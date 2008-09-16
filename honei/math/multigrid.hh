@@ -96,7 +96,7 @@ namespace honei
                     }
                 }
                 template <typename Prec_>
-                    static DenseVector<Prec_> _multigrid_kernel(BandedMatrixQ1<Prec_>&  system, DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ * cappa, MGInfo<Prec_> info)
+                    static DenseVector<Prec_> _multigrid_kernel(BandedMatrixQ1<Prec_>&  system, DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ * cappa, MGInfo<Prec_> & info)
                     {
 
                         bool restriction_started(false);
@@ -418,7 +418,7 @@ endCycleLoop:
                             local_cycle[i] = 1;
                         }
                         //configuration constants: /TODO: set/allocate!!!
-                        info.is_smoother = true;
+                        info.is_smoother = false;
                         DenseVector<unsigned long> mask(8);
                         info.macro_border_mask = &mask;
                         for(unsigned long i(0); i < 8 ; ++i)
@@ -481,7 +481,7 @@ endCycleLoop:
                                 break;
                         }
 
-                        info.n_max_iter = 1;
+                        info.n_max_iter = 16;
                         info.initial_zero = true;
                         info.tolerance = 1e-2;
                         info.convergence_check = false;
