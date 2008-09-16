@@ -33,6 +33,7 @@
 #include<honei/la/product.hh>
 #include<honei/math/restriction.hh>
 #include<honei/math/prolongation.hh>
+#include<honei/math/endian_swap.hh>
 #include<vector>
 #include<string>
 #include<fstream>
