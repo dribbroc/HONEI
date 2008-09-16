@@ -43,7 +43,7 @@ class DenseDotProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 13) ; size <<= 1)
             {
                 DenseVector<DataType_> dv0 (size, DataType_(0)), dv1(size, DataType_(1));
 
@@ -100,7 +100,7 @@ class DenseDotProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(22);
+            unsigned long size(12345);
             DenseVector<DataType_> dv0 (size, DataType_(0)), dv1(size, DataType_(1));
 
             DataType_ p0(DotProduct<Tag_>::value(dv1, dv0));
@@ -246,7 +246,7 @@ class DenseVectorRangeDotProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 13) ; size <<= 1)
             {
                 for (int i(0) ; i < 4 ; ++i)
                 {
@@ -307,7 +307,7 @@ class DenseVectorRangeDotProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(120);
+            unsigned long size(12345);
             for (int i(0) ; i < 4 ; ++i)
             {
                 for (int j(0) ; j < 4 ; ++j)
