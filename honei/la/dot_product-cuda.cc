@@ -21,7 +21,6 @@
 #include <honei/backends/cuda/operations.hh>
 #include <honei/util/configuration.hh>
 
-
 using namespace honei;
 
 float DotProduct<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<float> & a,
@@ -40,10 +39,15 @@ float DotProduct<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<float> 
 
     if (a.size() < gridsize * blocksize)
     {
+        /// \todo run mini dot product in cuda
+        a.lock(lm_read_only);
+        b.lock(lm_read_only);
         for (unsigned long i(0) ; i < a.size() ; ++i)
         {
             result += a[i] * b[i];
         }
+        a.unlock(lm_read_only);
+        b.unlock(lm_read_only);
     }
     else
     {

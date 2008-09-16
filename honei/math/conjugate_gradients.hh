@@ -29,11 +29,11 @@
 #include <honei/la/dot_product.hh>
 #include <honei/la/scale.hh>
 #include <honei/la/norm.hh>
-#include <iostream>
 #include <honei/math/methods.hh>
 #include <honei/la/element_product.hh>
 #include <honei/la/sparse_matrix.hh>
 #include <honei/la/algorithm.hh>
+
 using namespace methods;
 namespace honei
 {
@@ -103,18 +103,10 @@ namespace honei
             static inline void cg_kernel(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility)
             {
                 ///Compute x_i+1: (in energy)
-                DT1_ upper = DotProduct<Tag_>::value(former_gradient, former_gradient.copy());
+                DT1_ upper = DotProduct<Tag_>::value(former_gradient, former_gradient);
                 DenseVector<DT1_> energy = Product<Tag_>::value(system_matrix, utility);
                 DT1_ lower = DotProduct<Tag_>::value(energy, utility);
                 DenseVector<DT1_> u_c(utility.copy());
-                energy.lock(lm_read_only);
-                std::cout << "energy vorher: " << energy << std::endl;
-                energy.unlock(lm_read_only);
-                std::cout<<"lower: "<<lower<<std::endl;
-                utility.lock(lm_read_only);
-                std::cout << "utility vorher: " << utility << std::endl;
-                utility.unlock(lm_read_only);
-                std::cout<<"lower: "<<lower<<std::endl;
                 if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
                 {
                     Scale<Tag_>::value(u_c, DT1_(upper/lower));
@@ -124,12 +116,8 @@ namespace honei
                 {
                     Scale<Tag_>::value(u_c, DT1_(upper/std::numeric_limits<DT1_>::epsilon()));
                     energy = u_c;
-                    std::cout<<"tritt nicht ein"<<std::endl;
                 }
 
-                energy.lock(lm_read_only);
-                std::cout << "energy: " << energy << std::endl;
-                energy.unlock(lm_read_only);
                 Sum<Tag_>::value(energy, former_result);
                 ///Compute new gradient
                 DenseVector<DT1_> new_gradient = Product<Tag_>::value(system_matrix, energy);
