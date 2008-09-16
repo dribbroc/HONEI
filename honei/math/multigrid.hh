@@ -664,7 +664,7 @@ endCycleLoop:
                             info.x[i] = null.copy();
                         }
 
-                        /*unsigned long timing_loop(1);
+                        unsigned long timing_loop(1);
                         for(unsigned long timing(0); timing < timing_loop; ++timing)
                         {
                             unsigned long inner_iterations(0);
@@ -683,8 +683,8 @@ endCycleLoop:
 
                             Prec_ def_norm;
                             Prec_ inv;
-                            unsigned long step_iterations;*/
-                            /*while(inner_iterations < 1)
+                            unsigned long step_iterations;
+                            while(inner_iterations < 1)
                             {
                                 // set defect as RHS to inner solver
                                 for (unsigned long i(0); i < right_hand_side.size(); ++i)
@@ -695,9 +695,9 @@ endCycleLoop:
                                 (info.rhs)[info.max_level] = (temp_vector.copy());
                                 CONTAINS_NAN(info.rhs[info.max_level], "v5");
                                 // run inner solver as long as neccessary
-                                std::cout << inner_iterations << "th iteration!" << std::endl;*/
+                                std::cout << inner_iterations << "th iteration!" << std::endl;
                                 info.x[info.max_level] = (_multigrid_kernel<Prec_>(system, right_hand_side, max_levels, &cappa, info)).copy();
-                                /*inner_iterations += 1; //Markus: for now, this is ok, later: add kernel iterations
+                                inner_iterations += 1; //Markus: for now, this is ok, later: add kernel iterations
 
                                 // get "solution" and update outer solution
                                 temp_vector = info.x[info.max_level].copy();
@@ -737,7 +737,7 @@ endCycleLoop:
                                 CONTAINS_NAN(outer_defect, "v10");
                                 outer_iterations++;
                             }
-                        }*/
+                        }
 
                         return info.x[info.max_level];//result;
                     }
