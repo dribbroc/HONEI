@@ -180,3 +180,6 @@ class PoissonTestMGBandedQ1Float:
         }
 };
 PoissonTestMGBandedQ1Float<tags::CPU, float> poisson_test_jac_banded_float("float");
+#ifdef HONEI_CUDA
+PoissonTestMGBandedQ1Float<tags::GPU::CUDA, float> cuda_poisson_test_jac_banded_float("float");
+#endif

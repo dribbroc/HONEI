@@ -84,15 +84,18 @@ namespace honei
         {
             private:
                 template<typename Prec_>
-                static bool CONTAINS_NAN(DenseVector<Prec_> vector, std::string name)
+                static bool CONTAINS_NAN(DenseVector<Prec_> & vector, std::string name)
                 {
+                    vector.lock(lm_read_only);
                     for (unsigned long i(0); i < vector.size(); ++i)
                     {
                         if(vector[i] != vector[i])
                         {
                             std::cout << name << " contains NAN!!!" << std::endl;
+                            vector.unlock(lm_read_only);
                             return true;
                         }
+                        vector.unlock(lm_read_only);
                         return false;
                     }
                 }
@@ -112,7 +115,11 @@ namespace honei
                         else
                         {
                             DenseVector<Prec_> rhs_c((info.rhs[info.max_level]).copy());
-                            info.d[info.max_level] = (Difference<Tag_>::value(rhs_c, Product<Tag_>::value(info.a[info.max_level], info.x[info.max_level].copy()))).copy();
+                            DenseVector<Prec_> prod_1(Product<Tag_>::value(info.a[info.max_level], info.x[info.max_level].copy()));
+                            Difference<Tag_>::value(rhs_c, prod_1);
+                            info.d[info.max_level] = rhs_c;
+
+                            //info.d[info.max_level] = (Difference<Tag_>::value(rhs_c, Product<Tag_>::value(info.a[info.max_level], info.x[info.max_level].copy()))).copy();
 
                             CONTAINS_NAN(info.d[info.max_level], "2");
                         }
@@ -193,7 +200,11 @@ namespace honei
                                         }
 
                                         DenseVector<Prec_> rhs_c_2((info.rhs[current_level]).copy());
-                                        info.d[current_level] = (Difference<Tag_>::value(rhs_c_2, Product<Tag_>::value(info.a[current_level], info.x[current_level].copy())));
+                                        DenseVector<Prec_> prod_2(Product<Tag_>::value(info.a[current_level], info.x[current_level].copy()));
+                                        Difference<Tag_>::value(rhs_c_2, prod_2);
+                                        info.d[current_level] = rhs_c_2;
+
+                                        //info.d[current_level] = (Difference<Tag_>::value(rhs_c_2, Product<Tag_>::value(info.a[current_level], info.x[current_level].copy())));
 
                                         info.temp[current_level] = (info.d[current_level]).copy();
 
@@ -236,7 +247,11 @@ endRestrictionLoop:
                                         CONTAINS_NAN(info.d[current_level], "8");
 
                                         DenseVector<Prec_> rhs_c_4((info.rhs[current_level]).copy());
-                                        (info.d[current_level]) = (Difference<Tag_>::value(rhs_c_4, Product<Tag_>::value((info.a[current_level]), info.x[current_level].copy()))).copy();
+                                        DenseVector<Prec_> prod_4(Product<Tag_>::value((info.a[current_level]), info.x[current_level].copy()));
+                                        Difference<Tag_>::value(rhs_c_4, prod_4);
+                                        info.d[current_level] = rhs_c_4;
+
+                                        //(info.d[current_level]) = (Difference<Tag_>::value(rhs_c_4, Product<Tag_>::value((info.a[current_level]), info.x[current_level].copy()))).copy();
 
                                         CONTAINS_NAN(info.d[current_level], "9");
                                         //
@@ -325,7 +340,10 @@ endRestrictionLoop:
                                         // update defect
                                         //
                                         DenseVector<Prec_> rhs_c_5((info.rhs[current_level]).copy());
-                                        (info.d[current_level]) = (Difference<Tag_>::value(rhs_c_5, Product<Tag_>::value((info.a[current_level]), info.x[current_level].copy()))).copy();
+                                        DenseVector<Prec_> prod(Product<Tag_>::value((info.a[current_level]), info.x[current_level].copy()));
+                                        Difference<Tag_>::value(rhs_c_5, prod);
+                                        info.d[current_level] = rhs_c_5;
+                                        //(info.d[current_level]) = (Difference<Tag_>::value(rhs_c_5, Product<Tag_>::value((info.a[current_level]), info.x[current_level].copy()))).copy();
 
                                         std::cout << "Defect on level " << current_level << "||D||: " << Norm<vnt_l_two, true, Tag_>::value(info.d[current_level]) << std::endl;
                                         std::cout << "-----------------------------------------------------" << std::endl;
@@ -482,7 +500,7 @@ endCycleLoop:
                                 break;
                         }
 
-                        info.n_max_iter = 16;
+                        info.n_max_iter = 1;
                         info.initial_zero = true;
                         info.tolerance = 1e-2;
                         info.convergence_check = false;
@@ -678,7 +696,8 @@ endCycleLoop:
                             CONTAINS_NAN(product, "v1");
                             DenseVector<Prec_> rhs_c(right_hand_side.copy());
                             CONTAINS_NAN(rhs_c, "v2");
-                            outer_defect = Difference<Tag_>::value(rhs_c, product);
+                            Difference<Tag_>::value(rhs_c, product);
+                            outer_defect = rhs_c;
                             CONTAINS_NAN(outer_defect, "v3");
                             initial_defect = Norm<vnt_l_two, true, Tag_>::value(outer_defect);
 
@@ -715,7 +734,9 @@ endCycleLoop:
                                 DenseVector<Prec_> rhs_c_1(right_hand_side.copy());
                                 CONTAINS_NAN(rhs_c_1, "v8");
 
-                                outer_defect = Difference<Tag_>::value(rhs_c_1, Product<Tag_>::value(system, result));
+                                Difference<Tag_>::value(rhs_c_1, Product<Tag_>::value(system, result));
+                                outer_defect = rhs_c_1;
+
                                 CONTAINS_NAN(outer_defect, "v9");
 
                                 // calc norm of defect

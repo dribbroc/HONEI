@@ -94,7 +94,8 @@ namespace honei
 
                 Difference<Tag_>::value(temp2, temp);
                 ElementProduct<Tag_>::value(temp2, diag_inverted);
-                former_result = Sum<Tag_>::value(temp2, to_smooth);
+                Sum<Tag_>::value(temp2, to_smooth);
+                former_result = temp2;
             }
 
             template<typename DT1_, typename DT2_>
@@ -325,7 +326,11 @@ namespace honei
                     jacobi_kernel(to_smooth, system_matrix, right_hand_side, x, diag, diag_inverted, difference);
                     DenseVector<DT1_> ts_c(to_smooth.copy());
                     DenseVector<DT1_> x_c(x.copy());
+                    to_smooth.lock(lm_read_and_write);
+                    to_smooth.unlock(lm_read_and_write);
                     to_smooth = x_c.copy();
+                    x.lock(lm_read_and_write);
+                    x.unlock(lm_read_and_write);
                     x = ts_c.copy();
                 }
                 if(iter_number % 2 != 0)

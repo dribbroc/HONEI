@@ -103,10 +103,18 @@ namespace honei
             static inline void cg_kernel(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility)
             {
                 ///Compute x_i+1: (in energy)
-                DT1_ upper = DotProduct<Tag_>::value(former_gradient, former_gradient);
+                DT1_ upper = DotProduct<Tag_>::value(former_gradient, former_gradient.copy());
                 DenseVector<DT1_> energy = Product<Tag_>::value(system_matrix, utility);
                 DT1_ lower = DotProduct<Tag_>::value(energy, utility);
                 DenseVector<DT1_> u_c(utility.copy());
+                energy.lock(lm_read_only);
+                std::cout << "energy vorher: " << energy << std::endl;
+                energy.unlock(lm_read_only);
+                std::cout<<"lower: "<<lower<<std::endl;
+                utility.lock(lm_read_only);
+                std::cout << "utility vorher: " << utility << std::endl;
+                utility.unlock(lm_read_only);
+                std::cout<<"lower: "<<lower<<std::endl;
                 if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
                 {
                     Scale<Tag_>::value(u_c, DT1_(upper/lower));
@@ -116,7 +124,12 @@ namespace honei
                 {
                     Scale<Tag_>::value(u_c, DT1_(upper/std::numeric_limits<DT1_>::epsilon()));
                     energy = u_c;
+                    std::cout<<"tritt nicht ein"<<std::endl;
                 }
+
+                energy.lock(lm_read_only);
+                std::cout << "energy: " << energy << std::endl;
+                energy.unlock(lm_read_only);
                 Sum<Tag_>::value(energy, former_result);
                 ///Compute new gradient
                 DenseVector<DT1_> new_gradient = Product<Tag_>::value(system_matrix, energy);
@@ -384,7 +397,6 @@ namespace honei
             {
                 CONTEXT("When solving banded Q1 linear system with CG (with given convergence parameter):");
 
-
                 DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
                 DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
                 Difference<Tag_>::value(g, right_hand_side);
@@ -392,7 +404,6 @@ namespace honei
                 Scale<Tag_>::value(g_c, DT1_(-1.));
                 DenseVector<DT1_> u(g_c.copy());
                 DenseVector<DT1_> x_last(x.copy());
-
                 DT1_ norm_x_last = DT1_(0);
                 DT1_ norm_x = DT1_(1);
 
@@ -404,11 +415,12 @@ namespace honei
                     norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
                     x_last = x.copy();
                 }
+
                 return x;
             }
             ///Mixed precision implementations:
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad, int mixed_prec_iter_num)
+                static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad, int mixed_prec_iter_num)
             {
                 CONTEXT("When solving banded linear system with CG (with given convergence parameter), MIXEDPREC:");
 

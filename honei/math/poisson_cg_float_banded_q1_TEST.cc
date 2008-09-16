@@ -34,12 +34,12 @@ using namespace tests;
 using namespace std;
 
 template <typename Tag_, typename DT1_>
-class PoissonTestCGBandedFloat:
+class PoissonTestCGBandedFloatQ1:
     public BaseTest
 {
     public:
-        PoissonTestCGBandedFloat(const std::string & tag) :
-            BaseTest("Poisson test for itrerative LES solvers , CG (banded system)<" + tag + ">")
+        PoissonTestCGBandedFloatQ1(const std::string & tag) :
+            BaseTest("Poisson test for itrerative LES solvers , CG (Q1 system)<" + tag + ">")
         {
             register_tag(Tag_::name);
         }
@@ -150,18 +150,9 @@ class PoissonTestCGBandedFloat:
 
 
             long root_n = (long)sqrt(n);
-            BandedMatrix<float> A(n,dd_v.copy());
+            BandedMatrixQ1<float> A(n,ll_v, ld_v , lu_v, dl_v, dd_v, du_v, ul_v, ud_v, uu_v);
             //std::cout<<A.band(0)<<endl;
             //A->insert_band(0, dd_v.copy());
-            A.insert_band(1, du_v);
-            A.insert_band(-1, dl_v);
-            A.insert_band(root_n, ud_v);
-            A.insert_band(root_n+1, uu_v);
-            A.insert_band(root_n-1, ul_v);
-            A.insert_band(-root_n, ld_v);
-            A.insert_band(-root_n-1, ll_v );
-            A.insert_band(-root_n+1, lu_v);
-
             //std::cout<<A.band(0)[0] * double(1) << endl;
 
             //std::cout<< n << " " << A << " "<< root_n<<endl;
@@ -185,13 +176,13 @@ class PoissonTestCGBandedFloat:
 
         }
 };
-PoissonTestCGBandedFloat<tags::CPU, float> poisson_test_cg_banded_float("float");
+PoissonTestCGBandedFloatQ1<tags::CPU, float> poisson_test_cg_banded_float("float");
 #ifdef HONEI_SSE
-PoissonTestCGBandedFloat<tags::CPU::SSE, float> poisson_test_cg_banded_float_sse("SSE float");
+PoissonTestCGBandedFloatQ1<tags::CPU::SSE, float> poisson_test_cg_banded_float_sse("SSE float");
 #endif
 #ifdef HONEI_CUDA
-//PoissonTestCGBandedFloat<tags::GPU::CUDA, float> poisson_test_cg_banded_float_cuda("float");
+PoissonTestCGBandedFloatQ1<tags::GPU::CUDA, float> poisson_test_cg_banded_float_cuda("float");
 #endif
 #ifdef HONEI_CELL
-PoissonTestCGBandedFloat<tags::Cell, float> poisson_test_cg_banded_float_cell("Cell float");
+PoissonTestCGBandedFloatQ1<tags::Cell, float> poisson_test_cg_banded_float_cell("Cell float");
 #endif
