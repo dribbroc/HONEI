@@ -500,7 +500,7 @@ endCycleLoop:
                                 break;
                         }
 
-                        info.n_max_iter = 1;
+                        info.n_max_iter = 16;
                         info.initial_zero = true;
                         info.tolerance = 1e-2;
                         info.convergence_check = false;
