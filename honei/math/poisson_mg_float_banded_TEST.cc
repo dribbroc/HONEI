@@ -183,3 +183,6 @@ PoissonTestMGBandedQ1Float<tags::CPU, float> poisson_test_jac_banded_float("floa
 #ifdef HONEI_CUDA
 PoissonTestMGBandedQ1Float<tags::GPU::CUDA, float> cuda_poisson_test_jac_banded_float("float");
 #endif
+#ifdef HONEI_CELL
+PoissonTestMGBandedQ1Float<tags::Cell, float> cell_poisson_test_jac_banded_float("float");
+#endif
