@@ -180,6 +180,9 @@ class PoissonTestMGBandedQ1Double:
         }
 };
 PoissonTestMGBandedQ1Double<tags::CPU, double> poisson_test_jac_banded_double("double");
+#ifdef HONEI_SSE
+PoissonTestMGBandedQ1Double<tags::CPU::SSE, double> sse_poisson_test_jac_banded_double("double");
+#endif
 #ifdef HONEI_CELL
 PoissonTestMGBandedQ1Double<tags::Cell, double> cell_poisson_test_jac_banded_double("double");
 #endif
