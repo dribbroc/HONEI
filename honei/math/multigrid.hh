@@ -728,11 +728,13 @@ endCycleLoop:
                                 CONTAINS_NAN(result, "v7");
 
                                 // calculate defect
-                                DenseVector<Prec_> rhs_c_1(right_hand_side.copy());
+                                /*DenseVector<Prec_> rhs_c_1(right_hand_side.copy());
                                 CONTAINS_NAN(rhs_c_1, "v8");
-
                                 Difference<Tag_>::value(rhs_c_1, Product<Tag_>::value(system, result));
-                                outer_defect = rhs_c_1;
+                                outer_defect = rhs_c_1;*/
+
+                                DenseVector<Prec_> defect_outer(Defect<Tag_>::value(right_hand_side, system, result));
+                                outer_defect = defect_outer;
 
                                 CONTAINS_NAN(outer_defect, "v9");
 
