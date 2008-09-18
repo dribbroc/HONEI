@@ -40,12 +40,12 @@ class ProlongationTest:
 
         virtual void run() const
         {
-            unsigned long N_fine = 66049;
+            unsigned long N_fine = 1089;
             unsigned long width_fine = (unsigned long)sqrt((double)N_fine);
-            unsigned long N_coarse = 16641;
+            unsigned long N_coarse = 289;
             unsigned long width_coarse = (unsigned long)sqrt((double)N_coarse);
 
-            DenseVector<DT1_> fine(N_fine);
+            DenseVector<DT1_> fine(N_fine, DT1_(4711));
             DenseVector<DT1_> fine_ref(N_fine);
             DenseVector<DT1_> coarse(N_coarse);
             for (unsigned long i(0) ; i < coarse.size() ; ++i)
@@ -55,7 +55,7 @@ class ProlongationTest:
             DenseVector<unsigned long> mask(8);
             for(unsigned long i(0) ; i < 8 ; ++i)
             {
-                if(i % 2  == 0)
+                //if(i % 2  == 0)
                     mask[i] = 2;
             }
 

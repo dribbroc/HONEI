@@ -24,26 +24,26 @@ namespace honei
 {
     namespace cuda
     {
-        __global__ void prolongation_gpu(float * fine, float * coarse, int Nfine, int Ncoarse, int Mfine, int Mcoarse,
-                int n1, int n2, int n3, int n4, int e1, int e2, int e3, int e4)
+        __global__ void prolongation_gpu(float * fine, float * coarse, unsigned long Nfine, unsigned long Ncoarse, unsigned long Mfine, unsigned long Mcoarse,
+                unsigned long n1, unsigned long n2, unsigned long n3, unsigned long n4, unsigned long e1, unsigned long e2, unsigned long e3, unsigned long e4)
         {
             // index in the fine array (output index)
-            int ifine = blockDim.x*blockIdx.x+threadIdx.x;
+            unsigned long ifine = blockDim.x*blockIdx.x+threadIdx.x;
             // row index in the fine array  // TODO integer division
-            int rfine = (int)floorf(ifine / (float)Mfine);
+            unsigned long rfine = (unsigned long)floorf(ifine / (float)Mfine);
             // column index in the fine array
-            int cfine = ifine - rfine*Mfine;
+            unsigned long cfine = ifine - rfine*Mfine;
             // row index in the coarse array
-            int rcoarse = (int)floorf(0.5f*rfine);
+            unsigned long rcoarse = (unsigned long)floorf(0.5f*rfine);
             // column index in the coarse array
-            int ccoarse = (int)floorf(0.5f*cfine);
+            unsigned long ccoarse = (unsigned long)floorf(0.5f*cfine);
             // finally, index in the coarse array to start reading from
             // (bottom left node of the coarse cell in case of edge or inner points)
-            int icoarse = rcoarse*Mcoarse + ccoarse;
+            unsigned long icoarse = rcoarse*Mcoarse + ccoarse;
 
             // compute odd/even information (==0 = even)
-            int rodd = rfine & 1;
-            int codd = cfine & 1;
+            unsigned long rodd = rfine & 1;
+            unsigned long codd = cfine & 1;
 
             if (rodd==0)
             {

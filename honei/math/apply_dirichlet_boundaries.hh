@@ -35,6 +35,7 @@ namespace honei
                         int N = grid.size();
                         int M = (int)sqrt((double)N);
 
+                        // bottom left node
                         if (mask[0] == 2)
                             grid[0] = 0.0f;
                         // bottom right node

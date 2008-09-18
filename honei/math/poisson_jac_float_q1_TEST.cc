@@ -179,6 +179,9 @@ class PoissonTestJACBandedQ1Float:
         }
 };
 PoissonTestJACBandedQ1Float<tags::CPU, float> poisson_test_jac_banded_float("float");
+#ifdef HONEI_SSE
+PoissonTestJACBandedQ1Float<tags::CPU::SSE, float> sse_poisson_test_jac_banded_float("float");
+#endif
 #ifdef HONEI_CUDA
 PoissonTestJACBandedQ1Float<tags::GPU::CUDA, float> poisson_test_jac_banded_float_cuda("float");
 #endif
