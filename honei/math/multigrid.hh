@@ -34,6 +34,7 @@
 #include<honei/math/restriction.hh>
 #include<honei/math/prolongation.hh>
 #include<honei/math/endian_swap.hh>
+#include<honei/math/defect.hh>
 #include<vector>
 #include<string>
 #include<fstream>
@@ -114,12 +115,8 @@ namespace honei
                         }
                         else
                         {
-                            DenseVector<Prec_> rhs_c((info.rhs[info.max_level]).copy());
-                            DenseVector<Prec_> prod_1(Product<Tag_>::value(info.a[info.max_level], info.x[info.max_level].copy()));
-                            Difference<Tag_>::value(rhs_c, prod_1);
-                            info.d[info.max_level] = rhs_c;
-
-                            //info.d[info.max_level] = (Difference<Tag_>::value(rhs_c, Product<Tag_>::value(info.a[info.max_level], info.x[info.max_level].copy()))).copy();
+                            DenseVector<Prec_> defect(Defect<Tag_>::value(info.rhs[info.max_level], info.a[info.max_level], info.x[info.max_level]));
+                            info.d[info.max_level] = defect;
 
                             CONTAINS_NAN(info.d[info.max_level], "2");
                         }
@@ -199,12 +196,8 @@ namespace honei
                                             CONTAINS_NAN(info.x[current_level], "5");
                                         }
 
-                                        DenseVector<Prec_> rhs_c_2((info.rhs[current_level]).copy());
-                                        DenseVector<Prec_> prod_2(Product<Tag_>::value(info.a[current_level], info.x[current_level].copy()));
-                                        Difference<Tag_>::value(rhs_c_2, prod_2);
-                                        info.d[current_level] = rhs_c_2;
-
-                                        //info.d[current_level] = (Difference<Tag_>::value(rhs_c_2, Product<Tag_>::value(info.a[current_level], info.x[current_level].copy())));
+                                        DenseVector<Prec_> defect_2(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
+                                        info.d[current_level] = defect_2;
 
                                         info.temp[current_level] = (info.d[current_level]).copy();
 
@@ -246,12 +239,8 @@ endRestrictionLoop:
                                         (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon())).copy();
                                         CONTAINS_NAN(info.d[current_level], "8");
 
-                                        DenseVector<Prec_> rhs_c_4((info.rhs[current_level]).copy());
-                                        DenseVector<Prec_> prod_4(Product<Tag_>::value((info.a[current_level]), info.x[current_level].copy()));
-                                        Difference<Tag_>::value(rhs_c_4, prod_4);
-                                        info.d[current_level] = rhs_c_4;
-
-                                        //(info.d[current_level]) = (Difference<Tag_>::value(rhs_c_4, Product<Tag_>::value((info.a[current_level]), info.x[current_level].copy()))).copy();
+                                        DenseVector<Prec_> defect_3(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
+                                        info.d[current_level] = defect_3;
 
                                         CONTAINS_NAN(info.d[current_level], "9");
                                         //
@@ -339,11 +328,8 @@ endRestrictionLoop:
                                         //
                                         // update defect
                                         //
-                                        DenseVector<Prec_> rhs_c_5((info.rhs[current_level]).copy());
-                                        DenseVector<Prec_> prod(Product<Tag_>::value((info.a[current_level]), info.x[current_level].copy()));
-                                        Difference<Tag_>::value(rhs_c_5, prod);
-                                        info.d[current_level] = rhs_c_5;
-                                        //(info.d[current_level]) = (Difference<Tag_>::value(rhs_c_5, Product<Tag_>::value((info.a[current_level]), info.x[current_level].copy()))).copy();
+                                        DenseVector<Prec_> defect_4(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
+                                        info.d[current_level] = defect_4;
 
                                         std::cout << "Defect on level " << current_level << "||D||: " << Norm<vnt_l_two, true, Tag_>::value(info.d[current_level]) << std::endl;
                                         std::cout << "-----------------------------------------------------" << std::endl;
