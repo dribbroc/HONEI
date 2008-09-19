@@ -38,6 +38,8 @@
 #include<vector>
 #include<string>
 #include<fstream>
+
+//#define SOLVER_VERBOSE 1
 using namespace methods;
 namespace honei
 {
@@ -113,8 +115,9 @@ namespace honei
                         {
                             defect = Prec_(1e8);
                         }
+#ifdef SOLVER_VERBOSE
                         std::cout << defect << std::endl;
-
+#endif
                         // check if nothing needs to be done
                         if(info.convergence_check && defect <= info.tolerance)
                         {
@@ -127,7 +130,9 @@ namespace honei
                             unsigned long local_cycle[max_levels];
                             for(iter = 1 ; iter <= info.n_max_iter ; ++iter)
                             {
+#ifdef SOLVER_VERBOSE
                                 std::cout << iter << "th iteration" <<std::endl;
+#endif
                                 // set current level to the maximal level
                                 current_level = info.max_level;
 
@@ -178,9 +183,10 @@ namespace honei
                                         info.d[current_level] = defect_2;
 
                                         info.temp[current_level] = (info.d[current_level]).copy();
-
+#ifdef SOLVER_VERBOSE
                                         std::cout << "-----------------------------------------------------" << std::endl;
                                         std::cout << "Presmoothing ||D|| on level " << current_level << " " << Norm<vnt_l_two, true, Tag_>::value(info.d[current_level]) << std::endl;
+#endif
                                         //----------------------------------
                                         //restriction ("go down one level")
                                         //----------------------------------
@@ -192,11 +198,14 @@ namespace honei
                                         // depending on Dirichlet mask (see routine for details), and store a copy in RHS
 
                                         info.d[current_level] = Restriction<Tag_>::value((info.d[current_level]), (info.d[current_level + 1]), *info.macro_border_mask);
+#ifdef SOLVER_VERBOSE
                                         std::cout << "Restricted." << std::endl;
+#endif
                                         info.rhs[current_level] =(info.d[current_level]).copy();
 
-
+#ifdef SOLVER_VERBOSE
                                         std::cout << "Defect on level " << current_level << "||D||: " << Norm<vnt_l_two, true, Tag_>::value(info.d[current_level]) << std::endl;
+#endif
                                         // if we reached the coarsest level exit the restricition loop
                                         if (current_level == info.min_level)
                                             goto endRestrictionLoop;
@@ -228,8 +237,9 @@ endRestrictionLoop:
                                         // started with a zero start vector
 
                                         (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon())).copy();
-
+#ifdef SOLVER_VERBOSE
                                         std::cout << "Coarse Grid solver." << std::endl;
+#endif
                                     }
 
                                     //-------------
@@ -261,11 +271,13 @@ endRestrictionLoop:
                                         {
                                             info.c[current_level] = Prolongation<Tag_>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask);
                                         }
-                                        //std::cout << info.c[current_level] << std::endl;
+#ifdef SOLVER_VERBOSE
                                         std::cout << "Prolongated." << std::endl;
+#endif
                                         info.temp[current_level] = (info.c[current_level]).copy();
+#ifdef SOLVER_VERBOSE
                                         std::cout << "Prolongation on level " << current_level << " ||c|| " << Norm<vnt_l_two, true, Tag_>::value(info.c[current_level]) << std::endl;
-
+#endif
                                         //
                                         // perform adaptive coarse grid correction if required
                                         //
@@ -294,8 +306,9 @@ endRestrictionLoop:
                                         ScaledSum<Tag_>::value((info.x[current_level]), (info.c[current_level]), alpha);
 
                                         info.temp[current_level] = (info.x[current_level]).copy();
+#ifdef SOLVER_VERBOSE
                                         std::cout << "Prolongation on level " << current_level << " ||x|| " << Norm<vnt_l_two, true, Tag_>::value(info.x[current_level]) << std::endl;
-
+#endif
                                         //--------------
                                         //postsmoothing
                                         //--------------
@@ -304,16 +317,18 @@ endRestrictionLoop:
                                         //
                                         (info.x[current_level]) =(Jacobi<Tag_>::value(info.x[current_level].copy(), (info.a[current_level]), (info.rhs[current_level]), info.n_pre_smooth, Prec_(0.7))).copy();
                                         info.temp[current_level] = (info.x[current_level]).copy();
-
+#ifdef SOLVER_VERBOSE
                                         std::cout << "Postsmoothing ||X|| on level " << current_level << " " << Norm<vnt_l_two, true, Tag_>::value(info.x[current_level]) << std::endl;
+#endif
                                         //
                                         // update defect
                                         //
                                         DenseVector<Prec_> defect_4(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                                         info.d[current_level] = defect_4;
-
+#ifdef SOLVER_VERBOSE
                                         std::cout << "Defect on level " << current_level << "||D||: " << Norm<vnt_l_two, true, Tag_>::value(info.d[current_level]) << std::endl;
                                         std::cout << "-----------------------------------------------------" << std::endl;
+#endif
                                         // if the maximal level is reached then the MG cycle is finished,
                                         // so exit the MG cycle loop
                                         if (current_level == info.max_level)
@@ -676,7 +691,9 @@ endCycleLoop:
                                 }
                                 (info.rhs)[info.max_level] = (temp_vector.copy());
                                 // run inner solver as long as neccessary
+#ifdef SOLVER_VERBOSE
                                 std::cout << inner_iterations << "th iteration!" << std::endl;
+#endif
                                 info.x[info.max_level] = (_multigrid_kernel<Prec_>(system, right_hand_side, max_levels, &cappa, info)).copy();
                                 inner_iterations += 1; //Markus: for now, this is ok, later: add kernel iterations
 
@@ -696,9 +713,10 @@ endCycleLoop:
 
                                 // calc norm of defect
                                 def_norm = Norm<vnt_l_two, true, Tag_>::value(outer_defect);
+#ifdef SOLVER_VERBOSE
                                 std::cout << "defnorm: " << def_norm << std::endl;
                                 std::cout << "initial_defect: " << initial_defect << std::endl;
-
+#endif
                                 // check for convergence
                                 Prec_ outer_eps(1e-8);
                                 if (def_norm  < outer_eps * initial_defect)
