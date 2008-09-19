@@ -64,7 +64,7 @@ class PoissonTestPCGBandedFloat:
             double* ana_sol;
             double* ref_sol;
 
-            file = fopen("ehq.1.1.1.1.bin", "rb");
+            file = fopen("testdata/1089/ehq.1.1.1.1.bin", "rb");
             fread(&n, sizeof(int), 1, file);
 #ifdef HONEI_CELL
             unsigned char b1, b2, b3, b4;
