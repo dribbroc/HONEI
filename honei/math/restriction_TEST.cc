@@ -40,44 +40,45 @@ class RestrictionTest:
 
         virtual void run() const
         {
-            unsigned long N_fine = 66049;
-            unsigned long width_fine = (unsigned long)sqrt((double)N_fine);
-            unsigned long N_coarse = 16641;
-            unsigned long width_coarse = (unsigned long)sqrt((double)N_coarse);
-
-            DenseVector<DT1_> fine(N_fine);
-            DenseVector<DT1_> coarse(N_coarse);
-            DenseVector<DT1_> coarse_ref(N_coarse);
-            for (unsigned long i(0) ; i < fine.size() ; ++i)
+            for (float level(0) ; level < 10 ; ++level)
             {
-                fine[i] = DT1_(i % 1000);
-            }
-            DenseVector<unsigned long> mask(8);
-            for(unsigned long i(0) ; i < 8 ; ++i)
-            {
-                if(i % 2  == 0)
-                    mask[i] = 2;
-            }
+                unsigned long N_fine((unsigned long)pow((pow(2, level + 1) + 1), 2));
+                unsigned long width_fine = (unsigned long)sqrt((double)N_fine);
+                unsigned long N_coarse((unsigned long)pow((pow(2, level) + 1), 2));
+                unsigned long width_coarse = (unsigned long)sqrt((double)N_coarse);
 
-            Restriction<Tag_>::value(coarse, fine, mask);
-            Restriction<tags::CPU>::value(coarse_ref, fine, mask);
-            coarse.lock(lm_read_only);
-            coarse_ref.lock(lm_read_only);
-            TEST_CHECK_EQUAL(coarse, coarse_ref);
-
-            /*DenseMatrix<DT1_> grid_coarse(width_coarse, width_coarse, DT1_(0));
-            for(unsigned long i(0) ; i < width_coarse ; ++i)
-            {
-                for(unsigned long j(0); j < width_coarse; ++j)
+                DenseVector<DT1_> fine(N_fine);
+                DenseVector<DT1_> coarse(N_coarse, DT1_(4711));
+                DenseVector<DT1_> coarse_ref(N_coarse, DT1_(4711));
+                for (unsigned long i(0) ; i < fine.size() ; ++i)
                 {
-                    grid_coarse(i,j) = coarse[i*j + j];
+                    fine[i] = DT1_(i % 1000);
                 }
-            }
-            std::cout << grid_coarse << std::endl;*/
-            coarse.unlock(lm_read_only);
-            coarse_ref.unlock(lm_read_only);
+                DenseVector<unsigned long> mask(8);
+                for(unsigned long i(0) ; i < 8 ; ++i)
+                {
+                    if(i % 2  == 0)
+                        mask[i] = 2;
+                }
 
-            TEST_CHECK(true);
+                Restriction<Tag_>::value(coarse, fine, mask);
+                Restriction<tags::CPU>::value(coarse_ref, fine, mask);
+                coarse.lock(lm_read_only);
+                coarse_ref.lock(lm_read_only);
+                TEST_CHECK_EQUAL(coarse, coarse_ref);
+
+                /*DenseMatrix<DT1_> grid_coarse(width_coarse, width_coarse, DT1_(0));
+                  for(unsigned long i(0) ; i < width_coarse ; ++i)
+                  {
+                  for(unsigned long j(0); j < width_coarse; ++j)
+                  {
+                  grid_coarse(i,j) = coarse[i*j + j];
+                  }
+                  }
+                  std::cout << grid_coarse << std::endl;*/
+                coarse.unlock(lm_read_only);
+                coarse_ref.unlock(lm_read_only);
+            }
         }
 };
 RestrictionTest<tags::CPU, float> restriction_test("float");

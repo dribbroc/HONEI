@@ -23,6 +23,8 @@
 #include <honei/util/stringify.hh>
 #include <iostream>
 #include <honei/la/dense_matrix.hh>
+#include <cmath>
+
 using namespace honei;
 using namespace tests;
 using namespace std;
@@ -40,44 +42,45 @@ class ProlongationTest:
 
         virtual void run() const
         {
-            unsigned long N_fine = 1089;
-            unsigned long width_fine = (unsigned long)sqrt((double)N_fine);
-            unsigned long N_coarse = 289;
-            unsigned long width_coarse = (unsigned long)sqrt((double)N_coarse);
-
-            DenseVector<DT1_> fine(N_fine, DT1_(4711));
-            DenseVector<DT1_> fine_ref(N_fine);
-            DenseVector<DT1_> coarse(N_coarse);
-            for (unsigned long i(0) ; i < coarse.size() ; ++i)
+            for (float level(0) ; level < 10 ; ++level)
             {
-                coarse[i] = DT1_(i % 1000);
-            }
-            DenseVector<unsigned long> mask(8);
-            for(unsigned long i(0) ; i < 8 ; ++i)
-            {
-                //if(i % 2  == 0)
-                    mask[i] = 2;
-            }
+                unsigned long N_fine((unsigned long)pow((pow(2, level + 1) + 1), 2));
+                unsigned long width_fine = (unsigned long)sqrt((double)N_fine);
+                unsigned long N_coarse((unsigned long)pow((pow(2, level) + 1), 2));
+                unsigned long width_coarse = (unsigned long)sqrt((double)N_coarse);
 
-            Prolongation<Tag_>::value(fine, coarse, mask);
-            Prolongation<tags::CPU>::value(fine_ref, coarse, mask);
-            fine.lock(lm_read_only);
-            fine_ref.lock(lm_read_only);
-            TEST_CHECK_EQUAL(fine, fine_ref);
-
-            /*DenseMatrix<DT1_> grid_fine(width_fine, width_fine, DT1_(0));
-            for(unsigned long i(0) ; i < width_fine ; ++i)
-            {
-                for(unsigned long j(0); j < width_fine; ++j)
+                DenseVector<DT1_> fine(N_fine, DT1_(4711));
+                DenseVector<DT1_> fine_ref(N_fine, DT1_(4711));
+                DenseVector<DT1_> coarse(N_coarse);
+                for (unsigned long i(0) ; i < coarse.size() ; ++i)
                 {
-                    grid_fine(i,j) = fine[i * j + j];
+                    coarse[i] = DT1_(i % 1000);
                 }
-            }
-            std::cout << grid_fine << std::endl;*/
-            fine.unlock(lm_read_only);
-            fine_ref.unlock(lm_read_only);
+                DenseVector<unsigned long> mask(8);
+                for(unsigned long i(0) ; i < 8 ; ++i)
+                {
+                    //if(i % 2  == 0)
+                    mask[i] = 2;
+                }
 
-            TEST_CHECK(true);
+                Prolongation<Tag_>::value(fine, coarse, mask);
+                Prolongation<tags::CPU>::value(fine_ref, coarse, mask);
+                fine.lock(lm_read_only);
+                fine_ref.lock(lm_read_only);
+                TEST_CHECK_EQUAL(fine, fine_ref);
+
+                /*DenseMatrix<DT1_> grid_fine(width_fine, width_fine, DT1_(0));
+                  for(unsigned long i(0) ; i < width_fine ; ++i)
+                  {
+                  for(unsigned long j(0); j < width_fine; ++j)
+                  {
+                  grid_fine(i,j) = fine[i * j + j];
+                  }
+                  }
+                  std::cout << grid_fine << std::endl;*/
+                fine.unlock(lm_read_only);
+                fine_ref.unlock(lm_read_only);
+            }
         }
 };
 ProlongationTest<tags::CPU, float> prolongate_test("float");
