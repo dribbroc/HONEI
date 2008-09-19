@@ -95,7 +95,7 @@ namespace honei
                         // when start vector is not zero: d = rhs - A*x
                         if(info.initial_zero)
                         {
-                            info.d[info.max_level] = info.rhs[info.max_level].copy();
+                            info.d[info.max_level] = info.rhs[info.max_level];
                         }
                         else
                         {
@@ -163,9 +163,9 @@ namespace honei
                                         {
                                             // When the restriction loop just started
 
-                                            (info.c[current_level]) = (Jacobi<Tag_>::value(info.a[current_level], info.d[current_level], Prec_(0.7))).copy();
+                                            (info.c[current_level]) = (Jacobi<Tag_>::value(info.a[current_level], info.d[current_level], Prec_(0.7)));
                                             //DenseVector<Prec_> null(info.x[current_level].size() , Prec_(0));
-                                            (info.c[current_level]) = (Jacobi<Tag_>::value(info.c[current_level].copy() , info.a[current_level], info.d[current_level], info.n_pre_smooth - 1, Prec_(0.7))).copy();
+                                            (info.c[current_level]) = (Jacobi<Tag_>::value(info.c[current_level].copy() , info.a[current_level], info.d[current_level], info.n_pre_smooth - 1, Prec_(0.7)));
 
                                             Sum<Tag_>::value(info.x[current_level], info.c[current_level]);
                                         }
@@ -174,15 +174,15 @@ namespace honei
                                             // otherwise the solution process can be started directly with
                                             // the cleared solution vector (as the solution vector itself represents
                                             // the defect correction here)
-                                            info.x[current_level] = (Jacobi<Tag_>::value((info.a[current_level]), (info.d[current_level]), Prec_(0.7))).copy();
+                                            info.x[current_level] = (Jacobi<Tag_>::value((info.a[current_level]), (info.d[current_level]), Prec_(0.7)));
                                             //DenseVector<Prec_> null(info.x[current_level].size() , Prec_(0));
-                                            info.x[current_level] = (Jacobi<Tag_>::value(info.x[current_level].copy(), (info.a[current_level]), (info.d[current_level]), info.n_pre_smooth - 1, Prec_(0.7))).copy();
+                                            info.x[current_level] = (Jacobi<Tag_>::value(info.x[current_level].copy(), (info.a[current_level]), (info.d[current_level]), info.n_pre_smooth - 1, Prec_(0.7)));
                                         }
 
                                         DenseVector<Prec_> defect_2(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                                         info.d[current_level] = defect_2;
 
-                                        info.temp[current_level] = (info.d[current_level]).copy();
+                                        info.temp[current_level] = (info.d[current_level]);
 #ifdef SOLVER_VERBOSE
                                         std::cout << "-----------------------------------------------------" << std::endl;
                                         std::cout << "Presmoothing ||D|| on level " << current_level << " " << Norm<vnt_l_two, true, Tag_>::value(info.d[current_level]) << std::endl;
@@ -201,7 +201,7 @@ namespace honei
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Restricted." << std::endl;
 #endif
-                                        info.rhs[current_level] =(info.d[current_level]).copy();
+                                        info.rhs[current_level] =(info.d[current_level]);
 
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Defect on level " << current_level << "||D||: " << Norm<vnt_l_two, true, Tag_>::value(info.d[current_level]) << std::endl;
@@ -221,7 +221,7 @@ endRestrictionLoop:
                                         // For the case we actually have only one MG level, only
                                         // the following coarse grid correction (and no smoothing) is done.
 
-                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon())).copy();
+                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
 
                                         DenseVector<Prec_> defect_3(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                                         info.d[current_level] = defect_3;
@@ -236,7 +236,7 @@ endRestrictionLoop:
                                         // Otherwise this is a "real" coarse grid correction, which is
                                         // started with a zero start vector
 
-                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon())).copy();
+                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Coarse Grid solver." << std::endl;
 #endif
@@ -274,7 +274,7 @@ endRestrictionLoop:
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Prolongated." << std::endl;
 #endif
-                                        info.temp[current_level] = (info.c[current_level]).copy();
+                                        info.temp[current_level] = (info.c[current_level]);
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Prolongation on level " << current_level << " ||c|| " << Norm<vnt_l_two, true, Tag_>::value(info.c[current_level]) << std::endl;
 #endif
@@ -305,7 +305,7 @@ endRestrictionLoop:
                                         //
                                         ScaledSum<Tag_>::value((info.x[current_level]), (info.c[current_level]), alpha);
 
-                                        info.temp[current_level] = (info.x[current_level]).copy();
+                                        info.temp[current_level] = (info.x[current_level]);
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Prolongation on level " << current_level << " ||x|| " << Norm<vnt_l_two, true, Tag_>::value(info.x[current_level]) << std::endl;
 #endif
@@ -315,8 +315,8 @@ endRestrictionLoop:
                                         //
                                         // smooth A*x = rhs based on the RHS for that level we stored during restriction
                                         //
-                                        (info.x[current_level]) =(Jacobi<Tag_>::value(info.x[current_level].copy(), (info.a[current_level]), (info.rhs[current_level]), info.n_pre_smooth, Prec_(0.7))).copy();
-                                        info.temp[current_level] = (info.x[current_level]).copy();
+                                        (info.x[current_level]) =(Jacobi<Tag_>::value(info.x[current_level].copy(), (info.a[current_level]), (info.rhs[current_level]), info.n_pre_smooth, Prec_(0.7)));
+                                        info.temp[current_level] = (info.x[current_level]);
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Postsmoothing ||X|| on level " << current_level << " " << Norm<vnt_l_two, true, Tag_>::value(info.x[current_level]) << std::endl;
 #endif
@@ -500,7 +500,7 @@ endCycleLoop:
                                 size = 9;
 
                             DenseVector<Prec_> dummy_band(size, Prec_(0));
-                            BandedMatrixQ1<Prec_> ac_a(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
+                            BandedMatrixQ1<Prec_> ac_a(size, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band);
                             info.a.push_back(ac_a);
                             // iteration vectors
                             DenseVector<Prec_> ac_c(size, Prec_(0));
@@ -694,7 +694,7 @@ endCycleLoop:
 #ifdef SOLVER_VERBOSE
                                 std::cout << inner_iterations << "th iteration!" << std::endl;
 #endif
-                                info.x[info.max_level] = (_multigrid_kernel<Prec_>(system, right_hand_side, max_levels, &cappa, info)).copy();
+                                info.x[info.max_level] = (_multigrid_kernel<Prec_>(system, right_hand_side, max_levels, &cappa, info));
                                 inner_iterations += 1; //Markus: for now, this is ok, later: add kernel iterations
 
                                 // get "solution" and update outer solution
