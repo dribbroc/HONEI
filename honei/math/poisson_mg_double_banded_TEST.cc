@@ -389,18 +389,16 @@ class PoissonTestMGBandedQ1Double:
             //std::cout<< ana_sol_v <<endl;
             //std::cout<< ref_sol_v <<endl;
 
-            //result.lock(lm_read_only);
+            result.lock(lm_read_only);
             for(unsigned long i = 0; i < n; i++)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol[i], result[i], 1e-04);
             }
-            //result.unlock(lm_read_only);
+            result.unlock(lm_read_only);
             DenseVector<double> x(n, double(0));
             Difference<Tag_>::value(result, ana_sol_v);
             Difference<Tag_>::value(x, result);
-            //x.lock(lm_read_only);
-            double norm = Norm<vnt_l_two, false>::value(x);
-            //x.unlock(lm_read_only);
+            double norm = Norm<vnt_l_two, false, Tag_>::value(x);
             cout<<"L2: "<<norm<<endl;
             //TEST_CHECK(true);
         }
