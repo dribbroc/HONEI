@@ -394,20 +394,9 @@ endCycleLoop:
 
             public:
                 template<typename Prec_>
-                    static DenseVector<Prec_> value(BandedMatrixQ1<Prec_>&  system, DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ conv_rad)
+                    static DenseVector<Prec_> value(BandedMatrixQ1<Prec_>&  system, DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ conv_rad, MGInfo<Prec_> & info)
                     {
                         Prec_ cappa;
-
-                        DenseVector<Prec_> result(right_hand_side.size(), Prec_(0)); //final result
-                        MGInfo<Prec_> info;
-                        info.macro_border_mask = new DenseVector<unsigned long>(8);
-                        for(unsigned long i(0); i < 8; ++i)
-                        {
-                            (*info.macro_border_mask)[i] = 2;
-                        }
-
-                        // current and initial defect
-                        Prec_ defect, initial_defect;
 
                         // cycle control
                         unsigned long iter;
@@ -417,216 +406,11 @@ endCycleLoop:
                         {
                             local_cycle[i] = 1;
                         }
-                        //configuration constants: /TODO: set/allocate!!!
-                        info.is_smoother = false;
-                        DenseVector<unsigned long> mask(8);
-                        info.macro_border_mask = &mask;
-                        for(unsigned long i(0); i < 8 ; ++i)
-                        {
-                            (*info.macro_border_mask)[i] = (unsigned long)(2);
-                        }
 
-                        info.min_level = 1;
-                        switch(right_hand_side.size())
-                        {
-                            case 1050625:
-                                {
-                                    info.max_level = 10;
-                                }
-                                break;
-                            case 263169:
-                                {
-                                    info.max_level = 9;
-                                }
-                                break;
-                            case 66049:
-                                {
-                                    info.max_level = 8;
-                                }
-                                break;
-                            case 16641:
-                                {
-                                    info.max_level = 7;
-                                }
-                                break;
-                            case 4225:
-                                {
-                                    info.max_level = 6;
-                                }
-                                break;
-                            case 1089:
-                                {
-                                    info.max_level = 5;
-                                }
-                                break;
-                            case 289:
-                                {
-                                    info.max_level = 4;
-                                }
-                                break;
-                            case 81:
-                                {
-                                    info.max_level = 3;
-                                }
-                                break;
-                            case 25:
-                                {
-                                    info.max_level = 2;
-                                }
-                                break;
-                            case 9:
-                                {
-                                    info.max_level = 1;
-                                }
-                                break;
-                        }
+                        // current and initial defect
+                        Prec_ defect, initial_defect;
+                        DenseVector<Prec_> result(right_hand_side.size(), Prec_(0)); //final result
 
-                        info.n_max_iter = 16;
-                        info.initial_zero = true;
-                        info.tolerance = 1e-2;
-                        info.convergence_check = false;
-
-                        info.n_pre_smooth = 4;
-                        info.n_post_smooth = 4;
-                        info.n_max_iter_coarse = ((unsigned long)sqrt((double)(pow(2 , info.max_level) + 1)*(pow(2 , info.max_level) + 1)));
-                        info.tolerance_coarse = 1e-2;
-                        info.adapt_correction_factor = 1.;
-
-                        //push back dummy matrices/vectors in order not to disturb std::vectors index range:
-                        for (unsigned long i(0) ; i < info.min_level; ++i)
-                        {
-                            unsigned long size((unsigned long)(((unsigned long)pow(2, i) + 1) * ((unsigned long)pow(2, i) + 1)));
-                            if(i == 0)
-                                size = 9;
-
-                            DenseVector<Prec_> dummy_band(size, Prec_(0));
-                            BandedMatrixQ1<Prec_> ac_a(size, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band);
-                            info.a.push_back(ac_a);
-                            // iteration vectors
-                            DenseVector<Prec_> ac_c(size, Prec_(0));
-                            info.c.push_back(ac_c);
-                            DenseVector<Prec_> ac_d(size, Prec_(0));
-                            info.d.push_back(ac_d);
-                            DenseVector<Prec_> ac_rhs(size, Prec_(0));
-                            info.rhs.push_back(ac_rhs);
-                            DenseVector<Prec_> ac_x(size, Prec_(0));
-                            info.x.push_back(ac_x);
-                            DenseVector<Prec_> ac_temp(size, Prec_(0));
-                            info.temp.push_back(ac_temp);
-                        }
-                        for (unsigned long i(info.min_level) ; i <= info.max_level; ++i)
-                        {
-                            unsigned long size = (unsigned long)(((unsigned long)pow(2, i) + 1) * ((unsigned long)pow(2, i) + 1));
-                            // iteration vectors
-                            DenseVector<Prec_> ac_c(size, Prec_(0));
-                            info.c.push_back(ac_c);
-                            DenseVector<Prec_> ac_d(size, Prec_(0));
-                            info.d.push_back(ac_d);
-                            DenseVector<Prec_> ac_x(size, Prec_(0));
-                            info.x.push_back(ac_x);
-                            DenseVector<Prec_> ac_temp(size, Prec_(0));
-                            info.temp.push_back(ac_temp);
-                        }
-
-                        //assemble all needed levels' matrices:
-                        for(unsigned long i(info.min_level); i <= info.max_level; ++i)
-                        {
-                            unsigned long N = (unsigned long)(((unsigned long)pow(2, i) + 1) * ((unsigned long)pow(2, i) + 1));
-                            DenseVector<Prec_> LL_v(N);
-                            DenseVector<Prec_> LD_v(N);
-                            DenseVector<Prec_> LU_v(N);
-                            DenseVector<Prec_> DL_v(N);
-                            DenseVector<Prec_> DD_v(N);
-                            DenseVector<Prec_> DU_v(N);
-                            DenseVector<Prec_> UL_v(N);
-                            DenseVector<Prec_> UD_v(N);
-                            DenseVector<Prec_> UU_v(N);
-                            BandedMatrixQ1<Prec_> current_matrix(N,LL_v, LD_v, LU_v, DL_v, DD_v, DU_v, UL_v, UD_v, UU_v);
-
-                            DenseVector<Prec_> current_rhs(N);
-                            int n;
-
-                            FILE* file;
-
-                            double* dd;
-
-                            double* ll;
-                            double* ld;
-                            double* lu;
-                            double* dl;
-                            double* du;
-                            double* ul;
-                            double* ud;
-                            double* uu;
-                            double* b;
-                            std::string file_path("testdata/" + stringify(DD_v.size()) +"/ehq.1.1.1.1.bin");
-                            file = fopen(file_path.c_str(), "rb");
-                            fread(&n, sizeof(int), 1, file);
-
-#ifdef HONEI_CELL
-                            unsigned char b1, b2, b3, b4;
-                            b1 = n & 255;
-                            b2 = ( n >> 8 ) & 255;
-                            b3 = ( n>>16 ) & 255;
-                            b4 = ( n>>24 ) & 255;
-                            n = ((int)b1 << 24) + ((int)b2 << 16) + ((int)b3 << 8) + b4;
-#endif
-                            dd = new double[n];
-                            ll = new double[n];
-                            ld = new double[n];
-                            lu = new double[n];
-                            dl = new double[n];
-                            du = new double[n];
-                            ul = new double[n];
-                            ud = new double[n];
-                            uu = new double[n];
-
-                            b = new double[n];
-                            fread(dd, sizeof(double), n, file);
-                            fread(ll, sizeof(double), n, file);
-                            fread(ld, sizeof(double), n, file);
-                            fread(lu, sizeof(double), n, file);
-                            fread(dl, sizeof(double), n, file);
-                            fread(du, sizeof(double), n, file);
-                            fread(ul, sizeof(double), n, file);
-                            fread(ud, sizeof(double), n, file);
-                            fread(uu, sizeof(double), n, file);
-                            fread(b,  sizeof(double), n, file);
-                            fclose(file);
-
-#ifdef HONEI_CELL
-                            for(unsigned long j(0); j < n; ++j)
-                            {
-                                dd[j] = DoubleSwap(dd[j]);
-                                ll[j] = DoubleSwap(ll[j]);
-                                ld[j] = DoubleSwap(ld[j]);
-                                lu[j] = DoubleSwap(lu[j]);
-                                dl[j] = DoubleSwap(dl[j]);
-                                du[j] = DoubleSwap(du[j]);
-                                ul[j] = DoubleSwap(ul[j]);
-                                ud[j] = DoubleSwap(ud[j]);
-                                uu[j] = DoubleSwap(uu[j]);
-
-                                b[j] = DoubleSwap(b[j]);
-                            }
-#endif
-                            for(unsigned long j(0); j < DD_v.size(); ++j)
-                            {
-                                LL_v[j] = (Prec_)ll[j];
-                                LD_v[j] = (Prec_)ld[j];
-                                LU_v[j] = (Prec_)lu[j];
-                                DL_v[j] = (Prec_)dl[j];
-                                DD_v[j] = (Prec_)dd[j];
-                                DU_v[j] = (Prec_)du[j];
-                                UL_v[j] = (Prec_)ul[j];
-                                UD_v[j] = (Prec_)ud[j];
-                                UU_v[j] = (Prec_)uu[j];
-                                current_rhs[j] = (Prec_)b[j];
-                            }
-                            info.rhs.push_back(current_rhs);
-                            info.a.push_back(current_matrix);
-
-                        }
 
                         DenseVector<Prec_> initial_guess(right_hand_side.size(), Prec_(0)); //x_0
                         DenseVector<Prec_> outer_defect(right_hand_side.size(), Prec_(0));
@@ -651,17 +435,6 @@ endCycleLoop:
                         for (unsigned long i(sqrt_N - 1); i < right_hand_side.size(); i += sqrt_N)
                         {
                             initial_guess[i] = right_hand_side[i];
-                        }
-
-                        //clear rhs data on lower than max_level
-                        for(unsigned long i(0) ; i < info.max_level ; ++i)
-                        {
-                            unsigned long size((unsigned long)(((unsigned long)pow(2, i) + 1) * ((unsigned long)pow(2, i) + 1)));
-                            if(size==0)
-                                size = 9;
-
-                            DenseVector<Prec_> null(size , Prec_(0));
-                            info.x[i] = null.copy();
                         }
 
                         unsigned long timing_loop(1);
