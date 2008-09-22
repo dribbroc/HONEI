@@ -22,7 +22,7 @@
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <iostream>
-#include <endian_swap.hh>
+#include <honei/math/endian_swap.hh>
 
 //#include <cstdio>
 //#include <cstdlib>
@@ -403,13 +403,13 @@ class PoissonTestMGBandedQ1Float:
             //TEST_CHECK(true);
         }
 };
-PoissonTestMGBandedQ1Float<tags::CPU, float> poisson_test_jac_banded_float("float");
+PoissonTestMGBandedQ1Float<tags::CPU, float> poisson_test_mg_banded_float("float");
 #ifdef HONEI_SSE
-PoissonTestMGBandedQ1Float<tags::CPU::SSE, float> sse_poisson_test_jac_banded_float("float");
+PoissonTestMGBandedQ1Float<tags::CPU::SSE, float> sse_poisson_test_mg_banded_float("float");
 #endif
 #ifdef HONEI_CUDA
-PoissonTestMGBandedQ1Float<tags::GPU::CUDA, float> cuda_poisson_test_jac_banded_float("float");
+PoissonTestMGBandedQ1Float<tags::GPU::CUDA, float> cuda_poisson_test_mg_banded_float("float");
 #endif
 #ifdef HONEI_CELL
-PoissonTestMGBandedQ1Float<tags::Cell, float> cell_poisson_test_jac_banded_float("float");
+PoissonTestMGBandedQ1Float<tags::Cell, float> cell_poisson_test_mg_banded_float("float");
 #endif
