@@ -25,6 +25,7 @@
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/sparse_matrix.hh>
 #include <honei/la/banded_matrix.hh>
+#include <honei/la/banded_matrix_q1.hh>
 #include <honei/util/tags.hh>
 
 #include <limits>
@@ -35,20 +36,22 @@ namespace honei
      * \{
      *
      * Copies data from a source container to a destination container.
+     * The destination container data will reside in Tag_'s memory
      *
      * \ingroup grpalgorithm
      */
 
-    template <typename DT_> void copy(const DenseVector<DT_> & source, DenseVector<DT_> & dest)
+    template <typename Tag_, typename DT_> void copy(const DenseVectorContinuousBase<DT_> & source, DenseVectorContinuousBase<DT_> & dest)
     {
-        CONTEXT("When copying elements from DenseVector to DenseVector:");
+        CONTEXT("When copying elements from DenseVectorContinuousBase to DenseVectorContinuousBase:");
         ASSERT(source.elements() != dest.elements(),
-                "trying to copy data from a DenseVector to the very same DenseVector!");
+                "trying to copy data from a DenseVectorContinuousBase to the very same DenseVectorContinuousBase!");
 
         if (source.size() != dest.size())
             throw VectorSizeDoesNotMatch(dest.size(), source.size());
 
-        TypeTraits<DT_>::copy(source.elements(), dest.elements(), source.size());
+        MemoryArbiter::instance()->copy(Tag_::memory_value, source.memid(), source.address(),
+                dest.memid(), dest.address(), source.size() * sizeof(DT_));
     }
 
     template <typename IT_, typename DT_> void copy(const IT_ & begin, const IT_ & end,
@@ -64,6 +67,33 @@ namespace honei
         {
             *d = *i;
         }
+    }
+
+    template <typename Tag_, typename DT_> void copy(const BandedMatrixQ1<DT_> & source, BandedMatrixQ1<DT_> & dest)
+    {
+        CONTEXT("When copying elements from BandedMatrixQ1 to BandedMatrixQ1:");
+
+        if (source.size() != dest.size())
+            throw VectorSizeDoesNotMatch(dest.size(), source.size());
+
+        MemoryArbiter::instance()->copy(Tag_::memory_value, source.band(LL).memid(), source.band(LL).address(),
+                dest.band(LL).memid(), dest.band(LL).address(), source.band(LL).size() * sizeof(DT_));
+        MemoryArbiter::instance()->copy(Tag_::memory_value, source.band(LD).memid(), source.band(LD).address(),
+                dest.band(LD).memid(), dest.band(LD).address(), source.band(LD).size() * sizeof(DT_));
+        MemoryArbiter::instance()->copy(Tag_::memory_value, source.band(LU).memid(), source.band(LU).address(),
+                dest.band(LU).memid(), dest.band(LU).address(), source.band(LU).size() * sizeof(DT_));
+        MemoryArbiter::instance()->copy(Tag_::memory_value, source.band(DL).memid(), source.band(DL).address(),
+                dest.band(DL).memid(), dest.band(DL).address(), source.band(DL).size() * sizeof(DT_));
+        MemoryArbiter::instance()->copy(Tag_::memory_value, source.band(DD).memid(), source.band(DD).address(),
+                dest.band(DD).memid(), dest.band(DD).address(), source.band(DD).size() * sizeof(DT_));
+        MemoryArbiter::instance()->copy(Tag_::memory_value, source.band(DU).memid(), source.band(DU).address(),
+                dest.band(DU).memid(), dest.band(DU).address(), source.band(DU).size() * sizeof(DT_));
+        MemoryArbiter::instance()->copy(Tag_::memory_value, source.band(UL).memid(), source.band(UL).address(),
+                dest.band(UL).memid(), dest.band(UL).address(), source.band(UL).size() * sizeof(DT_));
+        MemoryArbiter::instance()->copy(Tag_::memory_value, source.band(UD).memid(), source.band(UD).address(),
+                dest.band(UD).memid(), dest.band(UD).address(), source.band(UD).size() * sizeof(DT_));
+        MemoryArbiter::instance()->copy(Tag_::memory_value, source.band(UU).memid(), source.band(UU).address(),
+                dest.band(UU).memid(), dest.band(UU).address(), source.band(UU).size() * sizeof(DT_));
     }
 
     /// \}

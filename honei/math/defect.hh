@@ -23,6 +23,7 @@
 
 #include<honei/la/banded_matrix_q1.hh>
 #include<honei/la/dense_vector.hh>
+#include<honei/la/algorithm.hh>
 
 using namespace honei;
 namespace honei
@@ -34,7 +35,8 @@ namespace honei
             template<typename DT_>
             static DenseVector<DT_> value(DenseVector<DT_> & rhs, BandedMatrixQ1<DT_> & system, DenseVector<DT_> & x)
             {
-                DenseVector<DT_> result(rhs.copy());
+                DenseVector<DT_> result(rhs.size());
+                copy<Tag_>(rhs, result);
 
                 DenseVector<DT_> prod(Product<Tag_>::value(system, x));
 

@@ -68,7 +68,7 @@ class PoissonBenchmarkMGBandedQ1Float:
             double* ana_sol;
             double* ref_sol;
 
-            file = fopen("../honei/math/testdata/4225/ehq.1.1.1.1.bin", "rb");
+            file = fopen("../honei/math/testdata/263169/ehq.1.1.1.1.bin", "rb");
             fread(&n, sizeof(int), 1, file);
 
 #ifdef HONEI_CELL
@@ -381,13 +381,28 @@ class PoissonBenchmarkMGBandedQ1Float:
                 DenseVector<float> null(size , float(0));
                 info.x[i] = null.copy();
             }
+
             //--------End loading of data----------------------------------
+            //Prefetch:
+            /*for (unsigned long i(0) ; i < info.max_level ; ++i)
+            {
+                info.a[i].lock(lm_read_only, Tag_::memory_value);
+                info.a[i].unlock(lm_read_only);
+                info.d[i].lock(lm_read_only, Tag_::memory_value);
+                info.d[i].unlock(lm_read_only);
+                info.x[i].lock(lm_read_only, Tag_::memory_value);
+                info.x[i].unlock(lm_read_only);
+                info.c[i].lock(lm_read_only, Tag_::memory_value);
+                info.c[i].unlock(lm_read_only);
+                info.rhs[i].lock(lm_read_only, Tag_::memory_value);
+                info.rhs[i].unlock(lm_read_only);
+            }*/
 
             DenseVector<float> result(n, float(0));
-            for (unsigned long i(0) ; i < 1 ; ++i)
+            for (unsigned long i(0) ; i < 5 ; ++i)
             {
                 BENCHMARK(
-                        for (unsigned long j(0) ; j < 10 ; ++j)
+                        for (unsigned long j(0) ; j < 5 ; ++j)
                         {
                         (result = Multigrid<Tag_, JAC, CYCLE::V, FIXED >::value(A, b_v, (unsigned long)11, std::numeric_limits<float>::epsilon(), info));
                         }

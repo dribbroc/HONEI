@@ -72,6 +72,12 @@ namespace honei
              */
             void remove_address(void * memid);
 
+            /**
+             * Request a copy operation in target memory
+             */
+            void copy(tags::TagValue memory, void * src_id, void * src_address, void * dest_id,
+                    void * dest_address, unsigned long bytes);
+
 
             /**
              * Request a read lock for a specific memory block.

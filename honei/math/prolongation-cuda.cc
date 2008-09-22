@@ -32,11 +32,11 @@ DenseVector<float> & Prolongation<tags::GPU::CUDA>::value(DenseVector<float> & f
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::prolongation_float", 64ul));
 
-    void * fine_gpu (fine.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * fine_gpu (fine.lock(lm_write_only, tags::GPU::CUDA::memory_value));
     void * coarse_gpu (coarse.lock(lm_read_only, tags::GPU::CUDA::memory_value));
     cuda_prolongation_float(fine_gpu, fine.size(), coarse_gpu, coarse.size(), mask.elements(), blocksize);
     coarse.unlock(lm_read_only);
-    fine.unlock(lm_read_and_write);
+    fine.unlock(lm_write_only);
 
     return fine;
 }

@@ -73,21 +73,29 @@ namespace honei
             std::map<void *, void *>::iterator i(_address_map.find(address));
             if (i == _address_map.end())
             {
-                throw InternalError("MemoryBackend<tags::GPU::CUDA> download address not found!");
+                throw InternalError("MemoryBackend<tags::GPU::CUDA>::download address not found!");
             }
             else
             {
                 cuda_download(i->second, address, bytes);
             }
-
         }
 
         void * alloc(void * memid, void * address, unsigned long bytes)
         {
-            void * device(cuda_malloc(bytes));
-            _id_map.insert(std::pair<void *, Chunk>(memid, Chunk(address, device, bytes)));
-            _address_map.insert(std::pair<void *, void *>(address, device));
-            return device;
+            std::map<void *, void *>::iterator i(_address_map.find(address));
+            if (i == _address_map.end())
+            {
+                void * device(cuda_malloc(bytes));
+                _id_map.insert(std::pair<void *, Chunk>(memid, Chunk(address, device, bytes)));
+                _address_map.insert(std::pair<void *, void *>(address, device));
+                return device;
+            }
+            else
+            {
+                return i->second;
+                //throw InternalError("MemoryBackend<tags::GPU::CUDA>::alloc address already known!");
+            }
         }
 
         void free(void * memid)
@@ -100,6 +108,27 @@ namespace honei
                 _address_map.erase(i->second.address);
             }
             _id_map.erase(range.first, range.second);
+        }
+
+        void copy(void * src_id, void * src_address, void * dest_id,
+            void * dest_address, unsigned long bytes)
+        {
+            std::map<void *, void *>::iterator src_i(_address_map.find(src_address));
+            std::map<void *, void *>::iterator dest_i(_address_map.find(dest_address));
+            if (src_i == _address_map.end() || dest_i == _address_map.end())
+            {
+                throw InternalError("MemoryBackend<tags::GPU::CUDA> copy address not found!");
+            }
+            else
+            {
+                cuda_copy(src_i->second, dest_i->second, bytes);
+            }
+        }
+
+        bool knows(void * memid, void * address)
+        {
+            std::map<void *, void *>::iterator i(_address_map.find(address));
+            return (i != _address_map.end());
         }
     };
 
@@ -136,6 +165,18 @@ namespace honei
     {
         CONTEXT("When freeing data (CUDA):");
         _imp->free(memid);
+    }
+
+    void MemoryBackend<tags::GPU::CUDA>::copy(void * src_id, void * src_address, void * dest_id,
+            void * dest_address, unsigned long bytes)
+    {
+        CONTEXT("When copying data (CUDA):");
+        _imp->copy(src_id, src_address, dest_id, dest_address, bytes);
+    }
+
+    bool MemoryBackend<tags::GPU::CUDA>::knows(void * memid, void * address)
+    {
+        return _imp->knows(memid, address);
     }
 
     template class InstantiationPolicy<MemoryBackend<tags::GPU::CUDA>, Singleton>;

@@ -36,6 +36,7 @@
 
 #include <set>
 #include <map>
+#include <string>
 
 namespace honei
 {
@@ -123,6 +124,58 @@ namespace honei
             }
         }
 
+        void copy(tags::TagValue memory, void * src_id, void * src_address, void * dest_id,
+                void * dest_address, unsigned long bytes)
+        {
+            Lock l(*_mutex);
+            std::map<void *, MemoryBlock>::iterator src_i(_blocks.find(src_id));
+            // Wait until no one writes on our src memory block
+            while (src_i != _blocks.end() && (src_i->second.write_count != 0))
+            {
+                _access_finished->wait(*_mutex);
+                src_i = _blocks.find(src_id);
+            }
+            std::map<void *, MemoryBlock>::iterator dest_i(_blocks.find(dest_id));
+            // Wait until no one reads or writes on our dest memory block
+            while (dest_i != _blocks.end() && (dest_i->second.write_count != 0 || dest_i->second.read_count != 0))
+            {
+                _access_finished->wait(*_mutex);
+                dest_i = _blocks.find(dest_id);
+            }
+
+            if (src_i == _blocks.end() || dest_i == _blocks.end())
+            {
+                throw InternalError("MemoryArbiter: Memory Block not found!");
+            }
+            else
+            {
+                // If we can copy just in our local device memory
+                if ((src_i->second.writer == tags::tv_none || src_i->second.writer == memory) && _backends[memory]->knows(src_id, src_address))
+                {
+                    dest_i->second.readers.clear();
+                    dest_i->second.writer = memory;
+                    dest_i->second.readers.insert(memory);
+                    _backends[memory]->alloc(dest_id, dest_address, bytes);
+                    _backends[memory]->copy(src_id, src_address, dest_id, dest_address, bytes);
+                }
+
+                // If our src memory block was changed on any other remote side, write it back to the main memory
+                // and upload it to the dest memory.
+                else
+                {
+                    if (src_i->second.writer != tags::tv_none)
+                        _backends[src_i->second.writer]->download(src_id, src_address, bytes);
+                    src_i->second.writer = tags::tv_none;
+                    memcpy((char *)dest_address, (char *)src_address, bytes);
+                    dest_i->second.readers.clear();
+                    dest_i->second.writer = memory;
+                    dest_i->second.readers.insert(memory);
+                    _backends[memory]->upload(dest_id, dest_address, bytes);
+                }
+            }
+
+        }
+
         void * read_only(tags::TagValue memory, void * memid, void * address, unsigned long bytes)
         {
             Lock l(*_mutex);
@@ -183,7 +236,7 @@ namespace honei
 
                 }
                 i->second.readers.clear();
-                i->second.writer= memory;
+                i->second.writer = memory;
                 i->second.write_count++;
                 i->second.readers.insert(memory);
             }
@@ -288,6 +341,12 @@ namespace honei
     {
         CONTEXT("When removing memory address:");
         _imp->remove_address(memid);
+    }
+
+    void MemoryArbiter::copy(tags::TagValue memory, void * src_id, void * src_address, void * dest_id,
+            void * dest_address, unsigned long bytes)
+    {
+        _imp->copy(memory, src_id, src_address, dest_id, dest_address, bytes);
     }
 
     void * MemoryArbiter::lock(LockMode mode, tags::TagValue memory, void * memid, void * address, unsigned long bytes)

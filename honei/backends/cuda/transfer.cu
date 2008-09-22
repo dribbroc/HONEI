@@ -44,3 +44,10 @@ extern "C" void cuda_free(void * gpu)
     CUDA_ERROR();
 }
 
+extern "C" void cuda_copy(void * src, void * dest, unsigned long bytes)
+{
+    cudaMemcpy(dest, src, bytes, cudaMemcpyDeviceToDevice);
+    CUDA_ERROR();
+}
+
+

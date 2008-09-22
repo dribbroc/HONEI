@@ -29,5 +29,7 @@ extern "C"
     void cuda_download(void * src, void * target, unsigned long bytes);
 
     void cuda_free(void *src);
+
+    void cuda_copy(void * src, void * dest, unsigned long bytes);
 }
 #endif

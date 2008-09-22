@@ -32,11 +32,11 @@ DenseVector<float> & Restriction<tags::GPU::CUDA>::value(DenseVector<float> & co
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::restriction_float", 64ul));
 
-    void * coarse_gpu (coarse.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * coarse_gpu (coarse.lock(lm_write_only, tags::GPU::CUDA::memory_value));
     void * fine_gpu (fine.lock(lm_read_only, tags::GPU::CUDA::memory_value));
     cuda_restriction_float(coarse_gpu, coarse.size(), fine_gpu, fine.size(), mask.elements(), blocksize);
     fine.unlock(lm_read_only);
-    coarse.unlock(lm_read_and_write);
+    coarse.unlock(lm_write_only);
 
     return coarse;
 }

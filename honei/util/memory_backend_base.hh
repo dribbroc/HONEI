@@ -38,6 +38,11 @@ namespace honei
             virtual void * alloc(void * memid, void * address, unsigned long bytes) = 0;
 
             virtual void free(void * memid) = 0;
+
+            virtual void copy(void * src_id, void * src_address, void * dest_id,
+                    void * dest_address, unsigned long bytes) = 0;
+
+            virtual bool knows(void * memid, void * address) = 0;
     };
 }
 #endif

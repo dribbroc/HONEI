@@ -25,8 +25,10 @@
 #include <honei/util/memory_backend_base.hh>
 #include <honei/util/tags.hh>
 #include <honei/util/exception.hh>
+#include <honei/util/type_traits.hh>
 
 #include <map>
+#include <string>
 
 namespace honei
 {
@@ -80,7 +82,19 @@ namespace honei
 
         virtual void free(void * memid)
         {
-            CONTEXT("When freeing data (CPU):");
+           CONTEXT("When freeing data (CPU):");
+        }
+
+        virtual void copy(void * src_id, void * src_address, void * dest_id,
+                void * dest_address, unsigned long bytes)
+        {
+           CONTEXT("When copying data (CPU):");
+           memcpy((char *)dest_address, (char *)src_address, bytes);
+        }
+
+        virtual bool knows(void * memid, void * address)
+        {
+            return true;
         }
 
     };
@@ -105,6 +119,11 @@ namespace honei
             virtual void * alloc(void * memid, void * address, unsigned long bytes);
 
             virtual void free(void * memid);
+
+            virtual void copy(void * src_id, void * src_address, void * dest_id,
+                    void * dest_address, unsigned long bytes);
+
+            virtual bool knows(void * memid, void * address);
     };
 }
 #endif

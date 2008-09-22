@@ -694,3 +694,45 @@ class IteratorFillQuickTest :
             }
         }
 };
+
+template <typename Tag_, typename DT_>
+class DenseVectorCopyQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorCopyQuickTest(const std::string & type) :
+            QuickTest("dense_vector_copy_quick_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(47);
+            DenseVector<DT_> dv(size);
+            for (unsigned long i(0) ; i < dv.size() ; ++i)
+            {
+                dv[i] = DT_(i % 10);
+            }
+            DenseVector<DT_> dv2(size, DT_(471));
+            copy<Tag_>(dv, dv2);
+            dv.lock(lm_read_only);
+            dv2.lock(lm_read_only);
+            TEST_CHECK_EQUAL(dv2, dv);
+            dv.unlock(lm_read_only);
+            dv2.unlock(lm_read_only);
+            copy<Tag_>(dv2, dv);
+            copy<Tag_>(dv, dv2);
+            dv.lock(lm_read_only);
+            dv2.lock(lm_read_only);
+            TEST_CHECK_EQUAL(dv2, dv);
+            dv.unlock(lm_read_only);
+            dv2.unlock(lm_read_only);
+        }
+};
+DenseVectorCopyQuickTest<tags::CPU, float> dense_vector_copy_fill_quick_test_float("float");
+DenseVectorCopyQuickTest<tags::CPU, double> dense_vector_copy_fill_quick_test_double("double");
+#ifdef HONEI_CUDA
+DenseVectorCopyQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_copy_fill_quick_test_float("float");
+#endif
+
