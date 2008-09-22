@@ -39,7 +39,7 @@
 #include<string>
 #include<fstream>
 
-//#define SOLVER_VERBOSE 1
+#define SOLVER_VERBOSE 1
 using namespace methods;
 namespace honei
 {
@@ -71,7 +71,6 @@ namespace honei
             std::vector<DenseVector<Prec_> > d;
             std::vector<DenseVector<Prec_> > rhs;
             std::vector<DenseVector<Prec_> > x;
-            std::vector<DenseVector<Prec_> > temp;
 
             std::vector<BandedMatrixQ1<Prec_> > a;
 
@@ -178,11 +177,9 @@ namespace honei
                                             //DenseVector<Prec_> null(info.x[current_level].size() , Prec_(0));
                                             info.x[current_level] = (Jacobi<Tag_>::value(info.x[current_level].copy(), (info.a[current_level]), (info.d[current_level]), info.n_pre_smooth - 1, Prec_(0.7)));
                                         }
-
                                         DenseVector<Prec_> defect_2(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                                         info.d[current_level] = defect_2;
 
-                                        info.temp[current_level] = (info.d[current_level]);
 #ifdef SOLVER_VERBOSE
                                         std::cout << "-----------------------------------------------------" << std::endl;
                                         std::cout << "Presmoothing ||D|| on level " << current_level << " " << Norm<vnt_l_two, true, Tag_>::value(info.d[current_level]) << std::endl;
@@ -274,7 +271,6 @@ endRestrictionLoop:
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Prolongated." << std::endl;
 #endif
-                                        info.temp[current_level] = (info.c[current_level]);
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Prolongation on level " << current_level << " ||c|| " << Norm<vnt_l_two, true, Tag_>::value(info.c[current_level]) << std::endl;
 #endif
@@ -305,7 +301,6 @@ endRestrictionLoop:
                                         //
                                         ScaledSum<Tag_>::value((info.x[current_level]), (info.c[current_level]), alpha);
 
-                                        info.temp[current_level] = (info.x[current_level]);
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Prolongation on level " << current_level << " ||x|| " << Norm<vnt_l_two, true, Tag_>::value(info.x[current_level]) << std::endl;
 #endif
@@ -316,7 +311,6 @@ endRestrictionLoop:
                                         // smooth A*x = rhs based on the RHS for that level we stored during restriction
                                         //
                                         (info.x[current_level]) =(Jacobi<Tag_>::value(info.x[current_level].copy(), (info.a[current_level]), (info.rhs[current_level]), info.n_pre_smooth, Prec_(0.7)));
-                                        info.temp[current_level] = (info.x[current_level]);
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Postsmoothing ||X|| on level " << current_level << " " << Norm<vnt_l_two, true, Tag_>::value(info.x[current_level]) << std::endl;
 #endif

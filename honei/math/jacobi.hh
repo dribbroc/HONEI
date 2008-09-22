@@ -76,7 +76,7 @@ namespace honei
             template<typename DT1_, typename DT2_>
             static inline void jacobi_kernel(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag, DenseVector<DT1_> & diag_inverted, BandedMatrixQ1<DT1_> & difference)
             {
-                DenseVector<DT1_> temp = Product<Tag_>::value(difference, former_result.copy());
+                DenseVector<DT1_> temp = Product<Tag_>::value(difference, former_result);
 
                 DenseVector<DT1_> temp2(right_hand_side.copy());
 
@@ -88,7 +88,7 @@ namespace honei
             template<typename DT1_, typename DT2_>
             static inline void jacobi_kernel(DenseVector<DT1_> to_smooth, BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag, DenseVector<DT1_> & diag_inverted, BandedMatrixQ1<DT1_> & difference)
             {
-                DenseVector<DT1_> temp(Product<Tag_>::value(difference, to_smooth.copy()));
+                DenseVector<DT1_> temp(Product<Tag_>::value(difference, to_smooth));
 
                 DenseVector<DT1_> temp2(right_hand_side.copy());
 
@@ -297,14 +297,14 @@ namespace honei
 
                     DenseVector<DT1_> diag_inverted(right_hand_side.size(), DT1_(0));
 
-                BandedMatrixQ1<DT1_> difference(system_matrix.copy());
+                    //BandedMatrixQ1<DT1_> difference(system_matrix.copy());
 
-                //DenseVector<DT1_> zeros(right_hand_side.size(), DT1_(0));
-                difference.lock(lm_read_and_write);
-                difference.unlock(lm_read_and_write);
-                //difference.band(DD) = zeros;
-                system_matrix.lock(lm_read_only);
-                for(unsigned long i =0; i < diag.size(); ++i)
+                    //DenseVector<DT1_> zeros(right_hand_side.size(), DT1_(0));
+                    //difference.lock(lm_read_and_write);
+                    //difference.unlock(lm_read_and_write);
+                    //difference.band(DD) = zeros;
+                    system_matrix.lock(lm_read_only);
+                    for(unsigned long i =0; i < diag.size(); ++i)
                 {
 
                     diag[i] = system_matrix.band(DD)[i];
@@ -323,7 +323,7 @@ namespace honei
 
                 for(unsigned long i = 0; i<iter_number; ++i)
                 {
-                    jacobi_kernel(to_smooth, system_matrix, right_hand_side, x, diag, diag_inverted, difference);
+                    jacobi_kernel(to_smooth, system_matrix, right_hand_side, x, diag, diag_inverted, system_matrix);
                     DenseVector<DT1_> ts_c(to_smooth.copy());
                     DenseVector<DT1_> x_c(x.copy());
                     to_smooth.lock(lm_read_and_write);

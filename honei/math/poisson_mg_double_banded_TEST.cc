@@ -255,8 +255,6 @@ class PoissonTestMGBandedQ1Double:
                 info.rhs.push_back(ac_rhs);
                 DenseVector<double> ac_x(size, double(0));
                 info.x.push_back(ac_x);
-                DenseVector<double> ac_temp(size, double(0));
-                info.temp.push_back(ac_temp);
             }
             for (unsigned long i(info.min_level) ; i <= info.max_level; ++i)
             {
@@ -268,8 +266,6 @@ class PoissonTestMGBandedQ1Double:
                 info.d.push_back(ac_d);
                 DenseVector<double> ac_x(size, double(0));
                 info.x.push_back(ac_x);
-                DenseVector<double> ac_temp(size, double(0));
-                info.temp.push_back(ac_temp);
             }
 
             //assemble all needed levels' matrices:

@@ -32,15 +32,11 @@ namespace honei
     {
         public:
             template<typename DT_>
-            static DenseVector<DT_>  value(DenseVector<DT_> & rhs, BandedMatrixQ1<DT_> & system, DenseVector<DT_> & x)
+            static DenseVector<DT_> value(DenseVector<DT_> & rhs, BandedMatrixQ1<DT_> & system, DenseVector<DT_> & x)
             {
                 DenseVector<DT_> result(rhs.copy());
 
-                system.lock(lm_read_only);
-                x.lock(lm_read_only);
                 DenseVector<DT_> prod(Product<Tag_>::value(system, x));
-                system.unlock(lm_read_only);
-                x.unlock(lm_read_only);
 
                 Difference<Tag_>::value(result, prod);
 

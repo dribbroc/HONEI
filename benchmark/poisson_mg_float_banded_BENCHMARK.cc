@@ -258,8 +258,6 @@ class PoissonBenchmarkMGBandedQ1Float:
                 info.rhs.push_back(ac_rhs);
                 DenseVector<float> ac_x(size, float(0));
                 info.x.push_back(ac_x);
-                DenseVector<float> ac_temp(size, float(0));
-                info.temp.push_back(ac_temp);
             }
             for (unsigned long i(info.min_level) ; i <= info.max_level; ++i)
             {
@@ -271,8 +269,6 @@ class PoissonBenchmarkMGBandedQ1Float:
                 info.d.push_back(ac_d);
                 DenseVector<float> ac_x(size, float(0));
                 info.x.push_back(ac_x);
-                DenseVector<float> ac_temp(size, float(0));
-                info.temp.push_back(ac_temp);
             }
 
             //assemble all needed levels' matrices:
@@ -388,7 +384,7 @@ class PoissonBenchmarkMGBandedQ1Float:
             //--------End loading of data----------------------------------
 
             DenseVector<float> result(n, float(0));
-            for (unsigned long i(0) ; i < _count ; ++i)
+            for (unsigned long i(0) ; i < 1 ; ++i)
             {
                 BENCHMARK(
                         for (unsigned long j(0) ; j < 10 ; ++j)
@@ -400,10 +396,10 @@ class PoissonBenchmarkMGBandedQ1Float:
             evaluate();
         }
 };
-PoissonBenchmarkMGBandedQ1Float<tags::CPU, float> poisson_bench_mg_banded_float("MG float", 10, 10);
+PoissonBenchmarkMGBandedQ1Float<tags::CPU, float> poisson_bench_mg_banded_float("MG float", 10, 1);
 #ifdef HONEI_SSE
-PoissonBenchmarkMGBandedQ1Float<tags::CPU::SSE, float> sse_poisson_mg_bench_banded_float("MG float SSE", 10, 10);
+PoissonBenchmarkMGBandedQ1Float<tags::CPU::SSE, float> sse_poisson_mg_bench_banded_float("MG float SSE", 10, 2);
 #endif
 #ifdef HONEI_CUDA
-PoissonBenchmarkMGBandedQ1Float<tags::GPU::CUDA, float> cuda_poisson_mg_bench_banded_float("MG float CUDA", 10, 10);
+PoissonBenchmarkMGBandedQ1Float<tags::GPU::CUDA, float> cuda_poisson_mg_bench_banded_float("MG float CUDA", 10, 2);
 #endif
