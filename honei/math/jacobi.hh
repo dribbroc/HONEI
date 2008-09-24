@@ -30,7 +30,6 @@
 #include <honei/la/scale.hh>
 #include <honei/la/norm.hh>
 #include <honei/la/element_inverse.hh>
-#include <iostream>
 #include <honei/util/memory_arbiter.hh>
 #include <honei/la/algorithm.hh>
 
@@ -112,7 +111,7 @@ namespace honei
                 copy<Tag_>(right_hand_side, temp2);
 
                 ElementProduct<Tag_>::value(temp2, diag_inverted);
-                former_result = temp2.copy();
+                former_result = temp2;
             }
 
             template<typename DT1_, typename DT2_>
@@ -230,37 +229,6 @@ namespace honei
             static DenseVector<DT1_> value(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side,long iter_number, DT1_ omega)
             {
                 CONTEXT("When solving banded linear system (Q1) with Jacobi (fixed # iterations):");
-                /*DenseVector<DT1_> diag(right_hand_side.size(), DT1_(0));
-
-                DenseVector<DT1_> diag_inverted(right_hand_side.size(), DT1_(0));
-
-                BandedMatrixQ1<DT1_> difference(system_matrix.size(), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()));
-                copy<Tag_>(system_matrix, difference);
-
-                DenseVector<DT1_> zeros(right_hand_side.size(), DT1_(0));
-                difference.lock(lm_read_and_write);
-                difference.unlock(lm_read_and_write);
-                difference.band(DD) = zeros;
-                ///Create Diagonal, invert, compute difference on the fly.
-                system_matrix.lock(lm_read_only);
-                for(unsigned long i =0; i < diag.size(); ++i)
-                {
-
-                    diag[i] = system_matrix.band(DD)[i];
-                    if(fabs(diag[i]) >= std::numeric_limits<DT1_>::epsilon())
-                    {
-                        diag_inverted[i] = omega * (DT1_(1) / diag[i]);
-                    }
-                    else
-                    {
-                        diag_inverted[i] = DT1_(1) / std::numeric_limits<DT1_>::epsilon();
-                    }
-                }
-                system_matrix.unlock(lm_read_only);
-
-                DenseVector<DT1_> x(right_hand_side.size());
-                copy<Tag_>(right_hand_side, x);*/
-
                 DenseVector<DT1_> diag_inverted(right_hand_side.size());
 
                 BandedMatrixQ1<DT1_> difference(system_matrix.size(), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()));
@@ -289,27 +257,6 @@ namespace honei
             static DenseVector<DT1_> value(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DT1_ omega)
             {
                 CONTEXT("When solving banded linear system (Q1) with Jacobi (fixed # iterations):");
-                /*DenseVector<DT1_> diag(right_hand_side.size(), DT1_(0));
-
-                DenseVector<DT1_> diag_inverted(right_hand_side.size(), DT1_(0));
-
-                system_matrix.lock(lm_read_only);
-                for(unsigned long i =0; i < diag.size(); ++i)
-                {
-
-                    diag[i] = system_matrix.band(DD)[i];
-                    if(fabs(diag[i]) >= std::numeric_limits<DT1_>::epsilon())
-                    {
-                        diag_inverted[i] = omega * (DT1_(1) / diag[i]);
-                    }
-                    else
-                    {
-                        diag_inverted[i] = DT1_(1) / std::numeric_limits<DT1_>::epsilon();
-                    }
-                }
-                system_matrix.unlock(lm_read_only);
-
-                DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));*/
                 DenseVector<DT1_> diag_inverted(right_hand_side.size());
                 copy<Tag_>(system_matrix.band(DD), diag_inverted);
                 ElementInverse<Tag_>::value(diag_inverted);
@@ -327,27 +274,6 @@ namespace honei
                 static DenseVector<DT1_> value(DenseVector<DT1_> to_smooth, BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side,long iter_number, DT1_ omega)
                 {
                     CONTEXT("When solving banded linear system (Q1) with Jacobi (fixed # iterations):");
-                    /*DenseVector<DT1_> diag(right_hand_side.size(), DT1_(0));
-
-                    DenseVector<DT1_> diag_inverted(right_hand_side.size(), DT1_(0));
-
-                    system_matrix.lock(lm_read_only);
-                    for(unsigned long i =0; i < diag.size(); ++i)
-                    {
-
-                        diag[i] = system_matrix.band(DD)[i];
-                        if(fabs(diag[i]) >= std::numeric_limits<DT1_>::epsilon())
-                        {
-                            diag_inverted[i] = omega * (DT1_(1) / diag[i]);
-                        }
-                        else
-                        {
-                            diag_inverted[i] = omega * (DT1_(1) / std::numeric_limits<DT1_>::epsilon());
-                        }
-                    }
-                    system_matrix.unlock(lm_read_only);
-
-                    DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));*/
 
                     DenseVector<DT1_> diag_inverted(right_hand_side.size());
                     copy<Tag_>(system_matrix.band(DD), diag_inverted);
