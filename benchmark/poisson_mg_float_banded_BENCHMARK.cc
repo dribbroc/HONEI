@@ -68,7 +68,7 @@ class PoissonBenchmarkMGBandedQ1Float:
             double* ana_sol;
             double* ref_sol;
 
-            file = fopen("../honei/math/testdata/263169/ehq.1.1.1.1.bin", "rb");
+            file = fopen("../honei/math/testdata/1050625/ehq.1.1.1.1.bin", "rb");
             fread(&n, sizeof(int), 1, file);
 
 #ifdef HONEI_CELL
@@ -225,6 +225,9 @@ class PoissonBenchmarkMGBandedQ1Float:
                     {
                         info.max_level = 1;
                     }
+                    break;
+                default:
+                    throw InternalError("Invalid problem size!");
                     break;
             }
 
@@ -399,10 +402,10 @@ class PoissonBenchmarkMGBandedQ1Float:
             }*/
 
             DenseVector<float> result(n, float(0));
-            for (unsigned long i(0) ; i < 5 ; ++i)
+            for (unsigned long i(0) ; i < 10 ; ++i)
             {
                 BENCHMARK(
-                        for (unsigned long j(0) ; j < 5 ; ++j)
+                        for (unsigned long j(0) ; j < 1 ; ++j)
                         {
                         (result = Multigrid<Tag_, JAC, CYCLE::V, FIXED >::value(A, b_v, (unsigned long)11, std::numeric_limits<float>::epsilon(), info));
                         }

@@ -260,7 +260,7 @@ endRestrictionLoop:
                                         // set homogeneous Dirichlet boundary conditions in the prolongated correction vector
                                         // depending on Dirichlet mask passed in from FEAST (see code for details)
                                         //
-                                        if (current_level == 4)
+                                        /*if (current_level == 4)
                                         {
                                             info.c[current_level].lock(lm_write_only);
                                             info.x[current_level - 1].lock(lm_read_only);
@@ -268,7 +268,7 @@ endRestrictionLoop:
                                             info.c[current_level].unlock(lm_write_only);
                                             info.x[current_level - 1].unlock(lm_read_only);
                                         }
-                                        else
+                                        else*/
                                         {
                                             info.c[current_level] = Prolongation<Tag_>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask);
                                         }
