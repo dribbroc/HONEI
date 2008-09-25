@@ -152,6 +152,16 @@ namespace honei
                 // If we can copy just in our local device memory
                 if ((src_i->second.writer == tags::tv_none || src_i->second.writer == memory) && _backends[memory]->knows(src_id, src_address))
                 {
+                    // Delete the deprecated memory block in all relevant memory backends
+                    for (std::set<tags::TagValue>::iterator j(dest_i->second.readers.begin()), j_end(dest_i->second.readers.end()) ;
+                            j != j_end ; ++j)
+                    {
+                        if (*j != memory)
+                        {
+                            _backends[*j]->free(dest_id);
+                        }
+
+                    }
                     dest_i->second.readers.clear();
                     dest_i->second.writer = memory;
                     dest_i->second.readers.insert(memory);
@@ -163,6 +173,16 @@ namespace honei
                 // and upload it to the dest memory.
                 else
                 {
+                    // Delete the deprecated memory block in all relevant memory backends
+                    for (std::set<tags::TagValue>::iterator j(dest_i->second.readers.begin()), j_end(dest_i->second.readers.end()) ;
+                            j != j_end ; ++j)
+                    {
+                        if (*j != memory)
+                        {
+                            _backends[*j]->free(dest_id);
+                        }
+
+                    }
                     if (src_i->second.writer != tags::tv_none)
                         _backends[src_i->second.writer]->download(src_id, src_address, bytes);
                     src_i->second.writer = tags::tv_none;
