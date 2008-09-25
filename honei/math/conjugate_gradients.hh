@@ -106,7 +106,8 @@ namespace honei
                 DT1_ upper = DotProduct<Tag_>::value(former_gradient, former_gradient);
                 DenseVector<DT1_> energy = Product<Tag_>::value(system_matrix, utility);
                 DT1_ lower = DotProduct<Tag_>::value(energy, utility);
-                DenseVector<DT1_> u_c(utility.copy());
+                DenseVector<DT1_> u_c(utility.size());
+                copy<Tag_>(utility, u_c);
                 if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
                 {
                     Scale<Tag_>::value(u_c, DT1_(upper/lower));
@@ -388,22 +389,24 @@ namespace honei
                 DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
                 DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
                 Difference<Tag_>::value(g, right_hand_side);
-                DenseVector<DT1_> g_c(g.copy());
+                DenseVector<DT1_> g_c(g.size());
+                copy<Tag_>(g, g_c);
                 Scale<Tag_>::value(g_c, DT1_(-1.));
-                DenseVector<DT1_> u(g_c.copy());
-                DenseVector<DT1_> x_last(x.copy());
+                DenseVector<DT1_> u(g_c.size());
+                copy<Tag_>(g_c, u);
+                DenseVector<DT1_> x_last(x.size());
+                copy<Tag_>(x, x_last);
                 DT1_ norm_x_last = DT1_(0);
                 DT1_ norm_x = DT1_(1);
 
                 while(norm_x - norm_x_last > konv_rad)
                 {
-
                     cg_kernel(system_matrix, right_hand_side, g, x, u);
                     norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
                     norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
-                    x_last = x.copy();
+                    //x_last = x.copy();
+                    copy<Tag_>(x, x_last);
                 }
-
                 return x;
             }
             ///Mixed precision implementations:

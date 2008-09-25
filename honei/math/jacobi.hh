@@ -104,9 +104,6 @@ namespace honei
             template<typename DT1_, typename DT2_>
             static inline void jacobi_kernel(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted)
             {
-                DenseVector<DT1_> temp(former_result.size());
-                copy<Tag_>(former_result, temp);
-
                 DenseVector<DT1_> temp2(right_hand_side.size());
                 copy<Tag_>(right_hand_side, temp2);
 
@@ -266,7 +263,6 @@ namespace honei
                 x.unlock(lm_write_only);
 
                 jacobi_kernel(system_matrix, right_hand_side, x, diag_inverted);
-
                 return x;
             }
 
@@ -288,8 +284,6 @@ namespace honei
                         jacobi_kernel(to_smooth, system_matrix, right_hand_side, x, diag_inverted, system_matrix);
                         DenseVector<DT1_> ts_c(to_smooth.size());
                         copy<Tag_>(to_smooth, ts_c);
-                        DenseVector<DT1_> x_c(x.size());
-                        copy<Tag_>(x, x_c);
                         ts_c = to_smooth;
                         to_smooth = x;
                         x = ts_c;

@@ -39,7 +39,6 @@
 #include<vector>
 #include<string>
 #include<fstream>
-#include<honei/util/time_stamp.hh>
 
 //#define SOLVER_VERBOSE 1
 using namespace methods;
@@ -263,11 +262,11 @@ endRestrictionLoop:
                                         //
                                         if (current_level == 4)
                                         {
-                                            info.c[current_level].lock(lm_read_and_write);
-                                            info.x[current_level - 1].lock(lm_read_and_write);
+                                            info.c[current_level].lock(lm_write_only);
+                                            info.x[current_level - 1].lock(lm_read_only);
                                             info.c[current_level] = Prolongation<tags::CPU>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask);
-                                            info.c[current_level].unlock(lm_read_and_write);
-                                            info.x[current_level - 1].unlock(lm_read_and_write);
+                                            info.c[current_level].unlock(lm_write_only);
+                                            info.x[current_level - 1].unlock(lm_read_only);
                                         }
                                         else
                                         {
@@ -462,13 +461,13 @@ endCycleLoop:
                             while(inner_iterations < 1)
                             {
                                 // set defect as RHS to inner solver
-                                temp_vector.lock(lm_read_and_write);
+                                temp_vector.lock(lm_write_only);
                                 outer_defect.lock(lm_read_only);
                                 for (unsigned long i(0); i < right_hand_side.size(); ++i)
                                 {
                                     temp_vector[i] = (Prec_)outer_defect[i];
                                 }
-                                temp_vector.unlock(lm_read_and_write);
+                                temp_vector.unlock(lm_write_only);
                                 outer_defect.unlock(lm_read_only);
                                 copy<Tag_>(temp_vector, info.rhs[info.max_level]);
 
@@ -482,13 +481,13 @@ endCycleLoop:
                                 // get "solution" and update outer solution
                                 copy<Tag_>(info.x[info.max_level], temp_vector);
 
-                                result.lock(lm_read_and_write);
+                                result.lock(lm_write_only);
                                 temp_vector.lock(lm_read_only);
                                 for (unsigned long i(0); i < right_hand_side.size(); ++i)
                                 {
                                     result[i] += scale_factor * (Prec_)(temp_vector)[i];
                                 }
-                                result.unlock(lm_read_and_write);
+                                result.unlock(lm_write_only);
                                 temp_vector.unlock(lm_read_only);
 
 
