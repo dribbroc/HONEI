@@ -103,28 +103,30 @@ namespace honei
 
 
             // all preparations done, so compute if necessary
-            if (isDirichlet > 0)
-                coarse[ic] = 0.0;
-            else
+            if (ic < Nc)
             {
-                // compute weighted sum
+                if (isDirichlet > 0)
+                    coarse[ic] = 0.0;
+                else
+                {
+                    // compute weighted sum
 
-                // center
-                float result = coeffs[1][1] * fine[jf];
-                // direct neighbours
-                result += coeffs[1][0] * fine[jf-1];
-                result += coeffs[1][2] * fine[jf+1];
-                result += coeffs[0][1] * fine[jf-Mf];
-                if (jf+Mf < Nf) result += coeffs[2][1] * fine[jf+Mf];
-                // diagonal neighbours
-                result += coeffs[0][0] * fine[jf-Mf-1];
-                result += coeffs[0][2] * fine[jf-Mf+1];
-                if (jf+Mf-1 < Nf) result += coeffs[2][0] * fine[jf+Mf-1];
-                if (jf+Mf+1 < Nf) result += coeffs[2][2] * fine[jf+Mf+1];
-                // done
-                coarse[ic] = result;
+                    // center
+                    float result = coeffs[1][1] * fine[jf];
+                    // direct neighbours
+                    if (jf >= 1) result += coeffs[1][0] * fine[jf-1];
+                    if (jf + 1 < Nf) result += coeffs[1][2] * fine[jf+1];
+                    if (jf >= Mf) result += coeffs[0][1] * fine[jf-Mf];
+                    if (jf+ Mf < Nf) result += coeffs[2][1] * fine[jf+Mf];
+                    // diagonal neighbours
+                    if (jf >= (Mf+1) )result += coeffs[0][0] * fine[jf-Mf-1];
+                    if (jf >= (Mf-1) )result += coeffs[0][2] * fine[jf-Mf+1];
+                    if (jf+Mf-1 < Nf) result += coeffs[2][0] * fine[jf+Mf-1];
+                    if (jf+Mf+1 < Nf) result += coeffs[2][2] * fine[jf+Mf+1];
+                    // done
+                    coarse[ic] = result;
+                }
             }
-
         }
     }
 }
