@@ -24,6 +24,8 @@
 #include<honei/la/banded_matrix_q1.hh>
 #include<honei/la/dense_vector.hh>
 #include<honei/la/algorithm.hh>
+#include<honei/la/product.hh>
+#include<honei/la/difference.hh>
 
 using namespace honei;
 namespace honei
