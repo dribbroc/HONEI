@@ -42,6 +42,8 @@ namespace honei
             virtual void copy(void * src_id, void * src_address, void * dest_id,
                     void * dest_address, unsigned long bytes) = 0;
 
+            virtual void fill(void * memid, void * address, unsigned long bytes, float proto) = 0;
+
             virtual bool knows(void * memid, void * address) = 0;
     };
 }

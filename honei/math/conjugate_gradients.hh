@@ -138,8 +138,8 @@ namespace honei
                 Difference<Tag_>::value(utility, new_gradient);
 
                 ///Finishing:
-                former_gradient = new_gradient;//.copy();
-                former_result = energy;//.copy();
+                former_gradient = new_gradient;
+                former_result = energy;
 
             }
             template<typename DT1_, typename DT2_>
@@ -386,7 +386,8 @@ namespace honei
             {
                 CONTEXT("When solving banded Q1 linear system with CG (with given convergence parameter):");
 
-                DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
+                DenseVector<DT1_> x(right_hand_side.size());
+                fill<Tag_>(x, DT1_(0));
                 DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
                 Difference<Tag_>::value(g, right_hand_side);
                 DenseVector<DT1_> g_c(g.size());
@@ -404,7 +405,6 @@ namespace honei
                     cg_kernel(system_matrix, right_hand_side, g, x, u);
                     norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
                     norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
-                    //x_last = x.copy();
                     copy<Tag_>(x, x_last);
                 }
                 return x;

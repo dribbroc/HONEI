@@ -50,4 +50,9 @@ extern "C" void cuda_copy(void * src, void * dest, unsigned long bytes)
     CUDA_ERROR();
 }
 
+extern "C" void cuda_fill_zero(void * dest, unsigned long bytes)
+{
+    cudaMemset(dest, 0, bytes);
+}
+
 

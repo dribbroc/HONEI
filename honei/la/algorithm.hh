@@ -272,18 +272,42 @@ namespace honei
      * \ingroup grpalgorithm
      */
 
-    template <typename DT_> void fill(const DenseVectorContinuousBase<DT_> & dest, const DT_ & proto = DT_(0))
+    template <typename Tag_>
+    void fill(const DenseVectorContinuousBase<float> & dest, const float & proto = float(0))
     {
         CONTEXT("When filling DenseVectorContinuousBase with '" + stringify(proto) + "':");
 
-        TypeTraits<DT_>::fill(dest.elements(), dest.size(), proto);
+        //TypeTraits<DT_>::fill(dest.elements(), dest.size(), proto);
+        MemoryArbiter::instance()->fill(Tag_::memory_value, dest.memid(), dest.address(),
+                dest.size() * sizeof(float), proto);
     }
 
-    template <typename DT_> void fill(const DenseMatrix<DT_> & dest, const DT_ & proto = DT_(0))
+    template <typename Tag_>
+    void fill(const DenseMatrix<float> & dest, const float & proto = float(0))
     {
         CONTEXT("When filling DenseMatrix with '" + stringify(proto) + "':");
 
+        //TypeTraits<DT_>::fill(dest.elements(), dest.rows() * dest.columns(), proto);
+        MemoryArbiter::instance()->fill(Tag_::memory_value, dest.memid(), dest.address(),
+                dest.size() * sizeof(float), proto);
+    }
+
+    template <typename Tag, typename DT_> void fill(const DenseVectorContinuousBase<DT_> & dest, const DT_ & proto = DT_(0))
+    {
+        CONTEXT("When filling DenseVectorContinuousBase with '" + stringify(proto) + "':");
+
+        dest.lock(lm_write_only);
+        TypeTraits<DT_>::fill(dest.elements(), dest.size(), proto);
+        dest.unlock(lm_write_only);
+    }
+
+    template <typename Tag, typename DT_> void fill(const DenseMatrix<DT_> & dest, const DT_ & proto = DT_(0))
+    {
+        CONTEXT("When filling DenseMatrix with '" + stringify(proto) + "':");
+
+        dest.lock(lm_write_only);
         TypeTraits<DT_>::fill(dest.elements(), dest.rows() * dest.columns(), proto);
+        dest.unlock(lm_write_only);
     }
 
     template <typename IT_, typename DT_> void fill(const IT_ & begin, const IT_ & end, const DT_ & proto = DT_(0))

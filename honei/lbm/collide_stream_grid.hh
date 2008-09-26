@@ -74,15 +74,15 @@ namespace honei
         {
             CONTEXT("When performing collision and streaming:");
 
-            fill(*data.f_temp_0, DT1_(0));
-            fill(*data.f_temp_1, DT1_(0));
-            fill(*data.f_temp_2, DT1_(0));
-            fill(*data.f_temp_3, DT1_(0));
-            fill(*data.f_temp_4, DT1_(0));
-            fill(*data.f_temp_5, DT1_(0));
-            fill(*data.f_temp_6, DT1_(0));
-            fill(*data.f_temp_7, DT1_(0));
-            fill(*data.f_temp_8, DT1_(0));
+            fill<Tag_>(*data.f_temp_0, DT1_(0));
+            fill<Tag_>(*data.f_temp_1, DT1_(0));
+            fill<Tag_>(*data.f_temp_2, DT1_(0));
+            fill<Tag_>(*data.f_temp_3, DT1_(0));
+            fill<Tag_>(*data.f_temp_4, DT1_(0));
+            fill<Tag_>(*data.f_temp_5, DT1_(0));
+            fill<Tag_>(*data.f_temp_6, DT1_(0));
+            fill<Tag_>(*data.f_temp_7, DT1_(0));
+            fill<Tag_>(*data.f_temp_8, DT1_(0));
 
             for (unsigned long begin(0) ; begin != info.limits->size() - 1 ; ++begin)
             {

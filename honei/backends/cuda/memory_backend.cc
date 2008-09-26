@@ -125,6 +125,21 @@ namespace honei
             }
         }
 
+        void fill(void * memid, void * address, unsigned long bytes, float proto)
+        {
+            std::map<void *, void *>::iterator i(_address_map.find(address));
+            if (i == _address_map.end())
+            {
+                throw InternalError("MemoryBackend<tags::GPU::CUDA>::download address not found!");
+            }
+            else
+            {
+                if (proto != 0)
+                    throw InternalError("CUDA fill != zero not supported yet!");
+                cuda_fill_zero(i->second, bytes);
+            }
+        }
+
         bool knows(void * memid, void * address)
         {
             std::map<void *, void *>::iterator i(_address_map.find(address));
@@ -172,6 +187,12 @@ namespace honei
     {
         CONTEXT("When copying data (CUDA):");
         _imp->copy(src_id, src_address, dest_id, dest_address, bytes);
+    }
+
+    void MemoryBackend<tags::GPU::CUDA>::fill(void * memid, void * address, unsigned long bytes, float proto)
+    {
+        CONTEXT("When filling data (CUDA):");
+        _imp->fill(memid, address, bytes, proto);
     }
 
     bool MemoryBackend<tags::GPU::CUDA>::knows(void * memid, void * address)

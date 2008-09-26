@@ -589,7 +589,7 @@ class SparseVectorConvertQuickTest :
         }
 } sparse_vector_convert_quick_test;
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class DenseVectorContinuousBaseFillQuickTest :
     public QuickTest
 {
@@ -607,14 +607,14 @@ class DenseVectorContinuousBaseFillQuickTest :
             DenseVectorRange<DT_> dvr2(dv, size, size / 3);
             DenseVectorRange<DT_> dvr3(dv, size - 2 * size / 3, size + size / 3);
 
-            fill(dv, DT_(8.472));
+            fill<Tag_>(dv, DT_(8.472));
 
             for (typename DenseVector<DT_>::ConstElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ; i != i_end ; ++i)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, DT_(8.472), std::numeric_limits<DT_>::epsilon());
             }
 
-            fill(dvr2, DT_(75.633));
+            fill<Tag_>(dvr2, DT_(75.633));
 
             for (typename DenseVectorRange<DT_>::ConstElementIterator i(dvr1.begin_elements()), i_end(dvr1.end_elements()) ; i != i_end ; ++i)
             {
@@ -633,10 +633,10 @@ class DenseVectorContinuousBaseFillQuickTest :
         }
 };
 
-DenseVectorContinuousBaseFillQuickTest<float> dense_vector_continuous_base_fill_quick_test_float("float");
-DenseVectorContinuousBaseFillQuickTest<double> dense_vector_continuous_base_fill_quick_test_double("double");
+DenseVectorContinuousBaseFillQuickTest<tags::CPU, float> dense_vector_continuous_base_fill_quick_test_float("float");
+DenseVectorContinuousBaseFillQuickTest<tags::CPU, double> dense_vector_continuous_base_fill_quick_test_double("double");
 
-template <typename DT_>
+template <typename Tag_, typename DT_>
 class DenseMatrixFillQuickTest :
     public QuickTest
 {
@@ -651,7 +651,7 @@ class DenseMatrixFillQuickTest :
             unsigned long rows(47), columns(11);
             DenseMatrix<DT_> dm(47, 11);
 
-            fill(dm, DT_(8.472));
+            fill<Tag_>(dm, DT_(8.472));
 
             for (typename DenseMatrix<DT_>::ConstElementIterator i(dm.begin_elements()), i_end(dm.end_elements()) ; i != i_end ; ++i)
             {
@@ -660,8 +660,36 @@ class DenseMatrixFillQuickTest :
         }
 };
 
-DenseMatrixFillQuickTest<float> dense_matrix_fill_quick_test_float("float");
-DenseMatrixFillQuickTest<double> dense_matrix_fill_quick_test_double("double");
+DenseMatrixFillQuickTest<tags::CPU, float> dense_matrix_fill_quick_test_float("float");
+DenseMatrixFillQuickTest<tags::CPU, double> dense_matrix_fill_quick_test_double("double");
+
+template <typename Tag_, typename DT_>
+class CudaDenseMatrixFillQuickTest :
+    public QuickTest
+{
+    public:
+        CudaDenseMatrixFillQuickTest(const std::string & type) :
+            QuickTest("cuda_dense_matrix_fill_quick_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long rows(47), columns(11);
+            DenseMatrix<DT_> dm(47, DT_(25.3));
+
+            fill<Tag_>(dm, DT_(0));
+
+            dm.lock(lm_read_only);
+            for (typename DenseMatrix<DT_>::ConstElementIterator i(dm.begin_elements()), i_end(dm.end_elements()) ; i != i_end ; ++i)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, DT_(0), std::numeric_limits<DT_>::epsilon());
+            }
+            dm.unlock(lm_read_only);
+        }
+};
+CudaDenseMatrixFillQuickTest<tags::GPU::CUDA, float> cuda_dense_matrix_fill_quick_test_float("float");
 
 template <typename DT_>
 class IteratorFillQuickTest :
@@ -730,9 +758,9 @@ class DenseVectorCopyQuickTest :
             dv2.unlock(lm_read_only);
         }
 };
-DenseVectorCopyQuickTest<tags::CPU, float> dense_vector_copy_fill_quick_test_float("float");
-DenseVectorCopyQuickTest<tags::CPU, double> dense_vector_copy_fill_quick_test_double("double");
+DenseVectorCopyQuickTest<tags::CPU, float> dense_vector_copy_quick_test_float("float");
+DenseVectorCopyQuickTest<tags::CPU, double> dense_vector_copy_quick_test_double("double");
 #ifdef HONEI_CUDA
-DenseVectorCopyQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_copy_fill_quick_test_float("float");
+DenseVectorCopyQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_copy_quick_test_float("float");
 #endif
 

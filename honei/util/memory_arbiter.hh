@@ -73,11 +73,15 @@ namespace honei
             void remove_address(void * memid);
 
             /**
-             * Request a copy operation in target memory
+             * Copy src to dest in target memory
              */
             void copy(tags::TagValue memory, void * src_id, void * src_address, void * dest_id,
                     void * dest_address, unsigned long bytes);
 
+            /**
+             * Fill target with protoin target memory
+             */
+            void fill(tags::TagValue memory, void * memid, void * address, unsigned long bytes, float proto);
 
             /**
              * Request a read lock for a specific memory block.

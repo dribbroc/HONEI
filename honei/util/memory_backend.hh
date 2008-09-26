@@ -92,6 +92,12 @@ namespace honei
            memcpy((char *)dest_address, (char *)src_address, bytes);
         }
 
+        virtual void fill(void * memid, void * address, unsigned long bytes, float proto)
+        {
+            CONTEXT("When filling data (CPU):");
+            TypeTraits<float>::fill((float *)address, bytes / 4, proto);
+        }
+
         virtual bool knows(void * memid, void * address)
         {
             return true;
@@ -122,6 +128,8 @@ namespace honei
 
             virtual void copy(void * src_id, void * src_address, void * dest_id,
                     void * dest_address, unsigned long bytes);
+
+            virtual void fill(void * memid, void * address, unsigned long bytes, float proto);
 
             virtual bool knows(void * memid, void * address);
     };
