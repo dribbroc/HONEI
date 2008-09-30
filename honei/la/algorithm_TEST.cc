@@ -689,7 +689,9 @@ class CudaDenseMatrixFillQuickTest :
             dm.unlock(lm_read_only);
         }
 };
+#ifdef HONEI_CUDA
 CudaDenseMatrixFillQuickTest<tags::GPU::CUDA, float> cuda_dense_matrix_fill_quick_test_float("float");
+#endif
 
 template <typename DT_>
 class IteratorFillQuickTest :
