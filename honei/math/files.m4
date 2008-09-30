@@ -42,6 +42,7 @@ add(`poisson_iteref_pcg_float_banded',        `test',                   `benchma
 add(`poisson_mixedprec_cg',                   `test',                   `benchmark')
 add(`poisson_mg_float_banded',                `test')
 add(`poisson_mg_double_banded',               `test')
+add(`poisson_mg_mixed_banded',                `test')
 add(`prolongation',                     `hh', `cuda', `test')
 add(`qr_decomposition',                 `hh', `test')
 add(`quadrature',                       `hh', `test')

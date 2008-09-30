@@ -31,15 +31,15 @@
 using namespace honei;
 using namespace std;
 
-template <typename Tag_, typename DT1_>
-class PoissonBenchmarkMGBandedQ1Float:
+template <typename Tag_, typename OuterTag_>
+class PoissonBenchmarkMGBandedQ1Mixed:
     public Benchmark
 {
     private:
         unsigned long _size;
         int _count;
     public:
-        PoissonBenchmarkMGBandedQ1Float(const std::string & id, unsigned long size, int count) :
+        PoissonBenchmarkMGBandedQ1Mixed(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
     {
             register_tag(Tag_::name);
@@ -49,6 +49,7 @@ class PoissonBenchmarkMGBandedQ1Float:
 
         virtual void run()
         {
+
             int n;
 
             FILE* file;
@@ -124,38 +125,39 @@ class PoissonBenchmarkMGBandedQ1Float:
 
             }
 #endif
-            DenseVector<float> dd_v(n, float(0));
-            DenseVector<float> ll_v(n, float(0));
-            DenseVector<float> ld_v(n, float(0));
-            DenseVector<float> lu_v(n, float(0));
-            DenseVector<float> dl_v(n, float(0));
-            DenseVector<float> du_v(n, float(0));
-            DenseVector<float> ul_v(n, float(0));
-            DenseVector<float> ud_v(n, float(0));
-            DenseVector<float> uu_v(n, float(0));
-            DenseVector<float> b_v(n, float(0));
-            DenseVector<float> ana_sol_v(n, float(0));
-            DenseVector<float> ref_sol_v(n, float(0));
+            DenseVector<double> dd_v(n, double(0));
+            DenseVector<double> ll_v(n, double(0));
+            DenseVector<double> ld_v(n, double(0));
+            DenseVector<double> lu_v(n, double(0));
+            DenseVector<double> dl_v(n, double(0));
+            DenseVector<double> du_v(n, double(0));
+            DenseVector<double> ul_v(n, double(0));
+            DenseVector<double> ud_v(n, double(0));
+            DenseVector<double> uu_v(n, double(0));
+            DenseVector<double> b_v(n, double(0));
+            DenseVector<double> ana_sol_v(n, double(0));
+            DenseVector<double> ref_sol_v(n, double(0));
             for(unsigned long i = 0; i < n; ++i)
             {
-                dd_v[i] = (float)dd[i];
-                ll_v[i] = (float)ll[i];
-                ld_v[i] = (float)ld[i];
-                lu_v[i] = (float)lu[i];
-                dl_v[i] = (float)dl[i];
-                du_v[i] = (float)du[i];
-                ul_v[i] = (float)ul[i];
-                ud_v[i] = (float)ud[i];
-                uu_v[i] = (float)uu[i];
-                b_v[i] = (float)b[i];
-                ana_sol_v[i] = (float)ana_sol[i];
-                ref_sol_v[i] = (float)ref_sol[i];
+                dd_v[i] = (double)dd[i];
+                ll_v[i] = (double)ll[i];
+                ld_v[i] = (double)ld[i];
+                lu_v[i] = (double)lu[i];
+                dl_v[i] = (double)dl[i];
+                du_v[i] = (double)du[i];
+                ul_v[i] = (double)ul[i];
+                ud_v[i] = (double)ud[i];
+                uu_v[i] = (double)uu[i];
+                b_v[i] = (double)b[i];
+                ana_sol_v[i] = (double)ana_sol[i];
+                ref_sol_v[i] = (double)ref_sol[i];
             }
             //std::cout<<dd[4]<<endl;
             //std::cout<<dd_v<<endl;
 
+
             long root_n = (long)sqrt(n);
-            BandedMatrixQ1<float> A(n, ll_v.copy(), ld_v.copy(), lu_v.copy(), dl_v.copy(), dd_v.copy(), du_v.copy(), ul_v.copy(), ud_v.copy(), uu_v.copy());
+            BandedMatrixQ1<double> A(n, ll_v.copy(), ld_v.copy(), lu_v.copy(), dl_v.copy(), dd_v.copy(), du_v.copy(), ul_v.copy(), ud_v.copy(), uu_v.copy());
             //std::cout<<A.band(0)<<endl;
             //A->insert_band(0, dd_v.copy());
             //std::cout<<A.band(0)[0] * double(1) << endl;
@@ -226,9 +228,6 @@ class PoissonBenchmarkMGBandedQ1Float:
                         info.max_level = 1;
                     }
                     break;
-                default:
-                    throw InternalError("Invalid problem size!");
-                    break;
             }
 
             info.n_max_iter = 16;
@@ -238,14 +237,14 @@ class PoissonBenchmarkMGBandedQ1Float:
 
             info.n_pre_smooth = 4;
             info.n_post_smooth = 4;
-            info.n_max_iter_coarse = ((unsigned long)sqrt((double)(pow((double)2 , (double)info.max_level) + 1)*(pow((double)2 , (double)info.max_level) + 1)));
+            info.n_max_iter_coarse = ((unsigned long)sqrt((float)(pow((float)2 , (float)info.max_level) + 1)*(pow((float)2 , (float)info.max_level) + 1)));
             info.tolerance_coarse = 1e-2;
             info.adapt_correction_factor = 1.;
 
             //push back dummy matrices/vectors in order not to disturb std::vectors index range:
             for (unsigned long i(0) ; i < info.min_level; ++i)
             {
-                unsigned long size((unsigned long)(((unsigned long)pow((double)2, (double)i) + 1) * ((unsigned long)pow((double)2, (double)i) + 1)));
+                unsigned long size((unsigned long)(((unsigned long)pow((float)2, (float)i) + 1) * ((unsigned long)pow((float)2, (float)i) + 1)));
                 if(i == 0)
                     size = 9;
 
@@ -264,7 +263,7 @@ class PoissonBenchmarkMGBandedQ1Float:
             }
             for (unsigned long i(info.min_level) ; i <= info.max_level; ++i)
             {
-                unsigned long size = (unsigned long)(((unsigned long)pow((double)2, (double)i) + 1) * ((unsigned long)pow((double)2, (double)i) + 1));
+                unsigned long size = (unsigned long)(((unsigned long)pow((float)2, (float)i) + 1) * ((unsigned long)pow((float)2, (float)i) + 1));
                 // iteration vectors
                 DenseVector<float> ac_c(size, float(0));
                 info.c.push_back(ac_c);
@@ -277,7 +276,7 @@ class PoissonBenchmarkMGBandedQ1Float:
             //assemble all needed levels' matrices:
             for(unsigned long i(info.min_level); i <= info.max_level; ++i)
             {
-                unsigned long N = (unsigned long)(((unsigned long)pow((double)2, (double)i) + 1) * ((unsigned long)pow((double)2, (double)i) + 1));
+                unsigned long N = (unsigned long)(((unsigned long)pow((float)2, (float)i) + 1) * ((unsigned long)pow((float)2, (float)i) + 1));
                 DenseVector<float> LL_v_2(N);
                 DenseVector<float> LD_v_2(N);
                 DenseVector<float> LU_v_2(N);
@@ -377,47 +376,31 @@ class PoissonBenchmarkMGBandedQ1Float:
             //clear rhs data on lower than max_level
             for(unsigned long i(0) ; i < info.max_level ; ++i)
             {
-                unsigned long size((unsigned long)(((unsigned long)pow((double)2, (double)i) + 1) * ((unsigned long)pow((double)2, (double)i) + 1)));
+                unsigned long size((unsigned long)(((unsigned long)pow((float)2, (float)i) + 1) * ((unsigned long)pow((float)2, (float)i) + 1)));
                 if(size==0)
                     size = 9;
 
                 DenseVector<float> null(size , float(0));
                 info.x[i] = null.copy();
             }
-
             //--------End loading of data----------------------------------
-            //Prefetch:
-            /*for (unsigned long i(0) ; i < info.max_level ; ++i)
-            {
-                info.a[i].lock(lm_read_only, Tag_::memory_value);
-                info.a[i].unlock(lm_read_only);
-                info.d[i].lock(lm_read_only, Tag_::memory_value);
-                info.d[i].unlock(lm_read_only);
-                info.x[i].lock(lm_read_only, Tag_::memory_value);
-                info.x[i].unlock(lm_read_only);
-                info.c[i].lock(lm_read_only, Tag_::memory_value);
-                info.c[i].unlock(lm_read_only);
-                info.rhs[i].lock(lm_read_only, Tag_::memory_value);
-                info.rhs[i].unlock(lm_read_only);
-            }*/
-
-            DenseVector<float> result(n, float(0));
+            DenseVector<double> result(n, double(0));
             for (unsigned long i(0) ; i < 10 ; ++i)
             {
                 BENCHMARK(
                         for (unsigned long j(0) ; j < 1 ; ++j)
                         {
-                        (result = Multigrid<Tag_, Tag_, JAC, CYCLE::V, FIXED >::value(A, b_v, (unsigned long)11, std::numeric_limits<float>::epsilon(), info));
+                        (result = Multigrid<Tag_, OuterTag_, JAC, CYCLE::V, MIXED >::value(A, b_v, (unsigned long)11, std::numeric_limits<double>::epsilon(), info));
                         }
                 );
             }
             evaluate();
         }
 };
-PoissonBenchmarkMGBandedQ1Float<tags::CPU, float> poisson_bench_mg_banded_float("MG float", 10, 1);
+PoissonBenchmarkMGBandedQ1Mixed<tags::CPU, tags::CPU> poisson_bench_mg_banded_mixed("MG mixed", 10, 1);
 #ifdef HONEI_SSE
-PoissonBenchmarkMGBandedQ1Float<tags::CPU::SSE, float> sse_poisson_mg_bench_banded_float("MG float SSE", 10, 2);
+PoissonBenchmarkMGBandedQ1Mixed<tags::CPU::SSE, tags::CPU::SSE> sse_poisson_mg_bench_banded_mixed("MG mixed SSE", 10, 2);
 #endif
 #ifdef HONEI_CUDA
-PoissonBenchmarkMGBandedQ1Float<tags::GPU::CUDA, float> cuda_poisson_mg_bench_banded_float("MG float CUDA", 10, 2);
+PoissonBenchmarkMGBandedQ1Mixed<tags::GPU::CUDA, tags::CPU::SSE> cuda_poisson_mg_bench_banded_mixed("MG mixed CUDA", 10, 2);
 #endif

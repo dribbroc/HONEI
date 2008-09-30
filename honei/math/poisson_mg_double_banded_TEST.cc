@@ -380,7 +380,7 @@ class PoissonTestMGBandedQ1Double:
             }
             //--------End loading of data----------------------------------
             DenseVector<double> result(n, double(0));
-            result = Multigrid<Tag_, JAC, CYCLE::V, FIXED >::value(A, b_v, (unsigned long)11, std::numeric_limits<double>::epsilon(), info);
+            result = Multigrid<Tag_, Tag_, JAC, CYCLE::V, FIXED >::value(A, b_v, (unsigned long)11, std::numeric_limits<double>::epsilon(), info);
             //std::cout<< result <<endl;
             //std::cout<< ana_sol_v <<endl;
             //std::cout<< ref_sol_v <<endl;
@@ -399,10 +399,10 @@ class PoissonTestMGBandedQ1Double:
             //TEST_CHECK(true);
         }
 };
-PoissonTestMGBandedQ1Double<tags::CPU, double> poisson_test_jac_banded_double("double");
+PoissonTestMGBandedQ1Double<tags::CPU, double> poisson_test_mg_banded_double("double");
 #ifdef HONEI_SSE
-PoissonTestMGBandedQ1Double<tags::CPU::SSE, double> sse_poisson_test_jac_banded_double("double");
+PoissonTestMGBandedQ1Double<tags::CPU::SSE, double> sse_poisson_test_mg_banded_double("double");
 #endif
 #ifdef HONEI_CELL
-PoissonTestMGBandedQ1Double<tags::Cell, double> cell_poisson_test_jac_banded_double("double");
+PoissonTestMGBandedQ1Double<tags::Cell, double> cell_poisson_test_mg_banded_double("double");
 #endif
