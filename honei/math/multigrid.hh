@@ -39,8 +39,10 @@
 #include<vector>
 #include<string>
 #include<fstream>
+#include<honei/util/time_stamp.hh>
 
 //#define SOLVER_VERBOSE 1
+//#define SOLVER_BENCHMARK
 using namespace methods;
 namespace honei
 {
@@ -405,11 +407,6 @@ endCycleLoop:
                         // cycle control
                         unsigned long iter;
                         bool restriction_started;
-                        unsigned long local_cycle[max_levels];
-                        for(unsigned long i(0); i < max_levels; ++i)
-                        {
-                            local_cycle[i] = 1;
-                        }
 
                         // current and initial defect
                         Prec_ defect, initial_defect;
@@ -483,13 +480,13 @@ endCycleLoop:
                                 // get "solution" and update outer solution
                                 copy<Tag_>(info.x[info.max_level], temp_vector);
 
-                                result.lock(lm_write_only);
+                                result.lock(lm_read_and_write);
                                 temp_vector.lock(lm_read_only);
                                 for (unsigned long i(0); i < right_hand_side.size(); ++i)
                                 {
                                     result[i] += scale_factor * (Prec_)(temp_vector)[i];
                                 }
-                                result.unlock(lm_write_only);
+                                result.unlock(lm_read_and_write);
                                 temp_vector.unlock(lm_read_only);
 
 
@@ -606,10 +603,7 @@ endCycleLoop:
                                             // When the restriction loop just started
 
                                             (info.c[current_level]) = (Jacobi<Tag_>::value(info.a[current_level], info.d[current_level], Prec_(0.7)));
-                                            //DenseVector<Prec_> null(info.x[current_level].size() , Prec_(0));
-                                            DenseVector<Prec_> temp_jac(info.c[current_level].size());
-                                            copy<Tag_>(info.c[current_level], temp_jac);
-                                            (info.c[current_level]) = (Jacobi<Tag_>::value(temp_jac , info.a[current_level], info.d[current_level], info.n_pre_smooth - 1, Prec_(0.7)));
+                                            (info.c[current_level]) = (Jacobi<Tag_>::value(info.c[current_level] , info.a[current_level], info.d[current_level], info.n_pre_smooth - 1, Prec_(0.7)));
 
                                             Sum<Tag_>::value(info.x[current_level], info.c[current_level]);
                                         }
@@ -619,10 +613,7 @@ endCycleLoop:
                                             // the cleared solution vector (as the solution vector itself represents
                                             // the defect correction here)
                                             info.x[current_level] = (Jacobi<Tag_>::value((info.a[current_level]), (info.d[current_level]), Prec_(0.7)));
-                                            //DenseVector<Prec_> null(info.x[current_level].size() , Prec_(0));
-                                            DenseVector<Prec_> temp_jac(info.x[current_level].size());
-                                            copy<Tag_>(info.x[current_level], temp_jac);
-                                            info.x[current_level] = (Jacobi<Tag_>::value(temp_jac, (info.a[current_level]), (info.d[current_level]), info.n_pre_smooth - 1, Prec_(0.7)));
+                                            info.x[current_level] = (Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.d[current_level]), info.n_pre_smooth - 1, Prec_(0.7)));
                                         }
                                         DenseVector<Prec_> defect_2(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                                         info.d[current_level] = defect_2;
@@ -757,9 +748,7 @@ endRestrictionLoop:
                                         //
                                         // smooth A*x = rhs based on the RHS for that level we stored during restriction
                                         //
-                                        DenseVector<Prec_> temp_jac(info.x[current_level].size());
-                                        copy<Tag_>(info.x[current_level], temp_jac);
-                                        (info.x[current_level]) =(Jacobi<Tag_>::value(temp_jac, (info.a[current_level]), (info.rhs[current_level]), info.n_pre_smooth, Prec_(0.7)));
+                                        (info.x[current_level]) =(Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.rhs[current_level]), info.n_pre_smooth, Prec_(0.7)));
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Postsmoothing ||X|| on level " << current_level << " " << Norm<vnt_l_two, true, Tag_>::value(info.x[current_level]) << std::endl;
 #endif
@@ -838,7 +827,7 @@ endCycleLoop:
                                 info.inner_iterations = iter;
                         }
                         DenseVector<Prec_> result(info.x[info.max_level].size());
-                        copy<Tag_>(info.x[info.max_level], result);
+                        copy<OuterTag_>(info.x[info.max_level], result);
 
                         return result;
                     }
@@ -847,26 +836,22 @@ endCycleLoop:
                 template<typename InnerPrec_, typename OuterPrec_>
                     static DenseVector<OuterPrec_> value(BandedMatrixQ1<OuterPrec_>&  system, DenseVector<OuterPrec_>& right_hand_side, unsigned long max_levels, OuterPrec_ conv_rad, MGInfo<InnerPrec_> & info)
                     {
+#ifdef SOLVER_BENCHMARK
+                        TimeStamp ab, ae;
+                        ab.take();
+                        TimeStamp pb, pe;
+                        pb.take();
+#endif
                         InnerPrec_ cappa;
 
                         // cycle control
                         unsigned long iter;
                         bool restriction_started;
-                        unsigned long local_cycle[max_levels];
-                        for(unsigned long i(0); i < max_levels; ++i)
-                        {
-                            local_cycle[i] = 1;
-                        }
 
                         // current and initial defect
                         OuterPrec_ defect, initial_defect;
                         DenseVector<OuterPrec_> result(right_hand_side.size(), OuterPrec_(0)); //final result
-
-
                         DenseVector<OuterPrec_> initial_guess(right_hand_side.size(), OuterPrec_(0)); //x_0
-                        DenseVector<OuterPrec_> outer_defect(right_hand_side.size(), OuterPrec_(0));
-                        DenseVector<OuterPrec_> temp_vector_outer(right_hand_side.size(), OuterPrec_(0)); //delete if unneeded
-                        DenseVector<InnerPrec_> temp_vector_inner(right_hand_side.size(), InnerPrec_(0)); //delete if unneeded
 
                         // apply Dirichlet BCs for boundary nodes (semi-implicit approach)
                         // note that we cleared the solution vector previously
@@ -889,95 +874,100 @@ endCycleLoop:
                             initial_guess[i] = right_hand_side[i];
                         }
 
-                        unsigned long timing_loop(1);
-                        for(unsigned long timing(0); timing < timing_loop; ++timing)
+                        unsigned long inner_iterations(0);
+                        unsigned long outer_iterations(1);
+                        OuterPrec_ scale_factor(1.0);
+
+                        // calc initial defect
+                        // D = B - Ax, d0 = ||D||
+                        DenseVector<OuterPrec_> product(Product<OuterTag_>::value(system, initial_guess));
+                        DenseVector<OuterPrec_> outer_defect(right_hand_side.size());
+                        copy<OuterTag_>(right_hand_side, outer_defect);
+                        Difference<OuterTag_>::value(outer_defect, product);
+                        initial_defect = Norm<vnt_l_two, true, OuterTag_>::value(outer_defect);
+
+                        OuterPrec_ def_norm;
+                        OuterPrec_ inv;
+                        unsigned long step_iterations;
+#ifdef SOLVER_BENCHMARK
+                        pe.take();
+                        std::cout << "PreProc TOE: "<< (pe.sec() - pb.sec()) + (pe.usec() - pb.usec())/1e6 << std::endl;
+#endif
+                        while(inner_iterations < 16)
                         {
-                            unsigned long inner_iterations(0);
-                            unsigned long outer_iterations(1);
-                            OuterPrec_ scale_factor(1.0);
+#ifdef SOLVER_BENCHMARK
+                            TimeStamp ob, oe, ib, ie;
+                            ob.take();
+#endif
+                            // set defect as RHS to inner solver
+                            convert(info.rhs[info.max_level], outer_defect);
 
-                            // calc initial defect
-                            // D = B - Ax, d0 = ||D||
-                            DenseVector<OuterPrec_> product(Product<OuterTag_>::value(system, initial_guess));
-                            DenseVector<OuterPrec_> rhs_c(right_hand_side.size());
-                            copy<OuterTag_>(right_hand_side, rhs_c);
-                            Difference<OuterTag_>::value(rhs_c, product);
-                            outer_defect = rhs_c;
-                            initial_defect = Norm<vnt_l_two, true, OuterTag_>::value(outer_defect);
+                            // run inner solver as long as neccessary
+#ifdef SOLVER_VERBOSE
+                            std::cout << inner_iterations << "th iteration (outer)!" << std::endl;
+#endif
+#ifdef SOLVER_BENCHMARK
+                            ib.take();
+#endif
+                            info.x[info.max_level] = (_multigrid_kernel<InnerPrec_>(max_levels, &cappa, info));
+#ifdef SOLVER_BENCHMARK
+                            ie.take();
+#endif
+                            inner_iterations += info.inner_iterations;
 
-                            OuterPrec_ def_norm;
-                            OuterPrec_ inv;
-                            unsigned long step_iterations;
-                            while(inner_iterations < 16)
+                            // get "solution" and update outer solution
+
+                            result.lock(lm_read_and_write);
+                            info.x[info.max_level].lock(lm_read_only);
+                            for (unsigned long i(0); i < right_hand_side.size(); ++i)
                             {
-                                // set defect as RHS to inner solver
-                                temp_vector_inner.lock(lm_write_only);
-                                outer_defect.lock(lm_read_only);
-                                for (unsigned long i(0); i < right_hand_side.size(); ++i)
-                                {
-                                    temp_vector_inner[i] = (InnerPrec_)outer_defect[i];
-                                }
-                                temp_vector_inner.unlock(lm_write_only);
-                                outer_defect.unlock(lm_read_only);
-                                copy<Tag_>(temp_vector_inner, info.rhs[info.max_level]);
-
-                                // run inner solver as long as neccessary
-#ifdef SOLVER_VERBOSE
-                                std::cout << inner_iterations << "th iteration (outer)!" << std::endl;
-#endif
-                                info.x[info.max_level] = (_multigrid_kernel<InnerPrec_>(max_levels, &cappa, info));
-                                inner_iterations += info.inner_iterations;
-
-                                // get "solution" and update outer solution
-                                copy<Tag_>(info.x[info.max_level], temp_vector_inner);
-
-                                result.lock(lm_write_only);
-                                temp_vector_inner.lock(lm_read_only);
-                                for (unsigned long i(0); i < right_hand_side.size(); ++i)
-                                {
-                                    result[i] += scale_factor * (OuterPrec_)(temp_vector_inner)[i];
-                                }
-                                result.unlock(lm_write_only);
-                                temp_vector_inner.unlock(lm_read_only);
-
-
-                                // calculate defect
-
-                                right_hand_side.lock(lm_read_only);
-                                system.lock(lm_read_only);
-                                result.lock(lm_read_only);
-                                right_hand_side.unlock(lm_read_only);
-                                system.unlock(lm_read_only);
-                                result.unlock(lm_read_only);
-                                DenseVector<OuterPrec_> defect_outer(Defect<OuterTag_>::value(right_hand_side, system, result));
-                                outer_defect = defect_outer;
-
-                                // calc norm of defect
-                                def_norm = Norm<vnt_l_two, true, OuterTag_>::value(outer_defect);
-#ifdef SOLVER_VERBOSE
-                                std::cout << "defnorm: " << def_norm << std::endl;
-                                std::cout << "initial_defect: " << initial_defect << std::endl;
-#endif
-                                // check for convergence
-                                OuterPrec_ outer_eps(1e-8);
-                                if (def_norm  < outer_eps * initial_defect)
-                                {
-                                    break;
-                                }
-                                // scale defect
-                                scale_factor = def_norm;
-
-                                inv = (1.0 / scale_factor);
-                                Scale<OuterTag_>::value(outer_defect, inv);
-
-                                outer_iterations++;
+                                result[i] += scale_factor * (OuterPrec_)(info.x[info.max_level])[i];
                             }
-#ifdef SOLVER_VERBOSE
-                            std::cout << "TN of outer iters: " << outer_iterations << std::endl;
-                            std::cout << "TN of inner iters: " << inner_iterations << std::endl;
-#endif
+                            result.unlock(lm_read_and_write);
+                            info.x[info.max_level].unlock(lm_read_only);
 
+
+                            // calculate defect
+                            outer_defect = Defect<OuterTag_>::value(right_hand_side, system, result);
+
+                            // calc norm of defect
+                            def_norm = Norm<vnt_l_two, true, OuterTag_>::value(outer_defect);
+#ifdef SOLVER_VERBOSE
+                            std::cout << "defnorm: " << def_norm << std::endl;
+                            std::cout << "initial_defect: " << initial_defect << std::endl;
+#endif
+                            // check for convergence
+                            OuterPrec_ outer_eps(1e-8);
+                            if (def_norm  < outer_eps * initial_defect)
+                            {
+#ifdef SOLVER_BENCHMARK
+                            oe.take();
+                            std::cout << "Outer TOE: "<< (oe.sec() - ob.sec()) + (oe.usec() - ob.usec())/1e6<< std::endl;
+                            std::cout << "Inner TOE: "<< (ie.sec() - ib.sec()) + (ie.usec() - ib.usec())/1e6<< std::endl;
+#endif
+                                break;
+                            }
+                            // scale defect
+                            scale_factor = def_norm;
+
+                            inv = (1.0 / scale_factor);
+                            Scale<OuterTag_>::value(outer_defect, inv);
+
+                            outer_iterations++;
+#ifdef SOLVER_BENCHMARK
+                            oe.take();
+                            std::cout << "Outer TOE: "<< (oe.sec() - ob.sec()) + (oe.usec() - ob.usec())/1e6<< std::endl;
+                            std::cout << "Inner TOE: "<< (ie.sec() - ib.sec()) + (ie.usec() - ib.usec())/1e6<< std::endl;
+#endif
                         }
+#ifdef SOLVER_VERBOSE
+                        std::cout << "TN of outer iters: " << outer_iterations << std::endl;
+                        std::cout << "TN of inner iters: " << inner_iterations << std::endl;
+#endif
+#ifdef SOLVER_BENCHMARK
+                        ae.take();
+                        std::cout << "All TOE: "<< (ae.sec() - ab.sec()) + (ae.usec() - ab.usec())/1e6 << std::endl;
+#endif
                         return result;
                     }
         };

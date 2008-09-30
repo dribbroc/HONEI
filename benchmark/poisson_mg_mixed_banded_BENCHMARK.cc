@@ -384,6 +384,20 @@ class PoissonBenchmarkMGBandedQ1Mixed:
                 info.x[i] = null.copy();
             }
             //--------End loading of data----------------------------------
+            //Prefetch:
+            /*for (unsigned long i(0) ; i < info.max_level ; ++i)
+            {
+                info.a[i].lock(lm_read_only, Tag_::memory_value);
+                info.a[i].unlock(lm_read_only);
+                info.d[i].lock(lm_read_only, Tag_::memory_value);
+                info.d[i].unlock(lm_read_only);
+                info.x[i].lock(lm_read_only, Tag_::memory_value);
+                info.x[i].unlock(lm_read_only);
+                info.c[i].lock(lm_read_only, Tag_::memory_value);
+                info.c[i].unlock(lm_read_only);
+                info.rhs[i].lock(lm_read_only, Tag_::memory_value);
+                info.rhs[i].unlock(lm_read_only);
+            }*/
             DenseVector<double> result(n, double(0));
             for (unsigned long i(0) ; i < 10 ; ++i)
             {

@@ -124,7 +124,11 @@ namespace honei
         if (copy.size() != orig.size())
             throw VectorSizeDoesNotMatch(orig.size(), copy.size());
 
+        copy.lock(lm_write_only);
+        orig.lock(lm_read_only);
         TypeTraits<OrigType_>::convert(copy.elements(), orig.elements(), orig.size());
+        copy.unlock(lm_write_only);
+        orig.unlock(lm_read_only);
     }
 
     template <typename DataType_> void convert(DenseVectorBase<DataType_> & copy,
@@ -146,12 +150,16 @@ namespace honei
         if (copy.size() != orig.size())
             throw VectorSizeDoesNotMatch(orig.size(), copy.size());
 
+        copy.lock(lm_write_only);
+        orig.lock(lm_read_only);
         typename DenseVector<DataType_>::ElementIterator f(copy.begin_elements());
         for (typename DenseVector<OrigType_>::ConstElementIterator i(orig.begin_elements()),
                 i_end(orig.end_elements()) ; i != i_end ; ++i, ++f)
         {
             *f = *i;
         }
+        copy.unlock(lm_write_only);
+        orig.unlock(lm_read_only);
     }
 
     template <typename DataType_> void convert(SparseVector<DataType_> & copy,
@@ -203,7 +211,11 @@ namespace honei
         if (copy.columns() != orig.columns())
             throw MatrixColumnsDoNotMatch(orig.columns(), copy.columns());
 
+        copy.lock(lm_write_only);
+        orig.lock(lm_read_only);
         TypeTraits<OrigType_>::convert(copy.elements(), orig.elements(), orig.columns() * orig.rows());
+        copy.unlock(lm_write_only);
+        orig.unlock(lm_read_only);
     }
 
     template <typename DataType_> void convert(SparseMatrix<DataType_> & copy,
