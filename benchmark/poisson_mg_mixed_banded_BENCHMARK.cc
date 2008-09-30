@@ -69,7 +69,7 @@ class PoissonBenchmarkMGBandedQ1Mixed:
             double* ana_sol;
             double* ref_sol;
 
-            file = fopen("../honei/math/testdata/263169/ehq.1.1.1.1.bin", "rb");
+            file = fopen("../honei/math/testdata/1050625/ehq.1.1.1.1.bin", "rb");
             fread(&n, sizeof(int), 1, file);
 
 #ifdef HONEI_CELL

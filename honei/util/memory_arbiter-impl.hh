@@ -177,10 +177,7 @@ namespace honei
                     for (std::set<tags::TagValue>::iterator j(dest_i->second.readers.begin()), j_end(dest_i->second.readers.end()) ;
                             j != j_end ; ++j)
                     {
-                        if (*j != memory)
-                        {
-                            _backends[*j]->free(dest_id);
-                        }
+                        _backends[*j]->free(dest_id);
 
                     }
                     if (src_i->second.writer != tags::tv_none)

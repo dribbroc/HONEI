@@ -930,7 +930,6 @@ endCycleLoop:
 
                                 // get "solution" and update outer solution
                                 copy<Tag_>(info.x[info.max_level], temp_vector_inner);
-                                //convert(temp_vector_outer, temp_vector_inner);
 
                                 result.lock(lm_write_only);
                                 temp_vector_inner.lock(lm_read_only);
