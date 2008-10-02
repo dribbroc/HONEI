@@ -36,13 +36,11 @@ BACKEND_LIBS += \
 endif
 
 bin_PROGRAMS = honei-lbm
-honei_lbmdir = $(top_srcdir)/clients/lbm
-honei_lbm_HEADERS = scenario_controller.hh \
-		    scenario_controller_base.hh \
-		    scenario_controller_grid.hh \
-		    honei_lbm.hh \
-		    honei_lbm.cc
-honei_lbm_SOURCES = honei_lbm.cc
+honei_lbm_SOURCES = \
+	honei_lbm.cc honei_lbm.hh \
+	scenario_controller.hh \
+	scenario_controller_base.hh \
+	scenario_controller_grid.hh
 honei_lbm_LDADD = \
 	$(top_srcdir)/honei/util/libhoneiutil.la \
 	$(top_srcdir)/honei/la/libhoneila.la \
