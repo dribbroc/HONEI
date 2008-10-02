@@ -53,156 +53,32 @@ class DenseVectorScaledSumBench :
         }
 };
 
-DenseVectorScaledSumBench<tags::CPU, float> DVSSBenchfloat1("Dense Vector ScaledSum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
-DenseVectorScaledSumBench<tags::CPU, double> DVSSBenchdouble1("Dense Vector ScaledSum Benchmark - vector size: 10,000, double", 10000, 10);
-DenseVectorScaledSumBench<tags::CPU::MultiCore, float>
-    MCDVSSBenchfloat1("MC Dense Vector ScaledSum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
-DenseVectorScaledSumBench<tags::CPU::MultiCore, double>
-    MCDVSSBenchdouble1("MC Dense Vector ScaledSum Benchmark - vector size: 10,000, double", 10000, 10);
+DenseVectorScaledSumBench<tags::CPU, float> DVSSBenchfloat1("CPU Dense Vector ScaledSum Benchmark - vector size: 65536, float", 65536ul, 10);
+DenseVectorScaledSumBench<tags::CPU, float> DVSSBenchfloat1b("CPU Dense Vector ScaledSum Benchmark - vector size: 655360, float", 655360ul, 10);
+DenseVectorScaledSumBench<tags::CPU, float> DVSSBenchfloat2("CPU Dense Vector ScaledSum Benchmark - vector size: 1376256, float", 1376256ul, 10);
+DenseVectorScaledSumBench<tags::CPU, float> DVSSBenchfloat3("CPU Dense Vector ScaledSum Benchmark - vector size: 268976, float", 2686976ul, 10);
+DenseVectorScaledSumBench<tags::CPU, float> DVSSBenchfloat4("CPU Dense Vector ScaledSum Benchmark - vector size: 3997696, float", 3997696ul, 10);
+
 #ifdef HONEI_SSE
-DenseVectorScaledSumBench<tags::CPU::SSE, float>
-    SSEDVSSBenchfloat1("SSE Dense Vector ScaledSum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
-DenseVectorScaledSumBench<tags::CPU::SSE, double>
-    SSEDVSSBenchdouble1("SSE Dense Vector ScaledSum Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
-DenseVectorScaledSumBench<tags::CPU::MultiCore::SSE, float>
-    MCSSEDVSSBenchfloat1("MC SSE Dense Vector ScaledSum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
-DenseVectorScaledSumBench<tags::CPU::MultiCore::SSE, double>
-    MCSSEDVSSBenchdouble1("MC SSE Dense Vector ScaledSum Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
+DenseVectorScaledSumBench<tags::CPU::SSE, float> SSEDVSSBenchfloat1("SSE Dense Vector ScaledSum Benchmark - vector size: 65536, float", 65536ul, 10);
+DenseVectorScaledSumBench<tags::CPU::SSE, float> SSEDVSSBenchfloat1b("SSE Dense Vector ScaledSum Benchmark - vector size: 655360, float", 655360ul, 10);
+DenseVectorScaledSumBench<tags::CPU::SSE, float> SSEDVSSBenchfloat2("SSE Dense Vector ScaledSum Benchmark - vector size: 1376256, float", 1376256ul, 10);
+DenseVectorScaledSumBench<tags::CPU::SSE, float> SSEDVSSBenchfloat3("SSE Dense Vector ScaledSum Benchmark - vector size: 268976, float", 2686976ul, 10);
+DenseVectorScaledSumBench<tags::CPU::SSE, float> SSEDVSSBenchfloat4("SSE Dense Vector ScaledSum Benchmark - vector size: 3997696, float", 3997696ul, 10);
 #endif
+
 #ifdef HONEI_CUDA
-DenseVectorScaledSumBench<tags::GPU::CUDA, float>
-    CUDADVSSBenchfloat1("CUDA Dense Vector ScaledSum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
+DenseVectorScaledSumBench<tags::GPU::CUDA, float> CUDADVSSBenchfloat1("CUDA Dense Vector ScaledSum Benchmark - vector size: 65536, float", 65536ul, 10);
+DenseVectorScaledSumBench<tags::GPU::CUDA, float> CUDADVSSBenchfloat1b("CUDA Dense Vector ScaledSum Benchmark - vector size: 655360, float", 655360ul, 10);
+DenseVectorScaledSumBench<tags::GPU::CUDA, float> CUDADVSSBenchfloat2("CUDA Dense Vector ScaledSum Benchmark - vector size: 1376256, float", 1376256ul, 10);
+DenseVectorScaledSumBench<tags::GPU::CUDA, float> CUDADVSSBenchfloat3("CUDA Dense Vector ScaledSum Benchmark - vector size: 268976, float", 2686976ul, 10);
+DenseVectorScaledSumBench<tags::GPU::CUDA, float> CUDADVSSBenchfloat4("CUDA Dense Vector ScaledSum Benchmark - vector size: 3997696, float", 3997696ul, 10);
 #endif
+
 #ifdef HONEI_CELL
-DenseVectorScaledSumBench<tags::Cell, float> CellDVSSBenchfloat1("CELL Dense Vector ScaledSum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
-DenseVectorScaledSumBench<tags::Cell, double> CellDVSSBenchdouble1("CELL Dense Vector ScaledSum Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
-#endif
-
-template <typename DT_, typename Tag_>
-class DenseVectorScaledSumSPUPlot :
-    public Benchmark
-{
-    private:
-        int _x;
-
-    public:
-        DenseVectorScaledSumSPUPlot(const std::string & id) :
-            Benchmark(id)
-        {
-            register_tag(Tag_::name);
-            _plots = true;
-        }
-
-        virtual void run()
-        {
-            BenchmarkInfo info;
-            std::list<BenchmarkInfo> infolist;
-            std::list<std::string> cores;
-
-            int temp(Configuration::instance()->get_value("cell::scaled_sum_dense_dense_float", 4));
-            int temp2(Configuration::instance()->get_value("cell::scaled_sum_dense_dense_double", 4));
-
-            int max_spu(6);
-
-            for (unsigned long j(1) ; j <= max_spu ; ++j)
-            {
-                for (unsigned long k(1) ; k < 81 ; k+=5)
-                {
-                    Configuration::instance()->set_value("cell::scaled_sum_dense_dense_float", j);
-                    Configuration::instance()->set_value("cell::scaled_sum_dense_dense_double", j);
-                    cores.push_back(stringify(j) +"SPUs" );
-                    DenseVector<DT_> dv0(k * 150000, DT_(rand()));
-                    DenseVector<DT_> dv1(k * 150000, DT_(rand()));
-                    DT_ alpha(rand());
-
-                    for(int i(0) ; i < 20 ; ++i)
-                    {
-                        BENCHMARK(
-                                for (unsigned long l(0) ; l < 5 ; ++l)
-                                {
-                                ScaledSum<Tag_>::value(dv0, dv1, alpha);
-                                }
-                                );
-                    }
-                    info = ScaledSum<>::get_benchmark_info(dv0, dv1, alpha);
-                    infolist.push_back(info * 5);
-                    std::cout << ".";
-                    std::cout.flush();
-                }
-            }
-            Configuration::instance()->set_value("cell::scaled_sum_dense_dense_float", temp);
-            Configuration::instance()->set_value("cell::scaled_sum_dense_dense_double", temp2);
-            std::cout<<std::endl;
-            evaluate_to_plotfile(infolist, cores, 20);
-        }
-};
-#ifdef HONEI_CELL
-DenseVectorScaledSumSPUPlot<float, tags::Cell> DVSSSPUF("Cell Dense Vector ScaledSum Benchmark - SPU Count: 1 to 6 - float");
-DenseVectorScaledSumSPUPlot<double, tags::Cell> DVSSSPUD("Cell Dense Vector ScaledSum Benchmark - SPU Count: 1 to 6 - double");
-#endif
-
-template <typename DT_>
-class DenseVectorScaledSumVSPlot :
-    public Benchmark
-{
-    private:
-        int _x;
-
-    public:
-        DenseVectorScaledSumVSPlot(const std::string & id) :
-            Benchmark(id)
-        {
-            register_tag(tags::CPU::SSE::name);
-            _plots = true;
-        }
-
-        virtual void run()
-        {
-            BenchmarkInfo info;
-            std::list<BenchmarkInfo> infolist;
-            std::list<std::string> cores;
-
-            // mc::sse
-            for (unsigned long j(1) ; j < 95 ; j+=5)
-            {
-                cores.push_back(tags::CPU::MultiCore::SSE::name);
-                DenseVector<DT_> dv0((j + 1) * 131072, DT_(rand()));
-                DenseVector<DT_> dv1((j + 1) * 131072, DT_(rand()));
-                DT_ alpha(rand());
-
-                for(int i(0) ; i < 5 ; ++i)
-                {
-                    BENCHMARK((ScaledSum<tags::CPU::MultiCore::SSE>::value(dv0, dv1, alpha)));
-                }
-                info = ScaledSum<>::get_benchmark_info(dv0, dv1, alpha);
-                infolist.push_back(info);
-                std::cout<<".";
-                std::cout.flush();
-            }
-
-            // sse
-            for (unsigned long j(1) ; j < 95 ; j+=5)
-            {
-                cores.push_back(tags::CPU::SSE::name);
-                DenseVector<DT_> dv0((j + 1) * 131072, DT_(rand()));
-                DenseVector<DT_> dv1((j + 1) * 131072, DT_(rand()));
-                DT_ alpha(rand());
-
-                for(int i(0) ; i < 5 ; ++i)
-                {
-                    BENCHMARK((ScaledSum<tags::CPU::SSE>::value(dv0, dv1, alpha)));
-                }
-                info = ScaledSum<>::get_benchmark_info(dv0, dv1, alpha);
-                infolist.push_back(info);
-                std::cout<<".";
-                std::cout.flush();
-            }
-
-            std::cout<<std::endl;
-            evaluate_to_plotfile(infolist, cores, 5);
-        }
-};
-#ifdef HONEI_SSE
-DenseVectorScaledSumVSPlot<float> DVSSVSF("MC vs SSE DenseVector ScaledSum Benchmark - float");
-DenseVectorScaledSumVSPlot<double> DVSSVSD("MC vs SSE DenseVector ScaledSum Benchmark - double");
+DenseVectorScaledSumBench<tags::Cell, float> CellDVSSBenchfloat1("Cell Dense Vector ScaledSum Benchmark - vector size: 65536, float", 65536ul, 10);
+DenseVectorScaledSumBench<tags::Cell, float> CellDVSSBenchfloat1b("Cell Dense Vector ScaledSum Benchmark - vector size: 655360, float", 655360ul, 10);
+DenseVectorScaledSumBench<tags::Cell, float> CellDVSSBenchfloat2("Cell Dense Vector ScaledSum Benchmark - vector size: 1376256, float", 1376256ul, 10);
+DenseVectorScaledSumBench<tags::Cell, float> CellDVSSBenchfloat3("Cell Dense Vector ScaledSum Benchmark - vector size: 268976, float", 2686976ul, 10);
+DenseVectorScaledSumBench<tags::Cell, float> CellDVSSBenchfloat4("Cell Dense Vector ScaledSum Benchmark - vector size: 3997696, float", 3997696ul, 10);
 #endif
