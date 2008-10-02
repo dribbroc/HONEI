@@ -84,7 +84,7 @@ libhoneiswe_la_LIBADD = \
 	$(top_builddir)/honei/la/libhoneila.la \
 	$(CELLLIB)
 
-libhoneiswe_includedir = $(includedir)/honei/libhoneiswe
+libhoneiswe_includedir = $(includedir)/honei/swe
 libhoneiswe_include_HEADERS = headerlist
 
 TESTS = testlist

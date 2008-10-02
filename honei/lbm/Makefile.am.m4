@@ -82,7 +82,7 @@ libhoneilbm_la_LIBADD = \
 	$(top_builddir)/honei/la/libhoneila.la \
 	$(CELLLIB)
 
-libhoneilbm_includedir = $(includedir)/honei/libhoneilbm
+libhoneilbm_includedir = $(includedir)/honei/lbm
 libhoneilbm_include_HEADERS = headerlist
 
 TESTS = testlist
