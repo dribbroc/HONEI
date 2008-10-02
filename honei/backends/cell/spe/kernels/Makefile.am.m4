@@ -4,13 +4,16 @@ ifdef(`__gnu__',`',`errprint(`This is not GNU m4...
 dnl vim: set ft=m4 noet :
 
 define(`filelist', `')dnl
-define(`sourceslist', `')dnl
 define(`cleanlist', `')dnl
 define(`objlist', `')dnl
-define(`add', `define(`filelist', filelist `$1')dnl
-define(`sourceslist', sourceslist `$1.cc' `$1-registrator.cc')dnl
+define(`proglist', `')dnl
+define(`sourceslist', `')dnl
+define(`add', `dnl
+define(`filelist', filelist `$1.sk')dnl
 define(`cleanlist', cleanlist `$1.body' `$1.functions' `$1.opcodes' `$1.cc')dnl
 define(`objlist', objlist `libcell-$1.o')dnl
+define(`proglist', proglist `$1')dnl
+define(`sourceslist', sourceslist `$1.cc' `$1-registrator.cc')dnl
 $1.cc : $1.sk $(top_srcdir)/misc/make_sk.bash $2-kernel.cc.in
 	$(top_srcdir)/misc/make_sk.bash $1.sk
 	sed -e "/@FUNCTIONS@/r $1.functions" \
@@ -69,11 +72,12 @@ EXTRA_DIST = \
 	Makefile.am.m4 \
 	files.m4 \
 	registrator.cc.in \
-	stand_alone-kernel.cc.in
+	stand_alone-kernel.cc.in \
+	filelist
 DEFS = \
 	$(DEBUGDEF)
 
-noinst_PROGRAMS = filelist
+noinst_PROGRAMS = proglist
 
 Makefile.am : Makefile.am.m4 files.m4
 	cd $(top_srcdir) ; ./misc/do_m4.bash honei/backends/cell/spe/kernels/Makefile.am
