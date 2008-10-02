@@ -269,7 +269,7 @@ dnl }}}
 dnl {{{
 AC_MSG_CHECKING([whether to build the visualisation engine])
 AC_ARG_WITH([visual],
-	AS_HELP_STRING([--with--visual], [Build visualisation engine (needs packages: libGL, libGLU, libglut)]),
+	AS_HELP_STRING([--with-visual], [Build visualisation engine (needs packages: libGL, libGLU, libglut)]),
 		[WITH_VISUAL=$withval
 		  AC_MSG_RESULT([$withval])],
 		[WITH_HDF5=no
