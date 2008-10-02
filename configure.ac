@@ -219,8 +219,8 @@ AC_ARG_ENABLE([debug],
 	AS_HELP_STRING([--enable-debug], [Build debug support (needs packages: none)]),
 		[ENABLE_DEBUG=$enableval
 		  AC_MSG_RESULT([$enableval])],
-		[ENABLE_DEBUG=yes
-		  AC_MSG_RESULT([yes])])
+		[ENABLE_DEBUG=no
+		  AC_MSG_RESULT([no])])
 AC_SUBST([ENABLE_DEBUG])
 if test "x$ENABLE_DEBUG" = "xyes"; then
 	DEBUGDEF="-DDEBUG"
