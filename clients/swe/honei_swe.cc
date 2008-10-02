@@ -21,8 +21,8 @@
 #include <GL/glut.h>
 #include <honei/swe/relax_solver.hh>
 #include <iostream>
-#include <honei_swe.hh>
-#include <scenario_controller.hh>
+#include <clients/swe/honei_swe.hh>
+#include <clients/swe/scenario_controller.hh>
 
 int main(int argc, char ** argv)
 {
