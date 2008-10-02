@@ -207,9 +207,9 @@ void Benchmark::evaluate(BenchmarkInfo info)
         ofs << "Runtime - highest: " << _max << "sec (" << _xmax << ".)" << std::endl;
         ofs << "Runtime - mean:    " << _avg << "sec" << std::endl;
         ofs << "Runtime - median:  " << _median << "sec" << std::endl;
-        ofs << "Transfer rate (mean):   " << _tp << pf[i] << "B/s" << std::endl;
-        ofs << "Transfer rate (median): " << _mediantp << pf[i] << "B/s" << std::endl;
-        ofs << "Transfer rate (peak):   " << _mintp << pf[i] << "B/s" << std::endl;
+        ofs << "Transfer rate (mean):   " << _tp << " " << pf[i] << "B/s" << std::endl;
+        ofs << "Transfer rate (median): " << _mediantp << " " << pf[i] << "B/s" << std::endl;
+        ofs << "Transfer rate (peak):   " << _mintp << " " << pf[i] << "B/s" << std::endl;
         ofs << _f << " " << pf[j] << "FLOPS (mean)" << std::endl;
         ofs << _medianf << " " << pf[j] << "FLOPS (median)" << std::endl;
         ofs << _minf << " " << pf[j] << "FLOPS (peak)" << std::endl;
