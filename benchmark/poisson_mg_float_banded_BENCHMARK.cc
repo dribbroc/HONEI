@@ -315,7 +315,7 @@ class PoissonBenchmarkMGBandedQ1Float:
                 b2 = ( n_2 >> 8 ) & 255;
                 b3 = ( n_2>>16 ) & 255;
                 b4 = ( n_2>>24 ) & 255;
-                n = ((int)b1 << 24) + ((int)b2 << 16) + ((int)b3 << 8) + b4;
+                n_2 = ((int)b1 << 24) + ((int)b2 << 16) + ((int)b3 << 8) + b4;
 #endif
                 dd_2 = new double[n_2];
                 ll_2 = new double[n_2];
