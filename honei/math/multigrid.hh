@@ -41,7 +41,7 @@
 #include<fstream>
 #include<honei/util/time_stamp.hh>
 
-//#define SOLVER_VERBOSE 1
+#define SOLVER_VERBOSE 1
 //#define SOLVER_BENCHMARK
 using namespace methods;
 namespace honei
@@ -441,7 +441,7 @@ endCycleLoop:
                         unsigned long timing_loop(1);
                         for(unsigned long timing(0); timing < timing_loop; ++timing)
                         {
-                            unsigned long inner_iterations(0);
+                            /*unsigned long inner_iterations(0);
                             unsigned long outer_iterations(1);
                             Prec_ scale_factor(1.0);
 
@@ -473,9 +473,9 @@ endCycleLoop:
                                 // run inner solver as long as neccessary
 #ifdef SOLVER_VERBOSE
                                 std::cout << inner_iterations << "th iteration (outer)!" << std::endl;
-#endif
+#endif*/
                                 info.x[info.max_level] = (_multigrid_kernel<Prec_>(info.a[info.max_level], right_hand_side, max_levels, &cappa, info));
-                                inner_iterations += 1; //Markus: for now, this is ok, later: add kernel iterations
+                                /*inner_iterations += 1; //Markus: for now, this is ok, later: add kernel iterations
 
                                 // get "solution" and update outer solution
                                 copy<Tag_>(info.x[info.max_level], temp_vector);
@@ -514,7 +514,7 @@ endCycleLoop:
                                 Scale<Tag_>::value(outer_defect, inv);
 
                                 outer_iterations++;
-                            }
+                            }*/
                         }
 
                         return info.x[info.max_level];//result;
