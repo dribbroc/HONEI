@@ -415,6 +415,6 @@ PoissonBenchmarkMGBandedQ1Mixed<tags::CPU, tags::CPU> poisson_bench_mg_banded_mi
 #ifdef HONEI_SSE
 PoissonBenchmarkMGBandedQ1Mixed<tags::CPU::SSE, tags::CPU::SSE> sse_poisson_mg_bench_banded_mixed("MG mixed SSE", 10, 2);
 #endif
-#ifdef HONEI_CUDA
+#if defined HONEI_CUDA && defined HONEI_SSE
 PoissonBenchmarkMGBandedQ1Mixed<tags::GPU::CUDA, tags::CPU::SSE> cuda_poisson_mg_bench_banded_mixed("MG mixed CUDA", 10, 2);
 #endif
