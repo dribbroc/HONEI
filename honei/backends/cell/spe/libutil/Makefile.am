@@ -2,13 +2,14 @@ CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in
 
 CXX = $(SPU_CXX)
-CXXFLAGS= $(SPU_CXXFLAGS)
+CXXFLAGS= $(SPU_CXXFLAGS) -I$(top_srcdir)
 DEFS = $(DEBUGDEF) $(PROFILERDEF)
 
 noinst_LIBRARIES = libutil_spe.a
 
 libutil_spe_a_HEADER = \
 	allocator.hh \
+	debug.hh \
 	operation_framework.hh \
 	profiler.hh \
 	transfer.hh
@@ -26,7 +27,12 @@ libutil_spe_a_SOURCES = \
 	operation_three_float_dma.cc \
 	operation_three_double_dma.cc \
 	profiler.cc \
-	transfer.cc
+	transfer.cc \
+	allocator.hh \
+	debug.hh \
+	operation_framework.hh \
+	profiler.hh \
+	transfer.hh
 
 libutil_spe_a_CXXFLAGS = -Wall -msafe-dma -fno-exceptions -fno-rtti
 

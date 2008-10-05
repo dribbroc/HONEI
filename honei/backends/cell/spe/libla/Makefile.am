@@ -2,7 +2,7 @@ CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in
 
 CXX = $(SPU_CXX)
-CXXFLAGS = $(SPU_CXXFLAGS)
+CXXFLAGS= $(SPU_CXXFLAGS) -I$(top_srcdir)
 DEFS = $(DEBUGDEF) $(PROFILERDEF)
 
 noinst_LIBRARIES = libla_spe.a
@@ -39,9 +39,10 @@ libla_spe_a_SOURCES = \
 	scaled_sum_dense_dense_float.cc \
 	scaled_sum_dense_dense_double.cc \
 	scale_sparse_float.cc \
-	fill_float.cc
+	fill_float.cc \
+	operations.hh
 
 libla_spe_a_LIBADD = \
-	$(top_srcdir)/honei/backends/cell/spe/libutil/libutil_spe.a
+	$(top_builddir)/honei/backends/cell/spe/libutil/libutil_spe.a
 
 libla_spe_a_CXXFLAGS = -Wall -msafe-dma -fno-exceptions -fno-rtti
