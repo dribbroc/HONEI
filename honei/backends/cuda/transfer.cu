@@ -17,7 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <cuda_util.hh>
+#include <honei/backends/cuda/cuda_util.hh>
 
 extern "C" void * cuda_malloc(unsigned long bytes)
 {
