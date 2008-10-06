@@ -60,7 +60,8 @@ DEFS = \
 	$(SSEDEF) \
 	$(CUDADEF) \
 	$(DEBUGDEF) \
-	$(PROFILERDEF)
+	$(PROFILERDEF) \
+	-DHONEI_SOURCEDIR='"$(top_srcdir)"'
 
 noinst_LIBRARIES = libbenchmark.a
 noinst_PROGRAMS = benchmarklist

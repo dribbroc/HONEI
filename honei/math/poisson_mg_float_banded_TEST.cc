@@ -64,7 +64,9 @@ class PoissonTestMGBandedQ1Float:
             double* ana_sol;
             double* ref_sol;
 
-            file = fopen("testdata/81/ehq.1.1.1.1.bin", "rb");
+            std::string file_name(HONEI_SOURCEDIR);
+            file_name += "/honei/math/testdata/81.bin";
+            file = fopen(file_name.c_str(), "rb");
             fread(&n, sizeof(int), 1, file);
 
 #ifdef HONEI_CELL
@@ -298,7 +300,8 @@ class PoissonTestMGBandedQ1Float:
                 double* ud_2;
                 double* uu_2;
                 double* b_2;
-                std::string file_path("testdata/" + stringify(DD_v_2.size()) +"/ehq.1.1.1.1.bin");
+                std::string file_path(HONEI_SOURCEDIR);
+                file_path += "/honei/math/testdata/" + stringify(DD_v_2.size()) + ".bin";
                 file_2 = fopen(file_path.c_str(), "rb");
                 fread(&n_2, sizeof(int), 1, file_2);
 

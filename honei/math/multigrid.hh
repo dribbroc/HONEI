@@ -41,7 +41,7 @@
 #include<fstream>
 #include<honei/util/time_stamp.hh>
 
-#define SOLVER_VERBOSE 1
+//#define SOLVER_VERBOSE 1
 //#define SOLVER_BENCHMARK
 using namespace methods;
 namespace honei

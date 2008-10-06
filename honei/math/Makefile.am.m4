@@ -66,6 +66,8 @@ BACKEND_LIBS += \
 
 endif
 
+SUBDIRS = testdata
+
 AM_CXXFLAGS = -I$(top_srcdir)
 
 CLEANFILES = *~
@@ -76,7 +78,8 @@ DEFS = \
 	$(SSEDEF) \
 	$(CUDADEF) \
 	$(DEBUGDEF) \
-	$(PROFILERDEF)
+	$(PROFILERDEF) \
+	-DHONEI_SOURCEDIR='"$(top_srcdir)"'
 
 lib_LTLIBRARIES = libhoneimath.la
 

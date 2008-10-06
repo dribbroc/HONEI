@@ -343,6 +343,7 @@ AC_OUTPUT(
 	honei/la/Makefile
 	honei/lbm/Makefile
 	honei/math/Makefile
+	honei/math/testdata/Makefile
 	honei/swe/Makefile
 	honei/util/Makefile
 	honei/visual/Makefile

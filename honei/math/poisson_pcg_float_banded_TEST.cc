@@ -64,7 +64,9 @@ class PoissonTestPCGBandedFloat:
             double* ana_sol;
             double* ref_sol;
 
-            file = fopen("testdata/1089/ehq.1.1.1.1.bin", "rb");
+            std::string file_name(HONEI_SOURCEDIR);
+            file_name += "/honei/math/testdata/1089.bin";
+            file = fopen(file_name.c_str(), "rb");
             fread(&n, sizeof(int), 1, file);
 #ifdef HONEI_CELL
             unsigned char b1, b2, b3, b4;
