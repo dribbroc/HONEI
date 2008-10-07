@@ -84,7 +84,7 @@ class GridPartitionerTest :
             TEST_CHECK(true);
         }
 };
-GridPartitionerTest<tags::CPU, float> gptest_float("float");
+//GridPartitionerTest<tags::CPU, float> gptest_float("float");
 
 template <typename Tag_, typename DataType_>
 class DirPartitionerTest :

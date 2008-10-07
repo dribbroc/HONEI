@@ -98,6 +98,4 @@ class GridPackerTest :
             TEST_CHECK(true);
         }
 };
-
 GridPackerTest<tags::CPU, float> gptest_float("float");
-
