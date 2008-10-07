@@ -102,6 +102,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
             {
                 case 100:
                     {
+                        glutSetWindowTitle("Grid: Laminar flow: Circular dam break 50x50");
                         _dheight = 50;
                         _dwidth = 50;
                         _h = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.05));
@@ -144,6 +145,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
 
                 case 101:
                     {
+                        glutSetWindowTitle("Grid: Laminar flow: Circular dam break 50x50 with cuboidal obstacles");
                         _dheight = 50;
                         _dwidth = 50;
                         _h = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.05));
@@ -184,6 +186,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
 
                 case 102:
                     {
+                        glutSetWindowTitle("Grid: Laminar flow: Partial dam break 50x50");
                         _dheight = 50;
                         _dwidth = 50;
                         _h = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.05));

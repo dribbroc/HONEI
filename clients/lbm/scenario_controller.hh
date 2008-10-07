@@ -144,6 +144,7 @@ template<typename Tag_, typename Prec_> class ScenarioController :
             {
                 case 0:
                     {
+                        glutSetWindowTitle("Mono: Laminar flow: Circular dam break 50x50");
                         _dheight = 50;
                         _dwidth = 50;
                         _height = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.05));
@@ -210,6 +211,7 @@ template<typename Tag_, typename Prec_> class ScenarioController :
 
                 case 1:
                     {
+                        glutSetWindowTitle("Mono: Laminar flow: Circular dam break above uneven bed 50x50");
                         _dheight = 50;
                         _dwidth = 50;
                         _height = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.05));

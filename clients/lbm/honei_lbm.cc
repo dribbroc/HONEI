@@ -82,9 +82,9 @@ int main(int argc, char ** argv)
     glutAddMenuEntry("Toggle primitive type", 6);
     glutAddMenuEntry("Toggle alpha blending", 7);
     GLint menu_id_scenario = glutCreateMenu(menu_scenario);
-    glutAddMenuEntry("Mono: Laminar flow: Circular dam break 50x50 float", 0);
-    glutAddMenuEntry("Mono: Laminar flow: Circular dam break above uneven bed 50x50 float", 1);
-    glutAddMenuEntry("Grid: Laminar flow: Circular dam break 50x50 float", 100);
+    glutAddMenuEntry("Mono: Laminar flow: Circular dam break 50x50", 0);
+    glutAddMenuEntry("Mono: Laminar flow: Circular dam break above uneven bed 50x50", 1);
+    glutAddMenuEntry("Grid: Laminar flow: Circular dam break 50x50 ", 100);
     glutAddMenuEntry("Grid: Laminar flow: Circular dam break 50x50 with cuboidal obstacles", 101);
     glutAddMenuEntry("Grid: Laminar flow: Partial dam break 50x50", 102);
     GLint menu_id_main = glutCreateMenu(menu_main);
