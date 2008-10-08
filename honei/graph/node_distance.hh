@@ -29,8 +29,9 @@
 #include <honei/la/difference.hh>
 #include <honei/la/matrix_error.hh>
 #include <honei/la/norm.hh>
-#include <honei/graph/node_distance-mc.hh>
 #include <honei/util/tags.hh>
+#include <honei/graph/graph_error.hh>
+
 
 /**
  * \file
@@ -169,9 +170,6 @@ namespace honei
         static void invert_distance(double * dist, double square_force_range, unsigned long size);
     };
 
-    template <> struct NodeDistance<tags::CPU::MultiCore> : public MCNodeDistance<tags::CPU::MultiCore> {};
-    template <> struct NodeDistance<tags::CPU::MultiCore::SSE> : public MCSSENodeDistance<tags::CPU::MultiCore::SSE> {};
-
     template <> struct NodeDistance<tags::Cell>
     {
         static DenseMatrix<float> value(const DenseMatrix<float> & pos_matrix);
@@ -180,5 +178,8 @@ namespace honei
                 DenseMatrix<float> & square_dist, DenseMatrix<float> & inv_square_dist,
                 const float repulsive_force_range);
     };
+
+    template <> struct NodeDistance<tags::CPU::MultiCore> : public NodeDistance<tags::CPU>{};
+    template <> struct NodeDistance<tags::CPU::MultiCore::SSE> : public NodeDistance<tags::CPU>{};
 }
 #endif

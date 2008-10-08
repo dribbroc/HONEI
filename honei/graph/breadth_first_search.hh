@@ -30,7 +30,6 @@
 #include <honei/la/vector_error.hh>
 #include <honei/graph/graph_error.hh>
 #include <honei/graph/abstract_graph.hh>
-#include <honei/graph/breadth_first_search-mc.hh>
 
 #include <queue>
 #include <iostream>
@@ -229,9 +228,11 @@ namespace honei
         }
     };
 
-    template <> struct BreadthFirstSearch<tags::CPU::MultiCore> : public MCBreadthFirstSearch<tags::CPU::MultiCore>{};
     template <> struct BreadthFirstSearch<tags::CPU::SSE> : public BreadthFirstSearch<tags::CPU>{};
     template <> struct BreadthFirstSearch<tags::Cell> : public BreadthFirstSearch<tags::CPU>{};
-    template <> struct BreadthFirstSearch<tags::CPU::MultiCore::SSE> : public MCBreadthFirstSearch<tags::CPU::MultiCore>{};
+
+    template <> struct BreadthFirstSearch<tags::CPU::MultiCore> : public BreadthFirstSearch<tags::CPU>{};
+    template <> struct BreadthFirstSearch<tags::CPU::MultiCore::SSE> : public BreadthFirstSearch<tags::CPU>{};
+
 }
 #endif
