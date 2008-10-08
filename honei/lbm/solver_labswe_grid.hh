@@ -43,6 +43,7 @@
 #include <honei/lbm/equilibrium_distribution_grid.hh>
 #include <honei/lbm/source_grid.hh>
 #include <honei/lbm/update_velocity_directions_grid.hh>
+#include <honei/lbm/extraction_grid.hh>
 #include <cmath>
 #include <honei/lbm/grid.hh>
 
@@ -443,6 +444,11 @@ namespace honei
                  **/
                 void solve()
                 {
+                    //extract velocities out of h from previous timestep:
+
+                    Extraction<Tag_, lbm_applications::LABSWE, quantities::VELOCITY_X>::value(*data);
+                    Extraction<Tag_, lbm_applications::LABSWE, quantities::VELOCITY_Y>::value(*data);
+
                     ++_time;
 
                     EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::
@@ -472,7 +478,10 @@ namespace honei
 
 
                     ///Compute physical quantities:
-                    _extract();
+                    //_extract();
+                    //extract height first:
+
+                    Extraction<Tag_, lbm_applications::LABSWE, quantities::HEIGHT>::value(*data);
 
                 };
         };
