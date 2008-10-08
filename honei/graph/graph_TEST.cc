@@ -46,15 +46,15 @@ class GraphTest :
 
     virtual void run() const
     {
-        Graph<DataType_> * g(TestScenario<DataType_>::Grid(6, 6));        
+        Graph<DataType_> * g(TestScenario<DataType_>::Grid(6, 6));
         std::cout << *g->coordinates() << std::endl;
         std::cout << *g->node_weights() << std::endl;
         std::cout << *g->edges() << std::endl;
-        
+
         Positions<Tag_, DataType_, methods::WeightedFruchtermanReingold> p(*g, DataType_(1));
         p.update(0, 10000);
-        std::string file("test.gml");
-        g->write_gml(file.c_str(), true);
+        //std::string file("test.gml");
+        //g->write_gml(file.c_str(), true);
         TEST_CHECK(true);
     }
 };

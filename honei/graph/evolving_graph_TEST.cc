@@ -90,17 +90,17 @@ class EvolvingGraphTest :
             //std::cout << "90\n";
             EvolvingGraph<DataType_> eg(2,1);
             // Creating nodes
-            
+
             //std::cout << "94\n";
             Graph<DataType_> & t1(eg.add_timeslice(2));
             Graph<DataType_> & t2(eg.add_timeslice(3));
-            
+
             //std::cout << "98\n";
             t1.add_node(1, 1);
             t1.add_node(4, 1);
             //std::cout << "101\n";
             t1.add_edge(1, 4, 1);
-            
+
             t2.add_node(1);
             t2.add_node(2, 2);
             t2.add_node(3, 3);
@@ -124,13 +124,13 @@ class EvolvingGraphTest :
             eg.update_slice_coordinates();
             for (int i(0); i < eg.slice_count(); ++i)
                 std::cout << "timeslice " << i << " after update:\n" << *eg.get_timeslice(i).coordinates() << std::endl;
-            
-            std::string file("evolving.gml");
-            eg.write_gml(file.c_str(), true);
 
-                
+            //std::string file("evolving.gml");
+            //eg.write_gml(file.c_str(), true);
+
+
             EvolvingAnimator<Tag_, DataType_> animator(eg, 0.1f);
-            
+
             for (animator.prepare_interpolation(); !animator.end(); animator.next_step())
                 std::cout << animator.time() << std::endl;
             TEST_CHECK(true);
