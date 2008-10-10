@@ -26,6 +26,7 @@
 #include <honei/la/reduction.hh>
 #include <honei/util/stringify.hh>
 #include <honei/util/partitioner.hh>
+#include <honei/util/configuration.hh>
 
 namespace honei
 {

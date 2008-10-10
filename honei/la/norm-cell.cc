@@ -26,6 +26,7 @@
 #include <honei/la/norm.hh>
 #include <honei/util/stringify.hh>
 #include <honei/util/partitioner.hh>
+#include <honei/util/configuration.hh>
 
 #include <cmath>
 
