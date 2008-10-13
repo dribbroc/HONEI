@@ -78,7 +78,7 @@ class SolverLABSWEGridRegressionTest :
             DenseVector<DataType_> s_y(data.h->size(), DataType_(0.));
             DenseVector<DataType_> b(data.h->size(), DataType_(0.));
 
-            SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 1., 1., 1., &b);
+            SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 1., 1., 1., &b);
 
             solver.set_source(&s_x, &s_y);
             solver.do_preprocessing();

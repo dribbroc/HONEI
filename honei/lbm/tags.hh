@@ -60,11 +60,12 @@ namespace honei
         {
             class SIMPLE;
             class CONSTANT;
+            class CENTRED;
         }
         namespace lbm_source_schemes
         {
             class BASIC;
-            class CENTERED;
+            class CENTRALDIFF;
         }
         namespace lbm_boundary_types
         {

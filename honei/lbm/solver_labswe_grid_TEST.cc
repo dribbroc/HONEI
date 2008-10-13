@@ -53,6 +53,7 @@ class SolverLABSWEGridTest :
             unsigned long timesteps(100);
 
             DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
+            DenseMatrix<DataType_> zeros(g_h, g_w, DataType_(0));
             Cylinder<DataType_> c1(h, DataType_(0.02), 25, 25);
             c1.value();
 
@@ -63,6 +64,8 @@ class SolverLABSWEGridTest :
             DenseMatrix<bool> obstacles(g_h, g_w, false);
             grid.obstacles = &obstacles;
             grid.h = &h;
+            grid.b_x = &zeros;
+            grid.b_y = &zeros;
             grid.u = &u;
             grid.v = &v;
             PackedGridData<D2Q9, DataType_>  data;
@@ -76,7 +79,7 @@ class SolverLABSWEGridTest :
             DenseVector<DataType_> s_y(data.h->size(), DataType_(0.));
             DenseVector<DataType_> b(data.h->size(), DataType_(0.));
 
-            SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 1., 1., 1., &b);
+            SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 1., 1., 1., &b);
 
             solver.set_source(&s_x, &s_y);
             solver.do_preprocessing();
@@ -117,6 +120,7 @@ class SolverLABSWEGridPartitionerTest :
             unsigned long g_h(50);
             unsigned long g_w(50);
             unsigned long timesteps(100);
+
 
             DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
             Cylinder<DataType_> c1(h, DataType_(0.02), 25, 25);

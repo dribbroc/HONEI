@@ -41,7 +41,7 @@
 #include <honei/la/element_inverse.hh>
 #include <honei/lbm/collide_stream_grid.hh>
 #include <honei/lbm/equilibrium_distribution_grid.hh>
-#include <honei/lbm/source_grid.hh>
+#include <honei/lbm/force_grid.hh>
 #include <honei/lbm/update_velocity_directions_grid.hh>
 #include <honei/lbm/extraction_grid.hh>
 #include <cmath>
@@ -65,7 +65,7 @@ namespace honei
             };
 
     template<typename Tag_, typename ResPrec_>
-        class SolverLABSWEGrid<Tag_, ResPrec_, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>
+        class SolverLABSWEGrid<Tag_, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>
         {
             private:
                 /** Global variables.
@@ -471,6 +471,8 @@ namespace honei
                               *data,
                               *_source_x, *_source_y,
                               _relaxation_time);
+
+                    ForceGrid<Tag_, lbm_applications::LABSWE, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF>::value(*data, *info, ResPrec_(9.81), _delta_x, _delta_y, _delta_t );
 
                     ///Boundary correction:
                     UpdateVelocityDirectionsGrid<D2Q9, NOSLIP>::
