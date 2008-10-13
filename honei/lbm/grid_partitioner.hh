@@ -52,18 +52,6 @@ namespace honei
             static void compose(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
                     std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list)
             {
-                /*for (unsigned long i(0); i < data_list[0].h->size(); ++i)
-                {
-                    (*data.h)[i] = (*data_list[0].h)[i];
-                }
-                for(unsigned long index(1); index < data_list.size(); ++index)
-                {
-                    for(unsigned long i(0); i < data_list[index].h->size(); ++i)
-                    {
-                        (*data.h)[i + info_list[index].offset] += (*data_list[index].h)[i];
-                    }
-                }*/
-
                 for(unsigned long i(0); i < data.h->size(); ++i)
                 {
                     unsigned long index(0);
@@ -213,6 +201,8 @@ namespace honei
                 /// todo bei abbruch dennoch barriers einbauen
                 if (dir_index.size() == 0 || dir_index[dir_index.size() - 1] < start || dir_index[0] > end)
                 {
+                    barriers.push_back(0);
+                    barriers.push_back(0);
                     return;
                 }
 
@@ -384,18 +374,6 @@ namespace honei
                     temp_dir_index_8.push_back((*info.dir_index_8)[i * 2 + 1]);
                 }
 
-                /*std::cout<<std::endl;
-                for (unsigned long i(0) ; i < temp_limits.size() ; ++i)
-                {
-                    std::cout<<temp_limits[i]<<" ";
-                }
-                std::cout<<std::endl;*/
-                /*for (unsigned long i(0) ; i < temp_limits.size() ; ++i)
-                {
-                    std::cout<<temp_types[i]<<" ";
-                }
-                std::cout<<std::endl;*/
-
                 if (data.u->size() < parts)
                     parts = data.u->size();
 
@@ -498,13 +476,6 @@ namespace honei
                 std::vector<unsigned long> temp_min_list;
                 std::vector<unsigned long> temp_max_list;
 
-                std::cout<<"barriers 0 vs 6: "<<barriers.size() <<" "<<barriers_6.size()<<std::endl;
-                for (unsigned long i(0) ; i < barriers.size() ; ++i)
-                    std::cout<<barriers[i]<<" ";
-                std::cout<<std::endl;
-                for (unsigned long i(0) ; i < barriers_6.size() ; ++i)
-                    std::cout<<barriers_6[i]<<" ";
-                std::cout<<std::endl;
                 for (unsigned long i(0) ; i < barriers.size() - 1; ++i)
                 {
                     std::vector<unsigned long> new_limits;
@@ -526,6 +497,10 @@ namespace honei
                     std::vector<unsigned long> new_dir_index_7;
                     std::vector<unsigned long> new_dir_index_8;
 
+                    /// \todo max von dir muss jeweils noch + "offset" gerechnet werden
+                    std::vector<unsigned long> max_collection;
+                    std::vector<unsigned long> min_collection;
+
                     for(unsigned long index(barriers[i]) ; index <= barriers[i + 1] ; ++index)
                     {
                         new_limits.push_back(temp_limits[index]);
@@ -539,54 +514,150 @@ namespace honei
                         new_dir_7.push_back(temp_dir_7[index]);
                         new_dir_8.push_back(temp_dir_8[index]);*/
                     }
-                    for (unsigned long index(barriers_1[i * 2]) ; index <= barriers_1[i * 2 + 1] ; ++index)
+                    if (barriers_1[i * 2] != barriers_1[i * 2 + 1])
                     {
-                        new_dir_index_1.push_back(temp_dir_index_1[index]);
-                        if (index % 2 == 0)
-                            new_dir_1.push_back(temp_dir_1[index / 2]);
+                        for (unsigned long index(barriers_1[i * 2]) ; index <= barriers_1[i * 2 + 1] ; ++index)
+                        {
+                            new_dir_index_1.push_back(temp_dir_index_1[index]);
+                            if (index % 2 == 0)
+                                new_dir_1.push_back(temp_dir_1[index / 2]);
+                        }
+                        max_collection.push_back(*max_element(new_dir_1.begin(), new_dir_1.end()) + new_dir_index_1[new_dir_index_1.size() - 1] - new_dir_index_1[new_dir_index_1.size() - 2] - 1);
+                        min_collection.push_back(*min_element(new_dir_1.begin(), new_dir_1.end()));
                     }
-                    for (unsigned long index(barriers_2[i * 2]) ; index <= barriers_2[i * 2 + 1] ; ++index)
+                    else
                     {
-                        new_dir_index_2.push_back(temp_dir_index_2[index]);
-                        if (index % 2 == 0)
-                            new_dir_2.push_back(temp_dir_2[index / 2]);
+                        new_dir_index_1.push_back(0);
+                        new_dir_index_1.push_back(0);
+                        new_dir_1.push_back(0);
                     }
-                    for (unsigned long index(barriers_3[i * 2]) ; index <= barriers_3[i * 2 + 1] ; ++index)
+
+                    if (barriers_2[i * 2] != barriers_2[i * 2 + 1])
                     {
-                        new_dir_index_3.push_back(temp_dir_index_3[index]);
-                        if (index % 2 == 0)
-                            new_dir_3.push_back(temp_dir_3[index / 2]);
+                        for (unsigned long index(barriers_2[i * 2]) ; index <= barriers_2[i * 2 + 1] ; ++index)
+                        {
+                            new_dir_index_2.push_back(temp_dir_index_2[index]);
+                            if (index % 2 == 0)
+                                new_dir_2.push_back(temp_dir_2[index / 2]);
+                        }
+                        max_collection.push_back(*max_element(new_dir_2.begin(), new_dir_2.end()));
+                        min_collection.push_back(*min_element(new_dir_2.begin(), new_dir_2.end()));
                     }
-                    for (unsigned long index(barriers_4[i * 2]) ; index <= barriers_4[i * 2 + 1] ; ++index)
+                    else
                     {
-                        new_dir_index_4.push_back(temp_dir_index_4[index]);
-                        if (index % 2 == 0)
-                            new_dir_4.push_back(temp_dir_4[index / 2]);
+                        new_dir_index_2.push_back(0);
+                        new_dir_index_2.push_back(0);
+                        new_dir_2.push_back(0);
                     }
-                    for (unsigned long index(barriers_5[i * 2]) ; index <= barriers_5[i * 2 + 1] ; ++index)
+
+                    if (barriers_3[i * 2] != barriers_3[i * 2 + 1])
                     {
-                        new_dir_index_5.push_back(temp_dir_index_5[index]);
-                        if (index % 2 == 0)
-                            new_dir_5.push_back(temp_dir_5[index / 2]);
+                        for (unsigned long index(barriers_3[i * 2]) ; index <= barriers_3[i * 2 + 1] ; ++index)
+                        {
+                            new_dir_index_3.push_back(temp_dir_index_3[index]);
+                            if (index % 2 == 0)
+                                new_dir_3.push_back(temp_dir_3[index / 2]);
+                        }
+                        max_collection.push_back(*max_element(new_dir_3.begin(), new_dir_3.end()));
+                        min_collection.push_back(*min_element(new_dir_3.begin(), new_dir_3.end()));
                     }
-                    for (unsigned long index(barriers_6[i * 2]) ; index <= barriers_6[i * 2 + 1] ; ++index)
+                    else
                     {
-                        new_dir_index_6.push_back(temp_dir_index_6[index]);
-                        if (index % 2 == 0)
-                            new_dir_6.push_back(temp_dir_6[index / 2]);
+                        new_dir_index_3.push_back(0);
+                        new_dir_index_3.push_back(0);
+                        new_dir_3.push_back(0);
                     }
-                    for (unsigned long index(barriers_7[i * 2]) ; index <= barriers_7[i * 2 + 1] ; ++index)
+
+                    if (barriers_4[i * 2] != barriers_4[i * 2 + 1])
                     {
-                        new_dir_index_7.push_back(temp_dir_index_7[index]);
-                        if (index % 2 == 0)
-                            new_dir_7.push_back(temp_dir_7[index / 2]);
+                        for (unsigned long index(barriers_4[i * 2]) ; index <= barriers_4[i * 2 + 1] ; ++index)
+                        {
+                            new_dir_index_4.push_back(temp_dir_index_4[index]);
+                            if (index % 2 == 0)
+                                new_dir_4.push_back(temp_dir_4[index / 2]);
+                        }
+                        max_collection.push_back(*max_element(new_dir_4.begin(), new_dir_4.end()));
+                        min_collection.push_back(*min_element(new_dir_4.begin(), new_dir_4.end()));
                     }
-                    for (unsigned long index(barriers_8[i * 2]) ; index <= barriers_8[i * 2 + 1] ; ++index)
+                    else
                     {
-                        new_dir_index_8.push_back(temp_dir_index_8[index]);
-                        if (index % 2 == 0)
-                            new_dir_8.push_back(temp_dir_8[index / 2]);
+                        new_dir_index_4.push_back(0);
+                        new_dir_index_4.push_back(0);
+                        new_dir_4.push_back(0);
                     }
+
+                    if (barriers_5[i * 2] != barriers_5[i * 2 + 1])
+                    {
+                        for (unsigned long index(barriers_5[i * 2]) ; index <= barriers_5[i * 2 + 1] ; ++index)
+                        {
+                            new_dir_index_5.push_back(temp_dir_index_5[index]);
+                            if (index % 2 == 0)
+                                new_dir_5.push_back(temp_dir_5[index / 2]);
+                        }
+                        max_collection.push_back(*max_element(new_dir_5.begin(), new_dir_5.end()));
+                        min_collection.push_back(*min_element(new_dir_5.begin(), new_dir_5.end()));
+                    }
+                    else
+                    {
+                        new_dir_index_5.push_back(0);
+                        new_dir_index_5.push_back(0);
+                        new_dir_5.push_back(0);
+                    }
+
+                    if (barriers_6[i * 2] != barriers_6[i * 2 + 1])
+                    {
+                        for (unsigned long index(barriers_6[i * 2]) ; index <= barriers_6[i * 2 + 1] ; ++index)
+                        {
+                            new_dir_index_6.push_back(temp_dir_index_6[index]);
+                            if (index % 2 == 0)
+                                new_dir_6.push_back(temp_dir_6[index / 2]);
+                        }
+                        max_collection.push_back(*max_element(new_dir_6.begin(), new_dir_6.end()) + new_dir_index_6[new_dir_index_6.size() - 1] - new_dir_index_6[new_dir_index_6.size() - 2] - 1);
+                        min_collection.push_back(*min_element(new_dir_6.begin(), new_dir_6.end()));
+                    }
+                    else
+                    {
+                        new_dir_index_6.push_back(0);
+                        new_dir_index_6.push_back(0);
+                        new_dir_6.push_back(0);
+                    }
+
+                    if (barriers_7[i * 2] != barriers_7[i * 2 + 1])
+                    {
+                        for (unsigned long index(barriers_7[i * 2]) ; index <= barriers_7[i * 2 + 1] ; ++index)
+                        {
+                            new_dir_index_7.push_back(temp_dir_index_7[index]);
+                            if (index % 2 == 0)
+                                new_dir_7.push_back(temp_dir_7[index / 2]);
+                        }
+                        max_collection.push_back(*max_element(new_dir_7.begin(), new_dir_7.end()) + new_dir_index_7[new_dir_index_7.size() - 1] - new_dir_index_7[new_dir_index_7.size() - 2] - 1);
+                        min_collection.push_back(*min_element(new_dir_7.begin(), new_dir_7.end()));
+                    }
+                    else
+                    {
+                        new_dir_index_7.push_back(0);
+                        new_dir_index_7.push_back(0);
+                        new_dir_7.push_back(0);
+                    }
+
+                    if (barriers_8[i * 2] != barriers_8[i * 2 + 1])
+                    {
+                        for (unsigned long index(barriers_8[i * 2]) ; index <= barriers_8[i * 2 + 1] ; ++index)
+                        {
+                            new_dir_index_8.push_back(temp_dir_index_8[index]);
+                            if (index % 2 == 0)
+                                new_dir_8.push_back(temp_dir_8[index / 2]);
+                        }
+                        max_collection.push_back(*max_element(new_dir_8.begin(), new_dir_8.end()) + new_dir_index_8[new_dir_index_8.size() - 1] - new_dir_index_8[new_dir_index_8.size() - 2] - 1);
+                        min_collection.push_back(*min_element(new_dir_7.begin(), new_dir_7.end()));
+                    }
+                    else
+                    {
+                        new_dir_index_8.push_back(0);
+                        new_dir_index_8.push_back(0);
+                        new_dir_8.push_back(0);
+                    }
+
                     temp_limits_list.push_back(new_limits);
                     temp_types_list.push_back(new_types);
                     temp_dir_1_list.push_back(new_dir_1);
@@ -606,27 +677,8 @@ namespace honei
                     temp_dir_index_7_list.push_back(new_dir_index_7);
                     temp_dir_index_8_list.push_back(new_dir_index_8);
 
-                    /// \todo max von dir muss jeweils noch + "offset" gerechnet werden
-                    std::vector<unsigned long> max_collection;
-                    max_collection.push_back(*max_element(new_dir_1.begin(), new_dir_1.end()));
-                    max_collection.push_back(*max_element(new_dir_2.begin(), new_dir_2.end()));
-                    max_collection.push_back(*max_element(new_dir_3.begin(), new_dir_3.end()));
-                    max_collection.push_back(*max_element(new_dir_4.begin(), new_dir_4.end()));
-                    max_collection.push_back(*max_element(new_dir_5.begin(), new_dir_5.end()));
-                    max_collection.push_back(*max_element(new_dir_6.begin(), new_dir_6.end()));
-                    max_collection.push_back(*max_element(new_dir_7.begin(), new_dir_7.end()));
-                    max_collection.push_back(*max_element(new_dir_8.begin(), new_dir_8.end()));
                     temp_max_list.push_back(*max_element(max_collection.begin(), max_collection.end()));
 
-                    std::vector<unsigned long> min_collection;
-                    min_collection.push_back(*min_element(new_dir_1.begin(), new_dir_1.end()));
-                    min_collection.push_back(*min_element(new_dir_2.begin(), new_dir_2.end()));
-                    min_collection.push_back(*min_element(new_dir_3.begin(), new_dir_3.end()));
-                    min_collection.push_back(*min_element(new_dir_4.begin(), new_dir_4.end()));
-                    min_collection.push_back(*min_element(new_dir_5.begin(), new_dir_5.end()));
-                    min_collection.push_back(*min_element(new_dir_6.begin(), new_dir_6.end()));
-                    min_collection.push_back(*min_element(new_dir_7.begin(), new_dir_7.end()));
-                    min_collection.push_back(*min_element(new_dir_8.begin(), new_dir_8.end()));
                     temp_min_list.push_back(*min_element(min_collection.begin(), min_collection.end()));
                 }
 
@@ -749,7 +801,7 @@ namespace honei
                     new_data.distribution_x = new DenseVector<DT_>(9ul, DT_(0));
                     new_data.distribution_y = new DenseVector<DT_>(9ul, DT_(0));
 
-                    for (unsigned long j(0) ; j < temp_max_list[i] - temp_min_list[i] + 1 ; ++j)
+                    for (unsigned long j(0) ; j < temp_max_list[i] - temp_min_list[i]  + 1 ; ++j)
                     {
                         (*new_data.h)[j] = (*data.h)[j + info_list[i].offset];
                         (*new_data.u)[j] = (*data.u)[j + info_list[i].offset];

@@ -35,6 +35,7 @@
 #include <honei/la/dense_matrix.hh>
 #include <honei/lbm/grid.hh>
 #include <cmath>
+
 using namespace honei::lbm;
 
 namespace honei

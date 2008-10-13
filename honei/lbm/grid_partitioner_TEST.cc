@@ -62,7 +62,6 @@ class GridPartitionerTest :
             {
                 *i = true;
             }*/
-            std::cout<<obst;
             PackedGridInfo<D2Q9> info;
             PackedGridData<D2Q9, DataType_> data;
 
@@ -72,19 +71,22 @@ class GridPartitionerTest :
             grid.u = new DenseMatrix<DataType_>(dummy.copy());
             grid.v = new DenseMatrix<DataType_>(dummy.copy());
             grid.obstacles = new DenseMatrix<bool>(obst);
+            std::cout<<"Obstacles: "<<obst;
+            std::cout<<"h: "<<*grid.h;
 
             std::vector<PackedGridInfo<D2Q9> > info_list;
             std::vector<PackedGridData<D2Q9, DataType_> > data_list;
 
             GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::pack(grid, info, data);
-            GridPartitioner<D2Q9, DataType_>::decompose(10, info, data, info_list, data_list);
+            GridPartitioner<D2Q9, DataType_>::decompose(2, info, data, info_list, data_list);
             GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list);
             GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);
+            std::cout<<"h: "<<*grid.h;
 
             TEST_CHECK(true);
         }
 };
-//GridPartitionerTest<tags::CPU, float> gptest_float("float");
+GridPartitionerTest<tags::CPU, float> gptest_float("float");
 
 template <typename Tag_, typename DataType_>
 class DirPartitionerTest :
@@ -126,6 +128,8 @@ class DirPartitionerTest :
                 std::cout<<dir[i]<<", ";
             }
             std::cout<<endl;
+            GridPartitioner<D2Q9, DataType_>::partition_directions(dir_index, dir, barrier, 0, 2);
+            GridPartitioner<D2Q9, DataType_>::partition_directions(dir_index, dir, barrier, 2, 8);
             GridPartitioner<D2Q9, DataType_>::partition_directions(dir_index, dir, barrier, 8, 14);
             GridPartitioner<D2Q9, DataType_>::partition_directions(dir_index, dir, barrier, 14, 19);
             std::cout<<"dir index nachher: "<<std::endl;

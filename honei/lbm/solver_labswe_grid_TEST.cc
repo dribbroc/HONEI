@@ -33,6 +33,9 @@ using namespace std;
 using namespace output_types;
 using namespace lbm::lbm_lattice_types;
 
+//#define SOLVER_VERBOSE
+//#define SOLVER_POSTPROCESSING
+
 template <typename Tag_, typename DataType_>
 class SolverLABSWEGridTest :
     public TaggedTest<Tag_>
@@ -171,7 +174,6 @@ class SolverLABSWEGridPartitionerTest :
 #endif
             }
 #ifdef SOLVER_VERBOSE
-
             GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);
             GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
             std::cout << *grid.h << std::endl;
@@ -179,4 +181,4 @@ class SolverLABSWEGridPartitionerTest :
             TEST_CHECK(true);
         }
 };
-//SolverLABSWEGridPartitionerTest<tags::CPU, double> solver_partitioner_test_double("double");
+SolverLABSWEGridPartitionerTest<tags::CPU, double> solver_partitioner_test_double("double");
