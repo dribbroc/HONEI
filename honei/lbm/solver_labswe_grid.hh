@@ -72,8 +72,8 @@ namespace honei
                  *
                  **/
 
-                PackedGridData<D2Q9, ResPrec_> * data;
-                PackedGridInfo<D2Q9> * info;
+                PackedGridData<D2Q9, ResPrec_> * _data;
+                PackedGridInfo<D2Q9> * _info;
 
                 ResPrec_ _relaxation_time, _delta_x, _delta_y, _delta_t;
                 DenseVector<ResPrec_>* _height;
@@ -233,8 +233,8 @@ namespace honei
                     _n_alpha(ResPrec_(6.)),
                     _relaxation_time(ResPrec_(1.5)),
                     _time(0),
-                    data(data),
-                    info(info),
+                    _data(data),
+                    _info(info),
                     _distribution_0(data->f_0),
                     _distribution_1(data->f_1),
                     _distribution_2(data->f_2),
@@ -300,7 +300,7 @@ namespace honei
 
                     ///Compute initial equilibrium distribution:
                     EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::
-                       value(_gravity, _e, *data);
+                       value(_gravity, _e, *_data);
 
                     *_distribution_0 = _eq_distribution_0->copy();
                     *_distribution_1 = _eq_distribution_1->copy();
@@ -326,31 +326,31 @@ namespace honei
                 {
                     //extract velocities out of h from previous timestep:
 
-                    Extraction<Tag_, lbm_applications::LABSWE, quantities::VELOCITY_X>::value(*data);
-                    Extraction<Tag_, lbm_applications::LABSWE, quantities::VELOCITY_Y>::value(*data);
+                    Extraction<Tag_, lbm_applications::LABSWE, quantities::VELOCITY_X>::value(*_data);
+                    Extraction<Tag_, lbm_applications::LABSWE, quantities::VELOCITY_Y>::value(*_data);
 
                     ++_time;
 
                     EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::
-                        value(_gravity, _e, *data);
+                        value(_gravity, _e, *_data);
 
                     CollideStreamGrid<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
-                        value(*info,
-                              *data,
+                        value(*_info,
+                              *_data,
                               _relaxation_time);
 
-                    ForceGrid<Tag_, lbm_applications::LABSWE, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF>::value(*data, *info, ResPrec_(9.81), _delta_x, _delta_y, _delta_t );
+                    ForceGrid<Tag_, lbm_applications::LABSWE, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF>::value(*_data, *_info, ResPrec_(9.81), _delta_x, _delta_y, _delta_t );
 
                     ///Boundary correction:
                     UpdateVelocityDirectionsGrid<D2Q9, NOSLIP>::
-                        value(*data, *info);
+                        value(*_data, *_info);
 
 
                     ///Compute physical quantities:
                     //_extract();
                     //extract height first:
 
-                    Extraction<Tag_, lbm_applications::LABSWE, quantities::HEIGHT>::value(*data);
+                    Extraction<Tag_, lbm_applications::LABSWE, quantities::HEIGHT>::value(*_data);
 
                 };
         };
