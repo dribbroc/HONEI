@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include <honei/lbm/solver_labswe_grid.hh>
+#include <honei/lbm/partial_derivative.hh>
 #include <honei/swe/post_processing.hh>
 #include <honei/swe/volume.hh>
 #include <unittest/unittest.hh>
@@ -53,21 +54,29 @@ class SolverLABSWEGridTest :
             unsigned long timesteps(100);
 
             DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
-            DenseMatrix<DataType_> zeros(g_h, g_w, DataType_(0));
             Cylinder<DataType_> c1(h, DataType_(0.02), 25, 25);
             c1.value();
 
             DenseMatrix<DataType_> u(g_h, g_w, DataType_(0.));
             DenseMatrix<DataType_> v(g_h, g_w, DataType_(0.));
 
+            DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
+
+            Cylinder<DataType_> b1(b, DataType_(0.04), 15, 15);
+            b1.value();
+
+            DenseMatrix<DataType_> b_x(PartialDerivative<Tag_, X, CENTRALDIFF>::value(b , DataType_(1)));
+            DenseMatrix<DataType_> b_y(PartialDerivative<Tag_, Y, CENTRALDIFF>::value(b , DataType_(1)));
+
             Grid<D2Q9, DataType_> grid;
             DenseMatrix<bool> obstacles(g_h, g_w, false);
             grid.obstacles = &obstacles;
             grid.h = &h;
-            grid.b_x = &zeros;
-            grid.b_y = &zeros;
             grid.u = &u;
             grid.v = &v;
+            grid.b_x = &b_x;
+            grid.b_y = &b_y;
+
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
 
@@ -75,13 +84,9 @@ class SolverLABSWEGridTest :
 
             //Other matrices needed by solver:
             /// \todo
-            DenseVector<DataType_> s_x(data.h->size(), DataType_(0.));
-            DenseVector<DataType_> s_y(data.h->size(), DataType_(0.));
-            DenseVector<DataType_> b(data.h->size(), DataType_(0.));
 
-            SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 1., 1., 1., &b);
+            SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 1., 1., 1.);
 
-            solver.set_source(&s_x, &s_y);
             solver.do_preprocessing();
 
             for(unsigned long i(0); i < timesteps; ++i)
@@ -145,20 +150,11 @@ class SolverLABSWEGridPartitionerTest :
 
             //Other matrices needed by solver:
             /// \todo
-            DenseVector<DataType_> s_x_0(data_list[0].h->size(), DataType_(0.));
-            DenseVector<DataType_> s_y_0(data_list[0].h->size(), DataType_(0.));
-            DenseVector<DataType_> b_0(data_list[0].h->size(), DataType_(0.));
 
-            DenseVector<DataType_> s_x_1(data_list[1].h->size(), DataType_(0.));
-            DenseVector<DataType_> s_y_1(data_list[1].h->size(), DataType_(0.));
-            DenseVector<DataType_> b_1(data_list[1].h->size(), DataType_(0.));
+            SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver_0(&data_list[0], &info_list[0], 1., 1., 1.);
 
-            SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver_0(&data_list[0], &info_list[0], 1., 1., 1., &b_0);
+            SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver_1(&data_list[1], &info_list[1], 1., 1., 1.);
 
-            SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver_1(&data_list[1], &info_list[1], 1., 1., 1., &b_1);
-
-            solver_0.set_source(&s_x_0, &s_y_0);
-            solver_1.set_source(&s_x_1, &s_y_1);
             solver_0.do_preprocessing();
             solver_1.do_preprocessing();
 
@@ -185,4 +181,4 @@ class SolverLABSWEGridPartitionerTest :
             TEST_CHECK(true);
         }
 };
-SolverLABSWEGridPartitionerTest<tags::CPU, double> solver_partitioner_test_double("double");
+//SolverLABSWEGridPartitionerTest<tags::CPU, double> solver_partitioner_test_double("double");

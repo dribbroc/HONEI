@@ -77,9 +77,6 @@ namespace honei
 
                 ResPrec_ _relaxation_time, _delta_x, _delta_y, _delta_t;
                 DenseVector<ResPrec_>* _height;
-                DenseVector<ResPrec_>* _bottom;
-                DenseVector<ResPrec_>* _d_bottom_x;
-                DenseVector<ResPrec_>* _d_bottom_y;
                 DenseVector<ResPrec_>* _u;
                 DenseVector<ResPrec_>* _v;
 
@@ -114,9 +111,6 @@ namespace honei
                 DenseVector<ResPrec_>* _eq_distribution_8;
 
                 unsigned long _time;
-
-                DenseVector<ResPrec_>* _source_x;
-                DenseVector<ResPrec_>* _source_y;
 
                 /** Global constants.
                  *
@@ -227,12 +221,11 @@ namespace honei
                 }
 
            public:
-                SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, DenseVector<ResPrec_>* bottom) :
+                SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt) :
                     _delta_x(dx),
                     _delta_y(dy),
                     _delta_t(dt),
                     _height(data->h),
-                    _bottom(bottom),
                     _u(data->u),
                     _v(data->v),
                     _pi(3.14159265),
@@ -280,91 +273,7 @@ namespace honei
 
                 ~SolverLABSWEGrid()
                 {
-                    //                CONTEXT("When destroying LABSWE solver.");
-                }
-
-                void set_distribution(DenseVector<ResPrec_>* dis_0,
-                        DenseVector<ResPrec_>* dis_1,
-                        DenseVector<ResPrec_>* dis_2,
-                        DenseVector<ResPrec_>* dis_3,
-                        DenseVector<ResPrec_>* dis_4,
-                        DenseVector<ResPrec_>* dis_5,
-                        DenseVector<ResPrec_>* dis_6,
-                        DenseVector<ResPrec_>* dis_7,
-                        DenseVector<ResPrec_>* dis_8)
-                {
-                    _distribution_0 = dis_0;
-                    _distribution_1 = dis_1;
-                    _distribution_2 = dis_2;
-                    _distribution_3 = dis_3;
-                    _distribution_4 = dis_4;
-                    _distribution_5 = dis_5;
-                    _distribution_6 = dis_6;
-                    _distribution_7 = dis_7;
-                    _distribution_8 = dis_8;
-                }
-
-                void set_eq_distribution(DenseVector<ResPrec_>* dis_0,
-                        DenseVector<ResPrec_>* dis_1,
-                        DenseVector<ResPrec_>* dis_2,
-                        DenseVector<ResPrec_>* dis_3,
-                        DenseVector<ResPrec_>* dis_4,
-                        DenseVector<ResPrec_>* dis_5,
-                        DenseVector<ResPrec_>* dis_6,
-                        DenseVector<ResPrec_>* dis_7,
-                        DenseVector<ResPrec_>* dis_8)
-                {
-                    _eq_distribution_0 = dis_0;
-                    _eq_distribution_1 = dis_1;
-                    _eq_distribution_2 = dis_2;
-                    _eq_distribution_3 = dis_3;
-                    _eq_distribution_4 = dis_4;
-                    _eq_distribution_5 = dis_5;
-                    _eq_distribution_6 = dis_6;
-                    _eq_distribution_7 = dis_7;
-                    _eq_distribution_8 = dis_8;
-                }
-
-                void set_vectors(DenseVector<ResPrec_>* vec_x,
-                        DenseVector<ResPrec_>* vec_y)
-                {
-                    _distribution_vector_x = vec_x;
-                    _distribution_vector_y = vec_y;
-                }
-
-                void set_source(DenseVector<ResPrec_>* s_x,
-                        DenseVector<ResPrec_>* s_y)
-                {
-                    _source_x = s_x;
-                    _source_y = s_y;
-                }
-
-                void set_temp_distribution(DenseVector<ResPrec_>* dis_0,
-                        DenseVector<ResPrec_>* dis_1,
-                        DenseVector<ResPrec_>* dis_2,
-                        DenseVector<ResPrec_>* dis_3,
-                        DenseVector<ResPrec_>* dis_4,
-                        DenseVector<ResPrec_>* dis_5,
-                        DenseVector<ResPrec_>* dis_6,
-                        DenseVector<ResPrec_>* dis_7,
-                        DenseVector<ResPrec_>* dis_8)
-                {
-                    _temp_distribution_0 = dis_0;
-                    _temp_distribution_1 = dis_1;
-                    _temp_distribution_2 = dis_2;
-                    _temp_distribution_3 = dis_3;
-                    _temp_distribution_4 = dis_4;
-                    _temp_distribution_5 = dis_5;
-                    _temp_distribution_6 = dis_6;
-                    _temp_distribution_7 = dis_7;
-                    _temp_distribution_8 = dis_8;
-                }
-
-                void set_slopes(DenseVector<ResPrec_>* d_x,
-                        DenseVector<ResPrec_>* d_y)
-                {
-                    _d_bottom_x = d_x;
-                    _d_bottom_y = d_y;
+                    CONTEXT("When destroying LABSWE solver.");
                 }
 
                 void do_preprocessing()
@@ -388,35 +297,6 @@ namespace honei
                     (*_distribution_vector_y)[6] = ResPrec_(sqrt(ResPrec_(2.)) * _e * sin(ResPrec_(5.) * _pi / ResPrec_(4.)));
                     (*_distribution_vector_y)[7] = ResPrec_(_e * sin(ResPrec_(3.) * _pi / ResPrec_(2.)));
                     (*_distribution_vector_y)[8] = ResPrec_(sqrt(ResPrec_(2.)) * _e * sin(ResPrec_(7.) * _pi / ResPrec_(4.)));
-
-                    ///Compute bottom slopes in x and y direction TODO
-                    /*for(unsigned long i(0); i < _grid_height; ++i)
-                    {
-                        for(unsigned long j(0); j < _grid_width; ++j)
-                        {
-                            ///BASIC scheme implies: only direct predecessors are involved
-                            if(i > 0 && j > 0)
-                            {
-                                (*_d_bottom_x)(i,j) = ((*_bottom)(i,j) - (*_bottom)(i,j - 1)) / _delta_x;
-                                (*_d_bottom_y)(i,j) = ((*_bottom)(i,j) - (*_bottom)(i - 1,j)) / _delta_y;
-                            }
-                            else if(i == 0 && j == 0)
-                            {
-                                (*_d_bottom_x)(i,j) = 0.;
-                                (*_d_bottom_y)(i,j) = 0.;
-                            }
-                            else if(i == 0)
-                            {
-                                (*_d_bottom_x)(i,j) = ((*_bottom)(i,j) - (*_bottom)(i,j - 1)) / _delta_x;
-                                (*_d_bottom_y)(i,j) = 0;
-                            }
-                            else
-                            {
-                                (*_d_bottom_x)(i,j) = 0;
-                                (*_d_bottom_y)(i,j) = ((*_bottom)(i,j) - (*_bottom)(i - 1,j)) / _delta_y;
-                            }
-                        }
-                    }*/
 
                     ///Compute initial equilibrium distribution:
                     EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::
@@ -453,23 +333,10 @@ namespace honei
 
                     EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::
                         value(_gravity, _e, *data);
-                    ///Compute source terms:
-                    /*Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::
-                        value(*_source_x, *_height, *_d_bottom_x, _gravity);
-                    Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::
-                        value(*_source_y, *_height, *_d_bottom_y, _gravity);
-                    */
-                    /*Source<Tag_, lbm_applications::LABSWE, lbm_source_types::CONSTANT, lbm_source_schemes::BASIC>::
-                    //value(*_source_x, ResPrec_(0.000024));
-                    value(*_source_x, ResPrec_(0.));
-                    Source<Tag_, lbm_applications::LABSWE, lbm_source_types::CONSTANT, lbm_source_schemes::BASIC>::
-                    value(*_source_y, ResPrec_(0.));*/
-                    ///Streaming and collision:
 
                     CollideStreamGrid<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                         value(*info,
                               *data,
-                              *_source_x, *_source_y,
                               _relaxation_time);
 
                     ForceGrid<Tag_, lbm_applications::LABSWE, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF>::value(*data, *info, ResPrec_(9.81), _delta_x, _delta_y, _delta_t );

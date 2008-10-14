@@ -58,18 +58,12 @@ namespace honei
          *
          * \brief Solves the LB equation.
          *
-         * \param s_x Source vector in x direction.
-         * \param s_y Source vector in y direction..
-         * \param (*data.distribution_x) Corresponding distribution vector.
-         * \param (*data.distribution_y) Corresponding distribution vector.
          * \param tau The relaxation time.
          */
         template <typename DT1_, typename DT2_>
         static void value(
                           PackedGridInfo<lbm_lattice_types::D2Q9> & info,
                           PackedGridData<lbm_lattice_types::D2Q9, DT1_> & data,
-                          DenseVector<DT1_> & s_x,
-                          DenseVector<DT1_> & s_y,
                           DT2_ tau)
         {
             CONTEXT("When performing collision and streaming:");
@@ -86,8 +80,7 @@ namespace honei
             {
                 for (unsigned long i((*info.dir_index_1)[begin]), offset(0) ; i < (*info.dir_index_1)[begin + 1] ; ++i, ++offset)
                 {
-                    (*data.f_temp_1)[(*info.dir_1)[half] + offset] = (*data.f_1)[i] - ((*data.f_1)[i] - (*data.f_eq_1)[i])/tau + DT1_(1./6.)
-                        * ((*data.distribution_x)[1] * s_x[i] + (*data.distribution_y)[1] * s_y[i]);
+                    (*data.f_temp_1)[(*info.dir_1)[half] + offset] = (*data.f_1)[i] - ((*data.f_1)[i] - (*data.f_eq_1)[i])/tau;
                 }
             }
 
@@ -95,8 +88,7 @@ namespace honei
             {
                 for (unsigned long i((*info.dir_index_2)[begin]), offset(0) ; i < (*info.dir_index_2)[begin + 1] ; ++i, ++offset)
                 {
-                    (*data.f_temp_2)[(*info.dir_2)[half] + offset] = (*data.f_2)[i] - ((*data.f_2)[i] - (*data.f_eq_2)[i])/tau + DT1_(1./6.)
-                        * ((*data.distribution_x)[2] * s_x[i] + (*data.distribution_y)[2] * s_y[i]);
+                    (*data.f_temp_2)[(*info.dir_2)[half] + offset] = (*data.f_2)[i] - ((*data.f_2)[i] - (*data.f_eq_2)[i])/tau;
                 }
             }
 
@@ -104,8 +96,7 @@ namespace honei
             {
                 for (unsigned long i((*info.dir_index_3)[begin]), offset(0) ; i < (*info.dir_index_3)[begin + 1] ; ++i, ++offset)
                 {
-                    (*data.f_temp_3)[(*info.dir_3)[half] + offset] = (*data.f_3)[i] - ((*data.f_3)[i] - (*data.f_eq_3)[i])/tau + DT1_(1./6.)
-                        * ((*data.distribution_x)[3] * s_x[i] + (*data.distribution_y)[3] * s_y[i]);
+                    (*data.f_temp_3)[(*info.dir_3)[half] + offset] = (*data.f_3)[i] - ((*data.f_3)[i] - (*data.f_eq_3)[i])/tau;
                 }
             }
 
@@ -113,8 +104,7 @@ namespace honei
             {
                 for (unsigned long i((*info.dir_index_4)[begin]), offset(0) ; i < (*info.dir_index_4)[begin + 1] ; ++i, ++offset)
                 {
-                    (*data.f_temp_4)[(*info.dir_4)[half] + offset] = (*data.f_4)[i] - ((*data.f_4)[i] - (*data.f_eq_4)[i])/tau + DT1_(1./6.)
-                        * ((*data.distribution_x)[4] * s_x[i] + (*data.distribution_y)[4] * s_y[i]);
+                    (*data.f_temp_4)[(*info.dir_4)[half] + offset] = (*data.f_4)[i] - ((*data.f_4)[i] - (*data.f_eq_4)[i])/tau;
                 }
             }
 
@@ -122,8 +112,7 @@ namespace honei
             {
                 for (unsigned long i((*info.dir_index_5)[begin]), offset(0) ; i < (*info.dir_index_5)[begin + 1] ; ++i, ++offset)
                 {
-                    (*data.f_temp_5)[(*info.dir_5)[half] + offset] = (*data.f_5)[i] - ((*data.f_5)[i] - (*data.f_eq_5)[i])/tau + DT1_(1./6.)
-                        * ((*data.distribution_x)[5] * s_x[i] + (*data.distribution_y)[5] * s_y[i]);
+                    (*data.f_temp_5)[(*info.dir_5)[half] + offset] = (*data.f_5)[i] - ((*data.f_5)[i] - (*data.f_eq_5)[i])/tau;
                 }
             }
 
@@ -131,8 +120,7 @@ namespace honei
             {
                 for (unsigned long i((*info.dir_index_6)[begin]), offset(0) ; i < (*info.dir_index_6)[begin + 1] ; ++i, ++offset)
                 {
-                    (*data.f_temp_6)[(*info.dir_6)[half] + offset] = (*data.f_6)[i] - ((*data.f_6)[i] - (*data.f_eq_6)[i])/tau + DT1_(1./6.)
-                        * ((*data.distribution_x)[6] * s_x[i] + (*data.distribution_y)[6] * s_y[i]);
+                    (*data.f_temp_6)[(*info.dir_6)[half] + offset] = (*data.f_6)[i] - ((*data.f_6)[i] - (*data.f_eq_6)[i])/tau;
                 }
             }
 
@@ -140,8 +128,7 @@ namespace honei
             {
                 for (unsigned long i((*info.dir_index_7)[begin]), offset(0) ; i < (*info.dir_index_7)[begin + 1] ; ++i, ++offset)
                 {
-                    (*data.f_temp_7)[(*info.dir_7)[half] + offset] = (*data.f_7)[i] - ((*data.f_7)[i] - (*data.f_eq_7)[i])/tau + DT1_(1./6.)
-                        * ((*data.distribution_x)[7] * s_x[i] + (*data.distribution_y)[7] * s_y[i]);
+                    (*data.f_temp_7)[(*info.dir_7)[half] + offset] = (*data.f_7)[i] - ((*data.f_7)[i] - (*data.f_eq_7)[i])/tau;
                 }
             }
 
@@ -149,8 +136,7 @@ namespace honei
             {
                 for (unsigned long i((*info.dir_index_8)[begin]), offset(0) ; i < (*info.dir_index_8)[begin + 1] ; ++i, ++offset)
                 {
-                    (*data.f_temp_8)[(*info.dir_8)[half] + offset] = (*data.f_8)[i] - ((*data.f_8)[i] - (*data.f_eq_8)[i])/tau + DT1_(1./6.)
-                        * ((*data.distribution_x)[8] * s_x[i] + (*data.distribution_y)[8] * s_y[i]);
+                    (*data.f_temp_8)[(*info.dir_8)[half] + offset] = (*data.f_8)[i] - ((*data.f_8)[i] - (*data.f_eq_8)[i])/tau;
                 }
             }
         }

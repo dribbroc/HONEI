@@ -47,12 +47,18 @@ class CollideStreamGridLABSWETest :
             DenseMatrix<DataType_> u(g_h, g_w, DataType_(0.));
             DenseMatrix<DataType_> v(g_h, g_w, DataType_(0.));
 
+            DenseMatrix<DataType_> b_x(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> b_y(g_h, g_w, DataType_(0.));
+
             Grid<D2Q9, DataType_> grid;
             DenseMatrix<bool> obstacles(g_h, g_w, false);
             grid.obstacles = &obstacles;
             grid.h = &h;
             grid.u = &u;
             grid.v = &v;
+            grid.b_x = &b_x;
+            grid.b_y = &b_y;
+
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
 
@@ -60,8 +66,6 @@ class CollideStreamGridLABSWETest :
 
             //Other matrices needed by solver:
             /// \todo
-            DenseVector<DataType_> s_x(data.h->size(), DataType_(0.));
-            DenseVector<DataType_> s_y(data.h->size(), DataType_(0.));
             DenseVector<DataType_> b(data.h->size(), DataType_(0.));
 
             data.distribution_x = new DenseVector<DataType_>(9ul, DataType_(2.));
@@ -91,7 +95,7 @@ class CollideStreamGridLABSWETest :
 
             }
             CollideStreamGrid<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
-                value(info, data, s_x, s_y, tau);
+                value(info, data, tau);
             TEST_CHECK(true);
 
             //std::cout<<GridPacker<D2Q9, NOSLIP, DataType_>::extract_ftemp2(grid, info, data)<<std::endl;

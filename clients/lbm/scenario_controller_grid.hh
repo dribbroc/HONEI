@@ -25,6 +25,7 @@
 #include <honei/swe/volume.hh>
 #include <honei/lbm/solver_labswe_grid.hh>
 #include <honei/lbm/grid_packer.hh>
+#include <honei/lbm/partial_derivative.hh>
 #include <clients/lbm/scenario_controller_base.hh>
 
 template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
@@ -33,9 +34,6 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
     private:
         int scenario_id;
 
-        DenseVector<Prec_>* _s_x;
-        DenseVector<Prec_>* _s_y;
-        DenseVector<Prec_>* _b_v;
 
         Grid<D2Q9, Prec_> _grid;
         PackedGridData<D2Q9, Prec_> _data;
@@ -46,10 +44,12 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
         DenseMatrix<Prec_>* _u;
         DenseMatrix<Prec_>* _v;
         DenseMatrix<Prec_>* _b;
+        DenseMatrix<Prec_>* _b_x;
+        DenseMatrix<Prec_>* _b_y;
 
         DenseMatrix<bool>* _obstacles;
 
-        SolverLABSWEGrid<Tag_, Prec_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>* _solver;
+        SolverLABSWEGrid<Tag_, Prec_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>* _solver;
 
         void _update_scenario()
         {
@@ -58,10 +58,9 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
     public:
         ScenarioControllerGrid(int scen_id) :
             scenario_id(scen_id),
-                _s_x(0),
-                _s_y(0),
                 _b(0),
-                _b_v(0)
+                _b_x(0),
+                _b_y(0)
     {
         srand(time(NULL));
     }
@@ -69,11 +68,10 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
         {
             delete _h;
             delete _b;
-            delete _b_v;
+            delete _b_x;
+            delete _b_y;
             delete _u;
             delete _v;
-            delete _s_x;
-            delete _s_y;
             delete _obstacles;
             delete _solver;
         }
@@ -85,14 +83,12 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
 
         void init(void)
         {
-            delete _s_x;
-            _s_x = 0;
-            delete _s_y;
-            _s_y = 0;
             delete _b;
+            delete _b_x;
+            delete _b_y;
             _b = 0;
-            delete _b_v;
-            _b_v = 0;
+            _b_x = 0;
+            _b_y = 0;
 
             _grid.destroy();
             _data.destroy();
@@ -112,6 +108,8 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         _u = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
                         _v = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
                         _b = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _b_x = new DenseMatrix<Prec_>(PartialDerivative<Tag_, X, CENTRALDIFF>::value(*_b , Prec_(1)));
+                        _b_y = new DenseMatrix<Prec_>(PartialDerivative<Tag_, Y, CENTRALDIFF>::value(*_b , Prec_(1)));
 
                         _obstacles = new DenseMatrix<bool>(_dheight, _dwidth, false);
                         /*Cylinder<bool> c2(*_obstacles, 1, 6, 10);
@@ -126,16 +124,14 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         _grid.h = _h;
                         _grid.u = _u;
                         _grid.v = _v;
+                        _grid.b_x = _b_x;
+                        _grid.b_y = _b_y;
 
                         GridPacker<D2Q9, NOSLIP, Prec_>::pack(_grid, _info, _data);
 
-                        _s_x = new DenseVector<Prec_>(_data.h->size(), Prec_(0.));
-                        _s_y = new DenseVector<Prec_> (_data.h->size(), Prec_(0.));
-                        _b_v = new DenseVector<Prec_> (_data.h->size(), Prec_(0.));
 
-                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 1., 1., 1., _b_v);
+                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 1., 1., 1.);
 
-                        _solver->set_source(_s_x, _s_y);
                         _solver->do_preprocessing();
 
 
@@ -155,6 +151,8 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         _u = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
                         _v = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
                         _b = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _b_x = new DenseMatrix<Prec_>(PartialDerivative<Tag_, X, CENTRALDIFF>::value(*_b , Prec_(1)));
+                        _b_y = new DenseMatrix<Prec_>(PartialDerivative<Tag_, Y, CENTRALDIFF>::value(*_b , Prec_(1)));
 
                         _obstacles = new DenseMatrix<bool>(_dheight, _dwidth, false);
                         /*Cylinder<bool> c2(*_obstacles, 1, 6, 10);
@@ -168,16 +166,14 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         _grid.h = _h;
                         _grid.u = _u;
                         _grid.v = _v;
+                        _grid.b_x = _b_x;
+                        _grid.b_y = _b_y;
 
                         GridPacker<D2Q9, NOSLIP, Prec_>::pack(_grid, _info, _data);
 
-                        _s_x = new DenseVector<Prec_>(_data.h->size(), Prec_(0.));
-                        _s_y = new DenseVector<Prec_> (_data.h->size(), Prec_(0.));
-                        _b_v = new DenseVector<Prec_> (_data.h->size(), Prec_(0.));
 
-                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 1., 1., 1., _b_v);
+                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 1., 1., 1.);
 
-                        _solver->set_source(_s_x, _s_y);
                         _solver->do_preprocessing();
 
 
@@ -201,6 +197,8 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         _v = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
                         _b = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
 
+                        _b_x = new DenseMatrix<Prec_>(PartialDerivative<Tag_, X, CENTRALDIFF>::value(*_b , Prec_(1)));
+                        _b_y = new DenseMatrix<Prec_>(PartialDerivative<Tag_, Y, CENTRALDIFF>::value(*_b , Prec_(1)));
                         _obstacles = new DenseMatrix<bool>(_dheight, _dwidth, false);
                         /*Cylinder<bool> c2(*_obstacles, 1, 6, 10);
                           c2.value();*/
@@ -213,16 +211,64 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         _grid.h = _h;
                         _grid.u = _u;
                         _grid.v = _v;
+                        _grid.b_x = _b_x;
+                        _grid.b_y = _b_y;
 
                         GridPacker<D2Q9, NOSLIP, Prec_>::pack(_grid, _info, _data);
 
-                        _s_x = new DenseVector<Prec_>(_data.h->size(), Prec_(0.));
-                        _s_y = new DenseVector<Prec_> (_data.h->size(), Prec_(0.));
-                        _b_v = new DenseVector<Prec_> (_data.h->size(), Prec_(0.));
 
-                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 1., 1., 1., _b_v);
+                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 1., 1., 1.);
 
-                        _solver->set_source(_s_x, _s_y);
+                        _solver->do_preprocessing();
+
+
+                    }
+                    break;
+
+                case 103:
+                    {
+                        glutSetWindowTitle("Grid: Laminar flow: Circular dam break over uneven bed 50x50");
+                        _dheight = 50;
+                        _dwidth = 50;
+                        _h = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.05));
+                        Cylinder<Prec_> c1(*_h, Prec_(0.06), 25, 25);
+                        c1.value();
+
+                        _u = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _v = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _b = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        srand(time(NULL));
+                        for (unsigned long i(0); i < _dheight; ++i)
+                        {
+                            for (unsigned long j(0); j < _dwidth; ++j)
+                            {
+                                (*_b)( i , j) += (Prec_)(Prec_(rand()) / RAND_MAX * 0.003);
+                            }
+                        }
+                        _b_x = new DenseMatrix<Prec_>(PartialDerivative<Tag_, X, CENTRALDIFF>::value(*_b , Prec_(1)));
+                        _b_y = new DenseMatrix<Prec_>(PartialDerivative<Tag_, Y, CENTRALDIFF>::value(*_b , Prec_(1)));
+
+                        _obstacles = new DenseMatrix<bool>(_dheight, _dwidth, false);
+                        /*Cylinder<bool> c2(*_obstacles, 1, 6, 10);
+                          c2.value();*/
+
+                        /*Cuboid<bool> q2(*_obstacles, 15, 5, 1, 10, 0);
+                        q2.value();
+                        Cuboid<bool> q3(*_obstacles, 40, 5, 1, 10, 30);
+                        q3.value();
+                        */
+                        _grid.obstacles = _obstacles;
+                        _grid.h = _h;
+                        _grid.u = _u;
+                        _grid.v = _v;
+                        _grid.b_x = _b_x;
+                        _grid.b_y = _b_y;
+
+                        GridPacker<D2Q9, NOSLIP, Prec_>::pack(_grid, _info, _data);
+
+
+                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 1., 1., 1.);
+
                         _solver->do_preprocessing();
 
 
@@ -245,7 +291,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
         {
 
             glScalef(1.0f, 1.0f, 100.0f);
-            /*if (show_ground)
+            if (show_ground)
             {
                 if(use_quads)
                 {
@@ -288,7 +334,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                     }
                     glEnd();
                 }
-            }*/
+            }
             if(enable_alpha_blending)
             {
                 glEnable (GL_BLEND);

@@ -60,6 +60,8 @@ class SolverLABSWEGridRegressionTest :
 
             DenseMatrix<DataType_> u(g_h, g_w, DataType_(0.));
             DenseMatrix<DataType_> v(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> b_x(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> b_y(g_h, g_w, DataType_(0.));
 
             Grid<D2Q9, DataType_> grid;
             DenseMatrix<bool> obstacles(g_h, g_w, false);
@@ -67,6 +69,8 @@ class SolverLABSWEGridRegressionTest :
             grid.h = &h;
             grid.u = &u;
             grid.v = &v;
+            grid.b_x = &b_x;
+            grid.b_y = &b_y;
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
 
@@ -74,13 +78,9 @@ class SolverLABSWEGridRegressionTest :
 
             //Other matrices needed by solver:
             /// \todo
-            DenseVector<DataType_> s_x(data.h->size(), DataType_(0.));
-            DenseVector<DataType_> s_y(data.h->size(), DataType_(0.));
-            DenseVector<DataType_> b(data.h->size(), DataType_(0.));
 
-            SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 1., 1., 1., &b);
+            SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 1., 1., 1.);
 
-            solver.set_source(&s_x, &s_y);
             solver.do_preprocessing();
 
             for(unsigned long i(0); i < timesteps; ++i)
