@@ -768,6 +768,8 @@ namespace honei
                     new_data.h = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1);
                     new_data.u = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1);
                     new_data.v = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1);
+                    new_data.b_x = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1);
+                    new_data.b_y = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1);
 
                     new_data.f_0 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
                     new_data.f_1 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
@@ -806,6 +808,8 @@ namespace honei
                         (*new_data.h)[j] = (*data.h)[j + info_list[i].offset];
                         (*new_data.u)[j] = (*data.u)[j + info_list[i].offset];
                         (*new_data.v)[j] = (*data.v)[j + info_list[i].offset];
+                        (*new_data.b_x)[j] = (*data.b_x)[j + info_list[i].offset];
+                        (*new_data.b_y)[j] = (*data.b_y)[j + info_list[i].offset];
                     }
                     data_list.push_back(new_data);
                 }

@@ -133,6 +133,9 @@ class SolverLABSWEGridPartitionerTest :
 
             DenseMatrix<DataType_> u(g_h, g_w, DataType_(0.));
             DenseMatrix<DataType_> v(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> b_x(PartialDerivative<Tag_, X, CENTRALDIFF>::value(b , DataType_(1)));
+            DenseMatrix<DataType_> b_y(PartialDerivative<Tag_, Y, CENTRALDIFF>::value(b , DataType_(1)));
 
             Grid<D2Q9, DataType_> grid;
             DenseMatrix<bool> obstacles(g_h, g_w, false);
@@ -140,6 +143,8 @@ class SolverLABSWEGridPartitionerTest :
             grid.h = &h;
             grid.u = &u;
             grid.v = &v;
+            grid.b_x = &b_x;
+            grid.b_y = &b_y;
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
 
@@ -181,4 +186,4 @@ class SolverLABSWEGridPartitionerTest :
             TEST_CHECK(true);
         }
 };
-//SolverLABSWEGridPartitionerTest<tags::CPU, double> solver_partitioner_test_double("double");
+SolverLABSWEGridPartitionerTest<tags::CPU, double> solver_partitioner_test_double("double");
