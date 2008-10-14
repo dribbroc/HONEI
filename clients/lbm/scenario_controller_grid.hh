@@ -57,23 +57,16 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
 
     public:
         ScenarioControllerGrid(int scen_id) :
-            scenario_id(scen_id),
-                _b(0),
-                _b_x(0),
-                _b_y(0)
+            scenario_id(scen_id)
     {
         srand(time(NULL));
     }
         ~ScenarioControllerGrid()
         {
-            delete _h;
-            delete _b;
-            delete _b_x;
-            delete _b_y;
-            delete _u;
-            delete _v;
-            delete _obstacles;
             delete _solver;
+            _grid.destroy();
+            _data.destroy();
+            _info.destroy();
         }
 
         static int get_precision(int scen_id)
@@ -83,13 +76,6 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
 
         void init(void)
         {
-            delete _b;
-            delete _b_x;
-            delete _b_y;
-            _b = 0;
-            _b_x = 0;
-            _b_y = 0;
-
             _grid.destroy();
             _data.destroy();
             _info.destroy();
