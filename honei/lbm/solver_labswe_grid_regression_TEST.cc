@@ -26,7 +26,6 @@
 #include <honei/math/quadrature.hh>
 #include <honei/lbm/grid.hh>
 #include <honei/lbm/grid_packer.hh>
-#include <honei/lbm/grid_partitioner.hh>
 #include <honei/la/norm.hh>
 #include <honei/la/difference.hh>
 
