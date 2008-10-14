@@ -70,6 +70,8 @@ class GridPackerTest :
             grid.h = new DenseMatrix<DataType_>(dummy.copy());
             grid.u = new DenseMatrix<DataType_>(dummy.copy());
             grid.v = new DenseMatrix<DataType_>(dummy.copy());
+            grid.b_x = new DenseMatrix<DataType_>(dummy.copy());
+            grid.b_y = new DenseMatrix<DataType_>(dummy.copy());
             grid.obstacles = new DenseMatrix<bool>(obst);
 
             GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::pack(grid, info, data);

@@ -74,16 +74,21 @@ class GridPartitionerTest :
             grid.b_y = new DenseMatrix<DataType_>(dummy.copy());
             grid.obstacles = new DenseMatrix<bool>(obst);
             std::cout<<"Obstacles: "<<obst;
-            std::cout<<"h: "<<*grid.h;
 
             std::vector<PackedGridInfo<D2Q9> > info_list;
             std::vector<PackedGridData<D2Q9, DataType_> > data_list;
 
             GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::pack(grid, info, data);
-            GridPartitioner<D2Q9, DataType_>::decompose(2, info, data, info_list, data_list);
+            std::cout<<"limits: "<<*info.limits;
+            GridPartitioner<D2Q9, DataType_>::decompose(10, info, data, info_list, data_list);
             GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list);
             GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);
-            std::cout<<"h: "<<*grid.h;
+
+            for (unsigned long i(0) ; i < info_list.size() ; ++i)
+            {
+                std::cout<<"limits "<<i<<" "<<*info_list[i].limits;
+                std::cout<<"offset "<<i<<" "<<info_list[i].offset<<std::endl;
+            }
 
             TEST_CHECK(true);
         }
