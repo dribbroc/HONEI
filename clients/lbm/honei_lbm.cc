@@ -102,7 +102,7 @@ int main(int argc, char ** argv)
     controller_f = 0;
     controller_d = 0;
 
-    switch_scenario(0);
+    switch_scenario(100);
 
     if (controller_f)
     {
@@ -287,6 +287,15 @@ static void keyboard_s (int key, int x, int y)
             {
                 controller_d->init();
             }
+            break;
+        case GLUT_KEY_F6:
+            rotation_x = -25;
+            rotation_y = 0;
+            rotation_z = 0;
+
+            translation_x = 0;
+            translation_y = 0;
+            translation_z = 0;
             break;
         case GLUT_KEY_F8:
             if (fullscreen)
