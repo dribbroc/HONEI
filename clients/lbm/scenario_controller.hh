@@ -362,11 +362,11 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                         for(unsigned int j = 0; j <_dheight-1; ++j)
                         {
                             glColor4f(0.0, 0.0, 1.0, alpha);
-                            glVertex3d(i,j,((*_height)[j][i] + (*_bottom)[j][i]));
+                            glVertex3d(i,j,((*_height)[j][i] /*+ (*_bottom)[j][i]*/));
                             glColor4f(0.0, 1.0, 1.0, alpha);
-                            glVertex3d(i+1,j,((*_height)[j][i+1] + (*_bottom)[j][i+1]));
-                            glVertex3d(i+1,j+1,((*_height)[j+1][i+1] + (*_bottom)[j+1][i+1]));
-                            glVertex3d(i,j+1,((*_height)[j+1][i] + (*_bottom)[j+1][i]));
+                            glVertex3d(i+1,j,((*_height)[j][i+1] /*+ (*_bottom)[j][i+1]*/));
+                            glVertex3d(i+1,j+1,((*_height)[j+1][i+1] /*+ (*_bottom)[j+1][i+1]*/));
+                            glVertex3d(i,j+1,((*_height)[j+1][i] /*+ (*_bottom)[j+1][i]*/));
                         }
                     }
                     glEnd();

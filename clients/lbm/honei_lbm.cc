@@ -88,6 +88,7 @@ int main(int argc, char ** argv)
     glutAddMenuEntry("Grid: Laminar flow: Circular dam break 50x50 with cuboidal obstacles", 101);
     glutAddMenuEntry("Grid: Laminar flow: Partial dam break 50x50", 102);
     glutAddMenuEntry("Grid: Laminar flow: Circular dam break above uneven bed 50x50", 103);
+    glutAddMenuEntry("Grid: Laminar flow: Circular dam break above uneven bed (b) 50x50", 104);
     GLint menu_id_main = glutCreateMenu(menu_main);
     glutAddMenuEntry("Restart scenario", 0);
     glutAddSubMenu("Rendering", menu_id_rendering);

@@ -260,6 +260,51 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
 
                     }
                     break;
+                case 104:
+                    {
+                        glutSetWindowTitle("Grid: Laminar flow: Circular dam break over uneven bed (b) 50x50");
+                        _dheight = 100;
+                        _dwidth = 200;
+                        _h = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.05));
+                        Cylinder<Prec_> c1(*_h, Prec_(0.03), 35 ,16);
+                        c1.value();
+
+                        _u = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _v = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _b = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+
+                        //build up the hill:
+                        for(unsigned long i(0) ; i < _dheight ; ++i)
+                        {
+                            for(unsigned long j(0) ; j < _dwidth ; ++j)
+                            {
+                                double x(j * 0.01);
+                                double y(i * 0.01);
+                                if(sqrt(y * y + x * x) >= 0.4)
+                                    (*_b)(i , j) = 0.4 * exp((-5.) * (x - 1.) * (x - 1.) - 50. * (y - 0.5) * (y - 0.5));
+                            }
+                        }
+                        _b_x = new DenseMatrix<Prec_>(PartialDerivative<Tag_, X, CENTRALDIFF>::value(*_b , Prec_(1)));
+                        _b_y = new DenseMatrix<Prec_>(PartialDerivative<Tag_, Y, CENTRALDIFF>::value(*_b , Prec_(1)));
+
+                        _obstacles = new DenseMatrix<bool>(_dheight, _dwidth, false);
+                        _grid.obstacles = _obstacles;
+                        _grid.h = _h;
+                        _grid.u = _u;
+                        _grid.v = _v;
+                        _grid.b_x = _b_x;
+                        _grid.b_y = _b_y;
+
+                        GridPacker<D2Q9, NOSLIP, Prec_>::pack(_grid, _info, _data);
+
+
+                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 1., 1., 1.);
+
+                        _solver->do_preprocessing();
+
+
+                    }
+                    break;
             }
 
         }
@@ -339,11 +384,11 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         for(unsigned int j = 0; j <_dheight-1; ++j)
                         {
                             glColor4f(0.0, 0.0, 1.0, alpha);
-                            glVertex3d(i,j,((*_h)(j,i) /*- (*_b)(j, i)*/));
+                            glVertex3d(i,j,((*_h)(j,i) /*+ (*_b)(j, i)*/));
                             glColor4f(0.0, 1.0, 1.0, alpha);
-                            glVertex3d(i+1,j,((*_h)[j][i+1] /*- (*_b)[j][i+1]*/));
-                            glVertex3d(i+1,j+1,((*_h)[j+1][i+1] /*- (*_b)[j+1][i+1]*/));
-                            glVertex3d(i,j+1,((*_h)[j+1][i] /*- (*_b)[j+1][i]*/));
+                            glVertex3d(i+1,j,((*_h)[j][i+1] /*+ (*_b)[j][i+1]*/));
+                            glVertex3d(i+1,j+1,((*_h)[j+1][i+1] /*+ (*_b)[j+1][i+1]*/));
+                            glVertex3d(i,j+1,((*_h)[j+1][i] /*+ (*_b)[j+1][i]*/));
                         }
                     }
                     glEnd();
@@ -373,6 +418,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                     glEnd();
                 }
             }
+
             glBegin(GL_QUADS);
             for(unsigned int i = 0; i < _dwidth-1; ++i)
             {
