@@ -202,7 +202,6 @@ namespace honei
                     std::vector<unsigned long> & barriers, unsigned long start, unsigned long end)
             {
                 CONTEXT("When partitioning one single direction:");
-                /// todo bei abbruch dennoch barriers einbauen
                 if (dir_index.size() == 0 || dir_index[dir_index.size() - 1] < start || dir_index[0] > end)
                 {
                     barriers.push_back(0);
@@ -233,7 +232,7 @@ namespace honei
                     end_index += 2;
                     end_it += 2;
                 }
-                if (dir_index[end_index - 1] > end)
+                if (dir_index[end_index - 1] >= end)
                 {
                     end_index -= 2;
                     end_it -= 2;
@@ -273,7 +272,7 @@ namespace honei
                 {
                     std::vector<unsigned long>::iterator temp_it(end_it);
                     temp_it = dir_index.insert(temp_it, end);
-                    dir_index.insert(temp_it, end);
+                    dir_index.insert(temp_it, end - 1);
 
                     std::vector<unsigned long>::iterator temp_dir(dir.begin());
                     for (unsigned long i(0) ; i < end_index / 2 ; ++i)

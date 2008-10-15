@@ -90,6 +90,18 @@ class SolverLABSWEGridMultiTest :
             solver_0.do_preprocessing();
             solver_1.do_preprocessing();
 
+            /*std::cout<<info.offset;
+            std::cout<<*info.dir_index_1;
+            std::cout<<*info.dir_1;
+            std::cout<<std::endl;
+            std::cout<<info_list[0].offset;
+            std::cout<<*info_list[0].dir_index_1;
+            std::cout<<*info_list[0].dir_1;
+            std::cout<<std::endl;
+            std::cout<<info_list[1].offset;
+            std::cout<<*info_list[1].dir_index_1;
+            std::cout<<*info_list[1].dir_1;*/
+
             for(unsigned long i(0); i < timesteps; ++i)
             {
 #ifdef SOLVER_VERBOSE
