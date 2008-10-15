@@ -339,11 +339,11 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         for(unsigned int j = 0; j <_dheight-1; ++j)
                         {
                             glColor4f(0.0, 0.0, 1.0, alpha);
-                            glVertex3d(i,j,((*_h)(j,i) + (*_b)(j, i)));
+                            glVertex3d(i,j,((*_h)(j,i) /*- (*_b)(j, i)*/));
                             glColor4f(0.0, 1.0, 1.0, alpha);
-                            glVertex3d(i+1,j,((*_h)[j][i+1] + (*_b)[j][i+1]));
-                            glVertex3d(i+1,j+1,((*_h)[j+1][i+1] + (*_b)[j+1][i+1]));
-                            glVertex3d(i,j+1,((*_h)[j+1][i] + (*_b)[j+1][i]));
+                            glVertex3d(i+1,j,((*_h)[j][i+1] /*- (*_b)[j][i+1]*/));
+                            glVertex3d(i+1,j+1,((*_h)[j+1][i+1] /*- (*_b)[j+1][i+1]*/));
+                            glVertex3d(i,j+1,((*_h)[j+1][i] /*- (*_b)[j+1][i]*/));
                         }
                     }
                     glEnd();
