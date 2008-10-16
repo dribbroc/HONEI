@@ -324,15 +324,6 @@ namespace honei
                  **/
                 void solve()
                 {
-                    //extract velocities out of h from previous timestep:
-
-                    Extraction<Tag_, lbm_applications::LABSWE, quantities::VELOCITY_X>::value(*_info, *_data);
-                    Extraction<Tag_, lbm_applications::LABSWE, quantities::VELOCITY_Y>::value(*_info, *_data);
-
-                    ++_time;
-
-                    EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::
-                        value(_gravity, _e, *_info, *_data);
 
                     CollideStreamGrid<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                         value(*_info,
@@ -345,12 +336,15 @@ namespace honei
                     UpdateVelocityDirectionsGrid<D2Q9, NOSLIP>::
                         value(*_data, *_info);
 
-
-                    ///Compute physical quantities:
-                    //_extract();
-                    //extract height first:
-
+                    //extract velocities out of h from previous timestep:
                     Extraction<Tag_, lbm_applications::LABSWE, quantities::HEIGHT>::value(*_info, *_data);
+                    Extraction<Tag_, lbm_applications::LABSWE, quantities::VELOCITY_X>::value(*_info, *_data);
+                    Extraction<Tag_, lbm_applications::LABSWE, quantities::VELOCITY_Y>::value(*_info, *_data);
+
+                    ++_time;
+
+                    EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::
+                        value(_gravity, _e, *_info, *_data);
 
                 };
         };

@@ -51,7 +51,7 @@ class SolverLABSWEGridRegressionTest :
         {
             unsigned long g_h(50);
             unsigned long g_w(50);
-            unsigned long timesteps(100);
+            unsigned long timesteps(200);
 
             DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
             Cylinder<DataType_> c1(h, DataType_(0.02), 25, 25);
@@ -102,7 +102,7 @@ class SolverLABSWEGridRegressionTest :
 
             unsigned long g_h_standard(50);
             unsigned long g_w_standard(50);
-            unsigned long timesteps_standard(100);
+            unsigned long timesteps_standard(200);
 
             DenseMatrix<DataType_> h_standard(g_h_standard, g_w_standard, DataType_(0.05));
             Cylinder<DataType_> c1_standard(h_standard, DataType_(0.02), 25, 25);
@@ -165,10 +165,10 @@ class SolverLABSWEGridRegressionTest :
             solver_standard.set_slopes(&d_x, &d_y);
             solver_standard.do_preprocessing();
 
-            for(unsigned long i(0); i < timesteps; ++i)
+            for(unsigned long i(0); i < timesteps_standard; ++i)
             {
 #ifdef SOLVER_VERBOSE
-                std::cout<<"Timestep: " << i << "/" << timesteps << std::endl;
+                std::cout<<"Timestep: " << i << "/" << timesteps_standard << std::endl;
 #endif
                 solver_standard.solve();
 #ifdef SOLVER_POSTPROCESSING
