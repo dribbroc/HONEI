@@ -61,10 +61,10 @@ namespace honei
              * \param e The ratio of space and time stepping.
              */
             template<typename DT1_, typename DT2_>
-                static void value(DT2_ g, DT2_ e, PackedGridData<D2Q9, DT1_> & data)
+                static void value(DT2_ g, DT2_ e, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data)
                 {
                     CONTEXT("When computing LABSWE local equilibrium distribution function:");
-                    for(unsigned long i(0); i < data.h->size(); ++i)
+                    for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                     {
                         DT1_ u((*data.u)[i]);
                         DT1_ v((*data.v)[i]);

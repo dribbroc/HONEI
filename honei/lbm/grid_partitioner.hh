@@ -711,7 +711,7 @@ namespace honei
                     for (unsigned long j(0) ; j < temp_limits_list[i].size() ; ++j)
                     {
                         (*new_info.limits)[j] = temp_limits_list[i][j] - new_info.offset;
-                        (*new_info.types)[j] = temp_types_list[i][j] - new_info.offset;
+                        (*new_info.types)[j] = temp_types_list[i][j]; //- new_info.offset;
                     }
                     for (unsigned long j(0) ; j < temp_dir_1_list[i].size() ; ++j)
                     {

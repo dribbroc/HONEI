@@ -37,8 +37,12 @@ class EqDisGridLABSWETest :
         virtual void run() const
         {
             PackedGridData<lbm_lattice_types::D2Q9, DataType_> data;
+            PackedGridInfo<lbm_lattice_types::D2Q9> info;
 
             data.h = new DenseVector<DataType_>(1000ul, DataType_(1.23456));
+            info.limits = new DenseVector<unsigned long>(2);
+            (*info.limits)[0] = 0;
+            (*info.limits)[1] = data.h->size();
             data.u = new DenseVector<DataType_>(1000ul, DataType_(1.23456));
             data.v = new DenseVector<DataType_>(1000ul, DataType_(1.23456));
             DataType_ g(9.81);
@@ -55,7 +59,7 @@ class EqDisGridLABSWETest :
             data.f_eq_7 = new DenseVector<DataType_>(1000);
             data.f_eq_8 = new DenseVector<DataType_>(1000);
             EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::
-                value(g, e, data);
+                value(g, e, info, data);
 
             for(unsigned long i(0); i < 1000; ++i)
             {

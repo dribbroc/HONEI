@@ -56,9 +56,9 @@ namespace honei
         {
             public:
                 template<typename DT_>
-                    static void value(PackedGridData<D2Q9, DT_> & data)
+                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
                     {
-                        for(unsigned long i(0) ; i < data.h->size() ; ++i)
+                        for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                         {
                             //set f to t_temp
                             (*data.f_0)[i] = (*data.f_temp_0)[i];
@@ -91,9 +91,9 @@ namespace honei
         {
             public:
                 template<typename DT_>
-                    static void value(PackedGridData<D2Q9, DT_> & data)
+                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
                     {
-                        for(unsigned long i(0) ; i < data.h->size() ; ++i)
+                        for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                         {
                             //accumulate
                             (*data.u)[i] = ((*data.distribution_x)[0] * (*data.f_0)[i] +
@@ -115,9 +115,9 @@ namespace honei
         {
             public:
                 template<typename DT_>
-                    static void value(PackedGridData<D2Q9, DT_> & data)
+                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
                     {
-                        for(unsigned long i(0) ; i < data.h->size() ; ++i)
+                        for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                         {
                             //accumulate
                             (*data.v)[i] = ((*data.distribution_y)[0] * (*data.f_0)[i] +
