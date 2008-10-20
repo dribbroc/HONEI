@@ -102,6 +102,7 @@ class SolverLABSWEGridMultiTest :
             std::cout<<*info_list[1].dir_index_1;
             std::cout<<*info_list[1].dir_1;*/
 
+            GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list);
             for(unsigned long i(0); i < timesteps; ++i)
             {
 #ifdef SOLVER_VERBOSE
