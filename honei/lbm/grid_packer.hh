@@ -66,7 +66,7 @@ namespace honei
                         {
                             ++end;
                         }
-                        dir_index.push_back(limits.at(end));
+                        dir_index.push_back(limits.at(end) + 1);
                         i = end - 1;
                     }
                 }

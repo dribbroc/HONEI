@@ -73,7 +73,7 @@ namespace honei
                 CONTEXT("When computing LABSWE force term:");
                 for (unsigned long begin(0), half(0) ; begin < info.dir_index_1->size() - 1; begin+=2, ++half)
                 {
-                    for (unsigned long i((*info.dir_index_1)[begin]), offset(0) ; i <= (*info.dir_index_1)[begin + 1] ; ++i, ++offset)
+                    for (unsigned long i((*info.dir_index_1)[begin]), offset(0) ; i < (*info.dir_index_1)[begin + 1] ; ++i, ++offset)
                     {
                         (*data.f_temp_1)[i] += d_t / (6 * d_x / d_t) * ((*data.distribution_x)[1]) *
                              (-g * (((*data.h)[(*info.dir_1)[half] + offset]) - ((*data.b_x)[i]))/ DT1_(2.) *
@@ -86,7 +86,7 @@ namespace honei
                 }
                 for (unsigned long begin(0), half(0) ; begin < info.dir_index_2->size() - 1; begin+=2, ++half)
                 {
-                    for (unsigned long i((*info.dir_index_2)[begin]), offset(0) ; i <= (*info.dir_index_2)[begin + 1] ; ++i, ++offset)
+                    for (unsigned long i((*info.dir_index_2)[begin]), offset(0) ; i < (*info.dir_index_2)[begin + 1] ; ++i, ++offset)
                     {
                         (*data.f_temp_2)[i] += d_t / (6 * d_x / d_t) * ((*data.distribution_x)[2]) *
                              (-g * (((*data.h)[(*info.dir_2)[half] + offset]) - ((*data.b_x)[i]))/ DT1_(2.) *
@@ -99,7 +99,7 @@ namespace honei
                 }
                 for (unsigned long begin(0), half(0) ; begin < info.dir_index_3->size() - 1; begin+=2, ++half)
                 {
-                    for (unsigned long i((*info.dir_index_3)[begin]), offset(0) ; i <= (*info.dir_index_3)[begin + 1] ; ++i, ++offset)
+                    for (unsigned long i((*info.dir_index_3)[begin]), offset(0) ; i < (*info.dir_index_3)[begin + 1] ; ++i, ++offset)
                     {
                         (*data.f_temp_3)[i] += d_t / (6 * d_x / d_t) * ((*data.distribution_x)[3]) *
                              (-g * (((*data.h)[(*info.dir_3)[half] + offset]) - ((*data.b_x)[i]))/ DT1_(2.) *
@@ -112,7 +112,7 @@ namespace honei
                 }
                 for (unsigned long begin(0), half(0) ; begin < info.dir_index_4->size() - 1; begin+=2, ++half)
                 {
-                    for (unsigned long i((*info.dir_index_4)[begin]), offset(0) ; i <= (*info.dir_index_4)[begin + 1] ; ++i, ++offset)
+                    for (unsigned long i((*info.dir_index_4)[begin]), offset(0) ; i < (*info.dir_index_4)[begin + 1] ; ++i, ++offset)
                     {
                         (*data.f_temp_4)[i] += d_t / (6 * d_x / d_t) * ((*data.distribution_x)[4]) *
                              (-g * (((*data.h)[(*info.dir_4)[half] + offset]) - ((*data.b_x)[i]))/ DT1_(2.) *
@@ -125,7 +125,7 @@ namespace honei
                 }
                 for (unsigned long begin(0), half(0) ; begin < info.dir_index_5->size() - 1; begin+=2, ++half)
                 {
-                    for (unsigned long i((*info.dir_index_5)[begin]), offset(0) ; i <= (*info.dir_index_5)[begin + 1] ; ++i, ++offset)
+                    for (unsigned long i((*info.dir_index_5)[begin]), offset(0) ; i < (*info.dir_index_5)[begin + 1] ; ++i, ++offset)
                     {
                         (*data.f_temp_5)[i] += d_t / (6 * d_x / d_t) * ((*data.distribution_x)[5]) *
                              (-g * (((*data.h)[(*info.dir_5)[half] + offset]) - ((*data.b_x)[i]))/ DT1_(2.) *
@@ -139,7 +139,7 @@ namespace honei
 
                 for (unsigned long begin(0), half(0) ; begin < info.dir_index_6->size() - 1; begin+=2, ++half)
                 {
-                    for (unsigned long i((*info.dir_index_6)[begin]), offset(0) ; i <= (*info.dir_index_6)[begin + 1] ; ++i, ++offset)
+                    for (unsigned long i((*info.dir_index_6)[begin]), offset(0) ; i < (*info.dir_index_6)[begin + 1] ; ++i, ++offset)
                     {
                         (*data.f_temp_6)[i] += d_t / (6 * d_x / d_t) * ((*data.distribution_x)[6]) *
                              (-g * (((*data.h)[(*info.dir_6)[half] + offset]) - ((*data.b_x)[i]))/ DT1_(2.) *
@@ -153,7 +153,7 @@ namespace honei
 
                 for (unsigned long begin(0), half(0) ; begin < info.dir_index_7->size() - 1; begin+=2, ++half)
                 {
-                    for (unsigned long i((*info.dir_index_7)[begin]), offset(0) ; i <= (*info.dir_index_7)[begin + 1] ; ++i, ++offset)
+                    for (unsigned long i((*info.dir_index_7)[begin]), offset(0) ; i < (*info.dir_index_7)[begin + 1] ; ++i, ++offset)
                     {
                         (*data.f_temp_7)[i] += d_t / (6 * d_x / d_t) * ((*data.distribution_x)[7]) *
                              (-g * (((*data.h)[(*info.dir_7)[half] + offset]) - ((*data.b_x)[i]))/ DT1_(2.) *
@@ -167,7 +167,7 @@ namespace honei
 
                 for (unsigned long begin(0), half(0) ; begin < info.dir_index_8->size() - 1; begin+=2, ++half)
                 {
-                    for (unsigned long i((*info.dir_index_8)[begin]), offset(0) ; i <= (*info.dir_index_8)[begin + 1] ; ++i, ++offset)
+                    for (unsigned long i((*info.dir_index_8)[begin]), offset(0) ; i < (*info.dir_index_8)[begin + 1] ; ++i, ++offset)
                     {
                         (*data.f_temp_8)[i] += d_t / (6 * d_x / d_t) * ((*data.distribution_x)[8]) *
                              (-g * (((*data.h)[(*info.dir_8)[half] + offset]) - ((*data.b_x)[i]))/ DT1_(2.) *
