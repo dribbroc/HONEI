@@ -312,6 +312,11 @@ namespace honei
                     *_distribution_7 = _eq_distribution_7->copy();
                     *_distribution_8 = _eq_distribution_8->copy();
 
+                    CollideStreamGrid<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
+                        value(*_info,
+                              *_data,
+                              _relaxation_time);
+
 #ifdef SOLVER_VERBOSE
                     std::cout << "h after preprocessing:" << std::endl;
                     std::cout << *_height << std::endl;
@@ -324,12 +329,6 @@ namespace honei
                  **/
                 void solve()
                 {
-
-                    CollideStreamGrid<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
-                        value(*_info,
-                              *_data,
-                              _relaxation_time);
-
                     ForceGrid<Tag_, lbm_applications::LABSWE, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF>::value(*_data, *_info, ResPrec_(9.81), _delta_x, _delta_y, _delta_t );
 
                     ///Boundary correction:
@@ -346,6 +345,10 @@ namespace honei
                     EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::
                         value(_gravity, _e, *_info, *_data);
 
+                    CollideStreamGrid<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
+                        value(*_info,
+                              *_data,
+                              _relaxation_time);
                 };
         };
 }
