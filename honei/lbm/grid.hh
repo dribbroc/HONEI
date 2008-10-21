@@ -52,6 +52,10 @@ namespace honei
     {
     };
 
+    template <typename LatticeType_> class PackedGridFringe
+    {
+    };
+
     template <typename DT_> class Grid<D2Q9, DT_>
     {
         public:
@@ -336,6 +340,92 @@ namespace honei
 
             DenseVector<DT_> * distribution_x;
             DenseVector<DT_> * distribution_y;
+    };
+
+    template <> class PackedGridFringe<D2Q9>
+    {
+        public:
+            PackedGridFringe():
+                h_index(0),
+                h_targets(0),
+                dir_index_1(0),
+                dir_targets_1(0),
+                dir_index_2(0),
+                dir_targets_2(0),
+                dir_index_3(0),
+                dir_targets_3(0),
+                dir_index_4(0),
+                dir_targets_4(0),
+                dir_index_5(0),
+                dir_targets_5(0),
+                dir_index_6(0),
+                dir_targets_6(0),
+                dir_index_7(0),
+                dir_targets_7(0),
+                dir_index_8(0),
+                dir_targets_8(0)
+            {
+            }
+
+            void destroy()
+            {
+                delete h_index;
+                delete h_targets;
+                delete dir_index_1;
+                delete dir_targets_1;
+                delete dir_index_2;
+                delete dir_targets_2;
+                delete dir_index_3;
+                delete dir_targets_3;
+                delete dir_index_4;
+                delete dir_targets_4;
+                delete dir_index_5;
+                delete dir_targets_5;
+                delete dir_index_6;
+                delete dir_targets_6;
+                delete dir_index_7;
+                delete dir_targets_7;
+                delete dir_index_8;
+                delete dir_targets_8;
+
+                h_index = 0;
+                h_targets = 0;
+                dir_index_1 = 0;
+                dir_targets_1 = 0;
+                dir_index_2 = 0;
+                dir_targets_2 = 0;
+                dir_index_3 = 0;
+                dir_targets_3 = 0;
+                dir_index_4 = 0;
+                dir_targets_4 = 0;
+                dir_index_5 = 0;
+                dir_targets_5 = 0;
+                dir_index_6 = 0;
+                dir_targets_6 = 0;
+                dir_index_7 = 0;
+                dir_targets_7 = 0;
+                dir_index_8 = 0;
+                dir_targets_8 = 0;
+            }
+
+            DenseVector<unsigned long> * h_index;
+            DenseVector<unsigned long> * h_targets;
+            DenseVector<unsigned long> * dir_index_1;
+            DenseVector<unsigned long> * dir_targets_1;
+            DenseVector<unsigned long> * dir_index_2;
+            DenseVector<unsigned long> * dir_targets_2;
+            DenseVector<unsigned long> * dir_index_3;
+            DenseVector<unsigned long> * dir_targets_3;
+            DenseVector<unsigned long> * dir_index_4;
+            DenseVector<unsigned long> * dir_targets_4;
+            DenseVector<unsigned long> * dir_index_5;
+            DenseVector<unsigned long> * dir_targets_5;
+            DenseVector<unsigned long> * dir_index_6;
+            DenseVector<unsigned long> * dir_targets_6;
+            DenseVector<unsigned long> * dir_index_7;
+            DenseVector<unsigned long> * dir_targets_7;
+            DenseVector<unsigned long> * dir_index_8;
+            DenseVector<unsigned long> * dir_targets_8;
     };
 }
 

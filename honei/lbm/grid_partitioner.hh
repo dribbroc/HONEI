@@ -47,6 +47,188 @@ namespace honei
 
     template <typename DT_> struct GridPartitioner<D2Q9, DT_>
     {
+        private:
+            static void _synch_temp_1(unsigned long patch,
+                    DenseVector<unsigned long> & index_vector, DenseVector<unsigned long> & targets,
+                    std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list)
+            {
+                for (unsigned long i(0) ; i < index_vector.size() - 1 ; i += 2)
+                {
+                    for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
+                    {
+                        unsigned long target(targets[i / 2]);
+                        (*data_list[target].f_temp_1)[j - info_list[target].offset] = (*data_list[patch].f_temp_1)[j - info_list[patch].offset];
+                    }
+                }
+            }
+
+            static void _synch_temp_2(unsigned long patch,
+                    DenseVector<unsigned long> & index_vector, DenseVector<unsigned long> & targets,
+                    std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list)
+            {
+                for (unsigned long i(0) ; i < index_vector.size() - 1 ; i += 2)
+                {
+                    for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
+                    {
+                        unsigned long target(targets[i / 2]);
+                        (*data_list[target].f_temp_2)[j - info_list[target].offset] = (*data_list[patch].f_temp_2)[j - info_list[patch].offset];
+                    }
+                }
+            }
+
+            static void _synch_temp_3(unsigned long patch,
+                    DenseVector<unsigned long> & index_vector, DenseVector<unsigned long> & targets,
+                    std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list)
+            {
+                for (unsigned long i(0) ; i < index_vector.size() - 1 ; i += 2)
+                {
+                    for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
+                    {
+                        unsigned long target(targets[i / 2]);
+                        (*data_list[target].f_temp_3)[j - info_list[target].offset] = (*data_list[patch].f_temp_3)[j - info_list[patch].offset];
+                    }
+                }
+            }
+
+            static void _synch_temp_4(unsigned long patch,
+                    DenseVector<unsigned long> & index_vector, DenseVector<unsigned long> & targets,
+                    std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list)
+            {
+                for (unsigned long i(0) ; i < index_vector.size() - 1 ; i += 2)
+                {
+                    for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
+                    {
+                        unsigned long target(targets[i / 2]);
+                        (*data_list[target].f_temp_4)[j - info_list[target].offset] = (*data_list[patch].f_temp_4)[j - info_list[patch].offset];
+                    }
+                }
+            }
+
+            static void _synch_temp_5(unsigned long patch,
+                    DenseVector<unsigned long> & index_vector, DenseVector<unsigned long> & targets,
+                    std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list)
+            {
+                for (unsigned long i(0) ; i < index_vector.size() - 1 ; i += 2)
+                {
+                    for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
+                    {
+                        unsigned long target(targets[i / 2]);
+                        (*data_list[target].f_temp_5)[j - info_list[target].offset] = (*data_list[patch].f_temp_5)[j - info_list[patch].offset];
+                    }
+                }
+            }
+
+            static void _synch_temp_6(unsigned long patch,
+                    DenseVector<unsigned long> & index_vector, DenseVector<unsigned long> & targets,
+                    std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list)
+            {
+                for (unsigned long i(0) ; i < index_vector.size() - 1 ; i += 2)
+                {
+                    for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
+                    {
+                        unsigned long target(targets[i / 2]);
+                        (*data_list[target].f_temp_6)[j - info_list[target].offset] = (*data_list[patch].f_temp_6)[j - info_list[patch].offset];
+                    }
+                }
+            }
+
+            static void _synch_temp_7(unsigned long patch,
+                    DenseVector<unsigned long> & index_vector, DenseVector<unsigned long> & targets,
+                    std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list)
+            {
+                for (unsigned long i(0) ; i < index_vector.size() - 1 ; i += 2)
+                {
+                    for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
+                    {
+                        unsigned long target(targets[i / 2]);
+                        (*data_list[target].f_temp_7)[j - info_list[target].offset] = (*data_list[patch].f_temp_7)[j - info_list[patch].offset];
+                    }
+                }
+            }
+
+            static void _synch_temp_8(unsigned long patch,
+                    DenseVector<unsigned long> & index_vector, DenseVector<unsigned long> & targets,
+                    std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list)
+            {
+                for (unsigned long i(0) ; i < index_vector.size() - 1 ; i += 2)
+                {
+                    for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
+                    {
+                        unsigned long target(targets[i / 2]);
+                        (*data_list[target].f_temp_8)[j - info_list[target].offset] = (*data_list[patch].f_temp_8)[j - info_list[patch].offset];
+                    }
+                }
+            }
+
+            static void _create_dir_fringe(unsigned long patch, DenseVector<unsigned long> & dir_index,
+                    DenseVector<unsigned long> & dir,
+                    std::vector<PackedGridInfo<D2Q9> > & info_list,
+                    DenseVector<unsigned long> * &new_dir_index, DenseVector<unsigned long> * &new_dir_targets)
+            {
+                std::vector<unsigned long> temp_dir_index;
+                std::vector<unsigned long> temp_dir_targets;
+
+                for (unsigned long index(0) ; index < dir.size() ; ++index)
+                {
+                    unsigned long start(dir_index[2 * index]);
+                    unsigned long end(dir_index[2 * index + 1]);
+                    for (unsigned long offset(0) ; offset < end - start ; ++offset)
+                    {
+                        // elements before our own data
+                        if (dir[index] + offset < (*info_list[patch].limits)[0])
+                        {
+                            temp_dir_targets.push_back(patch - 1);
+                            temp_dir_index.push_back(dir[index] + info_list[patch].offset + offset);
+                            temp_dir_index.push_back(dir[index] + info_list[patch].offset + 1 + offset);
+                        }
+                        // elements behind our own data
+                        if (dir[index] + offset >= (*info_list[patch].limits)[info_list[patch].limits->size() - 1]
+                                /// \todo remove this when packer generates valid dir vectors
+                                && patch + 1 < info_list.size())
+                        {
+                            temp_dir_targets.push_back(patch + 1);
+                            temp_dir_index.push_back(dir[index] + info_list[patch].offset + offset);
+                            temp_dir_index.push_back(dir[index] + info_list[patch].offset + 1 + offset);
+                        }
+                    }
+                }
+
+                if (temp_dir_targets.size() == 0)
+                {
+                    temp_dir_targets.push_back(0);
+                    temp_dir_index.push_back(0);
+                    temp_dir_index.push_back(0);
+                }
+
+                // postpack
+                std::vector<unsigned long> packed_index;
+                std::vector<unsigned long> packed_targets;
+                unsigned long start(0);
+                while (start < temp_dir_index.size())
+                {
+                    packed_index.push_back(temp_dir_index[start]);
+                    packed_targets.push_back(temp_dir_targets[start / 2]);
+                    while (start + 2 < temp_dir_index.size() && temp_dir_index[start + 2] == temp_dir_index[start] + 1)
+                    {
+                        start += 2;
+                    }
+                    packed_index.push_back(temp_dir_index[start + 1]);
+                    start += 2;
+                }
+
+                // Fill the real vectors
+                new_dir_index = new DenseVector<unsigned long>(packed_index.size());
+                for (unsigned long i(0) ; i < packed_index.size() ; ++i)
+                {
+                    (*new_dir_index)[i] = packed_index[i];
+                }
+                new_dir_targets = new DenseVector<unsigned long>(packed_targets.size());
+                for (unsigned long i(0) ; i < packed_targets.size() ; ++i)
+                {
+                    (*new_dir_targets)[i] = packed_targets[i];
+                }
+            }
+
         public:
 
             static void compose(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
@@ -64,113 +246,22 @@ namespace honei
             }
 
             static void synch(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
-                    std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list)
+                    std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list,
+                    std::vector<PackedGridFringe<D2Q9> > & fringe_list)
             {
-                for(unsigned long i(0); i < data.h->size(); ++i)
+                for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
                 {
-                    unsigned long index(0);
-                    while(info_list[index].offset + data_list[index].h->size() <= i)
-                    {
-                        ++index;
-                    }
-                    unsigned long start(index);
-                    while(index < info_list.size() && info_list[index].offset <= i)
-                    {
-                        ++index;
-                    }
-                    unsigned long end(index);
-
-                    DT_ values_f_0[end - start];
-                    DT_ values_f_1[end - start];
-                    DT_ values_f_2[end - start];
-                    DT_ values_f_3[end - start];
-                    DT_ values_f_4[end - start];
-                    DT_ values_f_5[end - start];
-                    DT_ values_f_6[end - start];
-                    DT_ values_f_7[end - start];
-                    DT_ values_f_8[end - start];
-                    DT_ values_f_9[end - start];
-
-                    DT_ values_f_eq_0[end - start];
-                    DT_ values_f_eq_1[end - start];
-                    DT_ values_f_eq_2[end - start];
-                    DT_ values_f_eq_3[end - start];
-                    DT_ values_f_eq_4[end - start];
-                    DT_ values_f_eq_5[end - start];
-                    DT_ values_f_eq_6[end - start];
-                    DT_ values_f_eq_7[end - start];
-                    DT_ values_f_eq_8[end - start];
-
-                    for(unsigned long l(start); l < end; ++l)
-                    {
-                        values_f_0[l - start] = (*data_list[l].f_0)[i - (info_list[l].offset)];
-                        values_f_1[l - start] = (*data_list[l].f_1)[i - (info_list[l].offset)];
-                        values_f_2[l - start] = (*data_list[l].f_2)[i - (info_list[l].offset)];
-                        values_f_3[l - start] = (*data_list[l].f_3)[i - (info_list[l].offset)];
-                        values_f_4[l - start] = (*data_list[l].f_4)[i - (info_list[l].offset)];
-                        values_f_5[l - start] = (*data_list[l].f_5)[i - (info_list[l].offset)];
-                        values_f_6[l - start] = (*data_list[l].f_6)[i - (info_list[l].offset)];
-                        values_f_7[l - start] = (*data_list[l].f_7)[i - (info_list[l].offset)];
-                        values_f_8[l - start] = (*data_list[l].f_8)[i - (info_list[l].offset)];
-
-                        values_f_eq_0[l - start] = (*data_list[l].f_eq_0)[i - (info_list[l].offset)];
-                        values_f_eq_1[l - start] = (*data_list[l].f_eq_1)[i - (info_list[l].offset)];
-                        values_f_eq_2[l - start] = (*data_list[l].f_eq_2)[i - (info_list[l].offset)];
-                        values_f_eq_3[l - start] = (*data_list[l].f_eq_3)[i - (info_list[l].offset)];
-                        values_f_eq_4[l - start] = (*data_list[l].f_eq_4)[i - (info_list[l].offset)];
-                        values_f_eq_5[l - start] = (*data_list[l].f_eq_5)[i - (info_list[l].offset)];
-                        values_f_eq_6[l - start] = (*data_list[l].f_eq_6)[i - (info_list[l].offset)];
-                        values_f_eq_7[l - start] = (*data_list[l].f_eq_7)[i - (info_list[l].offset)];
-                        values_f_eq_8[l - start] = (*data_list[l].f_eq_8)[i - (info_list[l].offset)];
-                    }
-
-                    for(unsigned long k(start); k < end; ++k)
-                    {
-                        (*data_list[k].f_0)[i - (info_list[k].offset)] = values_f_0[0];
-                        (*data_list[k].f_1)[i - (info_list[k].offset)] = values_f_1[0];
-                        (*data_list[k].f_2)[i - (info_list[k].offset)] = values_f_2[0];
-                        (*data_list[k].f_3)[i - (info_list[k].offset)] = values_f_3[0];
-                        (*data_list[k].f_4)[i - (info_list[k].offset)] = values_f_4[0];
-                        (*data_list[k].f_5)[i - (info_list[k].offset)] = values_f_5[0];
-                        (*data_list[k].f_6)[i - (info_list[k].offset)] = values_f_6[0];
-                        (*data_list[k].f_7)[i - (info_list[k].offset)] = values_f_7[0];
-                        (*data_list[k].f_8)[i - (info_list[k].offset)] = values_f_8[0];
-
-                        (*data_list[k].f_eq_0)[i - (info_list[k].offset)] = values_f_eq_0[0];
-                        (*data_list[k].f_eq_1)[i - (info_list[k].offset)] = values_f_eq_1[0];
-                        (*data_list[k].f_eq_2)[i - (info_list[k].offset)] = values_f_eq_2[0];
-                        (*data_list[k].f_eq_3)[i - (info_list[k].offset)] = values_f_eq_3[0];
-                        (*data_list[k].f_eq_4)[i - (info_list[k].offset)] = values_f_eq_4[0];
-                        (*data_list[k].f_eq_5)[i - (info_list[k].offset)] = values_f_eq_5[0];
-                        (*data_list[k].f_eq_6)[i - (info_list[k].offset)] = values_f_eq_6[0];
-                        (*data_list[k].f_eq_7)[i - (info_list[k].offset)] = values_f_eq_7[0];
-                        (*data_list[k].f_eq_8)[i - (info_list[k].offset)] = values_f_eq_8[0];
-
-                        for(unsigned long j(1); j < end - start; ++j)
-                        {
-                            (*data_list[k].f_0)[i - (info_list[k].offset)] += values_f_0[j];
-                            (*data_list[k].f_1)[i - (info_list[k].offset)] += values_f_1[j];
-                            (*data_list[k].f_2)[i - (info_list[k].offset)] += values_f_2[j];
-                            (*data_list[k].f_3)[i - (info_list[k].offset)] += values_f_3[j];
-                            (*data_list[k].f_4)[i - (info_list[k].offset)] += values_f_4[j];
-                            (*data_list[k].f_5)[i - (info_list[k].offset)] += values_f_5[j];
-                            (*data_list[k].f_6)[i - (info_list[k].offset)] += values_f_6[j];
-                            (*data_list[k].f_7)[i - (info_list[k].offset)] += values_f_7[j];
-                            (*data_list[k].f_8)[i - (info_list[k].offset)] += values_f_8[j];
-
-                            (*data_list[k].f_eq_0)[i - (info_list[k].offset)] += values_f_eq_0[j];
-                            (*data_list[k].f_eq_1)[i - (info_list[k].offset)] += values_f_eq_1[j];
-                            (*data_list[k].f_eq_2)[i - (info_list[k].offset)] += values_f_eq_2[j];
-                            (*data_list[k].f_eq_3)[i - (info_list[k].offset)] += values_f_eq_3[j];
-                            (*data_list[k].f_eq_4)[i - (info_list[k].offset)] += values_f_eq_4[j];
-                            (*data_list[k].f_eq_5)[i - (info_list[k].offset)] += values_f_eq_5[j];
-                            (*data_list[k].f_eq_6)[i - (info_list[k].offset)] += values_f_eq_6[j];
-                            (*data_list[k].f_eq_7)[i - (info_list[k].offset)] += values_f_eq_7[j];
-                            (*data_list[k].f_eq_8)[i - (info_list[k].offset)] += values_f_eq_8[j];
-                        }
-                    }
+                    _synch_temp_1(index, *(fringe_list[index].dir_index_1), *(fringe_list[index].dir_targets_1), info_list, data_list);
+                    _synch_temp_2(index, *(fringe_list[index].dir_index_2), *(fringe_list[index].dir_targets_2), info_list, data_list);
+                    _synch_temp_3(index, *(fringe_list[index].dir_index_3), *(fringe_list[index].dir_targets_3), info_list, data_list);
+                    _synch_temp_4(index, *(fringe_list[index].dir_index_4), *(fringe_list[index].dir_targets_4), info_list, data_list);
+                    _synch_temp_5(index, *(fringe_list[index].dir_index_5), *(fringe_list[index].dir_targets_5), info_list, data_list);
+                    _synch_temp_6(index, *(fringe_list[index].dir_index_6), *(fringe_list[index].dir_targets_6), info_list, data_list);
+                    _synch_temp_7(index, *(fringe_list[index].dir_index_7), *(fringe_list[index].dir_targets_7), info_list, data_list);
+                    _synch_temp_8(index, *(fringe_list[index].dir_index_8), *(fringe_list[index].dir_targets_8), info_list, data_list);
                 }
 
+                /// \todo h auch per fringe synchen
                 for(unsigned long i(0); i < data.h->size(); ++i)
                 {
                     unsigned long index(0);
@@ -292,7 +383,8 @@ namespace honei
             }
 
             static void decompose(unsigned long parts, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
-                    std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list)
+                    std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list,
+                    std::vector<PackedGridFringe<D2Q9> > & fringe_list)
             {
                 CONTEXT("When creating grid partitions:");
                 std::vector<unsigned long> temp_limits;
@@ -395,45 +487,18 @@ namespace honei
                     //std::cout<<"end: "<<end<<" "<<*end_index<<std::endl;
                     if (*end_index != end)
                     {
-                        std::vector<unsigned long>::iterator one_before(end_index);
-                        --one_before;
                         // Insert dummy nodes
                         temp_limits.insert(end_index, end);
 
-                        unsigned long one_before_offset(end - *one_before);
                         unsigned long i(0);
                         std::vector<unsigned long>::iterator it_types(temp_types.begin());
-                        /*std::vector<unsigned long>::iterator it_dir_1(temp_dir_1.begin());
-                        std::vector<unsigned long>::iterator it_dir_2(temp_dir_2.begin());
-                        std::vector<unsigned long>::iterator it_dir_3(temp_dir_3.begin());
-                        std::vector<unsigned long>::iterator it_dir_4(temp_dir_4.begin());
-                        std::vector<unsigned long>::iterator it_dir_5(temp_dir_5.begin());
-                        std::vector<unsigned long>::iterator it_dir_6(temp_dir_6.begin());
-                        std::vector<unsigned long>::iterator it_dir_7(temp_dir_7.begin());
-                        std::vector<unsigned long>::iterator it_dir_8(temp_dir_8.begin());*/
                         while (i != temp_limits.size() - 1 && temp_limits[i] != end)
                         {
                             ++i;
                             ++it_types;
-                            /*++it_dir_1;
-                            ++it_dir_2;
-                            ++it_dir_3;
-                            ++it_dir_4;
-                            ++it_dir_5;
-                            ++it_dir_6;
-                            ++it_dir_7;
-                            ++it_dir_8;*/
                         }
                         barriers.push_back(i);
                         temp_types.insert(it_types, *(--it_types));
-                        /*temp_dir_1.insert(++it_dir_1, *(--it_dir_1) + one_before_offset);
-                        temp_dir_2.insert(++it_dir_2, *(--it_dir_2) + one_before_offset);
-                        temp_dir_3.insert(++it_dir_3, *(--it_dir_3) + one_before_offset);
-                        temp_dir_4.insert(++it_dir_4, *(--it_dir_4) + one_before_offset);
-                        temp_dir_5.insert(++it_dir_5, *(--it_dir_5) + one_before_offset);
-                        temp_dir_6.insert(++it_dir_6, *(--it_dir_6) + one_before_offset);
-                        temp_dir_7.insert(++it_dir_7, *(--it_dir_7) + one_before_offset);
-                        temp_dir_8.insert(++it_dir_8, *(--it_dir_8) + one_before_offset);*/
                     }
                     else
                     {
@@ -500,7 +565,6 @@ namespace honei
                     std::vector<unsigned long> new_dir_index_7;
                     std::vector<unsigned long> new_dir_index_8;
 
-                    /// \todo max von dir muss jeweils noch + "offset" gerechnet werden
                     std::vector<unsigned long> max_collection;
                     std::vector<unsigned long> min_collection;
 
@@ -508,14 +572,6 @@ namespace honei
                     {
                         new_limits.push_back(temp_limits[index]);
                         new_types.push_back(temp_types[index]);
-                        /*new_dir_1.push_back(temp_dir_1[index]);
-                        new_dir_2.push_back(temp_dir_2[index]);
-                        new_dir_3.push_back(temp_dir_3[index]);
-                        new_dir_4.push_back(temp_dir_4[index]);
-                        new_dir_5.push_back(temp_dir_5[index]);
-                        new_dir_6.push_back(temp_dir_6[index]);
-                        new_dir_7.push_back(temp_dir_7[index]);
-                        new_dir_8.push_back(temp_dir_8[index]);*/
                     }
                     if (barriers_1[i * 2] != barriers_1[i * 2 + 1])
                     {
@@ -711,7 +767,7 @@ namespace honei
                     for (unsigned long j(0) ; j < temp_limits_list[i].size() ; ++j)
                     {
                         (*new_info.limits)[j] = temp_limits_list[i][j] - new_info.offset;
-                        (*new_info.types)[j] = temp_types_list[i][j]; //- new_info.offset;
+                        (*new_info.types)[j] = temp_types_list[i][j];
                     }
                     for (unsigned long j(0) ; j < temp_dir_1_list[i].size() ; ++j)
                     {
@@ -767,7 +823,7 @@ namespace honei
                 // Fill the real data vectors
                 for (unsigned long i(0) ; i < info_list.size() ; ++i)
                 {
-                    PackedGridData<D2Q9,DT_> new_data;
+                    PackedGridData<D2Q9, DT_> new_data;
                     new_data.h = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1);
                     new_data.u = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1);
                     new_data.v = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1);
@@ -815,6 +871,30 @@ namespace honei
                         (*new_data.b_y)[j] = (*data.b_y)[j + info_list[i].offset];
                     }
                     data_list.push_back(new_data);
+                }
+
+                // Compute fringes
+                for (unsigned long i(0) ; i < info_list.size() ; ++i)
+                {
+                    PackedGridFringe<D2Q9> new_fringe;
+
+                    _create_dir_fringe(i, *info_list[i].dir_index_1, *info_list[i].dir_1, info_list,
+                            new_fringe.dir_index_1, new_fringe.dir_targets_1);
+                    _create_dir_fringe(i, *info_list[i].dir_index_2, *info_list[i].dir_2, info_list,
+                            new_fringe.dir_index_2, new_fringe.dir_targets_2);
+                    _create_dir_fringe(i, *info_list[i].dir_index_3, *info_list[i].dir_3, info_list,
+                            new_fringe.dir_index_3, new_fringe.dir_targets_3);
+                    _create_dir_fringe(i, *info_list[i].dir_index_4, *info_list[i].dir_4, info_list,
+                            new_fringe.dir_index_4, new_fringe.dir_targets_4);
+                    _create_dir_fringe(i, *info_list[i].dir_index_5, *info_list[i].dir_5, info_list,
+                            new_fringe.dir_index_5, new_fringe.dir_targets_5);
+                    _create_dir_fringe(i, *info_list[i].dir_index_6, *info_list[i].dir_6, info_list,
+                            new_fringe.dir_index_6, new_fringe.dir_targets_6);
+                    _create_dir_fringe(i, *info_list[i].dir_index_7, *info_list[i].dir_7, info_list,
+                            new_fringe.dir_index_7, new_fringe.dir_targets_7);
+                    _create_dir_fringe(i, *info_list[i].dir_index_8, *info_list[i].dir_8, info_list,
+                            new_fringe.dir_index_8, new_fringe.dir_targets_8);
+                    fringe_list.push_back(new_fringe);
                 }
 
                 /*std::cout<<std::endl;

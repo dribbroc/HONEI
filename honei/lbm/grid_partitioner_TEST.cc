@@ -77,19 +77,26 @@ class GridPartitionerTest :
 
             std::vector<PackedGridInfo<D2Q9> > info_list;
             std::vector<PackedGridData<D2Q9, DataType_> > data_list;
+            std::vector<PackedGridFringe<D2Q9> > fringe_list;
 
             GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::pack(grid, info, data);
             std::cout<<"global dir index 1: "<<*info.dir_index_1;
-            std::cout<<"global dir  1: "<<*info.dir_1<<std::endl;
-            GridPartitioner<D2Q9, DataType_>::decompose(2, info, data, info_list, data_list);
-            GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list);
+            std::cout<<"global dir 1: "<<*info.dir_1;
+            std::cout<<"global limits: "<<*info.limits;
+            std::cout<<"global h size: "<<data.h->size()<<std::endl;
+            GridPartitioner<D2Q9, DataType_>::decompose(4, info, data, info_list, data_list, fringe_list);
+            GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list, fringe_list);
             GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);
 
             for (unsigned long i(0) ; i < info_list.size() ; ++i)
             {
                 std::cout<<info_list[i].offset<<std::endl;
-                std::cout<<"dir_index_1 "<<i<<" "<<*info_list[i].dir_index_1;
-                std::cout<<"dir_1 "<<i<<" "<<*info_list[i].dir_1<<std::endl;
+                std::cout<<"dir_index_1 "<<*info_list[i].dir_index_1;
+                std::cout<<"dir_1 "<<*info_list[i].dir_1;
+                std::cout<<"fringe dir index 1 "<<*fringe_list[i].dir_index_1;
+                std::cout<<"fringe dir targets 1 "<<*fringe_list[i].dir_targets_1;
+                std::cout<<"limits "<<*info_list[i].limits;
+                std::cout<<"h size: "<<data_list[i].h->size()<<std::endl;
             }
 
             TEST_CHECK(true);
@@ -162,5 +169,4 @@ class DirPartitionerTest :
             TEST_CHECK(true);
         }
 };
-DirPartitionerTest<tags::CPU, float> dptest_float("float");
-
+//DirPartitionerTest<tags::CPU, float> dptest_float("float");

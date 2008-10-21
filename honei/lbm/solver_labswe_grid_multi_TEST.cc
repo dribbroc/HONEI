@@ -78,7 +78,8 @@ class SolverLABSWEGridMultiTest :
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
             std::vector<PackedGridInfo<D2Q9> > info_list;
             std::vector<PackedGridData<D2Q9, DataType_> > data_list;
-            GridPartitioner<D2Q9, DataType_>::decompose(2, info, data, info_list, data_list);
+            std::vector<PackedGridFringe<D2Q9> > fringe_list;
+            GridPartitioner<D2Q9, DataType_>::decompose(3, info, data, info_list, data_list, fringe_list);
 
             //Other matrices needed by solver:
             /// \todo
@@ -87,8 +88,11 @@ class SolverLABSWEGridMultiTest :
 
             SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver_1(&data_list[1], &info_list[1], 1., 1., 1.);
 
+            SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver_2(&data_list[2], &info_list[2], 1., 1., 1.);
+
             solver_0.do_preprocessing();
             solver_1.do_preprocessing();
+            solver_2.do_preprocessing();
 
             /*std::cout<<info.offset;
             std::cout<<*info.dir_index_1;
@@ -102,7 +106,7 @@ class SolverLABSWEGridMultiTest :
             std::cout<<*info_list[1].dir_index_1;
             std::cout<<*info_list[1].dir_1;*/
 
-            GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list);
+            GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list, fringe_list);
             for(unsigned long i(0); i < timesteps; ++i)
             {
 #ifdef SOLVER_VERBOSE
@@ -110,8 +114,9 @@ class SolverLABSWEGridMultiTest :
 #endif
                 solver_0.solve();
                 solver_1.solve();
+                solver_2.solve();
 
-                GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list);
+                GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list, fringe_list);
 #ifdef SOLVER_POSTPROCESSING
                 GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
