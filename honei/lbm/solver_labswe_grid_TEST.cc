@@ -108,3 +108,4 @@ class SolverLABSWEGridTest :
 
 };
 SolverLABSWEGridTest<tags::CPU, double> solver_test_double("double");
+SolverLABSWEGridTest<tags::CPU::MultiCore, double> mc_solver_test_double("double");

@@ -89,6 +89,11 @@ int main(int argc, char ** argv)
     glutAddMenuEntry("Grid: Laminar flow: Partial dam break 50x50", 102);
     glutAddMenuEntry("Grid: Laminar flow: Circular dam break above uneven bed 50x50", 103);
     glutAddMenuEntry("Grid: Laminar flow: Circular dam break above uneven bed (b) 50x50", 104);
+    glutAddMenuEntry("MC Grid: Laminar flow: Circular dam break 50x50 ", 1100);
+    glutAddMenuEntry("MC Grid: Laminar flow: Circular dam break 50x50 with cuboidal obstacles", 1101);
+    glutAddMenuEntry("MC Grid: Laminar flow: Partial dam break 50x50", 1102);
+    glutAddMenuEntry("MC Grid: Laminar flow: Circular dam break above uneven bed 50x50", 1103);
+    glutAddMenuEntry("MC Grid: Laminar flow: Circular dam break above uneven bed (b) 50x50", 1104);
     GLint menu_id_main = glutCreateMenu(menu_main);
     glutAddMenuEntry("Restart scenario", 0);
     glutAddSubMenu("Rendering", menu_id_rendering);
@@ -162,6 +167,25 @@ void switch_scenario(int id)
             delete controller_d;
             controller_f = 0;
             controller_d = new ScenarioControllerGrid<tags::CPU, double> (id);
+            controller_d->init();
+        }
+    }
+    else if (id < 1200)
+    {
+        if (ScenarioControllerGrid<tags::CPU, float>::get_precision(id) == 0)
+        {
+            delete controller_f;
+            delete controller_d;
+            controller_d = 0;
+            controller_f = new ScenarioControllerGrid<tags::CPU::MultiCore, float> (id - 1000);
+            controller_f->init();
+        }
+        else if (ScenarioControllerGrid<tags::CPU, float>::get_precision(id) == 1)
+        {
+            delete controller_f;
+            delete controller_d;
+            controller_f = 0;
+            controller_d = new ScenarioControllerGrid<tags::CPU::MultiCore, double> (id - 1000);
             controller_d->init();
         }
     }

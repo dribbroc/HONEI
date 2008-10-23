@@ -33,6 +33,7 @@
 //#define SOLVER_POSTPROCESSING
 
 #include <honei/lbm/tags.hh>
+#include <honei/util/tags.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/sum.hh>
@@ -46,6 +47,9 @@
 #include <honei/lbm/extraction_grid.hh>
 #include <cmath>
 #include <honei/lbm/grid.hh>
+#include <honei/lbm/grid_partitioner.hh>
+
+#include <iostream>
 
 using namespace honei::lbm;
 using namespace honei::lbm::lbm_boundary_types;
@@ -64,12 +68,66 @@ namespace honei
             {
             };
 
-    template<typename Tag_, typename ResPrec_>
-        class SolverLABSWEGrid<Tag_, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>
+    template<typename ResPrec_>
+        class SolverLABSWEGrid<tags::CPU::MultiCore, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>
         {
             private:
-                /** Global variables.
-                 *
+                unsigned long _parts;
+                PackedGridInfo<D2Q9> * _info;
+                PackedGridData<D2Q9, ResPrec_> * _data;
+                std::vector<PackedGridInfo<D2Q9> > _info_list;
+                std::vector<PackedGridData<D2Q9, ResPrec_> > _data_list;
+                std::vector<PackedGridFringe<D2Q9> > _fringe_list;
+                std::vector<SolverLABSWEGrid<tags::CPU, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> *> _solver_list;
+
+            public:
+                SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt) :
+                    _parts(4), /// \todo use Configuration
+                    _data(data),
+                    _info(info)
+                {
+                    CONTEXT("When creating LABSWE solver:");
+                    GridPartitioner<D2Q9, ResPrec_>::decompose(_parts, *_info, *_data, _info_list, _data_list, _fringe_list);
+
+                    for(unsigned long i(0) ; i < _parts ; ++i)
+                    {
+                        _solver_list.push_back(new SolverLABSWEGrid<tags::CPU, ResPrec_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>(&_data_list[i], &_info_list[i], 1., 1., 1.));
+                    }
+                }
+
+                ~SolverLABSWEGrid()
+                {
+                    CONTEXT("When destroying LABSWE solver.");
+                }
+
+                void do_preprocessing()
+                {
+                    CONTEXT("When performing LABSWE preprocessing.");
+                    for (unsigned long i(0) ; i < _parts ; ++i)
+                    {
+                        _solver_list.at(i)->do_preprocessing();
+                    }
+                    GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);
+                }
+
+                void solve()
+                {
+                    for (unsigned long i(0) ; i < _parts ; ++i)
+                    {
+                        _solver_list.at(i)->solve();
+                    }
+                    GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);
+                    /// \todo remove?
+                    GridPartitioner<D2Q9, ResPrec_>::compose(*_info, *_data, _info_list, _data_list);
+                }
+        };
+
+                template<typename Tag_, typename ResPrec_>
+                    class SolverLABSWEGrid<Tag_, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>
+                    {
+                        private:
+                            /** Global variables.
+                             *
                  **/
 
                 PackedGridData<D2Q9, ResPrec_> * _data;
