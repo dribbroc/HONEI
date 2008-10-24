@@ -84,17 +84,15 @@ class GridPartitionerTest :
             std::cout<<"global dir 1: "<<*info.dir_1;
             std::cout<<"global limits: "<<*info.limits;
             std::cout<<"global h size: "<<data.h->size()<<std::endl;
-            GridPartitioner<D2Q9, DataType_>::decompose(4, info, data, info_list, data_list, fringe_list);
+            GridPartitioner<D2Q9, DataType_>::decompose(10, info, data, info_list, data_list, fringe_list);
             GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list, fringe_list);
             GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);
 
             for (unsigned long i(0) ; i < info_list.size() ; ++i)
             {
                 std::cout<<info_list[i].offset<<std::endl;
-                std::cout<<"dir_index_1 "<<*info_list[i].dir_index_1;
-                std::cout<<"dir_1 "<<*info_list[i].dir_1;
-                std::cout<<"fringe dir index 1 "<<*fringe_list[i].dir_index_1;
-                std::cout<<"fringe dir targets 1 "<<*fringe_list[i].dir_targets_1;
+                std::cout<<"fringe h index "<<*fringe_list[i].h_index;
+                std::cout<<"fringe h targets "<<*fringe_list[i].h_targets;
                 std::cout<<"limits "<<*info_list[i].limits;
                 std::cout<<"h size: "<<data_list[i].h->size()<<std::endl;
             }

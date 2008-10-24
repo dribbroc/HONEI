@@ -117,7 +117,7 @@ namespace honei
                         _solver_list.at(i)->solve();
                     }
                     GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);
-                    /// \todo remove?
+                    /// \todo remove compose - it is only necessary if one must read the data
                     GridPartitioner<D2Q9, ResPrec_>::compose(*_info, *_data, _info_list, _data_list);
                 }
         };
