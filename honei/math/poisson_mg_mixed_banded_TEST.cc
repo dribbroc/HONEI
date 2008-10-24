@@ -229,7 +229,7 @@ class PoissonTestMGBandedQ1Mixed:
 
             info.n_max_iter = 16;
             info.initial_zero = true;
-            info.tolerance = 1e-2;
+            info.tolerance = 1e-8;
             info.convergence_check = false;
 
             info.n_pre_smooth = 4;

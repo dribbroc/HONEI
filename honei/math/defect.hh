@@ -34,9 +34,7 @@ namespace honei
     struct Defect
     {
         public:
-            template<typename DT_>
-            static DenseVector<DT_> value(const DenseVector<DT_> & rhs, const BandedMatrixQ1<DT_> & system,
-                    const DenseVector<DT_> & x)
+            static DenseVector<DT_> value(DenseVector<DT_> & right_hand_side, BandedMatrixQ1<DT_> & system, DenseVector<DT_> & x)
             {
                 if (x.size() != system.columns())
                 {
@@ -47,13 +45,131 @@ namespace honei
                     throw VectorSizeDoesNotMatch(rhs.size(), system.columns());
                 }
 
-                DenseVector<DT_> result(rhs.size());
-                copy<Tag_>(rhs, result);
+                right_hand_side.lock(lm_read_only);
+                system.lock(lm_read_only);
+                x.lock(lm_read_only);
+                DenseVector<DT_> result(right_hand_side.size());
+                result.lock(lm_write_only);
+                unsigned long n = right_hand_side.size();
+                unsigned long root_n = (unsigned long)sqrt(n);
 
-                DenseVector<DT_> prod(Product<Tag_>::value(system, x));
+                DT_ * rhs = right_hand_side.elements();
+                DT_ * x_old = x.elements();
+                DT_ * x_new = result.elements();
 
-                Difference<Tag_>::value(result, prod);
+                DT_ * ll = system.band(LL).elements();
+                DT_ * ld = system.band(LD).elements();
+                DT_ * lu = system.band(LU).elements();
 
+                DT_ * dl = system.band(DL).elements();
+                DT_ * dd = system.band(DD).elements();
+                DT_ * du = system.band(DU).elements();
+
+                DT_ * ul = system.band(UL).elements();
+                DT_ * ud = system.band(UD).elements();
+                DT_ * uu = system.band(UU).elements();
+
+                unsigned long i(0);
+                //index 0
+                x_new[i] = ((rhs [i] - (dd[i] * x_old[i] +
+                           du[i] * x_old[1] +
+                           ul[i] * x_old[root_n - 1] +
+                           ud[i] * x_old[root_n] +
+                           uu[i] * x_old[root_n + 1])));
+
+                //index in [1, root_n -1[
+                i = 1;
+                for(; i < root_n - 1 ; ++i)
+                {
+                    x_new[i] = ((rhs[i] - (dl[i] * x_old[i - 1] +
+                               dd[i] * x_old[i] +
+                               du[i] * x_old[i + 1] +
+                               ul[i] * x_old[i + root_n - 1] +
+                               ud[i] * x_old[i + root_n] +
+                               uu[i] * x_old[i + root_n + 1])));
+                }
+
+                //index root_n -1
+                i = root_n - 1;
+                x_new[i] = ((rhs[i] - (lu[i] * x_old[i - (root_n - 1)] +
+                           dl[i] * x_old[i - 1] +
+                           dd[i] * x_old[i] +
+                           du[i] * x_old[i + 1] +
+                           ul[i] * x_old[i + root_n - 1] +
+                           ud[i] * x_old[i + root_n] +
+                           uu[i] * x_old[i + root_n + 1])));
+
+                //index root_n
+                i = root_n;
+                x_new[i] = ((rhs[i] - (ld[i] * x_old[i - root_n] +
+                           lu[i] * x_old[i - (root_n - 1)] +
+                           dl[i] * x_old[i - 1] +
+                           dd[i] * x_old[i] +
+                           du[i] * x_old[ i + 1] +
+                           ul[i] * x_old[i + root_n - 1] +
+                           ud[i] * x_old[i + root_n] +
+                           uu[i] * x_old[i + root_n + 1])));
+
+                //index in [root_n + 1, n - (root_n + 1)[
+                i = root_n + 1;
+                for(; i < n - (root_n  + 1) ; ++i)
+                {
+                    x_new[i] = ((rhs[i] - (ll[i] * x_old[i - root_n - 1] +
+                               ld[i] * x_old[i - root_n] +
+                               lu[i] * x_old[i - root_n + 1] +
+                               dl[i] * x_old[i - 1] +
+                               dd[i] * x_old[i] +
+                               du[i] * x_old[ i + 1] +
+                               ul[i] * x_old[i + root_n - 1] +
+                               ud[i] * x_old[i + root_n] +
+                               uu[i] * x_old[i + root_n + 1])));
+                }
+
+                //index n - (root_n + 1)
+                i = n - (root_n + 1);
+                x_new[i] = ((rhs[i] - (ll[i] * x_old[i - (n - (root_n + 1))] +
+                           ld[i] * x_old[i - root_n] +
+                           lu[i] * x_old[i - root_n + 1] +
+                           dl[i] * x_old[i - 1] +
+                           dd[i] * x_old[i] +
+                           du[i] * x_old[ i + 1] +
+                           ul[i] * x_old[i + root_n - 1] +
+                           ud[i] * x_old[i + root_n])));
+
+                //index n - root_n
+                i = n - root_n;
+                x_new[i] = ((rhs[i] - (ll[i] * x_old[i - (n - (root_n + 1))] +
+                           ld[i] * x_old[i - root_n] +
+                           lu[i] * x_old[i - root_n + 1] +
+                           dl[i] * x_old[i - 1] +
+                           dd[i] * x_old[i] +
+                           du[i] * x_old[ i + 1] +
+                           ul[i] * x_old[i + root_n - 1])));
+
+                //index in [n - root_n + 1, n -1[
+                i = n - root_n + 1;
+                for(; i < n - 1; ++i)
+                {
+                    x_new[i] = ((rhs[i] - (ll[i] * x_old[i - (n - (root_n + 1))] +
+                               ld[i] * x_old[i - root_n] +
+                               lu[i] * x_old[i - root_n + 1] +
+                               dl[i] * x_old[i - 1] +
+                               dd[i] * x_old[i] +
+                               du[i] * x_old[ i + 1])));
+                }
+
+                //index n - 1
+                i = n - 1;
+                x_new[i] = ((rhs[i] - (ll[i] * x_old[i - (n - (root_n + 1))] +
+                    ld[i] * x_old[i - root_n] +
+                    lu[i] * x_old[i - root_n + 1] +
+                    dl[i] * x_old[i - 1] +
+                    dd[i] * x_old[i])));
+
+                right_hand_side.unlock(lm_read_only);
+                system.unlock(lm_read_only);
+                x.unlock(lm_read_only);
+                result.unlock(lm_write_only);
                 return result;
             }
     };

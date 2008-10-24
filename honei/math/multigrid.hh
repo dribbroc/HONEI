@@ -104,7 +104,6 @@ namespace honei
                         {
                             DenseVector<Prec_> defect(Defect<Tag_>::value(info.rhs[info.max_level], info.a[info.max_level], info.x[info.max_level]));
                             info.d[info.max_level] = defect;
-
                         }
 
                         Prec_ defect, initial_defect;
@@ -168,10 +167,12 @@ namespace honei
 
                                             (info.c[current_level]) = (Jacobi<Tag_>::value(info.a[current_level], info.d[current_level], Prec_(0.7)));
                                             //DenseVector<Prec_> null(info.x[current_level].size() , Prec_(0));
-                                            DenseVector<Prec_> temp_jac(info.c[current_level].size());
-                                            copy<Tag_>(info.c[current_level], temp_jac);
-                                            (info.c[current_level]) = (Jacobi<Tag_>::value(temp_jac , info.a[current_level], info.d[current_level], info.n_pre_smooth - 1, Prec_(0.7)));
-
+                                            //NEWTEST:
+                                            //DenseVector<Prec_> temp_jac(info.c[current_level].size());
+                                            //copy<Tag_>(info.c[current_level], temp_jac);
+                                            //(info.c[current_level]) = (Jacobi<Tag_>::value(temp_jac , info.a[current_level], info.d[current_level], info.n_pre_smooth - 1, Prec_(0.7)));
+                                            (info.c[current_level]) = (Jacobi<Tag_>::value(info.c[current_level] , info.a[current_level], info.d[current_level], info.n_pre_smooth - 1, Prec_(0.7)));
+                                            //END NEWTEST
                                             Sum<Tag_>::value(info.x[current_level], info.c[current_level]);
                                         }
                                         else
@@ -180,10 +181,12 @@ namespace honei
                                             // the cleared solution vector (as the solution vector itself represents
                                             // the defect correction here)
                                             info.x[current_level] = (Jacobi<Tag_>::value((info.a[current_level]), (info.d[current_level]), Prec_(0.7)));
-                                            //DenseVector<Prec_> null(info.x[current_level].size() , Prec_(0));
-                                            DenseVector<Prec_> temp_jac(info.x[current_level].size());
-                                            copy<Tag_>(info.x[current_level], temp_jac);
-                                            info.x[current_level] = (Jacobi<Tag_>::value(temp_jac, (info.a[current_level]), (info.d[current_level]), info.n_pre_smooth - 1, Prec_(0.7)));
+                                            //NEWTEST:
+                                            //DenseVector<Prec_> temp_jac(info.x[current_level].size());
+                                            //copy<Tag_>(info.x[current_level], temp_jac);
+                                            //info.x[current_level] = (Jacobi<Tag_>::value(temp_jac, (info.a[current_level]), (info.d[current_level]), info.n_pre_smooth - 1, Prec_(0.7)));
+                                            info.x[current_level] = (Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.d[current_level]), info.n_pre_smooth - 1, Prec_(0.7)));
+                                            //END NEWTEST
                                         }
                                         DenseVector<Prec_> defect_2(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                                         info.d[current_level] = defect_2;
@@ -202,7 +205,7 @@ namespace honei
                                         // set homogeneous Dirichlet boundary conditions in the restricted defect vector
                                         // depending on Dirichlet mask (see routine for details), and store a copy in RHS
 
-                                        info.d[current_level] = Restriction<Tag_>::value((info.d[current_level]), (info.d[current_level + 1]), *info.macro_border_mask);
+                                        /*info.d[current_level] =*/ Restriction<Tag_>::value((info.d[current_level]), (info.d[current_level + 1]), *info.macro_border_mask);
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Restricted." << std::endl;
 #endif
@@ -274,7 +277,7 @@ endRestrictionLoop:
                                         }
                                         else*/
                                         {
-                                            info.c[current_level] = Prolongation<Tag_>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask);
+                                            /*info.c[current_level] =*/ Prolongation<Tag_>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask);
                                         }
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Prolongated." << std::endl;
@@ -286,7 +289,7 @@ endRestrictionLoop:
                                         // perform adaptive coarse grid correction if required
                                         //
                                         Prec_ alpha;
-                                        if (info.adapt_correction_factor == 0.0)
+                                        /*if (info.adapt_correction_factor == 0.0)
                                         {
                                             //Compute dalpha = (d,c)/(Ac,c) where d is the current residual
                                             //(data->d[icurrentLevel]) and c the prolongated correction (c[icurrentLevel])
@@ -298,7 +301,7 @@ endRestrictionLoop:
 
                                             alpha = Prec_(d1 / d2);
                                         }
-                                        else
+                                        else*/
                                         {
                                             alpha = info.adapt_correction_factor;
                                         }
@@ -317,10 +320,13 @@ endRestrictionLoop:
                                         //--------------
                                         //
                                         // smooth A*x = rhs based on the RHS for that level we stored during restriction
-                                        //
-                                        DenseVector<Prec_> temp_jac(info.x[current_level].size());
-                                        copy<Tag_>(info.x[current_level], temp_jac);
-                                        (info.x[current_level]) =(Jacobi<Tag_>::value(temp_jac, (info.a[current_level]), (info.rhs[current_level]), info.n_pre_smooth, Prec_(0.7)));
+
+                                        //NEWTEST:
+                                        //DenseVector<Prec_> temp_jac(info.x[current_level].size());
+                                        //copy<Tag_>(info.x[current_level], temp_jac);
+                                        //(info.x[current_level]) =(Jacobi<Tag_>::value(temp_jac, (info.a[current_level]), (info.rhs[current_level]), info.n_pre_smooth, Prec_(0.7)));
+                                        (info.x[current_level]) =(Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.rhs[current_level]), info.n_pre_smooth, Prec_(0.7)));
+                                        //end NEWTEST
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Postsmoothing ||X|| on level " << current_level << " " << Norm<vnt_l_two, true, Tag_>::value(info.x[current_level]) << std::endl;
 #endif
@@ -393,14 +399,15 @@ endCycleLoop:
                                 }
                             }
                         }
-                        DenseVector<Prec_> result(info.x[info.max_level].size());
+                        /*DenseVector<Prec_> result(info.x[info.max_level].size());
                         copy<Tag_>(info.x[info.max_level], result);
-                        return result;
+                        return result;*/
+                        return info.x[info.max_level];
                     }
 
             public:
                 template<typename Prec_>
-                    static DenseVector<Prec_> value(BandedMatrixQ1<Prec_>&  system, DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ conv_rad, MGInfo<Prec_> & info)
+                    static inline DenseVector<Prec_> value(BandedMatrixQ1<Prec_>&  system, DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ conv_rad, MGInfo<Prec_> & info)
                     {
                         Prec_ cappa;
 
@@ -410,12 +417,9 @@ endCycleLoop:
 
                         // current and initial defect
                         Prec_ defect, initial_defect;
-                        DenseVector<Prec_> result(right_hand_side.size(), Prec_(0)); //final result
-
 
                         DenseVector<Prec_> initial_guess(right_hand_side.size(), Prec_(0)); //x_0
                         DenseVector<Prec_> outer_defect(right_hand_side.size(), Prec_(0));
-                        DenseVector<Prec_> temp_vector(right_hand_side.size(), Prec_(0)); //delete if unneeded
 
                         // apply Dirichlet BCs for boundary nodes (semi-implicit approach)
                         // note that we cleared the solution vector previously
@@ -438,84 +442,7 @@ endCycleLoop:
                             initial_guess[i] = right_hand_side[i];
                         }
 
-                        unsigned long timing_loop(1);
-                        for(unsigned long timing(0); timing < timing_loop; ++timing)
-                        {
-                            /*unsigned long inner_iterations(0);
-                            unsigned long outer_iterations(1);
-                            Prec_ scale_factor(1.0);
-
-                            // calc initial defect
-                            // D = B - Ax, d0 = ||D||
-                            DenseVector<Prec_> product(Product<Tag_>::value(info.a[info.max_level], initial_guess));
-                            DenseVector<Prec_> rhs_c(right_hand_side.size());
-                            copy<Tag_>(right_hand_side, rhs_c);
-                            Difference<Tag_>::value(rhs_c, product);
-                            outer_defect = rhs_c;
-                            initial_defect = Norm<vnt_l_two, true, Tag_>::value(outer_defect);
-
-                            Prec_ def_norm;
-                            Prec_ inv;
-                            unsigned long step_iterations;
-                            while(inner_iterations < 1)
-                            {
-                                // set defect as RHS to inner solver
-                                temp_vector.lock(lm_write_only);
-                                outer_defect.lock(lm_read_only);
-                                for (unsigned long i(0); i < right_hand_side.size(); ++i)
-                                {
-                                    temp_vector[i] = (Prec_)outer_defect[i];
-                                }
-                                temp_vector.unlock(lm_write_only);
-                                outer_defect.unlock(lm_read_only);
-                                copy<Tag_>(temp_vector, info.rhs[info.max_level]);
-
-                                // run inner solver as long as neccessary
-#ifdef SOLVER_VERBOSE
-                                std::cout << inner_iterations << "th iteration (outer)!" << std::endl;
-#endif*/
-                                info.x[info.max_level] = (_multigrid_kernel<Prec_>(info.a[info.max_level], right_hand_side, max_levels, &cappa, info));
-                                /*inner_iterations += 1; //Markus: for now, this is ok, later: add kernel iterations
-
-                                // get "solution" and update outer solution
-                                copy<Tag_>(info.x[info.max_level], temp_vector);
-
-                                result.lock(lm_read_and_write);
-                                temp_vector.lock(lm_read_only);
-                                for (unsigned long i(0); i < right_hand_side.size(); ++i)
-                                {
-                                    result[i] += scale_factor * (Prec_)(temp_vector)[i];
-                                }
-                                result.unlock(lm_read_and_write);
-                                temp_vector.unlock(lm_read_only);
-
-
-                                // calculate defect
-
-                                DenseVector<Prec_> defect_outer(Defect<Tag_>::value(right_hand_side, info.a[info.max_level], result));
-                                outer_defect = defect_outer;
-
-                                // calc norm of defect
-                                def_norm = Norm<vnt_l_two, true, Tag_>::value(outer_defect);
-#ifdef SOLVER_VERBOSE
-                                std::cout << "defnorm: " << def_norm << std::endl;
-                                std::cout << "initial_defect: " << initial_defect << std::endl;
-#endif
-                                // check for convergence
-                                Prec_ outer_eps(1e-8);
-                                if (def_norm  < outer_eps * initial_defect)
-                                {
-                                    break;
-                                }
-                                // scale defect
-                                scale_factor = def_norm;
-
-                                inv = (1.0 / scale_factor);
-                                Scale<Tag_>::value(outer_defect, inv);
-
-                                outer_iterations++;
-                            }*/
-                        }
+                        info.x[info.max_level] = (_multigrid_kernel<Prec_>(info.a[info.max_level], right_hand_side, max_levels, &cappa, info));
 
                         return info.x[info.max_level];//result;
                     }
@@ -525,97 +452,97 @@ endCycleLoop:
     template<typename Tag_ , typename OuterTag_>
         class Multigrid<Tag_ , OuterTag_ , JAC, CYCLE::V, MIXED>
         {
-                template <typename Prec_>
-                    static DenseVector<Prec_> _multigrid_kernel(unsigned long max_levels, Prec_ * cappa, MGInfo<Prec_> & info)
+            template <typename Prec_>
+                static DenseVector<Prec_> _multigrid_kernel(unsigned long max_levels, Prec_ * cappa, MGInfo<Prec_> & info)
+                {
+                    bool restriction_started(false);
+                    // compute initial defect
+                    // when start vector is zero: set d = rhs (we can save one matvec here)
+                    // when start vector is not zero: d = rhs - A*x
+                    if(info.initial_zero)
                     {
-                        bool restriction_started(false);
-                        // compute initial defect
-                        // when start vector is zero: set d = rhs (we can save one matvec here)
-                        // when start vector is not zero: d = rhs - A*x
-                        if(info.initial_zero)
-                        {
-                            info.d[info.max_level] = info.rhs[info.max_level];
-                        }
-                        else
-                        {
-                            DenseVector<Prec_> defect(Defect<Tag_>::value(info.rhs[info.max_level], info.a[info.max_level], info.x[info.max_level]));
-                            info.d[info.max_level] = defect;
+                        info.d[info.max_level] = info.rhs[info.max_level];
+                    }
+                    else
+                    {
+                        DenseVector<Prec_> defect(Defect<Tag_>::value(info.rhs[info.max_level], info.a[info.max_level], info.x[info.max_level]));
+                        info.d[info.max_level] = defect;
 
-                        }
+                    }
 
-                        Prec_ defect, initial_defect;
-                        // compute norm of initial defect, also used for relative convergence control
-                        if(!info.is_smoother)
-                        {
-                            defect = Norm<vnt_l_two, true, Tag_>::value(info.d[info.max_level]);
-                            initial_defect = defect;
-                        }
-                        else
-                        {
-                            defect = Prec_(1e8);
-                        }
+                    Prec_ defect, initial_defect;
+                    // compute norm of initial defect, also used for relative convergence control
+                    if(!info.is_smoother)
+                    {
+                        defect = Norm<vnt_l_two, true, Tag_>::value(info.d[info.max_level]);
+                        initial_defect = defect;
+                    }
+                    else
+                    {
+                        defect = Prec_(1e8);
+                    }
 #ifdef SOLVER_VERBOSE
-                        std::cout << defect << std::endl;
+                    std::cout << defect << std::endl;
 #endif
-                        // check if nothing needs to be done
-                        if(info.convergence_check && defect <= info.tolerance)
+                    // check if nothing needs to be done
+                    if(info.convergence_check && defect <= info.tolerance)
+                    {
+                        //do nothing
+                    }
+                    else
+                    {
+                        //start cycles
+                        unsigned long iter, current_level(info.max_level);
+                        unsigned long local_cycle[max_levels];
+                        for(iter = 1 ; iter <= info.n_max_iter ; ++iter)
                         {
-                            //do nothing
-                        }
-                        else
-                        {
-                            //start cycles
-                            unsigned long iter, current_level(info.max_level);
-                            unsigned long local_cycle[max_levels];
-                            for(iter = 1 ; iter <= info.n_max_iter ; ++iter)
+#ifdef SOLVER_VERBOSE
+                            std::cout << iter << "th iteration" <<std::endl;
+#endif
+                            // set current level to the maximal level
+                            current_level = info.max_level;
+
+                            // Initialise the array providing the local cycle information
+                            //V cycle!
+                            for(unsigned long i(info.min_level + 1); i <= info.max_level; ++i)
                             {
-#ifdef SOLVER_VERBOSE
-                                std::cout << iter << "th iteration" <<std::endl;
-#endif
-                                // set current level to the maximal level
-                                current_level = info.max_level;
-
-                                // Initialise the array providing the local cycle information
-                                //V cycle!
-                                for(unsigned long i(info.min_level + 1); i <= info.max_level; ++i)
-                                {
-                                    local_cycle[i] = 1; //Using 1 to code local V cycle
-                                }
-                                //cycle loop
+                                local_cycle[i] = 1; //Using 1 to code local V cycle
+                            }
+                            //cycle loop
+                            while(true)
+                            {
+                                //Restriction loop:
+                                // set a flag that the restriction has just started
+                                restriction_started = true;
                                 while(true)
                                 {
-                                    //Restriction loop:
-                                    // set a flag that the restriction has just started
-                                    restriction_started = true;
-                                    while(true)
+                                    // for the case that we have actually only one level, do no presmoothing
+                                    // and jump to the coarse grid solver directly.
+                                    if (info.min_level == info.max_level)
+                                        goto endRestrictionLoop;
+
+                                    // -------------
+                                    // presmoothing
+                                    // -------------
+
+                                    if (restriction_started)
                                     {
-                                        // for the case that we have actually only one level, do no presmoothing
-                                        // and jump to the coarse grid solver directly.
-                                        if (info.min_level == info.max_level)
-                                            goto endRestrictionLoop;
+                                        // When the restriction loop just started
 
-                                        // -------------
-                                        // presmoothing
-                                        // -------------
+                                        (info.c[current_level]) = (Jacobi<Tag_>::value(info.a[current_level], info.d[current_level], Prec_(0.7)));
+                                        (info.c[current_level]) = (Jacobi<Tag_>::value(info.c[current_level] , info.a[current_level], info.d[current_level], info.n_pre_smooth - 1, Prec_(0.7)));
 
-                                        if (restriction_started)
-                                        {
-                                            // When the restriction loop just started
-
-                                            (info.c[current_level]) = (Jacobi<Tag_>::value(info.a[current_level], info.d[current_level], Prec_(0.7)));
-                                            (info.c[current_level]) = (Jacobi<Tag_>::value(info.c[current_level] , info.a[current_level], info.d[current_level], info.n_pre_smooth - 1, Prec_(0.7)));
-
-                                            Sum<Tag_>::value(info.x[current_level], info.c[current_level]);
-                                        }
-                                        else
-                                        {
-                                            // otherwise the solution process can be started directly with
-                                            // the cleared solution vector (as the solution vector itself represents
-                                            // the defect correction here)
-                                            info.x[current_level] = (Jacobi<Tag_>::value((info.a[current_level]), (info.d[current_level]), Prec_(0.7)));
-                                            info.x[current_level] = (Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.d[current_level]), info.n_pre_smooth - 1, Prec_(0.7)));
-                                        }
-                                        DenseVector<Prec_> defect_2(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
+                                        Sum<Tag_>::value(info.x[current_level], info.c[current_level]);
+                                    }
+                                    else
+                                    {
+                                        // otherwise the solution process can be started directly with
+                                        // the cleared solution vector (as the solution vector itself represents
+                                        // the defect correction here)
+                                        info.x[current_level] = (Jacobi<Tag_>::value((info.a[current_level]), (info.d[current_level]), Prec_(0.7)));
+                                        info.x[current_level] = (Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.d[current_level]), info.n_pre_smooth - 1, Prec_(0.7)));
+                                    }
+                                    DenseVector<Prec_> defect_2(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                                         info.d[current_level] = defect_2;
 
 #ifdef SOLVER_VERBOSE
@@ -834,7 +761,7 @@ endCycleLoop:
 
             public:
                 template<typename InnerPrec_, typename OuterPrec_>
-                    static DenseVector<OuterPrec_> value(BandedMatrixQ1<OuterPrec_>&  system, DenseVector<OuterPrec_>& right_hand_side, unsigned long max_levels, OuterPrec_ conv_rad, MGInfo<InnerPrec_> & info)
+                    static inline DenseVector<OuterPrec_> value(BandedMatrixQ1<OuterPrec_>&  system, DenseVector<OuterPrec_>& right_hand_side, unsigned long max_levels, OuterPrec_ conv_rad, MGInfo<InnerPrec_> & info)
                     {
 #ifdef SOLVER_BENCHMARK
                         TimeStamp ab, ae;

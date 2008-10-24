@@ -68,7 +68,9 @@ class PoissonBenchmarkMGBandedQ1Float:
             double* ana_sol;
             double* ref_sol;
 
-            file = fopen("../honei/math/testdata/1050625/ehq.1.1.1.1.bin", "rb");
+            std::string file_name(HONEI_SOURCEDIR);
+            file_name += "/honei/math/testdata/1050625.bin";
+            file = fopen(file_name.c_str(), "rb");
             fread(&n, sizeof(int), 1, file);
 
 #ifdef HONEI_CELL
@@ -229,15 +231,15 @@ class PoissonBenchmarkMGBandedQ1Float:
                     break;
             }
 
-            info.n_max_iter = 16;
+            info.n_max_iter = 9;
             info.initial_zero = true;
-            info.tolerance = 1e-10;
+            info.tolerance = 1e-8;
             info.convergence_check = false;
 
-            info.n_pre_smooth = 4;
-            info.n_post_smooth = 4;
+            info.n_pre_smooth = 2;
+            info.n_post_smooth = 2;
             info.n_max_iter_coarse = ((unsigned long)sqrt((double)(pow((double)2 , (double)info.max_level) + 1)*(pow((double)2 , (double)info.max_level) + 1)));
-            info.tolerance_coarse = 1e-10;
+            info.tolerance_coarse = 1e-2;
             info.adapt_correction_factor = 1.;
 
             //push back dummy matrices/vectors in order not to disturb std::vectors index range:
@@ -303,7 +305,9 @@ class PoissonBenchmarkMGBandedQ1Float:
                 double* ud_2;
                 double* uu_2;
                 double* b_2;
-                std::string file_path("../honei/math/testdata/" + stringify(DD_v_2.size()) +"/ehq.1.1.1.1.bin");
+
+                std::string file_path(HONEI_SOURCEDIR);
+                file_path += "/honei/math/testdata/" + stringify(DD_v_2.size()) +".bin";
                 file_2 = fopen(file_path.c_str(), "rb");
                 fread(&n_2, sizeof(int), 1, file_2);
 
