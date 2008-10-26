@@ -175,13 +175,21 @@ namespace honei
     };
 
     template<>
-    struct Defect<tags::GPU::CUDA>
-    {
-        public:
-            static DenseVector<float> value(const DenseVectorContinuousBase<float> & right_hand_side,
-                    const BandedMatrixQ1<float> & system, const DenseVectorContinuousBase<float> & x);
+        struct Defect<tags::GPU::CUDA>
+        {
+            public:
+                static DenseVector<float> value(const DenseVectorContinuousBase<float> & right_hand_side,
+                        const BandedMatrixQ1<float> & system, const DenseVectorContinuousBase<float> & x);
 
-    };
+        };
+    template<>
+        struct Defect<tags::CPU::SSE>
+        {
+
+            public:
+                static DenseVector<double> value(DenseVector<double> & right_hand_side, BandedMatrixQ1<double> & system, DenseVector<double> & x);
+                static DenseVector<float> value(DenseVector<float> & right_hand_side, BandedMatrixQ1<float> & system, DenseVector<float> & x);
+        };
 }
 
 #endif

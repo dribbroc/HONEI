@@ -10,7 +10,7 @@ dnl on this file at present...
 
 add(`apply_dirichlet_boundaries',       `hh')
 add(`conjugate_gradients',              `hh', `test')
-add(`defect',                           `hh', `cuda')
+add(`defect',                           `hh',         `sse',                        `cuda')
 add(`endian_swap',                      `hh')
 add(`hessenberg',                       `hh', `test')
 add(`iterative_refinement',             `hh', `test')
