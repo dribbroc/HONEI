@@ -231,7 +231,7 @@ class PoissonBenchmarkMGBandedQ1Float:
                     break;
             }
 
-            info.n_max_iter = 9;
+            info.n_max_iter = 16;
             info.initial_zero = true;
             info.tolerance = 1e-8;
             info.convergence_check = false;
@@ -261,6 +261,7 @@ class PoissonBenchmarkMGBandedQ1Float:
                 info.rhs.push_back(ac_rhs);
                 DenseVector<double> ac_x(size, double(0));
                 info.x.push_back(ac_x);
+                info.diags_inverted.push_back(dummy_band.copy());
             }
             for (unsigned long i(info.min_level) ; i <= info.max_level; ++i)
             {
@@ -272,6 +273,8 @@ class PoissonBenchmarkMGBandedQ1Float:
                 info.d.push_back(ac_d);
                 DenseVector<double> ac_x(size, double(0));
                 info.x.push_back(ac_x);
+                DenseVector<double> dummy_band(size, double(0));
+                info.diags_inverted.push_back(dummy_band.copy());
             }
 
             //assemble all needed levels' matrices:
@@ -387,6 +390,19 @@ class PoissonBenchmarkMGBandedQ1Float:
                 info.x[i] = null.copy();
             }
 
+//SET DIAG_INVERTED:
+            for (unsigned long i(0) ; i <= info.max_level; ++i)
+            {
+                unsigned long size((unsigned long)(((unsigned long)pow((double)2, (double)i) + 1) * ((unsigned long)pow((double)2, (double)i) + 1)));
+                if(i == 0)
+                    size = 9;
+
+                DenseVector<DT1_> scaled_diag_inverted(info.a[i].band(DD).copy());
+                ElementInverse<Tag_>::value(scaled_diag_inverted);
+                Scale<Tag_>::value(scaled_diag_inverted, 0.7);
+
+                info.diags_inverted[i] = scaled_diag_inverted.copy();
+            }
             //--------End loading of data----------------------------------
             //Prefetch:
             /*for (unsigned long i(0) ; i < info.max_level ; ++i)

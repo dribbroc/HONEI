@@ -65,7 +65,7 @@ class PoissonTestMGBandedQ1Mixed:
             double* ref_sol;
 
             std::string file_name(HONEI_SOURCEDIR);
-            file_name += "/honei/math/testdata/1089.bin";
+            file_name += "/honei/math/testdata/1050625.bin";
             file = fopen(file_name.c_str(), "rb");
             fread(&n, sizeof(int), 1, file);
 
@@ -227,13 +227,13 @@ class PoissonTestMGBandedQ1Mixed:
                     break;
             }
 
-            info.n_max_iter = 16;
+            info.n_max_iter = 2;
             info.initial_zero = true;
             info.tolerance = 1e-8;
             info.convergence_check = false;
 
-            info.n_pre_smooth = 4;
-            info.n_post_smooth = 4;
+            info.n_pre_smooth = 2;
+            info.n_post_smooth = 2;
             info.n_max_iter_coarse = ((unsigned long)sqrt((float)(pow((float)2 , (float)info.max_level) + 1)*(pow((float)2 , (float)info.max_level) + 1)));
             info.tolerance_coarse = 1e-2;
             info.adapt_correction_factor = 1.;
@@ -257,6 +257,7 @@ class PoissonTestMGBandedQ1Mixed:
                 info.rhs.push_back(ac_rhs);
                 DenseVector<float> ac_x(size, float(0));
                 info.x.push_back(ac_x);
+                info.diags_inverted.push_back(dummy_band.copy());
             }
             for (unsigned long i(info.min_level) ; i <= info.max_level; ++i)
             {
@@ -268,6 +269,8 @@ class PoissonTestMGBandedQ1Mixed:
                 info.d.push_back(ac_d);
                 DenseVector<float> ac_x(size, float(0));
                 info.x.push_back(ac_x);
+                DenseVector<float> dummy_band(size, float(0));
+                info.diags_inverted.push_back(dummy_band.copy());
             }
 
             //assemble all needed levels' matrices:
@@ -380,6 +383,19 @@ class PoissonTestMGBandedQ1Mixed:
 
                 DenseVector<float> null(size , float(0));
                 info.x[i] = null.copy();
+            }
+//SET DIAG_INVERTED:
+            for (unsigned long i(0) ; i <= info.max_level; ++i)
+            {
+                unsigned long size((unsigned long)(((unsigned long)pow((double)2, (double)i) + 1) * ((unsigned long)pow((double)2, (double)i) + 1)));
+                if(i == 0)
+                    size = 9;
+
+                DenseVector<float> scaled_diag_inverted(info.a[i].band(DD).copy());
+                ElementInverse<Tag_>::value(scaled_diag_inverted);
+                Scale<Tag_>::value(scaled_diag_inverted, 0.7);
+
+                info.diags_inverted[i] = scaled_diag_inverted.copy();
             }
             //--------End loading of data----------------------------------
             DenseVector<double> result(n, double(0));

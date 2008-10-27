@@ -154,10 +154,13 @@ class PoissonJACBenchQ1_1 :
             DenseVector<float> to_smooth(n, float(0));
             BandedMatrixQ1<float> A(n , ll_v, ld_v, lu_v, dl_v, dd_v, du_v, ul_v, ud_v, uu_v);
 
+            DenseVector<float> diag_inverted(A.band(DD).copy());
+            ElementInverse<Tag_>::value(diag_inverted);
             float omega(0.7);
+            Scale<Tag_>::value(diag_inverted, omega);
             for(unsigned long i(0) ; i < _count ; ++i)
             {
-                BENCHMARK(Jacobi<Tag_>::value(A, b_v, omega));
+                BENCHMARK(Jacobi<Tag_>::value(A, b_v, omega, diag_inverted));
             }
             evaluate();
         }
@@ -299,10 +302,13 @@ class PoissonJACBenchQ1_2 :
             DenseVector<float> to_smooth(n, float(0));
             BandedMatrixQ1<float> A(n , ll_v, ld_v, lu_v, dl_v, dd_v, du_v, ul_v, ud_v, uu_v);
 
+            DenseVector<float> diag_inverted(A.band(DD).copy());
+            ElementInverse<Tag_>::value(diag_inverted);
             float omega(0.7);
+            Scale<Tag_>::value(diag_inverted, omega);
             for(unsigned long i(0) ; i < _count ; ++i)
             {
-                BENCHMARK(Jacobi<Tag_>::value(to_smooth, A, b_v, 4,  omega));
+                BENCHMARK(Jacobi<Tag_>::value(to_smooth, A, b_v, 4,  omega, diag_inverted));
             }
             evaluate();
         }

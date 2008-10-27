@@ -106,14 +106,8 @@ namespace honei
 
                 DenseVector<DT1_> temp(Defect<Tag_>::value(right_hand_side, system_matrix, to_smooth));
 
-                DenseVector<DT1_> temp_2(right_hand_side.size());
-                copy<Tag_>(system_matrix.band(DD), temp_2);
-
-                ElementInverse<Tag_>::value(temp_2);
-                Scale<Tag_>::value(temp_2, omega);
-
                 former_result = to_smooth;
-                ScaledSum<Tag_>::value(former_result, temp, temp_2);
+                ScaledSum<Tag_>::value(former_result, temp, diag_inverted);
 
                 //OLD NONHONEI
                 /*unsigned long n = right_hand_side.size();
@@ -393,7 +387,7 @@ namespace honei
             }
 //MG types:
             template <typename DT1_, typename DT2_>
-            static inline DenseVector<DT1_> value(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DT1_ omega)
+            static inline DenseVector<DT1_> value(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DT1_ omega, DenseVector<DT1_> & diag_inverted)
             {
                 CONTEXT("When solving banded linear system (Q1) with Jacobi (fixed # iterations):");
                 /*DenseVector<DT1_> diag_inverted(right_hand_side.size());
@@ -412,10 +406,11 @@ namespace honei
                 system_matrix.lock(lm_read_only);
                 right_hand_side.lock(lm_read_only);
 
-                for(unsigned long i(0) ; i < right_hand_side.size() ; ++i)
+                for(unsigned long i(0) ; i < diag_inverted.size() ; ++i)
                 {
-                    x[i] = (omega/system_matrix.band(DD)[i]) * right_hand_side[i];
+                    x[i] = diag_inverted[i] * right_hand_side[i];
                 }
+
                 x.unlock(lm_write_only);
                 system_matrix.unlock(lm_read_only);
                 right_hand_side.unlock(lm_read_only);
@@ -423,7 +418,7 @@ namespace honei
             }
 
             template <typename DT1_, typename DT2_>
-                static inline DenseVector<DT1_> value(DenseVector<DT1_>& to_smooth, BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side,long iter_number, DT1_ omega)
+                static inline DenseVector<DT1_> value(DenseVector<DT1_>& to_smooth, BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side,long iter_number, DT1_ omega, DenseVector<DT1_> & diag_inverted)
                 {
                     CONTEXT("When solving banded linear system (Q1) with Jacobi (fixed # iterations):");
 
@@ -458,7 +453,7 @@ namespace honei
 
                     for(unsigned long i = 0; i<iter_number; ++i)
                     {
-                        jacobi_kernel(to_smooth, system_matrix, right_hand_side, x, x, system_matrix, omega);
+                        jacobi_kernel(to_smooth, system_matrix, right_hand_side, x, diag_inverted, system_matrix, omega);
                         DenseVector<DT1_> ts_c(to_smooth.size());
                         /// todo gpu kopieren
                         copy<tags::CPU>(to_smooth, ts_c);

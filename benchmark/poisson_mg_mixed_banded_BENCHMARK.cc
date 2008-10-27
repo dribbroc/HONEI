@@ -232,13 +232,13 @@ class PoissonBenchmarkMGBandedQ1Mixed:
                     break;
             }
 
-            info.n_max_iter = 16;
+            info.n_max_iter = 2;
             info.initial_zero = true;
-            info.tolerance = 1e-2;
-            info.convergence_check = false;
+            info.tolerance = 1e-8;
+            info.convergence_check = true;
 
-            info.n_pre_smooth = 4;
-            info.n_post_smooth = 4;
+            info.n_pre_smooth = 2;
+            info.n_post_smooth = 2;
             info.n_max_iter_coarse = ((unsigned long)sqrt((float)(pow((float)2 , (float)info.max_level) + 1)*(pow((float)2 , (float)info.max_level) + 1)));
             info.tolerance_coarse = 1e-2;
             info.adapt_correction_factor = 1.;
@@ -262,6 +262,7 @@ class PoissonBenchmarkMGBandedQ1Mixed:
                 info.rhs.push_back(ac_rhs);
                 DenseVector<float> ac_x(size, float(0));
                 info.x.push_back(ac_x);
+                info.diags_inverted.push_back(dummy_band.copy());
             }
             for (unsigned long i(info.min_level) ; i <= info.max_level; ++i)
             {
@@ -273,6 +274,8 @@ class PoissonBenchmarkMGBandedQ1Mixed:
                 info.d.push_back(ac_d);
                 DenseVector<float> ac_x(size, float(0));
                 info.x.push_back(ac_x);
+                DenseVector<float> dummy_band(size, float(0));
+                info.diags_inverted.push_back(dummy_band.copy());
             }
 
             //assemble all needed levels' matrices:
@@ -386,6 +389,19 @@ class PoissonBenchmarkMGBandedQ1Mixed:
                 DenseVector<float> null(size , float(0));
                 info.x[i] = null.copy();
             }
+//SET DIAG_INVERTED:
+            for (unsigned long i(0) ; i <= info.max_level; ++i)
+            {
+                unsigned long size((unsigned long)(((unsigned long)pow((double)2, (double)i) + 1) * ((unsigned long)pow((double)2, (double)i) + 1)));
+                if(i == 0)
+                    size = 9;
+
+                DenseVector<float> scaled_diag_inverted(info.a[i].band(DD).copy());
+                ElementInverse<Tag_>::value(scaled_diag_inverted);
+                Scale<Tag_>::value(scaled_diag_inverted, 0.7);
+
+                info.diags_inverted[i] = scaled_diag_inverted.copy();
+            }
             //--------End loading of data----------------------------------
             //Prefetch:
             /*for (unsigned long i(0) ; i < info.max_level ; ++i)
@@ -402,7 +418,7 @@ class PoissonBenchmarkMGBandedQ1Mixed:
                 info.rhs[i].unlock(lm_read_only);
             }*/
             DenseVector<double> result(n, double(0));
-            for (unsigned long i(0) ; i < 10 ; ++i)
+            for (unsigned long i(0) ; i < 1 ; ++i)
             {
                 BENCHMARK(
                         for (unsigned long j(0) ; j < 1 ; ++j)
@@ -414,10 +430,10 @@ class PoissonBenchmarkMGBandedQ1Mixed:
             evaluate();
         }
 };
-PoissonBenchmarkMGBandedQ1Mixed<tags::CPU, tags::CPU> poisson_bench_mg_banded_mixed("MG mixed", 10, 1);
+PoissonBenchmarkMGBandedQ1Mixed<tags::CPU, tags::CPU> poisson_bench_mg_banded_mixed("MG mixed", 1, 1);
 #ifdef HONEI_SSE
-PoissonBenchmarkMGBandedQ1Mixed<tags::CPU::SSE, tags::CPU::SSE> sse_poisson_mg_bench_banded_mixed("MG mixed SSE", 10, 2);
+PoissonBenchmarkMGBandedQ1Mixed<tags::CPU::SSE, tags::CPU::SSE> sse_poisson_mg_bench_banded_mixed("MG mixed SSE", 1, 1);
 #endif
 #if defined HONEI_CUDA && defined HONEI_SSE
-PoissonBenchmarkMGBandedQ1Mixed<tags::GPU::CUDA, tags::CPU::SSE> cuda_poisson_mg_bench_banded_mixed("MG mixed CUDA", 10, 2);
+PoissonBenchmarkMGBandedQ1Mixed<tags::GPU::CUDA, tags::CPU::SSE> cuda_poisson_mg_bench_banded_mixed("MG mixed CUDA", 1, 1);
 #endif

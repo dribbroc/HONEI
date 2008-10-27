@@ -77,6 +77,8 @@ namespace honei
             std::vector<DenseVector<Prec_> > rhs;
             std::vector<DenseVector<Prec_> > x;
 
+            std::vector<DenseVector<Prec_> > diags_inverted;
+
             std::vector<BandedMatrixQ1<Prec_> > a;
 
     };
@@ -165,13 +167,13 @@ namespace honei
                                         {
                                             // When the restriction loop just started
 
-                                            (info.c[current_level]) = (Jacobi<Tag_>::value(info.a[current_level], info.d[current_level], Prec_(0.7)));
+                                            (info.c[current_level]) = (Jacobi<Tag_>::value(info.a[current_level], info.d[current_level], Prec_(0.7), info.diags_inverted[current_level]));
                                             //DenseVector<Prec_> null(info.x[current_level].size() , Prec_(0));
                                             //NEWTEST:
                                             //DenseVector<Prec_> temp_jac(info.c[current_level].size());
                                             //copy<Tag_>(info.c[current_level], temp_jac);
                                             //(info.c[current_level]) = (Jacobi<Tag_>::value(temp_jac , info.a[current_level], info.d[current_level], info.n_pre_smooth - 1, Prec_(0.7)));
-                                            (info.c[current_level]) = (Jacobi<Tag_>::value(info.c[current_level] , info.a[current_level], info.d[current_level], info.n_pre_smooth - 1, Prec_(0.7)));
+                                            (info.c[current_level]) = (Jacobi<Tag_>::value(info.c[current_level] , info.a[current_level], info.d[current_level], info.n_pre_smooth - 1, Prec_(0.7), info.diags_inverted[current_level]));
                                             //END NEWTEST
                                             Sum<Tag_>::value(info.x[current_level], info.c[current_level]);
                                         }
@@ -180,12 +182,12 @@ namespace honei
                                             // otherwise the solution process can be started directly with
                                             // the cleared solution vector (as the solution vector itself represents
                                             // the defect correction here)
-                                            info.x[current_level] = (Jacobi<Tag_>::value((info.a[current_level]), (info.d[current_level]), Prec_(0.7)));
+                                            info.x[current_level] = (Jacobi<Tag_>::value((info.a[current_level]), (info.d[current_level]), Prec_(0.7), info.diags_inverted[current_level]));
                                             //NEWTEST:
                                             //DenseVector<Prec_> temp_jac(info.x[current_level].size());
                                             //copy<Tag_>(info.x[current_level], temp_jac);
                                             //info.x[current_level] = (Jacobi<Tag_>::value(temp_jac, (info.a[current_level]), (info.d[current_level]), info.n_pre_smooth - 1, Prec_(0.7)));
-                                            info.x[current_level] = (Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.d[current_level]), info.n_pre_smooth - 1, Prec_(0.7)));
+                                            info.x[current_level] = (Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.d[current_level]), info.n_pre_smooth - 1, Prec_(0.7), info.diags_inverted[current_level]));
                                             //END NEWTEST
                                         }
                                         DenseVector<Prec_> defect_2(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
@@ -325,7 +327,7 @@ endRestrictionLoop:
                                         //DenseVector<Prec_> temp_jac(info.x[current_level].size());
                                         //copy<Tag_>(info.x[current_level], temp_jac);
                                         //(info.x[current_level]) =(Jacobi<Tag_>::value(temp_jac, (info.a[current_level]), (info.rhs[current_level]), info.n_pre_smooth, Prec_(0.7)));
-                                        (info.x[current_level]) =(Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.rhs[current_level]), info.n_pre_smooth, Prec_(0.7)));
+                                        (info.x[current_level]) =(Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.rhs[current_level]), info.n_pre_smooth, Prec_(0.7), info.diags_inverted[current_level]));
                                         //end NEWTEST
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Postsmoothing ||X|| on level " << current_level << " " << Norm<vnt_l_two, true, Tag_>::value(info.x[current_level]) << std::endl;
@@ -529,8 +531,8 @@ endCycleLoop:
                                     {
                                         // When the restriction loop just started
 
-                                        (info.c[current_level]) = (Jacobi<Tag_>::value(info.a[current_level], info.d[current_level], Prec_(0.7)));
-                                        (info.c[current_level]) = (Jacobi<Tag_>::value(info.c[current_level] , info.a[current_level], info.d[current_level], info.n_pre_smooth - 1, Prec_(0.7)));
+                                        (info.c[current_level]) = (Jacobi<Tag_>::value(info.a[current_level], info.d[current_level], Prec_(0.7), info.diags_inverted[current_level]));
+                                        (info.c[current_level]) = (Jacobi<Tag_>::value(info.c[current_level] , info.a[current_level], info.d[current_level], info.n_pre_smooth - 1, Prec_(0.7), info.diags_inverted[current_level]));
 
                                         Sum<Tag_>::value(info.x[current_level], info.c[current_level]);
                                     }
@@ -539,8 +541,8 @@ endCycleLoop:
                                         // otherwise the solution process can be started directly with
                                         // the cleared solution vector (as the solution vector itself represents
                                         // the defect correction here)
-                                        info.x[current_level] = (Jacobi<Tag_>::value((info.a[current_level]), (info.d[current_level]), Prec_(0.7)));
-                                        info.x[current_level] = (Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.d[current_level]), info.n_pre_smooth - 1, Prec_(0.7)));
+                                        info.x[current_level] = (Jacobi<Tag_>::value((info.a[current_level]), (info.d[current_level]), Prec_(0.7), info.diags_inverted[current_level]));
+                                        info.x[current_level] = (Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.d[current_level]), info.n_pre_smooth - 1, Prec_(0.7), info.diags_inverted[current_level]));
                                     }
                                     DenseVector<Prec_> defect_2(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                                         info.d[current_level] = defect_2;
@@ -675,7 +677,7 @@ endRestrictionLoop:
                                         //
                                         // smooth A*x = rhs based on the RHS for that level we stored during restriction
                                         //
-                                        (info.x[current_level]) =(Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.rhs[current_level]), info.n_pre_smooth, Prec_(0.7)));
+                                        (info.x[current_level]) =(Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.rhs[current_level]), info.n_pre_smooth, Prec_(0.7), info.diags_inverted[current_level]));
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Postsmoothing ||X|| on level " << current_level << " " << Norm<vnt_l_two, true, Tag_>::value(info.x[current_level]) << std::endl;
 #endif
@@ -820,7 +822,7 @@ endCycleLoop:
                         pe.take();
                         std::cout << "PreProc TOE: "<< (pe.sec() - pb.sec()) + (pe.usec() - pb.usec())/1e6 << std::endl;
 #endif
-                        while(inner_iterations < 16)
+                        while(inner_iterations < 8)
                         {
 #ifdef SOLVER_BENCHMARK
                             TimeStamp ob, oe, ib, ie;
