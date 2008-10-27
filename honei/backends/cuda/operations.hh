@@ -23,6 +23,11 @@
 
 extern "C"
 {
+        void cuda_defect_q1_float(void * rhs, void * ll, void * ld, void * lu,
+                void * dl, void * dd, void *du,
+                void * ul, void * ud, void *uu, void * x, void * y,
+                unsigned long size, unsigned long blocksize, unsigned long m);
+
         void cuda_difference_two_float(void * a, const void * b, unsigned long size, unsigned long blocksize);
 
         float cuda_dot_product_two_float(const void * a, const void *b, unsigned long size, unsigned long blocksize,

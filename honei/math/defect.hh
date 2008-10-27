@@ -35,8 +35,18 @@ namespace honei
     {
         public:
             template<typename DT_>
-            static DenseVector<DT_> value(DenseVector<DT_> & rhs, BandedMatrixQ1<DT_> & system, DenseVector<DT_> & x)
+            static DenseVector<DT_> value(const DenseVector<DT_> & rhs, const BandedMatrixQ1<DT_> & system,
+                    const DenseVector<DT_> & x)
             {
+                if (x.size() != system.columns())
+                {
+                    throw VectorSizeDoesNotMatch(x.size(), system.columns());
+                }
+                if (rhs.size() != system.columns())
+                {
+                    throw VectorSizeDoesNotMatch(rhs.size(), system.columns());
+                }
+
                 DenseVector<DT_> result(rhs.size());
                 copy<Tag_>(rhs, result);
 
@@ -46,6 +56,15 @@ namespace honei
 
                 return result;
             }
+    };
+
+    template<>
+    struct Defect<tags::GPU::CUDA>
+    {
+        public:
+            static DenseVector<float> value(const DenseVectorContinuousBase<float> & right_hand_side,
+                    const BandedMatrixQ1<float> & system, const DenseVectorContinuousBase<float> & x);
+
     };
 }
 
