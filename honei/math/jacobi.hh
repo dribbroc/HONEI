@@ -32,6 +32,7 @@
 #include <honei/la/element_inverse.hh>
 #include <honei/util/memory_arbiter.hh>
 #include <honei/la/algorithm.hh>
+#include <honei/math/defect.hh>
 
 namespace honei
 {
@@ -90,6 +91,7 @@ namespace honei
             template<typename DT1_, typename DT2_>
             static inline void jacobi_kernel(DenseVector<DT1_> to_smooth, BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, BandedMatrixQ1<DT1_> & difference, DT1_ omega)
             {
+                //OLD HONEI:
                 /*DenseVector<DT1_> temp(Product<Tag_>::value(difference, to_smooth));
 
                 DenseVector<DT1_> temp2(right_hand_side.size());
@@ -100,8 +102,21 @@ namespace honei
                 Sum<Tag_>::value(temp2, to_smooth);
                 former_result = temp2;*/
 
+                //NEW:
 
-                unsigned long n = right_hand_side.size();
+                DenseVector<DT1_> temp(Defect<Tag_>::value(right_hand_side, system_matrix, to_smooth));
+
+                DenseVector<DT1_> temp_2(right_hand_side.size());
+                copy<Tag_>(system_matrix.band(DD), temp_2);
+
+                ElementInverse<Tag_>::value(temp_2);
+                Scale<Tag_>::value(temp_2, omega);
+
+                former_result = to_smooth;
+                ScaledSum<Tag_>::value(former_result, temp, temp_2);
+
+                //OLD NONHONEI
+                /*unsigned long n = right_hand_side.size();
                 unsigned long root_n = (unsigned long)sqrt(n);
 
                 to_smooth.lock(lm_read_only);
@@ -225,7 +240,7 @@ namespace honei
                 to_smooth.unlock(lm_read_only);
                 right_hand_side.unlock(lm_read_only);
                 difference.unlock(lm_read_only);
-                former_result.unlock(lm_write_only);
+                former_result.unlock(lm_write_only);*/
             }
 
             template<typename DT1_, typename DT2_>
