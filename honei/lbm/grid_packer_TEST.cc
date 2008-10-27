@@ -76,26 +76,24 @@ class GridPackerTest :
 
             GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::pack(grid, info, data);
 
-            for (unsigned long i(0) ; i < info.limits->size() ; ++i)
+            /*for (unsigned long i(0) ; i < info.limits->size() ; ++i)
             {
                 std::cout << (*info.limits)[i] << " " << (*info.types)[i] << std::endl;
-            }
-            /*
-            unsigned long observe(19);
-            std::cout<<(*info.limits)[observe] << " O: " << (*info.dir_1)[observe] << " N: " << (*info.dir_3)[observe] << " W: " << (*info.dir_5)[observe] << " S: " << (*info.dir_7)[observe] <<std::endl;
-            std::cout<<" NO: " << (*info.dir_2)[observe] << " NW: " << (*info.dir_4)[observe] << " SW: " << (*info.dir_6)[observe] << " SO: " << (*info.dir_8)[observe] <<std::endl;
-            ++observe;
-            std::cout<<(*info.limits)[observe] << " O: " << (*info.dir_1)[observe] << " N: " << (*info.dir_3)[observe] << " W: " << (*info.dir_5)[observe] << " S: " << (*info.dir_7)[observe] <<std::endl;
-            std::cout<<" NO: " << (*info.dir_2)[observe] << " NW: " << (*info.dir_4)[observe] << " SW: " << (*info.dir_6)[observe] << " SO: " << (*info.dir_8)[observe] <<std::endl;
-            ++observe;
-            std::cout<<(*info.limits)[observe] << " O: " << (*info.dir_1)[observe] << " N: " << (*info.dir_3)[observe] << " W: " << (*info.dir_5)[observe] << " S: " << (*info.dir_7)[observe] <<std::endl;
-            std::cout<<" NO: " << (*info.dir_2)[observe] << " NW: " << (*info.dir_4)[observe] << " SW: " << (*info.dir_6)[observe] << " SO: " << (*info.dir_8)[observe] <<std::endl;
-*/
+            }*/
+            std::cout<<*info.limits;
+            std::cout<<"1 "<<*info.dir_index_1;
+            std::cout<<"2: "<<*info.dir_index_2;
+            std::cout<<"3: "<<*info.dir_index_3;
+            std::cout<<"4: "<<*info.dir_index_4;
+            std::cout<<"5: "<<*info.dir_index_5;
+            std::cout<<"6: "<<*info.dir_index_6;
+            std::cout<<"7: "<<*info.dir_index_7;
+            std::cout<<"8: "<<*info.dir_index_8;
 
             GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::unpack(grid, info, data);
-            std::cout << *grid.h << std::endl;
+            //std::cout << *grid.h << std::endl;
 
-            std::cout << GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::extract_ftemp2(grid, info, data) << std::endl;
+//            std::cout << GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::extract_ftemp2(grid, info, data) << std::endl;
 
             TEST_CHECK(true);
         }

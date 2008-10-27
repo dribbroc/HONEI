@@ -201,9 +201,7 @@ namespace honei
                             temp_dir_index.push_back(dir[index] + info_list[patch].offset + 1 + offset);
                         }
                         // elements behind our own data
-                        if (dir[index] + offset >= (*info_list[patch].limits)[info_list[patch].limits->size() - 1]
-                                /// \todo remove this when packer generates valid dir vectors
-                                && patch + 1 < info_list.size())
+                        if (dir[index] + offset >= (*info_list[patch].limits)[info_list[patch].limits->size() - 1])
                         {
                             temp_dir_targets.push_back(patch + 1);
                             temp_dir_index.push_back(dir[index] + info_list[patch].offset + offset);
@@ -267,13 +265,9 @@ namespace honei
                 // elements behind our own data
                 for (unsigned long index(limits[limits.size() - 1]) ; index < h.size() ; ++index)
                 {
-                    /// \todo remove this when packer generates valid dir vectors
-                    if (patch + 1 < info_list.size())
-                    {
-                        temp_h_targets.push_back(patch + 1);
-                        temp_h_index.push_back(index + info_list[patch].offset);
-                        temp_h_index.push_back(index + info_list[patch].offset + 1);
-                    }
+                    temp_h_targets.push_back(patch + 1);
+                    temp_h_index.push_back(index + info_list[patch].offset);
+                    temp_h_index.push_back(index + info_list[patch].offset + 1);
                 }
                 if (temp_h_targets.size() == 0)
                 {

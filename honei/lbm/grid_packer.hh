@@ -51,9 +51,7 @@ namespace honei
             static void _dir_post_pack(std::vector<unsigned long> & dir, std::vector<unsigned long> & dir_post,
                     std::vector<unsigned long> & dir_index, std::vector<unsigned long> & limits)
             {
-                // todo keine ahnung was richtig ist: -1 oder ohne
                 for (unsigned long i(0) ; i < limits.size() - 1; ++i)
-                //for (unsigned long i(0) ; i < limits.size() ; ++i)
                 {
                     // if dir points not to our own cell (reflection)
                     if (dir[i] != limits[i])
@@ -66,7 +64,7 @@ namespace honei
                         {
                             ++end;
                         }
-                        dir_index.push_back(limits.at(end) + 1);
+                        dir_index.push_back(limits.at(end));
                         i = end - 1;
                     }
                 }
