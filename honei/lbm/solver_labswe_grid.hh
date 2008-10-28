@@ -68,60 +68,6 @@ namespace honei
             {
             };
 
-    template<typename ResPrec_>
-        class SolverLABSWEGrid<tags::CPU::MultiCore, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>
-        {
-            private:
-                unsigned long _parts;
-                PackedGridInfo<D2Q9> * _info;
-                PackedGridData<D2Q9, ResPrec_> * _data;
-                std::vector<PackedGridInfo<D2Q9> > _info_list;
-                std::vector<PackedGridData<D2Q9, ResPrec_> > _data_list;
-                std::vector<PackedGridFringe<D2Q9> > _fringe_list;
-                std::vector<SolverLABSWEGrid<tags::CPU, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> *> _solver_list;
-
-            public:
-                SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt) :
-                    _parts(4), /// \todo use Configuration
-                    _data(data),
-                    _info(info)
-                {
-                    CONTEXT("When creating LABSWE solver:");
-                    GridPartitioner<D2Q9, ResPrec_>::decompose(_parts, *_info, *_data, _info_list, _data_list, _fringe_list);
-
-                    for(unsigned long i(0) ; i < _parts ; ++i)
-                    {
-                        _solver_list.push_back(new SolverLABSWEGrid<tags::CPU, ResPrec_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>(&_data_list[i], &_info_list[i], 1., 1., 1.));
-                    }
-                }
-
-                ~SolverLABSWEGrid()
-                {
-                    CONTEXT("When destroying LABSWE solver.");
-                }
-
-                void do_preprocessing()
-                {
-                    CONTEXT("When performing LABSWE preprocessing.");
-                    for (unsigned long i(0) ; i < _parts ; ++i)
-                    {
-                        _solver_list.at(i)->do_preprocessing();
-                    }
-                    GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);
-                }
-
-                void solve()
-                {
-                    for (unsigned long i(0) ; i < _parts ; ++i)
-                    {
-                        _solver_list.at(i)->solve();
-                    }
-                    GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);
-                    /// \todo remove compose - it is only necessary if one must read the data
-                    GridPartitioner<D2Q9, ResPrec_>::compose(*_info, *_data, _info_list, _data_list);
-                }
-        };
-
                 template<typename Tag_, typename ResPrec_>
                     class SolverLABSWEGrid<Tag_, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>
                     {
@@ -409,5 +355,27 @@ namespace honei
                               _relaxation_time);
                 };
         };
+
+    template<typename ResPrec_>
+    class SolverLABSWEGrid<tags::CPU::MultiCore, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>
+    {
+        private:
+            unsigned long _parts;
+            PackedGridInfo<D2Q9> * _info;
+            PackedGridData<D2Q9, ResPrec_> * _data;
+            std::vector<PackedGridInfo<D2Q9> > _info_list;
+            std::vector<PackedGridData<D2Q9, ResPrec_> > _data_list;
+            std::vector<PackedGridFringe<D2Q9> > _fringe_list;
+            std::vector<SolverLABSWEGrid<tags::CPU, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> *> _solver_list;
+
+        public:
+            SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt);
+
+            ~SolverLABSWEGrid();
+
+            void do_preprocessing();
+
+            void solve();
+    };
 }
 #endif
