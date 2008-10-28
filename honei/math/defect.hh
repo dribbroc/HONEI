@@ -34,15 +34,16 @@ namespace honei
     struct Defect
     {
         public:
+            template<typename DT_>
             static DenseVector<DT_> value(DenseVector<DT_> & right_hand_side, BandedMatrixQ1<DT_> & system, DenseVector<DT_> & x)
             {
                 if (x.size() != system.columns())
                 {
                     throw VectorSizeDoesNotMatch(x.size(), system.columns());
                 }
-                if (rhs.size() != system.columns())
+                if (right_hand_side.size() != system.columns())
                 {
-                    throw VectorSizeDoesNotMatch(rhs.size(), system.columns());
+                    throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
                 }
 
                 right_hand_side.lock(lm_read_only);
