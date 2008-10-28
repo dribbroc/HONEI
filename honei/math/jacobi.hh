@@ -401,7 +401,7 @@ namespace honei
                 jacobi_kernel(system_matrix, right_hand_side, x, diag_inverted);
                 return x;*/
 
-                DenseVector<DT1_> x(right_hand_side.size());
+                /*DenseVector<DT1_> x(right_hand_side.size());
                 x.lock(lm_write_only);
                 system_matrix.lock(lm_read_only);
                 right_hand_side.lock(lm_read_only);
@@ -414,7 +414,12 @@ namespace honei
                 x.unlock(lm_write_only);
                 system_matrix.unlock(lm_read_only);
                 right_hand_side.unlock(lm_read_only);
-                return x;
+                return x;*/
+                //NEW:
+                DenseVector<DT1_> temp(diag_inverted.size());
+                copy<Tag_>(diag_inverted, temp);
+                ElementProduct<Tag_>::value(temp, right_hand_side);
+                return temp;
             }
 
             template <typename DT1_, typename DT2_>
