@@ -234,7 +234,7 @@ class PoissonBenchmarkMGBandedQ1Float:
                     break;
             }
 
-            info.n_max_iter = 9;
+            info.n_max_iter = 16;
             info.initial_zero = true;
             info.tolerance = 1e-2;
             info.convergence_check = true;
@@ -422,7 +422,7 @@ class PoissonBenchmarkMGBandedQ1Float:
             }
 
             DenseVector<float> result(n, float(0));
-            for (unsigned long i(0) ; i < 10 ; ++i)
+            for (unsigned long i(0) ; i < 1 ; ++i)
             {
                 BENCHMARK(
                         for (unsigned long j(0) ; j < 1 ; ++j)

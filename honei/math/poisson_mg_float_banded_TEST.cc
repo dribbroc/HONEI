@@ -229,7 +229,7 @@ class PoissonTestMGBandedQ1Float:
             info.n_max_iter = 16;
             info.initial_zero = true;
             info.tolerance = 1e-2;
-            info.convergence_check = false;
+            info.convergence_check = true;
 
             info.n_pre_smooth = 4;
             info.n_post_smooth = 4;
