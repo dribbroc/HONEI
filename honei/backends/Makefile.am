@@ -15,4 +15,8 @@ if SSE
   SSEDIR = sse
 endif
 
-SUBDIRS = $(SSEDIR) $(CELLDIR) $(CUDADIR)
+if MPI
+  MPIDIR = mpi
+endif
+
+SUBDIRS = $(SSEDIR) $(CELLDIR) $(CUDADIR) $(MPIDIR)

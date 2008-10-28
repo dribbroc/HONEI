@@ -36,6 +36,14 @@ BACKEND_LIBS += \
 
 endif
 
+if MPI
+
+SSEFILES = mpilist
+BACKEND_LIBS += \
+	$(top_builddir)/honei/backends/mpi/libhoneibackendsmpi.la
+
+endif
+
 CXX = mpic++
 CC = mpicc
 
