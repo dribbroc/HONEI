@@ -425,7 +425,6 @@ class PoissonBenchmarkMGBandedQ1Mixed:
                         for (unsigned long j(0) ; j < 1 ; ++j)
                         {
                         (result = Multigrid<Tag_, OuterTag_, JAC, CYCLE::V, MIXED >::value(A, b_v, (unsigned long)11, std::numeric_limits<double>::epsilon(), info));
-                        cuda_thread_synchronize();
                         }
                 );
             }

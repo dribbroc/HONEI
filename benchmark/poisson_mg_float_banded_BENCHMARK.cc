@@ -428,7 +428,6 @@ class PoissonBenchmarkMGBandedQ1Float:
                         for (unsigned long j(0) ; j < 1 ; ++j)
                         {
                         (result = Multigrid<Tag_, Tag_, JAC, CYCLE::V, FIXED >::value(A, b_v, (unsigned long)11, std::numeric_limits<float>::epsilon(), info));
-                        cuda_thread_synchronize();
                         }
                 );
             }
