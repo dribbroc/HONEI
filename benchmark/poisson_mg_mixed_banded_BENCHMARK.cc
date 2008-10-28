@@ -23,6 +23,7 @@
 #include <honei/util/stringify.hh>
 #include <iostream>
 #include <honei/math/endian_swap.hh>
+#include <honei/backends/cuda/operations.hh>
 
 //#include <cstdio>
 //#include <cstdlib>
@@ -404,7 +405,7 @@ class PoissonBenchmarkMGBandedQ1Mixed:
             }
             //--------End loading of data----------------------------------
             //Prefetch:
-            /*for (unsigned long i(0) ; i < info.max_level ; ++i)
+            for (unsigned long i(0) ; i < info.max_level ; ++i)
             {
                 info.a[i].lock(lm_read_only, Tag_::memory_value);
                 info.a[i].unlock(lm_read_only);
@@ -416,7 +417,7 @@ class PoissonBenchmarkMGBandedQ1Mixed:
                 info.c[i].unlock(lm_read_only);
                 info.rhs[i].lock(lm_read_only, Tag_::memory_value);
                 info.rhs[i].unlock(lm_read_only);
-            }*/
+            }
             DenseVector<double> result(n, double(0));
             for (unsigned long i(0) ; i < 1 ; ++i)
             {
@@ -424,6 +425,7 @@ class PoissonBenchmarkMGBandedQ1Mixed:
                         for (unsigned long j(0) ; j < 1 ; ++j)
                         {
                         (result = Multigrid<Tag_, OuterTag_, JAC, CYCLE::V, MIXED >::value(A, b_v, (unsigned long)11, std::numeric_limits<double>::epsilon(), info));
+                        cuda_thread_synchronize();
                         }
                 );
             }

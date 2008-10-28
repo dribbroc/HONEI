@@ -23,6 +23,7 @@
 #include <honei/util/stringify.hh>
 #include <iostream>
 #include <honei/math/endian_swap.hh>
+#include <honei/backends/cuda/operations.hh>
 
 //#include <cstdio>
 //#include <cstdlib>
@@ -235,8 +236,8 @@ class PoissonBenchmarkMGBandedQ1Float:
 
             info.n_max_iter = 9;
             info.initial_zero = true;
-            info.tolerance = 1e-8;
-            info.convergence_check = false;
+            info.tolerance = 1e-2;
+            info.convergence_check = true;
 
             info.n_pre_smooth = 2;
             info.n_post_smooth = 2;
@@ -406,7 +407,7 @@ class PoissonBenchmarkMGBandedQ1Float:
             }
             //--------End loading of data----------------------------------
             //Prefetch:
-            /*for (unsigned long i(0) ; i < info.max_level ; ++i)
+            for (unsigned long i(0) ; i < info.max_level ; ++i)
             {
                 info.a[i].lock(lm_read_only, Tag_::memory_value);
                 info.a[i].unlock(lm_read_only);
@@ -418,15 +419,16 @@ class PoissonBenchmarkMGBandedQ1Float:
                 info.c[i].unlock(lm_read_only);
                 info.rhs[i].lock(lm_read_only, Tag_::memory_value);
                 info.rhs[i].unlock(lm_read_only);
-            }*/
+            }
 
             DenseVector<float> result(n, float(0));
-            for (unsigned long i(0) ; i < 1 ; ++i)
+            for (unsigned long i(0) ; i < 10 ; ++i)
             {
                 BENCHMARK(
                         for (unsigned long j(0) ; j < 1 ; ++j)
                         {
                         (result = Multigrid<Tag_, Tag_, JAC, CYCLE::V, FIXED >::value(A, b_v, (unsigned long)11, std::numeric_limits<float>::epsilon(), info));
+                        cuda_thread_synchronize();
                         }
                 );
             }

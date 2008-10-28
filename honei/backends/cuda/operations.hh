@@ -57,5 +57,7 @@ extern "C"
         void cuda_scale_one_float(void * x, const float a, unsigned long size, unsigned long blocksize);
 
         void cuda_sum_two_float(void * a, const void * b, unsigned long size, unsigned long blocksize);
+
+        void cuda_thread_synchronize();
 }
 #endif
