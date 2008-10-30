@@ -29,8 +29,8 @@ namespace honei
         {
             // index in the fine array (output index)
             unsigned long ifine = blockDim.x*blockIdx.x+threadIdx.x;
-            // row index in the fine array  // TODO integer division
-            unsigned long rfine = (unsigned long)floorf(ifine / (float)Mfine);
+            // row index in the fine array
+            unsigned long rfine = ifine / Mfine;
             // column index in the fine array
             unsigned long cfine = ifine - rfine*Mfine;
             // row index in the coarse array

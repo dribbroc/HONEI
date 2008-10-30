@@ -47,13 +47,13 @@ class RestrictionTest:
                 unsigned long N_coarse((unsigned long)pow((pow(2, level) + 1), 2));
                 unsigned long width_coarse = (unsigned long)sqrt((double)N_coarse);
 
-                DenseVector<DT1_> fine(N_fine);
+                DenseVector<DT1_> fine(N_fine, DT1_(1));
                 DenseVector<DT1_> coarse(N_coarse, DT1_(4711));
                 DenseVector<DT1_> coarse_ref(N_coarse, DT1_(4711));
-                for (unsigned long i(0) ; i < fine.size() ; ++i)
+                /*for (unsigned long i(0) ; i < fine.size() ; ++i)
                 {
                     fine[i] = DT1_(i % 1000);
-                }
+                }*/
                 DenseVector<unsigned long> mask(8);
                 for(unsigned long i(0) ; i < 8 ; ++i)
                 {
@@ -61,10 +61,16 @@ class RestrictionTest:
                 }
 
                 Restriction<Tag_>::value(coarse, fine, mask);
-                //Restriction<tags::CPU>::value(coarse_ref, fine, mask);
+                Restriction<tags::CPU>::value(coarse_ref, fine, mask);
                 coarse.lock(lm_read_only);
                 coarse_ref.lock(lm_read_only);
-                //TEST_CHECK_EQUAL(coarse, coarse_ref);
+                std::cout << "At level: " << level + 1 << std::endl;
+                for(unsigned long i(0) ; i < coarse.size() ; ++i)
+                {
+                    if (coarse[i] != coarse_ref[i])
+                        std::cout << "Not matching: " << i << std::endl;
+                }
+                TEST_CHECK_EQUAL(coarse, coarse_ref);
 
                 coarse.unlock(lm_read_only);
                 coarse_ref.unlock(lm_read_only);

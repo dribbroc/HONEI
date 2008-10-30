@@ -65,7 +65,7 @@ class PoissonTestMGBandedQ1Double:
             double* ref_sol;
 
             std::string file_name(HONEI_SOURCEDIR);
-            file_name += "/honei/math/testdata/1050625.bin";
+            file_name += "/honei/math/testdata/1089.bin";
             file = fopen(file_name.c_str(), "rb");
             fread(&n, sizeof(int), 1, file);
 

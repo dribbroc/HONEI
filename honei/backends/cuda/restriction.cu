@@ -29,8 +29,7 @@ namespace honei
             // index in the coarse array (output index)
             unsigned long ic = blockDim.x*blockIdx.x+threadIdx.x;
             // row in the coarse array
-            unsigned long rc = (unsigned long)floorf(ic/(float)Mc);
-            // TODO unsigned longeger-division
+            unsigned long rc = ic/Mc;
 
             // column offset in the coarse array
             unsigned long cc = ic - rc*Mc;

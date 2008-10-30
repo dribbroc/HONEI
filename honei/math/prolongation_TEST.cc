@@ -51,11 +51,11 @@ class ProlongationTest:
 
                 DenseVector<DT1_> fine(N_fine, DT1_(4711));
                 DenseVector<DT1_> fine_ref(N_fine, DT1_(4711));
-                DenseVector<DT1_> coarse(N_coarse);
-                for (unsigned long i(0) ; i < coarse.size() ; ++i)
+                DenseVector<DT1_> coarse(N_coarse, DT1_(1));
+                /*for (unsigned long i(0) ; i < coarse.size() ; ++i)
                 {
                     coarse[i] = DT1_(i % 1000);
-                }
+                }*/
                 DenseVector<unsigned long> mask(8);
                 for(unsigned long i(0) ; i < 8 ; ++i)
                 {
@@ -63,10 +63,16 @@ class ProlongationTest:
                 }
 
                 Prolongation<Tag_>::value(fine, coarse, mask);
-                //Prolongation<tags::CPU>::value(fine_ref, coarse, mask);
+                Prolongation<tags::CPU>::value(fine_ref, coarse, mask);
                 fine.lock(lm_read_only);
                 fine_ref.lock(lm_read_only);
-                //TEST_CHECK_EQUAL(fine, fine_ref);
+                std::cout << "At level: " << level + 1 << std::endl;
+                for(unsigned long i(0) ; i < fine.size() ; ++i)
+                {
+                    if (fine[i] != fine_ref[i])
+                        std::cout << "Not matching: " << i << std::endl;
+                }
+                TEST_CHECK_EQUAL(fine, fine_ref);
 
                 fine.unlock(lm_read_only);
                 fine_ref.unlock(lm_read_only);
