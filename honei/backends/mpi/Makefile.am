@@ -9,9 +9,6 @@ DEFS = \
 	$(DEBUGDEF) \
 	$(PROFILERDEF)
 
-CXX = mpic++
-CC = mpicc
-
 lib_LTLIBRARIES = libhoneibackendsmpi.la
 
 libhoneibackendsmpi_la_LIBADD = \
