@@ -359,6 +359,16 @@ namespace honei
 
         static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & x, const DenseVectorContinuousBase<double> & y, const double & b);
 
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b, const DenseVectorContinuousBase<float> & c )
+        {
+            ScaledSum<tags::CPU>::value(a, b, c);
+        }
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b, const DenseVectorContinuousBase<double> & c)
+        {
+            ScaledSum<tags::CPU>::value(a, b, c);
+        }
+
         static DenseMatrix<float> & value(DenseMatrix<float> & x, const DenseMatrix<float> & y, const float & b);
 
         /// \}
