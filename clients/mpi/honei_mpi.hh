@@ -121,7 +121,7 @@ namespace honei
                     GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list, fringe_list);
                     GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);
                     GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
-                    PostProcessing<output_types::GNUPLOT>::value(*grid.h, 1, grid.h->rows(), grid.h->columns(), i);
+                    PostProcessing<output_types::GNUPLOT>::value(*grid.h, 1, grid.h->columns(), grid.h->rows(), i);
 
                     for (unsigned long target(1) ; target < _numprocs ; ++target)
                     {
@@ -436,6 +436,35 @@ namespace honei
                             q2.value();
                             Cuboid<bool> q3(*grid.obstacles, 40, 5, 1, 10, 30);
                             q3.value();
+                        }
+                        break;
+
+                    case 2:
+                        {
+                            unsigned long g_h(100);
+                            unsigned long g_w(200);
+                            grid.h = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.05));
+                            Cylinder<DataType_> c1(*grid.h, DataType_(0.03), 35, 16);
+                            c1.value();
+
+                            grid.u = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.));
+                            grid.v = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.));
+                            DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
+                            //build up the hill:
+                            for(unsigned long i(0) ; i < g_h ; ++i)
+                            {
+                                for(unsigned long j(0) ; j < g_w ; ++j)
+                                {
+                                    double x(j * 0.01);
+                                    double y(i * 0.01);
+                                    if(sqrt(y * y + x * x) >= 0.4)
+                                        b(i , j) = 0.4 * exp((-5.) * (x - 1.) * (x - 1.) - 50. * (y - 0.5) * (y - 0.5));
+                                }
+                            }
+                            grid.b_x = new DenseMatrix<DataType_> (PartialDerivative<Tag_, X, CENTRALDIFF>::value(b , DataType_(1)));
+                            grid.b_y = new DenseMatrix<DataType_> (PartialDerivative<Tag_, Y, CENTRALDIFF>::value(b , DataType_(1)));
+
+                            grid.obstacles = new DenseMatrix<bool> (g_h, g_w, false);
                         }
                         break;
                 }
