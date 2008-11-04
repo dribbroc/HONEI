@@ -72,29 +72,10 @@ namespace honei
         private:
             void _master()
             {
-                unsigned long g_h(50);
-                unsigned long g_w(50);
                 unsigned long timesteps(100);
-
-
-                DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
-                Cylinder<DataType_> c1(h, DataType_(0.02), 25, 25);
-                c1.value();
-
-                DenseMatrix<DataType_> u(g_h, g_w, DataType_(0.));
-                DenseMatrix<DataType_> v(g_h, g_w, DataType_(0.));
-                DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
-                DenseMatrix<DataType_> b_x(PartialDerivative<Tag_, X, CENTRALDIFF>::value(b , DataType_(1)));
-                DenseMatrix<DataType_> b_y(PartialDerivative<Tag_, Y, CENTRALDIFF>::value(b , DataType_(1)));
-
                 Grid<D2Q9, DataType_> grid;
-                DenseMatrix<bool> obstacles(g_h, g_w, false);
-                grid.obstacles = &obstacles;
-                grid.h = &h;
-                grid.u = &u;
-                grid.v = &v;
-                grid.b_x = &b_x;
-                grid.b_y = &b_y;
+                _load_scenario(1, grid);
+
                 PackedGridData<D2Q9, DataType_>  data;
                 PackedGridInfo<D2Q9> info;
 
@@ -140,7 +121,7 @@ namespace honei
                     GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list, fringe_list);
                     GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);
                     GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
-                    PostProcessing<output_types::GNUPLOT>::value(h, 1, g_w, g_h, i);
+                    PostProcessing<output_types::GNUPLOT>::value(*grid.h, 1, grid.h->rows(), grid.h->columns(), i);
 
                     for (unsigned long target(1) ; target < _numprocs ; ++target)
                     {
@@ -410,6 +391,54 @@ namespace honei
                 mpi::mpi_recv(data.f_temp_8->elements(), data.f_temp_8->size(), target, target);
 
                 mpi::mpi_recv(data.h->elements(), data.h->size(), target, target);
+            }
+
+            void _load_scenario(unsigned long scenario, Grid<D2Q9, DataType_> & grid)
+            {
+                switch (scenario)
+                {
+                    case 0:
+                        {
+                            unsigned long g_h(50);
+                            unsigned long g_w(50);
+
+                            grid.h = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.05));
+                            Cylinder<DataType_> c1(*grid.h, DataType_(0.06), 25, 25);
+                            c1.value();
+
+                            grid.u = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.));
+                            grid.v = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.));
+                            DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
+                            grid.b_x = new DenseMatrix<DataType_> (PartialDerivative<Tag_, X, CENTRALDIFF>::value(b , DataType_(1)));
+                            grid.b_y = new DenseMatrix<DataType_> (PartialDerivative<Tag_, Y, CENTRALDIFF>::value(b , DataType_(1)));
+
+                            grid.obstacles = new DenseMatrix<bool> (g_h, g_w, false);
+                        }
+                        break;
+
+                    case 1:
+                        {
+                            unsigned long g_h(50);
+                            unsigned long g_w(50);
+                            grid.h = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.05));
+                            Cylinder<DataType_> c1(*grid.h, DataType_(0.06), 25, 25);
+                            c1.value();
+
+                            grid.u = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.));
+                            grid.v = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.));
+                            DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
+                            grid.b_x = new DenseMatrix<DataType_> (PartialDerivative<Tag_, X, CENTRALDIFF>::value(b , DataType_(1)));
+                            grid.b_y = new DenseMatrix<DataType_> (PartialDerivative<Tag_, Y, CENTRALDIFF>::value(b , DataType_(1)));
+
+                            grid.obstacles = new DenseMatrix<bool> (g_h, g_w, false);
+
+                            Cuboid<bool> q2(*grid.obstacles, 15, 5, 1, 10, 0);
+                            q2.value();
+                            Cuboid<bool> q3(*grid.obstacles, 40, 5, 1, 10, 30);
+                            q3.value();
+                        }
+                        break;
+                }
             }
     };
 }
