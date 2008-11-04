@@ -51,8 +51,8 @@ namespace honei
      *
      * \ingroup grplbmoperations
      */
-    template <typename Tag_>
-    struct ForceGrid<Tag_, lbm_applications::LABSWE, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF>
+    template <>
+    struct ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF>
     {
         /**
          * \name Force term.

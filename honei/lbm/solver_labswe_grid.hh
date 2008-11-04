@@ -336,7 +336,7 @@ namespace honei
                     ForceGrid<Tag_, lbm_applications::LABSWE, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF>::value(*_data, *_info, ResPrec_(9.81), _delta_x, _delta_y, _delta_t );
 
                     ///Boundary correction:
-                    UpdateVelocityDirectionsGrid<D2Q9, NOSLIP>::
+                    UpdateVelocityDirectionsGrid<Tag_, NOSLIP>::
                         value(*_data, *_info);
 
                     //extract velocities out of h from previous timestep:

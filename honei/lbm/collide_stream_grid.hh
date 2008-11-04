@@ -50,8 +50,8 @@ namespace honei
      *
      * \ingroup grplbmoperations
      */
-    template <typename Tag_>
-    struct CollideStreamGrid<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>
+    template <>
+    struct CollideStreamGrid<tags::CPU, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>
     {
         /**
          * \name Collision and Streaming for direction 1..

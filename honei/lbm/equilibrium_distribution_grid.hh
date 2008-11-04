@@ -47,8 +47,8 @@ namespace honei
     *
     * \ingroup grplbmoperations
     */
-    template<typename Tag_>
-        struct EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>
+    template<>
+        struct EquilibriumDistributionGrid<tags::CPU, lbm_applications::LABSWE>
         {
             /**
              * \name Equilibrium distribution.

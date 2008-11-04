@@ -48,8 +48,8 @@ namespace honei
      *
      * \ingroup grplbmoperations
      */
-   template <typename Tag_>
-       struct UpdateVelocityDirectionsGrid<Tag_, lbm_boundary_types::NOSLIP>
+   template <>
+       struct UpdateVelocityDirectionsGrid<tags::CPU, lbm_boundary_types::NOSLIP>
        {
            /**
             * \name Velocity Update

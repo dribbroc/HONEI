@@ -51,8 +51,8 @@ namespace honei
         {
         };
 
-    template<typename Tag_>
-        class Extraction<Tag_, lbm_applications::LABSWE , quantities::HEIGHT>
+    template<>
+        class Extraction<tags::CPU, lbm_applications::LABSWE , quantities::HEIGHT>
         {
             public:
                 template<typename DT_>
@@ -86,8 +86,8 @@ namespace honei
         };
 
 
-    template<typename Tag_>
-        class Extraction<Tag_, lbm_applications::LABSWE , quantities::VELOCITY_X>
+    template<>
+        class Extraction<tags::CPU, lbm_applications::LABSWE , quantities::VELOCITY_X>
         {
             public:
                 template<typename DT_>
@@ -110,8 +110,8 @@ namespace honei
         };
 
 
-    template<typename Tag_>
-        class Extraction<Tag_, lbm_applications::LABSWE , quantities::VELOCITY_Y>
+    template<>
+        class Extraction<tags::CPU, lbm_applications::LABSWE , quantities::VELOCITY_Y>
         {
             public:
                 template<typename DT_>
