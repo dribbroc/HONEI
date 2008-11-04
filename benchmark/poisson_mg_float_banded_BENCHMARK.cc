@@ -70,7 +70,7 @@ class PoissonBenchmarkMGBandedQ1Float:
             double* ref_sol;
 
             std::string file_name(HONEI_SOURCEDIR);
-            file_name += "/honei/math/testdata/1050625.bin";
+            file_name += "/honei/math/testdata/4225.bin";
             file = fopen(file_name.c_str(), "rb");
             fread(&n, sizeof(int), 1, file);
 
@@ -234,9 +234,9 @@ class PoissonBenchmarkMGBandedQ1Float:
                     break;
             }
 
-            info.n_max_iter = 16;
+            info.n_max_iter = 9;
             info.initial_zero = true;
-            info.tolerance = 1e-2;
+            info.tolerance = 1e-8;
             info.convergence_check = true;
 
             info.n_pre_smooth = 2;
