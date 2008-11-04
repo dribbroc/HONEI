@@ -71,6 +71,41 @@ namespace honei
             static void value(PackedGridData<D2Q9, DT1_> & data, PackedGridInfo<D2Q9> & info, DT2_ g, DT2_ d_x, DT2_ d_y, DT2_ d_t)
             {
                 CONTEXT("When computing LABSWE force term:");
+
+                info.dir_index_1->lock(lm_read_only);
+                info.dir_index_2->lock(lm_read_only);
+                info.dir_index_3->lock(lm_read_only);
+                info.dir_index_4->lock(lm_read_only);
+                info.dir_index_5->lock(lm_read_only);
+                info.dir_index_6->lock(lm_read_only);
+                info.dir_index_7->lock(lm_read_only);
+                info.dir_index_8->lock(lm_read_only);
+
+                info.dir_1->lock(lm_read_only);
+                info.dir_2->lock(lm_read_only);
+                info.dir_3->lock(lm_read_only);
+                info.dir_4->lock(lm_read_only);
+                info.dir_5->lock(lm_read_only);
+                info.dir_6->lock(lm_read_only);
+                info.dir_7->lock(lm_read_only);
+                info.dir_8->lock(lm_read_only);
+
+                data.h->lock(lm_read_only);
+                data.b_x->lock(lm_read_only);
+                data.b_y->lock(lm_read_only);
+                data.distribution_x->lock(lm_read_only);
+                data.distribution_y->lock(lm_read_only);
+
+                data.f_temp_1->lock(lm_read_and_write);
+                data.f_temp_2->lock(lm_read_and_write);
+                data.f_temp_3->lock(lm_read_and_write);
+                data.f_temp_4->lock(lm_read_and_write);
+                data.f_temp_5->lock(lm_read_and_write);
+                data.f_temp_6->lock(lm_read_and_write);
+                data.f_temp_7->lock(lm_read_and_write);
+                data.f_temp_8->lock(lm_read_and_write);
+
+
                 for (unsigned long begin(0), half(0) ; begin < info.dir_index_1->size() - 1; begin+=2, ++half)
                 {
                     for (unsigned long i((*info.dir_index_1)[begin]), offset(0) ; i < (*info.dir_index_1)[begin + 1] ; ++i, ++offset)
@@ -178,6 +213,39 @@ namespace honei
                              ((((*data.b_y)[(*info.dir_8)[half] + offset]) - ((*data.b_y)[i]))/ DT1_(2.)));
                     }
                 }
+
+                info.dir_index_1->unlock(lm_read_only);
+                info.dir_index_2->unlock(lm_read_only);
+                info.dir_index_3->unlock(lm_read_only);
+                info.dir_index_4->unlock(lm_read_only);
+                info.dir_index_5->unlock(lm_read_only);
+                info.dir_index_6->unlock(lm_read_only);
+                info.dir_index_7->unlock(lm_read_only);
+                info.dir_index_8->unlock(lm_read_only);
+
+                info.dir_1->unlock(lm_read_only);
+                info.dir_2->unlock(lm_read_only);
+                info.dir_3->unlock(lm_read_only);
+                info.dir_4->unlock(lm_read_only);
+                info.dir_5->unlock(lm_read_only);
+                info.dir_6->unlock(lm_read_only);
+                info.dir_7->unlock(lm_read_only);
+                info.dir_8->unlock(lm_read_only);
+
+                data.h->unlock(lm_read_only);
+                data.b_x->unlock(lm_read_only);
+                data.b_y->unlock(lm_read_only);
+                data.distribution_x->unlock(lm_read_only);
+                data.distribution_y->unlock(lm_read_only);
+
+                data.f_temp_1->unlock(lm_read_and_write);
+                data.f_temp_2->unlock(lm_read_and_write);
+                data.f_temp_3->unlock(lm_read_and_write);
+                data.f_temp_4->unlock(lm_read_and_write);
+                data.f_temp_5->unlock(lm_read_and_write);
+                data.f_temp_6->unlock(lm_read_and_write);
+                data.f_temp_7->unlock(lm_read_and_write);
+                data.f_temp_8->unlock(lm_read_and_write);
             }
     };
 }

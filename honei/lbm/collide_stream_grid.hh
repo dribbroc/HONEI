@@ -68,6 +68,53 @@ namespace honei
         {
             CONTEXT("When performing collision and streaming:");
 
+            info.limits->lock(lm_read_only);
+            info.dir_1->lock(lm_read_only);
+            info.dir_2->lock(lm_read_only);
+            info.dir_3->lock(lm_read_only);
+            info.dir_4->lock(lm_read_only);
+            info.dir_5->lock(lm_read_only);
+            info.dir_6->lock(lm_read_only);
+            info.dir_7->lock(lm_read_only);
+            info.dir_8->lock(lm_read_only);
+            info.dir_index_1->lock(lm_read_only);
+            info.dir_index_2->lock(lm_read_only);
+            info.dir_index_3->lock(lm_read_only);
+            info.dir_index_4->lock(lm_read_only);
+            info.dir_index_5->lock(lm_read_only);
+            info.dir_index_6->lock(lm_read_only);
+            info.dir_index_7->lock(lm_read_only);
+            info.dir_index_8->lock(lm_read_only);
+
+            data.f_eq_0->lock(lm_read_only);
+            data.f_eq_1->lock(lm_read_only);
+            data.f_eq_2->lock(lm_read_only);
+            data.f_eq_3->lock(lm_read_only);
+            data.f_eq_4->lock(lm_read_only);
+            data.f_eq_5->lock(lm_read_only);
+            data.f_eq_6->lock(lm_read_only);
+            data.f_eq_7->lock(lm_read_only);
+            data.f_eq_8->lock(lm_read_only);
+            data.f_0->lock(lm_read_only);
+            data.f_1->lock(lm_read_only);
+            data.f_2->lock(lm_read_only);
+            data.f_3->lock(lm_read_only);
+            data.f_4->lock(lm_read_only);
+            data.f_5->lock(lm_read_only);
+            data.f_6->lock(lm_read_only);
+            data.f_7->lock(lm_read_only);
+            data.f_8->lock(lm_read_only);
+
+            data.f_temp_0->lock(lm_write_only);
+            data.f_temp_1->lock(lm_write_only);
+            data.f_temp_2->lock(lm_write_only);
+            data.f_temp_3->lock(lm_write_only);
+            data.f_temp_4->lock(lm_write_only);
+            data.f_temp_5->lock(lm_write_only);
+            data.f_temp_6->lock(lm_write_only);
+            data.f_temp_7->lock(lm_write_only);
+            data.f_temp_8->lock(lm_write_only);
+
             for (unsigned long begin(0) ; begin != info.limits->size() - 1 ; ++begin)
             {
                 for (unsigned long i((*info.limits)[begin]), offset(0) ; i != (*info.limits)[begin + 1] ; ++i, ++offset)
@@ -139,6 +186,53 @@ namespace honei
                     (*data.f_temp_8)[(*info.dir_8)[half] + offset] = (*data.f_8)[i] - ((*data.f_8)[i] - (*data.f_eq_8)[i])/tau;
                 }
             }
+
+            info.limits->unlock(lm_read_only);
+            info.dir_1->unlock(lm_read_only);
+            info.dir_2->unlock(lm_read_only);
+            info.dir_3->unlock(lm_read_only);
+            info.dir_4->unlock(lm_read_only);
+            info.dir_5->unlock(lm_read_only);
+            info.dir_6->unlock(lm_read_only);
+            info.dir_7->unlock(lm_read_only);
+            info.dir_8->unlock(lm_read_only);
+            info.dir_index_1->unlock(lm_read_only);
+            info.dir_index_2->unlock(lm_read_only);
+            info.dir_index_3->unlock(lm_read_only);
+            info.dir_index_4->unlock(lm_read_only);
+            info.dir_index_5->unlock(lm_read_only);
+            info.dir_index_6->unlock(lm_read_only);
+            info.dir_index_7->unlock(lm_read_only);
+            info.dir_index_8->unlock(lm_read_only);
+
+            data.f_eq_0->unlock(lm_read_only);
+            data.f_eq_1->unlock(lm_read_only);
+            data.f_eq_2->unlock(lm_read_only);
+            data.f_eq_3->unlock(lm_read_only);
+            data.f_eq_4->unlock(lm_read_only);
+            data.f_eq_5->unlock(lm_read_only);
+            data.f_eq_6->unlock(lm_read_only);
+            data.f_eq_7->unlock(lm_read_only);
+            data.f_eq_8->unlock(lm_read_only);
+            data.f_0->unlock(lm_read_only);
+            data.f_1->unlock(lm_read_only);
+            data.f_2->unlock(lm_read_only);
+            data.f_3->unlock(lm_read_only);
+            data.f_4->unlock(lm_read_only);
+            data.f_5->unlock(lm_read_only);
+            data.f_6->unlock(lm_read_only);
+            data.f_7->unlock(lm_read_only);
+            data.f_8->unlock(lm_read_only);
+
+            data.f_temp_0->unlock(lm_write_only);
+            data.f_temp_1->unlock(lm_write_only);
+            data.f_temp_2->unlock(lm_write_only);
+            data.f_temp_3->unlock(lm_write_only);
+            data.f_temp_4->unlock(lm_write_only);
+            data.f_temp_5->unlock(lm_write_only);
+            data.f_temp_6->unlock(lm_write_only);
+            data.f_temp_7->unlock(lm_write_only);
+            data.f_temp_8->unlock(lm_write_only);
         }
     };
 }

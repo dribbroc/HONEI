@@ -61,6 +61,19 @@ namespace honei
                static void value(PackedGridData<D2Q9, DT1_> & data, PackedGridInfo<D2Q9> & info)
                {
                    CONTEXT("When updating velocity directions:");
+
+                   info.limits->lock(lm_read_only);
+                   info.types->lock(lm_read_only);
+
+                   data.f_temp_1->lock(lm_read_and_write);
+                   data.f_temp_2->lock(lm_read_and_write);
+                   data.f_temp_3->lock(lm_read_and_write);
+                   data.f_temp_4->lock(lm_read_and_write);
+                   data.f_temp_5->lock(lm_read_and_write);
+                   data.f_temp_6->lock(lm_read_and_write);
+                   data.f_temp_7->lock(lm_read_and_write);
+                   data.f_temp_8->lock(lm_read_and_write);
+
                    for (unsigned long begin(0) ; begin != info.limits->size() - 1 ; ++begin)
                    {
                        for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
@@ -105,6 +118,18 @@ namespace honei
                            }
                        }
                    }
+
+                   info.limits->unlock(lm_read_only);
+                   info.types->unlock(lm_read_only);
+
+                   data.f_temp_1->unlock(lm_read_and_write);
+                   data.f_temp_2->unlock(lm_read_and_write);
+                   data.f_temp_3->unlock(lm_read_and_write);
+                   data.f_temp_4->unlock(lm_read_and_write);
+                   data.f_temp_5->unlock(lm_read_and_write);
+                   data.f_temp_6->unlock(lm_read_and_write);
+                   data.f_temp_7->unlock(lm_read_and_write);
+                   data.f_temp_8->unlock(lm_read_and_write);
                }
        };
 }

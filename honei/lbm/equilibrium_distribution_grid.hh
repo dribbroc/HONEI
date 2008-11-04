@@ -64,6 +64,26 @@ namespace honei
                 static void value(DT2_ g, DT2_ e, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data)
                 {
                     CONTEXT("When computing LABSWE local equilibrium distribution function:");
+
+                    info.limits->lock(lm_read_only);
+
+                    data.u->lock(lm_read_only);
+                    data.v->lock(lm_read_only);
+                    data.h->lock(lm_read_only);
+
+                    data.distribution_x->lock(lm_read_only);
+                    data.distribution_y->lock(lm_read_only);
+
+                    data.f_eq_0->lock(lm_write_only);
+                    data.f_eq_1->lock(lm_write_only);
+                    data.f_eq_2->lock(lm_write_only);
+                    data.f_eq_3->lock(lm_write_only);
+                    data.f_eq_4->lock(lm_write_only);
+                    data.f_eq_5->lock(lm_write_only);
+                    data.f_eq_6->lock(lm_write_only);
+                    data.f_eq_7->lock(lm_write_only);
+                    data.f_eq_8->lock(lm_write_only);
+
                     for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                     {
                         DT1_ u((*data.u)[i]);
@@ -111,6 +131,25 @@ namespace honei
                             ((h / (DT1_(8.) * e * e)) * ((*data.distribution_x)[8] * u * (*data.distribution_x)[8] * u + DT1_(2.) * (*data.distribution_x)[8] * u * (*data.distribution_y)[8] * v + (*data.distribution_y)[8] * v * (*data.distribution_y)[8] * v)) -
                             ((h / (DT1_(24.) * e * e)) * (u * u + v * v));
                     }
+
+                    info.limits->unlock(lm_read_only);
+
+                    data.u->unlock(lm_read_only);
+                    data.v->unlock(lm_read_only);
+                    data.h->unlock(lm_read_only);
+
+                    data.distribution_x->unlock(lm_read_only);
+                    data.distribution_y->unlock(lm_read_only);
+
+                    data.f_eq_0->unlock(lm_write_only);
+                    data.f_eq_1->unlock(lm_write_only);
+                    data.f_eq_2->unlock(lm_write_only);
+                    data.f_eq_3->unlock(lm_write_only);
+                    data.f_eq_4->unlock(lm_write_only);
+                    data.f_eq_5->unlock(lm_write_only);
+                    data.f_eq_6->unlock(lm_write_only);
+                    data.f_eq_7->unlock(lm_write_only);
+                    data.f_eq_8->unlock(lm_write_only);
                 }
         };
 }

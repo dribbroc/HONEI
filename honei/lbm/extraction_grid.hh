@@ -58,6 +58,30 @@ namespace honei
                 template<typename DT_>
                     static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
                     {
+                        info.limits->lock(lm_read_only);
+
+                        data.f_temp_0->lock(lm_read_only);
+                        data.f_temp_1->lock(lm_read_only);
+                        data.f_temp_2->lock(lm_read_only);
+                        data.f_temp_3->lock(lm_read_only);
+                        data.f_temp_4->lock(lm_read_only);
+                        data.f_temp_5->lock(lm_read_only);
+                        data.f_temp_6->lock(lm_read_only);
+                        data.f_temp_7->lock(lm_read_only);
+                        data.f_temp_8->lock(lm_read_only);
+
+                        data.f_0->lock(lm_write_only);
+                        data.f_1->lock(lm_write_only);
+                        data.f_2->lock(lm_write_only);
+                        data.f_3->lock(lm_write_only);
+                        data.f_4->lock(lm_write_only);
+                        data.f_5->lock(lm_write_only);
+                        data.f_6->lock(lm_write_only);
+                        data.f_7->lock(lm_write_only);
+                        data.f_8->lock(lm_write_only);
+
+                        data.h->lock(lm_write_only);
+
                         for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                         {
                             //set f to t_temp
@@ -82,6 +106,30 @@ namespace honei
                                 (*data.f_7)[i] +
                                 (*data.f_8)[i];
                         }
+
+                        info.limits->unlock(lm_read_only);
+
+                        data.f_temp_0->unlock(lm_read_only);
+                        data.f_temp_1->unlock(lm_read_only);
+                        data.f_temp_2->unlock(lm_read_only);
+                        data.f_temp_3->unlock(lm_read_only);
+                        data.f_temp_4->unlock(lm_read_only);
+                        data.f_temp_5->unlock(lm_read_only);
+                        data.f_temp_6->unlock(lm_read_only);
+                        data.f_temp_7->unlock(lm_read_only);
+                        data.f_temp_8->unlock(lm_read_only);
+
+                        data.f_0->unlock(lm_write_only);
+                        data.f_1->unlock(lm_write_only);
+                        data.f_2->unlock(lm_write_only);
+                        data.f_3->unlock(lm_write_only);
+                        data.f_4->unlock(lm_write_only);
+                        data.f_5->unlock(lm_write_only);
+                        data.f_6->unlock(lm_write_only);
+                        data.f_7->unlock(lm_write_only);
+                        data.f_8->unlock(lm_write_only);
+
+                        data.h->unlock(lm_write_only);
                     }
         };
 
@@ -93,6 +141,22 @@ namespace honei
                 template<typename DT_>
                     static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
                     {
+                        info.limits->lock(lm_read_only);
+
+                        data.distribution_x->lock(lm_read_only);
+
+                        data.f_0->lock(lm_read_only);
+                        data.f_1->lock(lm_read_only);
+                        data.f_2->lock(lm_read_only);
+                        data.f_3->lock(lm_read_only);
+                        data.f_4->lock(lm_read_only);
+                        data.f_5->lock(lm_read_only);
+                        data.f_6->lock(lm_read_only);
+                        data.f_7->lock(lm_read_only);
+                        data.f_8->lock(lm_read_only);
+
+                        data.u->lock(lm_write_only);
+
                         for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                         {
                             //accumulate
@@ -106,6 +170,22 @@ namespace honei
                                     (*data.distribution_x)[7] * (*data.f_7)[i] +
                                     (*data.distribution_x)[8] * (*data.f_8)[i]) / (*data.h)[i];
                         }
+
+                        info.limits->unlock(lm_read_only);
+
+                        data.distribution_x->unlock(lm_read_only);
+
+                        data.f_0->unlock(lm_read_only);
+                        data.f_1->unlock(lm_read_only);
+                        data.f_2->unlock(lm_read_only);
+                        data.f_3->unlock(lm_read_only);
+                        data.f_4->unlock(lm_read_only);
+                        data.f_5->unlock(lm_read_only);
+                        data.f_6->unlock(lm_read_only);
+                        data.f_7->unlock(lm_read_only);
+                        data.f_8->unlock(lm_read_only);
+
+                        data.u->unlock(lm_write_only);
                     }
         };
 
@@ -117,6 +197,22 @@ namespace honei
                 template<typename DT_>
                     static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
                     {
+                        info.limits->lock(lm_read_only);
+
+                        data.distribution_y->lock(lm_read_only);
+
+                        data.f_0->lock(lm_read_only);
+                        data.f_1->lock(lm_read_only);
+                        data.f_2->lock(lm_read_only);
+                        data.f_3->lock(lm_read_only);
+                        data.f_4->lock(lm_read_only);
+                        data.f_5->lock(lm_read_only);
+                        data.f_6->lock(lm_read_only);
+                        data.f_7->lock(lm_read_only);
+                        data.f_8->lock(lm_read_only);
+
+                        data.v->lock(lm_write_only);
+
                         for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                         {
                             //accumulate
@@ -130,6 +226,22 @@ namespace honei
                                     (*data.distribution_y)[7] * (*data.f_7)[i] +
                                     (*data.distribution_y)[8] * (*data.f_8)[i]) / (*data.h)[i];
                         }
+
+                        info.limits->unlock(lm_read_only);
+
+                        data.distribution_y->unlock(lm_read_only);
+
+                        data.f_0->unlock(lm_read_only);
+                        data.f_1->unlock(lm_read_only);
+                        data.f_2->unlock(lm_read_only);
+                        data.f_3->unlock(lm_read_only);
+                        data.f_4->unlock(lm_read_only);
+                        data.f_5->unlock(lm_read_only);
+                        data.f_6->unlock(lm_read_only);
+                        data.f_7->unlock(lm_read_only);
+                        data.f_8->unlock(lm_read_only);
+
+                        data.v->unlock(lm_write_only);
                     }
         };
 }
