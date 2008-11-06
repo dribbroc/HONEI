@@ -88,6 +88,10 @@ namespace honei
                 filename = "out" + stringify(solve_time) + ".dat";
                 file.open(filename.c_str());
 
+                ///Write header to file:
+                std::string header = "# " + stringify(d_height) + " " + stringify(d_width) + "\n" + "\n";
+                file << header;
+
                 ///For every column, traverse elements and write record to file:
                 for(unsigned long x = 0; x < d_width; ++x)
                 {

@@ -22,6 +22,7 @@
 #include <scenario_controller_base.hh>
 #include <scenario_controller.hh>
 #include <scenario_controller_grid.hh>
+#include <scenario_controller_dat.hh>
 #include <honei_lbm.hh>
 
 int main(int argc, char ** argv)
@@ -100,6 +101,7 @@ int main(int argc, char ** argv)
     glutAddSubMenu("Mono", menu_id_scenario_mono);
     glutAddSubMenu("Grid", menu_id_scenario_grid);
     glutAddSubMenu("Multi", menu_id_scenario_multi);
+    glutAddMenuEntry("Animate GnuPlot dat files", -1);
     GLint menu_id_main = glutCreateMenu(menu_main);
     glutAddMenuEntry("Restart scenario", 0);
     glutAddSubMenu("Rendering", menu_id_rendering);
@@ -138,7 +140,16 @@ void switch_scenario(int id)
     glutIdleFunc(NULL);
     glutDisplayFunc(display_null);
     calc = false;
-    if (id < 100)
+
+    if (id == -1)
+    {
+            delete controller_f;
+            delete controller_d;
+            controller_f = 0;
+            controller_d = new ScenarioControllerDat<tags::CPU, double> (id);
+            controller_d->init();
+    }
+    else if (id < 100)
     {
         if (ScenarioController<tags::CPU, float>::get_precision(id) == 0)
         {

@@ -40,7 +40,8 @@ honei_lbm_SOURCES = \
 	honei_lbm.cc honei_lbm.hh \
 	scenario_controller.hh \
 	scenario_controller_base.hh \
-	scenario_controller_grid.hh
+	scenario_controller_grid.hh \
+	scenario_controller_dat.hh
 honei_lbm_LDADD = \
 	$(top_srcdir)/honei/util/libhoneiutil.la \
 	$(top_srcdir)/honei/la/libhoneila.la \
