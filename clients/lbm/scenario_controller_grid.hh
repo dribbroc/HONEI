@@ -262,7 +262,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                     break;
                 case 104:
                     {
-                        glutSetWindowTitle("Grid: Laminar flow: Circular dam break over uneven bed (b) 50x50");
+                        glutSetWindowTitle("Grid: Laminar flow: Circular dam break over uneven bed (b) 100x200");
                         _dheight = 100;
                         _dwidth = 200;
                         _h = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.05));
