@@ -41,7 +41,6 @@ namespace honei
         class NEUMANN;
         class DIRICHLET_NEUMANN
         {
-            class NEUMANN_EAST_DIRICHLET_1;
         };
     }
     template <typename Tag_, typename Application_, typename BoundaryType_>
@@ -52,44 +51,100 @@ namespace honei
     template <typename Tag_>
         struct FillMatrix<Tag_, applications::POISSON, boundary_types::DIRICHLET::DIRICHLET_0>
         {
-            template <typename DT_>
-                static inline void value(BandedMatrixQ1<DT_> & target)
-                {
-                    unsigned long size(target.band(DD).size());
-                    DT_ * ll = target.band(LL).elements();
-                    DT_ * ld = target.band(LD).elements();
-                    DT_ * lu = target.band(LU).elements();
-
-                    DT_ * dl = target.band(DL).elements();
-                    DT_ * dd = target.band(DD).elements();
-                    DT_ * du = target.band(DU).elements();
-
-                    DT_ * ul = target.band(UL).elements();
-                    DT_ * ud = target.band(UD).elements();
-                    DT_ * uu = target.band(UU).elements();
-
-                    unsigned long N(size);
-                    unsigned long M((unsigned long)sqrt(N));
-                    for (unsigned long i(1) ; i <= N ; ++i)
+            public:
+                template <typename DT_>
+                    static inline void value(BandedMatrixQ1<DT_> & target)
                     {
-                        // first, Dirichlet unit rows
-                        if (i <= M || i > N-M || (i%M) == 1 || (i%M) == 0)
+                        unsigned long size(target.band(DD).size());
+                        DT_ * ll = target.band(LL).elements();
+                        DT_ * ld = target.band(LD).elements();
+                        DT_ * lu = target.band(LU).elements();
+
+                        DT_ * dl = target.band(DL).elements();
+                        DT_ * dd = target.band(DD).elements();
+                        DT_ * du = target.band(DU).elements();
+
+                        DT_ * ul = target.band(UL).elements();
+                        DT_ * ud = target.band(UD).elements();
+                        DT_ * uu = target.band(UU).elements();
+
+                        unsigned long N(size);
+                        unsigned long M((unsigned long)sqrt(N));
+                        for (unsigned long i(1) ; i <= N ; ++i)
                         {
-                            dd[i-1] = 1.0;
-                            ll[i-1] = ld[i-1] = lu[i-1] = 0.0;
-                            dl[i-1] = du[i-1] = 0.0;
-                            ul[i-1] = ud[i-1] = uu[i-1] = 0.0;
-                        }
-                        // then, inner points
-                        else
-                        {
-                            dd[i-1] = 8.0/3.0;
-                            ll[i-1] = ld[i-1] = lu[i-1] = -1.0/3.0;
-                            dl[i-1] = du[i-1] = -1.0/3.0;
-                            ul[i-1] = ud[i-1] = uu[i-1] = -1.0/3.0;
+                            // first, Dirichlet unit rows
+                            if (i <= M || i > N-M || (i%M) == 1 || (i%M) == 0)
+                            {
+                                dd[i-1] = 1.0;
+                                ll[i-1] = ld[i-1] = lu[i-1] = 0.0;
+                                dl[i-1] = du[i-1] = 0.0;
+                                ul[i-1] = ud[i-1] = uu[i-1] = 0.0;
+                            }
+                            // then, inner points
+                            else
+                            {
+                                dd[i-1] = 8.0/3.0;
+                                ll[i-1] = ld[i-1] = lu[i-1] = -1.0/3.0;
+                                dl[i-1] = du[i-1] = -1.0/3.0;
+                                ul[i-1] = ud[i-1] = uu[i-1] = -1.0/3.0;
+                            }
                         }
                     }
-                }
+        };
+
+    template <typename Tag_>
+        struct FillMatrix<Tag_, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>
+        {
+            public:
+                template <typename DT_>
+                    static inline void value(BandedMatrixQ1<DT_> & target)
+                    {
+                        unsigned long size(target.band(DD).size());
+                        DT_ * ll = target.band(LL).elements();
+                        DT_ * ld = target.band(LD).elements();
+                        DT_ * lu = target.band(LU).elements();
+
+                        DT_ * dl = target.band(DL).elements();
+                        DT_ * dd = target.band(DD).elements();
+                        DT_ * du = target.band(DU).elements();
+
+                        DT_ * ul = target.band(UL).elements();
+                        DT_ * ud = target.band(UD).elements();
+                        DT_ * uu = target.band(UU).elements();
+
+                        unsigned long N(size);
+                        unsigned long M((unsigned long)sqrt(N));
+                        for (unsigned long i(1) ; i <= N ; ++i)
+                        {
+                            // first, Dirichlet unit rows
+                            if (i <= M || i > N-M || (i%M) == 1)
+                            {
+                                dd[i-1] = 1.0;
+                                ll[i-1] = ld[i-1] = lu[i-1] = 0.0;
+                                dl[i-1] = du[i-1] = 0.0;
+                                ul[i-1] = ud[i-1] = uu[i-1] = 0.0;
+                            }
+                            // then, Neumann on the right
+                            else if ((i%M) == 0 && i>M && i<N)
+                            {
+                                dd[i-1] = 4.0/3.0;
+                                ll[i-1] = -1.0/3.0;
+                                ld[i-1] = -5.0/3.0;
+                                dl[i-1] = -1.0/3.0;
+                                ul[i-1] = -1.0/3.0;
+                                ud[i-1] = -5.0/3.0;
+                                lu[i-1] = du[i-1] = uu[i-1] = 0.0;
+                            }
+                            // then, inner points
+                            else
+                            {
+                                dd[i-1] = 8.0/3.0;
+                                ll[i-1] = ld[i-1] = lu[i-1] = -1.0/3.0;
+                                dl[i-1] = du[i-1] = -1.0/3.0;
+                                ul[i-1] = ud[i-1] = uu[i-1] = -1.0/3.0;
+                            }
+                        }
+                    }
         };
 }
 #endif
