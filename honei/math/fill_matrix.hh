@@ -28,21 +28,6 @@
 using namespace methods;
 namespace honei
 {
-    namespace applications
-    {
-        class POISSON;
-    }
-    namespace boundary_types
-    {
-        class DIRICHLET
-        {
-            class DIRICHLET_0;
-        };
-        class NEUMANN;
-        class DIRICHLET_NEUMANN
-        {
-        };
-    }
     template <typename Tag_, typename Application_, typename BoundaryType_>
         struct FillMatrix
         {

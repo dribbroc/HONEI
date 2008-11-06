@@ -48,4 +48,21 @@ namespace methods
     class MIXED;
 }
 
+
+namespace applications
+{
+    class POISSON;
+}
+namespace boundary_types
+{
+    class DIRICHLET
+    {
+        class DIRICHLET_0;
+    };
+    class NEUMANN;
+    class DIRICHLET_NEUMANN
+    {
+    };
+}
+
 #endif
