@@ -3,7 +3,7 @@
 #include <benchmark/benchmark.hh>
 #include <honei/la/sum.hh>
 #include <honei/util/configuration.hh>
-#include <honei/util/memory_arbiter.hh>
+#include <honei/backends/cuda/operations.hh>
 
 using namespace std;
 using namespace honei;
@@ -118,6 +118,9 @@ class DenseVectorSumBench :
                         for (unsigned long j(0) ; j < 10 ; ++j)
                         {
                         Sum<Tag_>::value(dv0, dv1);
+#ifdef HONEI_CUDA
+                        cuda_thread_synchronize();
+#endif
                         }
                         );
             }
@@ -213,6 +216,9 @@ class DenseMatrixSumBench :
                         for (unsigned long l(0) ; l < 10 ; ++l)
                         {
                         Sum<Tag_>::value(dm0, dm1);
+#ifdef HONEI_CUDA
+                        cuda_thread_synchronize();
+#endif
                         }
                         );
             }

@@ -8,6 +8,7 @@
 
 #include <honei/la/product.hh>
 #include <honei/util/configuration.hh>
+#include <honei/backends/cuda/operations.hh>
 #include <iostream>
 #include <cmath>
 //using namespace std;
@@ -53,6 +54,9 @@ class GenericQ1MatrixDenseVectorProductBench :
                         for (unsigned long j(0) ; j < 10 ; ++j)
                         {
                             Product<Tag_>::value(bm1, dv2);
+#ifdef HONEI_CUDA
+                            cuda_thread_synchronize();
+#endif
                         }
                         );
             }
@@ -119,6 +123,9 @@ class Q1MatrixDenseVectorProductBench :
                         for (unsigned long j(0) ; j < 10 ; ++j)
                         {
                             Product<Tag_>::value(qm1, dv2);
+#ifdef HONEI_CUDA
+                            cuda_thread_synchronize();
+#endif
                         }
                         );
             }
@@ -175,6 +182,9 @@ class BandedMatrixDenseVectorProductBench :
                         for (unsigned long j(0) ; j < 10 ; ++j)
                         {
                             Product<Tag_>::value(bm1, dv2);
+#ifdef HONEI_CUDA
+                            cuda_thread_synchronize();
+#endif
                         }
                         );
             }
@@ -234,6 +244,9 @@ class BandedMatrixDenseVectorProductBenchRelax :
                         for (unsigned long j(0) ; j < 10 ; ++j)
                         {
                             Product<Tag_>::value(bm1, dv2);
+#ifdef HONEI_CUDA
+                            cuda_thread_synchronize();
+#endif
                         }
                         );
             }

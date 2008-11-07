@@ -7,6 +7,7 @@
 #endif
 
 #include <honei/la/scaled_sum.hh>
+#include <honei/backends/cuda/operations.hh>
 #include <honei/util/configuration.hh>
 
 
@@ -41,6 +42,9 @@ class DenseVectorScaledSumBench :
                         for (unsigned long l(0) ; l < 10 ; ++l)
                         {
                         ScaledSum<Tag_>::value(dv0, dv1, b);
+#ifdef HONEI_CUDA
+                        cuda_thread_synchronize();
+#endif
                         }
                         );
             }
