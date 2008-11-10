@@ -48,6 +48,7 @@
 #include <cmath>
 #include <honei/lbm/grid.hh>
 #include <honei/lbm/grid_partitioner.hh>
+#include <honei/lbm/grid_packer.hh>
 
 #include <iostream>
 
@@ -123,107 +124,6 @@ namespace honei
                 DenseVector<ResPrec_>* _distribution_vector_x;
                 DenseVector<ResPrec_>* _distribution_vector_y;
 
-                /** Capsule for the extration of SWE physical quantities.
-                 *
-                 **/
-                void _extract()
-                {
-                    CONTEXT("When extracting physical quantities in LABSWE:");
-
-                    ///Set temple dis to dis:
-                    *_distribution_0 = _temp_distribution_0->copy();
-                    *_distribution_1 = _temp_distribution_1->copy();
-                    *_distribution_2 = _temp_distribution_2->copy();
-                    *_distribution_3 = _temp_distribution_3->copy();
-                    *_distribution_4 = _temp_distribution_4->copy();
-                    *_distribution_5 = _temp_distribution_5->copy();
-                    *_distribution_6 = _temp_distribution_6->copy();
-                    *_distribution_7 = _temp_distribution_7->copy();
-                    *_distribution_8 = _temp_distribution_8->copy();
-
-                    DenseVector<ResPrec_> accu(_distribution_0->copy());
-
-                    Sum<Tag_>::value(accu, *_distribution_1);
-                    Sum<Tag_>::value(accu, *_distribution_2);
-                    Sum<Tag_>::value(accu, *_distribution_3);
-                    Sum<Tag_>::value(accu, *_distribution_4);
-                    Sum<Tag_>::value(accu, *_distribution_5);
-                    Sum<Tag_>::value(accu, *_distribution_6);
-                    Sum<Tag_>::value(accu, *_distribution_7);
-                    Sum<Tag_>::value(accu, *_distribution_8);
-
-                    *_height = accu;
-
-                    DenseVector<ResPrec_> d0c(_distribution_0->copy());
-                    DenseVector<ResPrec_> d1c(_distribution_1->copy());
-                    DenseVector<ResPrec_> d2c(_distribution_2->copy());
-                    DenseVector<ResPrec_> d3c(_distribution_3->copy());
-                    DenseVector<ResPrec_> d4c(_distribution_4->copy());
-                    DenseVector<ResPrec_> d5c(_distribution_5->copy());
-                    DenseVector<ResPrec_> d6c(_distribution_6->copy());
-                    DenseVector<ResPrec_> d7c(_distribution_7->copy());
-                    DenseVector<ResPrec_> d8c(_distribution_8->copy());
-                    DenseVector<ResPrec_> d0c_2(_distribution_0->copy());
-                    DenseVector<ResPrec_> d1c_2(_distribution_1->copy());
-                    DenseVector<ResPrec_> d2c_2(_distribution_2->copy());
-                    DenseVector<ResPrec_> d3c_2(_distribution_3->copy());
-                    DenseVector<ResPrec_> d4c_2(_distribution_4->copy());
-                    DenseVector<ResPrec_> d5c_2(_distribution_5->copy());
-                    DenseVector<ResPrec_> d6c_2(_distribution_6->copy());
-                    DenseVector<ResPrec_> d7c_2(_distribution_7->copy());
-                    DenseVector<ResPrec_> d8c_2(_distribution_8->copy());
-
-                    Scale<Tag_>::value( d0c, (*_distribution_vector_x)[0]);
-                    Scale<Tag_>::value( d1c, (*_distribution_vector_x)[1]);
-                    Scale<Tag_>::value( d2c, (*_distribution_vector_x)[2]);
-                    Scale<Tag_>::value( d3c, (*_distribution_vector_x)[3]);
-                    Scale<Tag_>::value( d4c, (*_distribution_vector_x)[4]);
-                    Scale<Tag_>::value( d5c, (*_distribution_vector_x)[5]);
-                    Scale<Tag_>::value( d6c, (*_distribution_vector_x)[6]);
-                    Scale<Tag_>::value( d7c, (*_distribution_vector_x)[7]);
-                    Scale<Tag_>::value( d8c, (*_distribution_vector_x)[8]);
-
-                    DenseVector<ResPrec_> accu2(d0c.copy());
-
-                    Sum<Tag_>::value(accu2, d1c);
-                    Sum<Tag_>::value(accu2, d2c);
-                    Sum<Tag_>::value(accu2, d3c);
-                    Sum<Tag_>::value(accu2, d4c);
-                    Sum<Tag_>::value(accu2, d5c);
-                    Sum<Tag_>::value(accu2, d6c);
-                    Sum<Tag_>::value(accu2, d7c);
-                    Sum<Tag_>::value(accu2, d8c);
-
-                    DenseVector<ResPrec_> h_inv(_height->copy());
-                    ElementInverse<Tag_>::value(h_inv);
-                    DenseVector<ResPrec_> h_inv_2(h_inv.copy());
-                    *_u = ElementProduct<Tag_>::value(h_inv, accu2);
-
-                    Scale<Tag_>::value( d0c_2, (*_distribution_vector_y)[0]);
-                    Scale<Tag_>::value( d1c_2, (*_distribution_vector_y)[1]);
-                    Scale<Tag_>::value( d2c_2, (*_distribution_vector_y)[2]);
-                    Scale<Tag_>::value( d3c_2, (*_distribution_vector_y)[3]);
-                    Scale<Tag_>::value( d4c_2, (*_distribution_vector_y)[4]);
-                    Scale<Tag_>::value( d5c_2, (*_distribution_vector_y)[5]);
-                    Scale<Tag_>::value( d6c_2, (*_distribution_vector_y)[6]);
-                    Scale<Tag_>::value( d7c_2, (*_distribution_vector_y)[7]);
-                    Scale<Tag_>::value( d8c_2, (*_distribution_vector_y)[8]);
-
-                    DenseVector<ResPrec_> accu3(d0c_2.copy());
-
-                    Sum<Tag_>::value(accu3, d1c_2);
-                    Sum<Tag_>::value(accu3, d2c_2);
-                    Sum<Tag_>::value(accu3, d3c_2);
-                    Sum<Tag_>::value(accu3, d4c_2);
-                    Sum<Tag_>::value(accu3, d5c_2);
-                    Sum<Tag_>::value(accu3, d6c_2);
-                    Sum<Tag_>::value(accu3, d7c_2);
-                    Sum<Tag_>::value(accu3, d8c_2);
-
-                    *_v = ElementProduct<Tag_>::value(h_inv_2, accu3);
-
-                }
-
            public:
                 SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt) :
                     _delta_x(dx),
@@ -273,6 +173,11 @@ namespace honei
                     {
                         CONTEXT("When creating LABSWE solver:");
                         _e = _delta_x / _delta_t;
+
+                        if (Tag_::tag_value == tags::tv_gpu_cuda)
+                        {
+                            GridPacker<D2Q9, lbm_boundary_types::NOSLIP, ResPrec_>::cuda_pack(*_info, *_data);
+                        }
                     }
 
                 ~SolverLABSWEGrid()
@@ -283,6 +188,7 @@ namespace honei
                 void do_preprocessing()
                 {
                     CONTEXT("When performing LABSWE preprocessing.");
+
                     (*_distribution_vector_x)[0] = ResPrec_(0.);
                     (*_distribution_vector_x)[1] = ResPrec_(_e * cos(ResPrec_(0.)));
                     (*_distribution_vector_x)[2] = ResPrec_(sqrt(ResPrec_(2.)) * _e * cos(_pi / ResPrec_(4.)));
@@ -340,9 +246,7 @@ namespace honei
                         value(*_data, *_info);
 
                     //extract velocities out of h from previous timestep:
-                    Extraction<Tag_, lbm_applications::LABSWE, quantities::HEIGHT>::value(*_info, *_data);
-                    Extraction<Tag_, lbm_applications::LABSWE, quantities::VELOCITY_X>::value(*_info, *_data);
-                    Extraction<Tag_, lbm_applications::LABSWE, quantities::VELOCITY_Y>::value(*_info, *_data);
+                    Extraction<Tag_, lbm_applications::LABSWE>::value(*_info, *_data);
 
                     ++_time;
 
@@ -369,13 +273,45 @@ namespace honei
             std::vector<SolverLABSWEGrid<tags::CPU, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> *> _solver_list;
 
         public:
-            SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt);
+            SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt):
+                _parts(4), /// \todo use Configuration
+                _data(data),
+                _info(info)
+        {
+            CONTEXT("When creating LABSWE solver:");
+            GridPartitioner<D2Q9, ResPrec_>::decompose(_parts, *_info, *_data, _info_list, _data_list, _fringe_list);
 
-            ~SolverLABSWEGrid();
+            for(unsigned long i(0) ; i < _parts ; ++i)
+            {
+                _solver_list.push_back(new SolverLABSWEGrid<tags::CPU, ResPrec_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>(&_data_list[i], &_info_list[i], 1., 1., 1.));
+            }
+        }
 
-            void do_preprocessing();
+            ~SolverLABSWEGrid()
+            {
+                CONTEXT("When destroying LABSWE solver.");
+            }
 
-            void solve();
+            void do_preprocessing()
+            {
+                CONTEXT("When performing LABSWE preprocessing.");
+                for (unsigned long i(0) ; i < _parts ; ++i)
+                {
+                    _solver_list.at(i)->do_preprocessing();
+                }
+                GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);
+            }
+
+            void solve()
+            {
+                for (unsigned long i(0) ; i < _parts ; ++i)
+                {
+                    _solver_list.at(i)->solve();
+                }
+                GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);
+                /// \todo remove compose - it is only necessary if one must read the data
+                GridPartitioner<D2Q9, ResPrec_>::compose(*_info, *_data, _info_list, _data_list);
+            }
     };
 }
 #endif

@@ -96,7 +96,7 @@ class SolverLABSWEGridTest :
                 solver.solve();
 #ifdef SOLVER_POSTPROCESSING
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
-                PostProcessing<GNUPLOT>::value(h, 1, g_w, g_h, i);
+                PostProcessing<GNUPLOT>::value(*grid.h, 1, g_w, g_h, i);
 #endif
             }
 #ifdef SOLVER_VERBOSE
@@ -107,5 +107,10 @@ class SolverLABSWEGridTest :
         }
 
 };
+SolverLABSWEGridTest<tags::CPU, float> solver_test_float("float");
 SolverLABSWEGridTest<tags::CPU, double> solver_test_double("double");
+SolverLABSWEGridTest<tags::CPU::MultiCore, float> mc_solver_test_float("float");
 SolverLABSWEGridTest<tags::CPU::MultiCore, double> mc_solver_test_double("double");
+#ifdef HONEI_CUDA
+SolverLABSWEGridTest<tags::GPU::CUDA, float> cuda_solver_test_float("float");
+#endif

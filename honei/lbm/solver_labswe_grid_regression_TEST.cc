@@ -197,8 +197,8 @@ class SolverLABSWEGridRegressionTest :
             }
 
             //Save matrices to vectors, compute norm:
-            DenseVector<double> result_grid(g_h*g_w);
-            DenseVector<double> result_standard(g_h*g_w);
+            DenseVector<DataType_> result_grid(g_h*g_w);
+            DenseVector<DataType_> result_standard(g_h*g_w);
 
             unsigned long inner(0);
             for(unsigned long i(0) ; i < g_h ; ++i)
@@ -212,15 +212,20 @@ class SolverLABSWEGridRegressionTest :
             }
 
 
-            Difference<Tag_>::value(result_grid, result_standard);
-            double l2 = Norm<vnt_l_two, false, Tag_>::value(result_grid);
-            TEST_CHECK_EQUAL_WITHIN_EPS(l2, double(0.), std::numeric_limits<float>::epsilon());
+            Difference<tags::CPU>::value(result_grid, result_standard);
+            DataType_ l2 = Norm<vnt_l_two, false, tags::CPU>::value(result_grid);
+            TEST_CHECK_EQUAL_WITHIN_EPS(l2, DataType_(0.), std::numeric_limits<float>::epsilon());
 
             std::cout << "L2 norm: " << l2 << std::endl;
         }
 
 
 };
+SolverLABSWEGridRegressionTest<tags::CPU, float> solver_test_float("float");
 SolverLABSWEGridRegressionTest<tags::CPU, double> solver_test_double("double");
+SolverLABSWEGridRegressionTest<tags::CPU::MultiCore, float> mc_solver_test_float("float");
 SolverLABSWEGridRegressionTest<tags::CPU::MultiCore, double> mc_solver_test_double("double");
+#ifdef HONEI_CUDA
+SolverLABSWEGridRegressionTest<tags::GPU::CUDA, float> cuda_solver_test_float("float");
+#endif
 

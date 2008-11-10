@@ -17,7 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include <honei/lbm/solver_labswe_grid.hh>
-#include <honei/lbm/solver_labswe.hh>
+#include <honei/lbm/partial_derivative.hh>
 #include <honei/swe/post_processing.hh>
 #include <honei/swe/volume.hh>
 #include <unittest/unittest.hh>
@@ -59,8 +59,13 @@ class SolverLABSWEGridMultiRegressionTest :
 
             DenseMatrix<DataType_> u(g_h, g_w, DataType_(0.));
             DenseMatrix<DataType_> v(g_h, g_w, DataType_(0.));
-            DenseMatrix<DataType_> b_x(g_h, g_w, DataType_(0.));
-            DenseMatrix<DataType_> b_y(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
+
+            Cylinder<DataType_> b1(b, DataType_(0.04), 15, 15);
+            b1.value();
+
+            DenseMatrix<DataType_> b_x(PartialDerivative<Tag_, X, CENTRALDIFF>::value(b , DataType_(1)));
+            DenseMatrix<DataType_> b_y(PartialDerivative<Tag_, Y, CENTRALDIFF>::value(b , DataType_(1)));
 
             Grid<D2Q9, DataType_> grid;
             DenseMatrix<bool> obstacles(g_h, g_w, false);
@@ -113,8 +118,13 @@ class SolverLABSWEGridMultiRegressionTest :
 
             DenseMatrix<DataType_> u_standard(g_h_standard, g_w_standard, DataType_(0.));
             DenseMatrix<DataType_> v_standard(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> b_x_standard(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> b_y_standard(g_h_standard, g_w_standard, DataType_(0.));
+            DenseMatrix<DataType_> b_standard(g_h, g_w, DataType_(0.));
+
+            Cylinder<DataType_> b1_standard(b_standard, DataType_(0.04), 15, 15);
+            b1_standard.value();
+
+            DenseMatrix<DataType_> b_x_standard(PartialDerivative<Tag_, X, CENTRALDIFF>::value(b_standard , DataType_(1)));
+            DenseMatrix<DataType_> b_y_standard(PartialDerivative<Tag_, Y, CENTRALDIFF>::value(b_standard , DataType_(1)));
 
             Grid<D2Q9, DataType_> grid_standard;
             DenseMatrix<bool> obstacles_standard(g_h_standard, g_w_standard, false);
@@ -175,8 +185,8 @@ class SolverLABSWEGridMultiRegressionTest :
             }
 
             //Save matrices to vectors, compute norm:
-            DenseVector<double> result_grid(g_h*g_w);
-            DenseVector<double> result_standard(g_h*g_w);
+            DenseVector<DataType_> result_grid(g_h*g_w);
+            DenseVector<DataType_> result_standard(g_h*g_w);
 
             unsigned long inner(0);
             for(unsigned long i(0) ; i < g_h ; ++i)
@@ -190,7 +200,7 @@ class SolverLABSWEGridMultiRegressionTest :
             }
 
 
-            Difference<Tag_>::value(result_grid, result_standard);
+            Difference<tags::CPU>::value(result_grid, result_standard);
             double l2 = Norm<vnt_l_two, false, Tag_>::value(result_grid);
             TEST_CHECK_EQUAL_WITHIN_EPS(l2, double(0.), std::numeric_limits<float>::epsilon());
 
@@ -199,5 +209,9 @@ class SolverLABSWEGridMultiRegressionTest :
 
 
 };
+SolverLABSWEGridMultiRegressionTest<tags::CPU::MultiCore, float> mc_solver_multi_test_float("float");
 SolverLABSWEGridMultiRegressionTest<tags::CPU::MultiCore, double> mc_solver_multi_test_double("double");
+#ifdef HONEI_CUDA
+SolverLABSWEGridMultiRegressionTest<tags::GPU::CUDA, float> cuda_solver_multi_test_float("float");
+#endif
 

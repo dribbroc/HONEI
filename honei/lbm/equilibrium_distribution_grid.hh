@@ -98,14 +98,17 @@ namespace honei
                             ((h / (DT1_(3.) * e * e)) * ((*data.distribution_x)[1] * u + (*data.distribution_y)[1] * v)) +
                             ((h / (DT1_(2.) * e * e)) * ((*data.distribution_x)[1] * u * (*data.distribution_x)[1] * u + DT1_(2.) * (*data.distribution_x)[1] * u * (*data.distribution_y)[1] * v + (*data.distribution_y)[1] * v * (*data.distribution_y)[1] * v)) -
                             ((h / (DT1_(6.) * e * e)) * (u * u + v * v));
+
                         (*data.f_eq_3)[i] = ((g * h * h) /(DT1_(6.) * e * e)) +
                             ((h / (DT1_(3.) * e * e)) * ((*data.distribution_x)[3] * u + (*data.distribution_y)[3] * v)) +
                             ((h / (DT1_(2.) * e * e)) * ((*data.distribution_x)[3] * u * (*data.distribution_x)[3] * u + DT1_(2.) * (*data.distribution_x)[3] * u * (*data.distribution_y)[3] * v + (*data.distribution_y)[3] * v * (*data.distribution_y)[3] * v)) -
                             ((h / (DT1_(6.) * e * e)) * (u * u + v * v));
+
                         (*data.f_eq_5)[i] = ((g * h * h) /(DT1_(6.) * e * e)) +
                             ((h / (DT1_(3.) * e * e)) * ((*data.distribution_x)[5] * u + (*data.distribution_y)[5] * v)) +
                             ((h / (DT1_(2.) * e * e)) * ((*data.distribution_x)[5] * u * (*data.distribution_x)[5] * u + DT1_(2.) * (*data.distribution_x)[5] * u * (*data.distribution_y)[5] * v + (*data.distribution_y)[5] * v * (*data.distribution_y)[5] * v)) -
                             ((h / (DT1_(6.) * e * e)) * (u * u + v * v));
+
                         (*data.f_eq_7)[i] = ((g * h * h) /(DT1_(6.) * e * e)) +
                             ((h / (DT1_(3.) * e * e)) * ((*data.distribution_x)[7] * u + (*data.distribution_y)[7] * v)) +
                             ((h / (DT1_(2.) * e * e)) * ((*data.distribution_x)[7] * u * (*data.distribution_x)[7] * u + DT1_(2.) * (*data.distribution_x)[7] * u * (*data.distribution_y)[7] * v + (*data.distribution_y)[7] * v * (*data.distribution_y)[7] * v)) -
@@ -151,6 +154,12 @@ namespace honei
                     data.f_eq_7->unlock(lm_write_only);
                     data.f_eq_8->unlock(lm_write_only);
                 }
+        };
+
+    template<>
+        struct EquilibriumDistributionGrid<tags::GPU::CUDA, lbm_applications::LABSWE>
+        {
+            static void value(float g, float e, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data);
         };
 }
 #endif

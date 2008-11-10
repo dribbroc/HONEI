@@ -36,28 +36,22 @@
 using namespace honei;
 using namespace lbm;
 
-namespace quantities
-{
-    class HEIGHT;
-    class VELOCITY_X;
-    class VELOCITY_Y;
-    class DENSITY; //used for NAVSTO later
-}
-
 namespace honei
 {
-    template<typename Tag_, typename App_, typename Quantity_>
-        class Extraction
+    template<typename Tag_, typename App_>
+        struct Extraction
         {
         };
 
     template<>
-        class Extraction<tags::CPU, lbm_applications::LABSWE , quantities::HEIGHT>
+        struct Extraction<tags::CPU, lbm_applications::LABSWE>
         {
             public:
                 template<typename DT_>
                     static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
                     {
+                        CONTEXT("When extracting h, u and v:");
+
                         info.limits->lock(lm_read_only);
 
                         data.f_temp_0->lock(lm_read_only);
@@ -70,17 +64,23 @@ namespace honei
                         data.f_temp_7->lock(lm_read_only);
                         data.f_temp_8->lock(lm_read_only);
 
-                        data.f_0->lock(lm_write_only);
-                        data.f_1->lock(lm_write_only);
-                        data.f_2->lock(lm_write_only);
-                        data.f_3->lock(lm_write_only);
-                        data.f_4->lock(lm_write_only);
-                        data.f_5->lock(lm_write_only);
-                        data.f_6->lock(lm_write_only);
-                        data.f_7->lock(lm_write_only);
-                        data.f_8->lock(lm_write_only);
+                        data.f_0->lock(lm_read_and_write);
+                        data.f_1->lock(lm_read_and_write);
+                        data.f_2->lock(lm_read_and_write);
+                        data.f_3->lock(lm_read_and_write);
+                        data.f_4->lock(lm_read_and_write);
+                        data.f_5->lock(lm_read_and_write);
+                        data.f_6->lock(lm_read_and_write);
+                        data.f_7->lock(lm_read_and_write);
+                        data.f_8->lock(lm_read_and_write);
 
-                        data.h->lock(lm_write_only);
+                        data.h->lock(lm_write_only); // in this case: write before read
+
+                        data.distribution_x->lock(lm_read_only);
+                        data.distribution_y->lock(lm_read_only);
+
+                        data.u->lock(lm_write_only);
+                        data.v->lock(lm_write_only);
 
                         for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                         {
@@ -105,6 +105,26 @@ namespace honei
                                 (*data.f_6)[i] +
                                 (*data.f_7)[i] +
                                 (*data.f_8)[i];
+
+                            (*data.u)[i] = ((*data.distribution_x)[0] * (*data.f_0)[i] +
+                                    (*data.distribution_x)[1] * (*data.f_1)[i] +
+                                    (*data.distribution_x)[2] * (*data.f_2)[i] +
+                                    (*data.distribution_x)[3] * (*data.f_3)[i] +
+                                    (*data.distribution_x)[4] * (*data.f_4)[i] +
+                                    (*data.distribution_x)[5] * (*data.f_5)[i] +
+                                    (*data.distribution_x)[6] * (*data.f_6)[i] +
+                                    (*data.distribution_x)[7] * (*data.f_7)[i] +
+                                    (*data.distribution_x)[8] * (*data.f_8)[i]) / (*data.h)[i];
+
+                            (*data.v)[i] = ((*data.distribution_y)[0] * (*data.f_0)[i] +
+                                    (*data.distribution_y)[1] * (*data.f_1)[i] +
+                                    (*data.distribution_y)[2] * (*data.f_2)[i] +
+                                    (*data.distribution_y)[3] * (*data.f_3)[i] +
+                                    (*data.distribution_y)[4] * (*data.f_4)[i] +
+                                    (*data.distribution_y)[5] * (*data.f_5)[i] +
+                                    (*data.distribution_y)[6] * (*data.f_6)[i] +
+                                    (*data.distribution_y)[7] * (*data.f_7)[i] +
+                                    (*data.distribution_y)[8] * (*data.f_8)[i]) / (*data.h)[i];
                         }
 
                         info.limits->unlock(lm_read_only);
@@ -119,130 +139,31 @@ namespace honei
                         data.f_temp_7->unlock(lm_read_only);
                         data.f_temp_8->unlock(lm_read_only);
 
-                        data.f_0->unlock(lm_write_only);
-                        data.f_1->unlock(lm_write_only);
-                        data.f_2->unlock(lm_write_only);
-                        data.f_3->unlock(lm_write_only);
-                        data.f_4->unlock(lm_write_only);
-                        data.f_5->unlock(lm_write_only);
-                        data.f_6->unlock(lm_write_only);
-                        data.f_7->unlock(lm_write_only);
-                        data.f_8->unlock(lm_write_only);
+                        data.f_0->unlock(lm_read_and_write);
+                        data.f_1->unlock(lm_read_and_write);
+                        data.f_2->unlock(lm_read_and_write);
+                        data.f_3->unlock(lm_read_and_write);
+                        data.f_4->unlock(lm_read_and_write);
+                        data.f_5->unlock(lm_read_and_write);
+                        data.f_6->unlock(lm_read_and_write);
+                        data.f_7->unlock(lm_read_and_write);
+                        data.f_8->unlock(lm_read_and_write);
 
-                        data.h->unlock(lm_write_only);
-                    }
-        };
-
-
-    template<>
-        class Extraction<tags::CPU, lbm_applications::LABSWE , quantities::VELOCITY_X>
-        {
-            public:
-                template<typename DT_>
-                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
-                    {
-                        info.limits->lock(lm_read_only);
-
-                        data.distribution_x->lock(lm_read_only);
-
-                        data.f_0->lock(lm_read_only);
-                        data.f_1->lock(lm_read_only);
-                        data.f_2->lock(lm_read_only);
-                        data.f_3->lock(lm_read_only);
-                        data.f_4->lock(lm_read_only);
-                        data.f_5->lock(lm_read_only);
-                        data.f_6->lock(lm_read_only);
-                        data.f_7->lock(lm_read_only);
-                        data.f_8->lock(lm_read_only);
-
-                        data.u->lock(lm_write_only);
-
-                        for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
-                        {
-                            //accumulate
-                            (*data.u)[i] = ((*data.distribution_x)[0] * (*data.f_0)[i] +
-                                    (*data.distribution_x)[1] * (*data.f_1)[i] +
-                                    (*data.distribution_x)[2] * (*data.f_2)[i] +
-                                    (*data.distribution_x)[3] * (*data.f_3)[i] +
-                                    (*data.distribution_x)[4] * (*data.f_4)[i] +
-                                    (*data.distribution_x)[5] * (*data.f_5)[i] +
-                                    (*data.distribution_x)[6] * (*data.f_6)[i] +
-                                    (*data.distribution_x)[7] * (*data.f_7)[i] +
-                                    (*data.distribution_x)[8] * (*data.f_8)[i]) / (*data.h)[i];
-                        }
-
-                        info.limits->unlock(lm_read_only);
+                        data.h->unlock(lm_read_and_write);
 
                         data.distribution_x->unlock(lm_read_only);
-
-                        data.f_0->unlock(lm_read_only);
-                        data.f_1->unlock(lm_read_only);
-                        data.f_2->unlock(lm_read_only);
-                        data.f_3->unlock(lm_read_only);
-                        data.f_4->unlock(lm_read_only);
-                        data.f_5->unlock(lm_read_only);
-                        data.f_6->unlock(lm_read_only);
-                        data.f_7->unlock(lm_read_only);
-                        data.f_8->unlock(lm_read_only);
+                        data.distribution_y->unlock(lm_read_only);
 
                         data.u->unlock(lm_write_only);
+                        data.v->unlock(lm_write_only);
                     }
         };
 
-
     template<>
-        class Extraction<tags::CPU, lbm_applications::LABSWE , quantities::VELOCITY_Y>
+        struct Extraction<tags::GPU::CUDA, lbm_applications::LABSWE>
         {
             public:
-                template<typename DT_>
-                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
-                    {
-                        info.limits->lock(lm_read_only);
-
-                        data.distribution_y->lock(lm_read_only);
-
-                        data.f_0->lock(lm_read_only);
-                        data.f_1->lock(lm_read_only);
-                        data.f_2->lock(lm_read_only);
-                        data.f_3->lock(lm_read_only);
-                        data.f_4->lock(lm_read_only);
-                        data.f_5->lock(lm_read_only);
-                        data.f_6->lock(lm_read_only);
-                        data.f_7->lock(lm_read_only);
-                        data.f_8->lock(lm_read_only);
-
-                        data.v->lock(lm_write_only);
-
-                        for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
-                        {
-                            //accumulate
-                            (*data.v)[i] = ((*data.distribution_y)[0] * (*data.f_0)[i] +
-                                    (*data.distribution_y)[1] * (*data.f_1)[i] +
-                                    (*data.distribution_y)[2] * (*data.f_2)[i] +
-                                    (*data.distribution_y)[3] * (*data.f_3)[i] +
-                                    (*data.distribution_y)[4] * (*data.f_4)[i] +
-                                    (*data.distribution_y)[5] * (*data.f_5)[i] +
-                                    (*data.distribution_y)[6] * (*data.f_6)[i] +
-                                    (*data.distribution_y)[7] * (*data.f_7)[i] +
-                                    (*data.distribution_y)[8] * (*data.f_8)[i]) / (*data.h)[i];
-                        }
-
-                        info.limits->unlock(lm_read_only);
-
-                        data.distribution_y->unlock(lm_read_only);
-
-                        data.f_0->unlock(lm_read_only);
-                        data.f_1->unlock(lm_read_only);
-                        data.f_2->unlock(lm_read_only);
-                        data.f_3->unlock(lm_read_only);
-                        data.f_4->unlock(lm_read_only);
-                        data.f_5->unlock(lm_read_only);
-                        data.f_6->unlock(lm_read_only);
-                        data.f_7->unlock(lm_read_only);
-                        data.f_8->unlock(lm_read_only);
-
-                        data.v->unlock(lm_write_only);
-                    }
+                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data);
         };
 }
 #endif

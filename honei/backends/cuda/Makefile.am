@@ -24,14 +24,19 @@ memory_backend_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 
 libhoneibackendscuda_la_SOURCES = \
 				 cuda_util.hh \
-				 operations.hh \
-				 operations.cu \
+				 collide_stream_grid.cu \
 				 defect.cu \
 				 difference.cu \
 				 dot_product.cu \
 				 element_inverse.cu \
 				 element_product.cu \
+				 extraction_grid.cu \
+				 eq_dist_grid.cu \
+				 force_grid.cu \
+				 memory_backend.cc \
 				 norm.cu \
+				 operations.hh \
+				 operations.cu \
 				 prolongation.cu \
 				 product.cu \
 				 restriction.cu \
@@ -40,7 +45,7 @@ libhoneibackendscuda_la_SOURCES = \
 				 sum.cu \
 				 transfer.cu \
 				 transfer.hh \
-				 memory_backend.cc
+				 up_vel_dir_grid.cu
 libhoneibackendscuda_la_LIBADD = \
 				 $(top_builddir)/honei/util/libhoneiutil.la \
 				-lcudart

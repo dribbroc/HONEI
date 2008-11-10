@@ -61,13 +61,36 @@ class EqDisGridLABSWETest :
             EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::
                 value(g, e, info, data);
 
+            data.f_eq_0->lock(lm_read_only);
+            data.f_eq_1->lock(lm_read_only);
+            data.f_eq_2->lock(lm_read_only);
+            data.f_eq_3->lock(lm_read_only);
+            data.f_eq_4->lock(lm_read_only);
+            data.f_eq_5->lock(lm_read_only);
+            data.f_eq_6->lock(lm_read_only);
+            data.f_eq_7->lock(lm_read_only);
+            data.f_eq_8->lock(lm_read_only);
             for(unsigned long i(0); i < 1000; ++i)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS((*data.f_eq_0)[i], (1.23456 - ((5. * 9.81 * 1.23456 * 1.23456) / (6.)) - ((2. * 1.23456) / (3.)) * ((1.23456 * 1.23456) + (1.23456 * 1.23456))), std::numeric_limits<DataType_>::epsilon() * 20.);
+
                 TEST_CHECK_EQUAL_WITHIN_EPS((*data.f_eq_1)[i], ((9.81 * 1.23456 * 1.23456) / 6. + ((1.23456 / 3.) * (2. * 1.23456 + 2. * 1.23456)) + ((1.23456 / 2.) * (2. * 1.23456 * 2. * 1.23456 + 2. * 2. * 1.23456 * 2. * 1.23456 + 2. * 1.23456 * 2. * 1.23456)) - ((1.23456 / 6.) * (1.23456 * 1.23456 + 1.23456 * 1.23456))), std::numeric_limits<DataType_>::epsilon() * 20.);
                 TEST_CHECK_EQUAL_WITHIN_EPS((*data.f_eq_2)[i], ((9.81 * 1.23456 * 1.23456) / 24. + ((1.23456 / 12.) * (2. * 1.23456 + 2. * 1.23456)) + ((1.23456 / 8.) * (2. * 1.23456 * 2. * 1.23456 + 2. * 2. * 1.23456 * 2. * 1.23456 + 2. * 1.23456 * 2. * 1.23456)) - ((1.23456 / 24.) * (1.23456 * 1.23456 + 1.23456 * 1.23456))), std::numeric_limits<DataType_>::epsilon() * 20.);
             }
+
+            data.f_eq_0->unlock(lm_read_only);
+            data.f_eq_1->unlock(lm_read_only);
+            data.f_eq_2->unlock(lm_read_only);
+            data.f_eq_3->unlock(lm_read_only);
+            data.f_eq_4->unlock(lm_read_only);
+            data.f_eq_5->unlock(lm_read_only);
+            data.f_eq_6->unlock(lm_read_only);
+            data.f_eq_7->unlock(lm_read_only);
+            data.f_eq_8->unlock(lm_read_only);
         }
 };
 EqDisGridLABSWETest<tags::CPU, double> source_test_double("double");
 EqDisGridLABSWETest<tags::CPU, float> source_test_float("float");
+#ifdef HONEI_CUDA
+EqDisGridLABSWETest<tags::GPU::CUDA, float> cuda_source_test_float("float");
+#endif

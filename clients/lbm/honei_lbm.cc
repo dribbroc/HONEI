@@ -118,15 +118,6 @@ int main(int argc, char ** argv)
 
     switch_scenario(100);
 
-    if (controller_f)
-    {
-        controller_f->init();
-    }
-    else if (controller_d)
-    {
-        controller_d->init();
-    }
-
     glutMainLoop();
 
 

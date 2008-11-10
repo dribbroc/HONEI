@@ -45,7 +45,6 @@ extern "C" void cuda_sum_two_float(void * x, void * y, unsigned long size, unsig
     float * y_gpu((float *)y);
 
     honei::cuda::sum_gpu<<<grid, block>>>(x_gpu, y_gpu, size);
-    cudaThreadSynchronize();
 
     CUDA_ERROR();
 }

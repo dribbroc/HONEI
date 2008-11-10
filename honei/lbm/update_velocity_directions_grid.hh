@@ -32,6 +32,7 @@
 #include <honei/lbm/tags.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
+#include <honei/lbm/grid.hh>
 #include <cmath>
 using namespace honei::lbm;
 
@@ -54,7 +55,7 @@ namespace honei
            /**
             * \name Velocity Update
             *
-            * \brief Computes bla.
+            * \brief Computes boundary velocity values.
             *
             */
            template<typename DT1_>
@@ -78,6 +79,7 @@ namespace honei
                    {
                        for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
                        {
+                           /// \todo innere for schleife in die if's reinziehen
                            if(((*info.types)[begin] & 1<<0) == 1<<0)
                                (*data.f_temp_5)[i] = (*data.f_temp_1)[i];
                            if(((*info.types)[begin] & 1<<1) == 1<<1)
@@ -131,6 +133,12 @@ namespace honei
                    data.f_temp_7->unlock(lm_read_and_write);
                    data.f_temp_8->unlock(lm_read_and_write);
                }
+       };
+
+   template <>
+       struct UpdateVelocityDirectionsGrid<tags::GPU::CUDA, lbm_boundary_types::NOSLIP>
+       {
+           static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info);
        };
 }
 #endif

@@ -66,10 +66,6 @@ class CollideStreamGridLABSWETest :
 
             //Other matrices needed by solver:
             /// \todo
-            DenseVector<DataType_> b(data.h->size(), DataType_(0.));
-
-            data.distribution_x = new DenseVector<DataType_>(9ul, DataType_(2.));
-            data.distribution_y = new DenseVector<DataType_>(9ul, DataType_(2.));
             DataType_ tau (1);
 
             for(unsigned long i(0); i < data.h->size(); i++)
@@ -92,30 +88,19 @@ class CollideStreamGridLABSWETest :
                 (*data.f_6)[i] = DataType_(2.234);
                 (*data.f_7)[i] = DataType_(2.234);
                 (*data.f_8)[i] = DataType_(2.234);
-
+                (*data.f_temp_1)[i] = DataType_(4711);
             }
             CollideStreamGrid<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                 value(info, data, tau);
+            /*data.f_temp_1->lock(lm_read_only);
+            std::cout<<*data.f_temp_1;
+            data.f_temp_1->unlock(lm_read_only);*/
             TEST_CHECK(true);
-
-            //std::cout<<GridPacker<D2Q9, NOSLIP, DataType_>::extract_ftemp2(grid, info, data)<<std::endl;
-            //std::cout<<*info.limits<<std::endl;
-            //std::cout<<*info.dir_2<<std::endl;
 
         }
 };
-//CollideStreamGridLABSWETest<tags::CPU, float> collidestream_grid_test_float("float");
+CollideStreamGridLABSWETest<tags::CPU, float> collidestream_grid_test_float("float");
 CollideStreamGridLABSWETest<tags::CPU, double> collidestream_grid_test_double("double");
-/*CollideStreamGridLABSWETest<tags::CPU::MultiCore, float> collidestream_grid_test_float_mc("float");
-CollideStreamGridLABSWETest<tags::CPU::MultiCore, double> collidestream_grid_test_double_mc("double");
-#ifdef HONEI_SSE
-CollideStreamGridLABSWETest<tags::CPU::SSE, float> collidestream_grid_test_float_sse("float");
-CollideStreamGridLABSWETest<tags::CPU::SSE, double> collidestream_grid_test_double_sse("double");
-CollideStreamGridLABSWETest<tags::CPU::MultiCore::SSE, float> collidestream_grid_test_float_mc_sse("float");
-CollideStreamGridLABSWETest<tags::CPU::MultiCore::SSE, double> collidestream_grid_test_double_mc_sse("double");
+#ifdef HONEI_CUDA
+CollideStreamGridLABSWETest<tags::GPU::CUDA, float> cuda_collidestream_grid_test_float("float");
 #endif
-#ifdef HONEI_CELL
-CollideStreamGridLABSWETest<tags::Cell, float> collidestream_grid_test_float_cell("float");
-CollideStreamGridLABSWETest<tags::Cell, double> collidestream_grid_test_double_cell("double");
-#endif
-*/

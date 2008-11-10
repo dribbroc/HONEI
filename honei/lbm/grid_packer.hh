@@ -263,8 +263,84 @@ namespace honei
                 }
             }
 
+            static void _expand_direction(DenseVector<unsigned long> * new_dir, DenseVector<unsigned long> * dir,
+                    DenseVector<unsigned long> * dir_index)
+            {
+                for (unsigned long begin(0), half(0) ; begin < dir_index->size() - 1; begin+=2, ++half)
+                {
+                    for (unsigned long i((*dir_index)[begin]), offset(0) ; i < (*dir_index)[begin + 1] ; ++i, ++offset)
+                    {
+                        (*new_dir)[i] = (*dir)[half] + offset;
+                    }
+                }
+            }
+
 
         public:
+            static void cuda_pack(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
+            {
+                // expand types vector
+                DenseVector<unsigned long> * new_types(new DenseVector<unsigned long>(data.h->size()));
+                for (unsigned long begin(0) ; begin != info.limits->size() - 1 ; ++begin)
+                {
+                    for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
+                    {
+                        (*new_types)[i] = (*info.types)[begin];
+                    }
+                }
+                info.types = new_types;
+
+                // expand direction vectors
+                DenseVector<unsigned long> * new_dir_1(new DenseVector<unsigned long>(data.h->size()));
+                DenseVector<unsigned long> * new_dir_2(new DenseVector<unsigned long>(data.h->size()));
+                DenseVector<unsigned long> * new_dir_3(new DenseVector<unsigned long>(data.h->size()));
+                DenseVector<unsigned long> * new_dir_4(new DenseVector<unsigned long>(data.h->size()));
+                DenseVector<unsigned long> * new_dir_5(new DenseVector<unsigned long>(data.h->size()));
+                DenseVector<unsigned long> * new_dir_6(new DenseVector<unsigned long>(data.h->size()));
+                DenseVector<unsigned long> * new_dir_7(new DenseVector<unsigned long>(data.h->size()));
+                DenseVector<unsigned long> * new_dir_8(new DenseVector<unsigned long>(data.h->size()));
+
+                unsigned long inf(-1);
+                for (unsigned long i(0) ; i < new_dir_1->size() ; ++i)
+                {
+                    (*new_dir_1)[i] = inf;
+                    (*new_dir_2)[i] = inf;
+                    (*new_dir_3)[i] = inf;
+                    (*new_dir_4)[i] = inf;
+                    (*new_dir_5)[i] = inf;
+                    (*new_dir_6)[i] = inf;
+                    (*new_dir_7)[i] = inf;
+                    (*new_dir_8)[i] = inf;
+                }
+
+                _expand_direction(new_dir_1, info.dir_1, info.dir_index_1);
+                _expand_direction(new_dir_2, info.dir_2, info.dir_index_2);
+                _expand_direction(new_dir_3, info.dir_3, info.dir_index_3);
+                _expand_direction(new_dir_4, info.dir_4, info.dir_index_4);
+                _expand_direction(new_dir_5, info.dir_5, info.dir_index_5);
+                _expand_direction(new_dir_6, info.dir_6, info.dir_index_6);
+                _expand_direction(new_dir_7, info.dir_7, info.dir_index_7);
+                _expand_direction(new_dir_8, info.dir_8, info.dir_index_8);
+
+                info.dir_1 = new_dir_1;
+                info.dir_2 = new_dir_2;
+                info.dir_3 = new_dir_3;
+                info.dir_4 = new_dir_4;
+                info.dir_5 = new_dir_5;
+                info.dir_6 = new_dir_6;
+                info.dir_7 = new_dir_7;
+                info.dir_8 = new_dir_8;
+
+                info.dir_index_1 = 0;
+                info.dir_index_2 = 0;
+                info.dir_index_3 = 0;
+                info.dir_index_4 = 0;
+                info.dir_index_5 = 0;
+                info.dir_index_6 = 0;
+                info.dir_index_7 = 0;
+                info.dir_index_8 = 0;
+            }
+
             static void pack(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
             {
                 unsigned long fluid_count(0);
@@ -529,6 +605,9 @@ namespace honei
 
             static void unpack(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
             {
+                grid.obstacles->lock(lm_read_only);
+                grid.h->lock(lm_write_only);
+                data.h->lock(lm_read_only);
                 unsigned long packed_index(0);
 
                 for(unsigned long i(0); i < grid.obstacles->rows(); ++i)
@@ -546,6 +625,9 @@ namespace honei
                         }
                     }
                 }
+                grid.obstacles->unlock(lm_read_only);
+                grid.h->unlock(lm_write_only);
+                data.h->unlock(lm_read_only);
             }
 
             static DenseMatrix<DT_> extract_ftemp2(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)

@@ -115,12 +115,9 @@ namespace honei
             data.f_temp_7->lock(lm_write_only);
             data.f_temp_8->lock(lm_write_only);
 
-            for (unsigned long begin(0) ; begin != info.limits->size() - 1 ; ++begin)
+            for (unsigned long i((*info.limits)[0]) ; i < (*info.limits)[info.limits->size() - 1] ; ++i)
             {
-                for (unsigned long i((*info.limits)[begin]), offset(0) ; i != (*info.limits)[begin + 1] ; ++i, ++offset)
-                {
-                    (*data.f_temp_0)[i] = (*data.f_0)[i] - ((*data.f_0)[i] - (*data.f_eq_0)[i])/tau;
-                }
+                (*data.f_temp_0)[i] = (*data.f_0)[i] - ((*data.f_0)[i] - (*data.f_eq_0)[i])/tau;
             }
 
             for (unsigned long begin(0), half(0) ; begin < info.dir_index_1->size() - 1; begin+=2, ++half)
@@ -234,6 +231,15 @@ namespace honei
             data.f_temp_7->unlock(lm_write_only);
             data.f_temp_8->unlock(lm_write_only);
         }
+    };
+
+    template <>
+    struct CollideStreamGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>
+    {
+        static void value(
+                PackedGridInfo<lbm_lattice_types::D2Q9> & info,
+                PackedGridData<lbm_lattice_types::D2Q9, float> & data,
+                float tau);
     };
 }
 #endif
