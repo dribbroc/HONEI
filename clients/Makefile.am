@@ -2,12 +2,11 @@ CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in
 
 if VISUAL
-  VISUALDIR = swe
-  LBMDIR = lbm
+  VISUALDIR = swe lbm poisson
 endif
 
 if MPI
   MPIDIR = mpi
 endif
 
-SUBDIRS = $(VISUALDIR) $(LBMDIR) $(MPIDIR) config
+SUBDIRS = $(VISUALDIR) $(MPIDIR) config
