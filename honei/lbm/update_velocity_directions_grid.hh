@@ -77,48 +77,72 @@ namespace honei
 
                    for (unsigned long begin(0) ; begin != info.limits->size() - 1 ; ++begin)
                    {
-                       for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
-                       {
-                           /// \todo innere for schleife in die if's reinziehen
-                           if(((*info.types)[begin] & 1<<0) == 1<<0)
+                       if(((*info.types)[begin] & 1<<0) == 1<<0)
+                           for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
+                           {
                                (*data.f_temp_5)[i] = (*data.f_temp_1)[i];
-                           if(((*info.types)[begin] & 1<<1) == 1<<1)
+                           }
+                       if(((*info.types)[begin] & 1<<1) == 1<<1)
+                           for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
+                           {
                                (*data.f_temp_6)[i] = (*data.f_temp_2)[i];
-                           if(((*info.types)[begin] & 1<<2) == 1<<2)
+                           }
+                       if(((*info.types)[begin] & 1<<2) == 1<<2)
+                           for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
+                           {
                                (*data.f_temp_7)[i] = (*data.f_temp_3)[i];
-                           if(((*info.types)[begin] & 1<<3) == 1<<3)
+                           }
+                       if(((*info.types)[begin] & 1<<3) == 1<<3)
+                           for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
+                           {
                                (*data.f_temp_8)[i] = (*data.f_temp_4)[i];
-                           if(((*info.types)[begin] & 1<<4) == 1<<4)
+                           }
+                       if(((*info.types)[begin] & 1<<4) == 1<<4)
+                           for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
+                           {
                                (*data.f_temp_1)[i] = (*data.f_temp_5)[i];
-                           if(((*info.types)[begin] & 1<<5) == 1<<5)
+                           }
+                       if(((*info.types)[begin] & 1<<5) == 1<<5)
+                           for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
+                           {
                                (*data.f_temp_2)[i] = (*data.f_temp_6)[i];
-                           if(((*info.types)[begin] & 1<<6) == 1<<6)
+                           }
+                       if(((*info.types)[begin] & 1<<6) == 1<<6)
+                           for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
+                           {
                                (*data.f_temp_3)[i] = (*data.f_temp_7)[i];
-                           if(((*info.types)[begin] & 1<<7) == 1<<7)
+                           }
+                       if(((*info.types)[begin] & 1<<7) == 1<<7)
+                           for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
+                           {
                                (*data.f_temp_4)[i] = (*data.f_temp_8)[i];
+                           }
 
-                           // Corners
-                           if(((*info.types)[begin] & 1<<2) == 1<<2 && ((*info.types)[begin] & 1<<4) == 1<<4)
+                       // Corners
+                       if(((*info.types)[begin] & 1<<2) == 1<<2 && ((*info.types)[begin] & 1<<4) == 1<<4)
+                           for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
                            {
                                (*data.f_temp_2)[i] = (*data.f_temp_8)[i];
                                (*data.f_temp_6)[i] = (*data.f_temp_8)[i];
                            }
-                           if(((*info.types)[begin] & 1<<4) == 1<<4 && ((*info.types)[begin] & 1<<6) == 1<<6)
+                       if(((*info.types)[begin] & 1<<4) == 1<<4 && ((*info.types)[begin] & 1<<6) == 1<<6)
+                           for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
                            {
                                (*data.f_temp_4)[i] = (*data.f_temp_2)[i];
                                (*data.f_temp_8)[i] = (*data.f_temp_2)[i];
                            }
-                           if(((*info.types)[begin] & 1<<0) == 1<<0 && ((*info.types)[begin] & 1<<6) == 1<<6)
+                       if(((*info.types)[begin] & 1<<0) == 1<<0 && ((*info.types)[begin] & 1<<6) == 1<<6)
+                           for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
                            {
                                (*data.f_temp_2)[i] = (*data.f_temp_4)[i];
                                (*data.f_temp_6)[i] = (*data.f_temp_4)[i];
                            }
-                           if(((*info.types)[begin] & 1<<0) == 1<<0 && ((*info.types)[begin] & 1<<2) == 1<<2)
+                       if(((*info.types)[begin] & 1<<0) == 1<<0 && ((*info.types)[begin] & 1<<2) == 1<<2)
+                           for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
                            {
                                (*data.f_temp_4)[i] = (*data.f_temp_6)[i];
                                (*data.f_temp_8)[i] = (*data.f_temp_6)[i];
                            }
-                       }
                    }
 
                    info.limits->unlock(lm_read_only);

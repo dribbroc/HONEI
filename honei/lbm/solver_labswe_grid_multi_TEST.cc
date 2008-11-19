@@ -81,9 +81,6 @@ class SolverLABSWEGridMultiTest :
             std::vector<PackedGridFringe<D2Q9> > fringe_list;
             GridPartitioner<D2Q9, DataType_>::decompose(3, info, data, info_list, data_list, fringe_list);
 
-            //Other matrices needed by solver:
-            /// \todo
-
             SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver_0(&data_list[0], &info_list[0], 1., 1., 1.);
 
             SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver_1(&data_list[1], &info_list[1], 1., 1., 1.);

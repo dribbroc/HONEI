@@ -64,8 +64,6 @@ class CollideStreamGridLABSWETest :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            //Other matrices needed by solver:
-            /// \todo
             DataType_ tau (1);
 
             for(unsigned long i(0); i < data.h->size(); i++)
