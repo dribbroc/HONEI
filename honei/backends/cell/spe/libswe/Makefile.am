@@ -2,7 +2,7 @@ CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in
 
 CXX = $(SPU_CXX)
-CXXFLAGS= $(SPU_CXXFLAGS) -I$(top_srcdir)
+CXXFLAGS= -I$(top_srcdir) #$(SPU_CXXFLAGS)
 DEFS = $(DEBUGDEF) $(PROFILERDEF)
 
 noinst_LIBRARIES = libswe_spe.a

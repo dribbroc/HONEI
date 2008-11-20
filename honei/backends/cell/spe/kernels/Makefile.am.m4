@@ -42,17 +42,17 @@ $1-registrator.cc : registrator.cc.in $1
 $1_SOURCES = $1.cc
 $1_CXXFLAGS = -Wall -msafe-dma -fno-exceptions -fno-rtti
 $1_LDADD = \
-	$(top_srcdir)/honei/backends/cell/spe/libutil/libutil_spe.a \
-	$(top_srcdir)/honei/backends/cell/spe/libgraph/libgraph_spe.a \
-	$(top_srcdir)/honei/backends/cell/spe/libla/libla_spe.a \
-	$(top_srcdir)/honei/backends/cell/spe/libmath/libmath_spe.a \
-	$(top_srcdir)/honei/backends/cell/spe/libswe/libswe_spe.a \
-	$(top_srcdir)/honei/backends/cell/spe/libutil/libutil_spe.a
+	$(top_builddir)/honei/backends/cell/spe/libutil/libutil_spe.a \
+	$(top_builddir)/honei/backends/cell/spe/libgraph/libgraph_spe.a \
+	$(top_builddir)/honei/backends/cell/spe/libla/libla_spe.a \
+	$(top_builddir)/honei/backends/cell/spe/libmath/libmath_spe.a \
+	$(top_builddir)/honei/backends/cell/spe/libswe/libswe_spe.a \
+	$(top_builddir)/honei/backends/cell/spe/libutil/libutil_spe.a
 
 libcell-$1.o : $1
 	$(PPU_EMBEDSPU) $1_handle $< $`'@
 	sed -e "s/@NAME@/libcell-$1.o/"\
-	    libtool-hack.in > libcell-$1.lo
+	    $(srcdir)/libtool-hack.in > libcell-$1.lo
 ')dnl
 
 include(`honei/backends/cell/spe/kernels/files.m4')
@@ -60,7 +60,7 @@ include(`honei/backends/cell/spe/kernels/files.m4')
 AM_CXXFLAGS = -I$(top_srcdir)
 
 CXX = $(SPU_CXX)
-CXXFLAGS = $(SPU_CXXFLAGS)
+CXXFLAGS = $(SPU_CXXFLAGS) -I$(top_srcdir)
 AT = @
 
 BUILT_SOURCES = sourceslist objlist
@@ -71,9 +71,11 @@ MAINTAINERCLEANFILES = Makefile.in Makefile.am
 EXTRA_DIST = \
 	Makefile.am.m4 \
 	files.m4 \
+	libtool-hack.in \
 	registrator.cc.in \
 	stand_alone-kernel.cc.in \
 	filelist
+
 DEFS = \
 	$(DEBUGDEF)
 
