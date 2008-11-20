@@ -24,6 +24,7 @@
 #include <honei/backends/cell/ppe/spe_manager.hh>
 #include <honei/util/time_stamp.hh>
 #include <honei/util/private_implementation_pattern.hh>
+#include <libwrapiter/libwrapiter_forward_iterator.hh>
 
 namespace honei
 {

@@ -33,7 +33,6 @@
 #include <tr1/functional>
 
 #include <libspe2.h>
-#include <libwrapiter/libwrapiter_forward_iterator.hh>
 
 namespace
 {
@@ -278,22 +277,6 @@ namespace honei
     SPEManager::~SPEManager()
     {
         CONTEXT("When destroying SPEManager:");
-    }
-
-    SPEManager::Iterator
-    SPEManager::begin() const
-    {
-        Lock l(*_imp->mutex);
-
-        return Iterator(_imp->spe_list.begin());
-    }
-
-    SPEManager::Iterator
-    SPEManager::end() const
-    {
-        Lock l(*_imp->mutex);
-
-        return Iterator(_imp->spe_list.end());
     }
 
     unsigned int

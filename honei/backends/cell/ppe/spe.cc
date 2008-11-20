@@ -31,7 +31,6 @@
 #include <fstream>
 
 #include <libspe2.h>
-#include <libwrapiter/libwrapiter_forward_iterator.hh>
 #include <pthread.h>
 
 using namespace honei;

@@ -36,7 +36,6 @@
 #include <tr1/functional>
 
 #include <libspe2.h>
-#include <libwrapiter/libwrapiter_forward_iterator.hh>
 
 namespace honei
 {
@@ -72,10 +71,7 @@ namespace honei
             /// \name Iterate over our SPEs
             /// \{
 
-            typedef libwrapiter::ForwardIterator<SPEManager, SPE> Iterator;
 
-            Iterator begin() const;
-            Iterator end() const;
             unsigned int spe_count() const;
 
             /// \}
