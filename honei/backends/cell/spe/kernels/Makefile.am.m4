@@ -9,13 +9,14 @@ define(`objlist', `')dnl
 define(`proglist', `')dnl
 define(`sourceslist', `')dnl
 define(`add', `dnl
-define(`filelist', filelist `$1.sk')dnl
+define(`filelist', filelist `$1.sk $1.opcodes')dnl
 define(`cleanlist', cleanlist `$1.body' `$1.functions' `$1.opcodes' `$1.cc')dnl
 define(`objlist', objlist `libcell-$1.o')dnl
 define(`proglist', proglist `$1')dnl
 define(`sourceslist', sourceslist `$1.cc' `$1-registrator.cc')dnl
-$1.cc : $1.sk $(top_srcdir)/misc/make_sk.bash $2-kernel.cc.in
-	$(top_srcdir)/misc/make_sk.bash $1.sk
+
+$1.cc : $1.sk $(top_srcdir)/misc/make_sk.bash $2-kernel.cc.in $1.sk
+	$(top_srcdir)/misc/make_sk.bash $(top_srcdir)/honei/backends/cell/spe/kernels/$1.sk
 	sed -e "/@FUNCTIONS@/r $1.functions" \
 	    -e "/@FUNCTIONS@/d" \
 	    -e "/@BODY@/r $1.body" \
@@ -30,9 +31,9 @@ $1-registrator.cc : registrator.cc.in $1
 	    -e "s/@END@/0x35000/" \
 	    -e "s/@IDENTIFIER@/$1/g" \
 	    -e "s/@NAME@/$$(echo $1 | sed -e "s/kernel_//")/" \
-	    -e "/@OPCODES@/r $1.opcodes" \
+	    -e "/@OPCODES@/r $(top_srcdir)/honei/backends/cell/spe/kernels/$1.opcodes" \
 	    -e "/@OPCODES@/d" \
-	    -e "s/@OPCODECOUNT@/$$(wc -l $1.opcodes | cut -d " " -f 1)/" \
+	    -e "s/@OPCODECOUNT@/$$(wc -l $(top_srcdir)/honei/backends/cell/spe/kernels/$1.opcodes | cut -d " " -f 1)/" \
 	    -e "s/$(AT)TYPE$(AT)/kt_$2/g" \
 	    -e "/@HEADER@/r $(top_srcdir)/misc/generated-file.txt" \
 	    -e "/@HEADER@/d" \

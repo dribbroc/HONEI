@@ -29,13 +29,14 @@ class SPEManagerIterationTest :
         {
             try
             {
-                unsigned long count(0);
+                /*unsigned long count(0);
                 for (SPEManager::Iterator i(SPEManager::instance()->begin()),
                         i_end(SPEManager::instance()->end()) ; i != i_end ; ++i, ++count)
                 {
                     std::cout << "SPE id is '" << i->id() << "'" << std::endl;
                 }
-                std::cout << "Number of SPEs is " << count << std::endl;
+                std::cout << "Number of SPEs is " << count << std::endl;*/
+                std::cout << "Number of SPEs is " << SPEManager::instance()->spe_count() << std::endl;
                 TEST_CHECK(true);
             }
             catch (...)
