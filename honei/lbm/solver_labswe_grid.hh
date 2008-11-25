@@ -81,39 +81,6 @@ namespace honei
                 PackedGridInfo<D2Q9> * _info;
 
                 ResPrec_ _relaxation_time, _delta_x, _delta_y, _delta_t;
-                DenseVector<ResPrec_>* _height;
-                DenseVector<ResPrec_>* _u;
-                DenseVector<ResPrec_>* _v;
-
-                DenseVector<ResPrec_>* _distribution_0;
-                DenseVector<ResPrec_>* _distribution_1;
-                DenseVector<ResPrec_>* _distribution_2;
-                DenseVector<ResPrec_>* _distribution_3;
-                DenseVector<ResPrec_>* _distribution_4;
-                DenseVector<ResPrec_>* _distribution_5;
-                DenseVector<ResPrec_>* _distribution_6;
-                DenseVector<ResPrec_>* _distribution_7;
-                DenseVector<ResPrec_>* _distribution_8;
-
-                DenseVector<ResPrec_>* _temp_distribution_0;
-                DenseVector<ResPrec_>* _temp_distribution_1;
-                DenseVector<ResPrec_>* _temp_distribution_2;
-                DenseVector<ResPrec_>* _temp_distribution_3;
-                DenseVector<ResPrec_>* _temp_distribution_4;
-                DenseVector<ResPrec_>* _temp_distribution_5;
-                DenseVector<ResPrec_>* _temp_distribution_6;
-                DenseVector<ResPrec_>* _temp_distribution_7;
-                DenseVector<ResPrec_>* _temp_distribution_8;
-
-                DenseVector<ResPrec_>* _eq_distribution_0;
-                DenseVector<ResPrec_>* _eq_distribution_1;
-                DenseVector<ResPrec_>* _eq_distribution_2;
-                DenseVector<ResPrec_>* _eq_distribution_3;
-                DenseVector<ResPrec_>* _eq_distribution_4;
-                DenseVector<ResPrec_>* _eq_distribution_5;
-                DenseVector<ResPrec_>* _eq_distribution_6;
-                DenseVector<ResPrec_>* _eq_distribution_7;
-                DenseVector<ResPrec_>* _eq_distribution_8;
 
                 unsigned long _time;
 
@@ -121,55 +88,19 @@ namespace honei
                  *
                  **/
                 ResPrec_ _n_alpha, _e, _gravity, _pi;
-                DenseVector<ResPrec_>* _distribution_vector_x;
-                DenseVector<ResPrec_>* _distribution_vector_y;
 
            public:
                 SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt) :
                     _delta_x(dx),
                     _delta_y(dy),
                     _delta_t(dt),
-                    _height(data->h),
-                    _u(data->u),
-                    _v(data->v),
                     _pi(3.14159265),
                     _gravity(9.80665),
                     _n_alpha(ResPrec_(6.)),
                     _relaxation_time(ResPrec_(1.5)),
                     _time(0),
                     _data(data),
-                    _info(info),
-                    _distribution_0(data->f_0),
-                    _distribution_1(data->f_1),
-                    _distribution_2(data->f_2),
-                    _distribution_3(data->f_3),
-                    _distribution_4(data->f_4),
-                    _distribution_5(data->f_5),
-                    _distribution_6(data->f_6),
-                    _distribution_7(data->f_7),
-                    _distribution_8(data->f_8),
-
-                    _eq_distribution_0(data->f_eq_0),
-                    _eq_distribution_1(data->f_eq_1),
-                    _eq_distribution_2(data->f_eq_2),
-                    _eq_distribution_3(data->f_eq_3),
-                    _eq_distribution_4(data->f_eq_4),
-                    _eq_distribution_5(data->f_eq_5),
-                    _eq_distribution_6(data->f_eq_6),
-                    _eq_distribution_7(data->f_eq_7),
-                    _eq_distribution_8(data->f_eq_8),
-
-                    _temp_distribution_0(data->f_temp_0),
-                    _temp_distribution_1(data->f_temp_1),
-                    _temp_distribution_2(data->f_temp_2),
-                    _temp_distribution_3(data->f_temp_3),
-                    _temp_distribution_4(data->f_temp_4),
-                    _temp_distribution_5(data->f_temp_5),
-                    _temp_distribution_6(data->f_temp_6),
-                    _temp_distribution_7(data->f_temp_7),
-                    _temp_distribution_8(data->f_temp_8),
-                    _distribution_vector_x(data->distribution_x),
-                    _distribution_vector_y(data->distribution_y)
+                    _info(info)
                     {
                         CONTEXT("When creating LABSWE solver:");
                         _e = _delta_x / _delta_t;
@@ -189,38 +120,38 @@ namespace honei
                 {
                     CONTEXT("When performing LABSWE preprocessing.");
 
-                    (*_distribution_vector_x)[0] = ResPrec_(0.);
-                    (*_distribution_vector_x)[1] = ResPrec_(_e * cos(ResPrec_(0.)));
-                    (*_distribution_vector_x)[2] = ResPrec_(sqrt(ResPrec_(2.)) * _e * cos(_pi / ResPrec_(4.)));
-                    (*_distribution_vector_x)[3] = ResPrec_(_e * cos(_pi / ResPrec_(2.)));
-                    (*_distribution_vector_x)[4] = ResPrec_(sqrt(ResPrec_(2.)) * _e * cos(ResPrec_(3.) * _pi / ResPrec_(4.)));
-                    (*_distribution_vector_x)[5] = ResPrec_(_e * cos(_pi));
-                    (*_distribution_vector_x)[6] = ResPrec_(sqrt(ResPrec_(2.)) * _e * cos(ResPrec_(5.) * _pi / ResPrec_(4.)));
-                    (*_distribution_vector_x)[7] = ResPrec_(_e * cos(ResPrec_(3.) * _pi / ResPrec_(2.)));
-                    (*_distribution_vector_x)[8] = ResPrec_(sqrt(ResPrec_(2.)) * _e * cos(ResPrec_(7.) * _pi / ResPrec_(4.)));
-                    (*_distribution_vector_y)[0] = ResPrec_(0.);
-                    (*_distribution_vector_y)[1] = ResPrec_(_e * sin(ResPrec_(0.)));
-                    (*_distribution_vector_y)[2] = ResPrec_(sqrt(ResPrec_(2.)) * _e * sin(_pi / ResPrec_(4.)));
-                    (*_distribution_vector_y)[3] = ResPrec_(_e * sin(_pi / ResPrec_(2.)));
-                    (*_distribution_vector_y)[4] = ResPrec_(sqrt(ResPrec_(2.)) * _e * sin(ResPrec_(3.) * _pi / ResPrec_(4.)));
-                    (*_distribution_vector_y)[5] = ResPrec_(_e * sin(_pi));
-                    (*_distribution_vector_y)[6] = ResPrec_(sqrt(ResPrec_(2.)) * _e * sin(ResPrec_(5.) * _pi / ResPrec_(4.)));
-                    (*_distribution_vector_y)[7] = ResPrec_(_e * sin(ResPrec_(3.) * _pi / ResPrec_(2.)));
-                    (*_distribution_vector_y)[8] = ResPrec_(sqrt(ResPrec_(2.)) * _e * sin(ResPrec_(7.) * _pi / ResPrec_(4.)));
+                    (*_data->distribution_x)[0] = ResPrec_(0.);
+                    (*_data->distribution_x)[1] = ResPrec_(_e * cos(ResPrec_(0.)));
+                    (*_data->distribution_x)[2] = ResPrec_(sqrt(ResPrec_(2.)) * _e * cos(_pi / ResPrec_(4.)));
+                    (*_data->distribution_x)[3] = ResPrec_(_e * cos(_pi / ResPrec_(2.)));
+                    (*_data->distribution_x)[4] = ResPrec_(sqrt(ResPrec_(2.)) * _e * cos(ResPrec_(3.) * _pi / ResPrec_(4.)));
+                    (*_data->distribution_x)[5] = ResPrec_(_e * cos(_pi));
+                    (*_data->distribution_x)[6] = ResPrec_(sqrt(ResPrec_(2.)) * _e * cos(ResPrec_(5.) * _pi / ResPrec_(4.)));
+                    (*_data->distribution_x)[7] = ResPrec_(_e * cos(ResPrec_(3.) * _pi / ResPrec_(2.)));
+                    (*_data->distribution_x)[8] = ResPrec_(sqrt(ResPrec_(2.)) * _e * cos(ResPrec_(7.) * _pi / ResPrec_(4.)));
+                    (*_data->distribution_y)[0] = ResPrec_(0.);
+                    (*_data->distribution_y)[1] = ResPrec_(_e * sin(ResPrec_(0.)));
+                    (*_data->distribution_y)[2] = ResPrec_(sqrt(ResPrec_(2.)) * _e * sin(_pi / ResPrec_(4.)));
+                    (*_data->distribution_y)[3] = ResPrec_(_e * sin(_pi / ResPrec_(2.)));
+                    (*_data->distribution_y)[4] = ResPrec_(sqrt(ResPrec_(2.)) * _e * sin(ResPrec_(3.) * _pi / ResPrec_(4.)));
+                    (*_data->distribution_y)[5] = ResPrec_(_e * sin(_pi));
+                    (*_data->distribution_y)[6] = ResPrec_(sqrt(ResPrec_(2.)) * _e * sin(ResPrec_(5.) * _pi / ResPrec_(4.)));
+                    (*_data->distribution_y)[7] = ResPrec_(_e * sin(ResPrec_(3.) * _pi / ResPrec_(2.)));
+                    (*_data->distribution_y)[8] = ResPrec_(sqrt(ResPrec_(2.)) * _e * sin(ResPrec_(7.) * _pi / ResPrec_(4.)));
 
                     ///Compute initial equilibrium distribution:
                     EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::
                        value(_gravity, _e, *_info, *_data);
 
-                    *_distribution_0 = _eq_distribution_0->copy();
-                    *_distribution_1 = _eq_distribution_1->copy();
-                    *_distribution_2 = _eq_distribution_2->copy();
-                    *_distribution_3 = _eq_distribution_3->copy();
-                    *_distribution_4 = _eq_distribution_4->copy();
-                    *_distribution_5 = _eq_distribution_5->copy();
-                    *_distribution_6 = _eq_distribution_6->copy();
-                    *_distribution_7 = _eq_distribution_7->copy();
-                    *_distribution_8 = _eq_distribution_8->copy();
+                    *_data->f_0 = _data->f_eq_0->copy();
+                    *_data->f_1 = _data->f_eq_1->copy();
+                    *_data->f_2 = _data->f_eq_2->copy();
+                    *_data->f_3 = _data->f_eq_3->copy();
+                    *_data->f_4 = _data->f_eq_4->copy();
+                    *_data->f_5 = _data->f_eq_5->copy();
+                    *_data->f_6 = _data->f_eq_6->copy();
+                    *_data->f_7 = _data->f_eq_7->copy();
+                    *_data->f_8 = _data->f_eq_8->copy();
 
                     CollideStreamGrid<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                         value(*_info,
@@ -229,7 +160,7 @@ namespace honei
 
 #ifdef SOLVER_VERBOSE
                     std::cout << "h after preprocessing:" << std::endl;
-                    std::cout << *_height << std::endl;
+                    std::cout << *_data->h << std::endl;
 #endif
                 }
 
