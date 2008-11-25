@@ -81,7 +81,8 @@ int main(int argc, char ** argv)
     glutAddMenuEntry("Toggle primitive type", 6);
     glutAddMenuEntry("Toggle alpha blending", 7);
     GLint menu_id_scenario = glutCreateMenu(menu_scenario);
-    glutAddMenuEntry("F(x,y) = 0, Dirichlet 1, Neumann east", 0);
+    glutAddMenuEntry("F(x,y) = f, Dirichlet 2, Neumann east", 100);
+    glutAddMenuEntry("F(x,y) = f, Dirichlet 2, Neumann east, mixedprec", 101);
     GLint menu_id_main = glutCreateMenu(menu_main);
     glutAddMenuEntry("Restart scenario", 0);
     glutAddSubMenu("Rendering", menu_id_rendering);
@@ -111,20 +112,20 @@ void switch_scenario(int id)
     glutIdleFunc(NULL);
     glutDisplayFunc(display_null);
     calc = false;
-    if (ScenarioController<tags::CPU, float>::get_precision(id) == 0)
+    /*if (ScenarioController<tags::CPU::SSE , float>::get_precision(id) == 0)
     {
         delete controller_f;
         delete controller_d;
         controller_d = 0;
-        controller_f = new ScenarioController<tags::CPU, float> (id);
+        controller_f = new ScenarioController<tags::CPU::SSE , float> (id);
         controller_f->init();
     }
-    else if (ScenarioController<tags::CPU, double>::get_precision(id) == 1)
+    else*/ if (ScenarioController<tags::CPU::SSE , double>::get_precision(id) == 1)
     {
         delete controller_f;
         delete controller_d;
         controller_f = 0;
-        controller_d = new ScenarioController<tags::CPU, double> (id);
+        controller_d = new ScenarioController<tags::CPU::SSE , double> (id);
         controller_d->init();
     }
     calc = true;

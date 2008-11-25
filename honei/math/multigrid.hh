@@ -120,6 +120,7 @@ namespace honei
                             defect = Prec_(1e8);
                         }
 #ifdef SOLVER_VERBOSE
+                        std::cout << info.d[info.max_level] << std::endl;
                         std::cout << defect << std::endl;
 #endif
                         // check if nothing needs to be done
@@ -231,7 +232,7 @@ endRestrictionLoop:
                                         // For the case we actually have only one MG level, only
                                         // the following coarse grid correction (and no smoothing) is done.
 
-                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
+                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), 512ul));
 
                                         DenseVector<Prec_> defect_3(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                                         info.d[current_level] = defect_3;
@@ -246,7 +247,7 @@ endRestrictionLoop:
                                         // Otherwise this is a "real" coarse grid correction, which is
                                         // started with a zero start vector
 
-                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
+                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), 512ul));
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Coarse Grid solver." << std::endl;
 #endif
@@ -420,7 +421,7 @@ endCycleLoop:
                         // current and initial defect
                         Prec_ defect, initial_defect;
 
-                        DenseVector<Prec_> initial_guess(right_hand_side.size(), Prec_(0)); //x_0
+                        DenseVector<Prec_> initial_guess(right_hand_side.size(), Prec_(0.)); //x_0
                         DenseVector<Prec_> outer_defect(right_hand_side.size(), Prec_(0));
 
                         // apply Dirichlet BCs for boundary nodes (semi-implicit approach)
@@ -439,11 +440,13 @@ endCycleLoop:
                             initial_guess[i] = right_hand_side[i];
                         }
 
-                        for (unsigned long i(sqrt_N - 1); i < right_hand_side.size(); i += sqrt_N)
+                        /*for (unsigned long i(sqrt_N - 1); i < right_hand_side.size(); i += sqrt_N)
                         {
                             initial_guess[i] = right_hand_side[i];
-                        }
+                        }*/
 
+                        std::cout << initial_guess << std::endl;
+                        info.x[info.max_level] = initial_guess;
                         info.x[info.max_level] = (_multigrid_kernel<Prec_>(info.a[info.max_level], right_hand_side, max_levels, &cappa, info));
 
                         return info.x[info.max_level];//result;
@@ -585,7 +588,7 @@ endRestrictionLoop:
                                         // For the case we actually have only one MG level, only
                                         // the following coarse grid correction (and no smoothing) is done.
 
-                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
+                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), 512ul));
 
                                         DenseVector<Prec_> defect_3(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                                         info.d[current_level] = defect_3;
@@ -600,7 +603,7 @@ endRestrictionLoop:
                                         // Otherwise this is a "real" coarse grid correction, which is
                                         // started with a zero start vector
 
-                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
+                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), 512ul));
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Coarse Grid solver." << std::endl;
 #endif
@@ -797,11 +800,13 @@ endCycleLoop:
                         {
                             initial_guess[i] = right_hand_side[i];
                         }
-
-                        for (unsigned long i(sqrt_N - 1); i < right_hand_side.size(); i += sqrt_N)
+                        /*for (unsigned long i(sqrt_N - 1); i < right_hand_side.size(); i += sqrt_N)
                         {
                             initial_guess[i] = right_hand_side[i];
-                        }
+                        }*/
+
+                        convert(info.x[info.max_level], initial_guess);
+                        std::cout << initial_guess << std::endl;
 
                         unsigned long inner_iterations(0);
                         unsigned long outer_iterations(1);

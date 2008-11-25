@@ -37,6 +37,9 @@ namespace honei
             template<typename DT_>
             static DenseVector<DT_> value(DenseVector<DT_> & right_hand_side, BandedMatrixQ1<DT_> & system, DenseVector<DT_> & x)
             {
+                /*DenseVector<DT_> result(right_hand_side.copy());
+                return Difference<Tag_>::value(result,Product<Tag_>::value(system, x) );
+*/
                 if (x.size() != system.columns())
                 {
                     throw VectorSizeDoesNotMatch(x.size(), system.columns());

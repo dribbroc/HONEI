@@ -57,31 +57,99 @@ namespace honei
                 template <typename DT_>
                     static inline void value(DenseVector<DT_> & target)
                     {
-                        //example: N = 5^2
-                        // 1 1 1 1  1
-                        // 1 0 0 0 1.5
-                        // 1 0 0 0  2
-                        // 1 0 0 0 1.5
-                        // 1 1 1 1  1
                         unsigned long size(target.size());
                         unsigned long N(size);
                         unsigned long M((unsigned long)sqrt(N));
-                        for (unsigned long i(1) ; i <= N ; ++i)
+                        /*for (unsigned long i(1) ; i <= N ; ++i)
                         {
                             // first, Dirichlet unit rows
                             if (i <= M || i > N-M || (i%M) == 1)
                             {
-                                target[i-1] = 1.0;
+                                target[i-1] = 0.0;
                             }
                             // then, Neumann on the right
                             else if ((i % M) == 0 && i > M && i < N)
                             {
-                                target[i-1] = _f_1((i - M)/M * DT_(1./(DT_(M) - 1.)));
+                                target[i-1] = 1.;//_f_1((i - M)/M * DT_(1./(DT_(M) - 1.)));
                             }
                             // then, inner points
                             else
                             {
-                                target[i-1] = 0.;
+                                target[i-1] = 1.;
+                            }
+                        }*/
+
+                        unsigned long level(0);
+
+                        switch(N)
+                        {
+                            case 1050625:
+                                {
+                                    level = 10;
+                                }
+                                break;
+                            case 263169:
+                                {
+                                    level = 9;
+                                }
+                                break;
+                            case 66049:
+                                {
+                                    level = 8;
+                                }
+                                break;
+                            case 16641:
+                                {
+                                    level = 7;
+                                }
+                                break;
+                            case 4225:
+                                {
+                                    level = 6;
+                                }
+                                break;
+                            case 1089:
+                                {
+                                    level = 5;
+                                }
+                                break;
+                            case 289:
+                                {
+                                    level = 4;
+                                }
+                                break;
+                            case 81:
+                                {
+                                    level = 3;
+                                }
+                                break;
+                            case 25:
+                                {
+                                    level = 2;
+                                }
+                                break;
+                            case 9:
+                                {
+                                    level = 1;
+                                }
+                                break;
+                        }
+                        for (unsigned long i(1); i <= N; i++)
+                        {
+                            // first, Dirichlet
+                            if (i <= M || i > N - M || (i%M) == 1)
+                            {
+                                target[i-1] = 2.0;
+                            }
+                            // then, Neumann
+                            else if ((i%M) == 0 && i>M && i<N)
+                            {
+                                target[i-1] = 0.5*(1.0/pow(4.0, level));
+                            }
+                            // then, inner points
+                            else
+                            {
+                                target[i-1] = 1.0/pow(4.0, level);
                             }
                         }
                     }

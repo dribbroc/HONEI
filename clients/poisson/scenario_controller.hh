@@ -32,7 +32,7 @@ template<typename Tag_, typename Prec_> class ScenarioController :
     private:
         int scenario_id;
 
-        DenseMatrix<Prec_> * _u;
+        DenseMatrix<float> * _u;
         unsigned long _timestep;
 
         unsigned long _root_n;
@@ -54,7 +54,7 @@ template<typename Tag_, typename Prec_> class ScenarioController :
 
         static int get_precision(int scen_id)
         {
-            return 1; // todo return the correct accuracy (0(float) or 1(Prec_))
+            return 1; // todo return the correct accuracy (0(float) or 1(double))
         }
 
         void init(void)
@@ -65,11 +65,10 @@ template<typename Tag_, typename Prec_> class ScenarioController :
             {
                 case 100:
                     {
-                        glutSetWindowTitle("F(x,y) = 0, Dirichlet 0, Neumann east MG, N=1025^2");
-                        _root_n = 257;
+                        glutSetWindowTitle("F(x,y) = f, Dirichlet 2, Neumann east MG V2+2, N=33^2");
+                        _root_n = 5;
                         unsigned long n(_root_n * _root_n);
-                        _u = new DenseMatrix<Prec_>(_root_n, _root_n, Prec_(0.00));
-                        std::cout << "allocated" << std::endl;
+                        _u = new DenseMatrix<float>(_root_n, _root_n, Prec_(0.00));
                         MGInfo<Prec_> info;
                         //configuration constants: /TODO: set/allocate!!!
                         info.is_smoother = false;
@@ -80,7 +79,6 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                         {
                             (*info.macro_border_mask)[i] = 2;
                         }
-
                         //set Neumann boundaries:
                         (*info.macro_border_mask)[5] =1;
 
@@ -140,16 +138,15 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                         }
 
                         info.n_max_iter = 16;
-                        info.initial_zero = true;
+                        info.initial_zero = false;
                         info.tolerance = 1e-8;
-                        info.convergence_check = false;
+                        info.convergence_check = true;
 
                         info.n_pre_smooth = 2;
                         info.n_post_smooth = 2;
                         info.n_max_iter_coarse = ((unsigned long)sqrt((Prec_)(pow((Prec_)2 , (Prec_)info.max_level) + 1)*(pow((Prec_)2 , (Prec_)info.max_level) + 1)));
                         info.tolerance_coarse = 1e-2;
                         info.adapt_correction_factor = 1.;
-
 
                         for (unsigned long i(0) ; i < info.min_level; ++i)
                         {
@@ -198,14 +195,14 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                             DenseVector<Prec_> current_rhs(N);
 
 
-                            FillMatrix<Tag_, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(current_matrix);
+                            FillMatrix<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(current_matrix);
 
-                            FillVector<Tag_, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(current_rhs);
+                            FillVector<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(current_rhs);
 
                             info.rhs.push_back(current_rhs);
                             info.a.push_back(current_matrix);
                         }
-                        //clear rhs data on lower than max_level
+                        //clear x data
                         for(unsigned long i(0) ; i < info.max_level ; ++i)
                         {
                             unsigned long size((unsigned long)(((unsigned long)pow((Prec_)2, (Prec_)i) + 1) * ((unsigned long)pow((Prec_)2, (Prec_)i) + 1)));
@@ -237,9 +234,11 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                         unsigned long column_index(0);
                         unsigned long index(0);
 
+                        std::cout << result;
+
                         for (; index < info.rhs[info.max_level].size() ; ++index)
                         {
-                            (*_u)(row_index, column_index) = result[index];
+                            (*_u)(row_index, column_index) = result[index] *100;
                             if((index + 1) % _root_n == 0)
                             {
                                 ++row_index;
@@ -248,7 +247,197 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                             else
                                 ++column_index;
                         }
+                    }
+                    break;
 
+                case 101:
+                    {
+                        glutSetWindowTitle("F(x,y) = f, Dirichlet 2, Neumann east MG V2+2, N=33^2, mixedprec");
+                        _root_n = 5;
+                        unsigned long n(_root_n * _root_n);
+                        _u = new DenseMatrix<float>(_root_n, _root_n, Prec_(0.00));
+                        MGInfo<float> info;
+                        //configuration constants: /TODO: set/allocate!!!
+                        info.is_smoother = false;
+                        DenseVector<unsigned long> mask(8);
+
+                        info.macro_border_mask = new DenseVector<unsigned long>(8);
+                        for(unsigned long i(0); i < 8; ++i)
+                        {
+                            (*info.macro_border_mask)[i] = 2;
+                        }
+                        //set Neumann boundaries:
+                        (*info.macro_border_mask)[5] =1;
+
+                        info.min_level = 1;
+                        switch(n)
+                        {
+                            case 1050625:
+                                {
+                                    info.max_level = 10;
+                                }
+                                break;
+                            case 263169:
+                                {
+                                    info.max_level = 9;
+                                }
+                                break;
+                            case 66049:
+                                {
+                                    info.max_level = 8;
+                                }
+                                break;
+                            case 16641:
+                                {
+                                    info.max_level = 7;
+                                }
+                                break;
+                            case 4225:
+                                {
+                                    info.max_level = 6;
+                                }
+                                break;
+                            case 1089:
+                                {
+                                    info.max_level = 5;
+                                }
+                                break;
+                            case 289:
+                                {
+                                    info.max_level = 4;
+                                }
+                                break;
+                            case 81:
+                                {
+                                    info.max_level = 3;
+                                }
+                                break;
+                            case 25:
+                                {
+                                    info.max_level = 2;
+                                }
+                                break;
+                            case 9:
+                                {
+                                    info.max_level = 1;
+                                }
+                                break;
+                        }
+
+                        info.n_max_iter = 16;
+                        info.initial_zero = false;
+                        info.tolerance = 1e-8;
+                        info.convergence_check = true;
+
+                        info.n_pre_smooth = 2;
+                        info.n_post_smooth = 2;
+                        info.n_max_iter_coarse = ((unsigned long)sqrt((Prec_)(pow((Prec_)2 , (Prec_)info.max_level) + 1)*(pow((Prec_)2 , (Prec_)info.max_level) + 1)));
+                        info.tolerance_coarse = 1e-2;
+                        info.adapt_correction_factor = 1.;
+
+                        for (unsigned long i(0) ; i < info.min_level; ++i)
+                        {
+                            unsigned long size((unsigned long)(((unsigned long)pow((Prec_)2, (Prec_)i) + 1) * ((unsigned long)pow((Prec_)2, (Prec_)i) + 1)));
+                            if(i == 0)
+                                size = 9;
+
+                            DenseVector<float> dummy_band(size, float(0));
+                            BandedMatrixQ1<float> ac_a(size, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band);
+                            info.a.push_back(ac_a);
+                            // iteration vectors
+                            DenseVector<float> ac_c(size, float(0));
+                            info.c.push_back(ac_c);
+                            DenseVector<float> ac_d(size, float(0));
+                            info.d.push_back(ac_d);
+                            DenseVector<float> ac_rhs(size, float(0));
+                            info.rhs.push_back(ac_rhs);
+                            DenseVector<float> ac_x(size, float(0));
+                            info.x.push_back(ac_x);
+
+                            info.diags_inverted.push_back(dummy_band.copy());
+                        }
+
+
+                        for (unsigned long i(info.min_level) ; i <= info.max_level; ++i)
+                        {
+                            unsigned long size = (unsigned long)(((unsigned long)pow((Prec_)2, (Prec_)i) + 1) * ((unsigned long)pow((Prec_)2, (Prec_)i) + 1));
+                            // iteration vectors
+                            DenseVector<float> ac_c(size, float(0));
+                            info.c.push_back(ac_c);
+                            DenseVector<float> ac_d(size, float(0));
+                            info.d.push_back(ac_d);
+                            DenseVector<float> ac_x(size, float(0));
+                            info.x.push_back(ac_x);
+
+                            DenseVector<float> dummy_band(size, float(0));
+                            info.diags_inverted.push_back(dummy_band.copy());
+                        }
+
+                        //assemble all needed levels' matrices:
+                        for(unsigned long i(info.min_level); i <= info.max_level; ++i)
+                        {
+                            unsigned long N = (unsigned long)(((unsigned long)pow((Prec_)2, (Prec_)i) + 1) * ((unsigned long)pow((Prec_)2, (Prec_)i) + 1));
+                            DenseVector<float> band(N);
+                            BandedMatrixQ1<float> current_matrix(N, band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy());
+                            DenseVector<float> current_rhs(N);
+
+
+                            FillMatrix<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(current_matrix);
+
+                            FillVector<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(current_rhs);
+
+                            info.rhs.push_back(current_rhs);
+                            info.a.push_back(current_matrix);
+                        }
+                        //clear x data
+                        for(unsigned long i(0) ; i < info.max_level ; ++i)
+                        {
+                            unsigned long size((unsigned long)(((unsigned long)pow((Prec_)2, (Prec_)i) + 1) * ((unsigned long)pow((Prec_)2, (Prec_)i) + 1)));
+                            if(size==0)
+                                size = 9;
+
+                            DenseVector<float> null(size , float(0));
+                            info.x[i] = null.copy();
+                        }
+                        //SET DIAG_INVERTED:
+                        for (unsigned long i(0) ; i <= info.max_level; ++i)
+                        {
+                            unsigned long size((unsigned long)(((unsigned long)pow((Prec_)2, (Prec_)i) + 1) * ((unsigned long)pow((Prec_)2, (Prec_)i) + 1)));
+                            if(i == 0)
+                                size = 9;
+
+                            DenseVector<float> scaled_diag_inverted(info.a[i].band(DD).copy());
+                            ElementInverse<Tag_>::value(scaled_diag_inverted);
+                            Scale<Tag_>::value(scaled_diag_inverted, 0.7);
+
+                            info.diags_inverted[i] = scaled_diag_inverted.copy();
+                        }
+
+                        DenseVector<Prec_> null(info.rhs[info.max_level].size() , Prec_(0));
+                        BandedMatrixQ1<Prec_> A(info.rhs[info.max_level].size() , null.copy(), null.copy() , null.copy(), null.copy() , null.copy(), null.copy(), null.copy(), null.copy(), null.copy());
+                        FillMatrix<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(A);
+                        DenseVector<Prec_> RHS( info.rhs[info.max_level].size(), Prec_(0.));
+                        FillVector<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(RHS);
+                        DenseVector<Prec_> result(n, Prec_(0));
+                        result = Multigrid<tags::GPU::CUDA, tags::CPU::SSE, JAC, CYCLE::V, MIXED>::value(A, RHS, (unsigned long)11, std::numeric_limits<double>::epsilon(), info);
+
+                        //write result to scalarfield:
+                        unsigned long row_index(0);
+                        unsigned long column_index(0);
+                        unsigned long index(0);
+                        std::cout << result;
+
+                        for (; index < info.rhs[info.max_level].size() ; ++index)
+                        {
+                            (*_u)(row_index, column_index) = result[index] *100;
+                            if((index + 1) % _root_n == 0)
+                            {
+                                ++row_index;
+                                column_index = 0;
+                            }
+                            else
+                                ++column_index;
+                        }
                     }
                     break;
             }
@@ -265,8 +454,6 @@ template<typename Tag_, typename Prec_> class ScenarioController :
 
         void render(bool show_ground, bool use_quads, bool enable_alpha_blending, bool show_water, float alpha)
         {
-            std::cout << _u->size() << std::endl;
-
             if(enable_alpha_blending)
             {
                 glEnable (GL_BLEND);
@@ -279,6 +466,7 @@ template<typename Tag_, typename Prec_> class ScenarioController :
             {
                 if(use_quads)
                 {
+                    glTranslatef(0,0,-200);
                     glBegin(GL_QUADS);
                     for(unsigned int i = 0; i < _root_n-1; ++i)
                     {

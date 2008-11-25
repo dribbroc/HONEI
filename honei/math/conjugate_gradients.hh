@@ -409,6 +409,38 @@ namespace honei
                 }
                 return x;
             }
+
+
+            template <typename DT1_, typename DT2_>
+            static DenseVector<DT1_> value(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, unsigned long iters)
+            {
+                CONTEXT("When solving banded Q1 linear system with CG (with given convergence parameter):");
+
+                DenseVector<DT1_> x(right_hand_side.size());
+                fill<Tag_>(x, DT1_(0));
+                DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
+                Difference<Tag_>::value(g, right_hand_side);
+                DenseVector<DT1_> g_c(g.size());
+                copy<Tag_>(g, g_c);
+                Scale<Tag_>::value(g_c, DT1_(-1.));
+                DenseVector<DT1_> u(g_c.size());
+                copy<Tag_>(g_c, u);
+                DenseVector<DT1_> x_last(x.size());
+                copy<Tag_>(x, x_last);
+                DT1_ norm_x_last = DT1_(0);
+                DT1_ norm_x = DT1_(1);
+
+                unsigned long i(0);
+                while(i < iters)
+                {
+                    ++i;
+                    cg_kernel(system_matrix, right_hand_side, g, x, u);
+                    norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
+                    norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
+                    copy<Tag_>(x, x_last);
+                }
+                return x;
+            }
             ///Mixed precision implementations:
             template <typename DT1_, typename DT2_>
                 static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad, int mixed_prec_iter_num)

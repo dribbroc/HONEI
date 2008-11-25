@@ -104,29 +104,29 @@ namespace honei
                             // first, Dirichlet unit rows
                             if (i <= M || i > N-M || (i%M) == 1)
                             {
-                                dd[i-1] = 1.0;
-                                ll[i-1] = ld[i-1] = lu[i-1] = 0.0;
-                                dl[i-1] = du[i-1] = 0.0;
-                                ul[i-1] = ud[i-1] = uu[i-1] = 0.0;
+                                dd[i-1] = DT_(1.0);
+                                ll[i-1] = ld[i-1] = lu[i-1] = DT_(0.0);
+                                dl[i-1] = du[i-1] = DT_(0.0);
+                                ul[i-1] = ud[i-1] = uu[i-1] = DT_(0.0);
                             }
                             // then, Neumann on the right
                             else if ((i%M) == 0 && i>M && i<N)
                             {
-                                dd[i-1] = 4.0/3.0;
-                                ll[i-1] = -1.0/3.0;
-                                ld[i-1] = -5.0/3.0;
-                                dl[i-1] = -1.0/3.0;
-                                ul[i-1] = -1.0/3.0;
-                                ud[i-1] = -5.0/3.0;
-                                lu[i-1] = du[i-1] = uu[i-1] = 0.0;
+                                dd[i-1] = DT_(4.0/3.0);
+                                ll[i-1] = DT_(-1.0/3.0);
+                                ld[i-1] = DT_(-1.0/6.0);
+                                dl[i-1] = DT_(-1.0/3.0);
+                                ul[i-1] = DT_(-1.0/3.0);
+                                ud[i-1] = DT_(-1.0/6.0);
+                                lu[i-1] = du[i-1] = uu[i-1] = DT_(0.0);
                             }
                             // then, inner points
                             else
                             {
-                                dd[i-1] = 8.0/3.0;
-                                ll[i-1] = ld[i-1] = lu[i-1] = -1.0/3.0;
-                                dl[i-1] = du[i-1] = -1.0/3.0;
-                                ul[i-1] = ud[i-1] = uu[i-1] = -1.0/3.0;
+                                dd[i-1] = DT_(8.0/3.0);
+                                ll[i-1] = ld[i-1] = lu[i-1] = DT_(-1.0/3.0);
+                                dl[i-1] = du[i-1] = DT_(-1.0/3.0);
+                                ul[i-1] = ud[i-1] = uu[i-1] = DT_(-1.0/3.0);
                             }
                         }
                     }
