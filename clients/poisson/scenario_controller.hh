@@ -326,7 +326,7 @@ template<typename Tag_, typename Prec_> class ScenarioController :
 
                         info.n_max_iter = 16;
                         info.initial_zero = false;
-                        info.tolerance = 1e-8;
+                        info.tolerance = 1e-4;
                         info.convergence_check = true;
 
                         info.n_pre_smooth = 2;
