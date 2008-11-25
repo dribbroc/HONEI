@@ -84,55 +84,92 @@ namespace honei
                     data.f_eq_7->lock(lm_write_only);
                     data.f_eq_8->lock(lm_write_only);
 
+                    DT1_ e2(e * e);
+                    DT1_ e22(DT1_(2.) * e2);
+                    DT1_ e23(DT1_(3.) * e2);
+                    DT1_ e26(DT1_(6.) * e2);
+                    DT1_ e28(DT1_(8.) * e2);
+                    DT1_ e212(DT1_(12.) * e2);
+                    DT1_ e224(DT1_(24.) * e2);
                     for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                     {
                         DT1_ u((*data.u)[i]);
                         DT1_ v((*data.v)[i]);
                         DT1_ h((*data.h)[i]);
+                        DT1_ u2(u * u);
+                        DT1_ v2(v * v);
+                        DT1_ h2(h * h);
 
-                        (*data.f_eq_0)[i] = h -
-                            ((DT1_(5.) * g * h * h) / (DT1_(6.) * e * e)) -
-                            ((DT1_(2.) * h) /(DT1_(3.) * e * e) * (u * u + v * v));
+                        DT1_ dxu, dyv;
+                        DT1_ t1, t2, t3, t4;
 
-                        (*data.f_eq_1)[i] = ((g * h * h) /(DT1_(6.) * e * e)) +
-                            ((h / (DT1_(3.) * e * e)) * ((*data.distribution_x)[1] * u + (*data.distribution_y)[1] * v)) +
-                            ((h / (DT1_(2.) * e * e)) * ((*data.distribution_x)[1] * u * (*data.distribution_x)[1] * u + DT1_(2.) * (*data.distribution_x)[1] * u * (*data.distribution_y)[1] * v + (*data.distribution_y)[1] * v * (*data.distribution_y)[1] * v)) -
-                            ((h / (DT1_(6.) * e * e)) * (u * u + v * v));
+                        t1 = (DT1_(5.) * g * h2) / e26;
+                        t2 = (DT1_(2.) * h) / e23 * (u2 + v2);
+                        (*data.f_eq_0)[i] = h - t1 - t2;
 
-                        (*data.f_eq_3)[i] = ((g * h * h) /(DT1_(6.) * e * e)) +
-                            ((h / (DT1_(3.) * e * e)) * ((*data.distribution_x)[3] * u + (*data.distribution_y)[3] * v)) +
-                            ((h / (DT1_(2.) * e * e)) * ((*data.distribution_x)[3] * u * (*data.distribution_x)[3] * u + DT1_(2.) * (*data.distribution_x)[3] * u * (*data.distribution_y)[3] * v + (*data.distribution_y)[3] * v * (*data.distribution_y)[3] * v)) -
-                            ((h / (DT1_(6.) * e * e)) * (u * u + v * v));
+                        dxu = (*data.distribution_x)[1] * u;
+                        dyv = (*data.distribution_y)[1] * v;
+                        t1 = (g * h2) / e26;
+                        t2 = (h / e23) * (dxu + dyv);
+                        t3 = (h / e22) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
+                        t4 = (h / e26) * (u2 + v2);
+                        (*data.f_eq_1)[i] = t1 + t2 + t3 - t4;
 
-                        (*data.f_eq_5)[i] = ((g * h * h) /(DT1_(6.) * e * e)) +
-                            ((h / (DT1_(3.) * e * e)) * ((*data.distribution_x)[5] * u + (*data.distribution_y)[5] * v)) +
-                            ((h / (DT1_(2.) * e * e)) * ((*data.distribution_x)[5] * u * (*data.distribution_x)[5] * u + DT1_(2.) * (*data.distribution_x)[5] * u * (*data.distribution_y)[5] * v + (*data.distribution_y)[5] * v * (*data.distribution_y)[5] * v)) -
-                            ((h / (DT1_(6.) * e * e)) * (u * u + v * v));
+                        dxu = (*data.distribution_x)[3] * u;
+                        dyv = (*data.distribution_y)[3] * v;
+                        t1 = (g * h2) / e26;
+                        t2 = (h / e23) * (dxu + dyv);
+                        t3 = (h / e22) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
+                        t4 = (h / e26) * (u2 + v2);
+                        (*data.f_eq_3)[i] = t1 + t2 + t3 - t4;
 
-                        (*data.f_eq_7)[i] = ((g * h * h) /(DT1_(6.) * e * e)) +
-                            ((h / (DT1_(3.) * e * e)) * ((*data.distribution_x)[7] * u + (*data.distribution_y)[7] * v)) +
-                            ((h / (DT1_(2.) * e * e)) * ((*data.distribution_x)[7] * u * (*data.distribution_x)[7] * u + DT1_(2.) * (*data.distribution_x)[7] * u * (*data.distribution_y)[7] * v + (*data.distribution_y)[7] * v * (*data.distribution_y)[7] * v)) -
-                            ((h / (DT1_(6.) * e * e)) * (u * u + v * v));
+                        dxu = (*data.distribution_x)[5] * u;
+                        dyv = (*data.distribution_y)[5] * v;
+                        t1 = (g * h2) / e26;
+                        t2 = (h / e23) * (dxu + dyv);
+                        t3 = (h / e22) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
+                        t4 = (h / e26) * (u2 + v2);
+                        (*data.f_eq_5)[i] = t1 + t2 + t3 - t4;
 
-                        (*data.f_eq_2)[i] = ((g * h * h) /(DT1_(24.) * e * e)) +
-                            ((h / (DT1_(12.) * e * e)) * ((*data.distribution_x)[2] * u + (*data.distribution_y)[2] * v)) +
-                            ((h / (DT1_(8.) * e * e)) * ((*data.distribution_x)[2] * u * (*data.distribution_x)[2] * u + DT1_(2.) * (*data.distribution_x)[2] * u * (*data.distribution_y)[2] * v + (*data.distribution_y)[2] * v * (*data.distribution_y)[2] * v)) -
-                            ((h / (DT1_(24.) * e * e)) * (u * u + v * v));
+                        dxu = (*data.distribution_x)[7] * u;
+                        dyv = (*data.distribution_y)[7] * v;
+                        t1 = (g * h2) / e26;
+                        t2 = (h / e23) * (dxu + dyv);
+                        t3 = (h / e22) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
+                        t4 = (h / e26) * (u2 + v2);
+                        (*data.f_eq_7)[i] = t1 + t2 + t3 - t4;
 
-                        (*data.f_eq_4)[i] = ((g * h * h) /(DT1_(24.) * e * e)) +
-                            ((h / (DT1_(12.) * e * e)) * ((*data.distribution_x)[4] * u + (*data.distribution_y)[4] * v)) +
-                            ((h / (DT1_(8.) * e * e)) * ((*data.distribution_x)[4] * u * (*data.distribution_x)[4] * u + DT1_(2.) * (*data.distribution_x)[4] * u * (*data.distribution_y)[4] * v + (*data.distribution_y)[4] * v * (*data.distribution_y)[4] * v)) -
-                            ((h / (DT1_(24.) * e * e)) * (u * u + v * v));
+                        dxu = (*data.distribution_x)[2] * u;
+                        dyv = (*data.distribution_y)[2] * v;
+                        t1 = (g * h2) / e224;
+                        t2 = (h / e212) * (dxu + dyv);
+                        t3 = (h / e28) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
+                        t4 = (h / e224) * (u2 + v2);
+                        (*data.f_eq_2)[i] =  t1 + t2 + t3 - t4;
 
-                        (*data.f_eq_6)[i] = ((g * h * h) /(DT1_(24.) * e * e)) +
-                            ((h / (DT1_(12.) * e * e)) * ((*data.distribution_x)[6] * u + (*data.distribution_y)[6] * v)) +
-                            ((h / (DT1_(8.) * e * e)) * ((*data.distribution_x)[6] * u * (*data.distribution_x)[6] * u + DT1_(2.) * (*data.distribution_x)[6] * u * (*data.distribution_y)[6] * v + (*data.distribution_y)[6] * v * (*data.distribution_y)[6] * v)) -
-                            ((h / (DT1_(24.) * e * e)) * (u * u + v * v));
+                        dxu = (*data.distribution_x)[4] * u;
+                        dyv = (*data.distribution_y)[4] * v;
+                        t1 = (g * h2) / e224;
+                        t2 = (h / e212) * (dxu + dyv);
+                        t3 = (h / e28) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
+                        t4 = (h / e224) * (u2 + v2);
+                        (*data.f_eq_4)[i] =  t1 + t2 + t3 - t4;
 
-                        (*data.f_eq_8)[i] = ((g * h * h) /(DT1_(24.) * e * e)) +
-                            ((h / (DT1_(12.) * e * e)) * ((*data.distribution_x)[8] * u + (*data.distribution_y)[8] * v)) +
-                            ((h / (DT1_(8.) * e * e)) * ((*data.distribution_x)[8] * u * (*data.distribution_x)[8] * u + DT1_(2.) * (*data.distribution_x)[8] * u * (*data.distribution_y)[8] * v + (*data.distribution_y)[8] * v * (*data.distribution_y)[8] * v)) -
-                            ((h / (DT1_(24.) * e * e)) * (u * u + v * v));
+                        dxu = (*data.distribution_x)[6] * u;
+                        dyv = (*data.distribution_y)[6] * v;
+                        t1 = (g * h2) / e224;
+                        t2 = (h / e212) * (dxu + dyv);
+                        t3 = (h / e28) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
+                        t4 = (h / e224) * (u2 + v2);
+                        (*data.f_eq_6)[i] =  t1 + t2 + t3 - t4;
+
+                        dxu = (*data.distribution_x)[8] * u;
+                        dyv = (*data.distribution_y)[8] * v;
+                        t1 = (g * h2) / e224;
+                        t2 = (h / e212) * (dxu + dyv);
+                        t3 = (h / e28) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
+                        t4 = (h / e224) * (u2 + v2);
+                        (*data.f_eq_8)[i] =  t1 + t2 + t3 - t4;
                     }
 
                     info.limits->unlock(lm_read_only);
