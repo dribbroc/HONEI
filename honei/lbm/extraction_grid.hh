@@ -64,17 +64,17 @@ namespace honei
                         data.f_temp_7->lock(lm_read_only);
                         data.f_temp_8->lock(lm_read_only);
 
-                        data.f_0->lock(lm_read_and_write);
-                        data.f_1->lock(lm_read_and_write);
-                        data.f_2->lock(lm_read_and_write);
-                        data.f_3->lock(lm_read_and_write);
-                        data.f_4->lock(lm_read_and_write);
-                        data.f_5->lock(lm_read_and_write);
-                        data.f_6->lock(lm_read_and_write);
-                        data.f_7->lock(lm_read_and_write);
-                        data.f_8->lock(lm_read_and_write);
+                        data.f_0->lock(lm_write_only); // in this case: write before read
+                        data.f_1->lock(lm_write_only);
+                        data.f_2->lock(lm_write_only);
+                        data.f_3->lock(lm_write_only);
+                        data.f_4->lock(lm_write_only);
+                        data.f_5->lock(lm_write_only);
+                        data.f_6->lock(lm_write_only);
+                        data.f_7->lock(lm_write_only);
+                        data.f_8->lock(lm_write_only);
 
-                        data.h->lock(lm_write_only); // in this case: write before read
+                        data.h->lock(lm_write_only);
 
                         data.distribution_x->lock(lm_read_only);
                         data.distribution_y->lock(lm_read_only);
@@ -139,17 +139,17 @@ namespace honei
                         data.f_temp_7->unlock(lm_read_only);
                         data.f_temp_8->unlock(lm_read_only);
 
-                        data.f_0->unlock(lm_read_and_write);
-                        data.f_1->unlock(lm_read_and_write);
-                        data.f_2->unlock(lm_read_and_write);
-                        data.f_3->unlock(lm_read_and_write);
-                        data.f_4->unlock(lm_read_and_write);
-                        data.f_5->unlock(lm_read_and_write);
-                        data.f_6->unlock(lm_read_and_write);
-                        data.f_7->unlock(lm_read_and_write);
-                        data.f_8->unlock(lm_read_and_write);
+                        data.f_0->unlock(lm_write_only);
+                        data.f_1->unlock(lm_write_only);
+                        data.f_2->unlock(lm_write_only);
+                        data.f_3->unlock(lm_write_only);
+                        data.f_4->unlock(lm_write_only);
+                        data.f_5->unlock(lm_write_only);
+                        data.f_6->unlock(lm_write_only);
+                        data.f_7->unlock(lm_write_only);
+                        data.f_8->unlock(lm_write_only);
 
-                        data.h->unlock(lm_read_and_write);
+                        data.h->unlock(lm_write_only);
 
                         data.distribution_x->unlock(lm_read_only);
                         data.distribution_y->unlock(lm_read_only);
