@@ -445,7 +445,6 @@ endCycleLoop:
                             initial_guess[i] = right_hand_side[i];
                         }*/
 
-                        std::cout << initial_guess << std::endl;
                         info.x[info.max_level] = initial_guess;
                         info.x[info.max_level] = (_multigrid_kernel<Prec_>(info.a[info.max_level], right_hand_side, max_levels, &cappa, info));
 
@@ -806,7 +805,6 @@ endCycleLoop:
                         }*/
 
                         convert(info.x[info.max_level], initial_guess);
-                        std::cout << initial_guess << std::endl;
 
                         unsigned long inner_iterations(0);
                         unsigned long outer_iterations(1);
