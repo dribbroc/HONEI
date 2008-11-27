@@ -266,11 +266,14 @@ namespace honei
             static void _expand_direction(DenseVector<unsigned long> * new_dir, DenseVector<unsigned long> * dir,
                     DenseVector<unsigned long> * dir_index)
             {
-                for (unsigned long begin(0), half(0) ; begin < dir_index->size() - 1; begin+=2, ++half)
+                if (dir_index->size() > 0)
                 {
-                    for (unsigned long i((*dir_index)[begin]), offset(0) ; i < (*dir_index)[begin + 1] ; ++i, ++offset)
+                    for (unsigned long begin(0), half(0) ; begin < dir_index->size() - 1; begin+=2, ++half)
                     {
-                        (*new_dir)[i] = (*dir)[half] + offset;
+                        for (unsigned long i((*dir_index)[begin]), offset(0) ; i < (*dir_index)[begin + 1] ; ++i, ++offset)
+                        {
+                            (*new_dir)[i] = (*dir)[half] + offset;
+                        }
                     }
                 }
             }
@@ -453,7 +456,6 @@ namespace honei
                             {
                                 if (_element_type(i, j, grid) != _element_type(i, j - 1, grid))
                                 {
-
                                     // common case
                                     // insert current cell
                                     temp_limits.push_back(packed_index);
