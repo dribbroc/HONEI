@@ -23,6 +23,7 @@
 #include <honei/backends/cell/ppe/spe_kernel.hh>
 #include <honei/util/instantiation_policy.hh>
 #include <honei/util/private_implementation_pattern.hh>
+#include <honei/util/wrapped_forward_iterator.hh>
 
 namespace honei
 {
@@ -56,7 +57,8 @@ namespace honei
             /// \name List of kernels
             /// \{
 
-            typedef libwrapiter::ForwardIterator<SPEKernelManager, SPEKernel::Info> ListIterator;
+            struct ListIteratorTag;
+            typedef WrappedForwardIterator<ListIteratorTag, SPEKernel::Info> ListIterator;
 
             /**
              * Returns an iterator pointing to the first kernel in the list.
@@ -85,7 +87,8 @@ namespace honei
             /// \name Map of kernel capabilities
             /// \{
 
-            typedef libwrapiter::ForwardIterator<SPEKernelManager, SPEKernel::Info> MapIterator;
+            struct MapIteratorTag;
+            typedef WrappedForwardIterator<MapIteratorTag, SPEKernel::Info> MapIterator;
 
             /**
              * Returns an iterator pointing to the first kernel in a list

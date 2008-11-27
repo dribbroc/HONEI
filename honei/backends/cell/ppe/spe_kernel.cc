@@ -33,6 +33,7 @@
 #include <honei/util/profiler.hh>
 #include <honei/util/sync_point.hh>
 #include <honei/util/time_stamp.hh>
+#include <honei/util/wrapped_forward_iterator-impl.hh>
 
 #include <limits>
 #include <fstream>
@@ -41,6 +42,8 @@
 
 namespace honei
 {
+    template class WrappedForwardIterator<SPEKernel::OpCodeIteratorTag, const cell::OpCode>;
+
     using namespace cell;
 
     template <> struct Implementation<SPEKernel>

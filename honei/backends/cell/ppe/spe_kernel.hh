@@ -24,7 +24,7 @@
 #include <honei/backends/cell/ppe/spe_manager.hh>
 #include <honei/util/time_stamp.hh>
 #include <honei/util/private_implementation_pattern.hh>
-#include <libwrapiter/libwrapiter_forward_iterator.hh>
+#include <honei/util/wrapped_forward_iterator.hh>
 
 namespace honei
 {
@@ -64,7 +64,8 @@ namespace honei
             /// \name Iteration over supported opcodes.
             /// \{
 
-            typedef libwrapiter::ForwardIterator<SPEKernel, const cell::OpCode> OpCodeIterator;
+            struct OpCodeIteratorTag;
+            typedef WrappedForwardIterator<OpCodeIteratorTag, const cell::OpCode> OpCodeIterator;
 
             OpCodeIterator begin_supported_opcodes() const;
 

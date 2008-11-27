@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the Utility C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -26,6 +26,7 @@
 #include <honei/util/log.hh>
 #include <honei/util/mutex.hh>
 #include <honei/util/private_implementation_pattern-impl.hh>
+#include <honei/util/wrapped_forward_iterator-impl.hh>
 
 #include <algorithm>
 #include <list>
@@ -43,6 +44,10 @@ namespace
 
 namespace honei
 {
+    template class WrappedForwardIterator<SPEKernelManager::ListIteratorTag, SPEKernel::Info>;
+
+    template class WrappedForwardIterator<SPEKernelManager::MapIteratorTag, SPEKernel::Info>;
+
     using namespace cell;
 
     template class InstantiationPolicy<SPEKernelManager, Singleton>;
