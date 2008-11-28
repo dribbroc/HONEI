@@ -28,14 +28,14 @@ namespace honei
                 float* ll, float* ld, float* lu,
                 float* dl, float * dd, float* du,
                 float* ul, float* ud, float* uu,
-                float * x, float * y, int n, int m)
+                float * x, float * y, unsigned long n, unsigned long m)
         {
             extern __shared__ float  smv_cache[];
 
-            int idx = blockDim.x*blockIdx.x+threadIdx.x;
+            unsigned long idx = blockDim.x*blockIdx.x+threadIdx.x;
 
             // runs from 0 to blockDim.x-1
-            int lindex = threadIdx.x;
+            unsigned long lindex = threadIdx.x;
 
             float* Dcache = smv_cache;
             float* Lcache = smv_cache + blockDim.x + 2;
@@ -47,7 +47,7 @@ namespace honei
             // data needed for DD, DU, DL: each thread loads one element, the first and last one load the border cases
             // x_0 ... x_blockdim-1 into c_1...c_blockdim
             Dcache[lindex + 1] = x[idx];
-            if (idx - m >= 0) Lcache[lindex + 1] = x[idx - m];
+            if (idx  >= m) Lcache[lindex + 1] = x[idx - m];
             if (idx + m < n) Ucache[lindex + 1] = x[idx + m];
             if (lindex == 0)
             {

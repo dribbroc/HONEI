@@ -27,12 +27,12 @@ namespace honei
         {
             // calculate how many elements each thread needs to calculate
             const unsigned long iter = size / (blockDim.x * gridDim.x);
-            int pos = blockIdx.x* blocksize + threadIdx.x;
+            unsigned long pos = blockIdx.x* blocksize + threadIdx.x;
 
             // clear the output
             tmp[blockIdx.x * blocksize + threadIdx.x] = 0;
 
-            for (int i = 0 ; i < iter ; ++i)
+            for (unsigned long i = 0 ; i < iter ; ++i)
             {
                 tmp[blockIdx.x * blocksize + threadIdx.x] += x[pos] * x[pos];
                 pos += blockDim.x * gridDim.x;

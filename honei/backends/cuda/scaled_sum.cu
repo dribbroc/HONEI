@@ -25,7 +25,7 @@ namespace honei
     {
         __global__ void scaled_sum_gpu(float * x, float * y, float b, unsigned long size)
         {
-            int idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+            unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
             if (idx < size)
             {
                 x[idx] = x[idx] + b * y[idx];
@@ -34,7 +34,7 @@ namespace honei
 
         __global__ void scaled_sum_gpu(float * x, float * y, float * z, unsigned long size)
         {
-            int idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+            unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
             if (idx < size)
             {
                 x[idx] = x[idx] + y[idx] * z[idx];

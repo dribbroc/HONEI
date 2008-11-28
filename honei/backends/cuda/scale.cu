@@ -25,7 +25,7 @@ namespace honei
     {
         __global__ void scale_gpu(float * x, float a, unsigned long size)
         {
-            int idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+            unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
             if (idx < size)
             {
                 x[idx] = x[idx] * a;

@@ -29,7 +29,7 @@ namespace honei
                 float tau,
                 unsigned long offset_0, unsigned long size_0, unsigned long size)
         {
-            int idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+            unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
             if (idx < size_0)
             {
                 unsigned long i(idx + offset_0);

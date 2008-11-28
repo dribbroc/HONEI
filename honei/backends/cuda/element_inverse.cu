@@ -25,7 +25,7 @@ namespace honei
     {
         __global__ void element_inverse_gpu(float * x, unsigned long size)
         {
-            int idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+            unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
             if (idx < size)
             {
                 if (x[idx] != 0)

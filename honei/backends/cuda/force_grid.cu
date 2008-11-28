@@ -31,7 +31,7 @@ namespace honei
                 float g, float d_x, float d_y, float d_t,
                 unsigned long size)
         {
-            int idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+            unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
             if (idx < size)
             {
                 /*(*data.f_temp_1)[i] += d_t / (6 * d_x / d_t) * ((*data.distribution_x)[1]) *
