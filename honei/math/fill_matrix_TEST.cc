@@ -23,8 +23,7 @@
 #include <iostream>
 #include <endian_swap.hh>
 
-//#include <cstdio>
-//#include <cstdlib>
+#include <limits>
 
 #include <fstream>
 using namespace honei;

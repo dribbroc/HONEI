@@ -28,6 +28,8 @@
 
 #include <iostream>
 
+#include <cstdlib>
+#include <cstring>
 #include <cxxabi.h>
 #include <list>
 #include <string>

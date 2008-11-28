@@ -20,6 +20,8 @@
 #include <unittest/unittest.hh>
 #include <honei/lbm/source.hh>
 
+#include <limits>
+
 using namespace honei;
 using namespace tests;
 using namespace std;

@@ -24,9 +24,11 @@
 #include <honei/lbm/grid.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
-#include <vector>
+
+#include <algorithm>
 #include <iostream>
 #include <limits>
+#include <vector>
 
 /**
  * \file

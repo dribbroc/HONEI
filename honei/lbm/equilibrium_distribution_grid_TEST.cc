@@ -20,6 +20,8 @@
 #include <unittest/unittest.hh>
 #include <honei/lbm/equilibrium_distribution_grid.hh>
 
+#include <limits>
+
 using namespace honei;
 using namespace tests;
 using namespace std;

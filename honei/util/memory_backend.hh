@@ -27,6 +27,7 @@
 #include <honei/util/exception.hh>
 #include <honei/util/type_traits.hh>
 
+#include <cstring>
 #include <map>
 #include <string>
 
@@ -89,7 +90,7 @@ namespace honei
                 void * dest_address, unsigned long bytes)
         {
            CONTEXT("When copying data (CPU):");
-           memcpy((char *)dest_address, (char *)src_address, bytes);
+           std::memcpy((char *)dest_address, (char *)src_address, bytes);
         }
 
         virtual void fill(void * memid, void * address, unsigned long bytes, float proto)

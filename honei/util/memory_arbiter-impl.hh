@@ -34,6 +34,7 @@
 #include <honei/util/condition_variable.hh>
 #include <honei/util/memory_backend_base.hh>
 
+#include <cstring>
 #include <set>
 #include <map>
 #include <string>
@@ -183,7 +184,7 @@ namespace honei
                     if (src_i->second.writer != tags::tv_none)
                         _backends[src_i->second.writer]->download(src_id, src_address, bytes);
                     src_i->second.writer = tags::tv_none;
-                    memcpy((char *)dest_address, (char *)src_address, bytes);
+                    std::memcpy((char *)dest_address, (char *)src_address, bytes);
                     dest_i->second.readers.clear();
                     dest_i->second.writer = memory;
                     dest_i->second.readers.insert(memory);

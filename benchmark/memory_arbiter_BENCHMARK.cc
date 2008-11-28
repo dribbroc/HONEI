@@ -22,6 +22,8 @@
 #include <honei/util/shared_array.hh>
 #include <honei/la/dense_vector.hh>
 
+#include <cstdlib>
+
 using namespace std;
 using namespace honei;
 
