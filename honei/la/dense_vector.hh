@@ -69,10 +69,10 @@ namespace honei
             /// \}
 
             /// Type of the const iterator over our elements.
-            typedef ConstElementIterator<storage::Dense, container::Vector, DataType_> ConstElementIterator;
+            typedef honei::ConstElementIterator<storage::Dense, container::Vector, DataType_> ConstElementIterator;
 
             /// Type of the iterator over our elements.
-            typedef ElementIterator<storage::Dense, container::Vector, DataType_> ElementIterator;
+            typedef honei::ElementIterator<storage::Dense, container::Vector, DataType_> ElementIterator;
 
             /// Constructors
             /// \{

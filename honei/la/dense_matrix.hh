@@ -56,18 +56,18 @@ namespace honei
             /// \name Friends of DenseMatrix
             /// \{
 
-            friend class ConstElementIterator<storage::Dense, container::Matrix, DataType_>;
-            friend class ElementIterator<storage::Dense, container::Matrix, DataType_>;
+            friend class honei::ConstElementIterator<storage::Dense, container::Matrix, DataType_>;
+            friend class honei::ElementIterator<storage::Dense, container::Matrix, DataType_>;
 
             /// \}
 
             friend class DenseMatrixTile<DataType_>;
 
             /// Type of the const iterator over our elements.
-            typedef ConstElementIterator<storage::Dense, container::Matrix, DataType_> ConstElementIterator;
+            typedef honei::ConstElementIterator<storage::Dense, container::Matrix, DataType_> ConstElementIterator;
 
             /// Type of the iterator over our elements.
-            typedef ElementIterator<storage::Dense, container::Matrix, DataType_> ElementIterator;
+            typedef honei::ElementIterator<storage::Dense, container::Matrix, DataType_> ElementIterator;
 
             /// \name Constructors and destructor
             /// \{

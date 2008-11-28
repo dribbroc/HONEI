@@ -47,24 +47,24 @@ namespace honei
             /// \name Friends of BandedMatrix
             /// \{
 
-            friend struct Implementation<BandIterator<type::Banded, DataType_> >;
-            friend struct Implementation<ConstBandIterator<type::Banded, DataType_> >;
-            friend struct ConstElementIterator<storage::Banded, container::Matrix, DataType_>;
-            friend struct Implementation<ElementIterator<storage::Banded, container::Matrix, DataType_> >;
+            friend struct Implementation<honei::BandIterator<type::Banded, DataType_> >;
+            friend struct Implementation<honei::ConstBandIterator<type::Banded, DataType_> >;
+            friend struct honei::ConstElementIterator<storage::Banded, container::Matrix, DataType_>;
+            friend struct Implementation<honei::ElementIterator<storage::Banded, container::Matrix, DataType_> >;
 
             /// \}
 
             /// Type of the const iterator over our elements.
-            typedef ConstElementIterator<storage::Banded, container::Matrix, DataType_> ConstElementIterator;
+            typedef honei::ConstElementIterator<storage::Banded, container::Matrix, DataType_> ConstElementIterator;
 
             /// Type of the iterator over our elements.
-            typedef ElementIterator<storage::Banded, container::Matrix, DataType_> ElementIterator;
+            typedef honei::ElementIterator<storage::Banded, container::Matrix, DataType_> ElementIterator;
 
             /// Type of the const iterator over our bands.
-            typedef ConstBandIterator<type::Banded, DataType_> ConstBandIterator;
+            typedef honei::ConstBandIterator<type::Banded, DataType_> ConstBandIterator;
 
             /// Type of the iterator over our bands.
-            typedef BandIterator<type::Banded, DataType_> BandIterator;
+            typedef honei::BandIterator<type::Banded, DataType_> BandIterator;
 
             /// \name Basic operations
             /// \{

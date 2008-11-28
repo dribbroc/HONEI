@@ -35,7 +35,7 @@ namespace honei
     {
         public:
             /// Type of the const iterator over our elements.
-            typedef ConstElementIterator<storage::Dense, container::Vector, DataType_> ConstElementIterator;
+            typedef honei::ConstElementIterator<storage::Dense, container::Vector, DataType_> ConstElementIterator;
 
             /// Returns const iterator pointing to the first element of the vector.
             virtual ConstElementIterator begin_elements() const = 0;
@@ -47,7 +47,7 @@ namespace honei
             virtual ConstElementIterator element_at(unsigned long index) const = 0;
 
             /// Type of the iterator over our elements.
-            typedef ElementIterator<storage::Dense, container::Vector, DataType_> ElementIterator;
+            typedef honei::ElementIterator<storage::Dense, container::Vector, DataType_> ElementIterator;
 
             /// Returns iterator pointing to the first element of the vector.
             virtual ElementIterator begin_elements() = 0;

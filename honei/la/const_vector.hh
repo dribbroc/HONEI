@@ -40,7 +40,7 @@ namespace honei
     {
         public:
             /// Type of the const iterator over our elements.
-            typedef ConstElementIterator<storage::Const, container::Vector, DataType_> ConstElementIterator;
+            typedef honei::ConstElementIterator<storage::Const, container::Vector, DataType_> ConstElementIterator;
 
             /// Constructors
             /// \{
