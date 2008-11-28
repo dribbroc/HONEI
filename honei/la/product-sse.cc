@@ -354,7 +354,7 @@ DenseMatrix<float> Product<tags::CPU::SSE>::value(const SparseMatrix<float> & a,
 
     DenseMatrix<float> result(a.rows(), b.columns(), float(0));
 
-    for (SparseMatrix<float>::ConstElementIterator i(a.begin_non_zero_elements()), i_end(a.end_non_zero_elements()) ;
+    for (SparseMatrix<float>::NonZeroConstElementIterator i(a.begin_non_zero_elements()), i_end(a.end_non_zero_elements()) ;
             i != i_end ; ++i)
     {
         honei::sse::product_dm(result[i.row()].elements(), b[i.column()].elements(), *i, b[i.column()].size());
@@ -372,7 +372,7 @@ DenseMatrix<double> Product<tags::CPU::SSE>::value(const SparseMatrix<double> & 
 
     DenseMatrix<double> result(a.rows(), b.columns(), double(0));
 
-    for (SparseMatrix<double>::ConstElementIterator i(a.begin_non_zero_elements()), i_end(a.end_non_zero_elements()) ;
+    for (SparseMatrix<double>::NonZeroConstElementIterator i(a.begin_non_zero_elements()), i_end(a.end_non_zero_elements()) ;
             i != i_end ; ++i)
     {
         honei::sse::product_dm(result[i.row()].elements(), b[i.column()].elements(), *i, b[i.column()].size());

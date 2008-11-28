@@ -81,7 +81,7 @@ class SparseDotProductBench :
         {
             DataType_ p0;
             SparseVector<DataType_> sv(_size, (unsigned long)(_size/10));
-            for (typename Vector<DataType_>::ElementIterator i(sv.begin_elements()), i_end(sv.end_elements()) ; i != i_end ; ++i) 
+            for (typename SparseVector<DataType_>::ElementIterator i(sv.begin_elements()), i_end(sv.end_elements()) ; i != i_end ; ++i)
             {
                 if (i.index() % 10 == 0)
                 {

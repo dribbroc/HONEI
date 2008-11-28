@@ -21,7 +21,6 @@
 #ifndef LIBLA_GUARD_DOT_PRODUCT_HH
 #define LIBLA_GUARD_DOT_PRODUCT_HH 1
 
-#include <honei/la/vector.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_vector_range.hh>
 #include <honei/la/sparse_vector.hh>
@@ -90,7 +89,7 @@ namespace honei
 
             DT1_ result(0);
 
-            for (typename Vector<DT1_>::ConstElementIterator l(x.begin_non_zero_elements()),
+            for (typename SparseVector<DT1_>::NonZeroConstElementIterator l(x.begin_non_zero_elements()),
                     l_end(x.end_non_zero_elements()) ; l != l_end ; ++l )
             {
                 result += (*l) * y[l.index()];
@@ -109,7 +108,7 @@ namespace honei
 
             DT1_ result(0);
 
-            for (typename Vector<DT2_>::ConstElementIterator l(y.begin_non_zero_elements()),
+            for (typename SparseVector<DT2_>::NonZeroConstElementIterator l(y.begin_non_zero_elements()),
                     l_end(y.end_non_zero_elements()) ; l != l_end ; ++l )
             {
                 result += (*l) * x[l.index()];
@@ -129,8 +128,8 @@ namespace honei
 
             DT1_ result(0);
 
-            typename Vector<DT2_>::ConstElementIterator r(y.begin_non_zero_elements());
-            for (typename Vector<DT1_>::ConstElementIterator l(x.begin_non_zero_elements()),
+            typename SparseVector<DT2_>::NonZeroConstElementIterator r(y.begin_non_zero_elements());
+            for (typename SparseVector<DT1_>::NonZeroConstElementIterator l(x.begin_non_zero_elements()),
                     l_end(x.end_non_zero_elements()) ; l != l_end ; )
             {
                 if (l.index() == r.index())
@@ -199,8 +198,8 @@ namespace honei
         {
             BenchmarkInfo result;
             result.store = sizeof(DT1_);
-            typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
-            for (typename Vector<DT1_>::ConstElementIterator l(a.begin_non_zero_elements()), l_end(a.end_non_zero_elements()) ; l != l_end ; )
+            typename SparseVector<DT2_>::NonZeroConstElementIterator r(b.begin_non_zero_elements());
+            for (typename SparseVector<DT1_>::NonZeroConstElementIterator l(a.begin_non_zero_elements()), l_end(a.end_non_zero_elements()) ; l != l_end ; )
             {
                 if (l.index() == r.index())
                 {

@@ -21,7 +21,6 @@
 #ifndef LIBLA_GUARD_NORM_HH
 #define LIBLA_GUARD_NORM_HH 1
 
-#include <honei/la/vector.hh>
 #include <honei/la/dot_product.hh>
 #include <honei/la/norm-fwd.hh>
 #include <honei/util/tags.hh>
@@ -138,7 +137,7 @@ namespace honei
 
             DT_ result(0);
 
-            for (typename Vector<DT_>::ConstElementIterator l(x.begin_non_zero_elements()), l_end(x.end_non_zero_elements()) ;
+            for (typename SparseVector<DT_>::NonZeroConstElementIterator l(x.begin_non_zero_elements()), l_end(x.end_non_zero_elements()) ;
                     l != l_end ; ++l)
             {
                 if (fabs(*l) > result)
@@ -203,7 +202,7 @@ namespace honei
             CONTEXT("When calculating norm of a SparseVector:");
             DT_ result(0);
 
-            for (typename Vector<DT_>::ConstElementIterator l(x.begin_non_zero_elements()), l_end(x.end_non_zero_elements()) ;
+            for (typename SparseVector<DT_>::NonZeroConstElementIterator l(x.begin_non_zero_elements()), l_end(x.end_non_zero_elements()) ;
                     l != l_end ; ++l)
             {
                 result += fabs(*l);
@@ -359,7 +358,7 @@ namespace honei
             DT_ result(0);
             unsigned int k(static_cast<unsigned int>(norm_type_));
 
-            for (typename Vector<DT_>::ConstElementIterator l(x.begin_non_zero_elements()),
+            for (typename SparseVector<DT_>::NonZeroConstElementIterator l(x.begin_non_zero_elements()),
                     l_end(x.end_non_zero_elements()) ; l != l_end ; ++l)
             {
                 result += exp(k * log(fabs(*l)));

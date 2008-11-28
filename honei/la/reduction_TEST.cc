@@ -223,7 +223,7 @@ class SparseMatrixReductionToSumTest :
             {
                 SparseMatrix<DT_> sm1(size+1, size, size / 8 + 1);
                 DenseVector<DT_> dv1(size + 1, DT_(0));
-                for (typename MutableMatrix<DT_>::ElementIterator i(sm1.begin_elements()),
+                for (typename SparseMatrix<DT_>::ElementIterator i(sm1.begin_elements()),
                     i_end(sm1.end_elements()) ; i != i_end ; ++i)
                 {
                     if (i.index() % 10 == 0)
@@ -283,7 +283,7 @@ class SparseMatrixReductionQuickTest :
             unsigned long size(22);
             SparseMatrix<DT_> sm1(size+1, size, size / 8 + 1);
             DenseVector<DT_> dv1(size + 1, DT_(0));
-            for (typename MutableMatrix<DT_>::ElementIterator i(sm1.begin_elements()),
+            for (typename SparseMatrix<DT_>::ElementIterator i(sm1.begin_elements()),
                 i_end(sm1.end_elements()) ; i != i_end ; ++i)
             {
                 if (i.index() % 10 == 0)
@@ -533,7 +533,7 @@ class SparseVectorReductionToSumTest :
             {
                 DT_ s1(0);
                 SparseVector<DT_> sv1(size, size / 8 + 1);
-                for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+                for (typename SparseVector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     if (i.index() % 10 == 0)
@@ -581,7 +581,7 @@ class SparseVectorReductionToSumQuickTest :
             unsigned long size(22);
             DT_ s1(0);
             SparseVector<DT_> sv1(size, size / 8 + 1);
-            for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+            for (typename SparseVector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                     i != i_end ; ++i)
             {
                 if (i.index() % 10 == 0)
@@ -718,7 +718,7 @@ class SparseMatrixReductionToMinTest :
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 SparseMatrix<DT_> sm1(size, size);
-                for (typename MutableMatrix<DT_>::ElementIterator i(sm1.begin_elements()), i_end(sm1.end_elements()) ;
+                for (typename SparseMatrix<DT_>::ElementIterator i(sm1.begin_elements()), i_end(sm1.end_elements()) ;
                         i != i_end ; ++i)
             {
                 if (i.index() % 2 == 0)
@@ -761,7 +761,7 @@ class SparseMatrixReductionToMinQuickTest :
         {
             unsigned long size(22);
             SparseMatrix<DT_> sm1(size, size);
-            for (typename MutableMatrix<DT_>::ElementIterator i(sm1.begin_elements()), i_end(sm1.end_elements()) ;
+            for (typename SparseMatrix<DT_>::ElementIterator i(sm1.begin_elements()), i_end(sm1.end_elements()) ;
                     i != i_end ; ++i)
             {
                 if (i.index() % 2 == 0)
@@ -1107,7 +1107,7 @@ class SparseVectorReductionToMinTest :
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 SparseVector<DT_> sv1(size, size / 8 + 1);
-                for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+                for (typename SparseVector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = i.index();
@@ -1142,7 +1142,7 @@ class SparseVectorReductionToMinQuickTest :
         {
             unsigned long size(22);
             SparseVector<DT_> sv1(size, size / 8 + 1);
-            for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+            for (typename SparseVector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                     i != i_end ; ++i)
             {
                 *i = i.index();
@@ -1267,7 +1267,7 @@ class SparseMatrixReductionToMaxTest :
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 SparseMatrix<DT_> sm1(size, size);
-                for (typename MutableMatrix<DT_>::ElementIterator i(sm1.begin_elements()), i_end(sm1.end_elements()) ;
+                for (typename SparseMatrix<DT_>::ElementIterator i(sm1.begin_elements()), i_end(sm1.end_elements()) ;
                         i != i_end ; ++i)
             {
                 if (i.index() % 2 == 0)
@@ -1311,7 +1311,7 @@ class SparseMatrixReductionToMaxQuickTest :
         {
             unsigned long size(22);
             SparseMatrix<DT_> sm1(size, size);
-            for (typename MutableMatrix<DT_>::ElementIterator i(sm1.begin_elements()), i_end(sm1.end_elements()) ;
+            for (typename SparseMatrix<DT_>::ElementIterator i(sm1.begin_elements()), i_end(sm1.end_elements()) ;
                     i != i_end ; ++i)
             {
                     if (i.index() % 2 == 0)
@@ -1655,7 +1655,7 @@ class SparseVectorReductionToMaxTest :
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 SparseVector<DT_> sv1(size, size / 8 + 1);
-                for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+                for (typename SparseVector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = i.index();
@@ -1690,7 +1690,7 @@ class SparseVectorReductionToMaxQuickTest :
         {
             unsigned long size(22);
             SparseVector<DT_> sv1(size, size / 8 + 1);
-            for (typename Vector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+            for (typename SparseVector<DT_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                     i != i_end ; ++i)
             {
                 *i = i.index();

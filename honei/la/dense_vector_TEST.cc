@@ -20,9 +20,12 @@
 
 #include <honei/la/dense_vector.hh>
 #include <honei/la/sparse_vector.hh>
+#include <honei/la/vector_error.hh>
 #include <unittest/unittest.hh>
 
 #include <string>
+#include <limits>
+#include <cmath>
 
 
 using namespace honei;
@@ -107,7 +110,7 @@ class DenseVectorDensifyQuickTest :
                 DenseVector<DataType_> dv0(size, DataType_(0));
                 SparseVector<DataType_> sv0(size, size / 8 + 1);
 
-                typename Vector<DataType_>::ElementIterator j(sv0.begin_elements());
+                typename SparseVector<DataType_>::ElementIterator j(sv0.begin_elements());
                 for (typename DenseVector<DataType_>::ElementIterator i(dv0.begin_elements()), i_end(dv0.end_elements()) ;
                         i != i_end ; ++i, ++j)
                 {

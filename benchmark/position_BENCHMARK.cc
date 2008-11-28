@@ -124,7 +124,7 @@ struct Scenario<DataType_, Scenarios::SquareGrid>
         }
 
         // create Edge_Weights
-        for (typename MutableMatrix<DataType_>::ElementIterator e(Edge_Weights.begin_elements()),
+        for (typename SparseMatrix<DataType_>::ElementIterator e(Edge_Weights.begin_elements()),
                     e_end(Edge_Weights.end_elements()); e != e_end ; ++e)
             {
                 if ((((e.row() + 1 == e.column()) && (e.column() % _nodecount_2)) || (e.column() == e.row() + _nodecount_2)) && 

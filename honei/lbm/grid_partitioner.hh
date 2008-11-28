@@ -50,6 +50,7 @@ namespace honei
     template <typename DT_> struct GridPartitioner<D2Q9, DT_>
     {
         private:
+            /// Scatter f_temp elements to other patches
             static void _synch_temp_1(unsigned long patch,
                     DenseVector<unsigned long> & index_vector, DenseVector<unsigned long> & targets,
                     std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list)
@@ -148,7 +149,6 @@ namespace honei
                 }
             }
 
-            /// Scatter f_temp elements to other patches
             static void _synch_temp_8(unsigned long patch,
                     DenseVector<unsigned long> & index_vector, DenseVector<unsigned long> & targets,
                     std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list)

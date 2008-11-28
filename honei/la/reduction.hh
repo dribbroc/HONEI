@@ -138,7 +138,7 @@ namespace honei
 
             DT_ result(0);
 
-            for (typename Vector<DT_>::ConstElementIterator i(vector.begin_non_zero_elements()), i_end(vector.end_non_zero_elements()) ;
+            for (typename SparseVector<DT_>::NonZeroConstElementIterator i(vector.begin_non_zero_elements()), i_end(vector.end_non_zero_elements()) ;
                     i != i_end ; ++i)
             {
                 result += *i;
@@ -301,7 +301,7 @@ namespace honei
 
             DT_ result(vector[0]);
 
-            for (typename Vector<DT_>::ConstElementIterator l(vector.begin_elements()),
+            for (typename SparseVector<DT_>::ConstElementIterator l(vector.begin_elements()),
                     l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
                 if (*l > result)
@@ -427,7 +427,7 @@ namespace honei
 
             DT_ result(vector[0]);
 
-            for (typename Vector<DT_>::ConstElementIterator l(vector.begin_elements()),
+            for (typename SparseVector<DT_>::ConstElementIterator l(vector.begin_elements()),
                     l_end(vector.end_elements()) ; l != l_end ; ++l)
             {
                 if (*l < result)

@@ -1,7 +1,7 @@
-/* vim: set sw=4 sts=4 et foldmethod=syntax : */
+/* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2009 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -17,21 +17,12 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef HONEI_GUARD_ATTRIBUTES_HH
-#define HONEI_GUARD_ATTRIBUTES_HH 1
+#ifndef HONEI_GUARD_HONEI_LA_SPARSE_VECTOR_FWD_HH
+#define HONEI_GUARD_HONEI_LA_SPARSE_VECTOR_FWD_HH 1
 
-#if defined (__GNUC__)
-#  define HONEI_ALIGNED(x) __attribute__((__aligned__(x)))
-#  define HONEI_INLINE __attribute__((__always_inline__))
-#  define HONEI_PACKED __attribute__((packed))
-#  define HONEI_THREAD_LOCAL static __thread
-#elif defined (DOXYGEN)
-#  define HONEI_ALIGNED(x)
-#  define HONEI_INLINE
-#  define HONEI_PACKED
-#  define HONEI_THREAD_LOCAL static
-#else
-#  error "Your compiler is not supported yet!"
-#endif
+namespace honei
+{
+    template <typename DataType_> class SparseVector;
+}
 
 #endif

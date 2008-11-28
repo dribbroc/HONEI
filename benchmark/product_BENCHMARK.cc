@@ -376,7 +376,7 @@ class SparseMatrixProductBench :
         virtual void run()
         {
             SparseMatrix<DataType_> sm(_size, _size, (unsigned long)((_size*_size)/10));
-            for (typename MutableMatrix<DataType_>::ElementIterator i_end(sm.end_elements()), i(sm.begin_elements()) ; i != i_end ; ++i)
+            for (typename SparseMatrix<DataType_>::ElementIterator i_end(sm.end_elements()), i(sm.begin_elements()) ; i != i_end ; ++i)
             {
                 if (i.index() % 10 == 0)
                 {

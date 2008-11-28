@@ -251,7 +251,7 @@ namespace honei
                 EvolvingAnimator<Tag_, DataType_> * animator(getAnimator());
                 
                 
-                for (typename MutableMatrix<DataType_>::ElementIterator i(animator->edges()->begin_non_zero_elements()), i_end(animator->edges()->end_non_zero_elements()); i != i_end ; ++i)
+                for (typename SparseMatrix<DataType_>::NonZeroElementIterator i(animator->edges()->begin_non_zero_elements()), i_end(animator->edges()->end_non_zero_elements()); i != i_end ; ++i)
                 {
                     if (i.row() > i.column())
                     {

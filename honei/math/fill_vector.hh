@@ -144,12 +144,12 @@ namespace honei
                             // then, Neumann
                             else if ((i%M) == 0 && i>M && i<N)
                             {
-                                target[i-1] = 0.5*(1.0/pow(4.0, level));
+                                target[i-1] = 0.5*(1.0/pow(4.0, (int)level));
                             }
                             // then, inner points
                             else
                             {
-                                target[i-1] = 1.0/pow(4.0, level);
+                                target[i-1] = 1.0/pow(4.0, (int)level);
                             }
                         }
                     }

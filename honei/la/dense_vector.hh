@@ -116,7 +116,7 @@ namespace honei
             DenseVector(const DenseVector<DataType_> & other);
 
             /// Destructor.
-            ~DenseVector();
+            virtual ~DenseVector();
 
             /// \}
 
@@ -215,7 +215,7 @@ namespace honei
     /**
      * Equality operator for DenseVector.
      *
-     * Compares if corresponding elements of two banded matrices are equal
+     * Compares if corresponding elements of two dense vectors are equal
      * within machine precision.
      */
     template <typename DataType_> bool operator== (const DenseVectorBase<DataType_> & a, const DenseVectorBase<DataType_> & b);

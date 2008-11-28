@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007 Volker Jung <volker.jung@uni-dortmund.de>
+ * Copyright (c) 2009 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -21,10 +22,10 @@
 #define LIBLA_GUARD_DENSE_MATRIX_TILE_HH 1
 
 #include <honei/la/element_iterator.hh>
-#include <honei/la/matrix.hh>
 #include <honei/la/dense_vector_range.hh>
 #include <honei/la/dense_vector_slice.hh>
 #include <honei/la/dense_matrix-impl.hh>
+#include <honei/la/dense_matrix.hh>
 #include <honei/la/matrix_error.hh>
 #include <honei/util/shared_array-impl.hh>
 #include <honei/util/stringify.hh>
@@ -70,25 +71,25 @@ namespace honei
             /// The number of columns of our source matrix.
             unsigned long _source_columns;
 
-            /// Our implementation of ElementIteratorBase.
-            class DenseElementIterator;
+            /// Calculates our position from a given index.
+            inline unsigned long _calc_pos(const unsigned long index) const
+            {
+                return (_row_offset + index / _columns) * _source_columns + _column_offset + index % _columns;
+            }
 
-            typedef typename Matrix<DataType_>::MatrixElementIterator MatrixElementIterator;
 
         public:
-            friend class DenseElementIterator;
+            friend class honei::ConstElementIterator<storage::Dense, container::MatrixTile, DataType_>;
+            friend class honei::ElementIterator<storage::Dense, container::MatrixTile, DataType_>;
+            /// \todo remove impl friends after _calc_pos is moved
+            friend struct honei::Implementation<honei::ConstElementIterator<storage::Dense, container::MatrixTile, DataType_> >;
+            friend struct honei::Implementation<honei::ElementIterator<storage::Dense, container::MatrixTile, DataType_> >;
 
             /// Type of the const iterator over our elements.
-            typedef typename Matrix<DataType_>::ConstElementIterator ConstElementIterator;
+            typedef honei::ConstElementIterator<storage::Dense, container::MatrixTile, DataType_> ConstElementIterator;
 
             /// Type of the iterator over our elements.
-            typedef typename MutableMatrix<DataType_>::ElementIterator ElementIterator;
-
-            /// Type of the const iterator over our vectors.
-            typedef VectorIteratorWrapper<DataType_, const DataType_> ConstVectorIterator;
-
-            /// Type of the iterator over our vectors.
-            typedef VectorIteratorWrapper<DataType_, DataType_> VectorIterator;
+            typedef honei::ElementIterator<storage::Dense, container::MatrixTile, DataType_> ElementIterator;
 
             /// \name Constructors
             /// \{
@@ -141,27 +142,25 @@ namespace honei
             /// Returns iterator pointing to the first element of the matrix.
             virtual ConstElementIterator begin_elements() const
             {
-                return ConstElementIterator(new DenseElementIterator(*this, 0));
+                return ConstElementIterator(*this, 0);
             }
 
             /// Returns iterator pointing behind the last element of the matrix.
             virtual ConstElementIterator end_elements() const
             {
-                return ConstElementIterator(
-                        new DenseElementIterator(*this, _rows * _columns));
+                return ConstElementIterator(*this, _rows * _columns);
             }
 
             /// Returns iterator pointing to the first element of the matrix.
             virtual ElementIterator begin_elements()
             {
-                return ElementIterator(new DenseElementIterator(*this, 0));
+                return ElementIterator(*this, 0);
             }
 
             /// Returns iterator pointing behind the last element of the matrix.
             virtual ElementIterator end_elements()
             {
-                return ElementIterator(
-                        new DenseElementIterator(*this, _rows * _columns));
+                return ElementIterator(*this, _rows * _columns);
             }
 
             /// Returns the number of our columns.
@@ -256,17 +255,10 @@ namespace honei
             }
     };
 
-    /**
-     * \brief DenseMatrixTile::DenseElementIterator is a simple iterator implementation for dense matrix tiles.
-     *
-     * \ingroup grpmatrix
-     */
-    template <> template <typename DataType_> class DenseMatrixTile<DataType_>::DenseElementIterator :
-        public MatrixElementIterator
+    template <typename DataType_> struct Implementation<ConstElementIterator<storage::Dense, container::MatrixTile, DataType_> >
     {
-        private:
             /// Our parent matrix.
-            const DenseMatrixTile<DataType_> & _tile;
+            DenseMatrixTile<DataType_> _tile;
 
             /// Our index.
             unsigned long _index;
@@ -274,136 +266,286 @@ namespace honei
             /// Our position inside the matrix's elements.
             unsigned long _pos;
 
-            /// Calculates our position from a given index.
-            inline unsigned long _calc_pos(const unsigned long index)
-            {
-                return (_tile._row_offset + index / _tile._columns) * _tile._source_columns + _tile._column_offset + index % _tile._columns;
-            }
 
-        public:
-            /// \name Constructors
-            /// \{
+        Implementation(const DenseMatrixTile<DataType_> & tile, unsigned long index) :
+            _tile(tile),
+            _index(index),
+            _pos(tile._calc_pos(index))
+        {
+        }
 
-            /**
-             * Constructor.
-             *
-             * \param matrix The parent matrix tile that is referenced by the iterator.
-             * \param index The index into the matrix.
-             */
-            DenseElementIterator(const DenseMatrixTile<DataType_> & tile, unsigned long index) :
-                _tile(tile),
-                _index(index),
-                _pos(_calc_pos(index))
-            {
-            }
-
-            /// Copy-constructor.
-            DenseElementIterator(DenseElementIterator const & other) :
-                _tile(other._tile),
-                _index(other._index),
-                _pos(other._pos)
-            {
-            }
-
-            /// \}
-
-            /// \name Forward iterator interface
-            /// \{
-
-            /// Preincrement operator.
-            virtual DenseElementIterator & operator++ ()
-            {
-                CONTEXT("When incrementing iterator by one:");
-
-                ++_index;
-                if (_index % _tile._columns)
-                {
-                    ++_pos;
-                }
-                else
-                {
-                    _pos += _tile._source_columns - _tile._columns + 1;
-                }
-
-                return *this;
-            }
-
-            /// In-place-add operator.
-            virtual DenseElementIterator & operator+= (const unsigned long step)
-            {
-                CONTEXT("When incrementing iterator by '" + stringify(step) + "':");
-
-                _index += step;
-                _pos = _calc_pos(_index);
-
-                return *this;
-            }
-
-            /// Dereference operator that returns assignable reference.
-            virtual DataType_ & operator* ()
-            {
-                CONTEXT("When accessing assignable element at index '" + stringify(_index) + "':");
-
-                return _tile._elements[_pos];
-            }
-
-            /// Dereference operator that returns umassignable reference.
-            virtual const DataType_ & operator* () const
-            {
-                CONTEXT("When accessing unassignable element at index '" + stringify(_index) + "':");
-
-                return _tile._elements[_pos];
-            }
-
-            /// Comparison operator for less-than.
-            virtual bool operator< (const IteratorBase<DataType_, Matrix<DataType_> > & other) const
-            {
-                return _index < other.index();
-            }
-
-            /// Comparison operator for equality.
-            virtual bool operator== (const IteratorBase<DataType_, Matrix<DataType_> > & other) const
-            {
-                return ((&_tile == other.parent()) && (_index == other.index()));
-            }
-
-            /// Comparison operator for inequality.
-            virtual bool operator!= (const IteratorBase<DataType_, Matrix<DataType_> > & other) const
-            {
-                return ((&_tile != other.parent()) || (_index != other.index()));
-            }
-
-            /// \}
-
-            /// \name IteratorTraits interface
-            /// \{
-
-            /// Returns our index.
-            virtual unsigned long index() const
-            {
-                return _index;
-            }
-
-            /// Returns our column index.
-            virtual unsigned long column() const
-            {
-                return _index % _tile._columns;
-            }
-
-            /// Returns our row index.
-            virtual unsigned long row() const
-            {
-                return _index / _tile._columns;
-            }
-
-            /// Returns a pointer to our parent container.
-            virtual const void * parent() const
-            {
-                return &_tile;
-            }
-
-            /// \}
+        Implementation(const Implementation<ElementIterator<storage::Dense, container::MatrixTile, DataType_> > & other) :
+            _tile(other._tile),
+            _index(other._index),
+            _pos(other._pos)
+        {
+        }
     };
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Dense, container::MatrixTile, DataType_>::ConstElementIterator(const DenseMatrixTile<DataType_> & matrix, unsigned long index) :
+        PrivateImplementationPattern<ConstElementIterator<storage::Dense, container::MatrixTile, DataType_>, Single>(
+                new Implementation<ConstElementIterator<storage::Dense, container::MatrixTile, DataType_> >(matrix, index))
+    {
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Dense, container::MatrixTile, DataType_>::ConstElementIterator(const ConstElementIterator & other) :
+        PrivateImplementationPattern<ConstElementIterator<storage::Dense, container::MatrixTile, DataType_>, Single>(
+                new Implementation<ConstElementIterator<storage::Dense, container::MatrixTile, DataType_> >(*other._imp))
+    {
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Dense, container::MatrixTile, DataType_>::ConstElementIterator(
+            const ElementIterator<storage::Dense, container::MatrixTile, DataType_> & other) :
+        PrivateImplementationPattern<ConstElementIterator<storage::Dense, container::MatrixTile, DataType_>, Single>(
+                new Implementation<ConstElementIterator<storage::Dense, container::MatrixTile, DataType_> >(*other._imp))
+    {
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Dense, container::MatrixTile, DataType_>::~ConstElementIterator()
+    {
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Dense, container::MatrixTile, DataType_> &
+    ConstElementIterator<storage::Dense, container::MatrixTile, DataType_>::operator= (
+            const ConstElementIterator<storage::Dense, container::MatrixTile, DataType_> & other)
+    {
+        if (&other == this)
+            return *this;
+
+        this->_imp->_tile = other._imp->_tile;
+        this->_imp->_index = other._imp->_index;
+        this->_imp->_pos = other._imp->_pos;
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Dense, container::MatrixTile, DataType_> &
+    ConstElementIterator<storage::Dense, container::MatrixTile, DataType_>::operator++ ()
+    {
+        CONTEXT("When incrementing ConstElementIterator<Dense, MatrixTile> by one:");
+
+        ++this->_imp->_index;
+        if (this->_imp->_index % this->_imp->_tile._columns)
+        {
+            ++this->_imp->_pos;
+        }
+        else
+        {
+            this->_imp->_pos += this->_imp->_tile._source_columns - this->_imp->_tile._columns + 1;
+        }
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Dense, container::MatrixTile, DataType_> &
+    ConstElementIterator<storage::Dense, container::MatrixTile, DataType_>::operator+= (const unsigned long step)
+    {
+        CONTEXT("When incrementing ConstElementIterator<Dense, MatrixTile> by '" + stringify(step) + "':");
+
+        this->_imp->_index += step;
+        this->_imp->_pos = this->_imp->_tile._calc_pos(this->_imp->_index);
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    const DataType_ &
+    ConstElementIterator<storage::Dense, container::MatrixTile, DataType_>::operator* () const
+    {
+        CONTEXT("When accessing unassignable element at index '" + stringify(this->_imp->_index) + "':");
+
+        return this->_imp->_tile._elements[this->_imp->_pos];
+    }
+
+    template <typename DataType_>
+    bool
+    ConstElementIterator<storage::Dense, container::MatrixTile, DataType_>::operator< (
+            const ConstElementIterator<storage::Dense, container::MatrixTile, DataType_> & other) const
+    {
+        return this->_imp->_index < other._imp->_index;
+    }
+
+    template <typename DataType_>
+    bool
+    ConstElementIterator<storage::Dense, container::MatrixTile, DataType_>::operator== (
+            const ConstElementIterator<storage::Dense, container::MatrixTile, DataType_> & other) const
+    {
+        return ((this->_imp->_tile._elements.get() == other._imp->_tile._elements.get()) && (this->_imp->_index == other._imp->_index));
+    }
+
+    template <typename DataType_>
+    bool
+    ConstElementIterator<storage::Dense, container::MatrixTile, DataType_>::operator!= (
+            const ConstElementIterator<storage::Dense, container::MatrixTile, DataType_> & other) const
+    {
+        return ((this->_imp->_tile._elements.get() != other._imp->_tile._elements.get()) || (this->_imp->_index != other._imp->_index));
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ConstElementIterator<storage::Dense, container::MatrixTile, DataType_>::column() const
+    {
+        return this->_imp->_index % this->_imp->_tile._columns;
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ConstElementIterator<storage::Dense, container::MatrixTile, DataType_>::row() const
+    {
+        return this->_imp->_index / this->_imp->_tile._columns;
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ConstElementIterator<storage::Dense, container::MatrixTile, DataType_>::index() const
+    {
+        return this->_imp->_index;
+    }
+
+    template <typename DataType_> struct Implementation<ElementIterator<storage::Dense, container::MatrixTile, DataType_> >
+    {
+            /// Our parent matrix.
+            DenseMatrixTile<DataType_> _tile;
+
+            /// Our index.
+            unsigned long _index;
+
+            /// Our position inside the matrix's elements.
+            unsigned long _pos;
+
+        Implementation(DenseMatrixTile<DataType_> & tile, unsigned long index) :
+            _tile(tile),
+            _index(index),
+            _pos(tile._calc_pos(index))
+        {
+        }
+    };
+
+    template <typename DataType_>
+    ElementIterator<storage::Dense, container::MatrixTile, DataType_>::ElementIterator(DenseMatrixTile<DataType_> & matrix, unsigned long index) :
+        PrivateImplementationPattern<ElementIterator<storage::Dense, container::MatrixTile, DataType_>, Single>(
+                new Implementation<ElementIterator<storage::Dense, container::MatrixTile, DataType_> >(matrix, index))
+    {
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::Dense, container::MatrixTile, DataType_>::ElementIterator(const ElementIterator & other) :
+        PrivateImplementationPattern<ElementIterator<storage::Dense, container::MatrixTile, DataType_>, Single>(
+                new Implementation<ElementIterator<storage::Dense, container::MatrixTile, DataType_> >(*other._imp))
+    {
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::Dense, container::MatrixTile, DataType_>::~ElementIterator()
+    {
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::Dense, container::MatrixTile, DataType_> &
+    ElementIterator<storage::Dense, container::MatrixTile, DataType_>::operator= (
+            const ElementIterator<storage::Dense, container::MatrixTile, DataType_> & other)
+    {
+        if (&other == this)
+            return *this;
+
+        this->_imp->_tile = other._imp->_tile;
+        this->_imp->_index = other._imp->_index;
+        this->_imp->_pos = other._imp->_pos;
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::Dense, container::MatrixTile, DataType_> &
+    ElementIterator<storage::Dense, container::MatrixTile, DataType_>::operator++ ()
+    {
+        CONTEXT("When incrementing ElementIterator<Dense, MatrixTile> by one:");
+
+        ++this->_imp->_index;
+        if (this->_imp->_index % this->_imp->_tile._columns)
+        {
+            ++this->_imp->_pos;
+        }
+        else
+        {
+            this->_imp->_pos += this->_imp->_tile._source_columns - this->_imp->_tile._columns + 1;
+        }
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::Dense, container::MatrixTile, DataType_> &
+    ElementIterator<storage::Dense, container::MatrixTile, DataType_>::operator+= (const unsigned long step)
+    {
+        CONTEXT("When incrementing ElementIterator<Dense, MatrixTile> by '" + stringify(step) + "':");
+
+        this->_imp->_index += step;
+        this->_imp->_pos = this->_imp->_tile._calc_pos(this->_imp->_index);
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    DataType_ &
+    ElementIterator<storage::Dense, container::MatrixTile, DataType_>::operator* () const
+    {
+        CONTEXT("When accessing unassignable element at index '" + stringify(this->_imp->_index) + "':");
+
+        return this->_imp->_tile._elements[this->_imp->_pos];
+    }
+
+    template <typename DataType_>
+    bool
+    ElementIterator<storage::Dense, container::MatrixTile, DataType_>::operator< (
+            const ElementIterator<storage::Dense, container::MatrixTile, DataType_> & other) const
+    {
+        return this->_imp->_index < other._imp->_index;
+    }
+
+    template <typename DataType_>
+    bool
+    ElementIterator<storage::Dense, container::MatrixTile, DataType_>::operator== (
+            const ElementIterator<storage::Dense, container::MatrixTile, DataType_> & other) const
+    {
+        return ((this->_imp->_tile._elements.get() == other._imp->_tile._elements.get()) && (this->_imp->_index == other._imp->_index));
+    }
+
+    template <typename DataType_>
+    bool
+    ElementIterator<storage::Dense, container::MatrixTile, DataType_>::operator!= (
+            const ElementIterator<storage::Dense, container::MatrixTile, DataType_> & other) const
+    {
+        return ((this->_imp->_tile._elements.get() != other._imp->_tile._elements.get()) || (this->_imp->_index != other._imp->_index));
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ElementIterator<storage::Dense, container::MatrixTile, DataType_>::column() const
+    {
+        return this->_imp->_index % this->_imp->_tile._columns;
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ElementIterator<storage::Dense, container::MatrixTile, DataType_>::row() const
+    {
+        return this->_imp->_index / this->_imp->_tile._columns;
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ElementIterator<storage::Dense, container::MatrixTile, DataType_>::index() const
+    {
+        return this->_imp->_index;
+    }
 
     template <typename DataType_>
     std::ostream &

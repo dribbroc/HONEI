@@ -162,7 +162,7 @@ class BandedMatrixSparseMatrixSumTest :
                 SparseMatrix<DataType_> sm2(size, size, size / 8 + 1),
                     sm3(size, size, size / 8 + 1);
 
-                for (typename MutableMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
+                for (typename SparseMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
                         i_end(sm2.end_elements()), k(sm3.begin_elements()) ;
                         i != i_end ; ++i, ++k)
                 {
@@ -173,8 +173,8 @@ class BandedMatrixSparseMatrixSumTest :
                     }
                 }
 
-                typename MutableMatrix<DataType_>::ElementIterator k(sm3.begin_elements());
-                typename MutableMatrix<DataType_>::ElementIterator j(sm2.begin_elements());
+                typename SparseMatrix<DataType_>::ElementIterator k(sm3.begin_elements());
+                typename SparseMatrix<DataType_>::ElementIterator j(sm2.begin_elements());
                 for (typename BandedMatrix<DataType_>::ConstElementIterator i(bm1.begin_elements()),
                         i_end(bm1.end_elements()) ; i != i_end ; ++i, ++k, ++j)
                 {
@@ -220,7 +220,7 @@ class BandedMatrixSparseMatrixSumQuickTest :
             SparseMatrix<DataType_> sm2(size, size, size / 8 + 1),
                 sm3(size, size, size / 8 + 1);
 
-            for (typename MutableMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
+            for (typename SparseMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
                     i_end(sm2.end_elements()), k(sm3.begin_elements()) ;
                     i != i_end ; ++i, ++k)
             {
@@ -231,8 +231,8 @@ class BandedMatrixSparseMatrixSumQuickTest :
                 }
             }
 
-            typename MutableMatrix<DataType_>::ElementIterator k(sm3.begin_elements());
-            typename MutableMatrix<DataType_>::ElementIterator j(sm2.begin_elements());
+            typename SparseMatrix<DataType_>::ElementIterator k(sm3.begin_elements());
+            typename SparseMatrix<DataType_>::ElementIterator j(sm2.begin_elements());
             for (typename BandedMatrix<DataType_>::ConstElementIterator i(bm1.begin_elements()),
                     i_end(bm1.end_elements()) ; i != i_end ; ++i, ++k, ++j)
             {
@@ -378,7 +378,7 @@ class DenseMatrixSparseMatrixSumTest :
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(0)),
                         dm3(size+1, size, DataType_(0));
                 SparseMatrix<DataType_> sm2(size+1, size, size / 7 + 1);
-                typename MutableMatrix<DataType_>::ElementIterator j(sm2.begin_elements());
+                typename SparseMatrix<DataType_>::ElementIterator j(sm2.begin_elements());
                 for (typename DenseMatrix<DataType_>::ElementIterator i(dm1.begin_elements()),
                     i_end(dm1.end_elements()), k(dm3.begin_elements()) ;
                     i != i_end ; ++i, ++j, ++k)
@@ -432,7 +432,7 @@ class DenseMatrixSparseMatrixSumQuickTest :
             DenseMatrix<DataType_> dm1(size+1, size, DataType_(0)),
                     dm3(size+1, size, DataType_(0));
             SparseMatrix<DataType_> sm2(size+1, size, size / 7 + 1);
-            typename MutableMatrix<DataType_>::ElementIterator j(sm2.begin_elements());
+            typename SparseMatrix<DataType_>::ElementIterator j(sm2.begin_elements());
             for (typename DenseMatrix<DataType_>::ElementIterator i(dm1.begin_elements()),
                 i_end(dm1.end_elements()), k(dm3.begin_elements()) ;
                 i != i_end ; ++i, ++j, ++k)
@@ -591,7 +591,7 @@ class SparseMatrixSumTest :
             {
                 SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1),
                     sm2(size+1, size, size / 7 + 1), sm3(size+1, size, size / 8 + 1 );
-                for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
+                for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                     i_end(sm1.end_elements()), j(sm2.begin_elements()), k(sm3.begin_elements()) ;
                     i != i_end ; ++i, ++j, ++k)
                 {
@@ -642,7 +642,7 @@ class SparseMatrixSumQuickTest :
             unsigned long size (11);
             SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1),
                 sm2(size+1, size, size / 7 + 1), sm3(size+1, size, size / 8 + 1 );
-            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
+            for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                     i_end(sm1.end_elements()), j(sm2.begin_elements()), k(sm3.begin_elements()) ;
                     i != i_end ; ++i, ++j, ++k)
             {
@@ -1191,7 +1191,7 @@ class DenseVectorSparseVectorSumTest :
             {
                 DenseVector<DataType_> dv1(size, DataType_(0)), dv3(size, DataType_(0));
                 SparseVector<DataType_> sv2(size, size / 7 + 1);
-                typename Vector<DataType_>::ElementIterator j(sv2.begin_elements());
+                typename SparseVector<DataType_>::ElementIterator j(sv2.begin_elements());
                 for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                     k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
                 {
@@ -1245,7 +1245,7 @@ class DenseVectorSparseVectorSumQuickTest :
             unsigned long size(22);
             DenseVector<DataType_> dv1(size, DataType_(0)), dv3(size, DataType_(0));
             SparseVector<DataType_> sv2(size, size / 7 + 1);
-            typename Vector<DataType_>::ElementIterator j(sv2.begin_elements());
+            typename SparseVector<DataType_>::ElementIterator j(sv2.begin_elements());
             for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
                 k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
             {
@@ -1297,7 +1297,7 @@ class SparseVectorSumTest :
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 SparseVector<DataType_> sv1(size, size / 8 + 1), sv2(size, size / 7 + 1), sv3(size, size / 8 + 1);
-                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
+                for (typename SparseVector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
                     j(sv2.begin_elements()), k(sv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
                 {
                     if (i.index() % 10 == 0)
@@ -1342,7 +1342,7 @@ class SparseVectorSumQuickTest :
         {
             unsigned long size(20);
             SparseVector<DataType_> sv1(size, size / 8 + 1), sv2(size, size / 7 + 1), sv3(size, size / 8 + 1);
-            for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
+            for (typename SparseVector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
                 j(sv2.begin_elements()), k(sv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
             {
                 if (i.index() % 10 == 0)

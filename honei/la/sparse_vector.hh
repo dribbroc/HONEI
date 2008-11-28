@@ -4,6 +4,7 @@
  * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Michael Abshoff <michael.abshoff@fsmath.mathematik.uni-dortmund.de>
  * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
+ * Copyright (c) 2009 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -23,7 +24,7 @@
 #define LIBLA_GUARD_SPARSE_VECTOR_HH 1
 
 #include <honei/la/element_iterator.hh>
-#include <honei/la/vector.hh>
+#include <honei/la/sparse_matrix-fwd.hh>
 #include <honei/util/assertion.hh>
 #include <honei/util/exception.hh>
 #include <honei/util/log.hh>
@@ -31,9 +32,6 @@
 #include <honei/util/shared_array.hh>
 #include <honei/util/stringify.hh>
 
-#include <iterator>
-#include <ostream>
-#include <string>
 
 namespace honei
 {
@@ -44,7 +42,6 @@ namespace honei
      * \ingroup grpvector
      */
     template <typename DataType_> class SparseVector :
-        public Vector<DataType_>,
         public PrivateImplementationPattern<SparseVector<DataType_>, Shared>
     {
         private:
@@ -59,23 +56,30 @@ namespace honei
              */
             void _insert_element(unsigned long position, unsigned long index) const;
 
-            /// Our normal implementation of ElementIteratorBase.
-            class SparseElementIterator;
-
-            /// Our smart implementation of ElementIteratorBase.
-            class NonZeroElementIterator;
-
-            typedef typename Vector<DataType_>::VectorElementIterator VectorElementIterator;
-
         public:
-            friend class SparseElementIterator;
-            friend class NonZeroElementIterator;
+            /// \name Friends of SparseVector
+            /// \{
+
+            friend class SparseMatrix<DataType_>;
+            friend class honei::ConstElementIterator<storage::Sparse, container::Vector, DataType_>;
+            friend class honei::ElementIterator<storage::Sparse, container::Vector, DataType_>;
+            friend class honei::ElementIterator<storage::SparseNonZero, container::Vector, DataType_>;
+            friend class honei::ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_>;
+
+            /// \}
 
             /// Type of the const iterator over our elements.
-            typedef typename Vector<DataType_>::ConstElementIterator ConstElementIterator;
+            typedef honei::ConstElementIterator<storage::Sparse, container::Vector, DataType_> ConstElementIterator;
 
             /// Type of the iterator over our elements.
-            typedef typename Vector<DataType_>::ElementIterator ElementIterator;
+            typedef honei::ElementIterator<storage::Sparse, container::Vector, DataType_> ElementIterator;
+
+            /// Type of the const iterator over our non zero elements.
+            typedef honei::ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_> NonZeroConstElementIterator;
+
+            /// Type of the iterator over our non zero elements.
+            typedef honei::ElementIterator<storage::SparseNonZero, container::Vector, DataType_> NonZeroElementIterator;
+
 
             /// \name Constructors and Destructors
             /// \{
@@ -88,51 +92,54 @@ namespace honei
              */
             SparseVector(unsigned long size, unsigned long capacity);
 
+            /// Copy-constructor.
+            SparseVector(const SparseVector<DataType_> & other);
+
             /// Destructor.
             ~SparseVector();
 
             /// \}
 
             /// Returns const iterator pointing to the first element of the vector.
-            virtual ConstElementIterator begin_elements() const;
+            ConstElementIterator begin_elements() const;
 
             /// Returns iterator pointing behind the last element of the vector.
-            virtual ConstElementIterator end_elements() const;
+            ConstElementIterator end_elements() const;
 
             /// Returns iterator pointing to the first element of the vector.
-            virtual ElementIterator begin_elements();
+            ElementIterator begin_elements();
 
             /// Returns iterator pointing behind the last element of the vector.
-            virtual ElementIterator end_elements();
+            ElementIterator end_elements();
 
             /// Returns const iterator pointing to the first non-zero element of the vector.
-            virtual ConstElementIterator begin_non_zero_elements() const;
+            NonZeroConstElementIterator begin_non_zero_elements() const;
 
             /// Returns const iterator pointing behind the last element of the vector.
-            virtual ConstElementIterator end_non_zero_elements() const;
+            NonZeroConstElementIterator end_non_zero_elements() const;
 
             /// Returns const iterator pointing to a given non zero element of the vector.
             /// Please note that pos != index. pos is the index into the elements array.
-            virtual ConstElementIterator non_zero_element_at(unsigned long pos) const;
+            NonZeroConstElementIterator non_zero_element_at(unsigned long pos) const;
 
             /// Returns iterator pointing to the first non-zero element of the vector.
-            virtual ElementIterator begin_non_zero_elements();
+            NonZeroElementIterator begin_non_zero_elements();
 
             /// Returns iterator pointing behind the last element of the vector.
-            virtual ElementIterator end_non_zero_elements();
+            NonZeroElementIterator end_non_zero_elements();
 
             /// Returns iterator pointing to a given non zero element of the vector.
             /// Please note that pos != index. pos is the index into the elements array.
-            virtual ElementIterator non_zero_element_at(unsigned long pos);
+            NonZeroElementIterator non_zero_element_at(unsigned long pos);
 
             /// Returns out element capacity.
-            virtual unsigned long capacity() const;
+            unsigned long capacity() const;
 
             /// Returns our used element number.
-            virtual unsigned long used_elements() const;
+            unsigned long used_elements() const;
 
             /// Returns our size.
-            virtual unsigned long size() const;
+            unsigned long size() const;
 
             /// Return a pointer to our elements.
             DataType_ * elements() const;
@@ -141,22 +148,60 @@ namespace honei
             unsigned long * indices() const;
 
             /// Retrieves element by index, zero-based, unassignable.
-            virtual const DataType_ & operator[] (unsigned long index) const;
+            const DataType_ & operator[] (unsigned long index) const;
 
             /// Retrieves (and inserts empty) element by index, zero-based, assignable.
-            virtual DataType_ & operator[] (unsigned long index);
+            DataType_ & operator[] (unsigned long index);
 
             /// Returns a copy of the vector.
-            virtual SparseVector copy() const;
+            SparseVector copy() const;
     };
+
+    /**
+     * Equality operator for SparseVector.
+     *
+     * Compares if corresponding elements of two sparse vectors are equal
+     * within machine precision.
+     */
+    template <typename DataType_> bool operator== (const SparseVector<DataType_> & a, const SparseVector<DataType_> & b);
+
+    /**
+     * Output operator for SparseVector.
+     *
+     * Outputs a sparse vector to an output stream.
+     */
+    template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const SparseVector<DataType_> & vector);
 
     extern template class SparseVector<float>;
 
+    extern template bool operator== (const SparseVector<float> & a, const SparseVector<float> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const SparseVector<float> & vector);
+
     extern template class SparseVector<double>;
+
+    extern template bool operator== (const SparseVector<double> & a, const SparseVector<double> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const SparseVector<double> & vector);
 
     extern template class SparseVector<int>;
 
+    extern template bool operator== (const SparseVector<int> & a, const SparseVector<int> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const SparseVector<int> & vector);
+
     extern template class SparseVector<long>;
+
+    extern template bool operator== (const SparseVector<long> & a, const SparseVector<long> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const SparseVector<long> & vector);
+
+    extern template class SparseVector<unsigned long>;
+
+    extern template bool operator== (const SparseVector<unsigned long> & a, const SparseVector<unsigned long> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const SparseVector<unsigned long> & vector);
+
 }
 
 #endif

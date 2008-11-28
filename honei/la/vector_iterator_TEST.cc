@@ -17,11 +17,11 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/la/vector_iterator.hh>
 #include <honei/la/banded_matrix.hh>
 #include <unittest/unittest.hh>
 
 #include <string>
+#include <limits>
 
 using namespace honei;
 using namespace tests;

@@ -24,6 +24,7 @@
 
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_vector_range.hh>
+#include <honei/la/vector_error.hh>
 #include <honei/la/element_iterator.hh>
 #include <honei/la/sparse_vector.hh>
 #include <honei/la/element_iterator.hh>
@@ -36,6 +37,8 @@
 
 #include <algorithm>
 #include <string>
+#include <limits>
+#include <cmath>
 
 namespace honei
 {
@@ -137,7 +140,7 @@ namespace honei
 
         TypeTraits<DataType_>::fill(this->_imp->elements.get(), other.size(), DataType_(0));
 
-        for (typename Vector<DataType_>::ConstElementIterator i(other.begin_non_zero_elements()),
+        for (typename SparseVector<DataType_>::NonZeroConstElementIterator i(other.begin_non_zero_elements()),
                 i_end(other.end_non_zero_elements()) ; i != i_end ; ++i)
         {
             (*this)[i.index()] = *i;

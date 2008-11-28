@@ -345,13 +345,13 @@ class BandedMatrixSparseVectorProductTest :
                 bm1.insert_band(1, dv4);
                 bm1.insert_band(-1, dv5);
                 SparseVector<DataType_> sv1(size, size / 8 + 1);
-                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+                for (typename SparseVector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     if (i.index() % 10 == 0) *i = DataType_(3);
                 }
                 SparseVector<DataType_> sv2(size, size / 8 + 1);
-                for (typename Vector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
+                for (typename SparseVector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     if (i.index() % 10 == 0) *i = DataType_(6 * 1);
@@ -396,13 +396,13 @@ class BandedMatrixSparseVectorProductQuickTest :
             bm1.insert_band(1, dv4);
             bm1.insert_band(-1, dv5);
             SparseVector<DataType_> sv1(size, size / 8 + 1);
-            for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+            for (typename SparseVector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                     i != i_end ; ++i)
             {
                 if (i.index() % 5 == 0) *i = DataType_(3);
             }
             SparseVector<DataType_> sv2(size, size / 8 + 1);
-            for (typename Vector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
+            for (typename SparseVector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
                     i != i_end ; ++i)
             {
                 if (i.index() % 5 == 0) *i = DataType_(6 * 1);
@@ -523,13 +523,13 @@ class DenseMatrixSparseVectorProductTest :
             {
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(2));
                 SparseVector<DataType_> sv1(size, size / 8 + 1);
-                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+                for (typename SparseVector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     if (i.index() % 10 == 0) *i = DataType_(3);
                 }
                 SparseVector<DataType_> sv2(size + 1, size / 8 + 1);
-                for (typename Vector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
+                for (typename SparseVector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = static_cast<DataType_>(6 * (size / 10 + 1));
@@ -568,7 +568,7 @@ class DenseMatrixSparseVectorProductQuickTest :
             unsigned long size(20);
             DenseMatrix<DataType_> dm1(size+1, size, DataType_(2));
             SparseVector<DataType_> sv1(size, size / 8 + 1);
-            for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+            for (typename SparseVector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                     i != i_end ; ++i)
             {
                 if (i.index() % 10 == 0) *i = DataType_(3);
@@ -606,14 +606,14 @@ class SparseMatrixDenseVectorProductTest :
             {
                 SparseMatrix<DataType_> sm1(size+1, size,  size / 8 + 1);
                 DenseVector<DataType_> dv1(size,  DataType_(3)), dv2(size + 1, DataType_(6 * size));
-                for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
+                for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                     i_end(sm1.end_elements()) ; i != i_end ; ++i)
                 {
                     *i = 2;
                 }
                 SparseVector<DataType_> prod(Product<>::value(sm1, dv1));
 
-                for (typename Vector<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()) ;
+                for (typename SparseVector<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()) ;
                     i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_(6 * size), std::numeric_limits<DataType_>::epsilon());
@@ -643,7 +643,7 @@ class SparseMatrixDenseVectorProductQuickTest :
         {
             unsigned long size(20);
             SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1);
-            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
+            for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                 i_end(sm1.end_elements()) ; i != i_end ; ++i)
             {
                 *i = 2;
@@ -651,7 +651,7 @@ class SparseMatrixDenseVectorProductQuickTest :
             DenseVector<DataType_> dv1(size, DataType_(3)),  dv2(size + 1, DataType_(6 * size));
             SparseVector<DataType_> prod(Product<>::value(sm1, dv1));
 
-            for (typename Vector<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()) ;
+            for (typename SparseVector<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()) ;
                     i != i_end ; ++i)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_(6 * size), std::numeric_limits<DataType_>::epsilon());
@@ -682,19 +682,19 @@ class SparseMatrixSparseVectorProductTest :
             for (unsigned long size(11) ; size < (1 << 9) ; size <<= 1)
             {
                 SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1);
-                for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
+                for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                     i_end(sm1.end_elements()) ; i != i_end ; ++i)
                 {
                     *i = 2;
                 }
                 SparseVector<DataType_> sv1(size, size / 8 + 1);
-                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+                for (typename SparseVector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                     i != i_end ; ++i)
                 {
                     *i = DataType_(3);
                 }
                 SparseVector<DataType_> sv2(size + 1, size / 8 + 1);
-                for (typename Vector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
+                for (typename SparseVector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
                     i != i_end ; ++i)
                 {
                     *i = DataType_(6 * size);
@@ -727,19 +727,19 @@ class SparseMatrixSparseVectorProductQuickTest :
         {
             unsigned long size(20);
             SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1);
-            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
+            for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                 i_end(sm1.end_elements()) ; i != i_end ; ++i)
             {
                 *i = 2;
             }
             SparseVector<DataType_> sv1(size, size / 8 + 1);
-            for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+            for (typename SparseVector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                     i != i_end ; ++i)
             {
                 if (i.index() % 10 == 0) *i = DataType_(3);
             }
             SparseVector<DataType_> sv2(size + 1, size / 8 + 1);
-            for (typename Vector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
+            for (typename SparseVector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
                     i != i_end ; ++i)
             {
                 *i = DataType_(12);
@@ -1242,7 +1242,7 @@ class DenseMatrixSparseMatrixProductTest :
             {
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm3(size+1, size+1, DataType_(6 * size));
                 SparseMatrix<DataType_> sm2(size, size+1, size / 8 + 1);
-                for (typename MutableMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
+                for (typename SparseMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
                     i_end(sm2.end_elements()) ; i != i_end ; ++i)
                 {
                     *i = 3;
@@ -1276,7 +1276,7 @@ class DenseMatrixSparseMatrixProductQuickTest :
             unsigned long size (11);
             DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm3(size+1, size+1, DataType_(6 * size));
             SparseMatrix<DataType_> sm2(size, size+1, size / 8 + 1);
-            for (typename MutableMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
+            for (typename SparseMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
                 i_end(sm2.end_elements()) ; i != i_end ; ++i)
             {
                 *i = 3;
@@ -1312,7 +1312,7 @@ class SparseMatrixDenseMatrixProductTest :
                 SparseMatrix<DataType_> sm1(size + 3, size + 2, size / 8 + 1);
                 DenseMatrix<DataType_> dm2(size + 2, size + 1);
                 DenseMatrix<DataType_> dm3(size + 3 , size + 1, DataType_(0));
-                for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), i_end(sm1.end_elements()) ;
+                for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), i_end(sm1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     if (i.index() % 14 == 0)
@@ -1383,7 +1383,7 @@ class SparseMatrixDenseMatrixProductQuickTest :
             SparseMatrix<DataType_> sm1(size + 3, size + 2, size / 8 + 1);
             DenseMatrix<DataType_> dm2(size + 2, size + 1);
             DenseMatrix<DataType_> dm3(size + 3 , size + 1, DataType_(0));
-            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), i_end(sm1.end_elements()) ;
+            for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), i_end(sm1.end_elements()) ;
                     i != i_end ; ++i)
             {
                 if (i.index() % 14 == 0)
@@ -1452,17 +1452,17 @@ class SparseMatrixProductTest :
             {
                 SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1),
                     sm2(size, size+1, size / 7 + 1), sm3(size + 1, size + 1, size / 7 + 1);
-                for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
+                for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                     i_end(sm1.end_elements()) ; i != i_end ; ++i)
                 {
                     *i = 2;
                 }
-                for (typename MutableMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
+                for (typename SparseMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
                     i_end(sm2.end_elements()) ; i != i_end ; ++i)
                 {
                     *i = 3;
                 }
-                for (typename MutableMatrix<DataType_>::ElementIterator i(sm3.begin_elements()),
+                for (typename SparseMatrix<DataType_>::ElementIterator i(sm3.begin_elements()),
                     i_end(sm3.end_elements()) ; i != i_end ; ++i)
                 {
                     *i = 6 * size;
@@ -1496,17 +1496,17 @@ class SparseMatrixProductQuickTest :
             unsigned long size(2);
             SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1),
                 sm2(size, size+1, size / 7 + 1), sm3(size + 1, size + 1, size / 7 + 1);
-            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
+            for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                 i_end(sm1.end_elements()) ; i != i_end ; ++i)
             {
                 *i = 2;
             }
-            for (typename MutableMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
+            for (typename SparseMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
                 i_end(sm2.end_elements()) ; i != i_end ; ++i)
             {
                 *i = 3;
             }
-            for (typename MutableMatrix<DataType_>::ElementIterator i(sm3.begin_elements()),
+            for (typename SparseMatrix<DataType_>::ElementIterator i(sm3.begin_elements()),
                 i_end(sm3.end_elements()) ; i != i_end ; ++i)
             {
                 *i = 6 * size;

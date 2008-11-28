@@ -157,7 +157,7 @@ namespace honei
     /**
      * Equality operator for DenseVectorSlice.
      *
-     * Compares if corresponding elements of two banded matrices are equal
+     * Compares if corresponding elements of two dense vector slices are equal
      * within machine precision.
      */
     template <typename DataType_> bool operator== (const DenseVectorSlice<DataType_> & a, const DenseVectorSlice<DataType_> & b);

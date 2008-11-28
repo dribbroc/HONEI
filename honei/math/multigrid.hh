@@ -40,6 +40,7 @@
 #include<string>
 #include<fstream>
 #include<honei/util/time_stamp.hh>
+#include <cmath>
 
 /**
  * Use SOLVER_VERBOSE for detailed iteration-wise output of defect norms.
@@ -440,7 +441,7 @@ endCycleLoop:
                                 {
                                     defect = Norm<vnt_l_two, true, Tag_>::value((info.d[info.max_level]));
 
-                                    *cappa = pow(defect / initial_defect, 1.0/((Prec_)iter));
+                                    *cappa = std::pow((double)(defect / initial_defect), 1.0/((Prec_)iter));
 
                                     if (defect <= initial_defect * info.tolerance)
                                         break;
@@ -784,7 +785,7 @@ endCycleLoop:
                                 {
                                     defect = Norm<vnt_l_two, true, Tag_>::value((info.d[info.max_level]));
 
-                                    *cappa = pow(defect / initial_defect, 1.0/((Prec_)iter));
+                                    *cappa = std::pow((double)(defect / initial_defect), 1.0/((Prec_)iter));
 
                                     if (defect <= initial_defect * info.tolerance)
                                         break;

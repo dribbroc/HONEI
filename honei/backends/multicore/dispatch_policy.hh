@@ -24,6 +24,7 @@
 
 #include <tr1/functional>
 #include <vector>
+#include <algorithm>
 
 namespace honei
 {

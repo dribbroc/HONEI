@@ -100,8 +100,8 @@ namespace honei
             if (x.size() != y.size())
                 throw VectorSizeDoesNotMatch(y.size(), x.size());
 
-            typename Vector<DT2_>::ElementIterator l(x.begin_non_zero_elements());
-            for (typename Vector<DT1_>::ConstElementIterator r(y.begin_non_zero_elements()),
+            typename SparseVector<DT2_>::NonZeroElementIterator l(x.begin_non_zero_elements());
+            for (typename SparseVector<DT1_>::NonZeroConstElementIterator r(y.begin_non_zero_elements()),
                     r_end(y.end_non_zero_elements()) ; r != r_end ; )
             {
                 if (r.index() < l.index())
@@ -131,7 +131,7 @@ namespace honei
             if (x.size() != y.size())
                 throw VectorSizeDoesNotMatch(y.size(), x.size());
 
-            for (typename Vector<DT2_>::ConstElementIterator r(y.begin_non_zero_elements()),
+            for (typename SparseVector<DT2_>::NonZeroConstElementIterator r(y.begin_non_zero_elements()),
                     r_end(y.end_non_zero_elements()) ; r != r_end ; ++r )
             {
                 x[r.index()] += b * (*r);
@@ -314,12 +314,14 @@ namespace honei
 
         static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & x, const DenseVectorContinuousBase<double> & y, const double & b);
 
+        /// \todo Implement real cell version
         static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b, const DenseVectorContinuousBase<float> & c )
         {
             ScaledSum<tags::CPU>::value(a, b, c);
             return a;
         }
 
+        /// \todo Implement real cell version
         static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b, const DenseVectorContinuousBase<double> & c)
         {
             ScaledSum<tags::CPU>::value(a, b, c);

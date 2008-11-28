@@ -26,6 +26,7 @@
 #include <unittest/unittest.hh>
 
 #include <string>
+#include <limits>
 
 using namespace honei;
 using namespace tests;
@@ -225,14 +226,14 @@ class SparseVectorElementIterationTest :
             {
                 SparseVector<DataType_> sv(size, (size / 5) + 1);
 
-                typename Vector<DataType_>::ElementIterator f(sv.begin_elements()), f_end(sv.end_elements()) ;
+                typename SparseVector<DataType_>::ElementIterator f(sv.begin_elements()), f_end(sv.end_elements()) ;
                 for (unsigned long i(0) ; i < size ; ++i, ++f)
                 {
                     if (i % 10 == 0)
                         *f = 10;
                 }
 
-                typename Vector<DataType_>::ElementIterator e(sv.begin_elements()), e_end(sv.end_elements()) ;
+                typename SparseVector<DataType_>::ElementIterator e(sv.begin_elements()), e_end(sv.end_elements()) ;
                 for (unsigned long i(0) ; i < size ; ++i, ++e)
                 {
                     TEST_CHECK_EQUAL(e.index(), i);
@@ -243,12 +244,12 @@ class SparseVectorElementIterationTest :
                     }
                     else
                     {
-                        typename Vector<DataType_>::ConstElementIterator ce(e);
+                        typename SparseVector<DataType_>::ConstElementIterator ce(e);
                         TEST_CHECK_EQUAL_WITHIN_EPS(*ce, 0, std::numeric_limits<DataType_>::epsilon());
                     }
                 }
 
-                typename Vector<DataType_>::ConstElementIterator ce(sv.begin_elements()), ce_end(sv.end_elements()) ;
+                typename SparseVector<DataType_>::ConstElementIterator ce(sv.begin_elements()), ce_end(sv.end_elements()) ;
                 for (unsigned long i(0) ; i < size ; ++i, ++ce)
                 {
                     TEST_CHECK_EQUAL(ce.index(), i);
@@ -263,7 +264,7 @@ class SparseVectorElementIterationTest :
                 }
 
                 unsigned long count(0);
-                for (typename Vector<DataType_>::ConstElementIterator nz(sv.begin_non_zero_elements()),
+                for (typename SparseVector<DataType_>::NonZeroConstElementIterator nz(sv.begin_non_zero_elements()),
                         nz_end(sv.end_non_zero_elements()) ; nz != nz_end ; ++nz, ++count)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*nz, 222, std::numeric_limits<DataType_>::epsilon());

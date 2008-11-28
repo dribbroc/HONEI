@@ -219,7 +219,7 @@ void CorrectionProcessing<boundaries::REFLECT, tags::CPU::SSE>
     ///SSE loop:
     __m128d m1, m2, m3, m4, m5, m6, m7, m8;
     double HONEI_ALIGNED(16) one_half(0.5);
-    m1 = _mm_set_pd1(one_half);
+    m1 = _mm_set1_pd(one_half);
 
     for(unsigned long i(0); i < sse_limit; i += 2)
     {

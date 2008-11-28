@@ -428,11 +428,11 @@ class SparseMatrixConvertTest :
             {
                 SparseMatrix<float> smf1(size, size + 1), smf2(size, size + 1), smfr(size, size + 1);
                 SparseMatrix<double> smd1(size, size + 1), smd2(size, size + 1), smdr(size, size + 1);
-                MutableMatrix<float>::ElementIterator fr(smfr.begin_elements());
-                MutableMatrix<double>::ElementIterator dr(smdr.begin_elements());
-                MutableMatrix<float>::ElementIterator f1(smf1.begin_elements());
-                MutableMatrix<double>::ElementIterator d1(smd1.begin_elements());
-                for (MutableMatrix<float>::ElementIterator i_end(smf1.end_elements()) ; f1 != i_end ; ++fr, ++dr, ++f1, ++d1)
+                SparseMatrix<float>::ElementIterator fr(smfr.begin_elements());
+                SparseMatrix<double>::ElementIterator dr(smdr.begin_elements());
+                SparseMatrix<float>::ElementIterator f1(smf1.begin_elements());
+                SparseMatrix<double>::ElementIterator d1(smd1.begin_elements());
+                for (SparseMatrix<float>::ElementIterator i_end(smf1.end_elements()) ; f1 != i_end ; ++fr, ++dr, ++f1, ++d1)
                 {
                     if (fr.index() % 15 == 0)
                     {
@@ -445,7 +445,7 @@ class SparseMatrixConvertTest :
                 convert(smf2, smd1);
                 convert(smd2, smf1);
                 TEST_CHECK_EQUAL(smf2, smfr);
-                for (Matrix<double>::ConstElementIterator i(smd2.begin_elements()), r(smdr.begin_elements()), i_end(smd2.end_elements())
+                for (SparseMatrix<double>::ConstElementIterator i(smd2.begin_elements()), r(smdr.begin_elements()), i_end(smd2.end_elements())
                         ; i != i_end ; ++i, ++r)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, *r, sqrt(std::numeric_limits<float>::epsilon()));
@@ -472,11 +472,11 @@ class SparseMatrixConvertQuickTest :
             unsigned long size(47);
             SparseMatrix<float> smf1(size, size + 1), smf2(size, size + 1), smfr(size, size + 1);
             SparseMatrix<double> smd1(size, size + 1), smd2(size, size + 1), smdr(size, size + 1);
-            MutableMatrix<float>::ElementIterator fr(smfr.begin_elements());
-            MutableMatrix<double>::ElementIterator dr(smdr.begin_elements());
-            MutableMatrix<float>::ElementIterator f1(smf1.begin_elements());
-            MutableMatrix<double>::ElementIterator d1(smd1.begin_elements());
-            for (MutableMatrix<float>::ElementIterator i_end(smf1.end_elements()) ; f1 != i_end ; ++fr, ++dr, ++f1, ++d1)
+            SparseMatrix<float>::ElementIterator fr(smfr.begin_elements());
+            SparseMatrix<double>::ElementIterator dr(smdr.begin_elements());
+            SparseMatrix<float>::ElementIterator f1(smf1.begin_elements());
+            SparseMatrix<double>::ElementIterator d1(smd1.begin_elements());
+            for (SparseMatrix<float>::ElementIterator i_end(smf1.end_elements()) ; f1 != i_end ; ++fr, ++dr, ++f1, ++d1)
             {
                 if (fr.index() % 15 == 0)
                 {
@@ -489,7 +489,7 @@ class SparseMatrixConvertQuickTest :
             convert(smf2, smd1);
             convert(smd2, smf1);
             TEST_CHECK_EQUAL(smf2, smfr);
-            for (Matrix<double>::ConstElementIterator i(smd2.begin_elements()), r(smdr.begin_elements()), i_end(smd2.end_elements())
+            for (SparseMatrix<double>::ConstElementIterator i(smd2.begin_elements()), r(smdr.begin_elements()), i_end(smd2.end_elements())
                     ; i != i_end ; ++i, ++r)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *r, sqrt(std::numeric_limits<float>::epsilon()));
@@ -516,11 +516,11 @@ class SparseVectorConvertTest :
             {
                 SparseVector<float> svf1(size, size / 2), svf2(size, size / 2), svfr(size, size / 2);
                 SparseVector<double> svd1(size, size / 2), svd2(size, size / 2), svdr(size, size / 2);
-                Vector<float>::ElementIterator fr(svfr.begin_elements());
-                Vector<double>::ElementIterator dr(svdr.begin_elements());
-                Vector<float>::ElementIterator f1(svf1.begin_elements());
-                Vector<double>::ElementIterator d1(svd1.begin_elements());
-                for (Vector<float>::ElementIterator i_end(svf1.end_elements()) ; f1 != i_end ; ++fr, ++dr, ++f1, ++d1)
+                SparseVector<float>::ElementIterator fr(svfr.begin_elements());
+                SparseVector<double>::ElementIterator dr(svdr.begin_elements());
+                SparseVector<float>::ElementIterator f1(svf1.begin_elements());
+                SparseVector<double>::ElementIterator d1(svd1.begin_elements());
+                for (SparseVector<float>::ElementIterator i_end(svf1.end_elements()) ; f1 != i_end ; ++fr, ++dr, ++f1, ++d1)
                 {
                     if (fr.index() % 15 == 0)
                     {
@@ -533,7 +533,7 @@ class SparseVectorConvertTest :
                 convert(svf2, svd1);
                 convert(svd2, svf1);
                 TEST_CHECK_EQUAL(svf2, svfr);
-                for (Vector<double>::ConstElementIterator i(svd2.begin_elements()), r(svdr.begin_elements()), i_end(svd2.end_elements())
+                for (SparseVector<double>::ConstElementIterator i(svd2.begin_elements()), r(svdr.begin_elements()), i_end(svd2.end_elements())
                         ; i != i_end ; ++i, ++r)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, *r, sqrt(std::numeric_limits<float>::epsilon()));
@@ -560,11 +560,11 @@ class SparseVectorConvertQuickTest :
             unsigned long size(4711);
             SparseVector<float> svf1(size, size / 2), svf2(size, size / 2), svfr(size, size / 2);
             SparseVector<double> svd1(size, size / 2), svd2(size, size / 2), svdr(size, size / 2);
-            Vector<float>::ElementIterator fr(svfr.begin_elements());
-            Vector<double>::ElementIterator dr(svdr.begin_elements());
-            Vector<float>::ElementIterator f1(svf1.begin_elements());
-            Vector<double>::ElementIterator d1(svd1.begin_elements());
-            for (Vector<float>::ElementIterator i_end(svf1.end_elements()) ; f1 != i_end ; ++fr, ++dr, ++f1, ++d1)
+            SparseVector<float>::ElementIterator fr(svfr.begin_elements());
+            SparseVector<double>::ElementIterator dr(svdr.begin_elements());
+            SparseVector<float>::ElementIterator f1(svf1.begin_elements());
+            SparseVector<double>::ElementIterator d1(svd1.begin_elements());
+            for (SparseVector<float>::ElementIterator i_end(svf1.end_elements()) ; f1 != i_end ; ++fr, ++dr, ++f1, ++d1)
             {
                 if (fr.index() % 15 == 0)
                 {
@@ -577,7 +577,7 @@ class SparseVectorConvertQuickTest :
             convert(svf2, svd1);
             convert(svd2, svf1);
             TEST_CHECK_EQUAL(svf2, svfr);
-            for (Vector<double>::ConstElementIterator i(svd2.begin_elements()), r(svdr.begin_elements()), i_end(svd2.end_elements())
+            for (SparseVector<double>::ConstElementIterator i(svd2.begin_elements()), r(svdr.begin_elements()), i_end(svd2.end_elements())
                     ; i != i_end ; ++i, ++r)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *r, sqrt(std::numeric_limits<float>::epsilon()));
@@ -724,6 +724,7 @@ class IteratorFillQuickTest :
             }
         }
 };
+/// \todo Instanziieren
 
 template <typename Tag_, typename DT_>
 class DenseVectorCopyQuickTest :

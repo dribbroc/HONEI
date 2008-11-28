@@ -75,7 +75,7 @@ namespace honei
         static SparseMatrix<DT2_> & value(SparseMatrix<DT2_> & x, const DT1_ a)
         {
             CONTEXT("When scaling SparseMatrix:");
-            for (typename MutableMatrix<DT2_>::ElementIterator l(x.begin_non_zero_elements()),
+            for (typename SparseMatrix<DT2_>::NonZeroElementIterator l(x.begin_non_zero_elements()),
                     l_end(x.end_non_zero_elements()) ; l != l_end ; ++l)
             {
                 *l *= a;
@@ -139,7 +139,7 @@ namespace honei
         static SparseVector<DT2_> & value(SparseVector<DT2_> & x, const DT1_ a)
         {
             CONTEXT("When scaling SparseVector:");
-            for (typename Vector<DT2_>::ElementIterator l(x.begin_non_zero_elements()),
+            for (typename SparseVector<DT2_>::NonZeroElementIterator l(x.begin_non_zero_elements()),
                     l_end(x.end_non_zero_elements()) ; l != l_end ; ++l)
             {
                 *l *= a;
@@ -165,7 +165,7 @@ namespace honei
         static inline BenchmarkInfo get_benchmark_info(SparseMatrix<DT2_> & b, DT1_ a)
         {
             BenchmarkInfo result;
-            for (typename MutableMatrix<DT2_>::ElementIterator l(b.begin_non_zero_elements()),
+            for (typename SparseMatrix<DT2_>::NonZeroElementIterator l(b.begin_non_zero_elements()),
                     l_end(b.end_non_zero_elements()) ; l != l_end ; ++l)
             {
                 result.flops += 1;
@@ -263,9 +263,9 @@ namespace honei
 
         static SparseVector<double> & value(SparseVector<double> & x, const double a);
 
-        static SparseMatrix<float> & value(SparseMatrix<float> & x, const float a);
+        /*static SparseMatrix<float> & value(SparseMatrix<float> & x, const float a);
 
-        static SparseMatrix<double> & value(SparseMatrix<double> & x, const double a);
+        static SparseMatrix<double> & value(SparseMatrix<double> & x, const double a);*/
         /// \}
     };
 

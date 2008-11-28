@@ -3,6 +3,7 @@
 /*
  * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
+ * Copyright (c) 2009 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -22,13 +23,11 @@
 #define LIBLA_GUARD_SPARSE_MATRIX_HH 1
 
 #include <honei/la/element_iterator.hh>
-#include <honei/la/vector_iterator.hh>
-#include <honei/la/matrix.hh>
 #include <honei/la/sparse_vector-impl.hh>
+#include <honei/la/matrix_error.hh>
 #include <honei/util/shared_array-impl.hh>
+#include <limits>
 
-#include <iterator>
-#include <vector>
 
 namespace honei
 {
@@ -37,9 +36,7 @@ namespace honei
      *
      * \ingroup grpmatrix
      **/
-    template <typename DataType_> class SparseMatrix :
-        public RowAccessMatrix<DataType_>,
-        public MutableMatrix<DataType_>
+    template <typename DataType_> class SparseMatrix
     {
         private:
             /// Our row-vectors' initial capacity.
@@ -55,33 +52,30 @@ namespace honei
             SharedArray<std::tr1::shared_ptr<SparseVector<DataType_> > > _row_vectors;
 
             /// Our zero-vector.
-            const SparseVector<DataType_> _zero_vector;
-
-            /// Our implementation of ElementIteratorBase.
-            class SparseElementIterator;
-            /// Our smart implementation of ElementIteratorBase.
-            class NonZeroElementIterator;
-            /// Our smart implementation of VectorIteratorBase.
-            class NonZeroRowIterator;
-
-            typedef typename Matrix<DataType_>::MatrixElementIterator MatrixElementIterator;
+            SparseVector<DataType_> _zero_vector;
 
         public:
-            friend class SparseElementIterator;
-            friend class NonZeroElementIterator;
-            friend class NonZeroRowIterator;
+            friend class honei::ConstElementIterator<storage::Sparse, container::Matrix, DataType_>;
+            friend class honei::ElementIterator<storage::Sparse, container::Matrix, DataType_>;
+            friend class honei::ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_>;
+            friend class honei::ElementIterator<storage::SparseNonZero, container::Matrix, DataType_>;
+            friend struct honei::Implementation<honei::ConstElementIterator<storage::Sparse, container::Matrix, DataType_> >;
+            friend struct honei::Implementation<honei::ElementIterator<storage::Sparse, container::Matrix, DataType_> >;
+            friend struct honei::Implementation<honei::ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_> >;
+            friend struct honei::Implementation<honei::ElementIterator<storage::SparseNonZero, container::Matrix, DataType_> >;
+
 
             /// Type of the const iterator over our elements.
-            typedef typename Matrix<DataType_>::ConstElementIterator ConstElementIterator;
+            typedef honei::ConstElementIterator<storage::Sparse, container::Matrix, DataType_> ConstElementIterator;
 
             /// Type of the iterator over our elements.
-            typedef typename MutableMatrix<DataType_>::ElementIterator ElementIterator;
+            typedef honei::ElementIterator<storage::Sparse, container::Matrix, DataType_> ElementIterator;
 
-            /// Type of the const iterator over our vectors.
-            typedef VectorIteratorWrapper<DataType_, SparseVector<DataType_> > ConstRowIterator;
+            /// Type of the const iterator over our non zero elements.
+            typedef honei::ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_> NonZeroConstElementIterator;
 
-            /// Type of the iterator over our vectors.
-            typedef VectorIteratorWrapper<DataType_, SparseVector<DataType_> > RowIterator;
+            /// Type of the iterator over our non zero elements.
+            typedef honei::ElementIterator<storage::SparseNonZero, container::Matrix, DataType_> NonZeroElementIterator;
 
             /// \name Constructors
             /// \{
@@ -116,91 +110,67 @@ namespace honei
             /// \}
 
             /// Returns iterator pointing to the first element of the matrix.
-            virtual ConstElementIterator begin_elements() const
+            ConstElementIterator begin_elements() const
             {
-                return ConstElementIterator(new SparseElementIterator(*this, 0));
+                return ConstElementIterator(*this, 0);
             }
 
             /// Returns iterator pointing behind the last element of the matrix.
-            virtual ConstElementIterator end_elements() const
+            ConstElementIterator end_elements() const
             {
-                return ConstElementIterator(new SparseElementIterator(*this, _rows * _columns));
+                return ConstElementIterator(*this, _rows * _columns);
             }
 
             /// Returns iterator pointing to the first element of the matrix.
-            virtual ElementIterator begin_elements()
+            ElementIterator begin_elements()
             {
-                return ElementIterator(new SparseElementIterator(*this, 0));
+                return ElementIterator(*this, 0);
             }
 
             /// Returns iterator pointing behind the last element of the matrix.
-            virtual ElementIterator end_elements()
+            ElementIterator end_elements()
             {
-                return ElementIterator(new SparseElementIterator(*this, _rows * _columns));
+                return ElementIterator(*this, _rows * _columns);
             }
 
             /// Returns const iterator pointing to the first non-zero element of the matrix.
-            virtual ConstElementIterator begin_non_zero_elements() const
+            NonZeroConstElementIterator begin_non_zero_elements() const
             {
-                return ConstElementIterator(new NonZeroElementIterator(*this));
+                return NonZeroConstElementIterator(*this, 0);
             }
 
             /// Returns const iterator pointing behind the last element of the matrix.
-            virtual ConstElementIterator end_non_zero_elements() const
+            NonZeroConstElementIterator end_non_zero_elements() const
             {
-                return ConstElementIterator(new NonZeroElementIterator(*this, 0 /* Dummy */));
+                return NonZeroConstElementIterator(*this, 1 /* Dummy */);
             }
 
             /// Returns iterator pointing to the first non-zero element of the matrix.
-            virtual ElementIterator begin_non_zero_elements()
+            NonZeroElementIterator begin_non_zero_elements()
             {
-                return ElementIterator(new NonZeroElementIterator(*this));
+                return NonZeroElementIterator(*this, 0);
             }
 
             /// Returns iterator pointing behind the last element of the matrix.
-            virtual ElementIterator end_non_zero_elements()
+            NonZeroElementIterator end_non_zero_elements()
             {
-                return ElementIterator(new NonZeroElementIterator(*this, 0 /* Dummy */));
-            }
-
-            /// Returns const iterator pointing to the first row of the matrix.
-            ConstRowIterator begin_non_zero_rows() const
-            {
-                return ConstRowIterator(new NonZeroRowIterator(*this, 0));
-            }
-
-            /// Returns const iterator pointing behind the last row of the matrix.
-            ConstRowIterator end_non_zero_rows() const
-            {
-                return ConstRowIterator(new NonZeroRowIterator(*this, _rows));
-            }
-
-            /// Returns iterator pointing to the first row of the matrix.
-            RowIterator begin_non_zero_rows()
-            {
-                return RowIterator(new NonZeroRowIterator(*this, 0));
-            }
-
-            /// Returns iterator pointing behind the last row of the matrix.
-            RowIterator end_non_zero_rows()
-            {
-                return RowIterator(new NonZeroRowIterator(*this, _rows));
+                return NonZeroElementIterator(*this, 1 /* Dummy */);
             }
 
             /// Returns the number of our columns.
-            virtual unsigned long columns() const
+            unsigned long columns() const
             {
                 return _columns;
             }
 
             /// Returns the number of our rows.
-            virtual unsigned long rows() const
+            unsigned long rows() const
             {
                 return _rows;
             }
 
             /// Retrieves row vector by index, zero-based, unassignable.
-            virtual const SparseVector<DataType_> & operator[] (unsigned long row) const
+            const SparseVector<DataType_> & operator[] (unsigned long row) const
             {
                 if (! _row_vectors[row])
                     return _zero_vector;
@@ -209,7 +179,7 @@ namespace honei
             }
 
             /// Retrieves row vector by index, zero-based, assignable.
-            virtual SparseVector<DataType_> & operator[] (unsigned long row)
+            SparseVector<DataType_> & operator[] (unsigned long row)
             {
                 if (! _row_vectors[row])
                     _row_vectors[row].reset(new SparseVector<DataType_>(_columns, _capacity));
@@ -218,7 +188,7 @@ namespace honei
             }
 
             /// Retrieves element at (row, column), unassignable.
-            inline virtual const DataType_ & operator() (unsigned long row, unsigned long column) const
+            inline const DataType_ & operator() (unsigned long row, unsigned long column) const
             {
                 if (! _row_vectors[row])
                     /// \todo access element directly
@@ -229,7 +199,7 @@ namespace honei
             }
 
             /// Retrieves element at (row, column), assignable.
-            inline virtual DataType_ & operator() (unsigned long row, unsigned long column)
+            inline DataType_ & operator() (unsigned long row, unsigned long column)
             {
                 if (! _row_vectors[row])
                     _row_vectors[row].reset(new SparseVector<DataType_>(_columns, _capacity));
@@ -239,10 +209,10 @@ namespace honei
             }
 
             /// Returns a copy of the matrix.
-            virtual SparseMatrix copy() const
+            SparseMatrix copy() const
             {
                 CONTEXT("When creating a copy:");
-                SparseMatrix result(_columns, _rows, _capacity);
+                SparseMatrix result(_rows, _columns, _capacity);
 
                 for (unsigned long i(0) ; i < _rows ; ++i)
                 {
@@ -254,401 +224,776 @@ namespace honei
             }
     };
 
-    /**
-     * \brief SparseMatrix::SparseElementIterator is a simple iterator implementation for sparse matrices.
-     *
-     * \ingroup grpmatrix
-     **/
-    template <> template <typename DataType_> class SparseMatrix<DataType_>::SparseElementIterator :
-        public MatrixElementIterator
+    template <typename DataType_> struct Implementation<ConstElementIterator<storage::Sparse, container::Matrix, DataType_> >
     {
-        private:
-            /// Our parent matrix.
-            const SparseMatrix<DataType_> & _matrix;
+        /// Our parent matrix.
+        SparseMatrix<DataType_> _matrix;
 
-            /// Our index.
-            unsigned long _index;
+        /// Our index.
+        unsigned long _index;
 
-            /// Our row-vector's iterator.
-            typename Vector<DataType_>::ElementIterator _iter;
+        /// Our row-vector's iterator.
+        typename SparseVector<DataType_>::ConstElementIterator _iter;
 
-            /// Our row index.
-            unsigned long _row;
+        /// Our row index.
+        unsigned long _row;
 
-            static typename Vector<DataType_>::ElementIterator _get_iterator(const SparseMatrix<DataType_> & matrix,
-                    unsigned long index)
-            {
-                if (! matrix._row_vectors[index / matrix._columns])
-                    matrix._row_vectors[index / matrix._columns].reset(new SparseVector<DataType_>(matrix._columns,
-                                matrix._capacity));
+        static typename SparseVector<DataType_>::ConstElementIterator _get_iterator(const SparseMatrix<DataType_> & matrix,
+                unsigned long index)
+        {
+            if (! matrix._row_vectors[index / matrix._columns])
+                matrix._row_vectors[index / matrix._columns].reset(new SparseVector<DataType_>(matrix._columns,
+                            matrix._capacity));
 
-                return matrix._row_vectors[index / matrix._columns]->begin_elements();
-            }
+            return matrix._row_vectors[index / matrix._columns]->begin_elements();
+        }
 
-        public:
-            /// \name Constructors and destructor
-            /// \{
+        Implementation(const SparseMatrix<DataType_> & matrix, unsigned long index) :
+            _matrix(matrix),
+            _index(index),
+            _iter(_get_iterator(matrix, index)),
+            _row(index / matrix._columns)
+        {
+        }
 
-            /**
-             * Constructor.
-             *
-             * \param matrix The parent matrix that is referenced by the iterator.
-             * \param index The index into the matrix.
-             **/
-            SparseElementIterator(const SparseMatrix<DataType_> & matrix, unsigned long index) :
-                _matrix(matrix),
-                _index(index),
-                _iter(_get_iterator(matrix, index)),
-                _row(index / matrix._columns)
-            {
-            }
-
-            /// Copy-constructor.
-            SparseElementIterator(SparseElementIterator const & other) :
-                _matrix(other._matrix),
-                _index(other._index),
-                _iter(other._iter),
-                _row(other._row)
-            {
-            }
-
-            /// Destructor.
-            virtual ~SparseElementIterator()
-            {
-            }
-
-            /// \}
-
-            /// \name Forward iterator interface
-            /// \{
-
-            /// Preincrement operator.
-            virtual SparseElementIterator & operator++ ()
-            {
-                CONTEXT("When incrementing iterator by one:");
-
-                ++_index;
-                unsigned long row(_index / _matrix._columns);
-                if (row != _row)
-                {
-                    if (! _matrix._row_vectors[row])
-                        _matrix._row_vectors[row].reset(new SparseVector<DataType_>(_matrix._columns,
-                                    _matrix._capacity));
-
-                    _iter = _matrix._row_vectors[row]->begin_elements();
-                    _row = row;
-                }
-                else
-                {
-                    ++_iter;
-                }
-
-                return *this;
-            }
-
-            /// In-place-add operator.
-            virtual SparseElementIterator & operator+= (const unsigned long step)
-            {
-                CONTEXT("When incrementing iterator by '" + stringify(step) + "':");
-
-                _index += step;
-                if (_matrix._rows * _matrix._columns >= _index)
-                    _index = _matrix._rows + _matrix._columns;
-
-                unsigned long row(_index / _matrix._columns);
-                if (row != _row)
-                {
-                    if (! _matrix._row_vectors[row])
-                        _matrix._row_vectors[row].reset(new SparseVector<DataType_>(_matrix._columns,
-                                    _matrix._capacity));
-
-                    _iter = _matrix._row_vectors[row]->begin_elements();
-                    _row = row;
-                }
-                else
-                {
-                    ++_iter;
-                }
-
-                return *this;
-            }
-
-            /// Dereference operator that returns assignable reference.
-            virtual DataType_ & operator* ()
-            {
-                CONTEXT("When accessing assignable element at index '" + stringify(_index) + "':");
-
-                return *_iter;
-            }
-
-            /// Dereference operator that returns umassignable reference.
-            virtual const DataType_ & operator* () const
-            {
-                CONTEXT("When accessing unassignable element at index '" + stringify(_index) + "':");
-
-                typename Vector<DataType_>::ConstElementIterator const_iter(_iter);
-
-                return *const_iter;
-            }
-
-            /// Comparison operator for less-than.
-            virtual bool operator< (const IteratorBase<DataType_, Matrix<DataType_> > & other) const
-            {
-                return _index < other.index();
-            }
-
-            /// Comparison operator for equality.
-            virtual bool operator== (const IteratorBase<DataType_, Matrix<DataType_> > & other) const
-            {
-                return ((&_matrix == other.parent()) && (_index == other.index()));
-            }
-
-            /// Comparison operator for inequality.
-            virtual bool operator!= (const IteratorBase<DataType_, Matrix<DataType_> > & other) const
-            {
-                return ((&_matrix != other.parent()) || (_index != other.index()));
-            }
-
-            /// \}
-
-            /// \name IteratorTraits interface
-            /// \{
-
-            /// Returns our index.
-            virtual unsigned long index() const
-            {
-                return _index;
-            }
-
-            /// Returns our column index.
-            virtual unsigned long column() const
-            {
-                return _iter.index();
-            }
-
-            /// Returns our row index.
-            virtual unsigned long row() const
-            {
-                return _row;
-            }
-
-            /// Returns a pointer to our parent container.
-            virtual const void * parent() const
-            {
-                return &_matrix;
-            }
-
-            /// \}
+        Implementation(const Implementation<ElementIterator<storage::Sparse, container::Matrix, DataType_> > & other) :
+            _matrix(other._matrix),
+            _index(other._index),
+            _iter(other._iter),
+            _row(other._row)
+        {
+        }
     };
 
-    /**
-     * \brief SparseMatrix::NonZeroElementIterator is a smart iterator implementation that iterates over non-zero
-     * \brief elements of sparse matrices.
-     *
-     * \ingroup grpmatrix
-     **/
-    template <> template <typename DataType_> class SparseMatrix<DataType_>::NonZeroElementIterator :
-        public MatrixElementIterator
+    template <typename DataType_>
+    ConstElementIterator<storage::Sparse, container::Matrix, DataType_>::ConstElementIterator(const SparseMatrix<DataType_> & matrix, unsigned long index) :
+        PrivateImplementationPattern<ConstElementIterator<storage::Sparse, container::Matrix, DataType_>, Single>(
+                new Implementation<ConstElementIterator<storage::Sparse, container::Matrix, DataType_> >(matrix, index))
     {
-        private:
-            /// Our parent matrix.
-            const SparseMatrix<DataType_> & _matrix;
+    }
 
-            /// Our index.
-            unsigned long _index;
+    template <typename DataType_>
+    ConstElementIterator<storage::Sparse, container::Matrix, DataType_>::ConstElementIterator(const ConstElementIterator & other) :
+        PrivateImplementationPattern<ConstElementIterator<storage::Sparse, container::Matrix, DataType_>, Single>(
+                new Implementation<ConstElementIterator<storage::Sparse, container::Matrix, DataType_> >(*other._imp))
+    {
+    }
 
-            /// Our row-vector's iterator for the current position.
-            typename Vector<DataType_>::ElementIterator _iter;
+    template <typename DataType_>
+    ConstElementIterator<storage::Sparse, container::Matrix, DataType_>::ConstElementIterator(
+            const ElementIterator<storage::Sparse, container::Matrix, DataType_> & other) :
+        PrivateImplementationPattern<ConstElementIterator<storage::Sparse, container::Matrix, DataType_>, Single>(
+                new Implementation<ConstElementIterator<storage::Sparse, container::Matrix, DataType_> >(*other._imp))
+    {
+    }
 
-            /// Our row-vector's iterator for the end.
-            typename Vector<DataType_>::ElementIterator _end;
+    template <typename DataType_>
+    ConstElementIterator<storage::Sparse, container::Matrix, DataType_>::~ConstElementIterator()
+    {
+    }
 
-            /// Our column index.
-            unsigned long _column;
+    template <typename DataType_>
+    ConstElementIterator<storage::Sparse, container::Matrix, DataType_> &
+    ConstElementIterator<storage::Sparse, container::Matrix, DataType_>::operator= (
+            const ConstElementIterator<storage::Sparse, container::Matrix, DataType_> & other)
+    {
+        if (&other == this)
+            return *this;
 
-            /// Our row index.
-            unsigned long _row;
+        this->_imp->_matrix = other._imp->_matrix;
+        this->_imp->_index = other._imp->_index;
+        this->_imp->_iter = other._imp->_iter;
+        this->_imp->_row = other._imp->_row;
 
-            /// Find the pair of iterators for the next existing row.
-            void _find_next_row()
+        return *this;
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Sparse, container::Matrix, DataType_> &
+    ConstElementIterator<storage::Sparse, container::Matrix, DataType_>::operator++ ()
+    {
+        CONTEXT("When incrementing ConstElementIterator<Sparse, Matrix> by one:");
+
+        ++this->_imp->_index;
+        unsigned long row(this->_imp->_index / this->_imp->_matrix._columns);
+        if (row != this->_imp->_row)
+        {
+            if (! this->_imp->_matrix._row_vectors[row])
+                this->_imp->_matrix._row_vectors[row].reset(new SparseVector<DataType_>(this->_imp->_matrix._columns,
+                            this->_imp->_matrix._capacity));
+
+            this->_imp->_iter = this->_imp->_matrix._row_vectors[row]->begin_elements();
+            this->_imp->_row = row;
+        }
+        else
+        {
+            ++this->_imp->_iter;
+        }
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Sparse, container::Matrix, DataType_> &
+    ConstElementIterator<storage::Sparse, container::Matrix, DataType_>::operator+= (const unsigned long step)
+    {
+        CONTEXT("When incrementing ConstElementIterator<Sparse, Matrix> by '" + stringify(step) + "':");
+
+        this->_imp->_index += step;
+        if (this->_imp->_matrix._rows * this->_imp->_matrix._columns >= this->_imp->_index)
+            this->_imp->_index = this->_imp->_matrix._rows + this->_imp->_matrix._columns;
+
+        unsigned long row(this->_imp->_index / this->_imp->_matrix._columns);
+        if (row != this->_imp->_row)
+        {
+            if (! this->_imp->_matrix._row_vectors[row])
+                this->_imp->_matrix._row_vectors[row].reset(new SparseVector<DataType_>(this->_imp->_matrix._columns,
+                            this->_imp->_matrix._capacity));
+
+            this->_imp->_iter = this->_imp->_matrix._row_vectors[row]->begin_elements();
+            this->_imp->_row = row;
+        }
+        else
+        {
+            ++this->_imp->_iter;
+        }
+
+        return *this;
+    }
+
+
+    template <typename DataType_>
+    const DataType_ &
+    ConstElementIterator<storage::Sparse, container::Matrix, DataType_>::operator* () const
+    {
+        CONTEXT("When accessing unassignable element at index '" + stringify(this->_imp->_index) + "':");
+
+        return *(this->_imp->_iter);
+    }
+
+    template <typename DataType_>
+    bool
+    ConstElementIterator<storage::Sparse, container::Matrix, DataType_>::operator< (
+            const ConstElementIterator<storage::Sparse, container::Matrix, DataType_> & other) const
+    {
+        return this->_imp->_index < other._imp->_index;
+    }
+
+    /// \todo Check if both iterators belong to the same matrix
+    template <typename DataType_>
+    bool
+    ConstElementIterator<storage::Sparse, container::Matrix, DataType_>::operator== (
+            const ConstElementIterator<storage::Sparse, container::Matrix, DataType_> & other) const
+    {
+        return (/*(this->_imp->_matrix == other._imp->_matrix) && */(this->_imp->_index == other._imp->_index));
+    }
+
+    template <typename DataType_>
+    bool
+    ConstElementIterator<storage::Sparse, container::Matrix, DataType_>::operator!= (
+            const ConstElementIterator<storage::Sparse, container::Matrix, DataType_> & other) const
+    {
+        return (/*(!(this->_imp->_matrix == other._imp->_matrix)) || */(this->_imp->_index != other._imp->_index));
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ConstElementIterator<storage::Sparse, container::Matrix, DataType_>::index() const
+    {
+        return this->_imp->_index;
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ConstElementIterator<storage::Sparse, container::Matrix, DataType_>::column() const
+    {
+        return this->_imp->_iter.index();
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ConstElementIterator<storage::Sparse, container::Matrix, DataType_>::row() const
+    {
+        return this->_imp->_row;
+    }
+
+    template <typename DataType_> struct Implementation<ElementIterator<storage::Sparse, container::Matrix, DataType_> >
+    {
+        /// Our parent matrix.
+        SparseMatrix<DataType_> & _matrix;
+
+        /// Our index.
+        unsigned long _index;
+
+        /// Our row-vector's iterator.
+        typename SparseVector<DataType_>::ElementIterator _iter;
+
+        /// Our row index.
+        unsigned long _row;
+
+        typename SparseVector<DataType_>::ElementIterator _get_iterator(SparseMatrix<DataType_> & matrix,
+                unsigned long index)
+        {
+            if (! matrix._row_vectors[index / matrix._columns])
+                matrix._row_vectors[index / matrix._columns].reset(new SparseVector<DataType_>(matrix._columns,
+                            matrix._capacity));
+
+            return matrix._row_vectors[index / matrix._columns]->begin_elements();
+        }
+
+        Implementation(SparseMatrix<DataType_> & matrix, unsigned long index) :
+            _matrix(matrix),
+            _index(index),
+            _iter(_get_iterator(matrix, index)),
+            _row(index / matrix._columns)
+        {
+        }
+    };
+
+    template <typename DataType_>
+    ElementIterator<storage::Sparse, container::Matrix, DataType_>::ElementIterator(SparseMatrix<DataType_> & matrix, unsigned long index) :
+        PrivateImplementationPattern<ElementIterator<storage::Sparse, container::Matrix, DataType_>, Single>(
+                new Implementation<ElementIterator<storage::Sparse, container::Matrix, DataType_> >(matrix, index))
+    {
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::Sparse, container::Matrix, DataType_>::ElementIterator(const ElementIterator & other) :
+        PrivateImplementationPattern<ElementIterator<storage::Sparse, container::Matrix, DataType_>, Single>(
+                new Implementation<ElementIterator<storage::Sparse, container::Matrix, DataType_> >(*other._imp))
+    {
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::Sparse, container::Matrix, DataType_>::~ElementIterator()
+    {
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::Sparse, container::Matrix, DataType_> &
+    ElementIterator<storage::Sparse, container::Matrix, DataType_>::operator= (
+            const ElementIterator<storage::Sparse, container::Matrix, DataType_> & other)
+    {
+        if (&other == this)
+            return *this;
+
+        this->_imp->_matrix = other._imp->_matrix;
+        this->_imp->_index = other._imp->_index;
+        this->_imp->_iter = other._imp->_iter;
+        this->_imp->_row = other._imp->_row;
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::Sparse, container::Matrix, DataType_> &
+    ElementIterator<storage::Sparse, container::Matrix, DataType_>::operator++ ()
+    {
+        CONTEXT("When incrementing ElementIterator<Sparse, Matrix> by one:");
+
+        ++this->_imp->_index;
+        unsigned long row(this->_imp->_index / this->_imp->_matrix._columns);
+        if (row != this->_imp->_row)
+        {
+            if (! this->_imp->_matrix._row_vectors[row])
+                this->_imp->_matrix._row_vectors[row].reset(new SparseVector<DataType_>(this->_imp->_matrix._columns,
+                            this->_imp->_matrix._capacity));
+
+            this->_imp->_iter = this->_imp->_matrix._row_vectors[row]->begin_elements();
+            this->_imp->_row = row;
+        }
+        else
+        {
+            ++this->_imp->_iter;
+        }
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::Sparse, container::Matrix, DataType_> &
+    ElementIterator<storage::Sparse, container::Matrix, DataType_>::operator+= (const unsigned long step)
+    {
+        CONTEXT("When incrementing ElementIterator<Sparse, Matrix> by '" + stringify(step) + "':");
+
+        this->_imp->_index += step;
+        if (this->_imp->_matrix._rows * this->_imp->_matrix._columns >= this->_imp->_index)
+            this->_imp->_index = this->_imp->_matrix._rows + this->_imp->_matrix._columns;
+
+        unsigned long row(this->_imp->_index / this->_imp->_matrix._columns);
+        if (row != this->_imp->_row)
+        {
+            if (! this->_imp->_matrix._row_vectors[row])
+                this->_imp->_matrix._row_vectors[row].reset(new SparseVector<DataType_>(this->_imp->_matrix._columns,
+                            this->_imp->_matrix._capacity));
+
+            this->_imp->_iter = this->_imp->_matrix._row_vectors[row]->begin_elements();
+            this->_imp->_row = row;
+        }
+        else
+        {
+            ++this->_imp->_iter;
+        }
+
+        return *this;
+    }
+
+
+    template <typename DataType_>
+    DataType_ &
+    ElementIterator<storage::Sparse, container::Matrix, DataType_>::operator* () const
+    {
+        CONTEXT("When accessing assignable element at index '" + stringify(this->_imp->_index) + "':");
+
+        return *(this->_imp->_iter);
+    }
+
+    template <typename DataType_>
+    bool
+    ElementIterator<storage::Sparse, container::Matrix, DataType_>::operator< (
+            const ElementIterator<storage::Sparse, container::Matrix, DataType_> & other) const
+    {
+        return this->_imp->_index < other._imp->_index;
+    }
+
+    /// \todo Check if both iterators belong to the same matrix
+    template <typename DataType_>
+    bool
+    ElementIterator<storage::Sparse, container::Matrix, DataType_>::operator== (
+            const ElementIterator<storage::Sparse, container::Matrix, DataType_> & other) const
+    {
+        return (/*(this->_imp->_matrix == other._imp->_matrix) && */(this->_imp->_index == other._imp->_index));
+    }
+
+    template <typename DataType_>
+    bool
+    ElementIterator<storage::Sparse, container::Matrix, DataType_>::operator!= (
+            const ElementIterator<storage::Sparse, container::Matrix, DataType_> & other) const
+    {
+        return (/*(!(this->_imp->_matrix == other._imp->_matrix)) || */(this->_imp->_index != other._imp->_index));
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ElementIterator<storage::Sparse, container::Matrix, DataType_>::index() const
+    {
+        return this->_imp->_index;
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ElementIterator<storage::Sparse, container::Matrix, DataType_>::column() const
+    {
+        return this->_imp->_iter.index();
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ElementIterator<storage::Sparse, container::Matrix, DataType_>::row() const
+    {
+        return this->_imp->_row;
+    }
+
+    template <typename DataType_> struct Implementation<ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_> >
+    {
+        /// Our parent matrix.
+        SparseMatrix<DataType_> _matrix;
+
+        /// Our index.
+        unsigned long _index;
+
+        /// Our row-vector's iterator for the current position.
+        typename SparseVector<DataType_>::NonZeroConstElementIterator _iter;
+
+        /// Our row-vector's iterator for the end.
+        typename SparseVector<DataType_>::NonZeroConstElementIterator _end;
+
+        /// Our column index.
+        unsigned long _column;
+
+        /// Our row index.
+        unsigned long _row;
+
+        /// Find the pair of iterators for the next existing row.
+        void _find_next_row()
+        {
+            for ( ; _row < _matrix._rows + 1; ++_row)
             {
-                for ( ; _row < _matrix._rows + 1; ++_row)
+                if (_row == _matrix._rows)
                 {
-                    if (_row == _matrix._rows)
-                    {
-                        _iter = _matrix._row_vectors[_row]->begin_non_zero_elements();
-                        _end = _matrix._row_vectors[_row]->end_non_zero_elements();
-                        _index = _row * _matrix._columns;
-                        return;
-                    }
-
-                    if (! _matrix._row_vectors[_row])
-                        continue;
-
                     _iter = _matrix._row_vectors[_row]->begin_non_zero_elements();
                     _end = _matrix._row_vectors[_row]->end_non_zero_elements();
-
-
-                    if (_iter == _end)
-                        continue;
-
-                    break;
+                    _index = _row * _matrix._columns;
+                    return;
                 }
 
-                _column = _iter.index();
-                _index = _row * _matrix._columns + _column;
+                if (! _matrix._row_vectors[_row])
+                    continue;
+
+                _iter = _matrix._row_vectors[_row]->begin_non_zero_elements();
+                _end = _matrix._row_vectors[_row]->end_non_zero_elements();
+
+
+                if (_iter == _end)
+                    continue;
+
+                break;
             }
 
-        public:
-            /// \name Constructors and destructor
-            /// \{
+            _column = _iter.index();
+            _index = _row * _matrix._columns + _column;
+        }
 
-            /**
-             * Constructor, creates a begin iterator.
-             *
-             * \param matrix The parent matrix that is referenced by the iterator.
-             **/
-            NonZeroElementIterator(const SparseMatrix<DataType_> & matrix) :
+        Implementation(const SparseMatrix<DataType_> & matrix, unsigned long index) :
                 _matrix(matrix),
-                _index(0),
+                _index(index),
                 _iter(matrix._row_vectors[matrix._rows]->begin_non_zero_elements()), // Dummy
                 _end(matrix._row_vectors[matrix._rows]->end_non_zero_elements()), // Dummy
                 _column(0),
                 _row(0)
+        {
+            if (index != 0)
             {
+                _index = matrix._rows * matrix._columns;
+                _row = matrix._rows;
                 _find_next_row();
             }
-
-            /**
-             * Constructor, creates an end iterator.
-             *
-             * \param matrix The parent matrix that is referenced by the iterator.
-             */
-            NonZeroElementIterator(const SparseMatrix<DataType_> & matrix, const DataType_ &) :
-                _matrix(matrix),
-                _index(matrix._rows * matrix._columns  ),
-                _iter(matrix._row_vectors[matrix._rows]->begin_non_zero_elements()),
-                _end(matrix._row_vectors[matrix._rows]->end_non_zero_elements()),
-                _column(0),
-                _row(matrix._rows)
-            {
+            else
                 _find_next_row();
-            }
+        }
 
-            /// Copy-constructor.
-            NonZeroElementIterator(NonZeroElementIterator const & other) :
-                _matrix(other._matrix),
-                _index(other._index),
-                _iter(other._iter),
-                _end(other._end),
-                _column(other._columns),
-                _row(other._row)
+        Implementation(const Implementation<ElementIterator<storage::SparseNonZero, container::Matrix, DataType_> > & other) :
+            _matrix(other._matrix),
+            _index(other._index),
+            _iter(other._iter),
+            _end(other._end),
+            _column(other._column),
+            _row(other._row)
+        {
+        }
+    };
+
+    template <typename DataType_>
+    ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::ConstElementIterator(const SparseMatrix<DataType_> & matrix, unsigned long index) :
+        PrivateImplementationPattern<ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_>, Single>(
+                new Implementation<ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_> >(matrix, index))
+    {
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::ConstElementIterator(const ConstElementIterator & other) :
+        PrivateImplementationPattern<ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_>, Single>(
+                new Implementation<ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_> >(*other._imp))
+    {
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::ConstElementIterator(
+            const ElementIterator<storage::SparseNonZero, container::Matrix, DataType_> & other) :
+        PrivateImplementationPattern<ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_>, Single>(
+                new Implementation<ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_> >(*other._imp))
+    {
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::~ConstElementIterator()
+    {
+    }
+
+
+    template <typename DataType_>
+    ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_> &
+    ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::operator= (
+            const ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_> & other)
+    {
+        if (&other == this)
+            return *this;
+
+        this->_imp->_matrix = other._imp->_matrix;
+        this->_imp->_index = other._imp->_index;
+        this->_imp->_iter = other._imp->_iter;
+        this->_imp->_end = other._imp->_end;
+        this->_imp->_column = other._imp->_column;
+        this->_imp->_row = other._imp->_row;
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_> &
+    ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::operator++ ()
+    {
+        CONTEXT("When incrementing ConstElementIterator<SparseNonZero, Matrix> by one:");
+
+        ++this->_imp->_iter;
+        this->_imp->_column= this->_imp->_iter.index();
+
+        if (this->_imp->_iter == this->_imp->_end)
+        {
+            ++this->_imp->_row;
+            this->_imp->_column = 0;
+            this->_imp->_find_next_row();
+        }
+
+        this->_imp->_index = this->_imp->_row * this->_imp->_matrix._columns + this->_imp->_column;
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_> &
+    ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::operator+= (const unsigned long step)
+    {
+        throw InternalError("Not implemented yet!");
+    }
+
+    template <typename DataType_>
+    const DataType_ &
+    ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::operator* () const
+    {
+        CONTEXT("When accessing unassignable element at index '" + stringify(this->_imp->_index) + "':");
+
+        return *(this->_imp->_iter);
+    }
+
+    template <typename DataType_>
+    bool
+    ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::operator< (
+            const ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_> & other) const
+    {
+        return this->_imp->_index < other._imp->_index;
+    }
+
+    /// \todo Check if both iterators belong to the same matrix
+    template <typename DataType_>
+    bool
+    ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::operator== (
+            const ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_> & other) const
+    {
+        return (/*(this->_imp->_matrix == other._imp->_matrix) && */(this->_imp->_index == other._imp->_index));
+    }
+
+    template <typename DataType_>
+    bool
+    ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::operator!= (
+            const ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_> & other) const
+    {
+        return (/*(!(this->_imp->_matrix == other._imp->_matrix)) || */(this->_imp->_index != other._imp->_index));
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::index() const
+    {
+        return this->_imp->_index;
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::column() const
+    {
+        return this->_imp->_column;
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::row() const
+    {
+        return this->_imp->_row;
+    }
+
+    template <typename DataType_> struct Implementation<ElementIterator<storage::SparseNonZero, container::Matrix, DataType_> >
+    {
+        /// Our parent matrix.
+        SparseMatrix<DataType_> & _matrix;
+
+        /// Our index.
+        unsigned long _index;
+
+        /// Our row-vector's iterator for the current position.
+        typename SparseVector<DataType_>::NonZeroElementIterator _iter;
+
+        /// Our row-vector's iterator for the end.
+        typename SparseVector<DataType_>::NonZeroElementIterator _end;
+
+        /// Our column index.
+        unsigned long _column;
+
+        /// Our row index.
+        unsigned long _row;
+
+        /// Find the pair of iterators for the next existing row.
+        void _find_next_row()
+        {
+            for ( ; _row < _matrix._rows + 1; ++_row)
             {
-            }
-
-            /// Destructor.
-            virtual ~NonZeroElementIterator()
-            {
-            }
-
-            /// \}
-
-            /// \name Forward iterator interface
-            /// \{
-
-            /// Preincrement operator.
-            virtual NonZeroElementIterator & operator++ ()
-            {
-                    ++_iter;
-                    _column= _iter.index();
-
-                if (_iter == _end)
+                if (_row == _matrix._rows)
                 {
-                    ++_row;
-                    _column = 0;
-                    _find_next_row();
+                    _iter = _matrix._row_vectors[_row]->begin_non_zero_elements();
+                    _end = _matrix._row_vectors[_row]->end_non_zero_elements();
+                    _index = _row * _matrix._columns;
+                    return;
                 }
 
-                _index = _row * _matrix._columns + _column;
+                if (! _matrix._row_vectors[_row])
+                    continue;
 
-                return *this;
+                _iter = _matrix._row_vectors[_row]->begin_non_zero_elements();
+                _end = _matrix._row_vectors[_row]->end_non_zero_elements();
+
+
+                if (_iter == _end)
+                    continue;
+
+                break;
             }
 
-            /// In-place-add operator.
-            virtual NonZeroElementIterator & operator+= (const unsigned long step)
+            _column = _iter.index();
+            _index = _row * _matrix._columns + _column;
+        }
+
+        Implementation(SparseMatrix<DataType_> & matrix, unsigned long index) :
+                _matrix(matrix),
+                _index(index),
+                _iter(matrix._row_vectors[matrix._rows]->begin_non_zero_elements()), // Dummy
+                _end(matrix._row_vectors[matrix._rows]->end_non_zero_elements()), // Dummy
+                _column(0),
+                _row(0)
+        {
+            if (index != 0)
             {
-                /// \todo
-
-                return *this;
+                _index = matrix._rows * matrix._columns;
+                _row = matrix._rows;
+                _find_next_row();
             }
-
-            /// Dereference operator that returns assignable reference.
-            virtual DataType_ & operator* ()
-            {
-                CONTEXT("When accessing assignable element at index '" + stringify(_index) + "':");
-
-                return *_iter;
-            }
-
-            /// Dereference operator that returns umassignable reference.
-            virtual const DataType_ & operator* () const
-            {
-                CONTEXT("When accessing unassignable element at index '" + stringify(_index) + "':");
-
-                typename Vector<DataType_>::ConstElementIterator const_iter(_iter);
-
-                return *const_iter;
-            }
-
-            /// Comparison operator for less-than.
-            virtual bool operator< (const IteratorBase<DataType_, Matrix<DataType_> > & other) const
-            {
-                return _index < other.index();
-            }
-
-            /// Comparison operator for equality.
-            virtual bool operator== (const IteratorBase<DataType_, Matrix<DataType_> > & other) const
-            {
-                return ((&_matrix == other.parent()) && (_index == other.index()));
-            }
-
-            /// Comparison operator for inequality.
-            virtual bool operator!= (const IteratorBase<DataType_, Matrix<DataType_> > & other) const
-            {
-                return ((&_matrix != other.parent()) || (_index != other.index()));
-            }
-
-            /// \}
-
-            /// \name IteratorTraits interface
-            /// \{
-
-            /// Returns our index.
-            virtual unsigned long index() const
-            {
-                return _index;
-            }
-
-            /// Returns our column index.
-            virtual unsigned long column() const
-            {
-                return _column;
-            }
-
-            /// Returns our row index.
-            virtual unsigned long row() const
-            {
-                return _row;
-            }
-
-            /// Returns a pointer to our parent container.
-            virtual const void * parent() const
-            {
-                return &_matrix;
-            }
-
-            /// \}
+            else
+                _find_next_row();
+        }
     };
+
+    template <typename DataType_>
+    ElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::ElementIterator(SparseMatrix<DataType_> & matrix, unsigned long index) :
+        PrivateImplementationPattern<ElementIterator<storage::SparseNonZero, container::Matrix, DataType_>, Single>(
+                new Implementation<ElementIterator<storage::SparseNonZero, container::Matrix, DataType_> >(matrix, index))
+    {
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::ElementIterator(const ElementIterator & other) :
+        PrivateImplementationPattern<ElementIterator<storage::SparseNonZero, container::Matrix, DataType_>, Single>(
+                new Implementation<ElementIterator<storage::SparseNonZero, container::Matrix, DataType_> >(*other._imp))
+    {
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::~ElementIterator()
+    {
+    }
+
+
+    template <typename DataType_>
+    ElementIterator<storage::SparseNonZero, container::Matrix, DataType_> &
+    ElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::operator= (
+            const ElementIterator<storage::SparseNonZero, container::Matrix, DataType_> & other)
+    {
+        if (&other == this)
+            return *this;
+
+        this->_imp->_matrix = other._imp->_matrix;
+        this->_imp->_index = other._imp->_index;
+        this->_imp->_iter = other._imp->_iter;
+        this->_imp->_end = other._imp->_end;
+        this->_imp->_column = other._imp->_column;
+        this->_imp->_row = other._imp->_row;
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::SparseNonZero, container::Matrix, DataType_> &
+    ElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::operator++ ()
+    {
+        CONTEXT("When incrementing ElementIterator<SparseNonZero, Matrix> by one:");
+
+        ++this->_imp->_iter;
+        this->_imp->_column = this->_imp->_iter.index();
+
+        if (this->_imp->_iter == this->_imp->_end)
+        {
+            ++this->_imp->_row;
+            this->_imp->_column = 0;
+            this->_imp->_find_next_row();
+        }
+
+        this->_imp->_index = this->_imp->_row * this->_imp->_matrix._columns + this->_imp->_column;
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::SparseNonZero, container::Matrix, DataType_> &
+    ElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::operator+= (const unsigned long step)
+    {
+        throw InternalError("Not implemented yet!");
+    }
+
+    template <typename DataType_>
+    DataType_ &
+    ElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::operator* () const
+    {
+        CONTEXT("When accessing assignable element at index '" + stringify(this->_imp->_index) + "':");
+
+        return *(this->_imp->_iter);
+    }
+
+    template <typename DataType_>
+    bool
+    ElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::operator< (
+            const ElementIterator<storage::SparseNonZero, container::Matrix, DataType_> & other) const
+    {
+        return this->_imp->_index < other._imp->_index;
+    }
+
+    /// \todo Check if both iterators belong to the same matrix
+    template <typename DataType_>
+    bool
+    ElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::operator== (
+            const ElementIterator<storage::SparseNonZero, container::Matrix, DataType_> & other) const
+    {
+        return (/*(this->_imp->_matrix == other._imp->_matrix) && */(this->_imp->_index == other._imp->_index));
+    }
+
+    template <typename DataType_>
+    bool
+    ElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::operator!= (
+            const ElementIterator<storage::SparseNonZero, container::Matrix, DataType_> & other) const
+    {
+        return (/*(!(this->_imp->_matrix == other._imp->_matrix)) || */(this->_imp->_index != other._imp->_index));
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::index() const
+    {
+        return this->_imp->_index;
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::column() const
+    {
+        return this->_imp->_column;
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::row() const
+    {
+        return this->_imp->_row;
+    }
+
+
+
 
     /**
      * \brief SparseMatrix::NonZeroRowIterator is a smart iterator implementation that iterates over non-zero
@@ -656,7 +1001,7 @@ namespace honei
      *
      * \ingroup grpmatrix
      **/
-    template <> template <typename DataType_> class SparseMatrix<DataType_>::NonZeroRowIterator :
+    /*template <> template <typename DataType_> class SparseMatrix<DataType_>::NonZeroRowIterator :
         public VectorIteratorBase<DataType_, SparseVector<DataType_> >
     {
         private:
@@ -670,11 +1015,6 @@ namespace honei
             /// \name Constructors and destructor
             /// \{
 
-            /**
-             * Constructor, creates a begin iterator.
-             *
-             * \param matrix The parent matrix that is referenced by the iterator.
-             **/
             NonZeroRowIterator(const SparseMatrix<DataType_> & matrix, const unsigned long & index) :
                 _matrix(matrix),
                 _index(index)
@@ -764,7 +1104,47 @@ namespace honei
             }
 
             /// \}
-    };
+    };*/
+
+    template <typename DataType_>
+    std::ostream &
+    operator<< (std::ostream & lhs, const SparseMatrix<DataType_> & b)
+    {
+        lhs << "[" << std::endl;
+        for (unsigned long row(0) ; row < b.rows() ; ++row)
+        {
+            lhs << b[row];
+        }
+        lhs << "]" << std::endl;
+
+        return lhs;
+    }
+
+
+    template <typename DataType_>
+    bool
+    operator== (const SparseMatrix<DataType_> & a, const SparseMatrix<DataType_> & b)
+    {
+        CONTEXT("When comparing two sparse matrices:");
+
+        if (a.columns() != b.columns())
+        {
+            throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+        }
+
+        if (a.rows() != b.rows())
+        {
+            throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+        }
+
+        for (unsigned long row(0) ; row < a.rows() ; ++row)
+        {
+            if (! (a[row] == b[row]))
+                return false;
+        }
+
+        return true;
+    }
 }
 
 #endif

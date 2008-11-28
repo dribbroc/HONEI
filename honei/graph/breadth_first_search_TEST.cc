@@ -54,7 +54,7 @@ class BreadthFirstSearchQuickTest :
             // Now, fill that numbers into the real matrices
             unsigned long i(0);
             SparseMatrix<DataType_>  pEW(7,7);
-            for (typename MutableMatrix<DataType_>::ElementIterator e(pEW.begin_elements()), e_end(pEW.end_elements()); e != e_end ; ++e)
+            for (typename SparseMatrix<DataType_>::ElementIterator e(pEW.begin_elements()), e_end(pEW.end_elements()); e != e_end ; ++e)
             {
                 if (EW[i] != 0)
                 {
@@ -113,7 +113,7 @@ class BreadthFirstSearchQuickTest :
             SparseMatrix<DataType_>  pEW4(7,7);
             EW[1] = 0;
             EW[7] = 0;
-            for (typename MutableMatrix<DataType_>::ElementIterator e(pEW.begin_elements()), e_end(pEW.end_elements()); e != e_end ; ++e)
+            for (typename SparseMatrix<DataType_>::ElementIterator e(pEW.begin_elements()), e_end(pEW.end_elements()); e != e_end ; ++e)
             {
                 if (EW[i] != 0)
                 {
@@ -153,7 +153,7 @@ class BreadthFirstSearchCliqueTest :
         {
             // Create a nodecount-clique
             SparseMatrix<DataType_>  pEW(_nodecount, _nodecount);
-            for (typename MutableMatrix<DataType_>::ElementIterator e(pEW.begin_elements()), e_end(pEW.end_elements()); e != e_end ; ++e)
+            for (typename SparseMatrix<DataType_>::ElementIterator e(pEW.begin_elements()), e_end(pEW.end_elements()); e != e_end ; ++e)
             {
                 if (e.row() < e.column())
                 {

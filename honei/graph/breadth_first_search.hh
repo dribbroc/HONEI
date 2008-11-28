@@ -111,7 +111,7 @@ namespace honei
                     number_of_nodes++;
 
                     // Select all nodes that are adjacent to the starting-node
-                    for (typename Vector<DataType_>::ConstElementIterator e((edge_weights[current_node]).begin_non_zero_elements()),
+                    for (typename SparseVector<DataType_>::NonZeroConstElementIterator e((edge_weights[current_node]).begin_non_zero_elements()),
                     e_end((edge_weights[current_node]).end_non_zero_elements()); e != e_end ; ++e)
                     {
                         // Check that node has not been visited yet
@@ -197,7 +197,7 @@ namespace honei
                     number_of_nodes++;
 
                     // Select all nodes that are adjacent to the starting-node
-                    for (typename Vector<DataType_>::ConstElementIterator e((edge_weights[current_node]).begin_non_zero_elements()),
+                    for (typename SparseVector<DataType_>::NonZeroConstElementIterator e((edge_weights[current_node]).begin_non_zero_elements()),
                     e_end((edge_weights[current_node]).end_non_zero_elements()); e != e_end ; ++e)
                     {
                         // Check that node has not been visited yet

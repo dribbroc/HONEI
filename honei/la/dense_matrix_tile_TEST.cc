@@ -76,7 +76,7 @@ class DenseMatrixTileCopyTest :
                     *i = 1;
                 }
 
-                for (typename Matrix<DataType_>::ConstElementIterator i(dmt.begin_elements()),
+                for (typename DenseMatrixTile<DataType_>::ConstElementIterator i(dmt.begin_elements()),
                         i_end(dmt.end_elements()) ; i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
@@ -239,7 +239,7 @@ class DenseMatrixTileQuickTest :
             DenseMatrixTile<DataType_> dmt4_1(dm4, 4, 4, 0, 3);
             DenseMatrixTile<DataType_> dmt4_2(dm4, 4, 4, 3, 0);
 
-            for (typename MutableMatrix<DataType_>::ElementIterator i(dmt4_1.begin_elements()), i_end(dmt4_1.end_elements()) ;
+            for (typename DenseMatrixTile<DataType_>::ElementIterator i(dmt4_1.begin_elements()), i_end(dmt4_1.end_elements()) ;
                     i != i_end ; ++i)
             {
                 *i = DataType_(26);
@@ -248,7 +248,7 @@ class DenseMatrixTileQuickTest :
             TEST_CHECK_EQUAL(dmt4_1(3, 0), DataType_(26));
             dmt4_1(3, 0) = DataType_(19);
 
-            for (typename Matrix<DataType_>::ConstElementIterator i(dmt4_2.begin_elements()), i_end(dmt4_2.end_elements());
+            for (typename DenseMatrixTile<DataType_>::ConstElementIterator i(dmt4_2.begin_elements()), i_end(dmt4_2.end_elements());
                     i != i_end; ++i)
             {
                 TEST_CHECK_EQUAL(*i, DataType_(19));

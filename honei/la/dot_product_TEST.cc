@@ -481,7 +481,7 @@ class SparseDenseDotProductTest :
                 SparseVector<DataType_> sv1(size, size / 7 + 1);
                 DenseVector<DataType_> dv2(size, DataType_(0));
                 typename DenseVector<DataType_>::ElementIterator j(dv2.begin_elements());
-                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements());
+                for (typename SparseVector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements());
                         i != i_end ; ++i, ++j)
                 {
                     if (i.index() % 10 == 0)
@@ -534,7 +534,7 @@ class SparseDenseDotProductQuickTest :
             SparseVector<DataType_> sv1(size, size / 7 + 1);
             DenseVector<DataType_> dv2(size, DataType_(0));
             typename DenseVector<DataType_>::ElementIterator j(dv2.begin_elements());
-            for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+            for (typename SparseVector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                     i != i_end ; ++i, ++j)
             {
                 if (i.index() % 10 == 0)
@@ -581,7 +581,7 @@ class SparseDotProductTest :
             {
                 DataType_ p1(0);
                 SparseVector<DataType_> sv1(size, size / 7 + 1), sv2(size, size / 8 + 1);
-                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
+                for (typename SparseVector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
                         j(sv2.begin_elements()) ; i != i_end ; ++i, ++j)
                 {
                     if (i.index() % 10 == 0)
@@ -626,7 +626,7 @@ class SparseDotProductQuickTest :
             unsigned long size (22);
             DataType_ p1(0);
             SparseVector<DataType_> sv1(size, size / 7 + 1), sv2(size, size / 8 + 1);
-            for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
+            for (typename SparseVector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
                     j(sv2.begin_elements()) ; i != i_end ; ++i, ++j)
             {
                 if (i.index() % 10 == 0)

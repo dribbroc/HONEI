@@ -73,7 +73,7 @@ struct Scenario<DataType_, Scenarios::Clique>
         unsigned long _nodecount(Position.rows());
 
         // create Position
-        for (typename MutableMatrix<DataType_>::ElementIterator e(Position.begin_elements()),
+        for (typename SparseMatrix<DataType_>::ElementIterator e(Position.begin_elements()),
                     e_end(Position.end_elements());e != e_end ; ++e)
             {
                 e.column() == 0 ? *e = cos((DataType_) (e.row()) / (DataType_)_nodecount * 2.0f * 3.14f) :
@@ -88,7 +88,7 @@ struct Scenario<DataType_, Scenarios::Clique>
         }
 
         // create Edge_Weights
-        for (typename MutableMatrix<DataType_>::ElementIterator e(Edge_Weights.begin_elements()),
+        for (typename SparseMatrix<DataType_>::ElementIterator e(Edge_Weights.begin_elements()),
                     e_end(Edge_Weights.end_elements()); e != e_end ; ++e)
             {
                 if (e.row() != e.column()) *e = 1;
@@ -121,7 +121,7 @@ struct Scenario<DataType_, Scenarios::SquareGrid>
         }
 
         // create Edge_Weights
-        for (typename MutableMatrix<DataType_>::ElementIterator e(Edge_Weights.begin_elements()),
+        for (typename SparseMatrix<DataType_>::ElementIterator e(Edge_Weights.begin_elements()),
                     e_end(Edge_Weights.end_elements()); e != e_end ; ++e)
             {
                 if ((((e.row() + 1 == e.column()) && (e.column() % _nodecount_2)) || (e.column() == e.row() + _nodecount_2)) && 
@@ -143,7 +143,7 @@ struct Scenario<DataType_, Scenarios::BinaryTree>
         unsigned long _nodecount(Position.rows());
 
         // create Position
-        for (typename MutableMatrix<DataType_>::ElementIterator e(Position.begin_elements()),
+        for (typename SparseMatrix<DataType_>::ElementIterator e(Position.begin_elements()),
                     e_end(Position.end_elements());e != e_end ; ++e)
             {
                 e.column() == 0 ? *e = cos((DataType_) (e.row()) / (DataType_)_nodecount * 2.0f * 3.14f) :
@@ -158,7 +158,7 @@ struct Scenario<DataType_, Scenarios::BinaryTree>
         }
 
         // create Edge_Weights
-        for (typename MutableMatrix<DataType_>::ElementIterator e(Edge_Weights.begin_elements()),
+        for (typename SparseMatrix<DataType_>::ElementIterator e(Edge_Weights.begin_elements()),
                     e_end(Edge_Weights.end_elements()); e != e_end ; ++e)
             {
                 if ((e.column() == e.row() * 2 +1) || (e.column() == e.row() * 2 +2)) 
@@ -211,7 +211,7 @@ class WeightedFruchtermanReingoldPositionsQuickTest :
 
             i = 0;
             std::tr1::shared_ptr<SparseMatrix<DataType_> > pEdge_Weights(new SparseMatrix<DataType_>(2,2));
-            for (typename MutableMatrix<DataType_>::ElementIterator e(pEdge_Weights->begin_elements()),
+            for (typename SparseMatrix<DataType_>::ElementIterator e(pEdge_Weights->begin_elements()),
                     e_end(pEdge_Weights->end_elements()); e != e_end ; ++e)
             {
                 if (edge_weights[i] > std::numeric_limits<DataType_>::epsilon()) 
@@ -286,7 +286,7 @@ class WeightedKamadaKawaiPositionsQuickTest :
 
             i = 0;
             std::tr1::shared_ptr<SparseMatrix<DataType_> > pEdge_Weights(new SparseMatrix<DataType_>(2,2));
-            for (typename MutableMatrix<DataType_>::ElementIterator e(pEdge_Weights->begin_elements()),
+            for (typename SparseMatrix<DataType_>::ElementIterator e(pEdge_Weights->begin_elements()),
                     e_end(pEdge_Weights->end_elements()); e != e_end ; ++e)
             {
                 if (edge_weights[i] > std::numeric_limits<DataType_>::epsilon())

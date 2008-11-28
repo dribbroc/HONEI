@@ -279,7 +279,7 @@ namespace honei
                 DataType_ offset(graph->slice_count() / 4); 
                 
                 glBegin(GL_LINES);
-                for (typename MutableMatrix<DataType_>::ElementIterator i(graph->edges()->begin_non_zero_elements()), i_end(graph->edges()->end_non_zero_elements()); i != i_end ; ++i)
+                for (typename SparseMatrix<DataType_>::NonZeroElementIterator i(graph->edges()->begin_non_zero_elements()), i_end(graph->edges()->end_non_zero_elements()); i != i_end ; ++i)
                 {
                     if (i.row() > i.column())
                     {

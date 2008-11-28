@@ -77,7 +77,7 @@ SparseVector<double> & ElementInverse<tags::CPU::SSE>::value(SparseVector<double
     return x;
 }
 
-SparseMatrix<float> & ElementInverse<tags::CPU::SSE>::value(SparseMatrix<float> & x)
+/*SparseMatrix<float> & ElementInverse<tags::CPU::SSE>::value(SparseMatrix<float> & x)
 {
     CONTEXT("When invertingSparseMatrix<float> (SSE):");
 
@@ -101,5 +101,5 @@ SparseMatrix<double> & ElementInverse<tags::CPU::SSE>::value(SparseMatrix<double
     }
 
     return x;
-}
+}*/
 

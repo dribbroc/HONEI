@@ -21,23 +21,29 @@ class SparseMatrixCopyTest :
 
         virtual void run() const
         {
-            for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
+            //for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
             {
+                unsigned long size(5);
                 unsigned long columns(2 * size), rows(size);
                 SparseMatrix<DataType_> sm1(rows, columns, size / 10 + 1);
                 SparseMatrix<DataType_> sm2(sm1.copy());
 
-                for (typename MutableMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
+                TEST_CHECK_EQUAL(sm2.rows(), sm1.rows());
+                TEST_CHECK_EQUAL(sm2.columns(), sm1.columns());
+
+                for (typename SparseMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
                         i_end(sm2.end_elements()) ; i != i_end ; ++i)
                 {
-                    typename Matrix<DataType_>::ConstElementIterator ci(i);
+                    typename SparseMatrix<DataType_>::ConstElementIterator ci(i);
                     TEST_CHECK_EQUAL_WITHIN_EPS(*ci, DataType_(0), std::numeric_limits<DataType_>::epsilon());
 
                     if (0 == (i.index() % 7))
+                    {
                         *i = i.index();
+                    }
                 }
 
-                for (typename Matrix<DataType_>::ConstElementIterator i(sm1.begin_elements()),
+                for (typename SparseMatrix<DataType_>::ConstElementIterator i(sm1.begin_elements()),
                         i_end(sm1.end_elements()), j(sm2.begin_elements()) ; i != i_end ; ++i, ++j)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, 0, std::numeric_limits<DataType_>::epsilon());
@@ -66,7 +72,7 @@ class SparseMatrixCreationTest :
             for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
             {
                 unsigned long columns(size + 1), rows(size);
-                SparseMatrix<DataType_> sv1(rows, columns, columns * rows);
+                SparseMatrix<DataType_> sv1(rows, columns, columns);
                 SparseMatrix<DataType_> sv2(1,size);
                 TEST_CHECK(true);
             }
@@ -92,7 +98,7 @@ class SparseMatrixLayoutTest :
                 unsigned long columns(size + 1), rows(size);
 
                 SparseMatrix<DataType_> sm(rows, columns, size / 10 + 1);
-                for (typename MutableMatrix<DataType_>::ElementIterator i(sm.begin_elements()), i_end(sm.end_elements()) ;
+                for (typename SparseMatrix<DataType_>::ElementIterator i(sm.begin_elements()), i_end(sm.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     *i = static_cast<DataType_>(i.index());
@@ -101,10 +107,10 @@ class SparseMatrixLayoutTest :
                 TEST_CHECK_EQUAL(sm.columns(), columns);
                 TEST_CHECK_EQUAL(sm.rows(), rows);
 
-                Vector<DataType_> & row1 = sm[0];
+                SparseVector<DataType_> & row1 = sm[0];
                 TEST_CHECK_EQUAL(row1.size(), columns);
 
-                for (typename Vector<DataType_>::ConstElementIterator i(row1.begin_elements()), i_end(row1.end_elements()) ;
+                for (typename SparseVector<DataType_>::ConstElementIterator i(row1.begin_elements()), i_end(row1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, i.index(), std::numeric_limits<DataType_>::epsilon());
@@ -134,11 +140,11 @@ class SparseMatrixQuickTest :
             TEST_CHECK_EQUAL(sm.columns(), columns);
             TEST_CHECK_EQUAL(sm.rows(), rows);
 
-            Vector<DataType_> & row1 = sm[0];
+            SparseVector<DataType_> & row1 = sm[0];
 
             TEST_CHECK_EQUAL(row1.size(), columns);
 
-            for (typename MutableMatrix<DataType_>::ElementIterator i(sm.begin_non_zero_elements()),
+            for (typename SparseMatrix<DataType_>::NonZeroElementIterator i(sm.begin_non_zero_elements()),
                 i_end(sm.end_non_zero_elements()) ; i != i_end ; ++i)
             {
                 //iterating over an empty matrix - should never reach this point
@@ -148,7 +154,7 @@ class SparseMatrixQuickTest :
 
             unsigned long size (5);
             SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1);
-            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()), 
+            for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                 i_end(sm1.end_elements()); i != i_end ; ++i)
             {
                 if (i.index() % 4 == 0) 
@@ -157,7 +163,7 @@ class SparseMatrixQuickTest :
 
                 }
             }
-            for (typename Matrix<DataType_>::ConstElementIterator i(sm1.begin_non_zero_elements()),
+            for (typename SparseMatrix<DataType_>::NonZeroConstElementIterator i(sm1.begin_non_zero_elements()),
                 i_end(sm1.end_non_zero_elements()) ; i != i_end ; ++i)
             {
                 TEST_CHECK_EQUAL(i.index() % 4, 0ul);

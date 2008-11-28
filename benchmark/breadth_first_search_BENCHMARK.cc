@@ -49,7 +49,7 @@ class BreadthFirstSearchWeightedCliqueBench :
         {
             // Create a nodecount-clique
             SparseMatrix<DataType_>  pEW(_nodecount, _nodecount);
-            for (typename MutableMatrix<DataType_>::ElementIterator e(pEW.begin_elements()), e_end(pEW.end_elements()); e != e_end ; ++e)
+            for (typename SparseMatrix<DataType_>::ElementIterator e(pEW.begin_elements()), e_end(pEW.end_elements()); e != e_end ; ++e)
             {
                 if (e.row() < e.column())
                 {

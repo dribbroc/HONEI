@@ -171,7 +171,7 @@ namespace honei
     /**
      * Equality operator for DenseVectorRange.
      *
-     * Compares if corresponding elements of two banded matrices are equal
+     * Compares if corresponding elements of two dense vector ranges are equal
      * within machine precision.
      */
     template <typename DataType_> bool operator== (const DenseVectorRange<DataType_> & a, const DenseVectorRange<DataType_> & b);

@@ -30,7 +30,8 @@
 #include <honei/graph/graph.hh>
 #include <map>
 #include <iostream>
-#include <math.h>
+#include <cmath>
+#include <vector>
 namespace honei
 {
 
@@ -97,7 +98,7 @@ void assemble_edges()
     {
         int offset = _slice_offset[t];
         GraphType * slice = _slices[t];
-        for (typename SM::ConstElementIterator i(slice->edges()->begin_non_zero_elements()),
+        for (typename SM::NonZeroConstElementIterator i(slice->edges()->begin_non_zero_elements()),
                 i_end(slice->edges()->end_non_zero_elements()); i != i_end; ++i)
         {
             (*this->_edges)(offset + i.row(), offset + i.column()) = *i;

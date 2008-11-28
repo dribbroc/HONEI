@@ -85,7 +85,7 @@ namespace honei
             CONTEXT("When calculating the inverse value of SparseVector elements:");
 
 
-            for (typename Vector<DataType_>::ElementIterator l(x.begin_non_zero_elements()),
+            for (typename SparseVector<DataType_>::NonZeroElementIterator l(x.begin_non_zero_elements()),
                     l_end(x.end_non_zero_elements()) ; l != l_end ; ++l)
             {
                   if (*l == DataType_(0))
@@ -118,7 +118,7 @@ namespace honei
         {
             CONTEXT("When calculating the inverse value of DenseMatrix elements:");
 
-            for (typename MutableMatrix<DataType_>::ElementIterator i(x.begin_non_zero_elements()),
+            for (typename SparseMatrix<DataType_>::NonZeroElementIterator i(x.begin_non_zero_elements()),
                     i_end(x.end_non_zero_elements()) ; i != i_end ; ++i)
             {
                if (*i == DataType_(0))
@@ -296,9 +296,9 @@ namespace honei
 
         static SparseVector<double> & value(SparseVector<double> & x);
 
-        static SparseMatrix<float> & value(SparseMatrix<float> & x);
+        /*static SparseMatrix<float> & value(SparseMatrix<float> & x);
 
-        static SparseMatrix<double> & value(SparseMatrix<double> & x);
+        static SparseMatrix<double> & value(SparseMatrix<double> & x);*/
         /// \}
     };
 

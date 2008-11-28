@@ -24,7 +24,6 @@
 
 #include <honei/la/element_iterator.hh>
 #include <honei/la/dense_matrix.hh>
-#include <honei/la/dense_matrix_tile.hh>
 #include <honei/la/dense_vector-impl.hh>
 #include <honei/la/dense_vector_range-impl.hh>
 #include <honei/la/dense_vector_slice-impl.hh>
@@ -98,7 +97,7 @@ namespace honei
 
         TypeTraits<DataType_>::fill(this->_imp->elements.get(), this->_imp->size, DataType_(0));
 
-        for (typename Matrix<DataType_>::ConstElementIterator i(other.begin_non_zero_elements()),
+        for (typename SparseMatrix<DataType_>::NonZeroConstElementIterator i(other.begin_non_zero_elements()),
                 i_end(other.end_non_zero_elements()) ; i != i_end ; ++i)
         {
             (*this->_imp)(i.row(), i.column()) = *i;
@@ -382,7 +381,7 @@ namespace honei
     ConstElementIterator<storage::Dense, container::Matrix, DataType_> &
     ConstElementIterator<storage::Dense, container::Matrix, DataType_>::operator++ ()
     {
-        CONTEXT("When incrementing ConstElementIterator<Dense, Vector> by one:");
+        CONTEXT("When incrementing ConstElementIterator<Dense, Matrix> by one:");
 
         ++this->_imp->index;
 
@@ -393,7 +392,7 @@ namespace honei
     ConstElementIterator<storage::Dense, container::Matrix, DataType_> &
     ConstElementIterator<storage::Dense, container::Matrix, DataType_>::operator+= (const unsigned long step)
     {
-        CONTEXT("When incrementing ConstElementIterator<Dense, Vector> by '" + stringify(step) + "':");
+        CONTEXT("When incrementing ConstElementIterator<Dense, Matrix> by '" + stringify(step) + "':");
 
         this->_imp->index += step;
 
@@ -468,13 +467,6 @@ namespace honei
             index(index)
         {
         }
-
-        Implementation(const Implementation<ElementIterator<storage::Dense, container::Matrix, DataType_> > & other) :
-            elements(other.elements),
-            columns(other.columns),
-            index(other.index)
-        {
-        }
     };
 
     template <typename DataType_>
@@ -515,7 +507,7 @@ namespace honei
     ElementIterator<storage::Dense, container::Matrix, DataType_> &
     ElementIterator<storage::Dense, container::Matrix, DataType_>::operator++ ()
     {
-        CONTEXT("When incrementing ElementIterator<Dense, Vector> by one:");
+        CONTEXT("When incrementing ElementIterator<Dense, Matrix> by one:");
 
         ++this->_imp->index;
 
@@ -526,7 +518,7 @@ namespace honei
     ElementIterator<storage::Dense, container::Matrix, DataType_> &
     ElementIterator<storage::Dense, container::Matrix, DataType_>::operator+= (const unsigned long step)
     {
-        CONTEXT("When incrementing ElementIterator<Dense, Vector> by '" + stringify(step) + "':");
+        CONTEXT("When incrementing ElementIterator<Dense, Matrix> by '" + stringify(step) + "':");
 
         this->_imp->index += step;
 

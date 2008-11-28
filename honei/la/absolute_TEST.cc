@@ -102,7 +102,7 @@ class SparseVectorAbsoluteValueTest :
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 SparseVector<DataType_> sv1(size, size / 8 + 1), sv2(size, size / 9 + 1);
-                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
+                for (typename SparseVector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
                         j(sv2.begin_elements()) ; i != i_end ; ++i, ++j)
                 {
                     if (i.index() % 3 == 0)
@@ -134,7 +134,7 @@ class SparseVectorAbsoluteValueQuickTest :
         {
             unsigned long size(20);
             SparseVector<DataType_> sv1(size, size / 8 + 1), sv2(size, size / 9 + 1);
-            for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
+            for (typename SparseVector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()),
                     j(sv2.begin_elements()) ; i != i_end ; ++i, ++j)
             {
                 if (i.index() % 3 == 0)

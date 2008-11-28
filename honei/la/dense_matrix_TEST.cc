@@ -20,7 +20,6 @@
 
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/sparse_matrix.hh>
-#include <honei/la/vector.hh>
 #include <unittest/unittest.hh>
 
 #include <string>
@@ -57,7 +56,7 @@ class DenseMatrixCopyTest :
 {
     public:
         DenseMatrixCopyTest(const std::string & type) :
-            BaseTest("dense_vector_copy_test<" + type + ">")
+            BaseTest("dense_matrix_copy_test<" + type + ">")
         {
         }
 
@@ -109,7 +108,7 @@ class DenseMatrixDensifyQuickTest :
                 DenseMatrix<DataType_> dm0(size + 2, size, DataType_(0));
                 SparseMatrix<DataType_> sm0(size + 2, size, size / 8 + 1);
 
-                typename MutableMatrix<DataType_>::ElementIterator j(sm0.begin_elements());
+                typename SparseMatrix<DataType_>::ElementIterator j(sm0.begin_elements());
                 for (typename DenseMatrix<DataType_>::ElementIterator i(dm0.begin_elements()), i_end(dm0.end_elements()) ;
                         i != i_end ; ++i, ++j)
                 {
@@ -119,6 +118,7 @@ class DenseMatrixDensifyQuickTest :
                         *j = i.index();
                     }
                 }
+
                 DenseMatrix<DataType_> dm1(sm0);
 
                 TEST_CHECK_EQUAL(dm1, dm0);

@@ -224,7 +224,7 @@ namespace honei
                 unsigned long iter_number = 0;
 
                 ///Do conversion of system matrix once
-                typename SparseMatrix<DT1_>::ElementIterator i_outer(system_matrix.begin_non_zero_elements()), i_end(system_matrix.end_non_zero_elements());
+                typename SparseMatrix<DT1_>::NonZeroElementIterator i_outer(system_matrix.begin_non_zero_elements()), i_end(system_matrix.end_non_zero_elements());
                 typename SparseMatrix<float>::ElementIterator i_inner(inner_system.begin_elements());
                 while(i_outer != i_end)
                 {
@@ -479,7 +479,7 @@ namespace honei
                 unsigned long iter_number = 0;
 
                 ///Do conversion of system matrix once
-                typename SparseMatrix<DT1_>::ElementIterator i_outer(system_matrix.begin_non_zero_elements()), i_end(system_matrix.end_non_zero_elements());
+                typename SparseMatrix<DT1_>::NonZeroElementIterator i_outer(system_matrix.begin_non_zero_elements()), i_end(system_matrix.end_non_zero_elements());
                 typename SparseMatrix<float>::ElementIterator i_inner(inner_system.begin_elements());
                 while(i_outer != i_end)
                 {
@@ -730,7 +730,7 @@ namespace honei
                 unsigned long iter_number = 0;
 
                 ///Do conversion of system matrix once
-                typename SparseMatrix<DT1_>::ElementIterator i_outer(system_matrix.begin_non_zero_elements()), i_end(system_matrix.end_non_zero_elements());
+                typename SparseMatrix<DT1_>::NonZeroElementIterator i_outer(system_matrix.begin_non_zero_elements()), i_end(system_matrix.end_non_zero_elements());
                 typename SparseMatrix<float>::ElementIterator i_inner(inner_system.begin_elements());
                 while(i_outer != i_end)
                 {

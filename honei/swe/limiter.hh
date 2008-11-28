@@ -159,8 +159,8 @@ namespace honei
                 double HONEI_ALIGNED(16) zero(0.);
                 double HONEI_ALIGNED(16) one(1.);
 
-                __m128d mm0 = _mm_set_pd1(zero);
-                __m128d mm1 = _mm_set_pd1(one);
+                __m128d mm0 = _mm_set1_pd(zero);
+                __m128d mm1 = _mm_set1_pd(one);
                 __m128d result = _mm_max_pd( mm0, _mm_min_pd(mm1, vec));
 
                 return result;

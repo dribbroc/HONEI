@@ -4,7 +4,7 @@
  * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Michael Abshoff <michael.abshoff@fsmath.mathematik.uni-dortmund.de>
  * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
- * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2007, 2009 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -32,9 +32,11 @@
 #include <honei/util/shared_array-impl.hh>
 #include <honei/util/stringify.hh>
 #include <honei/util/type_traits.hh>
+#include <honei/la/vector_error.hh>
 
-#include <iterator>
 #include <string>
+#include <limits>
+#include <cmath>
 
 namespace honei
 {
@@ -150,68 +152,84 @@ namespace honei
     }
 
     template <typename DataType_>
+    SparseVector<DataType_>::SparseVector(const SparseVector<DataType_> & other) :
+        PrivateImplementationPattern<SparseVector<DataType_>, Shared>(other._imp)
+    {
+    }
+
+    template <typename DataType_>
     SparseVector<DataType_>::~SparseVector()
     {
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ConstElementIterator SparseVector<DataType_>::begin_elements() const
+    typename SparseVector<DataType_>::ConstElementIterator
+    SparseVector<DataType_>::begin_elements() const
     {
-        return ConstElementIterator(new SparseElementIterator(*this, 0));
+        return ConstElementIterator(*this, 0);
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ConstElementIterator SparseVector<DataType_>::end_elements() const
+    typename SparseVector<DataType_>::ConstElementIterator
+    SparseVector<DataType_>::end_elements() const
     {
-        return ConstElementIterator(new SparseElementIterator(*this, this->_imp->_size));
+        return ConstElementIterator(*this, this->_imp->_size);
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ElementIterator SparseVector<DataType_>::begin_elements()
+    typename SparseVector<DataType_>::ElementIterator
+    SparseVector<DataType_>::begin_elements()
     {
-        return ElementIterator(new SparseElementIterator(*this, 0));
+        return ElementIterator(*this, 0);
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ElementIterator SparseVector<DataType_>::end_elements()
+    typename SparseVector<DataType_>::ElementIterator
+    SparseVector<DataType_>::end_elements()
     {
-        return ElementIterator(new SparseElementIterator(*this, this->_imp->_size));
+        return ElementIterator(*this, this->_imp->_size);
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ConstElementIterator SparseVector<DataType_>::begin_non_zero_elements() const
+    typename SparseVector<DataType_>::NonZeroConstElementIterator
+    SparseVector<DataType_>::begin_non_zero_elements() const
     {
-        return ConstElementIterator(new NonZeroElementIterator(*this, 0));
+        return NonZeroConstElementIterator(*this, 0);
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ConstElementIterator SparseVector<DataType_>::end_non_zero_elements() const
+    typename SparseVector<DataType_>::NonZeroConstElementIterator
+    SparseVector<DataType_>::end_non_zero_elements() const
     {
-        return ConstElementIterator(new NonZeroElementIterator(*this, this->_imp->_used_elements));
+        return NonZeroConstElementIterator(*this, this->_imp->_used_elements);
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ElementIterator SparseVector<DataType_>::begin_non_zero_elements()
+    typename SparseVector<DataType_>::NonZeroElementIterator
+    SparseVector<DataType_>::begin_non_zero_elements()
     {
-        return ElementIterator(new NonZeroElementIterator(*this, 0));
+        return NonZeroElementIterator(*this, 0);
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ElementIterator SparseVector<DataType_>::end_non_zero_elements()
+    typename SparseVector<DataType_>::NonZeroElementIterator
+    SparseVector<DataType_>::end_non_zero_elements()
     {
-        return ElementIterator(new NonZeroElementIterator(*this, this->_imp->_used_elements));
+        return NonZeroElementIterator(*this, this->_imp->_used_elements);
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ElementIterator SparseVector<DataType_>::non_zero_element_at(unsigned long pos)
+    typename SparseVector<DataType_>::NonZeroElementIterator
+    SparseVector<DataType_>::non_zero_element_at(unsigned long pos)
     {
-        return ElementIterator(new NonZeroElementIterator(*this, pos));
+        return NonZeroElementIterator(*this, pos);
     }
 
     template <typename DataType_>
-    typename Vector<DataType_>::ConstElementIterator SparseVector<DataType_>::non_zero_element_at(unsigned long pos) const
+    typename SparseVector<DataType_>::NonZeroConstElementIterator
+    SparseVector<DataType_>::non_zero_element_at(unsigned long pos) const
     {
-        return ConstElementIterator(new NonZeroElementIterator(*this, pos));
+        return NonZeroConstElementIterator(*this, pos);
     }
 
     template <typename DataType_>
@@ -293,340 +311,666 @@ namespace honei
         return result;
     }
 
-    /**
-     * \brief SparseVector::SparseElementIterator is a plain iterator implementation for sparse vectors.
-     *
-     * \ingroup grpvector
-     */
-    template <> template <typename DataType_> class SparseVector<DataType_>::SparseElementIterator :
-        public VectorElementIterator
+    template <typename DataType_> struct Implementation<ElementIterator<storage::Sparse, container::Vector, DataType_> >
     {
-        private:
-            /// Our parent vector.
-            const SparseVector<DataType_> & _vector;
+        /// Our parent vector.
+        SparseVector<DataType_> _vector;
 
-            /// Our position in the index table.
-            unsigned long _pos;
+        /// Our index.
+        unsigned long _index;
 
-            /// Our index.
-            unsigned long _index;
+        /// Our position in the index table.
+        unsigned long _pos;
 
-        public:
-            /// \name Constructors
-            /// \{
-
-            /**
-             * Constructor.
-             *
-             * \param vector The parent vector that is referenced by the iterator.
-             * \param index The index into the vector.
-             */
-            SparseElementIterator(const SparseVector<DataType_> & vector, unsigned long index) :
-                _vector(vector),
-                _pos(0),
-                _index(index)
-            {
-            }
-
-            /// Copy-constructor.
-            SparseElementIterator(const SparseElementIterator & other) :
-                _vector(other._vector),
-                _pos(other._pos),
-                _index(other._index)
-            {
-            }
-
-            /// Destructor
-            virtual ~SparseElementIterator()
-            {
-            }
-
-            /// \}
-
-            /// \name Forward iterator interface
-            /// \{
-
-            /// Preincrement operator.
-            virtual SparseElementIterator & operator++ ()
-            {
-                CONTEXT("When incrementing iterator by one:");
-
-                ++_index;
-                while ((_pos < _vector._imp->_used_elements) && (_vector._imp->_indices[_pos] < _index))
-                    ++_pos;
-
-                return *this;
-            }
-
-            /// In-place-add operator.
-            virtual SparseElementIterator & operator+= (const unsigned long step)
-            {
-                CONTEXT("When incrementing iterator by '" + stringify(step) + "':");
-
-                _index += step;
-                while ((_pos < _vector._imp->_used_elements) && (_vector._imp->_indices[_pos] < _index))
-                    ++_pos;
-
-                return *this;
-            }
-
-            /// Dereference operator that returns an assignable reference.
-            virtual DataType_ & operator* ()
-            {
-                CONTEXT("When accessing assignable element at position '" + stringify(_pos) + "':");
-
-                if (_vector._imp->_indices[_pos] != _index)
-                    _vector._insert_element(_pos, _index);
-
-                return _vector._imp->_elements[_pos];
-            }
-
-            /// Dereference operator that returns an unassignable reference.
-            virtual const DataType_ & operator* () const
-            {
-                CONTEXT("When accessing unassignable element at position '" + stringify(_pos) + "':");
-
-                if (_vector._imp->_indices[_pos] != _index)
-                    return _vector._zero_element;
-                else
-                    return _vector._imp->_elements[_pos];
-            }
-
-            /// Less-than operator.
-            virtual bool operator< (const IteratorBase<DataType_, Vector<DataType_> > & other) const
-            {
-                return _index < other.index();
-            }
-
-            /// Comparison operator for equality.
-            virtual bool operator== (const IteratorBase<DataType_, Vector<DataType_> > & other) const
-            {
-                return ((&_vector == other.parent()) && (_index == other.index()));
-            }
-
-            /// Comparison operator for inequality.
-            virtual bool operator!= (const IteratorBase<DataType_, Vector<DataType_> > & other) const
-            {
-                return ((&_vector != other.parent()) || (_index != other.index()));
-            }
-
-            /// \}
-
-            /// \name IteratorTraits interface
-            /// \{
-
-            /// Returns our index.
-            virtual unsigned long index() const
-            {
-                return _index;
-            }
-
-            /// Returns a pointer to our parent container.
-            virtual const Vector<DataType_> * parent() const
-            {
-                return &_vector;
-            }
-
-            /// \}
+        Implementation(SparseVector<DataType_> & vector, unsigned long index, unsigned long pos) :
+            _vector(vector),
+            _index(index),
+            _pos(pos)
+        {
+        }
     };
 
-    /**
-     * \brief SparseVector::NonZeroElementIterator is a smart iterator implementation that iterates over non-zero
-     * \brief elements of sparse vectors.
-     *
-     * \ingroup grpvector
-     */
-    template <> template <typename DataType_> class SparseVector<DataType_>::NonZeroElementIterator :
-        public VectorElementIterator
+    template <typename DataType_>
+    ElementIterator<storage::Sparse, container::Vector, DataType_>::ElementIterator(SparseVector<DataType_> & vector,
+            unsigned long index) :
+        PrivateImplementationPattern<ElementIterator<storage::Sparse, container::Vector, DataType_>, Single>(
+                new Implementation<ElementIterator<storage::Sparse, container::Vector, DataType_> >(vector, index, 0))
     {
-        private:
-            /// Our parent vector.
-            const SparseVector<DataType_> & _vector;
+    }
 
-            /// Our position in the index table.
-            unsigned long _pos;
+    template <typename DataType_>
+    ElementIterator<storage::Sparse, container::Vector, DataType_>::ElementIterator(
+            const ElementIterator<storage::Sparse, container::Vector, DataType_> & other) :
+        PrivateImplementationPattern<ElementIterator<storage::Sparse, container::Vector, DataType_>, Single>(
+                new Implementation<ElementIterator<storage::Sparse, container::Vector, DataType_> >(*other._imp))
+    {
+    }
 
-            /// Our index.
-            unsigned long _index;
+    template <typename DataType_>
+    ElementIterator<storage::Sparse, container::Vector, DataType_>::~ElementIterator()
+    {
+    }
 
-        public:
-            /// \name Constructors
-            /// \{
+    template <typename DataType_>
+    ElementIterator<storage::Sparse, container::Vector, DataType_> &
+    ElementIterator<storage::Sparse, container::Vector, DataType_>::operator= (
+            const ElementIterator<storage::Sparse, container::Vector, DataType_> & other)
+    {
+        if (&other == this)
+            return *this;
 
-            /**
-             * Constructor.
-             *
-             * \param vector The parent vector that is referenced by the iterator.
-             * \param pos The index of a non-zero element into the vectors internal index table.
-             */
-            NonZeroElementIterator(const SparseVector<DataType_> & vector, unsigned long pos) :
-                _vector(vector),
-                _pos(pos),
-                _index(_vector._imp->_indices[pos])
-            {
-            }
+        this->_imp->_vector = other._imp->_vector;
+        this->_imp->_index = other._imp->_index;
+        this->_imp->_pos = other._imp->_pos;
 
-            /// Copy-cnstructor.
-            NonZeroElementIterator(NonZeroElementIterator const & other) :
-                _vector(other._vector),
-                _pos(other._pos),
-                _index(other._index)
-            {
-            }
+        return *this;
+    }
 
-            /// Destructor.
-            virtual ~NonZeroElementIterator()
-            {
-            }
+    template <typename DataType_>
+    ElementIterator<storage::Sparse, container::Vector, DataType_> &
+    ElementIterator<storage::Sparse, container::Vector, DataType_>::operator++ ()
+    {
+        CONTEXT("When incrementing ElementIterator<Sparse, Vector> by one:");
 
-            /// \}
+        ++this->_imp->_index;
+        while ((this->_imp->_pos < this->_imp->_vector._imp->_used_elements) &&
+                (this->_imp->_vector._imp->_indices[this->_imp->_pos] < this->_imp->_index))
+            ++this->_imp->_pos;
 
-            /// \name Forward iterator interface
-            /// \{
+        return *this;
+    }
 
-            /// Preincrement operator.
-            virtual NonZeroElementIterator & operator++ ()
-            {
-                CONTEXT("When incrementing iterator by one:");
-                if (_vector._imp->_indices[_pos] == _index)
-                {
-                    ++_pos;
-                }
-                else if (_vector._imp->_indices[_pos] < _index)
-                {
-                    while (_vector._imp->_indices[_pos] <= _index)
-                    {
-                        ++_pos;
-                    }
-                }
-                else if (_vector._imp->_indices[_pos] > _index)
-                {
-                    while (_vector._imp->_indices[_pos] > _index)
-                    {
-                        --_pos;
-                    }
-                    ++_pos;
-                }
+    template <typename DataType_>
+    ElementIterator<storage::Sparse, container::Vector, DataType_> &
+    ElementIterator<storage::Sparse, container::Vector, DataType_>::operator+= (const unsigned long step)
+    {
+        CONTEXT("When incrementing ElementIterator<Sparse, Vector> by '" + stringify(step) + "':");
 
-                _index = _vector._imp->_indices[_pos];
-                return *this;
-            }
+        this->_imp->_index += step;
+        while ((this->_imp->_pos < this->_imp->_vector._imp->_used_elements)
+                && (this->_imp->_vector._imp->_indices[this->_imp->_pos] < this->_imp->_index))
+            ++this->_imp->_pos;
 
-            /// In-place-add operator.
-            virtual NonZeroElementIterator & operator+= (const unsigned long step)
-            {
-                CONTEXT("When incrementing iterator by '" + stringify(step) + "':");
+        return *this;
+    }
 
-                //Restore position if the vector was modified
+    template <typename DataType_>
+    DataType_ &
+    ElementIterator<storage::Sparse, container::Vector, DataType_>::operator* () const
+    {
+        CONTEXT("When accessing assignable element at index '" + stringify(this->_imp->_index) + "':");
 
-                if (_vector._imp->_indices[_pos] < _index)
-                {
-                    while (_vector._imp->_indices[_pos] < _index)
-                    {
-                        _pos++;
-                    }
-                }
-                else if (_vector._imp->_indices[_pos] > _index)
-                {
-                    while (_vector._imp->_indices[_pos] > _index)
-                    {
-                        _pos--;
-                    }
-                }
+        if (this->_imp->_vector._imp->_indices[this->_imp->_pos] != this->_imp->_index)
+            this->_imp->_vector._insert_element(this->_imp->_pos, this->_imp->_index);
 
-                _pos += step;
-                if (_pos < _vector.capacity())
-                    _index = _vector._imp->_indices[_pos];
-                else
-                    _index = _vector.size();
+        return this->_imp->_vector._imp->_elements[this->_imp->_pos];
+    }
 
-                return *this;
-            }
+    template <typename DataType_>
+    bool
+    ElementIterator<storage::Sparse, container::Vector, DataType_>::operator< (
+            const ElementIterator<storage::Sparse, container::Vector, DataType_> & other) const
+    {
+        return this->_imp->_index < other._imp->_index;
+    }
 
-            /// Dereference operator that returns an assignable reference.
-            virtual DataType_ & operator* ()
-            {
-                CONTEXT("When accessing assignable element at position '" + stringify(_pos) + "':");
+    template <typename DataType_>
+    bool
+    ElementIterator<storage::Sparse, container::Vector, DataType_>::operator== (
+            const ElementIterator<storage::Sparse, container::Vector, DataType_> & other) const
+    {
+        return ((this->_imp->_vector._imp == other._imp->_vector._imp) && (this->_imp->_index == other._imp->_index));
+    }
 
-                //Restore position if the vector was modified
-                if (_vector._imp->_indices[_pos] < _index)
-                {
-                    while (_vector._imp->_indices[_pos] < _index)
-                    {
-                        ++_pos;
-                    }
-                }
-                else if (_vector._imp->_indices[_pos] > _index)
-                {
-                    while (_vector._imp->_indices[_pos] > _index)
-                    {
-                        --_pos;
-                    }
-                }
-                return _vector._imp->_elements[_pos];
-            }
+    template <typename DataType_>
+    bool
+    ElementIterator<storage::Sparse, container::Vector, DataType_>::operator!= (
+            const ElementIterator<storage::Sparse, container::Vector, DataType_> & other) const
+    {
+        return ((this->_imp->_vector._imp != other._imp->_vector._imp) || (this->_imp->_index != other._imp->_index));
+    }
 
-            /// Dereference operator that returns an unassignable reference.
-            virtual const DataType_ & operator* () const
-            {
-                CONTEXT("When accessing unassignable element at position '" + stringify(_pos) + "':");
+    template <typename DataType_>
+    unsigned long
+    ElementIterator<storage::Sparse, container::Vector, DataType_>::index() const
+    {
+        return this->_imp->_index;
+    }
 
-                //Restore position if the vector was modified
-                unsigned long temp_pos(_pos);
-                if (_vector._imp->_indices[temp_pos] < _index)
-                {
-                    while (_vector._imp->_indices[temp_pos] < _index)
-                    {
-                        ++temp_pos;
-                    }
-                }
-                else if (_vector._imp->_indices[temp_pos] > _index)
-                {
-                    while (_vector._imp->_indices[temp_pos] > _index)
-                    {
-                        --temp_pos;
-                    }
-                }
-                return _vector._imp->_elements[temp_pos];
-            }
+    template <typename DataType_> struct Implementation<ConstElementIterator<storage::Sparse, container::Vector, DataType_> >
+    {
+        /// Our parent vector.
+        SparseVector<DataType_> _vector;
 
-            /// Comparison operator for less-than.
-            virtual bool operator< (const IteratorBase<DataType_, Vector<DataType_> > & other) const
-            {
-                return _index < other.index();
-            }
+        /// Our index.
+        unsigned long _index;
 
-            /// Comparison operator for equality.
-            virtual bool operator== (const IteratorBase<DataType_, Vector<DataType_> > & other) const
-            {
-                return ((&_vector == other.parent()) && (_index == other.index()));
-            }
+        /// Our position in the index table.
+        unsigned long _pos;
 
-            /// Comparison operator for inequality.
-            virtual bool operator!= (const IteratorBase<DataType_, Vector<DataType_> > & other) const
-            {
-                return ((&_vector != other.parent()) || (_index != other.index()));
-            }
+        Implementation(const SparseVector<DataType_> & vector, unsigned long index, unsigned long pos) :
+            _vector(vector),
+            _index(index),
+            _pos(pos)
+        {
+        }
 
-            /// \}
-
-            /// \name IteratorTraits interface
-            /// \{
-
-            /// Returns our index.
-            virtual unsigned long index() const
-            {
-                return _index;
-            }
-
-            /// Returns a pointer to our parent container.
-            virtual const Vector<DataType_> * parent() const
-            {
-                return &_vector;
-            }
-
-            /// \}
+        Implementation(const Implementation<ElementIterator<storage::Sparse, container::Vector, DataType_> > & other) :
+            _vector(other._vector),
+            _index(other._index),
+            _pos(other._pos)
+        {
+        }
     };
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Sparse, container::Vector, DataType_>::ConstElementIterator(const SparseVector<DataType_> & vector, unsigned long index) :
+        PrivateImplementationPattern<ConstElementIterator<storage::Sparse, container::Vector, DataType_>, Single>(
+                new Implementation<ConstElementIterator<storage::Sparse, container::Vector, DataType_> >(vector, index, 0))
+    {
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Sparse, container::Vector, DataType_>::ConstElementIterator(const ConstElementIterator & other) :
+        PrivateImplementationPattern<ConstElementIterator<storage::Sparse, container::Vector, DataType_>, Single>(
+                new Implementation<ConstElementIterator<storage::Sparse, container::Vector, DataType_> >(*other._imp))
+    {
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Sparse, container::Vector, DataType_>::ConstElementIterator(
+            const ElementIterator<storage::Sparse, container::Vector, DataType_> & other) :
+        PrivateImplementationPattern<ConstElementIterator<storage::Sparse, container::Vector, DataType_>, Single>(
+                new Implementation<ConstElementIterator<storage::Sparse, container::Vector, DataType_> >(*other._imp))
+    {
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Sparse, container::Vector, DataType_>::~ConstElementIterator()
+    {
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Sparse, container::Vector, DataType_> &
+    ConstElementIterator<storage::Sparse, container::Vector, DataType_>::operator= (
+            const ConstElementIterator<storage::Sparse, container::Vector, DataType_> & other)
+    {
+        if (&other == this)
+            return *this;
+
+        this->_imp->_vector = other._imp->_vector;
+        this->_imp->_index = other._imp->_index;
+        this->_imp->_pos = other._imp->_pos;
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Sparse, container::Vector, DataType_> &
+    ConstElementIterator<storage::Sparse, container::Vector, DataType_>::operator++ ()
+    {
+        CONTEXT("When incrementing ConstElementIterator<Sparse, Vector> by one:");
+
+        ++this->_imp->_index;
+        while ((this->_imp->_pos < this->_imp->_vector._imp->_used_elements) &&
+                (this->_imp->_vector._imp->_indices[this->_imp->_pos] < this->_imp->_index))
+            ++this->_imp->_pos;
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::Sparse, container::Vector, DataType_> &
+    ConstElementIterator<storage::Sparse, container::Vector, DataType_>::operator+= (const unsigned long step)
+    {
+        CONTEXT("When incrementing ConstElementIterator<Sparse, Vector> by '" + stringify(step) + "':");
+
+        this->_imp->_index += step;
+        while ((this->_imp->_pos < this->_imp->_vector._imp->_used_elements)
+                && (this->_imp->_vector._imp->_indices[this->_imp->_pos] < this->_imp->_index))
+            ++this->_imp->_pos;
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    const DataType_ &
+    ConstElementIterator<storage::Sparse, container::Vector, DataType_>::operator* () const
+    {
+        CONTEXT("When accessing unassignable element at index '" + stringify(this->_imp->_index) + "':");
+
+        if (this->_imp->_vector._imp->_indices[this->_imp->_pos] != this->_imp->_index)
+            return this->_imp->_vector._zero_element;
+        else
+            return this->_imp->_vector._imp->_elements[this->_imp->_pos];
+    }
+
+
+    template <typename DataType_>
+    bool
+    ConstElementIterator<storage::Sparse, container::Vector, DataType_>::operator< (
+            const ConstElementIterator<storage::Sparse, container::Vector, DataType_> & other) const
+    {
+        return this->_imp->_index < other._imp->_index;
+    }
+
+    template <typename DataType_>
+    bool
+    ConstElementIterator<storage::Sparse, container::Vector, DataType_>::operator== (
+            const ConstElementIterator<storage::Sparse, container::Vector, DataType_> & other) const
+    {
+        return ((this->_imp->_vector._imp == other._imp->_vector._imp) && (this->_imp->_index == other._imp->_index));
+    }
+
+    template <typename DataType_>
+    bool
+    ConstElementIterator<storage::Sparse, container::Vector, DataType_>::operator!= (
+            const ConstElementIterator<storage::Sparse, container::Vector, DataType_> & other) const
+    {
+        return ((this->_imp->_vector._imp != other._imp->_vector._imp) || (this->_imp->_index != other._imp->_index));
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ConstElementIterator<storage::Sparse, container::Vector, DataType_>::index() const
+    {
+        return this->_imp->_index;
+    }
+
+
+    template <typename DataType_> struct Implementation<ElementIterator<storage::SparseNonZero, container::Vector, DataType_> >
+    {
+        /// Our parent vector.
+        SparseVector<DataType_> _vector;
+
+        /// Our index.
+        unsigned long _index;
+
+        /// Our position in the index table.
+        unsigned long _pos;
+
+        Implementation(SparseVector<DataType_> & vector, unsigned long index, unsigned long pos) :
+            _vector(vector),
+            _index(index),
+            _pos(pos)
+        {
+        }
+    };
+
+    template <typename DataType_>
+    ElementIterator<storage::SparseNonZero, container::Vector, DataType_>::ElementIterator(SparseVector<DataType_> & vector,
+            unsigned long pos) :
+        PrivateImplementationPattern<ElementIterator<storage::SparseNonZero, container::Vector, DataType_>, Single>(
+                new Implementation<ElementIterator<storage::SparseNonZero, container::Vector, DataType_> >
+                (vector, vector._imp->_indices[pos], pos))
+    {
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::SparseNonZero, container::Vector, DataType_>::ElementIterator(
+            const ElementIterator<storage::SparseNonZero, container::Vector, DataType_> & other) :
+        PrivateImplementationPattern<ElementIterator<storage::SparseNonZero, container::Vector, DataType_>, Single>(
+                new Implementation<ElementIterator<storage::SparseNonZero, container::Vector, DataType_> >(*other._imp))
+    {
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::SparseNonZero, container::Vector, DataType_>::~ElementIterator()
+    {
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::SparseNonZero, container::Vector, DataType_> &
+    ElementIterator<storage::SparseNonZero, container::Vector, DataType_>::operator= (
+            const ElementIterator<storage::SparseNonZero, container::Vector, DataType_> & other)
+    {
+        if (&other == this)
+            return *this;
+
+        this->_imp->_vector = other._imp->_vector;
+        this->_imp->_index = other._imp->_index;
+        this->_imp->_pos = other._imp->_pos;
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::SparseNonZero, container::Vector, DataType_> &
+    ElementIterator<storage::SparseNonZero, container::Vector, DataType_>::operator++ ()
+    {
+        CONTEXT("When incrementing ElementIterator<SparseNonZero, Vector> by one:");
+
+        if (this->_imp->_vector._imp->_indices[this->_imp->_pos] == this->_imp->_index)
+        {
+            ++this->_imp->_pos;
+        }
+        else if (this->_imp->_vector._imp->_indices[this->_imp->_pos] < this->_imp->_index)
+        {
+            while (this->_imp->_vector._imp->_indices[this->_imp->_pos] <= this->_imp->_index)
+            {
+                ++this->_imp->_pos;
+            }
+        }
+        else if (this->_imp->_vector._imp->_indices[this->_imp->_pos] > this->_imp->_index)
+        {
+            while (this->_imp->_vector._imp->_indices[this->_imp->_pos] > this->_imp->_index)
+            {
+                --this->_imp->_pos;
+            }
+            ++this->_imp->_pos;
+        }
+
+        this->_imp->_index = this->_imp->_vector._imp->_indices[this->_imp->_pos];
+        return *this;
+    }
+
+    template <typename DataType_>
+    ElementIterator<storage::SparseNonZero, container::Vector, DataType_> &
+    ElementIterator<storage::SparseNonZero, container::Vector, DataType_>::operator+= (const unsigned long step)
+    {
+        CONTEXT("When incrementing ElementIterator<SparseNonZero, Vector> by '" + stringify(step) + "':");
+
+        //Restore position if the vector was modified
+
+        if (this->_imp->_vector._imp->_indices[this->_imp->_pos] < this->_imp->_index)
+        {
+            while (this->_imp->_vector._imp->_indices[this->_imp->_pos] < this->_imp->_index)
+            {
+                this->_imp->_pos++;
+            }
+        }
+        else if (this->_imp->_vector._imp->_indices[this->_imp->_pos] > this->_imp->_index)
+        {
+            while (this->_imp->_vector._imp->_indices[this->_imp->_pos] > this->_imp->_index)
+            {
+                this->_imp->_pos--;
+            }
+        }
+
+        this->_imp->_pos += step;
+        if (this->_imp->_pos < this->_imp->_vector.capacity())
+            this->_imp->_index = this->_imp->_vector._imp->_indices[this->_imp->_pos];
+        else
+            this->_imp->_index = this->_imp->_vector.size();
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    DataType_ &
+    ElementIterator<storage::SparseNonZero, container::Vector, DataType_>::operator* () const
+    {
+        CONTEXT("When accessing assignable element at index '" + stringify(this->_imp->_index) + "':");
+
+        //Restore position if the vector was modified
+        if (this->_imp->_vector._imp->_indices[this->_imp->_pos] < this->_imp->_index)
+        {
+            while (this->_imp->_vector._imp->_indices[this->_imp->_pos] < this->_imp->_index)
+            {
+                ++this->_imp->_pos;
+            }
+        }
+        else if (this->_imp->_vector._imp->_indices[this->_imp->_pos] > this->_imp->_index)
+        {
+            while (this->_imp->_vector._imp->_indices[this->_imp->_pos] > this->_imp->_index)
+            {
+                --this->_imp->_pos;
+            }
+        }
+        return this->_imp->_vector._imp->_elements[this->_imp->_pos];
+    }
+
+    template <typename DataType_>
+    bool
+    ElementIterator<storage::SparseNonZero, container::Vector, DataType_>::operator< (
+            const ElementIterator<storage::SparseNonZero, container::Vector, DataType_> & other) const
+    {
+        return this->_imp->_index < other._imp->_index;
+    }
+
+    template <typename DataType_>
+    bool
+    ElementIterator<storage::SparseNonZero, container::Vector, DataType_>::operator== (
+            const ElementIterator<storage::SparseNonZero, container::Vector, DataType_> & other) const
+    {
+        return ((this->_imp->_vector._imp == other._imp->_vector._imp) && (this->_imp->_index == other._imp->_index));
+    }
+
+    template <typename DataType_>
+    bool
+    ElementIterator<storage::SparseNonZero, container::Vector, DataType_>::operator!= (
+            const ElementIterator<storage::SparseNonZero, container::Vector, DataType_> & other) const
+    {
+        return ((this->_imp->_vector._imp != other._imp->_vector._imp) || (this->_imp->_index != other._imp->_index));
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ElementIterator<storage::SparseNonZero, container::Vector, DataType_>::index() const
+    {
+        return this->_imp->_index;
+    }
+
+    template <typename DataType_> struct Implementation<ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_> >
+    {
+        /// Our parent vector.
+        SparseVector<DataType_> _vector;
+
+        /// Our index.
+        unsigned long _index;
+
+        /// Our position in the index table.
+        unsigned long _pos;
+
+        Implementation(const SparseVector<DataType_> & vector, unsigned long index, unsigned long pos) :
+            _vector(vector),
+            _index(index),
+            _pos(pos)
+        {
+        }
+
+        Implementation(const Implementation<ElementIterator<storage::SparseNonZero, container::Vector, DataType_> > & other) :
+            _vector(other._vector),
+            _index(other._index),
+            _pos(other._pos)
+        {
+        }
+    };
+
+    template <typename DataType_>
+    ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_>::ConstElementIterator(const SparseVector<DataType_> & vector,
+            unsigned long pos) :
+        PrivateImplementationPattern<ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_>, Single>(
+                new Implementation<ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_> >
+                (vector, vector._imp->_indices[pos], pos))
+    {
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_>::ConstElementIterator(
+            const ElementIterator<storage::SparseNonZero, container::Vector, DataType_> & other) :
+        PrivateImplementationPattern<ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_>, Single>(
+                new Implementation<ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_> >(*other._imp))
+    {
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_>::ConstElementIterator(
+            const ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_> & other) :
+        PrivateImplementationPattern<ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_>, Single>(
+                new Implementation<ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_> >(*other._imp))
+    {
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_>::~ConstElementIterator()
+    {
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_> &
+    ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_>::operator= (
+            const ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_> & other)
+    {
+        if (&other == this)
+            return *this;
+
+        this->_imp->_vector = other._imp->_vector;
+        this->_imp->_index = other._imp->_index;
+        this->_imp->_pos = other._imp->_pos;
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_> &
+    ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_>::operator++ ()
+    {
+        CONTEXT("When incrementing ConstElementIterator<SparseNonZero, Vector> by one:");
+
+        if (this->_imp->_vector._imp->_indices[this->_imp->_pos] == this->_imp->_index)
+        {
+            ++this->_imp->_pos;
+        }
+        else if (this->_imp->_vector._imp->_indices[this->_imp->_pos] < this->_imp->_index)
+        {
+            while (this->_imp->_vector._imp->_indices[this->_imp->_pos] <= this->_imp->_index)
+            {
+                ++this->_imp->_pos;
+            }
+        }
+        else if (this->_imp->_vector._imp->_indices[this->_imp->_pos] > this->_imp->_index)
+        {
+            while (this->_imp->_vector._imp->_indices[this->_imp->_pos] > this->_imp->_index)
+            {
+                --this->_imp->_pos;
+            }
+            ++this->_imp->_pos;
+        }
+
+        this->_imp->_index = this->_imp->_vector._imp->_indices[this->_imp->_pos];
+        return *this;
+    }
+
+    template <typename DataType_>
+    ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_> &
+    ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_>::operator+= (const unsigned long step)
+    {
+        CONTEXT("When incrementing ConstElementIterator<SparseNonZero, Vector> by '" + stringify(step) + "':");
+
+        //Restore position if the vector was modified
+
+        if (this->_imp->_vector._imp->_indices[this->_imp->_pos] < this->_imp->_index)
+        {
+            while (this->_imp->_vector._imp->_indices[this->_imp->_pos] < this->_imp->_index)
+            {
+                this->_imp->_pos++;
+            }
+        }
+        else if (this->_imp->_vector._imp->_indices[this->_imp->_pos] > this->_imp->_index)
+        {
+            while (this->_imp->_vector._imp->_indices[this->_imp->_pos] > this->_imp->_index)
+            {
+                this->_imp->_pos--;
+            }
+        }
+
+        this->_imp->_pos += step;
+        if (this->_imp->_pos < this->_imp->_vector.capacity())
+            this->_imp->_index = this->_imp->_vector._imp->_indices[this->_imp->_pos];
+        else
+            this->_imp->_index = this->_imp->_vector.size();
+
+        return *this;
+    }
+
+    template <typename DataType_>
+    const DataType_ &
+    ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_>::operator* () const
+    {
+        CONTEXT("When accessing unassignable element at position '" + stringify(this->_imp->_pos) + "':");
+
+        //Restore position if the vector was modified
+        unsigned long temp_pos(this->_imp->_pos);
+        if (this->_imp->_vector._imp->_indices[temp_pos] < this->_imp->_index)
+        {
+            while (this->_imp->_vector._imp->_indices[temp_pos] < this->_imp->_index)
+            {
+                ++temp_pos;
+            }
+        }
+        else if (this->_imp->_vector._imp->_indices[temp_pos] > this->_imp->_index)
+        {
+            while (this->_imp->_vector._imp->_indices[temp_pos] > this->_imp->_index)
+            {
+                --temp_pos;
+            }
+        }
+        return this->_imp->_vector._imp->_elements[temp_pos];
+    }
+
+    template <typename DataType_>
+    bool
+    ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_>::operator< (
+            const ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_> & other) const
+    {
+        return this->_imp->_index < other._imp->_index;
+    }
+
+    template <typename DataType_>
+    bool
+    ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_>::operator== (
+            const ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_> & other) const
+    {
+        return ((this->_imp->_vector._imp == other._imp->_vector._imp) && (this->_imp->_index == other._imp->_index));
+    }
+
+    template <typename DataType_>
+    bool
+    ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_>::operator!= (
+            const ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_> & other) const
+    {
+        return ((this->_imp->_vector._imp != other._imp->_vector._imp) || (this->_imp->_index != other._imp->_index));
+    }
+
+    template <typename DataType_>
+    unsigned long
+    ConstElementIterator<storage::SparseNonZero, container::Vector, DataType_>::index() const
+    {
+        return this->_imp->_index;
+    }
+
+    template <typename DataType_>
+    bool
+    operator== (const SparseVector<DataType_> & a, const SparseVector<DataType_> & b)
+    {
+        if (a.size() != b.size())
+            throw VectorSizeDoesNotMatch(a.size(), b.size());
+
+        for (typename SparseVector<DataType_>::ConstElementIterator i(a.begin_elements()), i_end(a.end_elements()),
+                j(b.begin_elements()) ; i != i_end ; ++i, ++j)
+        {
+            if (std::fabs(*i - *j) > std::numeric_limits<DataType_>::epsilon())
+                return false;
+        }
+
+        return true;
+    }
+
+    template <typename DataType_>
+    std::ostream &
+    operator<< (std::ostream & lhs, const SparseVector<DataType_> & b)
+    {
+        lhs << "[";
+        for (typename SparseVector<DataType_>::ConstElementIterator i(b.begin_elements()), i_end(b.end_elements()) ;
+                i != i_end ; ++i)
+        {
+            lhs << "  " << *i;
+        }
+        lhs << "]" << std::endl;
+
+        return lhs;
+    }
 }
 
 #endif

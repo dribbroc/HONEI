@@ -113,7 +113,7 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            for (typename Matrix<DT2_>::ConstElementIterator r(b.begin_non_zero_elements()),
+            for (typename SparseMatrix<DT2_>::NonZeroConstElementIterator r(b.begin_non_zero_elements()),
                     r_end(b.end_non_zero_elements()) ; r != r_end ; ++r)
             {
                 a(r.row(), r.column()) += *r;
@@ -137,8 +137,8 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename MutableMatrix<DT1_>::ElementIterator l(a.begin_non_zero_elements());
-            for (typename Matrix<DT2_>::ConstElementIterator r(b.begin_non_zero_elements()),
+            typename SparseMatrix<DT1_>::NonZeroElementIterator l(a.begin_non_zero_elements());
+            for (typename SparseMatrix<DT2_>::NonZeroConstElementIterator r(b.begin_non_zero_elements()),
                     r_end(b.end_non_zero_elements()) ; r != r_end ; )
             {
                 if (r.index() < l.index())
@@ -249,7 +249,7 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename MutableMatrix<DT1_>::ElementIterator l(a.begin_non_zero_elements());
+            typename SparseMatrix<DT1_>::NonZeroElementIterator l(a.begin_non_zero_elements());
             for (typename BandedMatrix<DT2_>::ConstElementIterator r(b.begin_elements()), r_end(b.end_elements()) ;
                     r != r_end ; ++r)
             {
@@ -346,8 +346,8 @@ namespace honei
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-            typename Vector<DT1_>::ElementIterator l(a.begin_non_zero_elements());
-            for (typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements()),
+            typename SparseVector<DT1_>::NonZeroElementIterator l(a.begin_non_zero_elements());
+            for (typename SparseVector<DT2_>::NonZeroConstElementIterator r(b.begin_non_zero_elements()),
                     r_end(b.end_non_zero_elements()) ; r != r_end ; )
             {
                 if (r.index() < l.index())
@@ -377,7 +377,7 @@ namespace honei
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-            for (typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements()),
+            for (typename SparseVector<DT2_>::NonZeroConstElementIterator r(b.begin_non_zero_elements()),
                     r_end(b.end_non_zero_elements()) ; r != r_end ; ++r )
             {
                 a[r.index()] += *r;

@@ -201,7 +201,7 @@ namespace honei
     }
 
     template class InstantiationPolicy<MemoryBackend<tags::GPU::CUDA>, Singleton>;
-    template class MemoryBackend<tags::GPU::CUDA>;
+    //template class MemoryBackend<tags::GPU::CUDA>;
 }
 
 using namespace honei;

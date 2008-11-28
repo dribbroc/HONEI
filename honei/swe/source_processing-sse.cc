@@ -196,11 +196,11 @@ DenseVector<double> SourceProcessing<source_types::SIMPLE, tags::CPU::SSE>::valu
 */
     ///SSE loop: This routine does not yet check for any NAN cases (dry states!) and uses manning = 0!!! TODO!!
     __m128d m1, m2, m3, m4, m5, m6, m7, m8;
-    m1 = _mm_set_pd1(g);
-    m2 = _mm_set_pd1(zero);
-    m3 = _mm_set_pd1(exponent);
-    m4 = _mm_set_pd1(minus_one);
-    m5 = _mm_set_pd1(manning);
+    m1 = _mm_set1_pd(g);
+    m2 = _mm_set1_pd(zero);
+    m3 = _mm_set1_pd(exponent);
+    m4 = _mm_set1_pd(minus_one);
+    m5 = _mm_set1_pd(manning);
 
     for(unsigned long i(0); i < tripels - (tripels % 2); i += 2)
     {

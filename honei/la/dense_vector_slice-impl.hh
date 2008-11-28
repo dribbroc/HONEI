@@ -20,11 +20,8 @@
 #ifndef LIBLA_GUARD_DENSE_VECTOR_SLICE_IMPL_HH
 #define LIBLA_GUARD_DENSE_VECTOR_SLICE_IMPL_HH 1
 
-#include <honei/la/dense_matrix_tile.hh>
 #include <honei/la/dense_vector-impl.hh>
-#include <honei/la/dense_vector_slice-impl.hh>
 #include <honei/la/element_iterator.hh>
-#include <honei/la/vector.hh>
 #include <honei/util/assertion.hh>
 #include <honei/util/private_implementation_pattern-impl.hh>
 #include <honei/util/shared_array-impl.hh>

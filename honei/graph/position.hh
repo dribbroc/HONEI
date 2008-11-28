@@ -38,7 +38,6 @@
 #include <honei/la/reduction.hh>
 #include <honei/la/sum.hh>
 #include <honei/la/scale.hh>
-#include <honei/la/vector.hh>
 #include <honei/graph/abstract_graph.hh>
 #include <honei/graph/graph_error.hh>
 #include <honei/util/tags.hh>
@@ -174,7 +173,7 @@
 
             inline void elements_check(const SparseMatrix<DataType_> & weights_of_edges, bool & trace, bool & symmetry, bool & positiv)
             {
-                for (typename Matrix<DataType_>::ConstElementIterator e(weights_of_edges.begin_non_zero_elements()),
+                for (typename SparseMatrix<DataType_>::NonZeroConstElementIterator e(weights_of_edges.begin_non_zero_elements()),
                         e_end(weights_of_edges.end_non_zero_elements()); e != e_end ; ++e)
                 {
                     if (*e != weights_of_edges(e.column(), e.row())) symmetry = false;
@@ -204,7 +203,7 @@
                 if (coordinates.rows() != weights_of_edges.columns())
                     throw MatrixColumnsDoNotMatch(weights_of_edges.columns(), coordinates.columns());
 
-                if (! weights_of_edges.square())
+                if (weights_of_edges.rows() != weights_of_edges.columns())
                     throw MatrixIsNotSquare(weights_of_edges.rows(), weights_of_edges.columns());
 
                 if (weights_of_nodes.size() != coordinates.rows())
@@ -782,7 +781,7 @@
                     
                     // Calculate stepwidth
                     DataType_ stepwidth(0);
-                    for (typename Matrix<DataType_>::ConstElementIterator e(_weights_of_edges.begin_non_zero_elements()),
+                    for (typename SparseMatrix<DataType_>::NonZeroConstElementIterator e(_weights_of_edges.begin_non_zero_elements()),
                         e_end(_weights_of_edges.end_non_zero_elements()); e != e_end ; ++e)
                     {
                         DataType_ auxiliary(sqrt(_weights_of_nodes[e.row()] * _weights_of_nodes[e.column()]) / *e * _coordinates.rows() / 20);

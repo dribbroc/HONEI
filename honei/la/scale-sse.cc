@@ -77,7 +77,7 @@ SparseVector<double> & Scale<tags::CPU::SSE>::value(SparseVector<double> & x, co
     return x;
 }
 
-SparseMatrix<float> & Scale<tags::CPU::SSE>::value(SparseMatrix<float> & x, const float a)
+/*SparseMatrix<float> & Scale<tags::CPU::SSE>::value(SparseMatrix<float> & x, const float a)
 {
     CONTEXT("When scaling SparseMatrix<float> by float (SSE):");
 
@@ -101,5 +101,5 @@ SparseMatrix<double> & Scale<tags::CPU::SSE>::value(SparseMatrix<double> & x, co
     }
 
     return x;
-}
+}*/
 

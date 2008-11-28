@@ -593,7 +593,7 @@ class DenseVectorSparseVectorScaledSumTest :
                     if (i.index() % 10 == 0) *i = DataType_(2);
                 }
                 SparseVector<DataType_> sv2(size, size / 8 + 1);
-                for (typename Vector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
+                for (typename SparseVector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     if (i.index() % 7 == 0) *i = DataType_(3);
@@ -646,7 +646,7 @@ class DenseVectorSparseVectorScaledSumQuickTest :
                 if (i.index() % 10 == 0) *i = DataType_(2);
             }
             SparseVector<DataType_> sv2(size, size / 8 + 1);
-            for (typename Vector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
+            for (typename SparseVector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
                     i != i_end ; ++i)
             {
                 if (i.index() % 7 == 0) *i = DataType_(3);
@@ -693,13 +693,13 @@ class SparseVectorScaledSumTest :
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 SparseVector<DataType_> sv1(size, size / 7 + 1);
-                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+                for (typename SparseVector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     if (i.index() % 10 == 0) *i = DataType_(2);
                 }
                 SparseVector<DataType_> sv2(size, size / 8 + 1);
-                for (typename Vector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
+                for (typename SparseVector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     if (i.index() % 7 == 0) *i = DataType_(3);
@@ -708,7 +708,7 @@ class SparseVectorScaledSumTest :
                 DataType_ scal(2);
 
                 SparseVector<DataType_> sum2(size, size / 5 + 1);
-                for (typename Vector<DataType_>::ElementIterator i(sum2.begin_elements()), i_end(sum2.end_elements()) ;
+                for (typename SparseVector<DataType_>::ElementIterator i(sum2.begin_elements()), i_end(sum2.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     if (i.index() % 7 == 0) *i = DataType_(6);
@@ -746,13 +746,13 @@ class SparseVectorScaledSumQuickTest :
         {
             unsigned long size(15);
             SparseVector<DataType_> sv1(size, size / 7 + 1);
-            for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+            for (typename SparseVector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                     i != i_end ; ++i)
             {
                 if (i.index() % 10 == 0) *i = DataType_(2);
             }
             SparseVector<DataType_> sv2(size, size / 8 + 1);
-            for (typename Vector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
+            for (typename SparseVector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
                     i != i_end ; ++i)
             {
                 if (i.index() % 7 == 0) *i = DataType_(3);
@@ -760,7 +760,7 @@ class SparseVectorScaledSumQuickTest :
             DataType_ scal(2);
 
             SparseVector<DataType_> sum2(size, size / 5 + 1);
-            for (typename Vector<DataType_>::ElementIterator i(sum2.begin_elements()), i_end(sum2.end_elements()) ;
+            for (typename SparseVector<DataType_>::ElementIterator i(sum2.begin_elements()), i_end(sum2.end_elements()) ;
                     i != i_end ; ++i)
             {
                 if (i.index() % 7 == 0) *i = DataType_(6);

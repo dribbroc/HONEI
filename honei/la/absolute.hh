@@ -21,7 +21,6 @@
 #define LIBLA_GUARD_ABSOLUTE_HH 1
 
 #include <honei/la/dense_vector.hh>
-#include <honei/la/vector.hh>
 #include <honei/la/sparse_vector.hh>
 #include <honei/util/tags.hh>
 
@@ -58,7 +57,7 @@ namespace honei
         {
             CONTEXT("When calculating the absolute value of DenseVectorBase elements:");
 
-            for (typename Vector<DT_>::ElementIterator i(x.begin_elements()), i_end(x.end_elements()) ;
+            for (typename DenseVector<DT_>::ElementIterator i(x.begin_elements()), i_end(x.end_elements()) ;
                     i != i_end ; ++i)
             {
                 if (*i < DT_(0))

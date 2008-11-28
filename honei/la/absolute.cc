@@ -18,6 +18,7 @@
  */
 
 #include <honei/la/absolute.hh>
+#include <cmath>
 
 using namespace honei;
 
@@ -42,7 +43,7 @@ Absolute<tags::CPU>::value(SparseVector<float> & x)
 {
     CONTEXT("When calculating the absolute value of SparseVector<float> elements:");
 
-    for (Vector<float>::ElementIterator i(x.begin_non_zero_elements()), i_end(x.end_non_zero_elements()) ;
+    for (SparseVector<float>::NonZeroElementIterator i(x.begin_non_zero_elements()), i_end(x.end_non_zero_elements()) ;
             i != i_end ; ++i)
     {
         *i = fabs(*i);
@@ -72,7 +73,7 @@ Absolute<tags::CPU>::value(SparseVector<double> & x)
 {
     CONTEXT("When calculating the absolute value of SparseVector<double> elements:");
 
-    for (Vector<double>::ElementIterator i(x.begin_non_zero_elements()), i_end(x.end_non_zero_elements()) ;
+    for (SparseVector<double>::NonZeroElementIterator i(x.begin_non_zero_elements()), i_end(x.end_non_zero_elements()) ;
             i != i_end ; ++i)
     {
         *i = fabs(*i);

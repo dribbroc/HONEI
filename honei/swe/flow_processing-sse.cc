@@ -250,8 +250,8 @@ DenseVector<double> FlowProcessing<directions::X, tags::CPU::SSE>::value(DenseVe
     __m128d m1, m2, m3, m4, m5, m6, m7;
     double HONEI_ALIGNED(16) g(9.81);
     double HONEI_ALIGNED(16) two(2.0);
-    m4 = _mm_set_pd1(g);
-    m5 = _mm_set_pd1(two);
+    m4 = _mm_set1_pd(g);
+    m5 = _mm_set1_pd(two);
     for(unsigned long i(0); i < tripels - (tripels % 4); i += 2)
     {
         m1 = _mm_load_pd(h_buffer + i);
@@ -347,8 +347,8 @@ DenseVector<double> FlowProcessing<directions::Y, tags::CPU::SSE>::value(DenseVe
     __m128d m1, m2, m3, m4, m5, m6, m7;
     double HONEI_ALIGNED(16) g(9.81);
     double HONEI_ALIGNED(16) two(2.0);
-    m4 = _mm_set_pd1(g);
-    m5 = _mm_set_pd1(two);
+    m4 = _mm_set1_pd(g);
+    m5 = _mm_set1_pd(two);
     for(unsigned long i(0); i < tripels - (tripels % 4); i += 2)
     {
         m1 = _mm_load_pd(h_buffer + i);

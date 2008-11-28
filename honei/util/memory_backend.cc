@@ -24,8 +24,7 @@
 namespace honei
 {
     template class InstantiationPolicy<MemoryBackend<tags::CPU>, Singleton>;
-    template class MemoryBackend<tags::CPU>;
-
+    //template class MemoryBackend<tags::CPU>;
 }
 
 using namespace honei;

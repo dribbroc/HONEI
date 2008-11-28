@@ -237,7 +237,7 @@ class SparseMatrixScalarTest :
             {
                 SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1),
                     sm2(size+1, size, size / 7 + 1);
-                for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
+                for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                     i_end(sm1.end_elements()), j(sm2.begin_elements()) ; i != i_end ; ++i, ++j)
                 {
                     if (i.index() % 10 == 0)
@@ -258,10 +258,10 @@ SparseMatrixScalarTest<tags::CPU, double> sparse_matrix_test_double("double");
 SparseMatrixScalarTest<tags::CPU::MultiCore, float> mc_sparse_matrix_scale_test_float("MC float");
 SparseMatrixScalarTest<tags::CPU::MultiCore, double> mc_sparse_matrix_scale_test_double("MC double");
 #ifdef HONEI_SSE
-SparseMatrixScalarTest<tags::CPU::MultiCore::SSE, float> mc_sse_sparse_matrix_scale_test_float("MC SSE float");
-SparseMatrixScalarTest<tags::CPU::MultiCore::SSE, double> mc_sse_sparse_matrix_scale_test_double("MC SSE double");
-SparseMatrixScalarTest<tags::CPU::SSE, float> sse_sparse_matrix_scale_test_float("SSE float");
-SparseMatrixScalarTest<tags::CPU::SSE, double> sse_sparse_matrix_scale_test_double("SSE double");
+//SparseMatrixScalarTest<tags::CPU::MultiCore::SSE, float> mc_sse_sparse_matrix_scale_test_float("MC SSE float");
+//SparseMatrixScalarTest<tags::CPU::MultiCore::SSE, double> mc_sse_sparse_matrix_scale_test_double("MC SSE double");
+//SparseMatrixScalarTest<tags::CPU::SSE, float> sse_sparse_matrix_scale_test_float("SSE float");
+//SparseMatrixScalarTest<tags::CPU::SSE, double> sse_sparse_matrix_scale_test_double("SSE double");
 #endif
 
 #ifdef HONEI_CELL
@@ -284,7 +284,7 @@ class SparseMatrixScaleQuickTest :
             unsigned long size (22);
             SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1),
                 sm2(size+1, size, size / 7 + 1);
-            for (typename MutableMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
+            for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                 i_end(sm1.end_elements()), j(sm2.begin_elements()) ; i != i_end ; ++i, ++j)
             {
                 if (i.index() % 10 == 0)
@@ -303,10 +303,10 @@ SparseMatrixScaleQuickTest<tags::CPU, double> sparse_matrix_scale_quick_test_dou
 SparseMatrixScaleQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_quick_test_float("MC float");
 SparseMatrixScaleQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_quick_test_double("MC double");
 #ifdef HONEI_SSE
-SparseMatrixScaleQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_sparse_matrix_scalar_quick_test_float("MC SSE float");
-SparseMatrixScaleQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_sparse_matrix_quick_test_double("MC SSE double");
-SparseMatrixScaleQuickTest<tags::CPU::SSE, float> sse_sparse_matrix_quick_test_float("SSE float");
-SparseMatrixScaleQuickTest<tags::CPU::SSE, double> sse_sparse_matrix_quick_test_double("SSE double");
+//SparseMatrixScaleQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_sparse_matrix_scalar_quick_test_float("MC SSE float");
+//SparseMatrixScaleQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_sparse_matrix_quick_test_double("MC SSE double");
+//SparseMatrixScaleQuickTest<tags::CPU::SSE, float> sse_sparse_matrix_quick_test_float("SSE float");
+//SparseMatrixScaleQuickTest<tags::CPU::SSE, double> sse_sparse_matrix_quick_test_double("SSE double");
 #endif
 #ifdef HONEI_CELL
 SparseMatrixScaleQuickTest<tags::Cell, float> cell_sparse_matrix_scalar_quick_test_float("Cell float");
@@ -420,7 +420,7 @@ class SparseVectorScaleTest :
             for (unsigned long size(11) ; size < (1 << 10) ; size <<= 1)
             {
                 SparseVector<DataType_> sv1(size, size / 8 + 1);
-                for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+                for (typename SparseVector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     if (i.index() % 10 == 0) *i = 3;
@@ -461,7 +461,7 @@ class SparseVectorScaleQuickTest :
         {
             unsigned long size(111);
             SparseVector<DataType_> sv1(size, size / 8 + 1);
-            for (typename Vector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
+            for (typename SparseVector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
                     i != i_end ; ++i)
             {
                 if (i.index() % 10 == 0) *i = 3;

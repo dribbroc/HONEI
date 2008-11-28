@@ -92,8 +92,8 @@ namespace honei
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-            typename Vector<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
-            for (typename Vector<DT1_>::ElementIterator l(a.begin_non_zero_elements()),
+            typename SparseVector<DT2_>::NonZeroConstElementIterator r(b.begin_non_zero_elements());
+            for (typename SparseVector<DT1_>::NonZeroElementIterator l(a.begin_non_zero_elements()),
                     l_end(a.end_non_zero_elements()) ; l != l_end ;)
             {
                 if (r.index() < l.index())
@@ -123,7 +123,7 @@ namespace honei
             if (a.size() != b.size())
                 throw VectorSizeDoesNotMatch(b.size(), a.size());
 
-            for (typename Vector<DT1_>::ElementIterator l(a.begin_non_zero_elements()),
+            for (typename SparseVector<DT1_>::NonZeroElementIterator l(a.begin_non_zero_elements()),
                     l_end(a.end_non_zero_elements()) ; l != l_end ; ++l )
             {
                 *l *= b[l.index()];
@@ -197,7 +197,7 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_non_zero_elements()),
+            for (typename SparseMatrix<DT1_>::NonZeroElementIterator l(a.begin_non_zero_elements()),
                     l_end(a.end_non_zero_elements()); l != l_end ; ++l)
             {
                 *l *= b(l.row(), l.column());
@@ -221,8 +221,8 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.rows());
             }
 
-            typename Matrix<DT2_>::ConstElementIterator r(b.begin_non_zero_elements());
-            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_non_zero_elements()),
+            typename SparseMatrix<DT2_>::NonZeroConstElementIterator r(b.begin_non_zero_elements());
+            for (typename SparseMatrix<DT1_>::NonZeroElementIterator l(a.begin_non_zero_elements()),
                     l_end(a.end_non_zero_elements()) ; l != l_end ; )
             {
                 if (l.index() < r.index())
@@ -316,7 +316,7 @@ namespace honei
             }
 
             typename BandedMatrix<DT1_>::ElementIterator l(a.begin_elements());
-            for (typename Matrix<DT2_>::ConstElementIterator r(b.begin_non_zero_elements()),
+            for (typename SparseMatrix<DT2_>::NonZeroConstElementIterator r(b.begin_non_zero_elements()),
                     r_end(b.end_non_zero_elements()); r != r_end ; )
             {
                 while (l.index() < r.index())
@@ -354,7 +354,7 @@ namespace honei
             }
 
             typename BandedMatrix<DT2_>::ConstElementIterator r(b.begin_elements());
-            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_elements()),
+            for (typename DenseMatrix<DT1_>::ElementIterator l(a.begin_elements()),
                     l_end(a.end_elements()) ; l != l_end ; ++l)
             {
                 *l *= *r;
@@ -380,7 +380,7 @@ namespace honei
             }
 
             typename BandedMatrix<DT2_>::ConstElementIterator r(b.begin_elements());
-            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_non_zero_elements()),
+            for (typename SparseMatrix<DT1_>::NonZeroElementIterator l(a.begin_non_zero_elements()),
                     l_end(a.end_non_zero_elements()) ; l != l_end ; )
             {
                 while (r.index() < l.index())
@@ -411,7 +411,7 @@ namespace honei
         static inline BenchmarkInfo get_benchmark_info(SparseMatrix<DT1_> & a, DenseMatrix<DT2_> & b)
         {
             BenchmarkInfo result;
-            for (typename MutableMatrix<DT1_>::ElementIterator l(a.begin_non_zero_elements()),
+            for (typename SparseMatrix<DT1_>::NonZeroElementIterator l(a.begin_non_zero_elements()),
                     l_end(a.end_non_zero_elements()); l != l_end ; ++l)
             {
                 result.flops += 1;

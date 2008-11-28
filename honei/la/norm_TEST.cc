@@ -304,7 +304,7 @@ class SparseVectorNormValueTest :
                 DataType_ smax(0);
                 DataType_ s1(0);
                 DataType_ s2(0);
-                for (typename Vector<DataType_>::ElementIterator i(sv.begin_elements()),
+                for (typename SparseVector<DataType_>::ElementIterator i(sv.begin_elements()),
                         i_end(sv.end_elements()) ; i != i_end ; ++i)
                 {
                     if (i.index() % 10 == 0)
@@ -353,7 +353,7 @@ class SparseVectorNormQuickTest :
             DataType_ smax(0);
             DataType_ s1(0);
             DataType_ s2(0);
-            for (typename Vector<DataType_>::ElementIterator i(sv.begin_elements()),
+            for (typename SparseVector<DataType_>::ElementIterator i(sv.begin_elements()),
                     i_end(sv.end_elements()) ; i != i_end ; ++i)
             {
                 if (i.index() % 10 == 0)

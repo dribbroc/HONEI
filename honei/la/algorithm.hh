@@ -181,7 +181,7 @@ namespace honei
         if (copy.size() != orig.size())
             throw VectorSizeDoesNotMatch(orig.size(), copy.size());
 
-        for (typename Vector<OrigType_>::ConstElementIterator i(orig.begin_non_zero_elements()),
+        for (typename SparseVector<OrigType_>::NonZeroConstElementIterator i(orig.begin_non_zero_elements()),
                 i_end(orig.end_non_zero_elements()) ; i != i_end ; ++i)
         {
             copy[i.index()] = *i;
