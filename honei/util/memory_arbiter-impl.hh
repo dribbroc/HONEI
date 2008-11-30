@@ -415,6 +415,8 @@ namespace honei
                 return write_only(memory, memid, address, bytes);
             case lm_read_and_write:
                 return read_and_write(memory, memid, address, bytes);
+            default:
+                throw InternalError("Memory Arbiter: lock mode unknown!");
         }
     }
 
