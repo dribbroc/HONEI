@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+//#define SOLVER_VERBOSE 1
 #include <honei/math/multigrid.hh>
 #include <honei/math/fill_matrix.hh>
 #include <honei/math/fill_vector.hh>
@@ -222,4 +223,35 @@ class PoissonBenchmarkMGBandedQ1Fixed:
             evaluate();
         }
 };
-PoissonBenchmarkMGBandedQ1Fixed<tags::CPU, double> poisson_bench_mg_banded_float("MG double CPU 25", 5, 1);
+#ifdef HONEI_SSE
+/*PoissonBenchmarkMGBandedQ1Fixed<tags::CPU::SSE, float> poisson_bench_mg_banded_float_2("MG float SSE L2", 5, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::CPU::SSE, float> poisson_bench_mg_banded_float_3("MG float SSE L3", 9, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::CPU::SSE, float> poisson_bench_mg_banded_float_4("MG float SSE L4", 17, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::CPU::SSE, float> poisson_bench_mg_banded_float_5("MG float SSE L5", 33, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::CPU::SSE, float> poisson_bench_mg_banded_float_6("MG float SSE L6", 65, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::CPU::SSE, float> poisson_bench_mg_banded_float_7("MG float SSE L7", 129, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::CPU::SSE, float> poisson_bench_mg_banded_float_8("MG float SSE L8", 257, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::CPU::SSE, float> poisson_bench_mg_banded_float_9("MG float SSE L9", 513, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::CPU::SSE, float> poisson_bench_mg_banded_float_10("MG float SSE L10", 1025, 1);*/
+PoissonBenchmarkMGBandedQ1Fixed<tags::CPU::SSE, double> poisson_bench_mg_banded_double_2("MG double SSE L2", 5, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::CPU::SSE, double> poisson_bench_mg_banded_double_3("MG double SSE L3", 9, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::CPU::SSE, double> poisson_bench_mg_banded_double_4("MG double SSE L4", 17, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::CPU::SSE, double> poisson_bench_mg_banded_double_5("MG double SSE L5", 33, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::CPU::SSE, double> poisson_bench_mg_banded_double_6("MG double SSE L6", 65, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::CPU::SSE, double> poisson_bench_mg_banded_double_7("MG double SSE L7", 129, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::CPU::SSE, double> poisson_bench_mg_banded_double_8("MG double SSE L8", 257, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::CPU::SSE, double> poisson_bench_mg_banded_double_9("MG double SSE L9", 513, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::CPU::SSE, double> poisson_bench_mg_banded_double_10("MG double SSE L10", 1025, 1);
+#endif
+
+#ifdef HONEI_CUDA
+/*PoissonBenchmarkMGBandedQ1Fixed<tags::GPU::CUDA, float> poisson_bench_mg_banded_float_a2("MG float CUDA L2", 5, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::GPU::CUDA, float> poisson_bench_mg_banded_float_a3("MG float CUDA L3", 9, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::GPU::CUDA, float> poisson_bench_mg_banded_float_a4("MG float CUDA L4", 17, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::GPU::CUDA, float> poisson_bench_mg_banded_float_a5("MG float CUDA L5", 33, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::GPU::CUDA, float> poisson_bench_mg_banded_float_a6("MG float CUDA L6", 65, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::GPU::CUDA, float> poisson_bench_mg_banded_float_a7("MG float CUDA L7", 129, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::GPU::CUDA, float> poisson_bench_mg_banded_float_a8("MG float CUDA L8", 257, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::GPU::CUDA, float> poisson_bench_mg_banded_float_a9("MG float CUDA L9", 513, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::GPU::CUDA, float> poisson_bench_mg_banded_float_a10("MG float CUDA L10", 1025, 1);*/
+#endif

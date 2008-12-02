@@ -66,7 +66,7 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                 case 100:
                     {
                         glutSetWindowTitle("F(x,y) = f, Dirichlet 2, Neumann east MG V2+2, N=33^2");
-                        _root_n = 5;
+                        _root_n = 33;
                         unsigned long n(_root_n * _root_n);
                         _u = new DenseMatrix<float>(_root_n, _root_n, Prec_(0.00));
                         MGInfo<Prec_> info;
@@ -234,8 +234,6 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                         unsigned long column_index(0);
                         unsigned long index(0);
 
-                        std::cout << result;
-
                         for (; index < info.rhs[info.max_level].size() ; ++index)
                         {
                             (*_u)(row_index, column_index) = result[index] *100;
@@ -253,7 +251,7 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                 case 101:
                     {
                         glutSetWindowTitle("F(x,y) = f, Dirichlet 2, Neumann east MG V2+2, N=33^2, mixedprec");
-                        _root_n = 5;
+                        _root_n = 33;
                         unsigned long n(_root_n * _root_n);
                         _u = new DenseMatrix<float>(_root_n, _root_n, Prec_(0.00));
                         MGInfo<float> info;
@@ -324,10 +322,10 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                                 break;
                         }
 
-                        info.n_max_iter = 16;
+                        info.n_max_iter = 2;
                         info.initial_zero = false;
-                        info.tolerance = 1e-4;
-                        info.convergence_check = true;
+                        info.tolerance = 1e-2;
+                        info.convergence_check = false;
 
                         info.n_pre_smooth = 2;
                         info.n_post_smooth = 2;
@@ -425,7 +423,6 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                         unsigned long row_index(0);
                         unsigned long column_index(0);
                         unsigned long index(0);
-                        std::cout << result;
 
                         for (; index < info.rhs[info.max_level].size() ; ++index)
                         {

@@ -119,10 +119,6 @@ namespace honei
                         {
                             defect = Prec_(1e8);
                         }
-#ifdef SOLVER_VERBOSE
-                        std::cout << info.d[info.max_level] << std::endl;
-                        std::cout << defect << std::endl;
-#endif
                         // check if nothing needs to be done
                         if(info.convergence_check && defect <= info.tolerance)
                         {
@@ -227,12 +223,13 @@ endRestrictionLoop:
                                     // ----------------------
                                     // coarse grid correction
                                     // ----------------------
+
                                     if (info.min_level == info.max_level)
                                     {
                                         // For the case we actually have only one MG level, only
                                         // the following coarse grid correction (and no smoothing) is done.
 
-                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), 512ul));
+                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
 
                                         DenseVector<Prec_> defect_3(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                                         info.d[current_level] = defect_3;
@@ -247,7 +244,7 @@ endRestrictionLoop:
                                         // Otherwise this is a "real" coarse grid correction, which is
                                         // started with a zero start vector
 
-                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), 512ul));
+                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Coarse Grid solver." << std::endl;
 #endif
@@ -447,7 +444,6 @@ endCycleLoop:
 
                         info.x[info.max_level] = initial_guess;
                         info.x[info.max_level] = (_multigrid_kernel<Prec_>(info.a[info.max_level], right_hand_side, max_levels, &cappa, info));
-
                         return info.x[info.max_level];//result;
                     }
         };
@@ -582,12 +578,13 @@ endRestrictionLoop:
                                     // ----------------------
                                     // coarse grid correction
                                     // ----------------------
+
                                     if (info.min_level == info.max_level)
                                     {
                                         // For the case we actually have only one MG level, only
                                         // the following coarse grid correction (and no smoothing) is done.
 
-                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), 512ul));
+                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
 
                                         DenseVector<Prec_> defect_3(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                                         info.d[current_level] = defect_3;
@@ -602,7 +599,7 @@ endRestrictionLoop:
                                         // Otherwise this is a "real" coarse grid correction, which is
                                         // started with a zero start vector
 
-                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), 512ul));
+                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Coarse Grid solver." << std::endl;
 #endif
@@ -807,7 +804,7 @@ endCycleLoop:
                         convert(info.x[info.max_level], initial_guess);
 
                         unsigned long inner_iterations(0);
-                        unsigned long outer_iterations(1);
+                        unsigned long outer_iterations(0);
                         OuterPrec_ scale_factor(1.0);
 
                         // calc initial defect
@@ -835,6 +832,7 @@ endCycleLoop:
                             convert(info.rhs[info.max_level], outer_defect);
 
                             // run inner solver as long as neccessary
+
 #ifdef SOLVER_VERBOSE
                             std::cout << inner_iterations << "th iteration (outer)!" << std::endl;
 #endif
@@ -845,6 +843,7 @@ endCycleLoop:
 #ifdef SOLVER_BENCHMARK
                             ie.take();
 #endif
+
                             inner_iterations += info.inner_iterations;
 
                             // get "solution" and update outer solution
@@ -885,17 +884,17 @@ endCycleLoop:
                             inv = (1.0 / scale_factor);
                             Scale<OuterTag_>::value(outer_defect, inv);
 
-                            outer_iterations++;
+                                outer_iterations++;
 #ifdef SOLVER_BENCHMARK
                             oe.take();
                             std::cout << "Outer TOE: "<< (oe.sec() - ob.sec()) + (oe.usec() - ob.usec())/1e6<< std::endl;
                             std::cout << "Inner TOE: "<< (ie.sec() - ib.sec()) + (ie.usec() - ib.usec())/1e6<< std::endl;
 #endif
                         }
-#ifdef SOLVER_VERBOSE
+//#ifdef SOLVER_VERBOSE
                         std::cout << "TN of outer iters: " << outer_iterations << std::endl;
                         std::cout << "TN of inner iters: " << inner_iterations << std::endl;
-#endif
+//#endif
 #ifdef SOLVER_BENCHMARK
                         ae.take();
                         std::cout << "All TOE: "<< (ae.sec() - ab.sec()) + (ae.usec() - ab.usec())/1e6 << std::endl;

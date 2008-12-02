@@ -17,6 +17,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+//#define SOLVER_VERBOSE
+
 #include <honei/math/multigrid.hh>
 #include <honei/math/fill_matrix.hh>
 #include <honei/math/fill_vector.hh>
@@ -43,9 +45,9 @@ class PoissonBenchmarkMGBandedQ1Mixed:
         PoissonBenchmarkMGBandedQ1Mixed(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
     {
-            register_tag(OTag_::name);
-            _size  = size;
-            _count = count;
+        register_tag(OTag_::name);
+        _size  = size;
+        _count = count;
     }
 
         virtual void run()
@@ -120,10 +122,10 @@ class PoissonBenchmarkMGBandedQ1Mixed:
                     break;
             }
 
-            info.n_max_iter = 16;
+            info.n_max_iter = 2;
             info.initial_zero = false;
-            info.tolerance = 1e-4;
-            info.convergence_check = true;
+            info.tolerance = 1e-2;
+            info.convergence_check = false;
 
             info.n_pre_smooth = 2;
             info.n_post_smooth = 2;
@@ -215,8 +217,6 @@ class PoissonBenchmarkMGBandedQ1Mixed:
             DenseVector<DT1_> RHS( info.rhs[info.max_level].size(), DT1_(0.));
             FillVector<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(RHS);
             DenseVector<DT1_> result(n, DT1_(0));
-            result = Multigrid<tags::GPU::CUDA, tags::CPU::SSE, JAC, CYCLE::V, MIXED>::value(A, RHS, (unsigned long)11, std::numeric_limits<double>::epsilon(), info);
-
             for (unsigned long i(0) ; i < 1 ; ++i)
             {
                 BENCHMARK(
@@ -229,4 +229,25 @@ class PoissonBenchmarkMGBandedQ1Mixed:
             evaluate();
         }
 };
-PoissonBenchmarkMGBandedQ1Mixed<tags::CPU, tags::CPU, double> poisson_bench_mg_banded_float("MG double CPU 25", 5, 1);
+#ifdef HONEI_SSE
+PoissonBenchmarkMGBandedQ1Mixed<tags::CPU::SSE, tags::CPU::SSE, double> poisson_bench_mg_banded_mixed_2_cpu("MG mixed CPU/CPU L2", 5, 1);
+PoissonBenchmarkMGBandedQ1Mixed<tags::CPU::SSE, tags::CPU::SSE, double> poisson_bench_mg_banded_mixed_3_cpu("MG mixed CPU/CPU L3", 9, 1);
+PoissonBenchmarkMGBandedQ1Mixed<tags::CPU::SSE, tags::CPU::SSE, double> poisson_bench_mg_banded_mixed_4_cpu("MG mixed CPU/CPU L4", 17, 1);
+PoissonBenchmarkMGBandedQ1Mixed<tags::CPU::SSE, tags::CPU::SSE, double> poisson_bench_mg_banded_mixed_5_cpu("MG mixed CPU/CPU L5", 33, 1);
+PoissonBenchmarkMGBandedQ1Mixed<tags::CPU::SSE, tags::CPU::SSE, double> poisson_bench_mg_banded_mixed_6_cpu("MG mixed CPU/CPU L6", 65, 1);
+PoissonBenchmarkMGBandedQ1Mixed<tags::CPU::SSE, tags::CPU::SSE, double> poisson_bench_mg_banded_mixed_7_cpu("MG mixed CPU/CPU L7", 129, 1);
+PoissonBenchmarkMGBandedQ1Mixed<tags::CPU::SSE, tags::CPU::SSE, double> poisson_bench_mg_banded_mixed_8_cpu("MG mixed CPU/CPU L8", 257, 1);
+PoissonBenchmarkMGBandedQ1Mixed<tags::CPU::SSE, tags::CPU::SSE, double> poisson_bench_mg_banded_mixed_9_cpu("MG mixed CPU/CPU L9", 513, 1);
+PoissonBenchmarkMGBandedQ1Mixed<tags::CPU::SSE, tags::CPU::SSE, double> poisson_bench_mg_banded_mixed_10_cpu("MG mixed CPU/CPU L10", 1025, 1);
+#ifdef HONEI_CUDA
+PoissonBenchmarkMGBandedQ1Mixed<tags::GPU::CUDA, tags::CPU::SSE, double> poisson_bench_mg_banded_mixed_2("MG mixed GPU/CPU L2", 5, 1);
+PoissonBenchmarkMGBandedQ1Mixed<tags::GPU::CUDA, tags::CPU::SSE, double> poisson_bench_mg_banded_mixed_3("MG mixed GPU/CPU L3", 9, 1);
+PoissonBenchmarkMGBandedQ1Mixed<tags::GPU::CUDA, tags::CPU::SSE, double> poisson_bench_mg_banded_mixed_4("MG mixed GPU/CPU L4", 17, 1);
+PoissonBenchmarkMGBandedQ1Mixed<tags::GPU::CUDA, tags::CPU::SSE, double> poisson_bench_mg_banded_mixed_5("MG mixed GPU/CPU L5", 33, 1);
+PoissonBenchmarkMGBandedQ1Mixed<tags::GPU::CUDA, tags::CPU::SSE, double> poisson_bench_mg_banded_mixed_6("MG mixed GPU/CPU L6", 65, 1);
+PoissonBenchmarkMGBandedQ1Mixed<tags::GPU::CUDA, tags::CPU::SSE, double> poisson_bench_mg_banded_mixed_7("MG mixed GPU/CPU L7", 129, 1);
+PoissonBenchmarkMGBandedQ1Mixed<tags::GPU::CUDA, tags::CPU::SSE, double> poisson_bench_mg_banded_mixed_8("MG mixed GPU/CPU L8", 257, 1);
+PoissonBenchmarkMGBandedQ1Mixed<tags::GPU::CUDA, tags::CPU::SSE, double> poisson_bench_mg_banded_mixed_9("MG mixed GPU/CPU L9", 513, 1);
+PoissonBenchmarkMGBandedQ1Mixed<tags::GPU::CUDA, tags::CPU::SSE, double> poisson_bench_mg_banded_mixed_10("MG mixed GPU/CPU L10", 1025, 1);
+#endif
+#endif
