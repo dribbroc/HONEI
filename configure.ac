@@ -216,7 +216,7 @@ dnl }}}
 dnl {{{ check for MPI support
 AC_MSG_CHECKING([whether to build MPI support])
 AC_ARG_ENABLE([mpi],
-	AS_HELP_STRING([--enable-mpi], [Build MPI support (needs packages: none)]),
+	AS_HELP_STRING([--enable-mpi], [Build MPI support (needs packages: OpenMPI)]),
 		[ENABLE_MPI=$enableval
 		  AC_MSG_RESULT([$enableval])],
 		[ENABLE_MPI=no
@@ -294,6 +294,47 @@ AC_ARG_WITH([visual],
 AC_SUBST([WITH_VISUAL])
 AM_CONDITIONAL([VISUAL], test "x$WITH_VISUAL" = "xyes")
 if test "x$WITH_VISUAL" = "xyes"; then
+	dnl {{{ check for libX11
+	AC_CHECK_LIB(X11, XOpenDisplay,
+		[have_x11=yes])
+	if test "x$have_x11" != "xyes" ; then
+		AC_MSG_ERROR([libX11 is needed for GPU support.])
+	fi
+	dnl }}}
+	dnl {{{ check for libGL
+	AC_CHECK_LIB(GL, glXCreateContext,
+		[have_gl=yes])
+	if test "x$have_gl" != "xyes" ; then
+		AC_MSG_ERROR([libGL (http://www.opengl.org) not found.])
+	fi
+	dnl }}}
+	dnl {{{ check for libGLU
+	AC_CHECK_LIB(GLU, gluPerspective,
+		[have_glu=yes])
+	if test "x$have_glu" != "xyes" ; then
+		AC_MSG_ERROR([libGLU (http://www.opengl.org) not found.])
+	fi
+	dnl }}}
+	dnl {{{ check for libglut
+	AC_CHECK_LIB(glut, glutPostRedisplay,
+		[have_glut=yes])
+	if test "x$have_glut" != "xyes" ; then
+		AC_MSG_ERROR([libglut (http://www.opengl.org) not found.])
+	fi
+	dnl }}}
+fi
+dnl }}}
+dnl {{{
+AC_MSG_CHECKING([whether to build the deprecated visualisation tests])
+AC_ARG_WITH([visual_old],
+	AS_HELP_STRING([--with-visual_old], [Build deprecated visualisation tests (needs packages: libGL, libGLU, libglut)]),
+		[WITH_VISUAL_OLD=$withval
+		  AC_MSG_RESULT([$withval])],
+		[WITH_HDF5=no
+		  AC_MSG_RESULT([no])])
+AC_SUBST([WITH_VISUAL_OLD])
+AM_CONDITIONAL([VISUAL_OLD], test "x$WITH_VISUAL_OLD" = "xyes")
+if test "x$WITH_VISUAL_OLD" = "xyes"; then
 	dnl {{{ check for libX11
 	AC_CHECK_LIB(X11, XOpenDisplay,
 		[have_x11=yes])

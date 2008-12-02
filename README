@@ -1,0 +1,24 @@
+HONEI README FILE
+
+INSTALLING
+* Untar and decompress the honei archive.
+* Run './configure' in the untarred honei archive's top-level directory.
+* Run 'make'.
+* Optionally run 'make check'.
+* Run 'make install'
+
+To adapt the honei installation to your systems features, you can give several parameters to the configure script.
+A full list can be obtained with './configure --help'.
+The common parameters are:
+--enable-cell           Build Cell BE support
+--enable-gpu            Build GPU support
+--enable-cuda           Build CUDA support
+--enable-sse            Build SSE support
+--with-visual           Build the visual applications
+--prefix=PATH           Change the installation path to PATH
+
+
+BENCHMARKS
+Along with the applications the benchmarks can be found in /usr/local/bin (unless you changed the installation path with --prefix=installation_path).
+The benchmark names should be self-explanatory.
+By adding 'i' for interactive mode or 'cuda', 'sse', 'cell' to the benchmark call, you can specify what backends should be benchmarked.

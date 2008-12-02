@@ -64,7 +64,7 @@ DEFS = \
 	-DHONEI_SOURCEDIR='"$(top_srcdir)"'
 
 noinst_LIBRARIES = libbenchmark.a
-noinst_PROGRAMS = benchmarklist
+bin_PROGRAMS = benchmarklist
 
 libbenchmark_a_SOURCES = \
 	benchmark.cc benchmark.hh

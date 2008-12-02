@@ -4,7 +4,7 @@ MAINTAINERCLEANFILES = \
 AUTOMAKE_OPTIONS = foreign dist-bzip2
 EXTRA_DIST = honeirc
 
-if VISUAL
+if VISUAL_OLD
   VISUALDIR = visual
 endif
 
