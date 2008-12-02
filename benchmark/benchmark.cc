@@ -135,7 +135,8 @@ void Benchmark::evaluate()
     std::cout << "Runtime - highest: " << _max << "sec (" << _xmax << ".)" << std::endl;
     std::cout << "Runtime - mean:    " << _avg << "sec" << std::endl;
     std::cout << "Runtime - median:  " << _median << "sec" << std::endl;
-    std::ofstream ofs("BenchmarkOut.txt", std::ios_base::out | std::ios_base::app);
+    /// \todo Reenable file output if needed
+    /*std::ofstream ofs("BenchmarkOut.txt", std::ios_base::out | std::ios_base::app);
     if (!ofs)
         std::cout << "Can't write to file!" << std::endl;
     else
@@ -151,7 +152,7 @@ void Benchmark::evaluate()
         ofs << "Runtime - mean:    " << _avg << "sec" << std::endl;
         ofs << "Runtime - median:  " << _median << "sec" << std::endl;
         ofs << std::endl << std::endl << std::endl;
-    }
+    }*/
 }
 
 void Benchmark::evaluate(BenchmarkInfo info)
@@ -192,7 +193,8 @@ void Benchmark::evaluate(BenchmarkInfo info)
         if (info.scaleinfo != " ")
             std::cout << info.scaleinfo << std::endl;
     }
-    std::ofstream ofs("BenchmarkOut.txt", std::ios_base::out | std::ios_base::app);
+    /// \todo Reenable file output if needed
+    /*std::ofstream ofs("BenchmarkOut.txt", std::ios_base::out | std::ios_base::app);
     if (!ofs)
         std::cout << "Can't write to file!" << std::endl;
     else
@@ -214,7 +216,7 @@ void Benchmark::evaluate(BenchmarkInfo info)
         ofs << _medianf << " " << pf[j] << "FLOPS (median)" << std::endl;
         ofs << _minf << " " << pf[j] << "FLOPS (peak)" << std::endl;
         ofs << std::endl << std::endl << std::endl;
-    }
+    }*/
 }
 
 void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<std::string> cores, int count)
