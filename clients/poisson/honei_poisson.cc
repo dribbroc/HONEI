@@ -120,7 +120,9 @@ void switch_scenario(int id)
         controller_f = new ScenarioController<tags::CPU::SSE , float> (id);
         controller_f->init();
     }
-    else*/ if (ScenarioController<tags::CPU::SSE , double>::get_precision(id) == 1)
+    else*/
+#ifdef HONEI_SSE
+    if (ScenarioController<tags::CPU::SSE , double>::get_precision(id) == 1)
     {
         delete controller_f;
         delete controller_d;
@@ -128,6 +130,16 @@ void switch_scenario(int id)
         controller_d = new ScenarioController<tags::CPU::SSE , double> (id);
         controller_d->init();
     }
+#else
+    if (ScenarioController<tags::CPU, double>::get_precision(id) == 1)
+    {
+        delete controller_f;
+        delete controller_d;
+        controller_f = 0;
+        controller_d = new ScenarioController<tags::CPU::SSE , double> (id);
+        controller_d->init();
+    }
+#endif
     calc = true;
     glutDisplayFunc(display);
     glutIdleFunc(display);
