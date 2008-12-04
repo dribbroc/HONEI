@@ -419,19 +419,9 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                         DenseVector<Prec_> result(n, Prec_(0));
 
 #ifdef HONEI_SSE
-    #ifdef HONEI_CUDA
-                        result = Multigrid<tags::GPU::CUDA, tags::CPU::SSE, JAC, CYCLE::V, MIXED>::value(A, RHS, (unsigned long)11, std::numeric_limits<double>::epsilon(), info);
-    #else
-
                         result = Multigrid<tags::CPU::SSE, tags::CPU::SSE, JAC, CYCLE::V, MIXED>::value(A, RHS, (unsigned long)11, std::numeric_limits<double>::epsilon(), info);
-    #endif
 #else
-    #ifdef HONEI_CUDA
-                        result = Multigrid<tags::GPU::CUDA, tags::CPU, JAC, CYCLE::V, MIXED>::value(A, RHS, (unsigned long)11, std::numeric_limits<double>::epsilon(), info);
-    #else
-
                         result = Multigrid<tags::CPU, tags::CPU, JAC, CYCLE::V, MIXED>::value(A, RHS, (unsigned long)11, std::numeric_limits<double>::epsilon(), info);
-    #endif
 #endif
 
                         //write result to scalarfield:

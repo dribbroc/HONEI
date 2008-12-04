@@ -24,9 +24,13 @@
 #include <scenario_controller.hh>
 #include <honei/util/time_stamp.hh>
 
+#ifdef HONEI_SSE
 ScenarioController<tags::CPU::SSE, float> * controller_f;
 ScenarioController<tags::CPU::SSE, double> * controller_d;
-
+#else
+ScenarioController<tags::CPU, float> * controller_f;
+ScenarioController<tags::CPU, double> * controller_d;
+#endif
 double rotation_x_increment;
 double rotation_y_increment;
 double rotation_z_increment;
