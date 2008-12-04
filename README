@@ -1,10 +1,10 @@
 HONEI README FILE
 
 INSTALLING
-* Untar and decompress the honei archive.
+* Decompress and untar the honei archive.
 * Run './configure' in the untarred honei archive's top-level directory.
 * Run 'make'.
-* Optionally run 'make check'.
+* Optionally run 'make check TYPE=quick'.
 * Run 'make install'
 
 To adapt the honei installation to your systems features, you can give several parameters to the configure script.
@@ -17,9 +17,15 @@ The common parameters are:
 --with-visual           Build the visual applications
 --prefix=PATH           Change the installation path to PATH
 
+APPLICATIONS
+The available applications (assuming you activated building visual applications by '--with-visual') are:
+honei-poisson
+honei-swe
+honei-lbm
+Once started, you can get an options menu by a right-click anywhere within the application window.
 
 BENCHMARKS
-Along with the applications the benchmarks can be found in /usr/local/bin (unless you changed the installation path with --prefix=installation_path).
+The benchmarks can be found in /benchmark in the build directory.
 The benchmark names should be self-explanatory.
 By adding 'i' for interactive mode or 'cuda', 'sse', 'cell' to the benchmark call, you can specify what backends should be benchmarked.
 
