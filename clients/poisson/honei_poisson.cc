@@ -136,7 +136,7 @@ void switch_scenario(int id)
         delete controller_f;
         delete controller_d;
         controller_f = 0;
-        controller_d = new ScenarioController<tags::CPU::SSE , double> (id);
+        controller_d = new ScenarioController<tags::CPU, double> (id);
         controller_d->init();
     }
 #endif
