@@ -357,6 +357,14 @@ static void menu_main(GLint index)
     {
         case 0:
             ogl_init();
+            if (controller_f)
+            {
+                controller_f->init();
+            }
+            else if (controller_d)
+            {
+                controller_d->init();
+            }
             break;
         case 10:
             exit(0);
