@@ -145,40 +145,6 @@ if test "x$ENABLE_CELL" = "xyes" ; then
 	dnl }}}
 fi
 dnl }}}
-dnl {{{ check for GPU support
-AC_MSG_CHECKING([whether to build GPU support])
-AC_ARG_ENABLE([gpu],
-	AS_HELP_STRING([--enable-gpu], [Build GPU support (needs packages: libX11, libGL, libGLEW)]),
-		[ENABLE_GPU=$enableval
-		  AC_MSG_RESULT([$enableval])],
-		[ENABLE_GPU=no
-		  AC_MSG_RESULT([no])])
-AC_SUBST([ENABLE_GPU])
-AM_CONDITIONAL([GPU], test "x$ENABLE_GPU" = "xyes")
-if test "x$ENABLE_GPU" = "xyes" ; then
-	dnl {{{ check for libX11
-	AC_CHECK_LIB(X11, XOpenDisplay,
-		[have_x11=yes])
-	if test "x$have_x11" != "xyes" ; then
-		AC_MSG_ERROR([libX11 is needed for GPU support.])
-	fi
-	dnl }}}
-	dnl {{{ check for libGL
-	AC_CHECK_LIB(GL, glXCreateContext,
-		[have_gl=yes])
-	if test "x$have_gl" != "xyes" ; then
-		AC_MSG_ERROR([libGL is needed for GPU support.])
-	fi
-	dnl }}}
-	dnl {{{ check for libGLEW
-	AC_CHECK_LIB(GLEW, glewInit,
-		[have_glew=yes])
-	if test "x$have_glew" != "xyes" ; then
-		AC_MSG_ERROR([libGLEW is needed for GPU support.])
-	fi
-	dnl }}}
-fi
-dnl }}}
 dnl {{{ check for CUDA support
 AC_MSG_CHECKING([whether to build CUDA support])
 AC_ARG_ENABLE([cuda],

@@ -6,9 +6,6 @@ dnl vim: set ft=m4 noet :
 define(`general_filelist', `')dnl
 define(`general_testlist', `')dnl
 define(`general_headerlist', `')dnl
-define(`gpu_filelist', `')dnl
-define(`gpu_testlist', `')dnl
-define(`gpu_headerlist', `')dnl
 define(`hdf5_filelist', `')dnl
 define(`hdf5_testlist', `')dnl
 define(`hdf5_headerlist', `')dnl
@@ -46,22 +43,6 @@ DEFS = \
 	$(DEBUGDEF) \
 	$(PROFILERDEF)
 
-if GPU
-
-GPUSOURCES = gpu_filelist
-GPUTESTS = gpu_testlist
-GPUHEADERS = gpu_headerlist
-GPULIBS = -lX11 -lGL -lGLEW
-
-else
-
-GPUSOURCES =
-GPUTESTS =
-GPUHEADERS =
-GPULIBS =
-
-endif
-
 if HDF5
 
 HDF5SOURCES = hdf5_filelist
@@ -75,16 +56,15 @@ endif
 
 lib_LTLIBRARIES = libhoneiutil.la
 
-libhoneiutil_la_SOURCES = general_filelist $(GPUSOURCES) $(HDF5SOURCES)
+libhoneiutil_la_SOURCES = general_filelist $(HDF5SOURCES)
 libhoneiutil_la_LIBADD = \
 	-lpthread \
-	$(GPULIBS) \
 	$(HDF5LIBS)
 
 libhoneiutil_includedir = $(includedir)/honei/util
-libhoneiutil_include_HEADERS = general_headerlist $(GPUHEADERS) $(HDF5HEADERS)
+libhoneiutil_include_HEADERS = general_headerlist $(HDF5HEADERS)
 
-TESTS = general_testlist $(GPUTESTS) $(HDF5TESTS)
+TESTS = general_testlist $(HDF5TESTS)
 TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_srcdir)/unittest/run.sh
 
 check_PROGRAMS = $(TESTS)
