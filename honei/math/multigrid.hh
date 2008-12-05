@@ -41,47 +41,98 @@
 #include<fstream>
 #include<honei/util/time_stamp.hh>
 
+/**
+ * Use SOLVER_VERBOSE for detailed iteration-wise output of defect norms.
+ */
 //#define SOLVER_VERBOSE 1
 //#define SOLVER_BENCHMARK
+
+
 using namespace methods;
 namespace honei
 {
 
+    /**
+     * \brief Configuration and data structure for the Multigrid solver.
+     *
+     * MGInfo contains all data and configuration parameters needed by the multigrid solvers.
+     *
+     */
     template <typename Prec_>
-    struct MGInfo
-    {
-        public:
-            //configuration constants:
-            bool is_smoother;
-            DenseVector<unsigned long>* macro_border_mask;
-            unsigned long min_level;
-            unsigned long max_level;
+        struct MGInfo
+        {
+            public:
+                //configuration constants:
 
-            unsigned long  n_max_iter;
-            bool initial_zero;
-            Prec_ tolerance;
-            bool convergence_check;
+                /**
+                 * Defines, wether the solver is used in smoother-mode or not.
+                 */
+                bool is_smoother;
 
-            unsigned long inner_iterations;
+                /**
+                 * Contains constants to encode boundary condition type on the four edges and
+                 * the four corners of the parameterplane. Allowed values are 1 vor NEUMANN boundaries
+                 * and 2 for DIRICHLET boundaries. Used by Restriction and Prolongation.
+                 */
+                DenseVector<unsigned long>* macro_border_mask;
 
-            unsigned long  n_pre_smooth;
-            unsigned long  n_post_smooth;
-            unsigned long  n_max_iter_coarse;
-            Prec_ tolerance_coarse;
-            Prec_ adapt_correction_factor;
-            unsigned long n_truncate_d_o_f;
-            unsigned long n_threshold_d_o_f;
+                /**
+                 * The coasest and finest levels in the cycle.
+                 */
+                unsigned long min_level;
+                unsigned long max_level;
 
-            std::vector<DenseVector<Prec_> > c;
-            std::vector<DenseVector<Prec_> > d;
-            std::vector<DenseVector<Prec_> > rhs;
-            std::vector<DenseVector<Prec_> > x;
+                /**
+                 * The maximum number of iterations.
+                 */
+                unsigned long  n_max_iter;
 
-            std::vector<DenseVector<Prec_> > diags_inverted;
+                /**
+                 * Defines, wether the initial guess is the zero-vector or not.
+                 */
+                bool initial_zero;
 
-            std::vector<BandedMatrixQ1<Prec_> > a;
+                /**
+                 * Parameters used for convergence check.
+                 */
+                Prec_ tolerance;
+                bool convergence_check;
 
-    };
+                /**
+                 * Stores the number of iterations of the MG kernel used by the mixed
+                 * precision framework.
+                 */
+                unsigned long inner_iterations;
+
+                /**
+                 * Total number of iterations of the pre- and postsmoother and maximum number
+                 * of iterations of the coarse grid solver.
+                 */
+                unsigned long  n_pre_smooth;
+                unsigned long  n_post_smooth;
+                unsigned long  n_max_iter_coarse;
+
+                /**
+                 * Parameter used for convergence check of the coarse grid solver.
+                 */
+                Prec_ tolerance_coarse;
+
+                /**
+                 * Parameter used for adaptive correction. See kernel code for details.
+                 */
+                Prec_ adapt_correction_factor;
+
+                /**
+                 * STL vectors to store the data on all levels.
+                 */
+                std::vector<DenseVector<Prec_> > c;
+                std::vector<DenseVector<Prec_> > d;
+                std::vector<DenseVector<Prec_> > rhs;
+                std::vector<DenseVector<Prec_> > x;
+                std::vector<DenseVector<Prec_> > diags_inverted;
+                std::vector<BandedMatrixQ1<Prec_> > a;
+
+        };
 
     template<typename Tag_, typename OuterTag_, typename SmootherType_, typename CycleType_, typename Mode_>
         struct Multigrid
@@ -91,16 +142,16 @@ namespace honei
     template<typename Tag_, typename OuterTag_>
         class Multigrid<Tag_, OuterTag_, JAC, CYCLE::V, FIXED>
         {
-                template <typename Prec_>
-                    static DenseVector<Prec_> _multigrid_kernel(BandedMatrixQ1<Prec_>&  system, DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ * cappa, MGInfo<Prec_> & info)
+            template <typename Prec_>
+                static DenseVector<Prec_> _multigrid_kernel(BandedMatrixQ1<Prec_>&  system, DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ * cappa, MGInfo<Prec_> & info)
+                {
+                    bool restriction_started(false);
+                    // compute initial defect
+                    // when start vector is zero: set d = rhs (we can save one matvec here)
+                    // when start vector is not zero: d = rhs - A*x
+                    if(info.initial_zero)
                     {
-                        bool restriction_started(false);
-                        // compute initial defect
-                        // when start vector is zero: set d = rhs (we can save one matvec here)
-                        // when start vector is not zero: d = rhs - A*x
-                        if(info.initial_zero)
-                        {
-                            info.d[info.max_level] = info.rhs[info.max_level];
+                        info.d[info.max_level] = info.rhs[info.max_level];
                         }
                         else
                         {
