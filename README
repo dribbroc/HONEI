@@ -17,11 +17,19 @@ The common parameters are:
 --with-visual           Build the visual applications
 --prefix=PATH           Change the installation path to PATH
 
+Currently only common versions of the GNU Compiler Collection's c++ compiler are fully supported and tested.
+
+In order to use the SSE backend, you must at least enable SSE2 support of your compiler (CXXFLAGS+="-msse2" for g++).
+To build the visual applications you need GL, GLU and GLUT headers and libraries.
+
+The Cell backend relies heavily on the IBM Cell SDK 2.0.
+Therefore the IBM Cell SDK (at least version 2.0) should be installed properly.
+In addition you need an installed libspe2 and CC/CXX must point to the SDK's GNU c/c++ compilers.
+
 APPLICATIONS
-The available applications (assuming you activated building visual applications by '--with-visual') are:
+The installed applications (assuming you activated building visual applications by '--with-visual') are:
 honei-poisson
 honei-swe
-honei-lbm
 Once started, you can get an options menu by a right-click anywhere within the application window.
 
 BENCHMARKS
