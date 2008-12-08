@@ -123,15 +123,7 @@ SolverBench<tags::CPU, float> solver_bench_float_1("Solver Benchmark - size: 21,
 SolverBench<tags::CPU, double> solver_bench_double_1("Solver Benchmark - size: 21, double", 21, 100);
 SolverBench<tags::CPU, float> solver_bench_float_2("Solver Benchmark - size: 41, float", 41, 100);
 SolverBench<tags::CPU, double> solver_bench_double_2("Solver Benchmark - size: 41, double", 41, 100);
-SolverBench<tags::CPU::MultiCore, float> mc_solver_bench_float_1("MC Solver Benchmark - size: 21, float", 21, 100);
-SolverBench<tags::CPU::MultiCore, double> mc_solver_bench_double_1("MC Solver Benchmark - size: 21, double", 21, 100);
-SolverBench<tags::CPU::MultiCore, float> mc_solver_bench_float_2("MC Solver Benchmark - size: 41, float", 41, 100);
-SolverBench<tags::CPU::MultiCore, double> mc_solver_bench_double_2("MC Solver Benchmark - size: 41, double", 41, 100);
 #ifdef HONEI_SSE
-SolverBench<tags::CPU::MultiCore::SSE, float> mc_sse_solver_bench_float_1("MC SSE Solver Benchmark - size: 21, float", 21, 100);
-SolverBench<tags::CPU::MultiCore::SSE, double> mc_sse_solver_bench_double_1("MC SSE Solver Benchmark - size: 21, double", 21, 100);
-SolverBench<tags::CPU::MultiCore::SSE, float> mc_sse_solver_bench_float_2("MC SSE Solver Benchmark - size: 41, float", 41, 100);
-SolverBench<tags::CPU::MultiCore::SSE, double> mc_sse_solver_bench_double_2("MC SSE Solver Benchmark - size: 41, double", 41, 100);
 SolverBench<tags::CPU::SSE, float> sse_solver_bench_float_1("SSE Solver Benchmark - size: 21, float", 21, 100);
 SolverBench<tags::CPU::SSE, double> sse_solver_bench_double_1("SSE Solver Benchmark - size: 21, double", 21, 100);
 SolverBench<tags::CPU::SSE, float> sse_solver_bench_float_2("SSE Solver Benchmark - size: 41, float", 41, 100);

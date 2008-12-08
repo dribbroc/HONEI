@@ -129,8 +129,6 @@ class BreadthFirstSearchQuickTest :
 // instantiate test cases
 BreadthFirstSearchQuickTest<float, tags::CPU> breadth_first_search_quick_test_float("float");
 BreadthFirstSearchQuickTest<double, tags::CPU> breadth_first_search_quick_test_double("double");
-BreadthFirstSearchQuickTest<float, tags::CPU::MultiCore> mc_breadth_first_search_quick_test_float("mc float");
-BreadthFirstSearchQuickTest<double, tags::CPU::MultiCore> mc_breadth_first_search_quick_test_double("mc double");
 
 
 template <typename DataType_, typename Tag_>
@@ -215,8 +213,6 @@ class BreadthFirstSearchCliqueTest :
 // instantiate test cases
 BreadthFirstSearchCliqueTest<float, tags::CPU> breadth_first_search_clique_test_float("clique, float", 100);
 BreadthFirstSearchCliqueTest<double, tags::CPU> breadth_first_search_test_clique_double("clique, double", 100);
-BreadthFirstSearchCliqueTest<float, tags::CPU::MultiCore> mc_breadth_first_search_clique_test_float("clique, mc float", 100);
-BreadthFirstSearchCliqueTest<double, tags::CPU::MultiCore> mc_breadth_first_search_clique_test_double("clique, mc double", 100);
 
 
 template <typename DataType_, typename Tag_>
@@ -315,5 +311,3 @@ class BreadthFirstSearchBinaryTreeTest :
 // instantiate test cases
 BreadthFirstSearchBinaryTreeTest<float, tags::CPU> breadth_first_search_binary_tree_test_float("binary_tree, float", 10);
 BreadthFirstSearchBinaryTreeTest<double, tags::CPU> breadth_first_search_binary_tree_test_double("binary_tree, double", 10);
-BreadthFirstSearchBinaryTreeTest<float, tags::CPU::MultiCore> mc_breadth_first_search_binary_tree_test_float("binary_tree, mc float", 10);
-BreadthFirstSearchBinaryTreeTest<double, tags::CPU::MultiCore> mc_breadth_first_search_binary_tree_test_double("binary_tree, mc double", 10);

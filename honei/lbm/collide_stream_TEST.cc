@@ -66,13 +66,9 @@ class CollideStreamLABSWETest :
 };
 CollideStreamLABSWETest<tags::CPU, float> collide_stream_test_float("float");
 CollideStreamLABSWETest<tags::CPU, double> collide_stream_test_double("double");
-CollideStreamLABSWETest<tags::CPU::MultiCore, float> collide_stream_test_float_mc("float");
-CollideStreamLABSWETest<tags::CPU::MultiCore, double> collide_stream_test_double_mc("double");
 #ifdef HONEI_SSE
 CollideStreamLABSWETest<tags::CPU::SSE, float> collide_stream_test_float_sse("float");
 CollideStreamLABSWETest<tags::CPU::SSE, double> collide_stream_test_double_sse("double");
-CollideStreamLABSWETest<tags::CPU::MultiCore::SSE, float> collide_stream_test_float_mc_sse("float");
-CollideStreamLABSWETest<tags::CPU::MultiCore::SSE, double> collide_stream_test_double_mc_sse("double");
 #endif
 #ifdef HONEI_CELL
 CollideStreamLABSWETest<tags::Cell, float> collide_stream_test_float_cell("float");

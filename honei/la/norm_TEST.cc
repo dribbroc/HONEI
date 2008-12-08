@@ -80,8 +80,6 @@ class DenseVectorNormValueTest :
 
 DenseVectorNormValueTest<tags::CPU, float> dense_vector_norm_value_test_float("float");
 DenseVectorNormValueTest<tags::CPU, double> dense_vector_norm_value_test_double("double");
-DenseVectorNormValueTest<tags::CPU::MultiCore, float> mc_dense_vector_norm_value_test_float("MC float");
-DenseVectorNormValueTest<tags::CPU::MultiCore, double> mc_dense_vector_norm_value_test_double("MC double");
 #ifdef HONEI_CELL
 DenseVectorNormValueTest<tags::Cell, float> cell_dense_vector_norm_value_test_float("float (Cell)");
 DenseVectorNormValueTest<tags::Cell, double> cell_dense_vector_norm_value_test_double("double (Cell)");
@@ -134,8 +132,6 @@ class DenseVectorNormQuickTest :
 };
 DenseVectorNormQuickTest<tags::CPU, float>  dense_vector_norm_quick_test_float("float");
 DenseVectorNormQuickTest<tags::CPU, double> dense_vector_norm_quick_test_double("double");
-DenseVectorNormQuickTest<tags::CPU::MultiCore, float>  mc_dense_vector_norm_quick_test_float("MC float");
-DenseVectorNormQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_norm_quick_test_double("MC double");
 #ifdef HONEI_CELL
 DenseVectorNormQuickTest<tags::Cell, float> cell_dense_vector_norm_quick_test_float("float (Cell)");
 DenseVectorNormQuickTest<tags::Cell, double> cell_dense_vector_norm_quick_test_double("double (Cell)");
@@ -198,13 +194,9 @@ class DenseVectorRangeNormValueTest :
 };
 DenseVectorRangeNormValueTest<tags::CPU, float> dense_vector_range_norm_value_test_float("float");
 DenseVectorRangeNormValueTest<tags::CPU, double> dense_vector_range_norm_value_test_double("double");
-DenseVectorRangeNormValueTest<tags::CPU::MultiCore, float> mc_dense_vector_range_norm_value_test_float("MC float");
-DenseVectorRangeNormValueTest<tags::CPU::MultiCore, double> mc_dense_vector_range_norm_value_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorRangeNormValueTest<tags::CPU::SSE, float> sse_dense_vector_range_norm_value_test_float("SSE float");
 DenseVectorRangeNormValueTest<tags::CPU::SSE, double> sse_dense_vector_range_norm_value_test_double("SSE double");
-DenseVectorRangeNormValueTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_range_norm_value_test_float("MC SSE float");
-DenseVectorRangeNormValueTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_range_norm_value_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CUDA
 DenseVectorRangeNormValueTest<tags::GPU::CUDA, float> cuda_dense_vector_range_norm_value_test_float("float");
@@ -268,13 +260,9 @@ class DenseVectorRangeNormQuickTest :
 };
 DenseVectorRangeNormQuickTest<tags::CPU, float>  dense_vector_range_norm_quick_test_float("float");
 DenseVectorRangeNormQuickTest<tags::CPU, double> dense_vector_range_norm_quick_test_double("double");
-DenseVectorRangeNormQuickTest<tags::CPU::MultiCore, float>  mc_dense_vector_range_norm_quick_test_float("MC float");
-DenseVectorRangeNormQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_range_norm_quick_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorRangeNormQuickTest<tags::CPU::SSE, float>  sse_dense_vector_range_norm_quick_test_float("SSE float");
 DenseVectorRangeNormQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_norm_quick_test_double("SSE double");
-DenseVectorRangeNormQuickTest<tags::CPU::MultiCore::SSE, float>  mc_sse_dense_vector_range_norm_quick_test_float("MC SSE float");
-DenseVectorRangeNormQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_range_norm_quick_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CUDA
 DenseVectorRangeNormQuickTest<tags::GPU::CUDA, float>  cuda_dense_vector_range_norm_quick_test_float("float");
@@ -332,8 +320,6 @@ class SparseVectorNormValueTest :
 
 SparseVectorNormValueTest<tags::CPU, float> sparse_vector_norm_value_test_float("float");
 SparseVectorNormValueTest<tags::CPU, double> sparse_vector_norm_value_test_double("double");
-SparseVectorNormValueTest<tags::CPU::MultiCore, float> mc_sparse_vector_norm_value_test_float("MC float");
-SparseVectorNormValueTest<tags::CPU::MultiCore, double> mc_sparse_vector_norm_value_test_double("MC double");
 
 template <typename Tag_, typename DataType_>
 class SparseVectorNormQuickTest :
@@ -380,5 +366,3 @@ class SparseVectorNormQuickTest :
 
 SparseVectorNormQuickTest<tags::CPU, float> sparse_vector_norm_quick_test_float("float");
 SparseVectorNormQuickTest<tags::CPU, double> sparse_vector_norm_quick_test_double("double");
-SparseVectorNormQuickTest<tags::CPU::MultiCore, float> mc_sparse_vector_norm_quick_test_float("MC float");
-SparseVectorNormQuickTest<tags::CPU::MultiCore, double> mc_sparse_vector_norm_quick_test_double("MC double");

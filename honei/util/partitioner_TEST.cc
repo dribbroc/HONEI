@@ -143,7 +143,4 @@ class PartitionerTestMC :
         }
 };
 
-PartitionerTestMC<tags::CPU::MultiCore, 1024, 16> partitioner_test_mc_1k_16;
-PartitionerTestMC<tags::CPU::MultiCore, 4096, 16> partitioner_test_mc_4k_16;
-PartitionerTestMC<tags::CPU::MultiCore, 131072, 16> partitioner_test_mc_128k_16;
 

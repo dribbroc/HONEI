@@ -100,13 +100,9 @@ class NodeDistanceQuickTest :
 };
 NodeDistanceQuickTest<float, tags::CPU>  node_distance_quick_test_float("float");
 NodeDistanceQuickTest<double, tags::CPU> node_distance_quick_test_double("double");
-NodeDistanceQuickTest<float, tags::CPU::MultiCore>  mc_node_distance_quick_test_float("mc float");
-NodeDistanceQuickTest<double, tags::CPU::MultiCore>  mc_node_distance_quick_test_double("mc double");
 #ifdef HONEI_SSE
 NodeDistanceQuickTest<float, tags::CPU::SSE>  sse_node_distance_quick_test_float("sse float");
 NodeDistanceQuickTest<double, tags::CPU::SSE> sse_node_distance_quick_test_double("sse double");
-NodeDistanceQuickTest<float, tags::CPU::MultiCore::SSE>  mc_sse_node_distance_quick_test_float("mc sse float");
-NodeDistanceQuickTest<double, tags::CPU::MultiCore::SSE> mc_sse_node_distance_quick_test_double("mc sse double");
 #endif
 #ifdef HONEI_CELL
 NodeDistanceQuickTest<float, tags::Cell> cell_node_distance_quick_test_float("Cell float");
@@ -178,13 +174,9 @@ class NodeDistanceTest :
 };
 NodeDistanceTest<float, tags::CPU> node_distance_test_float("float", 10);
 NodeDistanceTest<double, tags::CPU> node_distance_test_double("double", 10);
-NodeDistanceTest<float, tags::CPU::MultiCore>  mc_node_distance_test_float("mc float", 10);
-NodeDistanceTest<double, tags::CPU::MultiCore>  mc_node_distance_test_double("mc double", 10);
 #ifdef HONEI_SSE
 NodeDistanceTest<float, tags::CPU::SSE>  sse_node_distance_test_float("sse float", 10);
 NodeDistanceTest<double, tags::CPU::SSE> sse_node_distance_test_double("sse double", 10);
-NodeDistanceTest<float, tags::CPU::MultiCore::SSE>  mc_sse_node_distance_test_float("mc sse float", 10);
-NodeDistanceTest<double, tags::CPU::MultiCore::SSE> mc_sse_node_distance_test_double("mc sse double", 10);
 #endif
 #ifdef HONEI_CELL
 NodeDistanceTest<float, tags::Cell> cell_node_distance_test_float("Cell float", 10);

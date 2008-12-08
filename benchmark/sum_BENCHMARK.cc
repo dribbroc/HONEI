@@ -41,13 +41,9 @@ class ScalarDenseVectorSumBench :
 };
 ScalarDenseVectorSumBench<tags::CPU, float>  SDVSBenchfloat ("VectorShift Benchmark - vector size: 64^4, float",  64ul*64*64*64, 10);
 ScalarDenseVectorSumBench<tags::CPU, double> SDVSBenchdouble("VectorShift Benchmark - svector size: 64^4, double", 64ul*64*64*64, 10);
-ScalarDenseVectorSumBench<tags::CPU::MultiCore, float>  MCSDVSBenchfloat ("MC VectorShift Benchmark - vector size: 64^4, float",  64ul*64*64*64, 10);
-ScalarDenseVectorSumBench<tags::CPU::MultiCore, double> MCSDVSBenchdouble("MC VectorShift Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
 #ifdef HONEI_SSE
 ScalarDenseVectorSumBench<tags::CPU::SSE, float>  SSESDVSBenchfloat ("SSE VectorShift Benchmark - vector size: 64^4, float",  64ul*64*64*64, 10);
 ScalarDenseVectorSumBench<tags::CPU::SSE, double> SSESDVSBenchdouble("SSE VectorShift Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
-ScalarDenseVectorSumBench<tags::CPU::MultiCore::SSE, float>  MCSSESDVSBenchfloat ("MC::SSE VectorShift Benchmark - vector size: 64^4, float",  64ul*64*64*64, 10);
-ScalarDenseVectorSumBench<tags::CPU::MultiCore::SSE, double> MCSSESDVSBenchdouble("MC::SSE VectorShift Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -83,13 +79,9 @@ class ScalarDenseMatrixSumBench :
 };
 ScalarDenseMatrixSumBench<tags::CPU, float>  SDMSBenchfloat ("MatrixShift Benchmark - size: 4096x4096, float",  4096, 10);
 ScalarDenseMatrixSumBench<tags::CPU, double> SDMSBenchdouble("MatrixShift Benchmark - size: 4096x4096, double", 4096, 10);
-ScalarDenseMatrixSumBench<tags::CPU::MultiCore, float>  MCSDMSBenchfloat ("MC MatrixShift Benchmark - size: 4096x4096, float",  4096, 10);
-ScalarDenseMatrixSumBench<tags::CPU::MultiCore, double> MCSDMSBenchdouble("MC MatrixShift Benchmark - size: 4096x4096, double", 4096, 10);
 #ifdef HONEI_SSE
 ScalarDenseMatrixSumBench<tags::CPU::SSE, float>  SSESDMSBenchfloat ("SSE MatrixShift Benchmark - size: 4096x4096, float",  4096, 10);
 ScalarDenseMatrixSumBench<tags::CPU::SSE, double> SSESDMSBenchdouble("SSE MatrixShift Benchmark - size: 4096x4096, double", 4096, 10);
-ScalarDenseMatrixSumBench<tags::CPU::MultiCore::SSE, float>  MCSSESDMSBenchfloat ("MC::SSE MatrixShift Benchmark - size: 4096x4096, float",  4096, 10);
-ScalarDenseMatrixSumBench<tags::CPU::MultiCore::SSE, double> MCSSESDMSBenchdouble("MC::SSE MatrixShift Benchmark - size: 4096x4096, double", 4096, 10);
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -130,13 +122,9 @@ class DenseVectorSumBench :
 };
 DenseVectorSumBench<tags::CPU, float> DVSBenchfloat1("Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
 DenseVectorSumBench<tags::CPU, double> DVSBenchdouble1("Dense Vector Sum Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
-DenseVectorSumBench<tags::CPU::MultiCore, float> MCDVSBenchfloat1("MC Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
-DenseVectorSumBench<tags::CPU::MultiCore, double> MCDVSBenchdouble1("MC Dense Vector Sum Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
 #ifdef HONEI_SSE
 DenseVectorSumBench<tags::CPU::SSE, float> SSEDVSBenchfloat1("SSE Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64ul*64ul*64ul, 50);
 DenseVectorSumBench<tags::CPU::SSE, double> SSEDVSBenchdouble1("SSE Dense Vector Sum Benchmark - vector size: 64^4, double", 64ul*64ul*64ul*64ul, 50);
-DenseVectorSumBench<tags::CPU::MultiCore::SSE, float> MCSSEDVSBenchfloat1("MC::SSE Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64ul*64ul*64ul, 50);
-DenseVectorSumBench<tags::CPU::MultiCore::SSE, double> MCSSEDVSBenchdouble1("MC::SSE Dense Vector Sum Benchmark - vector size: 64^4, double", 64ul*64ul*64ul*64ul, 50);
 #endif
 #ifdef HONEI_CUDA
 DenseVectorSumBench<tags::GPU::CUDA, float> CUDADVSBenchfloat1("CUDA Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64ul*64ul*64ul, 10);
@@ -229,13 +217,9 @@ class DenseMatrixSumBench :
 
 DenseMatrixSumBench<tags::CPU, float> DMSBenchfloat1("Dense Matrix Sum Benchmark - Matrix size: 4096x4096, float", 4096, 4096, 10);
 DenseMatrixSumBench<tags::CPU, double> DMSBenchdouble1("Dense Matrix Sum Benchmark - Matrix size: 4096x4096, double", 4096, 4096, 10);
-DenseMatrixSumBench<tags::CPU::MultiCore, float> DMSBenchfloat0mc("MC: Dense Matrix Sum Benchmark - Matrix size: 4096x4096, float", 4096, 4096, 10);
-DenseMatrixSumBench<tags::CPU::MultiCore, double> DMSBenchdouble0mc("MC: Dense Matrix Sum Benchmark - Matrix size: 4096x4096, double", 4096, 4096, 10);
 #ifdef HONEI_SSE
 DenseMatrixSumBench<tags::CPU::SSE, float> DMSBenchfloat1sse("SSE Dense Matrix Sum Benchmark - Matrix size: 4096x4096, float", 4096, 4096, 10);
 DenseMatrixSumBench<tags::CPU::SSE, double> DMSBenchdouble1sse("SSE Dense Matrix Sum Benchmark - Matrix size: 4096x4096, double", 4096, 4096, 10);
-DenseMatrixSumBench<tags::CPU::MultiCore::SSE, float> DMSBenchfloat1mcsse("MC SSE : Dense Matrix Sum Benchmark - Matrix size: 4096x4096, float", 4096, 4096, 10);
-DenseMatrixSumBench<tags::CPU::MultiCore::SSE, double> DMSBenchdouble1mcsse("MC SSE: Dense Matrix Sum Benchmark - Matrix size: 4096x4096, double", 4096, 4096, 10);
 #endif
 #ifdef HONEI_CUDA
 DenseMatrixSumBench<tags::GPU::CUDA, float> DMSBenchfloat1cuda("CUDA Dense Matrix Sum Benchmark - Matrix size: 4096x4096, float", 4096, 4096, 10);
@@ -282,13 +266,9 @@ class DenseMatrixBandedMatrixSumBench :
 
 DenseMatrixBandedMatrixSumBench<tags::CPU, float> DMBMSBenchfloat1("Dense Matrix Banded Matrix Sum Benchmark - Matrix size: 4096x4096, float", 4096, 10);
 DenseMatrixBandedMatrixSumBench<tags::CPU, double> DMBMSBenchdouble1("Dense Matrix Banded Matrix Sum Benchmark - Matrix size: 4096x4096, double", 4096, 10);
-DenseMatrixBandedMatrixSumBench<tags::CPU::MultiCore, float> DMBMSBenchfloat1mc("MC: Dense Matrix Banded Matrix Sum Benchmark - Matrix size: 4096x4096, float", 4096, 10);
-DenseMatrixBandedMatrixSumBench<tags::CPU::MultiCore, double> DMSBMBenchdouble1mc("MC: Dense Matrix Banded Matrix Sum Benchmark - Matrix size: 4096x4096, double", 4096, 10);
 #ifdef HONEI_SSE
 DenseMatrixBandedMatrixSumBench<tags::CPU::SSE, float> DMBMSBenchfloat1sse("SSE Dense Matrix Banded Matrix Sum Benchmark - Matrix size: 4096x4096, float", 4096, 10);
 DenseMatrixBandedMatrixSumBench<tags::CPU::SSE, double> DMBMSBenchdouble1sse("SSE Dense Matrix Banded Matrix Sum Benchmark - Matrix size: 4096x4096, double", 4096, 10);
-DenseMatrixBandedMatrixSumBench<tags::CPU::MultiCore::SSE, float> DMBMSBenchfloat1mcsse("MC::SSE: Dense Matrix Banded Matrix Sum Benchmark - Matrix size: 4096x4096, float", 4096, 10);
-DenseMatrixBandedMatrixSumBench<tags::CPU::MultiCore::SSE, double> DMSBMBenchdouble1mcsse("MC::SSE: Dense Matrix Banded Matrix Sum Benchmark - Matrix size: 4096x4096, double", 4096, 10);
 #endif
 
 template <typename DT_, typename Tag_>
@@ -490,12 +470,6 @@ class DenseVectorSumBenchTestPlot :
         }
 };
 #ifdef HONEI_SSE
-//DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP("MC::SSE Dense Vector Sum Benchmark - vector size: 200.000 to 10.000.000 - double", 0);
-//DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP1("MC::SSE Dense Vector Sum Benchmark - vector size: 5.000.000 - parts: 1 to 20 - double", 1);
-//DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP2("MC::SSE Dense Vector Sum Benchmark - vector size: 100.000 to 2.000.000 - parts: 1 to 20 - double", 2);
-//DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP3("MC::SSE Dense Vector Sum Benchmark - vector size: 100.000 to 2.000.000 - parts: 1 to 4 - double", 3);
-//DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP4("MC::SSE and SSE Dense Vector Sum Benchmark - vector size: 200.000 to 10.000.000 - double", 4);
-//DenseVectorSumBenchTestPlot<double, tags::CPU::MultiCore::SSE> MCDVSBTP5("MC::SSE, SSE and CELL Dense Vector Sum Benchmark - vector size: 200.000 to 10.000.000 - double", 5);
 #endif
 
 template <typename DT_, typename Tag_>
@@ -585,13 +559,11 @@ class DenseVectorSumVSPlot :
             // mc::sse
             for (unsigned long j(1) ; j < 95 ; j+=5)
             {
-                cores.push_back(tags::CPU::MultiCore::SSE::name);
                 DenseVector<DT_> dv0((j + 1) * 131072, DT_(rand()));
                 DenseVector<DT_> dv1((j + 1) * 131072, DT_(rand()));
 
                 for(int i(0) ; i < 5 ; ++i)
                 {
-                    BENCHMARK((Sum<tags::CPU::MultiCore::SSE>::value(dv0, dv1)));
                 }
                 info = Sum<>::get_benchmark_info(dv0, dv1);
                 infolist.push_back(info);

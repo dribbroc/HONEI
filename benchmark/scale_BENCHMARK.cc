@@ -46,13 +46,9 @@ class ScalarDenseVectorScaleBench :
 };
 ScalarDenseVectorScaleBench<tags::CPU, float>             SVPBenchfloat   ("Densevector Scale Benchmark - vector size: 64^4, float",      64ul*64*64*64, 10);
 ScalarDenseVectorScaleBench<tags::CPU, double>            SVPBenchdouble  ("Densevector Scale Benchmark - vector size: 64^4, double",     64ul*64*64*64, 10);
-ScalarDenseVectorScaleBench<tags::CPU::MultiCore, float>  SVPBenchfloatMC ("MC: Densevector Scale Benchmark - vector size: 64^4, float",  64ul*64*64*64, 10);
-ScalarDenseVectorScaleBench<tags::CPU::MultiCore, double> SVPBenchdoubleMC("MC: Densevector Scale Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
 #ifdef HONEI_SSE
 ScalarDenseVectorScaleBench<tags::CPU::SSE, float>              SVPBenchfloatSSE("SSE: Densevector Scale Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
 ScalarDenseVectorScaleBench<tags::CPU::SSE, double>             SVPBenchdoubleSSE("SSE: Densevector Scale Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
-ScalarDenseVectorScaleBench<tags::CPU::MultiCore::SSE, float>   SVPBenchfloatMCSSE("MC SSE: Densevector Scale Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
-ScalarDenseVectorScaleBench<tags::CPU::MultiCore::SSE, double>  SVPBenchdoubleMCSSE("MC SSE: Densevector Scale Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -89,11 +85,7 @@ class ScalarDenseMatrixScaleBench :
 };
 ScalarDenseMatrixScaleBench<tags::CPU, float>             SMPBenchfloat   ("DenseMatrix Scale Benchmark: size: 8192x8192, float",      8192, 10);
 ScalarDenseMatrixScaleBench<tags::CPU, double>            SMPBenchdouble  ("DenseMatrix Scale Benchmark: size: 8192x8192, double",     8192, 10);
-ScalarDenseMatrixScaleBench<tags::CPU::MultiCore, float>  SMPBenchfloatMC ("MC: DenseMatrix Scale Benchmark: size: 8192x8192, float",  8192, 10);
-ScalarDenseMatrixScaleBench<tags::CPU::MultiCore, double> SMPBenchdoubleMC("MC: DenseMatrix Scale Benchmark: size: 8192x8192, double", 8192, 10);
 #ifdef HONEI_SSE
 ScalarDenseMatrixScaleBench<tags::CPU::SSE, float>              SMPBenchfloatSSE("SSE: DenseMatrix Scale Benchmark: size: 8192x8192, float", 8192, 10);
 ScalarDenseMatrixScaleBench<tags::CPU::SSE, double>             SMPBenchdoubleSSE("SSE: DenseMatrix Scale Benchmark: size: 8192x8192, double", 8192, 10);
-ScalarDenseMatrixScaleBench<tags::CPU::MultiCore::SSE, float>   SMPBenchfloatMCSSE("MC SSE: DenseMatrix Scale Benchmark: size: 8192x8192, float", 8192, 10);
-ScalarDenseMatrixScaleBench<tags::CPU::MultiCore::SSE, double>  SMPBenchdoubleMCSSE("MC SSE: DenseMatrix Scale Benchmark: size: 8192x8192, double", 8192, 10);
 #endif

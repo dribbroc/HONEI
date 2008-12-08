@@ -69,11 +69,9 @@ class GraphBench :
 
 
 GraphBench<tags::CPU, float, methods::WeightedFruchtermanReingold> wfr_graph_bench_float1("WFR Grid float BENCHMARK");
-GraphBench<tags::CPU::MultiCore, float, methods::WeightedFruchtermanReingold> wfr_graph_bench_float2("MC Grid float BENCHMARK");
 
 #ifdef HONEI_SSE
 GraphBench<tags::CPU::SSE, float, methods::WeightedFruchtermanReingold> wfr_graph_bench_float3("SSE WFR Grid float BENCHMARK");
-GraphBench<tags::CPU::MultiCore::SSE, float, methods::WeightedFruchtermanReingold> wfr_graph_bench_float4("MC SSE WFR Grid float BENCHMARK");
 #endif
 #ifdef HONEI_CELL
 GraphBench<tags::Cell, float, methods::WeightedFruchtermanReingold> wfr_graph_bench_float5("Cell WFR Grid float BENCHMARK");

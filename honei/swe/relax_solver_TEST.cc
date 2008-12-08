@@ -153,13 +153,9 @@ class RelaxSolverTest :
 };
 RelaxSolverTest<tags::CPU, float> relax_solver_test_float("float");
 RelaxSolverTest<tags::CPU, double> relax_solver_test_double("double");
-RelaxSolverTest<tags::CPU::MultiCore, float> mc_relax_solver_test_float("mc float");
-RelaxSolverTest<tags::CPU::MultiCore, double> mc_relax_solver_test_double("mc double");
 #ifdef HONEI_SSE
 RelaxSolverTest<tags::CPU::SSE, float> sse_relax_solver_test_float("sse float");
 RelaxSolverTest<tags::CPU::SSE, double> sse_relax_solver_test_double("sse double");
-RelaxSolverTest<tags::CPU::MultiCore::SSE, float> mc_sse_relax_solver_test_float("mc sse float");
-RelaxSolverTest<tags::CPU::MultiCore::SSE, double> ms_sse_relax_solver_test_double("mc sse double");
 #endif
 #ifdef HONEI_CUDA
 RelaxSolverTest<tags::GPU::CUDA, float> cuda_relax_solver_test_float("float");

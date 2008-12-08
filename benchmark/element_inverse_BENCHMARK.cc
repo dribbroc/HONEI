@@ -44,11 +44,7 @@ class DenseMatrixElementInverseBench :
 
 DenseMatrixElementInverseBench<float, tags::CPU>  MEIBenchfloat ("Matrix Element Inverse Benchmark: size: 4096x4096, float",  4096, 10);
 DenseMatrixElementInverseBench<double, tags::CPU> MEIBenchdouble("Matrix Element Inverse Benchmark: size: 4096x4096, double", 4096, 10);
-DenseMatrixElementInverseBench<float, tags::CPU::MultiCore>  MCMEIBenchfloat ("MC: Matrix Element Inverse Benchmark: size: 4096x4096, float",  4096, 10);
-DenseMatrixElementInverseBench<double, tags::CPU::MultiCore> MCMEIBenchdouble("MC: Matrix Element Inverse Benchmark: size: 4096x4096, double", 4096, 10);
 #ifdef HONEI_SSE
-DenseMatrixElementInverseBench<float, tags::CPU::MultiCore::SSE>  MCSSEMEIBenchfloat ("MC SSE Matrix Element Inverse Benchmark: size: 4096x4096, float",  4096, 10);
-DenseMatrixElementInverseBench<double, tags::CPU::MultiCore::SSE> MCSSEMEIBenchdouble("MC SSE Matrix Element Inverse Benchmark: size: 4096x4096, double", 4096, 10);
 DenseMatrixElementInverseBench<float, tags::CPU::SSE>  SSEMEIBenchfloat ("SSE Matrix Element Inverse Benchmark: size: 4096x4096, float",  4096, 10);
 DenseMatrixElementInverseBench<double, tags::CPU::SSE> SSEMEIBenchdouble("SSE Matrix Element Inverse Benchmark: size: 4096x4096, double", 4096, 10);
 #endif
@@ -88,11 +84,7 @@ class DenseVectorElementInverseBench :
 
 DenseVectorElementInverseBench<float, tags::CPU>  VEIBenchfloat ("Vector Element Inverse Benchmark: vector size: 64^4, float", 64ul*64*64*64, 10);
 DenseVectorElementInverseBench<double, tags::CPU> VEIBenchdouble("Vector Element Inverse Benchmark: vector size: 64^4, double", 64ul*64*64*64, 10);
-DenseVectorElementInverseBench<float, tags::CPU::MultiCore>  MCVEIBenchfloat ("MC: Vector Element Inverse Benchmark: vector size: 64^4, float", 64ul*64*64*64, 10);
-DenseVectorElementInverseBench<double, tags::CPU::MultiCore> MCVEIBenchdouble("MC: Vector Element Inverse Benchmark: vector size: 64^4, double", 64ul*64*64*64, 10);
 #ifdef HONEI_SSE
-DenseVectorElementInverseBench<float, tags::CPU::MultiCore::SSE>  MCSSEVEIBenchfloat ("MC SSE Vector Element Inverse Benchmark: vector size: 64^4, float", 64ul*64*64*64, 10);
-DenseVectorElementInverseBench<double, tags::CPU::MultiCore::SSE> MCSSEVEIBenchdouble("MC SSE Vector Element Inverse Benchmark: vector size: 64^4, double", 64ul*64*64*64, 10);
 DenseVectorElementInverseBench<float, tags::CPU::SSE>  SSEVEIBenchfloat ("SSE Vector Element Inverse Benchmark: vector size: 64^4, float", 64ul*64*64*64, 10);
 DenseVectorElementInverseBench<double, tags::CPU::SSE> SSEVEIBenchdouble("SSE Vector Element Inverse Benchmark: vector size: 64^4, double", 64ul*64*64*64, 10);
 #endif

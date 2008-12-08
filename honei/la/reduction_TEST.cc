@@ -68,8 +68,6 @@ class BandedMatrixReductionToSumTest :
 };
 BandedMatrixReductionToSumTest<tags::CPU, float> banded_matrix_reduction_to_sum_test_float("float");
 BandedMatrixReductionToSumTest<tags::CPU, double> banded_matrix_reduction_to_sum_test_double("double");
-BandedMatrixReductionToSumTest<tags::CPU::MultiCore, float> mc_banded_matrix_reduction_to_sum_test_float("MC float");
-BandedMatrixReductionToSumTest<tags::CPU::MultiCore, double> mc_banded_matrix_reduction_to_sum_test_double("MC double");
 
 template <typename Tag_, typename DT_>
 class BandedMatrixReductionQuickTest :
@@ -107,8 +105,6 @@ class BandedMatrixReductionQuickTest :
 };
 BandedMatrixReductionQuickTest<tags::CPU, float> banded_matrix_reduction_to_sum_quick_test_float("float");
 BandedMatrixReductionQuickTest<tags::CPU, double> banded_matrix_reduction_to_sum_quick_test_double("double");
-BandedMatrixReductionQuickTest<tags::CPU::MultiCore, float> mc_banded_matrix_reduction_to_sum_quick_test_float("MC float");
-BandedMatrixReductionQuickTest<tags::CPU::MultiCore, double> mc_banded_matrix_reduction_to_sum_quick_test_double("MC double");
 
 template <typename Tag_, typename DT_>
 class DenseMatrixReductionToSumTest :
@@ -147,13 +143,9 @@ class DenseMatrixReductionToSumTest :
 
 DenseMatrixReductionToSumTest<tags::CPU, float> dense_matrix_reduction_to_sum_test_float("float");
 DenseMatrixReductionToSumTest<tags::CPU, double> dense_matrix_reduction_to_sum_test_double("double");
-DenseMatrixReductionToSumTest<tags::CPU::MultiCore, float> mc_dense_matrix_reduction_to_sum_test_float("MC float");
-DenseMatrixReductionToSumTest<tags::CPU::MultiCore, double> mc_dense_matrix_reduction_to_sum_test_double("MC double");
 #ifdef HONEI_SSE
 DenseMatrixReductionToSumTest<tags::CPU::SSE, float> sse_dense_matrix_reduction_to_sum_test_float("SSE float");
 DenseMatrixReductionToSumTest<tags::CPU::SSE, double> sse_dense_matrix_reduction_to_sum_test_double("SSE double");
-DenseMatrixReductionToSumTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_matrix_reduction_to_sum_test_float("MC SSE float");
-DenseMatrixReductionToSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_matrix_reduction_to_sum_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
 DenseMatrixReductionToSumTest<tags::Cell, float> cell_dense_matrix_reduction_to_sum_test_float("Cell float");
@@ -193,13 +185,9 @@ class DenseMatrixReductionQuickTest :
 };
 DenseMatrixReductionQuickTest<tags::CPU, float> dense_matrix_reduction_to_sum_quick_test_float("float");
 DenseMatrixReductionQuickTest<tags::CPU, double> dense_matrix_reduction_to_sum_quick_test_double("double");
-DenseMatrixReductionQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_reduction_to_sum_quick_test_float("MC float");
-DenseMatrixReductionQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_reduction_to_sum_quick_test_double("MC double");
 #ifdef HONEI_SSE
 DenseMatrixReductionQuickTest<tags::CPU::SSE, float> sse_dense_matrix_reduction_to_sum_quick_test_float("SSE float");
 DenseMatrixReductionQuickTest<tags::CPU::SSE, double> sse_dense_matrix_reduction_to_sum_quick_test_double("SSE double");
-DenseMatrixReductionQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_matrix_reduction_to_sum_quick_test_float("MC SSE float");
-DenseMatrixReductionQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_matrix_reduction_to_sum_quick_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
 DenseMatrixReductionQuickTest<tags::Cell, float> cell_dense_matrix_reduction_to_sum_quick_test_float("Cell float");
@@ -254,13 +242,9 @@ class SparseMatrixReductionToSumTest :
 };
 SparseMatrixReductionToSumTest<tags::CPU, float> sparse_matrix_reduction_to_sum_test_float("float");
 SparseMatrixReductionToSumTest<tags::CPU, double> sparse_matrix_reduction_to_sum_test_double("double");
-SparseMatrixReductionToSumTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_sum_test_float("MC float");
-SparseMatrixReductionToSumTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_sum_test_double("MC double");
 #ifdef HONEI_SSE
 SparseMatrixReductionToSumTest<tags::CPU::SSE, float> sse_sparse_matrix_reduction_to_sum_test_float("SSE float");
 SparseMatrixReductionToSumTest<tags::CPU::SSE, double> sse_sparse_matrix_reduction_to_sum_test_double("SSE double");
-SparseMatrixReductionToSumTest<tags::CPU::MultiCore::SSE, float> sse_mc_sparse_matrix_reduction_to_sum_test_float("MC SSE float");
-SparseMatrixReductionToSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_sparse_matrix_reduction_to_sum_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
 SparseMatrixReductionToSumTest<tags::Cell, float> sparse_matrix_reduction_to_sum_test_float_cell("Cell float");
@@ -313,13 +297,9 @@ class SparseMatrixReductionQuickTest :
 };
 SparseMatrixReductionQuickTest<tags::CPU, float> sparse_matrix_reduction_to_sum_quick_test_float("float");
 SparseMatrixReductionQuickTest<tags::CPU, double> sparse_matrix_reduction_to_sum_quick_test_double("double");
-SparseMatrixReductionQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_sum_quick_test_float("MC float");
-SparseMatrixReductionQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_sum_quick_test_double("MC double");
 #ifdef HONEI_SSE
 SparseMatrixReductionQuickTest<tags::CPU::SSE, float> sse_sparse_matrix_reduction_to_sum_quick_test_float("SSE float");
 SparseMatrixReductionQuickTest<tags::CPU::SSE, double> sse_sparse_matrix_reduction_to_sum_quick_test_double("SSE double");
-SparseMatrixReductionQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_sparse_matrix_reduction_to_sum_quick_test_float("MC SSE float");
-SparseMatrixReductionQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_sparse_matrix_reduction_to_sum_quick_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
 SparseMatrixReductionQuickTest<tags::Cell, float> sparse_matrix_reduction_to_sum_quick_test_float_cell("Cell float");
@@ -362,14 +342,10 @@ class DenseVectorRangeReductionToSumTest :
 
 DenseVectorRangeReductionToSumTest<tags::CPU, float> dense_vector_range_reduction_to_sum_test_float("float");
 DenseVectorRangeReductionToSumTest<tags::CPU, double> dense_vector_range_reduction_to_sum_test_double("double");
-DenseVectorRangeReductionToSumTest<tags::CPU::MultiCore, float> mc_dense_vector_range_reduction_to_sum_test_float("MC float");
-DenseVectorRangeReductionToSumTest<tags::CPU::MultiCore, double> mc_dense_vector_range_reduction_to_sum_test_double("MC double");
 
 #ifdef HONEI_SSE
 DenseVectorRangeReductionToSumTest<tags::CPU::SSE, float> sse_dense_vector_range_reduction_to_sum_test_float("SSE float");
 DenseVectorRangeReductionToSumTest<tags::CPU::SSE, double> sse_dense_vector_range_reduction_to_sum_test_double("SSE double");
-DenseVectorRangeReductionToSumTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_range_reduction_to_sum_test_float("MC SSE float");
-DenseVectorRangeReductionToSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_reduction_to_sum_test_double("MC SSE double");
 #endif
 
 #ifdef HONEI_CELL
@@ -411,14 +387,10 @@ class DenseVectorRangeReductionToSumQuickTest :
 };
 DenseVectorRangeReductionToSumQuickTest<tags::CPU, float>  dense_vector_range_reduction_to_sum_quick_test_float("float");
 DenseVectorRangeReductionToSumQuickTest<tags::CPU, double> dense_vector_range_reduction_to_sum_quick_test_double("double");
-DenseVectorRangeReductionToSumQuickTest<tags::CPU::MultiCore, float>  mc_dense_vector_range_reduction_to_sum_quick_test_float("MC float");
-DenseVectorRangeReductionToSumQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_range_reduction_to_sum_quick_test_double("MC double");
 
 #ifdef HONEI_SSE
 DenseVectorRangeReductionToSumQuickTest<tags::CPU::SSE, float>  sse_dense_vector_range_reduction_to_sum_quick_test_float("SSE float");
 DenseVectorRangeReductionToSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_reduction_to_sum_quick_test_double("SSE double");
-DenseVectorRangeReductionToSumQuickTest<tags::CPU::MultiCore::SSE, float>  sse_mc_dense_vector_range_reduction_to_sum_quick_test_float("MC SSE float");
-DenseVectorRangeReductionToSumQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_reduction_to_sum_quick_test_double("MC SSE double");
 #endif
 
 #ifdef HONEI_CELL
@@ -459,13 +431,9 @@ class DenseVectorReductionToSumTest :
 
 DenseVectorReductionToSumTest<tags::CPU, float> dense_vector_reduction_to_sum_test_float("float");
 DenseVectorReductionToSumTest<tags::CPU, double> dense_vector_reduction_to_sum_test_double("double");
-DenseVectorReductionToSumTest<tags::CPU::MultiCore, float> mc_dense_vector_reduction_to_sum_test_float("MC float");
-DenseVectorReductionToSumTest<tags::CPU::MultiCore, double> mc_dense_vector_reduction_to_sum_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorReductionToSumTest<tags::CPU::SSE, float> sse_dense_vector_reduction_to_sum_test_float("SSE float");
 DenseVectorReductionToSumTest<tags::CPU::SSE, double> sse_dense_vector_reduction_to_sum_test_double("SSE double");
-DenseVectorReductionToSumTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_reduction_to_sum_test_float("MC SSE float");
-DenseVectorReductionToSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_reduction_to_sum_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
 DenseVectorReductionToSumTest<tags::Cell, float> dense_vector_reduction_to_sum_test_float_cell("Cell float");
@@ -502,13 +470,9 @@ class DenseVectorReductionToSumQuickTest :
 };
 DenseVectorReductionToSumQuickTest<tags::CPU, float>  dense_vector_reduction_to_sum_quick_test_float("float");
 DenseVectorReductionToSumQuickTest<tags::CPU, double> dense_vector_reduction_to_sum_quick_test_double("double");
-DenseVectorReductionToSumQuickTest<tags::CPU::MultiCore, float>  mc_dense_vector_reduction_to_sum_quick_test_float("MC float");
-DenseVectorReductionToSumQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_reduction_to_sum_quick_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorReductionToSumQuickTest<tags::CPU::SSE, float>  sse_dense_vector_reduction_to_sum_quick_test_float("SSE float");
 DenseVectorReductionToSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_reduction_to_sum_quick_test_double("SSE double");
-DenseVectorReductionToSumQuickTest<tags::CPU::MultiCore::SSE, float>  sse_mc_dense_vector_reduction_to_sum_quick_test_float("MC SSE float");
-DenseVectorReductionToSumQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_reduction_to_sum_quick_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
 DenseVectorReductionToSumQuickTest<tags::Cell, float> dense_vector_reduction_to_sum_quick_test_float_cell("Cell float");
@@ -552,13 +516,9 @@ class SparseVectorReductionToSumTest :
 
 SparseVectorReductionToSumTest<tags::CPU, float> sparse_vector_reduction_to_sum_test_float("float");
 SparseVectorReductionToSumTest<tags::CPU, double> sparse_vector_reduction_to_sum_test_double("double");
-SparseVectorReductionToSumTest<tags::CPU::MultiCore, float> mc_sparse_vector_reduction_to_sum_test_float("MC float");
-SparseVectorReductionToSumTest<tags::CPU::MultiCore, double> mc_sparse_vector_reduction_to_sum_test_double("MC double");
 #ifdef HONEI_SSE
 SparseVectorReductionToSumTest<tags::CPU::SSE, float> sse_sparse_vector_reduction_to_sum_test_float("SSE float");
 SparseVectorReductionToSumTest<tags::CPU::SSE, double> sse_sparse_vector_reduction_to_sum_test_double("SSE double");
-SparseVectorReductionToSumTest<tags::CPU::MultiCore::SSE, float> sse_mc_sparse_vector_reduction_to_sum_test_float("MC SSE float");
-SparseVectorReductionToSumTest<tags::CPU::MultiCore::SSE, double> sse_mc_sparse_vector_reduction_to_sum_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
 SparseVectorReductionToSumTest<tags::Cell, float> sparse_vector_reduction_to_sum_test_float_cell("Cell float");
@@ -599,13 +559,9 @@ class SparseVectorReductionToSumQuickTest :
 
 SparseVectorReductionToSumQuickTest<tags::CPU, float> sparse_reduction_to_sum_quick_test_float("float");
 SparseVectorReductionToSumQuickTest<tags::CPU, double> sparse_reduction_to_sum_quick_test_double("double");
-SparseVectorReductionToSumQuickTest<tags::CPU::MultiCore, float> mc_sparse_reduction_to_sum_quick_test_float("MC float");
-SparseVectorReductionToSumQuickTest<tags::CPU::MultiCore, double> mc_sparse_reduction_to_sum_quick_test_double("MC double");
 #ifdef HONEI_SSE
 SparseVectorReductionToSumQuickTest<tags::CPU::SSE, float> sse_sparse_reduction_to_sum_quick_test_float("SSE float");
 SparseVectorReductionToSumQuickTest<tags::CPU::SSE, double> sse_sparse_reduction_to_sum_quick_test_double("SSE double");
-SparseVectorReductionToSumQuickTest<tags::CPU::MultiCore::SSE, float> sse_mc_sparse_reduction_to_sum_quick_test_float("MC SSE float");
-SparseVectorReductionToSumQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_sparse_reduction_to_sum_quick_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CELL
 SparseVectorReductionToSumQuickTest<tags::Cell, float> sparse_vector_reduction_to_sum_quick_test_float_cell("Cell float");
@@ -651,8 +607,6 @@ class DenseMatrixReductionToMinTest :
 
 DenseMatrixReductionToMinTest<tags::CPU, float> dense_matrix_reduction_to_min_test_float("float");
 DenseMatrixReductionToMinTest<tags::CPU, double> dense_matrix_reduction_to_min_test_double("double");
-DenseMatrixReductionToMinTest<tags::CPU::MultiCore, float> mc_dense_matrix_reduction_to_min_test_float("MC float");
-DenseMatrixReductionToMinTest<tags::CPU::MultiCore, double> mc_dense_matrix_reduction_to_min_test_double("MC double");
 
 #ifdef HONEI_CELL
 DenseMatrixReductionToMinTest<tags::Cell, float> cell_dense_matrix_reduction_to_min_test_float("Cell float");
@@ -695,8 +649,6 @@ class DenseMatrixReductionToMinQuickTest :
 
 DenseMatrixReductionToMinQuickTest<tags::CPU, float> dense_matrix_reduction_to_min_quick_test_float("float");
 DenseMatrixReductionToMinQuickTest<tags::CPU, double> dense_matrix_reduction_to_min_quick_test_double("double");
-DenseMatrixReductionToMinQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_reduction_to_min_quick_test_float("MC float");
-DenseMatrixReductionToMinQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_reduction_to_min_quick_test_double("MC double");
 
 #ifdef HONEI_CELL
 DenseMatrixReductionToMinQuickTest<tags::Cell, float> cell_dense_matrix_reduction_to_min_quick_test_float("Cell float");
@@ -740,8 +692,6 @@ class SparseMatrixReductionToMinTest :
 };
 SparseMatrixReductionToMinTest<tags::CPU, float> sparse_matrix_reduction_to_min_test_float("float");
 SparseMatrixReductionToMinTest<tags::CPU, double> sparse_matrix_reduction_to_min_test_double("double");
-SparseMatrixReductionToMinTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_min_test_float("MC float");
-SparseMatrixReductionToMinTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_min_test_double("MC double");
 #ifdef HONEI_CELL
 SparseMatrixReductionToMinTest<tags::Cell, float> sparse_matrix_reduction_to_min_test_float_cell("Cell float");
 #endif
@@ -782,8 +732,6 @@ class SparseMatrixReductionToMinQuickTest :
 };
 SparseMatrixReductionToMinQuickTest<tags::CPU, float> sparse_matrix_reduction_to_min_quick_test_float("float");
 SparseMatrixReductionToMinQuickTest<tags::CPU, double> sparse_matrix_reduction_to_min_quick_test_double("double");
-SparseMatrixReductionToMinQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_min_quick_test_float("MC float");
-SparseMatrixReductionToMinQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_min_quick_test_double("MC double");
 #ifdef HONEI_CELL
 SparseMatrixReductionToMinQuickTest<tags::Cell, float> sparse_matrix_reduction_to_min_quick_test_float_cell("Cell float");
 #endif
@@ -846,8 +794,6 @@ class BandedMatrixReductionToMinTest :
 
 BandedMatrixReductionToMinTest<tags::CPU, float> banded_matrix_reduction_to_min_test_float("float");
 BandedMatrixReductionToMinTest<tags::CPU, double> banded_matrix_reduction_to_min_test_double("double");
-BandedMatrixReductionToMinTest<tags::CPU::MultiCore, float> mc_banded_matrix_reduction_to_min_test_float("MC float");
-BandedMatrixReductionToMinTest<tags::CPU::MultiCore, double> mc_banded_matrix_reduction_to_min_test_double("MC double");
 
 template <typename Tag_, typename DT_>
 class BandedMatrixReductionToMinQuickTest :
@@ -904,8 +850,6 @@ class BandedMatrixReductionToMinQuickTest :
 };
 BandedMatrixReductionToMinQuickTest<tags::CPU, float> banded_matrix_reduction_to_min_quick_test_float("float");
 BandedMatrixReductionToMinQuickTest<tags::CPU, double> banded_matrix_reduction_to_min_quick_test_double("double");
-BandedMatrixReductionToMinQuickTest<tags::CPU::MultiCore, float> mc_banded_matrix_reduction_to_min_quick_test_float("MC float");
-BandedMatrixReductionToMinQuickTest<tags::CPU::MultiCore, double> mc_banded_matrix_reduction_to_min_quick_test_double("MC double");
 
 template <typename Tag_, typename DT_>
 class DenseVectorRangeReductionToMinTest :
@@ -951,14 +895,10 @@ class DenseVectorRangeReductionToMinTest :
 
 DenseVectorRangeReductionToMinTest<tags::CPU, float> dense_vector_range_reduction_to_min_test_float("float");
 DenseVectorRangeReductionToMinTest<tags::CPU, double> dense_vector_range_reduction_to_min_test_double("double");
-DenseVectorRangeReductionToMinTest<tags::CPU::MultiCore, float> mc_dense_vector_range_reduction_to_min_test_float("MC float");
-DenseVectorRangeReductionToMinTest<tags::CPU::MultiCore, double> mc_dense_vector_range_reduction_to_min_test_double("MC double");
 /*
 #ifdef HONEI_SSE
 DenseVectorRangeReductionToMinTest<tags::CPU::SSE, float> sse_dense_vector_range_reduction_to_min_test_float("SSE float");
 DenseVectorRangeReductionToMinTest<tags::CPU::SSE, double> sse_dense_vector_range_reduction_to_min_test_double("SSE double");
-DenseVectorRangeReductionToMinTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_range_reduction_to_min_test_float("MC SSE float");
-DenseVectorRangeReductionToMinTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_reduction_to_min_test_double("MC SSE double");
 #endif
 */
 #ifdef HONEI_CELL
@@ -1006,14 +946,10 @@ class DenseVectorRangeReductionToMinQuickTest :
 };
 DenseVectorRangeReductionToMinQuickTest<tags::CPU, float>  dense_vector_range_reduction_to_min_quick_test_float("float");
 DenseVectorRangeReductionToMinQuickTest<tags::CPU, double> dense_vector_range_reduction_to_min_quick_test_double("double");
-DenseVectorRangeReductionToMinQuickTest<tags::CPU::MultiCore, float>  mc_dense_vector_range_reduction_to_min_quick_test_float("MC float");
-DenseVectorRangeReductionToMinQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_range_reduction_to_min_quick_test_double("MC double");
 /*
 #ifdef HONEI_SSE
 DenseVectorRangeReductionToMinQuickTest<tags::CPU::SSE, float>  sse_dense_vector_range_reduction_to_min_quick_test_float("SSE float");
 DenseVectorRangeReductionToMinQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_reduction_to_min_quick_test_double("SSE double");
-DenseVectorRangeReductionToMinQuickTest<tags::CPU::MultiCore::SSE, float>  sse_mc_dense_vector_range_reduction_to_min_quick_test_float("MC SSE float");
-DenseVectorRangeReductionToMinQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_reduction_to_min_quick_test_double("MC SSE double");
 #endif
 */
 #ifdef HONEI_CELL
@@ -1050,8 +986,6 @@ class DenseVectorReductionToMinTest :
 
 DenseVectorReductionToMinTest<tags::CPU, float> dense_vector_reduction_to_min_test_float("float");
 DenseVectorReductionToMinTest<tags::CPU, double> dense_vector_reduction_to_min_test_double("double");
-DenseVectorReductionToMinTest<tags::CPU::MultiCore, float> mc_dense_vector_reduction_to_min_test_float("MC float");
-DenseVectorReductionToMinTest<tags::CPU::MultiCore, double> mc_dense_vector_reduction_to_min_test_double("MC double");
 #ifdef HONEI_CELL
 DenseVectorReductionToMinTest<tags::Cell, float> dense_vector_reduction_to_min_test_float_cell("Cell float");
 #endif
@@ -1085,8 +1019,6 @@ class DenseVectorReductionToMinQuickTest :
 
 DenseVectorReductionToMinQuickTest<tags::CPU, float> dense_reduction_to_min_quick_test_float("float");
 DenseVectorReductionToMinQuickTest<tags::CPU, double> dense_reduction_to_min_quick_test_double("double");
-DenseVectorReductionToMinQuickTest<tags::CPU::MultiCore, float> mc_dense_reduction_to_min_quick_test_float("MC float");
-DenseVectorReductionToMinQuickTest<tags::CPU::MultiCore, double> mc_dense_reduction_to_min_quick_test_double("MC double");
 #ifdef HONEI_CELL
 DenseVectorReductionToMinQuickTest<tags::Cell, float> dense_vector_reduction_to_min_quick_test_float_cell("Cell float");
 #endif
@@ -1121,8 +1053,6 @@ class SparseVectorReductionToMinTest :
 
 SparseVectorReductionToMinTest<tags::CPU, float> sparse_vector_reduction_to_min_test_float("float");
 SparseVectorReductionToMinTest<tags::CPU, double> sparse_vector_reduction_to_min_test_double("double");
-SparseVectorReductionToMinTest<tags::CPU::MultiCore, float> mc_sparse_vector_reduction_to_min_test_float("MC float");
-SparseVectorReductionToMinTest<tags::CPU::MultiCore, double> mc_sparse_vector_reduction_to_min_test_double("MC double");
 #ifdef HONEI_CELL
 SparseVectorReductionToMinTest<tags::Cell, float> sparse_vector_reduction_to_min_test_float_cell("Cell float");
 #endif
@@ -1155,8 +1085,6 @@ class SparseVectorReductionToMinQuickTest :
 
 SparseVectorReductionToMinQuickTest<tags::CPU, float> sparse_reduction_to_min_quick_test_float("float");
 SparseVectorReductionToMinQuickTest<tags::CPU, double> sparse_reduction_to_min_quick_test_double("double");
-SparseVectorReductionToMinQuickTest<tags::CPU::MultiCore, float> mc_sparse_reduction_to_min_quick_test_float("MC float");
-SparseVectorReductionToMinQuickTest<tags::CPU::MultiCore, double> mc_sparse_reduction_to_min_quick_test_double("MC double");
 #ifdef HONEI_CELL
 SparseVectorReductionToMinQuickTest<tags::Cell, float> sparse_vector_reduction_to_min_quick_test_float_cell("Cell float");
 #endif
@@ -1200,8 +1128,6 @@ class DenseMatrixReductionToMaxTest :
 
 DenseMatrixReductionToMaxTest<tags::CPU, float> dense_matrix_reduction_to_max_test_float("float");
 DenseMatrixReductionToMaxTest<tags::CPU, double> dense_matrix_reduction_to_max_test_double("double");
-DenseMatrixReductionToMaxTest<tags::CPU::MultiCore, float> mc_dense_matrix_reduction_to_max_test_float("MC float");
-DenseMatrixReductionToMaxTest<tags::CPU::MultiCore, double> mc_dense_matrix_reduction_to_max_test_double("MC double");
 
 #ifdef HONEI_CELL
 DenseMatrixReductionToMaxTest<tags::Cell, float> cell_dense_matrix_reduction_to_max_test_float("Cell float");
@@ -1244,8 +1170,6 @@ class DenseMatrixReductionToMaxQuickTest :
 
 DenseMatrixReductionToMaxQuickTest<tags::CPU, float> dense_matrix_reduction_to_max_quick_test_float("float");
 DenseMatrixReductionToMaxQuickTest<tags::CPU, double> dense_matrix_reduction_to_max_quick_test_double("double");
-DenseMatrixReductionToMaxQuickTest<tags::CPU::MultiCore, float> mc_dense_matrix_reduction_to_max_quick_test_float("MC float");
-DenseMatrixReductionToMaxQuickTest<tags::CPU::MultiCore, double> mc_dense_matrix_reduction_to_max_quick_test_double("MC double");
 #ifdef HONEI_CELL
 DenseMatrixReductionToMaxQuickTest<tags::Cell, float> cell_dense_matrix_reduction_to_max_quick_test_float("Cell float");
 #endif
@@ -1290,8 +1214,6 @@ class SparseMatrixReductionToMaxTest :
 
 SparseMatrixReductionToMaxTest<tags::CPU, float> sparse_matrix_reduction_to_max_test_float("float");
 SparseMatrixReductionToMaxTest<tags::CPU, double> sparse_matrix_reduction_to_max_test_double("double");
-SparseMatrixReductionToMaxTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_max_test_float("MC float");
-SparseMatrixReductionToMaxTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_max_test_double("MC double");
 #ifdef HONEI_CELL
 SparseMatrixReductionToMaxTest<tags::Cell, float> sparse_matrix_reduction_to_max_test_float_cell("Cell float");
 #endif
@@ -1333,8 +1255,6 @@ class SparseMatrixReductionToMaxQuickTest :
 
 SparseMatrixReductionToMaxQuickTest<tags::CPU, float> sparse_matrix_reduction_to_max_quick_test_float("float");
 SparseMatrixReductionToMaxQuickTest<tags::CPU, double> sparse_matrix_reduction_to_max_quick_test_double("double");
-SparseMatrixReductionToMaxQuickTest<tags::CPU::MultiCore, float> mc_sparse_matrix_reduction_to_max_quick_test_float("MC float");
-SparseMatrixReductionToMaxQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_reduction_to_max_quick_test_double("MC double");
 #ifdef HONEI_CELL
 SparseMatrixReductionToMaxQuickTest<tags::Cell, float> sparse_matrix_reduction_to_max_quick_test_float_cell("Cell float");
 #endif
@@ -1396,8 +1316,6 @@ class BandedMatrixReductionToMaxTest :
 
 BandedMatrixReductionToMaxTest<tags::CPU, float> banded_matrix_reduction_to_max_test_float("float");
 BandedMatrixReductionToMaxTest<tags::CPU, double> banded_matrix_reduction_to_max_test_double("double");
-BandedMatrixReductionToMaxTest<tags::CPU::MultiCore, float> mc_banded_matrix_reduction_to_max_test_float("MC float");
-BandedMatrixReductionToMaxTest<tags::CPU::MultiCore, double> mc_banded_matrix_reduction_to_max_test_double("MC double");
 
 template <typename Tag_, typename DT_>
 class BandedMatrixReductionToMaxQuickTest :
@@ -1454,8 +1372,6 @@ class BandedMatrixReductionToMaxQuickTest :
 
 BandedMatrixReductionToMaxQuickTest<tags::CPU, float> banded_matrix_reduction_to_max_quick_test_float("float");
 BandedMatrixReductionToMaxQuickTest<tags::CPU, double> banded_matrix_reduction_to_max_quick_test_double("double");
-BandedMatrixReductionToMaxQuickTest<tags::CPU::MultiCore, float> mc_banded_matrix_reduction_to_max_quick_test_float("MC float");
-BandedMatrixReductionToMaxQuickTest<tags::CPU::MultiCore, double> mc_banded_matrix_reduction_to_max_quick_test_double("MC double");
 
 template <typename Tag_, typename DT_>
 class DenseVectorRangeReductionToMaxTest :
@@ -1501,14 +1417,10 @@ class DenseVectorRangeReductionToMaxTest :
 
 DenseVectorRangeReductionToMaxTest<tags::CPU, float> dense_vector_range_reduction_to_max_test_float("float");
 DenseVectorRangeReductionToMaxTest<tags::CPU, double> dense_vector_range_reduction_to_max_test_double("double");
-DenseVectorRangeReductionToMaxTest<tags::CPU::MultiCore, float> mc_dense_vector_range_reduction_to_max_test_float("MC float");
-DenseVectorRangeReductionToMaxTest<tags::CPU::MultiCore, double> mc_dense_vector_range_reduction_to_max_test_double("MC double");
 /*
 #ifdef HONEI_SSE
 DenseVectorRangeReductionToMaxTest<tags::CPU::SSE, float> sse_dense_vector_range_reduction_to_max_test_float("SSE float");
 DenseVectorRangeReductionToMaxTest<tags::CPU::SSE, double> sse_dense_vector_range_reduction_to_max_test_double("SSE double");
-DenseVectorRangeReductionToMaxTest<tags::CPU::MultiCore::SSE, float> sse_mc_dense_vector_range_reduction_to_max_test_float("MC SSE float");
-DenseVectorRangeReductionToMaxTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_reduction_to_max_test_double("MC SSE double");
 #endif
 */
 #ifdef HONEI_CELL
@@ -1556,14 +1468,10 @@ class DenseVectorRangeReductionToMaxQuickTest :
 };
 DenseVectorRangeReductionToMaxQuickTest<tags::CPU, float>  dense_vector_range_reduction_to_max_quick_test_float("float");
 DenseVectorRangeReductionToMaxQuickTest<tags::CPU, double> dense_vector_range_reduction_to_max_quick_test_double("double");
-DenseVectorRangeReductionToMaxQuickTest<tags::CPU::MultiCore, float>  mc_dense_vector_range_reduction_to_max_quick_test_float("MC float");
-DenseVectorRangeReductionToMaxQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_range_reduction_to_max_quick_test_double("MC double");
 /*
 #ifdef HONEI_SSE
 DenseVectorRangeReductionToMaxQuickTest<tags::CPU::SSE, float>  sse_dense_vector_range_reduction_to_max_quick_test_float("SSE float");
 DenseVectorRangeReductionToMaxQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_reduction_to_max_quick_test_double("SSE double");
-DenseVectorRangeReductionToMaxQuickTest<tags::CPU::MultiCore::SSE, float>  sse_mc_dense_vector_range_reduction_to_max_quick_test_float("MC SSE float");
-DenseVectorRangeReductionToMaxQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_vector_range_reduction_to_max_quick_test_double("MC SSE double");
 #endif
 */
 #ifdef HONEI_CELL
@@ -1601,8 +1509,6 @@ class DenseVectorReductionToMaxTest :
 
 DenseVectorReductionToMaxTest<tags::CPU, float> dense_vector_reduction_to_max_test_float("float");
 DenseVectorReductionToMaxTest<tags::CPU, double> dense_vector_reduction_to_max_test_double("double");
-DenseVectorReductionToMaxTest<tags::CPU::MultiCore, float> mc_dense_vector_reduction_to_max_test_float("MC float");
-DenseVectorReductionToMaxTest<tags::CPU::MultiCore, double> mc_dense_vector_reduction_to_max_test_double("MC double");
 
 
 template <typename Tag_, typename DT_>
@@ -1633,8 +1539,6 @@ class DenseVectorReductionToMaxQuickTest :
 
 DenseVectorReductionToMaxQuickTest<tags::CPU, float> dense_reduction_to_max_quick_test_float("float");
 DenseVectorReductionToMaxQuickTest<tags::CPU, double> dense_reduction_to_max_quick_test_double("double");
-DenseVectorReductionToMaxQuickTest<tags::CPU::MultiCore, float> mc_dense_reduction_to_max_quick_test_float("MC float");
-DenseVectorReductionToMaxQuickTest<tags::CPU::MultiCore, double> mc_dense_reduction_to_max_quick_test_double("MC double");
 #ifdef HONEI_CELL
 DenseVectorReductionToMaxQuickTest<tags::Cell, float> dense_vector_reduction_to_max_quick_test_float_cell("Cell float");
 #endif
@@ -1669,8 +1573,6 @@ class SparseVectorReductionToMaxTest :
 
 SparseVectorReductionToMaxTest<tags::CPU, float> sparse_vector_reduction_to_max_test_float("float");
 SparseVectorReductionToMaxTest<tags::CPU, double> sparse_vector_reduction_to_max_test_double("double");
-SparseVectorReductionToMaxTest<tags::CPU::MultiCore, float> mc_sparse_vector_reduction_to_max_test_float("MC float");
-SparseVectorReductionToMaxTest<tags::CPU::MultiCore, double> mc_sparse_vector_reduction_to_max_test_double("MC double");
 #ifdef HONEI_CELL
 SparseVectorReductionToMaxTest<tags::Cell, float> sparse_vector_reduction_to_max_test_float_cell("Cell float");
 #endif
@@ -1703,8 +1605,6 @@ class SparseVectorReductionToMaxQuickTest :
 
 SparseVectorReductionToMaxQuickTest<tags::CPU, float> sparse_reduction_to_max_quick_test_float("float");
 SparseVectorReductionToMaxQuickTest<tags::CPU, double> sparse_reduction_to_max_quick_test_double("double");
-SparseVectorReductionToMaxQuickTest<tags::CPU::MultiCore, float> mc_sparse_reduction_to_max_quick_test_float("MC float");
-SparseVectorReductionToMaxQuickTest<tags::CPU::MultiCore, double> mc_sparse_reduction_to_max_quick_test_double("MC double");
 #ifdef HONEI_CELL
 SparseVectorReductionToMaxQuickTest<tags::Cell, float> sparse_vector_reduction_to_max_quick_test_float_cell("Cell float");
 #endif

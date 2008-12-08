@@ -85,6 +85,16 @@ Q1MatrixDenseVectorProductBench<tags::CPU::SSE, float> sseQ1DVPBenchfloat6("SSE:
 Q1MatrixDenseVectorProductBench<tags::CPU::SSE, float> sseQ1DVPBenchfloat7("SSE: Size: 2198401, float", 2198401ul, 10);
 #endif
 
+#ifdef HONEI_CELL
+Q1MatrixDenseVectorProductBench<tags::Cell, float> cellQ1DVPBenchfloat1("Cell: Size: 1089, float", 1089ul, 10);
+Q1MatrixDenseVectorProductBench<tags::Cell, float> cellQ1DVPBenchfloat2("Cell: Size: 4225, float", 4225ul, 10);
+Q1MatrixDenseVectorProductBench<tags::Cell, float> cellQ1DVPBenchfloat3("Cell: Size: 16641, float", 16641ul, 10);
+Q1MatrixDenseVectorProductBench<tags::Cell, float> cellQ1DVPBenchfloat4("Cell: Size: 66049, float", 66049ul, 10);
+Q1MatrixDenseVectorProductBench<tags::Cell, float> cellQ1DVPBenchfloat5("Cell: Size: 263169, float", 263169ul, 10);
+Q1MatrixDenseVectorProductBench<tags::Cell, float> cellQ1DVPBenchfloat6("Cell: Size: 1050625, float", 1050625ul, 10);
+Q1MatrixDenseVectorProductBench<tags::Cell, float> cellQ1DVPBenchfloat7("Cell: Size: 2198401, float", 2198401ul, 10);
+#endif
+
 #ifdef HONEI_CUDA
 Q1MatrixDenseVectorProductBench<tags::GPU::CUDA, float> cudaQ1DVPBenchfloat1("CUDA: Size: 1089, float", 1089ul, 10);
 Q1MatrixDenseVectorProductBench<tags::GPU::CUDA, float> cudaQ1DVPBenchfloat2("CUDA: Size: 4225, float", 4225ul, 10);

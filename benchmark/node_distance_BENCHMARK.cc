@@ -133,20 +133,12 @@ NodeDistanceBench<tags::CPU, float, NodeDistanceMethods::ForWeightedKamadaKawai>
 NodeDistanceBench<tags::CPU, double, NodeDistanceMethods::ForWeightedKamadaKawai> node_distance_bench_double_WKK("NodeDistance for WKK Benchmark double", SIZE, COUNT);
 NodeDistanceBench<tags::CPU, float, NodeDistanceMethods::ForWeightedFruchtermanReingold> node_distance_bench_float_WFR("NodeDistance for WFR Benchmark float", SIZE, COUNT);
 NodeDistanceBench<tags::CPU, double, NodeDistanceMethods::ForWeightedFruchtermanReingold> node_distance_bench_double_WFR("NodeDistance for WFR Benchmark double", SIZE, COUNT);
-NodeDistanceBench<tags::CPU::MultiCore, float, NodeDistanceMethods::ForWeightedKamadaKawai> mc_node_distance_bench_float_WKK("MC NodeDistance for WKK Benchmark float", SIZE, COUNT);
-NodeDistanceBench<tags::CPU::MultiCore, double, NodeDistanceMethods::ForWeightedKamadaKawai> mc_node_distance_bench_double_WKK("MC NodeDistance for WKK Benchmark double", SIZE, COUNT);
-NodeDistanceBench<tags::CPU::MultiCore, float, NodeDistanceMethods::ForWeightedFruchtermanReingold> mc_node_distance_bench_float_WFR("MC NodeDistance for WFR Benchmark float", SIZE, COUNT);
-NodeDistanceBench<tags::CPU::MultiCore, double, NodeDistanceMethods::ForWeightedFruchtermanReingold> mc_node_distance_bench_double_WFR("MC NodeDistance for WFR Benchmark double", SIZE, COUNT);
 
 #ifdef HONEI_SSE
 NodeDistanceBench<tags::CPU::SSE, float, NodeDistanceMethods::ForWeightedKamadaKawai> sse_node_distance_bench_float_WKK("SSE NodeDistance for WKK Benchmark float", SIZE, COUNT);
 NodeDistanceBench<tags::CPU::SSE, double, NodeDistanceMethods::ForWeightedKamadaKawai> sse_node_distance_bench_double_WKK("SSE NodeDistance for WKK Benchmark double", SIZE, COUNT);
 NodeDistanceBench<tags::CPU::SSE, float, NodeDistanceMethods::ForWeightedFruchtermanReingold> sse_node_distance_bench_float_WFR("SSE NodeDistance for WFR Benchmark float", SIZE, COUNT);
 NodeDistanceBench<tags::CPU::SSE, double, NodeDistanceMethods::ForWeightedFruchtermanReingold> sse_node_distance_bench_double_WFR("SSE NodeDistance for WFR Benchmark double", SIZE, COUNT);
-NodeDistanceBench<tags::CPU::MultiCore::SSE, float, NodeDistanceMethods::ForWeightedKamadaKawai> mc_sse_node_distance_bench_float_WKK("MC SSE NodeDistance for WKK Benchmark float", SIZE, COUNT);
-NodeDistanceBench<tags::CPU::MultiCore::SSE, double, NodeDistanceMethods::ForWeightedKamadaKawai> mc_sse_node_distance_bench_double_WKK("MC SSE NodeDistance for WKK Benchmark double", SIZE, COUNT);
-NodeDistanceBench<tags::CPU::MultiCore::SSE, float, NodeDistanceMethods::ForWeightedFruchtermanReingold> mc_sse_node_distance_bench_float_WFR("MC SSE NodeDistance for WFR Benchmark float", SIZE, COUNT);
-NodeDistanceBench<tags::CPU::MultiCore::SSE, double, NodeDistanceMethods::ForWeightedFruchtermanReingold> mc_sse_node_distance_bench_double_WFR("MC SSE NodeDistance for WFR Benchmark double", SIZE, COUNT);
 #endif
 
 #ifdef HONEI_CELL

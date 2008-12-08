@@ -117,10 +117,8 @@ class RelaxSolverMIXEDPRECINNERBench :
         }
 };
 
-RelaxSolverMIXEDPRECINNERBench<tags::CPU::MultiCore> mc_solver_bench_mp2("MC RelaxSolver Benchmark - size: 41, mixedprec 2", 41, 100);
 RelaxSolverMIXEDPRECINNERBench<tags::CPU> solver_bench_mp22("RelaxSolver Benchmark - size: 41, mixedprec 2", 41, 100);
 #ifdef HONEI_SSE
-RelaxSolverMIXEDPRECINNERBench<tags::CPU::MultiCore::SSE> mc_sse_solver_bench_mp2("MC SSE RelaxSolver Benchmark - size: 41, mixedprec 2", 41, 100);
 RelaxSolverMIXEDPRECINNERBench<tags::CPU::SSE> sse_solver_bench_mp2("SSE RelaxSolver Benchmark - size: 41, mixedprec 2", 41, 100);
 #endif
 

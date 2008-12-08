@@ -74,6 +74,4 @@ AssemblyProcessingTest<tags::CPU, double> assembly_test_double("double");
 #ifdef HONEI_SSE
 AssemblyProcessingTest<tags::CPU::SSE, float> assembly_test_float_sse("SSE float");
 AssemblyProcessingTest<tags::CPU::SSE, double> assembly_test_double_sse("SSE double");
-AssemblyProcessingTest<tags::CPU::MultiCore::SSE, float> assembly_test_float_mcsse("MCSSE float");
-AssemblyProcessingTest<tags::CPU::MultiCore::SSE, double> assembly_test_double_mcsse("MCSSE double");
 #endif

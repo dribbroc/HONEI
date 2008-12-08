@@ -91,8 +91,6 @@ class CorrectionProcessingTest:
 };
 CorrectionProcessingTest<tags::CPU, float> correction_test_float("float");
 CorrectionProcessingTest<tags::CPU, double> correction_test_double("double");
-CorrectionProcessingTest<tags::CPU::MultiCore, float> correction_test_float_mc("float MC");
-CorrectionProcessingTest<tags::CPU::MultiCore, double> correction_test_double_mc("double MC");
 
 #ifdef HONEI_SSE
 CorrectionProcessingTest<tags::CPU::SSE, float> correction_test_float_sse("float SSE");

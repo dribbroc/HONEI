@@ -65,13 +65,9 @@ class SourceLABSWETest :
 };
 SourceLABSWETest<tags::CPU, float> source_test_float("float");
 SourceLABSWETest<tags::CPU, double> source_test_double("double");
-SourceLABSWETest<tags::CPU::MultiCore, float> source_test_float_mc("float");
-SourceLABSWETest<tags::CPU::MultiCore, double> source_test_double_mc("double");
 #ifdef HONEI_SSE
 SourceLABSWETest<tags::CPU::SSE, float> source_test_float_sse("float");
 SourceLABSWETest<tags::CPU::SSE, double> source_test_double_sse("double");
-SourceLABSWETest<tags::CPU::MultiCore::SSE, float> source_test_float_mc_sse("float");
-SourceLABSWETest<tags::CPU::MultiCore::SSE, double> source_test_double_mc_sse("double");
 #endif
 #ifdef HONEI_CELL
 SourceLABSWETest<tags::Cell, float> source_test_float_cell("float");
