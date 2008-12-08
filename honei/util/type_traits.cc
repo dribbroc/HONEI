@@ -327,10 +327,10 @@ namespace honei
 
             for (unsigned long index(quad_start) ; index < quad_end ; index += 8)
             {
-                m1 = _mm_loadu_ps(orig + index);
-                m2 = _mm_load_ps(orig + index + 2);
-                m3 = _mm_loadu_ps(orig + index + 4);
-                m4 = _mm_load_ps(orig + index + 6);
+                m1 = _mm_load_ps(orig + index);
+                m2 = _mm_loadu_ps(orig + index + 2);
+                m3 = _mm_load_ps(orig + index + 4);
+                m4 = _mm_loadu_ps(orig + index + 6);
 
                 /// \todo shuffle from 2 into 4 __m128 registers and use _mm_load_ps
                 m5 = _mm_cvtps_pd(m1);
