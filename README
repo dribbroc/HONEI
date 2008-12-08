@@ -42,7 +42,10 @@ DIRK: "all visual application"? je nachdem wie markus tests + benchmarks erklaer
 
 Currently only common versions of the GNU Compiler Collection's
 c++ compiler are fully supported and tested. Examples include
-gcc releases 4.1.x (e.g. OpenSUSE Linux 10.2) DOM: PLEASE ADD MORE TESTED COMPILERS FROM YOUR DISTROS, e.g. gentoo
+gcc releases 4.1.x (e.g. OpenSUSE Linux 10.2),
+gcc releases 4.2.x (e.g. Ubuntu 8.04),
+gcc releases 4.3.x (e.g. Kubuntu 8.10)
+DOM: PLEASE ADD MORE TESTED COMPILERS FROM YOUR DISTROS, e.g. gentoo
 Consequently, only compiler flags for GCC are discussed in this file.
 
 
