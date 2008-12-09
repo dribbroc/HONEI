@@ -1,11 +1,24 @@
-Authors of PG512
+Authors of HONEI
 ================
+
+Core developers
+===============
+Markus Geveler <markus.geveler@honei.org>
+
+Sven Mallach <sven.mallach@uni-dortmund.de>
+
+Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+
+Danny van Dyk <danny.dyk@uni-dortmund.de>
+
+
+Contributions
+=============
+Dominik Goeddeke <dominik.goeddeke@math.uni-dortmund.de>
+    Overall advise, testing, LibMath
 
 Michael Abshoff <michael.abshoff@fsmath.mathematik.uni-dortmund.de>
     LibLA
-
-Markus Geveler <apryde@gmx.de>
-    LibLA, LibSWE, LibMath, LibVisual
 
 David Gies <david-gies@gmx.de>
     Benchmarks, Unit Tests
@@ -16,24 +29,11 @@ Nina Harmuth <nina.harmuth@uni-dortmund.de>
 Volker Jung <volker.m.jung@t-online.de>
     LibSWE
 
-Sven Mallach <sven.mallach@uni-dortmund.de>
-    LibGraph, LibLA
-
 Andre Matuschek <andre@matuschek.org>
     Unit Tests
 
 Joachim Messer <joachim.messer@t-online.de>
     LibSWE
-
-Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
-    LibUtil, LibLa, LibVisual, Unit Tests
-
-Danny van Dyk <danny.dyk@uni-dortmund.de>
-    LibLA, LibSWE, LibUtil, Unit Tests
-
-
-Contributions
-=============
 
 Ciaran McCreesh <ciaran@ciaranm.org>
     LibUtil, Unit Tests
