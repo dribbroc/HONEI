@@ -7,25 +7,8 @@ INSTALLING
 
 * Decompress and untar the honei archive.
 * Run './configure' in the untarred honei archive's top-level directory.
-* Run 'make' to build all libraries and applications. DOM: oder nur die libs? Verstehe gerade die Ausgabe von 'make install' nicht.
+* Run 'make' to build all libraries and applications.
 * Optionally run 'make check TYPE=quick'.
-
-DOM: --with-visual scheint PFLICHT zu sein für CPE, denn ich sehe keine Applikation mit obigem configure.
-teslaspule: /home/user/goeddeke/temp/honeitest/honei-RC1[509]>ls -la bin/
-drwxr-xr-x  2 goeddeke lsiii   512 Dec  7 19:38 ./
-drwxr-xr-x 12 goeddeke lsiii  1024 Dec  7 19:39 ../
--rwxr-xr-x  1 goeddeke lsiii 16344 Dec  7 19:38 honei-config*
-
-DOM: mit --with-visual werden
--rwxr-xr-x  1 goeddeke lsiii  16344 Dec  7 19:44 honei-config*
--rwxr-xr-x  1 goeddeke lsiii 574399 Dec  7 19:44 honei-lbm*
--rwxr-xr-x  1 goeddeke lsiii 137015 Dec  7 19:44 honei-poisson*
--rwxr-xr-x  1 goeddeke lsiii 188153 Dec  7 19:44 honei-swe*
-gebaut. So weit so gut, nur dass es honei-lbm im CPE nicht gibt. Code bleibt natürlich drin, aber die App würde ich nicht bauen wollen.
-
-Zwischenfazit soweit: Das riecht sehr stark danach, als ob ein branch-cpe in git angebracht wäre.
-
-
 
 To adapt the honei installation to your systems features, you can pass
 several parameters to the configure script.
@@ -37,15 +20,13 @@ details):
 --enable-gpu            Build GPU support
 --enable-cuda           Build CUDA support
 --enable-sse            Build SSE support
---with-visual           Include GUI support (required for some applications)
-DIRK: "all visual application"? je nachdem wie markus tests + benchmarks erklaert...
+--with-visual           Include GUI support (required for the GUI applications)
 
 Currently only common versions of the GNU Compiler Collection's
 c++ compiler are fully supported and tested. Examples include
 gcc releases 4.1.x (e.g. OpenSUSE Linux 10.2),
 gcc releases 4.2.x (e.g. Ubuntu 8.04),
 gcc releases 4.3.x (e.g. Kubuntu 8.10)
-DOM: PLEASE ADD MORE TESTED COMPILERS FROM YOUR DISTROS, e.g. gentoo
 Consequently, only compiler flags for GCC are discussed in this file.
 
 
@@ -102,27 +83,15 @@ the configure stage than just passing --enable-XYZ:
 
 APPLICATIONS
 ------------
-DOM: Please refer to the files README.poisson and README.swe for details.
-DOM: As HONEI is work in progress, not all parameters can be set in the GUIs,
-DOM: in particular, the backend has to be chosen at compile-time in the code.
-DOM: ODER NICHT: ICH KOMPILIERE MIT ALLEN --enable DIE ES GIBT UND HACKE IRGENDWO IN
-     poisson.hh RUM DAMIT ICH SSE GEGEN CUDA VERGLEICHEN KANN, ODER?
-     BITTE DOKUMENTIEREN, MIT DEN BEIDEN SEPARATEN DATEIEN SIND WIR HIER AUF DER
-     SICHEREN SEITE.
-DOM: IN DEN README's SOLLTE AUCH BEANTWORTET WERDEN, WIE ICH ALS AUSGABE DIE TIMINGS
-     BEKOMME DIE WIR IM PAPER BEHAUPTEN. ICH HABE MAL poisson GESTARTET UND SEHE EXAKT
-     NICHTS. GUI ZEIGT ERGEBNISPLOT, CONSOLE ZEIGT ZAHL DER ITERATIONEN, UND DAS
-     WAR ES DANN. ÜBRIGENS AUCH NUR, WENN ICH EINMAL PER MENÜ DAS SCENARIO WECHSELE.
+For building and using the GUI applications (note, that they require '--with-visual'), as well as running tests and benchmarks,
+we refer to the associated README files in the following folders:
 
-
-BENCHMARKS
-----------
-
-DOM: WAS IST DAS? DAS IST NIRGENDWO ERKLÄRT. VIELLEICHT AUCH UNTER APPLICATIONS MIT
-SEPARATEM README AUFNEHMEN?
-The benchmarks can be found in /benchmark in the build directory.
-The benchmark names should be self-explanatory.
-By adding 'i' for interactive mode or 'cuda', 'sse', 'cell' to the benchmark call, you can specify what backends should be benchmarked.
+FOLDER                              DESCRIPTION
+benchmark/                          HONEI benchmarks are used to create timing and/or transfer rate and/or performance information.
+clients/poisson                     A GUI application to visualise results computed by the HONEI multigrid solver.
+clients/swe/                        A GUI application to visualise results computed by the HONEI SWE solver.
+honei/math/                         The HONEI math library folder. It also contains solvers and tests.
+honei/swe/                          The HONEI swe  library folder. It also contains solvers and tests.
 
 
 RUNTIME PARAMETERS
