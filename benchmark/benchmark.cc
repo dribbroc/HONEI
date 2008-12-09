@@ -92,9 +92,12 @@ void Benchmark::calculate()
     temp = _benchlist;
     temp.sort();
     std::list<double>::iterator m = temp.begin();
-    for(int i = 0 ; i < ((_x + 1) / 2) ; ++i)
+    if (temp.size() > 1)
     {
-        ++m;
+        for(int i = 0 ; i < ((_x + 1) / 2) ; ++i)
+        {
+            ++m;
+        }
     }
     _median = *m;
 }
