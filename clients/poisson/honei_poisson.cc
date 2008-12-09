@@ -75,10 +75,7 @@ int main(int argc, char ** argv)
     glutMouseFunc(mouse);
     GLint menu_id_rendering = glutCreateMenu(menu_rendering);
     glutAddMenuEntry("Toggle fill mode", 2);
-    glutAddMenuEntry("Toggle ground", 3);
-    glutAddMenuEntry("Toggle water", 4);
     glutAddMenuEntry("Toggle shading", 5);
-    glutAddMenuEntry("Toggle primitive type", 6);
     glutAddMenuEntry("Toggle alpha blending", 7);
     GLint menu_id_scenario = glutCreateMenu(menu_scenario);
     glutAddMenuEntry("F(x,y) = f, Dirichlet 2, Neumann east", 100);
