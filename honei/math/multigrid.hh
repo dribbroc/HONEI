@@ -942,10 +942,10 @@ endCycleLoop:
                             std::cout << "Inner TOE: "<< (ie.sec() - ib.sec()) + (ie.usec() - ib.usec())/1e6<< std::endl;
 #endif
                         }
-//#ifdef SOLVER_VERBOSE
+#ifdef SOLVER_VERBOSE
                         std::cout << "TN of outer iters: " << outer_iterations << std::endl;
                         std::cout << "TN of inner iters: " << inner_iterations << std::endl;
-//#endif
+#endif
 #ifdef SOLVER_BENCHMARK
                         ae.take();
                         std::cout << "All TOE: "<< (ae.sec() - ab.sec()) + (ae.usec() - ab.usec())/1e6 << std::endl;
