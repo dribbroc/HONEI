@@ -1,0 +1,50 @@
+HONEI README (honei/swe/README)
+------------
+
+RUNNING TESTS
+-------------
+To run the SWE tests, process the following steps (it is assumed here, that HONEI has been built properly, see
+the README in the HONEI root folder for instructions):
+
+	- If not yet built, build the tests by typing 'make check' in the current directory.
+	- Start the application by typing './<test>_TEST'. For example, to run the tests provided in
+	  'relax_solver_TEST.cc' type './relax_solver_TEST'. Alternatively, you can
+	  build all tests and run specific tests by using 'make check TESTS=<test>_TEST'.
+
+ENABLE VERBOSE MODE
+-------------------
+You can make use of the verbose mode of the HONEI SWE solver by adding the line
+	'#define SOLVER_VERBOSE'
+in the '*_TEST.cc' file before any includes are processed.
+
+SETTING UP TEST SCENARIOS
+-------------------------
+Set up new test scenarios for the SWE solver and run the test by changing the values in the test file or
+create new testcases by adding a test to the instantiation list, usually at the end of the file. In order to
+simply alter the problem size, change the initial values of 'dwidth' and 'dheight' properly. You can also change
+the value for the maximum number of timesteps to be performed by changing the value of 'timesteps'.
+In principle, many aspects of the scenario can be changed to receive a different configuration of the SWE solver.
+Since setting up the relaxation based solver is a non-trivial task, the solver might not work or even crash if not
+set up correctly. However, changing problem sizes and total number of timesteps to compute is save and
+can be performed without computing any relaxation parameters.
+
+Note that changing the parameters in mass conservation tests require an adjustment of the analytical volumes defined
+within the test.
+
+RUNNING BENCHMARKS
+------------------
+To run the SWE benchmarks, process the following steps:
+	- If not yet built, build the benchmarks by typing 'make' in the 'honei/benchmark/' directory.
+	- Start the benchmark by typing './<test>_BENCHMARK'. For example, to run the benchmarks provided in
+	  'relax_solver_BENCHMARK.cc' type './relax_solver_BENCHMARK'.
+See the README in 'honei/benchmark/' for further information.
+
+RELEVANT FILES
+--------------
+FILE                                                    DESCRIPTION
+honei/swe/relax_solver_TEST.cc                         General test of the SWE solver with full application kernel optimization.
+honei/swe/solver_TEST.cc                               General test of the SWE solver without application kernel optimization.
+honei/swe/relax_solver_mp1_TEST.cc                     General test of the SWE mixed precision solver 1 (fixed full timestep).
+honei/swe/relax_solver_mp2_TEST.cc                     General test of the SWE mixed precision solver 2 (mixed prediction).
+honei/swe/relax_solver_mp1_volume_steady_TEST.cc       Mass conservation test for the mixed precision configuration 1 (fixed full timestep).
+honei/swe/relax_solver_mp2_volume_steady_TEST.cc       Mass conservation test for the mixed precision configuration 2 (mixed prediction).

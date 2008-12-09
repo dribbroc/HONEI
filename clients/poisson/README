@@ -1,0 +1,66 @@
+HONEI README (clients/poisson/README)
+------------
+
+RUNNING GUI APPLICATION
+-----------------------
+To run the poisson gui application, process the following steps (it is assumed here, that HONEI has been built properly, see
+the README in the HONEI root folder for instructions):
+
+	- If not yet built, build the application by typing 'make' in the current directory.
+	- Start the application by typing './honei-poisson'.
+
+By that time, you should see a GLUT window popping up, rendering the result of the start scenario, as soon
+the computational results are available. See the following section for how to use the application.
+
+USING GUI APPLICATION
+---------------------
+The application just renders the result of the implemented setups (scenarios) of the poisson application, and
+additionally provides the following functionality:
+
+	Exit program
+	------------
+	In order to exit the program, right-click anywhere on the window to open the context menu and select
+	'Exit program'. Alternatively, you can use the ESC button.
+
+	Switching Scenarios:
+	----------------------
+	In order to select a new scenario, right-click anywhere on the window to open the context-menu and select
+	Scenarios -> <SCENARIO>. The problem is now beeing solved and the result is then rendered. There are currently
+	two scenarios provided. For altering these or setting up new ones see the next section.
+
+	Rendering
+	---------
+	Rendering options can be altered by using the context menu 'Rendering options'. Such options are:
+		-Toggle fill mode:       Decides wether the primitives are shaded or not.
+		-Toggle shading:         Sets shading from 'Interpolated' to 'Flat' and vice versa. Default is 'Interpolated.'
+		-Toggle alpha blending:  Enables/disables alpha blending. Default is using alpha blending.
+
+	Restart Scenario
+	----------------
+	In order to restart the scenario, use the context menu item 'Restart scenario' or press F5.
+
+SETTING UP SCENARIOS
+--------------------
+Set up new scenarios for the Poisson solver and visualize them via the gui application, by using one of the two following ways:
+
+	Alter existing scenario
+	-----------------------
+	The simplest way to compute a scenario is to change values in the associated scenario implementation in 'scenario_controller.cc.'
+	There are two examplary implementations available. One using the fixed- and one using the mixed precision configuration of the
+	MG solver. Scenarios are separated in a 'case' block in the 'switch_scenario() function'. To simply compute the results for larger
+	or smaller problem sizes, change the value of '_root_n' in the scenario you want to change (Note that this number has to be a power
+	of two, added to one, i.e. 3, 9, 17, 33, 65, ...., to compute a solution for a _root_n*_root_n sized problem). You can also try other
+	values for the setup variables provided by the MGInfo struct in 'honei/math/multigrid.hh'. For this, see the documentation of that file.
+
+	Create new scenario
+	-------------------
+	In order to keep the example scenarios, you can also add new ones by simply pasting another 'case' block into the associated 'switch'
+	block in 'switch_scenario()'. To make it accessible by the gui however, you will have to provide a unique scenario id and include
+	a menu entry of the form
+	'glutAddMenuEntry("<Description>", <id>);' in 'honei_poisson.cc' in this folder.
+
+RELEVANT FILES
+--------------
+FILE                                                    DESCRIPTION
+clients/poisson/honei_poisson.cc                        Contains menu entries for the scenarios.
+clients/poisson/scenario_controller.cc                  Contains specific scenario information.

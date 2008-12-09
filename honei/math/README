@@ -1,0 +1,46 @@
+HONEI README (honei/math/README)
+------------
+
+RUNNING TESTS
+-------------
+To run the poisson tests, process the following steps (it is assumed here, that HONEI has been built properly, see
+the README in the HONEI root folder for instructions):
+	- If not yet built, build the tests by typing 'make check' in the current directory.
+	- Start the application by typing './<test>_TEST'. For example, to run the tests provided in
+	  'poisson_mg_double_banded_TEST.cc' type './poisson_mg_double_banded_TEST'. Alternatively, you can
+	  build all tests and run specific tests by using 'make check TESTS=<test>_TEST'.
+
+ENABLE VERBOSE MODE
+-------------------
+You can make use of the verbose mode of the HONEI Multigrid solver by adding the line
+	'#define SOLVER_VERBOSE'
+in the '*_TEST.cc' file before any includes are processed. This mode prints out iteration numbers and defect-norms
+and other information that could be useful.
+
+SETTING UP TEST SCENARIOS
+-------------------------
+Set up new test scenarios for the Poisson solver and run the test by changing the values in the test file or
+create new testcases by adding a test to the instantiation list, usually at the end of the file. In order to
+simply alter the problem size, see the following instructions:
+
+Such tests load data from a binary file and compare analytical and reference results with the computed
+results. Simply substitute the filename by the one you want to test against. The files are
+named '<problem size>.bin' in the 'honei/math/testcases/' directory. The test adjusts the problem size
+accordingly. See the directory for available binaries.
+
+RUNNING BENCHMARKS
+------------------
+To run the poisson benchmarks, process the following steps:
+	- If not yet built, build the benchmarks by typing 'make' in the 'honei/benchmark/' directory.
+	- Start the application by typing './<test>_BENCHMARK'. For example, to run the benchmarks provided in
+	  'poisson_mg_double_banded_BENCHMARK.cc' type './poisson_mg_double_banded_BENCHMARK'.
+
+See the README in 'honei/benchmark/' for further information.
+
+RELEVANT FILES
+--------------
+FILE                                                    DESCRIPTION
+honei/math/poisson_mg_float_banded_TEST.cc              Single precision test of the HONEI Multigrid solver.
+honei/math/poisson_mg_double_banded_TEST.cc             Double precision test of the HONEI Multigrid solver.
+honei/math/poisson_mg_mixed_banded_TEST.cc              Mixed precision test of the HONEI Multigrid solver.
+
