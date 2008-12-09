@@ -35,6 +35,8 @@ BACKEND_LIBS += \
 
 endif
 
+EXTRA_DIST = README
+
 bin_PROGRAMS = honei-poisson
 honei_poisson_SOURCES = \
 			honei_poisson.hh \

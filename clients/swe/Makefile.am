@@ -35,6 +35,8 @@ BACKEND_LIBS += \
 
 endif
 
+EXTRA_DIST = README
+
 bin_PROGRAMS = honei-swe
 honei_swe_SOURCES = honei_swe.hh scenario_controller.hh honei_swe.cc
 honei_swe_LDADD = \
