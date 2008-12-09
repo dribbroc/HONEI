@@ -7,7 +7,7 @@ define(`benchmarklist', `')dnl
 define(`addbench', `define(`benchmarklist', benchmarklist `$1_BENCHMARK')dnl
 $1_BENCHMARK_SOURCES = $1_BENCHMARK.cc
 $1_BENCHMARK_LDADD = \
-	$(top_builddir)/benchmark/libbenchmark.a \
+	libbenchmark.la \
 	$(top_builddir)/honei/la/libhoneila.la \
 	$(top_builddir)/honei/math/libhoneimath.la \
 	$(top_builddir)/honei/swe/libhoneiswe.la \
@@ -63,10 +63,10 @@ DEFS = \
 	$(PROFILERDEF) \
 	-DHONEI_SOURCEDIR='"$(top_srcdir)"'
 
-noinst_LIBRARIES = libbenchmark.a
+noinst_LTLIBRARIES = libbenchmark.la
 noinst_PROGRAMS = benchmarklist
 
-libbenchmark_a_SOURCES = \
+libbenchmark_la_SOURCES = \
 	benchmark.cc benchmark.hh
 
 BENCHMARKS = benchmarklist
