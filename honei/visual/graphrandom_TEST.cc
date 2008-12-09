@@ -8,7 +8,7 @@
 #include <honei/graph/position.hh>
 #include <cstdlib>
 
-//
+
 using namespace honei;
 using namespace tests;
 using namespace std;
@@ -17,7 +17,7 @@ using namespace gl_globals;
 template <typename Tag_, typename DataType_, typename GraphTag_>
 class EngineGraphTest :
     public BaseTest
-{ 
+{
     private:
         typedef EngineGraph<Tag_, DataType_, GraphTag_> Engine;
         int _nodeCount;
@@ -35,7 +35,7 @@ class EngineGraphTest :
             register_tag(Tag_::name);
         }
 
-        
+
         virtual void run() const
         {
             int i =1;
@@ -43,7 +43,7 @@ class EngineGraphTest :
             Graph<DataType_>  g(_nodeCount, 2);
             for (int i = 0; i < _nodeCount; i++)
                 g.add_node(i, randomWeight());
-                
+
             //for (int j = 1; j < _nodeCount; j++)
             //        g.addEdge(0, j, randomWeight());
 
@@ -54,10 +54,10 @@ class EngineGraphTest :
 
             std::cout << "\nCalculate Position\n";
             std::cout << *g.edges();
-            
+
             Engine::setTestCase(g, new Positions<Tag_, DataType_, GraphTag_>(g, (DataType_)1), int(_nodeCount * 0.1));
-            
-            
+
+
             char * c = "Test: Engine";
             char ** cp = &c;
             glutInit(pi,cp);
@@ -76,6 +76,8 @@ class EngineGraphTest :
             TEST_CHECK(true);
          }
 };
+#ifdef HONEI_SSE
 //EngineGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double("wkk float", 11);
 //EngineGraphTest<tags::CPU::SSE, double, methods::WeightedFruchtermanReingold> engine_test_double2("wkk double big", 200, .01345);
 EngineGraphTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double2("wkk float big", 200, 0.33);
+#endif

@@ -27,7 +27,7 @@ class EngineEvolvingGraphTest :
             BaseTest("EngineGraph test<" + type + ">"),
             _nodes(nodes),
             _slices(slices)
-            
+
         {
             register_tag(Tag_::name);
         }
@@ -39,7 +39,7 @@ class EngineEvolvingGraphTest :
             int nps = _nodes * _slices;
             int sizes[] =  {2, 3, 4, 5, 6};
             //EvolvingGraph<DataType_> * eg = TestScenario<DataType_>::Evolving(5, sizes);
-            
+
             EvolvingGraph<DataType_> eg(2, DataType_(5));
             for (int t(0); t < _slices; ++t)
             {
@@ -57,7 +57,7 @@ class EngineEvolvingGraphTest :
             t1.add_node(2,1);
             t1.add_node(5,2);
             t1.add_node(6,2);
-            
+
             t1.add_edge(1, 2, 1);
             t1.add_edge(2, 5, 1);
             t1.add_edge(5, 6, 1);
@@ -69,35 +69,35 @@ class EngineEvolvingGraphTest :
             t2.add_node(2,1);
             t2.add_node(3,1);
             t2.add_node(6,3);
-            
+
             t2.add_edge(1,2,1);
             t2.add_edge(1,3,1);
             t2.add_edge(1,6,2);
-            //eg.addTimeslice(t2);   
+            //eg.addTimeslice(t2);
 
-            Graph<DataType_>  t3(eg.add_timeslice(3));   
+            Graph<DataType_>  t3(eg.add_timeslice(3));
             t3.add_node(1,1);
             t3.add_node(3,1);
             t3.add_node(4,1);
             t3.add_edge(1,4,1);
             t3.add_edge(3,4,1);
             t3.add_edge(1,3,1);
-            //eg.addTimeslice(t3);     
-            */       
-            
+            //eg.addTimeslice(t3);
+            */
+
             std::cout << "Scenario created!\n";
             //eg.reassemble_graph();
             std::cout << "Assembled\n";
             std::cout << "Evolving: " << eg.coordinates()->rows() << " Nodes, " << eg.edges()->rows() << "² Edges\n";
          //   std::cout << "coordinates eg: " << *eg.coordinates();
          //   std::cout << "edge matrix\n" << *eg.edges();
-            
-            
+
+
             std::cout << "\nCalculate Position\n";
             //Positions<Tag_, DataType_, methods::WeightedKamadaKawai> positions(&gl_globals::graph, (DataType_)1);
-            
+
             Engine::setTestCase(eg, new Positions<Tag_, DataType_, GraphTag_>(eg, (DataType_)1), 1,-40);
-            
+
 
             char * c = "Test: Engine";
             char ** cp = &c;
@@ -118,5 +118,7 @@ class EngineEvolvingGraphTest :
             TEST_CHECK(true);
         }
 };
+#ifdef HONEI_SSE
 EngineEvolvingGraphTest<tags::CPU::SSE, float, methods::WeightedFruchtermanReingold> engine_test_double("wkk float", 7, 6);
 //EngineEvolvingGraphTest<tags::CPU::SSE, float, methods::WeightedFruchtermanReingold> engine_test_double("wkk double");
+//#endif

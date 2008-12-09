@@ -34,12 +34,12 @@ class EngineEvolvingTest :
         virtual void run() const
         {
             int i =1;
-            int * pi = &i;            
+            int * pi = &i;
             int nps = _nodes * _slices;
-            
+
             /*
             EvolvingGraph<DataType_> eg(2, 4);
-            
+
             for (int t(0); t < _slices; ++t)
             {
                 Graph<DataType_> & g(eg.add_timeslice((t+1) * _nodes - t*0));
@@ -50,7 +50,7 @@ class EngineEvolvingTest :
                         g.add_edge(n, m, 1);
             }
             */
-            
+
             EvolvingGraph<DataType_> eg(2, DataType_(5));
             for (int t(0); t < _slices; ++t)
             {
@@ -61,20 +61,20 @@ class EngineEvolvingTest :
                    // for (int m(n+1); m < (t+1)*_nodes; ++m)
                         g.add_edge(t*_nodes  + n, t*_nodes  +  (n+1) % ((t+1)*_nodes), 1);
             }
-            
+
             std::cout << "\nCalculate Position\n";
             Positions<Tag_, DataType_, GraphTag_> positions(eg, (DataType_)1);
             positions.update(0.01, 500);
             std::cout << "Iterations: " << positions.number_of_iterations() << "\n";
-            
+
             std::cout << "update coordinates in timeslice graphs\n"; 
             eg.update_slice_coordinates(positions.coordinates());
             std::cout << "\nprepare interpolation (generate final coordinate matrices)\n";
-            
-            EvolvingAnimator<Tag_, DataType_> animator(eg, 0.001f);            
+
+            EvolvingAnimator<Tag_, DataType_> animator(eg, 0.001f);
             animator.prepare_interpolation();
             Engine::setTestCase(animator);
-            
+
 
             char * c = "Test: Engine";
             char ** cp = &c;
@@ -95,5 +95,7 @@ class EngineEvolvingTest :
             TEST_CHECK(true);
         }
 };
+#ifdef HONEI_SSE
 //EngineEvolvingTest<tags::CPU::SSE, float, methods::WeightedKamadaKawai> engine_test_double("wkk double");
 EngineEvolvingTest<tags::CPU::SSE, float, methods::WeightedFruchtermanReingold> engine_test_double("wkk double", 7, 6);
+#endif
