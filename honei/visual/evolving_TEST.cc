@@ -121,4 +121,4 @@ class EngineEvolvingGraphTest :
 #ifdef HONEI_SSE
 EngineEvolvingGraphTest<tags::CPU::SSE, float, methods::WeightedFruchtermanReingold> engine_test_double("wkk float", 7, 6);
 //EngineEvolvingGraphTest<tags::CPU::SSE, float, methods::WeightedFruchtermanReingold> engine_test_double("wkk double");
-//#endif
+#endif
