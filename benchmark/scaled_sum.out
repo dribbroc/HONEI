@@ -1,0 +1,240 @@
+CPU Dense Vector ScaledSum Benchmark - vector size: 65536, float:
+Function Calls: 10
+Runtime - total:   0.285382sec
+Runtime - lowest:  0.0211482sec (5.)
+Runtime - highest: 0.094975sec (1.)
+Runtime - mean:    0.0285382sec
+Runtime - median:  0.0211532sec
+Transfer rate (mean):   262.807 MB/s
+Transfer rate (median): 354.558 MB/s
+Transfer rate (peak):   354.642 MB/s
+45.9287 MFLOPS (mean)
+61.9632 MFLOPS (median)
+61.9778 MFLOPS (peak)
+'CPU Dense Vector ScaledSum Benchmark - vector size: 65536, float' finished successfully!
+
+
+CPU Dense Vector ScaledSum Benchmark - vector size: 655360, float:
+Function Calls: 10
+Runtime - total:   2.12479sec
+Runtime - lowest:  0.212285sec (9.)
+Runtime - highest: 0.212808sec (2.)
+Runtime - mean:    0.212479sec
+Runtime - median:  0.212504sec
+Transfer rate (mean):   352.976 MB/s
+Transfer rate (median): 352.935 MB/s
+Transfer rate (peak):   353.299 MB/s
+61.6869 MFLOPS (mean)
+61.6798 MFLOPS (median)
+61.7434 MFLOPS (peak)
+'CPU Dense Vector ScaledSum Benchmark - vector size: 655360, float' finished successfully!
+
+
+CPU Dense Vector ScaledSum Benchmark - vector size: 1376256, float:
+Function Calls: 10
+Runtime - total:   4.45814sec
+Runtime - lowest:  0.445695sec (10.)
+Runtime - highest: 0.446072sec (8.)
+Runtime - mean:    0.445814sec
+Runtime - median:  0.44577sec
+Transfer rate (mean):   353.287 MB/s
+Transfer rate (median): 353.321 MB/s
+Transfer rate (peak):   353.381 MB/s
+61.7413 MFLOPS (mean)
+61.7474 MFLOPS (median)
+61.7578 MFLOPS (peak)
+'CPU Dense Vector ScaledSum Benchmark - vector size: 1376256, float' finished successfully!
+
+
+CPU Dense Vector ScaledSum Benchmark - vector size: 268976, float:
+Function Calls: 10
+Runtime - total:   8.70736sec
+Runtime - lowest:  0.870577sec (7.)
+Runtime - highest: 0.871178sec (6.)
+Runtime - mean:    0.870736sec
+Runtime - median:  0.870669sec
+Transfer rate (mean):   353.15 MB/s
+Transfer rate (median): 353.177 MB/s
+Transfer rate (peak):   353.214 MB/s
+61.7173 MFLOPS (mean)
+61.7221 MFLOPS (median)
+61.7286 MFLOPS (peak)
+'CPU Dense Vector ScaledSum Benchmark - vector size: 268976, float' finished successfully!
+
+
+CPU Dense Vector ScaledSum Benchmark - vector size: 3997696, float:
+Function Calls: 10
+Runtime - total:   12.9559sec
+Runtime - lowest:  1.2954sec (3.)
+Runtime - highest: 1.29581sec (7.)
+Runtime - mean:    1.29559sec
+Runtime - median:  1.29552sec
+Transfer rate (mean):   353.121 MB/s
+Transfer rate (median): 353.139 MB/s
+Transfer rate (peak):   353.173 MB/s
+61.7124 MFLOPS (mean)
+61.7155 MFLOPS (median)
+61.7215 MFLOPS (peak)
+'CPU Dense Vector ScaledSum Benchmark - vector size: 3997696, float' finished successfully!
+
+
+SSE Dense Vector ScaledSum Benchmark - vector size: 65536, float:
+Function Calls: 10
+Runtime - total:   0.00851846sec
+Runtime - lowest:  0.000843048sec (10.)
+Runtime - highest: 0.000880957sec (1.)
+Runtime - mean:    0.000851846sec
+Runtime - median:  0.000849962sec
+Transfer rate (mean):   8.5981 GB/s
+Transfer rate (median): 8.61715 GB/s
+Transfer rate (peak):   8.68783 GB/s
+1.53868 GFLOPS (mean)
+1.54209 GFLOPS (median)
+1.55474 GFLOPS (peak)
+'SSE Dense Vector ScaledSum Benchmark - vector size: 65536, float' finished successfully!
+
+
+SSE Dense Vector ScaledSum Benchmark - vector size: 655360, float:
+Function Calls: 10
+Runtime - total:   0.203001sec
+Runtime - lowest:  0.020283sec (3.)
+Runtime - highest: 0.0203509sec (1.)
+Runtime - mean:    0.0203001sec
+Runtime - median:  0.020294sec
+Transfer rate (mean):   3.60796 GB/s
+Transfer rate (median): 3.60907 GB/s
+Transfer rate (peak):   3.61102 GB/s
+645.67 MFLOPS (mean)
+645.867 MFLOPS (median)
+646.217 MFLOPS (peak)
+'SSE Dense Vector ScaledSum Benchmark - vector size: 655360, float' finished successfully!
+
+
+SSE Dense Vector ScaledSum Benchmark - vector size: 1376256, float:
+Function Calls: 10
+Runtime - total:   0.424498sec
+Runtime - lowest:  0.0424259sec (7.)
+Runtime - highest: 0.0425248sec (1.)
+Runtime - mean:    0.0424498sec
+Runtime - median:  0.042443sec
+Transfer rate (mean):   3.62331 GB/s
+Transfer rate (median): 3.62388 GB/s
+Transfer rate (peak):   3.62535 GB/s
+648.416 MFLOPS (mean)
+648.519 MFLOPS (median)
+648.781 MFLOPS (peak)
+'SSE Dense Vector ScaledSum Benchmark - vector size: 1376256, float' finished successfully!
+
+
+SSE Dense Vector ScaledSum Benchmark - vector size: 268976, float:
+Function Calls: 10
+Runtime - total:   0.83083sec
+Runtime - lowest:  0.0830231sec (10.)
+Runtime - highest: 0.0832622sec (9.)
+Runtime - mean:    0.083083sec
+Runtime - median:  0.083065sec
+Transfer rate (mean):   3.61437 GB/s
+Transfer rate (median): 3.61516 GB/s
+Transfer rate (peak):   3.61698 GB/s
+646.817 MFLOPS (mean)
+646.957 MFLOPS (median)
+647.284 MFLOPS (peak)
+'SSE Dense Vector ScaledSum Benchmark - vector size: 268976, float' finished successfully!
+
+
+SSE Dense Vector ScaledSum Benchmark - vector size: 3997696, float:
+Function Calls: 10
+Runtime - total:   1.23428sec
+Runtime - lowest:  0.123396sec (4.)
+Runtime - highest: 0.12351sec (1.)
+Runtime - mean:    0.123428sec
+Runtime - median:  0.123427sec
+Transfer rate (mean):   3.61975 GB/s
+Transfer rate (median): 3.61977 GB/s
+Transfer rate (peak):   3.62067 GB/s
+647.779 MFLOPS (mean)
+647.784 MFLOPS (median)
+647.945 MFLOPS (peak)
+'SSE Dense Vector ScaledSum Benchmark - vector size: 3997696, float' finished successfully!
+
+
+CUDA Dense Vector ScaledSum Benchmark - vector size: 65536, float:
+Function Calls: 10
+Runtime - total:   0.00227404sec
+Runtime - lowest:  0.000115156sec (10.)
+Runtime - highest: 0.00123sec (1.)
+Runtime - mean:    0.000227404sec
+Runtime - median:  0.00011611sec
+Transfer rate (mean):   32.2082 GB/s
+Transfer rate (median): 63.0804 GB/s
+Transfer rate (peak):   63.6028 GB/s
+5.76385 GFLOPS (mean)
+11.2886 GFLOPS (median)
+11.3821 GFLOPS (peak)
+'CUDA Dense Vector ScaledSum Benchmark - vector size: 65536, float' finished successfully!
+
+
+CUDA Dense Vector ScaledSum Benchmark - vector size: 655360, float:
+Function Calls: 10
+Runtime - total:   0.00569987sec
+Runtime - lowest:  0.000113964sec (2.)
+Runtime - highest: 0.0046742sec (1.)
+Runtime - mean:    0.000569987sec
+Runtime - median:  0.000113964sec
+Transfer rate (mean):   128.498 GB/s
+Transfer rate (median): 642.678 GB/s
+Transfer rate (peak):   642.678 GB/s
+22.9956 GFLOPS (mean)
+115.012 GFLOPS (median)
+115.012 GFLOPS (peak)
+'CUDA Dense Vector ScaledSum Benchmark - vector size: 655360, float' finished successfully!
+
+
+CUDA Dense Vector ScaledSum Benchmark - vector size: 1376256, float:
+Function Calls: 10
+Runtime - total:   0.00970411sec
+Runtime - lowest:  0.00011301sec (3.)
+Runtime - highest: 0.00867414sec (1.)
+Runtime - mean:    0.000970411sec
+Runtime - median:  0.000113964sec
+Transfer rate (mean):   158.498 GB/s
+Transfer rate (median): 1349.62 GB/s
+Transfer rate (peak):   1361.01 GB/s
+28.3644 GFLOPS (mean)
+241.525 GFLOPS (median)
+243.563 GFLOPS (peak)
+'CUDA Dense Vector ScaledSum Benchmark - vector size: 1376256, float' finished successfully!
+
+
+CUDA Dense Vector ScaledSum Benchmark - vector size: 268976, float:
+Function Calls: 10
+Runtime - total:   0.0168645sec
+Runtime - lowest:  0.000113964sec (4.)
+Runtime - highest: 0.0158372sec (1.)
+Runtime - mean:    0.00168645sec
+Runtime - median:  0.000114202sec
+Transfer rate (mean):   178.062 GB/s
+Transfer rate (median): 2629.48 GB/s
+Transfer rate (peak):   2634.98 GB/s
+31.8654 GFLOPS (mean)
+470.563 GFLOPS (median)
+471.548 GFLOPS (peak)
+'CUDA Dense Vector ScaledSum Benchmark - vector size: 268976, float' finished successfully!
+
+
+CUDA Dense Vector ScaledSum Benchmark - vector size: 3997696, float:
+Function Calls: 10
+Runtime - total:   0.0241117sec
+Runtime - lowest:  0.000118971sec (4.)
+Runtime - highest: 0.02302sec (1.)
+Runtime - mean:    0.00241117sec
+Runtime - median:  0.00012207sec
+Transfer rate (mean):   185.294 GB/s
+Transfer rate (median): 3660 GB/s
+Transfer rate (peak):   3755.35 GB/s
+33.1597 GFLOPS (mean)
+654.983 GFLOPS (median)
+672.046 GFLOPS (peak)
+'CUDA Dense Vector ScaledSum Benchmark - vector size: 3997696, float' finished successfully!
+
+
