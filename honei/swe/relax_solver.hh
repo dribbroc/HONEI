@@ -44,7 +44,7 @@
  *
  * \ingroup grplibswe
  **/
-
+#include <iostream>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/banded_matrix.hh>
@@ -57,7 +57,6 @@
 #include <honei/la/element_product.hh>
 #include <honei/la/product.hh>
 #include <honei/util/tags.hh>
-#include <iostream>
 #include <fstream>
 #include <sys/time.h>
 #include <honei/swe/flow_processing.hh>

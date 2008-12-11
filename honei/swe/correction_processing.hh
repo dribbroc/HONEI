@@ -25,6 +25,7 @@
 #include <honei/la/product.hh>
 #include <honei/swe/directions.hh>
 #include <honei/swe/boundary_types.hh>
+#include <iostream>
 
 /**
  * \file
@@ -78,7 +79,7 @@ namespace honei
                     ++iter;
                 }
 #ifdef SOLVER_VERBOSE
-                cout << stringify(iter.index()) << endl;
+                std::cout << stringify(iter.index()) << std::endl;
 #endif
                 unsigned long count =0;
                 ///Iterate through predicted u,v,w - vectors, compute weighted sum , read out h_ij, care about ghost cells.
@@ -126,7 +127,7 @@ namespace honei
                         count = 0;
                     }
 #ifdef SOLVER_VERBOSE
-                    cout << stringify(count)<<endl;
+                    std::cout << stringify(count)<<std::endl;
 #endif
                 }
 #ifdef SOLVER_VERBOSE

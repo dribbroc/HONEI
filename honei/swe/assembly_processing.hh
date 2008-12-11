@@ -27,6 +27,8 @@
 #include <honei/la/product.hh>
 #include <honei/swe/directions.hh>
 #include <honei/swe/limiter.hh>
+#include <honei/util/stringify.hh>
+#include <iostream>
 /**
  * \file
  * Implementation of assembly processing functions for RelaxSolver.
@@ -283,10 +285,10 @@ namespace honei
                 m3.insert_band(6, m3bandPlus2);
                 m3.insert_band((-3), m3bandMinus1);
 #ifdef SOLVER_VERBOSE
-                cout << "M_1:" << stringify(m1.band(ulint(0))) << endl;
-                cout << "M_1:" << stringify(m1.band(ulint(3))) << endl;
-                cout << "M_1:" << stringify(m1.band(ulint(6))) << endl;
-                cout << "M_1:" << stringify(m1.band(ulint(-3))) << endl;
+                std::cout << "M_1:" << stringify(m1.band(0)) << std::endl;
+                std::cout << "M_1:" << stringify(m1.band(3)) << std::endl;
+                std::cout << "M_1:" << stringify(m1.band(6)) << std::endl;
+                std::cout << "M_1:" << stringify(m1.band(-3)) << std::endl;
                 std::cout << "Finished Matrix Assembly 1.\n";
 #endif
 
