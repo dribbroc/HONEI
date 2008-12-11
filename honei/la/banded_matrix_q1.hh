@@ -80,6 +80,9 @@ namespace honei
              */
             BandedMatrixQ1(BandedMatrix<DataType_> & src);
 
+            /// Copy-constructor.
+            BandedMatrixQ1(const BandedMatrixQ1<DataType_> & other);
+
             /// Destructor.
             ~BandedMatrixQ1();
 

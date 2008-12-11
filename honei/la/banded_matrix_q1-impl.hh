@@ -145,6 +145,12 @@ namespace honei
     }
 
     template <typename DataType_>
+    BandedMatrixQ1<DataType_>::BandedMatrixQ1(const BandedMatrixQ1<DataType_> & other) :
+        PrivateImplementationPattern<BandedMatrixQ1<DataType_>, Shared>(other._imp)
+    {
+    }
+
+    template <typename DataType_>
     BandedMatrixQ1<DataType_>::~BandedMatrixQ1()
     {
     }
