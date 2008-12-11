@@ -72,7 +72,7 @@ AM_CXXFLAGS = -I$(top_srcdir)
 
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in Makefile.am
-EXTRA_DIST = Makefile.am.m4 files.m4 README
+EXTRA_DIST = Makefile.am.m4 files.m4 README poisson_mg_double_banded.out
 DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \

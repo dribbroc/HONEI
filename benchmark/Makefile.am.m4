@@ -53,7 +53,7 @@ AM_CXXFLAGS = -I$(top_srcdir)
 
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in Makefile.am
-EXTRA_DIST = Makefile.am.m4 files.m4 README
+EXTRA_DIST = Makefile.am.m4 files.m4 README scaled_sum.out relax_solver_mp2.out poisson_mg_mixed_banded_dirneu.out
 
 DEFS = \
 	$(CELLDEF) \

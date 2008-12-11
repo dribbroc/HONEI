@@ -68,7 +68,7 @@ AM_CXXFLAGS = -I$(top_srcdir)
 
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in Makefile.am
-EXTRA_DIST = Makefile.am.m4 files.m4 README
+EXTRA_DIST = Makefile.am.m4 files.m4 README relax_solver_mp2_volume_steady.out
 DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \
