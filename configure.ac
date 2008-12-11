@@ -1,6 +1,6 @@
 dnl vim: set sw=4 sts=4 ts=4 noet ft=config foldmethod=marker foldmarker={{{,}}} :
 
-AC_INIT([honei], [CiCP])
+AC_INIT([honei], [CPC])
 AC_PREREQ(2.5)
 AC_CONFIG_SRCDIR([])
 AC_CONFIG_AUX_DIR(config)
