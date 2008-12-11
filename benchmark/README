@@ -3,17 +3,17 @@ HONEI README (benchmark/README)
 
 BENCHMARK DESCRIPTION
 ---------------------
-The benchmarks in HONEI have been used to produce timings and/or transfer rate and/or performance information.
-Note that for applications currently only pure execution times are available. To reproduce some of the presented
-results, you need to know how to change values in benchmarks and how to run them. A list of all relevant files is
-provided at the end of this file.
+The benchmarks in HONEI can be use to produce timings and/or transfer rate and/or performance information.
+Note that for applications currently only pure execution times are available. To reproduce some of the results
+presented in our paper, you need to know how to change values in benchmarks and how to run them. A list of all
+relevant files is provided at the end of this filem and this README explains most of the relevant settings.
 
 ENABLE VERBOSE MODE
 -------------------
 You can make use of the verbose mode of the HONEI solvers by adding the line
 	'#define SOLVER_VERBOSE'
-in the '*_TEST.cc' file before any includes are processed. This mode prints out iteration numbers and defect-norms
-and other information that could be useful.
+in the corresponing '*_BENCHMARK.cc' file before any includes are processed. This mode prints out iteration
+numbers and defect-norms and other information that could be useful.
 
 RUNNING BENCHMARKS
 ----------------------------
@@ -26,11 +26,11 @@ the README in the HONEI root folder for instructions):
 
 SETTING UP BENCHMARK SCENARIOS (POISSON)
 ----------------------------------------
-Set up new benchmark scenarios for the Poisson solver and run the benchmark by changing the values in the file or
-create new benchmarks by adding a benchmark to the instantiation list, usually at the end of the file. In order to
-simply alter the problem size, see the following instructions:
+Set up new benchmark scenarios for the Poisson solver and run the benchmark by changing the values in the corresponding
+_BENCHMARK.cc file or create new benchmarks by adding a benchmark to the instantiation list, usually at the end of the file.
+In order to simply alter the problem size, do the following:
 The problem sizes in benchmarks can be adjusted by simply changing the value of 'root_n' in the '*_BENCHMARK.cc' file.
-Note that this number has to be a power of two added to one, i.e. 3, 9, 17, 33, 65,... .
+Note that this number has to be a power of two added to one, i.e. 3, 9, 17, 33, 65,...,1025.
 
 
 SETTING UP BENCHMARK SCENARIOS (SWE)
@@ -44,8 +44,8 @@ Since setting up the relaxation based solver is a non-trivial task, the solver m
 set up correctly. However, changing problem sizes and total number of timesteps to compute is save and
 can be performed without computing any relaxation parameters.
 
-RELEVANT FILES
---------------
+RELEVANT FILES AS PRESENTED IN THE PAPER
+----------------------------------------
 FILE                                                    DESCRIPTION
 benchmark/scaled_sum_BENCHMARK.cc                       Benchmark for AXPY.
 benchmark/poisson_mg_fixed_banded_dirneu_BENCHMARK.cc   Benchmark for the fixed precision Multigrid solver.
@@ -54,3 +54,17 @@ benchmark/relax_solver_BENCHMARK.cc                     Benchmark for the fixed 
 benchmark/relax_solver_mp1_BENCHMARK.cc                 Benchmark for the mixed precision SWE solver configuration 1 (fixed full timestep).
 benchmark/relax_solver_mp2_BENCHMARK.cc                 Benchmark for the mixed precision SWE solver configuration 2 (mixed prediction).
 benchmark/solver_BENCHMARK.cc                           Benchmark for the SWE solver without application kernel optimization.
+
+
+SAMPLE OUTPUT
+-------------
+Benchmark outputs in HONEI appear like this:
+
+'MG double SSE L9:
+Function Calls: 1
+Runtime - total:   1.16592sec
+Runtime - lowest:  1.16592sec (1.)
+Runtime - highest: 1.16592sec (1.)
+Runtime - mean:    1.16592sec
+Runtime - median:  1.16592sec
+'MG double SSE L9' finished successfully!'

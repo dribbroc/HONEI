@@ -37,8 +37,8 @@ To run the poisson benchmarks, process the following steps:
 
 See the README in 'honei/benchmark/' for further information.
 
-RELEVANT FILES
---------------
+RELEVANT FILES AS PRESENTED IN THE PAPER
+----------------------------------------
 FILE                                                    DESCRIPTION
 honei/math/multigrid.hh                                 Implementations of multigrid type solvers and data structures.
 honei/math/jacobi.hh                                    Implementation of the smoother types used by the multigrid solver.
@@ -46,4 +46,20 @@ honei/math/conjugate_gradients.hh                       Implementation of the co
 honei/math/poisson_mg_float_banded_TEST.cc              Single precision test of the HONEI Multigrid solver.
 honei/math/poisson_mg_double_banded_TEST.cc             Double precision test of the HONEI Multigrid solver.
 honei/math/poisson_mg_mixed_banded_TEST.cc              Mixed precision test of the HONEI Multigrid solver.
+
+SAMPLE OUTPUT
+-------------
+For example, the output of the double precision test of the multigrid solvers produces
+the following output:
+
+'(1/2) Poisson test for itrerative LES solvers , MG (Q1 system)<double> [Backend: cpu]
+L2: 7.4013e-07
+PASSED
+(2/2) Poisson test for itrerative LES solvers , MG (Q1 system)<double> [Backend: sse]
+L2: 7.4013e-07
+PASSED
+PASS: poisson_mg_double_banded_TEST
+==================
+All 1 tests passed
+=================='
 

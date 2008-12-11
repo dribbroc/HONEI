@@ -10,14 +10,13 @@ INSTALLING
 * Run 'make' to build all libraries and applications.
 * Optionally run 'make check TYPE=quick'.
 
-To adapt the honei installation to your systems features, you can pass
+To adapt the honei installation to your system's features, you can pass
 several parameters to the configure script.
 A full list can be obtained with './configure --help'.
 
 The most common parameters are (see below for dependencies and additional
 details):
 --enable-cell           Build Cell BE support
---enable-gpu            Build GPU support
 --enable-cuda           Build CUDA support
 --enable-sse            Build SSE support
 --with-visual           Include GUI support (required for the GUI applications)
@@ -40,7 +39,7 @@ the configure stage than just passing --enable-XYZ:
   To create an optimised built for your machine (-march=, -mtune=, -ffoobar),
   pass these flags in CXXFLAGS to configure
 - GUI and visualisation
-  GUIs for the applications honei-poisson and honei-swe need OpenGL, X11 and (free-)GLUT
+  GUIs for the applications honei-poisson and honei-swe need OpenGL, X11 and (free-)glut
   headers and libraries. The applications are only built with --with-visual.
   Necessary files are installed with your graphics card driver, and freeglut is
   part of most Linux distributions, so we assume they have been set up properly
@@ -59,9 +58,9 @@ the configure stage than just passing --enable-XYZ:
   Set the following environment variables according to your installation,
   ideally in your .shellrc configuration file. We assume here CUDA has been
   installed to /usr/local/cuda/2.0:
-  $CUDA_INC_PATH -> /usr/local/cuda/2.0/include/
-  $CUDA_LIB_PATH -> /usr/local/cuda/2.0/lib/
-  $PATH          -> $PATH:/usr/local/cuda/2.0/bin/
+          $CUDA_INC_PATH -> /usr/local/cuda/2.0/include/
+          $CUDA_LIB_PATH -> /usr/local/cuda/2.0/lib/
+          $PATH          -> $PATH:/usr/local/cuda/2.0/bin/
   When configuring, add "-I$CUDA_INC_PATH" to CXXFLAGS,
   and "-L$CUDA_LIB_PATH" to LDFLAGS.
   and 'make' as usual.
@@ -88,6 +87,7 @@ we refer to the associated README files in the following folders:
 
 FOLDER                              DESCRIPTION
 benchmark/                          HONEI benchmarks are used to create timing and/or transfer rate and/or performance information.
+                                    In particular, this folder contains all benchmarks used throughout the paper.
 clients/poisson                     A GUI application to visualise results computed by the HONEI multigrid solver.
 clients/swe/                        A GUI application to visualise results computed by the HONEI SWE solver.
 honei/math/                         The HONEI math library folder. It also contains solvers and tests.
