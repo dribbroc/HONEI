@@ -1,0 +1,180 @@
+MG mixed CPU/CPU L2:
+Function Calls: 1
+Runtime - total:   0.00163412sec
+Runtime - lowest:  0.00163412sec (1.)
+Runtime - highest: 0.00163412sec (1.)
+Runtime - mean:    0.00163412sec
+Runtime - median:  0.00163412sec
+'MG mixed CPU/CPU L2' finished successfully!
+
+
+MG mixed CPU/CPU L3:
+Function Calls: 1
+Runtime - total:   0.00207901sec
+Runtime - lowest:  0.00207901sec (1.)
+Runtime - highest: 0.00207901sec (1.)
+Runtime - mean:    0.00207901sec
+Runtime - median:  0.00207901sec
+'MG mixed CPU/CPU L3' finished successfully!
+
+
+MG mixed CPU/CPU L4:
+Function Calls: 1
+Runtime - total:   0.00331783sec
+Runtime - lowest:  0.00331783sec (1.)
+Runtime - highest: 0.00331783sec (1.)
+Runtime - mean:    0.00331783sec
+Runtime - median:  0.00331783sec
+'MG mixed CPU/CPU L4' finished successfully!
+
+
+MG mixed CPU/CPU L5:
+Function Calls: 1
+Runtime - total:   0.00727606sec
+Runtime - lowest:  0.00727606sec (1.)
+Runtime - highest: 0.00727606sec (1.)
+Runtime - mean:    0.00727606sec
+Runtime - median:  0.00727606sec
+'MG mixed CPU/CPU L5' finished successfully!
+
+
+MG mixed CPU/CPU L6:
+Function Calls: 1
+Runtime - total:   0.0209799sec
+Runtime - lowest:  0.0209799sec (1.)
+Runtime - highest: 0.0209799sec (1.)
+Runtime - mean:    0.0209799sec
+Runtime - median:  0.0209799sec
+'MG mixed CPU/CPU L6' finished successfully!
+
+
+MG mixed CPU/CPU L7:
+Function Calls: 1
+Runtime - total:   0.079103sec
+Runtime - lowest:  0.079103sec (1.)
+Runtime - highest: 0.079103sec (1.)
+Runtime - mean:    0.079103sec
+Runtime - median:  0.079103sec
+'MG mixed CPU/CPU L7' finished successfully!
+
+
+MG mixed CPU/CPU L8:
+Function Calls: 1
+Runtime - total:   0.175838sec
+Runtime - lowest:  0.175838sec (1.)
+Runtime - highest: 0.175838sec (1.)
+Runtime - mean:    0.175838sec
+Runtime - median:  0.175838sec
+'MG mixed CPU/CPU L8' finished successfully!
+
+
+MG mixed CPU/CPU L9:
+Function Calls: 1
+Runtime - total:   0.757406sec
+Runtime - lowest:  0.757406sec (1.)
+Runtime - highest: 0.757406sec (1.)
+Runtime - mean:    0.757406sec
+Runtime - median:  0.757406sec
+'MG mixed CPU/CPU L9' finished successfully!
+
+
+MG mixed CPU/CPU L10:
+Function Calls: 1
+Runtime - total:   3.49935sec
+Runtime - lowest:  3.49935sec (1.)
+Runtime - highest: 3.49935sec (1.)
+Runtime - mean:    3.49935sec
+Runtime - median:  3.49935sec
+'MG mixed CPU/CPU L10' finished successfully!
+
+
+MG mixed GPU/CPU L2:
+Function Calls: 1
+Runtime - total:   0.0555201sec
+Runtime - lowest:  0.0555201sec (1.)
+Runtime - highest: 0.0555201sec (1.)
+Runtime - mean:    0.0555201sec
+Runtime - median:  0.0555201sec
+'MG mixed GPU/CPU L2' finished successfully!
+
+
+MG mixed GPU/CPU L3:
+Function Calls: 1
+Runtime - total:   0.01247sec
+Runtime - lowest:  0.01247sec (1.)
+Runtime - highest: 0.01247sec (1.)
+Runtime - mean:    0.01247sec
+Runtime - median:  0.01247sec
+'MG mixed GPU/CPU L3' finished successfully!
+
+
+MG mixed GPU/CPU L4:
+Function Calls: 1
+Runtime - total:   0.015384sec
+Runtime - lowest:  0.015384sec (1.)
+Runtime - highest: 0.015384sec (1.)
+Runtime - mean:    0.015384sec
+Runtime - median:  0.015384sec
+'MG mixed GPU/CPU L4' finished successfully!
+
+
+MG mixed GPU/CPU L5:
+Function Calls: 1
+Runtime - total:   0.0286109sec
+Runtime - lowest:  0.0286109sec (1.)
+Runtime - highest: 0.0286109sec (1.)
+Runtime - mean:    0.0286109sec
+Runtime - median:  0.0286109sec
+'MG mixed GPU/CPU L5' finished successfully!
+
+
+MG mixed GPU/CPU L6:
+Function Calls: 1
+Runtime - total:   0.058387sec
+Runtime - lowest:  0.058387sec (1.)
+Runtime - highest: 0.058387sec (1.)
+Runtime - mean:    0.058387sec
+Runtime - median:  0.058387sec
+'MG mixed GPU/CPU L6' finished successfully!
+
+
+MG mixed GPU/CPU L7:
+Function Calls: 1
+Runtime - total:   0.07951sec
+Runtime - lowest:  0.07951sec (1.)
+Runtime - highest: 0.07951sec (1.)
+Runtime - mean:    0.07951sec
+Runtime - median:  0.07951sec
+'MG mixed GPU/CPU L7' finished successfully!
+
+
+MG mixed GPU/CPU L8:
+Function Calls: 1
+Runtime - total:   0.13413sec
+Runtime - lowest:  0.13413sec (1.)
+Runtime - highest: 0.13413sec (1.)
+Runtime - mean:    0.13413sec
+Runtime - median:  0.13413sec
+'MG mixed GPU/CPU L8' finished successfully!
+
+
+MG mixed GPU/CPU L9:
+Function Calls: 1
+Runtime - total:   0.326262sec
+Runtime - lowest:  0.326262sec (1.)
+Runtime - highest: 0.326262sec (1.)
+Runtime - mean:    0.326262sec
+Runtime - median:  0.326262sec
+'MG mixed GPU/CPU L9' finished successfully!
+
+
+MG mixed GPU/CPU L10:
+Function Calls: 1
+Runtime - total:   1.17518sec
+Runtime - lowest:  1.17518sec (1.)
+Runtime - highest: 1.17518sec (1.)
+Runtime - mean:    1.17518sec
+Runtime - median:  1.17518sec
+'MG mixed GPU/CPU L10' finished successfully!
+
+

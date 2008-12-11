@@ -58,13 +58,7 @@ benchmark/solver_BENCHMARK.cc                           Benchmark for the SWE so
 
 SAMPLE OUTPUT
 -------------
-Benchmark outputs in HONEI appear like this:
-
-'MG double SSE L9:
-Function Calls: 1
-Runtime - total:   1.16592sec
-Runtime - lowest:  1.16592sec (1.)
-Runtime - highest: 1.16592sec (1.)
-Runtime - mean:    1.16592sec
-Runtime - median:  1.16592sec
-'MG double SSE L9' finished successfully!'
+FILE                                                    DESCRIPTION
+benchmark/scaled_sum.out                                Sample output for AXPY.
+benchmark/poisson_mg_mixed_banded_dirneu.out            Sample output for the mixed precision Multigrid solver.
+benchmark/relax_solver_mp2.out                          Sample output for the mixed precision SWE solver configuration 2 (mixed prediction).

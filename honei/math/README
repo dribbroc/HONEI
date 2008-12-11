@@ -49,17 +49,4 @@ honei/math/poisson_mg_mixed_banded_TEST.cc              Mixed precision test of 
 
 SAMPLE OUTPUT
 -------------
-For example, the output of the double precision test of the multigrid solvers produces
-the following output:
-
-'(1/2) Poisson test for itrerative LES solvers , MG (Q1 system)<double> [Backend: cpu]
-L2: 7.4013e-07
-PASSED
-(2/2) Poisson test for itrerative LES solvers , MG (Q1 system)<double> [Backend: sse]
-L2: 7.4013e-07
-PASSED
-PASS: poisson_mg_double_banded_TEST
-==================
-All 1 tests passed
-=================='
-
+honei/math/poisson_mg_double_banded.out                 Sample output for the double precision test of the HONEI Multigrid solver.

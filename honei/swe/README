@@ -42,31 +42,14 @@ See the README in 'honei/benchmark/' for further information.
 RELEVANT FILES
 --------------
 FILE                                                    DESCRIPTION
-honei/swe/relax_solver_TEST.cc                         General test of the SWE solver with full application kernel optimization.
-honei/swe/solver_TEST.cc                               General test of the SWE solver without application kernel optimization.
-honei/swe/relax_solver_mp1_TEST.cc                     General test of the SWE mixed precision solver 1 (fixed full timestep).
-honei/swe/relax_solver_mp2_TEST.cc                     General test of the SWE mixed precision solver 2 (mixed prediction).
-honei/swe/relax_solver_mp1_volume_steady_TEST.cc       Mass conservation test for the mixed precision configuration 1 (fixed full timestep).
-honei/swe/relax_solver_mp2_volume_steady_TEST.cc       Mass conservation test for the mixed precision configuration 2 (mixed prediction).
+honei/swe/relax_solver_TEST.cc                          General test of the SWE solver with full application kernel optimization.
+honei/swe/solver_TEST.cc                                General test of the SWE solver without application kernel optimization.
+honei/swe/relax_solver_mp1_TEST.cc                      General test of the SWE mixed precision solver 1 (fixed full timestep).
+honei/swe/relax_solver_mp2_TEST.cc                      General test of the SWE mixed precision solver 2 (mixed prediction).
+honei/swe/relax_solver_mp1_volume_steady_TEST.cc        Mass conservation test for the mixed precision configuration 1 (fixed full timestep).
+honei/swe/relax_solver_mp2_volume_steady_TEST.cc        Mass conservation test for the mixed precision configuration 2 (mixed prediction).
 
 SAMPLE OUTPUT
 -------------
-The output of the SWE solver tests appears like this:
-Note again, that you can make use of the verbose mode to get more information.
-
-'(1/1) relax_solver_mixedprec_volume_steady_test<SSE double to float> [Backend: sse]
-Timestep 1 / 5000 finished.
-Timestep 2 / 5000 finished.
-.
-.
-.
-Timestep 4999 / 5000 finished.
-Timestep 5000 / 5000 finished.
-
-Vol.: 200000
-PASSED
-PASS: relax_solver_mp1_volume_steady_TEST
-==================
-All 1 tests passed
-=================='
-
+FILE                                                    DESCRIPTION
+honei/swe/relax_solver_mp2_volume_steady.out            Sample output for the mass conservation test of the SWE mixed precision solver 2 (mixed prediction).

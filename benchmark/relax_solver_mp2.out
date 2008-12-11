@@ -1,0 +1,20 @@
+RelaxSolver Benchmark - size: 41, mixedprec 2:
+Function Calls: 100
+Runtime - total:   7.52411sec
+Runtime - lowest:  0.07359sec (31.)
+Runtime - highest: 0.162265sec (1.)
+Runtime - mean:    0.0752411sec
+Runtime - median:  0.0740991sec
+'RelaxSolver Benchmark - size: 41, mixedprec 2' finished successfully!
+
+
+SSE RelaxSolver Benchmark - size: 41, mixedprec 2:
+Function Calls: 100
+Runtime - total:   1.70906sec
+Runtime - lowest:  0.0164909sec (4.)
+Runtime - highest: 0.017597sec (83.)
+Runtime - mean:    0.0170906sec
+Runtime - median:  0.017133sec
+'SSE RelaxSolver Benchmark - size: 41, mixedprec 2' finished successfully!
+
+

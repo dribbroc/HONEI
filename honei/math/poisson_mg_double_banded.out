@@ -1,0 +1,678 @@
+(1/2) Poisson test for itrerative LES solvers , MG (Q1 system)<double> [Backend: cpu]
+1th iteration
+-----------------------------------------------------
+Presmoothing ||D|| on level 5 0.0211731
+Restricted.
+Defect on level 4||D||: 0.0420061
+-----------------------------------------------------
+Presmoothing ||D|| on level 4 0.0397275
+Restricted.
+Defect on level 3||D||: 0.0776096
+-----------------------------------------------------
+Presmoothing ||D|| on level 3 0.064997
+Restricted.
+Defect on level 2||D||: 0.120006
+-----------------------------------------------------
+Presmoothing ||D|| on level 2 0.0624991
+Restricted.
+Defect on level 1||D||: 0.0910232
+Coarse Grid solver.
+Prolongated.
+Prolongation on level 2 ||c|| 0.0512006
+Prolongation on level 2 ||x|| 0.104335
+Postsmoothing ||X|| on level 2 0.108382
+Defect on level 2||D||: 0.00522011
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 3 ||c|| 0.200875
+Prolongation on level 3 ||x|| 0.23936
+Postsmoothing ||X|| on level 3 0.241768
+Defect on level 3||D||: 0.00452674
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 4 ||c|| 0.474271
+Prolongation on level 4 ||x|| 0.495473
+Postsmoothing ||X|| on level 4 0.496809
+Defect on level 4||D||: 0.0027025
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 5 ||c|| 0.988795
+Prolongation on level 5 ||x|| 0.999671
+Postsmoothing ||X|| on level 5 1.00036
+Defect on level 5||D||: 0.00145743
+-----------------------------------------------------
+2th iteration
+-----------------------------------------------------
+Presmoothing ||D|| on level 5 0.00141235
+Restricted.
+Defect on level 4||D||: 0.00279115
+-----------------------------------------------------
+Presmoothing ||D|| on level 4 0.00258476
+Restricted.
+Defect on level 3||D||: 0.00501882
+-----------------------------------------------------
+Presmoothing ||D|| on level 3 0.00411068
+Restricted.
+Defect on level 2||D||: 0.0075631
+-----------------------------------------------------
+Presmoothing ||D|| on level 2 0.00392554
+Restricted.
+Defect on level 1||D||: 0.00571547
+Coarse Grid solver.
+Prolongated.
+Prolongation on level 2 ||c|| 0.00321495
+Prolongation on level 2 ||x|| 0.00654475
+Postsmoothing ||X|| on level 2 0.0068093
+Defect on level 2||D||: 0.000328368
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 3 ||c|| 0.0126187
+Prolongation on level 3 ||x|| 0.0150506
+Postsmoothing ||X|| on level 3 0.0152062
+Defect on level 3||D||: 0.000293697
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 4 ||c|| 0.0298236
+Prolongation on level 4 ||x|| 0.0311759
+Postsmoothing ||X|| on level 4 0.0312624
+Defect on level 4||D||: 0.00018751
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 5 ||c|| 0.0622163
+Prolongation on level 5 ||x|| 1.06325
+Postsmoothing ||X|| on level 5 1.06329
+Defect on level 5||D||: 0.000105566
+-----------------------------------------------------
+3th iteration
+-----------------------------------------------------
+Presmoothing ||D|| on level 5 0.000100543
+Restricted.
+Defect on level 4||D||: 0.000197319
+-----------------------------------------------------
+Presmoothing ||D|| on level 4 0.000175425
+Restricted.
+Defect on level 3||D||: 0.000336364
+-----------------------------------------------------
+Presmoothing ||D|| on level 3 0.000262501
+Restricted.
+Defect on level 2||D||: 0.000479092
+-----------------------------------------------------
+Presmoothing ||D|| on level 2 0.000246722
+Restricted.
+Defect on level 1||D||: 0.000359064
+Coarse Grid solver.
+Prolongated.
+Prolongation on level 2 ||c|| 0.000201974
+Prolongation on level 2 ||x|| 0.000410681
+Postsmoothing ||X|| on level 2 0.000428283
+Defect on level 2||D||: 2.06847e-05
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 3 ||c|| 0.000793419
+Prolongation on level 3 ||x|| 0.000948457
+Postsmoothing ||X|| on level 3 0.000958869
+Defect on level 3||D||: 1.97411e-05
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 4 ||c|| 0.0018797
+Prolongation on level 4 ||x|| 0.00196781
+Postsmoothing ||X|| on level 4 0.00197363
+Defect on level 4||D||: 1.41547e-05
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 5 ||c|| 0.00392704
+Prolongation on level 5 ||x|| 1.06725
+Postsmoothing ||X|| on level 5 1.06726
+Defect on level 5||D||: 8.44392e-06
+-----------------------------------------------------
+4th iteration
+-----------------------------------------------------
+Presmoothing ||D|| on level 5 7.86973e-06
+Restricted.
+Defect on level 4||D||: 1.53021e-05
+-----------------------------------------------------
+Presmoothing ||D|| on level 4 1.27988e-05
+Restricted.
+Defect on level 3||D||: 2.40277e-05
+-----------------------------------------------------
+Presmoothing ||D|| on level 3 1.71061e-05
+Restricted.
+Defect on level 2||D||: 3.06784e-05
+-----------------------------------------------------
+Presmoothing ||D|| on level 2 1.55218e-05
+Restricted.
+Defect on level 1||D||: 2.25746e-05
+Coarse Grid solver.
+Prolongated.
+Prolongation on level 2 ||c|| 1.26982e-05
+Prolongation on level 2 ||x|| 2.57938e-05
+Postsmoothing ||X|| on level 2 2.69929e-05
+Defect on level 2||D||: 1.30571e-06
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 3 ||c|| 4.99683e-05
+Prolongation on level 3 ||x|| 6.00447e-05
+Postsmoothing ||X|| on level 3 6.07914e-05
+Defect on level 3||D||: 1.40982e-06
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 4 ||c|| 0.000119037
+Prolongation on level 4 ||x|| 0.000125044
+Postsmoothing ||X|| on level 4 0.000125467
+Defect on level 4||D||: 1.17854e-06
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 5 ||c|| 0.000249537
+Prolongation on level 5 ||x|| 1.06751
+Postsmoothing ||X|| on level 5 1.06751
+Defect on level 5||D||: 7.42778e-07
+-----------------------------------------------------
+5th iteration
+-----------------------------------------------------
+Presmoothing ||D|| on level 5 6.79338e-07
+Restricted.
+Defect on level 4||D||: 1.30959e-06
+-----------------------------------------------------
+Presmoothing ||D|| on level 4 1.02589e-06
+Restricted.
+Defect on level 3||D||: 1.87603e-06
+-----------------------------------------------------
+Presmoothing ||D|| on level 3 1.15932e-06
+Restricted.
+Defect on level 2||D||: 2.00835e-06
+-----------------------------------------------------
+Presmoothing ||D|| on level 2 9.77952e-07
+Restricted.
+Defect on level 1||D||: 1.42088e-06
+Coarse Grid solver.
+Prolongated.
+Prolongation on level 2 ||c|| 7.99247e-07
+Prolongation on level 2 ||x|| 1.6238e-06
+Postsmoothing ||X|| on level 2 1.70796e-06
+Defect on level 2||D||: 8.26794e-08
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 3 ||c|| 3.15628e-06
+Prolongation on level 3 ||x|| 3.83788e-06
+Postsmoothing ||X|| on level 3 3.89817e-06
+Defect on level 3||D||: 1.09346e-07
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 4 ||c|| 7.61382e-06
+Prolongation on level 4 ||x|| 8.06006e-06
+Postsmoothing ||X|| on level 4 8.09506e-06
+Defect on level 4||D||: 1.06329e-07
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 5 ||c|| 1.60837e-05
+Prolongation on level 5 ||x|| 1.06752
+Postsmoothing ||X|| on level 5 1.06752
+Defect on level 5||D||: 6.97087e-08
+-----------------------------------------------------
+6th iteration
+-----------------------------------------------------
+Presmoothing ||D|| on level 5 6.29668e-08
+Restricted.
+Defect on level 4||D||: 1.20656e-07
+-----------------------------------------------------
+Presmoothing ||D|| on level 4 8.97319e-08
+Restricted.
+Defect on level 3||D||: 1.60251e-07
+-----------------------------------------------------
+Presmoothing ||D|| on level 3 8.38396e-08
+Restricted.
+Defect on level 2||D||: 1.37044e-07
+-----------------------------------------------------
+Presmoothing ||D|| on level 2 6.17528e-08
+Restricted.
+Defect on level 1||D||: 8.95841e-08
+Coarse Grid solver.
+Prolongated.
+Prolongation on level 2 ||c|| 5.0391e-08
+Prolongation on level 2 ||x|| 1.028e-07
+Postsmoothing ||X|| on level 2 1.08912e-07
+Defect on level 2||D||: 5.25978e-09
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 3 ||c|| 2.00496e-07
+Prolongation on level 3 ||x|| 2.50175e-07
+Postsmoothing ||X|| on level 3 2.55854e-07
+Defect on level 3||D||: 9.21883e-09
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 4 ||c|| 4.97058e-07
+Prolongation on level 4 ||x|| 5.34828e-07
+Postsmoothing ||X|| on level 4 5.38215e-07
+Defect on level 4||D||: 1.00757e-08
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 5 ||c|| 1.06712e-06
+Prolongation on level 5 ||x|| 1.06753
+Postsmoothing ||X|| on level 5 1.06753
+Defect on level 5||D||: 6.77237e-09
+-----------------------------------------------------
+7th iteration
+-----------------------------------------------------
+Presmoothing ||D|| on level 5 6.07271e-09
+Restricted.
+Defect on level 4||D||: 1.15935e-08
+-----------------------------------------------------
+Presmoothing ||D|| on level 4 8.32782e-09
+Restricted.
+Defect on level 3||D||: 1.46211e-08
+-----------------------------------------------------
+Presmoothing ||D|| on level 3 6.59529e-09
+Restricted.
+Defect on level 2||D||: 9.993e-09
+-----------------------------------------------------
+Presmoothing ||D|| on level 2 3.91251e-09
+Restricted.
+Defect on level 1||D||: 5.66241e-09
+Coarse Grid solver.
+Prolongated.
+Prolongation on level 2 ||c|| 1.22646e-09
+Prolongation on level 2 ||x|| 4.87217e-09
+Postsmoothing ||X|| on level 2 6.10758e-09
+Defect on level 2||D||: 1.38422e-09
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 3 ||c|| 1.10918e-08
+Prolongation on level 3 ||x|| 1.53407e-08
+Postsmoothing ||X|| on level 3 1.62231e-08
+Defect on level 3||D||: 1.07362e-09
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 4 ||c|| 3.10939e-08
+Prolongation on level 4 ||x|| 3.493e-08
+Postsmoothing ||X|| on level 4 3.54144e-08
+Defect on level 4||D||: 1.03801e-09
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 5 ||c|| 6.98816e-08
+Prolongation on level 5 ||x|| 1.06753
+Postsmoothing ||X|| on level 5 1.06753
+Defect on level 5||D||: 6.90768e-10
+-----------------------------------------------------
+8th iteration
+-----------------------------------------------------
+Presmoothing ||D|| on level 5 6.21087e-10
+Restricted.
+Defect on level 4||D||: 1.18716e-09
+-----------------------------------------------------
+Presmoothing ||D|| on level 4 8.63283e-10
+Restricted.
+Defect on level 3||D||: 1.52855e-09
+-----------------------------------------------------
+Presmoothing ||D|| on level 3 7.87665e-10
+Restricted.
+Defect on level 2||D||: 1.29258e-09
+-----------------------------------------------------
+Presmoothing ||D|| on level 2 5.89147e-10
+Restricted.
+Defect on level 1||D||: 8.54847e-10
+Coarse Grid solver.
+Prolongated.
+Prolongation on level 2 ||c|| 4.22003e-12
+Prolongation on level 2 ||x|| 5.46657e-10
+Postsmoothing ||X|| on level 2 8.01353e-10
+Defect on level 2||D||: 3.05222e-10
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 3 ||c|| 1.4695e-09
+Prolongation on level 3 ||x|| 1.95988e-09
+Postsmoothing ||X|| on level 3 2.08114e-09
+Defect on level 3||D||: 1.71764e-10
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 4 ||c|| 4.02948e-09
+Prolongation on level 4 ||x|| 4.41257e-09
+Postsmoothing ||X|| on level 4 4.47434e-09
+Defect on level 4||D||: 1.23578e-10
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 5 ||c|| 8.85958e-09
+Prolongation on level 5 ||x|| 1.06753
+Postsmoothing ||X|| on level 5 1.06753
+Defect on level 5||D||: 7.70484e-11
+-----------------------------------------------------
+L2: 7.4013e-07
+PASSED
+(2/2) Poisson test for itrerative LES solvers , MG (Q1 system)<double> [Backend: sse]
+1th iteration
+-----------------------------------------------------
+Presmoothing ||D|| on level 5 0.0211731
+Restricted.
+Defect on level 4||D||: 0.0420061
+-----------------------------------------------------
+Presmoothing ||D|| on level 4 0.0397275
+Restricted.
+Defect on level 3||D||: 0.0776096
+-----------------------------------------------------
+Presmoothing ||D|| on level 3 0.064997
+Restricted.
+Defect on level 2||D||: 0.120006
+-----------------------------------------------------
+Presmoothing ||D|| on level 2 0.0624991
+Restricted.
+Defect on level 1||D||: 0.0910232
+Coarse Grid solver.
+Prolongated.
+Prolongation on level 2 ||c|| 0.0512006
+Prolongation on level 2 ||x|| 0.104335
+Postsmoothing ||X|| on level 2 0.108382
+Defect on level 2||D||: 0.00522011
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 3 ||c|| 0.200875
+Prolongation on level 3 ||x|| 0.23936
+Postsmoothing ||X|| on level 3 0.241768
+Defect on level 3||D||: 0.00452674
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 4 ||c|| 0.474271
+Prolongation on level 4 ||x|| 0.495473
+Postsmoothing ||X|| on level 4 0.496809
+Defect on level 4||D||: 0.0027025
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 5 ||c|| 0.988795
+Prolongation on level 5 ||x|| 0.999671
+Postsmoothing ||X|| on level 5 1.00036
+Defect on level 5||D||: 0.00145743
+-----------------------------------------------------
+2th iteration
+-----------------------------------------------------
+Presmoothing ||D|| on level 5 0.00141235
+Restricted.
+Defect on level 4||D||: 0.00279115
+-----------------------------------------------------
+Presmoothing ||D|| on level 4 0.00258476
+Restricted.
+Defect on level 3||D||: 0.00501882
+-----------------------------------------------------
+Presmoothing ||D|| on level 3 0.00411068
+Restricted.
+Defect on level 2||D||: 0.0075631
+-----------------------------------------------------
+Presmoothing ||D|| on level 2 0.00392554
+Restricted.
+Defect on level 1||D||: 0.00571547
+Coarse Grid solver.
+Prolongated.
+Prolongation on level 2 ||c|| 0.00321495
+Prolongation on level 2 ||x|| 0.00654475
+Postsmoothing ||X|| on level 2 0.0068093
+Defect on level 2||D||: 0.000328368
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 3 ||c|| 0.0126187
+Prolongation on level 3 ||x|| 0.0150506
+Postsmoothing ||X|| on level 3 0.0152062
+Defect on level 3||D||: 0.000293697
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 4 ||c|| 0.0298236
+Prolongation on level 4 ||x|| 0.0311759
+Postsmoothing ||X|| on level 4 0.0312624
+Defect on level 4||D||: 0.00018751
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 5 ||c|| 0.0622163
+Prolongation on level 5 ||x|| 1.06325
+Postsmoothing ||X|| on level 5 1.06329
+Defect on level 5||D||: 0.000105566
+-----------------------------------------------------
+3th iteration
+-----------------------------------------------------
+Presmoothing ||D|| on level 5 0.000100543
+Restricted.
+Defect on level 4||D||: 0.000197319
+-----------------------------------------------------
+Presmoothing ||D|| on level 4 0.000175425
+Restricted.
+Defect on level 3||D||: 0.000336364
+-----------------------------------------------------
+Presmoothing ||D|| on level 3 0.000262501
+Restricted.
+Defect on level 2||D||: 0.000479092
+-----------------------------------------------------
+Presmoothing ||D|| on level 2 0.000246722
+Restricted.
+Defect on level 1||D||: 0.000359064
+Coarse Grid solver.
+Prolongated.
+Prolongation on level 2 ||c|| 0.000201974
+Prolongation on level 2 ||x|| 0.000410681
+Postsmoothing ||X|| on level 2 0.000428283
+Defect on level 2||D||: 2.06847e-05
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 3 ||c|| 0.000793419
+Prolongation on level 3 ||x|| 0.000948457
+Postsmoothing ||X|| on level 3 0.000958869
+Defect on level 3||D||: 1.97411e-05
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 4 ||c|| 0.0018797
+Prolongation on level 4 ||x|| 0.00196781
+Postsmoothing ||X|| on level 4 0.00197363
+Defect on level 4||D||: 1.41547e-05
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 5 ||c|| 0.00392704
+Prolongation on level 5 ||x|| 1.06725
+Postsmoothing ||X|| on level 5 1.06726
+Defect on level 5||D||: 8.44392e-06
+-----------------------------------------------------
+4th iteration
+-----------------------------------------------------
+Presmoothing ||D|| on level 5 7.86973e-06
+Restricted.
+Defect on level 4||D||: 1.53021e-05
+-----------------------------------------------------
+Presmoothing ||D|| on level 4 1.27988e-05
+Restricted.
+Defect on level 3||D||: 2.40277e-05
+-----------------------------------------------------
+Presmoothing ||D|| on level 3 1.71061e-05
+Restricted.
+Defect on level 2||D||: 3.06784e-05
+-----------------------------------------------------
+Presmoothing ||D|| on level 2 1.55218e-05
+Restricted.
+Defect on level 1||D||: 2.25746e-05
+Coarse Grid solver.
+Prolongated.
+Prolongation on level 2 ||c|| 1.26982e-05
+Prolongation on level 2 ||x|| 2.57938e-05
+Postsmoothing ||X|| on level 2 2.69929e-05
+Defect on level 2||D||: 1.30571e-06
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 3 ||c|| 4.99683e-05
+Prolongation on level 3 ||x|| 6.00447e-05
+Postsmoothing ||X|| on level 3 6.07914e-05
+Defect on level 3||D||: 1.40982e-06
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 4 ||c|| 0.000119037
+Prolongation on level 4 ||x|| 0.000125044
+Postsmoothing ||X|| on level 4 0.000125467
+Defect on level 4||D||: 1.17854e-06
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 5 ||c|| 0.000249537
+Prolongation on level 5 ||x|| 1.06751
+Postsmoothing ||X|| on level 5 1.06751
+Defect on level 5||D||: 7.42778e-07
+-----------------------------------------------------
+5th iteration
+-----------------------------------------------------
+Presmoothing ||D|| on level 5 6.79338e-07
+Restricted.
+Defect on level 4||D||: 1.30959e-06
+-----------------------------------------------------
+Presmoothing ||D|| on level 4 1.02589e-06
+Restricted.
+Defect on level 3||D||: 1.87603e-06
+-----------------------------------------------------
+Presmoothing ||D|| on level 3 1.15932e-06
+Restricted.
+Defect on level 2||D||: 2.00835e-06
+-----------------------------------------------------
+Presmoothing ||D|| on level 2 9.77952e-07
+Restricted.
+Defect on level 1||D||: 1.42088e-06
+Coarse Grid solver.
+Prolongated.
+Prolongation on level 2 ||c|| 7.99247e-07
+Prolongation on level 2 ||x|| 1.6238e-06
+Postsmoothing ||X|| on level 2 1.70796e-06
+Defect on level 2||D||: 8.26794e-08
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 3 ||c|| 3.15628e-06
+Prolongation on level 3 ||x|| 3.83788e-06
+Postsmoothing ||X|| on level 3 3.89817e-06
+Defect on level 3||D||: 1.09346e-07
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 4 ||c|| 7.61382e-06
+Prolongation on level 4 ||x|| 8.06006e-06
+Postsmoothing ||X|| on level 4 8.09506e-06
+Defect on level 4||D||: 1.06329e-07
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 5 ||c|| 1.60837e-05
+Prolongation on level 5 ||x|| 1.06752
+Postsmoothing ||X|| on level 5 1.06752
+Defect on level 5||D||: 6.97087e-08
+-----------------------------------------------------
+6th iteration
+-----------------------------------------------------
+Presmoothing ||D|| on level 5 6.29668e-08
+Restricted.
+Defect on level 4||D||: 1.20656e-07
+-----------------------------------------------------
+Presmoothing ||D|| on level 4 8.97319e-08
+Restricted.
+Defect on level 3||D||: 1.60251e-07
+-----------------------------------------------------
+Presmoothing ||D|| on level 3 8.38396e-08
+Restricted.
+Defect on level 2||D||: 1.37044e-07
+-----------------------------------------------------
+Presmoothing ||D|| on level 2 6.17528e-08
+Restricted.
+Defect on level 1||D||: 8.95841e-08
+Coarse Grid solver.
+Prolongated.
+Prolongation on level 2 ||c|| 5.0391e-08
+Prolongation on level 2 ||x|| 1.028e-07
+Postsmoothing ||X|| on level 2 1.08912e-07
+Defect on level 2||D||: 5.25978e-09
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 3 ||c|| 2.00496e-07
+Prolongation on level 3 ||x|| 2.50175e-07
+Postsmoothing ||X|| on level 3 2.55854e-07
+Defect on level 3||D||: 9.21883e-09
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 4 ||c|| 4.97058e-07
+Prolongation on level 4 ||x|| 5.34828e-07
+Postsmoothing ||X|| on level 4 5.38215e-07
+Defect on level 4||D||: 1.00757e-08
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 5 ||c|| 1.06712e-06
+Prolongation on level 5 ||x|| 1.06753
+Postsmoothing ||X|| on level 5 1.06753
+Defect on level 5||D||: 6.77237e-09
+-----------------------------------------------------
+7th iteration
+-----------------------------------------------------
+Presmoothing ||D|| on level 5 6.07271e-09
+Restricted.
+Defect on level 4||D||: 1.15935e-08
+-----------------------------------------------------
+Presmoothing ||D|| on level 4 8.32782e-09
+Restricted.
+Defect on level 3||D||: 1.46211e-08
+-----------------------------------------------------
+Presmoothing ||D|| on level 3 6.59529e-09
+Restricted.
+Defect on level 2||D||: 9.993e-09
+-----------------------------------------------------
+Presmoothing ||D|| on level 2 3.91251e-09
+Restricted.
+Defect on level 1||D||: 5.66241e-09
+Coarse Grid solver.
+Prolongated.
+Prolongation on level 2 ||c|| 1.22646e-09
+Prolongation on level 2 ||x|| 4.87217e-09
+Postsmoothing ||X|| on level 2 6.10758e-09
+Defect on level 2||D||: 1.38422e-09
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 3 ||c|| 1.10918e-08
+Prolongation on level 3 ||x|| 1.53407e-08
+Postsmoothing ||X|| on level 3 1.62231e-08
+Defect on level 3||D||: 1.07362e-09
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 4 ||c|| 3.10939e-08
+Prolongation on level 4 ||x|| 3.493e-08
+Postsmoothing ||X|| on level 4 3.54144e-08
+Defect on level 4||D||: 1.03801e-09
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 5 ||c|| 6.98816e-08
+Prolongation on level 5 ||x|| 1.06753
+Postsmoothing ||X|| on level 5 1.06753
+Defect on level 5||D||: 6.90768e-10
+-----------------------------------------------------
+8th iteration
+-----------------------------------------------------
+Presmoothing ||D|| on level 5 6.21087e-10
+Restricted.
+Defect on level 4||D||: 1.18716e-09
+-----------------------------------------------------
+Presmoothing ||D|| on level 4 8.63283e-10
+Restricted.
+Defect on level 3||D||: 1.52855e-09
+-----------------------------------------------------
+Presmoothing ||D|| on level 3 7.87665e-10
+Restricted.
+Defect on level 2||D||: 1.29258e-09
+-----------------------------------------------------
+Presmoothing ||D|| on level 2 5.89147e-10
+Restricted.
+Defect on level 1||D||: 8.54847e-10
+Coarse Grid solver.
+Prolongated.
+Prolongation on level 2 ||c|| 4.22003e-12
+Prolongation on level 2 ||x|| 5.46657e-10
+Postsmoothing ||X|| on level 2 8.01353e-10
+Defect on level 2||D||: 3.05222e-10
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 3 ||c|| 1.4695e-09
+Prolongation on level 3 ||x|| 1.95988e-09
+Postsmoothing ||X|| on level 3 2.08114e-09
+Defect on level 3||D||: 1.71764e-10
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 4 ||c|| 4.02948e-09
+Prolongation on level 4 ||x|| 4.41257e-09
+Postsmoothing ||X|| on level 4 4.47434e-09
+Defect on level 4||D||: 1.23578e-10
+-----------------------------------------------------
+Prolongated.
+Prolongation on level 5 ||c|| 8.85958e-09
+Prolongation on level 5 ||x|| 1.06753
+Postsmoothing ||X|| on level 5 1.06753
+Defect on level 5||D||: 7.70484e-11
+-----------------------------------------------------
+L2: 7.4013e-07
+PASSED
