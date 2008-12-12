@@ -28,8 +28,8 @@ namespace honei
     {
         void product_dm(float * x, float * y, float b, unsigned long size)
         {
-            _mm_prefetch(y, _MM_HINT_T0);
-            _mm_prefetch(x, _MM_HINT_T0);
+            _mm_prefetch((char *)y, _MM_HINT_T0);
+            _mm_prefetch((char *)x, _MM_HINT_T0);
 
             __m128 m1, m2, m3, m4, m5, m6, m8;
             float HONEI_ALIGNED(16) b_data;
@@ -117,8 +117,8 @@ namespace honei
 
         void product_dm(double * x, double * y, double b, unsigned long size)
         {
-            _mm_prefetch(y, _MM_HINT_T0);
-            _mm_prefetch(x, _MM_HINT_T0);
+            _mm_prefetch((char *)y, _MM_HINT_T0);
+            _mm_prefetch((char *)x, _MM_HINT_T0);
 
             __m128d m1, m2, m3, m4, m5, m6, m8;
             double HONEI_ALIGNED(16) b_data;
