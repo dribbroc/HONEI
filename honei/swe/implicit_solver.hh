@@ -41,6 +41,10 @@
 #ifndef LIBSWE_GUARD_IMPLICIT_SOLVER_HH
 #define LIBSWE_GUARD_IMPLICIT_SOLVER_HH 1
 
+#ifdef DEBUG
+#define SOLVER_VERBOSE
+#endif
+
 #include <honei/la/banded_matrix.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/dense_vector.hh>

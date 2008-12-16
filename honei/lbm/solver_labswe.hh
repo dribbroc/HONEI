@@ -31,6 +31,10 @@
 //#define SOLVER_VERBOSE
 //#define SOLVER_POSTPROCESSING 1
 
+#ifdef DEBUG
+#define SOLVER_VERBOSE
+#endif
+
 #include <honei/lbm/tags.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>

@@ -21,6 +21,11 @@
 #ifndef LIBSWE_GUARD_RELAX_SOLVER_HH
 #define LIBSWE_GUARD_RELAX_SOLVER_HH 1
 
+#ifdef DEBUG
+#define SOLVER_VERBOSE
+#define SOLVER_BENCHMARK
+#endif
+
 /**
  * \file
  *
