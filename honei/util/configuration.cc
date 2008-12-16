@@ -94,6 +94,8 @@ Configuration::~Configuration()
 void
 Configuration::_read()
 {
+    // Search order: 1: HONEI_CONFIG 2: ./honeirc 3: ~/.honeirc 4: HONEI_SOURCEDIR/honei/honeirc
+
     char * envvar(std::getenv("HONEI_CONFIG"));
     struct stat stat_info;
 
@@ -107,6 +109,13 @@ Configuration::_read()
             {
                 _imp->filename = std::string(envvar);
                 _imp->filename += "/.honeirc";
+            }
+
+            if (0!= ::lstat(_imp->filename.c_str(), &stat_info))
+            {
+                std::string file_name(HONEI_SOURCEDIR);
+                file_name += "/honei/honeirc";
+                _imp->filename = file_name;
             }
         }
         else

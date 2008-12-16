@@ -41,7 +41,8 @@ DEFS = \
 	$(SSEDEF) \
 	$(CUDADEF) \
 	$(DEBUGDEF) \
-	$(PROFILERDEF)
+	$(PROFILERDEF) \
+	-DHONEI_SOURCEDIR='"$(top_srcdir)"'
 
 if HDF5
 
