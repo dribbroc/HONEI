@@ -98,9 +98,9 @@ class ScenarioManagerTest :
                 RelaxSolver<tags::CPU, DataType_, DataType_, DataType_, DataType_, DataType_, source_types::SIMPLE, boundaries::REFLECT, precision_modes::FIXED> relax_solver
                     (scenario);
                 relax_solver.do_preprocessing();
-                cout << "Height -field after preprocessing:\n";
+                std::cout << "Height -field after preprocessing:\n";
                 string outHeight = stringify(height);
-                cout <<  outHeight;
+                std::cout <<  outHeight;
 
                 timeval start, end;
                 for (ulint i = 1; i <= timesteps; ++i)
@@ -108,11 +108,11 @@ class ScenarioManagerTest :
                     gettimeofday(&start, 0);
                     relax_solver.solve();
                     gettimeofday(&end, 0);
-                    cout << "Timestep "<< i <<" / " << timesteps << " finished." <<endl;
-                    cout << "Solvetime: "<< end.tv_sec - start.tv_sec << " " << end.tv_usec - start.tv_usec<<endl;
+                    std::cout << "Timestep "<< i <<" / " << timesteps << " finished." <<std::endl;
+                    std::cout << "Solvetime: "<< end.tv_sec - start.tv_sec << " " << end.tv_usec - start.tv_usec<<std::endl;
                 }
-                cout << "Height -field after solve():\n";
-                cout << stringify(height);
+                std::cout << "Height -field after solve():\n";
+                std::cout << stringify(height);
 
                 bool pass = true;
                 for(unsigned long i(0); i < height.rows(); ++i)
@@ -240,9 +240,9 @@ class ScenarioManagerConversionTest :
                 RelaxSolver<tags::CPU, DT2_, DT2_, DT2_, DT2_, DT2_, source_types::SIMPLE, boundaries::REFLECT, precision_modes::FIXED> relax_solver
                     (scenario_2);
                 relax_solver.do_preprocessing();
-                cout << "Height -field after preprocessing:\n";
+                std::cout << "Height -field after preprocessing:\n";
                 string outHeight = stringify(height_2);
-                cout <<  outHeight;
+                std::cout <<  outHeight;
 
                 timeval start, end;
                 for (ulint i = 1; i <= timesteps; ++i)
@@ -250,11 +250,11 @@ class ScenarioManagerConversionTest :
                     gettimeofday(&start, 0);
                     relax_solver.solve();
                     gettimeofday(&end, 0);
-                    cout << "Timestep "<< i <<" / " << timesteps << " finished." <<endl;
-                    cout << "Solvetime: "<< end.tv_sec - start.tv_sec << " " << end.tv_usec - start.tv_usec<<endl;
+                    std::cout << "Timestep "<< i <<" / " << timesteps << " finished." <<std::endl;
+                    std::cout << "Solvetime: "<< end.tv_sec - start.tv_sec << " " << end.tv_usec - start.tv_usec<<std::endl;
                 }
-                cout << "Height -field after solve():\n";
-                cout << stringify(height_2);
+                std::cout << "Height -field after solve():\n";
+                std::cout << stringify(height_2);
 
                 bool pass = true;
                 for(unsigned long i(0); i < height_2.rows(); ++i)

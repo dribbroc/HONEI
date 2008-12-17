@@ -123,9 +123,9 @@ class RelaxSolverTest :
             RelaxSolver<Tag_, DataType_, DataType_, DataType_, DataType_, DataType_, source_types::SIMPLE, boundaries::REFLECT, FIXED> relax_solver
                 (scenario);
             relax_solver.do_preprocessing();
-            cout << "Height -field after preprocessing:\n";
+            std::cout << "Height -field after preprocessing:\n";
             string outHeight = stringify(height);
-            cout <<  outHeight;
+            std::cout <<  outHeight;
 
             timeval start, end;
             for (ulint i = 1; i <= timesteps; ++i)
@@ -133,11 +133,11 @@ class RelaxSolverTest :
                 gettimeofday(&start, 0);
                 relax_solver.solve();
                 gettimeofday(&end, 0);
-                cout << "Timestep "<< i <<" / " << timesteps << " finished." <<endl;
-                cout << "Solvetime: "<< end.tv_sec - start.tv_sec << " " << end.tv_usec - start.tv_usec<<endl;
+                std::cout << "Timestep "<< i <<" / " << timesteps << " finished." <<std::endl;
+                std::cout << "Solvetime: "<< end.tv_sec - start.tv_sec << " " << end.tv_usec - start.tv_usec<<std::endl;
             }
-            cout << "Height -field after solve():\n";
-            cout << stringify(height);
+            std::cout << "Height -field after solve():\n";
+            std::cout << stringify(height);
 
             bool pass = true;
             for(unsigned long i(0); i < height.rows(); ++i)

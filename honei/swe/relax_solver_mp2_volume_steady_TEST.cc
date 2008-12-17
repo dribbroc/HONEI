@@ -118,7 +118,7 @@ class RelaxSolverMIXEDPRECINNERVolTest :
                 convert(result, height);
                 volumes[i] = GaussianQuadrature2D<tags::CPU, tags::Trapezoid>::value(result, double(0), double(deltax * dwidth), (double)deltax, (double)deltay);
 #endif
-                cout << "Timestep "<< i <<" / " << timesteps << " finished." <<endl;
+                std::cout << "Timestep "<< i <<" / " << timesteps << " finished." << std::endl;
             }
 
             convert(result, height);

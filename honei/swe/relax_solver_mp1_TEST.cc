@@ -158,7 +158,7 @@ class RelaxSolverMIXEDPRECTest :
                         ScenarioManager<DT2_, swe_solvers::RELAX, boundaries::REFLECT>::convert_scenario(scenario_2, scenario);
                         //~relax_solver_double;
                     }
-                    cout << "Timestep "<< i <<" / " << timesteps << " finished." <<endl;
+                    std::cout << "Timestep "<< i <<" / " << timesteps << " finished." << std::endl;
                 }
 
                 bool pass = true;

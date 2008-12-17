@@ -114,7 +114,7 @@ class RelaxSolverVolumeSteadyTest :
 #ifdef SOLVER_POSTPROCESSING_VOLUME
                 volumes[i] = GaussianQuadrature2D<tags::CPU, tags::Trapezoid>::value(height, DataType_(0), DataType_(deltax * dwidth), deltax, deltay);
 #endif
-                cout << "Timestep "<< i <<" / " << timesteps << " finished. " <<endl;
+                std::cout << "Timestep "<< i <<" / " << timesteps << " finished. " << std::endl;
             }
             DataType_ ana_vol = 0.5 * a.size()* deltax * deltay + (dwidth * deltax * dheight * deltay * 5.);
             std::cout << "Analytical start: " << ana_vol;

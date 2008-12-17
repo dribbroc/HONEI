@@ -65,7 +65,7 @@ class AssemblyProcessingTest:
             AssemblyProcessing<tags::CPU, assembly_types::QUICK::M6>::value(m1, m6, c, d_width, d_height);
             AssemblyProcessing<tags::CPU, assembly_types::QUICK::M8>::value(m2, m8, d, d_width, d_height);
 
-            cout << "Tested by visual verification M. Geveler 2007." << endl;
+            std::cout << "Tested by visual verification M. Geveler 2007." << std::endl;
             TEST_CHECK(true);
         }
 };

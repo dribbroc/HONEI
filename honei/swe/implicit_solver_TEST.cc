@@ -85,10 +85,10 @@ class ImplicitSolverPreprocessingTest :
 
             ImplicitSolver<Tag_, DataType_, CG, REFLECT> solver(scenario);
             solver.do_preprocessing();
-            std::cout<<*(scenario.height_bound)<<endl;
-            std::cout<<*(scenario.x_veloc_bound)<<endl;
-            std::cout<<*(scenario.y_veloc_bound)<<endl;
-            std::cout<<*(scenario.bottom_bound)<<endl;
+            std::cout << *(scenario.height_bound) << std::endl;
+            std::cout << *(scenario.x_veloc_bound) << std::endl;
+            std::cout << *(scenario.y_veloc_bound) << std::endl;
+            std::cout << *(scenario.bottom_bound)<< std::endl;
             TEST_CHECK(true);
 
         }
@@ -146,9 +146,9 @@ class ImplicitSolverMatrixAssTest :
 
             solver.do_preprocessing();
             solver.solve(1);
-            cout<<"After solve:"<< endl;
-            std::cout<<"A:"<<endl;
-            std::cout<<A<<endl;
+            std::cout << "After solve:" << std::endl;
+            std::cout << "A:" << std::endl;
+            std::cout << A << std::endl;
 
             TEST_CHECK(true);
 
@@ -207,8 +207,8 @@ class ImplicitSolverRHSAssTest :
             ImplicitSolver<Tag_, DataType_, CG, REFLECT> solver(scenario);
             solver.do_preprocessing();
             solver.solve(1);
-            std::cout<<"b:"<<endl;
-            std::cout<<rhs<<endl;
+            std::cout << "b:" << std::endl;
+            std::cout << rhs << std::endl;
 
             TEST_CHECK(true);
 
@@ -274,14 +274,14 @@ class ImplicitSolverRuntimeTest :
             int timesteps = 2;
             for(int timestep = 0; timestep < timesteps; ++timestep)
             {
-                cout<<"Time: " << timestep << endl;
+                std::cout << "Time: " << timestep << std::endl;
                 solver.solve(20);
             }
-            cout<<"After solve:"<< endl;
+            std::cout << "After solve:" << std::endl;
 
-            cout << h_b;
-            cout<<"u: "<<xv_b<<endl;
-            cout<<"v: "<<yv_b<<endl;
+            std::cout << h_b;
+            std::cout << "u: " << xv_b << std::endl;
+            std::cout << "v: " << yv_b << std::endl;
             TEST_CHECK(true);
 
         }

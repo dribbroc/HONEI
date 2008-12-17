@@ -627,8 +627,8 @@ namespace honei {
             }
         }
 #ifdef SOLVER_VERBOSE
-        cout << "u^T after building:\n";
-        cout << stringify(*_u) << std::endl;
+        std::cout << "u^T after building:\n";
+        std::cout << stringify(*_u) << std::endl;
 #endif
         /*OBSOLETE
         typename DenseVector<ResPrec_>::ElementIterator k2(_v->begin_elements());
