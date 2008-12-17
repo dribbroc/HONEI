@@ -289,10 +289,10 @@ class SolverLABSWEDrivenCavityTest<Tag_, DataType_, VELOC, RTIME>:
                 std::cout <<"Difference vector: " << diff << std::endl;
 
                 double norm = Norm<vnt_l_two, false, Tag_>::value(diff);
-                cout<<"L2 norm: "<<norm<<endl;
+                std::cout << "L2 norm: " << norm << std::endl;
 
                 //Output to file: d_t, d_x, rtime, veloc, iterations, error
-                cout << "Writing to file." << std::endl;
+                std::cout << "Writing to file." << std::endl;
                 out_file_stream << p_d_t << " " << p_d_x << " " << tau << " " << veloc << " " << timesteps << " " << norm << "\n";
             }
             out_file_stream << "\n" << "\n";
@@ -534,10 +534,10 @@ class SolverLABSWEDrivenCavityTest<Tag_, DataType_, VELOC, DT>:
                 std::cout <<"Difference vector: " << diff << std::endl;
 
                 double norm = Norm<vnt_l_two, false, Tag_>::value(diff);
-                cout<<"L2 norm: "<<norm<<endl;
+                std::cout << "L2 norm: " << norm << std::endl;
 
                 //Output to file: d_t, d_x, rtime, veloc, iterations, error
-                cout << "Writing to file." << std::endl;
+                std::cout << "Writing to file." << std::endl;
                 out_file_stream << p_d_t << " " << p_d_x << " " << tau << " " << veloc << " " << timesteps << " " << norm << "\n";
             }
             out_file_stream << "\n" << "\n";
@@ -779,10 +779,10 @@ class SolverLABSWEDrivenCavityTest<Tag_, DataType_, VELOC, DX>:
                 std::cout <<"Difference vector: " << diff << std::endl;
 
                 double norm = Norm<vnt_l_two, false, Tag_>::value(diff);
-                cout<<"L2 norm: "<<norm<<endl;
+                std::cout << "L2 norm: " << norm << std::endl;
 
                 //Output to file: d_t, d_x, rtime, veloc, iterations, error
-                cout << "Writing to file." << std::endl;
+                std::cout << "Writing to file." << std::endl;
                 out_file_stream << p_d_t << " " << p_d_x << " " << tau << " " << veloc << " " << timesteps << " " << norm << "\n";
             }
             out_file_stream << "\n" << "\n";
@@ -1026,10 +1026,10 @@ class SolverLABSWEDrivenCavityTest<Tag_, DataType_, NONE, H>:
                 std::cout <<"Difference vector: " << diff << std::endl;
 
                 double norm = Norm<vnt_l_two, false, Tag_>::value(diff);
-                cout<<"L2 norm: "<<norm<<endl;
+                std::cout << "L2 norm: " << norm << std::endl;
 
                 //Output to file: d_t, d_x, rtime, veloc, h, iterations, error
-                cout << "Writing to file." << std::endl;
+                std::cout << "Writing to file." << std::endl;
                 out_file_stream << p_d_t << " " << p_d_x << " " << tau << " " << veloc << " " << h_0 << " " << timesteps << " " << norm << "\n";
             }
             out_file_stream << "\n" << "\n";
@@ -1273,10 +1273,10 @@ class SolverLABSWEDrivenCavityTest<Tag_, DataType_, RTIME, VELOC>:
                 std::cout <<"Difference vector: " << diff << std::endl;
 
                 double norm = Norm<vnt_l_two, false, Tag_>::value(diff);
-                cout<<"L2 norm: "<<norm<<endl;
+                std::cout << "L2 norm: " << norm << std::endl;
 
                 //Output to file: d_t, d_x, rtime, veloc, h, iterations, error
-                cout << "Writing to file." << std::endl;
+                std::cout << "Writing to file." << std::endl;
                 out_file_stream << p_d_t << " " << p_d_x << " " << tau << " " << veloc << " " << h_0 << " " << timesteps << " " << norm << "\n";
             }
             out_file_stream << "\n" << "\n";
@@ -1533,10 +1533,10 @@ class SolverLABNAVSTODrivenCavityTest<Tag_, DataType_, VELOC, RTIME>:
                 std::cout <<"Difference vector: " << diff << std::endl;
 
                 double norm = Norm<vnt_l_two, false, Tag_>::value(diff);
-                cout<<"L2 norm: "<<norm<<endl;
+                std::cout << "L2 norm: " << norm << std::endl;
 
                 //Output to file: d_t, d_x, rtime, veloc, iterations, error
-                cout << "Writing to file." << std::endl;
+                std::cout << "Writing to file." << std::endl;
                 out_file_stream << p_d_t << " " << p_d_x << " " << tau << " " << veloc << " " << timesteps << " " << norm << "\n";
             }
             out_file_stream << "\n" << "\n";
@@ -1780,10 +1780,10 @@ class SolverLABNAVSTODrivenCavityTest<Tag_, DataType_, VELOC, DT>:
                 std::cout <<"Difference vector: " << diff << std::endl;
 
                 double norm = Norm<vnt_l_two, false, Tag_>::value(diff);
-                cout<<"L2 norm: "<<norm<<endl;
+                std::cout << "L2 norm: " << norm << std::endl;
 
                 //Output to file: d_t, d_x, rtime, veloc, iterations, error
-                cout << "Writing to file." << std::endl;
+                std::cout << "Writing to file." << std::endl;
                 out_file_stream << p_d_t << " " << p_d_x << " " << tau << " " << veloc << " " << timesteps << " " << norm << "\n";
             }
             out_file_stream << "\n" << "\n";
@@ -2027,10 +2027,10 @@ class SolverLABNAVSTODrivenCavityTest<Tag_, DataType_, RTIME, VELOC>:
                 std::cout <<"Difference vector: " << diff << std::endl;
 
                 double norm = Norm<vnt_l_two, false, Tag_>::value(diff);
-                cout<<"L2 norm: "<<norm<<endl;
+                std::cout << "L2 norm: " << norm << std::endl;
 
                 //Output to file: d_t, d_x, rtime, veloc, h, iterations, error
-                cout << "Writing to file." << std::endl;
+                std::cout << "Writing to file." << std::endl;
                 out_file_stream << p_d_t << " " << p_d_x << " " << tau << " " << veloc << " " << h_0 << " " << timesteps << " " << norm << "\n";
             }
             out_file_stream << "\n" << "\n";
@@ -2273,10 +2273,10 @@ class SolverLABNAVSTODrivenCavityTest<Tag_, DataType_, NONE, H>:
                 std::cout <<"Difference vector: " << diff << std::endl;
 
                 double norm = Norm<vnt_l_two, false, Tag_>::value(diff);
-                cout<<"L2 norm: "<<norm<<endl;
+                std::cout << "L2 norm: " << norm << std::endl;
 
                 //Output to file: d_t, d_x, rtime, veloc, h, iterations, error
-                cout << "Writing to file." << std::endl;
+                std::cout << "Writing to file." << std::endl;
                 out_file_stream << p_d_t << " " << p_d_x << " " << tau << " " << veloc << " " << h_0 << " " << timesteps << " " << norm << "\n";
             }
             out_file_stream << "\n" << "\n";
