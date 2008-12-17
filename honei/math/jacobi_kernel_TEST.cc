@@ -88,8 +88,8 @@ class JacobiKernelTestBanded:
             b[2] = DT1_(0);
             b[3] = DT1_(1);
 
-            std::cout<<"A:" << A <<endl;
-            std::cout<<"b:" << b <<endl;
+            std::cout << "A:" << A << std::endl;
+            std::cout << "b:" << b << std::endl;
 
             DenseVector<DT1_> x_analytical(4, DT1_(1));
             x_analytical[0] = DT1_(2./3.);
@@ -135,7 +135,7 @@ class JacobiKernelTestBanded:
                 norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
                 x_last = x.copy();
             }
-            cout << "x: " << x << endl;
+            std::cout << "x: " << x << std::endl;
             TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, norm_x , 10e-06);
 
         }
@@ -202,8 +202,8 @@ class JacobiKernelTestBandedSSE:
             b[2] = DT1_(0);
             b[3] = DT1_(1);
 
-            std::cout<<"A:" << A <<endl;
-            std::cout<<"b:" << b <<endl;
+            std::cout << "A:" << A << std::endl;
+            std::cout << "b:" << b << std::endl;
 
             DenseVector<DT1_> x_analytical(4, DT1_(1));
             x_analytical[0] = DT1_(2./3.);
@@ -249,7 +249,7 @@ class JacobiKernelTestBandedSSE:
                 norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
                 x_last = x.copy();
             }
-            cout << "x: " << x << endl;
+            std::cout << "x: " << x << std::endl;
             TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, norm_x , 10e-06);
 
         }

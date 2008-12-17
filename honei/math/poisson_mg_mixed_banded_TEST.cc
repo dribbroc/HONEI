@@ -411,7 +411,7 @@ class PoissonTestMGBandedQ1Mixed:
             Difference<OuterTag_>::value(result, ana_sol_v);
             Difference<OuterTag_>::value(x, result);
             double norm = Norm<vnt_l_two, false, OuterTag_>::value(x);
-            cout<<"L2: "<<norm<<endl;
+            std::cout << "L2: " << norm << std::endl;
             //TEST_CHECK(true);
         }
 };

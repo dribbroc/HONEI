@@ -39,7 +39,6 @@ class ParserTest:
             char * t = new char[10];
             //t = "123.123";
             DT_ f = Parser<DT_>::parse(t);
-            //cout << f << endl;
 
             DenseVector<DT_> result = Parser<DT_>::parse("parser_test_float.txt", 9);
             for(int i = 0; i < 9; i++)
@@ -52,7 +51,7 @@ class ParserTest:
             {
                 TEST_CHECK_EQUAL(resultm[0][i],i);
             }
-            cout<<resultm<<endl;
+            std::cout << resultm << std::endl;
 
             TEST_CHECK(true);
         }

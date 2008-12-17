@@ -146,13 +146,9 @@ class PoissonTestCGDenseDouble:
                 ana_sol_v[i] = ana_sol[i];
                 ref_sol_v[i] = ref_sol[i];
             }
-            //std::cout<<dd[4]<<endl;
-            //std::cout<<dd_v<<endl;
 
             long root_n = (long)sqrt(n);
             BandedMatrix<double> A(n,dd_v.copy());
-            //std::cout<<A.band(0)<<endl;
-            //A->insert_band(0, dd_v.copy());
             A.insert_band(1, du_v);
             A.insert_band(-1, dl_v);
             A.insert_band(root_n, ud_v);
@@ -162,14 +158,8 @@ class PoissonTestCGDenseDouble:
             A.insert_band(-root_n-1, ll_v );
             A.insert_band(-root_n+1, lu_v);
 
-            //std::cout<<A.band(0)[0] * double(1) << endl;
-
-            //std::cout<< n << " " << A << " "<< root_n<<endl;
             DenseVector<double> result(n, double(0));
             result = ConjugateGradients<Tag_, NONE>::value(A, b_v, std::numeric_limits<double>::epsilon());
-            //std::cout<< result <<endl;
-            //std::cout<< ana_sol_v <<endl;
-            //std::cout<< ref_sol_v <<endl;
             for(unsigned long i = 0; i < n; i++)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol_v[i], result[i],1e-05);
@@ -178,7 +168,7 @@ class PoissonTestCGDenseDouble:
             Difference<Tag_>::value(result, ana_sol_v);
             Difference<Tag_>::value(x, result);
             double norm = Norm<vnt_l_two, false, Tag_>::value(x);
-            cout<<"L2: "<<norm<<endl;
+            std::cout << "L2: " << norm << std::endl;
 
             //TEST_CHECK(true);
         }

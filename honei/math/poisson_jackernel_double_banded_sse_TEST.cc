@@ -202,7 +202,7 @@ class PoissonTestJACKernelBandedDoubleSSE:
                 norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
                 x_last = x.copy();
             }
-            cout << "x: " << x << endl;
+            std::cout << "x: " << x << std::endl;
             TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, norm_x , 10e-06);
 
         }

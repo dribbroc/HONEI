@@ -178,7 +178,7 @@ class PoissonTestIterefPCGBandedFloat:
             Difference<Tag_>::value(result, ana_sol_v);
             Difference<Tag_>::value(x, result);
             double norm = Norm<vnt_l_two, false, Tag_>::value(x);
-            cout<<"L2: "<<norm<<endl;
+            std::cout << "L2: " << norm << std::endl;
 
             //TEST_CHECK(true);
         }
