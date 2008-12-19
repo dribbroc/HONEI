@@ -73,10 +73,14 @@ BENCHMARKS = benchmarklist
 
 .PHONY: benchmark
 benchmark: $(BENCHMARKS)
-	@for b in $(BENCHMARKS) ; do \
+	@failed=0; \
+	for b in $(BENCHMARKS) ; do \
 	    echo ">>> $$b[BACKENDS=$(BACKENDS)]" ; \
-	    ./$$b $(BACKENDS) ; \
-	done
+	    if ! ./$$b $(BACKENDS) ; then \
+		failed=1; \
+	    fi; \
+	done; \
+	test "$$failed" -eq 0;
 
 Makefile.am : Makefile.am.m4 files.m4
 	cd $(top_srcdir) ; ./misc/do_m4.bash benchmark/Makefile.am
