@@ -34,10 +34,10 @@ class MemoryArbiterBench :
     private:
         unsigned long _size;
         int _count;
-        int _arrays;
+        unsigned long _arrays;
 
     public:
-        MemoryArbiterBench(const std::string & id, unsigned long size, int count, int arrays) :
+        MemoryArbiterBench(const std::string & id, unsigned long size, int count, unsigned long arrays) :
             Benchmark(id)
         {
             register_tag(Tag_::name);

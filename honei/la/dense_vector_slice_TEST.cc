@@ -152,13 +152,13 @@ class DenseVectorSliceFunctionsTest :
                 }
                 TEST_CHECK_EQUAL(dvs.size(), size / 5);
 
-                for (int i = 0 ; i < size / 5 ; ++i)
+                for (unsigned long i = 0 ; i < size / 5 ; ++i)
                 {
                     DataType_ s((3 * i + size / 5 * 2 + 1) / 1.23456789);
                     TEST_CHECK_EQUAL_WITHIN_EPS(dvs[i], s,
                         std::numeric_limits<DataType_>::epsilon());
                 }
-                for (int i = 0 ; i < size / 5 ; ++i)
+                for (unsigned long i = 0 ; i < size / 5 ; ++i)
                 {
                     DataType_ s((i + 5) / 1.23456789);
                     dvs[i] = s;
@@ -186,8 +186,8 @@ class DenseVectorSliceQuickTest :
         {
             DenseVector<DataType_> dv(4711, DataType_(123.987));
             DenseVectorSlice<DataType_> dvs(dv, 238, 921, 13);
-            TEST_CHECK_EQUAL(dv.size(), 4711);
-            TEST_CHECK_EQUAL(dvs.size(), 238);
+            TEST_CHECK_EQUAL(dv.size(), 4711ul);
+            TEST_CHECK_EQUAL(dvs.size(), 238ul);
             TEST_CHECK_EQUAL(dv, dv);
             TEST_CHECK_EQUAL(dvs, dvs);
             TEST_CHECK_EQUAL_WITHIN_EPS(dv[4710] , 123.987, std::sqrt(std::numeric_limits<DataType_>::epsilon()));

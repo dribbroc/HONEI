@@ -31,9 +31,8 @@ namespace honei
                 template<typename Prec_>
                     static DenseVector<Prec_>& value(DenseVector<Prec_>& grid, DenseVector<unsigned long>& mask)
                     {
-                        int i;
-                        int N = grid.size();
-                        int M = (int)sqrt((double)N);
+                        unsigned long N = grid.size();
+                        unsigned long M = (int)sqrt((double)N);
 
                         // bottom left node
                         if (mask[0] == 2)
@@ -79,6 +78,8 @@ namespace honei
                                 grid[i] = 0.0f;
                             }
                         }
+
+                        return grid;
                     }
         };
 }

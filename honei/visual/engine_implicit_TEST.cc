@@ -44,8 +44,9 @@ class EngineTest :
             int i =1;
             int * pi = &i;
 
-            char * c = "Test: Engine";
-            char ** cp = &c;
+            char c[] = "SWE";
+            char * cc = c;
+            char ** cp = &cc;
             glutInit(pi,cp);
             glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
             //glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA);

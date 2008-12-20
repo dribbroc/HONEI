@@ -361,20 +361,21 @@
                 /// step width
                 DenseVector<DataType_> _step_width;
 
-                /// step width factors: factor_1 increases step_width (if node is moving in correct direction), factor_2 reduces step_width (if node is oscillating or rotating)
-                DataType_ _step_width_factor_1, _step_width_factor_2;
+                /// the _repulsive_force_range defines the range of the repulsive force
+                DataType_ _repulsive_force_range;
+
+                /// _statistic_step defines the iterations, in which statistic values will be calculated
+                unsigned long _statistic_step;
 
                 /// _noise_duration - how long is a noise added to the forces (related to _step_with)?
                 DataType_ _noise_duration;
 
-                /// the _repulsive_force_range defines the range of the repulsive force
-                DataType_ _repulsive_force_range;
+                /// step width factors: factor_1 increases step_width (if node is moving in correct direction), factor_2 reduces step_width (if node is oscillating or rotating)
+                DataType_ _step_width_factor_1, _step_width_factor_2;
 
                 /// statistic_queue contains statistic values (number of iterations, average edge length, standard deviation of lengths and the maximum node force)
                 std::queue< DenseVector<DataType_> > statistic_queue;
 
-                /// _statistic_step defines the iterations, in which statistic values will be calculated
-                unsigned long _statistic_step;
 
             public:
                 friend class Positions<Tag_, DataType_, WeightedFruchtermanReingold>;
@@ -445,8 +446,8 @@
                     _force_direction(coordinates.rows(), coordinates.columns(), DataType_(0)),
                     _step_width(weights_of_nodes.size()),
                     _repulsive_force_range(DataType_(0)),
-                    _noise_duration(DataType_(0)),
                     _statistic_step(0),
+                    _noise_duration(DataType_(0)),
                     _step_width_factor_1(1.5),
                     _step_width_factor_2(0.5)
                 {
@@ -488,8 +489,8 @@
                     _force_direction(_coordinates.rows(), _coordinates.columns(), DataType_(0)),
                     _step_width(_weights_of_nodes.size()),
                     _repulsive_force_range(DataType_(0)),
-                    _noise_duration(DataType_(0)),
                     _statistic_step(0),
+                    _noise_duration(DataType_(0)),
                     _step_width_factor_1(1.5),
                     _step_width_factor_2(0.5)
                 {
@@ -661,11 +662,11 @@
                 /// vector of step width
                 DenseVector<DataType_> _step_width;
 
-                /// step width factors: factor_1 increases step_width (if node is moving in correct direction), factor_2 reduces step_width (if node is oscillating or rotating)
-                DataType_ _step_width_factor_1, _step_width_factor_2;
-
                 /// _noise_duration - how long is a noise added to the forces (related to _step_with)?
                 DataType_ _noise_duration;
+
+                /// step width factors: factor_1 increases step_width (if node is moving in correct direction), factor_2 reduces step_width (if node is oscillating or rotating)
+                DataType_ _step_width_factor_1, _step_width_factor_2;
 
                 /// statistic_queue contains statistic values (number of iterations, average edge length, standard deviation of lengths and the maximum node force)
                 std::queue< DenseVector<DataType_> > statistic_queue;
@@ -737,16 +738,16 @@
                     _weights_of_edges(weights_of_edges),
                     _graph_distance(weights_of_edges.rows(), weights_of_edges.columns(), DataType_(0)),
                     _spring_forces(coordinates.rows(), coordinates.columns(), DataType_(0)),
+                    node_forces(coordinates.rows() * coordinates.rows(), coordinates.columns(), DataType_(0)),
                     _max_force(0),
                     _number_of_iterations(1),
                     _max_node(0),
-                    node_forces(coordinates.rows() * coordinates.rows(), coordinates.columns(), DataType_(0)),
-                    _step_width(coordinates.rows(), DataType_(0)),
                     _force_direction(_coordinates.rows(), _coordinates.columns(), DataType_(0)),
-                    _statistic_step(0),
+                    _step_width(coordinates.rows(), DataType_(0)),
                     _noise_duration(0),
                     _step_width_factor_1(1.05),
-                    _step_width_factor_2(0.35)
+                    _step_width_factor_2(0.35),
+                    _statistic_step(0)
                 {
                     // Using BFS to calculate the graph distance matrix
                     if (! BreadthFirstSearch<Tag_>::value(_graph_distance, _weights_of_nodes, _weights_of_edges))
@@ -759,16 +760,16 @@
                     _weights_of_edges(*graph.edges()),
                     _graph_distance(_weights_of_edges.rows(), _weights_of_edges.columns(), DataType_(0)),
                     _spring_forces(_coordinates.rows(), _coordinates.columns(), DataType_(0)),
+                    node_forces(_coordinates.rows() * _coordinates.rows(), _coordinates.columns(), DataType_(0)),
                     _max_force(0),
                     _number_of_iterations(1),
                     _max_node(0),
-                    node_forces(_coordinates.rows() * _coordinates.rows(), _coordinates.columns(), DataType_(0)),
-                    _step_width(_coordinates.rows(), DataType_(0)),
                     _force_direction(_coordinates.rows(), _coordinates.columns(), DataType_(0)),
-                    _statistic_step(0),
+                    _step_width(_coordinates.rows(), DataType_(0)),
                     _noise_duration(0),
                     _step_width_factor_1(1.05),
-                    _step_width_factor_2(0.35)
+                    _step_width_factor_2(0.35),
+                    _statistic_step(0)
                 {
                     // Using BFS to calculate the graph distance matrix
                     if (! BreadthFirstSearch<Tag_>::value(_graph_distance, _weights_of_nodes, _weights_of_edges, graph))

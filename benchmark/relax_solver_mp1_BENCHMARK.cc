@@ -37,7 +37,7 @@ class RelaxSolverMIXEDPRECBench :
 {
     private:
         unsigned long _size;
-        int _count;
+        unsigned long _count;
     public:
         RelaxSolverMIXEDPRECBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
@@ -51,7 +51,6 @@ class RelaxSolverMIXEDPRECBench :
         {
             unsigned long dwidth(40);
             unsigned long dheight(40);
-            unsigned long timesteps(50);
             unsigned long k(15);
 
             DenseMatrix<DT1_> height(dheight, dwidth, DT1_(5));

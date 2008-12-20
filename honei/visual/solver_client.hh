@@ -29,6 +29,8 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <honei/la/dense_matrix.hh>
+#include <cstring>
+#include <string>
 
 #define BUFFER_SIZE 1024
 #define DATA_SIZE 5234567
@@ -106,7 +108,7 @@ namespace honei
                 if (_socket != -1) close(_socket);
             }
 
-            void init(char *  hostname, int port, int scenario)
+            void init(const char *  hostname, int port, int scenario)
             {
                 if (_socket != -1) close(_socket);
                 struct sockaddr_in srv;

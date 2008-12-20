@@ -36,10 +36,6 @@ class EngineEvolvingGraphTest :
         {
             int i =1;
             int * pi = &i;
-            int nps = _nodes * _slices;
-            int sizes[] =  {2, 3, 4, 5, 6};
-            //EvolvingGraph<DataType_> * eg = TestScenario<DataType_>::Evolving(5, sizes);
-
             EvolvingGraph<DataType_> eg(2, DataType_(5));
             for (int t(0); t < _slices; ++t)
             {
@@ -99,8 +95,9 @@ class EngineEvolvingGraphTest :
             Engine::setTestCase(eg, new Positions<Tag_, DataType_, GraphTag_>(eg, (DataType_)1), 1,-40);
 
 
-            char * c = "Test: Engine";
-            char ** cp = &c;
+            char c[] = "Graph";
+            char * cc = c;
+            char ** cp = &cc;
             glutInit(pi,cp);
             glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
             //glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA);

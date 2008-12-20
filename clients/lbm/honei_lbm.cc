@@ -58,12 +58,7 @@ int main(int argc, char ** argv)
     translation_y = 0;
     translation_z = 0;
 
-    int i =1;
-    int * pi = &i;
-
-    char * c = "Visual LBM";
-    char ** cp = &c;
-    glutInit(pi,cp);
+    glutInit(&argc,argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
     //glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA);
     glutInitWindowSize(screen_width, screen_height);
@@ -102,7 +97,7 @@ int main(int argc, char ** argv)
     glutAddSubMenu("Grid", menu_id_scenario_grid);
     glutAddSubMenu("Multi", menu_id_scenario_multi);
     glutAddMenuEntry("Animate GnuPlot dat files", -1);
-    GLint menu_id_main = glutCreateMenu(menu_main);
+    glutCreateMenu(menu_main);
     glutAddMenuEntry("Restart scenario", 0);
     glutAddSubMenu("Rendering", menu_id_rendering);
     glutAddSubMenu("Scenarios", menu_id_scenario);
@@ -464,12 +459,12 @@ static void display(void)
     glTranslatef(0.0, translation_y, 0.0);
     glTranslatef(0.0, 0.0 , translation_z);
 
-    do
+    /*do
     {
         actual.take();
     }
-    while(actual.usec() - last.usec() < 60000ul); // 1/25 = 40000
-    last.take();
+    while(actual.total() - last.total() < 0.6); // 1/25 = 40000
+    last.take();*/
 
     if (calc)
     {

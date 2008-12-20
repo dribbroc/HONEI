@@ -144,7 +144,8 @@ class MinModLimiterIntrinFloatQuickTest :
         {
 
             void * data;
-            posix_memalign(&data, 16, 200 * sizeof(float));
+            if (0 != posix_memalign(&data, 16, 200 * sizeof(float)))
+                    throw std::bad_alloc();
             float * data_v = reinterpret_cast<float *>(data);
 
             for(unsigned long i(0); i < 200; i++)
@@ -217,7 +218,8 @@ class MinModLimiterIntrinDoubleQuickTest :
         {
 
             void * data;
-            posix_memalign(&data, 16, 200 * sizeof(double));
+            if (0 != posix_memalign(&data, 16, 200 * sizeof(double)))
+                    throw std::bad_alloc();
             double * data_v = reinterpret_cast<double *>(data);
 
             for(unsigned long i(0); i < 200; i++)

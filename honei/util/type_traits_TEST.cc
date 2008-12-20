@@ -46,7 +46,7 @@ class TypeTraitsTest :
 
             DataType_ * elements(TypeTraits<DataType_>::allocate(size));
 
-            TEST_CHECK_EQUAL(reinterpret_cast<unsigned long long>(elements) % 16, 0);
+            TEST_CHECK_EQUAL(reinterpret_cast<unsigned long long>(elements) % 16, 0ul);
 
             TypeTraits<DataType_>::create(elements, size);
             TypeTraits<DataType_>::fill(elements, size, DataType_(7));

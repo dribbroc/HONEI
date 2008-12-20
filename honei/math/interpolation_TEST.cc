@@ -51,7 +51,7 @@ class InterpolationTest:
             TEST_CHECK_EQUAL_WITHIN_EPS(DT1_(20), result, std::numeric_limits<DT1_>::epsilon());
 
             DT1_ result2 = Interpolation<Tag_, NN>::value(delta_x, delta_y, height, DT1_(5.1234), DT1_(5.00001));
-            TEST_CHECK_EQUAL_WITHIN_EPS(DT1_(20), result, std::numeric_limits<DT1_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(DT1_(20), result2, std::numeric_limits<DT1_>::epsilon());
         }
 };
 
@@ -80,7 +80,7 @@ class InterpolationBoundaryTest:
             TEST_CHECK_EQUAL_WITHIN_EPS(DT1_(0), result, std::numeric_limits<DT1_>::epsilon());
 
             DT1_ result2 = Interpolation<Tag_, NN>::value(delta_x, delta_y, height, DT1_(423), DT1_(12212));
-            TEST_CHECK_EQUAL_WITHIN_EPS(DT1_(0), result, std::numeric_limits<DT1_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(DT1_(0), result2, std::numeric_limits<DT1_>::epsilon());
         }
 };
 

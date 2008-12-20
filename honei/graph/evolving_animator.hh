@@ -58,11 +58,11 @@ namespace honei
         public:
         /// creates an evolving graph with given number of dimensions for the node coordinates sets optionally the weight for intertimeslice edges
         EvolvingAnimator(EvolvingGraph<DataType_> & graph, float step_size):
-            _last_time(-1.0f),
-            _timeslice_idx(0),
-            _alpha(0.0f),
             _graph(graph),
             _step_size(step_size),
+            _timeslice_idx(0),
+            _alpha(0.0f),
+            _last_time(-1.0f),
             _last_interpolation(1, 1)
         {
             
@@ -108,7 +108,7 @@ namespace honei
             _last_time = 0.0f;
             _last_interpolation = _graph.get_timeslice(0).coordinates()->copy();
             
-            for(int i(0);  i < _interpolation_coordinates.size(); ++i)
+            for(unsigned long i(0);  i < _interpolation_coordinates.size(); ++i)
                 if (_interpolation_coordinates[i] != 0)
                     delete(_interpolation_coordinates[i]);
             _interpolation_coordinates.clear();

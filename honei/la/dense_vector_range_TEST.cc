@@ -163,13 +163,13 @@ class DenseVectorRangeFunctionsTest :
                 }
                 TEST_CHECK_EQUAL(dvr.size(), size - 1);
 
-                for (int i = 0 ; i < size - 1 ; ++i)
+                for (unsigned long i = 0 ; i < size - 1 ; ++i)
                 {
                     DataType_ s((i+1)/1.23456789);
                     TEST_CHECK_EQUAL_WITHIN_EPS((dvr)[i], s,
                             std::numeric_limits<DataType_>::epsilon());
                 }
-                for (int i = 0 ; i < size - 1 ; ++i)
+                for (unsigned long i = 0 ; i < size - 1 ; ++i)
                 {
                     DataType_ s((i+5)/1.23456789);
                     (dvr)[i] = s;
@@ -225,7 +225,7 @@ class DenseVectorRangeQuickTest :
             DenseVector<DataType_> dv(4711, DataType_(123.987));
             DenseVectorRange<DataType_> dvr(dv, 238, 3101);
             DenseVectorRange<DataType_> dvr2(dvr, 113, 35);
-            TEST_CHECK_EQUAL(dvr.size(), 238);
+            TEST_CHECK_EQUAL(dvr.size(), 238ul);
             TEST_CHECK_EQUAL(dvr, dvr);
             TEST_CHECK_EQUAL_WITHIN_EPS((dvr)[79] , 123.987, std::sqrt(std::numeric_limits<DataType_>::epsilon()));
             DataType_ s = DataType_(1.2345);

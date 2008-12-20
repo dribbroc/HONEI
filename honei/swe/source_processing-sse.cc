@@ -43,8 +43,6 @@ DenseVector<float> SourceProcessing<source_types::SIMPLE, tags::CPU::SSE>::value
     float HONEI_ALIGNED(16) result_q1[tripels];
     float HONEI_ALIGNED(16) result_q2[tripels];
 
-    float HONEI_ALIGNED(16) result_pow[tripels];
-
     float HONEI_ALIGNED(16) g(9.81f);
     float HONEI_ALIGNED(16) zero(0.f);
     float HONEI_ALIGNED(16) exponent(float(-7.f)/float(3.f));
@@ -120,8 +118,6 @@ DenseVector<float> SourceProcessing<source_types::SIMPLE, tags::CPU::SSE>::value
     for(unsigned long i(sse_limit); i < vector.size(); i += 3)
     {
         float h = v_e[i];
-        float q1 = v_e[i + 1];
-        float q2 = v_e[i + 2];
 
         if (fabs(h) >= std::numeric_limits<float>::epsilon())
         {
@@ -164,8 +160,6 @@ DenseVector<double> SourceProcessing<source_types::SIMPLE, tags::CPU::SSE>::valu
     double HONEI_ALIGNED(16) result_h[tripels];
     double HONEI_ALIGNED(16) result_q1[tripels];
     double HONEI_ALIGNED(16) result_q2[tripels];
-
-    double HONEI_ALIGNED(16) result_pow[tripels];
 
     double HONEI_ALIGNED(16) g(9.81);
     double HONEI_ALIGNED(16) zero(0.);
@@ -242,8 +236,6 @@ DenseVector<double> SourceProcessing<source_types::SIMPLE, tags::CPU::SSE>::valu
     for(unsigned long i(sse_limit); i < vector.size(); i += 3)
     {
         double h = v_e[i];
-        double q1 = v_e[i + 1];
-        double q2 = v_e[i + 2];
 
         if (fabs(h) >= std::numeric_limits<float>::epsilon())
         {

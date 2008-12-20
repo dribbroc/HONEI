@@ -42,6 +42,9 @@ namespace honei
         protected:
             double _size;
         public:
+            virtual ~Volume()
+            {
+            }
 
             double size()
             {
@@ -59,6 +62,9 @@ namespace honei
             std::list<Volume *> object_list;
 
         public:
+            virtual ~VolumeList()
+            {
+            }
 
             virtual void convex_hull()
             {
@@ -92,6 +98,10 @@ namespace honei
                 this->_grid_y = g_h;
             }
 
+            virtual ~Cylinder()
+            {
+            }
+
         private:
             DenseMatrix<DataType_> * _height;
             DataType_ _h;
@@ -100,44 +110,44 @@ namespace honei
 
             void value(DenseMatrix<DataType_> & height, DataType_ h, signed long grid_x, signed long grid_y)
             {
-                if(grid_y >= 0 && grid_y < height.rows())
+                if(grid_y >= 0 && grid_y < (signed long)height.rows())
                 {
                     for(signed long i(grid_x - 6); i < grid_x + 6; ++i)
                     {
-                        if(i >= 0 && i < height.columns())
+                        if(i >= 0 && i < (signed long)height.columns())
                         {
                             height[grid_y][i] += h;
                         }
                     }
                 }
 
-                if(grid_y + 1 >= 0 && grid_y + 1 < height.rows())
+                if(grid_y + 1 >= 0 && grid_y + 1 < (signed long)height.rows())
                 {
                     for(signed long i(grid_x - 6); i < grid_x + 6; ++i)
                     {
-                        if(i >= 0 && i < height.columns())
+                        if(i >= 0 && i < (signed long)height.columns())
                         {
                             height[grid_y + 1][i] += h;
                         }
                     }
                 }
 
-                if(grid_y - 1 >= 0 && grid_y - 1 < height.rows())
+                if(grid_y - 1 >= 0 && grid_y - 1 < (signed long)height.rows())
                 {
                     for(signed long i(grid_x - 6); i < grid_x + 6; ++i)
                     {
-                        if(i >= 0 && i < height.columns())
+                        if(i >= 0 && i < (signed long)height.columns())
                         {
                             height[grid_y - 1][i] += h;
                         }
                     }
                 }
 
-                if(grid_y + 2 >= 0 && grid_y + 2 < height.rows())
+                if(grid_y + 2 >= 0 && grid_y + 2 < (signed long)height.rows())
                 {
                     for(signed long i(grid_x - 5); i < grid_x + 5; ++i)
                     {
-                        if(i >= 0 && i < height.columns())
+                        if(i >= 0 && i < (signed long)height.columns())
                         {
                             height[grid_y + 2][i] += h;
                         }
@@ -145,11 +155,11 @@ namespace honei
 
                 }
 
-                if(grid_y - 2 >= 0 && grid_y - 2 < height.rows())
+                if(grid_y - 2 >= 0 && grid_y - 2 < (signed long)height.rows())
                 {
                     for(signed long i(grid_x - 5); i < grid_x + 5; ++i)
                     {
-                        if(i >= 0 && i < height.columns())
+                        if(i >= 0 && i < (signed long)height.columns())
                         {
                             height[grid_y - 2][i] += h;
                         }
@@ -157,11 +167,11 @@ namespace honei
 
                 }
 
-                if(grid_y + 3 >= 0 && grid_y + 3 < height.rows())
+                if(grid_y + 3 >= 0 && grid_y + 3 < (signed long)height.rows())
                 {
                     for(signed long i(grid_x - 5); i < grid_x + 5; ++i)
                     {
-                        if(i >= 0 && i < height.columns())
+                        if(i >= 0 && i < (signed long)height.columns())
                         {
                             height[grid_y + 3][i] += h;
                         }
@@ -169,11 +179,11 @@ namespace honei
 
                 }
 
-                if(grid_y - 3 >= 0 && grid_y - 3 < height.rows())
+                if(grid_y - 3 >= 0 && grid_y - 3 < (signed long)height.rows())
                 {
                     for(signed long i(grid_x - 5); i < grid_x + 5; ++i)
                     {
-                        if(i >= 0 && i < height.columns())
+                        if(i >= 0 && i < (signed long)height.columns())
                         {
                             height[grid_y - 3][i] += h;
                         }
@@ -181,11 +191,11 @@ namespace honei
 
                 }
 
-                if(grid_y + 4 >= 0 && grid_y + 4 < height.rows())
+                if(grid_y + 4 >= 0 && grid_y + 4 < (signed long)height.rows())
                 {
                     for(signed long i(grid_x - 4); i < grid_x + 4; ++i)
                     {
-                        if(i >= 0 && i < height.columns())
+                        if(i >= 0 && i < (signed long)height.columns())
                         {
                             height[grid_y + 4][i] += h;
                         }
@@ -193,11 +203,11 @@ namespace honei
 
                 }
 
-                if(grid_y - 4 >= 0 && grid_y - 4 < height.rows())
+                if(grid_y - 4 >= 0 && grid_y - 4 < (signed long)height.rows())
                 {
                     for(signed long i(grid_x - 4); i < grid_x + 4; ++i)
                     {
-                        if(i >= 0 && i < height.columns())
+                        if(i >= 0 && i < (signed long)height.columns())
                         {
                             height[grid_y - 4][i] += h;
                         }
@@ -205,11 +215,11 @@ namespace honei
 
                 }
 
-                if(grid_y + 5 >= 0 && grid_y + 5 < height.rows())
+                if(grid_y + 5 >= 0 && grid_y + 5 < (signed long)height.rows())
                 {
                     for(signed long i(grid_x - 3); i < grid_x + 3; ++i)
                     {
-                        if(i >= 0 && i < height.columns())
+                        if(i >= 0 && i < (signed long)height.columns())
                         {
                             height[grid_y + 5][i] += h;
                         }
@@ -217,11 +227,11 @@ namespace honei
 
                 }
 
-                if(grid_y - 5 >= 0 && grid_y - 5 < height.rows())
+                if(grid_y - 5 >= 0 && grid_y - 5 < (signed long)height.rows())
                 {
                     for(signed long i(grid_x - 3); i < grid_x + 3; ++i)
                     {
-                        if(i >= 0 && i < height.columns())
+                        if(i >= 0 && i < (signed long)height.columns())
                         {
                             height[grid_y - 5][i] += h;
                         }
@@ -229,11 +239,11 @@ namespace honei
 
                 }
 
-                if(grid_y + 6 >= 0 && grid_y + 6 < height.rows())
+                if(grid_y + 6 >= 0 && grid_y + 6 < (signed long)height.rows())
                 {
                     for(signed long i(grid_x - 2); i < grid_x + 2; ++i)
                     {
-                        if(i >= 0 && i < height.columns())
+                        if(i >= 0 && i < (signed long)height.columns())
                         {
                             height[grid_y + 6][i] += h;
                         }
@@ -241,11 +251,11 @@ namespace honei
 
                 }
 
-                if(grid_y - 6 >= 0 && grid_y - 6 < height.rows())
+                if(grid_y - 6 >= 0 && grid_y - 6 < (signed long)height.rows())
                 {
                     for(signed long i(grid_x - 2); i < grid_x + 2; ++i)
                     {
-                        if(i >= 0 && i < height.columns())
+                        if(i >= 0 && i < (signed long)height.columns())
                         {
                             height[grid_y - 6][i] += h;
                         }
@@ -277,6 +287,10 @@ namespace honei
                 this->_size = _w * _h * _l;
             }
 
+            virtual ~Cuboid()
+            {
+            }
+
         private:
             DenseMatrix<DataType_> * _height;
             DataType_ _h;
@@ -289,11 +303,11 @@ namespace honei
             {
                 for(signed long i(grid_y); i < grid_y + l; ++i)
                 {
-                    if(i >= 0 && i < height.rows())
+                    if(i >= 0 && i < (signed long)height.rows())
                     {
                         for(signed long j(grid_x); j < grid_x + w; ++j)
                         {
-                            if(j >= 0 && j < height.columns())
+                            if(j >= 0 && j < (signed long)height.columns())
                             {
                                 height[i][j] += h;
                             }

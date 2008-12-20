@@ -126,7 +126,7 @@ class PartitionerTestMC :
                         unsigned long partition_size(p->size);
                         sum += partition_size;
 
-                        TEST_CHECK_EQUAL(0, partition_size % quantisation_);
+                        TEST_CHECK_EQUAL(0ul, partition_size % quantisation_);
 
                         if (overall_size > best_part_size_)
                         {

@@ -55,8 +55,6 @@ class EquilibriumDistributionBench :
                 DenseMatrix<DataType_> v(1000ul, 1000ul, DataType_(1.23456));
                 DataType_ g(9.81);
                 DataType_ e(1.);
-                DataType_ e_u(2.);
-                DataType_ e_v(2.);
 
                 DenseMatrix<DataType_> result_1(1000ul, 1000ul);
                 DenseMatrix<DataType_> result_2(1000ul, 1000ul);

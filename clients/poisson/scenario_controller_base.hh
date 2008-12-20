@@ -23,6 +23,10 @@
 class ScenarioControllerBase
 {
     public:
+        virtual ~ScenarioControllerBase()
+        {
+        }
+
         static int get_precision(int scen_id);
 
         virtual void init(void) = 0;

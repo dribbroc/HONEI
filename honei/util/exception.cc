@@ -116,15 +116,15 @@ Context::backtrace(const std::string & delimiter)
 
 
 Exception::Exception(const std::string & message) throw () :
-    _message(message),
-    _context_data(new ContextData)
+    _context_data(new ContextData),
+    _message(message)
 {
 }
 
 Exception::Exception(const Exception & other) :
     std::exception(other),
-    _message(other._message),
-    _context_data(new ContextData(*other._context_data))
+    _context_data(new ContextData(*other._context_data)),
+    _message(other._message)
 {
 }
 

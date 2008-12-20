@@ -346,7 +346,7 @@ class SolverLABSWEMassConservationTest :
             unsigned long timesteps(5000);
 
             DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
-            Cuboid<DataType_> a(h, DataType_(5.), DataType_(5.), DataType_(0.02), 25, 25);
+            Cuboid<DataType_> a(h, 5, 5, DataType_(0.02), 25, 25);
             a.value();
 
             DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));

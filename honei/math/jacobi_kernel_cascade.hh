@@ -95,7 +95,6 @@ namespace honei
                 unsigned long root_n = (unsigned long)sqrt(n);
                 DenseVector<DT1_> result(n);
 
-                DT2_ * rhs = right_hand_side.elements();
                 DT1_ * x_old = former_result.elements();
                 DT1_ * d_i = diag_inverted.elements();
                 DT2_ * d_i_s = scaled_d.elements();
@@ -245,7 +244,6 @@ namespace honei
                 //Prepare result for SECOND iteration
                 DenseVector<DT1_> result_next(n);
 
-                DT2_ * rhs = right_hand_side.elements();
                 DT1_ * x_old = former_result.elements();
                 DT1_ * d_i = diag_inverted.elements();
                 DT2_ * d_i_s = scaled_d.elements();

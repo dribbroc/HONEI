@@ -31,7 +31,6 @@ class DenseMatrixElementProductBench :
 
         virtual void run()
         {
-            DataType_ p0;
             DenseMatrix<DataType_> dm0(_size, _size, DataType_(rand()));
             DenseMatrix<DataType_> dm1(_size, _size, DataType_(rand()));
             for(int i = 0; i < _count; ++i)
@@ -73,7 +72,6 @@ class SparseMatrixElementProductBench :
 
         virtual void run()
         {
-            DataType_ p0;
             SparseMatrix<DataType_> sm(_size, _size, (unsigned long)(_size/10)); 
             for (typename MutableMatrix<DataType_>::ElementIterator i_end(sm.end_elements()), i(sm.begin_elements()) ; i != i_end ; ++i)
             {
@@ -115,7 +113,6 @@ class BandedMatrixElementProductBench :
 
         virtual void run()
         {
-            DataType_ p0;
             DenseVector<DataType_> dv(_size, DataType_(rand()));
             BandedMatrix<DataType_> bm(_size, dv);
             bm.insert_band(1, dv);
@@ -155,7 +152,6 @@ class DenseVectorElementProductBench :
 
         virtual void run()
         {
-            DataType_ p0;
             DenseVector<DataType_> dv1(_size, DataType_(rand()));
             DenseVector<DataType_> dv2(_size, DataType_(rand()));
 

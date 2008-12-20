@@ -112,7 +112,7 @@ class BreadthFirstSearchWeightedBinaryTreeBench :
             for (typename DenseVector<DataType_>::ElementIterator e(pNW.begin_elements()), e_end(pNW.end_elements()); e != e_end ; ++e)
             {
                 *e = DataType_(1 + (exp % 2));
-                if (e.index() + 1 == (1 << (exp +1)) -1) exp++;
+                if ((signed long)e.index() + 1 == ((1 << (exp + 1)) - 1)) exp++;
             }
 
             // Creating a distance object with the test scenario

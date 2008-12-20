@@ -67,7 +67,8 @@ class PoissonTestJACKernelBandedDouble:
             std::string file_name(HONEI_SOURCEDIR);
             file_name += "/honei/math/testdata/81.bin";
             file = fopen(file_name.c_str(), "rb");
-            fread(&n, sizeof(int), 1, file);
+            if (1 != (int)fread(&n, sizeof(int), 1, file))
+                throw InternalError("IO Error!");
 #ifdef HONEI_CELL
             unsigned char b1, b2, b3, b4;
             b1 = n & 255;
@@ -90,21 +91,33 @@ class PoissonTestJACKernelBandedDouble:
             ana_sol = new double[n];
             ref_sol = new double[n];
 
-            fread(dd, sizeof(double), n, file);
-            fread(ll, sizeof(double), n, file);
-            fread(ld, sizeof(double), n, file);
-            fread(lu, sizeof(double), n, file);
-            fread(dl, sizeof(double), n, file);
-            fread(du, sizeof(double), n, file);
-            fread(ul, sizeof(double), n, file);
-            fread(ud, sizeof(double), n, file);
-            fread(uu, sizeof(double), n, file);
-            fread(b,  sizeof(double), n, file);
-            fread(ana_sol, sizeof(double), n, file);
-            fread(ref_sol, sizeof(double), n, file);
+            if (n != (int)fread(dd, sizeof(double), n, file))
+                throw InternalError("IO Error!");
+            if (n != (int)fread(ll, sizeof(double), n, file))
+                throw InternalError("IO Error!");
+            if (n != (int)fread(ld, sizeof(double), n, file))
+                throw InternalError("IO Error!");
+            if (n != (int)fread(lu, sizeof(double), n, file))
+                throw InternalError("IO Error!");
+            if (n != (int)fread(dl, sizeof(double), n, file))
+                throw InternalError("IO Error!");
+            if (n != (int)fread(du, sizeof(double), n, file))
+                throw InternalError("IO Error!");
+            if (n != (int)fread(ul, sizeof(double), n, file))
+                throw InternalError("IO Error!");
+            if (n != (int)fread(ud, sizeof(double), n, file))
+                throw InternalError("IO Error!");
+            if (n != (int)fread(uu, sizeof(double), n, file))
+                throw InternalError("IO Error!");
+            if (n != (int)fread(b,  sizeof(double), n, file))
+                throw InternalError("IO Error!");
+            if (n != (int)fread(ana_sol, sizeof(double), n, file))
+                throw InternalError("IO Error!");
+            if (n != (int)fread(ref_sol, sizeof(double), n, file))
+                throw InternalError("IO Error!");
             fclose(file);
 #ifdef HONEI_CELL
-            for(unsigned long i(0); i < n; ++i)
+            for(int i(0); i < n; ++i)
             {
                 dd[i] = DoubleSwap(dd[i]);
                 ll[i] = DoubleSwap(ll[i]);
@@ -132,7 +145,7 @@ class PoissonTestJACKernelBandedDouble:
             DenseVector<double> b_v(n, double(0));
             DenseVector<double> ana_sol_v(n, double(0));
             DenseVector<double> ref_sol_v(n, double(0));
-            for(unsigned long i = 0; i < n; ++i)
+            for(int i = 0; i < n; ++i)
             {
                 dd_v[i] = dd[i];
                 ll_v[i] = ll[i];

@@ -169,11 +169,11 @@ namespace honei
 
         typedef std::list<EvaluationFunction> EvaluationFunctions;
 
-        /// Our queue's mutex.
-        Mutex * const queue_mutex;
-
         /// Our evaluation's mutex.
         Mutex * const mutex;
+
+        /// Our queue's mutex.
+        Mutex * const queue_mutex;
 
         /// Our work-pending condition variable.
         ConditionVariable * const work_pending;

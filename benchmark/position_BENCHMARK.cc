@@ -200,8 +200,8 @@ class WeightedKamadaKawaiPositionsBench :
             Scenario<DataType_, ST_>::create(Coordinates, Node_Weights, Edge_Weights);
 
             // Creating a Positions object with the test scenario and update the positions
-            unsigned long number_of_iterations;
-            DataType_ max_node_force;
+            unsigned long number_of_iterations(0);
+            DataType_ max_node_force(0);
             DenseMatrix<DataType_> new_coordinates(_nodecount, 2, DataType_(0));
             DenseMatrix<DataType_> pos_copy(Coordinates.copy());
             Positions<Tag_, DataType_, methods::WeightedKamadaKawai> position(pos_copy, Node_Weights, Edge_Weights);
@@ -248,8 +248,8 @@ class WeightedFruchtermanReingoldPositionsBench :
             Scenario<DataType_, ST_>::create(Coordinates, Node_Weights, Edge_Weights);
 
             // Creating a Positions object with the test scenario and update the positions
-            unsigned long number_of_iterations;
-            DataType_ max_node_force;
+            unsigned long number_of_iterations(0);
+            DataType_ max_node_force(0);
             DenseMatrix<DataType_> new_coordinates(_nodecount, 2, DataType_(0));
             DenseMatrix<DataType_> pos_copy(Coordinates.copy());
             Positions<Tag_, DataType_, methods::WeightedFruchtermanReingold> position(pos_copy, Node_Weights, Edge_Weights);                

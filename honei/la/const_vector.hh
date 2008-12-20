@@ -71,7 +71,7 @@ namespace honei
             ConstVector(const ConstVector<DataType_> & other);
 
             /// Destructor.
-            ~ConstVector();
+            virtual ~ConstVector();
 
             /// \}
 

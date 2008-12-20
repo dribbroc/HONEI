@@ -41,6 +41,8 @@ namespace
             {
             }
 
+            virtual ~TestTask(){}
+
             virtual void operator() ()
             {
                 ++_v;
@@ -72,6 +74,6 @@ class WorkerQueueTest :
             while (! thread.idle())
                 sleep(1);
 
-            TEST_CHECK_EQUAL(v, 42);
+            TEST_CHECK_EQUAL(v, 42ul);
         }
 } worker_queue_test;

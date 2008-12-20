@@ -139,7 +139,7 @@ namespace honei
                     i_end(x.end_non_zero_bands()) ; i != i_end ; ++i)
             {
                 DenseVector<DataType_> band = *i;
-                int middle_index = x.rows() -1;
+                unsigned long middle_index(x.rows() - 1);
                 // If we are above or on the diagonal band, we start at Element 0 and go on
                 // until Element band_size-band_index.
                 if (i.index() >= middle_index)
@@ -369,11 +369,13 @@ namespace honei
         {
             CONTEXT("When forwarding ElementInverse tags::Cell to tags::CPU:");
             ElementInverse<tags::CPU>::value(a);
+            return a;
         }
         static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a)
         {
             CONTEXT("When forwarding ElementInverse tags::Cell to tags::CPU:");
             ElementInverse<tags::CPU>::value(a);
+            return a;
         }
     };
 }

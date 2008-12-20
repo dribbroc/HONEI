@@ -124,16 +124,16 @@ void assemble_edges()
         EvolvingGraph(int coordinate_dimensions, DataType_ intertimeslice_weight = (DataType_)1) :
                 _slices(),
 //                _nodes(),
+                _interpolation_coordinates(),
                 _slice_offset(),
-                _total_node_count(0),
                 _last_interpolation(1, 1),
+                _total_node_count(0),
                 _coordinate_dimensions(coordinate_dimensions),
-                _intertimeslice_weight(intertimeslice_weight),
-                _interpolation_coordinates()
-        {
-        }
-        
-        ~EvolvingGraph()
+                _intertimeslice_weight(intertimeslice_weight)
+	{
+	}
+
+        virtual ~EvolvingGraph()
         {
           //  for(int i(0);  i < _interpolation_coordinates.size(); ++i)
           //      if (_interpolation_coordinates[i] != 0)

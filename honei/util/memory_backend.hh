@@ -117,7 +117,7 @@ namespace honei
             MemoryBackend<tags::GPU::CUDA>();
 
             /// Destructor.
-            ~MemoryBackend<tags::GPU::CUDA>();
+            virtual ~MemoryBackend<tags::GPU::CUDA>();
 
             virtual void * upload(void * memid, void * address, unsigned long bytes);
 

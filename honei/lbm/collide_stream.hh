@@ -75,15 +75,15 @@ namespace honei
                           DT2_ tau)
         {
             CONTEXT("When performing collision and streaming in DIR 1:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
-                unsigned long i_forward(i + 1);
-                unsigned long i_backward(i - 1);
+                long i_forward(i + 1);
+                long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
                     long j_forward(j + 1);
                     long j_backward(j - 1);
@@ -138,15 +138,15 @@ namespace honei
                           DT2_ tau)
         {
             CONTEXT("When performing collision and streaming in DIR 2:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
                 long i_forward(i + 1);
                 long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
                     long j_forward(j + 1);
                     long j_backward(j - 1);
@@ -202,15 +202,15 @@ namespace honei
         {
 
             CONTEXT("When performing collision and streaming in DIR 3:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
                 long i_forward(i + 1);
                 long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
                     long j_forward(j + 1);
                     long j_backward(j - 1);
@@ -266,15 +266,15 @@ namespace honei
         {
 
             CONTEXT("When performing collision and streaming in DIR 4:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
                 long i_forward(i + 1);
                 long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
                     long j_forward(j + 1);
                     long j_backward(j - 1);
@@ -330,15 +330,15 @@ namespace honei
         {
 
             CONTEXT("When performing collision and streaming in DIR 5:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
                 long i_forward(i + 1);
                 long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
                     long j_forward(j + 1);
                     long j_backward(j - 1);
@@ -394,15 +394,15 @@ namespace honei
         {
 
             CONTEXT("When performing collision and streaming in DIR 6:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
                 long i_forward(i + 1);
                 long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
                     long j_forward(j + 1);
                     long j_backward(j - 1);
@@ -458,15 +458,15 @@ namespace honei
         {
 
             CONTEXT("When performing collision and streaming in DIR 7:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
                 long i_forward(i + 1);
                 long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
                     long j_forward(j + 1);
                     long j_backward(j - 1);
@@ -522,15 +522,15 @@ namespace honei
         {
 
             CONTEXT("When performing collision and streaming in DIR 8:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
                 long i_forward(i + 1);
                 long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
                     long j_forward(j + 1);
                     long j_backward(j - 1);
@@ -586,12 +586,12 @@ namespace honei
         {
 
             CONTEXT("When performing collision and streaming in DIR 0:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
                    ///Perform streaming and collision:
                     result(i, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau;
@@ -634,15 +634,15 @@ namespace honei
                           DT2_ tau)
         {
             CONTEXT("When performing collision and streaming in DIR 1:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
-                unsigned long i_forward(i + 1);
-                unsigned long i_backward(i - 1);
+                long i_forward(i + 1);
+                long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
                     long j_forward(j + 1);
                     long j_backward(j - 1);
@@ -689,15 +689,15 @@ namespace honei
                           DT2_ tau)
         {
             CONTEXT("When performing collision and streaming in DIR 2:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
                 long i_forward(i + 1);
                 long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
                     long j_forward(j + 1);
                     long j_backward(j - 1);
@@ -755,15 +755,15 @@ namespace honei
         {
 
             CONTEXT("When performing collision and streaming in DIR 3:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
                 long i_forward(i + 1);
                 long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
                     long j_forward(j + 1);
                     long j_backward(j - 1);
@@ -811,15 +811,15 @@ namespace honei
         {
 
             CONTEXT("When performing collision and streaming in DIR 4:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
                 long i_forward(i + 1);
                 long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
                     long j_forward(j + 1);
                     long j_backward(j - 1);
@@ -878,15 +878,15 @@ namespace honei
         {
 
             CONTEXT("When performing collision and streaming in DIR 5:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
                 long i_forward(i + 1);
                 long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
                     long j_forward(j + 1);
                     long j_backward(j - 1);
@@ -934,15 +934,15 @@ namespace honei
         {
 
             CONTEXT("When performing collision and streaming in DIR 6:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
                 long i_forward(i + 1);
                 long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
                     long j_forward(j + 1);
                     long j_backward(j - 1);
@@ -1000,15 +1000,15 @@ namespace honei
         {
 
             CONTEXT("When performing collision and streaming in DIR 7:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
                 long i_forward(i + 1);
                 long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
                     long j_forward(j + 1);
                     long j_backward(j - 1);
@@ -1056,15 +1056,15 @@ namespace honei
         {
 
             CONTEXT("When performing collision and streaming in DIR 8:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
                 long i_forward(i + 1);
                 long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
                     long j_forward(j + 1);
                     long j_backward(j - 1);
@@ -1122,12 +1122,12 @@ namespace honei
         {
 
             CONTEXT("When performing collision and streaming in DIR 0:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
                    ///Perform streaming and collision:
                     result(i, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau;
@@ -1169,18 +1169,18 @@ namespace honei
                           DT2_ tau)
         {
             CONTEXT("When performing collision and streaming in DIR 1:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
-                unsigned long i_forward(i + 1);
-                unsigned long i_backward(i - 1);
+                //long i_forward(i + 1);
+                //long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
                     long j_forward(j + 1);
-                    long j_backward(j - 1);
+                    //long j_backward(j - 1);
 
                     if(j_forward >= x_max)
                         ;//result(i,j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
@@ -1224,18 +1224,18 @@ namespace honei
                           DT2_ tau)
         {
             CONTEXT("When performing collision and streaming in DIR 2:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
                 long i_forward(i + 1);
-                long i_backward(i - 1);
+                //long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
                     long j_forward(j + 1);
-                    long j_backward(j - 1);
+                    //long j_backward(j - 1);
 
                     if(i_forward >= y_max || j_forward >= x_max)
                         ;//result(i, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
@@ -1280,18 +1280,18 @@ namespace honei
         {
 
             CONTEXT("When performing collision and streaming in DIR 3:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
                 long i_forward(i + 1);
-                long i_backward(i - 1);
+                //long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
-                    long j_forward(j + 1);
-                    long j_backward(j - 1);
+                    //long j_forward(j + 1);
+                    //long j_backward(j - 1);
 
                     if(i_forward >= y_max)
                         ;//result(i, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
@@ -1336,17 +1336,17 @@ namespace honei
         {
 
             CONTEXT("When performing collision and streaming in DIR 4:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
                 long i_forward(i + 1);
-                long i_backward(i - 1);
+                //long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
-                    long j_forward(j + 1);
+                    //long j_forward(j + 1);
                     long j_backward(j - 1);
 
                     if(i_forward >= y_max || j_backward < 0)
@@ -1392,17 +1392,17 @@ namespace honei
         {
 
             CONTEXT("When performing collision and streaming in DIR 5:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
-                long i_forward(i + 1);
-                long i_backward(i - 1);
+                //long i_forward(i + 1);
+                //long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
-                    long j_forward(j + 1);
+                    //long j_forward(j + 1);
                     long j_backward(j - 1);
 
                     if(j_backward < 0)
@@ -1448,17 +1448,17 @@ namespace honei
         {
 
             CONTEXT("When performing collision and streaming in DIR 6:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
-                long i_forward(i + 1);
+                //long i_forward(i + 1);
                 long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
-                    long j_forward(j + 1);
+                    //long j_forward(j + 1);
                     long j_backward(j - 1);
 
                     if(i_backward < 0 || j_backward < 0)
@@ -1504,18 +1504,18 @@ namespace honei
         {
 
             CONTEXT("When performing collision and streaming in DIR 7:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
-                long i_forward(i + 1);
+                //long i_forward(i + 1);
                 long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
-                    long j_forward(j + 1);
-                    long j_backward(j - 1);
+                    //long j_forward(j + 1);
+                    //long j_backward(j - 1);
 
                     if(i_backward < 0)
                         ;//result(i, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
@@ -1560,18 +1560,18 @@ namespace honei
         {
 
             CONTEXT("When performing collision and streaming in DIR 8:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
-                long i_forward(i + 1);
+                //long i_forward(i + 1);
                 long i_backward(i - 1);
 
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
                     long j_forward(j + 1);
-                    long j_backward(j - 1);
+                    //long j_backward(j - 1);
 
                     if(i_backward < 0 || j_forward >= x_max)
                         ;//result(i, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
@@ -1616,12 +1616,12 @@ namespace honei
         {
 
             CONTEXT("When performing collision and streaming in DIR 0:");
-            unsigned long y_max(result.rows());
-            unsigned long x_max(result.columns());
+            long y_max(result.rows());
+            long x_max(result.columns());
 
-            for(unsigned long i(0); i < y_max; ++i)
+            for(long i(0); i < y_max; ++i)
             {
-                for(unsigned long j(0); j < x_max; ++j)
+                for(long j(0); j < x_max; ++j)
                 {
                    ///Perform streaming and collision:
                     result(i, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau;

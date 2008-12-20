@@ -160,7 +160,7 @@ namespace honei
             DenseVector<DataType_> & band_unsigned(unsigned long index);
 
             /// Request a memory access lock for our data.
-            void * lock(LockMode mode, tags::TagValue memory = tags::CPU::memory_value) const;
+            void lock(LockMode mode) const;
 
             /// Release a memory access lock for our data.
             void unlock(LockMode mode) const;

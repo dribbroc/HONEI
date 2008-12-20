@@ -20,6 +20,7 @@
 #define LIBSWE_GUARD_SOLVER_CLIENT_HH 1
 #include <honei/la/dense_matrix.hh>
 #include <stdio.h>
+#include <string>
 #include <iostream>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -29,6 +30,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <honei/la/dense_matrix.hh>
+#include <cstring>
 
 #define BUFFER_SIZE 1024
 #define DATA_SIZE 5234567
@@ -55,7 +57,7 @@ namespace honei
             void _read_timestep(int c, DenseMatrix<double> & height_field)
             {
                 int bytes;
-                char delims[] = "#";
+                const char delims[] = "#";
                 typename DenseMatrix<double>::ElementIterator i(height_field.begin_elements()), i_end(height_field.end_elements());
 
                 for (unsigned long row(0) ; row < height_field.rows() ; ++row)
@@ -106,7 +108,7 @@ namespace honei
                 if (_socket != -1) close(_socket);
             }
 
-            void init(char *  hostname, int port, int scenario)
+            void init(const char * hostname, int port, int scenario)
             {
                 if (_socket != -1) close(_socket);
                 struct sockaddr_in srv;

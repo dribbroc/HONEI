@@ -20,9 +20,9 @@ class GenericQ1MatrixDenseVectorProductBench :
 {
     private:
         unsigned long _size;
-        int _count;
+        unsigned long _count;
     public:
-        GenericQ1MatrixDenseVectorProductBench(const std::string & id, unsigned long size, int count) :
+        GenericQ1MatrixDenseVectorProductBench(const std::string & id, unsigned long size, unsigned long count) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
@@ -88,9 +88,9 @@ class Q1MatrixDenseVectorProductBench :
 {
     private:
         unsigned long _size;
-        int _count;
+        unsigned long _count;
     public:
-        Q1MatrixDenseVectorProductBench(const std::string & id, unsigned long size, int count) :
+        Q1MatrixDenseVectorProductBench(const std::string & id, unsigned long size, unsigned long count) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
@@ -153,9 +153,9 @@ class BandedMatrixDenseVectorProductBench :
 {
     private:
         unsigned long _size;
-        int _count;
+        unsigned long _count;
     public:
-        BandedMatrixDenseVectorProductBench(const std::string & id, unsigned long size, int count) :
+        BandedMatrixDenseVectorProductBench(const std::string & id, unsigned long size, unsigned long count) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
@@ -169,7 +169,7 @@ class BandedMatrixDenseVectorProductBench :
             BandedMatrix<DataType_> bm1(_size, dv1);
             DenseVector<DataType_> dv4(_size, DataType_(3));
             DenseVector<DataType_> dv5(dv4.copy());
-            for (int i = 1; i < 14 && i < _size; i++)
+            for (unsigned long i = 1; i < 14 && i < _size; i++)
             {
                 bm1.insert_band(i * 3, dv4.copy());
                 bm1.insert_band(-1 * 5 * i, dv5.copy());
@@ -218,9 +218,9 @@ class BandedMatrixDenseVectorProductBenchRelax :
 {
     private:
         unsigned long _size;
-        int _count;
+        unsigned long _count;
     public:
-        BandedMatrixDenseVectorProductBenchRelax(const std::string & id, unsigned long size, int count) :
+        BandedMatrixDenseVectorProductBenchRelax(const std::string & id, unsigned long size, unsigned long count) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
@@ -273,9 +273,9 @@ class DenseMatrixProductBench :
 {
     private:
         unsigned long _size;
-        int _count;
+        unsigned long _count;
     public:
-        DenseMatrixProductBench(const std::string & id, unsigned long size, int count) :
+        DenseMatrixProductBench(const std::string & id, unsigned long size, unsigned long count) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
@@ -287,7 +287,7 @@ class DenseMatrixProductBench :
         {
             DenseMatrix<DataType_> dm0(_size, _size, DataType_(rand()));
             DenseMatrix<DataType_> dm1(_size, _size, DataType_(rand()));
-            for(int i = 0; i < _count; ++i)
+            for(unsigned long i = 0; i < _count; ++i)
             {
                 BENCHMARK(Product<Tag_>::value(dm0, dm1));
             }
@@ -321,9 +321,9 @@ class DenseMatrixDenseVectorProductBench :
 {
     private:
         unsigned long _size;
-        int _count;
+        unsigned long _count;
     public:
-        DenseMatrixDenseVectorProductBench(const std::string & id, unsigned long size, int count) :
+        DenseMatrixDenseVectorProductBench(const std::string & id, unsigned long size, unsigned long count) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
@@ -333,10 +333,9 @@ class DenseMatrixDenseVectorProductBench :
 
         virtual void run()
         {
-            DataType_ p0;
             DenseMatrix<DataType_> dm0(_size, _size, DataType_(rand()));
             DenseVector<DataType_> dv0(_size, DataType_(rand()));
-            for(int i = 0; i < _count; ++i)
+            for(unsigned long i = 0; i < _count; ++i)
             {
                 BENCHMARK(Product<Tag_>::value(dm0, dv0));
             }
@@ -364,9 +363,9 @@ class SparseMatrixProductBench :
 {
     private:
         unsigned long _size;
-        int _count;
+        unsigned long _count;
     public:
-        SparseMatrixProductBench(const std::string & id, unsigned long size, int count) :
+        SparseMatrixProductBench(const std::string & id, unsigned long size, unsigned long count) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
@@ -376,7 +375,6 @@ class SparseMatrixProductBench :
 
         virtual void run()
         {
-            DataType_ p0;
             SparseMatrix<DataType_> sm(_size, _size, (unsigned long)((_size*_size)/10));
             for (typename MutableMatrix<DataType_>::ElementIterator i_end(sm.end_elements()), i(sm.begin_elements()) ; i != i_end ; ++i)
             {
@@ -386,7 +384,7 @@ class SparseMatrixProductBench :
                 }
             }
             DenseMatrix<DataType_> dm(_size, _size, DataType_(rand()));
-            for(int i = 0; i < _count; ++i)
+            for(unsigned long i = 0; i < _count; ++i)
             {
                 BENCHMARK(Product<Tag_>::value(sm, dm));
             }
@@ -403,9 +401,9 @@ class BandedMatrixProductBench :
 {
     private:
         unsigned long _size;
-        int _count;
+        unsigned long _count;
     public:
-        BandedMatrixProductBench(const std::string & id, unsigned long size, int count) :
+        BandedMatrixProductBench(const std::string & id, unsigned long size, unsigned long count) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
@@ -415,7 +413,6 @@ class BandedMatrixProductBench :
 
         virtual void run()
         {
-            DataType_ p0;
             DenseVector<DataType_> dv(_size, DataType_(rand()));
             BandedMatrix<DataType_> bm(_size, dv);
             bm.insert_band(1, dv);
@@ -425,7 +422,7 @@ class BandedMatrixProductBench :
             bm.insert_band(5, dv);
             bm.insert_band(-5, dv);
             DenseMatrix<DataType_> dm(_size, _size, DataType_(rand()));
-            for(int i = 0; i < _count; ++i)
+            for(unsigned long i = 0; i < _count; ++i)
             { 
                 BENCHMARK(Product<Tag_>::value(bm, dm));
             }
@@ -471,7 +468,7 @@ class DenseMatrixDenseVectorProductSPUPlot :
                     DenseVector<DT_> dv((k + 1) * 64, DT_(rand()));
                     DenseMatrix<DT_> dm((k + 1) * 64, (k + 1) * 64, DT_(rand()));
 
-                    for(int i(0) ; i < 20 ; ++i)
+                    for(unsigned long i(0) ; i < 20 ; ++i)
                     {
                         BENCHMARK(
                                 for (unsigned long l(0) ; l < 5 ; ++l)
@@ -542,7 +539,7 @@ class BandedMatrixProductQ1SPUPlot :
                     bm.insert_band((unsigned long)sqrt(_size), dv1.copy());
                     bm.insert_band((unsigned long)sqrt(_size)+ 1, dv1.copy());
 
-                    for(int i(0) ; i < 10 ; ++i)
+                    for(unsigned long i(0) ; i < 10 ; ++i)
                     {
                         BENCHMARK(
                                 for (unsigned long l(0) ; l < 5 ; ++l)
@@ -611,7 +608,7 @@ class BandedMatrixProductRelaxSPUPlot :
                     bm.insert_band(-3, dv1.copy());
                     bm.insert_band(15, dv1.copy());
 
-                    for(int i(0) ; i < 10 ; ++i)
+                    for(unsigned long i(0) ; i < 10 ; ++i)
                     {
                         BENCHMARK(
                                 for (unsigned long l(0) ; l < 5 ; ++l)
@@ -676,7 +673,7 @@ class BandedMatrixProductQ1VSPlot :
                 bm.insert_band((unsigned long)sqrt(_size), dv1.copy());
                 bm.insert_band((unsigned long)sqrt(_size)+ 1, dv1.copy());
 
-                for(int i(0) ; i < 5 ; ++i)
+                for(unsigned long i(0) ; i < 5 ; ++i)
                 {
                     BENCHMARK(Product<tags::CPU::MultiCore::SSE>::value(bm, dv0));
                 }
@@ -704,7 +701,7 @@ class BandedMatrixProductQ1VSPlot :
                 bm.insert_band((unsigned long)sqrt(_size), dv1.copy());
                 bm.insert_band((unsigned long)sqrt(_size)+ 1, dv1.copy());
 
-                for(int i(0) ; i < 5 ; ++i)
+                for(unsigned long i(0) ; i < 5 ; ++i)
                 {
                     BENCHMARK(Product<tags::CPU::SSE>::value(bm, dv0));
                 }
@@ -748,15 +745,15 @@ class BandedMatrixProductRelaxVSPlot :
             for (unsigned long j(1) ; j < 160 ; j+=10)
             {
                 cores.push_back(tags::CPU::MultiCore::SSE::name);
-                unsigned long _size((j+1) * 8192);
-                DenseVector<DT_> dv0((j + 1) * 8192, DT_(rand()));
-                DenseVector<DT_> dv1((j + 1) * 8192, DT_(rand()));
-                BandedMatrix<DT_> bm((j + 1) * 8192, dv1);
+                unsigned long _size((j + 1) * 8192);
+                DenseVector<DT_> dv0(_size, DT_(rand()));
+                DenseVector<DT_> dv1(_size, DT_(rand()));
+                BandedMatrix<DT_> bm(_size, dv1);
                 bm.insert_band(3, dv1.copy());
                 bm.insert_band(-3, dv1.copy());
                 bm.insert_band(15, dv1.copy());
 
-                for(int i(0) ; i < 5 ; ++i)
+                for(unsigned long i(0) ; i < 5 ; ++i)
                 {
                     BENCHMARK(Product<tags::CPU::MultiCore::SSE>::value(bm, dv0));
                 }
@@ -771,14 +768,14 @@ class BandedMatrixProductRelaxVSPlot :
             {
                 cores.push_back(tags::CPU::SSE::name);
                 unsigned long _size((j+1) * 8192);
-                DenseVector<DT_> dv0((j + 1) * 8192, DT_(rand()));
-                DenseVector<DT_> dv1((j + 1) * 8192, DT_(rand()));
-                BandedMatrix<DT_> bm((j + 1) * 8192, dv1);
+                DenseVector<DT_> dv0(_size, DT_(rand()));
+                DenseVector<DT_> dv1(_size, DT_(rand()));
+                BandedMatrix<DT_> bm(_size, dv1);
                 bm.insert_band(3, dv1.copy());
                 bm.insert_band(-3, dv1.copy());
                 bm.insert_band(15, dv1.copy());
 
-                for(int i(0) ; i < 5 ; ++i)
+                for(unsigned long i(0) ; i < 5 ; ++i)
                 {
                     BENCHMARK(Product<tags::CPU::SSE>::value(bm, dv0));
                 }
@@ -825,7 +822,7 @@ class DenseMatrixProductVSPlot :
                 DenseMatrix<DT_> dm0((k + 1) * 40, (k + 1) * 40, DT_(rand()));
                 DenseMatrix<DT_> dm1((k + 1) * 40, (k + 1) * 40, DT_(rand()));
 
-                for(int i(0) ; i < 5 ; ++i)
+                for(unsigned long i(0) ; i < 5 ; ++i)
                 {
                     BENCHMARK(Product<tags::CPU::MultiCore::SSE>::value(dm0, dm1));
                 }
@@ -842,7 +839,7 @@ class DenseMatrixProductVSPlot :
                 DenseMatrix<DT_> dm0((k + 1) * 40, (k + 1) * 40, DT_(rand()));
                 DenseMatrix<DT_> dm1((k + 1) * 40, (k + 1) * 40, DT_(rand()));
 
-                for(int i(0) ; i < 5 ; ++i)
+                for(unsigned long i(0) ; i < 5 ; ++i)
                 {
                     BENCHMARK(Product<tags::CPU::SSE>::value(dm0, dm1));
                 }
@@ -890,7 +887,7 @@ class DenseMatrixDenseVectorProductVSPlot :
                 DenseVector<DT_> dv((j + 1) * 64, DT_(rand()));
                 DenseMatrix<DT_> dm((j + 1) * 64, (j + 1) * 64, DT_(rand()));
 
-                for(int i(0) ; i < 5 ; ++i)
+                for(unsigned long i(0) ; i < 5 ; ++i)
                 {
                     BENCHMARK(Product<tags::CPU::MultiCore::SSE>::value(dm, dv));
                 }
@@ -907,7 +904,7 @@ class DenseMatrixDenseVectorProductVSPlot :
                 DenseVector<DT_> dv((j + 1) * 64, DT_(rand()));
                 DenseMatrix<DT_> dm((j + 1) * 64, (j + 1) * 64, DT_(rand()));
 
-                for(int i(0) ; i < 5 ; ++i)
+                for(unsigned long i(0) ; i < 5 ; ++i)
                 {
                     BENCHMARK(Product<tags::CPU::SSE>::value(dm, dv));
                 }

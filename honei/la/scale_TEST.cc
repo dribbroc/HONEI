@@ -192,7 +192,7 @@ class DenseMatrixScaleQuickTest :
             Scale<Tag_>::value(dm, DataType_(3));
 
             dm.lock(lm_read_only);
-            DataType_ vsum(0), ssum(2 * DataType_(size) * DataType_(size + 1));
+            DataType_ vsum(0);
             for (typename DenseMatrix<DataType_>::ElementIterator i(dm.begin_elements()),
                     i_end(dm.end_elements()) ; i != i_end ; ++i)
             {

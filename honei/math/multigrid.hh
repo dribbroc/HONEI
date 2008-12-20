@@ -169,6 +169,7 @@ namespace honei
                         else
                         {
                             defect = Prec_(1e8);
+                            initial_defect = defect;
                         }
                         // check if nothing needs to be done
                         if(info.convergence_check && defect <= info.tolerance)
@@ -462,13 +463,6 @@ endCycleLoop:
                     {
                         Prec_ cappa;
 
-                        // cycle control
-                        unsigned long iter;
-                        bool restriction_started;
-
-                        // current and initial defect
-                        Prec_ defect, initial_defect;
-
                         DenseVector<Prec_> initial_guess(right_hand_side.size(), Prec_(0.)); //x_0
                         DenseVector<Prec_> outer_defect(right_hand_side.size(), Prec_(0));
 
@@ -531,6 +525,7 @@ endCycleLoop:
                     else
                     {
                         defect = Prec_(1e8);
+                        initial_defect = defect;
                     }
 #ifdef SOLVER_VERBOSE
                     std::cout << defect << std::endl;
@@ -823,12 +818,8 @@ endCycleLoop:
 #endif
                         InnerPrec_ cappa;
 
-                        // cycle control
-                        unsigned long iter;
-                        bool restriction_started;
-
                         // current and initial defect
-                        OuterPrec_ defect, initial_defect;
+                        OuterPrec_ initial_defect;
                         DenseVector<OuterPrec_> result(right_hand_side.size(), OuterPrec_(0)); //final result
                         DenseVector<OuterPrec_> initial_guess(right_hand_side.size(), OuterPrec_(0)); //x_0
 
@@ -868,7 +859,6 @@ endCycleLoop:
 
                         OuterPrec_ def_norm;
                         OuterPrec_ inv;
-                        unsigned long step_iterations;
 #ifdef SOLVER_BENCHMARK
                         pe.take();
                         std::cout << "PreProc TOE: "<< (pe.sec() - pb.sec()) + (pe.usec() - pb.usec())/1e6 << std::endl;

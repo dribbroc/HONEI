@@ -32,6 +32,7 @@
 #include <honei/la/dense_matrix.hh>
 #include <honei/swe/relax_solver.hh>
 #include <honei/swe/volume.hh>
+#include <cstring>
 
 #define BUFFER_SIZE 1024
 
@@ -81,7 +82,8 @@ namespace honei
 
             void _read_scenario(int c)
             {
-                char buffer[BUFFER_SIZE], scenario[BUFFER_SIZE];
+                //char buffer[BUFFER_SIZE];
+                char scenario[BUFFER_SIZE];
                 int bytes;
 
                 bytes = recv(c, scenario, sizeof(scenario) - 1, 0);
@@ -137,6 +139,8 @@ namespace honei
                     return 0;
                 else if (handshake[0] == 'x')
                     return 2;
+                else
+                    throw InternalError("Invalid handhake status!");
             }
 
             int _handling(int c)

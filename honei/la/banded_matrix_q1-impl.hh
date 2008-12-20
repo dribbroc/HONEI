@@ -268,17 +268,17 @@ namespace honei
     }
 
     template <typename DataType_>
-    void * BandedMatrixQ1<DataType_>::lock(LockMode mode, tags::TagValue memory) const
+    void BandedMatrixQ1<DataType_>::lock(LockMode mode) const
     {
-        this->_imp->bands[LL]->lock(mode, memory);
-        this->_imp->bands[LD]->lock(mode, memory);
-        this->_imp->bands[LU]->lock(mode, memory);
-        this->_imp->bands[DL]->lock(mode, memory);
-        this->_imp->bands[DD]->lock(mode, memory);
-        this->_imp->bands[DU]->lock(mode, memory);
-        this->_imp->bands[UL]->lock(mode, memory);
-        this->_imp->bands[UD]->lock(mode, memory);
-        this->_imp->bands[UU]->lock(mode, memory);
+        this->_imp->bands[LL]->lock(mode);
+        this->_imp->bands[LD]->lock(mode);
+        this->_imp->bands[LU]->lock(mode);
+        this->_imp->bands[DL]->lock(mode);
+        this->_imp->bands[DD]->lock(mode);
+        this->_imp->bands[DU]->lock(mode);
+        this->_imp->bands[UL]->lock(mode);
+        this->_imp->bands[UD]->lock(mode);
+        this->_imp->bands[UU]->lock(mode);
     }
 
     template <typename DataType_>

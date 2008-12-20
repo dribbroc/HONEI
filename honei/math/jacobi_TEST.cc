@@ -55,9 +55,9 @@ class JacobiTestDense:
             b[1] = DT1_(3);
             b[2] = DT1_(0);
 
-            std::cout << "A:" << A << std::endl;
-            std::cout << "b:" << b << std::endl;
-            DenseVector<DT1_> result = Jacobi<Tag_>::value(A,b,long(12));
+            std::cout<<"A:"<<A<<std::endl;
+            std::cout<<"b:"<<b<<std::endl;
+            DenseVector<DT1_> result = Jacobi<Tag_>::value(A,b,12ul);
             DT1_ x_n = Norm< vnt_l_two, false, Tag_>::value(result);
             DenseVector<DT1_> x_analytical(3, DT1_(0));
             std::cout << "RESULT(v1):" << result << std::endl;
@@ -127,7 +127,7 @@ class JacobiTestBanded:
             std::cout << "A:" << A << std::endl;
             std::cout << "b:" << b << std::endl;
 
-            DenseVector<DT1_> result = Jacobi<Tag_>::value(A,b,long(10));
+            DenseVector<DT1_> result = Jacobi<Tag_>::value(A,b,10ul);
             DT1_ x_n = Norm< vnt_l_two, false, Tag_>::value(result);
             DenseVector<DT1_> x_analytical(3, DT1_(1));
             x_analytical[0] = DT1_(2./3.);
@@ -177,7 +177,7 @@ class JacobiTestSparse:
 
             std::cout << "A:" << A << std::endl;
             std::cout << "b:" << b << std::endl;
-            DenseVector<DT1_> result = Jacobi<Tag_>::value(A,b,long(12));
+            DenseVector<DT1_> result = Jacobi<Tag_>::value(A,b, 12ul);
             DT1_ x_n = Norm< vnt_l_two, false, Tag_>::value(result);
             DenseVector<DT1_> x_analytical(3, DT1_(0));
             std::cout << "RESULT(v1):" << result << std::endl;

@@ -224,9 +224,6 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrixQ1<float> & 
 
     DenseVector<float> result(a.rows());
 
-    unsigned long m(a.root());
-
-
     honei::sse::product_bmdv_q1(a.band(LL).elements(), a.band(LD).elements(), a.band(LU).elements(),
             a.band(DL).elements(), a.band(DD).elements(), a.band(DU).elements(),
             a.band(UL).elements(), a.band(UD).elements(), a.band(UU).elements(),
@@ -245,9 +242,6 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrixQ1<double> 
     }
 
     DenseVector<double> result(a.rows());
-
-    unsigned long m(a.root());
-
 
     honei::sse::product_bmdv_q1(a.band(LL).elements(), a.band(LD).elements(), a.band(LU).elements(),
             a.band(DL).elements(), a.band(DD).elements(), a.band(DU).elements(),

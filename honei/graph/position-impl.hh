@@ -63,11 +63,11 @@
                 typename DenseMatrix<DataType_>::ConstElementIterator x(spring_force_parameters.begin_elements());
                 long int _size(coordinates.rows() * coordinates.columns());
                 long int _row_number(0);
-                for (int i(0); i < coordinates.rows(); i++)
+                for (unsigned long i(0); i < coordinates.rows(); i++)
                 {
                     DenseMatrix<DataType_> position_differences(coordinates.rows(), coordinates.columns(), DataType_(0));
                     TypeTraits<DataType_>::copy(coordinates.elements(), position_differences.elements(), coordinates.rows() * coordinates.columns());
-                    for (int j(0); j < coordinates.rows(); j++)
+                    for (unsigned long j(0); j < coordinates.rows(); j++)
                     {
                         typename DenseMatrix<DataType_>::Row pos_row(position_differences[j]), spring_row(spring_forces[i]);
                         Difference<Tag_>::value(pos_row, coordinates[i]);
@@ -90,7 +90,7 @@
                 DenseVector<DataType_> _force_difference_of_max_node(coordinates.columns(), DataType_(0));
                 long int pos_1(_previous_max_node * coordinates.rows());
                 long int pos_2(_previous_max_node);
-                for (int i(0) ; i != coordinates.rows() ; ++i)
+                for (unsigned long i(0) ; i != coordinates.rows() ; ++i)
                 {
                     // Calculate force parameter vector of node with maximal force(_auxiliary)
                     typename DenseMatrix<DataType_>::Row nf_row(node_forces[pos_1]), spring_row(spring_forces[i]);

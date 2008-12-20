@@ -30,5 +30,9 @@ class ScenarioControllerBase
         virtual void do_timestep(void) = 0;
 
         virtual void render(bool show_ground, bool use_quads, bool enable_alpha_blending, bool show_water, float alpha) = 0;
+
+        virtual ~ScenarioControllerBase()
+        {
+        }
 };
 #endif

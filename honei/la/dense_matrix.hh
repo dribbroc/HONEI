@@ -110,7 +110,7 @@ namespace honei
                     unsigned long row_offset, unsigned long rows);
 
             /// Destructor
-            ~DenseMatrix();
+            virtual ~DenseMatrix();
 
             /// \}
 

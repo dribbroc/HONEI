@@ -14,7 +14,7 @@ class ScalarDenseVectorSumBench :
 {
     private:
         unsigned long _size;
-        int _count;
+        unsigned long _count;
 
     public:
         ScalarDenseVectorSumBench(const std::string & id, unsigned long size, int count) :
@@ -31,7 +31,7 @@ class ScalarDenseVectorSumBench :
         {
             DataType_ alpha = DataType_ (2);
             DenseVector<DataType_> dv(_size, DataType_(42));
-            for(int i(0) ; i < _count ; ++i)
+            for(unsigned long i(0) ; i < _count ; ++i)
             {
                 BENCHMARK(Sum<Tag_>::value(dv, DataType_ (alpha)));
             }
@@ -56,7 +56,7 @@ class ScalarDenseMatrixSumBench :
 {
     private:
         unsigned long _size;
-        int _count;
+        unsigned long _count;
 
     public:
         ScalarDenseMatrixSumBench(const std::string & id, unsigned long size, int count) :
@@ -73,7 +73,7 @@ class ScalarDenseMatrixSumBench :
         {
             DataType_ alpha = DataType_ (2);
             DenseMatrix<DataType_> dm0(_size, _size, DataType_(42));
-            for(int i(0) ; i < _count ; ++i)
+            for(unsigned long i(0) ; i < _count ; ++i)
             {
                 BENCHMARK(Sum<Tag_>::value(dm0, DataType_ (alpha)));
             }
@@ -98,7 +98,7 @@ class DenseVectorSumBench :
 {
     private:
         unsigned long _size;
-        int _count;
+        unsigned long _count;
     public:
         DenseVectorSumBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
@@ -112,7 +112,7 @@ class DenseVectorSumBench :
         {
             DenseVector<DataType_> dv0(_size, DataType_(rand()));
             DenseVector<DataType_> dv1(_size, DataType_(rand()));
-            for(int i(0) ; i < _count; ++i)
+            for(unsigned long i(0) ; i < _count; ++i)
             {
                 BENCHMARK(
                         for (unsigned long j(0) ; j < 10 ; ++j)
@@ -153,7 +153,7 @@ class DenseVectorRangeSumBench :
 {
     private:
         unsigned long _size;
-        int _count;
+        unsigned long _count;
     public:
         DenseVectorRangeSumBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
@@ -169,7 +169,7 @@ class DenseVectorRangeSumBench :
             DenseVector<DataType_> dv1(_size, DataType_(rand()));
             DenseVectorRange<DataType_> dvr0 (dv0, _size - 2, 0);
             DenseVectorRange<DataType_> dvr1 (dv1, _size - 2, 1);
-            for(int i(0) ; i < _count; ++i)
+            for(unsigned long i(0) ; i < _count; ++i)
             {
                 BENCHMARK(Sum<Tag_>::value(dvr0, dvr1));
             }
@@ -195,7 +195,7 @@ class DenseMatrixSumBench :
 {
     private:
         unsigned long _sizex, _sizey;
-        int _count;
+        unsigned long _count;
     public:
         DenseMatrixSumBench(const std::string & id, unsigned long sizex, unsigned long sizey, int count) :
             Benchmark(id)
@@ -210,7 +210,7 @@ class DenseMatrixSumBench :
         {
             DenseMatrix<DataType_> dm0(_sizex, _sizey, DataType_(rand()));
             DenseMatrix<DataType_> dm1(_sizex, _sizey, DataType_(rand()));
-            for(int i(0) ; i < _count; ++i)
+            for(unsigned long i(0) ; i < _count; ++i)
             {
                 BENCHMARK(
                         for (unsigned long l(0) ; l < 10 ; ++l)
@@ -251,7 +251,7 @@ class DenseMatrixBandedMatrixSumBench :
 {
     private:
         unsigned long _size;
-        int _count;
+        unsigned long _count;
     public:
         DenseMatrixBandedMatrixSumBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
@@ -266,12 +266,12 @@ class DenseMatrixBandedMatrixSumBench :
             DenseMatrix<DataType_> dm0(_size, _size, DataType_(rand()));
             DenseVector<DataType_> dv (_size, DataType_(rand()));
             BandedMatrix<DataType_> bm(_size, dv);
-            for(int i = 0 ; i < _size; i += 10) {
+            for(unsigned long i = 0 ; i < _size; i += 10) {
                 bm.insert_band(i, dv);
                 bm.insert_band(-i, dv);
             }
             
-            for(int i = 0 ; i < _count ; ++i)
+            for(unsigned long i = 0 ; i < _count ; ++i)
             {
                 BENCHMARK(Sum<Tag_>::value(dm0, bm));
             }
@@ -321,7 +321,7 @@ class DenseVectorSumBenchTestPlot :
                     cores.push_back(Tag_::name);
                     DenseVector<DT_> dv0(j * 200000, DT_(rand()));
                     DenseVector<DT_> dv1(j * 200000, DT_(rand()));
-                    for(int i(0) ; i < 20 ; ++i)
+                    for(unsigned long i(0) ; i < 20 ; ++i)
                     {
                         BENCHMARK(Sum<Tag_>::value(dv0, dv1));
                     }
@@ -341,7 +341,7 @@ class DenseVectorSumBenchTestPlot :
                     DenseVector<DT_> dv0(5000000, DT_(rand()));
                     DenseVector<DT_> dv1(5000000, DT_(rand()));
 
-                    for(int i(0) ; i < 20 ; ++i)
+                    for(unsigned long i(0) ; i < 20 ; ++i)
                     {
                         BENCHMARK(Sum<Tag_>::value(dv0, dv1));
                     }
@@ -366,7 +366,7 @@ class DenseVectorSumBenchTestPlot :
                         DenseVector<DT_> dv0(j * 100000, DT_(rand()));
                         DenseVector<DT_> dv1(j * 100000, DT_(rand()));
     
-                        for(int i(0) ; i < 20 ; ++i)
+                        for(unsigned long i(0) ; i < 20 ; ++i)
                         {
                             BENCHMARK(Sum<Tag_>::value(dv0, dv1));
                         }
@@ -393,7 +393,7 @@ class DenseVectorSumBenchTestPlot :
                         DenseVector<DT_> dv0(k * 100000, DT_(rand()));
                         DenseVector<DT_> dv1(k * 100000, DT_(rand()));
     
-                        for(int i(0) ; i < 20 ; ++i)
+                        for(unsigned long i(0) ; i < 20 ; ++i)
                         {
                             BENCHMARK(Sum<Tag_>::value(dv0, dv1));
                         }
@@ -420,7 +420,7 @@ class DenseVectorSumBenchTestPlot :
                         DenseVector<DT_> dv0(k * 100000, DT_(rand()));
                         DenseVector<DT_> dv1(k * 100000, DT_(rand()));
 
-                        for(int i(0) ; i < 20 ; ++i)
+                        for(unsigned long i(0) ; i < 20 ; ++i)
                         {
                             BENCHMARK(Sum<Tag_>::value(dv0, dv1));
                         }
@@ -437,7 +437,7 @@ class DenseVectorSumBenchTestPlot :
                     DenseVector<DT_> dv0(k * 100000, DT_(rand()));
                     DenseVector<DT_> dv1(k * 100000, DT_(rand()));
 
-                    for(int i(0) ; i < 20 ; ++i)
+                    for(unsigned long i(0) ; i < 20 ; ++i)
                     {
                         BENCHMARK(Sum<typename Tag_::DelegateTo>::value(dv0, dv1));
                     }
@@ -460,7 +460,7 @@ class DenseVectorSumBenchTestPlot :
                     DenseVector<DT_> dv0(k * 200000, DT_(rand()));
                     DenseVector<DT_> dv1(k * 200000, DT_(rand()));
     
-                    for(int i(0) ; i < 20 ; ++i)
+                    for(unsigned long i(0) ; i < 20 ; ++i)
                     {
                         BENCHMARK(Sum<Tag_>::value(dv0, dv1));
                     }
@@ -475,7 +475,7 @@ class DenseVectorSumBenchTestPlot :
                     DenseVector<DT_> dv0(k * 200000, DT_(rand()));
                     DenseVector<DT_> dv1(k * 200000, DT_(rand()));
     
-                    for(int i(0) ; i < 20 ; ++i)
+                    for(unsigned long i(0) ; i < 20 ; ++i)
                     {
                         BENCHMARK(Sum<typename Tag_::DelegateTo>::value(dv0, dv1));
                     }
@@ -534,7 +534,7 @@ class DenseVectorSumSPUPlot :
                     DenseVector<DT_> dv0(k * 150000, DT_(rand()));
                     DenseVector<DT_> dv1(k * 150000, DT_(rand()));
 
-                    for(int i(0) ; i < 20 ; ++i)
+                    for(unsigned long i(0) ; i < 20 ; ++i)
                     {
                         BENCHMARK(
                                 for (unsigned long l(0) ; l < 5 ; ++l)
@@ -589,7 +589,7 @@ class DenseVectorSumVSPlot :
                 DenseVector<DT_> dv0((j + 1) * 131072, DT_(rand()));
                 DenseVector<DT_> dv1((j + 1) * 131072, DT_(rand()));
 
-                for(int i(0) ; i < 5 ; ++i)
+                for(unsigned long i(0) ; i < 5 ; ++i)
                 {
                     BENCHMARK((Sum<tags::CPU::MultiCore::SSE>::value(dv0, dv1)));
                 }
@@ -606,7 +606,7 @@ class DenseVectorSumVSPlot :
                 DenseVector<DT_> dv0((j + 1) * 131072, DT_(rand()));
                 DenseVector<DT_> dv1((j + 1) * 131072, DT_(rand()));
 
-                for(int i(0) ; i < 5 ; ++i)
+                for(unsigned long i(0) ; i < 5 ; ++i)
                 {
                     BENCHMARK((Sum<tags::CPU::SSE>::value(dv0, dv1)));
                 }

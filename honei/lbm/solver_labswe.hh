@@ -273,20 +273,20 @@ namespace honei
                         DenseMatrix<ResPrec_>* bottom,
                         DenseMatrix<ResPrec_>* u,
                         DenseMatrix<ResPrec_>* v) :
+                    _relaxation_time(ResPrec_(1.5)),
                     _delta_x(dx),
                     _delta_y(dy),
                     _delta_t(dt),
-                    _grid_width(gx),
-                    _grid_height(gy),
                     _height(height),
                     _bottom(bottom),
                     _u(u),
                     _v(v),
-                    _pi(3.14159265),
-                    _gravity(9.80665),
+                    _grid_width(gx),
+                    _grid_height(gy),
+                    _time(0),
                     _n_alpha(ResPrec_(6.)),
-                    _relaxation_time(ResPrec_(1.5)),
-                    _time(0)
+                    _gravity(9.80665),
+                    _pi(3.14159265)
             {
                 CONTEXT("When creating LABSWE solver:");
 
@@ -1294,20 +1294,20 @@ namespace honei
                         DenseMatrix<ResPrec_>* bottom,
                         DenseMatrix<ResPrec_>* u,
                         DenseMatrix<ResPrec_>* v) :
+                    _relaxation_time(ResPrec_(1.5)),
                     _delta_x(dx),
                     _delta_y(dy),
                     _delta_t(dt),
-                    _grid_width(gx),
-                    _grid_height(gy),
                     _height(height),
                     _bottom(bottom),
                     _u(u),
                     _v(v),
-                    _pi(3.14159265),
-                    _gravity(9.80665),
+                    _grid_width(gx),
+                    _grid_height(gy),
+                    _time(0),
                     _n_alpha(ResPrec_(6.)),
-                    _relaxation_time(ResPrec_(1.5)),
-                    _time(0)
+                    _gravity(9.80665),
+                    _pi(3.14159265)
             {
                 CONTEXT("When creating LABSWE solver:");
 
@@ -1856,20 +1856,20 @@ namespace honei
                         DenseMatrix<ResPrec_>* bottom,
                         DenseMatrix<ResPrec_>* u,
                         DenseMatrix<ResPrec_>* v) :
+                    _relaxation_time(ResPrec_(1.5)),
                     _delta_x(dx),
                     _delta_y(dy),
                     _delta_t(dt),
-                    _grid_width(gx),
-                    _grid_height(gy),
                     _height(height),
                     _bottom(bottom),
                     _u(u),
                     _v(v),
-                    _pi(3.14159265),
-                    _gravity(9.80665),
+                    _grid_width(gx),
+                    _grid_height(gy),
+                    _time(0),
                     _n_alpha(ResPrec_(6.)),
-                    _relaxation_time(ResPrec_(1.5)),
-                    _time(0)
+                    _gravity(9.80665),
+                    _pi(3.14159265)
             {
                 CONTEXT("When creating LABSWE solver:");
 

@@ -55,9 +55,9 @@ class ConjugateGradientsTestDense:
             b[1] = DT1_(3);
             b[2] = DT1_(0);
 
-            std::cout << "A:" << A << std::endl;
-            std::cout << "b:" << b << std::endl;
-            DenseVector<DT1_> result = ConjugateGradients<Tag_, methods::NONE>::value(A,b,long(2));
+            std::cout<<"A:"<<A<<endl;
+            std::cout<<"b:"<<b<<endl;
+            DenseVector<DT1_> result = ConjugateGradients<Tag_, methods::NONE>::value(A,b,2ul);
             DT1_ x_n = Norm< vnt_l_two, false, Tag_>::value(result);
             DenseVector<DT1_> x_analytical(3, DT1_(0));
             std::cout << "RESULT(v1):" << result << std::endl;
@@ -127,7 +127,7 @@ class ConjugateGradientsTestBanded:
             std::cout << "A:" << A << std::endl;
             std::cout << "b:" << b << std::endl;
 
-            DenseVector<DT1_> result = ConjugateGradients<tags::CPU, methods::NONE>::value(A,b,long(2));
+            DenseVector<DT1_> result = ConjugateGradients<tags::CPU, methods::NONE>::value(A,b,2ul);
             DT1_ x_n = Norm< vnt_l_two, false, Tag_>::value(result);
             DenseVector<DT1_> x_analytical(3, DT1_(1));
             x_analytical[0] = DT1_(2./3.);
@@ -479,7 +479,7 @@ class ConjugateGradientsMIXEDPRECTestBanded:
             std::cout << "A:" << A << std::endl;
             std::cout << "b:" << b << std::endl;
 
-            DenseVector<DT1_> result = ConjugateGradients<tags::CPU, methods::NONE>::value(A,b,long(2));
+            DenseVector<DT1_> result = ConjugateGradients<tags::CPU, methods::NONE>::value(A,b,2ul);
             DT1_ x_n = Norm< vnt_l_two, false, Tag_>::value(result);
             DenseVector<DT1_> x_analytical(3, DT1_(1));
             x_analytical[0] = DT1_(2./3.);

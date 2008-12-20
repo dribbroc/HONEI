@@ -47,7 +47,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerDat :
     {
         srand(time(NULL));
     }
-        ~ScenarioControllerDat()
+        virtual ~ScenarioControllerDat()
         {
             delete _h;
         }

@@ -54,8 +54,9 @@ class EngineGraphTest :
             Engine::setTestCase(*_graph, fine, 1, -140);
 
 
-            char * c = "Test: Engine";
-            char ** cp = &c;
+            char c[] = "Graph";
+            char * cc = c;
+            char ** cp = &cc;
             glutInit(pi,cp);
             glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
             glutInitWindowSize(screen_width, screen_height);

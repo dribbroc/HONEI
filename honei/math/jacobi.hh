@@ -271,7 +271,7 @@ namespace honei
 
             /// \{
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(DenseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side,long iter_number)
+            static DenseVector<DT1_> value(DenseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, unsigned long iter_number)
             {
                 CONTEXT("When solving dense linear system with Jacobi (fixed # iterations):");
                 DenseVector<DT1_> diag(right_hand_side.size(), DT1_(0));
@@ -317,7 +317,7 @@ namespace honei
 
             /// \{
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side,long iter_number)
+            static DenseVector<DT1_> value(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, unsigned long iter_number)
             {
                 CONTEXT("When solving banded linear system (Q1) with Jacobi (fixed # iterations):");
                 DenseVector<DT1_> diag(right_hand_side.size(), DT1_(0));
@@ -359,7 +359,7 @@ namespace honei
             }
 
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side,long iter_number, DT1_ omega)
+            static DenseVector<DT1_> value(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, unsigned long iter_number, DT1_ omega)
             {
                 CONTEXT("When solving banded linear system (Q1) with Jacobi (fixed # iterations):");
                 DenseVector<DT1_> diag_inverted(right_hand_side.size());
@@ -423,7 +423,7 @@ namespace honei
             }
 
             template <typename DT1_, typename DT2_>
-                static inline DenseVector<DT1_> value(DenseVector<DT1_>& to_smooth, BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side,long iter_number, DT1_ omega, DenseVector<DT1_> & diag_inverted)
+                static inline DenseVector<DT1_> value(DenseVector<DT1_>& to_smooth, BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, unsigned long iter_number, DT1_ omega, DenseVector<DT1_> & diag_inverted)
                 {
                     CONTEXT("When solving banded linear system (Q1) with Jacobi (fixed # iterations):");
 
@@ -483,7 +483,7 @@ namespace honei
 
             /// \{
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side,long iter_number)
+            static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, unsigned long iter_number)
             {
                 CONTEXT("When solving banded linear system with Jacobi (fixed # iterations):");
                 DenseVector<DT1_> diag(right_hand_side.size(), DT1_(0));
@@ -620,7 +620,7 @@ namespace honei
 
             /// \{
             template <typename DT1_, typename DT2_>
-                static DenseVector<DT1_> value(SparseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side,long iter_number)
+                static DenseVector<DT1_> value(SparseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, unsigned long iter_number)
                 {
                     CONTEXT("When solving sparse linear system with Jacobi (fixed # iterations):");
                     DenseVector<DT1_> diag(right_hand_side.size(), DT1_(0));

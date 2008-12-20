@@ -33,13 +33,17 @@ class Benchmark
          */
         Benchmark(const std::string & id);
 
+        virtual ~Benchmark()
+        {
+        }
+
         const std::string id() const;
 
         /// called by the benchmark framework to run the benchmark
         virtual void run() = 0;
 
         void calculate();
-    
+
         void calculate(BenchmarkInfo info);
 
         /// generates a standard benchmark output

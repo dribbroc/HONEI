@@ -89,7 +89,7 @@ template<typename Tag_, typename Prec_> class ScenarioController :
     {
         srand(time(NULL));
     }
-        ~ScenarioController()
+        virtual ~ScenarioController()
         {
             delete _height;
             delete _bottom;

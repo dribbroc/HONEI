@@ -51,16 +51,16 @@ class VolumeQuickTest :
             std::cout << height << std::endl;
 
             DenseMatrix<DataType_> height2(30 ,30, DataType_(1));
-            Cuboid<DataType_> q1(height2, DataType_(15), DataType_(10), DataType_(5), 4, 4);
+            Cuboid<DataType_> q1(height2, 15, 10, DataType_(5), 4, 4);
             q1.value();
 
-            Cuboid<DataType_> q2(height2, DataType_(15), DataType_(10), DataType_(5), 28, 4);
+            Cuboid<DataType_> q2(height2, 15, 10, DataType_(5), 28, 4);
             q2.value();
 
             std::cout << height2 << std::endl;
 
             DenseMatrix<DataType_> height3(30 ,30, DataType_(1));
-            Cuboid<DataType_> q3(height3, DataType_(15), DataType_(10), DataType_(6), 5, 5);
+            Cuboid<DataType_> q3(height3, 15, 10, DataType_(6), 5, 5);
             Cylinder<DataType_> c5(height3, DataType_(5), 15, 29);
 
             VolumeList v;

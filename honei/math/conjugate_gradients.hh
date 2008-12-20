@@ -240,7 +240,7 @@ namespace honei
 
 
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(DenseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side,long iter_number)
+            static DenseVector<DT1_> value(DenseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, unsigned long iter_number)
             {
                 CONTEXT("When solving dense linear system with CG (fixed # iterations):");
 
@@ -309,7 +309,7 @@ namespace honei
 
             /// \{
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side,long iter_number)
+            static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, unsigned long iter_number)
             {
                 CONTEXT("When solving banded linear system with CG (with fixed # of iterations):");
 

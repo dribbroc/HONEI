@@ -253,7 +253,7 @@ class BreadthFirstSearchBinaryTreeTest :
             for (typename DenseVector<DataType_>::ElementIterator e(pNW.begin_elements()), e_end(pNW.end_elements()); e != e_end ; ++e)
             {
                 *e = DataType_(1 + (exp % 2));
-                if (e.index() + 1 == (1 << (exp +1)) -1) exp++;
+                if ((signed)e.index() + 1 == (1 << (exp +1)) -1) exp++;
             }
 
             // Creating a distance object with the test scenario
@@ -278,7 +278,7 @@ class BreadthFirstSearchBinaryTreeTest :
 
             for (unsigned long i(1), node(1); i <= _depth; i++, node += (1 << (i-1)))
             {
-                for (unsigned long j(1); j <= (1 << i); j++)
+                for (unsigned long j(1); j <= (unsigned long)(1 << i); j++)
                 {
                     TEST_CHECK_EQUAL(static_cast<long int>(distance2[0][node + j - 1] * 100000), static_cast<long int>(i * sqrt(2) / 2 *100000));
                     TEST_CHECK_EQUAL_WITHIN_EPS(distance2[node + j - 1][0], distance2[0][node + j - 1], std::numeric_limits<DataType_>::epsilon());

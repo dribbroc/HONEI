@@ -85,7 +85,7 @@ namespace honei
                 unsigned long y_t = (unsigned long)y_t_1;
                 unsigned long j = (x_t);
                 unsigned long i = (y_t);
-                ResPrec_ l_1, l_2;
+                ResPrec_ l_1(0), l_2(0);
                 ///Perform bilinear interpolation:
                 if(i < height.rows() - 1 && j < height.columns() - 1)
                 {
@@ -94,7 +94,6 @@ namespace honei
                 }
                 else if(i >= height.rows() - 1 && j >= height.columns() - 1)
                 {
-
                     return height[height.rows() -1][height.columns() - 1];
                 }
 
@@ -182,6 +181,8 @@ namespace honei
                     {
                         return height[height.rows() - 1][nearest_x];
                     }
+                    else
+                        throw InternalError("Undefined status!");
                 }
         };
 }

@@ -53,7 +53,7 @@ class RelaxSolverMIXEDPRECVolTest :
             DenseMatrix<DT1_> height(dheight, dwidth, DT1_(5));
             DenseMatrix<DT1_> bottom(dheight, dwidth, DT1_(1));
 
-            Cuboid<DT1_> a(height, DT1_(5), DT1_(5), DT1_(10), 20, 20);
+            Cuboid<DT1_> a(height, 5, 5, DT1_(10), 20, 20);
             a.value();
 
             DenseMatrix<DT1_> u1(dheight, dwidth, DT1_(0));

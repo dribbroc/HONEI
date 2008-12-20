@@ -82,7 +82,7 @@ class BandedMatrixDenseMatrixDifferenceBench :
             DenseVector<DataType_> dv(_size, DataType_(rand()));
             BandedMatrix<DataType_> bm(_size, dv);
             DenseMatrix<DataType_> dm(_size, _size, DataType_(rand()));
-            for(int i(0) ; i < _size ; i += 10)
+            for(unsigned long i(0) ; i < _size ; i += 10)
             {
                 bm.insert_band(i, dv);
                 bm.insert_band(-i, dv);

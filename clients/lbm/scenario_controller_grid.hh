@@ -61,7 +61,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
     {
         srand(time(NULL));
     }
-        ~ScenarioControllerGrid()
+        virtual ~ScenarioControllerGrid()
         {
             delete _solver;
             _grid.destroy();

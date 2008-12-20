@@ -160,7 +160,7 @@ class SparseMatrixQuickTest :
             for (typename Matrix<DataType_>::ConstElementIterator i(sm1.begin_non_zero_elements()),
                 i_end(sm1.end_non_zero_elements()) ; i != i_end ; ++i)
             {
-                TEST_CHECK_EQUAL(i.index() % 4, 0);
+                TEST_CHECK_EQUAL(i.index() % 4, 0ul);
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_(5), std::numeric_limits<DataType_>::epsilon());
                 TEST_CHECK_EQUAL(i_end.index(), size * (size + 1));
             }

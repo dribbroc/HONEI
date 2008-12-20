@@ -66,7 +66,7 @@ class BandedMatrixDenseVectorProductTest :
                 DenseVector<DataType_> dv3(size, DataType_(0));
                 (dv3)[0]= DataType_(-1);
                 (dv3)[size-1]= DataType_(size);
-                for (int i(1); i < size-1; ++i)
+                for (unsigned long i(1); i < size-1; ++i)
                 {
                     (dv3)[i]= DataType_((i+1)*(size-i));
                 }
@@ -139,7 +139,7 @@ class BandedMatrixDenseVectorProductQuickTest :
             bm1.insert_band(size - 1, dv7);
 
             DenseVector<DataType_> dv3(size, DataType_(0));
-            for (int i(1); i < size-1; ++i)
+            for (unsigned long i(1); i < size-1; ++i)
             {
                 (dv3)[i]= DataType_((dv2[i-1] - dv2[i] + dv2[i+1])*((i+1) % num_limit));
             }
@@ -817,7 +817,7 @@ class BandedMatrixProductQuickTest :
             SparseMatrix<DataType_> sm1(size, size);
             sm1[0][size-1] = DataType_(3);
             sm1[size-1][0] = DataType_(3);
-            for(int i=0; i < size ; ++i)
+            for(unsigned long i=0; i < size ; ++i)
             {
                 sm1(i, i) = DataType_(3);
             }
@@ -852,7 +852,7 @@ class DenseMatrixProductTest :
 
         virtual void run() const
         {
-            int i(0);
+            unsigned long i(0);
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1, ++i)
             {
                 DenseMatrix<DataType_> dm1(size + 3, size + 2);
@@ -983,7 +983,7 @@ class DenseMatrixProductNX2Test :
 
         virtual void run() const
         {
-            int i(0);
+            unsigned long i(0);
             for (unsigned long size(10) ; size < (1 << 11) ; size <<= 1, ++i)
             {
                 DenseMatrix<DataType_> dm1(size, size);
@@ -1542,7 +1542,7 @@ class BandedMatrixDenseMatrixProductTest :
                 DenseVector<DataType_> dv3(size, DataType_(6));
                 DenseVector<DataType_> dv4(size, DataType_(6));
                 DenseMatrix<DataType_> dm1(size, size, DataType_(0));
-                for(int i=0 ; i < size ; ++i)
+                for(unsigned long i=0 ; i < size ; ++i)
                 {
                     dm1[i][i] = DataType_(3);
                 }
@@ -1590,7 +1590,7 @@ class BandedMatrixDenseMatrixProductQuickTest :
             DenseVector<DataType_> dv3(size, DataType_(6));
             DenseVector<DataType_> dv4(size, DataType_(6));
             DenseMatrix<DataType_> dm1(size, size, DataType_(0));
-            for(int i=0 ; i < size ; ++i)
+            for(unsigned long i=0 ; i < size ; ++i)
             {
                 dm1[i][i] = DataType_(3);
             }
@@ -1642,7 +1642,7 @@ class BandedMatrixSparseMatrixProductTest :
                 sm1[0][size-1] = DataType_(3);
                 sm1[size-1][0] = DataType_(3);
 
-                for(int i=0; i < size ; ++i)
+                for(unsigned long i=0; i < size ; ++i)
                 {
                     sm1[i][i] = DataType_(3);
                 }
@@ -1654,9 +1654,9 @@ class BandedMatrixSparseMatrixProductTest :
                 // Create a DenseMatrix that equals the BandedMatrix:
 
                 DenseMatrix<DataType_> dm1(size, size, DataType_(0));
-                for (int i = 0; i < size; ++i)
+                for (unsigned long i = 0; i < size; ++i)
                 {
-                    for (int j = 0; j < size; ++j)
+                    for (unsigned long j = 0; j < size; ++j)
                     {
                         if(i == j)
                             dm1[i][i] = DataType_(2);
@@ -1705,7 +1705,7 @@ class BandedMatrixSparseMatrixProductQuickTest :
             sm1[0][size-1] = DataType_(3);
             sm1[size-1][0] = DataType_(3);
 
-            for(int i=0; i < size ; ++i)
+            for(unsigned long i=0; i < size ; ++i)
             {
                 sm1[i][i] = DataType_(3);
             }
@@ -1717,9 +1717,9 @@ class BandedMatrixSparseMatrixProductQuickTest :
             // Create a DenseMatrix that equals the BandedMatrix:
 
             DenseMatrix<DataType_> dm1(size, size, DataType_(0));
-            for (int i = 0; i < size; ++i)
+            for (unsigned long i = 0; i < size; ++i)
             {
-                for (int j = 0; j < size; ++j)
+                for (unsigned long j = 0; j < size; ++j)
                 {
                     if(i == j)
                         dm1[i][i] = DataType_(2);
@@ -1761,9 +1761,9 @@ class DenseMatrixBandedMatrixProductTest :
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 DenseMatrix<DataType_> dm1(size, size, DataType_(0));
-                for (int i = 0; i < size; ++i)
+                for (unsigned long i = 0; i < size; ++i)
                 {
-                    for (int j = 0; j < size; ++j)
+                    for (unsigned long j = 0; j < size; ++j)
                     {
                         if(i == j)
                             dm1[i][i] = DataType_(2);
@@ -1818,9 +1818,9 @@ class DenseMatrixBandedMatrixProductQuickTest :
             unsigned long size(11);
 
             DenseMatrix<DataType_> dm1(size, size, DataType_(0));
-            for (int i = 0; i < size; ++i)
+            for (unsigned long i = 0; i < size; ++i)
             {
-                for (int j = 0; j < size; ++j)
+                for (unsigned long j = 0; j < size; ++j)
                 {
                     if(i == j)
                         dm1[i][i] = DataType_(2);
@@ -1874,9 +1874,9 @@ class SparseMatrixBandedMatrixProductTest :
             for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
             {
                 SparseMatrix<DataType_> sm1(size, size);
-                for (int i = 0; i < size; ++i)
+                for (unsigned long i = 0; i < size; ++i)
                 {
-                    for (int j = 0; j < size; ++j)
+                    for (unsigned long j = 0; j < size; ++j)
                     {
                         if(i == j)
                             sm1[i][i] = DataType_(2);
@@ -1930,9 +1930,9 @@ class SparseMatrixBandedMatrixProductQuickTest :
             unsigned long size(11);
 
             SparseMatrix<DataType_> sm1(size, size);
-            for (int i = 0; i < size; ++i)
+            for (unsigned long i = 0; i < size; ++i)
             {
-                for (int j = 0; j < size; ++j)
+                for (unsigned long j = 0; j < size; ++j)
                 {
                     if(i == j)
                         sm1[i][i] = DataType_(2);

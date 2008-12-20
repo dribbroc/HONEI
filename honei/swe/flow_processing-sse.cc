@@ -53,7 +53,7 @@ DenseVector<float> FlowProcessing<directions::X, tags::CPU::SSE>::value(DenseVec
     }
 
     ///SSE loop: This routine does not yet check for any NAN cases (dry states!) TODO!!
-    __m128 m1, m2, m3, m4, m5, m6, m7, m8;
+    __m128 m1, m2, m3, m4, m5, m6, m7;
     float HONEI_ALIGNED(16) g(9.81f);
     float HONEI_ALIGNED(16) two(2.0f);
     m4 = _mm_set_ps1(g);
@@ -112,7 +112,6 @@ DenseVector<float> FlowProcessing<directions::X, tags::CPU::SSE>::value(DenseVec
         }
         else
         {
-            float h = v_e[i];
             float q1 = v_e[i + 1];
             float q2 = v_e[i + 2];
 
@@ -151,7 +150,7 @@ DenseVector<float> FlowProcessing<directions::Y, tags::CPU::SSE>::value(DenseVec
     }
 
     ///SSE loop: This routine does not yet check for any NAN cases (dry states!) TODO!!
-    __m128 m1, m2, m3, m4, m5, m6, m7, m8;
+    __m128 m1, m2, m3, m4, m5, m6, m7;
     float HONEI_ALIGNED(16) g(9.81f);
     float HONEI_ALIGNED(16) two(2.0f);
     m4 = _mm_set_ps1(g);
@@ -248,7 +247,7 @@ DenseVector<double> FlowProcessing<directions::X, tags::CPU::SSE>::value(DenseVe
     }
 
     ///SSE loop: This routine does not yet check for any NAN cases (dry states!) TODO!!
-    __m128d m1, m2, m3, m4, m5, m6, m7, m8;
+    __m128d m1, m2, m3, m4, m5, m6, m7;
     double HONEI_ALIGNED(16) g(9.81);
     double HONEI_ALIGNED(16) two(2.0);
     m4 = _mm_set_pd1(g);
@@ -307,7 +306,6 @@ DenseVector<double> FlowProcessing<directions::X, tags::CPU::SSE>::value(DenseVe
         }
         else
         {
-            double h = v_e[i];
             double q1 = v_e[i + 1];
             double q2 = v_e[i + 2];
 
@@ -346,7 +344,7 @@ DenseVector<double> FlowProcessing<directions::Y, tags::CPU::SSE>::value(DenseVe
     }
 
     ///SSE loop: This routine does not yet check for any NAN cases (dry states!) TODO!!
-    __m128d m1, m2, m3, m4, m5, m6, m7, m8;
+    __m128d m1, m2, m3, m4, m5, m6, m7;
     double HONEI_ALIGNED(16) g(9.81);
     double HONEI_ALIGNED(16) two(2.0);
     m4 = _mm_set_pd1(g);

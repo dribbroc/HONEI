@@ -59,7 +59,7 @@ class PoissonBenchmarkMGBandedQ1Fixed:
             DenseVector<unsigned long> mask(8);
 
             info.macro_border_mask = new DenseVector<unsigned long>(8);
-            for(unsigned long i(0); i < 8; ++i)
+            for(int i(0); i < 8; ++i)
             {
                 (*info.macro_border_mask)[i] = 2;
             }
@@ -211,7 +211,7 @@ class PoissonBenchmarkMGBandedQ1Fixed:
             }
 
             DenseVector<DT1_> result(n, DT1_(0));
-            for (unsigned long i(0) ; i < 1 ; ++i)
+            for (int i(0) ; i < 1 ; ++i)
             {
                 BENCHMARK(
                         for (unsigned long j(0) ; j < 1 ; ++j)

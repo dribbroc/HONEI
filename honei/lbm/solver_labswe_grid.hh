@@ -81,12 +81,13 @@ namespace honei
                              *
                  **/
 
-                PackedGridData<D2Q9, ResPrec_> * _data;
-                PackedGridInfo<D2Q9> * _info;
 
                 ResPrec_ _relaxation_time, _delta_x, _delta_y, _delta_t;
 
                 unsigned long _time;
+
+                PackedGridData<D2Q9, ResPrec_> * _data;
+                PackedGridInfo<D2Q9> * _info;
 
                 /** Global constants.
                  *
@@ -95,16 +96,16 @@ namespace honei
 
            public:
                 SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt) :
+                    _relaxation_time(ResPrec_(1.5)),
                     _delta_x(dx),
                     _delta_y(dy),
                     _delta_t(dt),
-                    _pi(3.14159265),
-                    _gravity(9.80665),
-                    _n_alpha(ResPrec_(6.)),
-                    _relaxation_time(ResPrec_(1.5)),
                     _time(0),
                     _data(data),
-                    _info(info)
+                    _info(info),
+                    _n_alpha(ResPrec_(6.)),
+                    _gravity(9.80665),
+                    _pi(3.14159265)
                     {
                         CONTEXT("When creating LABSWE solver:");
                         _e = _delta_x / _delta_t;
@@ -210,8 +211,8 @@ namespace honei
         public:
             SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt):
                 _parts(4), /// \todo use Configuration
-                _data(data),
-                _info(info)
+                _info(info),
+                _data(data)
         {
             CONTEXT("When creating LABSWE solver:");
             GridPartitioner<D2Q9, ResPrec_>::decompose(_parts, *_info, *_data, _info_list, _data_list, _fringe_list);

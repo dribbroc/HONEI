@@ -61,7 +61,7 @@ namespace tests
             BaseTest(const std::string & id);
 
             /// Destructor.
-            ~BaseTest() {}
+            virtual ~BaseTest() {}
 
             /// Returns our id string.
             virtual const std::string id() const;

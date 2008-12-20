@@ -46,7 +46,7 @@ namespace honei
         {
         }
 
-        ~AbstractGraph()
+        virtual ~AbstractGraph()
         {
             delete _coordinates;
             delete _edges;

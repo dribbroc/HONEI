@@ -49,14 +49,17 @@ namespace honei
             /// Pointer to our elements.
             SharedArray<DataType_> _elements;
 
-            /// Our columns.
-            unsigned long _columns;
-
             /// Our rows.
             unsigned long _rows;
 
-            /// The number of columns of our source matrix.
-            unsigned long _source_columns;
+            /// Our columns.
+            unsigned long _columns;
+
+            /// Our row-vectors.
+            SharedArray<std::tr1::shared_ptr<DenseVectorRange<DataType_> > > _row_vectors;
+
+            /// Our column-vectors.
+            SharedArray<std::tr1::shared_ptr<DenseVectorSlice<DataType_> > > _column_vectors;
 
             /// Our row-offset.
             unsigned long _row_offset;
@@ -64,11 +67,8 @@ namespace honei
             /// Our column-offset.
             unsigned long _column_offset;
 
-            /// Our row-vectors.
-            SharedArray<std::tr1::shared_ptr<DenseVectorRange<DataType_> > > _row_vectors;
-
-            /// Our column-vectors.
-            SharedArray<std::tr1::shared_ptr<DenseVectorSlice<DataType_> > > _column_vectors;
+            /// The number of columns of our source matrix.
+            unsigned long _source_columns;
 
             /// Our implementation of ElementIteratorBase.
             class DenseElementIterator;
@@ -104,10 +104,10 @@ namespace honei
             DenseMatrixTile(const DenseMatrix<DataType_> & source, const unsigned long rows, const unsigned long columns,
                                 const unsigned long row_offset, const unsigned long column_offset) :
                 _elements(source._imp->elements),
-                _columns(columns),
-                _column_vectors(columns),
                 _rows(rows),
+                _columns(columns),
                 _row_vectors(rows),
+                _column_vectors(columns),
                 _row_offset(row_offset),
                 _column_offset(column_offset),
                 _source_columns(source.columns())
@@ -120,10 +120,10 @@ namespace honei
             DenseMatrixTile(const DenseMatrixTile<DataType_> & source, const unsigned long rows, const unsigned long columns,
                                 const unsigned long row_offset, const unsigned long column_offset) :
                 _elements(source._elements),
-                _columns(columns),
-                _column_vectors(columns),
                 _rows(rows),
+                _columns(columns),
                 _row_vectors(rows),
+                _column_vectors(columns),
                 _row_offset(source._row_offset + row_offset),
                 _column_offset(source._column_offset + column_offset),
                 _source_columns(source._source_columns)
@@ -131,6 +131,11 @@ namespace honei
                 CONTEXT("When creating DenseMatrixTile from DenseMatrixTile:");
                 ASSERT(rows > 0, "number of rows is zero!");
                 ASSERT(columns > 0, "number of columns is zero!");
+            }
+
+            /// Destructor
+            virtual ~DenseMatrixTile()
+            {
             }
 
             /// Returns iterator pointing to the first element of the matrix.
@@ -421,8 +426,6 @@ namespace honei
     operator== (const DenseMatrixTile<DataType_> & a, const DenseMatrixTile<DataType_> & b)
     {
         CONTEXT("When comparing two tiles of dense matrices:");
-
-        bool result(true);
 
         if (a.columns() != b.columns())
         {

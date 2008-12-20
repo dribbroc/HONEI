@@ -340,8 +340,8 @@ void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<st
     size_t pos;
     bool plotsvx(not(*(info.begin()->size.begin()) == *((--info.end())->size.begin()))), plotcvx(not(*cores.begin() == *(--cores.end())));
     std::string filename(std::string("PlotOut_") + ctime(&t));
-    while ((pos=filename.find(" "))!=-1) filename.replace(pos, 1, "_");
-    while ((pos=filename.find(":"))!=-1) filename.replace(pos, 1, "_");
+    while ((pos=filename.find(" "))!=std::string::npos) filename.replace(pos, 1, "_");
+    while ((pos=filename.find(":"))!=std::string::npos) filename.replace(pos, 1, "_");
     std::string eps1name(filename), eps2name(filename), eps3name(filename);
     filename.replace(32, 1, ".plt");
     eps1name.replace(32, 1, ".eps");

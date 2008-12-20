@@ -315,11 +315,9 @@ namespace honei
             DenseVector<WorkPrec_> m4bandPlus2(u.size(), WorkPrec_(0)); //two
             DenseVector<WorkPrec_> m4bandMinus1(u.size(), WorkPrec_(0));//three
 
-            WorkPrec_ * m2diag_e = m2diag.elements();
             WorkPrec_ * m2bandPlus1_e = m2bandPlus1.elements();
             WorkPrec_ * m2bandPlus2_e = m2bandPlus2.elements();
             WorkPrec_ * m2bandMinus1_e = m2bandMinus1.elements();
-            WorkPrec_ * m4diag_e = m4diag.elements();
             WorkPrec_ * m4bandPlus1_e = m4bandPlus1.elements();
             WorkPrec_ * m4bandPlus2_e = m4bandPlus2.elements();
             WorkPrec_ * m4bandMinus1_e = m4bandMinus1.elements();

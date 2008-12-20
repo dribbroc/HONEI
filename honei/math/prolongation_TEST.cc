@@ -45,9 +45,9 @@ class ProlongationTest:
             for (float level(0) ; level < 10 ; ++level)
             {
                 unsigned long N_fine((unsigned long)pow((pow(2, level + 1) + 1), 2));
-                unsigned long width_fine = (unsigned long)sqrt((double)N_fine);
+                //unsigned long width_fine = (unsigned long)sqrt((double)N_fine);
                 unsigned long N_coarse((unsigned long)pow((pow(2, level) + 1), 2));
-                unsigned long width_coarse = (unsigned long)sqrt((double)N_coarse);
+                //unsigned long width_coarse = (unsigned long)sqrt((double)N_coarse);
 
                 DenseVector<DT1_> fine(N_fine, DT1_(4711));
                 DenseVector<DT1_> fine_ref(N_fine, DT1_(4711));

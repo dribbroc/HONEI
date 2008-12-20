@@ -290,13 +290,13 @@ namespace honei
     }
 
     template <typename DataType_>
-    void * BandedMatrix<DataType_>::lock(LockMode mode, tags::TagValue memory) const
+    void BandedMatrix<DataType_>::lock(LockMode mode) const
     {
         for (unsigned long i(0) ; i < 2 * this->_imp->size - 1 ; ++i)
         {
             if (this->_imp->bands[i])
             {
-                this->_imp->bands[i]->lock(mode, memory);
+                this->_imp->bands[i]->lock(mode);
             }
         }
     }
@@ -630,9 +630,9 @@ namespace honei
     {
         std::tr1::shared_ptr<Implementation<BandedMatrix<DataType_> > > matrix;
 
-        DenseVector<DataType_> * band;
-
         unsigned long index;
+
+        DenseVector<DataType_> * band;
 
         Implementation(const std::tr1::shared_ptr<Implementation<BandedMatrix<DataType_> > > & matrix, unsigned long index) :
             matrix(matrix),

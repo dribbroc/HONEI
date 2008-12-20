@@ -71,7 +71,8 @@ class PoissonBenchmarkMGBandedQ1Float:
             std::string file_name(HONEI_SOURCEDIR);
             file_name += "/honei/math/testdata/1050625.bin";
             file = fopen(file_name.c_str(), "rb");
-            fread(&n, sizeof(int), 1, file);
+            if (1 != (int)fread(&n, sizeof(int), 1, file))
+                throw InternalError("IO Error!");
 
 #ifdef HONEI_CELL
             unsigned char b1, b2, b3, b4;
@@ -94,22 +95,34 @@ class PoissonBenchmarkMGBandedQ1Float:
             ana_sol = new double[n];
             ref_sol = new double[n];
 
-            fread(dd, sizeof(double), n, file);
-            fread(ll, sizeof(double), n, file);
-            fread(ld, sizeof(double), n, file);
-            fread(lu, sizeof(double), n, file);
-            fread(dl, sizeof(double), n, file);
-            fread(du, sizeof(double), n, file);
-            fread(ul, sizeof(double), n, file);
-            fread(ud, sizeof(double), n, file);
-            fread(uu, sizeof(double), n, file);
-            fread(b,  sizeof(double), n, file);
-            fread(ana_sol, sizeof(double), n, file);
-            fread(ref_sol, sizeof(double), n, file);
+            if (n != (int)fread(dd, sizeof(double), n, file))
+                throw InternalError("IO Error!");
+            if (n != (int)fread(ll, sizeof(double), n, file))
+                throw InternalError("IO Error!");
+            if (n != (int)fread(ld, sizeof(double), n, file))
+                throw InternalError("IO Error!");
+            if (n != (int)fread(lu, sizeof(double), n, file))
+                throw InternalError("IO Error!");
+            if (n != (int)fread(dl, sizeof(double), n, file))
+                throw InternalError("IO Error!");
+            if (n != (int)fread(du, sizeof(double), n, file))
+                throw InternalError("IO Error!");
+            if (n != (int)fread(ul, sizeof(double), n, file))
+                throw InternalError("IO Error!");
+            if (n != (int)fread(ud, sizeof(double), n, file))
+                throw InternalError("IO Error!");
+            if (n != (int)fread(uu, sizeof(double), n, file))
+                throw InternalError("IO Error!");
+            if (n != (int)fread(b,  sizeof(double), n, file))
+                throw InternalError("IO Error!");
+            if (n != (int)fread(ana_sol, sizeof(double), n, file))
+                throw InternalError("IO Error!");
+            if (n != (int)fread(ref_sol, sizeof(double), n, file))
+                throw InternalError("IO Error!");
             fclose(file);
 
 #ifdef HONEI_CELL
-            for(unsigned long i(0); i < n; ++i)
+            for(int i(0); i < n; ++i)
             {
                 dd[i] = DoubleSwap(dd[i]);
                 ll[i] = DoubleSwap(ll[i]);
@@ -138,7 +151,7 @@ class PoissonBenchmarkMGBandedQ1Float:
             DenseVector<double> b_v(n, double(0));
             DenseVector<double> ana_sol_v(n, double(0));
             DenseVector<double> ref_sol_v(n, double(0));
-            for(unsigned long i = 0; i < n; ++i)
+            for(int i = 0; i < n; ++i)
             {
                 dd_v[i] = (double)dd[i];
                 ll_v[i] = (double)ll[i];
@@ -154,7 +167,6 @@ class PoissonBenchmarkMGBandedQ1Float:
                 ref_sol_v[i] = (double)ref_sol[i];
             }
 
-            long root_n = (long)sqrt(n);
             BandedMatrixQ1<double> A(n, ll_v.copy(), ld_v.copy(), lu_v.copy(), dl_v.copy(), dd_v.copy(), du_v.copy(), ul_v.copy(), ud_v.copy(), uu_v.copy());
             //std::cout<<A.band(0)<<endl;
             //A->insert_band(0, dd_v.copy());
@@ -168,7 +180,7 @@ class PoissonBenchmarkMGBandedQ1Float:
             DenseVector<unsigned long> mask(8);
 
             info.macro_border_mask = new DenseVector<unsigned long>(8);
-            for(unsigned long i(0); i < 8; ++i)
+            for(int i(0); i < 8; ++i)
             {
                 (*info.macro_border_mask)[i] = 2;
             }
@@ -312,7 +324,8 @@ class PoissonBenchmarkMGBandedQ1Float:
                 std::string file_path(HONEI_SOURCEDIR);
                 file_path += "/honei/math/testdata/" + stringify(DD_v_2.size()) +".bin";
                 file_2 = fopen(file_path.c_str(), "rb");
-                fread(&n_2, sizeof(int), 1, file_2);
+                if (1 != (int)fread(&n_2, sizeof(int), 1, file_2))
+                    throw InternalError("IO Error!");
 
 #ifdef HONEI_CELL
                 unsigned char b1, b2, b3, b4;
@@ -333,16 +346,26 @@ class PoissonBenchmarkMGBandedQ1Float:
                 uu_2 = new double[n_2];
 
                 b_2 = new double[n];
-                fread(dd_2, sizeof(double), n_2, file_2);
-                fread(ll_2, sizeof(double), n_2, file_2);
-                fread(ld_2, sizeof(double), n_2, file_2);
-                fread(lu_2, sizeof(double), n_2, file_2);
-                fread(dl_2, sizeof(double), n_2, file_2);
-                fread(du_2, sizeof(double), n_2, file_2);
-                fread(ul_2, sizeof(double), n_2, file_2);
-                fread(ud_2, sizeof(double), n_2, file_2);
-                fread(uu_2, sizeof(double), n_2, file_2);
-                fread(b_2,  sizeof(double), n_2, file_2);
+                if (n_2 != (int)fread(dd_2, sizeof(double), n_2, file_2))
+                    throw InternalError("IO Error!");
+                if (n_2 != (int)fread(ll_2, sizeof(double), n_2, file_2))
+                    throw InternalError("IO Error!");
+                if (n_2 != (int)fread(ld_2, sizeof(double), n_2, file_2))
+                    throw InternalError("IO Error!");
+                if (n_2 != (int)fread(lu_2, sizeof(double), n_2, file_2))
+                    throw InternalError("IO Error!");
+                if (n_2 != (int)fread(dl_2, sizeof(double), n_2, file_2))
+                    throw InternalError("IO Error!");
+                if (n_2 != (int)fread(du_2, sizeof(double), n_2, file_2))
+                    throw InternalError("IO Error!");
+                if (n_2 != (int)fread(ul_2, sizeof(double), n_2, file_2))
+                    throw InternalError("IO Error!");
+                if (n_2 != (int)fread(ud_2, sizeof(double), n_2, file_2))
+                    throw InternalError("IO Error!");
+                if (n_2 != (int)fread(uu_2, sizeof(double), n_2, file_2))
+                    throw InternalError("IO Error!");
+                if (n_2 != (int)fread(b_2,  sizeof(double), n_2, file_2))
+                    throw InternalError("IO Error!");
                 fclose(file_2);
 
 #ifdef HONEI_CELL
@@ -404,23 +427,9 @@ class PoissonBenchmarkMGBandedQ1Float:
                 info.diags_inverted[i] = scaled_diag_inverted.copy();
             }
             //--------End loading of data----------------------------------
-            //Prefetch:
-            /*for (unsigned long i(0) ; i < info.max_level ; ++i)
-            {
-                info.a[i].lock(lm_read_only, Tag_::memory_value);
-                info.a[i].unlock(lm_read_only);
-                info.d[i].lock(lm_read_only, Tag_::memory_value);
-                info.d[i].unlock(lm_read_only);
-                info.x[i].lock(lm_read_only, Tag_::memory_value);
-                info.x[i].unlock(lm_read_only);
-                info.c[i].lock(lm_read_only, Tag_::memory_value);
-                info.c[i].unlock(lm_read_only);
-                info.rhs[i].lock(lm_read_only, Tag_::memory_value);
-                info.rhs[i].unlock(lm_read_only);
-            }*/
 
             DenseVector<double> result(n, double(0));
-            for (unsigned long i(0) ; i < 1 ; ++i)
+            for (int i(0) ; i < 1 ; ++i)
             {
                 BENCHMARK(
                         for (unsigned long j(0) ; j < 1 ; ++j)

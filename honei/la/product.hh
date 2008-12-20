@@ -168,7 +168,7 @@ namespace honei
             }
 
             DenseVector<DT1_> result(a.rows(), DT1_(0));
-            int middle_index(a.rows() -1);
+            unsigned long middle_index(a.rows() -1);
             for (typename BandedMatrix<DT1_>::ConstBandIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
                     vi != vi_end ; ++vi)
             {
@@ -236,7 +236,7 @@ namespace honei
             DenseVector<DT1_> result(a.rows());
             long root(a.root());
 
-            for (long index(0) ; index < b.size() ; ++index)
+            for (long index(0) ; index < (long)b.size() ; ++index)
             {
                 result[index] = a.band(DD)[index] * b[index];
                 if ((index - root - 1) >= 0)
@@ -247,13 +247,13 @@ namespace honei
                     result[index] += a.band(LU)[index] * b[index - root + 1];
                 if ((index - 1) >= 0)
                     result[index] += a.band(DL)[index] * b[index - 1];
-                if ((index + 1) < b.size())
+                if ((index + 1) < (long)b.size())
                     result[index] += a.band(DU)[index] * b[index + 1];
-                if ((index + root - 1) < b.size())
+                if ((index + root - 1) < (long)b.size())
                     result[index] += a.band(UL)[index] * b[index + root - 1];
-                if ((index + root) < b.size())
+                if ((index + root) < (long)b.size())
                     result[index] += a.band(UD)[index] * b[index + root];
-                if ((index + root + 1) < b.size())
+                if ((index + root + 1) < (long)b.size())
                     result[index] += a.band(UU)[index] * b[index + root + 1];
             }
 

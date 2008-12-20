@@ -234,7 +234,7 @@ namespace honei
             Scale<tags::CPU>::value(b, -1);
 #endif
 
-            int middle_index(a.rows() -1);
+            unsigned long middle_index(a.rows() -1);
             for (typename BandedMatrix<DT1_>::ConstBandIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
                     vi != vi_end ; ++vi)
             {
@@ -292,7 +292,7 @@ namespace honei
             Scale<tags::CPU>::value(b, -1);
 #endif
 
-            int middle_index(a.rows() -1);
+            unsigned long  middle_index(a.rows() -1);
             for (typename BandedMatrix<DT2_>::ConstBandIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
                     vi != vi_end ; ++vi)
             {
@@ -566,7 +566,7 @@ namespace honei
 #endif*/
 
             result = result + Scale<>::get_benchmark_info(b, DT2_(-1));
-            int middle_index(a.rows() -1);
+            unsigned long middle_index(a.rows() -1);
             for (typename BandedMatrix<DT1_>::ConstBandIterator vi(a.begin_non_zero_bands()), vi_end(a.end_non_zero_bands()) ;
                     vi != vi_end ; ++vi)
             {

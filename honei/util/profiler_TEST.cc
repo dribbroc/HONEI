@@ -89,8 +89,8 @@ class ProfilerTest :
         ProfilerTest() :
             QuickTest("profiler_test"),
             _mutex(new Mutex),
-            _complete(false),
             _done(new ConditionVariable),
+            _complete(false),
             _passed(false)
         {
             ProfilerMessage(ProfilerMessage::EvaluationFunction(std::tr1::bind(

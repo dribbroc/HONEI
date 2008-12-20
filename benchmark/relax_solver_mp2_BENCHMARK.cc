@@ -35,7 +35,7 @@ class RelaxSolverMIXEDPRECINNERBench :
 {
     private:
         unsigned long _size;
-        int _count;
+        unsigned long _count;
     public:
         RelaxSolverMIXEDPRECINNERBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)

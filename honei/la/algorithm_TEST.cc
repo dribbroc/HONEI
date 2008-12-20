@@ -649,7 +649,7 @@ class DenseMatrixFillQuickTest :
         virtual void run() const
         {
             unsigned long rows(47), columns(11);
-            DenseMatrix<DT_> dm(47, 11);
+            DenseMatrix<DT_> dm(rows, columns);
 
             fill<Tag_>(dm, DT_(8.472));
 

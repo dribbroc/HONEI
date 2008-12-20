@@ -193,8 +193,8 @@ public:
 
         TEST_CHECK_EQUAL(sv1.size(), size);
         TEST_CHECK_EQUAL(sv2.size(), size);
-        TEST_CHECK_EQUAL(sv1.used_elements(), 1);
-        TEST_CHECK_EQUAL(sv2.used_elements(), 1);
+        TEST_CHECK_EQUAL(sv1.used_elements(), 1ul);
+        TEST_CHECK_EQUAL(sv2.used_elements(), 1ul);
         TEST_CHECK_EQUAL(sv1, sv2);
         SparseVector<DataType_> sv4(size + 1, 1);
         TEST_CHECK_THROWS(sv1 == sv4, VectorSizeDoesNotMatch);
@@ -211,7 +211,7 @@ public:
         for (typename Vector<DataType_>::ElementIterator i(sv3.begin_non_zero_elements()),
                 i_end(sv3.end_non_zero_elements()) ; i != i_end ; ++i)
         {
-            TEST_CHECK_EQUAL(i.index() % 4, 0);
+            TEST_CHECK_EQUAL(i.index() % 4, 0ul);
             TEST_CHECK_EQUAL(*i, DataType_(5));
         }
 

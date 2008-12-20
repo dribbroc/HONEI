@@ -94,7 +94,7 @@ BandedMatrix<float> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK::
         ++buffer_i;
     }
 
-    __m128 m0, m2, m3, m4, m5, m6, m7, m8;
+    __m128 m0, m2, m3, m4, m5, m6, m7;
 
     m0 = _mm_load_ps(c1_buffer);
     m2 = _mm_load_ps(c2_buffer);
@@ -267,7 +267,7 @@ BandedMatrix<double> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK:
         ++buffer_i;
     }
 
-    __m128d m0, m2, m3, m4, m5, m6, m7, m8;
+    __m128d m0, m2, m3, m4, m5, m6, m7;
 
     m0 = _mm_load_pd(c1_buffer);
     m2 = _mm_load_pd(c2_buffer);
@@ -442,7 +442,7 @@ BandedMatrix<float> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK::
         ++buffer_i;
     }
 
-    __m128 m0, m1, m3, m4, m5, m6, m7, m8;
+    __m128 m0, m1, m3, m4, m5, m6, m7;
 
     m0 = _mm_load_ps(d1_buffer);
     m1 = _mm_load_ps(d2_buffer);
@@ -615,7 +615,7 @@ BandedMatrix<double> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK:
         ++buffer_i;
     }
 
-    __m128d m0, m1, m3, m4, m5, m6, m7, m8;
+    __m128d m0, m1, m3, m4, m5, m6, m7;
 
     m0 = _mm_load_pd(d1_buffer);
     m1 = _mm_load_pd(d2_buffer);

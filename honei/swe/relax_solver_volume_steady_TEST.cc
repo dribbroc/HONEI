@@ -55,7 +55,7 @@ class RelaxSolverVolumeSteadyTest :
             DenseMatrix<DataType_> height(dheight, dwidth, DataType_(5));
             DenseMatrix<DataType_> bottom(dheight, dwidth, DataType_(1));
 
-            Cuboid<DataType_> a(height, DataType_(5), DataType_(5), DataType_(10), 20, 20);
+            Cuboid<DataType_> a(height, 5, 5, DataType_(10), 20, 20);
             a.value();
 
             DenseMatrix<DataType_> u1(dheight, dwidth, DataType_(0));

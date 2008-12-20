@@ -56,10 +56,10 @@ namespace honei
     public:
         /// constructs new graph with given number of nodes and a given dimension for the coordinates
         Graph(int nodes, int coordinate_dimensions=2) :
-            _coordinate_dimensions(coordinate_dimensions),
-            _node_mapping(),
             _node_count(0),
             _max_nodes(nodes),
+            _coordinate_dimensions(coordinate_dimensions),
+            _node_mapping(),
             _random(false)
         {
             _nodes = new NodeType*[nodes];
@@ -91,6 +91,7 @@ namespace honei
         inline bool random_positions(bool value)
         {
             _random = value;
+	    return _random;
         }
         
         void add_node(int id, DataType_ weight = DataType_(1))

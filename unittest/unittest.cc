@@ -146,7 +146,7 @@ int main(int argc, char** argv)
 
     if (argc > 2)
     {
-        for (unsigned index(2) ; index < argc ; ++index)
+        for (int index(2) ; index < argc ; ++index)
         {
             if (stringify(argv[index]) == "sse")
             {

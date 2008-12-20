@@ -35,8 +35,6 @@ class EngineEvolvingTest :
         {
             int i =1;
             int * pi = &i;
-            int nps = _nodes * _slices;
-
             /*
             EvolvingGraph<DataType_> eg(2, 4);
 
@@ -76,8 +74,9 @@ class EngineEvolvingTest :
             Engine::setTestCase(animator);
 
 
-            char * c = "Test: Engine";
-            char ** cp = &c;
+            char c[] = "Graph";
+            char * cc = c;
+            char ** cp = &cc;
             glutInit(pi,cp);
             glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
             //glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA);

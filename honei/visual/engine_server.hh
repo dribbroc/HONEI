@@ -30,6 +30,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <honei/la/dense_matrix.hh>
+#include <cstring>
 
 #define BUFFER_SIZE 1024
 

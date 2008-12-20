@@ -511,10 +511,10 @@ namespace honei
             NonZeroElementIterator(const SparseMatrix<DataType_> & matrix) :
                 _matrix(matrix),
                 _index(0),
-                _column(0),
-                _row(0),
                 _iter(matrix._row_vectors[matrix._rows]->begin_non_zero_elements()), // Dummy
-                _end(matrix._row_vectors[matrix._rows]->end_non_zero_elements()) // Dummy
+                _end(matrix._row_vectors[matrix._rows]->end_non_zero_elements()), // Dummy
+                _column(0),
+                _row(0)
             {
                 _find_next_row();
             }
@@ -527,10 +527,10 @@ namespace honei
             NonZeroElementIterator(const SparseMatrix<DataType_> & matrix, const DataType_ &) :
                 _matrix(matrix),
                 _index(matrix._rows * matrix._columns  ),
-                _column(0),
-                _row(matrix._rows),
                 _iter(matrix._row_vectors[matrix._rows]->begin_non_zero_elements()),
-                _end(matrix._row_vectors[matrix._rows]->end_non_zero_elements())
+                _end(matrix._row_vectors[matrix._rows]->end_non_zero_elements()),
+                _column(0),
+                _row(matrix._rows)
             {
                 _find_next_row();
             }

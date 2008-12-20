@@ -58,8 +58,9 @@ class EngineGraphTest :
             Engine::setTestCase(g, new Positions<Tag_, DataType_, GraphTag_>(g, (DataType_)1), int(_nodeCount * 0.1));
 
 
-            char * c = "Test: Engine";
-            char ** cp = &c;
+            char c[] = "Graph";
+            char * cc = c;
+            char ** cp = &cc;
             glutInit(pi,cp);
             glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
             glutInitWindowSize(screen_width, screen_height);

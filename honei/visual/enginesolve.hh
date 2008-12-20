@@ -356,12 +356,12 @@ namespace honei
                 glTranslatef(0.0, 0.0 , gl_globals::translation_z);
 
 
-                do
+                /*do
                 {
                     gl_globals::actual.take();
                 }
-                while(gl_globals::actual.usec() - gl_globals::last.usec() < 60000ul); // 1/25 = 40000
-                gl_globals::last.take();
+                while(gl_globals::actual.usec() - gl_globals::last.usec() < 60000); // 1/25 = 40000
+                gl_globals::last.take();*/
                 gl_globals::solver.solve();
 
 
