@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
+ * Copyright (c) 2007, 2008 Sven Mallach <sven.mallach@cs.uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -20,12 +20,19 @@
 #ifndef LIBLA_GUARD_SCALED_SUM_HH
 #define LIBLA_GUARD_SCALED_SUM_HH 1
 
+#include <honei/backends/multicore/dispatch_policy.hh>
+#include <honei/backends/multicore/thread_pool.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/sparse_vector.hh>
 #include <honei/la/vector_error.hh>
 #include <honei/util/benchmark_info.hh>
+#include <honei/util/configuration.hh>
+#include <honei/util/operation_wrapper.hh>
+#include <honei/util/partitioner.hh>
 #include <honei/util/tags.hh>
+
+#include <tr1/functional>
 
 namespace honei
 {
@@ -376,22 +383,204 @@ namespace honei
         /// \}
     };
 
-    namespace mc
+    template <>
+    struct ScaledSum<tags::CPU::MultiCore>
     {
-        template <typename Tag_> struct ScaledSum :
-            public honei::ScaledSum<typename Tag_::DelegateTo>
+        template <typename DT1_, typename DT2_>
+        static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & x, const DenseVectorContinuousBase<DT2_> & y, DT2_ b)
         {
-        };
-    }
+            CONTEXT("When calculating ScaledSum (DenseVectorContinuousBase, DenseVectorContinuousBase, scalar) with tags::CPU::MultiCore:");
 
-    template <> struct ScaledSum<tags::CPU::MultiCore> :
-        public mc::ScaledSum<tags::CPU::MultiCore>
-    {
+            if (x.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DT)::min_part_size", 100));
+
+            if (x.size() < 2 * min_part_size)
+            {
+                ScaledSum<tags::CPU::MultiCore::DelegateTo>::value(x, y, b);
+            }
+            else
+            {
+                int threads(Configuration::instance()->get_value("mc::num_threads", 2));
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DT)::max_count", threads),
+                        min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+
+                TicketList tickets;
+
+                PartitionList::ConstIterator p(partitions.begin());
+                for (PartitionList::ConstIterator p_last(partitions.last()) ; p != p_last ; ++p)
+                {
+                    DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
+                    DenseVectorRange<DT2_> y_range(y.range(p->size, p->start));
+
+                    OperationWrapper<ScaledSum<tags::CPU::MultiCore::DelegateTo>, DenseVectorRange<DT1_>,
+                        DenseVectorRange<DT1_>, DenseVectorRange<DT2_>, DT2_> wrapper(x_range);
+                    tickets.push_back(mc::ThreadPool::instance(threads)->enqueue(std::tr1::bind(wrapper, x_range, y_range, b)));
+                }
+
+                DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
+                DenseVectorRange<DT2_> y_range(y.range(p->size, p->start));
+
+                ScaledSum<tags::CPU::MultiCore::DelegateTo>::value(x_range, y_range, b);
+
+                tickets.wait();
+//                mc::ThreadPool::instance()->clear_mapping(tickets);
+            }
+
+         return x;
+
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & x, const DenseVectorContinuousBase<DT2_> & y,
+                const DenseVectorContinuousBase<DT2_> & z)
+        {
+            CONTEXT("When calculating ScaledSum (DenseVectorContinuousBase, DenseVectorContinuousBase, DenseVectorContinuousBase) with tags::CPU::MultiCore:");
+
+            if (x.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DVCB)::min_part_size", 100));
+
+            if (x.size() < 2 * min_part_size)
+            {
+                ScaledSum<tags::CPU::MultiCore::DelegateTo>::value(x, y, z);
+            }
+            else
+            {
+                int threads(Configuration::instance()->get_value("mc::num_threads", 2));
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DVCB)::max_count", threads),
+                        min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+
+                TicketList tickets;
+
+                PartitionList::ConstIterator p(partitions.begin());
+                for (PartitionList::ConstIterator p_last(partitions.last()) ; p != p_last ; ++p)
+                {
+                    DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
+                    DenseVectorRange<DT2_> y_range(y.range(p->size, p->start));
+                    DenseVectorRange<DT2_> z_range(z.range(p->size, p->start));
+
+                    OperationWrapper<ScaledSum<tags::CPU::MultiCore::DelegateTo>, DenseVectorRange<DT1_>,
+                        DenseVectorRange<DT1_>, DenseVectorRange<DT2_>, DenseVectorRange<DT2_> > wrapper(x_range);
+                    tickets.push_back(mc::ThreadPool::instance(threads)->enqueue(std::tr1::bind(wrapper, x_range, y_range, z_range)));
+                }
+
+                DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
+                DenseVectorRange<DT2_> y_range(y.range(p->size, p->start));
+                DenseVectorRange<DT2_> z_range(z.range(p->size, p->start));
+
+                ScaledSum<tags::CPU::MultiCore::DelegateTo>::value(x_range, y_range, z_range);
+                tickets.wait();
+                //mc::ThreadPool::instance()->clear_mapping(tickets);
+            }
+
+         return x;
+
+        }
     };
 
-    template <> struct ScaledSum<tags::CPU::MultiCore::SSE> :
-        public mc::ScaledSum<tags::CPU::MultiCore::SSE>
+    template <>
+    struct ScaledSum<tags::CPU::MultiCore::SSE>
     {
+        template <typename DT1_, typename DT2_>
+        static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & x, const DenseVectorContinuousBase<DT2_> & y, DT2_ b)
+        {
+            CONTEXT("When calculating ScaledSum (DenseVectorContinuousBase, DenseVectorContinuousBase, scalar) with tags::CPU::MultiCore::SSE:");
+
+            if (x.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DT)::min_part_size", 100));
+
+            if (x.size() < 2 * min_part_size)
+            {
+                ScaledSum<tags::CPU::MultiCore::SSE::DelegateTo>::value(x, y, b);
+            }
+            else
+            {
+                int threads(Configuration::instance()->get_value("mc::num_threads", 2));
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DT)::max_count", threads),
+                        min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+
+                TicketList tickets;
+
+                PartitionList::ConstIterator p(partitions.begin());
+                for (PartitionList::ConstIterator p_last(partitions.last()) ; p != p_last ; ++p)
+                {
+                    DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
+                    DenseVectorRange<DT2_> y_range(y.range(p->size, p->start));
+
+                    OperationWrapper<ScaledSum<tags::CPU::MultiCore::SSE::DelegateTo>, DenseVectorContinuousBase<DT1_>,
+                        DenseVectorContinuousBase<DT1_>, DenseVectorContinuousBase<DT2_>, DT2_> wrapper(x_range);
+                    tickets.push_back(mc::ThreadPool::instance(threads)->enqueue(std::tr1::bind(wrapper, x_range, y_range, b)));
+                }
+
+                DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
+                DenseVectorRange<DT2_> y_range(y.range(p->size, p->start));
+
+                ScaledSum<tags::CPU::MultiCore::SSE::DelegateTo>::value(x_range, y_range, b);
+
+                tickets.wait();
+//                mc::ThreadPool::instance()->clear_mapping(tickets);
+            }
+
+         return x;
+
+        }
+
+        template <typename DT1_, typename DT2_>
+        static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & x, const DenseVectorContinuousBase<DT2_> & y,
+                const DenseVectorContinuousBase<DT2_> & z)
+        {
+            CONTEXT("When calculating ScaledSum (DenseVectorContinuousBase, DenseVectorContinuousBase, DenseVectorContinuousBase) with tags::CPU::MultiCore::SSE:");
+
+            if (x.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DVCB)::min_part_size", 100));
+
+            if (x.size() < 2 * min_part_size)
+            {
+                ScaledSum<tags::CPU::MultiCore::SSE::DelegateTo>::value(x, y, z);
+            }
+            else
+            {
+                int threads(Configuration::instance()->get_value("mc::num_threads", 2));
+                PartitionList partitions;
+                Partitioner<tags::CPU::MultiCore>(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DVCB)::max_count", threads),
+                        min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+
+                TicketList tickets;
+                PartitionList::ConstIterator p(partitions.begin());
+                for (PartitionList::ConstIterator p_last(partitions.last()) ; p != p_last ; ++p)
+                {
+                    DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
+                    DenseVectorRange<DT2_> y_range(y.range(p->size, p->start));
+                    DenseVectorRange<DT2_> z_range(z.range(p->size, p->start));
+
+                    OperationWrapper<ScaledSum<tags::CPU::MultiCore::SSE::DelegateTo>, DenseVectorContinuousBase<DT1_>,
+                        DenseVectorContinuousBase<DT1_>, DenseVectorContinuousBase<DT2_>, DenseVectorContinuousBase<DT2_> > wrapper(x_range);
+                    tickets.push_back(mc::ThreadPool::instance(threads)->enqueue(std::tr1::bind(wrapper, x_range, y_range, z_range)));
+                }
+
+                DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
+                DenseVectorRange<DT2_> y_range(y.range(p->size, p->start));
+                DenseVectorRange<DT2_> z_range(z.range(p->size, p->start));
+
+                ScaledSum<tags::CPU::MultiCore::SSE::DelegateTo>::value(x_range, y_range, z_range);
+
+                tickets.wait();
+//                mc::ThreadPool::instance()->clear_mapping(tickets);
+            }
+
+         return x;
+
+        }
     };
 }
 #endif

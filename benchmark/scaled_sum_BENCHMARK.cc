@@ -10,10 +10,8 @@
 #include <honei/backends/cuda/operations.hh>
 #include <honei/util/configuration.hh>
 
-
 using namespace std;
 using namespace honei;
-
 
 template <typename Tag_, typename DataType_>
 class DenseVectorScaledSumBench :

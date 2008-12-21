@@ -365,6 +365,7 @@ AC_OUTPUT(
 	honei/backends/cell/spe/libutil/Makefile
 	honei/backends/sse/Makefile
 	honei/backends/mpi/Makefile
+	honei/backends/multicore/Makefile
 	honei/backends/cuda/Makefile
 	honei/graph/Makefile
 	honei/la/Makefile

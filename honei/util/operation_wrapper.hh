@@ -29,32 +29,34 @@ namespace honei
      * overloaded functions.
      */
     template <typename Operation_, typename ResultType_, typename T1_, typename T2_ = void, typename T3_ = void,
-             typename T4_ = void, typename T4_ = void, typename T5_ = void, typename T6_ = void>
+             typename T4_ = void, typename T5_ = void, typename T6_ = void>
     struct OperationWrapper;
 
     template <typename Operation_, typename ResultType_, typename T1_>
     struct OperationWrapper<Operation_, ResultType_, T1_>
     {
-        ResultType_ result;
+        typedef void result_type;
+        ResultType_ & result;
 
-        OperationWrapper(ResultType_ & result) :
-            result(result)
+        OperationWrapper(ResultType_ & r) :
+            result(r)
         {
         }
 
         void operator() (T1_ & param_one)
         {
-            result = Operation_::value(parame_one);
+            result = Operation_::value(param_one);
         }
     };
 
     template <typename Operation_, typename ResultType_, typename T1_, typename T2_>
     struct OperationWrapper<Operation_, ResultType_, T1_, T2_>
     {
-        ResultType_ result;
+        typedef void result_type;
+        ResultType_ & result;
 
-        OperationWrapper(ResultType_ & result) :
-            result(result)
+        OperationWrapper(ResultType_ & r) :
+            result(r)
         {
         }
 
@@ -67,10 +69,11 @@ namespace honei
     template <typename Operation_, typename ResultType_, typename T1_, typename T2_, typename T3_>
     struct OperationWrapper<Operation_, ResultType_, T1_, T2_, T3_>
     {
-        ResultType_ result;
+        typedef void result_type;
+        ResultType_ & result;
 
-        OperationWrapper(ResultType_ & result) :
-            result(result)
+        OperationWrapper(ResultType_ & r) :
+            result(r)
         {
         }
 

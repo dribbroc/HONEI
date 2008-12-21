@@ -3,6 +3,8 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 AUTOMAKE_OPTIONS = foreign dist-bzip2
 
+  MULTICOREDIR = multicore
+
 if CELL
   CELLDIR = cell
 endif
@@ -19,4 +21,4 @@ if MPI
   MPIDIR = mpi
 endif
 
-SUBDIRS = $(SSEDIR) $(CELLDIR) $(CUDADIR) $(MPIDIR)
+SUBDIRS = $(SSEDIR) $(CELLDIR) $(CUDADIR) $(MPIDIR) $(MULTICOREDIR)

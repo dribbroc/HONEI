@@ -63,8 +63,8 @@ class DenseVectorScaledSumTest :
 };
 DenseVectorScaledSumTest<tags::CPU, float> dense_vector_scaled_sum_test_float("float");
 DenseVectorScaledSumTest<tags::CPU, double> dense_vector_scaled_sum_test_double("double");
-DenseVectorScaledSumTest<tags::CPU::MultiCore, float> mc_dense_vector_scaled_sum_test_float("float");
-DenseVectorScaledSumTest<tags::CPU::MultiCore, double> mc_dense_vector_scaled_sum_test_double("double");
+DenseVectorScaledSumTest<tags::CPU::MultiCore, float> mc_dense_vector_scaled_sum_test_float("MC float");
+DenseVectorScaledSumTest<tags::CPU::MultiCore, double> mc_dense_vector_scaled_sum_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorScaledSumTest<tags::CPU::SSE, float> sse_dense_vector_scaled_sum_test_float("SSE float");
 DenseVectorScaledSumTest<tags::CPU::SSE, double> sse_dense_vector_scaled_sum_test_double("SSE double");
@@ -339,7 +339,7 @@ DenseVector3ScaledSumQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_v
 DenseVector3ScaledSumQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_3_scaled_sum_quick_test_float("float");
 #endif
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class DenseVectorSparseVectorScaledSumTest :
     public BaseTest
 {
@@ -347,6 +347,7 @@ class DenseVectorSparseVectorScaledSumTest :
         DenseVectorSparseVectorScaledSumTest(const std::string & type) :
             BaseTest("dense_vector_sparse_vector_scaled_sum_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -377,7 +378,7 @@ class DenseVectorSparseVectorScaledSumTest :
                     if (i.index() % 10 == 0 && i.index() % 7 == 0) *i = DataType_(8);
                 }
 
-                ScaledSum<>::value(dv1, sv2, scal);
+                ScaledSum<Tag_>::value(dv1, sv2, scal);
 
                 TEST_CHECK_EQUAL(dv1, sum2);
             }
@@ -386,13 +387,13 @@ class DenseVectorSparseVectorScaledSumTest :
             SparseVector<DataType_> sv01(2, 1);
             DataType_ scal00(DataType_(2));
 
-            TEST_CHECK_THROWS(ScaledSum<>::value(sv00, sv01, scal00), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(ScaledSum<Tag_>::value(sv00, sv01, scal00), VectorSizeDoesNotMatch);
         }
 };
-DenseVectorSparseVectorScaledSumTest<float> dense_vector_sparse_vector_scaled_sum_test_float("float");
-DenseVectorSparseVectorScaledSumTest<double> dense_vector_sparse_vector_scaled__sum_test_double("double");
+DenseVectorSparseVectorScaledSumTest<tags::CPU, float> dense_vector_sparse_vector_scaled_sum_test_float("float");
+DenseVectorSparseVectorScaledSumTest<tags::CPU, double> dense_vector_sparse_vector_scaled__sum_test_double("double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class DenseVectorSparseVectorScaledSumQuickTest :
     public QuickTest
 {
@@ -400,6 +401,7 @@ class DenseVectorSparseVectorScaledSumQuickTest :
         DenseVectorSparseVectorScaledSumQuickTest(const std::string & type) :
             QuickTest("dense_vector_sparse_vector_scaled_sum_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -429,7 +431,7 @@ class DenseVectorSparseVectorScaledSumQuickTest :
                 if (i.index() % 10 == 0 && i.index() % 7 == 0) *i = DataType_(8);
             }
 
-            ScaledSum<>::value(dv1, sv2, scal);
+            ScaledSum<Tag_>::value(dv1, sv2, scal);
 
             TEST_CHECK_EQUAL(dv1, sum2);
 
@@ -437,21 +439,22 @@ class DenseVectorSparseVectorScaledSumQuickTest :
             SparseVector<DataType_> sv01(2, 1);
             DataType_ scal00(DataType_(2));
 
-            TEST_CHECK_THROWS(ScaledSum<>::value(sv00, sv01, scal00), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(ScaledSum<Tag_>::value(sv00, sv01, scal00), VectorSizeDoesNotMatch);
         }
 };
-DenseVectorSparseVectorScaledSumQuickTest<float> dense_vector_sparse_vector_scaled_sum_quick_test_float("float");
-DenseVectorSparseVectorScaledSumQuickTest<double> dense_vector_sparse_vector_scaled__sum_quick_test_double("double");
+DenseVectorSparseVectorScaledSumQuickTest<tags::CPU, float> dense_vector_sparse_vector_scaled_sum_quick_test_float("float");
+DenseVectorSparseVectorScaledSumQuickTest<tags::CPU, double> dense_vector_sparse_vector_scaled__sum_quick_test_double("double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class SparseVectorScaledSumTest :
     public BaseTest
 {
     public:
         SparseVectorScaledSumTest(const std::string & type) :
             BaseTest("sparse_vector_scaled_sum_test<" + type + ">")
-    {
-    }
+        {
+            register_tag(Tag_::name);
+        }
 
         virtual void run() const
         {
@@ -481,7 +484,7 @@ class SparseVectorScaledSumTest :
                     if (i.index() % 10 == 0 && i.index() % 7 == 0) *i = DataType_(8);
                 }
 
-                ScaledSum<>::value(sv1, sv2, scal);
+                ScaledSum<Tag_>::value(sv1, sv2, scal);
 
                 TEST_CHECK_EQUAL(sv1, sum2);
             }
@@ -490,21 +493,22 @@ class SparseVectorScaledSumTest :
             SparseVector<DataType_> sv01(2, 1);
             DataType_ scal00(DataType_(2));
 
-            TEST_CHECK_THROWS(ScaledSum<>::value(sv00, sv01, scal00), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(ScaledSum<Tag_>::value(sv00, sv01, scal00), VectorSizeDoesNotMatch);
         }
 };
-SparseVectorScaledSumTest<float> sparse_vector_scaled_sum_test_float("float");
-SparseVectorScaledSumTest<double> sparse_vector_scaled__sum_test_double("double");
+SparseVectorScaledSumTest<tags::CPU, float> sparse_vector_scaled_sum_test_float("float");
+SparseVectorScaledSumTest<tags::CPU, double> sparse_vector_scaled__sum_test_double("double");
 
-template <typename DataType_>
+template <typename Tag_, typename DataType_>
 class SparseVectorScaledSumQuickTest :
     public QuickTest
 {
     public:
         SparseVectorScaledSumQuickTest(const std::string & type) :
             QuickTest("sparse_vector_scaled_sum_quick_test<" + type + ">")
-    {
-    }
+        {
+            register_tag(Tag_::name);
+        }
 
         virtual void run() const
         {
@@ -532,7 +536,7 @@ class SparseVectorScaledSumQuickTest :
                 if (i.index() % 10 == 0 && i.index() % 7 == 0) *i = DataType_(8);
             }
 
-            ScaledSum<>::value(sv1, sv2, scal);
+            ScaledSum<Tag_>::value(sv1, sv2, scal);
 
             TEST_CHECK_EQUAL(sv1, sum2);
 
@@ -540,8 +544,8 @@ class SparseVectorScaledSumQuickTest :
             SparseVector<DataType_> sv01(2, 1);
             DataType_ scal00(DataType_(2));
 
-            TEST_CHECK_THROWS(ScaledSum<>::value(sv00, sv01, scal00), VectorSizeDoesNotMatch);
+            TEST_CHECK_THROWS(ScaledSum<Tag_>::value(sv00, sv01, scal00), VectorSizeDoesNotMatch);
         }
 };
-SparseVectorScaledSumQuickTest<float> sparse_vector_scaled_sum_quick_test_float("float");
-SparseVectorScaledSumQuickTest<double> sparse_vector_scaled__sum_quick_test_double("double");
+SparseVectorScaledSumQuickTest<tags::CPU, float> sparse_vector_scaled_sum_quick_test_float("float");
+SparseVectorScaledSumQuickTest<tags::CPU, double> sparse_vector_scaled_sum_quick_test_double("double");
