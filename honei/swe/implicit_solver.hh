@@ -43,6 +43,7 @@
 
 #ifdef DEBUG
 #define SOLVER_VERBOSE
+#define SOLVER_DEBUG 1
 #endif
 
 #include <honei/la/banded_matrix.hh>

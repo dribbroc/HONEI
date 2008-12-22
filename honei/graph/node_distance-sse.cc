@@ -35,7 +35,7 @@ namespace honei
 #if defined (__SSE3__)
             inline void node_distance(float * result, float * pos_matrix, float x, float y, unsigned long size)
             {
-                __m128 m1, m2, m3, m4, m5, m6, m7, m8;
+                __m128 m1, m2, m3, m4, m5, m6, m8;
                 float HONEI_ALIGNED(16) coordinates[4];
                 coordinates[0] = x;
                 coordinates[1] = y;

@@ -261,7 +261,7 @@ namespace honei
     {
         CONTEXT("When retrieving band '" + stringify(index) + "' of matrix of size '"
                 + stringify(this->_imp->size) + "':");
-        ASSERT(std::abs(index) < this->_imp->size, "index out of bounds!");
+        ASSERT(std::abs(index) < (signed)this->_imp->size, "index out of bounds!");
 
         if (! this->_imp->bands[index + this->_imp->size - 1])
         {

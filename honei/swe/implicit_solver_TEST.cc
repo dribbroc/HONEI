@@ -17,8 +17,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#define SOLVER_DEBUG 1
-#define SOLVER_VERBOSE 1
+//#define SOLVER_DEBUG 1
+//#define SOLVER_VERBOSE 1
 #include "implicit_solver.hh"
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>
