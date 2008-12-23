@@ -52,6 +52,9 @@ class SolverLABSWEDrivenCavityTest :
 
 };
 
+/**
+ * Fixed RTIME, computed VELOC.
+ * */
 template <typename Tag_, typename DataType_>
 class SolverLABSWEDrivenCavityTest<Tag_, DataType_, VELOC, RTIME>:
     public TaggedTest<Tag_>
@@ -300,6 +303,11 @@ class SolverLABSWEDrivenCavityTest<Tag_, DataType_, VELOC, RTIME>:
         }
 
 };
+
+
+/**
+ * Fixed DT, computed VELOC.
+ * */
 template <typename Tag_, typename DataType_>
 class SolverLABSWEDrivenCavityTest<Tag_, DataType_, VELOC, DT>:
     public TaggedTest<Tag_>
@@ -545,6 +553,10 @@ class SolverLABSWEDrivenCavityTest<Tag_, DataType_, VELOC, DT>:
         }
 
 };
+
+/**
+ * Fixed DX, computed VELOC.
+ * */
 template <typename Tag_, typename DataType_>
 class SolverLABSWEDrivenCavityTest<Tag_, DataType_, VELOC, DX>:
     public TaggedTest<Tag_>
@@ -791,6 +803,9 @@ class SolverLABSWEDrivenCavityTest<Tag_, DataType_, VELOC, DX>:
 
 };
 
+/**
+ * Fixed H, computed nothing.
+ * */
 template <typename Tag_, typename DataType_>
 class SolverLABSWEDrivenCavityTest<Tag_, DataType_, NONE, H>:
     public TaggedTest<Tag_>
@@ -1037,6 +1052,9 @@ class SolverLABSWEDrivenCavityTest<Tag_, DataType_, NONE, H>:
         }
 
 };
+/**
+ * Fixed VELOC, computed RTIME.
+ * */
 template <typename Tag_, typename DataType_>
 class SolverLABSWEDrivenCavityTest<Tag_, DataType_, RTIME, VELOC>:
     public TaggedTest<Tag_>
@@ -1296,6 +1314,9 @@ class SolverLABNAVSTODrivenCavityTest :
 
 };
 
+/**
+ * Fixed RTIME, computed VELOC.
+ * */
 template <typename Tag_, typename DataType_>
 class SolverLABNAVSTODrivenCavityTest<Tag_, DataType_, VELOC, RTIME>:
     public TaggedTest<Tag_>
@@ -1544,6 +1565,11 @@ class SolverLABNAVSTODrivenCavityTest<Tag_, DataType_, VELOC, RTIME>:
         }
 
 };
+
+
+/**
+ * Fixed DT, computed VELOC.
+ * */
 template <typename Tag_, typename DataType_>
 class SolverLABNAVSTODrivenCavityTest<Tag_, DataType_, VELOC, DT>:
     public TaggedTest<Tag_>
@@ -1791,6 +1817,9 @@ class SolverLABNAVSTODrivenCavityTest<Tag_, DataType_, VELOC, DT>:
         }
 
 };
+/**
+ * Fixed VELOC, computed RTIME.
+ * */
 template <typename Tag_, typename DataType_>
 class SolverLABNAVSTODrivenCavityTest<Tag_, DataType_, RTIME, VELOC>:
     public TaggedTest<Tag_>
@@ -2038,6 +2067,9 @@ class SolverLABNAVSTODrivenCavityTest<Tag_, DataType_, RTIME, VELOC>:
         }
 
 };
+/**
+ * Fixed H, computed nothing.
+ * */
 template <typename Tag_, typename DataType_>
 class SolverLABNAVSTODrivenCavityTest<Tag_, DataType_, NONE, H>:
     public TaggedTest<Tag_>
