@@ -114,7 +114,7 @@ namespace honei {
                 DenseVector<ResPrec_>* _distribution_vector_y;
 
                 /** Capsule for the extration of SWE physical quantities.
-                 *
+                 *  Going to be obsolete.
                  **/
                 void _extract()
                 {
@@ -579,6 +579,7 @@ namespace honei {
                     ///Compute physical quantities:
                     _extract();
 
+                    //------------NAVSTO specific---------------
                     ///Update equilibrium distribution function:
                     for(unsigned long i(0); i < _grid_width; ++i)
                     {
