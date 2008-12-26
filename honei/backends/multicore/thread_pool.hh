@@ -52,9 +52,6 @@ namespace honei
                 // Waiting list of worker tasks to be executed
                 std::list<ThreadTask *> tasks __attribute__((aligned(128)));
 
-                // Mapping of ticket IDs to thread IDs
-                std::map<unsigned, unsigned> task_mapping __attribute__((aligned(128)));
-
                 // Our Mutex
                 Mutex * const mutex;
 
@@ -87,8 +84,6 @@ namespace honei
                 void delete_threads(const unsigned num);
 
                 unsigned get_num_threads() const __attribute__((always_inline));
-
-                void clear_mapping(TicketList & tickets);
 
                 Ticket & enqueue(const std::tr1::function<void ()> & task, DispatchPolicy p = DispatchPolicy::any_core());
         };

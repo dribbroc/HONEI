@@ -14,6 +14,7 @@ libhoneibackendsmulticore_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la
 
 libhoneibackendsmulticore_la_SOURCES = dispatch_policy.hh \
+				 dispatch_policy.cc \
 				 thread_pool.hh \
 				 thread_pool.cc \
 				 thread.hh \

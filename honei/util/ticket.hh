@@ -21,6 +21,7 @@
 #ifndef HONEI_GUARD_UTIL_TICKET_HH
 #define HONEI_GUARD_UTIL_TICKET_HH 1
 
+#include <honei/util/condition_variable.hh>
 #include <honei/util/private_implementation_pattern.hh>
 
 namespace honei

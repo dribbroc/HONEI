@@ -20,55 +20,105 @@
 #ifndef MULTICORE_GUARD_POLICY_HH
 #define MULTICORE_GUARD_POLICY_HH 1
 
+#include <honei/util/ticket.hh>
+
+#include <map>
+#include <tr1/functional>
+
 namespace honei
 {
     namespace mc
     {
-        // Forward declaration for friend class setting
-        class ThreadPool;
+        class AnyCorePolicy
+        {
+            private:
+
+            public:
+
+                unsigned & operator() (std::map<unsigned, unsigned> & mapping, Ticket * ticket, unsigned * tid_array)
+                {
+                    return mapping[ticket->id()] = 0;
+                }
+        };
+
+        class SameCorePolicy
+        {
+            private:
+
+                const unsigned ticket_id;
+
+            public:
+
+                SameCorePolicy(const unsigned ticket_nr) :
+                    ticket_id(ticket_nr)
+                {
+                }
+
+                unsigned & operator() (std::map<unsigned, unsigned> & mapping, Ticket * ticket, unsigned * tid_array)
+                {
+                    unsigned & thread_id = mapping[ticket_id];
+                    return mapping[ticket->id()] = thread_id;
+                }
+        };
+
+        class OnCorePolicy
+        {
+            private:
+
+                const unsigned core_id;
+
+            public:
+
+                OnCorePolicy(const unsigned core_nr) :
+                    core_id(core_nr)
+                {
+                }
+
+                unsigned & operator() (std::map<unsigned, unsigned> & mapping, Ticket * ticket, unsigned * tid_array)
+                {
+                    return mapping[ticket->id()] = tid_array[core_id];
+                }
+        };
 
         class DispatchPolicy
         {
             private:
-               unsigned core_nr;
-               unsigned lfd_nr;
-               bool same;
 
-               DispatchPolicy(unsigned core, unsigned lfd, unsigned s) :
-                   core_nr(core),
-                   lfd_nr(lfd),
-                    same(s)
+                // Mapping of ticket IDs to thread IDs
+              static std::map<unsigned, unsigned> mapping;
+
+                const std::tr1::function<unsigned & (std::map<unsigned, unsigned> &, Ticket *, unsigned *)> policy;
+
+                DispatchPolicy(const std::tr1::function<unsigned & (std::map<unsigned, unsigned> &, Ticket *, unsigned *)> p) :
+                    policy(p)
                 {
                 }
 
             public:
 
-                friend class ThreadPool;
+                unsigned & apply(Ticket * ticket, unsigned * tid_array)
+                {
+                    return policy(DispatchPolicy::mapping, ticket, tid_array);
+                }
 
                 /// Named constructors
 
                 /// Dispatch on any core available
                 static DispatchPolicy any_core()
                 {
-                    return DispatchPolicy(0, 0, 0);
+                    return DispatchPolicy(AnyCorePolicy());
                 }
 
                 /// Dispatch on same core as earlier task
-                static DispatchPolicy same_core_as(unsigned lfd_nr)
+                static DispatchPolicy same_core_as(unsigned ticket_id)
                 {
-                    return DispatchPolicy(0, lfd_nr, 1);
+                    return DispatchPolicy(SameCorePolicy(ticket_id));
                 }
 
                 /// Dispatch on explicit core
-                static DispatchPolicy on_core(unsigned core_nr)
+                static DispatchPolicy on_core(unsigned core_id)
                 {
-                    return DispatchPolicy(core_nr, 0, 0);
-                }
-
-                /// Not working yet
-                static DispatchPolicy not_same_core_as(unsigned lfd_nr)
-                {
-                    return DispatchPolicy(0, lfd_nr, 0);
+                    return DispatchPolicy(OnCorePolicy(core_id));
                 }
         };
     }

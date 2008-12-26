@@ -165,36 +165,13 @@ unsigned ThreadPool::get_num_threads() const
     return num_threads;
 }
 
-void ThreadPool::clear_mapping(TicketList & tickets)
-{
-    while (! tickets.empty())
-        task_mapping.erase(task_mapping.find(tickets.remove_front()));
-}
-
 Ticket & ThreadPool::enqueue(const std::tr1::function<void ()> & task, DispatchPolicy p)
 {
     Ticket * ticket = new Ticket;
 
-    if (affinity)
-    {
-        if (p.core_nr != 0) // on_core()
-        {
-            task_mapping[ticket->id()] = thread_ids[p.core_nr % num_threads];
-        }
-        else if (! p.same) // any_core()
-            task_mapping[ticket->id()] = 0;
-        else // same_core_as()
-        {
-            unsigned & thread_id = task_mapping[p.lfd_nr];
-            task_mapping[ticket->id()] = thread_id;
-        }
-    }
-    else
-    {
-        task_mapping[ticket->id()] = 0;
-    }
+    unsigned & thread_id = p.apply(ticket, thread_ids);
 
-    ThreadTask * t_task = new ThreadTask(task, ticket, &task_mapping[ticket->id()]);
+    ThreadTask * t_task = new ThreadTask(task, ticket, &thread_id);
 
     Lock l(*mutex);
     tasks.push_back(t_task);
