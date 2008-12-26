@@ -21,9 +21,9 @@
 #define MULTICORE_GUARD_THREAD_POOL_HH 1
 
 #include <honei/backends/multicore/dispatch_policy.hh>
+#include <honei/backends/multicore/multicore_ticket.hh>
 #include <honei/backends/multicore/thread.hh>
 #include <honei/util/instantiation_policy.hh>
-#include <honei/util/ticket.hh>
 
 #include <map>
 #include <sys/syscall.h>
@@ -85,7 +85,7 @@ namespace honei
 
                 unsigned get_num_threads() const __attribute__((always_inline));
 
-                Ticket & enqueue(const std::tr1::function<void ()> & task, DispatchPolicy p = DispatchPolicy::any_core());
+                MultiCoreTicket & enqueue(const std::tr1::function<void ()> & task, DispatchPolicy p = DispatchPolicy::any_core());
         };
     }
 }

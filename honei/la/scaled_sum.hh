@@ -426,7 +426,6 @@ namespace honei
                 ScaledSum<tags::CPU::MultiCore::DelegateTo>::value(x_range, y_range, b);
 
                 tickets.wait();
-//                mc::ThreadPool::instance()->clear_mapping(tickets);
             }
 
          return x;
@@ -474,8 +473,8 @@ namespace honei
                 DenseVectorRange<DT2_> z_range(z.range(p->size, p->start));
 
                 ScaledSum<tags::CPU::MultiCore::DelegateTo>::value(x_range, y_range, z_range);
+
                 tickets.wait();
-                //mc::ThreadPool::instance()->clear_mapping(tickets);
             }
 
          return x;
@@ -526,7 +525,6 @@ namespace honei
                 ScaledSum<tags::CPU::MultiCore::SSE::DelegateTo>::value(x_range, y_range, b);
 
                 tickets.wait();
-//                mc::ThreadPool::instance()->clear_mapping(tickets);
             }
 
          return x;
@@ -575,7 +573,6 @@ namespace honei
                 ScaledSum<tags::CPU::MultiCore::SSE::DelegateTo>::value(x_range, y_range, z_range);
 
                 tickets.wait();
-//                mc::ThreadPool::instance()->clear_mapping(tickets);
             }
 
          return x;

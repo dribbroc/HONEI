@@ -61,10 +61,12 @@ namespace honei
 
             for (std::list<mc::ThreadTask *>::iterator i(tasklist->begin()) , i_end(tasklist->end()) ; i != i_end ; ++i)
             {
-                if (*(*i)->thread_id == 0 || *(*i)->thread_id == tid)
+                unsigned & thread_id = (*i)->ticket->tid();
+
+                if (thread_id == 0 || thread_id == tid)
                 {
                     task = *i;
-                    *task->thread_id = tid;
+                    thread_id = tid;
                     tasklist->remove(*i);
                     break;
                 }

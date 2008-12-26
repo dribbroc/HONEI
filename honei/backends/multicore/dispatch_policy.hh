@@ -20,7 +20,7 @@
 #ifndef MULTICORE_GUARD_POLICY_HH
 #define MULTICORE_GUARD_POLICY_HH 1
 
-#include <honei/util/ticket.hh>
+#include <honei/backends/multicore/multicore_ticket.hh>
 
 #include <map>
 #include <tr1/functional>
@@ -35,9 +35,9 @@ namespace honei
 
             public:
 
-                unsigned & operator() (std::map<unsigned, unsigned> & mapping, Ticket * ticket, unsigned * tid_array)
+                MultiCoreTicket * operator() (unsigned * tid_array)
                 {
-                    return mapping[ticket->id()] = 0;
+                    return new MultiCoreTicket;
                 }
         };
 
@@ -45,19 +45,19 @@ namespace honei
         {
             private:
 
-                const unsigned ticket_id;
+                MultiCoreTicket & other;
 
             public:
 
-                SameCorePolicy(const unsigned ticket_nr) :
-                    ticket_id(ticket_nr)
+                SameCorePolicy(MultiCoreTicket & ticket) :
+                    other(ticket)
                 {
                 }
 
-                unsigned & operator() (std::map<unsigned, unsigned> & mapping, Ticket * ticket, unsigned * tid_array)
+                MultiCoreTicket * operator() (unsigned * tid_array)
                 {
-                    unsigned & thread_id = mapping[ticket_id];
-                    return mapping[ticket->id()] = thread_id;
+                    MultiCoreTicket * ticket = new MultiCoreTicket(other.tid());
+                    return ticket;
                 }
         };
 
@@ -74,9 +74,10 @@ namespace honei
                 {
                 }
 
-                unsigned & operator() (std::map<unsigned, unsigned> & mapping, Ticket * ticket, unsigned * tid_array)
+                MultiCoreTicket * operator() (unsigned * tid_array)
                 {
-                    return mapping[ticket->id()] = tid_array[core_id];
+                    MultiCoreTicket * ticket = new MultiCoreTicket(tid_array[core_id]);
+                    return ticket;
                 }
         };
 
@@ -84,21 +85,18 @@ namespace honei
         {
             private:
 
-                // Mapping of ticket IDs to thread IDs
-              static std::map<unsigned, unsigned> mapping;
+                const std::tr1::function<MultiCoreTicket * (unsigned *)> policy;
 
-                const std::tr1::function<unsigned & (std::map<unsigned, unsigned> &, Ticket *, unsigned *)> policy;
-
-                DispatchPolicy(const std::tr1::function<unsigned & (std::map<unsigned, unsigned> &, Ticket *, unsigned *)> p) :
+                DispatchPolicy(const std::tr1::function<MultiCoreTicket * (unsigned *)> p) :
                     policy(p)
                 {
                 }
 
             public:
 
-                unsigned & apply(Ticket * ticket, unsigned * tid_array)
+                MultiCoreTicket * apply(unsigned * tid_array)
                 {
-                    return policy(DispatchPolicy::mapping, ticket, tid_array);
+                    return policy(tid_array);
                 }
 
                 /// Named constructors
@@ -110,9 +108,9 @@ namespace honei
                 }
 
                 /// Dispatch on same core as earlier task
-                static DispatchPolicy same_core_as(unsigned ticket_id)
+                static DispatchPolicy same_core_as(MultiCoreTicket & ticket)
                 {
-                    return DispatchPolicy(SameCorePolicy(ticket_id));
+                    return DispatchPolicy(SameCorePolicy(ticket));
                 }
 
                 /// Dispatch on explicit core

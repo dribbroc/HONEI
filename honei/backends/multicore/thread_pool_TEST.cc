@@ -69,7 +69,7 @@ class ThreadPoolTest :
 
             TicketList tickets;
 
-            Ticket first_t(ThreadPool::instance(4 * sysconf(_SC_NPROCESSORS_CONF), true)->enqueue(t));
+            MultiCoreTicket first_t(ThreadPool::instance(4 * sysconf(_SC_NPROCESSORS_CONF), true)->enqueue(t));
 
             tickets.push_back(first_t);
 
@@ -85,7 +85,7 @@ class ThreadPoolTest :
 
             for (unsigned i(2500) ; i < 5000 ; ++i)
             {
-                tickets.push_back(ThreadPool::instance()->enqueue(t, DispatchPolicy::same_core_as(first_t.id())));
+                tickets.push_back(ThreadPool::instance()->enqueue(t, DispatchPolicy::same_core_as(first_t)));
             }
 
             tickets.wait();
@@ -113,7 +113,7 @@ class ThreadPoolTest :
 
             for (unsigned i(2500) ; i < 5000 ; ++i)
             {
-                tickets.push_back(ThreadPool::instance()->enqueue(u, DispatchPolicy::same_core_as(first_t.id())));
+                tickets.push_back(ThreadPool::instance()->enqueue(u, DispatchPolicy::same_core_as(first_t)));
             }
 
             tickets.wait();
@@ -140,7 +140,7 @@ class ThreadPoolQuickTest :
 
             TicketList tickets;
 
-            Ticket first_t(ThreadPool::instance(4 * sysconf(_SC_NPROCESSORS_CONF), true)->enqueue(t));
+            MultiCoreTicket first_t(ThreadPool::instance(4 * sysconf(_SC_NPROCESSORS_CONF), true)->enqueue(t));
 
             tickets.push_back(first_t);
 
@@ -156,7 +156,7 @@ class ThreadPoolQuickTest :
 
             for (unsigned i(250) ; i < 500 ; ++i)
             {
-                tickets.push_back(ThreadPool::instance()->enqueue(t, DispatchPolicy::same_core_as(first_t.id())));
+                tickets.push_back(ThreadPool::instance()->enqueue(t, DispatchPolicy::same_core_as(first_t)));
             }
 
             tickets.wait();

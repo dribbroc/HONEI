@@ -2,7 +2,6 @@
 
 /*
  * Copyright (c) 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
- * Copyright (c) 2008 Sven Mallach <sven.mallach@cs.uni-dortmund.de>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -39,13 +38,6 @@ namespace honei
         private:
             /// \name Private members
             /// \{
-
-            /// Counter for unique global ticket IDs
-            static unsigned counter;
-
-            /// Unique ID
-            unsigned uid;
-
             /// \}
 
         public:
@@ -72,27 +64,7 @@ namespace honei
 
             /// Wait for ticket completion.
             void wait() const;
-
-            /// Retrieve unique ticket ID
-            unsigned id() const;
    };
-
-    template <> struct Implementation<Ticket>
-    {
-        Mutex mutex;
-
-        ConditionVariable completion;
-
-        bool completed;
-
-        const unsigned uid;
-
-        Implementation(const unsigned id) :
-            uid(id),
-            completed(false)
-        {
-        }
-    };
 
     /**
      * TicketList is used when multiple tickets are needed.

@@ -165,13 +165,11 @@ unsigned ThreadPool::get_num_threads() const
     return num_threads;
 }
 
-Ticket & ThreadPool::enqueue(const std::tr1::function<void ()> & task, DispatchPolicy p)
+MultiCoreTicket & ThreadPool::enqueue(const std::tr1::function<void ()> & task, DispatchPolicy p)
 {
-    Ticket * ticket = new Ticket;
+    MultiCoreTicket * ticket(p.apply(thread_ids));
 
-    unsigned & thread_id = p.apply(ticket, thread_ids);
-
-    ThreadTask * t_task = new ThreadTask(task, ticket, &thread_id);
+    ThreadTask * t_task(new ThreadTask(task, ticket));
 
     Lock l(*mutex);
     tasks.push_back(t_task);

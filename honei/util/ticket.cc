@@ -2,7 +2,6 @@
 
 /*
  * Copyright (c) 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
- * Copyright (c) 2008 Sven Mallach <sven.mallach@cs.uni-dortmund.de>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -31,8 +30,22 @@
 
 namespace honei
 {
+    template <> struct Implementation<Ticket>
+    {
+        Mutex mutex;
+
+        ConditionVariable completion;
+
+        bool completed;
+
+        Implementation() :
+            completed(false)
+        {
+        }
+    };
+
     Ticket::Ticket() :
-        PrivateImplementationPattern<Ticket, Shared>(new Implementation<Ticket>(counter++))
+        PrivateImplementationPattern<Ticket, Shared>(new Implementation<Ticket>)
     {
     }
 
@@ -64,14 +77,6 @@ namespace honei
         }
     }
 
-    unsigned
-    Ticket::id() const
-    {
-        return _imp->uid;
-    }
-
-    unsigned Ticket::counter(0);
-
     template <> struct Implementation<TicketList>
     {
         std::list<std::tr1::shared_ptr<Implementation<Ticket> > > tickets;
@@ -94,32 +99,22 @@ namespace honei
         _imp->tickets.push_back(ticket._imp);
     }
 
-    bool
-    TicketList::empty()
-    {
-        return _imp->tickets.empty();
-    }
-
-    const unsigned
-    TicketList::remove_front()
-    {
-        std::tr1::shared_ptr<Implementation<Ticket> > ticket(_imp->tickets.front());
-        _imp->tickets.pop_front();
-        return ticket->uid;
-    }
-
     void
     TicketList::wait() const
     {
-        for (std::list<std::tr1::shared_ptr<Implementation<Ticket> > >::iterator i(_imp->tickets.begin()) , i_end(_imp->tickets.end()) ; i != i_end ; ++i)
+        CONTEXT("When waiting for the Tickets in a TicketList:");
+
+        while (! _imp->tickets.empty())
         {
-            std::tr1::shared_ptr<Implementation<Ticket> > ticket(*i);
+            std::tr1::shared_ptr<Implementation<Ticket> > ticket(_imp->tickets.front());
             Lock l(ticket->mutex);
 
             while (! ticket->completed)
             {
                 ticket->completion.wait(ticket->mutex);
             }
+
+            _imp->tickets.pop_front();
         }
     }
 }
