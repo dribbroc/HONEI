@@ -394,7 +394,7 @@ namespace honei
             if (x.size() != y.size())
                 throw VectorSizeDoesNotMatch(y.size(), x.size());
 
-            unsigned long min_part_size(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DT)::min_part_size", 100));
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DT)::min_part_size", 128));
 
             if (x.size() < 2 * min_part_size)
             {
@@ -415,8 +415,8 @@ namespace honei
                     DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
                     DenseVectorRange<DT2_> y_range(y.range(p->size, p->start));
 
-                    OperationWrapper<ScaledSum<tags::CPU::MultiCore::DelegateTo>, DenseVectorRange<DT1_>,
-                        DenseVectorRange<DT1_>, DenseVectorRange<DT2_>, DT2_> wrapper(x_range);
+                    OperationWrapper<ScaledSum<tags::CPU::MultiCore::DelegateTo>, DenseVectorBase<DT1_>,
+                        DenseVectorBase<DT1_>, DenseVectorBase<DT2_>, DT2_> wrapper(x_range);
                     tickets.push_back(mc::ThreadPool::instance(threads)->enqueue(std::tr1::bind(wrapper, x_range, y_range, b)));
                 }
 
@@ -441,7 +441,7 @@ namespace honei
             if (x.size() != y.size())
                 throw VectorSizeDoesNotMatch(y.size(), x.size());
 
-            unsigned long min_part_size(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DVCB)::min_part_size", 100));
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DVCB)::min_part_size", 128));
 
             if (x.size() < 2 * min_part_size)
             {
@@ -463,8 +463,8 @@ namespace honei
                     DenseVectorRange<DT2_> y_range(y.range(p->size, p->start));
                     DenseVectorRange<DT2_> z_range(z.range(p->size, p->start));
 
-                    OperationWrapper<ScaledSum<tags::CPU::MultiCore::DelegateTo>, DenseVectorRange<DT1_>,
-                        DenseVectorRange<DT1_>, DenseVectorRange<DT2_>, DenseVectorRange<DT2_> > wrapper(x_range);
+                    OperationWrapper<ScaledSum<tags::CPU::MultiCore::DelegateTo>, DenseVectorBase<DT1_>,
+                        DenseVectorBase<DT1_>, DenseVectorBase<DT2_>, DenseVectorBase<DT2_> > wrapper(x_range);
                     tickets.push_back(mc::ThreadPool::instance(threads)->enqueue(std::tr1::bind(wrapper, x_range, y_range, z_range)));
                 }
 
@@ -493,7 +493,7 @@ namespace honei
             if (x.size() != y.size())
                 throw VectorSizeDoesNotMatch(y.size(), x.size());
 
-            unsigned long min_part_size(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DT)::min_part_size", 100));
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DT)::min_part_size", 128));
 
             if (x.size() < 2 * min_part_size)
             {
@@ -540,7 +540,7 @@ namespace honei
             if (x.size() != y.size())
                 throw VectorSizeDoesNotMatch(y.size(), x.size());
 
-            unsigned long min_part_size(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DVCB)::min_part_size", 100));
+            unsigned long min_part_size(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DVCB)::min_part_size", 128));
 
             if (x.size() < 2 * min_part_size)
             {
