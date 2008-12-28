@@ -98,6 +98,9 @@ mc::num_cores = 2
 # Number of concurrent threads
 mc::num_threads = 2
 
+# Wheather to use affinity (1 = true, 0 = false)
+mc::affinity = 1
+
 # Partition size and partition count settings on a per_operation base
 mc::difference(DVCB,DVCB)::min_part_size = 16
 mc::difference(DVCB,DVCB)::max_count = 2

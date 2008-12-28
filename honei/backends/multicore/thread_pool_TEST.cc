@@ -69,7 +69,7 @@ class ThreadPoolTest :
 
             TicketList tickets;
 
-            std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > first_t(ThreadPool::instance(4 * sysconf(_SC_NPROCESSORS_CONF), false)->enqueue(t));
+            std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > first_t(ThreadPool::instance()->enqueue(t));
 
             tickets.push_back(first_t);
 
@@ -90,11 +90,9 @@ class ThreadPoolTest :
 
             tickets.wait();
 
-            ThreadPool::instance()->destroy();
-
             TEST_CHECK_EQUAL(v, 5034);
 
-            first_t = ThreadPool::instance(4 * sysconf(_SC_NPROCESSORS_CONF), true)->enqueue(u);
+            first_t = ThreadPool::instance()->enqueue(u);
             tickets.push_back(first_t);
 
             for (unsigned i(1) ; i < 1250 ; ++i)
@@ -118,8 +116,6 @@ class ThreadPoolTest :
 
             tickets.wait();
 
-            ThreadPool::instance()->destroy();
-
             TEST_CHECK_EQUAL(w, 5034);
         }
 } thread_pool_test;
@@ -140,7 +136,7 @@ class ThreadPoolQuickTest :
 
             TicketList tickets;
 
-            std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > first_t(ThreadPool::instance(4 * sysconf(_SC_NPROCESSORS_CONF), true)->enqueue(t));
+            std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > first_t(ThreadPool::instance()->enqueue(t));
 
             tickets.push_back(first_t);
 
@@ -160,8 +156,6 @@ class ThreadPoolQuickTest :
             }
 
             tickets.wait();
-
-            ThreadPool::instance()->destroy();
 
             TEST_CHECK_EQUAL(v, 534);
         }

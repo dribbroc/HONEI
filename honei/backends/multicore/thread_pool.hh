@@ -25,7 +25,6 @@
 #include <honei/backends/multicore/thread.hh>
 #include <honei/util/instantiation_policy.hh>
 
-#include <sys/syscall.h>
 #include <vector>
 
 namespace honei
@@ -36,9 +35,6 @@ namespace honei
             public InstantiationPolicy<ThreadPool, Singleton>
         {
             private:
-
-                // ThreadPool is a Singleton
-                static ThreadPool * instance_ptr;
 
                 // Number of available logical processing units
                 const unsigned num_lpus;
@@ -68,15 +64,10 @@ namespace honei
                 cpu_set_t * affinity_mask;
 #endif
 
-                ThreadPool(const unsigned n_threads, const bool aff);
-
             public:
-
-                static ThreadPool * instance(unsigned threads = sysconf(_SC_NPROCESSORS_CONF), bool affinity = true);
-
-                static void destroy();
-
+                ThreadPool();
                 ~ThreadPool();
+
 
                 void add_threads(const unsigned num);
 

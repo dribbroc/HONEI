@@ -18,23 +18,28 @@
  */
 
 #include <honei/backends/multicore/thread_pool.hh>
+#include <honei/util/configuration.hh>
 #include <honei/util/exception.hh>
+#include <honei/util/instantiation_policy-impl.hh>
 #include <honei/util/lock.hh>
 #include <honei/util/stringify.hh>
 
 #include <errno.h>
 #include <sched.h>
 #include <stdlib.h>
+#include <sys/syscall.h>
 
 using namespace honei;
 using namespace honei::mc;
 
-ThreadPool::ThreadPool(const unsigned n_threads, const bool aff) :
+template class InstantiationPolicy<ThreadPool, Singleton>;
+
+ThreadPool::ThreadPool() :
     num_lpus(sysconf(_SC_NPROCESSORS_CONF)),
-    num_threads(n_threads),
+    num_threads(Configuration::instance()->get_value("mc::num_threads", sysconf(_SC_NPROCESSORS_CONF))),
     mutex(new Mutex),
     global_barrier(new ConditionVariable),
-    affinity(aff)
+    affinity(Configuration::instance()->get_value("mc::affinity", true))
 {
     for (unsigned i(0) ; i < num_threads ; ++i)
         threads.push_back(new Thread(mutex, &tasks, global_barrier));
@@ -63,25 +68,6 @@ ThreadPool::ThreadPool(const unsigned n_threads, const bool aff) :
         }
 #endif
     }
-}
-
-ThreadPool * ThreadPool::instance(unsigned threads, bool affinity)
-{
-    if (ThreadPool::instance_ptr == 0)
-    {
-        void * address(0);
-        posix_memalign(&address, 128, sizeof(ThreadPool));
-        ThreadPool::instance_ptr = new(address) ThreadPool(threads, affinity);
-    }
-
-    return ThreadPool::instance_ptr;
-}
-
-void ThreadPool::destroy()
-{
-    ThreadPool::instance_ptr->~ThreadPool();
-    free(ThreadPool::instance_ptr);
-    ThreadPool::instance_ptr = 0;
 }
 
 ThreadPool::~ThreadPool()
@@ -165,5 +151,3 @@ std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > & ThreadPool::enqueue(const 
 
     return ticket;
 }
-
-ThreadPool * ThreadPool::instance_ptr = 0;

@@ -402,10 +402,9 @@ namespace honei
             }
             else
             {
-                int threads(Configuration::instance()->get_value("mc::num_threads", 2));
                 PartitionList partitions;
-                Partitioner<tags::CPU::MultiCore>(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DT)::max_count", threads),
-                        min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+                Partitioner<tags::CPU::MultiCore>(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DT)::max_count",
+                            mc::ThreadPool::instance()->get_num_threads()), min_part_size, 16, x.size(), PartitionList::Filler(partitions));
 
                 TicketList tickets;
 
@@ -417,7 +416,7 @@ namespace honei
 
                     OperationWrapper<ScaledSum<tags::CPU::MultiCore::DelegateTo>, DenseVectorBase<DT1_>,
                         DenseVectorBase<DT1_>, DenseVectorBase<DT2_>, DT2_> wrapper(x_range);
-                    tickets.push_back(mc::ThreadPool::instance(threads)->enqueue(std::tr1::bind(wrapper, x_range, y_range, b)));
+                    tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper, x_range, y_range, b)));
                 }
 
                 DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
@@ -449,10 +448,9 @@ namespace honei
             }
             else
             {
-                int threads(Configuration::instance()->get_value("mc::num_threads", 2));
                 PartitionList partitions;
-                Partitioner<tags::CPU::MultiCore>(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DVCB)::max_count", threads),
-                        min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+                Partitioner<tags::CPU::MultiCore>(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DVCB)::max_count",
+                            mc::ThreadPool::instance()->get_num_threads()), min_part_size, 16, x.size(), PartitionList::Filler(partitions));
 
                 TicketList tickets;
 
@@ -465,7 +463,7 @@ namespace honei
 
                     OperationWrapper<ScaledSum<tags::CPU::MultiCore::DelegateTo>, DenseVectorBase<DT1_>,
                         DenseVectorBase<DT1_>, DenseVectorBase<DT2_>, DenseVectorBase<DT2_> > wrapper(x_range);
-                    tickets.push_back(mc::ThreadPool::instance(threads)->enqueue(std::tr1::bind(wrapper, x_range, y_range, z_range)));
+                    tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper, x_range, y_range, z_range)));
                 }
 
                 DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
@@ -501,10 +499,9 @@ namespace honei
             }
             else
             {
-                int threads(Configuration::instance()->get_value("mc::num_threads", 2));
                 PartitionList partitions;
-                Partitioner<tags::CPU::MultiCore>(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DT)::max_count", threads),
-                        min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+                Partitioner<tags::CPU::MultiCore>(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DT)::max_count",
+                            mc::ThreadPool::instance()->get_num_threads()), min_part_size, 16, x.size(), PartitionList::Filler(partitions));
 
                 TicketList tickets;
 
@@ -516,7 +513,7 @@ namespace honei
 
                     OperationWrapper<ScaledSum<tags::CPU::MultiCore::SSE::DelegateTo>, DenseVectorContinuousBase<DT1_>,
                         DenseVectorContinuousBase<DT1_>, DenseVectorContinuousBase<DT2_>, DT2_> wrapper(x_range);
-                    tickets.push_back(mc::ThreadPool::instance(threads)->enqueue(std::tr1::bind(wrapper, x_range, y_range, b)));
+                    tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper, x_range, y_range, b)));
                 }
 
                 DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
@@ -548,10 +545,9 @@ namespace honei
             }
             else
             {
-                int threads(Configuration::instance()->get_value("mc::num_threads", 2));
                 PartitionList partitions;
-                Partitioner<tags::CPU::MultiCore>(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DVCB)::max_count", threads),
-                        min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+                Partitioner<tags::CPU::MultiCore>(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DVCB)::max_count",
+                            mc::ThreadPool::instance()->get_num_threads()), min_part_size, 16, x.size(), PartitionList::Filler(partitions));
 
                 TicketList tickets;
                 PartitionList::ConstIterator p(partitions.begin());
@@ -563,7 +559,7 @@ namespace honei
 
                     OperationWrapper<ScaledSum<tags::CPU::MultiCore::SSE::DelegateTo>, DenseVectorContinuousBase<DT1_>,
                         DenseVectorContinuousBase<DT1_>, DenseVectorContinuousBase<DT2_>, DenseVectorContinuousBase<DT2_> > wrapper(x_range);
-                    tickets.push_back(mc::ThreadPool::instance(threads)->enqueue(std::tr1::bind(wrapper, x_range, y_range, z_range)));
+                    tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper, x_range, y_range, z_range)));
                 }
 
                 DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
