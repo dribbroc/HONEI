@@ -24,45 +24,35 @@
 
 namespace honei
 {
-    namespace mc
-    {
-        class MultiCoreTicket :
-            public Ticket
+        template <> class Ticket<tags::CPU::MultiCore> :
+            public TicketBase,
+            public PrivateImplementationPattern<Ticket<tags::CPU::MultiCore>, Shared>
         {
             private:
-            /// \name Private members
-            /// \{
+                /// \name Private members
+                /// \{
+                /// \}
 
-            /// Counter for unique global ticket IDs
-            static unsigned counter;
+            public:
+                /// \name Basic Operations
+                /// \{
 
-            /// Unique ID
-            unsigned id;
+                /// Constructor
+                Ticket(const unsigned tid = 0);
 
-            /// ID of the executing thread
-            unsigned thread_id;
+                /// \}
 
-            /// \}
+                /// Mark ticket as completed.
+                virtual void mark();
 
-        public:
-            /// \name Basic Operations
-            /// \{
+                /// Wait for ticket completion.
+                virtual void wait() const;
 
-            /// Constructor.
-            MultiCoreTicket(const unsigned tid = 0);
+                /// Retrieve unique ticket ID
+                unsigned uid() const;
 
-            /// Destructor.
-            ~MultiCoreTicket();
-
-            /// \}
-
-            /// Retrieve unique ticket ID
-            unsigned uid() const;
-
-            /// Retrieve thread ID
-            unsigned & tid();
+                /// Retrieve thread ID
+                unsigned & tid();
        };
-    }
 }
-
 #endif

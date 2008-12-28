@@ -20,10 +20,10 @@
 #ifndef MULTICORE_GUARD_POLICY_HH
 #define MULTICORE_GUARD_POLICY_HH 1
 
-#include <honei/backends/multicore/multicore_ticket.hh>
+#include <honei/backends/multicore/ticket.hh>
 
-#include <map>
 #include <tr1/functional>
+#include <vector>
 
 namespace honei
 {
@@ -35,9 +35,9 @@ namespace honei
 
             public:
 
-                MultiCoreTicket * operator() (unsigned * tid_array)
+                std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > & operator() (std::vector<unsigned> & tids)
                 {
-                    return new MultiCoreTicket;
+                    return *(new std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> >(new Ticket<tags::CPU::MultiCore>));
                 }
         };
 
@@ -45,19 +45,25 @@ namespace honei
         {
             private:
 
-                MultiCoreTicket & other;
+                std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > & other;
 
             public:
 
-                SameCorePolicy(MultiCoreTicket & ticket) :
+                SameCorePolicy(std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > & ticket) :
                     other(ticket)
                 {
                 }
 
-                MultiCoreTicket * operator() (unsigned * tid_array)
+                std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > & operator() (std::vector<unsigned> & tids)
                 {
-                    MultiCoreTicket * ticket = new MultiCoreTicket(other.tid());
-                    return ticket;
+                    unsigned thread_id(other->tid());
+                    if (tids.end() == std::find(tids.begin(), tids.end(), thread_id)) // Thread could already have been deleted
+                        thread_id = 0;
+
+                    std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > * ticket =
+                        new std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> >(new Ticket<tags::CPU::MultiCore>(thread_id));
+
+                    return *ticket;
                 }
         };
 
@@ -74,29 +80,43 @@ namespace honei
                 {
                 }
 
-                MultiCoreTicket * operator() (unsigned * tid_array)
+                std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > & operator() (std::vector<unsigned> & tids)
                 {
-                    MultiCoreTicket * ticket = new MultiCoreTicket(tid_array[core_id]);
-                    return ticket;
+                    std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > * ticket =
+                        new std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> >(new Ticket<tags::CPU::MultiCore>(tids[core_id % tids.size()]));
+
+                    return *ticket;
                 }
         };
+
+        /**
+         * DispatchPolicy realizes different dispatch strategies
+         * for multicore tasks.
+         */
 
         class DispatchPolicy
         {
             private:
 
-                const std::tr1::function<MultiCoreTicket * (unsigned *)> policy;
+                const std::tr1::function<std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > & (std::vector<unsigned> & tids)> policy;
 
-                DispatchPolicy(const std::tr1::function<MultiCoreTicket * (unsigned *)> p) :
+                /// \name Basic Operations
+                /// \{
+
+                /// Constructor
+                DispatchPolicy(const std::tr1::function<std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > & (std::vector<unsigned> & tids)> p) :
                     policy(p)
                 {
                 }
 
+                /// \}
+
             public:
 
-                MultiCoreTicket * apply(unsigned * tid_array)
+                /// Creates a new Ticket and assures the given way of dispatching
+                std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > & apply(std::vector<unsigned> & tids)
                 {
-                    return policy(tid_array);
+                    return policy(tids);
                 }
 
                 /// Named constructors
@@ -108,7 +128,7 @@ namespace honei
                 }
 
                 /// Dispatch on same core as earlier task
-                static DispatchPolicy same_core_as(MultiCoreTicket & ticket)
+                static DispatchPolicy same_core_as(std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > & ticket)
                 {
                     return DispatchPolicy(SameCorePolicy(ticket));
                 }

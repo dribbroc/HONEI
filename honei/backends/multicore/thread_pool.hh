@@ -21,12 +21,12 @@
 #define MULTICORE_GUARD_THREAD_POOL_HH 1
 
 #include <honei/backends/multicore/dispatch_policy.hh>
-#include <honei/backends/multicore/multicore_ticket.hh>
+#include <honei/backends/multicore/ticket.hh>
 #include <honei/backends/multicore/thread.hh>
 #include <honei/util/instantiation_policy.hh>
 
-#include <map>
 #include <sys/syscall.h>
+#include <vector>
 
 namespace honei
 {
@@ -58,14 +58,13 @@ namespace honei
                 // Condition Variable used to synchronize all threads
                 ConditionVariable * const global_barrier;
 
-                // Array of thread IDs
-                unsigned * thread_ids;
+                std::vector<unsigned> thread_ids;
 
                 // Flag whether to use thread affinity
                 const bool affinity;
 
 #ifdef linux
-                // Array of affinity masks for main process and all controlled threadas
+                // Array of affinity masks for main process and all controlled threads
                 cpu_set_t * affinity_mask;
 #endif
 
@@ -85,7 +84,7 @@ namespace honei
 
                 unsigned get_num_threads() const __attribute__((always_inline));
 
-                MultiCoreTicket & enqueue(const std::tr1::function<void ()> & task, DispatchPolicy p = DispatchPolicy::any_core());
+                std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > & enqueue(const std::tr1::function<void ()> & task, DispatchPolicy p = DispatchPolicy::any_core());
         };
     }
 }

@@ -34,7 +34,6 @@ ThreadPool::ThreadPool(const unsigned n_threads, const bool aff) :
     num_threads(n_threads),
     mutex(new Mutex),
     global_barrier(new ConditionVariable),
-    thread_ids(new unsigned[n_threads]),
     affinity(aff)
 {
     for (unsigned i(0) ; i < num_threads ; ++i)
@@ -55,10 +54,10 @@ ThreadPool::ThreadPool(const unsigned n_threads, const bool aff) :
         for (std::list<Thread *>::iterator k(threads.begin()), k_end(threads.end()) ; k != k_end ; ++k, --i)
         {
             Thread * t = *k;
-            thread_ids[i] = t->tid();
+            thread_ids.push_back(t->tid());
             CPU_ZERO(&affinity_mask[i]);
             CPU_SET(i % (num_lpus - 1), &affinity_mask[i]);
-            if(sched_setaffinity(thread_ids[i], sizeof(cpu_set_t), &affinity_mask[i]) != 0)
+            if(sched_setaffinity(t->tid(), sizeof(cpu_set_t), &affinity_mask[i]) != 0)
                 throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 
         }
@@ -92,7 +91,6 @@ ThreadPool::~ThreadPool()
         delete *i;
     }
 
-    delete[] thread_ids;
     delete[] affinity_mask;
     delete global_barrier;
     delete mutex;
@@ -109,19 +107,14 @@ void ThreadPool::add_threads(const unsigned num)
         delete[] affinity_mask;
         affinity_mask = aff_mask;
 
-        unsigned * ids = new unsigned[num_threads + num];
-        std::copy(thread_ids, thread_ids + num_threads, ids);
-        delete[] thread_ids;
-        thread_ids = ids;
-
         for (unsigned i(num_threads + num - 1) ; i >= num_threads ; --i)
         {
             Thread * t = new Thread(mutex, &tasks, global_barrier);
             threads.push_back(t);
-            thread_ids[i] = t->tid();
+            thread_ids.push_back(t->tid());
             CPU_ZERO(&affinity_mask[i]);
             CPU_SET(i % (num_lpus - 1), &affinity_mask[i]);
-            if(sched_setaffinity(thread_ids[i], sizeof(cpu_set_t), &affinity_mask[i]) != 0)
+            if(sched_setaffinity(t->tid(), sizeof(cpu_set_t), &affinity_mask[i]) != 0)
                 throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 
         }
@@ -136,14 +129,13 @@ void ThreadPool::add_threads(const unsigned num)
     num_threads += num;
 }
 
-
-// ToDo: We have a problem when s.o. deletes threads here that he later wants to reuse per same_core_as()
 void ThreadPool::delete_threads(const unsigned num)
 {
     for (unsigned i(0) ; i < num ; ++i)
     {
         Thread * t = threads.back();
         threads.pop_back();
+        thread_ids.pop_back();
         delete t;
     }
 
@@ -153,11 +145,6 @@ void ThreadPool::delete_threads(const unsigned num)
     std::copy(affinity_mask, affinity_mask + num_threads + 1, aff_mask);
     delete[] affinity_mask;
     affinity_mask = aff_mask;
-
-    unsigned * ids = new unsigned[num_threads];
-    std::copy(thread_ids, thread_ids + num_threads, ids);
-    delete[] thread_ids;
-    thread_ids = ids;
 }
 
 unsigned ThreadPool::get_num_threads() const
@@ -165,9 +152,9 @@ unsigned ThreadPool::get_num_threads() const
     return num_threads;
 }
 
-MultiCoreTicket & ThreadPool::enqueue(const std::tr1::function<void ()> & task, DispatchPolicy p)
+std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > & ThreadPool::enqueue(const std::tr1::function<void ()> & task, DispatchPolicy p)
 {
-    MultiCoreTicket * ticket(p.apply(thread_ids));
+    std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > & ticket((affinity ? p.apply(thread_ids) : DispatchPolicy::any_core().apply(thread_ids)));
 
     ThreadTask * t_task(new ThreadTask(task, ticket));
 
@@ -176,7 +163,7 @@ MultiCoreTicket & ThreadPool::enqueue(const std::tr1::function<void ()> & task, 
 
     global_barrier->broadcast();
 
-    return *ticket;
+    return ticket;
 }
 
 ThreadPool * ThreadPool::instance_ptr = 0;

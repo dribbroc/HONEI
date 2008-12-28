@@ -20,8 +20,7 @@
 #ifndef MULTICORE_GUARD_THREAD_HH
 #define MULTICORE_GUARD_THREAD_HH 1
 
-#include <honei/backends/multicore/multicore_ticket.hh>
-
+#include <honei/backends/multicore/ticket.hh>
 #include <honei/util/condition_variable.hh>
 #include <honei/util/mutex.hh>
 #include <honei/util/private_implementation_pattern.hh>
@@ -38,9 +37,9 @@ namespace honei
             typedef std::tr1::function<void () throw ()> WorkFunctor;
 
             WorkFunctor * functor;
-            MultiCoreTicket * ticket;
+            std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > & ticket;
 
-            template <typename WorkerTask> ThreadTask(WorkerTask & task, MultiCoreTicket * tick) :
+            template <typename WorkerTask> ThreadTask(WorkerTask & task, std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > & tick) :
                 functor(new WorkFunctor(task)),
                 ticket(tick)
             {

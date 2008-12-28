@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2008 Sven Mallach <sven.mallach@cs.tu-dortmund.de>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -30,7 +31,7 @@
 
 namespace honei
 {
-    template <> struct Implementation<Ticket>
+    template <> struct Implementation<TicketBase>
     {
         Mutex mutex;
 
@@ -44,17 +45,17 @@ namespace honei
         }
     };
 
-    Ticket::Ticket() :
-        PrivateImplementationPattern<Ticket, Shared>(new Implementation<Ticket>)
+    template <> struct Implementation<Ticket<tags::CPU> > :
+        public Implementation<TicketBase>
+    {
+    };
+
+    Ticket<tags::CPU>::Ticket() :
+        PrivateImplementationPattern<Ticket<tags::CPU>, Shared>(new Implementation<Ticket<tags::CPU> >)
     {
     }
 
-    Ticket::~Ticket()
-    {
-    }
-
-    void
-    Ticket::mark()
+    void Ticket<tags::CPU>::mark()
     {
         CONTEXT("When marking a ticket for completion:");
         Lock l(_imp->mutex);
@@ -65,8 +66,7 @@ namespace honei
         _imp->completion.signal();
     }
 
-    void
-    Ticket::wait() const
+    void Ticket<tags::CPU>::wait() const
     {
         CONTEXT("When waiting for ticket completion:");
         Lock l(_imp->mutex);
@@ -79,7 +79,7 @@ namespace honei
 
     template <> struct Implementation<TicketList>
     {
-        std::list<std::tr1::shared_ptr<Implementation<Ticket> > > tickets;
+        std::list<std::tr1::shared_ptr<TicketBase> > tickets;
     };
 
     TicketList::TicketList() :
@@ -92,11 +92,11 @@ namespace honei
     }
 
     void
-    TicketList::push_back(const Ticket & ticket)
+    TicketList::push_back(const std::tr1::shared_ptr<TicketBase> & ticket)
     {
         CONTEXT("When pushing a Ticket to the back of a TicketList:");
 
-        _imp->tickets.push_back(ticket._imp);
+        _imp->tickets.push_back(ticket);
     }
 
     void
@@ -106,14 +106,7 @@ namespace honei
 
         while (! _imp->tickets.empty())
         {
-            std::tr1::shared_ptr<Implementation<Ticket> > ticket(_imp->tickets.front());
-            Lock l(ticket->mutex);
-
-            while (! ticket->completed)
-            {
-                ticket->completion.wait(ticket->mutex);
-            }
-
+            _imp->tickets.front()->wait();
             _imp->tickets.pop_front();
         }
     }
