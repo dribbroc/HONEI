@@ -23,6 +23,7 @@
 #include <honei/backends/multicore/dispatch_policy.hh>
 #include <honei/backends/multicore/ticket.hh>
 #include <honei/backends/multicore/thread.hh>
+#include <honei/util/attributes.hh>
 #include <honei/util/instantiation_policy.hh>
 
 #include <vector>
@@ -43,10 +44,10 @@ namespace honei
                 unsigned num_threads;
 
                 // List of user POSIX threads
-                std::list<Thread *> threads __attribute__((aligned(128)));
+                std::list<Thread *> threads HONEI_ALIGNED(128);
 
                 // Waiting list of worker tasks to be executed
-                std::list<ThreadTask *> tasks __attribute__((aligned(128)));
+                std::list<ThreadTask *> tasks HONEI_ALIGNED(128);
 
                 // Our Mutex
                 Mutex * const mutex;
@@ -73,7 +74,7 @@ namespace honei
 
                 void delete_threads(const unsigned num);
 
-                unsigned get_num_threads() const __attribute__((always_inline));
+                unsigned get_num_threads() const;
 
                 std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > & enqueue(const std::tr1::function<void ()> & task, DispatchPolicy p = DispatchPolicy::any_core());
         };
