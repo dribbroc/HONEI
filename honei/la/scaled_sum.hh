@@ -90,23 +90,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & x, const DenseVectorBase<DT2_> & y, DT2_ b)
-        {
-            DenseVectorBase<DT1_> & temp = x;
-            ScaledSum<>::value(temp, y, b);
-            return x;
-        }
-
-        template <typename DT1_, typename DT2_>
-        static inline DenseVector<DT1_> & value(DenseVector<DT1_> & x, const DenseVectorBase<DT2_> & y, DT2_ b)
-        {
-            DenseVectorBase<DT1_> & temp = x;
-            ScaledSum<>::value(temp, y, b);
-            return x;
-        }
-
-        template <typename DT1_, typename DT2_>
-        static inline DenseVectorSlice<DT1_> & value(DenseVectorSlice<DT1_> & x, const DenseVectorBase<DT2_> & y, DT2_ b)
+        static inline DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & x, const DenseVectorBase<DT2_> & y, DT2_ b)
         {
             DenseVectorBase<DT1_> & temp = x;
             ScaledSum<>::value(temp, y, b);
@@ -162,23 +146,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_, typename DT3_>
-        static inline DenseVector<DT1_> & value(DenseVector<DT1_> & x, const SparseVector<DT2_> & y, DT3_ b)
-        {
-            DenseVectorBase<DT1_> & temp = x;
-            ScaledSum<>::value(temp, y, b);
-            return x;
-        }
-
-        template <typename DT1_, typename DT2_, typename DT3_>
-        static inline DenseVectorRange<DT1_> & value(DenseVectorRange<DT1_> & x, const SparseVector<DT2_> & y, DT3_ b)
-        {
-            DenseVectorBase<DT1_> & temp = x;
-            ScaledSum<>::value(temp, y, b);
-            return x;
-        }
-
-        template <typename DT1_, typename DT2_, typename DT3_>
-        static inline DenseVectorSlice<DT1_> & value(DenseVectorSlice<DT1_> & x, const SparseVector<DT2_> & y, DT3_ b)
+        static inline DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & x, const SparseVector<DT2_> & y, DT3_ b)
         {
             DenseVectorBase<DT1_> & temp = x;
             ScaledSum<>::value(temp, y, b);
@@ -208,36 +176,13 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_, typename DT3_>
-        static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & x, const DenseVectorBase<DT2_> & y, const DenseVectorBase<DT3_> & z)
+        static inline DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & x, const DenseVectorBase<DT2_> & y, const DenseVectorBase<DT3_> & z)
         {
             DenseVectorBase<DT1_> & temp = x;
             ScaledSum<>::value(temp, y, z);
             return x;
         }
 
-        template <typename DT1_, typename DT2_, typename DT3_>
-        static inline DenseVector<DT1_> & value(DenseVector<DT1_> & x, const DenseVectorBase<DT2_> & y, const DenseVectorBase<DT3_> & z)
-        {
-            DenseVectorBase<DT1_> & temp = x;
-            ScaledSum<>::value(temp, y, z);
-            return x;
-        }
-
-        template <typename DT1_, typename DT2_, typename DT3_>
-        static inline DenseVectorRange<DT1_> & value(DenseVectorRange<DT1_> & x, const DenseVectorBase<DT2_> & y, const DenseVectorBase<DT3_> & z)
-        {
-            DenseVectorBase<DT1_> & temp = x;
-            ScaledSum<>::value(temp, y, z);
-            return x;
-        }
-
-        template <typename DT1_, typename DT2_, typename DT3_>
-        static inline DenseVectorSlice<DT1_> & value(DenseVectorSlice<DT1_> & x, const DenseVectorBase<DT2_> & y, const DenseVectorBase<DT3_> & z)
-        {
-            DenseVectorBase<DT1_> & temp = x;
-            ScaledSum<>::value(temp, y, z);
-            return x;
-        }
         /// \}
 
         template <typename DT1_, typename DT2_, typename DT3_>
