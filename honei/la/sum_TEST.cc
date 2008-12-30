@@ -803,9 +803,14 @@ class ScalarDenseVectorSumTest :
 };
 ScalarDenseVectorSumTest<tags::CPU, float>  scalar_dense_vector_sum_test_float("float");
 ScalarDenseVectorSumTest<tags::CPU, double> scalar_dense_vector_sum_test_double("double");
+ScalarDenseVectorSumTest<tags::CPU::MultiCore, float>  mc_scalar_dense_vector_sum_test_float("MC float");
+ScalarDenseVectorSumTest<tags::CPU::MultiCore, double> mc_scalar_dense_vector_sum_test_double("MC double");
 #ifdef HONEI_SSE
 ScalarDenseVectorSumTest<tags::CPU::SSE, float>  sse_scalar_dense_vector_sum_test_float("SSE float");
 ScalarDenseVectorSumTest<tags::CPU::SSE, double> sse_scalar_dense_vector_sum_test_double("SSE double");
+ScalarDenseVectorSumTest<tags::CPU::MultiCore::SSE, float>  mc_sse_scalar_dense_vector_sum_test_float("MC SSE float");
+ScalarDenseVectorSumTest<tags::CPU::MultiCore::SSE, double> mc_sse_scalar_dense_vector_sum_test_double("MC SSE double");
+
 #endif
 #ifdef HONEI_CELL
 ScalarDenseVectorSumTest<tags::Cell, float> cell_scalar_dense_vector_sum_test_float("Cell float");
