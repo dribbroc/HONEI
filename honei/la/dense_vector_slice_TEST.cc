@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007 Volker Jung <volker.jung@uni-dortmund.de>
+ * Copyright (c) 2009 Sven Mallach <sven.mallach@cs.uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -25,7 +26,6 @@
 #include <limits>
 #include <string>
 
-
 using namespace honei;
 using namespace tests;
 
@@ -45,12 +45,50 @@ class DenseVectorSliceCreationTest :
             {
                 DenseVector<DataType_> dv(size, DataType_(0));
                 DenseVectorSlice<DataType_> dvs(dv, size - 5, 3, 1);
-                TEST_CHECK(true);
+                TEST_CHECK_EQUAL(*(dvs.begin_elements()), *(dv.element_at(3)));
+                TEST_CHECK_EQUAL(*(dvs.end_elements()), *(dv.element_at(3 + size - 5)));
             }
         }
 };
 DenseVectorSliceCreationTest<float> dense_vector_slice_creation_test_float("float");
 DenseVectorSliceCreationTest<double> dense_vector_slice_creation_test_double("double");
+
+template <typename DataType_>
+class DenseVectorSliceIterationTest :
+    public BaseTest
+{
+    public:
+        DenseVectorSliceIterationTest(const std::string & type) :
+            BaseTest("dense_vector_slice_iteration_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
+            {
+                DenseVector<DataType_> dv(size);
+                for (typename DenseVector<DataType_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ; i != i_end ; ++i)
+                {
+                    *i = i.index();
+                }
+
+                unsigned pos(rand() % size / 2);
+
+                DenseVectorSlice<DataType_> dvs(dv, size / 2, pos, 2);
+
+                typename DenseVector<DataType_>::ConstElementIterator j(dv.element_at(pos));
+                for (typename DenseVectorSlice<DataType_>::ConstElementIterator i(dvs.begin_elements()), i_end(dvs.end_elements()) ;
+                        i != i_end ; ++i, ++j)
+                {
+                    TEST_CHECK_EQUAL(*i, *j);
+                    ++j;
+                }
+            }
+        }
+};
+DenseVectorSliceIterationTest<float> dense_vector_slice_iteration_test_float("float");
+DenseVectorSliceIterationTest<double> dense_vector_slice_itearation_test_double("double");
 
 template <typename DataType_>
 class DenseVectorSliceCopyTest :
@@ -171,35 +209,3 @@ class DenseVectorSliceFunctionsTest :
 };
 DenseVectorSliceFunctionsTest<float> dense_vector_slice_functions_test_float("float");
 DenseVectorSliceFunctionsTest<double> dense_vector_slice_functions_test_double("double");
-
-template <typename DataType_>
-class DenseVectorSliceQuickTest :
-    public QuickTest
-{
-    public:
-        DenseVectorSliceQuickTest(const std::string & type) :
-            QuickTest("dense_vector_slice_quick_test<" + type + ">")
-        {
-        }
-
-        virtual void run() const
-        {
-            DenseVector<DataType_> dv(4711, DataType_(123.987));
-            DenseVectorSlice<DataType_> dvs(dv, 238, 921, 13);
-            TEST_CHECK_EQUAL(dv.size(), 4711ul);
-            TEST_CHECK_EQUAL(dvs.size(), 238ul);
-            TEST_CHECK_EQUAL(dv, dv);
-            TEST_CHECK_EQUAL(dvs, dvs);
-            TEST_CHECK_EQUAL_WITHIN_EPS(dv[4710] , 123.987, std::sqrt(std::numeric_limits<DataType_>::epsilon()));
-            TEST_CHECK_EQUAL_WITHIN_EPS(dvs[89], 123.987, std::sqrt(std::numeric_limits<DataType_>::epsilon()));
-            DataType_ s = DataType_(1.2345);
-            dv[999] = s;
-            dvs[67] = s + 5;
-            TEST_CHECK_EQUAL_WITHIN_EPS(dv[999] , s, std::sqrt(std::numeric_limits<DataType_>::epsilon()));
-            TEST_CHECK_EQUAL_WITHIN_EPS(dvs[67], s + 5, std::sqrt(std::numeric_limits<DataType_>::epsilon()));
-            TEST_CHECK_EQUAL_WITHIN_EPS(dvs[6], s, std::sqrt(std::numeric_limits<DataType_>::epsilon()));
-            TEST_CHECK_EQUAL_WITHIN_EPS(dv[1792], s + 5, std::sqrt(std::numeric_limits<DataType_>::epsilon()));
-        }
-};
-DenseVectorSliceQuickTest<float>  dense_vector_slice_quick_test_float("float");
-DenseVectorSliceQuickTest<double> dense_vector_slice_quick_test_double("double");

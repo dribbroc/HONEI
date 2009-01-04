@@ -58,31 +58,41 @@ namespace honei
             offset(o),
             stepsize(ss)
         {
+            CONTEXT("When creating DenseVectorSlice:");
+            ASSERT(stepsize > 0, "stepsize is zero!");
+            ASSERT(size > 0, "size is zero!");
+            ASSERT(elements.size() > offset + (size - 1) * stepsize, "end of slice is beyond end of source!");
         }
     };
 
+    /// Private Constructor
     template <typename DataType_>
     DenseVectorSlice<DataType_>::DenseVectorSlice(const SharedArray<DataType_> & elements, const unsigned long size,
             const unsigned long offset, const unsigned long stepsize) :
         PrivateImplementationPattern<DenseVectorSlice<DataType_>, Shared>(new Implementation<DenseVectorSlice<DataType_> >(
                     elements, size, offset, stepsize))
     {
-        CONTEXT("When creating DenseVectorSlice:");
-        ASSERT(size > 0, "size is zero!");
-        ASSERT(elements.size() > offset + (size - 1) * stepsize, "end of slice is beyond end of source!");
     }
 
+    /// Constructor for creation of a new DenseVectorSlice from some DenseVectorBase implementation type
     template <typename DataType_>
-    DenseVectorSlice<DataType_>::DenseVectorSlice(const DenseVector<DataType_> & source, const unsigned long size,
+    DenseVectorSlice<DataType_>::DenseVectorSlice(const DenseVectorBase<DataType_> & source, const unsigned long size,
             const unsigned long offset, const unsigned long stepsize) :
         PrivateImplementationPattern<DenseVectorSlice<DataType_>, Shared>(new Implementation<DenseVectorSlice<DataType_> >(
-                    source._imp->elements, size, offset, stepsize))
+                    source.array(), size, offset, stepsize))
     {
-        CONTEXT("When creating DenseVectorSlice:");
-        ASSERT(size > 0, "size is zero!");
-        ASSERT(source.size() > offset + (size - 1) * stepsize, "end of slice is beyond end of source!");
     }
 
+    /// Constructor for creation of a new DenseVectorSlice from some DenseVectorContinuousBase implementation type
+    template <typename DataType_>
+    DenseVectorSlice<DataType_>::DenseVectorSlice(const DenseVectorContinuousBase<DataType_> & source, const unsigned long size,
+            const unsigned long offset, const unsigned long stepsize) :
+        PrivateImplementationPattern<DenseVectorSlice<DataType_>, Shared>(new Implementation<DenseVectorSlice<DataType_> >(
+                    source.array(), size, offset, stepsize))
+    {
+    }
+
+    /// Copy-Constructor
     template <typename DataType_>
     DenseVectorSlice<DataType_>::DenseVectorSlice(const DenseVectorSlice<DataType_> & other) :
         PrivateImplementationPattern<DenseVectorSlice<DataType_>, Shared>(new Implementation<DenseVectorSlice<DataType_> >(
@@ -175,6 +185,12 @@ namespace honei
     inline DataType_ * DenseVectorSlice<DataType_>::elements() const
     {
         return this->_imp->elements.get() + this->_imp->offset;
+    }
+
+    template <typename DataType_>
+    inline SharedArray<DataType_> & DenseVectorSlice<DataType_>::array() const
+    {
+        return this->_imp->elements;
     }
 
     template <typename DataType_>

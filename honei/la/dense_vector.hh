@@ -182,11 +182,17 @@ namespace honei
             /// Return our offset.
             virtual unsigned long offset() const;
 
+            /// Return our stepsize.
+            virtual unsigned long stepsize() const;
+
             /// Return a range of our DenseVector.
             virtual DenseVectorRange<DataType_> range(unsigned long size, unsigned long offset) const;
 
             /// Return a pointer to our elements.
             virtual DataType_ * elements() const;
+
+            /// Return a reference of the elements array.
+            virtual SharedArray<DataType_> & array() const;
 
             /// Return our memory id
             virtual void * memid() const;

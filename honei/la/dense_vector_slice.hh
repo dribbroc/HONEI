@@ -69,6 +69,9 @@ namespace honei
             /// Constructors
             /// \{
 
+            /// Copy-constructor.
+            DenseVectorSlice(const DenseVectorSlice<DataType_> & other);
+
             /**
              * Constructor.
              *
@@ -77,11 +80,12 @@ namespace honei
              * \param offset Offset of the slice's data inside the source vector's elements.
              * \param stepsize Stepsize between two of the slice's elements inside the vector's elements.
              */
-            DenseVectorSlice(const DenseVector<DataType_> & source, const unsigned long size,
+            DenseVectorSlice(const DenseVectorBase<DataType_> & source, const unsigned long size,
                                 const unsigned long offset, const unsigned long stepsize);
 
-            /// Copy-constructor.
-            DenseVectorSlice(const DenseVectorSlice<DataType_> & other);
+            DenseVectorSlice(const DenseVectorContinuousBase<DataType_> & source, const unsigned long size,
+                                const unsigned long offset, const unsigned long stepsize);
+
 
             /// Destructor.
             ~DenseVectorSlice();
@@ -122,6 +126,9 @@ namespace honei
 
             /// Return a pointer to our elements.
             virtual DataType_ * elements() const;
+
+            /// Return a reference of the elements array.
+            virtual SharedArray<DataType_> & array() const;
 
             /// Return our memory id
             virtual void * memid() const;

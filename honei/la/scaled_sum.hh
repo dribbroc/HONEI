@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007, 2008 Sven Mallach <sven.mallach@cs.uni-dortmund.de>
+ * Copyright (c) 2007, 2008, 2009 Sven Mallach <sven.mallach@cs.uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -20,7 +20,7 @@
 #ifndef LIBLA_GUARD_SCALED_SUM_HH
 #define LIBLA_GUARD_SCALED_SUM_HH 1
 
-#include <honei/backends/multicore/dispatch_policy.hh>
+#include <honei/backends/multicore/operation.hh>
 #include <honei/backends/multicore/thread_pool.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/dense_vector.hh>
@@ -28,11 +28,7 @@
 #include <honei/la/vector_error.hh>
 #include <honei/util/benchmark_info.hh>
 #include <honei/util/configuration.hh>
-#include <honei/util/operation_wrapper.hh>
-#include <honei/util/partitioner.hh>
 #include <honei/util/tags.hh>
-
-#include <tr1/functional>
 
 namespace honei
 {
@@ -83,7 +79,6 @@ namespace honei
                     l_end(x.end_elements()) ; l != l_end ; ++l, ++r)
             {
                 *l += b * (*r);
-
             }
 
             return x;
@@ -341,94 +336,57 @@ namespace honei
         template <typename Tag_> struct ScaledSum
         {
             template <typename DT1_, typename DT2_>
+            static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & x, const DenseVectorBase<DT2_> & y, DT2_ b)
+            {
+                CONTEXT("When calculating ScaledSum (DenseVectorBase, DenseVectorBase, scalar) using backend : " + Tag_::name);
+
+                unsigned long min_part_size(Configuration::instance()->get_value("mc::ScaledSum(DVB,DVB,DT)::min_part_size", 128));
+                unsigned long max_count(Configuration::instance()->get_value("mc::ScaledSum(DVB,DVB,DT)::max_count",
+                            mc::ThreadPool::instance()->get_num_threads()));
+
+                Operation<honei::ScaledSum<typename Tag_::DelegateTo> >::op(x, y, b, min_part_size, max_count);
+
+                return x;
+            }
+
+            template <typename DT1_, typename DT2_>
             static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & x, const DenseVectorContinuousBase<DT2_> & y, DT2_ b)
             {
                 CONTEXT("When calculating ScaledSum (DenseVectorContinuousBase, DenseVectorContinuousBase, scalar) using backend : " + Tag_::name);
 
-                if (x.size() != y.size())
-                    throw VectorSizeDoesNotMatch(y.size(), x.size());
-
                 unsigned long min_part_size(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DT)::min_part_size", 128));
+                unsigned long max_count(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DT)::max_count",
+                            mc::ThreadPool::instance()->get_num_threads()));
 
-                if (x.size() < 2 * min_part_size)
-                {
-                    honei::ScaledSum<typename Tag_::DelegateTo>::value(x, y, b);
-                }
-                else
-                {
-                    PartitionList partitions;
-                    Partitioner<tags::CPU::MultiCore>(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DT)::max_count",
-                        mc::ThreadPool::instance()->get_num_threads()), min_part_size, 16, x.size(), PartitionList::Filler(partitions));
-
-                    TicketList tickets;
-
-                    PartitionList::ConstIterator p(partitions.begin());
-                    for (PartitionList::ConstIterator p_last(partitions.last()) ; p != p_last ; ++p)
-                    {
-                        DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
-                        DenseVectorRange<DT2_> y_range(y.range(p->size, p->start));
-
-                        OperationWrapper<honei::ScaledSum<typename Tag_::DelegateTo>, DenseVectorContinuousBase<DT1_>,
-                        DenseVectorContinuousBase<DT1_>, DenseVectorContinuousBase<DT2_>, DT2_> wrapper(x_range);
-                        tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper, x_range, y_range, b)));
-                    }
-
-                    DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
-                    DenseVectorRange<DT2_> y_range(y.range(p->size, p->start));
-
-                    honei::ScaledSum<typename Tag_::DelegateTo>::value(x_range, y_range, b);
-
-                    tickets.wait();
-                }
+                Operation<honei::ScaledSum<typename Tag_::DelegateTo> >::op(x, y, b, min_part_size, max_count);
 
                 return x;
-
             }
 
             template <typename DT1_, typename DT2_>
-            static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & x, const DenseVectorContinuousBase<DT2_> & y,
-                const DenseVectorContinuousBase<DT2_> & z)
+            static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & x, const DenseVectorBase<DT2_> & y, DenseVectorBase<DT2_> & z)
+            {
+                CONTEXT("When calculating ScaledSum (DenseVectorBase, DenseVectorBase, DenseVectorBase) using backend : " + Tag_::name);
+                unsigned long min_part_size(Configuration::instance()->get_value("mc::ScaledSum(DVB,DVB,DVB)::min_part_size", 128));
+                unsigned long max_count(Configuration::instance()->get_value("mc::ScaledSum(DVB,DVB,DVB)::max_count",
+                            mc::ThreadPool::instance()->get_num_threads()));
+
+                Operation<honei::ScaledSum<typename Tag_::DelegateTo> >::op(x, y, z, min_part_size, max_count);
+
+                return x;
+            }
+
+            template <typename DT1_, typename DT2_>
+            static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & x,
+                    const DenseVectorContinuousBase<DT2_> & y, const DenseVectorContinuousBase<DT2_> & z)
             {
                 CONTEXT("When calculating ScaledSum (DenseVectorContinuousBase, DenseVectorContinuousBase, DenseVectorContinuousBase) using backend : " + Tag_::name);
 
-                if (x.size() != y.size())
-                    throw VectorSizeDoesNotMatch(y.size(), x.size());
-
                 unsigned long min_part_size(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DVCB)::min_part_size", 128));
+                unsigned long max_count(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DVCB)::max_count",
+                            mc::ThreadPool::instance()->get_num_threads()));
 
-                if (x.size() < 2 * min_part_size)
-                {
-                    honei::ScaledSum<typename Tag_::DelegateTo>::value(x, y, z);
-                }
-                else
-                {
-                    PartitionList partitions;
-                    Partitioner<tags::CPU::MultiCore>(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DVCB)::max_count",
-                        mc::ThreadPool::instance()->get_num_threads()), min_part_size, 16, x.size(), PartitionList::Filler(partitions));
-
-                    TicketList tickets;
-
-                    PartitionList::ConstIterator p(partitions.begin());
-                    for (PartitionList::ConstIterator p_last(partitions.last()) ; p != p_last ; ++p)
-                    {
-                        DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
-                        DenseVectorRange<DT2_> y_range(y.range(p->size, p->start));
-                        DenseVectorRange<DT2_> z_range(z.range(p->size, p->start));
-
-                        OperationWrapper<honei::ScaledSum<typename Tag_::DelegateTo>, DenseVectorContinuousBase<DT1_>,
-                            DenseVectorContinuousBase<DT1_>, DenseVectorContinuousBase<DT2_>,
-                            DenseVectorContinuousBase<DT2_> > wrapper(x_range);
-                        tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper, x_range, y_range, z_range)));
-                    }
-
-                    DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
-                    DenseVectorRange<DT2_> y_range(y.range(p->size, p->start));
-                    DenseVectorRange<DT2_> z_range(z.range(p->size, p->start));
-
-                    honei::ScaledSum<typename Tag_::DelegateTo>::value(x_range, y_range, z_range);
-
-                    tickets.wait();
-                }
+                Operation<honei::ScaledSum<typename Tag_::DelegateTo> >::op(x, y, z, min_part_size, max_count);
 
                 return x;
             }

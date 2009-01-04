@@ -50,11 +50,15 @@ namespace honei
         /// Our offset.
         const unsigned long offset;
 
+        /// Our stepsize.
+        const unsigned long stepsize;
+
         /// Constructor.
         Implementation(const SharedArray<DataType_> & e, unsigned long s, unsigned long o) :
             elements(e),
             size(s),
-            offset(o)
+            offset(o),
+            stepsize(1)
         {
         }
     };
@@ -181,6 +185,12 @@ namespace honei
     }
 
     template <typename DataType_>
+    unsigned long DenseVectorRange<DataType_>::stepsize() const
+    {
+        return this->_imp->stepsize;
+    }
+
+    template <typename DataType_>
     DenseVectorRange<DataType_> DenseVectorRange<DataType_>::range(unsigned long size, unsigned long offset) const
     {
         DenseVectorRange<DataType_> result(*this, size, offset);
@@ -191,6 +201,12 @@ namespace honei
     inline DataType_ * DenseVectorRange<DataType_>::elements() const
     {
         return this->_imp->elements.get() + this->_imp->offset;
+    }
+
+    template <typename DataType_>
+    inline SharedArray<DataType_> & DenseVectorRange<DataType_>::array() const
+    {
+        return this->_imp->elements;
     }
 
     template <typename DataType_>

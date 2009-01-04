@@ -226,6 +226,12 @@ namespace honei
     }
 
     template <typename DataType_>
+    unsigned long DenseVector<DataType_>::stepsize() const
+    {
+        return this->_imp->stepsize;
+    }
+
+    template <typename DataType_>
     DenseVectorRange<DataType_> DenseVector<DataType_>::range(unsigned long size, unsigned long offset) const
     {
         DenseVectorRange<DataType_> result((*this) , size, offset);
@@ -236,6 +242,12 @@ namespace honei
     inline DataType_ * DenseVector<DataType_>::elements() const
     {
         return this->_imp->elements.get();
+    }
+
+    template <typename DataType_>
+    inline SharedArray<DataType_> & DenseVector<DataType_>::array() const
+    {
+        return this->_imp->elements;
     }
 
     template <typename DataType_>

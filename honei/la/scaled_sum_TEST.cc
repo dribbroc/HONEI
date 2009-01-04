@@ -145,9 +145,9 @@ class DenseVectorRangeScaledSumTest :
         {
             for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
             {
-                for (int i(0) ; i < 4 ; i++)
+                for (int i(0) ; i < 4 ; ++i)
                 {
-                    for (int j(0) ; j < 4 ; j++)
+                    for (int j(0) ; j < 4 ; ++j)
                     {
                         DenseVector<DataType_> dv1_source(size * 2, DataType_(2));
                         DenseVectorRange<DataType_> dv1(dv1_source, size, i);
@@ -239,6 +239,120 @@ DenseVectorRangeScaledSumQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_ran
 DenseVectorRangeScaledSumQuickTest<tags::Cell, float> cell_dense_vector_range_scaled_sum_quick_test_float("Cell float");
 DenseVectorRangeScaledSumQuickTest<tags::Cell, double> cell_dense_vector_range_scaled_sum_quick_test_double("Cell double");
 #endif
+
+template <typename Tag_, typename DataType_>
+class DenseVectorSliceScaledSumTest :
+    public BaseTest
+{
+    public:
+        DenseVectorSliceScaledSumTest(const std::string & type) :
+            BaseTest("dense_vector_Slice_scaled_sum_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
+            {
+                for (int i(1) ; i < 4 ; ++i)
+                {
+                    for (int j(1) ; j < 4 ; ++j)
+                    {
+                        DenseVector<DataType_> dv1_source(size * 6, DataType_(2));
+                        DenseVectorSlice<DataType_> dv1(dv1_source, size, i, j);
+
+                        DenseVector<DataType_> dv2_source(size * 6, DataType_(3));
+                        DenseVectorSlice<DataType_> dv2(dv2_source, size, i, j);
+                        DataType_ scal(DataType_(2));
+
+                        ScaledSum<Tag_>::value(dv1, dv2, scal);
+                        DenseVector<DataType_> dv3(size, DataType_(8));
+
+                        TEST(dv1.lock(lm_read_only), TEST_CHECK_EQUAL(dv1, dv3), dv1.unlock(lm_read_only));
+                    }
+                }
+            }
+
+            DenseVector<DataType_> dv00(1, DataType_(1));
+            DenseVector<DataType_> dv01(2, DataType_(1));
+            DataType_ scal00(DataType_(2));
+
+            TEST_CHECK_THROWS(ScaledSum<Tag_>::value(dv00, dv01, scal00), VectorSizeDoesNotMatch);
+        }
+};
+DenseVectorSliceScaledSumTest<tags::CPU, float> dense_vector_Slice_scaled_sum_test_float("float");
+DenseVectorSliceScaledSumTest<tags::CPU, double> dense_vector_Slice_scaled_sum_test_double("double");
+DenseVectorSliceScaledSumTest<tags::CPU::MultiCore, float> mc_dense_vector_Slice_scaled_sum_test_float("MC float");
+DenseVectorSliceScaledSumTest<tags::CPU::MultiCore, double> mc_dense_vector_Slice_scaled_sum_test_double("MC double");
+/*
+#ifdef HONEI_SSE
+DenseVectorSliceScaledSumTest<tags::CPU::SSE, float> sse_dense_vector_Slice_scaled_sum_test_float("SSE float");
+DenseVectorSliceScaledSumTest<tags::CPU::SSE, double> sse_dense_vector_Slice_scaled_sum_test_double("SSE double");
+DenseVectorSliceScaledSumTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_Slice_scaled_sum_test_float("MC SSE float");
+DenseVectorSliceScaledSumTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_Slice_scaled_sum_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CUDA
+DenseVectorSliceScaledSumTest<tags::GPU::CUDA, float> cuda_dense_vector_Slice_scaled_sum_test_float("float");
+#endif
+#ifdef HONEI_CELL
+DenseVectorSliceScaledSumTest<tags::Cell, float> cell_dense_vector_Slice_scaled_sum_test_float("Cell float");
+DenseVectorSliceScaledSumTest<tags::Cell, double> cell_dense_vector_Slice_scaled_sum_test_double("Cell double");
+#endif
+*/
+
+template <typename Tag_, typename DataType_>
+class DenseVectorSliceScaledSumQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorSliceScaledSumQuickTest(const std::string & type) :
+            QuickTest("dense_vector_Slice_scaled_sum_quick_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(165);
+
+            DenseVector<DataType_> dv1_source(size * 3, DataType_(2));
+            DenseVectorSlice<DataType_> dv1(dv1_source, size , 5, 2);
+
+            DenseVector<DataType_> dv2_source(size * 2, DataType_(3));
+            DenseVectorSlice<DataType_> dv2(dv2_source, size, 2, 1);
+
+            DataType_ scal(DataType_(2));
+            DenseVector<DataType_> dv3(size, DataType_(8));
+            ScaledSum<Tag_>::value(dv1, dv2, scal);
+            TEST(dv1.lock(lm_read_only), TEST_CHECK_EQUAL(dv1, dv3), dv1.unlock(lm_read_only));
+
+            DenseVector<DataType_> dv00(1, DataType_(1));
+            DenseVector<DataType_> dv01(2, DataType_(1));
+            DataType_ scal00(DataType_(2));
+
+            TEST_CHECK_THROWS(ScaledSum<Tag_>::value(dv00, dv01, scal00), VectorSizeDoesNotMatch);
+        }
+};
+DenseVectorSliceScaledSumQuickTest<tags::CPU, float> dense_vector_Slice_scaled_sum_quick_test_float("float");
+DenseVectorSliceScaledSumQuickTest<tags::CPU, double> dense_vector_Slice_scaled_sum_quick_test_double("double");
+DenseVectorSliceScaledSumQuickTest<tags::CPU::MultiCore, float> mc_dense_vector_Slice_scaled_sum_quick_test_float("MC float");
+DenseVectorSliceScaledSumQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_Slice_scaled_sum_quick_test_double("MC double");
+/*
+#ifdef HONEI_SSE
+DenseVectorSliceScaledSumQuickTest<tags::CPU::SSE, float> sse_dense_vector_Slice_scaled_sum_quick_test_float("SSE float");
+DenseVectorSliceScaledSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_Slice_scaled_sum_quick_test_double("SSE double");
+DenseVectorSliceScaledSumQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_Slice_scaled_sum_quick_test_float("MC SSE float");
+DenseVectorSliceScaledSumQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_Slice_scaled_sum_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CUDA
+DenseVectorSliceScaledSumQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_Slice_scaled_sum_quick_test_float("float");
+#endif
+#ifdef HONEI_CELL
+DenseVectorSliceScaledSumQuickTest<tags::Cell, float> cell_dense_vector_Slice_scaled_sum_quick_test_float("Cell float");
+DenseVectorSliceScaledSumQuickTest<tags::Cell, double> cell_dense_vector_Slice_scaled_sum_quick_test_double("Cell double");
+#endif
+*/
 
 template <typename Tag_, typename DataType_>
 class DenseVector3ScaledSumTest :
@@ -338,6 +452,124 @@ DenseVector3ScaledSumQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_v
 #ifdef HONEI_CUDA
 DenseVector3ScaledSumQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_3_scaled_sum_quick_test_float("float");
 #endif
+
+template <typename Tag_, typename DataType_>
+class DenseVectorSlice3ScaledSumTest :
+    public BaseTest
+{
+    public:
+        DenseVectorSlice3ScaledSumTest(const std::string & type) :
+            BaseTest("dense_vector_slice_3_scaled_sum_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
+            {
+                for (int i(1) ; i < 4 ; ++i)
+                {
+                    for (int j(1) ; j < 4 ; ++j)
+                    {
+                        DenseVector<DataType_> dv1_source(size * 6, DataType_(2));
+                        DenseVectorSlice<DataType_> dv1(dv1_source, size, i, j);
+
+                        DenseVector<DataType_> dv2_source(size * 6, DataType_(3));
+                        DenseVectorSlice<DataType_> dv2(dv2_source, size, i, j);
+
+                        DenseVector<DataType_> dv3_source(size * 6, DataType_(4));
+                        DenseVectorSlice<DataType_> dv3(dv3_source, size, i, j);
+
+                        ScaledSum<Tag_>::value(dv1, dv2, dv3);
+                        DenseVector<DataType_> dv4(size, DataType_(14));
+
+                        TEST(dv1.lock(lm_read_only), TEST_CHECK_EQUAL(dv1, dv4), dv1.unlock(lm_read_only));
+                    }
+                }
+            }
+
+            DenseVector<DataType_> dv00(1, DataType_(1));
+            DenseVector<DataType_> dv01(2, DataType_(1));
+            DenseVector<DataType_> dv02(2, DataType_(1));
+
+            TEST_CHECK_THROWS(ScaledSum<Tag_>::value(dv00, dv01, dv02), VectorSizeDoesNotMatch);
+        }
+};
+DenseVectorSlice3ScaledSumTest<tags::CPU, float> dense_vector_Slice_3scaled_sum_test_float("float");
+DenseVectorSlice3ScaledSumTest<tags::CPU, double> dense_vector_Slice_3scaled_sum_test_double("double");
+DenseVectorSlice3ScaledSumTest<tags::CPU::MultiCore, float> mc_dense_vector_Slice_3scaled_sum_test_float("MC float");
+DenseVectorSlice3ScaledSumTest<tags::CPU::MultiCore, double> mc_dense_vector_Slice_3scaled_sum_test_double("MC double");
+/*
+#ifdef HONEI_SSE
+DenseVectorSlice3ScaledSumTest<tags::CPU::SSE, float> sse_dense_vector_Slice_3scaled_sum_test_float("SSE float");
+DenseVectorSlice3ScaledSumTest<tags::CPU::SSE, double> sse_dense_vector_Slice_3scaled_sum_test_double("SSE double");
+DenseVectorSlice3ScaledSumTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_Slice_3scaled_sum_test_float("MC SSE float");
+DenseVectorSlice3ScaledSumTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_Slice_3scaled_sum_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CUDA
+DenseVectorSlice3ScaledSumTest<tags::GPU::CUDA, float> cuda_dense_vector_Slice_3scaled_sum_test_float("float");
+#endif
+#ifdef HONEI_CELL
+DenseVectorSlice3ScaledSumTest<tags::Cell, float> cell_dense_vector_Slice_3scaled_sum_test_float("Cell float");
+DenseVectorSlice3ScaledSumTest<tags::Cell, double> cell_dense_vector_Slice_3scaled_sum_test_double("Cell double");
+#endif
+*/
+
+template <typename Tag_, typename DataType_>
+class DenseVectorSlice3ScaledSumQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorSlice3ScaledSumQuickTest(const std::string & type) :
+            QuickTest("dense_vector_slice_3_scaled_sum_quick_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(165);
+
+            DenseVector<DataType_> dv1_source(size * 3, DataType_(2));
+            DenseVectorSlice<DataType_> dv1(dv1_source, size , 5, 2);
+
+            DenseVector<DataType_> dv2_source(size * 2, DataType_(3));
+            DenseVectorSlice<DataType_> dv2(dv2_source, size, 2, 1);
+
+            DenseVector<DataType_> dv3_source(size * 2, DataType_(4));
+            DenseVectorSlice<DataType_> dv3(dv3_source, size, 2, 1);
+
+            DenseVector<DataType_> dv4(size, DataType_(14));
+            ScaledSum<Tag_>::value(dv1, dv2, dv3);
+            TEST(dv1.lock(lm_read_only), TEST_CHECK_EQUAL(dv1, dv4), dv1.unlock(lm_read_only));
+
+            DenseVector<DataType_> dv00(1, DataType_(1));
+            DenseVector<DataType_> dv01(2, DataType_(1));
+            DenseVector<DataType_> dv02(2, DataType_(1));
+
+            TEST_CHECK_THROWS(ScaledSum<Tag_>::value(dv00, dv01, dv02), VectorSizeDoesNotMatch);
+        }
+};
+DenseVectorSlice3ScaledSumQuickTest<tags::CPU, float> dense_vector_Slice_3scaled_sum_quick_test_float("float");
+DenseVectorSlice3ScaledSumQuickTest<tags::CPU, double> dense_vector_Slice_3scaled_sum_quick_test_double("double");
+DenseVectorSlice3ScaledSumQuickTest<tags::CPU::MultiCore, float> mc_dense_vector_Slice_3scaled_sum_quick_test_float("MC float");
+DenseVectorSlice3ScaledSumQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_Slice_3scaled_sum_quick_test_double("MC double");
+/*
+#ifdef HONEI_SSE
+DenseVectorSlice3ScaledSumQuickTest<tags::CPU::SSE, float> sse_dense_vector_Slice_3scaled_sum_quick_test_float("SSE float");
+DenseVectorSlice3ScaledSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_Slice_3scaled_sum_quick_test_double("SSE double");
+DenseVectorSlice3ScaledSumQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_Slice_3scaled_sum_quick_test_float("MC SSE float");
+DenseVectorSlice3ScaledSumQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_Slice_3scaled_sum_quick_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CUDA
+DenseVectorSlice3ScaledSumQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_Slice_3scaled_sum_quick_test_float("float");
+#endif
+#ifdef HONEI_CELL
+DenseVectorSlice3ScaledSumQuickTest<tags::Cell, float> cell_dense_vector_Slice_3scaled_sum_quick_test_float("Cell float");
+DenseVectorSlice3ScaledSumQuickTest<tags::Cell, double> cell_dense_vector_Slice_3scaled_sum_quick_test_double("Cell double");
+#endif
+*/
 
 template <typename Tag_, typename DataType_>
 class DenseVectorSparseVectorScaledSumTest :
