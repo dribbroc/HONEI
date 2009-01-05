@@ -1,7 +1,6 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
-
 /*
- * Copyright (c) 2008 Sven Mallach <sven.mallach@cs.tu-dortmund.de>
+ * Copyright (c) 2009 Sven Mallach <sven.mallach@cs.uni-dortmund.de>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -17,12 +16,11 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef MULTICORE_GUARD_THREAD_HH
-#define MULTICORE_GUARD_THREAD_HH 1
+#ifndef MULTICORE_GUARD_THREAD_OBJECT_HH
+#define MULTICORE_GUARD_THREAD_OBJECT_HH 1
 
 #include <honei/backends/multicore/ticket.hh>
 #include <honei/util/condition_variable.hh>
-#include <honei/util/mutex.hh>
 #include <honei/util/private_implementation_pattern.hh>
 
 #include <list>
@@ -51,25 +49,23 @@ namespace honei
             }
         };
 
-        class Thread :
-            public PrivateImplementationPattern<Thread, Shared>
+        class ThreadFunction :
+            public PrivateImplementationPattern<ThreadFunction, Shared>
         {
             private:
-                /// Unwanted copy-constructor: Do not implement. See EffCpp, Item 27.
-                Thread(const Thread &);
-
-                /// Unwanted assignment operator: Do not implement. See EffCpp, Item 27.
-                Thread & operator= (const Thread &);
 
             public:
-                /// Constructor (cpu_id is the core to assign the thread to if affinity is enabled)
-                Thread(Mutex * const pool_mutex, std::list<ThreadTask *> * list, ConditionVariable * cv);
 
-                /// Destructor.
-                ~Thread();
+                ThreadFunction(Mutex * const mutex, ConditionVariable * const barrier, std::list<ThreadTask *> * const list);
 
-                /// Return the thread id given by the operating system
-                const unsigned tid();
+                ~ThreadFunction();
+
+                /// The threads' main function
+                void operator() ();
+
+                void stop();
+
+                const unsigned tid() const;
         };
     }
 }

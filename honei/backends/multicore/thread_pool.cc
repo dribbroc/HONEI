@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2008 Sven Mallach <sven.mallach@cs.tu-dortmund.de>
+ * Copyright (c) 2008, 2009 Sven Mallach <sven.mallach@cs.tu-dortmund.de>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -42,7 +42,11 @@ ThreadPool::ThreadPool() :
     affinity(Configuration::instance()->get_value("mc::affinity", true))
 {
     for (unsigned i(0) ; i < num_threads ; ++i)
-        threads.push_back(new Thread(mutex, &tasks, global_barrier));
+    {
+        ThreadFunction * tobj = new ThreadFunction(mutex, global_barrier, &tasks);
+        Thread * t = new Thread(*tobj);
+        threads.push_back(std::make_pair(t, tobj));
+    }
 
     if (affinity)
     {
@@ -56,9 +60,9 @@ ThreadPool::ThreadPool() :
             throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 
         unsigned i(num_threads - 1);
-        for (std::list<Thread *>::iterator k(threads.begin()), k_end(threads.end()) ; k != k_end ; ++k, --i)
+        for (std::list<std::pair<Thread *, ThreadFunction *> >::iterator k(threads.begin()), k_end(threads.end()) ; k != k_end ; ++k, --i)
         {
-            Thread * t = *k;
+            ThreadFunction * t = (*k).second;
             thread_ids.push_back(t->tid());
             CPU_ZERO(&affinity_mask[i]);
             CPU_SET(i % (num_lpus - 1), &affinity_mask[i]);
@@ -72,9 +76,11 @@ ThreadPool::ThreadPool() :
 
 ThreadPool::~ThreadPool()
 {
-    for(std::list<Thread *>::iterator i(threads.begin()), i_end(threads.end()) ; i != i_end ; ++i)
+    for(std::list<std::pair<Thread *, ThreadFunction *> >::iterator i(threads.begin()), i_end(threads.end()) ; i != i_end ; ++i)
     {
-        delete *i;
+        (*i).second->stop();
+        delete (*i).second;
+        delete (*i).first;
     }
 
     delete[] affinity_mask;
@@ -95,12 +101,14 @@ void ThreadPool::add_threads(const unsigned num)
 
         for (unsigned i(num_threads + num - 1) ; i >= num_threads ; --i)
         {
-            Thread * t = new Thread(mutex, &tasks, global_barrier);
-            threads.push_back(t);
-            thread_ids.push_back(t->tid());
+            ThreadFunction * tobj = new ThreadFunction(mutex, global_barrier, &tasks);
+            Thread * t = new Thread(*tobj);
+            threads.push_back(std::make_pair(t, tobj));
+
+            thread_ids.push_back(tobj->tid());
             CPU_ZERO(&affinity_mask[i]);
             CPU_SET(i % (num_lpus - 1), &affinity_mask[i]);
-            if(sched_setaffinity(t->tid(), sizeof(cpu_set_t), &affinity_mask[i]) != 0)
+            if(sched_setaffinity(tobj->tid(), sizeof(cpu_set_t), &affinity_mask[i]) != 0)
                 throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 
         }
@@ -109,7 +117,11 @@ void ThreadPool::add_threads(const unsigned num)
     else
     {
         for (unsigned i(0) ; i < num ; ++i)
-            threads.push_back(new Thread(mutex, &tasks, global_barrier));
+        {
+            ThreadFunction * tobj = new ThreadFunction(mutex, global_barrier, &tasks);
+            Thread * t = new Thread(*tobj);
+            threads.push_back(std::make_pair(t, tobj));
+        }
     }
 
     num_threads += num;
@@ -119,10 +131,12 @@ void ThreadPool::delete_threads(const unsigned num)
 {
     for (unsigned i(0) ; i < num ; ++i)
     {
-        Thread * t = threads.back();
+        std::pair<Thread *, ThreadFunction *> t = threads.back();
         threads.pop_back();
         thread_ids.pop_back();
-        delete t;
+        t.second->stop();
+        delete t.second;
+        delete t.first;
     }
 
     num_threads -= num;

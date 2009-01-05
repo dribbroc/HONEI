@@ -18,8 +18,8 @@ libhoneibackendsmulticore_la_SOURCES = dispatch_policy.hh \
 				 ticket.cc \
 				 thread_pool.hh \
 				 thread_pool.cc \
-				 thread.hh \
-				 thread.cc
+				 thread_function.hh \
+				 thread_function.cc
 
 thread_pool_TEST_SOURCES = thread_pool_TEST.cc
 
@@ -31,7 +31,7 @@ thread_pool_TEST_LDADD = \
 thread_pool_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 
 libhoneibackendsmulticore_includedir = $(includedir)/honei/backends/multicore/
-libhoneibackendsmulticore_include_HEADERS = dispatch_policy.hh ticket.hh thread_pool.hh thread.hh
+libhoneibackendsmulticore_include_HEADERS = dispatch_policy.hh ticket.hh thread_pool.hh thread_function.hh
 TESTS = thread_pool_TEST
 TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_srcdir)/unittest/run.sh
 check_PROGRAMS = $(TESTS)
