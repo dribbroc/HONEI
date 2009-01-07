@@ -174,8 +174,8 @@ namespace honei
                     {
                         unsigned long target(targets[i / 2]);
                         (*data_list[patch].h)[j - info_list[patch].offset] = (*data_list[target].h)[j - info_list[target].offset];
-                        (*data_list[patch].u)[j - info_list[patch].offset] = (*data_list[target].u)[j - info_list[target].offset];
-                        (*data_list[patch].v)[j - info_list[patch].offset] = (*data_list[target].v)[j - info_list[target].offset];
+                        //(*data_list[patch].u)[j - info_list[patch].offset] = (*data_list[target].u)[j - info_list[target].offset];
+                        //(*data_list[patch].v)[j - info_list[patch].offset] = (*data_list[target].v)[j - info_list[target].offset];
                     }
                 }
             }
