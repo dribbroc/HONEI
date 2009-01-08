@@ -267,7 +267,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                                 double x(j * 0.01);
                                 double y(i * 0.01);
                                 if(sqrt(y * y + x * x) >= 0.4)
-                                    (*_b)(i , j) = 0.4 * exp((-5.) * (x - 1.) * (x - 1.) - 50. * (y - 0.5) * (y - 0.5));
+                                    (*_b)(i , j) = 0.02 * exp((-5.) * (x - 1.) * (x - 1.) - 50. * (y - 0.5) * (y - 0.5));
                             }
                         }
 
