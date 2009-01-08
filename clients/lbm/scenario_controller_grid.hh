@@ -44,8 +44,6 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
         DenseMatrix<Prec_>* _u;
         DenseMatrix<Prec_>* _v;
         DenseMatrix<Prec_>* _b;
-        DenseMatrix<Prec_>* _b_x;
-        DenseMatrix<Prec_>* _b_y;
 
         DenseMatrix<bool>* _obstacles;
 
@@ -94,8 +92,6 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         _u = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
                         _v = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
                         _b = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
-                        _b_x = new DenseMatrix<Prec_>(PartialDerivative<Tag_, X, CENTRALDIFF>::value(*_b , Prec_(1)));
-                        _b_y = new DenseMatrix<Prec_>(PartialDerivative<Tag_, Y, CENTRALDIFF>::value(*_b , Prec_(1)));
 
                         _obstacles = new DenseMatrix<bool>(_dheight, _dwidth, false);
                         /*Cylinder<bool> c2(*_obstacles, 1, 6, 10);
@@ -110,8 +106,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         _grid.h = _h;
                         _grid.u = _u;
                         _grid.v = _v;
-                        _grid.b_x = _b_x;
-                        _grid.b_y = _b_y;
+                        _grid.b = _b;
 
                         GridPacker<D2Q9, NOSLIP, Prec_>::pack(_grid, _info, _data);
 
@@ -137,8 +132,6 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         _u = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
                         _v = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
                         _b = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
-                        _b_x = new DenseMatrix<Prec_>(PartialDerivative<Tag_, X, CENTRALDIFF>::value(*_b , Prec_(1)));
-                        _b_y = new DenseMatrix<Prec_>(PartialDerivative<Tag_, Y, CENTRALDIFF>::value(*_b , Prec_(1)));
 
                         _obstacles = new DenseMatrix<bool>(_dheight, _dwidth, false);
                         /*Cylinder<bool> c2(*_obstacles, 1, 6, 10);
@@ -152,8 +145,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         _grid.h = _h;
                         _grid.u = _u;
                         _grid.v = _v;
-                        _grid.b_x = _b_x;
-                        _grid.b_y = _b_y;
+                        _grid.b = _b;
 
                         GridPacker<D2Q9, NOSLIP, Prec_>::pack(_grid, _info, _data);
 
@@ -183,8 +175,6 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         _v = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
                         _b = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
 
-                        _b_x = new DenseMatrix<Prec_>(PartialDerivative<Tag_, X, CENTRALDIFF>::value(*_b , Prec_(1)));
-                        _b_y = new DenseMatrix<Prec_>(PartialDerivative<Tag_, Y, CENTRALDIFF>::value(*_b , Prec_(1)));
                         _obstacles = new DenseMatrix<bool>(_dheight, _dwidth, false);
                         /*Cylinder<bool> c2(*_obstacles, 1, 6, 10);
                           c2.value();*/
@@ -197,8 +187,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         _grid.h = _h;
                         _grid.u = _u;
                         _grid.v = _v;
-                        _grid.b_x = _b_x;
-                        _grid.b_y = _b_y;
+                        _grid.b = _b;
 
                         GridPacker<D2Q9, NOSLIP, Prec_>::pack(_grid, _info, _data);
 
@@ -231,8 +220,6 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                                 (*_b)( i , j) += (Prec_)(Prec_(rand()) / RAND_MAX * 0.003);
                             }
                         }
-                        _b_x = new DenseMatrix<Prec_>(PartialDerivative<Tag_, X, CENTRALDIFF>::value(*_b , Prec_(1)));
-                        _b_y = new DenseMatrix<Prec_>(PartialDerivative<Tag_, Y, CENTRALDIFF>::value(*_b , Prec_(1)));
 
                         _obstacles = new DenseMatrix<bool>(_dheight, _dwidth, false);
                         /*Cylinder<bool> c2(*_obstacles, 1, 6, 10);
@@ -247,8 +234,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         _grid.h = _h;
                         _grid.u = _u;
                         _grid.v = _v;
-                        _grid.b_x = _b_x;
-                        _grid.b_y = _b_y;
+                        _grid.b = _b;
 
                         GridPacker<D2Q9, NOSLIP, Prec_>::pack(_grid, _info, _data);
 
@@ -284,16 +270,13 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                                     (*_b)(i , j) = 0.4 * exp((-5.) * (x - 1.) * (x - 1.) - 50. * (y - 0.5) * (y - 0.5));
                             }
                         }
-                        _b_x = new DenseMatrix<Prec_>(PartialDerivative<Tag_, X, CENTRALDIFF>::value(*_b , Prec_(1)));
-                        _b_y = new DenseMatrix<Prec_>(PartialDerivative<Tag_, Y, CENTRALDIFF>::value(*_b , Prec_(1)));
 
                         _obstacles = new DenseMatrix<bool>(_dheight, _dwidth, false);
                         _grid.obstacles = _obstacles;
                         _grid.h = _h;
                         _grid.u = _u;
                         _grid.v = _v;
-                        _grid.b_x = _b_x;
-                        _grid.b_y = _b_y;
+                        _grid.b = _b;
 
                         GridPacker<D2Q9, NOSLIP, Prec_>::pack(_grid, _info, _data);
 
@@ -384,11 +367,11 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         for(unsigned int j = 0; j <_dheight-1; ++j)
                         {
                             glColor4f(0.0, 0.0, 1.0, alpha);
-                            glVertex3d(i,j,((*_h)(j,i) /*+ (*_b)(j, i)*/));
+                            glVertex3d(i,j,((*_h)(j,i) + (*_b)(j, i)));
                             glColor4f(0.0, 1.0, 1.0, alpha);
-                            glVertex3d(i+1,j,((*_h)[j][i+1] /*+ (*_b)[j][i+1]*/));
-                            glVertex3d(i+1,j+1,((*_h)[j+1][i+1] /*+ (*_b)[j+1][i+1]*/));
-                            glVertex3d(i,j+1,((*_h)[j+1][i] /*+ (*_b)[j+1][i]*/));
+                            glVertex3d(i+1,j,((*_h)[j][i+1] + (*_b)[j][i+1]));
+                            glVertex3d(i+1,j+1,((*_h)[j+1][i+1] + (*_b)[j+1][i+1]));
+                            glVertex3d(i,j+1,((*_h)[j+1][i] + (*_b)[j+1][i]));
                         }
                     }
                     glEnd();

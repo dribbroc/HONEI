@@ -63,8 +63,6 @@ namespace honei
                 obstacles(0),
                 h(0),
                 b(0),
-                b_x(0),
-                b_y(0),
                 u(0),
                 v(0),
                 h_index(0)
@@ -75,8 +73,6 @@ namespace honei
                 delete obstacles;
                 delete h;
                 delete b;
-                delete b_x;
-                delete b_y;
                 delete u;
                 delete v;
                 delete h_index;
@@ -84,8 +80,6 @@ namespace honei
                 obstacles = 0;
                 h = 0;
                 b = 0;
-                b_x = 0;
-                b_y = 0;
                 u = 0;
                 v = 0;
                 h_index = 0;
@@ -93,8 +87,6 @@ namespace honei
             DenseMatrix<bool> * obstacles;
             DenseMatrix<DT_> * h;
             DenseMatrix<DT_> * b;
-            DenseMatrix<DT_> * b_x;
-            DenseMatrix<DT_> * b_y;
             DenseMatrix<DT_> * u;
             DenseMatrix<DT_> * v;
             DenseMatrix<unsigned long> * h_index;
@@ -231,8 +223,7 @@ namespace honei
 
             PackedGridData():
                 h(0),
-                b_x(0),
-                b_y(0),
+                b(0),
                 u(0),
                 v(0),
                 f_0(0),
@@ -271,8 +262,7 @@ namespace honei
             void destroy()
             {
                 delete h;
-                delete b_x;
-                delete b_y;
+                delete b;
                 delete u;
                 delete v;
                 delete f_0;
@@ -307,8 +297,7 @@ namespace honei
                 delete distribution_y;
 
                 h = 0;
-                b_x = 0;
-                b_y = 0;
+                b = 0;
                 u = 0;
                 v = 0;
                 f_0 = 0;
@@ -343,8 +332,7 @@ namespace honei
                 distribution_y = 0;
             }
             DenseVector<DT_> * h;
-            DenseVector<DT_> * b_x;
-            DenseVector<DT_> * b_y;
+            DenseVector<DT_> * b;
             DenseVector<DT_> * u;
             DenseVector<DT_> * v;
 

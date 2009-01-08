@@ -42,8 +42,7 @@ void ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_source_types::CENT
     void * cuda_dir_8_gpu(info.cuda_dir_8->lock(lm_read_only, tags::GPU::CUDA::memory_value));
 
     void * h_gpu(data.h->lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * b_x_gpu(data.b_x->lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * b_y_gpu(data.b_y->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+    void * b_gpu(data.b->lock(lm_read_only, tags::GPU::CUDA::memory_value));
     void * distribution_x_gpu(data.distribution_x->lock(lm_read_only, tags::GPU::CUDA::memory_value));
     void * distribution_y_gpu(data.distribution_y->lock(lm_read_only, tags::GPU::CUDA::memory_value));
 
@@ -59,7 +58,7 @@ void ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_source_types::CENT
     cuda_force_grid_float(
             cuda_dir_1_gpu, cuda_dir_2_gpu, cuda_dir_3_gpu, cuda_dir_4_gpu,
             cuda_dir_5_gpu, cuda_dir_6_gpu, cuda_dir_7_gpu, cuda_dir_8_gpu,
-            h_gpu, b_x_gpu, b_y_gpu,
+            h_gpu,
             distribution_x_gpu, distribution_y_gpu,
             f_temp_1_gpu, f_temp_2_gpu,
             f_temp_3_gpu, f_temp_4_gpu, f_temp_5_gpu,
@@ -78,8 +77,7 @@ void ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_source_types::CENT
     info.cuda_dir_8->unlock(lm_read_only);
 
     data.h->unlock(lm_read_only);
-    data.b_x->unlock(lm_read_only);
-    data.b_y->unlock(lm_read_only);
+    data.b->unlock(lm_read_only);
     data.distribution_x->unlock(lm_read_only);
     data.distribution_y->unlock(lm_read_only);
 

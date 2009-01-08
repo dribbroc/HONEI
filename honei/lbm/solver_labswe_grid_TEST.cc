@@ -63,17 +63,13 @@ class SolverLABSWEGridTest :
             Cylinder<DataType_> b1(b, DataType_(0.04), 15, 15);
             b1.value();
 
-            DenseMatrix<DataType_> b_x(PartialDerivative<Tag_, X, CENTRALDIFF>::value(b , DataType_(1)));
-            DenseMatrix<DataType_> b_y(PartialDerivative<Tag_, Y, CENTRALDIFF>::value(b , DataType_(1)));
-
             Grid<D2Q9, DataType_> grid;
             DenseMatrix<bool> obstacles(g_h, g_w, false);
             grid.obstacles = &obstacles;
             grid.h = &h;
             grid.u = &u;
             grid.v = &v;
-            grid.b_x = &b_x;
-            grid.b_y = &b_y;
+            grid.b = &b;
 
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;

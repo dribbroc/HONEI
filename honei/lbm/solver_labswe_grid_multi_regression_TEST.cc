@@ -64,9 +64,6 @@ class SolverLABSWEGridMultiRegressionTest :
             Cylinder<DataType_> b1(b, DataType_(0.04), 15, 15);
             b1.value();
 
-            DenseMatrix<DataType_> b_x(PartialDerivative<Tag_, X, CENTRALDIFF>::value(b , DataType_(1)));
-            DenseMatrix<DataType_> b_y(PartialDerivative<Tag_, Y, CENTRALDIFF>::value(b , DataType_(1)));
-
             Grid<D2Q9, DataType_> grid;
             DenseMatrix<bool> obstacles(g_h, g_w, false);
             Cuboid<bool> q2(obstacles, 15, 5, 1, 10, 0);
@@ -77,8 +74,7 @@ class SolverLABSWEGridMultiRegressionTest :
             grid.h = &h;
             grid.u = &u;
             grid.v = &v;
-            grid.b_x = &b_x;
-            grid.b_y = &b_y;
+            grid.b = &b;
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
 
@@ -120,9 +116,6 @@ class SolverLABSWEGridMultiRegressionTest :
             Cylinder<DataType_> b1_standard(b_standard, DataType_(0.04), 15, 15);
             b1_standard.value();
 
-            DenseMatrix<DataType_> b_x_standard(PartialDerivative<Tag_, X, CENTRALDIFF>::value(b_standard , DataType_(1)));
-            DenseMatrix<DataType_> b_y_standard(PartialDerivative<Tag_, Y, CENTRALDIFF>::value(b_standard , DataType_(1)));
-
             Grid<D2Q9, DataType_> grid_standard;
             DenseMatrix<bool> obstacles_standard(g_h_standard, g_w_standard, false);
             Cuboid<bool> q2_standard(obstacles_standard, 15, 5, 1, 10, 0);
@@ -133,8 +126,7 @@ class SolverLABSWEGridMultiRegressionTest :
             grid_standard.h = &h_standard;
             grid_standard.u = &u_standard;
             grid_standard.v = &v_standard;
-            grid_standard.b_x = &b_x_standard;
-            grid_standard.b_y = &b_y_standard;
+            grid_standard.b = &b_standard;
             PackedGridData<D2Q9, DataType_>  data_standard;
             PackedGridInfo<D2Q9> info_standard;
 

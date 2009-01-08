@@ -357,8 +357,7 @@ namespace honei
                 }
                 grid.h_index = new DenseMatrix<unsigned long>(grid.h->rows(), grid.h->columns(), grid.h->size());
                 data.h = new DenseVector<DT_>(fluid_count);
-                data.b_x = new DenseVector<DT_>(fluid_count);
-                data.b_y = new DenseVector<DT_>(fluid_count);
+                data.b = new DenseVector<DT_>(fluid_count);
                 data.u = new DenseVector<DT_>(fluid_count);
                 data.v = new DenseVector<DT_>(fluid_count);
 
@@ -577,8 +576,7 @@ namespace honei
                             ++index2;
                         }
                         (*data.h)[i] = (*grid.h)(index2 / grid.obstacles->columns(), index2 % grid.obstacles->columns());
-                        (*data.b_x)[i] = (*grid.b_x)(index2 / grid.obstacles->columns(), index2 % grid.obstacles->columns());
-                        (*data.b_y)[i] = (*grid.b_y)(index2 / grid.obstacles->columns(), index2 % grid.obstacles->columns());
+                        (*data.b)[i] = (*grid.b)(index2 / grid.obstacles->columns(), index2 % grid.obstacles->columns());
                         (*data.u)[i] = (*grid.u)(index2 / grid.obstacles->columns(), index2 % grid.obstacles->columns());
                         (*data.v)[i] = (*grid.v)(index2 / grid.obstacles->columns(), index2 % grid.obstacles->columns());
                         ++index2;

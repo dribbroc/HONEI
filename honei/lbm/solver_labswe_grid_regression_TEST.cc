@@ -59,8 +59,7 @@ class SolverLABSWEGridRegressionTest :
 
             DenseMatrix<DataType_> u(g_h, g_w, DataType_(0.));
             DenseMatrix<DataType_> v(g_h, g_w, DataType_(0.));
-            DenseMatrix<DataType_> b_x(g_h, g_w, DataType_(0.));
-            DenseMatrix<DataType_> b_y(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
 
             Grid<D2Q9, DataType_> grid;
             DenseMatrix<bool> obstacles(g_h, g_w, false);
@@ -68,8 +67,7 @@ class SolverLABSWEGridRegressionTest :
             grid.h = &h;
             grid.u = &u;
             grid.v = &v;
-            grid.b_x = &b_x;
-            grid.b_y = &b_y;
+            grid.b = &b;
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
 

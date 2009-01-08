@@ -26,7 +26,7 @@ namespace honei
         __global__ void force_grid_gpu(
                 unsigned long ** directions,
                 float ** fs,
-                float * h, float * b_x, float * b_y,
+                float * h, float * b,
                 float * distribution_x, float * distribution_y,
                 float g, float d_x, float d_y, float d_t,
                 unsigned long size)
@@ -40,7 +40,7 @@ namespace honei
 
                 (*data.f_temp_1)[i] += d_t / (6 * d_y / d_t) * ((*data.distribution_y)[1]) *
                     (- g * (((*data.h)[(*info.dir_1)[half] + offset]) - ((*data.b_y)[i]))/ DT1_(2.) *
-                     ((((*data.b_y)[(*info.dir_1)[half] + offset]) - ((*data.b_y)[i]))/ DT1_(2.)));*/
+                     ((((*data.b_y)[(*info.dir_1)[half] + offset]) - ((*data.b_y)[i]))/ DT1_(2.)));*/ /*
                 unsigned long i(idx);
                 if (directions[0][i] < size)
                 {
@@ -121,7 +121,7 @@ namespace honei
                     fs[7][i] += d_t / (6 * d_y / d_t) * distribution_y[8] *
                         (-g * (h[directions[7][i]] - b_y[i])/ float(2.) *
                          ((b_y[directions[7][i]] - b_y[i])/ float(2.)));
-                }
+                }*/
             }
         }
     }
@@ -130,7 +130,7 @@ namespace honei
 extern "C" void cuda_force_grid_float(
         void * dir_1, void * dir_2, void * dir_3, void * dir_4,
         void * dir_5, void * dir_6, void * dir_7, void * dir_8,
-        void * h, void * b_x, void * b_y,
+        void * h, void * b,
         void * distribution_x, void * distribution_y,
         void * f_temp_1, void * f_temp_2,
         void * f_temp_3, void * f_temp_4, void * f_temp_5,
@@ -155,8 +155,7 @@ extern "C" void cuda_force_grid_float(
     unsigned long * dir_8_gpu((unsigned long *)dir_8);
 
     float * h_gpu((float *)h);
-    float * b_x_gpu((float *)b_x);
-    float * b_y_gpu((float *)b_y);
+    float * b_gpu((float *)b);
     float * distribution_x_gpu((float *)distribution_x);
     float * distribution_y_gpu((float *)distribution_y);
 
@@ -198,7 +197,7 @@ extern "C" void cuda_force_grid_float(
 
     honei::cuda::force_grid_gpu<<<grid, block>>>(
             directions_gpu, fs_gpu,
-            h_gpu, b_x_gpu, b_y_gpu,
+            h_gpu, b_gpu,
             distribution_x_gpu, distribution_y_gpu,
             g, d_x, d_y, d_t,
             size);
