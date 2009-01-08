@@ -61,7 +61,7 @@ class SolverLABSWEGridMultiRegressionTest :
             DenseMatrix<DataType_> v(g_h, g_w, DataType_(0.));
             DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
 
-            Cylinder<DataType_> b1(b, DataType_(0.04), 15, 15);
+            Cylinder<DataType_> b1(b, DataType_(0.001), 15, 15);
             b1.value();
 
             Grid<D2Q9, DataType_> grid;
@@ -113,7 +113,7 @@ class SolverLABSWEGridMultiRegressionTest :
             DenseMatrix<DataType_> v_standard(g_h_standard, g_w_standard, DataType_(0.));
             DenseMatrix<DataType_> b_standard(g_h, g_w, DataType_(0.));
 
-            Cylinder<DataType_> b1_standard(b_standard, DataType_(0.04), 15, 15);
+            Cylinder<DataType_> b1_standard(b_standard, DataType_(0.001), 15, 15);
             b1_standard.value();
 
             Grid<D2Q9, DataType_> grid_standard;
