@@ -37,9 +37,80 @@ namespace honei
         template <typename DelegateOperationType_> struct Operation
         {
             template <typename DT1_, typename DT2_>
+            static void op(DenseVectorBase<DT1_> & x, const DT2_ & a, unsigned long min_part_size, unsigned long max_count)
+            {
+                if (x.size() < 2 * min_part_size)
+                {
+                    DelegateOperationType_::value(x, a);
+                }
+                else
+                {
+                    PartitionList partitions;
+                    Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+
+                    TicketList tickets;
+
+                    PartitionList::ConstIterator p(partitions.begin());
+                    for (PartitionList::ConstIterator p_last(partitions.last()) ; p != p_last ; ++p)
+                    {
+                        DenseVectorSlice<DT1_> x_slice(x, p->size, x.offset() + (p->start * x.stepsize()), x.stepsize());
+
+                        OperationWrapper<DelegateOperationType_, DenseVectorBase<DT1_>,
+                        DenseVectorBase<DT1_>, DenseVectorBase<DT2_>, DT2_> wrapper(x_slice);
+
+                        tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper, x_slice, a)));
+                    }
+
+                    DenseVectorSlice<DT1_> x_slice(x, p->size, x.offset() + (p->start * x.stepsize()), x.stepsize());
+
+                    DelegateOperationType_::value(x_slice, a);
+
+                    tickets.wait();
+                }
+
+                return x;
+            }
+
+            template <typename DT1_, typename DT2_>
+            static void op(DenseVectorContinuousBase<DT1_> & x, const DT2_ & a, unsigned long min_part_size, unsigned long max_count)
+            {
+                if (x.size() < 2 * min_part_size)
+                {
+                    DelegateOperationType_::value(x, a);
+                }
+                else
+                {
+                    PartitionList partitions;
+                    Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+
+                    TicketList tickets;
+
+                    PartitionList::ConstIterator p(partitions.begin());
+                    for (PartitionList::ConstIterator p_last(partitions.last()) ; p != p_last ; ++p)
+                    {
+                        DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
+
+                        OperationWrapper<DelegateOperationType_, DenseVectorContinuousBase<DT1_>, DenseVectorContinuousBase<DT1_>, DT2_ > wrapper(x_range);
+                        tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper, x_range, a)));
+                    }
+
+                    DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
+
+                    DelegateOperationType_::value(x_range, a);
+
+                    tickets.wait();
+                }
+
+                return x;
+            }
+
+            template <typename DT1_, typename DT2_>
             static void op(DenseVectorBase<DT1_> & x, const DenseVectorBase<DT2_> & y, DT2_ b, unsigned long min_part_size,
                     unsigned long max_count)
             {
+                if (x.size() != y.size())
+                    throw VectorSizeDoesNotMatch(y.size(), x.size());
+
                 if (x.size() < 2 * min_part_size)
                 {
                     DelegateOperationType_::value(x, y, b);
@@ -75,6 +146,9 @@ namespace honei
             static void op(DenseVectorContinuousBase<DT1_> & x, const DenseVectorContinuousBase<DT2_> & y, DT2_ b,
                     unsigned long min_part_size, unsigned long max_count)
             {
+                if (x.size() != y.size())
+                    throw VectorSizeDoesNotMatch(y.size(), x.size());
+
                 if (x.size() < 2 * min_part_size)
                 {
                     DelegateOperationType_::value(x, y, b);
@@ -112,6 +186,10 @@ namespace honei
             {
                 if (x.size() != y.size())
                     throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+                if (x.size() != z.size())
+                    throw VectorSizeDoesNotMatch(z.size(), x.size());
+
 
                 if (x.size() < 2 * min_part_size)
                 {
@@ -158,6 +236,9 @@ namespace honei
             {
                 if (x.size() != y.size())
                     throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+                if (x.size() != z.size())
+                    throw VectorSizeDoesNotMatch(z.size(), x.size());
 
                 if (x.size() < 2 * min_part_size)
                 {
