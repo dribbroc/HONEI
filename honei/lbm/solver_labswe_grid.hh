@@ -100,8 +100,8 @@ namespace honei
                 ResPrec_ _n_alpha, _e, _gravity, _pi;
 
             public:
-                SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt) :
-                    _relaxation_time(ResPrec_(1.5)),
+                SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, ResPrec_ rel_time) :
+                    _relaxation_time(rel_time),
                     _delta_x(dx),
                     _delta_y(dy),
                     _delta_t(dt),
@@ -228,7 +228,7 @@ namespace honei
                     std::vector<Ticket<tags::CPU::MultiCore> *> _tickets;
 
                 public:
-                    SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt):
+                    SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, ResPrec_ rel_time):
                         _info(info),
                         _data(data)
                 {
@@ -238,7 +238,7 @@ namespace honei
 
                     for(unsigned long i(0) ; i < _parts ; ++i)
                     {
-                        _solver_list.push_back(new honei::SolverLABSWEGrid<typename Tag_::DelegateTo, ResPrec_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>(&_data_list[i], &_info_list[i], 1., 1., 1.));
+                        _solver_list.push_back(new honei::SolverLABSWEGrid<typename Tag_::DelegateTo, ResPrec_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>(&_data_list[i], &_info_list[i], dx, dy, dt, rel_time));
                     }
                 }
 
@@ -289,8 +289,8 @@ namespace honei
         public mc::SolverLABSWEGrid<tags::CPU::MultiCore, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>
         {
             public:
-            SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt):
-                mc::SolverLABSWEGrid<tags::CPU::MultiCore, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>(data, info, dx, dy, dt)
+            SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, ResPrec_ rel_time):
+                mc::SolverLABSWEGrid<tags::CPU::MultiCore, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>(data, info, dx, dy, dt, rel_time)
             {
             }
         };
@@ -300,8 +300,8 @@ namespace honei
         public mc::SolverLABSWEGrid<tags::CPU::MultiCore::SSE, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>
         {
             public:
-            SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt):
-                mc::SolverLABSWEGrid<tags::CPU::MultiCore::SSE, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>(data, info, dx, dy, dt)
+            SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, ResPrec_ rel_time):
+                mc::SolverLABSWEGrid<tags::CPU::MultiCore::SSE, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>(data, info, dx, dy, dt, rel_time)
             {
             }
         };
