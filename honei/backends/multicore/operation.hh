@@ -48,7 +48,7 @@ namespace honei
                     PartitionList partitions;
                     Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
 
-                    TicketList tickets;
+                    TicketVector tickets;
 
                     PartitionList::ConstIterator p(partitions.begin());
                     for (PartitionList::ConstIterator p_last(partitions.last()) ; p != p_last ; ++p)
@@ -83,7 +83,7 @@ namespace honei
                     PartitionList partitions;
                     Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
 
-                    TicketList tickets;
+                    TicketVector tickets;
 
                     PartitionList::ConstIterator p(partitions.begin());
                     for (PartitionList::ConstIterator p_last(partitions.last()) ; p != p_last ; ++p)
@@ -120,7 +120,7 @@ namespace honei
                     PartitionList partitions;
                     Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
 
-                    TicketList tickets;
+                    TicketVector tickets;
 
                     PartitionList::ConstIterator p(partitions.begin());
                     for (PartitionList::ConstIterator p_last(partitions.last()) ; p != p_last ; ++p)
@@ -158,7 +158,7 @@ namespace honei
                     PartitionList partitions;
                     Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
 
-                    TicketList tickets;
+                    TicketVector tickets;
 
                     PartitionList::ConstIterator p(partitions.begin());
                     for (PartitionList::ConstIterator p_last(partitions.last()) ; p != p_last ; ++p)
@@ -200,7 +200,7 @@ namespace honei
                     PartitionList partitions;
                     Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
 
-                    TicketList tickets;
+                    TicketVector tickets;
 
                     PartitionList::ConstIterator p(partitions.begin());
                     for (PartitionList::ConstIterator p_last(partitions.last()) ; p != p_last ; ++p)
@@ -249,7 +249,7 @@ namespace honei
                     PartitionList partitions;
                     Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
 
-                    TicketList tickets;
+                    TicketVector tickets;
 
                     PartitionList::ConstIterator p(partitions.begin());
                     for (PartitionList::ConstIterator p_last(partitions.last()) ; p != p_last ; ++p)

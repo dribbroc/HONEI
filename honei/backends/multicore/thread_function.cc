@@ -73,10 +73,10 @@ namespace honei
         }
 
         Implementation(Mutex * const mutex, ConditionVariable * const barrier, std::list<mc::ThreadTask *> * const list) :
-            pool_mutex(mutex),
-            global_barrier(barrier),
-            tasklist(list),
             thread_id(0),
+            pool_mutex(mutex),
+            tasklist(list),
+            global_barrier(barrier),
             terminate(false),
             task((mc::ThreadTask *) 1)
             {

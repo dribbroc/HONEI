@@ -152,9 +152,9 @@ unsigned ThreadPool::get_num_threads() const
     return num_threads;
 }
 
-std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > & ThreadPool::enqueue(const std::tr1::function<void ()> & task, DispatchPolicy p)
+Ticket<tags::CPU::MultiCore> * ThreadPool::enqueue(const std::tr1::function<void ()> & task, DispatchPolicy p)
 {
-    std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > & ticket((affinity ? p.apply(thread_ids) : DispatchPolicy::any_core().apply(thread_ids)));
+    Ticket<tags::CPU::MultiCore> * ticket((affinity ? p.apply(thread_ids) : DispatchPolicy::any_core().apply(thread_ids)));
 
     ThreadTask * t_task(new ThreadTask(task, ticket));
 

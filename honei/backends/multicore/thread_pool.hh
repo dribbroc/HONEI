@@ -77,7 +77,7 @@ namespace honei
 
                 unsigned get_num_threads() const;
 
-                std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > & enqueue(const std::tr1::function<void ()> & task, DispatchPolicy p = DispatchPolicy::any_core());
+                Ticket<tags::CPU::MultiCore> * enqueue(const std::tr1::function<void ()> & task, DispatchPolicy p = DispatchPolicy::any_core());
         };
     }
 }

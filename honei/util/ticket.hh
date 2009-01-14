@@ -2,7 +2,7 @@
 
 /*
  * Copyright (c) 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
- * Copyright (c) 2008 Sven Mallach <sven.mallach@cs.tu-dortmund.de>
+ * Copyright (c) 2008, 2009 Sven Mallach <sven.mallach@cs.tu-dortmund.de>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -28,7 +28,7 @@
 namespace honei
 {
     // Forward declaration for Ticket.
-    class TicketList;
+    class TicketVector;
 
     /**
      * TicketBase is the virtual base class for all types
@@ -56,7 +56,7 @@ namespace honei
 
             /// \name Friends of TicketBase
             /// \{
-            friend class TicketList;
+            friend class TicketVector;
             /// \}
     };
 
@@ -87,30 +87,33 @@ namespace honei
     };
 
     /**
-     * TicketList is used when multiple tickets are needed.
+     * TicketVector is used when multiple tickets are needed.
      */
 
-    class TicketList :
-        public InstantiationPolicy<TicketList, NonCopyable>,
-        public PrivateImplementationPattern<TicketList, Single>
+    class TicketVector :
+        public InstantiationPolicy<TicketVector, NonCopyable>,
+        public PrivateImplementationPattern<TicketVector, Single>
     {
         public:
             /// \name Basic Operations
             /// \{
 
             /// Constructor.
-            TicketList();
+            TicketVector();
 
             /// Destructor.
-            ~TicketList();
+            ~TicketVector();
 
             /// \}
 
             /// Push a ticket to the back of the list.
-            void push_back(const std::tr1::shared_ptr<TicketBase> & ticket);
+            void push_back(TicketBase * ticket);
 
             /// Wait for ticket completion.
             void wait() const;
+
+            /// Retrieve a single given Ticket
+            TicketBase * operator[] (const unsigned index);
     };
 }
 

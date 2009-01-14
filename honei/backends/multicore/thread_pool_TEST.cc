@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2008 Sven Mallach <sven.mallach@cs.tu-dortmund.de>
+ * Copyright (c) 2008, 2009 Sven Mallach <sven.mallach@cs.tu-dortmund.de>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -44,7 +44,7 @@ namespace
             {
             }
 
-            virtual void operator() ()
+            void operator() ()
             {
                 Lock l(*_mutex);
                 ++_v;
@@ -67,16 +67,14 @@ class ThreadPoolTest :
             TestTask t(v);
             TestTask u(w);
 
-            TicketList tickets;
+            TicketVector tickets;
 
-            std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > first_t(ThreadPool::instance()->enqueue(t));
-
-            tickets.push_back(first_t);
-
-            for (unsigned i(1) ; i < 1250 ; ++i)
+            for (unsigned i(0) ; i < 1250 ; ++i)
             {
                 tickets.push_back(ThreadPool::instance()->enqueue(t));
             }
+
+            Ticket<tags::CPU::MultiCore> * first_t(static_cast<Ticket<tags::CPU::MultiCore> *>(tickets[0]));
 
             for (unsigned i(1250) ; i < 2500 ; ++i)
             {
@@ -90,15 +88,14 @@ class ThreadPoolTest :
 
             tickets.wait();
 
-            TEST_CHECK_EQUAL(v, 5034);
+            TEST_CHECK_EQUAL(v, 5034u);
 
-            first_t = ThreadPool::instance()->enqueue(u);
-            tickets.push_back(first_t);
-
-            for (unsigned i(1) ; i < 1250 ; ++i)
+            for (unsigned i(0) ; i < 1250 ; ++i)
             {
                 tickets.push_back(ThreadPool::instance()->enqueue(u));
             }
+
+            first_t = static_cast<Ticket<tags::CPU::MultiCore> *>(tickets[251]);
 
             ThreadPool::instance()->add_threads(3);
 
@@ -116,7 +113,7 @@ class ThreadPoolTest :
 
             tickets.wait();
 
-            TEST_CHECK_EQUAL(w, 5034);
+            TEST_CHECK_EQUAL(w, 5034u);
         }
 } thread_pool_test;
 
@@ -134,16 +131,14 @@ class ThreadPoolQuickTest :
             unsigned v(34);
             TestTask t(v);
 
-            TicketList tickets;
+            TicketVector tickets;
 
-            std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > first_t(ThreadPool::instance()->enqueue(t));
-
-            tickets.push_back(first_t);
-
-            for (unsigned i(1) ; i < 125 ; ++i)
+            for (unsigned i(0) ; i < 125 ; ++i)
             {
                 tickets.push_back(ThreadPool::instance()->enqueue(t));
             }
+
+            Ticket<tags::CPU::MultiCore> * first_t(static_cast<Ticket<tags::CPU::MultiCore> *>(tickets[0]));
 
             for (unsigned i(125) ; i < 250 ; ++i)
             {
@@ -157,6 +152,6 @@ class ThreadPoolQuickTest :
 
             tickets.wait();
 
-            TEST_CHECK_EQUAL(v, 534);
+            TEST_CHECK_EQUAL(v, 534u);
         }
 } thread_pool_quick_test;

@@ -2,7 +2,7 @@
 
 /*
  * Copyright (c) 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
- * Copyright (c) 2008 Sven Mallach <sven.mallach@cs.tu-dortmund.de>
+ * Copyright (c) 2008, 2009 Sven Mallach <sven.mallach@cs.tu-dortmund.de>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -26,7 +26,7 @@
 #include <honei/util/private_implementation_pattern-impl.hh>
 #include <honei/util/ticket.hh>
 
-#include <list>
+#include <vector>
 #include <tr1/memory>
 
 namespace honei
@@ -77,37 +77,43 @@ namespace honei
         }
     }
 
-    template <> struct Implementation<TicketList>
+    template <> struct Implementation<TicketVector>
     {
-        std::list<std::tr1::shared_ptr<TicketBase> > tickets;
+        std::vector<TicketBase *> tickets;
     };
 
-    TicketList::TicketList() :
-        PrivateImplementationPattern<TicketList, Single>(new Implementation<TicketList>)
+    TicketVector::TicketVector() :
+        PrivateImplementationPattern<TicketVector, Single>(new Implementation<TicketVector>)
     {
     }
 
-    TicketList::~TicketList()
+    TicketVector::~TicketVector()
     {
     }
 
     void
-    TicketList::push_back(const std::tr1::shared_ptr<TicketBase> & ticket)
+    TicketVector::push_back(TicketBase * ticket)
     {
-        CONTEXT("When pushing a Ticket to the back of a TicketList:");
+        CONTEXT("When pushing a Ticket to the back of a TicketVector:");
 
         _imp->tickets.push_back(ticket);
     }
 
     void
-    TicketList::wait() const
+    TicketVector::wait() const
     {
-        CONTEXT("When waiting for the Tickets in a TicketList:");
+        CONTEXT("When waiting for the Tickets in a TicketVector:");
 
         while (! _imp->tickets.empty())
         {
-            _imp->tickets.front()->wait();
-            _imp->tickets.pop_front();
+            _imp->tickets.back()->wait();
+            _imp->tickets.pop_back();
         }
+    }
+
+    TicketBase *
+    TicketVector::operator[] (const unsigned index)
+    {
+        return _imp->tickets[index];
     }
 }

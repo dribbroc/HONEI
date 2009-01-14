@@ -35,9 +35,9 @@ namespace honei
             typedef std::tr1::function<void () throw ()> WorkFunctor;
 
             WorkFunctor * functor;
-            std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > & ticket;
+            Ticket<tags::CPU::MultiCore> * ticket;
 
-            template <typename WorkerTask> ThreadTask(WorkerTask & task, std::tr1::shared_ptr<Ticket<tags::CPU::MultiCore> > & tick) :
+            template <typename WorkerTask> ThreadTask(WorkerTask & task, Ticket<tags::CPU::MultiCore> * tick) :
                 functor(new WorkFunctor(task)),
                 ticket(tick)
             {
