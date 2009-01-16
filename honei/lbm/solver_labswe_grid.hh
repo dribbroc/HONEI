@@ -53,8 +53,11 @@
 #include <honei/lbm/grid.hh>
 #include <honei/lbm/grid_partitioner.hh>
 #include <honei/lbm/grid_packer.hh>
+#include <honei/backends/multicore/dispatch_policy.hh>
+#include <honei/backends/multicore/thread_pool.hh>
 
 #include <iostream>
+#include <tr1/functional>
 
 using namespace honei::lbm;
 using namespace honei::lbm::lbm_boundary_types;
@@ -231,19 +234,34 @@ namespace honei
             void do_preprocessing()
             {
                 CONTEXT("When performing LABSWE preprocessing.");
+
+                TicketVector tickets;
                 for (unsigned long i(0) ; i < _parts ; ++i)
                 {
-                    _solver_list.at(i)->do_preprocessing();
+                    /// \todo use the same core for the same patch every time
+                    tickets.push_back(mc::ThreadPool::instance()->enqueue(
+                                std::tr1::bind(
+                                    std::tr1::mem_fn(&SolverLABSWEGrid<tags::CPU, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>::do_preprocessing),
+                                    *(_solver_list.at(i))
+                                    )));
                 }
+                tickets.wait();
                 GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);
             }
 
             void solve()
             {
+                TicketVector tickets;
                 for (unsigned long i(0) ; i < _parts ; ++i)
                 {
-                    _solver_list.at(i)->solve();
+                    /// \todo use the same core for the same patch every time
+                    tickets.push_back(mc::ThreadPool::instance()->enqueue(
+                                std::tr1::bind(
+                                    std::tr1::mem_fn(&SolverLABSWEGrid<tags::CPU, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>::solve),
+                                    *(_solver_list.at(i))
+                                    )));
                 }
+                tickets.wait();
                 GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);
                 /// \todo remove compose - it is only necessary if one must read the data
                 GridPartitioner<D2Q9, ResPrec_>::compose(*_info, *_data, _info_list, _data_list);
