@@ -34,6 +34,4 @@ add(`general', `ticket',                         `hh', `cc')
 add(`general', `time_stamp',                     `hh', `test')
 add(`general', `thread',                         `hh', `cc', `test')
 add(`general', `type_traits',                    `hh', `cc', `test')
-add(`general', `worker',                         `hh', `cc', `test')
 add(`general', `wrapped_forward_iterator',       `hh', `fwd', `impl')
-
