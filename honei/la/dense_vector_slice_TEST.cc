@@ -76,7 +76,7 @@ class DenseVectorSliceIterationTest :
 
                 unsigned pos(rand() % size / 2);
 
-                DenseVectorSlice<DataType_> dvs(dv, size / 2, pos, 2);
+                DenseVectorSlice<DataType_> dvs(dv, size / 4, pos, 2);
 
                 typename DenseVector<DataType_>::ConstElementIterator j(dv.element_at(pos));
                 for (typename DenseVectorSlice<DataType_>::ConstElementIterator i(dvs.begin_elements()), i_end(dvs.end_elements()) ;
