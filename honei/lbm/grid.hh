@@ -66,7 +66,8 @@ namespace honei
                 b_x(0),
                 b_y(0),
                 u(0),
-                v(0)
+                v(0),
+                h_index(0)
             {
             }
             void destroy()
@@ -78,6 +79,7 @@ namespace honei
                 delete b_y;
                 delete u;
                 delete v;
+                delete h_index;
 
                 obstacles = 0;
                 h = 0;
@@ -86,6 +88,7 @@ namespace honei
                 b_y = 0;
                 u = 0;
                 v = 0;
+                h_index = 0;
             }
             DenseMatrix<bool> * obstacles;
             DenseMatrix<DT_> * h;
@@ -94,6 +97,7 @@ namespace honei
             DenseMatrix<DT_> * b_y;
             DenseMatrix<DT_> * u;
             DenseMatrix<DT_> * v;
+            DenseMatrix<unsigned long> * h_index;
     };
 
     template <> class PackedGridInfo<D2Q9>

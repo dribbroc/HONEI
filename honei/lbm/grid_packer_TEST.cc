@@ -75,6 +75,8 @@ class GridPackerTest :
             grid.obstacles = new DenseMatrix<bool>(obst);
 
             GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::pack(grid, info, data);
+            std::cout<<*grid.h_index;
+            std::cout<<"h_index (3, 5): "<<GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::h_index(grid, 3, 5)<<std::endl;
 
             /*for (unsigned long i(0) ; i < info.limits->size() ; ++i)
             {

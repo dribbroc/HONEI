@@ -376,6 +376,7 @@ namespace honei
                         }
                     }
                 }
+                grid.h_index = new DenseMatrix<unsigned long>(grid.h->rows(), grid.h->columns(), grid.h->size());
                 data.h = new DenseVector<DT_>(fluid_count);
                 data.b_x = new DenseVector<DT_>(fluid_count);
                 data.b_y = new DenseVector<DT_>(fluid_count);
@@ -470,6 +471,7 @@ namespace honei
                                 temp_types.push_back(_element_type(i, j, grid));
                                 _element_direction(packed_index, i, j, grid, dir_1, dir_2, dir_3, dir_4, dir_5, dir_6, dir_7, dir_8);
                             }
+                            (*grid.h_index)(i, j) = packed_index;
                             ++packed_index;
                         }
                     }
@@ -630,6 +632,12 @@ namespace honei
                 grid.obstacles->unlock(lm_read_only);
                 grid.h->unlock(lm_write_only);
                 data.h->unlock(lm_read_only);
+            }
+
+
+            static unsigned long h_index(Grid<D2Q9, DT_> & grid, unsigned long i, unsigned long j)
+            {
+                return (*grid.h_index)(i, j);
             }
 
             static DenseMatrix<DT_> extract_ftemp2(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)

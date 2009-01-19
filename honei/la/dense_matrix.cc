@@ -52,6 +52,16 @@ namespace honei
 
     template std::ostream & operator<< (std::ostream & lhs, const DenseMatrix<long> & matrix);
 
+    template class DenseMatrix<unsigned long>;
+
+    template class ConstElementIterator<storage::Dense, container::Matrix, unsigned long>;
+
+    template class ElementIterator<storage::Dense, container::Matrix, unsigned long>;
+
+    template bool operator== (const DenseMatrix<unsigned long> & a, const DenseMatrix<unsigned long> & b);
+
+    template std::ostream & operator<< (std::ostream & lhs, const DenseMatrix<unsigned long> & matrix);
+
     template class DenseMatrix<bool>;
 
     template class ConstElementIterator<storage::Dense, container::Matrix, bool>;
