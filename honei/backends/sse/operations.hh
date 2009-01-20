@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2008, 2009 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -24,6 +24,7 @@ namespace honei
 {
     namespace sse
     {
+        ///////////// LA
         void difference(float * a, const float * b, unsigned long size);
         void difference(double * a, const double * b, unsigned long size);
 
@@ -71,6 +72,23 @@ namespace honei
         void sum(double * a, const double * b, unsigned long size);
         void sum(const float a, float * x, unsigned long size);
         void sum(const double a, double * x, unsigned long size);
+
+        ///////////// LBM
+        void eq_dist_grid(unsigned long begin, unsigned long end,
+                float g, float e,
+                float * h, float * u, float * v,
+                float * distribution_x, float * distribution_y,
+                float * f_eq_0, float * f_eq_1, float * f_eq_2,
+                float * f_eq_3, float * f_eq_4, float * f_eq_5,
+                float * f_eq_6, float * f_eq_7, float * f_eq_8);
+
+        void eq_dist_grid(unsigned long begin, unsigned long end,
+                double g, double e,
+                double * h, double * u, double * v,
+                double * distribution_x, double * distribution_y,
+                double * f_eq_0, double * f_eq_1, double * f_eq_2,
+                double * f_eq_3, double * f_eq_4, double * f_eq_5,
+                double * f_eq_6, double * f_eq_7, double * f_eq_8);
     }
 }
 

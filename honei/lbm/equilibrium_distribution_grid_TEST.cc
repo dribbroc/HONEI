@@ -91,8 +91,12 @@ class EqDisGridLABSWETest :
             data.f_eq_8->unlock(lm_read_only);
         }
 };
-EqDisGridLABSWETest<tags::CPU, double> source_test_double("double");
-EqDisGridLABSWETest<tags::CPU, float> source_test_float("float");
+EqDisGridLABSWETest<tags::CPU, float> eq_dist_grid_test_float("float");
+EqDisGridLABSWETest<tags::CPU, double> eq_dist_grid_test_double("double");
+#ifdef HONEI_SSE
+EqDisGridLABSWETest<tags::CPU::SSE, float> sse_eq_dist_grid_test_float("float");
+EqDisGridLABSWETest<tags::CPU::SSE, double> sse_eq_dist_grid_test_double("double");
+#endif
 #ifdef HONEI_CUDA
-EqDisGridLABSWETest<tags::GPU::CUDA, float> cuda_source_test_float("float");
+EqDisGridLABSWETest<tags::GPU::CUDA, float> cuda_eq_dist_grid_test_float("float");
 #endif

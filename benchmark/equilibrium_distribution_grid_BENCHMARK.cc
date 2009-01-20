@@ -86,7 +86,8 @@ class EquilibriumDistributionGridBench :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 1., 1., 1.);
+            /// \todo use Tag_
+            SolverLABSWEGrid<tags::CPU, DataType_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 1., 1., 1.);
 
             solver.do_preprocessing();
 
@@ -106,6 +107,10 @@ class EquilibriumDistributionGridBench :
 
 EquilibriumDistributionGridBench<tags::CPU, float, D2Q9::DIR_0> eq_dist_grid_bench_float("EquilibriumDistributionGridBenchmark - size: 1000, float", 1000, 10);
 EquilibriumDistributionGridBench<tags::CPU, double, D2Q9::DIR_0> eq_dist_grid_bench_double("EquilibriumDistributionGrid Benchmark - size: 1000, double", 1000, 10);
+#ifdef HONEI_SSE
+EquilibriumDistributionGridBench<tags::CPU::SSE, float, D2Q9::DIR_0> sse_eq_dist_grid_bench_float("SSE EquilibriumDistributionGridBenchmark - size: 1000, float", 1000, 10);
+EquilibriumDistributionGridBench<tags::CPU::SSE, double, D2Q9::DIR_0> sse_eq_dist_grid_bench_double("SSE EquilibriumDistributionGridBenchmark - size: 1000, double", 1000, 10);
+#endif
 #ifdef HONEI_CUDA
 EquilibriumDistributionGridBench<tags::GPU::CUDA, float, D2Q9::DIR_0> cuda_eq_dist_grid_bench_float("CUDA EquilibriumDistributionGridBenchmark - size: 1000, float", 1000, 10);
 #endif

@@ -198,5 +198,12 @@ namespace honei
         {
             static void value(float g, float e, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data);
         };
+
+    template<>
+        struct EquilibriumDistributionGrid<tags::CPU::SSE, lbm_applications::LABSWE>
+        {
+            static void value(float g, float e, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data);
+            static void value(double g, double e, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data);
+        };
 }
 #endif
