@@ -94,8 +94,8 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         _b = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
 
                         _obstacles = new DenseMatrix<bool>(_dheight, _dwidth, false);
-                        /*Cylinder<bool> c2(*_obstacles, 1, 6, 10);
-                          c2.value();*/
+                        //Cylinder<bool> c2(*_obstacles, 1, 6, 10);
+                        //c2.value();
 
                         /*Cuboid<bool> q2(*_obstacles, 15, 5, 1, 10, 0);
                         q2.value();
@@ -221,6 +221,13 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                             }
                         }
 
+                        for(unsigned long i(0) ; i < _dheight ; ++i)
+                        {
+                            for(unsigned long j(0) ; j < _dwidth ; ++j)
+                            {
+                                    (*_h)(i , j) -= (*_b)(i , j);
+                            }
+                        }
                         _obstacles = new DenseMatrix<bool>(_dheight, _dwidth, false);
                         /*Cylinder<bool> c2(*_obstacles, 1, 6, 10);
                           c2.value();*/
@@ -259,15 +266,28 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         _v = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
                         _b = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
 
+                        Prec_ dx(0.01);
+                        Prec_ dy(0.01);
+                        Prec_ dt(0.01);
+                        Prec_ tau(1.1);
+
                         //build up the hill:
                         for(unsigned long i(0) ; i < _dheight ; ++i)
                         {
                             for(unsigned long j(0) ; j < _dwidth ; ++j)
                             {
-                                double x(j * 0.01);
-                                double y(i * 0.01);
-                                if(sqrt(y * y + x * x) >= 0.4)
-                                    (*_b)(i , j) = 0.02 * exp((-5.) * (x - 1.) * (x - 1.) - 50. * (y - 0.5) * (y - 0.5));
+                                double x(j * dx);
+                                double y(i * dy);
+                                //if(sqrt(y * y + x * x) >= 0.4)
+                                    (*_b)(i , j) = 0.04 * exp((-5.) * (x - 1.) * (x - 1.) - 50. * (y - 0.5) * (y - 0.5));
+                            }
+                        }
+
+                        for(unsigned long i(0) ; i < _dheight ; ++i)
+                        {
+                            for(unsigned long j(0) ; j < _dwidth ; ++j)
+                            {
+                                    (*_h)(i , j) -= (*_b)(i , j);
                             }
                         }
 
@@ -280,7 +300,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
 
                         GridPacker<D2Q9, NOSLIP, Prec_>::pack(_grid, _info, _data);
 
-                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 1., 1., 1., 1.5);
+                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, dx, dy, dt, tau);
 
                         _solver->do_preprocessing();
 
