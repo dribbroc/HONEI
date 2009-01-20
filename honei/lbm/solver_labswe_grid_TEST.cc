@@ -107,6 +107,10 @@ SolverLABSWEGridTest<tags::CPU, float> solver_test_float("float");
 SolverLABSWEGridTest<tags::CPU, double> solver_test_double("double");
 SolverLABSWEGridTest<tags::CPU::MultiCore, float> mc_solver_test_float("float");
 SolverLABSWEGridTest<tags::CPU::MultiCore, double> mc_solver_test_double("double");
+#ifdef HONEI_SSE
+SolverLABSWEGridTest<tags::CPU::SSE, float> sse_solver_test_float("float");
+SolverLABSWEGridTest<tags::CPU::SSE, double> sse_solver_test_double("double");
+#endif
 #ifdef HONEI_CUDA
 SolverLABSWEGridTest<tags::GPU::CUDA, float> cuda_solver_test_float("float");
 #endif

@@ -254,5 +254,20 @@ namespace honei
     {
         static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info, float g, float d_x, float d_y, float d_t);
     };
+
+    template <>
+    struct ForceGrid<tags::CPU::SSE, lbm_applications::LABSWE, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF>
+    {
+        static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info, float g, float d_x, float d_y, float d_t)
+        {
+            ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF>::value
+                (data, info, g, d_x, d_y, d_t);
+        }
+        static void value(PackedGridData<D2Q9, double> & data, PackedGridInfo<D2Q9> & info, double g, double d_x, double d_y, double d_t)
+        {
+            ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF>::value
+                (data, info, g, d_x, d_y, d_t);
+        }
+    };
 }
 #endif

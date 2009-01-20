@@ -165,5 +165,19 @@ namespace honei
             public:
                     static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data);
         };
+
+    template<>
+        struct Extraction<tags::CPU::SSE, lbm_applications::LABSWE>
+        {
+            public:
+                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data)
+                    {
+                        Extraction<tags::CPU, lbm_applications::LABSWE>::value(info, data);
+                    }
+                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data)
+                    {
+                        Extraction<tags::CPU, lbm_applications::LABSWE>::value(info, data);
+                    }
+        };
 }
 #endif

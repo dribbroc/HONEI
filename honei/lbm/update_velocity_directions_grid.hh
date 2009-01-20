@@ -164,5 +164,18 @@ namespace honei
        {
            static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info);
        };
+
+    template <>
+       struct UpdateVelocityDirectionsGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP>
+       {
+           static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info)
+           {
+               UpdateVelocityDirectionsGrid<tags::CPU, lbm_boundary_types::NOSLIP>::value(data, info);
+           }
+           static void value(PackedGridData<D2Q9, double> & data, PackedGridInfo<D2Q9> & info)
+           {
+               UpdateVelocityDirectionsGrid<tags::CPU, lbm_boundary_types::NOSLIP>::value(data, info);
+           }
+       };
 }
 #endif

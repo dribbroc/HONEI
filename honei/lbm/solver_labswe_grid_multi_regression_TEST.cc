@@ -205,6 +205,10 @@ class SolverLABSWEGridMultiRegressionTest :
 };
 SolverLABSWEGridMultiRegressionTest<tags::CPU::MultiCore, float> mc_solver_multi_test_float("float");
 SolverLABSWEGridMultiRegressionTest<tags::CPU::MultiCore, double> mc_solver_multi_test_double("double");
+#ifdef HONEI_SSE
+SolverLABSWEGridMultiRegressionTest<tags::CPU::SSE, float> sse_solver_multi_test_float("float");
+SolverLABSWEGridMultiRegressionTest<tags::CPU::SSE, double> sse_solver_multi_test_double("double");
+#endif
 #ifdef HONEI_CUDA
 SolverLABSWEGridMultiRegressionTest<tags::GPU::CUDA, float> cuda_solver_multi_test_float("float");
 #endif
