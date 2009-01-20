@@ -449,7 +449,7 @@ namespace honei
 
         float ppu_result(0.0f);
 
-        for (Vector<float>::ConstElementIterator i(a.non_zero_element_at(instruction.transfer_end())),
+        for (SparseVector<float>::NonZeroConstElementIterator i(a.non_zero_element_at(instruction.transfer_end())),
                 i_end(a.end_non_zero_elements()) ; i != i_end ; ++i)
         {
             ppu_result += *i;
@@ -461,21 +461,21 @@ namespace honei
         return result + ppu_result;
     }
 
-    DenseVector<float>
+    /*DenseVector<float>
     Reduction<rt_sum, tags::Cell>::value(const SparseMatrix<float> & a)
     {
         CONTEXT("When reducing SparseMatrix<float> to Vector by sum (Cell):");
 
         DenseVector<float> result(a.rows(), 0.0f);
 
-        for (SparseMatrix<float>::ConstRowIterator i(a.begin_non_zero_rows()),
+        for (SparseMatrix<float>::NonZeroConstRowIterator i(a.begin_non_zero_rows()),
                 i_end(a.end_non_zero_rows()) ; i != i_end ; ++i)
         {
             result[i.index()] = Reduction<rt_sum, tags::Cell>::value(*i);
         }
 
         return result;
-    }
+    }*/
 
     //
     double
@@ -493,7 +493,7 @@ namespace honei
 
         double ppu_result(0.0);
 
-        for (Vector<double>::ConstElementIterator i(a.non_zero_element_at(instruction.transfer_end())),
+        for (SparseVector<double>::NonZeroConstElementIterator i(a.non_zero_element_at(instruction.transfer_end())),
                 i_end(a.end_non_zero_elements()) ; i != i_end ; ++i)
         {
             ppu_result += *i;
@@ -505,21 +505,21 @@ namespace honei
         return result + ppu_result;
     }
 
-    DenseVector<double>
+    /*DenseVector<double>
     Reduction<rt_sum, tags::Cell>::value(const SparseMatrix<double> & a)
     {
         CONTEXT("When reducing SparseMatrix<double> to Vector by sum (Cell):");
 
         DenseVector<double> result(a.rows(), 0.0);
 
-        for (SparseMatrix<double>::ConstRowIterator i(a.begin_non_zero_rows()),
+        for (SparseMatrix<double>::NonZeroConstRowIterator i(a.begin_non_zero_rows()),
                 i_end(a.end_non_zero_rows()) ; i != i_end ; ++i)
         {
             result[i.index()] = Reduction<rt_sum, tags::Cell>::value(*i);
         }
 
         return result;
-    }
+    }*/
 
     //
     float
@@ -538,7 +538,7 @@ namespace honei
 
         float ppu_result(0.0f);
 
-        for (Vector<float>::ConstElementIterator i(a.non_zero_element_at(instruction.transfer_end())),
+        for (SparseVector<float>::NonZeroConstElementIterator i(a.non_zero_element_at(instruction.transfer_end())),
                 i_end(a.end_non_zero_elements()) ; i != i_end ; ++i)
         {
             ppu_result = (ppu_result < *i) ? ppu_result : *i;
@@ -552,21 +552,21 @@ namespace honei
         return (ppu_result < result) ? ppu_result : result;
     }
 
-    DenseVector<float>
+    /*DenseVector<float>
     Reduction<rt_min, tags::Cell>::value(const SparseMatrix<float> & a)
     {
         CONTEXT("When reducing SparseMatrix<float> to Vector by min (Cell):");
 
         DenseVector<float> result(a.rows(), 0.0f);
 
-        for (SparseMatrix<float>::ConstRowIterator i(a.begin_non_zero_rows()), 
+        for (SparseMatrix<float>::NonZeroConstRowIterator i(a.begin_non_zero_rows()), 
                 i_end(a.end_non_zero_rows()) ; i != i_end ; ++i)
         {
             result[i.index()] = Reduction<rt_min, tags::Cell>::value(*i);
         }
 
         return result;
-    }
+    }*/
 
     float
     Reduction<rt_max, tags::Cell>::value(const SparseVector<float> & a)
@@ -583,7 +583,7 @@ namespace honei
 
         float ppu_result(0.0f);
 
-        for (Vector<float>::ConstElementIterator i(a.non_zero_element_at(instruction.transfer_end())),
+        for (SparseVector<float>::NonZeroConstElementIterator i(a.non_zero_element_at(instruction.transfer_end())),
                 i_end(a.end_non_zero_elements()) ; i != i_end ; ++i)
         {
             ppu_result = (ppu_result > *i) ? ppu_result : *i;
@@ -597,20 +597,20 @@ namespace honei
         return (ppu_result > result) ? ppu_result : result;
     }
 
-    DenseVector<float>
+    /*DenseVector<float>
     Reduction<rt_max, tags::Cell>::value(const SparseMatrix<float> & a)
     {
         CONTEXT("When reducing SparseMatrix<float> to Vector by max (Cell):");
 
         DenseVector<float> result(a.rows(), 0.0f);
 
-        for (SparseMatrix<float>::ConstRowIterator i(a.begin_non_zero_rows()), 
+        for (SparseMatrix<float>::NonZeroConstRowIterator i(a.begin_non_zero_rows()), 
                 i_end(a.end_non_zero_rows()) ; i != i_end ; ++i)
         {
             result[i.index()] = Reduction<rt_max, tags::Cell>::value(*i);
         }
 
         return result;
-    }
+    }*/
 }
 

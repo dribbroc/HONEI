@@ -263,9 +263,8 @@ SparseMatrixScalarTest<tags::CPU::MultiCore, double> mc_sparse_matrix_scale_test
 //SparseMatrixScalarTest<tags::CPU::SSE, float> sse_sparse_matrix_scale_test_float("SSE float");
 //SparseMatrixScalarTest<tags::CPU::SSE, double> sse_sparse_matrix_scale_test_double("SSE double");
 #endif
-
 #ifdef HONEI_CELL
-SparseMatrixScalarTest<tags::Cell, float> cell_sparse_matrix_scalar_test_float("Cell float");
+//SparseMatrixScalarTest<tags::Cell, float> cell_sparse_matrix_scalar_test_float("Cell float");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -309,7 +308,7 @@ SparseMatrixScaleQuickTest<tags::CPU::MultiCore, double> mc_sparse_matrix_quick_
 //SparseMatrixScaleQuickTest<tags::CPU::SSE, double> sse_sparse_matrix_quick_test_double("SSE double");
 #endif
 #ifdef HONEI_CELL
-SparseMatrixScaleQuickTest<tags::Cell, float> cell_sparse_matrix_scalar_quick_test_float("Cell float");
+//SparseMatrixScaleQuickTest<tags::Cell, float> cell_sparse_matrix_scalar_quick_test_float("Cell float");
 #endif
 
 

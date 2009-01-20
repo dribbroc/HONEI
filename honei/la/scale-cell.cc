@@ -279,7 +279,7 @@ namespace honei
 
     }
 
-    SparseMatrix<float> &
+    /*SparseMatrix<float> &
     Scale<tags::Cell>::value(SparseMatrix<float> & b, const float a)
     {
         CONTEXT("When scaling SparseMatrix<float> (Cell):");
@@ -361,7 +361,7 @@ namespace honei
         }
 
         return b;
-    }
+    }*/
 
 }
 
