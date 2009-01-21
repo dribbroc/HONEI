@@ -39,8 +39,8 @@ class CollideStreamGridLABSWETest :
 
         virtual void run() const
         {
-            unsigned long g_h(50);
-            unsigned long g_w(50);
+            unsigned long g_h(25);
+            unsigned long g_w(25);
 
             DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
 
@@ -99,6 +99,11 @@ class CollideStreamGridLABSWETest :
 };
 CollideStreamGridLABSWETest<tags::CPU, float> collidestream_grid_test_float("float");
 CollideStreamGridLABSWETest<tags::CPU, double> collidestream_grid_test_double("double");
+#ifdef HONEI_SSE
+CollideStreamGridLABSWETest<tags::CPU::SSE, float> sse_collidestream_grid_test_float("float");
+CollideStreamGridLABSWETest<tags::CPU::SSE, double> sse_collidestream_grid_test_double("double");
+#endif
 #ifdef HONEI_CUDA
-CollideStreamGridLABSWETest<tags::GPU::CUDA, float> cuda_collidestream_grid_test_float("float");
+//needs cuda post pack
+//CollideStreamGridLABSWETest<tags::GPU::CUDA, float> cuda_collidestream_grid_test_float("float");
 #endif

@@ -42,16 +42,16 @@ namespace honei
             unsigned long z_offset(x_offset / 4);
             z_offset = (4 - z_offset) % 4;
 
-            unsigned long quad_start(z_offset);
-            unsigned long quad_end(size - ((size - quad_start) % 4));
+            unsigned long quad_start(z_offset + begin);
+            unsigned long quad_end(end - ((end - quad_start) % 4));
 
             if (size < 32)
             {
-                quad_end = 0;
-                quad_start = 0;
+                quad_end = begin;
+                quad_start = begin;
             }
 
-            for (unsigned long index(0) ; index < quad_start ; ++index)
+            for (unsigned long index(begin) ; index < quad_start ; ++index)
             {
                 float t1, t2, t3, t4, dxu, dyv;
                 t1 = (float(5) * g * h[index] * h[index]) / (e * e * float(6));
@@ -122,7 +122,7 @@ namespace honei
                 t4 = (h[index] / (e * e * float(24))) * (u[index] * u[index] + v[index] * v[index]);
                 f_eq_8[index] = t1 + t2 + t3 - t4;
             }
-            for (unsigned long index(quad_end) ; index < size ; ++index)
+            for (unsigned long index(quad_end) ; index < end ; ++index)
             {
                 float t1, t2, t3, t4, dxu, dyv;
                 t1 = (float(5) * g * h[index] * h[index]) / (e * e * float(6));
@@ -692,16 +692,16 @@ namespace honei
 
             unsigned long z_offset(x_offset / 8);
 
-            unsigned long quad_start(z_offset);
-            unsigned long quad_end(size - ((size - quad_start) % 2));
+            unsigned long quad_start(z_offset + begin);
+            unsigned long quad_end(end - ((end - quad_start) % 2));
 
             if (size < 32)
             {
-                quad_end = 0;
-                quad_start = 0;
+                quad_end = begin;
+                quad_start = begin;
             }
 
-            for (unsigned long index(0) ; index < quad_start ; ++index)
+            for (unsigned long index(begin) ; index < quad_start ; ++index)
             {
                 double t1, t2, t3, t4, dxu, dyv;
                 t1 = (double(5) * g * h[index] * h[index]) / (e * e * double(6));
@@ -772,7 +772,7 @@ namespace honei
                 t4 = (h[index] / (e * e * double(24))) * (u[index] * u[index] + v[index] * v[index]);
                 f_eq_8[index] = t1 + t2 + t3 - t4;
             }
-            for (unsigned long index(quad_end) ; index < size ; ++index)
+            for (unsigned long index(quad_end) ; index < end ; ++index)
             {
                 double t1, t2, t3, t4, dxu, dyv;
                 t1 = (double(5) * g * h[index] * h[index]) / (e * e * double(6));

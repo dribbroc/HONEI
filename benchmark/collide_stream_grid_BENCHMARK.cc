@@ -1,7 +1,7 @@
 /* vim: set number sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2008 Markus Geveler <apryde@gmx.de>
+ * Copyright (c) 2009 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -23,27 +23,28 @@
 #include <string>
 #endif
 
+#include <honei/lbm/collide_stream_grid.hh>
+#include <honei/lbm/grid_packer.hh>
 #include <honei/lbm/solver_labswe_grid.hh>
-#include <honei/lbm/partial_derivative.hh>
-#include <honei/swe/volume.hh>
-#include <iostream>
 #include <honei/swe/volume.hh>
 #include <honei/math/quadrature.hh>
-#include <honei/lbm/grid.hh>
-#include <honei/lbm/grid_packer.hh>
+#include <honei/backends/cuda/operations.hh>
+#include <honei/lbm/partial_derivative.hh>
 
 using namespace std;
 using namespace honei;
+using namespace lbm;
+using namespace lbm_lattice_types;
 
-template <typename Tag_, typename DataType_>
-class LBMGSolverBench :
+template <typename Tag_, typename DataType_, typename Dir_>
+class CollideStreamGridBench :
     public Benchmark
 {
     private:
         unsigned long _size;
         int _count;
     public:
-        LBMGSolverBench(const std::string & id, unsigned long size, int count) :
+        CollideStreamGridBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
@@ -62,6 +63,7 @@ class LBMGSolverBench :
 
             DenseMatrix<DataType_> u(g_h, g_w, DataType_(0.));
             DenseMatrix<DataType_> v(g_h, g_w, DataType_(0.));
+
             DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
 
             Cylinder<DataType_> b1(b, DataType_(0.04), 15, 15);
@@ -72,16 +74,13 @@ class LBMGSolverBench :
 
             Grid<D2Q9, DataType_> grid;
             DenseMatrix<bool> obstacles(g_h, g_w, false);
-            Cuboid<bool> q2(obstacles, 15, 5, 1, 10, 0);
-            q2.value();
-            Cuboid<bool> q3(obstacles, 40, 5, 1, 10, 30);
-            q3.value();
             grid.obstacles = &obstacles;
             grid.h = &h;
             grid.u = &u;
             grid.v = &v;
             grid.b_x = &b_x;
             grid.b_y = &b_y;
+
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
 
@@ -91,22 +90,26 @@ class LBMGSolverBench :
 
             solver.do_preprocessing();
 
+            DataType_ dt(1.);
+
             for(int i = 0; i < _count; ++i)
             {
-                BENCHMARK(solver.solve());
+                    BENCHMARK((CollideStreamGrid<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
+                        value(info, data, dt)));
+#ifdef HONEI_CUDA
+                        cuda_thread_synchronize();
+#endif
             }
             evaluate();
         }
 };
 
-LBMGSolverBench<tags::CPU, float> solver_bench_float_1("LBM Grid solver Benchmark - size: 250x250, float", 250, 25);
-LBMGSolverBench<tags::CPU, double> solver_bench_double_1("LBM Grid solver Benchmark - size: 250x250, double", 250, 25);
-LBMGSolverBench<tags::CPU::MultiCore, float> mc_solver_bench_float_1("MC LBM Grid solver Benchmark - size: 250x250, float", 250, 25);
-LBMGSolverBench<tags::CPU::MultiCore, double> mc_solver_bench_double_1("MC LBM Grid solver Benchmark - size: 250x250, double", 250, 25);
+CollideStreamGridBench<tags::CPU, float, D2Q9::DIR_0> collide_stream_grid_bench_float("CollideStreamGridBenchmark - size: 1000, float", 1000, 10);
+CollideStreamGridBench<tags::CPU, double, D2Q9::DIR_0> collide_stream_grid_bench_double("CollideStreamGridBenchmark - size: 1000, double", 1000, 10);
 #ifdef HONEI_SSE
-LBMGSolverBench<tags::CPU::SSE, float> sse_solver_bench_float_1("SSE LBM Grid solver Benchmark - size: 250x250, float", 250, 25);
-LBMGSolverBench<tags::CPU::SSE, double> sse_solver_bench_double_1("SSE LBM Grid solver Benchmark - size: 250x250, double", 250, 25);
+CollideStreamGridBench<tags::CPU::SSE, float, D2Q9::DIR_0> sse_collide_stream_grid_bench_float("SSE CollideStreamGridBenchmark - size: 1000, float", 1000, 10);
+CollideStreamGridBench<tags::CPU::SSE, double, D2Q9::DIR_0> sse_collide_stream_grid_bench_double("SSE CollideStreamGridBenchmark - size: 1000, double", 1000, 10);
 #endif
 #ifdef HONEI_CUDA
-LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_1("CUDA LBM Grid solver Benchmark - size: 250x250, float", 250, 25);
+CollideStreamGridBench<tags::GPU::CUDA, float, D2Q9::DIR_0> cuda_collide_stream_grid_bench_float("CUDA CollideStreamGridBenchmark - size: 1000, float", 1000, 10);
 #endif

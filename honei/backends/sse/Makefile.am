@@ -14,6 +14,7 @@ libhoneibackendssse_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la
 
 libhoneibackendssse_la_SOURCES = operations.hh \
+				 collide_stream_grid.cc \
 				 difference.cc \
 				 dot_product.cc \
 				 element_inverse.cc \

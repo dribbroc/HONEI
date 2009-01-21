@@ -9,7 +9,7 @@ dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
 add(`collide_stream',                  `hh', `test')
-add(`collide_stream_grid',             `hh', `cuda', `test')
+add(`collide_stream_grid',             `hh', `sse', `cuda', `test')
 add(`dc_advanced',                           `test')
 add(`equilibrium_distribution',        `hh', `test')
 add(`equilibrium_distribution_grid',   `hh', `sse', `cuda', `test')

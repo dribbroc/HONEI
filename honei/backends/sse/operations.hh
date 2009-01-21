@@ -89,6 +89,20 @@ namespace honei
                 double * f_eq_0, double * f_eq_1, double * f_eq_2,
                 double * f_eq_3, double * f_eq_4, double * f_eq_5,
                 double * f_eq_6, double * f_eq_7, double * f_eq_8);
+
+        void collide_stream_grid_dir_0(unsigned long begin, unsigned long end, float tau,
+                float * f_temp_0, float * f_0, float * f_eq_0);
+
+        void collide_stream_grid_dir_0(unsigned long begin, unsigned long end, double tau,
+                double * f_temp_0, double * f_0, double * f_eq_0);
+
+        void collide_stream_grid_dir_n(unsigned long end, float tau,
+                unsigned long * dir, unsigned long * dir_index,
+                float * f_temp, float * f, float * f_eq);
+
+        void collide_stream_grid_dir_n(unsigned long end, double tau,
+                unsigned long * dir, unsigned long * dir_index,
+                double * f_temp, double * f, double * f_eq);
     }
 }
 

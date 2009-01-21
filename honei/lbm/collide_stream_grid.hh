@@ -241,25 +241,19 @@ namespace honei
                 PackedGridData<lbm_lattice_types::D2Q9, float> & data,
                 float tau);
     };
+
     template <>
     struct CollideStreamGrid<tags::CPU::SSE, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>
     {
         static void value(
                 PackedGridInfo<lbm_lattice_types::D2Q9> & info,
                 PackedGridData<lbm_lattice_types::D2Q9, float> & data,
-                float tau)
-        {
-            CollideStreamGrid<tags::CPU, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::value
-                (info, data, tau);
-        }
+                float tau);
+
         static void value(
                 PackedGridInfo<lbm_lattice_types::D2Q9> & info,
                 PackedGridData<lbm_lattice_types::D2Q9, double> & data,
-                double tau)
-        {
-            CollideStreamGrid<tags::CPU, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::value
-                (info, data, tau);
-        }
+                double tau);
     };
 }
 #endif
