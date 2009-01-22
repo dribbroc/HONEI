@@ -36,7 +36,7 @@ using namespace honei;
 using namespace lbm;
 using namespace lbm_lattice_types;
 
-template <typename Tag_, typename DataType_, typename Dir_>
+template <typename Tag_, typename DataType_>
 class CollideStreamGridBench :
     public Benchmark
 {
@@ -104,12 +104,12 @@ class CollideStreamGridBench :
         }
 };
 
-CollideStreamGridBench<tags::CPU, float, D2Q9::DIR_0> collide_stream_grid_bench_float("CollideStreamGridBenchmark - size: 1000, float", 1000, 10);
-CollideStreamGridBench<tags::CPU, double, D2Q9::DIR_0> collide_stream_grid_bench_double("CollideStreamGridBenchmark - size: 1000, double", 1000, 10);
+CollideStreamGridBench<tags::CPU, float> collide_stream_grid_bench_float("CollideStreamGridBenchmark - size: 2000, float", 2000, 10);
+CollideStreamGridBench<tags::CPU, double> collide_stream_grid_bench_double("CollideStreamGridBenchmark - size: 2000, double", 2000, 10);
 #ifdef HONEI_SSE
-CollideStreamGridBench<tags::CPU::SSE, float, D2Q9::DIR_0> sse_collide_stream_grid_bench_float("SSE CollideStreamGridBenchmark - size: 1000, float", 1000, 10);
-CollideStreamGridBench<tags::CPU::SSE, double, D2Q9::DIR_0> sse_collide_stream_grid_bench_double("SSE CollideStreamGridBenchmark - size: 1000, double", 1000, 10);
+CollideStreamGridBench<tags::CPU::SSE, float> sse_collide_stream_grid_bench_float("SSE CollideStreamGridBenchmark - size: 2000, float", 2000, 10);
+CollideStreamGridBench<tags::CPU::SSE, double> sse_collide_stream_grid_bench_double("SSE CollideStreamGridBenchmark - size: 2000, double", 2000, 10);
 #endif
 #ifdef HONEI_CUDA
-CollideStreamGridBench<tags::GPU::CUDA, float, D2Q9::DIR_0> cuda_collide_stream_grid_bench_float("CUDA CollideStreamGridBenchmark - size: 1000, float", 1000, 10);
+CollideStreamGridBench<tags::GPU::CUDA, float> cuda_collide_stream_grid_bench_float("CUDA CollideStreamGridBenchmark - size: 2000, float", 2000, 10);
 #endif

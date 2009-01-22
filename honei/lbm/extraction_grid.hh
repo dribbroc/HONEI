@@ -39,12 +39,12 @@ using namespace lbm;
 namespace honei
 {
     template<typename Tag_, typename App_>
-        struct Extraction
+        struct ExtractionGrid
         {
         };
 
     template<>
-        struct Extraction<tags::CPU, lbm_applications::LABSWE>
+        struct ExtractionGrid<tags::CPU, lbm_applications::LABSWE>
         {
             public:
                 template<typename DT_>
@@ -160,24 +160,18 @@ namespace honei
         };
 
     template<>
-        struct Extraction<tags::GPU::CUDA, lbm_applications::LABSWE>
+        struct ExtractionGrid<tags::GPU::CUDA, lbm_applications::LABSWE>
         {
             public:
                     static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data);
         };
 
     template<>
-        struct Extraction<tags::CPU::SSE, lbm_applications::LABSWE>
+        struct ExtractionGrid<tags::CPU::SSE, lbm_applications::LABSWE>
         {
             public:
-                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data)
-                    {
-                        Extraction<tags::CPU, lbm_applications::LABSWE>::value(info, data);
-                    }
-                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data)
-                    {
-                        Extraction<tags::CPU, lbm_applications::LABSWE>::value(info, data);
-                    }
+                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data);
+                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data);
         };
 }
 #endif

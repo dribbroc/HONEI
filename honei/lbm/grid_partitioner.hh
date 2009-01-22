@@ -876,41 +876,42 @@ namespace honei
                 for (unsigned long i(0) ; i < info_list.size() ; ++i)
                 {
                     PackedGridData<D2Q9, DT_> new_data;
-                    new_data.h = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1);
-                    new_data.u = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1);
-                    new_data.v = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1);
-                    new_data.b_x = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1);
-                    new_data.b_y = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1);
+                    unsigned long data_size(temp_max_list[i] - temp_min_list[i]);
+                    new_data.h = new DenseVector<DT_>(data_size + 1);
+                    new_data.u = new DenseVector<DT_>(data_size + 1);
+                    new_data.v = new DenseVector<DT_>(data_size + 1);
+                    new_data.b_x = new DenseVector<DT_>(data_size + 1);
+                    new_data.b_y = new DenseVector<DT_>(data_size + 1);
 
-                    new_data.f_0 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_1 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_2 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_3 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_4 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_5 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_6 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_7 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_8 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_0 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_1 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_2 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_3 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_4 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_5 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_6 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_7 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_8 = new DenseVector<DT_>(data_size + 1, DT_(0));
 
-                    new_data.f_eq_0 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_eq_1 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_eq_2 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_eq_3 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_eq_4 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_eq_5 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_eq_6 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_eq_7 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_eq_8 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_eq_0 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_eq_1 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_eq_2 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_eq_3 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_eq_4 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_eq_5 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_eq_6 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_eq_7 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_eq_8 = new DenseVector<DT_>(data_size + 1, DT_(0));
 
-                    new_data.f_temp_0 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_temp_1 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_temp_2 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_temp_3 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_temp_4 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_temp_5 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_temp_6 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_temp_7 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
-                    new_data.f_temp_8 = new DenseVector<DT_>(temp_max_list[i] - temp_min_list[i] + 1, DT_(0));
+                    new_data.f_temp_0 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_temp_1 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_temp_2 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_temp_3 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_temp_4 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_temp_5 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_temp_6 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_temp_7 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    new_data.f_temp_8 = new DenseVector<DT_>(data_size + 1, DT_(0));
                     new_data.distribution_x = new DenseVector<DT_>(9ul, DT_(0));
                     new_data.distribution_y = new DenseVector<DT_>(9ul, DT_(0));
 

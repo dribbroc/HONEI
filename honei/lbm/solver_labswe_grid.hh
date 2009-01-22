@@ -185,7 +185,7 @@ namespace honei
                         value(*_data, *_info);
 
                     //extract velocities out of h from previous timestep:
-                    Extraction<Tag_, lbm_applications::LABSWE>::value(*_info, *_data);
+                    ExtractionGrid<Tag_, lbm_applications::LABSWE>::value(*_info, *_data);
 
                     ++_time;
 

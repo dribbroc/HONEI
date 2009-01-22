@@ -25,7 +25,7 @@
 
 using namespace honei;
 
-void Extraction<tags::GPU::CUDA, lbm_applications::LABSWE>::value(
+void ExtractionGrid<tags::GPU::CUDA, lbm_applications::LABSWE>::value(
                 PackedGridInfo<lbm_lattice_types::D2Q9> & info,
                 PackedGridData<lbm_lattice_types::D2Q9, float> & data)
 {

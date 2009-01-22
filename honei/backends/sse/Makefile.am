@@ -20,6 +20,7 @@ libhoneibackendssse_la_SOURCES = operations.hh \
 				 element_inverse.cc \
 				 element_product.cc \
 				 eq_dist_grid.cc \
+				 extraction_grid.cc \
 				 norm.cc \
 				 product.cc \
 				 reduction.cc \
