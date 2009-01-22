@@ -24,11 +24,6 @@ class TimeStampTest :
         {
             TimeStamp infinity, a, b, c, d;
 
-            TEST_CHECK(! (a < infinity));
-            TEST_CHECK(! (b < infinity));
-            TEST_CHECK(! (c < infinity));
-            TEST_CHECK(! (d < infinity));
-
             a.take();
             sleep(1);
 
