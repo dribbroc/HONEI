@@ -96,7 +96,7 @@ class SolverLABSWETest :
             DenseMatrix<DataType_> d_x(g_h, g_w, DataType_(0.));
             DenseMatrix<DataType_> d_y(g_h, g_w, DataType_(0.));
 
-            SolverLABSWE<Tag_, DataType_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP_PERIODIC> solver(1.,1.,1., g_w, g_h, &h, &b, &u, &v);
+            SolverLABSWE<Tag_, DataType_,lbm_force::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP_PERIODIC> solver(1.,1.,1., g_w, g_h, &h, &b, &u, &v);
 
             solver.set_distribution(&d_0, &d_1, &d_2, &d_3, &d_4, &d_5, &d_6, &d_7, &d_8);
             solver.set_eq_distribution(&e_d_0, &e_d_1, &e_d_2, &e_d_3, &e_d_4, &e_d_5, &e_d_6, &e_d_7, &e_d_8);
@@ -215,7 +215,7 @@ class SolverLABSWEDrivenCavityTest :
             DenseMatrix<DataType_> d_x(g_h, g_w, DataType_(0.));
             DenseMatrix<DataType_> d_y(g_h, g_w, DataType_(0.));
 
-            SolverLABSWE<Tag_, DataType_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::DRIVEN_CAVITY> solver(p_d_x, p_d_y, p_d_t, g_w, g_h, &h, &b, &u, &v);
+            SolverLABSWE<Tag_, DataType_,lbm_force::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::DRIVEN_CAVITY> solver(p_d_x, p_d_y, p_d_t, g_w, g_h, &h, &b, &u, &v);
 
             solver.set_distribution(&d_0, &d_1, &d_2, &d_3, &d_4, &d_5, &d_6, &d_7, &d_8);
             solver.set_eq_distribution(&e_d_0, &e_d_1, &e_d_2, &e_d_3, &e_d_4, &e_d_5, &e_d_6, &e_d_7, &e_d_8);
@@ -396,7 +396,7 @@ class SolverLABSWEMassConservationTest :
             DenseMatrix<DataType_> d_x(g_h, g_w, DataType_(0.));
             DenseMatrix<DataType_> d_y(g_h, g_w, DataType_(0.));
 
-            SolverLABSWE<Tag_, DataType_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP_PERIODIC> solver(1.,1.,1., g_w, g_h, &h, &b, &u, &v);
+            SolverLABSWE<Tag_, DataType_,lbm_force::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP_PERIODIC> solver(1.,1.,1., g_w, g_h, &h, &b, &u, &v);
 
             solver.set_distribution(&d_0, &d_1, &d_2, &d_3, &d_4, &d_5, &d_6, &d_7, &d_8);
             solver.set_eq_distribution(&e_d_0, &e_d_1, &e_d_2, &e_d_3, &e_d_4, &e_d_5, &e_d_6, &e_d_7, &e_d_8);
@@ -531,7 +531,7 @@ class SolverLABSWENOSLIPTest :
             DenseMatrix<DataType_> d_x(g_h, g_w, DataType_(0.));
             DenseMatrix<DataType_> d_y(g_h, g_w, DataType_(0.));
 
-            SolverLABSWE<Tag_, DataType_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(1.,1.,1., g_w, g_h, &h, &b, &u, &v);
+            SolverLABSWE<Tag_, DataType_,lbm_force::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(1.,1.,1., g_w, g_h, &h, &b, &u, &v);
 
             solver.set_distribution(&d_0, &d_1, &d_2, &d_3, &d_4, &d_5, &d_6, &d_7, &d_8);
             solver.set_eq_distribution(&e_d_0, &e_d_1, &e_d_2, &e_d_3, &e_d_4, &e_d_5, &e_d_6, &e_d_7, &e_d_8);

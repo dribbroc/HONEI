@@ -50,7 +50,7 @@ namespace honei
      * \ingroup grplbmoperations
      */
     template <typename Tag_>
-    struct Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>
+    struct Source<Tag_, lbm_applications::LABSWE, lbm_force::SIMPLE, lbm_source_schemes::BASIC>
     {
         /**
          * \name Source term.
@@ -83,7 +83,7 @@ namespace honei
      * \ingroup grplbmoperations
      */
     template <typename Tag_>
-    struct Source<Tag_, lbm_applications::LABSWE, lbm_source_types::CONSTANT, lbm_source_schemes::BASIC>
+    struct Source<Tag_, lbm_applications::LABSWE, lbm_force::CONSTANT, lbm_source_schemes::BASIC>
     {
         /**
          * \name Source term.

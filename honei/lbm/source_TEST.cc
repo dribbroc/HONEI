@@ -43,7 +43,7 @@ class SourceLABSWETest :
             DataType_ g(9.81);
             DenseMatrix<DataType_> result(1000ul, 1000ul);
 
-            Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::
+            Source<Tag_, lbm_applications::LABSWE, lbm_force::SIMPLE, lbm_source_schemes::BASIC>::
                 value(result, h, db, g);
             for(unsigned long i(0); i < 1000; ++i)
             {
@@ -52,7 +52,7 @@ class SourceLABSWETest :
                     TEST_CHECK_EQUAL_WITHIN_EPS(result(i,j), - g * 1.23456 * 0., std::numeric_limits<DataType_>::epsilon());
                 }
             }
-            Source<Tag_, lbm_applications::LABSWE, lbm_source_types::CONSTANT, lbm_source_schemes::BASIC>::
+            Source<Tag_, lbm_applications::LABSWE, lbm_force::CONSTANT, lbm_source_schemes::BASIC>::
                 value(result, DataType_(0.000024));
             for(unsigned long i(0); i < 1000; ++i)
             {

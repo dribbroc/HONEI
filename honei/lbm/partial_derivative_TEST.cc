@@ -42,11 +42,11 @@ class PartialDerivativeTest :
             f(5,5) = 10.;
             DataType_ h(1);
 
-            DenseMatrix<DataType_> result(PartialDerivative<Tag_, X, CENTRALDIFF>::value(f , h));
+            DenseMatrix<DataType_> result(PartialDerivative<Tag_, X, BED_SLOPE>::value(f , h));
 
             std::cout << result << std::endl;
 
-            DenseMatrix<DataType_> result_2(PartialDerivative<Tag_, Y, CENTRALDIFF>::value(f , h));
+            DenseMatrix<DataType_> result_2(PartialDerivative<Tag_, Y, BED_SLOPE>::value(f , h));
 
             std::cout << result_2 << std::endl;
             TEST_CHECK(true);

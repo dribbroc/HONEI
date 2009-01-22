@@ -73,7 +73,7 @@ class SolverLABSWEGridRegressionTest :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 1., 1., 1., 1.5);
+            SolverLABSWEGrid<Tag_, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 1., 1., 1., 1.5);
 
             solver.do_preprocessing();
 
@@ -150,7 +150,7 @@ class SolverLABSWEGridRegressionTest :
             DenseMatrix<DataType_> d_x(g_h_standard, g_w_standard, DataType_(0.));
             DenseMatrix<DataType_> d_y(g_h_standard, g_w_standard, DataType_(0.));
 
-            SolverLABSWE<tags::CPU, DataType_,lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP_PERIODIC> solver_standard(1.,1.,1., g_w_standard, g_h_standard, &h_standard, &b_standard, &u_standard, &v_standard);
+            SolverLABSWE<tags::CPU, DataType_,lbm_force::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP_PERIODIC> solver_standard(1.,1.,1., g_w_standard, g_h_standard, &h_standard, &b_standard, &u_standard, &v_standard);
 
             solver_standard.set_distribution(&d_0, &d_1, &d_2, &d_3, &d_4, &d_5, &d_6, &d_7, &d_8);
             solver_standard.set_eq_distribution(&e_d_0, &e_d_1, &e_d_2, &e_d_3, &e_d_4, &e_d_5, &e_d_6, &e_d_7, &e_d_8);

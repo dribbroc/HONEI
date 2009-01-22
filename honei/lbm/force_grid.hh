@@ -52,7 +52,7 @@ namespace honei
      * \ingroup grplbmoperations
      */
     template <>
-    struct ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF>
+    struct ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>
     {
         /**
          * \name Force term.
@@ -566,7 +566,7 @@ namespace honei
     };
 
     template <>
-    struct ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF>
+    struct ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>
     {
         static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info, float g, float d_x, float d_y, float d_t);
     };

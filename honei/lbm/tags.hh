@@ -56,7 +56,7 @@ namespace honei
         {
             class RECTANGULAR;
         }
-        namespace lbm_source_types
+        namespace lbm_force
         {
             class SIMPLE;
             class CONSTANT;
@@ -65,7 +65,7 @@ namespace honei
         namespace lbm_source_schemes
         {
             class BASIC;
-            class CENTRALDIFF;
+            class BED_SLOPE;
         }
         namespace lbm_boundary_types
         {

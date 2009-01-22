@@ -57,7 +57,7 @@ namespace honei {
             };
 
     template<typename Tag_, typename ResPrec_>
-        class SolverLABNAVSTO<Tag_, ResPrec_, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::DRIVEN_CAVITY>
+        class SolverLABNAVSTO<Tag_, ResPrec_, lbm_force::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::DRIVEN_CAVITY>
         {
             private:
                 /** Global variables.
@@ -486,16 +486,16 @@ namespace honei {
                     ++_time;
 
                     ///Compute source terms:
-                    /*Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::
+                    /*Source<Tag_, lbm_applications::LABSWE, lbm_force::SIMPLE, lbm_source_schemes::BASIC>::
                       value(*_source_x, *_height, *_d_bottom_x, _gravity);
-                      Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::
+                      Source<Tag_, lbm_applications::LABSWE, lbm_force::SIMPLE, lbm_source_schemes::BASIC>::
                       value(*_source_y, *_height, *_d_bottom_y, _gravity);
                       */
 
-                    Source<Tag_, lbm_applications::LABSWE, lbm_source_types::CONSTANT, lbm_source_schemes::BASIC>::
+                    Source<Tag_, lbm_applications::LABSWE, lbm_force::CONSTANT, lbm_source_schemes::BASIC>::
                         //value(*_source_x, ResPrec_(0.000024));
                         value(*_source_x, ResPrec_(0.));
-                    Source<Tag_, lbm_applications::LABSWE, lbm_source_types::CONSTANT, lbm_source_schemes::BASIC>::
+                    Source<Tag_, lbm_applications::LABSWE, lbm_force::CONSTANT, lbm_source_schemes::BASIC>::
                         value(*_source_y, ResPrec_(0.));
                     ///Streaming and collision:
 

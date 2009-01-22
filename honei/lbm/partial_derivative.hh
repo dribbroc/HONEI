@@ -45,7 +45,7 @@ namespace honei
         };
 
     template<typename Tag_>
-        class PartialDerivative<Tag_, X, CENTRALDIFF>
+        class PartialDerivative<Tag_, X, BED_SLOPE>
         {
             public:
                 template<typename DT_>
@@ -75,7 +75,7 @@ namespace honei
         };
 
     template<typename Tag_>
-        class PartialDerivative<Tag_, Y, CENTRALDIFF>
+        class PartialDerivative<Tag_, Y, BED_SLOPE>
         {
             public:
                 template<typename DT_>
