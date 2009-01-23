@@ -105,8 +105,80 @@ namespace honei
             }
 
             template <typename DT1_, typename DT2_>
-            static void op(DenseVectorBase<DT1_> & x, const DenseVectorBase<DT2_> & y, DT2_ b, unsigned long min_part_size,
-                    unsigned long max_count)
+            static void op(DenseVectorBase<DT1_> & x, const DenseVectorBase<DT2_> & y, unsigned long min_part_size, unsigned long max_count)
+            {
+                if (x.size() != y.size())
+                    throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+                if (x.size() < 2 * min_part_size)
+                {
+                    DelegateOperationType_::value(x, y);
+                }
+                else
+                {
+                    PartitionList partitions;
+                    Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+
+                    TicketVector tickets;
+
+                    PartitionList::ConstIterator p(partitions.begin());
+                    for (PartitionList::ConstIterator p_last(partitions.last()) ; p != p_last ; ++p)
+                    {
+                        DenseVectorSlice<DT1_> x_slice(x, p->size, x.offset() + (p->start * x.stepsize()), x.stepsize());
+                        DenseVectorSlice<DT1_> y_slice(y, p->size, y.offset() + (p->start * y.stepsize()), y.stepsize());
+
+                        OperationWrapper<DelegateOperationType_, DenseVectorBase<DT1_>, DenseVectorBase<DT1_>, DenseVectorBase<DT2_> > wrapper(x_slice);
+                        tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper, x_slice, y_slice)));
+                    }
+
+                    DenseVectorSlice<DT1_> x_slice(x, p->size, x.offset() + (p->start * x.stepsize()), x.stepsize());
+                    DenseVectorSlice<DT1_> y_slice(y, p->size, y.offset() + (p->start * y.stepsize()), y.stepsize());
+
+                    DelegateOperationType_::value(x_slice, y_slice);
+
+                    tickets.wait();
+                }
+            }
+
+            template <typename DT1_, typename DT2_>
+            static void op(DenseVectorContinuousBase<DT1_> & x, const DenseVectorContinuousBase<DT2_> & y, unsigned long min_part_size, unsigned long max_count)
+            {
+                if (x.size() != y.size())
+                    throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+                if (x.size() < 2 * min_part_size)
+                {
+                    DelegateOperationType_::value(x, y);
+                }
+                else
+                {
+                    PartitionList partitions;
+                    Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+
+                    TicketVector tickets;
+
+                    PartitionList::ConstIterator p(partitions.begin());
+                    for (PartitionList::ConstIterator p_last(partitions.last()) ; p != p_last ; ++p)
+                    {
+                        DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
+                        DenseVectorRange<DT2_> y_range(y.range(p->size, p->start));
+
+                        OperationWrapper<DelegateOperationType_, DenseVectorContinuousBase<DT1_>,
+                        DenseVectorContinuousBase<DT1_>, DenseVectorContinuousBase<DT2_> > wrapper(x_range);
+                        tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper, x_range, y_range)));
+                    }
+
+                    DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
+                    DenseVectorRange<DT2_> y_range(y.range(p->size, p->start));
+
+                    DelegateOperationType_::value(x_range, y_range);
+
+                    tickets.wait();
+                }
+            }
+
+            template <typename DT1_, typename DT2_>
+            static void op(DenseVectorBase<DT1_> & x, const DenseVectorBase<DT2_> & y, DT2_ b, unsigned long min_part_size, unsigned long max_count)
             {
                 if (x.size() != y.size())
                     throw VectorSizeDoesNotMatch(y.size(), x.size());

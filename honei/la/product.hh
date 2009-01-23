@@ -1321,7 +1321,7 @@ namespace honei
             template <typename DT1_, typename DT2_>
             static DenseVector<DT1_> value(const BandedMatrixQ1<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
             {
-                CONTEXT("When multiplying BandedMatrixQ1 with DenseVectorContinuousBase using multicore backend:");
+                CONTEXT("When multiplying BandedMatrixQ1 with DenseVectorContinuousBase using backend : " + Tag_::name);
                 if (b.size() != a.columns())
                 {
                     throw VectorSizeDoesNotMatch(b.size(), a.columns());
@@ -1364,7 +1364,7 @@ namespace honei
                 honei::ScaledSum<Tag_>::value(res_ld, ld_band, b_ld);
                 honei::ScaledSum<Tag_>::value(res_lu, lu_band, b_lu);
                 honei::ScaledSum<Tag_>::value(res_dl, dl_band, b_dl);
-                honei::ScaledSum<Tag_>::value(result, const_cast<const DenseVector<DT1_> &>(a.band(DD)), b); // ToDo: Use ElementProduct<Tag_> and save zero initialization
+                honei::ScaledSum<Tag_>::value(result, const_cast<const DenseVector<DT1_> &>(a.band(DD)), b);
                 honei::ScaledSum<Tag_>::value(res_du, du_band, b_du);
                 honei::ScaledSum<Tag_>::value(res_ud, ud_band, b_ud);
                 honei::ScaledSum<Tag_>::value(res_uu, uu_band, b_uu);
@@ -1377,7 +1377,7 @@ namespace honei
             template <typename DT1_, typename DT2_>
             static DenseVector<DT1_> value(const DenseMatrix<DT1_> & a, const DenseVectorBase<DT2_> & b)
             {
-                CONTEXT("When multiplying DenseMatrix with DenseVector(Base) using multicore backend:");
+                CONTEXT("When multiplying DenseMatrix with DenseVector(Base) using backend : " + Tag_::name);
 
                 if (b.size() != a.columns())
                 {
@@ -1391,7 +1391,7 @@ namespace honei
             template <typename DT1_, typename DT2_>
             static DenseVector<DT1_> value(const BandedMatrix<DT1_> & a, const DenseVectorBase<DT2_> & b)
             {
-                CONTEXT("When multiplying BandedMatrix with DenseVector(Base) using multicore backend:");
+                CONTEXT("When multiplying BandedMatrix with DenseVector(Base) using backend : " + Tag_::name);
 
                 if (b.size() != a.columns())
                 {
@@ -1405,7 +1405,7 @@ namespace honei
             template <typename DT1_, typename DT2_>
             static DenseMatrix<DT1_> value(const DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
             {
-                CONTEXT("When multiplying DenseMatrix with DenseMatrix using multicore backend:");
+                CONTEXT("When multiplying DenseMatrix with DenseMatrix using backend : " + Tag_::name);
 
                 if (a.columns() != b.rows())
                     throw MatrixRowsDoNotMatch(b.rows(), a.columns());
@@ -1417,7 +1417,7 @@ namespace honei
             template <typename DT1_, typename DT2_>
             static DenseMatrix<DT1_> value(const SparseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
             {
-                CONTEXT("When multiplying SparseMatrix with DenseMatrix using multicore backend:");
+                CONTEXT("When multiplying SparseMatrix with DenseMatrix using backend : " + Tag_::name);
 
                 if (a.columns() != b.rows())
                     throw MatrixRowsDoNotMatch(b.rows(), a.columns());

@@ -1,13 +1,13 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007 Sven Mallach <sven.mallach@uni-dortmund.de>
+ * Copyright (c) 2007, 2009 Sven Mallach <sven.mallach@cs.uni-dortmund.de>
  *
- * This file is part of the LA C++ library. LibLa is free software;
+ * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
  * Public License version 2, as published by the Free Software Foundation.
  *
- * LibLa is distributed in the hope that it will be useful, but WITHOUT ANY
+ * HONEI is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  * details.
@@ -20,6 +20,8 @@
 #ifndef LIBLA_GUARD_ELEMENT_PRODUCT_HH
 #define LIBLA_GUARD_ELEMENT_PRODUCT_HH 1
 
+#include <honei/backends/multicore/operation.hh>
+#include <honei/backends/multicore/thread_pool.hh>
 #include <honei/la/banded_matrix.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/dense_vector.hh>
@@ -28,6 +30,7 @@
 #include <honei/la/sparse_vector.hh>
 #include <honei/la/vector_error.hh>
 #include <honei/util/benchmark_info.hh>
+#include <honei/util/configuration.hh>
 #include <honei/util/tags.hh>
 
 namespace honei
@@ -85,6 +88,17 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
+        static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & a, const DenseVectorBase<DT2_> & b)
+        {
+            CONTEXT("When calculating the product of DenseVectorContinuousBases elements:");
+
+            DenseVectorBase<DT1_> & temp(a);
+            ElementProduct<tags::CPU>::value(temp, b);
+
+            return a;
+        }
+
+        template <typename DT1_, typename DT2_>
         static SparseVector<DT1_> value(SparseVector<DT1_> & a, const SparseVector<DT2_> & b)
         {
             CONTEXT("When calculating the product of SparseVector elements:");
@@ -130,30 +144,6 @@ namespace honei
             }
             return a;
             ///\todo: perhaps sparsify - if *b[l.index()] == 0 -> write of zero.
-        }
-
-        template <typename DT1_, typename DT2_>
-        static inline DenseVector<DT1_> & value(DenseVector<DT1_> & a, const DenseVectorBase<DT2_> & b)
-        {
-            DenseVectorBase<DT1_> & temp = a;
-            ElementProduct<>::value(temp, b);
-            return a;
-        }
-
-        template <typename DT1_, typename DT2_>
-        static inline DenseVectorRange<DT1_> & value(DenseVectorRange<DT1_> & a, const DenseVectorBase<DT2_> & b)
-        {
-            DenseVectorBase<DT1_> & temp = a;
-            ElementProduct<>::value(temp, b);
-            return a;
-        }
-
-        template <typename DT1_, typename DT2_>
-        static inline DenseVectorSlice<DT1_> & value(DenseVectorSlice<DT1_> & a, const DenseVectorBase<DT2_> & b)
-        {
-            DenseVectorBase<DT1_> & temp = a;
-            ElementProduct<>::value(temp, b);
-            return a;
         }
 
         template <typename DT1_, typename DT2_>
@@ -599,14 +589,6 @@ namespace honei
         /// \}
     };
 
-    namespace mc
-    {
-        template <typename Tag_> struct ElementProduct :
-            public honei::ElementProduct<typename Tag_::DelegateTo>
-        {
-        };
-    }
-
     /**
      * \brief Multiplication of the elements of two given entities.
      *
@@ -621,6 +603,123 @@ namespace honei
      * \ingroup grplamatrixoperations
      * \ingroup grplavectoroperations
      */
+
+    namespace mc
+    {
+        template <typename Tag_> struct ElementProduct
+        {
+            template <typename DT1_, typename DT2_>
+            static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & x, const DenseVectorBase<DT2_> & y)
+            {
+                CONTEXT("When calculating ElementProduct (DenseVectorBase, DenseVectorBase) using backend : " + Tag_::name);
+                unsigned long min_part_size(Configuration::instance()->get_value("mc::ElementProduct(DVB,DVB)::min_part_size", 128));
+                unsigned long max_count(Configuration::instance()->get_value("mc::ElementProduct(DVB,DVB)::max_count",
+                            mc::ThreadPool::instance()->get_num_threads()));
+
+                Operation<honei::ElementProduct<typename Tag_::DelegateTo> >::op(x, y, min_part_size, max_count);
+
+                return x;
+            }
+
+            template <typename DT1_, typename DT2_>
+            static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & x, const DenseVectorContinuousBase<DT2_> & y)
+            {
+                CONTEXT("When calculating ElementProduct (DenseVectorContinuousBase, DenseVectorContinuousBase) using backend : " + Tag_::name);
+
+                unsigned long min_part_size(Configuration::instance()->get_value("mc::ElementProduct(DVCB,DVCB)::min_part_size", 128));
+                unsigned long max_count(Configuration::instance()->get_value("mc::ElementProduct(DVCB,DVCB)::max_count",
+                            mc::ThreadPool::instance()->get_num_threads()));
+
+                Operation<honei::ElementProduct<typename Tag_::DelegateTo> >::op(x, y, min_part_size, max_count);
+
+                return x;
+            }
+
+            // Dummy
+            template <typename DT1_, typename DT2_>
+            static SparseVector<DT1_> & value(SparseVector<DT1_> & a, const DenseVectorBase<DT2_> & b)
+            {
+                CONTEXT("When calculating ElementProduct (SparseVector, DenseVectorBase) using backend : " + Tag_::name);
+
+                if (a.size() != b.size())
+                    throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+                return honei::ElementProduct<tags::CPU>::value(a, b);
+             }
+
+            // Dummy
+            template <typename DT1_, typename DT2_>
+            static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
+            {
+                CONTEXT("When calculating ElementProduct (SparseMatrix, SparseMatrix) using backend : " + Tag_::name);
+
+                if (a.columns() != b.columns())
+                {
+                    throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+                }
+
+                if (a.rows() != b.rows())
+                {
+                    throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+                }
+
+                return honei::ElementProduct<tags::CPU>::value(a, b);
+             }
+
+            // Dummy
+            template <typename DT1_, typename DT2_>
+            static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
+            {
+                CONTEXT("When calculating ElementProduct (DenseMatrix, DenseMatrix) using backend : " + Tag_::name);
+
+                if (a.columns() != b.columns())
+                {
+                    throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+                }
+
+                if (a.rows() != b.rows())
+                {
+                    throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+                }
+
+                return honei::ElementProduct<tags::CPU>::value(a, b);
+            }
+
+            // Dummy
+            template <typename DT1_, typename DT2_>
+            static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
+            {
+                CONTEXT("When calculating ElementProduct (SparseMatrix, DenseMatrix) using backend : " + Tag_::name);
+
+                if (a.columns() != b.columns())
+                {
+                    throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+                }
+
+                if (a.rows() != b.rows())
+                {
+                    throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+                }
+
+                return honei::ElementProduct<tags::CPU>::value(a, b);
+            }
+
+            // Dummy
+            template <typename DT1_, typename DT2_>
+            static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
+            {
+                CONTEXT("When calculating ElementProduct (BandedMatrix, BandedMatrix) using backend : " + Tag_::name);
+
+                if (a.rows() != b.rows())
+                {
+                    throw MatrixSizeDoesNotMatch(b.rows(), a.rows());
+                }
+
+                return honei::ElementProduct<tags::CPU>::value(a, b);
+            }
+
+        };
+    }
 
     template <> struct ElementProduct<tags::CPU::MultiCore> :
         public mc::ElementProduct<tags::CPU::MultiCore>

@@ -153,8 +153,11 @@ mc::sum(DM,SM)::max_count = 4
 mc::sum(SM,SM)::min_part_size = 16
 mc::sum(SM,SM)::max_count = 4
 
-mc::element_product(DVCB,DVCB)::min_part_size = 16
-mc::element_product(DVCB,DVCB)::max_count = 4
+mc::ElementProduct(DVB,DVB)::min_part_size = 16
+mc::ElementProduct(DVB,DVB)::max_count = 4
+
+mc::ElementProduct(DVCB,DVCB)::min_part_size = 16
+mc::ElementProduct(DVCB,DVCB)::max_count = 4
 
 mc::element_product(SV,DVCB)::min_part_size = 16
 mc::element_product(SV,DVCB)::max_count = 4
