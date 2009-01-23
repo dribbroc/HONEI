@@ -244,9 +244,13 @@ class Q1MatrixDenseVectorProductTest :
 };
 Q1MatrixDenseVectorProductTest<tags::CPU, float> q1_prod_test_float("float");
 Q1MatrixDenseVectorProductTest<tags::CPU, double> q1_prod_test_double("double");
+Q1MatrixDenseVectorProductTest<tags::CPU::MultiCore, float> q1_prod_mc_test_float("MC float");
+Q1MatrixDenseVectorProductTest<tags::CPU::MultiCore, double> q1_prod_mc_test_double("MC double");
 #ifdef HONEI_SSE
 Q1MatrixDenseVectorProductTest<tags::CPU::SSE, float> sse_q1_prod_test_float("float");
 Q1MatrixDenseVectorProductTest<tags::CPU::SSE, double> sse_q1_prod_test_double("double");
+Q1MatrixDenseVectorProductTest<tags::CPU::MultiCore::SSE, float> q1_prod_mc_sse_test_float("MC SSE float");
+Q1MatrixDenseVectorProductTest<tags::CPU::MultiCore::SSE, double> q1_prod_mc_sse_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CUDA
 Q1MatrixDenseVectorProductTest<tags::GPU::CUDA, float> cuda_q1_prod_test_float("float");
@@ -316,9 +320,13 @@ class Q1MatrixDenseVectorProductQuickTest :
 };
 Q1MatrixDenseVectorProductQuickTest<tags::CPU, float> q1_prod_quick_test_float("float");
 Q1MatrixDenseVectorProductQuickTest<tags::CPU, double> q1_prod_quick_test_double("double");
+Q1MatrixDenseVectorProductQuickTest<tags::CPU::MultiCore, float> q1_prod_quick_mc_test_float("MC float");
+Q1MatrixDenseVectorProductQuickTest<tags::CPU::MultiCore, double> q1_prod_quick_mc_test_double("MC double");
 #ifdef HONEI_SSE
 Q1MatrixDenseVectorProductQuickTest<tags::CPU::SSE, float> sse_q1_prod_quick_test_float("float");
 Q1MatrixDenseVectorProductQuickTest<tags::CPU::SSE, double> sse_q1_prod_quick_test_double("double");
+Q1MatrixDenseVectorProductQuickTest<tags::CPU::MultiCore::SSE, float> q1_prod_quick_mc_sse_test_float("MC SSE float");
+Q1MatrixDenseVectorProductQuickTest<tags::CPU::MultiCore::SSE, double> q1_prod_quick_mc_sse_test_double("MC SSE double");
 #endif
 #ifdef HONEI_CUDA
 Q1MatrixDenseVectorProductQuickTest<tags::GPU::CUDA, float> cuda_q1_prod_quick_test_float("float");
@@ -422,6 +430,50 @@ class BandedMatrixSparseVectorProductQuickTest :
 };
 BandedMatrixSparseVectorProductQuickTest<float> banded_matrix_sparse_vector_product_quick_test_float("float");
 BandedMatrixSparseVectorProductQuickTest<double> banded_matrix_sparse_vector_product_quick_test_double("double");
+
+template <typename Tag_, typename DataType_>
+class DenseMatrixDenseVectorRangeProductTest :
+    public BaseTest
+{
+    public:
+        DenseMatrixDenseVectorRangeProductTest(const std::string & type) :
+            BaseTest("dense_matrix_dense_vector_range_product_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 11) ; size <<= 1)
+            {
+                DenseMatrix<DataType_> dm1(size+1, size, DataType_(2));
+                DenseVector<DataType_> dv1(2 * size, DataType_(3)),  dv2(size + 1, DataType_(6 * size));
+                DenseVectorRange<DataType_> dvr1(dv1, size, 0);
+                DenseVector<DataType_> prod(Product<Tag_>::value(dm1, dvr1));
+
+                TEST_CHECK_EQUAL(prod, dv2);
+            }
+
+            DenseMatrix<DataType_> dm01(4, 3, DataType_(1));
+            DenseVector<DataType_> dv01(4, DataType_(1));
+            DenseVectorRange<DataType_> dvr01(dv01, 4, 0);
+
+            TEST_CHECK_THROWS(Product<Tag_>::value(dm01, dvr01), VectorSizeDoesNotMatch);
+        }
+};
+
+DenseMatrixDenseVectorRangeProductTest<tags::CPU, float> dense_matrix_dense_vector_r_product_test_float("float");
+DenseMatrixDenseVectorRangeProductTest<tags::CPU, double> dense_matrix_dense_vector_r_product_test_double("double");
+DenseMatrixDenseVectorRangeProductTest<tags::CPU::MultiCore, float> mc_dense_matrix_dense_vector_r_product_test_float("MC float");
+DenseMatrixDenseVectorRangeProductTest<tags::CPU::MultiCore, double> mc_dense_matrix_dense_vector_r_product_test_double("MC double");
+#ifdef HONEI_SSE
+DenseMatrixDenseVectorRangeProductTest<tags::CPU::SSE, float> sse_dense_matrix_dense_vector_product_r_test_float("SSE float");
+DenseMatrixDenseVectorRangeProductTest<tags::CPU::SSE, double> sse_dense_matrix_dense_vector_product_r_test_double("SSE double");
+#endif
+#ifdef HONEI_CELL
+DenseMatrixDenseVectorRangeProductTest<tags::Cell, float> cell_dense_matrix_dense_vector_product_r_test_float("Cell float");
+DenseMatrixDenseVectorRangeProductTest<tags::Cell, double> cell_dense_matrix_dense_vector_product_r_test_double("Cell double");
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseMatrixDenseVectorProductTest :

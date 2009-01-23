@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
+ * Copyright (c) 2007, 2009 Sven Mallach <sven.mallach@cs.uni-dortmund.de>
  * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
@@ -1316,10 +1316,117 @@ namespace honei
 
     namespace mc
     {
-        template <typename Tag_> struct Product :
-            public honei::Product<typename Tag_::DelegateTo>
+        template <typename Tag_> struct Product
         {
+            template <typename DT1_, typename DT2_>
+            static DenseVector<DT1_> value(const BandedMatrixQ1<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
+            {
+                CONTEXT("When multiplying BandedMatrixQ1 with DenseVectorContinuousBase using multicore backend:");
+                if (b.size() != a.columns())
+                {
+                    throw VectorSizeDoesNotMatch(b.size(), a.columns());
+                }
+
+                signed long root(a.root());
+                const unsigned long size(b.size());
+                DenseVector<DT1_> result(size, DT1_(0));
+
+                TicketVector tickets;
+
+                const DenseVectorRange<DT1_> ll_band(a.band_range(LL));
+                const DenseVectorRange<DT1_> ld_band(a.band_range(LD));
+                const DenseVectorRange<DT1_> lu_band(a.band_range(LU));
+                const DenseVectorRange<DT1_> dl_band(a.band_range(DL));
+                const DenseVectorRange<DT1_> du_band(a.band_range(DU));
+                const DenseVectorRange<DT1_> ud_band(a.band_range(UD));
+                const DenseVectorRange<DT1_> uu_band(a.band_range(UU));
+                const DenseVectorRange<DT1_> ul_band(a.band_range(UL));
+
+                DenseVectorRange<DT1_> res_ll(result.range(size - root - 1, root + 1));
+                DenseVectorRange<DT1_> res_ld(result.range(size - root, root));
+                DenseVectorRange<DT1_> res_lu(result.range(size - root + 1, root - 1));
+                DenseVectorRange<DT1_> res_dl(result.range(size - 1, 1));
+                DenseVectorRange<DT1_> res_du(result.range(size - 1, 0));
+                DenseVectorRange<DT1_> res_ud(result.range(size - root, 0));
+                DenseVectorRange<DT1_> res_uu(result.range(size - root - 1, 0));
+                DenseVectorRange<DT1_> res_ul(result.range(size - root + 1, 0));
+
+                const DenseVectorRange<DT1_> b_ll(b.range(size - root - 1, 0));
+                const DenseVectorRange<DT1_> b_ld(b.range(size - root, 0));
+                const DenseVectorRange<DT1_> b_lu(b.range(size - root + 1, 0));
+                const DenseVectorRange<DT1_> b_dl(b.range(size - 1, 0));
+                const DenseVectorRange<DT1_> b_du(b.range(size - 1, 1));
+                const DenseVectorRange<DT1_> b_ud(b.range(size - root, root));
+                const DenseVectorRange<DT1_> b_uu(b.range(size - root - 1, root + 1));
+                const DenseVectorRange<DT1_> b_ul(b.range(size - root + 1, root - 1));
+
+                honei::ScaledSum<Tag_>::value(res_ll, ll_band, b_ll);
+                honei::ScaledSum<Tag_>::value(res_ld, ld_band, b_ld);
+                honei::ScaledSum<Tag_>::value(res_lu, lu_band, b_lu);
+                honei::ScaledSum<Tag_>::value(res_dl, dl_band, b_dl);
+                honei::ScaledSum<Tag_>::value(result, const_cast<const DenseVector<DT1_> &>(a.band(DD)), b); // ToDo: Use ElementProduct<Tag_> and save zero initialization
+                honei::ScaledSum<Tag_>::value(res_du, du_band, b_du);
+                honei::ScaledSum<Tag_>::value(res_ud, ud_band, b_ud);
+                honei::ScaledSum<Tag_>::value(res_uu, uu_band, b_uu);
+                honei::ScaledSum<Tag_>::value(res_ul, ul_band, b_ul);
+
+                return result;
+            }
+
+            // Dummy
+            template <typename DT1_, typename DT2_>
+            static DenseVector<DT1_> value(const DenseMatrix<DT1_> & a, const DenseVectorBase<DT2_> & b)
+            {
+                CONTEXT("When multiplying DenseMatrix with DenseVector(Base) using multicore backend:");
+
+                if (b.size() != a.columns())
+                {
+                    throw VectorSizeDoesNotMatch(b.size(), a.columns());
+                }
+
+                return honei::Product<tags::CPU>::value(a, b);
+            }
+
+            // Dummy
+            template <typename DT1_, typename DT2_>
+            static DenseVector<DT1_> value(const BandedMatrix<DT1_> & a, const DenseVectorBase<DT2_> & b)
+            {
+                CONTEXT("When multiplying BandedMatrix with DenseVector(Base) using multicore backend:");
+
+                if (b.size() != a.columns())
+                {
+                    throw VectorSizeDoesNotMatch(b.size(), a.columns());
+                }
+
+                return honei::Product<tags::CPU>::value(a, b);
+            }
+
+            // Dummy
+            template <typename DT1_, typename DT2_>
+            static DenseMatrix<DT1_> value(const DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
+            {
+                CONTEXT("When multiplying DenseMatrix with DenseMatrix using multicore backend:");
+
+                if (a.columns() != b.rows())
+                    throw MatrixRowsDoNotMatch(b.rows(), a.columns());
+
+                return honei::Product<tags::CPU>::value(a, b);
+            }
+
+            // Dummy
+            template <typename DT1_, typename DT2_>
+            static DenseMatrix<DT1_> value(const SparseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
+            {
+                CONTEXT("When multiplying SparseMatrix with DenseMatrix using multicore backend:");
+
+                if (a.columns() != b.rows())
+                    throw MatrixRowsDoNotMatch(b.rows(), a.columns());
+
+                return honei::Product<tags::CPU>::value(a, b);
+            }
+
         };
+
     }
 
     /**

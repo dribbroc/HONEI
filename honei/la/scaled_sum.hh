@@ -366,7 +366,7 @@ namespace honei
             }
 
             template <typename DT1_, typename DT2_>
-            static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & x, const DenseVectorBase<DT2_> & y, DenseVectorBase<DT2_> & z)
+            static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & x, const DenseVectorBase<DT2_> & y, const DenseVectorBase<DT2_> & z)
             {
                 CONTEXT("When calculating ScaledSum (DenseVectorBase, DenseVectorBase, DenseVectorBase) using backend : " + Tag_::name);
                 unsigned long min_part_size(Configuration::instance()->get_value("mc::ScaledSum(DVB,DVB,DVB)::min_part_size", 128));
