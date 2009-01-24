@@ -1,14 +1,14 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007, 2008 Sven Mallach <sven.mallach@honei.org>
+ * Copyright (c) 2007, 2008, 2009 Sven Mallach <sven.mallach@cs.uni-dortmund.de>
  * Copyright (c) 2008 Danny van Dyk <dyk@honei.org>
  *
- * This file is part of the LA C++ library. LibLa is free software;
+ * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
  * Public License version 2, as published by the Free Software Foundation.
  *
- * LibLa is distributed in the hope that it will be useful, but WITHOUT ANY
+ * HONEI is distributed in the hope that it will be useful, but WITHOUT ANY
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
  * details.
@@ -21,16 +21,17 @@
 #ifndef LIBLA_GUARD_DIFFERENCE_HH
 #define LIBLA_GUARD_DIFFERENCE_HH 1
 
+#include <honei/backends/multicore/operation.hh>
+#include <honei/backends/multicore/thread_pool.hh>
 #include <honei/la/banded_matrix.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/matrix_error.hh>
 #include <honei/la/scale.hh>
 #include <honei/la/sparse_matrix.hh>
 #include <honei/la/dense_vector.hh>
-#include <honei/util/tags.hh>
 #include <honei/util/benchmark_info.hh>
-
-#include <iostream>
+#include <honei/util/configuration.hh>
+#include <honei/util/tags.hh>
 
 namespace honei
 {
@@ -341,49 +342,6 @@ namespace honei
          */
 
         template <typename DT1_, typename DT2_>
-        static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & a, const ConstVector<DT2_> & b)
-        {
-            CONTEXT("When subtracting ConstVector from DenseVectorBase:");
-
-            if (a.size() != b.size())
-                throw VectorSizeDoesNotMatch(b.size(), a.size());
-
-            typename ConstVector<DT2_>::ConstElementIterator r(b.begin_elements());
-            for (typename DenseVectorBase<DT1_>::ElementIterator l(a.begin_elements()),
-                    l_end(a.end_elements()) ; l != l_end ; ++l)
-            {
-                *l -= *r;
-                ++r;
-            }
-
-            return a;
-        }
-
-        template <typename DT1_, typename DT2_>
-        static inline DenseVector<DT1_> & value(DenseVector<DT1_> & a, const ConstVector<DT2_> & b)
-        {
-            DenseVectorBase<DT1_> & temp = a;
-            Difference<>::value(temp, b);
-            return a;
-        }
-
-        template <typename DT1_, typename DT2_>
-        static inline DenseVectorRange<DT1_> & value(DenseVectorRange<DT1_> & a, const ConstVector<DT2_> & b)
-        {
-            DenseVectorBase<DT1_> & temp = a;
-            Difference<>::value(temp, b);
-            return a;
-        }
-
-        template <typename DT1_, typename DT2_>
-        static inline DenseVectorSlice<DT1_> & value(DenseVectorSlice<DT1_> & a, const ConstVector<DT2_> & b)
-        {
-            DenseVectorBase<DT1_> & temp = a;
-            Difference<>::value(temp, b);
-            return a;
-        }
-
-        template <typename DT1_, typename DT2_>
         static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & a, const DenseVectorBase<DT2_> & b)
         {
             CONTEXT("When subtracting DenseVectorBase from DenseVectorBase:");
@@ -403,24 +361,10 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static inline DenseVector<DT1_> & value(DenseVector<DT1_> & a, const DenseVectorBase<DT2_> & b)
+        static inline DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & a, const DenseVectorBase<DT2_> & b)
         {
-            DenseVectorBase<DT1_> & temp = a;
-            Difference<>::value(temp, b);
-            return a;
-        }
+            CONTEXT("When subtracting DenseVectorBase from DenseVectorContinuousBase:");
 
-        template <typename DT1_, typename DT2_>
-        static inline DenseVectorRange<DT1_> & value(DenseVectorRange<DT1_> & a, const DenseVectorBase<DT2_> & b)
-        {
-            DenseVectorBase<DT1_> & temp = a;
-            Difference<>::value(temp, b);
-            return a;
-        }
-
-        template <typename DT1_, typename DT2_>
-        static inline DenseVectorSlice<DT1_> & value(DenseVectorSlice<DT1_> & a, const DenseVectorBase<DT2_> & b)
-        {
             DenseVectorBase<DT1_> & temp = a;
             Difference<>::value(temp, b);
             return a;
@@ -768,14 +712,6 @@ namespace honei
         /// \}
     };
 
-    namespace mc
-    {
-        template <typename Tag_> struct Difference :
-            public honei::Difference<typename Tag_::DelegateTo>
-        {
-        };
-    }
-
     /**
      * \brief Difference of two entities.
      *
@@ -793,6 +729,191 @@ namespace honei
      * \ingroup grplamatrixoperations
      * \ingroup grplavectoroperations
      */
+
+    namespace mc
+    {
+        template <typename Tag_> struct Difference
+        {
+            template <typename DT1_, typename DT2_>
+            static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & x, const DenseVectorBase<DT2_> & y)
+            {
+                CONTEXT("When calculating Difference (DenseVectorBase, DenseVectorBase) using backend : " + Tag_::name);
+                unsigned long min_part_size(Configuration::instance()->get_value("mc::Difference(DVB,DVB)::min_part_size", 128));
+                unsigned long max_count(Configuration::instance()->get_value("mc::Difference(DVB,DVB)::max_count",
+                            mc::ThreadPool::instance()->get_num_threads()));
+
+                Operation<honei::Difference<typename Tag_::DelegateTo> >::op(x, y, min_part_size, max_count);
+
+                return x;
+            }
+
+            template <typename DT1_, typename DT2_>
+            static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & x, const DenseVectorContinuousBase<DT2_> & y)
+            {
+                CONTEXT("When calculating Difference (DenseVectorContinuousBase, DenseVectorContinuousBase) using backend : " + Tag_::name);
+
+                unsigned long min_part_size(Configuration::instance()->get_value("mc::Difference(DVCB,DVCB)::min_part_size", 128));
+                unsigned long max_count(Configuration::instance()->get_value("mc::Difference(DVCB,DVCB)::max_count",
+                            mc::ThreadPool::instance()->get_num_threads()));
+
+                Operation<honei::Difference<typename Tag_::DelegateTo> >::op(x, y, min_part_size, max_count);
+
+                return x;
+            }
+
+            // Dummy
+            template <typename DT1_, typename DT2_>
+            static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & a, const SparseVector<DT2_> & b)
+            {
+                CONTEXT("When subtracting SparseVector from DenseVectorBase using backend : " + Tag_::name);
+
+                if (a.size() != b.size())
+                    throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+                return honei::Difference<tags::CPU>::value(a, b);
+            }
+
+            // Dummy
+            template <typename DT1_, typename DT2_>
+            static SparseVector<DT1_> & value(SparseVector<DT1_> & a, const DenseVectorBase<DT2_> & b)
+            {
+                CONTEXT("When calculating Difference (SparseVector, DenseVectorBase) using backend : " + Tag_::name);
+
+                if (a.size() != b.size())
+                    throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+                return honei::Difference<tags::CPU>::value(a, b);
+             }
+
+            // Dummy
+            template <typename DT1_, typename DT2_>
+            static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
+            {
+                CONTEXT("When subtracting SparseMatrix from DenseMatrix using backend : " + Tag_::name);
+
+                if (a.columns() != b.columns())
+                {
+                    throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+                }
+
+                if (a.rows() != b.rows())
+                {
+                    throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+                }
+                return honei::Difference<tags::CPU>::value(a, b);
+             }
+
+            // Dummy
+            template <typename DT1_, typename DT2_>
+            static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
+            {
+                CONTEXT("When calculating Difference (SparseMatrix, SparseMatrix) using backend : " + Tag_::name);
+
+                if (a.columns() != b.columns())
+                {
+                    throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+                }
+
+                if (a.rows() != b.rows())
+                {
+                    throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+                }
+
+                return honei::Difference<tags::CPU>::value(a, b);
+             }
+
+            // Dummy
+            template <typename DT1_, typename DT2_>
+            static DenseMatrix<DT1_> & value(DenseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
+            {
+                CONTEXT("When calculating Difference (DenseMatrix, DenseMatrix) using backend : " + Tag_::name);
+
+                if (a.columns() != b.columns())
+                {
+                    throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+                }
+
+                if (a.rows() != b.rows())
+                {
+                    throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+                }
+
+                return honei::Difference<tags::CPU>::value(a, b);
+            }
+
+            // Dummy
+            template <typename DT1_, typename DT2_>
+            static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & a, const DenseMatrix<DT2_> & b)
+            {
+                CONTEXT("When calculating Difference (SparseMatrix, DenseMatrix) using backend : " + Tag_::name);
+
+                if (a.columns() != b.columns())
+                {
+                    throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+                }
+
+                if (a.rows() != b.rows())
+                {
+                    throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+                }
+
+                return honei::Difference<tags::CPU>::value(a, b);
+            }
+
+            // Dummy
+            template <typename DT1_, typename DT2_>
+            static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
+            {
+                CONTEXT("When calculating Difference (BandedMatrix, BandedMatrix) using backend : " + Tag_::name);
+
+                if (a.rows() != b.rows())
+                {
+                    throw MatrixSizeDoesNotMatch(b.rows(), a.rows());
+                }
+
+                return honei::Difference<tags::CPU>::value(a, b);
+            }
+
+            // Dummy
+            template <typename DT1_, typename DT2_>
+            static SparseMatrix<DT2_> & value(const BandedMatrix<DT1_> & a, SparseMatrix<DT2_> & b)
+            {
+                CONTEXT("When subtracting SparseMatrix from BandedMatrix using backend : " + Tag_::name);
+
+                if (b.columns() != b.rows())
+                {
+                    throw MatrixIsNotSquare(b.rows(), b.columns());
+                }
+
+                if (a.rows() != b.rows())
+                {
+                    throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+                }
+
+                return honei::Difference<tags::CPU>::value(a, b);
+             }
+
+            // Dummy
+            template <typename DT1_, typename DT2_>
+            static DenseMatrix<DT2_> & value(const BandedMatrix<DT1_> & a, DenseMatrix<DT2_> & b)
+            {
+                CONTEXT("When subtracting DenseMatrix from BandedMatrix using backend : " + Tag_::name);
+
+                if (b.columns() != b.rows())
+                {
+                    throw MatrixIsNotSquare(b.rows(), b.columns());
+                }
+
+                if (a.rows() != b.rows())
+                {
+                    throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+                }
+
+                return honei::Difference<tags::CPU>::value(a, b);
+             }
+
+        };
+    }
 
     template <> struct Difference<tags::CPU::MultiCore> :
         public mc::Difference<tags::CPU::MultiCore>

@@ -102,8 +102,11 @@ mc::num_threads = 4
 mc::affinity = 1
 
 # Partition size and partition count settings on a per_operation base
-mc::difference(DVCB,DVCB)::min_part_size = 16
-mc::difference(DVCB,DVCB)::max_count = 4
+mc::Difference(DVCB,DVCB)::min_part_size = 16
+mc::Difference(DVCB,DVCB)::max_count = 4
+
+mc::Difference(DVB,DVB)::min_part_size = 16
+mc::Difference(DVB,DVB)::max_count = 4
 
 mc::difference(DVCB,SV)::min_part_size = 16
 mc::difference(DVCB,SV)::max_count = 4
@@ -126,8 +129,11 @@ mc::difference(SM,SM)::max_count = 4
 mc::difference(SM,BM)::min_part_size = 16
 mc::difference(SM,BM)::max_count = 4
 
-mc::sum(DVCB,DVCB)::min_part_size = 16
-mc::sum(DVCB,DVCB)::max_count = 4
+mc::Sum(DVCB,DVCB)::min_part_size = 16
+mc::Sum(DVCB,DVCB)::max_count = 4
+
+mc::Sum(DVB,DVB)::min_part_size = 16
+mc::Sum(DVB,DVB)::max_count = 4
 
 mc::sum(DVCB,SV)::min_part_size = 16
 mc::sum(DVCB,SV)::max_count = 4

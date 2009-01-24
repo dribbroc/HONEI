@@ -41,13 +41,13 @@ class ScalarDenseVectorSumBench :
 };
 ScalarDenseVectorSumBench<tags::CPU, float>  SDVSBenchfloat ("VectorShift Benchmark - vector size: 64^4, float",  64ul*64*64*64, 10);
 ScalarDenseVectorSumBench<tags::CPU, double> SDVSBenchdouble("VectorShift Benchmark - svector size: 64^4, double", 64ul*64*64*64, 10);
-ScalarDenseVectorSumBench<tags::CPU::MultiCore, float>  MCSDVSBenchfloat ("MC VectorShift Benchmark - vector size: 64^4, float",  64ul*64*64*64, 10);
-ScalarDenseVectorSumBench<tags::CPU::MultiCore, double> MCSDVSBenchdouble("MC VectorShift Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
+//ScalarDenseVectorSumBench<tags::CPU::MultiCore, float>  MCSDVSBenchfloat ("MC VectorShift Benchmark - vector size: 64^4, float",  64ul*64*64*64, 10);
+//ScalarDenseVectorSumBench<tags::CPU::MultiCore, double> MCSDVSBenchdouble("MC VectorShift Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
 #ifdef HONEI_SSE
 ScalarDenseVectorSumBench<tags::CPU::SSE, float>  SSESDVSBenchfloat ("SSE VectorShift Benchmark - vector size: 64^4, float",  64ul*64*64*64, 10);
 ScalarDenseVectorSumBench<tags::CPU::SSE, double> SSESDVSBenchdouble("SSE VectorShift Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
-ScalarDenseVectorSumBench<tags::CPU::MultiCore::SSE, float>  MCSSESDVSBenchfloat ("MC::SSE VectorShift Benchmark - vector size: 64^4, float",  64ul*64*64*64, 10);
-ScalarDenseVectorSumBench<tags::CPU::MultiCore::SSE, double> MCSSESDVSBenchdouble("MC::SSE VectorShift Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
+//ScalarDenseVectorSumBench<tags::CPU::MultiCore::SSE, float>  MCSSESDVSBenchfloat ("MC::SSE VectorShift Benchmark - vector size: 64^4, float",  64ul*64*64*64, 10);
+//ScalarDenseVectorSumBench<tags::CPU::MultiCore::SSE, double> MCSSESDVSBenchdouble("MC::SSE VectorShift Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -270,7 +270,7 @@ class DenseMatrixBandedMatrixSumBench :
                 bm.insert_band(i, dv);
                 bm.insert_band(-i, dv);
             }
-            
+
             for(unsigned long i = 0 ; i < _count ; ++i)
             {
                 BENCHMARK(Sum<Tag_>::value(dm0, bm));
@@ -365,7 +365,7 @@ class DenseVectorSumBenchTestPlot :
                         cores.push_back(stringify(k));
                         DenseVector<DT_> dv0(j * 100000, DT_(rand()));
                         DenseVector<DT_> dv1(j * 100000, DT_(rand()));
-    
+
                         for(unsigned long i(0) ; i < 20 ; ++i)
                         {
                             BENCHMARK(Sum<Tag_>::value(dv0, dv1));
@@ -392,7 +392,7 @@ class DenseVectorSumBenchTestPlot :
                         cores.push_back(Tag_::name + "-" + stringify(j) + "parts");
                         DenseVector<DT_> dv0(k * 100000, DT_(rand()));
                         DenseVector<DT_> dv1(k * 100000, DT_(rand()));
-    
+
                         for(unsigned long i(0) ; i < 20 ; ++i)
                         {
                             BENCHMARK(Sum<Tag_>::value(dv0, dv1));

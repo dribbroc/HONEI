@@ -67,8 +67,6 @@ namespace honei
 
                     tickets.wait();
                 }
-
-                return x;
             }
 
             template <typename DT1_, typename DT2_>
@@ -100,8 +98,6 @@ namespace honei
 
                     tickets.wait();
                 }
-
-                return x;
             }
 
             template <typename DT1_, typename DT2_>
