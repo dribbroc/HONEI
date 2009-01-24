@@ -36,7 +36,8 @@ define(`add', `addthis(`$1',`$2')addthis(`$1',`$3')addthis(`$1',`$4')addthis(`$1
 
 include(`honei/swe/files.m4')
 
-BACKEND_LIBS =
+BACKEND_LIBS = \
+       $(top_builddir)/honei/backends/multicore/libhoneibackendsmulticore.la
 
 if CELL
 
