@@ -225,6 +225,8 @@ SolverLABSWEGridRegressionTest<tags::CPU::MultiCore, double> mc_solver_test_doub
 #ifdef HONEI_CUDA
 SolverLABSWEGridRegressionTest<tags::CPU::SSE, float> sse_solver_test_float("float");
 SolverLABSWEGridRegressionTest<tags::CPU::SSE, double> sse_solver_test_double("double");
+SolverLABSWEGridRegressionTest<tags::CPU::MultiCore::SSE, float> mcsse_solver_test_float("float");
+SolverLABSWEGridRegressionTest<tags::CPU::MultiCore::SSE, double> mcsse_solver_test_double("double");
 #endif
 #ifdef HONEI_CUDA
 SolverLABSWEGridRegressionTest<tags::GPU::CUDA, float> cuda_solver_test_float("float");

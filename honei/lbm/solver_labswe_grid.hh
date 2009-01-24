@@ -76,12 +76,12 @@ namespace honei
             {
             };
 
-                template<typename Tag_, typename ResPrec_>
-                    class SolverLABSWEGrid<Tag_, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>
-                    {
-                        private:
-                            /** Global variables.
-                             *
+    template<typename Tag_, typename ResPrec_>
+        class SolverLABSWEGrid<Tag_, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>
+        {
+            private:
+                /** Global variables.
+                 *
                  **/
 
 
@@ -97,7 +97,7 @@ namespace honei
                  **/
                 ResPrec_ _n_alpha, _e, _gravity, _pi;
 
-           public:
+            public:
                 SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt) :
                     _relaxation_time(ResPrec_(1.5)),
                     _delta_x(dx),
@@ -109,15 +109,15 @@ namespace honei
                     _n_alpha(ResPrec_(6.)),
                     _gravity(9.80665),
                     _pi(3.14159265)
-                    {
-                        CONTEXT("When creating LABSWE solver:");
-                        _e = _delta_x / _delta_t;
+            {
+                CONTEXT("When creating LABSWE solver:");
+                _e = _delta_x / _delta_t;
 
-                        if (Tag_::tag_value == tags::tv_gpu_cuda)
-                        {
-                            GridPacker<D2Q9, lbm_boundary_types::NOSLIP, ResPrec_>::cuda_pack(*_info, *_data);
-                        }
-                    }
+                if (Tag_::tag_value == tags::tv_gpu_cuda)
+                {
+                    GridPacker<D2Q9, lbm_boundary_types::NOSLIP, ResPrec_>::cuda_pack(*_info, *_data);
+                }
+            }
 
                 ~SolverLABSWEGrid()
                 {
@@ -149,7 +149,7 @@ namespace honei
 
                     ///Compute initial equilibrium distribution:
                     EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::
-                       value(_gravity, _e, *_info, *_data);
+                        value(_gravity, _e, *_info, *_data);
 
                     *_data->f_0 = _data->f_eq_0->copy();
                     *_data->f_1 = _data->f_eq_1->copy();
@@ -163,8 +163,8 @@ namespace honei
 
                     CollideStreamGrid<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                         value(*_info,
-                              *_data,
-                              _relaxation_time);
+                                *_data,
+                                _relaxation_time);
 
 #ifdef SOLVER_VERBOSE
                     std::cout << "h after preprocessing:" << std::endl;
@@ -194,78 +194,114 @@ namespace honei
 
                     CollideStreamGrid<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                         value(*_info,
-                              *_data,
-                              _relaxation_time);
+                                *_data,
+                                _relaxation_time);
                 };
         };
 
-    template<typename ResPrec_>
-    class SolverLABSWEGrid<tags::CPU::MultiCore, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>
+    namespace mc
     {
-        private:
-            unsigned long _parts;
-            PackedGridInfo<D2Q9> * _info;
-            PackedGridData<D2Q9, ResPrec_> * _data;
-            std::vector<PackedGridInfo<D2Q9> > _info_list;
-            std::vector<PackedGridData<D2Q9, ResPrec_> > _data_list;
-            std::vector<PackedGridFringe<D2Q9> > _fringe_list;
-            std::vector<SolverLABSWEGrid<tags::CPU, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> *> _solver_list;
+    template<typename Tag_,
+        typename ResPrec_,
+        typename SourceType_,
+        typename SourceSheme_,
+        typename GridType_,
+        typename LatticeType_,
+        typename BoundaryType_>
+            class SolverLABSWEGrid
+            {
+            };
 
-        public:
-            SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt):
-                _parts(4), /// \todo use Configuration
-                _info(info),
-                _data(data)
+        template<typename Tag_, typename ResPrec_>
+            class SolverLABSWEGrid<Tag_, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>
+            {
+                private:
+                    unsigned long _parts;
+                    PackedGridInfo<D2Q9> * _info;
+                    PackedGridData<D2Q9, ResPrec_> * _data;
+                    std::vector<PackedGridInfo<D2Q9> > _info_list;
+                    std::vector<PackedGridData<D2Q9, ResPrec_> > _data_list;
+                    std::vector<PackedGridFringe<D2Q9> > _fringe_list;
+                    std::vector<honei::SolverLABSWEGrid<typename Tag_::DelegateTo, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> *> _solver_list;
+
+                public:
+                    SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt):
+                        _parts(4), /// \todo use Configuration
+                        _info(info),
+                        _data(data)
+                {
+                    CONTEXT("When creating LABSWE solver:");
+                    GridPartitioner<D2Q9, ResPrec_>::decompose(_parts, *_info, *_data, _info_list, _data_list, _fringe_list);
+
+                    for(unsigned long i(0) ; i < _parts ; ++i)
+                    {
+                        _solver_list.push_back(new honei::SolverLABSWEGrid<typename Tag_::DelegateTo, ResPrec_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>(&_data_list[i], &_info_list[i], 1., 1., 1.));
+                    }
+                }
+
+                    ~SolverLABSWEGrid()
+                    {
+                        CONTEXT("When destroying LABSWE solver.");
+                    }
+
+                    void do_preprocessing()
+                    {
+                        CONTEXT("When performing LABSWE preprocessing.");
+
+                        TicketVector tickets;
+                        for (unsigned long i(0) ; i < _parts ; ++i)
+                        {
+                            /// \todo use the same core for the same patch every time
+                            tickets.push_back(mc::ThreadPool::instance()->enqueue(
+                                        std::tr1::bind(
+                                            std::tr1::mem_fn(&honei::SolverLABSWEGrid<typename Tag_::DelegateTo, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>::do_preprocessing),
+                                            *(_solver_list.at(i))
+                                            )));
+                        }
+                        tickets.wait();
+                        GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);
+                    }
+
+                    void solve()
+                    {
+                        TicketVector tickets;
+                        for (unsigned long i(0) ; i < _parts ; ++i)
+                        {
+                            /// \todo use the same core for the same patch every time
+                            tickets.push_back(mc::ThreadPool::instance()->enqueue(
+                                        std::tr1::bind(
+                                            std::tr1::mem_fn(&honei::SolverLABSWEGrid<typename Tag_::DelegateTo, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>::solve),
+                                            *(_solver_list.at(i))
+                                            )));
+                        }
+                        tickets.wait();
+                        GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);
+                        /// \todo remove compose - it is only necessary if one must read the data
+                        GridPartitioner<D2Q9, ResPrec_>::compose(*_info, *_data, _info_list, _data_list);
+                    }
+            };
+    }
+
+    template<typename ResPrec_>
+        class SolverLABSWEGrid<tags::CPU::MultiCore, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> :
+        public mc::SolverLABSWEGrid<tags::CPU::MultiCore, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>
         {
-            CONTEXT("When creating LABSWE solver:");
-            GridPartitioner<D2Q9, ResPrec_>::decompose(_parts, *_info, *_data, _info_list, _data_list, _fringe_list);
-
-            for(unsigned long i(0) ; i < _parts ; ++i)
+            public:
+            SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt):
+                mc::SolverLABSWEGrid<tags::CPU::MultiCore, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>(data, info, dx, dy, dt)
             {
-                _solver_list.push_back(new SolverLABSWEGrid<tags::CPU, ResPrec_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>(&_data_list[i], &_info_list[i], 1., 1., 1.));
             }
-        }
+        };
 
-            ~SolverLABSWEGrid()
+    template<typename ResPrec_>
+        class SolverLABSWEGrid<tags::CPU::MultiCore::SSE, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> :
+        public mc::SolverLABSWEGrid<tags::CPU::MultiCore::SSE, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>
+        {
+            public:
+            SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt):
+                mc::SolverLABSWEGrid<tags::CPU::MultiCore::SSE, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>(data, info, dx, dy, dt)
             {
-                CONTEXT("When destroying LABSWE solver.");
             }
-
-            void do_preprocessing()
-            {
-                CONTEXT("When performing LABSWE preprocessing.");
-
-                TicketVector tickets;
-                for (unsigned long i(0) ; i < _parts ; ++i)
-                {
-                    /// \todo use the same core for the same patch every time
-                    tickets.push_back(mc::ThreadPool::instance()->enqueue(
-                                std::tr1::bind(
-                                    std::tr1::mem_fn(&SolverLABSWEGrid<tags::CPU, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>::do_preprocessing),
-                                    *(_solver_list.at(i))
-                                    )));
-                }
-                tickets.wait();
-                GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);
-            }
-
-            void solve()
-            {
-                TicketVector tickets;
-                for (unsigned long i(0) ; i < _parts ; ++i)
-                {
-                    /// \todo use the same core for the same patch every time
-                    tickets.push_back(mc::ThreadPool::instance()->enqueue(
-                                std::tr1::bind(
-                                    std::tr1::mem_fn(&SolverLABSWEGrid<tags::CPU, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>::solve),
-                                    *(_solver_list.at(i))
-                                    )));
-                }
-                tickets.wait();
-                GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);
-                /// \todo remove compose - it is only necessary if one must read the data
-                GridPartitioner<D2Q9, ResPrec_>::compose(*_info, *_data, _info_list, _data_list);
-            }
-    };
+        };
 }
 #endif
