@@ -38,6 +38,7 @@
 
 #include <honei/lbm/tags.hh>
 #include <honei/util/tags.hh>
+#include <honei/util/configuration.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/sum.hh>
@@ -58,6 +59,7 @@
 
 #include <iostream>
 #include <tr1/functional>
+#include <vector>
 
 using namespace honei::lbm;
 using namespace honei::lbm::lbm_boundary_types;
@@ -223,13 +225,14 @@ namespace honei
                     std::vector<PackedGridData<D2Q9, ResPrec_> > _data_list;
                     std::vector<PackedGridFringe<D2Q9> > _fringe_list;
                     std::vector<honei::SolverLABSWEGrid<typename Tag_::DelegateTo, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> *> _solver_list;
+                    std::vector<Ticket<tags::CPU::MultiCore> *> _tickets;
 
                 public:
                     SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt):
-                        _parts(4), /// \todo use Configuration
                         _info(info),
                         _data(data)
                 {
+                    _parts = Configuration::instance()->get_value("mc::SolverLabsweGrid::patch_count", 4ul);
                     CONTEXT("When creating LABSWE solver:");
                     GridPartitioner<D2Q9, ResPrec_>::decompose(_parts, *_info, *_data, _info_list, _data_list, _fringe_list);
 
@@ -252,11 +255,12 @@ namespace honei
                         for (unsigned long i(0) ; i < _parts ; ++i)
                         {
                             /// \todo use the same core for the same patch every time
-                            tickets.push_back(mc::ThreadPool::instance()->enqueue(
+                            _tickets.push_back(mc::ThreadPool::instance()->enqueue(
                                         std::tr1::bind(
                                             std::tr1::mem_fn(&honei::SolverLABSWEGrid<typename Tag_::DelegateTo, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>::do_preprocessing),
                                             *(_solver_list.at(i))
                                             )));
+                            tickets.push_back(_tickets.at(i));
                         }
                         tickets.wait();
                         GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);
@@ -272,7 +276,7 @@ namespace honei
                                         std::tr1::bind(
                                             std::tr1::mem_fn(&honei::SolverLABSWEGrid<typename Tag_::DelegateTo, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>::solve),
                                             *(_solver_list.at(i))
-                                            )));
+                                            ), DispatchPolicy::same_core_as(_tickets.at(i))));
                         }
                         tickets.wait();
                         GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);

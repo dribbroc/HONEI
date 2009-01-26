@@ -43,8 +43,10 @@ class EqDisGridLABSWETest :
 
             data.h = new DenseVector<DataType_>(1000ul, DataType_(1.23456));
             info.limits = new DenseVector<unsigned long>(2);
-            (*info.limits)[0] = 0;
-            (*info.limits)[1] = data.h->size();
+            unsigned long begin(25);
+            unsigned long end(data.h->size() - 55);
+            (*info.limits)[0] = begin;
+            (*info.limits)[1] = end;
             data.u = new DenseVector<DataType_>(1000ul, DataType_(1.23456));
             data.v = new DenseVector<DataType_>(1000ul, DataType_(1.23456));
             DataType_ g(9.81);
@@ -72,7 +74,7 @@ class EqDisGridLABSWETest :
             data.f_eq_6->lock(lm_read_only);
             data.f_eq_7->lock(lm_read_only);
             data.f_eq_8->lock(lm_read_only);
-            for(unsigned long i(0); i < 1000; ++i)
+            for(unsigned long i(begin); i < end; ++i)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS((*data.f_eq_0)[i], (1.23456 - ((5. * 9.81 * 1.23456 * 1.23456) / (6.)) - ((2. * 1.23456) / (3.)) * ((1.23456 * 1.23456) + (1.23456 * 1.23456))), std::numeric_limits<DataType_>::epsilon() * 20.);
 

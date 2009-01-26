@@ -289,3 +289,5 @@ mc::ScaledSum(DVCB,DVCB,DT)::max_count = 4
 
 mc::ScaledSum(DVCB,DVCB,DVCB)::min_part_size = 16
 mc::ScaledSum(DVCB,DVCB,DVCB)::max_count = 4
+
+mc::SolverLabsweGrid::patch_count = 4
