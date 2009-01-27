@@ -26,7 +26,8 @@ libhoneibackendssse_la_SOURCES = operations.hh \
 				 reduction.cc \
 				 scaled_sum.cc \
 				 scale.cc \
-				 sum.cc
+				 sum.cc \
+				 up_vel_dir_grid.cc
 
 libhoneibackendssse_includedir = $(includedir)/honei/backends/sse/
 libhoneibackendssse_include_HEADERS =  operations.hh

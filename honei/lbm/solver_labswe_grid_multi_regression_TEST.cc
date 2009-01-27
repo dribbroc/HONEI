@@ -174,13 +174,13 @@ class SolverLABSWEGridMultiRegressionTest :
                     std::cout << "(" << i << " , " << j << ")" << std::endl;
                     std::cout << (*grid.h)(i , j) << " " << (*grid_standard.h)(i , j) << std::endl;
 #endif
-                    TEST_CHECK_EQUAL_WITHIN_EPS((*grid.h)(i , j) , (*grid_standard.h)(i , j), std::numeric_limits<float>::epsilon());
+                    TEST_CHECK_EQUAL_WITHIN_EPS((*grid.h)(i , j) , (*grid_standard.h)(i , j), std::numeric_limits<DataType_>::epsilon());
                 }
             }
 
             //Save matrices to vectors, compute norm:
-            DenseVector<DataType_> result_grid(g_h*g_w);
-            DenseVector<DataType_> result_standard(g_h*g_w);
+            DenseVector<double> result_grid(g_h*g_w);
+            DenseVector<double> result_standard(g_h*g_w);
 
             unsigned long inner(0);
             for(unsigned long i(0) ; i < g_h ; ++i)
@@ -188,15 +188,14 @@ class SolverLABSWEGridMultiRegressionTest :
                 for(unsigned long j(0) ; j < g_w ; ++j)
                 {
                     result_grid[inner] = (*grid.h)(i , j);
-                    result_standard[inner] = (*grid_standard.h)(i , j);
+                    result_standard[inner] = h_standard(i , j);
                     ++inner;
                 }
             }
 
-
             Difference<tags::CPU>::value(result_grid, result_standard);
-            double l2 = Norm<vnt_l_two, false, Tag_>::value(result_grid);
-            TEST_CHECK_EQUAL_WITHIN_EPS(l2, double(0.), std::numeric_limits<float>::epsilon());
+            double l2 = Norm<vnt_l_two, false, tags::CPU>::value(result_grid);
+            TEST_CHECK_EQUAL_WITHIN_EPS(l2, DataType_(0.), std::numeric_limits<DataType_>::epsilon());
 
             std::cout << "L2 norm: " << l2 << std::endl;
         }

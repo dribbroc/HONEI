@@ -194,8 +194,8 @@ class SolverLABSWEGridRegressionTest :
             }
 
             //Save matrices to vectors, compute norm:
-            DenseVector<DataType_> result_grid(g_h*g_w);
-            DenseVector<DataType_> result_standard(g_h*g_w);
+            DenseVector<double> result_grid(g_h*g_w);
+            DenseVector<double> result_standard(g_h*g_w);
 
             unsigned long inner(0);
             for(unsigned long i(0) ; i < g_h ; ++i)
@@ -208,9 +208,8 @@ class SolverLABSWEGridRegressionTest :
                 }
             }
 
-
             Difference<tags::CPU>::value(result_grid, result_standard);
-            DataType_ l2 = Norm<vnt_l_two, false, tags::CPU>::value(result_grid);
+            double l2 = Norm<vnt_l_two, false, tags::CPU>::value(result_grid);
             TEST_CHECK_EQUAL_WITHIN_EPS(l2, DataType_(0.), std::numeric_limits<float>::epsilon());
 
             std::cout << "L2 norm: " << l2 << std::endl;

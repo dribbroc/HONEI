@@ -75,7 +75,7 @@ namespace honei
                    data.f_temp_7->lock(lm_read_and_write);
                    data.f_temp_8->lock(lm_read_and_write);
 
-                   for (unsigned long begin(0) ; begin != info.limits->size() - 1 ; ++begin)
+                   for (unsigned long begin(0) ; begin < info.limits->size() - 1 ; ++begin)
                    {
                        if(((*info.types)[begin] & 1<<0) == 1<<0)
                            for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
@@ -168,14 +168,8 @@ namespace honei
     template <>
        struct UpdateVelocityDirectionsGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP>
        {
-           static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info)
-           {
-               UpdateVelocityDirectionsGrid<tags::CPU, lbm_boundary_types::NOSLIP>::value(data, info);
-           }
-           static void value(PackedGridData<D2Q9, double> & data, PackedGridInfo<D2Q9> & info)
-           {
-               UpdateVelocityDirectionsGrid<tags::CPU, lbm_boundary_types::NOSLIP>::value(data, info);
-           }
+           static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info);
+           static void value(PackedGridData<D2Q9, double> & data, PackedGridInfo<D2Q9> & info);
        };
 }
 #endif
