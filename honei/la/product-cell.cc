@@ -34,7 +34,7 @@ namespace honei
 {
     using namespace cell;
 
-    DenseVector<float> Product<tags::Cell>::value(const DenseMatrix<float> & a, const DenseVector<float> & x)
+    DenseVector<float> Product<tags::Cell>::value(const DenseMatrix<float> & a, const DenseVectorContinuousBase<float> & x)
     {
         CONTEXT("When calculating DenseMatrix<float>-DenseVector<float> product (Cell):");
 
@@ -164,7 +164,7 @@ namespace honei
         return result;
     }
 
-    DenseVector<double> Product<tags::Cell>::value(const DenseMatrix<double> & a, const DenseVector<double> & x)
+    DenseVector<double> Product<tags::Cell>::value(const DenseMatrix<double> & a, const DenseVectorContinuousBase<double> & x)
     {
         CONTEXT("When calculating DenseMatrix<double>-DenseVector<double> product (Cell):");
 
@@ -294,7 +294,7 @@ namespace honei
         return result;
     }
 
-    DenseVector<float> Product<tags::Cell>::value(const BandedMatrix<float> & a, const DenseVector<float> & b)
+    DenseVector<float> Product<tags::Cell>::value(const BandedMatrix<float> & a, const DenseVectorContinuousBase<float> & b)
     {
         CONTEXT("When calculating BandedMatrix<float>-DenseVector<float> product (Cell):");
 
@@ -454,7 +454,7 @@ namespace honei
         return result;
     }
 
-    DenseVector<double> Product<tags::Cell>::value(const BandedMatrix<double> & a, const DenseVector<double> & b)
+    DenseVector<double> Product<tags::Cell>::value(const BandedMatrix<double> & a, const DenseVectorContinuousBase<double> & b)
     {
         CONTEXT("When calculating BandedMatrix<double>-DenseVector<double> product (Cell):");
 
