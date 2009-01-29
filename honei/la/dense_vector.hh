@@ -52,11 +52,8 @@ namespace honei
              *
              * \param size Size of the new dense vector.
              * \param elements SharedArray of the vector's elements.
-             * \param offset Offset of the vector's data inside the shared array.
-             * \param stepsize Stepsize between two of the vector's elements inside the shared array.
              */
-            DenseVector(const unsigned long size, const SharedArray<DataType_> & elements, unsigned long offset = 0,
-                    unsigned stepsize = 1);
+            DenseVector(const unsigned long size, const SharedArray<DataType_> & elements);
 
         public:
             /// \name Friends of DenseVector
@@ -81,10 +78,8 @@ namespace honei
              * Constructor.
              *
              * \param size Size of the new dense vector.
-             * \param offset Offset of the vector's data inside the shared array.
-             * \param stepsize Stepsize between two of the vector's elements inside the shared array.
              */
-            DenseVector(const unsigned long size, const unsigned long offset = 0, const unsigned long stepsize = 1);
+            DenseVector(const unsigned long size);
 
             /**
              * Constructor.
@@ -99,11 +94,8 @@ namespace honei
              *
              * \param size Size of the new dense vector.
              * \param value Default value for all of the vector's elements.
-             * \param offset Offset of the vector's data inside the shared array.
-             * \param stepsize Stepsize between two of the vector's elements inside the shared array.
              */
-            DenseVector(const unsigned long size, DataType_ value, unsigned long offset = 0,
-                    unsigned long stepsize = 1);
+            DenseVector(const unsigned long size, DataType_ value);
 
             /**
              * Constructor.

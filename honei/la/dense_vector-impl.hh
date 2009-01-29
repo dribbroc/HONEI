@@ -89,18 +89,16 @@ namespace honei
     };
 
     template <typename DataType_>
-    DenseVector<DataType_>::DenseVector(const unsigned long size, const SharedArray<DataType_> & elements,
-            unsigned long offset, unsigned stepsize) :
-        PrivateImplementationPattern<DenseVector<DataType_>, Shared>(new Implementation<DenseVector<DataType_> >(elements, size, offset, stepsize))
+    DenseVector<DataType_>::DenseVector(const unsigned long size, const SharedArray<DataType_> & elements) :
+        PrivateImplementationPattern<DenseVector<DataType_>, Shared>(new Implementation<DenseVector<DataType_> >(elements, size, 0, 1))
     {
         CONTEXT("When creating DenseVector:");
         ASSERT(size > 0, "size is zero!");
     }
 
     template <typename DataType_>
-    DenseVector<DataType_>::DenseVector(const unsigned long size, const unsigned long offset,
-            const unsigned long stepsize) :
-        PrivateImplementationPattern<DenseVector<DataType_>, Shared>(new Implementation<DenseVector<DataType_> >(size, offset, stepsize))
+    DenseVector<DataType_>::DenseVector(const unsigned long size) :
+        PrivateImplementationPattern<DenseVector<DataType_>, Shared>(new Implementation<DenseVector<DataType_> >(size, 0, 1))
     {
         CONTEXT("When creating DenseVector:");
         ASSERT(size > 0, "size is zero!");
@@ -116,19 +114,13 @@ namespace honei
     }
 
     template <typename DataType_>
-    DenseVector<DataType_>::DenseVector(const unsigned long size, DataType_ value, unsigned long offset,
-            unsigned long stepsize) :
-        PrivateImplementationPattern<DenseVector<DataType_>, Shared>(new Implementation<DenseVector<DataType_> >(size, offset, stepsize))
+    DenseVector<DataType_>::DenseVector(const unsigned long size, DataType_ value) :
+        PrivateImplementationPattern<DenseVector<DataType_>, Shared>(new Implementation<DenseVector<DataType_> >(size, 0, 1))
     {
         CONTEXT("When creating DenseVector:");
         ASSERT(size > 0, "size is zero!");
 
-        /// \todo Replace by the following once DenseVector has lost Range and Slice functionality:
-        // TypeTraits<DataType_>::fill(_imp->elements.get(), size, value);
-
-        DataType_ *  target(this->_imp->elements.get());
-        for (unsigned long i(offset) ; i < (stepsize * size + offset) ; i += stepsize)
-            target[i] = value;
+        TypeTraits<DataType_>::fill(this->_imp->elements.get(), size, value);
     }
 
     template <typename DataType_>
@@ -211,7 +203,7 @@ namespace honei
     {
         CONTEXT("When retrieving DenseVector element, unassignable:");
         ASSERT(index < this->_imp->size && index >= 0, "index is out of bounds!");
-        return this->_imp->elements[this->_imp->stepsize * index + this->_imp->offset];
+        return this->_imp->elements[index];
     }
 
     template <typename DataType_>
@@ -219,19 +211,19 @@ namespace honei
     {
         CONTEXT("When retrieving DenseVector element, assignable:");
         ASSERT(index < this->_imp->size && index >= 0, "index is out of bounds!");
-        return this->_imp->elements[this->_imp->stepsize * index + this->_imp->offset];
+        return this->_imp->elements[index];
     }
 
     template <typename DataType_>
     unsigned long DenseVector<DataType_>::offset() const
     {
-        return this->_imp->offset;
+        return 0;
     }
 
     template <typename DataType_>
     unsigned long DenseVector<DataType_>::stepsize() const
     {
-        return this->_imp->stepsize;
+        return 1;
     }
 
     template <typename DataType_>
