@@ -292,6 +292,9 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         }
 
                         _obstacles = new DenseMatrix<bool>(_dheight, _dwidth, false);
+                        //(*_obstacles)(50, 100) = true;
+                        Cylinder<bool> c2(*_obstacles, true, 10 ,10);
+                        c2.value();
                         _grid.obstacles = _obstacles;
                         _grid.h = _h;
                         _grid.u = _u;

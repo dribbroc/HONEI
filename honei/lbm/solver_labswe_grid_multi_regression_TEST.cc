@@ -61,7 +61,7 @@ class SolverLABSWEGridMultiRegressionTest :
             DenseMatrix<DataType_> v(g_h, g_w, DataType_(0.));
             DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
 
-            Cylinder<DataType_> b1(b, DataType_(0.001), 15, 15);
+            Cylinder<DataType_> b1(b, DataType_(0.0001), 15, 15);
             b1.value();
 
             Grid<D2Q9, DataType_> grid;
@@ -80,7 +80,7 @@ class SolverLABSWEGridMultiRegressionTest :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLABSWEGrid<Tag_, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 1., 1., 1., 1.5);
+            SolverLABSWEGrid<Tag_, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 0.01, 0.01, 0.005, 1.1);
 
             solver.do_preprocessing();
 
@@ -113,7 +113,7 @@ class SolverLABSWEGridMultiRegressionTest :
             DenseMatrix<DataType_> v_standard(g_h_standard, g_w_standard, DataType_(0.));
             DenseMatrix<DataType_> b_standard(g_h, g_w, DataType_(0.));
 
-            Cylinder<DataType_> b1_standard(b_standard, DataType_(0.001), 15, 15);
+            Cylinder<DataType_> b1_standard(b_standard, DataType_(0.0001), 15, 15);
             b1_standard.value();
 
             Grid<D2Q9, DataType_> grid_standard;
@@ -132,7 +132,7 @@ class SolverLABSWEGridMultiRegressionTest :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_standard, info_standard, data_standard);
 
-            SolverLABSWEGrid<tags::CPU, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver_standard(&data_standard, &info_standard, 1., 1., 1., 1.5);
+            SolverLABSWEGrid<tags::CPU, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver_standard(&data_standard, &info_standard, 0.01, 0.01, 0.005, 1.1);
 
             solver_standard.do_preprocessing();
 
