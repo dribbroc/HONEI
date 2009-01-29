@@ -1,5 +1,4 @@
 dnl vim: set sw=4 sts=4 ts=4 noet ft=config foldmethod=marker foldmarker={{{,}}} :
-
 AC_INIT([honei], [0.2])
 AC_PREREQ(2.5)
 AC_CONFIG_SRCDIR([])
@@ -250,6 +249,37 @@ if test "x$WITH_HDF5" = "xyes"; then
 fi
 dnl }}}
 dnl {{{
+AC_MSG_CHECKING([whether to build the honei-qt engine])
+AC_ARG_WITH([qt],
+	AS_HELP_STRING([--with-qt], [Build qt visualisation engine (needs packages: QT, libGl, libGLU)]),
+		[WITH_QT=$withval
+		  AC_MSG_RESULT([$withval])],
+		[WITH_HDF5=no
+		  AC_MSG_RESULT([no])])
+AC_SUBST([WITH_QT])
+AM_CONDITIONAL([QT], test "x$WITH_QT" = "xyes")
+if test "x$WITH_QT" = "xyes"; then
+	dnl {{{ check for QT with AutoTroll.
+	m4_include([misc/autotroll.m4])
+	AT_WITH_QT([opengl])
+	dnl }}}
+	dnl {{{ check for libGL
+	AC_CHECK_LIB(GL, glXCreateContext,
+		[have_gl=yes])
+	if test "x$have_gl" != "xyes" ; then
+		AC_MSG_ERROR([libGL (http://www.opengl.org) not found.])
+	fi
+	dnl }}}
+	dnl {{{ check for libGLU
+	AC_CHECK_LIB(GLU, gluPerspective,
+		[have_glu=yes])
+	if test "x$have_glu" != "xyes" ; then
+		AC_MSG_ERROR([libGLU (http://www.opengl.org) not found.])
+	fi
+	dnl }}}
+fi
+dnl }}}
+dnl {{{
 AC_MSG_CHECKING([whether to build the visualisation engine])
 AC_ARG_WITH([visual],
 	AS_HELP_STRING([--with-visual], [Build visualisation engine (needs packages: libGL, libGLU, libglut)]),
@@ -350,6 +380,7 @@ AC_OUTPUT(
 	clients/mpi/Makefile
 	clients/swe/Makefile
 	clients/lbm/Makefile
+	clients/qt/Makefile
 	clients/poisson/Makefile
 	doc/Makefile
 	honei/Makefile
