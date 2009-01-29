@@ -111,7 +111,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         GridPacker<D2Q9, NOSLIP, Prec_>::pack(_grid, _info, _data);
 
 
-                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 1., 1., 1., 1.5);
+                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 0.01, 0.01, 0.01, 1.1);
 
                         _solver->do_preprocessing();
 
@@ -150,7 +150,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         GridPacker<D2Q9, NOSLIP, Prec_>::pack(_grid, _info, _data);
 
 
-                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 1., 1., 1., 1.5);
+                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 0.01, 0.01, 0.01, 1.1);
 
                         _solver->do_preprocessing();
 
@@ -192,7 +192,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         GridPacker<D2Q9, NOSLIP, Prec_>::pack(_grid, _info, _data);
 
 
-                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 1., 1., 1., 1.5);
+                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 0.01, 0.01, 0.01, 1.1);
 
                         _solver->do_preprocessing();
 
@@ -246,7 +246,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         GridPacker<D2Q9, NOSLIP, Prec_>::pack(_grid, _info, _data);
 
 
-                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 1., 1., 1., 1.5);
+                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 0.01, 0.01, 0.01, 1.1);
 
                         _solver->do_preprocessing();
 

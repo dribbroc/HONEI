@@ -588,7 +588,7 @@ namespace honei
          *
          */
         template<typename DT1_, typename DT2_>
-            static void value(PackedGridData<D2Q9, DT1_> & data, PackedGridInfo<D2Q9> & info, DT2_ g, DT2_ d_x, DT2_ d_y, DT2_ d_t)
+            static void value(PackedGridData<D2Q9, DT1_> & data, PackedGridInfo<D2Q9> & info, DT2_ g, DT2_ d_x, DT2_ d_y, DT2_ d_t, DT2_ manning_const)
             {
                 CONTEXT("When computing LABSWE force term:");
 
@@ -626,18 +626,135 @@ namespace honei
 
                 //precompute constants
                 DT1_ force_multiplier(d_t / (6 * d_x * d_x / (d_t * d_t)));
-                DT1_ gravity_multiplier(g);
 
                 //-----------alpha = 1 ----------------------------------------------------------------------------------------------
-                /*
+
                 for (unsigned long begin(0), half(0) ; begin < info.dir_index_1->size() - 1; begin+=2, ++half)
                 {
                     for (unsigned long i((*info.dir_index_1)[begin]), offset(0) ; i < (*info.dir_index_1)[begin + 1] ; ++i, ++offset)
                     {
-                        (*data.f_temp_1)[i] = force_multiplier * gravity_multiplier * (*data.distribution_x)[1];
+                        (*data.f_temp_1)[i] -= force_multiplier * g * (*data.distribution_x)[1] * (manning_const * manning_const) *
+                            (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                     }
                 }
-                */
+
+
+                //-----------alpha = 2 ----------------------------------------------------------------------------------------------
+
+                for (unsigned long begin(0), half(0) ; begin < info.dir_index_2->size() - 1; begin+=2, ++half)
+                {
+                    for (unsigned long i((*info.dir_index_2)[begin]), offset(0) ; i < (*info.dir_index_2)[begin + 1] ; ++i, ++offset)
+                    {
+                        (*data.f_temp_2)[i] -= force_multiplier * g * (*data.distribution_x)[2] * (manning_const * manning_const) *
+                            (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
+                    }
+                }
+
+                for (unsigned long begin(0), half(0) ; begin < info.dir_index_2->size() - 1; begin+=2, ++half)
+                {
+                    for (unsigned long i((*info.dir_index_2)[begin]), offset(0) ; i < (*info.dir_index_2)[begin + 1] ; ++i, ++offset)
+                    {
+                        (*data.f_temp_2)[i] -= force_multiplier * g * (*data.distribution_y)[2] * (manning_const * manning_const) *
+                            (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
+                    }
+                }
+
+
+                //-----------alpha = 3 ----------------------------------------------------------------------------------------------
+
+                for (unsigned long begin(0), half(0) ; begin < info.dir_index_3->size() - 1; begin+=2, ++half)
+                {
+                    for (unsigned long i((*info.dir_index_3)[begin]), offset(0) ; i < (*info.dir_index_3)[begin + 1] ; ++i, ++offset)
+                    {
+                        (*data.f_temp_3)[i] -= force_multiplier * g * (*data.distribution_y)[3] * (manning_const * manning_const) *
+                            (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
+                    }
+                }
+
+                //-----------alpha = 4 ----------------------------------------------------------------------------------------------
+
+                for (unsigned long begin(0), half(0) ; begin < info.dir_index_4->size() - 1; begin+=2, ++half)
+                {
+                    for (unsigned long i((*info.dir_index_4)[begin]), offset(0) ; i < (*info.dir_index_4)[begin + 1] ; ++i, ++offset)
+                    {
+                        (*data.f_temp_4)[i] -= force_multiplier * g * (*data.distribution_x)[4] * (manning_const * manning_const) *
+                            (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
+                    }
+                }
+
+                for (unsigned long begin(0), half(0) ; begin < info.dir_index_4->size() - 1; begin+=2, ++half)
+                {
+                    for (unsigned long i((*info.dir_index_4)[begin]), offset(0) ; i < (*info.dir_index_4)[begin + 1] ; ++i, ++offset)
+                    {
+                        (*data.f_temp_4)[i] -= force_multiplier * g * (*data.distribution_y)[4] * (manning_const * manning_const) *
+                            (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
+                    }
+                }
+
+
+                //-----------alpha = 5 ----------------------------------------------------------------------------------------------
+
+                for (unsigned long begin(0), half(0) ; begin < info.dir_index_5->size() - 1; begin+=2, ++half)
+                {
+                    for (unsigned long i((*info.dir_index_5)[begin]), offset(0) ; i < (*info.dir_index_5)[begin + 1] ; ++i, ++offset)
+                    {
+                        (*data.f_temp_5)[i] -= force_multiplier * g * (*data.distribution_x)[5] * (manning_const * manning_const) *
+                            (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
+                    }
+                }
+
+                //-----------alpha = 6 ----------------------------------------------------------------------------------------------
+
+                for (unsigned long begin(0), half(0) ; begin < info.dir_index_6->size() - 1; begin+=2, ++half)
+                {
+                    for (unsigned long i((*info.dir_index_6)[begin]), offset(0) ; i < (*info.dir_index_6)[begin + 1] ; ++i, ++offset)
+                    {
+                        (*data.f_temp_6)[i] -= force_multiplier * g * (*data.distribution_x)[6] * (manning_const * manning_const) *
+                            (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
+                    }
+                }
+
+                for (unsigned long begin(0), half(0) ; begin < info.dir_index_6->size() - 1; begin+=2, ++half)
+                {
+                    for (unsigned long i((*info.dir_index_6)[begin]), offset(0) ; i < (*info.dir_index_6)[begin + 1] ; ++i, ++offset)
+                    {
+                        (*data.f_temp_6)[i] -= force_multiplier * g * (*data.distribution_y)[6] * (manning_const * manning_const) *
+                            (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
+                    }
+                }
+
+                //-----------alpha = 7 ----------------------------------------------------------------------------------------------
+
+                for (unsigned long begin(0), half(0) ; begin < info.dir_index_7->size() - 1; begin+=2, ++half)
+                {
+                    for (unsigned long i((*info.dir_index_7)[begin]), offset(0) ; i < (*info.dir_index_7)[begin + 1] ; ++i, ++offset)
+                    {
+                        (*data.f_temp_7)[i] -= force_multiplier * g * (*data.distribution_y)[7] * (manning_const * manning_const) *
+                            (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
+                    }
+                }
+
+
+                //-----------alpha = 8 ----------------------------------------------------------------------------------------------
+
+                for (unsigned long begin(0), half(0) ; begin < info.dir_index_8->size() - 1; begin+=2, ++half)
+                {
+                    for (unsigned long i((*info.dir_index_8)[begin]), offset(0) ; i < (*info.dir_index_8)[begin + 1] ; ++i, ++offset)
+                    {
+                        (*data.f_temp_8)[i] -= force_multiplier * g * (*data.distribution_x)[8] * (manning_const * manning_const) *
+                            (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
+                    }
+                }
+
+                for (unsigned long begin(0), half(0) ; begin < info.dir_index_8->size() - 1; begin+=2, ++half)
+                {
+                    for (unsigned long i((*info.dir_index_8)[begin]), offset(0) ; i < (*info.dir_index_8)[begin + 1] ; ++i, ++offset)
+                    {
+                        (*data.f_temp_8)[i] -= force_multiplier * g * (*data.distribution_y)[8] * (manning_const * manning_const) *
+                            (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
+                    }
+                }
+
                 info.dir_index_1->unlock(lm_read_only);
                 info.dir_index_2->unlock(lm_read_only);
                 info.dir_index_3->unlock(lm_read_only);
@@ -690,6 +807,10 @@ namespace honei
             ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF>::value
                 (data, info, g, d_x, d_y, d_t);
         }
+    template <>
+    struct ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>
+    {
+        static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info, float g, float d_x, float d_y, float d_t, float m){}
     };
 }
 #endif
