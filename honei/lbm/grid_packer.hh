@@ -291,30 +291,18 @@ namespace honei
                         (*new_types)[i] = (*info.types)[begin];
                     }
                 }
-                info.types = new_types;
+                info.cuda_types = new_types;
 
                 // expand direction vectors
-                DenseVector<unsigned long> * new_dir_1(new DenseVector<unsigned long>(data.h->size()));
-                DenseVector<unsigned long> * new_dir_2(new DenseVector<unsigned long>(data.h->size()));
-                DenseVector<unsigned long> * new_dir_3(new DenseVector<unsigned long>(data.h->size()));
-                DenseVector<unsigned long> * new_dir_4(new DenseVector<unsigned long>(data.h->size()));
-                DenseVector<unsigned long> * new_dir_5(new DenseVector<unsigned long>(data.h->size()));
-                DenseVector<unsigned long> * new_dir_6(new DenseVector<unsigned long>(data.h->size()));
-                DenseVector<unsigned long> * new_dir_7(new DenseVector<unsigned long>(data.h->size()));
-                DenseVector<unsigned long> * new_dir_8(new DenseVector<unsigned long>(data.h->size()));
-
                 unsigned long inf(-1);
-                for (unsigned long i(0) ; i < new_dir_1->size() ; ++i)
-                {
-                    (*new_dir_1)[i] = inf;
-                    (*new_dir_2)[i] = inf;
-                    (*new_dir_3)[i] = inf;
-                    (*new_dir_4)[i] = inf;
-                    (*new_dir_5)[i] = inf;
-                    (*new_dir_6)[i] = inf;
-                    (*new_dir_7)[i] = inf;
-                    (*new_dir_8)[i] = inf;
-                }
+                DenseVector<unsigned long> * new_dir_1(new DenseVector<unsigned long>(data.h->size(), inf));
+                DenseVector<unsigned long> * new_dir_2(new DenseVector<unsigned long>(data.h->size(), inf));
+                DenseVector<unsigned long> * new_dir_3(new DenseVector<unsigned long>(data.h->size(), inf));
+                DenseVector<unsigned long> * new_dir_4(new DenseVector<unsigned long>(data.h->size(), inf));
+                DenseVector<unsigned long> * new_dir_5(new DenseVector<unsigned long>(data.h->size(), inf));
+                DenseVector<unsigned long> * new_dir_6(new DenseVector<unsigned long>(data.h->size(), inf));
+                DenseVector<unsigned long> * new_dir_7(new DenseVector<unsigned long>(data.h->size(), inf));
+                DenseVector<unsigned long> * new_dir_8(new DenseVector<unsigned long>(data.h->size(), inf));
 
                 _expand_direction(new_dir_1, info.dir_1, info.dir_index_1);
                 _expand_direction(new_dir_2, info.dir_2, info.dir_index_2);
@@ -325,23 +313,14 @@ namespace honei
                 _expand_direction(new_dir_7, info.dir_7, info.dir_index_7);
                 _expand_direction(new_dir_8, info.dir_8, info.dir_index_8);
 
-                info.dir_1 = new_dir_1;
-                info.dir_2 = new_dir_2;
-                info.dir_3 = new_dir_3;
-                info.dir_4 = new_dir_4;
-                info.dir_5 = new_dir_5;
-                info.dir_6 = new_dir_6;
-                info.dir_7 = new_dir_7;
-                info.dir_8 = new_dir_8;
-
-                info.dir_index_1 = 0;
-                info.dir_index_2 = 0;
-                info.dir_index_3 = 0;
-                info.dir_index_4 = 0;
-                info.dir_index_5 = 0;
-                info.dir_index_6 = 0;
-                info.dir_index_7 = 0;
-                info.dir_index_8 = 0;
+                info.cuda_dir_1 = new_dir_1;
+                info.cuda_dir_2 = new_dir_2;
+                info.cuda_dir_3 = new_dir_3;
+                info.cuda_dir_4 = new_dir_4;
+                info.cuda_dir_5 = new_dir_5;
+                info.cuda_dir_6 = new_dir_6;
+                info.cuda_dir_7 = new_dir_7;
+                info.cuda_dir_8 = new_dir_8;
             }
 
             static void pack(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)

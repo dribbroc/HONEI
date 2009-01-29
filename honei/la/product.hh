@@ -1331,8 +1331,6 @@ namespace honei
                 const unsigned long size(b.size());
                 DenseVector<DT1_> result(size, DT1_(0));
 
-                TicketVector tickets;
-
                 const DenseVectorRange<DT1_> ll_band(a.band_range(LL));
                 const DenseVectorRange<DT1_> ld_band(a.band_range(LD));
                 const DenseVectorRange<DT1_> lu_band(a.band_range(LU));

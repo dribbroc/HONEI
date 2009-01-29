@@ -107,6 +107,7 @@ namespace honei
                 offset(0),
                 limits(0),
                 types(0),
+                cuda_types(0),
                 dir_1(0),
                 dir_2(0),
                 dir_3(0),
@@ -122,7 +123,15 @@ namespace honei
                 dir_index_5(0),
                 dir_index_6(0),
                 dir_index_7(0),
-                dir_index_8(0)
+                dir_index_8(0),
+                cuda_dir_1(0),
+                cuda_dir_2(0),
+                cuda_dir_3(0),
+                cuda_dir_4(0),
+                cuda_dir_5(0),
+                cuda_dir_6(0),
+                cuda_dir_7(0),
+                cuda_dir_8(0)
             {
             }
 
@@ -130,6 +139,7 @@ namespace honei
             {
                 delete limits;
                 delete types;
+                delete cuda_types;
                 delete dir_1;
                 delete dir_2;
                 delete dir_3;
@@ -146,9 +156,18 @@ namespace honei
                 delete dir_index_6;
                 delete dir_index_7;
                 delete dir_index_8;
+                delete cuda_dir_1;
+                delete cuda_dir_2;
+                delete cuda_dir_3;
+                delete cuda_dir_4;
+                delete cuda_dir_5;
+                delete cuda_dir_6;
+                delete cuda_dir_7;
+                delete cuda_dir_8;
 
                 limits = 0;
                 types = 0;
+                cuda_types = 0;
                 dir_1 = 0;
                 dir_2 = 0;
                 dir_3 = 0;
@@ -165,12 +184,21 @@ namespace honei
                 dir_index_6 = 0;
                 dir_index_7 = 0;
                 dir_index_8 = 0;
+                cuda_dir_1 = 0;
+                cuda_dir_2 = 0;
+                cuda_dir_3 = 0;
+                cuda_dir_4 = 0;
+                cuda_dir_5 = 0;
+                cuda_dir_6 = 0;
+                cuda_dir_7 = 0;
+                cuda_dir_8 = 0;
             }
 
             unsigned long offset;
             DenseVector<unsigned long> * limits;
             /// \todo Use std::bitset instead of unsigned long for types?
             DenseVector<unsigned long> * types;
+            DenseVector<unsigned long> * cuda_types;
             DenseVector<unsigned long> * dir_1;
             DenseVector<unsigned long> * dir_2;
             DenseVector<unsigned long> * dir_3;
@@ -187,6 +215,14 @@ namespace honei
             DenseVector<unsigned long> * dir_index_6;
             DenseVector<unsigned long> * dir_index_7;
             DenseVector<unsigned long> * dir_index_8;
+            DenseVector<unsigned long> * cuda_dir_1;
+            DenseVector<unsigned long> * cuda_dir_2;
+            DenseVector<unsigned long> * cuda_dir_3;
+            DenseVector<unsigned long> * cuda_dir_4;
+            DenseVector<unsigned long> * cuda_dir_5;
+            DenseVector<unsigned long> * cuda_dir_6;
+            DenseVector<unsigned long> * cuda_dir_7;
+            DenseVector<unsigned long> * cuda_dir_8;
     };
 
     template <typename DT_> class PackedGridData<D2Q9, DT_>
