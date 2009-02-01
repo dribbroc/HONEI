@@ -1,3 +1,5 @@
+AM_CXXFLAGS = -I$(top_srcdir)
+
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in
 
@@ -44,10 +46,10 @@ honei_lbm_SOURCES = \
 	scenario_controller_grid.hh \
 	scenario_controller_dat.hh
 honei_lbm_LDADD = \
-	$(top_srcdir)/honei/util/libhoneiutil.la \
-	$(top_srcdir)/honei/la/libhoneila.la \
-	$(top_srcdir)/honei/swe/libhoneiswe.la \
-	$(top_srcdir)/honei/lbm/libhoneilbm.la \
+	$(top_builddir)/honei/util/libhoneiutil.la \
+	$(top_builddir)/honei/la/libhoneila.la \
+	$(top_builddir)/honei/swe/libhoneiswe.la \
+	$(top_builddir)/honei/lbm/libhoneilbm.la \
 	$(BACKEND_LIBS) \
 	-lGL \
 	-lglut \
