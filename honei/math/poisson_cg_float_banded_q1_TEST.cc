@@ -198,7 +198,7 @@ class PoissonTestCGBandedFloatQ1:
         }
 };
 PoissonTestCGBandedFloatQ1<tags::CPU, float> poisson_test_cg_banded_float("float");
-/*#ifdef HONEI_SSE
+#ifdef HONEI_SSE
 PoissonTestCGBandedFloatQ1<tags::CPU::SSE, float> poisson_test_cg_banded_float_sse("SSE float");
 #endif
 #ifdef HONEI_CUDA
@@ -206,4 +206,4 @@ PoissonTestCGBandedFloatQ1<tags::GPU::CUDA, float> poisson_test_cg_banded_float_
 #endif
 #ifdef HONEI_CELL
 PoissonTestCGBandedFloatQ1<tags::Cell, float> poisson_test_cg_banded_float_cell("Cell float");
-#endif*/
+#endif

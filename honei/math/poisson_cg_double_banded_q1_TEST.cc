@@ -82,7 +82,7 @@ class PoissonTestCGBandedFloatQ1:
                 else
                     ++c;
             }
-            PostProcessing<output_types::GNUPLOT>::value(view, 1, root_n, root_n, 0);
+            //PostProcessing<output_types::GNUPLOT>::value(view, 1, root_n, root_n, 0);
             result.unlock(lm_read_only);
             TEST_CHECK(true);
         }
