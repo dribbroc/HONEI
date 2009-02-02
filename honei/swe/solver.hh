@@ -1412,7 +1412,7 @@ namespace honei {
         std::cout << "M_1:" << stringify(m1.band(ulint(0))) << std::endl;
         std::cout << "M_1:" << stringify(m1.band(ulint(3))) << std::endl;
         std::cout << "M_1:" << stringify(m1.band(ulint(6))) << std::endl;
-        std::cout << "M_1:" << stringify(m1.band(ulint(-3))) << std::endl;
+        std::cout << "M_1:" << stringify(m1.band(-3)) << std::endl;
         std::cout << "Finished Matrix Assembly 1.\n";
 #endif
     }
@@ -2164,7 +2164,7 @@ namespace honei {
         DenseVector<WorkPrec_> m6diag = (m1.band(ulint(0))).copy();
         DenseVector<WorkPrec_> m6bandplus3 = (m1.band(ulint(3))).copy();
         DenseVector<WorkPrec_> m6bandplus6 = (m1.band(ulint(6))).copy();
-        DenseVector<WorkPrec_> m6bandminus3 = (m1.band(ulint(-3))).copy();
+        DenseVector<WorkPrec_> m6bandminus3 = (m1.band(-3)).copy();
         ///Needed Iterators.
         typename DenseVector<WorkPrec_>::ElementIterator d(m6diag.begin_elements());//, d_END(m6diag->end_elements());
         typename DenseVector<WorkPrec_>::ElementIterator b1(m6bandplus3.begin_elements());
@@ -2651,7 +2651,7 @@ namespace honei {
         std::cout << "M_1:" << stringify(m1.band(ulint(0))) << std::endl;
         std::cout << "M_1:" << stringify(m1.band(ulint(3))) << std::endl;
         std::cout << "M_1:" << stringify(m1.band(ulint(6))) << std::endl;
-        std::cout << "M_1:" << stringify(m1.band(ulint(-3))) << std::endl;
+        std::cout << "M_1:" << stringify(m1.band(-3)) << std::endl;
         std::cout << "Finished Matrix Assembly 1.\n";
 #endif
     }
@@ -3006,7 +3006,7 @@ namespace honei {
         std::cout << "M_2:" << stringify(m2.band(ulint(0))) << std::endl;
         std::cout << "M_2:" << stringify(m2.band(ulint(3*(_d_width +4)))) << std::endl;
         std::cout << "M_2:" << stringify(m2.band(ulint(6*(_d_width +4)))) << std::endl;
-        std::cout << "M_2:" << stringify(m2.band(ulint(-3*(_d_width +4)))) << std::endl;
+        std::cout << "M_2:" << stringify(m2.band(-3*(_d_width +4))) << std::endl;
         std::cout << "Finished Matrix Assembly 2.\n";
 #endif
     }
