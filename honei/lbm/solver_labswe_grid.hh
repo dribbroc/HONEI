@@ -254,7 +254,6 @@ namespace honei
                         TicketVector tickets;
                         for (unsigned long i(0) ; i < _parts ; ++i)
                         {
-                            /// \todo use the same core for the same patch every time
                             _tickets.push_back(mc::ThreadPool::instance()->enqueue(
                                         std::tr1::bind(
                                             std::tr1::mem_fn(&honei::SolverLABSWEGrid<typename Tag_::DelegateTo, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>::do_preprocessing),
@@ -271,7 +270,6 @@ namespace honei
                         TicketVector tickets;
                         for (unsigned long i(0) ; i < _parts ; ++i)
                         {
-                            /// \todo use the same core for the same patch every time
                             tickets.push_back(mc::ThreadPool::instance()->enqueue(
                                         std::tr1::bind(
                                             std::tr1::mem_fn(&honei::SolverLABSWEGrid<typename Tag_::DelegateTo, ResPrec_, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>::solve),
