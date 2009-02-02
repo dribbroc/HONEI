@@ -31,7 +31,7 @@
 #include <honei/lbm/tags.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/lbm/grid.hh>
-
+#include <iostream>
 
 using namespace honei;
 using namespace lbm;
@@ -82,6 +82,9 @@ namespace honei
                         data.u->lock(lm_write_only);
                         data.v->lock(lm_write_only);
 
+                        DT_ lax_upper(2 * 10e-3);
+                        DT_ lax_lower(-lax_upper);
+
                         for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                         {
                             //set f to t_temp
@@ -106,25 +109,35 @@ namespace honei
                                 (*data.f_7)[i] +
                                 (*data.f_8)[i];
 
-                            (*data.u)[i] = ((*data.distribution_x)[0] * (*data.f_0)[i] +
-                                    (*data.distribution_x)[1] * (*data.f_1)[i] +
-                                    (*data.distribution_x)[2] * (*data.f_2)[i] +
-                                    (*data.distribution_x)[3] * (*data.f_3)[i] +
-                                    (*data.distribution_x)[4] * (*data.f_4)[i] +
-                                    (*data.distribution_x)[5] * (*data.f_5)[i] +
-                                    (*data.distribution_x)[6] * (*data.f_6)[i] +
-                                    (*data.distribution_x)[7] * (*data.f_7)[i] +
-                                    (*data.distribution_x)[8] * (*data.f_8)[i]) / (*data.h)[i];
+                            if((*data.h)[i] < lax_lower || (*data.h)[i] > lax_upper)
+                            {
+                                (*data.u)[i] = ((*data.distribution_x)[0] * (*data.f_0)[i] +
+                                        (*data.distribution_x)[1] * (*data.f_1)[i] +
+                                        (*data.distribution_x)[2] * (*data.f_2)[i] +
+                                        (*data.distribution_x)[3] * (*data.f_3)[i] +
+                                        (*data.distribution_x)[4] * (*data.f_4)[i] +
+                                        (*data.distribution_x)[5] * (*data.f_5)[i] +
+                                        (*data.distribution_x)[6] * (*data.f_6)[i] +
+                                        (*data.distribution_x)[7] * (*data.f_7)[i] +
+                                        (*data.distribution_x)[8] * (*data.f_8)[i]) / (*data.h)[i];
 
-                            (*data.v)[i] = ((*data.distribution_y)[0] * (*data.f_0)[i] +
-                                    (*data.distribution_y)[1] * (*data.f_1)[i] +
-                                    (*data.distribution_y)[2] * (*data.f_2)[i] +
-                                    (*data.distribution_y)[3] * (*data.f_3)[i] +
-                                    (*data.distribution_y)[4] * (*data.f_4)[i] +
-                                    (*data.distribution_y)[5] * (*data.f_5)[i] +
-                                    (*data.distribution_y)[6] * (*data.f_6)[i] +
-                                    (*data.distribution_y)[7] * (*data.f_7)[i] +
-                                    (*data.distribution_y)[8] * (*data.f_8)[i]) / (*data.h)[i];
+                                (*data.v)[i] = ((*data.distribution_y)[0] * (*data.f_0)[i] +
+                                        (*data.distribution_y)[1] * (*data.f_1)[i] +
+                                        (*data.distribution_y)[2] * (*data.f_2)[i] +
+                                        (*data.distribution_y)[3] * (*data.f_3)[i] +
+                                        (*data.distribution_y)[4] * (*data.f_4)[i] +
+                                        (*data.distribution_y)[5] * (*data.f_5)[i] +
+                                        (*data.distribution_y)[6] * (*data.f_6)[i] +
+                                        (*data.distribution_y)[7] * (*data.f_7)[i] +
+                                        (*data.distribution_y)[8] * (*data.f_8)[i]) / (*data.h)[i];
+                            }
+                            else
+                            {
+                                //TODO: better heuristics for reset of h: if negative -> 0, if positive but too small -> epsilon
+                                (*data.h)[i] = 0;
+                                (*data.u)[i] = 0;
+                                (*data.v)[i] = 0;
+                            }
                         }
 
                         info.limits->unlock(lm_read_only);
@@ -163,7 +176,7 @@ namespace honei
         struct ExtractionGrid<tags::GPU::CUDA, lbm_applications::LABSWE>
         {
             public:
-                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data);
+                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data);
         };
 
     template<>

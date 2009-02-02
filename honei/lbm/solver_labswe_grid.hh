@@ -183,7 +183,7 @@ namespace honei
                     ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(*_data, *_info, ResPrec_(9.81), _delta_x, _delta_y, _delta_t );
 
 
-                    ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(*_data, *_info, ResPrec_(9.81), _delta_x, _delta_y, _delta_t, ResPrec_(0.) );
+                    ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(*_data, *_info, ResPrec_(9.81), _delta_x, _delta_y, _delta_t, ResPrec_(0.01) );
 
                     ///Boundary correction:
                     UpdateVelocityDirectionsGrid<Tag_, NOSLIP>::
