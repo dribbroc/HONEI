@@ -69,7 +69,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
 
         static int get_precision(int scen_id)
         {
-            return 0; // todo return the correct accuracy (0(float) or 1(double))
+            return 1; // todo return the correct accuracy (0(float) or 1(double))
         }
 
         void init(void)
@@ -361,6 +361,47 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
                         GridPacker<D2Q9, NOSLIP, Prec_>::pack(_grid, _info, _data);
 
                         _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, dx, dy, dt, tau);
+
+                        _solver->do_preprocessing();
+
+
+                    }
+                    break;
+                case 106:
+                    {
+                        glutSetWindowTitle("Grid: Laminar flow: Partial dam break with dry states 50x50");
+                        _dheight = 50;
+                        _dwidth = 50;
+                        _h = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.0));
+                        /*Cylinder<Prec_> c1(*_h, Prec_(0.06), 25, 25);
+                        c1.value();
+                        */
+
+                        Cuboid<Prec_> reservoir(*_h, 50, 18, Prec_(0.03), 32, 0);
+                        reservoir.value();
+
+                        _u = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _v = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+                        _b = new DenseMatrix<Prec_>(_dheight, _dwidth, Prec_(0.));
+
+                        _obstacles = new DenseMatrix<bool>(_dheight, _dwidth, false);
+                        /*Cylinder<bool> c2(*_obstacles, 1, 6, 10);
+                          c2.value();*/
+
+                        Cuboid<bool> q2(*_obstacles, 15, 2, 1, 30, 0);
+                        q2.value();
+                        Cuboid<bool> q3(*_obstacles, 40, 2, 1, 30, 20);
+                        q3.value();
+                        _grid.obstacles = _obstacles;
+                        _grid.h = _h;
+                        _grid.u = _u;
+                        _grid.v = _v;
+                        _grid.b = _b;
+
+                        GridPacker<D2Q9, NOSLIP, Prec_>::pack(_grid, _info, _data);
+
+
+                        _solver = new SolverLABSWEGrid<Tag_, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> (&_data, &_info, 0.01, 0.01, 0.01, 1.1);
 
                         _solver->do_preprocessing();
 

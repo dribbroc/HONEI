@@ -87,6 +87,7 @@ int main(int argc, char ** argv)
     glutAddMenuEntry("Laminar flow: Circular dam break above uneven bed 50x50", 103);
     glutAddMenuEntry("Laminar flow: Circular dam break above uneven bed (b) 100x200", 104);
     glutAddMenuEntry("Laminar flow: Circular dam break above uneven bed (b) with dry states 100x200", 105);
+    glutAddMenuEntry("Laminar flow: Partial dam break with dry states 50x50", 106);
     GLint menu_id_scenario_multi = glutCreateMenu(menu_scenario);
     glutAddMenuEntry("Laminar flow: Circular dam break 50x50 ", 1100);
     glutAddMenuEntry("Laminar flow: Circular dam break 50x50 with cuboidal obstacles", 1101);

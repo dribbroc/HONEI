@@ -83,7 +83,7 @@ namespace honei
                         data.u->lock(lm_write_only);
                         data.v->lock(lm_write_only);
 
-                        DT_ lax_upper(std::numeric_limits<DT_>::epsilon() * 10e3);
+                        DT_ lax_upper(10e-5/*std::numeric_limits<DT_>::epsilon() * 10e7*/);
                         DT_ lax_lower(-lax_upper);
 
                         for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
