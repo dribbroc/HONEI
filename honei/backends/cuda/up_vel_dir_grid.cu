@@ -24,7 +24,9 @@ namespace honei
     namespace cuda
     {
         __global__ void up_vel_dir_grid_gpu(
-                float ** fs,
+                float * f_temp_1, float * f_temp_2,
+                float * f_temp_3, float * f_temp_4, float * f_temp_5,
+                float * f_temp_6, float * f_temp_7, float * f_temp_8,
                 unsigned long * types,
                 unsigned long size)
         {
@@ -33,42 +35,42 @@ namespace honei
             {
                 unsigned long i(idx);
                 if((types[i] & 1<<0) == 1<<0)
-                    fs[4][i] = fs[0][i];
+                    f_temp_5[i] = f_temp_1[i];
                 if((types[i] & 1<<1) == 1<<1)
-                    fs[5][i] = fs[1][i];
+                    f_temp_6[i] = f_temp_2[i];
                 if((types[i] & 1<<2) == 1<<2)
-                    fs[6][i] = fs[2][i];
+                    f_temp_7[i] = f_temp_3[i];
                 if((types[i] & 1<<3) == 1<<3)
-                    fs[7][i] = fs[3][i];
+                    f_temp_8[i] = f_temp_4[i];
                 if((types[i] & 1<<4) == 1<<4)
-                    fs[0][i] = fs[4][i];
+                    f_temp_1[i] = f_temp_5[i];
                 if((types[i] & 1<<5) == 1<<5)
-                    fs[1][i] = fs[5][i];
+                    f_temp_2[i] = f_temp_6[i];
                 if((types[i] & 1<<6) == 1<<6)
-                    fs[2][i] = fs[6][i];
+                    f_temp_3[i] = f_temp_7[i];
                 if((types[i] & 1<<7) == 1<<7)
-                    fs[3][i] = fs[7][i];
+                    f_temp_4[i] = f_temp_8[i];
 
                 // Corners
                 if((types[i] & 1<<2) == 1<<2 && (types[i] & 1<<4) == 1<<4)
                 {
-                    fs[1][i] = fs[7][i];
-                    fs[5][i] = fs[7][i];
+                    f_temp_2[i] = f_temp_8[i];
+                    f_temp_6[i] = f_temp_8[i];
                 }
                 if((types[i] & 1<<4) == 1<<4 && (types[i] & 1<<6) == 1<<6)
                 {
-                    fs[3][i] = fs[1][i];
-                    fs[7][i] = fs[1][i];
+                    f_temp_4[i] = f_temp_2[i];
+                    f_temp_8[i] = f_temp_2[i];
                 }
                 if((types[i] & 1<<0) == 1<<0 && (types[i] & 1<<6) == 1<<6)
                 {
-                    fs[1][i] = fs[3][i];
-                    fs[5][i] = fs[3][i];
+                    f_temp_2[i] = f_temp_4[i];
+                    f_temp_6[i] = f_temp_4[i];
                 }
                 if((types[i] & 1<<0) == 1<<0 && (types[i] & 1<<2) == 1<<2)
                 {
-                    fs[3][i] = fs[5][i];
-                    fs[7][i] = fs[5][i];
+                    f_temp_4[i] = f_temp_6[i];
+                    f_temp_8[i] = f_temp_6[i];
                 }
             }
         }
@@ -100,26 +102,11 @@ extern "C" void cuda_up_vel_dir_grid_float(void * types,
     float * f_temp_7_gpu((float *)f_temp_7);
     float * f_temp_8_gpu((float *)f_temp_8);
 
-    float * fs[8];
-    fs[0] = f_temp_1_gpu;
-    fs[1] = f_temp_2_gpu;
-    fs[2] = f_temp_3_gpu;
-    fs[3] = f_temp_4_gpu;
-    fs[4] = f_temp_5_gpu;
-    fs[5] = f_temp_6_gpu;
-    fs[6] = f_temp_7_gpu;
-    fs[7] = f_temp_8_gpu;
-
-    float ** fs_gpu;
-    cudaMalloc((void **) &fs_gpu, sizeof(fs));
-    cudaMemcpy(fs_gpu, fs, sizeof(fs), cudaMemcpyHostToDevice);
-
     honei::cuda::up_vel_dir_grid_gpu<<<grid, block>>>(
-            fs_gpu,
+            f_temp_1_gpu, f_temp_2_gpu, f_temp_3_gpu, f_temp_4_gpu,
+            f_temp_5_gpu, f_temp_6_gpu, f_temp_7_gpu, f_temp_8_gpu,
             types_gpu,
             size);
-
-    cudaFree(fs_gpu);
 
     CUDA_ERROR();
 }
