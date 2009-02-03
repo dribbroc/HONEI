@@ -119,16 +119,16 @@ namespace honei
                     }
 
                     GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list, fringe_list);
-                    GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);
-                    GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
-                    PostProcessing<output_types::GNUPLOT>::value(*grid.h, 1, grid.h->columns(), grid.h->rows(), i);
+                    //GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);
+                    //GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
+                    //PostProcessing<output_types::GNUPLOT>::value(*grid.h, 1, grid.h->columns(), grid.h->rows(), i);
 
                     for (unsigned long target(1) ; target < _numprocs ; ++target)
                     {
                         _send_sync(target, data_list[target - 1]);
                     }
                     bt.take();
-                    std::cout<<"Timestep: " << i << "/" << timesteps << " TOE: "<<bt.sec() - at.sec()<<" "<<bt.usec() - at.usec()<<std::endl;
+                    std::cout<<"Timestep: " << i << "/" << timesteps << " TOE: "<<bt.total() - at.total()<<std::endl;
                 }
             }
 
@@ -418,8 +418,8 @@ namespace honei
 
                     case 1:
                         {
-                            unsigned long g_h(50);
-                            unsigned long g_w(50);
+                            unsigned long g_h(600);
+                            unsigned long g_w(600);
                             grid.h = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.05));
                             Cylinder<DataType_> c1(*grid.h, DataType_(0.06), 25, 25);
                             c1.value();
