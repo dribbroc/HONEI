@@ -32,6 +32,7 @@
 #include <honei/la/dense_matrix.hh>
 #include <honei/lbm/grid.hh>
 #include <iostream>
+#include <honei/swe/limiter.hh>
 
 using namespace honei;
 using namespace lbm;
@@ -82,7 +83,7 @@ namespace honei
                         data.u->lock(lm_write_only);
                         data.v->lock(lm_write_only);
 
-                        DT_ lax_upper(2 * 10e-3);
+                        DT_ lax_upper(std::numeric_limits<DT_>::epsilon() * 10e3);
                         DT_ lax_lower(-lax_upper);
 
                         for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
@@ -135,9 +136,13 @@ namespace honei
                             {
                                 //TODO: better heuristics for reset of h: if negative -> 0, if positive but too small -> epsilon
                                 (*data.h)[i] = 0;
+
                                 (*data.u)[i] = 0;
                                 (*data.v)[i] = 0;
                             }
+                            (*data.h)[i] = min_mod_limiter((*data.h)[i]);
+
+
                         }
 
                         info.limits->unlock(lm_read_only);
