@@ -24,14 +24,26 @@ namespace honei
     namespace cuda
     {
         __global__ void eq_dist_grid_gpu(float * u, float * v, float * h,
-                float * distribution_x, float * distribution_y,
+                float * distribution_x_data, float * distribution_y_data,
                 float * f_eq_0, float * f_eq_1, float * f_eq_2,
                 float * f_eq_3, float * f_eq_4, float * f_eq_5,
                 float * f_eq_6, float * f_eq_7, float * f_eq_8,
                 float g, float e,
                 unsigned long offset, unsigned long size)
         {
+            extern __shared__ float  distribution_cache[];
+            float* distribution_x = distribution_cache;
+            float* distribution_y = distribution_cache + 9;
+
             unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+
+            if (idx % blockDim.x < 9)
+            {
+                distribution_x[idx % blockDim.x] = distribution_x_data[idx % blockDim.x];
+                distribution_y[idx % blockDim.x] = distribution_y_data[idx % blockDim.x];
+            }
+            __syncthreads();
+
             if (idx < size)
             {
                 unsigned long index(idx + offset);
@@ -115,7 +127,7 @@ extern "C" void cuda_eq_dist_grid_float(unsigned long start, unsigned long end, 
     float * f_eq_7_gpu((float *)f_eq_7);
     float * f_eq_8_gpu((float *)f_eq_8);
 
-    honei::cuda::eq_dist_grid_gpu<<<grid, block>>>(u_gpu, v_gpu, h_gpu,
+    honei::cuda::eq_dist_grid_gpu<<<grid, block, 18 * sizeof(float)>>>(u_gpu, v_gpu, h_gpu,
             distribution_x_gpu, distribution_y_gpu,
             f_eq_0_gpu, f_eq_1_gpu, f_eq_2_gpu,
             f_eq_3_gpu, f_eq_4_gpu, f_eq_5_gpu,

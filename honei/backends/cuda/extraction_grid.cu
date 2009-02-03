@@ -26,10 +26,22 @@ namespace honei
         __global__ void extraction_grid_gpu(
                 float ** fs,
                 float * h, float * u, float * v,
-                float * distribution_x, float * distribution_y,
+                float * distribution_x_data, float * distribution_y_data,
                 unsigned long offset, unsigned long size)
         {
+            extern __shared__ float  distribution_cache[];
+            float* distribution_x = distribution_cache;
+            float* distribution_y = distribution_cache + 9;
+
             unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+
+            if (idx % blockDim.x < 9)
+            {
+                distribution_x[idx % blockDim.x] = distribution_x_data[idx % blockDim.x];
+                distribution_y[idx % blockDim.x] = distribution_y_data[idx % blockDim.x];
+            }
+            __syncthreads();
+
             if (idx < size)
             {
                 unsigned long i(idx + offset);
@@ -147,7 +159,7 @@ extern "C" void cuda_extraction_grid_float(
     cudaMalloc((void **) &fs_gpu, sizeof(fs));
     cudaMemcpy(fs_gpu, fs, sizeof(fs), cudaMemcpyHostToDevice);
 
-    honei::cuda::extraction_grid_gpu<<<grid, block>>>(
+    honei::cuda::extraction_grid_gpu<<<grid, block, 18 * sizeof(float)>>>(
             fs_gpu,
             h_gpu, u_gpu, v_gpu,
             distribution_x_gpu, distribution_y_gpu,
