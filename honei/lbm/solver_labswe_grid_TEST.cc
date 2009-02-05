@@ -112,3 +112,70 @@ SolverLABSWEGridTest<tags::CPU::MultiCore::SSE, double> mcsse_solver_test_double
 #ifdef HONEI_CUDA
 SolverLABSWEGridTest<tags::GPU::CUDA, float> cuda_solver_test_float("float");
 #endif
+
+
+template <typename Tag_, typename DataType_>
+class SolverLABSWEGridMassConservationTest :
+    public TaggedTest<Tag_>
+{
+    public:
+        SolverLABSWEGridMassConservationTest(const std::string & type) :
+            TaggedTest<Tag_>("solver_labswe_grid_mass_cons_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long g_h(50);
+            unsigned long g_w(50);
+            unsigned long timesteps(100);
+
+            DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
+            Cuboid<DataType_> a(h, 5, 5, DataType_(0.02), 25, 25);
+            a.value();
+
+            DenseMatrix<DataType_> u(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> v(g_h, g_w, DataType_(0.));
+
+            DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
+
+            Grid<D2Q9, DataType_> grid;
+            DenseMatrix<bool> obstacles(g_h, g_w, false);
+            grid.obstacles = &obstacles;
+            grid.h = &h;
+            grid.u = &u;
+            grid.v = &v;
+            grid.b = &b;
+
+            PackedGridData<D2Q9, DataType_>  data;
+            PackedGridInfo<D2Q9> info;
+
+            GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
+
+            SolverLABSWEGrid<Tag_, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 1., 1., 1., 1.5);
+
+            solver.do_preprocessing();
+
+            for(unsigned long i(0); i < timesteps; ++i)
+            {
+#ifdef SOLVER_VERBOSE
+                std::cout<<"Timestep: " << i << "/" << timesteps << std::endl;
+#endif
+                solver.solve();
+#ifdef SOLVER_POSTPROCESSING
+                GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
+                PostProcessing<GNUPLOT>::value(*grid.h, 1, g_w, g_h, i);
+#endif
+            }
+            GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
+            DataType_ ana_vol(5. * 5. * 0.02 + g_w * g_h * 0.05);
+            std::cout << "Analytical Vol.: " << ana_vol << " ";
+            DataType_ vol = GaussianQuadrature2D<tags::CPU, tags::Trapezoid>::value(h, DataType_(0), DataType_(g_w), DataType_(1.), DataType_(1.));
+            std::cout << "Vol.: " << vol << std::endl;
+            TEST_CHECK_EQUAL_WITHIN_EPS(vol, ana_vol, 0.1);
+        }
+
+};
+SolverLABSWEGridMassConservationTest<tags::CPU, float> solver_grid_mc_test_float("float");
+SolverLABSWEGridMassConservationTest<tags::CPU, double> solver_grid_mc_test_double("double");
+
