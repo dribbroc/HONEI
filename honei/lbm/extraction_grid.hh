@@ -34,7 +34,6 @@
 #include <iostream>
 #include <honei/swe/limiter.hh>
 
-using namespace honei;
 using namespace lbm;
 
 namespace honei
@@ -181,15 +180,24 @@ namespace honei
         struct ExtractionGrid<tags::GPU::CUDA, lbm_applications::LABSWE>
         {
             public:
-                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data);
+                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data)
+                {
+                    ExtractionGrid<tags::CPU, lbm_applications::LABSWE>::value(info, data);
+                }
         };
 
     template<>
         struct ExtractionGrid<tags::CPU::SSE, lbm_applications::LABSWE>
         {
             public:
-                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data);
-                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data);
+                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data)
+                    {
+                        ExtractionGrid<tags::CPU, lbm_applications::LABSWE>::value(info, data);
+                    }
+                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data)
+                    {
+                        ExtractionGrid<tags::CPU, lbm_applications::LABSWE>::value(info, data);
+                    }
         };
 }
 #endif

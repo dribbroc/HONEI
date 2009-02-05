@@ -27,10 +27,10 @@
 
 #include <algorithm>
 #include <limits>
-#ifdef HONEI_SSE
+/*#ifdef HONEI_SSE
 #  include <xmmintrin.h>
 #  include <emmintrin.h>
-#endif
+#endif*/
 
 namespace honei
 {
@@ -136,7 +136,7 @@ namespace honei
     };
     static const VanLeerLimiter van_leer_limiter = VanLeerLimiter();
 
-#ifdef HONEI_SSE
+/*#ifdef HONEI_SSE
 
     namespace intern
     {
@@ -167,7 +167,7 @@ namespace honei
             }
         }
     }
-#endif
+#endif*/
 }
 
 #endif

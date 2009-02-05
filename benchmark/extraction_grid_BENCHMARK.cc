@@ -29,7 +29,6 @@
 #include <honei/swe/volume.hh>
 #include <honei/math/quadrature.hh>
 #include <honei/backends/cuda/operations.hh>
-#include <honei/lbm/partial_derivative.hh>
 
 using namespace std;
 using namespace honei;
@@ -69,24 +68,19 @@ class ExtractionGridBench :
             Cylinder<DataType_> b1(b, DataType_(0.04), 15, 15);
             b1.value();
 
-            DenseMatrix<DataType_> b_x(PartialDerivative<Tag_, X, CENTRALDIFF>::value(b , DataType_(1)));
-            DenseMatrix<DataType_> b_y(PartialDerivative<Tag_, Y, CENTRALDIFF>::value(b , DataType_(1)));
-
             Grid<D2Q9, DataType_> grid;
             DenseMatrix<bool> obstacles(g_h, g_w, false);
             grid.obstacles = &obstacles;
             grid.h = &h;
             grid.u = &u;
             grid.v = &v;
-            grid.b_x = &b_x;
-            grid.b_y = &b_y;
 
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 1., 1., 1.);
+            SolverLABSWEGrid<Tag_, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 1., 1., 1., 1.5);
 
             solver.do_preprocessing();
 

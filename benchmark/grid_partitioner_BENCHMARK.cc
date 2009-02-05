@@ -25,7 +25,6 @@
 
 #include <honei/lbm/grid_partitioner.hh>
 #include <honei/lbm/solver_labswe_grid.hh>
-#include <honei/lbm/partial_derivative.hh>
 #include <honei/swe/volume.hh>
 #include <iostream>
 #include <honei/swe/volume.hh>
@@ -70,9 +69,6 @@ class GridPartitionerBench :
             Cylinder<DataType_> b1(b, DataType_(0.04), 15, 15);
             b1.value();
 
-            DenseMatrix<DataType_> b_x(PartialDerivative<Tag_, X, CENTRALDIFF>::value(b , DataType_(1)));
-            DenseMatrix<DataType_> b_y(PartialDerivative<Tag_, Y, CENTRALDIFF>::value(b , DataType_(1)));
-
             Grid<D2Q9, DataType_> grid;
             DenseMatrix<bool> obstacles(g_h, g_w, false);
             Cuboid<bool> q2(obstacles, 15, 5, 1, 10, 0);
@@ -83,8 +79,6 @@ class GridPartitionerBench :
             grid.h = &h;
             grid.u = &u;
             grid.v = &v;
-            grid.b_x = &b_x;
-            grid.b_y = &b_y;
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
 

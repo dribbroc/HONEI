@@ -825,28 +825,46 @@ namespace honei
             }
     };
     template <>
-    struct ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>
-    {
-        static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info, float g, float d_x, float d_y, float d_t);
-    };
+        struct ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>
+        {
+            static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info, float g, float d_x, float d_y, float d_t)
+            {
+                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(data, info, g, d_x, d_y, d_t);
+            }
+        };
 
     template <>
-    struct ForceGrid<tags::CPU::SSE, lbm_applications::LABSWE, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF>
-    {
-        static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info, float g, float d_x, float d_y, float d_t)
+        struct ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>
         {
-            ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF>::value
-                (data, info, g, d_x, d_y, d_t);
-        }
-        static void value(PackedGridData<D2Q9, double> & data, PackedGridInfo<D2Q9> & info, double g, double d_x, double d_y, double d_t)
-        {
-            ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF>::value
-                (data, info, g, d_x, d_y, d_t);
-        }
+            static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info, float g, float d_x, float d_y, float d_t, float m)
+            {
+                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(data, info, g, d_x, d_y, d_t, m);
+            }
+        };
     template <>
-    struct ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>
-    {
-        static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info, float g, float d_x, float d_y, float d_t, float m){}
-    };
+        struct ForceGrid<tags::CPU::SSE, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>
+        {
+            static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info, float g, float d_x, float d_y, float d_t)
+            {
+                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(data, info, g, d_x, d_y, d_t);
+            }
+            static void value(PackedGridData<D2Q9, double> & data, PackedGridInfo<D2Q9> & info, double g, double d_x, double d_y, double d_t)
+            {
+                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(data, info, g, d_x, d_y, d_t);
+            }
+        };
+
+    template <>
+        struct ForceGrid<tags::CPU::SSE, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>
+        {
+            static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info, float g, float d_x, float d_y, float d_t, float m)
+            {
+                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(data, info, g, d_x, d_y, d_t, m);
+            }
+            static void value(PackedGridData<D2Q9, double> & data, PackedGridInfo<D2Q9> & info, double g, double d_x, double d_y, double d_t, double m)
+            {
+                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(data, info, g, d_x, d_y, d_t, m);
+            }
+        };
 }
 #endif

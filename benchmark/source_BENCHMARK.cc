@@ -55,7 +55,7 @@ class SourceBench :
                 DataType_ g(9.81);
                 DenseMatrix<DataType_> result(1000ul, 1000ul);
 
-                BENCHMARK((Source<Tag_, lbm_applications::LABSWE, lbm_source_types::SIMPLE, lbm_source_schemes::BASIC>::value(result, h, db, g)));
+                BENCHMARK((Source<Tag_, lbm_applications::LABSWE, lbm_force::SIMPLE, lbm_source_schemes::BASIC>::value(result, h, db, g)));
 
             }
             evaluate();
