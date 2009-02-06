@@ -90,7 +90,8 @@ class LBMGSolverBench :
             {
                 BENCHMARK(solver.solve());
             }
-            evaluate();
+            LBMBenchmarkInfo benchinfo(SolverLABSWEGrid<tags::CPU, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>::get_benchmark_info(&grid, &data, &info));
+            evaluate(benchinfo);
         }
 };
 

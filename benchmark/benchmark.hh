@@ -1,5 +1,24 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
+/*
+ * Copyright (c) 2007 Andre Matuschek <andre@matuschek.org>
+ * Copyright (c) 2007 David Gies      <david-gies@gmx.de>
+ * Copyright (c) 2009 Dirk Ribbrock   <dirk.ribbrock@uni-dortmund.de>
+ *
+ * This file is part of the HONEI C++ library. HONEI is free software;
+ * you can redistribute it and/or modify it under the terms of the GNU General
+ * Public License version 2, as published by the Free Software Foundation.
+ *
+ * HONEI is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 #include <honei/util/stringify.hh>
 #include <honei/util/exception.hh>
 #include <honei/util/tags.hh>
@@ -21,7 +40,7 @@ class Benchmark
         timeval _start, _end;
         std::list<double> _benchlist;
         int _x, _xmin, _xmax;
-        double _total, _min, _max, _avg, _median, _tp, _mediantp, _f, _medianf, _mintp, _minf;
+        double _total, _min, _max, _avg, _median, _tp, _mediantp, _f, _medianf, _mintp, _minf, _mlups, _mflups;
         std::string _tag_name;
         bool _plots;
 
@@ -46,11 +65,16 @@ class Benchmark
 
         void calculate(BenchmarkInfo info);
 
+        void calculate(LBMBenchmarkInfo info);
+
         /// generates a standard benchmark output
         void evaluate();
 
         /// generates a benchmark output with FLOPS and data transfer rate information.
         void evaluate(BenchmarkInfo info);
+
+        /// generates a benchmark output with FLOPS and data transfer rate information, including LBM related data.
+        void evaluate(LBMBenchmarkInfo info);
 
         void evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<std::string> cores, int count);
 

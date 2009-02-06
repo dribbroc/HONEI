@@ -1,5 +1,24 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
+/*
+ * Copyright (c) 2007 Andre Matuschek <andre@matuschek.org>
+ * Copyright (c) 2007 David Gies      <david-gies@gmx.de>
+ * Copyright (c) 2009 Dirk Ribbrock   <dirk.ribbrock@uni-dortmund.de>
+ *
+ * This file is part of the HONEI C++ library. HONEI is free software;
+ * you can redistribute it and/or modify it under the terms of the GNU General
+ * Public License version 2, as published by the Free Software Foundation.
+ *
+ * HONEI is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 #include <benchmark/benchmark.hh>
 
 #include <cstdlib>
@@ -43,7 +62,7 @@ class BenchmarkList
         {
             return _benchs.end();
         }
-        
+
         int bench_count() const
         {
             return _benchs.size();
@@ -51,7 +70,7 @@ class BenchmarkList
 
         Iterator erase(Iterator index)
         {
-            return _benchs.erase(index);             
+            return _benchs.erase(index);
         }
 };
 
@@ -102,6 +121,7 @@ void Benchmark::calculate()
     _median = *m;
 }
 
+
 void Benchmark::calculate(BenchmarkInfo info)
 {
     calculate();
@@ -114,6 +134,37 @@ void Benchmark::calculate(BenchmarkInfo info)
     {
         _tp = 0;
         _f = 0;
+    }
+    if (_median > 0)
+    {
+        _mediantp = ((double)(info.load + info.store) / (1024 * 1024)) / _median;
+        _mintp = ((double)(info.load + info.store) / (1024 * 1024)) / _min;
+        _medianf = ((double)(info.flops) / 1000000) / _median;
+        _minf = ((double)(info.flops) / 1000000) / _min;
+    }
+    else
+    {
+        _mediantp = 0;
+        _medianf = 0;
+    }
+}
+
+void Benchmark::calculate(LBMBenchmarkInfo info)
+{
+    calculate();
+    if (_total > 0)
+    {
+        _tp = ((double)(info.load + info.store) / (1024 * 1024)) * _x / _total;
+        _f = ((double)((_x/_total)*info.flops) / 1000000);
+        _mlups = (double)(info.lups * _x / _total) / 1000000;
+        _mflups = (double)(info.flups * _x / _total) / 1000000;
+    }
+    else
+    {
+        _tp = 0;
+        _f = 0;
+        _mlups = 0;
+        _mflups = 0;
     }
     if (_median > 0)
     {
@@ -220,6 +271,49 @@ void Benchmark::evaluate(BenchmarkInfo info)
         ofs << _minf << " " << pf[j] << "FLOPS (peak)" << std::endl;
         ofs << std::endl << std::endl << std::endl;
     }*/
+}
+
+void Benchmark::evaluate(LBMBenchmarkInfo info)
+{
+    calculate(info);
+    std::cout << "Function Calls: " << _x << std::endl;
+    std::cout << "Runtime - total:   " << _total << "sec" << std::endl;
+    std::cout << "Runtime - lowest:  " << _min << "sec (" << _xmin << ".)" << std::endl;
+    std::cout << "Runtime - highest: " << _max << "sec (" << _xmax << ".)" << std::endl;
+    std::cout << "Runtime - mean:    " << _avg << "sec" << std::endl;
+    std::cout << "Runtime - median:  " << _median << "sec" << std::endl;
+    std::string pf = " KMGTPEZY";
+    int i = 2;
+    while (_tp > 1024 && i < 8)
+    {
+        _tp /= 1024;
+        _mediantp /= 1024;
+        _mintp /= 1024;
+        ++i;
+    }
+    std::cout << "Transfer rate (mean):   " << _tp << " " << pf[i] << "B/s" << std::endl;
+    std::cout << "Transfer rate (median): " << _mediantp << " " << pf[i] << "B/s" << std::endl;
+    std::cout << "Transfer rate (peak):   " << _mintp << " " << pf[i] << "B/s" << std::endl;
+    int j = 2;
+    while (_f > 1000 && j < 8)
+    {
+        _f /= 1000;
+        _medianf /= 1000;
+        _minf /= 1000;
+        ++j;
+    }
+    std::cout << _f << " " << pf[j] << "FLOPS (mean)" << std::endl;
+    std::cout << _medianf << " " << pf[j] << "FLOPS (median)" << std::endl;
+    std::cout << _minf << " " << pf[j] << "FLOPS (peak)" << std::endl;
+
+    std::cout << "MLUPS - mean:  " << _mlups << std::endl;
+    std::cout << "MFLUPS - mean: " << _mflups << std::endl;
+    if (info.scale != 1)
+    {
+        std::cout << "Dense version calculates " << info.scale << " times more flops.\n(Depends on used elements of Sparse/Banded Operands.)" << std::endl;
+        if (info.scaleinfo != " ")
+            std::cout << info.scaleinfo << std::endl;
+    }
 }
 
 void Benchmark::evaluate_to_plotfile(std::list<BenchmarkInfo> info, std::list<std::string> cores, int count)

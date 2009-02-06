@@ -39,6 +39,7 @@
 #include <honei/lbm/tags.hh>
 #include <honei/util/tags.hh>
 #include <honei/util/configuration.hh>
+#include <honei/util/benchmark_info.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/sum.hh>
@@ -201,7 +202,20 @@ namespace honei
                         value(*_info,
                                 *_data,
                                 _relaxation_time);
-                };
+                }
+
+                static inline LBMBenchmarkInfo get_benchmark_info(Grid<D2Q9, ResPrec_> * grid, PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info)
+                {
+                    LBMBenchmarkInfo result;
+                    /*result.flops = a.size();
+                    result.load = a.size() * (sizeof(DT1_) + sizeof(DT2_));
+                    result.store = a.size() * sizeof(DT1_);*/
+                    result.size.push_back(grid->h->rows());
+                    result.size.push_back(grid->h->columns());
+                    result.lups = grid->h->rows() * grid->h->columns();
+                    result.flups = data->h->size();
+                    return result;
+                }
         };
 
     namespace mc

@@ -441,7 +441,7 @@ namespace honei
             result.store = a.rows() * a.columns() * sizeof(DT1_);
             result.size.push_back(a.rows() * a.columns());
             result.size.push_back(b.rows() * b.columns());
-            return result; 
+            return result;
         }
 
         template <typename DT1_, typename DT2_>
