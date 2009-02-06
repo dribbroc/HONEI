@@ -32,6 +32,7 @@
 #include <honei/lbm/tags.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/lbm/grid.hh>
+#include <honei/util/benchmark_info.hh>
 
 using namespace honei;
 using namespace lbm;
@@ -190,6 +191,16 @@ namespace honei
                     data.f_eq_6->unlock(lm_write_only);
                     data.f_eq_7->unlock(lm_write_only);
                     data.f_eq_8->unlock(lm_write_only);
+                }
+            template<typename DT1_>
+                static inline BenchmarkInfo get_benchmark_info(PackedGridData<D2Q9, DT1_> * data, PackedGridInfo<D2Q9> * info)
+                {
+                    BenchmarkInfo result;
+                    result.flops = data->h->size() * 20;
+                    result.load = data->h->size() * 20 * sizeof(DT1_);
+                    result.store = data->h->size() * 10 * sizeof(DT1_);
+                    result.size.push_back(data->h->size());
+                    return result;
                 }
         };
 

@@ -74,6 +74,7 @@ class CollideStreamGridBench :
             grid.h = &h;
             grid.u = &u;
             grid.v = &v;
+            grid.b = &b;
 
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
@@ -94,7 +95,8 @@ class CollideStreamGridBench :
                         cuda_thread_synchronize();
 #endif
             }
-            evaluate();
+            BenchmarkInfo benchinfo(CollideStreamGrid<tags::CPU, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::get_benchmark_info(&data, &info));
+            evaluate(benchinfo);
         }
 };
 

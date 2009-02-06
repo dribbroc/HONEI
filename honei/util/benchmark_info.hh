@@ -43,7 +43,7 @@ struct BenchmarkInfo
     {
     }
 
-    BenchmarkInfo operator+(const BenchmarkInfo a) 
+    BenchmarkInfo operator+(const BenchmarkInfo a)
     {
         flops += a.flops;
         load += a.load;
@@ -70,6 +70,14 @@ struct LBMBenchmarkInfo :
         lups(0),
         flups(0)
     {
+    }
+
+    LBMBenchmarkInfo operator+=(const BenchmarkInfo a)
+    {
+        flops += a.flops;
+        load += a.load;
+        store += a.store;
+        return *this;
     }
 };
 

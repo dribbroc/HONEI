@@ -207,9 +207,11 @@ namespace honei
                 static inline LBMBenchmarkInfo get_benchmark_info(Grid<D2Q9, ResPrec_> * grid, PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info)
                 {
                     LBMBenchmarkInfo result;
-                    /*result.flops = a.size();
-                    result.load = a.size() * (sizeof(DT1_) + sizeof(DT2_));
-                    result.store = a.size() * sizeof(DT1_);*/
+                    BenchmarkInfo eq_dist(EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::get_benchmark_info(data, info));
+                    result += eq_dist;
+                    BenchmarkInfo col_stream(CollideStreamGrid<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::get_benchmark_info(data, info));
+                    result += col_stream;
+                    /// \todo add missing modules
                     result.size.push_back(grid->h->rows());
                     result.size.push_back(grid->h->columns());
                     result.lups = grid->h->rows() * grid->h->columns();

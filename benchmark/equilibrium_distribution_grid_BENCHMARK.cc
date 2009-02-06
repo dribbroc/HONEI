@@ -74,6 +74,7 @@ class EquilibriumDistributionGridBench :
             grid.h = &h;
             grid.u = &u;
             grid.v = &v;
+            grid.b = &b;
 
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
@@ -94,7 +95,8 @@ class EquilibriumDistributionGridBench :
                         cuda_thread_synchronize();
 #endif
             }
-            evaluate();
+            BenchmarkInfo benchinfo(EquilibriumDistributionGrid<tags::CPU, lbm_applications::LABSWE>::get_benchmark_info(&data, &info));
+            evaluate(benchinfo);
         }
 };
 

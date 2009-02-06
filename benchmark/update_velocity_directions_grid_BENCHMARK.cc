@@ -74,6 +74,7 @@ class UpdateVelocityDirectionsGridBench :
             grid.h = &h;
             grid.u = &u;
             grid.v = &v;
+            grid.b = &b;
 
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
