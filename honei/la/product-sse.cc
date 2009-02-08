@@ -300,7 +300,7 @@ DenseMatrix<float> Product<tags::CPU::SSE>::value(const DenseMatrix<float> & a, 
 
     DenseMatrix<float> result(a.rows(), b.columns(), float(0));
 
-    if (a.columns() == a.rows() && b.columns() == 2)
+    /*if (a.columns() == a.rows() && b.columns() == 2)
     {
         for (unsigned long i(0) ; i < a.rows() ; ++i)
         {
@@ -308,12 +308,12 @@ DenseMatrix<float> Product<tags::CPU::SSE>::value(const DenseMatrix<float> & a, 
         }
     }
     else
-    {
+    {*/
         DenseMatrixTile<float> a_tile(a, a.rows(), a.columns(), 0, 0);
         DenseMatrixTile<float> b_tile(b, b.rows(), b.columns(), 0, 0);
         DenseMatrixTile<float> r_tile(result, result.rows(), result.columns(), 0, 0);
         honei::sse::rec_dm_product(r_tile, a_tile, b_tile);
-    }
+    //}
 
     return result;
 }
@@ -327,7 +327,7 @@ DenseMatrix<double> Product<tags::CPU::SSE>::value(const DenseMatrix<double> & a
 
     DenseMatrix<double> result(a.rows(), b.columns(), double(0));
 
-    if (a.columns() == a.rows() && b.columns() == 2)
+    /*if (a.columns() == a.rows() && b.columns() == 2)
     {
         for (unsigned long i(0) ; i < a.rows() ; ++i)
         {
@@ -335,12 +335,12 @@ DenseMatrix<double> Product<tags::CPU::SSE>::value(const DenseMatrix<double> & a
         }
     }
     else
-    {
+    {*/
         DenseMatrixTile<double> a_tile(a, a.rows(), a.columns(), 0, 0);
         DenseMatrixTile<double> b_tile(b, b.rows(), b.columns(), 0, 0);
         DenseMatrixTile<double> r_tile(result, result.rows(), result.columns(), 0, 0);
         honei::sse::rec_dm_product(r_tile, a_tile, b_tile);
-    }
+    //}
 
     return result;
 }
