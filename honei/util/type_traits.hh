@@ -32,7 +32,8 @@ namespace honei
 #ifndef DOXYGEN
         static inline unsigned multiple_of_sixteen(unsigned v)
         {
-            return (v & 0xf) ? (((v & ~0xf) + 1) * 16) : (v);
+            unsigned r(v & 0xF);
+            return (r > 0) ? v + 16 - r : v;
         }
 #endif
 

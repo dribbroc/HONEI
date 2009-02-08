@@ -75,6 +75,14 @@ class TypeTraitsTest :
 
             TypeTraits<DataType_>::free(elements, size);
             TEST_CHECK(true);
+
+            TEST_CHECK_EQUAL(intern::multiple_of_sixteen(1), 16ul);
+            TEST_CHECK_EQUAL(intern::multiple_of_sixteen(16), 16ul);
+            TEST_CHECK_EQUAL(intern::multiple_of_sixteen(17), 32ul);
+            TEST_CHECK_EQUAL(intern::multiple_of_sixteen(1024), 1024ul);
+            TEST_CHECK_EQUAL(intern::multiple_of_sixteen(1025), 1040ul);
+            TEST_CHECK_EQUAL(intern::multiple_of_sixteen(1026), 1040ul);
+            TEST_CHECK_EQUAL(intern::multiple_of_sixteen(1025*1025), 1050640ul);
         }
 };
 TypeTraitsTest<float> type_traits_test_float("float");
