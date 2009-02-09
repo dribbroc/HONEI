@@ -143,7 +143,7 @@ namespace honei
                 _recv_info(info);
                 _recv_data(data);
 
-                SolverLABSWEGrid<Tag_, DataType_,lbm_source_types::CENTRED, lbm_source_schemes::CENTRALDIFF, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 1., 1., 1.);
+                SolverLABSWEGrid<Tag_, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 0.01, 0.01, 0.01, 1.1);
 
                 solver.do_preprocessing();
 
@@ -307,8 +307,7 @@ namespace honei
                 mpi::mpi_send(data.h->elements(), data.h->size(), target, _myid);
                 mpi::mpi_send(data.u->elements(), data.u->size(), target, _myid);
                 mpi::mpi_send(data.v->elements(), data.v->size(), target, _myid);
-                mpi::mpi_send(data.b_x->elements(), data.b_x->size(), target, _myid);
-                mpi::mpi_send(data.b_y->elements(), data.b_y->size(), target, _myid);
+                mpi::mpi_send(data.b->elements(), data.b->size(), target, _myid);
             }
 
             void _recv_data(PackedGridData<D2Q9, DataType_> & data)
@@ -322,14 +321,12 @@ namespace honei
                 data.h = new DenseVector<DataType_>(h_size);
                 data.u = new DenseVector<DataType_>(h_size);
                 data.v = new DenseVector<DataType_>(h_size);
-                data.b_x = new DenseVector<DataType_>(h_size);
-                data.b_y = new DenseVector<DataType_>(h_size);
+                data.b = new DenseVector<DataType_>(h_size);
 
                 mpi::mpi_recv(data.h->elements(), data.h->size(), 0, 0);
                 mpi::mpi_recv(data.u->elements(), data.u->size(), 0, 0);
                 mpi::mpi_recv(data.v->elements(), data.v->size(), 0, 0);
-                mpi::mpi_recv(data.b_x->elements(), data.b_x->size(), 0, 0);
-                mpi::mpi_recv(data.b_y->elements(), data.b_y->size(), 0, 0);
+                mpi::mpi_recv(data.b->elements(), data.b->size(), 0, 0);
 
                 data.f_0 = new DenseVector<DataType_>(h_size);
                 data.f_1 = new DenseVector<DataType_>(h_size);
@@ -409,8 +406,7 @@ namespace honei
                             grid.u = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.));
                             grid.v = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.));
                             DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
-                            grid.b_x = new DenseMatrix<DataType_> (PartialDerivative<Tag_, X, CENTRALDIFF>::value(b , DataType_(1)));
-                            grid.b_y = new DenseMatrix<DataType_> (PartialDerivative<Tag_, Y, CENTRALDIFF>::value(b , DataType_(1)));
+                            grid.b = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.));
 
                             grid.obstacles = new DenseMatrix<bool> (g_h, g_w, false);
                         }
@@ -427,8 +423,7 @@ namespace honei
                             grid.u = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.));
                             grid.v = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.));
                             DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
-                            grid.b_x = new DenseMatrix<DataType_> (PartialDerivative<Tag_, X, CENTRALDIFF>::value(b , DataType_(1)));
-                            grid.b_y = new DenseMatrix<DataType_> (PartialDerivative<Tag_, Y, CENTRALDIFF>::value(b , DataType_(1)));
+                            grid.b = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.));
 
                             grid.obstacles = new DenseMatrix<bool> (g_h, g_w, false);
 
@@ -461,8 +456,7 @@ namespace honei
                                         b(i , j) = 0.4 * exp((-5.) * (x - 1.) * (x - 1.) - 50. * (y - 0.5) * (y - 0.5));
                                 }
                             }
-                            grid.b_x = new DenseMatrix<DataType_> (PartialDerivative<Tag_, X, CENTRALDIFF>::value(b , DataType_(1)));
-                            grid.b_y = new DenseMatrix<DataType_> (PartialDerivative<Tag_, Y, CENTRALDIFF>::value(b , DataType_(1)));
+                            grid.b = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.));
 
                             grid.obstacles = new DenseMatrix<bool> (g_h, g_w, false);
                         }
