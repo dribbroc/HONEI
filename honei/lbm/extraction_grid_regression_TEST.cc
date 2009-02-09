@@ -1,7 +1,7 @@
 /* vim: set number sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2008 Markus Geveler <apryde@gmx.de>
+ * Copyright (c) 2009 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the SWE C++ library. LiSWE is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -17,7 +17,6 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include <honei/lbm/solver_labswe_grid.hh>
-#include <honei/swe/post_processing.hh>
 #include <honei/swe/volume.hh>
 #include <unittest/unittest.hh>
 #include <iostream>
@@ -25,24 +24,21 @@
 #include <honei/math/quadrature.hh>
 #include <honei/lbm/grid.hh>
 #include <honei/lbm/grid_packer.hh>
-#include <honei/la/norm.hh>
-#include <honei/la/difference.hh>
 
 using namespace honei;
 using namespace tests;
 using namespace std;
-using namespace output_types;
 using namespace lbm::lbm_lattice_types;
 
 //#define SOLVER_VERBOSE 1
 
 template <typename Tag_, typename DataType_>
-class SolverLABSWEGridMultiRegressionTest :
+class ExtractionGridRegressionTest :
     public TaggedTest<Tag_>
 {
     public:
-        SolverLABSWEGridMultiRegressionTest(const std::string & type) :
-            TaggedTest<Tag_>("solver_labswe_grid_multi_regression_test<" + type + ">")
+        ExtractionGridRegressionTest(const std::string & type) :
+            TaggedTest<Tag_>("extraction_grid_regression_test<" + type + ">")
         {
         }
 
@@ -50,7 +46,6 @@ class SolverLABSWEGridMultiRegressionTest :
         {
             unsigned long g_h(50);
             unsigned long g_w(50);
-            unsigned long timesteps(200);
 
             DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
             Cylinder<DataType_> c1(h, DataType_(0.02), 25, 25);
@@ -83,26 +78,11 @@ class SolverLABSWEGridMultiRegressionTest :
 
             solver.do_preprocessing();
 
-            for(unsigned long i(0); i < timesteps; ++i)
-            {
-#ifdef SOLVER_VERBOSE
-                std::cout<<"Timestep: " << i << "/" << timesteps << std::endl;
-#endif
-                solver.solve();
-#ifdef SOLVER_POSTPROCESSING
-                GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
-                PostProcessing<GNUPLOT>::value(h, 1, g_w, g_h, i);
-#endif
-            }
-            GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
+            ExtractionGrid<Tag_, lbm_applications::LABSWE>::value(info, data);
 
-#ifdef SOLVER_VERBOSE
-            std::cout << *grid.h << std::endl;
-#endif
             //Standard solver using tags::CPU:
             unsigned long g_h_standard(50);
             unsigned long g_w_standard(50);
-            unsigned long timesteps_standard(200);
 
             DenseMatrix<DataType_> h_standard(g_h_standard, g_w_standard, DataType_(0.05));
             Cylinder<DataType_> c1_standard(h_standard, DataType_(0.02), 25, 25);
@@ -135,73 +115,29 @@ class SolverLABSWEGridMultiRegressionTest :
 
             solver_standard.do_preprocessing();
 
-            for(unsigned long i(0); i < timesteps_standard; ++i)
-            {
-#ifdef SOLVER_VERBOSE
-                std::cout<<"Timestep: " << i << "/" << timesteps << std::endl;
-#endif
-                solver_standard.solve();
-#ifdef SOLVER_POSTPROCESSING
-                GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid_standard, info_standard, data_standard);
-                PostProcessing<GNUPLOT>::value(h_standard, 1, g_w_standard, g_h_standard, i);
-#endif
-            }
-            GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid_standard, info_standard, data_standard);
+            ExtractionGrid<Tag_, lbm_applications::LABSWE>::value(info_standard, data_standard);
 
-#ifdef SOLVER_VERBOSE
-            std::cout << *grid_standard.h << std::endl;
-#endif
-
-
-            TEST_CHECK_EQUAL(g_h, g_h_standard);
-            TEST_CHECK_EQUAL(g_w, g_w_standard);
 
             //Compare CPU results of both solvers:
+            data.h->lock(lm_read_only);
+            data.u->lock(lm_read_only);
+            data.v->lock(lm_read_only);
             for(unsigned long i(0) ; i < g_h ; ++i)
             {
-                for(unsigned long j(0) ; j < g_w ; ++j)
-                {
-#ifdef SOLVER_VERBOSE
-                    std::cout << "(" << i << " , " << j << ")" << std::endl;
-                    std::cout << (*grid.h)(i , j) << " " << (*grid_standard.h)(i , j) << std::endl;
-#endif
-                    TEST_CHECK_EQUAL_WITHIN_EPS((*grid.h)(i , j) , (*grid_standard.h)(i , j), std::numeric_limits<DataType_>::epsilon());
-                }
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data.h)[i], (*data_standard.h)[i], std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data.u)[i], (*data_standard.u)[i], std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data.v)[i], (*data_standard.v)[i], std::numeric_limits<DataType_>::epsilon());
             }
-
-            //Save matrices to vectors, compute norm:
-            DenseVector<double> result_grid(g_h*g_w);
-            DenseVector<double> result_standard(g_h*g_w);
-
-            unsigned long inner(0);
-            for(unsigned long i(0) ; i < g_h ; ++i)
-            {
-                for(unsigned long j(0) ; j < g_w ; ++j)
-                {
-                    result_grid[inner] = (*grid.h)(i , j);
-                    result_standard[inner] = h_standard(i , j);
-                    ++inner;
-                }
-            }
-
-            Difference<tags::CPU>::value(result_grid, result_standard);
-            double l2 = Norm<vnt_l_two, false, tags::CPU>::value(result_grid);
-            TEST_CHECK_EQUAL_WITHIN_EPS(l2, DataType_(0.), std::numeric_limits<DataType_>::epsilon());
-
-            std::cout << "L2 norm: " << l2 << std::endl;
+            data.h->unlock(lm_read_only);
+            data.u->unlock(lm_read_only);
+            data.v->unlock(lm_read_only);
         }
-
-
 };
-SolverLABSWEGridMultiRegressionTest<tags::CPU::MultiCore, float> mc_solver_multi_test_float("float");
-SolverLABSWEGridMultiRegressionTest<tags::CPU::MultiCore, double> mc_solver_multi_test_double("double");
 #ifdef HONEI_SSE
-SolverLABSWEGridMultiRegressionTest<tags::CPU::SSE, float> sse_solver_multi_test_float("float");
-SolverLABSWEGridMultiRegressionTest<tags::CPU::SSE, double> sse_solver_multi_test_double("double");
-SolverLABSWEGridMultiRegressionTest<tags::CPU::MultiCore::SSE, float> mcsse_solver_multi_test_float("float");
-SolverLABSWEGridMultiRegressionTest<tags::CPU::MultiCore::SSE, double> mcsse_solver_multi_test_double("double");
+ExtractionGridRegressionTest<tags::CPU::SSE, float> sse_solver_multi_test_float("float");
+ExtractionGridRegressionTest<tags::CPU::SSE, double> sse_solver_multi_test_double("double");
 #endif
 #ifdef HONEI_CUDA
-SolverLABSWEGridMultiRegressionTest<tags::GPU::CUDA, float> cuda_solver_multi_test_float("float");
+ExtractionGridRegressionTest<tags::GPU::CUDA, float> cuda_solver_multi_test_float("float");
 #endif
 
