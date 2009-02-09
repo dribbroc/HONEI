@@ -101,8 +101,8 @@ class MonotonizedCentralLimiterQuickTest :
             TEST_CHECK_EQUAL_WITHIN_EPS(monotonized_central_limiter(s4), DataType_(2), std::numeric_limits<DataType_>::epsilon());
         }
 };
-MonotonizedCentralLimiterQuickTest<float> mc_limiter_quick_test_float("float");
-MonotonizedCentralLimiterQuickTest<double> mc_limiter_quick_test_double("double");
+//MonotonizedCentralLimiterQuickTest<float> mc_limiter_quick_test_float("float");
+//MonotonizedCentralLimiterQuickTest<double> mc_limiter_quick_test_double("double");
 
 template <typename DataType_>
 class VanLeerLimiterQuickTest :
@@ -126,8 +126,8 @@ class VanLeerLimiterQuickTest :
             TEST_CHECK(van_leer_limiter(s4) < DataType_(2));
         }
 };
-VanLeerLimiterQuickTest<float> vl_limiter_quick_test_float("float");
-VanLeerLimiterQuickTest<double> vl_limiter_quick_test_double("double");
+//VanLeerLimiterQuickTest<float> vl_limiter_quick_test_float("float");
+//VanLeerLimiterQuickTest<double> vl_limiter_quick_test_double("double");
 
 /*#ifdef HONEI_SSE
 using namespace intern::sse;
