@@ -71,7 +71,7 @@ class PoissonBenchmarkMGBandedQ1Mixed:
             double* ref_sol;
 
             std::string file_name(HONEI_SOURCEDIR);
-            file_name += "/honei/math/testdata/1050625.bin";
+            file_name += "/honei/math/testdata/4225.bin";
             file = fopen(file_name.c_str(), "rb");
             if (1 != (int)fread(&n, sizeof(int), 1, file))
                 throw InternalError("IO Error!");
