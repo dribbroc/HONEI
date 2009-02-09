@@ -87,10 +87,15 @@ class ExtractionGridBench :
 
             for(int i = 0; i < _count; ++i)
             {
-                BENCHMARK((ExtractionGrid<Tag_, lbm_applications::LABSWE>::value(info, data)));
+                BENCHMARK(
+                        for (unsigned long j(0) ; j < 5 ; ++j)
+                        {
+                        (ExtractionGrid<Tag_, lbm_applications::LABSWE>::value(info, data));
 #ifdef HONEI_CUDA
                         cuda_thread_synchronize();
 #endif
+                        }
+                        );
             }
             evaluate();
         }

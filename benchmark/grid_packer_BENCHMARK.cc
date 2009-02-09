@@ -88,5 +88,5 @@ class GridPackerPackBench :
         }
 };
 
-GridPackerPackBench<tags::CPU, float> packer_pack_bench_float_1("LBM Grid packer pack Benchmark - size: 500x500, float", 500, 25);
-GridPackerPackBench<tags::CPU, double> packer_pack_bench_double_1("LBM Grid packer pack Benchmark - size: 500x500, double", 500, 25);
+GridPackerPackBench<tags::CPU, float> packer_pack_bench_float_1("LBM Grid packer pack Benchmark - size: 500x500, float", 500, 5);
+GridPackerPackBench<tags::CPU, double> packer_pack_bench_double_1("LBM Grid packer pack Benchmark - size: 500x500, double", 500, 5);

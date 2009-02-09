@@ -90,13 +90,18 @@ class EquilibriumDistributionGridBench :
 
             for(int i = 0; i < _count; ++i)
             {
-                BENCHMARK((EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::value(g, e, info, data)));
+                BENCHMARK(
+                        for (unsigned long j(0) ; j < 5 ; ++j)
+                        {
+                        (EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::value(g, e, info, data));
 #ifdef HONEI_CUDA
                         cuda_thread_synchronize();
 #endif
+                        }
+                        );
             }
             BenchmarkInfo benchinfo(EquilibriumDistributionGrid<tags::CPU, lbm_applications::LABSWE>::get_benchmark_info(&data, &info));
-            evaluate(benchinfo);
+            evaluate(benchinfo * 5);
         }
 };
 

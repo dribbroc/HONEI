@@ -87,11 +87,16 @@ class UpdateVelocityDirectionsGridBench :
 
             for(int i = 0; i < _count; ++i)
             {
-                BENCHMARK((UpdateVelocityDirectionsGrid<Tag_, NOSLIP>::
-                            value(data, info)));
+                BENCHMARK(
+                        for (unsigned long j(0) ; j < 5 ; ++j)
+                        {
+                        (UpdateVelocityDirectionsGrid<Tag_, NOSLIP>::
+                         value(data, info));
 #ifdef HONEI_CUDA
                         cuda_thread_synchronize();
 #endif
+                        }
+                        );
             }
             evaluate();
         }
