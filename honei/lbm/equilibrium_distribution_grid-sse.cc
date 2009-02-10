@@ -50,12 +50,50 @@ void EquilibriumDistributionGrid<tags::CPU::SSE, lbm_applications::LABSWE>::valu
     unsigned long begin((*info.limits)[0]);
     unsigned long end((*info.limits)[info.limits->size() - 1]);
 
-    sse::eq_dist_grid(begin, end, g, e,
+
+    sse::eq_dist_grid_dir_0(begin, end, g, e,
+            data.h->elements(), data.u->elements(), data.v->elements(),
+            data.f_eq_0->elements());
+
+    sse::eq_dist_grid_dir_odd(begin, end, g, e,
             data.h->elements(), data.u->elements(), data.v->elements(),
             data.distribution_x->elements(), data.distribution_y->elements(),
-            data.f_eq_0->elements(), data.f_eq_1->elements(), data.f_eq_2->elements(),
-            data.f_eq_3->elements(), data.f_eq_4->elements(), data.f_eq_5->elements(),
-            data.f_eq_6->elements(), data.f_eq_7->elements(), data.f_eq_8->elements());
+            data.f_eq_1->elements(), 1);
+
+    sse::eq_dist_grid_dir_odd(begin, end, g, e,
+            data.h->elements(), data.u->elements(), data.v->elements(),
+            data.distribution_x->elements(), data.distribution_y->elements(),
+            data.f_eq_3->elements(), 3);
+
+    sse::eq_dist_grid_dir_odd(begin, end, g, e,
+            data.h->elements(), data.u->elements(), data.v->elements(),
+            data.distribution_x->elements(), data.distribution_y->elements(),
+            data.f_eq_5->elements(), 5);
+
+    sse::eq_dist_grid_dir_odd(begin, end, g, e,
+            data.h->elements(), data.u->elements(), data.v->elements(),
+            data.distribution_x->elements(), data.distribution_y->elements(),
+            data.f_eq_7->elements(), 7);
+
+    sse::eq_dist_grid_dir_even(begin, end, g, e,
+            data.h->elements(), data.u->elements(), data.v->elements(),
+            data.distribution_x->elements(), data.distribution_y->elements(),
+            data.f_eq_2->elements(), 2);
+
+    sse::eq_dist_grid_dir_even(begin, end, g, e,
+            data.h->elements(), data.u->elements(), data.v->elements(),
+            data.distribution_x->elements(), data.distribution_y->elements(),
+            data.f_eq_4->elements(), 4);
+
+    sse::eq_dist_grid_dir_even(begin, end, g, e,
+            data.h->elements(), data.u->elements(), data.v->elements(),
+            data.distribution_x->elements(), data.distribution_y->elements(),
+            data.f_eq_6->elements(), 6);
+
+    sse::eq_dist_grid_dir_even(begin, end, g, e,
+            data.h->elements(), data.u->elements(), data.v->elements(),
+            data.distribution_x->elements(), data.distribution_y->elements(),
+            data.f_eq_8->elements(), 8);
 
     info.limits->unlock(lm_read_only);
 
@@ -104,12 +142,49 @@ void EquilibriumDistributionGrid<tags::CPU::SSE, lbm_applications::LABSWE>::valu
     unsigned long begin((*info.limits)[0]);
     unsigned long end((*info.limits)[info.limits->size() - 1]);
 
-    sse::eq_dist_grid(begin, end, g, e,
+    sse::eq_dist_grid_dir_0(begin, end, g, e,
+            data.h->elements(), data.u->elements(), data.v->elements(),
+            data.f_eq_0->elements());
+
+    sse::eq_dist_grid_dir_odd(begin, end, g, e,
             data.h->elements(), data.u->elements(), data.v->elements(),
             data.distribution_x->elements(), data.distribution_y->elements(),
-            data.f_eq_0->elements(), data.f_eq_1->elements(), data.f_eq_2->elements(),
-            data.f_eq_3->elements(), data.f_eq_4->elements(), data.f_eq_5->elements(),
-            data.f_eq_6->elements(), data.f_eq_7->elements(), data.f_eq_8->elements());
+            data.f_eq_1->elements(), 1);
+
+    sse::eq_dist_grid_dir_odd(begin, end, g, e,
+            data.h->elements(), data.u->elements(), data.v->elements(),
+            data.distribution_x->elements(), data.distribution_y->elements(),
+            data.f_eq_3->elements(), 3);
+
+    sse::eq_dist_grid_dir_odd(begin, end, g, e,
+            data.h->elements(), data.u->elements(), data.v->elements(),
+            data.distribution_x->elements(), data.distribution_y->elements(),
+            data.f_eq_5->elements(), 5);
+
+    sse::eq_dist_grid_dir_odd(begin, end, g, e,
+            data.h->elements(), data.u->elements(), data.v->elements(),
+            data.distribution_x->elements(), data.distribution_y->elements(),
+            data.f_eq_7->elements(), 7);
+
+    sse::eq_dist_grid_dir_even(begin, end, g, e,
+            data.h->elements(), data.u->elements(), data.v->elements(),
+            data.distribution_x->elements(), data.distribution_y->elements(),
+            data.f_eq_2->elements(), 2);
+
+    sse::eq_dist_grid_dir_even(begin, end, g, e,
+            data.h->elements(), data.u->elements(), data.v->elements(),
+            data.distribution_x->elements(), data.distribution_y->elements(),
+            data.f_eq_4->elements(), 4);
+
+    sse::eq_dist_grid_dir_even(begin, end, g, e,
+            data.h->elements(), data.u->elements(), data.v->elements(),
+            data.distribution_x->elements(), data.distribution_y->elements(),
+            data.f_eq_6->elements(), 6);
+
+    sse::eq_dist_grid_dir_even(begin, end, g, e,
+            data.h->elements(), data.u->elements(), data.v->elements(),
+            data.distribution_x->elements(), data.distribution_y->elements(),
+            data.f_eq_8->elements(), 8);
 
     info.limits->unlock(lm_read_only);
 
