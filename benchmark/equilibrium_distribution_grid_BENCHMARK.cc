@@ -105,12 +105,12 @@ class EquilibriumDistributionGridBench :
         }
 };
 
-EquilibriumDistributionGridBench<tags::CPU, float> eq_dist_grid_bench_float("EquilibriumDistributionGridBenchmark - size: 2000, float", 2000, 10);
-EquilibriumDistributionGridBench<tags::CPU, double> eq_dist_grid_bench_double("EquilibriumDistributionGrid Benchmark - size: 2000, double", 2000, 10);
+EquilibriumDistributionGridBench<tags::CPU, float> eq_dist_grid_bench_float("EquilibriumDistributionGridBenchmark - size: 2000, float", 2000, 5);
+EquilibriumDistributionGridBench<tags::CPU, double> eq_dist_grid_bench_double("EquilibriumDistributionGrid Benchmark - size: 2000, double", 2000, 5);
 #ifdef HONEI_SSE
-EquilibriumDistributionGridBench<tags::CPU::SSE, float> sse_eq_dist_grid_bench_float("SSE EquilibriumDistributionGridBenchmark - size: 2000, float", 2000, 10);
-EquilibriumDistributionGridBench<tags::CPU::SSE, double> sse_eq_dist_grid_bench_double("SSE EquilibriumDistributionGridBenchmark - size: 2000, double", 2000, 10);
+EquilibriumDistributionGridBench<tags::CPU::SSE, float> sse_eq_dist_grid_bench_float("SSE EquilibriumDistributionGridBenchmark - size: 2000, float", 2000, 5);
+EquilibriumDistributionGridBench<tags::CPU::SSE, double> sse_eq_dist_grid_bench_double("SSE EquilibriumDistributionGridBenchmark - size: 2000, double", 2000, 5);
 #endif
 #ifdef HONEI_CUDA
-EquilibriumDistributionGridBench<tags::GPU::CUDA, float> cuda_eq_dist_grid_bench_float("CUDA EquilibriumDistributionGridBenchmark - size: 2000, float", 2000, 10);
+EquilibriumDistributionGridBench<tags::GPU::CUDA, float> cuda_eq_dist_grid_bench_float("CUDA EquilibriumDistributionGridBenchmark - size: 2000, float", 2000, 5);
 #endif
