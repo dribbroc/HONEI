@@ -77,6 +77,7 @@ class ExtractionGridRegressionTest :
             SolverLABSWEGrid<Tag_, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 0.01, 0.01, 0.005, 1.1);
 
             solver.do_preprocessing();
+            solver.solve();
 
             ExtractionGrid<Tag_, lbm_applications::LABSWE>::value(info, data);
 
@@ -90,7 +91,7 @@ class ExtractionGridRegressionTest :
 
             DenseMatrix<DataType_> u_standard(g_h_standard, g_w_standard, DataType_(0.));
             DenseMatrix<DataType_> v_standard(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> b_standard(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> b_standard(g_h_standard, g_w_standard, DataType_(0.));
 
             Cylinder<DataType_> b1_standard(b_standard, DataType_(0.0001), 15, 15);
             b1_standard.value();
@@ -114,11 +115,12 @@ class ExtractionGridRegressionTest :
             SolverLABSWEGrid<tags::CPU, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver_standard(&data_standard, &info_standard, 0.01, 0.01, 0.005, 1.1);
 
             solver_standard.do_preprocessing();
+            solver_standard.solve();
 
             ExtractionGrid<tags::CPU, lbm_applications::LABSWE>::value(info_standard, data_standard);
 
 
-            //Compare CPU results of both solvers:
+            //Compare results of both solvers:
             data.h->lock(lm_read_only);
             data.u->lock(lm_read_only);
             data.v->lock(lm_read_only);
@@ -140,4 +142,3 @@ ExtractionGridRegressionTest<tags::CPU::SSE, double> sse_solver_multi_test_doubl
 #ifdef HONEI_CUDA
 ExtractionGridRegressionTest<tags::GPU::CUDA, float> cuda_solver_multi_test_float("float");
 #endif
-

@@ -77,6 +77,7 @@ class EquilibriumDistributionGridRegressionTest :
             SolverLABSWEGrid<Tag_, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 0.01, 0.01, 0.005, 1.1);
 
             solver.do_preprocessing();
+            solver.solve();
 
             EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::value(9.81, 1., info, data);
 
@@ -114,6 +115,7 @@ class EquilibriumDistributionGridRegressionTest :
             SolverLABSWEGrid<tags::CPU, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver_standard(&data_standard, &info_standard, 0.01, 0.01, 0.005, 1.1);
 
             solver_standard.do_preprocessing();
+            solver_standard.solve();
 
             EquilibriumDistributionGrid<tags::CPU, lbm_applications::LABSWE>::value(9.81, 1., info_standard, data_standard);
 

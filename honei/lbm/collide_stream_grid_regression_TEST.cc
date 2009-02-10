@@ -77,6 +77,7 @@ class CollideStreamGridRegressionTest :
             SolverLABSWEGrid<Tag_, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 0.01, 0.01, 0.005, 1.1);
 
             solver.do_preprocessing();
+            solver.solve();
 
             CollideStreamGrid<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                 value(info, data, 1.1);
@@ -115,6 +116,7 @@ class CollideStreamGridRegressionTest :
             SolverLABSWEGrid<tags::CPU, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver_standard(&data_standard, &info_standard, 0.01, 0.01, 0.005, 1.1);
 
             solver_standard.do_preprocessing();
+            solver_standard.solve();
 
             CollideStreamGrid<tags::CPU, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                 value(info_standard, data_standard, 1.1);
