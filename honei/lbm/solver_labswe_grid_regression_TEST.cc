@@ -17,7 +17,6 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include <honei/lbm/solver_labswe_grid.hh>
-#include <honei/lbm/solver_labswe.hh>
 #include <honei/swe/post_processing.hh>
 #include <honei/swe/volume.hh>
 #include <unittest/unittest.hh>
@@ -61,8 +60,15 @@ class SolverLABSWEGridRegressionTest :
             DenseMatrix<DataType_> v(g_h, g_w, DataType_(0.));
             DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
 
+            Cylinder<DataType_> b1(b, DataType_(0.0001), 15, 15);
+            b1.value();
+
             Grid<D2Q9, DataType_> grid;
             DenseMatrix<bool> obstacles(g_h, g_w, false);
+            Cuboid<bool> q2(obstacles, 15, 5, 1, 10, 0);
+            q2.value();
+            Cuboid<bool> q3(obstacles, 40, 5, 1, 10, 30);
+            q3.value();
             grid.obstacles = &obstacles;
             grid.h = &h;
             grid.u = &u;
@@ -73,7 +79,7 @@ class SolverLABSWEGridRegressionTest :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLABSWEGrid<Tag_, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 1., 1., 1., 1.5);
+            SolverLABSWEGrid<Tag_, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 0.01, 0.01, 0.005, 1.1);
 
             solver.do_preprocessing();
 
@@ -93,8 +99,7 @@ class SolverLABSWEGridRegressionTest :
 #ifdef SOLVER_VERBOSE
             std::cout << *grid.h << std::endl;
 #endif
-            //Standard solver not using grid:
-
+            //Standard solver using tags::CPU:
             unsigned long g_h_standard(50);
             unsigned long g_w_standard(50);
             unsigned long timesteps_standard(200);
@@ -103,77 +108,50 @@ class SolverLABSWEGridRegressionTest :
             Cylinder<DataType_> c1_standard(h_standard, DataType_(0.02), 25, 25);
             c1_standard.value();
 
-            DenseMatrix<DataType_> b_standard(g_h_standard, g_w_standard, DataType_(0.));
             DenseMatrix<DataType_> u_standard(g_h_standard, g_w_standard, DataType_(0.));
             DenseMatrix<DataType_> v_standard(g_h_standard, g_w_standard, DataType_(0.));
+            DenseMatrix<DataType_> b_standard(g_h, g_w, DataType_(0.));
 
-            //All needed distribution functions:
+            Cylinder<DataType_> b1_standard(b_standard, DataType_(0.0001), 15, 15);
+            b1_standard.value();
 
-            DenseMatrix<DataType_> d_0(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> d_1(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> d_2(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> d_3(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> d_4(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> d_5(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> d_6(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> d_7(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> d_8(g_h_standard, g_w_standard, DataType_(0.));
+            Grid<D2Q9, DataType_> grid_standard;
+            DenseMatrix<bool> obstacles_standard(g_h_standard, g_w_standard, false);
+            Cuboid<bool> q2_standard(obstacles_standard, 15, 5, 1, 10, 0);
+            q2_standard.value();
+            Cuboid<bool> q3_standard(obstacles_standard, 40, 5, 1, 10, 30);
+            q3_standard.value();
+            grid_standard.obstacles = &obstacles_standard;
+            grid_standard.h = &h_standard;
+            grid_standard.u = &u_standard;
+            grid_standard.v = &v_standard;
+            grid_standard.b = &b_standard;
+            PackedGridData<D2Q9, DataType_>  data_standard;
+            PackedGridInfo<D2Q9> info_standard;
 
-            DenseMatrix<DataType_> e_d_0(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> e_d_1(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> e_d_2(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> e_d_3(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> e_d_4(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> e_d_5(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> e_d_6(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> e_d_7(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> e_d_8(g_h_standard, g_w_standard, DataType_(0.));
+            GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_standard, info_standard, data_standard);
 
-            DenseMatrix<DataType_> t_d_0(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> t_d_1(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> t_d_2(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> t_d_3(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> t_d_4(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> t_d_5(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> t_d_6(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> t_d_7(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> t_d_8(g_h_standard, g_w_standard, DataType_(0.));
+            SolverLABSWEGrid<tags::CPU, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver_standard(&data_standard, &info_standard, 0.01, 0.01, 0.005, 1.1);
 
-            //All needed vectors:
-            DenseVector<DataType_> v_x(9, DataType_(0));
-            DenseVector<DataType_> v_y(9, DataType_(0));
-
-            //Other matrices needed by solver:
-
-            DenseMatrix<DataType_> s_x_standard(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> s_y_standard(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> d_x(g_h_standard, g_w_standard, DataType_(0.));
-            DenseMatrix<DataType_> d_y(g_h_standard, g_w_standard, DataType_(0.));
-
-            SolverLABSWE<tags::CPU, DataType_,lbm_force::SIMPLE, lbm_source_schemes::BASIC, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP_PERIODIC> solver_standard(1.,1.,1., g_w_standard, g_h_standard, &h_standard, &b_standard, &u_standard, &v_standard);
-
-            solver_standard.set_distribution(&d_0, &d_1, &d_2, &d_3, &d_4, &d_5, &d_6, &d_7, &d_8);
-            solver_standard.set_eq_distribution(&e_d_0, &e_d_1, &e_d_2, &e_d_3, &e_d_4, &e_d_5, &e_d_6, &e_d_7, &e_d_8);
-            solver_standard.set_temp_distribution(&t_d_0, &t_d_1, &t_d_2, &t_d_3, &t_d_4, &t_d_5, &t_d_6, &t_d_7, &t_d_8);
-            solver_standard.set_vectors(&v_x, &v_y);
-            solver_standard.set_source(&s_x_standard, &s_y_standard);
-            solver_standard.set_slopes(&d_x, &d_y);
             solver_standard.do_preprocessing();
 
             for(unsigned long i(0); i < timesteps_standard; ++i)
             {
 #ifdef SOLVER_VERBOSE
-                std::cout<<"Timestep: " << i << "/" << timesteps_standard << std::endl;
+                std::cout<<"Timestep: " << i << "/" << timesteps << std::endl;
 #endif
                 solver_standard.solve();
 #ifdef SOLVER_POSTPROCESSING
+                GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid_standard, info_standard, data_standard);
                 PostProcessing<GNUPLOT>::value(h_standard, 1, g_w_standard, g_h_standard, i);
 #endif
             }
+            GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid_standard, info_standard, data_standard);
+
 #ifdef SOLVER_VERBOSE
-            std::cout << h_standard << std::endl;
+            std::cout << *grid_standard.h << std::endl;
 #endif
-            TEST_CHECK(true);
+
 
             TEST_CHECK_EQUAL(g_h, g_h_standard);
             TEST_CHECK_EQUAL(g_w, g_w_standard);
@@ -185,9 +163,9 @@ class SolverLABSWEGridRegressionTest :
                 {
 #ifdef SOLVER_VERBOSE
                     std::cout << "(" << i << " , " << j << ")" << std::endl;
-                    std::cout << (*grid.h)(i , j) << " " << h_standard(i , j) << std::endl;
+                    std::cout << (*grid.h)(i , j) << " " << (*grid_standard.h)(i , j) << std::endl;
 #endif
-                    TEST_CHECK_EQUAL_WITHIN_EPS((*grid.h)(i , j) , h_standard(i , j), std::numeric_limits<float>::epsilon());
+                    TEST_CHECK_EQUAL_WITHIN_EPS((*grid.h)(i , j) , (*grid_standard.h)(i , j), std::numeric_limits<DataType_>::epsilon());
                 }
             }
 
@@ -208,18 +186,16 @@ class SolverLABSWEGridRegressionTest :
 
             Difference<tags::CPU>::value(result_grid, result_standard);
             double l2 = Norm<vnt_l_two, false, tags::CPU>::value(result_grid);
-            TEST_CHECK_EQUAL_WITHIN_EPS(l2, DataType_(0.), std::numeric_limits<float>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(l2, DataType_(0.), std::numeric_limits<DataType_>::epsilon());
 
             std::cout << "L2 norm: " << l2 << std::endl;
         }
 
 
 };
-/*SolverLABSWEGridRegressionTest<tags::CPU, float> solver_test_float("float");
-SolverLABSWEGridRegressionTest<tags::CPU, double> solver_test_double("double");
 SolverLABSWEGridRegressionTest<tags::CPU::MultiCore, float> mc_solver_test_float("float");
 SolverLABSWEGridRegressionTest<tags::CPU::MultiCore, double> mc_solver_test_double("double");
-#ifdef HONEI_CUDA
+#ifdef HONEI_SSE
 SolverLABSWEGridRegressionTest<tags::CPU::SSE, float> sse_solver_test_float("float");
 SolverLABSWEGridRegressionTest<tags::CPU::SSE, double> sse_solver_test_double("double");
 SolverLABSWEGridRegressionTest<tags::CPU::MultiCore::SSE, float> mcsse_solver_test_float("float");
@@ -228,4 +204,4 @@ SolverLABSWEGridRegressionTest<tags::CPU::MultiCore::SSE, double> mcsse_solver_t
 #ifdef HONEI_CUDA
 SolverLABSWEGridRegressionTest<tags::GPU::CUDA, float> cuda_solver_test_float("float");
 #endif
-*/
+

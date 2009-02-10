@@ -91,11 +91,13 @@ class SolverLABSWEGridTest :
                 PostProcessing<GNUPLOT>::value(*grid.h, 1, g_w, g_h, i);
 #endif
             }
-#ifdef SOLVER_VERBOSE
             GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
+#ifdef SOLVER_VERBOSE
             std::cout << *grid.h << std::endl;
 #endif
-            TEST_CHECK(true);
+            for (unsigned long i(0) ; i < h.rows() ; ++i)
+                for(unsigned long j(0) ; j < h.columns() ; ++j)
+                    TEST_CHECK_EQUAL_WITHIN_EPS(h( i , j), DataType_(0.02), DataType_(0.1));
         }
 
 };
