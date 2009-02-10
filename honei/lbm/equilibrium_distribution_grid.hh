@@ -85,11 +85,11 @@ namespace honei
                     data.f_eq_7->lock(lm_write_only);
                     data.f_eq_8->lock(lm_write_only);
 
-                    DT1_ e2(e * e);
-                    DT1_ e22(DT1_(2.) * e2);
+                    DT1_ e2(e);
+                    DT1_ e42(DT1_(2.) * e2 * e2);
                     DT1_ e23(DT1_(3.) * e2);
                     DT1_ e26(DT1_(6.) * e2);
-                    DT1_ e28(DT1_(8.) * e2);
+                    DT1_ e48(DT1_(8.) * e2 * e2);
                     DT1_ e212(DT1_(12.) * e2);
                     DT1_ e224(DT1_(24.) * e2);
                     for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
@@ -112,7 +112,7 @@ namespace honei
                         dyv = (*data.distribution_y)[1] * v;
                         t1 = (g * h2) / e26;
                         t2 = (h / e23) * (dxu + dyv);
-                        t3 = (h / e22) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
+                        t3 = (h / e42) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
                         t4 = (h / e26) * (u2 + v2);
                         (*data.f_eq_1)[i] = t1 + t2 + t3 - t4;
 
@@ -120,7 +120,7 @@ namespace honei
                         dyv = (*data.distribution_y)[3] * v;
                         t1 = (g * h2) / e26;
                         t2 = (h / e23) * (dxu + dyv);
-                        t3 = (h / e22) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
+                        t3 = (h / e42) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
                         t4 = (h / e26) * (u2 + v2);
                         (*data.f_eq_3)[i] = t1 + t2 + t3 - t4;
 
@@ -128,7 +128,7 @@ namespace honei
                         dyv = (*data.distribution_y)[5] * v;
                         t1 = (g * h2) / e26;
                         t2 = (h / e23) * (dxu + dyv);
-                        t3 = (h / e22) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
+                        t3 = (h / e42) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
                         t4 = (h / e26) * (u2 + v2);
                         (*data.f_eq_5)[i] = t1 + t2 + t3 - t4;
 
@@ -136,7 +136,7 @@ namespace honei
                         dyv = (*data.distribution_y)[7] * v;
                         t1 = (g * h2) / e26;
                         t2 = (h / e23) * (dxu + dyv);
-                        t3 = (h / e22) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
+                        t3 = (h / e42) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
                         t4 = (h / e26) * (u2 + v2);
                         (*data.f_eq_7)[i] = t1 + t2 + t3 - t4;
 
@@ -144,7 +144,7 @@ namespace honei
                         dyv = (*data.distribution_y)[2] * v;
                         t1 = (g * h2) / e224;
                         t2 = (h / e212) * (dxu + dyv);
-                        t3 = (h / e28) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
+                        t3 = (h / e48) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
                         t4 = (h / e224) * (u2 + v2);
                         (*data.f_eq_2)[i] =  t1 + t2 + t3 - t4;
 
@@ -152,7 +152,7 @@ namespace honei
                         dyv = (*data.distribution_y)[4] * v;
                         t1 = (g * h2) / e224;
                         t2 = (h / e212) * (dxu + dyv);
-                        t3 = (h / e28) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
+                        t3 = (h / e48) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
                         t4 = (h / e224) * (u2 + v2);
                         (*data.f_eq_4)[i] =  t1 + t2 + t3 - t4;
 
@@ -160,7 +160,7 @@ namespace honei
                         dyv = (*data.distribution_y)[6] * v;
                         t1 = (g * h2) / e224;
                         t2 = (h / e212) * (dxu + dyv);
-                        t3 = (h / e28) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
+                        t3 = (h / e48) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
                         t4 = (h / e224) * (u2 + v2);
                         (*data.f_eq_6)[i] =  t1 + t2 + t3 - t4;
 
@@ -168,7 +168,7 @@ namespace honei
                         dyv = (*data.distribution_y)[8] * v;
                         t1 = (g * h2) / e224;
                         t2 = (h / e212) * (dxu + dyv);
-                        t3 = (h / e28) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
+                        t3 = (h / e48) * (dxu * dxu + DT1_(2.) * dxu * dyv + dyv * dyv);
                         t4 = (h / e224) * (u2 + v2);
                         (*data.f_eq_8)[i] =  t1 + t2 + t3 - t4;
                     }

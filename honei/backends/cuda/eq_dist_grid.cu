@@ -51,48 +51,48 @@ namespace honei
                 float vs(v[index]);
                 float hs(h[index]);
                 f_eq_0[index] = hs -
-                    ((float(5.) * g * hs * hs) / (float(6.) * e * e)) -
-                    ((float(2.) * hs) /(float(3.) * e * e) * (us * us + vs * vs));
+                    ((float(5.) * g * hs * hs) / (float(6.) * e)) -
+                    ((float(2.) * hs) /(float(3.) * e) * (us * us + vs * vs));
 
-                f_eq_1[index] = ((g * hs * hs) /(float(6.) * e * e)) +
-                    ((hs / (float(3.) * e * e)) * (distribution_x[1] * us + distribution_y[1] * vs)) +
+                f_eq_1[index] = ((g * hs * hs) /(float(6.) * e)) +
+                    ((hs / (float(3.) * e)) * (distribution_x[1] * us + distribution_y[1] * vs)) +
                     ((hs / (float(2.) * e * e)) * (distribution_x[1] * us * distribution_x[1] * us + float(2.) * distribution_x[1] * us * distribution_y[1] * vs + distribution_y[1] * vs * distribution_y[1] * vs)) -
-                    ((hs / (float(6.) * e * e)) * (us * us + vs * vs));
+                    ((hs / (float(6.) * e)) * (us * us + vs * vs));
 
-                f_eq_3[index] = ((g * hs * hs) /(float(6.) * e * e)) +
-                    ((hs / (float(3.) * e * e)) * (distribution_x[3] * us + distribution_y[3] * vs)) +
+                f_eq_3[index] = ((g * hs * hs) /(float(6.) * e)) +
+                    ((hs / (float(3.) * e)) * (distribution_x[3] * us + distribution_y[3] * vs)) +
                     ((hs / (float(2.) * e * e)) * (distribution_x[3] * us * distribution_x[3] * us + float(2.) * distribution_x[3] * us * distribution_y[3] * vs + distribution_y[3] * vs * distribution_y[3] * vs)) -
-                    ((hs / (float(6.) * e * e)) * (us * us + vs * vs));
+                    ((hs / (float(6.) * e)) * (us * us + vs * vs));
 
-                f_eq_5[index] = ((g * hs * hs) /(float(6.) * e * e)) +
-                    ((hs / (float(3.) * e * e)) * (distribution_x[5] * us + distribution_y[5] * vs)) +
+                f_eq_5[index] = ((g * hs * hs) /(float(6.) * e)) +
+                    ((hs / (float(3.) * e)) * (distribution_x[5] * us + distribution_y[5] * vs)) +
                     ((hs / (float(2.) * e * e)) * (distribution_x[5] * us * distribution_x[5] * us + float(2.) * distribution_x[5] * us * distribution_y[5] * vs + distribution_y[5] * vs * distribution_y[5] * vs)) -
-                    ((hs / (float(6.) * e * e)) * (us * us + vs * vs));
+                    ((hs / (float(6.) * e)) * (us * us + vs * vs));
 
-                f_eq_7[index] = ((g * hs * hs) /(float(6.) * e * e)) +
-                    ((hs / (float(3.) * e * e)) * (distribution_x[7] * us + distribution_y[7] * vs)) +
+                f_eq_7[index] = ((g * hs * hs) /(float(6.) * e)) +
+                    ((hs / (float(3.) * e)) * (distribution_x[7] * us + distribution_y[7] * vs)) +
                     ((hs / (float(2.) * e * e)) * (distribution_x[7] * us * distribution_x[7] * us + float(2.) * distribution_x[7] * us * distribution_y[7] * vs + distribution_y[7] * vs * distribution_y[7] * vs)) -
-                    ((hs / (float(6.) * e * e)) * (us * us + vs * vs));
+                    ((hs / (float(6.) * e)) * (us * us + vs * vs));
 
-                f_eq_2[index] = ((g * hs * hs) /(float(24.) * e * e)) +
-                    ((hs / (float(12.) * e * e)) * (distribution_x[2] * us + distribution_y[2] * vs)) +
+                f_eq_2[index] = ((g * hs * hs) /(float(24.) * e)) +
+                    ((hs / (float(12.) * e)) * (distribution_x[2] * us + distribution_y[2] * vs)) +
                     ((hs / (float(8.) * e * e)) * (distribution_x[2] * us * distribution_x[2] * us + float(2.) * distribution_x[2] * us * distribution_y[2] * vs + distribution_y[2] * vs * distribution_y[2] * vs)) -
-                    ((hs / (float(24.) * e * e)) * (us * us + vs * vs));
+                    ((hs / (float(24.) * e)) * (us * us + vs * vs));
 
-                f_eq_4[index] = ((g * hs * hs) /(float(24.) * e * e)) +
-                    ((hs / (float(12.) * e * e)) * (distribution_x[4] * us + distribution_y[4] * vs)) +
+                f_eq_4[index] = ((g * hs * hs) /(float(24.) * e)) +
+                    ((hs / (float(12.) * e)) * (distribution_x[4] * us + distribution_y[4] * vs)) +
                     ((hs / (float(8.) * e * e)) * (distribution_x[4] * us * distribution_x[4] * us + float(2.) * distribution_x[4] * us * distribution_y[4] * vs + distribution_y[4] * vs * distribution_y[4] * vs)) -
-                    ((hs / (float(24.) * e * e)) * (us * us + vs * vs));
+                    ((hs / (float(24.) * e)) * (us * us + vs * vs));
 
-                f_eq_6[index] = ((g * hs * hs) /(float(24.) * e * e)) +
-                    ((hs / (float(12.) * e * e)) * (distribution_x[6] * us + distribution_y[6] * vs)) +
+                f_eq_6[index] = ((g * hs * hs) /(float(24.) * e)) +
+                    ((hs / (float(12.) * e)) * (distribution_x[6] * us + distribution_y[6] * vs)) +
                     ((hs / (float(8.) * e * e)) * (distribution_x[6] * us * distribution_x[6] * us + float(2.) * distribution_x[6] * us * distribution_y[6] * vs + distribution_y[6] * vs * distribution_y[6] * vs)) -
-                    ((hs / (float(24.) * e * e)) * (us * us + vs * vs));
+                    ((hs / (float(24.) * e)) * (us * us + vs * vs));
 
-                f_eq_8[index] = ((g * hs * hs) /(float(24.) * e * e)) +
-                    ((hs / (float(12.) * e * e)) * (distribution_x[8] * us + distribution_y[8] * vs)) +
+                f_eq_8[index] = ((g * hs * hs) /(float(24.) * e)) +
+                    ((hs / (float(12.) * e)) * (distribution_x[8] * us + distribution_y[8] * vs)) +
                     ((hs / (float(8.) * e * e)) * (distribution_x[8] * us * distribution_x[8] * us + float(2.) * distribution_x[8] * us * distribution_y[8] * vs + distribution_y[8] * vs * distribution_y[8] * vs)) -
-                    ((hs / (float(24.) * e * e)) * (us * us + vs * vs));
+                    ((hs / (float(24.) * e)) * (us * us + vs * vs));
             }
         }
     }

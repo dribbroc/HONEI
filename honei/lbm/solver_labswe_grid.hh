@@ -98,7 +98,7 @@ namespace honei
                 /** Global constants.
                  *
                  **/
-                ResPrec_ _n_alpha, _e, _gravity, _pi;
+                ResPrec_ _n_alpha, _e, _gravity, _pi, _e_squared;
 
             public:
                 SolverLABSWEGrid(PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, ResPrec_ rel_time) :
@@ -115,6 +115,7 @@ namespace honei
             {
                 CONTEXT("When creating LABSWE solver:");
                 _e = _delta_x / _delta_t;
+                _e_squared = _e * _e;
 
                 if (Tag_::tag_value == tags::tv_gpu_cuda)
                 {
@@ -196,7 +197,7 @@ namespace honei
                     ++_time;
 
                     EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::
-                        value(_gravity, _e, *_info, *_data);
+                        value(_gravity, _e_squared, *_info, *_data);
 
                     CollideStreamGrid<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                         value(*_info,
