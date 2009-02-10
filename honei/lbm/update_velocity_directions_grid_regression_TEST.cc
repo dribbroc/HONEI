@@ -128,7 +128,7 @@ class UpateVelocityDirectionsGridRegressionTest :
             data.f_temp_6->lock(lm_read_only);
             data.f_temp_7->lock(lm_read_only);
             data.f_temp_8->lock(lm_read_only);
-            for(unsigned long i(0) ; i < g_h ; ++i)
+            for(unsigned long i(0) ; i < data.f_temp_0->size() ; ++i)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS((*data.f_temp_0)[i], (*data_standard.f_temp_0)[i], std::numeric_limits<DataType_>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS((*data.f_temp_1)[i], (*data_standard.f_temp_1)[i], std::numeric_limits<DataType_>::epsilon());

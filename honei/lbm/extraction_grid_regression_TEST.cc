@@ -115,14 +115,14 @@ class ExtractionGridRegressionTest :
 
             solver_standard.do_preprocessing();
 
-            ExtractionGrid<Tag_, lbm_applications::LABSWE>::value(info_standard, data_standard);
+            ExtractionGrid<tags::CPU, lbm_applications::LABSWE>::value(info_standard, data_standard);
 
 
             //Compare CPU results of both solvers:
             data.h->lock(lm_read_only);
             data.u->lock(lm_read_only);
             data.v->lock(lm_read_only);
-            for(unsigned long i(0) ; i < g_h ; ++i)
+            for(unsigned long i(0) ; i < data.h->size() ; ++i)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS((*data.h)[i], (*data_standard.h)[i], std::numeric_limits<DataType_>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS((*data.u)[i], (*data_standard.u)[i], std::numeric_limits<DataType_>::epsilon());

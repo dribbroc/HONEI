@@ -128,7 +128,7 @@ class EquilibriumDistributionGridRegressionTest :
             data.f_eq_6->lock(lm_read_only);
             data.f_eq_7->lock(lm_read_only);
             data.f_eq_8->lock(lm_read_only);
-            for(unsigned long i(0) ; i < g_h ; ++i)
+            for(unsigned long i(0) ; i < data.f_eq_0->size() ; ++i)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS((*data.f_eq_0)[i], (*data_standard.f_eq_0)[i], std::numeric_limits<DataType_>::epsilon());
                 TEST_CHECK_EQUAL_WITHIN_EPS((*data.f_eq_1)[i], (*data_standard.f_eq_1)[i], std::numeric_limits<DataType_>::epsilon());
