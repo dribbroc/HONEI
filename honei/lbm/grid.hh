@@ -90,6 +90,10 @@ namespace honei
             DenseMatrix<DT_> * u;
             DenseMatrix<DT_> * v;
             DenseMatrix<unsigned long> * h_index;
+
+            DT_ d_x, d_y, d_t, tau;
+
+            std::string description, long_description;
     };
 
     template <> class PackedGridInfo<D2Q9>
