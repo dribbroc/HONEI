@@ -40,16 +40,22 @@ class ScenarioCollectionTest :
         {
             unsigned long scen_count(ScenarioCollection::get_scenario_count());
             std::cout << "Scenario count: " << scen_count << std::endl;
-            Grid<GridType_, DataType_> grid;
 
-            ScenarioCollection::get_scenario(0, 10, 10, grid);
+            for (unsigned long i(0) ; i < scen_count ; ++i)
+            {
+                Grid<GridType_, DataType_> grid;
 
-            std::cout << grid.description << std::endl;
-            std::cout << grid.long_description << std::endl;
+                ScenarioCollection::get_scenario(i, 10, 10, grid);
 
-            std::cout << (*grid.h) << std::endl;
+                std::cout << "______________________________\n";
+                std::cout << grid.description << std::endl;
+                std::cout << grid.long_description << std::endl;
 
-            TEST_CHECK(true);
+                std::cout << (*grid.h) << std::endl;
+                std::cout << "______________________________\n";
+
+                TEST_CHECK(true);
+            }
         }
 };
 ScenarioCollectionTest<D2Q9, float> sc_test_float("D2Q9, float");

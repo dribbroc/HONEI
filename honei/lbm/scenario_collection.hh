@@ -31,6 +31,7 @@
 
 #include <honei/lbm/grid.hh>
 #include <honei/swe/volume.hh>
+#include <cmath>
 
 using namespace honei;
 using namespace lbm;
@@ -39,7 +40,7 @@ using namespace lbm_lattice_types;
 class ScenarioCollection
 {
     private:
-        static const unsigned long _scenario_count = 1;
+        static const unsigned long _scenario_count = 7;
 
     public:
         template <typename GridType_, typename DataType_>
@@ -49,6 +50,24 @@ class ScenarioCollection
             {
                 case 0:
                     {
+                        target_grid.description = "Circular dam break, uncritical.\n";
+                        target_grid.long_description = target_grid.description;
+                        target_grid.long_description.append("Discretization (proposal):\n");
+                        target_grid.long_description.append("d_x = d_y = 0.01\n");
+                        target_grid.long_description.append("d_t = 0.01\n");
+                        target_grid.long_description.append("recommended minimum size: 50x50\n\n");
+
+                        target_grid.long_description.append("Initial conditions:\n");
+                        target_grid.long_description.append("u = 0.\n");
+                        target_grid.long_description.append("v = 0.\n");
+                        target_grid.long_description.append("b = 0.\n");
+                        target_grid.long_description.append("h = h + b = 0.05\n\n");
+
+                        target_grid.long_description.append("Lattice Boltzmann model:\n");
+                        target_grid.long_description.append("tau = 1.1\n");
+                        target_grid.long_description.append("flow = laminar\n");
+                        target_grid.long_description.append("lattice_type = D2Q9 square\n");
+
                         target_grid.h = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.05));
                         Cylinder<DataType_> c1(*target_grid.h, DataType_(0.06), 25, 25);
                         c1.value();
@@ -62,11 +81,16 @@ class ScenarioCollection
                         target_grid.d_t = 0.01;
                         target_grid.tau = 1.1;
 
-                        target_grid.description = "Circular dam break, uncritical.\n";
+                    }
+                    break;
+                case 1:
+                    {
+                        target_grid.description = "Circular dam break, uncritical, with cuboidal obstacles.\n";
                         target_grid.long_description = target_grid.description;
                         target_grid.long_description.append("Discretization (proposal):\n");
                         target_grid.long_description.append("d_x = d_y = 0.01\n");
                         target_grid.long_description.append("d_t = 0.01\n\n");
+                        target_grid.long_description.append("recommended minimum size: 50x50\n\n");
 
                         target_grid.long_description.append("Initial conditions:\n");
                         target_grid.long_description.append("u = 0.\n");
@@ -79,6 +103,286 @@ class ScenarioCollection
                         target_grid.long_description.append("flow = laminar\n");
                         target_grid.long_description.append("lattice_type = D2Q9 square\n");
 
+                        target_grid.h = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.05));
+                        Cylinder<DataType_> c1(*target_grid.h, DataType_(0.06), 25, 25);
+                        c1.value();
+                        target_grid.u = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.v = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.b = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.obstacles = new DenseMatrix<bool>(grid_height, grid_width, false);
+                        Cuboid<bool> q2(*target_grid.obstacles, 15, 5, 1, 10, 0);
+                        q2.value();
+                        Cuboid<bool> q3(*target_grid.obstacles, 40, 5, 1, 10, 30);
+                        q3.value();
+
+                        target_grid.d_x = 0.01;
+                        target_grid.d_y = 0.01;
+                        target_grid.d_t = 0.01;
+                        target_grid.tau = 1.1;
+
+                    }
+                    break;
+                case 2:
+                    {
+                        target_grid.description = "Partial cuboidal dam break, uncritical.\n";
+                        target_grid.long_description = target_grid.description;
+                        target_grid.long_description.append("Discretization (proposal):\n");
+                        target_grid.long_description.append("d_x = d_y = 0.01\n");
+                        target_grid.long_description.append("d_t = 0.01\n\n");
+
+                        target_grid.long_description.append("Scenario constraints:\n");
+                        target_grid.long_description.append("size: 50x50\n\n");
+
+                        target_grid.long_description.append("Initial conditions:\n");
+                        target_grid.long_description.append("u = 0.\n");
+                        target_grid.long_description.append("v = 0.\n");
+                        target_grid.long_description.append("b = 0.\n");
+                        target_grid.long_description.append("h_upper = h_upper + b = 0.05\n");
+                        target_grid.long_description.append("h_lower = h_lower + b = 0.085\n\n");
+
+                        target_grid.long_description.append("Lattice Boltzmann model:\n");
+                        target_grid.long_description.append("tau = 1.1\n");
+                        target_grid.long_description.append("flow = laminar\n");
+                        target_grid.long_description.append("lattice_type = D2Q9 square\n");
+
+                        target_grid.h = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.05));
+                        Cuboid<DataType_> reservoir(*target_grid.h, 50, 18, DataType_(0.035), 32, 0);
+                        reservoir.value();
+                        target_grid.u = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.v = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.b = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.obstacles = new DenseMatrix<bool>(grid_height, grid_width, false);
+                        Cuboid<bool> q2(*target_grid.obstacles, 15, 2, 1, 30, 0);
+                        q2.value();
+                        Cuboid<bool> q3(*target_grid.obstacles, 40, 2, 1, 30, 20);
+                        q3.value();
+
+                        target_grid.d_x = 0.01;
+                        target_grid.d_y = 0.01;
+                        target_grid.d_t = 0.01;
+                        target_grid.tau = 1.1;
+                    }
+                    break;
+                case 3:
+                    {
+                        target_grid.description = "Circular dam break over uneven bed topography, uncritical.\n";
+                        target_grid.long_description = target_grid.description;
+
+                        target_grid.long_description.append("Scenario constraints:\n");
+                        target_grid.long_description.append("size: 100x200\n");
+                        target_grid.long_description.append("forces: BED_SLOPE, BED_FRICTION\n\n");
+                        target_grid.long_description.append("d_x = d_y = 0.01\n");
+                        target_grid.long_description.append("d_t = 0.01\n\n");
+
+                        target_grid.long_description.append("Initial conditions:\n");
+                        target_grid.long_description.append("u = 0.\n");
+                        target_grid.long_description.append("v = 0.\n");
+                        target_grid.long_description.append("b = predefined 2D function f with f_max = 0.04\n");
+                        target_grid.long_description.append("h = h - f\n");
+
+                        target_grid.long_description.append("Lattice Boltzmann model:\n");
+                        target_grid.long_description.append("tau = 1.1\n");
+                        target_grid.long_description.append("flow = laminar\n");
+                        target_grid.long_description.append("lattice_type = D2Q9 square\n");
+
+                        target_grid.h = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.05));
+                        Cylinder<DataType_> c1(*target_grid.h, DataType_(0.03), 35 ,16);
+                        c1.value();
+
+                        target_grid.u = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.v = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.b = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.obstacles = new DenseMatrix<bool>(grid_height, grid_width, false);
+
+                        target_grid.d_x = 0.01;
+                        target_grid.d_y = 0.01;
+                        target_grid.d_t = 0.01;
+                        target_grid.tau = 1.1;
+
+                        //build up the hill:
+                        for(unsigned long i(0) ; i < grid_height ; ++i)
+                        {
+                            for(unsigned long j(0) ; j < grid_width ; ++j)
+                            {
+                                double x(j * target_grid.d_x);
+                                double y(i * target_grid.d_y);
+                                //if(sqrt(y * y + x * x) >= 0.4)
+                                    (*target_grid.b)(i , j) = 0.04 * exp((-5.) * (x - 1.) * (x - 1.) - 50. * (y - 0.5) * (y - 0.5));
+                            }
+                        }
+
+                        for(unsigned long i(0) ; i < grid_height ; ++i)
+                        {
+                            for(unsigned long j(0) ; j < grid_width ; ++j)
+                            {
+                                    (*target_grid.h)(i , j) -= (*target_grid.b)(i , j);
+                            }
+                        }
+
+
+                    }
+                    break;
+                case 4:
+                    {
+                        target_grid.description = "Circular dam break over uneven bed topography and cylindrical obstacle, uncritical.\n";
+                        target_grid.long_description = target_grid.description;
+
+                        target_grid.long_description.append("Scenario constraints:\n");
+                        target_grid.long_description.append("size: 100x200\n");
+                        target_grid.long_description.append("forces: BED_SLOPE, BED_FRICTION\n\n");
+                        target_grid.long_description.append("d_x = d_y = 0.01\n");
+                        target_grid.long_description.append("d_t = 0.01\n\n");
+
+                        target_grid.long_description.append("Initial conditions:\n");
+                        target_grid.long_description.append("u = 0.\n");
+                        target_grid.long_description.append("v = 0.\n");
+                        target_grid.long_description.append("b = predefined 2D function f with f_max = 0.04\n");
+                        target_grid.long_description.append("h = h - f\n");
+
+                        target_grid.long_description.append("Lattice Boltzmann model:\n");
+                        target_grid.long_description.append("tau = 1.1\n");
+                        target_grid.long_description.append("flow = laminar\n");
+                        target_grid.long_description.append("lattice_type = D2Q9 square\n");
+
+                        target_grid.h = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.05));
+                        Cylinder<DataType_> c1(*target_grid.h, DataType_(0.03), 35 ,16);
+                        c1.value();
+
+                        target_grid.u = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.v = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.b = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.obstacles = new DenseMatrix<bool>(grid_height, grid_width, false);
+                        Cylinder<bool> c2(*target_grid.obstacles, true, 10 ,10);
+                        c2.value();
+
+                        target_grid.d_x = 0.01;
+                        target_grid.d_y = 0.01;
+                        target_grid.d_t = 0.01;
+                        target_grid.tau = 1.1;
+
+                        //build up the hill:
+                        for(unsigned long i(0) ; i < grid_height ; ++i)
+                        {
+                            for(unsigned long j(0) ; j < grid_width ; ++j)
+                            {
+                                double x(j * target_grid.d_x);
+                                double y(i * target_grid.d_y);
+                                //if(sqrt(y * y + x * x) >= 0.4)
+                                    (*target_grid.b)(i , j) = 0.04 * exp((-5.) * (x - 1.) * (x - 1.) - 50. * (y - 0.5) * (y - 0.5));
+                            }
+                        }
+
+                        for(unsigned long i(0) ; i < grid_height ; ++i)
+                        {
+                            for(unsigned long j(0) ; j < grid_width ; ++j)
+                            {
+                                    (*target_grid.h)(i , j) -= (*target_grid.b)(i , j);
+                            }
+                        }
+
+
+                    }
+                    break;
+                case 5:
+                    {
+                        target_grid.description = "Circular dam break over uneven bed topography, CRITICAL(dry states).\n";
+                        target_grid.long_description = target_grid.description;
+
+                        target_grid.long_description.append("Scenario constraints:\n");
+                        target_grid.long_description.append("size: 100x200\n");
+                        target_grid.long_description.append("forces: BED_SLOPE, BED_FRICTION\n\n");
+                        target_grid.long_description.append("d_x = d_y = 0.01\n");
+                        target_grid.long_description.append("d_t = 0.01\n\n");
+
+                        target_grid.long_description.append("Initial conditions:\n");
+                        target_grid.long_description.append("u = 0.\n");
+                        target_grid.long_description.append("v = 0.\n");
+                        target_grid.long_description.append("b = predefined 2D function f with f_max = 0.08\n");
+                        target_grid.long_description.append("h = h - f\n");
+
+                        target_grid.long_description.append("Lattice Boltzmann model:\n");
+                        target_grid.long_description.append("tau = 1.1\n");
+                        target_grid.long_description.append("flow = laminar\n");
+                        target_grid.long_description.append("lattice_type = D2Q9 square\n");
+
+                        target_grid.h = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.05));
+                        Cylinder<DataType_> c1(*target_grid.h, DataType_(0.03), 35 ,16);
+                        c1.value();
+
+                        target_grid.u = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.v = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.b = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.obstacles = new DenseMatrix<bool>(grid_height, grid_width, false);
+                        Cylinder<bool> c2(*target_grid.obstacles, true, 10 ,10);
+                        c2.value();
+
+                        target_grid.d_x = 0.01;
+                        target_grid.d_y = 0.01;
+                        target_grid.d_t = 0.01;
+                        target_grid.tau = 1.1;
+
+                        //build up the hill:
+                        for(unsigned long i(0) ; i < grid_height ; ++i)
+                        {
+                            for(unsigned long j(0) ; j < grid_width ; ++j)
+                            {
+                                double x(j * target_grid.d_x);
+                                double y(i * target_grid.d_y);
+                                //if(sqrt(y * y + x * x) >= 0.4)
+                                    (*target_grid.b)(i , j) = 0.08 * exp((-5.) * (x - 1.) * (x - 1.) - 50. * (y - 0.5) * (y - 0.5));
+                            }
+                        }
+
+                        for(unsigned long i(0) ; i < grid_height ; ++i)
+                        {
+                            for(unsigned long j(0) ; j < grid_width ; ++j)
+                            {
+                                    (*target_grid.h)(i , j) -= (*target_grid.b)(i , j);
+                            }
+                        }
+
+
+                    }
+                    break;
+                case 6:
+                    {
+                        target_grid.description = "Partial cuboidal dam break, CRITICAL(dry states)\n";
+                        target_grid.long_description = target_grid.description;
+                        target_grid.long_description.append("Discretization (proposal):\n");
+                        target_grid.long_description.append("d_x = d_y = 0.01\n");
+                        target_grid.long_description.append("d_t = 0.01\n\n");
+
+                        target_grid.long_description.append("Scenario constraints:\n");
+                        target_grid.long_description.append("size: 50x50\n\n");
+
+                        target_grid.long_description.append("Initial conditions:\n");
+                        target_grid.long_description.append("u = 0.\n");
+                        target_grid.long_description.append("v = 0.\n");
+                        target_grid.long_description.append("b = 0.\n");
+                        target_grid.long_description.append("h_upper = h_upper + b = 0.0\n");
+                        target_grid.long_description.append("h_lower = h_lower + b = 0.03\n\n");
+
+                        target_grid.long_description.append("Lattice Boltzmann model:\n");
+                        target_grid.long_description.append("tau = 1.1\n");
+                        target_grid.long_description.append("flow = laminar\n");
+                        target_grid.long_description.append("lattice_type = D2Q9 square\n");
+
+                        target_grid.h = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.0));
+                        Cuboid<DataType_> reservoir(*target_grid.h, 50, 18, DataType_(0.03), 32, 0);
+                        reservoir.value();
+                        target_grid.u = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.v = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.b = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.obstacles = new DenseMatrix<bool>(grid_height, grid_width, false);
+                        Cuboid<bool> q2(*target_grid.obstacles, 15, 2, 1, 30, 0);
+                        q2.value();
+                        Cuboid<bool> q3(*target_grid.obstacles, 40, 2, 1, 30, 20);
+                        q3.value();
+
+                        target_grid.d_x = 0.01;
+                        target_grid.d_y = 0.01;
+                        target_grid.d_t = 0.01;
+                        target_grid.tau = 1.1;
                     }
                     break;
             }
