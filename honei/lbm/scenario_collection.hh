@@ -145,13 +145,16 @@ class ScenarioCollection
                         target_grid.long_description.append("flow = laminar\n");
                         target_grid.long_description.append("lattice_type = D2Q9 square\n");
 
-                        target_grid.h = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.05));
+                        unsigned long constraint_g_h = 50;
+                        unsigned long constraint_g_w = 50;
+
+                        target_grid.h = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.05));
                         Cuboid<DataType_> reservoir(*target_grid.h, 50, 18, DataType_(0.035), 32, 0);
                         reservoir.value();
-                        target_grid.u = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
-                        target_grid.v = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
-                        target_grid.b = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
-                        target_grid.obstacles = new DenseMatrix<bool>(grid_height, grid_width, false);
+                        target_grid.u = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
+                        target_grid.v = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
+                        target_grid.b = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
+                        target_grid.obstacles = new DenseMatrix<bool>(constraint_g_h, constraint_g_w, false);
                         Cuboid<bool> q2(*target_grid.obstacles, 15, 2, 1, 30, 0);
                         q2.value();
                         Cuboid<bool> q3(*target_grid.obstacles, 40, 2, 1, 30, 20);
@@ -185,14 +188,17 @@ class ScenarioCollection
                         target_grid.long_description.append("flow = laminar\n");
                         target_grid.long_description.append("lattice_type = D2Q9 square\n");
 
-                        target_grid.h = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.05));
+                        unsigned long constraint_g_h = 100;
+                        unsigned long constraint_g_w = 200;
+
+                        target_grid.h = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.05));
                         Cylinder<DataType_> c1(*target_grid.h, DataType_(0.03), 35 ,16);
                         c1.value();
 
-                        target_grid.u = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
-                        target_grid.v = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
-                        target_grid.b = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
-                        target_grid.obstacles = new DenseMatrix<bool>(grid_height, grid_width, false);
+                        target_grid.u = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
+                        target_grid.v = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
+                        target_grid.b = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
+                        target_grid.obstacles = new DenseMatrix<bool>(constraint_g_h, constraint_g_w, false);
 
                         target_grid.d_x = 0.01;
                         target_grid.d_y = 0.01;
@@ -200,9 +206,9 @@ class ScenarioCollection
                         target_grid.tau = 1.1;
 
                         //build up the hill:
-                        for(unsigned long i(0) ; i < grid_height ; ++i)
+                        for(unsigned long i(0) ; i < constraint_g_h ; ++i)
                         {
-                            for(unsigned long j(0) ; j < grid_width ; ++j)
+                            for(unsigned long j(0) ; j < constraint_g_w ; ++j)
                             {
                                 double x(j * target_grid.d_x);
                                 double y(i * target_grid.d_y);
@@ -211,9 +217,9 @@ class ScenarioCollection
                             }
                         }
 
-                        for(unsigned long i(0) ; i < grid_height ; ++i)
+                        for(unsigned long i(0) ; i < constraint_g_h ; ++i)
                         {
-                            for(unsigned long j(0) ; j < grid_width ; ++j)
+                            for(unsigned long j(0) ; j < constraint_g_w ; ++j)
                             {
                                     (*target_grid.h)(i , j) -= (*target_grid.b)(i , j);
                             }
@@ -244,14 +250,17 @@ class ScenarioCollection
                         target_grid.long_description.append("flow = laminar\n");
                         target_grid.long_description.append("lattice_type = D2Q9 square\n");
 
-                        target_grid.h = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.05));
+                        unsigned long constraint_g_h = 100;
+                        unsigned long constraint_g_w = 100;
+
+                        target_grid.h = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.05));
                         Cylinder<DataType_> c1(*target_grid.h, DataType_(0.03), 35 ,16);
                         c1.value();
 
-                        target_grid.u = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
-                        target_grid.v = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
-                        target_grid.b = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
-                        target_grid.obstacles = new DenseMatrix<bool>(grid_height, grid_width, false);
+                        target_grid.u = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
+                        target_grid.v = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
+                        target_grid.b = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
+                        target_grid.obstacles = new DenseMatrix<bool>(constraint_g_h, constraint_g_w, false);
                         Cylinder<bool> c2(*target_grid.obstacles, true, 10 ,10);
                         c2.value();
 
@@ -261,9 +270,9 @@ class ScenarioCollection
                         target_grid.tau = 1.1;
 
                         //build up the hill:
-                        for(unsigned long i(0) ; i < grid_height ; ++i)
+                        for(unsigned long i(0) ; i < constraint_g_h ; ++i)
                         {
-                            for(unsigned long j(0) ; j < grid_width ; ++j)
+                            for(unsigned long j(0) ; j < constraint_g_w ; ++j)
                             {
                                 double x(j * target_grid.d_x);
                                 double y(i * target_grid.d_y);
@@ -272,9 +281,9 @@ class ScenarioCollection
                             }
                         }
 
-                        for(unsigned long i(0) ; i < grid_height ; ++i)
+                        for(unsigned long i(0) ; i < constraint_g_h ; ++i)
                         {
-                            for(unsigned long j(0) ; j < grid_width ; ++j)
+                            for(unsigned long j(0) ; j < constraint_g_w ; ++j)
                             {
                                     (*target_grid.h)(i , j) -= (*target_grid.b)(i , j);
                             }
@@ -305,14 +314,17 @@ class ScenarioCollection
                         target_grid.long_description.append("flow = laminar\n");
                         target_grid.long_description.append("lattice_type = D2Q9 square\n");
 
-                        target_grid.h = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.05));
+                        unsigned long constraint_g_h = 100;
+                        unsigned long constraint_g_w = 200;
+
+                        target_grid.h = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.05));
                         Cylinder<DataType_> c1(*target_grid.h, DataType_(0.03), 35 ,16);
                         c1.value();
 
-                        target_grid.u = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
-                        target_grid.v = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
-                        target_grid.b = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
-                        target_grid.obstacles = new DenseMatrix<bool>(grid_height, grid_width, false);
+                        target_grid.u = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
+                        target_grid.v = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
+                        target_grid.b = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
+                        target_grid.obstacles = new DenseMatrix<bool>(constraint_g_h, constraint_g_w, false);
                         Cylinder<bool> c2(*target_grid.obstacles, true, 10 ,10);
                         c2.value();
 
@@ -322,9 +334,9 @@ class ScenarioCollection
                         target_grid.tau = 1.1;
 
                         //build up the hill:
-                        for(unsigned long i(0) ; i < grid_height ; ++i)
+                        for(unsigned long i(0) ; i < constraint_g_h ; ++i)
                         {
-                            for(unsigned long j(0) ; j < grid_width ; ++j)
+                            for(unsigned long j(0) ; j < constraint_g_w ; ++j)
                             {
                                 double x(j * target_grid.d_x);
                                 double y(i * target_grid.d_y);
@@ -333,9 +345,9 @@ class ScenarioCollection
                             }
                         }
 
-                        for(unsigned long i(0) ; i < grid_height ; ++i)
+                        for(unsigned long i(0) ; i < constraint_g_h ; ++i)
                         {
-                            for(unsigned long j(0) ; j < grid_width ; ++j)
+                            for(unsigned long j(0) ; j < constraint_g_w ; ++j)
                             {
                                     (*target_grid.h)(i , j) -= (*target_grid.b)(i , j);
                             }
@@ -367,13 +379,16 @@ class ScenarioCollection
                         target_grid.long_description.append("flow = laminar\n");
                         target_grid.long_description.append("lattice_type = D2Q9 square\n");
 
-                        target_grid.h = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.0));
+                        unsigned long constraint_g_h = 50;
+                        unsigned long constraint_g_w = 50;
+
+                        target_grid.h = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.0));
                         Cuboid<DataType_> reservoir(*target_grid.h, 50, 18, DataType_(0.03), 32, 0);
                         reservoir.value();
-                        target_grid.u = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
-                        target_grid.v = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
-                        target_grid.b = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
-                        target_grid.obstacles = new DenseMatrix<bool>(grid_height, grid_width, false);
+                        target_grid.u = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
+                        target_grid.v = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
+                        target_grid.b = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
+                        target_grid.obstacles = new DenseMatrix<bool>(constraint_g_h, constraint_g_w, false);
                         Cuboid<bool> q2(*target_grid.obstacles, 15, 2, 1, 30, 0);
                         q2.value();
                         Cuboid<bool> q3(*target_grid.obstacles, 40, 2, 1, 30, 20);

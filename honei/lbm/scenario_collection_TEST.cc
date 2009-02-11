@@ -51,7 +51,7 @@ class ScenarioCollectionTest :
                 std::cout << grid.description << std::endl;
                 std::cout << grid.long_description << std::endl;
 
-                std::cout << (*grid.h) << std::endl;
+                std::cout << (*grid.h)(0,0) << std::endl;
                 std::cout << "______________________________\n";
 
                 TEST_CHECK(true);
