@@ -67,7 +67,7 @@ class SolverLABSWEGridTest :
                 SolverLABSWEGrid<Tag_, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, grid.d_x, grid.d_y, grid.d_t, grid.tau);
 
                 solver.do_preprocessing();
-                std::cout << "Solving: " << grid.description;
+                std::cout << "Solving: " << grid.description << std::endl;
                 for(unsigned long i(0); i < timesteps; ++i)
                 {
 #ifdef SOLVER_VERBOSE

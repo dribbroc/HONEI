@@ -41,6 +41,7 @@ class ScenarioCollection
 {
     private:
         static const unsigned long _scenario_count = 7;
+        static const unsigned long _stable_scenario_count = 6;
 
     public:
         template <typename GridType_, typename DataType_>
@@ -407,6 +408,11 @@ class ScenarioCollection
         static unsigned long get_scenario_count()
         {
             return _scenario_count;
+        }
+
+        static unsigned long get_stable_scenario_count()
+        {
+            return _stable_scenario_count;
         }
 };
 

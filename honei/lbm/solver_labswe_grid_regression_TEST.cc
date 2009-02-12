@@ -49,7 +49,7 @@ class SolverLABSWEGridRegressionTest :
 
         virtual void run() const
         {
-            for (unsigned long scen(0) ; scen < ScenarioCollection::get_scenario_count() ; ++scen)
+            for (unsigned long scen(0) ; scen < ScenarioCollection::get_stable_scenario_count() ; ++scen)
             {
                 unsigned long g_h(50);
                 unsigned long g_w(50);
@@ -74,7 +74,7 @@ class SolverLABSWEGridRegressionTest :
                     solver.solve();
 #ifdef SOLVER_POSTPROCESSING
                     GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
-                    PostProcessing<GNUPLOT>::value(h, 1, g_w, g_h, i);
+                    PostProcessing<GNUPLOT>::value(*grid.h, 1, g_w, g_h, i);
 #endif
                 }
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
@@ -107,7 +107,7 @@ class SolverLABSWEGridRegressionTest :
                     solver_standard.solve();
 #ifdef SOLVER_POSTPROCESSING
                     GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid_standard, info_standard, data_standard);
-                    PostProcessing<GNUPLOT>::value(h_standard, 1, g_w_standard, g_h_standard, i);
+                    PostProcessing<GNUPLOT>::value(*grid_standard.h, 1, g_w_standard, g_h_standard, i);
 #endif
                 }
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid_standard, info_standard, data_standard);
@@ -116,6 +116,7 @@ class SolverLABSWEGridRegressionTest :
                 std::cout << *grid_standard.h << std::endl;
 #endif
 
+                std::cout << grid.description <<": ";
 
                 TEST_CHECK_EQUAL(g_h, g_h_standard);
                 TEST_CHECK_EQUAL(g_w, g_w_standard);
@@ -152,7 +153,7 @@ class SolverLABSWEGridRegressionTest :
                 double l2 = Norm<vnt_l_two, false, tags::CPU>::value(result_grid);
                 TEST_CHECK_EQUAL_WITHIN_EPS(l2, DataType_(0.), std::numeric_limits<DataType_>::epsilon());
 
-                std::cout << "L2 norm of " << grid.description <<": "<< l2 << std::endl;
+                std::cout << "L2 norm " << l2 << std::endl;
             }
         }
 };
