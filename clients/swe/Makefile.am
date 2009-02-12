@@ -1,5 +1,8 @@
+AM_CXXFLAGS = -I$(top_srcdir)
+
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in
+EXTRA_DIST = README
 
 DEFS = \
 	$(CELLDEF) \
@@ -35,14 +38,12 @@ BACKEND_LIBS += \
 
 endif
 
-EXTRA_DIST = README
-
 bin_PROGRAMS = honei-swe
 honei_swe_SOURCES = honei_swe.hh scenario_controller.hh honei_swe.cc
 honei_swe_LDADD = \
-	$(top_srcdir)/honei/util/libhoneiutil.la \
-	$(top_srcdir)/honei/la/libhoneila.la \
-	$(top_srcdir)/honei/swe/libhoneiswe.la \
+	$(top_builddir)/honei/util/libhoneiutil.la \
+	$(top_builddir)/honei/la/libhoneila.la \
+	$(top_builddir)/honei/swe/libhoneiswe.la \
 	$(BACKEND_LIBS) \
 	-lGL \
 	-lglut \

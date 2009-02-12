@@ -1,5 +1,8 @@
+AM_CXXFLAGS = -I$(top_srcdir)
+
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in
+EXTRA_DIST = README
 
 DEFS = \
 	$(CELLDEF) \
@@ -35,8 +38,6 @@ BACKEND_LIBS += \
 
 endif
 
-EXTRA_DIST = README
-
 bin_PROGRAMS = honei-poisson
 honei_poisson_SOURCES = \
 			honei_poisson.hh \
@@ -44,9 +45,9 @@ honei_poisson_SOURCES = \
 			scenario_controller.hh \
 			scenario_controller_base.hh
 honei_poisson_LDADD = \
-	$(top_srcdir)/honei/util/libhoneiutil.la \
-	$(top_srcdir)/honei/la/libhoneila.la \
-	$(top_srcdir)/honei/math/libhoneimath.la \
+	$(top_builddir)/honei/util/libhoneiutil.la \
+	$(top_builddir)/honei/la/libhoneila.la \
+	$(top_builddir)/honei/math/libhoneimath.la \
 	$(BACKEND_LIBS) \
 	-lGL \
 	-lglut \
