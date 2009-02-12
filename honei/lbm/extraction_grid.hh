@@ -32,7 +32,7 @@
 #include <honei/la/dense_matrix.hh>
 #include <honei/lbm/grid.hh>
 #include <iostream>
-#include <honei/swe/limiter.hh>
+#include <honei/lbm/lbm_limiter.hh>
 
 using namespace lbm;
 
@@ -139,7 +139,7 @@ namespace honei
                                 (*data.u)[i] = 0;
                                 (*data.v)[i] = 0;
                             }
-                            (*data.h)[i] = min_mod_limiter((*data.h)[i]);
+                            (*data.h)[i] = MinModLimiter<tags::CPU>::value((*data.h)[i]);
 
 
                         }
