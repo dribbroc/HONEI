@@ -50,9 +50,9 @@ class ScenarioCollection
             {
                 case 0:
                     {
-                        target_grid.description = "Circular dam break, uncritical.\n";
+                        target_grid.description = "Circular dam break, uncritical";
                         target_grid.long_description = target_grid.description;
-                        target_grid.long_description.append("Discretization (proposal):\n");
+                        target_grid.long_description.append("\nDiscretization (proposal):\n");
                         target_grid.long_description.append("d_x = d_y = 0.01\n");
                         target_grid.long_description.append("d_t = 0.01\n");
                         target_grid.long_description.append("recommended minimum size: 50x50\n\n");
@@ -85,9 +85,9 @@ class ScenarioCollection
                     break;
                 case 1:
                     {
-                        target_grid.description = "Circular dam break, uncritical, with cuboidal obstacles.\n";
+                        target_grid.description = "Circular dam break, uncritical, with cuboidal obstacles";
                         target_grid.long_description = target_grid.description;
-                        target_grid.long_description.append("Discretization (proposal):\n");
+                        target_grid.long_description.append("\nDiscretization (proposal):\n");
                         target_grid.long_description.append("d_x = d_y = 0.01\n");
                         target_grid.long_description.append("d_t = 0.01\n\n");
                         target_grid.long_description.append("recommended minimum size: 50x50\n\n");
@@ -124,9 +124,9 @@ class ScenarioCollection
                     break;
                 case 2:
                     {
-                        target_grid.description = "Partial cuboidal dam break, uncritical.\n";
+                        target_grid.description = "Partial cuboidal dam break, uncritical";
                         target_grid.long_description = target_grid.description;
-                        target_grid.long_description.append("Discretization (proposal):\n");
+                        target_grid.long_description.append("\nDiscretization (proposal):\n");
                         target_grid.long_description.append("d_x = d_y = 0.01\n");
                         target_grid.long_description.append("d_t = 0.01\n\n");
 
@@ -168,10 +168,10 @@ class ScenarioCollection
                     break;
                 case 3:
                     {
-                        target_grid.description = "Circular dam break over uneven bed topography, uncritical.\n";
+                        target_grid.description = "Circular dam break over uneven bed topography, uncritical";
                         target_grid.long_description = target_grid.description;
 
-                        target_grid.long_description.append("Scenario constraints:\n");
+                        target_grid.long_description.append("\nScenario constraints:\n");
                         target_grid.long_description.append("size: 100x200\n");
                         target_grid.long_description.append("forces: BED_SLOPE, BED_FRICTION\n\n");
                         target_grid.long_description.append("d_x = d_y = 0.01\n");
@@ -230,10 +230,10 @@ class ScenarioCollection
                     break;
                 case 4:
                     {
-                        target_grid.description = "Circular dam break over uneven bed topography and cylindrical obstacle, uncritical.\n";
+                        target_grid.description = "Circular dam break over uneven bed topography and cylindrical obstacle, uncritical";
                         target_grid.long_description = target_grid.description;
 
-                        target_grid.long_description.append("Scenario constraints:\n");
+                        target_grid.long_description.append("\nScenario constraints:\n");
                         target_grid.long_description.append("size: 100x200\n");
                         target_grid.long_description.append("forces: BED_SLOPE, BED_FRICTION\n\n");
                         target_grid.long_description.append("d_x = d_y = 0.01\n");
@@ -294,10 +294,10 @@ class ScenarioCollection
                     break;
                 case 5:
                     {
-                        target_grid.description = "Circular dam break over uneven bed topography, CRITICAL(dry states).\n";
+                        target_grid.description = "Circular dam break over uneven bed topography, CRITICAL(dry states)";
                         target_grid.long_description = target_grid.description;
 
-                        target_grid.long_description.append("Scenario constraints:\n");
+                        target_grid.long_description.append("\nScenario constraints:\n");
                         target_grid.long_description.append("size: 100x200\n");
                         target_grid.long_description.append("forces: BED_SLOPE, BED_FRICTION\n\n");
                         target_grid.long_description.append("d_x = d_y = 0.01\n");
@@ -358,9 +358,9 @@ class ScenarioCollection
                     break;
                 case 6:
                     {
-                        target_grid.description = "Partial cuboidal dam break, CRITICAL(dry states)\n";
+                        target_grid.description = "Partial cuboidal dam break, CRITICAL(dry states)";
                         target_grid.long_description = target_grid.description;
-                        target_grid.long_description.append("Discretization (proposal):\n");
+                        target_grid.long_description.append("\nDiscretization (proposal):\n");
                         target_grid.long_description.append("d_x = d_y = 0.01\n");
                         target_grid.long_description.append("d_t = 0.01\n\n");
 

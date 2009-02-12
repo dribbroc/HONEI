@@ -67,8 +67,7 @@ class SolverLABSWEGridTest :
                 SolverLABSWEGrid<Tag_, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, grid.d_x, grid.d_y, grid.d_t, grid.tau);
 
                 solver.do_preprocessing();
-                std::cout << "-----------------------------------------------------------------------------------------------"<<std::endl;
-                std::cout << "Solving:" << std::endl << grid.long_description;
+                std::cout << "Solving: " << grid.description;
                 for(unsigned long i(0); i < timesteps; ++i)
                 {
 #ifdef SOLVER_VERBOSE
@@ -87,8 +86,6 @@ class SolverLABSWEGridTest :
                 for (unsigned long i(0) ; i < (*grid.h).rows() ; ++i)
                     for(unsigned long j(0) ; j < (*grid.h).columns() ; ++j)
                         TEST_CHECK_EQUAL_WITHIN_EPS((*grid.h)( i , j), DataType_(0.02), DataType_(0.1));
-
-                std::cout << "-----------------------------------------------------------------------------------------------"<<std::endl;
             }
         }
 

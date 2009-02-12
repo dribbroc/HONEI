@@ -48,7 +48,9 @@ class ScenarioCollectionTest :
                 ScenarioCollection::get_scenario(i, 10, 10, grid);
 
                 std::cout << "______________________________\n";
+                std::cout<<"Description:" << std::endl;
                 std::cout << grid.description << std::endl;
+                std::cout<<"Long description:" << std::endl;
                 std::cout << grid.long_description << std::endl;
 
                 std::cout << (*grid.h)(0,0) << std::endl;
