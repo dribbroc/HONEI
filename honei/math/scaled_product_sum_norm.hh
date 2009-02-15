@@ -54,7 +54,7 @@ namespace honei
                     A.unlock(lm_read_only);
                     x.unlock(lm_read_only);
 
-                    return Norm<vnt_l_two, false, Tag_>::value(result_vector);
+                    return Norm<vnt_l_two, false, Tag_>::value(result);
 
                 }
         };
