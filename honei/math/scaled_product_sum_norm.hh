@@ -46,11 +46,9 @@ namespace honei
                     A.lock(lm_read_only);
                     x.lock(lm_read_only);
 
-                    DenseVector<DataType_> y_c(y.copy());
-
-                    DenseVector<DataType_> alpha_by_y = Scale<Tag_>::value(y_c, alpha);
-                    DenseVector<DataType_> A_by_x = Product<Tag_>::value(A, x);
-                    DenseVector<DataType_> result_vector = ScaledSum<Tag_>::value(alpha_by_y, A_by_x, beta);
+                    DenseVector<DataType_> result(y.copy());
+                    Scale<Tag_>::value(result, alpha);
+                    result = ScaledSum<Tag_>::value(result, Product<Tag_>::value(A , x), beta);
 
                     y.unlock(lm_read_only);
                     A.unlock(lm_read_only);
