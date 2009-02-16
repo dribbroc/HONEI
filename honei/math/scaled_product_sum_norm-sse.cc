@@ -25,7 +25,9 @@ namespace honei
 {
     float ScaledProductSumNorm<tags::CPU::SSE>::value(float a, DenseVector<float> & y, float b, BandedMatrix<float> & A, DenseVector<float> & x)
     {
-
+        x.lock(lm_read_only);
+        y.lock(lm_read_only);
+        A.lock(lm_read_only);
 
         //Still use HONEIs BandedMatrix-DenseVector product:
         DenseVector<float> A_x(Product<tags::CPU::SSE>::value(A, x));
@@ -35,11 +37,21 @@ namespace honei
         float * y_data = y.elements();
 
         //redirect the relevant data to the SSE backend
-        return honei::sse::scaled_product_sum_norm(x.size(), a, y_data, b, A_x_data);
+        float result(honei::sse::scaled_product_sum_norm(x.size(), a, y_data, b, A_x_data));
+
+        x.unlock(lm_read_only);
+        y.unlock(lm_read_only);
+        A.unlock(lm_read_only);
+
+        return result;
+
     }
     double ScaledProductSumNorm<tags::CPU::SSE>::value(double a, DenseVector<double> & y, double b, BandedMatrix<double> & A, DenseVector<double> & x)
     {
 
+        x.lock(lm_read_only);
+        y.lock(lm_read_only);
+        A.lock(lm_read_only);
 
         //Still use HONEIs BandedMatrix-DenseVector product:
         DenseVector<double> A_x(Product<tags::CPU::SSE>::value(A, x));
@@ -49,6 +61,12 @@ namespace honei
         double * y_data = y.elements();
 
         //redirect the relevant data to the SSE backend
-        return honei::sse::scaled_product_sum_norm(x.size(), a, y_data, b, A_x_data);
+        double result(honei::sse::scaled_product_sum_norm(x.size(), a, y_data, b, A_x_data));
+
+        x.unlock(lm_read_only);
+        y.unlock(lm_read_only);
+        A.unlock(lm_read_only);
+
+        return result;
     }
 }
