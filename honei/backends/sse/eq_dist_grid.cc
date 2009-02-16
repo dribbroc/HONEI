@@ -48,18 +48,31 @@ namespace honei
                 quad_start = begin;
             }
 
+            float e2(e);
+            float e23(float(3.) * e2);
+            float e26(float(6.) * e2);
             for (unsigned long index(begin) ; index < quad_start ; ++index)
             {
+                float u2(u[index] * u[index]);
+                float v2(v[index] * v[index]);
+                float h2(h[index] * h[index]);
+
                 float t1, t2;
-                t1 = (float(5) * g * h[index] * h[index]) / (e * float(6));
-                t2 = (float(2) * h[index]) / (e * float(3)) * (u[index] * u[index] + v[index] * v[index]);
+
+                t1 = (float(5.) * g * h2) / e26;
+                t2 = (float(2.) * h[index]) / e23 * (u2 + v2);
                 f_eq_0[index] = h[index] - t1 - t2;
             }
             for (unsigned long index(quad_end) ; index < end ; ++index)
             {
+                float u2(u[index] * u[index]);
+                float v2(v[index] * v[index]);
+                float h2(h[index] * h[index]);
+
                 float t1, t2;
-                t1 = (float(5) * g * h[index] * h[index]) / (e * float(6));
-                t2 = (float(2) * h[index]) / (e * float(3)) * (u[index] * u[index] + v[index] * v[index]);
+
+                t1 = (float(5.) * g * h2) / e26;
+                t2 = (float(2.) * h[index]) / e23 * (u2 + v2);
                 f_eq_0[index] = h[index] - t1 - t2;
             }
 
@@ -125,26 +138,40 @@ namespace honei
                 quad_start = begin;
             }
 
+            float e2(e);
+            float e42(float(2.) * e2 * e2);
+            float e23(float(3.) * e2);
+            float e26(float(6.) * e2);
             for (unsigned long index(begin) ; index < quad_start ; ++index)
             {
-                float t1, t2, t3, t4, dxu, dyv;
+                float u2(u[index] * u[index]);
+                float v2(v[index] * v[index]);
+                float h2(h[index] * h[index]);
+
+                float dxu, dyv;
+                float t1, t2, t3, t4;
                 dxu = distribution_x[dir] * u[index];
                 dyv = distribution_y[dir] * v[index];
-                t1 = (g * h[index] * h[index]) / (e * float(6));
-                t2 = (h[index] / (e * float(3))) * (dxu + dyv);
-                t3 = (h[index] / (e * e * float(2))) * (dxu * dxu + float(2) * dxu * dyv + dyv * dyv);
-                t4 = (h[index] / (e * float(6))) * (u[index] * u[index] + v[index] * v[index]);
+                t1 = (g * h2) / e26;
+                t2 = (h[index] / e23) * (dxu + dyv);
+                t3 = (h[index] / e42) * (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv);
+                t4 = (h[index] / e26) * (u2 + v2);
                 f_eq[index] = t1 + t2 + t3 - t4;
             }
             for (unsigned long index(quad_end) ; index < end ; ++index)
             {
-                float t1, t2, t3, t4, dxu, dyv;
+                float u2(u[index] * u[index]);
+                float v2(v[index] * v[index]);
+                float h2(h[index] * h[index]);
+
+                float dxu, dyv;
+                float t1, t2, t3, t4;
                 dxu = distribution_x[dir] * u[index];
                 dyv = distribution_y[dir] * v[index];
-                t1 = (g * h[index] * h[index]) / (e * float(6));
-                t2 = (h[index] / (e * float(3))) * (dxu + dyv);
-                t3 = (h[index] / (e * e * float(2))) * (dxu * dxu + float(2) * dxu * dyv + dyv * dyv);
-                t4 = (h[index] / (e * float(6))) * (u[index] * u[index] + v[index] * v[index]);
+                t1 = (g * h2) / e26;
+                t2 = (h[index] / e23) * (dxu + dyv);
+                t3 = (h[index] / e42) * (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv);
+                t4 = (h[index] / e26) * (u2 + v2);
                 f_eq[index] = t1 + t2 + t3 - t4;
             }
 
@@ -168,12 +195,11 @@ namespace honei
                 m1 = _mm_load_ps(h + index);
                 m1 = _mm_mul_ps(m1, m1);
                 m1 = _mm_mul_ps(m1, gv);
-                m2 = _mm_mul_ps(e2v, scal1);
-                t1 = _mm_div_ps(m1, m2);
+                scal1 = _mm_mul_ps(e2v, scal1);
+                t1 = _mm_div_ps(m1, scal1);
 
                 m1 = _mm_load_ps(h + index);
-                m2 = _mm_mul_ps(e2v, scal1);
-                t4 = _mm_div_ps(m1, m2);
+                t4 = _mm_div_ps(m1, scal1);
                 m1 = _mm_load_ps(u + index);
                 m1 = _mm_mul_ps(m1, m1);
                 m2 = _mm_load_ps(v + index);
@@ -193,12 +219,14 @@ namespace honei
                 m2 = _mm_mul_ps(e2v, e2v);
                 m2 = _mm_mul_ps(m2, scal1);
                 t3 = _mm_div_ps(m1, m2);
+
                 m1 = _mm_mul_ps(dxu, dxu);
+                m2 = _mm_mul_ps(scal1, dxu);
+                m2 = _mm_mul_ps(m2, dyv);
+                m1 = _mm_add_ps(m1, m2);
                 m2 = _mm_mul_ps(dyv, dyv);
                 m1 = _mm_add_ps(m1, m2);
-                m2 = _mm_mul_ps(dxu, dyv);
-                m2 = _mm_mul_ps(m2, scal1);
-                m1 = _mm_add_ps(m1, m2);
+
                 t3 = _mm_mul_ps(m1, t3);
 
                 m1 = _mm_add_ps(t1, t2);
@@ -232,27 +260,41 @@ namespace honei
                 quad_start = begin;
             }
 
+            float e2(e);
+            float e48(float(8.) * e2 * e2);
+            float e212(float(12.) * e2);
+            float e224(float(24.) * e2);
             for (unsigned long index(begin) ; index < quad_start ; ++index)
             {
-                float t1, t2, t3, t4, dxu, dyv;
+                float u2(u[index] * u[index]);
+                float v2(v[index] * v[index]);
+                float h2(h[index] * h[index]);
+
+                float dxu, dyv;
+                float t1, t2, t3, t4;
                 dxu = distribution_x[dir] * u[index];
                 dyv = distribution_y[dir] * v[index];
-                t1 = (g * h[index] * h[index]) / (e * float(24));
-                t2 = (h[index] / (e * float(12))) * (dxu + dyv);
-                t3 = (h[index] / (e * e * float(8))) * (dxu * dxu + float(2) * dxu * dyv + dyv * dyv);
-                t4 = (h[index] / (e * float(24))) * (u[index] * u[index] + v[index] * v[index]);
-                f_eq[index] = t1 + t2 + t3 - t4;
+                t1 = (g * h2) / e224;
+                t2 = (h[index] / e212) * (dxu + dyv);
+                t3 = (h[index] / e48) * (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv);
+                t4 = (h[index] / e224) * (u2 + v2);
+                f_eq[index] =  t1 + t2 + t3 - t4;
             }
             for (unsigned long index(quad_end) ; index < end ; ++index)
             {
-                float t1, t2, t3, t4, dxu, dyv;
+                float u2(u[index] * u[index]);
+                float v2(v[index] * v[index]);
+                float h2(h[index] * h[index]);
+
+                float dxu, dyv;
+                float t1, t2, t3, t4;
                 dxu = distribution_x[dir] * u[index];
                 dyv = distribution_y[dir] * v[index];
-                t1 = (g * h[index] * h[index]) / (e * float(24));
-                t2 = (h[index] / (e * float(12))) * (dxu + dyv);
-                t3 = (h[index] / (e * e * float(8))) * (dxu * dxu + float(2) * dxu * dyv + dyv * dyv);
-                t4 = (h[index] / (e * float(24))) * (u[index] * u[index] + v[index] * v[index]);
-                f_eq[index] = t1 + t2 + t3 - t4;
+                t1 = (g * h2) / e224;
+                t2 = (h[index] / e212) * (dxu + dyv);
+                t3 = (h[index] / e48) * (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv);
+                t4 = (h[index] / e224) * (u2 + v2);
+                f_eq[index] =  t1 + t2 + t3 - t4;
             }
 
             __m128 gv = _mm_set1_ps(g);
@@ -275,12 +317,11 @@ namespace honei
                 m1 = _mm_load_ps(h + index);
                 m1 = _mm_mul_ps(m1, m1);
                 m1 = _mm_mul_ps(m1, gv);
-                m2 = _mm_mul_ps(e2v, scal1);
-                t1 = _mm_div_ps(m1, m2);
+                scal1 = _mm_mul_ps(e2v, scal1);
+                t1 = _mm_div_ps(m1, scal1);
 
                 m1 = _mm_load_ps(h + index);
-                m2 = _mm_mul_ps(e2v, scal1);
-                t4 = _mm_div_ps(m1, m2);
+                t4 = _mm_div_ps(m1, scal1);
                 m1 = _mm_load_ps(u + index);
                 m1 = _mm_mul_ps(m1, m1);
                 m2 = _mm_load_ps(v + index);
@@ -300,13 +341,15 @@ namespace honei
                 m2 = _mm_mul_ps(e2v, e2v);
                 m2 = _mm_mul_ps(m2, scal1);
                 t3 = _mm_div_ps(m1, m2);
-                scal1 = _mm_set1_ps(float(2));
+
                 m1 = _mm_mul_ps(dxu, dxu);
+                scal1 = _mm_set1_ps(float(2));
+                m2 = _mm_mul_ps(scal1, dxu);
+                m2 = _mm_mul_ps(m2, dyv);
+                m1 = _mm_add_ps(m1, m2);
                 m2 = _mm_mul_ps(dyv, dyv);
                 m1 = _mm_add_ps(m1, m2);
-                m2 = _mm_mul_ps(dxu, dyv);
-                m2 = _mm_mul_ps(m2, scal1);
-                m1 = _mm_add_ps(m1, m2);
+
                 t3 = _mm_mul_ps(m1, t3);
 
                 m1 = _mm_add_ps(t1, t2);
@@ -337,18 +380,31 @@ namespace honei
                 quad_start = begin;
             }
 
+            double e2(e);
+            double e23(double(3.) * e2);
+            double e26(double(6.) * e2);
             for (unsigned long index(begin) ; index < quad_start ; ++index)
             {
+                double u2(u[index] * u[index]);
+                double v2(v[index] * v[index]);
+                double h2(h[index] * h[index]);
+
                 double t1, t2;
-                t1 = (double(5) * g * h[index] * h[index]) / (e * double(6));
-                t2 = (double(2) * h[index]) / (e * double(3)) * (u[index] * u[index] + v[index] * v[index]);
+
+                t1 = (double(5.) * g * h2) / e26;
+                t2 = (double(2.) * h[index]) / e23 * (u2 + v2);
                 f_eq_0[index] = h[index] - t1 - t2;
             }
             for (unsigned long index(quad_end) ; index < end ; ++index)
             {
+                double u2(u[index] * u[index]);
+                double v2(v[index] * v[index]);
+                double h2(h[index] * h[index]);
+
                 double t1, t2;
-                t1 = (double(5) * g * h[index] * h[index]) / (e * double(6));
-                t2 = (double(2) * h[index]) / (e * double(3)) * (u[index] * u[index] + v[index] * v[index]);
+
+                t1 = (double(5.) * g * h2) / e26;
+                t2 = (double(2.) * h[index]) / e23 * (u2 + v2);
                 f_eq_0[index] = h[index] - t1 - t2;
             }
 
@@ -413,26 +469,40 @@ namespace honei
                 quad_start = begin;
             }
 
+            double e2(e);
+            double e42(double(2.) * e2 * e2);
+            double e23(double(3.) * e2);
+            double e26(double(6.) * e2);
             for (unsigned long index(begin) ; index < quad_start ; ++index)
             {
-                double t1, t2, t3, t4, dxu, dyv;
+                double u2(u[index] * u[index]);
+                double v2(v[index] * v[index]);
+                double h2(h[index] * h[index]);
+
+                double dxu, dyv;
+                double t1, t2, t3, t4;
                 dxu = distribution_x[dir] * u[index];
                 dyv = distribution_y[dir] * v[index];
-                t1 = (g * h[index] * h[index]) / (e * double(6));
-                t2 = (h[index] / (e * double(3))) * (dxu + dyv);
-                t3 = (h[index] / (e * e * double(2))) * (dxu * dxu + double(2) * dxu * dyv + dyv * dyv);
-                t4 = (h[index] / (e * double(6))) * (u[index] * u[index] + v[index] * v[index]);
+                t1 = (g * h2) / e26;
+                t2 = (h[index] / e23) * (dxu + dyv);
+                t3 = (h[index] / e42) * (dxu * dxu + double(2.) * dxu * dyv + dyv * dyv);
+                t4 = (h[index] / e26) * (u2 + v2);
                 f_eq[index] = t1 + t2 + t3 - t4;
             }
             for (unsigned long index(quad_end) ; index < end ; ++index)
             {
-                double t1, t2, t3, t4, dxu, dyv;
+                double u2(u[index] * u[index]);
+                double v2(v[index] * v[index]);
+                double h2(h[index] * h[index]);
+
+                double dxu, dyv;
+                double t1, t2, t3, t4;
                 dxu = distribution_x[dir] * u[index];
                 dyv = distribution_y[dir] * v[index];
-                t1 = (g * h[index] * h[index]) / (e * double(6));
-                t2 = (h[index] / (e * double(3))) * (dxu + dyv);
-                t3 = (h[index] / (e * e * double(2))) * (dxu * dxu + double(2) * dxu * dyv + dyv * dyv);
-                t4 = (h[index] / (e * double(6))) * (u[index] * u[index] + v[index] * v[index]);
+                t1 = (g * h2) / e26;
+                t2 = (h[index] / e23) * (dxu + dyv);
+                t3 = (h[index] / e42) * (dxu * dxu + double(2.) * dxu * dyv + dyv * dyv);
+                t4 = (h[index] / e26) * (u2 + v2);
                 f_eq[index] = t1 + t2 + t3 - t4;
             }
 
@@ -444,7 +514,6 @@ namespace honei
             {
                 __m128d t1, t2, t3, t4, m1, m2, dxu, dyv;
                 __m128d scal1;
-
                 m1 = _mm_set1_pd(distribution_x[dir]);
                 m2 = _mm_load_pd(u + index);
                 dxu = _mm_mul_pd(m1, m2);
@@ -456,12 +525,11 @@ namespace honei
                 m1 = _mm_load_pd(h + index);
                 m1 = _mm_mul_pd(m1, m1);
                 m1 = _mm_mul_pd(m1, gv);
-                m2 = _mm_mul_pd(e2v, scal1);
-                t1 = _mm_div_pd(m1, m2);
+                scal1 = _mm_mul_pd(e2v, scal1);
+                t1 = _mm_div_pd(m1, scal1);
 
                 m1 = _mm_load_pd(h + index);
-                m2 = _mm_mul_pd(e2v, scal1);
-                t4 = _mm_div_pd(m1, m2);
+                t4 = _mm_div_pd(m1, scal1);
                 m1 = _mm_load_pd(u + index);
                 m1 = _mm_mul_pd(m1, m1);
                 m2 = _mm_load_pd(v + index);
@@ -481,12 +549,14 @@ namespace honei
                 m2 = _mm_mul_pd(e2v, e2v);
                 m2 = _mm_mul_pd(m2, scal1);
                 t3 = _mm_div_pd(m1, m2);
+
                 m1 = _mm_mul_pd(dxu, dxu);
+                m2 = _mm_mul_pd(scal1, dxu);
+                m2 = _mm_mul_pd(m2, dyv);
+                m1 = _mm_add_pd(m1, m2);
                 m2 = _mm_mul_pd(dyv, dyv);
                 m1 = _mm_add_pd(m1, m2);
-                m2 = _mm_mul_pd(dxu, dyv);
-                m2 = _mm_mul_pd(m2, scal1);
-                m1 = _mm_add_pd(m1, m2);
+
                 t3 = _mm_mul_pd(m1, t3);
 
                 m1 = _mm_add_pd(t1, t2);
@@ -519,27 +589,41 @@ namespace honei
                 quad_start = begin;
             }
 
+            double e2(e);
+            double e48(double(8.) * e2 * e2);
+            double e212(double(12.) * e2);
+            double e224(double(24.) * e2);
             for (unsigned long index(begin) ; index < quad_start ; ++index)
             {
-                double t1, t2, t3, t4, dxu, dyv;
+                double u2(u[index] * u[index]);
+                double v2(v[index] * v[index]);
+                double h2(h[index] * h[index]);
+
+                double dxu, dyv;
+                double t1, t2, t3, t4;
                 dxu = distribution_x[dir] * u[index];
                 dyv = distribution_y[dir] * v[index];
-                t1 = (g * h[index] * h[index]) / (e * double(24));
-                t2 = (h[index] / (e * double(12))) * (dxu + dyv);
-                t3 = (h[index] / (e * e * double(8))) * (dxu * dxu + double(2) * dxu * dyv + dyv * dyv);
-                t4 = (h[index] / (e * double(24))) * (u[index] * u[index] + v[index] * v[index]);
-                f_eq[index] = t1 + t2 + t3 - t4;
+                t1 = (g * h2) / e224;
+                t2 = (h[index] / e212) * (dxu + dyv);
+                t3 = (h[index] / e48) * (dxu * dxu + double(2.) * dxu * dyv + dyv * dyv);
+                t4 = (h[index] / e224) * (u2 + v2);
+                f_eq[index] =  t1 + t2 + t3 - t4;
             }
             for (unsigned long index(quad_end) ; index < end ; ++index)
             {
-                double t1, t2, t3, t4, dxu, dyv;
+                double u2(u[index] * u[index]);
+                double v2(v[index] * v[index]);
+                double h2(h[index] * h[index]);
+
+                double dxu, dyv;
+                double t1, t2, t3, t4;
                 dxu = distribution_x[dir] * u[index];
                 dyv = distribution_y[dir] * v[index];
-                t1 = (g * h[index] * h[index]) / (e * double(24));
-                t2 = (h[index] / (e * double(12))) * (dxu + dyv);
-                t3 = (h[index] / (e * e * double(8))) * (dxu * dxu + double(2) * dxu * dyv + dyv * dyv);
-                t4 = (h[index] / (e * double(24))) * (u[index] * u[index] + v[index] * v[index]);
-                f_eq[index] = t1 + t2 + t3 - t4;
+                t1 = (g * h2) / e224;
+                t2 = (h[index] / e212) * (dxu + dyv);
+                t3 = (h[index] / e48) * (dxu * dxu + double(2.) * dxu * dyv + dyv * dyv);
+                t4 = (h[index] / e224) * (u2 + v2);
+                f_eq[index] =  t1 + t2 + t3 - t4;
             }
 
             __m128d gv = _mm_set1_pd(g);
@@ -562,12 +646,11 @@ namespace honei
                 m1 = _mm_load_pd(h + index);
                 m1 = _mm_mul_pd(m1, m1);
                 m1 = _mm_mul_pd(m1, gv);
-                m2 = _mm_mul_pd(e2v, scal1);
-                t1 = _mm_div_pd(m1, m2);
+                scal1 = _mm_mul_pd(e2v, scal1);
+                t1 = _mm_div_pd(m1, scal1);
 
                 m1 = _mm_load_pd(h + index);
-                m2 = _mm_mul_pd(e2v, scal1);
-                t4 = _mm_div_pd(m1, m2);
+                t4 = _mm_div_pd(m1, scal1);
                 m1 = _mm_load_pd(u + index);
                 m1 = _mm_mul_pd(m1, m1);
                 m2 = _mm_load_pd(v + index);
@@ -587,13 +670,15 @@ namespace honei
                 m2 = _mm_mul_pd(e2v, e2v);
                 m2 = _mm_mul_pd(m2, scal1);
                 t3 = _mm_div_pd(m1, m2);
-                scal1 = _mm_set1_pd(double(2));
+
                 m1 = _mm_mul_pd(dxu, dxu);
+                scal1 = _mm_set1_pd(double(2));
+                m2 = _mm_mul_pd(scal1, dxu);
+                m2 = _mm_mul_pd(m2, dyv);
+                m1 = _mm_add_pd(m1, m2);
                 m2 = _mm_mul_pd(dyv, dyv);
                 m1 = _mm_add_pd(m1, m2);
-                m2 = _mm_mul_pd(dxu, dyv);
-                m2 = _mm_mul_pd(m2, scal1);
-                m1 = _mm_add_pd(m1, m2);
+
                 t3 = _mm_mul_pd(m1, t3);
 
                 m1 = _mm_add_pd(t1, t2);
