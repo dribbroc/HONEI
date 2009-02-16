@@ -55,10 +55,11 @@ class SPSNormRegressionTest:
 
             std::cout << "result_cpu: " << result_cpu << std::endl;
             std::cout << "result_" << Tag_::name <<": " << result_sse << std::endl;
-            TEST_CHECK_EQUAL_WITHIN_EPS(result_cpu, result_sse, std::numeric_limits<DT_>::epsilon() * _size * 100);
+            TEST_CHECK_EQUAL_WITHIN_EPS(result_cpu, result_sse, std::numeric_limits<DT_>::epsilon() * _size * 300);
         }
 };
 
 #ifdef HONEI_SSE
 SPSNormRegressionTest<tags::CPU::SSE, float> spsnorm_regr_test_sse_float("float", 10000);
+SPSNormRegressionTest<tags::CPU::SSE, double> spsnorm_regr_test_sse_double("double", 10000);
 #endif

@@ -21,19 +21,34 @@
 #include <honei/math/scaled_product_sum_norm.hh>
 #include <honei/la/product.hh>
 
-using namespace honei;
-
-float ScaledProductSumNorm<tags::CPU::SSE>::value(float a, DenseVector<float> & y, float b, BandedMatrix<float> & A, DenseVector<float> & x)
+namespace honei
 {
+    float ScaledProductSumNorm<tags::CPU::SSE>::value(float a, DenseVector<float> & y, float b, BandedMatrix<float> & A, DenseVector<float> & x)
+    {
 
 
-    //Still use HONEIs BandedMatrix-DenseVector product:
-    DenseVector<float> A_x(Product<tags::CPU::SSE>::value(A, x));
+        //Still use HONEIs BandedMatrix-DenseVector product:
+        DenseVector<float> A_x(Product<tags::CPU::SSE>::value(A, x));
 
-    //do not care about alignment, HONEI containers provide aligned data
-    float * A_x_data = A_x.elements();
-    float * y_data = y.elements();
+        //do not care about alignment, HONEI containers provide aligned data
+        float * A_x_data = A_x.elements();
+        float * y_data = y.elements();
 
-    //redirect the relevant data to the SSE backend
-    return honei::sse::scaled_product_sum_norm(x.size(), a, y_data, b, A_x_data);
+        //redirect the relevant data to the SSE backend
+        return honei::sse::scaled_product_sum_norm(x.size(), a, y_data, b, A_x_data);
+    }
+    double ScaledProductSumNorm<tags::CPU::SSE>::value(double a, DenseVector<double> & y, double b, BandedMatrix<double> & A, DenseVector<double> & x)
+    {
+
+
+        //Still use HONEIs BandedMatrix-DenseVector product:
+        DenseVector<double> A_x(Product<tags::CPU::SSE>::value(A, x));
+
+        //do not care about alignment, HONEI containers provide aligned data
+        double * A_x_data = A_x.elements();
+        double * y_data = y.elements();
+
+        //redirect the relevant data to the SSE backend
+        return honei::sse::scaled_product_sum_norm(x.size(), a, y_data, b, A_x_data);
+    }
 }
