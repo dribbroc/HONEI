@@ -59,6 +59,8 @@ namespace honei
         float reduction_sum(const float * a, unsigned long size);
         double reduction_sum(double * a, unsigned long size);
 
+        float scaled_product_sum_norm(unsigned long size, float a, float * y, float b, float * A_x);
+
         void scaled_sum(float * x, const float * y, float b, unsigned long size);
         void scaled_sum(double * x, const double * y, double b, unsigned long size);
         void scaled_sum(float * x, const float * y, const float * z, unsigned long size);

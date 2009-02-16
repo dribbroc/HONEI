@@ -42,21 +42,23 @@ class SPSNormRegressionTest:
 
         virtual void run() const
         {
-            //TODO: implement regression test, as soon as backend-impls are
-            //available
-
-            DenseVector<DT_> x(_size, DT_(1));
-            DenseVector<DT_> y(_size, DT_(1));
+            DenseVector<DT_> x(_size, DT_(1.12345));
+            DenseVector<DT_> y(_size, DT_(0.23456));
             BandedMatrix<DT_> A(_size);
 
             A.insert_band(0, x.copy());
-            A.insert_band(1, x.copy());
-            A.insert_band(-1, x.copy());
+            A.insert_band(1, y.copy());
+            A.insert_band(-1, y.copy());
 
-            DT_ result = ScaledProductSumNorm<Tag_>::value(DT_(0.1), y, DT_(0.1), A, x);
-            TEST_CHECK(true);
+            DT_ result_cpu = ScaledProductSumNorm<tags::CPU>::value(DT_(1.234), y, DT_(0.1234), A, x);
+            DT_ result_sse = ScaledProductSumNorm<Tag_>::value(DT_(1.234), y, DT_(0.1234), A, x);
+
+            std::cout << "result_cpu: " << result_cpu << std::endl;
+            std::cout << "result_" << Tag_::name <<": " << result_sse << std::endl;
+            TEST_CHECK_EQUAL_WITHIN_EPS(result_cpu, result_sse, std::numeric_limits<DT_>::epsilon() * _size * 100);
         }
 };
 
-SPSNormRegressionTest<tags::CPU, float> spsnorm_regr_test_float("float", 10000);
-SPSNormRegressionTest<tags::CPU, double> spsnorm_regr_test_double("double", 10000);
+#ifdef HONEI_SSE
+SPSNormRegressionTest<tags::CPU::SSE, float> spsnorm_regr_test_sse_float("float", 10000);
+#endif

@@ -58,5 +58,13 @@ namespace honei
 
                 }
         };
+
+    template<>
+        struct ScaledProductSumNorm<tags::CPU::SSE>
+        {
+            static float value(float a, DenseVector<float> & y, float b, BandedMatrix<float> & A, DenseVector<float> & x);
+           // static inline double value(double a, DenseVector<double> & y, double b, BandedMatrix<double> & A, DenseVector<double> & x);
+        };
 }
+
 #endif

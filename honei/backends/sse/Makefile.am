@@ -21,6 +21,7 @@ libhoneibackendssse_la_SOURCES = operations.hh \
 				 norm.cc \
 				 product.cc \
 				 reduction.cc \
+				 scaled_product_sum_norm.cc \
 				 scaled_sum.cc \
 				 scale.cc \
 				 sum.cc
