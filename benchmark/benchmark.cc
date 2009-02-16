@@ -797,6 +797,7 @@ int main(int argc, char** argv)
                     next = runrs.front();
                     runrs.pop_front();
                 }
+                i = BenchmarkList::instance()->erase(i);
             }
         }
     }

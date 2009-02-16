@@ -205,7 +205,7 @@ int main(int argc, char** argv)
 
     unsigned long iterator_index(1);
     for (TestList::Iterator i(TestList::instance()->begin_tests()), i_end(TestList::instance()->end_tests()) ;
-            i != i_end ; ++i)
+            i != i_end ;)
     {
         CONTEXT("When running test case '" + (*i)->id() + "':");
         try
@@ -241,6 +241,7 @@ int main(int argc, char** argv)
             result = EXIT_FAILURE;
         }
         iterator_index++;
+        i = TestList::instance()->erase(i);
     }
 
     return result;
