@@ -23,7 +23,7 @@
 
 namespace honei
 {
-    float ScaledProductSumNorm<tags::CPU::SSE>::value(float a, DenseVector<float> & y, float b, BandedMatrix<float> & A, DenseVector<float> & x)
+    float ScaledProductSumNorm_TUTORIAL<tags::CPU::SSE>::value(float a, DenseVector<float> & y, float b, BandedMatrixQ1<float> & A, DenseVector<float> & x)
     {
         x.lock(lm_read_only);
         y.lock(lm_read_only);
@@ -46,7 +46,7 @@ namespace honei
         return result;
 
     }
-    double ScaledProductSumNorm<tags::CPU::SSE>::value(double a, DenseVector<double> & y, double b, BandedMatrix<double> & A, DenseVector<double> & x)
+    double ScaledProductSumNorm_TUTORIAL<tags::CPU::SSE>::value(double a, DenseVector<double> & y, double b, BandedMatrixQ1<double> & A, DenseVector<double> & x)
     {
 
         x.lock(lm_read_only);

@@ -32,14 +32,15 @@
 
 namespace honei
 {
+    //Tutorial version
     template<typename Tag_>
-        struct ScaledProductSumNorm
+        struct ScaledProductSumNorm_TUTORIAL
         {
             template<typename DataType_>
                 static inline DataType_ value(DataType_ alpha,
                                               DenseVector<DataType_> & y,
                                               DataType_ beta,
-                                              BandedMatrix<DataType_> & A,
+                                              BandedMatrixQ1<DataType_> & A,
                                               DenseVector<DataType_> & x)
                 {
                     y.lock(lm_read_only);
@@ -60,11 +61,16 @@ namespace honei
         };
 
     template<>
-        struct ScaledProductSumNorm<tags::CPU::SSE>
+        struct ScaledProductSumNorm_TUTORIAL<tags::CPU::SSE>
         {
-            static float value(float a, DenseVector<float> & y, float b, BandedMatrix<float> & A, DenseVector<float> & x);
-            static double value(double a, DenseVector<double> & y, double b, BandedMatrix<double> & A, DenseVector<double> & x);
+            static float value(float a, DenseVector<float> & y, float b, BandedMatrixQ1<float> & A, DenseVector<float> & x);
+            static double value(double a, DenseVector<double> & y, double b, BandedMatrixQ1<double> & A, DenseVector<double> & x);
         };
+
+
+    //Fully optimized version
+    template<typename Tag_>
+        struct ScaledProductSumNorm;
 }
 
 #endif
