@@ -179,38 +179,63 @@ int main(int argc, char** argv)
     unsigned long list_size(0);
 
     for (TestList::Iterator i(TestList::instance()->begin_tests()), i_end(TestList::instance()->end_tests()) ;
-            i != i_end ; ++i)
+            i != i_end ; )
     {
             if (quick && (!(*i)->is_quick_test()) )
+            {
+                i = TestList::instance()->erase(i);
                 continue;
+            }
             if (!all)
             {
                 if (((*i)->get_tag_name()=="sse") && !sse)
+                {
+                    i = TestList::instance()->erase(i);
                     continue;
+                }
                 if (((*i)->get_tag_name()=="cuda") && !cuda)
+                {
+                    i = TestList::instance()->erase(i);
                     continue;
+                }
                 if (((*i)->get_tag_name()=="cell") && !cell)
+                {
+                    i = TestList::instance()->erase(i);
                     continue;
+                }
                 if (((*i)->get_tag_name()=="mc-sse") && (!mc && !sse))
+                {
+                    i = TestList::instance()->erase(i);
                     continue;
+                }
                 if (((*i)->get_tag_name()=="mc") && (!mc && !cpu))
+                {
+                    i = TestList::instance()->erase(i);
                     continue;
+                }
                 if (((*i)->get_tag_name()=="cpu") && !cpu)
+                {
+                    i = TestList::instance()->erase(i);
                     continue;
+                }
                 if (((*i)->get_tag_name()=="none") && !all)
+                {
+                    i = TestList::instance()->erase(i);
                     continue;
+                }
             }
+            ++i;
             list_size++;
     }
 
     unsigned long iterator_index(1);
     for (TestList::Iterator i(TestList::instance()->begin_tests()), i_end(TestList::instance()->end_tests()) ;
-            i != i_end ; ++i)
+            i != i_end ; )
     {
         CONTEXT("When running test case '" + (*i)->id() + "':");
         try
         {
-            if (quick && (!(*i)->is_quick_test()) )
+            /*if (quick && (!(*i)->is_quick_test()) )
                 continue;
             if (!all)
             {
@@ -228,7 +253,7 @@ int main(int argc, char** argv)
                     continue;
                 if (((*i)->get_tag_name()=="none") && !all)
                     continue;
-            }
+            }*/
 
             std::cout << "(" << iterator_index << "/" << list_size << ") " << (*i)->id() + " [Backend: "
                 << (*i)->get_tag_name() << "]" << std::endl;
@@ -240,6 +265,7 @@ int main(int argc, char** argv)
             std::cout << "FAILED: " << std::endl << stringify(e.what()) << std::endl;
             result = EXIT_FAILURE;
         }
+        i = TestList::instance()->erase(i);
         iterator_index++;
     }
 

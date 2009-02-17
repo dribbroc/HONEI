@@ -26,7 +26,7 @@
 #include <iomanip>
 #include <fstream>
 
-// using namespace pg512;
+#include <list>
 
 class Benchmark;
 
@@ -772,7 +772,7 @@ int main(int argc, char** argv)
         runrs.sort();
         int next = runrs.front();
         runrs.pop_front();
-        for (BenchmarkList::Iterator i(BenchmarkList::instance()->begin_benchs()),i_end(BenchmarkList::instance()->end_benchs()) ; i != i_end ; ++i, ++count)
+        for (BenchmarkList::Iterator i(BenchmarkList::instance()->begin_benchs()),i_end(BenchmarkList::instance()->end_benchs()) ; i != i_end ; ++count)
         {
             if (next == count)
             {
@@ -798,6 +798,7 @@ int main(int argc, char** argv)
                     runrs.pop_front();
                 }
             }
+            i = BenchmarkList::instance()->erase(i);
         }
     }
     if (plot)
