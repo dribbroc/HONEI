@@ -67,6 +67,7 @@ namespace honei
             class BASIC;
             class BED_SLOPE;
             class BED_FRICTION;
+            class BED_FULL;
         }
         namespace lbm_boundary_types
         {
