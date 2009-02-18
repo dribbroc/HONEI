@@ -27,9 +27,9 @@
 
 struct BenchmarkInfo
 {
-    unsigned long flops;
-    unsigned long load;
-    unsigned long store;
+    unsigned long long flops;
+    unsigned long long load;
+    unsigned long long store;
     std::list<unsigned long> size;
     double scale;
     std::string scaleinfo;
@@ -51,7 +51,7 @@ struct BenchmarkInfo
         return *this;
     }
 
-    BenchmarkInfo operator*(unsigned long a) 
+    BenchmarkInfo operator*(unsigned long long a)
     {
         flops *= a;
         load *= a;
@@ -63,8 +63,8 @@ struct BenchmarkInfo
 struct LBMBenchmarkInfo :
     public BenchmarkInfo
 {
-    unsigned long lups;
-    unsigned long flups;
+    unsigned long long lups;
+    unsigned long long flups;
     LBMBenchmarkInfo() :
         BenchmarkInfo(),
         lups(0),
