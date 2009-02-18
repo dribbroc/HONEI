@@ -33,6 +33,7 @@
 #include <honei/lbm/grid.hh>
 #include <iostream>
 #include <honei/lbm/lbm_limiter.hh>
+#include <honei/util/benchmark_info.hh>
 
 using namespace lbm;
 
@@ -174,6 +175,17 @@ namespace honei
                         data.u->unlock(lm_write_only);
                         data.v->unlock(lm_write_only);
                     }
+
+            template<typename DT1_>
+                static inline BenchmarkInfo get_benchmark_info(PackedGridData<D2Q9, DT1_> * data, PackedGridInfo<D2Q9> * info)
+                {
+                    BenchmarkInfo result;
+                    result.flops = data->h->size() * 28;
+                    result.load = data->h->size() * 57 * sizeof(DT1_);
+                    result.store = data->h->size() * 13 * sizeof(DT1_);
+                    result.size.push_back(data->h->size());
+                    return result;
+                }
         };
 
     template<>

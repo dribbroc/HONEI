@@ -202,14 +202,18 @@ namespace honei
                                 _relaxation_time);
                 }
 
-                static inline LBMBenchmarkInfo get_benchmark_info(Grid<D2Q9, ResPrec_> * grid, PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info)
+                static LBMBenchmarkInfo get_benchmark_info(Grid<D2Q9, ResPrec_> * grid, PackedGridData<D2Q9, ResPrec_> * data, PackedGridInfo<D2Q9> * info)
                 {
                     LBMBenchmarkInfo result;
                     BenchmarkInfo eq_dist(EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::get_benchmark_info(data, info));
                     result += eq_dist;
                     BenchmarkInfo col_stream(CollideStreamGrid<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::get_benchmark_info(data, info));
                     result += col_stream;
-                    /// \todo add missing modules
+                    BenchmarkInfo force(ForceGrid<Tag_, lbm_applications::LABSWE, Force_, SourceScheme_>::get_benchmark_info(data, info));
+                    result += force;
+                    BenchmarkInfo extraction(ExtractionGrid<Tag_, lbm_applications::LABSWE>::get_benchmark_info(data, info));
+                    result += extraction;
+
                     result.size.push_back(grid->h->rows());
                     result.size.push_back(grid->h->columns());
                     result.lups = grid->h->rows() * grid->h->columns();

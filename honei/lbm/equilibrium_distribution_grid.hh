@@ -192,6 +192,7 @@ namespace honei
                     data.f_eq_7->unlock(lm_write_only);
                     data.f_eq_8->unlock(lm_write_only);
                 }
+
             template<typename DT1_>
                 static inline BenchmarkInfo get_benchmark_info(PackedGridData<D2Q9, DT1_> * data, PackedGridInfo<D2Q9> * info)
                 {

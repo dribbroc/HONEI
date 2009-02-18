@@ -97,16 +97,17 @@ class ExtractionGridBench :
                         }
                         );
             }
-            evaluate();
+            BenchmarkInfo benchinfo(ExtractionGrid<tags::CPU, lbm_applications::LABSWE>::get_benchmark_info(&data, &info));
+            evaluate(benchinfo * 5);
         }
 };
 
-ExtractionGridBench<tags::CPU, float> extraction_grid_bench_float("ExtractionGridBench - size: 2000, float", 2000, 10);
-ExtractionGridBench<tags::CPU, double> extraction_grid_bench_double("ExtractionGridBench - size: 2000, double", 2000, 10);
+ExtractionGridBench<tags::CPU, float> extraction_grid_bench_float("ExtractionGridBench - size: 2000, float", 2000, 5);
+ExtractionGridBench<tags::CPU, double> extraction_grid_bench_double("ExtractionGridBench - size: 2000, double", 2000, 5);
 #ifdef HONEI_SSE
-ExtractionGridBench<tags::CPU::SSE, float> sse_extraction_grid_bench_float("SSE ExtractionGridBench - size: 2000, float", 2000, 10);
-ExtractionGridBench<tags::CPU::SSE, double> sse_extraction_grid_bench_double("SSE ExtractionGridBench - size: 2000, double", 2000, 10);
+ExtractionGridBench<tags::CPU::SSE, float> sse_extraction_grid_bench_float("SSE ExtractionGridBench - size: 2000, float", 2000, 5);
+ExtractionGridBench<tags::CPU::SSE, double> sse_extraction_grid_bench_double("SSE ExtractionGridBench - size: 2000, double", 2000, 5);
 #endif
 #ifdef HONEI_CUDA
-ExtractionGridBench<tags::GPU::CUDA, float> cuda_extraction_grid_bench_float("CUDA ExtractionGridBench - size: 2000, float", 2000, 10);
+ExtractionGridBench<tags::GPU::CUDA, float> cuda_extraction_grid_bench_float("CUDA ExtractionGridBench - size: 2000, float", 2000, 5);
 #endif

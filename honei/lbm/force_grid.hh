@@ -33,6 +33,7 @@
 #include <honei/lbm/tags.hh>
 #include <honei/lbm/grid.hh>
 #include <honei/la/dense_vector.hh>
+#include <honei/util/benchmark_info.hh>
 #include <cmath>
 using namespace honei::lbm;
 
@@ -563,6 +564,17 @@ namespace honei
                 data.f_temp_7->unlock(lm_read_and_write);
                 data.f_temp_8->unlock(lm_read_and_write);
             }
+
+            template<typename DT1_>
+                static inline BenchmarkInfo get_benchmark_info(PackedGridData<D2Q9, DT1_> * data, PackedGridInfo<D2Q9> * info)
+                {
+                    BenchmarkInfo result;
+                    result.flops = data->h->size() * 14 + 8 * data->h->size() * 28;
+                    result.load = data->h->size() * 9 * 5 * sizeof(DT1_);
+                    result.store = data->h->size() * 9 * sizeof(DT1_);
+                    result.size.push_back(data->h->size());
+                    return result;
+                }
     };
 
 
@@ -823,6 +835,18 @@ namespace honei
                 data.f_temp_7->unlock(lm_read_and_write);
                 data.f_temp_8->unlock(lm_read_and_write);
             }
+
+            template<typename DT1_>
+                static inline BenchmarkInfo get_benchmark_info(PackedGridData<D2Q9, DT1_> * data, PackedGridInfo<D2Q9> * info)
+                {
+                    // \todo Insert real data
+                    BenchmarkInfo result;
+                    result.flops = data->h->size() * 14 + 8 * data->h->size() * 28;
+                    result.load = data->h->size() * 9 * 5 * sizeof(DT1_);
+                    result.store = data->h->size() * 9 * sizeof(DT1_);
+                    result.size.push_back(data->h->size());
+                    return result;
+                }
     };
 
     template <typename Tag_>
@@ -834,6 +858,18 @@ namespace honei
                 ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(data, info, g, d_x, d_y, d_t, manning);
                 ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(data, info, g, d_x, d_y, d_t, manning);
             }
+
+            template<typename DT1_>
+                static inline BenchmarkInfo get_benchmark_info(PackedGridData<D2Q9, DT1_> * data, PackedGridInfo<D2Q9> * info)
+                {
+                    BenchmarkInfo result;
+                    BenchmarkInfo f1(ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::get_benchmark_info(data, info));
+                    result + f1;
+                    BenchmarkInfo f2(ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::get_benchmark_info(data, info));
+                    result + f2;
+                    result.size.push_back(data->h->size());
+                    return result;
+                }
     };
 
     template <>
