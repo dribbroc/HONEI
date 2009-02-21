@@ -277,10 +277,18 @@ namespace honei
                         {
                             _tickets.push_back(mc::ThreadPool::instance()->enqueue(
                                         std::tr1::bind(
+                                            honei::GridPartitioner<D2Q9, ResPrec_>::recompose, &_info_list.at(i), &_data_list.at(i))
+                                            ));
+                            tickets.push_back(_tickets.at(i));
+                        }
+                        tickets.wait();
+                        for (unsigned long i(0) ; i < _parts ; ++i)
+                        {
+                            tickets.push_back(mc::ThreadPool::instance()->enqueue(
+                                        std::tr1::bind(
                                             std::tr1::mem_fn(&honei::SolverLABSWEGrid<typename Tag_::DelegateTo, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>::do_preprocessing),
                                             *(_solver_list.at(i))
-                                            )));
-                            tickets.push_back(_tickets.at(i));
+                                            ), DispatchPolicy::same_core_as(_tickets.at(i))));
                         }
                         tickets.wait();
                         GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);

@@ -1002,6 +1002,217 @@ namespace honei
                     std::cout<<std::endl;
                 }*/
             }
+
+            static void recompose(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT_> * data)
+            {
+                DenseVector<unsigned long> * tempul;
+
+                tempul = new DenseVector<unsigned long>(info->limits->copy());
+                delete info->limits;
+                info->limits = tempul;
+
+                tempul = new DenseVector<unsigned long>(info->types->copy());
+                delete info->types;
+                info->types = tempul;
+
+                tempul = new DenseVector<unsigned long>(info->dir_1->copy());
+                delete info->dir_1;
+                info->dir_1 = tempul;
+
+                tempul = new DenseVector<unsigned long>(info->dir_2->copy());
+                delete info->dir_2;
+                info->dir_2 = tempul;
+
+                tempul = new DenseVector<unsigned long>(info->dir_3->copy());
+                delete info->dir_3;
+                info->dir_3 = tempul;
+
+                tempul = new DenseVector<unsigned long>(info->dir_4->copy());
+                delete info->dir_4;
+                info->dir_4 = tempul;
+
+                tempul = new DenseVector<unsigned long>(info->dir_5->copy());
+                delete info->dir_5;
+                info->dir_5 = tempul;
+
+                tempul = new DenseVector<unsigned long>(info->dir_6->copy());
+                delete info->dir_6;
+                info->dir_6 = tempul;
+
+                tempul = new DenseVector<unsigned long>(info->dir_7->copy());
+                delete info->dir_7;
+                info->dir_7 = tempul;
+
+                tempul = new DenseVector<unsigned long>(info->dir_8->copy());
+                delete info->dir_8;
+                info->dir_8 = tempul;
+
+                tempul = new DenseVector<unsigned long>(info->dir_index_1->copy());
+                delete info->dir_index_1;
+                info->dir_index_1 = tempul;
+
+                tempul = new DenseVector<unsigned long>(info->dir_index_2->copy());
+                delete info->dir_index_2;
+                info->dir_index_2 = tempul;
+
+                tempul = new DenseVector<unsigned long>(info->dir_index_3->copy());
+                delete info->dir_index_3;
+                info->dir_index_3 = tempul;
+
+                tempul = new DenseVector<unsigned long>(info->dir_index_4->copy());
+                delete info->dir_index_4;
+                info->dir_index_4 = tempul;
+
+                tempul = new DenseVector<unsigned long>(info->dir_index_5->copy());
+                delete info->dir_index_5;
+                info->dir_index_5 = tempul;
+
+                tempul = new DenseVector<unsigned long>(info->dir_index_6->copy());
+                delete info->dir_index_6;
+                info->dir_index_6 = tempul;
+
+                tempul = new DenseVector<unsigned long>(info->dir_index_7->copy());
+                delete info->dir_index_7;
+                info->dir_index_7 = tempul;
+
+                tempul = new DenseVector<unsigned long>(info->dir_index_8->copy());
+                delete info->dir_index_8;
+                info->dir_index_8 = tempul;
+
+                DenseVector<DT_> * temp;
+
+                temp = new DenseVector<DT_>(data->h->copy());
+                delete data->h;
+                data->h = temp;
+
+                temp = new DenseVector<DT_>(data->u->copy());
+                delete data->u;
+                data->u = temp;
+
+                temp = new DenseVector<DT_>(data->v->copy());
+                delete data->v;
+                data->v = temp;
+
+                temp = new DenseVector<DT_>(data->b->copy());
+                delete data->b;
+                data->b = temp;
+
+                temp = new DenseVector<DT_>(data->f_0->copy());
+                delete data->f_0;
+                data->f_0 = temp;
+
+                temp = new DenseVector<DT_>(data->f_1->copy());
+                delete data->f_1;
+                data->f_1 = temp;
+
+                temp = new DenseVector<DT_>(data->f_2->copy());
+                delete data->f_2;
+                data->f_2 = temp;
+
+                temp = new DenseVector<DT_>(data->f_3->copy());
+                delete data->f_3;
+                data->f_3 = temp;
+
+                temp = new DenseVector<DT_>(data->f_4->copy());
+                delete data->f_4;
+                data->f_4 = temp;
+
+                temp = new DenseVector<DT_>(data->f_5->copy());
+                delete data->f_5;
+                data->f_5 = temp;
+
+                temp = new DenseVector<DT_>(data->f_6->copy());
+                delete data->f_6;
+                data->f_6 = temp;
+
+                temp = new DenseVector<DT_>(data->f_7->copy());
+                delete data->f_7;
+                data->f_7 = temp;
+
+                temp = new DenseVector<DT_>(data->f_8->copy());
+                delete data->f_8;
+                data->f_8 = temp;
+
+                temp = new DenseVector<DT_>(data->f_eq_0->copy());
+                delete data->f_eq_0;
+                data->f_eq_0 = temp;
+
+                temp = new DenseVector<DT_>(data->f_eq_1->copy());
+                delete data->f_eq_1;
+                data->f_eq_1 = temp;
+
+                temp = new DenseVector<DT_>(data->f_eq_2->copy());
+                delete data->f_eq_2;
+                data->f_eq_2 = temp;
+
+                temp = new DenseVector<DT_>(data->f_eq_3->copy());
+                delete data->f_eq_3;
+                data->f_eq_3 = temp;
+
+                temp = new DenseVector<DT_>(data->f_eq_4->copy());
+                delete data->f_eq_4;
+                data->f_eq_4 = temp;
+
+                temp = new DenseVector<DT_>(data->f_eq_5->copy());
+                delete data->f_eq_5;
+                data->f_eq_5 = temp;
+
+                temp = new DenseVector<DT_>(data->f_eq_6->copy());
+                delete data->f_eq_6;
+                data->f_eq_6 = temp;
+
+                temp = new DenseVector<DT_>(data->f_eq_7->copy());
+                delete data->f_eq_7;
+                data->f_eq_7 = temp;
+
+                temp = new DenseVector<DT_>(data->f_eq_8->copy());
+                delete data->f_eq_8;
+                data->f_eq_8 = temp;
+
+                temp = new DenseVector<DT_>(data->f_temp_0->copy());
+                delete data->f_temp_0;
+                data->f_temp_0 = temp;
+
+                temp = new DenseVector<DT_>(data->f_temp_1->copy());
+                delete data->f_temp_1;
+                data->f_temp_1 = temp;
+
+                temp = new DenseVector<DT_>(data->f_temp_2->copy());
+                delete data->f_temp_2;
+                data->f_temp_2 = temp;
+
+                temp = new DenseVector<DT_>(data->f_temp_3->copy());
+                delete data->f_temp_3;
+                data->f_temp_3 = temp;
+
+                temp = new DenseVector<DT_>(data->f_temp_4->copy());
+                delete data->f_temp_4;
+                data->f_temp_4 = temp;
+
+                temp = new DenseVector<DT_>(data->f_temp_5->copy());
+                delete data->f_temp_5;
+                data->f_temp_5 = temp;
+
+                temp = new DenseVector<DT_>(data->f_temp_6->copy());
+                delete data->f_temp_6;
+                data->f_temp_6 = temp;
+
+                temp = new DenseVector<DT_>(data->f_temp_7->copy());
+                delete data->f_temp_7;
+                data->f_temp_7 = temp;
+
+                temp = new DenseVector<DT_>(data->f_temp_8->copy());
+                delete data->f_temp_8;
+                data->f_temp_8 = temp;
+
+                temp = new DenseVector<DT_>(data->distribution_x->copy());
+                delete data->distribution_x;
+                data->distribution_x = temp;
+
+                temp = new DenseVector<DT_>(data->distribution_y->copy());
+                delete data->distribution_y;
+                data->distribution_y = temp;
+            }
     };
 }
 
