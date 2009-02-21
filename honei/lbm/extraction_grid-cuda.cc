@@ -27,7 +27,7 @@ using namespace honei;
 
 void ExtractionGrid<tags::GPU::CUDA, lbm_applications::LABSWE>::value(
                 PackedGridInfo<lbm_lattice_types::D2Q9> & info,
-                PackedGridData<lbm_lattice_types::D2Q9, float> & data)
+                PackedGridData<lbm_lattice_types::D2Q9, float> & data, float epsilon)
 {
     CONTEXT("When extracting h, u and v (CUDA):");
 
@@ -73,7 +73,7 @@ void ExtractionGrid<tags::GPU::CUDA, lbm_applications::LABSWE>::value(
             f_temp_3_gpu, f_temp_4_gpu, f_temp_5_gpu,
             f_temp_6_gpu, f_temp_7_gpu, f_temp_8_gpu,
             h_gpu, u_gpu, v_gpu,
-            distribution_x_gpu, distribution_y_gpu,
+            distribution_x_gpu, distribution_y_gpu, epsilon,
             blocksize);
 
     info.limits->unlock(lm_read_only);

@@ -24,7 +24,7 @@
 using namespace honei;
 
 void ExtractionGrid<tags::CPU::SSE, lbm_applications::LABSWE>::value(
-        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data)
+        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float epsilon)
 {
     CONTEXT("When extracting h, u and v(SSE):");
 
@@ -76,7 +76,7 @@ void ExtractionGrid<tags::CPU::SSE, lbm_applications::LABSWE>::value(
             data.h->elements(), data.u->elements(), data.v->elements(),
             data.f_0->elements(), data.f_1->elements(), data.f_2->elements(),
             data.f_3->elements(), data.f_4->elements(), data.f_5->elements(),
-            data.f_6->elements(), data.f_7->elements(), data.f_8->elements());
+            data.f_6->elements(), data.f_7->elements(), data.f_8->elements(), epsilon);
 
     info.limits->unlock(lm_read_only);
 
@@ -110,7 +110,7 @@ void ExtractionGrid<tags::CPU::SSE, lbm_applications::LABSWE>::value(
 }
 
 void ExtractionGrid<tags::CPU::SSE, lbm_applications::LABSWE>::value(
-        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data)
+        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data, double epsilon)
 {
     CONTEXT("When extracting h, u and v(SSE):");
 
@@ -162,7 +162,7 @@ void ExtractionGrid<tags::CPU::SSE, lbm_applications::LABSWE>::value(
             data.h->elements(), data.u->elements(), data.v->elements(),
             data.f_0->elements(), data.f_1->elements(), data.f_2->elements(),
             data.f_3->elements(), data.f_4->elements(), data.f_5->elements(),
-            data.f_6->elements(), data.f_7->elements(), data.f_8->elements());
+            data.f_6->elements(), data.f_7->elements(), data.f_8->elements(), epsilon);
 
     info.limits->unlock(lm_read_only);
 

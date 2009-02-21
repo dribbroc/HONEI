@@ -20,7 +20,7 @@
 #ifndef LBM_GUARD_LBM_LIMITER_HH
 #define LBM_GUARD_LBM_LIMITER_HH 1
 
-#include <cmath>
+#include <algorithm>
 
 namespace honei
 {

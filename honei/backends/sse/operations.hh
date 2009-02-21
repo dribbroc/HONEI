@@ -131,14 +131,14 @@ namespace honei
                 float * h, float * u, float * v,
                 float * f_0, float * f_1, float * f_2,
                 float * f_3, float * f_4, float * f_5,
-                float * f_6, float * f_7, float * f_8);
+                float * f_6, float * f_7, float * f_8, float epsilon);
 
         void extraction_grid(unsigned long begin, unsigned long end,
                 double * distribution_x, double * distribution_y,
                 double * h, double * u, double * v,
                 double * f_0, double * f_1, double * f_2,
                 double * f_3, double * f_4, double * f_5,
-                double * f_6, double * f_7, double * f_8);
+                double * f_6, double * f_7, double * f_8, double epsilon);
 
         void up_vel_dir_grid(unsigned long begin, unsigned long end, unsigned long * limits, unsigned long * types,
                 float * f_temp_1, float * f_temp_2,  float * f_temp_3,

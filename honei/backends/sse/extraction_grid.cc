@@ -18,6 +18,7 @@
  */
 
 #include <honei/util/attributes.hh>
+#include <algorithm>
 
 #include <xmmintrin.h>
 #include <emmintrin.h>
@@ -31,7 +32,7 @@ namespace honei
                 float * h, float * u, float * v,
                 float * f_0, float * f_1, float * f_2,
                 float * f_3, float * f_4, float * f_5,
-                float * f_6, float * f_7, float * f_8)
+                float * f_6, float * f_7, float * f_8, float epsilon)
         {
             //unsigned long size(end - begin);
 
@@ -50,55 +51,78 @@ namespace honei
                 quad_start = begin;
             }
 
+            float lax_upper(epsilon);
+            float lax_lower(-lax_upper);
             for (unsigned long index(begin) ; index < quad_start ; ++index)
             {
                 h[index] = f_0[index] + f_1[index] + f_2[index] + f_3[index] + f_4[index] +
                     f_5[index] + f_6[index] + f_7[index] + f_8[index];
 
-                u[index] = (distribution_x[0] * f_0[index] +
-                        distribution_x[1] * f_1[index] +
-                        distribution_x[2] * f_2[index] +
-                        distribution_x[3] * f_3[index] +
-                        distribution_x[4] * f_4[index] +
-                        distribution_x[5] * f_5[index] +
-                        distribution_x[6] * f_6[index] +
-                        distribution_x[7] * f_7[index] +
-                        distribution_x[8] * f_8[index]) / h[index];
+                if(h[index] < lax_lower || h[index] > lax_upper)
+                {
+                    u[index] = (distribution_x[0] * f_0[index] +
+                            distribution_x[1] * f_1[index] +
+                            distribution_x[2] * f_2[index] +
+                            distribution_x[3] * f_3[index] +
+                            distribution_x[4] * f_4[index] +
+                            distribution_x[5] * f_5[index] +
+                            distribution_x[6] * f_6[index] +
+                            distribution_x[7] * f_7[index] +
+                            distribution_x[8] * f_8[index]) / h[index];
 
-                v[index] = (distribution_y[0] * f_0[index] +
-                        distribution_y[1] * f_1[index] +
-                        distribution_y[2] * f_2[index] +
-                        distribution_y[3] * f_3[index] +
-                        distribution_y[4] * f_4[index] +
-                        distribution_y[5] * f_5[index] +
-                        distribution_y[6] * f_6[index] +
-                        distribution_y[7] * f_7[index] +
-                        distribution_y[8] * f_8[index]) / h[index];
+                    v[index] = (distribution_y[0] * f_0[index] +
+                            distribution_y[1] * f_1[index] +
+                            distribution_y[2] * f_2[index] +
+                            distribution_y[3] * f_3[index] +
+                            distribution_y[4] * f_4[index] +
+                            distribution_y[5] * f_5[index] +
+                            distribution_y[6] * f_6[index] +
+                            distribution_y[7] * f_7[index] +
+                            distribution_y[8] * f_8[index]) / h[index];
+                }
+                else
+                {
+                    h[index] = 0;
+                    u[index] = 0;
+                    v[index] = 0;
+                }
+                h[index] = std::max(float(0), std::min(float(1), h[index]));
             }
+
             for (unsigned long index(quad_end) ; index < end ; ++index)
             {
                 h[index] = f_0[index] + f_1[index] + f_2[index] + f_3[index] + f_4[index] +
                     f_5[index] + f_6[index] + f_7[index] + f_8[index];
 
-                u[index] = (distribution_x[0] * f_0[index] +
-                        distribution_x[1] * f_1[index] +
-                        distribution_x[2] * f_2[index] +
-                        distribution_x[3] * f_3[index] +
-                        distribution_x[4] * f_4[index] +
-                        distribution_x[5] * f_5[index] +
-                        distribution_x[6] * f_6[index] +
-                        distribution_x[7] * f_7[index] +
-                        distribution_x[8] * f_8[index]) / h[index];
+                if(h[index] < lax_lower || h[index] > lax_upper)
+                {
+                    u[index] = (distribution_x[0] * f_0[index] +
+                            distribution_x[1] * f_1[index] +
+                            distribution_x[2] * f_2[index] +
+                            distribution_x[3] * f_3[index] +
+                            distribution_x[4] * f_4[index] +
+                            distribution_x[5] * f_5[index] +
+                            distribution_x[6] * f_6[index] +
+                            distribution_x[7] * f_7[index] +
+                            distribution_x[8] * f_8[index]) / h[index];
 
-                v[index] = (distribution_y[0] * f_0[index] +
-                        distribution_y[1] * f_1[index] +
-                        distribution_y[2] * f_2[index] +
-                        distribution_y[3] * f_3[index] +
-                        distribution_y[4] * f_4[index] +
-                        distribution_y[5] * f_5[index] +
-                        distribution_y[6] * f_6[index] +
-                        distribution_y[7] * f_7[index] +
-                        distribution_y[8] * f_8[index]) / h[index];
+                    v[index] = (distribution_y[0] * f_0[index] +
+                            distribution_y[1] * f_1[index] +
+                            distribution_y[2] * f_2[index] +
+                            distribution_y[3] * f_3[index] +
+                            distribution_y[4] * f_4[index] +
+                            distribution_y[5] * f_5[index] +
+                            distribution_y[6] * f_6[index] +
+                            distribution_y[7] * f_7[index] +
+                            distribution_y[8] * f_8[index]) / h[index];
+                }
+                else
+                {
+                    h[index] = 0;
+                    u[index] = 0;
+                    v[index] = 0;
+                }
+                h[index] = std::max(float(0), std::min(float(1), h[index]));
             }
 
 
@@ -119,7 +143,7 @@ namespace honei
                 double * h, double * u, double * v,
                 double * f_0, double * f_1, double * f_2,
                 double * f_3, double * f_4, double * f_5,
-                double * f_6, double * f_7, double * f_8)
+                double * f_6, double * f_7, double * f_8, double epsilon)
         {
             //unsigned long size(end - begin);
 
@@ -137,55 +161,78 @@ namespace honei
                 quad_start = begin;
             }
 
+            double lax_upper(epsilon);
+            double lax_lower(-lax_upper);
             for (unsigned long index(begin) ; index < quad_start ; ++index)
             {
                 h[index] = f_0[index] + f_1[index] + f_2[index] + f_3[index] + f_4[index] +
                     f_5[index] + f_6[index] + f_7[index] + f_8[index];
 
-                u[index] = (distribution_x[0] * f_0[index] +
-                        distribution_x[1] * f_1[index] +
-                        distribution_x[2] * f_2[index] +
-                        distribution_x[3] * f_3[index] +
-                        distribution_x[4] * f_4[index] +
-                        distribution_x[5] * f_5[index] +
-                        distribution_x[6] * f_6[index] +
-                        distribution_x[7] * f_7[index] +
-                        distribution_x[8] * f_8[index]) / h[index];
+                if(h[index] < lax_lower || h[index] > lax_upper)
+                {
+                    u[index] = (distribution_x[0] * f_0[index] +
+                            distribution_x[1] * f_1[index] +
+                            distribution_x[2] * f_2[index] +
+                            distribution_x[3] * f_3[index] +
+                            distribution_x[4] * f_4[index] +
+                            distribution_x[5] * f_5[index] +
+                            distribution_x[6] * f_6[index] +
+                            distribution_x[7] * f_7[index] +
+                            distribution_x[8] * f_8[index]) / h[index];
 
-                v[index] = (distribution_y[0] * f_0[index] +
-                        distribution_y[1] * f_1[index] +
-                        distribution_y[2] * f_2[index] +
-                        distribution_y[3] * f_3[index] +
-                        distribution_y[4] * f_4[index] +
-                        distribution_y[5] * f_5[index] +
-                        distribution_y[6] * f_6[index] +
-                        distribution_y[7] * f_7[index] +
-                        distribution_y[8] * f_8[index]) / h[index];
+                    v[index] = (distribution_y[0] * f_0[index] +
+                            distribution_y[1] * f_1[index] +
+                            distribution_y[2] * f_2[index] +
+                            distribution_y[3] * f_3[index] +
+                            distribution_y[4] * f_4[index] +
+                            distribution_y[5] * f_5[index] +
+                            distribution_y[6] * f_6[index] +
+                            distribution_y[7] * f_7[index] +
+                            distribution_y[8] * f_8[index]) / h[index];
+                }
+                else
+                {
+                    h[index] = 0;
+                    u[index] = 0;
+                    v[index] = 0;
+                }
+                h[index] = std::max(double(0), std::min(double(1), h[index]));
             }
+
             for (unsigned long index(quad_end) ; index < end ; ++index)
             {
                 h[index] = f_0[index] + f_1[index] + f_2[index] + f_3[index] + f_4[index] +
                     f_5[index] + f_6[index] + f_7[index] + f_8[index];
 
-                u[index] = (distribution_x[0] * f_0[index] +
-                        distribution_x[1] * f_1[index] +
-                        distribution_x[2] * f_2[index] +
-                        distribution_x[3] * f_3[index] +
-                        distribution_x[4] * f_4[index] +
-                        distribution_x[5] * f_5[index] +
-                        distribution_x[6] * f_6[index] +
-                        distribution_x[7] * f_7[index] +
-                        distribution_x[8] * f_8[index]) / h[index];
+                if(h[index] < lax_lower || h[index] > lax_upper)
+                {
+                    u[index] = (distribution_x[0] * f_0[index] +
+                            distribution_x[1] * f_1[index] +
+                            distribution_x[2] * f_2[index] +
+                            distribution_x[3] * f_3[index] +
+                            distribution_x[4] * f_4[index] +
+                            distribution_x[5] * f_5[index] +
+                            distribution_x[6] * f_6[index] +
+                            distribution_x[7] * f_7[index] +
+                            distribution_x[8] * f_8[index]) / h[index];
 
-                v[index] = (distribution_y[0] * f_0[index] +
-                        distribution_y[1] * f_1[index] +
-                        distribution_y[2] * f_2[index] +
-                        distribution_y[3] * f_3[index] +
-                        distribution_y[4] * f_4[index] +
-                        distribution_y[5] * f_5[index] +
-                        distribution_y[6] * f_6[index] +
-                        distribution_y[7] * f_7[index] +
-                        distribution_y[8] * f_8[index]) / h[index];
+                    v[index] = (distribution_y[0] * f_0[index] +
+                            distribution_y[1] * f_1[index] +
+                            distribution_y[2] * f_2[index] +
+                            distribution_y[3] * f_3[index] +
+                            distribution_y[4] * f_4[index] +
+                            distribution_y[5] * f_5[index] +
+                            distribution_y[6] * f_6[index] +
+                            distribution_y[7] * f_7[index] +
+                            distribution_y[8] * f_8[index]) / h[index];
+                }
+                else
+                {
+                    h[index] = 0;
+                    u[index] = 0;
+                    v[index] = 0;
+                }
+                h[index] = std::max(double(0), std::min(double(1), h[index]));
             }
 
 

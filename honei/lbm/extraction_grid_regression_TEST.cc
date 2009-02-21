@@ -79,7 +79,7 @@ class ExtractionGridRegressionTest :
             solver.do_preprocessing();
             solver.solve();
 
-            ExtractionGrid<Tag_, lbm_applications::LABSWE>::value(info, data);
+            ExtractionGrid<Tag_, lbm_applications::LABSWE>::value(info, data, DataType_(10e-5));
 
             //Standard solver using tags::CPU:
             unsigned long g_h_standard(50);
@@ -117,7 +117,7 @@ class ExtractionGridRegressionTest :
             solver_standard.do_preprocessing();
             solver_standard.solve();
 
-            ExtractionGrid<tags::CPU, lbm_applications::LABSWE>::value(info_standard, data_standard);
+            ExtractionGrid<tags::CPU, lbm_applications::LABSWE>::value(info_standard, data_standard, DataType_(10e-5));
 
 
             //Compare results of both solvers:

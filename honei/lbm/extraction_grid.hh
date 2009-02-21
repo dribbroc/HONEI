@@ -49,7 +49,7 @@ namespace honei
         {
             public:
                 template<typename DT_>
-                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
+                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data, DT_ epsilon)
                     {
                         CONTEXT("When extracting h, u and v:");
 
@@ -83,7 +83,7 @@ namespace honei
                         data.u->lock(lm_write_only);
                         data.v->lock(lm_write_only);
 
-                        DT_ lax_upper(10e-5/*std::numeric_limits<DT_>::epsilon() * 10e7*/);
+                        DT_ lax_upper(epsilon /*10e-5 std::numeric_limits<DT_>::epsilon() * 10e7*/);
                         DT_ lax_lower(-lax_upper);
 
                         for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
@@ -192,24 +192,16 @@ namespace honei
         struct ExtractionGrid<tags::GPU::CUDA, lbm_applications::LABSWE>
         {
             public:
-                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data)
-                {
-                    ExtractionGrid<tags::CPU, lbm_applications::LABSWE>::value(info, data);
-                }
+                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float epsilon);
         };
 
     template<>
         struct ExtractionGrid<tags::CPU::SSE, lbm_applications::LABSWE>
         {
             public:
-                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data)
-                    {
-                        ExtractionGrid<tags::CPU, lbm_applications::LABSWE>::value(info, data);
-                    }
-                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data)
-                    {
-                        ExtractionGrid<tags::CPU, lbm_applications::LABSWE>::value(info, data);
-                    }
+                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float epsilon);
+
+                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data, double epsilon);
         };
 }
 #endif

@@ -130,7 +130,7 @@ class SolverLABSWEGridRegressionTest :
                         std::cout << "(" << i << " , " << j << ")" << std::endl;
                         std::cout << (*grid.h)(i , j) << " " << (*grid_standard.h)(i , j) << std::endl;
 #endif
-                        TEST_CHECK_EQUAL_WITHIN_EPS((*grid.h)(i , j) , (*grid_standard.h)(i , j), std::numeric_limits<DataType_>::epsilon());
+                        TEST_CHECK_EQUAL_WITHIN_EPS((*grid.h)(i , j) , (*grid_standard.h)(i , j), std::numeric_limits<DataType_>::epsilon() * 2e2);
                     }
                 }
 
@@ -151,7 +151,7 @@ class SolverLABSWEGridRegressionTest :
 
                 Difference<tags::CPU>::value(result_grid, result_standard);
                 double l2 = Norm<vnt_l_two, false, tags::CPU>::value(result_grid);
-                TEST_CHECK_EQUAL_WITHIN_EPS(l2, DataType_(0.), std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS(l2, DataType_(0.), std::numeric_limits<DataType_>::epsilon() * 2);
 
                 std::cout << "L2 norm " << l2 << std::endl;
             }

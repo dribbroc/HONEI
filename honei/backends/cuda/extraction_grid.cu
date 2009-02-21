@@ -31,7 +31,7 @@ namespace honei
                 float * f_temp_3, float * f_temp_4, float * f_temp_5,
                 float * f_temp_6, float * f_temp_7, float * f_temp_8,
                 float * h, float * u, float * v,
-                float * distribution_x_data, float * distribution_y_data,
+                float * distribution_x_data, float * distribution_y_data, float epsilon,
                 unsigned long offset, unsigned long size)
         {
             extern __shared__ float  distribution_cache[];
@@ -71,25 +71,38 @@ namespace honei
                     f_7[i] +
                     f_8[i];
 
-                u[i] = (distribution_x[0] * f_0[i] +
-                        distribution_x[1] * f_1[i] +
-                        distribution_x[2] * f_2[i] +
-                        distribution_x[3] * f_3[i] +
-                        distribution_x[4] * f_4[i] +
-                        distribution_x[5] * f_5[i] +
-                        distribution_x[6] * f_6[i] +
-                        distribution_x[7] * f_7[i] +
-                        distribution_x[8] * f_8[i]) / h[i];
+                float lax_upper(epsilon);
+                float lax_lower(-lax_upper);
 
-                v[i] = (distribution_y[0] * f_0[i] +
-                        distribution_y[1] * f_1[i] +
-                        distribution_y[2] * f_2[i] +
-                        distribution_y[3] * f_3[i] +
-                        distribution_y[4] * f_4[i] +
-                        distribution_y[5] * f_5[i] +
-                        distribution_y[6] * f_6[i] +
-                        distribution_y[7] * f_7[i] +
-                        distribution_y[8] * f_8[i]) / h[i];
+                if(h[i] < lax_lower || h[i] > lax_upper)
+                {
+                    u[i] = (distribution_x[0] * f_0[i] +
+                            distribution_x[1] * f_1[i] +
+                            distribution_x[2] * f_2[i] +
+                            distribution_x[3] * f_3[i] +
+                            distribution_x[4] * f_4[i] +
+                            distribution_x[5] * f_5[i] +
+                            distribution_x[6] * f_6[i] +
+                            distribution_x[7] * f_7[i] +
+                            distribution_x[8] * f_8[i]) / h[i];
+
+                    v[i] = (distribution_y[0] * f_0[i] +
+                            distribution_y[1] * f_1[i] +
+                            distribution_y[2] * f_2[i] +
+                            distribution_y[3] * f_3[i] +
+                            distribution_y[4] * f_4[i] +
+                            distribution_y[5] * f_5[i] +
+                            distribution_y[6] * f_6[i] +
+                            distribution_y[7] * f_7[i] +
+                            distribution_y[8] * f_8[i]) / h[i];
+                }
+                else
+                {
+                    h[i] = 0;
+                    u[i] = 0;
+                    v[i] = 0;
+                }
+                h[i] = max(float(0), min(float(1), h[i]));
             }
         }
     }
@@ -104,7 +117,7 @@ extern "C" void cuda_extraction_grid_float(
         void * f_temp_3, void * f_temp_4, void * f_temp_5,
         void * f_temp_6, void * f_temp_7, void * f_temp_8,
         void * h, void * u, void * v,
-        void * distribution_x, void * distribution_y,
+        void * distribution_x, void * distribution_y, float epsilon,
         unsigned long blocksize)
 {
     unsigned long size(end - start);
@@ -146,7 +159,7 @@ extern "C" void cuda_extraction_grid_float(
             f_temp_0_gpu, f_temp_1_gpu, f_temp_2_gpu, f_temp_3_gpu, f_temp_4_gpu,
             f_temp_5_gpu, f_temp_6_gpu, f_temp_7_gpu, f_temp_8_gpu,
             h_gpu, u_gpu, v_gpu,
-            distribution_x_gpu, distribution_y_gpu,
+            distribution_x_gpu, distribution_y_gpu, epsilon,
             start, size);
 
     CUDA_ERROR();
