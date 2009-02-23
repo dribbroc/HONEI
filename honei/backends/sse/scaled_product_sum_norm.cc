@@ -116,5 +116,33 @@ namespace honei {
 
             return result;
         }
+
+        float scaled_product_sum_norm(unsigned long size, float a, float * y, float b, float * ll, float * ld, float * lu, float * dl, float * dd, float * du, float * ul, float * ud, float * uu, float * x)
+        {
+
+            union sse4
+            {
+                __m128 m;
+                float f[4];
+            } m1, m2, m3, m4, m5;
+
+            float result(0);
+
+            return result;
+        }
+
+        double scaled_product_sum_norm(unsigned long size, double a, double * y, double b, double * ll, double * ld, double * lu, double * dl, double * dd, double * du, double * ul, double * ud, double * uu, double * x)
+        {
+
+            union sse2
+            {
+                __m128d m;
+                double f[2];
+            } m1, m2, m3, m4, m5;
+
+            double result(0);
+
+            return result;
+        }
     }
 }

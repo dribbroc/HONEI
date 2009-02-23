@@ -61,6 +61,8 @@ namespace honei
 
         float scaled_product_sum_norm(unsigned long size, float a, float * y, float b, float * A_x);
         double scaled_product_sum_norm(unsigned long size, double a, double * y, double b, double * A_x);
+        float scaled_product_sum_norm(unsigned long size, float a, float * y, float b, float * ll, float * ld, float * lu, float * dl, float * dd, float * du, float * ul, float * ud, float * uu, float * x);
+        double scaled_product_sum_norm(unsigned long size, double a, double * y, double b, double * ll, double * ld, double * lu, double * dl, double * dd, double * du, double * ul, double * ud, double * uu, double * x);
 
         void scaled_sum(float * x, const float * y, float b, unsigned long size);
         void scaled_sum(double * x, const double * y, double b, unsigned long size);

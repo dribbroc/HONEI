@@ -70,7 +70,26 @@ namespace honei
 
     //Fully optimized version
     template<typename Tag_>
-        struct ScaledProductSumNorm;
+        struct ScaledProductSumNorm
+        {
+            template<typename DataType_>
+                static inline DataType_ value(DataType_ alpha,
+                                              DenseVector<DataType_> & y,
+                                              DataType_ beta,
+                                              BandedMatrixQ1<DataType_> & A,
+                                              DenseVector<DataType_> & x)
+                {
+                    ScaledProductSumNorm_TUTORIAL<Tag_>::value(alpha, y, beta, A, x);
+                }
+        };
+
+    template<>
+        struct ScaledProductSumNorm<tags::CPU::SSE>
+        {
+            static float value(float a, DenseVector<float> & y, float b, BandedMatrixQ1<float> & A, DenseVector<float> & x);
+            static double value(double a, DenseVector<double> & y, double b, BandedMatrixQ1<double> & A, DenseVector<double> & x);
+        };
+
 }
 
 #endif
