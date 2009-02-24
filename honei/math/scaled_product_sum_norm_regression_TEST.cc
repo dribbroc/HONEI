@@ -64,3 +64,41 @@ class SPSNormRegressionTest:
 SPSNormRegressionTest<tags::CPU::SSE, float> spsnorm_regr_test_sse_float("float", 10000);
 SPSNormRegressionTest<tags::CPU::SSE, double> spsnorm_regr_test_sse_double("double", 10000);
 #endif
+
+
+template <typename Tag_, typename DT_>
+class SPSNormOptRegressionTest:
+    public BaseTest
+{
+    private:
+        unsigned long _size;
+    public:
+        SPSNormOptRegressionTest(const std::string & tag, unsigned long size) :
+            BaseTest("ScaledProductSumNorm regression test<" + tag + ">")
+    {
+        register_tag(Tag_::name);
+        this->_size = size;
+    }
+
+        virtual void run() const
+        {
+            DenseVector<DT_> x(_size, DT_(1.12345));
+            DenseVector<DT_> y(_size, DT_(0.23456));
+
+            DenseVector<DT_> non_diag(x.copy());
+            DenseVector<DT_> diag(y.copy());
+
+            BandedMatrixQ1<DT_> A(_size, non_diag, non_diag, non_diag, non_diag, diag, non_diag, non_diag, non_diag, non_diag);
+
+
+            DT_ result_cpu = ScaledProductSumNorm<tags::CPU>::value(DT_(1.234), y, DT_(0.1234), A, x);
+            DT_ result_sse = ScaledProductSumNorm<Tag_>::value(DT_(1.234), y, DT_(0.1234), A, x);
+
+            std::cout << "result_cpu: " << result_cpu << std::endl;
+            std::cout << "result_" << Tag_::name <<": " << result_sse << std::endl;
+            TEST_CHECK_EQUAL_WITHIN_EPS(result_cpu, result_sse, std::numeric_limits<float>::epsilon() *_size * 6500);
+        }
+};
+#ifdef HONEI_SSE
+SPSNormOptRegressionTest<tags::CPU::SSE, float> spsnorm_regr_test_sse_opt_float("float", 10000);
+#endif

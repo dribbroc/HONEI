@@ -79,7 +79,7 @@ namespace honei
                                               BandedMatrixQ1<DataType_> & A,
                                               DenseVector<DataType_> & x)
                 {
-                    ScaledProductSumNorm_TUTORIAL<Tag_>::value(alpha, y, beta, A, x);
+                    return ScaledProductSumNorm_TUTORIAL<Tag_>::value(alpha, y, beta, A, x);
                 }
         };
 
