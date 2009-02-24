@@ -566,7 +566,7 @@ namespace honei
             }
 
             template<typename DT1_>
-                static inline BenchmarkInfo get_benchmark_info(PackedGridData<D2Q9, DT1_> * data, PackedGridInfo<D2Q9> * info)
+                static inline BenchmarkInfo get_benchmark_info(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT1_> * data)
                 {
                     BenchmarkInfo result;
                     result.flops = data->h->size() * 14 + 8 * data->h->size() * 28;
@@ -837,7 +837,7 @@ namespace honei
             }
 
             template<typename DT1_>
-                static inline BenchmarkInfo get_benchmark_info(PackedGridData<D2Q9, DT1_> * data, PackedGridInfo<D2Q9> * info)
+            static inline BenchmarkInfo get_benchmark_info(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT1_> * data)
                 {
                     // \todo Insert real data
                     BenchmarkInfo result;
@@ -860,12 +860,12 @@ namespace honei
             }
 
             template<typename DT1_>
-                static inline BenchmarkInfo get_benchmark_info(PackedGridData<D2Q9, DT1_> * data, PackedGridInfo<D2Q9> * info)
+                static inline BenchmarkInfo get_benchmark_info(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT1_> * data)
                 {
                     BenchmarkInfo result;
-                    BenchmarkInfo f1(ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::get_benchmark_info(data, info));
+                    BenchmarkInfo f1(ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::get_benchmark_info(info, data));
                     result + f1;
-                    BenchmarkInfo f2(ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::get_benchmark_info(data, info));
+                    BenchmarkInfo f2(ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::get_benchmark_info(info, data));
                     result + f2;
                     result.size.push_back(data->h->size());
                     return result;

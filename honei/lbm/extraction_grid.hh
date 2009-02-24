@@ -177,7 +177,7 @@ namespace honei
                     }
 
             template<typename DT1_>
-                static inline BenchmarkInfo get_benchmark_info(PackedGridData<D2Q9, DT1_> * data, PackedGridInfo<D2Q9> * info)
+            static inline BenchmarkInfo get_benchmark_info(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT1_> * data)
                 {
                     BenchmarkInfo result;
                     result.flops = data->h->size() * 28;

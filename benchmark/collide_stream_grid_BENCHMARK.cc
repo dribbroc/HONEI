@@ -81,7 +81,7 @@ class CollideStreamGridBench :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLABSWEGrid<Tag_, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 1., 1., 1., 1.5);
+            SolverLABSWEGrid<Tag_, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&info, &data, 1., 1., 1., 1.5);
 
             solver.do_preprocessing();
 
@@ -100,7 +100,7 @@ class CollideStreamGridBench :
                         }
                         );
             }
-            BenchmarkInfo benchinfo(CollideStreamGrid<tags::CPU, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::get_benchmark_info(&data, &info));
+            BenchmarkInfo benchinfo(CollideStreamGrid<tags::CPU, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::get_benchmark_info(&info, &data));
             evaluate(benchinfo * 5);
         }
 };

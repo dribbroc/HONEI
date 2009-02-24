@@ -74,7 +74,7 @@ class UpateVelocityDirectionsGridRegressionTest :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLABSWEGrid<Tag_, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&data, &info, 0.01, 0.01, 0.005, 1.1);
+            SolverLABSWEGrid<Tag_, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&info, &data, 0.01, 0.01, 0.005, 1.1);
 
             solver.do_preprocessing();
             solver.solve();
@@ -112,7 +112,7 @@ class UpateVelocityDirectionsGridRegressionTest :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_standard, info_standard, data_standard);
 
-            SolverLABSWEGrid<tags::CPU, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver_standard(&data_standard, &info_standard, 0.01, 0.01, 0.005, 1.1);
+            SolverLABSWEGrid<tags::CPU, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver_standard(&info_standard, &data_standard, 0.01, 0.01, 0.005, 1.1);
 
             solver_standard.do_preprocessing();
             solver_standard.solve();
