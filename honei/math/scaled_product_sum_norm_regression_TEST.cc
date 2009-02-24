@@ -64,6 +64,9 @@ class SPSNormRegressionTest:
 SPSNormRegressionTest<tags::CPU::SSE, float> spsnorm_regr_test_sse_float("float", 10000);
 SPSNormRegressionTest<tags::CPU::SSE, double> spsnorm_regr_test_sse_double("double", 10000);
 #endif
+#ifdef HONEI_CUDA
+SPSNormRegressionTest<tags::GPU::CUDA, float> spsnorm_regr_test_cuda_float("float", 10000);
+#endif
 
 
 template <typename Tag_, typename DT_>

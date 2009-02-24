@@ -67,6 +67,11 @@ namespace honei
             static double value(double a, DenseVector<double> & y, double b, BandedMatrixQ1<double> & A, DenseVector<double> & x);
         };
 
+    template<>
+        struct ScaledProductSumNorm_TUTORIAL<tags::GPU::CUDA>
+        {
+            static float value(float a, DenseVector<float> & y, float b, BandedMatrixQ1<float> & A, DenseVector<float> & x);
+        };
 
     //Fully optimized version
     template<typename Tag_>

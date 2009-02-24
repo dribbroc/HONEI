@@ -28,6 +28,9 @@ cuda::product_bmdv_q1_float = 128
 cuda::scaled_sum_two_float = 128
 cuda::scaled_sum_three_float = 128
 
+cuda::spsn_float = 128
+cuda::spsn_float_grid = 16
+
 cuda::scale_one_float = 128
 
 cuda::sum_two_float = 128

@@ -42,6 +42,7 @@ libhoneibackendscuda_la_SOURCES = \
 				 restriction.cu \
 				 scale.cu \
 				 scaled_sum.cu \
+				 scaled_product_sum_norm.cu \
 				 sum.cu \
 				 transfer.cu \
 				 transfer.hh \
