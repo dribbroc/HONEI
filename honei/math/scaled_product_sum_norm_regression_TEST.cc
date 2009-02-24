@@ -101,4 +101,5 @@ class SPSNormOptRegressionTest:
 };
 #ifdef HONEI_SSE
 SPSNormOptRegressionTest<tags::CPU::SSE, float> spsnorm_regr_test_sse_opt_float("float", 10000);
+SPSNormOptRegressionTest<tags::CPU::SSE, double> spsnorm_regr_test_sse_opt_double("double", 10000);
 #endif

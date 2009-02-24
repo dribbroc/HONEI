@@ -121,13 +121,12 @@ namespace honei
         double * x_data = x.elements();
 
         //redirect the relevant data to the SSE backend
-        //double result(honei::sse::scaled_product_sum_norm(x.size(), A.root(), a, y_data, b, A_LL, A_LD, A_LU, A_DL, A_DD, A_DU, A_UL, A_UD, A_UU, x_data));
+        double result(honei::sse::scaled_product_sum_norm(x.size(), A.root(), a, y_data, b, A_LL, A_LD, A_LU, A_DL, A_DD, A_DU, A_UL, A_UD, A_UU, x_data));
 
         x.unlock(lm_read_only);
         y.unlock(lm_read_only);
         A.unlock(lm_read_only);
 
-        //return result;
-        return 0;
+        return result;
     }
 }
