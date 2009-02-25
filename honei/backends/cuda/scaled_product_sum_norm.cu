@@ -45,33 +45,6 @@ namespace honei
                 tmp[blockIdx.x * blocksize + threadIdx.x] += (A_x[pos] * b + y[pos] * a) * (A_x[pos] * b + y[pos] * a);
             }
         }
-
-        __global__ void scaled_product_sum_norm_opt_gpu(float a, float * y, float b,
-                float * ll, float * ld, float * lu,
-                float * dl, float * dd, float * du,
-                float * ul, float * ud, float * uu,
-                float * x,
-                float * tmp, unsigned long size, unsigned long blocksize, unsigned long m)
-        {
-            // calculate how many elements each thread needs to calculate
-            const unsigned long iter = size / (blockDim.x * gridDim.x);
-            unsigned long pos = blockIdx.x* blocksize + threadIdx.x;
-
-            // clear the output
-            tmp[blockIdx.x * blocksize + threadIdx.x] = 0;
-
-            for (unsigned long i = 0 ; i < iter ; ++i)
-            {
-                tmp[blockIdx.x * blocksize + threadIdx.x] += (A_x[pos] * b + y[pos] * a) * (A_x[pos] * b + y[pos] * a);
-                pos += blockDim.x * gridDim.x;
-            }
-
-            // for the last iteration, check if the elements are still available
-            if (pos < size)
-            {
-                tmp[blockIdx.x * blocksize + threadIdx.x] += (A_x[pos] * b + y[pos] * a) * (A_x[pos] * b + y[pos] * a);
-            }
-        }
     }
 }
 
