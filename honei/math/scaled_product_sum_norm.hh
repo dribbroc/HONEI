@@ -66,8 +66,8 @@ namespace honei
                 {
                     BenchmarkInfo result;
                     result.flops = 22 * vector.size();
-                    result.load = 11 * vector.size() * (sizeof(DT1_));
-                    result.store = 1;
+                    result.load = (11 * vector.size() + 2) * (sizeof(DT1_));
+                    result.store = 1 * sizeof(DT1_);
                     result.size.push_back(vector.size());
                     result.size.push_back(vector.size());
                     result.size.push_back(vector.size());
@@ -93,8 +93,8 @@ namespace honei
                 {
                     BenchmarkInfo result;
                     result.flops = 22 * vector.size();
-                    result.load = 11 * vector.size() * (sizeof(DT1_));
-                    result.store = 1;
+                    result.load = (11 * vector.size() + 2) * (sizeof(DT1_));
+                    result.store = 1 * sizeof(DT1_);
                     result.size.push_back(vector.size());
                     result.size.push_back(vector.size());
                     result.size.push_back(vector.size());
@@ -154,7 +154,7 @@ namespace honei
                 {
                     BenchmarkInfo result;
                     result.flops = 22 * vector.size();
-                    result.load = 11 * vector.size() * (sizeof(DT1_));
+                    result.load = (11 * vector.size() + 2) * (sizeof(DT1_));
                     result.store = 1;
                     result.size.push_back(vector.size());
                     result.size.push_back(vector.size());

@@ -73,8 +73,9 @@ class SPSNBench :
 SPSNBench<tags::CPU::SSE, float> spsn_opt_float_sse_0("SSE SPSN   Benchmark - vector size: 66049, float", 66049ul, 10);
 SPSNBench<tags::CPU::SSE, float> spsn_opt_float_sse_1("SSE SPSN   Benchmark - vector size: 263169, float", 263169ul, 10);
 SPSNBench<tags::CPU::SSE, float> spsn_opt_float_sse_2("SSE SPSN   Benchmark - vector size: 1050625, float", 1050625ul, 10);
-SPSNBench<tags::CPU::SSE, float> spsn_opt_float_sse_3("SSE SPSN   Benchmark - vector size: 4198401, float", 4198401ul, 10);
-SPSNBench<tags::CPU::SSE, float> spsn_opt_float_sse_4("SSE SPSN   Benchmark - vector size: 1.5 * 4198401, float", 1.5 * 4198401ul, 10);
+SPSNBench<tags::CPU::SSE, float> spsn_opt_float_sse_3("SSE SPSN   Benchmark - vector size: 4000000, float", 4000000ul, 10);
+SPSNBench<tags::CPU::SSE, float> spsn_opt_float_sse_4("SSE SPSN   Benchmark - vector size: 7500000, float", 7500000ul, 10);
+SPSNBench<tags::CPU::SSE, float> spsn_opt_float_sse_5("SSE SPSN   Benchmark - vector size: 8000000, float", 8000000ul, 10);
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -135,6 +136,7 @@ class SPSNBench_TUTORIAL :
 SPSNBench_TUTORIAL<tags::GPU::CUDA, float> spsn_tut_float_cuda_0("CUDA SPSN Benchmark - vector size: 66049, float", 66049ul, 10);
 SPSNBench_TUTORIAL<tags::GPU::CUDA, float> spsn_tut_float_cuda_1("CUDA SPSN Benchmark - vector size: 263169, float", 263169ul, 10);
 SPSNBench_TUTORIAL<tags::GPU::CUDA, float> spsn_tut_float_cuda_2("CUDA SPSN Benchmark - vector size: 1050625, float", 1050625ul, 10);
-SPSNBench_TUTORIAL<tags::GPU::CUDA, float> spsn_tut_float_cuda_3("CUDA SPSN Benchmark - vector size: 4198401, float", 4198401ul, 10);
-SPSNBench_TUTORIAL<tags::GPU::CUDA, float> spsn_tut_float_cuda_4("CUDA SPSN Benchmark - vector size: 1.5 * 4198401, float", 1.5 * 4198401ul, 10);
+SPSNBench_TUTORIAL<tags::GPU::CUDA, float> spsn_tut_float_cuda_3("CUDA SPSN Benchmark - vector size: 4000000, float", 4198401ul, 10);
+SPSNBench_TUTORIAL<tags::GPU::CUDA, float> spsn_tut_float_cuda_4("CUDA SPSN Benchmark - vector size: 7500000, float", 7500000ul, 10);
+SPSNBench_TUTORIAL<tags::GPU::CUDA, float> spsn_tut_float_cuda_5("CUDA SPSN Benchmark - vector size: 8000000, float", 8000000ul, 10);
 #endif
