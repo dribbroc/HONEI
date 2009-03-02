@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008, 2009 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  * Copyright (c) 2007, 2008 Sven Mallach <sven.mallach@honei.org>
  *
@@ -29,6 +29,7 @@
 #include <honei/util/profiler.hh>
 
 #include <list>
+#include <iostream>
 
 namespace honei
 {

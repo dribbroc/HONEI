@@ -52,11 +52,11 @@ class SPSNormRegressionTest:
 
 
             DT_ result_cpu = ScaledProductSumNorm_TUTORIAL<tags::CPU>::value(DT_(1.234), y, DT_(0.1234), A, x);
-            DT_ result_sse = ScaledProductSumNorm_TUTORIAL<Tag_>::value(DT_(1.234), y, DT_(0.1234), A, x);
+            DT_ result = ScaledProductSumNorm_TUTORIAL<Tag_>::value(DT_(1.234), y, DT_(0.1234), A, x);
 
             std::cout << "result_cpu: " << result_cpu << std::endl;
-            std::cout << "result_" << Tag_::name <<": " << result_sse << std::endl;
-            TEST_CHECK_EQUAL_WITHIN_EPS(result_cpu, result_sse, std::numeric_limits<float>::epsilon() *_size * 7000);
+            std::cout << "result_" << Tag_::name <<": " << result << std::endl;
+            TEST_CHECK_EQUAL_WITHIN_EPS(result_cpu, result, std::numeric_limits<float>::epsilon() *_size * 7000);
         }
 };
 
@@ -66,6 +66,9 @@ SPSNormRegressionTest<tags::CPU::SSE, double> spsnorm_regr_test_sse_double("doub
 #endif
 #ifdef HONEI_CUDA
 SPSNormRegressionTest<tags::GPU::CUDA, float> spsnorm_regr_test_cuda_float("float", 4225);
+#endif
+#ifdef HONEI_CELL
+SPSNormRegressionTest<tags::Cell, float> spsnorm_regr_test_cuda_float("float", 4225);
 #endif
 
 
@@ -95,11 +98,11 @@ class SPSNormOptRegressionTest:
 
 
             DT_ result_cpu = ScaledProductSumNorm<tags::CPU>::value(DT_(1.234), y, DT_(0.1234), A, x);
-            DT_ result_sse = ScaledProductSumNorm<Tag_>::value(DT_(1.234), y, DT_(0.1234), A, x);
+            DT_ result = ScaledProductSumNorm<Tag_>::value(DT_(1.234), y, DT_(0.1234), A, x);
 
             std::cout << "result_cpu: " << result_cpu << std::endl;
-            std::cout << "result_" << Tag_::name <<": " << result_sse << std::endl;
-            TEST_CHECK_EQUAL_WITHIN_EPS(result_cpu, result_sse, std::numeric_limits<float>::epsilon() *_size * 7000);
+            std::cout << "result_" << Tag_::name <<": " << result << std::endl;
+            TEST_CHECK_EQUAL_WITHIN_EPS(result_cpu, result, std::numeric_limits<float>::epsilon() *_size * 7000);
         }
 };
 #ifdef HONEI_SSE

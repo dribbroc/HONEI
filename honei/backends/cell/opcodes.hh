@@ -70,6 +70,7 @@ namespace honei
             oc_node_distance_float_wfr,
 
             // LibMath opcodes
+            oc_scaled_product_sum_norm_float,
             oc_sqrt_dense_float,
 
             // LibSWE opcodes

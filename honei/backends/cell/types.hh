@@ -34,7 +34,7 @@ namespace honei
             unsigned value;
         };
 
-        typedef void * EffectiveAddress;
+        typedef const void * EffectiveAddress;
 
 #elif defined(__SPU__)
 

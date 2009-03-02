@@ -30,7 +30,7 @@ namespace honei
         namespace implementation
         {
             vector float dot_product_dense_dense_float(const vector float & accumulator, vector float & b_carry, const vector float * a,
-                    const vector float * b, const unsigned size, const unsigned b_offset, const float optional_scalar)
+                    const vector float * b, unsigned size, unsigned b_offset, float, float)
             {
                 vector float acc = accumulator;
                 for (unsigned i(0) ; i < size ; ++i)

@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2008, 2009 Danny van Dyk <danny.dyk@uni-dortmund.de>
  *
  * This file is part of the Util C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -119,7 +119,7 @@ namespace honei
 
             /// Performs calculation on given blocks of data.
             vector float (*calculate)(const vector float & accumulator, vector float & carry, const vector float * a_elements,
-                    const vector float * b_elements, const unsigned size, const unsigned offset, const float optional_scalar);
+                    const vector float * b_elements, unsigned size, unsigned offset, float scalar1, float scalar2);
 
             /// Finishs the calculations and returns a sclar result suitable for mail transfer.
             float (*finish)(const vector float & accumulator);
@@ -135,7 +135,7 @@ namespace honei
 
             /// Performs calculation on given blocks of data.
             vector double (*calculate)(const vector double & accumulator, vector double & carry, const vector double * a_elements,
-                    const vector double * b_elements, const unsigned size, const unsigned offset, const double optional_scalar);
+                    const vector double * b_elements, unsigned size, unsigned offset, double scalar1, double scalar2);
 
             /// Finishs the calculations and returns a sclar result suitable for mail transfer.
             double (*finish)(const vector double & accumulator);
@@ -161,6 +161,19 @@ namespace honei
             void (*calculate)(vector double * a_elements, const vector double * b_elements, const vector double * c_elements,
                     const unsigned size, vector double & b_carry, const unsigned b_offset, vector double & c_carry,
                     const unsigned c_offset, const double optional_scalar);
+        };
+
+        template <> struct Operation<4, float, rtm_dma>
+        {
+            /// Our result type.
+            typedef void ResultType;
+
+            /// Performs initialization.
+            void (*init)(float scalar, vector float carry);
+
+            /// Performs calculation on given blocks of data.
+            void (*calculate)(vector float * result_elements, const vector float * a_elements, const vector float * b_elements,
+                    const vector float * c_elements, const unsigned size, float scalar);
         };
 
         /// \}
@@ -205,6 +218,8 @@ namespace honei
         template <> void operation<Operation<3, float, rtm_dma> >(const Operation<3, float, rtm_dma> & operation,
                 const Instruction & instruction);
 
+        template <> void operation<Operation<4, float, rtm_dma> >(const Operation<4, float, rtm_dma> & operation,
+                const Instruction & instruction);
         /// \}
 
         /// \name Utility functions often used by operations

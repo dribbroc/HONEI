@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2007, 2008, 2009 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  * Copyright (c) 2008 Sven Mallach <sven.mallach@honei.org>
  *
@@ -30,6 +30,8 @@
 #include <honei/util/private_implementation_pattern-impl.hh>
 
 #include <tr1/functional>
+
+#include <iostream>
 
 namespace honei
 {
@@ -301,7 +303,7 @@ SPEFrameworkInstruction<2, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
         instruction.b.u += (sizeof(DataType_) * ((16 / sizeof(DataType_)) - b_offset));
 
         // Transmit the first __vector__ following the elements calculated on PPU (b_carry on SPU)
-        Operand * dma_start(reinterpret_cast<Operand *>(instruction.b.ea));
+        const Operand * dma_start(reinterpret_cast<const Operand *>(instruction.b.ea));
         instruction.f = dma_start[-2];
         instruction.g = dma_start[-1];
 
@@ -342,7 +344,7 @@ template class SPEFrameworkInstruction<2, double, cell::rtm_dma>;
 
 template <typename DataType_>
 SPEFrameworkInstruction<2, DataType_, cell::rtm_mail>::SPEFrameworkInstruction(const OpCode opcode, DataType_ * result, DataType_ * a_elements,
-        DataType_ * b_elements, const unsigned size, const DataType_ scalar) :
+        DataType_ * b_elements, const unsigned size, DataType_ scalar1, DataType_ scalar2) :
     SPEInstruction(opcode, 16384, result, a_elements, b_elements),
     _use_spe(true)
 {
@@ -369,10 +371,11 @@ SPEFrameworkInstruction<2, DataType_, cell::rtm_mail>::SPEFrameworkInstruction(c
         instruction.c.u += (sizeof(DataType_) * ((16 / sizeof(DataType_)) - b_offset));
 
         // Transmit the first __vector__ following the elements calculated on PPU (b_carry on SPU)
-        Operand * dma_start(reinterpret_cast<Operand *>(instruction.c.ea));
+        const Operand * dma_start(reinterpret_cast<const Operand *>(instruction.c.ea));
         instruction.g = dma_start[-2];
         instruction.h = dma_start[-1];
-        instruction.i = Operand(scalar);
+        instruction.i = Operand(scalar1);
+        instruction.j = Operand(scalar2);
 
         // Subtract PPU-calculated parts from size.
         instruction.d.u = (size - skip) / (16384 / sizeof(DataType_));
@@ -493,6 +496,38 @@ SPEFrameworkInstruction<3, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
 }
 template class SPEFrameworkInstruction<3, float, cell::rtm_dma>;
 template class SPEFrameworkInstruction<3, double, cell::rtm_dma>;
+
+template <typename DataType_>
+SPEFrameworkInstruction<4, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(const OpCode opcode,
+        DataType_ * a_elements, const DataType_ * b_elements, const DataType_ * c_elements,
+        const DataType_ * d_elements, const unsigned size, const DataType_ & scalar, const DataType_ * carry) :
+    SPEInstruction(opcode, 16384, a_elements, b_elements, c_elements, d_elements), _use_spe(true)
+{
+    Instruction & instruction(_imp->instruction);
+
+    std::cout << "SPEFwInst: instruction.size = " << instruction.size << std::endl;
+
+    instruction.e.u = (size * sizeof(DataType_) / 16384);
+    instruction.f.u = intern::multiple_of_sixteen(size * sizeof(DataType_) % 16384);
+    instruction.g = *(reinterpret_cast<const Operand *>(&scalar));
+    instruction.h.u = 0;
+    instruction.i.u = 0;
+
+    if (instruction.f.u > 0)
+        ++instruction.e.u;
+
+    if (carry)
+    {
+        const Operand * c(reinterpret_cast<const Operand *>(carry));
+        instruction.h = c[0];
+        instruction.i = c[1];
+    }
+
+    _begin_transfers = 0;
+    _end_transfers = 0;
+    _use_spe = false;
+}
+template class SPEFrameworkInstruction<4, float, cell::rtm_dma>;
 
 namespace honei
 {

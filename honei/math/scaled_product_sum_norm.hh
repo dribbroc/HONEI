@@ -88,6 +88,12 @@ namespace honei
             static float value(float a, DenseVector<float> & y, float b, BandedMatrixQ1<float> & A, DenseVector<float> & x);
         };
 
+    template<>
+        struct ScaledProductSumNorm_TUTORIAL<tags::Cell>
+        {
+            static float value(float a, DenseVector<float> & y, float b, BandedMatrixQ1<float> & A, DenseVector<float> & x);
+        };
+
     //Fully optimized version
     template<typename Tag_>
         struct ScaledProductSumNorm

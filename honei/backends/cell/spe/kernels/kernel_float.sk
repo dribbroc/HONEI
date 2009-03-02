@@ -31,6 +31,7 @@ void            node_distance_float_wkk                     node_distance_float_
 
 # LibMath Operations
 ####################
+dword           scaled_product_sum_norm_float
 void            sqrt_dense_float
 
 # LibSWE Operations

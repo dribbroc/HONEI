@@ -48,7 +48,8 @@ namespace honei
             unsigned nextsize;
             unsigned current(0), next(1);
 
-            double scalar = instruction.i.d;
+            double scalar1 = instruction.i.d;
+            double scalar2 = instruction.j.d;
 
             unsigned offset(instruction.f.u);
 
@@ -74,7 +75,7 @@ namespace honei
                 mfc_read_tag_status_all();
 
                 accumulator = operation.calculate(accumulator, carry, a[current].vectorised, b[current].vectorised,
-                        size / sizeof(vector double), offset, scalar);
+                        size / sizeof(vector double), offset, scalar1, scalar2);
 
                 --counter;
 
@@ -89,7 +90,7 @@ namespace honei
             mfc_read_tag_status_all();
 
             accumulator = operation.calculate(accumulator, carry, a[current].vectorised, b[current].vectorised,
-                    size / sizeof(vector double), offset, scalar);
+                    size / sizeof(vector double), offset, scalar1, scalar2);
             release_all_blocks();
 
             MailableResult<double> result = { operation.finish(accumulator) };

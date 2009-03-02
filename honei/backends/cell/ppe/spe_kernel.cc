@@ -164,7 +164,7 @@ namespace honei
                                         Lock ll(*imp->mutex);
 
                                         spe_out_mbox_read(spe->context(),
-                                                reinterpret_cast<unsigned int *>(imp->instructions[imp->spe_instruction_index].a.ea), 1);
+                                                reinterpret_cast<unsigned int *>(const_cast<void *>(imp->instructions[imp->spe_instruction_index].a.ea)), 1);
                                     }
                                     continue;
 
@@ -174,7 +174,7 @@ namespace honei
                                         Lock ll(*imp->mutex);
 
                                         spe_out_mbox_read(imp->spe->context(),
-                                                reinterpret_cast<unsigned int *>(imp->instructions[imp->spe_instruction_index].a.ea), 2);
+                                                reinterpret_cast<unsigned int *>(const_cast<void *>(imp->instructions[imp->spe_instruction_index].a.ea)), 2);
                                     }
                                     continue;
 

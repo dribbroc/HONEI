@@ -243,6 +243,9 @@ Q1MatrixDenseVectorProductTest<tags::CPU::SSE, double> sse_q1_prod_test_double("
 #ifdef HONEI_CUDA
 Q1MatrixDenseVectorProductTest<tags::GPU::CUDA, float> cuda_q1_prod_test_float("float");
 #endif
+#ifdef HONEI_CELL
+Q1MatrixDenseVectorProductTest<tags::Cell, float> cell_q1_prod_test_float("float");
+#endif
 
 template <typename Tag_, typename DataType_>
 class Q1MatrixDenseVectorProductQuickTest :

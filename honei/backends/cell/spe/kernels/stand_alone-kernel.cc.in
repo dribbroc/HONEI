@@ -99,6 +99,7 @@ int main(unsigned long long spe_id, EffectiveAddress argp, EffectiveAddress envp
 
                 default:
                     spu_write_out_intr_mbox(km_unknown_opcode);
+                    retval = 0;
                     spu_stop(0);
             }
         }
