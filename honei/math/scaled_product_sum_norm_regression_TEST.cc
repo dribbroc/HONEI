@@ -56,16 +56,16 @@ class SPSNormRegressionTest:
 
             std::cout << "result_cpu: " << result_cpu << std::endl;
             std::cout << "result_" << Tag_::name <<": " << result_sse << std::endl;
-            TEST_CHECK_EQUAL_WITHIN_EPS(result_cpu, result_sse, std::numeric_limits<float>::epsilon() *_size * 3000);
+            TEST_CHECK_EQUAL_WITHIN_EPS(result_cpu, result_sse, std::numeric_limits<float>::epsilon() *_size * 7000);
         }
 };
 
 #ifdef HONEI_SSE
-SPSNormRegressionTest<tags::CPU::SSE, float> spsnorm_regr_test_sse_float("float", 10000);
-SPSNormRegressionTest<tags::CPU::SSE, double> spsnorm_regr_test_sse_double("double", 10000);
+SPSNormRegressionTest<tags::CPU::SSE, float> spsnorm_regr_test_sse_float("float", 4225);
+SPSNormRegressionTest<tags::CPU::SSE, double> spsnorm_regr_test_sse_double("double", 4225);
 #endif
 #ifdef HONEI_CUDA
-SPSNormRegressionTest<tags::GPU::CUDA, float> spsnorm_regr_test_cuda_float("float", 10000);
+SPSNormRegressionTest<tags::GPU::CUDA, float> spsnorm_regr_test_cuda_float("float", 4225);
 #endif
 
 
@@ -99,10 +99,10 @@ class SPSNormOptRegressionTest:
 
             std::cout << "result_cpu: " << result_cpu << std::endl;
             std::cout << "result_" << Tag_::name <<": " << result_sse << std::endl;
-            TEST_CHECK_EQUAL_WITHIN_EPS(result_cpu, result_sse, std::numeric_limits<float>::epsilon() *_size * 6500);
+            TEST_CHECK_EQUAL_WITHIN_EPS(result_cpu, result_sse, std::numeric_limits<float>::epsilon() *_size * 7000);
         }
 };
 #ifdef HONEI_SSE
-SPSNormOptRegressionTest<tags::CPU::SSE, float> spsnorm_regr_test_sse_opt_float("float", 10000);
-SPSNormOptRegressionTest<tags::CPU::SSE, double> spsnorm_regr_test_sse_opt_double("double", 10000);
+SPSNormOptRegressionTest<tags::CPU::SSE, float> spsnorm_regr_test_sse_opt_float("float", 4225);
+SPSNormOptRegressionTest<tags::CPU::SSE, double> spsnorm_regr_test_sse_opt_double("double", 4225);
 #endif
