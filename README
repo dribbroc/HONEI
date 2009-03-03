@@ -8,7 +8,7 @@ INSTALLING
 * Decompress and untar the honei archive.
 * Run './configure' in the untarred honei archive's top-level directory.
 * Run 'make' to build all libraries and applications.
-* Optionally run 'make check TYPE=quick'.
+* Optionally run 'make check'.
 
 To adapt the honei installation to your system's features, you can pass
 several parameters to the configure script.
@@ -78,6 +78,9 @@ the configure stage than just passing --enable-XYZ:
   SSE+CUDA, all applications, "generic SSE": ./configure --enable-sse --enable-cuda --with-visual CXXFLAGS="-msse2 -mfpmath=sse -I$CUDA_INC_PATH" LDFLAGS="-L$CUDA_LIB_PATH"
 
   Cell only: ./configure --enable-cell CXXFLAGS="-O2 -fno-inline" CC=ppu-gcc CXX=ppu-g++ LD=ppu-ld
+
+  To run tests only for a specific backend type 'make check BACKENDS=backend' where backend can be cpu, sse, cell or cuda.
+  For example a CUDA only test run would be started with 'make check BACKENDS=cuda'.
 
 
 APPLICATIONS
