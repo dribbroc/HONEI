@@ -32,7 +32,7 @@ namespace honei
         //Still use HONEIs BandedMatrix-DenseVector product:
         DenseVector<float> A_x(Product<tags::CPU::SSE>::value(A, x));
 
-        //do not care about alignment, HONEI containers provide aligned data
+        //do not care about alignment, this HONEI containers provide aligned data
         float * A_x_data = A_x.elements();
         float * y_data = y.elements();
 

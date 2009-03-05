@@ -64,9 +64,8 @@ class SPSNBench :
                         }
                         );
             }
-            BenchmarkInfo info(ScaledProductSumNorm<Tag_>::get_benchmark_info(x));
+            BenchmarkInfo info(ScaledProductSumNorm<tags::CPU>::get_benchmark_info(x));
             evaluate(info * 10);
-            //evaluate();
         }
 };
 #ifdef HONEI_SSE
@@ -131,9 +130,8 @@ class SPSNBench_TUTORIAL :
                         }
                         );
             }
-            BenchmarkInfo info(ScaledProductSumNorm_TUTORIAL<Tag_>::get_benchmark_info(x));
+            BenchmarkInfo info(ScaledProductSumNorm_TUTORIAL<tags::CPU>::get_benchmark_info(x));
             evaluate(info * 10);
-            //evaluate();
         }
 };
 #ifdef HONEI_CUDA

@@ -44,17 +44,9 @@ namespace honei
                                               BandedMatrixQ1<DataType_> & A,
                                               DenseVector<DataType_> & x)
                 {
-                    y.lock(lm_read_only);
-                    A.lock(lm_read_only);
-                    x.lock(lm_read_only);
-
                     DenseVector<DataType_> result(y.copy());
                     Scale<Tag_>::value(result, alpha);
                     result = ScaledSum<Tag_>::value(result, Product<Tag_>::value(A , x), beta);
-
-                    y.unlock(lm_read_only);
-                    A.unlock(lm_read_only);
-                    x.unlock(lm_read_only);
 
                     return Norm<vnt_l_two, false, Tag_>::value(result);
 
@@ -88,52 +80,12 @@ namespace honei
         {
             static float value(float a, DenseVector<float> & y, float b, BandedMatrixQ1<float> & A, DenseVector<float> & x);
             static double value(double a, DenseVector<double> & y, double b, BandedMatrixQ1<double> & A, DenseVector<double> & x);
-            template <typename DT1_>
-                static inline BenchmarkInfo get_benchmark_info(const DenseVector<DT1_> & vector)
-                {
-                    BenchmarkInfo result;
-                    result.flops = 22 * vector.size();
-                    result.load = (11 * vector.size() + 2) * (sizeof(DT1_));
-                    result.store = 1 * sizeof(DT1_);
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    return result;
-                }
         };
 
     template<>
         struct ScaledProductSumNorm_TUTORIAL<tags::GPU::CUDA>
         {
             static float value(float a, DenseVector<float> & y, float b, BandedMatrixQ1<float> & A, DenseVector<float> & x);
-            template <typename DT1_>
-                static inline BenchmarkInfo get_benchmark_info(const DenseVector<DT1_> & vector)
-                {
-                    BenchmarkInfo result;
-                    result.flops = 22 * vector.size();
-                    result.load = (11 * vector.size() + 2) * (sizeof(DT1_));
-                    result.store = 1 * sizeof(DT1_);
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    return result;
-                }
         };
 
     //Fully optimized version
@@ -149,6 +101,7 @@ namespace honei
                 {
                     return ScaledProductSumNorm_TUTORIAL<Tag_>::value(alpha, y, beta, A, x);
                 }
+
             template <typename DT1_>
                 static inline BenchmarkInfo get_benchmark_info(const DenseVector<DT1_> & vector)
                 {
@@ -176,26 +129,6 @@ namespace honei
         {
             static float value(float a, DenseVector<float> & y, float b, BandedMatrixQ1<float> & A, DenseVector<float> & x);
             static double value(double a, DenseVector<double> & y, double b, BandedMatrixQ1<double> & A, DenseVector<double> & x);
-            template <typename DT1_>
-                static inline BenchmarkInfo get_benchmark_info(const DenseVector<DT1_> & vector)
-                {
-                    BenchmarkInfo result;
-                    result.flops = 22 * vector.size();
-                    result.load = (11 * vector.size() + 2) * (sizeof(DT1_));
-                    result.store = 1 * sizeof(DT1_);
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    result.size.push_back(vector.size());
-                    return result;
-                }
         };
 
 }

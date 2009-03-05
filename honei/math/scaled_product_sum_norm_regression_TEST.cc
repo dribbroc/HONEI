@@ -77,7 +77,7 @@ class SPSNormOptRegressionTest:
         unsigned long _size;
     public:
         SPSNormOptRegressionTest(const std::string & tag, unsigned long size) :
-            BaseTest("ScaledProductSumNorm regression test<" + tag + ">")
+            BaseTest("ScaledProductSumNormOpt regression test<" + tag + ">")
     {
         register_tag(Tag_::name);
         this->_size = size;
