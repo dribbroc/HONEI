@@ -25,12 +25,12 @@ namespace honei
 {
     float ScaledProductSumNorm_TUTORIAL<tags::CPU::SSE>::value(float a, DenseVector<float> & y, float b, BandedMatrixQ1<float> & A, DenseVector<float> & x)
     {
+        //Still use HONEIs BandedMatrix-DenseVector product:
+        DenseVector<float> A_x(Product<tags::CPU::SSE>::value(A, x));
+
         x.lock(lm_read_only);
         y.lock(lm_read_only);
         A.lock(lm_read_only);
-
-        //Still use HONEIs BandedMatrix-DenseVector product:
-        DenseVector<float> A_x(Product<tags::CPU::SSE>::value(A, x));
 
         //do not care about alignment, this HONEI containers provide aligned data
         float * A_x_data = A_x.elements();
