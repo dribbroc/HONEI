@@ -41,7 +41,7 @@ BACKEND_LIBS += \
 endif
 
 bin_PROGRAMS = honei-qt
-honei_qt_SOURCES = main.cc window.hh window.cc window.moc.cc glwidget.hh glwidget.cc glwidget.moc.cc
+honei_qt_SOURCES = honei_qt.cc window.hh window.cc window.moc.cc gl_widget.hh gl_widget.cc gl_widget.moc.cc
 honei_qt_CXXFLAGS = $(QT_CXXFLAGS) $(QT_INCPATH) $(AM_CXXFLAGS)
 honei_qt_CPPFLAGS = $(QT_CPPFLAGS) $(AM_CPPFLAGS)
 honei_qt_LDFLAGS  = $(QT_LDFLAGS) $(LDFLAGS)

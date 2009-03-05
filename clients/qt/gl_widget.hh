@@ -18,25 +18,38 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef HONEI_GUARD_WINDOW_HH
-#define HONEI_GUARD_WINDOW_HH
 
-#include <QWidget>
-#include <clients/qt/gl_widget.hh>
+#ifndef HONEI_GUARD_GL_WIDGET_HH
+#define HONEI_GUARD_GL_WIDGET_HH
 
-class QSlider;
-class GLWidget;
+#include <QGLWidget>
 
-class Window : public QWidget
+//#include "NanoTimer.h"
+
+
+class GLWidget : public QGLWidget
 {
     Q_OBJECT
 
-public:
-    Window();
+    public:
+        GLWidget(QWidget * father = 0);
+        ~GLWidget();
 
-private:
-    GLWidget *glWidget;
-    //QLabel *menuwidget;
+        QSize minimumSizeHint() const;
+        QSize sizeHint() const;
+
+    protected:
+        virtual void initializeGL();
+        virtual void paintGL();
+        virtual void resizeGL( int width, int height );
+    private:
+        GLuint m_object;
+        int m_xRot, m_yRot, m_zRot;
+        float m_xTrans, m_yTrans, m_zTrans;
+        QPoint m_lastPos;
+        float m_backgroundcolor[3];
+        float m_curr_rot;
+        unsigned int m_numFlakeRec;
 };
 
 #endif

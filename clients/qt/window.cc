@@ -1,39 +1,36 @@
+/* vim: set sw=4 sts=4 et nofoldenable : */
+
+/*
+ * Copyright (c) 2009 Markus Geveler <apryde@gmx.de>
+ * Copyright (c) 2009 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ *
+ * This file is part of HONEI. HONEI is free software;
+ * you can redistribute it and/or modify it under the terms of the GNU General
+ * Public License version 2, as published by the Free Software Foundation.
+ *
+ * HONEI is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 
 #include <QtGui>
 
-#include "glwidget.hh"
-#include "window.hh"
+#include <clients/qt/gl_widget.hh>
+#include <clients/qt/window.hh>
 
 Window::Window()
 {
     glWidget = new GLWidget;
-    menuwidget = new QLabel("bla");
-/*
-    m_xSlider = createSlider( 360 );
-    m_ySlider = createSlider( 360 );
-    m_flakeRecSlider = createSlider( 6 );
-	m_backgroundColorSlider = createSlider( 100 );
-
-    connect( m_xSlider, SIGNAL(valueChanged(int)), glWidget, SLOT(setXRotation(int)) );
-    connect( glWidget, SIGNAL(xRotationChanged(int)), m_xSlider, SLOT(setValue(int)) );
-    connect( m_ySlider, SIGNAL(valueChanged(int)), glWidget, SLOT(setYRotation(int)) );
-    connect( glWidget, SIGNAL(yRotationChanged(int)), m_ySlider, SLOT(setValue(int)) );
-    connect( m_flakeRecSlider, SIGNAL(valueChanged(int)), glWidget, SLOT(setFlakeRec(int)) );
-    connect( m_backgroundColorSlider, SIGNAL(valueChanged(int)), glWidget, SLOT( setBackgroundColor(int)) );
-*/
     QHBoxLayout *mainLayout = new QHBoxLayout;
-    mainLayout->addWidget(menuwidget);
+
     mainLayout->addWidget(glWidget);
-  /*  mainLayout->addWidget(m_xSlider);
-    mainLayout->addWidget(m_ySlider);
-    mainLayout->addWidget(m_flakeRecSlider);
-    mainLayout->addWidget(m_backgroundColorSlider);*/
     setLayout(mainLayout);
-/*
-    m_xSlider->setValue( 15 );
-    m_ySlider->setValue( 345 );
-    m_flakeRecSlider->setValue( 2 );
-    m_backgroundColorSlider->setValue( 10 );*/
-    setWindowTitle( "Hello GL" );
+    setWindowTitle( "HONEI QT OpenGL client" );
 }
 

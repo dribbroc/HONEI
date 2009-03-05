@@ -18,25 +18,16 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef HONEI_GUARD_WINDOW_HH
-#define HONEI_GUARD_WINDOW_HH
 
-#include <QWidget>
-#include <clients/qt/gl_widget.hh>
+#include <QApplication>
 
-class QSlider;
-class GLWidget;
+#include <clients/qt/window.hh>
 
-class Window : public QWidget
+int main(int argc, char *argv[])
 {
-    Q_OBJECT
+    QApplication app(argc, argv);
+    Window window;
+    window.show();
+    return app.exec();
+}
 
-public:
-    Window();
-
-private:
-    GLWidget *glWidget;
-    //QLabel *menuwidget;
-};
-
-#endif
