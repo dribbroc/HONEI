@@ -6,11 +6,11 @@ if VISUAL
 endif
 
 if QT
-  QTDIR = qt
+  HQTDIR = qt
 endif
 
 if MPI
   MPIDIR = mpi
 endif
 
-SUBDIRS = $(VISUALDIR) $(MPIDIR) $(QTDIR) config
+SUBDIRS = $(VISUALDIR) $(MPIDIR) $(HQTDIR) config
