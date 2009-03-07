@@ -52,3 +52,5 @@ honei_qt_LDADD = \
 	$(top_builddir)/honei/lbm/libhoneilbm.la \
 	$(BACKEND_LIBS) \
 	$(QT_LIBS) $(LDADD)
+
+BUILT_SOURCES = window.moc.cc gl_widget.moc.cc
