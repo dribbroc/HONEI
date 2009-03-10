@@ -2,6 +2,8 @@ CLEANFILES = *~ cleanauthors cleanauthorstex cleancontributors
 
 MAINTAINERCLEANFILES = Makefile.in
 
+EXTRA_DIST = doxygen.conf authors.html.skel footer.html header.html
+
 doxygen: doxygen.conf htmlpages texfiles
 	doxygen $(top_srcdir)/doc/doxygen.conf
 	cp powered-by-*.png $(top_srcdir)/doc/html/
@@ -39,7 +41,7 @@ authors.html: authors.html.skel cleanauthors cleancontributors header.html foote
 	    -e '/@FOOTER@/d' \
 	     < $(srcdir)/authors.html.skel > authors.html
 
-licence.html: licence.html.skel ../COPYING header.html footer.html
+licence.html: licence.html.skel $(top_srcdir)/COPYING header.html footer.html
 	sed -e '/@HEADER@/r header.html' \
 	    -e '/@HEADER@/d' \
 	    -e '/@FOOTER@/r footer.html' \
