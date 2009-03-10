@@ -82,6 +82,8 @@ the configure stage than just passing --enable-XYZ:
   To run tests only for a specific backend type 'make check BACKENDS=backend' where backend can be cpu, sse, cell or cuda.
   For example a CUDA only test run would be started with 'make check BACKENDS=cuda'.
 
+NOTE: Building the mixed precision (CPU/GPU) Poisson tests and benchmarks require both, '--enable-sse' and '--enable-cuda'
+NOTE: Building the mixed precision (CPU/CPU) Poisson tests and benchmarks require '--enable-sse'
 
 APPLICATIONS
 ------------
