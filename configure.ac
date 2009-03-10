@@ -351,7 +351,6 @@ AC_OUTPUT(
 	clients/swe/Makefile
 	clients/lbm/Makefile
 	clients/poisson/Makefile
-	doc/Makefile
 	honei/Makefile
 	honei/backends/Makefile
 	honei/backends/cell/Makefile
