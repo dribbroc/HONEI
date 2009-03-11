@@ -87,6 +87,8 @@ namespace honei
             if (i == _address_map.end())
             {
                 void * device(cuda_malloc(bytes));
+                if (device == 0)
+                    throw InternalError("MemoryBackend<tags::GPU::CUDA>::alloc CudaMallocError!");
                 _id_map.insert(std::pair<void *, Chunk>(memid, Chunk(address, device, bytes)));
                 _address_map.insert(std::pair<void *, void *>(address, device));
                 return device;
