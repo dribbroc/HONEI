@@ -27,9 +27,6 @@ namespace honei
                 float * f_0, float * f_1, float * f_2,
                 float * f_3, float * f_4, float * f_5,
                 float * f_6, float * f_7, float * f_8,
-                float * f_temp_0, float * f_temp_1, float * f_temp_2,
-                float * f_temp_3, float * f_temp_4, float * f_temp_5,
-                float * f_temp_6, float * f_temp_7, float * f_temp_8,
                 float * h, float * u, float * v,
                 float * distribution_x_data, float * distribution_y_data, float epsilon,
                 unsigned long offset, unsigned long size)
@@ -50,16 +47,6 @@ namespace honei
             if (idx < size)
             {
                 unsigned long i(idx + offset);
-
-                f_0[i] = f_temp_0[i];
-                f_1[i] = f_temp_1[i];
-                f_2[i] = f_temp_2[i];
-                f_3[i] = f_temp_3[i];
-                f_4[i] = f_temp_4[i];
-                f_5[i] = f_temp_5[i];
-                f_6[i] = f_temp_6[i];
-                f_7[i] = f_temp_7[i];
-                f_8[i] = f_temp_8[i];
 
                 h[i] = f_0[i] +
                     f_1[i] +
@@ -113,9 +100,6 @@ extern "C" void cuda_extraction_grid_float(
         void * f_0, void * f_1, void * f_2,
         void * f_3, void * f_4, void * f_5,
         void * f_6, void * f_7, void * f_8,
-        void * f_temp_0, void * f_temp_1, void * f_temp_2,
-        void * f_temp_3, void * f_temp_4, void * f_temp_5,
-        void * f_temp_6, void * f_temp_7, void * f_temp_8,
         void * h, void * u, void * v,
         void * distribution_x, void * distribution_y, float epsilon,
         unsigned long blocksize)
@@ -137,16 +121,6 @@ extern "C" void cuda_extraction_grid_float(
     float * f_7_gpu((float *)f_7);
     float * f_8_gpu((float *)f_8);
 
-    float * f_temp_0_gpu((float *)f_temp_0);
-    float * f_temp_1_gpu((float *)f_temp_1);
-    float * f_temp_2_gpu((float *)f_temp_2);
-    float * f_temp_3_gpu((float *)f_temp_3);
-    float * f_temp_4_gpu((float *)f_temp_4);
-    float * f_temp_5_gpu((float *)f_temp_5);
-    float * f_temp_6_gpu((float *)f_temp_6);
-    float * f_temp_7_gpu((float *)f_temp_7);
-    float * f_temp_8_gpu((float *)f_temp_8);
-
     float * h_gpu((float *)h);
     float * u_gpu((float *)u);
     float * v_gpu((float *)v);
@@ -156,8 +130,6 @@ extern "C" void cuda_extraction_grid_float(
     honei::cuda::extraction_grid_gpu<<<grid, block, 18 * sizeof(float)>>>(
             f_0_gpu, f_1_gpu, f_2_gpu, f_3_gpu, f_4_gpu,
             f_5_gpu, f_6_gpu, f_7_gpu, f_8_gpu,
-            f_temp_0_gpu, f_temp_1_gpu, f_temp_2_gpu, f_temp_3_gpu, f_temp_4_gpu,
-            f_temp_5_gpu, f_temp_6_gpu, f_temp_7_gpu, f_temp_8_gpu,
             h_gpu, u_gpu, v_gpu,
             distribution_x_gpu, distribution_y_gpu, epsilon,
             start, size);

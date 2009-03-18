@@ -33,27 +33,47 @@ void ExtractionGrid<tags::GPU::CUDA, lbm_applications::LABSWE>::value(
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::extraction_grid_float", 128ul));
 
+    //set f to t_temp
+    DenseVector<float> * swap;
+    swap = data.f_0;
+    data.f_0 = data.f_temp_0;
+    data.f_temp_0 = swap;
+    swap = data.f_1;
+    data.f_1 = data.f_temp_1;
+    data.f_temp_1 = swap;
+    swap = data.f_2;
+    data.f_2 = data.f_temp_2;
+    data.f_temp_2 = swap;
+    swap = data.f_3;
+    data.f_3 = data.f_temp_3;
+    data.f_temp_3 = swap;
+    swap = data.f_4;
+    data.f_4 = data.f_temp_4;
+    data.f_temp_4 = swap;
+    swap = data.f_5;
+    data.f_5 = data.f_temp_5;
+    data.f_temp_5 = swap;
+    swap = data.f_6;
+    data.f_6 = data.f_temp_6;
+    data.f_temp_6 = swap;
+    swap = data.f_7;
+    data.f_7 = data.f_temp_7;
+    data.f_temp_7 = swap;
+    swap = data.f_8;
+    data.f_8 = data.f_temp_8;
+    data.f_temp_8 = swap;
+
     info.limits->lock(lm_read_only);
 
-    void * f_0_gpu(data.f_0->lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * f_1_gpu(data.f_1->lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * f_2_gpu(data.f_2->lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * f_3_gpu(data.f_3->lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * f_4_gpu(data.f_4->lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * f_5_gpu(data.f_5->lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * f_6_gpu(data.f_6->lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * f_7_gpu(data.f_7->lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * f_8_gpu(data.f_8->lock(lm_write_only, tags::GPU::CUDA::memory_value));
-
-    void * f_temp_0_gpu(data.f_temp_0->lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * f_temp_1_gpu(data.f_temp_1->lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * f_temp_2_gpu(data.f_temp_2->lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * f_temp_3_gpu(data.f_temp_3->lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * f_temp_4_gpu(data.f_temp_4->lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * f_temp_5_gpu(data.f_temp_5->lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * f_temp_6_gpu(data.f_temp_6->lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * f_temp_7_gpu(data.f_temp_7->lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * f_temp_8_gpu(data.f_temp_8->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+    void * f_0_gpu(data.f_0->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * f_1_gpu(data.f_1->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * f_2_gpu(data.f_2->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * f_3_gpu(data.f_3->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * f_4_gpu(data.f_4->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * f_5_gpu(data.f_5->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * f_6_gpu(data.f_6->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * f_7_gpu(data.f_7->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * f_8_gpu(data.f_8->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
 
     void * h_gpu(data.h->lock(lm_write_only, tags::GPU::CUDA::memory_value));
     void * u_gpu(data.u->lock(lm_write_only, tags::GPU::CUDA::memory_value));
@@ -69,34 +89,21 @@ void ExtractionGrid<tags::GPU::CUDA, lbm_applications::LABSWE>::value(
             f_0_gpu, f_1_gpu, f_2_gpu,
             f_3_gpu, f_4_gpu, f_5_gpu,
             f_6_gpu, f_7_gpu, f_8_gpu,
-            f_temp_0_gpu, f_temp_1_gpu, f_temp_2_gpu,
-            f_temp_3_gpu, f_temp_4_gpu, f_temp_5_gpu,
-            f_temp_6_gpu, f_temp_7_gpu, f_temp_8_gpu,
             h_gpu, u_gpu, v_gpu,
             distribution_x_gpu, distribution_y_gpu, epsilon,
             blocksize);
 
     info.limits->unlock(lm_read_only);
 
-    data.f_temp_0->unlock(lm_read_only);
-    data.f_temp_1->unlock(lm_read_only);
-    data.f_temp_2->unlock(lm_read_only);
-    data.f_temp_3->unlock(lm_read_only);
-    data.f_temp_4->unlock(lm_read_only);
-    data.f_temp_5->unlock(lm_read_only);
-    data.f_temp_6->unlock(lm_read_only);
-    data.f_temp_7->unlock(lm_read_only);
-    data.f_temp_8->unlock(lm_read_only);
-
-    data.f_0->unlock(lm_write_only);
-    data.f_1->unlock(lm_write_only);
-    data.f_2->unlock(lm_write_only);
-    data.f_3->unlock(lm_write_only);
-    data.f_4->unlock(lm_write_only);
-    data.f_5->unlock(lm_write_only);
-    data.f_6->unlock(lm_write_only);
-    data.f_7->unlock(lm_write_only);
-    data.f_8->unlock(lm_write_only);
+    data.f_0->unlock(lm_read_and_write);
+    data.f_1->unlock(lm_read_and_write);
+    data.f_2->unlock(lm_read_and_write);
+    data.f_3->unlock(lm_read_and_write);
+    data.f_4->unlock(lm_read_and_write);
+    data.f_5->unlock(lm_read_and_write);
+    data.f_6->unlock(lm_read_and_write);
+    data.f_7->unlock(lm_read_and_write);
+    data.f_8->unlock(lm_read_and_write);
 
     data.h->unlock(lm_write_only);
 

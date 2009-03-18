@@ -53,27 +53,47 @@ namespace honei
                     {
                         CONTEXT("When extracting h, u and v:");
 
+                        //set f to t_temp
+                        DenseVector<DT_> * swap;
+                        swap = data.f_0;
+                        data.f_0 = data.f_temp_0;
+                        data.f_temp_0 = swap;
+                        swap = data.f_1;
+                        data.f_1 = data.f_temp_1;
+                        data.f_temp_1 = swap;
+                        swap = data.f_2;
+                        data.f_2 = data.f_temp_2;
+                        data.f_temp_2 = swap;
+                        swap = data.f_3;
+                        data.f_3 = data.f_temp_3;
+                        data.f_temp_3 = swap;
+                        swap = data.f_4;
+                        data.f_4 = data.f_temp_4;
+                        data.f_temp_4 = swap;
+                        swap = data.f_5;
+                        data.f_5 = data.f_temp_5;
+                        data.f_temp_5 = swap;
+                        swap = data.f_6;
+                        data.f_6 = data.f_temp_6;
+                        data.f_temp_6 = swap;
+                        swap = data.f_7;
+                        data.f_7 = data.f_temp_7;
+                        data.f_temp_7 = swap;
+                        swap = data.f_8;
+                        data.f_8 = data.f_temp_8;
+                        data.f_temp_8 = swap;
+
                         info.limits->lock(lm_read_only);
 
-                        data.f_temp_0->lock(lm_read_only);
-                        data.f_temp_1->lock(lm_read_only);
-                        data.f_temp_2->lock(lm_read_only);
-                        data.f_temp_3->lock(lm_read_only);
-                        data.f_temp_4->lock(lm_read_only);
-                        data.f_temp_5->lock(lm_read_only);
-                        data.f_temp_6->lock(lm_read_only);
-                        data.f_temp_7->lock(lm_read_only);
-                        data.f_temp_8->lock(lm_read_only);
-
-                        data.f_0->lock(lm_write_only); // in this case: write before read
-                        data.f_1->lock(lm_write_only);
-                        data.f_2->lock(lm_write_only);
-                        data.f_3->lock(lm_write_only);
-                        data.f_4->lock(lm_write_only);
-                        data.f_5->lock(lm_write_only);
-                        data.f_6->lock(lm_write_only);
-                        data.f_7->lock(lm_write_only);
-                        data.f_8->lock(lm_write_only);
+                        data.f_0->lock(lm_read_and_write);
+                        data.f_1->lock(lm_read_and_write);
+                        data.f_2->lock(lm_read_and_write);
+                        data.f_3->lock(lm_read_and_write);
+                        data.f_4->lock(lm_read_and_write);
+                        data.f_5->lock(lm_read_and_write);
+                        data.f_6->lock(lm_read_and_write);
+                        data.f_7->lock(lm_read_and_write);
+                        data.f_8->lock(lm_read_and_write);
 
                         data.h->lock(lm_write_only);
 
@@ -88,16 +108,6 @@ namespace honei
 
                         for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                         {
-                            //set f to t_temp
-                            (*data.f_0)[i] = (*data.f_temp_0)[i];
-                            (*data.f_1)[i] = (*data.f_temp_1)[i];
-                            (*data.f_2)[i] = (*data.f_temp_2)[i];
-                            (*data.f_3)[i] = (*data.f_temp_3)[i];
-                            (*data.f_4)[i] = (*data.f_temp_4)[i];
-                            (*data.f_5)[i] = (*data.f_temp_5)[i];
-                            (*data.f_6)[i] = (*data.f_temp_6)[i];
-                            (*data.f_7)[i] = (*data.f_temp_7)[i];
-                            (*data.f_8)[i] = (*data.f_temp_8)[i];
 
                             //accumulate
                             (*data.h)[i] = (*data.f_0)[i] +
@@ -147,25 +157,15 @@ namespace honei
 
                         info.limits->unlock(lm_read_only);
 
-                        data.f_temp_0->unlock(lm_read_only);
-                        data.f_temp_1->unlock(lm_read_only);
-                        data.f_temp_2->unlock(lm_read_only);
-                        data.f_temp_3->unlock(lm_read_only);
-                        data.f_temp_4->unlock(lm_read_only);
-                        data.f_temp_5->unlock(lm_read_only);
-                        data.f_temp_6->unlock(lm_read_only);
-                        data.f_temp_7->unlock(lm_read_only);
-                        data.f_temp_8->unlock(lm_read_only);
-
-                        data.f_0->unlock(lm_write_only);
-                        data.f_1->unlock(lm_write_only);
-                        data.f_2->unlock(lm_write_only);
-                        data.f_3->unlock(lm_write_only);
-                        data.f_4->unlock(lm_write_only);
-                        data.f_5->unlock(lm_write_only);
-                        data.f_6->unlock(lm_write_only);
-                        data.f_7->unlock(lm_write_only);
-                        data.f_8->unlock(lm_write_only);
+                        data.f_0->unlock(lm_read_and_write);
+                        data.f_1->unlock(lm_read_and_write);
+                        data.f_2->unlock(lm_read_and_write);
+                        data.f_3->unlock(lm_read_and_write);
+                        data.f_4->unlock(lm_read_and_write);
+                        data.f_5->unlock(lm_read_and_write);
+                        data.f_6->unlock(lm_read_and_write);
+                        data.f_7->unlock(lm_read_and_write);
+                        data.f_8->unlock(lm_read_and_write);
 
                         data.h->unlock(lm_write_only);
 
@@ -176,16 +176,16 @@ namespace honei
                         data.v->unlock(lm_write_only);
                     }
 
-            template<typename DT1_>
-            static inline BenchmarkInfo get_benchmark_info(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT1_> * data)
-                {
-                    BenchmarkInfo result;
-                    result.flops = data->h->size() * 28;
-                    result.load = data->h->size() * 57 * sizeof(DT1_);
-                    result.store = data->h->size() * 13 * sizeof(DT1_);
-                    result.size.push_back(data->h->size());
-                    return result;
-                }
+                template<typename DT1_>
+                    static inline BenchmarkInfo get_benchmark_info(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT1_> * data)
+                    {
+                        BenchmarkInfo result;
+                        result.flops = data->h->size() * 28;
+                        result.load = data->h->size() * 57 * sizeof(DT1_);
+                        result.store = data->h->size() * 13 * sizeof(DT1_);
+                        result.size.push_back(data->h->size());
+                        return result;
+                    }
         };
 
     template<>
@@ -199,9 +199,9 @@ namespace honei
         struct ExtractionGrid<tags::CPU::SSE, lbm_applications::LABSWE>
         {
             public:
-                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float epsilon);
+                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float epsilon);
 
-                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data, double epsilon);
+                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data, double epsilon);
         };
 }
 #endif

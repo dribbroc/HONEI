@@ -108,9 +108,6 @@ extern "C"
             void * f_0, void * f_1, void * f_2,
             void * f_3, void * f_4, void * f_5,
             void * f_6, void * f_7, void * f_8,
-            void * f_temp_0, void * f_temp_1, void * f_temp_2,
-            void * f_temp_3, void * f_temp_4, void * f_temp_5,
-            void * f_temp_6, void * f_temp_7, void * f_temp_8,
             void * h, void * u, void * v,
             void * distribution_x, void * distribution_y, float epsilon,
             unsigned long blocksize);
