@@ -94,10 +94,9 @@ class CollideStreamGridBench :
                         {
                         (CollideStreamGrid<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                         value(info, data, dt));
-#ifdef HONEI_CUDA
-                        cuda_thread_synchronize();
-#endif
                         }
+                        if (Tag_::tag_value == tags::tv_gpu_cuda)
+                            cuda_thread_synchronize();
                         );
             }
             BenchmarkInfo benchinfo(CollideStreamGrid<tags::CPU, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::get_benchmark_info(&info, &data));

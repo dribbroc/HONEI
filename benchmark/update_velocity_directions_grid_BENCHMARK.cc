@@ -92,22 +92,21 @@ class UpdateVelocityDirectionsGridBench :
                         {
                         (UpdateVelocityDirectionsGrid<Tag_, NOSLIP>::
                          value(data, info));
-#ifdef HONEI_CUDA
-                        cuda_thread_synchronize();
-#endif
                         }
+                        if (Tag_::tag_value == tags::tv_gpu_cuda)
+                            cuda_thread_synchronize();
                         );
             }
             evaluate();
         }
 };
 
-UpdateVelocityDirectionsGridBench<tags::CPU, float> update_velocity_directions_grid_bench_float("UpdateVelocityDirectionsGridBench - size: 1500, float", 1500, 10);
-UpdateVelocityDirectionsGridBench<tags::CPU, double> update_velocity_directions_grid_bench_double("UpdateVelocityDirectionsGridBench - size: 1500, double", 1500, 10);
+UpdateVelocityDirectionsGridBench<tags::CPU, float> update_velocity_directions_grid_bench_float("UpdateVelocityDirectionsGridBench - size: 2000, float", 2000, 10);
+UpdateVelocityDirectionsGridBench<tags::CPU, double> update_velocity_directions_grid_bench_double("UpdateVelocityDirectionsGridBench - size: 2000, double", 2000, 10);
 #ifdef HONEI_SSE
-UpdateVelocityDirectionsGridBench<tags::CPU::SSE, float> sse_update_velocity_directions_grid_bench_float("SSE UpdateVelocityDirectionsGridBench - size: 1500, float", 1500, 10);
-UpdateVelocityDirectionsGridBench<tags::CPU::SSE, double> sse_colliupdate_velocity_directions_bench_double("SSE UpdateVelocityDirectionsGridBench - size: 1500, double", 1500, 10);
+UpdateVelocityDirectionsGridBench<tags::CPU::SSE, float> sse_update_velocity_directions_grid_bench_float("SSE UpdateVelocityDirectionsGridBench - size: 2000, float", 2000, 10);
+UpdateVelocityDirectionsGridBench<tags::CPU::SSE, double> sse_colliupdate_velocity_directions_bench_double("SSE UpdateVelocityDirectionsGridBench - size: 2000, double", 2000, 10);
 #endif
 #ifdef HONEI_CUDA
-UpdateVelocityDirectionsGridBench<tags::GPU::CUDA, float> cuda_update_velocity_directions_grid_bench_float("CUDA UpdateVelocityDirectionsGridBench - size: 1500, float", 1500, 10);
+UpdateVelocityDirectionsGridBench<tags::GPU::CUDA, float> cuda_update_velocity_directions_grid_bench_float("CUDA UpdateVelocityDirectionsGridBench - size: 2000, float", 2000, 10);
 #endif

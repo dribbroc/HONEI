@@ -91,10 +91,9 @@ class ExtractionGridBench :
                         for (unsigned long j(0) ; j < 5 ; ++j)
                         {
                         (ExtractionGrid<Tag_, lbm_applications::LABSWE>::value(info, data, DataType_(10e-5)));
-#ifdef HONEI_CUDA
-                        cuda_thread_synchronize();
-#endif
                         }
+                        if (Tag_::tag_value == tags::tv_gpu_cuda)
+                            cuda_thread_synchronize();
                         );
             }
             BenchmarkInfo benchinfo(ExtractionGrid<tags::CPU, lbm_applications::LABSWE>::get_benchmark_info(&info, &data));

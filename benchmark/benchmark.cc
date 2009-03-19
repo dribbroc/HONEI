@@ -156,8 +156,8 @@ void Benchmark::calculate(LBMBenchmarkInfo info)
     {
         _tp = ((double)(info.load + info.store) / (1024 * 1024)) * _x / _total;
         _f = ((double)((_x/_total)*info.flops) / 1000000);
-        _mlups = (double)(info.lups * _x / _total) / 1000000;
-        _mflups = (double)(info.flups * _x / _total) / 1000000;
+        _mlups = (double)(info.lups * double(1) / _median) / 1000000;
+        _mflups = (double)(info.flups * double(1) / _median) / 1000000;
     }
     else
     {
