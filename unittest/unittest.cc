@@ -265,6 +265,11 @@ int main(int argc, char** argv)
             std::cout << "FAILED: " << std::endl << stringify(e.what()) << std::endl;
             result = EXIT_FAILURE;
         }
+        catch (honei::Exception & e)
+        {
+            std::cout << "Caught exception:" << std::endl << e.message() << std::endl;
+            throw;
+        }
         i = TestList::instance()->erase(i);
         iterator_index++;
     }

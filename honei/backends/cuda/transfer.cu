@@ -22,7 +22,8 @@
 extern "C" void * cuda_malloc(unsigned long bytes)
 {
     void * gpu;
-    cudaMalloc((void**)&gpu, bytes);
+    if (cudaErrorMemoryAllocation == cudaMalloc((void**)&gpu, bytes))
+        return 0;
     CUDA_ERROR();
     return gpu;
 }

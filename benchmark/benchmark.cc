@@ -788,6 +788,12 @@ int main(int argc, char** argv)
                     std::cout << e.what() << std::endl;
                     result = EXIT_FAILURE;
                 }
+                catch (honei::Exception & e)
+                {
+                    std::cout << "Caught exception:" << std::endl << e.message() << std::endl;
+                    throw;
+                }
+
                 while ((runrs.size() > 0) && (next == runrs.front()))
                 {
                     runrs.pop_front();
