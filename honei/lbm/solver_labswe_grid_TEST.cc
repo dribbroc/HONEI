@@ -90,6 +90,7 @@ class SolverLABSWEGridTest :
         }
 
 };
+
 SolverLABSWEGridTest<tags::CPU, float> solver_test_float("float");
 SolverLABSWEGridTest<tags::CPU, double> solver_test_double("double");
 SolverLABSWEGridTest<tags::CPU::MultiCore, float> mc_solver_test_float("float");
@@ -169,4 +170,13 @@ class SolverLABSWEGridMassConservationTest :
 };
 SolverLABSWEGridMassConservationTest<tags::CPU, float> solver_grid_mc_test_float("float");
 SolverLABSWEGridMassConservationTest<tags::CPU, double> solver_grid_mc_test_double("double");
+#ifdef HONEI_SSE
+SolverLABSWEGridMassConservationTest<tags::CPU::SSE, float> sse_solver_grid_mc_test_float("float");
+SolverLABSWEGridMassConservationTest<tags::CPU::SSE, double> sse_solver_grid_mc_test_double("double");
+SolverLABSWEGridMassConservationTest<tags::CPU::MultiCore::SSE, float> mcsse_solver_grid_mc_test_float("float");
+SolverLABSWEGridMassConservationTest<tags::CPU::MultiCore::SSE, double> mcsse_solver_grid_mc_test_double("double");
+#endif
+#ifdef HONEI_CUDA
+SolverLABSWEGridMassConservationTest<tags::GPU::CUDA, float> cuda_solver_grid_mc_test_float("float");
+#endif
 
