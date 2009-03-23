@@ -88,10 +88,15 @@ class LBMGSolverBench :
 
             for(int i = 0; i < _count; ++i)
             {
-                BENCHMARK(solver.solve());
+                BENCHMARK(
+                        for (unsigned long j(0) ; j < 25 ; ++j)
+                        {
+                            solver.solve();
+                        }
+                        );
             }
             LBMBenchmarkInfo benchinfo(SolverLABSWEGrid<tags::CPU, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>::get_benchmark_info(&grid, &info, &data));
-            evaluate(benchinfo);
+            evaluate(benchinfo * 25);
         }
 };
 

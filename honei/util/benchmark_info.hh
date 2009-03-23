@@ -79,6 +79,16 @@ struct LBMBenchmarkInfo :
         store += a.store;
         return *this;
     }
+
+    LBMBenchmarkInfo operator*(unsigned long a)
+    {
+        flops *= a;
+        load *= a;
+        store *= a;
+        lups *= a;
+        flups *= a;
+        return *this;
+    }
 };
 
 #endif
