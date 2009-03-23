@@ -2,6 +2,9 @@ CLEANFILES = *~ cleanauthors cleanauthorstex cleancontributors
 
 MAINTAINERCLEANFILES = Makefile.in
 
+EXTRA_DIST = pg512.css doxygen.conf authors.html.skel licence.html.skel footer.html header.html header.tex.in \
+	     powered-by-c++.png powered-by-vim.png bee_270.png bee.svg
+
 doxygen: doxygen.conf htmlpages texfiles
 	doxygen $(top_srcdir)/doc/doxygen.conf
 	cp powered-by-*.png $(top_srcdir)/doc/html/
