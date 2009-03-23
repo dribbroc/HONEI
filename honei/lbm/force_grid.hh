@@ -108,6 +108,7 @@ namespace honei
                 //precompute constants
                 DT1_ force_multiplier(d_t / (6 * d_x * d_x / (d_t * d_t)));
                 DT1_ gravity_multiplier(-g);
+                DT1_ force_times_gravity(force_multiplier * gravity_multiplier);
 
                 //-----------alpha = 1 ----------------------------------------------------------------------------------------------
                 unsigned long size_1(data.f_temp_1->size());
@@ -118,7 +119,7 @@ namespace honei
                 {
                     for (unsigned long i((*info.dir_index_1)[begin]), offset(0) ; i < (*info.dir_index_1)[begin + 1] ; ++i, ++offset)
                     {
-                        temp_1[i] = force_multiplier * gravity_multiplier * (*data.distribution_x)[1];
+                        temp_1[i] = force_times_gravity * (*data.distribution_x)[1];
                     }
                 }
                 //multiply temp by interpolation
@@ -156,7 +157,7 @@ namespace honei
                 {
                     for (unsigned long i((*info.dir_index_2)[begin]), offset(0) ; i < (*info.dir_index_2)[begin + 1] ; ++i, ++offset)
                     {
-                        temp_2[i] = force_multiplier * gravity_multiplier * (*data.distribution_x)[2];
+                        temp_2[i] = force_times_gravity * (*data.distribution_x)[2];
                     }
                 }
                 //multiply temp by interpolation
@@ -190,7 +191,7 @@ namespace honei
                 {
                     for (unsigned long i((*info.dir_index_2)[begin]), offset(0) ; i < (*info.dir_index_2)[begin + 1] ; ++i, ++offset)
                     {
-                        temp_2_y[i] = force_multiplier * gravity_multiplier * (*data.distribution_y)[2];
+                        temp_2_y[i] = force_times_gravity * (*data.distribution_y)[2];
                     }
                 }
                 //multiply temp by interpolation
@@ -228,7 +229,7 @@ namespace honei
                 {
                     for (unsigned long i((*info.dir_index_3)[begin]), offset(0) ; i < (*info.dir_index_3)[begin + 1] ; ++i, ++offset)
                     {
-                        temp_3_y[i] = force_multiplier * gravity_multiplier * (*data.distribution_y)[3];
+                        temp_3_y[i] = force_times_gravity * (*data.distribution_y)[3];
                     }
                 }
                 //multiply temp by interpolation
@@ -263,7 +264,7 @@ namespace honei
                 {
                     for (unsigned long i((*info.dir_index_4)[begin]), offset(0) ; i < (*info.dir_index_4)[begin + 1] ; ++i, ++offset)
                     {
-                        temp_4[i] = force_multiplier * gravity_multiplier * (*data.distribution_x)[4];
+                        temp_4[i] = force_times_gravity * (*data.distribution_x)[4];
                     }
                 }
                 //multiply temp by interpolation
@@ -297,7 +298,7 @@ namespace honei
                 {
                     for (unsigned long i((*info.dir_index_4)[begin]), offset(0) ; i < (*info.dir_index_4)[begin + 1] ; ++i, ++offset)
                     {
-                        temp_4_y[i] = force_multiplier * gravity_multiplier * (*data.distribution_y)[4];
+                        temp_4_y[i] = force_times_gravity * (*data.distribution_y)[4];
                     }
                 }
                 //multiply temp by interpolation
@@ -332,7 +333,7 @@ namespace honei
                 {
                     for (unsigned long i((*info.dir_index_5)[begin]), offset(0) ; i < (*info.dir_index_5)[begin + 1] ; ++i, ++offset)
                     {
-                        temp_5[i] = force_multiplier * gravity_multiplier * (*data.distribution_x)[5];
+                        temp_5[i] = force_times_gravity * (*data.distribution_x)[5];
                     }
                 }
                 //multiply temp by interpolation
@@ -367,7 +368,7 @@ namespace honei
                 {
                     for (unsigned long i((*info.dir_index_6)[begin]), offset(0) ; i < (*info.dir_index_6)[begin + 1] ; ++i, ++offset)
                     {
-                        temp_6[i] = force_multiplier * gravity_multiplier * (*data.distribution_x)[6];
+                        temp_6[i] = force_times_gravity * (*data.distribution_x)[6];
                     }
                 }
                 //multiply temp by interpolation
@@ -401,7 +402,7 @@ namespace honei
                 {
                     for (unsigned long i((*info.dir_index_6)[begin]), offset(0) ; i < (*info.dir_index_6)[begin + 1] ; ++i, ++offset)
                     {
-                        temp_6_y[i] = force_multiplier * gravity_multiplier * (*data.distribution_y)[6];
+                        temp_6_y[i] = force_times_gravity * (*data.distribution_y)[6];
                     }
                 }
                 //multiply temp by interpolation
@@ -438,7 +439,7 @@ namespace honei
                 {
                     for (unsigned long i((*info.dir_index_7)[begin]), offset(0) ; i < (*info.dir_index_7)[begin + 1] ; ++i, ++offset)
                     {
-                        temp_7_y[i] = force_multiplier * gravity_multiplier * (*data.distribution_y)[7];
+                        temp_7_y[i] = force_times_gravity * (*data.distribution_y)[7];
                     }
                 }
                 //multiply temp by interpolation
@@ -473,7 +474,7 @@ namespace honei
                 {
                     for (unsigned long i((*info.dir_index_8)[begin]), offset(0) ; i < (*info.dir_index_8)[begin + 1] ; ++i, ++offset)
                     {
-                        temp_8[i] = force_multiplier * gravity_multiplier * (*data.distribution_x)[8];
+                        temp_8[i] = force_times_gravity * (*data.distribution_x)[8];
                     }
                 }
                 //multiply temp by interpolation
@@ -507,7 +508,7 @@ namespace honei
                 {
                     for (unsigned long i((*info.dir_index_8)[begin]), offset(0) ; i < (*info.dir_index_8)[begin + 1] ; ++i, ++offset)
                     {
-                        temp_8_y[i] = force_multiplier * gravity_multiplier * (*data.distribution_y)[8];
+                        temp_8_y[i] = force_times_gravity * (*data.distribution_y)[8];
                     }
                 }
                 //multiply temp by interpolation
@@ -638,6 +639,7 @@ namespace honei
 
                 //precompute constants
                 DT1_ force_multiplier(d_t / (6 * d_x * d_x / (d_t * d_t)));
+                force_multiplier *= g;
 
                 //-----------alpha = 1 ----------------------------------------------------------------------------------------------
 
@@ -647,7 +649,7 @@ namespace honei
                     {
                         if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()) )
                         {
-                            (*data.f_temp_1)[i] -= force_multiplier * g * (*data.distribution_x)[1] * (manning_const * manning_const) *
+                            (*data.f_temp_1)[i] -= force_multiplier * (*data.distribution_x)[1] * (manning_const * manning_const) *
                                 (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                         }
                     }
@@ -662,7 +664,7 @@ namespace honei
                     {
                         if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
                         {
-                            (*data.f_temp_2)[i] -= force_multiplier * g * (*data.distribution_x)[2] * (manning_const * manning_const) *
+                            (*data.f_temp_2)[i] -= force_multiplier * (*data.distribution_x)[2] * (manning_const * manning_const) *
                                 (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                         }
                     }
@@ -674,7 +676,7 @@ namespace honei
                     {
                         if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
                         {
-                            (*data.f_temp_2)[i] -= force_multiplier * g * (*data.distribution_y)[2] * (manning_const * manning_const) *
+                            (*data.f_temp_2)[i] -= force_multiplier * (*data.distribution_y)[2] * (manning_const * manning_const) *
                                 (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                         }
                     }
@@ -689,7 +691,7 @@ namespace honei
                     {
                         if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
                         {
-                            (*data.f_temp_3)[i] -= force_multiplier * g * (*data.distribution_y)[3] * (manning_const * manning_const) *
+                            (*data.f_temp_3)[i] -= force_multiplier * (*data.distribution_y)[3] * (manning_const * manning_const) *
                                 (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                         }
                     }
@@ -703,7 +705,7 @@ namespace honei
                     {
                         if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
                         {
-                            (*data.f_temp_4)[i] -= force_multiplier * g * (*data.distribution_x)[4] * (manning_const * manning_const) *
+                            (*data.f_temp_4)[i] -= force_multiplier * (*data.distribution_x)[4] * (manning_const * manning_const) *
                                 (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                         }
                     }
@@ -715,7 +717,7 @@ namespace honei
                     {
                         if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
                         {
-                            (*data.f_temp_4)[i] -= force_multiplier * g * (*data.distribution_y)[4] * (manning_const * manning_const) *
+                            (*data.f_temp_4)[i] -= force_multiplier * (*data.distribution_y)[4] * (manning_const * manning_const) *
                                 (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                         }
                     }
@@ -730,7 +732,7 @@ namespace honei
                     {
                         if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
                         {
-                            (*data.f_temp_5)[i] -= force_multiplier * g * (*data.distribution_x)[5] * (manning_const * manning_const) *
+                            (*data.f_temp_5)[i] -= force_multiplier * (*data.distribution_x)[5] * (manning_const * manning_const) *
                                 (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                         }
                     }
@@ -744,7 +746,7 @@ namespace honei
                     {
                         if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
                         {
-                            (*data.f_temp_6)[i] -= force_multiplier * g * (*data.distribution_x)[6] * (manning_const * manning_const) *
+                            (*data.f_temp_6)[i] -= force_multiplier * (*data.distribution_x)[6] * (manning_const * manning_const) *
                                 (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                         }
                     }
@@ -756,7 +758,7 @@ namespace honei
                     {
                         if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
                         {
-                            (*data.f_temp_6)[i] -= force_multiplier * g * (*data.distribution_y)[6] * (manning_const * manning_const) *
+                            (*data.f_temp_6)[i] -= force_multiplier * (*data.distribution_y)[6] * (manning_const * manning_const) *
                                 (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                         }
                     }
@@ -770,7 +772,7 @@ namespace honei
                     {
                         if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
                         {
-                            (*data.f_temp_7)[i] -= force_multiplier * g * (*data.distribution_y)[7] * (manning_const * manning_const) *
+                            (*data.f_temp_7)[i] -= force_multiplier * (*data.distribution_y)[7] * (manning_const * manning_const) *
                                 (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                         }
                     }
@@ -785,7 +787,7 @@ namespace honei
                     {
                         if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
                         {
-                            (*data.f_temp_8)[i] -= force_multiplier * g * (*data.distribution_x)[8] * (manning_const * manning_const) *
+                            (*data.f_temp_8)[i] -= force_multiplier * (*data.distribution_x)[8] * (manning_const * manning_const) *
                                 (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                         }
                     }
@@ -797,7 +799,7 @@ namespace honei
                     {
                         if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
                         {
-                            (*data.f_temp_8)[i] -= force_multiplier * g * (*data.distribution_y)[8] * (manning_const * manning_const) *
+                            (*data.f_temp_8)[i] -= force_multiplier * (*data.distribution_y)[8] * (manning_const * manning_const) *
                                 (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                         }
                     }
