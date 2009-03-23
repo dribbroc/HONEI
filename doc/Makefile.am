@@ -1,4 +1,4 @@
-CLEANFILES = *~ cleanauthors cleanauthorstex cleancontributors
+CLEANFILES = *~ cleanauthors cleanauthorstex cleancontributors *.out *.log *.aux *.toc *.pdf
 
 MAINTAINERCLEANFILES = Makefile.in
 
@@ -69,3 +69,8 @@ header.tex: header.tex.in cleanauthorstex
 	    -e 's/@VERSION@/Prerelease/' \
 	    < $(srcdir)/header.tex.in > header.tex
 
+pdf: tutorial.tex
+	pdflatex tutorial.tex
+	pdflatex tutorial.tex
+	pdflatex grid.tex
+	pdflatex grid.tex

@@ -14,3 +14,6 @@ benchmark:
 
 doxygen:
 	$(MAKE) -C doc $@
+
+pdf:
+	$(MAKE) -C doc $@

@@ -1,0 +1,106 @@
+\batchmode
+\documentclass[12pt]{article}
+\usepackage{ngerman}
+\usepackage[latin1]{inputenc}
+\usepackage[pdftex]{graphicx}
+\parindent0pt
+
+\begin{document}
+
+%\newpage
+%\tableofcontents
+%\newpage
+
+\section{Datenstrukturen}
+\subsection{Grid}
+
+\subsubsection{obstacles}
+Bool'sche Matrix mit true für ein obstacle und false sonst.
+
+\subsubsection{h}
+Höhenfeld.
+
+\subsubsection{h\_index}
+Ent"alt zu jeder Stelle in h den korrespondierenden Index im PackedGridData h Vektor.
+
+\subsection{PackedGridInfo}
+
+\subsubsection{offset}
+Bezeichnet die Stelle des ersten Elements der data Vektoren im globalen data Vektor.
+
+Beispiel: lokal\_data[0] entspricht global\_data[offset].
+
+\subsubsection{limits}
+Enthält die kontinuierlich elementweise abzuarbeitenden Elemente der data Vektoren (limits[0] bis limits[size - 1]).
+Hierbei geht ein Abschnitt von limits[i] bis eins vor limits[i + 1].
+Der nächste Abschnitt beginnt mit limits[i+1].
+Die data Vektoren können auch vor limits[0] und nach limits[size - 1] Elemente haben, wenn PackedGridInfo aus dem GridPartitioner stammt.
+
+\subsubsection{types}
+Gibt für jeden Eintrag in limits den Typ der in diesem Abschnitt liegenden Elemente an.
+Das erste Bit kodiert eine Boundary in Direction 1 usw.
+
+\subsubsection{cuda\_types}
+Gibt f"ur jedes Element der data Vektoren den Typ an (ist nur bei einem tags::GPU::CUDA L"oser aktiviert).
+
+\subsubsection{dir\_index\_n}
+Enthält die Abschnitte, in denen Zelle i einen Nachbarn in Richtung n besitzt.
+Hierbei geht der Bereich von i = dir\_index\_n[x] bis i $<$ dir\_index\_n[x + 1] exklusive.
+Der nächste Bereich beginnt dann bei dir\_index\_n[x + 2].
+
+\subsubsection{dir\_n}
+Gibt für den Bereich der bei i = dir\_index\_n[x] beginnt die in dieser Richtung liegende Zelle j = dir\_n[x/2] an.
+
+Beachte: dir\_n.size() = 0.5 * dir\_index\_n.size().
+
+\subsubsection{cuda\_dir\_n}
+Gibt f"ur jedes Element der data Vektoren die benachbarten Zellen an an (ist nur bei einem tags::GPU::CUDA L"oser aktiviert).
+
+\subsection{PackedGridData}
+
+\subsection{PackedGridFringe}
+
+\subsubsection{h\_index}
+Enthält die Abschnitte, in denen h, u und v von anderen Lösern beschrieben werden.
+Hierbei geht der Bereich von i = h\_index[x] bis i $<$ h\_index[x + 1] exklusive.
+Der nächste Bereich beginnt dann bei h\_index[x + 2].
+
+\subsubsection{h\_targets}
+Enthält den Löser, der den gewünschte Bereich von u, h und v  beschrieben hat.
+
+Beachte: h\_targets.size() = 0.5 * h\_index.size().
+
+\subsubsection{dir\_index\_n}
+Enthält die Abschnitte, in denen der f\_temp\_n Vektor anderen Lösern mitgeteilt werden muss.
+Hierbei geht der Bereich von i = dir\_index\_n[x] bis i $<$ dir\_index\_n[x + 1] exklusive.
+Der nächste Bereich beginnt dann bei dir\_index\_n[x + 2].
+
+\subsubsection{dir\_targets\_n}
+Enthält den Löser, dem der Bereich von f\_temp\_n mitgeteilt werden muss.
+
+Beachte: dir\_targets\_n.size() = 0.5 * dir\_index\_n.size().
+
+\section{Grid Tools}
+\subsection{GridPacker}
+\subsubsection{pack}
+Erzeugt aus einem Grid Objekt PackedGridData und PackedGridInfo.
+
+\subsubsection{unpack}
+Schreibt den data.h Vektor wieder in das Grid H"ohenfeld zur"uck.
+
+\subsubsection{h\_index}
+Gibt zu einer Stelle i, j in einem Grid H"ohenfeld den Index des data.h Vektors zur"uck.
+
+\subsection{GridPartitioner}
+\subsubsection{compose}
+Schreibt die H"ohenfelder aller Patches wieder in das urspr"ungliche data.h Feld zur"uck.
+
+\subsubsection{decompose}
+Zerlegt PackedGridData und PackedGridInfo in mehrere unabh"angige Patches.
+
+\subsubsection{synch}
+Synchronisiert die f\_temp Vektoren und den h Vektor zwischen allen Patches.
+
+\section{Löser}
+
+\end{document}
