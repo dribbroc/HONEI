@@ -170,6 +170,8 @@ class SolverLABSWEGridMassConservationTest :
 };
 SolverLABSWEGridMassConservationTest<tags::CPU, float> solver_grid_mc_test_float("float");
 SolverLABSWEGridMassConservationTest<tags::CPU, double> solver_grid_mc_test_double("double");
+SolverLABSWEGridMassConservationTest<tags::CPU::MultiCore, float> mc_solver_grid_mc_test_float("float");
+SolverLABSWEGridMassConservationTest<tags::CPU::MultiCore, double> mc_solver_grid_mc_test_double("double");
 #ifdef HONEI_SSE
 SolverLABSWEGridMassConservationTest<tags::CPU::SSE, float> sse_solver_grid_mc_test_float("float");
 SolverLABSWEGridMassConservationTest<tags::CPU::SSE, double> sse_solver_grid_mc_test_double("double");

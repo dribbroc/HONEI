@@ -230,6 +230,7 @@ namespace honei
                 b(0),
                 u(0),
                 v(0),
+                temp(0),
                 f_0(0),
                 f_1(0),
                 f_2(0),
@@ -269,6 +270,7 @@ namespace honei
                 delete b;
                 delete u;
                 delete v;
+                delete temp;
                 delete f_0;
                 delete f_1;
                 delete f_2;
@@ -304,6 +306,7 @@ namespace honei
                 b = 0;
                 u = 0;
                 v = 0;
+                temp = 0;
                 f_0 = 0;
                 f_1 = 0;
                 f_2 = 0;
@@ -339,6 +342,7 @@ namespace honei
             DenseVector<DT_> * b;
             DenseVector<DT_> * u;
             DenseVector<DT_> * v;
+            DenseVector<DT_> * temp;
 
             DenseVector<DT_> * f_0;
             DenseVector<DT_> * f_1;

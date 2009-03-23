@@ -360,6 +360,7 @@ namespace honei
                 data.b = new DenseVector<DT_>(fluid_count);
                 data.u = new DenseVector<DT_>(fluid_count);
                 data.v = new DenseVector<DT_>(fluid_count);
+                data.temp = new DenseVector<DT_>(fluid_count);
 
                 data.f_0 = new DenseVector<DT_>(fluid_count, DT_(0));
                 data.f_1 = new DenseVector<DT_>(fluid_count, DT_(0));

@@ -881,6 +881,7 @@ namespace honei
                     new_data.u = new DenseVector<DT_>(data_size + 1);
                     new_data.v = new DenseVector<DT_>(data_size + 1);
                     new_data.b = new DenseVector<DT_>(data_size + 1);
+                    new_data.temp = new DenseVector<DT_>(data_size + 1);
 
                     new_data.f_0 = new DenseVector<DT_>(data_size + 1, DT_(0));
                     new_data.f_1 = new DenseVector<DT_>(data_size + 1, DT_(0));
