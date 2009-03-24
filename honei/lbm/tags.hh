@@ -61,6 +61,7 @@ namespace honei
             class SIMPLE;
             class CONSTANT;
             class CENTRED;
+            class NONE;
         }
         namespace lbm_source_schemes
         {
@@ -68,6 +69,7 @@ namespace honei
             class BED_SLOPE;
             class BED_FRICTION;
             class BED_FULL;
+            class NONE;
         }
         namespace lbm_boundary_types
         {

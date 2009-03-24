@@ -847,6 +847,23 @@ namespace honei
                 }
     };
 
+    template <typename Tag_>
+    struct ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::NONE, lbm_source_schemes::NONE>
+    {
+        template<typename DT1_, typename DT2_>
+            static void value(PackedGridData<D2Q9, DT1_> & data, PackedGridInfo<D2Q9> & info, DT2_ g, DT2_ d_x, DT2_ d_y, DT2_ d_t, DT2_ manning)
+            {
+            }
+
+            template<typename DT1_>
+                static inline BenchmarkInfo get_benchmark_info(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT1_> * data)
+                {
+                    BenchmarkInfo result;
+                    return result;
+                }
+    };
+
+
     template <>
         struct ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>
         {
