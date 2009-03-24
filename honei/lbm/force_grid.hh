@@ -138,8 +138,11 @@ namespace honei
                     for (unsigned long i((*info.dir_index_1)[begin]), offset(0) ; i < (*info.dir_index_1)[begin + 1] ; ++i, ++offset)
                     {
                         temp[i] *= ((*data.b)[(*info.dir_1)[half] + offset] - (*data.b)[i]) / (d_x);
-                        (*data.f_temp_1)[i] += temp[i];
                     }
+                }
+                for (unsigned long i((*info.limits)[0]) ; i < (*info.limits)[info.limits->size() - 1] ; ++i)
+                {
+                        (*data.f_temp_1)[i] += temp[i];
                 }
                 //repeat for y direction
                 //NOTHING TO BE DONE HERE
@@ -170,8 +173,11 @@ namespace honei
                     for (unsigned long i((*info.dir_index_1)[begin]), offset(0) ; i < (*info.dir_index_1)[begin + 1] ; ++i, ++offset)
                     {
                         temp[i] *= ((*data.b)[(*info.dir_1)[half] + offset] - (*data.b)[i]) / (d_x);
-                        (*data.f_temp_2)[i] += temp[i];
                     }
+                }
+                for (unsigned long i((*info.limits)[0]) ; i < (*info.limits)[info.limits->size() - 1] ; ++i)
+                {
+                        (*data.f_temp_2)[i] += temp[i];
                 }
 
                 //REPEAT FOR Y
@@ -199,8 +205,11 @@ namespace honei
                     for (unsigned long i((*info.dir_index_3)[begin]), offset(0) ; i < (*info.dir_index_3)[begin + 1] ; ++i, ++offset)
                     {
                         temp[i] *= ((*data.b)[(*info.dir_3)[half] + offset] - (*data.b)[i]) / (d_y);
-                        (*data.f_temp_2)[i] += temp[i];
                     }
+                }
+                for (unsigned long i((*info.limits)[0]) ; i < (*info.limits)[info.limits->size() - 1] ; ++i)
+                {
+                        (*data.f_temp_2)[i] += temp[i];
                 }
 
 
@@ -231,8 +240,11 @@ namespace honei
                     for (unsigned long i((*info.dir_index_3)[begin]), offset(0) ; i < (*info.dir_index_3)[begin + 1] ; ++i, ++offset)
                     {
                         temp[i] *= ((*data.b)[(*info.dir_3)[half] + offset] - (*data.b)[i]) / (d_y);
-                        (*data.f_temp_3)[i] += temp[i];
                     }
+                }
+                for (unsigned long i((*info.limits)[0]) ; i < (*info.limits)[info.limits->size() - 1] ; ++i)
+                {
+                        (*data.f_temp_3)[i] += temp[i];
                 }
 
                 //-----------alpha = 4 ----------------------------------------------------------------------------------------------
@@ -260,8 +272,11 @@ namespace honei
                     for (unsigned long i((*info.dir_index_1)[begin]), offset(0) ; i < (*info.dir_index_1)[begin + 1] ; ++i, ++offset)
                     {
                         temp[i] *= ((*data.b)[(*info.dir_1)[half] + offset] - (*data.b)[i]) / (d_x);
-                        (*data.f_temp_4)[i] += temp[i];
                     }
+                }
+                for (unsigned long i((*info.limits)[0]) ; i < (*info.limits)[info.limits->size() - 1] ; ++i)
+                {
+                        (*data.f_temp_4)[i] += temp[i];
                 }
 
                 //REPEAT FOR Y
@@ -289,8 +304,11 @@ namespace honei
                     for (unsigned long i((*info.dir_index_3)[begin]), offset(0) ; i < (*info.dir_index_3)[begin + 1] ; ++i, ++offset)
                     {
                         temp[i] *= ((*data.b)[(*info.dir_3)[half] + offset] - (*data.b)[i]) / (d_y);
-                        (*data.f_temp_4)[i] += temp[i];
                     }
+                }
+                for (unsigned long i((*info.limits)[0]) ; i < (*info.limits)[info.limits->size() - 1] ; ++i)
+                {
+                        (*data.f_temp_4)[i] += temp[i];
                 }
 
                 //-----------alpha = 5 ----------------------------------------------------------------------------------------------
@@ -319,8 +337,11 @@ namespace honei
                     for (unsigned long i((*info.dir_index_1)[begin]), offset(0) ; i < (*info.dir_index_1)[begin + 1] ; ++i, ++offset)
                     {
                         temp[i] *= ((*data.b)[(*info.dir_1)[half] + offset] - (*data.b)[i]) / (d_x);
-                        (*data.f_temp_5)[i] += temp[i];
                     }
+                }
+                for (unsigned long i((*info.limits)[0]) ; i < (*info.limits)[info.limits->size() - 1] ; ++i)
+                {
+                        (*data.f_temp_5)[i] += temp[i];
                 }
 
                 //-----------alpha = 6 ----------------------------------------------------------------------------------------------
@@ -348,8 +369,11 @@ namespace honei
                     for (unsigned long i((*info.dir_index_1)[begin]), offset(0) ; i < (*info.dir_index_1)[begin + 1] ; ++i, ++offset)
                     {
                         temp[i] *= ((*data.b)[(*info.dir_1)[half] + offset] - (*data.b)[i]) / (d_x);
-                        (*data.f_temp_6)[i] += temp[i];
                     }
+                }
+                for (unsigned long i((*info.limits)[0]) ; i < (*info.limits)[info.limits->size() - 1] ; ++i)
+                {
+                        (*data.f_temp_6)[i] += temp[i];
                 }
 
                 //REPEAT FOR Y
@@ -377,8 +401,11 @@ namespace honei
                     for (unsigned long i((*info.dir_index_3)[begin]), offset(0) ; i < (*info.dir_index_3)[begin + 1] ; ++i, ++offset)
                     {
                         temp[i] *= ((*data.b)[(*info.dir_3)[half] + offset] - (*data.b)[i]) / (d_y);
-                        (*data.f_temp_6)[i] += temp[i];
                     }
+                }
+                for (unsigned long i((*info.limits)[0]) ; i < (*info.limits)[info.limits->size() - 1] ; ++i)
+                {
+                        (*data.f_temp_6)[i] += temp[i];
                 }
 
                 //-----------alpha = 7 ----------------------------------------------------------------------------------------------
@@ -408,8 +435,11 @@ namespace honei
                     for (unsigned long i((*info.dir_index_3)[begin]), offset(0) ; i < (*info.dir_index_3)[begin + 1] ; ++i, ++offset)
                     {
                         temp[i] *= ((*data.b)[(*info.dir_3)[half] + offset] - (*data.b)[i]) / (d_y);
-                        (*data.f_temp_7)[i] += temp[i];
                     }
+                }
+                for (unsigned long i((*info.limits)[0]) ; i < (*info.limits)[info.limits->size() - 1] ; ++i)
+                {
+                        (*data.f_temp_7)[i] += temp[i];
                 }
 
                 //-----------alpha = 8 ----------------------------------------------------------------------------------------------
@@ -437,8 +467,11 @@ namespace honei
                     for (unsigned long i((*info.dir_index_1)[begin]), offset(0) ; i < (*info.dir_index_1)[begin + 1] ; ++i, ++offset)
                     {
                         temp[i] *= ((*data.b)[(*info.dir_1)[half] + offset] - (*data.b)[i]) / (d_x);
-                        (*data.f_temp_8)[i] += temp[i];
                     }
+                }
+                for (unsigned long i((*info.limits)[0]) ; i < (*info.limits)[info.limits->size() - 1] ; ++i)
+                {
+                        (*data.f_temp_8)[i] += temp[i];
                 }
 
                 //REPEAT FOR Y
@@ -466,8 +499,11 @@ namespace honei
                     for (unsigned long i((*info.dir_index_3)[begin]), offset(0) ; i < (*info.dir_index_3)[begin + 1] ; ++i, ++offset)
                     {
                         temp[i] *= ((*data.b)[(*info.dir_3)[half] + offset] - (*data.b)[i]) / (d_y);
-                        (*data.f_temp_8)[i] += temp[i];
                     }
+                }
+                for (unsigned long i((*info.limits)[0]) ; i < (*info.limits)[info.limits->size() - 1] ; ++i)
+                {
+                        (*data.f_temp_8)[i] += temp[i];
                 }
 
                 info.dir_index_1->unlock(lm_read_only);
