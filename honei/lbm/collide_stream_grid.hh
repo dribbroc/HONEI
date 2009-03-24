@@ -41,7 +41,7 @@ using namespace honei::lbm;
 
 namespace honei
 {
-    template <typename Tag_, typename Application_, typename BoundaryType_, typename LatticeType_>
+    template <typename Tag_, typename BoundaryType_, typename LatticeType_>
     struct CollideStreamGrid
     {
     };
@@ -52,7 +52,7 @@ namespace honei
      * \ingroup grplbmoperations
      */
     template <>
-    struct CollideStreamGrid<tags::CPU, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>
+    struct CollideStreamGrid<tags::CPU, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>
     {
         /**
          * \name Collision and Streaming for direction 1..
@@ -246,7 +246,7 @@ namespace honei
     };
 
     template <>
-    struct CollideStreamGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>
+    struct CollideStreamGrid<tags::GPU::CUDA, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>
     {
         static void value(
                 PackedGridInfo<lbm_lattice_types::D2Q9> & info,
@@ -255,7 +255,7 @@ namespace honei
     };
 
     template <>
-    struct CollideStreamGrid<tags::CPU::SSE, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>
+    struct CollideStreamGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>
     {
         static void value(
                 PackedGridInfo<lbm_lattice_types::D2Q9> & info,

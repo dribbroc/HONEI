@@ -22,7 +22,7 @@
 
 using namespace honei;
 
-void CollideStreamGrid<tags::CPU::SSE, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::value(
+void CollideStreamGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::value(
         PackedGridInfo<lbm_lattice_types::D2Q9> & info,
         PackedGridData<lbm_lattice_types::D2Q9, float> & data,
         float tau)
@@ -160,7 +160,7 @@ void CollideStreamGrid<tags::CPU::SSE, lbm_applications::LABSWE, lbm_boundary_ty
     data.f_temp_8->unlock(lm_write_only);
 }
 
-void CollideStreamGrid<tags::CPU::SSE, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::value(
+void CollideStreamGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::value(
         PackedGridInfo<lbm_lattice_types::D2Q9> & info,
         PackedGridData<lbm_lattice_types::D2Q9, double> & data,
         double tau)

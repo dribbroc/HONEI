@@ -81,7 +81,7 @@ class ExtractionGridBench :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLABSWEGrid<Tag_, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&info, &data, 1., 1., 1., 1.5);
+            SolverLABSWEGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&info, &data, 1., 1., 1., 1.5);
 
             solver.do_preprocessing();
 
@@ -90,13 +90,13 @@ class ExtractionGridBench :
                 BENCHMARK(
                         for (unsigned long j(0) ; j < 5 ; ++j)
                         {
-                        (ExtractionGrid<Tag_, lbm_applications::LABSWE>::value(info, data, DataType_(10e-5)));
+                        (ExtractionGrid<Tag_>::value(info, data, DataType_(10e-5)));
                         }
                         if (Tag_::tag_value == tags::tv_gpu_cuda)
                             cuda_thread_synchronize();
                         );
             }
-            BenchmarkInfo benchinfo(ExtractionGrid<tags::CPU, lbm_applications::LABSWE>::get_benchmark_info(&info, &data));
+            BenchmarkInfo benchinfo(ExtractionGrid<tags::CPU>::get_benchmark_info(&info, &data));
             evaluate(benchinfo * 5);
         }
 };

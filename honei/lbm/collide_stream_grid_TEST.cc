@@ -86,7 +86,7 @@ class CollideStreamGridLABSWETest :
                 (*data.f_8)[i] = DataType_(2.234);
                 (*data.f_temp_1)[i] = DataType_(4711);
             }
-            CollideStreamGrid<Tag_, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
+            CollideStreamGrid<Tag_, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                 value(info, data, tau);
             /*data.f_temp_1->lock(lm_read_only);
             std::cout<<*data.f_temp_1;

@@ -23,7 +23,7 @@
 
 using namespace honei;
 
-void ExtractionGrid<tags::CPU::SSE, lbm_applications::LABSWE>::value(
+void ExtractionGrid<tags::CPU::SSE>::value(
         PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float epsilon)
 {
     CONTEXT("When extracting h, u and v(SSE):");
@@ -109,7 +109,7 @@ void ExtractionGrid<tags::CPU::SSE, lbm_applications::LABSWE>::value(
     data.v->unlock(lm_write_only);
 }
 
-void ExtractionGrid<tags::CPU::SSE, lbm_applications::LABSWE>::value(
+void ExtractionGrid<tags::CPU::SSE>::value(
         PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data, double epsilon)
 {
     CONTEXT("When extracting h, u and v(SSE):");

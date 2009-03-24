@@ -74,12 +74,12 @@ class ExtractionGridRegressionTest :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLABSWEGrid<Tag_, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&info, &data, 0.01, 0.01, 0.005, 1.1);
+            SolverLABSWEGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&info, &data, 0.01, 0.01, 0.005, 1.1);
 
             solver.do_preprocessing();
             solver.solve();
 
-            ExtractionGrid<Tag_, lbm_applications::LABSWE>::value(info, data, DataType_(10e-5));
+            ExtractionGrid<Tag_>::value(info, data, DataType_(10e-5));
 
             //Standard solver using tags::CPU:
             unsigned long g_h_standard(50);
@@ -112,12 +112,12 @@ class ExtractionGridRegressionTest :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_standard, info_standard, data_standard);
 
-            SolverLABSWEGrid<tags::CPU, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver_standard(&info_standard, &data_standard, 0.01, 0.01, 0.005, 1.1);
+            SolverLABSWEGrid<tags::CPU, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver_standard(&info_standard, &data_standard, 0.01, 0.01, 0.005, 1.1);
 
             solver_standard.do_preprocessing();
             solver_standard.solve();
 
-            ExtractionGrid<tags::CPU, lbm_applications::LABSWE>::value(info_standard, data_standard, DataType_(10e-5));
+            ExtractionGrid<tags::CPU>::value(info_standard, data_standard, DataType_(10e-5));
 
 
             //Compare results of both solvers:

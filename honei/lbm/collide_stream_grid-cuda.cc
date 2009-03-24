@@ -25,7 +25,7 @@
 
 using namespace honei;
 
-void CollideStreamGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_boundary_types::NOSLIP,
+void CollideStreamGrid<tags::GPU::CUDA, lbm_boundary_types::NOSLIP,
      lbm_lattice_types::D2Q9>::value(
                 PackedGridInfo<lbm_lattice_types::D2Q9> & info,
                 PackedGridData<lbm_lattice_types::D2Q9, float> & data,

@@ -39,13 +39,13 @@ using namespace lbm;
 
 namespace honei
 {
-    template<typename Tag_, typename App_>
+    template<typename Tag_>
         struct ExtractionGrid
         {
         };
 
     template<>
-        struct ExtractionGrid<tags::CPU, lbm_applications::LABSWE>
+        struct ExtractionGrid<tags::CPU>
         {
             public:
                 template<typename DT_>
@@ -189,14 +189,14 @@ namespace honei
         };
 
     template<>
-        struct ExtractionGrid<tags::GPU::CUDA, lbm_applications::LABSWE>
+        struct ExtractionGrid<tags::GPU::CUDA>
         {
             public:
                 static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float epsilon);
         };
 
     template<>
-        struct ExtractionGrid<tags::CPU::SSE, lbm_applications::LABSWE>
+        struct ExtractionGrid<tags::CPU::SSE>
         {
             public:
                 static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float epsilon);
