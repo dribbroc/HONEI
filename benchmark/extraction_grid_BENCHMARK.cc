@@ -35,7 +35,7 @@ using namespace honei;
 using namespace lbm;
 using namespace lbm_lattice_types;
 
-template <typename Tag_, typename DataType_>
+template <typename Tag_, typename DataType_, typename LbmMode_>
 class ExtractionGridBench :
     public Benchmark
 {
@@ -81,7 +81,7 @@ class ExtractionGridBench :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLABSWEGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> solver(&info, &data, 1., 1., 1., 1.5);
+            SolverLABSWEGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_> solver(&info, &data, 1., 1., 1., 1.5);
 
             solver.do_preprocessing();
 
@@ -90,23 +90,33 @@ class ExtractionGridBench :
                 BENCHMARK(
                         for (unsigned long j(0) ; j < 5 ; ++j)
                         {
-                        (ExtractionGrid<Tag_>::value(info, data, DataType_(10e-5)));
+                        (ExtractionGrid<Tag_, LbmMode_>::value(info, data, DataType_(10e-5)));
                         }
                         if (Tag_::tag_value == tags::tv_gpu_cuda)
                             cuda_thread_synchronize();
                         );
             }
-            BenchmarkInfo benchinfo(ExtractionGrid<tags::CPU>::get_benchmark_info(&info, &data));
+            BenchmarkInfo benchinfo(ExtractionGrid<tags::CPU, LbmMode_>::get_benchmark_info(&info, &data));
             evaluate(benchinfo * 5);
         }
 };
 
-ExtractionGridBench<tags::CPU, float> extraction_grid_bench_float("ExtractionGridBench - size: 2000, float", 2000, 5);
-ExtractionGridBench<tags::CPU, double> extraction_grid_bench_double("ExtractionGridBench - size: 2000, double", 2000, 5);
+ExtractionGridBench<tags::CPU, float, lbm_modes::DRY> dry_extraction_grid_bench_float("DRY ExtractionGridBench - size: 2000, float", 2000, 5);
+ExtractionGridBench<tags::CPU, double, lbm_modes::DRY> dry_extraction_grid_bench_double("DRY ExtractionGridBench - size: 2000, double", 2000, 5);
 #ifdef HONEI_SSE
-ExtractionGridBench<tags::CPU::SSE, float> sse_extraction_grid_bench_float("SSE ExtractionGridBench - size: 2000, float", 2000, 5);
-ExtractionGridBench<tags::CPU::SSE, double> sse_extraction_grid_bench_double("SSE ExtractionGridBench - size: 2000, double", 2000, 5);
+ExtractionGridBench<tags::CPU::SSE, float, lbm_modes::DRY> dry_sse_extraction_grid_bench_float("DRY SSE ExtractionGridBench - size: 2000, float", 2000, 5);
+ExtractionGridBench<tags::CPU::SSE, double, lbm_modes::DRY> dry_sse_extraction_grid_bench_double("DRY SSE ExtractionGridBench - size: 2000, double", 2000, 5);
 #endif
 #ifdef HONEI_CUDA
-ExtractionGridBench<tags::GPU::CUDA, float> cuda_extraction_grid_bench_float("CUDA ExtractionGridBench - size: 2000, float", 2000, 25);
+ExtractionGridBench<tags::GPU::CUDA, float, lbm_modes::DRY> dry_cuda_extraction_grid_bench_float("DRY CUDA ExtractionGridBench - size: 2000, float", 2000, 25);
+#endif
+
+ExtractionGridBench<tags::CPU, float, lbm_modes::WET> wet_extraction_grid_bench_float("WET ExtractionGridBench - size: 2000, float", 2000, 5);
+ExtractionGridBench<tags::CPU, double, lbm_modes::WET> wet_extraction_grid_bench_double("WET ExtractionGridBench - size: 2000, double", 2000, 5);
+#ifdef HONEI_SSE
+ExtractionGridBench<tags::CPU::SSE, float, lbm_modes::WET> wet_sse_extraction_grid_bench_float("WET SSE ExtractionGridBench - size: 2000, float", 2000, 5);
+ExtractionGridBench<tags::CPU::SSE, double, lbm_modes::WET> wet_sse_extraction_grid_bench_double("WET SSE ExtractionGridBench - size: 2000, double", 2000, 5);
+#endif
+#ifdef HONEI_CUDA
+ExtractionGridBench<tags::GPU::CUDA, float, lbm_modes::WET> wet_cuda_extraction_grid_bench_float("WET CUDA ExtractionGridBench - size: 2000, float", 2000, 25);
 #endif

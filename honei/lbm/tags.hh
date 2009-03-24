@@ -91,6 +91,12 @@ namespace honei
             class X;
             class Y;
         }
+
+        namespace lbm_modes
+        {
+            class DRY;
+            class WET;
+        }
     }
 
 }

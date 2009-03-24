@@ -39,13 +39,13 @@ using namespace lbm;
 
 namespace honei
 {
-    template<typename Tag_>
+    template<typename Tag_, typename LbmMode_>
         struct ExtractionGrid
         {
         };
 
     template<>
-        struct ExtractionGrid<tags::CPU>
+        struct ExtractionGrid<tags::CPU, lbm_modes::DRY>
         {
             public:
                 template<typename DT_>
@@ -189,14 +189,159 @@ namespace honei
         };
 
     template<>
-        struct ExtractionGrid<tags::GPU::CUDA>
+        struct ExtractionGrid<tags::GPU::CUDA, lbm_modes::DRY>
         {
             public:
                 static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float epsilon);
         };
 
     template<>
-        struct ExtractionGrid<tags::CPU::SSE>
+        struct ExtractionGrid<tags::CPU::SSE, lbm_modes::DRY>
+        {
+            public:
+                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float epsilon);
+
+                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data, double epsilon);
+        };
+
+    template<>
+        struct ExtractionGrid<tags::CPU, lbm_modes::WET>
+        {
+            public:
+                template<typename DT_>
+                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data, DT_ epsilon)
+                    {
+                        CONTEXT("When extracting h, u and v:");
+
+                        //set f to t_temp
+                        DenseVector<DT_> * swap;
+                        swap = data.f_0;
+                        data.f_0 = data.f_temp_0;
+                        data.f_temp_0 = swap;
+                        swap = data.f_1;
+                        data.f_1 = data.f_temp_1;
+                        data.f_temp_1 = swap;
+                        swap = data.f_2;
+                        data.f_2 = data.f_temp_2;
+                        data.f_temp_2 = swap;
+                        swap = data.f_3;
+                        data.f_3 = data.f_temp_3;
+                        data.f_temp_3 = swap;
+                        swap = data.f_4;
+                        data.f_4 = data.f_temp_4;
+                        data.f_temp_4 = swap;
+                        swap = data.f_5;
+                        data.f_5 = data.f_temp_5;
+                        data.f_temp_5 = swap;
+                        swap = data.f_6;
+                        data.f_6 = data.f_temp_6;
+                        data.f_temp_6 = swap;
+                        swap = data.f_7;
+                        data.f_7 = data.f_temp_7;
+                        data.f_temp_7 = swap;
+                        swap = data.f_8;
+                        data.f_8 = data.f_temp_8;
+                        data.f_temp_8 = swap;
+
+                        info.limits->lock(lm_read_only);
+
+                        data.f_0->lock(lm_read_and_write);
+                        data.f_1->lock(lm_read_and_write);
+                        data.f_2->lock(lm_read_and_write);
+                        data.f_3->lock(lm_read_and_write);
+                        data.f_4->lock(lm_read_and_write);
+                        data.f_5->lock(lm_read_and_write);
+                        data.f_6->lock(lm_read_and_write);
+                        data.f_7->lock(lm_read_and_write);
+                        data.f_8->lock(lm_read_and_write);
+
+                        data.h->lock(lm_write_only);
+
+                        data.distribution_x->lock(lm_read_only);
+                        data.distribution_y->lock(lm_read_only);
+
+                        data.u->lock(lm_write_only);
+                        data.v->lock(lm_write_only);
+
+                        for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
+                        {
+
+                            //accumulate
+                            (*data.h)[i] = (*data.f_0)[i] +
+                                (*data.f_1)[i] +
+                                (*data.f_2)[i] +
+                                (*data.f_3)[i] +
+                                (*data.f_4)[i] +
+                                (*data.f_5)[i] +
+                                (*data.f_6)[i] +
+                                (*data.f_7)[i] +
+                                (*data.f_8)[i];
+
+                            (*data.u)[i] = ((*data.distribution_x)[0] * (*data.f_0)[i] +
+                                    (*data.distribution_x)[1] * (*data.f_1)[i] +
+                                    (*data.distribution_x)[2] * (*data.f_2)[i] +
+                                    (*data.distribution_x)[3] * (*data.f_3)[i] +
+                                    (*data.distribution_x)[4] * (*data.f_4)[i] +
+                                    (*data.distribution_x)[5] * (*data.f_5)[i] +
+                                    (*data.distribution_x)[6] * (*data.f_6)[i] +
+                                    (*data.distribution_x)[7] * (*data.f_7)[i] +
+                                    (*data.distribution_x)[8] * (*data.f_8)[i]) / (*data.h)[i];
+
+                            (*data.v)[i] = ((*data.distribution_y)[0] * (*data.f_0)[i] +
+                                    (*data.distribution_y)[1] * (*data.f_1)[i] +
+                                    (*data.distribution_y)[2] * (*data.f_2)[i] +
+                                    (*data.distribution_y)[3] * (*data.f_3)[i] +
+                                    (*data.distribution_y)[4] * (*data.f_4)[i] +
+                                    (*data.distribution_y)[5] * (*data.f_5)[i] +
+                                    (*data.distribution_y)[6] * (*data.f_6)[i] +
+                                    (*data.distribution_y)[7] * (*data.f_7)[i] +
+                                    (*data.distribution_y)[8] * (*data.f_8)[i]) / (*data.h)[i];
+
+
+                        }
+
+                        info.limits->unlock(lm_read_only);
+
+                        data.f_0->unlock(lm_read_and_write);
+                        data.f_1->unlock(lm_read_and_write);
+                        data.f_2->unlock(lm_read_and_write);
+                        data.f_3->unlock(lm_read_and_write);
+                        data.f_4->unlock(lm_read_and_write);
+                        data.f_5->unlock(lm_read_and_write);
+                        data.f_6->unlock(lm_read_and_write);
+                        data.f_7->unlock(lm_read_and_write);
+                        data.f_8->unlock(lm_read_and_write);
+
+                        data.h->unlock(lm_write_only);
+
+                        data.distribution_x->unlock(lm_read_only);
+                        data.distribution_y->unlock(lm_read_only);
+
+                        data.u->unlock(lm_write_only);
+                        data.v->unlock(lm_write_only);
+                    }
+
+                template<typename DT1_>
+                    static inline BenchmarkInfo get_benchmark_info(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT1_> * data)
+                    {
+                        BenchmarkInfo result;
+                        result.flops = data->h->size() * 28;
+                        result.load = data->h->size() * 57 * sizeof(DT1_);
+                        result.store = data->h->size() * 13 * sizeof(DT1_);
+                        result.size.push_back(data->h->size());
+                        return result;
+                    }
+        };
+
+    template<>
+        struct ExtractionGrid<tags::GPU::CUDA, lbm_modes::WET>
+        {
+            public:
+                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float epsilon);
+        };
+
+    template<>
+        struct ExtractionGrid<tags::CPU::SSE, lbm_modes::WET>
         {
             public:
                 static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float epsilon);

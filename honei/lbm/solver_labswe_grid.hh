@@ -75,13 +75,14 @@ namespace honei
         typename SourceScheme_,
         typename GridType_,
         typename LatticeType_,
-        typename BoundaryType_>
+        typename BoundaryType_,
+        typename LbmMode_>
             class SolverLABSWEGrid
             {
             };
 
-    template<typename Tag_, typename Application_, typename ResPrec_, typename Force_, typename SourceScheme_>
-        class SolverLABSWEGrid<Tag_, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>
+    template<typename Tag_, typename Application_, typename ResPrec_, typename Force_, typename SourceScheme_, typename LbmMode_>
+        class SolverLABSWEGrid<Tag_, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>
         {
             private:
                 /** Global variables.
@@ -190,7 +191,7 @@ namespace honei
                         value(*_data, *_info);
 
                     //extract velocities out of h from previous timestep:
-                    ExtractionGrid<Tag_>::value(*_info, *_data, ResPrec_(10e-5));
+                    ExtractionGrid<Tag_, LbmMode_>::value(*_info, *_data, ResPrec_(10e-5));
 
                     ++_time;
 
@@ -212,7 +213,7 @@ namespace honei
                     result += col_stream;
                     BenchmarkInfo force(ForceGrid<Tag_, Application_, Force_, SourceScheme_>::get_benchmark_info(info, data));
                     result += force;
-                    BenchmarkInfo extraction(ExtractionGrid<Tag_>::get_benchmark_info(info, data));
+                    BenchmarkInfo extraction(ExtractionGrid<Tag_, LbmMode_>::get_benchmark_info(info, data));
                     result += extraction;
 
                     result.size.push_back(grid->h->rows());
@@ -232,13 +233,14 @@ namespace honei
             typename SourceScheme_,
             typename GridType_,
             typename LatticeType_,
-            typename BoundaryType_>
+            typename BoundaryType_,
+            typename LbmMode_>
                 class SolverLABSWEGrid
                 {
                 };
 
-        template<typename Tag_, typename Application_, typename ResPrec_, typename Force_, typename SourceScheme_>
-            class SolverLABSWEGrid<Tag_, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>
+        template<typename Tag_, typename Application_, typename ResPrec_, typename Force_, typename SourceScheme_, typename LbmMode_>
+            class SolverLABSWEGrid<Tag_, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>
             {
                 private:
                     unsigned long _parts;
@@ -247,7 +249,7 @@ namespace honei
                     std::vector<PackedGridInfo<D2Q9> > _info_list;
                     std::vector<PackedGridData<D2Q9, ResPrec_> > _data_list;
                     std::vector<PackedGridFringe<D2Q9> > _fringe_list;
-                    std::vector<honei::SolverLABSWEGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> *> _solver_list;
+                    std::vector<honei::SolverLABSWEGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_> *> _solver_list;
                     std::vector<Ticket<tags::CPU::MultiCore> *> _tickets;
 
                 public:
@@ -261,7 +263,7 @@ namespace honei
 
                     for(unsigned long i(0) ; i < _parts ; ++i)
                     {
-                        _solver_list.push_back(new honei::SolverLABSWEGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>(&_info_list[i], &_data_list[i], dx, dy, dt, rel_time));
+                        _solver_list.push_back(new honei::SolverLABSWEGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>(&_info_list[i], &_data_list[i], dx, dy, dt, rel_time));
                     }
                 }
 
@@ -288,7 +290,7 @@ namespace honei
                         {
                             tickets.push_back(mc::ThreadPool::instance()->enqueue(
                                         std::tr1::bind(
-                                            std::tr1::mem_fn(&honei::SolverLABSWEGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>::do_preprocessing),
+                                            std::tr1::mem_fn(&honei::SolverLABSWEGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>::do_preprocessing),
                                             *(_solver_list.at(i))
                                             ), DispatchPolicy::same_core_as(_tickets.at(i))));
                         }
@@ -303,7 +305,7 @@ namespace honei
                         {
                             tickets.push_back(mc::ThreadPool::instance()->enqueue(
                                         std::tr1::bind(
-                                            std::tr1::mem_fn(&honei::SolverLABSWEGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>::solve),
+                                            std::tr1::mem_fn(&honei::SolverLABSWEGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>::solve),
                                             *(_solver_list.at(i))
                                             ), DispatchPolicy::same_core_as(_tickets.at(i))));
                         }
@@ -315,24 +317,24 @@ namespace honei
             };
     }
 
-    template<typename Application_, typename ResPrec_, typename Force_, typename SourceScheme_>
-        class SolverLABSWEGrid<tags::CPU::MultiCore, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> :
-        public mc::SolverLABSWEGrid<tags::CPU::MultiCore, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>
+    template<typename Application_, typename ResPrec_, typename Force_, typename SourceScheme_, typename LbmMode_>
+        class SolverLABSWEGrid<tags::CPU::MultiCore, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_> :
+        public mc::SolverLABSWEGrid<tags::CPU::MultiCore, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>
         {
             public:
                 SolverLABSWEGrid(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, ResPrec_> * data, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, ResPrec_ rel_time):
-                    mc::SolverLABSWEGrid<tags::CPU::MultiCore, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>(info, data, dx, dy, dt, rel_time)
+                    mc::SolverLABSWEGrid<tags::CPU::MultiCore, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>(info, data, dx, dy, dt, rel_time)
             {
             }
         };
 
-    template<typename Application_, typename ResPrec_, typename Force_, typename SourceScheme_>
-        class SolverLABSWEGrid<tags::CPU::MultiCore::SSE, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP> :
-        public mc::SolverLABSWEGrid<tags::CPU::MultiCore::SSE, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>
+    template<typename Application_, typename ResPrec_, typename Force_, typename SourceScheme_, typename LbmMode_>
+        class SolverLABSWEGrid<tags::CPU::MultiCore::SSE, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_> :
+        public mc::SolverLABSWEGrid<tags::CPU::MultiCore::SSE, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>
         {
             public:
                 SolverLABSWEGrid(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, ResPrec_> * data, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, ResPrec_ rel_time):
-                    mc::SolverLABSWEGrid<tags::CPU::MultiCore::SSE, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP>(info, data, dx, dy, dt, rel_time)
+                    mc::SolverLABSWEGrid<tags::CPU::MultiCore::SSE, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>(info, data, dx, dy, dt, rel_time)
             {
             }
         };

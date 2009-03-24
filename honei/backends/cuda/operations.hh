@@ -103,7 +103,16 @@ extern "C"
             unsigned long size,
             unsigned long blocksize);
 
-    void cuda_extraction_grid_float(
+    void cuda_extraction_grid_dry_float(
+            unsigned long start, unsigned long end,
+            void * f_0, void * f_1, void * f_2,
+            void * f_3, void * f_4, void * f_5,
+            void * f_6, void * f_7, void * f_8,
+            void * h, void * u, void * v,
+            void * distribution_x, void * distribution_y, float epsilon,
+            unsigned long blocksize);
+
+    void cuda_extraction_grid_wet_float(
             unsigned long start, unsigned long end,
             void * f_0, void * f_1, void * f_2,
             void * f_3, void * f_4, void * f_5,
