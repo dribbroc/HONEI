@@ -111,5 +111,5 @@ EquilibriumDistributionGridBench<tags::CPU::SSE, float> sse_eq_dist_grid_bench_f
 EquilibriumDistributionGridBench<tags::CPU::SSE, double> sse_eq_dist_grid_bench_double("SSE EquilibriumDistributionGridBenchmark - size: 2000, double", 2000, 5);
 #endif
 #ifdef HONEI_CUDA
-EquilibriumDistributionGridBench<tags::GPU::CUDA, float> cuda_eq_dist_grid_bench_float("CUDA EquilibriumDistributionGridBenchmark - size: 2000, float", 2000, 5);
+EquilibriumDistributionGridBench<tags::GPU::CUDA, float> cuda_eq_dist_grid_bench_float("CUDA EquilibriumDistributionGridBenchmark - size: 2000, float", 2000, 25);
 #endif

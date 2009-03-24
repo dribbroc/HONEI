@@ -108,5 +108,5 @@ ExtractionGridBench<tags::CPU::SSE, float> sse_extraction_grid_bench_float("SSE 
 ExtractionGridBench<tags::CPU::SSE, double> sse_extraction_grid_bench_double("SSE ExtractionGridBench - size: 2000, double", 2000, 5);
 #endif
 #ifdef HONEI_CUDA
-ExtractionGridBench<tags::GPU::CUDA, float> cuda_extraction_grid_bench_float("CUDA ExtractionGridBench - size: 2000, float", 2000, 5);
+ExtractionGridBench<tags::GPU::CUDA, float> cuda_extraction_grid_bench_float("CUDA ExtractionGridBench - size: 2000, float", 2000, 25);
 #endif
