@@ -1,7 +1,7 @@
 /* vim: set number sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2008 Markus Geveler <apryde@gmx.de>
+ * Copyright (c) 2008, 2009 Markus Geveler <apryde@gmx.de>
  * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LBM C++ library. LBM is free software;
@@ -54,12 +54,6 @@ namespace honei
             /**
              * \name Equilibrium distribution.
              *
-             * \brief Computes the equilibrium distribution for the zeroth direction.
-             *
-             * \param result The destination matrix.
-             * \param h The height matrix.
-             * \param g The gravitational constant to be used.
-             * \param e The ratio of space and time stepping.
              */
             template<typename DT1_, typename DT2_>
                 static void value(DT2_ g, DT2_ e, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data)
@@ -203,6 +197,113 @@ namespace honei
                     result.size.push_back(data->h->size());
                     return result;
                 }
+        };
+
+    template<typename Tag_>
+        struct EquilibriumDistributionGrid<Tag_, lbm_applications::LABNAVSTO>
+        {
+            /**
+             * \name Equilibrium distribution for NAVSTO equations
+             *
+             */
+            template<typename DT1_, typename DT2_>
+                static void value(DT2_ g, DT2_ e, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data)
+                {
+                    CONTEXT("When computing LABNAVSTO local equilibrium distribution function:");
+
+                    info.limits->lock(lm_read_only);
+
+                    data.u->lock(lm_read_only);
+                    data.v->lock(lm_read_only);
+                    data.h->lock(lm_read_only);
+
+                    data.distribution_x->lock(lm_read_only);
+                    data.distribution_y->lock(lm_read_only);
+
+                    data.f_eq_0->lock(lm_write_only);
+                    data.f_eq_1->lock(lm_write_only);
+                    data.f_eq_2->lock(lm_write_only);
+                    data.f_eq_3->lock(lm_write_only);
+                    data.f_eq_4->lock(lm_write_only);
+                    data.f_eq_5->lock(lm_write_only);
+                    data.f_eq_6->lock(lm_write_only);
+                    data.f_eq_7->lock(lm_write_only);
+                    data.f_eq_8->lock(lm_write_only);
+
+                    DT1_ e2(e); //e squared is passed!!
+                    DT1_ e4(e2 * e2);
+                    DT1_ three_by_e2(DT1_(3.) / e2);
+                    DT1_ nine_by_2e4(DT1_(9.) / (DT1_(2.) * e4));
+                    DT1_ three_by_2e2(DT1_(3.) / (DT1_(2.) * e2));
+                    for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
+                    {
+                        DT1_ u((*data.u)[i]);
+                        DT1_ v((*data.v)[i]);
+                        DT1_ h((*data.h)[i]);
+                        DT1_ u2(u * u);
+                        DT1_ v2(v * v);
+
+                        DT1_ dxu, dyv;
+                        DT1_ omega_0(DT1_(4./9.));
+                        DT1_ omega_1(DT1_(1./9.));
+                        DT1_ omega_2(DT1_(1./36.));
+                        DT1_ one(1.);
+
+                        (*data.f_eq_0)[i] = h * omega_0 * (one - (three_by_2e2 * (u2 + v2)));
+
+                        dxu = (*data.distribution_x)[1] * u;
+                        dyv = (*data.distribution_y)[1] * v;
+                        (*data.f_eq_1)[i] = h * omega_1 * (one + (three_by_e2 * (dxu + dyv)) + (nine_by_2e4 * ((dxu + dyv) * (dxu + dyv))) -  (three_by_2e2 * (u2 + v2)));
+
+                        dxu = (*data.distribution_x)[3] * u;
+                        dyv = (*data.distribution_y)[3] * v;
+                        (*data.f_eq_3)[i] = h * omega_1 * (one + (three_by_e2 * (dxu + dyv)) + (nine_by_2e4 * ((dxu + dyv) * (dxu + dyv))) -  (three_by_2e2 * (u2 + v2)));
+
+                        dxu = (*data.distribution_x)[5] * u;
+                        dyv = (*data.distribution_y)[5] * v;
+                        (*data.f_eq_5)[i] = h * omega_1 * (one + (three_by_e2 * (dxu + dyv)) + (nine_by_2e4 * ((dxu + dyv) * (dxu + dyv))) -  (three_by_2e2 * (u2 + v2)));
+
+                        dxu = (*data.distribution_x)[7] * u;
+                        dyv = (*data.distribution_y)[7] * v;
+                        (*data.f_eq_7)[i] = h * omega_1 * (one + (three_by_e2 * (dxu + dyv)) + (nine_by_2e4 * ((dxu + dyv) * (dxu + dyv))) -  (three_by_2e2 * (u2 + v2)));
+
+                        dxu = (*data.distribution_x)[2] * u;
+                        dyv = (*data.distribution_y)[2] * v;
+                        (*data.f_eq_2)[i] = h * omega_2 * (one + (three_by_e2 * (dxu + dyv)) + (nine_by_2e4 * ((dxu + dyv) * (dxu + dyv))) -  (three_by_2e2 * (u2 + v2)));
+
+                        dxu = (*data.distribution_x)[4] * u;
+                        dyv = (*data.distribution_y)[4] * v;
+                        (*data.f_eq_4)[i] = h * omega_2 * (one + (three_by_e2 * (dxu + dyv)) + (nine_by_2e4 * ((dxu + dyv) * (dxu + dyv))) -  (three_by_2e2 * (u2 + v2)));
+
+                        dxu = (*data.distribution_x)[6] * u;
+                        dyv = (*data.distribution_y)[6] * v;
+                        (*data.f_eq_6)[i] = h * omega_2 * (one + (three_by_e2 * (dxu + dyv)) + (nine_by_2e4 * ((dxu + dyv) * (dxu + dyv))) -  (three_by_2e2 * (u2 + v2)));
+
+                        dxu = (*data.distribution_x)[8] * u;
+                        dyv = (*data.distribution_y)[8] * v;
+                        (*data.f_eq_8)[i] = h * omega_2 * (one + (three_by_e2 * (dxu + dyv)) + (nine_by_2e4 * ((dxu + dyv) * (dxu + dyv))) -  (three_by_2e2 * (u2 + v2)));
+                    }
+
+                    info.limits->unlock(lm_read_only);
+
+                    data.u->unlock(lm_read_only);
+                    data.v->unlock(lm_read_only);
+                    data.h->unlock(lm_read_only);
+
+                    data.distribution_x->unlock(lm_read_only);
+                    data.distribution_y->unlock(lm_read_only);
+
+                    data.f_eq_0->unlock(lm_write_only);
+                    data.f_eq_1->unlock(lm_write_only);
+                    data.f_eq_2->unlock(lm_write_only);
+                    data.f_eq_3->unlock(lm_write_only);
+                    data.f_eq_4->unlock(lm_write_only);
+                    data.f_eq_5->unlock(lm_write_only);
+                    data.f_eq_6->unlock(lm_write_only);
+                    data.f_eq_7->unlock(lm_write_only);
+                    data.f_eq_8->unlock(lm_write_only);
+                }
+
         };
 
     template<>
