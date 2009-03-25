@@ -155,7 +155,7 @@ namespace honei
 
                     ///Compute initial equilibrium distribution:
                     EquilibriumDistributionGrid<Tag_, Application_>::
-                        value(_gravity, _e, *_info, *_data);
+                        value(_gravity, _e_squared, *_info, *_data);
 
                     *_data->f_0 = _data->f_eq_0->copy();
                     *_data->f_1 = _data->f_eq_1->copy();
