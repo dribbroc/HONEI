@@ -233,6 +233,23 @@ if test "x$ENABLE_OPENCL" = "xyes"; then
 fi
 AC_SUBST([OPENCLDEF])
 dnl }}}
+dnl {{{ check for Itanium support
+AC_MSG_CHECKING([whether to build Itanium support])
+AC_ARG_ENABLE([itanium],
+	AS_HELP_STRING([--enable-itanium], [Build Itanium support (needs packages: none)]),
+		[ENABLE_ITANIUM=$enableval
+		  AC_MSG_RESULT([$enableval])],
+		[ENABLE_ITANIUM=no
+		  AC_MSG_RESULT([no])])
+AC_SUBST([ENABLE_ITANIUM])
+AM_CONDITIONAL([ITANIUM], test "x$ENABLE_ITANIUM" = "xyes")
+if test "x$ENABLE_ITANIUM" = "xyes"; then
+	dnl {{{ enable itanium support
+	ITANIUMDEF="-DHONEI_ITANIUM"
+	dnl }}}
+fi
+AC_SUBST([ITANIUMDEF])
+dnl }}}
 dnl {{{ check for MPI support
 AC_MSG_CHECKING([whether to build MPI support])
 AC_ARG_ENABLE([mpi],
@@ -529,6 +546,7 @@ AC_OUTPUT(
 	honei/backends/cell/spe/libswe/Makefile
 	honei/backends/cell/spe/libutil/Makefile
 	honei/backends/sse/Makefile
+	honei/backends/itanium/Makefile
 	honei/backends/mpi/Makefile
 	honei/backends/multicore/Makefile
 	honei/backends/cuda/Makefile

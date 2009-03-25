@@ -76,6 +76,19 @@ namespace honei
             };
 
             /**
+             * Tag-type for Itanium-optimised operations.
+             *
+             * \ingroup grptagscpuitanium
+             */
+            struct Itanium :
+                public InstantiationPolicy<CPU::Itanium, NonCopyable>
+            {
+                const static TagValue tag_value = tv_cpu;
+                const static TagValue memory_value = tv_cpu;
+                const static std::string name;
+            };
+
+            /**
              * Tag-type for multithreaded/C++-based operations.
              *
              * \ingroup grptagscpumulticore

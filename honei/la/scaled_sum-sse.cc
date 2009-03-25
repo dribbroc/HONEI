@@ -26,7 +26,7 @@ using namespace honei;
 DenseVectorContinuousBase<float> & ScaledSum<tags::CPU::SSE>::value(DenseVectorContinuousBase<float> & x,
         const DenseVectorContinuousBase<float> & y, float b)
 {
-    CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<float> (SSE):");
+    CONTEXT("When calculating ScaledSum from DenseVectorContinuousBase<float> (SSE):");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
@@ -39,7 +39,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::CPU::SSE>::value(DenseVectorC
 DenseVectorContinuousBase<double> & ScaledSum<tags::CPU::SSE>::value(DenseVectorContinuousBase<double> & x,
         const DenseVectorContinuousBase<double> & y, double b)
 {
-    CONTEXT("When calculating ScaledSum form DenseVectoriContinuousBase<double> (SSE):");
+    CONTEXT("When calculating ScaledSum from DenseVectoriContinuousBase<double> (SSE):");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());

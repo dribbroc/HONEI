@@ -69,6 +69,12 @@ DenseVectorScaledSumBench<tags::CPU::MultiCore::SSE, float>
 DenseVectorScaledSumBench<tags::CPU::MultiCore::SSE, double>
     MCSSEDVSSBenchdouble1("MC SSE Dense Vector ScaledSum Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
 #endif
+#ifdef HONEI_ITANIUM
+DenseVectorScaledSumBench<tags::CPU::Itanium, float>
+    ITANIUMDVSSBenchfloat1("Itanium Dense Vector ScaledSum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
+DenseVectorScaledSumBench<tags::CPU::Itanium, double>
+    ITANIUMDVSSBenchdouble1("Itanium Dense Vector ScaledSum Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
+#endif
 #ifdef HONEI_CUDA
 DenseVectorScaledSumBench<tags::GPU::CUDA, float>
     CUDADVSSBenchfloat1("CUDA Dense Vector ScaledSum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);

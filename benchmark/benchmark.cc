@@ -591,6 +591,7 @@ int main(int argc, char** argv)
     bool sse(true);
     bool cuda(true);
     bool opencl(true);
+    bool itanium(true);
     bool cell(true);
     bool mc(true);
     bool sc(true);
@@ -615,6 +616,7 @@ int main(int argc, char** argv)
             sc = false;
             cuda = false;
             opencl = false;
+            itanium = false;
             for(int i(1) ; i < argc ; ++i)
             {
                 if (honei::stringify(argv[i]) == "sse")
@@ -628,6 +630,9 @@ int main(int argc, char** argv)
                 if (honei::stringify(argv[i]) == "opencl")
                 {
                     opencl = true;
+                if (honei::stringify(argv[i]) == "itanium")
+                {
+                    itanium = true;
                 }
                 if (honei::stringify(argv[i]) == "cell")
                 {
@@ -676,6 +681,11 @@ int main(int argc, char** argv)
             continue;
         }
         if (cuda && ((*i)->plots() == plot) && (((*i)->get_tag_name() == "cuda") || ((*i)->get_tag_name() == "mc-cuda")))
+        {
+            ++i;
+            continue;
+        }
+        if (itanium && ((*i)->plots() == plot) && ((*i)->get_tag_name() == "itanium"))
         {
             ++i;
             continue;

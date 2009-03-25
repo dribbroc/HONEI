@@ -200,7 +200,7 @@ namespace
 DenseVectorContinuousBase<float> & ScaledSum<tags::GPU::CUDA>::value(DenseVectorContinuousBase<float> & x,
         const DenseVectorContinuousBase<float> & y, float b)
 {
-    CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<float> (CUDA):");
+    CONTEXT("When calculating ScaledSum from DenseVectorContinuousBase<float> (CUDA):");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());

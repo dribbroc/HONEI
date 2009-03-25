@@ -25,6 +25,7 @@ using namespace honei;
 
 const std::string tags::CPU::name = "cpu";
 const std::string tags::CPU::SSE::name = "sse";
+const std::string tags::CPU::Itanium::name = "itanium";
 const std::string tags::CPU::MultiCore::name = "mc";
 const std::string tags::CPU::MultiCore::SSE::name = "mc-sse";
 const std::string tags::Cell::name = "cell";
