@@ -381,10 +381,7 @@ namespace honei
         {
             public:
                 template <typename DT1_>
-                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data, DT1_ epsilon)
-                {
-                    ExtractionGrid<tags::CPU, lbm_modes::WET>::value(info, data, epsilon);
-                }
+                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data, DT1_ epsilon);
         };
 }
 #endif

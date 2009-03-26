@@ -60,6 +60,14 @@ namespace honei
         void collide_stream_grid_dir_n(unsigned long end, DT1_ tau,
                 unsigned long * dir, unsigned long * dir_index,
                 DT1_ * f_temp, DT1_ * f, DT1_ * f_eq);
+
+        template <typename DT1_>
+        void extraction_grid_wet(unsigned long begin, unsigned long end,
+                DT1_ * distribution_x, DT1_ * distribution_y,
+                DT1_ * h, DT1_ * u, DT1_ * v,
+                DT1_ * f_0, DT1_ * f_1, DT1_ * f_2,
+                DT1_ * f_3, DT1_ * f_4, DT1_ * f_5,
+                DT1_ * f_6, DT1_ * f_7, DT1_ * f_8, DT1_ epsilon);
     }
 }
 
