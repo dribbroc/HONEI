@@ -134,6 +134,7 @@ int main(int argc, char** argv)
     int result(EXIT_SUCCESS);
     bool quick(false);
     bool sse(false);
+    bool itanium(false);
     bool cuda(false);
     bool cell(false);
     bool mc(false);
@@ -152,6 +153,11 @@ int main(int argc, char** argv)
             if (stringify(argv[index]) == "sse")
             {
                 sse = true;
+                all = false;
+            }
+            if (stringify(argv[index]) == "itanium")
+            {
+                itanium = true;
                 all = false;
             }
             if (stringify(argv[index]) == "cuda")
@@ -195,6 +201,11 @@ int main(int argc, char** argv)
             if (!all)
             {
                 if (((*i)->get_tag_name()=="sse") && !sse)
+                {
+                    i = TestList::instance()->erase(i);
+                    continue;
+                }
+                if (((*i)->get_tag_name()=="itanium") && !itanium)
                 {
                     i = TestList::instance()->erase(i);
                     continue;

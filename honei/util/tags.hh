@@ -37,6 +37,7 @@ namespace honei
         {
             tv_cpu = 1,
             tv_cpu_multi_core,
+            tv_cpu_itanium,
             tv_cell,
             tv_gpu,
             tv_gpu_cuda,
@@ -83,7 +84,7 @@ namespace honei
             struct Itanium :
                 public InstantiationPolicy<CPU::Itanium, NonCopyable>
             {
-                const static TagValue tag_value = tv_cpu;
+                const static TagValue tag_value = tv_cpu_itanium;
                 const static TagValue memory_value = tv_cpu;
                 const static std::string name;
             };

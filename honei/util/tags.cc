@@ -53,6 +53,10 @@ std::ostream & honei::operator<< (std::ostream & left, tags::TagValue value)
                 left << "CPU-Multicore";
                 continue;
 
+            case tags::tv_cpu_itanium:
+                left << "CPU-Itanium";
+                continue;
+
             case tags::tv_cell:
                 left << "Cell";
                 continue;

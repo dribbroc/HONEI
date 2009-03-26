@@ -630,6 +630,7 @@ int main(int argc, char** argv)
                 if (honei::stringify(argv[i]) == "opencl")
                 {
                     opencl = true;
+                }
                 if (honei::stringify(argv[i]) == "itanium")
                 {
                     itanium = true;
