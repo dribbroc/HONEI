@@ -27,6 +27,39 @@ namespace honei
         ///////////// LA
         template <typename DT1_, typename DT2_>
         void scaled_sum(DT1_ * x, const DT2_ * y, DT2_ b, unsigned long size);
+
+        ///////////// LBM
+        template <typename DT1_>
+        void eq_dist_grid_dir_0(unsigned long begin, unsigned long end,
+                DT1_ g, DT1_ e,
+                DT1_ * h, DT1_ * u, DT1_ * v,
+                DT1_ * f_eq_0);
+
+        template <typename DT1_>
+        void eq_dist_grid_dir_odd(unsigned long begin, unsigned long end,
+                DT1_ g, DT1_ e,
+                DT1_ * h, DT1_ * u, DT1_ * v,
+                DT1_ * distribution_x, DT1_ * distribution_y,
+                DT1_ * f_eq,
+                unsigned long dir);
+
+        template <typename DT1_>
+        void eq_dist_grid_dir_even(unsigned long begin, unsigned long end,
+                DT1_ g, DT1_ e,
+                DT1_ * h, DT1_ * u, DT1_ * v,
+                DT1_ * distribution_x, DT1_ * distribution_y,
+                DT1_ * f_eq,
+                unsigned long dir);
+
+        template <typename DT1_>
+        void collide_stream_grid_dir_0(unsigned long begin, unsigned long end, DT1_ tau,
+                DT1_ * f_temp_0, DT1_ * f_0, DT1_ * f_eq_0);
+
+
+        template <typename DT1_>
+        void collide_stream_grid_dir_n(unsigned long end, DT1_ tau,
+                unsigned long * dir, unsigned long * dir_index,
+                DT1_ * f_temp, DT1_ * f, DT1_ * f_eq);
     }
 }
 

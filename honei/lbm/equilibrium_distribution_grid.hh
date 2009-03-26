@@ -325,5 +325,12 @@ namespace honei
             template <typename DT1_>
                 static void value(DT1_ g, DT1_ e, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data);
         };
+
+    template<>
+        struct EquilibriumDistributionGrid<tags::CPU::Itanium, lbm_applications::LABSWE>
+        {
+            template <typename DT1_>
+            static void value(DT1_ g, DT1_ e, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data);
+        };
 }
 #endif
