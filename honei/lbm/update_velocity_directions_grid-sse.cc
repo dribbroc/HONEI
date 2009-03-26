@@ -23,7 +23,7 @@
 using namespace honei;
 
 void UpdateVelocityDirectionsGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP>::value(
-        PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info)
+        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data)
 {
     CONTEXT("When updating velocity directions (SSE):");
 
@@ -60,7 +60,7 @@ void UpdateVelocityDirectionsGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP>::v
 }
 
 void UpdateVelocityDirectionsGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP>::value(
-        PackedGridData<D2Q9, double> & data, PackedGridInfo<D2Q9> & info)
+        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data)
 {
     CONTEXT("When updating velocity directions (SSE):");
 

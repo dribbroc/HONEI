@@ -91,7 +91,7 @@ class UpdateVelocityDirectionsGridBench :
                         for (unsigned long j(0) ; j < 5 ; ++j)
                         {
                         (UpdateVelocityDirectionsGrid<Tag_, NOSLIP>::
-                         value(data, info));
+                         value(info, data));
                         }
                         if (Tag_::tag_value == tags::tv_gpu_cuda)
                             cuda_thread_synchronize();

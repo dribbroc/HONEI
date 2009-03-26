@@ -59,7 +59,7 @@ namespace honei
             *
             */
            template<typename DT1_>
-               static void value(PackedGridData<D2Q9, DT1_> & data, PackedGridInfo<D2Q9> & info)
+               static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data)
                {
                    CONTEXT("When updating velocity directions:");
 
@@ -162,14 +162,14 @@ namespace honei
    template <>
        struct UpdateVelocityDirectionsGrid<tags::GPU::CUDA, lbm_boundary_types::NOSLIP>
        {
-           static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info);
+           static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data);
        };
 
     template <>
        struct UpdateVelocityDirectionsGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP>
        {
-           static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info);
-           static void value(PackedGridData<D2Q9, double> & data, PackedGridInfo<D2Q9> & info);
+           static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data);
+           static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data);
        };
 }
 #endif

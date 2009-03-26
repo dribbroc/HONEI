@@ -79,7 +79,7 @@ class UpateVelocityDirectionsGridRegressionTest :
             solver.do_preprocessing();
             solver.solve();
 
-            UpdateVelocityDirectionsGrid<Tag_, NOSLIP>::value(data, info);
+            UpdateVelocityDirectionsGrid<Tag_, NOSLIP>::value(info, data);
 
             //Standard solver using tags::CPU:
             unsigned long g_h_standard(50);
@@ -117,7 +117,7 @@ class UpateVelocityDirectionsGridRegressionTest :
             solver_standard.do_preprocessing();
             solver_standard.solve();
 
-            UpdateVelocityDirectionsGrid<tags::CPU, NOSLIP>::value(data_standard, info_standard);
+            UpdateVelocityDirectionsGrid<tags::CPU, NOSLIP>::value(info_standard, data_standard);
 
 
             //Compare CPU results of both solvers:
