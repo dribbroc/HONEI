@@ -16,7 +16,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include <honei/lbm/solver_labswe_grid.hh>
+#include <honei/lbm/solver_lbm_grid.hh>
 #include <honei/lbm/partial_derivative.hh>
 #include <honei/swe/post_processing.hh>
 #include <unittest/unittest.hh>
@@ -42,7 +42,7 @@ class SolverLABNAVSTOGridTest :
 {
     public:
         SolverLABNAVSTOGridTest(const std::string & type) :
-            TaggedTest<Tag_>("solver_labswe_grid_test<" + type + ">")
+            TaggedTest<Tag_>("solver_lbm_grid_test<" + type + ">")
         {
         }
 
@@ -64,7 +64,7 @@ class SolverLABNAVSTOGridTest :
 
                 GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-                SolverLABSWEGrid<Tag_, lbm_applications::LABNAVSTO, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, grid.d_x, grid.d_y, grid.d_t, grid.tau);
+                SolverLBMGrid<Tag_, lbm_applications::LABNAVSTO, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, grid.d_x, grid.d_y, grid.d_t, grid.tau);
 
                 solver.do_preprocessing();
                 std::cout << "Solving: " << grid.description << std::endl;
@@ -103,7 +103,7 @@ class SolverLABNAVSTOGridMassConservationTest :
 {
     public:
         SolverLABNAVSTOGridMassConservationTest(const std::string & type) :
-            TaggedTest<Tag_>("solver_labswe_grid_mass_cons_test<" + type + ">")
+            TaggedTest<Tag_>("solver_lbm_grid_mass_cons_test<" + type + ">")
     {
     }
 
@@ -135,7 +135,7 @@ class SolverLABNAVSTOGridMassConservationTest :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLABSWEGrid<Tag_, lbm_applications::LABNAVSTO, DataType_, lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, 1., 1., 1., 1.5);
+            SolverLBMGrid<Tag_, lbm_applications::LABNAVSTO, DataType_, lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, 1., 1., 1., 1.5);
 
             solver.do_preprocessing();
 

@@ -25,7 +25,7 @@
 
 #include <honei/lbm/extraction_grid.hh>
 #include <honei/lbm/grid_packer.hh>
-#include <honei/lbm/solver_labswe_grid.hh>
+#include <honei/lbm/solver_lbm_grid.hh>
 #include <honei/swe/volume.hh>
 #include <honei/math/quadrature.hh>
 #include <honei/backends/cuda/operations.hh>
@@ -81,7 +81,7 @@ class ExtractionGridBench :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLABSWEGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_> solver(&info, &data, 1., 1., 1., 1.5);
+            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_> solver(&info, &data, 1., 1., 1., 1.5);
 
             solver.do_preprocessing();
 

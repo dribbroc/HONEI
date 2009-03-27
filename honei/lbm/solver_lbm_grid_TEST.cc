@@ -16,7 +16,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include <honei/lbm/solver_labswe_grid.hh>
+#include <honei/lbm/solver_lbm_grid.hh>
 #include <honei/lbm/partial_derivative.hh>
 #include <honei/swe/post_processing.hh>
 #include <unittest/unittest.hh>
@@ -37,12 +37,12 @@ using namespace lbm::lbm_lattice_types;
 //#define SOLVER_POSTPROCESSING
 
 template <typename Tag_, typename DataType_>
-class SolverLABSWEGridTest :
+class SolverLBMGridTest :
     public TaggedTest<Tag_>
 {
     public:
-        SolverLABSWEGridTest(const std::string & type) :
-            TaggedTest<Tag_>("solver_labswe_grid_test<" + type + ">")
+        SolverLBMGridTest(const std::string & type) :
+            TaggedTest<Tag_>("solver_lbm_grid_test<" + type + ">")
         {
         }
 
@@ -64,7 +64,7 @@ class SolverLABSWEGridTest :
 
                 GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-                SolverLABSWEGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, grid.d_x, grid.d_y, grid.d_t, grid.tau);
+                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, grid.d_x, grid.d_y, grid.d_t, grid.tau);
 
                 solver.do_preprocessing();
                 std::cout << "Solving: " << grid.description << std::endl;
@@ -91,28 +91,28 @@ class SolverLABSWEGridTest :
 
 };
 
-SolverLABSWEGridTest<tags::CPU, float> solver_test_float("float");
-SolverLABSWEGridTest<tags::CPU, double> solver_test_double("double");
-SolverLABSWEGridTest<tags::CPU::MultiCore, float> mc_solver_test_float("float");
-SolverLABSWEGridTest<tags::CPU::MultiCore, double> mc_solver_test_double("double");
+SolverLBMGridTest<tags::CPU, float> solver_test_float("float");
+SolverLBMGridTest<tags::CPU, double> solver_test_double("double");
+SolverLBMGridTest<tags::CPU::MultiCore, float> mc_solver_test_float("float");
+SolverLBMGridTest<tags::CPU::MultiCore, double> mc_solver_test_double("double");
 #ifdef HONEI_SSE
-SolverLABSWEGridTest<tags::CPU::SSE, float> sse_solver_test_float("float");
-SolverLABSWEGridTest<tags::CPU::SSE, double> sse_solver_test_double("double");
-SolverLABSWEGridTest<tags::CPU::MultiCore::SSE, float> mcsse_solver_test_float("float");
-SolverLABSWEGridTest<tags::CPU::MultiCore::SSE, double> mcsse_solver_test_double("double");
+SolverLBMGridTest<tags::CPU::SSE, float> sse_solver_test_float("float");
+SolverLBMGridTest<tags::CPU::SSE, double> sse_solver_test_double("double");
+SolverLBMGridTest<tags::CPU::MultiCore::SSE, float> mcsse_solver_test_float("float");
+SolverLBMGridTest<tags::CPU::MultiCore::SSE, double> mcsse_solver_test_double("double");
 #endif
 #ifdef HONEI_CUDA
-SolverLABSWEGridTest<tags::GPU::CUDA, float> cuda_solver_test_float("float");
+SolverLBMGridTest<tags::GPU::CUDA, float> cuda_solver_test_float("float");
 #endif
 
 
 template <typename Tag_, typename DataType_>
-class SolverLABSWEGridMassConservationTest :
+class SolverLBMGridMassConservationTest :
     public TaggedTest<Tag_>
 {
     public:
-        SolverLABSWEGridMassConservationTest(const std::string & type) :
-            TaggedTest<Tag_>("solver_labswe_grid_mass_cons_test<" + type + ">")
+        SolverLBMGridMassConservationTest(const std::string & type) :
+            TaggedTest<Tag_>("solver_lbm_grid_mass_cons_test<" + type + ">")
     {
     }
 
@@ -144,7 +144,7 @@ class SolverLABSWEGridMassConservationTest :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLABSWEGrid<Tag_, lbm_applications::LABSWE, DataType_, lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, 1., 1., 1., 1.5);
+            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_, lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, 1., 1., 1., 1.5);
 
             solver.do_preprocessing();
 
@@ -168,17 +168,17 @@ class SolverLABSWEGridMassConservationTest :
         }
 
 };
-SolverLABSWEGridMassConservationTest<tags::CPU, float> solver_grid_mc_test_float("float");
-SolverLABSWEGridMassConservationTest<tags::CPU, double> solver_grid_mc_test_double("double");
-SolverLABSWEGridMassConservationTest<tags::CPU::MultiCore, float> mc_solver_grid_mc_test_float("float");
-SolverLABSWEGridMassConservationTest<tags::CPU::MultiCore, double> mc_solver_grid_mc_test_double("double");
+SolverLBMGridMassConservationTest<tags::CPU, float> solver_grid_mc_test_float("float");
+SolverLBMGridMassConservationTest<tags::CPU, double> solver_grid_mc_test_double("double");
+SolverLBMGridMassConservationTest<tags::CPU::MultiCore, float> mc_solver_grid_mc_test_float("float");
+SolverLBMGridMassConservationTest<tags::CPU::MultiCore, double> mc_solver_grid_mc_test_double("double");
 #ifdef HONEI_SSE
-SolverLABSWEGridMassConservationTest<tags::CPU::SSE, float> sse_solver_grid_mc_test_float("float");
-SolverLABSWEGridMassConservationTest<tags::CPU::SSE, double> sse_solver_grid_mc_test_double("double");
-SolverLABSWEGridMassConservationTest<tags::CPU::MultiCore::SSE, float> mcsse_solver_grid_mc_test_float("float");
-SolverLABSWEGridMassConservationTest<tags::CPU::MultiCore::SSE, double> mcsse_solver_grid_mc_test_double("double");
+SolverLBMGridMassConservationTest<tags::CPU::SSE, float> sse_solver_grid_mc_test_float("float");
+SolverLBMGridMassConservationTest<tags::CPU::SSE, double> sse_solver_grid_mc_test_double("double");
+SolverLBMGridMassConservationTest<tags::CPU::MultiCore::SSE, float> mcsse_solver_grid_mc_test_float("float");
+SolverLBMGridMassConservationTest<tags::CPU::MultiCore::SSE, double> mcsse_solver_grid_mc_test_double("double");
 #endif
 #ifdef HONEI_CUDA
-SolverLABSWEGridMassConservationTest<tags::GPU::CUDA, float> cuda_solver_grid_mc_test_float("float");
+SolverLBMGridMassConservationTest<tags::GPU::CUDA, float> cuda_solver_grid_mc_test_float("float");
 #endif
 

@@ -16,7 +16,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include <honei/lbm/solver_labswe_grid.hh>
+#include <honei/lbm/solver_lbm_grid.hh>
 #include <honei/swe/post_processing.hh>
 #include <honei/swe/volume.hh>
 #include <unittest/unittest.hh>
@@ -38,12 +38,12 @@ using namespace lbm::lbm_lattice_types;
 //#define SOLVER_VERBOSE 1
 
 template <typename Tag_, typename DataType_>
-class SolverLABSWEGridRegressionTest :
+class SolverLBMGridRegressionTest :
     public TaggedTest<Tag_>
 {
     public:
-        SolverLABSWEGridRegressionTest(const std::string & type) :
-            TaggedTest<Tag_>("solver_labswe_grid_regression_test<" + type + ">")
+        SolverLBMGridRegressionTest(const std::string & type) :
+            TaggedTest<Tag_>("solver_lbm_grid_regression_test<" + type + ">")
     {
     }
 
@@ -63,7 +63,7 @@ class SolverLABSWEGridRegressionTest :
 
                 GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-                SolverLABSWEGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, grid.d_x, grid.d_y, grid.d_t, grid.tau);
+                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, grid.d_x, grid.d_y, grid.d_t, grid.tau);
                 solver.do_preprocessing();
 
                 for(unsigned long i(0); i < timesteps; ++i)
@@ -95,7 +95,7 @@ class SolverLABSWEGridRegressionTest :
 
                 GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_standard, info_standard, data_standard);
 
-                SolverLABSWEGrid<tags::CPU, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver_standard(&info_standard, &data_standard, grid_standard.d_x, grid_standard.d_y, grid_standard.d_t, grid_standard.tau);
+                SolverLBMGrid<tags::CPU, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver_standard(&info_standard, &data_standard, grid_standard.d_x, grid_standard.d_y, grid_standard.d_t, grid_standard.tau);
 
                 solver_standard.do_preprocessing();
 
@@ -157,15 +157,15 @@ class SolverLABSWEGridRegressionTest :
             }
         }
 };
-SolverLABSWEGridRegressionTest<tags::CPU::MultiCore, float> mc_solver_test_float("float");
-SolverLABSWEGridRegressionTest<tags::CPU::MultiCore, double> mc_solver_test_double("double");
+SolverLBMGridRegressionTest<tags::CPU::MultiCore, float> mc_solver_test_float("float");
+SolverLBMGridRegressionTest<tags::CPU::MultiCore, double> mc_solver_test_double("double");
 #ifdef HONEI_SSE
-SolverLABSWEGridRegressionTest<tags::CPU::SSE, float> sse_solver_test_float("float");
-SolverLABSWEGridRegressionTest<tags::CPU::SSE, double> sse_solver_test_double("double");
-SolverLABSWEGridRegressionTest<tags::CPU::MultiCore::SSE, float> mcsse_solver_test_float("float");
-SolverLABSWEGridRegressionTest<tags::CPU::MultiCore::SSE, double> mcsse_solver_test_double("double");
+SolverLBMGridRegressionTest<tags::CPU::SSE, float> sse_solver_test_float("float");
+SolverLBMGridRegressionTest<tags::CPU::SSE, double> sse_solver_test_double("double");
+SolverLBMGridRegressionTest<tags::CPU::MultiCore::SSE, float> mcsse_solver_test_float("float");
+SolverLBMGridRegressionTest<tags::CPU::MultiCore::SSE, double> mcsse_solver_test_double("double");
 #endif
 #ifdef HONEI_CUDA
-SolverLABSWEGridRegressionTest<tags::GPU::CUDA, float> cuda_solver_test_float("float");
+SolverLBMGridRegressionTest<tags::GPU::CUDA, float> cuda_solver_test_float("float");
 #endif
 

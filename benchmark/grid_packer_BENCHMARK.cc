@@ -23,7 +23,7 @@
 #include <string>
 #endif
 
-#include <honei/lbm/solver_labswe_grid.hh>
+#include <honei/lbm/solver_lbm_grid.hh>
 #include <honei/swe/volume.hh>
 #include <iostream>
 #include <honei/swe/volume.hh>

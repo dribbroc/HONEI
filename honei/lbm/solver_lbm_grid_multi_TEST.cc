@@ -16,7 +16,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include <honei/lbm/solver_labswe_grid.hh>
+#include <honei/lbm/solver_lbm_grid.hh>
 #include <honei/lbm/partial_derivative.hh>
 #include <honei/swe/post_processing.hh>
 #include <honei/swe/volume.hh>
@@ -38,12 +38,12 @@ using namespace lbm::lbm_lattice_types;
 //#define SOLVER_POSTPROCESSING
 
 template <typename Tag_, typename DataType_>
-class SolverLABSWEGridMultiTest :
+class SolverLBMGridMultiTest :
     public TaggedTest<Tag_>
 {
     public:
-        SolverLABSWEGridMultiTest(const std::string & type) :
-            TaggedTest<Tag_>("solver_labswe_grid_multi_test<" + type + ">")
+        SolverLBMGridMultiTest(const std::string & type) :
+            TaggedTest<Tag_>("solver_lbm_grid_multi_test<" + type + ">")
         {
         }
 
@@ -79,11 +79,11 @@ class SolverLABSWEGridMultiTest :
             std::vector<PackedGridFringe<D2Q9> > fringe_list;
             GridPartitioner<D2Q9, DataType_>::decompose(3, info, data, info_list, data_list, fringe_list);
 
-            SolverLABSWEGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver_0(&info_list[0], &data_list[0], 1., 1., 1., 1.5);
+            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver_0(&info_list[0], &data_list[0], 1., 1., 1., 1.5);
 
-            SolverLABSWEGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver_1(&info_list[1], &data_list[1], 1., 1., 1., 1.5);
+            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver_1(&info_list[1], &data_list[1], 1., 1., 1., 1.5);
 
-            SolverLABSWEGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver_2(&info_list[2], &data_list[2], 1., 1., 1., 1.5);
+            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver_2(&info_list[2], &data_list[2], 1., 1., 1., 1.5);
 
             solver_0.do_preprocessing();
             solver_1.do_preprocessing();
@@ -126,4 +126,4 @@ class SolverLABSWEGridMultiTest :
             TEST_CHECK(true);
         }
 };
-SolverLABSWEGridMultiTest<tags::CPU, double> solver_multi_test_double("double");
+SolverLBMGridMultiTest<tags::CPU, double> solver_multi_test_double("double");
