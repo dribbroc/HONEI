@@ -183,9 +183,9 @@ namespace honei
        struct UpdateVelocityDirectionsGrid<tags::CPU::Itanium, lbm_boundary_types::NOSLIP>
        {
            template <typename DT1_>
-           static void value(PackedGridData<D2Q9, DT1_> & data, PackedGridInfo<D2Q9> & info)
+           static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data)
            {
-               UpdateVelocityDirectionsGrid<tags::CPU, lbm_boundary_types::NOSLIP>::value(data, info);
+               UpdateVelocityDirectionsGrid<tags::CPU, lbm_boundary_types::NOSLIP>::value(info, data);
            }
        };
 }
