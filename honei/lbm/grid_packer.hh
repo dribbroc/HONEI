@@ -611,6 +611,32 @@ namespace honei
                 grid.h->unlock(lm_write_only);
                 data.h->unlock(lm_read_only);
             }
+            static void unpack_u(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
+            {
+                grid.obstacles->lock(lm_read_only);
+                grid.u->lock(lm_write_only);
+                data.u->lock(lm_read_only);
+                unsigned long packed_index(0);
+
+                for(unsigned long i(0); i < grid.obstacles->rows(); ++i)
+                {
+                    for(unsigned long j(0); j < grid.obstacles->columns(); ++j)
+                    {
+                        if((*grid.obstacles)(i, j))
+                        {
+                            (*grid.u)(i, j) = DT_(0);
+                        }
+                        else
+                        {
+                            (*grid.u)(i, j) = (*data.u)[packed_index];
+                            ++packed_index;
+                        }
+                    }
+                }
+                grid.obstacles->unlock(lm_read_only);
+                grid.u->unlock(lm_write_only);
+                data.u->unlock(lm_read_only);
+            }
 
 
             static unsigned long h_index(Grid<D2Q9, DT_> & grid, unsigned long i, unsigned long j)
