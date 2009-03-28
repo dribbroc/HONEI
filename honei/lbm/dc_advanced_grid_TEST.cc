@@ -37,15 +37,25 @@ using namespace lbm;
 
 //#define SOLVER_VERBOSE
 //#define SOLVER_POSTPROCESSING
+//#define DRIVEN_CAVITY_OUTPUT_TESTLINE
+#define DRIVEN_CAVITY_OUTPUT_ACCURACY
 
 template <typename Tag_, typename DataType_>
 class SolverLABNAVSTOGridDCTest :
     public TaggedTest<Tag_>
 {
+    private:
+        DataType_ _dx, _dy, _dt, _reynolds, _tau, _U;
     public:
-        SolverLABNAVSTOGridDCTest(const std::string & type) :
+        SolverLABNAVSTOGridDCTest(const std::string & type, DataType_ dx, DataType_ dy, DataType_ dt, DataType_ reynolds, DataType_ tau, DataType_ U) :
             TaggedTest<Tag_>("solver_lbm_grid_test<" + type + ">")
         {
+            _dx = dx;
+            _dy = dy;
+            _dt = dt;
+            _reynolds = reynolds;
+            _tau = tau;
+            _U = U;
         }
 
         virtual void run() const
@@ -53,11 +63,11 @@ class SolverLABNAVSTOGridDCTest :
             unsigned long g_h(129);
             unsigned long g_w(129);
             unsigned long timesteps(10000);
-            DataType_ dx(1);
-            DataType_ dy(1);
-            DataType_ dt(1.2);
-            DataType_ tau(1);
-            DataType_ lid_U(Reynolds::adjust_veloc(double(100.), double(0.), g_w, dx, dt, tau));
+            DataType_ dx(_dx);
+            DataType_ dy(_dy);
+            DataType_ dt(_dt);
+            DataType_ tau(_tau);
+            DataType_ lid_U(Reynolds::adjust_veloc(double(_reynolds), double(0.), g_w, dx, dt, tau));
 
             std::cout << "U: " << lid_U << std::endl;
             std::cout << "Reynolds: " << Reynolds::value(lid_U, g_w, dx, dt, tau) << std::endl;
@@ -156,6 +166,17 @@ class SolverLABNAVSTOGridDCTest :
             {
                 test_line[i] = DataType_( (*grid.u)(i,( g_w - 1 ) / 2)/ lid_U);
             }
+#ifdef DRIVEN_CAVITY_OUTPUT_TESTLINE
+            std::string filename;
+            std::ofstream file;
+            filename = "out_lbm_navsto_dc_relative.dat";
+            file.open(filename.c_str());
+            for(unsigned long i(0); i < g_h; ++i)
+            {
+                file << stringify(i) + " " + stringify(test_line[i]) + "\n";
+            }
+            file.close();
+#endif
             std::cout<<"Result:"<<test_line<<std::endl;
 
             //Reference data by Ghia et al. 1982 for reynolds number of 100:
@@ -227,8 +248,30 @@ class SolverLABNAVSTOGridDCTest :
 
             double norm = Norm<vnt_l_two, false, Tag_>::value(diff);
             std::cout << "L2 norm: " << norm << std::endl;
+#ifdef DRIVEN_CAVITY_OUTPUT_ACCURACY
+            std::string output_file = "accuracy_lbm_navsto.dat";
+
+            std::ofstream out_file_stream;
+
+            out_file_stream.open(output_file.c_str(), ios::app);
+
+            out_file_stream << "----------------------------------------------" << std::endl;
+            out_file_stream << "precision = " << sizeof(DataType_) << std::endl;
+            out_file_stream << "  delta_x = " << dx << std::endl;
+            out_file_stream << "  delta_y = " << dy << std::endl;
+            out_file_stream << "  delta_t = " << dt << std::endl;
+            out_file_stream << "      tau = " << tau << std::endl;
+            out_file_stream << "       Re = " << _reynolds << std::endl;
+
+            out_file_stream << "        U = " << lid_U << std::endl;
+
+            out_file_stream << "L2 NORM(DIFF(GHIA)) = " << norm << std::endl;
+
+            out_file_stream << "----------------------------------------------" << std::endl;;
+            out_file_stream.close();
+#endif
         }
 };
-
-/*SolverLABNAVSTOGridDCTest<tags::CPU, double> solver_test_double("double");*/
-SolverLABNAVSTOGridDCTest<tags::CPU, float> solver_test_float("float");
+//SolverLABNAVSTOGridDCTest<tags::CPU, double> solver_test_double("double", double(1), double(1), double(1.2), double(100), double(1), double(0));
+//SolverLABNAVSTOGridDCTest<tags::CPU, float> solver_test_float("float", float(1), float(1), float(1.2), float(100), float(1), float(0));
+SolverLABNAVSTOGridDCTest<tags::CPU, double> solver_test_double_10("double", double(1.), double(1.), double(1.), double(100), double(1), double(0));
