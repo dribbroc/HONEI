@@ -180,9 +180,9 @@ namespace honei
                     static inline BenchmarkInfo get_benchmark_info(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT1_> * data)
                     {
                         BenchmarkInfo result;
-                        result.flops = data->h->size() * 28;
-                        result.load = data->h->size() * 57 * sizeof(DT1_);
-                        result.store = data->h->size() * 13 * sizeof(DT1_);
+                        result.flops = data->h->size() * 44;
+                        result.load = data->h->size() * (5 * 9 + 2) * sizeof(DT1_);
+                        result.store = data->h->size() * 3 * sizeof(DT1_);
                         result.size.push_back(data->h->size());
                         return result;
                     }
@@ -325,9 +325,9 @@ namespace honei
                     static inline BenchmarkInfo get_benchmark_info(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT1_> * data)
                     {
                         BenchmarkInfo result;
-                        result.flops = data->h->size() * 28;
-                        result.load = data->h->size() * 57 * sizeof(DT1_);
-                        result.store = data->h->size() * 13 * sizeof(DT1_);
+                        result.flops = data->h->size() * 44;
+                        result.load = data->h->size() * (5 * 9 + 2) * sizeof(DT1_);
+                        result.store = data->h->size() * 3 * sizeof(DT1_);
                         result.size.push_back(data->h->size());
                         return result;
                     }
