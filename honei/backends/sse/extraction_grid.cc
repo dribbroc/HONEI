@@ -255,7 +255,7 @@ namespace honei
                 float * f_3, float * f_4, float * f_5,
                 float * f_6, float * f_7, float * f_8, float epsilon)
         {
-            //unsigned long size(end - begin);
+            unsigned long size(end - begin);
 
             unsigned long x_address((unsigned long)&h[begin]);
             unsigned long x_offset(x_address % 16);
@@ -266,7 +266,7 @@ namespace honei
             unsigned long quad_start(z_offset + begin);
             unsigned long quad_end(end - ((end - quad_start) % 4));
 
-            //if (size < 32)
+            if (size < 32)
             {
                 quad_end = begin;
                 quad_start = begin;
@@ -324,16 +324,106 @@ namespace honei
                         distribution_y[8] * f_8[index]) / h[index];
             }
 
-            /// \todo use sse intrinsics
-            /*for (unsigned long index(quad_start) ; index < quad_end ; index += 4)
+            __m128 m1, m2, m3;
+            for (unsigned long index(quad_start) ; index < quad_end ; index += 4)
             {
-                __m128 t1, t2, m1, m2;
-                  __m128 scal1, scal2;
+                  m1 = _mm_load_ps(f_0 + index);
+                  m2 = _mm_load_ps(f_1 + index);
+                  m1 = _mm_add_ps(m1, m2);
+                  m2 = _mm_load_ps(f_2 + index);
+                  m1 = _mm_add_ps(m1, m2);
+                  m2 = _mm_load_ps(f_3 + index);
+                  m1 = _mm_add_ps(m1, m2);
+                  m2 = _mm_load_ps(f_4 + index);
+                  m1 = _mm_add_ps(m1, m2);
+                  m2 = _mm_load_ps(f_5 + index);
+                  m1 = _mm_add_ps(m1, m2);
+                  m2 = _mm_load_ps(f_6 + index);
+                  m1 = _mm_add_ps(m1, m2);
+                  m2 = _mm_load_ps(f_7 + index);
+                  m1 = _mm_add_ps(m1, m2);
+                  m2 = _mm_load_ps(f_8 + index);
+                  m1 = _mm_add_ps(m1, m2);
+                  _mm_store_ps(h + index, m1);
 
-                  m1 = _mm_mul_ps(scal1, gv);
-                  m2 = _mm_load_ps(h + index);
-                  _mm_store_ps(f_eq_0 + index, m1);
-            }*/
+                  m1 = _mm_load1_ps(distribution_x);
+                  m2 = _mm_load_ps(f_0 + index);
+                  m3 = _mm_mul_ps(m1, m2);
+                  m1 = _mm_load1_ps(distribution_x + 1);
+                  m2 = _mm_load_ps(f_1 + index);
+                  m1 = _mm_mul_ps(m1, m2);
+                  m3 = _mm_add_ps(m1, m3);
+                  m1 = _mm_load1_ps(distribution_x + 2);
+                  m2 = _mm_load_ps(f_2 + index);
+                  m1 = _mm_mul_ps(m1, m2);
+                  m3 = _mm_add_ps(m1, m3);
+                  m1 = _mm_load1_ps(distribution_x + 3);
+                  m2 = _mm_load_ps(f_3 + index);
+                  m1 = _mm_mul_ps(m1, m2);
+                  m3 = _mm_add_ps(m1, m3);
+                  m1 = _mm_load1_ps(distribution_x + 4);
+                  m2 = _mm_load_ps(f_4 + index);
+                  m1 = _mm_mul_ps(m1, m2);
+                  m3 = _mm_add_ps(m1, m3);
+                  m1 = _mm_load1_ps(distribution_x + 5);
+                  m2 = _mm_load_ps(f_5 + index);
+                  m1 = _mm_mul_ps(m1, m2);
+                  m3 = _mm_add_ps(m1, m3);
+                  m1 = _mm_load1_ps(distribution_x + 6);
+                  m2 = _mm_load_ps(f_6 + index);
+                  m1 = _mm_mul_ps(m1, m2);
+                  m3 = _mm_add_ps(m1, m3);
+                  m1 = _mm_load1_ps(distribution_x + 7);
+                  m2 = _mm_load_ps(f_7 + index);
+                  m1 = _mm_mul_ps(m1, m2);
+                  m3 = _mm_add_ps(m1, m3);
+                  m1 = _mm_load1_ps(distribution_x + 8);
+                  m2 = _mm_load_ps(f_8 + index);
+                  m1 = _mm_mul_ps(m1, m2);
+                  m3 = _mm_add_ps(m1, m3);
+                  m1 = _mm_load_ps(h + index);
+                  m3 = _mm_div_ps(m3, m1);
+                  _mm_store_ps(u + index, m3);
+
+                  m1 = _mm_load1_ps(distribution_y);
+                  m2 = _mm_load_ps(f_0 + index);
+                  m3 = _mm_mul_ps(m1, m2);
+                  m1 = _mm_load1_ps(distribution_y + 1);
+                  m2 = _mm_load_ps(f_1 + index);
+                  m1 = _mm_mul_ps(m1, m2);
+                  m3 = _mm_add_ps(m1, m3);
+                  m1 = _mm_load1_ps(distribution_y + 2);
+                  m2 = _mm_load_ps(f_2 + index);
+                  m1 = _mm_mul_ps(m1, m2);
+                  m3 = _mm_add_ps(m1, m3);
+                  m1 = _mm_load1_ps(distribution_y + 3);
+                  m2 = _mm_load_ps(f_3 + index);
+                  m1 = _mm_mul_ps(m1, m2);
+                  m3 = _mm_add_ps(m1, m3);
+                  m1 = _mm_load1_ps(distribution_y + 4);
+                  m2 = _mm_load_ps(f_4 + index);
+                  m1 = _mm_mul_ps(m1, m2);
+                  m3 = _mm_add_ps(m1, m3);
+                  m1 = _mm_load1_ps(distribution_y + 5);
+                  m2 = _mm_load_ps(f_5 + index);
+                  m1 = _mm_mul_ps(m1, m2);
+                  m3 = _mm_add_ps(m1, m3);
+                  m1 = _mm_load1_ps(distribution_y + 6);
+                  m2 = _mm_load_ps(f_6 + index);
+                  m1 = _mm_mul_ps(m1, m2);
+                  m3 = _mm_add_ps(m1, m3);
+                  m1 = _mm_load1_ps(distribution_y + 7);
+                  m2 = _mm_load_ps(f_7 + index);
+                  m1 = _mm_mul_ps(m1, m2);
+                  m3 = _mm_add_ps(m1, m3);
+                  m1 = _mm_load1_ps(distribution_y + 8);
+                  m2 = _mm_load_ps(f_8 + index);
+                  m1 = _mm_mul_ps(m1, m2);
+                  m3 = _mm_add_ps(m1, m3);
+                  m1 = _mm_load_ps(h + index);
+                  m3 = _mm_div_ps(m3, m1);
+                  _mm_store_ps(v + index, m3);
+            }
         }
 
         void extraction_grid_wet(unsigned long begin, unsigned long end,
@@ -343,7 +433,7 @@ namespace honei
                 double * f_3, double * f_4, double * f_5,
                 double * f_6, double * f_7, double * f_8, double epsilon)
         {
-            //unsigned long size(end - begin);
+            unsigned long size(end - begin);
 
             unsigned long x_address((unsigned long)&h[begin]);
             unsigned long x_offset(x_address % 16);
@@ -353,7 +443,7 @@ namespace honei
             unsigned long quad_start(z_offset + begin);
             unsigned long quad_end(end - ((end - quad_start) % 2));
 
-            //if (size < 32)
+            if (size < 32)
             {
                 quad_end = begin;
                 quad_start = begin;
@@ -411,16 +501,106 @@ namespace honei
                         distribution_y[8] * f_8[index]) / h[index];
             }
 
-            /// \todo use sse intrinsics
-            /*for (unsigned long index(quad_start) ; index < quad_end ; index += 4)
+            __m128d m1, m2, m3;
+            for (unsigned long index(quad_start) ; index < quad_end ; index += 2)
             {
-                __m128 t1, t2, m1, m2;
-                  __m128 scal1, scal2;
+                  m1 = _mm_load_pd(f_0 + index);
+                  m2 = _mm_load_pd(f_1 + index);
+                  m1 = _mm_add_pd(m1, m2);
+                  m2 = _mm_load_pd(f_2 + index);
+                  m1 = _mm_add_pd(m1, m2);
+                  m2 = _mm_load_pd(f_3 + index);
+                  m1 = _mm_add_pd(m1, m2);
+                  m2 = _mm_load_pd(f_4 + index);
+                  m1 = _mm_add_pd(m1, m2);
+                  m2 = _mm_load_pd(f_5 + index);
+                  m1 = _mm_add_pd(m1, m2);
+                  m2 = _mm_load_pd(f_6 + index);
+                  m1 = _mm_add_pd(m1, m2);
+                  m2 = _mm_load_pd(f_7 + index);
+                  m1 = _mm_add_pd(m1, m2);
+                  m2 = _mm_load_pd(f_8 + index);
+                  m1 = _mm_add_pd(m1, m2);
+                  _mm_store_pd(h + index, m1);
 
-                  m1 = _mm_mul_ps(scal1, gv);
-                  m2 = _mm_load_ps(h + index);
-                  _mm_store_ps(f_eq_0 + index, m1);
-            }*/
+                  m1 = _mm_load1_pd(distribution_x);
+                  m2 = _mm_load_pd(f_0 + index);
+                  m3 = _mm_mul_pd(m1, m2);
+                  m1 = _mm_load1_pd(distribution_x + 1);
+                  m2 = _mm_load_pd(f_1 + index);
+                  m1 = _mm_mul_pd(m1, m2);
+                  m3 = _mm_add_pd(m1, m3);
+                  m1 = _mm_load1_pd(distribution_x + 2);
+                  m2 = _mm_load_pd(f_2 + index);
+                  m1 = _mm_mul_pd(m1, m2);
+                  m3 = _mm_add_pd(m1, m3);
+                  m1 = _mm_load1_pd(distribution_x + 3);
+                  m2 = _mm_load_pd(f_3 + index);
+                  m1 = _mm_mul_pd(m1, m2);
+                  m3 = _mm_add_pd(m1, m3);
+                  m1 = _mm_load1_pd(distribution_x + 4);
+                  m2 = _mm_load_pd(f_4 + index);
+                  m1 = _mm_mul_pd(m1, m2);
+                  m3 = _mm_add_pd(m1, m3);
+                  m1 = _mm_load1_pd(distribution_x + 5);
+                  m2 = _mm_load_pd(f_5 + index);
+                  m1 = _mm_mul_pd(m1, m2);
+                  m3 = _mm_add_pd(m1, m3);
+                  m1 = _mm_load1_pd(distribution_x + 6);
+                  m2 = _mm_load_pd(f_6 + index);
+                  m1 = _mm_mul_pd(m1, m2);
+                  m3 = _mm_add_pd(m1, m3);
+                  m1 = _mm_load1_pd(distribution_x + 7);
+                  m2 = _mm_load_pd(f_7 + index);
+                  m1 = _mm_mul_pd(m1, m2);
+                  m3 = _mm_add_pd(m1, m3);
+                  m1 = _mm_load1_pd(distribution_x + 8);
+                  m2 = _mm_load_pd(f_8 + index);
+                  m1 = _mm_mul_pd(m1, m2);
+                  m3 = _mm_add_pd(m1, m3);
+                  m1 = _mm_load_pd(h + index);
+                  m3 = _mm_div_pd(m3, m1);
+                  _mm_store_pd(u + index, m3);
+
+                  m1 = _mm_load1_pd(distribution_y);
+                  m2 = _mm_load_pd(f_0 + index);
+                  m3 = _mm_mul_pd(m1, m2);
+                  m1 = _mm_load1_pd(distribution_y + 1);
+                  m2 = _mm_load_pd(f_1 + index);
+                  m1 = _mm_mul_pd(m1, m2);
+                  m3 = _mm_add_pd(m1, m3);
+                  m1 = _mm_load1_pd(distribution_y + 2);
+                  m2 = _mm_load_pd(f_2 + index);
+                  m1 = _mm_mul_pd(m1, m2);
+                  m3 = _mm_add_pd(m1, m3);
+                  m1 = _mm_load1_pd(distribution_y + 3);
+                  m2 = _mm_load_pd(f_3 + index);
+                  m1 = _mm_mul_pd(m1, m2);
+                  m3 = _mm_add_pd(m1, m3);
+                  m1 = _mm_load1_pd(distribution_y + 4);
+                  m2 = _mm_load_pd(f_4 + index);
+                  m1 = _mm_mul_pd(m1, m2);
+                  m3 = _mm_add_pd(m1, m3);
+                  m1 = _mm_load1_pd(distribution_y + 5);
+                  m2 = _mm_load_pd(f_5 + index);
+                  m1 = _mm_mul_pd(m1, m2);
+                  m3 = _mm_add_pd(m1, m3);
+                  m1 = _mm_load1_pd(distribution_y + 6);
+                  m2 = _mm_load_pd(f_6 + index);
+                  m1 = _mm_mul_pd(m1, m2);
+                  m3 = _mm_add_pd(m1, m3);
+                  m1 = _mm_load1_pd(distribution_y + 7);
+                  m2 = _mm_load_pd(f_7 + index);
+                  m1 = _mm_mul_pd(m1, m2);
+                  m3 = _mm_add_pd(m1, m3);
+                  m1 = _mm_load1_pd(distribution_y + 8);
+                  m2 = _mm_load_pd(f_8 + index);
+                  m1 = _mm_mul_pd(m1, m2);
+                  m3 = _mm_add_pd(m1, m3);
+                  m1 = _mm_load_pd(h + index);
+                  m3 = _mm_div_pd(m3, m1);
+                  _mm_store_pd(v + index, m3);
+            }
         }
     }
 }

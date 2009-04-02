@@ -78,12 +78,12 @@ namespace honei
 
             __m128 gv = _mm_set1_ps(g);
             __m128 e2v = _mm_set1_ps(e);
+            __m128 t1, t2, m1, m2;
+            __m128 scal1, scal2;
 
             // f_eq_0
             for (unsigned long index(quad_start) ; index < quad_end ; index += 4)
             {
-                __m128 t1, t2, m1, m2;
-                __m128 scal1, scal2;
 
                 scal1 = _mm_set1_ps(float(5));
                 scal2 = _mm_set1_ps(float(6));
@@ -177,13 +177,12 @@ namespace honei
 
             __m128 gv = _mm_set1_ps(g);
             __m128 e2v = _mm_set1_ps(e);
+            __m128 t1, t2, t3, t4, m1, m2, dxu, dyv;
+            __m128 scal1;
 
             // f_eq_odd
             for (unsigned long index(quad_start) ; index < quad_end ; index += 4)
             {
-                __m128 t1, t2, t3, t4, m1, m2, dxu, dyv;
-                __m128 scal1;
-
                 m1 = _mm_set1_ps(distribution_x[dir]);
                 m2 = _mm_load_ps(u + index);
                 dxu = _mm_mul_ps(m1, m2);
@@ -299,13 +298,12 @@ namespace honei
 
             __m128 gv = _mm_set1_ps(g);
             __m128 e2v = _mm_set1_ps(e);
+            __m128 t1, t2, t3, t4, m1, m2, dxu, dyv;
+            __m128 scal1;
 
             // f_eq_even
             for (unsigned long index(quad_start) ; index < quad_end ; index += 4)
             {
-                __m128 t1, t2, t3, t4, m1, m2, dxu, dyv;
-                __m128 scal1;
-
                 m1 = _mm_set1_ps(distribution_x[dir]);
                 m2 = _mm_load_ps(u + index);
                 dxu = _mm_mul_ps(m1, m2);
@@ -410,13 +408,12 @@ namespace honei
 
             __m128d gv = _mm_set1_pd(g);
             __m128d e2v = _mm_set1_pd(e);
+            __m128d t1, t2, m1, m2;
+            __m128d scal1, scal2;
 
             // f_eq_0
             for (unsigned long index(quad_start) ; index < quad_end ; index += 2)
             {
-                __m128d t1, t2, m1, m2;
-                __m128d scal1, scal2;
-
                 scal1 = _mm_set1_pd(double(5));
                 scal2 = _mm_set1_pd(double(6));
                 m1 = _mm_mul_pd(scal1, gv);
@@ -508,12 +505,12 @@ namespace honei
 
             __m128d gv = _mm_set1_pd(g);
             __m128d e2v = _mm_set1_pd(e);
+            __m128d t1, t2, t3, t4, m1, m2, dxu, dyv;
+            __m128d scal1;
 
             // f_eq_odd
             for (unsigned long index(quad_start) ; index < quad_end ; index += 2)
             {
-                __m128d t1, t2, t3, t4, m1, m2, dxu, dyv;
-                __m128d scal1;
                 m1 = _mm_set1_pd(distribution_x[dir]);
                 m2 = _mm_load_pd(u + index);
                 dxu = _mm_mul_pd(m1, m2);
@@ -628,13 +625,12 @@ namespace honei
 
             __m128d gv = _mm_set1_pd(g);
             __m128d e2v = _mm_set1_pd(e);
+            __m128d t1, t2, t3, t4, m1, m2, dxu, dyv;
+            __m128d scal1;
 
             // f_eq_even
             for (unsigned long index(quad_start) ; index < quad_end ; index += 2)
             {
-                __m128d t1, t2, t3, t4, m1, m2, dxu, dyv;
-                __m128d scal1;
-
                 m1 = _mm_set1_pd(distribution_x[dir]);
                 m2 = _mm_load_pd(u + index);
                 dxu = _mm_mul_pd(m1, m2);

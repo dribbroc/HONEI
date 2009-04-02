@@ -56,10 +56,10 @@ namespace honei
             }
 
             __m128 tauv = _mm_set1_ps(tau);
+            __m128 m1, m2;
 
             for (unsigned long index(quad_start) ; index < quad_end ; index += 4)
             {
-                __m128 m1, m2;
 
                 m1 = _mm_load_ps(f_0 + index);
                 m2 = _mm_load_ps(f_eq_0 + index);
@@ -110,10 +110,10 @@ namespace honei
                 }
 
                 offset = quad_start - dir_index[begin];
+                __m128 m1, m2;
                 for (unsigned long index(quad_start) ; index < quad_end ; index += 4, offset += 4)
                 {
                     //f_temp[dir[half] + offset] = f[index] - (f[index] - f_eq[index])/tau;
-                    __m128 m1, m2;
 
                     m1 = _mm_load_ps(f + index);
                     m2 = _mm_load_ps(f_eq + index);
@@ -154,10 +154,10 @@ namespace honei
             }
 
             __m128d tauv = _mm_set1_pd(tau);
+            __m128d m1, m2;
 
             for (unsigned long index(quad_start) ; index < quad_end ; index += 2)
             {
-                __m128d m1, m2;
 
                 m1 = _mm_load_pd(f_0 + index);
                 m2 = _mm_load_pd(f_eq_0 + index);
@@ -207,10 +207,10 @@ namespace honei
                 }
 
                 offset = quad_start - dir_index[begin];
+                __m128d m1, m2;
                 for (unsigned long index(quad_start) ; index < quad_end ; index += 2, offset += 2)
                 {
                     //f_temp[dir[half] + offset] = f[index] - (f[index] - f_eq[index])/tau;
-                    __m128d m1, m2;
 
                     m1 = _mm_load_pd(f + index);
                     m2 = _mm_load_pd(f_eq + index);
