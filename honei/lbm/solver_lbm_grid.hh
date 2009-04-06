@@ -178,6 +178,10 @@ namespace honei
 #endif
                 }
 
+                void do_postprocessing()
+                {
+                }
+
 
                 /** Capsule for the solution: Single step time marching.
                  *
@@ -281,8 +285,8 @@ namespace honei
                         {
                             _tickets.push_back(mc::ThreadPool::instance()->enqueue(
                                         std::tr1::bind(
-                                            honei::GridPartitioner<D2Q9, ResPrec_>::recompose, &_info_list.at(i), &_data_list.at(i))
-                                            ));
+                                            honei::GridPartitioner<D2Q9, ResPrec_>::recompose, &_info_list.at(i), &_data_list.at(i)),
+                                            DispatchPolicy::on_core(i)));
                             tickets.push_back(_tickets.at(i));
                         }
                         tickets.wait();
@@ -298,6 +302,21 @@ namespace honei
                         GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);
                     }
 
+                    void do_postprocessing()
+                    {
+                        TicketVector tickets;
+                        for (unsigned long i(0) ; i < _parts ; ++i)
+                        {
+                            tickets.push_back(mc::ThreadPool::instance()->enqueue(
+                                        std::tr1::bind(
+                                            std::tr1::mem_fn(&honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>::do_postprocessing),
+                                            *(_solver_list.at(i))
+                                            ), DispatchPolicy::same_core_as(_tickets.at(i))));
+                        }
+                        tickets.wait();
+                        GridPartitioner<D2Q9, ResPrec_>::compose(*_info, *_data, _info_list, _data_list);
+                    }
+
                     void solve()
                     {
                         TicketVector tickets;
@@ -311,8 +330,6 @@ namespace honei
                         }
                         tickets.wait();
                         GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);
-                        /// \todo remove compose - it is only necessary if one must read the data
-                        GridPartitioner<D2Q9, ResPrec_>::compose(*_info, *_data, _info_list, _data_list);
                     }
             };
     }

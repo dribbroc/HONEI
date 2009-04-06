@@ -75,10 +75,12 @@ class SolverLBMGridTest :
 #endif
                     solver.solve();
 #ifdef SOLVER_POSTPROCESSING
+                    solver.do_postprocessing();
                     GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
                     PostProcessing<GNUPLOT>::value(*grid.h, 1, g_w, g_h, i);
 #endif
                 }
+                solver.do_postprocessing();
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
 #ifdef SOLVER_VERBOSE
                 std::cout << *grid.h << std::endl;
@@ -155,10 +157,12 @@ class SolverLBMGridMassConservationTest :
 #endif
                 solver.solve();
 #ifdef SOLVER_POSTPROCESSING
+                solver.do_postprocessing();
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
                 PostProcessing<GNUPLOT>::value(*grid.h, 1, g_w, g_h, i);
 #endif
             }
+            solver.do_postprocessing();
             GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
             DataType_ ana_vol(5. * 5. * 0.02 + g_w * g_h * 0.05);
             std::cout << "Analytical Vol.: " << ana_vol << " ";

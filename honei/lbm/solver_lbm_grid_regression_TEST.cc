@@ -73,10 +73,12 @@ class SolverLBMGridRegressionTest :
 #endif
                     solver.solve();
 #ifdef SOLVER_POSTPROCESSING
+                    solver.do_postprocessing();
                     GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
                     PostProcessing<GNUPLOT>::value(*grid.h, 1, g_w, g_h, i);
 #endif
                 }
+                solver.do_postprocessing();
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
 
 #ifdef SOLVER_VERBOSE
@@ -106,10 +108,12 @@ class SolverLBMGridRegressionTest :
 #endif
                     solver_standard.solve();
 #ifdef SOLVER_POSTPROCESSING
+                    solver.do_postprocessing();
                     GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid_standard, info_standard, data_standard);
                     PostProcessing<GNUPLOT>::value(*grid_standard.h, 1, g_w_standard, g_h_standard, i);
 #endif
                 }
+                solver.do_postprocessing();
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid_standard, info_standard, data_standard);
 
 #ifdef SOLVER_VERBOSE
