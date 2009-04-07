@@ -72,7 +72,7 @@ namespace honei
         private:
             void _master()
             {
-                unsigned long timesteps(100);
+                unsigned long timesteps(20);
                 Grid<D2Q9, DataType_> grid;
                 _load_scenario(1, grid);
 
@@ -107,10 +107,10 @@ namespace honei
 
                 // Preproc finished
                 // start timesteps
+                TimeStamp at, bt;
+                at.take();
                 for(unsigned long i(0); i < timesteps; ++i)
                 {
-                    TimeStamp at, bt;
-                    at.take();
                     //here are the solvers solving...
                     //and finished
                     for (signed long target(1) ; target < _numprocs ; ++target)
@@ -127,9 +127,10 @@ namespace honei
                     {
                         _send_sync(target, data_list[target - 1]);
                     }
-                    bt.take();
-                    std::cout<<"Timestep: " << i << "/" << timesteps << " TOE: "<<bt.total() - at.total()<<std::endl;
                 }
+                bt.take();
+                std::cout<<"Timesteps: " << timesteps << " TOE: "<<bt.total() - at.total()<<std::endl;
+                std::cout<<"MLUPS: "<< (double(grid.h->rows()) * double(grid.h->columns()) * double(timesteps)) / (1e6 * (bt.total() - at.total())) <<std::endl;
             }
 
             void _slave()
@@ -143,7 +144,7 @@ namespace honei
                 _recv_info(info);
                 _recv_data(data);
 
-                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, 0.01, 0.01, 0.01, 1.1);
+                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info, &data, 0.01, 0.01, 0.01, 1.1);
 
                 solver.do_preprocessing();
 
@@ -414,8 +415,8 @@ namespace honei
 
                     case 1:
                         {
-                            unsigned long g_h(600);
-                            unsigned long g_w(600);
+                            unsigned long g_h(1500);
+                            unsigned long g_w(1500);
                             grid.h = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.05));
                             Cylinder<DataType_> c1(*grid.h, DataType_(0.06), 25, 25);
                             c1.value();

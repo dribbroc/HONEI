@@ -11,7 +11,8 @@ DEFS = \
 	$(DEBUGDEF) \
 	$(PROFILERDEF)
 
-BACKEND_LIBS =
+BACKEND_LIBS = \
+	$(top_builddir)/honei/backends/multicore/libhoneibackendsmulticore.la
 
 if CELL
 
