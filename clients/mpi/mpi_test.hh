@@ -70,7 +70,7 @@ namespace honei
                 std::cout << "Master: " << dv << std::endl;
                 //MPI_Bcast(dv.elements(), dv.size() * sizeof(float), MPI_BYTE, 0, MPI_COMM_WORLD);
                 mpi::mpi_bcast(dv.elements(), dv.size(), 0);
-                for(unsigned long i(1) ; i < _numprocs ; ++i)
+                for(signed long i(1) ; i < _numprocs ; ++i)
                 {
                     DenseVector<float> temp(10);
                     //MPI_Recv(temp.elements(), temp.size() * sizeof(float), MPI_BYTE, i, i, MPI_COMM_WORLD, &_stat);

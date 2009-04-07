@@ -521,6 +521,9 @@ namespace honei
                     temp_dir_index_8.push_back((*info.dir_index_8)[i * 2 + 1]);
                 }
 
+                if (parts == 0)
+                    throw InternalError("GridPartitioner: Cannot decompose into 0 parts!");
+
                 if (data.u->size() < parts)
                     parts = data.u->size();
 

@@ -86,21 +86,21 @@ namespace honei
                 GridPartitioner<D2Q9, DataType_>::decompose(_numprocs - 1, info, data, info_list, data_list, fringe_list);
 
                 mpi::mpi_bcast(&timesteps, 1, 0);
-                for (unsigned long target(1) ; target < _numprocs ; ++target)
+                for (signed long target(1) ; target < _numprocs ; ++target)
                 {
                     _send_info(target, info_list[target - 1]);
                     _send_data(target, data_list[target - 1]);
                 }
 
 
-                for (unsigned long target(1) ; target < _numprocs ; ++target)
+                for (signed long target(1) ; target < _numprocs ; ++target)
                 {
                     _recv_sync(target, data_list[target - 1]);
                 }
 
                 GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list, fringe_list);
 
-                for (unsigned long target(1) ; target < _numprocs ; ++target)
+                for (signed long target(1) ; target < _numprocs ; ++target)
                 {
                     _send_sync(target, data_list[target - 1]);
                 }
@@ -113,7 +113,7 @@ namespace honei
                     at.take();
                     //here are the solvers solving...
                     //and finished
-                    for (unsigned long target(1) ; target < _numprocs ; ++target)
+                    for (signed long target(1) ; target < _numprocs ; ++target)
                     {
                         _recv_sync(target, data_list[target - 1]);
                     }
@@ -123,7 +123,7 @@ namespace honei
                     //GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
                     //PostProcessing<output_types::GNUPLOT>::value(*grid.h, 1, grid.h->columns(), grid.h->rows(), i);
 
-                    for (unsigned long target(1) ; target < _numprocs ; ++target)
+                    for (signed long target(1) ; target < _numprocs ; ++target)
                     {
                         _send_sync(target, data_list[target - 1]);
                     }
