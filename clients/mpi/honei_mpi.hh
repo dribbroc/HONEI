@@ -90,6 +90,7 @@ namespace honei
                 {
                     _send_info(target, info_list[target - 1]);
                     _send_data(target, data_list[target - 1]);
+                    _send_fringe(target, fringe_list[target - 1]);
                 }
 
 
@@ -137,12 +138,14 @@ namespace honei
             {
                 PackedGridData<D2Q9, DataType_> data;
                 PackedGridInfo<D2Q9> info;
+                PackedGridFringe<D2Q9> fringe;
                 unsigned long timesteps;
 
                 mpi::mpi_bcast(&timesteps, 1, 0);
 
                 _recv_info(info);
                 _recv_data(data);
+                _recv_fringe(fringe);
 
                 SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info, &data, 0.01, 0.01, 0.01, 1.1);
 
@@ -361,6 +364,145 @@ namespace honei
 
                 data.distribution_x = new DenseVector<DataType_>(dist_size);
                 data.distribution_y = new DenseVector<DataType_>(dist_size);
+            }
+
+            void _send_fringe(unsigned long target, PackedGridFringe<D2Q9> & fringe)
+            {
+                unsigned long h_targets_size(fringe.h_targets->size());
+                unsigned long h_index_size(fringe.h_index->size());
+                unsigned long dir_targets_1_size(fringe.dir_targets_1->size());
+                unsigned long dir_index_1_size(fringe.dir_index_1->size());
+                unsigned long dir_targets_2_size(fringe.dir_targets_2->size());
+                unsigned long dir_index_2_size(fringe.dir_index_2->size());
+                unsigned long dir_targets_3_size(fringe.dir_targets_3->size());
+                unsigned long dir_index_3_size(fringe.dir_index_3->size());
+                unsigned long dir_targets_4_size(fringe.dir_targets_4->size());
+                unsigned long dir_index_4_size(fringe.dir_index_4->size());
+                unsigned long dir_targets_5_size(fringe.dir_targets_5->size());
+                unsigned long dir_index_5_size(fringe.dir_index_5->size());
+                unsigned long dir_targets_6_size(fringe.dir_targets_6->size());
+                unsigned long dir_index_6_size(fringe.dir_index_6->size());
+                unsigned long dir_targets_7_size(fringe.dir_targets_7->size());
+                unsigned long dir_index_7_size(fringe.dir_index_7->size());
+                unsigned long dir_targets_8_size(fringe.dir_targets_8->size());
+                unsigned long dir_index_8_size(fringe.dir_index_8->size());
+
+                mpi::mpi_send(&h_targets_size, 1, target, _myid);
+                mpi::mpi_send(&h_index_size, 1, target, _myid);
+                mpi::mpi_send(&dir_targets_1_size, 1, target, _myid);
+                mpi::mpi_send(&dir_index_1_size, 1, target, _myid);
+                mpi::mpi_send(&dir_targets_2_size, 1, target, _myid);
+                mpi::mpi_send(&dir_index_2_size, 1, target, _myid);
+                mpi::mpi_send(&dir_targets_3_size, 1, target, _myid);
+                mpi::mpi_send(&dir_index_3_size, 1, target, _myid);
+                mpi::mpi_send(&dir_targets_4_size, 1, target, _myid);
+                mpi::mpi_send(&dir_index_4_size, 1, target, _myid);
+                mpi::mpi_send(&dir_targets_5_size, 1, target, _myid);
+                mpi::mpi_send(&dir_index_5_size, 1, target, _myid);
+                mpi::mpi_send(&dir_targets_6_size, 1, target, _myid);
+                mpi::mpi_send(&dir_index_6_size, 1, target, _myid);
+                mpi::mpi_send(&dir_targets_7_size, 1, target, _myid);
+                mpi::mpi_send(&dir_index_7_size, 1, target, _myid);
+                mpi::mpi_send(&dir_targets_8_size, 1, target, _myid);
+                mpi::mpi_send(&dir_index_8_size, 1, target, _myid);
+
+                mpi::mpi_send(fringe.h_targets->elements(), fringe.h_targets->size(), target, _myid);
+                mpi::mpi_send(fringe.h_index->elements(), fringe.h_index->size(), target, _myid);
+                mpi::mpi_send(fringe.dir_targets_1->elements(), fringe.dir_targets_1->size(), target, _myid);
+                mpi::mpi_send(fringe.dir_index_1->elements(), fringe.dir_index_1->size(), target, _myid);
+                mpi::mpi_send(fringe.dir_targets_2->elements(), fringe.dir_targets_2->size(), target, _myid);
+                mpi::mpi_send(fringe.dir_index_2->elements(), fringe.dir_index_2->size(), target, _myid);
+                mpi::mpi_send(fringe.dir_targets_3->elements(), fringe.dir_targets_3->size(), target, _myid);
+                mpi::mpi_send(fringe.dir_index_3->elements(), fringe.dir_index_3->size(), target, _myid);
+                mpi::mpi_send(fringe.dir_targets_4->elements(), fringe.dir_targets_4->size(), target, _myid);
+                mpi::mpi_send(fringe.dir_index_4->elements(), fringe.dir_index_4->size(), target, _myid);
+                mpi::mpi_send(fringe.dir_targets_5->elements(), fringe.dir_targets_5->size(), target, _myid);
+                mpi::mpi_send(fringe.dir_index_5->elements(), fringe.dir_index_5->size(), target, _myid);
+                mpi::mpi_send(fringe.dir_targets_6->elements(), fringe.dir_targets_6->size(), target, _myid);
+                mpi::mpi_send(fringe.dir_index_6->elements(), fringe.dir_index_6->size(), target, _myid);
+                mpi::mpi_send(fringe.dir_targets_7->elements(), fringe.dir_targets_7->size(), target, _myid);
+                mpi::mpi_send(fringe.dir_index_7->elements(), fringe.dir_index_7->size(), target, _myid);
+                mpi::mpi_send(fringe.dir_targets_8->elements(), fringe.dir_targets_8->size(), target, _myid);
+                mpi::mpi_send(fringe.dir_index_8->elements(), fringe.dir_index_8->size(), target, _myid);
+            }
+
+            void _recv_fringe(PackedGridFringe<D2Q9> & fringe)
+            {
+                unsigned long h_targets_size;
+                unsigned long h_index_size;
+                unsigned long dir_targets_1_size;
+                unsigned long dir_index_1_size;
+                unsigned long dir_targets_2_size;
+                unsigned long dir_index_2_size;
+                unsigned long dir_targets_3_size;
+                unsigned long dir_index_3_size;
+                unsigned long dir_targets_4_size;
+                unsigned long dir_index_4_size;
+                unsigned long dir_targets_5_size;
+                unsigned long dir_index_5_size;
+                unsigned long dir_targets_6_size;
+                unsigned long dir_index_6_size;
+                unsigned long dir_targets_7_size;
+                unsigned long dir_index_7_size;
+                unsigned long dir_targets_8_size;
+                unsigned long dir_index_8_size;
+
+                mpi::mpi_recv(&h_targets_size, 1, 0, 0);
+                mpi::mpi_recv(&h_index_size, 1, 0, 0);
+                mpi::mpi_recv(&dir_targets_1_size, 1, 0, 0);
+                mpi::mpi_recv(&dir_index_1_size, 1, 0, 0);
+                mpi::mpi_recv(&dir_targets_2_size, 1, 0, 0);
+                mpi::mpi_recv(&dir_index_2_size, 1, 0, 0);
+                mpi::mpi_recv(&dir_targets_3_size, 1, 0, 0);
+                mpi::mpi_recv(&dir_index_3_size, 1, 0, 0);
+                mpi::mpi_recv(&dir_targets_4_size, 1, 0, 0);
+                mpi::mpi_recv(&dir_index_4_size, 1, 0, 0);
+                mpi::mpi_recv(&dir_targets_5_size, 1, 0, 0);
+                mpi::mpi_recv(&dir_index_5_size, 1, 0, 0);
+                mpi::mpi_recv(&dir_targets_6_size, 1, 0, 0);
+                mpi::mpi_recv(&dir_index_6_size, 1, 0, 0);
+                mpi::mpi_recv(&dir_targets_7_size, 1, 0, 0);
+                mpi::mpi_recv(&dir_index_7_size, 1, 0, 0);
+                mpi::mpi_recv(&dir_targets_8_size, 1, 0, 0);
+                mpi::mpi_recv(&dir_index_8_size, 1, 0, 0);
+
+                fringe.h_targets = new DenseVector<unsigned long>(h_targets_size);
+                fringe.h_index = new DenseVector<unsigned long>(h_index_size);
+                fringe.dir_targets_1 = new DenseVector<unsigned long>(dir_targets_1_size);
+                fringe.dir_index_1 = new DenseVector<unsigned long>(dir_index_1_size);
+                fringe.dir_targets_2 = new DenseVector<unsigned long>(dir_targets_2_size);
+                fringe.dir_index_2 = new DenseVector<unsigned long>(dir_index_2_size);
+                fringe.dir_targets_3 = new DenseVector<unsigned long>(dir_targets_3_size);
+                fringe.dir_index_3 = new DenseVector<unsigned long>(dir_index_3_size);
+                fringe.dir_targets_4 = new DenseVector<unsigned long>(dir_targets_4_size);
+                fringe.dir_index_4 = new DenseVector<unsigned long>(dir_index_4_size);
+                fringe.dir_targets_5 = new DenseVector<unsigned long>(dir_targets_5_size);
+                fringe.dir_index_5 = new DenseVector<unsigned long>(dir_index_5_size);
+                fringe.dir_targets_6 = new DenseVector<unsigned long>(dir_targets_6_size);
+                fringe.dir_index_6 = new DenseVector<unsigned long>(dir_index_6_size);
+                fringe.dir_targets_7 = new DenseVector<unsigned long>(dir_targets_7_size);
+                fringe.dir_index_7 = new DenseVector<unsigned long>(dir_index_7_size);
+                fringe.dir_targets_8 = new DenseVector<unsigned long>(dir_targets_8_size);
+                fringe.dir_index_8 = new DenseVector<unsigned long>(dir_index_8_size);
+
+                mpi::mpi_recv(fringe.h_targets->elements(), fringe.h_targets->size(), 0, 0);
+                mpi::mpi_recv(fringe.h_index->elements(), fringe.h_index->size(), 0, 0);
+                mpi::mpi_recv(fringe.dir_targets_1->elements(), fringe.dir_targets_1->size(), 0, 0);
+                mpi::mpi_recv(fringe.dir_index_1->elements(), fringe.dir_index_1->size(), 0, 0);
+                mpi::mpi_recv(fringe.dir_targets_2->elements(), fringe.dir_targets_2->size(), 0, 0);
+                mpi::mpi_recv(fringe.dir_index_2->elements(), fringe.dir_index_2->size(), 0, 0);
+                mpi::mpi_recv(fringe.dir_targets_3->elements(), fringe.dir_targets_3->size(), 0, 0);
+                mpi::mpi_recv(fringe.dir_index_3->elements(), fringe.dir_index_3->size(), 0, 0);
+                mpi::mpi_recv(fringe.dir_targets_4->elements(), fringe.dir_targets_4->size(), 0, 0);
+                mpi::mpi_recv(fringe.dir_index_4->elements(), fringe.dir_index_4->size(), 0, 0);
+                mpi::mpi_recv(fringe.dir_targets_5->elements(), fringe.dir_targets_5->size(), 0, 0);
+                mpi::mpi_recv(fringe.dir_index_5->elements(), fringe.dir_index_5->size(), 0, 0);
+                mpi::mpi_recv(fringe.dir_targets_6->elements(), fringe.dir_targets_6->size(), 0, 0);
+                mpi::mpi_recv(fringe.dir_index_6->elements(), fringe.dir_index_6->size(), 0, 0);
+                mpi::mpi_recv(fringe.dir_targets_7->elements(), fringe.dir_targets_7->size(), 0, 0);
+                mpi::mpi_recv(fringe.dir_index_7->elements(), fringe.dir_index_7->size(), 0, 0);
+                mpi::mpi_recv(fringe.dir_targets_8->elements(), fringe.dir_targets_8->size(), 0, 0);
+                mpi::mpi_recv(fringe.dir_index_8->elements(), fringe.dir_index_8->size(), 0, 0);
             }
 
             void _send_sync(unsigned long target, PackedGridData<D2Q9, DataType_> & data)

@@ -90,8 +90,8 @@ class GridPartitionerTest :
             for (unsigned long i(0) ; i < info_list.size() ; ++i)
             {
                 std::cout<<info_list[i].offset<<std::endl;
-                std::cout<<"fringe h index "<<*fringe_list[i].h_index;
-                std::cout<<"fringe h targets "<<*fringe_list[i].h_targets;
+                std::cout<<"fringe dir 7 index "<<*fringe_list[i].dir_index_7;
+                std::cout<<"fringe dir 7 targets "<<*fringe_list[i].dir_targets_7;
                 std::cout<<"limits "<<*info_list[i].limits;
                 std::cout<<"h size: "<<data_list[i].h->size()<<std::endl;
             }
