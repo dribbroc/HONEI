@@ -82,14 +82,15 @@ class GridPackerTest :
                 std::cout << (*info.limits)[i] << " " << (*info.types)[i] << std::endl;
             }*/
             std::cout<<*info.limits;
-            std::cout<<"1 "<<*info.dir_index_1;
+/*            std::cout<<"1 "<<*info.dir_index_1;
             std::cout<<"2: "<<*info.dir_index_2;
             std::cout<<"3: "<<*info.dir_index_3;
             std::cout<<"4: "<<*info.dir_index_4;
             std::cout<<"5: "<<*info.dir_index_5;
-            std::cout<<"6: "<<*info.dir_index_6;
-            std::cout<<"7: "<<*info.dir_index_7;
-            std::cout<<"8: "<<*info.dir_index_8;
+            std::cout<<"6: "<<*info.dir_index_6;*/
+            std::cout<<"dir index 7: "<<*info.dir_index_7;
+            std::cout<<"dir 7: "<<*info.dir_7;
+            //std::cout<<"8: "<<*info.dir_index_8;
 
             GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::unpack(grid, info, data);
             //std::cout << *grid.h << std::endl;
