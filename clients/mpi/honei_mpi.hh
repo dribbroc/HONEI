@@ -96,6 +96,7 @@ namespace honei
 
                 for (signed long target(1) ; target < _numprocs ; ++target)
                 {
+                    // \todo send/recv sync muessen richtung master und richtung slave unterschiedlich sein
                     _recv_sync(target, info_list[target - 1], data_list[target - 1], fringe_list[target - 1]);
                 }
 
@@ -591,8 +592,8 @@ namespace honei
 
                     case 1:
                         {
-                            unsigned long g_h(1500);
-                            unsigned long g_w(1500);
+                            unsigned long g_h(100);
+                            unsigned long g_w(100);
                             grid.h = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.05));
                             Cylinder<DataType_> c1(*grid.h, DataType_(0.06), 25, 25);
                             c1.value();

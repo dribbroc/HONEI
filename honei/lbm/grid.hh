@@ -399,7 +399,15 @@ namespace honei
                 dir_index_7(0),
                 dir_targets_7(0),
                 dir_index_8(0),
-                dir_targets_8(0)
+                dir_targets_8(0),
+                external_dir_index_1(0),
+                external_dir_index_2(0),
+                external_dir_index_3(0),
+                external_dir_index_4(0),
+                external_dir_index_5(0),
+                external_dir_index_6(0),
+                external_dir_index_7(0),
+                external_dir_index_8(0)
             {
             }
 
@@ -423,6 +431,14 @@ namespace honei
                 delete dir_targets_7;
                 delete dir_index_8;
                 delete dir_targets_8;
+                delete external_dir_index_1;
+                delete external_dir_index_2;
+                delete external_dir_index_3;
+                delete external_dir_index_4;
+                delete external_dir_index_5;
+                delete external_dir_index_6;
+                delete external_dir_index_7;
+                delete external_dir_index_8;
 
                 h_index = 0;
                 h_targets = 0;
@@ -442,6 +458,14 @@ namespace honei
                 dir_targets_7 = 0;
                 dir_index_8 = 0;
                 dir_targets_8 = 0;
+                external_dir_index_1 = 0;
+                external_dir_index_2 = 0;
+                external_dir_index_3 = 0;
+                external_dir_index_4 = 0;
+                external_dir_index_5 = 0;
+                external_dir_index_6 = 0;
+                external_dir_index_7 = 0;
+                external_dir_index_8 = 0;
             }
 
             DenseVector<unsigned long> * h_index;
@@ -462,6 +486,14 @@ namespace honei
             DenseVector<unsigned long> * dir_targets_7;
             DenseVector<unsigned long> * dir_index_8;
             DenseVector<unsigned long> * dir_targets_8;
+            DenseVector<unsigned long> * external_dir_index_1;
+            DenseVector<unsigned long> * external_dir_index_2;
+            DenseVector<unsigned long> * external_dir_index_3;
+            DenseVector<unsigned long> * external_dir_index_4;
+            DenseVector<unsigned long> * external_dir_index_5;
+            DenseVector<unsigned long> * external_dir_index_6;
+            DenseVector<unsigned long> * external_dir_index_7;
+            DenseVector<unsigned long> * external_dir_index_8;
     };
 }
 

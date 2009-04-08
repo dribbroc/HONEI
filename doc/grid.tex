@@ -80,6 +80,11 @@ Enthält den Löser, dem der Bereich von f\_temp\_n mitgeteilt werden muss.
 
 Beachte: dir\_targets\_n.size() = 0.5 * dir\_index\_n.size().
 
+\subsubsection{external\_dir\_index\_n}
+Enthält die Abschnitte, in denen der f\_temp\_n Vektor von anderen L"osern beschrieben wurde.
+Hierbei geht der Bereich von i = dir\_index\_n[x] bis i $<$ dir\_index\_n[x + 1] exklusive.
+Der nächste Bereich beginnt dann bei dir\_index\_n[x + 2].
+
 \section{Grid Tools}
 \subsection{GridPacker}
 \subsubsection{pack}

@@ -307,6 +307,210 @@ namespace honei
                 }
             }
 
+            // Gather all external modified parts of patch self
+            static void _add_external_fringe(unsigned long self, std::vector<PackedGridFringe<D2Q9> > & fringe_list)
+            {
+                std::vector<unsigned long> temp_external_1;
+                for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
+                {
+                    for (unsigned long i(0) ; i < fringe_list[index].dir_targets_1->size() ; ++i)
+                    {
+                        if ((*fringe_list[index].dir_targets_1)[i] == self)
+                        {
+                            temp_external_1.push_back((*fringe_list[index].dir_index_1)[i*2]);
+                            temp_external_1.push_back((*fringe_list[index].dir_index_1)[i*2 + 1]);
+                        }
+                    }
+                }
+
+                if (temp_external_1.size() == 0)
+                {
+                    temp_external_1.push_back(0);
+                    temp_external_1.push_back(0);
+                }
+
+                fringe_list[self].external_dir_index_1 = new DenseVector<unsigned long>(temp_external_1.size());
+                for (unsigned long i(0) ; i < temp_external_1.size() ; ++i)
+                {
+                    (*fringe_list[self].external_dir_index_1)[i] = temp_external_1.at(i);
+                }
+
+                std::vector<unsigned long> temp_external_2;
+                for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
+                {
+                    for (unsigned long i(0) ; i < fringe_list[index].dir_targets_2->size() ; ++i)
+                    {
+                        if ((*fringe_list[index].dir_targets_2)[i] == self)
+                        {
+                            temp_external_2.push_back((*fringe_list[index].dir_index_2)[i*2]);
+                            temp_external_2.push_back((*fringe_list[index].dir_index_2)[i*2 + 1]);
+                        }
+                    }
+                }
+
+                if (temp_external_2.size() == 0)
+                {
+                    temp_external_2.push_back(0);
+                    temp_external_2.push_back(0);
+                }
+
+                fringe_list[self].external_dir_index_2 = new DenseVector<unsigned long>(temp_external_2.size());
+                for (unsigned long i(0) ; i < temp_external_2.size() ; ++i)
+                {
+                    (*fringe_list[self].external_dir_index_2)[i] = temp_external_2.at(i);
+                }
+
+                std::vector<unsigned long> temp_external_3;
+                for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
+                {
+                    for (unsigned long i(0) ; i < fringe_list[index].dir_targets_3->size() ; ++i)
+                    {
+                        if ((*fringe_list[index].dir_targets_3)[i] == self)
+                        {
+                            temp_external_3.push_back((*fringe_list[index].dir_index_3)[i*2]);
+                            temp_external_3.push_back((*fringe_list[index].dir_index_3)[i*2 + 1]);
+                        }
+                    }
+                }
+
+                if (temp_external_3.size() == 0)
+                {
+                    temp_external_3.push_back(0);
+                    temp_external_3.push_back(0);
+                }
+
+                fringe_list[self].external_dir_index_3 = new DenseVector<unsigned long>(temp_external_3.size());
+                for (unsigned long i(0) ; i < temp_external_3.size() ; ++i)
+                {
+                    (*fringe_list[self].external_dir_index_3)[i] = temp_external_3.at(i);
+                }
+
+                std::vector<unsigned long> temp_external_4;
+                for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
+                {
+                    for (unsigned long i(0) ; i < fringe_list[index].dir_targets_4->size() ; ++i)
+                    {
+                        if ((*fringe_list[index].dir_targets_4)[i] == self)
+                        {
+                            temp_external_4.push_back((*fringe_list[index].dir_index_4)[i*2]);
+                            temp_external_4.push_back((*fringe_list[index].dir_index_4)[i*2 + 1]);
+                        }
+                    }
+                }
+
+                if (temp_external_4.size() == 0)
+                {
+                    temp_external_4.push_back(0);
+                    temp_external_4.push_back(0);
+                }
+
+                fringe_list[self].external_dir_index_4 = new DenseVector<unsigned long>(temp_external_4.size());
+                for (unsigned long i(0) ; i < temp_external_4.size() ; ++i)
+                {
+                    (*fringe_list[self].external_dir_index_4)[i] = temp_external_4.at(i);
+                }
+
+                std::vector<unsigned long> temp_external_5;
+                for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
+                {
+                    for (unsigned long i(0) ; i < fringe_list[index].dir_targets_5->size() ; ++i)
+                    {
+                        if ((*fringe_list[index].dir_targets_5)[i] == self)
+                        {
+                            temp_external_5.push_back((*fringe_list[index].dir_index_5)[i*2]);
+                            temp_external_5.push_back((*fringe_list[index].dir_index_5)[i*2 + 1]);
+                        }
+                    }
+                }
+
+                if (temp_external_5.size() == 0)
+                {
+                    temp_external_5.push_back(0);
+                    temp_external_5.push_back(0);
+                }
+
+                fringe_list[self].external_dir_index_5 = new DenseVector<unsigned long>(temp_external_5.size());
+                for (unsigned long i(0) ; i < temp_external_5.size() ; ++i)
+                {
+                    (*fringe_list[self].external_dir_index_5)[i] = temp_external_5.at(i);
+                }
+
+                std::vector<unsigned long> temp_external_6;
+                for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
+                {
+                    for (unsigned long i(0) ; i < fringe_list[index].dir_targets_6->size() ; ++i)
+                    {
+                        if ((*fringe_list[index].dir_targets_6)[i] == self)
+                        {
+                            temp_external_6.push_back((*fringe_list[index].dir_index_6)[i*2]);
+                            temp_external_6.push_back((*fringe_list[index].dir_index_6)[i*2 + 1]);
+                        }
+                    }
+                }
+
+                if (temp_external_6.size() == 0)
+                {
+                    temp_external_6.push_back(0);
+                    temp_external_6.push_back(0);
+                }
+
+                fringe_list[self].external_dir_index_6 = new DenseVector<unsigned long>(temp_external_6.size());
+                for (unsigned long i(0) ; i < temp_external_6.size() ; ++i)
+                {
+                    (*fringe_list[self].external_dir_index_6)[i] = temp_external_6.at(i);
+                }
+
+                std::vector<unsigned long> temp_external_7;
+                for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
+                {
+                    for (unsigned long i(0) ; i < fringe_list[index].dir_targets_7->size() ; ++i)
+                    {
+                        if ((*fringe_list[index].dir_targets_7)[i] == self)
+                        {
+                            temp_external_7.push_back((*fringe_list[index].dir_index_7)[i*2]);
+                            temp_external_7.push_back((*fringe_list[index].dir_index_7)[i*2 + 1]);
+                        }
+                    }
+                }
+
+                if (temp_external_7.size() == 0)
+                {
+                    temp_external_7.push_back(0);
+                    temp_external_7.push_back(0);
+                }
+
+                fringe_list[self].external_dir_index_7 = new DenseVector<unsigned long>(temp_external_7.size());
+                for (unsigned long i(0) ; i < temp_external_7.size() ; ++i)
+                {
+                    (*fringe_list[self].external_dir_index_7)[i] = temp_external_7.at(i);
+                }
+
+                std::vector<unsigned long> temp_external_8;
+                for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
+                {
+                    for (unsigned long i(0) ; i < fringe_list[index].dir_targets_8->size() ; ++i)
+                    {
+                        if ((*fringe_list[index].dir_targets_8)[i] == self)
+                        {
+                            temp_external_8.push_back((*fringe_list[index].dir_index_8)[i*2]);
+                            temp_external_8.push_back((*fringe_list[index].dir_index_8)[i*2 + 1]);
+                        }
+                    }
+                }
+
+                if (temp_external_8.size() == 0)
+                {
+                    temp_external_8.push_back(0);
+                    temp_external_8.push_back(0);
+                }
+
+                fringe_list[self].external_dir_index_8 = new DenseVector<unsigned long>(temp_external_8.size());
+                for (unsigned long i(0) ; i < temp_external_8.size() ; ++i)
+                {
+                    (*fringe_list[self].external_dir_index_8)[i] = temp_external_8.at(i);
+                }
+            }
+
         public:
 
             static void compose(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
@@ -953,6 +1157,11 @@ namespace honei
                     _create_h_fringe(i, *info_list[i].limits, *data_list[i].h, info_list,
                             new_fringe.h_index, new_fringe.h_targets);
                     fringe_list.push_back(new_fringe);
+                }
+                // Add external_fringe data
+                for (unsigned long i(0) ; i < info_list.size() ; ++i)
+                {
+                    _add_external_fringe(i, fringe_list);
                 }
 
                 /*std::cout<<std::endl;
