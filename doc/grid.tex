@@ -49,7 +49,7 @@ Hierbei geht der Bereich von i = dir\_index\_n[x] bis i $<$ dir\_index\_n[x + 1]
 Der nächste Bereich beginnt dann bei dir\_index\_n[x + 2].
 
 \subsubsection{dir\_n}
-Gibt für den Bereich der bei i = dir\_index\_n[x] beginnt die in dieser Richtung liegende Zelle j = dir\_n[x/2] an.
+Gibt für den Bereich, der bei i = dir\_index\_n[x] beginnt, die in dieser Richtung liegende Zelle j = dir\_n[x/2] an.
 
 Beachte: dir\_n.size() = 0.5 * dir\_index\_n.size().
 
@@ -64,6 +64,7 @@ Gibt f"ur jedes Element der data Vektoren die benachbarten Zellen an an (ist nur
 Enthält die Abschnitte, in denen h, u und v von anderen Lösern beschrieben werden.
 Hierbei geht der Bereich von i = h\_index[x] bis i $<$ h\_index[x + 1] exklusive.
 Der nächste Bereich beginnt dann bei h\_index[x + 2].
+Die Koordinaten beziehen sich auf den globalen h Vektor.
 
 \subsubsection{h\_targets}
 Enthält den Löser, der den gewünschte Bereich von u, h und v  beschrieben hat.
@@ -74,6 +75,7 @@ Beachte: h\_targets.size() = 0.5 * h\_index.size().
 Enthält die Abschnitte, in denen der f\_temp\_n Vektor anderen Lösern mitgeteilt werden muss.
 Hierbei geht der Bereich von i = dir\_index\_n[x] bis i $<$ dir\_index\_n[x + 1] exklusive.
 Der nächste Bereich beginnt dann bei dir\_index\_n[x + 2].
+Die Koordinaten beziehen sich auf den globalen f\_temp\_n Vektor.
 
 \subsubsection{dir\_targets\_n}
 Enthält den Löser, dem der Bereich von f\_temp\_n mitgeteilt werden muss.

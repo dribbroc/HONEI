@@ -57,9 +57,9 @@ namespace honei
             {
                 for (unsigned long i(0) ; i < index_vector.size() - 1 ; i += 2)
                 {
+                    unsigned long target(targets[i / 2]);
                     for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
                     {
-                        unsigned long target(targets[i / 2]);
                         (*data_list[target].f_temp_1)[j - info_list[target].offset] = (*data_list[patch].f_temp_1)[j - info_list[patch].offset];
                     }
                 }
@@ -71,9 +71,9 @@ namespace honei
             {
                 for (unsigned long i(0) ; i < index_vector.size() - 1 ; i += 2)
                 {
+                    unsigned long target(targets[i / 2]);
                     for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
                     {
-                        unsigned long target(targets[i / 2]);
                         (*data_list[target].f_temp_2)[j - info_list[target].offset] = (*data_list[patch].f_temp_2)[j - info_list[patch].offset];
                     }
                 }
@@ -85,9 +85,9 @@ namespace honei
             {
                 for (unsigned long i(0) ; i < index_vector.size() - 1 ; i += 2)
                 {
+                    unsigned long target(targets[i / 2]);
                     for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
                     {
-                        unsigned long target(targets[i / 2]);
                         (*data_list[target].f_temp_3)[j - info_list[target].offset] = (*data_list[patch].f_temp_3)[j - info_list[patch].offset];
                     }
                 }
@@ -99,9 +99,9 @@ namespace honei
             {
                 for (unsigned long i(0) ; i < index_vector.size() - 1 ; i += 2)
                 {
+                    unsigned long target(targets[i / 2]);
                     for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
                     {
-                        unsigned long target(targets[i / 2]);
                         (*data_list[target].f_temp_4)[j - info_list[target].offset] = (*data_list[patch].f_temp_4)[j - info_list[patch].offset];
                     }
                 }
@@ -113,9 +113,9 @@ namespace honei
             {
                 for (unsigned long i(0) ; i < index_vector.size() - 1 ; i += 2)
                 {
+                    unsigned long target(targets[i / 2]);
                     for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
                     {
-                        unsigned long target(targets[i / 2]);
                         (*data_list[target].f_temp_5)[j - info_list[target].offset] = (*data_list[patch].f_temp_5)[j - info_list[patch].offset];
                     }
                 }
@@ -127,9 +127,9 @@ namespace honei
             {
                 for (unsigned long i(0) ; i < index_vector.size() - 1 ; i += 2)
                 {
+                    unsigned long target(targets[i / 2]);
                     for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
                     {
-                        unsigned long target(targets[i / 2]);
                         (*data_list[target].f_temp_6)[j - info_list[target].offset] = (*data_list[patch].f_temp_6)[j - info_list[patch].offset];
                     }
                 }
@@ -141,9 +141,9 @@ namespace honei
             {
                 for (unsigned long i(0) ; i < index_vector.size() - 1 ; i += 2)
                 {
+                    unsigned long target(targets[i / 2]);
                     for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
                     {
-                        unsigned long target(targets[i / 2]);
                         (*data_list[target].f_temp_7)[j - info_list[target].offset] = (*data_list[patch].f_temp_7)[j - info_list[patch].offset];
                     }
                 }
@@ -155,9 +155,9 @@ namespace honei
             {
                 for (unsigned long i(0) ; i < index_vector.size() - 1 ; i += 2)
                 {
+                    unsigned long target(targets[i / 2]);
                     for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
                     {
-                        unsigned long target(targets[i / 2]);
                         (*data_list[target].f_temp_8)[j - info_list[target].offset] = (*data_list[patch].f_temp_8)[j - info_list[patch].offset];
                     }
                 }
@@ -315,7 +315,12 @@ namespace honei
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_1->size() ; ++i)
                     {
-                        if ((*fringe_list[index].dir_targets_1)[i] == self)
+                        if ((*fringe_list[index].dir_targets_1)[i] == self
+                                && (
+                                    //prevent target==0 index==[0,0] dummy entries
+                                    (*fringe_list[index].dir_index_1)[i*2] != 0||
+                                    (*fringe_list[index].dir_index_1)[i*2 + 1] != 0
+                                    ))
                         {
                             temp_external_1.push_back((*fringe_list[index].dir_index_1)[i*2]);
                             temp_external_1.push_back((*fringe_list[index].dir_index_1)[i*2 + 1]);
