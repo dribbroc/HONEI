@@ -96,7 +96,7 @@ namespace honei
 
                 for (signed long target(1) ; target < _numprocs ; ++target)
                 {
-                    _recv_full_sync(target, info_list[target - 1], data_list[target - 1], fringe_list[target - 1]);
+                    _recv_slave_sync(target, info_list[target - 1], data_list[target - 1], fringe_list[target - 1]);
                 }
 
                 GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list, fringe_list);
@@ -119,8 +119,7 @@ namespace honei
                     //and finished
                     for (signed long target(1) ; target < _numprocs ; ++target)
                     {
-                        //_recv_slave_sync(target, info_list[target - 1], data_list[target - 1], fringe_list[target - 1]);
-                        _recv_full_sync(target, info_list[target - 1], data_list[target - 1], fringe_list[target - 1]);
+                        _recv_slave_sync(target, info_list[target - 1], data_list[target - 1], fringe_list[target - 1]);
                     }
 
                     GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list, fringe_list);
@@ -155,15 +154,14 @@ namespace honei
 
                 solver.do_preprocessing();
 
-                _send_full_sync(0, info, data, fringe);
+                _send_master_sync(0, info, data, fringe);
                 _recv_master_sync(0, info, data, fringe);
 
                 for(unsigned long i(0); i < timesteps; ++i)
                 {
                     solver.solve();
 
-                    //_send_master_sync(0, info, data, fringe);
-                    _send_full_sync(0, info, data, fringe);
+                    _send_master_sync(0, info, data, fringe);
                     _recv_master_sync(0, info, data, fringe);
                 }
             }

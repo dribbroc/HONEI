@@ -318,7 +318,7 @@ namespace honei
                         if ((*fringe_list[index].dir_targets_1)[i] == self
                                 && (
                                     //prevent target==0 index==[0,0] dummy entries
-                                    (*fringe_list[index].dir_index_1)[i*2] != 0||
+                                    (*fringe_list[index].dir_index_1)[i*2] != 0 ||
                                     (*fringe_list[index].dir_index_1)[i*2 + 1] != 0
                                     ))
                         {
@@ -345,7 +345,12 @@ namespace honei
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_2->size() ; ++i)
                     {
-                        if ((*fringe_list[index].dir_targets_2)[i] == self)
+                        if ((*fringe_list[index].dir_targets_2)[i] == self
+                                && (
+                                    //prevent target==0 index==[0,0] dummy entries
+                                    (*fringe_list[index].dir_index_2)[i*2] != 0 ||
+                                    (*fringe_list[index].dir_index_2)[i*2 + 1] != 0
+                                    ))
                         {
                             temp_external_2.push_back((*fringe_list[index].dir_index_2)[i*2]);
                             temp_external_2.push_back((*fringe_list[index].dir_index_2)[i*2 + 1]);
@@ -370,7 +375,12 @@ namespace honei
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_3->size() ; ++i)
                     {
-                        if ((*fringe_list[index].dir_targets_3)[i] == self)
+                        if ((*fringe_list[index].dir_targets_3)[i] == self
+                                && (
+                                    //prevent target==0 index==[0,0] dummy entries
+                                    (*fringe_list[index].dir_index_3)[i*2] != 0 ||
+                                    (*fringe_list[index].dir_index_3)[i*2 + 1] != 0
+                                    ))
                         {
                             temp_external_3.push_back((*fringe_list[index].dir_index_3)[i*2]);
                             temp_external_3.push_back((*fringe_list[index].dir_index_3)[i*2 + 1]);
@@ -395,7 +405,12 @@ namespace honei
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_4->size() ; ++i)
                     {
-                        if ((*fringe_list[index].dir_targets_4)[i] == self)
+                        if ((*fringe_list[index].dir_targets_4)[i] == self
+                                && (
+                                    //prevent target==0 index==[0,0] dummy entries
+                                    (*fringe_list[index].dir_index_4)[i*2] != 0 ||
+                                    (*fringe_list[index].dir_index_4)[i*2 + 1] != 0
+                                    ))
                         {
                             temp_external_4.push_back((*fringe_list[index].dir_index_4)[i*2]);
                             temp_external_4.push_back((*fringe_list[index].dir_index_4)[i*2 + 1]);
@@ -420,7 +435,12 @@ namespace honei
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_5->size() ; ++i)
                     {
-                        if ((*fringe_list[index].dir_targets_5)[i] == self)
+                        if ((*fringe_list[index].dir_targets_5)[i] == self
+                                && (
+                                    //prevent target==0 index==[0,0] dummy entries
+                                    (*fringe_list[index].dir_index_5)[i*2] != 0 ||
+                                    (*fringe_list[index].dir_index_5)[i*2 + 1] != 0
+                                    ))
                         {
                             temp_external_5.push_back((*fringe_list[index].dir_index_5)[i*2]);
                             temp_external_5.push_back((*fringe_list[index].dir_index_5)[i*2 + 1]);
@@ -445,7 +465,12 @@ namespace honei
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_6->size() ; ++i)
                     {
-                        if ((*fringe_list[index].dir_targets_6)[i] == self)
+                        if ((*fringe_list[index].dir_targets_6)[i] == self
+                                && (
+                                    //prevent target==0 index==[0,0] dummy entries
+                                    (*fringe_list[index].dir_index_6)[i*2] != 0 ||
+                                    (*fringe_list[index].dir_index_6)[i*2 + 1] != 0
+                                    ))
                         {
                             temp_external_6.push_back((*fringe_list[index].dir_index_6)[i*2]);
                             temp_external_6.push_back((*fringe_list[index].dir_index_6)[i*2 + 1]);
@@ -470,7 +495,12 @@ namespace honei
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_7->size() ; ++i)
                     {
-                        if ((*fringe_list[index].dir_targets_7)[i] == self)
+                        if ((*fringe_list[index].dir_targets_7)[i] == self
+                                && (
+                                    //prevent target==0 index==[0,0] dummy entries
+                                    (*fringe_list[index].dir_index_7)[i*2] != 0 ||
+                                    (*fringe_list[index].dir_index_7)[i*2 + 1] != 0
+                                    ))
                         {
                             temp_external_7.push_back((*fringe_list[index].dir_index_7)[i*2]);
                             temp_external_7.push_back((*fringe_list[index].dir_index_7)[i*2 + 1]);
@@ -495,7 +525,12 @@ namespace honei
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_8->size() ; ++i)
                     {
-                        if ((*fringe_list[index].dir_targets_8)[i] == self)
+                        if ((*fringe_list[index].dir_targets_8)[i] == self
+                                && (
+                                    //prevent target==0 index==[0,0] dummy entries
+                                    (*fringe_list[index].dir_index_8)[i*2] != 0 ||
+                                    (*fringe_list[index].dir_index_8)[i*2 + 1] != 0
+                                    ))
                         {
                             temp_external_8.push_back((*fringe_list[index].dir_index_8)[i*2]);
                             temp_external_8.push_back((*fringe_list[index].dir_index_8)[i*2 + 1]);
