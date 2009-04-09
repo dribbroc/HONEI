@@ -157,7 +157,7 @@ namespace honei
                 _recv_data(data);
                 _recv_fringe(fringe);
 
-                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info, &data, 0.01, 0.01, 0.01, 1.1);
+                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, 0.01, 0.01, 0.01, 1.1);
 
                 solver.do_preprocessing();
 
@@ -337,6 +337,7 @@ namespace honei
                 data.u = new DenseVector<DataType_>(h_size);
                 data.v = new DenseVector<DataType_>(h_size);
                 data.b = new DenseVector<DataType_>(h_size);
+                data.temp = new DenseVector<DataType_>(h_size);
 
                 mpi::mpi_recv(data.h->elements(), data.h->size(), 0, 0);
                 mpi::mpi_recv(data.u->elements(), data.u->size(), 0, 0);
