@@ -384,6 +384,7 @@ namespace honei
             PackedGridFringe():
                 h_index(0),
                 h_targets(0),
+                external_h_index(0),
                 dir_index_1(0),
                 dir_targets_1(0),
                 dir_index_2(0),
@@ -415,6 +416,7 @@ namespace honei
             {
                 delete h_index;
                 delete h_targets;
+                delete external_h_index;
                 delete dir_index_1;
                 delete dir_targets_1;
                 delete dir_index_2;
@@ -442,6 +444,7 @@ namespace honei
 
                 h_index = 0;
                 h_targets = 0;
+                external_h_index = 0;
                 dir_index_1 = 0;
                 dir_targets_1 = 0;
                 dir_index_2 = 0;
@@ -470,6 +473,7 @@ namespace honei
 
             DenseVector<unsigned long> * h_index;
             DenseVector<unsigned long> * h_targets;
+            DenseVector<unsigned long> * external_h_index;
             DenseVector<unsigned long> * dir_index_1;
             DenseVector<unsigned long> * dir_targets_1;
             DenseVector<unsigned long> * dir_index_2;

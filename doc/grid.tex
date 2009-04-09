@@ -71,6 +71,12 @@ Enthält den Löser, der den gewünschte Bereich von u, h und v  beschrieben hat.
 
 Beachte: h\_targets.size() = 0.5 * h\_index.size().
 
+\subsubsection{external\_h\_index}
+Enthält die Abschnitte von h, u und v, die den anderen Lösern mitgeteilt werden muessen.
+Hierbei geht der Bereich von i = h\_index[x] bis i $<$ h\_index[x + 1] exklusive.
+Der nächste Bereich beginnt dann bei external\_h\_index[x + 2].
+Die Koordinaten beziehen sich auf den globalen h Vektor.
+
 \subsubsection{dir\_index\_n}
 Enthält die Abschnitte, in denen der f\_temp\_n Vektor anderen Lösern mitgeteilt werden muss.
 Hierbei geht der Bereich von i = dir\_index\_n[x] bis i $<$ dir\_index\_n[x + 1] exklusive.
@@ -85,7 +91,8 @@ Beachte: dir\_targets\_n.size() = 0.5 * dir\_index\_n.size().
 \subsubsection{external\_dir\_index\_n}
 Enthält die Abschnitte, in denen der f\_temp\_n Vektor von anderen L"osern beschrieben wurde.
 Hierbei geht der Bereich von i = dir\_index\_n[x] bis i $<$ dir\_index\_n[x + 1] exklusive.
-Der nächste Bereich beginnt dann bei dir\_index\_n[x + 2].
+Der nächste Bereich beginnt dann bei external\_dir\_index\_n[x + 2].
+Die Koordinaten beziehen sich auf den globalen h Vektor.
 
 \section{Grid Tools}
 \subsection{GridPacker}

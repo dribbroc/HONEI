@@ -310,6 +310,36 @@ namespace honei
             // Gather all external modified parts of patch self
             static void _add_external_fringe(unsigned long self, std::vector<PackedGridFringe<D2Q9> > & fringe_list)
             {
+                std::vector<unsigned long> temp_external_h;
+                for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
+                {
+                    for (unsigned long i(0) ; i < fringe_list[index].h_targets->size() ; ++i)
+                    {
+                        if ((*fringe_list[index].h_targets)[i] == self
+                                && (
+                                    //prevent target==0 index==[0,0] dummy entries
+                                    (*fringe_list[index].h_index)[i*2] != 0 ||
+                                    (*fringe_list[index].h_index)[i*2 + 1] != 0
+                                    ))
+                        {
+                            temp_external_h.push_back((*fringe_list[index].h_index)[i*2]);
+                            temp_external_h.push_back((*fringe_list[index].h_index)[i*2 + 1]);
+                        }
+                    }
+                }
+
+                if (temp_external_h.size() == 0)
+                {
+                    temp_external_h.push_back(0);
+                    temp_external_h.push_back(0);
+                }
+
+                fringe_list[self].external_h_index = new DenseVector<unsigned long>(temp_external_h.size());
+                for (unsigned long i(0) ; i < temp_external_h.size() ; ++i)
+                {
+                    (*fringe_list[self].external_h_index)[i] = temp_external_h.at(i);
+                }
+
                 std::vector<unsigned long> temp_external_1;
                 for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
                 {
