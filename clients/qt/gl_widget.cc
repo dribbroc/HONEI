@@ -76,7 +76,7 @@ QSize GLWidget::minimumSizeHint() const
 
 QSize GLWidget::sizeHint() const
 {
-    return QSize(400, 400);
+    return QSize(640, 480);
 }
 
 void GLWidget::initializeGL()
@@ -108,13 +108,10 @@ void GLWidget::initializeGL()
 #endif
 #endif
 
-    // create object
-    // now we can start the timer for the animation function timerEvent()
-    //startTimer(RotTimer);
-
-    QTimer * animation_timer = new QTimer(this);
-    connect(animation_timer, SIGNAL(timeout()), SLOT(solver_event()));
-    animation_timer->start();
+    //start the solver timer
+    _solver_timer = new QTimer(this);
+    connect(_solver_timer, SIGNAL(timeout()), SLOT(solver_event()));
+    _solver_timer->start();
 }
 
 void GLWidget::paintGL()
@@ -125,8 +122,7 @@ void GLWidget::paintGL()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    //render HONEI solver output here
-
+    //render HONEI solver output
     glTranslatef(-4.0,-10.0,-45);
     glRotatef(-45.0f,1.0, 0.0, 0.0);
     glRotatef(45.0f,0.0, 0.0, 1.0);

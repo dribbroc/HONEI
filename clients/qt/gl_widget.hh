@@ -49,6 +49,7 @@ class GLWidget : public QGLWidget
         float m_curr_rot;
         unsigned int m_numFlakeRec;
 
+        QTimer * _solver_timer;
         bool _solver_precision_flag;
         SimulationController<float>* _sim_control_float;
         SimulationController<double>* _sim_control_double;
