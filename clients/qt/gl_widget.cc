@@ -25,7 +25,7 @@
 #include <cmath>
 
 #include <clients/qt/gl_widget.hh>
-
+#include <iostream>
 // switch on the following if you want the scene to be drawn in wireframe
 #undef WIREFRAME
 #define ANTIALIAS
@@ -99,7 +99,11 @@ void GLWidget::initializeGL()
 
     // create object
     // now we can start the timer for the animation function timerEvent()
-    startTimer(RotTimer);
+    //startTimer(RotTimer);
+
+    QTimer * animation_timer = new QTimer(this);
+    connect(animation_timer, SIGNAL(timeout()), SLOT(animation_event()));
+    animation_timer->start();
 }
 
 void GLWidget::paintGL()
@@ -111,13 +115,15 @@ void GLWidget::paintGL()
     glLoadIdentity();
 
     //render HONEI solver output here
-    glTranslatef(-1.5f,0.0f,-6.0f);
-    glBegin(GL_TRIANGLES);
-    glColor3f(1.0, 1.0, 0.0);
-    glVertex3f(0.f, 1.f, 0.f);
-    glVertex3f(-1.f, -1.f, 0.f);
-    glVertex3f(1.f, -1.f, 0.f);
-    glEnd();
+
+    glTranslatef(-4.0,-10.0,-45);
+    glRotatef(-45.0f,1.0, 0.0, 0.0);
+    glRotatef(45.0f,0.0, 0.0, 1.0);
+    glScalef(1.0f, 1.0f, 100.0f);
+    glEnable (GL_BLEND);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    _render_matrix(_sim_control.get_b(), 0.0, 1., 0.0, 0.5);
+    _render_matrix(_sim_control.get_hb(), 0.0, 0.0, 1., 0.5);
 }
 
 void GLWidget::resizeGL( int w, int h )		// = width & height
@@ -129,5 +135,28 @@ void GLWidget::resizeGL( int w, int h )		// = width & height
     glLoadIdentity();
     //glOrtho(-1.5, +1.5, +1.5, -1.5, 1.0, 150.0);
     glFrustum(-1.0, +1.0, -1.0, +1.0, 1.0, 150.0);
+}
+
+void GLWidget::_render_matrix(DenseMatrix<float> & matrix, float r, float g, float b, float a)
+{
+    glBegin(GL_QUADS);
+    for(unsigned int i = 0 ; i < matrix.columns()- 1 ; ++i)
+    {
+        for(unsigned int j = 0 ; j < matrix.rows() - 1 ; ++j)
+        {
+            glColor4f(r, g, b, a);
+            glVertex3d(i,j, matrix[j][i]);
+            glVertex3d(i+1,j, matrix[j][i+1]);
+            glVertex3d(i+1,j+1, matrix[j+1][i+1]);
+            glVertex3d(i,j+1, matrix[j+1][i]);
+        }
+    }
+    glEnd();
+}
+
+void GLWidget::animation_event()
+{
+    _sim_control.do_timestep();
+    updateGL();
 }
 

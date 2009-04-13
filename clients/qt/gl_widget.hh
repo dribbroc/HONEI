@@ -23,10 +23,8 @@
 #define HONEI_GUARD_GL_WIDGET_HH
 
 #include <QGLWidget>
-
-//#include "NanoTimer.h"
-
-
+#include <QTimer>
+#include <simulation_controller.hh>
 class GLWidget : public QGLWidget
 {
     Q_OBJECT
@@ -50,6 +48,11 @@ class GLWidget : public QGLWidget
         float m_backgroundcolor[3];
         float m_curr_rot;
         unsigned int m_numFlakeRec;
+        SimulationController _sim_control;
+        void _render_matrix( DenseMatrix<float> & matrix, float r, float g, float b, float a);
+
+    private slots:
+        void animation_event();
 };
 
 #endif
