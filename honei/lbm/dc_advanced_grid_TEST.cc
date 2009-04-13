@@ -38,7 +38,7 @@ using namespace lbm;
 //#define SOLVER_VERBOSE
 //#define SOLVER_POSTPROCESSING
 //#define DRIVEN_CAVITY_OUTPUT_TESTLINE
-#define DRIVEN_CAVITY_OUTPUT_ACCURACY
+//#define DRIVEN_CAVITY_OUTPUT_ACCURACY
 
 template <typename Tag_, typename DataType_>
 class SolverLABNAVSTOGridDCTest :
@@ -62,7 +62,7 @@ class SolverLABNAVSTOGridDCTest :
         {
             unsigned long g_h(129);
             unsigned long g_w(129);
-            unsigned long timesteps(10000);
+            unsigned long timesteps(1000);
             DataType_ dx(_dx);
             DataType_ dy(_dy);
             DataType_ dt(_dt);
@@ -94,6 +94,10 @@ class SolverLABNAVSTOGridDCTest :
 
 
             SolverLBMGrid<Tag_, lbm_applications::LABNAVSTO, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info, &data, grid.d_x, grid.d_y, grid.d_t, grid.tau);
+            std::cout << "dx " << grid.d_x << std::endl;
+            std::cout << "dy " << grid.d_y << std::endl;
+            std::cout << "dt " << grid.d_t << std::endl;
+            std::cout << "tau " << grid.tau << std::endl;
 
             solver.do_preprocessing();
             std::cout << "Solving: " << grid.description << std::endl;
@@ -119,6 +123,7 @@ class SolverLABNAVSTOGridDCTest :
                         (*data.u)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid, j, g_w - 1)] = DataType_(0.);
                         (*data.v)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid, j, g_w - 1)] = DataType_(0.);
                     }
+
                 }
 
                 //solver.solve();
@@ -153,10 +158,12 @@ class SolverLABNAVSTOGridDCTest :
                         (*data.u)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid, j, g_w - 1)] = DataType_(0.);
                         (*data.v)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid, j, g_w - 1)] = DataType_(0.);
                     }
+
                 }
+                std::cout << i << std::endl;
 #ifdef SOLVER_POSTPROCESSING
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack_u(grid, info, data);
-                PostProcessing<GNUPLOT>::value(*grid.u, 99, g_w, g_h, i);
+                PostProcessing<GNUPLOT>::value(*grid.u, 999, g_w, g_h, i);
 #endif
             }
             GridPacker<D2Q9, NOSLIP, DataType_>::unpack_u(grid, info, data);
@@ -242,12 +249,285 @@ class SolverLABNAVSTOGridDCTest :
                 //TEST_CHECK_EQUAL_WITHIN_EPS(test_line[indices_100[i]], ref_result_100[i], 0.5);
             }
 
-            Difference<>::value(diff, test_line);
+            //compare with HUEBNER
+            DenseVector<DataType_> ref_result_100_hubner(g_w);
+            unsigned long i(0);
 
-            std::cout <<"Difference vector: " << diff << std::endl;
+            ref_result_100_hubner[i] = 1.000000e+00;
+            ++i;
+            ref_result_100_hubner[i] = 9.482407e-01;
+            ++i;
+            ref_result_100_hubner[i] = 8.958706e-01;
+            ++i;
+            ref_result_100_hubner[i] = 8.434837e-01;
+            ++i;
+            ref_result_100_hubner[i] = 7.916057e-01;
+            ++i;
+            ref_result_100_hubner[i] = 7.407020e-01;
+            ++i;
+            ref_result_100_hubner[i] = 6.911695e-01;
+            ++i;
+            ref_result_100_hubner[i] = 6.433326e-01;
+            ++i;
+            ref_result_100_hubner[i] = 5.974428e-01;
+            ++i;
+            ref_result_100_hubner[i] = 5.536819e-01;
+            ++i;
+            ref_result_100_hubner[i] = 5.121672e-01;
+            ++i;
+            ref_result_100_hubner[i] = 4.729579e-01;
+            ++i;
+            ref_result_100_hubner[i] = 4.360633e-01;
+            ++i;
+            ref_result_100_hubner[i] = 4.014499e-01;
+            ++i;
+            ref_result_100_hubner[i] = 3.690501e-01;
+            ++i;
+            ref_result_100_hubner[i] = 3.387690e-01;
+            ++i;
+            ref_result_100_hubner[i] = 3.104923e-01;
+            ++i;
+            ref_result_100_hubner[i] = 2.840917e-01;
+            ++i;
+            ref_result_100_hubner[i] = 2.594308e-01;
+            ++i;
+            ref_result_100_hubner[i] = 2.363697e-01;
+            ++i;
+            ref_result_100_hubner[i] = 2.147690e-01;
+            ++i;
+            ref_result_100_hubner[i] = 1.944924e-01;
+            ++i;
+            ref_result_100_hubner[i] = 1.754096e-01;
+            ++i;
+            ref_result_100_hubner[i] = 1.573977e-01;
+            ++i;
+            ref_result_100_hubner[i] = 1.403425e-01;
+            ++i;
+            ref_result_100_hubner[i] = 1.241392e-01;
+            ++i;
+            ref_result_100_hubner[i] = 1.086928e-01;
+            ++i;
+            ref_result_100_hubner[i] = 9.391818e-02;
+            ++i;
+            ref_result_100_hubner[i] = 7.973991e-02;
+            ++i;
+            ref_result_100_hubner[i] = 6.609181e-02;
+            ++i;
+            ref_result_100_hubner[i] = 5.291659e-02;
+            ++i;
+            ref_result_100_hubner[i] = 4.016524e-02;
+            ++i;
+            ref_result_100_hubner[i] = 2.779642e-02;
+            ++i;
+            ref_result_100_hubner[i] = 1.577586e-02;
+            ++i;
+            ref_result_100_hubner[i] = 4.075649e-03;
+            ++i;
+            ref_result_100_hubner[i] = -7.326301e-03;
+            ++i;
+            ref_result_100_hubner[i] = -1.844692e-02;
+            ++i;
+            ref_result_100_hubner[i] = -2.929853e-02;
+            ++i;
+            ref_result_100_hubner[i] = -3.988940e-02;
+            ++i;
+            ref_result_100_hubner[i] = -5.022425e-02;
+            ++i;
+            ref_result_100_hubner[i] = -6.030470e-02;
+            ++i;
+            ref_result_100_hubner[i] = -7.012976e-02;
+            ++i;
+            ref_result_100_hubner[i] = -7.969618e-02;
+            ++i;
+            ref_result_100_hubner[i] = -8.899887e-02;
+            ++i;
+            ref_result_100_hubner[i] = -9.803122e-02;
+            ++i;
+            ref_result_100_hubner[i] = -1.067854e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.152528e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.234240e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.312894e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.388392e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.460636e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.529531e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.594988e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.656923e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.715258e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.769927e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.820873e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.868048e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.911417e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.950958e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.986661e-01;
+            ++i;
+            ref_result_100_hubner[i] = -2.018528e-01;
+            ++i;
+            ref_result_100_hubner[i] = -2.046576e-01;
+            ++i;
+            ref_result_100_hubner[i] = -2.070833e-01;
+            ++i;
+            ref_result_100_hubner[i] = -2.091342e-01;
+            ++i;
+            ref_result_100_hubner[i] = -2.108155e-01;
+            ++i;
+            ref_result_100_hubner[i] = -2.121341e-01;
+            ++i;
+            ref_result_100_hubner[i] = -2.130976e-01;
+            ++i;
+            ref_result_100_hubner[i] = -2.137150e-01;
+            ++i;
+            ref_result_100_hubner[i] = -2.139960e-01;
+            ++i;
+            ref_result_100_hubner[i] = -2.139515e-01;
+            ++i;
+            ref_result_100_hubner[i] = -2.135930e-01;
+            ++i;
+            ref_result_100_hubner[i] = -2.129330e-01;
+            ++i;
+            ref_result_100_hubner[i] = -2.119843e-01;
+            ++i;
+            ref_result_100_hubner[i] = -2.107604e-01;
+            ++i;
+            ref_result_100_hubner[i] = -2.092753e-01;
+            ++i;
+            ref_result_100_hubner[i] = -2.075432e-01;
+            ++i;
+            ref_result_100_hubner[i] = -2.055785e-01;
+            ++i;
+            ref_result_100_hubner[i] = -2.033957e-01;
+            ++i;
+            ref_result_100_hubner[i] = -2.010094e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.984341e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.956842e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.927736e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.897161e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.865250e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.832132e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.797930e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.762763e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.726742e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.689971e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.652550e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.614569e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.576113e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.537257e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.498071e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.458615e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.418945e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.379106e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.339137e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.299069e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.258928e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.218729e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.178485e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.138196e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.097862e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.057471e-01;
+            ++i;
+            ref_result_100_hubner[i] = -1.017007e-01;
+            ++i;
+            ref_result_100_hubner[i] = -9.764491e-02;
+            ++i;
+            ref_result_100_hubner[i] = -9.357677e-02;
+            ++i;
+            ref_result_100_hubner[i] = -8.949286e-02;
+            ++i;
+            ref_result_100_hubner[i] = -8.538917e-02;
+            ++i;
+            ref_result_100_hubner[i] = -8.126107e-02;
+            ++i;
+            ref_result_100_hubner[i] = -7.710338e-02;
+            ++i;
+            ref_result_100_hubner[i] = -7.291035e-02;
+            ++i;
+            ref_result_100_hubner[i] = -6.867564e-02;
+            ++i;
+            ref_result_100_hubner[i] = -6.439234e-02;
+            ++i;
+            ref_result_100_hubner[i] = -6.005299e-02;
+            ++i;
+            ref_result_100_hubner[i] = -5.564948e-02;
+            ++i;
+            ref_result_100_hubner[i] = -5.117313e-02;
+            ++i;
+            ref_result_100_hubner[i] = -4.661461e-02;
+            ++i;
+            ref_result_100_hubner[i] = -4.196398e-02;
+            ++i;
+            ref_result_100_hubner[i] = -3.721056e-02;
+            ++i;
+            ref_result_100_hubner[i] = -3.234301e-02;
+            ++i;
+            ref_result_100_hubner[i] = -2.734922e-02;
+            ++i;
+            ref_result_100_hubner[i] = -2.221629e-02;
+            ++i;
+            ref_result_100_hubner[i] = -1.693047e-02;
+            ++i;
+            ref_result_100_hubner[i] = -1.147712e-02;
+            ++i;
+            ref_result_100_hubner[i] = -5.840619e-03;
+            ++i;
+            ref_result_100_hubner[i] = 0.000000e+00;
+
+            DenseVector<DataType_> diff_2(test_line.copy());
+
+            for(unsigned long i(0); i < g_w; ++i)
+            {
+                diff_2[i]= ref_result_100_hubner[i];
+            }
+
+            Difference<>::value(diff, test_line);
+            Difference<>::value(diff_2, test_line);
+
+            std::cout <<"Difference vector (GHIA): " << diff << std::endl;
+            std::cout <<"Difference vector (HUEBNER): " << diff_2 << std::endl;
 
             double norm = Norm<vnt_l_two, false, Tag_>::value(diff);
-            std::cout << "L2 norm: " << norm << std::endl;
+            double norm_2 = Norm<vnt_l_two, false, Tag_>::value(diff_2);
+            std::cout << "L2 norm (GHIA): " << norm << std::endl;
+            std::cout << "L2 norm (HUEBNER): " << norm_2 << std::endl;
 #ifdef DRIVEN_CAVITY_OUTPUT_ACCURACY
             std::string output_file = "accuracy_lbm_navsto.dat";
 
@@ -256,6 +536,7 @@ class SolverLABNAVSTOGridDCTest :
             out_file_stream.open(output_file.c_str(), ios::app);
 
             out_file_stream << "----------------------------------------------" << std::endl;
+            out_file_stream << "timesteps = " << timesteps << std::endl;
             out_file_stream << "precision = " << sizeof(DataType_) << std::endl;
             out_file_stream << "  delta_x = " << dx << std::endl;
             out_file_stream << "  delta_y = " << dy << std::endl;
@@ -266,12 +547,14 @@ class SolverLABNAVSTOGridDCTest :
             out_file_stream << "        U = " << lid_U << std::endl;
 
             out_file_stream << "L2 NORM(DIFF(GHIA)) = " << norm << std::endl;
+            out_file_stream << "L2 NORM(DIFF(HUEBNER)) = " << norm_2 << std::endl;
 
             out_file_stream << "----------------------------------------------" << std::endl;;
             out_file_stream.close();
 #endif
+
         }
 };
 //SolverLABNAVSTOGridDCTest<tags::CPU, double> solver_test_double("double", double(1), double(1), double(1.2), double(100), double(1), double(0));
 //SolverLABNAVSTOGridDCTest<tags::CPU, float> solver_test_float("float", float(1), float(1), float(1.2), float(100), float(1), float(0));
-SolverLABNAVSTOGridDCTest<tags::CPU, double> solver_test_double_10("double", double(1.), double(1.), double(1.), double(100), double(1), double(0));
+SolverLABNAVSTOGridDCTest<tags::CPU, double> solver_test_double_10("double", double(1), double(1), double(1.), double(100), double(1.), double(0));
