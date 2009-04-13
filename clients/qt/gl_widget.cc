@@ -95,6 +95,8 @@ void GLWidget::initializeGL()
             static_cast<int>(multisamplebufs), static_cast<int>(multisamples) );
 
     //Insert HONEI gl initialization here
+    //glEnable( GL_DEPTH_TEST ); //Later needed for lighting
+
 #ifdef ANTIALIAS
 #ifdef WIREFRAME
     // anti-aliasing of lines
@@ -131,13 +133,13 @@ void GLWidget::paintGL()
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     if (_solver_precision_flag)
     {
-        _render_matrix(_sim_control_float->get_b(), 0.0, 1., 0.0, 1.);
-        _render_matrix(_sim_control_float->get_hb(), 0.0, 0.0, 1., 0.5);
+        _render_matrix(_sim_control_float->get_b(), 0.0, 0.8, 0.0, 1.);
+        _render_matrix(_sim_control_float->get_hb(), 0.0, 0.0, 0.8, 0.5);
     }
     else
     {
-        _render_matrix(_sim_control_double->get_b(), 0.0, 1., 0.0, 1.);
-        _render_matrix(_sim_control_double->get_hb(), 0.0, 0.0, 1., 0.5);
+        _render_matrix(_sim_control_double->get_b(), 0.0, 0.8, 0.0, 1.);
+        _render_matrix(_sim_control_double->get_hb(), 0.0, 0.0, 0.8, 0.5);
     }
 }
 
@@ -149,22 +151,23 @@ void GLWidget::resizeGL( int w, int h )		// = width & height
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     //glOrtho(-1.5, +1.5, +1.5, -1.5, 1.0, 150.0);
-    glFrustum(-1.0, +1.0, -1.0, +1.0, 1.0, 150.0);
+    glFrustum(-1.1, +1.0, -1.0, +1.0, 1.0, 210.0);
 }
 
 template <typename Prec_>
 void GLWidget::_render_matrix(DenseMatrix<Prec_> & matrix, float r, float g, float b, float a)
 {
     glBegin(GL_QUADS);
-    for(unsigned int i = 0 ; i < matrix.columns()- 1 ; ++i)
+    for(unsigned int i = 0 ; i < matrix.rows()- 1 ; ++i)
     {
-        for(unsigned int j = 0 ; j < matrix.rows() - 1 ; ++j)
+        for(unsigned int j = 0 ; j < matrix.columns() - 1 ; ++j)
         {
             glColor4f(r, g, b, a);
-            glVertex3d(i,j, matrix[j][i]);
-            glVertex3d(i+1,j, matrix[j][i+1]);
-            glVertex3d(i+1,j+1, matrix[j+1][i+1]);
-            glVertex3d(i,j+1, matrix[j+1][i]);
+            glVertex3d(i,j, matrix[i][j]);
+            glColor4f(r, g + 0.2, b + 0.2, a);
+            glVertex3d(i,j+1, matrix[i][j+1]);
+            glVertex3d(i+1,j+1, matrix[i+1][j+1]);
+            glVertex3d(i+1,j, matrix[i+1][j]);
         }
     }
     glEnd();
