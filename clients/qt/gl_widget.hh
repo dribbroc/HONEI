@@ -48,11 +48,16 @@ class GLWidget : public QGLWidget
         float m_backgroundcolor[3];
         float m_curr_rot;
         unsigned int m_numFlakeRec;
-        SimulationController _sim_control;
-        void _render_matrix( DenseMatrix<float> & matrix, float r, float g, float b, float a);
+
+        bool _solver_precision_flag;
+        SimulationController<float>* _sim_control_float;
+        SimulationController<double>* _sim_control_double;
+
+        template <typename Prec_>
+        void _render_matrix( DenseMatrix<Prec_> & matrix, float r, float g, float b, float a);
 
     private slots:
-        void animation_event();
+        void solver_event();
 };
 
 #endif

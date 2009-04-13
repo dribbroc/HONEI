@@ -26,29 +26,30 @@
 using namespace lbm;
 using namespace lbm_lattice_types;
 
+template <typename Prec_>
 class SimulationController
 {
     private:
-        Simulation<DEFAULT> _default_simulation;
+        Simulation<DEFAULT, Prec_> _default_simulation;
 
     public:
         void do_timestep()
         {
             _default_simulation.get_solver().solve();
-            GridPacker<D2Q9, NOSLIP, float>::unpack(_default_simulation.get_grid(), _default_simulation.get_info(), _default_simulation.get_data());
+            GridPacker<D2Q9, NOSLIP, Prec_>::unpack(_default_simulation.get_grid(), _default_simulation.get_info(), _default_simulation.get_data());
         }
 
-        DenseMatrix<float> & get_h()
+        DenseMatrix<Prec_> & get_h()
         {
             return *_default_simulation.get_grid().h;
         }
 
-        DenseMatrix<float> & get_hb()
+        DenseMatrix<Prec_> & get_hb()
         {
             return Sum<tags::CPU::SSE>::value(*_default_simulation.get_grid().h, *_default_simulation.get_grid().b);
         }
 
-        DenseMatrix<float> & get_b()
+        DenseMatrix<Prec_> & get_b()
         {
             return *_default_simulation.get_grid().b;
         }

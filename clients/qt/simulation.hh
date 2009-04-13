@@ -31,21 +31,21 @@ using namespace lbm_lattice_types;
 
 class DEFAULT;
 
-template<typename Type_>
+template<typename Type_, typename Prec_>
 class Simulation
 {
 };
 
-template<>
-class Simulation<DEFAULT>
+template<typename Prec_>
+class Simulation<DEFAULT, Prec_>
 {
     private:
         bool _simulation_ready_flag;
-        Grid<D2Q9, float> _grid;
-        PackedGridData<D2Q9, float>  _data;
+        Grid<D2Q9, Prec_> _grid;
+        PackedGridData<D2Q9, Prec_>  _data;
         PackedGridInfo<D2Q9> _info;
 
-        SolverLBMGrid<tags::CPU::SSE, lbm_applications::LABSWE, float,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY>* _solver;
+        SolverLBMGrid<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY>* _solver;
 
     public:
 
@@ -53,21 +53,21 @@ class Simulation<DEFAULT>
         _simulation_ready_flag(false)
         {
             ScenarioCollection::get_scenario(0, 50, 50, _grid);
-            GridPacker<D2Q9, NOSLIP, float>::pack(_grid, _info, _data);
+            GridPacker<D2Q9, NOSLIP, Prec_>::pack(_grid, _info, _data);
 
-            _solver = new SolverLBMGrid<tags::CPU::SSE, lbm_applications::LABSWE, float,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> (&_info, &_data, _grid.d_x, _grid.d_y, _grid.d_t, _grid.tau);
+            _solver = new SolverLBMGrid<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> (&_info, &_data, _grid.d_x, _grid.d_y, _grid.d_t, _grid.tau);
 
             _solver->do_preprocessing();
 
             _simulation_ready_flag = true;
         }
 
-        Grid<D2Q9, float> & get_grid()
+        Grid<D2Q9, Prec_> & get_grid()
         {
             return _grid;
         }
 
-        PackedGridData<D2Q9, float> & get_data()
+        PackedGridData<D2Q9, Prec_> & get_data()
         {
             return _data;
         }
@@ -77,7 +77,7 @@ class Simulation<DEFAULT>
             return _info;
         }
 
-        SolverLBMGrid<tags::CPU::SSE, lbm_applications::LABSWE, float,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> & get_solver()
+        SolverLBMGrid<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> & get_solver()
         {
             return *_solver;
         }

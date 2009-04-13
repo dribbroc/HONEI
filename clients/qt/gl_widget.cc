@@ -41,13 +41,24 @@ const unsigned int RotTimer = 0;	// 0 = workproc, i.e., when there are no more U
 : QGLWidget( QGLFormat(QGL::SampleBuffers), father),			// enables multi-sampling
       m_object(0), m_xRot(0), m_yRot(0), m_zRot(0),
       m_xTrans(0.0), m_yTrans(0.0), m_zTrans(-5.0),
-      m_curr_rot(0.0), m_numFlakeRec(2)
+      m_curr_rot(0.0), m_numFlakeRec(2), _solver_precision_flag(true)
       //m_timer()
 {
     if ( ! format().sampleBuffers() )
         fprintf(stderr, "Could not get sample buffer; no polygon anti-aliasing!");
 
     m_backgroundcolor[0] = 0.2f;  m_backgroundcolor[1] = 1.0f;  m_backgroundcolor[2] = 0.4f;
+
+    if(_solver_precision_flag)
+    {
+        _sim_control_float = new SimulationController<float>();
+        _sim_control_double = 0;
+    }
+    else
+    {
+        _sim_control_float = 0;
+        _sim_control_double = new SimulationController<double>();
+    }
 }
 
 
@@ -102,7 +113,7 @@ void GLWidget::initializeGL()
     //startTimer(RotTimer);
 
     QTimer * animation_timer = new QTimer(this);
-    connect(animation_timer, SIGNAL(timeout()), SLOT(animation_event()));
+    connect(animation_timer, SIGNAL(timeout()), SLOT(solver_event()));
     animation_timer->start();
 }
 
@@ -122,8 +133,16 @@ void GLWidget::paintGL()
     glScalef(1.0f, 1.0f, 100.0f);
     glEnable (GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    _render_matrix(_sim_control.get_b(), 0.0, 1., 0.0, 0.5);
-    _render_matrix(_sim_control.get_hb(), 0.0, 0.0, 1., 0.5);
+    if (_solver_precision_flag)
+    {
+        _render_matrix(_sim_control_float->get_b(), 0.0, 1., 0.0, 1.);
+        _render_matrix(_sim_control_float->get_hb(), 0.0, 0.0, 1., 0.5);
+    }
+    else
+    {
+        _render_matrix(_sim_control_double->get_b(), 0.0, 1., 0.0, 1.);
+        _render_matrix(_sim_control_double->get_hb(), 0.0, 0.0, 1., 0.5);
+    }
 }
 
 void GLWidget::resizeGL( int w, int h )		// = width & height
@@ -137,7 +156,8 @@ void GLWidget::resizeGL( int w, int h )		// = width & height
     glFrustum(-1.0, +1.0, -1.0, +1.0, 1.0, 150.0);
 }
 
-void GLWidget::_render_matrix(DenseMatrix<float> & matrix, float r, float g, float b, float a)
+template <typename Prec_>
+void GLWidget::_render_matrix(DenseMatrix<Prec_> & matrix, float r, float g, float b, float a)
 {
     glBegin(GL_QUADS);
     for(unsigned int i = 0 ; i < matrix.columns()- 1 ; ++i)
@@ -154,9 +174,13 @@ void GLWidget::_render_matrix(DenseMatrix<float> & matrix, float r, float g, flo
     glEnd();
 }
 
-void GLWidget::animation_event()
+void GLWidget::solver_event()
 {
-    _sim_control.do_timestep();
+    if(_solver_precision_flag)
+        _sim_control_float->do_timestep();
+    else
+        _sim_control_double->do_timestep();
+
     updateGL();
 }
 
