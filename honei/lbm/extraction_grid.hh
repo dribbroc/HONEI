@@ -199,9 +199,8 @@ namespace honei
         struct ExtractionGrid<tags::CPU::SSE, lbm_modes::DRY>
         {
             public:
-                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float epsilon);
-
-                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data, double epsilon);
+                template <typename DT1_>
+                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data, DT1_ epsilon);
         };
 
     template<>
@@ -344,9 +343,8 @@ namespace honei
         struct ExtractionGrid<tags::CPU::SSE, lbm_modes::WET>
         {
             public:
-                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float epsilon);
-
-                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data, double epsilon);
+                template <typename DT1_>
+                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data, DT1_ epsilon);
         };
 }
 #endif

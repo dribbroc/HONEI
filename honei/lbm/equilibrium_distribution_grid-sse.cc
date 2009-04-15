@@ -23,8 +23,9 @@
 
 using namespace honei;
 
-void EquilibriumDistributionGrid<tags::CPU::SSE, lbm_applications::LABSWE>::value(float g, float e,
-        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data)
+template <typename DT_>
+void EquilibriumDistributionGrid<tags::CPU::SSE, lbm_applications::LABSWE>::value(DT_ g, DT_ e,
+        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
 {
     CONTEXT("When computing LABSWE local equilibrium distribution function (SSE):");
 
@@ -115,93 +116,8 @@ void EquilibriumDistributionGrid<tags::CPU::SSE, lbm_applications::LABSWE>::valu
     data.f_eq_8->unlock(lm_write_only);
 }
 
-void EquilibriumDistributionGrid<tags::CPU::SSE, lbm_applications::LABSWE>::value(double g, double e,
-        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data)
-{
-    CONTEXT("When computing LABSWE local equilibrium distribution function (SSE):");
+template void EquilibriumDistributionGrid<tags::CPU::SSE, lbm_applications::LABSWE>::value<float>(float, float,
+        PackedGridInfo<D2Q9> &, PackedGridData<D2Q9, float> &);
 
-    info.limits->lock(lm_read_only);
-
-    data.u->lock(lm_read_only);
-    data.v->lock(lm_read_only);
-    data.h->lock(lm_read_only);
-
-    data.distribution_x->lock(lm_read_only);
-    data.distribution_y->lock(lm_read_only);
-
-    data.f_eq_0->lock(lm_write_only);
-    data.f_eq_1->lock(lm_write_only);
-    data.f_eq_2->lock(lm_write_only);
-    data.f_eq_3->lock(lm_write_only);
-    data.f_eq_4->lock(lm_write_only);
-    data.f_eq_5->lock(lm_write_only);
-    data.f_eq_6->lock(lm_write_only);
-    data.f_eq_7->lock(lm_write_only);
-    data.f_eq_8->lock(lm_write_only);
-
-    unsigned long begin((*info.limits)[0]);
-    unsigned long end((*info.limits)[info.limits->size() - 1]);
-
-    sse::eq_dist_grid_dir_0(begin, end, g, e,
-            data.h->elements(), data.u->elements(), data.v->elements(),
-            data.f_eq_0->elements());
-
-    sse::eq_dist_grid_dir_odd(begin, end, g, e,
-            data.h->elements(), data.u->elements(), data.v->elements(),
-            data.distribution_x->elements(), data.distribution_y->elements(),
-            data.f_eq_1->elements(), 1);
-
-    sse::eq_dist_grid_dir_odd(begin, end, g, e,
-            data.h->elements(), data.u->elements(), data.v->elements(),
-            data.distribution_x->elements(), data.distribution_y->elements(),
-            data.f_eq_3->elements(), 3);
-
-    sse::eq_dist_grid_dir_odd(begin, end, g, e,
-            data.h->elements(), data.u->elements(), data.v->elements(),
-            data.distribution_x->elements(), data.distribution_y->elements(),
-            data.f_eq_5->elements(), 5);
-
-    sse::eq_dist_grid_dir_odd(begin, end, g, e,
-            data.h->elements(), data.u->elements(), data.v->elements(),
-            data.distribution_x->elements(), data.distribution_y->elements(),
-            data.f_eq_7->elements(), 7);
-
-    sse::eq_dist_grid_dir_even(begin, end, g, e,
-            data.h->elements(), data.u->elements(), data.v->elements(),
-            data.distribution_x->elements(), data.distribution_y->elements(),
-            data.f_eq_2->elements(), 2);
-
-    sse::eq_dist_grid_dir_even(begin, end, g, e,
-            data.h->elements(), data.u->elements(), data.v->elements(),
-            data.distribution_x->elements(), data.distribution_y->elements(),
-            data.f_eq_4->elements(), 4);
-
-    sse::eq_dist_grid_dir_even(begin, end, g, e,
-            data.h->elements(), data.u->elements(), data.v->elements(),
-            data.distribution_x->elements(), data.distribution_y->elements(),
-            data.f_eq_6->elements(), 6);
-
-    sse::eq_dist_grid_dir_even(begin, end, g, e,
-            data.h->elements(), data.u->elements(), data.v->elements(),
-            data.distribution_x->elements(), data.distribution_y->elements(),
-            data.f_eq_8->elements(), 8);
-
-    info.limits->unlock(lm_read_only);
-
-    data.u->unlock(lm_read_only);
-    data.v->unlock(lm_read_only);
-    data.h->unlock(lm_read_only);
-
-    data.distribution_x->unlock(lm_read_only);
-    data.distribution_y->unlock(lm_read_only);
-
-    data.f_eq_0->unlock(lm_write_only);
-    data.f_eq_1->unlock(lm_write_only);
-    data.f_eq_2->unlock(lm_write_only);
-    data.f_eq_3->unlock(lm_write_only);
-    data.f_eq_4->unlock(lm_write_only);
-    data.f_eq_5->unlock(lm_write_only);
-    data.f_eq_6->unlock(lm_write_only);
-    data.f_eq_7->unlock(lm_write_only);
-    data.f_eq_8->unlock(lm_write_only);
-}
+template void EquilibriumDistributionGrid<tags::CPU::SSE, lbm_applications::LABSWE>::value<double>(double, double,
+        PackedGridInfo<D2Q9> &, PackedGridData<D2Q9, double> &);

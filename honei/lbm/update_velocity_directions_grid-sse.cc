@@ -22,8 +22,9 @@
 
 using namespace honei;
 
+template <typename DT_>
 void UpdateVelocityDirectionsGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP>::value(
-        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data)
+        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
 {
     CONTEXT("When updating velocity directions (SSE):");
 
@@ -58,40 +59,8 @@ void UpdateVelocityDirectionsGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP>::v
     data.f_temp_7->unlock(lm_read_and_write);
     data.f_temp_8->unlock(lm_read_and_write);
 }
+template void UpdateVelocityDirectionsGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP>::value<float>(
+        PackedGridInfo<D2Q9> &, PackedGridData<D2Q9, float> &);
 
-void UpdateVelocityDirectionsGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP>::value(
-        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data)
-{
-    CONTEXT("When updating velocity directions (SSE):");
-
-    info.limits->lock(lm_read_only);
-    info.types->lock(lm_read_only);
-
-    data.f_temp_1->lock(lm_read_and_write);
-    data.f_temp_2->lock(lm_read_and_write);
-    data.f_temp_3->lock(lm_read_and_write);
-    data.f_temp_4->lock(lm_read_and_write);
-    data.f_temp_5->lock(lm_read_and_write);
-    data.f_temp_6->lock(lm_read_and_write);
-    data.f_temp_7->lock(lm_read_and_write);
-    data.f_temp_8->lock(lm_read_and_write);
-
-    unsigned long begin(0);
-    unsigned long end(info.limits->size() - 1);
-    sse::up_vel_dir_grid(begin, end, info.limits->elements(), info.types->elements(),
-            data.f_temp_1->elements(), data.f_temp_2->elements(), data.f_temp_3->elements(),
-            data.f_temp_4->elements(), data.f_temp_5->elements(), data.f_temp_6->elements(),
-            data.f_temp_7->elements(), data.f_temp_8->elements());
-
-    info.limits->unlock(lm_read_only);
-    info.types->unlock(lm_read_only);
-
-    data.f_temp_1->unlock(lm_read_and_write);
-    data.f_temp_2->unlock(lm_read_and_write);
-    data.f_temp_3->unlock(lm_read_and_write);
-    data.f_temp_4->unlock(lm_read_and_write);
-    data.f_temp_5->unlock(lm_read_and_write);
-    data.f_temp_6->unlock(lm_read_and_write);
-    data.f_temp_7->unlock(lm_read_and_write);
-    data.f_temp_8->unlock(lm_read_and_write);
-}
+template void UpdateVelocityDirectionsGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP>::value<double>(
+        PackedGridInfo<D2Q9> &, PackedGridData<D2Q9, double> &);

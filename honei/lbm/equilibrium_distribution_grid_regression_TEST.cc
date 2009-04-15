@@ -79,7 +79,7 @@ class EquilibriumDistributionGridRegressionTest :
             solver.do_preprocessing();
             solver.solve();
 
-            EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::value(9.81, 1., info, data);
+            EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::value(DataType_(9.81), DataType_(1.), info, data);
 
             //Standard solver using tags::CPU:
             unsigned long g_h_standard(50);

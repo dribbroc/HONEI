@@ -80,7 +80,7 @@ class CollideStreamGridRegressionTest :
             solver.solve();
 
             CollideStreamGrid<Tag_, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
-                value(info, data, 1.1);
+                value(info, data, DataType_(1.1));
 
             //Standard solver using tags::CPU:
             unsigned long g_h_standard(50);
