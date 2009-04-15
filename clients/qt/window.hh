@@ -21,22 +21,32 @@
 #ifndef HONEI_GUARD_WINDOW_HH
 #define HONEI_GUARD_WINDOW_HH
 
+#include <QMainWindow>
+#include <QScrollArea>
 #include <QWidget>
+#include <QMenu>
+
 #include <clients/qt/gl_widget.hh>
 
 class QSlider;
 class GLWidget;
 
-class Window : public QWidget
+class Window : public QMainWindow
 {
     Q_OBJECT
 
-public:
-    Window();
+    public:
+        Window();
 
-private:
-    GLWidget *glWidget;
-    //QLabel *menuwidget;
+    private:
+        QWidget * centralWidget;
+        QScrollArea * glArea;
+        GLWidget *glWidget;
+        //QLabel *menuwidget;
+
+        QMenu * simulation_menu;
+
+        void create_menu();
 };
 
 #endif

@@ -26,11 +26,32 @@
 
 Window::Window()
 {
-    glWidget = new GLWidget;
-    QHBoxLayout *mainLayout = new QHBoxLayout;
+    centralWidget = new QWidget;
+    setCentralWidget(centralWidget);
 
-    mainLayout->addWidget(glWidget);
-    setLayout(mainLayout);
+    glArea = new QScrollArea;
+    glWidget = new GLWidget;
+
+    glArea->setWidget(glWidget);
+    glArea->setWidgetResizable(true);
+    glArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    glArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    glArea->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
+    glArea->setMinimumSize(50, 50);
+
+    QGridLayout *mainLayout = new QGridLayout;
+
+    mainLayout->addWidget(glArea);
+    centralWidget->setLayout(mainLayout);
     setWindowTitle( "HONEI QT OpenGL client" );
+
+    create_menu();
+
+    resize(640,480);
+}
+
+void Window::create_menu()
+{
+    simulation_menu = menuBar() -> addMenu(tr("&Simulation"));
 }
 
