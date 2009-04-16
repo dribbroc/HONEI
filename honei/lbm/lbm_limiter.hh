@@ -21,6 +21,7 @@
 #define LBM_GUARD_LBM_LIMITER_HH 1
 
 #include <algorithm>
+#include <limits>
 
 namespace honei
 {
