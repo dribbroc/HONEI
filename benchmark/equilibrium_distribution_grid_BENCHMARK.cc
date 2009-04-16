@@ -81,7 +81,7 @@ class EquilibriumDistributionGridBench :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, 1., 1., 1., 1.5);
+            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, 1., 1., 1., 1.5);
 
             solver.do_preprocessing();
 
@@ -91,7 +91,7 @@ class EquilibriumDistributionGridBench :
             for(int i = 0; i < _count; ++i)
             {
                 BENCHMARK(
-                        for (unsigned long j(0) ; j < 5 ; ++j)
+                        for (unsigned long j(0) ; j < 10 ; ++j)
                         {
                         (EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::value(g, e, info, data));
                         }
@@ -100,7 +100,7 @@ class EquilibriumDistributionGridBench :
                         );
             }
             BenchmarkInfo benchinfo(EquilibriumDistributionGrid<tags::CPU, lbm_applications::LABSWE>::get_benchmark_info(&info, &data));
-            evaluate(benchinfo * 5);
+            evaluate(benchinfo * 10);
         }
 };
 
@@ -112,4 +112,7 @@ EquilibriumDistributionGridBench<tags::CPU::SSE, double> sse_eq_dist_grid_bench_
 #endif
 #ifdef HONEI_CUDA
 EquilibriumDistributionGridBench<tags::GPU::CUDA, float> cuda_eq_dist_grid_bench_float("CUDA EquilibriumDistributionGridBenchmark - size: 2000, float", 2000, 25);
+#endif
+#ifdef HONEI_CELL
+EquilibriumDistributionGridBench<tags::Cell, float> cell_eq_dist_grid_bench_float("Cell EquilibriumDistributionGridBenchmark - size: 250, float", 250, 100);
 #endif

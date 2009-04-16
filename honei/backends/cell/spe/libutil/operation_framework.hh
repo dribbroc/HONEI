@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2009 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the Util C++ library. LibUtil is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -161,6 +162,18 @@ namespace honei
             void (*calculate)(vector double * a_elements, const vector double * b_elements, const vector double * c_elements,
                     const unsigned size, vector double & b_carry, const unsigned b_offset, vector double & c_carry,
                     const unsigned c_offset, const double optional_scalar);
+        };
+
+        template <> struct Operation<4, float, rtm_dma>
+        {
+            /// Our result type.
+            typedef void ResultType;
+
+            /// Performs calculation on given blocks of data.
+            void (*calculate)(vector float * a_elements, const vector float * b_elements,
+                    const vector float * c_elements, const vector float * d_elements,
+                    const unsigned size,
+                    const float a_scalar, const float b_scalar, const float c_scalar, const float d_scalar);
         };
 
         /// \}

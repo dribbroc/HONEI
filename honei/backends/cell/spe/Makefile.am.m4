@@ -14,7 +14,7 @@ AM_CXXFLAGS = -I$(top_srcdir)
 
 CLEANFILES = *~ *.body *.caps *.func *.cc
 MAINTAINERCLEANFILES = Makefile.in Makefile.am
-SUBDIRS = libutil libgraph libla libmath libswe kernels .
+SUBDIRS = libutil libgraph libla libmath libswe liblbm kernels .
 DISTCLEANFILES = cleanlist
 EXTRA_DIST = \
 	Makefile.am.m4

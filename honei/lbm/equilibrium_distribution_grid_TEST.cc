@@ -43,8 +43,8 @@ class EqDisGridLABSWETest :
 
             data.h = new DenseVector<DataType_>(1000ul, DataType_(1.23456));
             info.limits = new DenseVector<unsigned long>(2);
-            unsigned long begin(25);
-            unsigned long end(data.h->size() - 55);
+            unsigned long begin(0);
+            unsigned long end(data.h->size());
             (*info.limits)[0] = begin;
             (*info.limits)[1] = end;
             data.u = new DenseVector<DataType_>(1000ul, DataType_(1.23456));
@@ -76,10 +76,10 @@ class EqDisGridLABSWETest :
             data.f_eq_8->lock(lm_read_only);
             for(unsigned long i(begin); i < end; ++i)
             {
-                TEST_CHECK_EQUAL_WITHIN_EPS((*data.f_eq_0)[i], (1.23456 - ((5. * 9.81 * 1.23456 * 1.23456) / (6.)) - ((2. * 1.23456) / (3.)) * ((1.23456 * 1.23456) + (1.23456 * 1.23456))), std::numeric_limits<DataType_>::epsilon() * 20.);
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data.f_eq_0)[i], (1.23456 - ((5. * 9.81 * 1.23456 * 1.23456) / (6.)) - ((2. * 1.23456) / (3.)) * ((1.23456 * 1.23456) + (1.23456 * 1.23456))), std::numeric_limits<DataType_>::epsilon() * 50.);
 
-                TEST_CHECK_EQUAL_WITHIN_EPS((*data.f_eq_1)[i], ((9.81 * 1.23456 * 1.23456) / 6. + ((1.23456 / 3.) * (2. * 1.23456 + 2. * 1.23456)) + ((1.23456 / 2.) * (2. * 1.23456 * 2. * 1.23456 + 2. * 2. * 1.23456 * 2. * 1.23456 + 2. * 1.23456 * 2. * 1.23456)) - ((1.23456 / 6.) * (1.23456 * 1.23456 + 1.23456 * 1.23456))), std::numeric_limits<DataType_>::epsilon() * 20.);
-                TEST_CHECK_EQUAL_WITHIN_EPS((*data.f_eq_2)[i], ((9.81 * 1.23456 * 1.23456) / 24. + ((1.23456 / 12.) * (2. * 1.23456 + 2. * 1.23456)) + ((1.23456 / 8.) * (2. * 1.23456 * 2. * 1.23456 + 2. * 2. * 1.23456 * 2. * 1.23456 + 2. * 1.23456 * 2. * 1.23456)) - ((1.23456 / 24.) * (1.23456 * 1.23456 + 1.23456 * 1.23456))), std::numeric_limits<DataType_>::epsilon() * 20.);
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data.f_eq_1)[i], ((9.81 * 1.23456 * 1.23456) / 6. + ((1.23456 / 3.) * (2. * 1.23456 + 2. * 1.23456)) + ((1.23456 / 2.) * (2. * 1.23456 * 2. * 1.23456 + 2. * 2. * 1.23456 * 2. * 1.23456 + 2. * 1.23456 * 2. * 1.23456)) - ((1.23456 / 6.) * (1.23456 * 1.23456 + 1.23456 * 1.23456))), std::numeric_limits<DataType_>::epsilon() * 50.);
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data.f_eq_2)[i], ((9.81 * 1.23456 * 1.23456) / 24. + ((1.23456 / 12.) * (2. * 1.23456 + 2. * 1.23456)) + ((1.23456 / 8.) * (2. * 1.23456 * 2. * 1.23456 + 2. * 2. * 1.23456 * 2. * 1.23456 + 2. * 1.23456 * 2. * 1.23456)) - ((1.23456 / 24.) * (1.23456 * 1.23456 + 1.23456 * 1.23456))), std::numeric_limits<DataType_>::epsilon() * 50.);
             }
 
             data.f_eq_0->unlock(lm_read_only);
@@ -101,4 +101,7 @@ EqDisGridLABSWETest<tags::CPU::SSE, double> sse_eq_dist_grid_test_double("double
 #endif
 #ifdef HONEI_CUDA
 EqDisGridLABSWETest<tags::GPU::CUDA, float> cuda_eq_dist_grid_test_float("float");
+#endif
+#ifdef HONEI_CELL
+EqDisGridLABSWETest<tags::Cell, float> cell_eq_dist_grid_test_float("float");
 #endif

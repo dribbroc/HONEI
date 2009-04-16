@@ -21,6 +21,7 @@
 
 #include <honei/backends/cell/cell.hh>
 #include <honei/backends/cell/spe/libla/operations.hh>
+#include <honei/backends/cell/spe/liblbm/operations.hh>
 #include <honei/backends/cell/spe/libmath/operations.hh>
 #include <honei/backends/cell/spe/libswe/operations.hh>
 #include <honei/backends/cell/spe/libutil/allocator.hh>

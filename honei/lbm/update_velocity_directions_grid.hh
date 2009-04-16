@@ -171,5 +171,14 @@ namespace honei
            template <typename DT1_>
            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data);
        };
+
+   template <>
+       struct UpdateVelocityDirectionsGrid<tags::Cell, lbm_boundary_types::NOSLIP>
+       {
+           static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data)
+           {
+               UpdateVelocityDirectionsGrid<tags::CPU, lbm_boundary_types::NOSLIP>::value(info, data);
+           }
+       };
 }
 #endif

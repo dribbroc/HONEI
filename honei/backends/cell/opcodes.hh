@@ -76,6 +76,11 @@ namespace honei
             oc_flow_processing_x_float,
             oc_flow_processing_y_float,
 
+            // LibLBM opcodes
+            oc_eq_dist_grid_dir_0_float,
+            oc_eq_dist_grid_dir_odd_float,
+            oc_eq_dist_grid_dir_even_float,
+
             // Unittest opcodes
             oc_test_instruction_finished = 1 << 30,
             oc_test_result_dword,

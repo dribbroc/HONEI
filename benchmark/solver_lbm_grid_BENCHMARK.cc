@@ -174,7 +174,7 @@ class LBMGSimpleSolverBench :
             for(int i = 0; i < _count; ++i)
             {
                 BENCHMARK(
-                        for (unsigned long j(0) ; j < 25 ; ++j)
+                        for (unsigned long j(0) ; j < 5 ; ++j)
                         {
                             solver.solve();
                         }
@@ -183,7 +183,7 @@ class LBMGSimpleSolverBench :
                         );
             }
             LBMBenchmarkInfo benchinfo(SolverLBMGrid<tags::CPU, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET>::get_benchmark_info(&grid, &info, &data));
-            evaluate(benchinfo * 25);
+            evaluate(benchinfo * 5);
             info.destroy();
             data.destroy();
         }
@@ -201,6 +201,9 @@ LBMGSimpleSolverBench<tags::CPU::MultiCore::SSE, double> mcsse_solver_simple_ben
 #endif
 #ifdef HONEI_CUDA
 LBMGSimpleSolverBench<tags::GPU::CUDA, float> cuda_solver_simple_bench_float_1("CUDA LBM Simple Grid solver Benchmark - size: 250x250, float", 250, 25);
+#endif
+#ifdef HONEI_CELL
+LBMGSimpleSolverBench<tags::Cell, float> cell_solver_simple_bench_float_1("Cell LBM Simple Grid solver Benchmark - size: 250x250, float", 250, 5);
 #endif
 
 

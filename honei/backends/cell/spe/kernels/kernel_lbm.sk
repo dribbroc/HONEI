@@ -1,0 +1,9 @@
+# vim: set sw=4 sts=4 et tw=0 ft=bash :
+
+halt
+
+# LibLBM Operations
+###################
+void eq_dist_grid_dir_0_float
+void eq_dist_grid_dir_odd_float
+void eq_dist_grid_dir_even_float

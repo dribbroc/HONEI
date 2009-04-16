@@ -313,6 +313,12 @@ namespace honei
         };
 
     template<>
+        struct EquilibriumDistributionGrid<tags::Cell, lbm_applications::LABSWE>
+        {
+            static void value(float g, float e, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data);
+        };
+
+    template<>
         struct EquilibriumDistributionGrid<tags::CPU::SSE, lbm_applications::LABSWE>
         {
             template <typename DT1_>

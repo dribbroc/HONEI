@@ -46,6 +46,7 @@ $1_LDADD = \
 	$(top_builddir)/honei/backends/cell/spe/libutil/libutil_spe.a \
 	$(top_builddir)/honei/backends/cell/spe/libgraph/libgraph_spe.a \
 	$(top_builddir)/honei/backends/cell/spe/libla/libla_spe.a \
+	$(top_builddir)/honei/backends/cell/spe/liblbm/liblbm_spe.a \
 	$(top_builddir)/honei/backends/cell/spe/libmath/libmath_spe.a \
 	$(top_builddir)/honei/backends/cell/spe/libswe/libswe_spe.a \
 	$(top_builddir)/honei/backends/cell/spe/libutil/libutil_spe.a

@@ -494,6 +494,84 @@ SPEFrameworkInstruction<3, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
 template class SPEFrameworkInstruction<3, float, cell::rtm_dma>;
 template class SPEFrameworkInstruction<3, double, cell::rtm_dma>;
 
+template <typename DataType_>
+SPEFrameworkInstruction<4, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(const OpCode opcode,
+        DataType_ * a_elements, DataType_ * b_elements, DataType_ * c_elements, DataType_ * d_elements,
+        const unsigned size,
+        const DataType_ a_scalar,
+        const DataType_ b_scalar,
+        const DataType_ c_scalar,
+        const DataType_ d_scalar) :
+    SPEInstruction(opcode, 16384, a_elements, b_elements, c_elements, d_elements), _use_spe(true)
+{
+    Instruction & instruction(_imp->instruction);
+
+    if (size < 5)
+    {
+        instruction.e.u = 0;
+        instruction.f.u = 0;
+        _begin_transfers = 0;
+        _end_transfers = 0;
+        _use_spe = false;
+    }
+    else
+    {
+        unsigned a_offset((instruction.a.u & 0xF) / sizeof(DataType_)); // Alignment offset of a -> elements calculated on PPU.
+        unsigned skip((16 / sizeof(DataType_) - a_offset) % (16 / sizeof(DataType_)));
+
+        // Align the address for SPU.
+        instruction.a.u += (sizeof(DataType_) * skip);
+        instruction.b.u += (sizeof(DataType_) * skip);
+        instruction.c.u += (sizeof(DataType_) * skip);
+        instruction.d.u += (sizeof(DataType_) * skip);
+
+        if (sizeof(DataType_) == 4) // float
+        {
+            instruction.g.f = a_scalar;
+            instruction.h.f = b_scalar;
+            instruction.i.f = c_scalar;
+            instruction.j.f = d_scalar;
+        }
+        else // double
+        {
+            instruction.g.d = a_scalar;
+            instruction.h.d = b_scalar;
+            instruction.i.d = c_scalar;
+            instruction.j.d = d_scalar;
+        }
+
+        // Subtract PPU-calculated parts from size.
+        instruction.e.u = (size - skip) / (16384 / sizeof(DataType_));
+        instruction.f.u = (size - skip) % (16384 / sizeof(DataType_));
+        instruction.f.u &= ~0xF;
+
+        // Rest index dependent on offset and SPU part.
+        _begin_transfers = skip;
+        _end_transfers = (instruction.e.u * (16384 / sizeof(DataType_))) + instruction.f.u + skip;
+
+        instruction.f.u *= sizeof(DataType_);
+    }
+
+    if (0 == instruction.f.u)
+    {
+        if (instruction.e.u > 0)
+        {
+            instruction.f.u = instruction.size;
+        }
+        else
+        {
+            _use_spe = false;
+        }
+    }
+    else
+    {
+        ++instruction.e.u;
+    }
+
+}
+template class SPEFrameworkInstruction<4, float, cell::rtm_dma>;
+template class SPEFrameworkInstruction<4, double, cell::rtm_dma>;
+
 namespace honei
 {
     template <> struct Implementation<SPEInstructionQueue>
