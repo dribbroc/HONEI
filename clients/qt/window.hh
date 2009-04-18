@@ -25,6 +25,7 @@
 #include <QScrollArea>
 #include <QWidget>
 #include <QMenu>
+#include <QAction>
 
 #include <clients/qt/gl_widget.hh>
 
@@ -42,11 +43,14 @@ class Window : public QMainWindow
         QWidget * centralWidget;
         QScrollArea * glArea;
         GLWidget *glWidget;
-        //QLabel *menuwidget;
 
-        QMenu * simulation_menu;
+        QMenu * _simulation_menu;
+        QAction * _solver_start_stop_action;
 
         void create_menu();
+
+    private slots:
+        void _solver_start_stop();
 };
 
 #endif

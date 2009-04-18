@@ -52,6 +52,19 @@ Window::Window()
 
 void Window::create_menu()
 {
-    simulation_menu = menuBar() -> addMenu(tr("&Simulation"));
+    _simulation_menu = menuBar() -> addMenu(tr("&Simulation"));
+    _solver_start_stop_action = new QAction(tr("&Start/Stop"), this);
+    _solver_start_stop_action->setShortcut(tr("Ctrl+S"));
+    connect(_solver_start_stop_action, SIGNAL(triggered()),
+            this, SLOT(_solver_start_stop()));
+
+    _simulation_menu->addAction(_solver_start_stop_action);
+
+
+}
+
+void Window::_solver_start_stop()
+{
+    glWidget->solver_start_stop();
 }
 

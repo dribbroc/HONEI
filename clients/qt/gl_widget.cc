@@ -41,7 +41,7 @@ const unsigned int RotTimer = 0;	// 0 = workproc, i.e., when there are no more U
 : QGLWidget( QGLFormat(QGL::SampleBuffers), father),			// enables multi-sampling
       m_object(0), m_xRot(0), m_yRot(0), m_zRot(0),
       m_xTrans(0.0), m_yTrans(0.0), m_zTrans(-5.0),
-      m_curr_rot(0.0), m_numFlakeRec(2), _solver_precision_flag(true)
+      m_curr_rot(0.0), m_numFlakeRec(2), _solver_precision_flag(true), _solver_start_stop_flag(false)
       //m_timer()
 {
     if ( ! format().sampleBuffers() )
@@ -175,11 +175,18 @@ void GLWidget::_render_matrix(DenseMatrix<Prec_> & matrix, float r, float g, flo
 
 void GLWidget::solver_event()
 {
-    if(_solver_precision_flag)
-        _sim_control_float->do_timestep();
-    else
-        _sim_control_double->do_timestep();
+    if(_solver_start_stop_flag)
+    {
+        if(_solver_precision_flag)
+            _sim_control_float->do_timestep();
+        else
+            _sim_control_double->do_timestep();
 
-    updateGL();
+        updateGL();
+    }
 }
 
+void GLWidget::solver_start_stop()
+{
+    _solver_start_stop_flag = !_solver_start_stop_flag;
+}

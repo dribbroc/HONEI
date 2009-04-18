@@ -36,6 +36,8 @@ class GLWidget : public QGLWidget
         QSize minimumSizeHint() const;
         QSize sizeHint() const;
 
+        void solver_start_stop();
+
     protected:
         virtual void initializeGL();
         virtual void paintGL();
@@ -50,7 +52,10 @@ class GLWidget : public QGLWidget
         unsigned int m_numFlakeRec;
 
         QTimer * _solver_timer;
+
         bool _solver_precision_flag;
+        bool _solver_start_stop_flag;
+
         SimulationController<float>* _sim_control_float;
         SimulationController<double>* _sim_control_double;
 
