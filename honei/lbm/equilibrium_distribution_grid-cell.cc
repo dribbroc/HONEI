@@ -60,95 +60,106 @@ namespace honei
         unsigned long end(data.h->size());
         unsigned long size(end - begin);
 
-        SPEFrameworkInstruction<4, float, rtm_dma> * instruction_dir_0 = new SPEFrameworkInstruction<4, float, rtm_dma>(
+        SPEInstructionQueue q0;
+        SPEInstructionQueue q1;
+        SPEInstructionQueue q2;
+        SPEInstructionQueue q3;
+        SPEInstructionQueue q4;
+
+        SPEFrameworkInstruction<4, float, rtm_dma> instruction_dir_0(
                 oc_eq_dist_grid_dir_0_float, data.f_eq_0->elements() + begin, data.h->elements() + begin,
                 data.u->elements() + begin, data.v->elements() + begin,
                 size, g, e);
 
-        if (instruction_dir_0->use_spe())
+        if (instruction_dir_0.use_spe())
         {
-            SPEManager::instance()->dispatch(*instruction_dir_0);
+            q0.push_back(instruction_dir_0);
         }
+        SPEManager::instance()->dispatch(q0);
 
-        SPEFrameworkInstruction<4, float, rtm_dma> * instruction_dir_1 = new SPEFrameworkInstruction<4, float, rtm_dma>(
+        SPEFrameworkInstruction<4, float, rtm_dma> instruction_dir_1(
                 oc_eq_dist_grid_dir_odd_float, data.f_eq_1->elements() + begin, data.h->elements() + begin,
                 data.u->elements() + begin, data.v->elements() + begin,
                 size, g, e, (*data.distribution_x)[1], (*data.distribution_y)[1]);
 
-        if (instruction_dir_1->use_spe())
+        if (instruction_dir_1.use_spe())
         {
-            SPEManager::instance()->dispatch(*instruction_dir_1);
+            q1.push_back(instruction_dir_1);
         }
 
-        SPEFrameworkInstruction<4, float, rtm_dma> * instruction_dir_3 = new SPEFrameworkInstruction<4, float, rtm_dma>(
+        SPEFrameworkInstruction<4, float, rtm_dma> instruction_dir_3(
                 oc_eq_dist_grid_dir_odd_float, data.f_eq_3->elements() + begin, data.h->elements() + begin,
                 data.u->elements() + begin, data.v->elements() + begin,
                 size, g, e, (*data.distribution_x)[3], (*data.distribution_y)[3]);
 
-        if (instruction_dir_3->use_spe())
+        if (instruction_dir_3.use_spe())
         {
-            SPEManager::instance()->dispatch(*instruction_dir_3);
+            q1.push_back(instruction_dir_3);
         }
+        SPEManager::instance()->dispatch(q1);
 
-        SPEFrameworkInstruction<4, float, rtm_dma> * instruction_dir_5 = new SPEFrameworkInstruction<4, float, rtm_dma>(
+        SPEFrameworkInstruction<4, float, rtm_dma> instruction_dir_5(
                 oc_eq_dist_grid_dir_odd_float, data.f_eq_5->elements() + begin, data.h->elements() + begin,
                 data.u->elements() + begin, data.v->elements() + begin,
                 size, g, e, (*data.distribution_x)[5], (*data.distribution_y)[5]);
 
-        if (instruction_dir_5->use_spe())
+        if (instruction_dir_5.use_spe())
         {
-            SPEManager::instance()->dispatch(*instruction_dir_5);
+            q2.push_back(instruction_dir_5);
         }
 
-        SPEFrameworkInstruction<4, float, rtm_dma> * instruction_dir_7 = new SPEFrameworkInstruction<4, float, rtm_dma>(
+        SPEFrameworkInstruction<4, float, rtm_dma> instruction_dir_7(
                 oc_eq_dist_grid_dir_odd_float, data.f_eq_7->elements() + begin, data.h->elements() + begin,
                 data.u->elements() + begin, data.v->elements() + begin,
                 size, g, e, (*data.distribution_x)[7], (*data.distribution_y)[7]);
 
-        if (instruction_dir_7->use_spe())
+        if (instruction_dir_7.use_spe())
         {
-            SPEManager::instance()->dispatch(*instruction_dir_7);
+            q2.push_back(instruction_dir_7);
         }
+        SPEManager::instance()->dispatch(q2);
 
-        SPEFrameworkInstruction<4, float, rtm_dma> * instruction_dir_2 = new SPEFrameworkInstruction<4, float, rtm_dma>(
+        SPEFrameworkInstruction<4, float, rtm_dma> instruction_dir_2(
                 oc_eq_dist_grid_dir_even_float, data.f_eq_2->elements() + begin, data.h->elements() + begin,
                 data.u->elements() + begin, data.v->elements() + begin,
                 size, g, e, (*data.distribution_x)[2], (*data.distribution_y)[2]);
 
-        if (instruction_dir_2->use_spe())
+        if (instruction_dir_2.use_spe())
         {
-            SPEManager::instance()->dispatch(*instruction_dir_2);
+            q3.push_back(instruction_dir_2);
         }
 
-        SPEFrameworkInstruction<4, float, rtm_dma> * instruction_dir_4 = new SPEFrameworkInstruction<4, float, rtm_dma>(
+        SPEFrameworkInstruction<4, float, rtm_dma> instruction_dir_4(
                 oc_eq_dist_grid_dir_even_float, data.f_eq_4->elements() + begin, data.h->elements() + begin,
                 data.u->elements() + begin, data.v->elements() + begin,
                 size, g, e, (*data.distribution_x)[4], (*data.distribution_y)[4]);
 
-        if (instruction_dir_4->use_spe())
+        if (instruction_dir_4.use_spe())
         {
-            SPEManager::instance()->dispatch(*instruction_dir_4);
+            q3.push_back(instruction_dir_4);
         }
+        SPEManager::instance()->dispatch(q3);
 
-        SPEFrameworkInstruction<4, float, rtm_dma> * instruction_dir_6 = new SPEFrameworkInstruction<4, float, rtm_dma>(
+        SPEFrameworkInstruction<4, float, rtm_dma> instruction_dir_6(
                 oc_eq_dist_grid_dir_even_float, data.f_eq_6->elements() + begin, data.h->elements() + begin,
                 data.u->elements() + begin, data.v->elements() + begin,
                 size, g, e, (*data.distribution_x)[6], (*data.distribution_y)[6]);
 
-        if (instruction_dir_6->use_spe())
+        if (instruction_dir_6.use_spe())
         {
-            SPEManager::instance()->dispatch(*instruction_dir_6);
+            q4.push_back(instruction_dir_6);
         }
 
-        SPEFrameworkInstruction<4, float, rtm_dma> * instruction_dir_8 = new SPEFrameworkInstruction<4, float, rtm_dma>(
+        SPEFrameworkInstruction<4, float, rtm_dma> instruction_dir_8(
                 oc_eq_dist_grid_dir_even_float, data.f_eq_8->elements() + begin, data.h->elements() + begin,
                 data.u->elements() + begin, data.v->elements() + begin,
                 size, g, e, (*data.distribution_x)[8], (*data.distribution_y)[8]);
 
-        if (instruction_dir_8->use_spe())
+        if (instruction_dir_8.use_spe())
         {
-            SPEManager::instance()->dispatch(*instruction_dir_8);
+            q4.push_back(instruction_dir_8);
         }
+            SPEManager::instance()->dispatch(q4);
 
         // Calculate the last elements on PPU (if needed).
         float e2(e);
@@ -158,7 +169,7 @@ namespace honei
         float e48(float(8.) * e2 * e2);
         float e212(float(12.) * e2);
         float e224(float(24.) * e2);
-        for (unsigned long index(begin + instruction_dir_8->transfer_end()) ; index < end ; ++index)
+        for (unsigned long index(begin + instruction_dir_8.transfer_end()) ; index < end ; ++index)
         {
             float u2((*data.u)[index] * (*data.u)[index]);
             float v2((*data.v)[index] * (*data.v)[index]);
@@ -246,36 +257,12 @@ namespace honei
         }
 
 
-        if (instruction_dir_0->use_spe())
-            instruction_dir_0->wait();
 
-        if (instruction_dir_1->use_spe())
-            instruction_dir_1->wait();
-        if (instruction_dir_3->use_spe())
-            instruction_dir_3->wait();
-        if (instruction_dir_5->use_spe())
-            instruction_dir_5->wait();
-        if (instruction_dir_7->use_spe())
-            instruction_dir_7->wait();
-
-        if (instruction_dir_2->use_spe())
-            instruction_dir_2->wait();
-        if (instruction_dir_4->use_spe())
-            instruction_dir_4->wait();
-        if (instruction_dir_6->use_spe())
-            instruction_dir_6->wait();
-        if (instruction_dir_8->use_spe())
-            instruction_dir_8->wait();
-
-        delete instruction_dir_0;
-        delete instruction_dir_1;
-        delete instruction_dir_2;
-        delete instruction_dir_3;
-        delete instruction_dir_4;
-        delete instruction_dir_5;
-        delete instruction_dir_6;
-        delete instruction_dir_7;
-        delete instruction_dir_8;
+        q0.wait();
+        q1.wait();
+        q2.wait();
+        q3.wait();
+        q4.wait();
 
         info.limits->unlock(lm_read_only);
 
