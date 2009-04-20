@@ -196,6 +196,16 @@ namespace honei
         };
 
     template<>
+        struct ExtractionGrid<tags::Cell, lbm_modes::DRY>
+        {
+            public:
+                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float epsilon)
+                {
+                    ExtractionGrid<tags::CPU, lbm_modes::DRY>::value(info, data, epsilon);
+                }
+        };
+
+    template<>
         struct ExtractionGrid<tags::CPU::SSE, lbm_modes::DRY>
         {
             public:
@@ -351,10 +361,7 @@ namespace honei
         struct ExtractionGrid<tags::Cell, lbm_modes::WET>
         {
             public:
-                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float epsilon)
-                {
-                    ExtractionGrid<tags::CPU, lbm_modes::WET>::value(info, data, epsilon);
-                }
+                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float epsilon);
         };
 }
 #endif

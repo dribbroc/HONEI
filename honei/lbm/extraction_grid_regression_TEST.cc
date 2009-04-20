@@ -142,3 +142,6 @@ ExtractionGridRegressionTest<tags::CPU::SSE, double> sse_solver_multi_test_doubl
 #ifdef HONEI_CUDA
 ExtractionGridRegressionTest<tags::GPU::CUDA, float> cuda_solver_multi_test_float("float");
 #endif
+#ifdef HONEI_CELL
+ExtractionGridRegressionTest<tags::Cell, float> cell_solver_multi_test_float("float");
+#endif

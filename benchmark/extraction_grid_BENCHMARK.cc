@@ -120,3 +120,6 @@ ExtractionGridBench<tags::CPU::SSE, double, lbm_modes::WET> wet_sse_extraction_g
 #ifdef HONEI_CUDA
 ExtractionGridBench<tags::GPU::CUDA, float, lbm_modes::WET> wet_cuda_extraction_grid_bench_float("WET CUDA ExtractionGridBench - size: 2000, float", 2000, 25);
 #endif
+#ifdef HONEI_CELL
+ExtractionGridBench<tags::Cell, float, lbm_modes::WET> wet_cell_extraction_grid_bench_float("WET Cell ExtractionGridBench - size: 250, float", 250, 25);
+#endif

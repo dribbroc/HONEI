@@ -160,4 +160,6 @@ EquilibriumDistributionGridRegressionTest<tags::CPU::SSE, double> sse_solver_mul
 #ifdef HONEI_CUDA
 EquilibriumDistributionGridRegressionTest<tags::GPU::CUDA, float> cuda_solver_multi_test_float("float");
 #endif
-
+#ifdef HONEI_CELL
+EquilibriumDistributionGridRegressionTest<tags::Cell, float> cell_solver_multi_test_float("float");
+#endif
