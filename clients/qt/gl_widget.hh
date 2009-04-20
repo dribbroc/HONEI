@@ -42,6 +42,8 @@ class GLWidget : public QGLWidget
         virtual void initializeGL();
         virtual void paintGL();
         virtual void resizeGL( int width, int height );
+        virtual void mouseMoveEvent( QMouseEvent *event );
+
     private:
         GLuint m_object;
         int m_xRot, m_yRot, m_zRot;
@@ -58,6 +60,10 @@ class GLWidget : public QGLWidget
 
         SimulationController<float>* _sim_control_float;
         SimulationController<double>* _sim_control_double;
+
+        void _set_x_rotation(int value);
+        void _set_y_rotation(int value);
+        void _normalize_angle(int * angle) const;
 
         template <typename Prec_>
         void _render_matrix( DenseMatrix<Prec_> & matrix, float r, float g, float b, float a);

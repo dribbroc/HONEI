@@ -39,9 +39,9 @@ const unsigned int RotTimer = 0;	// 0 = workproc, i.e., when there are no more U
 
     GLWidget::GLWidget(QWidget * father )
 : QGLWidget( QGLFormat(QGL::SampleBuffers), father),			// enables multi-sampling
-      m_object(0), m_xRot(0), m_yRot(0), m_zRot(0),
-      m_xTrans(0.0), m_yTrans(0.0), m_zTrans(-5.0),
-      m_curr_rot(0.0), m_numFlakeRec(2), _solver_precision_flag(true), _solver_start_stop_flag(false)
+      m_object(0), m_xRot(-45.), m_yRot(0), m_zRot(45),
+      m_xTrans(-4.), m_yTrans(-10.0), m_zTrans(-45.0),
+      m_curr_rot(0), m_numFlakeRec(2), _solver_precision_flag(true), _solver_start_stop_flag(false)
       //m_timer()
 {
     if ( ! format().sampleBuffers() )
@@ -125,9 +125,11 @@ void GLWidget::paintGL()
     glLoadIdentity();
 
     //render HONEI solver output
-    glTranslatef(-4.0,-10.0,-45);
-    glRotatef(-45.0f,1.0, 0.0, 0.0);
-    glRotatef(45.0f,0.0, 0.0, 1.0);
+    glTranslatef(m_xTrans, m_yTrans, m_zTrans);
+    glRotatef(m_xRot,1.0, 0.0, 0.0);
+    glRotatef(m_yRot,0.0, 1.0, 0.0);
+    glRotatef(m_zRot,0.0, 0.0, 1.0);
+
     glScalef(1.0f, 1.0f, 100.0f);
     glEnable (GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -157,8 +159,11 @@ void GLWidget::resizeGL( int w, int h )		// = width & height
 template <typename Prec_>
 void GLWidget::_render_matrix(DenseMatrix<Prec_> & matrix, float r, float g, float b, float a)
 {
+    //glPushMatrix();
+    //glTranslatef(-matrix.columns()/2, -matrix.rows()/2, 0.);
+
     glBegin(GL_QUADS);
-    for(unsigned int i = 0 ; i < matrix.rows()- 1 ; ++i)
+    for(unsigned int i = 0 ; i < matrix.rows() - 1 ; ++i)
     {
         for(unsigned int j = 0 ; j < matrix.columns() - 1 ; ++j)
         {
@@ -170,6 +175,7 @@ void GLWidget::_render_matrix(DenseMatrix<Prec_> & matrix, float r, float g, flo
             glVertex3d(i+1,j, matrix[i+1][j]);
         }
     }
+    //glPopMatrix();
     glEnd();
 }
 
@@ -189,4 +195,55 @@ void GLWidget::solver_event()
 void GLWidget::solver_start_stop()
 {
     _solver_start_stop_flag = !_solver_start_stop_flag;
+}
+
+
+void GLWidget::mouseMoveEvent( QMouseEvent * e )
+{
+    int dx = e->x() - m_lastPos.x();
+    int dy = e->y() - m_lastPos.y();
+
+    bool ctrl_key = e->modifiers() & Qt::MetaModifier;
+
+    if ( (e->buttons() & Qt::RightButton) ||
+            ctrl_key )
+    {
+        m_zTrans += 0.5 * dy;
+        m_xTrans += 0.5 * dx;
+    }
+    else if ( e->buttons() & Qt::LeftButton )
+    {
+        _set_x_rotation(m_xRot + 8 * dy);
+        _set_y_rotation(m_yRot + 8 * dx);
+    }
+    m_lastPos = e->pos();
+    e->accept();
+    updateGL();
+}
+
+void GLWidget::_set_x_rotation( int angle )
+{
+    _normalize_angle( &angle );
+    if (angle != m_xRot)
+    {
+        m_xRot = angle;
+        updateGL();
+    }
+}
+
+void GLWidget::_set_y_rotation( int angle )
+{
+    _normalize_angle( &angle );
+    if (angle != m_yRot)
+    {
+        m_yRot = angle;
+        updateGL();
+    }
+}
+void GLWidget::_normalize_angle( int *angle ) const
+{
+    while (*angle < 0)
+        *angle += 360;
+    while (*angle > 360 )
+        *angle -= 360;
 }
