@@ -113,3 +113,6 @@ CollideStreamGridBench<tags::CPU::SSE, double> sse_collide_stream_grid_bench_dou
 #ifdef HONEI_CUDA
 CollideStreamGridBench<tags::GPU::CUDA, float> cuda_collide_stream_grid_bench_float("CUDA CollideStreamGridBenchmark - size: 2000, float", 2000, 25);
 #endif
+#ifdef HONEI_CELL
+CollideStreamGridBench<tags::Cell, float> cell_collide_stream_grid_bench_float("Cell CollideStreamGridBenchmark - size: 250, float", 250, 25);
+#endif

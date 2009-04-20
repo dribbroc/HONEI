@@ -111,7 +111,7 @@ ExtractionGridBench<tags::CPU::SSE, double, lbm_modes::DRY> dry_sse_extraction_g
 ExtractionGridBench<tags::GPU::CUDA, float, lbm_modes::DRY> dry_cuda_extraction_grid_bench_float("DRY CUDA ExtractionGridBench - size: 2000, float", 2000, 25);
 #endif
 
-ExtractionGridBench<tags::CPU, float, lbm_modes::WET> wet_extraction_grid_bench_float("WET ExtractionGridBench - size: 2000, float", 2000, 5);
+ExtractionGridBench<tags::CPU, float, lbm_modes::WET> wet_extraction_grid_bench_float("WET ExtractionGridBench - size: 250, float", 250, 5);
 ExtractionGridBench<tags::CPU, double, lbm_modes::WET> wet_extraction_grid_bench_double("WET ExtractionGridBench - size: 2000, double", 2000, 5);
 #ifdef HONEI_SSE
 ExtractionGridBench<tags::CPU::SSE, float, lbm_modes::WET> wet_sse_extraction_grid_bench_float("WET SSE ExtractionGridBench - size: 2000, float", 2000, 5);

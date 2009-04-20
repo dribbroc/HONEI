@@ -91,7 +91,7 @@ class EquilibriumDistributionGridBench :
             for(int i = 0; i < _count; ++i)
             {
                 BENCHMARK(
-                        for (unsigned long j(0) ; j < 10 ; ++j)
+                        for (unsigned long j(0) ; j < 5 ; ++j)
                         {
                         (EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::value(g, e, info, data));
                         }
@@ -100,7 +100,7 @@ class EquilibriumDistributionGridBench :
                         );
             }
             BenchmarkInfo benchinfo(EquilibriumDistributionGrid<tags::CPU, lbm_applications::LABSWE>::get_benchmark_info(&info, &data));
-            evaluate(benchinfo * 10);
+            evaluate(benchinfo * 5);
         }
 };
 
@@ -114,5 +114,5 @@ EquilibriumDistributionGridBench<tags::CPU::SSE, double> sse_eq_dist_grid_bench_
 EquilibriumDistributionGridBench<tags::GPU::CUDA, float> cuda_eq_dist_grid_bench_float("CUDA EquilibriumDistributionGridBenchmark - size: 2000, float", 2000, 25);
 #endif
 #ifdef HONEI_CELL
-EquilibriumDistributionGridBench<tags::Cell, float> cell_eq_dist_grid_bench_float("Cell EquilibriumDistributionGridBenchmark - size: 250, float", 250, 100);
+EquilibriumDistributionGridBench<tags::Cell, float> cell_eq_dist_grid_bench_float("Cell EquilibriumDistributionGridBenchmark - size: 250, float", 250, 25);
 #endif
