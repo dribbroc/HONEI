@@ -80,6 +80,7 @@ namespace honei
             oc_eq_dist_grid_dir_0_float,
             oc_eq_dist_grid_dir_odd_float,
             oc_eq_dist_grid_dir_even_float,
+            oc_extraction_grid_float,
 
             // Unittest opcodes
             oc_test_instruction_finished = 1 << 30,

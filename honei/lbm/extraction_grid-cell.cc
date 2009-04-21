@@ -19,11 +19,15 @@
 
 #include <honei/lbm/extraction_grid.hh>
 
+#include <honei/backends/cell/ppe/spe_manager.hh>
+#include <honei/backends/cell/ppe/spe_instruction.hh>
+#include <honei/backends/cell/interface.hh>
+
 #include <honei/la/algorithm.hh>
-#include <honei/la/sum.hh>
-#include <honei/la/scaled_sum.hh>
+#include <iostream>
 
 using namespace honei;
+using namespace cell;
 
 void ExtractionGrid<tags::Cell, lbm_modes::WET>::value(
         PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float epsilon)
@@ -60,79 +64,82 @@ void ExtractionGrid<tags::Cell, lbm_modes::WET>::value(
     data.f_8 = data.f_temp_8;
     data.f_temp_8 = swap;
 
-    /*info.limits->lock(lm_read_only);
+    Operand * operands;
+    if (0 != posix_memalign(reinterpret_cast<void **>(&operands), 128, 32 * sizeof(Operand)));
 
-    data.f_0->lock(lm_read_and_write);
-    data.f_1->lock(lm_read_and_write);
-    data.f_2->lock(lm_read_and_write);
-    data.f_3->lock(lm_read_and_write);
-    data.f_4->lock(lm_read_and_write);
-    data.f_5->lock(lm_read_and_write);
-    data.f_6->lock(lm_read_and_write);
-    data.f_7->lock(lm_read_and_write);
-    data.f_8->lock(lm_read_and_write);
+    operands[0].ea = data.h->elements();
+    operands[1].ea = data.u->elements();
+    operands[2].ea = data.v->elements();
+    operands[3].ea = data.f_0->elements();
+    operands[4].ea = data.f_1->elements();
+    operands[5].ea = data.f_2->elements();
+    operands[6].ea = data.f_3->elements();
+    operands[7].ea = data.f_4->elements();
+    operands[8].ea = data.f_5->elements();
+    operands[9].ea = data.f_6->elements();
+    operands[10].ea = data.f_7->elements();
+    operands[11].ea = data.f_8->elements();
+    operands[12].fa[0] = (*data.distribution_x)[0];
+    operands[13].fa[0] = (*data.distribution_x)[1];
+    operands[14].fa[0] = (*data.distribution_x)[2];
+    operands[15].fa[0] = (*data.distribution_x)[3];
+    operands[16].fa[0] = (*data.distribution_x)[4];
+    operands[17].fa[0] = (*data.distribution_x)[5];
+    operands[18].fa[0] = (*data.distribution_x)[6];
+    operands[19].fa[0] = (*data.distribution_x)[7];
+    operands[20].fa[0] = (*data.distribution_x)[8];
+    operands[21].fa[1] = (*data.distribution_y)[0];
+    operands[22].fa[1] = (*data.distribution_y)[1];
+    operands[23].fa[1] = (*data.distribution_y)[2];
+    operands[24].fa[1] = (*data.distribution_y)[3];
+    operands[25].fa[1] = (*data.distribution_y)[4];
+    operands[26].fa[1] = (*data.distribution_y)[5];
+    operands[27].fa[1] = (*data.distribution_y)[6];
+    operands[28].fa[1] = (*data.distribution_y)[7];
+    operands[29].fa[1] = (*data.distribution_y)[8];
 
-    data.h->lock(lm_write_only);
+    unsigned long begin(0);
+    unsigned long end(data.h->size());
+    unsigned long size(end - begin);
 
-    data.distribution_x->lock(lm_read_only);
-    data.distribution_y->lock(lm_read_only);
+    SPEFrameworkInstruction<1, float, rtm_dma> instruction(
+            oc_extraction_grid_float, data.f_0->elements(), size);
+    instruction.instruction().a.ea = operands;
 
-    data.u->lock(lm_write_only);
-    data.v->lock(lm_write_only);
+    SPEManager::instance()->dispatch(instruction);
 
-    unsigned long begin((*info.limits)[0]);
-    unsigned long end((*info.limits)[info.limits->size() - 1]);
+    for (unsigned long i(begin + instruction.transfer_end()) ; i < end ; ++i)
+    {
+        //accumulate
+        (*data.h)[i] = (*data.f_0)[i] +
+            (*data.f_1)[i] +
+            (*data.f_2)[i] +
+            (*data.f_3)[i] +
+            (*data.f_4)[i] +
+            (*data.f_5)[i] +
+            (*data.f_6)[i] +
+            (*data.f_7)[i] +
+            (*data.f_8)[i];
 
+        (*data.u)[i] = ((*data.distribution_x)[0] * (*data.f_0)[i] +
+                (*data.distribution_x)[1] * (*data.f_1)[i] +
+                (*data.distribution_x)[2] * (*data.f_2)[i] +
+                (*data.distribution_x)[3] * (*data.f_3)[i] +
+                (*data.distribution_x)[4] * (*data.f_4)[i] +
+                (*data.distribution_x)[5] * (*data.f_5)[i] +
+                (*data.distribution_x)[6] * (*data.f_6)[i] +
+                (*data.distribution_x)[7] * (*data.f_7)[i] +
+                (*data.distribution_x)[8] * (*data.f_8)[i]) / (*data.h)[i];
 
-    info.limits->unlock(lm_read_only);
-
-    data.f_0->unlock(lm_read_and_write);
-    data.f_1->unlock(lm_read_and_write);
-    data.f_2->unlock(lm_read_and_write);
-    data.f_3->unlock(lm_read_and_write);
-    data.f_4->unlock(lm_read_and_write);
-    data.f_5->unlock(lm_read_and_write);
-    data.f_6->unlock(lm_read_and_write);
-    data.f_7->unlock(lm_read_and_write);
-    data.f_8->unlock(lm_read_and_write);
-
-    data.h->unlock(lm_write_only);
-
-    data.distribution_x->unlock(lm_read_only);
-    data.distribution_y->unlock(lm_read_only);
-
-    data.u->unlock(lm_write_only);
-    data.v->unlock(lm_write_only); */
-    //honei::fill<tags::Cell>(*data.h, float(0));
-    Sum<tags::Cell>::value(*data.h, *data.f_0);
-    Sum<tags::Cell>::value(*data.h, *data.f_1);
-    Sum<tags::Cell>::value(*data.h, *data.f_2);
-    Sum<tags::Cell>::value(*data.h, *data.f_3);
-    Sum<tags::Cell>::value(*data.h, *data.f_4);
-    Sum<tags::Cell>::value(*data.h, *data.f_5);
-    Sum<tags::Cell>::value(*data.h, *data.f_6);
-    Sum<tags::Cell>::value(*data.h, *data.f_7);
-    Sum<tags::Cell>::value(*data.h, *data.f_8);
-
-    //honei::fill<tags::Cell>(*data.u, float(0));
-    ScaledSum<tags::Cell>::value(*data.u, *data.f_0, (*data.distribution_x)[0]);
-    ScaledSum<tags::Cell>::value(*data.u, *data.f_1, (*data.distribution_x)[1]);
-    ScaledSum<tags::Cell>::value(*data.u, *data.f_2, (*data.distribution_x)[2]);
-    ScaledSum<tags::Cell>::value(*data.u, *data.f_3, (*data.distribution_x)[3]);
-    ScaledSum<tags::Cell>::value(*data.u, *data.f_4, (*data.distribution_x)[4]);
-    ScaledSum<tags::Cell>::value(*data.u, *data.f_5, (*data.distribution_x)[5]);
-    ScaledSum<tags::Cell>::value(*data.u, *data.f_6, (*data.distribution_x)[6]);
-    ScaledSum<tags::Cell>::value(*data.u, *data.f_7, (*data.distribution_x)[7]);
-    ScaledSum<tags::Cell>::value(*data.u, *data.f_8, (*data.distribution_x)[8]);
-
-    //honei::fill<tags::Cell>(*data.v, float(0));
-    ScaledSum<tags::Cell>::value(*data.v, *data.f_0, (*data.distribution_y)[0]);
-    ScaledSum<tags::Cell>::value(*data.v, *data.f_1, (*data.distribution_y)[1]);
-    ScaledSum<tags::Cell>::value(*data.v, *data.f_2, (*data.distribution_y)[2]);
-    ScaledSum<tags::Cell>::value(*data.v, *data.f_3, (*data.distribution_y)[3]);
-    ScaledSum<tags::Cell>::value(*data.v, *data.f_4, (*data.distribution_y)[4]);
-    ScaledSum<tags::Cell>::value(*data.v, *data.f_5, (*data.distribution_y)[5]);
-    ScaledSum<tags::Cell>::value(*data.v, *data.f_6, (*data.distribution_y)[6]);
-    ScaledSum<tags::Cell>::value(*data.v, *data.f_7, (*data.distribution_y)[7]);
-    ScaledSum<tags::Cell>::value(*data.v, *data.f_8, (*data.distribution_y)[8]);
+        (*data.v)[i] = ((*data.distribution_y)[0] * (*data.f_0)[i] +
+                (*data.distribution_y)[1] * (*data.f_1)[i] +
+                (*data.distribution_y)[2] * (*data.f_2)[i] +
+                (*data.distribution_y)[3] * (*data.f_3)[i] +
+                (*data.distribution_y)[4] * (*data.f_4)[i] +
+                (*data.distribution_y)[5] * (*data.f_5)[i] +
+                (*data.distribution_y)[6] * (*data.f_6)[i] +
+                (*data.distribution_y)[7] * (*data.f_7)[i] +
+                (*data.distribution_y)[8] * (*data.f_8)[i]) / (*data.h)[i];
+    }
+    instruction.wait();
 }
