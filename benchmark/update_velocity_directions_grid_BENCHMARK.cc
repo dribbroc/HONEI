@@ -110,3 +110,6 @@ UpdateVelocityDirectionsGridBench<tags::CPU::SSE, double> sse_colliupdate_veloci
 #ifdef HONEI_CUDA
 UpdateVelocityDirectionsGridBench<tags::GPU::CUDA, float> cuda_update_velocity_directions_grid_bench_float("CUDA UpdateVelocityDirectionsGridBench - size: 1500, float", 1500, 10);
 #endif
+#ifdef HONEI_CELL
+UpdateVelocityDirectionsGridBench<tags::Cell, float> cell_update_velocity_directions_grid_bench_float("Cell UpdateVelocityDirectionsGridBench - size: 250, float", 250, 25);
+#endif

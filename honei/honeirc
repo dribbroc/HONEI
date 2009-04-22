@@ -89,6 +89,8 @@ cell::product_dense_matrix_dense_vector_float = 4
 cell::product_banded_matrix_dense_vector_float = 4
 cell::product_banded_matrix_dense_vector_double = 4
 
+cell::extraction_grid_float = 5
+
 # MultiCore
 ###########
 

@@ -172,4 +172,7 @@ SolverLBMGridRegressionTest<tags::CPU::MultiCore::SSE, double> mcsse_solver_test
 #ifdef HONEI_CUDA
 SolverLBMGridRegressionTest<tags::GPU::CUDA, float> cuda_solver_test_float("float");
 #endif
+#ifdef HONEI_CELL
+SolverLBMGridRegressionTest<tags::Cell, float> cell_solver_test_float("float");
+#endif
 
