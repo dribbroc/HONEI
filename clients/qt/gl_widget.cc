@@ -95,7 +95,7 @@ void GLWidget::initializeGL()
             static_cast<int>(multisamplebufs), static_cast<int>(multisamples) );
 
     //Insert HONEI gl initialization here
-    //glEnable( GL_DEPTH_TEST ); //Later needed for lighting
+    glEnable( GL_DEPTH_TEST ); //Later needed for lighting
 
 #ifdef ANTIALIAS
 #ifdef WIREFRAME
@@ -197,6 +197,11 @@ void GLWidget::solver_start_stop()
     _solver_start_stop_flag = !_solver_start_stop_flag;
 }
 
+
+void GLWidget::mousePressEvent( QMouseEvent * e )
+{
+    m_lastPos = e->pos();
+}
 
 void GLWidget::mouseMoveEvent( QMouseEvent * e )
 {
