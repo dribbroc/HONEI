@@ -161,3 +161,6 @@ UpateVelocityDirectionsGridRegressionTest<tags::CPU::SSE, double> sse_solver_mul
 UpateVelocityDirectionsGridRegressionTest<tags::GPU::CUDA, float> cuda_solver_multi_test_float("float");
 #endif
 
+#ifdef HONEI_CELL
+UpateVelocityDirectionsGridRegressionTest<tags::Cell, float> cell_solver_multi_test_float("float");
+#endif

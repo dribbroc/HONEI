@@ -175,10 +175,7 @@ namespace honei
    template <>
        struct UpdateVelocityDirectionsGrid<tags::Cell, lbm_boundary_types::NOSLIP>
        {
-           static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data)
-           {
-               UpdateVelocityDirectionsGrid<tags::CPU, lbm_boundary_types::NOSLIP>::value(info, data);
-           }
+           static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data);
        };
 }
 #endif

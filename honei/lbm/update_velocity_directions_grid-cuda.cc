@@ -28,7 +28,7 @@ using namespace honei;
 void UpdateVelocityDirectionsGrid<tags::GPU::CUDA, lbm_boundary_types::NOSLIP>::value(
         PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data)
 {
-    CONTEXT("When computing LABSWE local equilibrium distribution function (CUDA):");
+    CONTEXT("When updating velocity directions (CUDA):");
 
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::up_vel_dir_grid_float", 128ul));
