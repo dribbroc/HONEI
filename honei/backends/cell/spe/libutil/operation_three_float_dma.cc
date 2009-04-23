@@ -39,15 +39,17 @@
  * \operand e Last transfer buffer size in bytes.
  * \operand f alignment offset of entity b.
  * \operand g alignment offset of entity c.
- * \operand h first element of carry_b (not transfered via dma)
- * \operand i second element of carry_b (not transfered via dma)
- * \operand j third element of carry_b (not transfered via dma)
- * \operand k fourth element of carry_b (not transfered via dma)
- * \operand l first element of carry_c (not transfered via dma)
- * \operand m second element of carry_c (not transfered via dma)
- * \operand n third element of carry_c (not transfered via dma)
- * \operand o fourth element of carry_c (not transfered via dma)
- * \operand p scalar
+ * \operand h[0] first element of carry_b (not transfered via dma)
+ * \operand h[1] second element of carry_b (not transfered via dma)
+ * \operand i[0] third element of carry_b (not transfered via dma)
+ * \operand i[1] fourth element of carry_b (not transfered via dma)
+ * \operand j[0] first element of carry_c (not transfered via dma)
+ * \operand j[1] second element of carry_c (not transfered via dma)
+ * \operand k[0] third element of carry_c (not transfered via dma)
+ * \operand k[1] fourth element of carry_c (not transfered via dma)
+ * \operand l scalar
+ * \operand m scalar
+ * \operand n scalar
 */
 
 namespace honei
@@ -74,12 +76,14 @@ namespace honei
             unsigned nextsize;
             unsigned current(0), next(1);
 
-            float scalar = instruction.p.f; // optional scalar value to be computed.
+            float a_scalar = instruction.l.f; // optional scalar value to be computed.
+            float b_scalar = instruction.m.f; // optional scalar value to be computed.
+            float c_scalar = instruction.n.f; // optional scalar value to be computed.
 
             unsigned b_offset(instruction.f.u);
             unsigned c_offset(instruction.g.u);
-            vector float b_carry = { instruction.h.f, instruction.i.f, instruction.j.f, instruction.k.f };
-            vector float c_carry = { instruction.l.f, instruction.m.f, instruction.n.f, instruction.o.f };
+            vector float b_carry = { instruction.h.fa[0], instruction.h.fa[1], instruction.i.fa[0], instruction.i.fa[1] };
+            vector float c_carry = { instruction.j.fa[0], instruction.j.fa[1], instruction.k.fa[0], instruction.k.fa[1] };
 
             debug_get(ea_a, a[current].untyped, size);
             mfc_get(a[current].untyped, ea_a, size, current, 0, 0);
@@ -109,7 +113,7 @@ namespace honei
                 mfc_read_tag_status_all();
 
                 operation.calculate(a[current].vectorised, b[current].vectorised, c[current].vectorised,
-                        size / sizeof(vector float), b_carry, b_offset, c_carry, c_offset, scalar);
+                        size / sizeof(vector float), b_carry, b_offset, c_carry, c_offset, a_scalar, b_scalar, c_scalar);
 
                 debug_put(ea_result, a[current].untyped, size);
                 mfc_putb(a[current].untyped, ea_result, size, current, 0, 0);
@@ -128,7 +132,7 @@ namespace honei
             mfc_read_tag_status_all();
 
             operation.calculate(a[current].vectorised, b[current].vectorised, c[current].vectorised,
-                    size / sizeof(vector float), b_carry, b_offset, c_carry, c_offset, scalar);
+                    size / sizeof(vector float), b_carry, b_offset, c_carry, c_offset, a_scalar, b_scalar, c_scalar);
 
             debug_put(ea_result, a[current].untyped, size);
             mfc_put(a[current].untyped, ea_result, size, current, 0, 0);

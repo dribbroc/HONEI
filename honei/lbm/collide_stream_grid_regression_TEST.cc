@@ -162,4 +162,7 @@ CollideStreamGridRegressionTest<tags::CPU::SSE, double> sse_solver_multi_test_do
 #ifdef HONEI_CUDA
 CollideStreamGridRegressionTest<tags::GPU::CUDA, float> cuda_solver_multi_test_float("float");
 #endif
+#ifdef HONEI_CELL
+CollideStreamGridRegressionTest<tags::Cell, float> cell_solver_multi_test_float("float");
+#endif
 

@@ -31,6 +31,8 @@ namespace honei
             extern Operation<4, float, rtm_dma> eq_dist_grid_dir_0_float;
             extern Operation<4, float, rtm_dma> eq_dist_grid_dir_odd_float;
             extern Operation<4, float, rtm_dma> eq_dist_grid_dir_even_float;
+            extern Operation<3, float, rtm_dma> collide_stream_grid_float;
+            extern Operation<3, float, rtm_dma> collide_stream_grid_times_float;
         }
     }
 }

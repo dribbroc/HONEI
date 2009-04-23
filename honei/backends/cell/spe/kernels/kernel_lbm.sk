@@ -8,3 +8,5 @@ void eq_dist_grid_dir_0_float
 void eq_dist_grid_dir_odd_float
 void eq_dist_grid_dir_even_float
 void extraction_grid_float extraction_grid_float
+void collide_stream_grid_float
+void collide_stream_grid_times_float

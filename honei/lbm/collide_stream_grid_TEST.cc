@@ -61,6 +61,7 @@ class CollideStreamGridLABSWETest :
             PackedGridInfo<D2Q9> info;
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
+            GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::cuda_pack(info, data);
 
             DataType_ tau (1);
 
@@ -85,14 +86,19 @@ class CollideStreamGridLABSWETest :
                 (*data.f_7)[i] = DataType_(2.234);
                 (*data.f_8)[i] = DataType_(2.234);
                 (*data.f_temp_1)[i] = DataType_(4711);
+                (*data.f_temp_2)[i] = DataType_(4711);
+                (*data.f_temp_3)[i] = DataType_(4711);
+                (*data.f_temp_4)[i] = DataType_(4711);
+                (*data.f_temp_5)[i] = DataType_(4711);
+                (*data.f_temp_6)[i] = DataType_(4711);
+                (*data.f_temp_7)[i] = DataType_(4711);
+                (*data.f_temp_8)[i] = DataType_(4711);
             }
             CollideStreamGrid<Tag_, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                 value(info, data, tau);
-            /*data.f_temp_1->lock(lm_read_only);
-            std::cout<<*data.f_temp_1;
-            data.f_temp_1->unlock(lm_read_only);*/
-            TEST_CHECK(true);
-
+            data.f_temp_1->lock(lm_read_only);
+            std::cout<<*data.f_temp_4;
+            data.f_temp_1->unlock(lm_read_only);
         }
 };
 CollideStreamGridLABSWETest<tags::CPU, float> collidestream_grid_test_float("float");
@@ -102,6 +108,8 @@ CollideStreamGridLABSWETest<tags::CPU::SSE, float> sse_collidestream_grid_test_f
 CollideStreamGridLABSWETest<tags::CPU::SSE, double> sse_collidestream_grid_test_double("double");
 #endif
 #ifdef HONEI_CUDA
-//needs cuda post pack
-//CollideStreamGridLABSWETest<tags::GPU::CUDA, float> cuda_collidestream_grid_test_float("float");
+CollideStreamGridLABSWETest<tags::GPU::CUDA, float> cuda_collidestream_grid_test_float("float");
+#endif
+#ifdef HONEI_CELL
+CollideStreamGridLABSWETest<tags::Cell, float> cell_collidestream_grid_test_float("float");
 #endif

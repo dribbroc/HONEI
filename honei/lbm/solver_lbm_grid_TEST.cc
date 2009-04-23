@@ -106,6 +106,9 @@ SolverLBMGridTest<tags::CPU::MultiCore::SSE, double> mcsse_solver_test_double("d
 #ifdef HONEI_CUDA
 SolverLBMGridTest<tags::GPU::CUDA, float> cuda_solver_test_float("float");
 #endif
+#ifdef HONEI_CELL
+SolverLBMGridTest<tags::Cell, float> cell_solver_test_float("float");
+#endif
 
 
 template <typename Tag_, typename DataType_>
@@ -184,5 +187,8 @@ SolverLBMGridMassConservationTest<tags::CPU::MultiCore::SSE, double> mcsse_solve
 #endif
 #ifdef HONEI_CUDA
 SolverLBMGridMassConservationTest<tags::GPU::CUDA, float> cuda_solver_grid_mc_test_float("float");
+#endif
+#ifdef HONEI_Cell
+SolverLBMGridMassConservationTest<tags::Cell, float> cell_solver_grid_mc_test_float("float");
 #endif
 

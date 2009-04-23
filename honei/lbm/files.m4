@@ -9,7 +9,7 @@ dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
 add(`collide_stream',                  `hh', `test')
-add(`collide_stream_grid',             `hh', `sse', `cuda', `test')
+add(`collide_stream_grid',             `hh', `sse', `cuda', `cell', `test')
 add(`collide_stream_grid_regression',        `test')
 add(`dc_advanced',                           `test')
 add(`dc_advanced_grid',                      `test')

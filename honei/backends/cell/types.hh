@@ -143,8 +143,8 @@ namespace honei
         struct HONEI_PACKED HONEI_ALIGNED(8) ListElement
         {
             unsigned stall_and_notify : 1;
-            unsigned reserved : 16;
-            unsigned transfer_size : 15;
+            unsigned reserved : 15;
+            unsigned transfer_size : 16;
             unsigned effective_address_low;
         };
 

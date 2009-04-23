@@ -98,6 +98,7 @@ class GridPackerTest :
 //            std::cout << GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::extract_ftemp2(grid, info, data) << std::endl;
 
             GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::cuda_pack(info, data);
+            std::cout<<"cuda dir 7: "<<*info.cuda_dir_7;
             TEST_CHECK(true);
         }
 };

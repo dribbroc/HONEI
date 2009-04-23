@@ -32,7 +32,7 @@ namespace honei
         {
             void product_banded_matrix_dense_vector_float(vector float * a, const vector float * b, const vector float * c,
                     const unsigned size, vector float & b_carry, const unsigned b_offset, vector float & c_carry,
-                    const unsigned c_offset, const float optional_scalar)
+                    const unsigned c_offset, const float a_scalar, const float b_scalar, const float c_scalar)
             {
                 for (unsigned i(0) ; i < size ; ++i)
                 {

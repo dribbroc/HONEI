@@ -30,6 +30,7 @@
 #include <honei/util/private_implementation_pattern-impl.hh>
 
 #include <tr1/functional>
+#include <iostream>
 
 namespace honei
 {
@@ -409,7 +410,8 @@ template class SPEFrameworkInstruction<2, double, cell::rtm_mail>;
 template <typename DataType_>
 SPEFrameworkInstruction<3, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(const OpCode opcode,
         DataType_ * a_elements, DataType_ * b_elements, DataType_ * c_elements,
-        const unsigned size, const DataType_ scalar) :
+        const unsigned size, const DataType_ a_scalar,
+        const DataType_ b_scalar, const DataType_ c_scalar) :
     SPEInstruction(opcode, 16384, a_elements, b_elements, c_elements), _use_spe(true)
 {
     Instruction & instruction(_imp->instruction);
@@ -443,23 +445,27 @@ SPEFrameworkInstruction<3, DataType_, cell::rtm_dma>::SPEFrameworkInstruction(co
         DataType_ * c_dma_start = reinterpret_cast<DataType_ *>(instruction.c.u);
         if (sizeof(DataType_) == 4) // float
         {
-            instruction.h.f = *(b_dma_start - 4);
-            instruction.i.f = *(b_dma_start - 3);
-            instruction.j.f = *(b_dma_start - 2);
-            instruction.k.f = *(b_dma_start - 1);
-            instruction.l.f = *(c_dma_start - 4);
-            instruction.m.f = *(c_dma_start - 3);
-            instruction.n.f = *(c_dma_start - 2);
-            instruction.o.f = *(c_dma_start - 1);
-            instruction.p.f = scalar;
+            instruction.h.fa[0] = *(b_dma_start - 4);
+            instruction.h.fa[1] = *(b_dma_start - 3);
+            instruction.i.fa[0] = *(b_dma_start - 2);
+            instruction.i.fa[1] = *(b_dma_start - 1);
+            instruction.j.fa[0] = *(c_dma_start - 4);
+            instruction.j.fa[1] = *(c_dma_start - 3);
+            instruction.k.fa[0] = *(c_dma_start - 2);
+            instruction.k.fa[1] = *(c_dma_start - 1);
+            instruction.l.f = a_scalar;
+            instruction.m.f = b_scalar;
+            instruction.n.f = c_scalar;
         }
         else // double
         {
             instruction.h.d = *(b_dma_start - 2);
             instruction.i.d = *(b_dma_start - 1);
-            instruction.l.d = *(c_dma_start - 2);
-            instruction.m.d = *(c_dma_start - 1);
-            instruction.p.d = scalar;
+            instruction.j.d = *(c_dma_start - 2);
+            instruction.k.d = *(c_dma_start - 1);
+            instruction.l.d = a_scalar;
+            instruction.m.d = b_scalar;
+            instruction.n.d = c_scalar;
         }
 
         // Subtract PPU-calculated parts from size.
@@ -597,7 +603,10 @@ SPEInstructionQueue::push_back(const SPEInstruction & instruction)
     if (_imp->instructions.size() > 0)
     {
         if (instruction.instruction().opcode != (*(_imp->instructions.begin())).instruction().opcode)
+        {
+            std::cout<<"SPEInstructionQueue: Inserting different opcodes in one Queue."<<std::endl;
             throw InternalError("SPEInstructionQueue: Inserting different opcodes in one Queue.");
+        }
     }
     if (_imp->instructions.size() > 7)
             throw InternalError("SPEInstructionQueue: InstructionQueue size is limited to 8 elements due to restrictions in the spu programm.");

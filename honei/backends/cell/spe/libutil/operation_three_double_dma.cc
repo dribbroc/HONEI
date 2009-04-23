@@ -41,9 +41,11 @@
  * \operand g alignment offset of entity c.
  * \operand h first element of carry_b (not transfered via dma)
  * \operand i second element of carry_b (not transfered via dma)
- * \operand l first element of carry_c (not transfered via dma)
- * \operand m second element of carry_c (not transfered via dma)
- * \operand p scalar
+ * \operand j first element of carry_c (not transfered via dma)
+ * \operand k second element of carry_c (not transfered via dma)
+ * \operand l scalar
+ * \operand m scalar
+ * \operand n scalar
 */
 
 namespace honei
@@ -70,12 +72,14 @@ namespace honei
             unsigned nextsize;
             unsigned current(0), next(1);
 
-            double scalar = instruction.p.d; // optional scalar value to be computed.
+            double a_scalar = instruction.l.d; // optional scalar value to be computed.
+            double b_scalar = instruction.m.d; // optional scalar value to be computed.
+            double c_scalar = instruction.n.d; // optional scalar value to be computed.
 
             unsigned b_offset(instruction.f.u);
             unsigned c_offset(instruction.g.u);
             vector double b_carry = { instruction.h.d, instruction.i.d};
-            vector double c_carry = { instruction.l.d, instruction.m.d};
+            vector double c_carry = { instruction.j.d, instruction.k.d};
 
             debug_get(ea_a, a[current].untyped, size);
             mfc_get(a[current].untyped, ea_a, size, current, 0, 0);
@@ -105,7 +109,7 @@ namespace honei
                 mfc_read_tag_status_all();
 
                 operation.calculate(a[current].vectorised, b[current].vectorised, c[current].vectorised,
-                        size / sizeof(vector double), b_carry, b_offset, c_carry, c_offset, scalar);
+                        size / sizeof(vector double), b_carry, b_offset, c_carry, c_offset, a_scalar, b_scalar, c_scalar);
 
                 debug_put(ea_result, a[current].untyped, size);
                 mfc_putb(a[current].untyped, ea_result, size, current, 0, 0);
@@ -124,7 +128,7 @@ namespace honei
             mfc_read_tag_status_all();
 
             operation.calculate(a[current].vectorised, b[current].vectorised, c[current].vectorised,
-                    size / sizeof(vector double), b_carry, b_offset, c_carry, c_offset, scalar);
+                    size / sizeof(vector double), b_carry, b_offset, c_carry, c_offset, a_scalar, b_scalar, c_scalar);
 
             debug_put(ea_result, a[current].untyped, size);
             mfc_put(a[current].untyped, ea_result, size, current, 0, 0);

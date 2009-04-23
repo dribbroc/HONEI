@@ -298,7 +298,10 @@ namespace honei
              * \param size The overall size of the container.
              */
             SPEFrameworkInstruction(const OpCode opcode, DataType_ * a_elements, DataType_ * b_elements,
-                    DataType_ * c_elements, const unsigned size, const DataType_ scalar = DataType_(0));
+                    DataType_ * c_elements, const unsigned size,
+                    const DataType_ a_scalar = DataType_(0),
+                    const DataType_ b_scalar = DataType_(0),
+                    const DataType_ c_scalar = DataType_(0));
 
             unsigned transfer_begin() const
             {

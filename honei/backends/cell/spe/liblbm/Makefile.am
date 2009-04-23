@@ -7,6 +7,7 @@ DEFS = $(DEBUGDEF) $(PROFILERDEF)
 
 noinst_LIBRARIES = liblbm_spe.a
 liblbm_spe_a_SOURCES = \
+	collide_stream_grid_float.cc \
 	eq_dist_grid_float.cc \
 	extraction_grid_float.cc \
 	operations.hh

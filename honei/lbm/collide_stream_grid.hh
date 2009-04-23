@@ -270,10 +270,7 @@ namespace honei
         static void value(
                 PackedGridInfo<lbm_lattice_types::D2Q9> & info,
                 PackedGridData<lbm_lattice_types::D2Q9, float> & data,
-                float tau)
-        {
-            CollideStreamGrid<tags::CPU, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::value(info, data, tau);
-        }
+                float tau);
     };
 }
 #endif
