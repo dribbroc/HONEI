@@ -44,6 +44,7 @@ class GLWidget : public QGLWidget
         virtual void resizeGL( int width, int height );
         virtual void mousePressEvent( QMouseEvent *event );
         virtual void mouseMoveEvent( QMouseEvent *event );
+        virtual void wheelEvent( QWheelEvent *event );
 
     private:
         GLuint m_object;
@@ -63,7 +64,7 @@ class GLWidget : public QGLWidget
         SimulationController<double>* _sim_control_double;
 
         void _set_x_rotation(int value);
-        void _set_y_rotation(int value);
+        void _set_z_rotation(int value);
         void _normalize_angle(int * angle) const;
 
         template <typename Prec_>

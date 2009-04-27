@@ -39,8 +39,10 @@ const unsigned int RotTimer = 0;	// 0 = workproc, i.e., when there are no more U
 
     GLWidget::GLWidget(QWidget * father )
 : QGLWidget( QGLFormat(QGL::SampleBuffers), father),			// enables multi-sampling
-      m_object(0), m_xRot(-45.), m_yRot(0), m_zRot(45),
-      m_xTrans(-4.), m_yTrans(-10.0), m_zTrans(-45.0),
+      //m_object(0), m_xRot(-45.), m_yRot(0), m_zRot(45),
+      m_object(0), m_xRot(0), m_yRot(0), m_zRot(0),
+      //m_xTrans(-4.), m_yTrans(-10.0), m_zTrans(-45.0),
+      m_xTrans(0), m_yTrans(0.), m_zTrans(1.),
       m_curr_rot(0), m_numFlakeRec(2), _solver_precision_flag(true), _solver_start_stop_flag(false)
       //m_timer()
 {
@@ -125,13 +127,14 @@ void GLWidget::paintGL()
     glLoadIdentity();
 
     //render HONEI solver output
-    glTranslatef(m_xTrans, m_yTrans, m_zTrans);
+    glTranslatef(m_xTrans, m_yTrans, 1./*m_zTrans*/);
     glRotatef(m_xRot,1.0, 0.0, 0.0);
     glRotatef(m_yRot,0.0, 1.0, 0.0);
     glRotatef(m_zRot,0.0, 0.0, 1.0);
 
-    glScalef(1.0f, 1.0f, 100.0f);
+    glScalef(1.f * m_zTrans, 1.f * m_zTrans, 100.0f * m_zTrans);
     glEnable (GL_BLEND);
+    glTranslatef(-50/2, -50/2, 0.);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     if (_solver_precision_flag)
     {
@@ -152,15 +155,14 @@ void GLWidget::resizeGL( int w, int h )		// = width & height
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    //glOrtho(-1.5, +1.5, +1.5, -1.5, 1.0, 150.0);
-    glFrustum(-1.1, +1.0, -1.0, +1.0, 1.0, 210.0);
+    glOrtho(-100, +100, +100, -100, -500., 100.0);
+    //glFrustum(-100., +100.0, -100.0, +100.0, -1000.0, 1000.0);
 }
 
 template <typename Prec_>
 void GLWidget::_render_matrix(DenseMatrix<Prec_> & matrix, float r, float g, float b, float a)
 {
     //glPushMatrix();
-    //glTranslatef(-matrix.columns()/2, -matrix.rows()/2, 0.);
 
     glBegin(GL_QUADS);
     for(unsigned int i = 0 ; i < matrix.rows() - 1 ; ++i)
@@ -213,18 +215,34 @@ void GLWidget::mouseMoveEvent( QMouseEvent * e )
     if ( (e->buttons() & Qt::RightButton) ||
             ctrl_key )
     {
-        m_zTrans += 0.5 * dy;
+        m_xTrans -= 0.5 * dy;
         m_xTrans += 0.5 * dx;
     }
     else if ( e->buttons() & Qt::LeftButton )
     {
-        _set_x_rotation(m_xRot + 8 * dy);
-        _set_y_rotation(m_yRot + 8 * dx);
+        _set_x_rotation(m_xRot + 4 * dy);
+        _set_z_rotation(m_zRot + 4 * dx);
     }
+    else if ( e->buttons() & Qt::MidButton )
+    {
+        m_yTrans += 0.5 * dy;
+        m_yTrans -= 0.5 * dx;
+    }
+
     m_lastPos = e->pos();
     e->accept();
     updateGL();
 }
+
+void GLWidget::wheelEvent( QWheelEvent * e )
+{
+    m_zTrans += float((e->delta() / 120) * 0.05);
+
+    m_lastPos = e->pos();
+    e->accept();
+    updateGL();
+}
+
 
 void GLWidget::_set_x_rotation( int angle )
 {
@@ -236,12 +254,12 @@ void GLWidget::_set_x_rotation( int angle )
     }
 }
 
-void GLWidget::_set_y_rotation( int angle )
+void GLWidget::_set_z_rotation( int angle )
 {
     _normalize_angle( &angle );
     if (angle != m_yRot)
     {
-        m_yRot = angle;
+        m_zRot = angle;
         updateGL();
     }
 }
