@@ -30,21 +30,14 @@
 #undef WIREFRAME
 #define ANTIALIAS
 
-static const float SphereColor[3] = { 0.2f, 0.1f, 0.9f };
-const float PIf = 3.14159265358979323846f;
-const unsigned int NumSphereSlices = 30;
-const float RotSpeed = 0.1f;
 const unsigned int RotTimer = 0;	// 0 = workproc, i.e., when there are no more UI events in the queue
 
 
     GLWidget::GLWidget(QWidget * father )
 : QGLWidget( QGLFormat(QGL::SampleBuffers), father),			// enables multi-sampling
-      //m_object(0), m_xRot(-45.), m_yRot(0), m_zRot(45),
       m_object(0), m_xRot(0), m_yRot(0), m_zRot(0),
-      //m_xTrans(-4.), m_yTrans(-10.0), m_zTrans(-45.0),
       m_xTrans(0), m_yTrans(0.), m_zTrans(1.),
       m_curr_rot(0), m_numFlakeRec(2), _solver_precision_flag(true), _solver_start_stop_flag(false)
-      //m_timer()
 {
     if ( ! format().sampleBuffers() )
         fprintf(stderr, "Could not get sample buffer; no polygon anti-aliasing!");
@@ -97,7 +90,7 @@ void GLWidget::initializeGL()
             static_cast<int>(multisamplebufs), static_cast<int>(multisamples) );
 
     //Insert HONEI gl initialization here
-    glEnable( GL_DEPTH_TEST ); //Later needed for lighting
+    glEnable( GL_DEPTH_TEST );
 
 #ifdef ANTIALIAS
 #ifdef WIREFRAME
@@ -127,14 +120,23 @@ void GLWidget::paintGL()
     glLoadIdentity();
 
     //render HONEI solver output
-    glTranslatef(m_xTrans, m_yTrans, 1./*m_zTrans*/);
+    glTranslatef(m_xTrans, m_yTrans, 1.);
     glRotatef(m_xRot,1.0, 0.0, 0.0);
     glRotatef(m_yRot,0.0, 1.0, 0.0);
     glRotatef(m_zRot,0.0, 0.0, 1.0);
 
+    //mz_Trans is now used for scaling the scene aka zoom-in/zoom-out
     glScalef(1.f * m_zTrans, 1.f * m_zTrans, 100.0f * m_zTrans);
     glEnable (GL_BLEND);
-    glTranslatef(-50/2, -50/2, 0.);
+    if(_solver_precision_flag)
+    {
+        glTranslatef(float(-(_sim_control_float->get_b()).columns())/2., float(-(_sim_control_float->get_b()).rows())/2., 0.);
+    }
+    else
+    {
+        glTranslatef(float(-(_sim_control_double->get_b()).columns())/2., float(-(_sim_control_double->get_b()).rows())/2., 0.);
+    }
+
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     if (_solver_precision_flag)
     {
