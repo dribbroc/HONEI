@@ -30,13 +30,18 @@ template <typename Prec_>
 class SimulationController
 {
     private:
-        Simulation<DEFAULT, Prec_> _default_simulation;
+        Simulation<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> _default_simulation;
+
+        bool _noslip_flag;
+        bool _d2q9_flag;
 
     public:
         void do_timestep()
         {
             _default_simulation.get_solver().solve();
-            GridPacker<D2Q9, NOSLIP, Prec_>::unpack(_default_simulation.get_grid(), _default_simulation.get_info(), _default_simulation.get_data());
+
+            if(_noslip_flag && _d2q9_flag)
+                GridPacker<D2Q9, NOSLIP, Prec_>::unpack(_default_simulation.get_grid(), _default_simulation.get_info(), _default_simulation.get_data());
         }
 
         DenseMatrix<Prec_> & get_h()
@@ -46,12 +51,22 @@ class SimulationController
 
         DenseMatrix<Prec_> & get_hb()
         {
+#ifdef HONEI_SSE
             return Sum<tags::CPU::SSE>::value(*_default_simulation.get_grid().h, *_default_simulation.get_grid().b);
+#else
+            return Sum<tags::CPU>::value(*_default_simulation.get_grid().h, *_default_simulation.get_grid().b);
+#endif
         }
 
         DenseMatrix<Prec_> & get_b()
         {
             return *_default_simulation.get_grid().b;
+        }
+
+        SimulationController() :
+            _noslip_flag(true),
+            _d2q9_flag(true)
+        {
         }
 };
 
