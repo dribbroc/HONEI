@@ -46,11 +46,13 @@ class Window : public QMainWindow
 
         QMenu * _simulation_menu;
         QAction * _solver_start_stop_action;
+        QAction * _simulation_reload_action;
 
         void create_menu();
 
     private slots:
         void _solver_start_stop();
+        void _simulation_reload();
 };
 
 #endif

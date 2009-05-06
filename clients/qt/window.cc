@@ -61,6 +61,12 @@ void Window::create_menu()
     _simulation_menu->addAction(_solver_start_stop_action);
 
 
+    _simulation_reload_action = new QAction(tr("&Reload"), this);
+    _simulation_reload_action->setShortcut(tr("Ctrl+R"));
+    connect(_simulation_reload_action, SIGNAL(triggered()),
+            this, SLOT(_simulation_reload()));
+
+    _simulation_menu->addAction(_simulation_reload_action);
 }
 
 void Window::_solver_start_stop()
@@ -68,3 +74,7 @@ void Window::_solver_start_stop()
     glWidget->solver_start_stop();
 }
 
+void Window::_simulation_reload()
+{
+    glWidget->simulation_reload();
+}

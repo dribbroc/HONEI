@@ -37,6 +37,7 @@ class GLWidget : public QGLWidget
         QSize sizeHint() const;
 
         void solver_start_stop();
+        void simulation_reload();
 
     protected:
         virtual void initializeGL();
@@ -53,10 +54,13 @@ class GLWidget : public QGLWidget
         QPoint m_lastPos;
         float m_backgroundcolor[3];
         float m_curr_rot;
-        unsigned int m_numFlakeRec;
+
+        DenseMatrix<float> * _idle_hb;
+        DenseMatrix<float> * _idle_b;
 
         QTimer * _solver_timer;
 
+        bool _render_idle_flag;
         bool _solver_precision_flag;
         bool _solver_start_stop_flag;
 

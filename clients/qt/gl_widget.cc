@@ -37,7 +37,7 @@ const unsigned int RotTimer = 0;	// 0 = workproc, i.e., when there are no more U
 : QGLWidget( QGLFormat(QGL::SampleBuffers), father),			// enables multi-sampling
       m_object(0), m_xRot(0), m_yRot(0), m_zRot(0),
       m_xTrans(0), m_yTrans(0.), m_zTrans(1.),
-      m_curr_rot(0), m_numFlakeRec(2), _solver_precision_flag(true), _solver_start_stop_flag(false)
+      m_curr_rot(0), _solver_precision_flag(true), _solver_start_stop_flag(false), _render_idle_flag(false)
 {
     if ( ! format().sampleBuffers() )
         fprintf(stderr, "Could not get sample buffer; no polygon anti-aliasing!");
@@ -54,6 +54,9 @@ const unsigned int RotTimer = 0;	// 0 = workproc, i.e., when there are no more U
         _sim_control_float = 0;
         _sim_control_double = new SimulationController<double>();
     }
+
+    _idle_hb = new DenseMatrix<float>(50, 50, float(0));
+    _idle_b = new DenseMatrix<float>(50, 50, float(0));
 }
 
 
@@ -128,25 +131,40 @@ void GLWidget::paintGL()
     //mz_Trans is now used for scaling the scene aka zoom-in/zoom-out
     glScalef(1.f * m_zTrans, 1.f * m_zTrans, 100.0f * m_zTrans);
     glEnable (GL_BLEND);
+
     if(_solver_precision_flag)
     {
-        glTranslatef(float(-(_sim_control_float->get_b()).columns())/2., float(-(_sim_control_float->get_b()).rows())/2., 0.);
+        if(!_render_idle_flag)
+            glTranslatef(float(-(_sim_control_float->get_b()).columns())/2., float(-(_sim_control_float->get_b()).rows())/2., 0.);
+        else
+            glTranslatef(float(-(_idle_b->columns()))/2., float(-(_idle_b->rows()))/2., 0.);
     }
     else
     {
-        glTranslatef(float(-(_sim_control_double->get_b()).columns())/2., float(-(_sim_control_double->get_b()).rows())/2., 0.);
+        if(!_render_idle_flag)
+            glTranslatef(float(-(_sim_control_double->get_b()).columns())/2., float(-(_sim_control_double->get_b()).rows())/2., 0.);
+        else
+            glTranslatef(float(-(_idle_b->columns()))/2., float(-(_idle_b->rows()))/2., 0.);
     }
 
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    if (_solver_precision_flag)
+    if(!_render_idle_flag)
     {
-        _render_matrix(_sim_control_float->get_b(), 0.0, 0.8, 0.0, 1.);
-        _render_matrix(_sim_control_float->get_hb(), 0.0, 0.0, 0.8, 0.5);
+        if (_solver_precision_flag)
+        {
+            _render_matrix(_sim_control_float->get_b(), 0.0, 0.8, 0.0, 1.);
+            _render_matrix(_sim_control_float->get_hb(), 0.0, 0.0, 0.8, 0.5);
+        }
+        else
+        {
+            _render_matrix(_sim_control_double->get_b(), 0.0, 0.8, 0.0, 1.);
+            _render_matrix(_sim_control_double->get_hb(), 0.0, 0.0, 0.8, 0.5);
+        }
     }
     else
     {
-        _render_matrix(_sim_control_double->get_b(), 0.0, 0.8, 0.0, 1.);
-        _render_matrix(_sim_control_double->get_hb(), 0.0, 0.0, 0.8, 0.5);
+            _render_matrix(*_idle_hb, 0.0, 0.8, 0.0, 1.);
+            _render_matrix(*_idle_b, 0.0, 0.0, 0.8, 0.5);
     }
 }
 
@@ -161,11 +179,9 @@ void GLWidget::resizeGL( int w, int h )		// = width & height
     //glFrustum(-100., +100.0, -100.0, +100.0, -1000.0, 1000.0);
 }
 
-template <typename Prec_>
+    template <typename Prec_>
 void GLWidget::_render_matrix(DenseMatrix<Prec_> & matrix, float r, float g, float b, float a)
 {
-    //glPushMatrix();
-
     glBegin(GL_QUADS);
     for(unsigned int i = 0 ; i < matrix.rows() - 1 ; ++i)
     {
@@ -179,7 +195,6 @@ void GLWidget::_render_matrix(DenseMatrix<Prec_> & matrix, float r, float g, flo
             glVertex3d(i+1,j, matrix[i+1][j]);
         }
     }
-    //glPopMatrix();
     glEnd();
 }
 
@@ -199,6 +214,24 @@ void GLWidget::solver_event()
 void GLWidget::solver_start_stop()
 {
     _solver_start_stop_flag = !_solver_start_stop_flag;
+}
+
+void GLWidget::simulation_reload()
+{
+    if(_solver_start_stop_flag)
+        _solver_start_stop_flag = false;
+
+    if(!_render_idle_flag)
+        _render_idle_flag = true;
+
+    if(_solver_precision_flag)
+        _sim_control_float->reload_simulation();
+    else
+        _sim_control_double->reload_simulation();
+
+    _render_idle_flag = false;
+
+    updateGL();
 }
 
 
