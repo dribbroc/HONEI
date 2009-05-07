@@ -173,6 +173,147 @@ SolverLBMGridRegressionTest<tags::CPU::MultiCore::SSE, double> mcsse_solver_test
 SolverLBMGridRegressionTest<tags::GPU::CUDA, float> cuda_solver_test_float("float");
 #endif
 #ifdef HONEI_CELL
-SolverLBMGridRegressionTest<tags::Cell, float> cell_solver_test_float("float");
+//Cell cannot handle obstacles in collide&stream
+//SolverLBMGridRegressionTest<tags::Cell, float> cell_solver_test_float("float");
+#endif
+
+template <typename Tag_, typename DataType_>
+class SimpleSolverLBMGridRegressionTest :
+    public TaggedTest<Tag_>
+{
+    public:
+        SimpleSolverLBMGridRegressionTest(const std::string & type) :
+            TaggedTest<Tag_>("simple_solver_lbm_grid_regression_test<" + type + ">")
+    {
+    }
+
+        virtual void run() const
+        {
+            //for (unsigned long scen(0) ; scen < ScenarioCollection::get_stable_scenario_count() ; ++scen)
+            {
+                unsigned long scen(0);
+                unsigned long g_h(50);
+                unsigned long g_w(50);
+                unsigned long timesteps(200);
+
+                Grid<D2Q9, DataType_> grid;
+                ScenarioCollection::get_scenario(scen, g_h, g_w, grid);
+
+                PackedGridData<D2Q9, DataType_>  data;
+                PackedGridInfo<D2Q9> info;
+
+                GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
+
+                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info, &data, grid.d_x, grid.d_y, grid.d_t, grid.tau);
+                solver.do_preprocessing();
+
+                for(unsigned long i(0); i < timesteps; ++i)
+                {
+#ifdef SOLVER_VERBOSE
+                    std::cout<<"Timestep: " << i << "/" << timesteps << std::endl;
+#endif
+                    solver.solve();
+#ifdef SOLVER_POSTPROCESSING
+                    solver.do_postprocessing();
+                    GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
+                    PostProcessing<GNUPLOT>::value(*grid.h, 1, g_w, g_h, i);
+#endif
+                }
+                solver.do_postprocessing();
+                GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
+
+#ifdef SOLVER_VERBOSE
+                std::cout << *grid.h << std::endl;
+#endif
+                //Standard solver using tags::CPU:
+                unsigned long g_h_standard(50);
+                unsigned long g_w_standard(50);
+                unsigned long timesteps_standard(200);
+
+                Grid<D2Q9, DataType_> grid_standard;
+                ScenarioCollection::get_scenario(scen, g_h_standard, g_w_standard, grid_standard);
+
+                PackedGridData<D2Q9, DataType_>  data_standard;
+                PackedGridInfo<D2Q9> info_standard;
+
+                GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_standard, info_standard, data_standard);
+
+                SolverLBMGrid<tags::CPU, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver_standard(&info_standard, &data_standard, grid_standard.d_x, grid_standard.d_y, grid_standard.d_t, grid_standard.tau);
+
+                solver_standard.do_preprocessing();
+
+                for(unsigned long i(0); i < timesteps_standard; ++i)
+                {
+#ifdef SOLVER_VERBOSE
+                    std::cout<<"Timestep: " << i << "/" << timesteps << std::endl;
+#endif
+                    solver_standard.solve();
+#ifdef SOLVER_POSTPROCESSING
+                    solver.do_postprocessing();
+                    GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid_standard, info_standard, data_standard);
+                    PostProcessing<GNUPLOT>::value(*grid_standard.h, 1, g_w_standard, g_h_standard, i);
+#endif
+                }
+                solver.do_postprocessing();
+                GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid_standard, info_standard, data_standard);
+
+#ifdef SOLVER_VERBOSE
+                std::cout << *grid_standard.h << std::endl;
+#endif
+
+                std::cout << grid.description <<": ";
+
+                TEST_CHECK_EQUAL(g_h, g_h_standard);
+                TEST_CHECK_EQUAL(g_w, g_w_standard);
+
+                //Compare CPU results of both solvers:
+                for(unsigned long i(0) ; i < g_h ; ++i)
+                {
+                    for(unsigned long j(0) ; j < g_w ; ++j)
+                    {
+#ifdef SOLVER_VERBOSE
+                        std::cout << "(" << i << " , " << j << ")" << std::endl;
+                        std::cout << (*grid.h)(i , j) << " " << (*grid_standard.h)(i , j) << std::endl;
+#endif
+                        TEST_CHECK_EQUAL_WITHIN_EPS((*grid.h)(i , j) , (*grid_standard.h)(i , j), std::numeric_limits<DataType_>::epsilon() * 2e2);
+                    }
+                }
+
+                //Save matrices to vectors, compute norm:
+                DenseVector<double> result_grid(g_h*g_w);
+                DenseVector<double> result_standard(g_h*g_w);
+
+                unsigned long inner(0);
+                for(unsigned long i(0) ; i < g_h ; ++i)
+                {
+                    for(unsigned long j(0) ; j < g_w ; ++j)
+                    {
+                        result_grid[inner] = (*grid.h)(i , j);
+                        result_standard[inner] = (*grid_standard.h)(i , j);
+                        ++inner;
+                    }
+                }
+
+                Difference<tags::CPU>::value(result_grid, result_standard);
+                double l2 = Norm<vnt_l_two, false, tags::CPU>::value(result_grid);
+                TEST_CHECK_EQUAL_WITHIN_EPS(l2, DataType_(0.), std::numeric_limits<DataType_>::epsilon() * 2);
+
+                std::cout << "L2 norm " << l2 << std::endl;
+            }
+        }
+};
+SimpleSolverLBMGridRegressionTest<tags::CPU::MultiCore, float> mc_simple_solver_test_float("float");
+SimpleSolverLBMGridRegressionTest<tags::CPU::MultiCore, double> mc_simple_solver_test_double("double");
+#ifdef HONEI_SSE
+SimpleSolverLBMGridRegressionTest<tags::CPU::SSE, float> sse_simple_solver_test_float("float");
+SimpleSolverLBMGridRegressionTest<tags::CPU::SSE, double> sse_simple_solver_test_double("double");
+SimpleSolverLBMGridRegressionTest<tags::CPU::MultiCore::SSE, float> mcsse_simple_solver_test_float("float");
+SimpleSolverLBMGridRegressionTest<tags::CPU::MultiCore::SSE, double> mcsse_simple_solver_test_double("double");
+#endif
+#ifdef HONEI_CUDA
+SimpleSolverLBMGridRegressionTest<tags::GPU::CUDA, float> cuda_simple_solver_test_float("float");
+#endif
+#ifdef HONEI_CELL
+SimpleSolverLBMGridRegressionTest<tags::Cell, float> cell_simple_solver_test_float("float");
 #endif
 

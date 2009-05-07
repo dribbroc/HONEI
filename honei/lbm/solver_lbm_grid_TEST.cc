@@ -192,3 +192,84 @@ SolverLBMGridMassConservationTest<tags::GPU::CUDA, float> cuda_solver_grid_mc_te
 SolverLBMGridMassConservationTest<tags::Cell, float> cell_solver_grid_mc_test_float("float");
 #endif
 
+
+template <typename Tag_, typename DataType_>
+class SimpleSolverLBMGridMassConservationTest :
+    public TaggedTest<Tag_>
+{
+    public:
+        SimpleSolverLBMGridMassConservationTest(const std::string & type) :
+            TaggedTest<Tag_>("simple_solver_lbm_grid_mass_cons_test<" + type + ">")
+    {
+    }
+
+        virtual void run() const
+        {
+            unsigned long g_h(50);
+            unsigned long g_w(50);
+            unsigned long timesteps(100);
+
+            DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
+            Cuboid<DataType_> a(h, 5, 5, DataType_(0.02), 25, 25);
+            a.value();
+
+            DenseMatrix<DataType_> u(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> v(g_h, g_w, DataType_(0.));
+
+            DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
+
+            Grid<D2Q9, DataType_> grid;
+            DenseMatrix<bool> obstacles(g_h, g_w, false);
+            grid.obstacles = &obstacles;
+            grid.h = &h;
+            grid.u = &u;
+            grid.v = &v;
+            grid.b = &b;
+
+            PackedGridData<D2Q9, DataType_>  data;
+            PackedGridInfo<D2Q9> info;
+
+            GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
+
+            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_, lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info, &data, 1., 1., 1., 1.5);
+
+            solver.do_preprocessing();
+
+            for(unsigned long i(0); i < timesteps; ++i)
+            {
+#ifdef SOLVER_VERBOSE
+                std::cout<<"Timestep: " << i << "/" << timesteps << std::endl;
+#endif
+                solver.solve();
+#ifdef SOLVER_POSTPROCESSING
+                solver.do_postprocessing();
+                GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
+                PostProcessing<GNUPLOT>::value(*grid.h, 1, g_w, g_h, i);
+#endif
+            }
+            solver.do_postprocessing();
+            GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
+            DataType_ ana_vol(5. * 5. * 0.02 + g_w * g_h * 0.05);
+            std::cout << "Analytical Vol.: " << ana_vol << " ";
+            DataType_ vol = GaussianQuadrature2D<tags::CPU, tags::Trapezoid>::value(h, DataType_(0), DataType_(g_w), DataType_(1.), DataType_(1.));
+            std::cout << "Vol.: " << vol << std::endl;
+            TEST_CHECK_EQUAL_WITHIN_EPS(vol, ana_vol, 0.1);
+        }
+
+};
+SimpleSolverLBMGridMassConservationTest<tags::CPU, float> simple_solver_grid_mc_test_float("float");
+SimpleSolverLBMGridMassConservationTest<tags::CPU, double> simple_solver_grid_mc_test_double("double");
+SimpleSolverLBMGridMassConservationTest<tags::CPU::MultiCore, float> mc_simple_solver_grid_mc_test_float("float");
+SimpleSolverLBMGridMassConservationTest<tags::CPU::MultiCore, double> mc_simple_solver_grid_mc_test_double("double");
+#ifdef HONEI_SSE
+SimpleSolverLBMGridMassConservationTest<tags::CPU::SSE, float> sse_simple_solver_grid_mc_test_float("float");
+SimpleSolverLBMGridMassConservationTest<tags::CPU::SSE, double> sse_simple_solver_grid_mc_test_double("double");
+SimpleSolverLBMGridMassConservationTest<tags::CPU::MultiCore::SSE, float> mcsse_simple_solver_grid_mc_test_float("float");
+SimpleSolverLBMGridMassConservationTest<tags::CPU::MultiCore::SSE, double> mcsse_simple_solver_grid_mc_test_double("double");
+#endif
+#ifdef HONEI_CUDA
+SimpleSolverLBMGridMassConservationTest<tags::GPU::CUDA, float> cuda_simple_solver_grid_mc_test_float("float");
+#endif
+#ifdef HONEI_Cell
+SimpleSolverLBMGridMassConservationTest<tags::Cell, float> cell_simple_solver_grid_mc_test_float("float");
+#endif

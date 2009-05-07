@@ -97,7 +97,7 @@ class CollideStreamGridLABSWETest :
             CollideStreamGrid<Tag_, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                 value(info, data, tau);
             data.f_temp_1->lock(lm_read_only);
-            std::cout<<*data.f_temp_4;
+            //std::cout<<*data.f_temp_1;
             data.f_temp_1->unlock(lm_read_only);
         }
 };
