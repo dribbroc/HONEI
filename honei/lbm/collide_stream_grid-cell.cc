@@ -24,8 +24,6 @@
 
 #include <honei/lbm/collide_stream_grid.hh>
 
-#include <iostream>
-
 
 using namespace honei;
 
@@ -91,6 +89,28 @@ void CollideStreamGrid<tags::Cell, lbm_boundary_types::NOSLIP,
     SPEInstructionQueue q5;
     unsigned a_offset, skip, width;
     width = dir_1[0] + dir_index_1[1];
+
+    SPEFrameworkInstruction<3, float, rtm_dma> instruction_3(oc_collide_stream_grid_float,
+            f_temp_3 + dir_3[0], f_3 + dir_index_3[0], f_eq_3 + dir_index_3[0], dir_index_3[info.dir_index_3->size() - 1] - dir_index_3[0], tau);
+    if (instruction_3.use_spe())
+    {
+        q0.push_back(instruction_3);
+    }
+
+    SPEFrameworkInstruction<3, float, rtm_dma> instruction_7(oc_collide_stream_grid_float,
+            f_temp_7 + dir_7[0], f_7 + dir_index_7[0], f_eq_7 + dir_index_7[0], dir_index_7[info.dir_index_7->size() - 1] - dir_index_7[0], tau);
+    if (instruction_7.use_spe())
+    {
+        q0.push_back(instruction_7);
+    }
+
+    SPEFrameworkInstruction<3, float, rtm_dma> instruction_0(oc_collide_stream_grid_float,
+            f_temp_0, f_0, f_eq_0, limits[info.limits->size() - 1], tau);
+    if (instruction_0.use_spe())
+    {
+        q0.push_back(instruction_0);
+    }
+    SPEManager::instance()->dispatch(q0);
 
     a_offset = (((unsigned long)f_temp_1 + dir_1[0] * sizeof(float))& 0xF) / sizeof(float);
     skip = (16 / sizeof(float) - a_offset) % (16 / sizeof(float));
@@ -166,27 +186,6 @@ void CollideStreamGrid<tags::Cell, lbm_boundary_types::NOSLIP,
     }
     SPEManager::instance()->dispatch(q5);
 
-    SPEFrameworkInstruction<3, float, rtm_dma> instruction_3(oc_collide_stream_grid_float,
-            f_temp_3 + dir_3[0], f_3 + dir_index_3[0], f_eq_3 + dir_index_3[0], dir_index_3[info.dir_index_3->size() - 1] - dir_index_3[0], tau);
-    if (instruction_3.use_spe())
-    {
-        q0.push_back(instruction_3);
-    }
-
-    SPEFrameworkInstruction<3, float, rtm_dma> instruction_7(oc_collide_stream_grid_float,
-            f_temp_7 + dir_7[0], f_7 + dir_index_7[0], f_eq_7 + dir_index_7[0], dir_index_7[info.dir_index_7->size() - 1] - dir_index_7[0], tau);
-    if (instruction_7.use_spe())
-    {
-        q0.push_back(instruction_7);
-    }
-
-    SPEFrameworkInstruction<3, float, rtm_dma> instruction_0(oc_collide_stream_grid_float,
-            f_temp_0, f_0, f_eq_0, limits[info.limits->size() - 1], tau);
-    if (instruction_0.use_spe())
-    {
-        q0.push_back(instruction_0);
-    }
-    SPEManager::instance()->dispatch(q0);
 
     for (unsigned long i(instruction_0.transfer_end()) ; i < limits[info.limits->size() - 1] ; ++i)
     {
