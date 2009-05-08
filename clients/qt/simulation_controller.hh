@@ -61,14 +61,14 @@ class SimulationController
         Simulation<tags::GPU::CUDA, lbm_applications::LABSWE, float,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> * _cuda_full_dry_simulation;
 #endif
 
-        Simulation<tags::CPU, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> * _cpu_full_wet_simulation;
+        Simulation<tags::CPU, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> * _cpu_full_wet_simulation;
 
 #ifdef HONEI_SSE
-        Simulation<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> * _sse_full_wet_simulation;
+        Simulation<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> * _sse_full_wet_simulation;
 #endif
 
 #ifdef HONEI_CUDA
-        Simulation<tags::GPU::CUDA, lbm_applications::LABSWE, float,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> * _cuda_full_wet_simulation;
+        Simulation<tags::GPU::CUDA, lbm_applications::LABSWE, float,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> * _cuda_full_wet_simulation;
 #endif
 
         Simulation<tags::CPU, lbm_applications::LABSWE, Prec_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> * _cpu_wet_simulation;
@@ -85,6 +85,32 @@ class SimulationController
         bool _d2q9_flag;
 
     public:
+        ///Constructor
+        SimulationController() :
+            _noslip_flag(true),
+            _d2q9_flag(true),
+            _current_solver(cpu_full_dry) ///Init wit CPU
+    {
+        _cpu_full_dry_simulation = new Simulation<tags::CPU, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> ();
+
+#ifdef HONEI_SSE ///Reset to SSE if possible
+        _sse_full_dry_simulation = new Simulation<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> ();
+        _sse_full_wet_simulation = 0;
+        _sse_wet_simulation = 0;
+
+        _current_solver = sse_full_dry;
+        delete _cpu_full_dry_simulation;
+        _cpu_full_dry_simulation = 0;
+#endif
+#ifdef HONEI_CUDA
+        _cuda_full_dry_simulation = 0;
+        _cuda_full_wet_simulation = 0;
+        _cuda_wet_simulation = 0;
+#endif
+        _cpu_full_wet_simulation = 0;
+        _cpu_wet_simulation = 0;
+    }
+
         void do_timestep()
         {
             switch(_current_solver)
@@ -379,23 +405,59 @@ class SimulationController
             }
         }
 
-        ///Constructor
-        SimulationController() :
-            _noslip_flag(true),
-            _d2q9_flag(true),
-            _current_solver(sse_full_dry)
-    {
-        _sse_full_dry_simulation = new Simulation<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> ();
-    }
 
         void reload_simulation()
         {
             switch (_current_solver)
             {
+#ifdef HONEI_SSE
                 case sse_full_dry:
                     {
                         delete _sse_full_dry_simulation;
                         _sse_full_dry_simulation = new Simulation<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> ();
+                    }
+                case sse_full_wet:
+                    {
+                        delete _sse_full_wet_simulation;
+                        _sse_full_wet_simulation = new Simulation<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> ();
+                    }
+                case sse_wet:
+                    {
+                        delete _sse_wet_simulation;
+                        _sse_wet_simulation = new Simulation<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> ();
+                    }
+#endif
+#ifdef HONEI_CUDA
+                case cuda_full_dry:
+                    {
+                        delete _cuda_full_dry_simulation;
+                        _cuda_full_dry_simulation = new Simulation<tags::GPU::CUDA, lbm_applications::LABSWE, float,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> ();
+                    }
+                case cuda_full_wet:
+                    {
+                        delete _cuda_full_wet_simulation;
+                        _cuda_full_wet_simulation = new Simulation<tags::GPU::CUDA, lbm_applications::LABSWE, float,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> ();
+                    }
+                case cuda_wet:
+                    {
+                        delete _cuda_wet_simulation;
+                        _cuda_wet_simulation = new Simulation<tags::GPU::CUDA, lbm_applications::LABSWE, float,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> ();
+                    }
+#endif
+                case cpu_full_dry:
+                    {
+                        delete _cpu_full_dry_simulation;
+                        _cpu_full_dry_simulation = new Simulation<tags::CPU, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> ();
+                    }
+                case cpu_full_wet:
+                    {
+                        delete _cpu_full_wet_simulation;
+                        _cpu_full_wet_simulation = new Simulation<tags::CPU, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> ();
+                    }
+                case cpu_wet:
+                    {
+                        delete _cpu_wet_simulation;
+                        _cpu_wet_simulation = new Simulation<tags::CPU, lbm_applications::LABSWE, Prec_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> ();
                     }
             }
         }
