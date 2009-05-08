@@ -152,13 +152,17 @@ void GLWidget::paintGL()
     {
         if (_solver_precision_flag)
         {
-            _render_matrix(_sim_control_float->get_b(), 0.0, 0.8, 0.0, 1.);
-            _render_matrix(_sim_control_float->get_hb(), 0.0, 0.0, 0.8, 0.5);
+            DenseMatrix<float> b(_sim_control_float->get_b());
+            _render_matrix(b, 0.0, 0.8, 0.0, 1.);
+            DenseMatrix<float> hb(_sim_control_float->get_hb());
+            _render_matrix(hb, 0.0, 0.0, 0.8, 0.5);
         }
         else
         {
-            _render_matrix(_sim_control_double->get_b(), 0.0, 0.8, 0.0, 1.);
-            _render_matrix(_sim_control_double->get_hb(), 0.0, 0.0, 0.8, 0.5);
+            DenseMatrix<double> b(_sim_control_double->get_b());
+            _render_matrix(b, 0.0, 0.8, 0.0, 1.);
+            DenseMatrix<double> hb(_sim_control_double->get_hb());
+            _render_matrix(hb, 0.0, 0.0, 0.8, 0.5);
         }
     }
     else
