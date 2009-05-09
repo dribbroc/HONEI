@@ -517,6 +517,62 @@ class SimulationController
                     break;
             }
         }
+
+        std::string get_simulation_info()
+        {
+            switch (_current_solver)
+            {
+#ifdef HONEI_SSE
+                case sse_full_dry:
+                    {
+                        return _sse_full_dry_simulation->get_grid().description;
+                    }
+                    break;
+                case sse_full_wet:
+                    {
+                        return _sse_full_wet_simulation->get_grid().description;
+                    }
+                    break;
+                case sse_wet:
+                    {
+                        return _sse_wet_simulation->get_grid().description;
+                    }
+                    break;
+#endif
+#ifdef HONEI_CUDA
+                case cuda_full_dry:
+                    {
+                        return _cuda_full_dry_simulation->get_grid().description;
+                    }
+                    break;
+                case cuda_full_wet:
+                    {
+                        return _cuda_full_wet_simulation->get_grid().description;
+                    }
+                    break;
+                case cuda_wet:
+                    {
+                        return _cuda_wet_simulation->get_grid().description;
+                    }
+                    break;
+#endif
+                case cpu_full_dry:
+                    {
+                        return _cpu_full_dry_simulation->get_grid().description;
+                    }
+                    break;
+                case cpu_full_wet:
+                    {
+                        return _cpu_full_wet_simulation->get_grid().description;
+                    }
+                    break;
+                case cpu_wet:
+                    {
+                        return _cpu_wet_simulation->get_grid().description;
+                    }
+                    break;
+            }
+        }
 };
 
 #endif

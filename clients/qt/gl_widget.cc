@@ -323,20 +323,27 @@ void GLWidget::_render_hud()
 {
     if(_hud_on_flag)
     {
-        std::string hud_text_1("backend:   ");
+        std::string hud_text_1("backend:     ");
         if(_solver_precision_flag)
             hud_text_1 += _sim_control_float->get_backend_info();
         else
             hud_text_1 += _sim_control_double->get_backend_info();
 
-        std::string hud_text_2("precision:  ");
+        std::string hud_text_2("precision:    ");
         if(_solver_precision_flag)
             hud_text_2 += "single";
         else
             hud_text_2 += "double";
 
+        std::string hud_text_3("simulation:  ");
+        if(_solver_precision_flag)
+            hud_text_3 += _sim_control_float->get_simulation_info();
+        else
+            hud_text_2 += _sim_control_float->get_simulation_info();
+
         const char * txt_1 = hud_text_1.c_str();
         const char * txt_2 = hud_text_2.c_str();
+        const char * txt_3 = hud_text_3.c_str();
 
         glMatrixMode( GL_PROJECTION );
         glPushMatrix();
@@ -351,6 +358,7 @@ void GLWidget::_render_hud()
 
         renderText( 10, 20, QString(txt_1), QFont("System", 8) );
         renderText( 10, 35, QString(txt_2), QFont("System", 8) );
+        renderText( 10, 50, QString(txt_3), QFont("System", 8) );
 
         glPopMatrix();
 
