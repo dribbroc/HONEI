@@ -37,7 +37,7 @@ const unsigned int RotTimer = 0;	// 0 = workproc, i.e., when there are no more U
 : QGLWidget( QGLFormat(QGL::SampleBuffers), father),			// enables multi-sampling
       m_object(0), m_xRot(0), m_yRot(0), m_zRot(0),
       m_xTrans(0), m_yTrans(0.), m_zTrans(1.),
-      m_curr_rot(0), _solver_precision_flag(true), _solver_start_stop_flag(false), _render_idle_flag(false),
+      m_curr_rot(0), _solver_precision_flag(true), _solver_start_stop_flag(false), _render_idle_flag(false), _hud_on_flag(true),
       _sim_w(50), _sim_h(50), _sim_id(0)
 {
     if ( ! format().sampleBuffers() )
@@ -321,39 +321,49 @@ void GLWidget::_normalize_angle( int *angle ) const
 
 void GLWidget::_render_hud()
 {
-    std::string hud_text_1("backend:   ");
-    if(_solver_precision_flag)
-        hud_text_1 += _sim_control_float->get_backend_info();
-    else
-        hud_text_1 += _sim_control_double->get_backend_info();
+    if(_hud_on_flag)
+    {
+        std::string hud_text_1("backend:   ");
+        if(_solver_precision_flag)
+            hud_text_1 += _sim_control_float->get_backend_info();
+        else
+            hud_text_1 += _sim_control_double->get_backend_info();
 
-    std::string hud_text_2("precision:  ");
-    if(_solver_precision_flag)
-        hud_text_2 += "single";
-    else
-        hud_text_2 += "double";
+        std::string hud_text_2("precision:  ");
+        if(_solver_precision_flag)
+            hud_text_2 += "single";
+        else
+            hud_text_2 += "double";
 
-    const char * txt_1 = hud_text_1.c_str();
-    const char * txt_2 = hud_text_2.c_str();
+        const char * txt_1 = hud_text_1.c_str();
+        const char * txt_2 = hud_text_2.c_str();
 
-    glMatrixMode( GL_PROJECTION );
-    glPushMatrix();
-    glLoadIdentity();
-    glMatrixMode( GL_MODELVIEW );
+        glMatrixMode( GL_PROJECTION );
+        glPushMatrix();
+        glLoadIdentity();
+        glMatrixMode( GL_MODELVIEW );
 
-    glDisable( GL_DEPTH_TEST );
-    glColor3f( 1.0, 0.0, 0.0 );
+        glDisable( GL_DEPTH_TEST );
+        glColor3f( 1.0, 0.0, 0.0 );
 
-    glPushMatrix();
-    glLoadIdentity();
+        glPushMatrix();
+        glLoadIdentity();
 
-    renderText( 10, 20, QString(txt_1), QFont("System", 8) );
-    renderText( 10, 35, QString(txt_2), QFont("System", 8) );
+        renderText( 10, 20, QString(txt_1), QFont("System", 8) );
+        renderText( 10, 35, QString(txt_2), QFont("System", 8) );
 
-    glPopMatrix();
+        glPopMatrix();
 
-    glMatrixMode( GL_PROJECTION );
-    glPopMatrix();
-    glMatrixMode( GL_MODELVIEW );
-    glEnable(GL_DEPTH_TEST);
+        glMatrixMode( GL_PROJECTION );
+        glPopMatrix();
+        glMatrixMode( GL_MODELVIEW );
+        glEnable(GL_DEPTH_TEST);
+    }
+}
+
+void GLWidget::hud_on_off()
+{
+    _hud_on_flag = !_hud_on_flag;
+
+    updateGL();
 }

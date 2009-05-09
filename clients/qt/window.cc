@@ -52,6 +52,8 @@ Window::Window()
 
 void Window::create_menu()
 {
+
+    ///Simulation menu:
     _simulation_menu = menuBar() -> addMenu(tr("&Simulation"));
     _solver_start_stop_action = new QAction(tr("&Start/Stop"), this);
     _solver_start_stop_action->setShortcut(tr("Ctrl+S"));
@@ -67,6 +69,15 @@ void Window::create_menu()
             this, SLOT(_simulation_reload()));
 
     _simulation_menu->addAction(_simulation_reload_action);
+
+    ///HUD menu:
+    _hud_menu = menuBar() -> addMenu(tr("&HUD"));
+    _hud_on_off_action = new QAction(tr("&On/Off"), this);
+    _hud_on_off_action->setShortcut(tr("Ctrl+I"));
+    connect(_hud_on_off_action, SIGNAL(triggered()),
+            this, SLOT(_hud_on_off()));
+
+    _hud_menu->addAction(_hud_on_off_action);
 }
 
 void Window::_solver_start_stop()
@@ -77,4 +88,9 @@ void Window::_solver_start_stop()
 void Window::_simulation_reload()
 {
     glWidget->simulation_reload();
+}
+
+void Window::_hud_on_off()
+{
+    glWidget->hud_on_off();
 }

@@ -38,6 +38,7 @@ class GLWidget : public QGLWidget
 
         void solver_start_stop();
         void simulation_reload();
+        void hud_on_off();
 
     protected:
         virtual void initializeGL();
@@ -63,6 +64,7 @@ class GLWidget : public QGLWidget
         bool _render_idle_flag;
         bool _solver_precision_flag;
         bool _solver_start_stop_flag;
+        bool _hud_on_flag;
         unsigned long _sim_h, _sim_w, _sim_id;
         solver_type _current_solver;
 

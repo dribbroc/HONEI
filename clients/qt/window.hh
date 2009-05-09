@@ -48,11 +48,15 @@ class Window : public QMainWindow
         QAction * _solver_start_stop_action;
         QAction * _simulation_reload_action;
 
+        QMenu * _hud_menu;
+        QAction * _hud_on_off_action;
+
         void create_menu();
 
     private slots:
         void _solver_start_stop();
         void _simulation_reload();
+        void _hud_on_off();
 };
 
 #endif
