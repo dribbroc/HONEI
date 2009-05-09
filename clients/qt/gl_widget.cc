@@ -37,7 +37,8 @@ const unsigned int RotTimer = 0;	// 0 = workproc, i.e., when there are no more U
 : QGLWidget( QGLFormat(QGL::SampleBuffers), father),			// enables multi-sampling
       m_object(0), m_xRot(0), m_yRot(0), m_zRot(0),
       m_xTrans(0), m_yTrans(0.), m_zTrans(1.),
-      m_curr_rot(0), _solver_precision_flag(true), _solver_start_stop_flag(false), _render_idle_flag(false)
+      m_curr_rot(0), _solver_precision_flag(true), _solver_start_stop_flag(false), _render_idle_flag(false),
+      _sim_w(50), _sim_h(50), _sim_id(0)
 {
     if ( ! format().sampleBuffers() )
         fprintf(stderr, "Could not get sample buffer; no polygon anti-aliasing!");
@@ -54,6 +55,12 @@ const unsigned int RotTimer = 0;	// 0 = workproc, i.e., when there are no more U
         _sim_control_float = 0;
         _sim_control_double = new SimulationController<double>();
     }
+
+#ifdef HONEI_SSE
+    _current_solver = sse_full_dry;
+#else
+    _current_solver = cpu_full_dry;
+#endif
 
     _idle_hb = new DenseMatrix<float>(50, 50, float(0));
     _idle_b = new DenseMatrix<float>(50, 50, float(0));
@@ -170,6 +177,8 @@ void GLWidget::paintGL()
             _render_matrix(*_idle_hb, 0.0, 0.8, 0.0, 1.);
             _render_matrix(*_idle_b, 0.0, 0.0, 0.8, 0.5);
     }
+
+    _render_hud();
 }
 
 void GLWidget::resizeGL( int w, int h )		// = width & height
@@ -308,4 +317,43 @@ void GLWidget::_normalize_angle( int *angle ) const
         *angle += 360;
     while (*angle > 360 )
         *angle -= 360;
+}
+
+void GLWidget::_render_hud()
+{
+    std::string hud_text_1("backend:   ");
+    if(_solver_precision_flag)
+        hud_text_1 += _sim_control_float->get_backend_info();
+    else
+        hud_text_1 += _sim_control_double->get_backend_info();
+
+    std::string hud_text_2("precision:  ");
+    if(_solver_precision_flag)
+        hud_text_2 += "single";
+    else
+        hud_text_2 += "double";
+
+    const char * txt_1 = hud_text_1.c_str();
+    const char * txt_2 = hud_text_2.c_str();
+
+    glMatrixMode( GL_PROJECTION );
+    glPushMatrix();
+    glLoadIdentity();
+    glMatrixMode( GL_MODELVIEW );
+
+    glDisable( GL_DEPTH_TEST );
+    glColor3f( 1.0, 0.0, 0.0 );
+
+    glPushMatrix();
+    glLoadIdentity();
+
+    renderText( 10, 20, QString(txt_1), QFont("System", 8) );
+    renderText( 10, 35, QString(txt_2), QFont("System", 8) );
+
+    glPopMatrix();
+
+    glMatrixMode( GL_PROJECTION );
+    glPopMatrix();
+    glMatrixMode( GL_MODELVIEW );
+    glEnable(GL_DEPTH_TEST);
 }

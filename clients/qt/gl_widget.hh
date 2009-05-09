@@ -63,6 +63,8 @@ class GLWidget : public QGLWidget
         bool _render_idle_flag;
         bool _solver_precision_flag;
         bool _solver_start_stop_flag;
+        unsigned long _sim_h, _sim_w, _sim_id;
+        solver_type _current_solver;
 
         SimulationController<float>* _sim_control_float;
         SimulationController<double>* _sim_control_double;
@@ -73,6 +75,8 @@ class GLWidget : public QGLWidget
 
         template <typename Prec_>
         void _render_matrix( DenseMatrix<Prec_> & matrix, float r, float g, float b, float a);
+
+        void _render_hud();
 
     private slots:
         void solver_event();

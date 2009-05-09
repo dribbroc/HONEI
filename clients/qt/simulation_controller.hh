@@ -461,6 +461,62 @@ class SimulationController
                     }
             }
         }
+
+        std::string get_backend_info()
+        {
+            switch (_current_solver)
+            {
+#ifdef HONEI_SSE
+                case sse_full_dry:
+                    {
+                        return "SSE";
+                    }
+                    break;
+                case sse_full_wet:
+                    {
+                        return "SSE";
+                    }
+                    break;
+                case sse_wet:
+                    {
+                        return "SSE";
+                    }
+                    break;
+#endif
+#ifdef HONEI_CUDA
+                case cuda_full_dry:
+                    {
+                        return "CUDA";
+                    }
+                    break;
+                case cuda_full_wet:
+                    {
+                        return "CUDA";
+                    }
+                    break;
+                case cuda_wet:
+                    {
+                        return "CUDA";
+                    }
+                    break;
+#endif
+                case cpu_full_dry:
+                    {
+                        return "CPU";
+                    }
+                    break;
+                case cpu_full_wet:
+                    {
+                        return "CPU";
+                    }
+                    break;
+                case cpu_wet:
+                    {
+                        return "CPU";
+                    }
+                    break;
+            }
+        }
 };
 
 #endif
