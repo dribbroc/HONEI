@@ -35,6 +35,7 @@
 #include <honei/la/dense_vector.hh>
 #include <honei/la/algorithm.hh>
 #include <honei/util/benchmark_info.hh>
+#include <honei/util/attributes.hh>
 #include <cmath>
 using namespace honei::lbm;
 
@@ -70,7 +71,7 @@ namespace honei
          *
          */
         template<typename DT1_, typename DT2_>
-            static void value(PackedGridData<D2Q9, DT1_> & data, PackedGridInfo<D2Q9> & info, DT2_ g, DT2_ d_x, DT2_ d_y, DT2_ d_t, DT2_ manning)
+            static void value(PackedGridData<D2Q9, DT1_> & data, PackedGridInfo<D2Q9> & info, DT2_ g, DT2_ d_x, DT2_ d_y, DT2_ d_t, HONEI_UNUSED DT2_ manning)
             {
                 CONTEXT("When computing LABSWE force term:");
 
@@ -574,7 +575,7 @@ namespace honei
          *
          */
         template<typename DT1_, typename DT2_>
-            static void value(PackedGridData<D2Q9, DT1_> & data, PackedGridInfo<D2Q9> & info, DT2_ g, DT2_ d_x, DT2_ d_y, DT2_ d_t, DT2_ manning_const)
+            static void value(PackedGridData<D2Q9, DT1_> & data, PackedGridInfo<D2Q9> & info, DT2_ g, DT2_ d_x, HONEI_UNUSED DT2_ d_y, DT2_ d_t, DT2_ manning_const)
             {
                 CONTEXT("When computing LABSWE force term:");
 
@@ -851,8 +852,16 @@ namespace honei
     struct ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::NONE, lbm_source_schemes::NONE>
     {
         template<typename DT1_, typename DT2_>
-            static void value(PackedGridData<D2Q9, DT1_> & data, PackedGridInfo<D2Q9> & info, DT2_ g, DT2_ d_x, DT2_ d_y, DT2_ d_t, DT2_ manning)
+            static void value(PackedGridData<D2Q9,  DT1_> & data,  PackedGridInfo<D2Q9> & info,  DT2_ g,  DT2_ d_x,  DT2_ d_y,  DT2_ d_t,  DT2_ manning)
             {
+                /// \todo Find out, why massive use of HONEI_UNUSED triggers compiler errors
+                (void) data;
+                (void) info;
+                (void) g;
+                (void) d_x;
+                (void) d_y;
+                (void) d_t;
+                (void) manning;
             }
 
             template<typename DT1_>

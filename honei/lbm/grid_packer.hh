@@ -26,7 +26,7 @@
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
 #include <vector>
-#include <iostream>
+#include <honei/util/attributes.hh>
 
 /**
  * \file
@@ -585,7 +585,7 @@ namespace honei
                 }
             }
 
-            static void unpack(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
+            static void unpack(Grid<D2Q9, DT_> & grid, HONEI_UNUSED PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
             {
                 grid.obstacles->lock(lm_read_only);
                 grid.h->lock(lm_write_only);

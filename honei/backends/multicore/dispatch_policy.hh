@@ -21,6 +21,7 @@
 #define MULTICORE_GUARD_POLICY_HH 1
 
 #include <honei/backends/multicore/ticket.hh>
+#include <honei/util/attributes.hh>
 
 #include <tr1/functional>
 #include <vector>
@@ -36,7 +37,7 @@ namespace honei
 
             public:
 
-                Ticket<tags::CPU::MultiCore> * operator() (std::vector<unsigned> & tids)
+                Ticket<tags::CPU::MultiCore> * operator() ( HONEI_UNUSED std::vector<unsigned> & tids)
                 {
                     return new Ticket<tags::CPU::MultiCore>();
                 }

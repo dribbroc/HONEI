@@ -87,9 +87,9 @@ class SimulationController
     public:
         ///Constructor
         SimulationController() :
+            _current_solver(cpu_full_dry), ///Init wit CPU
             _noslip_flag(true),
-            _d2q9_flag(true),
-            _current_solver(cpu_full_dry) ///Init wit CPU
+            _d2q9_flag(true)
     {
         _cpu_full_dry_simulation = new Simulation<tags::CPU, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> ();
 
@@ -337,6 +337,8 @@ class SimulationController
                         return result;
                     }
                     break;
+                default:
+                    throw InternalError("Wird nie passieren laut Markus!");
             }
         }
 
@@ -402,6 +404,8 @@ class SimulationController
                         return *_cpu_wet_simulation->get_grid().b;
                     }
                     break;
+                default:
+                    throw InternalError("Wird nie passieren laut Markus!");
             }
         }
 
@@ -515,6 +519,8 @@ class SimulationController
                         return "CPU";
                     }
                     break;
+                default:
+                    throw InternalError("Wird nie passieren laut Markus!");
             }
         }
 
@@ -571,6 +577,8 @@ class SimulationController
                         return _cpu_wet_simulation->get_grid().description;
                     }
                     break;
+                default:
+                    throw InternalError("Wird nie passieren laut Markus!");
             }
         }
 };

@@ -61,11 +61,11 @@ class GLWidget : public QGLWidget
 
         QTimer * _solver_timer;
 
-        bool _render_idle_flag;
         bool _solver_precision_flag;
         bool _solver_start_stop_flag;
+        bool _render_idle_flag;
         bool _hud_on_flag;
-        unsigned long _sim_h, _sim_w, _sim_id;
+        unsigned long _sim_w, _sim_h, _sim_id;
         float _sim_dx, _sim_dy, _sim_dt, _sim_tau;
 
         solver_type _current_solver;

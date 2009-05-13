@@ -31,9 +31,9 @@
 #include <honei/lbm/tags.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/lbm/grid.hh>
-#include <iostream>
 #include <honei/lbm/lbm_limiter.hh>
 #include <honei/util/benchmark_info.hh>
+#include <honei/util/attributes.hh>
 
 using namespace lbm;
 
@@ -218,7 +218,7 @@ namespace honei
         {
             public:
                 template<typename DT_>
-                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data, DT_ epsilon)
+                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data, HONEI_UNUSED DT_ epsilon)
                     {
                         CONTEXT("When extracting h, u and v:");
 
