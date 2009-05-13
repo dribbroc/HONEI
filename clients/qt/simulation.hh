@@ -51,6 +51,7 @@ class Simulation
 
     public:
 
+        ///Constructors
         Simulation() :
         _simulation_ready_flag(false)
         {
@@ -77,6 +78,28 @@ class Simulation
             _simulation_ready_flag = true;
         }
 
+        Simulation(unsigned long scenario_number,
+                   unsigned long sim_w,
+                   unsigned long sim_h,
+                   Prec_ sim_dx,
+                   Prec_ sim_dy,
+                   Prec_ sim_dt,
+                   Prec_ sim_tau) :
+        _simulation_ready_flag(false)
+        {
+            ScenarioCollection::get_scenario(scenario_number, 50, 50, _grid);
+            GridPacker<LatticeType_, BoundaryType_, Prec_>::pack(_grid, _info, _data);
+
+            _grid->d_x = sim_dx;
+            _grid->d_y = sim_dy;
+            _grid->d_t = sim_dt;
+            _grid->tau = sim_tau;
+            _solver = new SolverLBMGrid<Tag_, App_, Prec_, ForceScheme_, ForceType_, GridType_, LatticeType_, BoundaryType_, Mode_> (&_info, &_data, _grid.d_x, _grid.d_y, _grid.d_t, _grid.tau);
+
+            _solver->do_preprocessing();
+
+            _simulation_ready_flag = true;
+        }
         Grid<LatticeType_, Prec_> & get_grid()
         {
             return _grid;

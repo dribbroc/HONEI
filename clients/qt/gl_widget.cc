@@ -351,7 +351,7 @@ void GLWidget::_render_hud()
         glMatrixMode( GL_MODELVIEW );
 
         glDisable( GL_DEPTH_TEST );
-        glColor3f( 1.0, 0.0, 0.0 );
+        glColor3f( 1.0, 1.0, 1.0 );
 
         glPushMatrix();
         glLoadIdentity();

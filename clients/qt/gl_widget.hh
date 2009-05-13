@@ -66,6 +66,8 @@ class GLWidget : public QGLWidget
         bool _solver_start_stop_flag;
         bool _hud_on_flag;
         unsigned long _sim_h, _sim_w, _sim_id;
+        float _sim_dx, _sim_dy, _sim_dt, _sim_tau;
+
         solver_type _current_solver;
 
         SimulationController<float>* _sim_control_float;
