@@ -90,6 +90,23 @@ void Window::create_menu()
             qApp, SLOT(quit()));
     _simulation_menu->addAction(_exit_action);
 
+    ///Solver menu:
+    _solver_menu = menuBar() -> addMenu(tr("Sol&ver"));
+    _solver_backend_submenu = _solver_menu -> addMenu(tr("&switch backend"));
+    _solver_backend_cpu_action = new QAction(tr("CPU(FPU)"), this);
+    _solver_backend_cpu_action->setCheckable(true);
+    _solver_backend_submenu->addAction(_solver_backend_cpu_action);
+#ifdef HONEI_SSE
+    _solver_backend_sse_action = new QAction(tr("CPU(SSE)"), this);
+    _solver_backend_sse_action->setCheckable(true);
+    _solver_backend_submenu->addAction(_solver_backend_sse_action);
+#endif
+#ifdef HONEI_CUDA
+    _solver_backend_cuda_action = new QAction(tr("GPU(CUDA)"), this);
+    _solver_backend_cuda_action->setCheckable(true);
+    _solver_backend_submenu->addAction(_solver_backend_cuda_action);
+#endif
+
     ///HUD menu:
     _hud_menu = menuBar() -> addMenu(tr("&HUD"));
     _hud_on_off_action = new QAction(tr("&On/Off"), this);
@@ -121,12 +138,33 @@ void Window::_simulation_load()
 
     _simulation_load_actions[current_sim_id]->setChecked(false);
 
+    QAction * checked(0);
     for(unsigned long i(0) ; i <= ScenarioCollection::get_stable_scenario_count() ; ++i)
     {
         if (_simulation_load_actions[i]->isChecked() == true)
         {
             glWidget->simulation_load(i);
+            checked = _simulation_load_actions[i];
             break;
         }
     }
+    ///If previous scenario has been unchecked:
+    if(!checked)
+        _simulation_load_actions[current_sim_id]->setChecked(true);
 }
+
+void Window::_solver_backend_cpu()
+{
+}
+
+#ifdef HONEI_SSE
+void Window::_solver_backend_sse()
+{
+}
+#endif
+
+#ifdef HONEI_CUDA
+void Window::_solver_backend_cuda()
+{
+}
+#endif

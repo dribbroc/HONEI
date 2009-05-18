@@ -44,6 +44,7 @@ class Window : public QMainWindow
         QScrollArea * glArea;
         GLWidget *glWidget;
 
+        ///Simulation menu related members:
         QMenu * _simulation_menu;
         QAction * _solver_start_stop_action;
         QAction * _simulation_reload_action;
@@ -51,6 +52,18 @@ class Window : public QMainWindow
         std::vector<QAction *> _simulation_load_actions;
         QAction * _exit_action;
 
+        ///Solver menu related members:
+        QMenu * _solver_menu;
+        QMenu * _solver_backend_submenu;
+        QAction * _solver_backend_cpu_action;
+#ifdef HONEI_SSE
+        QAction * _solver_backend_sse_action;
+#endif
+#ifdef HONEI_CUDA
+        QAction * _solver_backend_cuda_action;
+#endif
+
+        ///HUD menu related members:
         QMenu * _hud_menu;
         QAction * _hud_on_off_action;
 
@@ -61,6 +74,13 @@ class Window : public QMainWindow
         void _simulation_reload();
         void _hud_on_off();
         void _simulation_load();
+        void _solver_backend_cpu();
+#ifdef HONEI_SSE
+        void _solver_backend_sse();
+#endif
+#ifdef HONEI_CUDA
+        void _solver_backend_cuda();
+#endif
 };
 
 #endif
