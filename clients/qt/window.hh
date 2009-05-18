@@ -75,12 +75,8 @@ class Window : public QMainWindow
         void _hud_on_off();
         void _simulation_load();
         void _solver_backend_cpu();
-#ifdef HONEI_SSE
         void _solver_backend_sse();
-#endif
-#ifdef HONEI_CUDA
         void _solver_backend_cuda();
-#endif
 };
 
 #endif

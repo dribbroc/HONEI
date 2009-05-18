@@ -92,19 +92,31 @@ void Window::create_menu()
 
     ///Solver menu:
     _solver_menu = menuBar() -> addMenu(tr("Sol&ver"));
-    _solver_backend_submenu = _solver_menu -> addMenu(tr("&switch backend"));
+    _solver_backend_submenu = _solver_menu -> addMenu(tr("&backend"));
     _solver_backend_cpu_action = new QAction(tr("CPU(FPU)"), this);
     _solver_backend_cpu_action->setCheckable(true);
     _solver_backend_submenu->addAction(_solver_backend_cpu_action);
+    connect(_solver_backend_cpu_action, SIGNAL(triggered()),
+            this, SLOT(_solver_backend_cpu()));
 #ifdef HONEI_SSE
     _solver_backend_sse_action = new QAction(tr("CPU(SSE)"), this);
     _solver_backend_sse_action->setCheckable(true);
     _solver_backend_submenu->addAction(_solver_backend_sse_action);
+    connect(_solver_backend_sse_action, SIGNAL(triggered()),
+            this, SLOT(_solver_backend_sse()));
 #endif
 #ifdef HONEI_CUDA
     _solver_backend_cuda_action = new QAction(tr("GPU(CUDA)"), this);
     _solver_backend_cuda_action->setCheckable(true);
     _solver_backend_submenu->addAction(_solver_backend_cuda_action);
+    connect(_solver_backend_cuda_action, SIGNAL(triggered()),
+            this, SLOT(_solver_backend_cuda()));
+#endif
+
+#ifdef HONEI_SSE
+    _solver_backend_sse_action->setChecked(true);
+#else
+    _solver_backend_cpu_action->setChecked(true);
 #endif
 
     ///HUD menu:
@@ -155,16 +167,40 @@ void Window::_simulation_load()
 
 void Window::_solver_backend_cpu()
 {
+    _solver_backend_cpu_action->setChecked(true);
+#ifdef HONEI_SSE
+    _solver_backend_sse_action->setChecked(false);
+#endif
+#ifdef HONEI_CUDA
+    _solver_backend_cuda_action->setChecked(false);
+#endif
+    glWidget->set_solver_backend(cpu);
 }
 
-#ifdef HONEI_SSE
 void Window::_solver_backend_sse()
 {
-}
+    _solver_backend_cpu_action->setChecked(false);
+#ifdef HONEI_SSE
+    _solver_backend_sse_action->setChecked(true);
 #endif
-
 #ifdef HONEI_CUDA
+    _solver_backend_cuda_action->setChecked(false);
+#endif
+#ifdef HONEI_SSE
+    glWidget->set_solver_backend(sse);
+#endif
+}
+
 void Window::_solver_backend_cuda()
 {
-}
+    _solver_backend_cpu_action->setChecked(false);
+#ifdef HONEI_SSE
+    _solver_backend_sse_action->setChecked(false);
 #endif
+#ifdef HONEI_CUDA
+    _solver_backend_cuda_action->setChecked(true);
+#endif
+#ifdef HONEI_CUDA
+    glWidget->set_solver_backend(cuda);
+#endif
+}

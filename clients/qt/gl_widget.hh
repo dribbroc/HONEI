@@ -38,6 +38,7 @@ class GLWidget : public QGLWidget
 
         unsigned long get_sim_id();
         void solver_start_stop();
+        void set_solver_backend(solver_type new_solver);
         void simulation_reload();
         void simulation_load(unsigned long id);
         void hud_on_off();

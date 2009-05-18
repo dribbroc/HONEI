@@ -351,7 +351,7 @@ void GLWidget::_render_hud()
         glMatrixMode( GL_MODELVIEW );
 
         glDisable( GL_DEPTH_TEST );
-        glColor3f( 1.0, 1.0, 1.0 );
+        glColor3f( 1.0, 0., 0. );
 
         glPushMatrix();
         glLoadIdentity();
@@ -395,6 +395,29 @@ void GLWidget::simulation_load(unsigned long id)
     else
         _sim_control_double->load_simulation(id);
 
+    _render_idle_flag = false;
+
+    updateGL();
+}
+
+void GLWidget::set_solver_backend(solver_type new_solver)
+{
+    if(_solver_start_stop_flag)
+        _solver_start_stop_flag = false;
+
+    if(!_render_idle_flag)
+        _render_idle_flag = true;
+
+    if(_solver_precision_flag)
+    {
+        _sim_control_float->reinit_backend(new_solver, _sim_id);
+        _current_solver = _sim_control_float->get_solver_type();
+    }
+    else
+    {
+        _sim_control_double->reinit_backend(new_solver, _sim_id);
+        _current_solver = _sim_control_double->get_solver_type();
+    }
     _render_idle_flag = false;
 
     updateGL();

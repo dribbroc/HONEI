@@ -31,16 +31,16 @@ enum solver_type
 #ifdef HONEI_SSE
     sse_full_dry,
     sse_full_wet,
-    sse_wet,
+    sse,
 #endif
 #ifdef HONEI_CUDA
     cuda_full_wet,
     cuda_full_dry,
-    cuda_wet,
+    cuda,
 #endif
     cpu_full_wet,
     cpu_full_dry,
-    cpu_wet
+    cpu
 };
 
 
@@ -71,14 +71,14 @@ class SimulationController
         Simulation<tags::GPU::CUDA, lbm_applications::LABSWE, float,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> * _cuda_full_wet_simulation;
 #endif
 
-        Simulation<tags::CPU, lbm_applications::LABSWE, Prec_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> * _cpu_wet_simulation;
+        Simulation<tags::CPU, lbm_applications::LABSWE, Prec_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> * _cpu_simulation;
 
 #ifdef HONEI_SSE
-        Simulation<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> * _sse_wet_simulation;
+        Simulation<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> * _sse_simulation;
 #endif
 
 #ifdef HONEI_CUDA
-        Simulation<tags::GPU::CUDA, lbm_applications::LABSWE, float,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> * _cuda_wet_simulation;
+        Simulation<tags::GPU::CUDA, lbm_applications::LABSWE, float,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> * _cuda_simulation;
 #endif
 
         bool _noslip_flag;
@@ -96,7 +96,7 @@ class SimulationController
 #ifdef HONEI_SSE ///Reset to SSE if possible
         _sse_full_dry_simulation = new Simulation<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> ();
         _sse_full_wet_simulation = 0;
-        _sse_wet_simulation = 0;
+        _sse_simulation = 0;
 
         _current_solver = sse_full_dry;
         delete _cpu_full_dry_simulation;
@@ -105,11 +105,16 @@ class SimulationController
 #ifdef HONEI_CUDA
         _cuda_full_dry_simulation = 0;
         _cuda_full_wet_simulation = 0;
-        _cuda_wet_simulation = 0;
+        _cuda_simulation = 0;
 #endif
         _cpu_full_wet_simulation = 0;
-        _cpu_wet_simulation = 0;
+        _cpu_simulation = 0;
     }
+
+        solver_type get_solver_type()
+        {
+            return _current_solver;
+        }
 
         void do_timestep()
         {
@@ -132,12 +137,12 @@ class SimulationController
                             GridPacker<D2Q9, NOSLIP, Prec_>::unpack(_sse_full_wet_simulation->get_grid(), _sse_full_wet_simulation->get_info(), _sse_full_wet_simulation->get_data());
                     }
                     break;
-                case sse_wet:
+                case sse:
                     {
-                        _sse_wet_simulation->get_solver().solve();
+                        _sse_simulation->get_solver().solve();
 
                         if(_noslip_flag && _d2q9_flag)
-                            GridPacker<D2Q9, NOSLIP, Prec_>::unpack(_sse_wet_simulation->get_grid(), _sse_wet_simulation->get_info(), _sse_wet_simulation->get_data());
+                            GridPacker<D2Q9, NOSLIP, Prec_>::unpack(_sse_simulation->get_grid(), _sse_simulation->get_info(), _sse_simulation->get_data());
                     }
                     break;
 #endif
@@ -158,12 +163,12 @@ class SimulationController
                             GridPacker<D2Q9, NOSLIP, float>::unpack(_cuda_full_wet_simulation->get_grid(), _cuda_full_wet_simulation->get_info(), _cuda_full_wet_simulation->get_data());
                     }
                     break;
-                case cuda_wet:
+                case cuda:
                     {
-                        _cuda_wet_simulation->get_solver().solve();
+                        _cuda_simulation->get_solver().solve();
 
                         if(_noslip_flag && _d2q9_flag)
-                            GridPacker<D2Q9, NOSLIP, float>::unpack(_cuda_wet_simulation->get_grid(), _cuda_wet_simulation->get_info(), _cuda_wet_simulation->get_data());
+                            GridPacker<D2Q9, NOSLIP, float>::unpack(_cuda_simulation->get_grid(), _cuda_simulation->get_info(), _cuda_simulation->get_data());
                     }
                     break;
 #endif
@@ -183,12 +188,12 @@ class SimulationController
                             GridPacker<D2Q9, NOSLIP, Prec_>::unpack(_cpu_full_wet_simulation->get_grid(), _cpu_full_wet_simulation->get_info(), _cpu_full_wet_simulation->get_data());
                     }
                     break;
-                case cpu_wet:
+                case cpu:
                     {
-                        _cpu_wet_simulation->get_solver().solve();
+                        _cpu_simulation->get_solver().solve();
 
                         if(_noslip_flag && _d2q9_flag)
-                            GridPacker<D2Q9, NOSLIP, Prec_>::unpack(_cpu_wet_simulation->get_grid(), _cpu_wet_simulation->get_info(), _cpu_wet_simulation->get_data());
+                            GridPacker<D2Q9, NOSLIP, Prec_>::unpack(_cpu_simulation->get_grid(), _cpu_simulation->get_info(), _cpu_simulation->get_data());
                     }
                     break;
 
@@ -210,9 +215,9 @@ class SimulationController
                         return *_sse_full_wet_simulation->get_grid().h;
                     }
                     break;
-                case sse_wet:
+                case sse:
                     {
-                        return *_sse_wet_simulation->get_grid().h;
+                        return *_sse_simulation->get_grid().h;
                     }
                     break;
 #endif
@@ -227,9 +232,9 @@ class SimulationController
                         return *_cuda_full_wet_simulation->get_grid().h;
                     }
                     break;
-                case cuda_wet:
+                case cuda:
                     {
-                        return *_cuda_wet_simulation->get_grid().h;
+                        return *_cuda_simulation->get_grid().h;
                     }
                     break;
 #endif
@@ -243,9 +248,9 @@ class SimulationController
                         return *_cpu_full_wet_simulation->get_grid().h;
                     }
                     break;
-                case cpu_wet:
+                case cpu:
                     {
-                        return *_cpu_wet_simulation->get_grid().h;
+                        return *_cpu_simulation->get_grid().h;
                     }
                     break;
             }
@@ -270,10 +275,10 @@ class SimulationController
                         return result;
                     }
                     break;
-                case sse_wet:
+                case sse:
                     {
-                        DenseMatrix<Prec_> result((*_sse_wet_simulation->get_grid().h).copy());
-                        Sum<tags::CPU::SSE>::value(result, (*_sse_wet_simulation->get_grid().b));
+                        DenseMatrix<Prec_> result((*_sse_simulation->get_grid().h).copy());
+                        Sum<tags::CPU::SSE>::value(result, (*_sse_simulation->get_grid().b));
                         return result;
                     }
                     break;
@@ -303,12 +308,12 @@ class SimulationController
                         return converted_result;
                     }
                     break;
-                case cuda_wet:
+                case cuda:
                     {
-                        DenseMatrix<float> result((*_cuda_wet_simulation->get_grid().h).copy());
+                        DenseMatrix<float> result((*_cuda_simulation->get_grid().h).copy());
                         DenseMatrix<Prec_> converted_result(result.rows(), result.columns());
 
-                        Sum<tags::GPU::CUDA>::value(result, (*_cuda_wet_simulation->get_grid().b));
+                        Sum<tags::GPU::CUDA>::value(result, (*_cuda_simulation->get_grid().b));
 
                         convert(converted_result, result);
 
@@ -330,10 +335,10 @@ class SimulationController
                         return result;
                     }
                     break;
-                case cpu_wet:
+                case cpu:
                     {
-                        DenseMatrix<Prec_> result((*_cpu_wet_simulation->get_grid().h).copy());
-                        Sum<tags::CPU::SSE>::value(result, (*_cpu_wet_simulation->get_grid().b));
+                        DenseMatrix<Prec_> result((*_cpu_simulation->get_grid().h).copy());
+                        Sum<tags::CPU::SSE>::value(result, (*_cpu_simulation->get_grid().b));
                         return result;
                     }
                     break;
@@ -357,9 +362,9 @@ class SimulationController
                         return *_sse_full_wet_simulation->get_grid().b;
                     }
                     break;
-                case sse_wet:
+                case sse:
                     {
-                        return *_sse_wet_simulation->get_grid().b;
+                        return *_sse_simulation->get_grid().b;
                     }
                     break;
 #endif
@@ -380,9 +385,9 @@ class SimulationController
                         return converted_result;
                     }
                     break;
-                case cuda_wet:
+                case cuda:
                     {
-                        DenseMatrix<float> result(*_cuda_wet_simulation->get_grid().b);
+                        DenseMatrix<float> result(*_cuda_simulation->get_grid().b);
                         DenseMatrix<Prec_> converted_result(result.rows(), result.columns());
                         convert(converted_result, result);
                         return converted_result;
@@ -399,9 +404,9 @@ class SimulationController
                         return *_cpu_full_wet_simulation->get_grid().b;
                     }
                     break;
-                case cpu_wet:
+                case cpu:
                     {
-                        return *_cpu_wet_simulation->get_grid().b;
+                        return *_cpu_simulation->get_grid().b;
                     }
                     break;
                 default:
@@ -424,10 +429,10 @@ class SimulationController
                         delete _sse_full_wet_simulation;
                         _sse_full_wet_simulation = new Simulation<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (id);
                     }
-                case sse_wet:
+                case sse:
                     {
-                        delete _sse_wet_simulation;
-                        _sse_wet_simulation = new Simulation<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (id);
+                        delete _sse_simulation;
+                        _sse_simulation = new Simulation<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (id);
                     }
 #endif
 #ifdef HONEI_CUDA
@@ -441,10 +446,10 @@ class SimulationController
                         delete _cuda_full_wet_simulation;
                         _cuda_full_wet_simulation = new Simulation<tags::GPU::CUDA, lbm_applications::LABSWE, float,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (id);
                     }
-                case cuda_wet:
+                case cuda:
                     {
-                        delete _cuda_wet_simulation;
-                        _cuda_wet_simulation = new Simulation<tags::GPU::CUDA, lbm_applications::LABSWE, float,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (id);
+                        delete _cuda_simulation;
+                        _cuda_simulation = new Simulation<tags::GPU::CUDA, lbm_applications::LABSWE, float,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (id);
                     }
 #endif
                 case cpu_full_dry:
@@ -457,10 +462,10 @@ class SimulationController
                         delete _cpu_full_wet_simulation;
                         _cpu_full_wet_simulation = new Simulation<tags::CPU, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (id);
                     }
-                case cpu_wet:
+                case cpu:
                     {
-                        delete _cpu_wet_simulation;
-                        _cpu_wet_simulation = new Simulation<tags::CPU, lbm_applications::LABSWE, Prec_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (id);
+                        delete _cpu_simulation;
+                        _cpu_simulation = new Simulation<tags::CPU, lbm_applications::LABSWE, Prec_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (id);
                     }
             }
         }
@@ -481,7 +486,7 @@ class SimulationController
                         return "SSE";
                     }
                     break;
-                case sse_wet:
+                case sse:
                     {
                         return "SSE";
                     }
@@ -498,7 +503,7 @@ class SimulationController
                         return "CUDA";
                     }
                     break;
-                case cuda_wet:
+                case cuda:
                     {
                         return "CUDA";
                     }
@@ -514,7 +519,7 @@ class SimulationController
                         return "CPU";
                     }
                     break;
-                case cpu_wet:
+                case cpu:
                     {
                         return "CPU";
                     }
@@ -539,9 +544,9 @@ class SimulationController
                         return _sse_full_wet_simulation->get_grid().description;
                     }
                     break;
-                case sse_wet:
+                case sse:
                     {
-                        return _sse_wet_simulation->get_grid().description;
+                        return _sse_simulation->get_grid().description;
                     }
                     break;
 #endif
@@ -556,9 +561,9 @@ class SimulationController
                         return _cuda_full_wet_simulation->get_grid().description;
                     }
                     break;
-                case cuda_wet:
+                case cuda:
                     {
-                        return _cuda_wet_simulation->get_grid().description;
+                        return _cuda_simulation->get_grid().description;
                     }
                     break;
 #endif
@@ -572,14 +577,277 @@ class SimulationController
                         return _cpu_full_wet_simulation->get_grid().description;
                     }
                     break;
-                case cpu_wet:
+                case cpu:
                     {
-                        return _cpu_wet_simulation->get_grid().description;
+                        return _cpu_simulation->get_grid().description;
                     }
                     break;
                 default:
                     throw InternalError("Undefined solver state.");
             }
+        }
+
+        void reinit_backend(solver_type new_solver, unsigned long id)
+        {
+            switch (_current_solver)
+            {
+#ifdef HONEI_SSE
+                case sse_full_dry:
+                    {
+                        switch(new_solver)
+                        {
+                            case sse:
+                                {
+                                }
+                                break;
+#ifdef HONEI_CUDA
+                            case cuda:
+                                {
+                                    _current_solver = cuda_full_dry;
+                                    load_simulation(id);
+                                }
+                                break;
+#endif
+                            case cpu:
+                                {
+                                    _current_solver = cpu_full_dry;
+                                    load_simulation(id);
+                                }
+                                break;
+                            default:
+                                throw InternalError("Undefined backend state.");
+                        }
+                    }
+                    break;
+                case sse_full_wet:
+                    {
+                        switch(new_solver)
+                        {
+                            case sse:
+                                {
+                                }
+                                break;
+#ifdef HONEI_CUDA
+                            case cuda:
+                                {
+                                    _current_solver = cuda_full_wet;
+                                    load_simulation(id);
+                                }
+                                break;
+#endif
+                            case cpu:
+                                {
+                                    _current_solver = cpu_full_wet;
+                                    load_simulation(id);
+                                }
+                                break;
+                            default:
+                                throw InternalError("Undefined backend state.");
+                        }
+                    }
+                    break;
+                case sse:
+                    {
+                        switch(new_solver)
+                        {
+                            case sse:
+                                {
+                                }
+                                break;
+#ifdef HONEI_CUDA
+                            case cuda:
+                                {
+                                    _current_solver = cuda;
+                                    load_simulation(id);
+                                }
+                                break;
+#endif
+                            case cpu:
+                                {
+                                    _current_solver = cpu;
+                                    load_simulation(id);
+                                }
+                                break;
+                            default:
+                                throw InternalError("Undefined backend state.");
+                        }
+                    }
+                    break;
+#endif
+#ifdef HONEI_CUDA
+                case cuda_full_dry:
+                    {
+                        switch(new_solver)
+                        {
+#ifdef HONEI_SSE
+                            case sse:
+                                {
+                                    _current_solver = sse_full_dry;
+                                    load_simulation(id);
+                                }
+                                break;
+#endif
+                            case cuda:
+                                {
+                                }
+                                break;
+                            case cpu:
+                                {
+                                    _current_solver = cpu_full_dry;
+                                    load_simulation(id);
+                                }
+                                break;
+                            default:
+                                throw InternalError("Undefined backend state.");
+                        }
+                    }
+                    break;
+                case cuda_full_wet:
+                    {
+                        switch(new_solver)
+                        {
+#ifdef HONEI_SSE
+                            case sse:
+                                {
+                                    _current_solver = sse_full_wet;
+                                    load_simulation(id);
+                                }
+                                break;
+#endif
+                            case cuda:
+                                {
+                                }
+                                break;
+                            case cpu:
+                                {
+                                    _current_solver = cpu_full_wet;
+                                    load_simulation(id);
+                                }
+                                break;
+                            default:
+                                throw InternalError("Undefined backend state.");
+                        }
+                    }
+                    break;
+                case cuda:
+                    {
+                        switch(new_solver)
+                        {
+#ifdef HONEI_SSE
+                            case sse:
+                                {
+                                    _current_solver = sse;
+                                    load_simulation(id);
+                                }
+                                break;
+#endif
+                            case cuda:
+                                {
+                                }
+                                break;
+                            case cpu:
+                                {
+                                    _current_solver = cpu;
+                                    load_simulation(id);
+                                }
+                                break;
+                            default:
+                                throw InternalError("Undefined backend state.");
+                        }
+                    }
+                    break;
+#endif
+                case cpu_full_dry:
+                    {
+                        switch(new_solver)
+                        {
+#ifdef HONEI_SSE
+                            case sse:
+                                {
+                                    _current_solver = sse_full_dry;
+                                    load_simulation(id);
+                                }
+                                break;
+#endif
+#ifdef HONEI_CUDA
+                            case cuda:
+                                {
+                                    _current_solver = cuda_full_dry;
+                                    load_simulation(id);
+                                }
+                                break;
+#endif
+                            case cpu:
+                                {
+                                }
+                                break;
+                            default:
+                                throw InternalError("Undefined backend state.");
+                        }
+                    }
+                    break;
+                case cpu_full_wet:
+                    {
+                        switch(new_solver)
+                        {
+#ifdef HONEI_SSE
+                            case sse:
+                                {
+                                    _current_solver = sse_full_wet;
+                                    load_simulation(id);
+                                }
+                                break;
+#endif
+#ifdef HONEI_CUDA
+                            case cuda:
+                                {
+                                    _current_solver = cuda_full_wet;
+                                    load_simulation(id);
+                                }
+                                break;
+#endif
+                            case cpu:
+                                {
+                                }
+                                break;
+                            default:
+                                throw InternalError("Undefined backend state.");
+                        }
+                    }
+                    break;
+                case cpu:
+                    {
+                        switch(new_solver)
+                        {
+#ifdef HONEI_SSE
+                            case sse:
+                                {
+                                    _current_solver = sse;
+                                    load_simulation(id);
+                                }
+                                break;
+#endif
+#ifdef HONEI_CUDA
+                            case cuda:
+                                {
+                                    _current_solver = cuda;
+                                    load_simulation(id);
+                                }
+                                break;
+#endif
+                            case cpu:
+                                {
+                                }
+                                break;
+                            default:
+                                throw InternalError("Undefined backend state.");
+                        }
+                    }
+                    break;
+                default:
+                    throw InternalError("Undefined solver state.");
+            }
+
         }
 };
 
