@@ -23,6 +23,7 @@
 
 #include <clients/qt/gl_widget.hh>
 #include <clients/qt/window.hh>
+#include <honei/lbm/scenario_collection.hh>
 
 Window::Window()
 {
@@ -70,6 +71,19 @@ void Window::create_menu()
 
     _simulation_menu->addAction(_simulation_reload_action);
 
+    _simulation_load_submenu = _simulation_menu -> addMenu(tr("&Load predefined"));
+    for (unsigned long i(0) ; i <= ScenarioCollection::get_stable_scenario_count() ; ++i)
+    {
+        QAction * action = new QAction(tr(ScenarioCollection::get_scenario_descr(i).c_str()), this);
+        action->setCheckable(true);
+        _simulation_load_actions.push_back(action);
+        _simulation_load_submenu->addAction(action);
+        connect(action, SIGNAL(triggered()),
+                this, SLOT(_simulation_load()));
+        if(glWidget->get_sim_id() == i)
+            action->setChecked(true);
+    }
+
     ///HUD menu:
     _hud_menu = menuBar() -> addMenu(tr("&HUD"));
     _hud_on_off_action = new QAction(tr("&On/Off"), this);
@@ -93,4 +107,20 @@ void Window::_simulation_reload()
 void Window::_hud_on_off()
 {
     glWidget->hud_on_off();
+}
+
+void Window::_simulation_load()
+{
+    unsigned long current_sim_id(glWidget->get_sim_id());
+
+    _simulation_load_actions[current_sim_id]->setChecked(false);
+
+    for(unsigned long i(0) ; i <= ScenarioCollection::get_stable_scenario_count() ; ++i)
+    {
+        if (_simulation_load_actions[i]->isChecked() == true)
+        {
+            glWidget->simulation_load(i);
+            break;
+        }
+    }
 }

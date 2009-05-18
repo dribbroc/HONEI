@@ -47,6 +47,8 @@ class Window : public QMainWindow
         QMenu * _simulation_menu;
         QAction * _solver_start_stop_action;
         QAction * _simulation_reload_action;
+        QMenu * _simulation_load_submenu;
+        std::vector<QAction *> _simulation_load_actions;
 
         QMenu * _hud_menu;
         QAction * _hud_on_off_action;
@@ -57,6 +59,7 @@ class Window : public QMainWindow
         void _solver_start_stop();
         void _simulation_reload();
         void _hud_on_off();
+        void _simulation_load();
 };
 
 #endif

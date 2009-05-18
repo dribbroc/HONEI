@@ -375,3 +375,13 @@ void GLWidget::hud_on_off()
 
     updateGL();
 }
+
+unsigned long GLWidget::get_sim_id()
+{
+    return _sim_id;
+}
+
+void GLWidget::simulation_load(unsigned long id)
+{
+    _sim_id = id;
+}

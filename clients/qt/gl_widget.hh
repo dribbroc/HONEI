@@ -36,8 +36,10 @@ class GLWidget : public QGLWidget
         QSize minimumSizeHint() const;
         QSize sizeHint() const;
 
+        unsigned long get_sim_id();
         void solver_start_stop();
         void simulation_reload();
+        void simulation_load(unsigned long id);
         void hud_on_off();
 
     protected:

@@ -44,6 +44,44 @@ class ScenarioCollection
         static const unsigned long _stable_scenario_count = 6;
 
     public:
+        static std::string get_scenario_descr(unsigned long id)
+        {
+            switch(id)
+            {
+                case 0:
+                    return "Circular dam break, uncritical";
+                    break;
+
+                case 1:
+                    return "Circular dam break, uncritical, with cuboidal obstacles";
+                    break;
+
+                case 2:
+                    return "Partial cuboidal dam break, uncritical";
+                    break;
+
+                case 3:
+                    return "Circular dam break over uneven bed topography, uncritical";
+                    break;
+
+                case 4:
+                    return "Circular dam break over uneven bed topography and cylindrical obstacle, uncritical";
+                    break;
+
+                case 5:
+                    return "Circular dam break over uneven bed topography, CRITICAL(dry states)";
+                    break;
+
+                case 6:
+                    return "Partial cuboidal dam break, CRITICAL(dry states)";
+                    break;
+
+                default:
+                    return "Unspecified or unstable  scenario";
+                    break;
+
+            }
+        }
         template <typename GridType_, typename DataType_>
         static void get_scenario(unsigned long scen_id, unsigned long grid_height, unsigned long grid_width, Grid<GridType_, DataType_> & target_grid)
         {
