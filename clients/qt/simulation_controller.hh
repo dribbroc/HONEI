@@ -338,7 +338,7 @@ class SimulationController
                     }
                     break;
                 default:
-                    throw InternalError("Wird nie passieren laut Markus!");
+                    throw InternalError("Undefined solver state.");
             }
         }
 
@@ -405,12 +405,11 @@ class SimulationController
                     }
                     break;
                 default:
-                    throw InternalError("Wird nie passieren laut Markus!");
+                    throw InternalError("Undefined solver state.");
             }
         }
 
-
-        void reload_simulation()
+        void load_simulation(unsigned long id)
         {
             switch (_current_solver)
             {
@@ -418,53 +417,54 @@ class SimulationController
                 case sse_full_dry:
                     {
                         delete _sse_full_dry_simulation;
-                        _sse_full_dry_simulation = new Simulation<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> ();
+                        _sse_full_dry_simulation = new Simulation<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> (id);
                     }
                 case sse_full_wet:
                     {
                         delete _sse_full_wet_simulation;
-                        _sse_full_wet_simulation = new Simulation<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> ();
+                        _sse_full_wet_simulation = new Simulation<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (id);
                     }
                 case sse_wet:
                     {
                         delete _sse_wet_simulation;
-                        _sse_wet_simulation = new Simulation<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> ();
+                        _sse_wet_simulation = new Simulation<tags::CPU::SSE, lbm_applications::LABSWE, Prec_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (id);
                     }
 #endif
 #ifdef HONEI_CUDA
                 case cuda_full_dry:
                     {
                         delete _cuda_full_dry_simulation;
-                        _cuda_full_dry_simulation = new Simulation<tags::GPU::CUDA, lbm_applications::LABSWE, float,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> ();
+                        _cuda_full_dry_simulation = new Simulation<tags::GPU::CUDA, lbm_applications::LABSWE, float,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> (id);
                     }
                 case cuda_full_wet:
                     {
                         delete _cuda_full_wet_simulation;
-                        _cuda_full_wet_simulation = new Simulation<tags::GPU::CUDA, lbm_applications::LABSWE, float,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> ();
+                        _cuda_full_wet_simulation = new Simulation<tags::GPU::CUDA, lbm_applications::LABSWE, float,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (id);
                     }
                 case cuda_wet:
                     {
                         delete _cuda_wet_simulation;
-                        _cuda_wet_simulation = new Simulation<tags::GPU::CUDA, lbm_applications::LABSWE, float,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> ();
+                        _cuda_wet_simulation = new Simulation<tags::GPU::CUDA, lbm_applications::LABSWE, float,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (id);
                     }
 #endif
                 case cpu_full_dry:
                     {
                         delete _cpu_full_dry_simulation;
-                        _cpu_full_dry_simulation = new Simulation<tags::CPU, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> ();
+                        _cpu_full_dry_simulation = new Simulation<tags::CPU, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> (id);
                     }
                 case cpu_full_wet:
                     {
                         delete _cpu_full_wet_simulation;
-                        _cpu_full_wet_simulation = new Simulation<tags::CPU, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> ();
+                        _cpu_full_wet_simulation = new Simulation<tags::CPU, lbm_applications::LABSWE, Prec_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (id);
                     }
                 case cpu_wet:
                     {
                         delete _cpu_wet_simulation;
-                        _cpu_wet_simulation = new Simulation<tags::CPU, lbm_applications::LABSWE, Prec_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> ();
+                        _cpu_wet_simulation = new Simulation<tags::CPU, lbm_applications::LABSWE, Prec_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (id);
                     }
             }
         }
+
 
         std::string get_backend_info()
         {
@@ -520,7 +520,7 @@ class SimulationController
                     }
                     break;
                 default:
-                    throw InternalError("Wird nie passieren laut Markus!");
+                    throw InternalError("Undefined solver state.");
             }
         }
 
@@ -578,7 +578,7 @@ class SimulationController
                     }
                     break;
                 default:
-                    throw InternalError("Wird nie passieren laut Markus!");
+                    throw InternalError("Undefined solver state.");
             }
         }
 };

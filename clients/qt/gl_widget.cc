@@ -142,7 +142,7 @@ void GLWidget::paintGL()
     if(_solver_precision_flag)
     {
         if(!_render_idle_flag)
-            glTranslatef(float(-(_sim_control_float->get_b()).columns())/2., float(-(_sim_control_float->get_b()).rows())/2., 0.);
+            glTranslatef(float(-(_sim_control_float->get_b()).rows())/2., float(-(_sim_control_float->get_b()).columns())/2., 0.);
         else
             glTranslatef(float(-(_idle_b->columns()))/2., float(-(_idle_b->rows()))/2., 0.);
     }
@@ -238,9 +238,9 @@ void GLWidget::simulation_reload()
         _render_idle_flag = true;
 
     if(_solver_precision_flag)
-        _sim_control_float->reload_simulation();
+        _sim_control_float->load_simulation(_sim_id);
     else
-        _sim_control_double->reload_simulation();
+        _sim_control_double->load_simulation(_sim_id);
 
     _render_idle_flag = false;
 
@@ -384,4 +384,18 @@ unsigned long GLWidget::get_sim_id()
 void GLWidget::simulation_load(unsigned long id)
 {
     _sim_id = id;
+    if(_solver_start_stop_flag)
+        _solver_start_stop_flag = false;
+
+    if(!_render_idle_flag)
+        _render_idle_flag = true;
+
+    if(_solver_precision_flag)
+        _sim_control_float->load_simulation(id);
+    else
+        _sim_control_double->load_simulation(id);
+
+    _render_idle_flag = false;
+
+    updateGL();
 }

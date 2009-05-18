@@ -100,6 +100,7 @@ class Simulation
 
             _simulation_ready_flag = true;
         }
+
         Grid<LatticeType_, Prec_> & get_grid()
         {
             return _grid;
