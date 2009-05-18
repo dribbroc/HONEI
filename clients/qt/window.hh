@@ -49,6 +49,7 @@ class Window : public QMainWindow
         QAction * _simulation_reload_action;
         QMenu * _simulation_load_submenu;
         std::vector<QAction *> _simulation_load_actions;
+        QAction * _exit_action;
 
         QMenu * _hud_menu;
         QAction * _hud_on_off_action;

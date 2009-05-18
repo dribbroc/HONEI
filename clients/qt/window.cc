@@ -84,6 +84,12 @@ void Window::create_menu()
             action->setChecked(true);
     }
 
+    _exit_action = new QAction(tr("&Exit"), this);
+    _exit_action->setShortcut(tr("Ctrl+Q"));
+    connect(_exit_action, SIGNAL(triggered()),
+            qApp, SLOT(quit()));
+    _simulation_menu->addAction(_exit_action);
+
     ///HUD menu:
     _hud_menu = menuBar() -> addMenu(tr("&HUD"));
     _hud_on_off_action = new QAction(tr("&On/Off"), this);
