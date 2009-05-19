@@ -159,7 +159,7 @@ namespace honei
                 return this;
             }
 
-            const DenseVector<DataType_> * const operator-> () const
+            const DenseVector<DataType_> * operator-> () const
             {
                 return this;
             }

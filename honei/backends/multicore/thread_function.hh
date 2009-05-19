@@ -65,7 +65,7 @@ namespace honei
 
                 void stop();
 
-                const unsigned tid() const;
+                unsigned tid() const;
         };
     }
 }

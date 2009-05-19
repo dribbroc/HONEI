@@ -141,7 +141,7 @@ void ThreadFunction::operator() ()
     while (! _imp->terminate);
 }
 
-const unsigned ThreadFunction::tid() const
+unsigned ThreadFunction::tid() const
 {
     return _imp->thread_id;
 }
