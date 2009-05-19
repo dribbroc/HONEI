@@ -58,86 +58,72 @@ namespace honei
 
                 float u2(u[index] * u[index]);
                 float v2(v[index] * v[index]);
-                float h2(h[index] * h[index]);
+                float gh(g * h[index]);
 
                 float dxu, dyv;
                 float t1, t2, t3, t4;
 
-                t1 = (float(5.) * g * h2) / e26;
-                t2 = (float(2.) * h[index]) / e23 * (u2 + v2);
-                f_eq_0[index] = h[index] - t1 - t2;
+                t1 = (float(5.) * gh) / e26;
+                t2 = float(2.) / e23 * (u2 + v2);
+                f_eq_0[index] = h[index] * (float(1) - t1 - t2);
 
                 dxu = distribution_x[1] * u[index];
                 dyv = distribution_y[1] * v[index];
-                t1 = (g * h2) / e26;
-                t2 = (h[index] / e23) * (dxu + dyv);
-                t3 = (h[index] / e42) * (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv);
-                t4 = (h[index] / e26) * (u2 + v2);
-                f_eq_1[index] = t1 + t2 + t3 - t4;
+                t1 = (gh) / e26;
+                t2 = (dxu + dyv) / e23;
+                t3 = (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv) / e42;
+                t4 = (u2 + v2) / e26;
+                f_eq_1[index] = h[index] * (t1 + t2 + t3 - t4);
 
                 dxu = distribution_x[3] * u[index];
                 dyv = distribution_y[3] * v[index];
-                t1 = (g * h2) / e26;
-                t2 = (h[index] / e23) * (dxu + dyv);
-                t3 = (h[index] / e42) * (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv);
-                t4 = (h[index] / e26) * (u2 + v2);
-                f_eq_3[index] = t1 + t2 + t3 - t4;
+                t2 = (dxu + dyv) / e23;
+                t3 = (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv) / e42;
+                f_eq_3[index] = h[index] * (t1 + t2 + t3 - t4);
 
                 dxu = distribution_x[5] * u[index];
                 dyv = distribution_y[5] * v[index];
-                t1 = (g * h2) / e26;
-                t2 = (h[index] / e23) * (dxu + dyv);
-                t3 = (h[index] / e42) * (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv);
-                t4 = (h[index] / e26) * (u2 + v2);
-                f_eq_5[index] = t1 + t2 + t3 - t4;
+                t2 = (dxu + dyv) / e23;
+                t3 = (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv) / e42;
+                f_eq_5[index] = h[index] * (t1 + t2 + t3 - t4);
 
                 dxu = distribution_x[7] * u[index];
                 dyv = distribution_y[7] * v[index];
-                t1 = (g * h2) / e26;
-                t2 = (h[index] / e23) * (dxu + dyv);
-                t3 = (h[index] / e42) * (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv);
-                t4 = (h[index] / e26) * (u2 + v2);
-                f_eq_7[index] = t1 + t2 + t3 - t4;
+                t2 = (dxu + dyv) / e23;
+                t3 = (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv) / e42;
+                f_eq_7[index] = h[index] * (t1 + t2 + t3 - t4);
 
                 dxu = distribution_x[2] * u[index];
                 dyv = distribution_y[2] * v[index];
-                t1 = (g * h2) / e224;
-                t2 = (h[index] / e212) * (dxu + dyv);
-                t3 = (h[index] / e48) * (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv);
-                t4 = (h[index] / e224) * (u2 + v2);
-                f_eq_2[index] =  t1 + t2 + t3 - t4;
+                t1 = (gh) / e224;
+                t2 = (dxu + dyv) / e212;
+                t3 = (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv) / e48;
+                t4 = (u2 + v2) / e224;
+                f_eq_2[index] =  h[index] * (t1 + t2 + t3 - t4);
 
                 dxu = distribution_x[2] * u[index];
                 dyv = distribution_y[2] * v[index];
-                t1 = (g * h2) / e224;
-                t2 = (h[index] / e212) * (dxu + dyv);
-                t3 = (h[index] / e48) * (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv);
-                t4 = (h[index] / e224) * (u2 + v2);
-                f_eq_2[index] =  t1 + t2 + t3 - t4;
+                t2 = (dxu + dyv) / e212;
+                t3 = (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv) / e48;
+                f_eq_2[index] =  h[index] * (t1 + t2 + t3 - t4);
 
                 dxu = distribution_x[4] * u[index];
                 dyv = distribution_y[4] * v[index];
-                t1 = (g * h2) / e224;
-                t2 = (h[index] / e212) * (dxu + dyv);
-                t3 = (h[index] / e48) * (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv);
-                t4 = (h[index] / e224) * (u2 + v2);
-                f_eq_4[index] =  t1 + t2 + t3 - t4;
+                t2 = (dxu + dyv) / e212;
+                t3 = (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv) / e48;
+                f_eq_4[index] =  h[index] * (t1 + t2 + t3 - t4);
 
                 dxu = distribution_x[6] * u[index];
                 dyv = distribution_y[6] * v[index];
-                t1 = (g * h2) / e224;
-                t2 = (h[index] / e212) * (dxu + dyv);
-                t3 = (h[index] / e48) * (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv);
-                t4 = (h[index] / e224) * (u2 + v2);
-                f_eq_6[index] =  t1 + t2 + t3 - t4;
+                t2 = (dxu + dyv) / e212;
+                t3 = (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv) / e48;
+                f_eq_6[index] =  h[index] * (t1 + t2 + t3 - t4);
 
                 dxu = distribution_x[8] * u[index];
                 dyv = distribution_y[8] * v[index];
-                t1 = (g * h2) / e224;
-                t2 = (h[index] / e212) * (dxu + dyv);
-                t3 = (h[index] / e48) * (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv);
-                t4 = (h[index] / e224) * (u2 + v2);
-                f_eq_8[index] =  t1 + t2 + t3 - t4;
+                t2 = (dxu + dyv) / e212;
+                t3 = (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv) / e48;
+                f_eq_8[index] =  h[index] * (t1 + t2 + t3 - t4);
             }
         }
     }

@@ -173,87 +173,75 @@ namespace honei
         {
             float u2((*data.u)[index] * (*data.u)[index]);
             float v2((*data.v)[index] * (*data.v)[index]);
-            float h2((*data.h)[index] * (*data.h)[index]);
+            float gh(g * (*data.h)[index]);
 
             float t1, t2, t3, t4;
             float dxu, dyv;
 
             // dir 0
-            t1 = (float(5.) * g * h2) / e26;
-            t2 = (float(2.) * (*data.h)[index]) / e23 * (u2 + v2);
-            (*data.f_eq_0)[index] = (*data.h)[index] - t1 - t2;
+            t1 = (float(5.) * gh) / e26;
+            t2 = float(2.) / e23 * (u2 + v2);
+            (*data.f_eq_0)[index] = (*data.h)[index] * (float(1.) - t1 - t2);
 
             // dir 1
             dxu = (*data.distribution_x)[1] * (*data.u)[index];
             dyv = (*data.distribution_y)[1] * (*data.v)[index];
-            t1 = (g * h2) / e26;
-            t2 = ((*data.h)[index] / e23) * (dxu + dyv);
-            t3 = ((*data.h)[index] / e42) * (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv);
-            t4 = ((*data.h)[index] / e26) * (u2 + v2);
-            (*data.f_eq_1)[index] = t1 + t2 + t3 - t4;
+            t1 = gh / e26;
+            t2 = (dxu + dyv) / e23;
+            t3 = (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv) / e42;
+            t4 = (u2 + v2) / e26;
+            (*data.f_eq_1)[index] = (*data.h)[index] * (t1 + t2 + t3 - t4);
 
             // dir 3
             dxu = (*data.distribution_x)[3] * (*data.u)[index];
             dyv = (*data.distribution_y)[3] * (*data.v)[index];
-            t1 = (g * h2) / e26;
-            t2 = ((*data.h)[index] / e23) * (dxu + dyv);
-            t3 = ((*data.h)[index] / e42) * (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv);
-            t4 = ((*data.h)[index] / e26) * (u2 + v2);
-            (*data.f_eq_3)[index] = t1 + t2 + t3 - t4;
+            t2 = (dxu + dyv) / e23;
+            t3 = (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv) / e42;
+            (*data.f_eq_3)[index] = (*data.h)[index] * (t1 + t2 + t3 - t4);
 
             // dir 5
             dxu = (*data.distribution_x)[5] * (*data.u)[index];
             dyv = (*data.distribution_y)[5] * (*data.v)[index];
-            t1 = (g * h2) / e26;
-            t2 = ((*data.h)[index] / e23) * (dxu + dyv);
-            t3 = ((*data.h)[index] / e42) * (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv);
-            t4 = ((*data.h)[index] / e26) * (u2 + v2);
-            (*data.f_eq_5)[index] = t1 + t2 + t3 - t4;
+            t2 = (dxu + dyv) / e23;
+            t3 = (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv) / e42;
+            (*data.f_eq_5)[index] = (*data.h)[index] * (t1 + t2 + t3 - t4);
 
             // dir 7
             dxu = (*data.distribution_x)[7] * (*data.u)[index];
             dyv = (*data.distribution_y)[7] * (*data.v)[index];
-            t1 = (g * h2) / e26;
-            t2 = ((*data.h)[index] / e23) * (dxu + dyv);
-            t3 = ((*data.h)[index] / e42) * (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv);
-            t4 = ((*data.h)[index] / e26) * (u2 + v2);
-            (*data.f_eq_7)[index] = t1 + t2 + t3 - t4;
+            t2 = (dxu + dyv) / e23;
+            t3 = (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv) / e42;
+            (*data.f_eq_7)[index] = (*data.h)[index] * (t1 + t2 + t3 - t4);
 
             // dir 2
             dxu = (*data.distribution_x)[2] * (*data.u)[index];
             dyv = (*data.distribution_y)[2] * (*data.v)[index];
-            t1 = (g * h2) / e224;
-            t2 = ((*data.h)[index] / e212) * (dxu + dyv);
-            t3 = ((*data.h)[index] / e48) * (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv);
-            t4 = ((*data.h)[index] / e224) * (u2 + v2);
-            (*data.f_eq_2)[index] =  t1 + t2 + t3 - t4;
+            t1 = gh / e224;
+            t2 = (dxu + dyv) / e212;
+            t3 = (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv) / e48;
+            t4 = (u2 + v2) / e224;
+            (*data.f_eq_2)[index] =  (*data.h)[index] * (t1 + t2 + t3 - t4);
 
             // dir 4
             dxu = (*data.distribution_x)[4] * (*data.u)[index];
             dyv = (*data.distribution_y)[4] * (*data.v)[index];
-            t1 = (g * h2) / e224;
-            t2 = ((*data.h)[index] / e212) * (dxu + dyv);
-            t3 = ((*data.h)[index] / e48) * (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv);
-            t4 = ((*data.h)[index] / e224) * (u2 + v2);
-            (*data.f_eq_4)[index] =  t1 + t2 + t3 - t4;
+            t2 = (dxu + dyv) / e212;
+            t3 = (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv) / e48;
+            (*data.f_eq_4)[index] =  (*data.h)[index] * (t1 + t2 + t3 - t4);
 
             // dir 6
             dxu = (*data.distribution_x)[6] * (*data.u)[index];
             dyv = (*data.distribution_y)[6] * (*data.v)[index];
-            t1 = (g * h2) / e224;
-            t2 = ((*data.h)[index] / e212) * (dxu + dyv);
-            t3 = ((*data.h)[index] / e48) * (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv);
-            t4 = ((*data.h)[index] / e224) * (u2 + v2);
-            (*data.f_eq_6)[index] =  t1 + t2 + t3 - t4;
+            t2 = (dxu + dyv) / e212;
+            t3 = (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv) / e48;
+            (*data.f_eq_6)[index] =  (*data.h)[index] * (t1 + t2 + t3 - t4);
 
             // dir 8
             dxu = (*data.distribution_x)[8] * (*data.u)[index];
             dyv = (*data.distribution_y)[8] * (*data.v)[index];
-            t1 = (g * h2) / e224;
-            t2 = ((*data.h)[index] / e212) * (dxu + dyv);
-            t3 = ((*data.h)[index] / e48) * (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv);
-            t4 = ((*data.h)[index] / e224) * (u2 + v2);
-            (*data.f_eq_8)[index] =  t1 + t2 + t3 - t4;
+            t2 = (dxu + dyv) / e212;
+            t3 = (dxu * dxu + float(2.) * dxu * dyv + dyv * dyv) / e48;
+            (*data.f_eq_8)[index] =  (*data.h)[index] * (t1 + t2 + t3 - t4);
         }
 
 
