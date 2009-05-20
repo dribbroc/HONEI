@@ -53,7 +53,7 @@ class SolverLBMGridTest :
             unsigned long timesteps(100);
 
 
-            for (unsigned long i(0) ; i < ScenarioCollection::get_scenario_count() ; ++i)
+            for (unsigned long i(0) ; i < ScenarioCollection::get_stable_scenario_count() ; ++i)
             {
                 Grid<D2Q9, DataType_> grid;
 
