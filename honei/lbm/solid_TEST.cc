@@ -71,7 +71,52 @@ class SolidTest :
             DenseMatrix<bool> target(20, 20, false);
             ScanConversion<Tag_>::value(tri_0, target, DataType_(1), DataType_(1));
 
-            std::cout << target;
+            std::cout << target << std::endl;
+
+            //FluidToSolid test:
+            DenseMatrix<bool> target_fts(20, 20, false);
+            DenseMatrix<bool> tm1_fts(20, 20, false);
+            DenseMatrix<bool> t_fts(20, 20, false);
+
+            Line<DataType_, lbm_solid_dims::D2> line_3(DataType_(1), DataType_(1), DataType_(10), DataType_(10));
+            Line<DataType_, lbm_solid_dims::D2> line_4(DataType_(10), DataType_(10), DataType_(15), DataType_(1));
+            Line<DataType_, lbm_solid_dims::D2> line_5(DataType_(15), DataType_(1), DataType_(1), DataType_(1));
+
+            Polygon<DataType_, lbm_solid_dims::D2> tri_1(3);
+            tri_1.add_line(line_3);
+            tri_1.add_line(line_4);
+            tri_1.add_line(line_5);
+
+            tri_1.value();
+
+            Line<DataType_, lbm_solid_dims::D2> line_6(DataType_(2), DataType_(2), DataType_(11), DataType_(11));
+            Line<DataType_, lbm_solid_dims::D2> line_7(DataType_(11), DataType_(11), DataType_(16), DataType_(2));
+            Line<DataType_, lbm_solid_dims::D2> line_8(DataType_(16), DataType_(2), DataType_(2), DataType_(2));
+
+            Polygon<DataType_, lbm_solid_dims::D2> tri_2(3);
+            tri_2.add_line(line_6);
+            tri_2.add_line(line_7);
+            tri_2.add_line(line_8);
+
+            tri_2.value();
+
+            ScanConversion<Tag_>::value(tri_1, tm1_fts, DataType_(1), DataType_(1));
+            std::cout << "Matrix at time t-1: " << std::endl;
+            std::cout << tm1_fts << std::endl;
+            ScanConversion<Tag_>::value(tri_2, t_fts, DataType_(1), DataType_(1));
+            std::cout << "Matrix at time t: " << std::endl;
+            std::cout << t_fts << std::endl;
+
+            FluidToSolidCells<Tag_>::value(tm1_fts, t_fts, target_fts);
+            std::cout << "Fluid to solid cells: " << std::endl;
+            std::cout << target_fts << std::endl;
+
+            //Solid to fluid test:
+            DenseMatrix<bool> target_stf(20, 20, false);
+            SolidToFluidCells<Tag_>::value(tm1_fts, t_fts, target_stf);
+            std::cout << "Solid to fluid cells: " << std::endl;
+            std::cout << target_stf << std::endl;
+
         }
 };
 SolidTest<tags::CPU, float> solidtest_float("float");

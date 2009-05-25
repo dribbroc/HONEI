@@ -294,6 +294,49 @@ namespace lbm
                         local_scan_fill(solid, target, dx, dy);
                     }
         };
+
+    template<typename Tag_>
+        class FluidToSolidCells
+        {
+        };
+
+    template<>
+        class FluidToSolidCells<tags::CPU>
+        {
+            public:
+                static void value(DenseMatrix<bool> & source_tm1, DenseMatrix<bool> & source_t, DenseMatrix<bool> & target)
+                {
+                    for (unsigned long i(0) ; i < target.rows() ; ++i)
+                    {
+                        for (unsigned long j(0) ; j < target.columns() ; ++j)
+                        {
+                            target[i][j] = (!source_tm1[i][j] & source_t[i][j]);
+                        }
+                    }
+                }
+
+        };
+    template<typename Tag_>
+        class SolidToFluidCells
+        {
+        };
+
+    template<>
+        class SolidToFluidCells<tags::CPU>
+        {
+            public:
+                static void value(DenseMatrix<bool> & source_tm1, DenseMatrix<bool> & source_t, DenseMatrix<bool> & target)
+                {
+                    for (unsigned long i(0) ; i < target.rows() ; ++i)
+                    {
+                        for (unsigned long j(0) ; j < target.columns() ; ++j)
+                        {
+                            target[i][j] = (source_tm1[i][j] & !source_t[i][j]);
+                        }
+                    }
+                }
+
+        };
 }
 
 #endif
