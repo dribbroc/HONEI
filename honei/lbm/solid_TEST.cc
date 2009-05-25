@@ -117,6 +117,19 @@ class SolidTest :
             std::cout << "Solid to fluid cells: " << std::endl;
             std::cout << target_stf << std::endl;
 
+            //STFExtrapolation test:
+            DenseMatrix<DataType_> h(20, 20, DataType_(5));
+            DenseMatrix<DataType_> u(20, 20, DataType_(-5));
+            DenseMatrix<DataType_> v(20, 20, DataType_(-5));
+
+            STFExtrapolation<Tag_, lbm_solid_extrapolation_methods::SIMPLE>::value(t_fts, target_stf, h, u, v, DataType_(1), DataType_(1));
+
+            std::cout << "h after extrapolation: " << std::endl;
+            std::cout << h << std::endl;
+            std::cout << "u after extrapolation: " << std::endl;
+            std::cout << u << std::endl;
+            std::cout << "v after extrapolation: " << std::endl;
+            std::cout << v << std::endl;
         }
 };
 SolidTest<tags::CPU, float> solidtest_float("float");
