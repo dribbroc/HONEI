@@ -28,6 +28,7 @@
 
 #include <limits>
 #include <tr1/memory>
+#include <iostream>
 
 using namespace honei;
 using namespace tests;
@@ -663,9 +664,9 @@ class SparseMatrixDenseVectorProductTest :
                 {
                     *i = 2;
                 }
-                SparseVector<DataType_> prod(Product<>::value(sm1, dv1));
+                DenseVector<DataType_> prod(Product<>::value(sm1, dv1));
 
-                for (typename SparseVector<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()) ;
+                for (typename DenseVector<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()) ;
                     i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_(6 * size), std::numeric_limits<DataType_>::epsilon());
@@ -701,9 +702,9 @@ class SparseMatrixDenseVectorProductQuickTest :
                 *i = 2;
             }
             DenseVector<DataType_> dv1(size, DataType_(3)),  dv2(size + 1, DataType_(6 * size));
-            SparseVector<DataType_> prod(Product<>::value(sm1, dv1));
+            DenseVector<DataType_> prod(Product<>::value(sm1, dv1));
 
-            for (typename SparseVector<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()) ;
+            for (typename DenseVector<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()) ;
                     i != i_end ; ++i)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_(6 * size), std::numeric_limits<DataType_>::epsilon());
@@ -718,6 +719,38 @@ class SparseMatrixDenseVectorProductQuickTest :
 };
 SparseMatrixDenseVectorProductQuickTest<float> sparse_matrix_dense_vector_product_quick_test_float("float");
 SparseMatrixDenseVectorProductQuickTest<double> sparse_matrix_dense_vector_product_quick_test_double("double");
+
+template <typename DataType_>
+class SparseMatrixELLDenseVectorProductQuickTest :
+    public QuickTest
+{
+    public:
+        SparseMatrixELLDenseVectorProductQuickTest(const std::string & type) :
+            QuickTest("sparse_matrix_ell_dense_vector_product_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long size (2);
+            DenseMatrix<DataType_> dm0(size, size, DataType_(0));
+            dm0(0, 0) = 1;
+            dm0(0, 1) = 1;
+            dm0(1, 0) = 1;
+            SparseMatrixELL<DataType_> sm0(dm0);
+            std::cout<<dm0;
+            std::cout<<sm0;
+            DenseVector<DataType_> dv1(size, DataType_(0));
+            dv1[0] = 1;
+            dv1[1] = 2;
+            DenseVector<DataType_> prod(Product<>::value(sm0, dv1));
+            DenseVector<DataType_> prod_ref(Product<>::value(dm0, dv1));
+
+            TEST_CHECK_EQUAL(prod, prod_ref);
+        }
+};
+SparseMatrixELLDenseVectorProductQuickTest<float> sparse_matrix_ell_dense_vector_product_quick_test_float("float");
+SparseMatrixELLDenseVectorProductQuickTest<double> sparse_matrix_ell_dense_vector_product_quick_test_double("double");
 
 template <typename DataType_>
 class SparseMatrixSparseVectorProductTest :
