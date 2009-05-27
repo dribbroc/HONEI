@@ -33,7 +33,7 @@
 using namespace honei;
 using namespace tests;
 
-/*template <typename Tag_, typename DataType_>
+template <typename Tag_, typename DataType_>
 class BandedMatrixDenseVectorProductTest :
     public BaseTest
 {
@@ -719,8 +719,8 @@ class SparseMatrixDenseVectorProductQuickTest :
 };
 SparseMatrixDenseVectorProductQuickTest<float> sparse_matrix_dense_vector_product_quick_test_float("float");
 SparseMatrixDenseVectorProductQuickTest<double> sparse_matrix_dense_vector_product_quick_test_double("double");
-*/
-template <typename DataType_>
+
+template <typename DataType_, typename Tag_>
 class SparseMatrixELLDenseVectorProductQuickTest :
     public QuickTest
 {
@@ -728,6 +728,7 @@ class SparseMatrixELLDenseVectorProductQuickTest :
         SparseMatrixELLDenseVectorProductQuickTest(const std::string & type) :
             QuickTest("sparse_matrix_ell_dense_vector_product_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -746,14 +747,19 @@ class SparseMatrixELLDenseVectorProductQuickTest :
             DenseVector<DataType_> dv1(size, DataType_(4));
             dv1[0] = 1;
             dv1[1] = 2;
-            DenseVector<DataType_> prod(Product<>::value(sm0, dv1));
+            DenseVector<DataType_> prod(Product<Tag_>::value(sm0, dv1));
             DenseVector<DataType_> prod_ref(Product<>::value(dm0, dv1));
 
+            prod.lock(lm_read_only);
             TEST_CHECK_EQUAL(prod, prod_ref);
+            prod.unlock(lm_read_only);
         }
 };
-SparseMatrixELLDenseVectorProductQuickTest<float> sparse_matrix_ell_dense_vector_product_quick_test_float("float");
-SparseMatrixELLDenseVectorProductQuickTest<double> sparse_matrix_ell_dense_vector_product_quick_test_double("double");
+SparseMatrixELLDenseVectorProductQuickTest<float, tags::CPU> sparse_matrix_ell_dense_vector_product_quick_test_float("float");
+SparseMatrixELLDenseVectorProductQuickTest<double, tags::CPU> sparse_matrix_ell_dense_vector_product_quick_test_double("double");
+#ifdef HONEI_CUDA
+SparseMatrixELLDenseVectorProductQuickTest<float, tags::GPU::CUDA> cuda_sparse_matrix_ell_dense_vector_product_quick_test_float("float");
+#endif
 
 template <typename DataType_>
 class SparseMatrixSparseVectorProductTest :

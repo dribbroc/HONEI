@@ -18,6 +18,10 @@
  */
 #include <honei/backends/cuda/cuda_util.hh>
 
+// ceil(x/y) for integers, used to determine # of blocks/warps etc.
+#define DIVIDE_INTO(x,y) ((x + y - 1)/y)
+#define large_grid_thread_id(void) ((__umul24(blockDim.x,blockIdx.x + __umul24(blockIdx.y,gridDim.x)) + threadIdx.x))
+
 namespace honei
 {
     namespace cuda
@@ -81,6 +85,33 @@ namespace honei
                 y[idx] = ytemp1;
             }
         }
+
+        __global__ void product_smell_dv_gpu(float * x, float * y, unsigned long * Aj, float * Ax,
+                unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row, unsigned long stride)
+        {
+            const unsigned long row = large_grid_thread_id();
+
+            if(row >= num_rows){ return; }
+
+            float sum = y[row];
+
+            Aj += row;
+            Ax += row;
+
+            for(unsigned long n = 0; n < num_cols_per_row; n++){
+                const float A_ij = *Ax;
+
+                if (A_ij != 0){
+                    const unsigned long col = *Aj;
+                    sum += A_ij * x[col];
+                }
+
+                Aj += stride;
+                Ax += stride;
+            }
+
+    y[row] = sum;
+        }
     }
 }
 
@@ -107,6 +138,35 @@ extern "C" void cuda_product_bmdv_q1_float (void * ll, void * ld, void * lu,
 
 
     honei::cuda::product_bmdv_q1_gpu<<<grid, block, 3 * (block.x + 2 ) * sizeof(float)>>>(ll_gpu, ld_gpu, lu_gpu, dl_gpu, dd_gpu, du_gpu, ul_gpu, ud_gpu, uu_gpu, x_gpu, y_gpu, size, m);
+
+    CUDA_ERROR();
+}
+
+dim3 make_large_grid(const unsigned int num_threads, const unsigned int blocksize){
+    const unsigned int num_blocks = DIVIDE_INTO(num_threads, blocksize);
+    if (num_blocks <= 65535){
+        //fits in a 1D grid
+        return dim3(num_blocks);
+    } else {
+        //2D grid is required
+        const unsigned int side = (unsigned int) ceil(sqrt((double)num_blocks));
+        return dim3(side,side);
+    }
+}
+
+extern "C" void cuda_product_smell_dv_float(void * x, void * y, void * Aj, void * Ax,
+        unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
+        unsigned long stride, unsigned long blocksize)
+{
+    const dim3 grid = make_large_grid(num_rows, blocksize);
+
+    float * x_gpu((float *)x);
+    float * y_gpu((float *)y);
+    unsigned long * Aj_gpu((unsigned long *)Aj);
+    float * Ax_gpu((float *)Ax);
+
+    honei::cuda::product_smell_dv_gpu<<<grid, blocksize>>>(x_gpu, y_gpu, Aj_gpu, Ax_gpu,
+            num_rows, num_cols, num_cols_per_row, stride);
 
     CUDA_ERROR();
 }

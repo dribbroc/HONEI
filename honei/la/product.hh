@@ -160,14 +160,7 @@ namespace honei
                         result[i] += Ax_n[i] * b[Aj_n[i]];
                 }
             }
-            /*for (unsigned long i(0) ; i < a.rows() ; ++i)
-            {
-                for (unsigned long n(0) ; n < a.num_cols_per_row() ; ++n)
-                {
-                    result[i] += a.Ax().elements()[i * a.num_cols_per_row() + n] * b[a.Aj().elements()[i * a.num_cols_per_row() + n]];
-                }
-            }
-*/
+
             return result;
         }
 
@@ -1269,7 +1262,7 @@ namespace honei
 
         static DenseVector<float> value(const BandedMatrixQ1<float> & a, const DenseVectorContinuousBase<float> & b);
 
-        //static DenseVector<float> value(const SparseMatrixELL<float> & a, const DenseVectorContinuousBase<float> & b)
+        static DenseVector<float> value(const SparseMatrixELL<float> & a, const DenseVectorContinuousBase<float> & b);
 
         /// \}
     };
