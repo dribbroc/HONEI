@@ -110,7 +110,34 @@ namespace honei
                 Ax += stride;
             }
 
-    y[row] = sum;
+            y[row] = sum;
+        }
+
+        __global__ void product_smell_dv_gpu(double * x, double * y, unsigned long * Aj, double * Ax,
+                unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row, unsigned long stride)
+        {
+            const unsigned long row = large_grid_thread_id();
+
+            if(row >= num_rows){ return; }
+
+            double sum = y[row];
+
+            Aj += row;
+            Ax += row;
+
+            for(unsigned long n = 0; n < num_cols_per_row; n++){
+                const double A_ij = *Ax;
+
+                if (A_ij != 0){
+                    const unsigned long col = *Aj;
+                    sum += A_ij * x[col];
+                }
+
+                Aj += stride;
+                Ax += stride;
+            }
+
+            y[row] = sum;
         }
     }
 }
@@ -164,6 +191,23 @@ extern "C" void cuda_product_smell_dv_float(void * x, void * y, void * Aj, void 
     float * y_gpu((float *)y);
     unsigned long * Aj_gpu((unsigned long *)Aj);
     float * Ax_gpu((float *)Ax);
+
+    honei::cuda::product_smell_dv_gpu<<<grid, blocksize>>>(x_gpu, y_gpu, Aj_gpu, Ax_gpu,
+            num_rows, num_cols, num_cols_per_row, stride);
+
+    CUDA_ERROR();
+}
+
+extern "C" void cuda_product_smell_dv_double(void * x, void * y, void * Aj, void * Ax,
+        unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
+        unsigned long stride, unsigned long blocksize)
+{
+    const dim3 grid = make_large_grid(num_rows, blocksize);
+
+    double * x_gpu((double *)x);
+    double * y_gpu((double *)y);
+    unsigned long * Aj_gpu((unsigned long *)Aj);
+    double * Ax_gpu((double *)Ax);
 
     honei::cuda::product_smell_dv_gpu<<<grid, blocksize>>>(x_gpu, y_gpu, Aj_gpu, Ax_gpu,
             num_rows, num_cols, num_cols_per_row, stride);

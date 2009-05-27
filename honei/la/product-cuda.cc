@@ -149,3 +149,33 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(const SparseMatrixELL<float> 
 
     return result;
 }
+
+DenseVector<double> Product<tags::GPU::CUDA>::value(const SparseMatrixELL<double> & a, const DenseVectorContinuousBase<double> & b)
+{
+    CONTEXT("When multiplying SparseMatrixELL<double> with DenseVectorContinuousBase<double> (CUDA):");
+
+    if (b.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+    }
+
+    DenseVector<double> result(a.rows());
+    fill<tags::GPU::CUDA>(result, double(0));
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_double", 256ul));
+
+    void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+    void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+    void * Aj_gpu(a.Aj().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+    void * Ax_gpu(a.Ax().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+    cuda_product_smell_dv_double(b_gpu, result_gpu, Aj_gpu, Ax_gpu,
+            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), blocksize);
+
+    result.unlock(lm_write_only);
+    b.unlock(lm_read_only);
+    a.Aj().unlock(lm_read_only);
+    a.Ax().unlock(lm_read_only);
+
+    return result;
+}

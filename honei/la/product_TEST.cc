@@ -28,7 +28,6 @@
 
 #include <limits>
 #include <tr1/memory>
-#include <iostream>
 
 using namespace honei;
 using namespace tests;
@@ -742,8 +741,6 @@ class SparseMatrixELLDenseVectorProductQuickTest :
             dm0(2, 3) = 3;
             dm0(7, 5) = 4;
             SparseMatrixELL<DataType_> sm0(dm0);
-            std::cout<<dm0;
-            std::cout<<sm0;
             DenseVector<DataType_> dv1(size, DataType_(4));
             dv1[0] = 1;
             dv1[1] = 2;
@@ -759,6 +756,7 @@ SparseMatrixELLDenseVectorProductQuickTest<float, tags::CPU> sparse_matrix_ell_d
 SparseMatrixELLDenseVectorProductQuickTest<double, tags::CPU> sparse_matrix_ell_dense_vector_product_quick_test_double("double");
 #ifdef HONEI_CUDA
 SparseMatrixELLDenseVectorProductQuickTest<float, tags::GPU::CUDA> cuda_sparse_matrix_ell_dense_vector_product_quick_test_float("float");
+SparseMatrixELLDenseVectorProductQuickTest<double, tags::GPU::CUDA> cuda_sparse_matrix_ell_dense_vector_product_quick_test_double("double");
 #endif
 
 template <typename DataType_>
