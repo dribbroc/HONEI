@@ -43,11 +43,11 @@ class SparseMatrixELLQuickTest :
             unsigned long size (5);
             DenseMatrix<DataType_> dm0(size, size + 3, DataType_(0));
             dm0(0, 0) = 1;
-            dm0(0, 3) = 1;
-            dm0(0, 4) = 1;
-            dm0(2, 1) = 1;
-            dm0(2, 3) = 1;
-            dm0(3, 3) = 1;
+            dm0(0, 3) = 2;
+            dm0(0, 4) = 3;
+            dm0(2, 1) = 4;
+            dm0(2, 3) = 5;
+            dm0(3, 3) = 6;
 
             SparseMatrixELL<DataType_> sm0(dm0);
 

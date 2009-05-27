@@ -33,7 +33,7 @@
 using namespace honei;
 using namespace tests;
 
-template <typename Tag_, typename DataType_>
+/*template <typename Tag_, typename DataType_>
 class BandedMatrixDenseVectorProductTest :
     public BaseTest
 {
@@ -719,7 +719,7 @@ class SparseMatrixDenseVectorProductQuickTest :
 };
 SparseMatrixDenseVectorProductQuickTest<float> sparse_matrix_dense_vector_product_quick_test_float("float");
 SparseMatrixDenseVectorProductQuickTest<double> sparse_matrix_dense_vector_product_quick_test_double("double");
-
+*/
 template <typename DataType_>
 class SparseMatrixELLDenseVectorProductQuickTest :
     public QuickTest
@@ -736,6 +736,8 @@ class SparseMatrixELLDenseVectorProductQuickTest :
             DenseMatrix<DataType_> dm0(size, size, DataType_(0));
             dm0(0, 0) = 1;
             dm0(1, 1) = 2;
+            dm0(1, 5) = 2;
+            dm0(1, 7) = 2;
             dm0(2, 3) = 3;
             dm0(7, 5) = 4;
             SparseMatrixELL<DataType_> sm0(dm0);

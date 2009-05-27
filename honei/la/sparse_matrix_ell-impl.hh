@@ -134,8 +134,21 @@ namespace honei
                 }
             }
         }
-        this->_imp->Aj = Aj;
-        this->_imp->Ax = Ax;
+
+        DenseVector<unsigned long> tAj(num_cols_per_row * src.rows(), (unsigned long)(0));
+        DenseVector<DataType_> tAx(num_cols_per_row * src.rows(), DataType_(0));
+        unsigned long t(0);
+        for (unsigned long j(0) ; j < num_cols_per_row ; ++j)
+        {
+            for (unsigned long i(0) ; i < tAj.size() ; i+=num_cols_per_row)
+            {
+                tAj[t] = Aj[j + i];
+                tAx[t] = Ax[j + i];
+                ++t;
+            }
+        }
+        this->_imp->Aj = tAj;
+        this->_imp->Ax = tAx;
     }
 
     template <typename DataType_>
