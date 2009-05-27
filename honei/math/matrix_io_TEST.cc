@@ -20,13 +20,14 @@
 #include <honei/math/matrix_io.hh>
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>
+#include <honei/la/product.hh>
 #include <iostream>
 
 using namespace honei;
 using namespace tests;
 using namespace std;
 
-template<typename DT_>
+template<typename DT_, typename Tag_>
 class MMIOTest:
     public BaseTest
 {
@@ -34,21 +35,30 @@ class MMIOTest:
         MMIOTest(const std::string & tag) :
             BaseTest("Matrix Market Format I/O test")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
         {
-            unsigned long c, r, nz, d;
-            std::string filename("5pt_10x10.mtx");
-            MatrixIO::get_sizes(filename, c, r, nz, d);
-            std::cout << c << " " << r << " " << nz << std::endl;
-
+            std::string filename(HONEI_SOURCEDIR);
+            filename += "/honei/math/testdata/5pt_10x10.mtx";
             DenseMatrix<DT_> matrix = MatrixIO::read_matrix(filename, DT_(0));
-
             std::cout << matrix;
 
-            TEST_CHECK(true);
+            DenseVector<DT_> x(matrix.rows());
+            for (unsigned long i(0) ; i < x.size() ; ++i)
+            {
+                x[i] = DT_(i) / 1.234;
+            }
+            SparseMatrixELL<DT_> smatrix(matrix);
+            DenseVector<DT_> y1(Product<Tag_>::value(smatrix, x));
+            DenseVector<DT_> y2(Product<tags::CPU>::value(matrix, x));
+
+            y1.lock(lm_read_only);
+            TEST_CHECK_EQUAL(y1, y2);
+            y1.unlock(lm_read_only);
         }
 };
-MMIOTest<float> mmio_test_float_dense("float");
+MMIOTest<float, tags::CPU> mmio_test_float_dense("float");
+MMIOTest<float, tags::GPU::CUDA> cuda_mmio_test_float_dense("float");
 

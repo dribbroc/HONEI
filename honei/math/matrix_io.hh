@@ -29,14 +29,13 @@
 using namespace honei;
 class MatrixIO
 {
-    public:
+    private:
         static void get_sizes(std::string filename, unsigned long & c,
                                                     unsigned long & r,
                                                     unsigned long & n_z,
                                                     unsigned long & data_begin)
         {
             std::string c_s, r_s, n_z_s;
-            unsigned long c_result, r_result, n_z_result;
             std::ifstream file(filename.c_str());
 
             unsigned long data_index(0);
@@ -92,6 +91,7 @@ class MatrixIO
                 throw honei::InternalError("Unable to open MatrixMarket file.");
         }
 
+    public:
         template<typename DT_>
             static DenseMatrix<DT_> read_matrix(std::string filename, DT_ base)
             {

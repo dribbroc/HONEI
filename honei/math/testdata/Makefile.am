@@ -3,6 +3,7 @@ AM_CXXFLAGS = -I$(top_srcdir)
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST = \
+	5pt_10x10.mtx \
 	9.bin \
 	25.bin \
 	81.bin \
