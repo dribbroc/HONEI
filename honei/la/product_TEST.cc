@@ -732,15 +732,16 @@ class SparseMatrixELLDenseVectorProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size (2);
+            unsigned long size (10);
             DenseMatrix<DataType_> dm0(size, size, DataType_(0));
             dm0(0, 0) = 1;
-            dm0(0, 1) = 1;
-            dm0(1, 0) = 1;
+            dm0(1, 1) = 2;
+            dm0(2, 3) = 3;
+            dm0(7, 5) = 4;
             SparseMatrixELL<DataType_> sm0(dm0);
             std::cout<<dm0;
             std::cout<<sm0;
-            DenseVector<DataType_> dv1(size, DataType_(0));
+            DenseVector<DataType_> dv1(size, DataType_(4));
             dv1[0] = 1;
             dv1[1] = 2;
             DenseVector<DataType_> prod(Product<>::value(sm0, dv1));
