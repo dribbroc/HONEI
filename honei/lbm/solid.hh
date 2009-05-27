@@ -361,8 +361,10 @@ namespace lbm
                                       DenseMatrix<Prec_> & target_h,
                                       DenseMatrix<Prec_> & target_u,
                                       DenseMatrix<Prec_> & target_v,
-                                      Prec_ u,
-                                      Prec_ v)
+                                      Prec_ u,     //x-veloc of solid
+                                      Prec_ v,     //y-veloc of solid
+                                      Prec_ alpha, //control parameter
+                                      Prec_ depth) //of solid under water
                     {
                         ///For all cells to init: take average of all fluid neighbours (for h), set vector (for u,v):
 
@@ -463,41 +465,185 @@ namespace lbm
                                     ++nb_count;
                                 }
 
-                            //determine h:
-                            Prec_ accu_h(0);
-                            for(unsigned long j(0) ; j < nb_count ; ++j)
-                            {
-                                accu_h += target_h[nb_row_index[j]][nb_column_index[j]];
-                            }
-
-                            if(nb_count > 0)
-                                accu_h /= nb_count;
-                            target_h[stf_row_index[i]][stf_column_index[i]] = accu_h;
-
-                            //determine u,v:
-                            Prec_ accu_u(0), accu_v(0), accu_l(0);
-                            for(unsigned long j(0) ; j < nb_count ; ++j)
-                            {
-                                Prec_ c_u = target_u[nb_row_index[j]][nb_column_index[j]];
-                                Prec_ c_v = target_v[nb_row_index[j]][nb_column_index[j]];
-                                accu_u += c_u;
-                                accu_v += c_v;
-
-                                accu_l += sqrt(c_u * c_u + c_v * c_v);
-                            }
-
+                            //determine {h, u, v}_average
+                            Prec_ h_average(0);
+                            Prec_ u_average(0); //TODO:not needed?
+                            Prec_ v_average(0); //TODO:not needed?
                             if(nb_count > 0)
                             {
-                                accu_u /= nb_count;
-                                accu_v /= nb_count;
+                                for(unsigned long j(0) ; j < nb_count ; ++j)
+                                {
 
-                                accu_l /= nb_count;
+                                    Prec_ value_h((1./nb_count) * alpha * depth * target_h[nb_row_index[j]][nb_column_index[j]]);
+                                    Prec_ value_u((1./nb_count) * alpha * depth * target_u[nb_row_index[j]][nb_column_index[j]]);
+                                    Prec_ value_v((1./nb_count) * alpha * depth * target_v[nb_row_index[j]][nb_column_index[j]]);
+
+                                    h_average += value_h;
+                                    u_average += value_u;
+                                    v_average += value_v;
+                                }
+                                h_average /= nb_count;
+                                u_average /= nb_count;
+                                v_average /= nb_count;
                             }
-                            //assume u,v given as unit values:
-                            accu_u += accu_l * u;
-                            accu_v += accu_l * v;
-                            target_u[stf_row_index[i]][stf_column_index[i]] = accu_u;
-                            target_v[stf_row_index[i]][stf_column_index[i]] = accu_v;
+
+                            //determine h, u, v:
+                            //TODO: remove these after testing:
+                            target_h[stf_row_index[i]][stf_column_index[i]] = Prec_(0);
+                            target_u[stf_row_index[i]][stf_column_index[i]] = Prec_(0);
+                            target_v[stf_row_index[i]][stf_column_index[i]] = Prec_(0);
+                            if(nb_count > 0)
+                            {
+                                for(unsigned long j(0) ; j < nb_count ; ++j)
+                                {
+                                    Prec_ value_h(target_h[nb_row_index[j]][nb_column_index[j]] * (0.5 / nb_count) * alpha);
+                                    target_h[stf_row_index[i]][stf_column_index[i]] += value_h;
+                                    target_h[nb_row_index[j]][nb_column_index[j]] -= value_h;
+                                    Prec_ value_u(target_u[nb_row_index[j]][nb_column_index[j]] * (0.5 / nb_count) * alpha);
+                                    target_u[stf_row_index[i]][stf_column_index[i]] += value_u;
+                                    target_u[nb_row_index[j]][nb_column_index[j]] -= value_u;
+                                    Prec_ value_v(target_v[nb_row_index[j]][nb_column_index[j]] * (0.5 / nb_count) * alpha);
+                                    target_v[stf_row_index[i]][stf_column_index[i]] += value_v;
+                                    target_v[nb_row_index[j]][nb_column_index[j]] -= value_v;
+                                }
+                            }
+                        }
+                    }
+        };
+
+    ///Initialization of solids
+    template<typename Tag_, typename Method_>
+        class FTSExtrapolation
+        {
+        };
+
+    template<>
+        class FTSExtrapolation<tags::CPU, lbm_solid_extrapolation_methods::SIMPLE>
+        {
+            public:
+                template<typename Prec_>
+                    static void value(DenseMatrix<bool> & obstacles,
+                                      DenseMatrix<bool> & fluids_to_solids,
+                                      DenseMatrix<Prec_> & target_h,
+                                      DenseMatrix<Prec_> & target_u,
+                                      DenseMatrix<Prec_> & target_v,
+                                      Prec_ u,
+                                      Prec_ v,
+                                      Prec_ alpha,
+                                      Prec_ depth)
+                    {
+                        ///For h: determine displaced amount of water by diving-depth and distribute it amongst FTS cells
+                        //First: preprocess elements (only operated on the boolean stf matrix):
+                        std::vector<unsigned long> stf_row_index;
+                        std::vector<unsigned long> stf_column_index;
+
+                        unsigned long stf_count(0);
+                        for(unsigned long i(0) ; i < fluids_to_solids.rows() ; ++i)
+                        {
+                            for(unsigned long j(0) ; j < fluids_to_solids.columns() ; ++j)
+                            {
+                                if(fluids_to_solids[i][j])
+                                {
+                                    stf_row_index.push_back(i);
+                                    stf_column_index.push_back(j);
+                                    ++stf_count;
+                                }
+                            }
+                        }
+
+                        //Second: determine neighbours and set values:
+                        for(unsigned long i(0) ; i < stf_count ; ++i)
+                        {
+                            std::vector<unsigned long> nb_row_index;
+                            std::vector<unsigned long> nb_column_index;
+
+                            unsigned long nb_count(0);
+                            //dir 1
+                            if(stf_column_index[i] + 1 < obstacles.columns())
+                                if(!obstacles[stf_row_index[i]][stf_column_index[i] + 1] && !fluids_to_solids[stf_row_index[i]][stf_column_index[i] + 1])
+                                {
+                                    nb_row_index.push_back(stf_row_index[i]);
+                                    nb_column_index.push_back(stf_column_index[i] + 1);
+                                    ++nb_count;
+                                }
+
+                            //dir 2
+                            if(stf_row_index[i] + 1 < obstacles.rows() && stf_column_index[i] + 1 < obstacles.columns())
+                                if(!obstacles[stf_row_index[i] + 1][stf_column_index[i] + 1] && !fluids_to_solids[stf_row_index[i] + 1][stf_column_index[i] + 1])
+                                {
+                                    nb_row_index.push_back(stf_row_index[i] + 1);
+                                    nb_column_index.push_back(stf_column_index[i] + 1);
+                                    ++nb_count;
+                                }
+
+                            //dir 3
+                            if(stf_row_index[i] + 1 < obstacles.rows())
+                                if(!obstacles[stf_row_index[i] + 1][stf_column_index[i]] && !fluids_to_solids[stf_row_index[i] + 1][stf_column_index[i]])
+                                {
+                                    nb_row_index.push_back(stf_row_index[i] + 1);
+                                    nb_column_index.push_back(stf_column_index[i]);
+                                    ++nb_count;
+                                }
+
+                            //dir 4
+                            if(stf_row_index[i] + 1 < obstacles.rows() && stf_column_index[i] - 1 >= 0)
+                                if(!obstacles[stf_row_index[i] + 1][stf_column_index[i] - 1] && !fluids_to_solids[stf_row_index[i] + 1][stf_column_index[i] - 1])
+                                {
+                                    nb_row_index.push_back(stf_row_index[i] + 1);
+                                    nb_column_index.push_back(stf_column_index[i] - 1);
+                                    ++nb_count;
+                                }
+
+                            //dir 5
+                            if(stf_column_index[i] - 1 >= 0)
+                                if(!obstacles[stf_row_index[i]][stf_column_index[i] - 1] && !fluids_to_solids[stf_row_index[i]][stf_column_index[i] - 1])
+                                {
+                                    nb_row_index.push_back(stf_row_index[i]);
+                                    nb_column_index.push_back(stf_column_index[i] - 1);
+                                    ++nb_count;
+                                }
+
+                            //dir 6
+                            if(stf_row_index[i] - 1 >= 0 && stf_column_index[i] - 1 >= 0)
+                                if(!obstacles[stf_row_index[i] - 1][stf_column_index[i] - 1] && !fluids_to_solids[stf_row_index[i] - 1][stf_column_index[i] - 1])
+                                {
+                                    nb_row_index.push_back(stf_row_index[i] - 1);
+                                    nb_column_index.push_back(stf_column_index[i] - 1);
+                                    ++nb_count;
+                                }
+
+                            //dir 7
+                            if(stf_row_index[i] - 1 >= 0)
+                                if(!obstacles[stf_row_index[i] - 1][stf_column_index[i]] && !fluids_to_solids[stf_row_index[i] - 1][stf_column_index[i]])
+                                {
+                                    nb_row_index.push_back(stf_row_index[i] - 1);
+                                    nb_column_index.push_back(stf_column_index[i]);
+                                    ++nb_count;
+                                }
+
+                            //dir 8
+                            if(stf_row_index[i] - 1 >= 0 && stf_column_index[i] + 1 < obstacles.columns() && !fluids_to_solids[stf_row_index[i] - 1][stf_column_index[i] + 1])
+                                if(!obstacles[stf_row_index[i] - 1][stf_column_index[i] + 1])
+                                {
+                                    nb_row_index.push_back(stf_row_index[i] - 1);
+                                    nb_column_index.push_back(stf_column_index[i] + 1);
+                                    ++nb_count;
+                                }
+
+                            //distribute h, u, v:
+                            if(nb_count > 0)
+                            {
+                                for(unsigned long j(0) ; j < nb_count ; ++j)
+                                {
+                                    target_h[nb_row_index[j]][nb_column_index[j]] += (depth)/nb_count * alpha;
+                                    target_u[nb_row_index[j]][nb_column_index[j]] += (depth)/nb_count * alpha;
+                                    target_v[nb_row_index[j]][nb_column_index[j]] += (depth)/nb_count * alpha;
+                                }
+                            }
+                            //TODO: remove these after testing:
+                            target_h[stf_row_index[i]][stf_column_index[i]] = Prec_(0);
+                            target_u[stf_row_index[i]][stf_column_index[i]] = Prec_(0);
+                            target_v[stf_row_index[i]][stf_column_index[i]] = Prec_(0);
                         }
                     }
         };
