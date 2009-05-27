@@ -208,6 +208,7 @@ class MatrixIO
                 file.close();
             }
 
+
         template<typename DT_>
             static DenseMatrix<DT_> read_matrix(std::string filename, DT_ base, unsigned long & non_zeros)
             {
