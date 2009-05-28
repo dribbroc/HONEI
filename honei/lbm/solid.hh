@@ -180,15 +180,15 @@ namespace honei
                 private:
 
                     template <typename DT_>
-                        static int signum(DT_ x)
+                        static signed long signum(DT_ x)
                         {
                             return (x > 0) ? 1 : (x < 0) ? -1 : 0;
                         }
 
                     template <typename DT_>
-                        static unsigned long convert_pos(DT_ coord, DT_ delta)
+                        static signed long convert_pos(DT_ coord, DT_ delta)
                         {
-                            return (unsigned long)(coord / delta);
+                            return (signed long)(coord / delta);
                         }
 
                     ///Bresenham line rasterization:
@@ -200,12 +200,12 @@ namespace honei
                             signed long d_y(convert_pos(line.y_coord_2, dy) - convert_pos(line.y_coord_1, dy));
 
                             ///Determine signs:
-                            int inc_x(signum(d_x));
-                            int inc_y(signum(d_y));
+                            signed long inc_x(signum(d_x));
+                            signed long inc_y(signum(d_y));
                             if(d_x < 0) d_x = -d_x;
                             if(d_y < 0) d_y = -d_y;
 
-                            int p_d_x, p_d_y, d_d_x, d_d_y, e_s, e_l;
+                            signed long p_d_x, p_d_y, d_d_x, d_d_y, e_s, e_l;
                             if(d_x > d_y)
                             {
                                 p_d_x = inc_x;
@@ -225,12 +225,12 @@ namespace honei
                                 e_l = d_y;
                             }
 
-                            int x(convert_pos(line.x_coord_1, dx));
-                            int y(convert_pos(line.y_coord_1, dy));
-                            int err(e_l / 2);
+                            signed long x(convert_pos(line.x_coord_1, dx));
+                            signed long y(convert_pos(line.y_coord_1, dy));
+                            signed long err(e_l / 2);
 
                             ///Set start pixel and begin loop:
-                            if(y < target.rows() && x < target.columns())
+                            if(y < target.rows() && x < target.columns() && x >= 0 && y >= 0)
                                 target[y][x] = true;
 
                             for(unsigned long i(0) ; i < e_l ; ++i)
@@ -247,7 +247,7 @@ namespace honei
                                     x += p_d_x;
                                     y += p_d_y;
                                 }
-                                if(y < target.rows() && x < target.columns())
+                                if(y < target.rows() && x < target.columns() && x >= 0 && y >= 0)
                                     target[y][x] = true;
                             }
                         }
@@ -256,33 +256,53 @@ namespace honei
                     template <typename DT_>
                         static void local_scan_fill(Polygon<DT_, lbm_solid_dims::D2> & polygon, DenseMatrix<bool> & target, DT_ dx, DT_ dy)
                         {
-                            ///Suppose, starting index is geq zero in both dimensions (TODO: catch negative)
-                            unsigned long i_start(convert_pos(polygon.line_min_y_level, dy));
-                            unsigned long j_start(convert_pos(polygon.line_min_x_level, dx));
-                            unsigned long i_end(convert_pos(polygon.line_max_y_level, dy));
-                            unsigned long j_end(convert_pos(polygon.line_max_x_level, dx));
+                            signed long i_start_s(convert_pos(polygon.line_min_y_level, dy));
+                            signed long j_start_s(convert_pos(polygon.line_min_x_level, dx));
+                            signed long i_end_s(convert_pos(polygon.line_max_y_level, dy));
+                            signed long j_end_s(convert_pos(polygon.line_max_x_level, dx));
 
-                            bool paint(false);
-                            bool left(false);
-                            bool leave(false);
+                            unsigned long i_start, i_end, j_start, j_end;
+                            if(i_start_s < 0)
+                                i_start = 0;
+                            else if(i_start_s >= target.rows())
+                                i_start = (unsigned long)target.rows();
+                            else
+                                i_start = (unsigned long)i_start_s;
 
+                            if(i_end_s < 0)
+                                i_end = 0;
+                            else if(i_end_s >= target.rows())
+                                i_end = (unsigned long)target.rows();
+                            else
+                                i_end = (unsigned long)i_end_s;
+
+                            if(j_start_s < 0)
+                                j_start = 0;
+                            else if(j_start_s >= target.columns())
+                                j_start = (unsigned long)target.columns();
+                            else
+                                j_start = (unsigned long)j_start_s;
+
+                            if(j_end_s < 0)
+                                j_end = 0;
+                            else if(j_end_s >= target.columns())
+                                j_end = (unsigned long)target.columns();
+                            else
+                                j_end = (unsigned long)j_end_s;
+
+                            bool a(false), b(false);
                             for(unsigned long i(i_start) ; i < i_end ; ++i)
                             {
                                 for(unsigned long j(j_start); j < j_end ; ++j)
                                 {
-                                    bool current(target[i][j]);
-                                    bool paint_new((!paint & left & leave & !current) | (paint & !left & !leave & !current));
-                                    bool left_new((!paint & !left & leave & !current) | (!paint & left & !leave & !current) |
-                                            (!paint & left & !leave & current) | (!paint & left & leave & current) |
-                                            (!paint & !left & !leave & !current));
-                                    bool leave_new((!paint & !left & !leave & current) | (!paint & !left & leave & current) |
-                                            (!paint & left & !leave & current) | (!paint & left & leave & current) |
-                                            (paint & !left & !leave & current));
+                                    bool e(target[i][j]);
 
-                                    target[i][j] = paint_new | current;
-                                    paint = paint_new;
-                                    left = left_new;
-                                    leave = leave_new;
+                                    bool a_t((!a & !b & e) | (!a & b & e) | (a & !b & !e) | (a & !b & e) | (a & b & e));
+                                    bool b_t((!a & !b & !e) | (!a & b & !e) | (a & !b & e) | (a & b & !e) | (a & b & e));
+
+                                    target[i][j] = a_t;
+                                    a = a_t;
+                                    b = b_t;
                                 }
                             }
                         }
