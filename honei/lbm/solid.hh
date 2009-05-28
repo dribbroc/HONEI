@@ -227,10 +227,10 @@ namespace lbm
                     int err(e_l / 2);
 
                     ///Set start pixel and begin loop:
-                    if(y < target.rows() && x < target.columns())
+                    if(y < (signed)target.rows() && x < (signed)target.columns())
                         target[y][x] = true;
 
-                    for(unsigned long i(0) ; i < e_l ; ++i)
+                    for(signed long i(0) ; i < e_l ; ++i)
                     {
                         err -= e_s;
                         if(err < 0)
@@ -244,7 +244,7 @@ namespace lbm
                             x += p_d_x;
                             y += p_d_y;
                         }
-                        if(y < target.rows() && x < target.columns())
+                        if(y < (signed)target.rows() && x < (signed)target.columns())
                             target[y][x] = true;
                     }
                 }
