@@ -42,8 +42,10 @@ class MMIOTest:
         {
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/5pt_10x10.mtx";
-            DenseMatrix<DT_> matrix = MatrixIO::read_matrix(filename, DT_(0));
+            unsigned long non_zeros(0);
+            DenseMatrix<DT_> matrix = MatrixIO::read_matrix(filename, DT_(0), non_zeros);
             std::cout << matrix;
+            std::cout << "Non zero elements: " << non_zeros << std::endl;
 
             DenseVector<DT_> x(matrix.rows());
             for (unsigned long i(0) ; i < x.size() ; ++i)

@@ -6,6 +6,7 @@
 #include <string>
 #endif
 
+#include <honei/math/matrix_io.hh>
 #include <honei/la/product.hh>
 #include <honei/util/configuration.hh>
 #include <honei/backends/cuda/operations.hh>
@@ -436,6 +437,65 @@ class BandedMatrixProductBench :
 };
 BandedMatrixProductBench<tags::CPU, float> BMPBenchfloat2("Matrix Product Benchmark banded/dense - matrix size: 256x256, float", 256, 10);
 BandedMatrixProductBench<tags::CPU, double> BMPBenchdouble2("Matrix Product Benchmark banded/dense - matrix size: 256x256, double", 256, 10);
+
+template <typename Tag_, typename DataType_>
+class SMELLDenseVectorProductBench :
+    public Benchmark
+{
+    private:
+        unsigned long _size;
+        unsigned long _count;
+    public:
+        SMELLDenseVectorProductBench(const std::string & id, unsigned long size, unsigned long count) :
+            Benchmark(id)
+        {
+            register_tag(Tag_::name);
+            _size = size;
+            _count = count;
+        }
+
+        virtual void run()
+        {
+            std::cout<< ULONG_MAX<<std::endl;
+            std::string filename(HONEI_SOURCEDIR);
+            filename += "/honei/math/testdata/5pt_10x10.mtx";
+            unsigned long non_zeros(0);
+            DenseMatrix<DataType_> matrix = MatrixIO::read_matrix(filename, DataType_(0), non_zeros);
+
+            DenseVector<DataType_> x(matrix.rows());
+            for (unsigned long i(0) ; i < x.size() ; ++i)
+            {
+                x[i] = DataType_(i) / 1.234;
+            }
+            SparseMatrixELL<DataType_> smatrix(matrix);
+            DenseVector<DataType_> y1(Product<Tag_>::value(smatrix, x));
+
+            for (unsigned long i(0) ; i < _count ; i++)
+            {
+                BENCHMARK(
+                        for (unsigned long j(0) ; j < 100 ; ++j)
+                        {
+                            Product<Tag_>::value(smatrix, y1);
+#ifdef HONEI_CUDA
+                            cuda_thread_synchronize();
+#endif
+                        }
+                        );
+            }
+            //BenchmarkInfo info(Product<>::get_benchmark_info(smatrix, y1));
+            //evaluate(info * 100);
+            BenchmarkInfo info;
+            info.flops = non_zeros * 2;
+            std::cout<<"Non Zeros: " << non_zeros << std::endl;
+            evaluate(info * 100);
+        }
+};
+SMELLDenseVectorProductBench<tags::CPU, float> SMELLDVPBenchfloat("SM ELL Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10);
+SMELLDenseVectorProductBench<tags::CPU, double> SMELLDVPBenchdouble("SM ELL Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10);
+#ifdef HONEI_CUDA
+SMELLDenseVectorProductBench<tags::GPU::CUDA, float> cudaSMELLDVPBenchfloat("CUDA SM ELL Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10);
+SMELLDenseVectorProductBench<tags::GPU::CUDA, double> cudaSMELLDVPBenchdouble("CUDA SM ELL Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10);
+#endif
 
 
 template <typename DT_, typename Tag_>

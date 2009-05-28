@@ -93,9 +93,9 @@ class MatrixIO
 
     public:
         template<typename DT_>
-            static DenseMatrix<DT_> read_matrix(std::string filename, DT_ base)
+            static DenseMatrix<DT_> read_matrix(std::string filename, DT_ base, unsigned long & non_zeros)
             {
-                unsigned long columns, rows, non_zeros, non_data_lines;
+                unsigned long columns, rows, non_data_lines;
                 get_sizes(filename, columns, rows, non_zeros, non_data_lines);
 
                 DenseMatrix<DT_> result(rows, columns, base);
