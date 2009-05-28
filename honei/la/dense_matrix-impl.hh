@@ -204,6 +204,7 @@ namespace honei
     typename DenseMatrix<DataType_>::ConstRow
     DenseMatrix<DataType_>::operator[] (unsigned long row) const
     {
+        CONTEXT("When retrieving DenseMatrix row, unassignable:");
         return DenseVectorRange<DataType_>(this->_imp->elements, this->_imp->columns, row * this->_imp->columns);
     }
 
@@ -211,6 +212,7 @@ namespace honei
     typename DenseMatrix<DataType_>::Row
     DenseMatrix<DataType_>::operator[] (unsigned long row)
     {
+        CONTEXT("When retrieving DenseMatrix row:");
         return DenseVectorRange<DataType_>(this->_imp->elements, this->_imp->columns, row * this->_imp->columns);
     }
 
@@ -218,6 +220,7 @@ namespace honei
     const DataType_ &
     DenseMatrix<DataType_>::operator() (unsigned long row, unsigned long column) const
     {
+        CONTEXT("When retrieving DenseMatrix element, unassignable:");
         return (*this->_imp)(row, column);
     }
 
@@ -225,6 +228,7 @@ namespace honei
     DataType_ &
     DenseMatrix<DataType_>::operator() (unsigned long row, unsigned long column)
     {
+        CONTEXT("When retrieving DenseMatrix element:");
         return (*this->_imp)(row, column);
     }
 
