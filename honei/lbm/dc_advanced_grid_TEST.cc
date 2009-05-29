@@ -75,7 +75,7 @@ class SolverLABNAVSTOGridDCTest :
             Grid<D2Q9, DataType_> grid;
 
             //just take some scenario and adjust it;
-            ScenarioCollection::get_scenario(7, g_h, g_w, grid);
+            ScenarioCollection::get_scenario(8, g_h, g_w, grid);
             grid.d_x = dx;
             grid.d_y = dy;
             grid.d_t = dt;

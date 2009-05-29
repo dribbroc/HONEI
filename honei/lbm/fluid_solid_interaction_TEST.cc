@@ -53,7 +53,8 @@ class FSISolverLBMGridTest :
 
             Grid<D2Q9, DataType_> grid;
 
-            ScenarioCollection::get_scenario(0, g_h, g_w, grid);
+            ///Use STEADY STATE values:
+            ScenarioCollection::get_scenario(6, g_h, g_w, grid);
 
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
@@ -69,9 +70,10 @@ class FSISolverLBMGridTest :
                 GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.u, grid.u);
                 GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.v, grid.v);
 
-                Line<DataType_, lbm_solid_dims::D2> line_1(DataType_(2 + i), DataType_(2), DataType_(11 + i), DataType_(11));
-                Line<DataType_, lbm_solid_dims::D2> line_2(DataType_(11 + i), DataType_(11), DataType_(16 + i), DataType_(2));
-                Line<DataType_, lbm_solid_dims::D2> line_3(DataType_(16 + i), DataType_(2), DataType_(2 + i), DataType_(2));
+                //Directly dealing with omega-coordinates
+                Line<DataType_, lbm_solid_dims::D2> line_1(DataType_(2 + i) * grid.d_x, DataType_(2) * grid.d_y, DataType_(11 + i)* grid.d_x, DataType_(11) * grid.d_y);
+                Line<DataType_, lbm_solid_dims::D2> line_2(DataType_(11 + i)* grid.d_x, DataType_(11) * grid.d_y, DataType_(16 + i)* grid.d_x, DataType_(2) * grid.d_y);
+                Line<DataType_, lbm_solid_dims::D2> line_3(DataType_(16 + i)* grid.d_x, DataType_(2) * grid.d_y, DataType_(2 + i)* grid.d_x, DataType_(2) * grid.d_y);
 
                 Polygon<DataType_, lbm_solid_dims::D2> tri(3);
                 tri.add_line(line_1);
@@ -84,11 +86,11 @@ class FSISolverLBMGridTest :
 
                 DenseMatrix<bool> fts(g_h, g_w, false);
                 FluidToSolidCells<Tag_>::value(*grid.obstacles, obstacles_new, fts);
-                FTSExtrapolation<Tag_, lbm_solid_extrapolation_methods::SIMPLE>::value(obstacles_new, fts, *grid.h, *grid.u, *grid.v, DataType_(1), DataType_(1), DataType_(1), DataType_(1));
+                FTSExtrapolation<Tag_, lbm_solid_extrapolation_methods::SIMPLE>::value(obstacles_new, fts, *grid.h, *grid.u, *grid.v, DataType_(1), DataType_(1), DataType_(0.001), DataType_(grid.d_x));
 
                 DenseMatrix<bool> stf(g_h, g_w, false);
                 SolidToFluidCells<Tag_>::value(*grid.obstacles, obstacles_new, stf);
-                STFExtrapolation<Tag_, lbm_solid_extrapolation_methods::SIMPLE>::value(obstacles_new, stf, *grid.h, *grid.u, *grid.v, DataType_(1), DataType_(1), DataType_(1), DataType_(1));
+                STFExtrapolation<Tag_, lbm_solid_extrapolation_methods::SIMPLE>::value(obstacles_new, stf, *grid.h, *grid.u, *grid.v, DataType_(1), DataType_(1), DataType_(0.001), DataType_(grid.d_x));
 
                 info.destroy();
                 data.destroy();
