@@ -296,13 +296,15 @@ namespace honei
                                 for(unsigned long j(j_start); j < j_end ; ++j)
                                 {
                                     bool e(target[i][j]);
-
-                                    bool a_t((!a & !b & e) | (!a & b & e) | (a & !b & !e) | (a & !b & e) | (a & b & e));
+                                    //TODO: correct for rectangles, incorrect for triangles
+                                    bool rim(j - j_start == 0);
+                                    bool a_t((!a & !b & e) | (!a & b & e) | (a & !b & !e) | (a & !b & e) | (a & b & e) | (a & b & !e & !rim));
                                     bool b_t((!a & !b & !e) | (!a & b & !e) | (a & !b & e) | (a & b & !e) | (a & b & e));
 
                                     target[i][j] = a_t;
                                     a = a_t;
                                     b = b_t;
+
                                 }
                             }
                         }
@@ -497,9 +499,9 @@ namespace honei
                                     for(unsigned long j(0) ; j < nb_count ; ++j)
                                     {
 
-                                        Prec_ value_h((1./nb_count) * alpha * depth * target_h[nb_row_index[j]][nb_column_index[j]]);
-                                        Prec_ value_u((1./nb_count) * alpha * depth * target_u[nb_row_index[j]][nb_column_index[j]]);
-                                        Prec_ value_v((1./nb_count) * alpha * depth * target_v[nb_row_index[j]][nb_column_index[j]]);
+                                        Prec_ value_h(alpha * depth * target_h[nb_row_index[j]][nb_column_index[j]]);
+                                        Prec_ value_u(alpha * depth * target_u[nb_row_index[j]][nb_column_index[j]]);
+                                        Prec_ value_v(alpha * depth * target_v[nb_row_index[j]][nb_column_index[j]]);
 
                                         h_average += value_h;
                                         u_average += value_u;
@@ -511,23 +513,13 @@ namespace honei
                                 }
 
                                 //determine h, u, v:
-                                //TODO: remove these after testing:
-                                target_h[stf_row_index[i]][stf_column_index[i]] = Prec_(0);
-                                target_u[stf_row_index[i]][stf_column_index[i]] = Prec_(0);
-                                target_v[stf_row_index[i]][stf_column_index[i]] = Prec_(0);
                                 if(nb_count > 0)
                                 {
                                     for(unsigned long j(0) ; j < nb_count ; ++j)
                                     {
-                                        Prec_ value_h(target_h[nb_row_index[j]][nb_column_index[j]] * (0.5 / nb_count) * alpha);
-                                        target_h[stf_row_index[i]][stf_column_index[i]] += value_h;
-                                        target_h[nb_row_index[j]][nb_column_index[j]] -= value_h;
-                                        Prec_ value_u(target_u[nb_row_index[j]][nb_column_index[j]] * (0.5 / nb_count) * alpha);
-                                        target_u[stf_row_index[i]][stf_column_index[i]] += value_u;
-                                        target_u[nb_row_index[j]][nb_column_index[j]] -= value_u;
-                                        Prec_ value_v(target_v[nb_row_index[j]][nb_column_index[j]] * (0.5 / nb_count) * alpha);
-                                        target_v[stf_row_index[i]][stf_column_index[i]] += value_v;
-                                        target_v[nb_row_index[j]][nb_column_index[j]] -= value_v;
+                                        target_h[stf_row_index[i]][stf_column_index[i]] = h_average;
+                                        target_u[stf_row_index[i]][stf_column_index[i]] = u_average;
+                                        target_v[stf_row_index[i]][stf_column_index[i]] = v_average;
                                     }
                                 }
                             }

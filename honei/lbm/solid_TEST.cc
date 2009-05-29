@@ -72,6 +72,23 @@ class SolidTest :
             ScanConversion<Tag_>::value(tri_0, target, DataType_(1), DataType_(1));
 
             std::cout << target << std::endl;
+            //Rasterization test 2:
+            DenseMatrix<bool> target_2(50, 50, false);
+            DataType_ dx(1);
+            Line<DataType_, lbm_solid_dims::D2> line_c_0(DataType_(5) * dx, DataType_(20) * dx, DataType_(10) * dx, DataType_(20) * dx);
+            Line<DataType_, lbm_solid_dims::D2> line_c_1(DataType_(10) * dx, DataType_(20) * dx, DataType_(10) * dx, DataType_(25) * dx);
+            Line<DataType_, lbm_solid_dims::D2> line_c_2(DataType_(10) * dx, DataType_(25) * dx, DataType_(5) * dx, DataType_(25) * dx);
+            Line<DataType_, lbm_solid_dims::D2> line_c_3(DataType_(5) * dx, DataType_(25) * dx, DataType_(5) * dx, DataType_(20) * dx);
+
+            Polygon<DataType_, lbm_solid_dims::D2> c_0(4);
+            c_0.add_line(line_c_0);
+            c_0.add_line(line_c_1);
+            c_0.add_line(line_c_2);
+            c_0.add_line(line_c_3);
+            c_0.value();
+            ScanConversion<Tag_>::value(c_0, target_2, dx, dx);
+
+            std::cout << target_2 << std::endl;
 
             //FluidToSolid test:
             DenseMatrix<bool> target_fts(20, 20, false);

@@ -41,7 +41,7 @@ class FSISolverLBMGridTest :
 {
     public:
         FSISolverLBMGridTest(const std::string & type) :
-            TaggedTest<Tag_>("solver_lbm_grid_test<" + type + ">")
+            TaggedTest<Tag_>("fsi_lbm_grid_test<" + type + ">")
         {
         }
 
@@ -63,32 +63,46 @@ class FSISolverLBMGridTest :
             SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, grid.d_x, grid.d_y, grid.d_t, grid.tau);
 
 
+            DenseMatrix<bool> obstacles_new(g_h, g_w, false);
+            DenseMatrix<bool> fts(g_h, g_w, false);
+            DenseMatrix<bool> stf(g_h, g_w, false);
             std::cout << "Solving: " << grid.description << std::endl;
             for(unsigned long i(0); i < timesteps; ++i)
             {
+                for(unsigned long j(0); j < obstacles_new.rows() ; ++j)
+                {
+                    for(unsigned long k(0) ; k < obstacles_new.columns() ; ++k)
+                    {
+                        obstacles_new[j][k] = false;
+                        fts[j][k] = false;
+                        stf[j][k] = false;
+                    }
+                }
                 GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.h, grid.h);
                 GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.u, grid.u);
                 GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.v, grid.v);
 
                 //Directly dealing with omega-coordinates
-                Line<DataType_, lbm_solid_dims::D2> line_1(DataType_(2 + i) * grid.d_x, DataType_(2) * grid.d_y, DataType_(11 + i)* grid.d_x, DataType_(11) * grid.d_y);
-                Line<DataType_, lbm_solid_dims::D2> line_2(DataType_(11 + i)* grid.d_x, DataType_(11) * grid.d_y, DataType_(16 + i)* grid.d_x, DataType_(2) * grid.d_y);
-                Line<DataType_, lbm_solid_dims::D2> line_3(DataType_(16 + i)* grid.d_x, DataType_(2) * grid.d_y, DataType_(2 + i)* grid.d_x, DataType_(2) * grid.d_y);
+                Line<DataType_, lbm_solid_dims::D2> line_1(DataType_(5 + i) * grid.d_x, DataType_(20) * grid.d_y, DataType_(10 + i)* grid.d_x, DataType_(20) * grid.d_y);
+                Line<DataType_, lbm_solid_dims::D2> line_2(DataType_(10 + i)* grid.d_x, DataType_(20) * grid.d_y, DataType_(10 + i)* grid.d_x, DataType_(25) * grid.d_y);
+                Line<DataType_, lbm_solid_dims::D2> line_3(DataType_(10 + i)* grid.d_x, DataType_(25) * grid.d_y, DataType_(5 + i)* grid.d_x, DataType_(25) * grid.d_y);
+                Line<DataType_, lbm_solid_dims::D2> line_4(DataType_(5 + i)* grid.d_x, DataType_(25) * grid.d_y, DataType_(5 + i)* grid.d_x, DataType_(20) * grid.d_y);
 
-                Polygon<DataType_, lbm_solid_dims::D2> tri(3);
+                Polygon<DataType_, lbm_solid_dims::D2> tri(4);
                 tri.add_line(line_1);
                 tri.add_line(line_2);
                 tri.add_line(line_3);
+                tri.add_line(line_4);
                 tri.value();
 
-                DenseMatrix<bool> obstacles_new(g_h, g_w, false);
                 ScanConversion<Tag_>::value(tri, obstacles_new, grid.d_x, grid.d_y);
-
-                DenseMatrix<bool> fts(g_h, g_w, false);
+#ifdef SOLVER_VERBOSE
+                if(i == 0)
+                    std::cout << obstacles_new << std::endl;
+#endif
                 FluidToSolidCells<Tag_>::value(*grid.obstacles, obstacles_new, fts);
                 FTSExtrapolation<Tag_, lbm_solid_extrapolation_methods::SIMPLE>::value(obstacles_new, fts, *grid.h, *grid.u, *grid.v, DataType_(1), DataType_(1), DataType_(0.001), DataType_(grid.d_x));
 
-                DenseMatrix<bool> stf(g_h, g_w, false);
                 SolidToFluidCells<Tag_>::value(*grid.obstacles, obstacles_new, stf);
                 STFExtrapolation<Tag_, lbm_solid_extrapolation_methods::SIMPLE>::value(obstacles_new, stf, *grid.h, *grid.u, *grid.v, DataType_(1), DataType_(1), DataType_(0.001), DataType_(grid.d_x));
 
