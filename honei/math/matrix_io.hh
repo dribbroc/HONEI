@@ -25,6 +25,7 @@
 #include <cstdlib>
 #include <string>
 #include <honei/la/dense_matrix.hh>
+#include <honei/la/dense_vector.hh>
 
 using namespace honei;
 class MatrixIO
@@ -92,6 +93,122 @@ class MatrixIO
         }
 
     public:
+        ///Only read size for sparse data and index vectors
+        static unsigned long get_non_zeros(std::string filename)
+        {
+            std::string c_s, r_s, n_z_s;
+            std::ifstream file(filename.c_str());
+
+            unsigned long data_index(0);
+
+            if(file.is_open())
+            {
+                while(true)
+                {
+                    std::string line;
+                    std::getline(file, line);
+                    if(line.find("%", 0) < line.npos)
+                    {
+                        ++data_index;
+                        continue;
+                    }
+                    else
+                    {
+                        std::string::size_type first_blank(line.find_first_of(" "));
+                        for(unsigned long i(0) ; i < first_blank ; ++i)
+                        {
+                            c_s.append(1, line[i]);
+                        }
+                        line.erase(0, first_blank + 1);
+
+                        std::string::size_type second_blank(line.find_first_of(" "));
+                        for(unsigned long i(0) ; i < second_blank ; ++i)
+                        {
+                            r_s.append(1, line[i]);
+                        }
+                        line.erase(0, second_blank + 1);
+
+                        std::string::size_type eol(line.length());
+                        for(unsigned long i(0) ; i < eol ; ++i)
+                        {
+                            n_z_s.append(1, line[i]);
+                        }
+
+                        ++data_index;
+                        break;
+
+                    }
+                }
+
+                file.close();
+                unsigned long n_z((unsigned long)atol(n_z_s.c_str()));
+
+                return n_z;
+
+            }
+            else
+                throw honei::InternalError("Unable to open MatrixMarket file.");
+        }
+
+        ///Read in sparse data only
+        template<typename DT_>
+            static void read_matrix(std::string filename, DenseVector<unsigned long> & row_indices,
+                                                          DenseVector<unsigned long> & column_indices,
+                                                          DenseVector<DT_> & data)
+            {
+                unsigned long columns, rows, non_data_lines, non_zeros;
+                get_sizes(filename, columns, rows, non_zeros, non_data_lines);
+
+                std::ifstream file(filename.c_str());
+                file.is_open();
+
+                for(unsigned long i(0) ; i < non_data_lines ; ++i)
+                {
+                    std::string line;
+                    std::getline(file, line);
+                }
+
+                ///Attention: MatrixMarket indices are 1-based!!!
+                for(unsigned long i(0) ; i < non_zeros ; ++i)
+                {
+                    std::string line;
+                    std::getline(file, line);
+
+                    std::string c_s, r_s, n_z_s;
+
+                    std::string::size_type first_blank(line.find_first_of(" "));
+                    for(unsigned long j(0) ; j < first_blank ; ++j)
+                    {
+                        c_s.append(1, line[j]);
+                    }
+                    line.erase(0, first_blank + 1);
+
+                    std::string::size_type second_blank(line.find_first_of(" "));
+                    for(unsigned long j(0) ; j < second_blank ; ++j)
+                    {
+                        r_s.append(1, line[j]);
+                    }
+                    line.erase(0, second_blank + 1);
+
+                    std::string::size_type eol(line.length());
+                    for(unsigned long j(0) ; j < eol ; ++j)
+                    {
+                        n_z_s.append(1, line[j]);
+                    }
+
+
+                    unsigned long c = (unsigned long)atol(c_s.c_str());
+                    unsigned long r = (unsigned long)atol(r_s.c_str());
+                    DT_ n_z = (DT_)atof(n_z_s.c_str());
+
+                    row_indices[i] = r - 1;
+                    column_indices[i] = c -1;
+                    data[i] = n_z;
+
+                }
+                file.close();
+            }
+
         template<typename DT_>
             static DenseMatrix<DT_> read_matrix(std::string filename, DT_ base, unsigned long & non_zeros)
             {
@@ -118,24 +235,25 @@ class MatrixIO
                     std::string c_s, r_s, n_z_s;
 
                     std::string::size_type first_blank(line.find_first_of(" "));
-                    for(unsigned long i(0) ; i < first_blank ; ++i)
+                    for(unsigned long j(0) ; j < first_blank ; ++j)
                     {
-                        c_s.append(1, line[i]);
+                        c_s.append(1, line[j]);
                     }
                     line.erase(0, first_blank + 1);
 
                     std::string::size_type second_blank(line.find_first_of(" "));
-                    for(unsigned long i(0) ; i < second_blank ; ++i)
+                    for(unsigned long j(0) ; j < second_blank ; ++j)
                     {
-                        r_s.append(1, line[i]);
+                        r_s.append(1, line[j]);
                     }
                     line.erase(0, second_blank + 1);
 
                     std::string::size_type eol(line.length());
-                    for(unsigned long i(0) ; i < eol ; ++i)
+                    for(unsigned long j(0) ; j < eol ; ++j)
                     {
-                        n_z_s.append(1, line[i]);
+                        n_z_s.append(1, line[j]);
                     }
+
 
                     unsigned long c = (unsigned long)atol(c_s.c_str());
                     unsigned long r = (unsigned long)atol(r_s.c_str());
@@ -143,6 +261,7 @@ class MatrixIO
 
                     result[r - 1][c - 1] = n_z;
                 }
+                file.close();
 
                 return result;
             }

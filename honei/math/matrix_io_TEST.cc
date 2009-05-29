@@ -59,6 +59,26 @@ class MMIOTest:
             y1.lock(lm_read_only);
             TEST_CHECK_EQUAL(y1, y2);
             y1.unlock(lm_read_only);
+
+            ///Test second read-in method:
+            std::cout << "Testing sparse data read-in:" << std::endl;
+            unsigned long non_zeros_2(MatrixIO::get_non_zeros(filename));
+            DenseVector<unsigned long> r(non_zeros_2);
+            DenseVector<unsigned long> c(non_zeros_2);
+            DenseVector<DT_> data(non_zeros_2);
+
+            MatrixIO::read_matrix(filename, r, c, data);
+            std::cout << "Row Indices:" << std::endl;
+            std::cout << r;
+            std::cout << "Column Indices:" << std::endl;
+            std::cout << c;
+            std::cout << "Data:" << std::endl;
+            std::cout << data;
+
+            for(unsigned long i(0) ; i < non_zeros_2 ; ++i)
+            {
+                TEST_CHECK_EQUAL(matrix[r[i]][c[i]] , data[i]);
+            }
         }
 };
 MMIOTest<float, tags::CPU> mmio_test_float_dense("float");
