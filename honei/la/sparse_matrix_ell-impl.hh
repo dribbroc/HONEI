@@ -94,7 +94,7 @@ namespace honei
         {
             DenseVectorRange<DataType_> act_row(src[row]);
             unsigned long i(0);
-            while(act_row[i] == this->_imp->zero_element && i < act_row.size())
+            while(i < act_row.size() && act_row[i] == this->_imp->zero_element)
             {
                 ++i;
             }
@@ -120,7 +120,7 @@ namespace honei
             DenseVectorRange<DataType_> act_row(src[row]);
             unsigned long i(0);
             unsigned long target(0);
-            while(act_row[i] == this->_imp->zero_element)
+            while(i < act_row.size() && act_row[i] == this->_imp->zero_element)
             {
                 ++i;
             }
