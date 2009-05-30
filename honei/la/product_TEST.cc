@@ -733,14 +733,14 @@ class SparseMatrixELLDenseVectorProductQuickTest :
         virtual void run() const
         {
             unsigned long size (10);
-            DenseMatrix<DataType_> dm0(size, size, DataType_(0));
-            dm0(0, 0) = 1;
-            dm0(1, 1) = 2;
-            dm0(1, 5) = 2;
-            dm0(1, 7) = 2;
-            dm0(2, 3) = 3;
-            dm0(7, 5) = 4;
-            SparseMatrixELL<DataType_> sm0(dm0);
+            SparseMatrix<DataType_> sms(size, size + 3);
+            for (typename SparseMatrix<DataType_>::ElementIterator i(sms.begin_elements()) ; i < sms.end_elements() ; ++i)
+            {
+                if (i.index() % 5 == 0)
+                    *i = DataType_(i.index()) / 1.234;
+            }
+            DenseMatrix<DataType_> dm0(sms);
+            SparseMatrixELL<DataType_> sm0(sms);
             DenseVector<DataType_> dv1(size, DataType_(4));
             dv1[0] = 1;
             dv1[1] = 2;

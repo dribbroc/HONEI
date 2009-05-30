@@ -22,6 +22,7 @@
 #define LIBLA_GUARD_SPARSE_MATRIX_ELL_IMPL_HH 1
 
 #include <honei/la/sparse_matrix_ell.hh>
+#include <honei/la/sparse_matrix.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/matrix_error.hh>
 #include <honei/la/vector_error.hh>
@@ -84,40 +85,29 @@ namespace honei
     }
 
     template <typename DataType_>
-    SparseMatrixELL<DataType_>::SparseMatrixELL(DenseMatrix<DataType_> & src) :
+    SparseMatrixELL<DataType_>::SparseMatrixELL(SparseMatrix<DataType_> & src) :
         PrivateImplementationPattern<SparseMatrixELL<DataType_>, Shared>(new Implementation<SparseMatrixELL<DataType_> >(src.rows(), src.columns()))
     {
-        CONTEXT("When creating SparseMatrixELL from DenseMatrix:");
+        CONTEXT("When creating SparseMatrixELL from SparseMatrix:");
+        unsigned long rows(src.rows());
 
         unsigned long num_cols_per_row(0);
-        for (unsigned long row(0); row < src.rows() ; ++row)
+        for (unsigned long i(0) ; i < rows ; ++i)
         {
-            DenseVectorRange<DataType_> act_row(src[row]);
-            unsigned long i(0);
-            while(i < act_row.size() && act_row[i] == this->_imp->zero_element)
+            if (src[i].used_elements() > num_cols_per_row)
             {
-                ++i;
+                num_cols_per_row = src[i].used_elements();
             }
-            unsigned long start_i(i);
-            unsigned long last_i(i);
-            for( ; i < act_row.size() ; ++i)
-            {
-                if (act_row[i] != this->_imp->zero_element)
-                    last_i = i;
-            }
-
-            if (last_i - start_i + 1 > num_cols_per_row)
-                num_cols_per_row = last_i - start_i + 1;
         }
         this->_imp->num_cols_per_row = num_cols_per_row;
-        this->_imp->stride = src.rows();
+        this->_imp->stride = rows;
 
-        DenseVector<unsigned long> Aj(num_cols_per_row * src.rows(), (unsigned long)(0));
-        DenseVector<DataType_> Ax(num_cols_per_row * src.rows(), DataType_(0));
+        DenseVector<unsigned long> Aj(num_cols_per_row * rows, (unsigned long)(0));
+        DenseVector<DataType_> Ax(num_cols_per_row * rows, DataType_(0));
 
-        for (unsigned long row(0); row < src.rows() ; ++row)
+        for (unsigned long row(0); row < rows ; ++row)
         {
-            DenseVectorRange<DataType_> act_row(src[row]);
+            DenseVector<DataType_> act_row(src[row]);
             unsigned long i(0);
             unsigned long target(0);
             while(i < act_row.size() && act_row[i] == this->_imp->zero_element)
@@ -135,8 +125,71 @@ namespace honei
             }
         }
 
-        DenseVector<unsigned long> tAj(num_cols_per_row * src.rows(), (unsigned long)(0));
-        DenseVector<DataType_> tAx(num_cols_per_row * src.rows(), DataType_(0));
+        DenseVector<unsigned long> tAj(num_cols_per_row * rows, (unsigned long)(0));
+        DenseVector<DataType_> tAx(num_cols_per_row * rows, DataType_(0));
+        unsigned long t(0);
+        for (unsigned long j(0) ; j < num_cols_per_row ; ++j)
+        {
+            for (unsigned long i(0) ; i < tAj.size() ; i+=num_cols_per_row)
+            {
+                tAj[t] = Aj[j + i];
+                tAx[t] = Ax[j + i];
+                ++t;
+            }
+        }
+        this->_imp->Aj = tAj;
+        this->_imp->Ax = tAx;
+    }
+
+    template <typename DataType_>
+    SparseMatrixELL<DataType_>::SparseMatrixELL(unsigned long rows, unsigned long columns, DenseVector<unsigned long> & row_indices,
+            DenseVector<unsigned long> & column_indices, DenseVector<DataType_> & data) :
+        PrivateImplementationPattern<SparseMatrixELL<DataType_>, Shared>(new Implementation<SparseMatrixELL<DataType_> >(rows, columns))
+    {
+        CONTEXT("When creating SparseMatrixELL from coordinate vectors:");
+
+        SparseMatrix<DataType_> src(rows, columns);
+        for (unsigned long i(0) ; i < data.size() ; ++i)
+        {
+            src(row_indices[i], column_indices[i]) = data[i];
+        }
+
+        unsigned long num_cols_per_row(0);
+        for (unsigned long i(0) ; i < rows ; ++i)
+        {
+            if (src[i].used_elements() > num_cols_per_row)
+            {
+                num_cols_per_row = src[i].used_elements();
+            }
+        }
+        this->_imp->num_cols_per_row = num_cols_per_row;
+        this->_imp->stride = rows;
+
+        DenseVector<unsigned long> Aj(num_cols_per_row * rows, (unsigned long)(0));
+        DenseVector<DataType_> Ax(num_cols_per_row * rows, DataType_(0));
+
+        for (unsigned long row(0); row < rows ; ++row)
+        {
+            DenseVector<DataType_> act_row(src[row]);
+            unsigned long i(0);
+            unsigned long target(0);
+            while(i < act_row.size() && act_row[i] == this->_imp->zero_element)
+            {
+                ++i;
+            }
+            for( ; i < act_row.size() ; ++i)
+            {
+                if (act_row[i] != this->_imp->zero_element)
+                {
+                    Aj[target + row * num_cols_per_row] = i;
+                    Ax[target + row * num_cols_per_row] = act_row[i];
+                    target++;
+                }
+            }
+        }
+
+        DenseVector<unsigned long> tAj(num_cols_per_row * rows, (unsigned long)(0));
+        DenseVector<DataType_> tAx(num_cols_per_row * rows, DataType_(0));
         unsigned long t(0);
         for (unsigned long j(0) ; j < num_cols_per_row ; ++j)
         {

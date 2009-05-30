@@ -18,6 +18,7 @@
  */
 
 #include <honei/la/sparse_matrix_ell.hh>
+#include <honei/la/sparse_matrix.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/vector_error.hh>
 #include <unittest/unittest.hh>
@@ -41,17 +42,16 @@ class SparseMatrixELLQuickTest :
         virtual void run() const
         {
             unsigned long size (5);
-            DenseMatrix<DataType_> dm0(size, size + 3, DataType_(0));
-            dm0(0, 0) = 1;
-            dm0(0, 3) = 2;
-            dm0(0, 4) = 3;
-            dm0(2, 1) = 4;
-            dm0(2, 3) = 5;
-            dm0(3, 3) = 6;
+            SparseMatrix<DataType_> sms(size, size + 3);
+            for (typename SparseMatrix<DataType_>::ElementIterator i(sms.begin_elements()) ; i < sms.end_elements() ; ++i)
+            {
+                if (i.index() % 5 == 0)
+                    *i = DataType_(i.index()) / 1.234;
+            }
 
-            SparseMatrixELL<DataType_> sm0(dm0);
+            SparseMatrixELL<DataType_> sm0(sms);
 
-            std::cout<<dm0;
+            std::cout<<sms;
             std::cout<<sm0;
 
             TEST_CHECK_EQUAL(sm0, sm0);

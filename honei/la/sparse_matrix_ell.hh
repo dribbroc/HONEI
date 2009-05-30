@@ -23,6 +23,7 @@
 
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
+#include <honei/la/sparse_matrix.hh>
 #include <honei/util/private_implementation_pattern.hh>
 
 namespace honei
@@ -42,20 +43,26 @@ namespace honei
             /**
              * Constructor.
              *
-             * \param size Size of the new banded matrix.
-             * \param diagonal Diagonal of the new banded matrix.
              */
             SparseMatrixELL(unsigned long rows, unsigned columns, unsigned long stride,
                     unsigned long num_cols_per_row,
                     const DenseVector<unsigned long> & Aj,
                     const DenseVector<DataType_> & Ax);
 
+
             /**
              * Constructor.
              *
-             * \param src The DenseMatrix our matrix will be created from.
+             * \param src The SparseMatrix our matrix will be created from.
              */
-            SparseMatrixELL(DenseMatrix<DataType_> & src);
+            SparseMatrixELL(SparseMatrix<DataType_> & src);
+
+            /**
+             * Constructor.
+             *
+             */
+            SparseMatrixELL(unsigned long rows, unsigned long columns, DenseVector<unsigned long> & row_indices, DenseVector<unsigned long> & column_indices,
+                    DenseVector<DataType_> & data);
 
             /// Copy-constructor.
             SparseMatrixELL(const SparseMatrixELL<DataType_> & other);
