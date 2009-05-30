@@ -30,7 +30,7 @@
 using namespace honei;
 class MatrixIO
 {
-    private:
+    public:
         static void get_sizes(std::string filename, unsigned long & c,
                                                     unsigned long & r,
                                                     unsigned long & n_z,
@@ -92,7 +92,6 @@ class MatrixIO
                 throw honei::InternalError("Unable to open MatrixMarket file.");
         }
 
-    public:
         ///Only read size for sparse data and index vectors
         static unsigned long get_non_zeros(std::string filename)
         {

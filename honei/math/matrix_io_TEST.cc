@@ -52,7 +52,8 @@ class MMIOTest:
             {
                 x[i] = DT_(i) / 1.234;
             }
-            SparseMatrixELL<DT_> smatrix(matrix);
+            SparseMatrix<DT_> ssmatrix(matrix);
+            SparseMatrixELL<DT_> smatrix(ssmatrix);
             DenseVector<DT_> y1(Product<Tag_>::value(smatrix, x));
             DenseVector<DT_> y2(Product<tags::CPU>::value(matrix, x));
 
@@ -63,6 +64,7 @@ class MMIOTest:
             ///Test second read-in method:
             std::cout << "Testing sparse data read-in:" << std::endl;
             unsigned long non_zeros_2(MatrixIO::get_non_zeros(filename));
+            TEST_CHECK_EQUAL(non_zeros, non_zeros_2);
             DenseVector<unsigned long> r(non_zeros_2);
             DenseVector<unsigned long> c(non_zeros_2);
             DenseVector<DT_> data(non_zeros_2);
@@ -79,6 +81,12 @@ class MMIOTest:
             {
                 TEST_CHECK_EQUAL(matrix[r[i]][c[i]] , data[i]);
             }
+
+            unsigned long rows, columns, ax, bx;
+            MatrixIO::get_sizes(filename, columns, rows, ax, bx);
+            SparseMatrixELL<DT_> smatrix2(rows, columns, r, c, data);
+
+            TEST_CHECK_EQUAL(smatrix2, smatrix);
         }
 };
 MMIOTest<float, tags::CPU> mmio_test_float_dense("float");

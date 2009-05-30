@@ -456,18 +456,22 @@ class SMELLDenseVectorProductBench :
 
         virtual void run()
         {
-            std::cout<< ULONG_MAX<<std::endl;
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/5pt_10x10.mtx";
-            unsigned long non_zeros(0);
-            DenseMatrix<DataType_> matrix = MatrixIO::read_matrix(filename, DataType_(0), non_zeros);
+            unsigned long non_zeros(MatrixIO::get_non_zeros(filename));
+            DenseVector<unsigned long> r(non_zeros);
+            DenseVector<unsigned long> c(non_zeros);
+            DenseVector<DataType_> data(non_zeros);
+            MatrixIO::read_matrix(filename, r, c, data);
+            unsigned long rows, columns, ax, bx;
+            MatrixIO::get_sizes(filename, columns, rows, ax, bx);
+            SparseMatrixELL<DataType_> smatrix(rows, columns, r, c, data);
 
-            DenseVector<DataType_> x(matrix.rows());
+            DenseVector<DataType_> x(smatrix.rows());
             for (unsigned long i(0) ; i < x.size() ; ++i)
             {
                 x[i] = DataType_(i) / 1.234;
             }
-            SparseMatrixELL<DataType_> smatrix(matrix);
             DenseVector<DataType_> y1(Product<Tag_>::value(smatrix, x));
 
             for (unsigned long i(0) ; i < _count ; i++)
@@ -486,7 +490,6 @@ class SMELLDenseVectorProductBench :
             //evaluate(info * 100);
             BenchmarkInfo info;
             info.flops = non_zeros * 2;
-            std::cout<<"Non Zeros: " << non_zeros << std::endl;
             evaluate(info * 100);
         }
 };
