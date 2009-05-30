@@ -107,21 +107,13 @@ namespace honei
 
         for (unsigned long row(0); row < rows ; ++row)
         {
-            DenseVector<DataType_> act_row(src[row]);
-            unsigned long i(0);
             unsigned long target(0);
-            while(i < act_row.size() && act_row[i] == this->_imp->zero_element)
+            for (typename SparseVector<DataType_>::NonZeroElementIterator i(src[row].begin_non_zero_elements()) ;
+                    i < src[row].end_non_zero_elements() ; ++i)
             {
-                ++i;
-            }
-            for( ; i < act_row.size() ; ++i)
-            {
-                if (act_row[i] != this->_imp->zero_element)
-                {
-                    Aj[target + row * num_cols_per_row] = i;
-                    Ax[target + row * num_cols_per_row] = act_row[i];
-                    target++;
-                }
+                Aj[target + row * num_cols_per_row] = i.index();
+                Ax[target + row * num_cols_per_row] = *i;
+                target++;
             }
         }
 
@@ -170,21 +162,13 @@ namespace honei
 
         for (unsigned long row(0); row < rows ; ++row)
         {
-            DenseVector<DataType_> act_row(src[row]);
-            unsigned long i(0);
             unsigned long target(0);
-            while(i < act_row.size() && act_row[i] == this->_imp->zero_element)
+            for (typename SparseVector<DataType_>::NonZeroElementIterator i(src[row].begin_non_zero_elements()) ;
+                    i < src[row].end_non_zero_elements() ; ++i)
             {
-                ++i;
-            }
-            for( ; i < act_row.size() ; ++i)
-            {
-                if (act_row[i] != this->_imp->zero_element)
-                {
-                    Aj[target + row * num_cols_per_row] = i;
-                    Ax[target + row * num_cols_per_row] = act_row[i];
-                    target++;
-                }
+                Aj[target + row * num_cols_per_row] = i.index();
+                Ax[target + row * num_cols_per_row] = *i;
+                target++;
             }
         }
 

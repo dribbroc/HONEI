@@ -457,7 +457,8 @@ class SMELLDenseVectorProductBench :
         virtual void run()
         {
             std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/math/testdata/5pt_10x10.mtx";
+            //filename += "/honei/math/testdata/5pt_10x10.mtx";
+            filename += "/honei/math/testdata/test_0.mtx";
             unsigned long non_zeros(MatrixIO::get_non_zeros(filename));
             DenseVector<unsigned long> r(non_zeros);
             DenseVector<unsigned long> c(non_zeros);
@@ -472,18 +473,17 @@ class SMELLDenseVectorProductBench :
             {
                 x[i] = DataType_(i) / 1.234;
             }
-            DenseVector<DataType_> y1(Product<Tag_>::value(smatrix, x));
 
             for (unsigned long i(0) ; i < _count ; i++)
             {
                 BENCHMARK(
                         for (unsigned long j(0) ; j < 100 ; ++j)
                         {
-                            Product<Tag_>::value(smatrix, y1);
+                            Product<Tag_>::value(smatrix, x);
+                        }
 #ifdef HONEI_CUDA
                             cuda_thread_synchronize();
 #endif
-                        }
                         );
             }
             //BenchmarkInfo info(Product<>::get_benchmark_info(smatrix, y1));

@@ -741,7 +741,7 @@ class SparseMatrixELLDenseVectorProductQuickTest :
             }
             DenseMatrix<DataType_> dm0(sms);
             SparseMatrixELL<DataType_> sm0(sms);
-            DenseVector<DataType_> dv1(size, DataType_(4));
+            DenseVector<DataType_> dv1(size + 3, DataType_(4));
             dv1[0] = 1;
             dv1[1] = 2;
             DenseVector<DataType_> prod(Product<Tag_>::value(sm0, dv1));
