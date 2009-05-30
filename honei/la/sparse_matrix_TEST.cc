@@ -1,6 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 #include <honei/la/sparse_matrix.hh>
+#include <honei/la/dense_matrix.hh>
 #include <unittest/unittest.hh>
 
 #include <string>
@@ -170,6 +171,17 @@ class SparseMatrixQuickTest :
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_(5), std::numeric_limits<DataType_>::epsilon());
                 TEST_CHECK_EQUAL(i_end.index(), size * (size + 1));
             }
+
+
+            SparseMatrix<DataType_> sm3(size, size + 4);
+            sm3(0, 1) = 1;
+            sm3(1, 2) = 2;
+            sm3(2, 1) = 3;
+            sm3(2, 3) = 4;
+            sm3(4, 4) = 5;
+            DenseMatrix<DataType_> dm0(sm3);
+            SparseMatrix<DataType_> sm4(dm0);
+            TEST_CHECK_EQUAL(sm4, sm3);
         }
 };
 SparseMatrixQuickTest<float>  sparse_matrix_quick_test_float("float");

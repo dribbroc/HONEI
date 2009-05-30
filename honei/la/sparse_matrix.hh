@@ -103,6 +103,31 @@ namespace honei
                 _row_vectors[rows].reset(new SparseVector<DataType_>(columns, 1));
             }
 
+            SparseMatrix(DenseMatrix<DataType_> & src, unsigned long capacity = 1) :
+                _capacity(capacity),
+                _columns(src.columns()),
+                _rows(src.rows()),
+                _row_vectors(src.rows() + 1),
+                _zero_vector(src.columns(), 1)
+            {
+                CONTEXT("When creating SparseMatrix:");
+                ASSERT(src.columns() >= capacity, "capacity '" + stringify(capacity) + "' exceeds row-vector size '" +
+                        stringify(src.columns()) + "'!");
+
+                _row_vectors[src.rows()].reset(new SparseVector<DataType_>(src.columns(), 1));
+
+                typename DenseMatrix<DataType_>::ElementIterator i(src.begin_elements());
+                typename SparseMatrix<DataType_>::ElementIterator si(this->begin_elements());
+                while (i < src.end_elements())
+                {
+                    /// \todo Removed hardcoded zero element.
+                    if (*i != DataType_(0))
+                        *si = *i;
+                    ++i;
+                    ++si;
+                }
+            }
+
             ~SparseMatrix()
             {
             }
