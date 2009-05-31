@@ -69,7 +69,7 @@ class SolidTest :
             }
             //Rasterization test:
             DenseMatrix<bool> target(20, 20, false);
-            ScanConversion<Tag_>::value(tri_0, target, DataType_(1), DataType_(1));
+            ScanConversion<Tag_>::value(tri_0, target, DataType_(1), DataType_(1), false);
 
             std::cout << target << std::endl;
             //Rasterization test 2:
@@ -86,7 +86,7 @@ class SolidTest :
             c_0.add_line(line_c_2);
             c_0.add_line(line_c_3);
             c_0.value();
-            ScanConversion<Tag_>::value(c_0, target_2, dx, dx);
+            ScanConversion<Tag_>::value(c_0, target_2, dx, dx, true);
 
             std::cout << target_2 << std::endl;
 
@@ -117,10 +117,10 @@ class SolidTest :
 
             tri_2.value();
 
-            ScanConversion<Tag_>::value(tri_1, tm1_fts, DataType_(1), DataType_(1));
+            ScanConversion<Tag_>::value(tri_1, tm1_fts, DataType_(1), DataType_(1), false);
             std::cout << "Matrix at time t-1: " << std::endl;
             std::cout << tm1_fts << std::endl;
-            ScanConversion<Tag_>::value(tri_2, t_fts, DataType_(1), DataType_(1));
+            ScanConversion<Tag_>::value(tri_2, t_fts, DataType_(1), DataType_(1), false);
             std::cout << "Matrix at time t: " << std::endl;
             std::cout << t_fts << std::endl;
 

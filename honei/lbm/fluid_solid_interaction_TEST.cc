@@ -95,16 +95,16 @@ class FSISolverLBMGridTest :
                 tri.add_line(line_4);
                 tri.value();
 
-                ScanConversion<Tag_>::value(tri, obstacles_new, grid.d_x, grid.d_y);
+                ScanConversion<Tag_>::value(tri, obstacles_new, grid.d_x, grid.d_y, true);
 #ifdef SOLVER_VERBOSE
                 if(i == 0)
                     std::cout << obstacles_new << std::endl;
 #endif
                 FluidToSolidCells<Tag_>::value(*grid.obstacles, obstacles_new, fts);
-                FTSExtrapolation<Tag_, lbm_solid_extrapolation_methods::SIMPLE>::value(obstacles_new, fts, *grid.h, *grid.u, *grid.v, DataType_(1), DataType_(1), DataType_(0.001), DataType_(grid.d_x));
+                FTSExtrapolation<Tag_, lbm_solid_extrapolation_methods::SIMPLE>::value(obstacles_new, fts, *grid.h, *grid.u, *grid.v, DataType_(1), DataType_(0), DataType_(0.001), DataType_(grid.d_x));
 
                 SolidToFluidCells<Tag_>::value(*grid.obstacles, obstacles_new, stf);
-                STFExtrapolation<Tag_, lbm_solid_extrapolation_methods::SIMPLE>::value(obstacles_new, stf, *grid.h, *grid.u, *grid.v, DataType_(1), DataType_(1), DataType_(0.001), DataType_(grid.d_x));
+                STFExtrapolation<Tag_, lbm_solid_extrapolation_methods::SIMPLE>::value(obstacles_new, stf, *grid.h, *grid.u, *grid.v, DataType_(1), DataType_(0), DataType_(0.001), DataType_(grid.d_x));
 
                 info.destroy();
                 data.destroy();

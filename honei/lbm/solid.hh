@@ -254,7 +254,7 @@ namespace honei
 
                     ///Local scan fill algo:
                     template <typename DT_>
-                        static void local_scan_fill(Polygon<DT_, lbm_solid_dims::D2> & polygon, DenseMatrix<bool> & target, DT_ dx, DT_ dy)
+                        static void local_scan_fill(Polygon<DT_, lbm_solid_dims::D2> & polygon, DenseMatrix<bool> & target, DT_ dx, DT_ dy, bool rect)
                         {
                             signed long i_start_s(convert_pos(polygon.line_min_y_level, dy));
                             signed long j_start_s(convert_pos(polygon.line_min_x_level, dx));
@@ -290,21 +290,42 @@ namespace honei
                             else
                                 j_end = (unsigned long)j_end_s;
 
-                            bool a(false), b(false);
-                            for(unsigned long i(i_start) ; i < i_end ; ++i)
+                            if(rect)
                             {
-                                for(unsigned long j(j_start); j < j_end ; ++j)
+                                bool a(false), b(false);
+                                for(unsigned long i(i_start) ; i < i_end ; ++i)
                                 {
-                                    bool e(target[i][j]);
-                                    //TODO: correct for rectangles, incorrect for triangles
-                                    bool rim(j - j_start == 0);
-                                    bool a_t((!a & !b & e) | (!a & b & e) | (a & !b & !e) | (a & !b & e) | (a & b & e) | (a & b & !e & !rim));
-                                    bool b_t((!a & !b & !e) | (!a & b & !e) | (a & !b & e) | (a & b & !e) | (a & b & e));
+                                    for(unsigned long j(j_start); j < j_end ; ++j)
+                                    {
+                                        bool e(target[i][j]);
+                                        //TODO: correct for rectangles, incorrect for triangles
+                                        bool rim(j - j_start == 0);
+                                        bool a_t((!a & !b & e) | (!a & b & e) | (a & !b & !e) | (a & !b & e) | (a & b & e) | (a & b & !e & !rim));
+                                        bool b_t((!a & !b & !e) | (!a & b & !e) | (a & !b & e) | (a & b & !e) | (a & b & e));
 
-                                    target[i][j] = a_t;
-                                    a = a_t;
-                                    b = b_t;
+                                        target[i][j] = a_t;
+                                        a = a_t;
+                                        b = b_t;
 
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                bool a(false), b(false);
+                                for(unsigned long i(i_start) ; i < i_end ; ++i)
+                                {
+                                    for(unsigned long j(j_start); j < j_end ; ++j)
+                                    {
+                                        bool e(target[i][j]);
+                                        bool a_t((!a & !b & e) | (!a & b & e) | (a & !b & !e) | (a & !b & e) | (a & b & e));
+                                        bool b_t((!a & !b & !e) | (!a & b & !e) | (a & !b & e) | (a & b & !e) | (a & b & e));
+
+                                        target[i][j] = a_t;
+                                        a = a_t;
+                                        b = b_t;
+
+                                    }
                                 }
                             }
                         }
@@ -312,7 +333,7 @@ namespace honei
 
                 public:
                     template<typename Prec_>
-                        static void value(Polygon<Prec_, lbm_solid_dims::D2> & solid, DenseMatrix<bool> & target, Prec_ dx, Prec_ dy)
+                        static void value(Polygon<Prec_, lbm_solid_dims::D2> & solid, DenseMatrix<bool> & target, Prec_ dx, Prec_ dy, bool rect)
                         {
                             ///For all lines: Rasterize line with Bresenhams algo:
                             for(unsigned long i(0) ; i < solid.line_count ; ++i)
@@ -321,7 +342,7 @@ namespace honei
                             }
 
                             ///Fill Polygon:
-                            local_scan_fill(solid, target, dx, dy);
+                            local_scan_fill(solid, target, dx, dy, rect);
                         }
             };
 
@@ -646,19 +667,19 @@ namespace honei
                                     }
 
                                 //distribute h, u, v:
-                                if(nb_count > 0)
-                                {
-                                    for(unsigned long j(0) ; j < nb_count ; ++j)
-                                    {
-                                        target_h[nb_row_index[j]][nb_column_index[j]] += (depth)/nb_count * alpha;
-                                        target_u[nb_row_index[j]][nb_column_index[j]] += (depth)/nb_count * alpha;
-                                        target_v[nb_row_index[j]][nb_column_index[j]] += (depth)/nb_count * alpha;
-                                    }
-                                }
+                                /*if(nb_count > 0)
+                                  {
+                                  for(unsigned long j(0) ; j < nb_count ; ++j)
+                                  {
+                                  target_h[nb_row_index[j]][nb_column_index[j]] += (depth)/nb_count * alpha;
+                                  target_u[nb_row_index[j]][nb_column_index[j]] += (depth)/nb_count * alpha;
+                                  target_v[nb_row_index[j]][nb_column_index[j]] += (depth)/nb_count * alpha;
+                                  }
+                                  }*/
                                 //TODO: remove these after testing:
                                 target_h[stf_row_index[i]][stf_column_index[i]] = Prec_(0);
-                                target_u[stf_row_index[i]][stf_column_index[i]] = Prec_(0);
-                                target_v[stf_row_index[i]][stf_column_index[i]] = Prec_(0);
+                                target_u[stf_row_index[i]][stf_column_index[i]] = u;
+                                target_v[stf_row_index[i]][stf_column_index[i]] = v;
                             }
                         }
             };
