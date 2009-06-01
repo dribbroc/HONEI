@@ -8,6 +8,7 @@ EXTRA_DIST = libtool-hack.in
 lib_LTLIBRARIES = libhoneibackendscuda.la
 
 NVCC = nvcc
+#NVCC = /usr/local/cuda/2.2/bin/nvcc
 NVCCFLAGS = -g --ptxas-options=-v -O3 -I$(top_srcdir) $(DEBUGDEF) $(PROFILERDEF)
 
 .cu.lo: libtool-hack.in

@@ -100,10 +100,13 @@ namespace honei
             }
         }
         this->_imp->num_cols_per_row = num_cols_per_row;
-        this->_imp->stride = rows;
+        /// \todo remove hardcoded numbers
+        unsigned long alignment(32);
+        unsigned long stride = alignment * ((rows + alignment - 1)/ alignment);
+        this->_imp->stride = stride;
 
-        DenseVector<unsigned long> Aj(num_cols_per_row * rows, (unsigned long)(0));
-        DenseVector<DataType_> Ax(num_cols_per_row * rows, DataType_(0));
+        DenseVector<unsigned long> Aj(num_cols_per_row * stride, (unsigned long)(0));
+        DenseVector<DataType_> Ax(num_cols_per_row * stride, DataType_(0));
 
         for (unsigned long row(0); row < rows ; ++row)
         {
@@ -117,8 +120,8 @@ namespace honei
             }
         }
 
-        DenseVector<unsigned long> tAj(num_cols_per_row * rows, (unsigned long)(0));
-        DenseVector<DataType_> tAx(num_cols_per_row * rows, DataType_(0));
+        DenseVector<unsigned long> tAj(num_cols_per_row * stride, (unsigned long)(0));
+        DenseVector<DataType_> tAx(num_cols_per_row * stride, DataType_(0));
         unsigned long t(0);
         for (unsigned long j(0) ; j < num_cols_per_row ; ++j)
         {
@@ -155,10 +158,13 @@ namespace honei
             }
         }
         this->_imp->num_cols_per_row = num_cols_per_row;
-        this->_imp->stride = rows;
+        /// \todo remove hardcoded numbers
+        unsigned long alignment(32);
+        unsigned long stride = alignment * ((rows + alignment - 1)/ alignment);
+        this->_imp->stride = stride;
 
-        DenseVector<unsigned long> Aj(num_cols_per_row * rows, (unsigned long)(0));
-        DenseVector<DataType_> Ax(num_cols_per_row * rows, DataType_(0));
+        DenseVector<unsigned long> Aj(num_cols_per_row * stride, (unsigned long)(0));
+        DenseVector<DataType_> Ax(num_cols_per_row * stride, DataType_(0));
 
         for (unsigned long row(0); row < rows ; ++row)
         {
@@ -172,8 +178,8 @@ namespace honei
             }
         }
 
-        DenseVector<unsigned long> tAj(num_cols_per_row * rows, (unsigned long)(0));
-        DenseVector<DataType_> tAx(num_cols_per_row * rows, DataType_(0));
+        DenseVector<unsigned long> tAj(num_cols_per_row * stride, (unsigned long)(0));
+        DenseVector<DataType_> tAx(num_cols_per_row * stride, DataType_(0));
         unsigned long t(0);
         for (unsigned long j(0) ; j < num_cols_per_row ; ++j)
         {
@@ -181,6 +187,7 @@ namespace honei
             {
                 tAj[t] = Aj[j + i];
                 tAx[t] = Ax[j + i];
+                /// \todo Change ++t with respect to stride > rows to avoid leftmost elements in the Ax matrix beeing zero.
                 ++t;
             }
         }
