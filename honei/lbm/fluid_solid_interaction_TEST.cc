@@ -32,8 +32,8 @@ using namespace std;
 using namespace output_types;
 using namespace lbm_lattice_types;
 
-//#define SOLVER_VERBOSE
-//#define SOLVER_POSTPROCESSING
+#define SOLVER_VERBOSE
+#define SOLVER_POSTPROCESSING
 
 template <typename Tag_, typename DataType_>
 class FSISolverLBMGridTest :
@@ -58,35 +58,54 @@ class FSISolverLBMGridTest :
 
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
+            //Directly dealing with omega-coordinates
+            Line<DataType_, lbm_solid_dims::D2> line_1_0(DataType_(5) * grid.d_x, DataType_(20) * grid.d_y, DataType_(10)* grid.d_x, DataType_(20) * grid.d_y);
+            Line<DataType_, lbm_solid_dims::D2> line_2_0(DataType_(10)* grid.d_x, DataType_(20) * grid.d_y, DataType_(10)* grid.d_x, DataType_(25) * grid.d_y);
+            Line<DataType_, lbm_solid_dims::D2> line_3_0(DataType_(10)* grid.d_x, DataType_(25) * grid.d_y, DataType_(5)* grid.d_x, DataType_(25) * grid.d_y);
+            Line<DataType_, lbm_solid_dims::D2> line_4_0(DataType_(5)* grid.d_x, DataType_(25) * grid.d_y, DataType_(5)* grid.d_x, DataType_(20) * grid.d_y);
+
+            Polygon<DataType_, lbm_solid_dims::D2> tri_0(4);
+            tri_0.add_line(line_1_0);
+            tri_0.add_line(line_2_0);
+            tri_0.add_line(line_3_0);
+            tri_0.add_line(line_4_0);
+            tri_0.value();
+
+            ScanConversion<Tag_>::value(tri_0, *grid.obstacles, grid.d_x, grid.d_y, true);
+
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
             SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, grid.d_x, grid.d_y, grid.d_t, grid.tau);
 
 
-            DenseMatrix<bool> obstacles_new(g_h, g_w, false);
             DenseMatrix<bool> fts(g_h, g_w, false);
             DenseMatrix<bool> stf(g_h, g_w, false);
+
+            DenseMatrix<bool> obstacles_old(grid.obstacles->copy());
+
             std::cout << "Solving: " << grid.description << std::endl;
             for(unsigned long i(0); i < timesteps; ++i)
             {
-                for(unsigned long j(0); j < obstacles_new.rows() ; ++j)
-                {
-                    for(unsigned long k(0) ; k < obstacles_new.columns() ; ++k)
-                    {
-                        obstacles_new[j][k] = false;
-                        fts[j][k] = false;
-                        stf[j][k] = false;
-                    }
-                }
+
                 GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.h, grid.h);
                 GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.u, grid.u);
                 GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.v, grid.v);
 
+                for(unsigned long j(0); j < stf.rows() ; ++j)
+                {
+                    for(unsigned long k(0) ; k < stf.columns() ; ++k)
+                    {
+                        (*grid.obstacles)[j][k] = false;
+                        fts[j][k] = false;
+                        stf[j][k] = false;
+                    }
+                }
+
                 //Directly dealing with omega-coordinates
-                Line<DataType_, lbm_solid_dims::D2> line_1(DataType_(5 + i) * grid.d_x, DataType_(20) * grid.d_y, DataType_(10 + i)* grid.d_x, DataType_(20) * grid.d_y);
-                Line<DataType_, lbm_solid_dims::D2> line_2(DataType_(10 + i)* grid.d_x, DataType_(20) * grid.d_y, DataType_(10 + i)* grid.d_x, DataType_(25) * grid.d_y);
-                Line<DataType_, lbm_solid_dims::D2> line_3(DataType_(10 + i)* grid.d_x, DataType_(25) * grid.d_y, DataType_(5 + i)* grid.d_x, DataType_(25) * grid.d_y);
-                Line<DataType_, lbm_solid_dims::D2> line_4(DataType_(5 + i)* grid.d_x, DataType_(25) * grid.d_y, DataType_(5 + i)* grid.d_x, DataType_(20) * grid.d_y);
+                Line<DataType_, lbm_solid_dims::D2> line_1(DataType_(5 + i/2) * grid.d_x, DataType_(20) * grid.d_y, DataType_(10 + i/2)* grid.d_x, DataType_(20) * grid.d_y);
+                Line<DataType_, lbm_solid_dims::D2> line_2(DataType_(10 + i/2)* grid.d_x, DataType_(20) * grid.d_y, DataType_(10 + i/2)* grid.d_x, DataType_(25) * grid.d_y);
+                Line<DataType_, lbm_solid_dims::D2> line_3(DataType_(10 + i/2)* grid.d_x, DataType_(25) * grid.d_y, DataType_(5 + i/2)* grid.d_x, DataType_(25) * grid.d_y);
+                Line<DataType_, lbm_solid_dims::D2> line_4(DataType_(5 + i/2)* grid.d_x, DataType_(25) * grid.d_y, DataType_(5 + i/2)* grid.d_x, DataType_(20) * grid.d_y);
 
                 Polygon<DataType_, lbm_solid_dims::D2> tri(4);
                 tri.add_line(line_1);
@@ -95,16 +114,9 @@ class FSISolverLBMGridTest :
                 tri.add_line(line_4);
                 tri.value();
 
-                ScanConversion<Tag_>::value(tri, obstacles_new, grid.d_x, grid.d_y, true);
-#ifdef SOLVER_VERBOSE
-                if(i == 0)
-                    std::cout << obstacles_new << std::endl;
-#endif
-                FluidToSolidCells<Tag_>::value(*grid.obstacles, obstacles_new, fts);
-                FTSExtrapolation<Tag_, lbm_solid_extrapolation_methods::SIMPLE>::value(obstacles_new, fts, *grid.h, *grid.u, *grid.v, DataType_(1), DataType_(0), DataType_(0.001), DataType_(grid.d_x));
-
-                SolidToFluidCells<Tag_>::value(*grid.obstacles, obstacles_new, stf);
-                STFExtrapolation<Tag_, lbm_solid_extrapolation_methods::SIMPLE>::value(obstacles_new, stf, *grid.h, *grid.u, *grid.v, DataType_(1), DataType_(0), DataType_(0.001), DataType_(grid.d_x));
+                ScanConversion<Tag_>::value(tri, *grid.obstacles, grid.d_x, grid.d_y, true);
+                SolidToFluidCells<Tag_>::value(obstacles_old, *grid.obstacles, stf);
+                Extrapolation<Tag_, lbm_lattice_types::D2Q9::DIR_1>::value(stf, *grid.h, *grid.u, *grid.v, *grid.obstacles, DataType_(grid.d_x), DataType_((grid.d_x/grid.d_t)/2), DataType_(0.05));
 
                 info.destroy();
                 data.destroy();

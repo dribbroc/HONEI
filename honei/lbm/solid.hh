@@ -731,17 +731,19 @@ namespace honei
                         {
                             bool prev((j >= 1) ? true : false);
                             bool pre_prev((j >= 2) ? true : false);
+                            bool pre_pre_prev((j >= 3) ? true : false);
 
                             bool prev_o(prev ? obstacles[i][j - 1] : true);
                             bool pre_prev_o(pre_prev ? obstacles[i][j - 2] : true);
+                            bool pre_pre_prev_o(pre_pre_prev ? obstacles[i][j - 3] : true);
 
-                            DT_ v_1((prev && !prev_o) ? target[i][j - 1] : h_b);
-                            DT_ v_2((pre_prev && !prev_o) ? target[i][j - 2] : (prev && !prev_o) ? target[i][j - 1] : h_b);
+                            DT_ v_m1((prev && !prev_o) ? target[i][j - 1] : target[i][j]);
+                            DT_ v_m2((pre_prev && !pre_prev_o) ? target[i][j - 2] : (prev && !prev_o) ? target[i][j - 1] : target[i][j]);
+                            DT_ v_m3((pre_pre_prev && !pre_pre_prev_o) ? target[i][j - 3] : (pre_prev && !pre_prev_o) ? target[i][j - 2] :
+                                    (prev && !prev_o) ? target[i][j - 1] : target[i][j]);
 
-                            DT_ m((v_2 - v_1) / dx);
-                            DT_ b(v_1 - (m * (j - 1) * dx));
+                            return (DT_(3.) * (v_m1 - v_m2)) + v_m3;
 
-                            return m * j * dx + b;
                         }
 
                     template<typename DT_>
