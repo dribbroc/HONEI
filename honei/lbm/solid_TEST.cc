@@ -204,7 +204,7 @@ class SolidTest :
             std::cout << "Solid to fluid cells in EXTRAPOLATION test: " << std::endl;
             std::cout << stf_ex << std::endl;
 
-            Extrapolation<Tag_, lbm_lattice_types::D2Q9::DIR_1>::value(stf_ex, h_ex, u_ex, v_ex, current, DataType_(1), DataType_(1), DataType_(1));
+            Extrapolation<Tag_, lbm_lattice_types::D2Q9::DIR_1>::value(stf_ex, h_ex, u_ex, v_ex, current, DataType_(1), DataType_(1), DataType_(1), DataType_(1));
             std::cout << h_ex << std::endl;
             std::cout << u_ex << std::endl;
             std::cout << v_ex << std::endl;

@@ -752,18 +752,10 @@ namespace honei
                                                   unsigned long i,
                                                   unsigned long j,
                                                   DT_ dx,
+                                                  DT_ dt,
                                                   DT_ u_x)
                         {
-                            bool prev((j >= 1) ? true : false);
-                            bool prev_o(prev ? obstacles[i][j - 1] : true);
-
-                            DT_ v_1((prev && !prev_o) ? target[i][j - 1] : DT_(0));
-
-                            DT_ m((u_x - v_1) / DT_(2) * dx);
-                            DT_ b(v_1 - (m * (j - 1) * dx));
-
-                            return m * j * dx + b;
-
+                            return dx * u_x;
                         }
                 ///Positive x direction
                 public:
@@ -774,6 +766,7 @@ namespace honei
                                           DenseMatrix<DT_> & v,
                                           DenseMatrix<bool> & obstacles,
                                           DT_ dx,
+                                          DT_ dt,
                                           DT_ u_x,
                                           DT_ h_b)
                         {
@@ -789,8 +782,8 @@ namespace honei
                             for( ; i < end ; ++i, ++j)
                             {
                                 h[*i][*j] = _extrapolation(h, obstacles, *i, *j, dx, h_b);
-                                u[*i][*j] = _interpolation(u, obstacles, *i, *j, dx, u_x);
-                                v[*i][*j] = _interpolation(v, obstacles, *i, *j, dx, DT_(0));
+                                u[*i][*j] = _interpolation(u, obstacles, *i, *j, dx, dt, u_x);
+                                v[*i][*j] = _interpolation(v, obstacles, *i, *j, dx, dt, DT_(0));
                             }
                         }
             };

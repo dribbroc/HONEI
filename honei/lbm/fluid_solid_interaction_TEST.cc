@@ -32,8 +32,8 @@ using namespace std;
 using namespace output_types;
 using namespace lbm_lattice_types;
 
-#define SOLVER_VERBOSE
-#define SOLVER_POSTPROCESSING
+//#define SOLVER_VERBOSE
+//#define SOLVER_POSTPROCESSING
 
 template <typename Tag_, typename DataType_>
 class FSISolverLBMGridTest :
@@ -116,7 +116,7 @@ class FSISolverLBMGridTest :
 
                 ScanConversion<Tag_>::value(tri, *grid.obstacles, grid.d_x, grid.d_y, true);
                 SolidToFluidCells<Tag_>::value(obstacles_old, *grid.obstacles, stf);
-                Extrapolation<Tag_, lbm_lattice_types::D2Q9::DIR_1>::value(stf, *grid.h, *grid.u, *grid.v, *grid.obstacles, DataType_(grid.d_x), DataType_((grid.d_x/grid.d_t)/2), DataType_(0.05));
+                Extrapolation<Tag_, lbm_lattice_types::D2Q9::DIR_1>::value(stf, *grid.h, *grid.u, *grid.v, *grid.obstacles, DataType_(grid.d_x), DataType_(grid.d_t), DataType_((grid.d_x/grid.d_t)/2), DataType_(0.05));
 
                 info.destroy();
                 data.destroy();
