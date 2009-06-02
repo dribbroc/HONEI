@@ -162,6 +162,52 @@ class SolidTest :
             std::cout << "v after FTS extrapolation: " << std::endl;
             std::cout << v_2 << std::endl;
 
+            //Extrapolation test:
+            DenseMatrix<DataType_> h_ex(20, 20, DataType_(4));
+            DenseMatrix<DataType_> u_ex(20, 20, DataType_(4));
+            DenseMatrix<DataType_> v_ex(20, 20, DataType_(4));
+
+            DenseMatrix<bool> last(20, 20, false);
+            DenseMatrix<bool> current(20, 20, false);
+
+            Line<DataType_, lbm_solid_dims::D2> line_ex_1(DataType_(5), DataType_(5), DataType_(10), DataType_(5));
+            Line<DataType_, lbm_solid_dims::D2> line_ex_2(DataType_(10), DataType_(5), DataType_(10), DataType_(15));
+            Line<DataType_, lbm_solid_dims::D2> line_ex_3(DataType_(10), DataType_(15), DataType_(5), DataType_(15));
+            Line<DataType_, lbm_solid_dims::D2> line_ex_4(DataType_(5), DataType_(15), DataType_(5), DataType_(5));
+            Line<DataType_, lbm_solid_dims::D2> line_ex_5(DataType_(6), DataType_(5), DataType_(11), DataType_(5));
+            Line<DataType_, lbm_solid_dims::D2> line_ex_6(DataType_(11), DataType_(5), DataType_(11), DataType_(15));
+            Line<DataType_, lbm_solid_dims::D2> line_ex_7(DataType_(11), DataType_(15), DataType_(6), DataType_(15));
+            Line<DataType_, lbm_solid_dims::D2> line_ex_8(DataType_(6), DataType_(15), DataType_(6), DataType_(5));
+
+            Polygon<DataType_, lbm_solid_dims::D2> tri_ex(4);
+            tri_ex.add_line(line_ex_1);
+            tri_ex.add_line(line_ex_2);
+            tri_ex.add_line(line_ex_3);
+            tri_ex.add_line(line_ex_4);
+            tri_ex.value();
+            Polygon<DataType_, lbm_solid_dims::D2> tri_ex_new(4);
+            tri_ex_new.add_line(line_ex_5);
+            tri_ex_new.add_line(line_ex_6);
+            tri_ex_new.add_line(line_ex_7);
+            tri_ex_new.add_line(line_ex_8);
+            tri_ex_new.value();
+
+            ScanConversion<Tag_>::value(tri_ex, last, DataType_(1), DataType_(1), true);
+            ScanConversion<Tag_>::value(tri_ex_new, current, DataType_(1), DataType_(1), true);
+
+            std::cout << "Matrices after ScanConversion: " << std::endl;
+            std::cout << last << std::endl;
+            std::cout << current << std::endl;
+
+            DenseMatrix<bool> stf_ex(20, 20, false);
+            SolidToFluidCells<Tag_>::value(last, current, stf_ex);
+            std::cout << "Solid to fluid cells in EXTRAPOLATION test: " << std::endl;
+            std::cout << stf_ex << std::endl;
+
+            Extrapolation<Tag_, lbm_lattice_types::D2Q9::DIR_1>::value(stf_ex, h_ex, u_ex, v_ex, current, DataType_(1), DataType_(1), DataType_(1));
+            std::cout << h_ex << std::endl;
+            std::cout << u_ex << std::endl;
+            std::cout << v_ex << std::endl;
         }
 };
 SolidTest<tags::CPU, float> solidtest_float("float");
