@@ -120,7 +120,7 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrixQ1<float> &
     return result;
 }
 
-DenseVector<float> Product<tags::GPU::CUDA>::value(const SparseMatrixELL<float> & a, const DenseVectorContinuousBase<float> & b)
+DenseVector<float> Product<tags::GPU::CUDA>::value(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b)
 {
     CONTEXT("When multiplying SparseMatrixELL<float> with DenseVectorContinuousBase<float> (CUDA):");
 
@@ -128,8 +128,12 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(const SparseMatrixELL<float> 
     {
         throw VectorSizeDoesNotMatch(b.size(), a.columns());
     }
+    if (a.rows() != result.size())
+    {
+        throw VectorSizeDoesNotMatch(a.rows(), result.size());
+    }
 
-    DenseVector<float> result(a.rows());
+    //DenseVector<float> result(a.rows());
     fill<tags::GPU::CUDA>(result, float(0));
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_float", 256ul));
@@ -150,7 +154,7 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(const SparseMatrixELL<float> 
     return result;
 }
 
-DenseVector<double> Product<tags::GPU::CUDA>::value(const SparseMatrixELL<double> & a, const DenseVectorContinuousBase<double> & b)
+DenseVector<double> Product<tags::GPU::CUDA>::value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b)
 {
     CONTEXT("When multiplying SparseMatrixELL<double> with DenseVectorContinuousBase<double> (CUDA):");
 
@@ -158,8 +162,12 @@ DenseVector<double> Product<tags::GPU::CUDA>::value(const SparseMatrixELL<double
     {
         throw VectorSizeDoesNotMatch(b.size(), a.columns());
     }
+    if (a.rows() != result.size())
+    {
+        throw VectorSizeDoesNotMatch(a.rows(), result.size());
+    }
 
-    DenseVector<double> result(a.rows());
+    //DenseVector<double> result(a.rows());
     fill<tags::GPU::CUDA>(result, double(0));
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_double", 256ul));

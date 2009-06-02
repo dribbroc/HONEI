@@ -457,8 +457,8 @@ class SMELLDenseVectorProductBench :
         virtual void run()
         {
             std::string filename(HONEI_SOURCEDIR);
-            //filename += "/honei/math/testdata/5pt_10x10.mtx";
-            filename += "/honei/math/testdata/test_0.mtx";
+            filename += "/honei/math/testdata/5pt_10x10.mtx";
+            //filename += "/honei/math/testdata/test_0.mtx";
             unsigned long non_zeros(MatrixIO::get_non_zeros(filename));
             DenseVector<unsigned long> r(non_zeros);
             DenseVector<unsigned long> c(non_zeros);
@@ -469,6 +469,7 @@ class SMELLDenseVectorProductBench :
             SparseMatrixELL<DataType_> smatrix(rows, columns, r, c, data);
 
             DenseVector<DataType_> x(smatrix.rows());
+            DenseVector<DataType_> y(smatrix.rows());
             for (unsigned long i(0) ; i < x.size() ; ++i)
             {
                 x[i] = DataType_(i) / 1.234;
@@ -479,15 +480,13 @@ class SMELLDenseVectorProductBench :
                 BENCHMARK(
                         for (unsigned long j(0) ; j < 100 ; ++j)
                         {
-                            Product<Tag_>::value(smatrix, x);
+                            Product<Tag_>::value(y, smatrix, x);
                         }
 #ifdef HONEI_CUDA
                             cuda_thread_synchronize();
 #endif
                         );
             }
-            //BenchmarkInfo info(Product<>::get_benchmark_info(smatrix, y1));
-            //evaluate(info * 100);
             BenchmarkInfo info;
             info.flops = non_zeros * 2;
             evaluate(info * 100);

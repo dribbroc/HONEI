@@ -22,6 +22,7 @@
 #define LIBLA_GUARD_PRODUCT_HH 1
 
 #include <honei/la/banded_matrix.hh>
+#include <honei/la/algorithm.hh>
 #include <honei/la/banded_matrix_q1.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/dense_matrix_tile.hh>
@@ -139,7 +140,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> value(const SparseMatrixELL<DT1_> & a, const DenseVectorBase<DT2_> & b)
+        static DenseVector<DT1_> value(DenseVector<DT1_> & result, const SparseMatrixELL<DT1_> & a, const DenseVectorBase<DT2_> & b)
         {
             CONTEXT("When multiplying SparseMatrixELL with DenseVectorBase:");
 
@@ -147,8 +148,13 @@ namespace honei
             {
                 throw VectorSizeDoesNotMatch(b.size(), a.columns());
             }
+            if (a.rows() != result.size())
+            {
+                throw VectorSizeDoesNotMatch(a.rows(), result.size());
+            }
 
-            DenseVector<DT1_> result(a.rows(), DT1_(0));
+            //DenseVector<DT1_> result(a.rows(), DT1_(0));
+            fill<tags::CPU>(result, DT1_(0));
 
             for(unsigned long n(0) ; n < a.num_cols_per_row() ; n++)
             {
@@ -1262,9 +1268,9 @@ namespace honei
 
         static DenseVector<float> value(const BandedMatrixQ1<float> & a, const DenseVectorContinuousBase<float> & b);
 
-        static DenseVector<float> value(const SparseMatrixELL<float> & a, const DenseVectorContinuousBase<float> & b);
+        static DenseVector<float> value(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b);
 
-        static DenseVector<double> value(const SparseMatrixELL<double> & a, const DenseVectorContinuousBase<double> & b);
+        static DenseVector<double> value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b);
 
         /// \}
     };

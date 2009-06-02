@@ -48,13 +48,14 @@ class MMIOTest:
             std::cout << "Non zero elements: " << non_zeros << std::endl;
 
             DenseVector<DT_> x(matrix.rows());
+            DenseVector<DT_> y(matrix.rows());
             for (unsigned long i(0) ; i < x.size() ; ++i)
             {
                 x[i] = DT_(i) / 1.234;
             }
             SparseMatrix<DT_> ssmatrix(matrix);
             SparseMatrixELL<DT_> smatrix(ssmatrix);
-            DenseVector<DT_> y1(Product<Tag_>::value(smatrix, x));
+            DenseVector<DT_> y1(Product<Tag_>::value(y, smatrix, x));
             DenseVector<DT_> y2(Product<tags::CPU>::value(matrix, x));
 
             y1.lock(lm_read_only);
