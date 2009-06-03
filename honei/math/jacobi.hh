@@ -452,16 +452,12 @@ namespace honei
 
 
                     DenseVector<DT1_> x(right_hand_side.size());
-                    /// todo gpu locken
-                    x.lock(lm_write_only);
-                    x.unlock(lm_write_only);
 
                     for(unsigned long i = 0; i<iter_number; ++i)
                     {
                         jacobi_kernel(to_smooth, system_matrix, right_hand_side, x, diag_inverted, system_matrix, omega);
                         DenseVector<DT1_> ts_c(to_smooth.size());
-                        /// todo gpu kopieren
-                        copy<tags::CPU>(to_smooth, ts_c);
+                        copy<Tag_>(to_smooth, ts_c);
                         ts_c = to_smooth;
                         to_smooth = x;
                         x = ts_c;

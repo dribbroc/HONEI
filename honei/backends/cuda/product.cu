@@ -22,6 +22,20 @@
 #define DIVIDE_INTO(x,y) ((x + y - 1)/y)
 #define large_grid_thread_id(void) ((__umul24(blockDim.x,blockIdx.x + __umul24(blockIdx.y,gridDim.x)) + threadIdx.x))
 
+dim3 make_large_grid_product(const unsigned int num_threads, const unsigned int blocksize){
+    const unsigned int num_blocks = DIVIDE_INTO(num_threads, blocksize);
+    if (num_blocks <= 65535){
+        //fits in a 1D grid
+        return dim3(num_blocks);
+    } else {
+        //2D grid is required
+        const unsigned int side = (unsigned int) ceil(sqrt((double)num_blocks));
+        return dim3(side,side);
+    }
+}
+
+
+
 namespace honei
 {
     namespace cuda
@@ -93,7 +107,8 @@ namespace honei
 
             if(row >= num_rows){ return; }
 
-            float sum = y[row];
+            //float sum = y[row];
+            float sum = float(0);
 
             Aj += row;
             Ax += row;
@@ -120,7 +135,8 @@ namespace honei
 
             if(row >= num_rows){ return; }
 
-            double sum = y[row];
+            //double sum = y[row];
+            double sum = double(0);
 
             Aj += row;
             Ax += row;
@@ -169,23 +185,12 @@ extern "C" void cuda_product_bmdv_q1_float (void * ll, void * ld, void * lu,
     CUDA_ERROR();
 }
 
-dim3 make_large_grid(const unsigned int num_threads, const unsigned int blocksize){
-    const unsigned int num_blocks = DIVIDE_INTO(num_threads, blocksize);
-    if (num_blocks <= 65535){
-        //fits in a 1D grid
-        return dim3(num_blocks);
-    } else {
-        //2D grid is required
-        const unsigned int side = (unsigned int) ceil(sqrt((double)num_blocks));
-        return dim3(side,side);
-    }
-}
 
 extern "C" void cuda_product_smell_dv_float(void * x, void * y, void * Aj, void * Ax,
         unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
         unsigned long stride, unsigned long blocksize)
 {
-    const dim3 grid = make_large_grid(num_rows, blocksize);
+    const dim3 grid = make_large_grid_product(num_rows, blocksize);
 
     float * x_gpu((float *)x);
     float * y_gpu((float *)y);
@@ -202,7 +207,7 @@ extern "C" void cuda_product_smell_dv_double(void * x, void * y, void * Aj, void
         unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
         unsigned long stride, unsigned long blocksize)
 {
-    const dim3 grid = make_large_grid(num_rows, blocksize);
+    const dim3 grid = make_large_grid_product(num_rows, blocksize);
 
     double * x_gpu((double *)x);
     double * y_gpu((double *)y);

@@ -134,7 +134,7 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(DenseVector<float> & result, 
     }
 
     //DenseVector<float> result(a.rows());
-    fill<tags::GPU::CUDA>(result, float(0));
+    //fill<tags::GPU::CUDA>(result, float(0));
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_float", 256ul));
 
@@ -168,7 +168,7 @@ DenseVector<double> Product<tags::GPU::CUDA>::value(DenseVector<double> & result
     }
 
     //DenseVector<double> result(a.rows());
-    fill<tags::GPU::CUDA>(result, double(0));
+    //fill<tags::GPU::CUDA>(result, double(0));
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_double", 256ul));
 

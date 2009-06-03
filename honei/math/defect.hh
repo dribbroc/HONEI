@@ -22,6 +22,7 @@
 #define LIBMATH_GUARD_DEFECT_HH 1
 
 #include<honei/la/banded_matrix_q1.hh>
+#include<honei/la/sparse_matrix_ell.hh>
 #include<honei/la/dense_vector.hh>
 #include<honei/la/algorithm.hh>
 #include<honei/la/product.hh>
@@ -176,6 +177,25 @@ namespace honei
                 result.unlock(lm_write_only);
                 return result;
             }
+
+            template<typename DT_>
+            static DenseVector<DT_> value(DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
+            {
+                if (x.size() != system.columns())
+                {
+                    throw VectorSizeDoesNotMatch(x.size(), system.columns());
+                }
+                if (right_hand_side.size() != system.columns())
+                {
+                    throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
+                }
+
+                DenseVector<DT_> result(right_hand_side.copy());
+                DenseVector<DT_> temp(right_hand_side.size());
+                Product<Tag_>::value(temp, system, x);
+                Difference<Tag_>::value(result, temp);
+                return result;
+            }
     };
 
     template<>
@@ -184,6 +204,9 @@ namespace honei
             public:
                 static DenseVector<float> value(const DenseVectorContinuousBase<float> & right_hand_side,
                         const BandedMatrixQ1<float> & system, const DenseVectorContinuousBase<float> & x);
+
+                static DenseVector<float> value(const DenseVectorContinuousBase<float> & right_hand_side,
+                        const SparseMatrixELL<float> & system, const DenseVectorContinuousBase<float> & x);
 
         };
     template<>

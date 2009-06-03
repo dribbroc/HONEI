@@ -29,6 +29,10 @@ extern "C"
             void * ul, void * ud, void *uu, void * x, void * y,
             unsigned long size, unsigned long blocksize, unsigned long m);
 
+    void cuda_defect_smell_dv_float(void * rhs, void * result, void * Aj, void * Ax, void * b,
+            unsigned long rows, unsigned long columns, unsigned long num_cols_per_row, unsigned long stride,
+            unsigned long blocksize);
+
     void cuda_difference_two_float(void * a, const void * b, unsigned long size, unsigned long blocksize);
 
     float cuda_dot_product_two_float(const void * a, const void *b, unsigned long size, unsigned long blocksize,

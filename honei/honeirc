@@ -25,6 +25,9 @@ cuda::norm_l2_one_float_grid = 16
 
 cuda::product_bmdv_q1_float = 128
 
+cuda::product_smell_dv_float = 256
+cuda::product_smell_dv_double = 256
+
 cuda::scaled_sum_two_float = 128
 cuda::scaled_sum_three_float = 128
 

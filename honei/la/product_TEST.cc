@@ -732,7 +732,7 @@ class SparseMatrixELLDenseVectorProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size (10);
+            unsigned long size (1000);
             SparseMatrix<DataType_> sms(size, size + 3);
             for (typename SparseMatrix<DataType_>::ElementIterator i(sms.begin_elements()) ; i < sms.end_elements() ; ++i)
             {
@@ -742,7 +742,7 @@ class SparseMatrixELLDenseVectorProductQuickTest :
             DenseMatrix<DataType_> dm0(sms);
             SparseMatrixELL<DataType_> sm0(sms);
             DenseVector<DataType_> dv1(size + 3, DataType_(4));
-            DenseVector<DataType_> result(size, DataType_(1));
+            DenseVector<DataType_> result(size, DataType_(4711));
             dv1[0] = 1;
             dv1[1] = 2;
             DenseVector<DataType_> prod(Product<Tag_>::value(result, sm0, dv1));

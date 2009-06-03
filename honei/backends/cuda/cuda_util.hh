@@ -17,10 +17,12 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+
 #ifndef CUDA_GUARD_CUDA_UTIL_HH
 #define CUDA_GUARD_CUDA_UTIL_HH 1
 
 #include <honei/util/assertion.hh>
+
 
 #if defined (DEBUG)
 namespace honei
@@ -35,18 +37,19 @@ namespace honei
 namespace honei
 {
 
-/**
- * \def CUDA_ERROR
- *
- * \brief Convenience definition that provides a way to test for cuda errors.
- *
- * The thrown Assertion will be automatically provided with the correct filename,
- * line number and function name.
- *
- * \warning Will only be compiled in when debug support is enabled.
- *
- * \ingroup grpcuda
- */
+
+    /**
+     * \def CUDA_ERROR
+     *
+     * \brief Convenience definition that provides a way to test for cuda errors.
+     *
+     * The thrown Assertion will be automatically provided with the correct filename,
+     * line number and function name.
+     *
+     * \warning Will only be compiled in when debug support is enabled.
+     *
+     * \ingroup grpcuda
+     */
 #if defined (DEBUG)
 #define CUDA_ERROR() \
     do { \
