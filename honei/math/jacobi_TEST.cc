@@ -259,10 +259,18 @@ class JacobiTestSparseELL:
 
             DenseVector<DT1_> result(Jacobi<Tag_>::value(initial_guess, smatrix2, rhs, 1000ul, DT1_(0.7), diag_inverted));
 
+            result.lock(lm_read_only);
+            x.lock(lm_read_only);
             for(unsigned long i(0) ; i < rhs.size() ; ++i)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(result[i], x[i], std::numeric_limits<DT1_>::epsilon());
             }
+            result.unlock(lm_read_only);
+            x.unlock(lm_read_only);
         }
 };
 JacobiTestSparseELL<tags::CPU, float> jacobi_test_float_sparse_ell("float");
+JacobiTestSparseELL<tags::CPU, double> jacobi_test_double_sparse_ell("double");
+#ifdef HONEI_CUDA
+JacobiTestSparseELL<tags::GPU::CUDA, float> cuda_jacobi_test_float_sparse_ell("float");
+#endif
