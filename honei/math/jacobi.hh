@@ -236,6 +236,15 @@ namespace honei
                 difference.unlock(lm_read_only);
                 former_result.unlock(lm_write_only);*/
             }
+            template<typename DT1_, typename DT2_>
+            static inline void jacobi_kernel(DenseVector<DT1_> to_smooth, SparseMatrixELL<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, SparseMatrixELL<DT1_> & difference, DT1_ omega)
+            {
+                DenseVector<DT1_> temp(Defect<Tag_>::value(right_hand_side, system_matrix, to_smooth));
+
+                former_result = to_smooth;
+                ScaledSum<Tag_>::value(former_result, temp, diag_inverted);
+
+            }
 
             template<typename DT1_, typename DT2_>
             static inline void jacobi_kernel(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted)
@@ -450,6 +459,27 @@ namespace honei
                     else
                         return to_smooth;*/
 
+
+                    DenseVector<DT1_> x(right_hand_side.size());
+
+                    for(unsigned long i = 0; i<iter_number; ++i)
+                    {
+                        jacobi_kernel(to_smooth, system_matrix, right_hand_side, x, diag_inverted, system_matrix, omega);
+                        DenseVector<DT1_> ts_c(to_smooth.size());
+                        copy<Tag_>(to_smooth, ts_c);
+                        ts_c = to_smooth;
+                        to_smooth = x;
+                        x = ts_c;
+                    }
+                    if(iter_number % 2 != 0)
+                        return x;
+                    else
+                        return to_smooth;
+                }
+            template <typename DT1_, typename DT2_>
+                static inline DenseVector<DT1_> value(DenseVector<DT1_>& to_smooth, SparseMatrixELL<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, unsigned long iter_number, DT1_ omega, DenseVector<DT1_> & diag_inverted)
+                {
+                    CONTEXT("When solving sparse linear system (ELL) with Jacobi (fixed # iterations):");
 
                     DenseVector<DT1_> x(right_hand_side.size());
 
