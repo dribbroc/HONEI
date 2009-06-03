@@ -212,3 +212,53 @@ JacobiTestBanded<tags::CPU::SSE, float> sse_jacobi_test_float_banded("SSE float"
 JacobiTestBanded<tags::CPU::SSE, double> sse_jacobi_test_double_banded("SSE double");
 
 #endif
+
+template <typename Tag_, typename DT1_>
+class JacobiTestSparseELL:
+    public BaseTest
+{
+    public:
+        JacobiTestSparseELL(const std::string & tag) :
+            BaseTest("Jacobi solver test (sparse ELL system)<" + tag + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+
+            std::string filename(HONEI_SOURCEDIR);
+            filename += "/honei/math/testdata/5pt_10x10.mtx";
+            unsigned long non_zeros(0);
+            unsigned long rows, columns, ax, bx;
+            DenseVector<unsigned long> r(non_zeros_2);
+            DenseVector<unsigned long> c(non_zeros_2);
+            DenseVector<DT_> data(non_zeros_2);
+
+            MatrixIO::read_matrix(filename, r, c, data);
+            MatrixIO::get_sizes(filename, columns, rows, ax, bx);
+            SparseMatrixELL<DT_> smatrix2(rows, columns, r, c, data);
+
+            DenseVector<DT1_> x(rows, DT1_(1.2345));
+
+            DenseVector<DT1_> rhs(rows, DT1_(0));
+
+            Product<Tag_>::value(rhs, smatrix2, x);
+
+            DenseVector<DT1_> initial_guess(rows, DT1_(1));
+            DenseVector<DT1_> diag_inverted(rows, DT1_(0));
+            for(unsigned long i(0) ; i < data.size() ; ++i)
+            {
+                if(r[i] == c[i])
+                    diag_inverted[r[i]] = DT1_(1)/data[i];
+            }
+
+            //Initial defect:
+            DenseVector<DT1_> initial_defect(Defect<Tag_>::value(rhs, smatrix2, x));
+
+            DenseVector<DT1_> result(Jacobi<Tag_>::value(x, smatrix2, initial_defect, 20ul, DT1_(0.7), diag_inverted));
+
+            std::cout << result;
+        }
+};
+JacobiTestSparseELL<tags::CPU, float> jacobi_test_float_sparse_ell("float");

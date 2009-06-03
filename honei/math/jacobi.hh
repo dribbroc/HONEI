@@ -243,7 +243,6 @@ namespace honei
 
                 former_result = to_smooth;
                 ScaledSum<Tag_>::value(former_result, temp, diag_inverted);
-
             }
 
             template<typename DT1_, typename DT2_>
