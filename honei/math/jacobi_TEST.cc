@@ -18,6 +18,7 @@
  */
 
 #include <honei/math/jacobi.hh>
+#include <honei/math/matrix_io.hh>
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <iostream>
@@ -229,15 +230,15 @@ class JacobiTestSparseELL:
 
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/5pt_10x10.mtx";
-            unsigned long non_zeros(0);
+            unsigned long non_zeros(MatrixIO::get_non_zeros(filename));
             unsigned long rows, columns, ax, bx;
-            DenseVector<unsigned long> r(non_zeros_2);
-            DenseVector<unsigned long> c(non_zeros_2);
-            DenseVector<DT_> data(non_zeros_2);
+            DenseVector<unsigned long> r(non_zeros);
+            DenseVector<unsigned long> c(non_zeros);
+            DenseVector<DT1_> data(non_zeros);
 
             MatrixIO::read_matrix(filename, r, c, data);
             MatrixIO::get_sizes(filename, columns, rows, ax, bx);
-            SparseMatrixELL<DT_> smatrix2(rows, columns, r, c, data);
+            SparseMatrixELL<DT1_> smatrix2(rows, columns, r, c, data);
 
             DenseVector<DT1_> x(rows, DT1_(1.2345));
 
@@ -256,8 +257,7 @@ class JacobiTestSparseELL:
             //Initial defect:
             DenseVector<DT1_> initial_defect(Defect<Tag_>::value(rhs, smatrix2, x));
 
-            DenseVector<DT1_> result(Jacobi<Tag_>::value(x, smatrix2, initial_defect, 20ul, DT1_(0.7), diag_inverted));
-
+            DenseVector<DT1_> result(Jacobi<Tag_>::value(x, smatrix2, initial_defect, 99ul, DT1_(0.7), diag_inverted));
             std::cout << result;
         }
 };
