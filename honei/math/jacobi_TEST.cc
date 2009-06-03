@@ -254,11 +254,15 @@ class JacobiTestSparseELL:
                     diag_inverted[r[i]] = DT1_(1)/data[i];
             }
 
-            //Initial defect:
+            //Initial defect (for convergence purposes later):
             DenseVector<DT1_> initial_defect(Defect<Tag_>::value(rhs, smatrix2, x));
 
-            DenseVector<DT1_> result(Jacobi<Tag_>::value(x, smatrix2, initial_defect, 99ul, DT1_(0.7), diag_inverted));
-            std::cout << result;
+            DenseVector<DT1_> result(Jacobi<Tag_>::value(initial_guess, smatrix2, rhs, 1000ul, DT1_(0.7), diag_inverted));
+
+            for(unsigned long i(0) ; i < rhs.size() ; ++i)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(result[i], x[i], std::numeric_limits<DT1_>::epsilon());
+            }
         }
 };
 JacobiTestSparseELL<tags::CPU, float> jacobi_test_float_sparse_ell("float");
