@@ -69,7 +69,8 @@ class SolidTest :
             }
             //Rasterization test:
             DenseMatrix<bool> target(20, 20, false);
-            ScanConversion<Tag_>::value(tri_0, target, DataType_(1), DataType_(1), false);
+            DenseMatrix<bool> boundaries(20, 20, false);
+            ScanConversion<Tag_>::value(tri_0, target, boundaries, DataType_(1), DataType_(1), false);
 
             std::cout << target << std::endl;
             //Rasterization test 2:
@@ -86,7 +87,8 @@ class SolidTest :
             c_0.add_line(line_c_2);
             c_0.add_line(line_c_3);
             c_0.value();
-            ScanConversion<Tag_>::value(c_0, target_2, dx, dx, true);
+            DenseMatrix<bool> boundaries_2(50, 50, false);
+            ScanConversion<Tag_>::value(c_0, target_2, boundaries_2, dx, dx, true);
 
             std::cout << target_2 << std::endl;
 
@@ -117,10 +119,13 @@ class SolidTest :
 
             tri_2.value();
 
-            ScanConversion<Tag_>::value(tri_1, tm1_fts, DataType_(1), DataType_(1), false);
+            DenseMatrix<bool> boundaries_3(20, 20, false);
+            ScanConversion<Tag_>::value(tri_1, tm1_fts, boundaries_3, DataType_(1), DataType_(1), false);
             std::cout << "Matrix at time t-1: " << std::endl;
             std::cout << tm1_fts << std::endl;
-            ScanConversion<Tag_>::value(tri_2, t_fts, DataType_(1), DataType_(1), false);
+
+            DenseMatrix<bool> boundaries_4(20, 20, false);
+            ScanConversion<Tag_>::value(tri_2, t_fts, boundaries_4, DataType_(1), DataType_(1), false);
             std::cout << "Matrix at time t: " << std::endl;
             std::cout << t_fts << std::endl;
 
@@ -192,12 +197,17 @@ class SolidTest :
             tri_ex_new.add_line(line_ex_8);
             tri_ex_new.value();
 
-            ScanConversion<Tag_>::value(tri_ex, last, DataType_(1), DataType_(1), true);
-            ScanConversion<Tag_>::value(tri_ex_new, current, DataType_(1), DataType_(1), true);
+            DenseMatrix<bool> boundaries_5(20, 20, false);
+            DenseMatrix<bool> boundaries_6(20, 20, false);
+            ScanConversion<Tag_>::value(tri_ex, last, boundaries_5, DataType_(1), DataType_(1), true);
+            std::cout << "##############################" << std::endl;
+            ScanConversion<Tag_>::value(tri_ex_new, current, boundaries_6, DataType_(1), DataType_(1), true);
 
             std::cout << "Matrices after ScanConversion: " << std::endl;
             std::cout << last << std::endl;
             std::cout << current << std::endl;
+            std::cout << "Current Boundaries:" << std::endl;
+            std::cout << boundaries_6 << std::endl;
 
             DenseMatrix<bool> stf_ex(20, 20, false);
             SolidToFluidCells<Tag_>::value(last, current, stf_ex);

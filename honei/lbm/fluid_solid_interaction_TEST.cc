@@ -71,7 +71,8 @@ class FSISolverLBMGridTest :
             tri_0.add_line(line_4_0);
             tri_0.value();
 
-            ScanConversion<Tag_>::value(tri_0, *grid.obstacles, grid.d_x, grid.d_y, true);
+            DenseMatrix<bool> boundaries(g_h, g_w, false);
+            ScanConversion<Tag_>::value(tri_0, *grid.obstacles, boundaries, grid.d_x, grid.d_y, true);
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
@@ -98,6 +99,7 @@ class FSISolverLBMGridTest :
                         (*grid.obstacles)[j][k] = false;
                         fts[j][k] = false;
                         stf[j][k] = false;
+                        boundaries[j][k] = false;
                     }
                 }
 
@@ -114,7 +116,7 @@ class FSISolverLBMGridTest :
                 tri.add_line(line_4);
                 tri.value();
 
-                ScanConversion<Tag_>::value(tri, *grid.obstacles, grid.d_x, grid.d_y, true);
+                ScanConversion<Tag_>::value(tri, *grid.obstacles, boundaries, grid.d_x, grid.d_y, true);
                 SolidToFluidCells<Tag_>::value(obstacles_old, *grid.obstacles, stf);
                 Extrapolation<Tag_, lbm_lattice_types::D2Q9::DIR_1>::value(stf, *grid.h, *grid.u, *grid.v, *grid.obstacles, DataType_(grid.d_x), DataType_(grid.d_t), DataType_((grid.d_x/grid.d_t)/2), DataType_(0.05));
 

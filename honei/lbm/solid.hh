@@ -181,28 +181,46 @@ namespace honei
                 private:
 
                     template <typename DT_>
-                        static signed long signum(DT_ x)
+                        static signed long _signum(DT_ x)
                         {
                             return (x > 0) ? 1 : (x < 0) ? -1 : 0;
                         }
 
                     template <typename DT_>
-                        static signed long convert_pos(DT_ coord, DT_ delta)
+                        static signed long _convert_pos(DT_ coord, DT_ delta)
                         {
                             return (signed long)(coord / delta);
                         }
 
+                    static void _flag_line_neighbours(DenseMatrix<bool> & target, unsigned long i, unsigned long j)
+                    {
+                        unsigned long max_i((i + 1 < target.rows()) ? (i + 1) : i);
+                        unsigned long max_j((j + 1 < target.columns()) ? (j + 1) : j);
+                        unsigned long min_i((i - 1 >= 0) ? (i - 1) : i);
+                        unsigned long min_j((j - 1 >= 0) ? (j - 1) : j);
+
+                        target[i][max_j] = true;
+                        target[max_i][max_j] = true;
+                        target[max_i][j] = true;
+                        target[max_i][min_j] = true;
+                        target[i][min_j] = true;
+                        target[min_i][min_j] = true;
+                        target[min_i][j] = true;
+                        target[min_i][max_j] = true;
+                    }
+
                     ///Bresenham line rasterization:
                     template <typename DT_>
-                        static void rasterize_line(Line<DT_, lbm_solid_dims::D2> & line, DenseMatrix<bool> & target, DT_ dx, DT_ dy)
+                        static void rasterize_line(Line<DT_, lbm_solid_dims::D2> & line, DenseMatrix<bool> & target,
+                                                                                         DenseMatrix<bool> & boundaries, DT_ dx, DT_ dy)
                         {
                             ///Convert to matrix coordinates and determine ranges:
-                            signed long d_x(convert_pos(line.x_coord_2, dx) - convert_pos(line.x_coord_1, dx));
-                            signed long d_y(convert_pos(line.y_coord_2, dy) - convert_pos(line.y_coord_1, dy));
+                            signed long d_x(_convert_pos(line.x_coord_2, dx) - _convert_pos(line.x_coord_1, dx));
+                            signed long d_y(_convert_pos(line.y_coord_2, dy) - _convert_pos(line.y_coord_1, dy));
 
                             ///Determine signs:
-                            signed long inc_x(signum(d_x));
-                            signed long inc_y(signum(d_y));
+                            signed long inc_x(_signum(d_x));
+                            signed long inc_y(_signum(d_y));
                             if(d_x < 0) d_x = -d_x;
                             if(d_y < 0) d_y = -d_y;
 
@@ -226,13 +244,16 @@ namespace honei
                                 e_l = d_y;
                             }
 
-                            signed long x(convert_pos(line.x_coord_1, dx));
-                            signed long y(convert_pos(line.y_coord_1, dy));
+                            signed long x(_convert_pos(line.x_coord_1, dx));
+                            signed long y(_convert_pos(line.y_coord_1, dy));
                             signed long err(e_l / 2);
 
                             ///Set start pixel and begin loop:
                             if(y < target.rows() && x < target.columns() && x >= 0 && y >= 0)
+                            {
                                 target[y][x] = true;
+                                _flag_line_neighbours(boundaries, y, x);
+                            }
 
                             for(unsigned long i(0) ; i < e_l ; ++i)
                             {
@@ -249,18 +270,23 @@ namespace honei
                                     y += p_d_y;
                                 }
                                 if(y < target.rows() && x < target.columns() && x >= 0 && y >= 0)
+                                {
                                     target[y][x] = true;
+                                    _flag_line_neighbours(boundaries, y, x);
+                                }
                             }
                         }
 
                     ///Local scan fill algo:
                     template <typename DT_>
-                        static void local_scan_fill(Polygon<DT_, lbm_solid_dims::D2> & polygon, DenseMatrix<bool> & target, DT_ dx, DT_ dy, bool rect)
+                        static void local_scan_fill(Polygon<DT_, lbm_solid_dims::D2> & polygon, DenseMatrix<bool> & target,
+                                                                                                DenseMatrix<bool> & boundaries,
+                                                                                                DT_ dx, DT_ dy, bool rect)
                         {
-                            signed long i_start_s(convert_pos(polygon.line_min_y_level, dy));
-                            signed long j_start_s(convert_pos(polygon.line_min_x_level, dx));
-                            signed long i_end_s(convert_pos(polygon.line_max_y_level, dy));
-                            signed long j_end_s(convert_pos(polygon.line_max_x_level, dx));
+                            signed long i_start_s(_convert_pos(polygon.line_min_y_level, dy));
+                            signed long j_start_s(_convert_pos(polygon.line_min_x_level, dx));
+                            signed long i_end_s(_convert_pos(polygon.line_max_y_level, dy));
+                            signed long j_end_s(_convert_pos(polygon.line_max_x_level, dx));
 
                             unsigned long i_start, i_end, j_start, j_end;
                             if(i_start_s < 0)
@@ -305,6 +331,10 @@ namespace honei
                                         bool b_t((!a & !b & !e) | (!a & b & !e) | (a & !b & e) | (a & b & !e) | (a & b & e));
 
                                         target[i][j] = a_t;
+
+                                        if(a_t)
+                                            boundaries[i][j] = false;
+
                                         a = a_t;
                                         b = b_t;
 
@@ -323,6 +353,10 @@ namespace honei
                                         bool b_t((!a & !b & !e) | (!a & b & !e) | (a & !b & e) | (a & b & !e) | (a & b & e));
 
                                         target[i][j] = a_t;
+
+                                        if(a_t)
+                                            boundaries[i][j] = false;
+
                                         a = a_t;
                                         b = b_t;
 
@@ -334,16 +368,18 @@ namespace honei
 
                 public:
                     template<typename Prec_>
-                        static void value(Polygon<Prec_, lbm_solid_dims::D2> & solid, DenseMatrix<bool> & target, Prec_ dx, Prec_ dy, bool rect)
+                        static void value(Polygon<Prec_, lbm_solid_dims::D2> & solid, DenseMatrix<bool> & target,
+                                                                                      DenseMatrix<bool> & boundaries,
+                                                                                      Prec_ dx, Prec_ dy, bool rect)
                         {
                             ///For all lines: Rasterize line with Bresenhams algo:
                             for(unsigned long i(0) ; i < solid.line_count ; ++i)
                             {
-                                rasterize_line(solid.lines[i], target, dx, dy);
+                                rasterize_line(solid.lines[i], target, boundaries, dx, dy);
                             }
 
                             ///Fill Polygon:
-                            local_scan_fill(solid, target, dx, dy, rect);
+                            local_scan_fill(solid, target, boundaries, dx, dy, rect);
                         }
             };
 
