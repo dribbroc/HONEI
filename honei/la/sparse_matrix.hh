@@ -140,7 +140,7 @@ namespace honei
                 CONTEXT("When creating SparseMatrix:");
                 ASSERT(rows > 0, "number of rows is zero!");
                 ASSERT(columns > 0, "number of columns is zero!");
-                ASSERT(columns >= capacity, "capacity '" + stringify(capacity) + "' exceeds row-vector size '" +
+                ASSERT(columns >= _capacity, "capacity '" + stringify(_capacity) + "' exceeds row-vector size '" +
                         stringify(columns) + "'!");
 
                 _row_vectors[rows].reset(new SparseVector<DataType_>(columns, 1));
