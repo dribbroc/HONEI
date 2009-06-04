@@ -60,14 +60,15 @@ class DefectTest:
             Difference<tags::CPU>::value(y2 ,Product<tags::CPU>::value(matrix, x) );
 
             y1.lock(lm_read_only);
-            TEST_CHECK_EQUAL(y1, y2);
             y1.unlock(lm_read_only);
+            TEST_CHECK_EQUAL(y1, y2);
 
         }
 };
-DefectTest<float, tags::CPU> defect_test_float_dense("float");
-DefectTest<double, tags::CPU> defect_test_double_dense("double");
+DefectTest<float, tags::CPU> defect_test_float_sparse("float");
+DefectTest<double, tags::CPU> defect_test_double_sparse("double");
 #ifdef HONEI_CUDA
-DefectTest<float, tags::GPU::CUDA> cuda_defect_test_float_dense("float");
+DefectTest<float, tags::GPU::CUDA> cuda_defect_test_float_sparse("float");
+//DefectTest<double, tags::GPU::CUDA> cuda_defect_test_double_sparse("double");
 #endif
 

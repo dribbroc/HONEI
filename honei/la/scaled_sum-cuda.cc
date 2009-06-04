@@ -43,6 +43,25 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::GPU::CUDA>::value(DenseVector
     return x;
 }
 
+DenseVectorContinuousBase<double> & ScaledSum<tags::GPU::CUDA>::value(DenseVectorContinuousBase<double> & x,
+        const DenseVectorContinuousBase<double> & y, double b)
+{
+    CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<double> (CUDA):");
+
+    if (x.size() != y.size())
+        throw VectorSizeDoesNotMatch(x.size(), y.size());
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::scaled_sum_two_double", 128ul));
+
+    void * x_gpu (x.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * y_gpu (y.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+    cuda_scaled_sum_two_double(x_gpu, y_gpu, b, x.size(), blocksize);
+    y.unlock(lm_read_only);
+    x.unlock(lm_read_and_write);
+
+    return x;
+}
+
 DenseVectorContinuousBase<float> & ScaledSum<tags::GPU::CUDA>::value(DenseVectorContinuousBase<float> & a,
         const DenseVectorContinuousBase<float> & b, const DenseVectorContinuousBase<float> & c)
 {
@@ -61,6 +80,31 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::GPU::CUDA>::value(DenseVector
     void * b_gpu (b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
     void * c_gpu (c.lock(lm_read_only, tags::GPU::CUDA::memory_value));
     cuda_scaled_sum_three_float(a_gpu, b_gpu, c_gpu, a.size(), blocksize);
+    c.unlock(lm_read_only);
+    b.unlock(lm_read_only);
+    a.unlock(lm_read_and_write);
+
+    return a;
+}
+
+DenseVectorContinuousBase<double> & ScaledSum<tags::GPU::CUDA>::value(DenseVectorContinuousBase<double> & a,
+        const DenseVectorContinuousBase<double> & b, const DenseVectorContinuousBase<double> & c)
+{
+    CONTEXT("When calculating ScaledSum (DenseVectorContinuousBase<double>, DenseVectorContinuousBase<double>, "
+            "DenseVectorContinuousBase<double>) (CUDA):");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+    if (a.size() != c.size())
+        throw VectorSizeDoesNotMatch(c.size(), a.size());
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::scaled_sum_three_double", 128ul));
+
+    void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * b_gpu (b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+    void * c_gpu (c.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+    cuda_scaled_sum_three_double(a_gpu, b_gpu, c_gpu, a.size(), blocksize);
     c.unlock(lm_read_only);
     b.unlock(lm_read_only);
     a.unlock(lm_read_and_write);

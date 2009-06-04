@@ -36,6 +36,7 @@ class SMELLJacobiBench :
 
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/5pt_10x10.mtx";
+            //filename += "/honei/math/testdata/test_0.mtx";
             unsigned long non_zeros(MatrixIO::get_non_zeros(filename));
             unsigned long rows, columns, ax, bx;
             DenseVector<unsigned long> r(non_zeros);
@@ -74,7 +75,8 @@ class SMELLJacobiBench :
             evaluate(info * 100);
         }
 };
-SMELLJacobiBench<tags::CPU, float> SMELLDVPBenchfloat("SM ELL Jacobi Benchmark CPU float: " , 0, 10);
+SMELLJacobiBench<tags::CPU, float> SMELLDVPBench_float("SM ELL Jacobi Benchmark CPU float: " , 0, 10);
 #ifdef HONEI_CUDA
-SMELLJacobiBench<tags::GPU::CUDA, float> SMELLDVPBenchfloat_cuda("SM ELL Jacobi Benchmark CUDA float: " , 0, 10);
+SMELLJacobiBench<tags::GPU::CUDA, float> SMELLDVPBench_float_cuda("SM ELL Jacobi Benchmark CUDA float: " , 0, 10);
+SMELLJacobiBench<tags::GPU::CUDA, double> SMELLDVPBench_double_cuda("SM ELL Jacobi Benchmark CUDA double: " , 0, 10);
 #endif

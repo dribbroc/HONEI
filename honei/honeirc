@@ -29,7 +29,9 @@ cuda::product_smell_dv_float = 256
 cuda::product_smell_dv_double = 256
 
 cuda::scaled_sum_two_float = 128
+cuda::scaled_sum_two_double = 128
 cuda::scaled_sum_three_float = 128
+cuda::scaled_sum_three_double = 128
 
 cuda::scale_one_float = 128
 

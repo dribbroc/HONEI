@@ -466,9 +466,10 @@ namespace honei
                     {
                         jacobi_kernel(to_smooth, system_matrix, right_hand_side, x, diag_inverted, system_matrix, omega);
                         copy<Tag_>(to_smooth, ts_c);
-                        ts_c = to_smooth;
+
+                        DenseVector<DT1_> temp(to_smooth);
                         to_smooth = x;
-                        x = ts_c;
+                        x = temp;
                     }
                     if(iter_number % 2 != 0)
                         return x;
@@ -487,9 +488,10 @@ namespace honei
                     {
                         jacobi_kernel(to_smooth, system_matrix, right_hand_side, x, diag_inverted, system_matrix, omega);
                         copy<Tag_>(to_smooth, ts_c);
-                        ts_c = to_smooth;
+
+                        DenseVector<DT1_> temp(to_smooth);
                         to_smooth = x;
-                        x = ts_c;
+                        x = temp;
                     }
                     if(iter_number % 2 != 0)
                         return x;

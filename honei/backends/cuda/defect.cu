@@ -125,6 +125,34 @@ namespace honei
 
             y[row] = rhs[row] - sum;
         }
+
+        __global__ void defect_smell_dv_gpu(double * rhs, double * y, unsigned long * Aj, double * Ax, double * x,
+                unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row, unsigned long stride)
+        {
+            const unsigned long row = large_grid_thread_id();
+
+            if(row >= num_rows){ return; }
+
+            //double sum = y[row];
+            double sum(double(0));
+
+            Aj += row;
+            Ax += row;
+
+            for(unsigned long n = 0; n < num_cols_per_row; n++){
+                const double A_ij = *Ax;
+
+                if (A_ij != 0){
+                    const unsigned long col = *Aj;
+                    sum += A_ij * x[col];
+                }
+
+                Aj += stride;
+                Ax += stride;
+            }
+
+            y[row] = rhs[row] - sum;
+        }
     }
 }
 
@@ -176,3 +204,20 @@ extern "C" void cuda_defect_smell_dv_float(void * rhs, void * result, void * Aj,
     CUDA_ERROR();
 }
 
+extern "C" void cuda_defect_smell_dv_double(void * rhs, void * result, void * Aj, void * Ax, void * b,
+        unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row, unsigned long stride,
+        unsigned long blocksize)
+{
+    const dim3 grid = make_large_grid_defect(num_rows, blocksize);
+
+    double * rhs_gpu((double *)rhs);
+    double * result_gpu((double *)result);
+    double * b_gpu((double *)b);
+    unsigned long * Aj_gpu((unsigned long *)Aj);
+    double * Ax_gpu((double *)Ax);
+
+    honei::cuda::defect_smell_dv_gpu<<<grid, blocksize>>>(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, b_gpu,
+            num_rows, num_cols, num_cols_per_row, stride);
+
+    CUDA_ERROR();
+}

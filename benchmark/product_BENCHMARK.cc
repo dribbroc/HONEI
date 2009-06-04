@@ -458,7 +458,7 @@ class SMELLDenseVectorProductBench :
         {
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/5pt_10x10.mtx";
-            //filename += "/honei/math/testdata/test_0.mtx";
+            //filename += "/honei/math/testdata/test_4.mtx";
             unsigned long non_zeros(MatrixIO::get_non_zeros(filename));
             DenseVector<unsigned long> r(non_zeros);
             DenseVector<unsigned long> c(non_zeros);

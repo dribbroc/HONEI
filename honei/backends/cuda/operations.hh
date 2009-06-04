@@ -33,6 +33,10 @@ extern "C"
             unsigned long rows, unsigned long columns, unsigned long num_cols_per_row, unsigned long stride,
             unsigned long blocksize);
 
+    void cuda_defect_smell_dv_double(void * rhs, void * result, void * Aj, void * Ax, void * b,
+            unsigned long rows, unsigned long columns, unsigned long num_cols_per_row, unsigned long stride,
+            unsigned long blocksize);
+
     void cuda_difference_two_float(void * a, const void * b, unsigned long size, unsigned long blocksize);
 
     float cuda_dot_product_two_float(const void * a, const void *b, unsigned long size, unsigned long blocksize,
@@ -65,7 +69,9 @@ extern "C"
             unsigned long * macroBorderMask, unsigned long blocksize);
 
     void cuda_scaled_sum_two_float(void * x, const void * y, float b, unsigned long size, unsigned long blocksize);
+    void cuda_scaled_sum_two_double(void * x, const void * y, double b, unsigned long size, unsigned long blocksize);
     void cuda_scaled_sum_three_float(void * x, void * y, void * z, unsigned long size, unsigned long blocksize);
+    void cuda_scaled_sum_three_double(void * x, void * y, void * z, unsigned long size, unsigned long blocksize);
 
     void cuda_scale_one_float(void * x, const float a, unsigned long size, unsigned long blocksize);
 

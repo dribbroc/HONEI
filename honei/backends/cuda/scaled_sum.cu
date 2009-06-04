@@ -32,7 +32,25 @@ namespace honei
             }
         }
 
+        __global__ void scaled_sum_gpu(double * x, double * y, double b, unsigned long size)
+        {
+            unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+            if (idx < size)
+            {
+                x[idx] = x[idx] + b * y[idx];
+            }
+        }
+
         __global__ void scaled_sum_gpu(float * x, float * y, float * z, unsigned long size)
+        {
+            unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+            if (idx < size)
+            {
+                x[idx] = x[idx] + y[idx] * z[idx];
+            }
+        }
+
+        __global__ void scaled_sum_gpu(double * x, double * y, double * z, unsigned long size)
         {
             unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
             if (idx < size)
@@ -58,6 +76,21 @@ extern "C" void cuda_scaled_sum_two_float(void * x, const void * y, float b, uns
     CUDA_ERROR();
 }
 
+extern "C" void cuda_scaled_sum_two_double(void * x, const void * y, double b, unsigned long size, unsigned long blocksize)
+{
+    dim3 grid;
+    dim3 block;
+    block.x = blocksize;
+    grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
+    grid.y = grid.x;
+    double * x_gpu((double *)x);
+    double * y_gpu((double *)y);
+
+    honei::cuda::scaled_sum_gpu<<<grid, block>>>(x_gpu, y_gpu, b, size);
+
+    CUDA_ERROR();
+}
+
 extern "C" void cuda_scaled_sum_three_float(void * x, void * y, void * z, unsigned long size, unsigned long blocksize)
 {
     dim3 grid;
@@ -68,6 +101,22 @@ extern "C" void cuda_scaled_sum_three_float(void * x, void * y, void * z, unsign
     float * x_gpu((float *)x);
     float * y_gpu((float *)y);
     float * z_gpu((float *)z);
+
+    honei::cuda::scaled_sum_gpu<<<grid, block>>>(x_gpu, y_gpu, z_gpu, size);
+
+    CUDA_ERROR();
+}
+
+extern "C" void cuda_scaled_sum_three_double(void * x, void * y, void * z, unsigned long size, unsigned long blocksize)
+{
+    dim3 grid;
+    dim3 block;
+    block.x = blocksize;
+    grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
+    grid.y = grid.x;
+    double * x_gpu((double *)x);
+    double * y_gpu((double *)y);
+    double * z_gpu((double *)z);
 
     honei::cuda::scaled_sum_gpu<<<grid, block>>>(x_gpu, y_gpu, z_gpu, size);
 
