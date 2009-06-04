@@ -461,10 +461,10 @@ namespace honei
 
                     DenseVector<DT1_> x(right_hand_side.size());
 
+                    DenseVector<DT1_> ts_c(to_smooth.size());
                     for(unsigned long i = 0; i<iter_number; ++i)
                     {
                         jacobi_kernel(to_smooth, system_matrix, right_hand_side, x, diag_inverted, system_matrix, omega);
-                        DenseVector<DT1_> ts_c(to_smooth.size());
                         copy<Tag_>(to_smooth, ts_c);
                         ts_c = to_smooth;
                         to_smooth = x;
@@ -482,10 +482,10 @@ namespace honei
 
                     DenseVector<DT1_> x(right_hand_side.size());
 
+                    DenseVector<DT1_> ts_c(to_smooth.size());
                     for(unsigned long i = 0; i<iter_number; ++i)
                     {
                         jacobi_kernel(to_smooth, system_matrix, right_hand_side, x, diag_inverted, system_matrix, omega);
-                        DenseVector<DT1_> ts_c(to_smooth.size());
                         copy<Tag_>(to_smooth, ts_c);
                         ts_c = to_smooth;
                         to_smooth = x;
