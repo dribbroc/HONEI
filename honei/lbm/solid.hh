@@ -335,50 +335,68 @@ namespace honei
                             else
                                 j_end = (unsigned long)j_end_s;
 
-                            if(rect)
+                            bool a(false), b(false);
+                            for(unsigned long i(i_start) ; i <= i_end ; ++i)
                             {
-                                bool a(false), b(false);
-                                for(unsigned long i(i_start) ; i < i_end ; ++i)
+                                for(unsigned long j(j_start); j <= j_end ; ++j)
                                 {
-                                    for(unsigned long j(j_start); j < j_end ; ++j)
-                                    {
-                                        bool e(target[i][j]);
-                                        //TODO: correct for rectangles, incorrect for triangles
-                                        bool rim(j - j_start == 0);
-                                        bool a_t((!a & !b & e) | (!a & b & e) | (a & !b & !e) | (a & !b & e) | (a & b & e) | (a & b & !e & !rim));
-                                        bool b_t((!a & !b & !e) | (!a & b & !e) | (a & !b & e) | (a & b & !e) | (a & b & e));
+                                    bool e_1(target[i][j]);
+                                    bool e_2(j - j_start == 1);
 
-                                        target[i][j] = a_t;
+                                    bool a_t( (a & b & !e_1 & !e_2) |
+                                             (!a & !b & e_1 & !e_2) |
+                                             (a & !b & e_1 & !e_2) |
+                                             (!a & b & e_1 & !e_2) |
+                                             (a & b & e_1 & !e_2) |
+                                             (a & !b & !e_1 & e_2) |
+                                             (a & b & !e_1 & e_2) |
+                                             (!a & !b & e_1 & e_2) |
+                                             (a & !b & e_1 & e_2) |
+                                             (!a & b & e_1 & e_2) |
+                                             (a & b & e_1 & e_2)
+                                           );
 
-                                        if(a_t)
-                                            boundaries[i][j] = false;
+                                    bool b_t( (rect) ? (!a & !b & !e_1 & !e_2) |
+                                              (a & !b & !e_1 & !e_2) |
+                                              (!a & b & !e_1 & !e_2) |
+                                              (a & b & !e_1 & !e_2) |
+                                              (!a & !b & !e_1 & e_2) |
+                                              (a & !b & !e_1 & e_2) |
+                                              (!a & b & !e_1 & e_2) |
+                                              (a & b & !e_1 & e_2) |
+                                              (!a & b & e_1 & !e_2) |
+                                              (!a & b & e_1 & e_2) :
 
-                                        a = a_t;
-                                        b = b_t;
+                                              (j == j_start || j == j_end || i == i_end || i == i_start) ?
+                                              (!a & !b & !e_1 & !e_2) |
+                                              (a & !b & !e_1 & !e_2) |
+                                              (!a & b & !e_1 & !e_2) |
+                                              (a & b & !e_1 & !e_2) |
+                                              (!a & !b & !e_1 & e_2) |
+                                              (a & !b & !e_1 & e_2) |
+                                              (!a & b & !e_1 & e_2) |
+                                              (a & b & !e_1 & e_2) :
 
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                bool a(false), b(false);
-                                for(unsigned long i(i_start) ; i < i_end ; ++i)
-                                {
-                                    for(unsigned long j(j_start); j < j_end ; ++j)
-                                    {
-                                        bool e(target[i][j]);
-                                        bool a_t((!a & !b & e) | (!a & b & e) | (a & !b & !e) | (a & !b & e) | (a & b & e));
-                                        bool b_t((!a & !b & !e) | (!a & b & !e) | (a & !b & e) | (a & b & !e) | (a & b & e));
+                                              (!a & !b & !e_1 & !e_2) |
+                                              (a & !b & !e_1 & !e_2) |
+                                              (!a & b & !e_1 & !e_2) |
+                                              (a & b & !e_1 & !e_2) |
+                                              (!a & !b & !e_1 & e_2) |
+                                              (a & !b & !e_1 & e_2) |
+                                              (!a & b & !e_1 & e_2) |
+                                              (a & b & !e_1 & e_2) |
+                                              (!a & b & e_1 & !e_2) |
+                                              (!a & b & e_1 & e_2)
+                                            );
 
-                                        target[i][j] = a_t;
+                                    target[i][j] = a_t;
 
-                                        if(a_t)
-                                            boundaries[i][j] = false;
+                                    if(a_t)
+                                        boundaries[i][j] = false;
 
-                                        a = a_t;
-                                        b = b_t;
+                                    a = a_t;
+                                    b = b_t;
 
-                                    }
                                 }
                             }
                         }
@@ -387,8 +405,8 @@ namespace honei
                 public:
                     template<typename Prec_>
                         static void value(Polygon<Prec_, lbm_solid_dims::D2> & solid, DenseMatrix<bool> & target,
-                                                                                      DenseMatrix<bool> & boundaries,
-                                                                                      Prec_ dx, Prec_ dy, bool rect)
+                                DenseMatrix<bool> & boundaries,
+                                Prec_ dx, Prec_ dy, bool rect)
                         {
                             ///For all lines: Rasterize line with Bresenhams algo:
                             for(unsigned long i(0) ; i < solid.line_count ; ++i)
@@ -749,8 +767,8 @@ namespace honei
             {
                 public:
                     static void value(DenseMatrix<bool> & flags,
-                                      std::vector<unsigned long> & row_i,
-                                      std::vector<unsigned long> & column_i)
+                            std::vector<unsigned long> & row_i,
+                            std::vector<unsigned long> & column_i)
                     {
                         for(unsigned long i(0) ; i < flags.rows() ; ++i)
                         {
@@ -777,11 +795,11 @@ namespace honei
                 private:
                     template<typename DT_>
                         static DT_ _extrapolation(DenseMatrix<DT_> & target,
-                                                  DenseMatrix<bool> & obstacles,
-                                                  unsigned long i,
-                                                  unsigned long j,
-                                                  DT_ dx,
-                                                  DT_ h_b)
+                                DenseMatrix<bool> & obstacles,
+                                unsigned long i,
+                                unsigned long j,
+                                DT_ dx,
+                                DT_ h_b)
                         {
                             bool prev((j >= 1) ? true : false);
                             bool pre_prev((j >= 2) ? true : false);
@@ -802,27 +820,27 @@ namespace honei
 
                     template<typename DT_>
                         static DT_ _interpolation(DenseMatrix<DT_> & target,
-                                                  DenseMatrix<bool> & obstacles,
-                                                  unsigned long i,
-                                                  unsigned long j,
-                                                  DT_ dx,
-                                                  DT_ dt,
-                                                  DT_ u_x)
+                                DenseMatrix<bool> & obstacles,
+                                unsigned long i,
+                                unsigned long j,
+                                DT_ dx,
+                                DT_ dt,
+                                DT_ u_x)
                         {
                             return dx * u_x;
                         }
-                ///Positive x direction
+                    ///Positive x direction
                 public:
                     template<typename DT_>
                         static void value(DenseMatrix<bool> & flags,
-                                          DenseMatrix<DT_> & h,
-                                          DenseMatrix<DT_> & u,
-                                          DenseMatrix<DT_> & v,
-                                          DenseMatrix<bool> & obstacles,
-                                          DT_ dx,
-                                          DT_ dt,
-                                          DT_ u_x,
-                                          DT_ h_b)
+                                DenseMatrix<DT_> & h,
+                                DenseMatrix<DT_> & u,
+                                DenseMatrix<DT_> & v,
+                                DenseMatrix<bool> & obstacles,
+                                DT_ dx,
+                                DT_ dt,
+                                DT_ u_x,
+                                DT_ h_b)
                         {
                             std::vector<unsigned long> row_i, column_i;
 
