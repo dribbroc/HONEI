@@ -209,6 +209,20 @@ namespace honei
                         target[min_i][max_j] = true;
                     }
 
+                    static void _clamp(DenseMatrix<bool> & target, DenseMatrix<bool> & boundaries, signed long i, signed long j)
+                    {
+                        bool north((i < 0) ? true : false);
+                        bool west((j < 0) ? true : false);
+                        bool south((i >= (signed long)target.rows()) ? true : false);
+                        bool east((j >= (signed long)target.columns()) ? true : false);
+
+                        unsigned long target_x(west ? 0ul : east ? target.columns() - 1 : (unsigned long)j);
+                        unsigned long target_y(north ? 0ul : south ? target.rows() - 1 : (unsigned long)i);
+
+                        target[target_y][target_x] = true;
+                        _flag_line_neighbours(boundaries, target_y, target_x);
+                    }
+
                     ///Bresenham line rasterization:
                     template <typename DT_>
                         static void rasterize_line(Line<DT_, lbm_solid_dims::D2> & line, DenseMatrix<bool> & target,
@@ -249,13 +263,13 @@ namespace honei
                             signed long err(e_l / 2);
 
                             ///Set start pixel and begin loop:
-                            if(y < target.rows() && x < target.columns() && x >= 0 && y >= 0)
+                            if(y < (signed long)target.rows() && x < (signed long)target.columns() && x >= 0 && y >= 0)
                             {
                                 target[y][x] = true;
                                 _flag_line_neighbours(boundaries, y, x);
                             }
 
-                            for(unsigned long i(0) ; i < e_l ; ++i)
+                            for(signed long i(0) ; i < e_l ; ++i)
                             {
                                 err -= e_s;
                                 if(err < 0)
@@ -269,10 +283,14 @@ namespace honei
                                     x += p_d_x;
                                     y += p_d_y;
                                 }
-                                if(y < target.rows() && x < target.columns() && x >= 0 && y >= 0)
+                                if(y < (signed long)target.rows() && x < (signed long)target.columns() && x >= 0 && y >= 0)
                                 {
                                     target[y][x] = true;
                                     _flag_line_neighbours(boundaries, y, x);
+                                }
+                                else
+                                {
+                                    _clamp(target, boundaries, y, x);
                                 }
                             }
                         }
@@ -291,28 +309,28 @@ namespace honei
                             unsigned long i_start, i_end, j_start, j_end;
                             if(i_start_s < 0)
                                 i_start = 0;
-                            else if(i_start_s >= target.rows())
+                            else if(i_start_s >= (signed long)target.rows())
                                 i_start = (unsigned long)target.rows();
                             else
                                 i_start = (unsigned long)i_start_s;
 
                             if(i_end_s < 0)
                                 i_end = 0;
-                            else if(i_end_s >= target.rows())
+                            else if(i_end_s >= (signed long)target.rows())
                                 i_end = (unsigned long)target.rows();
                             else
                                 i_end = (unsigned long)i_end_s;
 
                             if(j_start_s < 0)
                                 j_start = 0;
-                            else if(j_start_s >= target.columns())
+                            else if(j_start_s >= (signed long)target.columns())
                                 j_start = (unsigned long)target.columns();
                             else
                                 j_start = (unsigned long)j_start_s;
 
                             if(j_end_s < 0)
                                 j_end = 0;
-                            else if(j_end_s >= target.columns())
+                            else if(j_end_s >= (signed long)target.columns())
                                 j_end = (unsigned long)target.columns();
                             else
                                 j_end = (unsigned long)j_end_s;
