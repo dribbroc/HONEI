@@ -391,8 +391,7 @@ namespace honei
 
                                     target[i][j] = a_t;
 
-                                    if(a_t)
-                                        boundaries[i][j] = false;
+                                    boundaries[i][j] = a_t ? false : boundaries[i][j];
 
                                     a = a_t;
                                     b = b_t;
@@ -462,6 +461,36 @@ namespace honei
                         }
                     }
 
+            };
+
+        //Boundary velocity initialization:
+        template<typename Tag_>
+            class BoundaryInit
+            {
+            };
+
+        template<>
+            class BoundaryInit<tags::CPU>
+            {
+                public:
+                    template<typename DT_>
+                        static void value(DenseMatrix<DT_> & target_u,
+                                          DenseMatrix<DT_> & target_v,
+                                          DenseMatrix<bool> & boundaries,
+                                          DenseMatrix<bool> & stf,
+                                          DT_ u,
+                                          DT_ v,
+                                          DT_ dx)
+                        {
+                            for(unsigned long i(0) ; i < target_u.rows() ; ++i)
+                            {
+                                for(unsigned long j(0) ; j < target_u.columns() ; ++j)
+                                {
+                                    target_u[i][j] = (boundaries[i][j] & !stf[i][j]) ? u * dx : target_u[i][j];
+                                    target_v[i][j] = (boundaries[i][j] & !stf[i][j]) ? v * dx : target_v[i][j];
+                                }
+                            }
+                        }
             };
 
         ///Initialization of fluids

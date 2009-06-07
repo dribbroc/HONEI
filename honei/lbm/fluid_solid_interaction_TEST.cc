@@ -49,7 +49,7 @@ class FSISolverLBMGridTest :
         {
             unsigned long g_h(50);
             unsigned long g_w(50);
-            unsigned long timesteps(100);
+            unsigned long timesteps(120);
 
             Grid<D2Q9, DataType_> grid;
 
@@ -119,6 +119,7 @@ class FSISolverLBMGridTest :
                 ScanConversion<Tag_>::value(tri, *grid.obstacles, boundaries, grid.d_x, grid.d_y, true);
                 SolidToFluidCells<Tag_>::value(obstacles_old, *grid.obstacles, stf);
                 Extrapolation<Tag_, lbm_lattice_types::D2Q9::DIR_1>::value(stf, *grid.h, *grid.u, *grid.v, *grid.obstacles, DataType_(grid.d_x), DataType_(grid.d_t), DataType_((grid.d_x/grid.d_t)/2), DataType_(0.05));
+                BoundaryInit<Tag_>::value(*grid.u, *grid.v, boundaries, stf, DataType_((grid.d_x/grid.d_t)/2), DataType_(0), grid.d_x);
 
                 info.destroy();
                 data.destroy();
