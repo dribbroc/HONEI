@@ -533,7 +533,6 @@ class ConjugateGradientsTestSparseELL:
 
             Product<Tag_>::value(rhs, smatrix2, x);
 
-            DenseVector<DT1_> initial_guess(rows, DT1_(2));
             DenseVector<DT1_> diag_inverted(rows, DT1_(0));
             for(unsigned long i(0) ; i < data.size() ; ++i)
             {
@@ -546,10 +545,10 @@ class ConjugateGradientsTestSparseELL:
 
             result.lock(lm_read_only);
             x.lock(lm_read_only);
-            std::cout << result << std::endl;
+            //std::cout << result << std::endl;
             for(unsigned long i(0) ; i < rhs.size() ; ++i)
             {
-                TEST_CHECK_EQUAL_WITHIN_EPS(result[i], x[i], std::numeric_limits<DT1_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS(result[i], x[i], std::numeric_limits<DT1_>::epsilon() * 100);
             }
             result.unlock(lm_read_only);
             x.unlock(lm_read_only);
