@@ -18,6 +18,7 @@
  */
 
 #include <honei/math/conjugate_gradients.hh>
+#include <honei/math/matrix_io.hh>
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <iostream>
@@ -499,3 +500,65 @@ class ConjugateGradientsMIXEDPRECTestBanded:
 };
 ConjugateGradientsMIXEDPRECTestBanded<tags::CPU, float> cg_test_mixed_banded1("float");
 
+
+template <typename Tag_, typename DT1_>
+class ConjugateGradientsTestSparseELL:
+    public BaseTest
+{
+    public:
+        ConjugateGradientsTestSparseELL(const std::string & tag) :
+            BaseTest("ConjugateGradients solver test (sparse ELL system)<" + tag + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+
+            std::string filename(HONEI_SOURCEDIR);
+            filename += "/honei/math/testdata/5pt_10x10.mtx";
+            unsigned long non_zeros(MatrixIO::get_non_zeros(filename));
+            unsigned long rows, columns, ax, bx;
+            DenseVector<unsigned long> r(non_zeros);
+            DenseVector<unsigned long> c(non_zeros);
+            DenseVector<DT1_> data(non_zeros);
+
+            MatrixIO::read_matrix(filename, r, c, data);
+            MatrixIO::get_sizes(filename, columns, rows, ax, bx);
+            SparseMatrixELL<DT1_> smatrix2(rows, columns, r, c, data);
+
+            DenseVector<DT1_> x(rows, DT1_(1.2345));
+
+            DenseVector<DT1_> rhs(rows, DT1_(0));
+
+            Product<Tag_>::value(rhs, smatrix2, x);
+
+            DenseVector<DT1_> initial_guess(rows, DT1_(2));
+            DenseVector<DT1_> diag_inverted(rows, DT1_(0));
+            for(unsigned long i(0) ; i < data.size() ; ++i)
+            {
+                if(r[i] == c[i])
+                    diag_inverted[r[i]] = DT1_(1)/data[i];
+            }
+
+            DenseVector<DT1_> result(rhs.size(), DT1_(1));
+            ConjugateGradients<Tag_, JAC>::value(smatrix2, rhs, result, diag_inverted, 1000ul);
+
+            result.lock(lm_read_only);
+            x.lock(lm_read_only);
+            std::cout << result << std::endl;
+            for(unsigned long i(0) ; i < rhs.size() ; ++i)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(result[i], x[i], std::numeric_limits<DT1_>::epsilon());
+            }
+            result.unlock(lm_read_only);
+            x.unlock(lm_read_only);
+
+        }
+};
+ConjugateGradientsTestSparseELL<tags::CPU, float> cg_test_float_sparse_ell("float");
+ConjugateGradientsTestSparseELL<tags::CPU, double> cg_test_double_sparse_ell("double");
+#ifdef HONEI_CUDA
+ConjugateGradientsTestSparseELL<tags::GPU::CUDA, float> cuda_cg_test_float_sparse_ell("float");
+//ConjugateGradientsTestSparseELL<tags::GPU::CUDA, double> cuda_cg_test_double_sparse_ell("double");
+#endif

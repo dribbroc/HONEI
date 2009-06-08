@@ -23,11 +23,13 @@
 #include <honei/util/tags.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/dense_vector.hh>
+#include <honei/math/defect.hh>
 #include <honei/la/product.hh>
 #include <honei/la/sum.hh>
 #include <honei/la/difference.hh>
 #include <honei/la/dot_product.hh>
 #include <honei/la/scale.hh>
+#include <honei/la/scaled_sum.hh>
 #include <honei/la/norm.hh>
 #include <honei/math/methods.hh>
 #include <honei/la/element_product.hh>
@@ -688,6 +690,46 @@ namespace honei
                 Sum<Tag_>::value(utility, former_gradient);
             }
 
+            ///SMELL type:
+            template<typename DT_>
+            static inline void cg_kernel(SparseMatrixELL<DT_> & A,
+                                         DenseVector<DT_> & r,
+                                         DenseVector<DT_> & z,
+                                         DenseVector<DT_> & d,
+                                         DenseVector<DT_> & x,
+                                         DenseVector<DT_> & dd_inverted,
+                                         DenseVector<DT_> & temp_0,
+                                         DenseVector<DT_> & temp_1)
+            {
+                DT_ alpha, beta;
+
+                Product<Tag_>::value(temp_0, A, d);
+
+                //alpha = z_k^T * r_k / d_k^T A d_k
+                alpha = DotProduct<Tag_>::value(z, r) / DotProduct<Tag_>::value(temp_0, d);
+
+                //x_k+1 = x_k + alpha z_k
+                ScaledSum<Tag_>::value(x, d, alpha);                                               //STATUS:: STORE x_k+1
+
+                //r_k+1 = r_k - alpha A d_k
+                copy<Tag_>(r, temp_1);                                                             //STATUS: r_k stored in temp_1
+                ScaledSum<Tag_>::value(r, temp_0, -alpha);                                         //STATUS: STORE r_k+1
+
+                //Preconditioner:
+                //z_k+1 = C^-1 r_k+1
+                copy<Tag_>(dd_inverted, temp_0);
+                ElementProduct<Tag_>::value(temp_0, r);                                            //STATUS: z_k+1 stored in temp_0
+
+                //beta = z_k+1^T r_k+t / z_k^T r_k
+                beta = DotProduct<Tag_>::value(temp_0, r) / DotProduct<Tag_>::value(z, temp_1);
+                copy<Tag_>(temp_0, z);                                                             //STATUS: STORE z_k+1
+
+                //d_k+1 = z_k+1 + beta d_k
+                ScaledSum<Tag_>::value(temp_0, d, beta);
+                copy<Tag_>(temp_0, d);                                                             //STATUS: STORE d_k+1
+            }
+            //end SMELL type
+
         public:
             /**
             * \brief Returns solution of LES given by a DenseMatrix and a Vector.
@@ -880,6 +922,38 @@ namespace honei
                 }
                 return x;
 
+
+            }
+
+
+            template <typename DT_>
+            static void value(SparseMatrixELL<DT_> & system_matrix,
+                                           DenseVector<DT_> & right_hand_side,
+                                           DenseVector<DT_> & x,
+                                           DenseVector<DT_> & dd_inverted,
+                                           unsigned long iters)
+            {
+                CONTEXT("When solving sparse ELL linear system with PCG-Jacobi: ");
+
+                DenseVector<DT_> t_0(right_hand_side.size());
+                DenseVector<DT_> t_1(right_hand_side.size());
+
+                //r_0 = b - Ax_0
+                DenseVector<DT_> r(Defect<Tag_>::value(right_hand_side, system_matrix, x));
+
+                //z_0 = C^-1 r_0
+                DenseVector<DT_> z(right_hand_side.size());
+                copy<Tag_>(dd_inverted, z);
+                ElementProduct<DT_>::value(z, r);
+
+                //d_0 = z_0
+                DenseVector<DT_> d(right_hand_side.size());
+                copy<Tag_>(d, z);
+
+                for(unsigned long i(0) ; i < iters ; ++i)
+                {
+                    cg_kernel(system_matrix, r, z, d, x, dd_inverted, t_0, t_1);
+                }
 
             }
 
