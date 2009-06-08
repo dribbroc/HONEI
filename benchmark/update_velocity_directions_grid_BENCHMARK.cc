@@ -98,6 +98,8 @@ class UpdateVelocityDirectionsGridBench :
                         );
             }
             evaluate();
+            data.destroy();
+            info.destroy();
         }
 };
 

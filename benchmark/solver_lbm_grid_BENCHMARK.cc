@@ -101,6 +101,8 @@ class LBMGSolverBench :
             }
             LBMBenchmarkInfo benchinfo(SolverLBMGrid<tags::CPU, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY>::get_benchmark_info(&grid, &info, &data));
             evaluate(benchinfo * 25);
+            data.destroy();
+            info.destroy();
         }
 };
 

@@ -98,6 +98,8 @@ class ExtractionGridBench :
             }
             BenchmarkInfo benchinfo(ExtractionGrid<tags::CPU, LbmMode_>::get_benchmark_info(&info, &data));
             evaluate(benchinfo * 5);
+            data.destroy();
+            info.destroy();
         }
 };
 

@@ -101,6 +101,8 @@ class CollideStreamGridBench :
             }
             BenchmarkInfo benchinfo(CollideStreamGrid<tags::CPU, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::get_benchmark_info(&info, &data));
             evaluate(benchinfo * 5);
+            data.destroy();
+            info.destroy();
         }
 };
 

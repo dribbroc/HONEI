@@ -101,6 +101,8 @@ class EquilibriumDistributionGridBench :
             }
             BenchmarkInfo benchinfo(EquilibriumDistributionGrid<tags::CPU, lbm_applications::LABSWE>::get_benchmark_info(&info, &data));
             evaluate(benchinfo * 5);
+            data.destroy();
+            info.destroy();
         }
 };
 
