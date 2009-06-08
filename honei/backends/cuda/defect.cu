@@ -34,6 +34,9 @@ dim3 make_large_grid_defect(const unsigned int num_threads, const unsigned int b
     }
 }
 
+texture<float,1> tex_x_float_defect;
+texture<int2,1>  tex_x_double_defect;
+
 
 namespace honei
 {
@@ -116,7 +119,8 @@ namespace honei
 
                 if (A_ij != 0){
                     const unsigned long col = *Aj;
-                    sum += A_ij * x[col];
+                    //sum += A_ij * x[col];
+                    sum += A_ij * tex1Dfetch(tex_x_float_defect, col);
                 }
 
                 Aj += stride;
@@ -198,8 +202,10 @@ extern "C" void cuda_defect_smell_dv_float(void * rhs, void * result, void * Aj,
     unsigned long * Aj_gpu((unsigned long *)Aj);
     float * Ax_gpu((float *)Ax);
 
+    cudaBindTexture(NULL, tex_x_float_defect, b_gpu);
     honei::cuda::defect_smell_dv_gpu<<<grid, blocksize>>>(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, b_gpu,
             num_rows, num_cols, num_cols_per_row, stride);
+    cudaUnbindTexture(tex_x_float_defect);
 
     CUDA_ERROR();
 }

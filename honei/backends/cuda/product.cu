@@ -34,7 +34,8 @@ dim3 make_large_grid_product(const unsigned int num_threads, const unsigned int 
     }
 }
 
-
+texture<float,1> tex_x_float_product;
+texture<int2,1>  tex_x_double_prduct;
 
 namespace honei
 {
@@ -118,7 +119,8 @@ namespace honei
 
                 if (A_ij != 0){
                     const unsigned long col = *Aj;
-                    sum += A_ij * x[col];
+                    //sum += A_ij * x[col];
+                    sum += A_ij * tex1Dfetch(tex_x_float_product, col);
                 }
 
                 Aj += stride;
@@ -197,8 +199,10 @@ extern "C" void cuda_product_smell_dv_float(void * x, void * y, void * Aj, void 
     unsigned long * Aj_gpu((unsigned long *)Aj);
     float * Ax_gpu((float *)Ax);
 
+    cudaBindTexture(NULL, tex_x_float_product, x_gpu);
     honei::cuda::product_smell_dv_gpu<<<grid, blocksize>>>(x_gpu, y_gpu, Aj_gpu, Ax_gpu,
             num_rows, num_cols, num_cols_per_row, stride);
+    cudaUnbindTexture(tex_x_float_product);
 
     CUDA_ERROR();
 }
