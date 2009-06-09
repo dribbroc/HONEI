@@ -52,7 +52,7 @@ class MatrixIO<io_formats::M>
             n_z = 0;
             data_begin = 0;
 
-            std::string c_s, r_s, n_z_s;
+            std::string c_s, r_s;
             std::ifstream file(filename.c_str());
 
 
@@ -95,20 +95,11 @@ class MatrixIO<io_formats::M>
                         first_digit = line.find_first_not_of(" ");
                         line.erase(0, first_digit);
 
-
-                        std::string::size_type first_semicolon(line.find_first_of(";"));
-                        for(unsigned long i(0) ; i < first_semicolon ; ++i)
-                        {
-                            n_z_s.append(1, line[i]);
-                        }
-
                         c = (unsigned long)atol(c_s.c_str());
                         r = (unsigned long)atol(r_s.c_str());
-                        double bla = (double)atof(n_z_s.c_str());
 
                         c_s.clear();
                         r_s.clear();
-                        n_z_s.clear();
 
                     }
 
