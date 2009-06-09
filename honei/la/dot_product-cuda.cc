@@ -59,5 +59,42 @@ float DotProduct<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<float> 
     }
 
     return result;
+}
 
+double DotProduct<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<double> & a,
+        const DenseVectorContinuousBase<double> & b)
+{
+    CONTEXT("When calculating dot-product of DenseVectorContinuousBase<double> with DenseVectorContinuousBase<double> "
+            "(CUDA):");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::dot_product_two_double", 128ul));
+    unsigned long gridsize(Configuration::instance()->get_value("cuda::dot_product_two_double", 16ul));
+
+    double result (0.);
+
+    if (a.size() < gridsize * blocksize)
+    {
+        /// \todo run mini dot product in cuda
+        a.lock(lm_read_only);
+        b.lock(lm_read_only);
+        for (unsigned long i(0) ; i < a.size() ; ++i)
+        {
+            result += a[i] * b[i];
+        }
+        a.unlock(lm_read_only);
+        b.unlock(lm_read_only);
+    }
+    else
+    {
+        void * a_gpu(a.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+        void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+        result = cuda_dot_product_two_double(a_gpu, b_gpu, a.size(), blocksize, gridsize);
+        b.unlock(lm_read_only);
+        a.unlock(lm_read_only);
+    }
+
+    return result;
 }

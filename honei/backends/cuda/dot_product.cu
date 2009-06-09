@@ -44,6 +44,28 @@ namespace honei
                 tmp[blockIdx.x * blocksize + threadIdx.x] += x[pos] * y[pos];
             }
         }
+
+        __global__ void dot_product_gpu(double * x, double * y, double * tmp, unsigned long size, unsigned long blocksize)
+        {
+            // calculate how many elements each thread needs to calculate
+            const unsigned long iter = size / (blockDim.x * gridDim.x);
+            unsigned long pos = blockIdx.x* blocksize + threadIdx.x;
+
+            // clear the output
+            tmp[blockIdx.x * blocksize + threadIdx.x] = 0;
+
+            for (unsigned long i = 0 ; i < iter ; ++i)
+            {
+                tmp[blockIdx.x * blocksize + threadIdx.x] += x[pos] * y[pos];
+                pos += blockDim.x * gridDim.x;
+            }
+
+            // for the last iteration, check if the elements are still available
+            if (pos < size)
+            {
+                tmp[blockIdx.x * blocksize + threadIdx.x] += x[pos] * y[pos];
+            }
+        }
     }
 }
 
@@ -65,6 +87,36 @@ extern "C" float cuda_dot_product_two_float(const void * x, const void * y, unsi
     honei::cuda::dot_product_gpu<<<grid, block>>>(x_gpu, y_gpu, tmp_gpu, size, blocksize);
 
     cudaMemcpy(tmp_cpu, tmp_gpu, blocksize * gridsize * sizeof(float), cudaMemcpyDeviceToHost);
+    for (unsigned long i(0) ; i < blocksize * gridsize ; ++i)
+    {
+        result += tmp_cpu[i];
+    }
+
+    cudaFree(tmp_gpu);
+    cudaFreeHost(tmp_cpu);
+
+    CUDA_ERROR();
+    return result;
+}
+
+extern "C" double cuda_dot_product_two_double(const void * x, const void * y, unsigned long size, unsigned long blocksize,
+        unsigned long gridsize)
+{
+    double result(0.);
+
+    dim3 grid(gridsize);
+    dim3 block(blocksize);
+    double * x_gpu((double* )x);
+    double * y_gpu((double *)y);
+    double * tmp_cpu(0);
+    double * tmp_gpu(0);
+
+    cudaMalloc((void**)&tmp_gpu, gridsize * blocksize * sizeof(double));
+    cudaMallocHost((void**)&tmp_cpu, gridsize * blocksize * sizeof(double));
+
+    honei::cuda::dot_product_gpu<<<grid, block>>>(x_gpu, y_gpu, tmp_gpu, size, blocksize);
+
+    cudaMemcpy(tmp_cpu, tmp_gpu, blocksize * gridsize * sizeof(double), cudaMemcpyDeviceToHost);
     for (unsigned long i(0) ; i < blocksize * gridsize ; ++i)
     {
         result += tmp_cpu[i];

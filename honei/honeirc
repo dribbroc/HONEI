@@ -15,10 +15,13 @@ cuda::difference_two_float = 128
 
 cuda::dot_product_two_float = 128
 cuda::dot_product_two_float_grid = 16
+cuda::dot_product_two_double = 128
+cuda::dot_product_two_double_grid = 16
 
 cuda::element_inverse_one_float = 128
 
 cuda::element_product_two_float = 128
+cuda::element_product_two_double = 128
 
 cuda::norm_l2_one_float = 128
 cuda::norm_l2_one_float_grid = 16

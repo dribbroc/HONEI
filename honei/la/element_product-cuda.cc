@@ -44,6 +44,26 @@ DenseVectorContinuousBase<float> & ElementProduct<tags::GPU::CUDA>::value(DenseV
     return a;
 }
 
+DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::CUDA>::value(DenseVectorContinuousBase<double> & a,
+        const DenseVectorContinuousBase<double> & b)
+{
+    CONTEXT("When multiplying DenseVectorContinuousBase<double> and DenseVectorContinuousBase<double> elementwise "
+            "(CUDA):");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::element_inverse_one_double", 128ul));
+
+    void * a_gpu(a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+    cuda_element_product_two_double(a_gpu, b_gpu, a.size(), blocksize);
+    b.unlock(lm_read_only);
+    a.unlock(lm_read_and_write);
+
+    return a;
+}
+
 
 DenseMatrix<float> & ElementProduct<tags::GPU::CUDA>::value(DenseMatrix<float> & a, const DenseMatrix<float> & b)
 {
