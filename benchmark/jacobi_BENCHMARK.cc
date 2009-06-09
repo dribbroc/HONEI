@@ -44,7 +44,7 @@ class SMELLJacobiBench :
             DenseVector<DataType_> data(non_zeros);
 
             MatrixIO<io_formats::MTX>::read_matrix(filename, r, c, data);
-            MatrixIO<io_formats::MTX>::get_sizes(filename, columns, rows, ax, bx);
+            MatrixIO<io_formats::MTX>::get_sizes(filename, rows, columns, ax, bx);
             SparseMatrixELL<DataType_> smatrix2(rows, columns, r, c, data);
 
             DenseVector<DataType_> x(rows, DataType_(1.2345));

@@ -524,7 +524,7 @@ class ConjugateGradientsTestSparseELL:
             DenseVector<DT1_> data(non_zeros);
 
             MatrixIO<io_formats::MTX>::read_matrix(filename, r, c, data);
-            MatrixIO<io_formats::MTX>::get_sizes(filename, columns, rows, ax, bx);
+            MatrixIO<io_formats::MTX>::get_sizes(filename, rows, columns, ax, bx);
             SparseMatrixELL<DT1_> smatrix2(rows, columns, r, c, data);
 
             DenseVector<DT1_> x(rows, DT1_(1.2345));
