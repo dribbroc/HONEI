@@ -517,14 +517,14 @@ class ConjugateGradientsTestSparseELL:
 
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/5pt_10x10.mtx";
-            unsigned long non_zeros(MatrixIO::get_non_zeros(filename));
+            unsigned long non_zeros(MatrixIO<io_formats::MTX>::get_non_zeros(filename));
             unsigned long rows, columns, ax, bx;
             DenseVector<unsigned long> r(non_zeros);
             DenseVector<unsigned long> c(non_zeros);
             DenseVector<DT1_> data(non_zeros);
 
-            MatrixIO::read_matrix(filename, r, c, data);
-            MatrixIO::get_sizes(filename, columns, rows, ax, bx);
+            MatrixIO<io_formats::MTX>::read_matrix(filename, r, c, data);
+            MatrixIO<io_formats::MTX>::get_sizes(filename, columns, rows, ax, bx);
             SparseMatrixELL<DT1_> smatrix2(rows, columns, r, c, data);
 
             DenseVector<DT1_> x(rows, DT1_(1.2345));

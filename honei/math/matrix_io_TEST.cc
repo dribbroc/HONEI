@@ -43,7 +43,7 @@ class MMIOTest:
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/5pt_10x10.mtx";
             unsigned long non_zeros(0);
-            DenseMatrix<DT_> matrix = MatrixIO::read_matrix(filename, DT_(0), non_zeros);
+            DenseMatrix<DT_> matrix = MatrixIO<io_formats::MTX>::read_matrix(filename, DT_(0), non_zeros);
             std::cout << matrix;
             std::cout << "Non zero elements: " << non_zeros << std::endl;
 
@@ -64,13 +64,13 @@ class MMIOTest:
 
             ///Test second read-in method:
             std::cout << "Testing sparse data read-in:" << std::endl;
-            unsigned long non_zeros_2(MatrixIO::get_non_zeros(filename));
+            unsigned long non_zeros_2(MatrixIO<io_formats::MTX>::get_non_zeros(filename));
             TEST_CHECK_EQUAL(non_zeros, non_zeros_2);
             DenseVector<unsigned long> r(non_zeros_2);
             DenseVector<unsigned long> c(non_zeros_2);
             DenseVector<DT_> data(non_zeros_2);
 
-            MatrixIO::read_matrix(filename, r, c, data);
+            MatrixIO<io_formats::MTX>::read_matrix(filename, r, c, data);
             std::cout << "Row Indices:" << std::endl;
             std::cout << r;
             std::cout << "Column Indices:" << std::endl;
@@ -84,7 +84,7 @@ class MMIOTest:
             }
 
             unsigned long rows, columns, ax, bx;
-            MatrixIO::get_sizes(filename, columns, rows, ax, bx);
+            MatrixIO<io_formats::MTX>::get_sizes(filename, columns, rows, ax, bx);
             SparseMatrixELL<DT_> smatrix2(rows, columns, r, c, data);
 
             TEST_CHECK_EQUAL(smatrix2, smatrix);
