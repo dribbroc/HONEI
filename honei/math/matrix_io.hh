@@ -40,14 +40,18 @@ class MatrixIO
 {
 };
 
-/*template<>
+template<>
 class MatrixIO<io_formats::M>
 {
     public:
-        static void get_sizes(std::string filename, unsigned long & c,
-                                                    unsigned long & r,
-                                                    unsigned long & n_z)
+        static void get_sizes(std::string filename, unsigned long & r,
+                                                    unsigned long & c,
+                                                    unsigned long & n_z,
+                                                    unsigned long & data_begin)
         {
+            n_z = 0;
+            data_begin = 0;
+
             std::string c_s, r_s, n_z_s;
             std::ifstream file(filename.c_str());
 
@@ -56,20 +60,23 @@ class MatrixIO<io_formats::M>
             {
                 while(!file.eof())
                 {
-                    //ignore header
                     std::string line;
                     std::getline(file, line);
+
+                    //ignore header and footer
+                    if(line.find("]", 0) < line.npos)
+                        break;
+
                     if(line.find("data", 0) < line.npos)
                     {
+                        ++data_begin;
                         continue;
                     }
                     else
                     {
-                        //erase first blanks:
+                        ++n_z;
                         std::string::size_type first_digit(line.find_first_not_of(" "));
                         line.erase(0, first_digit);
-
-
                         std::string::size_type first_blank(line.find_first_of(" "));
                         for(unsigned long i(0) ; i < first_blank ; ++i)
                         {
@@ -84,23 +91,146 @@ class MatrixIO<io_formats::M>
                         {
                             c_s.append(1, line[i]);
                         }
+                        line.erase(0, second_blank + 1);
+                        first_digit = line.find_first_not_of(" ");
+                        line.erase(0, first_digit);
 
+
+                        std::string::size_type first_semicolon(line.find_first_of(";"));
+                        for(unsigned long i(0) ; i < first_semicolon ; ++i)
+                        {
+                            n_z_s.append(1, line[i]);
+                        }
+
+                        c = (unsigned long)atol(c_s.c_str());
+                        r = (unsigned long)atol(r_s.c_str());
+                        double bla = (double)atof(n_z_s.c_str());
+
+                        c_s.clear();
+                        r_s.clear();
+                        n_z_s.clear();
 
                     }
 
                 }
+
+                file.close();
+
             }
+            else
+                throw honei::InternalError("Unable to open MATLAB file.");
         }
+
+        static unsigned long get_non_zeros(std::string filename)
+        {
+            unsigned long n_z(0);
+            std::ifstream file(filename.c_str());
+            if(file.is_open())
+            {
+                while(!file.eof())
+                {
+                    std::string line;
+                    std::getline(file, line);
+
+                    //ignore header and footer
+                    if(line.find("]", 0) < line.npos)
+                        break;
+
+                    if(line.find("data", 0) < line.npos)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        ++n_z;
+                    }
+
+                }
+
+                file.close();
+
+            }
+            else
+                throw honei::InternalError("Unable to open MATLAB file.");
+
+            return n_z;
+        }
+
+        template<typename DT_>
+            static void read_matrix(std::string filename, DenseVector<unsigned long> & row_indices,
+                                                          DenseVector<unsigned long> & column_indices,
+                                                          DenseVector<DT_> & data)
+            {
+                unsigned long columns, rows, non_data_lines, non_zeros;
+                get_sizes(filename, rows, columns, non_zeros, non_data_lines);
+
+                std::ifstream file(filename.c_str());
+                file.is_open();
+
+                for(unsigned long i(0) ; i < non_data_lines ; ++i)
+                {
+                    std::string line;
+                    std::getline(file, line);
+                }
+
+                ///Attention: MatrixMarket indices are 1-based!!!
+                for(unsigned long j(0) ; j < non_zeros ; ++j)
+                {
+                    std::string line;
+                    std::getline(file, line);
+
+                    std::string c_s, r_s, n_z_s;
+
+                    std::string::size_type first_digit(line.find_first_not_of(" "));
+                    line.erase(0, first_digit);
+                    std::string::size_type first_blank(line.find_first_of(" "));
+                    for(unsigned long i(0) ; i < first_blank ; ++i)
+                    {
+                        r_s.append(1, line[i]);
+                    }
+                    line.erase(0, first_blank + 1);
+                    first_digit = line.find_first_not_of(" ");
+                    line.erase(0, first_digit);
+
+                    std::string::size_type second_blank(line.find_first_of(" "));
+                    for(unsigned long i(0) ; i < second_blank ; ++i)
+                    {
+                        c_s.append(1, line[i]);
+                    }
+                    line.erase(0, second_blank + 1);
+                    first_digit = line.find_first_not_of(" ");
+                    line.erase(0, first_digit);
+
+
+                    std::string::size_type first_semicolon(line.find_first_of(";"));
+                    for(unsigned long i(0) ; i < first_semicolon ; ++i)
+                    {
+                        n_z_s.append(1, line[i]);
+                    }
+
+
+                    unsigned long c = (unsigned long)atol(c_s.c_str());
+                    unsigned long r = (unsigned long)atol(r_s.c_str());
+                    DT_ n_z = (DT_)atof(n_z_s.c_str());
+
+                    row_indices[j] = r - 1;
+                    column_indices[j] = c -1;
+                    data[j] = n_z;
+
+                }
+                file.close();
+            }
 };
-*/
+
+//MATRIX MARKET TYPE
 template<>
 class MatrixIO<io_formats::MTX>
 {
     public:
-        static void get_sizes(std::string filename, unsigned long & c,
-                                                    unsigned long & r,
-                                                    unsigned long & n_z,
-                                                    unsigned long & data_begin)
+        static void get_sizes(std::string filename, unsigned long & r,
+                unsigned long & c,
+                unsigned long & n_z,
+                unsigned long & data_begin)
         {
             std::string c_s, r_s, n_z_s;
             std::ifstream file(filename.c_str());
@@ -218,11 +348,11 @@ class MatrixIO<io_formats::MTX>
         ///Read in sparse data only
         template<typename DT_>
             static void read_matrix(std::string filename, DenseVector<unsigned long> & row_indices,
-                                                          DenseVector<unsigned long> & column_indices,
-                                                          DenseVector<DT_> & data)
+                    DenseVector<unsigned long> & column_indices,
+                    DenseVector<DT_> & data)
             {
                 unsigned long columns, rows, non_data_lines, non_zeros;
-                get_sizes(filename, columns, rows, non_zeros, non_data_lines);
+                get_sizes(filename, rows, columns, non_zeros, non_data_lines);
 
                 std::ifstream file(filename.c_str());
                 file.is_open();
@@ -279,7 +409,7 @@ class MatrixIO<io_formats::MTX>
             static DenseMatrix<DT_> read_matrix(std::string filename, DT_ base, unsigned long & non_zeros)
             {
                 unsigned long columns, rows, non_data_lines;
-                get_sizes(filename, columns, rows, non_zeros, non_data_lines);
+                get_sizes(filename, rows, columns, non_zeros, non_data_lines);
 
                 DenseMatrix<DT_> result(rows, columns, base);
 
