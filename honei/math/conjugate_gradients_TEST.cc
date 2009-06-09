@@ -541,14 +541,14 @@ class ConjugateGradientsTestSparseELL:
             }
 
             DenseVector<DT1_> result(rhs.size(), DT1_(1));
-            ConjugateGradients<Tag_, JAC>::value(smatrix2, rhs, result, diag_inverted, 1000ul);
+            ConjugateGradients<Tag_, JAC>::value(smatrix2, rhs, result, diag_inverted, 30ul);
 
             result.lock(lm_read_only);
             x.lock(lm_read_only);
             //std::cout << result << std::endl;
             for(unsigned long i(0) ; i < rhs.size() ; ++i)
             {
-                TEST_CHECK_EQUAL_WITHIN_EPS(result[i], x[i], std::numeric_limits<DT1_>::epsilon() * 100);
+                TEST_CHECK_EQUAL_WITHIN_EPS(result[i], x[i], std::numeric_limits<DT1_>::epsilon() * 10);
             }
             result.unlock(lm_read_only);
             x.unlock(lm_read_only);

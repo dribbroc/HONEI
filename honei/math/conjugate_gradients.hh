@@ -948,7 +948,7 @@ namespace honei
 
                 //d_0 = z_0
                 DenseVector<DT_> d(right_hand_side.size());
-                copy<Tag_>(d, z);
+                copy<Tag_>(z, d);
 
                 for(unsigned long i(0) ; i < iters ; ++i)
                 {
