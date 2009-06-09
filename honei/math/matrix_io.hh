@@ -28,7 +28,73 @@
 #include <honei/la/dense_vector.hh>
 
 using namespace honei;
+
+namespace io_formats
+{
+    class MTX;
+    class M;
+}
+
+template<typename IOFormat_>
 class MatrixIO
+{
+};
+
+/*template<>
+class MatrixIO<io_formats::M>
+{
+    public:
+        static void get_sizes(std::string filename, unsigned long & c,
+                                                    unsigned long & r,
+                                                    unsigned long & n_z)
+        {
+            std::string c_s, r_s, n_z_s;
+            std::ifstream file(filename.c_str());
+
+
+            if(file.is_open())
+            {
+                while(!file.eof())
+                {
+                    //ignore header
+                    std::string line;
+                    std::getline(file, line);
+                    if(line.find("data", 0) < line.npos)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        //erase first blanks:
+                        std::string::size_type first_digit(line.find_first_not_of(" "));
+                        line.erase(0, first_digit);
+
+
+                        std::string::size_type first_blank(line.find_first_of(" "));
+                        for(unsigned long i(0) ; i < first_blank ; ++i)
+                        {
+                            r_s.append(1, line[i]);
+                        }
+                        line.erase(0, first_blank + 1);
+                        first_digit = line.find_first_not_of(" ");
+                        line.erase(0, first_digit);
+
+                        std::string::size_type second_blank(line.find_first_of(" "));
+                        for(unsigned long i(0) ; i < second_blank ; ++i)
+                        {
+                            c_s.append(1, line[i]);
+                        }
+
+
+                    }
+
+                }
+            }
+        }
+};
+*/
+template<>
+class MatrixIO<io_formats::MTX>
 {
     public:
         static void get_sizes(std::string filename, unsigned long & c,
@@ -57,14 +123,14 @@ class MatrixIO
                         std::string::size_type first_blank(line.find_first_of(" "));
                         for(unsigned long i(0) ; i < first_blank ; ++i)
                         {
-                            c_s.append(1, line[i]);
+                            r_s.append(1, line[i]);
                         }
                         line.erase(0, first_blank + 1);
 
                         std::string::size_type second_blank(line.find_first_of(" "));
                         for(unsigned long i(0) ; i < second_blank ; ++i)
                         {
-                            r_s.append(1, line[i]);
+                            c_s.append(1, line[i]);
                         }
                         line.erase(0, second_blank + 1);
 
@@ -116,14 +182,14 @@ class MatrixIO
                         std::string::size_type first_blank(line.find_first_of(" "));
                         for(unsigned long i(0) ; i < first_blank ; ++i)
                         {
-                            c_s.append(1, line[i]);
+                            r_s.append(1, line[i]);
                         }
                         line.erase(0, first_blank + 1);
 
                         std::string::size_type second_blank(line.find_first_of(" "));
                         for(unsigned long i(0) ; i < second_blank ; ++i)
                         {
-                            r_s.append(1, line[i]);
+                            c_s.append(1, line[i]);
                         }
                         line.erase(0, second_blank + 1);
 
@@ -178,14 +244,14 @@ class MatrixIO
                     std::string::size_type first_blank(line.find_first_of(" "));
                     for(unsigned long j(0) ; j < first_blank ; ++j)
                     {
-                        c_s.append(1, line[j]);
+                        r_s.append(1, line[j]);
                     }
                     line.erase(0, first_blank + 1);
 
                     std::string::size_type second_blank(line.find_first_of(" "));
                     for(unsigned long j(0) ; j < second_blank ; ++j)
                     {
-                        r_s.append(1, line[j]);
+                        c_s.append(1, line[j]);
                     }
                     line.erase(0, second_blank + 1);
 
@@ -237,14 +303,14 @@ class MatrixIO
                     std::string::size_type first_blank(line.find_first_of(" "));
                     for(unsigned long j(0) ; j < first_blank ; ++j)
                     {
-                        c_s.append(1, line[j]);
+                        r_s.append(1, line[j]);
                     }
                     line.erase(0, first_blank + 1);
 
                     std::string::size_type second_blank(line.find_first_of(" "));
                     for(unsigned long j(0) ; j < second_blank ; ++j)
                     {
-                        r_s.append(1, line[j]);
+                        c_s.append(1, line[j]);
                     }
                     line.erase(0, second_blank + 1);
 
