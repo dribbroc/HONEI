@@ -53,7 +53,7 @@ class SolverLABNAVSTOGridTest :
             unsigned long timesteps(100);
 
 
-            for (unsigned long i(0) ; i < ScenarioCollection::get_scenario_count() - 1 ; ++i)
+            for (unsigned long i(0) ; i < ScenarioCollection::get_scenario_count() - 2 ; ++i)
             {
                 Grid<D2Q9, DataType_> grid;
 
