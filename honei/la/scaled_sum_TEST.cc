@@ -76,7 +76,7 @@ DenseVectorScaledSumTest<tags::CPU::MultiCore::SSE, double>
 #ifdef HONEI_CUDA
 DenseVectorScaledSumTest<tags::GPU::CUDA, float> cuda_dense_vector_scaled_sum_test_float("float");
 #ifdef HONEI_CUDA_DOUBLE
-DenseVectorScaledSumTest<tags::GPU::CUDA, t> cuda_dense_vector_scaled_sum_test_double("double");
+DenseVectorScaledSumTest<tags::GPU::CUDA, double> cuda_dense_vector_scaled_sum_test_double("double");
 #endif
 #endif
 #ifdef HONEI_CELL
