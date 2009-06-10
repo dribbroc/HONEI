@@ -11,6 +11,7 @@ dnl on this file at present...
 add(`breadth_first_search',                      `bench')
 add(`collide_stream',                            `bench')
 add(`collide_stream_grid',                       `bench')
+add(`conjugate_gradients',                       `bench')
 add(`difference',                                `bench')
 add(`defect',                                    `bench')
 add(`dot_product',                               `bench')
