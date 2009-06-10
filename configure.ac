@@ -161,6 +161,23 @@ if test "x$ENABLE_CUDA" = "xyes"; then
 fi
 AC_SUBST([CUDADEF])
 dnl }}}
+dnl {{{ check for CUDA double support
+AC_MSG_CHECKING([whether to build CUDA double support])
+AC_ARG_ENABLE([cuda_double],
+			  AS_HELP_STRING([--enable-cuda_double], [Build CUDA with double support (needs packages: Cuda)]),
+		[ENABLE_CUDA_DOUBLE=$enableval
+		  AC_MSG_RESULT([$enableval])],
+		[ENABLE_CUDA_DOUBLE=no
+		  AC_MSG_RESULT([no])])
+AC_SUBST([ENABLE_CUDA_DOUBLE])
+AM_CONDITIONAL([CUDA_DOUBLE], test "x$ENABLE_CUDA_DOUBLE" = "xyes")
+if test "x$ENABLE_CUDA_DOUBLE" = "xyes"; then
+	dnl {{{ enable cuda double support
+	CUDA_DOUBLEDEF="-DHONEI_CUDA_DOUBLE"
+	dnl }}}
+fi
+AC_SUBST([CUDA_DOUBLEDEF])
+dnl }}}
 dnl {{{ check for SSE support
 AC_MSG_CHECKING([whether to build SSE support])
 AC_ARG_ENABLE([sse],

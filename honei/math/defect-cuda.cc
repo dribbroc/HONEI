@@ -114,6 +114,7 @@ DenseVector<float> Defect<tags::GPU::CUDA>::value(const DenseVectorContinuousBas
     return result;
 }
 
+#ifdef HONEI_CUDA_DOUBLE
 DenseVector<double> Defect<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<double> & rhs,
         const SparseMatrixELL<double> & a,
         const DenseVectorContinuousBase<double> & b)
@@ -150,4 +151,4 @@ DenseVector<double> Defect<tags::GPU::CUDA>::value(const DenseVectorContinuousBa
 
     return result;
 }
-
+#endif

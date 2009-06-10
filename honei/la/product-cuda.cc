@@ -154,6 +154,7 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(DenseVector<float> & result, 
     return result;
 }
 
+#ifdef HONEI_CUDA_DOUBLE
 DenseVector<double> Product<tags::GPU::CUDA>::value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b)
 {
     CONTEXT("When multiplying SparseMatrixELL<double> with DenseVectorContinuousBase<double> (CUDA):");
@@ -187,3 +188,4 @@ DenseVector<double> Product<tags::GPU::CUDA>::value(DenseVector<double> & result
 
     return result;
 }
+#endif

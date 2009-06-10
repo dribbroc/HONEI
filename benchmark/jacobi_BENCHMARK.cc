@@ -65,10 +65,10 @@ class SMELLJacobiBench :
             {
                 BENCHMARK(
                         Jacobi<Tag_>::value(initial_guess, smatrix2, rhs, 100ul, DataType_(0.7), diag_inverted);
+                        );
 #ifdef HONEI_CUDA
                         cuda_thread_synchronize();
 #endif
-                        );
             }
             BenchmarkInfo info;
             info.flops = non_zeros * 2 + 3 * rows;
@@ -78,5 +78,7 @@ class SMELLJacobiBench :
 SMELLJacobiBench<tags::CPU, float> SMELLDVPBench_float("SM ELL Jacobi Benchmark CPU float: " , 0, 10);
 #ifdef HONEI_CUDA
 SMELLJacobiBench<tags::GPU::CUDA, float> SMELLDVPBench_float_cuda("SM ELL Jacobi Benchmark CUDA float: " , 0, 10);
+#ifdef HONEI_CUDA_DOUBLE
 SMELLJacobiBench<tags::GPU::CUDA, double> SMELLDVPBench_double_cuda("SM ELL Jacobi Benchmark CUDA double: " , 0, 10);
+#endif
 #endif

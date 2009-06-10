@@ -130,6 +130,7 @@ namespace honei
             y[row] = rhs[row] - sum;
         }
 
+#ifdef HONEI_CUDA_DOUBLE
         __global__ void defect_smell_dv_gpu(double * rhs, double * y, unsigned long * Aj, double * Ax, double * x,
                 unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row, unsigned long stride)
         {
@@ -148,7 +149,9 @@ namespace honei
 
                 if (A_ij != 0){
                     const unsigned long col = *Aj;
-                    sum += A_ij * x[col];
+                    //sum += A_ij * x[col];
+                    int2 v = tex1Dfetch(tex_x_double_defect, col);
+                    sum += A_ij * __hiloint2double(v.y, v.x);
                 }
 
                 Aj += stride;
@@ -157,6 +160,7 @@ namespace honei
 
             y[row] = rhs[row] - sum;
         }
+#endif
     }
 }
 
@@ -210,6 +214,7 @@ extern "C" void cuda_defect_smell_dv_float(void * rhs, void * result, void * Aj,
     CUDA_ERROR();
 }
 
+#ifdef HONEI_CUDA_DOUBLE
 extern "C" void cuda_defect_smell_dv_double(void * rhs, void * result, void * Aj, void * Ax, void * b,
         unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row, unsigned long stride,
         unsigned long blocksize)
@@ -222,8 +227,11 @@ extern "C" void cuda_defect_smell_dv_double(void * rhs, void * result, void * Aj
     unsigned long * Aj_gpu((unsigned long *)Aj);
     double * Ax_gpu((double *)Ax);
 
+    cudaBindTexture(NULL, tex_x_double_defect, b_gpu);
     honei::cuda::defect_smell_dv_gpu<<<grid, blocksize>>>(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, b_gpu,
             num_rows, num_cols, num_cols_per_row, stride);
+    cudaUnbindTexture(tex_x_double_defect);
 
     CUDA_ERROR();
 }
+#endif

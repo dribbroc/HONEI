@@ -496,7 +496,9 @@ SMELLDenseVectorProductBench<tags::CPU, float> SMELLDVPBenchfloat("SM ELL Dense 
 SMELLDenseVectorProductBench<tags::CPU, double> SMELLDVPBenchdouble("SM ELL Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10);
 #ifdef HONEI_CUDA
 SMELLDenseVectorProductBench<tags::GPU::CUDA, float> cudaSMELLDVPBenchfloat("CUDA SM ELL Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10);
+#ifdef HONEI_CUDA_DOUBLE
 SMELLDenseVectorProductBench<tags::GPU::CUDA, double> cudaSMELLDVPBenchdouble("CUDA SM ELL Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10);
+#endif
 #endif
 
 

@@ -32,6 +32,7 @@ namespace honei
             }
         }
 
+#ifdef HONEI_CUDA_DOUBLE
         __global__ void element_product_gpu(double * x, double * y, unsigned long size)
         {
             unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
@@ -40,6 +41,7 @@ namespace honei
                 x[idx] = x[idx] * y[idx];
             }
         }
+#endif
     }
 }
 
@@ -58,6 +60,7 @@ extern "C" void cuda_element_product_two_float(void * x, void * y, unsigned long
     CUDA_ERROR();
 }
 
+#ifdef HONEI_CUDA_DOUBLE
 extern "C" void cuda_element_product_two_double(void * x, void * y, unsigned long size, unsigned long blocksize)
 {
     dim3 grid;
@@ -72,3 +75,4 @@ extern "C" void cuda_element_product_two_double(void * x, void * y, unsigned lon
 
     CUDA_ERROR();
 }
+#endif

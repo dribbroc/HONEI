@@ -83,6 +83,9 @@ DenseVectorElementProductTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_ve
 #endif
 #ifdef HONEI_CUDA
 DenseVectorElementProductTest<tags::GPU::CUDA, float> cuda_dense_vector_elementwise_product_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorElementProductTest<tags::GPU::CUDA, double> cuda_dense_vector_elementwise_product_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CELL
 DenseVectorElementProductTest<tags::Cell, float> cell_dense_vector_element_product_test_float("Cell float");
@@ -147,6 +150,9 @@ DenseVectorElementProductQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_den
 #endif
 #ifdef HONEI_CUDA
 DenseVectorElementProductQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_elementwise_product_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorElementProductQuickTest<tags::GPU::CUDA, double> cuda_dense_vector_elementwise_product_quick_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CELL
 DenseVectorElementProductQuickTest<tags::Cell, float> cell_dense_vector_element_product_quick_test_float("Cell float");

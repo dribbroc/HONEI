@@ -32,6 +32,7 @@ namespace honei
             }
         }
 
+#ifdef HONEI_CUDA_DOUBLE
         __global__ void scaled_sum_gpu(double * x, double * y, double b, unsigned long size)
         {
             unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
@@ -40,6 +41,7 @@ namespace honei
                 x[idx] = x[idx] + b * y[idx];
             }
         }
+#endif
 
         __global__ void scaled_sum_gpu(float * x, float * y, float * z, unsigned long size)
         {
@@ -50,6 +52,7 @@ namespace honei
             }
         }
 
+#ifdef HONEI_CUDA_DOUBLE
         __global__ void scaled_sum_gpu(double * x, double * y, double * z, unsigned long size)
         {
             unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
@@ -58,6 +61,7 @@ namespace honei
                 x[idx] = x[idx] + y[idx] * z[idx];
             }
         }
+#endif
     }
 }
 
@@ -76,6 +80,7 @@ extern "C" void cuda_scaled_sum_two_float(void * x, const void * y, float b, uns
     CUDA_ERROR();
 }
 
+#ifdef HONEI_CUDA_DOUBLE
 extern "C" void cuda_scaled_sum_two_double(void * x, const void * y, double b, unsigned long size, unsigned long blocksize)
 {
     dim3 grid;
@@ -90,6 +95,7 @@ extern "C" void cuda_scaled_sum_two_double(void * x, const void * y, double b, u
 
     CUDA_ERROR();
 }
+#endif
 
 extern "C" void cuda_scaled_sum_three_float(void * x, void * y, void * z, unsigned long size, unsigned long blocksize)
 {
@@ -107,6 +113,7 @@ extern "C" void cuda_scaled_sum_three_float(void * x, void * y, void * z, unsign
     CUDA_ERROR();
 }
 
+#ifdef HONEI_CUDA_DOUBLE
 extern "C" void cuda_scaled_sum_three_double(void * x, void * y, void * z, unsigned long size, unsigned long blocksize)
 {
     dim3 grid;
@@ -122,3 +129,4 @@ extern "C" void cuda_scaled_sum_three_double(void * x, void * y, void * z, unsig
 
     CUDA_ERROR();
 }
+#endif

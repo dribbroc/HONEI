@@ -94,5 +94,8 @@ MMIOTest<float, tags::CPU> mmio_test_float_dense("float");
 MMIOTest<double, tags::CPU> mmio_test_double_dense("double");
 #ifdef HONEI_CUDA
 MMIOTest<float, tags::GPU::CUDA> cuda_mmio_test_float_dense("float");
+#ifdef HONEI_CUDA_DOUBLE
+MMIOTest<double, tags::GPU::CUDA> cuda_mmio_test_double_dense("double");
+#endif
 #endif
 

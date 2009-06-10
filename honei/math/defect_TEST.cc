@@ -69,6 +69,8 @@ DefectTest<float, tags::CPU> defect_test_float_sparse("float");
 DefectTest<double, tags::CPU> defect_test_double_sparse("double");
 #ifdef HONEI_CUDA
 DefectTest<float, tags::GPU::CUDA> cuda_defect_test_float_sparse("float");
-//DefectTest<double, tags::GPU::CUDA> cuda_defect_test_double_sparse("double");
+#ifdef HONEI_CUDA_DOUBLE
+DefectTest<double, tags::GPU::CUDA> cuda_defect_test_double_sparse("double");
+#endif
 #endif
 

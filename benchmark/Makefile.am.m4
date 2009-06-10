@@ -60,6 +60,7 @@ DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \
 	$(CUDADEF) \
+	$(CUDA_DOUBLEDEF) \
 	$(DEBUGDEF) \
 	$(PROFILERDEF) \
 	-DHONEI_SOURCEDIR='"$(top_srcdir)"'

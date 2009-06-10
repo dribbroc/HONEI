@@ -45,6 +45,7 @@ namespace honei
             }
         }
 
+#ifdef HONEI_CUDA_DOUBLE
         __global__ void dot_product_gpu(double * x, double * y, double * tmp, unsigned long size, unsigned long blocksize)
         {
             // calculate how many elements each thread needs to calculate
@@ -66,6 +67,7 @@ namespace honei
                 tmp[blockIdx.x * blocksize + threadIdx.x] += x[pos] * y[pos];
             }
         }
+#endif
     }
 }
 
@@ -99,6 +101,7 @@ extern "C" float cuda_dot_product_two_float(const void * x, const void * y, unsi
     return result;
 }
 
+#ifdef HONEI_CUDA_DOUBLE
 extern "C" double cuda_dot_product_two_double(const void * x, const void * y, unsigned long size, unsigned long blocksize,
         unsigned long gridsize)
 {
@@ -128,3 +131,4 @@ extern "C" double cuda_dot_product_two_double(const void * x, const void * y, un
     CUDA_ERROR();
     return result;
 }
+#endif

@@ -85,6 +85,9 @@ DenseDotProductTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_scalar_produ
 #endif
 #ifdef HONEI_CUDA
 DenseDotProductTest<tags::GPU::CUDA, float> cuda_dense_scalar_product_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseDotProductTest<tags::GPU::CUDA, double> cuda_dense_scalar_product_test_double("double");
+#endif
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -139,6 +142,9 @@ DenseDotProductQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_scalar_
 #endif
 #ifdef HONEI_CUDA
 DenseDotProductQuickTest<tags::GPU::CUDA, float> cuda_dense_scalar_product_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseDotProductQuickTest<tags::GPU::CUDA, double> cuda_dense_scalar_product_quick_test_double("double");
+#endif
 #endif
 
 template <typename Tag_, typename DataType_>

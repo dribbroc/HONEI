@@ -757,7 +757,9 @@ SparseMatrixELLDenseVectorProductQuickTest<float, tags::CPU> sparse_matrix_ell_d
 SparseMatrixELLDenseVectorProductQuickTest<double, tags::CPU> sparse_matrix_ell_dense_vector_product_quick_test_double("double");
 #ifdef HONEI_CUDA
 SparseMatrixELLDenseVectorProductQuickTest<float, tags::GPU::CUDA> cuda_sparse_matrix_ell_dense_vector_product_quick_test_float("float");
-//SparseMatrixELLDenseVectorProductQuickTest<double, tags::GPU::CUDA> cuda_sparse_matrix_ell_dense_vector_product_quick_test_double("double");
+#ifdef HONEI_CUDA_DOUBLE
+SparseMatrixELLDenseVectorProductQuickTest<double, tags::GPU::CUDA> cuda_sparse_matrix_ell_dense_vector_product_quick_test_double("double");
+#endif
 #endif
 
 template <typename DataType_>

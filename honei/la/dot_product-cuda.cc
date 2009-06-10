@@ -61,6 +61,7 @@ float DotProduct<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<float> 
     return result;
 }
 
+#ifdef HONEI_CUDA_DOUBLE
 double DotProduct<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<double> & a,
         const DenseVectorContinuousBase<double> & b)
 {
@@ -98,3 +99,4 @@ double DotProduct<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<double
 
     return result;
 }
+#endif

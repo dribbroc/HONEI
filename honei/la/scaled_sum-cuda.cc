@@ -43,6 +43,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::GPU::CUDA>::value(DenseVector
     return x;
 }
 
+#ifdef HONEI_CUDA_DOUBLE
 DenseVectorContinuousBase<double> & ScaledSum<tags::GPU::CUDA>::value(DenseVectorContinuousBase<double> & x,
         const DenseVectorContinuousBase<double> & y, double b)
 {
@@ -61,6 +62,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::GPU::CUDA>::value(DenseVecto
 
     return x;
 }
+#endif
 
 DenseVectorContinuousBase<float> & ScaledSum<tags::GPU::CUDA>::value(DenseVectorContinuousBase<float> & a,
         const DenseVectorContinuousBase<float> & b, const DenseVectorContinuousBase<float> & c)
@@ -87,6 +89,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::GPU::CUDA>::value(DenseVector
     return a;
 }
 
+#ifdef HONEI_CUDA_DOUBLE
 DenseVectorContinuousBase<double> & ScaledSum<tags::GPU::CUDA>::value(DenseVectorContinuousBase<double> & a,
         const DenseVectorContinuousBase<double> & b, const DenseVectorContinuousBase<double> & c)
 {
@@ -111,3 +114,4 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::GPU::CUDA>::value(DenseVecto
 
     return a;
 }
+#endif

@@ -559,5 +559,7 @@ ConjugateGradientsTestSparseELL<tags::CPU, float> cg_test_float_sparse_ell("floa
 ConjugateGradientsTestSparseELL<tags::CPU, double> cg_test_double_sparse_ell("double");
 #ifdef HONEI_CUDA
 ConjugateGradientsTestSparseELL<tags::GPU::CUDA, float> cuda_cg_test_float_sparse_ell("float");
-//ConjugateGradientsTestSparseELL<tags::GPU::CUDA, double> cuda_cg_test_double_sparse_ell("double");
+#ifdef HONEI_CUDA_DOUBLE
+ConjugateGradientsTestSparseELL<tags::GPU::CUDA, double> cuda_cg_test_double_sparse_ell("double");
+#endif
 #endif

@@ -80,6 +80,7 @@ DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \
 	$(CUDADEF) \
+	$(CUDA_DOUBLEDEF) \
 	$(DEBUGDEF) \
 	$(PROFILERDEF)
 

@@ -44,6 +44,7 @@ DenseVectorContinuousBase<float> & ElementProduct<tags::GPU::CUDA>::value(DenseV
     return a;
 }
 
+#ifdef HONEI_CUDA_DOUBLE
 DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::CUDA>::value(DenseVectorContinuousBase<double> & a,
         const DenseVectorContinuousBase<double> & b)
 {
@@ -63,7 +64,7 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::CUDA>::value(Dense
 
     return a;
 }
-
+#endif
 
 DenseMatrix<float> & ElementProduct<tags::GPU::CUDA>::value(DenseMatrix<float> & a, const DenseMatrix<float> & b)
 {

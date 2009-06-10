@@ -7,8 +7,19 @@ EXTRA_DIST = libtool-hack.in
 
 lib_LTLIBRARIES = libhoneibackendscuda.la
 
+DEFS = \
+	$(CELLDEF) \
+	$(SSEDEF) \
+	$(CUDADEF) \
+	$(CUDA_DOUBLEDEF) \
+	$(DEBUGDEF) \
+	$(PROFILERDEF)
+
 NVCC = nvcc
-NVCCFLAGS = -g --ptxas-options=-v -O3 -I$(top_srcdir) $(DEBUGDEF) $(PROFILERDEF)
+NVCCFLAGS = -g --ptxas-options=-v -O3 -I$(top_srcdir) $(DEFS)
+if CUDA_DOUBLE
+  NVCCFLAGS += -arch=sm_13
+endif
 
 .cu.lo: libtool-hack.in
 	$(NVCC) $(NVCCFLAGS) -Xcompiler -fPIC -c -o $(patsubst %.lo,%.o,$@) $<
@@ -21,6 +32,7 @@ memory_backend_TEST_LDADD = \
 	libhoneibackendscuda.la \
 	$(DYNAMIC_LD_LIBS)
 memory_backend_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
+
 
 libhoneibackendscuda_la_SOURCES = \
 				 cuda_util.hh \
