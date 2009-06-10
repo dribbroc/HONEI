@@ -541,7 +541,7 @@ class ConjugateGradientsTestSparseELL:
             }
 
             DenseVector<DT1_> result(rhs.size(), DT1_(1));
-            ConjugateGradients<Tag_, JAC>::value(smatrix2, rhs, result, diag_inverted, 30ul);
+            ConjugateGradients<Tag_, JAC>::value(smatrix2, rhs, result, diag_inverted, 60ul);
 
             result.lock(lm_read_only);
             x.lock(lm_read_only);

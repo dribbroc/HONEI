@@ -33,8 +33,9 @@ class SMELLCGBench :
 
         virtual void run()
         {
-            std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/math/testdata/5pt_10x10.mtx";
+            //std::string filename(HONEI_SOURCEDIR);
+            //filename += "/honei/math/testdata/5pt_10x10.mtx";
+            std::string filename = "/home/user/mgeveler/nobackup/feat2/Featflow2/area51/renumbenchmark/l10/test_2.mtx";
             unsigned long non_zeros(MatrixIO<io_formats::MTX>::get_non_zeros(filename));
             unsigned long rows, columns, ax, bx;
             DenseVector<unsigned long> r(non_zeros);
@@ -63,11 +64,11 @@ class SMELLCGBench :
             for(unsigned long i(0) ; i < _count ; ++i)
             {
                 BENCHMARK(
-                        (ConjugateGradients<Tag_, JAC>::value(smatrix2, rhs, result, diag_inverted, 30ul));
+                        (ConjugateGradients<Tag_, JAC>::value(smatrix2, rhs, result, diag_inverted, 10ul));
+                        );
 #ifdef HONEI_CUDA
                         cuda_thread_synchronize();
 #endif
-                        );
             }
             BenchmarkInfo info;
             BenchmarkInfo info_pre;
@@ -78,6 +79,8 @@ class SMELLCGBench :
 };
 SMELLCGBench<tags::CPU, float> SMELLDVPBench_float("SM ELL CG Benchmark CPU float: " , 0, 10);
 #ifdef HONEI_CUDA
-SMELLCGBench<tags::GPU::CUDA, float> SMELLDVPBench_float_cuda("SM ELL CG Benchmark CUDA float: " , 0, 10);
-//SMELLCGBench<tags::GPU::CUDA, double> SMELLDVPBench_double_cuda("SM ELL CG Benchmark CUDA double: " , 0, 10);
+SMELLCGBench<tags::GPU::CUDA, float> SMELLDVPBench_float_cuda("SM ELL CG Benchmark CUDA float: " , 0, 6);
+#ifdef HONEI_CUDA_DOUBLE
+SMELLCGBench<tags::GPU::CUDA, double> SMELLDVPBench_double_cuda("SM ELL CG Benchmark CUDA double: " , 0, 10);
+#endif
 #endif
