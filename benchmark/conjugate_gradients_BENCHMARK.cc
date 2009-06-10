@@ -33,9 +33,9 @@ class SMELLCGBench :
 
         virtual void run()
         {
-            //std::string filename(HONEI_SOURCEDIR);
-            //filename += "/honei/math/testdata/5pt_10x10.mtx";
-            std::string filename = "/home/user/mgeveler/nobackup/feat2/Featflow2/area51/renumbenchmark/l10/test_2.mtx";
+            std::string filename(HONEI_SOURCEDIR);
+            filename += "/honei/math/testdata/5pt_10x10.mtx";
+            //std::string filename = "/home/user/mgeveler/nobackup/feat2/Featflow2/area51/renumbenchmark/l10/test_2.mtx";
             unsigned long non_zeros(MatrixIO<io_formats::MTX>::get_non_zeros(filename));
             unsigned long rows, columns, ax, bx;
             DenseVector<unsigned long> r(non_zeros);
