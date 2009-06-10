@@ -70,8 +70,10 @@ class SMELLCGBench :
                         );
             }
             BenchmarkInfo info;
-            info.flops = non_zeros * 2 + 12 * rows;
-            evaluate(info * 30);
+            BenchmarkInfo info_pre;
+            info_pre.flops = ((2 * non_zeros + 2 * rows));
+            info.flops = non_zeros * 2 + 12 * rows + 2;
+            evaluate(info * 30 + info_pre);
         }
 };
 SMELLCGBench<tags::CPU, float> SMELLDVPBench_float("SM ELL CG Benchmark CPU float: " , 0, 10);
