@@ -86,6 +86,29 @@ namespace honei
 
             return a;
         }
+        template <typename DT1_, typename DT2_>
+        static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & result, DenseVectorBase<DT1_> & a, const DenseVectorBase<DT2_> & b)
+        {
+            CONTEXT("When calculating the product of DenseVectorBases elements:");
+
+            if (a.size() != b.size())
+                throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+            if (a.size() != result.size())
+                throw VectorSizeDoesNotMatch(result.size(), a.size());
+
+            typename DenseVectorBase<DT1_>::ConstElementIterator a_i(a.begin_elements());
+            typename DenseVectorBase<DT2_>::ConstElementIterator b_i(b.begin_elements());
+            for (typename DenseVectorBase<DT1_>::ElementIterator res_i(result.begin_elements()),
+                    a_i_end(a.end_elements()) ; a_i != a_i_end ; ++a_i)
+            {
+                *res_i = *a_i * *b_i;
+                ++b_i;
+                ++res_i;
+            }
+
+            return result;
+        }
 
         template <typename DT1_, typename DT2_>
         static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & a, const DenseVectorBase<DT2_> & b)
@@ -527,11 +550,13 @@ namespace honei
 
         static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
 
-
         static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
 
-        static DenseMatrix<float> & value(DenseMatrix<float> & a, const DenseMatrix<float> & b);
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & result, DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
 
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & result, DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+
+        static DenseMatrix<float> & value(DenseMatrix<float> & a, const DenseMatrix<float> & b);
         /// \}
     };
 

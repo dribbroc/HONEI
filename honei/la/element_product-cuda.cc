@@ -37,7 +37,7 @@ DenseVectorContinuousBase<float> & ElementProduct<tags::GPU::CUDA>::value(DenseV
 
     void * a_gpu(a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
     void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    cuda_element_product_two_float(a_gpu, b_gpu, a.size(), blocksize);
+    cuda_element_product_three_float(a_gpu, a_gpu, b_gpu, a.size(), blocksize);
     b.unlock(lm_read_only);
     a.unlock(lm_read_and_write);
 
@@ -58,7 +58,7 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::CUDA>::value(Dense
 
     void * a_gpu(a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
     void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    cuda_element_product_two_double(a_gpu, b_gpu, a.size(), blocksize);
+    cuda_element_product_three_double(a_gpu, a_gpu, b_gpu, a.size(), blocksize);
     b.unlock(lm_read_only);
     a.unlock(lm_read_and_write);
 
@@ -66,6 +66,51 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::CUDA>::value(Dense
 }
 #endif
 
+DenseVectorContinuousBase<float> & ElementProduct<tags::GPU::CUDA>::value(DenseVectorContinuousBase<float> & result, DenseVectorContinuousBase<float> & a,
+        const DenseVectorContinuousBase<float> & b)
+{
+    CONTEXT("When multiplying DenseVectorContinuousBase<float> and DenseVectorContinuousBase<float> elementwise "
+            "(CUDA):");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::element_inverse_one_float", 128ul));
+
+    void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+    void * a_gpu(a.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+    void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+    cuda_element_product_three_float(result_gpu, a_gpu, b_gpu, a.size(), blocksize);
+    result.unlock(lm_write_only);
+    b.unlock(lm_read_only);
+    a.unlock(lm_read_only);
+
+    return result;
+}
+
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::CUDA>::value(DenseVectorContinuousBase<double> & result, DenseVectorContinuousBase<double> & a,
+        const DenseVectorContinuousBase<double> & b)
+{
+    CONTEXT("When multiplying DenseVectorContinuousBase<double> and DenseVectorContinuousBase<double> elementwise "
+            "(CUDA):");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::element_inverse_one_double", 128ul));
+
+    void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+    void * a_gpu(a.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+    void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+    cuda_element_product_three_double(result_gpu, a_gpu, b_gpu, a.size(), blocksize);
+    result.unlock(lm_write_only);
+    b.unlock(lm_read_only);
+    a.unlock(lm_read_only);
+
+    return result;
+}
+#endif
 DenseMatrix<float> & ElementProduct<tags::GPU::CUDA>::value(DenseMatrix<float> & a, const DenseMatrix<float> & b)
 {
     CONTEXT("When multiplying DenseMatrix<float> and DenseMatrix<float> elementwise (CUDA):");
@@ -84,7 +129,7 @@ DenseMatrix<float> & ElementProduct<tags::GPU::CUDA>::value(DenseMatrix<float> &
 
     void * a_gpu(a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
     void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    cuda_element_product_two_float(a_gpu, b_gpu, a.size(), blocksize);
+    cuda_element_product_three_float(a_gpu, a_gpu, b_gpu, a.size(), blocksize);
     b.unlock(lm_read_only);
     a.unlock(lm_read_and_write);
 

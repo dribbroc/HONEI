@@ -85,6 +85,27 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
+        static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & result, DenseVectorBase<DT1_> & x, const DenseVectorBase<DT2_> & y, DT2_ b)
+        {
+            CONTEXT("When calculating ScaledSum (DenseVectorBase, DenseVectorBase, scalar):");
+
+            if (x.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+            if (x.size() != result.size())
+                throw VectorSizeDoesNotMatch(result.size(), x.size());
+
+            typename DenseVectorBase<DT1_>::ConstElementIterator x_i(x.begin_elements());
+            typename DenseVectorBase<DT2_>::ConstElementIterator y_i(y.begin_elements());
+            for (typename DenseVectorBase<DT1_>::ElementIterator res_i(result.begin_elements()),
+                    x_i_end(x.end_elements()) ; x_i != x_i_end ; ++x_i)
+            {
+                *res_i = b * (*y_i) + *x_i;
+            }
+
+            return result;
+        }
+        template <typename DT1_, typename DT2_>
         static inline DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & x, const DenseVectorBase<DT2_> & y, DT2_ b)
         {
             DenseVectorBase<DT1_> & temp = x;
@@ -273,6 +294,10 @@ namespace honei
         static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & x, const DenseVectorContinuousBase<float> & y, float b);
 
         static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & x, const DenseVectorContinuousBase<double> & y, double b);
+
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & result, DenseVectorContinuousBase<float> & x, const DenseVectorContinuousBase<float> & y, float b);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & result, DenseVectorContinuousBase<double> & x, const DenseVectorContinuousBase<double> & y, double b);
 
         static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b, const DenseVectorContinuousBase<float> & c );
 

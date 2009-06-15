@@ -18,6 +18,7 @@
  */
 
 #include <honei/math/matrix_io.hh>
+#include <honei/math/vector_io.hh>
 #include <honei/math/defect.hh>
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>
@@ -74,3 +75,53 @@ DefectTest<double, tags::GPU::CUDA> cuda_defect_test_double_sparse("double");
 #endif
 #endif
 
+template<typename DT_, typename Tag_>
+class DefectRegressionTest:
+    public BaseTest
+{
+    private:
+        std::string _m_f, _v_f;
+    public:
+        DefectRegressionTest(const std::string & tag, std::string m_file, std::string v_file) :
+            BaseTest("Defect Regression Test")
+        {
+            register_tag(Tag_::name);
+            _m_f = m_file;
+            _v_f = v_file;
+        }
+
+        virtual void run() const
+        {
+
+            std::string filename(HONEI_SOURCEDIR);
+            filename += "/honei/math/testdata/";
+            filename += _m_f;
+            unsigned long non_zeros(MatrixIO<io_formats::M>::get_non_zeros(filename));
+            unsigned long rows, columns, ax, bx;
+            DenseVector<unsigned long> r(non_zeros);
+            DenseVector<unsigned long> c(non_zeros);
+            DenseVector<DT_> data(non_zeros);
+
+            MatrixIO<io_formats::M>::read_matrix(filename, r, c, data);
+            MatrixIO<io_formats::M>::get_sizes(filename, rows, columns, ax, bx);
+            SparseMatrixELL<DT_> smatrix2(rows, columns, r, c, data);
+
+            std::string filename_2(HONEI_SOURCEDIR);
+	    filename_2 += "/honei/math/testdata/";
+            filename_2 += _v_f;
+            DenseVector<DT_> rhs(rows, DT_(0));
+            VectorIO<io_formats::EXP>::read_vector(filename_2, rhs);
+
+            DenseVector<DT_> x(rows, DT_(1));
+            DenseVector<DT_> ref_result(Defect<tags::CPU>::value(rhs, smatrix2, x));
+
+            DenseVector<DT_> result(Defect<Tag_>::value(rhs, smatrix2, x));
+
+            result.lock(lm_read_only);
+            TEST_CHECK_EQUAL(result, ref_result);
+            result.unlock(lm_read_only);
+        }
+};
+#ifdef HONEI_CUDA
+DefectRegressionTest<float, tags::GPU::CUDA> defect_test_float_sparse_cuda(" CUDA Regression float", "area51_full_0.m", "area51_rhs_0");
+#endif

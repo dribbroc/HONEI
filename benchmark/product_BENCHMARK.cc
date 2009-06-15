@@ -445,27 +445,30 @@ class SMELLDenseVectorProductBench :
     private:
         unsigned long _size;
         unsigned long _count;
+        std::string _file;
     public:
-        SMELLDenseVectorProductBench(const std::string & id, unsigned long size, unsigned long count) :
+        SMELLDenseVectorProductBench(const std::string & id, unsigned long size, unsigned long count, std::string file) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
             _size = size;
             _count = count;
+            _file = file;
         }
 
         virtual void run()
         {
             std::string filename(HONEI_SOURCEDIR);
-            filename = "/home/user/mgeveler/nobackup/feat2/Featflow2/area51/renumbenchmark/l10/test_0.mtx";
-            //filename += "/honei/math/testdata/test_4.mtx";
-            unsigned long non_zeros(MatrixIO<io_formats::MTX>::get_non_zeros(filename));
+            filename += "/honei/math/testdata/";
+            filename += _file;
+
+            unsigned long non_zeros(MatrixIO<io_formats::M>::get_non_zeros(filename));
             DenseVector<unsigned long> r(non_zeros);
             DenseVector<unsigned long> c(non_zeros);
             DenseVector<DataType_> data(non_zeros);
-            MatrixIO<io_formats::MTX>::read_matrix(filename, r, c, data);
+            MatrixIO<io_formats::M>::read_matrix(filename, r, c, data);
             unsigned long rows, columns, ax, bx;
-            MatrixIO<io_formats::MTX>::get_sizes(filename, rows, columns, ax, bx);
+            MatrixIO<io_formats::M>::get_sizes(filename, rows, columns, ax, bx);
             SparseMatrixELL<DataType_> smatrix(rows, columns, r, c, data);
 
             DenseVector<DataType_> x(smatrix.rows());
@@ -478,7 +481,7 @@ class SMELLDenseVectorProductBench :
             for (unsigned long i(0) ; i < _count ; i++)
             {
                 BENCHMARK(
-                        for (unsigned long j(0) ; j < 100 ; ++j)
+                        for (unsigned long j(0) ; j < 1000 ; ++j)
                         {
                             Product<Tag_>::value(y, smatrix, x);
                         }
@@ -489,15 +492,13 @@ class SMELLDenseVectorProductBench :
             }
             BenchmarkInfo info;
             info.flops = non_zeros * 2;
-            evaluate(info * 100);
+            evaluate(info * 1000);
         }
 };
-SMELLDenseVectorProductBench<tags::CPU, float> SMELLDVPBenchfloat("SM ELL Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10);
-SMELLDenseVectorProductBench<tags::CPU, double> SMELLDVPBenchdouble("SM ELL Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10);
 #ifdef HONEI_CUDA
-SMELLDenseVectorProductBench<tags::GPU::CUDA, float> cudaSMELLDVPBenchfloat("CUDA SM ELL Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10);
+SMELLDenseVectorProductBench<tags::GPU::CUDA, float> cudaSMELLDVPBenchfloat0("CUDA SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10, "area51_full_0.m");
 #ifdef HONEI_CUDA_DOUBLE
-SMELLDenseVectorProductBench<tags::GPU::CUDA, double> cudaSMELLDVPBenchdouble("CUDA SM ELL Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10);
+SMELLDenseVectorProductBench<tags::GPU::CUDA, double> cudaSMELLDVPBenchdouble0("CUDA SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10, "area51_full_0.m");
 #endif
 #endif
 

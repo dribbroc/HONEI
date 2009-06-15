@@ -480,7 +480,6 @@ namespace honei
                 static inline DenseVector<DT1_> value(DenseVector<DT1_>& to_smooth, SparseMatrixELL<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, unsigned long iter_number, DT1_ omega, DenseVector<DT1_> & diag_inverted)
                 {
                     CONTEXT("When solving sparse linear system (ELL) with Jacobi (fixed # iterations):");
-
                     DenseVector<DT1_> x(right_hand_side.size());
 
                     DenseVector<DT1_> ts_c(to_smooth.size());

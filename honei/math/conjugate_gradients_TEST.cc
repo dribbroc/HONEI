@@ -19,6 +19,7 @@
 
 #include <honei/math/conjugate_gradients.hh>
 #include <honei/math/matrix_io.hh>
+#include <honei/math/vector_io.hh>
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <iostream>
@@ -505,33 +506,38 @@ template <typename Tag_, typename DT1_>
 class ConjugateGradientsTestSparseELL:
     public BaseTest
 {
+    private:
+        std::string _m_f, _v_f;
     public:
-        ConjugateGradientsTestSparseELL(const std::string & tag) :
+        ConjugateGradientsTestSparseELL(const std::string & tag, std::string m_file, std::string v_file) :
             BaseTest("ConjugateGradients solver test (sparse ELL system)<" + tag + ">")
         {
             register_tag(Tag_::name);
+            _m_f = m_file;
+            _v_f = v_file;
         }
 
         virtual void run() const
         {
 
             std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/math/testdata/5pt_10x10.mtx";
-            unsigned long non_zeros(MatrixIO<io_formats::MTX>::get_non_zeros(filename));
+            filename += "/honei/math/testdata/";
+            filename += _m_f;
+            unsigned long non_zeros(MatrixIO<io_formats::M>::get_non_zeros(filename));
             unsigned long rows, columns, ax, bx;
             DenseVector<unsigned long> r(non_zeros);
             DenseVector<unsigned long> c(non_zeros);
             DenseVector<DT1_> data(non_zeros);
 
-            MatrixIO<io_formats::MTX>::read_matrix(filename, r, c, data);
-            MatrixIO<io_formats::MTX>::get_sizes(filename, rows, columns, ax, bx);
+            MatrixIO<io_formats::M>::read_matrix(filename, r, c, data);
+            MatrixIO<io_formats::M>::get_sizes(filename, rows, columns, ax, bx);
             SparseMatrixELL<DT1_> smatrix2(rows, columns, r, c, data);
 
-            DenseVector<DT1_> x(rows, DT1_(1.2345));
-
+            std::string filename_2(HONEI_SOURCEDIR);
+	    filename_2 += "/honei/math/testdata/";
+            filename_2 += _v_f;
             DenseVector<DT1_> rhs(rows, DT1_(0));
-
-            Product<Tag_>::value(rhs, smatrix2, x);
+            VectorIO<io_formats::EXP>::read_vector(filename_2, rhs);
 
             DenseVector<DT1_> diag_inverted(rows, DT1_(0));
             for(unsigned long i(0) ; i < data.size() ; ++i)
@@ -540,26 +546,21 @@ class ConjugateGradientsTestSparseELL:
                     diag_inverted[r[i]] = DT1_(1)/data[i];
             }
 
-            DenseVector<DT1_> result(rhs.size(), DT1_(1));
-            ConjugateGradients<Tag_, JAC>::value(smatrix2, rhs, result, diag_inverted, 60ul);
+            DenseVector<DT1_> result(rhs.size(), DT1_(0));
+            ConjugateGradients<Tag_, JAC>::value(smatrix2, rhs, result, diag_inverted, 4000ul);
 
             result.lock(lm_read_only);
-            x.lock(lm_read_only);
             //std::cout << result << std::endl;
-            for(unsigned long i(0) ; i < rhs.size() ; ++i)
-            {
-                TEST_CHECK_EQUAL_WITHIN_EPS(result[i], x[i], std::numeric_limits<DT1_>::epsilon() * 10);
-            }
             result.unlock(lm_read_only);
-            x.unlock(lm_read_only);
 
         }
 };
-ConjugateGradientsTestSparseELL<tags::CPU, float> cg_test_float_sparse_ell("float");
-ConjugateGradientsTestSparseELL<tags::CPU, double> cg_test_double_sparse_ell("double");
+
+ConjugateGradientsTestSparseELL<tags::CPU, float> cg_test_float_sparse_ell("float", "area51_full_0.m", "area51_rhs_0");
+ConjugateGradientsTestSparseELL<tags::CPU, double> cg_test_double_sparse_ell("double", "area51_full_0.m", "area51_rhs_0");
 #ifdef HONEI_CUDA
-ConjugateGradientsTestSparseELL<tags::GPU::CUDA, float> cuda_cg_test_float_sparse_ell("float");
+ConjugateGradientsTestSparseELL<tags::GPU::CUDA, float> cuda_cg_test_float_sparse_ell("float", "area51_full_0.m", "area51_rhs_0");
 #ifdef HONEI_CUDA_DOUBLE
-ConjugateGradientsTestSparseELL<tags::GPU::CUDA, double> cuda_cg_test_double_sparse_ell("double");
+ConjugateGradientsTestSparseELL<tags::GPU::CUDA, double> cuda_cg_test_double_sparse_ell("double", "area51_full_0.m", "area51_rhs_0");
 #endif
 #endif

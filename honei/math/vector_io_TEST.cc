@@ -45,6 +45,7 @@ class VectorIOTest:
             unsigned long non_zeros, non_data;
 
             VectorIO<io_formats::EXP>::get_size(filename, non_zeros, non_data);
+            std::cout << "NZ: " << non_zeros << std::endl;
             DenseVector<DT_> data(non_zeros);
 
             VectorIO<io_formats::EXP>::read_vector(filename, data);

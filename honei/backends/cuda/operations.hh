@@ -46,13 +46,13 @@ extern "C"
 
     void cuda_element_inverse_one_float(void * x, unsigned long size, unsigned long blocksize);
 
-    void cuda_element_product_two_float(void * a, const void * b, unsigned long size, unsigned long blocksize);
-    void cuda_element_product_two_double(void * a, const void * b, unsigned long size, unsigned long blocksize);
+    void cuda_element_product_three_float(void * r, void * a, const void * b, unsigned long size, unsigned long blocksize);
+    void cuda_element_product_three_double(void * r, void * a, const void * b, unsigned long size, unsigned long blocksize);
 
     float cuda_norm_l2_one_float(const void * a, unsigned long size, unsigned long blocksize,
             unsigned long gridsize);
 
-    float cuda_norm_l2_one_double(const void * a, unsigned long size, unsigned long blocksize,
+    double cuda_norm_l2_one_double(const void * a, unsigned long size, unsigned long blocksize,
             unsigned long gridsize);
 
     void cuda_product_bmdv_q1_float(void * ll, void * ld, void * lu,
@@ -74,8 +74,8 @@ extern "C"
     void cuda_restriction_float(void * coarse, unsigned long size_coarse, void * fine, unsigned long size_fine,
             unsigned long * macroBorderMask, unsigned long blocksize);
 
-    void cuda_scaled_sum_two_float(void * x, const void * y, float b, unsigned long size, unsigned long blocksize);
-    void cuda_scaled_sum_two_double(void * x, const void * y, double b, unsigned long size, unsigned long blocksize);
+    void cuda_scaled_sum_three_float_s(void * x, void * y, void * z, float s, unsigned long size, unsigned long blocksize);
+    void cuda_scaled_sum_three_double_s(void * x, void * y, void * z, double s, unsigned long size, unsigned long blocksize);
     void cuda_scaled_sum_three_float(void * x, void * y, void * z, unsigned long size, unsigned long blocksize);
     void cuda_scaled_sum_three_double(void * x, void * y, void * z, unsigned long size, unsigned long blocksize);
 

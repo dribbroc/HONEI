@@ -59,7 +59,6 @@ class VectorIO<io_formats::EXP>
                     if(line.find("#", 0) < line.npos)
                     {
                         ++data_begin;
-                        continue;
                     }
                     else
                     {
@@ -69,6 +68,7 @@ class VectorIO<io_formats::EXP>
                 }
 
                 file.close();
+                --n_z;
             }
             else
                 throw honei::InternalError("Unable to open Vector file.");

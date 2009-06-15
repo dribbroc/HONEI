@@ -23,55 +23,57 @@ namespace honei
 {
     namespace cuda
     {
-        __global__ void element_product_gpu(float * x, float * y, unsigned long size)
+        __global__ void element_product_gpu(float * r, float * x, float * y, unsigned long size)
         {
             unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
             if (idx < size)
             {
-                x[idx] = x[idx] * y[idx];
+                r[idx] = x[idx] * y[idx];
             }
         }
 
 #ifdef HONEI_CUDA_DOUBLE
-        __global__ void element_product_gpu(double * x, double * y, unsigned long size)
+        __global__ void element_product_gpu(double * r, double * x, double * y, unsigned long size)
         {
             unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
             if (idx < size)
             {
-                x[idx] = x[idx] * y[idx];
+                r[idx] = x[idx] * y[idx];
             }
         }
 #endif
     }
 }
 
-extern "C" void cuda_element_product_two_float(void * x, void * y, unsigned long size, unsigned long blocksize)
+extern "C" void cuda_element_product_three_float(void * r, void * x, void * y, unsigned long size, unsigned long blocksize)
 {
     dim3 grid;
     dim3 block;
     block.x = blocksize;
     grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
     grid.y = grid.x;
+    float * r_gpu((float *)r);
     float * x_gpu((float *)x);
     float * y_gpu((float *)y);
 
-    honei::cuda::element_product_gpu<<<grid, block>>>(x_gpu, y_gpu, size);
+    honei::cuda::element_product_gpu<<<grid, block>>>(r_gpu, x_gpu, y_gpu, size);
 
     CUDA_ERROR();
 }
 
 #ifdef HONEI_CUDA_DOUBLE
-extern "C" void cuda_element_product_two_double(void * x, void * y, unsigned long size, unsigned long blocksize)
+extern "C" void cuda_element_product_three_double(void * r, void * x, void * y, unsigned long size, unsigned long blocksize)
 {
     dim3 grid;
     dim3 block;
     block.x = blocksize;
     grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
     grid.y = grid.x;
+    double * r_gpu((double *)r);
     double * x_gpu((double *)x);
     double * y_gpu((double *)y);
 
-    honei::cuda::element_product_gpu<<<grid, block>>>(x_gpu, y_gpu, size);
+    honei::cuda::element_product_gpu<<<grid, block>>>(r_gpu, x_gpu, y_gpu, size);
 
     CUDA_ERROR();
 }

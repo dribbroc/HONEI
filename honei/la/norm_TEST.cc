@@ -140,7 +140,12 @@ DenseVectorNormQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_norm_quic
 DenseVectorNormQuickTest<tags::Cell, float> cell_dense_vector_norm_quick_test_float("float (Cell)");
 DenseVectorNormQuickTest<tags::Cell, double> cell_dense_vector_norm_quick_test_double("double (Cell)");
 #endif
-
+#ifdef HONEI_CUDA
+DenseVectorNormQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_norm_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorNormQuickTest<tags::GPU::CUDA, double> cuda_dense_vector_norm_quick_test_double("double");
+#endif
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseVectorRangeNormValueTest :
