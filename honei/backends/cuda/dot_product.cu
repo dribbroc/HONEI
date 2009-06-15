@@ -84,7 +84,8 @@ extern "C" float cuda_dot_product_two_float(const void * x, const void * y, unsi
     float * tmp_gpu(0);
 
     cudaMalloc((void**)&tmp_gpu, gridsize * blocksize * sizeof(float));
-    cudaMallocHost((void**)&tmp_cpu, gridsize * blocksize * sizeof(float));
+    //cudaMallocHost((void**)&tmp_cpu, gridsize * blocksize * sizeof(float));
+    tmp_cpu = new float[gridsize * blocksize];
 
     honei::cuda::dot_product_gpu<<<grid, block>>>(x_gpu, y_gpu, tmp_gpu, size, blocksize);
 
@@ -95,7 +96,8 @@ extern "C" float cuda_dot_product_two_float(const void * x, const void * y, unsi
     }
 
     cudaFree(tmp_gpu);
-    cudaFreeHost(tmp_cpu);
+    //cudaFreeHost(tmp_cpu);
+    delete tmp_cpu;
 
     CUDA_ERROR();
     return result;
@@ -115,7 +117,8 @@ extern "C" double cuda_dot_product_two_double(const void * x, const void * y, un
     double * tmp_gpu(0);
 
     cudaMalloc((void**)&tmp_gpu, gridsize * blocksize * sizeof(double));
-    cudaMallocHost((void**)&tmp_cpu, gridsize * blocksize * sizeof(double));
+    //cudaMallocHost((void**)&tmp_cpu, gridsize * blocksize * sizeof(double));
+    tmp_cpu = new double[gridsize * blocksize];
 
     honei::cuda::dot_product_gpu<<<grid, block>>>(x_gpu, y_gpu, tmp_gpu, size, blocksize);
 
@@ -126,7 +129,8 @@ extern "C" double cuda_dot_product_two_double(const void * x, const void * y, un
     }
 
     cudaFree(tmp_gpu);
-    cudaFreeHost(tmp_cpu);
+    //cudaFreeHost(tmp_cpu);
+    delete tmp_cpu;
 
     CUDA_ERROR();
     return result;

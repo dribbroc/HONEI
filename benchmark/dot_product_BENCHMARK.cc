@@ -8,6 +8,7 @@
 
 #include <honei/la/dot_product.hh>
 #include <honei/util/configuration.hh>
+#include <honei/backends/cuda/operations.hh>
 
 using namespace std;
 using namespace honei;
@@ -37,10 +38,18 @@ class DotProductBench :
             DataType_ p0;
             for(int i = 0; i < _count; ++i)
             {
-                BENCHMARK(p0 = DotProduct<Tag_>::value(dv0, dv1));
+                BENCHMARK(
+                        for (unsigned long j(0) ; j < 10 ; ++j)
+                        {
+                        p0 = DotProduct<Tag_>::value(dv0, dv1);
+#ifdef HONEI_CUDA
+                        cuda_thread_synchronize();
+#endif
+                        }
+                        );
             }
             BenchmarkInfo info(DotProduct<>::get_benchmark_info(dv1, dv0));
-            evaluate(info);
+            evaluate(info * 10);
         }
 };
 DotProductBench<float, tags::CPU> DPBenchfloat("Dot Product Benchmark dense/dense - vector size: 64^4 float", 64ul*64*64*64, 10);

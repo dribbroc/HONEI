@@ -59,7 +59,8 @@ extern "C" float cuda_norm_l2_one_float(const void * x, unsigned long size, unsi
     float * tmp_gpu(0);
 
     cudaMalloc((void**)&tmp_gpu, gridsize * blocksize * sizeof(float));
-    cudaMallocHost((void**)&tmp_cpu, gridsize * blocksize * sizeof(float));
+    //cudaMallocHost((void**)&tmp_cpu, gridsize * blocksize * sizeof(float));
+    tmp_cpu = new float[gridsize * blocksize];
 
     honei::cuda::norm_l2_gpu<<<grid, block>>>(x_gpu, tmp_gpu, size, blocksize);
 
@@ -70,7 +71,8 @@ extern "C" float cuda_norm_l2_one_float(const void * x, unsigned long size, unsi
     }
 
     cudaFree(tmp_gpu);
-    cudaFreeHost(tmp_cpu);
+    //cudaFreeHost(tmp_cpu);
+    delete tmp_cpu;
 
     CUDA_ERROR();
     return result;
