@@ -765,6 +765,46 @@ namespace honei
                 return result;
             }
     };
+
+    ///FSI types:
+    template <typename LatticeType_, typename BoundaryType_, typename DT_> struct GridPackerFSI
+    {
+    };
+
+    template <typename DT_> struct GridPackerFSI<D2Q9, lbm_boundary_types::NOSLIP, DT_>
+    {
+        public:
+            static void allocate(PackedGridData<D2Q9, DT_> & data, PackedSolidData<D2Q9, DT_> & solids)
+            {
+                solids.boundary_flags = new DenseVector<bool>(data.h->size());
+                solids.line_flags = new DenseVector<bool>(data.h->size());
+                solids.solid_flags = new DenseVector<bool>(data.h->size());
+                solids.solid_to_fluid_flags = new DenseVector<bool>(data.h->size());
+            }
+
+            static void pack_solid(Grid<D2Q9, DT_> & grid,
+                             PackedGridData<D2Q9, DT_> & data,
+                             PackedSolidData<D2Q9, DT_> & solids,
+                             DenseMatrix<bool> & lines,
+                             DenseMatrix<bool> & boundaries,
+                             DenseMatrix<bool> & solid,
+                             DenseMatrix<bool> & solid_to_fluid)
+            {
+                unsigned long index(0);
+
+                for (unsigned long i(0) ; i < lines.rows() ; ++i)
+                {
+                    for (unsigned long j(0) ; j < lines.columns() ; ++j)
+                    {
+                        solids.boundary_flags[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT_>::h_index(i, j)] = boundaries[i][j] ? true : false;
+                        solids.line_flags[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT_>::h_index(i, j)] = lines[i][j] ? true : false;
+                        solids.solid_flags[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT_>::h_index(i, j)] = solid[i][j] ? true : false;
+                        solids.solid_to_fluid_flags[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT_>::h_index(i, j)] = solid_to_fluid[i][j] ? true : false;
+                        ++index;
+                    }
+                }
+            }
+    };
 }
 
 #endif

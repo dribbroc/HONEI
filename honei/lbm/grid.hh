@@ -378,6 +378,42 @@ namespace honei
             DenseVector<DT_> * distribution_y;
     };
 
+
+    template <typename Lattice_Type_, typename DT_> class PackedSolidData
+    {
+    };
+
+    template <typename DT_> class PackedSolidData<D2Q9, DT_>
+    {
+        public:
+
+            PackedSolidData():
+                boundary_flags(0),
+                rim_flags(0),
+                solid_flags(0),
+                solid_to_fluid_flags(0)
+            {
+            }
+
+            void destroy()
+            {
+                delete boundary_flags;
+                delete rim_flags;
+                delete solid_flags;
+                delete solid_to_fluid_flags;
+
+                boundary_flags = 0;
+                rim_flags = 0;
+                solid_flags = 0;
+                solid_to_fluid_flags = 0;
+            }
+
+            DenseVector<bool> * boundary_flags;
+            DenseVector<bool> * rim_flags;
+            DenseVector<bool> * solid_flags;
+            DenseVector<bool> * solid_to_fluid_flags;
+    };
+
     template <> class PackedGridFringe<D2Q9>
     {
         public:
