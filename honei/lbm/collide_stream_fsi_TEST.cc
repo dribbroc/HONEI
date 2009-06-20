@@ -174,7 +174,83 @@ class CollideStreamFSITest :
             DenseMatrix<DataType_> ref(h.rows(), h.columns());
             DenseMatrix<DataType_> res(h.rows(), h.columns());
 
-            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, &ref_result , &ref);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.f_temp_1 , &ref);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2, data_2.f_temp_1, &res);
+
+            for(unsigned long i(0) ; i < ref.rows() ; ++i)
+            {
+                for(unsigned long j(0) ; j < ref.columns() ; ++j)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(res[i][j], ref[i][j], std::numeric_limits<DataType_>::epsilon() * 10);
+                }
+            }
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.f_temp_2 , &ref);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2, data_2.f_temp_2, &res);
+
+            for(unsigned long i(0) ; i < ref.rows() ; ++i)
+            {
+                for(unsigned long j(0) ; j < ref.columns() ; ++j)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(res[i][j], ref[i][j], std::numeric_limits<DataType_>::epsilon() * 10);
+                }
+            }
+
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.f_temp_3 , &ref);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2, data_2.f_temp_3, &res);
+
+            for(unsigned long i(0) ; i < ref.rows() ; ++i)
+            {
+                for(unsigned long j(0) ; j < ref.columns() ; ++j)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(res[i][j], ref[i][j], std::numeric_limits<DataType_>::epsilon() * 10);
+                }
+            }
+
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.f_temp_4 , &ref);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2, data_2.f_temp_4, &res);
+
+            for(unsigned long i(0) ; i < ref.rows() ; ++i)
+            {
+                for(unsigned long j(0) ; j < ref.columns() ; ++j)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(res[i][j], ref[i][j], std::numeric_limits<DataType_>::epsilon() * 10);
+                }
+            }
+
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.f_temp_5 , &ref);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2, data_2.f_temp_5, &res);
+
+            for(unsigned long i(0) ; i < ref.rows() ; ++i)
+            {
+                for(unsigned long j(0) ; j < ref.columns() ; ++j)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(res[i][j], ref[i][j], std::numeric_limits<DataType_>::epsilon() * 10);
+                }
+            }
+
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.f_temp_6 , &ref);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2, data_2.f_temp_6, &res);
+
+            for(unsigned long i(0) ; i < ref.rows() ; ++i)
+            {
+                for(unsigned long j(0) ; j < ref.columns() ; ++j)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(res[i][j], ref[i][j], std::numeric_limits<DataType_>::epsilon() * 10);
+                }
+            }
+
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.f_temp_7 , &ref);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2, data_2.f_temp_7, &res);
+
+            for(unsigned long i(0) ; i < ref.rows() ; ++i)
+            {
+                for(unsigned long j(0) ; j < ref.columns() ; ++j)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(res[i][j], ref[i][j], std::numeric_limits<DataType_>::epsilon() * 10);
+                }
+            }
+
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.f_temp_8 , &ref);
             GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2, data_2.f_temp_8, &res);
 
             for(unsigned long i(0) ; i < ref.rows() ; ++i)

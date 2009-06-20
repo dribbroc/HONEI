@@ -79,63 +79,39 @@ namespace honei
             //Perform backward-streaming in all directions:
             for (unsigned long i(0) ; i < to_stream.size() ; ++i)
             {
-                if((*data.f_temp_1)[to_stream[i]] != 0)
-                {
                     (*data.f_temp_5)[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT1_>::
                         h_index(grid, solids.lines_inverse_i[i], solids.lines_inverse_j[i] - 1)] = (*data.f_temp_1)[to_stream[i]];
                     (*data.f_temp_1)[to_stream[i]] = DT1_(0);
-                }
 
-                if((*data.f_temp_2)[to_stream[i]] != 0)
-                {
                     (*data.f_temp_6)[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT1_>::
                         h_index(grid, solids.lines_inverse_i[i] - 1, solids.lines_inverse_j[i] - 1)] = (*data.f_temp_2)[to_stream[i]];
                     (*data.f_temp_2)[to_stream[i]] = DT1_(0);
-                }
 
-                if((*data.f_temp_3)[to_stream[i]] != 0)
-                {
                     (*data.f_temp_7)[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT1_>::
                         h_index(grid, solids.lines_inverse_i[i] - 1, solids.lines_inverse_j[i])] = (*data.f_temp_3)[to_stream[i]];
                     (*data.f_temp_3)[to_stream[i]] = DT1_(0);
-                }
 
 
-                if((*data.f_temp_4)[to_stream[i]] != 0)
-                {
                     (*data.f_temp_8)[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT1_>::
                         h_index(grid, solids.lines_inverse_i[i] - 1, solids.lines_inverse_j[i] + 1)] = (*data.f_temp_4)[to_stream[i]];
                     (*data.f_temp_4)[to_stream[i]] = DT1_(0);
-                }
 
-                if((*data.f_temp_5)[to_stream[i]] != 0)
-                {
                     (*data.f_temp_1)[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT1_>::
                         h_index(grid, solids.lines_inverse_i[i], solids.lines_inverse_j[i] + 1)] = (*data.f_temp_5)[to_stream[i]];
                     (*data.f_temp_5)[to_stream[i]] = DT1_(0);
-                }
 
 
-                if((*data.f_temp_6)[to_stream[i]] != 0)
-                {
                     (*data.f_temp_2)[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT1_>::
                         h_index(grid, solids.lines_inverse_i[i] + 1, solids.lines_inverse_j[i] + 1)] = (*data.f_temp_6)[to_stream[i]];
                     (*data.f_temp_6)[to_stream[i]] = DT1_(0);
-                }
 
-                if((*data.f_temp_7)[to_stream[i]] != 0)
-                {
                     (*data.f_temp_3)[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT1_>::
                         h_index(grid, solids.lines_inverse_i[i] + 1, solids.lines_inverse_j[i])] = (*data.f_temp_7)[to_stream[i]];
                     (*data.f_temp_7)[to_stream[i]] = DT1_(0);
-                }
 
-                if((*data.f_temp_8)[to_stream[i]] != 0)
-                {
                     (*data.f_temp_4)[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT1_>::
                         h_index(grid, solids.lines_inverse_i[i] + 1, solids.lines_inverse_j[i] - 1)] = (*data.f_temp_8)[to_stream[i]];
                     (*data.f_temp_8)[to_stream[i]] = DT1_(0);
-                }
             }
 
             info.limits->unlock(lm_read_only);
