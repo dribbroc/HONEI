@@ -22,6 +22,7 @@
 #ifndef LBM_GUARD_GRID_HH
 #define LBM_GUARD_GRID_HH 1
 
+#include <vector>
 #include <honei/lbm/tags.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
@@ -387,31 +388,40 @@ namespace honei
     {
         public:
 
-            PackedSolidData():
+            PackedSolidData(std::vector<unsigned long> & lines_i, std::vector<unsigned long> & lines_j):
                 boundary_flags(0),
-                rim_flags(0),
+                line_flags(0),
                 solid_flags(0),
-                solid_to_fluid_flags(0)
+                solid_to_fluid_flags(0),
+                lines_inverse_i(lines_i),
+                lines_inverse_j(lines_j)
             {
             }
 
             void destroy()
             {
                 delete boundary_flags;
-                delete rim_flags;
+                delete line_flags;
                 delete solid_flags;
                 delete solid_to_fluid_flags;
+                delete lines_inverse_i;
+                delete lines_inverse_j;
 
                 boundary_flags = 0;
-                rim_flags = 0;
+                line_flags = 0;
                 solid_flags = 0;
                 solid_to_fluid_flags = 0;
+                lines_inverse_i = 0;
+                lines_inverse_j = 0;
             }
 
             DenseVector<bool> * boundary_flags;
-            DenseVector<bool> * rim_flags;
+            DenseVector<bool> * line_flags;
             DenseVector<bool> * solid_flags;
             DenseVector<bool> * solid_to_fluid_flags;
+
+            std::vector<unsigned long> & lines_inverse_i;
+            std::vector<unsigned long> & lines_inverse_j;
     };
 
     template <> class PackedGridFringe<D2Q9>
