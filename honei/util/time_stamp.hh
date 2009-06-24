@@ -70,7 +70,7 @@ namespace honei
             /// Return total time in seconds.
             double total() const
             {
-                return _time.tv_sec + (_time.tv_usec / 10e6);
+                return _time.tv_sec + (_time.tv_usec / 1e6);
             }
 
             /**
@@ -83,8 +83,8 @@ namespace honei
              */
             bool operator< (const TimeStamp & other)
             {
-                double this_time(_time.tv_sec + (_time.tv_usec / 10e6));
-                double other_time(other._time.tv_sec + (other._time.tv_usec / 10e6));
+                double this_time(_time.tv_sec + (_time.tv_usec / 1e6));
+                double other_time(other._time.tv_sec + (other._time.tv_usec / 1e6));
                 return this_time < other_time;
             }
     };
