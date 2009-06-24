@@ -394,7 +394,9 @@ namespace honei
                 solid_flags(0),
                 solid_to_fluid_flags(0),
                 lines_inverse_i(lines_i),
-                lines_inverse_j(lines_j)
+                lines_inverse_j(lines_j),
+                current_u(DT_(0)),
+                current_v(DT_(0))
             {
             }
 
@@ -422,6 +424,8 @@ namespace honei
 
             std::vector<unsigned long> & lines_inverse_i;
             std::vector<unsigned long> & lines_inverse_j;
+
+            DT_ current_u, current_v;
     };
 
     template <> class PackedGridFringe<D2Q9>
