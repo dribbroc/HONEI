@@ -46,9 +46,16 @@ class BoundaryInitFSITest :
             unsigned long g_w(12);
 
             DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
+            h[5][1] = DataType_(0.4);
+            h[5][2] = DataType_(0.3);
+            h[5][3] = DataType_(0.2);
 
             DenseMatrix<DataType_> u(g_h, g_w, DataType_(0.));
+            u[5][2] = DataType_(0);
+            u[5][3] = DataType_(0);
             DenseMatrix<DataType_> v(g_h, g_w, DataType_(0.));
+            v[5][2] = DataType_(0);
+            v[5][3] = DataType_(0);
 
             DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
 
@@ -95,7 +102,7 @@ class BoundaryInitFSITest :
             grid.d_x = DataType_(0.1);
             grid.d_y = DataType_(0.1);
             solids.current_u = DataType_(1);
-            solids.current_v = DataType_(0);
+            solids.current_v = DataType_(1);
 
             BoundaryInitFSI<Tag_, D2Q9::DIR_1>::value(grid, info, data, solids);
 

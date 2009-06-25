@@ -26,8 +26,6 @@
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/lbm/grid.hh>
-#include <honei/util/benchmark_info.hh>
-#include <cmath>
 
 using namespace honei::lbm;
 
