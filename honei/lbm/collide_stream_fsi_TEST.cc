@@ -133,7 +133,7 @@ class CollideStreamFSITest :
             DenseMatrix<bool> stf(g_h, g_w, false);
             DenseMatrix<bool> sol(g_h, g_w, false);
             GridPackerFSI<D2Q9, NOSLIP, DataType_>::allocate(data_2, solids);
-            GridPackerFSI<D2Q9, NOSLIP, DataType_>::pack(grid_2, data_2, solids, line, bound, sol, stf);
+            GridPackerFSI<D2Q9, NOSLIP, DataType_>::pack(grid_2, data_2, solids, line, bound, sol, stf, obstacles);
 
             for(unsigned long i(0); i < data_2.h->size(); i++)
             {
@@ -260,6 +260,7 @@ class CollideStreamFSITest :
                     TEST_CHECK_EQUAL_WITHIN_EPS(res[i][j], ref[i][j], std::numeric_limits<DataType_>::epsilon() * 10);
                 }
             }
+
         }
 };
 CollideStreamFSITest<tags::CPU, float> collidestream_grid_test_float("float");

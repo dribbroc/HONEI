@@ -780,6 +780,7 @@ namespace honei
                 solids.line_flags = new DenseVector<bool>(data.h->size());
                 solids.solid_flags = new DenseVector<bool>(data.h->size());
                 solids.solid_to_fluid_flags = new DenseVector<bool>(data.h->size());
+                solids.stationary_flags = new DenseVector<bool>(data.h->size());
             }
 
             static void pack(Grid<D2Q9, DT_> & grid,
@@ -788,7 +789,8 @@ namespace honei
                              DenseMatrix<bool> & lines,
                              DenseMatrix<bool> & boundaries,
                              DenseMatrix<bool> & solid,
-                             DenseMatrix<bool> & solid_to_fluid)
+                             DenseMatrix<bool> & solid_to_fluid,
+                             DenseMatrix<bool> & stationary)
             {
 
                 solids.lines_inverse_i.clear();
@@ -809,6 +811,7 @@ namespace honei
 
                         (*solids.solid_flags)[packed_index] = solid[i][j] ? true : false;
                         (*solids.solid_to_fluid_flags)[packed_index] = solid_to_fluid[i][j] ? true : false;
+                        (*solids.stationary_flags)[packed_index] = stationary[i][j] ? true : false;
                     }
                 }
             }
