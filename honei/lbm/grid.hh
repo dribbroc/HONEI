@@ -393,6 +393,7 @@ namespace honei
                 line_flags(0),
                 solid_flags(0),
                 solid_to_fluid_flags(0),
+                stationary_flags(0),
                 lines_inverse_i(lines_i),
                 lines_inverse_j(lines_j),
                 current_u(DT_(0)),
@@ -406,6 +407,7 @@ namespace honei
                 delete line_flags;
                 delete solid_flags;
                 delete solid_to_fluid_flags;
+                delete stationary_flags;
                 delete lines_inverse_i;
                 delete lines_inverse_j;
 
@@ -413,6 +415,7 @@ namespace honei
                 line_flags = 0;
                 solid_flags = 0;
                 solid_to_fluid_flags = 0;
+                stationary_flags = 0;
                 lines_inverse_i = 0;
                 lines_inverse_j = 0;
             }
@@ -421,6 +424,7 @@ namespace honei
             DenseVector<bool> * line_flags;
             DenseVector<bool> * solid_flags;
             DenseVector<bool> * solid_to_fluid_flags;
+            DenseVector<bool> * stationary_flags;
 
             std::vector<unsigned long> & lines_inverse_i;
             std::vector<unsigned long> & lines_inverse_j;
