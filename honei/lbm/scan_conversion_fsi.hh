@@ -291,6 +291,21 @@ namespace honei
                                           Polygon<DT_, lbm_solid_dims::D2> & solid,
                                           bool rect)
                         {
+                            info.cuda_dir_1->lock(lm_read_only);
+                            info.cuda_dir_2->lock(lm_read_only);
+                            info.cuda_dir_3->lock(lm_read_only);
+                            info.cuda_dir_4->lock(lm_read_only);
+                            info.cuda_dir_5->lock(lm_read_only);
+                            info.cuda_dir_6->lock(lm_read_only);
+                            info.cuda_dir_7->lock(lm_read_only);
+                            info.cuda_dir_8->lock(lm_read_only);
+
+                            solids.line_flags->lock(lm_read_and_write);
+                            solids.boundary_flags->lock(lm_read_and_write);
+                            solids.solid_flags->lock(lm_read_and_write);
+
+                            grid.h->lock(lm_read_only);
+
                             ///For all lines: Rasterize line with Bresenhams algo:
                             for(unsigned long i(0) ; i < solid.line_count ; ++i)
                             {
@@ -299,6 +314,21 @@ namespace honei
 
                             ///Fill Polygon:
                             _local_scan_fill(grid, info, data, solids, solid, rect);
+
+                            info.cuda_dir_1->unlock(lm_read_only);
+                            info.cuda_dir_2->unlock(lm_read_only);
+                            info.cuda_dir_3->unlock(lm_read_only);
+                            info.cuda_dir_4->unlock(lm_read_only);
+                            info.cuda_dir_5->unlock(lm_read_only);
+                            info.cuda_dir_6->unlock(lm_read_only);
+                            info.cuda_dir_7->unlock(lm_read_only);
+                            info.cuda_dir_8->unlock(lm_read_only);
+
+                            solids.line_flags->unlock(lm_read_and_write);
+                            solids.boundary_flags->unlock(lm_read_and_write);
+                            solids.solid_flags->unlock(lm_read_and_write);
+
+                            grid.h->unlock(lm_read_only);
                         }
             };
     }
