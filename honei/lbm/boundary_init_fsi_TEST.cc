@@ -102,7 +102,7 @@ class BoundaryInitFSITest :
             solids.current_u = DataType_(0.1);
             solids.current_v = DataType_(0.1);
 
-            BoundaryInitFSI<Tag_, D2Q9::DIR_1>::value(grid, info, data, solids);
+            BoundaryInitFSI<Tag_, D2Q9::DIR_1>::value(info, data, solids);
 
             //in matrix-form:
             DenseMatrix<DataType_> res_h(h.rows(), h.columns());

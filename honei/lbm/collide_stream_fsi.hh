@@ -48,7 +48,6 @@ namespace honei
             {
                 template <typename DT1_>
                     static void value(
-                            Grid<D2Q9, DT1_> & grid,
                             PackedGridInfo<lbm_lattice_types::D2Q9> & info,
                             PackedGridData<lbm_lattice_types::D2Q9, DT1_> & data,
                             PackedSolidData<lbm_lattice_types::D2Q9, DT1_> & solids)

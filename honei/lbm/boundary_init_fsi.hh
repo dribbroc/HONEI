@@ -38,23 +38,22 @@ namespace honei
             {
                 private:
                     template<typename DT_>
-                        static DT_ _extrapolation(Grid<D2Q9, DT_> & grid,
+                        static DT_ _extrapolation(
                                           PackedGridInfo<lbm_lattice_types::D2Q9> & info,
                                           PackedGridData<lbm_lattice_types::D2Q9, DT_> & data,
                                           PackedSolidData<lbm_lattice_types::D2Q9, DT_> & solids,
                                           unsigned long packed_index)
                         {
-
                             ///Determine extrapolation_indices:
-                            bool prev(!((*info.cuda_dir_5)[packed_index] > grid.h->rows() * grid.h->columns() + 1) ?
+                            bool prev(!((*info.cuda_dir_5)[packed_index] ==  ULONG_MAX) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_5)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_5)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_5)[prev_index] > grid.h->rows() * grid.h->columns() + 1) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_5)[prev_index] == ULONG_MAX) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_5)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_5)[prev_index] : prev_index);
 
-                            bool pre_pre_prev(pre_prev ? (!((*info.cuda_dir_5)[pre_prev_index] > grid.h->rows() * grid.h->columns() + 1) ?
+                            bool pre_pre_prev(pre_prev ? (!((*info.cuda_dir_5)[pre_prev_index] == ULONG_MAX) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_5)[pre_prev_index]] ? true : false) : false) : false);
                             unsigned long pre_pre_prev_index(pre_pre_prev ? (*info.cuda_dir_5)[pre_prev_index] : pre_prev_index);
 
@@ -68,18 +67,18 @@ namespace honei
                         }
 
                     template<typename DT_>
-                        static DT_ _interpolation_u(Grid<D2Q9, DT_> & grid,
+                        static DT_ _interpolation_u(
                                           PackedGridInfo<lbm_lattice_types::D2Q9> & info,
                                           PackedGridData<lbm_lattice_types::D2Q9, DT_> & data,
                                           PackedSolidData<lbm_lattice_types::D2Q9, DT_> & solids,
                                           unsigned long packed_index)
                         {
 
-                            bool prev(!((*info.cuda_dir_5)[packed_index] > grid.h->rows() * grid.h->columns() + 1) ?
+                            bool prev(!((*info.cuda_dir_5)[packed_index] == ULONG_MAX) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_5)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_5)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_5)[prev_index] > grid.h->rows() * grid.h->columns() + 1) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_5)[prev_index] == ULONG_MAX) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_5)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_5)[prev_index] : prev_index);
 
@@ -91,18 +90,18 @@ namespace honei
                         }
 
                     template<typename DT_>
-                        static DT_ _interpolation_v(Grid<D2Q9, DT_> & grid,
+                        static DT_ _interpolation_v(
                                           PackedGridInfo<lbm_lattice_types::D2Q9> & info,
                                           PackedGridData<lbm_lattice_types::D2Q9, DT_> & data,
                                           PackedSolidData<lbm_lattice_types::D2Q9, DT_> & solids,
                                           unsigned long packed_index)
                         {
 
-                            bool prev(!((*info.cuda_dir_5)[packed_index] > grid.h->rows() * grid.h->columns() + 1) ?
+                            bool prev(!((*info.cuda_dir_5)[packed_index] == ULONG_MAX) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_5)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_5)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_5)[prev_index] > grid.h->rows() * grid.h->columns() + 1) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_5)[prev_index] == ULONG_MAX) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_5)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_5)[prev_index] : prev_index);
 
@@ -114,7 +113,7 @@ namespace honei
                         }
                 public:
                     template<typename DT_>
-                        static void value(Grid<D2Q9, DT_> & grid,
+                        static void value(
                                           PackedGridInfo<lbm_lattice_types::D2Q9> & info,
                                           PackedGridData<lbm_lattice_types::D2Q9, DT_> & data,
                                           PackedSolidData<lbm_lattice_types::D2Q9, DT_> & solids)
@@ -131,15 +130,15 @@ namespace honei
                             for(unsigned long i((*info.limits)[0]) ; i < (*info.limits)[info.limits->size() - 1] ; ++i)
                             {
                                 (*data.h)[i] = (*solids.solid_to_fluid_flags)[i] ?
-                                                    _extrapolation(grid, info, data, solids, i) :(*data.h)[i];
+                                                    _extrapolation(info, data, solids, i) :(*data.h)[i];
 
                                 (*data.u)[i] = ((*solids.boundary_flags)[i] & !(*solids.solid_to_fluid_flags)[i]) ?
                                                     solids.current_u  : ((*solids.solid_to_fluid_flags)[i] ?
-                                                            _interpolation_u(grid, info, data, solids, i) :(*data.u)[i]);
+                                                            _interpolation_u(info, data, solids, i) :(*data.u)[i]);
 
                                 (*data.v)[i] = ((*solids.boundary_flags)[i] & !(*solids.solid_to_fluid_flags)[i]) ?
                                                     solids.current_v  : ((*solids.solid_to_fluid_flags)[i] ?
-                                                            _interpolation_v(grid, info, data, solids, i) :(*data.v)[i]);
+                                                            _interpolation_v(info, data, solids, i) :(*data.v)[i]);
                             }
 
                             info.cuda_dir_5->unlock(lm_read_only);

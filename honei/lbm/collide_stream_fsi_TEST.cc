@@ -165,7 +165,7 @@ class CollideStreamFSITest :
             CollideStreamGrid<Tag_, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                 value(info_2, data_2, tau);
             CollideStreamFSI<Tag_, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
-                value(grid_2, info_2, data_2, solids);
+                value(info_2, data_2, solids);
             UpdateVelocityDirectionsGrid<Tag_, NOSLIP>::value(info_2, data_2);
 
             //in matrix-form:
