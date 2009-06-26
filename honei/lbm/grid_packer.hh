@@ -808,6 +808,7 @@ namespace honei
                 solids.boundary_flags = new DenseVector<bool>(data.h->size());
                 solids.line_flags = new DenseVector<bool>(data.h->size());
                 solids.solid_flags = new DenseVector<bool>(data.h->size());
+                solids.solid_old_flags = new DenseVector<bool>(data.h->size());
                 solids.solid_to_fluid_flags = new DenseVector<bool>(data.h->size());
                 solids.stationary_flags = new DenseVector<bool>(data.h->size());
             }
@@ -830,6 +831,7 @@ namespace honei
                         (*solids.boundary_flags)[packed_index] = boundaries[i][j] ? true : false;
                         (*solids.line_flags)[packed_index] = lines[i][j] ? true : false;
                         (*solids.solid_flags)[packed_index] = solid[i][j] ? true : false;
+                        (*solids.solid_old_flags)[packed_index] = (*solids.solid_flags)[packed_index]; //equals solid at start
                         (*solids.solid_to_fluid_flags)[packed_index] = solid_to_fluid[i][j] ? true : false;
                         (*solids.stationary_flags)[packed_index] = stationary[i][j] ? true : false;
                     }
