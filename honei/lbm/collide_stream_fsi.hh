@@ -66,57 +66,71 @@ namespace honei
                         data.f_temp_7->lock(lm_read_and_write);
                         data.f_temp_8->lock(lm_read_and_write);
 
+                        info.cuda_dir_1->lock(lm_read_only);
+                        info.cuda_dir_2->lock(lm_read_only);
+                        info.cuda_dir_3->lock(lm_read_only);
+                        info.cuda_dir_4->lock(lm_read_only);
+                        info.cuda_dir_5->lock(lm_read_only);
+                        info.cuda_dir_6->lock(lm_read_only);
+                        info.cuda_dir_7->lock(lm_read_only);
+                        info.cuda_dir_8->lock(lm_read_only);
+
                         solids.line_flags->lock(lm_read_only);
 
-                        //Determine cells with possibly needed backward-streaming
-                        std::vector<unsigned long> to_stream;
+                        //Perform backward-streaming in all directions:
                         for(unsigned long i((*info.limits)[0]) ; i < (*info.limits)[info.limits->size() - 1] ; ++i)
                         {
-                            if((*solids.line_flags)[i] == true)
-                            {
-                                to_stream.push_back(i);
-                            }
-                        }
+                            bool valid(((*data.f_temp_1)[i] != DT1_(0) && (*solids.line_flags)[i]));
+                            unsigned long prev_index(valid ? (*info.cuda_dir_5)[i] : i);
+                            (*data.f_temp_5)[prev_index] = valid ? (*data.f_temp_1)[prev_index] : (*data.f_temp_5)[prev_index];
+                            (*data.f_temp_1)[i] = valid ? DT1_(0) : (*data.f_temp_1)[i];
 
-                        //Perform backward-streaming in all directions:
-                        for (unsigned long i(0) ; i < to_stream.size() ; ++i)
-                        {
-                            (*data.f_temp_5)[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT1_>::
-                                h_index(grid, solids.lines_inverse_i[i], solids.lines_inverse_j[i] - 1)] = (*data.f_temp_1)[to_stream[i]];
-                            (*data.f_temp_1)[to_stream[i]] = DT1_(0);
+                            valid = (((*data.f_temp_2)[i] != DT1_(0) && (*solids.line_flags)[i]));
+                            prev_index = (valid ? (*info.cuda_dir_6)[i] : i);
+                            (*data.f_temp_6)[prev_index] = valid ? (*data.f_temp_2)[prev_index] : (*data.f_temp_6)[prev_index];
+                            (*data.f_temp_2)[i] = valid ? DT1_(0) : (*data.f_temp_2)[i];
 
-                            (*data.f_temp_6)[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT1_>::
-                                h_index(grid, solids.lines_inverse_i[i] - 1, solids.lines_inverse_j[i] - 1)] = (*data.f_temp_2)[to_stream[i]];
-                            (*data.f_temp_2)[to_stream[i]] = DT1_(0);
+                            valid = (((*data.f_temp_3)[i] != DT1_(0) && (*solids.line_flags)[i]));
+                            prev_index = (valid ? (*info.cuda_dir_7)[i] : i);
+                            (*data.f_temp_7)[prev_index] = valid ? (*data.f_temp_3)[prev_index] : (*data.f_temp_7)[prev_index];
+                            (*data.f_temp_3)[i] = valid ? DT1_(0) : (*data.f_temp_3)[i];
 
-                            (*data.f_temp_7)[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT1_>::
-                                h_index(grid, solids.lines_inverse_i[i] - 1, solids.lines_inverse_j[i])] = (*data.f_temp_3)[to_stream[i]];
-                            (*data.f_temp_3)[to_stream[i]] = DT1_(0);
+                            valid = (((*data.f_temp_4)[i] != DT1_(0) && (*solids.line_flags)[i]));
+                            prev_index = (valid ? (*info.cuda_dir_8)[i] : i);
+                            (*data.f_temp_8)[prev_index] = valid ? (*data.f_temp_4)[prev_index] : (*data.f_temp_8)[prev_index];
+                            (*data.f_temp_4)[i] = valid ? DT1_(0) : (*data.f_temp_4)[i];
 
+                            valid = (((*data.f_temp_5)[i] != DT1_(0) && (*solids.line_flags)[i]));
+                            prev_index = (valid ? (*info.cuda_dir_1)[i] : i);
+                            (*data.f_temp_1)[prev_index] = valid ? (*data.f_temp_5)[prev_index] : (*data.f_temp_1)[prev_index];
+                            (*data.f_temp_5)[i] = valid ? DT1_(0) : (*data.f_temp_5)[i];
 
-                            (*data.f_temp_8)[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT1_>::
-                                h_index(grid, solids.lines_inverse_i[i] - 1, solids.lines_inverse_j[i] + 1)] = (*data.f_temp_4)[to_stream[i]];
-                            (*data.f_temp_4)[to_stream[i]] = DT1_(0);
+                            valid = (((*data.f_temp_6)[i] != DT1_(0) && (*solids.line_flags)[i]));
+                            prev_index = (valid ? (*info.cuda_dir_2)[i] : i);
+                            (*data.f_temp_2)[prev_index] = valid ? (*data.f_temp_6)[prev_index] : (*data.f_temp_2)[prev_index];
+                            (*data.f_temp_6)[i] = valid ? DT1_(0) : (*data.f_temp_6)[i];
 
-                            (*data.f_temp_1)[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT1_>::
-                                h_index(grid, solids.lines_inverse_i[i], solids.lines_inverse_j[i] + 1)] = (*data.f_temp_5)[to_stream[i]];
-                            (*data.f_temp_5)[to_stream[i]] = DT1_(0);
+                            valid = (((*data.f_temp_7)[i] != DT1_(0) && (*solids.line_flags)[i]));
+                            prev_index = (valid ? (*info.cuda_dir_3)[i] : i);
+                            (*data.f_temp_3)[prev_index] = valid ? (*data.f_temp_7)[prev_index] : (*data.f_temp_3)[prev_index];
+                            (*data.f_temp_7)[i] = valid ? DT1_(0) : (*data.f_temp_7)[i];
 
-
-                            (*data.f_temp_2)[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT1_>::
-                                h_index(grid, solids.lines_inverse_i[i] + 1, solids.lines_inverse_j[i] + 1)] = (*data.f_temp_6)[to_stream[i]];
-                            (*data.f_temp_6)[to_stream[i]] = DT1_(0);
-
-                            (*data.f_temp_3)[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT1_>::
-                                h_index(grid, solids.lines_inverse_i[i] + 1, solids.lines_inverse_j[i])] = (*data.f_temp_7)[to_stream[i]];
-                            (*data.f_temp_7)[to_stream[i]] = DT1_(0);
-
-                            (*data.f_temp_4)[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT1_>::
-                                h_index(grid, solids.lines_inverse_i[i] + 1, solids.lines_inverse_j[i] - 1)] = (*data.f_temp_8)[to_stream[i]];
-                            (*data.f_temp_8)[to_stream[i]] = DT1_(0);
+                            valid = (((*data.f_temp_8)[i] != DT1_(0) && (*solids.line_flags)[i]));
+                            prev_index = (valid ? (*info.cuda_dir_4)[i] : i);
+                            (*data.f_temp_4)[prev_index] = valid ? (*data.f_temp_8)[prev_index] : (*data.f_temp_4)[prev_index];
+                            (*data.f_temp_8)[i] = valid ? DT1_(0) : (*data.f_temp_8)[i];
                         }
 
                         solids.line_flags->unlock(lm_read_only);
+
+                        info.cuda_dir_1->unlock(lm_read_only);
+                        info.cuda_dir_2->unlock(lm_read_only);
+                        info.cuda_dir_3->unlock(lm_read_only);
+                        info.cuda_dir_4->unlock(lm_read_only);
+                        info.cuda_dir_5->unlock(lm_read_only);
+                        info.cuda_dir_6->unlock(lm_read_only);
+                        info.cuda_dir_7->unlock(lm_read_only);
+                        info.cuda_dir_8->unlock(lm_read_only);
 
                         info.limits->unlock(lm_read_only);
                         data.f_temp_0->unlock(lm_read_and_write);

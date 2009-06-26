@@ -63,8 +63,6 @@ namespace honei
                             DT_ v_m_2((*data.h)[pre_prev_index]);
                             DT_ v_m_3((*data.h)[pre_pre_prev_index]);
 
-                            std::cout << v_m_1 << " " << v_m_2 << " " << v_m_3 << std::endl;
-
                             return (DT_(3.) * (v_m_1 - v_m_2) + v_m_3);
 
                         }
