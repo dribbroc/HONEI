@@ -74,9 +74,8 @@ class BoundaryInitFSITest :
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
             GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::cuda_pack(info, data);
 
-            std::vector<unsigned long> lines_i;
-            std::vector<unsigned long> lines_j;
-            PackedSolidData<D2Q9, DataType_> solids(lines_i, lines_j);
+            std::vector<unsigned long> bla;
+            PackedSolidData<D2Q9, DataType_> solids(bla,bla);
 
             DenseMatrix<bool> line(g_h, g_w, false);
             line[5][5] = true;
@@ -101,8 +100,8 @@ class BoundaryInitFSITest :
 
             grid.d_x = DataType_(0.1);
             grid.d_y = DataType_(0.1);
-            solids.current_u = DataType_(1);
-            solids.current_v = DataType_(1);
+            solids.current_u = DataType_(0.1);
+            solids.current_v = DataType_(0.1);
 
             BoundaryInitFSI<Tag_, D2Q9::DIR_1>::value(grid, info, data, solids);
 
