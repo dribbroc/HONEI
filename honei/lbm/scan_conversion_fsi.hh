@@ -20,6 +20,7 @@
 #define LBM_GUARD_SCAN_CONVERSION_FSI_HH 1
 
 #include <honei/lbm/tags.hh>
+#include <honei/la/algorithm.hh>
 #include <honei/lbm/grid_packer.hh>
 #include <honei/lbm/grid.hh>
 #include <honei/lbm/solid.hh>
@@ -300,11 +301,16 @@ namespace honei
                             info.cuda_dir_7->lock(lm_read_only);
                             info.cuda_dir_8->lock(lm_read_only);
 
+                            ///Clear all target vectors:
+                            fill<tags::CPU>((*solids.line_flags));
+                            fill<tags::CPU>((*solids.boundary_flags));
+                            fill<tags::CPU>((*solids.solid_flags));
                             solids.line_flags->lock(lm_read_and_write);
                             solids.boundary_flags->lock(lm_read_and_write);
                             solids.solid_flags->lock(lm_read_and_write);
 
                             grid.h->lock(lm_read_only);
+
 
                             ///For all lines: Rasterize line with Bresenhams algo:
                             for(unsigned long i(0) ; i < solid.line_count ; ++i)
