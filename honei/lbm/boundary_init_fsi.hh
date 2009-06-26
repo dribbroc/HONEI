@@ -123,7 +123,19 @@ namespace honei
                             data.v->lock(lm_read_and_write);
                             data.h->lock(lm_read_and_write);
                             solids.boundary_flags->lock(lm_read_only);
-                            solids.solid_to_fluid_flags->lock(lm_read_only);
+                            solids.solid_to_fluid_flags->lock(lm_read_and_write);
+                            solids.solid_flags->lock(lm_read_only);
+                            solids.solid_old_flags->lock(lm_read_and_write);
+
+                            data.f_0->lock(lm_read_and_write);
+                            data.f_1->lock(lm_read_and_write);
+                            data.f_2->lock(lm_read_and_write);
+                            data.f_3->lock(lm_read_and_write);
+                            data.f_4->lock(lm_read_and_write);
+                            data.f_5->lock(lm_read_and_write);
+                            data.f_6->lock(lm_read_and_write);
+                            data.f_7->lock(lm_read_and_write);
+                            data.f_8->lock(lm_read_and_write);
 
                             info.cuda_dir_5->lock(lm_read_only);
 
@@ -144,17 +156,39 @@ namespace honei
                                                     solids.current_v  : ((*solids.solid_to_fluid_flags)[i] ?
                                                             _interpolation_v(info, data, solids, i) :(fts ? DT_(0) : (*data.v)[i]));
 
+                                (*data.f_0)[i] = fts ? DT_(0) : (*data.f_0)[i];
+                                (*data.f_1)[i] = fts ? DT_(0) : (*data.f_1)[i];
+                                (*data.f_2)[i] = fts ? DT_(0) : (*data.f_2)[i];
+                                (*data.f_3)[i] = fts ? DT_(0) : (*data.f_3)[i];
+                                (*data.f_4)[i] = fts ? DT_(0) : (*data.f_4)[i];
+                                (*data.f_5)[i] = fts ? DT_(0) : (*data.f_5)[i];
+                                (*data.f_6)[i] = fts ? DT_(0) : (*data.f_6)[i];
+                                (*data.f_7)[i] = fts ? DT_(0) : (*data.f_7)[i];
+                                (*data.f_8)[i] = fts ? DT_(0) : (*data.f_8)[i];
+
                                 //TODO: set all f_* to zero if fts???
                             }
 
                             info.cuda_dir_5->unlock(lm_read_only);
 
-                            solids.solid_to_fluid_flags->unlock(lm_read_only);
+                            solids.solid_to_fluid_flags->unlock(lm_read_and_write);
                             solids.boundary_flags->unlock(lm_read_only);
                             data.h->unlock(lm_read_and_write);
                             data.v->unlock(lm_read_and_write);
                             data.u->unlock(lm_read_and_write);
                             info.limits->unlock(lm_read_only);
+                            solids.solid_flags->unlock(lm_read_only);
+                            solids.solid_old_flags->unlock(lm_read_and_write);
+
+                            data.f_0->unlock(lm_read_and_write);
+                            data.f_1->unlock(lm_read_and_write);
+                            data.f_2->unlock(lm_read_and_write);
+                            data.f_3->unlock(lm_read_and_write);
+                            data.f_4->unlock(lm_read_and_write);
+                            data.f_5->unlock(lm_read_and_write);
+                            data.f_6->unlock(lm_read_and_write);
+                            data.f_7->unlock(lm_read_and_write);
+                            data.f_8->unlock(lm_read_and_write);
                         }
             };
     }
