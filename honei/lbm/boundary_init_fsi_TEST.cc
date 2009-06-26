@@ -89,7 +89,6 @@ class BoundaryInitFSITest :
             bound[6][6] = true;
 
             DenseMatrix<bool> stf(g_h, g_w, false);
-            stf[5][4] = true;
 
             DenseMatrix<bool> sol(g_h, g_w, false);
             sol[5][5] = true;
@@ -102,6 +101,9 @@ class BoundaryInitFSITest :
             solids.current_u = DataType_(0.1);
             solids.current_v = DataType_(0.1);
 
+
+            (*solids.solid_old_flags)[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::h_index(grid, 5, 4)] = true;
+            (*solids.solid_old_flags)[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::h_index(grid, 5, 5)] = false;
             BoundaryInitFSI<Tag_, D2Q9::DIR_1>::value(info, data, solids);
 
             //in matrix-form:

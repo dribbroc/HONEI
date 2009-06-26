@@ -392,6 +392,7 @@ namespace honei
                 boundary_flags(0),
                 line_flags(0),
                 solid_flags(0),
+                solid_old_flags(0),
                 solid_to_fluid_flags(0),
                 stationary_flags(0),
                 current_u(DT_(0)),
@@ -404,12 +405,14 @@ namespace honei
                 delete boundary_flags;
                 delete line_flags;
                 delete solid_flags;
+                delete solid_old_flags;
                 delete solid_to_fluid_flags;
                 delete stationary_flags;
 
                 boundary_flags = 0;
                 line_flags = 0;
                 solid_flags = 0;
+                solid_old_flags = 0;
                 solid_to_fluid_flags = 0;
                 stationary_flags = 0;
             }
@@ -417,6 +420,7 @@ namespace honei
             DenseVector<bool> * boundary_flags;
             DenseVector<bool> * line_flags;
             DenseVector<bool> * solid_flags;
+            DenseVector<bool> * solid_old_flags;
             DenseVector<bool> * solid_to_fluid_flags;
             DenseVector<bool> * stationary_flags;
 

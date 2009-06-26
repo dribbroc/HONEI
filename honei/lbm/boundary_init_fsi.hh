@@ -129,16 +129,22 @@ namespace honei
 
                             for(unsigned long i((*info.limits)[0]) ; i < (*info.limits)[info.limits->size() - 1] ; ++i)
                             {
+                                (*solids.solid_to_fluid_flags)[i] = (*solids.solid_old_flags)[i] & !(*solids.solid_flags)[i];
+                                bool fts(!(*solids.solid_old_flags)[i] & (*solids.solid_flags)[i]);
+                                (*solids.solid_old_flags)[i] = (*solids.solid_flags)[i];
+
                                 (*data.h)[i] = (*solids.solid_to_fluid_flags)[i] ?
-                                                    _extrapolation(info, data, solids, i) :(*data.h)[i];
+                                                    _extrapolation(info, data, solids, i) :(fts ? DT_(0) : (*data.h)[i]);
 
                                 (*data.u)[i] = ((*solids.boundary_flags)[i] & !(*solids.solid_to_fluid_flags)[i]) ?
                                                     solids.current_u  : ((*solids.solid_to_fluid_flags)[i] ?
-                                                            _interpolation_u(info, data, solids, i) :(*data.u)[i]);
+                                                            _interpolation_u(info, data, solids, i) :(fts ? DT_(0) : (*data.u)[i]));
 
                                 (*data.v)[i] = ((*solids.boundary_flags)[i] & !(*solids.solid_to_fluid_flags)[i]) ?
                                                     solids.current_v  : ((*solids.solid_to_fluid_flags)[i] ?
-                                                            _interpolation_v(info, data, solids, i) :(*data.v)[i]);
+                                                            _interpolation_v(info, data, solids, i) :(fts ? DT_(0) : (*data.v)[i]));
+
+                                //TODO: set all f_* to zero if fts???
                             }
 
                             info.cuda_dir_5->unlock(lm_read_only);
