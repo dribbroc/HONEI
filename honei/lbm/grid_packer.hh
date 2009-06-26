@@ -774,6 +774,35 @@ namespace honei
     template <typename DT_> struct GridPackerFSI<D2Q9, lbm_boundary_types::NOSLIP, DT_>
     {
         public:
+            ///Generalized unpacking and extraction
+            static void deflate(Grid<D2Q9, DT_> & grid, PackedSolidData<D2Q9, DT_> & data, DenseVector<bool> * from, DenseMatrix<bool> * to)
+            {
+                grid.obstacles->lock(lm_read_only);
+                to->lock(lm_write_only);
+                from->lock(lm_read_only);
+                unsigned long packed_index(0);
+
+                for(unsigned long i(0); i < grid.obstacles->rows(); ++i)
+                {
+                    for(unsigned long j(0); j < grid.obstacles->columns(); ++j)
+                    {
+                        if((*grid.obstacles)(i, j))
+                        {
+                            (*to)(i, j) = DT_(0);
+                        }
+                        else
+                        {
+                            (*to)(i, j) = (*from)[packed_index];
+                            ++packed_index;
+                        }
+                    }
+                }
+                grid.obstacles->unlock(lm_read_only);
+                to->unlock(lm_write_only);
+                from->unlock(lm_read_only);
+            }
+            ///END Generalized unpacking and extraction
+
             static void allocate(PackedGridData<D2Q9, DT_> & data, PackedSolidData<D2Q9, DT_> & solids)
             {
                 solids.boundary_flags = new DenseVector<bool>(data.h->size());
