@@ -55,6 +55,9 @@ namespace honei
                 template<typename Tag_>
                     friend class ScanConversion;
 
+                template<typename Tag_>
+                    friend class ScanConversionFSI;
+
                 private:
                 Prec_ x_coord_1;
                 Prec_ y_coord_1;
@@ -89,6 +92,8 @@ namespace honei
                 template<typename Tag_>
                     friend class ScanConversion;
 
+                template<typename Tag_>
+                    friend class ScanConversionFSI;
                 private:
                 ///Suppose vertices are arranged in line order
                 DenseVector<Prec_> * vertex_x_coords;
