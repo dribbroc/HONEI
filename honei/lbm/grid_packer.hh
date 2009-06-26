@@ -793,9 +793,6 @@ namespace honei
                              DenseMatrix<bool> & stationary)
             {
 
-                solids.lines_inverse_i.clear();
-                solids.lines_inverse_j.clear();
-
                 for (unsigned long i(0) ; i < lines.rows() ; ++i)
                 {
                     for (unsigned long j(0) ; j < lines.columns() ; ++j)
@@ -803,12 +800,6 @@ namespace honei
                         unsigned long packed_index(GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DT_>::h_index(grid, i, j));
                         (*solids.boundary_flags)[packed_index] = boundaries[i][j] ? true : false;
                         (*solids.line_flags)[packed_index] = lines[i][j] ? true : false;
-                        if(lines[i][j] == true)
-                        {
-                            solids.lines_inverse_i.push_back(i);
-                            solids.lines_inverse_j.push_back(j);
-                        }
-
                         (*solids.solid_flags)[packed_index] = solid[i][j] ? true : false;
                         (*solids.solid_to_fluid_flags)[packed_index] = solid_to_fluid[i][j] ? true : false;
                         (*solids.stationary_flags)[packed_index] = stationary[i][j] ? true : false;
