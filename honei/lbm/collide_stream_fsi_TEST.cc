@@ -123,9 +123,7 @@ class CollideStreamFSITest :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_2, info_2, data_2);
             GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::cuda_pack(info_2, data_2);
-            std::vector<unsigned long> lines_i;
-            std::vector<unsigned long> lines_j;
-            PackedSolidData<D2Q9, DataType_> solids(lines_i, lines_j);
+            PackedSolidData<D2Q9, DataType_> solids;
 
             DenseMatrix<bool> line(g_h, g_w, false);
             line[5][5] = true;
