@@ -429,10 +429,10 @@ class ScenarioCollection
                         target_grid.b = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.obstacles = new DenseMatrix<bool>(grid_height, grid_width, false);
 
-                        target_grid.d_x = 0.01;
-                        target_grid.d_y = 0.01;
-                        target_grid.d_t = 0.01;
-                        target_grid.tau = 1.1;
+                        target_grid.d_x = 0.1;
+                        target_grid.d_y = 0.1;
+                        target_grid.d_t = 0.1;
+                        target_grid.tau = 1.;
 
                     }
                     break;

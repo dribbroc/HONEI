@@ -156,6 +156,7 @@ namespace honei
                                                     solids.current_v  : ((*solids.solid_to_fluid_flags)[i] ?
                                                             _interpolation_v(info, data, solids, i) :(fts ? DT_(0) : (*data.v)[i]));
 
+
                                 (*data.f_0)[i] = fts ? DT_(0) : (*data.f_0)[i];
                                 (*data.f_1)[i] = fts ? DT_(0) : (*data.f_1)[i];
                                 (*data.f_2)[i] = fts ? DT_(0) : (*data.f_2)[i];
@@ -166,7 +167,25 @@ namespace honei
                                 (*data.f_7)[i] = fts ? DT_(0) : (*data.f_7)[i];
                                 (*data.f_8)[i] = fts ? DT_(0) : (*data.f_8)[i];
 
-                                //TODO: set all f_* to zero if fts???
+                                (*data.f_eq_0)[i] = fts ? DT_(0) : (*data.f_eq_0)[i];
+                                (*data.f_eq_1)[i] = fts ? DT_(0) : (*data.f_eq_1)[i];
+                                (*data.f_eq_2)[i] = fts ? DT_(0) : (*data.f_eq_2)[i];
+                                (*data.f_eq_3)[i] = fts ? DT_(0) : (*data.f_eq_3)[i];
+                                (*data.f_eq_4)[i] = fts ? DT_(0) : (*data.f_eq_4)[i];
+                                (*data.f_eq_5)[i] = fts ? DT_(0) : (*data.f_eq_5)[i];
+                                (*data.f_eq_6)[i] = fts ? DT_(0) : (*data.f_eq_6)[i];
+                                (*data.f_eq_7)[i] = fts ? DT_(0) : (*data.f_eq_7)[i];
+                                (*data.f_eq_8)[i] = fts ? DT_(0) : (*data.f_eq_8)[i];
+
+                                (*data.f_temp_0)[i] = fts ? DT_(0) : (*data.f_temp_0)[i];
+                                (*data.f_temp_1)[i] = fts ? DT_(0) : (*data.f_temp_1)[i];
+                                (*data.f_temp_2)[i] = fts ? DT_(0) : (*data.f_temp_2)[i];
+                                (*data.f_temp_3)[i] = fts ? DT_(0) : (*data.f_temp_3)[i];
+                                (*data.f_temp_4)[i] = fts ? DT_(0) : (*data.f_temp_4)[i];
+                                (*data.f_temp_5)[i] = fts ? DT_(0) : (*data.f_temp_5)[i];
+                                (*data.f_temp_6)[i] = fts ? DT_(0) : (*data.f_temp_6)[i];
+                                (*data.f_temp_7)[i] = fts ? DT_(0) : (*data.f_temp_7)[i];
+                                (*data.f_temp_8)[i] = fts ? DT_(0) : (*data.f_temp_8)[i];
                             }
 
                             info.cuda_dir_5->unlock(lm_read_only);
