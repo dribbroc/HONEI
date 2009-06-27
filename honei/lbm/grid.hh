@@ -395,6 +395,14 @@ namespace honei
                 solid_old_flags(0),
                 solid_to_fluid_flags(0),
                 stationary_flags(0),
+                f_mea_1(0),
+                f_mea_2(0),
+                f_mea_3(0),
+                f_mea_4(0),
+                f_mea_5(0),
+                f_mea_6(0),
+                f_mea_7(0),
+                f_mea_8(0),
                 current_u(DT_(0)),
                 current_v(DT_(0))
             {
@@ -408,6 +416,14 @@ namespace honei
                 delete solid_old_flags;
                 delete solid_to_fluid_flags;
                 delete stationary_flags;
+                delete f_mea_1;
+                delete f_mea_2;
+                delete f_mea_3;
+                delete f_mea_4;
+                delete f_mea_5;
+                delete f_mea_6;
+                delete f_mea_7;
+                delete f_mea_8;
 
                 boundary_flags = 0;
                 line_flags = 0;
@@ -415,6 +431,15 @@ namespace honei
                 solid_old_flags = 0;
                 solid_to_fluid_flags = 0;
                 stationary_flags = 0;
+
+                f_mea_1 = 0;
+                f_mea_2 = 0;
+                f_mea_3 = 0;
+                f_mea_4 = 0;
+                f_mea_5 = 0;
+                f_mea_6 = 0;
+                f_mea_7 = 0;
+                f_mea_8 = 0;
             }
 
             DenseVector<bool> * boundary_flags;
@@ -423,6 +448,15 @@ namespace honei
             DenseVector<bool> * solid_old_flags;
             DenseVector<bool> * solid_to_fluid_flags;
             DenseVector<bool> * stationary_flags;
+
+            DenseVector<DT_> * f_mea_1;
+            DenseVector<DT_> * f_mea_2;
+            DenseVector<DT_> * f_mea_3;
+            DenseVector<DT_> * f_mea_4;
+            DenseVector<DT_> * f_mea_5;
+            DenseVector<DT_> * f_mea_6;
+            DenseVector<DT_> * f_mea_7;
+            DenseVector<DT_> * f_mea_8;
 
             DT_ current_u, current_v;
     };

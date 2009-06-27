@@ -811,6 +811,16 @@ namespace honei
                 solids.solid_old_flags = new DenseVector<bool>(data.h->size());
                 solids.solid_to_fluid_flags = new DenseVector<bool>(data.h->size());
                 solids.stationary_flags = new DenseVector<bool>(data.h->size());
+
+
+                solids.f_mea_1 = new DenseVector<DT_>(data.h->size());
+                solids.f_mea_2 = new DenseVector<DT_>(data.h->size());
+                solids.f_mea_3 = new DenseVector<DT_>(data.h->size());
+                solids.f_mea_4 = new DenseVector<DT_>(data.h->size());
+                solids.f_mea_5 = new DenseVector<DT_>(data.h->size());
+                solids.f_mea_6 = new DenseVector<DT_>(data.h->size());
+                solids.f_mea_7 = new DenseVector<DT_>(data.h->size());
+                solids.f_mea_8 = new DenseVector<DT_>(data.h->size());
             }
 
             static void pack(Grid<D2Q9, DT_> & grid,
