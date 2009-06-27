@@ -50,7 +50,9 @@ namespace honei
                     static void value(
                             PackedGridInfo<lbm_lattice_types::D2Q9> & info,
                             PackedGridData<lbm_lattice_types::D2Q9, DT1_> & data,
-                            PackedSolidData<lbm_lattice_types::D2Q9, DT1_> & solids)
+                            PackedSolidData<lbm_lattice_types::D2Q9, DT1_> & solids,
+                            DT1_ d_x,
+                            DT1_ d_y)
                     {
                         CONTEXT("When performing collision and streaming FSI correction:");
 
@@ -81,42 +83,58 @@ namespace honei
                         {
                             bool valid(((*data.f_temp_1)[i] != DT1_(0) && (*solids.line_flags)[i]));
                             unsigned long prev_index(valid ? (*info.cuda_dir_5)[i] : i);
-                            (*data.f_temp_5)[prev_index] = valid ? (*data.f_temp_1)[prev_index] : (*data.f_temp_5)[prev_index];
+                            DT1_ mb_term(DT1_(6. * 1./9.) * (d_x * solids.current_u +
+                                                             d_y * solids.current_v));
+                            (*data.f_temp_5)[prev_index] = valid ? (*data.f_temp_1)[prev_index] + mb_term : (*data.f_temp_5)[prev_index];
                             (*data.f_temp_1)[i] = valid ? DT1_(0) : (*data.f_temp_1)[i];
 
                             valid = (((*data.f_temp_2)[i] != DT1_(0) && (*solids.line_flags)[i]));
                             prev_index = (valid ? (*info.cuda_dir_6)[i] : i);
-                            (*data.f_temp_6)[prev_index] = valid ? (*data.f_temp_2)[prev_index] : (*data.f_temp_6)[prev_index];
+                            mb_term = (DT1_(6. * 1./36.) * (d_x * solids.current_u +
+                                                            d_y * solids.current_v));
+                            (*data.f_temp_6)[prev_index] = valid ? (*data.f_temp_2)[prev_index] + mb_term : (*data.f_temp_6)[prev_index];
                             (*data.f_temp_2)[i] = valid ? DT1_(0) : (*data.f_temp_2)[i];
 
                             valid = (((*data.f_temp_3)[i] != DT1_(0) && (*solids.line_flags)[i]));
                             prev_index = (valid ? (*info.cuda_dir_7)[i] : i);
-                            (*data.f_temp_7)[prev_index] = valid ? (*data.f_temp_3)[prev_index] : (*data.f_temp_7)[prev_index];
+                            mb_term = (DT1_(6. * 1./9.) * (d_x * solids.current_u +
+                                                           d_y * solids.current_v));
+                            (*data.f_temp_7)[prev_index] = valid ? (*data.f_temp_3)[prev_index] + mb_term : (*data.f_temp_7)[prev_index];
                             (*data.f_temp_3)[i] = valid ? DT1_(0) : (*data.f_temp_3)[i];
 
                             valid = (((*data.f_temp_4)[i] != DT1_(0) && (*solids.line_flags)[i]));
                             prev_index = (valid ? (*info.cuda_dir_8)[i] : i);
-                            (*data.f_temp_8)[prev_index] = valid ? (*data.f_temp_4)[prev_index] : (*data.f_temp_8)[prev_index];
+                            mb_term = (DT1_(6. * 1./36.) * (d_x * solids.current_u +
+                                                            d_y * solids.current_v));
+                            (*data.f_temp_8)[prev_index] = valid ? (*data.f_temp_4)[prev_index] + mb_term : (*data.f_temp_8)[prev_index];
                             (*data.f_temp_4)[i] = valid ? DT1_(0) : (*data.f_temp_4)[i];
 
                             valid = (((*data.f_temp_5)[i] != DT1_(0) && (*solids.line_flags)[i]));
                             prev_index = (valid ? (*info.cuda_dir_1)[i] : i);
-                            (*data.f_temp_1)[prev_index] = valid ? (*data.f_temp_5)[prev_index] : (*data.f_temp_1)[prev_index];
+                            mb_term = (DT1_(6. * 1./9.) * (d_x * solids.current_u +
+                                                           d_y * solids.current_v));
+                            (*data.f_temp_1)[prev_index] = valid ? (*data.f_temp_5)[prev_index] + mb_term : (*data.f_temp_1)[prev_index];
                             (*data.f_temp_5)[i] = valid ? DT1_(0) : (*data.f_temp_5)[i];
 
                             valid = (((*data.f_temp_6)[i] != DT1_(0) && (*solids.line_flags)[i]));
                             prev_index = (valid ? (*info.cuda_dir_2)[i] : i);
-                            (*data.f_temp_2)[prev_index] = valid ? (*data.f_temp_6)[prev_index] : (*data.f_temp_2)[prev_index];
+                            mb_term = (DT1_(6. * 1./36.) * (d_x * solids.current_u +
+                                                            d_y * solids.current_v));
+                            (*data.f_temp_2)[prev_index] = valid ? (*data.f_temp_6)[prev_index] + mb_term : (*data.f_temp_2)[prev_index];
                             (*data.f_temp_6)[i] = valid ? DT1_(0) : (*data.f_temp_6)[i];
 
                             valid = (((*data.f_temp_7)[i] != DT1_(0) && (*solids.line_flags)[i]));
                             prev_index = (valid ? (*info.cuda_dir_3)[i] : i);
-                            (*data.f_temp_3)[prev_index] = valid ? (*data.f_temp_7)[prev_index] : (*data.f_temp_3)[prev_index];
+                            mb_term = (DT1_(6. * 1./9.) * (d_x * solids.current_u +
+                                                           d_y * solids.current_v));
+                            (*data.f_temp_3)[prev_index] = valid ? (*data.f_temp_7)[prev_index] + mb_term : (*data.f_temp_3)[prev_index];
                             (*data.f_temp_7)[i] = valid ? DT1_(0) : (*data.f_temp_7)[i];
 
                             valid = (((*data.f_temp_8)[i] != DT1_(0) && (*solids.line_flags)[i]));
                             prev_index = (valid ? (*info.cuda_dir_4)[i] : i);
-                            (*data.f_temp_4)[prev_index] = valid ? (*data.f_temp_8)[prev_index] : (*data.f_temp_4)[prev_index];
+                            mb_term = (DT1_(6. * 1./36.) * (d_x * solids.current_u +
+                                                            d_y * solids.current_v));
+                            (*data.f_temp_4)[prev_index] = valid ? (*data.f_temp_8)[prev_index] + mb_term : (*data.f_temp_4)[prev_index];
                             (*data.f_temp_8)[i] = valid ? DT1_(0) : (*data.f_temp_8)[i];
                         }
 
@@ -141,6 +159,7 @@ namespace honei
                         data.f_temp_6->unlock(lm_read_and_write);
                         data.f_temp_7->unlock(lm_read_and_write);
                         data.f_temp_8->unlock(lm_read_and_write);
+
                     }
 
             };

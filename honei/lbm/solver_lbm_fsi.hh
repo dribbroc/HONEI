@@ -179,7 +179,7 @@ namespace honei
                               *_data,
                               _relaxation_time);
                     CollideStreamFSI<Tag_, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
-                        value(*_info, *_data, *_solids);
+                        value(*_info, *_data, *_solids, _delta_x, _delta_y);
 
 #ifdef SOLVER_VERBOSE
                     std::cout << "h after preprocessing:" << std::endl;
@@ -218,7 +218,7 @@ namespace honei
                               *_data,
                               _relaxation_time);
                     CollideStreamFSI<Tag_, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
-                        value(*_info, *_data, *_solids);
+                        value(*_info, *_data, *_solids, _delta_x, _delta_y);
                 }
 
         };

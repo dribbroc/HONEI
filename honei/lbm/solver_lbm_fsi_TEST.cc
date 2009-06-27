@@ -34,8 +34,8 @@ using namespace std;
 using namespace output_types;
 using namespace lbm::lbm_lattice_types;
 
-//#define SOLVER_VERBOSE
-//#define SOLVER_POSTPROCESSING
+#define SOLVER_VERBOSE
+#define SOLVER_POSTPROCESSING
 
 template <typename Tag_, typename DataType_>
 class SolverLBMFSITest :
@@ -99,7 +99,7 @@ class SolverLBMFSITest :
         }
 
 };
-SolverLBMFSITest<tags::CPU, float> solver_test_float("float");
+//SolverLBMFSITest<tags::CPU, float> solver_test_float("float");
 
 
 template <typename Tag_, typename DataType_>
@@ -175,7 +175,7 @@ class SolverLBMFSIStationaryTest :
         }
 
 };
-SolverLBMFSIStationaryTest<tags::CPU, float> solver_test_stat_float("float");
+//SolverLBMFSIStationaryTest<tags::CPU, float> solver_test_stat_float("float");
 
 template <typename Tag_, typename DataType_>
 class SolverLBMFSINonStationaryTest :
@@ -229,7 +229,7 @@ class SolverLBMFSINonStationaryTest :
 
             ScanConversionFSI<Tag_>::value(grid, info, data, solids, tri_0, true);
 
-            solids.current_u = DataType_(grid.d_x);
+            solids.current_u = DataType_(1./2.* grid.d_x);
             solids.current_v = DataType_(0.);
             solver.do_preprocessing();
             std::cout << "Solving: " << grid.description << std::endl;
@@ -239,12 +239,12 @@ class SolverLBMFSINonStationaryTest :
                 std::cout<<"Timestep: " << i << "/" << timesteps << std::endl;
 #endif
                 //Directly dealing with omega-coordinates
-                if (i < 50)
+                if (i < 80)
                 {
-                    Line<DataType_, lbm_solid_dims::D2> line_1_i(DataType_(5. + i) * grid.d_x, DataType_(20) * grid.d_y, DataType_(10. + i)* grid.d_x, DataType_(20) * grid.d_y);
-                    Line<DataType_, lbm_solid_dims::D2> line_2_i(DataType_(10. + i)* grid.d_x, DataType_(20) * grid.d_y, DataType_(10. + i)* grid.d_x, DataType_(25) * grid.d_y);
-                    Line<DataType_, lbm_solid_dims::D2> line_3_i(DataType_(10. + i)* grid.d_x, DataType_(25) * grid.d_y, DataType_(5. + i)* grid.d_x, DataType_(25) * grid.d_y);
-                    Line<DataType_, lbm_solid_dims::D2> line_4_i(DataType_(5. + i)* grid.d_x, DataType_(25) * grid.d_y, DataType_(5. + i)* grid.d_x, DataType_(20) * grid.d_y);
+                    Line<DataType_, lbm_solid_dims::D2> line_1_i(DataType_(5. + i/2.) * grid.d_x, DataType_(20) * grid.d_y, DataType_(10. + i/2.)* grid.d_x, DataType_(20) * grid.d_y);
+                    Line<DataType_, lbm_solid_dims::D2> line_2_i(DataType_(10. + i/2.)* grid.d_x, DataType_(20) * grid.d_y, DataType_(10. + i/2.)* grid.d_x, DataType_(25) * grid.d_y);
+                    Line<DataType_, lbm_solid_dims::D2> line_3_i(DataType_(10. + i/2.)* grid.d_x, DataType_(25) * grid.d_y, DataType_(5. + i/2.)* grid.d_x, DataType_(25) * grid.d_y);
+                    Line<DataType_, lbm_solid_dims::D2> line_4_i(DataType_(5. + i/2.)* grid.d_x, DataType_(25) * grid.d_y, DataType_(5. + i/2.)* grid.d_x, DataType_(20) * grid.d_y);
 
                     Polygon<DataType_, lbm_solid_dims::D2> tri_i(4);
                     tri_i.add_line(line_1_i);
