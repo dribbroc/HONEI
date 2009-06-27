@@ -78,62 +78,65 @@ namespace honei
 
                         solids.line_flags->lock(lm_read_only);
 
+                        data.distribution_x->lock(lm_read_only);
+                        data.distribution_y->lock(lm_read_only);
+
                         //Perform backward-streaming in all directions:
                         for(unsigned long i((*info.limits)[0]) ; i < (*info.limits)[info.limits->size() - 1] ; ++i)
                         {
                             bool valid(((*data.f_temp_1)[i] != DT1_(0) && (*solids.line_flags)[i]));
                             unsigned long prev_index(valid ? (*info.cuda_dir_5)[i] : i);
-                            DT1_ mb_term(DT1_(6. * 1./9.) * (d_x * solids.current_u +
-                                                             d_y * solids.current_v));
+                            DT1_ mb_term(DT1_(6. * 1./9.) * (d_x * solids.current_u * (*data.distribution_x)[5] +
+                                                             d_y * solids.current_v * (*data.distribution_y)[5]));
                             (*data.f_temp_5)[prev_index] = valid ? (*data.f_temp_1)[prev_index] + mb_term : (*data.f_temp_5)[prev_index];
                             (*data.f_temp_1)[i] = valid ? DT1_(0) : (*data.f_temp_1)[i];
 
                             valid = (((*data.f_temp_2)[i] != DT1_(0) && (*solids.line_flags)[i]));
                             prev_index = (valid ? (*info.cuda_dir_6)[i] : i);
-                            mb_term = (DT1_(6. * 1./36.) * (d_x * solids.current_u +
-                                                            d_y * solids.current_v));
+                            mb_term = (DT1_(6. * 1./36.) * (d_x * solids.current_u * (*data.distribution_x)[6] +
+                                                             d_y * solids.current_v * (*data.distribution_y)[6]));
                             (*data.f_temp_6)[prev_index] = valid ? (*data.f_temp_2)[prev_index] + mb_term : (*data.f_temp_6)[prev_index];
                             (*data.f_temp_2)[i] = valid ? DT1_(0) : (*data.f_temp_2)[i];
 
                             valid = (((*data.f_temp_3)[i] != DT1_(0) && (*solids.line_flags)[i]));
                             prev_index = (valid ? (*info.cuda_dir_7)[i] : i);
-                            mb_term = (DT1_(6. * 1./9.) * (d_x * solids.current_u +
-                                                           d_y * solids.current_v));
+                            mb_term = (DT1_(6. * 1./9.) * (d_x * solids.current_u * (*data.distribution_x)[7] +
+                                                             d_y * solids.current_v * (*data.distribution_y)[7]));
                             (*data.f_temp_7)[prev_index] = valid ? (*data.f_temp_3)[prev_index] + mb_term : (*data.f_temp_7)[prev_index];
                             (*data.f_temp_3)[i] = valid ? DT1_(0) : (*data.f_temp_3)[i];
 
                             valid = (((*data.f_temp_4)[i] != DT1_(0) && (*solids.line_flags)[i]));
                             prev_index = (valid ? (*info.cuda_dir_8)[i] : i);
-                            mb_term = (DT1_(6. * 1./36.) * (d_x * solids.current_u +
-                                                            d_y * solids.current_v));
+                            mb_term = (DT1_(6. * 1./36.) * (d_x * solids.current_u * (*data.distribution_x)[8] +
+                                                             d_y * solids.current_v * (*data.distribution_y)[8]));
                             (*data.f_temp_8)[prev_index] = valid ? (*data.f_temp_4)[prev_index] + mb_term : (*data.f_temp_8)[prev_index];
                             (*data.f_temp_4)[i] = valid ? DT1_(0) : (*data.f_temp_4)[i];
 
                             valid = (((*data.f_temp_5)[i] != DT1_(0) && (*solids.line_flags)[i]));
                             prev_index = (valid ? (*info.cuda_dir_1)[i] : i);
-                            mb_term = (DT1_(6. * 1./9.) * (d_x * solids.current_u +
-                                                           d_y * solids.current_v));
+                            mb_term = (DT1_(6. * 1./9.) * (d_x * solids.current_u * (*data.distribution_x)[1] +
+                                                             d_y * solids.current_v * (*data.distribution_y)[1]));
                             (*data.f_temp_1)[prev_index] = valid ? (*data.f_temp_5)[prev_index] + mb_term : (*data.f_temp_1)[prev_index];
                             (*data.f_temp_5)[i] = valid ? DT1_(0) : (*data.f_temp_5)[i];
 
                             valid = (((*data.f_temp_6)[i] != DT1_(0) && (*solids.line_flags)[i]));
                             prev_index = (valid ? (*info.cuda_dir_2)[i] : i);
-                            mb_term = (DT1_(6. * 1./36.) * (d_x * solids.current_u +
-                                                            d_y * solids.current_v));
+                            mb_term = (DT1_(6. * 1./36.) * (d_x * solids.current_u * (*data.distribution_x)[2] +
+                                                             d_y * solids.current_v * (*data.distribution_y)[2]));
                             (*data.f_temp_2)[prev_index] = valid ? (*data.f_temp_6)[prev_index] + mb_term : (*data.f_temp_2)[prev_index];
                             (*data.f_temp_6)[i] = valid ? DT1_(0) : (*data.f_temp_6)[i];
 
                             valid = (((*data.f_temp_7)[i] != DT1_(0) && (*solids.line_flags)[i]));
                             prev_index = (valid ? (*info.cuda_dir_3)[i] : i);
-                            mb_term = (DT1_(6. * 1./9.) * (d_x * solids.current_u +
-                                                           d_y * solids.current_v));
+                            mb_term = (DT1_(6. * 1./9.) * (d_x * solids.current_u * (*data.distribution_x)[3] +
+                                                             d_y * solids.current_v * (*data.distribution_y)[3]));
                             (*data.f_temp_3)[prev_index] = valid ? (*data.f_temp_7)[prev_index] + mb_term : (*data.f_temp_3)[prev_index];
                             (*data.f_temp_7)[i] = valid ? DT1_(0) : (*data.f_temp_7)[i];
 
                             valid = (((*data.f_temp_8)[i] != DT1_(0) && (*solids.line_flags)[i]));
                             prev_index = (valid ? (*info.cuda_dir_4)[i] : i);
-                            mb_term = (DT1_(6. * 1./36.) * (d_x * solids.current_u +
-                                                            d_y * solids.current_v));
+                            mb_term = (DT1_(6. * 1./36.) * (d_x * solids.current_u * (*data.distribution_x)[4] +
+                                                             d_y * solids.current_v * (*data.distribution_y)[4]));
                             (*data.f_temp_4)[prev_index] = valid ? (*data.f_temp_8)[prev_index] + mb_term : (*data.f_temp_4)[prev_index];
                             (*data.f_temp_8)[i] = valid ? DT1_(0) : (*data.f_temp_8)[i];
                         }
@@ -160,6 +163,8 @@ namespace honei
                         data.f_temp_7->unlock(lm_read_and_write);
                         data.f_temp_8->unlock(lm_read_and_write);
 
+                        data.distribution_x->unlock(lm_read_only);
+                        data.distribution_y->unlock(lm_read_only);
                     }
 
             };
