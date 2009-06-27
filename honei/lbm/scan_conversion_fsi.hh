@@ -321,6 +321,10 @@ namespace honei
                             ///Fill Polygon:
                             _local_scan_fill(grid, info, data, solids, solid, rect);
 
+                            solids.line_flags->unlock(lm_read_and_write);
+                            solids.boundary_flags->unlock(lm_read_and_write);
+                            solids.solid_flags->unlock(lm_read_and_write);
+
                             info.cuda_dir_1->unlock(lm_read_only);
                             info.cuda_dir_2->unlock(lm_read_only);
                             info.cuda_dir_3->unlock(lm_read_only);
@@ -330,9 +334,6 @@ namespace honei
                             info.cuda_dir_7->unlock(lm_read_only);
                             info.cuda_dir_8->unlock(lm_read_only);
 
-                            solids.line_flags->unlock(lm_read_and_write);
-                            solids.boundary_flags->unlock(lm_read_and_write);
-                            solids.solid_flags->unlock(lm_read_and_write);
 
                             grid.h->unlock(lm_read_only);
                         }
