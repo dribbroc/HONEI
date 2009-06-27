@@ -34,8 +34,8 @@ using namespace std;
 using namespace output_types;
 using namespace lbm::lbm_lattice_types;
 
-#define SOLVER_VERBOSE
-#define SOLVER_POSTPROCESSING
+//#define SOLVER_VERBOSE
+//#define SOLVER_POSTPROCESSING
 
 template <typename Tag_, typename DataType_>
 class SolverLBMFSITest :
@@ -99,7 +99,7 @@ class SolverLBMFSITest :
         }
 
 };
-//SolverLBMFSITest<tags::CPU, float> solver_test_float("float");
+SolverLBMFSITest<tags::CPU, float> solver_test_float("float");
 
 
 template <typename Tag_, typename DataType_>
@@ -175,7 +175,7 @@ class SolverLBMFSIStationaryTest :
         }
 
 };
-//SolverLBMFSIStationaryTest<tags::CPU, float> solver_test_stat_float("float");
+SolverLBMFSIStationaryTest<tags::CPU, float> solver_test_stat_float("float");
 
 template <typename Tag_, typename DataType_>
 class SolverLBMFSINonStationaryTest :
