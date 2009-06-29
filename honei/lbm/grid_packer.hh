@@ -859,6 +859,19 @@ namespace honei
                              DenseMatrix<bool> & stationary)
             {
 
+                solids.boundary_flags->lock(lm_write_only);
+                solids.line_flags->lock(lm_write_only);
+                solids.solid_flags->lock(lm_write_only);
+                solids.solid_to_fluid_flags->lock(lm_write_only);
+                solids.stationary_flags->lock(lm_write_only);
+                solids.f_mea_1->lock(lm_write_only);
+                solids.f_mea_2->lock(lm_write_only);
+                solids.f_mea_3->lock(lm_write_only);
+                solids.f_mea_4->lock(lm_write_only);
+                solids.f_mea_5->lock(lm_write_only);
+                solids.f_mea_6->lock(lm_write_only);
+                solids.f_mea_7->lock(lm_write_only);
+                solids.f_mea_8->lock(lm_write_only);
                 for (unsigned long i(0) ; i < lines.rows() ; ++i)
                 {
                     for (unsigned long j(0) ; j < lines.columns() ; ++j)
@@ -870,8 +883,30 @@ namespace honei
                         (*solids.solid_old_flags)[packed_index] = (*solids.solid_flags)[packed_index]; //equals solid at start
                         (*solids.solid_to_fluid_flags)[packed_index] = solid_to_fluid[i][j] ? true : false;
                         (*solids.stationary_flags)[packed_index] = stationary[i][j] ? true : false;
+
+                        (*solids.f_mea_1)[packed_index] = DT_(0);
+                        (*solids.f_mea_2)[packed_index] = DT_(0);
+                        (*solids.f_mea_3)[packed_index] = DT_(0);
+                        (*solids.f_mea_4)[packed_index] = DT_(0);
+                        (*solids.f_mea_5)[packed_index] = DT_(0);
+                        (*solids.f_mea_6)[packed_index] = DT_(0);
+                        (*solids.f_mea_7)[packed_index] = DT_(0);
+                        (*solids.f_mea_8)[packed_index] = DT_(0);
                     }
                 }
+                solids.f_mea_1->unlock(lm_write_only);
+                solids.f_mea_2->unlock(lm_write_only);
+                solids.f_mea_3->unlock(lm_write_only);
+                solids.f_mea_4->unlock(lm_write_only);
+                solids.f_mea_5->unlock(lm_write_only);
+                solids.f_mea_6->unlock(lm_write_only);
+                solids.f_mea_7->unlock(lm_write_only);
+                solids.f_mea_8->unlock(lm_write_only);
+                solids.boundary_flags->unlock(lm_write_only);
+                solids.line_flags->unlock(lm_write_only);
+                solids.solid_flags->unlock(lm_write_only);
+                solids.solid_to_fluid_flags->unlock(lm_write_only);
+                solids.stationary_flags->unlock(lm_write_only);
             }
     };
 }

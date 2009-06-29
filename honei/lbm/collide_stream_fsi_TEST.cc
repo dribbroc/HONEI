@@ -72,6 +72,43 @@ class CollideStreamFSITest :
 
             DataType_ tau (1);
 
+            data.distribution_x->lock(lm_write_only);
+            data.distribution_y->lock(lm_write_only);
+            for(unsigned long i(0); i < 9 ; ++i)
+            {
+                (*data.distribution_x)[i] = DataType_(1.);
+                (*data.distribution_y)[i] = DataType_(1.);
+            }
+            data.distribution_x->unlock(lm_write_only);
+            data.distribution_y->unlock(lm_write_only);
+
+            data.f_0->lock(lm_write_only);
+            data.f_1->lock(lm_write_only);
+            data.f_2->lock(lm_write_only);
+            data.f_3->lock(lm_write_only);
+            data.f_4->lock(lm_write_only);
+            data.f_5->lock(lm_write_only);
+            data.f_6->lock(lm_write_only);
+            data.f_7->lock(lm_write_only);
+            data.f_8->lock(lm_write_only);
+            data.f_temp_0->lock(lm_write_only);
+            data.f_temp_1->lock(lm_write_only);
+            data.f_temp_2->lock(lm_write_only);
+            data.f_temp_3->lock(lm_write_only);
+            data.f_temp_4->lock(lm_write_only);
+            data.f_temp_5->lock(lm_write_only);
+            data.f_temp_6->lock(lm_write_only);
+            data.f_temp_7->lock(lm_write_only);
+            data.f_temp_8->lock(lm_write_only);
+            data.f_eq_0->lock(lm_write_only);
+            data.f_eq_1->lock(lm_write_only);
+            data.f_eq_2->lock(lm_write_only);
+            data.f_eq_3->lock(lm_write_only);
+            data.f_eq_4->lock(lm_write_only);
+            data.f_eq_5->lock(lm_write_only);
+            data.f_eq_6->lock(lm_write_only);
+            data.f_eq_7->lock(lm_write_only);
+            data.f_eq_8->lock(lm_write_only);
             for(unsigned long i(0); i < data.h->size(); i++)
             {
                 (*data.f_eq_0)[i] = DataType_(1.234);
@@ -101,6 +138,34 @@ class CollideStreamFSITest :
                 (*data.f_temp_7)[i] = DataType_(4711);
                 (*data.f_temp_8)[i] = DataType_(4711);
             }
+            data.f_0->unlock(lm_write_only);
+            data.f_1->unlock(lm_write_only);
+            data.f_2->unlock(lm_write_only);
+            data.f_3->unlock(lm_write_only);
+            data.f_4->unlock(lm_write_only);
+            data.f_5->unlock(lm_write_only);
+            data.f_6->unlock(lm_write_only);
+            data.f_7->unlock(lm_write_only);
+            data.f_8->unlock(lm_write_only);
+            data.f_temp_0->unlock(lm_write_only);
+            data.f_temp_1->unlock(lm_write_only);
+            data.f_temp_2->unlock(lm_write_only);
+            data.f_temp_3->unlock(lm_write_only);
+            data.f_temp_4->unlock(lm_write_only);
+            data.f_temp_5->unlock(lm_write_only);
+            data.f_temp_6->unlock(lm_write_only);
+            data.f_temp_7->unlock(lm_write_only);
+            data.f_temp_8->unlock(lm_write_only);
+            data.f_eq_0->unlock(lm_write_only);
+            data.f_eq_1->unlock(lm_write_only);
+            data.f_eq_2->unlock(lm_write_only);
+            data.f_eq_3->unlock(lm_write_only);
+            data.f_eq_4->unlock(lm_write_only);
+            data.f_eq_5->unlock(lm_write_only);
+            data.f_eq_6->unlock(lm_write_only);
+            data.f_eq_7->unlock(lm_write_only);
+            data.f_eq_8->unlock(lm_write_only);
+
             CollideStreamGrid<Tag_, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                 value(info, data, tau);
             UpdateVelocityDirectionsGrid<Tag_, NOSLIP>::value(info, data);
@@ -132,7 +197,45 @@ class CollideStreamFSITest :
             DenseMatrix<bool> sol(g_h, g_w, false);
             GridPackerFSI<D2Q9, NOSLIP, DataType_>::allocate(data_2, solids);
             GridPackerFSI<D2Q9, NOSLIP, DataType_>::pack(grid_2, data_2, solids, line, bound, sol, stf, obstacles);
+            solids.current_u = DataType_(1);
+            solids.current_v = DataType_(0);
+            data_2.distribution_x->lock(lm_write_only);
+            data_2.distribution_y->lock(lm_write_only);
+            for(unsigned long i(0); i < 9 ; ++i)
+            {
+                (*data_2.distribution_x)[i] = DataType_(1.);
+                (*data_2.distribution_y)[i] = DataType_(1.);
+            }
+            data_2.distribution_x->unlock(lm_write_only);
+            data_2.distribution_y->unlock(lm_write_only);
 
+            data_2.f_0->lock(lm_write_only);
+            data_2.f_1->lock(lm_write_only);
+            data_2.f_2->lock(lm_write_only);
+            data_2.f_3->lock(lm_write_only);
+            data_2.f_4->lock(lm_write_only);
+            data_2.f_5->lock(lm_write_only);
+            data_2.f_6->lock(lm_write_only);
+            data_2.f_7->lock(lm_write_only);
+            data_2.f_8->lock(lm_write_only);
+            data_2.f_temp_0->lock(lm_write_only);
+            data_2.f_temp_1->lock(lm_write_only);
+            data_2.f_temp_2->lock(lm_write_only);
+            data_2.f_temp_3->lock(lm_write_only);
+            data_2.f_temp_4->lock(lm_write_only);
+            data_2.f_temp_5->lock(lm_write_only);
+            data_2.f_temp_6->lock(lm_write_only);
+            data_2.f_temp_7->lock(lm_write_only);
+            data_2.f_temp_8->lock(lm_write_only);
+            data_2.f_eq_0->lock(lm_write_only);
+            data_2.f_eq_1->lock(lm_write_only);
+            data_2.f_eq_2->lock(lm_write_only);
+            data_2.f_eq_3->lock(lm_write_only);
+            data_2.f_eq_4->lock(lm_write_only);
+            data_2.f_eq_5->lock(lm_write_only);
+            data_2.f_eq_6->lock(lm_write_only);
+            data_2.f_eq_7->lock(lm_write_only);
+            data_2.f_eq_8->lock(lm_write_only);
             for(unsigned long i(0); i < data_2.h->size(); i++)
             {
                 (*data_2.f_eq_0)[i] = DataType_(1.234);
@@ -162,6 +265,33 @@ class CollideStreamFSITest :
                 (*data_2.f_temp_7)[i] = DataType_(4711);
                 (*data_2.f_temp_8)[i] = DataType_(4711);
             }
+            data_2.f_0->unlock(lm_write_only);
+            data_2.f_1->unlock(lm_write_only);
+            data_2.f_2->unlock(lm_write_only);
+            data_2.f_3->unlock(lm_write_only);
+            data_2.f_4->unlock(lm_write_only);
+            data_2.f_5->unlock(lm_write_only);
+            data_2.f_6->unlock(lm_write_only);
+            data_2.f_7->unlock(lm_write_only);
+            data_2.f_8->unlock(lm_write_only);
+            data_2.f_temp_0->unlock(lm_write_only);
+            data_2.f_temp_1->unlock(lm_write_only);
+            data_2.f_temp_2->unlock(lm_write_only);
+            data_2.f_temp_3->unlock(lm_write_only);
+            data_2.f_temp_4->unlock(lm_write_only);
+            data_2.f_temp_5->unlock(lm_write_only);
+            data_2.f_temp_6->unlock(lm_write_only);
+            data_2.f_temp_7->unlock(lm_write_only);
+            data_2.f_temp_8->unlock(lm_write_only);
+            data_2.f_eq_0->unlock(lm_write_only);
+            data_2.f_eq_1->unlock(lm_write_only);
+            data_2.f_eq_2->unlock(lm_write_only);
+            data_2.f_eq_3->unlock(lm_write_only);
+            data_2.f_eq_4->unlock(lm_write_only);
+            data_2.f_eq_5->unlock(lm_write_only);
+            data_2.f_eq_6->unlock(lm_write_only);
+            data_2.f_eq_7->unlock(lm_write_only);
+            data_2.f_eq_8->unlock(lm_write_only);
             CollideStreamGrid<Tag_, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                 value(info_2, data_2, tau);
             CollideStreamFSI<Tag_, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
@@ -171,6 +301,31 @@ class CollideStreamFSITest :
             //in matrix-form:
             DenseMatrix<DataType_> ref(h.rows(), h.columns());
             DenseMatrix<DataType_> res(h.rows(), h.columns());
+
+            data_2.f_temp_1->lock(lm_read_only);
+            data_2.f_temp_2->lock(lm_read_only);
+            data_2.f_temp_3->lock(lm_read_only);
+            data_2.f_temp_4->lock(lm_read_only);
+            data_2.f_temp_5->lock(lm_read_only);
+            data_2.f_temp_6->lock(lm_read_only);
+            data_2.f_temp_7->lock(lm_read_only);
+            data_2.f_temp_8->lock(lm_read_only);
+            data.f_temp_1->lock(lm_read_only);
+            data.f_temp_2->lock(lm_read_only);
+            data.f_temp_3->lock(lm_read_only);
+            data.f_temp_4->lock(lm_read_only);
+            data.f_temp_5->lock(lm_read_only);
+            data.f_temp_6->lock(lm_read_only);
+            data.f_temp_7->lock(lm_read_only);
+            data.f_temp_8->lock(lm_read_only);
+            solids.f_mea_1->lock(lm_read_only);
+            solids.f_mea_2->lock(lm_read_only);
+            solids.f_mea_3->lock(lm_read_only);
+            solids.f_mea_4->lock(lm_read_only);
+            solids.f_mea_5->lock(lm_read_only);
+            solids.f_mea_6->lock(lm_read_only);
+            solids.f_mea_7->lock(lm_read_only);
+            solids.f_mea_8->lock(lm_read_only);
 
             GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.f_temp_1 , &ref);
             GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2, data_2.f_temp_1, &res);
@@ -258,15 +413,41 @@ class CollideStreamFSITest :
                     TEST_CHECK_EQUAL_WITHIN_EPS(res[i][j], ref[i][j], std::numeric_limits<DataType_>::epsilon() * 10);
                 }
             }
-
-            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_1)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(1.234), std::numeric_limits<DataType_>::epsilon() * 10);
-            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_2)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(1.234), std::numeric_limits<DataType_>::epsilon() * 10);
-            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_3)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(1.234), std::numeric_limits<DataType_>::epsilon() * 10);
-            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_4)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(1.234), std::numeric_limits<DataType_>::epsilon() * 10);
-            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_5)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(1.234), std::numeric_limits<DataType_>::epsilon() * 10);
-            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_6)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(1.234), std::numeric_limits<DataType_>::epsilon() * 10);
-            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_7)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(1.234), std::numeric_limits<DataType_>::epsilon() * 10);
-            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_8)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(1.234), std::numeric_limits<DataType_>::epsilon() * 10);
+            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_1)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(4.936), std::numeric_limits<DataType_>::epsilon() * 10);
+            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_2)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(4.936), std::numeric_limits<DataType_>::epsilon() * 10);
+            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_3)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(4.936), std::numeric_limits<DataType_>::epsilon() * 10);
+            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_4)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(4.936), std::numeric_limits<DataType_>::epsilon() * 10);
+            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_5)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(4.936), std::numeric_limits<DataType_>::epsilon() * 10);
+            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_6)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(4.936), std::numeric_limits<DataType_>::epsilon() * 10);
+            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_7)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(4.936), std::numeric_limits<DataType_>::epsilon() * 10);
+            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_8)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(4.936), std::numeric_limits<DataType_>::epsilon() * 10);
+            data_2.f_temp_1->unlock(lm_read_only);
+            data_2.f_temp_2->unlock(lm_read_only);
+            data_2.f_temp_3->unlock(lm_read_only);
+            data_2.f_temp_4->unlock(lm_read_only);
+            data_2.f_temp_5->unlock(lm_read_only);
+            data_2.f_temp_6->unlock(lm_read_only);
+            data_2.f_temp_7->unlock(lm_read_only);
+            data_2.f_temp_8->unlock(lm_read_only);
+            data.f_temp_1->unlock(lm_read_only);
+            data.f_temp_2->unlock(lm_read_only);
+            data.f_temp_3->unlock(lm_read_only);
+            data.f_temp_4->unlock(lm_read_only);
+            data.f_temp_5->unlock(lm_read_only);
+            data.f_temp_6->unlock(lm_read_only);
+            data.f_temp_7->unlock(lm_read_only);
+            data.f_temp_8->unlock(lm_read_only);
+            solids.f_mea_1->unlock(lm_read_only);
+            solids.f_mea_2->unlock(lm_read_only);
+            solids.f_mea_3->unlock(lm_read_only);
+            solids.f_mea_4->unlock(lm_read_only);
+            solids.f_mea_5->unlock(lm_read_only);
+            solids.f_mea_6->unlock(lm_read_only);
+            solids.f_mea_7->unlock(lm_read_only);
+            solids.f_mea_8->unlock(lm_read_only);
         }
 };
 CollideStreamFSITest<tags::CPU, float> collidestream_grid_test_float("float");
+#ifdef HONEI_CUDA
+CollideStreamFSITest<tags::GPU::CUDA, float> cuda_collidestream_grid_test_float("CUDA float");
+#endif

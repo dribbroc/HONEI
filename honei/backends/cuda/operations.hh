@@ -3,6 +3,7 @@
 
 /*
  * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2009 Markus Geveler <apryde@gmx.de>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -153,5 +154,21 @@ extern "C"
 
     ///////////////////////////  /////////////////////////
     void cuda_thread_synchronize();
+
+
+    ///////////////////////////LBMFSI/////////////////////////
+    void cuda_collide_stream_fsi_float(unsigned long start, unsigned long end,
+            void * dir_1, void * dir_2, void * dir_3, void * dir_4,
+            void * dir_5, void * dir_6, void * dir_7, void * dir_8,
+            void * f_temp_1, void * f_temp_2,
+            void * f_temp_3, void * f_temp_4, void * f_temp_5,
+            void * f_temp_6, void * f_temp_7, void * f_temp_8,
+            void * f_mea_1, void * f_mea_2,
+            void * f_mea_3, void * f_mea_4, void * f_mea_5,
+            void * f_mea_6, void * f_mea_7, void * f_mea_8,
+            void * line_flags, void * dist_x, void * dist_y,
+            float d_xu, float d_yv,
+            unsigned long size,
+            unsigned long blocksize);
 }
 #endif

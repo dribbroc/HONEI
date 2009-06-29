@@ -99,7 +99,7 @@ namespace honei
                                                              d_y * solids.current_v * (*data.distribution_y)[5]));
                             (*data.f_temp_5)[prev_index] = valid ? (*data.f_temp_1)[prev_index] + mb_term : (*data.f_temp_5)[prev_index];
                             (*solids.f_mea_5)[i] = valid ? (((*data.distribution_x)[5] + (*data.distribution_y)[5]) *
-                                                                (*data.f_temp_5)[prev_index] + (*data.f_temp_1)[i]) : (*solids.f_mea_5)[prev_index];
+                                                                ((*data.f_temp_5)[prev_index] + (*data.f_temp_1)[i])) : (*solids.f_mea_5)[prev_index];
                             (*data.f_temp_1)[i] = valid ? DT1_(0) : (*data.f_temp_1)[i];
 
                             valid = (((*data.f_temp_2)[i] != DT1_(0) && (*solids.line_flags)[i]));
@@ -108,7 +108,7 @@ namespace honei
                                                              d_y * solids.current_v * (*data.distribution_y)[6]));
                             (*data.f_temp_6)[prev_index] = valid ? (*data.f_temp_2)[prev_index] + mb_term : (*data.f_temp_6)[prev_index];
                             (*solids.f_mea_6)[i] = valid ? (((*data.distribution_x)[6] + (*data.distribution_y)[6]) *
-                                                                (*data.f_temp_6)[prev_index] + (*data.f_temp_2)[i]) : (*solids.f_mea_6)[prev_index];
+                                                                ((*data.f_temp_6)[prev_index] + (*data.f_temp_2)[i])) : (*solids.f_mea_6)[prev_index];
                             (*data.f_temp_2)[i] = valid ? DT1_(0) : (*data.f_temp_2)[i];
 
                             valid = (((*data.f_temp_3)[i] != DT1_(0) && (*solids.line_flags)[i]));
@@ -117,7 +117,7 @@ namespace honei
                                                              d_y * solids.current_v * (*data.distribution_y)[7]));
                             (*data.f_temp_7)[prev_index] = valid ? (*data.f_temp_3)[prev_index] + mb_term : (*data.f_temp_7)[prev_index];
                             (*solids.f_mea_7)[i] = valid ? (((*data.distribution_x)[7] + (*data.distribution_y)[7]) *
-                                                                (*data.f_temp_7)[prev_index] + (*data.f_temp_3)[i]) : (*solids.f_mea_7)[prev_index];
+                                                                ((*data.f_temp_7)[prev_index] + (*data.f_temp_3)[i])) : (*solids.f_mea_7)[prev_index];
                             (*data.f_temp_3)[i] = valid ? DT1_(0) : (*data.f_temp_3)[i];
 
                             valid = (((*data.f_temp_4)[i] != DT1_(0) && (*solids.line_flags)[i]));
@@ -126,7 +126,7 @@ namespace honei
                                                              d_y * solids.current_v * (*data.distribution_y)[8]));
                             (*data.f_temp_8)[prev_index] = valid ? (*data.f_temp_4)[prev_index] + mb_term : (*data.f_temp_8)[prev_index];
                             (*solids.f_mea_8)[i] = valid ? (((*data.distribution_x)[8] + (*data.distribution_y)[8]) *
-                                                                (*data.f_temp_8)[prev_index] + (*data.f_temp_4)[i]) : (*solids.f_mea_8)[prev_index];
+                                                                ((*data.f_temp_8)[prev_index] + (*data.f_temp_4)[i])) : (*solids.f_mea_8)[prev_index];
                             (*data.f_temp_4)[i] = valid ? DT1_(0) : (*data.f_temp_4)[i];
 
                             valid = (((*data.f_temp_5)[i] != DT1_(0) && (*solids.line_flags)[i]));
@@ -135,7 +135,7 @@ namespace honei
                                                              d_y * solids.current_v * (*data.distribution_y)[1]));
                             (*data.f_temp_1)[prev_index] = valid ? (*data.f_temp_5)[prev_index] + mb_term : (*data.f_temp_1)[prev_index];
                             (*solids.f_mea_1)[i] = valid ? (((*data.distribution_x)[1] + (*data.distribution_y)[1]) *
-                                                                (*data.f_temp_1)[prev_index] + (*data.f_temp_5)[i]) : (*solids.f_mea_1)[prev_index];
+                                                                ((*data.f_temp_1)[prev_index] + (*data.f_temp_5)[i])) : (*solids.f_mea_1)[prev_index];
                             (*data.f_temp_5)[i] = valid ? DT1_(0) : (*data.f_temp_5)[i];
 
                             valid = (((*data.f_temp_6)[i] != DT1_(0) && (*solids.line_flags)[i]));
@@ -144,7 +144,7 @@ namespace honei
                                                              d_y * solids.current_v * (*data.distribution_y)[2]));
                             (*data.f_temp_2)[prev_index] = valid ? (*data.f_temp_6)[prev_index] + mb_term : (*data.f_temp_2)[prev_index];
                             (*solids.f_mea_2)[i] = valid ? (((*data.distribution_x)[2] + (*data.distribution_y)[2]) *
-                                                                (*data.f_temp_2)[prev_index] + (*data.f_temp_6)[i]) : (*solids.f_mea_2)[prev_index];
+                                                                ((*data.f_temp_2)[prev_index] + (*data.f_temp_6)[i])) : (*solids.f_mea_2)[prev_index];
                             (*data.f_temp_6)[i] = valid ? DT1_(0) : (*data.f_temp_6)[i];
 
                             valid = (((*data.f_temp_7)[i] != DT1_(0) && (*solids.line_flags)[i]));
@@ -153,7 +153,7 @@ namespace honei
                                                              d_y * solids.current_v * (*data.distribution_y)[3]));
                             (*data.f_temp_3)[prev_index] = valid ? (*data.f_temp_7)[prev_index] + mb_term : (*data.f_temp_3)[prev_index];
                             (*solids.f_mea_3)[i] = valid ? (((*data.distribution_x)[3] + (*data.distribution_y)[3]) *
-                                                                (*data.f_temp_3)[prev_index] + (*data.f_temp_7)[i]) : (*solids.f_mea_3)[prev_index];
+                                                                ((*data.f_temp_3)[prev_index] + (*data.f_temp_7)[i])) : (*solids.f_mea_3)[prev_index];
                             (*data.f_temp_7)[i] = valid ? DT1_(0) : (*data.f_temp_7)[i];
 
                             valid = (((*data.f_temp_8)[i] != DT1_(0) && (*solids.line_flags)[i]));
@@ -162,7 +162,7 @@ namespace honei
                                                              d_y * solids.current_v * (*data.distribution_y)[4]));
                             (*data.f_temp_4)[prev_index] = valid ? (*data.f_temp_8)[prev_index] + mb_term : (*data.f_temp_4)[prev_index];
                             (*solids.f_mea_4)[i] = valid ? (((*data.distribution_x)[4] + (*data.distribution_y)[4]) *
-                                                                (*data.f_temp_4)[prev_index] + (*data.f_temp_8)[i]) : (*solids.f_mea_4)[prev_index];
+                                                                ((*data.f_temp_4)[prev_index] + (*data.f_temp_8)[i])) : (*solids.f_mea_4)[prev_index];
                             (*data.f_temp_8)[i] = valid ? DT1_(0) : (*data.f_temp_8)[i];
                         }
 
@@ -202,6 +202,20 @@ namespace honei
                     }
 
             };
+
+        template <>
+            struct CollideStreamFSI<tags::GPU::CUDA, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>
+            {
+
+                    static void value(
+                            PackedGridInfo<lbm_lattice_types::D2Q9> & info,
+                            PackedGridData<lbm_lattice_types::D2Q9, float> & data,
+                            PackedSolidData<lbm_lattice_types::D2Q9, float> & solids,
+                            float d_x,
+                            float d_y);
+            };
+
+
     }
 }
 #endif
