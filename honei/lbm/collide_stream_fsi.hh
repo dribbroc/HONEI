@@ -202,6 +202,20 @@ namespace honei
                     }
 
             };
+
+        template <>
+            struct CollideStreamFSI<tags::GPU::CUDA, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>
+            {
+
+                    static void value(
+                            PackedGridInfo<lbm_lattice_types::D2Q9> & info,
+                            PackedGridData<lbm_lattice_types::D2Q9, float> & data,
+                            PackedSolidData<lbm_lattice_types::D2Q9, float> & solids,
+                            float d_x,
+                            float d_y);
+            };
+
+
     }
 }
 #endif
