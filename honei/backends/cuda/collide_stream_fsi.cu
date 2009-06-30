@@ -41,9 +41,9 @@ namespace honei
                 unsigned long i(idx);
                 if(f_temp_i[i] != 0. && line_flags[i])
                 {
-                    //f_temp_m_i[dir[i]] = f_temp_i[dir[i]] + 2./3. * (d_xu * dist_x[5] + d_yv * dist_y[5]);
-                    //f_mea_m_i[i] = (dist_x[5] + dist_y[5]) * (f_temp_m_i[dir[i]] + f_temp_i[i]);
-                    //f_temp_i[i] = 0.;
+                    f_temp_m_i[dir[i]] = f_temp_i[dir[i]] + 2./3. * (d_xu * dist_x[5] + d_yv * dist_y[5]);
+                    f_mea_m_i[i] = (dist_x[5] + dist_y[5]) * (f_temp_m_i[dir[i]] + f_temp_i[i]);
+                    f_temp_i[i] = 0.;
                 }
             }
         }
