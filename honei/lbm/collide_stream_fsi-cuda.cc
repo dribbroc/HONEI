@@ -75,8 +75,6 @@ void CollideStreamFSI<tags::GPU::CUDA, lbm_boundary_types::NOSLIP, lbm_lattice_t
     float u(solids.current_u);
     float v(solids.current_v);
 
-    std::cout << u << " " << v << std::endl;
-
     cuda_collide_stream_fsi_float(start, end,
             cuda_dir_1_gpu, cuda_dir_2_gpu, cuda_dir_3_gpu, cuda_dir_4_gpu,
             cuda_dir_5_gpu, cuda_dir_6_gpu, cuda_dir_7_gpu, cuda_dir_8_gpu,

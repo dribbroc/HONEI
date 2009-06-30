@@ -39,11 +39,11 @@ namespace honei
             if (idx < size)
             {
                 unsigned long i(idx);
-                if(f_temp_i[i] != 0 && line_flags[i])
+                if(f_temp_i[i] != 0. && line_flags[i])
                 {
-                    f_temp_m_i[dir[i]] = f_temp_i[dir[i]] + 2./3. * (d_xu * dist_x[5] + d_yv * dist_y[5]);
-                    f_mea_m_i[i] = (dist_x[5] + dist_y[5]) * (f_temp_m_i[dir[i]] + f_temp_i[i]);
-                    f_temp_i[i] = 0.;
+                    //f_temp_m_i[dir[i]] = f_temp_i[dir[i]] + 2./3. * (d_xu * dist_x[5] + d_yv * dist_y[5]);
+                    //f_mea_m_i[i] = (dist_x[5] + dist_y[5]) * (f_temp_m_i[dir[i]] + f_temp_i[i]);
+                    //f_temp_i[i] = 0.;
                 }
             }
         }
@@ -270,7 +270,7 @@ extern "C" void cuda_collide_stream_fsi_float(unsigned long start, unsigned long
     float * dist_x_gpu((float *)dist_x);
     float * dist_y_gpu((float *)dist_y);
 
-    honei::cuda::collide_stream_fsi_1_gpu<<<grid, block>>>(dir_1_gpu,
+    honei::cuda::collide_stream_fsi_1_gpu<<<grid, block>>>(dir_5_gpu,
                                                            f_temp_1_gpu,
                                                            f_temp_5_gpu,
                                                            f_mea_5_gpu,
@@ -281,7 +281,7 @@ extern "C" void cuda_collide_stream_fsi_float(unsigned long start, unsigned long
                                                            d_yv,
                                                            size);
 
-    honei::cuda::collide_stream_fsi_2_gpu<<<grid, block>>>(dir_2_gpu,
+    honei::cuda::collide_stream_fsi_2_gpu<<<grid, block>>>(dir_6_gpu,
                                                            f_temp_2_gpu,
                                                            f_temp_6_gpu,
                                                            f_mea_6_gpu,
@@ -292,7 +292,7 @@ extern "C" void cuda_collide_stream_fsi_float(unsigned long start, unsigned long
                                                            d_yv,
                                                            size);
 
-    honei::cuda::collide_stream_fsi_3_gpu<<<grid, block>>>(dir_3_gpu,
+    honei::cuda::collide_stream_fsi_3_gpu<<<grid, block>>>(dir_7_gpu,
                                                            f_temp_3_gpu,
                                                            f_temp_7_gpu,
                                                            f_mea_7_gpu,
@@ -303,7 +303,7 @@ extern "C" void cuda_collide_stream_fsi_float(unsigned long start, unsigned long
                                                            d_yv,
                                                            size);
 
-    honei::cuda::collide_stream_fsi_4_gpu<<<grid, block>>>(dir_4_gpu,
+    honei::cuda::collide_stream_fsi_4_gpu<<<grid, block>>>(dir_8_gpu,
                                                            f_temp_4_gpu,
                                                            f_temp_8_gpu,
                                                            f_mea_8_gpu,
@@ -314,7 +314,7 @@ extern "C" void cuda_collide_stream_fsi_float(unsigned long start, unsigned long
                                                            d_yv,
                                                            size);
 
-    honei::cuda::collide_stream_fsi_5_gpu<<<grid, block>>>(dir_5_gpu,
+    honei::cuda::collide_stream_fsi_5_gpu<<<grid, block>>>(dir_1_gpu,
                                                            f_temp_5_gpu,
                                                            f_temp_1_gpu,
                                                            f_mea_1_gpu,
@@ -325,7 +325,7 @@ extern "C" void cuda_collide_stream_fsi_float(unsigned long start, unsigned long
                                                            d_yv,
                                                            size);
 
-    honei::cuda::collide_stream_fsi_6_gpu<<<grid, block>>>(dir_6_gpu,
+    honei::cuda::collide_stream_fsi_6_gpu<<<grid, block>>>(dir_2_gpu,
                                                            f_temp_6_gpu,
                                                            f_temp_2_gpu,
                                                            f_mea_2_gpu,
@@ -336,7 +336,7 @@ extern "C" void cuda_collide_stream_fsi_float(unsigned long start, unsigned long
                                                            d_yv,
                                                            size);
 
-    honei::cuda::collide_stream_fsi_7_gpu<<<grid, block>>>(dir_7_gpu,
+    honei::cuda::collide_stream_fsi_7_gpu<<<grid, block>>>(dir_3_gpu,
                                                            f_temp_7_gpu,
                                                            f_temp_3_gpu,
                                                            f_mea_3_gpu,
@@ -347,7 +347,7 @@ extern "C" void cuda_collide_stream_fsi_float(unsigned long start, unsigned long
                                                            d_yv,
                                                            size);
 
-    honei::cuda::collide_stream_fsi_8_gpu<<<grid, block>>>(dir_8_gpu,
+    honei::cuda::collide_stream_fsi_8_gpu<<<grid, block>>>(dir_4_gpu,
                                                            f_temp_8_gpu,
                                                            f_temp_4_gpu,
                                                            f_mea_4_gpu,
