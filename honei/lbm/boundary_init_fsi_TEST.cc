@@ -119,6 +119,26 @@ class BoundaryInitFSITest :
             std::cout << res_u << std::endl;
             std::cout << res_v << std::endl;
 
+            for(unsigned long i(0); i < h.rows() ; ++i)
+            {
+                for(unsigned long j(0); j < h.columns() ; ++j)
+                {
+                    if(i == 5 && j == 5)
+                    {
+                        TEST_CHECK_EQUAL_WITHIN_EPS(res_h[i][j], DataType_(0.), std::numeric_limits<DataType_>::epsilon());
+                        TEST_CHECK_EQUAL_WITHIN_EPS(res_u[i][j], DataType_(0.), std::numeric_limits<DataType_>::epsilon());
+                        TEST_CHECK_EQUAL_WITHIN_EPS(res_v[i][j], DataType_(0.), std::numeric_limits<DataType_>::epsilon());
+                    }
+
+                    if((i < 4 || i > 6) && (j < 4 || j > 6))
+                    {
+                        TEST_CHECK_EQUAL_WITHIN_EPS(res_h[i][j], DataType_(0.05), std::numeric_limits<DataType_>::epsilon());
+                        TEST_CHECK_EQUAL_WITHIN_EPS(res_u[i][j], DataType_(0.), std::numeric_limits<DataType_>::epsilon());
+                        TEST_CHECK_EQUAL_WITHIN_EPS(res_v[i][j], DataType_(0.), std::numeric_limits<DataType_>::epsilon());
+                    }
+                }
+            }
+
         }
 };
 BoundaryInitFSITest<tags::CPU, float> collidestream_grid_test_float("float");
