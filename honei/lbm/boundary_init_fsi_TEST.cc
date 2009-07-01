@@ -61,7 +61,6 @@ class BoundaryInitFSITest :
 
             Grid<D2Q9, DataType_> grid;
             DenseMatrix<bool> obstacles_ref(g_h, g_w, false);
-            obstacles_ref[5][5] = true;
             grid.obstacles = &obstacles_ref;
             grid.h = &h;
             grid.u = &u;
@@ -101,9 +100,11 @@ class BoundaryInitFSITest :
             solids.current_u = DataType_(0.1);
             solids.current_v = DataType_(0.1);
 
-
+            solids.solid_old_flags->lock(lm_write_only);
             (*solids.solid_old_flags)[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::h_index(grid, 5, 4)] = true;
             (*solids.solid_old_flags)[GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::h_index(grid, 5, 5)] = false;
+            solids.solid_old_flags->unlock(lm_write_only);
+
             BoundaryInitFSI<Tag_, D2Q9::DIR_1>::value(info, data, solids);
 
             //in matrix-form:
@@ -148,8 +149,8 @@ class BoundaryInitFSITest :
                 }
             }
             TEST_CHECK_EQUAL_WITHIN_EPS(res_h[5][4], DataType_(0.1), std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(res_u[5][4], DataType_(0.0533333), std::numeric_limits<DataType_>::epsilon());
-            TEST_CHECK_EQUAL_WITHIN_EPS(res_v[5][4], DataType_(0.0533333), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(res_u[5][4], DataType_(0.05333333333333333333333333), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(res_v[5][4], DataType_(0.05333333333333333333333333), std::numeric_limits<DataType_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(res_h[5][6], DataType_(0.05), std::numeric_limits<DataType_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(res_u[5][6], DataType_(0.1), std::numeric_limits<DataType_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(res_v[5][6], DataType_(0.1), std::numeric_limits<DataType_>::epsilon());
@@ -157,4 +158,8 @@ class BoundaryInitFSITest :
 
         }
 };
-BoundaryInitFSITest<tags::CPU, float> collidestream_grid_test_float("float");
+BoundaryInitFSITest<tags::CPU, float> collidestream_fsi_test_float("float");
+BoundaryInitFSITest<tags::CPU, double> collidestream_fsi_test_double("double");
+#ifdef HONEI_CUDA
+BoundaryInitFSITest<tags::GPU::CUDA, float> collidestream_fsi_test_float_cuda("CUDA float");
+#endif

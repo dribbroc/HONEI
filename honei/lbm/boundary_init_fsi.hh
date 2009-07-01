@@ -123,7 +123,6 @@ namespace honei
                             data.v->lock(lm_read_and_write);
                             data.h->lock(lm_read_and_write);
                             solids.boundary_flags->lock(lm_read_only);
-                            solids.solid_to_fluid_flags->lock(lm_read_and_write);
                             solids.solid_flags->lock(lm_read_only);
                             solids.solid_old_flags->lock(lm_read_and_write);
 
@@ -159,19 +158,19 @@ namespace honei
 
                             for(unsigned long i((*info.limits)[0]) ; i < (*info.limits)[info.limits->size() - 1] ; ++i)
                             {
-                                (*solids.solid_to_fluid_flags)[i] = (*solids.solid_old_flags)[i] & !(*solids.solid_flags)[i];
+                                bool stf((*solids.solid_old_flags)[i] & !(*solids.solid_flags)[i]);
                                 bool fts(!(*solids.solid_old_flags)[i] & (*solids.solid_flags)[i]);
                                 (*solids.solid_old_flags)[i] = (*solids.solid_flags)[i];
 
-                                (*data.h)[i] = (*solids.solid_to_fluid_flags)[i] ?
+                                (*data.h)[i] = stf ?
                                                     _extrapolation(info, data, solids, i) :(fts ? DT_(0) : (*data.h)[i]);
 
-                                (*data.u)[i] = ((*solids.boundary_flags)[i] & !(*solids.solid_to_fluid_flags)[i]) ?
-                                                    solids.current_u  : ((*solids.solid_to_fluid_flags)[i] ?
+                                (*data.u)[i] = ((*solids.boundary_flags)[i] & !stf) ?
+                                                    solids.current_u  : (stf ?
                                                             _interpolation_u(info, data, solids, i) :(fts ? DT_(0) : (*data.u)[i]));
 
-                                (*data.v)[i] = ((*solids.boundary_flags)[i] & !(*solids.solid_to_fluid_flags)[i]) ?
-                                                    solids.current_v  : ((*solids.solid_to_fluid_flags)[i] ?
+                                (*data.v)[i] = ((*solids.boundary_flags)[i] & !stf) ?
+                                                    solids.current_v  : (stf ?
                                                             _interpolation_v(info, data, solids, i) :(fts ? DT_(0) : (*data.v)[i]));
 
 
@@ -208,14 +207,13 @@ namespace honei
 
                             info.cuda_dir_5->unlock(lm_read_only);
 
-                            solids.solid_to_fluid_flags->unlock(lm_read_and_write);
                             solids.boundary_flags->unlock(lm_read_only);
+                            solids.solid_flags->unlock(lm_read_only);
+                            solids.solid_old_flags->unlock(lm_read_and_write);
                             data.h->unlock(lm_read_and_write);
                             data.v->unlock(lm_read_and_write);
                             data.u->unlock(lm_read_and_write);
                             info.limits->unlock(lm_read_only);
-                            solids.solid_flags->unlock(lm_read_only);
-                            solids.solid_old_flags->unlock(lm_read_and_write);
 
                             data.f_0->unlock(lm_write_only);
                             data.f_1->unlock(lm_write_only);
@@ -245,6 +243,16 @@ namespace honei
                             data.f_temp_7->unlock(lm_write_only);
                             data.f_temp_8->unlock(lm_write_only);
                         }
+            };
+
+        template <>
+            struct BoundaryInitFSI<tags::GPU::CUDA, D2Q9::DIR_1>
+            {
+
+                    static void value(
+                            PackedGridInfo<lbm_lattice_types::D2Q9> & info,
+                            PackedGridData<lbm_lattice_types::D2Q9, float> & data,
+                            PackedSolidData<lbm_lattice_types::D2Q9, float> & solids);
             };
     }
 }
