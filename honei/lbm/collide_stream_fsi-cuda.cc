@@ -56,14 +56,14 @@ void CollideStreamFSI<tags::GPU::CUDA, lbm_boundary_types::NOSLIP, lbm_lattice_t
     void * f_temp_7_gpu(data.f_temp_7->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
     void * f_temp_8_gpu(data.f_temp_8->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
 
-    void * f_mea_1_gpu(solids.f_mea_1->lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * f_mea_2_gpu(solids.f_mea_2->lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * f_mea_3_gpu(solids.f_mea_3->lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * f_mea_4_gpu(solids.f_mea_4->lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * f_mea_5_gpu(solids.f_mea_5->lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * f_mea_6_gpu(solids.f_mea_6->lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * f_mea_7_gpu(solids.f_mea_7->lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * f_mea_8_gpu(solids.f_mea_8->lock(lm_write_only, tags::GPU::CUDA::memory_value));
+    void * f_mea_1_gpu(solids.f_mea_1->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * f_mea_2_gpu(solids.f_mea_2->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * f_mea_3_gpu(solids.f_mea_3->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * f_mea_4_gpu(solids.f_mea_4->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * f_mea_5_gpu(solids.f_mea_5->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * f_mea_6_gpu(solids.f_mea_6->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * f_mea_7_gpu(solids.f_mea_7->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * f_mea_8_gpu(solids.f_mea_8->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
 
     void * line_flags_gpu(solids.line_flags->lock(lm_read_only, tags::GPU::CUDA::memory_value));
     void * dist_x_gpu(data.distribution_x->lock(lm_read_only, tags::GPU::CUDA::memory_value));
@@ -110,14 +110,14 @@ void CollideStreamFSI<tags::GPU::CUDA, lbm_boundary_types::NOSLIP, lbm_lattice_t
     data.f_temp_7->unlock(lm_read_and_write);
     data.f_temp_8->unlock(lm_read_and_write);
 
-    solids.f_mea_1->unlock(lm_write_only);
-    solids.f_mea_2->unlock(lm_write_only);
-    solids.f_mea_3->unlock(lm_write_only);
-    solids.f_mea_4->unlock(lm_write_only);
-    solids.f_mea_5->unlock(lm_write_only);
-    solids.f_mea_6->unlock(lm_write_only);
-    solids.f_mea_7->unlock(lm_write_only);
-    solids.f_mea_8->unlock(lm_write_only);
+    solids.f_mea_1->unlock(lm_read_and_write);
+    solids.f_mea_2->unlock(lm_read_and_write);
+    solids.f_mea_3->unlock(lm_read_and_write);
+    solids.f_mea_4->unlock(lm_read_and_write);
+    solids.f_mea_5->unlock(lm_read_and_write);
+    solids.f_mea_6->unlock(lm_read_and_write);
+    solids.f_mea_7->unlock(lm_read_and_write);
+    solids.f_mea_8->unlock(lm_read_and_write);
 
     solids.line_flags->unlock(lm_read_only);
     data.distribution_x->unlock(lm_read_only);

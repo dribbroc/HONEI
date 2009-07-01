@@ -294,14 +294,8 @@ class CollideStreamFSITest :
             data_2.f_eq_8->unlock(lm_write_only);
             CollideStreamGrid<Tag_, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                 value(info_2, data_2, tau);
-            solids.f_mea_1->lock(lm_read_only);
-            std::cout << *solids.f_mea_1 << std::endl;
-            solids.f_mea_1->unlock(lm_read_only);
             CollideStreamFSI<Tag_, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                 value(info_2, data_2, solids, DataType_(0.), DataType_(0.));
-            solids.f_mea_1->lock(lm_read_only);
-            std::cout << *solids.f_mea_1 << std::endl;
-            solids.f_mea_1->unlock(lm_read_only);
             UpdateVelocityDirectionsGrid<Tag_, NOSLIP>::value(info_2, data_2);
 
             //in matrix-form:
@@ -336,7 +330,6 @@ class CollideStreamFSITest :
             GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.f_temp_1 , &ref);
             GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2, data_2.f_temp_1, &res);
 
-            std::cout << res << std::endl;
             for(unsigned long i(0) ; i < ref.rows() ; ++i)
             {
                 for(unsigned long j(0) ; j < ref.columns() ; ++j)
@@ -420,14 +413,14 @@ class CollideStreamFSITest :
                     TEST_CHECK_EQUAL_WITHIN_EPS(res[i][j], ref[i][j], std::numeric_limits<DataType_>::epsilon() * 10);
                 }
             }
-            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_1)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(3.702), std::numeric_limits<DataType_>::epsilon() * 10);
-            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_2)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(3.702), std::numeric_limits<DataType_>::epsilon() * 10);
-            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_3)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(3.702), std::numeric_limits<DataType_>::epsilon() * 10);
-            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_4)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(3.702), std::numeric_limits<DataType_>::epsilon() * 10);
-            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_5)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(3.702), std::numeric_limits<DataType_>::epsilon() * 10);
-            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_6)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(3.702), std::numeric_limits<DataType_>::epsilon() * 10);
-            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_7)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(3.702), std::numeric_limits<DataType_>::epsilon() * 10);
-            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_8)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(3.702), std::numeric_limits<DataType_>::epsilon() * 10);
+            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_1)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(4.936), std::numeric_limits<DataType_>::epsilon() * 10);
+            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_2)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(4.936), std::numeric_limits<DataType_>::epsilon() * 10);
+            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_3)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(4.936), std::numeric_limits<DataType_>::epsilon() * 10);
+            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_4)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(4.936), std::numeric_limits<DataType_>::epsilon() * 10);
+            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_5)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(4.936), std::numeric_limits<DataType_>::epsilon() * 10);
+            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_6)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(4.936), std::numeric_limits<DataType_>::epsilon() * 10);
+            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_7)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(4.936), std::numeric_limits<DataType_>::epsilon() * 10);
+            TEST_CHECK_EQUAL_WITHIN_EPS( ((*solids.f_mea_8)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid_2, 5, 5)]), DataType_(4.936), std::numeric_limits<DataType_>::epsilon() * 10);
             data_2.f_temp_1->unlock(lm_read_only);
             data_2.f_temp_2->unlock(lm_read_only);
             data_2.f_temp_3->unlock(lm_read_only);
