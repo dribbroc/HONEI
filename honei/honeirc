@@ -25,6 +25,8 @@ cuda::element_product_two_double = 128
 
 cuda::norm_l2_one_float = 128
 cuda::norm_l2_one_float_grid = 16
+cuda::norm_l2_one_double = 128
+cuda::norm_l2_one_double = 16
 
 cuda::product_bmdv_q1_float = 128
 

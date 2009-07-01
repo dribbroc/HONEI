@@ -399,6 +399,7 @@ namespace honei
          */
 
         static float value(const DenseVectorContinuousBase<float> & x);
+        static double value(const DenseVectorContinuousBase<double> & x);
     };
     template <> struct Norm<vnt_l_two, true, tags::GPU::CUDA>
     {
@@ -414,6 +415,7 @@ namespace honei
          */
 
         static float value(const DenseVectorContinuousBase<float> & x);
+        static double value(const DenseVectorContinuousBase<double> & x);
     };
 
     /**

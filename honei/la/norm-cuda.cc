@@ -80,3 +80,61 @@ float Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuousB
 
     return sqrt(result);
 }
+
+#ifdef HONEI_CUDA_DOUBLE
+double Norm<vnt_l_two, false, tags::GPU::CUDA>::value(const DenseVectorContinuousBase<double> & a)
+{
+    CONTEXT("When calculating L2 norm (false) of DenseVectorContinuousBase<double> (CUDA):");
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::norm_l2_one_double", 128ul));
+    unsigned long gridsize(Configuration::instance()->get_value("cuda::norm_l2_one_double", 16ul));
+
+    double result (0.);
+
+    if (a.size() < gridsize * blocksize)
+    {
+        a.lock(lm_read_only);
+        for (unsigned long i(0) ; i < a.size() ; ++i)
+        {
+            result += a[i] * a[i];
+        }
+        a.unlock(lm_read_only);
+    }
+    else
+    {
+        void * a_gpu(a.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+        result = cuda_norm_l2_one_double(a_gpu, a.size(), blocksize, gridsize);
+        a.unlock(lm_read_only);
+    }
+
+    return result;
+}
+
+double Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuousBase<double> & a)
+{
+    CONTEXT("When calculating L2 norm (true) of DenseVectorContinuousBase<double> (CUDA):");
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::norm_l2_one_double", 128ul));
+    unsigned long gridsize(Configuration::instance()->get_value("cuda::norm_l2_one_double", 16ul));
+
+    double result (0.);
+
+    if (a.size() < gridsize * blocksize)
+    {
+        a.lock(lm_read_only);
+        for (unsigned long i(0) ; i < a.size() ; ++i)
+        {
+            result += a[i] * a[i];
+        }
+        a.unlock(lm_read_only);
+    }
+    else
+    {
+        void * a_gpu(a.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+        result = cuda_norm_l2_one_double(a_gpu, a.size(), blocksize, gridsize);
+        a.unlock(lm_read_only);
+    }
+
+    return sqrt(result);
+}
+#endif

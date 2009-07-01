@@ -52,6 +52,9 @@ extern "C"
     float cuda_norm_l2_one_float(const void * a, unsigned long size, unsigned long blocksize,
             unsigned long gridsize);
 
+    float cuda_norm_l2_one_double(const void * a, unsigned long size, unsigned long blocksize,
+            unsigned long gridsize);
+
     void cuda_product_bmdv_q1_float(void * ll, void * ld, void * lu,
             void * dl, void * dd, void *du,
             void * ul, void * ud, void *uu, void * x, void * y,
