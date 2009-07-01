@@ -136,8 +136,24 @@ class BoundaryInitFSITest :
                         TEST_CHECK_EQUAL_WITHIN_EPS(res_u[i][j], DataType_(0.), std::numeric_limits<DataType_>::epsilon());
                         TEST_CHECK_EQUAL_WITHIN_EPS(res_v[i][j], DataType_(0.), std::numeric_limits<DataType_>::epsilon());
                     }
+                    if( i == 4 || i == 6)
+                    {
+                        if(j >= 4 && j <=6)
+                        {
+                        TEST_CHECK_EQUAL_WITHIN_EPS(res_h[i][j], DataType_(0.05), std::numeric_limits<DataType_>::epsilon());
+                        TEST_CHECK_EQUAL_WITHIN_EPS(res_u[i][j], DataType_(0.1), std::numeric_limits<DataType_>::epsilon());
+                        TEST_CHECK_EQUAL_WITHIN_EPS(res_v[i][j], DataType_(0.1), std::numeric_limits<DataType_>::epsilon());
+                        }
+                    }
                 }
             }
+            TEST_CHECK_EQUAL_WITHIN_EPS(res_h[5][4], DataType_(0.1), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(res_u[5][4], DataType_(0.0533333), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(res_v[5][4], DataType_(0.0533333), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(res_h[5][6], DataType_(0.05), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(res_u[5][6], DataType_(0.1), std::numeric_limits<DataType_>::epsilon());
+            TEST_CHECK_EQUAL_WITHIN_EPS(res_v[5][6], DataType_(0.1), std::numeric_limits<DataType_>::epsilon());
+
 
         }
 };
