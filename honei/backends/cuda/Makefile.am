@@ -36,6 +36,7 @@ memory_backend_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 
 libhoneibackendscuda_la_SOURCES = \
 				 cuda_util.hh \
+				 boundary_init_fsi.cu \
 				 collide_stream_grid.cu \
 				 collide_stream_fsi.cu \
 				 defect.cu \

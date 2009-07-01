@@ -861,7 +861,8 @@ namespace honei
 
                 solids.boundary_flags->lock(lm_write_only);
                 solids.line_flags->lock(lm_write_only);
-                solids.solid_flags->lock(lm_write_only);
+                solids.solid_flags->lock(lm_read_and_write);
+                solids.solid_old_flags->lock(lm_write_only);
                 solids.solid_to_fluid_flags->lock(lm_write_only);
                 solids.stationary_flags->lock(lm_write_only);
                 solids.f_mea_1->lock(lm_write_only);
@@ -904,7 +905,8 @@ namespace honei
                 solids.f_mea_8->unlock(lm_write_only);
                 solids.boundary_flags->unlock(lm_write_only);
                 solids.line_flags->unlock(lm_write_only);
-                solids.solid_flags->unlock(lm_write_only);
+                solids.solid_flags->unlock(lm_read_and_write);
+                solids.solid_old_flags->unlock(lm_write_only);
                 solids.solid_to_fluid_flags->unlock(lm_write_only);
                 solids.stationary_flags->unlock(lm_write_only);
             }
