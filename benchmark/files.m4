@@ -8,6 +8,7 @@ dnl the base filename with no extension; later parameters can be `hh', `cc',
 dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
+add(`boundary_init_fsi',                         `bench')
 add(`breadth_first_search',                      `bench')
 add(`collide_stream',                            `bench')
 add(`collide_stream_grid',                       `bench')
