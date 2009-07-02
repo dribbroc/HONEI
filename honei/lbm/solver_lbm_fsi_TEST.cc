@@ -227,7 +227,7 @@ class SolverLBMFSINonStationaryTest :
             tri_0.add_line(line_4_0);
             tri_0.value();
 
-            ScanConversionFSI<Tag_>::value(grid, info, data, solids, tri_0, true);
+            ScanConversionFSI<tags::CPU>::value(grid, info, data, solids, tri_0, true);
 
             solids.current_u = DataType_(1./2.* grid.d_x);
             solids.current_v = DataType_(0.);
@@ -252,7 +252,7 @@ class SolverLBMFSINonStationaryTest :
                     tri_i.add_line(line_3_i);
                     tri_i.add_line(line_4_i);
                     tri_i.value();
-                    ScanConversionFSI<Tag_>::value(grid, info, data, solids, tri_i, true);
+                    ScanConversionFSI<tags::CPU>::value(grid, info, data, solids, tri_i, true);
                 }
                 else
                 {
@@ -274,3 +274,6 @@ class SolverLBMFSINonStationaryTest :
 
 };
 SolverLBMFSINonStationaryTest<tags::CPU, float> solver_test_nstat_float("float");
+#ifdef HONEI_CUDA
+SolverLBMFSINonStationaryTest<tags::GPU::CUDA, float> solver_test_nstat_cuda_float(" CUDA float");
+#endif
