@@ -23,105 +23,77 @@ namespace honei
 {
     namespace cuda
     {
-        __global__ void force_grid_gpu(
-                unsigned long ** directions,
-                float ** fs,
+        __global__ void force_grid_gpu_x(
+                unsigned long * dir_1,
+                float * f_temp_1,
                 float * h, float * b,
-                float * distribution_x, float * distribution_y,
+                float distribution_x,
                 float g, float d_x, float d_y, float d_t,
                 unsigned long size)
         {
             unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+            float force_multiplier(d_t / (6 * d_x * d_x / (d_t * d_t)));
+            float gravity_multiplier(-g);
+            float force_times_gravity(force_multiplier * gravity_multiplier);
+            float dx_by_two(float(2) * d_x);
+
             if (idx < size)
             {
-                /*(*data.f_temp_1)[i] += d_t / (6 * d_x / d_t) * ((*data.distribution_x)[1]) *
-                    (-g * (((*data.h)[(*info.dir_1)[half] + offset]) - ((*data.b_x)[i]))/ DT1_(2.) *
-                     ((((*data.b_x)[(*info.dir_1)[half] + offset]) - ((*data.b_x)[i]))/ DT1_(2.)));
-
-                (*data.f_temp_1)[i] += d_t / (6 * d_y / d_t) * ((*data.distribution_y)[1]) *
-                    (- g * (((*data.h)[(*info.dir_1)[half] + offset]) - ((*data.b_y)[i]))/ DT1_(2.) *
-                     ((((*data.b_y)[(*info.dir_1)[half] + offset]) - ((*data.b_y)[i]))/ DT1_(2.)));*/ /*
                 unsigned long i(idx);
-                if (directions[0][i] < size)
+                if (dir_1[i] < size)
                 {
-                    fs[0][i] += d_t / (6 * d_x / d_t) * distribution_x[1] *
-                        (-g * (h[directions[0][i]] - b_x[i])/ float(2.) *
-                         ((b_x[directions[0][i]] - b_x[i])/ float(2.)));
-
-                    fs[0][i] += d_t / (6 * d_y / d_t) * distribution_y[1] *
-                        (-g * (h[directions[0][i]] - b_y[i])/ float(2.) *
-                         ((b_y[directions[0][i]] - b_y[i])/ float(2.)));
+                    f_temp_1[i] += force_times_gravity * distribution_x * (h[i] + h[dir_1[i]]) * (b[dir_1[i]] - b[i]) / dx_by_two;
                 }
-                if (directions[1][i] < size)
-                {
-                    fs[1][i] += d_t / (6 * d_x / d_t) * distribution_x[2] *
-                        (-g * (h[directions[1][i]] - b_x[i])/ float(2.) *
-                         ((b_x[directions[1][i]] - b_x[i])/ float(2.)));
+            }
+        }
+        __global__ void force_grid_gpu_xy(
+                unsigned long * dir_2,
+                unsigned long * dir_1,
+                unsigned long * dir_3,
+                float * f_temp_2,
+                float * h, float * b,
+                float distribution_x, float distribution_y,
+                float g, float d_x, float d_y, float d_t,
+                unsigned long size)
+        {
+            unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+            float force_multiplier(d_t / (6 * d_x * d_x / (d_t * d_t)));
+            float gravity_multiplier(-g);
+            float force_times_gravity(force_multiplier * gravity_multiplier);
+            float dx_by_two(float(2) * d_x);
+            float dy_by_two(float(2) * d_y);
 
-                    fs[1][i] += d_t / (6 * d_y / d_t) * distribution_y[2] *
-                        (-g * (h[directions[1][i]] - b_y[i])/ float(2.) *
-                         ((b_y[directions[1][i]] - b_y[i])/ float(2.)));
+            if (idx < size)
+            {
+                unsigned long i(idx);
+                if (dir_2[i] < size && dir_3[i] < size && dir_1[i] < size)
+                {
+                    f_temp_2[i] += (force_times_gravity * distribution_x * (h[i] + h[dir_2[i]]) * (b[dir_1[i]] - b[i]) / dx_by_two) +
+                                   (force_times_gravity * distribution_y * (h[i] + h[dir_2[i]]) * (b[dir_3[i]] - b[i]) / dy_by_two);
                 }
-                if (directions[2][i] < size)
-                {
-                    fs[2][i] += d_t / (6 * d_x / d_t) * distribution_x[3] *
-                        (-g * (h[directions[2][i]] - b_x[i])/ float(2.) *
-                         ((b_x[directions[2][i]] - b_x[i])/ float(2.)));
+            }
+        }
+        __global__ void force_grid_gpu_y(
+                unsigned long * dir_3,
+                float * f_temp_3,
+                float * h, float * b,
+                float distribution_y,
+                float g, float d_x, float d_y, float d_t,
+                unsigned long size)
+        {
+            unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+            float force_multiplier(d_t / (6 * d_x * d_x / (d_t * d_t)));
+            float gravity_multiplier(-g);
+            float force_times_gravity(force_multiplier * gravity_multiplier);
+            float dy_by_two(float(2) * d_y);
 
-                    fs[2][i] += d_t / (6 * d_y / d_t) * distribution_y[3] *
-                        (-g * (h[directions[2][i]] - b_y[i])/ float(2.) *
-                         ((b_y[directions[2][i]] - b_y[i])/ float(2.)));
+            if (idx < size)
+            {
+                unsigned long i(idx);
+                if (dir_3[i] < size)
+                {
+                    f_temp_3[i] += force_times_gravity * distribution_y * (h[i] + h[dir_3[i]]) * (b[dir_3[i]] - b[i]) / dy_by_two;
                 }
-                if (directions[3][i] < size)
-                {
-                    fs[3][i] += d_t / (6 * d_x / d_t) * distribution_x[4] *
-                        (-g * (h[directions[3][i]] - b_x[i])/ float(2.) *
-                         ((b_x[directions[3][i]] - b_x[i])/ float(2.)));
-
-                    fs[3][i] += d_t / (6 * d_y / d_t) * distribution_y[4] *
-                        (-g * (h[directions[3][i]] - b_y[i])/ float(2.) *
-                         ((b_y[directions[3][i]] - b_y[i])/ float(2.)));
-                }
-                if (directions[4][i] < size)
-                {
-                    fs[4][i] += d_t / (6 * d_x / d_t) * distribution_x[5] *
-                        (-g * (h[directions[4][i]] - b_x[i])/ float(2.) *
-                         ((b_x[directions[4][i]] - b_x[i])/ float(2.)));
-
-                    fs[4][i] += d_t / (6 * d_y / d_t) * distribution_y[5] *
-                        (-g * (h[directions[4][i]] - b_y[i])/ float(2.) *
-                         ((b_y[directions[4][i]] - b_y[i])/ float(2.)));
-                }
-                if (directions[5][i] < size)
-                {
-                    fs[5][i] += d_t / (6 * d_x / d_t) * distribution_x[6] *
-                        (-g * (h[directions[5][i]] - b_x[i])/ float(2.) *
-                         ((b_x[directions[5][i]] - b_x[i])/ float(2.)));
-
-                    fs[5][i] += d_t / (6 * d_y / d_t) * distribution_y[6] *
-                        (-g * (h[directions[5][i]] - b_y[i])/ float(2.) *
-                         ((b_y[directions[5][i]] - b_y[i])/ float(2.)));
-                }
-                if (directions[6][i] < size)
-                {
-                    fs[6][i] += d_t / (6 * d_x / d_t) * distribution_x[7] *
-                        (-g * (h[directions[6][i]] - b_x[i])/ float(2.) *
-                         ((b_x[directions[6][i]] - b_x[i])/ float(2.)));
-
-                    fs[6][i] +=  d_t / (6 * d_y / d_t) * distribution_y[7] *
-                        (-g * (h[directions[6][i]] - b_y[i])/ float(2.) *
-                         ((b_y[directions[6][i]] - b_y[i])/ float(2.)));
-                }
-                if (directions[7][i] < size)
-                {
-                    fs[7][i] += d_t / (6 * d_x / d_t) * distribution_x[8] *
-                        (-g * (h[directions[7][i]] - b_x[i])/ float(2.) *
-                         ((b_x[directions[7][i]] - b_x[i])/ float(2.)));
-
-                    fs[7][i] += d_t / (6 * d_y / d_t) * distribution_y[8] *
-                        (-g * (h[directions[7][i]] - b_y[i])/ float(2.) *
-                         ((b_y[directions[7][i]] - b_y[i])/ float(2.)));
-                }*/
             }
         }
     }
@@ -131,10 +103,17 @@ extern "C" void cuda_force_grid_float(
         void * dir_1, void * dir_2, void * dir_3, void * dir_4,
         void * dir_5, void * dir_6, void * dir_7, void * dir_8,
         void * h, void * b,
-        void * distribution_x, void * distribution_y,
         void * f_temp_1, void * f_temp_2,
         void * f_temp_3, void * f_temp_4, void * f_temp_5,
         void * f_temp_6, void * f_temp_7, void * f_temp_8,
+        float distribution_x_1, float distribution_y_1,
+        float distribution_x_2, float distribution_y_2,
+        float distribution_x_3, float distribution_y_3,
+        float distribution_x_4, float distribution_y_4,
+        float distribution_x_5, float distribution_y_5,
+        float distribution_x_6, float distribution_y_6,
+        float distribution_x_7, float distribution_y_7,
+        float distribution_x_8, float distribution_y_8,
         float g, float d_x, float d_y, float d_t,
         unsigned long size,
         unsigned long blocksize)
@@ -156,8 +135,6 @@ extern "C" void cuda_force_grid_float(
 
     float * h_gpu((float *)h);
     float * b_gpu((float *)b);
-    float * distribution_x_gpu((float *)distribution_x);
-    float * distribution_y_gpu((float *)distribution_y);
 
     float * f_temp_1_gpu((float *)f_temp_1);
     float * f_temp_2_gpu((float *)f_temp_2);
@@ -168,42 +145,54 @@ extern "C" void cuda_force_grid_float(
     float * f_temp_7_gpu((float *)f_temp_7);
     float * f_temp_8_gpu((float *)f_temp_8);
 
-    unsigned long * directions[8];
-    directions[0] = dir_1_gpu;
-    directions[1] = dir_2_gpu;
-    directions[2] = dir_3_gpu;
-    directions[3] = dir_4_gpu;
-    directions[4] = dir_5_gpu;
-    directions[5] = dir_6_gpu;
-    directions[6] = dir_7_gpu;
-    directions[7] = dir_8_gpu;
-
-    float * fs[8];
-    fs[0] = f_temp_1_gpu;
-    fs[1] = f_temp_2_gpu;
-    fs[2] = f_temp_3_gpu;
-    fs[3] = f_temp_4_gpu;
-    fs[4] = f_temp_5_gpu;
-    fs[5] = f_temp_6_gpu;
-    fs[6] = f_temp_7_gpu;
-    fs[7] = f_temp_8_gpu;
-
-    unsigned long ** directions_gpu;
-    float ** fs_gpu;
-    cudaMalloc((void **) &directions_gpu, sizeof(directions));
-    cudaMalloc((void **) &fs_gpu, sizeof(fs));
-    cudaMemcpy(directions_gpu, directions, sizeof(directions), cudaMemcpyHostToDevice);
-    cudaMemcpy(fs_gpu, fs, sizeof(fs), cudaMemcpyHostToDevice);
-
-    honei::cuda::force_grid_gpu<<<grid, block>>>(
-            directions_gpu, fs_gpu,
+    honei::cuda::force_grid_gpu_x<<<grid, block>>>(
+            dir_1_gpu, f_temp_1_gpu,
             h_gpu, b_gpu,
-            distribution_x_gpu, distribution_y_gpu,
+            distribution_x_1,
             g, d_x, d_y, d_t,
             size);
-
-    cudaFree(directions_gpu);
-    cudaFree(fs_gpu);
+    honei::cuda::force_grid_gpu_xy<<<grid, block>>>(
+            dir_2_gpu, dir_1_gpu, dir_3_gpu, f_temp_2_gpu,
+            h_gpu, b_gpu,
+            distribution_x_2, distribution_y_2,
+            g, d_x, d_y, d_t,
+            size);
+    honei::cuda::force_grid_gpu_y<<<grid, block>>>(
+            dir_3_gpu, f_temp_3_gpu,
+            h_gpu, b_gpu,
+            distribution_y_3,
+            g, d_x, d_y, d_t,
+            size);
+    honei::cuda::force_grid_gpu_xy<<<grid, block>>>(
+            dir_4_gpu, dir_1_gpu, dir_3_gpu, f_temp_4_gpu,
+            h_gpu, b_gpu,
+            distribution_x_4, distribution_y_4,
+            g, d_x, d_y, d_t,
+            size);
+    honei::cuda::force_grid_gpu_x<<<grid, block>>>(
+            dir_5_gpu, f_temp_5_gpu,
+            h_gpu, b_gpu,
+            distribution_x_5,
+            g, d_x, d_y, d_t,
+            size);
+    honei::cuda::force_grid_gpu_xy<<<grid, block>>>(
+            dir_6_gpu, dir_1_gpu, dir_3_gpu, f_temp_6_gpu,
+            h_gpu, b_gpu,
+            distribution_x_6, distribution_y_6,
+            g, d_x, d_y, d_t,
+            size);
+    honei::cuda::force_grid_gpu_y<<<grid, block>>>(
+            dir_7_gpu, f_temp_7_gpu,
+            h_gpu, b_gpu,
+            distribution_y_7,
+            g, d_x, d_y, d_t,
+            size);
+    honei::cuda::force_grid_gpu_xy<<<grid, block>>>(
+            dir_8_gpu, dir_1_gpu, dir_3_gpu, f_temp_8_gpu,
+            h_gpu, b_gpu,
+            distribution_x_8, distribution_y_8,
+            g, d_x, d_y, d_t,
+            size);
 
     CUDA_ERROR();
 }

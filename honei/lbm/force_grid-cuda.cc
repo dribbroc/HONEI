@@ -26,7 +26,7 @@
 using namespace honei;
 
 void ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(
-        PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info, float g, float d_x, float d_y, float d_t)
+        PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info, float g, float d_x, float d_y, float d_t, float manning)
 {
     CONTEXT("When computing LABSWE source term (CUDA):");
 
@@ -43,8 +43,6 @@ void ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lb
 
     void * h_gpu(data.h->lock(lm_read_only, tags::GPU::CUDA::memory_value));
     void * b_gpu(data.b->lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * distribution_x_gpu(data.distribution_x->lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * distribution_y_gpu(data.distribution_y->lock(lm_read_only, tags::GPU::CUDA::memory_value));
 
     void * f_temp_1_gpu(data.f_temp_1->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
     void * f_temp_2_gpu(data.f_temp_2->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
@@ -58,11 +56,18 @@ void ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lb
     cuda_force_grid_float(
             cuda_dir_1_gpu, cuda_dir_2_gpu, cuda_dir_3_gpu, cuda_dir_4_gpu,
             cuda_dir_5_gpu, cuda_dir_6_gpu, cuda_dir_7_gpu, cuda_dir_8_gpu,
-            h_gpu,
-            distribution_x_gpu, distribution_y_gpu,
+            h_gpu, b_gpu,
             f_temp_1_gpu, f_temp_2_gpu,
             f_temp_3_gpu, f_temp_4_gpu, f_temp_5_gpu,
             f_temp_6_gpu, f_temp_7_gpu, f_temp_8_gpu,
+            (*data.distribution_x)[1], (*data.distribution_y)[1],
+            (*data.distribution_x)[2], (*data.distribution_y)[2],
+            (*data.distribution_x)[3], (*data.distribution_y)[3],
+            (*data.distribution_x)[4], (*data.distribution_y)[4],
+            (*data.distribution_x)[5], (*data.distribution_y)[5],
+            (*data.distribution_x)[6], (*data.distribution_y)[6],
+            (*data.distribution_x)[7], (*data.distribution_y)[7],
+            (*data.distribution_x)[8], (*data.distribution_y)[8],
             g, d_x, d_y, d_t,
             data.h->size(),
             blocksize);
@@ -78,8 +83,6 @@ void ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lb
 
     data.h->unlock(lm_read_only);
     data.b->unlock(lm_read_only);
-    data.distribution_x->unlock(lm_read_only);
-    data.distribution_y->unlock(lm_read_only);
 
     data.f_temp_1->unlock(lm_read_and_write);
     data.f_temp_2->unlock(lm_read_and_write);
