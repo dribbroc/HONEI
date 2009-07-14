@@ -93,3 +93,55 @@ void ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lb
     data.f_temp_7->unlock(lm_read_and_write);
     data.f_temp_8->unlock(lm_read_and_write);
 }
+void ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(
+        PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info, float g, float d_x, float d_y, float d_t, float manning)
+{
+    CONTEXT("When computing LABSWE source term (CUDA):");
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::force_grid_float", 128ul));
+
+    void * h_gpu(data.h->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+    void * u_gpu(data.u->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+    void * v_gpu(data.v->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+    void * b_gpu(data.b->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+    void * f_temp_1_gpu(data.f_temp_1->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * f_temp_2_gpu(data.f_temp_2->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * f_temp_3_gpu(data.f_temp_3->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * f_temp_4_gpu(data.f_temp_4->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * f_temp_5_gpu(data.f_temp_5->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * f_temp_6_gpu(data.f_temp_6->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * f_temp_7_gpu(data.f_temp_7->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * f_temp_8_gpu(data.f_temp_8->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+
+    cuda_force_grid_float_2(
+            h_gpu, u_gpu, v_gpu,
+            f_temp_1_gpu, f_temp_2_gpu,
+            f_temp_3_gpu, f_temp_4_gpu, f_temp_5_gpu,
+            f_temp_6_gpu, f_temp_7_gpu, f_temp_8_gpu,
+            (*data.distribution_x)[1], (*data.distribution_y)[1],
+            (*data.distribution_x)[2], (*data.distribution_y)[2],
+            (*data.distribution_x)[3], (*data.distribution_y)[3],
+            (*data.distribution_x)[4], (*data.distribution_y)[4],
+            (*data.distribution_x)[5], (*data.distribution_y)[5],
+            (*data.distribution_x)[6], (*data.distribution_y)[6],
+            (*data.distribution_x)[7], (*data.distribution_y)[7],
+            (*data.distribution_x)[8], (*data.distribution_y)[8],
+            g, d_x, d_y, d_t, manning,
+            data.h->size(),
+            blocksize);
+
+    data.h->unlock(lm_read_only);
+    data.u->unlock(lm_read_only);
+    data.v->unlock(lm_read_only);
+    data.b->unlock(lm_read_only);
+
+    data.f_temp_1->unlock(lm_read_and_write);
+    data.f_temp_2->unlock(lm_read_and_write);
+    data.f_temp_3->unlock(lm_read_and_write);
+    data.f_temp_4->unlock(lm_read_and_write);
+    data.f_temp_5->unlock(lm_read_and_write);
+    data.f_temp_6->unlock(lm_read_and_write);
+    data.f_temp_7->unlock(lm_read_and_write);
+    data.f_temp_8->unlock(lm_read_and_write);
+}

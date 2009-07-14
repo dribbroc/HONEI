@@ -134,6 +134,23 @@ extern "C"
             unsigned long size,
             unsigned long blocksize);
 
+    void cuda_force_grid_float_2(
+            void * h, void * u, void * v,
+            void * f_temp_1, void * f_temp_2,
+            void * f_temp_3, void * f_temp_4, void * f_temp_5,
+            void * f_temp_6, void * f_temp_7, void * f_temp_8,
+            float distribution_x_1, float distribution_y_1,
+            float distribution_x_2, float distribution_y_2,
+            float distribution_x_3, float distribution_y_3,
+            float distribution_x_4, float distribution_y_4,
+            float distribution_x_5, float distribution_y_5,
+            float distribution_x_6, float distribution_y_6,
+            float distribution_x_7, float distribution_y_7,
+            float distribution_x_8, float distribution_y_8,
+            float g, float d_x, float d_y, float d_t, float manning,
+            unsigned long size,
+            unsigned long blocksize);
+
     void cuda_up_vel_dir_grid_float(void * types,
             void * f_temp_1, void * f_temp_2,
             void * f_temp_3, void * f_temp_4, void * f_temp_5,
