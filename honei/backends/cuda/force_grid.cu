@@ -196,3 +196,149 @@ extern "C" void cuda_force_grid_float(
 
     CUDA_ERROR();
 }
+
+//-----------------------------------------------------------------------------------------------
+namespace honei
+{
+    namespace cuda
+    {
+        __global__ void force_grid_gpu_x_2(
+                float * f_temp,
+                float * h, float * u, float * v,
+                float distribution_x,
+                float g, float d_x, float d_t, float manning, float epsilon,
+                unsigned long size)
+        {
+            unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+
+            if (idx < size)
+            {
+                unsigned long i(idx);
+                float force_multiplier(d_t / (float(6) * d_x * d_x / (d_t * d_t)));
+                force_multiplier *= g;
+                if ( (powf(h[i], float(1./3.))) > epsilon || (pow(h[i], float(1./3.))) < -epsilon )
+                {
+                    f_temp[i] -= force_multiplier * distribution_x * manning * manning *
+                        u[i] * sqrtf(u[i] * u[i] + v[i] * v[i]) / (powf(h[i], float(1./3.)));
+                }
+            }
+        }
+
+        __global__ void force_grid_gpu_xy_2(
+                float * f_temp,
+                float * h, float * u, float * v,
+                float distribution_x,
+                float distribution_y,
+                float g, float d_x, float d_t, float manning, float epsilon,
+                unsigned long size)
+        {
+            unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+
+            if (idx < size)
+            {
+                unsigned long i(idx);
+                float force_multiplier(d_t / (float(6) * d_x * d_x / (d_t * d_t)));
+                force_multiplier *= g;
+                if ( (powf(h[i], float(1./3.))) > epsilon || (pow(h[i], float(1./3.))) < -epsilon )
+                {
+                    f_temp[i] -= force_multiplier * distribution_x * manning * manning *
+                        u[i] * sqrtf(u[i] * u[i] + v[i] * v[i]) / (powf(h[i], float(1./3.)));
+                    f_temp[i] -= force_multiplier * distribution_y * manning * manning *
+                        u[i] * sqrtf(u[i] * u[i] + v[i] * v[i]) / (powf(h[i], float(1./3.)));
+                }
+            }
+        }
+
+        extern "C" void cuda_force_grid_float_2(
+                void * h, void * u, void * v,
+                void * f_temp_1, void * f_temp_2,
+                void * f_temp_3, void * f_temp_4, void * f_temp_5,
+                void * f_temp_6, void * f_temp_7, void * f_temp_8,
+                float distribution_x_1, float distribution_y_1,
+                float distribution_x_2, float distribution_y_2,
+                float distribution_x_3, float distribution_y_3,
+                float distribution_x_4, float distribution_y_4,
+                float distribution_x_5, float distribution_y_5,
+                float distribution_x_6, float distribution_y_6,
+                float distribution_x_7, float distribution_y_7,
+                float distribution_x_8, float distribution_y_8,
+                float g, float d_x, float d_y, float d_t, float manning,
+                unsigned long size,
+                unsigned long blocksize)
+        {
+            dim3 grid;
+            dim3 block;
+            block.x = blocksize;
+            grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
+            grid.y = grid.x;
+
+            float * h_gpu((float *)h);
+            float * u_gpu((float *)u);
+            float * v_gpu((float *)v);
+
+            float * f_temp_1_gpu((float *)f_temp_1);
+            float * f_temp_2_gpu((float *)f_temp_2);
+            float * f_temp_3_gpu((float *)f_temp_3);
+            float * f_temp_4_gpu((float *)f_temp_4);
+            float * f_temp_5_gpu((float *)f_temp_5);
+            float * f_temp_6_gpu((float *)f_temp_6);
+            float * f_temp_7_gpu((float *)f_temp_7);
+            float * f_temp_8_gpu((float *)f_temp_8);
+
+            honei::cuda::force_grid_gpu_x_2<<<grid, block>>>(
+                    f_temp_1_gpu,
+                    h_gpu, u_gpu, v_gpu,
+                    distribution_x_1,
+                    g, d_x, d_t, manning, std::numeric_limits<float>::epsilon(),
+                    size);
+            honei::cuda::force_grid_gpu_xy_2<<<grid, block>>>(
+                    f_temp_2_gpu,
+                    h_gpu, u_gpu, v_gpu,
+                    distribution_x_2,
+                    distribution_y_2,
+                    g, d_x, d_t, manning, std::numeric_limits<float>::epsilon(),
+                    size);
+            honei::cuda::force_grid_gpu_x_2<<<grid, block>>>(
+                    f_temp_3_gpu,
+                    h_gpu, u_gpu, v_gpu,
+                    distribution_y_3,
+                    g, d_x, d_t, manning, std::numeric_limits<float>::epsilon(),
+                    size);
+            honei::cuda::force_grid_gpu_xy_2<<<grid, block>>>(
+                    f_temp_4_gpu,
+                    h_gpu, u_gpu, v_gpu,
+                    distribution_x_4,
+                    distribution_y_4,
+                    g, d_x, d_t, manning, std::numeric_limits<float>::epsilon(),
+                    size);
+            honei::cuda::force_grid_gpu_x_2<<<grid, block>>>(
+                    f_temp_5_gpu,
+                    h_gpu, u_gpu, v_gpu,
+                    distribution_x_5,
+                    g, d_x, d_t, manning, std::numeric_limits<float>::epsilon(),
+                    size);
+            honei::cuda::force_grid_gpu_xy_2<<<grid, block>>>(
+                    f_temp_6_gpu,
+                    h_gpu, u_gpu, v_gpu,
+                    distribution_x_6,
+                    distribution_y_6,
+                    g, d_x, d_t, manning, std::numeric_limits<float>::epsilon(),
+                    size);
+            honei::cuda::force_grid_gpu_x_2<<<grid, block>>>(
+                    f_temp_7_gpu,
+                    h_gpu, u_gpu, v_gpu,
+                    distribution_y_7,
+                    g, d_x, d_t, manning, std::numeric_limits<float>::epsilon(),
+                    size);
+            honei::cuda::force_grid_gpu_xy_2<<<grid, block>>>(
+                    f_temp_8_gpu,
+                    h_gpu, u_gpu, v_gpu,
+                    distribution_x_8,
+                    distribution_y_8,
+                    g, d_x, d_t, manning, std::numeric_limits<float>::epsilon(),
+                    size);
+
+            CUDA_ERROR();
+        }
+    }
+}
