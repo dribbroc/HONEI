@@ -121,6 +121,8 @@ class SolverLBMFSIFSIBench :
                 }
                 BENCHMARK(
                         solver.solve();
+                        if (Tag_::tag_value == tags::tv_gpu_cuda)
+                            cuda_thread_synchronize();
                         );
             }
             evaluate();
@@ -133,5 +135,5 @@ class SolverLBMFSIFSIBench :
 SolverLBMFSIFSIBench<tags::CPU, float> collide_stream_grid_bench_float("SolverLBMFSIFSIBenchmark - size: 129, float", 129, 100);
 SolverLBMFSIFSIBench<tags::CPU, double> collide_stream_grid_bench_double("SolverLBMFSIFSIBenchmark - size: 129, double", 129, 100);
 #ifdef HONEI_CUDA
-SolverLBMFSIFSIBench<tags::GPU::CUDA, float> collide_stream_grid_bench_float_cuda("SolverLBMFSIFSIBenchmark CUDA - size: 129, float", 129, 100);
+SolverLBMFSIFSIBench<tags::GPU::CUDA, float> collide_stream_grid_bench_float_cuda("SolverLBMFSIFSIBenchmark CUDA - size: 450*2, float", 450*2, 100);
 #endif
