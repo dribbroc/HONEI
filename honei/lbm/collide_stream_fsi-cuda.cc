@@ -65,7 +65,7 @@ void CollideStreamFSI<tags::GPU::CUDA, lbm_boundary_types::NOSLIP, lbm_lattice_t
     void * f_mea_7_gpu(solids.f_mea_7->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
     void * f_mea_8_gpu(solids.f_mea_8->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
 
-    void * line_flags_gpu(solids.line_flags->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+    void * line_flags_gpu(solids.solid_flags->lock(lm_read_only, tags::GPU::CUDA::memory_value));//We need indeed SOLID flags
     void * dist_x_gpu(data.distribution_x->lock(lm_read_only, tags::GPU::CUDA::memory_value));
     void * dist_y_gpu(data.distribution_y->lock(lm_read_only, tags::GPU::CUDA::memory_value));
 
@@ -119,7 +119,7 @@ void CollideStreamFSI<tags::GPU::CUDA, lbm_boundary_types::NOSLIP, lbm_lattice_t
     solids.f_mea_7->unlock(lm_read_and_write);
     solids.f_mea_8->unlock(lm_read_and_write);
 
-    solids.line_flags->unlock(lm_read_only);
+    solids.solid_flags->unlock(lm_read_only);
     data.distribution_x->unlock(lm_read_only);
     data.distribution_y->unlock(lm_read_only);
 }

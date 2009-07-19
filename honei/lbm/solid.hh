@@ -58,6 +58,9 @@ namespace honei
                 template<typename Tag_>
                     friend class ScanConversionFSI;
 
+                template<typename Tag_>
+                    friend struct SolidEmulation2D;
+
                 private:
                 Prec_ x_coord_1;
                 Prec_ y_coord_1;
@@ -94,12 +97,18 @@ namespace honei
 
                 template<typename Tag_>
                     friend class ScanConversionFSI;
+
+                template<typename Tag_>
+                    friend struct SolidEmulation2D;
+
                 private:
                 ///Suppose vertices are arranged in line order
                 DenseVector<Prec_> * vertex_x_coords;
                 DenseVector<Prec_> * vertex_y_coords;
                 unsigned long vertex_count, line_count, lines_inserted;
                 std::vector< Line<Prec_, lbm_solid_dims::D2> > lines;
+
+                Prec_ _mass_x, _mass_y;
 
                 Prec_ line_min_x_level, line_min_y_level, line_max_x_level, line_max_y_level;
 

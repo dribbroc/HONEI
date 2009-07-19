@@ -299,3 +299,963 @@ extern "C" void cuda_boundary_init_fsi_dir_1_float(
                                                                   size);
     CUDA_ERROR();
 }
+
+extern "C" void cuda_boundary_init_fsi_dir_2_float(
+        void * dir_6,
+        void * boundary_flags ,
+        void * solid_flags ,
+        void * solid_old_flags ,
+        void * h ,
+        void * u ,
+        void * v ,
+        void * f_0 ,
+        void * f_1 ,
+        void * f_2 ,
+        void * f_3 ,
+        void * f_4 ,
+        void * f_5 ,
+        void * f_6 ,
+        void * f_7 ,
+        void * f_8 ,
+        void * f_eq_0 ,
+        void * f_eq_1 ,
+        void * f_eq_2 ,
+        void * f_eq_3 ,
+        void * f_eq_4 ,
+        void * f_eq_5 ,
+        void * f_eq_6 ,
+        void * f_eq_7 ,
+        void * f_eq_8 ,
+        void * f_temp_0 ,
+        void * f_temp_1 ,
+        void * f_temp_2 ,
+        void * f_temp_3 ,
+        void * f_temp_4 ,
+        void * f_temp_5 ,
+        void * f_temp_6 ,
+        void * f_temp_7 ,
+        void * f_temp_8 ,
+        float c_u ,
+        float c_v ,
+        unsigned long size,
+        unsigned long blocksize)
+{
+    dim3 grid;
+    dim3 block;
+    block.x = blocksize;
+    grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
+    grid.y = grid.x;
+
+    unsigned long * dir_6_gpu((unsigned long *)dir_6);
+
+    bool * boundary_flags_gpu((bool *)boundary_flags);
+    bool * solid_flags_gpu((bool *)solid_flags);
+    bool * solid_old_flags_gpu((bool *)solid_old_flags);
+
+    float * h_gpu((float *)h);
+    float * u_gpu((float *)u);
+    float * v_gpu((float *)v);
+
+    float * f_0_gpu((float *)f_0);
+    float * f_1_gpu((float *)f_1);
+    float * f_2_gpu((float *)f_2);
+    float * f_3_gpu((float *)f_3);
+    float * f_4_gpu((float *)f_4);
+    float * f_5_gpu((float *)f_5);
+    float * f_6_gpu((float *)f_6);
+    float * f_7_gpu((float *)f_7);
+    float * f_8_gpu((float *)f_8);
+    float * f_eq_0_gpu((float *)f_eq_0);
+    float * f_eq_1_gpu((float *)f_eq_1);
+    float * f_eq_2_gpu((float *)f_eq_2);
+    float * f_eq_3_gpu((float *)f_eq_3);
+    float * f_eq_4_gpu((float *)f_eq_4);
+    float * f_eq_5_gpu((float *)f_eq_5);
+    float * f_eq_6_gpu((float *)f_eq_6);
+    float * f_eq_7_gpu((float *)f_eq_7);
+    float * f_eq_8_gpu((float *)f_eq_8);
+    float * f_temp_0_gpu((float *)f_temp_0);
+    float * f_temp_1_gpu((float *)f_temp_1);
+    float * f_temp_2_gpu((float *)f_temp_2);
+    float * f_temp_3_gpu((float *)f_temp_3);
+    float * f_temp_4_gpu((float *)f_temp_4);
+    float * f_temp_5_gpu((float *)f_temp_5);
+    float * f_temp_6_gpu((float *)f_temp_6);
+    float * f_temp_7_gpu((float *)f_temp_7);
+    float * f_temp_8_gpu((float *)f_temp_8);
+
+
+
+    honei::cuda::boundary_init_fsi_1_set_gpu<<<grid, block>>>(dir_6_gpu,
+                                                           boundary_flags_gpu,
+                                                           solid_flags_gpu,
+                                                           solid_old_flags_gpu,
+                                                           h_gpu,
+                                                           u_gpu,
+                                                           v_gpu,
+                                                           c_u,
+                                                           c_v,
+                                                           size);
+
+    honei::cuda::boundary_init_fsi_1_reset_f_gpu<<<grid, block>>>(f_0_gpu,
+                                                                  f_1_gpu,
+                                                                  f_2_gpu,
+                                                                  f_3_gpu,
+                                                                  f_4_gpu,
+                                                                  f_5_gpu,
+                                                                  f_6_gpu,
+                                                                  f_7_gpu,
+                                                                  f_8_gpu,
+                                                                  solid_flags_gpu,
+                                                                  solid_old_flags_gpu,
+                                                                  size);
+
+    honei::cuda::boundary_init_fsi_1_reset_f_eq_gpu<<<grid, block>>>(f_eq_0_gpu,
+                                                                  f_eq_1_gpu,
+                                                                  f_eq_2_gpu,
+                                                                  f_eq_3_gpu,
+                                                                  f_eq_4_gpu,
+                                                                  f_eq_5_gpu,
+                                                                  f_eq_6_gpu,
+                                                                  f_eq_7_gpu,
+                                                                  f_eq_8_gpu,
+                                                                  solid_flags_gpu,
+                                                                  solid_old_flags_gpu,
+                                                                  size);
+
+    honei::cuda::boundary_init_fsi_1_reset_f_temp_gpu<<<grid, block>>>(f_temp_0_gpu,
+                                                                  f_temp_1_gpu,
+                                                                  f_temp_2_gpu,
+                                                                  f_temp_3_gpu,
+                                                                  f_temp_4_gpu,
+                                                                  f_temp_5_gpu,
+                                                                  f_temp_6_gpu,
+                                                                  f_temp_7_gpu,
+                                                                  f_temp_8_gpu,
+                                                                  solid_flags_gpu,
+                                                                  solid_old_flags_gpu,
+                                                                  size);
+    CUDA_ERROR();
+}
+extern "C" void cuda_boundary_init_fsi_dir_3_float(
+        void * dir_7,
+        void * boundary_flags ,
+        void * solid_flags ,
+        void * solid_old_flags ,
+        void * h ,
+        void * u ,
+        void * v ,
+        void * f_0 ,
+        void * f_1 ,
+        void * f_2 ,
+        void * f_3 ,
+        void * f_4 ,
+        void * f_5 ,
+        void * f_6 ,
+        void * f_7 ,
+        void * f_8 ,
+        void * f_eq_0 ,
+        void * f_eq_1 ,
+        void * f_eq_2 ,
+        void * f_eq_3 ,
+        void * f_eq_4 ,
+        void * f_eq_5 ,
+        void * f_eq_6 ,
+        void * f_eq_7 ,
+        void * f_eq_8 ,
+        void * f_temp_0 ,
+        void * f_temp_1 ,
+        void * f_temp_2 ,
+        void * f_temp_3 ,
+        void * f_temp_4 ,
+        void * f_temp_5 ,
+        void * f_temp_6 ,
+        void * f_temp_7 ,
+        void * f_temp_8 ,
+        float c_u ,
+        float c_v ,
+        unsigned long size,
+        unsigned long blocksize)
+{
+    dim3 grid;
+    dim3 block;
+    block.x = blocksize;
+    grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
+    grid.y = grid.x;
+
+    unsigned long * dir_7_gpu((unsigned long *)dir_7);
+
+    bool * boundary_flags_gpu((bool *)boundary_flags);
+    bool * solid_flags_gpu((bool *)solid_flags);
+    bool * solid_old_flags_gpu((bool *)solid_old_flags);
+
+    float * h_gpu((float *)h);
+    float * u_gpu((float *)u);
+    float * v_gpu((float *)v);
+
+    float * f_0_gpu((float *)f_0);
+    float * f_1_gpu((float *)f_1);
+    float * f_2_gpu((float *)f_2);
+    float * f_3_gpu((float *)f_3);
+    float * f_4_gpu((float *)f_4);
+    float * f_5_gpu((float *)f_5);
+    float * f_6_gpu((float *)f_6);
+    float * f_7_gpu((float *)f_7);
+    float * f_8_gpu((float *)f_8);
+    float * f_eq_0_gpu((float *)f_eq_0);
+    float * f_eq_1_gpu((float *)f_eq_1);
+    float * f_eq_2_gpu((float *)f_eq_2);
+    float * f_eq_3_gpu((float *)f_eq_3);
+    float * f_eq_4_gpu((float *)f_eq_4);
+    float * f_eq_5_gpu((float *)f_eq_5);
+    float * f_eq_6_gpu((float *)f_eq_6);
+    float * f_eq_7_gpu((float *)f_eq_7);
+    float * f_eq_8_gpu((float *)f_eq_8);
+    float * f_temp_0_gpu((float *)f_temp_0);
+    float * f_temp_1_gpu((float *)f_temp_1);
+    float * f_temp_2_gpu((float *)f_temp_2);
+    float * f_temp_3_gpu((float *)f_temp_3);
+    float * f_temp_4_gpu((float *)f_temp_4);
+    float * f_temp_5_gpu((float *)f_temp_5);
+    float * f_temp_6_gpu((float *)f_temp_6);
+    float * f_temp_7_gpu((float *)f_temp_7);
+    float * f_temp_8_gpu((float *)f_temp_8);
+
+
+
+    honei::cuda::boundary_init_fsi_1_set_gpu<<<grid, block>>>(dir_7_gpu,
+                                                           boundary_flags_gpu,
+                                                           solid_flags_gpu,
+                                                           solid_old_flags_gpu,
+                                                           h_gpu,
+                                                           u_gpu,
+                                                           v_gpu,
+                                                           c_u,
+                                                           c_v,
+                                                           size);
+
+    honei::cuda::boundary_init_fsi_1_reset_f_gpu<<<grid, block>>>(f_0_gpu,
+                                                                  f_1_gpu,
+                                                                  f_2_gpu,
+                                                                  f_3_gpu,
+                                                                  f_4_gpu,
+                                                                  f_5_gpu,
+                                                                  f_6_gpu,
+                                                                  f_7_gpu,
+                                                                  f_8_gpu,
+                                                                  solid_flags_gpu,
+                                                                  solid_old_flags_gpu,
+                                                                  size);
+
+    honei::cuda::boundary_init_fsi_1_reset_f_eq_gpu<<<grid, block>>>(f_eq_0_gpu,
+                                                                  f_eq_1_gpu,
+                                                                  f_eq_2_gpu,
+                                                                  f_eq_3_gpu,
+                                                                  f_eq_4_gpu,
+                                                                  f_eq_5_gpu,
+                                                                  f_eq_6_gpu,
+                                                                  f_eq_7_gpu,
+                                                                  f_eq_8_gpu,
+                                                                  solid_flags_gpu,
+                                                                  solid_old_flags_gpu,
+                                                                  size);
+
+    honei::cuda::boundary_init_fsi_1_reset_f_temp_gpu<<<grid, block>>>(f_temp_0_gpu,
+                                                                  f_temp_1_gpu,
+                                                                  f_temp_2_gpu,
+                                                                  f_temp_3_gpu,
+                                                                  f_temp_4_gpu,
+                                                                  f_temp_5_gpu,
+                                                                  f_temp_6_gpu,
+                                                                  f_temp_7_gpu,
+                                                                  f_temp_8_gpu,
+                                                                  solid_flags_gpu,
+                                                                  solid_old_flags_gpu,
+                                                                  size);
+    CUDA_ERROR();
+}
+extern "C" void cuda_boundary_init_fsi_dir_4_float(
+        void * dir_8,
+        void * boundary_flags ,
+        void * solid_flags ,
+        void * solid_old_flags ,
+        void * h ,
+        void * u ,
+        void * v ,
+        void * f_0 ,
+        void * f_1 ,
+        void * f_2 ,
+        void * f_3 ,
+        void * f_4 ,
+        void * f_5 ,
+        void * f_6 ,
+        void * f_7 ,
+        void * f_8 ,
+        void * f_eq_0 ,
+        void * f_eq_1 ,
+        void * f_eq_2 ,
+        void * f_eq_3 ,
+        void * f_eq_4 ,
+        void * f_eq_5 ,
+        void * f_eq_6 ,
+        void * f_eq_7 ,
+        void * f_eq_8 ,
+        void * f_temp_0 ,
+        void * f_temp_1 ,
+        void * f_temp_2 ,
+        void * f_temp_3 ,
+        void * f_temp_4 ,
+        void * f_temp_5 ,
+        void * f_temp_6 ,
+        void * f_temp_7 ,
+        void * f_temp_8 ,
+        float c_u ,
+        float c_v ,
+        unsigned long size,
+        unsigned long blocksize)
+{
+    dim3 grid;
+    dim3 block;
+    block.x = blocksize;
+    grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
+    grid.y = grid.x;
+
+    unsigned long * dir_8_gpu((unsigned long *)dir_8);
+
+    bool * boundary_flags_gpu((bool *)boundary_flags);
+    bool * solid_flags_gpu((bool *)solid_flags);
+    bool * solid_old_flags_gpu((bool *)solid_old_flags);
+
+    float * h_gpu((float *)h);
+    float * u_gpu((float *)u);
+    float * v_gpu((float *)v);
+
+    float * f_0_gpu((float *)f_0);
+    float * f_1_gpu((float *)f_1);
+    float * f_2_gpu((float *)f_2);
+    float * f_3_gpu((float *)f_3);
+    float * f_4_gpu((float *)f_4);
+    float * f_5_gpu((float *)f_5);
+    float * f_6_gpu((float *)f_6);
+    float * f_7_gpu((float *)f_7);
+    float * f_8_gpu((float *)f_8);
+    float * f_eq_0_gpu((float *)f_eq_0);
+    float * f_eq_1_gpu((float *)f_eq_1);
+    float * f_eq_2_gpu((float *)f_eq_2);
+    float * f_eq_3_gpu((float *)f_eq_3);
+    float * f_eq_4_gpu((float *)f_eq_4);
+    float * f_eq_5_gpu((float *)f_eq_5);
+    float * f_eq_6_gpu((float *)f_eq_6);
+    float * f_eq_7_gpu((float *)f_eq_7);
+    float * f_eq_8_gpu((float *)f_eq_8);
+    float * f_temp_0_gpu((float *)f_temp_0);
+    float * f_temp_1_gpu((float *)f_temp_1);
+    float * f_temp_2_gpu((float *)f_temp_2);
+    float * f_temp_3_gpu((float *)f_temp_3);
+    float * f_temp_4_gpu((float *)f_temp_4);
+    float * f_temp_5_gpu((float *)f_temp_5);
+    float * f_temp_6_gpu((float *)f_temp_6);
+    float * f_temp_7_gpu((float *)f_temp_7);
+    float * f_temp_8_gpu((float *)f_temp_8);
+
+
+
+    honei::cuda::boundary_init_fsi_1_set_gpu<<<grid, block>>>(dir_8_gpu,
+                                                           boundary_flags_gpu,
+                                                           solid_flags_gpu,
+                                                           solid_old_flags_gpu,
+                                                           h_gpu,
+                                                           u_gpu,
+                                                           v_gpu,
+                                                           c_u,
+                                                           c_v,
+                                                           size);
+
+    honei::cuda::boundary_init_fsi_1_reset_f_gpu<<<grid, block>>>(f_0_gpu,
+                                                                  f_1_gpu,
+                                                                  f_2_gpu,
+                                                                  f_3_gpu,
+                                                                  f_4_gpu,
+                                                                  f_5_gpu,
+                                                                  f_6_gpu,
+                                                                  f_7_gpu,
+                                                                  f_8_gpu,
+                                                                  solid_flags_gpu,
+                                                                  solid_old_flags_gpu,
+                                                                  size);
+
+    honei::cuda::boundary_init_fsi_1_reset_f_eq_gpu<<<grid, block>>>(f_eq_0_gpu,
+                                                                  f_eq_1_gpu,
+                                                                  f_eq_2_gpu,
+                                                                  f_eq_3_gpu,
+                                                                  f_eq_4_gpu,
+                                                                  f_eq_5_gpu,
+                                                                  f_eq_6_gpu,
+                                                                  f_eq_7_gpu,
+                                                                  f_eq_8_gpu,
+                                                                  solid_flags_gpu,
+                                                                  solid_old_flags_gpu,
+                                                                  size);
+
+    honei::cuda::boundary_init_fsi_1_reset_f_temp_gpu<<<grid, block>>>(f_temp_0_gpu,
+                                                                  f_temp_1_gpu,
+                                                                  f_temp_2_gpu,
+                                                                  f_temp_3_gpu,
+                                                                  f_temp_4_gpu,
+                                                                  f_temp_5_gpu,
+                                                                  f_temp_6_gpu,
+                                                                  f_temp_7_gpu,
+                                                                  f_temp_8_gpu,
+                                                                  solid_flags_gpu,
+                                                                  solid_old_flags_gpu,
+                                                                  size);
+    CUDA_ERROR();
+}
+extern "C" void cuda_boundary_init_fsi_dir_5_float(
+        void * dir_1,
+        void * boundary_flags ,
+        void * solid_flags ,
+        void * solid_old_flags ,
+        void * h ,
+        void * u ,
+        void * v ,
+        void * f_0 ,
+        void * f_1 ,
+        void * f_2 ,
+        void * f_3 ,
+        void * f_4 ,
+        void * f_5 ,
+        void * f_6 ,
+        void * f_7 ,
+        void * f_8 ,
+        void * f_eq_0 ,
+        void * f_eq_1 ,
+        void * f_eq_2 ,
+        void * f_eq_3 ,
+        void * f_eq_4 ,
+        void * f_eq_5 ,
+        void * f_eq_6 ,
+        void * f_eq_7 ,
+        void * f_eq_8 ,
+        void * f_temp_0 ,
+        void * f_temp_1 ,
+        void * f_temp_2 ,
+        void * f_temp_3 ,
+        void * f_temp_4 ,
+        void * f_temp_5 ,
+        void * f_temp_6 ,
+        void * f_temp_7 ,
+        void * f_temp_8 ,
+        float c_u ,
+        float c_v ,
+        unsigned long size,
+        unsigned long blocksize)
+{
+    dim3 grid;
+    dim3 block;
+    block.x = blocksize;
+    grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
+    grid.y = grid.x;
+
+    unsigned long * dir_1_gpu((unsigned long *)dir_1);
+
+    bool * boundary_flags_gpu((bool *)boundary_flags);
+    bool * solid_flags_gpu((bool *)solid_flags);
+    bool * solid_old_flags_gpu((bool *)solid_old_flags);
+
+    float * h_gpu((float *)h);
+    float * u_gpu((float *)u);
+    float * v_gpu((float *)v);
+
+    float * f_0_gpu((float *)f_0);
+    float * f_1_gpu((float *)f_1);
+    float * f_2_gpu((float *)f_2);
+    float * f_3_gpu((float *)f_3);
+    float * f_4_gpu((float *)f_4);
+    float * f_5_gpu((float *)f_5);
+    float * f_6_gpu((float *)f_6);
+    float * f_7_gpu((float *)f_7);
+    float * f_8_gpu((float *)f_8);
+    float * f_eq_0_gpu((float *)f_eq_0);
+    float * f_eq_1_gpu((float *)f_eq_1);
+    float * f_eq_2_gpu((float *)f_eq_2);
+    float * f_eq_3_gpu((float *)f_eq_3);
+    float * f_eq_4_gpu((float *)f_eq_4);
+    float * f_eq_5_gpu((float *)f_eq_5);
+    float * f_eq_6_gpu((float *)f_eq_6);
+    float * f_eq_7_gpu((float *)f_eq_7);
+    float * f_eq_8_gpu((float *)f_eq_8);
+    float * f_temp_0_gpu((float *)f_temp_0);
+    float * f_temp_1_gpu((float *)f_temp_1);
+    float * f_temp_2_gpu((float *)f_temp_2);
+    float * f_temp_3_gpu((float *)f_temp_3);
+    float * f_temp_4_gpu((float *)f_temp_4);
+    float * f_temp_5_gpu((float *)f_temp_5);
+    float * f_temp_6_gpu((float *)f_temp_6);
+    float * f_temp_7_gpu((float *)f_temp_7);
+    float * f_temp_8_gpu((float *)f_temp_8);
+
+
+
+    honei::cuda::boundary_init_fsi_1_set_gpu<<<grid, block>>>(dir_1_gpu,
+                                                           boundary_flags_gpu,
+                                                           solid_flags_gpu,
+                                                           solid_old_flags_gpu,
+                                                           h_gpu,
+                                                           u_gpu,
+                                                           v_gpu,
+                                                           c_u,
+                                                           c_v,
+                                                           size);
+
+    honei::cuda::boundary_init_fsi_1_reset_f_gpu<<<grid, block>>>(f_0_gpu,
+                                                                  f_1_gpu,
+                                                                  f_2_gpu,
+                                                                  f_3_gpu,
+                                                                  f_4_gpu,
+                                                                  f_5_gpu,
+                                                                  f_6_gpu,
+                                                                  f_7_gpu,
+                                                                  f_8_gpu,
+                                                                  solid_flags_gpu,
+                                                                  solid_old_flags_gpu,
+                                                                  size);
+
+    honei::cuda::boundary_init_fsi_1_reset_f_eq_gpu<<<grid, block>>>(f_eq_0_gpu,
+                                                                  f_eq_1_gpu,
+                                                                  f_eq_2_gpu,
+                                                                  f_eq_3_gpu,
+                                                                  f_eq_4_gpu,
+                                                                  f_eq_5_gpu,
+                                                                  f_eq_6_gpu,
+                                                                  f_eq_7_gpu,
+                                                                  f_eq_8_gpu,
+                                                                  solid_flags_gpu,
+                                                                  solid_old_flags_gpu,
+                                                                  size);
+
+    honei::cuda::boundary_init_fsi_1_reset_f_temp_gpu<<<grid, block>>>(f_temp_0_gpu,
+                                                                  f_temp_1_gpu,
+                                                                  f_temp_2_gpu,
+                                                                  f_temp_3_gpu,
+                                                                  f_temp_4_gpu,
+                                                                  f_temp_5_gpu,
+                                                                  f_temp_6_gpu,
+                                                                  f_temp_7_gpu,
+                                                                  f_temp_8_gpu,
+                                                                  solid_flags_gpu,
+                                                                  solid_old_flags_gpu,
+                                                                  size);
+    CUDA_ERROR();
+}
+extern "C" void cuda_boundary_init_fsi_dir_6_float(
+        void * dir_2,
+        void * boundary_flags ,
+        void * solid_flags ,
+        void * solid_old_flags ,
+        void * h ,
+        void * u ,
+        void * v ,
+        void * f_0 ,
+        void * f_1 ,
+        void * f_2 ,
+        void * f_3 ,
+        void * f_4 ,
+        void * f_5 ,
+        void * f_6 ,
+        void * f_7 ,
+        void * f_8 ,
+        void * f_eq_0 ,
+        void * f_eq_1 ,
+        void * f_eq_2 ,
+        void * f_eq_3 ,
+        void * f_eq_4 ,
+        void * f_eq_5 ,
+        void * f_eq_6 ,
+        void * f_eq_7 ,
+        void * f_eq_8 ,
+        void * f_temp_0 ,
+        void * f_temp_1 ,
+        void * f_temp_2 ,
+        void * f_temp_3 ,
+        void * f_temp_4 ,
+        void * f_temp_5 ,
+        void * f_temp_6 ,
+        void * f_temp_7 ,
+        void * f_temp_8 ,
+        float c_u ,
+        float c_v ,
+        unsigned long size,
+        unsigned long blocksize)
+{
+    dim3 grid;
+    dim3 block;
+    block.x = blocksize;
+    grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
+    grid.y = grid.x;
+
+    unsigned long * dir_2_gpu((unsigned long *)dir_2);
+
+    bool * boundary_flags_gpu((bool *)boundary_flags);
+    bool * solid_flags_gpu((bool *)solid_flags);
+    bool * solid_old_flags_gpu((bool *)solid_old_flags);
+
+    float * h_gpu((float *)h);
+    float * u_gpu((float *)u);
+    float * v_gpu((float *)v);
+
+    float * f_0_gpu((float *)f_0);
+    float * f_1_gpu((float *)f_1);
+    float * f_2_gpu((float *)f_2);
+    float * f_3_gpu((float *)f_3);
+    float * f_4_gpu((float *)f_4);
+    float * f_5_gpu((float *)f_5);
+    float * f_6_gpu((float *)f_6);
+    float * f_7_gpu((float *)f_7);
+    float * f_8_gpu((float *)f_8);
+    float * f_eq_0_gpu((float *)f_eq_0);
+    float * f_eq_1_gpu((float *)f_eq_1);
+    float * f_eq_2_gpu((float *)f_eq_2);
+    float * f_eq_3_gpu((float *)f_eq_3);
+    float * f_eq_4_gpu((float *)f_eq_4);
+    float * f_eq_5_gpu((float *)f_eq_5);
+    float * f_eq_6_gpu((float *)f_eq_6);
+    float * f_eq_7_gpu((float *)f_eq_7);
+    float * f_eq_8_gpu((float *)f_eq_8);
+    float * f_temp_0_gpu((float *)f_temp_0);
+    float * f_temp_1_gpu((float *)f_temp_1);
+    float * f_temp_2_gpu((float *)f_temp_2);
+    float * f_temp_3_gpu((float *)f_temp_3);
+    float * f_temp_4_gpu((float *)f_temp_4);
+    float * f_temp_5_gpu((float *)f_temp_5);
+    float * f_temp_6_gpu((float *)f_temp_6);
+    float * f_temp_7_gpu((float *)f_temp_7);
+    float * f_temp_8_gpu((float *)f_temp_8);
+
+
+
+    honei::cuda::boundary_init_fsi_1_set_gpu<<<grid, block>>>(dir_2_gpu,
+                                                           boundary_flags_gpu,
+                                                           solid_flags_gpu,
+                                                           solid_old_flags_gpu,
+                                                           h_gpu,
+                                                           u_gpu,
+                                                           v_gpu,
+                                                           c_u,
+                                                           c_v,
+                                                           size);
+
+    honei::cuda::boundary_init_fsi_1_reset_f_gpu<<<grid, block>>>(f_0_gpu,
+                                                                  f_1_gpu,
+                                                                  f_2_gpu,
+                                                                  f_3_gpu,
+                                                                  f_4_gpu,
+                                                                  f_5_gpu,
+                                                                  f_6_gpu,
+                                                                  f_7_gpu,
+                                                                  f_8_gpu,
+                                                                  solid_flags_gpu,
+                                                                  solid_old_flags_gpu,
+                                                                  size);
+
+    honei::cuda::boundary_init_fsi_1_reset_f_eq_gpu<<<grid, block>>>(f_eq_0_gpu,
+                                                                  f_eq_1_gpu,
+                                                                  f_eq_2_gpu,
+                                                                  f_eq_3_gpu,
+                                                                  f_eq_4_gpu,
+                                                                  f_eq_5_gpu,
+                                                                  f_eq_6_gpu,
+                                                                  f_eq_7_gpu,
+                                                                  f_eq_8_gpu,
+                                                                  solid_flags_gpu,
+                                                                  solid_old_flags_gpu,
+                                                                  size);
+
+    honei::cuda::boundary_init_fsi_1_reset_f_temp_gpu<<<grid, block>>>(f_temp_0_gpu,
+                                                                  f_temp_1_gpu,
+                                                                  f_temp_2_gpu,
+                                                                  f_temp_3_gpu,
+                                                                  f_temp_4_gpu,
+                                                                  f_temp_5_gpu,
+                                                                  f_temp_6_gpu,
+                                                                  f_temp_7_gpu,
+                                                                  f_temp_8_gpu,
+                                                                  solid_flags_gpu,
+                                                                  solid_old_flags_gpu,
+                                                                  size);
+    CUDA_ERROR();
+}
+extern "C" void cuda_boundary_init_fsi_dir_7_float(
+        void * dir_3,
+        void * boundary_flags ,
+        void * solid_flags ,
+        void * solid_old_flags ,
+        void * h ,
+        void * u ,
+        void * v ,
+        void * f_0 ,
+        void * f_1 ,
+        void * f_2 ,
+        void * f_3 ,
+        void * f_4 ,
+        void * f_5 ,
+        void * f_6 ,
+        void * f_7 ,
+        void * f_8 ,
+        void * f_eq_0 ,
+        void * f_eq_1 ,
+        void * f_eq_2 ,
+        void * f_eq_3 ,
+        void * f_eq_4 ,
+        void * f_eq_5 ,
+        void * f_eq_6 ,
+        void * f_eq_7 ,
+        void * f_eq_8 ,
+        void * f_temp_0 ,
+        void * f_temp_1 ,
+        void * f_temp_2 ,
+        void * f_temp_3 ,
+        void * f_temp_4 ,
+        void * f_temp_5 ,
+        void * f_temp_6 ,
+        void * f_temp_7 ,
+        void * f_temp_8 ,
+        float c_u ,
+        float c_v ,
+        unsigned long size,
+        unsigned long blocksize)
+{
+    dim3 grid;
+    dim3 block;
+    block.x = blocksize;
+    grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
+    grid.y = grid.x;
+
+    unsigned long * dir_3_gpu((unsigned long *)dir_3);
+
+    bool * boundary_flags_gpu((bool *)boundary_flags);
+    bool * solid_flags_gpu((bool *)solid_flags);
+    bool * solid_old_flags_gpu((bool *)solid_old_flags);
+
+    float * h_gpu((float *)h);
+    float * u_gpu((float *)u);
+    float * v_gpu((float *)v);
+
+    float * f_0_gpu((float *)f_0);
+    float * f_1_gpu((float *)f_1);
+    float * f_2_gpu((float *)f_2);
+    float * f_3_gpu((float *)f_3);
+    float * f_4_gpu((float *)f_4);
+    float * f_5_gpu((float *)f_5);
+    float * f_6_gpu((float *)f_6);
+    float * f_7_gpu((float *)f_7);
+    float * f_8_gpu((float *)f_8);
+    float * f_eq_0_gpu((float *)f_eq_0);
+    float * f_eq_1_gpu((float *)f_eq_1);
+    float * f_eq_2_gpu((float *)f_eq_2);
+    float * f_eq_3_gpu((float *)f_eq_3);
+    float * f_eq_4_gpu((float *)f_eq_4);
+    float * f_eq_5_gpu((float *)f_eq_5);
+    float * f_eq_6_gpu((float *)f_eq_6);
+    float * f_eq_7_gpu((float *)f_eq_7);
+    float * f_eq_8_gpu((float *)f_eq_8);
+    float * f_temp_0_gpu((float *)f_temp_0);
+    float * f_temp_1_gpu((float *)f_temp_1);
+    float * f_temp_2_gpu((float *)f_temp_2);
+    float * f_temp_3_gpu((float *)f_temp_3);
+    float * f_temp_4_gpu((float *)f_temp_4);
+    float * f_temp_5_gpu((float *)f_temp_5);
+    float * f_temp_6_gpu((float *)f_temp_6);
+    float * f_temp_7_gpu((float *)f_temp_7);
+    float * f_temp_8_gpu((float *)f_temp_8);
+
+
+
+    honei::cuda::boundary_init_fsi_1_set_gpu<<<grid, block>>>(dir_3_gpu,
+                                                           boundary_flags_gpu,
+                                                           solid_flags_gpu,
+                                                           solid_old_flags_gpu,
+                                                           h_gpu,
+                                                           u_gpu,
+                                                           v_gpu,
+                                                           c_u,
+                                                           c_v,
+                                                           size);
+
+    honei::cuda::boundary_init_fsi_1_reset_f_gpu<<<grid, block>>>(f_0_gpu,
+                                                                  f_1_gpu,
+                                                                  f_2_gpu,
+                                                                  f_3_gpu,
+                                                                  f_4_gpu,
+                                                                  f_5_gpu,
+                                                                  f_6_gpu,
+                                                                  f_7_gpu,
+                                                                  f_8_gpu,
+                                                                  solid_flags_gpu,
+                                                                  solid_old_flags_gpu,
+                                                                  size);
+
+    honei::cuda::boundary_init_fsi_1_reset_f_eq_gpu<<<grid, block>>>(f_eq_0_gpu,
+                                                                  f_eq_1_gpu,
+                                                                  f_eq_2_gpu,
+                                                                  f_eq_3_gpu,
+                                                                  f_eq_4_gpu,
+                                                                  f_eq_5_gpu,
+                                                                  f_eq_6_gpu,
+                                                                  f_eq_7_gpu,
+                                                                  f_eq_8_gpu,
+                                                                  solid_flags_gpu,
+                                                                  solid_old_flags_gpu,
+                                                                  size);
+
+    honei::cuda::boundary_init_fsi_1_reset_f_temp_gpu<<<grid, block>>>(f_temp_0_gpu,
+                                                                  f_temp_1_gpu,
+                                                                  f_temp_2_gpu,
+                                                                  f_temp_3_gpu,
+                                                                  f_temp_4_gpu,
+                                                                  f_temp_5_gpu,
+                                                                  f_temp_6_gpu,
+                                                                  f_temp_7_gpu,
+                                                                  f_temp_8_gpu,
+                                                                  solid_flags_gpu,
+                                                                  solid_old_flags_gpu,
+                                                                  size);
+    CUDA_ERROR();
+}
+extern "C" void cuda_boundary_init_fsi_dir_8_float(
+        void * dir_4,
+        void * boundary_flags ,
+        void * solid_flags ,
+        void * solid_old_flags ,
+        void * h ,
+        void * u ,
+        void * v ,
+        void * f_0 ,
+        void * f_1 ,
+        void * f_2 ,
+        void * f_3 ,
+        void * f_4 ,
+        void * f_5 ,
+        void * f_6 ,
+        void * f_7 ,
+        void * f_8 ,
+        void * f_eq_0 ,
+        void * f_eq_1 ,
+        void * f_eq_2 ,
+        void * f_eq_3 ,
+        void * f_eq_4 ,
+        void * f_eq_5 ,
+        void * f_eq_6 ,
+        void * f_eq_7 ,
+        void * f_eq_8 ,
+        void * f_temp_0 ,
+        void * f_temp_1 ,
+        void * f_temp_2 ,
+        void * f_temp_3 ,
+        void * f_temp_4 ,
+        void * f_temp_5 ,
+        void * f_temp_6 ,
+        void * f_temp_7 ,
+        void * f_temp_8 ,
+        float c_u ,
+        float c_v ,
+        unsigned long size,
+        unsigned long blocksize)
+{
+    dim3 grid;
+    dim3 block;
+    block.x = blocksize;
+    grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
+    grid.y = grid.x;
+
+    unsigned long * dir_4_gpu((unsigned long *)dir_4);
+
+    bool * boundary_flags_gpu((bool *)boundary_flags);
+    bool * solid_flags_gpu((bool *)solid_flags);
+    bool * solid_old_flags_gpu((bool *)solid_old_flags);
+
+    float * h_gpu((float *)h);
+    float * u_gpu((float *)u);
+    float * v_gpu((float *)v);
+
+    float * f_0_gpu((float *)f_0);
+    float * f_1_gpu((float *)f_1);
+    float * f_2_gpu((float *)f_2);
+    float * f_3_gpu((float *)f_3);
+    float * f_4_gpu((float *)f_4);
+    float * f_5_gpu((float *)f_5);
+    float * f_6_gpu((float *)f_6);
+    float * f_7_gpu((float *)f_7);
+    float * f_8_gpu((float *)f_8);
+    float * f_eq_0_gpu((float *)f_eq_0);
+    float * f_eq_1_gpu((float *)f_eq_1);
+    float * f_eq_2_gpu((float *)f_eq_2);
+    float * f_eq_3_gpu((float *)f_eq_3);
+    float * f_eq_4_gpu((float *)f_eq_4);
+    float * f_eq_5_gpu((float *)f_eq_5);
+    float * f_eq_6_gpu((float *)f_eq_6);
+    float * f_eq_7_gpu((float *)f_eq_7);
+    float * f_eq_8_gpu((float *)f_eq_8);
+    float * f_temp_0_gpu((float *)f_temp_0);
+    float * f_temp_1_gpu((float *)f_temp_1);
+    float * f_temp_2_gpu((float *)f_temp_2);
+    float * f_temp_3_gpu((float *)f_temp_3);
+    float * f_temp_4_gpu((float *)f_temp_4);
+    float * f_temp_5_gpu((float *)f_temp_5);
+    float * f_temp_6_gpu((float *)f_temp_6);
+    float * f_temp_7_gpu((float *)f_temp_7);
+    float * f_temp_8_gpu((float *)f_temp_8);
+
+
+
+    honei::cuda::boundary_init_fsi_1_set_gpu<<<grid, block>>>(dir_4_gpu,
+                                                           boundary_flags_gpu,
+                                                           solid_flags_gpu,
+                                                           solid_old_flags_gpu,
+                                                           h_gpu,
+                                                           u_gpu,
+                                                           v_gpu,
+                                                           c_u,
+                                                           c_v,
+                                                           size);
+
+    honei::cuda::boundary_init_fsi_1_reset_f_gpu<<<grid, block>>>(f_0_gpu,
+                                                                  f_1_gpu,
+                                                                  f_2_gpu,
+                                                                  f_3_gpu,
+                                                                  f_4_gpu,
+                                                                  f_5_gpu,
+                                                                  f_6_gpu,
+                                                                  f_7_gpu,
+                                                                  f_8_gpu,
+                                                                  solid_flags_gpu,
+                                                                  solid_old_flags_gpu,
+                                                                  size);
+
+    honei::cuda::boundary_init_fsi_1_reset_f_eq_gpu<<<grid, block>>>(f_eq_0_gpu,
+                                                                  f_eq_1_gpu,
+                                                                  f_eq_2_gpu,
+                                                                  f_eq_3_gpu,
+                                                                  f_eq_4_gpu,
+                                                                  f_eq_5_gpu,
+                                                                  f_eq_6_gpu,
+                                                                  f_eq_7_gpu,
+                                                                  f_eq_8_gpu,
+                                                                  solid_flags_gpu,
+                                                                  solid_old_flags_gpu,
+                                                                  size);
+
+    honei::cuda::boundary_init_fsi_1_reset_f_temp_gpu<<<grid, block>>>(f_temp_0_gpu,
+                                                                  f_temp_1_gpu,
+                                                                  f_temp_2_gpu,
+                                                                  f_temp_3_gpu,
+                                                                  f_temp_4_gpu,
+                                                                  f_temp_5_gpu,
+                                                                  f_temp_6_gpu,
+                                                                  f_temp_7_gpu,
+                                                                  f_temp_8_gpu,
+                                                                  solid_flags_gpu,
+                                                                  solid_old_flags_gpu,
+                                                                  size);
+    CUDA_ERROR();
+}
