@@ -120,7 +120,7 @@ class SolverLBMFSIFSIBench :
                     solids.current_u = DataType_(0);
                 }
                 BENCHMARK(
-                        solver.solve();
+                        solver.solve(1ul);
                         if (Tag_::tag_value == tags::tv_gpu_cuda)
                             cuda_thread_synchronize();
                         );

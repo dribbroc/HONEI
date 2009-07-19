@@ -195,7 +195,7 @@ namespace honei
                 /** Capsule for the solution: Single step time marching.
                  *
                  **/
-                void solve()
+                void solve(unsigned long dir)
                 {
                     ForceGrid<Tag_, Application_, Force_, SourceScheme_>::value(*_data, *_info, ResPrec_(9.81), _delta_x, _delta_y, _delta_t, ResPrec_(0.01));
 
@@ -208,8 +208,49 @@ namespace honei
 
                     ++_time;
 
-                    BoundaryInitFSI<Tag_, D2Q9::DIR_1>::value(*_info, *_data, *_solids);
-
+                    switch(dir)
+                    {
+                        case 1:
+                            {
+                                BoundaryInitFSI<Tag_, D2Q9::DIR_1>::value(*_info, *_data, *_solids);
+                            }
+                            break;
+                        case 2:
+                            {
+                                BoundaryInitFSI<Tag_, D2Q9::DIR_2>::value(*_info, *_data, *_solids);
+                            }
+                            break;
+                        case 3:
+                            {
+                                BoundaryInitFSI<Tag_, D2Q9::DIR_3>::value(*_info, *_data, *_solids);
+                            }
+                            break;
+                        case 4:
+                            {
+                                BoundaryInitFSI<Tag_, D2Q9::DIR_4>::value(*_info, *_data, *_solids);
+                            }
+                            break;
+                        case 5:
+                            {
+                                BoundaryInitFSI<Tag_, D2Q9::DIR_5>::value(*_info, *_data, *_solids);
+                            }
+                            break;
+                        case 6:
+                            {
+                                BoundaryInitFSI<Tag_, D2Q9::DIR_6>::value(*_info, *_data, *_solids);
+                            }
+                            break;
+                        case 7:
+                            {
+                                BoundaryInitFSI<Tag_, D2Q9::DIR_7>::value(*_info, *_data, *_solids);
+                            }
+                            break;
+                        case 8:
+                            {
+                                BoundaryInitFSI<Tag_, D2Q9::DIR_8>::value(*_info, *_data, *_solids);
+                            }
+                            break;
+                    }
                     EquilibriumDistributionGrid<Tag_, Application_>::
                         value(_gravity, _e_squared, *_info, *_data);
 

@@ -195,6 +195,7 @@ class CollideStreamFSITest :
             DenseMatrix<bool> bound(g_h, g_w, false);
             DenseMatrix<bool> stf(g_h, g_w, false);
             DenseMatrix<bool> sol(g_h, g_w, false);
+            sol[5][5] = true;
             GridPackerFSI<D2Q9, NOSLIP, DataType_>::allocate(data_2, solids);
             GridPackerFSI<D2Q9, NOSLIP, DataType_>::pack(grid_2, data_2, solids, line, bound, sol, stf, obstacles);
             solids.current_u = DataType_(1);
@@ -329,7 +330,8 @@ class CollideStreamFSITest :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.f_temp_1 , &ref);
             GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2, data_2.f_temp_1, &res);
-
+            std::cout << ref << std::endl;
+            std::cout << res << std::endl;
             for(unsigned long i(0) ; i < ref.rows() ; ++i)
             {
                 for(unsigned long j(0) ; j < ref.columns() ; ++j)

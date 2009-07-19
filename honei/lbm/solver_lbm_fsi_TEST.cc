@@ -81,7 +81,7 @@ class SolverLBMFSITest :
 #ifdef SOLVER_VERBOSE
                 std::cout<<"Timestep: " << i << "/" << timesteps << std::endl;
 #endif
-                solver.solve();
+                solver.solve(1ul);
 #ifdef SOLVER_POSTPROCESSING
                 solver.do_postprocessing();
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
@@ -160,7 +160,7 @@ class SolverLBMFSIStationaryTest :
 #ifdef SOLVER_VERBOSE
                 std::cout<<"Timestep: " << i << "/" << timesteps << std::endl;
 #endif
-                solver.solve();
+                solver.solve(1ul);
 #ifdef SOLVER_POSTPROCESSING
                 solver.do_postprocessing();
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
@@ -230,7 +230,7 @@ class SolverLBMFSINonStationaryTest :
             ScanConversionFSI<tags::CPU>::value(grid, info, data, solids, tri_0, true);
 
             solids.current_u = DataType_(1./2.* grid.d_x);
-            solids.current_v = DataType_(0.);
+            solids.current_v = -DataType_(1./2.* grid.d_x);//DataType_(0.);
             solver.do_preprocessing();
             std::cout << "Solving: " << grid.description << std::endl;
             for(unsigned long i(0); i < timesteps; ++i)
@@ -241,10 +241,10 @@ class SolverLBMFSINonStationaryTest :
                 //Directly dealing with omega-coordinates
                 if (i < 80)
                 {
-                    Line<DataType_, lbm_solid_dims::D2> line_1_i(DataType_(5. + i/2.) * grid.d_x, DataType_(20) * grid.d_y, DataType_(10. + i/2.)* grid.d_x, DataType_(20) * grid.d_y);
-                    Line<DataType_, lbm_solid_dims::D2> line_2_i(DataType_(10. + i/2.)* grid.d_x, DataType_(20) * grid.d_y, DataType_(10. + i/2.)* grid.d_x, DataType_(25) * grid.d_y);
-                    Line<DataType_, lbm_solid_dims::D2> line_3_i(DataType_(10. + i/2.)* grid.d_x, DataType_(25) * grid.d_y, DataType_(5. + i/2.)* grid.d_x, DataType_(25) * grid.d_y);
-                    Line<DataType_, lbm_solid_dims::D2> line_4_i(DataType_(5. + i/2.)* grid.d_x, DataType_(25) * grid.d_y, DataType_(5. + i/2.)* grid.d_x, DataType_(20) * grid.d_y);
+                    Line<DataType_, lbm_solid_dims::D2> line_1_i(DataType_(5.+ i/2.) * grid.d_x, DataType_(20+ i/2.) * grid.d_y, DataType_(10.+ i/2.)* grid.d_x, DataType_(20+ i/2.) * grid.d_y);
+                    Line<DataType_, lbm_solid_dims::D2> line_2_i(DataType_(10.+ i/2.)* grid.d_x, DataType_(20+ i/2.) * grid.d_y, DataType_(10.+ i/2.)* grid.d_x, DataType_(25+ i/2.) * grid.d_y);
+                    Line<DataType_, lbm_solid_dims::D2> line_3_i(DataType_(10.+ i/2.)* grid.d_x, DataType_(25+ i/2.) * grid.d_y, DataType_(5.+ i/2.)* grid.d_x, DataType_(25+ i/2.) * grid.d_y);
+                    Line<DataType_, lbm_solid_dims::D2> line_4_i(DataType_(5.+ i/2.)* grid.d_x, DataType_(25+ i/2.) * grid.d_y, DataType_(5.+ i/2.)* grid.d_x, DataType_(20+ i/2.) * grid.d_y);
 
                     Polygon<DataType_, lbm_solid_dims::D2> tri_i(4);
                     tri_i.add_line(line_1_i);
@@ -258,7 +258,7 @@ class SolverLBMFSINonStationaryTest :
                 {
                     solids.current_u = DataType_(0);
                 }
-                solver.solve();
+                solver.solve(2ul);
 #ifdef SOLVER_POSTPROCESSING
                 solver.do_postprocessing();
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
