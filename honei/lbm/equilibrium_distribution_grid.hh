@@ -191,7 +191,7 @@ namespace honei
             static inline BenchmarkInfo get_benchmark_info(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT1_> * data)
                 {
                     BenchmarkInfo result;
-                    result.flops = data->h->size() * 14 + 8 * data->h->size() * 28;
+                    result.flops = data->h->size() * 12 + 8 * data->h->size() * 27;
                     result.load = data->h->size() * 9 * 5 * sizeof(DT1_);
                     result.store = data->h->size() * 9 * sizeof(DT1_);
                     result.size.push_back(data->h->size());
