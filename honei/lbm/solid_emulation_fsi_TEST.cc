@@ -83,7 +83,7 @@ class MinAngleTest :
             solids.current_u = 1.;
             solids.current_v = 1.;
             result = (MinAngle2D<tags::CPU>::value(solids.current_u, solids.current_v, solids, data));
-            std::cout << result;
+            std::cout << result<< std::endl;;
 
             solids.current_u = 0.;
             solids.current_v = 1.;
@@ -114,6 +114,46 @@ class MinAngleTest :
             solids.current_v = -1.;
             result = (MinAngle2D<tags::CPU>::value(solids.current_u, solids.current_v, solids, data));
             std::cout << result << std::endl;;
+
+            solids.current_u =  0.1;
+            solids.current_v =  0.1;
+            result = (MinAngle2D<tags::CPU>::value(solids.current_u, solids.current_v, solids, data));
+            TEST_CHECK_EQUAL(result, 6ul);
+
+            solids.current_u =  0.2;
+            solids.current_v =  0.1;
+            result = (MinAngle2D<tags::CPU>::value(solids.current_u, solids.current_v, solids, data));
+            TEST_CHECK_EQUAL(result, 5ul);
+
+            solids.current_u =  0.1;
+            solids.current_v =  3;
+            result = (MinAngle2D<tags::CPU>::value(solids.current_u, solids.current_v, solids, data));
+            TEST_CHECK_EQUAL(result, 7ul);
+
+            solids.current_u =  -0.1;
+            solids.current_v =  -3;
+            result = (MinAngle2D<tags::CPU>::value(solids.current_u, solids.current_v, solids, data));
+            TEST_CHECK_EQUAL(result, 3ul);
+
+            solids.current_u =  0.1;
+            solids.current_v =  -3;
+            result = (MinAngle2D<tags::CPU>::value(solids.current_u, solids.current_v, solids, data));
+            TEST_CHECK_EQUAL(result, 3ul);
+
+            solids.current_u =  -0.1;
+            solids.current_v =  3;
+            result = (MinAngle2D<tags::CPU>::value(solids.current_u, solids.current_v, solids, data));
+            TEST_CHECK_EQUAL(result, 7ul);
+
+            solids.current_u =  5;
+            solids.current_v =  -1;
+            result = (MinAngle2D<tags::CPU>::value(solids.current_u, solids.current_v, solids, data));
+            TEST_CHECK_EQUAL(result, 5ul);
+
+            solids.current_u = -5;
+            solids.current_v =  -1;
+            result = (MinAngle2D<tags::CPU>::value(solids.current_u, solids.current_v, solids, data));
+            TEST_CHECK_EQUAL(result, 1ul);
         }
 };
 MinAngleTest<tags::CPU, float> min_angle("float");
