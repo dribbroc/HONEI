@@ -48,33 +48,107 @@ namespace honei
                             DenseVector<DT_> t(2ul, DT_(0));
                             t[0] = tx;
                             t[0] = ty;
-
-                            DenseVector<DT_> mt(2ul, DT_(0));
-                            t[0] = -tx;
-                            t[0] = -ty;
-
-                            DT_ stop_prod(DotProduct<tags::CPU>::value(t, mt));
-                            DT_ min_prod(10000);
-                            unsigned long min_dir;
-
-                            for(unsigned long i(1) ; i < 8 ; ++i)
+                            if(tx > 0 && ty > 0)
                             {
-                                DenseVector<DT_> dir(2ul, DT_(0));
-                                dir[0] = (*data.distribution_x)[i];
-                                dir[1] = (*data.distribution_y)[i];
+                                if(tx == ty)
+                                    return 6;
 
-                                DT_ current_prod(DotProduct<tags::CPU>::value(t, dir));
-
-                                if(current_prod <= stop_prod)
-                                    break;
-
-                                if(current_prod <= min_prod)
+                                if(ty < tx)
                                 {
-                                    min_prod = current_prod;
-                                    min_dir = i;
+                                    ///iterate from 5 to 6
+                                    if(ty <= 1./2. * tx)
+                                        return 5;
+                                    else
+                                        return 6;
+                                }
+                                else
+                                {
+                                    ///iterate from 6 to 7
+                                    if(tx <= 1./2. * ty)
+                                        return 7;
+                                    else
+                                        return 6;
                                 }
                             }
-                            return min_dir;
+                            if(tx < 0 && ty < 0)
+                            {
+                                if(tx == ty)
+                                    return 2;
+
+                                if(ty < tx)
+                                {
+                                    if(ty <= 1./2. * tx)
+                                        return 3;
+                                    else
+                                        return 2;
+                                }
+                                else
+                                {
+                                    if(tx <= 1./2. * ty)
+                                        return 1;
+                                    else
+                                        return 2;
+                                }
+                            }
+                            if(tx > 0 && ty < 0)
+                            {
+                                if(tx == ty)
+                                    return 4;
+
+                                if(-ty < tx)
+                                {
+                                    ///iterate from 4 to 5
+                                    if(-ty <= 1./2. * tx)
+                                        return 5;
+                                    else
+                                        return 4;
+                                }
+                                else
+                                {
+                                    ///iterate from 3 to 4
+                                    if(tx <= 1./2. * -ty)
+                                        return 3;
+                                    else
+                                        return 4;
+                                }
+                            }
+                            if(tx < 0 && ty > 0)
+                            {
+                                if(tx == -ty)
+                                    return 8;
+
+                                if(-tx < ty)
+                                {
+                                    ///iterate from 8 to 7
+                                    if(-tx <= 1./2. * ty)
+                                        return 7;
+                                    else
+                                        return 8;
+                                }
+                                else
+                                {
+                                    ///iterate from 8 to 1
+                                    if(-tx >= 1./2. * ty)
+                                        return 1;
+                                    else
+                                        return 8;
+                                }
+                            }
+
+                            if(tx == 0)
+                            {
+                                if(ty > 0)
+                                    return 7;
+                                else
+                                    return 3;
+                            }
+                            if(ty == 0)
+                            {
+                                if(tx > 0)
+                                    return 5;
+                                else
+                                    return 1;
+                            }
                         }
             };
 
@@ -89,8 +163,8 @@ namespace honei
                 private:
                     template<typename DT_>
                         static DenseVector<DT_> _translation_vector(Polygon<DT_, lbm_solid_dims::D2> & polygon,
-                                          PackedSolidData<lbm_lattice_types::D2Q9, DT_> & solids,
-                                          Grid<D2Q9, DT_> & grid)
+                                PackedSolidData<lbm_lattice_types::D2Q9, DT_> & solids,
+                                Grid<D2Q9, DT_> & grid)
                         {
                             ///Accumulate f_mea
                             DenseVector<DT_> F(solids.f_mea_1->size(), DT_(0));
