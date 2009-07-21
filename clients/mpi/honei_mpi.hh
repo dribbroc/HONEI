@@ -72,7 +72,7 @@ namespace honei
         private:
             void _master()
             {
-                unsigned long timesteps(10);
+                unsigned long timesteps(100);
                 Grid<D2Q9, DataType_> grid;
                 _load_scenario(1, grid);
 
@@ -106,9 +106,9 @@ namespace honei
                     _send_slave_sync(target, info_list[target - 1], data_list[target - 1], fringe_list[target - 1]);
                 }
 
-                GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);
-                GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
-                PostProcessing<output_types::GNUPLOT>::value(*grid.h, 1, grid.h->columns(), grid.h->rows(), 101);
+                //GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);
+                //GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
+                //PostProcessing<output_types::GNUPLOT>::value(*grid.h, 1, grid.h->columns(), grid.h->rows(), 101);
                 // Preproc finished
                 // start timesteps
                 TimeStamp at, bt;
@@ -130,18 +130,19 @@ namespace honei
                     }
                 }
                 bt.take();
+                std::cout<<"Gridsize: "<<grid.h->rows()<<" x "<<grid.h->columns()<<std::endl;
                 std::cout<<"Timesteps: " << timesteps << " TOE: "<<bt.total() - at.total()<<std::endl;
                 std::cout<<"MLUPS: "<< (double(grid.h->rows()) * double(grid.h->columns()) * double(timesteps)) / (1e6 * (bt.total() - at.total())) <<std::endl;
 
                 // generate output
-                for (signed long target(1) ; target < _numprocs ; ++target)
+                /*for (signed long target(1) ; target < _numprocs ; ++target)
                 {
                     _recv_full_sync(target, info_list[target - 1], data_list[target - 1], fringe_list[target - 1]);
                 }
                 GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list, fringe_list);
                 GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
-                PostProcessing<output_types::GNUPLOT>::value(*grid.h, 1, grid.h->columns(), grid.h->rows(), 0);
+                PostProcessing<output_types::GNUPLOT>::value(*grid.h, 1, grid.h->columns(), grid.h->rows(), 0);*/
             }
 
             void _slave()
@@ -157,7 +158,7 @@ namespace honei
                 _recv_data(data);
                 _recv_fringe(fringe);
 
-                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, 0.01, 0.01, 0.01, 1.1);
+                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info, &data, 0.01, 0.01, 0.01, 1.1);
 
                 solver.do_preprocessing();
 
@@ -171,7 +172,7 @@ namespace honei
                     _send_master_sync(0, info, data, fringe);
                     _recv_master_sync(0, info, data, fringe);
                 }
-                _send_full_sync(0, info, data, fringe);
+                //_send_full_sync(0, info, data, fringe);
             }
 
             void _send_info(unsigned long target, PackedGridInfo<D2Q9> & info)
@@ -777,8 +778,8 @@ namespace honei
 
                     case 1:
                         {
-                            unsigned long g_h(100);
-                            unsigned long g_w(100);
+                            unsigned long g_h(250);
+                            unsigned long g_w(250);
                             grid.h = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.05));
                             Cylinder<DataType_> c1(*grid.h, DataType_(0.06), 25, 25);
                             c1.value();
