@@ -34,7 +34,7 @@ using namespace output_types;
 using namespace lbm::lbm_lattice_types;
 
 //#define SOLVER_VERBOSE
-//#define SOLVER_POSTPROCESSING
+#define SOLVER_POSTPROCESSING
 
 template <typename Tag_, typename DataType_>
 class SolverLBMGridTest :
@@ -53,8 +53,9 @@ class SolverLBMGridTest :
             unsigned long timesteps(100);
 
 
-            for (unsigned long i(0) ; i < ScenarioCollection::get_stable_scenario_count() ; ++i)
+            //for (unsigned long i(0) ; i < ScenarioCollection::get_stable_scenario_count() ; ++i)
             {
+                unsigned long i(1);
                 Grid<D2Q9, DataType_> grid;
 
                 ScenarioCollection::get_scenario(i, g_h, g_w, grid);
@@ -93,13 +94,14 @@ class SolverLBMGridTest :
 
 };
 
-SolverLBMGridTest<tags::CPU, float> solver_test_float("float");
+/*SolverLBMGridTest<tags::CPU, float> solver_test_float("float");
 SolverLBMGridTest<tags::CPU, double> solver_test_double("double");
 SolverLBMGridTest<tags::CPU::MultiCore, float> mc_solver_test_float("float");
-SolverLBMGridTest<tags::CPU::MultiCore, double> mc_solver_test_double("double");
+SolverLBMGridTest<tags::CPU::MultiCore, double> mc_solver_test_double("double");*/
 #ifdef HONEI_SSE
 SolverLBMGridTest<tags::CPU::SSE, float> sse_solver_test_float("float");
-SolverLBMGridTest<tags::CPU::SSE, double> sse_solver_test_double("double");
+#endif
+/*SolverLBMGridTest<tags::CPU::SSE, double> sse_solver_test_double("double");
 SolverLBMGridTest<tags::CPU::MultiCore::SSE, float> mcsse_solver_test_float("float");
 SolverLBMGridTest<tags::CPU::MultiCore::SSE, double> mcsse_solver_test_double("double");
 #endif
@@ -109,8 +111,8 @@ SolverLBMGridTest<tags::GPU::CUDA, float> cuda_solver_test_float("float");
 #ifdef HONEI_CELL
 SolverLBMGridTest<tags::Cell, float> cell_solver_test_float("float");
 #endif
-
-
+*/
+/*
 template <typename Tag_, typename DataType_>
 class SolverLBMGridMassConservationTest :
     public TaggedTest<Tag_>
@@ -273,3 +275,4 @@ SimpleSolverLBMGridMassConservationTest<tags::GPU::CUDA, float> cuda_simple_solv
 #ifdef HONEI_Cell
 SimpleSolverLBMGridMassConservationTest<tags::Cell, float> cell_simple_solver_grid_mc_test_float("float");
 #endif
+*/

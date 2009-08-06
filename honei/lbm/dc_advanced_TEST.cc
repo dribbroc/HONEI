@@ -1331,7 +1331,7 @@ class SolverLABNAVSTODrivenCavityTest<Tag_, DataType_, VELOC, RTIME>:
             definition_right = def_right;
         }
 
-        int iterations;
+        unsigned iterations;
         DataType_ definition_left, definition_right;
 
         virtual void run() const
@@ -2317,4 +2317,4 @@ class SolverLABNAVSTODrivenCavityTest<Tag_, DataType_, NONE, H>:
 
 };
 
-//SolverLABNAVSTODrivenCavityTest<tags::CPU, double, VELOC, RTIME> solver_DV_test_double("double", 2, 1.0022, 1.0023);
+SolverLABNAVSTODrivenCavityTest<tags::CPU, double, VELOC, RTIME> solver_DV_test_double("double", 2, 1.0022, 1.0023);

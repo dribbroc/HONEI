@@ -511,6 +511,19 @@ class SolverLABNAVSTOGridDCTest :
             ++i;
             ref_result_100_hubner[i] = 0.000000e+00;
 
+            DataType_ summe(0);
+            for (unsigned long i(0) ; i < ref_result_100_hubner.size() ; ++i)
+            {
+                summe += fabs(ref_result_100_hubner[i]);
+            }
+            std::cout<<"Summe Huebner: "<<summe<<std::endl;
+            DataType_ summe2(0);
+            for (unsigned long i(0) ; i < ref_result_100_hubner.size() ; ++i)
+            {
+                summe2 += fabs(test_line[i]);
+            }
+            std::cout<<"Summe Honei: "<<summe2<<std::endl;
+
             DenseVector<DataType_> diff_2(test_line.copy());
 
             for(unsigned long i(0); i < g_w; ++i)
@@ -523,6 +536,8 @@ class SolverLABNAVSTOGridDCTest :
 
             std::cout <<"Difference vector (GHIA): " << diff << std::endl;
             std::cout <<"Difference vector (HUEBNER): " << diff_2 << std::endl;
+            std::cout<<"Summe Huebner: "<<summe<<std::endl;
+            std::cout<<"Summe Honei: "<<summe2<<std::endl;
 
             double norm = Norm<vnt_l_two, false, Tag_>::value(diff);
             double norm_2 = Norm<vnt_l_two, false, Tag_>::value(diff_2);
