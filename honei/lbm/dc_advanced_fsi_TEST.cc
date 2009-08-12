@@ -16,7 +16,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include <honei/lbm/solver_lbm_grid.hh>
+#include <honei/lbm/solver_lbm_fsi.hh>
 #include <honei/lbm/partial_derivative.hh>
 #include <honei/swe/post_processing.hh>
 #include <unittest/unittest.hh>
@@ -36,19 +36,19 @@ using namespace lbm::lbm_lattice_types;
 using namespace lbm;
 
 //#define SOLVER_VERBOSE
-#define SOLVER_POSTPROCESSING
+//#define SOLVER_POSTPROCESSING
 //#define DRIVEN_CAVITY_OUTPUT_TESTLINE
 //#define DRIVEN_CAVITY_OUTPUT_ACCURACY
 
 template <typename Tag_, typename DataType_>
-class SolverLABNAVSTOGridDCTest :
+class SolverLABNAVSTO_FSI_DCTest :
     public TaggedTest<Tag_>
 {
     private:
         DataType_ _dx, _dy, _dt, _reynolds, _tau, _U;
     public:
-        SolverLABNAVSTOGridDCTest(const std::string & type, DataType_ dx, DataType_ dy, DataType_ dt, DataType_ reynolds, DataType_ tau, DataType_ U) :
-            TaggedTest<Tag_>("solver_lbm_grid_test<" + type + ">")
+        SolverLABNAVSTO_FSI_DCTest(const std::string & type, DataType_ dx, DataType_ dy, DataType_ dt, DataType_ reynolds, DataType_ tau, DataType_ U) :
+            TaggedTest<Tag_>("solver_lbm_fsi_dc_test<" + type + ">")
         {
             _dx = dx;
             _dy = dy;
@@ -60,7 +60,7 @@ class SolverLABNAVSTOGridDCTest :
 
         virtual void run() const
         {
-            unsigned long g_h(129);
+            unsigned long g_h(130);
             unsigned long g_w(129);
             unsigned long timesteps(100000);
             DataType_ dx(_dx);
@@ -82,26 +82,54 @@ class SolverLABNAVSTOGridDCTest :
             grid.tau = tau;
 
             //init lid velocity
-            for (unsigned long i(0) ; i < g_w ; ++i)
+            /*for (unsigned long i(0) ; i < g_w ; ++i)
             {
                 (*grid.u)[0][i] = lid_U;
-            }
+            }*/
 
             PackedGridData<D2Q9, DataType_>  data;
+            PackedSolidData<D2Q9, DataType_>  solids;
             PackedGridInfo<D2Q9> info;
 
+            DenseMatrix<bool> line(g_h, g_w, false);
+            DenseMatrix<bool> bound(g_h, g_w, false);
+            DenseMatrix<bool> stf(g_h, g_w, false);
+            DenseMatrix<bool> sol(g_h, g_w, false);
+            for(unsigned long i(0) ; i < g_h ; ++i)
+            {
+                for(unsigned long j(0) ; j < g_w ; ++j)
+                {
+                    if(i == 0)
+                    {
+                        line[i][j] = true;
+                        sol[i][j] = true;
+                    }
+                    if(i == 1)
+                        bound[i][j] = true;
+                }
+            }
+
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
+            GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::cuda_pack(info, data);
+            GridPackerFSI<D2Q9, NOSLIP, DataType_>::allocate(data, solids);
+            GridPackerFSI<D2Q9, NOSLIP, DataType_>::pack(grid, data, solids, line, bound, stf, sol, *grid.obstacles);
 
+            solids.current_u = lid_U;
+            solids.current_v = DataType_(0);
+            SolverLBMFSI<Tag_, lbm_applications::LABNAVSTO, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info, &data, &solids, grid.d_x, grid.d_y, grid.d_t, grid.tau);
 
-            SolverLBMGrid<Tag_, lbm_applications::LABNAVSTO, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info, &data, grid.d_x, grid.d_y, grid.d_t, grid.tau);
             std::cout << "dx " << grid.d_x << std::endl;
             std::cout << "dy " << grid.d_y << std::endl;
             std::cout << "dt " << grid.d_t << std::endl;
             std::cout << "tau " << grid.tau << std::endl;
 
             solver.do_preprocessing();
-            std::cout << "Solving: " << grid.description << std::endl;
+            CollideStreamFSI<Tag_, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
+                        value(info, data, solids, grid.d_x, grid.d_y);
+
             DenseVector<DataType_> last_u(data.u->copy());
+
+            std::cout << "Solving: " << grid.description << std::endl;
             for(unsigned long i(0); i < timesteps; ++i)
             {
 #ifdef SOLVER_VERBOSE
@@ -110,13 +138,16 @@ class SolverLABNAVSTOGridDCTest :
                 //after solving, reset lid velocity by using h_index
                 for (unsigned long j(0) ; j < g_w ; ++j)
                 {
-                    (*data.u)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid, 0, j)] = lid_U;
-                    (*data.v)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid, 0, j)] = DataType_(0.);
+                    (*data.u)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid, 1, j)] = lid_U;
+                    (*data.v)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid, 1, j)] = DataType_(0.);
 
                     (*data.u)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid, g_h - 1, j)] = DataType_(0.);
                     (*data.v)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid, g_h - 1, j)] = DataType_(0.);
+                }
 
-                    if(j > 0)
+                for (unsigned long j(0) ; j < g_h ; ++j)
+                {
+                    if(j > 1)
                     {
                         (*data.u)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid, j, 0)] = DataType_(0.);
                         (*data.v)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid, j, 0)] = DataType_(0.);
@@ -128,13 +159,17 @@ class SolverLABNAVSTOGridDCTest :
                 }
 
                 //solver.solve();
-                EquilibriumDistributionGrid<Tag_, lbm_applications::LABNAVSTO>::
+                BoundaryInitFSI<Tag_, D2Q9::DIR_1>::value(info, data, solids);
+                EquilibriumDistributionGrid<tags::CPU, lbm_applications::LABNAVSTO>::
                     value(DataType_(9.81), (grid.d_x / grid.d_t) * (grid.d_x / grid.d_t), info, data);
 
                 CollideStreamGrid<Tag_, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                     value(info,
                           data,
                           tau);
+                CollideStreamFSI<Tag_, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
+                        value(info, data, solids, grid.d_x, grid.d_y);
+
                 ///Boundary correction:
                 UpdateVelocityDirectionsGrid<Tag_, lbm_boundary_types::NOSLIP>::
                     value(info, data);
@@ -145,13 +180,16 @@ class SolverLABNAVSTOGridDCTest :
                 //after solving, reset lid velocity by using h_index
                 for (unsigned long j(0) ; j < g_w ; ++j)
                 {
-                    (*data.u)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid, 0, j)] = lid_U;
-                    (*data.v)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid, 0, j)] = DataType_(0.);
+                    (*data.u)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid, 1, j)] = lid_U;
+                    (*data.v)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid, 1, j)] = DataType_(0.);
 
                     (*data.u)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid, g_h - 1, j)] = DataType_(0.);
                     (*data.v)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid, g_h - 1, j)] = DataType_(0.);
+                }
 
-                    if(j > 0)
+                for (unsigned long j(0) ; j < g_h ; ++j)
+                {
+                    if(j > 1)
                     {
                         (*data.u)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid, j, 0)] = DataType_(0.);
                         (*data.v)[GridPacker<D2Q9, NOSLIP, DataType_>::h_index(grid, j, 0)] = DataType_(0.);
@@ -166,7 +204,7 @@ class SolverLABNAVSTOGridDCTest :
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack_u(grid, info, data);
                 PostProcessing<GNUPLOT>::value(*grid.u, 999, g_w, g_h, i);
 #endif
-                if(Norm<vnt_l_two, false, Tag_>::value(Difference<Tag_>::value(last_u, *data.u)) <= std::numeric_limits<DataType_>::epsilon())
+                if(Norm<vnt_l_two, false, tags::CPU>::value(Difference<Tag_>::value(last_u, *data.u)) <= std::numeric_limits<double>::epsilon())
                     break;
 
                 last_u = data.u->copy();
@@ -181,7 +219,7 @@ class SolverLABNAVSTOGridDCTest :
 #ifdef DRIVEN_CAVITY_OUTPUT_TESTLINE
             std::string filename;
             std::ofstream file;
-            filename = "out_lbm_navsto_dc_relative_grid.dat";
+            filename = "out_lbm_navsto_dc_relative_fsi.dat";
             file.open(filename.c_str());
             for(unsigned long i(0); i < g_h; ++i)
             {
@@ -191,73 +229,12 @@ class SolverLABNAVSTOGridDCTest :
 #endif
             std::cout<<"Result:"<<test_line<<std::endl;
 
-            //Reference data by Ghia et al. 1982 for reynolds number of 100:
-            DenseVector<double> ref_result_100(17);
-            unsigned long indices_100[17];
-
-            ref_result_100[0] = double(1);
-            indices_100[0] = 0;
-
-            ref_result_100[1] = double(0.84123);
-            indices_100[1] = 3;
-
-            ref_result_100[2] = double(0.78871);
-            indices_100[2] = 4;
-
-            ref_result_100[3] = double(0.73722);
-            indices_100[3] = 5;
-
-            ref_result_100[4] = double(0.68717);
-            indices_100[4] = 6;
-
-            ref_result_100[5] = double(0.23151);
-            indices_100[5] = 19;
-
-            ref_result_100[6] = double(0.00332);
-            indices_100[6] = 34;
-
-            ref_result_100[7] = double(-0.13641);
-            indices_100[7] = 49;
-
-            ref_result_100[8] = double(-0.20581);
-            indices_100[8] = 64;
-
-            ref_result_100[9] = double(-0.21090);
-            indices_100[9] = 70;
-
-            ref_result_100[10] = double(-0.15662);
-            indices_100[10] = 92;
-
-            ref_result_100[11] = double(-0.10150);
-            indices_100[11] = 106;
-
-            ref_result_100[12] = double(-0.06434);
-            indices_100[12] = 115;
-
-            ref_result_100[13] = double(-0.04775);
-            indices_100[13] = 119;
-
-            ref_result_100[14] = double(-0.04192);
-            indices_100[14] = 120;
-
-            ref_result_100[15] = double(-0.03717);
-            indices_100[15] = 121;
-
-            ref_result_100[16] = double(0.);
-            indices_100[16] = 128;
-
-            DenseVector<DataType_> diff(test_line.copy());
-
-            for(unsigned long i(0); i < 17; ++i)
-            {
-                diff[indices_100[i]] = ref_result_100[i];
-                //TEST_CHECK_EQUAL_WITHIN_EPS(test_line[indices_100[i]], ref_result_100[i], 0.5);
-            }
-
             //compare with HUEBNER
-            DenseVector<DataType_> ref_result_100_hubner(g_w);
+            DenseVector<DataType_> ref_result_100_hubner(g_h);
             unsigned long i(0);
 
+            ref_result_100_hubner[i] = test_line[0];
+            ++i;
             ref_result_100_hubner[i] = 1.000000e+00;
             ++i;
             ref_result_100_hubner[i] = 9.482407e-01;
@@ -518,23 +495,19 @@ class SolverLABNAVSTOGridDCTest :
 
             DenseVector<DataType_> diff_2(test_line.copy());
 
-            for(unsigned long i(0); i < g_w; ++i)
+            for(unsigned long i(0); i < g_h; ++i)
             {
                 diff_2[i]= ref_result_100_hubner[i];
             }
 
-            Difference<>::value(diff, test_line);
             Difference<>::value(diff_2, test_line);
 
-            std::cout <<"Difference vector (GHIA): " << diff << std::endl;
             std::cout <<"Difference vector (HUEBNER): " << diff_2 << std::endl;
 
-            double norm = Norm<vnt_l_two, false, Tag_>::value(diff);
-            double norm_2 = Norm<vnt_l_two, false, Tag_>::value(diff_2);
-            std::cout << "L2 norm (GHIA): " << norm << std::endl;
+            double norm_2 = Norm<vnt_l_two, false, tags::CPU>::value(diff_2);
             std::cout << "L2 norm (HUEBNER): " << norm_2 << std::endl;
 #ifdef DRIVEN_CAVITY_OUTPUT_ACCURACY
-            std::string output_file = "accuracy_lbm_navsto_grid.dat";
+            std::string output_file = "accuracy_lbm_navsto_fsi.dat";
 
             std::ofstream out_file_stream;
 
@@ -551,7 +524,6 @@ class SolverLABNAVSTOGridDCTest :
 
             out_file_stream << "        U = " << lid_U << std::endl;
 
-            out_file_stream << "L2 NORM(DIFF(GHIA)) = " << norm << std::endl;
             out_file_stream << "L2 NORM(DIFF(HUEBNER)) = " << norm_2 << std::endl;
 
             out_file_stream << "----------------------------------------------" << std::endl;;
@@ -560,6 +532,6 @@ class SolverLABNAVSTOGridDCTest :
 
         }
 };
-//SolverLABNAVSTOGridDCTest<tags::CPU, double> solver_test_double("double", double(1), double(1), double(1.2), double(100), double(1), double(0));
-//SolverLABNAVSTOGridDCTest<tags::CPU, float> solver_test_float("float", float(1), float(1), float(1.2), float(100), float(1), float(0));
-SolverLABNAVSTOGridDCTest<tags::CPU, double> solver_test_double_10("double", double(1.), double(1.), double(1.), double(100), double(1.), double(0));
+//SolverLABNAVSTO_FSI_DCTest<tags::CPU, double> solver_test_double("double", double(1), double(1), double(1.2), double(100), double(1), double(0));
+//SolverLABNAVSTO_FSI_DCTest<tags::CPU, float> solver_test_float("float", float(1), float(1), float(1.2), float(100), float(1), float(0));
+SolverLABNAVSTO_FSI_DCTest<tags::CPU, double> solver_test_double_10("double", double(1), double(1), double(1.), double(100), double(1.), double(0));
