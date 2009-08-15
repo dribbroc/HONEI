@@ -442,12 +442,12 @@ namespace honei
                 f_mea_8 = 0;
             }
 
-            DenseVector<bool> * boundary_flags;
-            DenseVector<bool> * line_flags;
-            DenseVector<bool> * solid_flags;
-            DenseVector<bool> * solid_old_flags;
-            DenseVector<bool> * solid_to_fluid_flags;
-            DenseVector<bool> * stationary_flags;
+            DenseVector<int> * boundary_flags;
+            DenseVector<int> * line_flags;
+            DenseVector<int> * solid_flags;
+            DenseVector<int> * solid_old_flags;
+            DenseVector<int> * solid_to_fluid_flags;
+            DenseVector<int> * stationary_flags;
 
             DenseVector<DT_> * f_mea_1;
             DenseVector<DT_> * f_mea_2;

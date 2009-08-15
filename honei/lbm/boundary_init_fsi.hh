@@ -45,15 +45,15 @@ namespace honei
                                           unsigned long packed_index)
                         {
                             ///Determine extrapolation_indices:
-                            bool prev(!((*info.cuda_dir_5)[packed_index] ==  ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_5)[packed_index] ==  4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_5)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_5)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_5)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_5)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_5)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_5)[prev_index] : prev_index);
 
-                            bool pre_pre_prev(pre_prev ? (!((*info.cuda_dir_5)[pre_prev_index] == ULONG_MAX) ?
+                            bool pre_pre_prev(pre_prev ? (!((*info.cuda_dir_5)[pre_prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_5)[pre_prev_index]] ? true : false) : false) : false);
                             unsigned long pre_pre_prev_index(pre_pre_prev ? (*info.cuda_dir_5)[pre_prev_index] : pre_prev_index);
 
@@ -74,11 +74,11 @@ namespace honei
                                           unsigned long packed_index)
                         {
 
-                            bool prev(!((*info.cuda_dir_5)[packed_index] == ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_5)[packed_index] == 4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_5)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_5)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_5)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_5)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_5)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_5)[prev_index] : prev_index);
 
@@ -97,11 +97,11 @@ namespace honei
                                           unsigned long packed_index)
                         {
 
-                            bool prev(!((*info.cuda_dir_5)[packed_index] == ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_5)[packed_index] == 4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_5)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_5)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_5)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_5)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_5)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_5)[prev_index] : prev_index);
 
@@ -266,15 +266,15 @@ namespace honei
                                           unsigned long packed_index)
                         {
                             ///Determine extrapolation_indices:
-                            bool prev(!((*info.cuda_dir_6)[packed_index] ==  ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_6)[packed_index] ==  4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_6)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_6)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_6)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_6)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_6)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_6)[prev_index] : prev_index);
 
-                            bool pre_pre_prev(pre_prev ? (!((*info.cuda_dir_6)[pre_prev_index] == ULONG_MAX) ?
+                            bool pre_pre_prev(pre_prev ? (!((*info.cuda_dir_6)[pre_prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_6)[pre_prev_index]] ? true : false) : false) : false);
                             unsigned long pre_pre_prev_index(pre_pre_prev ? (*info.cuda_dir_6)[pre_prev_index] : pre_prev_index);
 
@@ -295,11 +295,11 @@ namespace honei
                                           unsigned long packed_index)
                         {
 
-                            bool prev(!((*info.cuda_dir_6)[packed_index] == ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_6)[packed_index] == 4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_6)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_6)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_6)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_6)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_6)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_6)[prev_index] : prev_index);
 
@@ -318,11 +318,11 @@ namespace honei
                                           unsigned long packed_index)
                         {
 
-                            bool prev(!((*info.cuda_dir_6)[packed_index] == ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_6)[packed_index] == 4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_6)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_6)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_6)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_6)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_6)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_6)[prev_index] : prev_index);
 
@@ -477,15 +477,15 @@ namespace honei
                                           unsigned long packed_index)
                         {
                             ///Determine extrapolation_indices:
-                            bool prev(!((*info.cuda_dir_7)[packed_index] ==  ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_7)[packed_index] ==  4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_7)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_7)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_7)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_7)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_7)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_7)[prev_index] : prev_index);
 
-                            bool pre_pre_prev(pre_prev ? (!((*info.cuda_dir_7)[pre_prev_index] == ULONG_MAX) ?
+                            bool pre_pre_prev(pre_prev ? (!((*info.cuda_dir_7)[pre_prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_7)[pre_prev_index]] ? true : false) : false) : false);
                             unsigned long pre_pre_prev_index(pre_pre_prev ? (*info.cuda_dir_7)[pre_prev_index] : pre_prev_index);
 
@@ -506,11 +506,11 @@ namespace honei
                                           unsigned long packed_index)
                         {
 
-                            bool prev(!((*info.cuda_dir_7)[packed_index] == ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_7)[packed_index] == 4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_7)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_7)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_7)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_7)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_7)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_7)[prev_index] : prev_index);
 
@@ -529,11 +529,11 @@ namespace honei
                                           unsigned long packed_index)
                         {
 
-                            bool prev(!((*info.cuda_dir_7)[packed_index] == ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_7)[packed_index] == 4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_7)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_7)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_7)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_7)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_7)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_7)[prev_index] : prev_index);
 
@@ -688,15 +688,15 @@ namespace honei
                                           unsigned long packed_index)
                         {
                             ///Determine extrapolation_indices:
-                            bool prev(!((*info.cuda_dir_8)[packed_index] ==  ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_8)[packed_index] ==  4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_8)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_8)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_8)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_8)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_8)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_8)[prev_index] : prev_index);
 
-                            bool pre_pre_prev(pre_prev ? (!((*info.cuda_dir_8)[pre_prev_index] == ULONG_MAX) ?
+                            bool pre_pre_prev(pre_prev ? (!((*info.cuda_dir_8)[pre_prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_8)[pre_prev_index]] ? true : false) : false) : false);
                             unsigned long pre_pre_prev_index(pre_pre_prev ? (*info.cuda_dir_8)[pre_prev_index] : pre_prev_index);
 
@@ -717,11 +717,11 @@ namespace honei
                                           unsigned long packed_index)
                         {
 
-                            bool prev(!((*info.cuda_dir_8)[packed_index] == ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_8)[packed_index] == 4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_8)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_8)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_8)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_8)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_8)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_8)[prev_index] : prev_index);
 
@@ -740,11 +740,11 @@ namespace honei
                                           unsigned long packed_index)
                         {
 
-                            bool prev(!((*info.cuda_dir_8)[packed_index] == ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_8)[packed_index] == 4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_8)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_8)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_8)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_8)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_8)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_8)[prev_index] : prev_index);
 
@@ -899,15 +899,15 @@ namespace honei
                                           unsigned long packed_index)
                         {
                             ///Determine extrapolation_indices:
-                            bool prev(!((*info.cuda_dir_1)[packed_index] ==  ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_1)[packed_index] ==  4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_1)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_1)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_1)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_1)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_1)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_1)[prev_index] : prev_index);
 
-                            bool pre_pre_prev(pre_prev ? (!((*info.cuda_dir_1)[pre_prev_index] == ULONG_MAX) ?
+                            bool pre_pre_prev(pre_prev ? (!((*info.cuda_dir_1)[pre_prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_1)[pre_prev_index]] ? true : false) : false) : false);
                             unsigned long pre_pre_prev_index(pre_pre_prev ? (*info.cuda_dir_1)[pre_prev_index] : pre_prev_index);
 
@@ -928,11 +928,11 @@ namespace honei
                                           unsigned long packed_index)
                         {
 
-                            bool prev(!((*info.cuda_dir_1)[packed_index] == ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_1)[packed_index] == 4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_1)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_1)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_1)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_1)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_1)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_1)[prev_index] : prev_index);
 
@@ -951,11 +951,11 @@ namespace honei
                                           unsigned long packed_index)
                         {
 
-                            bool prev(!((*info.cuda_dir_1)[packed_index] == ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_1)[packed_index] == 4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_1)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_1)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_1)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_1)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_1)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_1)[prev_index] : prev_index);
 
@@ -1110,15 +1110,15 @@ namespace honei
                                           unsigned long packed_index)
                         {
                             ///Determine extrapolation_indices:
-                            bool prev(!((*info.cuda_dir_2)[packed_index] ==  ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_2)[packed_index] ==  4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_2)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_2)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_2)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_2)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_2)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_2)[prev_index] : prev_index);
 
-                            bool pre_pre_prev(pre_prev ? (!((*info.cuda_dir_2)[pre_prev_index] == ULONG_MAX) ?
+                            bool pre_pre_prev(pre_prev ? (!((*info.cuda_dir_2)[pre_prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_2)[pre_prev_index]] ? true : false) : false) : false);
                             unsigned long pre_pre_prev_index(pre_pre_prev ? (*info.cuda_dir_2)[pre_prev_index] : pre_prev_index);
 
@@ -1139,11 +1139,11 @@ namespace honei
                                           unsigned long packed_index)
                         {
 
-                            bool prev(!((*info.cuda_dir_2)[packed_index] == ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_2)[packed_index] == 4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_2)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_2)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_2)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_2)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_2)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_2)[prev_index] : prev_index);
 
@@ -1162,11 +1162,11 @@ namespace honei
                                           unsigned long packed_index)
                         {
 
-                            bool prev(!((*info.cuda_dir_2)[packed_index] == ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_2)[packed_index] == 4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_2)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_2)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_2)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_2)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_2)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_2)[prev_index] : prev_index);
 
@@ -1321,15 +1321,15 @@ namespace honei
                                           unsigned long packed_index)
                         {
                             ///Determine extrapolation_indices:
-                            bool prev(!((*info.cuda_dir_3)[packed_index] ==  ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_3)[packed_index] ==  4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_3)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_3)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_3)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_3)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_3)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_3)[prev_index] : prev_index);
 
-                            bool pre_pre_prev(pre_prev ? (!((*info.cuda_dir_3)[pre_prev_index] == ULONG_MAX) ?
+                            bool pre_pre_prev(pre_prev ? (!((*info.cuda_dir_3)[pre_prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_3)[pre_prev_index]] ? true : false) : false) : false);
                             unsigned long pre_pre_prev_index(pre_pre_prev ? (*info.cuda_dir_3)[pre_prev_index] : pre_prev_index);
 
@@ -1350,11 +1350,11 @@ namespace honei
                                           unsigned long packed_index)
                         {
 
-                            bool prev(!((*info.cuda_dir_3)[packed_index] == ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_3)[packed_index] == 4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_3)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_3)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_3)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_3)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_3)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_3)[prev_index] : prev_index);
 
@@ -1373,11 +1373,11 @@ namespace honei
                                           unsigned long packed_index)
                         {
 
-                            bool prev(!((*info.cuda_dir_3)[packed_index] == ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_3)[packed_index] == 4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_3)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_3)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_3)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_3)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_3)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_3)[prev_index] : prev_index);
 
@@ -1532,15 +1532,15 @@ namespace honei
                                           unsigned long packed_index)
                         {
                             ///Determine extrapolation_indices:
-                            bool prev(!((*info.cuda_dir_4)[packed_index] ==  ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_4)[packed_index] ==  4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_4)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_4)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_4)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_4)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_4)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_4)[prev_index] : prev_index);
 
-                            bool pre_pre_prev(pre_prev ? (!((*info.cuda_dir_4)[pre_prev_index] == ULONG_MAX) ?
+                            bool pre_pre_prev(pre_prev ? (!((*info.cuda_dir_4)[pre_prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_4)[pre_prev_index]] ? true : false) : false) : false);
                             unsigned long pre_pre_prev_index(pre_pre_prev ? (*info.cuda_dir_4)[pre_prev_index] : pre_prev_index);
 
@@ -1561,11 +1561,11 @@ namespace honei
                                           unsigned long packed_index)
                         {
 
-                            bool prev(!((*info.cuda_dir_4)[packed_index] == ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_4)[packed_index] == 4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_4)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_4)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_4)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_4)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_4)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_4)[prev_index] : prev_index);
 
@@ -1584,11 +1584,11 @@ namespace honei
                                           unsigned long packed_index)
                         {
 
-                            bool prev(!((*info.cuda_dir_4)[packed_index] == ULONG_MAX) ?
+                            bool prev(!((*info.cuda_dir_4)[packed_index] == 4294967295) ?
                                     (!(*solids.solid_flags)[(*info.cuda_dir_4)[packed_index]] ? true : false) : false);
                             unsigned long prev_index(prev ? (*info.cuda_dir_4)[packed_index] : packed_index);
 
-                            bool pre_prev(prev ? (!((*info.cuda_dir_4)[prev_index] == ULONG_MAX) ?
+                            bool pre_prev(prev ? (!((*info.cuda_dir_4)[prev_index] == 4294967295) ?
                                         (!(*solids.solid_flags)[(*info.cuda_dir_4)[prev_index]] ? true : false) : false) : false);
                             unsigned long pre_prev_index(pre_prev ? (*info.cuda_dir_4)[prev_index] : prev_index);
 

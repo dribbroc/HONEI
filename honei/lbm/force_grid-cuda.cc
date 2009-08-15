@@ -103,7 +103,7 @@ void ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lb
     void * h_gpu(data.h->lock(lm_read_only, tags::GPU::CUDA::memory_value));
     void * u_gpu(data.u->lock(lm_read_only, tags::GPU::CUDA::memory_value));
     void * v_gpu(data.v->lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * b_gpu(data.b->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+    //void * b_gpu(data.b->lock(lm_read_only, tags::GPU::CUDA::memory_value));
 
     void * f_temp_1_gpu(data.f_temp_1->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
     void * f_temp_2_gpu(data.f_temp_2->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));

@@ -775,7 +775,7 @@ namespace honei
     {
         public:
             ///Generalized unpacking and extraction
-            static void deflate(Grid<D2Q9, DT_> & grid, PackedSolidData<D2Q9, DT_> & data, DenseVector<bool> * from, DenseMatrix<bool> * to)
+            static void deflate(Grid<D2Q9, DT_> & grid, PackedSolidData<D2Q9, DT_> & data, DenseVector<int> * from, DenseMatrix<bool> * to)
             {
                 grid.obstacles->lock(lm_read_only);
                 to->lock(lm_write_only);
@@ -831,12 +831,12 @@ namespace honei
 
             static void allocate(PackedGridData<D2Q9, DT_> & data, PackedSolidData<D2Q9, DT_> & solids)
             {
-                solids.boundary_flags = new DenseVector<bool>(data.h->size());
-                solids.line_flags = new DenseVector<bool>(data.h->size());
-                solids.solid_flags = new DenseVector<bool>(data.h->size());
-                solids.solid_old_flags = new DenseVector<bool>(data.h->size());
-                solids.solid_to_fluid_flags = new DenseVector<bool>(data.h->size());
-                solids.stationary_flags = new DenseVector<bool>(data.h->size());
+                solids.boundary_flags = new DenseVector<int>(data.h->size(), false);
+                solids.line_flags = new DenseVector<int>(data.h->size(), false);
+                solids.solid_flags = new DenseVector<int>(data.h->size(), false);
+                solids.solid_old_flags = new DenseVector<int>(data.h->size(), false);
+                solids.solid_to_fluid_flags = new DenseVector<int>(data.h->size(), false);
+                solids.stationary_flags = new DenseVector<int>(data.h->size(), false);
 
 
                 solids.f_mea_1 = new DenseVector<DT_>(data.h->size());

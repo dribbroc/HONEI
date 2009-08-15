@@ -58,14 +58,14 @@ namespace honei
                                                                  PackedSolidData<lbm_lattice_types::D2Q9, DT_> & solids,
                                                                  unsigned long packed_index)
                         {
-                            unsigned long nb_1(((*info.cuda_dir_1)[packed_index] != ULONG_MAX) ? (*info.cuda_dir_1)[packed_index] : packed_index);
-                            unsigned long nb_2(((*info.cuda_dir_2)[packed_index] != ULONG_MAX) ? (*info.cuda_dir_2)[packed_index] : packed_index);
-                            unsigned long nb_3(((*info.cuda_dir_3)[packed_index] != ULONG_MAX) ? (*info.cuda_dir_3)[packed_index] : packed_index);
-                            unsigned long nb_4(((*info.cuda_dir_4)[packed_index] != ULONG_MAX) ? (*info.cuda_dir_4)[packed_index] : packed_index);
-                            unsigned long nb_5(((*info.cuda_dir_5)[packed_index] != ULONG_MAX) ? (*info.cuda_dir_5)[packed_index] : packed_index);
-                            unsigned long nb_6(((*info.cuda_dir_6)[packed_index] != ULONG_MAX) ? (*info.cuda_dir_6)[packed_index] : packed_index);
-                            unsigned long nb_7(((*info.cuda_dir_7)[packed_index] != ULONG_MAX) ? (*info.cuda_dir_7)[packed_index] : packed_index);
-                            unsigned long nb_8(((*info.cuda_dir_8)[packed_index] != ULONG_MAX) ? (*info.cuda_dir_8)[packed_index] : packed_index);
+                            unsigned long nb_1(((*info.cuda_dir_1)[packed_index] != 4294967295) ? (*info.cuda_dir_1)[packed_index] : packed_index);
+                            unsigned long nb_2(((*info.cuda_dir_2)[packed_index] != 4294967295) ? (*info.cuda_dir_2)[packed_index] : packed_index);
+                            unsigned long nb_3(((*info.cuda_dir_3)[packed_index] != 4294967295) ? (*info.cuda_dir_3)[packed_index] : packed_index);
+                            unsigned long nb_4(((*info.cuda_dir_4)[packed_index] != 4294967295) ? (*info.cuda_dir_4)[packed_index] : packed_index);
+                            unsigned long nb_5(((*info.cuda_dir_5)[packed_index] != 4294967295) ? (*info.cuda_dir_5)[packed_index] : packed_index);
+                            unsigned long nb_6(((*info.cuda_dir_6)[packed_index] != 4294967295) ? (*info.cuda_dir_6)[packed_index] : packed_index);
+                            unsigned long nb_7(((*info.cuda_dir_7)[packed_index] != 4294967295) ? (*info.cuda_dir_7)[packed_index] : packed_index);
+                            unsigned long nb_8(((*info.cuda_dir_8)[packed_index] != 4294967295) ? (*info.cuda_dir_8)[packed_index] : packed_index);
 
                             (*solids.boundary_flags)[nb_1] = true;
                             (*solids.boundary_flags)[nb_2] = true;
