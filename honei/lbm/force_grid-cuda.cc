@@ -134,7 +134,7 @@ void ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lb
     data.h->unlock(lm_read_only);
     data.u->unlock(lm_read_only);
     data.v->unlock(lm_read_only);
-    data.b->unlock(lm_read_only);
+    //data.b->unlock(lm_read_only);
 
     data.f_temp_1->unlock(lm_read_and_write);
     data.f_temp_2->unlock(lm_read_and_write);
