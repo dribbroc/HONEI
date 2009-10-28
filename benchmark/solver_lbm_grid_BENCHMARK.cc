@@ -84,14 +84,14 @@ class LBMGSolverBench :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLBMGrid<Tag_, lbm_applications::LABSWE,  DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, 1., 1., 1., 1.5);
+            SolverLBMGrid<Tag_, lbm_applications::LABSWE,  DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info, &data, 1., 1., 1., 1.5);
 
             solver.do_preprocessing();
 
             for(int i = 0; i < _count; ++i)
             {
                 BENCHMARK(
-                        for (unsigned long j(0) ; j < 25 ; ++j)
+                        for (unsigned long j(0) ; j < 1 ; ++j)
                         {
                             solver.solve();
                         }
@@ -106,7 +106,7 @@ class LBMGSolverBench :
         }
 };
 
-LBMGSolverBench<tags::CPU, float> solver_bench_float_1("LBM Grid solver Benchmark - size: 250x250, float", 250, 25);
+/*LBMGSolverBench<tags::CPU, float> solver_bench_float_1("LBM Grid solver Benchmark - size: 250x250, float", 250, 25);
 LBMGSolverBench<tags::CPU, double> solver_bench_double_1("LBM Grid solver Benchmark - size: 250x250, double", 250, 25);
 LBMGSolverBench<tags::CPU::MultiCore, float> mc_solver_bench_float_1("MC LBM Grid solver Benchmark - size: 250x250, float", 250, 25);
 LBMGSolverBench<tags::CPU::MultiCore, double> mc_solver_bench_double_1("MC LBM Grid solver Benchmark - size: 250x250, double", 250, 25);
@@ -114,10 +114,23 @@ LBMGSolverBench<tags::CPU::MultiCore, double> mc_solver_bench_double_1("MC LBM G
 LBMGSolverBench<tags::CPU::SSE, float> sse_solver_bench_float_1("SSE LBM Grid solver Benchmark - size: 250x250, float", 250, 25);
 LBMGSolverBench<tags::CPU::SSE, double> sse_solver_bench_double_1("SSE LBM Grid solver Benchmark - size: 250x250, double", 250, 25);
 LBMGSolverBench<tags::CPU::MultiCore::SSE, float> mcsse_solver_bench_float_1("MC SSE LBM Grid solver Benchmark - size: 250x250, float", 250, 25);
-LBMGSolverBench<tags::CPU::MultiCore::SSE, double> mcsse_solver_bench_double_1("MC SSE LBM Grid solver Benchmark - size: 250x250, double", 250, 25);
-#endif
+LBMGSolverBench<tags::CPU::MultiCore::SSE, double> mcsse_solver_bench_double_1("MC SSE LBM Grid solver Benchmark - size: 250x250, double", 250, 25);*/
+//#endif
 #ifdef HONEI_CUDA
-LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_1("CUDA LBM Grid solver Benchmark - size: 250x250, float", 250, 25);
+LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_12("CUDA LBM Grid solver Benchmark - size: 250x250, float", 100*2, 100);
+LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_13("CUDA LBM Grid solver Benchmark - size: 250x250, float", 200*2, 100);
+LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_14("CUDA LBM Grid solver Benchmark - size: 250x250, float", 300*2, 100);
+LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_15("CUDA LBM Grid solver Benchmark - size: 250x250, float", 400*2, 100);
+LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_16("CUDA LBM Grid solver Benchmark - size: 250x250, float", 500*2, 100);
+LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_17("CUDA LBM Grid solver Benchmark - size: 250x250, float", 600*2, 100);
+LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_18("CUDA LBM Grid solver Benchmark - size: 250x250, float", 700*2, 100);
+LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_19("CUDA LBM Grid solver Benchmark - size: 250x250, float", 800*2, 100);
+LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_1a("CUDA LBM Grid solver Benchmark - size: 250x250, float", 900*2, 100);
+LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_1s("CUDA LBM Grid solver Benchmark - size: 250x250, float", 1000*2, 100);
+LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_1d("CUDA LBM Grid solver Benchmark - size: 250x250, float", 1100*2, 100);
+LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_1f("CUDA LBM Grid solver Benchmark - size: 250x250, float", 1200*2, 100);
+LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_1g("CUDA LBM Grid solver Benchmark - size: 250x250, float", 1300*2, 100);
+LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_1z("CUDA LBM Grid solver Benchmark - size: 250x250, float", 1400*2, 100);
 #endif
 
 
@@ -191,7 +204,7 @@ class LBMGSimpleSolverBench :
         }
 };
 
-LBMGSimpleSolverBench<tags::CPU, float> solver_simple_bench_float_1("LBM Simple Grid solver Benchmark - size: 250x250, float", 250, 25);
+/*LBMGSimpleSolverBench<tags::CPU, float> solver_simple_bench_float_1("LBM Simple Grid solver Benchmark - size: 250x250, float", 250, 25);
 LBMGSimpleSolverBench<tags::CPU, double> solver_simple_bench_double_1("LBM Simple Grid solver Benchmark - size: 250x250, double", 250, 25);
 LBMGSimpleSolverBench<tags::CPU::MultiCore, float> mc_solver_simple_bench_float_1("MC LBM Simple Grid solver Benchmark - size: 250x250, float", 250, 25);
 LBMGSimpleSolverBench<tags::CPU::MultiCore, double> mc_solver_simple_bench_double_1("MC LBM Simple Grid solver Benchmark - size: 250x250, double", 250, 25);
@@ -207,7 +220,7 @@ LBMGSimpleSolverBench<tags::GPU::CUDA, float> cuda_solver_simple_bench_float_1("
 #ifdef HONEI_CELL
 LBMGSimpleSolverBench<tags::Cell, float> cell_solver_simple_bench_float_1("Cell LBM Simple Grid solver Benchmark - size: 250x250, float", 250, 25);
 #endif
-
+*/
 
 /*LBMGSimpleSolverBench<tags::CPU::SSE, float> sse_solver_simple_bench_float_1("SSE LBM Simple Grid solver Benchmark - size: 50, float", 50, 25);
 LBMGSimpleSolverBench<tags::CPU::SSE, float> sse_solver_simple_bench_float_2("SSE LBM Simple Grid solver Benchmark - size: 100, float", 100, 25);

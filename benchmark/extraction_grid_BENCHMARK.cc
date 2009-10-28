@@ -88,7 +88,7 @@ class ExtractionGridBench :
             for(int i = 0; i < _count; ++i)
             {
                 BENCHMARK(
-                        for (unsigned long j(0) ; j < 5 ; ++j)
+                        for (unsigned long j(0) ; j < 1 ; ++j)
                         {
                         (ExtractionGrid<Tag_, LbmMode_>::value(info, data, DataType_(10e-5)));
                         }
@@ -103,25 +103,6 @@ class ExtractionGridBench :
         }
 };
 
-ExtractionGridBench<tags::CPU, float, lbm_modes::DRY> dry_extraction_grid_bench_float("DRY ExtractionGridBench - size: 2000, float", 2000, 5);
-ExtractionGridBench<tags::CPU, double, lbm_modes::DRY> dry_extraction_grid_bench_double("DRY ExtractionGridBench - size: 2000, double", 2000, 5);
-#ifdef HONEI_SSE
-ExtractionGridBench<tags::CPU::SSE, float, lbm_modes::DRY> dry_sse_extraction_grid_bench_float("DRY SSE ExtractionGridBench - size: 2000, float", 2000, 5);
-ExtractionGridBench<tags::CPU::SSE, double, lbm_modes::DRY> dry_sse_extraction_grid_bench_double("DRY SSE ExtractionGridBench - size: 2000, double", 2000, 5);
-#endif
 #ifdef HONEI_CUDA
-ExtractionGridBench<tags::GPU::CUDA, float, lbm_modes::DRY> dry_cuda_extraction_grid_bench_float("DRY CUDA ExtractionGridBench - size: 2000, float", 2000, 25);
-#endif
-
-ExtractionGridBench<tags::CPU, float, lbm_modes::WET> wet_extraction_grid_bench_float("WET ExtractionGridBench - size: 250, float", 250, 5);
-ExtractionGridBench<tags::CPU, double, lbm_modes::WET> wet_extraction_grid_bench_double("WET ExtractionGridBench - size: 2000, double", 2000, 5);
-#ifdef HONEI_SSE
-ExtractionGridBench<tags::CPU::SSE, float, lbm_modes::WET> wet_sse_extraction_grid_bench_float("WET SSE ExtractionGridBench - size: 2000, float", 2000, 5);
-ExtractionGridBench<tags::CPU::SSE, double, lbm_modes::WET> wet_sse_extraction_grid_bench_double("WET SSE ExtractionGridBench - size: 2000, double", 2000, 5);
-#endif
-#ifdef HONEI_CUDA
-ExtractionGridBench<tags::GPU::CUDA, float, lbm_modes::WET> wet_cuda_extraction_grid_bench_float("WET CUDA ExtractionGridBench - size: 2000, float", 2000, 25);
-#endif
-#ifdef HONEI_CELL
-ExtractionGridBench<tags::Cell, float, lbm_modes::WET> wet_cell_extraction_grid_bench_float("WET Cell ExtractionGridBench - size: 250, float", 250, 25);
+ExtractionGridBench<tags::GPU::CUDA, float, lbm_modes::WET> wet_cuda_extraction_grid_bench_float("WET CUDA ExtractionGridBench - size: 2000, float", 1300, 100);
 #endif

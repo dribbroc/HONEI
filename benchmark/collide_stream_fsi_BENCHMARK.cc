@@ -121,7 +121,7 @@ class CollideStreamFSIBench :
                     solids.current_u = DataType_(0);
                 }
                 BENCHMARK(
-                        for (unsigned long j(0) ; j < 5 ; ++j)
+                        for (unsigned long j(0) ; j < 1 ; ++j)
                         {
                         (CollideStreamFSI<Tag_, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                         value(info, data, solids, grid.d_x, grid.d_y));
@@ -137,8 +137,6 @@ class CollideStreamFSIBench :
         }
 };
 
-CollideStreamFSIBench<tags::CPU, float> collide_stream_grid_bench_float("CollideStreamFSIBenchmark - size: 129, float", 129, 10);
-CollideStreamFSIBench<tags::CPU, double> collide_stream_grid_bench_double("CollideStreamFSIBenchmark - size: 129, double", 129, 10);
 #ifdef HONEI_CUDA
-CollideStreamFSIBench<tags::GPU::CUDA, float> collide_stream_grid_bench_float_cuda("CollideStreamFSIBenchmark CUDA - size: 129, float", 129, 10);
+CollideStreamFSIBench<tags::GPU::CUDA, float> collide_stream_grid_bench_float_cuda("CollideStreamFSIBenchmark CUDA - size: 129, float", 1300, 100);
 #endif
