@@ -256,6 +256,19 @@ namespace honei
     }
 
     template <typename DataType_>
+    const DataType_ SparseMatrixELL<DataType_>::operator() (unsigned long row, unsigned long column) const
+    {
+        unsigned long start(row * this->num_cols_per_row());
+        unsigned long end((row + 1) * this->num_cols_per_row());
+        for (unsigned long i(start) ; i < end && this->Aj()[i] <= column ; ++i)
+        {
+            if (this->Aj()[i] == column)
+                return this->Ax()[i];
+        }
+        return 0;
+    }
+
+    template <typename DataType_>
     void SparseMatrixELL<DataType_>::lock(LockMode mode) const
     {
         this->_imp->Aj.lock(mode);
@@ -310,17 +323,17 @@ namespace honei
     std::ostream &
     operator<< (std::ostream & lhs, const SparseMatrixELL<DataType_> & b)
     {
-/*        lhs << "SparseMatrixELL" << std::endl << "{" << std::endl;
-        for (unsigned long row(0) ; row < b.size() ; ++row)
+        lhs << "SparseMatrixELL" << std::endl << "{" << std::endl;
+        for (unsigned long row(0) ; row < b.rows() ; ++row)
         {
-            for (unsigned long column(0) ; column < b.size() ; ++column)
+            for (unsigned long column(0) ; column < b.columns() ; ++column)
             {
                 lhs << " " << b(row, column);
             }
             lhs << std::endl;
         }
         lhs << "}" << std::endl;
-*/
+
         lhs << "NumColsPerRow: "<< b.num_cols_per_row() << " Stride: "<< b.stride() << std::endl;
         lhs << "Aj: " << b.Aj();
         lhs << "Ax: " << b.Ax();

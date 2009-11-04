@@ -534,7 +534,7 @@ class ConjugateGradientsTestSparseELL:
             SparseMatrixELL<DT1_> smatrix2(rows, columns, r, c, data);
 
             std::string filename_2(HONEI_SOURCEDIR);
-	    filename_2 += "/honei/math/testdata/";
+            filename_2 += "/honei/math/testdata/";
             filename_2 += _v_f;
             DenseVector<DT1_> rhs(rows, DT1_(0));
             VectorIO<io_formats::EXP>::read_vector(filename_2, rhs);

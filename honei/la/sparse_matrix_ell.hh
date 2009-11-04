@@ -93,6 +93,9 @@ namespace honei
             /// Retrieves our Ax (data) vector.
             DenseVector<DataType_> & Ax() const;
 
+            /// Retrieves element at (row, column), unassignable.
+            const DataType_ operator() (unsigned long row, unsigned long column) const;
+
             /// Request a memory access lock for our data.
             void lock(LockMode mode) const;
 
