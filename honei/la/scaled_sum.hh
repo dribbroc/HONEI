@@ -98,7 +98,7 @@ namespace honei
             typename DenseVectorBase<DT1_>::ConstElementIterator x_i(x.begin_elements());
             typename DenseVectorBase<DT2_>::ConstElementIterator y_i(y.begin_elements());
             for (typename DenseVectorBase<DT1_>::ElementIterator res_i(result.begin_elements()),
-                    x_i_end(x.end_elements()) ; x_i != x_i_end ; ++x_i)
+                    x_i_end(x.end_elements()) ; x_i != x_i_end ; ++x_i, ++y_i, ++res_i)
             {
                 *res_i = b * (*y_i) + *x_i;
             }

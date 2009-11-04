@@ -57,12 +57,17 @@ class DefectTest:
             SparseMatrixELL<DT_> smatrix(ssmatrix);
 
             DenseVector<DT_> y1(Defect<Tag_>::value(b, smatrix, x));
-            DenseVector<DT_> y2(b.copy());
-            Difference<tags::CPU>::value(y2 ,Product<tags::CPU>::value(matrix, x) );
+            DenseVector<DT_> y2(b.size());
+            Defect<Tag_>::value(y2, b, smatrix, x);
+            DenseVector<DT_> yref(b.copy());
+            Difference<tags::CPU>::value(yref ,Product<tags::CPU>::value(matrix, x) );
 
             y1.lock(lm_read_only);
             y1.unlock(lm_read_only);
-            TEST_CHECK_EQUAL(y1, y2);
+            y2.lock(lm_read_only);
+            y2.unlock(lm_read_only);
+            TEST_CHECK_EQUAL(y1, yref);
+            TEST_CHECK_EQUAL(y2, yref);
 
         }
 };
@@ -107,7 +112,7 @@ class DefectRegressionTest:
             SparseMatrixELL<DT_> smatrix2(rows, columns, r, c, data);
 
             std::string filename_2(HONEI_SOURCEDIR);
-	    filename_2 += "/honei/math/testdata/";
+            filename_2 += "/honei/math/testdata/";
             filename_2 += _v_f;
             DenseVector<DT_> rhs(rows, DT_(0));
             VectorIO<io_formats::EXP>::read_vector(filename_2, rhs);
@@ -116,12 +121,22 @@ class DefectRegressionTest:
             DenseVector<DT_> ref_result(Defect<tags::CPU>::value(rhs, smatrix2, x));
 
             DenseVector<DT_> result(Defect<Tag_>::value(rhs, smatrix2, x));
+            DenseVector<DT_> result2(result.size());
+            Defect<Tag_>::value(result2, rhs, smatrix2, x);
 
             result.lock(lm_read_only);
+            result2.lock(lm_read_only);
             TEST_CHECK_EQUAL(result, ref_result);
+            TEST_CHECK_EQUAL(result2, ref_result);
+            result2.unlock(lm_read_only);
             result.unlock(lm_read_only);
         }
 };
+DefectRegressionTest<float, tags::CPU> regression_defect_test_float_sparse("Regression float", "area51_full_0.m", "area51_rhs_0");
+DefectRegressionTest<double, tags::CPU> regression_defect_test_double_sparse("Regression double", "area51_full_0.m", "area51_rhs_0");
 #ifdef HONEI_CUDA
-DefectRegressionTest<float, tags::GPU::CUDA> defect_test_float_sparse_cuda(" CUDA Regression float", "area51_full_0.m", "area51_rhs_0");
+DefectRegressionTest<float, tags::GPU::CUDA> cuda_regression_defect_test_float_sparse("CUDA Regression float", "area51_full_0.m", "area51_rhs_0");
+#ifdef HONEI_CUDA_DOUBLE
+DefectRegressionTest<double, tags::GPU::CUDA> cuda_regression_defect_test_double_sparse("CUDA Regression double", "area51_full_0.m", "area51_rhs_0");
+#endif
 #endif

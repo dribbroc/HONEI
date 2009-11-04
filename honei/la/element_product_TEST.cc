@@ -160,6 +160,122 @@ DenseVectorElementProductQuickTest<tags::Cell, double> cell_dense_vector_element
 #endif
 
 template <typename Tag_, typename DataType_>
+class DenseVector3ElementProductTest :
+    public BaseTest
+{
+    public:
+        DenseVector3ElementProductTest(const std::string & type) :
+            BaseTest("dense_vector_3_elementwise_product_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 9) ; size <<= 1)
+            {
+                DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(0)),
+                    dv3(size, DataType_(0));
+
+                unsigned long num_limit(311); //value of used elements will be <= (num_limit/2)^2
+                DataType_ sign_1(1), sign_2(1);
+                for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                    j(dv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
+                {
+                    *i = sign_1 * (i.index() % num_limit);
+                    *j = sign_2 * (num_limit - (i.index() % num_limit) - 1);
+                    *k = sign_1 * sign_2 * ((i.index() % num_limit) * (num_limit - (i.index() % num_limit) - 1));
+                    sign_1 *= -1;
+                    sign_2 *= (-1) * sign_1;
+                }
+                DenseVector<DataType_> dv4(dv1.size());
+                ElementProduct<Tag_>::value(dv4, dv1, dv2);
+                ElementProduct<Tag_>::value(dv1, dv2);
+
+                TEST(dv1.lock(lm_read_only), TEST_CHECK_EQUAL(dv1, dv3), dv1.unlock(lm_read_only));
+                TEST(dv4.lock(lm_read_only), TEST_CHECK_EQUAL(dv4, dv3), dv4.unlock(lm_read_only));
+            }
+
+            DenseVector<DataType_> dv01(3, DataType_(1)), dv02(4, DataType_(1));
+
+            TEST_CHECK_THROWS(ElementProduct<Tag_>::value(dv02, dv01), VectorSizeDoesNotMatch);
+        }
+};
+
+DenseVector3ElementProductTest<tags::CPU, float> dense_vector_3_elementwise_product_test_float("float");
+DenseVector3ElementProductTest<tags::CPU, double> dense_vector_3_elementwise_product_test_double("double");
+#ifdef HONEI_CUDA
+DenseVector3ElementProductTest<tags::GPU::CUDA, float> cuda_dense_vector_3_elementwise_product_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVector3ElementProductTest<tags::GPU::CUDA, double> cuda_dense_vector_3_elementwise_product_test_double("double");
+#endif
+#endif
+
+template <typename Tag_, typename DataType_>
+class DenseVector3ElementProductQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVector3ElementProductQuickTest(const std::string & type) :
+            QuickTest("dense_vector_3_elementwise_product_quick_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(4711);
+            DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(0)),
+                dv3(size, DataType_(0));
+
+            unsigned long num_limit(311); //value of used elements will be <= (num_limit/2)^2
+            DataType_ sign_1(1), sign_2(1);
+            for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                j(dv2.begin_elements()), k(dv3.begin_elements()) ; i != i_end ; ++i, ++j, ++k)
+            {
+                *i = sign_1 * (i.index() % num_limit);
+                *j = sign_2 * (num_limit - (i.index() % num_limit) - 1);
+                *k = sign_1 * sign_2 * ((i.index() % num_limit) * (num_limit - (i.index() % num_limit) - 1));
+                sign_1 *= -1;
+                sign_2 *= (-1) * sign_1;
+            }
+
+            DenseVector<DataType_> dv4(dv1.size());
+            ElementProduct<Tag_>::value(dv4, dv1, dv2);
+            ElementProduct<Tag_>::value(dv1, dv2);
+
+            TEST(dv1.lock(lm_read_only),
+                    for (typename DenseVector<DataType_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()),
+                        k(dv3.begin_elements()) ; i != i_end ; ++i, ++k)
+                    {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *k, std::numeric_limits<DataType_>::epsilon());
+                    },
+                    dv1.unlock(lm_read_only));
+
+            TEST(dv4.lock(lm_read_only),
+                    for (typename DenseVector<DataType_>::ElementIterator i(dv4.begin_elements()), i_end(dv4.end_elements()),
+                        k(dv3.begin_elements()) ; i != i_end ; ++i, ++k)
+                    {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *k, std::numeric_limits<DataType_>::epsilon());
+                    },
+                    dv4.unlock(lm_read_only));
+
+            DenseVector<DataType_> dv01(3, DataType_(1)), dv02(4, DataType_(1));
+
+            TEST_CHECK_THROWS(ElementProduct<Tag_>::value(dv02, dv01), VectorSizeDoesNotMatch);
+
+        }
+};
+DenseVector3ElementProductQuickTest<tags::CPU, float> dense_vector_3_elementwise_product_quick_test_float("float");
+DenseVector3ElementProductQuickTest<tags::CPU, double> dense_vector_3_elementwise_product_quick_test_double("double");
+#ifdef HONEI_CUDA
+DenseVector3ElementProductQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_3_elementwise_product_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVector3ElementProductQuickTest<tags::GPU::CUDA, double> cuda_dense_vector_3_elementwise_product_quick_test_double("double");
+#endif
+#endif
+
+template <typename Tag_, typename DataType_>
 class DenseVectorRangeElementProductTest :
     public BaseTest
 {

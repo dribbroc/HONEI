@@ -137,6 +137,93 @@ DenseVectorScaledSumQuickTest<tags::Cell, double> cell_dense_vector_scaled_sum_q
 #endif
 
 template <typename Tag_, typename DataType_>
+class DenseVectorResScaledSumTest :
+    public BaseTest
+{
+    public:
+        DenseVectorResScaledSumTest(const std::string & type) :
+            BaseTest("dense_vector_res_scaled_sum_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(10) ; size < (1 << 10) ; size <<= 1)
+            {
+                DenseVector<DataType_> dv1(size, DataType_(2));
+                DenseVector<DataType_> dv2(size, DataType_(3));
+                DataType_ scal(DataType_(2));
+                DenseVector<DataType_> dv4(size);
+                ScaledSum<Tag_>::value(dv4, dv1, dv2, scal);
+
+                ScaledSum<Tag_>::value(dv1, dv2, scal);
+                DenseVector<DataType_> dv3(size, DataType_(8));
+
+                TEST(dv1.lock(lm_read_only), TEST_CHECK_EQUAL(dv1, dv3), dv1.unlock(lm_read_only));
+                TEST(dv4.lock(lm_read_only), TEST_CHECK_EQUAL(dv4, dv3), dv4.unlock(lm_read_only));
+            }
+
+            DenseVector<DataType_> dv00(1, DataType_(1));
+            DenseVector<DataType_> dv01(2, DataType_(1));
+            DataType_ scal00(DataType_(2));
+
+            TEST_CHECK_THROWS(ScaledSum<Tag_>::value(dv00, dv01, scal00), VectorSizeDoesNotMatch);
+        }
+};
+DenseVectorResScaledSumTest<tags::CPU, float> dense_vector_scaled_res_sum_test_float("float");
+DenseVectorResScaledSumTest<tags::CPU, double> dense_vector_scaled_res_sum_test_double("double");
+#ifdef HONEI_CUDA
+DenseVectorResScaledSumTest<tags::GPU::CUDA, float> cuda_dense_vector_res_scaled_sum_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorResScaledSumTest<tags::GPU::CUDA, double> cuda_dense_vector_res_scaled_sum_test_double("double");
+#endif
+#endif
+
+template <typename Tag_, typename DataType_>
+class DenseVectorResScaledSumQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorResScaledSumQuickTest(const std::string & type) :
+            QuickTest("dense_vector_Res_scaled_sum_quick_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(65);
+
+            DenseVector<DataType_> dv1(size, DataType_(2));
+            DenseVector<DataType_> dv2(size, DataType_(3));
+            DataType_ scal(DataType_(2));
+            DenseVector<DataType_> dv4(size);
+            ScaledSum<Tag_>::value(dv4, dv1, dv2, scal);
+
+            ScaledSum<Tag_>::value(dv1, dv2, scal);
+            DenseVector<DataType_> dv3(size, DataType_(8));
+
+            TEST(dv1.lock(lm_read_only), TEST_CHECK_EQUAL(dv1, dv3), dv1.unlock(lm_read_only));
+            TEST(dv4.lock(lm_read_only), TEST_CHECK_EQUAL(dv4, dv3), dv4.unlock(lm_read_only));
+
+            DenseVector<DataType_> dv00(1, DataType_(1));
+            DenseVector<DataType_> dv01(2, DataType_(1));
+            DataType_ scal00(DataType_(2));
+
+            TEST_CHECK_THROWS(ScaledSum<Tag_>::value(dv00, dv01, scal00), VectorSizeDoesNotMatch);
+        }
+};
+DenseVectorResScaledSumQuickTest<tags::CPU, float> dense_vector_res_scaled_sum_quick_test_float("float");
+DenseVectorResScaledSumQuickTest<tags::CPU, double> dense_vector_res_scaled_sum_quick_test_double("double");
+#ifdef HONEI_CUDA
+DenseVectorResScaledSumQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_res_scaled_sum_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorResScaledSumQuickTest<tags::GPU::CUDA, double> cuda_dense_vector_res_scaled_sum_quick_test_double("double");
+#endif
+#endif
+
+template <typename Tag_, typename DataType_>
 class DenseVectorRangeScaledSumTest :
     public BaseTest
 {
