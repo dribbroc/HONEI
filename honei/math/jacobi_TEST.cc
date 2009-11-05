@@ -22,6 +22,8 @@
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <iostream>
+#include <honei/math/matrix_io.hh>
+#include <honei/math/vector_io.hh>
 
 using namespace honei;
 using namespace tests;
@@ -279,5 +281,81 @@ JacobiTestSparseELL<tags::CPU::SSE, double> sse_jacobi_test_double_sparse_ell("d
 JacobiTestSparseELL<tags::GPU::CUDA, float> cuda_jacobi_test_float_sparse_ell("float");
 #ifdef HONEI_CUDA_DOUBLE
 JacobiTestSparseELL<tags::GPU::CUDA, double> cuda_jacobi_test_double_sparse_ell("double");
+#endif
+#endif
+
+template <typename Tag_, typename DT1_>
+class JacobiSparseELLComparisonTest:
+    public BaseTest
+{
+    private:
+        std::string _m_f, _v_f, _r_f;
+    public:
+        JacobiSparseELLComparisonTest(const std::string & tag, std::string m_file, std::string v_file, std::string res_file) :
+            BaseTest("Jacobi solver test (sparse ELL system)<" + tag + ">")
+        {
+            register_tag(Tag_::name);
+            _m_f = m_file;
+            _v_f = v_file;
+            _r_f = res_file;
+        }
+
+        virtual void run() const
+        {
+            std::string filename(HONEI_SOURCEDIR);
+            filename += "/honei/math/testdata/";
+            filename += _m_f;
+            unsigned long non_zeros(MatrixIO<io_formats::M>::get_non_zeros(filename));
+            unsigned long rows, columns, ax, bx;
+            DenseVector<unsigned long> r(non_zeros);
+            DenseVector<unsigned long> c(non_zeros);
+            DenseVector<DT1_> data(non_zeros);
+
+            MatrixIO<io_formats::M>::read_matrix(filename, r, c, data);
+            MatrixIO<io_formats::M>::get_sizes(filename, rows, columns, ax, bx);
+            SparseMatrixELL<DT1_> smatrix2(rows, columns, r, c, data);
+
+            std::string filename_2(HONEI_SOURCEDIR);
+            filename_2 += "/honei/math/testdata/";
+            filename_2 += _v_f;
+            DenseVector<DT1_> rhs(rows, DT1_(0));
+            VectorIO<io_formats::EXP>::read_vector(filename_2, rhs);
+
+            DenseVector<DT1_> diag_inverted(rows, DT1_(0));
+            for(unsigned long i(0) ; i < data.size() ; ++i)
+            {
+                if(r[i] == c[i])
+                    diag_inverted[r[i]] = DT1_(1)/data[i];
+            }
+            for(unsigned long i(0) ; i < data.size() ; ++i)
+            {
+                if(r[i] == c[i])
+                     data[i] = DT1_(0);
+            }
+            SparseMatrixELL<DT1_> difference(rows, columns, r, c, data);
+
+            DenseVector<DT1_> result(rhs.size(), DT1_(0));
+            Jacobi<Tag_>::value(smatrix2, difference, rhs, result, diag_inverted, 4000ul);
+
+            std::string filename_3(HONEI_SOURCEDIR);
+            filename_3 += "/honei/math/testdata/";
+            filename_3 += _r_f;
+            DenseVector<DT1_> ref_result(rows, DT1_(0));
+            VectorIO<io_formats::EXP>::read_vector(filename_3, ref_result);
+
+            result.lock(lm_read_only);
+            //std::cout << result << std::endl;
+            result.unlock(lm_read_only);
+
+            TEST_CHECK_EQUAL(result, ref_result);
+        }
+};
+
+JacobiSparseELLComparisonTest<tags::CPU, float> jac_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
+JacobiSparseELLComparisonTest<tags::CPU, double> jac_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
+#ifdef HONEI_CUDA
+JacobiSparseELLComparisonTest<tags::GPU::CUDA, float> jac_test_float_sparse_ell_cuda("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
+#ifdef HONEI_CUDA_DOUBLE
+JacobiSparseELLComparisonTest<tags::GPU::CUDA, double> jac_test_double_sparse_ell_cuda("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
 #endif
 #endif

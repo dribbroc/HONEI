@@ -147,8 +147,47 @@ namespace honei
 
             //NEW ELL type:
             template<typename DT1_>
-            static inline void cg_kernel(SparseMatrixELL<DT1_> & system_matrix, DenseVector<DT1_> & right_hand_side, DenseVector<DT1_> & diag_inverted, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility)
+            static inline void cg_kernel(SparseMatrixELL<DT1_> & system_matrix, DenseVector<DT1_> & right_hand_side, DenseVector<DT1_> & x, DenseVector<DT1_> & r, DenseVector<DT1_> & p, DenseVector<DT1_> & v, unsigned long max_iters)
             {
+                //MARKE
+                DT1_ alpha, alpha_old, lambda, initial_defect;
+                unsigned long iterations(0);
+                //r=p=b-Ax
+                Defect<Tag_>::value(r, right_hand_side, system_matrix, x);
+                copy<Tag_>(r, p);
+                alpha = Norm<vnt_l_two, false, Tag_>::value(r);
+                initial_defect = sqrt(alpha);
+                std::cout << "Initial defect NORM: " << initial_defect << std::endl;
+                std::cout << "Initial alpha: " << alpha << std::endl;
+                while(iterations < max_iters)
+                {
+                    Product<Tag_>::value(v, system_matrix, p);
+                    lambda = alpha / DotProduct<Tag_>::value(v, p);
+                    ScaledSum<Tag_>::value(x, p, lambda);
+                    ScaledSum<Tag_>::value(r, v, -lambda);
+                    alpha_old = alpha;
+                    alpha = Norm<vnt_l_two, false, Tag_>::value(r);
+                    Scale<Tag_>::value(p, alpha / alpha_old);
+                    Sum<Tag_>::value(p, r);
+
+                    ++iterations;
+
+                    DT1_ current_defect(sqrt(alpha));
+                    if(current_defect < 1e-08 * initial_defect)
+                    {
+                        std::cout << "Final defect NORM: " << current_defect << " after " << iterations << " iterations." << std::endl;
+                        break;
+                    }
+                    if(current_defect < 1e-08)
+                    {
+                        std::cout << "ABORT. Final defect NORM: " << current_defect << " after " << iterations << " iterations." << std::endl;
+                        break;
+                    }
+                    if(iterations == max_iters)
+                        std::cout << "NO CONVERGENCE after " << max_iters << " iterations! Norm: " << current_defect << std::endl;
+                }
+
+                /*
                 ///Compute x_i+1: (in energy)
                 DT1_ upper = DotProduct<Tag_>::value(former_gradient, former_gradient);
                 DenseVector<DT1_> energy(former_result.size());
@@ -189,6 +228,7 @@ namespace honei
                 ///Finishing:
                 former_gradient = new_gradient;
                 former_result = energy;
+                */
 
             }
             template<typename DT1_, typename DT2_>
@@ -439,6 +479,7 @@ namespace honei
                 fill<Tag_>(x, DT1_(0));
                 DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
                 Difference<Tag_>::value(g, right_hand_side);
+
                 DenseVector<DT1_> g_c(g.size());
                 copy<Tag_>(g, g_c);
                 Scale<Tag_>::value(g_c, DT1_(-1.));
@@ -456,6 +497,9 @@ namespace honei
                     norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
                     copy<Tag_>(x, x_last);
                 }
+                DenseVector<DT1_> r_def(Defect<Tag_>::value(right_hand_side, system_matrix, x));
+                DT1_ norm_bla = Norm<vnt_l_two, false, Tag_>::value(r_def);
+                std::cout << norm_bla << std::endl;
                 return x;
             }
 
@@ -479,45 +523,40 @@ namespace honei
                 DT1_ norm_x_last = DT1_(0);
                 DT1_ norm_x = DT1_(1);
 
+                DT1_ initial_norm(Norm<vnt_l_two, false, Tag_>::value(g));
+
                 unsigned long i(0);
                 while(i < iters)
                 {
                     ++i;
                     cg_kernel(system_matrix, right_hand_side, g, x, u);
-                    norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
-                    norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
-                    copy<Tag_>(x, x_last);
+                    //norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
+                    //norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
+                    //copy<Tag_>(x, x_last);
+                    DT1_ current_norm(Norm<vnt_l_two, false, Tag_>::value(Defect<Tag_>::value(right_hand_side, system_matrix, x)));
+                    if(current_norm < initial_norm * 1e-08)
+                    {
+                        std::cout << "converged after " << i << " iterations. NORM: " << current_norm << std::endl;
+                        break;
+                    }
                 }
+                std::cout << "EEEEEK. NO CONVERGENCE!!!" << std::endl;
                 return x;
             }
 
             ///NEW ELL type:
             template <typename DT1_>
-            static DenseVector<DT1_> value(SparseMatrixELL<DT1_> & system_matrix, DenseVector<DT1_> & right_hand_side, DenseVector<DT1_> & x, DenseVector<DT1_> & diag_inverted, unsigned long iters)
+            static DenseVector<DT1_> & value(SparseMatrixELL<DT1_> & system_matrix, DenseVector<DT1_> & right_hand_side, DenseVector<DT1_> & x, unsigned long max_iters)
             {
-                CONTEXT("When solving banded Q1 linear system with CG (with given convergence parameter):");
+                CONTEXT("When solving sparse ELL linear system with CG :");
+                std::cout << "CALLING CG with no preconditioning!" << std::endl;
 
-                //DenseVector<DT1_> x(right_hand_side.size());
-                //fill<Tag_>(x, DT1_(0));
-                DenseVector<DT1_> g(right_hand_side.size());
-                Product<Tag_>::value(g, system_matrix, x);
-                Difference<Tag_>::value(g, right_hand_side);
-                DenseVector<DT1_> g_c(g.size());
-                copy<Tag_>(g, g_c);
-                Scale<Tag_>::value(g_c, DT1_(-1.));
-                DenseVector<DT1_> u(g_c.size());
-                copy<Tag_>(g_c, u);
-                DenseVector<DT1_> x_last(x.size());
-                copy<Tag_>(x, x_last);
-
-                unsigned long i(0);
-                while(i < iters)
-                {
-                    ++i;
-                    cg_kernel(system_matrix, right_hand_side, diag_inverted, g, x, u);
-                    copy<Tag_>(x, x_last);
-                }
+                DenseVector<DT1_> p(right_hand_side.size());
+                DenseVector<DT1_> r(right_hand_side.size());
+                DenseVector<DT1_> v(right_hand_side.size());
+                cg_kernel(system_matrix, right_hand_side, x,  r, p, v, max_iters);
                 return x;
+
             }
 
             ///Mixed precision implementations:
@@ -780,13 +819,13 @@ namespace honei
                 DT_ alpha, beta;
                 beta = DotProduct<Tag_>::value(r, z);
                 Product<Tag_>::value(temp_0, A, d);
-
-                alpha = beta / DotProduct<Tag_>::value(d, temp_0);
+                alpha = DotProduct<Tag_>::value(d, temp_0);
+                alpha = std::fabs(alpha) >= std::numeric_limits<DT_>::epsilon() ? beta / alpha : beta / std::numeric_limits<DT_>::epsilon();
                 ScaledSum<Tag_>::value(x, d, alpha);
                 ScaledSum<Tag_>::value(r, temp_0, -alpha);
 
                 ElementProduct<Tag_>::value(z, dd_inverted, r);
-                beta = DotProduct<Tag_>::value(z, r) / beta;
+                beta = std::fabs(beta) >= std::numeric_limits<DT_>::epsilon() ? DotProduct<Tag_>::value(z, r) / beta : DotProduct<Tag_>::value(z, r) / std::numeric_limits<DT_>::epsilon();
 
                 copy<Tag_>(d, temp_0);
                 ScaledSum<Tag_>::value(d, z, temp_0, beta);
@@ -1072,10 +1111,11 @@ namespace honei
                 for(unsigned long i(0) ; i < max_iters ; ++i)
                 {
                     cg_kernel(system_matrix, r, z, d, x, dd_inverted, t_0);
-                    Defect<Tag_>::value(t_1, right_hand_side, system_matrix, x);
-                    DT_ current_defect_norm(Norm<vnt_l_two, false, Tag_>::value(t_1));
+                    //Defect<Tag_>::value(t_1, right_hand_side, system_matrix, x);
+                    //DT_ current_defect_norm(Norm<vnt_l_two, false, Tag_>::value(t_1));
+                    DT_ current_defect_norm(Norm<vnt_l_two, false, Tag_>::value(r));
 
-                    if(current_defect_norm <= initial_defect_norm * 10e-8)
+                    if(current_defect_norm < initial_defect_norm * 1e-08)
                     {
                         std::cout << "Converged after " << i + 1 << " iterations: NORM: " << current_defect_norm << std::endl;
                         break;

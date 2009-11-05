@@ -87,6 +87,20 @@ namespace honei
                 ElementProduct<Tag_>::value(temp2, diag_inverted);
                 former_result = temp2;
             }
+            template<typename DT1_, typename DT2_>
+            static inline void jacobi_kernel(DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, SparseMatrixELL<DT1_> & difference)
+            {
+                DenseVector<DT1_> temp(right_hand_side.size());
+                Product<Tag_>::value(temp, difference, former_result);
+
+                DenseVector<DT1_> temp2(right_hand_side.size());
+                copy<Tag_>(right_hand_side, temp2);
+
+                Difference<Tag_>::value(temp2, temp);
+                ElementProduct<Tag_>::value(temp2, diag_inverted);
+
+                former_result = temp2;
+            }
 //MG types:
             template<typename DT1_, typename DT2_>
             static inline void jacobi_kernel(DenseVector<DT1_> to_smooth, BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, BandedMatrixQ1<DT1_> & difference, DT1_ omega)
@@ -631,6 +645,35 @@ namespace honei
                     norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
                     norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
                     x_last = x.copy();
+                }
+                return x;
+            }
+
+            template <typename DT1_, typename DT2_>
+            static DenseVector<DT1_> & value(SparseMatrixELL<DT1_> & system_matrix, SparseMatrixELL<DT1_> & difference, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & x, DenseVector<DT1_> & diag_inverted, unsigned long max_iters)
+            {
+                CONTEXT("When solving banded linear system (ELL) with Jacobi:");
+
+                DenseVector<DT1_> defect(right_hand_side.size());
+                Defect<Tag_>::value(defect, right_hand_side, system_matrix, x);
+                DT1_ initial_defect_norm(Norm<vnt_l_two, false, Tag_>::value(defect));
+                DT1_ current_defect_norm(1000);
+
+                for(unsigned long i = 0; i<max_iters; ++i)
+                {
+                    jacobi_kernel(right_hand_side, x, diag_inverted, difference);
+                    Defect<Tag_>::value(defect, right_hand_side, system_matrix, x);
+                    current_defect_norm = Norm<vnt_l_two, false, Tag_>::value(defect);
+
+                    if(current_defect_norm < initial_defect_norm * 1e-08)
+                    {
+                        std::cout << "Converged after " << i + 1 << " iterations: NORM: " << current_defect_norm << std::endl;
+                        break;
+                    }
+                    if(i == max_iters - 1)
+                    {
+                        std::cout << "NO convergence after " << i + 1 << " iterations: NORM: " << current_defect_norm << std::endl;
+                    }
                 }
                 return x;
             }
