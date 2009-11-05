@@ -720,15 +720,60 @@ SparseMatrixDenseVectorProductQuickTest<float> sparse_matrix_dense_vector_produc
 SparseMatrixDenseVectorProductQuickTest<double> sparse_matrix_dense_vector_product_quick_test_double("double");
 
 template <typename DataType_, typename Tag_>
+class SparseMatrixELLDenseVectorProductTest :
+    public BaseTest
+{
+    public:
+        SparseMatrixELLDenseVectorProductTest(const std::string & type) :
+            BaseTest("sparse_matrix_ell_dense_vector_product_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(11) ; size < (1 << 9) ; size <<= 1)
+            {
+                SparseMatrix<DataType_> sms(size, size + 3);
+                for (typename SparseMatrix<DataType_>::ElementIterator i(sms.begin_elements()) ; i < sms.end_elements() ; ++i)
+                {
+                    if (i.index() % 5 == 0)
+                        *i = DataType_(i.index()) / 1.234;
+                }
+                DenseMatrix<DataType_> dm0(sms);
+                SparseMatrixELL<DataType_> sm0(sms);
+                DenseVector<DataType_> dv1(size + 3, DataType_(4));
+                DenseVector<DataType_> result(size, DataType_(4711));
+                dv1[0] = 1;
+                dv1[1] = 2;
+                DenseVector<DataType_> prod(Product<Tag_>::value(result, sm0, dv1));
+                DenseVector<DataType_> prod_ref(Product<>::value(dm0, dv1));
+
+                prod.lock(lm_read_only);
+                TEST_CHECK_EQUAL(prod, prod_ref);
+                prod.unlock(lm_read_only);
+            }
+        }
+};
+SparseMatrixELLDenseVectorProductTest<float, tags::CPU> sparse_matrix_ell_dense_vector_product_test_float("float");
+SparseMatrixELLDenseVectorProductTest<double, tags::CPU> sparse_matrix_ell_dense_vector_product_test_double("double");
+#ifdef HONEI_CUDA
+SparseMatrixELLDenseVectorProductTest<float, tags::GPU::CUDA> cuda_sparse_matrix_ell_dense_vector_product_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+SparseMatrixELLDenseVectorProductTest<double, tags::GPU::CUDA> cuda_sparse_matrix_ell_dense_vector_product_test_double("double");
+#endif
+#endif
+
+template <typename DataType_, typename Tag_>
 class SparseMatrixELLDenseVectorProductQuickTest :
     public QuickTest
 {
     public:
         SparseMatrixELLDenseVectorProductQuickTest(const std::string & type) :
             QuickTest("sparse_matrix_ell_dense_vector_product_quick_test<" + type + ">")
-        {
-            register_tag(Tag_::name);
-        }
+    {
+        register_tag(Tag_::name);
+    }
 
         virtual void run() const
         {
@@ -769,8 +814,8 @@ class SparseMatrixSparseVectorProductTest :
     public:
         SparseMatrixSparseVectorProductTest(const std::string & type) :
             BaseTest("sparse_matrix_sparse_vector_product_test<" + type + ">")
-        {
-        }
+    {
+    }
 
         virtual void run() const
         {
@@ -778,19 +823,19 @@ class SparseMatrixSparseVectorProductTest :
             {
                 SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1);
                 for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
-                    i_end(sm1.end_elements()) ; i != i_end ; ++i)
+                        i_end(sm1.end_elements()) ; i != i_end ; ++i)
                 {
                     *i = 2;
                 }
                 SparseVector<DataType_> sv1(size, size / 8 + 1);
                 for (typename SparseVector<DataType_>::ElementIterator i(sv1.begin_elements()), i_end(sv1.end_elements()) ;
-                    i != i_end ; ++i)
+                        i != i_end ; ++i)
                 {
                     *i = DataType_(3);
                 }
                 SparseVector<DataType_> sv2(size + 1, size / 8 + 1);
                 for (typename SparseVector<DataType_>::ElementIterator i(sv2.begin_elements()), i_end(sv2.end_elements()) ;
-                    i != i_end ; ++i)
+                        i != i_end ; ++i)
                 {
                     *i = DataType_(6 * size);
                 }
@@ -815,15 +860,15 @@ class SparseMatrixSparseVectorProductQuickTest :
     public:
         SparseMatrixSparseVectorProductQuickTest(const std::string & type) :
             QuickTest("sparse_matrix_sparse_vector_product_quick_test<" + type + ">")
-        {
-        }
+    {
+    }
 
         virtual void run() const
         {
             unsigned long size(20);
             SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1);
             for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
-                i_end(sm1.end_elements()) ; i != i_end ; ++i)
+                    i_end(sm1.end_elements()) ; i != i_end ; ++i)
             {
                 *i = 2;
             }
@@ -859,8 +904,8 @@ class BandedMatrixProductTest :
     public:
         BandedMatrixProductTest(const std::string & type) :
             BaseTest("banded_matrix_product_test<" + type + ">")
-        {
-        }
+    {
+    }
 
         virtual void run() const
         {
@@ -889,8 +934,8 @@ class BandedMatrixProductQuickTest :
     public:
         BandedMatrixProductQuickTest(const std::string & type) :
             QuickTest("banded_matrix_product_quick_test<" + type + ">")
-        {
-        }
+    {
+    }
 
         virtual void run() const
         {
@@ -941,9 +986,9 @@ class DenseMatrixProductTest :
     public:
         DenseMatrixProductTest(const std::string & type) :
             BaseTest("dense_matrix_product_test<" + type + ">")
-        {
-            register_tag(Tag_::name);
-        }
+    {
+        register_tag(Tag_::name);
+    }
 
         virtual void run() const
         {
@@ -1007,9 +1052,9 @@ class DenseMatrixProductQuickTest :
     public:
         DenseMatrixProductQuickTest(const std::string & type) :
             QuickTest("dense_matrix_product_quick_test<" + type + ">")
-        {
-            register_tag(Tag_::name);
-        }
+    {
+        register_tag(Tag_::name);
+    }
 
         virtual void run() const
         {
@@ -1072,9 +1117,9 @@ class DenseMatrixProductNX2Test :
     public:
         DenseMatrixProductNX2Test(const std::string & type) :
             BaseTest("dense_matrix_nx2_product_test<" + type + ">")
-        {
-            register_tag(Tag_::name);
-        }
+    {
+        register_tag(Tag_::name);
+    }
 
         virtual void run() const
         {
@@ -1138,9 +1183,9 @@ class DenseMatrixProductNX2QuickTest :
     public:
         DenseMatrixProductNX2QuickTest(const std::string & type) :
             QuickTest("dense_matrix_product_nx2_quick_test<" + type + ">")
-        {
-            register_tag(Tag_::name);
-        }
+    {
+        register_tag(Tag_::name);
+    }
 
         virtual void run() const
         {
@@ -1203,9 +1248,9 @@ class DenseMatrixProductCellTest :
     public:
         DenseMatrixProductCellTest(const std::string & type) :
             BaseTest("dense_matrix_product_test<" + type + ">")
-        {
-            register_tag(Tag_::name);
-        }
+    {
+        register_tag(Tag_::name);
+    }
 
         virtual void run() const
         {
@@ -1267,9 +1312,9 @@ class DenseMatrixProductCellQuickTest :
     public:
         DenseMatrixProductCellQuickTest(const std::string & type) :
             QuickTest("dense_matrix_product_quick_test<" + type + ">")
-        {
-            register_tag(Tag_::name);
-        }
+    {
+        register_tag(Tag_::name);
+    }
 
         virtual void run() const
         {
@@ -1328,8 +1373,8 @@ class DenseMatrixSparseMatrixProductTest :
     public:
         DenseMatrixSparseMatrixProductTest(const std::string & type) :
             BaseTest("dense_matrix_sparse_matrix_product_test<" + type + ">")
-        {
-        }
+    {
+    }
 
         virtual void run() const
         {
@@ -1338,7 +1383,7 @@ class DenseMatrixSparseMatrixProductTest :
                 DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm3(size+1, size+1, DataType_(6 * size));
                 SparseMatrix<DataType_> sm2(size, size+1, size / 8 + 1);
                 for (typename SparseMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
-                    i_end(sm2.end_elements()) ; i != i_end ; ++i)
+                        i_end(sm2.end_elements()) ; i != i_end ; ++i)
                 {
                     *i = 3;
                 }
@@ -1363,8 +1408,8 @@ class DenseMatrixSparseMatrixProductQuickTest :
     public:
         DenseMatrixSparseMatrixProductQuickTest(const std::string & type) :
             QuickTest("dense_matrix_sparse_matrix_product_quick_test<" + type + ">")
-        {
-        }
+    {
+    }
 
         virtual void run() const
         {
@@ -1372,7 +1417,7 @@ class DenseMatrixSparseMatrixProductQuickTest :
             DenseMatrix<DataType_> dm1(size+1, size, DataType_(2)), dm3(size+1, size+1, DataType_(6 * size));
             SparseMatrix<DataType_> sm2(size, size+1, size / 8 + 1);
             for (typename SparseMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
-                i_end(sm2.end_elements()) ; i != i_end ; ++i)
+                    i_end(sm2.end_elements()) ; i != i_end ; ++i)
             {
                 *i = 3;
             }
@@ -1396,9 +1441,9 @@ class SparseMatrixDenseMatrixProductTest :
     public:
         SparseMatrixDenseMatrixProductTest(const std::string & type) :
             BaseTest("sparse_matrix_dense_matrix_product_test<" + type + ">")
-        {
-            register_tag(Tag_::name);
-        }
+    {
+        register_tag(Tag_::name);
+    }
 
         virtual void run() const
         {
@@ -1468,9 +1513,9 @@ class SparseMatrixDenseMatrixProductQuickTest :
     public:
         SparseMatrixDenseMatrixProductQuickTest(const std::string & type) :
             QuickTest("sparse_matrix_dense_matrix_product_quick_test<" + type + ">")
-        {
-            register_tag(Tag_::name);
-        }
+    {
+        register_tag(Tag_::name);
+    }
 
         virtual void run() const
         {
@@ -1506,7 +1551,7 @@ class SparseMatrixDenseMatrixProductQuickTest :
             DenseMatrix<DataType_> prod(Product<Tag_>::value(sm1, dm2));
 
             for (typename DenseMatrix<DataType_>::ConstElementIterator i(prod.begin_elements()), i_end(prod.end_elements()),
-                        j(dm3.begin_elements()) ; i != i_end ; ++i,  ++j)
+                    j(dm3.begin_elements()) ; i != i_end ; ++i,  ++j)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *j, 10 * *i * std::numeric_limits<DataType_>::epsilon());
             }
@@ -1538,8 +1583,8 @@ class SparseMatrixProductTest :
     public:
         SparseMatrixProductTest(const std::string & type) :
             BaseTest("sparse_matrix_product_test<" + type + ">")
-        {
-        }
+    {
+    }
 
         virtual void run() const
         {
@@ -1548,17 +1593,17 @@ class SparseMatrixProductTest :
                 SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1),
                     sm2(size, size+1, size / 7 + 1), sm3(size + 1, size + 1, size / 7 + 1);
                 for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
-                    i_end(sm1.end_elements()) ; i != i_end ; ++i)
+                        i_end(sm1.end_elements()) ; i != i_end ; ++i)
                 {
                     *i = 2;
                 }
                 for (typename SparseMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
-                    i_end(sm2.end_elements()) ; i != i_end ; ++i)
+                        i_end(sm2.end_elements()) ; i != i_end ; ++i)
                 {
                     *i = 3;
                 }
                 for (typename SparseMatrix<DataType_>::ElementIterator i(sm3.begin_elements()),
-                    i_end(sm3.end_elements()) ; i != i_end ; ++i)
+                        i_end(sm3.end_elements()) ; i != i_end ; ++i)
                 {
                     *i = 6 * size;
                 }
@@ -1583,8 +1628,8 @@ class SparseMatrixProductQuickTest :
     public:
         SparseMatrixProductQuickTest(const std::string & type) :
             QuickTest("sparse_matrix_product_quick_test<" + type + ">")
-        {
-        }
+    {
+    }
 
         virtual void run() const
         {
@@ -1592,17 +1637,17 @@ class SparseMatrixProductQuickTest :
             SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1),
                 sm2(size, size+1, size / 7 + 1), sm3(size + 1, size + 1, size / 7 + 1);
             for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
-                i_end(sm1.end_elements()) ; i != i_end ; ++i)
+                    i_end(sm1.end_elements()) ; i != i_end ; ++i)
             {
                 *i = 2;
             }
             for (typename SparseMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
-                i_end(sm2.end_elements()) ; i != i_end ; ++i)
+                    i_end(sm2.end_elements()) ; i != i_end ; ++i)
             {
                 *i = 3;
             }
             for (typename SparseMatrix<DataType_>::ElementIterator i(sm3.begin_elements()),
-                i_end(sm3.end_elements()) ; i != i_end ; ++i)
+                    i_end(sm3.end_elements()) ; i != i_end ; ++i)
             {
                 *i = 6 * size;
             }
@@ -1626,8 +1671,8 @@ class BandedMatrixDenseMatrixProductTest :
     public:
         BandedMatrixDenseMatrixProductTest(const std::string & type) :
             BaseTest("banded_matrix_dense_matrix_product_test<" + type + ">")
-        {
-        }
+    {
+    }
 
         virtual void run() const
         {
@@ -1675,8 +1720,8 @@ class BandedMatrixDenseMatrixProductQuickTest :
     public:
         BandedMatrixDenseMatrixProductQuickTest(const std::string & type) :
             QuickTest("banded_matrix_dense_matrix_product_quick_test<" + type + ">")
-        {
-        }
+    {
+    }
 
         virtual void run() const
         {
