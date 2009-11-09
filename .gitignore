@@ -18,6 +18,8 @@ libtool
 .libs
 # Ignore backup files
 *~
+# Ignore linkinfo files
+*.linkinfo
 # Ignore patch remains
 *.orig
 *.rej

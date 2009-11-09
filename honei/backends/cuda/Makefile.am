@@ -1,6 +1,6 @@
 AM_CXXFLAGS = -I$(top_srcdir)
 
-CLEANFILES = *~
+CLEANFILES = *~ *.linkinfo
 MAINTAINERCLEANFILES = Makefile.in
 AUTOMAKE_OPTIONS = foreign dist-bzip2
 EXTRA_DIST = libtool-hack.in
