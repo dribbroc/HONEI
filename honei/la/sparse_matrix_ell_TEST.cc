@@ -46,13 +46,14 @@ class SparseMatrixELLQuickTest :
             for (typename SparseMatrix<DataType_>::ElementIterator i(sms.begin_elements()) ; i < sms.end_elements() ; ++i)
             {
                 if (i.index() % 5 == 0)
-                    *i = DataType_(i.index()) / 1.234;
+                    *i = (DataType_(i.index()) / 1.234 + 1);
             }
 
             SparseMatrixELL<DataType_> sm0(sms);
 
             std::cout<<sms;
             std::cout<<sm0;
+            std::cout<<"rows: "<<sm0.rows() << " cols: "<<sm0.columns()<<std::endl;
 
             TEST_CHECK_EQUAL(sm0, sm0);
             TEST_CHECK_EQUAL(sm0, sm0.copy());

@@ -90,6 +90,8 @@ namespace honei
     {
         CONTEXT("When creating SparseMatrixELL from SparseMatrix:");
         unsigned long rows(src.rows());
+        this->_imp->rows = rows;
+        this->_imp->columns = src.columns();
 
         unsigned long num_cols_per_row(0);
         for (unsigned long i(0) ; i < rows ; ++i)
@@ -258,9 +260,7 @@ namespace honei
     template <typename DataType_>
     const DataType_ SparseMatrixELL<DataType_>::operator() (unsigned long row, unsigned long column) const
     {
-        unsigned long start(row * this->num_cols_per_row());
-        unsigned long end((row + 1) * this->num_cols_per_row());
-        for (unsigned long i(start) ; i < end && this->Aj()[i] <= column ; ++i)
+        for (unsigned long i(row) ; i < this->Aj().size() && this->Aj()[i] <= column ; i += this->stride())
         {
             if (this->Aj()[i] == column)
                 return this->Ax()[i];
@@ -323,16 +323,18 @@ namespace honei
     std::ostream &
     operator<< (std::ostream & lhs, const SparseMatrixELL<DataType_> & b)
     {
-        lhs << "SparseMatrixELL" << std::endl << "{" << std::endl;
+        lhs << "SparseMatrixELL" << std::endl << "[" << std::endl;
         for (unsigned long row(0) ; row < b.rows() ; ++row)
         {
+            lhs << "[";
             for (unsigned long column(0) ; column < b.columns() ; ++column)
             {
                 lhs << " " << b(row, column);
             }
+            lhs << "]";
             lhs << std::endl;
         }
-        lhs << "}" << std::endl;
+        lhs << "]" << std::endl;
 
         lhs << "NumColsPerRow: "<< b.num_cols_per_row() << " Stride: "<< b.stride() << std::endl;
         lhs << "Aj: " << b.Aj();
