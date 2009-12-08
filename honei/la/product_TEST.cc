@@ -254,6 +254,9 @@ Q1MatrixDenseVectorProductTest<tags::CPU::MultiCore::SSE, double> q1_prod_mc_sse
 #endif
 #ifdef HONEI_CUDA
 Q1MatrixDenseVectorProductTest<tags::GPU::CUDA, float> cuda_q1_prod_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+Q1MatrixDenseVectorProductTest<tags::GPU::CUDA, double> cuda_q1_prod_test_double("double");
+#endif
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -330,6 +333,9 @@ Q1MatrixDenseVectorProductQuickTest<tags::CPU::MultiCore::SSE, double> q1_prod_q
 #endif
 #ifdef HONEI_CUDA
 Q1MatrixDenseVectorProductQuickTest<tags::GPU::CUDA, float> cuda_q1_prod_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+Q1MatrixDenseVectorProductQuickTest<tags::GPU::CUDA, double> cuda_q1_prod_quick_test_double("double");
+#endif
 #endif
 
 template <typename DataType_>

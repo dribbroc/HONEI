@@ -60,6 +60,11 @@ extern "C"
             void * ul, void * ud, void *uu, void * x, void * y,
             unsigned long size, unsigned long blocksize, unsigned long m);
 
+    void cuda_product_bmdv_q1_double(void * ll, void * ld, void * lu,
+            void * dl, void * dd, void *du,
+            void * ul, void * ud, void *uu, void * x, void * y,
+            unsigned long size, unsigned long blocksize, unsigned long m);
+
     void cuda_product_smell_dv_float(void * x, void * y, void * Aj, void * Ax,
             unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
             unsigned long stride, unsigned long blocksize);

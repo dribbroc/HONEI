@@ -146,6 +146,9 @@ Q1MatrixDenseVectorProductBench<tags::CPU::MultiCore::SSE, double> MCSSEQ1DVPBen
 #endif
 #ifdef HONEI_CUDA
 Q1MatrixDenseVectorProductBench<tags::GPU::CUDA, float> CUDAQ1DVPBenchfloat("CUDA Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, float",1025ul * 1025 , 10);
+#ifdef HONEI_CUDA_DOUBLE
+Q1MatrixDenseVectorProductBench<tags::GPU::CUDA, double> CUDAQ1DVPBenchdouble("CUDA Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, double",1025ul * 1025 , 10);
+#endif
 #endif
 #ifdef HONEI_CELL
 Q1MatrixDenseVectorProductBench<tags::Cell, float> CELLQ1DVPBenchfloat("CELL Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025^2, float", 1025ul * 1025, 10);
@@ -495,10 +498,114 @@ class SMELLDenseVectorProductBench :
             evaluate(info * 1000);
         }
 };
+SMELLDenseVectorProductBench<tags::CPU, float> SMELLDVPBenchfloat0("SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10, "area51_full_0.m");
+SMELLDenseVectorProductBench<tags::CPU, double> SMELLDVPBenchdouble0("SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10, "area51_full_0.m");
 #ifdef HONEI_CUDA
 SMELLDenseVectorProductBench<tags::GPU::CUDA, float> cudaSMELLDVPBenchfloat0("CUDA SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10, "area51_full_0.m");
 #ifdef HONEI_CUDA_DOUBLE
 SMELLDenseVectorProductBench<tags::GPU::CUDA, double> cudaSMELLDVPBenchdouble0("CUDA SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10, "area51_full_0.m");
+#endif
+#endif
+
+
+template <typename Tag_, typename DataType_>
+class Q1MatrixELLDenseVectorProductBench :
+    public Benchmark
+{
+    private:
+        unsigned long _size;
+        unsigned long _count;
+    public:
+        Q1MatrixELLDenseVectorProductBench(const std::string & id, unsigned long size, unsigned long count) :
+            Benchmark(id)
+        {
+            register_tag(Tag_::name);
+            _size = size;
+            _count = count;
+        }
+
+        virtual void run()
+        {
+            DenseVector<DataType_> dv1(_size, DataType_(2));
+            BandedMatrix<DataType_> bm1(_size, dv1);
+            DenseVector<DataType_> dv4(_size, DataType_(3));
+            DenseVector<DataType_> dv5(dv4.copy());
+
+            bm1.insert_band(- (unsigned long)sqrt(_size) - 1, dv4.copy());
+            bm1.insert_band(- (unsigned long)sqrt(_size), dv4.copy());
+            bm1.insert_band(- (unsigned long)sqrt(_size) + 1, dv4.copy());
+            bm1.insert_band(-1, dv4.copy());
+            bm1.insert_band(0, dv4.copy());
+            bm1.insert_band(1, dv4.copy());
+            bm1.insert_band((unsigned long)sqrt(_size) - 1, dv4.copy());
+            bm1.insert_band((unsigned long)sqrt(_size), dv4.copy());
+            bm1.insert_band((unsigned long)sqrt(_size)+ 1, dv4.copy());
+
+            //BandedMatrixQ1<DataType_> qm1(bm1);
+            DenseVector<DataType_> dv2(_size, DataType_(4));
+            DenseVector<DataType_> dv3(_size, DataType_(4));
+
+            SparseMatrix<DataType_> sm(_size, _size, 10);
+            for (unsigned long rows(0), cols(0) ; rows < _size && cols < _size; ++rows, ++cols)
+            {
+                sm(rows, cols) = DataType_(2);;
+            }
+            for (unsigned long rows(0), cols(1) ; rows < _size && cols < _size; ++rows, ++cols)
+            {
+                sm(rows, cols) = DataType_(2);;
+            }
+            for (unsigned long rows(1), cols(0) ; rows < _size && cols < _size; ++rows, ++cols)
+            {
+                sm(rows, cols) = DataType_(2);;
+            }
+            for (unsigned long rows(1024), cols(0) ; rows < _size && cols < _size; ++rows, ++cols)
+            {
+                sm(rows, cols) = DataType_(2);;
+            }
+            for (unsigned long rows(1025), cols(0) ; rows < _size && cols < _size; ++rows, ++cols)
+            {
+                sm(rows, cols) = DataType_(2);;
+            }
+            for (unsigned long rows(1026), cols(0) ; rows < _size && cols < _size; ++rows, ++cols)
+            {
+                sm(rows, cols) = DataType_(2);;
+            }
+            for (unsigned long rows(0), cols(1024) ; rows < _size && cols < _size; ++rows, ++cols)
+            {
+                sm(rows, cols) = DataType_(2);;
+            }
+            for (unsigned long rows(0), cols(1025) ; rows < _size && cols < _size; ++rows, ++cols)
+            {
+                sm(rows, cols) = DataType_(2);;
+            }
+            for (unsigned long rows(0), cols(1026) ; rows < _size && cols < _size; ++rows, ++cols)
+            {
+                sm(rows, cols) = DataType_(2);;
+            }
+
+            SparseMatrixELL<DataType_> smell(sm);
+            for (unsigned long i(0) ; i < _count ; i++)
+            {
+                BENCHMARK(
+                        for (unsigned long j(0) ; j < 10 ; ++j)
+                        {
+                            Product<Tag_>::value(dv3, smell, dv2);
+#ifdef HONEI_CUDA
+                            cuda_thread_synchronize();
+#endif
+                        }
+                        );
+            }
+            BenchmarkInfo info(Product<>::get_benchmark_info(bm1, dv2));
+            evaluate(info * 10);
+        }
+};
+Q1MatrixELLDenseVectorProductBench<tags::CPU, float> Q1ELLDVPBenchfloat("ELL Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10);
+Q1MatrixELLDenseVectorProductBench<tags::CPU, double> Q1ELLDVPBenchdouble("ELLMatrix (Q1) Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10);
+#ifdef HONEI_CUDA
+Q1MatrixELLDenseVectorProductBench<tags::GPU::CUDA, float> CUDAQ1ELLDVPBenchfloat("CUDA ELL Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, float",1025ul * 1025 , 10);
+#ifdef HONEI_CUDA_DOUBLE
+Q1MatrixELLDenseVectorProductBench<tags::GPU::CUDA, double> CUDAQ1ELLDVPBenchdouble("CUDA ELL Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, double",1025ul * 1025 , 10);
 #endif
 #endif
 
