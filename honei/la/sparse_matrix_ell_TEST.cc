@@ -41,7 +41,7 @@ class SparseMatrixELLQuickTest :
 
         virtual void run() const
         {
-            unsigned long size (5);
+            unsigned long size (111);
             SparseMatrix<DataType_> sms(size, size + 3);
             for (typename SparseMatrix<DataType_>::ElementIterator i(sms.begin_elements()) ; i < sms.end_elements() ; ++i)
             {
@@ -51,12 +51,15 @@ class SparseMatrixELLQuickTest :
 
             SparseMatrixELL<DataType_> sm0(sms);
 
-            std::cout<<sms;
-            std::cout<<sm0;
-            std::cout<<"rows: "<<sm0.rows() << " cols: "<<sm0.columns()<<std::endl;
-
             TEST_CHECK_EQUAL(sm0, sm0);
             TEST_CHECK_EQUAL(sm0, sm0.copy());
+            for (unsigned long row(0) ; row < sm0.rows() ; ++row)
+            {
+                for (unsigned long col(0) ; col < sm0.columns() ; ++col)
+                {
+                    TEST_CHECK_EQUAL(sm0(row, col), sms(row, col));
+                }
+            }
         }
 };
 SparseMatrixELLQuickTest<float> sparse_matrix_ell_quick_test_float("float");
