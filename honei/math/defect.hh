@@ -31,7 +31,7 @@
     using namespace honei;
     namespace honei
     {
-        template<typename Tag_>
+        template<typename Tag_ = tags::CPU>
         struct Defect
         {
             public:
@@ -266,6 +266,54 @@
             public:
                 static DenseVector<double> value(DenseVector<double> & right_hand_side, BandedMatrixQ1<double> & system, DenseVector<double> & x);
                 static DenseVector<float> value(DenseVector<float> & right_hand_side, BandedMatrixQ1<float> & system, DenseVector<float> & x);
+
+                template<typename DT_>
+                static DenseVector<DT_> value(DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
+                {
+                    if (x.size() != system.columns())
+                    {
+                        throw VectorSizeDoesNotMatch(x.size(), system.columns());
+                    }
+                    if (right_hand_side.size() != system.columns())
+                    {
+                        throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
+                    }
+
+                    DenseVector<DT_> result(right_hand_side.copy());
+                    DenseVector<DT_> temp(right_hand_side.size());
+                    Product<tags::CPU::SSE>::value(temp, system, x);
+                    Difference<tags::CPU::SSE>::value(result, temp);
+                    return result;
+                }
+
+                template<typename DT_>
+                static DenseVector<DT_> & value(DenseVector<DT_> & result, DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
+                {
+                    if (x.size() != system.columns())
+                    {
+                        throw VectorSizeDoesNotMatch(x.size(), system.columns());
+                    }
+                    if (right_hand_side.size() != system.columns())
+                    {
+                        throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
+                    }
+
+                    DenseVector<DT_> temp(right_hand_side.size());
+                    Product<tags::CPU::SSE>::value(temp, system, x);
+
+                    result.lock(lm_write_only);
+                    right_hand_side.lock(lm_read_only);
+                    temp.lock(lm_read_only);
+                    for(unsigned long i(0) ; i < result.size() ; ++i)
+                    {
+                        result.elements()[i] = right_hand_side.elements()[i] - temp.elements()[i];
+                    }
+                    result.unlock(lm_write_only);
+                    right_hand_side.unlock(lm_read_only);
+                    temp.unlock(lm_read_only);
+
+                    return result;
+                }
         };
 }
 

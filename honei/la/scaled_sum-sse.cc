@@ -83,3 +83,32 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::CPU::SSE>::value(DenseVector
     return a;
 }
 
+DenseVectorContinuousBase<float> & ScaledSum<tags::CPU::SSE>::value(DenseVectorContinuousBase<float> & x,
+        const DenseVectorContinuousBase<float> & y, const DenseVectorContinuousBase<float> & z, float b)
+{
+    CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<float> (SSE):");
+
+    if (x.size() != y.size())
+        throw VectorSizeDoesNotMatch(x.size(), y.size());
+    if (x.size() != z.size())
+        throw VectorSizeDoesNotMatch(x.size(), z.size());
+
+    sse::scaled_sum(x.elements(), y.elements(), z.elements(), b, x.size());
+
+    return x;
+}
+
+DenseVectorContinuousBase<double> & ScaledSum<tags::CPU::SSE>::value(DenseVectorContinuousBase<double> & x,
+        const DenseVectorContinuousBase<double> & y, const DenseVectorContinuousBase<double> & z, double b)
+{
+    CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<double> (SSE):");
+
+    if (x.size() != y.size())
+        throw VectorSizeDoesNotMatch(x.size(), y.size());
+    if (x.size() != z.size())
+        throw VectorSizeDoesNotMatch(x.size(), z.size());
+
+    sse::scaled_sum(x.elements(), y.elements(), z.elements(), b, x.size());
+
+    return x;
+}

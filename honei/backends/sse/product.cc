@@ -1001,6 +1001,36 @@ namespace honei
                 + ld[index] * b[index - m]
                 + dl[index] * b[index - 1];
         }
+
+        void product_smell_dv(float * result, unsigned long * Aj, float * Ax, float * b,
+                unsigned long stride, unsigned long rows, unsigned long num_cols_per_row)
+        {
+            for(unsigned long n(0) ; n < num_cols_per_row ; n++)
+            {
+                const unsigned long * Aj_n = Aj + n * stride;
+                const float * Ax_n = Ax + n * stride;
+                for(unsigned i(0) ; i < rows ; i++)
+                {
+                    //if(Ax_n[i] != float(0))
+                        result[i] += Ax_n[i] * b[Aj_n[i]];
+                }
+            }
+        }
+
+        void product_smell_dv(double * result, unsigned long * Aj, double * Ax, double * b,
+                unsigned long stride, unsigned long rows, unsigned long num_cols_per_row)
+        {
+            for(unsigned long n(0) ; n < num_cols_per_row ; n++)
+            {
+                const unsigned long * Aj_n = Aj + n * stride;
+                const double * Ax_n = Ax + n * stride;
+                for(unsigned i(0) ; i < rows ; i++)
+                {
+                    //if(Ax_n[i] != double(0))
+                        result[i] += Ax_n[i] * b[Aj_n[i]];
+                }
+            }
+        }
     }
 }
 

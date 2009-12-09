@@ -251,6 +251,40 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrixQ1<double> 
     return result;
 }
 
+DenseVector<float> Product<tags::CPU::SSE>::value(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b)
+{
+    CONTEXT("When multiplying SparseMatrixELL<float> with DenseVector<float> (SSE):");
+
+    if (b.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+    }
+
+    fill<tags::CPU::SSE>(result, float(0));
+
+    honei::sse::product_smell_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), b.elements(),
+            a.stride(), a.rows(), a.num_cols_per_row());
+
+    return result;
+}
+
+DenseVector<double> Product<tags::CPU::SSE>::value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b)
+{
+    CONTEXT("When multiplying SparseMatrixELL<double> with DenseVector<double> (SSE):");
+
+    if (b.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+    }
+
+    fill<tags::CPU::SSE>(result, double(0));
+
+    honei::sse::product_smell_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), b.elements(),
+            a.stride(), a.rows(), a.num_cols_per_row());
+
+    return result;
+}
+
 DenseVector<float> Product<tags::CPU::SSE>::value(const DenseMatrix<float> & a, const DenseVectorContinuousBase<float> & b)
 {
     CONTEXT("When multiplying DenseMatrix<float> with DenseVectorContinuousBase<float> (SSE):");

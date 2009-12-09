@@ -498,8 +498,13 @@ class SMELLDenseVectorProductBench :
             evaluate(info * 1000);
         }
 };
+/// \todo Embed real world matrix with proper size
 SMELLDenseVectorProductBench<tags::CPU, float> SMELLDVPBenchfloat0("SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10, "area51_full_0.m");
 SMELLDenseVectorProductBench<tags::CPU, double> SMELLDVPBenchdouble0("SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10, "area51_full_0.m");
+#ifdef HONEI_SSE
+SMELLDenseVectorProductBench<tags::CPU::SSE, float> sse_SMELLDVPBenchfloat0("SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10, "area51_full_0.m");
+//SMELLDenseVectorProductBench<tags::CPU::SSE, double> sse_SMELLDVPBenchdouble0("SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10, "area51_full_0.m");
+#endif
 #ifdef HONEI_CUDA
 SMELLDenseVectorProductBench<tags::GPU::CUDA, float> cudaSMELLDVPBenchfloat0("CUDA SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10, "area51_full_0.m");
 #ifdef HONEI_CUDA_DOUBLE

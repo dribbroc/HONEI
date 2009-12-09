@@ -51,6 +51,38 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::CPU::SSE>::value(DenseV
     return a;
 }
 
+DenseVectorContinuousBase<float> & ElementProduct<tags::CPU::SSE>::value(DenseVectorContinuousBase<float> & a,
+        const DenseVectorContinuousBase<float> & b, const DenseVectorContinuousBase<float> & c)
+{
+    CONTEXT("When multiplying DenseVectorContinuousBase<float> and DenseVectorContinuousBase<float> elementwise "
+            "(SSE):");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+    if (a.size() != c.size())
+        throw VectorSizeDoesNotMatch(c.size(), a.size());
+
+    sse::element_product(a.elements(), b.elements(), c.elements(), a.size());
+
+    return a;
+}
+
+DenseVectorContinuousBase<double> & ElementProduct<tags::CPU::SSE>::value(DenseVectorContinuousBase<double> & a,
+        const DenseVectorContinuousBase<double> & b, const DenseVectorContinuousBase<double> & c)
+{
+    CONTEXT("When multiplying DenseVectorContinuousBase<double> and DenseVectorContinuousBase<double> elementwise "
+            "(SSE):");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+    if (a.size() != c.size())
+        throw VectorSizeDoesNotMatch(c.size(), a.size());
+
+    sse::element_product(a.elements(), b.elements(), c.elements(), a.size());
+
+    return a;
+}
+
 DenseMatrix<float> & ElementProduct<tags::CPU::SSE>::value(DenseMatrix<float> & a, const DenseMatrix<float> & b)
 {
     CONTEXT("When multiplying DenseMatrix<float> and DenseMatrix<float> elementwise (SSE):");

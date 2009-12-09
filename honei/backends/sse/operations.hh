@@ -36,6 +36,8 @@ namespace honei
 
         void element_product(float * a, const float * b, unsigned long size);
         void element_product(double * a, const double * b, unsigned long size);
+        void element_product(float * a, const float * b, const float * c, unsigned long size);
+        void element_product(double * a, const double * b, const double * c, unsigned long size);
 
         float norm_l2(const float * a, unsigned long size);
         double norm_l2(double * a, unsigned long size);
@@ -56,6 +58,10 @@ namespace honei
                 double * ul, double * ud, double * uu,
                 double * b, double * result,
                 unsigned long, unsigned long m);
+        void product_smell_dv(float * result, unsigned long * Aj, float * Ax, float * b,
+            unsigned long stride, unsigned long rows, unsigned long num_cols_per_row);
+        void product_smell_dv(double * result, unsigned long * Aj, double * Ax, double * b,
+            unsigned long stride, unsigned long rows, unsigned long num_cols_per_row);
 
         float reduction_sum(const float * a, unsigned long size);
         double reduction_sum(double * a, unsigned long size);
@@ -64,6 +70,8 @@ namespace honei
         void scaled_sum(double * x, const double * y, double b, unsigned long size);
         void scaled_sum(float * x, const float * y, const float * z, unsigned long size);
         void scaled_sum(double * x, const double * y, const double * z, unsigned long size);
+        void scaled_sum(float * x, const float * y, const float * z, float b, unsigned long size);
+        void scaled_sum(double * x, const double * y, const double * z, double b, unsigned long size);
 
         void scale(const float a, float * x, unsigned long size);
         void scale(const double a, double * x, unsigned long size);

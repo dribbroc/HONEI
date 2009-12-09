@@ -1337,6 +1337,9 @@ namespace honei
 
         static DenseMatrixTile<double> & value(DenseMatrixTile<double> & r, const DenseMatrixTile<double> & a, const DenseMatrixTile<double> & b);
 
+        static DenseVector<float> value(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b);
+
+        static DenseVector<double> value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b);
         /// \}
     };
 

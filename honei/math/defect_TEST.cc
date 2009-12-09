@@ -73,6 +73,10 @@ class DefectTest:
 };
 DefectTest<float, tags::CPU> defect_test_float_sparse("float");
 DefectTest<double, tags::CPU> defect_test_double_sparse("double");
+#ifdef HONEI_SSE
+DefectTest<float, tags::CPU::SSE> sse_defect_test_float_sparse("float");
+DefectTest<double, tags::CPU::SSE> sse_defect_test_double_sparse("double");
+#endif
 #ifdef HONEI_CUDA
 DefectTest<float, tags::GPU::CUDA> cuda_defect_test_float_sparse("float");
 #ifdef HONEI_CUDA_DOUBLE
@@ -134,6 +138,10 @@ class DefectRegressionTest:
 };
 DefectRegressionTest<float, tags::CPU> regression_defect_test_float_sparse("Regression float", "area51_full_0.m", "area51_rhs_0");
 DefectRegressionTest<double, tags::CPU> regression_defect_test_double_sparse("Regression double", "area51_full_0.m", "area51_rhs_0");
+#ifdef HONEI_SSE
+DefectRegressionTest<float, tags::CPU::SSE> sse_regression_defect_test_float_sparse("Regression float", "area51_full_0.m", "area51_rhs_0");
+DefectRegressionTest<double, tags::CPU::SSE> sse_regression_defect_test_double_sparse("Regression double", "area51_full_0.m", "area51_rhs_0");
+#endif
 #ifdef HONEI_CUDA
 DefectRegressionTest<float, tags::GPU::CUDA> cuda_regression_defect_test_float_sparse("CUDA Regression float", "area51_full_0.m", "area51_rhs_0");
 #ifdef HONEI_CUDA_DOUBLE

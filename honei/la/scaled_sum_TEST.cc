@@ -173,6 +173,10 @@ class DenseVectorResScaledSumTest :
 };
 DenseVectorResScaledSumTest<tags::CPU, float> dense_vector_scaled_res_sum_test_float("float");
 DenseVectorResScaledSumTest<tags::CPU, double> dense_vector_scaled_res_sum_test_double("double");
+#ifdef HONEI_SSE
+DenseVectorResScaledSumTest<tags::CPU::SSE, float> sse_dense_vector_scaled_res_sum_test_float("float");
+DenseVectorResScaledSumTest<tags::CPU::SSE, double> sse_dense_vector_scaled_res_sum_test_double("double");
+#endif
 #ifdef HONEI_CUDA
 DenseVectorResScaledSumTest<tags::GPU::CUDA, float> cuda_dense_vector_res_scaled_sum_test_float("float");
 #ifdef HONEI_CUDA_DOUBLE
@@ -216,6 +220,10 @@ class DenseVectorResScaledSumQuickTest :
 };
 DenseVectorResScaledSumQuickTest<tags::CPU, float> dense_vector_res_scaled_sum_quick_test_float("float");
 DenseVectorResScaledSumQuickTest<tags::CPU, double> dense_vector_res_scaled_sum_quick_test_double("double");
+#ifdef HONEI_SSE
+DenseVectorResScaledSumQuickTest<tags::CPU::SSE, float> sse_dense_vector_res_scaled_sum_quick_test_float("float");
+DenseVectorResScaledSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_res_scaled_sum_quick_test_double("double");
+#endif
 #ifdef HONEI_CUDA
 DenseVectorResScaledSumQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_res_scaled_sum_quick_test_float("float");
 #ifdef HONEI_CUDA_DOUBLE
