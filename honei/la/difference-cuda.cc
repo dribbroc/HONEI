@@ -43,6 +43,27 @@ DenseVectorContinuousBase<float> & Difference<tags::GPU::CUDA>::value(DenseVecto
     return a;
 }
 
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorContinuousBase<double> & Difference<tags::GPU::CUDA>::value(DenseVectorContinuousBase<double> & a,
+        const DenseVectorContinuousBase<double> & b)
+{
+    CONTEXT("When subtractiong DenseVectorContinuousBase<double> from DenseVectorContinuousBase<double> (CUDA):");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::difference_two_double", 128ul));
+
+    void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * b_gpu (b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+    cuda_difference_two_double(a_gpu, b_gpu, a.size(), blocksize);
+    b.unlock(lm_read_only);
+    a.unlock(lm_read_and_write);
+
+    return a;
+}
+#endif
+
 DenseMatrix<float> & Difference<tags::GPU::CUDA>::value(DenseMatrix<float> & a, const DenseMatrix<float> & b)
 {
     CONTEXT("When subtracting DenseMatrix<float> from DenseMatrix<float> (CUDA):");

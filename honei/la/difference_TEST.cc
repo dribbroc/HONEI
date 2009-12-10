@@ -673,6 +673,9 @@ DenseVectorDifferenceTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector
 #endif
 #ifdef HONEI_CUDA
 DenseVectorDifferenceTest<tags::GPU::CUDA, float> cuda_dense_vector_difference_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorDifferenceTest<tags::GPU::CUDA, double> cuda_dense_vector_difference_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CELL
 DenseVectorDifferenceTest<tags::Cell, float> cell_dense_vector_difference_test_float("Cell float");
@@ -726,6 +729,9 @@ DenseVectorDifferenceQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_v
 #endif
 #ifdef HONEI_CUDA
 DenseVectorDifferenceQuickTest<tags::GPU::CUDA, float>  cuda_dense_vector_difference_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorDifferenceQuickTest<tags::GPU::CUDA, double>  cuda_dense_vector_difference_quick_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CELL
 DenseVectorDifferenceQuickTest<tags::Cell, float> cell_dense_vector_difference_quick_test_float("Cell float");
@@ -783,6 +789,9 @@ DenseVectorRangeDifferenceTest<tags::CPU::SSE, double> sse_dense_vector_range_di
 #endif
 #ifdef HONEI_CUDA
 DenseVectorRangeDifferenceTest<tags::GPU::CUDA, float> cuda_dense_vector_range_difference_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorRangeDifferenceTest<tags::GPU::CUDA, double> cuda_dense_vector_range_difference_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CELL
 DenseVectorRangeDifferenceTest<tags::Cell, float> cell_dense_vector_range_difference_test_float("Cell float");
@@ -838,6 +847,9 @@ DenseVectorRangeDifferenceQuickTest<tags::CPU::SSE, double> sse_dense_vector_ran
 #endif
 #ifdef HONEI_CUDA
 DenseVectorRangeDifferenceQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_range_difference_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorRangeDifferenceQuickTest<tags::GPU::CUDA, double> cuda_dense_vector_range_difference_quick_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CELL
 DenseVectorRangeDifferenceQuickTest<tags::Cell, float> cell_dense_vector_range_difference_quick_test_float("Cell float");

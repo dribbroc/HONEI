@@ -12,6 +12,7 @@ log::categories = all
 
 # Size of one Block in a Grid
 cuda::difference_two_float = 128
+cuda::difference_two_double = 128
 
 cuda::dot_product_two_float = 128
 cuda::dot_product_two_float_grid = 16
