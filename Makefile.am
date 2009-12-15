@@ -10,6 +10,7 @@ SUBDIRS = doc honei clients unittest benchmark
 .PHONY: benchmark
 
 benchmark:
+	$(MAKE) all
 	$(MAKE) -C benchmark benchmark $@
 
 doxygen:
