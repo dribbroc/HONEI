@@ -19,6 +19,7 @@
 #ifndef LBM_GUARD_SCAN_CONVERSION_FSI_HH
 #define LBM_GUARD_SCAN_CONVERSION_FSI_HH 1
 
+#include <climits>
 #include <honei/lbm/tags.hh>
 #include <honei/la/algorithm.hh>
 #include <honei/lbm/grid_packer.hh>

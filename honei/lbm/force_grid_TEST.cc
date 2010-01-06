@@ -72,13 +72,13 @@ class ForceSlopeLBMGridTest :
             ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(data, info, DataType_(9.81), grid.d_x, grid.d_y, grid.d_t, DataType_(0.01));
 
             DenseVector<DataType_> temp_1_ref(data.f_temp_1->copy());
-            DenseVector<DataType_> temp_2_ref(data.f_temp_1->copy());
-            DenseVector<DataType_> temp_3_ref(data.f_temp_1->copy());
-            DenseVector<DataType_> temp_4_ref(data.f_temp_1->copy());
-            DenseVector<DataType_> temp_5_ref(data.f_temp_1->copy());
-            DenseVector<DataType_> temp_6_ref(data.f_temp_1->copy());
-            DenseVector<DataType_> temp_7_ref(data.f_temp_1->copy());
-            DenseVector<DataType_> temp_8_ref(data.f_temp_1->copy());
+            DenseVector<DataType_> temp_2_ref(data.f_temp_2->copy());
+            DenseVector<DataType_> temp_3_ref(data.f_temp_3->copy());
+            DenseVector<DataType_> temp_4_ref(data.f_temp_4->copy());
+            DenseVector<DataType_> temp_5_ref(data.f_temp_5->copy());
+            DenseVector<DataType_> temp_6_ref(data.f_temp_6->copy());
+            DenseVector<DataType_> temp_7_ref(data.f_temp_7->copy());
+            DenseVector<DataType_> temp_8_ref(data.f_temp_8->copy());
 
             //----------------------------------------------------
             Grid<D2Q9, DataType_> grid_2;
@@ -184,13 +184,13 @@ class ForceFrictionLBMGridTest :
             ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(data, info, DataType_(9.81), grid.d_x, grid.d_y, grid.d_t, DataType_(0.01));
 
             DenseVector<DataType_> temp_1_ref(data.f_temp_1->copy());
-            DenseVector<DataType_> temp_2_ref(data.f_temp_1->copy());
-            DenseVector<DataType_> temp_3_ref(data.f_temp_1->copy());
-            DenseVector<DataType_> temp_4_ref(data.f_temp_1->copy());
-            DenseVector<DataType_> temp_5_ref(data.f_temp_1->copy());
-            DenseVector<DataType_> temp_6_ref(data.f_temp_1->copy());
-            DenseVector<DataType_> temp_7_ref(data.f_temp_1->copy());
-            DenseVector<DataType_> temp_8_ref(data.f_temp_1->copy());
+            DenseVector<DataType_> temp_2_ref(data.f_temp_2->copy());
+            DenseVector<DataType_> temp_3_ref(data.f_temp_3->copy());
+            DenseVector<DataType_> temp_4_ref(data.f_temp_4->copy());
+            DenseVector<DataType_> temp_5_ref(data.f_temp_5->copy());
+            DenseVector<DataType_> temp_6_ref(data.f_temp_6->copy());
+            DenseVector<DataType_> temp_7_ref(data.f_temp_7->copy());
+            DenseVector<DataType_> temp_8_ref(data.f_temp_8->copy());
 
             //----------------------------------------------------
             Grid<D2Q9, DataType_> grid_2;

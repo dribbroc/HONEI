@@ -51,5 +51,11 @@ namespace honei
     template bool operator== (const DenseVectorRange<unsigned long> & a, const DenseVectorRange<unsigned long> & b);
 
     template std::ostream & operator<< (std::ostream & lhs, const DenseVectorRange<unsigned long> & vector);
+
+    template class DenseVectorRange<bool>;
+
+    template bool operator== (const DenseVectorRange<bool> & a, const DenseVectorRange<bool> & b);
+
+    template std::ostream & operator<< (std::ostream & lhs, const DenseVectorRange<bool> & vector);
 }
 
