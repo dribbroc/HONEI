@@ -167,6 +167,7 @@ namespace honei
                     ScaledSum<Tag_>::value(r, v, -lambda);
                     alpha_old = alpha;
                     alpha = Norm<vnt_l_two, false, Tag_>::value(r);
+
                     Scale<Tag_>::value(p, alpha / alpha_old);
                     Sum<Tag_>::value(p, r);
 

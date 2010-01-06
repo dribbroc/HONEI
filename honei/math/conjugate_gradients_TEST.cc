@@ -550,15 +550,15 @@ class ConjugateGradientsTestSparseELL:
             }
 
             DenseVector<DT1_> result(rhs.size(), DT1_(0));
-            SparseMatrix<DT1_> bla(smatrix2.rows(), smatrix2.columns());
+            /*SparseMatrix<DT1_> bla(smatrix2.rows(), smatrix2.columns());
             for(unsigned long i(0) ; i < bla.rows() ; ++i)
                 for(unsigned long j(0) ; j < bla.columns() ; ++ j)
                 {
                     if (smatrix2(i,j) != DT1_(0))
                         bla(i,j) = smatrix2(i,j);
                 }
-            DenseMatrix<DT1_> dmatrix(bla);
-            result = ConjugateGradients<Tag_, NONE>::value(dmatrix, rhs, 1e-12);
+            DenseMatrix<DT1_> dmatrix(bla);*/
+            result = ConjugateGradients<Tag_, NONE>::value(smatrix2, rhs, result, 10000ul);
 
             std::string filename_3(HONEI_SOURCEDIR);
             filename_3 += "/honei/math/testdata/";
