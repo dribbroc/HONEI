@@ -121,7 +121,7 @@ class BoundaryInitFSIBench :
                     solids.current_u = DataType_(0);
                 }
                 BENCHMARK(
-                        for (unsigned long j(0) ; j < 5 ; ++j)
+                        for (unsigned long j(0) ; j < 1 ; ++j)
                         {
                         (BoundaryInitFSI<Tag_, lbm_lattice_types::D2Q9::DIR_1>::
                         value(info, data, solids));
@@ -137,8 +137,6 @@ class BoundaryInitFSIBench :
         }
 };
 
-BoundaryInitFSIBench<tags::CPU, float> collide_stream_grid_bench_float("BoundaryInitFSIBenchmark - size: 129, float", 129, 10);
-BoundaryInitFSIBench<tags::CPU, double> collide_stream_grid_bench_double("BoundaryInitFSIBenchmark - size: 129, double", 129, 10);
 #ifdef HONEI_CUDA
-BoundaryInitFSIBench<tags::GPU::CUDA, float> collide_stream_grid_bench_float_cuda("BoundaryInitFSIBenchmark CUDA - size: 129, float", 129, 10);
+BoundaryInitFSIBench<tags::GPU::CUDA, float> collide_stream_grid_bench_float_cuda("BoundaryInitFSIBenchmark CUDA - size: 129, float", 1300, 100);
 #endif
