@@ -80,6 +80,7 @@ class SMELLJacobiBench :
             evaluate(info * 100);
         }
 };
+/*
 #ifdef HONEI_CUDA
 SMELLJacobiBench<tags::GPU::CUDA, float> SMELLDVPBench_float_cuda0("SM ELL 0 Jacobi Benchmark CUDA float: " , 0, 10, "l10/area51_full_0.m", "l10/area51_rhs_0" );
 SMELLJacobiBench<tags::GPU::CUDA, float> SMELLDVPBench_float_cuda1("SM ELL 1 Jacobi Benchmark CUDA float: " , 0, 10, "l10/area51_full_1.m", "l10/area51_rhs_1" );
@@ -104,3 +105,4 @@ SMELLJacobiBench<tags::GPU::CUDA, double> SMELLDVPBench_double8("SM ELL 3f Jacob
 SMELLJacobiBench<tags::GPU::CUDA, double> SMELLDVPBench_double9("SM ELL 4f Jacobi Benchmark CUDA double: " , 0, 10, "l10_full/area51_full_4.m", "l10_full/area51_rhs_4" );
 #endif
 #endif
+*/
