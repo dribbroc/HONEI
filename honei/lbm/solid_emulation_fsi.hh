@@ -149,6 +149,7 @@ namespace honei
                                 else
                                     return 1;
                             }
+                            return 4711;
                         }
             };
 
