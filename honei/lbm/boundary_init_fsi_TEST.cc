@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <limits>
 #include <honei/lbm/tags.hh>
 #include <unittest/unittest.hh>
 #include <honei/lbm/grid.hh>
