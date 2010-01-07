@@ -57,7 +57,7 @@ class SolidTest :
             Polygon<DataType_, lbm_solid_dims::D2> poly_0(1000);
             for(unsigned long i(0) ; i < 1000; ++i)
             {
-                Line<DataType_, lbm_solid_dims::D2> line_i(DataType_(i), DataType_(i), DataType_(i+1), DataType_(i+1));
+                Line<DataType_, lbm_solid_dims::D2> line_i(DataType_(i+0), DataType_(i+0), DataType_(i+1), DataType_(i+1));
                 poly_0.add_line(line_i);
             }
 
