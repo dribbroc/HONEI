@@ -196,6 +196,8 @@ class SimulationController
                             GridPacker<D2Q9, NOSLIP, Prec_>::unpack(_cpu_simulation->get_grid(), _cpu_simulation->get_info(), _cpu_simulation->get_data());
                     }
                     break;
+                default:
+                    break;
 
             }
         }
@@ -252,6 +254,8 @@ class SimulationController
                     {
                         return *_cpu_simulation->get_grid().h;
                     }
+                    break;
+                default:
                     break;
             }
         }
@@ -467,6 +471,8 @@ class SimulationController
                         delete _cpu_simulation;
                         _cpu_simulation = new Simulation<tags::CPU, lbm_applications::LABSWE, Prec_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (id);
                     }
+                default:
+                    break;
             }
         }
 
