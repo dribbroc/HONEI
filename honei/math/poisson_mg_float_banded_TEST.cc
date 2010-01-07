@@ -236,6 +236,9 @@ class PoissonTestMGBandedQ1Float:
                         info.max_level = 1;
                     }
                     break;
+                default:
+                    throw InternalError("Uknown size!");
+                    break;
             }
 
             info.n_max_iter = 16;

@@ -433,6 +433,8 @@ namespace honei
             case lm_read_and_write:
                 release_write(memid);
                 break;
+            default:
+                throw InternalError("Memory Arbiter: lock mode unknown!");
         }
     }
 

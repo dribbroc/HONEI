@@ -65,6 +65,10 @@ std::ostream & honei::operator<< (std::ostream & left, tags::TagValue value)
             case tags::tv_fake:
                 left << "Fake -- for test purpose only!";
                 continue;
+
+            default:
+                left << "Uknown Backend";
+                continue;
         }
 
         throw InternalError("Unexpected value for tags::TagValue '" + stringify(long(value)) + "'");

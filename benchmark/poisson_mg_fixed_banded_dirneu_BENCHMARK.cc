@@ -119,6 +119,9 @@ class PoissonBenchmarkMGBandedQ1Fixed:
                         info.max_level = 1;
                     }
                     break;
+                default:
+                    throw InternalError("Uknown size!");
+                    break;
             }
 
             info.n_max_iter = 16;

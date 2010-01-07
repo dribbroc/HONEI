@@ -237,6 +237,9 @@ class PoissonTestMGBandedQ1Mixed:
                         info.max_level = 1;
                     }
                     break;
+                default:
+                    throw InternalError("Uknown size!");
+                    break;
             }
 
             info.n_max_iter = 2;

@@ -513,6 +513,9 @@ class ScenarioCollection
 
                     }
                     break;
+                default:
+                    throw InternalError("Scenario not found!");
+                    break;
             }
             return;
         }

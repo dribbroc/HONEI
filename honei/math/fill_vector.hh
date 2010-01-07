@@ -133,6 +133,10 @@ namespace honei
                                     level = 1;
                                 }
                                 break;
+                            default:
+                                throw InternalError("Uknown size!");
+                                break;
+
                         }
                         for (unsigned long i(1); i <= N; i++)
                         {
