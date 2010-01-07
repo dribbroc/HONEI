@@ -111,19 +111,19 @@ class ForceSlopeLBMGridTest :
             data_2.f_temp_6->lock(lm_read_only);
             data_2.f_temp_7->lock(lm_read_only);
             data_2.f_temp_8->lock(lm_read_only);
-            for(unsigned long i(0) ; i < g_h ; ++i)
+
+            //std::cout << temp_2_ref << std::endl;
+            //std::cout << *data_2.f_temp_2 << std::endl;
+            for(unsigned long i(0) ; i < temp_2_ref.size() ; ++i)
             {
-                for(unsigned long j(0) ; j < g_w ; ++j)
-                {
-                    TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_1)[i], temp_1_ref[i], std::numeric_limits<DataType_>::epsilon());
-                    TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_2)[i], temp_2_ref[i], std::numeric_limits<DataType_>::epsilon());
-                    TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_3)[i], temp_3_ref[i], std::numeric_limits<DataType_>::epsilon());
-                    TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_4)[i], temp_4_ref[i], std::numeric_limits<DataType_>::epsilon());
-                    TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_5)[i], temp_5_ref[i], std::numeric_limits<DataType_>::epsilon());
-                    TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_6)[i], temp_6_ref[i], std::numeric_limits<DataType_>::epsilon());
-                    TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_7)[i], temp_7_ref[i], std::numeric_limits<DataType_>::epsilon());
-                    TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_8)[i], temp_8_ref[i], std::numeric_limits<DataType_>::epsilon());
-                }
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_1)[i], temp_1_ref[i], std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_2)[i], temp_2_ref[i], std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_3)[i], temp_3_ref[i], std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_4)[i], temp_4_ref[i], std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_5)[i], temp_5_ref[i], std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_6)[i], temp_6_ref[i], std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_7)[i], temp_7_ref[i], std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_8)[i], temp_8_ref[i], std::numeric_limits<DataType_>::epsilon());
             }
             data_2.f_temp_1->unlock(lm_read_only);
             data_2.f_temp_2->unlock(lm_read_only);
@@ -223,19 +223,16 @@ class ForceFrictionLBMGridTest :
             data_2.f_temp_6->lock(lm_read_only);
             data_2.f_temp_7->lock(lm_read_only);
             data_2.f_temp_8->lock(lm_read_only);
-            for(unsigned long i(0) ; i < g_h ; ++i)
+            for(unsigned long i(0) ; i < temp_1_ref.size() ; ++i)
             {
-                for(unsigned long j(0) ; j < g_w ; ++j)
-                {
-                    TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_1)[i], temp_1_ref[i], std::numeric_limits<DataType_>::epsilon());
-                    TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_2)[i], temp_2_ref[i], std::numeric_limits<DataType_>::epsilon());
-                    TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_3)[i], temp_3_ref[i], std::numeric_limits<DataType_>::epsilon());
-                    TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_4)[i], temp_4_ref[i], std::numeric_limits<DataType_>::epsilon());
-                    TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_5)[i], temp_5_ref[i], std::numeric_limits<DataType_>::epsilon());
-                    TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_6)[i], temp_6_ref[i], std::numeric_limits<DataType_>::epsilon());
-                    TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_7)[i], temp_7_ref[i], std::numeric_limits<DataType_>::epsilon());
-                    TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_8)[i], temp_8_ref[i], std::numeric_limits<DataType_>::epsilon());
-                }
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_1)[i], temp_1_ref[i], std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_2)[i], temp_2_ref[i], std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_3)[i], temp_3_ref[i], std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_4)[i], temp_4_ref[i], std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_5)[i], temp_5_ref[i], std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_6)[i], temp_6_ref[i], std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_7)[i], temp_7_ref[i], std::numeric_limits<DataType_>::epsilon());
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_8)[i], temp_8_ref[i], std::numeric_limits<DataType_>::epsilon());
             }
             data_2.f_temp_1->unlock(lm_read_only);
             data_2.f_temp_2->unlock(lm_read_only);

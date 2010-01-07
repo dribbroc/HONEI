@@ -26,6 +26,7 @@ namespace honei
     {
         __global__ void force_grid_gpu_x(
                 unsigned long * dir_1,
+                unsigned long * interdir_1,
                 float * f_temp_1,
                 float * h, float * b,
                 float distribution_x,
@@ -36,15 +37,20 @@ namespace honei
             float force_multiplier(d_t / (6 * d_x * d_x / (d_t * d_t)));
             float gravity_multiplier(-g);
             float force_times_gravity(force_multiplier * gravity_multiplier);
-            float dx_by_two(float(2) * d_x);
 
             if (idx < size)
             {
                 unsigned long i(idx);
+                float x(0);
+                if (interdir_1[i] < size)
+                {
+                    x = force_times_gravity * distribution_x * (h[i] + h[interdir_1[i]]) / float(2);
+                }
                 if (dir_1[i] < size)
                 {
-                    f_temp_1[i] += force_times_gravity * distribution_x * (h[i] + h[dir_1[i]]) * (b[dir_1[i]] - b[i]) / dx_by_two;
+                    x *= (b[dir_1[i]] - b[i]) / d_x;
                 }
+                f_temp_1[i] += x;
             }
         }
         __global__ void force_grid_gpu_xy(
@@ -61,21 +67,35 @@ namespace honei
             float force_multiplier(d_t / (6 * d_x * d_x / (d_t * d_t)));
             float gravity_multiplier(-g);
             float force_times_gravity(force_multiplier * gravity_multiplier);
-            float dx_by_two(float(2) * d_x);
-            float dy_by_two(float(2) * d_y);
 
             if (idx < size)
             {
                 unsigned long i(idx);
-                if (dir_2[i] < size && dir_3[i] < size && dir_1[i] < size)
+                float x(0);
+                if (dir_2[i] < size)
                 {
-                    f_temp_2[i] += (force_times_gravity * distribution_x * (h[i] + h[dir_2[i]]) * (b[dir_1[i]] - b[i]) / dx_by_two) +
-                                   (force_times_gravity * distribution_y * (h[i] + h[dir_2[i]]) * (b[dir_3[i]] - b[i]) / dy_by_two);
+                    x = force_times_gravity * distribution_x * (h[i] + h[dir_2[i]]) / float(2);
                 }
+                if (dir_1[i] < size)
+                {
+                    x *= (b[dir_1[i]] - b[i]) / d_x;
+                }
+                f_temp_2[i] += x;
+                float y(0);
+                if (dir_2[i] < size)
+                {
+                    y = force_times_gravity * distribution_y * (h[i] + h[dir_2[i]]) / float(2);
+                }
+                if (dir_3[i] < size)
+                {
+                    y *= (b[dir_3[i]] - b[i]) / d_y;
+                }
+                f_temp_2[i] += y;
             }
         }
         __global__ void force_grid_gpu_y(
                 unsigned long * dir_3,
+                unsigned long * interdir_3,
                 float * f_temp_3,
                 float * h, float * b,
                 float distribution_y,
@@ -86,15 +106,20 @@ namespace honei
             float force_multiplier(d_t / (6 * d_x * d_x / (d_t * d_t)));
             float gravity_multiplier(-g);
             float force_times_gravity(force_multiplier * gravity_multiplier);
-            float dy_by_two(float(2) * d_y);
 
             if (idx < size)
             {
                 unsigned long i(idx);
+                float y(0);
+                if (interdir_3[i] < size)
+                {
+                    y = force_times_gravity * distribution_y * (h[i] + h[interdir_3[i]]) / float(2);
+                }
                 if (dir_3[i] < size)
                 {
-                    f_temp_3[i] += force_times_gravity * distribution_y * (h[i] + h[dir_3[i]]) * (b[dir_3[i]] - b[i]) / dy_by_two;
+                    y *= (b[dir_3[i]] - b[i]) / d_y;
                 }
+                f_temp_3[i] += y;
             }
         }
     }
@@ -147,7 +172,7 @@ extern "C" void cuda_force_grid_float(
     float * f_temp_8_gpu((float *)f_temp_8);
 
     honei::cuda::force_grid_gpu_x<<<grid, block>>>(
-            dir_1_gpu, f_temp_1_gpu,
+            dir_1_gpu, dir_1_gpu, f_temp_1_gpu,
             h_gpu, b_gpu,
             distribution_x_1,
             g, d_x, d_y, d_t,
@@ -159,7 +184,7 @@ extern "C" void cuda_force_grid_float(
             g, d_x, d_y, d_t,
             size);
     honei::cuda::force_grid_gpu_y<<<grid, block>>>(
-            dir_3_gpu, f_temp_3_gpu,
+            dir_3_gpu, dir_3_gpu, f_temp_3_gpu,
             h_gpu, b_gpu,
             distribution_y_3,
             g, d_x, d_y, d_t,
@@ -171,7 +196,7 @@ extern "C" void cuda_force_grid_float(
             g, d_x, d_y, d_t,
             size);
     honei::cuda::force_grid_gpu_x<<<grid, block>>>(
-            dir_5_gpu, f_temp_5_gpu,
+            dir_1_gpu, dir_5_gpu, f_temp_5_gpu,
             h_gpu, b_gpu,
             distribution_x_5,
             g, d_x, d_y, d_t,
@@ -183,7 +208,7 @@ extern "C" void cuda_force_grid_float(
             g, d_x, d_y, d_t,
             size);
     honei::cuda::force_grid_gpu_y<<<grid, block>>>(
-            dir_7_gpu, f_temp_7_gpu,
+            dir_3_gpu, dir_7_gpu, f_temp_7_gpu,
             h_gpu, b_gpu,
             distribution_y_7,
             g, d_x, d_y, d_t,
@@ -217,7 +242,7 @@ namespace honei
                 unsigned long i(idx);
                 float force_multiplier(d_t / (float(6) * d_x * d_x / (d_t * d_t)));
                 force_multiplier *= g;
-                if ( (powf(h[i], float(1./3.))) > epsilon || (pow(h[i], float(1./3.))) < -epsilon )
+                if ( (powf(h[i], float(1./3.))) > epsilon || (powf(h[i], float(1./3.))) < -epsilon )
                 {
                     f_temp[i] -= force_multiplier * distribution_x * manning * manning *
                         u[i] * sqrtf(u[i] * u[i] + v[i] * v[i]) / (powf(h[i], float(1./3.)));
@@ -240,7 +265,7 @@ namespace honei
                 unsigned long i(idx);
                 float force_multiplier(d_t / (float(6) * d_x * d_x / (d_t * d_t)));
                 force_multiplier *= g;
-                if ( (powf(h[i], float(1./3.))) > epsilon || (pow(h[i], float(1./3.))) < -epsilon )
+                if ( (powf(h[i], float(1./3.))) > epsilon || (powf(h[i], float(1./3.))) < -epsilon )
                 {
                     f_temp[i] -= force_multiplier * distribution_x * manning * manning *
                         u[i] * sqrtf(u[i] * u[i] + v[i] * v[i]) / (powf(h[i], float(1./3.)));
