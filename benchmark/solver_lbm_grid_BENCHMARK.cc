@@ -118,19 +118,6 @@ LBMGSolverBench<tags::CPU::MultiCore::SSE, double> mcsse_solver_bench_double_1("
 //#endif
 #ifdef HONEI_CUDA
 LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_12("CUDA LBM Grid solver Benchmark - size: 250x250, float", 100*2, 100);
-LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_13("CUDA LBM Grid solver Benchmark - size: 250x250, float", 200*2, 100);
-LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_14("CUDA LBM Grid solver Benchmark - size: 250x250, float", 300*2, 100);
-LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_15("CUDA LBM Grid solver Benchmark - size: 250x250, float", 400*2, 100);
-LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_16("CUDA LBM Grid solver Benchmark - size: 250x250, float", 500*2, 100);
-LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_17("CUDA LBM Grid solver Benchmark - size: 250x250, float", 600*2, 100);
-LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_18("CUDA LBM Grid solver Benchmark - size: 250x250, float", 700*2, 100);
-LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_19("CUDA LBM Grid solver Benchmark - size: 250x250, float", 800*2, 100);
-LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_1a("CUDA LBM Grid solver Benchmark - size: 250x250, float", 900*2, 100);
-LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_1s("CUDA LBM Grid solver Benchmark - size: 250x250, float", 1000*2, 100);
-LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_1d("CUDA LBM Grid solver Benchmark - size: 250x250, float", 1100*2, 100);
-LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_1f("CUDA LBM Grid solver Benchmark - size: 250x250, float", 1200*2, 100);
-LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_1g("CUDA LBM Grid solver Benchmark - size: 250x250, float", 1300*2, 100);
-LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_1z("CUDA LBM Grid solver Benchmark - size: 250x250, float", 1400*2, 100);
 #endif
 
 
