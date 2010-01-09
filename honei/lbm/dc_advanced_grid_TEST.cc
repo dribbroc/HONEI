@@ -36,7 +36,7 @@ using namespace lbm::lbm_lattice_types;
 using namespace lbm;
 
 //#define SOLVER_VERBOSE
-#define SOLVER_POSTPROCESSING
+//#define SOLVER_POSTPROCESSING
 //#define DRIVEN_CAVITY_OUTPUT_TESTLINE
 //#define DRIVEN_CAVITY_OUTPUT_ACCURACY
 
