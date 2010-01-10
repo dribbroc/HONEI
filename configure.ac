@@ -15,6 +15,20 @@ AC_PROG_LIBTOOL
 AC_PROG_MAKE_SET
 dnl }}}
 
+dnl {{{ check for Pathscale C++ compiler (due to lack of __thread support in PIC)
+AC_MSG_CHECKING([for Pathscale compiler])
+AC_COMPILE_IFELSE([
+#ifdef __PATHSCALE__
+#  error "Pathscale compiler detected!"
+#endif
+],
+		[AC_MSG_RESULT([no])],
+		[
+		 AC_MSG_RESULT([yes])
+		 AC_MSG_ERROR([HONEI does not support the Pathscale compiler suite. Last checked with version 3.2.99])
+		])
+dnl }}}
+
 dnl {{{ check for a sensible C++ compiler
 dnl {{{ check for partial specialisation of class templates
 AC_MSG_CHECKING([for compiler support for partial specialisation of template classes])
