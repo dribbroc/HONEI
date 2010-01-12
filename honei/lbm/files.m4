@@ -8,6 +8,7 @@ dnl the base filename with no extension; later parameters can be `hh', `cc',
 dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
+add(`bitmap_io',                       `hh', `test')
 add(`boundary_init_fsi',               `hh', `test', `cuda')
 add(`collide_stream',                  `hh', `test')
 add(`collide_stream_grid',             `hh', `sse', `cuda', `cell', `test')

@@ -13,6 +13,12 @@
  * Source can be found at http://www.kalytta.com/bitmap.h
  */
 
+#include <iostream>
+#include <fstream>
+#include <cstdlib>
+#include <string.h>
+#include <stdio.h>
+
 #pragma once
 #pragma pack(1)
 
@@ -155,7 +161,7 @@ public:
                 Dispose();
         }
 
-        CBitmap(char* Filename) : m_BitmapData(0), m_BitmapSize(0), m_ColorTableSize(0), m_ColorTable(0) {
+        CBitmap(const char* Filename) : m_BitmapData(0), m_BitmapSize(0), m_ColorTableSize(0), m_ColorTable(0) {
                 Load(Filename);
         }
 
@@ -175,7 +181,7 @@ public:
 
         /* Load specified Bitmap and stores it as RGBA in an internal buffer */
 
-        bool Load(char *Filename) {
+        bool Load(const char *Filename) {
                 FILE *file = fopen(Filename, "rb");
 
                 Dispose();
@@ -183,7 +189,7 @@ public:
                 if (file == 0) return false;
 
                 fread(&m_BitmapFileHeader, BITMAP_FILEHEADER_SIZE, 1, file);
-                if (m_BitmapFileHeader.Signature != BITMAP_SIGNATURE) {
+                if (m_BitmapFileHeader.Signature != 'MB') {
                         return false;
                 }
 
@@ -330,7 +336,6 @@ public:
                 } else if (m_BitmapHeader.Compression == 2) { // RLE 4
                         /* RLE 4 is not supported */
                 } else if (m_BitmapHeader.Compression == 3) { // BITFIELDS
-                        
                         /* We assumes that mask of each color component can be in any order */
 
                         for (int i = 0; i < GetHeight(); i++) {
