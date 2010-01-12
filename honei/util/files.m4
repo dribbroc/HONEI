@@ -11,6 +11,7 @@ dnl on this file at present...
 add(`general', `assertion',                      `hh', `cc', `test')
 add(`general', `attributes',                     `hh')
 add(`general', `benchmark_info',                 `hh')
+add(`general', `bitmap',                         `hh')
 add(`general', `condition_variable',             `hh', `cc')
 add(`general', `configuration',                  `hh', `cc', `test')
 add(`general', `exception',                      `hh', `cc')
