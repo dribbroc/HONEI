@@ -347,7 +347,9 @@ class JacobiSparseELLComparisonTest:
             //std::cout << result << std::endl;
             result.unlock(lm_read_only);
 
-            TEST_CHECK_EQUAL(result, ref_result);
+            //TEST_CHECK_EQUAL(result, ref_result);
+            for(unsigned long i(0) ; i < result.size() ; ++i)
+                TEST_CHECK_EQUAL_WITHIN_EPS(result[i], ref_result[i], 1e-3);
         }
 };
 
