@@ -271,6 +271,10 @@ class JacobiTestSparseELL:
 };
 JacobiTestSparseELL<tags::CPU, float> jacobi_test_float_sparse_ell("float");
 JacobiTestSparseELL<tags::CPU, double> jacobi_test_double_sparse_ell("double");
+#ifdef HONEI_SSE
+JacobiTestSparseELL<tags::CPU::SSE, float> sse_jacobi_test_float_sparse_ell("float");
+JacobiTestSparseELL<tags::CPU::SSE, double> sse_jacobi_test_double_sparse_ell("double");
+#endif
 #ifdef HONEI_CUDA
 JacobiTestSparseELL<tags::GPU::CUDA, float> cuda_jacobi_test_float_sparse_ell("float");
 #ifdef HONEI_CUDA_DOUBLE
