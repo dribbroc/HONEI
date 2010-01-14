@@ -44,6 +44,27 @@ DenseVectorContinuousBase<float> & Sum<tags::GPU::CUDA>::value(DenseVectorContin
     return a;
 }
 
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorContinuousBase<double> & Sum<tags::GPU::CUDA>::value(DenseVectorContinuousBase<double> & a,
+        const DenseVectorContinuousBase<double> & b)
+{
+    CONTEXT("When adding DenseVectorContinuousBase<double> to DenseVectorContinuousBase<double> (CUDA):");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::sum_two_double", 128ul));
+
+    void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    void * b_gpu (b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+    cuda_sum_two_double(a_gpu, b_gpu, a.size(), blocksize);
+    b.unlock(lm_read_only);
+    a.unlock(lm_read_and_write);
+
+    return a;
+}
+#endif
+
 DenseMatrix<float> & Sum<tags::GPU::CUDA>::value(DenseMatrix<float> & a, const DenseMatrix<float> & b)
 {
     CONTEXT("When adding DenseMatrix<float> to DenseMatrix<float> (CUDA):");

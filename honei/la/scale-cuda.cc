@@ -37,6 +37,21 @@ DenseVectorContinuousBase<float> & Scale<tags::GPU::CUDA>::value(DenseVectorCont
     return x;
 }
 
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorContinuousBase<double> & Scale<tags::GPU::CUDA>::value(DenseVectorContinuousBase<double> & x, const double a)
+{
+    CONTEXT("When scaling DenseVectorContinuousBase<double> by double (CUDA):");
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::scale_one_double", 128ul));
+
+    void * x_gpu (x.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+    cuda_scale_one_double(x_gpu, a, x.size(), blocksize);
+    x.unlock(lm_read_and_write);
+
+    return x;
+}
+#endif
+
 DenseMatrix<float> & Scale<tags::GPU::CUDA>::value(DenseMatrix<float> & x, const float a)
 {
     CONTEXT("When scaling DenseMatrix<float> by float (CUDA):");

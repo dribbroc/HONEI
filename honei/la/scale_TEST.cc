@@ -352,6 +352,9 @@ DenseVectorScaleTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_scal
 #endif
 #ifdef HONEI_CUDA
 DenseVectorScaleTest<tags::GPU::CUDA, float> cuda_dense_vector_scale_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorScaleTest<tags::GPU::CUDA, double> cuda_dense_vector_scale_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CELL
 DenseVectorScaleTest<tags::Cell, float> cell_dense_vector_scale_test_float("Cell float");
@@ -397,6 +400,9 @@ DenseVectorScaleQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector
 #endif
 #ifdef HONEI_CUDA
 DenseVectorScaleQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_scale_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorScaleQuickTest<tags::GPU::CUDA, double> cuda_dense_vector_scale_quick_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CELL
 DenseVectorScaleQuickTest<tags::Cell, float> cell_dense_vector_scale_quick_test_float("Cell float");
@@ -526,6 +532,9 @@ DenseVectorRangeScaleTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector
 #endif
 #ifdef HONEI_CUDA
 DenseVectorRangeScaleTest<tags::GPU::CUDA, float> cuda_dense_vector_range_scale_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorRangeScaleTest<tags::GPU::CUDA, double> cuda_dense_vector_range_scale_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CELL
 DenseVectorRangeScaleTest<tags::Cell, float> cell_dense_vector_range_scale_test_float("Cell float");
@@ -573,6 +582,9 @@ DenseVectorRangeScaleQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_v
 #endif
 #ifdef HONEI_CUDA
 DenseVectorRangeScaleQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_range_scale_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorRangeScaleQuickTest<tags::GPU::CUDA, double> cuda_dense_vector_range_scale_quick_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CELL
 DenseVectorRangeScaleQuickTest<tags::Cell, float> cell_dense_vector_range_scale_quick_test_float("Cell float");

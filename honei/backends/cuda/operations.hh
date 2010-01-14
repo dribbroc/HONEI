@@ -87,8 +87,10 @@ extern "C"
     void cuda_scaled_sum_three_double(void * x, void * y, void * z, unsigned long size, unsigned long blocksize);
 
     void cuda_scale_one_float(void * x, const float a, unsigned long size, unsigned long blocksize);
+    void cuda_scale_one_double(void * x, const double a, unsigned long size, unsigned long blocksize);
 
     void cuda_sum_two_float(void * a, const void * b, unsigned long size, unsigned long blocksize);
+    void cuda_sum_two_double(void * a, const void * b, unsigned long size, unsigned long blocksize);
 
 
     /////////////////////////// LBM /////////////////////////

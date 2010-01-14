@@ -31,6 +31,17 @@ namespace honei
                 x[idx] = x[idx] * a;
             }
         }
+
+#ifdef HONEI_CUDA_DOUBLE
+        __global__ void scale_gpu(double * x, double a, unsigned long size)
+        {
+            unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+            if (idx < size)
+            {
+                x[idx] = x[idx] * a;
+            }
+        }
+#endif
     }
 }
 
@@ -47,3 +58,19 @@ extern "C" void cuda_scale_one_float(void * x, float a, unsigned long size, unsi
 
     CUDA_ERROR();
 }
+
+#ifdef HONEI_CUDA_DOUBLE
+extern "C" void cuda_scale_one_double(void * x, double a, unsigned long size, unsigned long blocksize)
+{
+    dim3 grid;
+    dim3 block;
+    block.x = blocksize;
+    grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
+    grid.y = grid.x;
+    double * x_gpu((double *)x);
+
+    honei::cuda::scale_gpu<<<grid, block>>>(x_gpu, a, size);
+
+    CUDA_ERROR();
+}
+#endif
