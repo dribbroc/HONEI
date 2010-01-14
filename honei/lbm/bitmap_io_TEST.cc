@@ -26,7 +26,7 @@ using namespace honei;
 using namespace tests;
 using namespace std;
 
-template<typename DT_>
+template<typename DT_, typename FileType_>
 class BitmapIOTest:
     public BaseTest
 {
@@ -39,7 +39,9 @@ class BitmapIOTest:
         virtual void run() const
         {
             std::string filename("test.bmp");
-            DenseMatrix<DT_> target(BitmapIO::read_scalar_field<DT_>(filename));
+            DT_ scale(1);
+            DenseMatrix<DT_> result(BitmapIO<FileType_>::read_scalar_field(filename, scale));
         }
 };
-BitmapIOTest<float> bitmapio_test_float("float");
+BitmapIOTest<float, io_formats::PNM> bitmapio_test_float("float, BMP");
+BitmapIOTest<double, io_formats::PNM> bitmapio_test_double("float, BMP");

@@ -26,35 +26,25 @@
 #include <honei/la/dense_vector.hh>
 
 using namespace honei;
+
+namespace io_formats
+{
+    class BMP;
+    class PNM;
+}
+
+template<typename FileType_>
 class BitmapIO
+{
+};
+
+template<>
+class BitmapIO<io_formats::PNM>
 {
     public:
         template<typename DT_>
-        static DenseMatrix<DT_> read_scalar_field(std::string source)
+        static DenseMatrix<DT_> read_scalar_field(std::string source, DT_ scale)
         {
-            CBitmap bitmap(source.c_str());
-            unsigned long width(bitmap.GetWidth());
-            unsigned long height(bitmap.GetHeight());
-            unsigned long bits(bitmap.GetBitCount());
-
-            std::cout << "Loading data from Bitmap..." << std::endl;
-            std::cout << "Width    = " << width << std::endl;
-            std::cout << "Height   = " << height << std::endl;
-            std::cout << "Bitdepth = " << bits << std::endl;
-
-            DenseMatrix<DT_> result(height, width);
-            void* data_v(bitmap.GetBits());
-            RGBA* data = (RGBA*)data_v;
-
-
-            for(unsigned long i(0) ; i < width * height ; ++i)
-            {
-                std::cout << "R: " << (float)data[i].Red << std::endl;
-                std::cout << "G: " << (float)data[i].Green << std::endl;
-                std::cout << "B: " << (float)data[i].Blue << std::endl;
-                std::cout << "A: " << (float)data[i].Alpha << std::endl;
-            }
-            return result;
         }
 };
 
