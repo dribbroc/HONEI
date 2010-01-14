@@ -558,6 +558,8 @@ class ConjugateGradientsTestSparseELL:
                         bla(i,j) = smatrix2(i,j);
                 }
             DenseMatrix<DT1_> dmatrix(bla);*/
+            DenseVector<DT1_> result_c(result.copy());
+            Defect<Tag_>::value(result, rhs, smatrix2, result_c);
             result = ConjugateGradients<Tag_, NONE>::value(smatrix2, rhs, result, 10000ul);
 
             std::string filename_3(HONEI_SOURCEDIR);
@@ -570,7 +572,10 @@ class ConjugateGradientsTestSparseELL:
             //std::cout << result << std::endl;
             result.unlock(lm_read_only);
 
-            TEST_CHECK_EQUAL(result, ref_result);
+            std::cout << "Comparing with FEATFLOW2: " << std::endl;
+            //TEST_CHECK_EQUAL(result, ref_result);
+            for(unsigned long i(0) ; i < result.size() ; ++i)
+                TEST_CHECK_EQUAL_WITHIN_EPS(result[i], ref_result[i], std::numeric_limits<DT1_>::epsilon()*1e8);
         }
 };
 
@@ -581,72 +586,9 @@ ConjugateGradientsTestSparseELL<tags::CPU::SSE, float> sse_cg_test_float_sparse_
 ConjugateGradientsTestSparseELL<tags::CPU::SSE, double> sse_cg_test_double_sparse_ell("double", "area51_full_0.m", "area51_rhs_0");
 #endif
 #ifdef HONEI_CUDA
-//ConjugateGradientsTestSparseELL<tags::GPU::CUDA, float> cuda_cg_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
+ConjugateGradientsTestSparseELL<tags::GPU::CUDA, float> cuda_cg_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
 #ifdef HONEI_CUDA_DOUBLE
 //ConjugateGradientsTestSparseELL<tags::GPU::CUDA, double> cuda_cg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
 #endif
 #endif
 
-template <typename Tag_, typename DT1_>
-class ConjugateGradientsCompareTestSparseELL:
-    public BaseTest
-{
-    private:
-        unsigned long _n;
-    public:
-        ConjugateGradientsCompareTestSparseELL(const std::string & tag, unsigned long n) :
-            BaseTest("ConjugateGradients (comparison) solver test (sparse ELL system versus banded system)<" + tag + ">")
-        {
-            register_tag(Tag_::name);
-            _n = n;
-        }
-
-        virtual void run() const
-        {
-            DenseVector<DT1_> dd_v(_n, DT1_(0));
-            DenseVector<DT1_> ll_v(_n, DT1_(0));
-            DenseVector<DT1_> ld_v(_n, DT1_(0));
-            DenseVector<DT1_> lu_v(_n, DT1_(0));
-            DenseVector<DT1_> dl_v(_n, DT1_(0));
-            DenseVector<DT1_> du_v(_n, DT1_(0));
-            DenseVector<DT1_> ul_v(_n, DT1_(0));
-            DenseVector<DT1_> ud_v(_n, DT1_(0));
-            DenseVector<DT1_> uu_v(_n, DT1_(0));
-            DenseVector<DT1_> b_v(_n, DT1_(0));
-            DenseVector<DT1_> ana_sol_v(_n, DT1_(0));
-            DenseVector<DT1_> ref_sol_v(_n, DT1_(0));
-            unsigned long root_n = (unsigned long)sqrt(_n);
-            BandedMatrixQ1<DT1_> A(_n,ll_v, ld_v , lu_v, dl_v, dd_v, du_v, ul_v, ud_v, uu_v);
-
-            FillMatrix<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(A);
-            FillVector<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(b_v);
-            DenseVector<DT1_> result(_n, DT1_(0));
-            result = ConjugateGradients<tags::CPU, NONE>::value(A, b_v, 100000ul);
-
-            SparseMatrix<DT1_> temp(_n,_n);
-            for(unsigned long row(0); row < _n; ++row)
-                for(unsigned long column(0); column < _n ; ++column)
-                {
-                    temp(row , column) = A(row , column);
-                }
-            DenseVector<DT1_> diag_inverted(_n);
-            for(unsigned long i(0) ; i < b_v.size() ; ++i)
-            {
-                diag_inverted[i] = DT1_(1)/dd_v[i];
-            }
-
-            SparseMatrixELL<DT1_> A_ell(temp);
-            DenseVector<DT1_> result_ell(_n, DT1_(0));
-            ConjugateGradients<Tag_, JAC>::value(A_ell, b_v, result_ell, diag_inverted, 100000ul);
-
-            std::cout << A << std::endl;
-            std::cout << temp << std::endl;
-            std::cout << A_ell << std::endl;
-
-            result_ell.lock(lm_read_only);
-            TEST_CHECK_EQUAL(result_ell, result);
-            result_ell.lock(lm_read_only);
-
-        }
-};
-//ConjugateGradientsCompareTestSparseELL<tags::GPU::CUDA, double> cg_test_float_sparse_ell_compare("double", 9ul);
