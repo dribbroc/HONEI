@@ -31,7 +31,15 @@ memory_backend_TEST_LDADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	libhoneibackendscuda.la \
 	$(DYNAMIC_LD_LIBS)
-memory_backend_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
+memory_backend__TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
+
+multi_gpu_TEST_SOURCES = multi_gpu_TEST.cc
+multi_gpu_TEST_LDADD = \
+	$(top_builddir)/unittest/libunittest.a \
+	$(top_builddir)/honei/util/libhoneiutil.la \
+	libhoneibackendscuda.la \
+	$(DYNAMIC_LD_LIBS)
+multi_gpu_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 
 
 libhoneibackendscuda_la_SOURCES = \
@@ -48,6 +56,8 @@ libhoneibackendscuda_la_SOURCES = \
 				 eq_dist_grid.cu \
 				 force_grid.cu \
 				 memory_backend.cc \
+				 multi_gpu.cu \
+				 multi_gpu.hh \
 				 norm.cu \
 				 operations.hh \
 				 operations.cu \
@@ -66,9 +76,9 @@ libhoneibackendscuda_la_LIBADD = \
 
 libhoneibackendscuda_includedir = $(includedir)/honei/backends/cuda/
 
-libhoneibackendscuda_include_HEADERS = operations.hh cuda_util.hh transfer.hh
+libhoneibackendscuda_include_HEADERS = operations.hh cuda_util.hh transfer.hh multi_gpu.hh
 
-TESTS =  memory_backend_TEST
+TESTS =  memory_backend_TEST multi_gpu_TEST
 TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_srcdir)/unittest/run.sh
 
 check_PROGRAMS = $(TESTS)
