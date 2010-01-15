@@ -592,3 +592,91 @@ ConjugateGradientsTestSparseELL<tags::GPU::CUDA, double> cuda_cg_test_double_spa
 #endif
 #endif
 
+template <typename Tag_, typename DT1_>
+class PreconditionedConjugateGradientsTestSparseELL:
+    public BaseTest
+{
+    private:
+        std::string _m_f, _v_f, _r_f;
+    public:
+        PreconditionedConjugateGradientsTestSparseELL(const std::string & tag, std::string m_file, std::string v_file, std::string res_file) :
+            BaseTest("Preconditioned (JAC) ConjugateGradients solver test (sparse ELL system)<" + tag + ">")
+        {
+            register_tag(Tag_::name);
+            _m_f = m_file;
+            _v_f = v_file;
+            _r_f = res_file;
+        }
+
+        virtual void run() const
+        {
+
+            std::string filename(HONEI_SOURCEDIR);
+            filename += "/honei/math/testdata/";
+            filename += _m_f;
+            unsigned long non_zeros(MatrixIO<io_formats::M>::get_non_zeros(filename));
+            unsigned long rows, columns, ax, bx;
+            DenseVector<unsigned long> r(non_zeros);
+            DenseVector<unsigned long> c(non_zeros);
+            DenseVector<DT1_> data(non_zeros);
+
+            MatrixIO<io_formats::M>::read_matrix(filename, r, c, data);
+            MatrixIO<io_formats::M>::get_sizes(filename, rows, columns, ax, bx);
+            SparseMatrixELL<DT1_> smatrix2(rows, columns, r, c, data);
+
+            std::string filename_2(HONEI_SOURCEDIR);
+            filename_2 += "/honei/math/testdata/";
+            filename_2 += _v_f;
+            DenseVector<DT1_> rhs(rows, DT1_(0));
+            VectorIO<io_formats::EXP>::read_vector(filename_2, rhs);
+
+            DenseVector<DT1_> diag_inverted(rows, DT1_(0));
+            for(unsigned long i(0) ; i < data.size() ; ++i)
+            {
+                if(r[i] == c[i])
+                    diag_inverted[r[i]] = DT1_(1)/data[i];
+            }
+
+            DenseVector<DT1_> result(rhs.size(), DT1_(0));
+            /*SparseMatrix<DT1_> bla(smatrix2.rows(), smatrix2.columns());
+            for(unsigned long i(0) ; i < bla.rows() ; ++i)
+                for(unsigned long j(0) ; j < bla.columns() ; ++ j)
+                {
+                    if (smatrix2(i,j) != DT1_(0))
+                        bla(i,j) = smatrix2(i,j);
+                }
+            DenseMatrix<DT1_> dmatrix(bla);*/
+            DenseVector<DT1_> result_c(result.copy());
+            Defect<Tag_>::value(result, rhs, smatrix2, result_c);
+            ConjugateGradients<Tag_, JAC>::value(smatrix2, rhs, result, diag_inverted, 10000ul);
+
+            std::string filename_3(HONEI_SOURCEDIR);
+            filename_3 += "/honei/math/testdata/";
+            filename_3 += _r_f;
+            DenseVector<DT1_> ref_result(rows, DT1_(0));
+            VectorIO<io_formats::EXP>::read_vector(filename_3, ref_result);
+
+            result.lock(lm_read_only);
+            //std::cout << result << std::endl;
+            result.unlock(lm_read_only);
+
+            std::cout << "Comparing with FEATFLOW2: " << std::endl;
+            //TEST_CHECK_EQUAL(result, ref_result);
+            for(unsigned long i(0) ; i < result.size() ; ++i)
+                TEST_CHECK_EQUAL_WITHIN_EPS(result[i], ref_result[i], std::numeric_limits<DT1_>::epsilon()*1e11);
+        }
+};
+
+PreconditionedConjugateGradientsTestSparseELL<tags::CPU, float> pcg_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
+PreconditionedConjugateGradientsTestSparseELL<tags::CPU, double> pcg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
+#ifdef HONEI_SSE
+PreconditionedConjugateGradientsTestSparseELL<tags::CPU::SSE, float> sse_pcg_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
+PreconditionedConjugateGradientsTestSparseELL<tags::CPU::SSE, double> sse_pcg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
+#endif
+#ifdef HONEI_CUDA
+PreconditionedConjugateGradientsTestSparseELL<tags::GPU::CUDA, float> cuda_pcg_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
+#ifdef HONEI_CUDA_DOUBLE
+PreconditionedConjugateGradientsTestSparseELL<tags::GPU::CUDA, double> cuda_pcg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
+#endif
+#endif
+
