@@ -335,6 +335,8 @@ class JacobiSparseELLComparisonTest:
             SparseMatrixELL<DT1_> difference(rows, columns, r, c, data);
 
             DenseVector<DT1_> result(rhs.size(), DT1_(0));
+            DenseVector<DT1_> result_c(result.copy());
+            Defect<Tag_>::value(result, rhs, smatrix2, result_c);
             Jacobi<Tag_>::value(smatrix2, difference, rhs, result, diag_inverted, 4000ul);
 
             std::string filename_3(HONEI_SOURCEDIR);
@@ -355,6 +357,10 @@ class JacobiSparseELLComparisonTest:
 
 JacobiSparseELLComparisonTest<tags::CPU, float> jac_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
 JacobiSparseELLComparisonTest<tags::CPU, double> jac_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
+#ifdef HONEI_SSE
+JacobiSparseELLComparisonTest<tags::CPU::SSE, float> jac_test_float_sparse_ell_sse("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
+JacobiSparseELLComparisonTest<tags::CPU::SSE, double> jac_test_double_sparse_ell_sse("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
+#endif
 #ifdef HONEI_CUDA
 JacobiSparseELLComparisonTest<tags::GPU::CUDA, float> jac_test_float_sparse_ell_cuda("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
 #ifdef HONEI_CUDA_DOUBLE

@@ -1116,11 +1116,11 @@ namespace honei
                     //DT_ current_defect_norm(Norm<vnt_l_two, false, Tag_>::value(t_1));
                     DT_ current_defect_norm(Norm<vnt_l_two, false, Tag_>::value(r));
 
-                    if(current_defect_norm < initial_defect_norm * 1e-08)
+                    /*if(current_defect_norm < initial_defect_norm * 1e-9)
                     {
                         std::cout << "Converged after " << i + 1 << " iterations: NORM: " << current_defect_norm << std::endl;
                         break;
-                    }
+                    }*/
                     if(i == max_iters - 1)
                     {
                         std::cout << "NO convergence after " << i + 1 << " iterations: NORM: " << current_defect_norm << std::endl;

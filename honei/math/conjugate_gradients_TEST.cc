@@ -23,6 +23,7 @@
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <iostream>
+#include <iomanip>
 #include <honei/math/fill_matrix.hh>
 #include <honei/math/fill_vector.hh>
 
@@ -648,7 +649,7 @@ class PreconditionedConjugateGradientsTestSparseELL:
             DenseMatrix<DT1_> dmatrix(bla);*/
             DenseVector<DT1_> result_c(result.copy());
             Defect<Tag_>::value(result, rhs, smatrix2, result_c);
-            ConjugateGradients<Tag_, JAC>::value(smatrix2, rhs, result, diag_inverted, 10000ul);
+            ConjugateGradients<Tag_, JAC>::value(smatrix2, rhs, result, diag_inverted, 962ul);
 
             std::string filename_3(HONEI_SOURCEDIR);
             filename_3 += "/honei/math/testdata/";
@@ -662,21 +663,26 @@ class PreconditionedConjugateGradientsTestSparseELL:
 
             std::cout << "Comparing with FEATFLOW2: " << std::endl;
             //TEST_CHECK_EQUAL(result, ref_result);
+            std::cout << std::numeric_limits<DT1_>::epsilon() << std::endl;
             for(unsigned long i(0) ; i < result.size() ; ++i)
-                TEST_CHECK_EQUAL_WITHIN_EPS(result[i], ref_result[i], std::numeric_limits<DT1_>::epsilon()*1e11);
+            {
+                if(fabs(result[i] - ref_result[i]) > std::numeric_limits<DT1_>::epsilon())
+                    std::cout << std::setprecision(11) << result[i] << " " << ref_result[i] << " at index " << i << std::endl;
+                TEST_CHECK_EQUAL_WITHIN_EPS(result[i], ref_result[i], std::numeric_limits<DT1_>::epsilon());
+            }
         }
 };
 
-PreconditionedConjugateGradientsTestSparseELL<tags::CPU, float> pcg_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
-PreconditionedConjugateGradientsTestSparseELL<tags::CPU, double> pcg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
+PreconditionedConjugateGradientsTestSparseELL<tags::CPU, float> pcg_test_float_sparse_ell("float", "l8/area51_full_2.m", "l8/area51_rhs_2", "l8/area51_sol_2");
+PreconditionedConjugateGradientsTestSparseELL<tags::CPU, double> pcg_test_double_sparse_ell("double", "l8/area51_full_2.m", "l8/area51_rhs_2", "l8/area51_sol_2");
 #ifdef HONEI_SSE
-PreconditionedConjugateGradientsTestSparseELL<tags::CPU::SSE, float> sse_pcg_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
-PreconditionedConjugateGradientsTestSparseELL<tags::CPU::SSE, double> sse_pcg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
+PreconditionedConjugateGradientsTestSparseELL<tags::CPU::SSE, float> sse_pcg_test_float_sparse_ell("float", "l8/area51_full_2.m", "l8/area51_rhs_2", "l8/area51_sol_2");
+PreconditionedConjugateGradientsTestSparseELL<tags::CPU::SSE, double> sse_pcg_test_double_sparse_ell("double", "l8/area51_full_2.m", "l8/area51_rhs_2", "l8/area51_sol_2");
 #endif
 #ifdef HONEI_CUDA
-PreconditionedConjugateGradientsTestSparseELL<tags::GPU::CUDA, float> cuda_pcg_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
+PreconditionedConjugateGradientsTestSparseELL<tags::GPU::CUDA, float> cuda_pcg_test_float_sparse_ell("float", "l8/area51_full_2.m", "l8/area51_rhs_2", "l8/area51_sol_2");
 #ifdef HONEI_CUDA_DOUBLE
-PreconditionedConjugateGradientsTestSparseELL<tags::GPU::CUDA, double> cuda_pcg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
+PreconditionedConjugateGradientsTestSparseELL<tags::GPU::CUDA, double> cuda_pcg_test_double_sparse_ell("double", "l8/area51_full_2.m", "l8/area51_rhs_2", "l8/area51_sol_2");
 #endif
 #endif
 
