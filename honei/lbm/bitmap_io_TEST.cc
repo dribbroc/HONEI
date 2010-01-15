@@ -32,16 +32,18 @@ class BitmapIOTest:
 {
     public:
         BitmapIOTest(const std::string & tag) :
-            BaseTest("Bitmap I/O test")
+            BaseTest("Bitmap I/O test " + tag)
         {
         }
 
         virtual void run() const
         {
-            std::string filename("test.bmp");
+            std::string filename("test_2.pgm");
             DT_ scale(1);
             DenseMatrix<DT_> result(BitmapIO<FileType_>::read_scalar_field(filename, scale));
+
+            std::cout << result << std::endl;
         }
 };
-BitmapIOTest<float, io_formats::PNM> bitmapio_test_float("float, BMP");
-BitmapIOTest<double, io_formats::PNM> bitmapio_test_double("float, BMP");
+BitmapIOTest<float, io_formats::PNM> bitmapio_test_float("float, PGM");
+BitmapIOTest<double, io_formats::PNM> bitmapio_test_double("float, PGM");

@@ -6,7 +6,7 @@
 #include <fstream>
 //#include <boost/cstdint.hpp>
 
-
+using namespace honei;
 using namespace util;
 using namespace std;
 //using namespace boost;
