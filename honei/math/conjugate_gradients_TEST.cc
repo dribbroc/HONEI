@@ -579,16 +579,16 @@ class ConjugateGradientsTestSparseELL:
         }
 };
 
-ConjugateGradientsTestSparseELL<tags::CPU, float> cg_test_float_sparse_ell("float", "area51_full_0.m", "area51_rhs_0");
-ConjugateGradientsTestSparseELL<tags::CPU, double> cg_test_double_sparse_ell("double", "area51_full_0.m", "area51_rhs_0");
+ConjugateGradientsTestSparseELL<tags::CPU, float> cg_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
+ConjugateGradientsTestSparseELL<tags::CPU, double> cg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
 #ifdef HONEI_SSE
-ConjugateGradientsTestSparseELL<tags::CPU::SSE, float> sse_cg_test_float_sparse_ell("float", "area51_full_0.m", "area51_rhs_0");
-ConjugateGradientsTestSparseELL<tags::CPU::SSE, double> sse_cg_test_double_sparse_ell("double", "area51_full_0.m", "area51_rhs_0");
+ConjugateGradientsTestSparseELL<tags::CPU::SSE, float> sse_cg_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
+ConjugateGradientsTestSparseELL<tags::CPU::SSE, double> sse_cg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
 #endif
 #ifdef HONEI_CUDA
 ConjugateGradientsTestSparseELL<tags::GPU::CUDA, float> cuda_cg_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
 #ifdef HONEI_CUDA_DOUBLE
-//ConjugateGradientsTestSparseELL<tags::GPU::CUDA, double> cuda_cg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
+ConjugateGradientsTestSparseELL<tags::GPU::CUDA, double> cuda_cg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
 #endif
 #endif
 
