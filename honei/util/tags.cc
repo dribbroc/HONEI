@@ -29,6 +29,7 @@ const std::string tags::CPU::MultiCore::name = "mc";
 const std::string tags::CPU::MultiCore::SSE::name = "mc-sse";
 const std::string tags::Cell::name = "cell";
 const std::string tags::GPU::name = "gpu";
+const std::string tags::GPU::MultiCore::name = "gpu";
 const std::string tags::GPU::CUDA::name = "cuda";
 const std::string tags::NONE::name = "none";
 
