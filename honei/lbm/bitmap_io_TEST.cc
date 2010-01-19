@@ -30,20 +30,30 @@ template<typename DT_, typename FileType_>
 class BitmapIOTest:
     public BaseTest
 {
+    private:
+        std::string _tag;
     public:
         BitmapIOTest(const std::string & tag) :
             BaseTest("Bitmap I/O test " + tag)
         {
+            _tag = tag;
         }
 
         virtual void run() const
         {
-            std::string filename("test_2.pgm");
+            std::string filename;
+            if(_tag.find("PPM") == -1)
+                filename = "test_2.pgm";
+            else
+                filename = "test_2.ppm";
+
             DT_ scale(1);
             DenseMatrix<DT_> result(BitmapIO<FileType_>::read_scalar_field(filename, scale));
 
             std::cout << result << std::endl;
         }
 };
-BitmapIOTest<float, io_formats::PNM> bitmapio_test_float("float, PGM");
-BitmapIOTest<double, io_formats::PNM> bitmapio_test_double("float, PGM");
+BitmapIOTest<float, io_formats::PGM> bitmapio_test_float("float, PGM");
+BitmapIOTest<double, io_formats::PGM> bitmapio_test_double("double, PGM");
+BitmapIOTest<float, io_formats::PPM> bitmapio_test_float_ppm("float, PPM");
+BitmapIOTest<double, io_formats::PPM> bitmapio_test_double_ppm("double, PPM");
