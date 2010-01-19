@@ -35,6 +35,9 @@ namespace honei
         /// Our GPU id
         int gpu_id;
 
+        /// Are we idle?
+        bool idle;
+
         /// The gpu pool's mutex (for grabbing work).
         Mutex * const pool_mutex;
 
@@ -61,6 +64,7 @@ namespace honei
             {
                 task = taskqueue->front();
                 taskqueue->pop();
+                idle = false;
             }
 
             pthread_mutex_unlock(pool_mutex->mutex());
@@ -68,6 +72,7 @@ namespace honei
 
         Implementation(int id, Mutex * const mutex, ConditionVariable * const barrier, std::queue<cuda::GPUTask *> * const queue) :
             gpu_id(id),
+            idle(true),
             pool_mutex(mutex),
             taskqueue(queue),
             global_barrier(barrier),
@@ -106,6 +111,12 @@ void GPUFunction::stop()
     _imp->stop();
 }
 
+bool GPUFunction::idle()
+{
+    return _imp->idle;
+}
+
+
 void GPUFunction::operator() ()
 {
     cuda_set_device(_imp->gpu_id);
@@ -118,6 +129,7 @@ void GPUFunction::operator() ()
             _imp->pick_work();
             if (_imp->task == 0 && ! _imp->terminate)
             {
+                _imp->idle = true;
                 _imp->global_barrier->wait(*_imp->pool_mutex);
                 _imp->pick_work();
             }

@@ -23,7 +23,8 @@
 #include <honei/util/instantiation_policy-impl.hh>
 #include <honei/util/lock.hh>
 #include <honei/util/stringify.hh>
-#include <iostream>
+
+//todo wenn das alles fertig ist, scaledsum auf multigpu
 
 #include <errno.h>
 #include <sched.h>
@@ -42,6 +43,7 @@ GPUPool::GPUPool() :
 {
     //for (unsigned i(0) ; i < num_gpus ; ++i)
     //{
+    // todo auf task vector tasks[device] umstellen
         GPUFunction * tobj = new GPUFunction(0, mutex, global_barrier, &tasks_gpu0);
         Thread * t = new Thread(*tobj);
         threads.push_back(std::make_pair(t, tobj));
@@ -76,6 +78,7 @@ Ticket<tags::GPU::MultiCore> * GPUPool::enqueue(const std::tr1::function<void ()
     GPUTask * t_task(new GPUTask(task, ticket));
 
     Lock l(*mutex);
+    // todo auf task vector tasks[device] umstellen und exception wenn falsches device angegeben
     switch (device)
     {
         case 0:
@@ -90,4 +93,17 @@ Ticket<tags::GPU::MultiCore> * GPUPool::enqueue(const std::tr1::function<void ()
     global_barrier->broadcast();
 
     return ticket;
+}
+
+// todo methode die sagt ob queues leer sind, sprich transfers sicher ausgefuehrt werden koennen
+bool GPUPool::idle()
+{
+    Lock l(*mutex);
+    for(std::vector<std::pair<Thread *, GPUFunction *> >::iterator i(threads.begin()), i_end(threads.end()) ; i != i_end ; ++i)
+    {
+        if (!(*i).second->idle())
+            return false;
+    }
+    // todo auch checken ob die queues leer sind
+    return true;
 }

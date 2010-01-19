@@ -22,7 +22,11 @@
 #endif
 
 #include <honei/backends/cuda/gpu_pool.hh>
+#include <honei/backends/cuda/operations.hh>
 #include <honei/backends/cuda/multi_gpu.hh>
+#include <honei/backends/cuda/transfer.hh>
+#include <honei/util/memory_backend.hh>
+#include <honei/util/memory_arbiter.hh>
 #include <honei/util/lock.hh>
 #include <honei/util/stringify.hh>
 #include <unittest/unittest.hh>
@@ -33,90 +37,50 @@ using namespace tests;
 
 namespace
 {
-    class TestTask
+    class TransferTask
     {
         private:
-            Mutex * const _mutex;
-
+            int * data;
         public:
-            TestTask() :
-                _mutex(new Mutex)
+            TransferTask(int * d) :
+                data(d)
             {
             }
 
             void operator() ()
             {
-                Lock l(*_mutex);
-                std::cout<<cuda_get_device()<<std::endl;
+                MemoryBackend<tags::GPU::CUDA>::instance()->upload((void *) data, (void *)data, 5 * sizeof(int));
+                for (int i(0) ; i < 5 ; ++i)
+                {
+                    data[i] = -4712;
+                }
+                MemoryBackend<tags::GPU::CUDA>::instance()->download((void *) data, (void *)data, 5 * sizeof(int));
+                MemoryBackend<tags::GPU::CUDA>::instance()->free((void *) data);
+            }
+    };
+
+    class LockTask
+    {
+        private:
+            void * data;
+        public:
+            LockTask(void * d) :
+                data(d)
+            {
+            }
+
+            void operator() ()
+            {
+                void * device(MemoryArbiter::instance()->lock(lm_read_and_write, tags::GPU::CUDA::memory_value, data, data, 1));
+                std::cout<<"thread: device address: "<<device<<std::endl;
+                ((char*)data)[0]='b';
+                cuda_fill_zero(device, sizeof(char));
+                MemoryArbiter::instance()->unlock(lm_read_and_write, data);
+                //MemoryArbiter::instance()->lock(lm_read_only, tags::CPU::memory_value, data, data, 1);
+                //MemoryArbiter::instance()->unlock(lm_read_only, data);
             }
     };
 }
-/*
-class ThreadPoolTest :
-    public BaseTest
-{
-    public:
-        ThreadPoolTest() :
-            BaseTest("thread_pool_test")
-        {
-        }
-
-        virtual void run() const
-        {
-            unsigned v(34), w(34);
-            TestTask t(v);
-            TestTask u(w);
-
-            TicketVector tickets;
-
-            for (unsigned i(0) ; i < 1250 ; ++i)
-            {
-                tickets.push_back(ThreadPool::instance()->enqueue(t));
-            }
-
-            Ticket<tags::CPU::MultiCore> * first_t(static_cast<Ticket<tags::CPU::MultiCore> *>(tickets[0]));
-
-            for (unsigned i(1250) ; i < 2500 ; ++i)
-            {
-                tickets.push_back(ThreadPool::instance()->enqueue(t, DispatchPolicy::on_core(2 * sysconf(_SC_NPROCESSORS_CONF))));
-            }
-
-            for (unsigned i(2500) ; i < 5000 ; ++i)
-            {
-                tickets.push_back(ThreadPool::instance()->enqueue(t, DispatchPolicy::same_core_as(first_t)));
-            }
-
-            tickets.wait();
-
-            TEST_CHECK_EQUAL(v, 5034u);
-
-            for (unsigned i(0) ; i < 1250 ; ++i)
-            {
-                tickets.push_back(ThreadPool::instance()->enqueue(u));
-            }
-
-            first_t = static_cast<Ticket<tags::CPU::MultiCore> *>(tickets[251]);
-
-            ThreadPool::instance()->add_threads(3);
-
-            for (unsigned i(1250) ; i < 2500 ; ++i)
-            {
-                tickets.push_back(ThreadPool::instance()->enqueue(u, DispatchPolicy::on_core(2 * sysconf(_SC_NPROCESSORS_CONF))));
-            }
-
-            ThreadPool::instance()->delete_threads(3);
-
-            for (unsigned i(2500) ; i < 5000 ; ++i)
-            {
-                tickets.push_back(ThreadPool::instance()->enqueue(u, DispatchPolicy::same_core_as(first_t)));
-            }
-
-            tickets.wait();
-
-            TEST_CHECK_EQUAL(w, 5034u);
-        }
-} thread_pool_test;
-*/
 
 class GPUPoolQuickTest :
     public QuickTest
@@ -129,19 +93,64 @@ class GPUPoolQuickTest :
 
         virtual void run() const
         {
-            TestTask t;
-
             TicketVector tickets;
 
-            tickets.push_back(GPUPool::instance()->enqueue(t,1));
+            int data [10];
+            TransferTask trans(data);
+            TransferTask trans2(data+5);
+            for (int i(0) ; i < 10 ; ++i)
+            {
+                data[i] = i;
+            }
+            tickets.push_back(GPUPool::instance()->enqueue(trans,0));
+            tickets.push_back(GPUPool::instance()->enqueue(trans2,1));
             tickets.wait();
-            tickets.push_back(GPUPool::instance()->enqueue(t,0));
-            tickets.wait();
-            tickets.push_back(GPUPool::instance()->enqueue(t,1));
-            tickets.push_back(GPUPool::instance()->enqueue(t,0));
-            tickets.wait();
-
-
-            //TEST_CHECK_EQUAL(v, 534u);
+            for (int i(0) ; i < 10 ; ++i)
+            {
+                TEST_CHECK_EQUAL(data[i], i);
+            }
+            TEST_CHECK(GPUPool::instance()->idle());
         }
 } gpu_pool_quick_test;
+
+class GPUPoolArbiterQuickTest :
+    public QuickTest
+{
+    public:
+        GPUPoolArbiterQuickTest() :
+            QuickTest("gpu_pool_arbiter_quick_test")
+        {
+        }
+
+        virtual void run() const
+        {
+            char  data_array1 [10];
+            void * data1 = data_array1;
+            void * mem1(data1);
+            char  data_array2 [10];
+            void * data2 = data_array2;
+            void * mem2(data2);
+            data_array1[0]='a';
+            data_array2[0]='a';
+            std::cout<<"in: "<<data_array1[0]<<" + "<<data_array2[0]<<std::endl;
+            MemoryArbiter::instance()->register_address(mem1);
+            MemoryArbiter::instance()->register_address(mem2);
+            TicketVector tickets;
+            LockTask lt1(data1);
+            LockTask lt2(data2);
+
+            tickets.push_back(GPUPool::instance()->enqueue(lt1,0));
+            tickets.push_back(GPUPool::instance()->enqueue(lt2,1));
+            tickets.wait();
+
+            std::cout<<"data1 address: "<<data1<<std::endl;
+            std::cout<<"data2 address: "<<data2<<std::endl;
+            MemoryArbiter::instance()->lock(lm_read_only, tags::CPU::memory_value, mem1, data1, 1);
+            MemoryArbiter::instance()->lock(lm_read_only, tags::CPU::memory_value, mem2, data2, 1);
+            std::cout<<"main thread device: "<<cuda_get_device()<<std::endl;
+            std::cout<<"out: "<<data_array1[0]<<" + "<<data_array2[0]<<std::endl;
+
+            MemoryArbiter::instance()->remove_address(mem2);
+            MemoryArbiter::instance()->remove_address(mem1);
+        }
+} gpu_pool_arbiter_quick_test;

@@ -64,6 +64,8 @@ namespace honei
                 void operator() ();
 
                 void stop();
+
+                bool idle();
         };
     }
 }

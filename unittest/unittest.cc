@@ -270,6 +270,11 @@ int main(int argc, char** argv)
             std::cout << "Caught exception:" << std::endl << e.message() << std::endl;
             throw;
         }
+        catch (std::exception & e)
+        {
+            std::cout << "Caught exception:" << std::endl << e.what() << std::endl;
+            throw;
+        }
         i = TestList::instance()->erase(i);
         iterator_index++;
     }
