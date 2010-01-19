@@ -65,6 +65,12 @@ class BitmapIO<io_formats::PGM>
 
             return result;
         }
+
+        template<typename DT_>
+        static void write_scalar_field(DenseMatrix<DT_> & source, std::string filename, int channels=0)
+        {
+            std::cout << "Skipping output to file " << filename << "!" << std::endl;
+        }
 };
 
 template<>
@@ -74,7 +80,7 @@ class BitmapIO<io_formats::PPM>
         template<typename DT_>
         static DenseMatrix<DT_> read_scalar_field(std::string source, DT_ scale, int channel=1)
         {
-            std::cout << "Reading PGM image from file " << source << ":" << std::endl;
+            std::cout << "Reading PPM image from file " << source << ":" << std::endl;
             std::tr1::shared_ptr<PPMImage> image(PPMImage::read(source.c_str()));
 
             unsigned long height((unsigned long)image->getHeight());
@@ -96,11 +102,16 @@ class BitmapIO<io_formats::PPM>
                     {
                         data = image->getGreenData();
                     }
+                    break;
 
                 case 3:
                     {
                         data = image->getBlueData();
                     }
+                    break;
+
+                default:
+                    data = image->getRedData();
             }
             DenseMatrix<DT_> result(height, width);
             for(unsigned long i(0) ; i < height ; ++i)
@@ -110,6 +121,67 @@ class BitmapIO<io_formats::PPM>
             std::cout << "...finished." << std::endl;
 
             return result;
+        }
+
+        template<typename DT_>
+        static void write_scalar_field(DenseMatrix<DT_> & source, std::string filename, int channels=0)
+        {
+            std::cout << "Writing PPM image to file " << filename << ":" << std::endl;
+            unsigned long height((unsigned long)source.rows());
+            unsigned long width((unsigned long)source.columns());
+            std::cout << "Lines         : " << height << std::endl;
+            std::cout << "Pixel per line: " << width << std::endl;
+            std::cout << "Writing data..." << std::endl;
+
+            std::tr1::shared_ptr<PPMImage> image(new PPMImage(width, height));
+
+            switch(channels)
+            {
+                case 0: ///Write all channels
+                    {
+                        for (unsigned long i(0) ; i < width * height ; ++i)
+                        {
+                            (image->getRedData())[i] = (source.elements())[i];
+                            (image->getGreenData())[i] = (source.elements())[i];
+                            (image->getBlueData())[i] = (source.elements())[i];
+                        }
+                    }
+                    break;
+
+                case 1:
+                    {
+                        for (unsigned long i(0) ; i < width * height ; ++i)
+                            (image->getRedData())[i] = (source.elements())[i];
+                    }
+                    break;
+
+                case 2:
+                    {
+                        for (unsigned long i(0) ; i < width * height ; ++i)
+                            (image->getGreenData())[i] = (source.elements())[i];
+                    }
+                    break;
+
+                case 3:
+                    {
+                        for (unsigned long i(0) ; i < width * height ; ++i)
+                            (image->getBlueData())[i] = (source.elements())[i];
+                    }
+                    break;
+
+                default:
+                    {
+                        for (unsigned long i(0) ; i < width * height ; ++i)
+                        {
+                            (image->getRedData())[i] = (source.elements())[i];
+                            (image->getGreenData())[i] = (source.elements())[i];
+                            (image->getBlueData())[i] = (source.elements())[i];
+                        }
+                    }
+            }
+
+            PPMImage::write(image, filename.c_str());
+            std::cout << "...finished." << std::endl;
         }
 };
 #endif

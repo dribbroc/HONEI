@@ -50,10 +50,29 @@ class BitmapIOTest:
             DT_ scale(1);
             DenseMatrix<DT_> result(BitmapIO<FileType_>::read_scalar_field(filename, scale));
 
-            std::cout << result << std::endl;
+            TEST_CHECK_EQUAL(result[50][50], DT_(0));
+            TEST_CHECK_EQUAL(result[0][0], DT_(1));
+            TEST_CHECK_EQUAL(result[99][99], DT_(1));
+            TEST_CHECK_EQUAL(result[0][99], DT_(1));
+            TEST_CHECK_EQUAL(result[99][0], DT_(1));
+            //std::cout << result << std::endl;
+
+            std::string outname(_tag);
+            outname += ".ppm";
+            BitmapIO<FileType_>::write_scalar_field(result, outname);
+
+            if(_tag.find("PPM") != -1)
+            {
+                DenseMatrix<DT_> result_2(BitmapIO<FileType_>::read_scalar_field(outname, scale));
+                TEST_CHECK_EQUAL(result_2[50][50], DT_(0));
+                TEST_CHECK_EQUAL(result_2[0][0], DT_(1));
+                TEST_CHECK_EQUAL(result_2[99][99], DT_(1));
+                TEST_CHECK_EQUAL(result_2[0][99], DT_(1));
+                TEST_CHECK_EQUAL(result_2[99][0], DT_(1));
+            }
         }
 };
-BitmapIOTest<float, io_formats::PGM> bitmapio_test_float("float, PGM");
-BitmapIOTest<double, io_formats::PGM> bitmapio_test_double("double, PGM");
-BitmapIOTest<float, io_formats::PPM> bitmapio_test_float_ppm("float, PPM");
-BitmapIOTest<double, io_formats::PPM> bitmapio_test_double_ppm("double, PPM");
+BitmapIOTest<float, io_formats::PGM> bitmapio_test_float("float_PGM");
+BitmapIOTest<double, io_formats::PGM> bitmapio_test_double("double_PGM");
+BitmapIOTest<float, io_formats::PPM> bitmapio_test_float_ppm("float_PPM");
+BitmapIOTest<double, io_formats::PPM> bitmapio_test_double_ppm("double_PPM");
