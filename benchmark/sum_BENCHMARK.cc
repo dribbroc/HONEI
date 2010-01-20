@@ -3,7 +3,7 @@
 #include <benchmark/benchmark.hh>
 #include <honei/la/sum.hh>
 #include <honei/util/configuration.hh>
-#include <honei/backends/cuda/operations.hh>
+#include <honei/backends/cuda/gpu_pool.hh>
 
 using namespace std;
 using namespace honei;
@@ -119,7 +119,7 @@ class DenseVectorSumBench :
                         {
                         Sum<Tag_>::value(dv0, dv1);
 #ifdef HONEI_CUDA
-                        cuda_thread_synchronize();
+                        cuda::GPUPool::instance()->flush();
 #endif
                         }
                         );
@@ -217,7 +217,7 @@ class DenseMatrixSumBench :
                         {
                         Sum<Tag_>::value(dm0, dm1);
 #ifdef HONEI_CUDA
-                        cuda_thread_synchronize();
+                        cuda::GPUPool::instance()->flush();
 #endif
                         }
                         );

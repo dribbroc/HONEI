@@ -95,7 +95,6 @@ Ticket<tags::GPU::MultiCore> * GPUPool::enqueue(const std::tr1::function<void ()
     return ticket;
 }
 
-// todo methode die sagt ob queues leer sind, sprich transfers sicher ausgefuehrt werden koennen
 bool GPUPool::idle()
 {
     Lock l(*mutex);
@@ -106,4 +105,13 @@ bool GPUPool::idle()
     }
     // todo auch checken ob die queues leer sind
     return true;
+}
+
+void GPUPool::flush()
+{
+    SynchTask t;
+    TicketVector tickets;
+    tickets.push_back(enqueue(t,0));
+    tickets.push_back(enqueue(t,1));
+    tickets.wait();
 }

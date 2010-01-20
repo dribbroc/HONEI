@@ -21,12 +21,29 @@
 #define CUDA_GUARD_GPU_POOL_HH 1
 
 #include <honei/backends/cuda/gpu_function.hh>
+#include <honei/backends/cuda/operations.hh>
 #include <honei/util/attributes.hh>
 #include <honei/util/instantiation_policy.hh>
 #include <honei/util/thread.hh>
 
 #include <vector>
 #include <queue>
+
+namespace
+{
+    class SynchTask
+    {
+        public:
+            SynchTask()
+            {
+            }
+
+            void operator() ()
+            {
+                cuda_thread_synchronize();
+            }
+    };
+}
 
 namespace honei
 {
@@ -64,6 +81,8 @@ namespace honei
                 Ticket<tags::GPU::MultiCore> * enqueue(const std::tr1::function<void ()> & task, int device);
 
                 bool idle();
+
+                void flush();
         };
     }
 }
