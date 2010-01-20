@@ -19,12 +19,57 @@
 
 #include <honei/la/sum.hh>
 #include <honei/backends/cuda/operations.hh>
+#include <honei/backends/cuda/gpu_pool.hh>
 #include <honei/util/memory_arbiter.hh>
 #include <honei/util/configuration.hh>
+#include <tr1/functional>
 
 
 using namespace honei;
 
+    class SumTask
+    {
+        private:
+            void * a;
+            void * b;
+            unsigned long size;
+            unsigned long blocksize;
+        public:
+            SumTask(void * a, void * b, unsigned long size, unsigned long blocksize) :
+                a(a),
+                b(b),
+                size(size),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                cuda_sum_two_float(a, b, size, blocksize);
+            }
+    };
+
+    class SumTask2
+    {
+        private:
+            void * a;
+            void * b;
+            unsigned long size;
+            unsigned long blocksize;
+        public:
+            SumTask2(void * a, void * b, unsigned long size, unsigned long blocksize) :
+                a(a),
+                b(b),
+                size(size),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                cuda_sum_two_double(a, b, size, blocksize);
+            }
+    };
 DenseVectorContinuousBase<float> & Sum<tags::GPU::CUDA>::value(DenseVectorContinuousBase<float> & a,
         const DenseVectorContinuousBase<float> & b)
 {
@@ -37,7 +82,11 @@ DenseVectorContinuousBase<float> & Sum<tags::GPU::CUDA>::value(DenseVectorContin
 
     void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
     void * b_gpu (b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    cuda_sum_two_float(a_gpu, b_gpu, a.size(), blocksize);
+
+    //cuda_sum_two_float(a_gpu, b_gpu, a.size(), blocksize);
+    SumTask st(a_gpu, b_gpu, a.size(), blocksize);
+    cuda::GPUPool::instance()->enqueue(st,0)->wait();
+
     b.unlock(lm_read_only);
     a.unlock(lm_read_and_write);
 
@@ -57,7 +106,9 @@ DenseVectorContinuousBase<double> & Sum<tags::GPU::CUDA>::value(DenseVectorConti
 
     void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
     void * b_gpu (b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    cuda_sum_two_double(a_gpu, b_gpu, a.size(), blocksize);
+    //cuda_sum_two_double(a_gpu, b_gpu, a.size(), blocksize);
+    SumTask2 st(a_gpu, b_gpu, a.size(), blocksize);
+    cuda::GPUPool::instance()->enqueue(st,0)->wait();
     b.unlock(lm_read_only);
     a.unlock(lm_read_and_write);
 
@@ -83,7 +134,9 @@ DenseMatrix<float> & Sum<tags::GPU::CUDA>::value(DenseMatrix<float> & a, const D
 
     void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
     void * b_gpu (b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    cuda_sum_two_float(a_gpu, b_gpu, a.size(), blocksize);
+    //cuda_sum_two_float(a_gpu, b_gpu, a.size(), blocksize);
+    SumTask st(a_gpu, b_gpu, a.size(), blocksize);
+    cuda::GPUPool::instance()->enqueue(st,0)->wait();
     b.unlock(lm_read_only);
     a.unlock(lm_read_and_write);
 

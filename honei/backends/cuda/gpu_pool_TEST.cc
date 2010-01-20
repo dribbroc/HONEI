@@ -30,7 +30,6 @@
 #include <honei/util/lock.hh>
 #include <honei/util/stringify.hh>
 #include <unittest/unittest.hh>
-#include <iostream>
 
 using namespace honei::cuda;
 using namespace tests;
@@ -71,13 +70,11 @@ namespace
 
             void operator() ()
             {
-                void * device(MemoryArbiter::instance()->lock(lm_read_and_write, tags::GPU::CUDA::memory_value, data, data, 1));
-                std::cout<<"thread: device address: "<<device<<std::endl;
+                //void * device(MemoryArbiter::instance()->lock(lm_read_and_write, tags::GPU::CUDA::memory_value, data, data, 1));
+                MemoryArbiter::instance()->lock(lm_read_and_write, tags::GPU::CUDA::memory_value, data, data, 1);
                 ((char*)data)[0]='b';
-                cuda_fill_zero(device, sizeof(char));
+                //cuda_fill_zero(device, sizeof(char));
                 MemoryArbiter::instance()->unlock(lm_read_and_write, data);
-                //MemoryArbiter::instance()->lock(lm_read_only, tags::CPU::memory_value, data, data, 1);
-                //MemoryArbiter::instance()->unlock(lm_read_only, data);
             }
     };
 }
@@ -132,7 +129,6 @@ class GPUPoolArbiterQuickTest :
             void * mem2(data2);
             data_array1[0]='a';
             data_array2[0]='a';
-            std::cout<<"in: "<<data_array1[0]<<" + "<<data_array2[0]<<std::endl;
             MemoryArbiter::instance()->register_address(mem1);
             MemoryArbiter::instance()->register_address(mem2);
             TicketVector tickets;
@@ -143,12 +139,12 @@ class GPUPoolArbiterQuickTest :
             tickets.push_back(GPUPool::instance()->enqueue(lt2,1));
             tickets.wait();
 
-            std::cout<<"data1 address: "<<data1<<std::endl;
-            std::cout<<"data2 address: "<<data2<<std::endl;
             MemoryArbiter::instance()->lock(lm_read_only, tags::CPU::memory_value, mem1, data1, 1);
             MemoryArbiter::instance()->lock(lm_read_only, tags::CPU::memory_value, mem2, data2, 1);
-            std::cout<<"main thread device: "<<cuda_get_device()<<std::endl;
-            std::cout<<"out: "<<data_array1[0]<<" + "<<data_array2[0]<<std::endl;
+            TEST_CHECK_EQUAL(data_array1[0], 'a');
+            TEST_CHECK_EQUAL(data_array2[0], 'a');
+            MemoryArbiter::instance()->unlock(lm_read_only, mem1);
+            MemoryArbiter::instance()->unlock(lm_read_only, mem2);
 
             MemoryArbiter::instance()->remove_address(mem2);
             MemoryArbiter::instance()->remove_address(mem1);
