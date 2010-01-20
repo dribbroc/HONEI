@@ -59,7 +59,7 @@ class BitmapIO<io_formats::PGM>
             DenseMatrix<DT_> result(height, width);
             for(unsigned long i(0) ; i < height ; ++i)
                 for(unsigned long j(0) ; j < width ; ++j)
-                    result[i][j] = (DT_)data[i * width + j];
+                    result[i][j] = scale * (DT_)data[i * width + j];
 
             std::cout << "...finished." << std::endl;
 
@@ -116,7 +116,7 @@ class BitmapIO<io_formats::PPM>
             DenseMatrix<DT_> result(height, width);
             for(unsigned long i(0) ; i < height ; ++i)
                 for(unsigned long j(0) ; j < width ; ++j)
-                    result[i][j] = (DT_)data[i * width + j];
+                    result[i][j] = scale * (DT_)data[i * width + j];
 
             std::cout << "...finished." << std::endl;
 
