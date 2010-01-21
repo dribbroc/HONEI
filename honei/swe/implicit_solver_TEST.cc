@@ -19,6 +19,9 @@
 
 //#define SOLVER_DEBUG 1
 //#define SOLVER_VERBOSE 1
+#ifdef DEBUG
+#define SOLVER_VERBOSE
+#endif
 #include "implicit_solver.hh"
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>

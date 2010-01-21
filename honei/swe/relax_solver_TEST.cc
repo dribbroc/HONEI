@@ -18,6 +18,10 @@
  */
 
 //#define SOLVER_BENCHMARK 1
+#ifdef DEBUG
+#define SOLVER_VERBOSE
+#endif
+
 #include <honei/swe/relax_solver.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>

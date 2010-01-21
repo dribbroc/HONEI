@@ -27,6 +27,10 @@
 #include <honei/lbm/grid_packer.hh>
 #include <honei/lbm/scenario_collection.hh>
 
+#ifdef DEBUG
+#define SOLVER_VERBOSE
+#endif
+
 using namespace honei;
 using namespace tests;
 using namespace std;

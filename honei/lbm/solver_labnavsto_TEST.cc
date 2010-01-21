@@ -25,6 +25,10 @@
 #include <honei/swe/volume.hh>
 #include <honei/math/quadrature.hh>
 
+#ifdef DEBUG
+#define SOLVER_VERBOSE
+#endif
+
 using namespace honei;
 using namespace tests;
 using namespace std;
