@@ -24,8 +24,6 @@
 #include <honei/util/lock.hh>
 #include <honei/util/stringify.hh>
 
-//todo wenn das alles fertig ist, scaledsum auf multigpu
-
 #include <errno.h>
 #include <sched.h>
 #include <stdlib.h>
@@ -103,15 +101,21 @@ bool GPUPool::idle()
         if (!(*i).second->idle())
             return false;
     }
-    // todo auch checken ob die queues leer sind
-    return true;
+    if (tasks_gpu0.size() == 0 && tasks_gpu1.size() == 0)
+        return true;
+    else
+        return false;
 }
 
 void GPUPool::flush()
 {
+    //todo tasks vector benutzen
     SynchTask t;
     TicketVector tickets;
     tickets.push_back(enqueue(t,0));
     tickets.push_back(enqueue(t,1));
     tickets.wait();
+    while (!idle())
+    {
+    }
 }

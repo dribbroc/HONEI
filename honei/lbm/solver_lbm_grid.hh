@@ -57,6 +57,7 @@
 #include <honei/lbm/grid_packer.hh>
 #include <honei/backends/multicore/dispatch_policy.hh>
 #include <honei/backends/multicore/thread_pool.hh>
+#include <honei/backends/cuda/gpu_pool.hh>
 
 #include <iostream>
 #include <tr1/functional>
@@ -352,6 +353,114 @@ namespace honei
             public:
                 SolverLBMGrid(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, ResPrec_> * data, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, ResPrec_ rel_time):
                     mc::SolverLBMGrid<tags::CPU::MultiCore::SSE, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>(info, data, dx, dy, dt, rel_time)
+            {
+            }
+        };
+
+
+    namespace cuda
+    {
+        template<typename Tag_,
+            typename Application_,
+            typename ResPrec_,
+            typename Force__,
+            typename SourceScheme_,
+            typename GridType_,
+            typename LatticeType_,
+            typename BoundaryType_,
+            typename LbmMode_>
+                class SolverLBMGrid
+                {
+                };
+
+        template<typename Tag_, typename Application_, typename ResPrec_, typename Force_, typename SourceScheme_, typename LbmMode_>
+            class SolverLBMGrid<Tag_, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>
+            {
+                private:
+                    unsigned long _parts;
+                    PackedGridInfo<D2Q9> * _info;
+                    PackedGridData<D2Q9, ResPrec_> * _data;
+                    std::vector<PackedGridInfo<D2Q9> > _info_list;
+                    std::vector<PackedGridData<D2Q9, ResPrec_> > _data_list;
+                    std::vector<PackedGridFringe<D2Q9> > _fringe_list;
+                    std::vector<honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_> *> _solver_list;
+
+                public:
+                    SolverLBMGrid(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, ResPrec_> * data, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, ResPrec_ rel_time):
+                        _info(info),
+                        _data(data)
+                {
+                    _parts = Configuration::instance()->get_value("cuda::SolverLabsweGrid::patch_count", 2ul);
+                    CONTEXT("When creating LABSWE solver:");
+                    GridPartitioner<D2Q9, ResPrec_>::decompose(_parts, *_info, *_data, _info_list, _data_list, _fringe_list);
+
+                    for(unsigned long i(0) ; i < _parts ; ++i)
+                    {
+                        _solver_list.push_back(new honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>(&_info_list[i], &_data_list[i], dx, dy, dt, rel_time));
+                    }
+                }
+
+                    ~SolverLBMGrid()
+                    {
+                        CONTEXT("When destroying LABSWE solver.");
+                    }
+
+                    void do_preprocessing()
+                    {
+                        CONTEXT("When performing LABSWE preprocessing.");
+
+                        TicketVector tickets;
+                        for (unsigned long i(0) ; i < _parts ; ++i)
+                        {
+                            tickets.push_back(cuda::GPUPool::instance()->enqueue(
+                                        std::tr1::bind(
+                                            std::tr1::mem_fn(&honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>::do_preprocessing),
+                                            *(_solver_list.at(i))
+                                            ), i));
+                        }
+                        tickets.wait();
+                        GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);
+                    }
+
+                    void do_postprocessing()
+                    {
+                        TicketVector tickets;
+                        for (unsigned long i(0) ; i < _parts ; ++i)
+                        {
+                            tickets.push_back(cuda::GPUPool::instance()->enqueue(
+                                        std::tr1::bind(
+                                            std::tr1::mem_fn(&honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>::do_postprocessing),
+                                            *(_solver_list.at(i))
+                                            ), i));
+                        }
+                        tickets.wait();
+                        GridPartitioner<D2Q9, ResPrec_>::compose(*_info, *_data, _info_list, _data_list);
+                    }
+
+                    void solve()
+                    {
+                        TicketVector tickets;
+                        for (unsigned long i(0) ; i < _parts ; ++i)
+                        {
+                            tickets.push_back(cuda::GPUPool::instance()->enqueue(
+                                        std::tr1::bind(
+                                            std::tr1::mem_fn(&honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>::solve),
+                                            *(_solver_list.at(i))
+                                            ), i));
+                        }
+                        tickets.wait();
+                        GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);
+                    }
+            };
+    }
+
+    template<typename Application_, typename ResPrec_, typename Force_, typename SourceScheme_, typename LbmMode_>
+        class SolverLBMGrid<tags::GPU::MultiCore::CUDA, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_> :
+        public cuda::SolverLBMGrid<tags::GPU::MultiCore::CUDA, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>
+        {
+            public:
+                SolverLBMGrid(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, ResPrec_> * data, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, ResPrec_ rel_time):
+                    cuda::SolverLBMGrid<tags::GPU::MultiCore::CUDA, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>(info, data, dx, dy, dt, rel_time)
             {
             }
         };

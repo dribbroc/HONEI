@@ -586,7 +586,12 @@ namespace honei
             static void compose(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
                     std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list)
             {
-                for(unsigned long i(0); i < data.h->size(); ++i)
+                data.h->lock(lm_read_and_write);
+                for (unsigned long i(0) ; i < data_list.size() ; ++i)
+                {
+                    data_list[i].h->lock(lm_read_only);
+                }
+                for(unsigned long i(0) ; i < data.h->size() ; ++i)
                 {
                     unsigned long index(0);
                     while(info_list[index].offset + (*info_list[index].limits)[info_list[index].limits->size() - 1] <= i)
@@ -595,12 +600,29 @@ namespace honei
                     }
                     (*data.h)[i] = (*data_list[index].h)[i - (info_list[index].offset)];
                 }
+                data.h->unlock(lm_read_and_write);
+                for (unsigned long i(0) ; i < data_list.size() ; ++i)
+                {
+                    data_list[i].h->unlock(lm_read_only);
+                }
             }
 
             static void synch(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
                     std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list,
                     std::vector<PackedGridFringe<D2Q9> > & fringe_list)
             {
+                for (unsigned long i(0) ; i < data_list.size() ; ++i)
+                {
+                    data_list[i].f_temp_1->lock(lm_read_and_write);
+                    data_list[i].f_temp_2->lock(lm_read_and_write);
+                    data_list[i].f_temp_3->lock(lm_read_and_write);
+                    data_list[i].f_temp_4->lock(lm_read_and_write);
+                    data_list[i].f_temp_5->lock(lm_read_and_write);
+                    data_list[i].f_temp_6->lock(lm_read_and_write);
+                    data_list[i].f_temp_7->lock(lm_read_and_write);
+                    data_list[i].f_temp_8->lock(lm_read_and_write);
+                    data_list[i].h->lock(lm_read_and_write);
+                }
                 for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
                 {
                     _synch_temp_1(index, *(fringe_list[index].dir_index_1), *(fringe_list[index].dir_targets_1), info_list, data_list);
@@ -612,6 +634,18 @@ namespace honei
                     _synch_temp_7(index, *(fringe_list[index].dir_index_7), *(fringe_list[index].dir_targets_7), info_list, data_list);
                     _synch_temp_8(index, *(fringe_list[index].dir_index_8), *(fringe_list[index].dir_targets_8), info_list, data_list);
                     _synch_h(index, *(fringe_list[index].h_index), *(fringe_list[index].h_targets), info_list, data_list);
+                }
+                for (unsigned long i(0) ; i < data_list.size() ; ++i)
+                {
+                    data_list[i].f_temp_1->unlock(lm_read_and_write);
+                    data_list[i].f_temp_2->unlock(lm_read_and_write);
+                    data_list[i].f_temp_3->unlock(lm_read_and_write);
+                    data_list[i].f_temp_4->unlock(lm_read_and_write);
+                    data_list[i].f_temp_5->unlock(lm_read_and_write);
+                    data_list[i].f_temp_6->unlock(lm_read_and_write);
+                    data_list[i].f_temp_7->unlock(lm_read_and_write);
+                    data_list[i].f_temp_8->unlock(lm_read_and_write);
+                    data_list[i].h->unlock(lm_read_and_write);
                 }
             }
 

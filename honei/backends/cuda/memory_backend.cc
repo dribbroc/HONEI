@@ -26,6 +26,7 @@
 #include <honei/backends/cuda/multi_gpu.hh>
 #include <honei/backends/cuda/gpu_pool.hh>
 
+#include <iostream>
 namespace honei
 {
     namespace cuda
@@ -221,7 +222,10 @@ namespace honei
                 else
                 {
                     if (! cuda::GPUPool::instance()->idle())
+                    {
+                        std::cout<<cuda_get_device()<<" but should be "<<j->second<<std::endl;
                         throw InternalError("MemoryBackend<tags::GPU::CUDA>::download Data is located on another device!");
+                    }
                     //running main thread -> switch to slave
                     else
                     {
@@ -284,7 +288,10 @@ namespace honei
                 else
                 {
                     if (! cuda::GPUPool::instance()->idle())
+                    {
+                        std::cout<<cuda_get_device()<<" but should be "<<j->second<<std::endl;
                         throw InternalError("MemoryBackend<tags::GPU::CUDA>::free Data is located on another device!");
+                    }
                     //running in master thread -> switch to slave thread
                     else
                     {

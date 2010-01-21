@@ -109,6 +109,7 @@ SolverLBMGridTest<tags::CPU::MultiCore::SSE, double> mcsse_solver_test_double("d
 #endif
 #ifdef HONEI_CUDA
 SolverLBMGridTest<tags::GPU::CUDA, float> cuda_solver_test_float("float");
+SolverLBMGridTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_solver_test_float("float");
 #endif
 #ifdef HONEI_CELL
 SolverLBMGridTest<tags::Cell, float> cell_solver_test_float("float");
@@ -191,6 +192,7 @@ SolverLBMGridMassConservationTest<tags::CPU::MultiCore::SSE, double> mcsse_solve
 #endif
 #ifdef HONEI_CUDA
 SolverLBMGridMassConservationTest<tags::GPU::CUDA, float> cuda_solver_grid_mc_test_float("float");
+SolverLBMGridMassConservationTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_solver_grid_mc_test_float("float");
 #endif
 #ifdef HONEI_Cell
 SolverLBMGridMassConservationTest<tags::Cell, float> cell_solver_grid_mc_test_float("float");
@@ -273,6 +275,7 @@ SimpleSolverLBMGridMassConservationTest<tags::CPU::MultiCore::SSE, double> mcsse
 #endif
 #ifdef HONEI_CUDA
 SimpleSolverLBMGridMassConservationTest<tags::GPU::CUDA, float> cuda_simple_solver_grid_mc_test_float("float");
+SimpleSolverLBMGridMassConservationTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_simple_solver_grid_mc_test_float("float");
 #endif
 #ifdef HONEI_Cell
 SimpleSolverLBMGridMassConservationTest<tags::Cell, float> cell_simple_solver_grid_mc_test_float("float");

@@ -217,7 +217,8 @@ class DenseMatrixSumBench :
                         {
                         Sum<Tag_>::value(dm0, dm1);
 #ifdef HONEI_CUDA
-                        cuda::GPUPool::instance()->flush();
+                        if (Tag_::tag_value == tags::tv_gpu_cuda)
+                            cuda::GPUPool::instance()->flush();
 #endif
                         }
                         );

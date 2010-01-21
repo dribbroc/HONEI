@@ -113,6 +113,7 @@ void GPUFunction::stop()
 
 bool GPUFunction::idle()
 {
+    Lock l(*_imp->pool_mutex);
     return _imp->idle;
 }
 
@@ -129,7 +130,6 @@ void GPUFunction::operator() ()
             _imp->pick_work();
             if (_imp->task == 0 && ! _imp->terminate)
             {
-                _imp->idle = true;
                 _imp->global_barrier->wait(*_imp->pool_mutex);
                 _imp->pick_work();
             }
@@ -139,6 +139,10 @@ void GPUFunction::operator() ()
         {
             (*_imp->task->functor)();
             _imp->task->ticket->mark();
+            {
+                Lock l(*_imp->pool_mutex);
+                _imp->idle = true;
+            }
             delete _imp->task;
             _imp->pick_work();
         }

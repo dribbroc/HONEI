@@ -38,6 +38,7 @@ namespace honei
             tv_cell,
             tv_gpu,
             tv_gpu_cuda,
+            tv_gpu_multi_core,
             tv_fake, /* used by unit tests */
             tv_none
         };
@@ -150,9 +151,19 @@ namespace honei
             struct MultiCore :
                 public InstantiationPolicy<MultiCore, NonCopyable>
             {
-                const static TagValue tag_value = tv_cpu_multi_core;
-                const static TagValue memory_value = tv_cpu;
+                const static TagValue tag_value = tv_gpu_multi_core;
+                const static TagValue memory_value = tv_gpu;
                 const static std::string name;
+
+                struct CUDA :
+                    public InstantiationPolicy<MultiCore::CUDA, NonCopyable>
+                {
+                    const static TagValue tag_value = tv_gpu_cuda;
+                    const static TagValue memory_value = tv_gpu_cuda;
+                    const static std::string name;
+
+                    typedef tags::GPU::CUDA DelegateTo;
+                };
             };
         };
 

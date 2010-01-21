@@ -32,6 +32,7 @@
 #include <honei/lbm/grid.hh>
 #include <honei/lbm/grid_packer.hh>
 #include <honei/backends/cuda/operations.hh>
+#include <honei/backends/cuda/gpu_pool.hh>
 
 using namespace std;
 using namespace honei;
@@ -95,8 +96,10 @@ class LBMGSolverBench :
                         {
                             solver.solve();
                         }
+#ifdef HONEI_CUDA
                         if (Tag_::tag_value == tags::tv_gpu_cuda)
-                            cuda_thread_synchronize();
+                            cuda::GPUPool::instance()->flush();
+#endif
                         );
             }
             LBMBenchmarkInfo benchinfo(SolverLBMGrid<tags::CPU, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY>::get_benchmark_info(&grid, &info, &data));
@@ -180,8 +183,10 @@ class LBMGSimpleSolverBench :
                         {
                             solver.solve();
                         }
+#ifdef HONEI_CUDA
                         if (Tag_::tag_value == tags::tv_gpu_cuda)
-                            cuda_thread_synchronize();
+                            cuda::GPUPool::instance()->flush();
+#endif
                         );
             }
             LBMBenchmarkInfo benchinfo(SolverLBMGrid<tags::CPU, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET>::get_benchmark_info(&grid, &info, &data));
@@ -241,10 +246,11 @@ LBMGSimpleSolverBench<tags::CPU::MultiCore::SSE, double> sse_solver_simple_bench
 LBMGSimpleSolverBench<tags::CPU::MultiCore::SSE, double> sse_solver_simple_bench_double_6("MC SSE LBM Simple Grid solver Benchmark - size: 1100, double", 1100, 15);
 LBMGSimpleSolverBench<tags::CPU::MultiCore::SSE, double> sse_solver_simple_bench_double_7("MC SSE LBM Simple Grid solver Benchmark - size: 1500, double", 1500, 10);*/
 
-/*LBMGSimpleSolverBench<tags::GPU::CUDA, float> sse_solver_simple_bench_float_1("CUDA LBM Simple Grid solver Benchmark - size: 50, float", 50, 25);
+LBMGSimpleSolverBench<tags::GPU::CUDA, float> sse_solver_simple_bench_float_1("CUDA LBM Simple Grid solver Benchmark - size: 50, float", 50, 25);
 LBMGSimpleSolverBench<tags::GPU::CUDA, float> sse_solver_simple_bench_float_2("CUDA LBM Simple Grid solver Benchmark - size: 100, float", 100, 25);
 LBMGSimpleSolverBench<tags::GPU::CUDA, float> sse_solver_simple_bench_float_3("CUDA LBM Simple Grid solver Benchmark - size: 250, float", 250, 25);
 LBMGSimpleSolverBench<tags::GPU::CUDA, float> sse_solver_simple_bench_float_4("CUDA LBM Simple Grid solver Benchmark - size: 500, float", 500, 25);
 LBMGSimpleSolverBench<tags::GPU::CUDA, float> sse_solver_simple_bench_float_5("CUDA LBM Simple Grid solver Benchmark - size: 800, float", 800, 25);
 LBMGSimpleSolverBench<tags::GPU::CUDA, float> sse_solver_simple_bench_float_6("CUDA LBM Simple Grid solver Benchmark - size: 1100, float", 1100, 25);
-LBMGSimpleSolverBench<tags::GPU::CUDA, float> sse_solver_simple_bench_float_7("CUDA LBM Simple Grid solver Benchmark - size: 1500, float", 1500, 25);*/
+LBMGSimpleSolverBench<tags::GPU::CUDA, float> sse_solver_simple_bench_float_7("CUDA LBM Simple Grid solver Benchmark - size: 1500, float", 1500, 25);
+LBMGSimpleSolverBench<tags::GPU::MultiCore::CUDA, float> mc_sse_solver_simple_bench_float_7("MC CUDA LBM Simple Grid solver Benchmark - size: 1500, float", 1500, 25);

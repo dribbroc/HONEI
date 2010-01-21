@@ -627,7 +627,7 @@ int main(int argc, char** argv)
                 {
                     cell = true;
                 }
-                    if (honei::stringify(argv[i]) == "mc")
+                if (honei::stringify(argv[i]) == "mc")
                 {
                     mc = true;
                 }
@@ -664,12 +664,12 @@ int main(int argc, char** argv)
             ++i;
             continue;
         }
-        if (cuda && ((*i)->plots() == plot) && ((*i)->get_tag_name() == "cuda"))
+        if (cuda && ((*i)->plots() == plot) && (((*i)->get_tag_name() == "cuda") || ((*i)->get_tag_name() == "mc-cuda")))
         {
             ++i;
             continue;
         }
-            if (mc && ((*i)->plots() == plot) && ((*i)->get_tag_name() == "mc"))
+        if (mc && ((*i)->plots() == plot) && ((*i)->get_tag_name() == "mc") | ((*i)->get_tag_name() == "mc-cuda"))
         {
             ++i;
             continue;

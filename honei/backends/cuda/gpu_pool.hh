@@ -78,6 +78,7 @@ namespace honei
 
                 unsigned get_num_gpus() const;
 
+                //todo alles auf gpu mc cuda umstellen
                 Ticket<tags::GPU::MultiCore> * enqueue(const std::tr1::function<void ()> & task, int device);
 
                 bool idle();

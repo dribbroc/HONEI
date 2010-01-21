@@ -198,6 +198,11 @@ int main(int argc, char** argv)
                     i = TestList::instance()->erase(i);
                     continue;
                 }
+                if (((*i)->get_tag_name()=="mc-cuda") && (!mc && !cuda))
+                {
+                    i = TestList::instance()->erase(i);
+                    continue;
+                }
                 if (((*i)->get_tag_name()=="cell") && !cell)
                 {
                     i = TestList::instance()->erase(i);

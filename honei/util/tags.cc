@@ -31,6 +31,7 @@ const std::string tags::Cell::name = "cell";
 const std::string tags::GPU::name = "gpu";
 const std::string tags::GPU::MultiCore::name = "gpu";
 const std::string tags::GPU::CUDA::name = "cuda";
+const std::string tags::GPU::MultiCore::CUDA::name = "mc-cuda";
 const std::string tags::NONE::name = "none";
 
 std::ostream & honei::operator<< (std::ostream & left, tags::TagValue value)
@@ -57,6 +58,10 @@ std::ostream & honei::operator<< (std::ostream & left, tags::TagValue value)
 
             case tags::tv_gpu_cuda:
                 left << "GPU CUDA";
+                continue;
+
+            case tags::tv_gpu_multi_core:
+                left << "GPU MC";
                 continue;
 
             case tags::tv_none:
