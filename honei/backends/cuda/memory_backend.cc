@@ -26,7 +26,6 @@
 #include <honei/backends/cuda/multi_gpu.hh>
 #include <honei/backends/cuda/gpu_pool.hh>
 
-#include <iostream>
 namespace honei
 {
     namespace cuda
@@ -170,6 +169,7 @@ namespace honei
 
         std::multimap<void *, Chunk> _id_map;
 
+        // todo idle() aufrufe auf einmal pro methode reduzieren
         void * upload(void * memid, void * address, unsigned long bytes)
         {
             std::map<void *, void *>::iterator i(_address_map.find(address));
@@ -223,7 +223,6 @@ namespace honei
                 {
                     if (! cuda::GPUPool::instance()->idle())
                     {
-                        std::cout<<cuda_get_device()<<" but should be "<<j->second<<std::endl;
                         throw InternalError("MemoryBackend<tags::GPU::CUDA>::download Data is located on another device!");
                     }
                     //running main thread -> switch to slave
@@ -289,7 +288,6 @@ namespace honei
                 {
                     if (! cuda::GPUPool::instance()->idle())
                     {
-                        std::cout<<cuda_get_device()<<" but should be "<<j->second<<std::endl;
                         throw InternalError("MemoryBackend<tags::GPU::CUDA>::free Data is located on another device!");
                     }
                     //running in master thread -> switch to slave thread

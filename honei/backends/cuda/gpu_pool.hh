@@ -63,6 +63,7 @@ namespace honei
                 // Waiting queue of worker tasks to be executed
                 std::queue<GPUTask *> tasks_gpu0 HONEI_ALIGNED(128);
                 std::queue<GPUTask *> tasks_gpu1 HONEI_ALIGNED(128);
+                std::vector<std::queue<GPUTask *> > tasks HONEI_ALIGNED(128);
 
                 // Our Mutex
                 Mutex * const mutex;
@@ -78,7 +79,7 @@ namespace honei
 
                 unsigned get_num_gpus() const;
 
-                //todo alles auf gpu mc cuda umstellen
+                //todo alles auf gpu mc cuda umstellen?
                 Ticket<tags::GPU::MultiCore> * enqueue(const std::tr1::function<void ()> & task, int device);
 
                 bool idle();

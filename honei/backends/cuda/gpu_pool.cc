@@ -39,16 +39,20 @@ GPUPool::GPUPool() :
     mutex(new Mutex),
     global_barrier(new ConditionVariable)
 {
-    //for (unsigned i(0) ; i < num_gpus ; ++i)
-    //{
-    // todo auf task vector tasks[device] umstellen
-        GPUFunction * tobj = new GPUFunction(0, mutex, global_barrier, &tasks_gpu0);
+    /*for (unsigned i(0) ; i < num_gpus ; ++i)
+    {
+        std::queue<GPUTask *> q HONEI_ALIGNED(128);
+        tasks.push_back(q);
+        GPUFunction * tobj = new GPUFunction(i, mutex, global_barrier, &tasks.at(i));
         Thread * t = new Thread(*tobj);
         threads.push_back(std::make_pair(t, tobj));
-        GPUFunction * tobj2 = new GPUFunction(1, mutex, global_barrier, &tasks_gpu1);
-        Thread * t2 = new Thread(*tobj2);
-        threads.push_back(std::make_pair(t2, tobj2));
-    //}
+    }*/
+    GPUFunction * tobj = new GPUFunction(0, mutex, global_barrier, &tasks_gpu0);
+    Thread * t = new Thread(*tobj);
+    threads.push_back(std::make_pair(t, tobj));
+    GPUFunction * tobj2 = new GPUFunction(1, mutex, global_barrier, &tasks_gpu1);
+    Thread * t2 = new Thread(*tobj2);
+    threads.push_back(std::make_pair(t2, tobj2));
 }
 
 GPUPool::~GPUPool()
@@ -76,7 +80,7 @@ Ticket<tags::GPU::MultiCore> * GPUPool::enqueue(const std::tr1::function<void ()
     GPUTask * t_task(new GPUTask(task, ticket));
 
     Lock l(*mutex);
-    // todo auf task vector tasks[device] umstellen und exception wenn falsches device angegeben
+    //tasks.at(device).push(t_task);
     switch (device)
     {
         case 0:
@@ -101,10 +105,14 @@ bool GPUPool::idle()
         if (!(*i).second->idle())
             return false;
     }
-    if (tasks_gpu0.size() == 0 && tasks_gpu1.size() == 0)
-        return true;
-    else
+    if (tasks_gpu0.size() != 0 || tasks_gpu1.size() != 0)
         return false;
+    /*for (unsigned i(0) ; i < num_gpus ; ++i)
+    {
+        if (tasks.at(i).size() != 0)
+            return false;
+    }*/
+    return true;
 }
 
 void GPUPool::flush()

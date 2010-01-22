@@ -115,7 +115,7 @@ class DenseVectorSumBench :
             for(unsigned long i(0) ; i < _count; ++i)
             {
                 BENCHMARK(
-                        for (unsigned long j(0) ; j < 10 ; ++j)
+                        for (unsigned long j(0) ; j < 100 ; ++j)
                         {
                         Sum<Tag_>::value(dv0, dv1);
 #ifdef HONEI_CUDA
@@ -125,7 +125,7 @@ class DenseVectorSumBench :
                         );
             }
             BenchmarkInfo info(Sum<>::get_benchmark_info(dv0, dv1));
-            evaluate(info * 10);
+            evaluate(info * 100);
         }
 };
 DenseVectorSumBench<tags::CPU, float> DVSBenchfloat1("Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
@@ -213,7 +213,7 @@ class DenseMatrixSumBench :
             for(unsigned long i(0) ; i < _count; ++i)
             {
                 BENCHMARK(
-                        for (unsigned long l(0) ; l < 10 ; ++l)
+                        for (unsigned long l(0) ; l < 100 ; ++l)
                         {
                         Sum<Tag_>::value(dm0, dm1);
 #ifdef HONEI_CUDA
@@ -224,7 +224,7 @@ class DenseMatrixSumBench :
                         );
             }
             BenchmarkInfo info(Sum<>::get_benchmark_info(dm0, dm1));
-            evaluate(info * 10);
+            evaluate(info * 100);
         }
 };
 

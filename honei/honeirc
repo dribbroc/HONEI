@@ -60,6 +60,8 @@ cuda::up_vel_dir_grid = 128
 
 cuda::extraction_grid = 128
 
+cuda::SolverLabsweGrid::patch_count = 2
+
 # Cell
 ######
 

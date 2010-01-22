@@ -27,14 +27,14 @@ using namespace honei;
 
 namespace
 {
-    class SumTask
+    class cudaSumDVfloat
     {
         private:
             DenseVectorContinuousBase<float> & a;
             const DenseVectorContinuousBase<float> & b;
             unsigned long blocksize;
         public:
-            SumTask(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b, unsigned long blocksize) :
+            cudaSumDVfloat(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b, unsigned long blocksize) :
                 a(a),
                 b(b),
                 blocksize(blocksize)
@@ -53,14 +53,14 @@ namespace
             }
     };
 
-    class SumTask3
+    class cudaSumDMfloat
     {
         private:
             DenseMatrix<float> & a;
             const DenseMatrix<float> & b;
             unsigned long blocksize;
         public:
-            SumTask3(DenseMatrix<float> & a, const DenseMatrix<float> & b, unsigned long blocksize) :
+            cudaSumDMfloat(DenseMatrix<float> & a, const DenseMatrix<float> & b, unsigned long blocksize) :
                 a(a),
                 b(b),
                 blocksize(blocksize)
@@ -79,14 +79,14 @@ namespace
             }
     };
 
-    class SumTask2
+    class cudaSumDVdouble
     {
         private:
             DenseVectorContinuousBase<double> & a;
             const DenseVectorContinuousBase<double> & b;
             unsigned long blocksize;
         public:
-            SumTask2(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b, unsigned long blocksize) :
+            cudaSumDVdouble(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b, unsigned long blocksize) :
                 a(a),
                 b(b),
                 blocksize(blocksize)
@@ -117,18 +117,13 @@ DenseVectorContinuousBase<float> & Sum<tags::GPU::CUDA>::value(DenseVectorContin
 
     if (! cuda::GPUPool::instance()->idle())
     {
-        void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-        void * b_gpu (b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-
-        cuda_sum_two_float(a_gpu, b_gpu, a.size(), blocksize);
-
-        b.unlock(lm_read_only);
-        a.unlock(lm_read_and_write);
+        cudaSumDVfloat task(a, b, blocksize);
+        task();
     }
     else
     {
-        SumTask st(a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(st,0)->wait();
+        cudaSumDVfloat task(a, b, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
     }
 
     return a;
@@ -147,18 +142,13 @@ DenseVectorContinuousBase<double> & Sum<tags::GPU::CUDA>::value(DenseVectorConti
 
     if (! cuda::GPUPool::instance()->idle())
     {
-        void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-        void * b_gpu (b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-
-        cuda_sum_two_double(a_gpu, b_gpu, a.size(), blocksize);
-
-        b.unlock(lm_read_only);
-        a.unlock(lm_read_and_write);
+        cudaSumDVdouble task(a, b, blocksize);
+        task();
     }
     else
     {
-        SumTask2 st(a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(st,0)->wait();
+        cudaSumDVdouble task(a, b, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
     }
 
     return a;
@@ -183,18 +173,13 @@ DenseMatrix<float> & Sum<tags::GPU::CUDA>::value(DenseMatrix<float> & a, const D
 
     if (! cuda::GPUPool::instance()->idle())
     {
-        void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-        void * b_gpu (b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-
-        cuda_sum_two_float(a_gpu, b_gpu, a.size(), blocksize);
-
-        b.unlock(lm_read_only);
-        a.unlock(lm_read_and_write);
+        cudaSumDMfloat task(a, b, blocksize);
+        task();
     }
     else
     {
-        SumTask3 st(a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(st,0)->wait();
+        cudaSumDMfloat task(a, b, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
     }
 
     return a;

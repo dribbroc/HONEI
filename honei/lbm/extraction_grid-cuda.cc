@@ -19,15 +19,159 @@
 
 #include <honei/lbm/extraction_grid.hh>
 #include <honei/backends/cuda/operations.hh>
+#include <honei/backends/cuda/gpu_pool.hh>
 #include <honei/util/memory_arbiter.hh>
 #include <honei/util/configuration.hh>
 
 
 using namespace honei;
 
+namespace
+{
+    class cudaExtractionGridDryfloat
+    {
+        private:
+            PackedGridInfo<D2Q9> & info;
+            PackedGridData<D2Q9, float> & data;
+            float epsilon;
+            unsigned long blocksize;
+        public:
+            cudaExtractionGridDryfloat(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float epsilon, unsigned long blocksize) :
+                info(info),
+                data(data),
+                epsilon(epsilon),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                info.limits->lock(lm_read_only);
+
+                void * f_0_gpu(data.f_0->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_1_gpu(data.f_1->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_2_gpu(data.f_2->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_3_gpu(data.f_3->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_4_gpu(data.f_4->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_5_gpu(data.f_5->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_6_gpu(data.f_6->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_7_gpu(data.f_7->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_8_gpu(data.f_8->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+
+                void * h_gpu(data.h->lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * u_gpu(data.u->lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * v_gpu(data.v->lock(lm_write_only, tags::GPU::CUDA::memory_value));
+
+                void * distribution_x_gpu(data.distribution_x->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * distribution_y_gpu(data.distribution_y->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                unsigned long start((*info.limits)[0]);
+                unsigned long end((*info.limits)[info.limits->size() - 1]);
+
+                cuda_extraction_grid_dry_float(start, end,
+                        f_0_gpu, f_1_gpu, f_2_gpu,
+                        f_3_gpu, f_4_gpu, f_5_gpu,
+                        f_6_gpu, f_7_gpu, f_8_gpu,
+                        h_gpu, u_gpu, v_gpu,
+                        distribution_x_gpu, distribution_y_gpu, epsilon,
+                        blocksize);
+
+                info.limits->unlock(lm_read_only);
+
+                data.f_0->unlock(lm_read_and_write);
+                data.f_1->unlock(lm_read_and_write);
+                data.f_2->unlock(lm_read_and_write);
+                data.f_3->unlock(lm_read_and_write);
+                data.f_4->unlock(lm_read_and_write);
+                data.f_5->unlock(lm_read_and_write);
+                data.f_6->unlock(lm_read_and_write);
+                data.f_7->unlock(lm_read_and_write);
+                data.f_8->unlock(lm_read_and_write);
+
+                data.h->unlock(lm_write_only);
+
+                data.distribution_x->unlock(lm_read_only);
+                data.distribution_y->unlock(lm_read_only);
+
+                data.u->unlock(lm_write_only);
+                data.v->unlock(lm_write_only);
+            }
+    };
+
+    class cudaExtractionGridWetfloat
+    {
+        private:
+            PackedGridInfo<D2Q9> & info;
+            PackedGridData<D2Q9, float> & data;
+            float epsilon;
+            unsigned long blocksize;
+        public:
+            cudaExtractionGridWetfloat(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float epsilon, unsigned long blocksize) :
+                info(info),
+                data(data),
+                epsilon(epsilon),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                info.limits->lock(lm_read_only);
+
+                void * f_0_gpu(data.f_0->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_1_gpu(data.f_1->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_2_gpu(data.f_2->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_3_gpu(data.f_3->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_4_gpu(data.f_4->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_5_gpu(data.f_5->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_6_gpu(data.f_6->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_7_gpu(data.f_7->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_8_gpu(data.f_8->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+
+                void * h_gpu(data.h->lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * u_gpu(data.u->lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * v_gpu(data.v->lock(lm_write_only, tags::GPU::CUDA::memory_value));
+
+                void * distribution_x_gpu(data.distribution_x->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * distribution_y_gpu(data.distribution_y->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                unsigned long start((*info.limits)[0]);
+                unsigned long end((*info.limits)[info.limits->size() - 1]);
+
+                cuda_extraction_grid_wet_float(start, end,
+                        f_0_gpu, f_1_gpu, f_2_gpu,
+                        f_3_gpu, f_4_gpu, f_5_gpu,
+                        f_6_gpu, f_7_gpu, f_8_gpu,
+                        h_gpu, u_gpu, v_gpu,
+                        distribution_x_gpu, distribution_y_gpu, epsilon,
+                        blocksize);
+
+                info.limits->unlock(lm_read_only);
+
+                data.f_0->unlock(lm_read_and_write);
+                data.f_1->unlock(lm_read_and_write);
+                data.f_2->unlock(lm_read_and_write);
+                data.f_3->unlock(lm_read_and_write);
+                data.f_4->unlock(lm_read_and_write);
+                data.f_5->unlock(lm_read_and_write);
+                data.f_6->unlock(lm_read_and_write);
+                data.f_7->unlock(lm_read_and_write);
+                data.f_8->unlock(lm_read_and_write);
+
+                data.h->unlock(lm_write_only);
+
+                data.distribution_x->unlock(lm_read_only);
+                data.distribution_y->unlock(lm_read_only);
+
+                data.u->unlock(lm_write_only);
+                data.v->unlock(lm_write_only);
+            }
+    };
+}
+
 void ExtractionGrid<tags::GPU::CUDA, lbm_modes::DRY>::value(
-                PackedGridInfo<lbm_lattice_types::D2Q9> & info,
-                PackedGridData<lbm_lattice_types::D2Q9, float> & data, float epsilon)
+        PackedGridInfo<lbm_lattice_types::D2Q9> & info,
+        PackedGridData<lbm_lattice_types::D2Q9, float> & data, float epsilon)
 {
     CONTEXT("When extracting h, u and v (CUDA):");
 
@@ -63,60 +207,21 @@ void ExtractionGrid<tags::GPU::CUDA, lbm_modes::DRY>::value(
     data.f_8 = data.f_temp_8;
     data.f_temp_8 = swap;
 
-    info.limits->lock(lm_read_only);
-
-    void * f_0_gpu(data.f_0->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    void * f_1_gpu(data.f_1->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    void * f_2_gpu(data.f_2->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    void * f_3_gpu(data.f_3->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    void * f_4_gpu(data.f_4->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    void * f_5_gpu(data.f_5->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    void * f_6_gpu(data.f_6->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    void * f_7_gpu(data.f_7->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    void * f_8_gpu(data.f_8->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-
-    void * h_gpu(data.h->lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * u_gpu(data.u->lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * v_gpu(data.v->lock(lm_write_only, tags::GPU::CUDA::memory_value));
-
-    void * distribution_x_gpu(data.distribution_x->lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * distribution_y_gpu(data.distribution_y->lock(lm_read_only, tags::GPU::CUDA::memory_value));
-
-    unsigned long start((*info.limits)[0]);
-    unsigned long end((*info.limits)[info.limits->size() - 1]);
-
-    cuda_extraction_grid_dry_float(start, end,
-            f_0_gpu, f_1_gpu, f_2_gpu,
-            f_3_gpu, f_4_gpu, f_5_gpu,
-            f_6_gpu, f_7_gpu, f_8_gpu,
-            h_gpu, u_gpu, v_gpu,
-            distribution_x_gpu, distribution_y_gpu, epsilon,
-            blocksize);
-
-    info.limits->unlock(lm_read_only);
-
-    data.f_0->unlock(lm_read_and_write);
-    data.f_1->unlock(lm_read_and_write);
-    data.f_2->unlock(lm_read_and_write);
-    data.f_3->unlock(lm_read_and_write);
-    data.f_4->unlock(lm_read_and_write);
-    data.f_5->unlock(lm_read_and_write);
-    data.f_6->unlock(lm_read_and_write);
-    data.f_7->unlock(lm_read_and_write);
-    data.f_8->unlock(lm_read_and_write);
-
-    data.h->unlock(lm_write_only);
-
-    data.distribution_x->unlock(lm_read_only);
-    data.distribution_y->unlock(lm_read_only);
-
-    data.u->unlock(lm_write_only);
-    data.v->unlock(lm_write_only);
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaExtractionGridDryfloat task(info, data, epsilon, blocksize);
+        task();
+    }
+    else
+    {
+        cudaExtractionGridDryfloat task(info, data, epsilon, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
 }
 
 void ExtractionGrid<tags::GPU::CUDA, lbm_modes::WET>::value(
-                PackedGridInfo<lbm_lattice_types::D2Q9> & info,
-                PackedGridData<lbm_lattice_types::D2Q9, float> & data, float epsilon)
+        PackedGridInfo<lbm_lattice_types::D2Q9> & info,
+        PackedGridData<lbm_lattice_types::D2Q9, float> & data, float epsilon)
 {
     CONTEXT("When extracting h, u and v (CUDA):");
 
@@ -152,54 +257,15 @@ void ExtractionGrid<tags::GPU::CUDA, lbm_modes::WET>::value(
     data.f_8 = data.f_temp_8;
     data.f_temp_8 = swap;
 
-    info.limits->lock(lm_read_only);
-
-    void * f_0_gpu(data.f_0->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    void * f_1_gpu(data.f_1->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    void * f_2_gpu(data.f_2->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    void * f_3_gpu(data.f_3->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    void * f_4_gpu(data.f_4->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    void * f_5_gpu(data.f_5->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    void * f_6_gpu(data.f_6->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    void * f_7_gpu(data.f_7->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    void * f_8_gpu(data.f_8->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-
-    void * h_gpu(data.h->lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * u_gpu(data.u->lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * v_gpu(data.v->lock(lm_write_only, tags::GPU::CUDA::memory_value));
-
-    void * distribution_x_gpu(data.distribution_x->lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * distribution_y_gpu(data.distribution_y->lock(lm_read_only, tags::GPU::CUDA::memory_value));
-
-    unsigned long start((*info.limits)[0]);
-    unsigned long end((*info.limits)[info.limits->size() - 1]);
-
-    cuda_extraction_grid_wet_float(start, end,
-            f_0_gpu, f_1_gpu, f_2_gpu,
-            f_3_gpu, f_4_gpu, f_5_gpu,
-            f_6_gpu, f_7_gpu, f_8_gpu,
-            h_gpu, u_gpu, v_gpu,
-            distribution_x_gpu, distribution_y_gpu, epsilon,
-            blocksize);
-
-    info.limits->unlock(lm_read_only);
-
-    data.f_0->unlock(lm_read_and_write);
-    data.f_1->unlock(lm_read_and_write);
-    data.f_2->unlock(lm_read_and_write);
-    data.f_3->unlock(lm_read_and_write);
-    data.f_4->unlock(lm_read_and_write);
-    data.f_5->unlock(lm_read_and_write);
-    data.f_6->unlock(lm_read_and_write);
-    data.f_7->unlock(lm_read_and_write);
-    data.f_8->unlock(lm_read_and_write);
-
-    data.h->unlock(lm_write_only);
-
-    data.distribution_x->unlock(lm_read_only);
-    data.distribution_y->unlock(lm_read_only);
-
-    data.u->unlock(lm_write_only);
-    data.v->unlock(lm_write_only);
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaExtractionGridWetfloat task(info, data, epsilon, blocksize);
+        task();
+    }
+    else
+    {
+        cudaExtractionGridWetfloat task(info, data, epsilon, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
 }
 

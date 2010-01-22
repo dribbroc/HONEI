@@ -69,7 +69,7 @@ class ForceSlopeLBMGridTest :
                 (*data.distribution_y)[i] = 1;
             }
 
-            ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(data, info, DataType_(9.81), grid.d_x, grid.d_y, grid.d_t, DataType_(0.01));
+            ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(info, data, DataType_(9.81), grid.d_x, grid.d_y, grid.d_t, DataType_(0.01));
 
             DenseVector<DataType_> temp_1_ref(data.f_temp_1->copy());
             DenseVector<DataType_> temp_2_ref(data.f_temp_2->copy());
@@ -101,7 +101,7 @@ class ForceSlopeLBMGridTest :
             data_2.distribution_x->unlock(lm_write_only);
             data_2.distribution_y->unlock(lm_write_only);
 
-            ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(data_2, info_2, DataType_(9.81), grid_2.d_x, grid_2.d_y, grid_2.d_t, DataType_(0.01));
+            ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(info_2, data_2, DataType_(9.81), grid_2.d_x, grid_2.d_y, grid_2.d_t, DataType_(0.01));
 
             data_2.f_temp_1->lock(lm_read_only);
             data_2.f_temp_2->lock(lm_read_only);
@@ -181,7 +181,7 @@ class ForceFrictionLBMGridTest :
                 (*data.distribution_y)[i] = 1;
             }
 
-            ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(data, info, DataType_(9.81), grid.d_x, grid.d_y, grid.d_t, DataType_(0.01));
+            ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(info, data, DataType_(9.81), grid.d_x, grid.d_y, grid.d_t, DataType_(0.01));
 
             DenseVector<DataType_> temp_1_ref(data.f_temp_1->copy());
             DenseVector<DataType_> temp_2_ref(data.f_temp_2->copy());
@@ -213,7 +213,7 @@ class ForceFrictionLBMGridTest :
             data_2.distribution_x->unlock(lm_write_only);
             data_2.distribution_y->unlock(lm_write_only);
 
-            ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(data_2, info_2, DataType_(9.81), grid_2.d_x, grid_2.d_y, grid_2.d_t, DataType_(0.01));
+            ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(info_2, data_2, DataType_(9.81), grid_2.d_x, grid_2.d_y, grid_2.d_t, DataType_(0.01));
 
             data_2.f_temp_1->lock(lm_read_only);
             data_2.f_temp_2->lock(lm_read_only);

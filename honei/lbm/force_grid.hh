@@ -71,7 +71,7 @@ namespace honei
          *
          */
         template<typename DT1_, typename DT2_>
-            static void value(PackedGridData<D2Q9, DT1_> & data, PackedGridInfo<D2Q9> & info, DT2_ g, DT2_ d_x, DT2_ d_y, DT2_ d_t, HONEI_UNUSED DT2_ manning)
+            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data, DT2_ g, DT2_ d_x, DT2_ d_y, DT2_ d_t, HONEI_UNUSED DT2_ manning)
             {
                 CONTEXT("When computing LABSWE force term:");
 
@@ -575,7 +575,7 @@ namespace honei
          *
          */
         template<typename DT1_, typename DT2_>
-            static void value(PackedGridData<D2Q9, DT1_> & data, PackedGridInfo<D2Q9> & info, DT2_ g, DT2_ d_x, HONEI_UNUSED DT2_ d_y, DT2_ d_t, DT2_ manning_const)
+            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data, DT2_ g, DT2_ d_x, HONEI_UNUSED DT2_ d_y, DT2_ d_t, DT2_ manning_const)
             {
                 CONTEXT("When computing LABSWE force term:");
 
@@ -829,10 +829,10 @@ namespace honei
     struct ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FULL>
     {
         template<typename DT1_, typename DT2_>
-            static void value(PackedGridData<D2Q9, DT1_> & data, PackedGridInfo<D2Q9> & info, DT2_ g, DT2_ d_x, DT2_ d_y, DT2_ d_t, DT2_ manning)
+            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data, DT2_ g, DT2_ d_x, DT2_ d_y, DT2_ d_t, DT2_ manning)
             {
-                ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(data, info, g, d_x, d_y, d_t, manning);
-                ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(data, info, g, d_x, d_y, d_t, manning);
+                ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(info, data, g, d_x, d_y, d_t, manning);
+                ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(info, data, g, d_x, d_y, d_t, manning);
             }
 
             template<typename DT1_>
@@ -852,7 +852,7 @@ namespace honei
     struct ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::NONE, lbm_source_schemes::NONE>
     {
         template<typename DT1_, typename DT2_>
-            static void value(PackedGridData<D2Q9,  DT1_> & data,  PackedGridInfo<D2Q9> & info,  DT2_ g,  DT2_ d_x,  DT2_ d_y,  DT2_ d_t,  DT2_ manning)
+            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9,  DT1_> & data, DT2_ g, DT2_ d_x, DT2_ d_y, DT2_ d_t, DT2_ manning)
             {
                 /// \todo Find out, why massive use of HONEI_UNUSED triggers compiler errors
                 (void) data;
@@ -875,7 +875,7 @@ namespace honei
     struct ForceGrid<Tag_, lbm_applications::LABNAVSTO, lbm_force::NONE, lbm_source_schemes::NONE>
     {
         template<typename DT1_, typename DT2_>
-            static void value(PackedGridData<D2Q9, DT1_> & data, PackedGridInfo<D2Q9> & info, DT2_ g, DT2_ d_x, DT2_ d_y, DT2_ d_t, DT2_ manning)
+            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data, DT2_ g, DT2_ d_x, DT2_ d_y, DT2_ d_t, DT2_ manning)
             {
             }
 
@@ -891,56 +891,56 @@ namespace honei
     template <>
         struct ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>
         {
-            static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info, float g, float d_x, float d_y, float d_t, float manning);
+            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float g, float d_x, float d_y, float d_t, float manning);
         };
 
     template <>
         struct ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>
         {
-            static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info, float g, float d_x, float d_y, float d_t, float m);
+            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float g, float d_x, float d_y, float d_t, float m);
         };
 
     template <>
         struct ForceGrid<tags::Cell, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>
         {
-            static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info, float g, float d_x, float d_y, float d_t, float manning)
+            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float g, float d_x, float d_y, float d_t, float manning)
             {
-                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(data, info, g, d_x, d_y, d_t, manning);
+                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(info, data, g, d_x, d_y, d_t, manning);
             }
         };
 
     template <>
         struct ForceGrid<tags::Cell, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>
         {
-            static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info, float g, float d_x, float d_y, float d_t, float m)
+            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float g, float d_x, float d_y, float d_t, float m)
             {
-                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(data, info, g, d_x, d_y, d_t, m);
+                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(info, data, g, d_x, d_y, d_t, m);
             }
         };
 
     template <>
         struct ForceGrid<tags::CPU::SSE, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>
         {
-            static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info, float g, float d_x, float d_y, float d_t, float manning)
+            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float g, float d_x, float d_y, float d_t, float manning)
             {
-                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(data, info, g, d_x, d_y, d_t, manning);
+                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(info, data, g, d_x, d_y, d_t, manning);
             }
-            static void value(PackedGridData<D2Q9, double> & data, PackedGridInfo<D2Q9> & info, double g, double d_x, double d_y, double d_t, double manning)
+            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data, double g, double d_x, double d_y, double d_t, double manning)
             {
-                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(data, info, g, d_x, d_y, d_t, manning);
+                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(info, data, g, d_x, d_y, d_t, manning);
             }
         };
 
     template <>
         struct ForceGrid<tags::CPU::SSE, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>
         {
-            static void value(PackedGridData<D2Q9, float> & data, PackedGridInfo<D2Q9> & info, float g, float d_x, float d_y, float d_t, float m)
+            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float g, float d_x, float d_y, float d_t, float m)
             {
-                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(data, info, g, d_x, d_y, d_t, m);
+                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(info, data, g, d_x, d_y, d_t, m);
             }
-            static void value(PackedGridData<D2Q9, double> & data, PackedGridInfo<D2Q9> & info, double g, double d_x, double d_y, double d_t, double m)
+            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data, double g, double d_x, double d_y, double d_t, double m)
             {
-                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(data, info, g, d_x, d_y, d_t, m);
+                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(info, data, g, d_x, d_y, d_t, m);
             }
         };
 }
