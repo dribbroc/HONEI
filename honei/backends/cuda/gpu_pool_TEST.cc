@@ -31,6 +31,8 @@
 #include <honei/util/stringify.hh>
 #include <unittest/unittest.hh>
 
+#include <iostream>
+
 using namespace honei::cuda;
 using namespace tests;
 
@@ -107,6 +109,7 @@ class GPUPoolQuickTest :
                 TEST_CHECK_EQUAL(data[i], i);
             }
             TEST_CHECK(GPUPool::instance()->idle());
+            std::cout<<"Used GPU's: "<<GPUPool::instance()->get_num_gpus()<<std::endl;
         }
 } gpu_pool_quick_test;
 

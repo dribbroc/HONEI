@@ -9,6 +9,8 @@ log::categories = all
 
 # CUDA
 ######
+# Number of GPU's
+cuda::num_gpu = 2
 
 # Size of one Block in a Grid
 cuda::difference_two_float = 128

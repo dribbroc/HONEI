@@ -18,6 +18,7 @@
  */
 
 #include <honei/backends/cuda/gpu_pool.hh>
+#include <honei/backends/cuda/multi_gpu.hh>
 #include <honei/util/configuration.hh>
 #include <honei/util/exception.hh>
 #include <honei/util/instantiation_policy-impl.hh>
@@ -35,24 +36,18 @@ using namespace honei::cuda;
 template class InstantiationPolicy<GPUPool, Singleton>;
 
 GPUPool::GPUPool() :
-    num_gpus(2),
+    num_gpus(std::min(Configuration::instance()->get_value("cuda::num_gpu", 2), cuda_device_count())),
     mutex(new Mutex),
     global_barrier(new ConditionVariable)
 {
-    /*for (unsigned i(0) ; i < num_gpus ; ++i)
+    for (unsigned i(0) ; i < num_gpus ; ++i)
     {
-        std::queue<GPUTask *> q HONEI_ALIGNED(128);
+        std::queue<GPUTask *> * q = new std::queue<GPUTask *>;
         tasks.push_back(q);
-        GPUFunction * tobj = new GPUFunction(i, mutex, global_barrier, &tasks.at(i));
+        GPUFunction * tobj = new GPUFunction(i, mutex, global_barrier, (tasks.at(i)));
         Thread * t = new Thread(*tobj);
         threads.push_back(std::make_pair(t, tobj));
-    }*/
-    GPUFunction * tobj = new GPUFunction(0, mutex, global_barrier, &tasks_gpu0);
-    Thread * t = new Thread(*tobj);
-    threads.push_back(std::make_pair(t, tobj));
-    GPUFunction * tobj2 = new GPUFunction(1, mutex, global_barrier, &tasks_gpu1);
-    Thread * t2 = new Thread(*tobj2);
-    threads.push_back(std::make_pair(t2, tobj2));
+    }
 }
 
 GPUPool::~GPUPool()
@@ -80,17 +75,7 @@ Ticket<tags::GPU::MultiCore> * GPUPool::enqueue(const std::tr1::function<void ()
     GPUTask * t_task(new GPUTask(task, ticket));
 
     Lock l(*mutex);
-    //tasks.at(device).push(t_task);
-    switch (device)
-    {
-        case 0:
-            tasks_gpu0.push(t_task);
-            break;
-        case 1:
-            tasks_gpu1.push(t_task);
-            break;
-    }
-
+    tasks.at(device%num_gpus)->push(t_task);
 
     global_barrier->broadcast();
 
@@ -105,23 +90,22 @@ bool GPUPool::idle()
         if (!(*i).second->idle())
             return false;
     }
-    if (tasks_gpu0.size() != 0 || tasks_gpu1.size() != 0)
-        return false;
-    /*for (unsigned i(0) ; i < num_gpus ; ++i)
+    for (unsigned i(0) ; i < num_gpus ; ++i)
     {
-        if (tasks.at(i).size() != 0)
+        if (tasks.at(i)->size() != 0)
             return false;
-    }*/
+    }
     return true;
 }
 
 void GPUPool::flush()
 {
-    //todo tasks vector benutzen
     SynchTask t;
     TicketVector tickets;
-    tickets.push_back(enqueue(t,0));
-    tickets.push_back(enqueue(t,1));
+    for (unsigned i(0) ; i < num_gpus ; ++i)
+    {
+        tickets.push_back(enqueue(t,i));
+    }
     tickets.wait();
     while (!idle())
     {
