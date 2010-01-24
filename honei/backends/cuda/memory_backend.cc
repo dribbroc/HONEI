@@ -176,8 +176,9 @@ namespace honei
             //address unknown
             if (i == _address_map.end())
             {
+                bool idle(cuda::GPUPool::instance()->idle());
                 // running in slave thread
-                if (! cuda::GPUPool::instance()->idle())
+                if (! idle)
                 {
                     void * device(this->alloc(memid, address, bytes));
                     cuda_upload(address, device, bytes);
@@ -213,15 +214,16 @@ namespace honei
             }
             else
             {
+                bool idle(cuda::GPUPool::instance()->idle());
                 std::map<void *, int>::iterator j(_device_map.find(address));
                 //running slave thread
-                if (j->second == cuda_get_device() && ! cuda::GPUPool::instance()->idle())
+                if (j->second == cuda_get_device() && ! idle)
                 {
                     cuda_download(i->second, address, bytes);
                 }
                 else
                 {
-                    if (! cuda::GPUPool::instance()->idle())
+                    if (! idle)
                     {
                         throw InternalError("MemoryBackend<tags::GPU::CUDA>::download Data is located on another device!");
                     }
@@ -242,8 +244,9 @@ namespace honei
             if (i == _address_map.end())
             {
                 void * device(0);
+                bool idle(cuda::GPUPool::instance()->idle());
                 //running in slave thread
-                if (! cuda::GPUPool::instance()->idle())
+                if (! idle)
                 {
                     device = cuda_malloc(bytes);
                 }
@@ -276,17 +279,18 @@ namespace honei
         {
             std::multimap<void *, Chunk>::iterator i;
             std::pair<std::multimap<void *, Chunk>::iterator, std::multimap<void *, Chunk>::iterator> range(_id_map.equal_range(memid));
+            bool idle(cuda::GPUPool::instance()->idle());
             for (std::multimap<void *, Chunk>::iterator i(range.first) ; i != range.second ; ++i)
             {
                 std::map<void *, int>::iterator j(_device_map.find(i->second.address));
                 //running in slave thread
-                if (j->second == cuda_get_device() && ! cuda::GPUPool::instance()->idle())
+                if (j->second == cuda_get_device() && ! idle)
                 {
                     cuda_free(i->second.device);
                 }
                 else
                 {
-                    if (! cuda::GPUPool::instance()->idle())
+                    if (! idle)
                     {
                         throw InternalError("MemoryBackend<tags::GPU::CUDA>::free Data is located on another device!");
                     }
@@ -319,14 +323,15 @@ namespace honei
                 if (j_source->second != j_dest->second)
                     throw InternalError("MemoryBackend<tags::GPU::CUDA>::copy src and dest on different devices!");
 
+                bool idle(cuda::GPUPool::instance()->idle());
                 //running in slave thread
-                if (j_source->second == cuda_get_device() && ! cuda::GPUPool::instance()->idle())
+                if (j_source->second == cuda_get_device() && ! idle)
                 {
                     cuda_copy(src_i->second, dest_i->second, bytes);
                 }
                 else
                 {
-                    if (! cuda::GPUPool::instance()->idle())
+                    if (! idle)
                         throw InternalError("MemoryBackend<tags::GPU::CUDA>::copy Data is located on another device!");
                     //running in master thread -> switch to slave thread
                     else
@@ -351,15 +356,15 @@ namespace honei
                     throw InternalError("CUDA fill != zero not supported yet!");
 
                 std::map<void *, int>::iterator j(_device_map.find(address));
-                cuda_fill_zero(i->second, bytes);
+                bool idle(cuda::GPUPool::instance()->idle());
                 //running in slave thread
-                if (j->second == cuda_get_device() && ! cuda::GPUPool::instance()->idle())
+                if (j->second == cuda_get_device() && ! idle)
                 {
                     cuda_fill_zero(i->second, bytes);
                 }
                 else
                 {
-                    if (! cuda::GPUPool::instance()->idle())
+                    if (! idle)
                         throw InternalError("MemoryBackend<tags::GPU::CUDA>::fill Data is located on another device!");
                     //running in master thread -> switch to slave thread
                     else
