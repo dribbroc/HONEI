@@ -169,7 +169,6 @@ namespace honei
 
         std::multimap<void *, Chunk> _id_map;
 
-        // todo idle() aufrufe auf einmal pro methode reduzieren
         void * upload(void * memid, void * address, unsigned long bytes)
         {
             std::map<void *, void *>::iterator i(_address_map.find(address));
@@ -206,32 +205,37 @@ namespace honei
 
         void download(void * memid, void * address, unsigned long bytes)
         {
-            std::map<void *, void *>::iterator i(_address_map.find(address));
-            //address not known
-            if (i == _address_map.end())
+            std::multimap<void *, Chunk>::iterator map_i;
+            std::pair<std::multimap<void *, Chunk>::iterator, std::multimap<void *, Chunk>::iterator> range(_id_map.equal_range(memid));
+            if (range.first == range.second)
             {
                 throw InternalError("MemoryBackend<tags::GPU::CUDA>::download address not found!");
             }
+            //address not known
             else
             {
-                bool idle(cuda::GPUPool::instance()->idle());
-                std::map<void *, int>::iterator j(_device_map.find(address));
-                //running slave thread
-                if (j->second == cuda_get_device() && ! idle)
+                for (std::multimap<void *, Chunk>::iterator map_i(range.first) ; map_i != range.second ; ++map_i)
                 {
-                    cuda_download(i->second, address, bytes);
-                }
-                else
-                {
-                    if (! idle)
+                    //std::map<void *, void *>::iterator i(_address_map.find(address));
+                    bool idle(cuda::GPUPool::instance()->idle());
+                    std::map<void *, int>::iterator j(_device_map.find(map_i->second.address));
+                    //running slave thread
+                    if (j->second == cuda_get_device() && ! idle)
                     {
-                        throw InternalError("MemoryBackend<tags::GPU::CUDA>::download Data is located on another device!");
+                        cuda_download(map_i->second.device, map_i->second.address, map_i->second.bytes);
                     }
-                    //running main thread -> switch to slave
                     else
                     {
-                        cuda::DownloadTask dt(i->second, address, bytes);
-                        cuda::GPUPool::instance()->enqueue(dt, j->second)->wait();
+                        if (! idle)
+                        {
+                            throw InternalError("MemoryBackend<tags::GPU::CUDA>::download Data is located on another device!");
+                        }
+                        //running main thread -> switch to slave
+                        else
+                        {
+                            cuda::DownloadTask dt(map_i->second.device, map_i->second.address, map_i->second.bytes);
+                            cuda::GPUPool::instance()->enqueue(dt, j->second)->wait();
+                        }
                     }
                 }
             }
