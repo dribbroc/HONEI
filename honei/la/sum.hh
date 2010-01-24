@@ -698,6 +698,60 @@ namespace honei
      * \ingroup grplamatrixoperations
      * \ingroup grplavectoroperations
      */
+    template <> struct Sum<tags::GPU::MultiCore::CUDA>
+    {
+        /**
+         * \name Sums of two matrices.
+         * \{
+         *
+         * Returns the first matrix after adding each element of the second one.
+         *
+         * \param a The DenseMatrix to be used.
+         * \param b The DenseMatrix to be added.
+         *
+         * \retval a The referenced matrix is changed by adding each corresponding element to each of its elements.
+         */
+
+        //static DenseMatrix<float> & value(DenseMatrix<float> & a, const DenseMatrix<float> & b);
+
+        //static DenseMatrix<double> & value(DenseMatrix<double> & a, const DenseMatrix<double> & b);
+
+        /**
+         * \name Sums of two vectors
+         * \{
+         *
+         * \brief Returns the the sum of two given vectors.
+         *
+         * \param a The vector that is the left-hand summand of the operation.
+         * \param b The vector that is the right-hand summand of the operation.
+         *
+         * \retval Will modify the summand a and return it.
+         *
+         * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
+         */
+
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+        /// \}
+
+    };
+
+    /**
+     * \brief Sum of two entities
+     *
+     * Sum is the class template for the addition operation
+     * \f[
+     *     \texttt{Sum}(a, b): \quad r \leftarrow a + b,
+     * \f]
+     * which yields r, the sum of entities a and b.
+     *
+     * The return value is the summand a after modification.
+     *
+     * \ingroup grplaoperations
+     * \ingroup grplamatrixoperations
+     * \ingroup grplavectoroperations
+     */
     template <> struct Sum<tags::CPU::SSE>
     {
         /**

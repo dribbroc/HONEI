@@ -106,6 +106,7 @@ namespace
             }
     };
 }
+
 DenseVectorContinuousBase<float> & Sum<tags::GPU::CUDA>::value(DenseVectorContinuousBase<float> & a,
         const DenseVectorContinuousBase<float> & b)
 {
@@ -125,14 +126,6 @@ DenseVectorContinuousBase<float> & Sum<tags::GPU::CUDA>::value(DenseVectorContin
     {
         cudaSumDVfloat task(a, b, blocksize);
         cuda::GPUPool::instance()->enqueue(task, 0)->wait();
-        /*DenseVectorRange<float> a1(a.range(a.size()/2, 0));
-        DenseVectorRange<float> b1(b.range(b.size()/2, 0));
-        cudaSumDVfloat task1(a1, b1, blocksize);
-        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
-        DenseVectorRange<float> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
-        DenseVectorRange<float> b2(b.range(b.size()/2 + b.size()%2, b.size()/2));
-        cudaSumDVfloat task2(a2, b2, blocksize);
-        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();*/
     }
 
     return a;
@@ -193,3 +186,67 @@ DenseMatrix<float> & Sum<tags::GPU::CUDA>::value(DenseMatrix<float> & a, const D
 
     return a;
 }
+
+DenseVectorContinuousBase<float> & Sum<tags::GPU::MultiCore::CUDA>::value(DenseVectorContinuousBase<float> & a,
+        const DenseVectorContinuousBase<float> & b)
+{
+    CONTEXT("When adding DenseVectorContinuousBase<float> to DenseVectorContinuousBase<float> (MC CUDA):");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::sum_two_float", 128ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        throw InternalError("You should not run this operation within any MC CUDA op!");
+        //cudaSumDVfloat task(a, b, blocksize);
+        //task();
+    }
+    else
+    {
+        DenseVectorRange<float> a1(a.range(a.size()/2, 0));
+        DenseVectorRange<float> b1(b.range(b.size()/2, 0));
+        cudaSumDVfloat task1(a1, b1, blocksize);
+        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
+        DenseVectorRange<float> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
+        DenseVectorRange<float> b2(b.range(b.size()/2 + b.size()%2, b.size()/2));
+        cudaSumDVfloat task2(a2, b2, blocksize);
+        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+    }
+
+    return a;
+}
+
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorContinuousBase<double> & Sum<tags::GPU::MultiCore::CUDA>::value(DenseVectorContinuousBase<double> & a,
+        const DenseVectorContinuousBase<double> & b)
+{
+    CONTEXT("When adding DenseVectorContinuousBase<double> to DenseVectorContinuousBase<double> (MC CUDA):");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::sum_two_double", 128ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        throw InternalError("You should not run this operation within any MC CUDA op!");
+        //cudaSumDVdouble task(a, b, blocksize);
+        //task();
+    }
+    else
+    {
+        DenseVectorRange<double> a1(a.range(a.size()/2, 0));
+        DenseVectorRange<double> b1(b.range(b.size()/2, 0));
+        cudaSumDVdouble task1(a1, b1, blocksize);
+        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
+        DenseVectorRange<double> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
+        DenseVectorRange<double> b2(b.range(b.size()/2 + b.size()%2, b.size()/2));
+        cudaSumDVdouble task2(a2, b2, blocksize);
+        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+    }
+
+    return a;
+}
+#endif

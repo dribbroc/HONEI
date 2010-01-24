@@ -140,6 +140,11 @@ DenseVectorSumBench<tags::CPU::MultiCore::SSE, double> MCSSEDVSBenchdouble1("MC:
 #endif
 #ifdef HONEI_CUDA
 DenseVectorSumBench<tags::GPU::CUDA, float> CUDADVSBenchfloat1("CUDA Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64ul*64ul*64ul, 10);
+DenseVectorSumBench<tags::GPU::MultiCore::CUDA, float> MCCUDADVSBenchfloat1("MC CUDA Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64ul*64ul*64ul, 10);
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorSumBench<tags::GPU::CUDA, double> CUDADVSBenchdouble1("CUDA Dense Vector Sum Benchmark - vector size: 64^4, double", 64ul*64ul*64ul*64ul, 10);
+DenseVectorSumBench<tags::GPU::MultiCore::CUDA, double> MCCUDADVSBenchdouble1("MC CUDA Dense Vector Sum Benchmark - vector size: 64^4, double", 64ul*64ul*64ul*64ul, 10);
+#endif
 #endif
 #ifdef HONEI_CELL
 DenseVectorSumBench<tags::Cell, float> dvs_bench_cell_float("Cell Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul * 64 * 64 * 64, 50);
