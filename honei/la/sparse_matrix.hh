@@ -24,6 +24,7 @@
 
 #include <honei/la/element_iterator.hh>
 #include <honei/la/sparse_vector-impl.hh>
+#include <honei/la/sparse_matrix_ell.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/matrix_error.hh>
 #include <honei/util/shared_array-impl.hh>
@@ -126,6 +127,29 @@ namespace honei
                         *si = *i;
                     ++i;
                     ++si;
+                }
+            }
+
+            SparseMatrix(SparseMatrixELL<DataType_> & src, unsigned long capacity = 1) :
+                _capacity(capacity),
+                _columns(src.columns()),
+                _rows(src.rows()),
+                _row_vectors(src.rows() + 1),
+                _zero_vector(src.columns(), 1)
+            {
+                CONTEXT("When creating SparseMatrix:");
+                ASSERT(src.columns() >= capacity, "capacity '" + stringify(capacity) + "' exceeds row-vector size '" +
+                        stringify(src.columns()) + "'!");
+
+                _row_vectors[src.rows()].reset(new SparseVector<DataType_>(src.columns(), 1));
+
+                for (unsigned long i(0) ; i < src.rows() ; ++i)
+                {
+                    for (unsigned long j(0) ; j < src.columns() ; ++j)
+                    {
+                        if (src(i, j) != DataType_(0))
+                            (*this)(i, j) = src(i, j);
+                    }
                 }
             }
 

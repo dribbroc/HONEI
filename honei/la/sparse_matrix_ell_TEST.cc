@@ -60,6 +60,8 @@ class SparseMatrixELLQuickTest :
                     TEST_CHECK_EQUAL(sm0(row, col), sms(row, col));
                 }
             }
+            SparseMatrix<DataType_> sms2(sm0);
+            TEST_CHECK_EQUAL(sms, sms2);
         }
 };
 SparseMatrixELLQuickTest<float> sparse_matrix_ell_quick_test_float("float");

@@ -23,11 +23,13 @@
 
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
-#include <honei/la/sparse_matrix.hh>
 #include <honei/util/private_implementation_pattern.hh>
 
 namespace honei
 {
+    // Forward declarations
+    template <typename DataType_> class SparseMatrix;
+
     /**
      * \brief SparseMatrixELL is a sparse matrix with its data kept in the ELLPACK format.
      *
