@@ -521,8 +521,8 @@ namespace honei
                 copy<Tag_>(g_c, u);
                 DenseVector<DT1_> x_last(x.size());
                 copy<Tag_>(x, x_last);
-                DT1_ norm_x_last = DT1_(0);
-                DT1_ norm_x = DT1_(1);
+                //DT1_ norm_x_last = DT1_(0);
+                //DT1_ norm_x = DT1_(1);
 
                 DT1_ initial_norm(Norm<vnt_l_two, false, Tag_>::value(g));
 

@@ -11,6 +11,7 @@ dnl on this file at present...
 add(`apply_dirichlet_boundaries',       `hh')
 add(`conjugate_gradients',              `hh', `test')
 add(`defect',                           `hh', `test',   `sse',                        `cuda')
+add(`dune_regression',                        `test')
 add(`endian_swap',                      `hh')
 add(`fill_matrix',                      `hh', `test')
 add(`fill_vector',                      `hh', `test')

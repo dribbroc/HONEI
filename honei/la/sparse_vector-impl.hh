@@ -965,7 +965,7 @@ namespace honei
         for (typename SparseVector<DataType_>::ConstElementIterator i(b.begin_elements()), i_end(b.end_elements()) ;
                 i != i_end ; ++i)
         {
-            lhs << "  " << *i;
+            lhs << " " << *i;
         }
         lhs << "]" << std::endl;
 
