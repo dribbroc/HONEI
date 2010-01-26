@@ -265,7 +265,7 @@ namespace honei
             if (this->Aj()[i] == column)
                 return this->Ax()[i];
         }
-        return 0;
+        return DataType_(0);
     }
 
     template <typename DataType_>
