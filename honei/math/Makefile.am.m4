@@ -80,6 +80,7 @@ DEFS = \
 	$(CUDA_DOUBLEDEF) \
 	$(DEBUGDEF) \
 	$(PROFILERDEF) \
+	$(DUNEDEF) \
 	-DHONEI_SOURCEDIR='"$(top_srcdir)"'
 
 lib_LTLIBRARIES = libhoneimath.la

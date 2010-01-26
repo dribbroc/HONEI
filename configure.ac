@@ -279,13 +279,30 @@ if test "x$WITH_HDF5" = "xyes"; then
 	dnl }}}
 fi
 dnl }}}
+dnl {{{ check for DUNE support
+AC_MSG_CHECKING([whether to build DUNE support])
+AC_ARG_WITH([dune],
+	AS_HELP_STRING([--with-dune], [Build dune (needs packages: dune)]),
+		[WITH_DUNE=$withval
+		  AC_MSG_RESULT([$withval])],
+		[WITH_DUNE=no
+		  AC_MSG_RESULT([no])])
+AC_SUBST([WITH_DUNE])
+AM_CONDITIONAL([DUNE], test "x$WITH_DUNE" = "xyes")
+if test "x$ENABLE_SSE" = "xyes"; then
+	dnl {{{ enable dune support
+	DUNEDEF="-DHONEI_DUNE"
+	dnl }}}
+fi
+AC_SUBST([DUNEDEF])
+dnl }}}
 dnl {{{
 AC_MSG_CHECKING([whether to build the honei-qt engine])
 AC_ARG_WITH([qt],
 	AS_HELP_STRING([--with-qt], [Build qt visualisation engine (needs packages: QT, libGl, libGLU)]),
 		[WITH_QT=$withval
 		  AC_MSG_RESULT([$withval])],
-		[WITH_HDF5=no
+		[WITH_QT=no
 		  AC_MSG_RESULT([no])])
 AC_SUBST([WITH_QT])
 AM_CONDITIONAL([QT], test "x$WITH_QT" = "xyes")
@@ -316,7 +333,7 @@ AC_ARG_WITH([visual],
 	AS_HELP_STRING([--with-visual], [Build visualisation engine (needs packages: libGL, libGLU, libglut)]),
 		[WITH_VISUAL=$withval
 		  AC_MSG_RESULT([$withval])],
-		[WITH_HDF5=no
+		[WITH_VISUAL=no
 		  AC_MSG_RESULT([no])])
 AC_SUBST([WITH_VISUAL])
 AM_CONDITIONAL([VISUAL], test "x$WITH_VISUAL" = "xyes")
@@ -357,7 +374,7 @@ AC_ARG_WITH([visual_old],
 	AS_HELP_STRING([--with-visual_old], [Build deprecated visualisation tests (needs packages: libGL, libGLU, libglut)]),
 		[WITH_VISUAL_OLD=$withval
 		  AC_MSG_RESULT([$withval])],
-		[WITH_HDF5=no
+		[WITH_VISUAL_OLD=no
 		  AC_MSG_RESULT([no])])
 AC_SUBST([WITH_VISUAL_OLD])
 AM_CONDITIONAL([VISUAL_OLD], test "x$WITH_VISUAL_OLD" = "xyes")

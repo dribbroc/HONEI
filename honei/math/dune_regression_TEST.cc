@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#ifdef HONEI_DUNE
 #include <honei/math/conjugate_gradients.hh>
 #include <honei/math/matrix_io.hh>
 #include <honei/math/vector_io.hh>
@@ -27,7 +28,9 @@
 #include <dune/istl/bcrsmatrix.hh>
 #include <dune/istl/preconditioners.hh>
 #include <dune/istl/solvers.hh>
+#ifdef HAVE_SUPERLU
 #include <dune/istl/superlu.hh>
+#endif
 #include <dune/istl/io.hh>
 #include <dune/common/fmatrix.hh>
 #include <dune/common/fvector.hh>
@@ -120,14 +123,16 @@ class DuneRegressionTestSparseELL:
             }
             InverseOperatorResult irs;
 
+#ifdef HAVE_SUPERLU
             SuperLU<SM> slu(smatrix_dune, true);
             slu.apply(result_dune, rhs_dune, irs);
-
-            /*typedef SeqJac<SM, BV, BV> PREC;
+#else
+            typedef SeqJac<SM, BV, BV> PREC;
             PREC prec(smatrix_dune, 1, 1);
             MatrixAdapter<SM,BV,BV> op(smatrix_dune);
-            CGSolver<BV> cg(op,prec,1E-4,10,2);
-            cg.apply(result_dune, rhs_dune, irs);*/
+            CGSolver<BV> cg(op,prec,1E-4, 25, 2);
+            cg.apply(result_dune, rhs_dune, irs);
+#endif
 
             result.lock(lm_read_only);
             result.unlock(lm_read_only);
@@ -155,3 +160,5 @@ class DuneRegressionTestSparseELL:
 };
 
 DuneRegressionTestSparseELL<tags::CPU, double> dune_regression_test_double_sparse_ell("double", "l2/area51_full_2.m", "l2/area51_rhs_2", "l2/area51_sol_2");
+
+#endif
