@@ -99,7 +99,8 @@ class SolverLBMFSITest :
         }
 
 };
-//SolverLBMFSITest<tags::CPU, float> solver_test_float("float");
+SolverLBMFSITest<tags::CPU, float> solver_test_float("float");
+SolverLBMFSITest<tags::GPU::CUDA, float> cuda_solver_test_float("float");
 
 
 template <typename Tag_, typename DataType_>
