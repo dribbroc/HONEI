@@ -107,6 +107,19 @@ namespace honei
                 }
 
 
+                //Comment by Markus: only for convenience - corners:
+                if(i == 0 && j == 0)
+                    type |= 1<<3;
+
+                if(i == (*grid.obstacles).rows() - 1 && j == (*grid.obstacles).columns() - 1)
+                    type |= 1<<7;
+
+                if(i == (*grid.obstacles).rows() - 1 && j == 0)
+                    type |= 1<<6;
+
+                if(i == 0 && j == (*grid.obstacles).columns() - 1)
+                    type |= 1<<2;
+
                 // Inner Boundaries
                 if(i > 0 && (*grid.obstacles)(i - 1, j))
                     type |= 1<<2;

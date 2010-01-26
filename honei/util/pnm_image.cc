@@ -275,7 +275,7 @@ void PPMImage::write(std::tr1::shared_ptr<PPMImage>& img, const char* filename) 
             }
         }
     }
-    else { 
+    else {
         for(int i=0; i<width*height; ++i) {
             for (int j=0; j<3; ++j) {
                 buffer[3*i  ] = data[0][i]*max_value;

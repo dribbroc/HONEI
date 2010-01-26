@@ -53,7 +53,7 @@ namespace honei
                     f_temp_4[i] = f_temp_8[i];
 
                 // Corners
-                if((types[i] & 1<<2) == 1<<2 && (types[i] & 1<<4) == 1<<4)
+                /*if((types[i] & 1<<2) == 1<<2 && (types[i] & 1<<4) == 1<<4)
                 {
                     f_temp_2[i] = f_temp_8[i];
                     f_temp_6[i] = f_temp_8[i];
@@ -72,6 +72,38 @@ namespace honei
                 {
                     f_temp_4[i] = f_temp_6[i];
                     f_temp_8[i] = f_temp_6[i];
+                }*/
+                if(((types)[i] & 1<<2) == 1<<2 &&
+                        ((types)[i] & 1<<4) == 1<<4 &&
+                        ((types)[i] & 1<<1) == 1<<1 &&
+                        ((types)[i] & 1<<5) == 1<<5)
+                {
+                    (f_temp_2)[i] = (f_temp_8)[i];
+                    (f_temp_6)[i] = (f_temp_8)[i];
+                }
+                if(((types)[i] & 1<<4) == 1<<4 &&
+                        ((types)[i] & 1<<6) == 1<<6 &&
+                        ((types)[i] & 1<<7) == 1<<7 &&
+                        ((types)[i] & 1<<3) == 1<<3)
+                {
+                    (f_temp_4)[i] = (f_temp_2)[i];
+                    (f_temp_8)[i] = (f_temp_2)[i];
+                }
+                if(((types)[i] & 1<<0) == 1<<0 &&
+                        ((types)[i] & 1<<6) == 1<<6 &&
+                        ((types)[i] & 1<<1) == 1<<1 &&
+                        ((types)[i] & 1<<5) == 1<<5)
+                {
+                    (f_temp_2)[i] = (f_temp_4)[i];
+                    (f_temp_6)[i] = (f_temp_4)[i];
+                }
+                if(((types)[i] & 1<<0) == 1<<0 &&
+                        ((types)[i] & 1<<2) == 1<<2 &&
+                        ((types)[i] & 1<<7) == 1<<7 &&
+                        ((types)[i] & 1<<3) == 1<<3)
+                {
+                    (f_temp_4)[i] = (f_temp_6)[i];
+                    (f_temp_8)[i] = (f_temp_6)[i];
                 }
             }
         }
