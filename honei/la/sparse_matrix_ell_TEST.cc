@@ -48,6 +48,7 @@ class SparseMatrixELLQuickTest :
                 if (i.index() % 5 == 0)
                     *i = (DataType_(i.index()) / 1.234 + 1);
             }
+            sms[0][0] = 4711;
 
             SparseMatrixELL<DataType_> sm0(sms);
 
