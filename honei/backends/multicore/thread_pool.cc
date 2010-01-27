@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2008, 2009 Sven Mallach <sven.mallach@cs.tu-dortmund.de>
+ * Copyright (c) 2008, 2009, 2010 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -35,8 +35,8 @@ using namespace honei::mc;
 template class InstantiationPolicy<ThreadPool, Singleton>;
 
 ThreadPool::ThreadPool() :
-    num_lpus(sysconf(_SC_NPROCESSORS_CONF)),
-    num_threads(Configuration::instance()->get_value("mc::num_threads", sysconf(_SC_NPROCESSORS_CONF))),
+    topology(new Topology),
+    num_threads(Configuration::instance()->get_value("mc::num_threads", topology->num_lpus())),
     mutex(new Mutex),
     global_barrier(new ConditionVariable),
     affinity(Configuration::instance()->get_value("mc::affinity", true))
@@ -55,7 +55,7 @@ ThreadPool::ThreadPool() :
 
         // set own affinity first
         CPU_ZERO(&affinity_mask[num_threads]);
-        CPU_SET(num_lpus - 1, &affinity_mask[num_threads]);
+        CPU_SET(topology->num_lpus() - 1, &affinity_mask[num_threads]);
         if(sched_setaffinity(syscall(__NR_gettid), sizeof(cpu_set_t), &affinity_mask[num_threads]) != 0)
             throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 
@@ -65,7 +65,7 @@ ThreadPool::ThreadPool() :
             ThreadFunction * t = (*k).second;
             thread_ids.push_back(t->tid());
             CPU_ZERO(&affinity_mask[i]);
-            CPU_SET(i % (num_lpus - 1), &affinity_mask[i]);
+            CPU_SET(i % (topology->num_lpus() - 1), &affinity_mask[i]);
             if(sched_setaffinity(t->tid(), sizeof(cpu_set_t), &affinity_mask[i]) != 0)
                 throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 
@@ -107,7 +107,7 @@ void ThreadPool::add_threads(const unsigned num)
 
             thread_ids.push_back(tobj->tid());
             CPU_ZERO(&affinity_mask[i]);
-            CPU_SET(i % (num_lpus - 1), &affinity_mask[i]);
+            CPU_SET(i % (topology->num_lpus() - 1), &affinity_mask[i]);
             if(sched_setaffinity(tobj->tid(), sizeof(cpu_set_t), &affinity_mask[i]) != 0)
                 throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 

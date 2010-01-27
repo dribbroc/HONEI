@@ -14,13 +14,16 @@ libhoneibackendsmulticore_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la
 
 libhoneibackendsmulticore_la_SOURCES = dispatch_policy.hh \
+				 numainfo.hh \
 				 operation.hh \
 				 ticket.hh \
 				 ticket.cc \
 				 thread_pool.hh \
 				 thread_pool.cc \
 				 thread_function.hh \
-				 thread_function.cc
+				 thread_function.cc \
+				 topology.hh \
+				 topology.cc
 
 thread_pool_TEST_SOURCES = thread_pool_TEST.cc
 
@@ -31,8 +34,23 @@ thread_pool_TEST_LDADD = \
 	$(DYNAMIC_LD_LIBS)
 thread_pool_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 
+topology_TEST_LDADD = \
+$(top_builddir)/unittest/libunittest.a \
+libhoneibackendsmulticore.la \
+$(top_builddir)/honei/util/libhoneiutil.la
+$(DYNAMIC_LD_LIBS)
+topology_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
+
+numainfo_TEST_LDADD = \
+$(top_builddir)/unittest/libunittest.a \
+libhoneibackendsmulticore.la \
+$(top_builddir)/honei/util/libhoneiutil.la
+$(DYNAMIC_LD_LIBS)
+numainfo_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
+
 libhoneibackendsmulticore_includedir = $(includedir)/honei/backends/multicore/
-libhoneibackendsmulticore_include_HEADERS = dispatch_policy.hh ticket.hh thread_pool.hh thread_function.hh
-TESTS = thread_pool_TEST
+libhoneibackendsmulticore_include_HEADERS = dispatch_policy.hh numainfo.hh operation.hh \
+						 ticket.hh thread_pool.hh thread_function.hh
+TESTS = numainfo_TEST thread_pool_TEST topology_TEST
 TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_srcdir)/unittest/run.sh
 check_PROGRAMS = $(TESTS)

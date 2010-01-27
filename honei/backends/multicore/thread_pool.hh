@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2008, 2009 Sven Mallach <sven.mallach@cs.tu-dortmund.de>
+ * Copyright (c) 2008, 2009, 2010 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -23,6 +23,7 @@
 #include <honei/backends/multicore/dispatch_policy.hh>
 #include <honei/backends/multicore/ticket.hh>
 #include <honei/backends/multicore/thread_function.hh>
+#include <honei/backends/multicore/topology.hh>
 #include <honei/util/attributes.hh>
 #include <honei/util/instantiation_policy.hh>
 #include <honei/util/thread.hh>
@@ -38,8 +39,8 @@ namespace honei
         {
             private:
 
-                // Number of available logical processing units
-                const unsigned num_lpus;
+                // Information about processor topology (such as number of processing units)
+                Topology * topology;
 
                 // Number of threads use
                 unsigned num_threads;
