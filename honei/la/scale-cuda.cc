@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c)  2008, 2010 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -19,10 +19,82 @@
 
 #include <honei/la/scale.hh>
 #include <honei/backends/cuda/operations.hh>
+#include <honei/backends/cuda/gpu_pool.hh>
+#include <honei/util/memory_arbiter.hh>
 #include <honei/util/configuration.hh>
 
 
 using namespace honei;
+
+namespace
+{
+    class cudaScaleDVfloat
+    {
+        private:
+            DenseVectorContinuousBase<float> & a;
+            float scal;
+            unsigned long blocksize;
+        public:
+            cudaScaleDVfloat(DenseVectorContinuousBase<float> & a, float scal, unsigned long blocksize) :
+                a(a),
+                scal(scal),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                cuda_scale_one_float(a_gpu, scal, a.size(), blocksize);
+                a.unlock(lm_read_and_write);
+            }
+    };
+
+    class cudaScaleDVdouble
+    {
+        private:
+            DenseVectorContinuousBase<double> & a;
+            double scal;
+            unsigned long blocksize;
+        public:
+            cudaScaleDVdouble(DenseVectorContinuousBase<double> & a, double scal, unsigned long blocksize) :
+                a(a),
+                scal(scal),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                cuda_scale_one_double(a_gpu, scal, a.size(), blocksize);
+                a.unlock(lm_read_and_write);
+            }
+    };
+
+    class cudaScaleDMfloat
+    {
+        private:
+            DenseMatrix<float> & a;
+            float scal;
+            unsigned long blocksize;
+        public:
+            cudaScaleDMfloat(DenseMatrix<float> & a, float scal, unsigned long blocksize) :
+                a(a),
+                scal(scal),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                cuda_scale_one_float(a_gpu, scal, a.size(), blocksize);
+                a.unlock(lm_read_and_write);
+            }
+    };
+}
+
 
 DenseVectorContinuousBase<float> & Scale<tags::GPU::CUDA>::value(DenseVectorContinuousBase<float> & x, const float a)
 {
@@ -30,9 +102,16 @@ DenseVectorContinuousBase<float> & Scale<tags::GPU::CUDA>::value(DenseVectorCont
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::scale_one_float", 128ul));
 
-    void * x_gpu (x.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    cuda_scale_one_float(x_gpu, a, x.size(), blocksize);
-    x.unlock(lm_read_and_write);
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaScaleDVfloat task(x, a, blocksize);
+        task();
+    }
+    else
+    {
+        cudaScaleDVfloat task(x, a, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
 
     return x;
 }
@@ -44,9 +123,16 @@ DenseVectorContinuousBase<double> & Scale<tags::GPU::CUDA>::value(DenseVectorCon
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::scale_one_double", 128ul));
 
-    void * x_gpu (x.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    cuda_scale_one_double(x_gpu, a, x.size(), blocksize);
-    x.unlock(lm_read_and_write);
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaScaleDVdouble task(x, a, blocksize);
+        task();
+    }
+    else
+    {
+        cudaScaleDVdouble task(x, a, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
 
     return x;
 }
@@ -58,9 +144,16 @@ DenseMatrix<float> & Scale<tags::GPU::CUDA>::value(DenseMatrix<float> & x, const
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::scale_one_float", 128ul));
 
-    void * x_gpu (x.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    cuda_scale_one_float(x_gpu, a, x.size(), blocksize);
-    x.unlock(lm_read_and_write);
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaScaleDMfloat task(x, a, blocksize);
+        task();
+    }
+    else
+    {
+        cudaScaleDMfloat task(x, a, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
 
     return x;
 }

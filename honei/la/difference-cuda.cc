@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c)  2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c)  2008, 2010 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -20,9 +20,93 @@
 #include <honei/la/difference.hh>
 #include <honei/backends/cuda/operations.hh>
 #include <honei/util/configuration.hh>
+#include <honei/backends/cuda/gpu_pool.hh>
+#include <honei/util/memory_arbiter.hh>
 
 
 using namespace honei;
+
+namespace
+{
+    class cudaDifferenceDVfloat
+    {
+        private:
+            DenseVectorContinuousBase<float> & a;
+            const DenseVectorContinuousBase<float> & b;
+            unsigned long blocksize;
+        public:
+            cudaDifferenceDVfloat(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b, unsigned long blocksize) :
+                a(a),
+                b(b),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * b_gpu (b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                cuda_difference_two_float(a_gpu, b_gpu, a.size(), blocksize);
+
+                b.unlock(lm_read_only);
+                a.unlock(lm_read_and_write);
+            }
+    };
+
+    class cudaDifferenceDMfloat
+    {
+        private:
+            DenseMatrix<float> & a;
+            const DenseMatrix<float> & b;
+            unsigned long blocksize;
+        public:
+            cudaDifferenceDMfloat(DenseMatrix<float> & a, const DenseMatrix<float> & b, unsigned long blocksize) :
+                a(a),
+                b(b),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * b_gpu (b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                cuda_difference_two_float(a_gpu, b_gpu, a.size(), blocksize);
+
+                b.unlock(lm_read_only);
+                a.unlock(lm_read_and_write);
+            }
+    };
+
+    class cudaDifferenceDVdouble
+    {
+        private:
+            DenseVectorContinuousBase<double> & a;
+            const DenseVectorContinuousBase<double> & b;
+            unsigned long blocksize;
+        public:
+            cudaDifferenceDVdouble(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b, unsigned long blocksize) :
+                a(a),
+                b(b),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * b_gpu (b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                cuda_difference_two_double(a_gpu, b_gpu, a.size(), blocksize);
+
+                b.unlock(lm_read_only);
+                a.unlock(lm_read_and_write);
+            }
+    };
+}
+
 
 DenseVectorContinuousBase<float> & Difference<tags::GPU::CUDA>::value(DenseVectorContinuousBase<float> & a,
         const DenseVectorContinuousBase<float> & b)
@@ -34,11 +118,16 @@ DenseVectorContinuousBase<float> & Difference<tags::GPU::CUDA>::value(DenseVecto
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::difference_two_float", 128ul));
 
-    void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    void * b_gpu (b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    cuda_difference_two_float(a_gpu, b_gpu, a.size(), blocksize);
-    b.unlock(lm_read_only);
-    a.unlock(lm_read_and_write);
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaDifferenceDVfloat task(a, b, blocksize);
+        task();
+    }
+    else
+    {
+        cudaDifferenceDVfloat task(a, b, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
 
     return a;
 }
@@ -54,11 +143,16 @@ DenseVectorContinuousBase<double> & Difference<tags::GPU::CUDA>::value(DenseVect
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::difference_two_double", 128ul));
 
-    void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    void * b_gpu (b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    cuda_difference_two_double(a_gpu, b_gpu, a.size(), blocksize);
-    b.unlock(lm_read_only);
-    a.unlock(lm_read_and_write);
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaDifferenceDVdouble task(a, b, blocksize);
+        task();
+    }
+    else
+    {
+        cudaDifferenceDVdouble task(a, b, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
 
     return a;
 }
@@ -80,11 +174,16 @@ DenseMatrix<float> & Difference<tags::GPU::CUDA>::value(DenseMatrix<float> & a, 
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::difference_two_float", 128ul));
 
-    void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    void * b_gpu (b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    cuda_difference_two_float(a_gpu, b_gpu, a.size(), blocksize);
-    b.unlock(lm_read_only);
-    a.unlock(lm_read_and_write);
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaDifferenceDMfloat task(a, b, blocksize);
+        task();
+    }
+    else
+    {
+        cudaDifferenceDMfloat task(a, b, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
 
     return a;
 }

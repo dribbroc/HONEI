@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c)  2008, 2010 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -19,11 +19,63 @@
 
 #include <honei/la/norm.hh>
 #include <honei/backends/cuda/operations.hh>
+#include <honei/backends/cuda/gpu_pool.hh>
+#include <honei/util/memory_arbiter.hh>
 #include <honei/util/configuration.hh>
 
 
 using namespace honei;
 
+namespace
+{
+    class cudaNormL2oneDVfloat
+    {
+        private:
+            const DenseVectorContinuousBase<float> & a;
+            float * result;
+            unsigned long blocksize;
+            unsigned long gridsize;
+        public:
+            cudaNormL2oneDVfloat(const DenseVectorContinuousBase<float> & a, float * result, unsigned long blocksize, unsigned long gridsize) :
+                a(a),
+                result(result),
+                blocksize(blocksize),
+                gridsize(gridsize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * a_gpu(a.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                *result = cuda_norm_l2_one_float(a_gpu, a.size(), blocksize, gridsize);
+                a.unlock(lm_read_only);
+            }
+    };
+
+    class cudaNormL2oneDVdouble
+    {
+        private:
+            const DenseVectorContinuousBase<double> & a;
+            double * result;
+            unsigned long blocksize;
+            unsigned long gridsize;
+        public:
+            cudaNormL2oneDVdouble(const DenseVectorContinuousBase<double> & a, double * result, unsigned long blocksize, unsigned long gridsize) :
+                a(a),
+                result(result),
+                blocksize(blocksize),
+                gridsize(gridsize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * a_gpu(a.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                *result = cuda_norm_l2_one_double(a_gpu, a.size(), blocksize, gridsize);
+                a.unlock(lm_read_only);
+            }
+    };
+}
 
 float Norm<vnt_l_two, false, tags::GPU::CUDA>::value(const DenseVectorContinuousBase<float> & a)
 {
@@ -45,9 +97,16 @@ float Norm<vnt_l_two, false, tags::GPU::CUDA>::value(const DenseVectorContinuous
     }
     else
     {
-        void * a_gpu(a.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-        result = cuda_norm_l2_one_float(a_gpu, a.size(), blocksize, gridsize);
-        a.unlock(lm_read_only);
+        if (! cuda::GPUPool::instance()->idle())
+        {
+            cudaNormL2oneDVfloat task(a, &result, blocksize, gridsize);
+            task();
+        }
+        else
+        {
+            cudaNormL2oneDVfloat task(a, &result, blocksize, gridsize);
+            cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        }
     }
 
     return result;
@@ -73,9 +132,16 @@ float Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuousB
     }
     else
     {
-        void * a_gpu(a.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-        result = cuda_norm_l2_one_float(a_gpu, a.size(), blocksize, gridsize);
-        a.unlock(lm_read_only);
+        if (! cuda::GPUPool::instance()->idle())
+        {
+            cudaNormL2oneDVfloat task(a, &result, blocksize, gridsize);
+            task();
+        }
+        else
+        {
+            cudaNormL2oneDVfloat task(a, &result, blocksize, gridsize);
+            cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        }
     }
 
     return sqrt(result);
@@ -102,9 +168,16 @@ double Norm<vnt_l_two, false, tags::GPU::CUDA>::value(const DenseVectorContinuou
     }
     else
     {
-        void * a_gpu(a.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-        result = cuda_norm_l2_one_double(a_gpu, a.size(), blocksize, gridsize);
-        a.unlock(lm_read_only);
+        if (! cuda::GPUPool::instance()->idle())
+        {
+            cudaNormL2oneDVdouble task(a, &result, blocksize, gridsize);
+            task();
+        }
+        else
+        {
+            cudaNormL2oneDVdouble task(a, &result, blocksize, gridsize);
+            cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        }
     }
 
     return result;
@@ -130,9 +203,16 @@ double Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuous
     }
     else
     {
-        void * a_gpu(a.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-        result = cuda_norm_l2_one_double(a_gpu, a.size(), blocksize, gridsize);
-        a.unlock(lm_read_only);
+        if (! cuda::GPUPool::instance()->idle())
+        {
+            cudaNormL2oneDVdouble task(a, &result, blocksize, gridsize);
+            task();
+        }
+        else
+        {
+            cudaNormL2oneDVdouble task(a, &result, blocksize, gridsize);
+            cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        }
     }
 
     return sqrt(result);

@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c)  2008, 2010 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -19,10 +19,143 @@
 
 #include <honei/la/element_product.hh>
 #include <honei/backends/cuda/operations.hh>
+#include <honei/backends/cuda/gpu_pool.hh>
+#include <honei/util/memory_arbiter.hh>
 #include <honei/util/configuration.hh>
 
 
 using namespace honei;
+
+namespace
+{
+    class cudaElementProductDVfloat
+    {
+        private:
+            DenseVectorContinuousBase<float> & a;
+            const DenseVectorContinuousBase<float> & b;
+            unsigned long blocksize;
+        public:
+            cudaElementProductDVfloat(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b, unsigned long blocksize) :
+                a(a),
+                b(b),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * a_gpu(a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                cuda_element_product_three_float(a_gpu, a_gpu, b_gpu, a.size(), blocksize);
+                b.unlock(lm_read_only);
+                a.unlock(lm_read_and_write);
+            }
+    };
+
+    class cudaElementProductDVdouble
+    {
+        private:
+            DenseVectorContinuousBase<double> & a;
+            const DenseVectorContinuousBase<double> & b;
+            unsigned long blocksize;
+        public:
+            cudaElementProductDVdouble(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b, unsigned long blocksize) :
+                a(a),
+                b(b),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * a_gpu(a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                cuda_element_product_three_double(a_gpu, a_gpu, b_gpu, a.size(), blocksize);
+                b.unlock(lm_read_only);
+                a.unlock(lm_read_and_write);
+            }
+    };
+
+    class cudaElementProduct3DVfloat
+    {
+        private:
+            DenseVectorContinuousBase<float> & result;
+            const DenseVectorContinuousBase<float> & a;
+            const DenseVectorContinuousBase<float> & b;
+            unsigned long blocksize;
+        public:
+            cudaElementProduct3DVfloat(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b, unsigned long blocksize) :
+                result(result),
+                a(a),
+                b(b),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * a_gpu(a.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                cuda_element_product_three_float(result_gpu, a_gpu, b_gpu, a.size(), blocksize);
+                result.unlock(lm_write_only);
+                b.unlock(lm_read_only);
+                a.unlock(lm_read_only);
+            }
+    };
+
+    class cudaElementProduct3DVdouble
+    {
+        private:
+            DenseVectorContinuousBase<double> & result;
+            const DenseVectorContinuousBase<double> & a;
+            const DenseVectorContinuousBase<double> & b;
+            unsigned long blocksize;
+        public:
+            cudaElementProduct3DVdouble(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b, unsigned long blocksize) :
+                result(result),
+                a(a),
+                b(b),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * a_gpu(a.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                cuda_element_product_three_double(result_gpu, a_gpu, b_gpu, a.size(), blocksize);
+                result.unlock(lm_write_only);
+                b.unlock(lm_read_only);
+                a.unlock(lm_read_only);
+            }
+    };
+
+    class cudaElementProductDMfloat
+    {
+        private:
+            DenseMatrix<float> & a;
+            const DenseMatrix<float> & b;
+            unsigned long blocksize;
+        public:
+            cudaElementProductDMfloat(DenseMatrix<float> & a, const DenseMatrix<float> & b, unsigned long blocksize) :
+                a(a),
+                b(b),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * a_gpu(a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                cuda_element_product_three_float(a_gpu, a_gpu, b_gpu, a.size(), blocksize);
+                b.unlock(lm_read_only);
+                a.unlock(lm_read_and_write);
+            }
+    };
+}
 
 DenseVectorContinuousBase<float> & ElementProduct<tags::GPU::CUDA>::value(DenseVectorContinuousBase<float> & a,
         const DenseVectorContinuousBase<float> & b)
@@ -35,11 +168,16 @@ DenseVectorContinuousBase<float> & ElementProduct<tags::GPU::CUDA>::value(DenseV
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::element_inverse_one_float", 128ul));
 
-    void * a_gpu(a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    cuda_element_product_three_float(a_gpu, a_gpu, b_gpu, a.size(), blocksize);
-    b.unlock(lm_read_only);
-    a.unlock(lm_read_and_write);
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaElementProductDVfloat task(a, b, blocksize);
+        task();
+    }
+    else
+    {
+        cudaElementProductDVfloat task(a, b, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
 
     return a;
 }
@@ -56,11 +194,16 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::CUDA>::value(Dense
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::element_inverse_one_double", 128ul));
 
-    void * a_gpu(a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    cuda_element_product_three_double(a_gpu, a_gpu, b_gpu, a.size(), blocksize);
-    b.unlock(lm_read_only);
-    a.unlock(lm_read_and_write);
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaElementProductDVdouble task(a, b, blocksize);
+        task();
+    }
+    else
+    {
+        cudaElementProductDVdouble task(a, b, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
 
     return a;
 }
@@ -77,13 +220,16 @@ DenseVectorContinuousBase<float> & ElementProduct<tags::GPU::CUDA>::value(DenseV
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::element_inverse_one_float", 128ul));
 
-    void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * a_gpu(a.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    cuda_element_product_three_float(result_gpu, a_gpu, b_gpu, a.size(), blocksize);
-    result.unlock(lm_write_only);
-    b.unlock(lm_read_only);
-    a.unlock(lm_read_only);
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaElementProduct3DVfloat task(result, a, b, blocksize);
+        task();
+    }
+    else
+    {
+        cudaElementProduct3DVfloat task(result, a, b, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
 
     return result;
 }
@@ -100,17 +246,21 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::CUDA>::value(Dense
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::element_inverse_one_double", 128ul));
 
-    void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * a_gpu(a.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    cuda_element_product_three_double(result_gpu, a_gpu, b_gpu, a.size(), blocksize);
-    result.unlock(lm_write_only);
-    b.unlock(lm_read_only);
-    a.unlock(lm_read_only);
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaElementProduct3DVdouble task(result, a, b, blocksize);
+        task();
+    }
+    else
+    {
+        cudaElementProduct3DVdouble task(result, a, b, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
 
     return result;
 }
 #endif
+
 DenseMatrix<float> & ElementProduct<tags::GPU::CUDA>::value(DenseMatrix<float> & a, const DenseMatrix<float> & b)
 {
     CONTEXT("When multiplying DenseMatrix<float> and DenseMatrix<float> elementwise (CUDA):");
@@ -127,11 +277,16 @@ DenseMatrix<float> & ElementProduct<tags::GPU::CUDA>::value(DenseMatrix<float> &
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::element_inverse_one_float", 128ul));
 
-    void * a_gpu(a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
-    void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    cuda_element_product_three_float(a_gpu, a_gpu, b_gpu, a.size(), blocksize);
-    b.unlock(lm_read_only);
-    a.unlock(lm_read_and_write);
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaElementProductDMfloat task(a, b, blocksize);
+        task();
+    }
+    else
+    {
+        cudaElementProductDMfloat task(a, b, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
 
     return a;
 }

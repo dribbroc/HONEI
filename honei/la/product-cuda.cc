@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c)  2008, 2010 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -20,9 +20,202 @@
 #include <honei/la/product.hh>
 #include <honei/la/algorithm.hh>
 #include <honei/backends/cuda/operations.hh>
+#include <honei/backends/cuda/gpu_pool.hh>
+#include <honei/util/memory_arbiter.hh>
 #include <honei/util/configuration.hh>
 
 using namespace honei;
+
+namespace
+{
+    class cudaProductBMDVfloat
+    {
+        private:
+            void * result_gpu;
+            void * band_gpu;
+            void * temp_b_gpu;
+            unsigned long size;
+            unsigned long blocksize;
+        public:
+            cudaProductBMDVfloat(void * result_gpu, void * band_gpu, void * temp_b_gpu, unsigned long size, unsigned long blocksize) :
+                result_gpu(result_gpu),
+                band_gpu(band_gpu),
+                temp_b_gpu(temp_b_gpu),
+                size(size),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                cuda_scaled_sum_three_float(result_gpu, band_gpu, temp_b_gpu, size, blocksize);
+            }
+    };
+
+    class cudaProductBMQ1DVfloat
+    {
+        private:
+            DenseVector<float> & result;;
+            const BandedMatrixQ1<float> & a;
+            const DenseVectorContinuousBase<float> & b;
+            unsigned long blocksize;
+        public:
+            cudaProductBMQ1DVfloat(DenseVector<float> & result, const BandedMatrixQ1<float> & a, const DenseVectorContinuousBase<float> & b, unsigned long blocksize) :
+                result(result),
+                a(a),
+                b(b),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * ll_gpu(a.band(LL).lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * ld_gpu(a.band(LD).lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * lu_gpu(a.band(LU).lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * dl_gpu(a.band(DL).lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * dd_gpu(a.band(DD).lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * du_gpu(a.band(DU).lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * ul_gpu(a.band(UL).lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * ud_gpu(a.band(UD).lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * uu_gpu(a.band(UU).lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                cuda_product_bmdv_q1_float(ll_gpu, ld_gpu, lu_gpu,
+                        dl_gpu, dd_gpu, du_gpu,
+                        ul_gpu, ud_gpu, uu_gpu,
+                        b_gpu, result_gpu, a.size(), blocksize, a.root());
+
+                result.unlock(lm_write_only);
+                b.unlock(lm_read_only);
+                a.band(LL).unlock(lm_read_only);
+                a.band(LD).unlock(lm_read_only);
+                a.band(LU).unlock(lm_read_only);
+                a.band(DL).unlock(lm_read_only);
+                a.band(DD).unlock(lm_read_only);
+                a.band(DU).unlock(lm_read_only);
+                a.band(UL).unlock(lm_read_only);
+                a.band(UD).unlock(lm_read_only);
+                a.band(UU).unlock(lm_read_only);
+            }
+    };
+
+    class cudaProductBMQ1DVdouble
+    {
+        private:
+            DenseVector<double> & result;;
+            const BandedMatrixQ1<double> & a;
+            const DenseVectorContinuousBase<double> & b;
+            unsigned long blocksize;
+        public:
+            cudaProductBMQ1DVdouble(DenseVector<double> & result, const BandedMatrixQ1<double> & a, const DenseVectorContinuousBase<double> & b, unsigned long blocksize) :
+                result(result),
+                a(a),
+                b(b),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * ll_gpu(a.band(LL).lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * ld_gpu(a.band(LD).lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * lu_gpu(a.band(LU).lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * dl_gpu(a.band(DL).lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * dd_gpu(a.band(DD).lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * du_gpu(a.band(DU).lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * ul_gpu(a.band(UL).lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * ud_gpu(a.band(UD).lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * uu_gpu(a.band(UU).lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                cuda_product_bmdv_q1_double(ll_gpu, ld_gpu, lu_gpu,
+                        dl_gpu, dd_gpu, du_gpu,
+                        ul_gpu, ud_gpu, uu_gpu,
+                        b_gpu, result_gpu, a.size(), blocksize, a.root());
+
+                result.unlock(lm_write_only);
+                b.unlock(lm_read_only);
+                a.band(LL).unlock(lm_read_only);
+                a.band(LD).unlock(lm_read_only);
+                a.band(LU).unlock(lm_read_only);
+                a.band(DL).unlock(lm_read_only);
+                a.band(DD).unlock(lm_read_only);
+                a.band(DU).unlock(lm_read_only);
+                a.band(UL).unlock(lm_read_only);
+                a.band(UD).unlock(lm_read_only);
+                a.band(UU).unlock(lm_read_only);
+            }
+    };
+
+    class cudaProductSMELLDVfloat
+    {
+        private:
+            DenseVector<float> & result;;
+            const SparseMatrixELL<float> & a;
+            const DenseVector<float> & b;
+            unsigned long blocksize;
+        public:
+            cudaProductSMELLDVfloat(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b, unsigned long blocksize) :
+                result(result),
+                a(a),
+                b(b),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * Aj_gpu(a.Aj().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * Ax_gpu(a.Ax().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                cuda_product_smell_dv_float(b_gpu, result_gpu, Aj_gpu, Ax_gpu,
+                        a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), blocksize);
+
+                result.unlock(lm_write_only);
+                b.unlock(lm_read_only);
+                a.Aj().unlock(lm_read_only);
+                a.Ax().unlock(lm_read_only);
+            }
+    };
+
+    class cudaProductSMELLDVdouble
+    {
+        private:
+            DenseVector<double> & result;;
+            const SparseMatrixELL<double> & a;
+            const DenseVector<double> & b;
+            unsigned long blocksize;
+        public:
+            cudaProductSMELLDVdouble(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b, unsigned long blocksize) :
+                result(result),
+                a(a),
+                b(b),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * Aj_gpu(a.Aj().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * Ax_gpu(a.Ax().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                cuda_product_smell_dv_double(b_gpu, result_gpu, Aj_gpu, Ax_gpu,
+                        a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), blocksize);
+
+                result.unlock(lm_write_only);
+                b.unlock(lm_read_only);
+                a.Aj().unlock(lm_read_only);
+                a.Ax().unlock(lm_read_only);
+            }
+    };
+}
 
 DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrix<float> & a, const DenseVectorContinuousBase<float> & b)
 {
@@ -49,10 +242,19 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrix<float> & a
         // If we are above or on the diagonal band, we start at Element 0 and go on until Element band_size-band_index.
         if (band.index() >= middle_index)
         {
-            op_offset = band.index() - middle_index;
             void * band_gpu(band->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+            op_offset = band.index() - middle_index;
             void * temp_b_gpu = (void *)((float *)b_gpu + op_offset);
-            cuda_scaled_sum_three_float(result_gpu, band_gpu, temp_b_gpu, a.size() - op_offset, blocksize);
+            if (! cuda::GPUPool::instance()->idle())
+            {
+                cudaProductBMDVfloat task(result_gpu, band_gpu, temp_b_gpu, a.size() - op_offset, blocksize);
+                task();
+            }
+            else
+            {
+                cudaProductBMDVfloat task(result_gpu, band_gpu, temp_b_gpu, a.size() - op_offset, blocksize);
+                cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+            }
             band->unlock(lm_read_only);
         }
         else // If we are below the diagonal band, we start at Element 'start' and go on until the last element.
@@ -61,8 +263,16 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrix<float> & a
             void * band_gpu(band->lock(lm_read_only, tags::GPU::CUDA::memory_value));
             band_gpu = (void *)((float *)band_gpu + op_offset);
             void * temp_result_gpu = (void *)((float *)result_gpu + op_offset);
-            cuda_scaled_sum_three_float(temp_result_gpu, band_gpu, b_gpu,
-                    a.size() - op_offset, blocksize);
+            if (! cuda::GPUPool::instance()->idle())
+            {
+                cudaProductBMDVfloat task(temp_result_gpu, band_gpu, b_gpu, a.size() - op_offset, blocksize);
+                task();
+            }
+            else
+            {
+                cudaProductBMDVfloat task(temp_result_gpu, band_gpu, b_gpu, a.size() - op_offset, blocksize);
+                cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+            }
             band->unlock(lm_read_only);
         }
     }
@@ -76,7 +286,7 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrix<float> & a
 
 DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrixQ1<float> & a, const DenseVectorContinuousBase<float> & b)
 {
-    CONTEXT("When multiplying BandedMatrix<float> with DenseVectorContinuousBase<float> (CUDA):");
+    CONTEXT("When multiplying BandedMatrixQ1<float> with DenseVectorContinuousBase<float> (CUDA):");
 
     if (b.size() != a.columns())
     {
@@ -86,36 +296,17 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrixQ1<float> &
     DenseVector<float> result(a.rows());
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::product_bmdv_q1_float", 128ul));
-    unsigned long m(a.root());
 
-    void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * ll_gpu(a.band(LL).lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * ld_gpu(a.band(LD).lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * lu_gpu(a.band(LU).lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * dl_gpu(a.band(DL).lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * dd_gpu(a.band(DD).lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * du_gpu(a.band(DU).lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * ul_gpu(a.band(UL).lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * ud_gpu(a.band(UD).lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * uu_gpu(a.band(UU).lock(lm_read_only, tags::GPU::CUDA::memory_value));
-
-    cuda_product_bmdv_q1_float(ll_gpu, ld_gpu, lu_gpu,
-            dl_gpu, dd_gpu, du_gpu,
-            ul_gpu, ud_gpu, uu_gpu,
-            b_gpu, result_gpu, a.size(), blocksize, m);
-
-    result.unlock(lm_write_only);
-    b.unlock(lm_read_only);
-    a.band(LL).unlock(lm_read_only);
-    a.band(LD).unlock(lm_read_only);
-    a.band(LU).unlock(lm_read_only);
-    a.band(DL).unlock(lm_read_only);
-    a.band(DD).unlock(lm_read_only);
-    a.band(DU).unlock(lm_read_only);
-    a.band(UL).unlock(lm_read_only);
-    a.band(UD).unlock(lm_read_only);
-    a.band(UU).unlock(lm_read_only);
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaProductBMQ1DVfloat task(result, a, b, blocksize);
+        task();
+    }
+    else
+    {
+        cudaProductBMQ1DVfloat task(result, a, b, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
 
     return result;
 }
@@ -123,7 +314,7 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrixQ1<float> &
 #ifdef HONEI_CUDA_DOUBLE
 DenseVector<double> Product<tags::GPU::CUDA>::value(const BandedMatrixQ1<double> & a, const DenseVectorContinuousBase<double> & b)
 {
-    CONTEXT("When multiplying BandedMatrix<double> with DenseVectorContinuousBase<double> (CUDA):");
+    CONTEXT("When multiplying BandedMatrixQ1<double> with DenseVectorContinuousBase<double> (CUDA):");
 
     if (b.size() != a.columns())
     {
@@ -133,36 +324,17 @@ DenseVector<double> Product<tags::GPU::CUDA>::value(const BandedMatrixQ1<double>
     DenseVector<double> result(a.rows());
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::product_bmdv_q1_double", 128ul));
-    unsigned long m(a.root());
 
-    void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * ll_gpu(a.band(LL).lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * ld_gpu(a.band(LD).lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * lu_gpu(a.band(LU).lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * dl_gpu(a.band(DL).lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * dd_gpu(a.band(DD).lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * du_gpu(a.band(DU).lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * ul_gpu(a.band(UL).lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * ud_gpu(a.band(UD).lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * uu_gpu(a.band(UU).lock(lm_read_only, tags::GPU::CUDA::memory_value));
-
-    cuda_product_bmdv_q1_double(ll_gpu, ld_gpu, lu_gpu,
-            dl_gpu, dd_gpu, du_gpu,
-            ul_gpu, ud_gpu, uu_gpu,
-            b_gpu, result_gpu, a.size(), blocksize, m);
-
-    result.unlock(lm_write_only);
-    b.unlock(lm_read_only);
-    a.band(LL).unlock(lm_read_only);
-    a.band(LD).unlock(lm_read_only);
-    a.band(LU).unlock(lm_read_only);
-    a.band(DL).unlock(lm_read_only);
-    a.band(DD).unlock(lm_read_only);
-    a.band(DU).unlock(lm_read_only);
-    a.band(UL).unlock(lm_read_only);
-    a.band(UD).unlock(lm_read_only);
-    a.band(UU).unlock(lm_read_only);
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaProductBMQ1DVdouble task(result, a, b, blocksize);
+        task();
+    }
+    else
+    {
+        cudaProductBMQ1DVdouble task(result, a, b, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
 
     return result;
 }
@@ -181,23 +353,18 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(DenseVector<float> & result, 
         throw VectorSizeDoesNotMatch(a.rows(), result.size());
     }
 
-    //DenseVector<float> result(a.rows());
-    //fill<tags::GPU::CUDA>(result, float(0));
-
     unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_float", 256ul));
 
-    void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * Aj_gpu(a.Aj().lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * Ax_gpu(a.Ax().lock(lm_read_only, tags::GPU::CUDA::memory_value));
-
-    cuda_product_smell_dv_float(b_gpu, result_gpu, Aj_gpu, Ax_gpu,
-            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), blocksize);
-
-    result.unlock(lm_write_only);
-    b.unlock(lm_read_only);
-    a.Aj().unlock(lm_read_only);
-    a.Ax().unlock(lm_read_only);
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaProductSMELLDVfloat task(result, a, b, blocksize);
+        task();
+    }
+    else
+    {
+        cudaProductSMELLDVfloat task(result, a, b, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
 
     return result;
 }
@@ -216,23 +383,18 @@ DenseVector<double> Product<tags::GPU::CUDA>::value(DenseVector<double> & result
         throw VectorSizeDoesNotMatch(a.rows(), result.size());
     }
 
-    //DenseVector<double> result(a.rows());
-    //fill<tags::GPU::CUDA>(result, double(0));
-
     unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_double", 256ul));
 
-    void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * Aj_gpu(a.Aj().lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    void * Ax_gpu(a.Ax().lock(lm_read_only, tags::GPU::CUDA::memory_value));
-
-    cuda_product_smell_dv_double(b_gpu, result_gpu, Aj_gpu, Ax_gpu,
-            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), blocksize);
-
-    result.unlock(lm_write_only);
-    b.unlock(lm_read_only);
-    a.Aj().unlock(lm_read_only);
-    a.Ax().unlock(lm_read_only);
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaProductSMELLDVdouble task(result, a, b, blocksize);
+        task();
+    }
+    else
+    {
+        cudaProductSMELLDVdouble task(result, a, b, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
 
     return result;
 }
