@@ -42,7 +42,8 @@ class DenseVectorScaledSumBench :
                         {
                         ScaledSum<Tag_>::value(dv0, dv1, b);
 #ifdef HONEI_CUDA
-                        cuda::GPUPool::instance()->flush();
+                        if (Tag_::tag_value == tags::tv_gpu_cuda)
+                            cuda::GPUPool::instance()->flush();
 #endif
                         }
                         );

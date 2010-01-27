@@ -9,6 +9,7 @@
 #include <honei/la/dot_product.hh>
 #include <honei/util/configuration.hh>
 #include <honei/backends/cuda/operations.hh>
+#include <honei/backends/cuda/gpu_pool.hh>
 
 using namespace std;
 using namespace honei;
@@ -43,7 +44,8 @@ class DotProductBench :
                         {
                         p0 = DotProduct<Tag_>::value(dv0, dv1);
 #ifdef HONEI_CUDA
-                        cuda_thread_synchronize();
+                        if (Tag_::tag_value == tags::tv_gpu_cuda)
+                            cuda::GPUPool::instance()->flush();
 #endif
                         }
                         );
@@ -64,6 +66,9 @@ DotProductBench<double, tags::CPU::SSE> SSEDPBenchdouble("SSE Dot Product Benchm
 #endif
 #ifdef HONEI_CUDA
 DotProductBench<float, tags::GPU::CUDA> CUDADPBenchfloat("CUDA Dot Product Benchmark dense/dense - vector size: 64^4 float", 64ul*64*64*64, 10);
+#ifdef HONEI_CUDA_DOUBLE
+DotProductBench<double, tags::GPU::CUDA> CUDADPBenchdouble("CUDA Dot Product Benchmark dense/dense - vector size: 64^4 double", 64ul*64*64*64, 10);
+#endif
 #endif
 #ifdef HONEI_CELL
 DotProductBench<float, tags::Cell> CELLDPBenchfloat("Cell Dot Product Benchmark dense/dense - vector size: 64^4 float", 64ul*64*64*64, 10);

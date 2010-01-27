@@ -665,7 +665,7 @@ namespace honei
                     Defect<Tag_>::value(defect, right_hand_side, system_matrix, x);
                     current_defect_norm = Norm<vnt_l_two, false, Tag_>::value(defect);
 
-                    if(current_defect_norm < initial_defect_norm * 1e-08)
+                    if(current_defect_norm < initial_defect_norm * 1e-16)
                     {
                         std::cout << "Converged after " << i + 1 << " iterations: NORM: " << current_defect_norm << std::endl;
                         break;

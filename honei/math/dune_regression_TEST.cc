@@ -19,6 +19,7 @@
 
 #ifdef HONEI_DUNE
 #include <honei/math/conjugate_gradients.hh>
+#include <honei/math/jacobi.hh>
 #include <honei/math/matrix_io.hh>
 #include <honei/math/vector_io.hh>
 #include <unittest/unittest.hh>
@@ -84,11 +85,18 @@ class DuneRegressionTestSparseELL:
                 if(r[i] == c[i])
                     diag_inverted[r[i]] = DT1_(1)/data[i];
             }
+            for(unsigned long i(0) ; i < data.size() ; ++i)
+            {
+                if(r[i] == c[i])
+                     data[i] = DT1_(0);
+            }
+            SparseMatrixELL<DT1_> difference(rows, columns, r, c, data);
 
             DenseVector<DT1_> result(rhs.size(), DT1_(0));
             DenseVector<DT1_> result_c(result.copy());
             Defect<Tag_>::value(result, rhs, smatrix, result_c);
-            ConjugateGradients<Tag_, JAC>::value(smatrix, rhs, result, diag_inverted, 10ul);
+            //ConjugateGradients<Tag_, JAC>::value(smatrix, rhs, result, diag_inverted, 10000ul);
+            Jacobi<Tag_>::value(smatrix, difference, rhs, result, diag_inverted, 10000ul);
 
 
             // DUNE
@@ -114,7 +122,7 @@ class DuneRegressionTestSparseELL:
             {
                 smatrix_dune[i.row()][i.column()] = *i;
             }
-            BV result_dune(result.size(),0);
+            BV result_dune(result.size(), 0);
             result_dune=0;
             BV rhs_dune(rhs.size(),0);
             for (unsigned long i(0) ; i < rhs.size() ; ++i)
@@ -130,7 +138,7 @@ class DuneRegressionTestSparseELL:
             typedef SeqJac<SM, BV, BV> PREC;
             PREC prec(smatrix_dune, 1, 1);
             MatrixAdapter<SM,BV,BV> op(smatrix_dune);
-            CGSolver<BV> cg(op,prec,1E-4, 25, 2);
+            CGSolver<BV> cg(op,prec,1E-13, 1000, 2);
             cg.apply(result_dune, rhs_dune, irs);
 #endif
 
@@ -138,27 +146,30 @@ class DuneRegressionTestSparseELL:
             result.unlock(lm_read_only);
             for (unsigned long i(0) ; i < result.size() ; ++i)
             {
-                TEST_CHECK_EQUAL_WITHIN_EPS(result_dune[i], result[i], 1e-4);
+                TEST_CHECK_EQUAL_WITHIN_EPS(result_dune[i], result[i], 1e-8);
                 //std::cout<<result[i]<<"  "<<result_dune[i]<<std::endl;
             }
 
             //FEATFLOW
-            /*DenseVector<DT1_> ref_result(rows, DT1_(0));
+            DenseVector<DT1_> result_feat(rows, DT1_(0));
             std::string filename_3(HONEI_SOURCEDIR);
             filename_3 += "/honei/math/testdata/";
             filename_3 += _r_f;
-            VectorIO<io_formats::EXP>::read_vector(filename_3, ref_result);
+            VectorIO<io_formats::EXP>::read_vector(filename_3, result_feat);
             std::cout << "Comparing with FEATFLOW2: " << std::endl;
-            std::cout << std::numeric_limits<DT1_>::epsilon() << std::endl;
             for(unsigned long i(0) ; i < result.size() ; ++i)
             {
-                if(fabs(result[i] - ref_result[i]) > std::numeric_limits<DT1_>::epsilon())
-                    std::cout << std::setprecision(11) << result[i] << " " << ref_result[i] << " at index " << i << std::endl;
-                TEST_CHECK_EQUAL_WITHIN_EPS(result[i], ref_result[i], std::numeric_limits<DT1_>::epsilon());
-            }*/
+                //std::cout<<result[i]<<"..."<<result_dune[i]<<"..."<<result_feat[i]<<std::endl;
+                TEST_CHECK_EQUAL_WITHIN_EPS(result_dune[i], result_feat[i], 1e-4);
+            }
         }
 };
 
 DuneRegressionTestSparseELL<tags::CPU, double> dune_regression_test_double_sparse_ell("double", "l2/area51_full_2.m", "l2/area51_rhs_2", "l2/area51_sol_2");
+//DuneRegressionTestSparseELL<tags::CPU, double> dune_regression_test_double_sparse_ell("double", "l8/poisson_full.m", "l8/poisson_rhs", "l8/poisson_sol");
+#ifdef HONEI_CUDA_DOUBLE
+//DuneRegressionTestSparseELL<tags::GPU::CUDA, double> cuda_dune_regression_test_double_sparse_ell("double", "l8/area51_full_2.m", "l8/area51_rhs_2", "l8/area51_sol_2");
+//DuneRegressionTestSparseELL<tags::GPU::CUDA, double> cuda_dune_regression_test_double_sparse_ell("double", "l8/poisson_full.m", "l8/poisson_rhs", "l8/poisson_sol");
+#endif
 
 #endif

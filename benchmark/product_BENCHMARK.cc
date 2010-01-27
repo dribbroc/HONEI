@@ -10,6 +10,7 @@
 #include <honei/la/product.hh>
 #include <honei/util/configuration.hh>
 #include <honei/backends/cuda/operations.hh>
+#include <honei/backends/cuda/gpu_pool.hh>
 #include <iostream>
 #include <cmath>
 //using namespace std;
@@ -56,7 +57,8 @@ class GenericQ1MatrixDenseVectorProductBench :
                         {
                             Product<Tag_>::value(bm1, dv2);
 #ifdef HONEI_CUDA
-                            cuda_thread_synchronize();
+                        if (Tag_::tag_value == tags::tv_gpu_cuda)
+                            cuda::GPUPool::instance()->flush();
 #endif
                         }
                         );
@@ -125,7 +127,8 @@ class Q1MatrixDenseVectorProductBench :
                         {
                             Product<Tag_>::value(qm1, dv2);
 #ifdef HONEI_CUDA
-                            cuda_thread_synchronize();
+                        if (Tag_::tag_value == tags::tv_gpu_cuda)
+                            cuda::GPUPool::instance()->flush();
 #endif
                         }
                         );
@@ -191,7 +194,8 @@ class BandedMatrixDenseVectorProductBench :
                         {
                             Product<Tag_>::value(bm1, dv2);
 #ifdef HONEI_CUDA
-                            cuda_thread_synchronize();
+                        if (Tag_::tag_value == tags::tv_gpu_cuda)
+                            cuda::GPUPool::instance()->flush();
 #endif
                         }
                         );
@@ -253,7 +257,8 @@ class BandedMatrixDenseVectorProductBenchRelax :
                         {
                             Product<Tag_>::value(bm1, dv2);
 #ifdef HONEI_CUDA
-                            cuda_thread_synchronize();
+                        if (Tag_::tag_value == tags::tv_gpu_cuda)
+                            cuda::GPUPool::instance()->flush();
 #endif
                         }
                         );
@@ -489,7 +494,8 @@ class SMELLDenseVectorProductBench :
                             Product<Tag_>::value(y, smatrix, x);
                         }
 #ifdef HONEI_CUDA
-                            cuda_thread_synchronize();
+                        if (Tag_::tag_value == tags::tv_gpu_cuda)
+                            cuda::GPUPool::instance()->flush();
 #endif
                         );
             }
@@ -499,16 +505,16 @@ class SMELLDenseVectorProductBench :
         }
 };
 /// \todo Embed real world matrix with proper size
-SMELLDenseVectorProductBench<tags::CPU, float> SMELLDVPBenchfloat0("SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10, "area51_full_0.m");
-SMELLDenseVectorProductBench<tags::CPU, double> SMELLDVPBenchdouble0("SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10, "area51_full_0.m");
+SMELLDenseVectorProductBench<tags::CPU, float> SMELLDVPBenchfloat0("SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10, "l2/area51_full_0.m");
+SMELLDenseVectorProductBench<tags::CPU, double> SMELLDVPBenchdouble0("SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10, "l2/area51_full_0.m");
 #ifdef HONEI_SSE
-SMELLDenseVectorProductBench<tags::CPU::SSE, float> sse_SMELLDVPBenchfloat0("SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10, "area51_full_0.m");
-//SMELLDenseVectorProductBench<tags::CPU::SSE, double> sse_SMELLDVPBenchdouble0("SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10, "area51_full_0.m");
+SMELLDenseVectorProductBench<tags::CPU::SSE, float> sse_SMELLDVPBenchfloat0("SSE SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10, "l2/area51_full_2.m");
+SMELLDenseVectorProductBench<tags::CPU::SSE, double> sse_SMELLDVPBenchdouble0("SSE SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10, "l2/area51_full_2.m");
 #endif
 #ifdef HONEI_CUDA
-SMELLDenseVectorProductBench<tags::GPU::CUDA, float> cudaSMELLDVPBenchfloat0("CUDA SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10, "area51_full_0.m");
+SMELLDenseVectorProductBench<tags::GPU::CUDA, float> cudaSMELLDVPBenchfloat0("CUDA SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10, "l2/area51_full_2.m");
 #ifdef HONEI_CUDA_DOUBLE
-SMELLDenseVectorProductBench<tags::GPU::CUDA, double> cudaSMELLDVPBenchdouble0("CUDA SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10, "area51_full_0.m");
+SMELLDenseVectorProductBench<tags::GPU::CUDA, double> cudaSMELLDVPBenchdouble0("CUDA SM 0 ELL Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10, "l2/area51_full_2.m");
 #endif
 #endif
 
@@ -596,7 +602,8 @@ class Q1MatrixELLDenseVectorProductBench :
                         {
                             Product<Tag_>::value(dv3, smell, dv2);
 #ifdef HONEI_CUDA
-                            cuda_thread_synchronize();
+                        if (Tag_::tag_value == tags::tv_gpu_cuda)
+                            cuda::GPUPool::instance()->flush();
 #endif
                         }
                         );
