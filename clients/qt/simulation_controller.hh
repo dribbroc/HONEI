@@ -36,7 +36,7 @@ enum solver_type
 #ifdef HONEI_CUDA
     cuda_full_wet,
     cuda_full_dry,
-    cuda,
+    cuda_simple,
 #endif
     cpu_full_wet,
     cpu_full_dry,
@@ -163,7 +163,7 @@ class SimulationController
                             GridPacker<D2Q9, NOSLIP, float>::unpack(_cuda_full_wet_simulation->get_grid(), _cuda_full_wet_simulation->get_info(), _cuda_full_wet_simulation->get_data());
                     }
                     break;
-                case cuda:
+                case cuda_simple:
                     {
                         _cuda_simulation->get_solver().solve();
 
@@ -234,7 +234,7 @@ class SimulationController
                         return *_cuda_full_wet_simulation->get_grid().h;
                     }
                     break;
-                case cuda:
+                case cuda_simple:
                     {
                         return *_cuda_simulation->get_grid().h;
                     }
@@ -312,7 +312,7 @@ class SimulationController
                         return converted_result;
                     }
                     break;
-                case cuda:
+                case cuda_simple:
                     {
                         DenseMatrix<float> result((*_cuda_simulation->get_grid().h).copy());
                         DenseMatrix<Prec_> converted_result(result.rows(), result.columns());
@@ -389,7 +389,7 @@ class SimulationController
                         return converted_result;
                     }
                     break;
-                case cuda:
+                case cuda_simple:
                     {
                         DenseMatrix<float> result(*_cuda_simulation->get_grid().b);
                         DenseMatrix<Prec_> converted_result(result.rows(), result.columns());
@@ -450,7 +450,7 @@ class SimulationController
                         delete _cuda_full_wet_simulation;
                         _cuda_full_wet_simulation = new Simulation<tags::GPU::CUDA, lbm_applications::LABSWE, float,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (id);
                     }
-                case cuda:
+                case cuda_simple:
                     {
                         delete _cuda_simulation;
                         _cuda_simulation = new Simulation<tags::GPU::CUDA, lbm_applications::LABSWE, float,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (id);
@@ -509,7 +509,7 @@ class SimulationController
                         return "CUDA";
                     }
                     break;
-                case cuda:
+                case cuda_simple:
                     {
                         return "CUDA";
                     }
@@ -567,7 +567,7 @@ class SimulationController
                         return _cuda_full_wet_simulation->get_grid().description;
                     }
                     break;
-                case cuda:
+                case cuda_simple:
                     {
                         return _cuda_simulation->get_grid().description;
                     }
@@ -607,7 +607,7 @@ class SimulationController
                                 }
                                 break;
 #ifdef HONEI_CUDA
-                            case cuda:
+                            case cuda_simple:
                                 {
                                     _current_solver = cuda_full_dry;
                                     load_simulation(id);
@@ -634,7 +634,7 @@ class SimulationController
                                 }
                                 break;
 #ifdef HONEI_CUDA
-                            case cuda:
+                            case cuda_simple:
                                 {
                                     _current_solver = cuda_full_wet;
                                     load_simulation(id);
@@ -661,9 +661,9 @@ class SimulationController
                                 }
                                 break;
 #ifdef HONEI_CUDA
-                            case cuda:
+                            case cuda_simple:
                                 {
-                                    _current_solver = cuda;
+                                    _current_solver = cuda_simple;
                                     load_simulation(id);
                                 }
                                 break;
@@ -693,7 +693,7 @@ class SimulationController
                                 }
                                 break;
 #endif
-                            case cuda:
+                            case cuda_simple:
                                 {
                                 }
                                 break;
@@ -720,7 +720,7 @@ class SimulationController
                                 }
                                 break;
 #endif
-                            case cuda:
+                            case cuda_simple:
                                 {
                                 }
                                 break;
@@ -735,7 +735,7 @@ class SimulationController
                         }
                     }
                     break;
-                case cuda:
+                case cuda_simple:
                     {
                         switch(new_solver)
                         {
@@ -747,7 +747,7 @@ class SimulationController
                                 }
                                 break;
 #endif
-                            case cuda:
+                            case cuda_simple:
                                 {
                                 }
                                 break;
@@ -776,7 +776,7 @@ class SimulationController
                                 break;
 #endif
 #ifdef HONEI_CUDA
-                            case cuda:
+                            case cuda_simple:
                                 {
                                     _current_solver = cuda_full_dry;
                                     load_simulation(id);
@@ -805,7 +805,7 @@ class SimulationController
                                 break;
 #endif
 #ifdef HONEI_CUDA
-                            case cuda:
+                            case cuda_simple:
                                 {
                                     _current_solver = cuda_full_wet;
                                     load_simulation(id);
@@ -834,9 +834,9 @@ class SimulationController
                                 break;
 #endif
 #ifdef HONEI_CUDA
-                            case cuda:
+                            case cuda_simple:
                                 {
-                                    _current_solver = cuda;
+                                    _current_solver = cuda_simple;
                                     load_simulation(id);
                                 }
                                 break;

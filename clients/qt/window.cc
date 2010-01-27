@@ -201,6 +201,6 @@ void Window::_solver_backend_cuda()
     _solver_backend_cuda_action->setChecked(true);
 #endif
 #ifdef HONEI_CUDA
-    glWidget->set_solver_backend(cuda);
+    glWidget->set_solver_backend(cuda_simple);
 #endif
 }
