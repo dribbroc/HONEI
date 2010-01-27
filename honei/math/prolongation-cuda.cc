@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c)  2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c)  2008, 2010 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -19,11 +19,41 @@
 
 #include <honei/math/prolongation.hh>
 #include <honei/backends/cuda/operations.hh>
+#include <honei/backends/cuda/gpu_pool.hh>
 #include <honei/util/memory_arbiter.hh>
 #include <honei/util/configuration.hh>
 
 
 using namespace honei;
+
+namespace
+{
+    class cudaProlongationDVfloat
+    {
+        private:
+            DenseVector<float> & fine;
+            const DenseVector<float> & coarse;
+            const DenseVector<unsigned long> & mask;
+            unsigned long blocksize;
+        public:
+            cudaProlongationDVfloat(DenseVector<float> & fine, const DenseVector<float> & coarse, const DenseVector<unsigned long> & mask, unsigned long blocksize) :
+                fine(fine),
+                coarse(coarse),
+                mask(mask),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * fine_gpu (fine.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * coarse_gpu (coarse.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                cuda_prolongation_float(fine_gpu, fine.size(), coarse_gpu, coarse.size(), mask.elements(), blocksize);
+                coarse.unlock(lm_read_only);
+                fine.unlock(lm_write_only);
+            }
+    };
+}
 
 DenseVector<float> & Prolongation<tags::GPU::CUDA>::value(DenseVector<float> & fine,
         const DenseVector<float> & coarse, const DenseVector<unsigned long> & mask)
@@ -32,11 +62,16 @@ DenseVector<float> & Prolongation<tags::GPU::CUDA>::value(DenseVector<float> & f
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::prolongation_float", 64ul));
 
-    void * fine_gpu (fine.lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    void * coarse_gpu (coarse.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    cuda_prolongation_float(fine_gpu, fine.size(), coarse_gpu, coarse.size(), mask.elements(), blocksize);
-    coarse.unlock(lm_read_only);
-    fine.unlock(lm_write_only);
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaProlongationDVfloat task(fine, coarse, mask, blocksize);
+        task();
+    }
+    else
+    {
+        cudaProlongationDVfloat task(fine, coarse, mask, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
 
     return fine;
 }
