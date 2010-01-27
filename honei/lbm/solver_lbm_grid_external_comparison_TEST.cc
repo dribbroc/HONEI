@@ -31,7 +31,7 @@ using namespace std;
 using namespace output_types;
 using namespace lbm::lbm_lattice_types;
 
-//#define SOLVER_VERBOSE 1
+#define SOLVER_VERBOSE 1
 //#define SOLVER_POSTPROCESSING 1
 template <typename Tag_, typename DataType_>
 class SolverLBMGridExternalComparisonTest :
@@ -112,14 +112,12 @@ class SolverLBMGridExternalComparisonTest :
 #ifdef SOLVER_POSTPROCESSING
                 solver.do_postprocessing();
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
-                PostProcessing<GNUPLOT>::value(*grid.h, _max_timesteps - 1 , h.columns(), h.rows(), i);
+                //PostProcessing<GNUPLOT>::value(*grid.h, _max_timesteps - 1 , h.columns(), h.rows(), i);
+                PostProcessing<GNUPLOT>::value(*grid.h, 10, h.columns(), h.rows(), i);
 #endif
             }
             solver.do_postprocessing();
             GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
-#ifdef SOLVER_VERBOSE
-            std::cout << *grid.h << std::endl;
-#endif
             /*for (unsigned long i(0) ; i < (*grid.h).rows() ; ++i)
                 for(unsigned long j(0) ; j < (*grid.h).columns() ; ++j)
                     TEST_CHECK_EQUAL_WITHIN_EPS((*grid.h)( i , j), DataType_(0.04), DataType_(0.041));*/
@@ -140,19 +138,10 @@ class SolverLBMGridExternalComparisonTest :
 
 };
 
-SolverLBMGridExternalComparisonTest<tags::CPU, float> solver_test_float("float", "ext_initial_h.ppm", "ext_initial_vx.ppm", "ext_initial_vy.ppm", "ext_initial_b.ppm", "ext_obstacles.ppm", 250ul, 0.1f, 0.001f, 0.001f, 0.01f, 1.5f);
-SolverLBMGridExternalComparisonTest<tags::CPU, double> solver_test_double("double", "ext_initial_h.ppm", "ext_initial_vx.ppm", "ext_initial_vy.ppm", "ext_initial_b.ppm", "ext_obstacles.ppm",150ul, 0.1, 0.01, 0.01, 0.01, 1.);
-SolverLBMGridExternalComparisonTest<tags::CPU::MultiCore, float> mc_solver_test_float("float", "ext_initial_h.ppm", "ext_initial_vx.ppm", "ext_initial_vy.ppm", "ext_initial_b.ppm", "ext_obstacles.ppm",150ul, 0.1f, 0.01f, 0.01f, 0.01f, 1.f);
-SolverLBMGridExternalComparisonTest<tags::CPU::MultiCore, double> mc_solver_test_double("double", "ext_initial_h.ppm", "ext_initial_vx.ppm", "ext_initial_vy.ppm", "ext_initial_b.ppm", "ext_obstacles.ppm",150ul, 0.1, 0.01, 0.01, 0.01, 1.);
+SolverLBMGridExternalComparisonTest<tags::CPU, float> cpu_solver_test_float("float", "ext_initial_h_1.ppm", "ext_initial_vx_1.ppm", "ext_initial_vy_1.ppm", "ext_initial_b_1.ppm", "ext_obstacles_1.ppm", 100ul, 0.025f, 0.001f, 0.001f, 0.00051f, 1.5f);
 #ifdef HONEI_SSE
-SolverLBMGridExternalComparisonTest<tags::CPU::SSE, float> sse_solver_test_float("float", "ext_initial_h.ppm", "ext_initial_vx.ppm", "ext_initial_vy.ppm", "ext_initial_b.ppm", "ext_obstacles.ppm",150ul, 0.1f, 0.01f, 0.01f, 0.01f, 1.f);
-SolverLBMGridExternalComparisonTest<tags::CPU::SSE, double> sse_solver_test_double("double", "ext_initial_h.ppm", "ext_initial_vx.ppm", "ext_initial_vy.ppm", "ext_initial_b.ppm", "ext_obstacles.ppm", 150ul, 0.1, 0.01, 0.01, 0.01, 1.);
-SolverLBMGridExternalComparisonTest<tags::CPU::MultiCore::SSE, float> mcsse_solver_test_float("float", "ext_initial_h.ppm", "ext_initial_vx.ppm", "ext_initial_vy.ppm", "ext_initial_b.ppm", "ext_obstacles.ppm",150ul, 0.1f, 0.01f, 0.01f, 0.01f, 1.f);
-SolverLBMGridExternalComparisonTest<tags::CPU::MultiCore::SSE, double> mcsse_solver_test_double("double", "ext_initial_h.ppm", "ext_initial_vx.ppm", "ext_initial_vy.ppm", "ext_initial_b.ppm", "ext_obstacles.ppm",150ul, 0.1, 0.01, 0.01, 0.01, 1.);
+SolverLBMGridExternalComparisonTest<tags::CPU::SSE, float> sse_solver_test_float("float", "ext_initial_h_1.ppm", "ext_initial_vx_1.ppm", "ext_initial_vy_1.ppm", "ext_initial_b_1.ppm", "ext_obstacles_1.ppm", 100ul, 0.025f, 0.001f, 0.001f, 0.00051f, 1.5f);
 #endif
 #ifdef HONEI_CUDA
-SolverLBMGridExternalComparisonTest<tags::GPU::CUDA, float> cuda_solver_test_float("float", "ext_initial_h.ppm", "ext_initial_vx.ppm", "ext_initial_vy.ppm", "ext_initial_b.ppm", "ext_obstacles.ppm", 200ul, 0.025f, 0.01f, 0.01f, 0.005f, 0.9f);
-#endif
-#ifdef HONEI_CELL
-SolverLBMGridExternalComparisonTest<tags::Cell, float> cell_solver_test_float("float", "ext_initial_h.ppm", "ext_initial_vx.ppm", "ext_initial_vy.ppm", "ext_initial_b.ppm", "ext_obstacles.ppm", 150ul, 0.1f, 0.0001f, 0.0001f, 0.01f, 1.f);
+SolverLBMGridExternalComparisonTest<tags::GPU::CUDA, float> cuda_solver_test_float("float", "ext_initial_h_1.ppm", "ext_initial_vx_1.ppm", "ext_initial_vy_1.ppm", "ext_initial_b_1.ppm", "ext_obstacles_1.ppm", 100ul, 0.025f, 0.001f, 0.001f, 0.0005f, 1.5f);
 #endif
