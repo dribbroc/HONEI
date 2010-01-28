@@ -63,11 +63,11 @@ namespace honei
                 // Waiting queues of worker tasks to be executed
                 std::vector<std::queue<GPUTask *> *> tasks;
 
-                // Our Mutex
-                Mutex * const mutex;
+                // Our Mutexes
+                std::vector<Mutex *> mutexe;
 
-                // Condition Variable used to synchronize all threads
-                ConditionVariable * const global_barrier;
+                // Condition Variables used to synchronize all threads
+                std::vector<ConditionVariable *> barriers;
 
 
             public:

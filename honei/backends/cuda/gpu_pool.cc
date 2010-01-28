@@ -36,15 +36,14 @@ using namespace honei::cuda;
 template class InstantiationPolicy<GPUPool, Singleton>;
 
 GPUPool::GPUPool() :
-    num_gpus(std::min(Configuration::instance()->get_value("cuda::num_gpu", 2), cuda_device_count())),
-    mutex(new Mutex),
-    global_barrier(new ConditionVariable)
+    num_gpus(std::min(Configuration::instance()->get_value("cuda::num_gpu", 2), cuda_device_count()))
 {
     for (unsigned i(0) ; i < num_gpus ; ++i)
     {
-        std::queue<GPUTask *> * q = new std::queue<GPUTask *>;
-        tasks.push_back(q);
-        GPUFunction * tobj = new GPUFunction(i, mutex, global_barrier, (tasks.at(i)));
+        tasks.push_back(new std::queue<GPUTask *>);
+        barriers.push_back(new ConditionVariable);
+        mutexe.push_back(new Mutex);
+        GPUFunction * tobj = new GPUFunction(i, mutexe.at(i), barriers.at(i), (tasks.at(i)));
         Thread * t = new Thread(*tobj);
         threads.push_back(std::make_pair(t, tobj));
     }
@@ -59,8 +58,11 @@ GPUPool::~GPUPool()
         delete (*i).first;
     }
 
-    delete global_barrier;
-    delete mutex;
+    for (unsigned i(0) ; i < mutexe.size() ; ++i)
+    {
+        delete barriers.at(i);
+        delete mutexe.at(i);
+    }
 }
 
 unsigned GPUPool::get_num_gpus() const
@@ -74,17 +76,16 @@ Ticket<tags::GPU::MultiCore> * GPUPool::enqueue(const std::tr1::function<void ()
 
     GPUTask * t_task(new GPUTask(task, ticket));
 
-    Lock l(*mutex);
+    Lock l(*mutexe.at(device%num_gpus));
     tasks.at(device%num_gpus)->push(t_task);
 
-    global_barrier->broadcast();
+    barriers.at(device%num_gpus)->broadcast();
 
     return ticket;
 }
 
 bool GPUPool::idle()
 {
-    Lock l(*mutex);
     for(std::vector<std::pair<Thread *, GPUFunction *> >::iterator i(threads.begin()), i_end(threads.end()) ; i != i_end ; ++i)
     {
         if (!(*i).second->idle())
@@ -92,6 +93,7 @@ bool GPUPool::idle()
     }
     for (unsigned i(0) ; i < num_gpus ; ++i)
     {
+        Lock l(*mutexe.at(i));
         if (tasks.at(i)->size() != 0)
             return false;
     }
