@@ -44,9 +44,9 @@ namespace honei
             }
             __syncthreads();
 
-            if (idx < size)
+            if (idx >= offset && idx < size)
             {
-                unsigned long i(idx + offset);
+                unsigned long i(idx);
 
                 h[i] = f_0[i] +
                     f_1[i] +
@@ -114,9 +114,9 @@ namespace honei
             }
             __syncthreads();
 
-            if (idx < size)
+            if (idx >= offset && idx < size)
             {
-                unsigned long i(idx + offset);
+                unsigned long i(idx);
 
                 h[i] = f_0[i] +
                     f_1[i] +
@@ -161,7 +161,7 @@ extern "C" void cuda_extraction_grid_dry_float(
         void * distribution_x, void * distribution_y, float epsilon,
         unsigned long blocksize)
 {
-    unsigned long size(end - start);
+    unsigned long size(end);
     dim3 grid;
     dim3 block;
     block.x = blocksize;
@@ -203,7 +203,7 @@ extern "C" void cuda_extraction_grid_wet_float(
         void * distribution_x, void * distribution_y, float epsilon,
         unsigned long blocksize)
 {
-    unsigned long size(end - start);
+    unsigned long size(end);
     dim3 grid;
     dim3 block;
     block.x = blocksize;

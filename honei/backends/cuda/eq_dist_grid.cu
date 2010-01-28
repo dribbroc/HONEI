@@ -44,9 +44,9 @@ namespace honei
             }
             __syncthreads();
 
-            if (idx < size)
+            if (idx >= offset && idx < size)
             {
-                unsigned long index(idx + offset);
+                unsigned long index(idx);
 
                 float e2(e);
                 float e23(float(3.) * e2);
@@ -137,7 +137,7 @@ extern "C" void cuda_eq_dist_grid_float(unsigned long start, unsigned long end, 
         float g, float e,
         unsigned long blocksize)
 {
-    unsigned long size(end - start);
+    unsigned long size(end);
     dim3 grid;
     dim3 block;
     block.x = blocksize;

@@ -44,6 +44,8 @@ namespace
 
             void operator() ()
             {
+                info.limits->lock(lm_read_only);
+
                 void * cuda_types_gpu(info.cuda_types->lock(lm_read_only, tags::GPU::CUDA::memory_value));
 
                 void * f_temp_1_gpu(data.f_temp_1->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
@@ -55,11 +57,12 @@ namespace
                 void * f_temp_7_gpu(data.f_temp_7->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
                 void * f_temp_8_gpu(data.f_temp_8->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
 
-                cuda_up_vel_dir_grid_float(cuda_types_gpu,
+                unsigned long start((*info.limits)[0]);
+                unsigned long end((*info.limits)[info.limits->size() - 1]);
+                cuda_up_vel_dir_grid_float(start, end, cuda_types_gpu,
                         f_temp_1_gpu, f_temp_2_gpu,
                         f_temp_3_gpu, f_temp_4_gpu, f_temp_5_gpu,
                         f_temp_6_gpu, f_temp_7_gpu, f_temp_8_gpu,
-                        data.h->size(),
                         blocksize);
 
                 info.cuda_types->unlock(lm_read_only);

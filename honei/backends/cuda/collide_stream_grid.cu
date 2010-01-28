@@ -31,9 +31,9 @@ namespace honei
                 unsigned long offset_0, unsigned long size_0)
         {
             unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
-            if (idx < size_0)
+            if (idx >= offset_0 && idx < size_0)
             {
-                unsigned long i(idx + offset_0);
+                unsigned long i(idx);
                 //(*data.f_temp_0)[i] = (*data.f_0)[i] - ((*data.f_0)[i] - (*data.f_eq_0)[i])/tau;
                 f_temp_0[i] = f_0[i] - (f_0[i] - f_eq_0[i]) / tau;
             }
@@ -72,7 +72,7 @@ extern "C" void cuda_collide_stream_grid_float(unsigned long start, unsigned lon
         float tau, unsigned long size,
         unsigned long blocksize)
 {
-    unsigned long size_0(end - start);
+    unsigned long size_0(end);
     dim3 grid;
     dim3 block;
     block.x = blocksize;

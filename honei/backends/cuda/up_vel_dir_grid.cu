@@ -28,10 +28,11 @@ namespace honei
                 float * f_temp_3, float * f_temp_4, float * f_temp_5,
                 float * f_temp_6, float * f_temp_7, float * f_temp_8,
                 unsigned long * types,
+                unsigned long offset,
                 unsigned long size)
         {
             unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
-            if (idx < size)
+            if (idx >= offset && idx < size)
             {
                 unsigned long i(idx);
                 if((types[i] & 1<<0) == 1<<0)
@@ -77,13 +78,13 @@ namespace honei
     }
 }
 
-extern "C" void cuda_up_vel_dir_grid_float(void * types,
-        void * f_temp_1, void * f_temp_2,
+extern "C" void cuda_up_vel_dir_grid_float(unsigned long start, unsigned long end,
+        void * types, void * f_temp_1, void * f_temp_2,
         void * f_temp_3, void * f_temp_4, void * f_temp_5,
         void * f_temp_6, void * f_temp_7, void * f_temp_8,
-        unsigned long size,
         unsigned long blocksize)
 {
+    unsigned long size(end);
     dim3 grid;
     dim3 block;
     block.x = blocksize;
@@ -106,7 +107,7 @@ extern "C" void cuda_up_vel_dir_grid_float(void * types,
             f_temp_1_gpu, f_temp_2_gpu, f_temp_3_gpu, f_temp_4_gpu,
             f_temp_5_gpu, f_temp_6_gpu, f_temp_7_gpu, f_temp_8_gpu,
             types_gpu,
-            size);
+            start, size);
 
     CUDA_ERROR();
 }
