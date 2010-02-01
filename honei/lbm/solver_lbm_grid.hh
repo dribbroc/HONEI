@@ -58,10 +58,12 @@
 #include <honei/backends/multicore/dispatch_policy.hh>
 #include <honei/backends/multicore/thread_pool.hh>
 #include <honei/backends/cuda/gpu_pool.hh>
+#include <honei/backends/cuda/transfer.hh>
 
 #include <iostream>
 #include <tr1/functional>
 #include <vector>
+
 
 using namespace honei::lbm;
 using namespace honei::lbm::lbm_boundary_types;
@@ -358,6 +360,67 @@ namespace honei
         };
 
 
+    namespace
+    {
+        class UploadTask
+        {
+            private:
+                void * device;
+                void * address;
+                unsigned long bytes;
+            public:
+                UploadTask(void * a, void * d, unsigned long b) :
+                    device(d),
+                    address(a),
+                    bytes(b)
+                {
+                }
+
+                void operator() ()
+                {
+                    cuda_upload(address, device, bytes);
+                }
+        };
+
+        class DownloadTask
+        {
+            private:
+                void * device;
+                void * address;
+                unsigned long bytes;
+            public:
+                DownloadTask(void * d, void * a, unsigned long b) :
+                    device(d),
+                    address(a),
+                    bytes(b)
+                {
+                }
+
+                void operator() ()
+                {
+                    cuda_download(device, address, bytes);
+                }
+        };
+
+        class DetectTask
+        {
+            private:
+                void ** device;
+                void * address;
+            public:
+                DetectTask(void * a, void ** d) :
+                    device(d),
+                    address(a)
+                {
+                }
+
+                void operator() ()
+                {
+                    *device = MemoryArbiter::instance()->lock(lm_read_only, tags::GPU::CUDA::memory_value, address, address, 0);
+                    MemoryArbiter::instance()->unlock(lm_read_only, address);
+                }
+        };
+    }
     namespace cuda
     {
         template<typename Tag_,
@@ -419,7 +482,31 @@ namespace honei
                                             ), i));
                         }
                         tickets.wait();
+                        for (unsigned long i(0) ; i < _parts ; ++i)
+                        {
+                            _data_list[i].f_temp_1->lock(lm_read_and_write);
+                            _data_list[i].f_temp_2->lock(lm_read_and_write);
+                            _data_list[i].f_temp_3->lock(lm_read_and_write);
+                            _data_list[i].f_temp_4->lock(lm_read_and_write);
+                            _data_list[i].f_temp_5->lock(lm_read_and_write);
+                            _data_list[i].f_temp_6->lock(lm_read_and_write);
+                            _data_list[i].f_temp_7->lock(lm_read_and_write);
+                            _data_list[i].f_temp_8->lock(lm_read_and_write);
+                            _data_list[i].h->lock(lm_read_and_write);
+                        }
                         GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);
+                        for (unsigned long i(0) ; i < _parts ; ++i)
+                        {
+                            _data_list[i].f_temp_1->unlock(lm_read_and_write);
+                            _data_list[i].f_temp_2->unlock(lm_read_and_write);
+                            _data_list[i].f_temp_3->unlock(lm_read_and_write);
+                            _data_list[i].f_temp_4->unlock(lm_read_and_write);
+                            _data_list[i].f_temp_5->unlock(lm_read_and_write);
+                            _data_list[i].f_temp_6->unlock(lm_read_and_write);
+                            _data_list[i].f_temp_7->unlock(lm_read_and_write);
+                            _data_list[i].f_temp_8->unlock(lm_read_and_write);
+                            _data_list[i].h->unlock(lm_read_and_write);
+                        }
                     }
 
                     void do_postprocessing()
@@ -449,7 +536,155 @@ namespace honei
                                             ), i));
                         }
                         tickets.wait();
+                        for (unsigned long i(0) ; i < _parts ; ++i)
+                        {
+                            //todo target nur einmal abrufen und dann speichern
+                            void * target;
+                            void * target1;
+                            void * target2;
+                            void * target3;
+                            void * target4;
+                            void * target5;
+                            void * target6;
+                            void * target7;
+                            void * target8;
+                            DetectTask detask(_data_list[i].h->address(), &target);
+                            cuda::GPUPool::instance()->enqueue(detask, i)->wait();
+                            DetectTask detask1(_data_list[i].f_temp_1->address(), &target1);
+                            cuda::GPUPool::instance()->enqueue(detask1, i)->wait();
+                            DetectTask detask2(_data_list[i].f_temp_2->address(), &target2);
+                            cuda::GPUPool::instance()->enqueue(detask2, i)->wait();
+                            DetectTask detask3(_data_list[i].f_temp_3->address(), &target3);
+                            cuda::GPUPool::instance()->enqueue(detask3, i)->wait();
+                            DetectTask detask4(_data_list[i].f_temp_4->address(), &target4);
+                            cuda::GPUPool::instance()->enqueue(detask4, i)->wait();
+                            DetectTask detask5(_data_list[i].f_temp_5->address(), &target5);
+                            cuda::GPUPool::instance()->enqueue(detask5, i)->wait();
+                            DetectTask detask6(_data_list[i].f_temp_6->address(), &target6);
+                            cuda::GPUPool::instance()->enqueue(detask6, i)->wait();
+                            DetectTask detask7(_data_list[i].f_temp_7->address(), &target7);
+                            cuda::GPUPool::instance()->enqueue(detask7, i)->wait();
+                            DetectTask detask8(_data_list[i].f_temp_8->address(), &target8);
+                            cuda::GPUPool::instance()->enqueue(detask8, i)->wait();
+
+                            unsigned long offset(_info_list[i].offset);
+                            unsigned long f1_offset((*_fringe_list[i].dir_index_1)[0]);
+                            unsigned long f1_size((*_fringe_list[i].dir_index_1)[_fringe_list[i].dir_index_1->size()-1] - f1_offset);
+                            DownloadTask dtask1((void *)((ResPrec_*)target1 + f1_offset - offset), (void *)((ResPrec_*)_data_list[i].f_temp_1->address() + f1_offset - offset), f1_size * sizeof(ResPrec_));
+                            tickets.push_back(cuda::GPUPool::instance()->enqueue(dtask1, i));
+                            unsigned long f2_offset((*_fringe_list[i].dir_index_2)[0]);
+                            unsigned long f2_size((*_fringe_list[i].dir_index_2)[_fringe_list[i].dir_index_2->size()-1] - f2_offset);
+                            DownloadTask dtask2((void *)((ResPrec_*)target2 + f2_offset - offset), (void *)((ResPrec_*)_data_list[i].f_temp_2->address() + f2_offset - offset), f2_size * sizeof(ResPrec_));
+                            tickets.push_back(cuda::GPUPool::instance()->enqueue(dtask2, i));
+                            unsigned long f3_offset((*_fringe_list[i].dir_index_3)[0]);
+                            unsigned long f3_size((*_fringe_list[i].dir_index_3)[_fringe_list[i].dir_index_3->size()-1] - f3_offset);
+                            DownloadTask dtask3((void *)((ResPrec_*)target3 + f3_offset - offset), (void *)((ResPrec_*)_data_list[i].f_temp_3->address() + f3_offset - offset), f3_size * sizeof(ResPrec_));
+                            tickets.push_back(cuda::GPUPool::instance()->enqueue(dtask3, i));
+                            unsigned long f4_offset((*_fringe_list[i].dir_index_4)[0]);
+                            unsigned long f4_size((*_fringe_list[i].dir_index_4)[_fringe_list[i].dir_index_4->size()-1] - f4_offset);
+                            DownloadTask dtask4((void *)((ResPrec_*)target4 + f4_offset - offset), (void *)((ResPrec_*)_data_list[i].f_temp_4->address() + f4_offset - offset), f4_size * sizeof(ResPrec_));
+                            tickets.push_back(cuda::GPUPool::instance()->enqueue(dtask4, i));
+                            unsigned long f5_offset((*_fringe_list[i].dir_index_5)[0]);
+                            unsigned long f5_size((*_fringe_list[i].dir_index_5)[_fringe_list[i].dir_index_5->size()-1] - f5_offset);
+                            DownloadTask dtask5((void *)((ResPrec_*)target5 + f5_offset - offset), (void *)((ResPrec_*)_data_list[i].f_temp_5->address() + f5_offset - offset), f5_size * sizeof(ResPrec_));
+                            tickets.push_back(cuda::GPUPool::instance()->enqueue(dtask5, i));
+                            unsigned long f6_offset((*_fringe_list[i].dir_index_6)[0]);
+                            unsigned long f6_size((*_fringe_list[i].dir_index_6)[_fringe_list[i].dir_index_6->size()-1] - f6_offset);
+                            DownloadTask dtask6((void *)((ResPrec_*)target6 + f6_offset - offset), (void *)((ResPrec_*)_data_list[i].f_temp_6->address() + f6_offset - offset), f6_size * sizeof(ResPrec_));
+                            tickets.push_back(cuda::GPUPool::instance()->enqueue(dtask6, i));
+                            unsigned long f7_offset((*_fringe_list[i].dir_index_7)[0]);
+                            unsigned long f7_size((*_fringe_list[i].dir_index_7)[_fringe_list[i].dir_index_7->size()-1] - f7_offset);
+                            DownloadTask dtask7((void *)((ResPrec_*)target7 + f7_offset - offset), (void *)((ResPrec_*)_data_list[i].f_temp_7->address() + f7_offset - offset), f7_size * sizeof(ResPrec_));
+                            tickets.push_back(cuda::GPUPool::instance()->enqueue(dtask7, i));
+                            unsigned long f8_offset((*_fringe_list[i].dir_index_8)[0]);
+                            unsigned long f8_size((*_fringe_list[i].dir_index_8)[_fringe_list[i].dir_index_8->size()-1] - f8_offset);
+                            DownloadTask dtask8((void *)((ResPrec_*)target8 + f8_offset - offset), (void *)((ResPrec_*)_data_list[i].f_temp_8->address() + f8_offset - offset), f8_size * sizeof(ResPrec_));
+                            tickets.push_back(cuda::GPUPool::instance()->enqueue(dtask8, i));
+
+                            for (unsigned long j(0) ; j < _fringe_list[i].external_h_index->size() / 2 ; ++j)
+                            {
+                                unsigned long h_offset((*_fringe_list[i].external_h_index)[j * 2]);
+                                unsigned long h_size((*_fringe_list[i].external_h_index)[j * 2 + 1] - h_offset);
+                                DownloadTask dtask((void *)((ResPrec_*)target + h_offset - offset), (void *)((ResPrec_*)_data_list[i].h->address() + h_offset - offset), h_size * sizeof(ResPrec_));
+                                tickets.push_back(cuda::GPUPool::instance()->enqueue(dtask, i));
+                            }
+
+                        }
+                        tickets.wait();
                         GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);
+                        for (unsigned long i(0) ; i < _parts ; ++i)
+                        {
+                            void * target;
+                            void * target1;
+                            void * target2;
+                            void * target3;
+                            void * target4;
+                            void * target5;
+                            void * target6;
+                            void * target7;
+                            void * target8;
+                            DetectTask detask(_data_list[i].h->address(), &target);
+                            cuda::GPUPool::instance()->enqueue(detask, i)->wait();
+                            DetectTask detask1(_data_list[i].f_temp_1->address(), &target1);
+                            cuda::GPUPool::instance()->enqueue(detask1, i)->wait();
+                            DetectTask detask2(_data_list[i].f_temp_2->address(), &target2);
+                            cuda::GPUPool::instance()->enqueue(detask2, i)->wait();
+                            DetectTask detask3(_data_list[i].f_temp_3->address(), &target3);
+                            cuda::GPUPool::instance()->enqueue(detask3, i)->wait();
+                            DetectTask detask4(_data_list[i].f_temp_4->address(), &target4);
+                            cuda::GPUPool::instance()->enqueue(detask4, i)->wait();
+                            DetectTask detask5(_data_list[i].f_temp_5->address(), &target5);
+                            cuda::GPUPool::instance()->enqueue(detask5, i)->wait();
+                            DetectTask detask6(_data_list[i].f_temp_6->address(), &target6);
+                            cuda::GPUPool::instance()->enqueue(detask6, i)->wait();
+                            DetectTask detask7(_data_list[i].f_temp_7->address(), &target7);
+                            cuda::GPUPool::instance()->enqueue(detask7, i)->wait();
+                            DetectTask detask8(_data_list[i].f_temp_8->address(), &target8);
+                            cuda::GPUPool::instance()->enqueue(detask8, i)->wait();
+
+                            unsigned long offset(_info_list[i].offset);
+                            unsigned long f1_offset((*_fringe_list[i].external_dir_index_1)[0]);
+                            unsigned long f1_size((*_fringe_list[i].external_dir_index_1)[_fringe_list[i].external_dir_index_1->size()-1] - f1_offset);
+                            UploadTask utask1((void *)((ResPrec_*)_data_list[i].f_temp_1->address() + f1_offset - offset), (void *)((ResPrec_*)target1 + f1_offset - offset), f1_size * sizeof(ResPrec_));
+                            tickets.push_back(cuda::GPUPool::instance()->enqueue(utask1, i));
+                            unsigned long f2_offset((*_fringe_list[i].external_dir_index_2)[0]);
+                            unsigned long f2_size((*_fringe_list[i].external_dir_index_2)[_fringe_list[i].external_dir_index_2->size()-1] - f2_offset);
+                            UploadTask utask2((void *)((ResPrec_*)_data_list[i].f_temp_2->address() + f2_offset - offset), (void *)((ResPrec_*)target2 + f2_offset - offset), f2_size * sizeof(ResPrec_));
+                            tickets.push_back(cuda::GPUPool::instance()->enqueue(utask2, i));
+                            unsigned long f3_offset((*_fringe_list[i].external_dir_index_3)[0]);
+                            unsigned long f3_size((*_fringe_list[i].external_dir_index_3)[_fringe_list[i].external_dir_index_3->size()-1] - f3_offset);
+                            UploadTask utask3((void *)((ResPrec_*)_data_list[i].f_temp_3->address() + f3_offset - offset), (void *)((ResPrec_*)target3 + f3_offset - offset), f3_size * sizeof(ResPrec_));
+                            tickets.push_back(cuda::GPUPool::instance()->enqueue(utask3, i));
+                            unsigned long f4_offset((*_fringe_list[i].external_dir_index_4)[0]);
+                            unsigned long f4_size((*_fringe_list[i].external_dir_index_4)[_fringe_list[i].external_dir_index_4->size()-1] - f4_offset);
+                            UploadTask utask4((void *)((ResPrec_*)_data_list[i].f_temp_4->address() + f4_offset - offset), (void *)((ResPrec_*)target4 + f4_offset - offset), f4_size * sizeof(ResPrec_));
+                            tickets.push_back(cuda::GPUPool::instance()->enqueue(utask4, i));
+                            unsigned long f5_offset((*_fringe_list[i].external_dir_index_5)[0]);
+                            unsigned long f5_size((*_fringe_list[i].external_dir_index_5)[_fringe_list[i].external_dir_index_5->size()-1] - f5_offset);
+                            UploadTask utask5((void *)((ResPrec_*)_data_list[i].f_temp_5->address() + f5_offset - offset), (void *)((ResPrec_*)target5 + f5_offset - offset), f5_size * sizeof(ResPrec_));
+                            tickets.push_back(cuda::GPUPool::instance()->enqueue(utask5, i));
+                            unsigned long f6_offset((*_fringe_list[i].external_dir_index_6)[0]);
+                            unsigned long f6_size((*_fringe_list[i].external_dir_index_6)[_fringe_list[i].external_dir_index_6->size()-1] - f6_offset);
+                            UploadTask utask6((void *)((ResPrec_*)_data_list[i].f_temp_6->address() + f6_offset - offset), (void *)((ResPrec_*)target6 + f6_offset - offset), f6_size * sizeof(ResPrec_));
+                            tickets.push_back(cuda::GPUPool::instance()->enqueue(utask6, i));
+                            unsigned long f7_offset((*_fringe_list[i].external_dir_index_7)[0]);
+                            unsigned long f7_size((*_fringe_list[i].external_dir_index_7)[_fringe_list[i].external_dir_index_7->size()-1] - f7_offset);
+                            UploadTask utask7((void *)((ResPrec_*)_data_list[i].f_temp_7->address() + f7_offset - offset), (void *)((ResPrec_*)target7 + f7_offset - offset), f7_size * sizeof(ResPrec_));
+                            tickets.push_back(cuda::GPUPool::instance()->enqueue(utask7, i));
+                            unsigned long f8_offset((*_fringe_list[i].external_dir_index_8)[0]);
+                            unsigned long f8_size((*_fringe_list[i].external_dir_index_8)[_fringe_list[i].external_dir_index_8->size()-1] - f8_offset);
+                            UploadTask utask8((void *)((ResPrec_*)_data_list[i].f_temp_8->address() + f8_offset - offset), (void *)((ResPrec_*)target8 + f8_offset - offset), f8_size * sizeof(ResPrec_));
+                            tickets.push_back(cuda::GPUPool::instance()->enqueue(utask8, i));
+
+                            for (unsigned long j(0) ; j < _fringe_list[i].h_index->size() / 2 ; ++j)
+                            {
+                                unsigned long h_offset((*_fringe_list[i].h_index)[j * 2]);
+                                unsigned long h_size((*_fringe_list[i].h_index)[j * 2 + 1] - h_offset);
+                                UploadTask utask((void *)((ResPrec_*)_data_list[i].h->address() + h_offset - offset), (void *)((ResPrec_*)target + h_offset - offset), h_size * sizeof(ResPrec_));
+                                tickets.push_back(cuda::GPUPool::instance()->enqueue(utask, i));
+                            }
+                        }
+                        tickets.wait();
                     }
             };
     }
