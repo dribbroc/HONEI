@@ -23,11 +23,48 @@ namespace honei
 {
     namespace cuda
     {
-        __global__ void up_vel_dir_grid_gpu(
+        __global__ void up_vel_dir_grid_gpu_ordinary(
+                float * f_temp_backward,
+                float * f_forward,
+                float * f_eq_forward,
+                unsigned long * types,
+                unsigned long type,
+                float tau,
+                unsigned long offset,
+                unsigned long size)
+        {
+            unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+            if (idx >= offset && idx < size)
+            {
+                unsigned long i(idx);
+                if((types[i] & 1<<(type)) == 1<<(type))
+                    f_temp_backward[i] = f_forward[i] - (f_forward[i] - f_eq_forward[i])/tau;
+            }
+        }
+        __global__ void up_vel_dir_grid_gpu_corner(
+                float * f_temp_backward,
+                float * f_forward,
+                float * f_eq_forward,
+                unsigned long * types,
+                unsigned long type,
+                float tau,
+                unsigned long offset,
+                unsigned long size)
+        {
+            unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+            if (idx >= offset && idx < size)
+            {
+                unsigned long i(idx);
+                if((types[i] & 1<<(type)) == 1<<(type))
+                    f_temp_backward[i] = f_forward[i] - (f_forward[i] - f_eq_forward[i])/tau;
+            }
+        }
+        /*__global__ void up_vel_dir_grid_gpu(
                 float * f_temp_1, float * f_temp_2,
                 float * f_temp_3, float * f_temp_4, float * f_temp_5,
                 float * f_temp_6, float * f_temp_7, float * f_temp_8,
                 unsigned long * types,
+                float tau,
                 unsigned long offset,
                 unsigned long size)
         {
@@ -52,27 +89,6 @@ namespace honei
                 if((types[i] & 1<<7) == 1<<7)
                     f_temp_4[i] = f_temp_8[i];
 
-                // Corners
-                /*if((types[i] & 1<<2) == 1<<2 && (types[i] & 1<<4) == 1<<4)
-                {
-                    f_temp_2[i] = f_temp_8[i];
-                    f_temp_6[i] = f_temp_8[i];
-                }
-                if((types[i] & 1<<4) == 1<<4 && (types[i] & 1<<6) == 1<<6)
-                {
-                    f_temp_4[i] = f_temp_2[i];
-                    f_temp_8[i] = f_temp_2[i];
-                }
-                if((types[i] & 1<<0) == 1<<0 && (types[i] & 1<<6) == 1<<6)
-                {
-                    f_temp_2[i] = f_temp_4[i];
-                    f_temp_6[i] = f_temp_4[i];
-                }
-                if((types[i] & 1<<0) == 1<<0 && (types[i] & 1<<2) == 1<<2)
-                {
-                    f_temp_4[i] = f_temp_6[i];
-                    f_temp_8[i] = f_temp_6[i];
-                }*/
                 if(((types)[i] & 1<<2) == 1<<2 &&
                         ((types)[i] & 1<<4) == 1<<4 &&
                         ((types)[i] & 1<<1) == 1<<1 &&
@@ -106,7 +122,7 @@ namespace honei
                     (f_temp_8)[i] = (f_temp_6)[i];
                 }
             }
-        }
+        }*/
     }
 }
 
@@ -114,6 +130,9 @@ extern "C" void cuda_up_vel_dir_grid_float(unsigned long start, unsigned long en
         void * types, void * f_temp_1, void * f_temp_2,
         void * f_temp_3, void * f_temp_4, void * f_temp_5,
         void * f_temp_6, void * f_temp_7, void * f_temp_8,
+        void * f_1, void * f_2, void * f_3, void * f_4, void * f_5, void * f_6, void * f_7, void * f_8,
+        void * f_eq_1, void * f_eq_2, void * f_eq_3, void * f_eq_4, void * f_eq_5, void * f_eq_6, void * f_eq_7, void * f_eq_8,
+        float tau,
         unsigned long blocksize)
 {
     unsigned long size(end);
@@ -135,10 +154,92 @@ extern "C" void cuda_up_vel_dir_grid_float(unsigned long start, unsigned long en
     float * f_temp_7_gpu((float *)f_temp_7);
     float * f_temp_8_gpu((float *)f_temp_8);
 
-    honei::cuda::up_vel_dir_grid_gpu<<<grid, block>>>(
+    float * f_1_gpu((float *)f_1);
+    float * f_2_gpu((float *)f_2);
+    float * f_3_gpu((float *)f_3);
+    float * f_4_gpu((float *)f_4);
+    float * f_5_gpu((float *)f_5);
+    float * f_6_gpu((float *)f_6);
+    float * f_7_gpu((float *)f_7);
+    float * f_8_gpu((float *)f_8);
+
+    float * f_eq_1_gpu((float *)f_eq_1);
+    float * f_eq_2_gpu((float *)f_eq_2);
+    float * f_eq_3_gpu((float *)f_eq_3);
+    float * f_eq_4_gpu((float *)f_eq_4);
+    float * f_eq_5_gpu((float *)f_eq_5);
+    float * f_eq_6_gpu((float *)f_eq_6);
+    float * f_eq_7_gpu((float *)f_eq_7);
+    float * f_eq_8_gpu((float *)f_eq_8);
+    /*honei::cuda::up_vel_dir_grid_gpu<<<grid, block>>>(
             f_temp_1_gpu, f_temp_2_gpu, f_temp_3_gpu, f_temp_4_gpu,
             f_temp_5_gpu, f_temp_6_gpu, f_temp_7_gpu, f_temp_8_gpu,
             types_gpu,
+            tau,
+            start, size);*/
+    honei::cuda::up_vel_dir_grid_gpu_ordinary<<<grid, block>>>(
+            f_temp_5_gpu,
+            f_1_gpu,
+            f_eq_1_gpu,
+            types_gpu,
+            0ul,
+            tau,
+            start, size);
+    honei::cuda::up_vel_dir_grid_gpu_ordinary<<<grid, block>>>(
+            f_temp_6_gpu,
+            f_2_gpu,
+            f_eq_2_gpu,
+            types_gpu,
+            1ul,
+            tau,
+            start, size);
+    honei::cuda::up_vel_dir_grid_gpu_ordinary<<<grid, block>>>(
+            f_temp_7_gpu,
+            f_3_gpu,
+            f_eq_3_gpu,
+            types_gpu,
+            2ul,
+            tau,
+            start, size);
+    honei::cuda::up_vel_dir_grid_gpu_ordinary<<<grid, block>>>(
+            f_temp_8_gpu,
+            f_4_gpu,
+            f_eq_4_gpu,
+            types_gpu,
+            3ul,
+            tau,
+            start, size);
+    honei::cuda::up_vel_dir_grid_gpu_ordinary<<<grid, block>>>(
+            f_temp_1_gpu,
+            f_5_gpu,
+            f_eq_5_gpu,
+            types_gpu,
+            4ul,
+            tau,
+            start, size);
+    honei::cuda::up_vel_dir_grid_gpu_ordinary<<<grid, block>>>(
+            f_temp_2_gpu,
+            f_6_gpu,
+            f_eq_6_gpu,
+            types_gpu,
+            5ul,
+            tau,
+            start, size);
+    honei::cuda::up_vel_dir_grid_gpu_ordinary<<<grid, block>>>(
+            f_temp_3_gpu,
+            f_7_gpu,
+            f_eq_7_gpu,
+            types_gpu,
+            6ul,
+            tau,
+            start, size);
+    honei::cuda::up_vel_dir_grid_gpu_ordinary<<<grid, block>>>(
+            f_temp_4_gpu,
+            f_8_gpu,
+            f_eq_8_gpu,
+            types_gpu,
+            7ul,
+            tau,
             start, size);
 
     CUDA_ERROR();

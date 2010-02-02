@@ -25,9 +25,10 @@ using namespace honei;
 using namespace cell;
 
 void UpdateVelocityDirectionsGrid<tags::Cell, lbm_boundary_types::NOSLIP>::value(
-        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data)
+        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float tau)
 {
     CONTEXT("When updating velocity directions (Cell):");
+#error "Last patch in this module has not yet been applied. Boundary treatment is wrong!"
 
     info.limits->lock(lm_read_only);
     info.types->lock(lm_read_only);

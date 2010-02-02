@@ -59,11 +59,9 @@ namespace honei
             *
             */
            template<typename DT1_>
-               static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data)
+               static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data, DT1_ tau)
                {
                    CONTEXT("When updating velocity directions:");
-
-                   DT1_ tau(1.5);
 
                    info.limits->lock(lm_read_only);
                    info.types->lock(lm_read_only);
@@ -200,20 +198,20 @@ namespace honei
    template <>
        struct UpdateVelocityDirectionsGrid<tags::GPU::CUDA, lbm_boundary_types::NOSLIP>
        {
-           static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data);
+           static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float tau);
        };
 
    template <>
        struct UpdateVelocityDirectionsGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP>
        {
            template <typename DT1_>
-           static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data);
+           static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data, DT1_ tau);
        };
 
    template <>
        struct UpdateVelocityDirectionsGrid<tags::Cell, lbm_boundary_types::NOSLIP>
        {
-           static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data);
+           static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float tau);
        };
 }
 #endif

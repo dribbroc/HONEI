@@ -24,7 +24,7 @@ using namespace honei;
 
 template <typename DT_>
 void UpdateVelocityDirectionsGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP>::value(
-        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
+        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data, DT_ tau)
 {
     CONTEXT("When updating velocity directions (SSE):");
 
@@ -45,7 +45,7 @@ void UpdateVelocityDirectionsGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP>::v
     sse::up_vel_dir_grid(begin, end, info.limits->elements(), info.types->elements(),
             data.f_temp_1->elements(), data.f_temp_2->elements(), data.f_temp_3->elements(),
             data.f_temp_4->elements(), data.f_temp_5->elements(), data.f_temp_6->elements(),
-            data.f_temp_7->elements(), data.f_temp_8->elements());
+            data.f_temp_7->elements(), data.f_temp_8->elements(), tau);
 
     info.limits->unlock(lm_read_only);
     info.types->unlock(lm_read_only);
@@ -60,7 +60,7 @@ void UpdateVelocityDirectionsGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP>::v
     data.f_temp_8->unlock(lm_read_and_write);
 }
 template void UpdateVelocityDirectionsGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP>::value<float>(
-        PackedGridInfo<D2Q9> &, PackedGridData<D2Q9, float> &);
+        PackedGridInfo<D2Q9> &, PackedGridData<D2Q9, float> &, float);
 
 template void UpdateVelocityDirectionsGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP>::value<double>(
-        PackedGridInfo<D2Q9> &, PackedGridData<D2Q9, double> &);
+        PackedGridInfo<D2Q9> &, PackedGridData<D2Q9, double> &, double);

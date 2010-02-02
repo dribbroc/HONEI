@@ -165,12 +165,12 @@ namespace honei
         void up_vel_dir_grid(unsigned long begin, unsigned long end, unsigned long * limits, unsigned long * types,
                 float * f_temp_1, float * f_temp_2,  float * f_temp_3,
                 float * f_temp_4, float * f_temp_5,  float * f_temp_6,
-                float * f_temp_7, float * f_temp_8);
+                float * f_temp_7, float * f_temp_8, float tau);
 
         void up_vel_dir_grid(unsigned long begin, unsigned long end, unsigned long * limits, unsigned long * types,
                 double * f_temp_1, double * f_temp_2,  double * f_temp_3,
                 double * f_temp_4, double * f_temp_5,  double * f_temp_6,
-                double * f_temp_7, double * f_temp_8);
+                double * f_temp_7, double * f_temp_8, double tau);
     }
 }
 

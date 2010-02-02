@@ -33,11 +33,13 @@ namespace
         private:
             PackedGridInfo<D2Q9> & info;
             PackedGridData<D2Q9, float> & data;
+            float tau;
             unsigned long blocksize;
         public:
-            cudaUpVelDirGridfloat(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, unsigned long blocksize) :
+            cudaUpVelDirGridfloat(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float tau, unsigned long blocksize) :
                 info(info),
                 data(data),
+                tau(tau),
                 blocksize(blocksize)
             {
             }
@@ -63,6 +65,7 @@ namespace
                         f_temp_1_gpu, f_temp_2_gpu,
                         f_temp_3_gpu, f_temp_4_gpu, f_temp_5_gpu,
                         f_temp_6_gpu, f_temp_7_gpu, f_temp_8_gpu,
+                        tau,
                         blocksize);
 
                 info.cuda_types->unlock(lm_read_only);
@@ -80,7 +83,7 @@ namespace
 }
 
 void UpdateVelocityDirectionsGrid<tags::GPU::CUDA, lbm_boundary_types::NOSLIP>::value(
-        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data)
+        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float tau)
 {
     CONTEXT("When updating velocity directions (CUDA):");
 
@@ -89,12 +92,12 @@ void UpdateVelocityDirectionsGrid<tags::GPU::CUDA, lbm_boundary_types::NOSLIP>::
 
     if (! cuda::GPUPool::instance()->idle())
     {
-        cudaUpVelDirGridfloat task(info, data, blocksize);
+        cudaUpVelDirGridfloat task(info, data, tau, blocksize);
         task();
     }
     else
     {
-        cudaUpVelDirGridfloat task(info, data, blocksize);
+        cudaUpVelDirGridfloat task(info, data, tau, blocksize);
         cuda::GPUPool::instance()->enqueue(task, 0)->wait();
     }
 }
