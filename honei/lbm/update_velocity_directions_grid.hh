@@ -63,6 +63,8 @@ namespace honei
                {
                    CONTEXT("When updating velocity directions:");
 
+                   DT1_ tau(1.5);
+
                    info.limits->lock(lm_read_only);
                    info.types->lock(lm_read_only);
 
@@ -75,47 +77,65 @@ namespace honei
                    data.f_temp_7->lock(lm_read_and_write);
                    data.f_temp_8->lock(lm_read_and_write);
 
+                   data.f_1->lock(lm_read_only);
+                   data.f_2->lock(lm_read_only);
+                   data.f_3->lock(lm_read_only);
+                   data.f_4->lock(lm_read_only);
+                   data.f_5->lock(lm_read_only);
+                   data.f_6->lock(lm_read_only);
+                   data.f_7->lock(lm_read_only);
+                   data.f_8->lock(lm_read_only);
+
+                   data.f_eq_1->lock(lm_read_only);
+                   data.f_eq_2->lock(lm_read_only);
+                   data.f_eq_3->lock(lm_read_only);
+                   data.f_eq_4->lock(lm_read_only);
+                   data.f_eq_5->lock(lm_read_only);
+                   data.f_eq_6->lock(lm_read_only);
+                   data.f_eq_7->lock(lm_read_only);
+                   data.f_eq_8->lock(lm_read_only);
+
                    for (unsigned long begin(0) ; begin < info.limits->size() - 1 ; ++begin)
                    {
                        if(((*info.types)[begin] & 1<<0) == 1<<0)
                            for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
                            {
-                               (*data.f_temp_5)[i] = (*data.f_temp_1)[i];
+                               (*data.f_temp_5)[i] = (*data.f_1)[i] - ((*data.f_1)[i] - (*data.f_eq_1)[i])/tau;
                            }
                        if(((*info.types)[begin] & 1<<1) == 1<<1)
                            for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
                            {
-                               (*data.f_temp_6)[i] = (*data.f_temp_2)[i];
+                               (*data.f_temp_6)[i] = (*data.f_2)[i] - ((*data.f_2)[i] - (*data.f_eq_2)[i])/tau;
                            }
                        if(((*info.types)[begin] & 1<<2) == 1<<2)
                            for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
                            {
-                               (*data.f_temp_7)[i] = (*data.f_temp_3)[i];
+                               (*data.f_temp_7)[i] = (*data.f_3)[i] - ((*data.f_3)[i] - (*data.f_eq_3)[i])/tau;
                            }
                        if(((*info.types)[begin] & 1<<3) == 1<<3)
                            for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
                            {
-                               (*data.f_temp_8)[i] = (*data.f_temp_4)[i];
+                               (*data.f_temp_8)[i] = (*data.f_4)[i] - ((*data.f_4)[i] - (*data.f_eq_4)[i])/tau;
                            }
                        if(((*info.types)[begin] & 1<<4) == 1<<4)
                            for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
                            {
-                               (*data.f_temp_1)[i] = (*data.f_temp_5)[i];
+                               (*data.f_temp_1)[i] = (*data.f_5)[i] - ((*data.f_5)[i] - (*data.f_eq_5)[i])/tau;
                            }
                        if(((*info.types)[begin] & 1<<5) == 1<<5)
                            for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
                            {
-                               (*data.f_temp_2)[i] = (*data.f_temp_6)[i];
+                               (*data.f_temp_2)[i] = (*data.f_6)[i] - ((*data.f_6)[i] - (*data.f_eq_6)[i])/tau;
                            }
                        if(((*info.types)[begin] & 1<<6) == 1<<6)
                            for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
                            {
-                               (*data.f_temp_3)[i] = (*data.f_temp_7)[i];
+                               (*data.f_temp_3)[i] = (*data.f_7)[i] - ((*data.f_7)[i] - (*data.f_eq_7)[i])/tau;
                            }
                        if(((*info.types)[begin] & 1<<7) == 1<<7)
                            for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
                            {
-                               (*data.f_temp_4)[i] = (*data.f_temp_8)[i];
+                               (*data.f_temp_4)[i] = (*data.f_8)[i] - ((*data.f_8)[i] - (*data.f_eq_8)[i])/tau;
                            }
 
                        // Corners
@@ -156,6 +176,24 @@ namespace honei
                    data.f_temp_6->unlock(lm_read_and_write);
                    data.f_temp_7->unlock(lm_read_and_write);
                    data.f_temp_8->unlock(lm_read_and_write);
+
+                   data.f_1->unlock(lm_read_only);
+                   data.f_2->unlock(lm_read_only);
+                   data.f_3->unlock(lm_read_only);
+                   data.f_4->unlock(lm_read_only);
+                   data.f_5->unlock(lm_read_only);
+                   data.f_6->unlock(lm_read_only);
+                   data.f_7->unlock(lm_read_only);
+                   data.f_8->unlock(lm_read_only);
+
+                   data.f_eq_1->unlock(lm_read_only);
+                   data.f_eq_2->unlock(lm_read_only);
+                   data.f_eq_3->unlock(lm_read_only);
+                   data.f_eq_4->unlock(lm_read_only);
+                   data.f_eq_5->unlock(lm_read_only);
+                   data.f_eq_6->unlock(lm_read_only);
+                   data.f_eq_7->unlock(lm_read_only);
+                   data.f_eq_8->unlock(lm_read_only);
                }
        };
 

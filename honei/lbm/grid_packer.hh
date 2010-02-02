@@ -54,7 +54,7 @@ namespace honei
                 for (unsigned long i(0) ; i < limits.size() - 1; ++i)
                 {
                     // if dir points not to our own cell (reflection)
-                    if (dir[i] != limits[i])
+                    //if (dir[i] != limits[i])
                     {
                         dir_post.push_back(dir[i]);
                         dir_index.push_back(limits.at(i));
