@@ -861,6 +861,32 @@ namespace honei
                     start = end;
                 }
 
+                //todo ganz loeschen wenn reflektion in packer komplett funktioniert
+                /*temp_dir_index_1.pop_back();
+                temp_dir_index_1.pop_back();
+                temp_dir_1.pop_back();
+                temp_dir_index_2.pop_back();
+                temp_dir_index_2.pop_back();
+                temp_dir_2.pop_back();
+                temp_dir_index_3.pop_back();
+                temp_dir_index_3.pop_back();
+                temp_dir_3.pop_back();
+                temp_dir_index_4.pop_back();
+                temp_dir_index_4.pop_back();
+                temp_dir_4.pop_back();
+                temp_dir_index_5.pop_back();
+                temp_dir_index_5.pop_back();
+                temp_dir_5.pop_back();
+                temp_dir_index_6.pop_back();
+                temp_dir_index_6.pop_back();
+                temp_dir_6.pop_back();
+                temp_dir_index_7.pop_back();
+                temp_dir_index_7.pop_back();
+                temp_dir_7.pop_back();
+                temp_dir_index_8.pop_back();
+                temp_dir_index_8.pop_back();
+                temp_dir_8.pop_back();*/
+
                 // Create partitions
                 std::vector<std::vector<unsigned long> > temp_limits_list;
                 std::vector<std::vector<unsigned long> > temp_types_list;
@@ -919,8 +945,9 @@ namespace honei
                             new_dir_index_1.push_back(temp_dir_index_1[index]);
                             if (index % 2 == 0)
                                 new_dir_1.push_back(temp_dir_1[index / 2]);
+                            else
+                                max_collection.push_back(new_dir_1.back() + new_dir_index_1.back() - new_dir_index_1[new_dir_index_1.size() - 2] -1);
                         }
-                        max_collection.push_back(*max_element(new_dir_1.begin(), new_dir_1.end()) + new_dir_index_1[new_dir_index_1.size() - 1] - new_dir_index_1[new_dir_index_1.size() - 2] - 1);
                         min_collection.push_back(*min_element(new_dir_1.begin(), new_dir_1.end()));
                     }
                     else
@@ -1009,8 +1036,9 @@ namespace honei
                             new_dir_index_6.push_back(temp_dir_index_6[index]);
                             if (index % 2 == 0)
                                 new_dir_6.push_back(temp_dir_6[index / 2]);
+                            else
+                                max_collection.push_back(new_dir_6.back() + new_dir_index_6.back() - new_dir_index_6[new_dir_index_6.size() - 2] -1);
                         }
-                        max_collection.push_back(*max_element(new_dir_6.begin(), new_dir_6.end()) + new_dir_index_6[new_dir_index_6.size() - 1] - new_dir_index_6[new_dir_index_6.size() - 2] - 1);
                         min_collection.push_back(*min_element(new_dir_6.begin(), new_dir_6.end()));
                     }
                     else
@@ -1027,8 +1055,9 @@ namespace honei
                             new_dir_index_7.push_back(temp_dir_index_7[index]);
                             if (index % 2 == 0)
                                 new_dir_7.push_back(temp_dir_7[index / 2]);
+                            else
+                                max_collection.push_back(new_dir_7.back() + new_dir_index_7.back() - new_dir_index_7[new_dir_index_7.size() - 2] -1);
                         }
-                        max_collection.push_back(*max_element(new_dir_7.begin(), new_dir_7.end()) + new_dir_index_7[new_dir_index_7.size() - 1] - new_dir_index_7[new_dir_index_7.size() - 2] - 1);
                         min_collection.push_back(*min_element(new_dir_7.begin(), new_dir_7.end()));
                     }
                     else
@@ -1045,8 +1074,9 @@ namespace honei
                             new_dir_index_8.push_back(temp_dir_index_8[index]);
                             if (index % 2 == 0)
                                 new_dir_8.push_back(temp_dir_8[index / 2]);
+                            else
+                                max_collection.push_back(new_dir_8.back() + new_dir_index_8.back() - new_dir_index_8[new_dir_index_8.size() - 2] -1);
                         }
-                        max_collection.push_back(*max_element(new_dir_8.begin(), new_dir_8.end()) + new_dir_index_8[new_dir_index_8.size() - 1] - new_dir_index_8[new_dir_index_8.size() - 2] - 1);
                         min_collection.push_back(*min_element(new_dir_7.begin(), new_dir_7.end()));
                     }
                     else
