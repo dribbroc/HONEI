@@ -534,4 +534,4 @@ class SolverLABNAVSTO_FSI_DCTest :
 };
 //SolverLABNAVSTO_FSI_DCTest<tags::CPU, double> solver_test_double("double", double(1), double(1), double(1.2), double(100), double(1), double(0));
 //SolverLABNAVSTO_FSI_DCTest<tags::CPU, float> solver_test_float("float", float(1), float(1), float(1.2), float(100), float(1), float(0));
-SolverLABNAVSTO_FSI_DCTest<tags::CPU, double> solver_test_double_10("double", double(1), double(1), double(1.), double(100), double(1.), double(0));
+//SolverLABNAVSTO_FSI_DCTest<tags::CPU, double> solver_test_double_10("double", double(1), double(1), double(1.), double(100), double(1.), double(0));

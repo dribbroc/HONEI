@@ -48,7 +48,7 @@ class SolverLABNAVSTOGridDCTest :
         DataType_ _dx, _dy, _dt, _reynolds, _tau, _U;
     public:
         SolverLABNAVSTOGridDCTest(const std::string & type, DataType_ dx, DataType_ dy, DataType_ dt, DataType_ reynolds, DataType_ tau, DataType_ U) :
-            TaggedTest<Tag_>("solver_lbm_grid_test<" + type + ">")
+            TaggedTest<Tag_>("solver_lbm_grid_dc_advanced_test<" + type + ">")
         {
             _dx = dx;
             _dy = dy;
@@ -562,4 +562,4 @@ class SolverLABNAVSTOGridDCTest :
 };
 //SolverLABNAVSTOGridDCTest<tags::CPU, double> solver_test_double("double", double(1), double(1), double(1.2), double(100), double(1), double(0));
 //SolverLABNAVSTOGridDCTest<tags::CPU, float> solver_test_float("float", float(1), float(1), float(1.2), float(100), float(1), float(0));
-SolverLABNAVSTOGridDCTest<tags::CPU, double> solver_test_double_10("double", double(1.), double(1.), double(1.), double(100), double(1.), double(0));
+//SolverLABNAVSTOGridDCTest<tags::CPU, double> solver_test_double_10("double", double(1.), double(1.), double(1.), double(100), double(1.), double(0));
