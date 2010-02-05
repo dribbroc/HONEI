@@ -169,7 +169,7 @@ class CollideStreamFSITest :
 
             CollideStreamGrid<Tag_, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                 value(info, data, tau);
-            UpdateVelocityDirectionsGrid<Tag_, NOSLIP>::value(info, data);
+            UpdateVelocityDirectionsGrid<Tag_, NOSLIP>::value(info, data, tau);
 
             data.f_temp_1->lock(lm_read_only);
             DenseVector<DataType_> ref_result(data.f_temp_8->copy());
@@ -298,7 +298,7 @@ class CollideStreamFSITest :
                 value(info_2, data_2, tau);
             CollideStreamFSI<Tag_, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                 value(info_2, data_2, solids, DataType_(0.), DataType_(0.));
-            UpdateVelocityDirectionsGrid<Tag_, NOSLIP>::value(info_2, data_2);
+            UpdateVelocityDirectionsGrid<Tag_, NOSLIP>::value(info_2, data_2, tau);
 
             //in matrix-form:
             DenseMatrix<DataType_> ref(h.rows(), h.columns());

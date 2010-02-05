@@ -138,12 +138,12 @@ class SolverLBMGridExternalComparisonTest_1 :
 
 };
 SolverLBMGridExternalComparisonTest_1<tags::CPU, float> cpu_solver_test_float("float", "ext_initial_h.ppm", "ext_initial_vx.ppm", "ext_initial_vy.ppm", "ext_initial_b.ppm", "ext_obstacles.ppm", 300ul, 0.025f, 0.001f, 0.001f, 0.00051f, 1.5f);
-/*#ifdef HONEI_SSE
+#ifdef HONEI_SSE
 SolverLBMGridExternalComparisonTest_1<tags::CPU::SSE, float> sse_solver_test_float("float", "ext_initial_h.ppm", "ext_initial_vx.ppm", "ext_initial_vy.ppm", "ext_initial_b.ppm", "ext_obstacles.ppm", 200ul, 0.025f, 0.001f, 0.001f, 0.00051f, 1.5f);
 #endif
 #ifdef HONEI_CUDA
-SolverLBMGridExternalComparisonTest_1<tags::GPU::CUDA, float> cuda_solver_test_float("float", "ext_initial_h.ppm", "ext_initial_vx.ppm", "ext_initial_vy.ppm", "ext_initial_b.ppm", "ext_obstacles.ppm", 1000ul, 0.025f, 0.001f, 0.001f, 0.0005f, 1.5f);
-#endif*/
+SolverLBMGridExternalComparisonTest_1<tags::GPU::CUDA, float> cuda_solver_test_float("float", "ext_initial_h.ppm", "ext_initial_vx.ppm", "ext_initial_vy.ppm", "ext_initial_b.ppm", "ext_obstacles.ppm", 300ul, 0.025f, 0.001f, 0.001f, 0.0005f, 1.5f);
+#endif
 
 
 template <typename Tag_, typename DataType_>

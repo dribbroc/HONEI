@@ -214,16 +214,20 @@ namespace honei
                     if ((type & 1<<5) == 1<<5)
                         dir_6.push_back(packed_index);
                     else
-                        dir_6.push_back(temp_index - 1);
-
+                    {
+                        //if(type & 1<<6 == 1<<6)
+                        //    dir_6.push_back(temp_index);
+                        //else
+                            dir_6.push_back(temp_index - 1);
+                    }
                     // DIR_8
                     if ((type & 1<<7) == 1<<7)
                         dir_8.push_back(packed_index);
                     else
                     {
-                        if ((type & 1<<6) == 1<<6)
-                            dir_8.push_back(temp_index);
-                        else
+                        //if ((type & 1<<6) == 1<<6)
+                        //    dir_8.push_back(temp_index);
+                        //else
                             dir_8.push_back(temp_index + 1);
                     }
                 }
@@ -261,16 +265,22 @@ namespace honei
                     if ((type & 1<<1) == 1<<1)
                         dir_2.push_back(packed_index);
                     else
-                        dir_2.push_back(temp_index + 1);
+                    {
+                        //if (type & 1<<2 == 1<<2)
+                        //    dir_2.push_back(temp_index);
+                        //else
+                            dir_2.push_back(temp_index + 1);
+
+                    }
 
                     // DIR_4
                     if ((type & 1<<3) == 1<<3)
                         dir_4.push_back(packed_index);
                     else
                     {
-                        if ((type & 1<<2) == 1<<2)
-                            dir_4.push_back(temp_index);
-                        else
+                        //if ((type & 1<<2) == 1<<2)
+                        //    dir_4.push_back(temp_index);
+                        //else
                             dir_4.push_back(temp_index - 1);
                     }
                 }

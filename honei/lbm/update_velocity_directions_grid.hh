@@ -137,25 +137,41 @@ namespace honei
                            }
 
                        // Corners
-                       if(((*info.types)[begin] & 1<<2) == 1<<2 && ((*info.types)[begin] & 1<<4) == 1<<4)
+                       if(((*info.types)[begin] & 1<<2) == 1<<2 &&
+                               ((*info.types)[begin] & 1<<4) == 1<<4 &&
+                               ((*info.types)[begin] & 1<<1) == 1<<1 &&
+                               ((*info.types)[begin] & 1<<5) == 1<<5
+                         )
                            for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
                            {
                                (*data.f_temp_2)[i] = (*data.f_temp_8)[i];
                                (*data.f_temp_6)[i] = (*data.f_temp_8)[i];
                            }
-                       if(((*info.types)[begin] & 1<<4) == 1<<4 && ((*info.types)[begin] & 1<<6) == 1<<6)
+                       if(((*info.types)[begin] & 1<<4) == 1<<4 &&
+                               ((*info.types)[begin] & 1<<6) == 1<<6 &&
+                               ((*info.types)[begin] & 1<<3) == 1<<3 &&
+                               ((*info.types)[begin] & 1<<7) == 1<<7
+                         )
                            for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
                            {
                                (*data.f_temp_4)[i] = (*data.f_temp_2)[i];
                                (*data.f_temp_8)[i] = (*data.f_temp_2)[i];
                            }
-                       if(((*info.types)[begin] & 1<<0) == 1<<0 && ((*info.types)[begin] & 1<<6) == 1<<6)
+                       if(((*info.types)[begin] & 1<<0) == 1<<0 &&
+                               ((*info.types)[begin] & 1<<6) == 1<<6 &&
+                               ((*info.types)[begin] & 1<<1) == 1<<1 &&
+                               ((*info.types)[begin] & 1<<5) == 1<<5
+                         )
                            for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
                            {
                                (*data.f_temp_2)[i] = (*data.f_temp_4)[i];
                                (*data.f_temp_6)[i] = (*data.f_temp_4)[i];
                            }
-                       if(((*info.types)[begin] & 1<<0) == 1<<0 && ((*info.types)[begin] & 1<<2) == 1<<2)
+                       if(((*info.types)[begin] & 1<<0) == 1<<0 &&
+                               ((*info.types)[begin] & 1<<2) == 1<<2 &&
+                               ((*info.types)[begin] & 1<<3) == 1<<3 &&
+                               ((*info.types)[begin] & 1<<7) == 1<<7
+                         )
                            for (unsigned long i((*info.limits)[begin]) ; i != (*info.limits)[begin + 1] ; ++i)
                            {
                                (*data.f_temp_4)[i] = (*data.f_temp_6)[i];
@@ -205,7 +221,7 @@ namespace honei
        struct UpdateVelocityDirectionsGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP>
        {
            template <typename DT1_>
-           static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data, DT1_ tau);
+               static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data, DT1_ tau);
        };
 
    template <>

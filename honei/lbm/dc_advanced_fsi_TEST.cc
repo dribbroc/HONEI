@@ -172,7 +172,7 @@ class SolverLABNAVSTO_FSI_DCTest :
 
                 ///Boundary correction:
                 UpdateVelocityDirectionsGrid<Tag_, lbm_boundary_types::NOSLIP>::
-                    value(info, data);
+                    value(info, data, tau);
 
                 //extract velocities out of h from previous timestep:
                 ExtractionGrid<Tag_, lbm_modes::WET>::value(info, data, DataType_(10e-5));

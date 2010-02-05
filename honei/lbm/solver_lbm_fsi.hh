@@ -201,7 +201,7 @@ namespace honei
 
                     ///Boundary correction:
                     UpdateVelocityDirectionsGrid<Tag_, NOSLIP>::
-                        value(*_info, *_data);
+                        value(*_info, *_data, _relaxation_time);
 
                     //extract velocities out of h from previous timestep:
                     ExtractionGrid<Tag_, LbmMode_>::value(*_info, *_data, ResPrec_(10e-5));

@@ -45,7 +45,14 @@ void UpdateVelocityDirectionsGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP>::v
     sse::up_vel_dir_grid(begin, end, info.limits->elements(), info.types->elements(),
             data.f_temp_1->elements(), data.f_temp_2->elements(), data.f_temp_3->elements(),
             data.f_temp_4->elements(), data.f_temp_5->elements(), data.f_temp_6->elements(),
-            data.f_temp_7->elements(), data.f_temp_8->elements(), tau);
+            data.f_temp_7->elements(), data.f_temp_8->elements(),
+            data.f_1->elements(), data.f_2->elements(), data.f_3->elements(),
+            data.f_4->elements(), data.f_5->elements(), data.f_6->elements(),
+            data.f_7->elements(), data.f_8->elements(),
+            data.f_eq_1->elements(), data.f_eq_2->elements(), data.f_eq_3->elements(),
+            data.f_eq_4->elements(), data.f_eq_5->elements(), data.f_eq_6->elements(),
+            data.f_eq_7->elements(), data.f_eq_8->elements(),
+            tau);
 
     info.limits->unlock(lm_read_only);
     info.types->unlock(lm_read_only);

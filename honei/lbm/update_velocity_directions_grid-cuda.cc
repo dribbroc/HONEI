@@ -59,12 +59,35 @@ namespace
                 void * f_temp_7_gpu(data.f_temp_7->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
                 void * f_temp_8_gpu(data.f_temp_8->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
 
+                void * f_1_gpu(data.f_1->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * f_2_gpu(data.f_2->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * f_3_gpu(data.f_3->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * f_4_gpu(data.f_4->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * f_5_gpu(data.f_5->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * f_6_gpu(data.f_6->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * f_7_gpu(data.f_7->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * f_8_gpu(data.f_8->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                void * f_eq_1_gpu(data.f_eq_1->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * f_eq_2_gpu(data.f_eq_2->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * f_eq_3_gpu(data.f_eq_3->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * f_eq_4_gpu(data.f_eq_4->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * f_eq_5_gpu(data.f_eq_5->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * f_eq_6_gpu(data.f_eq_6->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * f_eq_7_gpu(data.f_eq_7->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * f_eq_8_gpu(data.f_eq_8->lock(lm_read_only, tags::GPU::CUDA::memory_value));
                 unsigned long start((*info.limits)[0]);
                 unsigned long end((*info.limits)[info.limits->size() - 1]);
                 cuda_up_vel_dir_grid_float(start, end, cuda_types_gpu,
                         f_temp_1_gpu, f_temp_2_gpu,
                         f_temp_3_gpu, f_temp_4_gpu, f_temp_5_gpu,
                         f_temp_6_gpu, f_temp_7_gpu, f_temp_8_gpu,
+                        f_1_gpu, f_2_gpu,
+                        f_3_gpu, f_4_gpu, f_5_gpu,
+                        f_6_gpu, f_7_gpu, f_8_gpu,
+                        f_eq_1_gpu, f_eq_2_gpu,
+                        f_eq_3_gpu, f_eq_4_gpu, f_eq_5_gpu,
+                        f_eq_6_gpu, f_eq_7_gpu, f_eq_8_gpu,
                         tau,
                         blocksize);
 
@@ -78,6 +101,24 @@ namespace
                 data.f_temp_6->unlock(lm_read_and_write);
                 data.f_temp_7->unlock(lm_read_and_write);
                 data.f_temp_8->unlock(lm_read_and_write);
+
+                data.f_1->unlock(lm_read_only);
+                data.f_2->unlock(lm_read_only);
+                data.f_3->unlock(lm_read_only);
+                data.f_4->unlock(lm_read_only);
+                data.f_5->unlock(lm_read_only);
+                data.f_6->unlock(lm_read_only);
+                data.f_7->unlock(lm_read_only);
+                data.f_8->unlock(lm_read_only);
+
+                data.f_eq_1->unlock(lm_read_only);
+                data.f_eq_2->unlock(lm_read_only);
+                data.f_eq_3->unlock(lm_read_only);
+                data.f_eq_4->unlock(lm_read_only);
+                data.f_eq_5->unlock(lm_read_only);
+                data.f_eq_6->unlock(lm_read_only);
+                data.f_eq_7->unlock(lm_read_only);
+                data.f_eq_8->unlock(lm_read_only);
             }
     };
 }

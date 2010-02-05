@@ -18,7 +18,7 @@
  */
 
 #include <honei/backends/cuda/cuda_util.hh>
-
+#include <iostream>
 namespace honei
 {
     namespace cuda
@@ -42,11 +42,14 @@ namespace honei
             }
         }
         __global__ void up_vel_dir_grid_gpu_corner(
-                float * f_temp_backward,
-                float * f_forward,
-                float * f_eq_forward,
+                float * f_temp_old_1,
+                float * f_temp_old_2,
+                float * f_temp_new,
                 unsigned long * types,
-                unsigned long type,
+                unsigned long type_1,
+                unsigned long type_2,
+                unsigned long type_3,
+                unsigned long type_4,
                 float tau,
                 unsigned long offset,
                 unsigned long size)
@@ -55,8 +58,15 @@ namespace honei
             if (idx >= offset && idx < size)
             {
                 unsigned long i(idx);
-                if((types[i] & 1<<(type)) == 1<<(type))
-                    f_temp_backward[i] = f_forward[i] - (f_forward[i] - f_eq_forward[i])/tau;
+                if((types[i] & 1<<(type_1)) == 1<<(type_1) &&
+                        (types[i] & 1<<(type_2)) == 1<<(type_2) &&
+                        (types[i] & 1<<(type_3)) == 1<<(type_3) &&
+                        (types[i] & 1<<(type_4)) == 1<<(type_4)
+                  )
+                {
+                    f_temp_old_1[i] = f_temp_new[i];
+                    f_temp_old_2[i] = f_temp_new[i];
+                }
             }
         }
         /*__global__ void up_vel_dir_grid_gpu(
@@ -238,6 +248,51 @@ extern "C" void cuda_up_vel_dir_grid_float(unsigned long start, unsigned long en
             f_8_gpu,
             f_eq_8_gpu,
             types_gpu,
+            7ul,
+            tau,
+            start, size);
+
+    honei::cuda::up_vel_dir_grid_gpu_corner<<<grid, block>>>(
+            f_temp_2_gpu,
+            f_temp_6_gpu,
+            f_temp_8_gpu,
+            types_gpu,
+            1ul,
+            2ul,
+            4ul,
+            5ul,
+            tau,
+            start, size);
+    honei::cuda::up_vel_dir_grid_gpu_corner<<<grid, block>>>(
+            f_temp_4_gpu,
+            f_temp_8_gpu,
+            f_temp_2_gpu,
+            types_gpu,
+            3ul,
+            4ul,
+            6ul,
+            7ul,
+            tau,
+            start, size);
+    honei::cuda::up_vel_dir_grid_gpu_corner<<<grid, block>>>(
+            f_temp_2_gpu,
+            f_temp_6_gpu,
+            f_temp_4_gpu,
+            types_gpu,
+            0ul,
+            1ul,
+            5ul,
+            6ul,
+            tau,
+            start, size);
+    honei::cuda::up_vel_dir_grid_gpu_corner<<<grid, block>>>(
+            f_temp_4_gpu,
+            f_temp_8_gpu,
+            f_temp_6_gpu,
+            types_gpu,
+            0ul,
+            2ul,
+            3ul,
             7ul,
             tau,
             start, size);
