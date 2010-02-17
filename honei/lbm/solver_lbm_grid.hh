@@ -265,7 +265,6 @@ namespace honei
                         _data(data)
                 {
                     _parts = Configuration::instance()->get_value("mc::SolverLabsweGrid::patch_count", 4ul);
-                    _parts = 4;
                     CONTEXT("When creating LABSWE solver:");
                     GridPartitioner<D2Q9, ResPrec_>::decompose(_parts, *_info, *_data, _info_list, _data_list, _fringe_list);
 
@@ -456,7 +455,7 @@ namespace honei
                         _data(data)
                 {
                     _parts = Configuration::instance()->get_value("cuda::SolverLabsweGrid::patch_count", 2ul);
-                    _parts = 2;
+                    _parts = 3;
                     CONTEXT("When creating LABSWE solver:");
                     GridPartitioner<D2Q9, ResPrec_>::decompose(_parts, *_info, *_data, _info_list, _data_list, _fringe_list, true);
 

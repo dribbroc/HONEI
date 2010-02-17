@@ -815,8 +815,11 @@ namespace honei
                 unsigned long first_size((data.u->size() / parts) + (data.u->size() % parts));
                 if (hack)
                 {
-                    first_size=800ul*600;
-                    normal_size= data.u->size() - first_size;
+                    //first_size=800ul*600;
+                    first_size=400ul*600;
+                    unsigned long rest_size = data.u->size() - first_size;
+                    normal_size = rest_size / (parts - 1);
+                    first_size += rest_size % (parts -1);
                 }
                 std::cout<<data.u->size() <<" "<<normal_size<<" " <<parts<<std::endl;
 
