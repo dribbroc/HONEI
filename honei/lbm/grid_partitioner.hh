@@ -720,7 +720,7 @@ namespace honei
 
             static void decompose(unsigned long parts, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
                     std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list,
-                    std::vector<PackedGridFringe<D2Q9> > & fringe_list)
+                    std::vector<PackedGridFringe<D2Q9> > & fringe_list, bool hack=false)
             {
                 CONTEXT("When creating grid partitions:");
                 std::vector<unsigned long> temp_limits;
@@ -813,6 +813,12 @@ namespace honei
 
                 unsigned long normal_size((data.u->size() / parts));
                 unsigned long first_size((data.u->size() / parts) + (data.u->size() % parts));
+                if (hack)
+                {
+                    first_size=800ul*600;
+                    normal_size= data.u->size() - first_size;
+                }
+                std::cout<<data.u->size() <<" "<<normal_size<<" " <<parts<<std::endl;
 
                 unsigned long end(0);
                 unsigned long start(0);

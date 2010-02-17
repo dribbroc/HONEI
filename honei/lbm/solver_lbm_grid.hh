@@ -265,6 +265,7 @@ namespace honei
                         _data(data)
                 {
                     _parts = Configuration::instance()->get_value("mc::SolverLabsweGrid::patch_count", 4ul);
+                    _parts = 4;
                     CONTEXT("When creating LABSWE solver:");
                     GridPartitioner<D2Q9, ResPrec_>::decompose(_parts, *_info, *_data, _info_list, _data_list, _fringe_list);
 
@@ -447,6 +448,7 @@ namespace honei
                     std::vector<PackedGridData<D2Q9, ResPrec_> > _data_list;
                     std::vector<PackedGridFringe<D2Q9> > _fringe_list;
                     std::vector<honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_> *> _solver_list;
+                    honei::SolverLBMGrid<tags::CPU::MultiCore::SSE, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_> * _cpu_solver;
 
                 public:
                     SolverLBMGrid(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, ResPrec_> * data, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, ResPrec_ rel_time):
@@ -454,10 +456,12 @@ namespace honei
                         _data(data)
                 {
                     _parts = Configuration::instance()->get_value("cuda::SolverLabsweGrid::patch_count", 2ul);
+                    _parts = 2;
                     CONTEXT("When creating LABSWE solver:");
-                    GridPartitioner<D2Q9, ResPrec_>::decompose(_parts, *_info, *_data, _info_list, _data_list, _fringe_list);
+                    GridPartitioner<D2Q9, ResPrec_>::decompose(_parts, *_info, *_data, _info_list, _data_list, _fringe_list, true);
 
-                    for(unsigned long i(0) ; i < _parts ; ++i)
+                    _cpu_solver = new honei::SolverLBMGrid<tags::CPU::MultiCore::SSE, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>(&_info_list[0], &_data_list[0], dx, dy, dt, rel_time);
+                    for(unsigned long i(1) ; i < _parts ; ++i)
                     {
                         _solver_list.push_back(new honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>(&_info_list[i], &_data_list[i], dx, dy, dt, rel_time));
                     }
@@ -472,13 +476,14 @@ namespace honei
                     {
                         CONTEXT("When performing LABSWE preprocessing.");
 
+                        _cpu_solver->do_preprocessing();
                         TicketVector tickets;
-                        for (unsigned long i(0) ; i < _parts ; ++i)
+                        for (unsigned long i(1) ; i < _parts ; ++i)
                         {
                             tickets.push_back(cuda::GPUPool::instance()->enqueue(
                                         std::tr1::bind(
                                             std::tr1::mem_fn(&honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>::do_preprocessing),
-                                            *(_solver_list.at(i))
+                                            *(_solver_list.at(i-1))
                                             ), i));
                         }
                         tickets.wait();
@@ -511,13 +516,14 @@ namespace honei
 
                     void do_postprocessing()
                     {
+                        _cpu_solver->do_postprocessing();
                         TicketVector tickets;
-                        for (unsigned long i(0) ; i < _parts ; ++i)
+                        for (unsigned long i(1) ; i < _parts ; ++i)
                         {
                             tickets.push_back(cuda::GPUPool::instance()->enqueue(
                                         std::tr1::bind(
                                             std::tr1::mem_fn(&honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>::do_postprocessing),
-                                            *(_solver_list.at(i))
+                                            *(_solver_list.at(i-1))
                                             ), i));
                         }
                         tickets.wait();
@@ -527,16 +533,17 @@ namespace honei
                     void solve()
                     {
                         TicketVector tickets;
-                        for (unsigned long i(0) ; i < _parts ; ++i)
+                        for (unsigned long i(1) ; i < _parts ; ++i)
                         {
                             tickets.push_back(cuda::GPUPool::instance()->enqueue(
                                         std::tr1::bind(
                                             std::tr1::mem_fn(&honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>::solve),
-                                            *(_solver_list.at(i))
+                                            *(_solver_list.at(i-1))
                                             ), i));
                         }
+                        _cpu_solver->solve();
                         tickets.wait();
-                        for (unsigned long i(0) ; i < _parts ; ++i)
+                        for (unsigned long i(1) ; i < _parts ; ++i)
                         {
                             //todo target nur einmal abrufen und dann speichern
                             void * target;
@@ -612,7 +619,7 @@ namespace honei
                         }
                         tickets.wait();
                         GridPartitioner<D2Q9, ResPrec_>::synch(*_info, *_data, _info_list, _data_list, _fringe_list);
-                        for (unsigned long i(0) ; i < _parts ; ++i)
+                        for (unsigned long i(1) ; i < _parts ; ++i)
                         {
                             void * target;
                             void * target1;
