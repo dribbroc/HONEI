@@ -25,6 +25,8 @@
 #include <iostream>
 #include <honei/lbm/grid.hh>
 #include <honei/lbm/grid_packer.hh>
+#include <honei/la/difference.hh>
+#include <honei/la/sum.hh>
 
 using namespace honei;
 using namespace tests;
@@ -124,12 +126,12 @@ class SolverLBMGridExternalComparisonTest_1 :
 
             DataType_ max_v(0);
             for(unsigned long i(0) ; i < grid.h->rows() ; ++i)
-                for(unsigned long j(0) ; j < grid.h->rows() ; ++j)
+                for(unsigned long j(0) ; j < grid.h->columns() ; ++j)
                     max_v = std::max(max_v, (*grid.h)[i][j]);
 
             //0->0, max_v->1
             for(unsigned long i(0) ; i < grid.h->rows() ; ++i)
-                for(unsigned long j(0) ; j < grid.h->rows() ; ++j)
+                for(unsigned long j(0) ; j < grid.h->columns() ; ++j)
                     (*grid.h)[i][j] /= max_v;
 
             BitmapIO<io_formats::PPM>::write_scalar_field(*grid.h, "ext_result_h_1.ppm");
@@ -137,13 +139,13 @@ class SolverLBMGridExternalComparisonTest_1 :
         }
 
 };
-SolverLBMGridExternalComparisonTest_1<tags::CPU, float> cpu_solver_test_float("float", "ext_initial_h.ppm", "ext_initial_vx.ppm", "ext_initial_vy.ppm", "ext_initial_b.ppm", "ext_obstacles.ppm", 300ul, 0.025f, 0.001f, 0.001f, 0.00051f, 1.5f);
+/*SolverLBMGridExternalComparisonTest_1<tags::CPU, float> cpu_solver_test_float("float", "ext_initial_h.ppm", "ext_initial_vx.ppm", "ext_initial_vy.ppm", "ext_initial_b.ppm", "ext_obstacles.ppm", 300ul, 0.025f, 0.001f, 0.001f, 0.00051f, 1.5f);
 #ifdef HONEI_SSE
 SolverLBMGridExternalComparisonTest_1<tags::CPU::SSE, float> sse_solver_test_float("float", "ext_initial_h.ppm", "ext_initial_vx.ppm", "ext_initial_vy.ppm", "ext_initial_b.ppm", "ext_obstacles.ppm", 200ul, 0.025f, 0.001f, 0.001f, 0.00051f, 1.5f);
 #endif
 #ifdef HONEI_CUDA
 SolverLBMGridExternalComparisonTest_1<tags::GPU::CUDA, float> cuda_solver_test_float("float", "ext_initial_h.ppm", "ext_initial_vx.ppm", "ext_initial_vy.ppm", "ext_initial_b.ppm", "ext_obstacles.ppm", 300ul, 0.025f, 0.001f, 0.001f, 0.0005f, 1.5f);
-#endif
+#endif*/
 
 
 template <typename Tag_, typename DataType_>
@@ -157,7 +159,7 @@ class SolverLBMGridExternalComparisonTest_CDUB :
         std::string _fn_initial_b;
         std::string _fn_obstacles;
         unsigned long _max_timesteps;
-        DataType_ _max_h;
+        DataType_ _scale_h, _scale_vx, _scale_vy, _scale_b;
         DataType_ _dx, _dy, _dt, _tau;
     public:
         SolverLBMGridExternalComparisonTest_CDUB(const std::string & type,
@@ -167,7 +169,10 @@ class SolverLBMGridExternalComparisonTest_CDUB :
                                             const std::string & fn_b,
                                             const std::string & fn_o,
                                             unsigned long max_ts,
-                                            DataType_ max_h,
+                                            DataType_ scale_h,
+                                            DataType_ scale_vx,
+                                            DataType_ scale_vy,
+                                            DataType_ scale_b,
                                             DataType_ dx,
                                             DataType_ dy,
                                             DataType_ dt,
@@ -180,7 +185,10 @@ class SolverLBMGridExternalComparisonTest_CDUB :
             _fn_initial_b = fn_b;
             _fn_obstacles = fn_o;
             _max_timesteps = max_ts;
-            _max_h = max_h;
+            _scale_h = scale_h;
+            _scale_vx = scale_vx;
+            _scale_vy = scale_vy;
+            _scale_b = scale_b;
             _dx = dx;
             _dy = dy;
             _dt = dt;
@@ -189,20 +197,32 @@ class SolverLBMGridExternalComparisonTest_CDUB :
 
         virtual void run() const
         {
-            Grid<D2Q9, DataType_> grid;
+            //Code used for bed topography generation
+            /*Grid<D2Q9, DataType_> grid;
 
             ScenarioCollection::get_scenario(5, 100, 200, grid);
 
-            BitmapIO<io_formats::PPM>::write_scalar_field(*grid.b, "ext_initial_b_cdub.ppm");
-            std::cout << *grid.b << std::endl;
+            DataType_ max_v(0);
+            for(unsigned long i(0) ; i < grid.b->rows() ; ++i)
+                for(unsigned long j(0) ; j < grid.b->columns() ; ++j)
+                    max_v = std::max(max_v, (*grid.b)[i][j]);
 
+            //0->0, max_v->1
+            for(unsigned long i(0) ; i < grid.b->rows() ; ++i)
+                for(unsigned long j(0) ; j < grid.b->columns() ; ++j)
+                    (*grid.b)[i][j] /= max_v;
+
+            BitmapIO<io_formats::PPM>::write_scalar_field(*grid.b, "ext_initial_b_cdub.ppm");*/
 
             //Reading data from files:
-            /*DenseMatrix<DataType_> h(BitmapIO<io_formats::PPM>::read_scalar_field(_fn_initial_h, _max_h));
-            DenseMatrix<DataType_> u(BitmapIO<io_formats::PPM>::read_scalar_field(_fn_initial_veloc_x, _max_h));
-            DenseMatrix<DataType_> v(BitmapIO<io_formats::PPM>::read_scalar_field(_fn_initial_veloc_y, _max_h));
-            DenseMatrix<DataType_> b(BitmapIO<io_formats::PPM>::read_scalar_field(_fn_initial_b, _max_h));
+            DenseMatrix<DataType_> h(BitmapIO<io_formats::PPM>::read_scalar_field(_fn_initial_h, _scale_h));
+            DenseMatrix<DataType_> u(BitmapIO<io_formats::PPM>::read_scalar_field(_fn_initial_veloc_x, _scale_vx));
+            DenseMatrix<DataType_> v(BitmapIO<io_formats::PPM>::read_scalar_field(_fn_initial_veloc_y, _scale_vy));
+            DenseMatrix<DataType_> b(BitmapIO<io_formats::PPM>::read_scalar_field(_fn_initial_b, _scale_b));
             DenseMatrix<bool> o(BitmapIO<io_formats::PPM>::read_scalar_field(_fn_obstacles, bool(1)));
+
+            //Renormalize initial h:
+            Difference<Tag_>::value(h, b);
 
             Grid<D2Q9, DataType_> grid;
             grid.h = &h;
@@ -240,25 +260,28 @@ class SolverLBMGridExternalComparisonTest_CDUB :
             solver.do_postprocessing();
             GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
 
+            DenseMatrix<DataType_> h_plus_b(grid.h->copy());
+            Sum<Tag_>::value(h_plus_b, b);
+
             DataType_ max_v(0);
             for(unsigned long i(0) ; i < grid.h->rows() ; ++i)
-                for(unsigned long j(0) ; j < grid.h->rows() ; ++j)
-                    max_v = std::max(max_v, (*grid.h)[i][j]);
+                for(unsigned long j(0) ; j < grid.h->columns() ; ++j)
+                    max_v = std::max(max_v, (h_plus_b)[i][j]);
 
             //0->0, max_v->1
             for(unsigned long i(0) ; i < grid.h->rows() ; ++i)
-                for(unsigned long j(0) ; j < grid.h->rows() ; ++j)
-                    (*grid.h)[i][j] /= max_v;
+                for(unsigned long j(0) ; j < grid.h->columns() ; ++j)
+                    (h_plus_b)[i][j] /= max_v;
 
-            BitmapIO<io_formats::PPM>::write_scalar_field(*grid.h, "ext_result_h_cdub.ppm");
-            DenseMatrix<DataType_> bluppy2(BitmapIO<io_formats::PPM>::read_scalar_field("ext_result_h_cudb.ppm", DataType_(1.)));*/
+            BitmapIO<io_formats::PPM>::write_scalar_field(h_plus_b, "ext_result_h_b_cdub.ppm");
+            DenseMatrix<DataType_> bluppy2(BitmapIO<io_formats::PPM>::read_scalar_field("ext_result_h_b_cdub.ppm", DataType_(1.)));
         }
 
 };
-/*SolverLBMGridExternalComparisonTest_CDUB<tags::CPU, float> cpu_solver_test_float_cdub("float", "ext_initial_h_cdub.ppm", "ext_initial_vx_cdub.ppm", "ext_initial_vy_cdub.ppm", "ext_initial_b_cdub.ppm", "ext_obstacles_cdub.ppm", 100ul, 0.025f, 0.001f, 0.001f, 0.00051f, 1.5f);
-#ifdef HONEI_SSE
-SolverLBMGridExternalComparisonTest_CDUB<tags::CPU::SSE, float> sse_solver_test_float_cdub("float", "ext_initial_h_cdub.ppm", "ext_initial_vx_cdub.ppm", "ext_initial_vy_cdub.ppm", "ext_initial_b_cdub.ppm", "ext_obstacles_cdub.ppm", 100ul, 0.025f, 0.001f, 0.001f, 0.00051f, 1.5f);
-#endif
+SolverLBMGridExternalComparisonTest_CDUB<tags::CPU, float> cpu_solver_test_float_cdub("float", "ext_initial_h_cdub.ppm", "ext_initial_vx_cdub.ppm", "ext_initial_vy_cdub.ppm", "ext_initial_b_cdub.ppm", "ext_obstacles_cdub.ppm", 200ul, 0.08f, 1.0f, 1.0f, 0.08f, 0.01f, 0.01f, 0.01f, 1.1f);
 #ifdef HONEI_CUDA
-SolverLBMGridExternalComparisonTest_CDUB<tags::GPU::CUDA, float> cuda_solver_test_float_cdub("float", "ext_initial_h_cdub.ppm", "ext_initial_vx_cdub.ppm", "ext_initial_vy_cdub.ppm", "ext_initial_b_cdub.ppm", "ext_obstacles_cdub.ppm", 100ul, 0.025f, 0.001f, 0.001f, 0.0005f, 1.5f);
-#endif*/
+SolverLBMGridExternalComparisonTest_CDUB<tags::GPU::CUDA, float> cuda_solver_test_float_cdub("float", "ext_initial_h_cdub.ppm", "ext_initial_vx_cdub.ppm", "ext_initial_vy_cdub.ppm", "ext_initial_b_cdub.ppm", "ext_obstacles_cdub.ppm", 200ul, 0.08f, 1.0f, 1.0f, 0.08f, 0.01f, 0.01f, 0.01f, 1.1f);
+#endif
+#ifdef HONEI_SSE
+SolverLBMGridExternalComparisonTest_CDUB<tags::CPU::SSE, float> sse_solver_test_float_cdub("float", "ext_initial_h_cdub.ppm", "ext_initial_vx_cdub.ppm", "ext_initial_vy_cdub.ppm", "ext_initial_b_cdub.ppm", "ext_obstacles_cdub.ppm", 200ul, 0.08f, 1.0f, 1.0f, 0.08f, 0.01f, 0.01f, 0.01f, 1.1f);
+#endif

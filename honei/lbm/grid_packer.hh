@@ -54,7 +54,7 @@ namespace honei
                 for (unsigned long i(0) ; i < limits.size() - 1; ++i)
                 {
                     // if dir points not to our own cell (reflection)
-                    //if (dir[i] != limits[i])
+                    if (dir[i] != limits[i])
                     {
                         dir_post.push_back(dir[i]);
                         dir_index.push_back(limits.at(i));
@@ -108,7 +108,7 @@ namespace honei
 
 
                 //Comment by Markus: only for convenience - corners:
-                if(i == 0 && j == 0)
+                /*if(i == 0 && j == 0)
                     type |= 1<<3;
 
                 if(i == (*grid.obstacles).rows() - 1 && j == (*grid.obstacles).columns() - 1)
@@ -118,7 +118,7 @@ namespace honei
                     type |= 1<<6;
 
                 if(i == 0 && j == (*grid.obstacles).columns() - 1)
-                    type |= 1<<2;
+                    type |= 1<<2;*/
 
                 // Inner Boundaries
                 if(i > 0 && (*grid.obstacles)(i - 1, j))
