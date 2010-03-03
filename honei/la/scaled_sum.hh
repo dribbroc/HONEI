@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007, 2008, 2009 Sven Mallach <sven.mallach@cs.uni-dortmund.de>
+ * Copyright (c) 2007, 2008, 2009 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -377,7 +377,7 @@ namespace honei
 
                 unsigned long min_part_size(Configuration::instance()->get_value("mc::ScaledSum(DVB,DVB,DT)::min_part_size", 128));
                 unsigned long max_count(Configuration::instance()->get_value("mc::ScaledSum(DVB,DVB,DT)::max_count",
-                            mc::ThreadPool::instance()->get_num_threads()));
+                            mc::ThreadPool::instance()->num_threads()));
 
                 Operation<honei::ScaledSum<typename Tag_::DelegateTo> >::op(x, y, b, min_part_size, max_count);
 
@@ -391,7 +391,7 @@ namespace honei
 
                 unsigned long min_part_size(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DT)::min_part_size", 128));
                 unsigned long max_count(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DT)::max_count",
-                            mc::ThreadPool::instance()->get_num_threads()));
+                            mc::ThreadPool::instance()->num_threads()));
 
                 Operation<honei::ScaledSum<typename Tag_::DelegateTo> >::op(x, y, b, min_part_size, max_count);
 
@@ -404,7 +404,7 @@ namespace honei
                 CONTEXT("When calculating ScaledSum (DenseVectorBase, DenseVectorBase, DenseVectorBase) using backend : " + Tag_::name);
                 unsigned long min_part_size(Configuration::instance()->get_value("mc::ScaledSum(DVB,DVB,DVB)::min_part_size", 128));
                 unsigned long max_count(Configuration::instance()->get_value("mc::ScaledSum(DVB,DVB,DVB)::max_count",
-                            mc::ThreadPool::instance()->get_num_threads()));
+                            mc::ThreadPool::instance()->num_threads()));
 
                 Operation<honei::ScaledSum<typename Tag_::DelegateTo> >::op(x, y, z, min_part_size, max_count);
 
@@ -419,7 +419,7 @@ namespace honei
 
                 unsigned long min_part_size(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DVCB)::min_part_size", 128));
                 unsigned long max_count(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DVCB)::max_count",
-                            mc::ThreadPool::instance()->get_num_threads()));
+                            mc::ThreadPool::instance()->num_threads()));
 
                 Operation<honei::ScaledSum<typename Tag_::DelegateTo> >::op(x, y, z, min_part_size, max_count);
 

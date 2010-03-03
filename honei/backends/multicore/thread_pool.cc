@@ -35,43 +35,43 @@ using namespace honei::mc;
 template class InstantiationPolicy<ThreadPool, Singleton>;
 
 ThreadPool::ThreadPool() :
-    topology(Topology::instance()),
-    num_threads(Configuration::instance()->get_value("mc::num_threads", topology->num_lpus())),
-    inst_ctr(0),
-    mutex(new Mutex),
-    global_barrier(new ConditionVariable),
-    affinity(Configuration::instance()->get_value("mc::affinity", true))
+    _topology(Topology::instance()),
+    _num_threads(Configuration::instance()->get_value("mc::num_threads", _topology->num_lpus())),
+    _inst_ctr(0),
+    _mutex(new Mutex),
+    _global_barrier(new ConditionVariable),
+    _affinity(Configuration::instance()->get_value("mc::affinity", true))
 {
 #ifdef linux
-    if (affinity)
+    if (_affinity)
     {
-        affinity_mask = new cpu_set_t[num_threads + 1];
+        _affinity_mask = new cpu_set_t[_num_threads + 1];
 
         // set own affinity first
-        CPU_ZERO(&affinity_mask[num_threads]);
-        CPU_SET(topology->num_lpus() - 1, &affinity_mask[num_threads]);
-        if(sched_setaffinity(syscall(__NR_gettid), sizeof(cpu_set_t), &affinity_mask[num_threads]) != 0)
+        CPU_ZERO(&_affinity_mask[_num_threads]);
+        CPU_SET(_topology->num_lpus() - 1, &_affinity_mask[_num_threads]);
+        if(sched_setaffinity(syscall(__NR_gettid), sizeof(cpu_set_t), &_affinity_mask[_num_threads]) != 0)
             throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
     }
 #endif
 
-    for (int i(num_threads - 1) ; i >= 0 ; --i)
+    for (int i(_num_threads - 1) ; i >= 0 ; --i)
     {
-        unsigned sched_id(i % (topology->num_lpus() - 1));
+        unsigned sched_id(i % (_topology->num_lpus() - 1));
 
         // ToDo: Remove branch!
-        ThreadFunction * tobj = new ThreadFunction(mutex, global_barrier, &tasks, inst_ctr, (affinity ? sched_id : 0xFFFF));
+        ThreadFunction * tobj = new ThreadFunction(_mutex, _global_barrier, &_tasks, _inst_ctr, (_affinity ? sched_id : 0xFFFF));
         Thread * t = new Thread(*tobj);
-        threads.push_back(std::make_pair(t, tobj));
-        ++inst_ctr;
+        _threads.push_back(std::make_pair(t, tobj));
+        ++_inst_ctr;
 
 #ifdef linux
-        if (affinity)
+        if (_affinity)
         {
-            sched_ids.push_back(sched_id);
-            CPU_ZERO(&affinity_mask[i]);
-            CPU_SET(sched_id, &affinity_mask[i]);
-            if(sched_setaffinity(tobj->tid(), sizeof(cpu_set_t), &affinity_mask[i]) != 0)
+            _sched_ids.push_back(sched_id);
+            CPU_ZERO(&_affinity_mask[i]);
+            CPU_SET(sched_id, &_affinity_mask[i]);
+            if(sched_setaffinity(tobj->tid(), sizeof(cpu_set_t), &_affinity_mask[i]) != 0)
                 throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
         }
 #endif
@@ -80,97 +80,102 @@ ThreadPool::ThreadPool() :
 
 ThreadPool::~ThreadPool()
 {
-    for(std::list<std::pair<Thread *, ThreadFunction *> >::iterator i(threads.begin()), i_end(threads.end()) ; i != i_end ; ++i)
+    for(std::list<std::pair<Thread *, ThreadFunction *> >::iterator i(_threads.begin()), i_end(_threads.end()) ; i != i_end ; ++i)
     {
         (*i).second->stop();
         delete (*i).second;
         delete (*i).first;
     }
 
-    delete[] affinity_mask;
-    delete global_barrier;
-    delete mutex;
+    delete[] _affinity_mask;
+    delete _global_barrier;
+    delete _mutex;
 }
 
 void ThreadPool::add_threads(const unsigned num)
 {
 #ifdef linux
-    if (affinity)
+    if (_affinity)
     {
-        cpu_set_t * aff_mask = new cpu_set_t[num_threads + num + 1];
-        std::copy(affinity_mask, affinity_mask + num_threads + 1, aff_mask);
+        cpu_set_t * aff_mask = new cpu_set_t[_num_threads + num + 1];
+        std::copy(_affinity_mask, _affinity_mask + _num_threads + 1, aff_mask);
 
-        delete[] affinity_mask;
-        affinity_mask = aff_mask;
+        delete[] _affinity_mask;
+        _affinity_mask = aff_mask;
     }
 #endif
 
-    for (unsigned i(num_threads + num - 1) ; i >= num_threads ; --i)
+    for (unsigned i(_num_threads + num - 1) ; i >= _num_threads ; --i)
     {
-        unsigned sched_id(i % (topology->num_lpus() - 1));
+        unsigned sched_id(i % (_topology->num_lpus() - 1));
 
         // ToDo: Remove branch!
-        ThreadFunction * tobj = new ThreadFunction(mutex, global_barrier, &tasks, inst_ctr, (affinity ? sched_id : 0xFFFF));
+        ThreadFunction * tobj = new ThreadFunction(_mutex, _global_barrier, &_tasks, _inst_ctr, (_affinity ? sched_id : 0xFFFF));
         Thread * t = new Thread(*tobj);
-        threads.push_back(std::make_pair(t, tobj));
-        ++inst_ctr;
+        _threads.push_back(std::make_pair(t, tobj));
+        ++_inst_ctr;
 
 #ifdef linux
-        if (affinity)
+        if (_affinity)
         {
-            sched_ids.push_back(sched_id);
-            CPU_ZERO(&affinity_mask[i]);
-            CPU_SET(sched_id, &affinity_mask[i]);
-            if(sched_setaffinity(tobj->tid(), sizeof(cpu_set_t), &affinity_mask[i]) != 0)
+            _sched_ids.push_back(sched_id);
+            CPU_ZERO(&_affinity_mask[i]);
+            CPU_SET(sched_id, &_affinity_mask[i]);
+            if(sched_setaffinity(tobj->tid(), sizeof(cpu_set_t), &_affinity_mask[i]) != 0)
                 throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
         }
 #endif
     }
 
-    num_threads += num;
+    _num_threads += num;
 }
 
 void ThreadPool::delete_threads(const unsigned num)
 {
     for (unsigned i(0) ; i < num ; ++i)
     {
-        std::pair<Thread *, ThreadFunction *> t = threads.back();
-        threads.pop_back();
-        sched_ids.pop_back();
+        std::pair<Thread *, ThreadFunction *> t = _threads.back();
+        _threads.pop_back();
+        _sched_ids.pop_back();
         t.second->stop();
         delete t.second;
         delete t.first;
-        --inst_ctr;
+        --_inst_ctr;
     }
 
-    num_threads -= num;
+    _num_threads -= num;
 
-    cpu_set_t * aff_mask = new cpu_set_t[num_threads + 1];
-    std::copy(affinity_mask, affinity_mask + num_threads + 1, aff_mask);
-    delete[] affinity_mask;
-    affinity_mask = aff_mask;
+    cpu_set_t * aff_mask = new cpu_set_t[_num_threads + 1];
+    std::copy(_affinity_mask, _affinity_mask + _num_threads + 1, aff_mask);
+    delete[] _affinity_mask;
+    _affinity_mask = aff_mask;
 }
 
 unsigned ThreadPool::num_nodes() const
 {
-    return topology->num_nodes();
+    return _topology->num_nodes();
 }
 
-unsigned ThreadPool::get_num_threads() const
+unsigned ThreadPool::num_threads() const
 {
-    return num_threads;
+    return _num_threads;
+}
+
+unsigned ThreadPool::main_node() const
+{
+    return _topology->get_node(_topology->num_lpus() - 1);
 }
 
 Ticket<tags::CPU::MultiCore> * ThreadPool::enqueue(const std::tr1::function<void ()> & task, DispatchPolicy p)
 {
-    Ticket<tags::CPU::MultiCore> * ticket((affinity ? p.apply(sched_ids) : DispatchPolicy::any_core().apply(sched_ids)));
+    Ticket<tags::CPU::MultiCore> * ticket((_affinity ? p.apply(_sched_ids) : DispatchPolicy::any_core().apply(_sched_ids)));
 
     ThreadTask * t_task(new ThreadTask(task, ticket));
 
-    Lock l(*mutex);
-    tasks.push_back(t_task);
+    Lock l(*_mutex);
+    _tasks.push_back(t_task);
 
-    global_barrier->broadcast();
+    _global_barrier->broadcast();
 
     return ticket;
 }

@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2007, 2008, 2009 Sven Mallach <sven.mallach@cs.uni-dortmund.de>
+ * Copyright (c) 2007, 2008, 2009 Sven Mallach <mallach@honei.org>
  * Copyright (c) 2008 Danny van Dyk <dyk@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
@@ -742,7 +742,7 @@ namespace honei
                 CONTEXT("When calculating Difference (DenseVectorBase, DenseVectorBase) using backend : " + Tag_::name);
                 unsigned long min_part_size(Configuration::instance()->get_value("mc::Difference(DVB,DVB)::min_part_size", 128));
                 unsigned long max_count(Configuration::instance()->get_value("mc::Difference(DVB,DVB)::max_count",
-                            mc::ThreadPool::instance()->get_num_threads()));
+                            mc::ThreadPool::instance()->num_threads()));
 
                 Operation<honei::Difference<typename Tag_::DelegateTo> >::op(x, y, min_part_size, max_count);
 
@@ -756,7 +756,7 @@ namespace honei
 
                 unsigned long min_part_size(Configuration::instance()->get_value("mc::Difference(DVCB,DVCB)::min_part_size", 128));
                 unsigned long max_count(Configuration::instance()->get_value("mc::Difference(DVCB,DVCB)::max_count",
-                            mc::ThreadPool::instance()->get_num_threads()));
+                            mc::ThreadPool::instance()->num_threads()));
 
                 Operation<honei::Difference<typename Tag_::DelegateTo> >::op(x, y, min_part_size, max_count);
 

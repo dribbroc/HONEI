@@ -81,8 +81,6 @@ Topology::Topology()
 
         _num_nodes = intern::num_nodes();
 
-        if (_num_nodes == _num_lpus && _num_nodes > 1)
-            --_num_nodes;
 
         if (_num_nodes == 1)
         {
@@ -100,16 +98,19 @@ Topology::Topology()
         {
             cpu_to_node = intern::cpu_to_node_array(_num_nodes, _num_lpus);
 
-            range_min = new unsigned[_num_nodes];
-            range_max = new unsigned[_num_nodes];
+            unsigned nodes_to_use((_num_nodes == _num_lpus && _num_lpus > 1) ? _num_nodes - 1 : _num_nodes);
 
-            for (unsigned i(0) ; i < _num_nodes ; ++i)
+            range_min = new unsigned[nodes_to_use];
+            range_max = new unsigned[nodes_to_use];
+
+            for (unsigned i(0) ; i < nodes_to_use ; ++i)
             {
                 range_min[i] = std::numeric_limits<unsigned>::max();
                 range_max[i] = std::numeric_limits<unsigned>::min();
             }
 
-            for (unsigned i(0) ; i < _num_lpus ; ++i)
+            // Leave out the last LPU which is reserved for the main thread
+            for (unsigned i(0) ; i < _num_lpus - 1 ; ++i)
             {
                 if (i < range_min[cpu_to_node[i]])
                     range_min[cpu_to_node[i]] = i;
@@ -118,6 +119,8 @@ Topology::Topology()
                     range_max[cpu_to_node[i]] = i;
             }
         }
+
+        _lpus_per_node = _num_lpus / _num_nodes;
 
         if (vendor == UNDEFINED)
             _num_cores = sysconf(_SC_NPROCESSORS_CONF);
@@ -190,6 +193,11 @@ unsigned Topology::num_lpus() const
 unsigned Topology::num_nodes() const
 {
     return _num_nodes;
+}
+
+unsigned Topology::lpus_per_node() const
+{
+    return _lpus_per_node;
 }
 
 unsigned Topology::node_min(unsigned node) const

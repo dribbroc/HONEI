@@ -2,7 +2,7 @@
 
 /*
  * Copyright (c) 2007 Volker Jung <volker.jung@uni-dortmund.de>
- * Copyright (c) 2009 Sven Mallach <sven.mallach@cs.uni-dortmund.de>
+ * Copyright (c) 2009 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General

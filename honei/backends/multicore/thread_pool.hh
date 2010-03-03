@@ -40,35 +40,35 @@ namespace honei
             private:
 
                 // Information about processor topology (such as number of processing units)
-                Topology * topology;
+                Topology * _topology;
 
                 // Number of currently pooled threads
-                unsigned num_threads;
+                unsigned _num_threads;
 
                 // A thread instantiation counter
-                unsigned inst_ctr;
+                unsigned _inst_ctr;
 
                 // List of user POSIX threads
-                std::list<std::pair<Thread *, ThreadFunction *> > threads;
+                std::list<std::pair<Thread *, ThreadFunction *> > _threads;
 
                 // Waiting list of worker tasks to be executed
-                std::list<ThreadTask *> tasks;
+                std::list<ThreadTask *> _tasks;
 
                 // Our Mutex
-                Mutex * const mutex;
+                Mutex * const _mutex;
 
                 // Condition Variable used to synchronize all threads
-                ConditionVariable * const global_barrier;
+                ConditionVariable * const _global_barrier;
 
                 // Flag whether to use thread affinity
-                const bool affinity;
+                const bool _affinity;
 
 #ifdef linux
                 // Mapping of threads to the scheduler ids of the cores they run on
-                std::vector<unsigned> sched_ids;
+                std::vector<unsigned> _sched_ids;
 
                 // Array of affinity masks for main process and all controlled threads
-                cpu_set_t * affinity_mask;
+                cpu_set_t * _affinity_mask;
 #endif
 
             public:
@@ -85,8 +85,11 @@ namespace honei
                 // Retrieve the number of NUMA nodes
                 unsigned num_nodes() const;
 
+                // Retrieve the node on which the main thread runs (use only when affinity enabled)
+                unsigned main_node() const;
+
                 // Retrieve the number of created threads
-                unsigned get_num_threads() const;
+                unsigned num_threads() const;
 
                 Ticket<tags::CPU::MultiCore> * enqueue(const std::tr1::function<void ()> & task, DispatchPolicy p = DispatchPolicy::any_core());
         };

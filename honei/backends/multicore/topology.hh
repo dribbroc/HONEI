@@ -43,6 +43,9 @@ namespace honei
                 /// Number of NUMA nodes
                 unsigned _num_nodes;
 
+                /// Number of PUs per node
+                unsigned _lpus_per_node;
+
                 /// Array that maps sched_ids to NUMA nodes
                 unsigned * cpu_to_node;
 
@@ -96,6 +99,9 @@ namespace honei
 
                 /// Return the number of NUMA nodes
                 unsigned num_nodes() const;
+
+                /// Return the number of PUs per node
+                unsigned lpus_per_node() const;
 
                 /// Return the node the lpu belongs to
                 unsigned get_node(unsigned lpu) const;

@@ -107,7 +107,7 @@ class ThreadPoolTest :
 
             TEST_CHECK_EQUAL(v, 1784u);
 
-            unsigned old_num = ThreadPool::instance()->get_num_threads();
+            unsigned old_num = ThreadPool::instance()->num_threads();
 
             ThreadPool::instance()->add_threads(3);
 
