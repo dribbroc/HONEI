@@ -81,6 +81,9 @@ Topology::Topology()
 
         _num_nodes = intern::num_nodes();
 
+        if (_num_nodes == _num_lpus && _num_nodes > 1)
+            --_num_nodes;
+
         if (_num_nodes == 1)
         {
             cpu_to_node = new unsigned[_num_lpus];
@@ -111,7 +114,7 @@ Topology::Topology()
                 if (i < range_min[cpu_to_node[i]])
                     range_min[cpu_to_node[i]] = i;
 
-                if (i > range_min[cpu_to_node[i]])
+                if (i > range_max[cpu_to_node[i]])
                     range_max[cpu_to_node[i]] = i;
             }
         }
