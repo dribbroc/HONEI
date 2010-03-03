@@ -39,12 +39,12 @@ class NumaInfoTest :
         virtual void run() const
         {
 #if defined linux
-            unsigned nnodes = num_nodes();
+            unsigned nnodes = intern::num_nodes();
 
             TEST_CHECK(nnodes >= 1);
 
             unsigned lpus(sysconf(_SC_NPROCESSORS_CONF));
-            unsigned * res = cpu_to_node_array(nnodes, lpus);
+            unsigned * res = intern::cpu_to_node_array(nnodes, lpus);
 
             if (nnodes == 0)
             {

@@ -65,11 +65,13 @@ namespace honei
 
             for (std::list<mc::ThreadTask *>::iterator i(tasklist->begin()) , i_end(tasklist->end()) ; i != i_end ; ++i)
             {
-                unsigned & sched_id = (*i)->ticket->sid();
+                unsigned sched_min = (*i)->ticket->sid_min();
+                unsigned sched_max = (*i)->ticket->sid_max();
 
-                if (sched_id == 0xFFFF || sched_id == sched_lpu)
+                if (sched_min == 0xFFFF || (sched_min <= sched_lpu && sched_lpu <= sched_max))
                 {
                     task = *i;
+                    unsigned & sched_id = task->ticket->sid();
                     sched_id = sched_lpu;
                     tasklist->remove(*i);
                     break;

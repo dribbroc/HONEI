@@ -40,23 +40,31 @@ namespace honei
             /// Unique ID
             unsigned id;
 
-            /// Scheduler ID of the executing thread
+            /// Lowest sched_id of a core that may execute this task
+            unsigned sched_min;
+
+            /// Highest sched_id of a core that may execute this task
+            unsigned sched_max;
+
+            /// ID of the core that really executed this task
             unsigned sched_id;
 
             /// Process ID of the executing thread
             unsigned thread_id;
 
-            Implementation(const unsigned sid) :
+            Implementation(const unsigned sid_min, const unsigned sid_max) :
                 completed(false),
                 id(counter),
-                sched_id(sid)
+                sched_min(sid_min),
+                sched_max(sid_max),
+                sched_id(0xFFFF)
              {
                 ++counter;
             }
         };
 
-        Ticket<tags::CPU::MultiCore>::Ticket(const unsigned sid) :
-            PrivateImplementationPattern<Ticket<tags::CPU::MultiCore>, Shared>(new Implementation<Ticket<tags::CPU::MultiCore> >(sid))
+        Ticket<tags::CPU::MultiCore>::Ticket(const unsigned sid_min, const unsigned sid_max) :
+            PrivateImplementationPattern<Ticket<tags::CPU::MultiCore>, Shared>(new Implementation<Ticket<tags::CPU::MultiCore> >(sid_min, sid_max))
         {
         }
 
@@ -85,6 +93,16 @@ namespace honei
         unsigned Ticket<tags::CPU::MultiCore>::uid() const
         {
             return _imp->id;
+        }
+
+        unsigned Ticket<tags::CPU::MultiCore>::sid_min() const
+        {
+            return _imp->sched_min;
+        }
+
+        unsigned Ticket<tags::CPU::MultiCore>::sid_max() const
+        {
+            return _imp->sched_max;
         }
 
         unsigned & Ticket<tags::CPU::MultiCore>::sid()

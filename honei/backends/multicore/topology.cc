@@ -16,9 +16,11 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/backends/multicore/numainfo.hh>
 #include <honei/backends/multicore/topology.hh>
 #include <honei/util/instantiation_policy-impl.hh>
 
+#include <limits>
 #include <sys/syscall.h>
 #include <unistd.h>
 
@@ -58,6 +60,40 @@ Topology::Topology()
 #if defined linux
         _num_lpus = sysconf(_SC_NPROCESSORS_CONF);
 
+        _num_nodes = intern::num_nodes();
+
+        if (_num_nodes == 1)
+        {
+            cpu_to_node = new unsigned[_num_lpus];
+            for (unsigned i(0) ; i < _num_lpus ; ++i)
+                cpu_to_node[i] = 0;
+
+            range_min = new unsigned[1];
+            range_max = new unsigned[1];
+
+            range_min[0] = 0;
+            range_max[0] = _num_lpus - 1;
+        }
+        else
+        {
+            cpu_to_node = intern::cpu_to_node_array(_num_nodes, _num_lpus);
+
+            for (unsigned i(0) ; i < _num_nodes ; ++i)
+            {
+                range_min[i] = std::numeric_limits<unsigned>::max();
+                range_max[i] = std::numeric_limits<unsigned>::min();
+            }
+
+            for (unsigned i(0) ; i < _num_lpus ; ++i)
+            {
+                if (i < range_min[cpu_to_node[i]])
+                    range_min[cpu_to_node[i]] = i;
+
+                if (i > range_min[cpu_to_node[i]])
+                    range_max[cpu_to_node[i]] = i;
+            }
+        }
+
         if (vendor == UNDEFINED)
             _num_cores = sysconf(_SC_NPROCESSORS_CONF);
 
@@ -67,6 +103,12 @@ Topology::Topology()
 #endif
         _num_cpus = _num_lpus / _num_cores;
 
+}
+Topology::~Topology()
+{
+    delete[] cpu_to_node;
+    delete[] range_min;
+    delete[] range_max;
 }
 
 #if defined(__i386__) || defined(__x86_64__)
@@ -118,6 +160,26 @@ void Topology::init_x86()
 unsigned Topology::num_lpus() const
 {
     return _num_lpus;
+}
+
+unsigned Topology::num_nodes() const
+{
+    return _num_nodes;
+}
+
+unsigned Topology::node_min(unsigned node) const
+{
+    return range_min[node];
+}
+
+unsigned Topology::node_max(unsigned node) const
+{
+    return range_max[node];
+}
+
+unsigned Topology::get_node(unsigned lpu) const
+{
+    return cpu_to_node[lpu];
 }
 
 #if defined(__i386__) || defined(__x86_64__)

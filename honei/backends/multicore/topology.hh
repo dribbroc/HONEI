@@ -40,6 +40,16 @@ namespace honei
                 /// Number of LOGICAL PUs (hardware threads)
                 unsigned _num_lpus;
 
+                /// Number of NUMA nodes
+                unsigned _num_nodes;
+
+                /// Array that maps sched_ids to NUMA nodes
+                unsigned * cpu_to_node;
+
+                unsigned * range_min;
+
+                unsigned * range_max;
+
 #if defined(__i386__) || defined(__x86_64__)
 
                 /// Return the number of PUs per physical processor package
@@ -71,13 +81,25 @@ namespace honei
                 /// \name Basic Operations
                 /// \{
 
-                /// Constructor
                 Topology();
+                ~Topology();
 
                 /// \}
 
                 /// Return the number of logical PUs (hardware-threads)
                 unsigned num_lpus() const;
+
+                /// Return the number of NUMA nodes
+                unsigned num_nodes() const;
+
+                /// Return the node the lpu belongs to
+                unsigned get_node(unsigned lpu) const;
+
+                /// Return the lowest sched_id of a lpu belong to the node
+                unsigned node_min(unsigned node) const;
+
+                /// Return the highest sched_id of a lpu belong to the node
+                unsigned node_max(unsigned node) const;
 
 #if defined(__i386__) || defined(__x86_64__)
 

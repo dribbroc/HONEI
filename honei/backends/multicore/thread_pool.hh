@@ -74,7 +74,6 @@ namespace honei
                 ThreadPool();
                 ~ThreadPool();
 
-
                 void add_threads(const unsigned num);
 
                 void delete_threads(const unsigned num);

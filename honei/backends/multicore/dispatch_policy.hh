@@ -21,6 +21,7 @@
 #define MULTICORE_GUARD_POLICY_HH 1
 
 #include <honei/backends/multicore/ticket.hh>
+#include <honei/backends/multicore/topology.hh>
 #include <honei/util/attributes.hh>
 
 #include <tr1/functional>
@@ -60,7 +61,7 @@ namespace honei
                 {
                     unsigned sched_id(other->sid());
                     // Should make sure that there is a thread running on that core...
-                    Ticket<tags::CPU::MultiCore> * ticket = new Ticket<tags::CPU::MultiCore>(sched_id);
+                    Ticket<tags::CPU::MultiCore> * ticket = new Ticket<tags::CPU::MultiCore>(sched_id, sched_id);
 
                     return ticket;
                 }
@@ -86,7 +87,55 @@ namespace honei
                         core_id = 0xFFFF;
 
                     Ticket<tags::CPU::MultiCore> * ticket =
-                        new Ticket<tags::CPU::MultiCore>(core_id);
+                        new Ticket<tags::CPU::MultiCore>(core_id, core_id);
+
+                    return ticket;
+                }
+        };
+
+        class SameNodePolicy
+        {
+            private:
+
+                Ticket<tags::CPU::MultiCore> * other;
+
+            public:
+
+                SameNodePolicy(Ticket<tags::CPU::MultiCore> * ticket) :
+                    other(ticket)
+                {
+                }
+
+                Ticket<tags::CPU::MultiCore> * operator() (std::vector<unsigned> & sids)
+                {
+                    unsigned sched_min(other->sid_min());
+                    unsigned sched_max(other->sid_max());
+                    // Should make sure that there is a thread running on that core...
+                    Ticket<tags::CPU::MultiCore> * ticket = new Ticket<tags::CPU::MultiCore>(sched_min, sched_max);
+
+                    return ticket;
+                }
+        };
+
+        class OnNodePolicy
+        {
+            private:
+
+                unsigned node_id;
+
+            public:
+
+                OnNodePolicy(const unsigned node_nr) :
+                    node_id(node_nr)
+                {
+                }
+
+                Ticket<tags::CPU::MultiCore> * operator() (std::vector<unsigned> & sids)
+                {
+                    Topology * top = Topology::instance();
+
+                    Ticket<tags::CPU::MultiCore> * ticket =
+                        new Ticket<tags::CPU::MultiCore>(top->node_min(node_id), top->node_max(node_id));
 
                     return ticket;
                 }
@@ -140,6 +189,18 @@ namespace honei
                 static DispatchPolicy on_core(unsigned core_id)
                 {
                     return DispatchPolicy(OnCorePolicy(core_id));
+                }
+
+                /// Dispatch on same node as earlier task
+                static DispatchPolicy same_node_as(Ticket<tags::CPU::MultiCore> * ticket)
+                {
+                    return DispatchPolicy(SameNodePolicy(ticket));
+                }
+
+                /// Dispatch on explicit NUMA node
+                static DispatchPolicy on_node(unsigned node_id)
+                {
+                    return DispatchPolicy(OnNodePolicy(node_id));
                 }
         };
     }

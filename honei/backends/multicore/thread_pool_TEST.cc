@@ -69,51 +69,65 @@ class ThreadPoolTest :
 
             TicketVector tickets;
 
-            for (unsigned i(0) ; i < 1250 ; ++i)
+            for (unsigned i(0) ; i < 500 ; ++i)
             {
                 tickets.push_back(ThreadPool::instance()->enqueue(t));
             }
 
-            Ticket<tags::CPU::MultiCore> * first_t(static_cast<Ticket<tags::CPU::MultiCore> *>(tickets[0]));
-
-            for (unsigned i(1250) ; i < 2500 ; ++i)
+            for (unsigned i(500) ; i < 750 ; ++i)
             {
                 tickets.push_back(ThreadPool::instance()->enqueue(t, DispatchPolicy::on_core(2 * sysconf(_SC_NPROCESSORS_CONF))));
             }
 
-            for (unsigned i(2500) ; i < 5000 ; ++i)
+            for (unsigned i(750) ; i < 1000 ; ++i)
             {
-                tickets.push_back(ThreadPool::instance()->enqueue(t, DispatchPolicy::same_core_as(first_t)));
+                tickets.push_back(ThreadPool::instance()->enqueue(t, DispatchPolicy::on_core(i % (sysconf(_SC_NPROCESSORS_CONF) - 1))));
+            }
+
+            for (unsigned i(1000) ; i < 1250 ; ++i)
+            {
+                Ticket<tags::CPU::MultiCore> * tick(static_cast<Ticket<tags::CPU::MultiCore> *>(tickets[750 + (i % 200)]));
+                tickets.push_back(ThreadPool::instance()->enqueue(t, DispatchPolicy::same_core_as(tick)));
+            }
+
+            Topology * top = Topology::instance();
+
+            for (unsigned i(1250) ; i < 1500 ; ++i)
+            {
+                tickets.push_back(ThreadPool::instance()->enqueue(t, DispatchPolicy::on_node(i % top->num_nodes())));
+            }
+
+            for (unsigned i(1500) ; i < 1750 ; ++i)
+            {
+                Ticket<tags::CPU::MultiCore> * tick(static_cast<Ticket<tags::CPU::MultiCore> *>(tickets[1250 + (i % 200)]));
+                tickets.push_back(ThreadPool::instance()->enqueue(t, DispatchPolicy::same_node_as(tick)));
             }
 
             tickets.wait();
 
-            TEST_CHECK_EQUAL(v, 5034u);
+            TEST_CHECK_EQUAL(v, 1784u);
 
-            for (unsigned i(0) ; i < 1250 ; ++i)
-            {
-                tickets.push_back(ThreadPool::instance()->enqueue(u));
-            }
-
-            first_t = static_cast<Ticket<tags::CPU::MultiCore> *>(tickets[251]);
+            unsigned old_num = ThreadPool::instance()->get_num_threads();
 
             ThreadPool::instance()->add_threads(3);
 
-            for (unsigned i(1250) ; i < 2500 ; ++i)
+            for (unsigned i(0) ; i < 250 ; ++i)
             {
-                tickets.push_back(ThreadPool::instance()->enqueue(u, DispatchPolicy::on_core(2 * sysconf(_SC_NPROCESSORS_CONF))));
+                tickets.push_back(ThreadPool::instance()->enqueue(u, DispatchPolicy::on_core(old_num + (i % 3))));
             }
 
             ThreadPool::instance()->delete_threads(3);
 
-            for (unsigned i(2500) ; i < 5000 ; ++i)
+            Ticket<tags::CPU::MultiCore> * tick(static_cast<Ticket<tags::CPU::MultiCore> *>(tickets[200]));
+
+            for (unsigned i(250) ; i < 500 ; ++i)
             {
-                tickets.push_back(ThreadPool::instance()->enqueue(u, DispatchPolicy::same_core_as(first_t)));
+                tickets.push_back(ThreadPool::instance()->enqueue(u, DispatchPolicy::same_core_as(tick)));
             }
 
             tickets.wait();
 
-            TEST_CHECK_EQUAL(w, 5034u);
+            TEST_CHECK_EQUAL(w, 534u);
         }
 } thread_pool_test;
 

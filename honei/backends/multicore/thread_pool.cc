@@ -35,7 +35,7 @@ using namespace honei::mc;
 template class InstantiationPolicy<ThreadPool, Singleton>;
 
 ThreadPool::ThreadPool() :
-    topology(new Topology),
+    topology(Topology::instance()),
     num_threads(Configuration::instance()->get_value("mc::num_threads", topology->num_lpus())),
     inst_ctr(0),
     mutex(new Mutex),

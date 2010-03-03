@@ -197,8 +197,6 @@ namespace honei
                 return num_nodes;
             }
 
-        }
-
         static unsigned num_nodes()
         {
             return intern::retrieve_num_nodes();
@@ -208,11 +206,12 @@ namespace honei
         {
             unsigned * result;
 
-            if (num_nodes < 2 || num_lpus < 2)
+            if (num_nodes < 2)
             {
                 return NULL;
             }
 
+            // if num_nodes >= 2 then num_lpus should be >=2 too...
             result = new unsigned[num_lpus];
             intern::NumaInfo info;
             bool success = info.init(num_nodes);
@@ -229,6 +228,8 @@ namespace honei
 
             return result;
         }
+        }
+
 
     }
 }

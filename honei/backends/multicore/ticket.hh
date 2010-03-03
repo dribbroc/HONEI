@@ -38,7 +38,7 @@ namespace honei
                 /// \{
 
                 /// Constructor
-                Ticket(const unsigned sid = 0xFFFF);
+                Ticket(const unsigned sid_min = 0xFFFF, const unsigned sid_max = 0xFFFF);
 
                 /// \}
 
@@ -50,6 +50,12 @@ namespace honei
 
                 /// Retrieve unique ticket ID
                 unsigned uid() const;
+
+                /// Retrieve the lowest sched_id of a core that may execute this task
+                unsigned sid_min() const;
+
+                /// Retrieve the highest sched_id of a core that may execute this task
+                unsigned sid_max() const;
 
                 /// Retrieve sched ID of the thread executing the task
                 unsigned & sid();
