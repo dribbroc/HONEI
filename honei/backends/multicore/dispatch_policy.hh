@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2008, 2009 Sven Mallach <sven.mallach@cs.tu-dortmund.de>
+ * Copyright (c) 2008, 2009, 2010 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -37,7 +37,7 @@ namespace honei
 
             public:
 
-                Ticket<tags::CPU::MultiCore> * operator() ( HONEI_UNUSED std::vector<unsigned> & tids)
+                Ticket<tags::CPU::MultiCore> * operator() ( HONEI_UNUSED std::vector<unsigned> & sids)
                 {
                     return new Ticket<tags::CPU::MultiCore>();
                 }
@@ -56,13 +56,11 @@ namespace honei
                 {
                 }
 
-                Ticket<tags::CPU::MultiCore> * operator() (std::vector<unsigned> & tids)
+                Ticket<tags::CPU::MultiCore> * operator() (std::vector<unsigned> & sids)
                 {
-                    unsigned thread_id(other->tid());
-                    if (tids.end() == std::find(tids.begin(), tids.end(), thread_id)) // Thread could already have been deleted
-                        thread_id = 0;
-
-                    Ticket<tags::CPU::MultiCore> * ticket = new Ticket<tags::CPU::MultiCore>(thread_id);
+                    unsigned sched_id(other->sid());
+                    // Should make sure that there is a thread running on that core...
+                    Ticket<tags::CPU::MultiCore> * ticket = new Ticket<tags::CPU::MultiCore>(sched_id);
 
                     return ticket;
                 }
@@ -72,7 +70,7 @@ namespace honei
         {
             private:
 
-                const unsigned core_id;
+                unsigned core_id;
 
             public:
 
@@ -81,10 +79,14 @@ namespace honei
                 {
                 }
 
-                Ticket<tags::CPU::MultiCore> * operator() (std::vector<unsigned> & tids)
+                Ticket<tags::CPU::MultiCore> * operator() (std::vector<unsigned> & sids)
                 {
+                    // Use core_nr as equal to sched_id
+                    if (sids.end() == std::find(sids.begin(), sids.end(), core_id))
+                        core_id = 0xFFFF;
+
                     Ticket<tags::CPU::MultiCore> * ticket =
-                        new Ticket<tags::CPU::MultiCore>(tids[core_id % tids.size()]);
+                        new Ticket<tags::CPU::MultiCore>(core_id);
 
                     return ticket;
                 }
@@ -99,13 +101,13 @@ namespace honei
         {
             private:
 
-                const std::tr1::function<Ticket<tags::CPU::MultiCore> * (std::vector<unsigned> & tids)> policy;
+                const std::tr1::function<Ticket<tags::CPU::MultiCore> * (std::vector<unsigned> & sids)> policy;
 
                 /// \name Basic Operations
                 /// \{
 
                 /// Constructor
-                DispatchPolicy(const std::tr1::function<Ticket<tags::CPU::MultiCore> * (std::vector<unsigned> & tids)> p) :
+                DispatchPolicy(const std::tr1::function<Ticket<tags::CPU::MultiCore> * (std::vector<unsigned> & sids)> p) :
                     policy(p)
                 {
                 }
@@ -115,9 +117,9 @@ namespace honei
             public:
 
                 /// Creates a new Ticket and assures the given way of dispatching
-                Ticket<tags::CPU::MultiCore> * apply(std::vector<unsigned> & tids)
+                Ticket<tags::CPU::MultiCore> * apply(std::vector<unsigned> & sids)
                 {
-                    return policy(tids);
+                    return policy(sids);
                 }
 
                 /// Named constructors

@@ -1,6 +1,6 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 /*
- * Copyright (c) 2009 Sven Mallach <sven.mallach@cs.uni-dortmund.de>
+ * Copyright (c) 2009, 2010 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -31,8 +31,15 @@ namespace honei
 {
     template <> struct Implementation<mc::ThreadFunction>
     {
+        /// Our internal ID
+        const unsigned pool_id;
+
         /// Our Thread ID (given by the operating system)
         unsigned thread_id;
+
+        /// The logical processor this thread is bound to
+        /// scheduler id - only used when affinity enabled
+        const unsigned sched_lpu;
 
         /// The thread pool's mutex (for grabbing work).
         Mutex * const pool_mutex;
@@ -58,12 +65,12 @@ namespace honei
 
             for (std::list<mc::ThreadTask *>::iterator i(tasklist->begin()) , i_end(tasklist->end()) ; i != i_end ; ++i)
             {
-                unsigned & thr_id = (*i)->ticket->tid();
+                unsigned & sched_id = (*i)->ticket->sid();
 
-                if (thr_id == 0 || thr_id == thread_id)
+                if (sched_id == 0xFFFF || sched_id == sched_lpu)
                 {
                     task = *i;
-                    thr_id = thread_id;
+                    sched_id = sched_lpu;
                     tasklist->remove(*i);
                     break;
                 }
@@ -72,8 +79,11 @@ namespace honei
             pthread_mutex_unlock(pool_mutex->mutex());
         }
 
-        Implementation(Mutex * const mutex, ConditionVariable * const barrier, std::list<mc::ThreadTask *> * const list) :
+        Implementation(Mutex * const mutex, ConditionVariable * const barrier,
+                std::list<mc::ThreadTask *> * const list, unsigned pid, unsigned sched) :
+            pool_id(pid),
             thread_id(0),
+            sched_lpu(sched),
             pool_mutex(mutex),
             tasklist(list),
             global_barrier(barrier),
@@ -98,8 +108,8 @@ namespace honei
 
 using namespace honei::mc;
 
-ThreadFunction::ThreadFunction(Mutex * const mutex, ConditionVariable * const barrier, std::list<ThreadTask *> * const list) :
-    PrivateImplementationPattern<ThreadFunction, Shared>(new Implementation<ThreadFunction>(mutex, barrier, list))
+ThreadFunction::ThreadFunction(Mutex * const mutex, ConditionVariable * const barrier, std::list<ThreadTask *> * const list, unsigned pool_id, unsigned sched_id) :
+    PrivateImplementationPattern<ThreadFunction, Shared>(new Implementation<ThreadFunction>(mutex, barrier, list, pool_id, sched_id))
 {
 }
 
@@ -139,6 +149,11 @@ void ThreadFunction::operator() ()
         }
     }
     while (! _imp->terminate);
+}
+
+unsigned ThreadFunction::pool_id() const
+{
+    return _imp->pool_id;
 }
 
 unsigned ThreadFunction::tid() const

@@ -1,6 +1,6 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 /*
- * Copyright (c) 2009 Sven Mallach <sven.mallach@cs.uni-dortmund.de>
+ * Copyright (c) 2009, 2010 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -56,7 +56,7 @@ namespace honei
 
             public:
 
-                ThreadFunction(Mutex * const mutex, ConditionVariable * const barrier, std::list<ThreadTask *> * const list);
+                ThreadFunction(Mutex * const mutex, ConditionVariable * const barrier, std::list<ThreadTask *> * const list, unsigned pool_id, unsigned sched_id);
 
                 ~ThreadFunction();
 
@@ -64,6 +64,8 @@ namespace honei
                 void operator() ();
 
                 void stop();
+
+                unsigned pool_id() const;
 
                 unsigned tid() const;
         };

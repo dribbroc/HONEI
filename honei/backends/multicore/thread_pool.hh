@@ -45,6 +45,9 @@ namespace honei
                 // Number of threads use
                 unsigned num_threads;
 
+                // A thread instantiation counter
+                unsigned inst_ctr;
+
                 // List of user POSIX threads
                 std::list<std::pair<Thread *, ThreadFunction *> > threads HONEI_ALIGNED(128);
 
@@ -57,7 +60,7 @@ namespace honei
                 // Condition Variable used to synchronize all threads
                 ConditionVariable * const global_barrier;
 
-                std::vector<unsigned> thread_ids;
+                std::vector<unsigned> sched_ids;
 
                 // Flag whether to use thread affinity
                 const bool affinity;

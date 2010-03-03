@@ -112,10 +112,7 @@ cell::extraction_grid_float = 5
 # MultiCore
 ###########
 
-# Number of cores on the CPU's die
-mc::num_cores = 4
-
-# Number of concurrent threads
+# Number of concurrent worker threads to use
 mc::num_threads = 4
 
 # Wheather to use affinity (1 = true, 0 = false)

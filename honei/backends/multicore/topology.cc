@@ -17,161 +17,124 @@
  */
 
 #include <honei/backends/multicore/topology.hh>
-#include <honei/util/private_implementation_pattern-impl.hh>
+#include <honei/util/instantiation_policy-impl.hh>
 
-#include <stdint.h>
 #include <sys/syscall.h>
+#include <unistd.h>
 
-namespace honei
+using namespace honei;
+using namespace honei::mc;
+
+template class InstantiationPolicy<Topology, Singleton>;
+
+// ToDo: May be put in an own header for arch-specific code
+#if defined(__i386__) || defined(__x86_64__)
+void cpuid(int CPUInfo[4], int infoType, int ecx_init = 0)
 {
-    namespace mc
-    {
-        // ToDo: May be put in an own header for arch-specific code
-#if defined(__i386__) || defined(__x86_64__)
-        void cpuid(int CPUInfo[4], int infoType, int ecx_init = 0)
-        {
-            uint32_t eax, ebx, ecx, edx;
-            __asm__ (
-                "pushl %%ebx\n\t"
-                "cpuid\n\t"
-                "movl %%ebx, %1\n\t"
-                "popl %%ebx\n\t"
-                : "=a" (eax), "=r" (ebx), "=c" (ecx), "=d" (edx)
-                : "a" (infoType), "c" (ecx_init)
-                : "cc"
-            );
+    uint32_t eax, ebx, ecx, edx;
+    __asm__ (
+        "pushl %%ebx\n\t"
+        "cpuid\n\t"
+        "movl %%ebx, %1\n\t"
+        "popl %%ebx\n\t"
+        : "=a" (eax), "=r" (ebx), "=c" (ecx), "=d" (edx)
+        : "a" (infoType), "c" (ecx_init)
+        : "cc"
+    );
 
-            CPUInfo[0] = eax;
-            CPUInfo[1] = ebx;
-            CPUInfo[2] = ecx;
-            CPUInfo[3] = edx;
-        }
-#endif
-    }
-
-    using namespace mc;
-
-    template <> struct Implementation<mc::Topology>
-    {
-        /// Number of LOGICAL PUs (hardware threads)
-        unsigned num_lpus;
-
-        /// Number of LOGICAL PUs per physical processor package
-        unsigned num_cores;
-
-        /// Number of physical processor packages (num_lpus / num_cores)
-        unsigned num_cpus;
-
-        /// Number of hardware threads per processor core (usually 1 or 2)
-        unsigned ht_factor;
-
-#if defined(__i386__) || defined(__x86_64__)
-
-        /// Enumeration to distinguish the main x86 processor vendors
-        enum x86_Vendor
-        {
-            UNDEFINED,
-            INTEL,
-            AMD
-        };
-
-        /// Processor vendor as specified by the corresponding enumeration
-        int vendor;
-
-        /// Read processor specific information using cpuid instruction
-        void init_x86()
-        {
-            int CPUInfo[4];
-
-            cpuid(CPUInfo, 0x0);
-            if (CPUInfo[0] > 0)
-            {
-                if (CPUInfo[2] == 1818588270)
-                    vendor = INTEL;
-                else if (CPUInfo[2] == 1145913699)
-                    vendor = AMD;
-                else
-                    vendor = UNDEFINED;
-            }
-
-            if (vendor == INTEL)
-            {
-                cpuid(CPUInfo, 0x4, 0x0);
-                if (CPUInfo[0] > 0)
-                {
-                    num_cores = 1 + (CPUInfo[0] >> 26); // doubled if HTT is enabled!
-                    cpuid(CPUInfo, 0x1);
-
-                    if (((CPUInfo[3] >> 28) & 0x1) == 1)
-                        ht_factor = 2;
-                    else
-                        ht_factor = 1;
-                }
-            }
-            else if (vendor == AMD)
-            {
-                cpuid(CPUInfo, 0x80000000);
-                if (CPUInfo[0] > int(0x80000008))
-                {
-                    cpuid(CPUInfo, 0x80000008);
-                    {
-                        num_cores = 1 + (CPUInfo[2] & 0xFF);
-                    }
-
-                    ht_factor = 1; // ToDo: Remove hardcoded numbers
-                }
-            }
-        }
+    CPUInfo[0] = eax;
+    CPUInfo[1] = ebx;
+    CPUInfo[2] = ecx;
+    CPUInfo[3] = edx;
+}
 #endif
 
-        Implementation()
-        {
+Topology::Topology()
+{
 #if defined(__i386__) || defined(__x86_64__)
-            init_x86();
+        init_x86();
 #endif
 
 #if defined linux
-            num_lpus = sysconf(_SC_NPROCESSORS_CONF);
+        _num_lpus = sysconf(_SC_NPROCESSORS_CONF);
 
-            if (vendor == UNDEFINED)
-                num_cores = sysconf(_SC_NPROCESSORS_CONF);
+        if (vendor == UNDEFINED)
+            _num_cores = sysconf(_SC_NPROCESSORS_CONF);
 
 #else
-            num_lpus = 1;
-            num_cores = 1; // ToDo: Remove hardcoded numbers
+        _num_lpus = 1;
+        _num_cores = 1; // ToDo: Remove hardcoded numbers
 #endif
-            num_cpus = num_lpus / num_cores;
+        _num_cpus = _num_lpus / _num_cores;
+
+}
+
+#if defined(__i386__) || defined(__x86_64__)
+void Topology::init_x86()
+{
+    int CPUInfo[4];
+
+    cpuid(CPUInfo, 0x0);
+    if (CPUInfo[0] > 0)
+    {
+        if (CPUInfo[2] == 1818588270)
+            vendor = INTEL;
+        else if (CPUInfo[2] == 1145913699)
+            vendor = AMD;
+        else
+            vendor = UNDEFINED;
+    }
+
+    if (vendor == INTEL)
+    {
+        cpuid(CPUInfo, 0x4, 0x0);
+        if (CPUInfo[0] > 0)
+        {
+            _num_cores = 1 + (CPUInfo[0] >> 26); // doubled if HTT is enabled!
+            cpuid(CPUInfo, 0x1);
+
+            if (((CPUInfo[3] >> 28) & 0x1) == 1)
+                _ht_factor = 2;
+            else
+                _ht_factor = 1;
         }
-    };
+    }
+    else if (vendor == AMD)
+    {
+        cpuid(CPUInfo, 0x80000000);
+        if (CPUInfo[0] > int(0x80000008))
+        {
+            cpuid(CPUInfo, 0x80000008);
+            {
+                _num_cores = 1 + (CPUInfo[2] & 0xFF);
+            }
+
+            _ht_factor = 1; // ToDo: Remove hardcoded numbers
+        }
+    }
 }
+#endif
 
-using namespace honei::mc;
-
-Topology::Topology() :
-    PrivateImplementationPattern<Topology, Single>(new Implementation<Topology>())
+unsigned Topology::num_lpus() const
 {
-}
-
-unsigned Topology::num_lpus()
-{
-    return _imp->num_lpus;
+    return _num_lpus;
 }
 
 #if defined(__i386__) || defined(__x86_64__)
 
-unsigned Topology::num_cores()
+unsigned Topology::num_cores() const
 {
-    return _imp->num_cores;
+    return _num_cores;
 }
 
-unsigned Topology::num_cpus()
+unsigned Topology::num_cpus() const
 {
-    return _imp->num_cpus;
+    return _num_cpus;
 }
 
-unsigned Topology::ht_factor()
+unsigned Topology::ht_factor() const
 {
-    return _imp->ht_factor;
+    return _ht_factor;
 }
 
 #endif

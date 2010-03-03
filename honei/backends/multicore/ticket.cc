@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2008, 2009 Sven Mallach <sven.mallach@cs.uni-dortmund.de>
+ * Copyright (c) 2008, 2009, 2010 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -40,20 +40,23 @@ namespace honei
             /// Unique ID
             unsigned id;
 
-            /// ID of the executing thread
+            /// Scheduler ID of the executing thread
+            unsigned sched_id;
+
+            /// Process ID of the executing thread
             unsigned thread_id;
 
-            Implementation(const unsigned tid) :
+            Implementation(const unsigned sid) :
                 completed(false),
                 id(counter),
-                thread_id(tid)
+                sched_id(sid)
              {
                 ++counter;
             }
         };
 
-        Ticket<tags::CPU::MultiCore>::Ticket(const unsigned tid) :
-            PrivateImplementationPattern<Ticket<tags::CPU::MultiCore>, Shared>(new Implementation<Ticket<tags::CPU::MultiCore> >(tid))
+        Ticket<tags::CPU::MultiCore>::Ticket(const unsigned sid) :
+            PrivateImplementationPattern<Ticket<tags::CPU::MultiCore>, Shared>(new Implementation<Ticket<tags::CPU::MultiCore> >(sid))
         {
         }
 
@@ -82,6 +85,11 @@ namespace honei
         unsigned Ticket<tags::CPU::MultiCore>::uid() const
         {
             return _imp->id;
+        }
+
+        unsigned & Ticket<tags::CPU::MultiCore>::sid()
+        {
+            return _imp->sched_id;
         }
 
         unsigned & Ticket<tags::CPU::MultiCore>::tid()
