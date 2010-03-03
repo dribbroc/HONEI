@@ -42,17 +42,17 @@ namespace honei
                 // Information about processor topology (such as number of processing units)
                 Topology * topology;
 
-                // Number of threads use
+                // Number of currently pooled threads
                 unsigned num_threads;
 
                 // A thread instantiation counter
                 unsigned inst_ctr;
 
                 // List of user POSIX threads
-                std::list<std::pair<Thread *, ThreadFunction *> > threads HONEI_ALIGNED(128);
+                std::list<std::pair<Thread *, ThreadFunction *> > threads;
 
                 // Waiting list of worker tasks to be executed
-                std::list<ThreadTask *> tasks HONEI_ALIGNED(128);
+                std::list<ThreadTask *> tasks;
 
                 // Our Mutex
                 Mutex * const mutex;
@@ -60,24 +60,32 @@ namespace honei
                 // Condition Variable used to synchronize all threads
                 ConditionVariable * const global_barrier;
 
-                std::vector<unsigned> sched_ids;
-
                 // Flag whether to use thread affinity
                 const bool affinity;
 
 #ifdef linux
+                // Mapping of threads to the scheduler ids of the cores they run on
+                std::vector<unsigned> sched_ids;
+
                 // Array of affinity masks for main process and all controlled threads
                 cpu_set_t * affinity_mask;
 #endif
 
             public:
                 ThreadPool();
+
                 ~ThreadPool();
 
+                // Add threads to the pool
                 void add_threads(const unsigned num);
 
+                // Remove threads from the pool
                 void delete_threads(const unsigned num);
 
+                // Retrieve the number of NUMA nodes
+                unsigned num_nodes() const;
+
+                // Retrieve the number of created threads
                 unsigned get_num_threads() const;
 
                 Ticket<tags::CPU::MultiCore> * enqueue(const std::tr1::function<void ()> & task, DispatchPolicy p = DispatchPolicy::any_core());

@@ -151,6 +151,11 @@ void ThreadPool::delete_threads(const unsigned num)
     affinity_mask = aff_mask;
 }
 
+unsigned ThreadPool::num_nodes() const
+{
+    return topology->num_nodes();
+}
+
 unsigned ThreadPool::get_num_threads() const
 {
     return num_threads;

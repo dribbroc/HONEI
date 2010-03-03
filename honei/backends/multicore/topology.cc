@@ -30,7 +30,7 @@ using namespace honei::mc;
 template class InstantiationPolicy<Topology, Singleton>;
 
 // ToDo: May be put in an own header for arch-specific code
-#if defined(__i386__) || defined(__x86_64__)
+#if defined(__i386__)
 void cpuid(int CPUInfo[4], int infoType, int ecx_init = 0)
 {
     uint32_t eax, ebx, ecx, edx;
@@ -48,6 +48,25 @@ void cpuid(int CPUInfo[4], int infoType, int ecx_init = 0)
     CPUInfo[1] = ebx;
     CPUInfo[2] = ecx;
     CPUInfo[3] = edx;
+}
+#elif defined(__x86_64__)
+void cpuid(int CPUInfo[4], int infoType, int ecx_init = 0)
+{
+    uint64_t _eax, _ebx, _ecx, _edx;
+    __asm__ (
+        "push %%rbx\n\t"
+        "cpuid\n\t"
+        "mov %%rbx, %1\n\t"
+        "pop %%rbx\n\t"
+        : "=a" (_eax), "=r" (_ebx), "=c" (_ecx), "=d" (_edx)
+        : "a" (infoType), "c" (ecx_init)
+        : "cc"
+    );
+
+    CPUInfo[0] = static_cast<int>(_eax);
+    CPUInfo[1] = static_cast<int>(_ebx);
+    CPUInfo[2] = static_cast<int>(_ecx);
+    CPUInfo[3] = static_cast<int>(_edx);
 }
 #endif
 
@@ -77,6 +96,9 @@ Topology::Topology()
         else
         {
             cpu_to_node = intern::cpu_to_node_array(_num_nodes, _num_lpus);
+
+            range_min = new unsigned[_num_nodes];
+            range_max = new unsigned[_num_nodes];
 
             for (unsigned i(0) ; i < _num_nodes ; ++i)
             {

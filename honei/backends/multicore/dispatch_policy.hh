@@ -38,7 +38,7 @@ namespace honei
 
             public:
 
-                Ticket<tags::CPU::MultiCore> * operator() ( HONEI_UNUSED std::vector<unsigned> & sids)
+                Ticket<tags::CPU::MultiCore> * operator() (std::vector<unsigned> & sids)
                 {
                     return new Ticket<tags::CPU::MultiCore>();
                 }
@@ -60,7 +60,11 @@ namespace honei
                 Ticket<tags::CPU::MultiCore> * operator() (std::vector<unsigned> & sids)
                 {
                     unsigned sched_id(other->sid());
-                    // Should make sure that there is a thread running on that core...
+
+                    // Make sure that there is STILL a thread running on that core.
+                    if (sids.end() == std::find(sids.begin(), sids.end(), sched_id))
+                        sched_id = 0xFFFF;
+
                     Ticket<tags::CPU::MultiCore> * ticket = new Ticket<tags::CPU::MultiCore>(sched_id, sched_id);
 
                     return ticket;
@@ -82,7 +86,7 @@ namespace honei
 
                 Ticket<tags::CPU::MultiCore> * operator() (std::vector<unsigned> & sids)
                 {
-                    // Use core_nr as equal to sched_id
+                    // Use core_nr as equal to sched_id and make sure that there is a thread on it
                     if (sids.end() == std::find(sids.begin(), sids.end(), core_id))
                         core_id = 0xFFFF;
 

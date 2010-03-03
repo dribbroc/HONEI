@@ -46,8 +46,10 @@ namespace honei
                 /// Array that maps sched_ids to NUMA nodes
                 unsigned * cpu_to_node;
 
+                /// Lowest scheduler ID of NUMA nodes
                 unsigned * range_min;
 
+                /// Highest scheduler ID of NUMA nodes
                 unsigned * range_max;
 
 #if defined(__i386__) || defined(__x86_64__)
@@ -81,7 +83,10 @@ namespace honei
                 /// \name Basic Operations
                 /// \{
 
+                /// Constructor
                 Topology();
+
+                /// Destructor
                 ~Topology();
 
                 /// \}
