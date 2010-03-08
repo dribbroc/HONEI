@@ -36,7 +36,7 @@ template class InstantiationPolicy<ThreadPool, Singleton>;
 
 ThreadPool::ThreadPool() :
     _topology(Topology::instance()),
-    _num_threads(Configuration::instance()->get_value("mc::num_threads", _topology->num_lpus())),
+    _num_threads(Configuration::instance()->get_value("mc::num_threads", _topology->num_lpus() - 1)),
     _inst_ctr(0),
     _mutex(new Mutex),
     _global_barrier(new ConditionVariable),

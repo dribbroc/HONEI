@@ -23,13 +23,10 @@
 #include <honei/util/attributes.hh>
 #include <honei/util/instantiation_policy.hh>
 
-#include <stdint.h>
-
 namespace honei
 {
     namespace mc
     {
-
         class Topology :
              public InstantiationPolicy<Topology, Singleton>
         {
@@ -56,6 +53,8 @@ namespace honei
                 unsigned * range_max;
 
 #if defined(__i386__) || defined(__x86_64__)
+                /// Processor vendor as specified by the corresponding enumeration
+                unsigned _vendor;
 
                 /// Return the number of PUs per physical processor package
                 unsigned _num_cores;
@@ -66,19 +65,6 @@ namespace honei
                 /// Return the number of hardware threads per processor core (usually 1 or 2)
                 unsigned _ht_factor;
 
-                /// Enumeration to distinguish the main x86 processor vendors
-                enum x86_Vendor
-                {
-                    UNDEFINED,
-                    INTEL,
-                    AMD
-                };
-
-                /// Processor vendor as specified by the corresponding enumeration
-                int vendor;
-
-                /// Read processor specific information using cpuid instruction
-                void init_x86();
 #endif
                 /// \}
 

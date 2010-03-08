@@ -59,7 +59,7 @@ namespace honei
         /// Helper function to pick work out of the pool's task list
         inline void pick_work() HONEI_INLINE
         {
-            pthread_mutex_lock(pool_mutex->mutex());
+            Lock l(*pool_mutex);
 
             task = 0;
 
@@ -77,8 +77,6 @@ namespace honei
                     break;
                 }
             }
-
-            pthread_mutex_unlock(pool_mutex->mutex());
         }
 
         Implementation(Mutex * const mutex, ConditionVariable * const barrier,
@@ -96,10 +94,9 @@ namespace honei
 
             void stop()
             {
-                pthread_mutex_lock(pool_mutex->mutex());
+                Lock l(*pool_mutex);
                 terminate = true;
                 global_barrier->broadcast();
-                pthread_mutex_unlock(pool_mutex->mutex());
             }
 
             ~Implementation()

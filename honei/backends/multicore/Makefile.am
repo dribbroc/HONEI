@@ -23,7 +23,8 @@ libhoneibackendsmulticore_la_SOURCES = dispatch_policy.hh \
 				 thread_function.hh \
 				 thread_function.cc \
 				 topology.hh \
-				 topology.cc
+				 topology.cc \
+				 x86_spec.hh
 
 thread_pool_TEST_SOURCES = thread_pool_TEST.cc
 
@@ -50,7 +51,8 @@ numainfo_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 
 libhoneibackendsmulticore_includedir = $(includedir)/honei/backends/multicore/
 libhoneibackendsmulticore_include_HEADERS = dispatch_policy.hh numainfo.hh operation.hh \
-						 ticket.hh thread_pool.hh thread_function.hh
+						 ticket.hh thread_pool.hh thread_function.hh \
+						 x86_spec.hh
 TESTS = numainfo_TEST thread_pool_TEST topology_TEST
 TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_srcdir)/unittest/run.sh
 check_PROGRAMS = $(TESTS)
