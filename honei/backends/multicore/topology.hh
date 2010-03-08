@@ -68,17 +68,29 @@ namespace honei
 #endif
                 /// \}
 
-            public:
+            protected:
+
+                friend class InstantiationPolicy<Topology, Singleton>;
+
                 /// \name Basic Operations
                 /// \{
 
                 /// Constructor
                 Topology();
 
+                /// \}
+
+            public:
+                /// \name Basic Operations
+                /// \{
+
                 /// Destructor
                 ~Topology();
 
                 /// \}
+
+                /// \name Public members
+                /// \{
 
                 /// Return the number of logical PUs (hardware-threads)
                 unsigned num_lpus() const;
@@ -109,6 +121,7 @@ namespace honei
                 /// Return the number of hardware threads per processor core (usually 1 or 2)
                 unsigned ht_factor() const;
 #endif
+                /// \}
         };
     }
 }

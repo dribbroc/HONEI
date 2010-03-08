@@ -38,60 +38,87 @@ namespace honei
             public InstantiationPolicy<ThreadPool, Singleton>
         {
             private:
+                /// \name Private members
+                /// \{
 
-                // Information about processor topology (such as number of processing units)
+                /// Information about processor topology (such as number of processing units)
                 Topology * _topology;
 
-                // Number of currently pooled threads
+                /// Number of currently pooled threads
                 unsigned _num_threads;
 
-                // A thread instantiation counter
+                /// A thread instantiation counter
                 unsigned _inst_ctr;
 
-                // List of user POSIX threads
+                /// List of user POSIX threads
                 std::list<std::pair<Thread *, ThreadFunction *> > _threads;
 
-                // Waiting list of worker tasks to be executed
+                /// Waiting list of worker tasks to be executed
                 std::list<ThreadTask *> _tasks;
 
-                // Our Mutex
+                /// Our Mutex
                 Mutex * const _mutex;
 
-                // Condition Variable used to synchronize all threads
+                /// Condition Variable used to synchronize all threads
                 ConditionVariable * const _global_barrier;
 
-                // Flag whether to use thread affinity
+                /// Flag whether to use thread affinity
                 const bool _affinity;
 
 #ifdef linux
-                // Mapping of threads to the scheduler ids of the cores they run on
+                /// Mapping of threads to the scheduler ids of the cores they run on
                 std::vector<unsigned> _sched_ids;
 
-                // Array of affinity masks for main process and all controlled threads
+                /// Array of affinity masks for main process and all controlled threads
                 cpu_set_t * _affinity_mask;
 #endif
+                /// \}
+
+            protected:
+
+                friend class InstantiationPolicy<ThreadPool, Singleton>;
+
+                /// \name Basic Operations
+                /// \{
+
+                /// Constructor
+
+                ThreadPool();
+
+                /// \}
 
             public:
-                ThreadPool();
+
+                /// \name Basic Operations
+                /// \{
+
+                /// Destructor
 
                 ~ThreadPool();
 
-                // Add threads to the pool
+                /// \}
+
+                /// \name Public members
+                /// \{
+
+                /// Add threads to the pool
                 void add_threads(const unsigned num);
 
-                // Remove threads from the pool
+                /// Remove threads from the pool
                 void delete_threads(const unsigned num);
 
-                // Retrieve the number of NUMA nodes
+                /// Retrieve the number of NUMA nodes
                 unsigned num_nodes() const;
 
-                // Retrieve the node on which the main thread runs (use only when affinity enabled)
+                /// Retrieve the node on which the main thread runs (use only when affinity enabled)
                 unsigned main_node() const;
 
-                // Retrieve the number of created threads
+                /// Retrieve the number of created threads
                 unsigned num_threads() const;
 
                 Ticket<tags::CPU::MultiCore> * enqueue(const std::tr1::function<void ()> & task, DispatchPolicy p = DispatchPolicy::any_core());
+
+                /// \}
         };
     }
 }

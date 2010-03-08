@@ -38,7 +38,7 @@ class TopologyTest :
 
         virtual void run() const
         {
-            Topology * t(new Topology);
+            Topology * t = Topology::instance();
 
 #if defined linux
             TEST_CHECK(t->num_lpus() == (unsigned) sysconf(_SC_NPROCESSORS_CONF));
