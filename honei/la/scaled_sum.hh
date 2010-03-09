@@ -310,6 +310,31 @@ namespace honei
         /// \}
     };
 
+    template <>
+    struct ScaledSum<tags::GPU::MultiCore::CUDA>
+    {
+        /**
+         * \name Scaled sums
+         * \{
+         *
+         * \brief Returns the vector x as the scaled sum of two given vectors.
+         *
+         * \param x The vector that shall not be scaled.
+         * \param y The vector that shall be scaled.
+         * \param b The scale factor.
+         *
+         * \retval x Will modify x and return it.
+         *
+         * \exception VectorSizeDoesNotMatch is thrown if the sizes of x and y do not match.
+         */
+
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & x, const DenseVectorContinuousBase<float> & y, float b);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & x, const DenseVectorContinuousBase<double> & y, double b);
+
+        /// \}
+    };
+
     /**
      * \brief Scaled sum of two given vectors and a given scalar.
      *

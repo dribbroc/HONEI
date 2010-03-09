@@ -9,6 +9,7 @@
 #include <honei/la/scaled_sum.hh>
 #include <honei/backends/cuda/operations.hh>
 #include <honei/util/configuration.hh>
+#include <honei/backends/cuda/gpu_pool.hh>
 
 using namespace std;
 using namespace honei;
@@ -37,17 +38,17 @@ class DenseVectorScaledSumBench :
                 for(int i = 0; i < _count; ++i)
             {
                 BENCHMARK(
-                        for (unsigned long l(0) ; l < 10 ; ++l)
+                        for (unsigned long l(0) ; l < 20 ; ++l)
                         {
                         ScaledSum<Tag_>::value(dv0, dv1, b);
 #ifdef HONEI_CUDA
-                        cuda_thread_synchronize();
+                        cuda::GPUPool::instance()->flush();
 #endif
                         }
                         );
             }
             BenchmarkInfo info(ScaledSum<>::get_benchmark_info(dv0, dv1, b));
-            evaluate(info * 10);
+            evaluate(info * 20);
         }
 };
 
@@ -70,6 +71,14 @@ DenseVectorScaledSumBench<tags::CPU::MultiCore::SSE, double>
 #ifdef HONEI_CUDA
 DenseVectorScaledSumBench<tags::GPU::CUDA, float>
     CUDADVSSBenchfloat1("CUDA Dense Vector ScaledSum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
+DenseVectorScaledSumBench<tags::GPU::MultiCore::CUDA, float>
+    MCCUDADVSSBenchfloat1("MC CUDA Dense Vector ScaledSum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorScaledSumBench<tags::GPU::CUDA, double>
+    CUDADVSSBenchdouble("CUDA Dense Vector ScaledSum Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
+DenseVectorScaledSumBench<tags::GPU::MultiCore::CUDA, double>
+    MCCUDADVSSBenchdouble("MC CUDA Dense Vector ScaledSum Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
+#endif
 #endif
 #ifdef HONEI_CELL
 DenseVectorScaledSumBench<tags::Cell, float> CellDVSSBenchfloat1("CELL Dense Vector ScaledSum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
