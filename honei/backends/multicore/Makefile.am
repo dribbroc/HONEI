@@ -26,7 +26,11 @@ libhoneibackendsmulticore_la_SOURCES = dispatch_policy.hh \
 				 topology.cc \
 				 x86_spec.hh
 
+numainfo_TEST_SOURCES = numainfo_TEST.cc
+
 thread_pool_TEST_SOURCES = thread_pool_TEST.cc
+
+topology_TEST_SOURCES = topology_TEST.cc
 
 thread_pool_TEST_LDADD = \
 	$(top_builddir)/unittest/libunittest.a \

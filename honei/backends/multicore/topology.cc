@@ -16,12 +16,11 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/backends/multicore/numainfo.hh>
+#include <honei/backends/multicore/topology.hh>
 #if defined(__i386__) || defined(__x86_64__)
 #include <honei/backends/multicore/x86_spec.hh>
 #endif
-
-#include <honei/backends/multicore/numainfo.hh>
-#include <honei/backends/multicore/topology.hh>
 #include <honei/util/instantiation_policy-impl.hh>
 
 #include <limits>
@@ -32,11 +31,17 @@ using namespace honei::mc;
 
 template class InstantiationPolicy<Topology, Singleton>;
 
-Topology::Topology()
+Topology::Topology() :
+    _num_lpus(1),
+    _num_nodes(1),
+    _lpus_per_node(1),
+    _num_cores(1)
 {
+#if defined linux
     _num_lpus = sysconf(_SC_NPROCESSORS_CONF);
 
     _num_nodes = intern::num_nodes();
+#endif
 
     if (_num_nodes == 1)
     {
@@ -83,15 +88,12 @@ Topology::Topology()
 #endif
 
 #if defined linux
-
     _lpus_per_node = _num_lpus / _num_nodes;
 
     if (_vendor == UNDEFINED)
         _num_cores = sysconf(_SC_NPROCESSORS_CONF);
-#else
-    _num_lpus = 1;
-    _num_cores = 1; // ToDo: Remove hardcoded numbers
 #endif
+
     _num_cpus = _num_lpus / _num_cores;
 }
 
@@ -101,7 +103,6 @@ Topology::~Topology()
     delete[] range_min;
     delete[] range_max;
 }
-
 
 unsigned Topology::num_lpus() const
 {

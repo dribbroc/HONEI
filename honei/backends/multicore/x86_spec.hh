@@ -61,21 +61,20 @@ namespace honei
         }
 
 #elif defined(__x86_64__)
-        inline void cpuid(int CPUInfo[4], int infoType, int ecx_init = 0)
+        inline void cpuid(int CPUInfo[4], int infoType, int rcx_init = 0)
         {
-            uint64_t _eax, _ebx, _ecx, _edx;
+            uint64_t _rax, _rbx, _rcx, _rdx;
             __asm__ (
                 "cpuid\n\t"
-                "mov %%rbx, %0\n\t"
-                : "=a" (_eax), "=r" (_ebx), "=c" (_ecx), "=d" (_edx)
-                : "a" (infoType), "c" (ecx_init)
+                : "=a" (_rax), "=b" (_rbx), "=c" (_rcx), "=d" (_rdx)
+                : "a" (infoType), "c" (rcx_init)
                 : "cc"
             );
 
-            CPUInfo[0] = static_cast<int>(_eax);
-            CPUInfo[1] = static_cast<int>(_ebx);
-            CPUInfo[2] = static_cast<int>(_ecx);
-            CPUInfo[3] = static_cast<int>(_edx);
+            CPUInfo[0] = static_cast<int>(_rax);
+            CPUInfo[1] = static_cast<int>(_rbx);
+            CPUInfo[2] = static_cast<int>(_rcx);
+            CPUInfo[3] = static_cast<int>(_rdx);
         }
 #endif
 
