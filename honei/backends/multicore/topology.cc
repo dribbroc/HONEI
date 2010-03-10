@@ -34,8 +34,7 @@ template class InstantiationPolicy<Topology, Singleton>;
 Topology::Topology() :
     _num_lpus(1),
     _num_nodes(1),
-    _lpus_per_node(1),
-    _num_cores(1)
+    _lpus_per_node(1)
 {
 #if defined linux
     _num_lpus = sysconf(_SC_NPROCESSORS_CONF);
@@ -83,18 +82,20 @@ Topology::Topology() :
 
 #if defined(__i386__) || defined(__x86_64__)
     init_x86(_vendor, _num_cores, _ht_factor);
-#else
-    _vendor = UNDEFINED;
-#endif
-
-#if defined linux
-    _lpus_per_node = _num_lpus / _num_nodes;
 
     if (_vendor == UNDEFINED)
+    {
+#if defined linux
         _num_cores = sysconf(_SC_NPROCESSORS_CONF);
+#else
+        _num_cores = 1;
 #endif
+    }
 
     _num_cpus = _num_lpus / _num_cores;
+#endif
+
+    _lpus_per_node = _num_lpus / _num_nodes;
 }
 
 Topology::~Topology()

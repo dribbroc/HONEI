@@ -44,6 +44,9 @@
 
 #elif defined(__ia64__)
 #define __NR_sched_getaffinity    1232
+
+#elif defined(__ppc__) || defined (__PPU__)
+#define __NR_sched_getaffinity    233
 #endif
 
 namespace honei
