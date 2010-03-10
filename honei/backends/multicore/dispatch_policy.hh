@@ -38,7 +38,7 @@ namespace honei
 
             public:
 
-                Ticket<tags::CPU::MultiCore> * operator() (std::vector<unsigned> & sids)
+                Ticket<tags::CPU::MultiCore> * operator() (HONEI_UNUSED std::vector<unsigned> & sids)
                 {
                     return new Ticket<tags::CPU::MultiCore>();
                 }
@@ -114,7 +114,7 @@ namespace honei
                 {
                     unsigned sched_min(other->sid_min());
                     unsigned sched_max(other->sid_max());
-                    // Should make sure that there is a thread running on that core...
+
                     Ticket<tags::CPU::MultiCore> * ticket = new Ticket<tags::CPU::MultiCore>(sched_min, sched_max);
 
                     return ticket;
@@ -134,7 +134,7 @@ namespace honei
                 {
                 }
 
-                Ticket<tags::CPU::MultiCore> * operator() (std::vector<unsigned> & sids)
+                Ticket<tags::CPU::MultiCore> * operator() (HONEI_UNUSED std::vector<unsigned> & sids)
                 {
                     Topology * top = Topology::instance();
 
