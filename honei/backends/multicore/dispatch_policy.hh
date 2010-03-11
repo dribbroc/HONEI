@@ -110,7 +110,7 @@ namespace honei
                 {
                 }
 
-                Ticket<tags::CPU::MultiCore> * operator() (std::vector<unsigned> & sids)
+                Ticket<tags::CPU::MultiCore> * operator() (HONEI_UNUSED std::vector<unsigned> & sids)
                 {
                     unsigned sched_min(other->sid_min());
                     unsigned sched_max(other->sid_max());
