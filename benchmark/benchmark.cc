@@ -669,7 +669,7 @@ int main(int argc, char** argv)
             ++i;
             continue;
         }
-        if (mc && ((*i)->plots() == plot) && ((*i)->get_tag_name() == "mc") | ((*i)->get_tag_name() == "mc-cuda"))
+        if (mc && ((*i)->plots() == plot) && ((*i)->get_tag_name() == "mc-sse") | ((*i)->get_tag_name() == "mc-cuda"))
         {
             ++i;
             continue;
