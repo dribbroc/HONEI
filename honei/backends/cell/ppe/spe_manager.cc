@@ -134,7 +134,7 @@ namespace honei
                     {
                         for (unsigned j(0) ; j < (*k_it).capabilities.opcode_count ; ++j)
                         {
-                            if ((*k_it).capabilities.opcodes[j] == opcode_history[i]);
+                            if ((*k_it).capabilities.opcodes[j] == opcode_history[i])
                             {
                                 temp_count++;
                                 break;
