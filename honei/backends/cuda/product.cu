@@ -177,7 +177,8 @@ namespace honei
             for(unsigned long n = 0; n < num_cols_per_row; n++){
                 const float A_ij = *Ax;
 
-                if (A_ij != 0){
+                //if (A_ij != 0)
+                {
                     const unsigned long col = *Aj;
                     //sum += A_ij * x[col];
                     sum += A_ij * tex1Dfetch(tex_x_float_product, col);
@@ -207,7 +208,8 @@ namespace honei
             for(unsigned long n = 0; n < num_cols_per_row; n++){
                 const double A_ij = *Ax;
 
-                if (A_ij != 0){
+                //if (A_ij != 0)
+                {
                     const unsigned long col = *Aj;
                     //sum += A_ij * x[col];
                     int2 v = tex1Dfetch(tex_x_double_product, col);
