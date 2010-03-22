@@ -251,7 +251,8 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrixQ1<double> 
     return result;
 }
 
-DenseVector<float> Product<tags::CPU::SSE>::value(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b)
+DenseVector<float> & Product<tags::CPU::SSE>::value(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b,
+        unsigned long row_start, unsigned long row_end)
 {
     CONTEXT("When multiplying SparseMatrixELL<float> with DenseVector<float> (SSE):");
 
@@ -260,15 +261,25 @@ DenseVector<float> Product<tags::CPU::SSE>::value(DenseVector<float> & result, c
         throw VectorSizeDoesNotMatch(b.size(), a.columns());
     }
 
-    fill<tags::CPU::SSE>(result, float(0));
 
-    honei::sse::product_smell_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), b.elements(),
-            a.stride(), a.rows(), a.num_cols_per_row());
+    if (row_end == 0)
+    {
+        fill<tags::CPU::SSE>(result, float(0));
+        honei::sse::product_smell_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), b.elements(),
+                a.stride(), a.rows(), a.num_cols_per_row());
+    }
+
+    else
+    {
+        honei::sse::product_smell_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), b.elements(),
+                a.stride(), a.rows(), a.num_cols_per_row(), row_start, row_end);
+    }
 
     return result;
 }
 
-DenseVector<double> Product<tags::CPU::SSE>::value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b)
+DenseVector<double> & Product<tags::CPU::SSE>::value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b,
+        unsigned long row_start, unsigned long row_end)
 {
     CONTEXT("When multiplying SparseMatrixELL<double> with DenseVector<double> (SSE):");
 
@@ -277,10 +288,18 @@ DenseVector<double> Product<tags::CPU::SSE>::value(DenseVector<double> & result,
         throw VectorSizeDoesNotMatch(b.size(), a.columns());
     }
 
-    fill<tags::CPU::SSE>(result, double(0));
+    if (row_end == 0)
+    {
+        fill<tags::CPU::SSE>(result, double(0));
+        honei::sse::product_smell_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), b.elements(),
+                a.stride(), a.rows(), a.num_cols_per_row());
+    }
 
-    honei::sse::product_smell_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), b.elements(),
-            a.stride(), a.rows(), a.num_cols_per_row());
+    else
+    {
+        honei::sse::product_smell_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), b.elements(),
+                a.stride(), a.rows(), a.num_cols_per_row(), row_start, row_end);
+    }
 
     return result;
 }

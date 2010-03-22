@@ -766,6 +766,8 @@ SparseMatrixELLDenseVectorProductTest<double, tags::CPU> sparse_matrix_ell_dense
 #ifdef HONEI_SSE
 SparseMatrixELLDenseVectorProductTest<float, tags::CPU::SSE> sse_sparse_matrix_ell_dense_vector_product_test_float("float");
 SparseMatrixELLDenseVectorProductTest<double, tags::CPU::SSE> sse_sparse_matrix_ell_dense_vector_product_test_double("double");
+SparseMatrixELLDenseVectorProductTest<float, tags::CPU::MultiCore::SSE> mc_sse_sparse_matrix_ell_dense_vector_product_test_float("float");
+SparseMatrixELLDenseVectorProductTest<double, tags::CPU::MultiCore::SSE> mc_sse_sparse_matrix_ell_dense_vector_product_test_double("double");
 #endif
 #ifdef HONEI_CUDA
 SparseMatrixELLDenseVectorProductTest<float, tags::GPU::CUDA> cuda_sparse_matrix_ell_dense_vector_product_test_float("float");
@@ -801,7 +803,7 @@ class SparseMatrixELLDenseVectorProductQuickTest :
             dv1[0] = 1;
             dv1[1] = 2;
             DenseVector<DataType_> prod(Product<Tag_>::value(result, sm0, dv1));
-            DenseVector<DataType_> prod_ref(Product<>::value(dm0, dv1));
+            DenseVector<DataType_> prod_ref(Product<tags::CPU>::value(dm0, dv1));
 
             prod.lock(lm_read_only);
             TEST_CHECK_EQUAL(prod, prod_ref);
@@ -813,6 +815,8 @@ SparseMatrixELLDenseVectorProductQuickTest<double, tags::CPU> sparse_matrix_ell_
 #ifdef HONEI_SSE
 SparseMatrixELLDenseVectorProductQuickTest<float, tags::CPU::SSE> sse_sparse_matrix_ell_dense_vector_product_quick_test_float("float");
 SparseMatrixELLDenseVectorProductQuickTest<double, tags::CPU::SSE> sse_sparse_matrix_ell_dense_vector_product_quick_test_double("double");
+SparseMatrixELLDenseVectorProductQuickTest<float, tags::CPU::MultiCore::SSE> mc_sse_sparse_matrix_ell_dense_vector_product_quick_test_float("float");
+SparseMatrixELLDenseVectorProductQuickTest<double, tags::CPU::MultiCore::SSE> mc_sse_sparse_matrix_ell_dense_vector_product_quick_test_double("double");
 #endif
 #ifdef HONEI_CUDA
 SparseMatrixELLDenseVectorProductQuickTest<float, tags::GPU::CUDA> cuda_sparse_matrix_ell_dense_vector_product_quick_test_float("float");

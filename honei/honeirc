@@ -277,6 +277,8 @@ mc::product(BM,DVCB)::max_count = 4
 mc::product(SM,DM)::min_part_size = 16
 mc::product(SM,DM)::max_count = 4
 
+mc::Product(DV,SMELL,DV)::max_count = 4
+
 mc::dot_product(DVCB,DVCB)::min_part_size = 16
 mc::dot_product(DVCB,DVCB)::max_count = 4
 

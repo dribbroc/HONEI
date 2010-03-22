@@ -26,6 +26,11 @@
 #include <honei/la/sparse_vector.hh>
 #include <honei/la/vector_error.hh>
 #include <honei/util/benchmark_info.hh>
+#include <honei/util/configuration.hh>
+#include <honei/util/operation_wrapper.hh>
+#include <honei/util/partitioner.hh>
+#include <honei/backends/multicore/operation.hh>
+#include <honei/backends/multicore/thread_pool.hh>
 #include <honei/util/tags.hh>
 
 namespace honei
@@ -327,9 +332,26 @@ namespace honei
 
     namespace mc
     {
-        template <typename Tag_> struct DotProduct :
-            public honei::DotProduct<typename Tag_::DelegateTo>
+        template <typename Tag_> struct DotProduct
         {
+            template <typename DT1_, typename DT2_>
+            static DT1_ value(const DenseVectorContinuousBase<DT1_> & x, const DenseVectorContinuousBase<DT2_> & y)
+            {
+                CONTEXT("When calculating DVCB, DBCB dot product using backend : " + Tag_::name);
+
+                if (x.size() != y.size())
+                    throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+                unsigned long min_part_size(Configuration::instance()->get_value("mc::dot_product(DVCB,DVCB)::min_part_size", 128));
+                unsigned long max_count(Configuration::instance()->get_value("mc::dot_product(DVCB,DVCB)::max_count",
+                            mc::ThreadPool::instance()->num_threads()));
+
+                DT1_ result(0);
+
+                Operation<honei::DotProduct<typename Tag_::DelegateTo> >::op(result, x, y, min_part_size, max_count);
+
+                return result;
+            }
         };
     }
 

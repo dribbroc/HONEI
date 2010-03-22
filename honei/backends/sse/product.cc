@@ -1016,6 +1016,34 @@ namespace honei
                 }
             }
         }
+        void product_smell_dv(float * result, unsigned long * Aj, float * Ax, float * b,
+                unsigned long stride, unsigned long rows, unsigned long num_cols_per_row,
+                unsigned long row_start, unsigned long row_end)
+        {
+            for (unsigned long row(row_start) ; row < row_end ; ++row)
+            {
+                unsigned long * tAj(Aj);
+                float * tAx(Ax);
+                float sum(0);
+                tAj += row;
+                tAx += row;
+
+                for(unsigned long n = 0; n < num_cols_per_row; n++)
+                {
+                    const float A_ij = *tAx;
+
+                    //if (A_ij != 0)
+                    {
+                        const unsigned long col = *tAj;
+                        sum += A_ij * b[col];
+                    }
+
+                    tAj += stride;
+                    tAx += stride;
+                }
+                result[row] = sum;
+            }
+        }
 
         void product_smell_dv(double * result, unsigned long * Aj, double * Ax, double * b,
                 unsigned long stride, unsigned long rows, unsigned long num_cols_per_row)
@@ -1029,6 +1057,35 @@ namespace honei
                     //if(Ax_n[i] != double(0))
                         result[i] += Ax_n[i] * b[Aj_n[i]];
                 }
+            }
+        }
+
+        void product_smell_dv(double * result, unsigned long * Aj, double * Ax, double * b,
+                unsigned long stride, unsigned long rows, unsigned long num_cols_per_row,
+                unsigned long row_start, unsigned long row_end)
+        {
+            for (unsigned long row(row_start) ; row < row_end ; ++row)
+            {
+                unsigned long * tAj(Aj);
+                double * tAx(Ax);
+                double sum(0);
+                tAj += row;
+                tAx += row;
+
+                for(unsigned long n = 0; n < num_cols_per_row; n++)
+                {
+                    const double A_ij = *tAx;
+
+                    //if (A_ij != 0)
+                    {
+                        const unsigned long col = *tAj;
+                        sum += A_ij * b[col];
+                    }
+
+                    tAj += stride;
+                    tAx += stride;
+                }
+                result[row] = sum;
             }
         }
     }

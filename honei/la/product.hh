@@ -140,9 +140,9 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> value(DenseVector<DT1_> & result, const SparseMatrixELL<DT1_> & a, const DenseVectorBase<DT2_> & b)
+        static DenseVector<DT1_> value(DenseVector<DT1_> & result, const SparseMatrixELL<DT1_> & a, const DenseVector<DT2_> & b)
         {
-            CONTEXT("When multiplying SparseMatrixELL with DenseVectorBase:");
+            CONTEXT("When multiplying SparseMatrixELL with DenseVector:");
 
             if (b.size() != a.columns())
             {
@@ -1337,9 +1337,11 @@ namespace honei
 
         static DenseMatrixTile<double> & value(DenseMatrixTile<double> & r, const DenseMatrixTile<double> & a, const DenseMatrixTile<double> & b);
 
-        static DenseVector<float> value(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b);
+        static DenseVector<float> & value(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b,
+                unsigned long row_start = 0, unsigned long row_end = 0);
 
-        static DenseVector<double> value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b);
+        static DenseVector<double> & value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b,
+                unsigned long row_start = 0, unsigned long row_end = 0);
         /// \}
     };
 
@@ -1413,11 +1415,50 @@ namespace honei
                 return result;
             }
 
+            template <typename DT_>
+            static DenseVector<DT_> value(DenseVector<DT_> & result, const SparseMatrixELL<DT_> & a, const DenseVector<DT_> & b)
+            {
+                if (b.size() != a.columns())
+                {
+                    throw VectorSizeDoesNotMatch(b.size(), a.columns());
+                }
+                if (a.rows() != result.size())
+                {
+                    throw VectorSizeDoesNotMatch(a.rows(), result.size());
+                }
+
+                //fill<typename Tag_::DelegateTo>(result, DT_(0));
+
+                unsigned long max_count(Configuration::instance()->get_value("mc::Product(DV,SMELL,DV)::max_count",
+                            mc::ThreadPool::instance()->num_threads()));
+
+                TicketVector tickets;
+
+                unsigned long limits[max_count + 1];
+                limits[0] = 0;
+                for (unsigned long i(1) ; i < max_count; ++i)
+                {
+                    limits[i] = limits[i-1] + a.rows() / max_count;
+                }
+                limits[max_count] = a.rows();
+
+                for (unsigned long i(0) ; i < max_count ; ++i)
+                {
+                    OperationWrapper<honei::Product<typename Tag_::DelegateTo>, DenseVector<DT_>,
+                        DenseVector<DT_>, SparseMatrixELL<DT_>, DenseVector<DT_>, unsigned long, unsigned long > wrapper(result);
+                    tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper, result, a, b, limits[i], limits[i+1])));
+                }
+
+                tickets.wait();
+
+                return result;
+            }
+
             // Dummy
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(const DenseMatrix<DT1_> & a, const DenseVectorBase<DT2_> & b)
-            {
-                CONTEXT("When multiplying DenseMatrix with DenseVector(Base) using backend : " + Tag_::name);
+                static DenseVector<DT1_> value(const DenseMatrix<DT1_> & a, const DenseVectorBase<DT2_> & b)
+                {
+                    CONTEXT("When multiplying DenseMatrix with DenseVector(Base) using backend : " + Tag_::name);
 
                 if (b.size() != a.columns())
                 {

@@ -424,6 +424,20 @@ namespace honei
             }
 
             template <typename DT1_, typename DT2_>
+            static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & result, const DenseVectorContinuousBase<DT1_> & x, const DenseVectorContinuousBase<DT2_> & y, DT2_ b)
+            {
+                CONTEXT("When calculating ScaledSum (DenseVectorContinuousBase, DenseVectorContinuousBase, scalar) using backend : " + Tag_::name);
+
+                unsigned long min_part_size(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DT)::min_part_size", 128));
+                unsigned long max_count(Configuration::instance()->get_value("mc::ScaledSum(DVCB,DVCB,DT)::max_count",
+                            mc::ThreadPool::instance()->num_threads()));
+
+                Operation<honei::ScaledSum<typename Tag_::DelegateTo> >::op(result, x, y, b, min_part_size, max_count);
+
+                return result;
+            }
+
+            template <typename DT1_, typename DT2_>
             static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & x, const DenseVectorBase<DT2_> & y, const DenseVectorBase<DT2_> & z)
             {
                 CONTEXT("When calculating ScaledSum (DenseVectorBase, DenseVectorBase, DenseVectorBase) using backend : " + Tag_::name);

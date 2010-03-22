@@ -583,7 +583,9 @@
                         for (typename DenseVector<DataType_>::ElementIterator e(_step_width.begin_elements()),
                                 e_end(_step_width.end_elements()); e != e_end ; ++e)
                                 {
-                                        DataType_ prod( DotProduct<Tag_>::value(_force_direction[e.index()], scaled_forces[e.index()]) );
+                                    DenseVectorRange<DataType_> temp1(_force_direction[e.index()]);
+                                    DenseVectorRange<DataType_> temp2(scaled_forces[e.index()]);
+                                        DataType_ prod( DotProduct<Tag_>::value(temp1, temp2) );
                                         if (prod > 0.8) *e *=_step_width_factor_1;
                                         if ( (prod < -0.8) || (fabs(prod) < 0.2) ) *e *=_step_width_factor_2;
                                 }

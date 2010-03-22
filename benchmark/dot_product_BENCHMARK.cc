@@ -59,10 +59,10 @@ DotProductBench<double, tags::CPU> DPBenchdouble("Dot Product Benchmark dense/de
 DotProductBench<float, tags::CPU::MultiCore> MCDPBenchfloat("MC: Dot Product Benchmark dense/dense - vector size: 64^4 float", 64ul*64*64*64, 10);
 DotProductBench<double, tags::CPU::MultiCore> MCDPBenchdouble("MC: Dot Product Benchmark dense/dense - vector size: 64^4 double", 64ul*64*64*64, 10);
 #ifdef HONEI_SSE
-DotProductBench<float, tags::CPU::MultiCore::SSE> SSEMCDPBenchfloat("MC: SSE Dot Product Benchmark dense/dense - vector size: 64^4 float", 64ul*64*64*64, 10);
-DotProductBench<double, tags::CPU::MultiCore::SSE> SSEMCDPBenchdouble("MC: SSE  Dot Product Benchmark dense/dense - vector size: 64^4 double", 64ul*64*64*64, 10);
 DotProductBench<float, tags::CPU::SSE> SSEDPBenchfloat("SSE Dot Product Benchmark dense/dense - vector size: 64^4 float", 64ul*64*64*64, 10);
 DotProductBench<double, tags::CPU::SSE> SSEDPBenchdouble("SSE Dot Product Benchmark dense/dense - vector size: 64^4 double", 64ul*64*64*64, 10);
+DotProductBench<float, tags::CPU::MultiCore::SSE> SSEMCDPBenchfloat("MC: SSE Dot Product Benchmark dense/dense - vector size: 64^4 float", 64ul*64*64*64, 10);
+DotProductBench<double, tags::CPU::MultiCore::SSE> SSEMCDPBenchdouble("MC: SSE  Dot Product Benchmark dense/dense - vector size: 64^4 double", 64ul*64*64*64, 10);
 #endif
 #ifdef HONEI_CUDA
 DotProductBench<float, tags::GPU::CUDA> CUDADPBenchfloat("CUDA Dot Product Benchmark dense/dense - vector size: 64^4 float", 64ul*64*64*64, 10);
@@ -113,8 +113,8 @@ class SparseDotProductBench :
 };
 SparseDotProductBench<float, tags::CPU> SDPBenchfloat("Dot Product Benchmark sparse/dense - vector size: 10,000,000 float", 10000000, 10);
 SparseDotProductBench<double, tags::CPU> SDPBenchdouble("Dot Product Benchmark sparse/dense - vector size: 10,000,000 double", 10000000, 10);
-SparseDotProductBench<float, tags::CPU::MultiCore> MCSDPBenchfloat("MC: Dot Product Benchmark sparse/dense - vector size: 10,000,000 float", 10000000, 10);
-SparseDotProductBench<double, tags::CPU::MultiCore> MCSDPBenchdouble("MC: Dot Product Benchmark sparse/dense - vector size: 10,000,000 double", 10000000, 10);
+//SparseDotProductBench<float, tags::CPU::MultiCore> MCSDPBenchfloat("MC: Dot Product Benchmark sparse/dense - vector size: 10,000,000 float", 10000000, 10);
+//SparseDotProductBench<double, tags::CPU::MultiCore> MCSDPBenchdouble("MC: Dot Product Benchmark sparse/dense - vector size: 10,000,000 double", 10000000, 10);
 
 
 template <typename DT_, typename Tag_>

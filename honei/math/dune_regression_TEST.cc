@@ -95,8 +95,8 @@ class DuneRegressionTestSparseELL:
             DenseVector<DT1_> result(rhs.size(), DT1_(0));
             DenseVector<DT1_> result_c(result.copy());
             Defect<Tag_>::value(result, rhs, smatrix, result_c);
-            //ConjugateGradients<Tag_, JAC>::value(smatrix, rhs, result, diag_inverted, 10000ul);
-            Jacobi<Tag_>::value(smatrix, difference, rhs, result, diag_inverted, 10000ul);
+            ConjugateGradients<Tag_, JAC>::value(smatrix, rhs, result, diag_inverted, 10000ul);
+            //Jacobi<Tag_>::value(smatrix, difference, rhs, result, diag_inverted, 10000ul);
 
 
             // DUNE
@@ -165,11 +165,13 @@ class DuneRegressionTestSparseELL:
         }
 };
 
-DuneRegressionTestSparseELL<tags::CPU, double> dune_regression_test_double_sparse_ell("double", "l2/area51_full_2.m", "l2/area51_rhs_2", "l2/area51_sol_2");
-//DuneRegressionTestSparseELL<tags::CPU, double> dune_regression_test_double_sparse_ell("double", "l8/poisson_full.m", "l8/poisson_rhs", "l8/poisson_sol");
+DuneRegressionTestSparseELL<tags::CPU::SSE, double> sse_dune_regression_test_double_sparse_ell2("double", "l2/poisson_full.m", "l2/poisson_rhs", "l2/poisson_sol");
+//DuneRegressionTestSparseELL<tags::CPU::SSE, double> sse_dune_regression_test_double_sparse_ell8("double", "l8/poisson_full.m", "l8/poisson_rhs", "l8/poisson_sol");
+DuneRegressionTestSparseELL<tags::CPU::MultiCore::SSE, double> mc_sse_dune_regression_test_double_sparse_ell2("double", "l2/poisson_full.m", "l2/poisson_rhs", "l2/poisson_sol");
+DuneRegressionTestSparseELL<tags::CPU::MultiCore::SSE, double> mc_sse_dune_regression_test_double_sparse_ell8("double", "l8/poisson_full.m", "l8/poisson_rhs", "l8/poisson_sol");
 #ifdef HONEI_CUDA_DOUBLE
-//DuneRegressionTestSparseELL<tags::GPU::CUDA, double> cuda_dune_regression_test_double_sparse_ell("double", "l8/area51_full_2.m", "l8/area51_rhs_2", "l8/area51_sol_2");
-//DuneRegressionTestSparseELL<tags::GPU::CUDA, double> cuda_dune_regression_test_double_sparse_ell("double", "l8/poisson_full.m", "l8/poisson_rhs", "l8/poisson_sol");
+DuneRegressionTestSparseELL<tags::GPU::CUDA, double> cuda_dune_regression_test_double_sparse_ell2("double", "l2/poisson_full.m", "l2/poisson_rhs", "l2/poisson_sol");
+DuneRegressionTestSparseELL<tags::GPU::CUDA, double> cuda_dune_regression_test_double_sparse_ell8("double", "l8/poisson_full.m", "l8/poisson_rhs", "l8/poisson_sol");
 #endif
 
 #endif

@@ -24,6 +24,9 @@
 #include <honei/la/dot_product.hh>
 #include <honei/la/norm-fwd.hh>
 #include <honei/util/tags.hh>
+#include <honei/backends/multicore/operation.hh>
+#include <honei/backends/multicore/thread_pool.hh>
+#include <honei/util/configuration.hh>
 
 #include <cmath>
 
@@ -370,6 +373,7 @@ namespace honei
         /// \}
     };
 
+
     /**
      * \brief Norm of an entity (CUDA implementation).
      *
@@ -522,5 +526,24 @@ namespace honei
         static double value(const DenseVectorContinuousBase<double> & a);
     };
     // end of the template-Cell-part
+
+    template <> struct Norm<vnt_l_two, false, tags::CPU::MultiCore::SSE>
+    {
+            template <typename DT1_>
+            static DT1_ value(const DenseVectorContinuousBase<DT1_> & x)
+            {
+                CONTEXT("When calculating DVCB, DBCB dot product using backend : " + Tag_::name);
+
+
+                DT1_ result(0);
+                unsigned long min_part_size(Configuration::instance()->get_value("mc::dot_product(DVCB,DVCB)::min_part_size", 128));
+                unsigned long max_count(Configuration::instance()->get_value("mc::dot_product(DVCB,DVCB)::max_count",
+                            mc::ThreadPool::instance()->num_threads()));
+
+                mc::Operation<honei::Norm<vnt_l_two, false, typename tags::CPU::MultiCore::SSE::DelegateTo> >::op(result, x, min_part_size, max_count);
+
+                return result;
+            }
+    };
 }
 #endif

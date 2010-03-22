@@ -233,8 +233,8 @@ class WeightedFruchtermanReingoldPositionsQuickTest :
 
 WeightedFruchtermanReingoldPositionsQuickTest<tags::CPU, float> weighted_fruchterman_reingold_positions_quick_test_float("float");
 WeightedFruchtermanReingoldPositionsQuickTest<tags::CPU, double> weighted_fruchterman_reingold_positions_quick_test_double("double");
-WeightedFruchtermanReingoldPositionsQuickTest<tags::CPU::MultiCore, float> mc_weighted_fruchterman_reingold_positions_quick_test_float("MC float");
-WeightedFruchtermanReingoldPositionsQuickTest<tags::CPU::MultiCore, double> mc_weighted_fruchterman_reingold_positions_quick_test_double("MC double");
+//WeightedFruchtermanReingoldPositionsQuickTest<tags::CPU::MultiCore, float> mc_weighted_fruchterman_reingold_positions_quick_test_float("MC float");
+//WeightedFruchtermanReingoldPositionsQuickTest<tags::CPU::MultiCore, double> mc_weighted_fruchterman_reingold_positions_quick_test_double("MC double");
 #ifdef HONEI_SSE
 WeightedFruchtermanReingoldPositionsQuickTest<tags::CPU::SSE, float> sse_weighted_fruchterman_reingold_positions_quick_test_float("SSE float");
 WeightedFruchtermanReingoldPositionsQuickTest<tags::CPU::SSE, double> sse_weighted_fruchterman_reingold_positions_quick_test_double("SSE double");
@@ -307,8 +307,8 @@ class WeightedKamadaKawaiPositionsQuickTest :
 
 WeightedKamadaKawaiPositionsQuickTest<tags::CPU, float> weighted_kamada_kawai_positions_quick_test_float("float");
 WeightedKamadaKawaiPositionsQuickTest<tags::CPU, double> weighted_kamada_kawai_positions_quick_test_double("double");
-WeightedKamadaKawaiPositionsQuickTest<tags::CPU::MultiCore, float> mc_weighted_kamada_kawai_positions_quick_test_float("MC float");
-WeightedKamadaKawaiPositionsQuickTest<tags::CPU::MultiCore, double> mc_weighted_kamada_kawai_positions_quick_test_double("MC double");
+//WeightedKamadaKawaiPositionsQuickTest<tags::CPU::MultiCore, float> mc_weighted_kamada_kawai_positions_quick_test_float("MC float");
+//WeightedKamadaKawaiPositionsQuickTest<tags::CPU::MultiCore, double> mc_weighted_kamada_kawai_positions_quick_test_double("MC double");
 #ifdef HONEI_SSE
 WeightedKamadaKawaiPositionsQuickTest<tags::CPU::SSE, float> sse_weighted_kamada_kawai_positions_quick_test_float("SSE float");
 WeightedKamadaKawaiPositionsQuickTest<tags::CPU::SSE, double> sse_weighted_kamada_kawai_positions_quick_test_double("SSE double");
@@ -400,8 +400,8 @@ class WeightedKamadaKawaiPositionsTest :
 
 WeightedFruchtermanReingoldPositionsTest<tags::CPU, float, POSITIONTEST> weighted_fruchterman_reingold_positions_test_float("float", POSITIONTESTSIZE);
 WeightedFruchtermanReingoldPositionsTest<tags::CPU, double, POSITIONTEST> weighted_fruchterman_reingold_positions_test_double("double", POSITIONTESTSIZE);
-WeightedFruchtermanReingoldPositionsTest<tags::CPU::MultiCore, float, POSITIONTEST> mc_weighted_fruchterman_reingold_positions_test_float("MC float", POSITIONTESTSIZE);
-WeightedFruchtermanReingoldPositionsTest<tags::CPU::MultiCore, double, POSITIONTEST> mc_weighted_fruchterman_reingold_positions_test_double("MC double", POSITIONTESTSIZE);
+//WeightedFruchtermanReingoldPositionsTest<tags::CPU::MultiCore, float, POSITIONTEST> mc_weighted_fruchterman_reingold_positions_test_float("MC float", POSITIONTESTSIZE);
+//WeightedFruchtermanReingoldPositionsTest<tags::CPU::MultiCore, double, POSITIONTEST> mc_weighted_fruchterman_reingold_positions_test_double("MC double", POSITIONTESTSIZE);
 #ifdef HONEI_SSE
 WeightedFruchtermanReingoldPositionsTest<tags::CPU::SSE, float, POSITIONTEST> sse_weighted_fruchterman_reingold_positions_test_float("SSE float", POSITIONTESTSIZE);
 WeightedFruchtermanReingoldPositionsTest<tags::CPU::SSE, double, POSITIONTEST> sse_weighted_fruchterman_reingold_positions_test_double("SSE double", POSITIONTESTSIZE);
@@ -414,8 +414,8 @@ WeightedFruchtermanReingoldPositionsTest<tags::Cell, float, POSITIONTEST> cell_w
 
 WeightedKamadaKawaiPositionsTest<tags::CPU, float, POSITIONTEST> weighted_kamada_kawai_positions_test_float("float", POSITIONTESTSIZE);
 WeightedKamadaKawaiPositionsTest<tags::CPU, double, POSITIONTEST> weighted_kamada_kawai_positions_test_double("double", POSITIONTESTSIZE);
-WeightedKamadaKawaiPositionsTest<tags::CPU::MultiCore, float, POSITIONTEST> mc_weighted_kamada_kawai_positions_test_float("MC float", POSITIONTESTSIZE);
-WeightedKamadaKawaiPositionsTest<tags::CPU::MultiCore, double, POSITIONTEST> mc_weighted_kamada_kawai_positions_test_double("MC double", POSITIONTESTSIZE);
+//WeightedKamadaKawaiPositionsTest<tags::CPU::MultiCore, float, POSITIONTEST> mc_weighted_kamada_kawai_positions_test_float("MC float", POSITIONTESTSIZE);
+//WeightedKamadaKawaiPositionsTest<tags::CPU::MultiCore, double, POSITIONTEST> mc_weighted_kamada_kawai_positions_test_double("MC double", POSITIONTESTSIZE);
 #ifdef HONEI_SSE
 WeightedKamadaKawaiPositionsTest<tags::CPU::SSE, float, POSITIONTEST> sse_weighted_kamada_kawai_positions_test_float("SSE float", POSITIONTESTSIZE);
 WeightedKamadaKawaiPositionsTest<tags::CPU::SSE, double, POSITIONTEST> sse_weighted_kamada_kawai_positions_test_double("SSE double", POSITIONTESTSIZE);

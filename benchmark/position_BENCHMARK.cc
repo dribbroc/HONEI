@@ -277,20 +277,20 @@ WeightedKamadaKawaiPositionsBench<tags::CPU, float, POSITIONBENCH> weighted_kama
 WeightedKamadaKawaiPositionsBench<tags::CPU, double, POSITIONBENCH> weighted_kamada_kawai_positions_bench_double("WeightedKamadaKawai Benchmark double", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
 WeightedFruchtermanReingoldPositionsBench<tags::CPU, float, POSITIONBENCH> weighted_fruchterman_reingold_positions_bench_float("WeightedFruchtermanReingold Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
 WeightedFruchtermanReingoldPositionsBench<tags::CPU, double, POSITIONBENCH> weighted_fruchterman_reingold_positions_bench_double("WeightedFruchtermanReingold Benchmark double", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
-WeightedKamadaKawaiPositionsBench<tags::CPU::MultiCore, float, POSITIONBENCH> mc_weighted_kamada_kawai_positions_bench_float("MC WeightedKamadaKawai Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
-WeightedKamadaKawaiPositionsBench<tags::CPU::MultiCore, double, POSITIONBENCH> mc_weighted_kamada_kawai_positions_bench_double("MC WeightedKamadaKawai Benchmark double", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
-WeightedFruchtermanReingoldPositionsBench<tags::CPU::MultiCore, float, POSITIONBENCH> mc_weighted_fruchterman_reingold_positions_bench_float("MC WeightedFruchtermanReingold Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
-WeightedFruchtermanReingoldPositionsBench<tags::CPU::MultiCore, double, POSITIONBENCH> mc_weighted_fruchterman_reingold_positions_bench_double("MC WeightedFruchtermanReingold Benchmark double", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+//WeightedKamadaKawaiPositionsBench<tags::CPU::MultiCore, float, POSITIONBENCH> mc_weighted_kamada_kawai_positions_bench_float("MC WeightedKamadaKawai Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+//WeightedKamadaKawaiPositionsBench<tags::CPU::MultiCore, double, POSITIONBENCH> mc_weighted_kamada_kawai_positions_bench_double("MC WeightedKamadaKawai Benchmark double", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+//WeightedFruchtermanReingoldPositionsBench<tags::CPU::MultiCore, float, POSITIONBENCH> mc_weighted_fruchterman_reingold_positions_bench_float("MC WeightedFruchtermanReingold Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+//WeightedFruchtermanReingoldPositionsBench<tags::CPU::MultiCore, double, POSITIONBENCH> mc_weighted_fruchterman_reingold_positions_bench_double("MC WeightedFruchtermanReingold Benchmark double", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
 
 #ifdef HONEI_SSE
 WeightedKamadaKawaiPositionsBench<tags::CPU::SSE, float, POSITIONBENCH> sse_weighted_kamada_kawai_positions_bench_float("SSE WeightedKamadaKawai Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
 WeightedKamadaKawaiPositionsBench<tags::CPU::SSE, double, POSITIONBENCH> sse_weighted_kamada_kawai_positions_bench_double("SSE WeightedKamadaKawai Benchmark double", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
 WeightedFruchtermanReingoldPositionsBench<tags::CPU::SSE, float, POSITIONBENCH> sse_weighted_fruchterman_reingold_positions_bench_float("SSE WeightedFruchtermanReingold Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
 WeightedFruchtermanReingoldPositionsBench<tags::CPU::SSE, double, POSITIONBENCH> sse_weighted_fruchterman_reingold_positions_bench_double("SSE WeightedFruchtermanReingold Benchmark double", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
-WeightedKamadaKawaiPositionsBench<tags::CPU::MultiCore::SSE, float, POSITIONBENCH> mc_sse_weighted_kamada_kawai_positions_bench_float("MC SSE WeightedKamadaKawai Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
-WeightedKamadaKawaiPositionsBench<tags::CPU::MultiCore::SSE, double, POSITIONBENCH> mc_sse_weighted_kamada_kawai_positions_bench_double("MC SSE WeightedKamadaKawai Benchmark double", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
-WeightedFruchtermanReingoldPositionsBench<tags::CPU::MultiCore::SSE, float, POSITIONBENCH> mc_sse_weighted_fruchterman_reingold_positions_bench_float("MC SSE WeightedFruchtermanReingold Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
-WeightedFruchtermanReingoldPositionsBench<tags::CPU::MultiCore::SSE, double, POSITIONBENCH> mc_sse_weighted_fruchterman_reingold_positions_bench_double("MC SSE WeightedFruchtermanReingold Benchmark double", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+//WeightedKamadaKawaiPositionsBench<tags::CPU::MultiCore::SSE, float, POSITIONBENCH> mc_sse_weighted_kamada_kawai_positions_bench_float("MC SSE WeightedKamadaKawai Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+//WeightedKamadaKawaiPositionsBench<tags::CPU::MultiCore::SSE, double, POSITIONBENCH> mc_sse_weighted_kamada_kawai_positions_bench_double("MC SSE WeightedKamadaKawai Benchmark double", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+//WeightedFruchtermanReingoldPositionsBench<tags::CPU::MultiCore::SSE, float, POSITIONBENCH> mc_sse_weighted_fruchterman_reingold_positions_bench_float("MC SSE WeightedFruchtermanReingold Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
+//WeightedFruchtermanReingoldPositionsBench<tags::CPU::MultiCore::SSE, double, POSITIONBENCH> mc_sse_weighted_fruchterman_reingold_positions_bench_double("MC SSE WeightedFruchtermanReingold Benchmark double", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);
 #endif
 #ifdef HONEI_CELL
 WeightedKamadaKawaiPositionsBench<tags::Cell, float, POSITIONBENCH> cell_weighted_kamada_kawai_positions_bench_float("Cell WeightedKamadaKawai Benchmark float", POSITIONBENCHSIZE, POSITIONBENCHCOUNT);

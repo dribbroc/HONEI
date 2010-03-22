@@ -83,6 +83,40 @@ namespace honei
             result = Operation_::value(param_one, param_two, param_three);
         }
     };
+
+    template <typename Operation_, typename ResultType_, typename T1_, typename T2_, typename T3_, typename T4_>
+    struct OperationWrapper<Operation_, ResultType_, T1_, T2_, T3_, T4_>
+    {
+        typedef void result_type;
+        ResultType_ & result;
+
+        OperationWrapper(ResultType_ & r) :
+            result(r)
+        {
+        }
+
+        void operator() (T1_ & param_one, const T2_ & param_two, const T3_ & param_three, const T4_ & param_four)
+        {
+            result = Operation_::value(param_one, param_two, param_three, param_four);
+        }
+    };
+
+    template <typename Operation_, typename ResultType_, typename T1_, typename T2_, typename T3_, typename T4_, typename T5_>
+    struct OperationWrapper<Operation_, ResultType_, T1_, T2_, T3_, T4_, T5_>
+    {
+        typedef void result_type;
+        ResultType_ & result;
+
+        OperationWrapper(ResultType_ & r) :
+            result(r)
+        {
+        }
+
+        void operator() (T1_ & param_one, const T2_ & param_two, const T3_ & param_three, const T4_ & param_four, const T5_ & param_five)
+        {
+            result = Operation_::value(param_one, param_two, param_three, param_four, param_five);
+        }
+    };
 }
 
 #endif

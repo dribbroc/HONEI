@@ -101,6 +101,8 @@ SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_double2("SM ELL 2 L2 CG Ben
 SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_double8("SM ELL 2 L8 CG Benchmark SSE double: " , 0, 1, "l8/area51_full_2.m", "l8/area51_rhs_2");
 SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_double10("SM ELL 2 L10 CG Benchmark SSE double: " , 0, 1, "l10/area51_full_2.m", "l10/area51_rhs_2");
 SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_double11("SM ELL 2 L11 CG Benchmark SSE double: " , 0, 1, "l11/area51_full_2.m", "l11/area51_rhs_2");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> mcsseSMELLCGBench_double8("MC SM ELL 2 L8 CG Benchmark SSE double: " , 0, 1, "l8/area51_full_2.m", "l8/area51_rhs_2");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> mcsseSMELLCGBench_double10("MC SM ELL 2 L10 CG Benchmark SSE double: " , 0, 1, "l10/area51_full_2.m", "l10/area51_rhs_2");
 #endif
 #ifdef HONEI_CUDA
 SMELLCGBench<tags::GPU::CUDA, float> cudaSMELLCGBench_float2("SM ELL 2 L2 CG Benchmark CUDA float: " , 0, 1, "l2/area51_full_2.m", "l2/area51_rhs_2");

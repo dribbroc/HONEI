@@ -666,6 +666,20 @@ namespace honei
                 return x;
             }
 
+            template <typename DT1_, typename DT2_>
+            static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & result, const DenseVectorContinuousBase<DT1_> & x, const DenseVectorContinuousBase<DT2_> & y)
+            {
+                CONTEXT("When calculating ElementProduct (DenseVectorContinuousBase, DenseVectorContinuousBase) using backend : " + Tag_::name);
+
+                unsigned long min_part_size(Configuration::instance()->get_value("mc::ElementProduct(DVCB,DVCB)::min_part_size", 128));
+                unsigned long max_count(Configuration::instance()->get_value("mc::ElementProduct(DVCB,DVCB)::max_count",
+                            mc::ThreadPool::instance()->num_threads()));
+
+                Operation<honei::ElementProduct<typename Tag_::DelegateTo> >::op(result, x, y, min_part_size, max_count);
+
+                return result;
+            }
+
             // Dummy
             template <typename DT1_, typename DT2_>
             static SparseVector<DT1_> & value(SparseVector<DT1_> & a, const DenseVectorBase<DT2_> & b)
