@@ -678,6 +678,8 @@ PreconditionedConjugateGradientsTestSparseELL<tags::CPU, double> pcg_test_double
 #ifdef HONEI_SSE
 PreconditionedConjugateGradientsTestSparseELL<tags::CPU::SSE, float> sse_pcg_test_float_sparse_ell("float", "l8/area51_full_2.m", "l8/area51_rhs_2", "l8/area51_sol_2");
 PreconditionedConjugateGradientsTestSparseELL<tags::CPU::SSE, double> sse_pcg_test_double_sparse_ell("double", "l8/area51_full_2.m", "l8/area51_rhs_2", "l8/area51_sol_2");
+PreconditionedConjugateGradientsTestSparseELL<tags::CPU::MultiCore::SSE, float> mc_sse_pcg_test_float_sparse_ell("float", "l8/area51_full_2.m", "l8/area51_rhs_2", "l8/area51_sol_2");
+PreconditionedConjugateGradientsTestSparseELL<tags::CPU::MultiCore::SSE, double> mc_sse_pcg_test_double_sparse_ell("double", "l8/area51_full_2.m", "l8/area51_rhs_2", "l8/area51_sol_2");
 #endif
 #ifdef HONEI_CUDA
 PreconditionedConjugateGradientsTestSparseELL<tags::GPU::CUDA, float> cuda_pcg_test_float_sparse_ell("float", "l8/area51_full_2.m", "l8/area51_rhs_2", "l8/area51_sol_2");

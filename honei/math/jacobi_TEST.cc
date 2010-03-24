@@ -276,6 +276,8 @@ JacobiTestSparseELL<tags::CPU, double> jacobi_test_double_sparse_ell("double");
 #ifdef HONEI_SSE
 JacobiTestSparseELL<tags::CPU::SSE, float> sse_jacobi_test_float_sparse_ell("float");
 JacobiTestSparseELL<tags::CPU::SSE, double> sse_jacobi_test_double_sparse_ell("double");
+JacobiTestSparseELL<tags::CPU::MultiCore::SSE, float> mc_sse_jacobi_test_float_sparse_ell("float");
+JacobiTestSparseELL<tags::CPU::MultiCore::SSE, double> mc_sse_jacobi_test_double_sparse_ell("double");
 #endif
 #ifdef HONEI_CUDA
 JacobiTestSparseELL<tags::GPU::CUDA, float> cuda_jacobi_test_float_sparse_ell("float");
@@ -360,6 +362,8 @@ JacobiSparseELLComparisonTest<tags::CPU, double> jac_test_double_sparse_ell("dou
 #ifdef HONEI_SSE
 JacobiSparseELLComparisonTest<tags::CPU::SSE, float> jac_test_float_sparse_ell_sse("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
 JacobiSparseELLComparisonTest<tags::CPU::SSE, double> jac_test_double_sparse_ell_sse("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
+JacobiSparseELLComparisonTest<tags::CPU::MultiCore::SSE, float> jac_test_float_sparse_ell_mcsse("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
+JacobiSparseELLComparisonTest<tags::CPU::MultiCore::SSE, double> jac_test_double_sparse_ell_mcsse("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");
 #endif
 #ifdef HONEI_CUDA
 JacobiSparseELLComparisonTest<tags::GPU::CUDA, float> jac_test_float_sparse_ell_cuda("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0");

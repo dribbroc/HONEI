@@ -11,6 +11,7 @@
 #include <honei/math/jacobi.hh>
 #include <honei/util/configuration.hh>
 #include <honei/backends/cuda/operations.hh>
+#include <honei/backends/cuda/gpu_pool.hh>
 #include <iostream>
 #include <cmath>
 //using namespace std;
@@ -72,7 +73,8 @@ class SMELLJacobiBench :
                         Jacobi<Tag_>::value(initial_guess, smatrix2, rhs, 100ul, DataType_(0.7), diag_inverted);
                         );
 #ifdef HONEI_CUDA
-                        cuda_thread_synchronize();
+                        if (Tag_::tag_value == tags::tv_gpu_cuda)
+                            cuda::GPUPool::instance()->flush();
 #endif
             }
             BenchmarkInfo info;
