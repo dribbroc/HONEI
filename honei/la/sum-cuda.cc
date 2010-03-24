@@ -207,10 +207,10 @@ DenseVectorContinuousBase<float> & Sum<tags::GPU::MultiCore::CUDA>::value(DenseV
         DenseVectorRange<float> a1(a.range(a.size()/2, 0));
         DenseVectorRange<float> b1(b.range(b.size()/2, 0));
         cudaSumDVfloat task1(a1, b1, blocksize);
-        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
         DenseVectorRange<float> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
         DenseVectorRange<float> b2(b.range(b.size()/2 + b.size()%2, b.size()/2));
         cudaSumDVfloat task2(a2, b2, blocksize);
+        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
         cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
     }
 
@@ -239,10 +239,10 @@ DenseVectorContinuousBase<double> & Sum<tags::GPU::MultiCore::CUDA>::value(Dense
         DenseVectorRange<double> a1(a.range(a.size()/2, 0));
         DenseVectorRange<double> b1(b.range(b.size()/2, 0));
         cudaSumDVdouble task1(a1, b1, blocksize);
-        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
         DenseVectorRange<double> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
         DenseVectorRange<double> b2(b.range(b.size()/2 + b.size()%2, b.size()/2));
         cudaSumDVdouble task2(a2, b2, blocksize);
+        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
         cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
     }
 
