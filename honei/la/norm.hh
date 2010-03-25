@@ -545,5 +545,25 @@ namespace honei
                 return result;
             }
     };
+
+    template <> struct Norm<vnt_l_two, true, tags::CPU::MultiCore::SSE>
+    {
+            template <typename DT1_>
+            static DT1_ value(const DenseVectorContinuousBase<DT1_> & x)
+            {
+                CONTEXT("When calculating DVCB, DBCB dot product using backend : " + Tag_::name);
+
+
+                DT1_ result(0);
+                unsigned long min_part_size(Configuration::instance()->get_value("mc::dot_product(DVCB,DVCB)::min_part_size", 128));
+                unsigned long max_count(Configuration::instance()->get_value("mc::dot_product(DVCB,DVCB)::max_count",
+                            mc::ThreadPool::instance()->num_threads()));
+
+                mc::Operation<honei::Norm<vnt_l_two, false, typename tags::CPU::MultiCore::SSE::DelegateTo> >::op(result, x, min_part_size, max_count);
+                result = sqrt(result);
+
+                return result;
+            }
+    };
 }
 #endif

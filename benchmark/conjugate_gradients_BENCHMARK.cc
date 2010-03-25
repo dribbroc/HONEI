@@ -84,11 +84,11 @@ class SMELLCGBench :
                 //Defect<Tag_>::value(result, rhs, smatrix2, result_c);
                 BENCHMARK(
                         (ConjugateGradients<Tag_, JAC>::value(smatrix2, rhs, result, diag_inverted, 10000ul));
-                        );
 #ifdef HONEI_CUDA
                         if (Tag_::tag_value == tags::tv_gpu_cuda)
                             cuda::GPUPool::instance()->flush();
 #endif
+                        );
             }
             BenchmarkInfo info;
             BenchmarkInfo info_pre;
@@ -122,6 +122,26 @@ SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_4double7("SM ELL 4 L7 CG Be
 SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_4double8("SM ELL 4 L8 CG Benchmark SSE double: " , 0, 1, "l8/area51_full_4.m", "l8/area51_rhs_4", "l8/area51_init_0");
 SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_4double9("SM ELL 4 L9 CG Benchmark SSE double: " , 0, 1, "l9/area51_full_4.m", "l9/area51_rhs_4", "l9/area51_init_0");
 SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_4double10("SM ELL 4 L10 CG Benchmark SSE double: " , 0, 1, "l10/area51_full_4.m", "l10/area51_rhs_4", "l10/area51_init_0");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_0double7("SM ELL 0 L7 CG Benchmark MultiCore::SSE double: " , 0, 1, "l7/area51_full_0.m", "l7/area51_rhs_0", "l7/area51_init_0");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_0double8("SM ELL 0 L8 CG Benchmark MultiCore::SSE double: " , 0, 1, "l8/area51_full_0.m", "l8/area51_rhs_0", "l8/area51_init_0");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_0double9("SM ELL 0 L9 CG Benchmark MultiCore::SSE double: " , 0, 1, "l9/area51_full_0.m", "l9/area51_rhs_0", "l9/area51_init_0");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_0double10("SM ELL 0 L10 CG Benchmark MultiCore::SSE double: " , 0, 1, "l10/area51_full_0.m", "l10/area51_rhs_0", "l10/area51_init_0");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_1double7("SM ELL 1 L7 CG Benchmark MultiCore::SSE double: " , 0, 1, "l7/area51_full_1.m", "l7/area51_rhs_1", "l7/area51_init_0");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_1double8("SM ELL 1 L8 CG Benchmark MultiCore::SSE double: " , 0, 1, "l8/area51_full_1.m", "l8/area51_rhs_1", "l8/area51_init_0");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_1double9("SM ELL 1 L9 CG Benchmark MultiCore::SSE double: " , 0, 1, "l9/area51_full_1.m", "l9/area51_rhs_1", "l9/area51_init_0");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_1double10("SM ELL 1 L10 CG Benchmark MultiCore::SSE double: " , 0, 1, "l10/area51_full_1.m", "l10/area51_rhs_1", "l10/area51_init_0");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_2double7("SM ELL 2 L7 CG Benchmark MultiCore::SSE double: " , 0, 1, "l7/area51_full_2.m", "l7/area51_rhs_2", "l7/area51_init_0");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_2double8("SM ELL 2 L8 CG Benchmark MultiCore::SSE double: " , 0, 1, "l8/area51_full_2.m", "l8/area51_rhs_2", "l8/area51_init_0");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_2double9("SM ELL 2 L9 CG Benchmark MultiCore::SSE double: " , 0, 1, "l9/area51_full_2.m", "l9/area51_rhs_2", "l9/area51_init_0");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_2double10("SM ELL 2 L10 CG Benchmark MultiCore::SSE double: " , 0, 1, "l10/area51_full_2.m", "l10/area51_rhs_2", "l10/area51_init_0");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_3double7("SM ELL 3 L7 CG Benchmark MultiCore::SSE double: " , 0, 1, "l7/area51_full_3.m", "l7/area51_rhs_3", "l7/area51_init_0");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_3double8("SM ELL 3 L8 CG Benchmark MultiCore::SSE double: " , 0, 1, "l8/area51_full_3.m", "l8/area51_rhs_3", "l8/area51_init_0");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_3double9("SM ELL 3 L9 CG Benchmark MultiCore::SSE double: " , 0, 1, "l9/area51_full_3.m", "l9/area51_rhs_3", "l9/area51_init_0");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_3double10("SM ELL 3 L10 CG Benchmark MultiCore::SSE double: " , 0, 1, "l10/area51_full_3.m", "l10/area51_rhs_3", "l10/area51_init_0");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_4double7("SM ELL 4 L7 CG Benchmark MultiCore::SSE double: " , 0, 1, "l7/area51_full_4.m", "l7/area51_rhs_4", "l7/area51_init_0");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_4double8("SM ELL 4 L8 CG Benchmark MultiCore::SSE double: " , 0, 1, "l8/area51_full_4.m", "l8/area51_rhs_4", "l8/area51_init_0");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_4double9("SM ELL 4 L9 CG Benchmark MultiCore::SSE double: " , 0, 1, "l9/area51_full_4.m", "l9/area51_rhs_4", "l9/area51_init_0");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_4double10("SM ELL 4 L10 CG Benchmark MultiCore::SSE double: " , 0, 1, "l10/area51_full_4.m", "l10/area51_rhs_4", "l10/area51_init_0");
 #endif
 #ifdef HONEI_CUDA_DOUBLE
 SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_0double7("SM ELL 0 L7 CG Benchmark CUDA double: " , 0, 1, "l7/area51_full_0.m", "l7/area51_rhs_0", "l7/area51_init_0");
