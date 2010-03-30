@@ -188,50 +188,8 @@ namespace honei
                         std::cout << "NO CONVERGENCE after " << max_iters << " iterations! Norm: " << current_defect << std::endl;
                 }
 
-                /*
-                ///Compute x_i+1: (in energy)
-                DT1_ upper = DotProduct<Tag_>::value(former_gradient, former_gradient);
-                DenseVector<DT1_> energy(former_result.size());
-                Product<Tag_>::value(energy, system_matrix, utility);
-                DT1_ lower = DotProduct<Tag_>::value(energy, utility);
-                DenseVector<DT1_> u_c(utility.size());
-                copy<Tag_>(utility, u_c);
-                if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
-                {
-                    Scale<Tag_>::value(u_c, DT1_(upper/lower));
-                    energy = u_c;
-                }
-                else
-                {
-                    Scale<Tag_>::value(u_c, DT1_(upper/std::numeric_limits<DT1_>::epsilon()));
-                    energy = u_c;
-                }
-
-                Sum<Tag_>::value(energy, former_result);
-                ///Compute new gradient
-                DenseVector<DT1_> new_gradient(energy.size());
-                Product<Tag_>::value(new_gradient, system_matrix, energy);
-                Difference<Tag_>::value(new_gradient, right_hand_side);
-
-                ///Compute new utility
-                upper = DotProduct<Tag_>::value(new_gradient, new_gradient);
-                lower = DotProduct<Tag_>::value(former_gradient, former_gradient);
-                if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
-                {
-                    Scale<Tag_>::value(utility, DT1_(upper/lower));
-                }
-                else
-                {
-                    Scale<Tag_>::value(utility, DT1_(upper/std::numeric_limits<DT1_>::epsilon()));
-                }
-                Difference<Tag_>::value(utility, new_gradient);
-
-                ///Finishing:
-                former_gradient = new_gradient;
-                former_result = energy;
-                */
-
             }
+
             template<typename DT1_, typename DT2_>
             static inline void cg_kernel(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility)
             {
@@ -325,10 +283,6 @@ namespace honei
             * \param iter_number The fixed number of iterations.
             *
            */
-
-            /// \{
-
-
             template <typename DT1_, typename DT2_>
             static DenseVector<DT1_> value(DenseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, unsigned long iter_number)
             {
@@ -347,6 +301,7 @@ namespace honei
                 }
                 return x;
             }
+
             /**
             * \brief Returns solution of LES given by a DenseMatrix and a Vector.
             *
@@ -355,10 +310,6 @@ namespace honei
             * \param konv_rad The parameter for convergence control.
             *
             */
-
-            /// \{
-
-
             template <typename DT1_, typename DT2_>
             static DenseVector<DT1_> value(DenseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad)
             {
@@ -388,6 +339,7 @@ namespace honei
 
 
             }
+
             /**
             * \brief Returns solution of LES given by a BandedMatrix and a Vector.
             *
@@ -396,14 +348,10 @@ namespace honei
             * \param iter_number The fixed number of iterations.
             *
             */
-
-            /// \{
             template <typename DT1_, typename DT2_>
             static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, unsigned long iter_number)
             {
                 CONTEXT("When solving banded linear system with CG (with fixed # of iterations):");
-
-
 
                 DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
                 DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
@@ -417,6 +365,7 @@ namespace honei
                 }
                 return x;
             }
+
             /**
             * \brief Returns solution of LES given by a BandedMatrix and a Vector.
             *
@@ -425,10 +374,6 @@ namespace honei
             * \param konv_rad The parameter for convergence control.
             *
             */
-
-            /// \{
-
-
             template <typename DT1_, typename DT2_>
             static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad)
             {
@@ -467,10 +412,6 @@ namespace honei
             * \param konv_rad The parameter for convergence control.
             *
             */
-
-            /// \{
-
-
             template <typename DT1_, typename DT2_>
             static DenseVector<DT1_> value(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad)
             {
@@ -831,63 +772,6 @@ namespace honei
                 copy<Tag_>(d, temp_0);
                 ScaledSum<Tag_>::value(d, z, temp_0, beta);
 
-                /*
-                DT_ alpha, beta;
-
-                Product<Tag_>::value(temp_0, A, d);
-
-                //alpha = z_k^T * r_k / d_k^T A d_k
-                z.lock(lm_read_only);
-                r.lock(lm_read_only);
-                temp_0.lock(lm_read_only);
-                d.lock(lm_read_only);
-                DT_ pre_alpha(DotProduct<Tag_>::value(temp_0, d));
-
-                if(pre_alpha > std::numeric_limits<DT_>::epsilon())
-                    alpha = DotProduct<Tag_>::value(z, r) / pre_alpha;
-                else
-                    alpha = DotProduct<Tag_>::value(z, r) / std::numeric_limits<DT_>::epsilon();
-                z.unlock(lm_read_only);
-                r.unlock(lm_read_only);
-                temp_0.unlock(lm_read_only);
-                d.unlock(lm_read_only);
-
-                //x_k+1 = x_k + alpha z_k
-                ScaledSum<Tag_>::value(x, d, alpha);                                               //STATUS:: STORE x_k+1
-
-                z.lock(lm_read_only);
-                r.lock(lm_read_only);
-                beta = DotProduct<Tag_>::value(z, r);
-                z.unlock(lm_read_only);
-                r.unlock(lm_read_only);
-
-                //r_k+1 = r_k - alpha A d_k
-                ScaledSum<Tag_>::value(r, temp_0, -alpha);                                         //STATUS: STORE r_k+1
-
-                //Preconditioner:
-                //z_k+1 = C^-1 r_k+1
-                copy<Tag_>(dd_inverted, temp_0);
-                //temp_0 = dd_inverted.copy();
-                ElementProduct<Tag_>::value(temp_0, r);                                            //STATUS: z_k+1 stored in temp_0
-
-                //beta = z_k+1^T r_k+t / z_k^T r_k
-                r.lock(lm_read_only);
-                temp_0.lock(lm_read_only);
-                if(beta > std::numeric_limits<DT_>::epsilon())
-                    beta = DotProduct<Tag_>::value(temp_0, r) / beta;
-                else
-                    beta = DotProduct<Tag_>::value(temp_0, r) / std::numeric_limits<DT_>::epsilon();
-
-                r.unlock(lm_read_only);
-                temp_0.unlock(lm_read_only);
-                copy<Tag_>(temp_0, z);                                                             //STATUS: STORE z_k+1
-                //z = temp_0.copy();
-
-                //d_k+1 = z_k+1 + beta d_k
-                ScaledSum<Tag_>::value(temp_0, d, beta);
-                copy<Tag_>(temp_0, d);                                                             //STATUS: STORE d_k+1
-                //d = temp_0.copy();
-                */
             }
             //end SMELL type
 
@@ -900,9 +784,6 @@ namespace honei
             * \param konv_rad The parameter for convergence control.
             *
             */
-
-            /// \{
-
             template <typename DT1_, typename DT2_>
             static DenseVector<DT1_> value(DenseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad)
             {
@@ -966,9 +847,6 @@ namespace honei
             * \param konv_rad The parameter for convergence control.
             *
             */
-
-            /// \{
-
             template <typename DT1_, typename DT2_>
             static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad)
             {
@@ -1021,6 +899,7 @@ namespace honei
 
 
             }
+
             /**
             * \brief Returns solution of LES given by a SparseMatrix and a Vector.
             *
@@ -1029,14 +908,12 @@ namespace honei
             * \param konv_rad The parameter for convergence control.
             *
             */
-
-            /// \{
-
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(SparseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad)
+            static DenseVector<DT1_> value(SparseMatrix<DT1_> & system_matrix,
+                                            DenseVector<DT2_> & right_hand_side,
+                                            double konv_rad)
             {
                 CONTEXT("When solving sparse linear system with PCG-Jacobi (with given convergence parameter):");
-
 
                 DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
                 DenseVector<DT1_> r = Product<Tag_>::value(system_matrix, x);
@@ -1112,8 +989,6 @@ namespace honei
                 for(unsigned long i(0) ; i < max_iters ; ++i)
                 {
                     cg_kernel(system_matrix, r, z, d, x, dd_inverted, t_0);
-                    //Defect<Tag_>::value(t_1, right_hand_side, system_matrix, x);
-                    //DT_ current_defect_norm(Norm<vnt_l_two, false, Tag_>::value(t_1));
                     DT_ current_defect_norm(Norm<vnt_l_two, true, Tag_>::value(r));
 
                     if(current_defect_norm < initial_defect_norm * 1e-8)
@@ -1126,47 +1001,6 @@ namespace honei
                         std::cout << "NO convergence after " << i + 1 << " iterations: NORM: " << current_defect_norm << std::endl;
                     }
                 }
-                /*
-                DenseVector<DT_> t_0(right_hand_side.size());
-                DenseVector<DT_> t_1(right_hand_side.size());
-
-                //r_0 = b - Ax_0
-                DenseVector<DT_> r(Defect<Tag_>::value(right_hand_side, system_matrix, x));
-                //DT_ initial_defect_norm(Norm<vnt_l_two, false, Tag_>::value(r));
-                r.lock(lm_read_only);
-                DT_ initial_defect_norm(Norm<vnt_l_two, false, tags::CPU>::value(r));
-                r.unlock(lm_read_only);
-                std::cout << "Initial defect NORM: " << initial_defect_norm << std::endl;
-
-                //z_0 = C^-1 r_0
-                DenseVector<DT_> z(right_hand_side.size());
-                //copy<Tag_>(dd_inverted, z);
-                z = dd_inverted.copy();
-                ElementProduct<DT_>::value(z, r);
-
-                //d_0 = z_0
-                DenseVector<DT_> d(right_hand_side.size());
-                copy<Tag_>(z, d);
-                //d = z.copy();
-
-                for(unsigned long i(0) ; i < max_iters ; ++i)
-                {
-                    cg_kernel(system_matrix, r, z, d, x, dd_inverted, t_0, t_1);
-                    //DT_ current_defect_norm(Norm<vnt_l_two, false, Tag_>::value(Defect<Tag_>::value(right_hand_side, system_matrix, x)));
-                    DenseVector<DT_> blub = Defect<Tag_>::value(right_hand_side, system_matrix, x);
-                    blub.lock(lm_read_only);
-                    DT_ current_defect_norm(Norm<vnt_l_two, false, tags::CPU>::value(blub));
-                    blub.unlock(lm_read_only);
-                    if(current_defect_norm <= initial_defect_norm * 10e-8)
-                    {
-                        std::cout << "Converged after " << i + 1 << " iterations: NORM: " << current_defect_norm << std::endl;
-                        break;
-                    }
-                    if(i == max_iters - 1)
-                    {
-                        std::cout << "NO convergence after " << i + 1 << " iterations: NORM: " << current_defect_norm << std::endl;
-                    }
-                }*/
 
             }
 
