@@ -289,7 +289,7 @@ AC_ARG_WITH([dune],
 		  AC_MSG_RESULT([no])])
 AC_SUBST([WITH_DUNE])
 AM_CONDITIONAL([DUNE], test "x$WITH_DUNE" = "xyes")
-if test "x$ENABLE_SSE" = "xyes"; then
+if test "x$WITH_DUNE" = "xyes"; then
 	dnl {{{ enable dune support
 	DUNEDEF="-DHONEI_DUNE"
 	dnl }}}
