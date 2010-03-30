@@ -59,13 +59,6 @@ namespace honei
              */
             SparseMatrixELL(SparseMatrix<DataType_> & src);
 
-            /**
-             * Constructor.
-             *
-             */
-            SparseMatrixELL(unsigned long rows, unsigned long columns, DenseVector<unsigned long> & row_indices, DenseVector<unsigned long> & column_indices,
-                    DenseVector<DataType_> & data);
-
             /// Copy-constructor.
             SparseMatrixELL(const SparseMatrixELL<DataType_> & other);
 

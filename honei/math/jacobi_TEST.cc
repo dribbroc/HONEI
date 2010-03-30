@@ -240,7 +240,8 @@ class JacobiTestSparseELL:
 
             MatrixIO<io_formats::MTX>::read_matrix(filename, r, c, data);
             MatrixIO<io_formats::MTX>::get_sizes(filename, rows, columns, ax, bx);
-            SparseMatrixELL<DT1_> smatrix2(rows, columns, r, c, data);
+            SparseMatrix<DT1_> tsmatrix2(rows, columns, r, c, data);
+            SparseMatrixELL<DT1_> smatrix2(tsmatrix2);
 
             DenseVector<DT1_> x(rows, DT1_(1.2345));
 
@@ -315,7 +316,8 @@ class JacobiSparseELLComparisonTest:
 
             MatrixIO<io_formats::M>::read_matrix(filename, r, c, data);
             MatrixIO<io_formats::M>::get_sizes(filename, rows, columns, ax, bx);
-            SparseMatrixELL<DT1_> smatrix2(rows, columns, r, c, data);
+            SparseMatrix<DT1_> tsmatrix2(rows, columns, r, c, data);
+            SparseMatrixELL<DT1_> smatrix2(tsmatrix2);
 
             std::string filename_2(HONEI_SOURCEDIR);
             filename_2 += "/honei/math/testdata/";
@@ -334,7 +336,8 @@ class JacobiSparseELLComparisonTest:
                 if(r[i] == c[i])
                      data[i] = DT1_(0);
             }
-            SparseMatrixELL<DT1_> difference(rows, columns, r, c, data);
+            SparseMatrix<DT1_> tdifference(rows, columns, r, c, data);
+            SparseMatrixELL<DT1_> difference(tdifference);
 
             DenseVector<DT1_> result(rhs.size(), DT1_(0));
             DenseVector<DT1_> result_c(result.copy());

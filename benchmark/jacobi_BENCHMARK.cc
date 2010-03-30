@@ -52,7 +52,8 @@ class SMELLJacobiBench :
 
             MatrixIO<io_formats::M>::read_matrix(filename, r, c, data);
             MatrixIO<io_formats::M>::get_sizes(filename, rows, columns, ax, bx);
-            SparseMatrixELL<DataType_> smatrix2(rows, columns, r, c, data);
+            SparseMatrix<DataType_> tsmatrix2(rows, columns, r, c, data);
+            SparseMatrixELL<DataType_> smatrix2(tsmatrix2);
 
             std::string filename_2 = "/home/user/mgeveler/nobackup/feat2/Featflow2/area51/renumbenchmark/";
             filename_2 += _v_f;

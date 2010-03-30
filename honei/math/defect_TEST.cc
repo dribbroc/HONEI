@@ -113,7 +113,8 @@ class DefectRegressionTest:
 
             MatrixIO<io_formats::M>::read_matrix(filename, r, c, data);
             MatrixIO<io_formats::M>::get_sizes(filename, rows, columns, ax, bx);
-            SparseMatrixELL<DT_> smatrix2(rows, columns, r, c, data);
+            SparseMatrix<DT_> tsmatrix2(rows, columns, r, c, data);
+            SparseMatrixELL<DT_> smatrix2(tsmatrix2);
 
             std::string filename_2(HONEI_SOURCEDIR);
             filename_2 += "/honei/math/testdata/";

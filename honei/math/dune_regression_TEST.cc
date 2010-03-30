@@ -71,7 +71,8 @@ class DuneRegressionTestSparseELL:
 
             MatrixIO<io_formats::M>::read_matrix(filename, r, c, data);
             MatrixIO<io_formats::M>::get_sizes(filename, rows, columns, ax, bx);
-            SparseMatrixELL<DT1_> smatrix(rows, columns, r, c, data);
+            SparseMatrix<DT1_> tsmatrix(rows, columns, r, c, data);
+            SparseMatrixELL<DT1_> smatrix(tsmatrix);
 
             std::string filename_2(HONEI_SOURCEDIR);
             filename_2 += "/honei/math/testdata/";
@@ -90,7 +91,8 @@ class DuneRegressionTestSparseELL:
                 if(r[i] == c[i])
                      data[i] = DT1_(0);
             }
-            SparseMatrixELL<DT1_> difference(rows, columns, r, c, data);
+            SparseMatrix<DT1_> tdifference(rows, columns, r, c, data);
+            SparseMatrixELL<DT1_> difference(tdifference);
 
             DenseVector<DT1_> result(rhs.size(), DT1_(0));
             DenseVector<DT1_> result_c(result.copy());

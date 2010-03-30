@@ -24,9 +24,9 @@ class SMELLCGBench :
     private:
         unsigned long _size;
         unsigned long _count;
-        std::string _m_f, _v_f;
+        std::string _m_f, _v_f, _i_f;
     public:
-        SMELLCGBench(const std::string & id, unsigned long size, unsigned long count, std::string m_file, std::string v_file) :
+        SMELLCGBench(const std::string & id, unsigned long size, unsigned long count, std::string m_file, std::string v_file, std::string i_file) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
@@ -34,6 +34,7 @@ class SMELLCGBench :
             _count = count;
             _m_f = m_file;
             _v_f = v_file;
+            _i_f = i_file;
         }
 
         virtual void run()
@@ -50,7 +51,8 @@ class SMELLCGBench :
 
             MatrixIO<io_formats::M>::read_matrix(filename, r, c, data);
             MatrixIO<io_formats::M>::get_sizes(filename, rows, columns, ax, bx);
-            SparseMatrixELL<DataType_> smatrix2(rows, columns, r, c, data);
+            SparseMatrix<DataType_> tsmatrix2(rows, columns, r, c, data);
+            SparseMatrixELL<DataType_> smatrix2(tsmatrix2);
 
             std::string filename_2(HONEI_SOURCEDIR);
             filename_2 += "/honei/math/testdata/";
@@ -67,14 +69,21 @@ class SMELLCGBench :
 
             for(unsigned long i(0) ; i < _count ; ++i)
             {
-                DenseVector<DataType_> result(rhs.size(), DataType_(1));
+                std::string filename_3(HONEI_SOURCEDIR);
+                filename_3 += "/honei/math/testdata/";
+                filename_3 += _i_f;
+                DenseVector<DataType_> result(rows, DataType_(0));
+                VectorIO<io_formats::EXP>::read_vector(filename_3, result);
+
                 if (Tag_::tag_value == tags::tv_gpu_cuda)
                 {
                     result.lock(lm_read_and_write, tags::GPU::CUDA::memory_value);
                     result.unlock(lm_read_and_write);
                 }
+                //DenseVector<DataType_> result_c(result.copy());
+                //Defect<Tag_>::value(result, rhs, smatrix2, result_c);
                 BENCHMARK(
-                        (ConjugateGradients<Tag_, JAC>::value(smatrix2, rhs, result, diag_inverted, 1000ul));
+                        (ConjugateGradients<Tag_, JAC>::value(smatrix2, rhs, result, diag_inverted, 10000ul));
                         );
 #ifdef HONEI_CUDA
                         if (Tag_::tag_value == tags::tv_gpu_cuda)
@@ -89,30 +98,50 @@ class SMELLCGBench :
             info.flops = non_zeros * 2 + 13 * rows + 2;
             info.load = (non_zeros*2 + 13 * rows + 3)* sizeof(DataType_);
             info.store = (5 * rows + 3)* sizeof(DataType_);
-            evaluate(info * 1000 + info_pre);
+            evaluate(info * 10000 + info_pre);
         }
 };
 #ifdef HONEI_SSE
-SMELLCGBench<tags::CPU::SSE, float> sseSMELLCGBench_float2("SM ELL 2 L2 CG Benchmark SSE float: " , 0, 1, "l2/area51_full_2.m", "l2/area51_rhs_2");
-SMELLCGBench<tags::CPU::SSE, float> sseSMELLCGBench_float8("SM ELL 2 L8 CG Benchmark SSE float: " , 0, 1, "l8/area51_full_2.m", "l8/area51_rhs_2");
-SMELLCGBench<tags::CPU::SSE, float> sseSMELLCGBench_float10("SM ELL 2 L10 CG Benchmark SSE float: " , 0, 1, "l10/area51_full_2.m", "l10/area51_rhs_2");
-SMELLCGBench<tags::CPU::SSE, float> sseSMELLCGBench_float11("SM ELL 2 L11 CG Benchmark SSE float: " , 0, 1, "l11/area51_full_2.m", "l11/area51_rhs_2");
-SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_double2("SM ELL 2 L2 CG Benchmark SSE double: " , 0, 1, "l2/area51_full_2.m", "l2/area51_rhs_2");
-SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_double8("SM ELL 2 L8 CG Benchmark SSE double: " , 0, 1, "l8/area51_full_2.m", "l8/area51_rhs_2");
-SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_double10("SM ELL 2 L10 CG Benchmark SSE double: " , 0, 1, "l10/area51_full_2.m", "l10/area51_rhs_2");
-SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_double11("SM ELL 2 L11 CG Benchmark SSE double: " , 0, 1, "l11/area51_full_2.m", "l11/area51_rhs_2");
-SMELLCGBench<tags::CPU::MultiCore::SSE, double> mcsseSMELLCGBench_double8("MC SM ELL 2 L8 CG Benchmark SSE double: " , 0, 1, "l8/area51_full_2.m", "l8/area51_rhs_2");
-SMELLCGBench<tags::CPU::MultiCore::SSE, double> mcsseSMELLCGBench_double10("MC SM ELL 2 L10 CG Benchmark SSE double: " , 0, 1, "l10/area51_full_2.m", "l10/area51_rhs_2");
+SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_0double7("SM ELL 0 L7 CG Benchmark SSE double: " , 0, 1, "l7/area51_full_0.m", "l7/area51_rhs_0", "l7/area51_init_0");
+SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_0double8("SM ELL 0 L8 CG Benchmark SSE double: " , 0, 1, "l8/area51_full_0.m", "l8/area51_rhs_0", "l8/area51_init_0");
+SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_0double9("SM ELL 0 L9 CG Benchmark SSE double: " , 0, 1, "l9/area51_full_0.m", "l9/area51_rhs_0", "l9/area51_init_0");
+SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_0double10("SM ELL 0 L10 CG Benchmark SSE double: " , 0, 1, "l10/area51_full_0.m", "l10/area51_rhs_0", "l10/area51_init_0");
+SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_1double7("SM ELL 1 L7 CG Benchmark SSE double: " , 0, 1, "l7/area51_full_1.m", "l7/area51_rhs_1", "l7/area51_init_0");
+SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_1double8("SM ELL 1 L8 CG Benchmark SSE double: " , 0, 1, "l8/area51_full_1.m", "l8/area51_rhs_1", "l8/area51_init_0");
+SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_1double9("SM ELL 1 L9 CG Benchmark SSE double: " , 0, 1, "l9/area51_full_1.m", "l9/area51_rhs_1", "l9/area51_init_0");
+SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_1double10("SM ELL 1 L10 CG Benchmark SSE double: " , 0, 1, "l10/area51_full_1.m", "l10/area51_rhs_1", "l10/area51_init_0");
+SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_2double7("SM ELL 2 L7 CG Benchmark SSE double: " , 0, 1, "l7/area51_full_2.m", "l7/area51_rhs_2", "l7/area51_init_0");
+SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_2double8("SM ELL 2 L8 CG Benchmark SSE double: " , 0, 1, "l8/area51_full_2.m", "l8/area51_rhs_2", "l8/area51_init_0");
+SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_2double9("SM ELL 2 L9 CG Benchmark SSE double: " , 0, 1, "l9/area51_full_2.m", "l9/area51_rhs_2", "l9/area51_init_0");
+SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_2double10("SM ELL 2 L10 CG Benchmark SSE double: " , 0, 1, "l10/area51_full_2.m", "l10/area51_rhs_2", "l10/area51_init_0");
+SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_3double7("SM ELL 3 L7 CG Benchmark SSE double: " , 0, 1, "l7/area51_full_3.m", "l7/area51_rhs_3", "l7/area51_init_0");
+SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_3double8("SM ELL 3 L8 CG Benchmark SSE double: " , 0, 1, "l8/area51_full_3.m", "l8/area51_rhs_3", "l8/area51_init_0");
+SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_3double9("SM ELL 3 L9 CG Benchmark SSE double: " , 0, 1, "l9/area51_full_3.m", "l9/area51_rhs_3", "l9/area51_init_0");
+SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_3double10("SM ELL 3 L10 CG Benchmark SSE double: " , 0, 1, "l10/area51_full_3.m", "l10/area51_rhs_3", "l10/area51_init_0");
+SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_4double7("SM ELL 4 L7 CG Benchmark SSE double: " , 0, 1, "l7/area51_full_4.m", "l7/area51_rhs_4", "l7/area51_init_0");
+SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_4double8("SM ELL 4 L8 CG Benchmark SSE double: " , 0, 1, "l8/area51_full_4.m", "l8/area51_rhs_4", "l8/area51_init_0");
+SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_4double9("SM ELL 4 L9 CG Benchmark SSE double: " , 0, 1, "l9/area51_full_4.m", "l9/area51_rhs_4", "l9/area51_init_0");
+SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_4double10("SM ELL 4 L10 CG Benchmark SSE double: " , 0, 1, "l10/area51_full_4.m", "l10/area51_rhs_4", "l10/area51_init_0");
 #endif
-#ifdef HONEI_CUDA
-SMELLCGBench<tags::GPU::CUDA, float> cudaSMELLCGBench_float2("SM ELL 2 L2 CG Benchmark CUDA float: " , 0, 1, "l2/area51_full_2.m", "l2/area51_rhs_2");
-SMELLCGBench<tags::GPU::CUDA, float> cudaSMELLCGBench_float8("SM ELL 2 L8 CG Benchmark CUDA float: " , 0, 1, "l8/area51_full_2.m", "l8/area51_rhs_2");
-SMELLCGBench<tags::GPU::CUDA, float> cudaSMELLCGBench_float10("SM ELL 2 L10 CG Benchmark CUDA float: " , 0, 1, "l10/area51_full_2.m", "l10/area51_rhs_2");
-SMELLCGBench<tags::GPU::CUDA, float> cudaSMELLCGBench_float11("SM ELL 2 L11 CG Benchmark CUDA float: " , 0, 1, "l11/area51_full_2.m", "l11/area51_rhs_2");
 #ifdef HONEI_CUDA_DOUBLE
-SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_double2("SM ELL 2 L2 CG Benchmark CUDA double: " , 0, 1, "l2/area51_full_2.m", "l2/area51_rhs_2");
-SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_double8("SM ELL 2 L8 CG Benchmark CUDA double: " , 0, 1, "l8/area51_full_2.m", "l8/area51_rhs_2");
-SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_double10("SM ELL 2 L10 CG Benchmark CUDA double: " , 0, 1, "l10/area51_full_2.m", "l10/area51_rhs_2");
-SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_double11("SM ELL 2 L11 CG Benchmark CUDA double: " , 0, 1, "l11/area51_full_2.m", "l11/area51_rhs_2");
-#endif
+SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_0double7("SM ELL 0 L7 CG Benchmark CUDA double: " , 0, 1, "l7/area51_full_0.m", "l7/area51_rhs_0", "l7/area51_init_0");
+SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_0double8("SM ELL 0 L8 CG Benchmark CUDA double: " , 0, 1, "l8/area51_full_0.m", "l8/area51_rhs_0", "l8/area51_init_0");
+SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_0double9("SM ELL 0 L9 CG Benchmark CUDA double: " , 0, 1, "l9/area51_full_0.m", "l9/area51_rhs_0", "l9/area51_init_0");
+SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_0double10("SM ELL 0 L10 CG Benchmark CUDA double: " , 0, 1, "l10/area51_full_0.m", "l10/area51_rhs_0", "l10/area51_init_0");
+SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_1double7("SM ELL 1 L7 CG Benchmark CUDA double: " , 0, 1, "l7/area51_full_1.m", "l7/area51_rhs_1", "l7/area51_init_0");
+SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_1double8("SM ELL 1 L8 CG Benchmark CUDA double: " , 0, 1, "l8/area51_full_1.m", "l8/area51_rhs_1", "l8/area51_init_0");
+SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_1double9("SM ELL 1 L9 CG Benchmark CUDA double: " , 0, 1, "l9/area51_full_1.m", "l9/area51_rhs_1", "l9/area51_init_0");
+SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_1double10("SM ELL 1 L10 CG Benchmark CUDA double: " , 0, 1, "l10/area51_full_1.m", "l10/area51_rhs_1", "l10/area51_init_0");
+SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_2double7("SM ELL 2 L7 CG Benchmark CUDA double: " , 0, 1, "l7/area51_full_2.m", "l7/area51_rhs_2", "l7/area51_init_0");
+SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_2double8("SM ELL 2 L8 CG Benchmark CUDA double: " , 0, 1, "l8/area51_full_2.m", "l8/area51_rhs_2", "l8/area51_init_0");
+SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_2double9("SM ELL 2 L9 CG Benchmark CUDA double: " , 0, 1, "l9/area51_full_2.m", "l9/area51_rhs_2", "l9/area51_init_0");
+SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_2double10("SM ELL 2 L10 CG Benchmark CUDA double: " , 0, 1, "l10/area51_full_2.m", "l10/area51_rhs_2", "l10/area51_init_0");
+SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_3double7("SM ELL 3 L7 CG Benchmark CUDA double: " , 0, 1, "l7/area51_full_3.m", "l7/area51_rhs_3", "l7/area51_init_0");
+SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_3double8("SM ELL 3 L8 CG Benchmark CUDA double: " , 0, 1, "l8/area51_full_3.m", "l8/area51_rhs_3", "l8/area51_init_0");
+SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_3double9("SM ELL 3 L9 CG Benchmark CUDA double: " , 0, 1, "l9/area51_full_3.m", "l9/area51_rhs_3", "l9/area51_init_0");
+SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_3double10("SM ELL 3 L10 CG Benchmark CUDA double: " , 0, 1, "l10/area51_full_3.m", "l10/area51_rhs_3", "l10/area51_init_0");
+SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_4double7("SM ELL 4 L7 CG Benchmark CUDA double: " , 0, 1, "l7/area51_full_4.m", "l7/area51_rhs_4", "l7/area51_init_0");
+SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_4double8("SM ELL 4 L8 CG Benchmark CUDA double: " , 0, 1, "l8/area51_full_4.m", "l8/area51_rhs_4", "l8/area51_init_0");
+SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_4double9("SM ELL 4 L9 CG Benchmark CUDA double: " , 0, 1, "l9/area51_full_4.m", "l9/area51_rhs_4", "l9/area51_init_0");
+SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_4double10("SM ELL 4 L10 CG Benchmark CUDA double: " , 0, 1, "l10/area51_full_4.m", "l10/area51_rhs_4", "l10/area51_init_0");
 #endif

@@ -1100,7 +1100,7 @@ namespace honei
 
                 DenseVector<DT_> r(right_hand_side.size());
                 Defect<Tag_>::value(r, right_hand_side, system_matrix, x);
-                DT_ initial_defect_norm(Norm<vnt_l_two, false, Tag_>::value(r));
+                DT_ initial_defect_norm(Norm<vnt_l_two, true, Tag_>::value(r));
                 std::cout << "Initial defect NORM: " << initial_defect_norm << std::endl;
 
                 DenseVector<DT_> z(right_hand_side.size());
@@ -1114,9 +1114,9 @@ namespace honei
                     cg_kernel(system_matrix, r, z, d, x, dd_inverted, t_0);
                     //Defect<Tag_>::value(t_1, right_hand_side, system_matrix, x);
                     //DT_ current_defect_norm(Norm<vnt_l_two, false, Tag_>::value(t_1));
-                    DT_ current_defect_norm(Norm<vnt_l_two, false, Tag_>::value(r));
+                    DT_ current_defect_norm(Norm<vnt_l_two, true, Tag_>::value(r));
 
-                    if(current_defect_norm < initial_defect_norm * 1e-13)
+                    if(current_defect_norm < initial_defect_norm * 1e-8)
                     {
                         std::cout << "Converged after " << i + 1 << " iterations: NORM: " << current_defect_norm << std::endl;
                         break;

@@ -21,6 +21,7 @@
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <honei/la/product.hh>
+#include <honei/la/sparse_matrix_ell.hh>
 #include <iostream>
 
 using namespace honei;
@@ -85,7 +86,8 @@ class MMIOTest:
 
             unsigned long rows, columns, ax, bx;
             MatrixIO<io_formats::MTX>::get_sizes(filename, rows, columns, ax, bx);
-            SparseMatrixELL<DT_> smatrix2(rows, columns, r, c, data);
+            SparseMatrix<DT_> tsmatrix2(rows, columns, r, c, data);
+            SparseMatrixELL<DT_> smatrix2(tsmatrix2);
 
             TEST_CHECK_EQUAL(smatrix2, smatrix);
 
@@ -110,7 +112,8 @@ class MMIOTest:
             std::cout << c_matlab << std::endl;
             std::cout << data_matlab << std::endl;
 
-            SparseMatrixELL<DT_> smatrix3(r_2, c_2, r_matlab, c_matlab, data_matlab);
+            SparseMatrix<DT_> tsmatrix3(r_2, c_2, r_matlab, c_matlab, data_matlab);
+            SparseMatrixELL<DT_> smatrix3(tsmatrix3);
 
             std::cout << smatrix3 << std::endl;
         }

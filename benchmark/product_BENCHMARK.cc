@@ -477,7 +477,8 @@ class SMELLDenseVectorProductBench :
             MatrixIO<io_formats::M>::read_matrix(filename, r, c, data);
             unsigned long rows, columns, ax, bx;
             MatrixIO<io_formats::M>::get_sizes(filename, rows, columns, ax, bx);
-            SparseMatrixELL<DataType_> smatrix(rows, columns, r, c, data);
+            SparseMatrix<DataType_> tsmatrix(rows, columns, r, c, data);
+            SparseMatrixELL<DataType_> smatrix(tsmatrix);
 
             DenseVector<DataType_> x(smatrix.rows());
             DenseVector<DataType_> y(smatrix.rows());

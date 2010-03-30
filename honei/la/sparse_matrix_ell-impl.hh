@@ -71,6 +71,58 @@ namespace honei
             columns(columns)
         {
         }
+
+        Implementation(SparseMatrix<DataType_> & src) :
+            Aj(1),
+            Ax(1),
+            rows(1),
+            columns(1)
+        {
+            rows = src.rows();
+            columns = src.columns();
+
+            num_cols_per_row = 0;
+            for (unsigned long i(0) ; i < rows ; ++i)
+            {
+                if (src[i].used_elements() > num_cols_per_row)
+                {
+                    num_cols_per_row = src[i].used_elements();
+                }
+            }
+            /// \todo remove hardcoded numbers
+            unsigned long alignment(32);
+            stride = alignment * ((rows + alignment - 1)/ alignment);
+
+            DenseVector<unsigned long> pAj(num_cols_per_row * stride, (unsigned long)(0));
+            DenseVector<DataType_> pAx(num_cols_per_row * stride, DataType_(0));
+
+            for (unsigned long row(0); row < rows ; ++row)
+            {
+                unsigned long target(0);
+                for (typename SparseVector<DataType_>::NonZeroElementIterator i(src[row].begin_non_zero_elements()) ;
+                        i < src[row].end_non_zero_elements() ; ++i)
+                {
+                    pAj[target + row * num_cols_per_row] = i.index();
+                    pAx[target + row * num_cols_per_row] = *i;
+                    target++;
+                }
+            }
+
+            DenseVector<unsigned long> tAj(num_cols_per_row * stride, (unsigned long)(0));
+            DenseVector<DataType_> tAx(num_cols_per_row * stride, DataType_(0));
+            unsigned long t(0);
+            for (unsigned long j(0) ; j < num_cols_per_row ; ++j)
+            {
+                for (unsigned long i(0) ; i < tAj.size() ; i+=num_cols_per_row)
+                {
+                    tAj[t] = pAj[j + i];
+                    tAx[t] = pAx[j + i];
+                    ++t;
+                }
+            }
+            Aj = tAj;
+            Ax = tAx;
+        }
     };
 
 
@@ -86,115 +138,9 @@ namespace honei
 
     template <typename DataType_>
     SparseMatrixELL<DataType_>::SparseMatrixELL(SparseMatrix<DataType_> & src) :
-        PrivateImplementationPattern<SparseMatrixELL<DataType_>, Shared>(new Implementation<SparseMatrixELL<DataType_> >(src.rows(), src.columns()))
+        PrivateImplementationPattern<SparseMatrixELL<DataType_>, Shared>(new Implementation<SparseMatrixELL<DataType_> >(src))
     {
         CONTEXT("When creating SparseMatrixELL from SparseMatrix:");
-        unsigned long rows(src.rows());
-        this->_imp->rows = rows;
-        this->_imp->columns = src.columns();
-
-        unsigned long num_cols_per_row(0);
-        for (unsigned long i(0) ; i < rows ; ++i)
-        {
-            if (src[i].used_elements() > num_cols_per_row)
-            {
-                num_cols_per_row = src[i].used_elements();
-            }
-        }
-        this->_imp->num_cols_per_row = num_cols_per_row;
-        /// \todo remove hardcoded numbers
-        unsigned long alignment(32);
-        unsigned long stride = alignment * ((rows + alignment - 1)/ alignment);
-        this->_imp->stride = stride;
-
-        DenseVector<unsigned long> Aj(num_cols_per_row * stride, (unsigned long)(0));
-        DenseVector<DataType_> Ax(num_cols_per_row * stride, DataType_(0));
-
-        for (unsigned long row(0); row < rows ; ++row)
-        {
-            unsigned long target(0);
-            for (typename SparseVector<DataType_>::NonZeroElementIterator i(src[row].begin_non_zero_elements()) ;
-                    i < src[row].end_non_zero_elements() ; ++i)
-            {
-                Aj[target + row * num_cols_per_row] = i.index();
-                Ax[target + row * num_cols_per_row] = *i;
-                target++;
-            }
-        }
-
-        DenseVector<unsigned long> tAj(num_cols_per_row * stride, (unsigned long)(0));
-        DenseVector<DataType_> tAx(num_cols_per_row * stride, DataType_(0));
-        unsigned long t(0);
-        for (unsigned long j(0) ; j < num_cols_per_row ; ++j)
-        {
-            for (unsigned long i(0) ; i < tAj.size() ; i+=num_cols_per_row)
-            {
-                tAj[t] = Aj[j + i];
-                tAx[t] = Ax[j + i];
-                ++t;
-            }
-        }
-        this->_imp->Aj = tAj;
-        this->_imp->Ax = tAx;
-    }
-
-    template <typename DataType_>
-    SparseMatrixELL<DataType_>::SparseMatrixELL(unsigned long rows, unsigned long columns, DenseVector<unsigned long> & row_indices,
-            DenseVector<unsigned long> & column_indices, DenseVector<DataType_> & data) :
-        PrivateImplementationPattern<SparseMatrixELL<DataType_>, Shared>(new Implementation<SparseMatrixELL<DataType_> >(rows, columns))
-    {
-        CONTEXT("When creating SparseMatrixELL from coordinate vectors:");
-
-        SparseMatrix<DataType_> src(rows, columns);
-        for (unsigned long i(0) ; i < data.size() ; ++i)
-        {
-            src(row_indices[i], column_indices[i]) = data[i];
-        }
-
-        unsigned long num_cols_per_row(0);
-        for (unsigned long i(0) ; i < rows ; ++i)
-        {
-            if (src[i].used_elements() > num_cols_per_row)
-            {
-                num_cols_per_row = src[i].used_elements();
-            }
-        }
-        this->_imp->num_cols_per_row = num_cols_per_row;
-        /// \todo remove hardcoded numbers
-        unsigned long alignment(32);
-        unsigned long stride = alignment * ((rows + alignment - 1)/ alignment);
-        this->_imp->stride = stride;
-
-        DenseVector<unsigned long> Aj(num_cols_per_row * stride, (unsigned long)(0));
-        DenseVector<DataType_> Ax(num_cols_per_row * stride, DataType_(0));
-
-        for (unsigned long row(0); row < rows ; ++row)
-        {
-            unsigned long target(0);
-            for (typename SparseVector<DataType_>::NonZeroElementIterator i(src[row].begin_non_zero_elements()) ;
-                    i < src[row].end_non_zero_elements() ; ++i)
-            {
-                Aj[target + row * num_cols_per_row] = i.index();
-                Ax[target + row * num_cols_per_row] = *i;
-                target++;
-            }
-        }
-
-        DenseVector<unsigned long> tAj(num_cols_per_row * stride, (unsigned long)(0));
-        DenseVector<DataType_> tAx(num_cols_per_row * stride, DataType_(0));
-        unsigned long t(0);
-        for (unsigned long j(0) ; j < num_cols_per_row ; ++j)
-        {
-            for (unsigned long i(0) ; i < tAj.size() ; i+=num_cols_per_row)
-            {
-                tAj[t] = Aj[j + i];
-                tAx[t] = Ax[j + i];
-                /// \todo Change ++t with respect to stride > rows to avoid leftmost elements in the Ax matrix beeing zero.
-                ++t;
-            }
-        }
-        this->_imp->Aj = tAj;
-        this->_imp->Ax = tAx;
     }
 
     template <typename DataType_>
@@ -265,7 +211,7 @@ namespace honei
             if (this->Aj()[i] == column)
                 return this->Ax()[i];
         }
-        return DataType_(0);
+        return this->_imp->zero_element;
     }
 
     template <typename DataType_>

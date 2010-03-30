@@ -33,6 +33,9 @@
 
 namespace honei
 {
+    // Forward declarations
+    template <typename DataType_> class SparseMatrixELL;
+
     /**
      * \brief SparseMatrix is a matrix with O(rows) sparse row-vectors.
      *
@@ -143,14 +146,6 @@ namespace honei
 
                 _row_vectors[src.rows()].reset(new SparseVector<DataType_>(src.columns(), 1));
 
-                /*for (unsigned long i(0) ; i < src.rows() ; ++i)
-                {
-                    for (unsigned long j(0) ; j < src.columns() ; ++j)
-                    {
-                        if (src(i, j) != DataType_(0))
-                            (*this)(i, j) = src(i, j);
-                    }
-                }*/
                 for (unsigned long row(0) ; row < src.rows() ; ++row)
                 {
                     for (unsigned long i(row) ; i < src.Aj().size() ; i += src.stride())
@@ -247,6 +242,11 @@ namespace honei
             unsigned long rows() const
             {
                 return _rows;
+            }
+
+            unsigned long size() const
+            {
+                return _rows * _columns;
             }
 
             /// Retrieves row vector by index, zero-based, unassignable.
