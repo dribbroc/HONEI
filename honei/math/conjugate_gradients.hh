@@ -35,6 +35,10 @@
 #include <honei/la/element_product.hh>
 #include <honei/la/sparse_matrix.hh>
 #include <honei/la/algorithm.hh>
+#include <iostream>
+
+#define SOLVER_VERBOSE_L2 1
+//#define SOLVER_VERBOSE_L1 1
 
 using namespace methods;
 namespace honei
@@ -44,16 +48,13 @@ namespace honei
     struct ConjugateGradients
     {
     };
+
     /**
      * \brief Solution of LES with CG.
-     *
-     * The referenced containers are invariant under this operation.
-     * In every case, a new object is created and returned.
      *
      * \ingroup grpmatrixoperations
      * \ingroup grpvectoroperations
      */
-
     template <typename Tag_>
     struct ConjugateGradients<Tag_, methods::NONE>
     {
@@ -445,13 +446,17 @@ namespace honei
                 return x;
             }
 
-
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, unsigned long iters)
+            static void value(BandedMatrixQ1<DT1_> & system_matrix,
+                    DenseVector<DT2_> & right_hand_side,
+                    DenseVector<DT2_> & x,
+                    unsigned long iters)
             {
                 CONTEXT("When solving banded Q1 linear system with CG (with given convergence parameter):");
+#ifdef SOLVER_VERBOSE_L2
+                std::cout << "Calling CG solver, preconditioning=NONE, datalayout=Q1" << std::endl;
+#endif
 
-                DenseVector<DT1_> x(right_hand_side.size());
                 fill<Tag_>(x, DT1_(0));
                 DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
                 Difference<Tag_>::value(g, right_hand_side);
@@ -483,32 +488,67 @@ namespace honei
                     }
                 }
                 std::cout << "EEEEEK. NO CONVERGENCE!!!" << std::endl;
-                return x;
             }
 
             ///NEW ELL type:
             template <typename DT1_>
-            static DenseVector<DT1_> & value(SparseMatrixELL<DT1_> & system_matrix, DenseVector<DT1_> & right_hand_side, DenseVector<DT1_> & x, unsigned long max_iters)
+            static void value(SparseMatrixELL<DT1_> & system_matrix, 
+                    DenseVector<DT1_> & right_hand_side,
+                    DenseVector<DT1_> & x,
+                    unsigned long max_iters)
             {
                 CONTEXT("When solving sparse ELL linear system with CG :");
-                std::cout << "CALLING CG with no preconditioning!" << std::endl;
-
+#ifdef SOLVER_VERBOSE_L2
+                std::cout << "Calling CG solver, preconditioning=NONE, datalayout=ELLPACK" << std::endl;
+#endif
                 DenseVector<DT1_> p(right_hand_side.size());
                 DenseVector<DT1_> r(right_hand_side.size());
                 DenseVector<DT1_> v(right_hand_side.size());
                 cg_kernel(system_matrix, right_hand_side, x,  r, p, v, max_iters);
-                return x;
+            }
 
+            template <typename DT1_, typename DT2_>
+            static void value(SparseMatrix<DT1_> & system_matrix,
+                                               DenseVector<DT2_> & right_hand_side,
+                                               DenseVector<DT2_> & x,
+                                               double konv_rad)
+            {
+                CONTEXT("When solving sparse linear system with CG (with given convergence parameter):");
+#ifdef SOLVER_VERBOSE_L2
+                std::cout << "Calling CG solver, preconditioning=NONE, datalayout=SPARSE" << std::endl;
+#endif
+                DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
+                Difference<Tag_>::value(g, right_hand_side);
+                DenseVector<DT1_> g_c(g.copy());
+                Scale<Tag_>::value(g_c, DT1_(-1.));
+                DenseVector<DT1_> u(g_c.copy());
+                DenseVector<DT1_> x_last(x.copy());
+
+                DT1_ norm_x_last = DT1_(0);
+                DT1_ norm_x = DT1_(1);
+
+                while(norm_x - norm_x_last > konv_rad)
+                {
+
+                    cg_kernel(system_matrix, right_hand_side, g, x, u);
+                    norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
+                    norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
+                    x_last = x.copy();
+                }
             }
 
             ///Mixed precision implementations:
             template <typename DT1_, typename DT2_>
-                static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad, int mixed_prec_iter_num)
+            static void value(BandedMatrix<DT1_> & system_matrix,
+                                           DenseVector<DT2_> & right_hand_side,
+                                           DenseVector<DT2_> & x,
+                                           double konv_rad,
+                                           int mixed_prec_iter_num)
             {
                 CONTEXT("When solving banded linear system with CG (with given convergence parameter), MIXEDPREC:");
-
-
-                DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
+#ifdef SOLVER_VERBOSE_L2
+                std::cout << "Calling CG solver, preconditioning=NONE, datalayout=BANDED, MIXEDPREC (k-version)" << std::endl;
+#endif
                 DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
                 Difference<Tag_>::value(g, right_hand_side);
                 DenseVector<DT1_> g_c(g.copy());
@@ -557,52 +597,18 @@ namespace honei
                     }
                     ++iteration_count;
                 }
-                return x;
             }
-
-
-            template <typename DT1_, typename DT2_>
-                static DenseVector<DT1_> value(SparseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad)
-                {
-                    CONTEXT("When solving sparse linear system with CG (with given convergence parameter):");
-
-
-                    DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
-                    DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
-                    Difference<Tag_>::value(g, right_hand_side);
-                    DenseVector<DT1_> g_c(g.copy());
-                    Scale<Tag_>::value(g_c, DT1_(-1.));
-                    DenseVector<DT1_> u(g_c.copy());
-                    DenseVector<DT1_> x_last(x.copy());
-
-                    DT1_ norm_x_last = DT1_(0);
-                    DT1_ norm_x = DT1_(1);
-
-                    while(norm_x - norm_x_last > konv_rad)
-                    {
-
-                        cg_kernel(system_matrix, right_hand_side, g, x, u);
-                        norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
-                        norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
-                        x_last = x.copy();
-                    }
-                    return x;
-
-
-                }
-
     };
+
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     /**
      * \brief Solution of LES with PCG - Jacobi.
      *
-     * The referenced containers are invariant under this operation.
-     * In every case, a new object is created and returned.
-     *
      * \ingroup grpmatrixoperations
      * \ingroup grpvectoroperations
      */
-
     template <typename Tag_>
         struct ConjugateGradients<Tag_, methods::JAC>
         {
@@ -610,6 +616,10 @@ namespace honei
                 template<typename DT1_, typename DT2_>
                     static inline void cg_kernel(DenseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility, DenseVector<DT1_> & former_residual, DenseVector<DT1_> & diag_inverted)
                     {
+                        CONTEXT("When calling CG kernel, preconditioner=JACOBI, datalayout=DENSE.");
+#ifdef SOLVER_VERBOSE_L1
+                        std::cout << "Calling single iteration of CG, preconditioner=JACOBI, datalayout=DENSE." << std::endl;
+#endif
 
                         DT1_ alpha, beta, upper, lower;
                         upper = DotProduct<Tag_>::value(former_residual, former_gradient);
@@ -651,12 +661,16 @@ namespace honei
                         }
 
                         Scale<Tag_>::value(utility, beta);
-                Sum<Tag_>::value(utility, former_gradient);
+                        Sum<Tag_>::value(utility, former_gradient);
             }
 
             template<typename DT1_, typename DT2_>
             static inline void cg_kernel(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility, DenseVector<DT1_> & former_residual, DenseVector<DT1_> & diag_inverted)
             {
+                CONTEXT("When calling CG kernel, preconditioner=JACOBI, datalayout=BANDED.");
+#ifdef SOLVER_VERBOSE_L1
+                std::cout << "Calling single iteration of CG, preconditioner=JACOBI, datalayout=BANDED." << std::endl;
+#endif
 
                 DT1_ alpha, beta, upper, lower;
                 upper = DotProduct<Tag_>::value(former_residual, former_gradient);
@@ -704,6 +718,10 @@ namespace honei
             template<typename DT1_, typename DT2_>
             static inline void cg_kernel(SparseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility, DenseVector<DT1_> & former_residual, DenseVector<DT1_> & diag_inverted)
             {
+                CONTEXT("When calling CG kernel, preconditioner=JACOBI, datalayout=SPARSE.");
+#ifdef SOLVER_VERBOSE_L1
+                std::cout << "Calling single iteration of CG, preconditioner=JACOBI, datalayout=SPARSE." << std::endl;
+#endif
 
                 DT1_ alpha, beta, upper, lower;
                 upper = DotProduct<Tag_>::value(former_residual, former_gradient);
@@ -758,6 +776,11 @@ namespace honei
                                          DenseVector<DT_> & dd_inverted,
                                          DenseVector<DT_> & temp_0)
             {
+                CONTEXT("When calling CG kernel, preconditioner=JACOBI, datalayout=ELLPACK.");
+#ifdef SOLVER_VERBOSE_L1
+                std::cout << "Calling single iteration of CG, preconditioner=JACOBI, datalayout=ELL." << std::endl;
+#endif
+
                 DT_ alpha, beta;
                 beta = DotProduct<Tag_>::value(r, z);
                 Product<Tag_>::value(temp_0, A, d);
@@ -781,16 +804,21 @@ namespace honei
             *
             * \param system_matrix The system matrix.
             * \param right_hand_side The right hand side of the system.
+            * \param x The solution (and initial guess).
             * \param konv_rad The parameter for convergence control.
             *
             */
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(DenseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad)
+            static void value(DenseMatrix<DT1_> & system_matrix,
+                                           DenseVector<DT2_> & right_hand_side,
+                                           DenseVector<DT2_> & x,
+                                           double konv_rad)
             {
                 CONTEXT("When solving dense linear system with PCG-Jacobi (with given convergence parameter):");
+#ifdef SOLVER_VERBOSE_L2
+                std::cout << "Calling CG solver, preconditioning=JACOBI, datalayout=DENSE" << std::endl;
+#endif
 
-
-                DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
                 DenseVector<DT1_> r = Product<Tag_>::value(system_matrix, x);
                 Difference<Tag_>::value(r, right_hand_side);
                 Scale<Tag_>::value(r, DT1_(-1.));
@@ -834,9 +862,6 @@ namespace honei
                     norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
                     x_last = x.copy();
                 }
-                return x;
-
-
             }
 
             /**
@@ -844,15 +869,21 @@ namespace honei
             *
             * \param system_matrix The system matrix.
             * \param right_hand_side The right hand side of the system.
+            * \param x The solution (and initial guess).
             * \param konv_rad The parameter for convergence control.
             *
             */
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad)
+            static void value(BandedMatrix<DT1_> & system_matrix,
+                              DenseVector<DT2_> & right_hand_side,
+                              DenseVector<DT2_> & x,
+                              double konv_rad)
             {
                 CONTEXT("When solving banded linear system with PCG-Jacobi (with given convergence parameter):");
+#ifdef SOLVER_VERBOSE_L2
+                std::cout << "Calling CG solver, preconditioning=JACOBI, datalayout=BANDED" << std::endl;
+#endif
 
-                DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
                 DenseVector<DT1_> r = Product<Tag_>::value(system_matrix, x);
                 Difference<Tag_>::value(r, right_hand_side);
                 Scale<Tag_>::value(r, DT1_(-1.));
@@ -895,9 +926,6 @@ namespace honei
                     norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
                     x_last = x.copy();
                 }
-                return x;
-
-
             }
 
             /**
@@ -905,17 +933,21 @@ namespace honei
             *
             * \param system_matrix The system matrix.
             * \param right_hand_side The right hand side of the system.
+            * \param x The solution (and initial guess).
             * \param konv_rad The parameter for convergence control.
             *
             */
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(SparseMatrix<DT1_> & system_matrix,
-                                            DenseVector<DT2_> & right_hand_side,
-                                            double konv_rad)
+            static void value(SparseMatrix<DT1_> & system_matrix,
+                         DenseVector<DT2_> & right_hand_side,
+                         DenseVector<DT2_> & x,
+                         double konv_rad)
             {
                 CONTEXT("When solving sparse linear system with PCG-Jacobi (with given convergence parameter):");
+#ifdef SOLVER_VERBOSE_L2
+                std::cout << "Calling CG solver, preconditioning=JACOBI, datalayout=SPARSE" << std::endl;
+#endif
 
-                DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
                 DenseVector<DT1_> r = Product<Tag_>::value(system_matrix, x);
                 Difference<Tag_>::value(r, right_hand_side);
                 Scale<Tag_>::value(r, DT1_(-1.));
@@ -958,9 +990,6 @@ namespace honei
                     norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
                     x_last = x.copy();
                 }
-                return x;
-
-
             }
 
 
@@ -972,6 +1001,9 @@ namespace honei
                                            unsigned long max_iters)
             {
                 CONTEXT("When solving sparse ELL linear system with PCG-Jacobi: ");
+#ifdef SOLVER_VERBOSE_L2
+                std::cout << "Calling CG solver, preconditioning=JACOBI, datalayout=ELL" << std::endl;
+#endif
 
                 DenseVector<DT_> t_0(right_hand_side.size());
 

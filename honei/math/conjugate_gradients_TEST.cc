@@ -191,8 +191,8 @@ class ConjugateGradientsTestDenseJAC:
             x_analytical[2] = DT1_(-1./3.);
             DT1_ x_analytical_n = Norm< vnt_l_two, false, Tag_>::value(x_analytical);
             //TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.1));
-
-            DenseVector<DT1_> result_2 = ConjugateGradients<tags::CPU, methods::JAC>::value(A,b,double(std::numeric_limits<double>::epsilon()));
+            DenseVector<DT1_> result_2(x_analytical.size());
+            ConjugateGradients<tags::CPU, methods::JAC>::value(A, b, result_2, double(std::numeric_limits<double>::epsilon()));
             std::cout << "RESULT(v2):" << result_2 << std::endl;
 
             DT1_ x_n_2 = Norm< vnt_l_two, false, Tag_>::value(result_2);
@@ -262,7 +262,8 @@ class ConjugateGradientsTestBandedJAC:
             //cout<<"RESULT(v1):"<<result<<endl;
             //TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.1));
 
-            DenseVector<DT1_> result_2 = ConjugateGradients<tags::CPU, methods::JAC>::value(A,b,double(std::numeric_limits<double>::epsilon()));
+            DenseVector<DT1_> result_2(x_analytical.size());
+            ConjugateGradients<tags::CPU, methods::JAC>::value(A, b, result_2, double(std::numeric_limits<double>::epsilon()));
             DT1_ x_n_2 = Norm< vnt_l_two, false, Tag_>::value(result_2);
             TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n_2 , double(0.1));
 
@@ -341,7 +342,8 @@ class ConjugateGradientsTestSparse:
             DT1_ x_analytical_n = Norm< vnt_l_two, false, Tag_>::value(x_analytical);
             //TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.1));
 
-            DenseVector<DT1_> result_2 = ConjugateGradients<tags::CPU, methods::NONE>::value(A,b,double(std::numeric_limits<double>::epsilon()));
+            DenseVector<DT1_> result_2(x_analytical.size());
+            ConjugateGradients<tags::CPU, methods::NONE>::value(A, b, result_2, double(std::numeric_limits<double>::epsilon()));
             std::cout << "RESULT(v2):" << result_2 << std::endl;
 
             DT1_ x_n_2 = Norm< vnt_l_two, false, Tag_>::value(result_2);
@@ -391,7 +393,8 @@ class ConjugateGradientsTestSparseJAC:
             DT1_ x_analytical_n = Norm< vnt_l_two, false, Tag_>::value(x_analytical);
             //TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.1));
 
-            DenseVector<DT1_> result_2 = ConjugateGradients<tags::CPU, methods::JAC>::value(A,b,double(std::numeric_limits<double>::epsilon()));
+            DenseVector<DT1_> result_2(x_analytical.size());
+            ConjugateGradients<tags::CPU, methods::JAC>::value(A, b, result_2, double(std::numeric_limits<double>::epsilon()));
             std::cout<< "RESULT(v2):" << result_2 << std::endl;
 
             DT1_ x_n_2 = Norm< vnt_l_two, false, Tag_>::value(result_2);
@@ -495,7 +498,8 @@ class ConjugateGradientsMIXEDPRECTestBanded:
             std::cout << "RESULT(v1):" << result << std::endl;
             TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.1));
 
-            DenseVector<DT1_> result_2 = ConjugateGradients<tags::CPU, methods::NONE>::value(A,b,double(std::numeric_limits<double>::epsilon()), 20);
+            DenseVector<DT1_> result_2(x_analytical.copy());
+            ConjugateGradients<tags::CPU, methods::NONE>::value(A, b, result_2, double(std::numeric_limits<double>::epsilon()), 20);
             DT1_ x_n_2 = Norm< vnt_l_two, false, Tag_>::value(result_2);
             TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n_2 , double(0.1));
 
@@ -560,9 +564,7 @@ class ConjugateGradientsTestSparseELL:
                         bla(i,j) = smatrix2(i,j);
                 }
             DenseMatrix<DT1_> dmatrix(bla);*/
-            DenseVector<DT1_> result_c(result.copy());
-            Defect<Tag_>::value(result, rhs, smatrix2, result_c);
-            result = ConjugateGradients<Tag_, NONE>::value(smatrix2, rhs, result, 10000ul);
+            ConjugateGradients<Tag_, NONE>::value(smatrix2, rhs, result, 10000ul);
 
             std::string filename_3(HONEI_SOURCEDIR);
             filename_3 += "/honei/math/testdata/";
