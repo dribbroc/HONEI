@@ -172,7 +172,7 @@ class PoissonTestCGDenseDouble:
             A.insert_band(-root_n+1, lu_v);
 
             DenseVector<double> result(n, double(0));
-            result = ConjugateGradients<Tag_, NONE>::value(A, b_v, std::numeric_limits<double>::epsilon());
+            ConjugateGradients<Tag_, NONE>::value(A, b_v, result, std::numeric_limits<double>::epsilon());
             for(int i = 0; i < n; i++)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(ref_sol_v[i], result[i],1e-05);

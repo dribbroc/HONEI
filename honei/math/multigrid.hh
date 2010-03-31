@@ -282,7 +282,8 @@ endRestrictionLoop:
                                         // For the case we actually have only one MG level, only
                                         // the following coarse grid correction (and no smoothing) is done.
 
-                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
+                                        //(info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
+                                        ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
 
                                         DenseVector<Prec_> defect_3(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                                         info.d[current_level] = defect_3;
@@ -297,7 +298,8 @@ endRestrictionLoop:
                                         // Otherwise this is a "real" coarse grid correction, which is
                                         // started with a zero start vector
 
-                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
+                                        //(info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
+                                        ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Coarse Grid solver." << std::endl;
 #endif
@@ -631,7 +633,8 @@ endRestrictionLoop:
                                         // For the case we actually have only one MG level, only
                                         // the following coarse grid correction (and no smoothing) is done.
 
-                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
+                                        //(info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
+                                        ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
 
                                         DenseVector<Prec_> defect_3(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                                         info.d[current_level] = defect_3;
@@ -646,7 +649,8 @@ endRestrictionLoop:
                                         // Otherwise this is a "real" coarse grid correction, which is
                                         // started with a zero start vector
 
-                                        (info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
+                                        //(info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
+                                        ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
 #ifdef SOLVER_VERBOSE
                                         std::cout << "Coarse Grid solver." << std::endl;
 #endif

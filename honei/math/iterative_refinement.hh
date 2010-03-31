@@ -101,8 +101,9 @@ namespace honei
                         *j_inner = float(*j_outer);
                         ++j_inner; ++j_outer;
                     }
-
-                    inner_defect = ConjugateGradients<Tag_, methods::NONE>::value(inner_system, inner_defect, eps_inner);
+                    DenseVector<float> defect_result(inner_defect.copy());
+                    ConjugateGradients<Tag_, methods::NONE>::value(inner_system, inner_defect, defect_result, eps_inner);
+                    inner_defect = defect_result;
 
                     typename DenseVector<DT1_>::ElementIterator b_outer(defect.begin_elements()), b_end(defect.end_elements());
                     typename DenseVector<float>::ConstElementIterator b_inner(inner_defect.begin_elements());
@@ -176,8 +177,9 @@ namespace honei
                             *d_inner = float(*d_outer);
                             ++d_inner; ++d_outer;
                         }
-
-                        inner_defect = ConjugateGradients<Tag_, methods::NONE>::value(inner_system, inner_defect, eps_inner);
+                        DenseVector<float> defect_result(inner_defect.copy());
+                        ConjugateGradients<Tag_, methods::NONE>::value(inner_system, inner_defect, defect_result, eps_inner);
+                        inner_defect = defect_result.copy();
 
                         //reconvert
                         convert(defect, inner_defect);

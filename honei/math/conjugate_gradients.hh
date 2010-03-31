@@ -50,7 +50,7 @@ namespace honei
     };
 
     /**
-     * \brief Solution of LES with CG.
+     * \brief Solution of linear system with CG.
      *
      * \ingroup grpmatrixoperations
      * \ingroup grpvectoroperations
@@ -277,20 +277,25 @@ namespace honei
 
         public:
             /**
-            * \brief Returns solution of LES given by a DenseMatrix and a Vector.
+            * \brief Returns solution of linear system given by a DenseMatrix and a Vector.
             *
             * \param system_matrix The system matrix.
             * \param right_hand_side The right hand side of the system.
+            * \param x The solution and initial guess.
             * \param iter_number The fixed number of iterations.
             *
            */
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(DenseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, unsigned long iter_number)
+            static void value(DenseMatrix<DT1_> & system_matrix,
+                    DenseVector<DT2_> & right_hand_side,
+                    DenseVector<DT2_> & x,
+                    unsigned long iter_number)
             {
                 CONTEXT("When solving dense linear system with CG (fixed # iterations):");
+#ifdef SOLVER_VERBOSE_L2
+                std::cout << "Calling CG solver, preconditioning=NONE, datalayout=DENSE" << std::endl;
+#endif
 
-
-                DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
                 DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
                 Difference<Tag_>::value(g, right_hand_side);
                 DenseVector<DT1_> g_c(g.copy());
@@ -300,24 +305,28 @@ namespace honei
                 {
                     cg_kernel(system_matrix, right_hand_side, g, x, u);
                 }
-                return x;
             }
 
             /**
-            * \brief Returns solution of LES given by a DenseMatrix and a Vector.
+            * \brief Returns solution of linear system given by a DenseMatrix and a Vector.
             *
             * \param system_matrix The system matrix.
             * \param right_hand_side The right hand side of the system.
+            * \param x The solution and initial guess.
             * \param konv_rad The parameter for convergence control.
             *
             */
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(DenseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad)
+            static void value(DenseMatrix<DT1_> & system_matrix,
+                    DenseVector<DT2_> & right_hand_side,
+                    DenseVector<DT2_> & x,
+                    double konv_rad)
             {
                 CONTEXT("When solving dense linear system with CG (with given convergence parameter):");
+#ifdef SOLVER_VERBOSE_L2
+                std::cout << "Calling CG solver, preconditioning=NONE, datalayout=DENSE" << std::endl;
+#endif
 
-
-                DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
                 DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
                 Difference<Tag_>::value(g, right_hand_side);
                 DenseVector<DT1_> g_c(g.copy());
@@ -336,25 +345,27 @@ namespace honei
                     norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
                     x_last = x.copy();
                 }
-                return x;
-
-
             }
 
             /**
-            * \brief Returns solution of LES given by a BandedMatrix and a Vector.
+            * \brief Returns solution of linear system given by a BandedMatrix and a Vector.
             *
             * \param system_matrix The system matrix.
             * \param right_hand_side The right hand side of the system.
+            * \param x The solution and initial guess.
             * \param iter_number The fixed number of iterations.
             *
             */
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, unsigned long iter_number)
+            static void value(BandedMatrix<DT1_> & system_matrix,
+                    DenseVector<DT2_> & right_hand_side,
+                    DenseVector<DT2_> & x,
+                    unsigned long iter_number)
             {
                 CONTEXT("When solving banded linear system with CG (with fixed # of iterations):");
-
-                DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
+#ifdef SOLVER_VERBOSE_L2
+                std::cout << "Calling CG solver, preconditioning=NONE, datalayout=BANDED" << std::endl;
+#endif
                 DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
                 Difference<Tag_>::value(g, right_hand_side);
                 DenseVector<DT1_> g_c(g.copy());
@@ -364,24 +375,27 @@ namespace honei
                 {
                     cg_kernel(system_matrix, right_hand_side, g, x, u);
                 }
-                return x;
             }
 
             /**
-            * \brief Returns solution of LES given by a BandedMatrix and a Vector.
+            * \brief Returns solution of linear system given by a BandedMatrix and a Vector.
             *
             * \param system_matrix The system matrix.
             * \param right_hand_side The right hand side of the system.
+            * \param x The solution and initial guess.
             * \param konv_rad The parameter for convergence control.
             *
             */
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad)
+            static void value(BandedMatrix<DT1_> & system_matrix,
+                    DenseVector<DT2_> & right_hand_side,
+                    DenseVector<DT2_> & x,
+                    double konv_rad)
             {
                 CONTEXT("When solving banded linear system with CG (with given convergence parameter):");
-
-
-                DenseVector<DT1_> x(right_hand_side.size(), DT1_(0));
+#ifdef SOLVER_VERBOSE_L2
+                std::cout << "Calling CG solver, preconditioning=NONE, datalayout=BANDED" << std::endl;
+#endif
                 DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
                 Difference<Tag_>::value(g, right_hand_side);
                 DenseVector<DT1_> g_c(g.copy());
@@ -400,25 +414,28 @@ namespace honei
                     norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
                     x_last = x.copy();
                 }
-                return x;
-
-
             }
 
             /**
-            * \brief Returns solution of LES given by a BandedMatrix and a Vector.
+            * \brief Returns solution of linear system given by a BandedMatrix and a Vector.
             *
             * \param system_matrix The system matrix.
             * \param right_hand_side The right hand side of the system.
+            * \param x The solution and initial guess.
             * \param konv_rad The parameter for convergence control.
             *
             */
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, double konv_rad)
+            static void value(BandedMatrixQ1<DT1_> & system_matrix,
+                    DenseVector<DT2_> & right_hand_side,
+                    DenseVector<DT2_> & x,
+                    double konv_rad)
             {
                 CONTEXT("When solving banded Q1 linear system with CG (with given convergence parameter):");
+#ifdef SOLVER_VERBOSE_L2
+                std::cout << "Calling CG solver, preconditioning=NONE, datalayout=Q1, MULTIGRID" << std::endl;
+#endif
 
-                DenseVector<DT1_> x(right_hand_side.size());
                 fill<Tag_>(x, DT1_(0));
                 DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
                 Difference<Tag_>::value(g, right_hand_side);
@@ -443,7 +460,6 @@ namespace honei
                 DenseVector<DT1_> r_def(Defect<Tag_>::value(right_hand_side, system_matrix, x));
                 DT1_ norm_bla = Norm<vnt_l_two, false, Tag_>::value(r_def);
                 std::cout << norm_bla << std::endl;
-                return x;
             }
 
             template <typename DT1_, typename DT2_>
@@ -487,7 +503,7 @@ namespace honei
                         break;
                     }
                 }
-                std::cout << "EEEEEK. NO CONVERGENCE!!!" << std::endl;
+                std::cout << "NO CONVERGENCE after " << i << " iterations!" << std::endl;
             }
 
             ///NEW ELL type:
@@ -604,7 +620,7 @@ namespace honei
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     /**
-     * \brief Solution of LES with PCG - Jacobi.
+     * \brief Solution of linear system with PCG - Jacobi.
      *
      * \ingroup grpmatrixoperations
      * \ingroup grpvectoroperations
@@ -800,7 +816,7 @@ namespace honei
 
         public:
             /**
-            * \brief Returns solution of LES given by a DenseMatrix and a Vector.
+            * \brief Returns solution of linear system given by a DenseMatrix and a Vector.
             *
             * \param system_matrix The system matrix.
             * \param right_hand_side The right hand side of the system.
@@ -865,7 +881,7 @@ namespace honei
             }
 
             /**
-            * \brief Returns solution of LES given by a BandedMatrix and a Vector.
+            * \brief Returns solution of linear system given by a BandedMatrix and a Vector.
             *
             * \param system_matrix The system matrix.
             * \param right_hand_side The right hand side of the system.
@@ -929,7 +945,7 @@ namespace honei
             }
 
             /**
-            * \brief Returns solution of LES given by a SparseMatrix and a Vector.
+            * \brief Returns solution of linear system given by a SparseMatrix and a Vector.
             *
             * \param system_matrix The system matrix.
             * \param right_hand_side The right hand side of the system.

@@ -164,9 +164,10 @@ class PoissonCGQ1Bench :
 
 
             BandedMatrixQ1<float> A(n,ll_v, ld_v , lu_v, dl_v, dd_v, du_v, ul_v, ud_v, uu_v);
+            DenseVector<float> res(ll_v.size());
             for(int i(0); i < 100; ++i)
             {
-                BENCHMARK((ConjugateGradients<Tag_, NONE>::value(A, b_v, std::numeric_limits<float>::epsilon())));
+                BENCHMARK((ConjugateGradients<Tag_, NONE>::value(A, b_v, res, std::numeric_limits<float>::epsilon())));
             }
             evaluate();
         }
