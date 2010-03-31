@@ -39,6 +39,9 @@ namespace honei
             tv_gpu,
             tv_gpu_cuda,
             tv_gpu_multi_core,
+            tv_opencl,
+            tv_opencl_cpu,
+            tv_opencl_gpu,
             tv_fake, /* used by unit tests */
             tv_none
         };
@@ -84,7 +87,7 @@ namespace honei
                 typedef tags::CPU DelegateTo;
 
                 /**
-                 * Tag-type for SSE1/2-optimised multithreaded operations.
+                 * Tag-type for SSE-optimised multithreaded operations.
                  *
                  * \ingroup grptagscpumulticore
                  */
@@ -133,7 +136,7 @@ namespace honei
             /**
              * Tag-type for CUDA-optimised operations.
              *
-             * \ingroup grptagscpusse
+             * \ingroup grptagsgpu
              */
             struct CUDA :
                 public InstantiationPolicy<GPU::CUDA, NonCopyable>
@@ -165,6 +168,46 @@ namespace honei
                     typedef tags::GPU::CUDA DelegateTo;
                 };
             };
+        };
+
+        /**
+         * Tag-type for OpenCL-base operations.
+         *
+         * \ingroup gtptagsocl
+         */
+        struct OpenCL :
+                public InstantiationPolicy<OpenCL, NonCopyable>
+        {
+            const static TagValue tag_value = tv_opencl;
+            const static TagValue memory_value = tv_opencl;
+            const static std::string name;
+
+            /**
+             * Tag-type for CPU-optimised operations.
+             *
+             * \ingroup grptagsocl
+             */
+            struct CPU :
+                public InstantiationPolicy<OpenCL::CPU, NonCopyable>
+            {
+                const static TagValue tag_value = tv_opencl;
+                const static TagValue memory_value = tv_opencl_cpu;
+                const static std::string name;
+            };
+
+            /**
+             * Tag-type for GPU-optimised operations.
+             *
+             * \ingroup grptagsocl
+             */
+            struct GPU :
+                public InstantiationPolicy<OpenCL::GPU, NonCopyable>
+            {
+                const static TagValue tag_value = tv_opencl;
+                const static TagValue memory_value = tv_opencl_gpu;
+                const static std::string name;
+            };
+
         };
 
         /**

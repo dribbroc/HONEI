@@ -262,6 +262,22 @@ namespace honei
         /// \}
     };
 
+    template <>
+    struct ScaledSum<tags::OpenCL::CPU>
+    {
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & x, const DenseVectorContinuousBase<float> & y, float b);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & x, const DenseVectorContinuousBase<double> & y, double b);
+    };
+
+    template <>
+    struct ScaledSum<tags::OpenCL::GPU>
+    {
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & x, const DenseVectorContinuousBase<float> & y, float b);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & x, const DenseVectorContinuousBase<double> & y, double b);
+    };
+
     /**
      * \brief Scaled sum of two given vectors and a given scalar.
      *

@@ -50,6 +50,13 @@ BACKEND_LIBS += \
 
 endif
 
+if OPENCL
+
+BACKEND_LIBS += \
+	$(top_builddir)/honei/backends/opencl/libhoneibackendsopencl.la
+
+endif
+
 AM_CXXFLAGS = -I$(top_srcdir)
 
 CLEANFILES = *~
@@ -59,6 +66,7 @@ EXTRA_DIST = Makefile.am.m4 files.m4
 DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \
+	$(OPENCLDEF) \
 	$(CUDADEF) \
 	$(CUDA_DOUBLEDEF) \
 	$(DEBUGDEF) \

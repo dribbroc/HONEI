@@ -154,5 +154,75 @@ namespace honei
 
             virtual bool knows(void * memid, void * address);
     };
+
+    template<>
+    class MemoryBackend<tags::OpenCL::CPU> :
+        public MemoryBackendBase,
+        public InstantiationPolicy<MemoryBackend<tags::OpenCL::CPU>, Singleton>,
+        public PrivateImplementationPattern<MemoryBackend<tags::OpenCL::CPU>, Single>
+    {
+        public:
+            /// Constructor.
+            MemoryBackend<tags::OpenCL::CPU>();
+
+            /// Destructor.
+            virtual ~MemoryBackend<tags::OpenCL::CPU>();
+
+            virtual void * upload(void * memid, void * address, unsigned long bytes);
+
+            virtual void download(void * memid, void * address, unsigned long bytes);
+
+            virtual void * alloc(void * memid, void * address, unsigned long bytes);
+
+            virtual void free(void * memid);
+
+            virtual void copy(void * src_id, void * src_address, void * dest_id,
+                    void * dest_address, unsigned long bytes);
+
+            virtual void convert_float_double(void * src_id, void * src_address, void * dest_id,
+                    void * dest_address, unsigned long bytes);
+
+            virtual void convert_double_float(void * src_id, void * src_address, void * dest_id,
+                    void * dest_address, unsigned long bytes);
+
+            virtual void fill(void * memid, void * address, unsigned long bytes, float proto);
+
+            virtual bool knows(void * memid, void * address);
+    };
+
+    template<>
+    class MemoryBackend<tags::OpenCL::GPU> :
+        public MemoryBackendBase,
+        public InstantiationPolicy<MemoryBackend<tags::OpenCL::GPU>, Singleton>,
+        public PrivateImplementationPattern<MemoryBackend<tags::OpenCL::GPU>, Single>
+    {
+        public:
+            /// Constructor.
+            MemoryBackend<tags::OpenCL::GPU>();
+
+            /// Destructor.
+            virtual ~MemoryBackend<tags::OpenCL::GPU>();
+
+            virtual void * upload(void * memid, void * address, unsigned long bytes);
+
+            virtual void download(void * memid, void * address, unsigned long bytes);
+
+            virtual void * alloc(void * memid, void * address, unsigned long bytes);
+
+            virtual void free(void * memid);
+
+            virtual void copy(void * src_id, void * src_address, void * dest_id,
+                    void * dest_address, unsigned long bytes);
+
+            virtual void convert_float_double(void * src_id, void * src_address, void * dest_id,
+                    void * dest_address, unsigned long bytes);
+
+            virtual void convert_double_float(void * src_id, void * src_address, void * dest_id,
+                    void * dest_address, unsigned long bytes);
+
+            virtual void fill(void * memid, void * address, unsigned long bytes, float proto);
+
+            virtual bool knows(void * memid, void * address);
+    };
 }
 #endif

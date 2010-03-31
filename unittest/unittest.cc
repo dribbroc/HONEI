@@ -138,6 +138,7 @@ int main(int argc, char** argv)
     bool cell(false);
     bool mc(false);
     bool cpu(false);
+    bool opencl(false);
     bool all(true);
     if ((argc > 1) && (stringify(argv[1]) == "quick"))
     {
@@ -171,6 +172,11 @@ int main(int argc, char** argv)
             if (stringify(argv[index]) == "cpu")
             {
                 cpu = true;
+                all = false;
+            }
+            if (stringify(argv[index]) == "opencl")
+            {
+                opencl = true;
                 all = false;
             }
         }
@@ -219,6 +225,11 @@ int main(int argc, char** argv)
                     continue;
                 }
                 if (((*i)->get_tag_name()=="cpu") && !cpu)
+                {
+                    i = TestList::instance()->erase(i);
+                    continue;
+                }
+                if (((*i)->get_tag_name()=="opencl-cpu" || (*i)->get_tag_name()=="opencl-gpu") && !opencl)
                 {
                     i = TestList::instance()->erase(i);
                     continue;

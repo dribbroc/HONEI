@@ -8,6 +8,7 @@ define(`celllist', `')dnl
 define(`headerlist', `')dnl
 define(`sselist', `')dnl
 define(`cudalist', `')dnl
+define(`opencllist', `')dnl
 define(`testlist', `')dnl
 define(`addtest', `define(`testlist', testlist `$1_TEST')dnl
 $1_TEST_SOURCES = $1_TEST.cc
@@ -27,6 +28,7 @@ define(`addcell', `define(`celllist', celllist `$1-cell.cc')')dnl
 define(`addmc', `define(`filelist', filelist `$1-mc.hh')define(`headerlist', headerlist `$1-mc.hh')')dnl
 define(`addsse', `define(`sselist', sselist `$1-sse.cc')')dnl
 define(`addcuda', `define(`cudalist', cudalist `$1-cuda.cc')')dnl
+define(`addopencl', `define(`opencllist', opencllist `$1-opencl.cc')')dnl
 define(`addthis', `dnl
 ifelse(`$2', `hh', `addhh(`$1')', `')dnl
 ifelse(`$2', `impl', `addimpl(`$1')', `')dnl
@@ -36,9 +38,10 @@ ifelse(`$2', `cell', `addcell(`$1')', `')dnl
 ifelse(`$2', `sse', `addsse(`$1')', `')dnl
 ifelse(`$2', `mc', `addmc(`$1')', `')dnl
 ifelse(`$2', `cuda', `addcuda(`$1')', `')dnl
+ifelse(`$2', `opencl', `addopencl(`$1')', `')dnl
 ifelse(`$2', `test', `addtest(`$1')', `')dnl
 ')dnl
-define(`add', `addthis(`$1',`$2')addthis(`$1',`$3')addthis(`$1',`$4')addthis(`$1',`$5')addthis(`$1',`$6')addthis(`$1',`$7')addthis(`$1',`$8')')dnl
+define(`add', `addthis(`$1',`$2')addthis(`$1',`$3')addthis(`$1',`$4')addthis(`$1',`$5')addthis(`$1',`$6')addthis(`$1',`$7')addthis(`$1',`$8')addthis(`$1',`$9')')dnl
 
 include(`honei/la/files.m4')
 
@@ -70,6 +73,14 @@ BACKEND_LIBS += \
 
 endif
 
+if OPENCL
+
+OPENCLFILES = opencllist
+BACKEND_LIBS += \
+	$(top_builddir)/honei/backends/opencl/libhoneibackendsopencl.la
+
+endif
+
 AM_CXXFLAGS = -I$(top_srcdir)
 
 CLEANFILES = *~
@@ -79,6 +90,7 @@ EXTRA_DIST = Makefile.am.m4 files.m4
 DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \
+	$(OPENCLDEF) \
 	$(CUDADEF) \
 	$(CUDA_DOUBLEDEF) \
 	$(DEBUGDEF) \
@@ -86,7 +98,7 @@ DEFS = \
 
 lib_LTLIBRARIES = libhoneila.la
 
-libhoneila_la_SOURCES = filelist $(CELLFILES) $(SSEFILES) $(CUDAFILES)
+libhoneila_la_SOURCES = filelist $(CELLFILES) $(SSEFILES) $(CUDAFILES) $(OPENCLFILES)
 libhoneila_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(CELLLIB)

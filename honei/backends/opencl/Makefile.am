@@ -1,0 +1,52 @@
+AM_CXXFLAGS = -I$(top_srcdir)
+
+MAINTAINERCLEANFILES = Makefile.in
+AUTOMAKE_OPTIONS = foreign dist-bzip2
+EXTRA_DIST = scaled_sum.cl
+CLEANFILES = *~
+
+DEFS = \
+	$(OPENCLDEF) \
+	$(DEBUGDEF) \
+	$(PROFILERDEF) \
+	-DHONEI_SOURCEDIR='"$(abs_top_srcdir)"'
+
+lib_LTLIBRARIES = libhoneibackendsopencl.la
+
+libhoneibackendsopencl_la_LIBADD = \
+	$(top_builddir)/honei/util/libhoneiutil.la \
+	-lOpenCL
+
+libhoneibackendsopencl_la_SOURCES = operations.hh \
+				    operations.cc \
+				    opencl_backend.cc \
+				    opencl_backend-impl.hh \
+				    memory_backend_cpu.cc \
+				    memory_backend_gpu.cc \
+				    opencl_backend.hh \
+				    scaled_sum.cc
+
+
+libhoneibackendsopencl_includedir = $(includedir)/honei/backends/opencl/
+libhoneibackendsopencl_include_HEADERS =  operations.hh opencl_backend.hh opencl_backend-impl.hh
+
+opencl_backend_TEST_SOURCES = opencl_backend_TEST.cc
+opencl_backend_TEST_LDADD = \
+	$(top_builddir)/unittest/libunittest.a \
+	$(top_builddir)/honei/util/libhoneiutil.la \
+	libhoneibackendsopencl.la \
+	$(DYNAMIC_LD_LIBS)
+opencl_backend__TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
+
+memory_backend_TEST_SOURCES = memory_backend_TEST.cc
+memory_backend_TEST_LDADD = \
+	$(top_builddir)/unittest/libunittest.a \
+	$(top_builddir)/honei/util/libhoneiutil.la \
+	libhoneibackendsopencl.la \
+	$(DYNAMIC_LD_LIBS)
+memory_backend__TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
+
+TESTS =  opencl_backend_TEST memory_backend_TEST
+TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_srcdir)/unittest/run.sh
+
+check_PROGRAMS = $(TESTS)

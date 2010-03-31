@@ -70,6 +70,14 @@ BACKEND_LIBS += \
 
 endif
 
+if OPENCL
+
+OPENCLFILES = opencllist
+BACKEND_LIBS += \
+	$(top_builddir)/honei/backends/opencl/libhoneibackendsopencl.la
+
+endif
+
 AM_CXXFLAGS = -I$(top_srcdir)
 
 CLEANFILES = *~

@@ -17,8 +17,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef MEMORY_GUARD_MEMORY_CONTROLLER_HH
-#define MEMORY_GUARD_MEMORY_CONTROLLER_HH 1
+#ifndef MEMORY_GUARD_MEMORY_ARBITER_HH
+#define MEMORY_GUARD_MEMORY_ARBITER_HH 1
 
 #include <honei/util/instantiation_policy.hh>
 #include <honei/util/private_implementation_pattern.hh>

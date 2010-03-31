@@ -590,6 +590,7 @@ int main(int argc, char** argv)
     std::list<int> runrs;
     bool sse(true);
     bool cuda(true);
+    bool opencl(true);
     bool cell(true);
     bool mc(true);
     bool sc(true);
@@ -613,6 +614,7 @@ int main(int argc, char** argv)
             mc = false;
             sc = false;
             cuda = false;
+            opencl = false;
             for(int i(1) ; i < argc ; ++i)
             {
                 if (honei::stringify(argv[i]) == "sse")
@@ -622,6 +624,10 @@ int main(int argc, char** argv)
                 if (honei::stringify(argv[i]) == "cuda")
                 {
                     cuda = true;
+                }
+                if (honei::stringify(argv[i]) == "opencl")
+                {
+                    opencl = true;
                 }
                 if (honei::stringify(argv[i]) == "cell")
                 {
@@ -660,6 +666,11 @@ int main(int argc, char** argv)
             continue;
         }
         if (cell && ((*i)->plots() == plot) && ((*i)->get_tag_name() == "cell"))
+        {
+            ++i;
+            continue;
+        }
+        if (opencl && ((*i)->plots() == plot) && ((*i)->get_tag_name() == "opencl-cpu" || (*i)->get_tag_name() == "opencl-gpu"))
         {
             ++i;
             continue;

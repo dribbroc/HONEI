@@ -209,6 +209,23 @@ if test "x$ENABLE_SSE" = "xyes"; then
 fi
 AC_SUBST([SSEDEF])
 dnl }}}
+dnl {{{ check for OpenCL support
+AC_MSG_CHECKING([whether to build OpenCL support])
+AC_ARG_ENABLE([opencl],
+	AS_HELP_STRING([--enable-opencl], [Build OpenCL support (needs packages: OpenCL)]),
+		[ENABLE_OPENCL=$enableval
+		  AC_MSG_RESULT([$enableval])],
+		[ENABLE_OPENCL=no
+		  AC_MSG_RESULT([no])])
+AC_SUBST([ENABLE_OPENCL])
+AM_CONDITIONAL([OPENCL], test "x$ENABLE_OPENCL" = "xyes")
+if test "x$ENABLE_OPENCL" = "xyes"; then
+	dnl {{{ enable opencl support
+	OPENCLDEF="-DHONEI_OPENCL"
+	dnl }}}
+fi
+AC_SUBST([OPENCLDEF])
+dnl }}}
 dnl {{{ check for MPI support
 AC_MSG_CHECKING([whether to build MPI support])
 AC_ARG_ENABLE([mpi],
@@ -447,6 +464,7 @@ AC_OUTPUT(
 	honei/backends/mpi/Makefile
 	honei/backends/multicore/Makefile
 	honei/backends/cuda/Makefile
+	honei/backends/opencl/Makefile
 	honei/graph/Makefile
 	honei/la/Makefile
 	honei/lbm/Makefile
