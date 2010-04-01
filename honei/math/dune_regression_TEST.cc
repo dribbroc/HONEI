@@ -46,15 +46,20 @@ class DuneRegressionTestSparseELL:
     public BaseTest
 {
     private:
-        std::string _m_f, _v_f, _r_f;
+        std::string _m_f, _v_f, _r_f, _i_f;
     public:
-        DuneRegressionTestSparseELL(const std::string & tag, std::string m_file, std::string v_file, std::string res_file) :
+        DuneRegressionTestSparseELL(const std::string & tag,
+                std::string m_file,
+                std::string v_file,
+                std::string res_file,
+                std::string init_file) :
             BaseTest("Dune regression test (sparse ELL system)<" + tag + ">")
         {
             register_tag(Tag_::name);
             _m_f = m_file;
             _v_f = v_file;
             _r_f = res_file;
+            _i_f = init_file;
         }
 
         virtual void run() const
@@ -94,9 +99,13 @@ class DuneRegressionTestSparseELL:
             SparseMatrix<DT1_> tdifference(rows, columns, r, c, data);
             SparseMatrixELL<DT1_> difference(tdifference);
 
-            DenseVector<DT1_> result(rhs.size(), DT1_(0));
-            DenseVector<DT1_> result_c(result.copy());
-            Defect<Tag_>::value(result, rhs, smatrix, result_c);
+            DenseVector<DT1_> init(rhs.size(), DT1_(0));
+            std::string filename_4(HONEI_SOURCEDIR);
+            filename_4 += "/honei/math/testdata/";
+            filename_4 += _i_f;
+            VectorIO<io_formats::EXP>::read_vector(filename_4, init);
+            DenseVector<DT1_> result(init.copy());
+
             ConjugateGradients<Tag_, JAC>::value(smatrix, rhs, result, diag_inverted, 10000ul);
             //Jacobi<Tag_>::value(smatrix, difference, rhs, result, diag_inverted, 10000ul);
 
@@ -125,11 +134,11 @@ class DuneRegressionTestSparseELL:
                 smatrix_dune[i.row()][i.column()] = *i;
             }
             BV result_dune(result.size(), 0);
-            result_dune=0;
             BV rhs_dune(rhs.size(),0);
             for (unsigned long i(0) ; i < rhs.size() ; ++i)
             {
                 rhs_dune[i] = rhs[i];
+                result_dune[i] = init[i];
             }
             InverseOperatorResult irs;
 
@@ -146,9 +155,20 @@ class DuneRegressionTestSparseELL:
 
             result.lock(lm_read_only);
             result.unlock(lm_read_only);
+            DT1_ base_digits(3);
+            DT1_ additional_digits(2);
+
+            DT1_ base_eps(1 / pow(10, base_digits));
+            DT1_ add_eps(base_eps / pow(10, additional_digits));
+
+            DT1_ m((add_eps - base_eps) / DT1_(4));
+            DT1_ b(base_eps - (DT1_(4) * m));
+
+            DT1_ eps(m * sizeof(DT1_) + b);
+            eps *= DT1_(3);
             for (unsigned long i(0) ; i < result.size() ; ++i)
             {
-                TEST_CHECK_EQUAL_WITHIN_EPS(result_dune[i], result[i], 1e-8);
+                TEST_CHECK_EQUAL_WITHIN_EPS(result_dune[i], result[i], eps);
                 //std::cout<<result[i]<<"  "<<result_dune[i]<<std::endl;
             }
 
@@ -158,22 +178,25 @@ class DuneRegressionTestSparseELL:
             filename_3 += "/honei/math/testdata/";
             filename_3 += _r_f;
             VectorIO<io_formats::EXP>::read_vector(filename_3, result_feat);
-            std::cout << "Comparing with FEATFLOW2: " << std::endl;
+
+
+            std::cout << "Comparing with FEATFLOW2: eps= " << eps << std::endl;
             for(unsigned long i(0) ; i < result.size() ; ++i)
             {
-                //std::cout<<result[i]<<"..."<<result_dune[i]<<"..."<<result_feat[i]<<std::endl;
-                TEST_CHECK_EQUAL_WITHIN_EPS(result_dune[i], result_feat[i], 1e-4);
+                if(fabs(result[i] - result_feat[i]) > eps)
+                    std::cout << std::setprecision(11) << result[i] << " " << result_feat[i] << " at index " << i << std::endl;
+                TEST_CHECK_EQUAL_WITHIN_EPS(result[i], result_feat[i], eps);
             }
         }
 };
 
-DuneRegressionTestSparseELL<tags::CPU::SSE, double> sse_dune_regression_test_double_sparse_ell2("double", "l2/poisson_full.m", "l2/poisson_rhs", "l2/poisson_sol");
-//DuneRegressionTestSparseELL<tags::CPU::SSE, double> sse_dune_regression_test_double_sparse_ell8("double", "l8/poisson_full.m", "l8/poisson_rhs", "l8/poisson_sol");
-DuneRegressionTestSparseELL<tags::CPU::MultiCore::SSE, double> mc_sse_dune_regression_test_double_sparse_ell2("double", "l2/poisson_full.m", "l2/poisson_rhs", "l2/poisson_sol");
-DuneRegressionTestSparseELL<tags::CPU::MultiCore::SSE, double> mc_sse_dune_regression_test_double_sparse_ell8("double", "l8/poisson_full.m", "l8/poisson_rhs", "l8/poisson_sol");
+DuneRegressionTestSparseELL<tags::CPU::SSE, double> sse_dune_regression_test_double_sparse_ell2("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
+DuneRegressionTestSparseELL<tags::CPU::SSE, double> sse_dune_regression_test_double_sparse_ell8("double", "l8/area51_full_0.m", "l8/area51_rhs_0", "l8/area51_sol_0", "l8/area51_init_0");
+DuneRegressionTestSparseELL<tags::CPU::MultiCore::SSE, double> mc_sse_dune_regression_test_double_sparse_ell2("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
+DuneRegressionTestSparseELL<tags::CPU::MultiCore::SSE, double> mc_sse_dune_regression_test_double_sparse_ell8("double", "l8/area51_full_0.m", "l8/area51_rhs_0", "l8/area51_sol_0", "l8/area51_init_0");
 #ifdef HONEI_CUDA_DOUBLE
-DuneRegressionTestSparseELL<tags::GPU::CUDA, double> cuda_dune_regression_test_double_sparse_ell2("double", "l2/poisson_full.m", "l2/poisson_rhs", "l2/poisson_sol");
-DuneRegressionTestSparseELL<tags::GPU::CUDA, double> cuda_dune_regression_test_double_sparse_ell8("double", "l8/poisson_full.m", "l8/poisson_rhs", "l8/poisson_sol");
+DuneRegressionTestSparseELL<tags::GPU::CUDA, double> cuda_dune_regression_test_double_sparse_ell2("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
+DuneRegressionTestSparseELL<tags::GPU::CUDA, double> cuda_dune_regression_test_double_sparse_ell8("double", "l8/area51_full_0.m", "l8/area51_rhs_0", "l8/area51_sol_0", "l8/area51_init_0");
 #endif
 
 #endif
