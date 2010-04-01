@@ -176,4 +176,4 @@ data=[...
         47         48  0.28408829E+00;
         48         48  0.10000000E+01;
 ];
-mat=sparse(data(:,1),data(:,2),data(:,3));
+system=sparse(data(:,1),data(:,2),data(:,3));
