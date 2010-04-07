@@ -365,9 +365,16 @@ namespace honei
             }
 //MG types:
             template <typename DT1_, typename DT2_>
-            static inline DenseVector<DT1_> value(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DT1_ omega, DenseVector<DT1_> & diag_inverted)
+            static inline void value(BandedMatrixQ1<DT1_> & system_matrix,
+                    DenseVector<DT2_> & right_hand_side,
+                    DenseVector<DT2_> & x,
+                    DT1_ omega,
+                    DenseVector<DT1_> & diag_inverted)
             {
                 CONTEXT("When solving banded linear system (Q1) with Jacobi (fixed # iterations):");
+#ifdef SOLVER_VERBOSE_L2
+                std::cout << "Calling JACOBI smoother, datalayout=Q1, MULTIGRID (1)" << std::endl;
+#endif
                 /*DenseVector<DT1_> diag_inverted(right_hand_side.size());
                 copy<Tag_>(system_matrix.band(DD), diag_inverted);
                 ElementInverse<Tag_>::value(diag_inverted);
@@ -397,13 +404,22 @@ namespace honei
                 DenseVector<DT1_> temp(diag_inverted.size());
                 copy<Tag_>(diag_inverted, temp);
                 ElementProduct<Tag_>::value(temp, right_hand_side);
-                return temp;
+                x = temp;
             }
 
             template <typename DT1_, typename DT2_>
-                static inline DenseVector<DT1_> value(DenseVector<DT1_>& to_smooth, BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, unsigned long iter_number, DT1_ omega, DenseVector<DT1_> & diag_inverted)
-                {
-                    CONTEXT("When solving banded linear system (Q1) with Jacobi (fixed # iterations):");
+            static inline void value(DenseVector<DT1_>& to_smooth,
+                    BandedMatrixQ1<DT1_> & system_matrix,
+                    DenseVector<DT2_> & right_hand_side,
+                    DenseVector<DT2_> & x,
+                    unsigned long iter_number,
+                    DT1_ omega,
+                    DenseVector<DT1_> & diag_inverted)
+            {
+                CONTEXT("When solving banded linear system (Q1) with Jacobi (fixed # iterations):");
+#ifdef SOLVER_VERBOSE_L2
+                std::cout << "Calling JACOBI smoother, datalayout=Q1, MULTIGRID (2)" << std::endl;
+#endif
 
                     /*DenseVector<DT1_> diag_inverted(right_hand_side.size());
                     copy<Tag_>(system_matrix.band(DD), diag_inverted);
@@ -428,45 +444,52 @@ namespace honei
                     else
                         return to_smooth;*/
 
-
-                    DenseVector<DT1_> x(right_hand_side.size());
-
-                    DenseVector<DT1_> ts_c(to_smooth.size());
-                    for(unsigned long i = 0; i<iter_number; ++i)
-                    {
-                        jacobi_kernel(to_smooth, system_matrix, right_hand_side, x, diag_inverted, system_matrix, omega);
-                        copy<Tag_>(to_smooth, ts_c);
-
-                        DenseVector<DT1_> temp(to_smooth);
-                        to_smooth = x;
-                        x = temp;
-                    }
-                    if(iter_number % 2 != 0)
-                        return x;
-                    else
-                        return to_smooth;
-                }
-            template <typename DT1_, typename DT2_>
-                static inline DenseVector<DT1_> value(DenseVector<DT1_>& to_smooth, SparseMatrixELL<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, unsigned long iter_number, DT1_ omega, DenseVector<DT1_> & diag_inverted)
+                DenseVector<DT1_> ts_c(to_smooth.size());
+                for(unsigned long i = 0; i<iter_number; ++i)
                 {
-                    CONTEXT("When solving sparse linear system (ELL) with Jacobi (fixed # iterations):");
-                    DenseVector<DT1_> x(right_hand_side.size());
+                    jacobi_kernel(to_smooth, system_matrix, right_hand_side, x, diag_inverted, system_matrix, omega);
+                    copy<Tag_>(to_smooth, ts_c);
 
-                    DenseVector<DT1_> ts_c(to_smooth.size());
-                    for(unsigned long i = 0; i<iter_number; ++i)
-                    {
-                        jacobi_kernel(to_smooth, system_matrix, right_hand_side, x, diag_inverted, system_matrix, omega);
-                        copy<Tag_>(to_smooth, ts_c);
-
-                        DenseVector<DT1_> temp(to_smooth);
-                        to_smooth = x;
-                        x = temp;
-                    }
-                    if(iter_number % 2 != 0)
-                        return x;
-                    else
-                        return to_smooth;
+                    DenseVector<DT1_> temp(to_smooth);
+                    to_smooth = x;
+                    x = temp;
                 }
+                if(iter_number % 2 != 0)
+                {
+                }
+                else
+                    x = to_smooth;
+            }
+
+            template <typename DT1_, typename DT2_>
+            static inline void value(DenseVector<DT1_>& to_smooth,
+                    SparseMatrixELL<DT1_> & system_matrix,
+                    DenseVector<DT2_> & right_hand_side,
+                    DenseVector<DT2_> & x,
+                    unsigned long iter_number,
+                    DT1_ omega,
+                    DenseVector<DT1_> & diag_inverted)
+            {
+                CONTEXT("When solving sparse linear system (ELL) with Jacobi (fixed # iterations):");
+#ifdef SOLVER_VERBOSE_L2
+                std::cout << "Calling JACOBI smoother, datalayout=ELLPACK, MULTIGRID" << std::endl;
+#endif
+                DenseVector<DT1_> ts_c(to_smooth.size());
+                for(unsigned long i = 0; i<iter_number; ++i)
+                {
+                    jacobi_kernel(to_smooth, system_matrix, right_hand_side, x, diag_inverted, system_matrix, omega);
+                    copy<Tag_>(to_smooth, ts_c);
+
+                    DenseVector<DT1_> temp(to_smooth);
+                    to_smooth = x;
+                    x = temp;
+                }
+                if(iter_number % 2 != 0)
+                {
+                }
+                else
+                    x = to_smooth;
+            }
 //end MG types
 
             /**
@@ -485,6 +508,9 @@ namespace honei
                     unsigned long iter_number)
             {
                 CONTEXT("When solving dense linear system with Jacobi (fixed # iterations):");
+#ifdef SOLVER_VERBOSE_L2
+                std::cout << "Calling JACOBI solver, datalayout=DENSE" << std::endl;
+#endif
                 DenseVector<DT1_> diag(right_hand_side.size(), DT1_(0));
 
                 DenseVector<DT1_> diag_inverted(right_hand_side.size(), DT1_(0));

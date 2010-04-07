@@ -271,7 +271,8 @@ class JacobiTestSparseELL:
             //Initial defect (for convergence purposes later):
             DenseVector<DT1_> initial_defect(Defect<Tag_>::value(rhs, smatrix2, x));
 
-            DenseVector<DT1_> result(Jacobi<Tag_>::value(initial_guess, smatrix2, rhs, 1000ul, DT1_(0.7), diag_inverted));
+            DenseVector<DT1_> result(rhs.size(), DT1_(0));
+            Jacobi<Tag_>::value(initial_guess, smatrix2, rhs, result, 1000ul, DT1_(0.7), diag_inverted);
 
             result.lock(lm_read_only);
             x.lock(lm_read_only);
