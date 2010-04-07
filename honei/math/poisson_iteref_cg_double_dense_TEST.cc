@@ -173,7 +173,7 @@ class PoissonTestIterefCGDenseDouble:
             A.insert_band(-root_n+1, lu_v);
 
             DenseVector<double> result(n, double(0));
-            result = IterativeRefinement<CG, Tag_>::value(A, b_v, std::numeric_limits<double>::epsilon() , std::numeric_limits<double>::epsilon());
+            IterativeRefinement<CG, Tag_>::value(A, b_v, result, std::numeric_limits<double>::epsilon() , std::numeric_limits<double>::epsilon());
             //std::cout<< result <<endl;
             //std::cout<< ana_sol_v <<endl;
             //std::cout<< ref_sol_v <<endl;

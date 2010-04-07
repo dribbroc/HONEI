@@ -181,7 +181,7 @@ class PoissonIteRefCGBench :
 
             //std::cout<< n << " " << A << " "<< root_n<<endl;
             DenseVector<float> result(n, float(0));
-            BENCHMARK((IterativeRefinement<CG, Tag_>::value(A, b_v, std::numeric_limits<float>::epsilon(), std::numeric_limits<float>::epsilon())));
+            BENCHMARK((IterativeRefinement<CG, Tag_>::value(A, b_v, result, std::numeric_limits<float>::epsilon(), std::numeric_limits<float>::epsilon())));
             evaluate();
         }
 };
