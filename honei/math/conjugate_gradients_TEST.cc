@@ -62,7 +62,7 @@ class ConjugateGradientsTestDense:
 
             std::cout<<"A:"<<A<<endl;
             std::cout<<"b:"<<b<<endl;
-            DenseVector<DT1_> result(3);
+            DenseVector<DT1_> result(3, DT1_(0));
             ConjugateGradients<Tag_, methods::NONE>::value(A, b, result, 2ul);
             DT1_ x_n = Norm< vnt_l_two, false, Tag_>::value(result);
             DenseVector<DT1_> x_analytical(3, DT1_(0));
@@ -74,7 +74,7 @@ class ConjugateGradientsTestDense:
             DT1_ x_analytical_n = Norm< vnt_l_two, false, Tag_>::value(x_analytical);
             TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.1));
 
-            DenseVector<DT1_> result_2(3);
+            DenseVector<DT1_> result_2(3, DT1_(0));
             ConjugateGradients<tags::CPU, methods::NONE>::value(A, b, result_2, double(std::numeric_limits<double>::epsilon()));
             std::cout << "RESULT(v2):" << result_2 << std::endl;
 
@@ -195,13 +195,12 @@ class ConjugateGradientsTestDenseJAC:
             x_analytical[2] = DT1_(-1./3.);
             DT1_ x_analytical_n = Norm< vnt_l_two, false, Tag_>::value(x_analytical);
             //TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.1));
-            DenseVector<DT1_> result_2(x_analytical.size());
+            DenseVector<DT1_> result_2(x_analytical.size(), DT1_(0));
             ConjugateGradients<tags::CPU, methods::JAC>::value(A, b, result_2, double(std::numeric_limits<double>::epsilon()));
             std::cout << "RESULT(v2):" << result_2 << std::endl;
 
             DT1_ x_n_2 = Norm< vnt_l_two, false, Tag_>::value(result_2);
             TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n_2 , double(0.1));
-
         }
 };
 
@@ -266,7 +265,7 @@ class ConjugateGradientsTestBandedJAC:
             //cout<<"RESULT(v1):"<<result<<endl;
             //TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.1));
 
-            DenseVector<DT1_> result_2(x_analytical.size());
+            DenseVector<DT1_> result_2(3, DT1_(0));
             ConjugateGradients<tags::CPU, methods::JAC>::value(A, b, result_2, double(std::numeric_limits<double>::epsilon()));
             DT1_ x_n_2 = Norm< vnt_l_two, false, Tag_>::value(result_2);
             TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n_2 , double(0.1));
@@ -294,7 +293,7 @@ class ConjugateGradientsTestDense_big:
 
             //std::cout<<"A:"<<A<<endl;
             //std::cout<<"b:"<<b<<endl;
-            DenseVector<DT1_> result(size);
+            DenseVector<DT1_> result(size, DT1_(0));
             ConjugateGradients<tags::CPU, NONE>::value(A, b, result, double(std::numeric_limits<double>::epsilon()));
             DT1_ x_n = Norm< vnt_l_two, false, Tag_>::value(result);
             DenseVector<DT1_> x_analytical(size, DT1_(0.001));
@@ -347,7 +346,7 @@ class ConjugateGradientsTestSparse:
             DT1_ x_analytical_n = Norm< vnt_l_two, false, Tag_>::value(x_analytical);
             //TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.1));
 
-            DenseVector<DT1_> result_2(x_analytical.size());
+            DenseVector<DT1_> result_2(3, DT1_(0));
             ConjugateGradients<tags::CPU, methods::NONE>::value(A, b, result_2, double(std::numeric_limits<double>::epsilon()));
             std::cout << "RESULT(v2):" << result_2 << std::endl;
 
@@ -398,7 +397,7 @@ class ConjugateGradientsTestSparseJAC:
             DT1_ x_analytical_n = Norm< vnt_l_two, false, Tag_>::value(x_analytical);
             //TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.1));
 
-            DenseVector<DT1_> result_2(x_analytical.size());
+            DenseVector<DT1_> result_2(3, DT1_(0));
             ConjugateGradients<tags::CPU, methods::JAC>::value(A, b, result_2, double(std::numeric_limits<double>::epsilon()));
             std::cout<< "RESULT(v2):" << result_2 << std::endl;
 
@@ -407,7 +406,7 @@ class ConjugateGradientsTestSparseJAC:
 
         }
 };
-/*ConjugateGradientsTestSparseJAC<tags::CPU, float> cg_test_float_sparse_jac("float");
+ConjugateGradientsTestSparseJAC<tags::CPU, float> cg_test_float_sparse_jac("float");
 ConjugateGradientsTestSparseJAC<tags::CPU, double> cg_test_double_sparse_jac("double");
 ConjugateGradientsTestSparse<tags::CPU, float> cg_test_float_sparse("float");
 ConjugateGradientsTestSparse<tags::CPU, double> cg_test_double_sparse("double");
@@ -440,7 +439,7 @@ ConjugateGradientsTestDenseJAC<tags::CPU::SSE, float> sse_cg_test_float_dense_ja
 ConjugateGradientsTestDenseJAC<tags::CPU::SSE, double> sse_cg_test_double_dense_jac("SSE double");
 ConjugateGradientsTestBandedJAC<tags::CPU::SSE, float> sse_cg_test_float_banded_jac("SSE float");
 ConjugateGradientsTestBandedJAC<tags::CPU::SSE, double> sse_cg_test_double_banded_jac("SSE double");
-#endif*/
+#endif
 
 template <typename Tag_, typename DT1_>
 class ConjugateGradientsMIXEDPRECTestBanded:
@@ -504,7 +503,7 @@ class ConjugateGradientsMIXEDPRECTestBanded:
             std::cout << "RESULT(v1):" << result << std::endl;
             TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.1));
 
-            DenseVector<DT1_> result_2(x_analytical.copy());
+            DenseVector<DT1_> result_2(3, DT1_(0));
             ConjugateGradients<tags::CPU, methods::NONE>::value(A, b, result_2, double(std::numeric_limits<double>::epsilon()), 20);
             DT1_ x_n_2 = Norm< vnt_l_two, false, Tag_>::value(result_2);
             TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n_2 , double(0.1));
@@ -512,7 +511,7 @@ class ConjugateGradientsMIXEDPRECTestBanded:
             std::cout << "RESULT(v2):" << result_2 << std::endl;
         }
 };
-//ConjugateGradientsMIXEDPRECTestBanded<tags::CPU, float> cg_test_mixed_banded1("float");
+ConjugateGradientsMIXEDPRECTestBanded<tags::CPU, float> cg_test_mixed_banded1("float");
 
 
 template <typename Tag_, typename DT1_>
