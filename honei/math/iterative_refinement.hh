@@ -101,7 +101,7 @@ namespace honei
                         *j_inner = float(*j_outer);
                         ++j_inner; ++j_outer;
                     }
-                    DenseVector<float> defect_result(inner_defect.copy());
+                    DenseVector<float> defect_result(inner_defect.size(), float(0));
                     ConjugateGradients<Tag_, methods::NONE>::value(inner_system, inner_defect, defect_result, eps_inner);
                     inner_defect = defect_result;
 
@@ -177,7 +177,7 @@ namespace honei
                             *d_inner = float(*d_outer);
                             ++d_inner; ++d_outer;
                         }
-                        DenseVector<float> defect_result(inner_defect.copy());
+                        DenseVector<float> defect_result(inner_defect.size(), float(0));
                         ConjugateGradients<Tag_, methods::NONE>::value(inner_system, inner_defect, defect_result, eps_inner);
                         inner_defect = defect_result.copy();
 
@@ -262,7 +262,7 @@ namespace honei
                         *j_inner = float(*j_outer);
                         ++j_inner; ++j_outer;
                     }
-                    DenseVector<float> defect_result(inner_defect.copy());
+                    DenseVector<float> defect_result(inner_defect.size(), float(0));
                     ConjugateGradients<Tag_, methods::NONE>::value(inner_system, inner_defect, defect_result, eps_inner);
                     inner_defect = defect_result;
 
@@ -360,7 +360,7 @@ namespace honei
                         *j_inner = float(*j_outer);
                         ++j_inner; ++j_outer;
                     }
-                    DenseVector<float> defect_result(inner_defect.copy());
+                    DenseVector<float> defect_result(inner_defect.size(), float(0));
                     ConjugateGradients<Tag_, methods::JAC>::value(inner_system, inner_defect, defect_result, eps_inner);
                     inner_defect = defect_result;
 
@@ -437,7 +437,7 @@ namespace honei
                             ++d_inner; ++d_outer;
                         }
 
-                        DenseVector<float> defect_result(inner_defect.copy());
+                        DenseVector<float> defect_result(inner_defect.size(), float(0));
                         ConjugateGradients<Tag_, methods::JAC>::value(inner_system, inner_defect, defect_result, eps_inner);
                         inner_defect = defect_result;
 
@@ -522,7 +522,7 @@ namespace honei
                         *j_inner = float(*j_outer);
                         ++j_inner; ++j_outer;
                     }
-                    DenseVector<float> defect_result(inner_defect.copy());
+                    DenseVector<float> defect_result(inner_defect.size(), float(0));
                     ConjugateGradients<Tag_, methods::JAC>::value(inner_system, inner_defect, defect_result, eps_inner);
                     inner_defect = defect_result;
 
@@ -619,7 +619,9 @@ namespace honei
                                 ++j_inner; ++j_outer;
                             }
 
-                            inner_defect = Jacobi<Tag_>::value(inner_system, inner_defect, eps_inner);
+                            DenseVector<float> defect_result(inner_defect.size(), float(0));
+                            Jacobi<Tag_>::value(inner_system, inner_defect, defect_result, eps_inner);
+                            inner_defect = defect_result.copy();
 
                             typename DenseVector<DT1_>::ElementIterator b_outer(defect.begin_elements()), b_end(defect.end_elements());
                             typename DenseVector<float>::ConstElementIterator b_inner(inner_defect.begin_elements());
@@ -693,7 +695,10 @@ namespace honei
                             ++d_inner; ++d_outer;
                         }
 
-                        inner_defect = Jacobi<Tag_>::value(inner_system, inner_defect, eps_inner);
+                        DenseVector<float> defect_result(inner_defect.size(), float(0));
+                        Jacobi<Tag_>::value(inner_system, inner_defect, defect_result, eps_inner);
+                        inner_defect = defect_result.copy();
+
                         //reconvert
                         convert(defect, inner_defect);
 
@@ -775,7 +780,9 @@ namespace honei
                         ++j_inner; ++j_outer;
                     }
 
-                    inner_defect = Jacobi<Tag_>::value(inner_system, inner_defect, eps_inner);
+                    DenseVector<float> defect_result(inner_defect.size(), float(0));
+                    Jacobi<Tag_>::value(inner_system, inner_defect, defect_result, eps_inner);
+                    inner_defect = defect_result.copy();
 
                     typename DenseVector<DT1_>::ElementIterator b_outer(defect.begin_elements()), b_end(defect.end_elements());
                     typename DenseVector<float>::ConstElementIterator b_inner(inner_defect.begin_elements());

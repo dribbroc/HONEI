@@ -184,7 +184,7 @@ class PoissonTestJACBandedFloat:
 
             //std::cout<< n << " " << A << " "<< root_n<<endl;
             DenseVector<float> result(n, float(0));
-            result = Jacobi<Tag_>::value(A, b_v, std::numeric_limits<float>::epsilon());
+            Jacobi<Tag_>::value(A, b_v, result, std::numeric_limits<float>::epsilon());
             //std::cout<< result <<endl;
             //std::cout<< ana_sol_v <<endl;
             //std::cout<< ref_sol_v <<endl;

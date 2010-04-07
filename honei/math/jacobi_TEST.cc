@@ -17,6 +17,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#define SOLVER_VERBOSE_L2
+
 #include <honei/math/jacobi.hh>
 #include <honei/math/matrix_io.hh>
 #include <unittest/unittest.hh>
@@ -60,7 +62,8 @@ class JacobiTestDense:
 
             std::cout<<"A:"<<A<<std::endl;
             std::cout<<"b:"<<b<<std::endl;
-            DenseVector<DT1_> result = Jacobi<Tag_>::value(A,b,12ul);
+            DenseVector<DT1_> result(3, DT1_(0));
+            Jacobi<Tag_>::value(A, b, result, 12ul);
             DT1_ x_n = Norm< vnt_l_two, false, Tag_>::value(result);
             DenseVector<DT1_> x_analytical(3, DT1_(0));
             std::cout << "RESULT(v1):" << result << std::endl;
@@ -71,7 +74,8 @@ class JacobiTestDense:
             DT1_ x_analytical_n = Norm< vnt_l_two, false, Tag_>::value(x_analytical);
             TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.001));
 
-            DenseVector<DT1_> result_2 = Jacobi<Tag_>::value(A,b,double(std::numeric_limits<double>::epsilon()));
+            DenseVector<DT1_> result_2(3, DT1_(0));
+            Jacobi<Tag_>::value(A, b, result_2, double(std::numeric_limits<double>::epsilon()));
             std::cout << "RESULT(v2):" << result_2 << std::endl;
 
             DT1_ x_n_2 = Norm< vnt_l_two, false, Tag_>::value(result_2);
@@ -130,7 +134,9 @@ class JacobiTestBanded:
             std::cout << "A:" << A << std::endl;
             std::cout << "b:" << b << std::endl;
 
-            DenseVector<DT1_> result = Jacobi<Tag_>::value(A,b,10ul);
+            DenseVector<DT1_> result(3, DT1_(0));
+            Jacobi<Tag_>::value(A, b, result, 10ul);
+
             DT1_ x_n = Norm< vnt_l_two, false, Tag_>::value(result);
             DenseVector<DT1_> x_analytical(3, DT1_(1));
             x_analytical[0] = DT1_(2./3.);
@@ -141,7 +147,8 @@ class JacobiTestBanded:
             std::cout << "RESULT(v1):" << result << std::endl;
             TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.1));
 
-            DenseVector<DT1_> result_2 = Jacobi<Tag_>::value(A,b,double(std::numeric_limits<double>::epsilon()));
+            DenseVector<DT1_> result_2(3, DT1_(0));
+            Jacobi<Tag_>::value(A, b, result_2, double(std::numeric_limits<double>::epsilon()));
             DT1_ x_n_2 = Norm< vnt_l_two, false, Tag_>::value(result_2);
             TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n_2 , double(0.1));
 
@@ -180,7 +187,10 @@ class JacobiTestSparse:
 
             std::cout << "A:" << A << std::endl;
             std::cout << "b:" << b << std::endl;
-            DenseVector<DT1_> result = Jacobi<Tag_>::value(A,b, 12ul);
+
+            DenseVector<DT1_> result(3, DT1_(0));
+            Jacobi<Tag_>::value(A,b, result, 12ul);
+
             DT1_ x_n = Norm< vnt_l_two, false, Tag_>::value(result);
             DenseVector<DT1_> x_analytical(3, DT1_(0));
             std::cout << "RESULT(v1):" << result << std::endl;
@@ -191,7 +201,8 @@ class JacobiTestSparse:
             DT1_ x_analytical_n = Norm< vnt_l_two, false, Tag_>::value(x_analytical);
             TEST_CHECK_EQUAL_WITHIN_EPS(x_analytical_n, x_n , double(0.001));
 
-            DenseVector<DT1_> result_2 = Jacobi<Tag_>::value(A,b,double(std::numeric_limits<double>::epsilon()));
+            DenseVector<DT1_> result_2(3, DT1_(0));
+            Jacobi<Tag_>::value(A, b, result_2, double(std::numeric_limits<double>::epsilon()));
             std::cout << "RESULT(v2):" << result_2 << std::endl;
 
             DT1_ x_n_2 = Norm< vnt_l_two, false, Tag_>::value(result_2);
