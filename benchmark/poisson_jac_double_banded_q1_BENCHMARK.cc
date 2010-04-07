@@ -171,9 +171,10 @@ class PoissonJACBenchQ1_1 :
             ElementInverse<Tag_>::value(diag_inverted);
             double omega(0.7);
             Scale<Tag_>::value(diag_inverted, omega);
+            DenseVector<double> result(b_v.size(), double(0));
             for(unsigned long i(0) ; i < _count ; ++i)
             {
-                BENCHMARK(Jacobi<Tag_>::value(A, b_v, omega, diag_inverted));
+                BENCHMARK(Jacobi<Tag_>::value(A, b_v, result, omega, diag_inverted));
             }
             evaluate();
         }
@@ -328,10 +329,10 @@ class PoissonJACBenchQ1_2 :
             ElementInverse<Tag_>::value(diag_inverted);
             double omega(0.7);
             Scale<Tag_>::value(diag_inverted, omega);
-
+            DenseVector<double> result(b_v.size(), double(0));
             for(unsigned long i(0) ; i < _count ; ++i)
             {
-                BENCHMARK(Jacobi<Tag_>::value(to_smooth, A, b_v, 4,  omega, diag_inverted));
+                BENCHMARK(Jacobi<Tag_>::value(to_smooth, A, b_v, result, 4,  omega, diag_inverted));
             }
             evaluate();
         }

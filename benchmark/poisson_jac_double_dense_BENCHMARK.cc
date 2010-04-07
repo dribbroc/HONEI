@@ -180,7 +180,7 @@ class PoissonJACBenchDouble :
 
             //std::cout<< n << " " << A << " "<< root_n<<endl;
             DenseVector<double> result(n, double(0));
-            BENCHMARK(Jacobi<Tag_>::value(A, b_v, std::numeric_limits<double>::epsilon()));
+            BENCHMARK(Jacobi<Tag_>::value(A, b_v, result, std::numeric_limits<double>::epsilon()));
             evaluate();
         }
 };

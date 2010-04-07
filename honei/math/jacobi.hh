@@ -292,12 +292,16 @@ namespace honei
             * \param iter_number The fixed number of iterations.
             *
             */
-
-            /// \{
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, unsigned long iter_number)
+            static void value(BandedMatrixQ1<DT1_> & system_matrix,
+                    DenseVector<DT2_> & right_hand_side,
+                    DenseVector<DT2_> & x,
+                    unsigned long iter_number)
             {
                 CONTEXT("When solving banded linear system (Q1) with Jacobi (fixed # iterations):");
+#ifdef SOLVER_VERBOSE_L2
+                std::cout << "Calling JACOBI solver, datalayout=Q1" << std::endl;
+#endif
                 DenseVector<DT1_> diag(right_hand_side.size(), DT1_(0));
 
                 DenseVector<DT1_> diag_inverted(right_hand_side.size(), DT1_(0));
@@ -313,7 +317,6 @@ namespace honei
                 system_matrix.lock(lm_read_only);
                 for(unsigned long i =0; i < diag.size(); ++i)
                 {
-
                     diag[i] = system_matrix.band(DD)[i];
                     if(fabs(diag[i]) >= std::numeric_limits<DT1_>::epsilon())
                     {
@@ -326,20 +329,24 @@ namespace honei
                 }
                 system_matrix.unlock(lm_read_only);
 
-                DenseVector<DT1_> x(right_hand_side.size());
                 copy<Tag_>(right_hand_side, x);
 
                 for(unsigned long i = 0; i<iter_number; ++i)
                 {
                     jacobi_kernel(system_matrix, right_hand_side, x, diag_inverted, difference);
                 }
-                return x;
             }
 
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, unsigned long iter_number, DT1_ omega)
+            static void value(BandedMatrixQ1<DT1_> & system_matrix,
+                    DenseVector<DT2_> & right_hand_side,
+                    DenseVector<DT2_> & x,
+                    unsigned long iter_number, DT1_ omega)
             {
                 CONTEXT("When solving banded linear system (Q1) with Jacobi (fixed # iterations):");
+#ifdef SOLVER_VERBOSE_L2
+                std::cout << "Calling JACOBI solver, datalayout=Q1" << std::endl;
+#endif
                 DenseVector<DT1_> diag_inverted(right_hand_side.size());
 
                 BandedMatrixQ1<DT1_> difference(system_matrix.size(), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()));
@@ -354,14 +361,12 @@ namespace honei
                 ElementInverse<Tag_>::value(diag_inverted);
                 Scale<Tag_>::value(diag_inverted, omega);
 
-                DenseVector<DT1_> x(right_hand_side.size());
                 copy<Tag_>(right_hand_side, x);
 
                 for(unsigned long i = 0; i<iter_number; ++i)
                 {
                     jacobi_kernel(system_matrix, right_hand_side, x, diag_inverted, difference);
                 }
-                return x;
             }
 //MG types:
             template <typename DT1_, typename DT2_>

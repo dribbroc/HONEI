@@ -173,7 +173,7 @@ class PoissonTestJACBandedQ1Float:
             //std::cout<<A.band(0)[0] * double(1) << endl;
             //std::cout<< n << " " << A << " "<< root_n<<endl;
             DenseVector<float> result(n, float(0));
-            result = Jacobi<Tag_>::value(A, b_v, 100);
+            Jacobi<Tag_>::value(A, b_v, result, 100);
             //std::cout<< result <<endl;
             //std::cout<< ana_sol_v <<endl;
             //std::cout<< ref_sol_v <<endl;
