@@ -97,14 +97,14 @@ class DuneConjugateGradientsTestSparseELL:
             VectorIO<io_formats::EXP>::read_vector(filename_4, init);
             DenseVector<DT1_> result(init.copy());
 
-            ConjugateGradients<Tag_, JAC>::value(smatrix, rhs, result, diag_inverted, 10000ul);
-            //Jacobi<Tag_>::value(smatrix, difference, rhs, result, diag_inverted, 10000ul);
-
+            unsigned long used_iters(0);
+            ConjugateGradients<Tag_, JAC>::value(smatrix, rhs, result, diag_inverted, 10000ul, used_iters, DT1_(1e-8));
+            //Jacobi<Tag_>::value(smatrix, difference, rhs, result, diag_inverted, 10000ul, used_iters, DT1_(1e-8));
 
             // DUNE
 
             DenseVector<DT1_> dune_result(init.copy());
-            DuneConjugateGradients<JAC>::value(smatrix, rhs, dune_result, diag_inverted, 10000ul);
+            DuneConjugateGradients<JAC>::value(smatrix, rhs, dune_result, diag_inverted, 10000ul, DT1_(1e-8));
 
             result.lock(lm_read_only);
             result.unlock(lm_read_only);
@@ -199,8 +199,9 @@ class DuneLUTestSparseELL:
             VectorIO<io_formats::EXP>::read_vector(filename_4, init);
             DenseVector<DT1_> result(init.copy());
 
-            ConjugateGradients<Tag_, JAC>::value(smatrix, rhs, result, diag_inverted, 10000ul);
-            //Jacobi<Tag_>::value(smatrix, difference, rhs, result, diag_inverted, 10000ul);
+            unsigned long used_iters(0);
+            ConjugateGradients<Tag_, JAC>::value(smatrix, rhs, result, diag_inverted, 10000ul, used_iters, DT1_(1e-8));
+            //Jacobi<Tag_>::value(smatrix, difference, rhs, result, diag_inverted, 10000ul, used_iters, DT1_(1e-8));
 
 
             // DUNE

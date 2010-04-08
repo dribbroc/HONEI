@@ -56,7 +56,8 @@ namespace honei
                     DenseVector<DT_> & right_hand_side,
                     DenseVector<DT_> & x,
                     DenseVector<DT_> & dd_inverted,
-                    unsigned long max_iters)
+                    unsigned long max_iters,
+                    DT_ eps_relative = 1e-8)
             {
 #ifdef SOLVER_VERBOSE_L2
                 std::cout << "Calling Dune CG solver, preconditioning=JACOBI, datalayout=ELL" << std::endl;
@@ -100,7 +101,7 @@ namespace honei
 #else
                 int cgverbose = 0;
 #endif
-                CGSolver<BV> cg(op,prec,1E-13, max_iters, cgverbose);
+                CGSolver<BV> cg(op, prec, eps_relative, max_iters, cgverbose);
                 cg.apply(result_dune, rhs_dune, irs);
 
                 for (unsigned long i(0) ; i < x.size() ; ++i)
