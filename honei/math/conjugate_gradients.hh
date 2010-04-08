@@ -508,7 +508,7 @@ namespace honei
 
             ///NEW ELL type:
             template <typename DT1_>
-            static void value(SparseMatrixELL<DT1_> & system_matrix, 
+            static void value(SparseMatrixELL<DT1_> & system_matrix,
                     DenseVector<DT1_> & right_hand_side,
                     DenseVector<DT1_> & x,
                     unsigned long max_iters)
