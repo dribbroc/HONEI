@@ -828,6 +828,10 @@ endCycleLoop:
                 OuterPrec_ conv_rad,
                 MGInfo<InnerPrec_> & info)
             {
+                CONTEXT("When solving banded q1 linear system with MULTIGRID: ");
+#ifdef SOLVER_VERBOSE_L2
+                std::cout << "Calling MG solver, presmoothing=JACOBI, postsmoothing=JACOBI, coarse-grid solver=CG, datalayout=Q1, precision=MIXED" << std::endl;
+#endif
 #ifdef SOLVER_BENCHMARK
                 TimeStamp ab, ae;
                 ab.take();
