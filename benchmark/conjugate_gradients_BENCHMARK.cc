@@ -67,6 +67,7 @@ class SMELLCGBench :
                     diag_inverted[r[i]] = DataType_(1)/data[i];
             }
 
+            unsigned long used_iters(0);
             for(unsigned long i(0) ; i < _count ; ++i)
             {
                 std::string filename_3(HONEI_SOURCEDIR);
@@ -83,7 +84,6 @@ class SMELLCGBench :
                 //DenseVector<DataType_> result_c(result.copy());
                 //Defect<Tag_>::value(result, rhs, smatrix2, result_c);
 
-                unsigned long used_iters(0);
                 BENCHMARK(
                         (ConjugateGradients<Tag_, JAC>::value(smatrix2, rhs, result, diag_inverted, 10000ul, used_iters, 1e-8));
 #ifdef HONEI_CUDA
@@ -100,7 +100,7 @@ class SMELLCGBench :
             info.flops = non_zeros * 2 + 13 * rows + 2;
             info.load = (non_zeros*2 + 13 * rows + 3)* sizeof(DataType_);
             info.store = (5 * rows + 3)* sizeof(DataType_);
-            evaluate(info * 10000 + info_pre);
+            evaluate(info * used_iters + info_pre);
         }
 };
 #ifdef HONEI_SSE
