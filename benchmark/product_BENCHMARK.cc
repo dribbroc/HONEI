@@ -616,10 +616,12 @@ class Q1MatrixELLDenseVectorProductBench :
             evaluate(info * 10);
         }
 };
+#ifdef HONEI_SSE
 Q1MatrixELLDenseVectorProductBench<tags::CPU::SSE, float> sseQ1ELLDVPBenchfloat("SSE ELL Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10);
 Q1MatrixELLDenseVectorProductBench<tags::CPU::SSE, double> sseQ1ELLDVPBenchdouble("SSE ELL Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10);
 Q1MatrixELLDenseVectorProductBench<tags::CPU::MultiCore::SSE, float> mcsseQ1ELLDVPBenchfloat("MC SSE ELL Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10);
 Q1MatrixELLDenseVectorProductBench<tags::CPU::MultiCore::SSE, double> mcsseQ1ELLDVPBenchdouble("MC SSE ELL Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10);
+#endif
 #ifdef HONEI_CUDA
 Q1MatrixELLDenseVectorProductBench<tags::GPU::CUDA, float> CUDAQ1ELLDVPBenchfloat("CUDA ELL Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, float",1025ul * 1025 , 10);
 #ifdef HONEI_CUDA_DOUBLE
