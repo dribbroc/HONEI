@@ -354,7 +354,9 @@ class JacobiSparseELLComparisonTest:
             DenseVector<DT1_> result(rhs.size(), DT1_(0));
             DenseVector<DT1_> result_c(result.copy());
             Defect<Tag_>::value(result, rhs, smatrix2, result_c);
-            Jacobi<Tag_>::value(smatrix2, difference, rhs, result, diag_inverted, 4000ul);
+
+            unsigned long used_iters;
+            Jacobi<Tag_>::value(smatrix2, difference, rhs, result, diag_inverted, 10000ul, used_iters, DT1_(1e-8));
 
             std::string filename_3(HONEI_SOURCEDIR);
             filename_3 += "/honei/math/testdata/";

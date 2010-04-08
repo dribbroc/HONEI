@@ -82,8 +82,10 @@ class SMELLCGBench :
                 }
                 //DenseVector<DataType_> result_c(result.copy());
                 //Defect<Tag_>::value(result, rhs, smatrix2, result_c);
+
+                unsigned long used_iters(0);
                 BENCHMARK(
-                        (ConjugateGradients<Tag_, JAC>::value(smatrix2, rhs, result, diag_inverted, 10000ul));
+                        (ConjugateGradients<Tag_, JAC>::value(smatrix2, rhs, result, diag_inverted, 10000ul, used_iters, 1e-8));
 #ifdef HONEI_CUDA
                         if (Tag_::tag_value == tags::tv_gpu_cuda)
                             cuda::GPUPool::instance()->flush();

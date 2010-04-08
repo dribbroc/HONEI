@@ -408,7 +408,6 @@ namespace honei
 
                 while(norm_x - norm_x_last > konv_rad)
                 {
-
                     cg_kernel(system_matrix, right_hand_side, g, x, u);
                     norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
                     norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
@@ -472,7 +471,6 @@ namespace honei
 #ifdef SOLVER_VERBOSE_L2
                 std::cout << "Calling CG solver, preconditioning=NONE, datalayout=Q1" << std::endl;
 #endif
-
                 fill<Tag_>(x, DT1_(0));
                 DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
                 Difference<Tag_>::value(g, right_hand_side);
@@ -1008,19 +1006,19 @@ namespace honei
                 }
             }
 
-
             template <typename DT_>
             static void value(SparseMatrixELL<DT_> & system_matrix,
                                            DenseVector<DT_> & right_hand_side,
                                            DenseVector<DT_> & x,
                                            DenseVector<DT_> & dd_inverted,
-                                           unsigned long max_iters)
+                                           unsigned long max_iters,
+                                           unsigned long & used_iters,
+                                           DT_ eps_relative = 1e-8)
             {
                 CONTEXT("When solving sparse ELL linear system with PCG-Jacobi: ");
 #ifdef SOLVER_VERBOSE_L2
                 std::cout << "Calling CG solver, preconditioning=JACOBI, datalayout=ELL" << std::endl;
 #endif
-
                 DenseVector<DT_> t_0(right_hand_side.size());
 
                 DenseVector<DT_> r(right_hand_side.size());
@@ -1039,14 +1037,16 @@ namespace honei
                     cg_kernel(system_matrix, r, z, d, x, dd_inverted, t_0);
                     DT_ current_defect_norm(Norm<vnt_l_two, true, Tag_>::value(r));
 
-                    if(current_defect_norm < initial_defect_norm * 1e-8)
+                    if(current_defect_norm < initial_defect_norm * eps_relative)
                     {
                         std::cout << "Converged after " << i + 1 << " iterations: NORM: " << current_defect_norm << std::endl;
+                        used_iters = i + 1;
                         break;
                     }
                     if(i == max_iters - 1)
                     {
                         std::cout << "NO convergence after " << i + 1 << " iterations: NORM: " << current_defect_norm << std::endl;
+                        used_iters = i + 1;
                     }
                 }
 

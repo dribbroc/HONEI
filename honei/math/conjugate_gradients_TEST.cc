@@ -690,7 +690,8 @@ class PreconditionedConjugateGradientsTestSparseELL:
             filename_4 += _i_f;
             VectorIO<io_formats::EXP>::read_vector(filename_4, result);
 
-            ConjugateGradients<Tag_, JAC>::value(smatrix2, rhs, result, diag_inverted, 10000ul);
+            unsigned long used_iters(0);
+            ConjugateGradients<Tag_, JAC>::value(smatrix2, rhs, result, diag_inverted, 10000ul, used_iters, DT1_(1e-8));
 
             std::string filename_3(HONEI_SOURCEDIR);
             filename_3 += "/honei/math/testdata/";

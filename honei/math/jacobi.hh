@@ -341,7 +341,8 @@ namespace honei
             static void value(BandedMatrixQ1<DT1_> & system_matrix,
                     DenseVector<DT2_> & right_hand_side,
                     DenseVector<DT2_> & x,
-                    unsigned long iter_number, DT1_ omega)
+                    unsigned long iter_number,
+                    DT1_ omega)
             {
                 CONTEXT("When solving banded linear system (Q1) with Jacobi (fixed # iterations):");
 #ifdef SOLVER_VERBOSE_L2
@@ -685,7 +686,9 @@ namespace honei
                     DenseVector<DT2_> & right_hand_side,
                     DenseVector<DT1_> & x,
                     DenseVector<DT1_> & diag_inverted,
-                    unsigned long max_iters)
+                    unsigned long max_iters,
+                    unsigned long & used_iters,
+                    DT1_ eps_relative = 1e-8)
             {
                 CONTEXT("When solving sparse linear system (ELL) with Jacobi:");
 #ifdef SOLVER_VERBOSE_L2
@@ -702,14 +705,16 @@ namespace honei
                     Defect<Tag_>::value(defect, right_hand_side, system_matrix, x);
                     current_defect_norm = Norm<vnt_l_two, false, Tag_>::value(defect);
 
-                    if(current_defect_norm < initial_defect_norm * 1e-16)
+                    if(current_defect_norm < initial_defect_norm * eps_relative)
                     {
                         std::cout << "Converged after " << i + 1 << " iterations: NORM: " << current_defect_norm << std::endl;
+                        used_iters = i + 1;
                         break;
                     }
                     if(i == max_iters - 1)
                     {
                         std::cout << "NO convergence after " << i + 1 << " iterations: NORM: " << current_defect_norm << std::endl;
+                        used_iters = i + 1;
                     }
                 }
             }
