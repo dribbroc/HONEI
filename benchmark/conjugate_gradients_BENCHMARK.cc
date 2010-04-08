@@ -102,7 +102,8 @@ class SMELLCGBench :
         }
 };
 #ifdef HONEI_SSE
-SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_0double7("SM ELL 0 L7 CG Benchmark SSE double: " , 0, 1, "l7/area51_full_0.m", "l7/area51_rhs_0", "l7/area51_init_0");
+SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_0double7("SM ELL 0 L2 CG Benchmark SSE double: " , 0, 1, "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_init_0");
+/*SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_0double7("SM ELL 0 L7 CG Benchmark SSE double: " , 0, 1, "l7/area51_full_0.m", "l7/area51_rhs_0", "l7/area51_init_0");
 SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_0double8("SM ELL 0 L8 CG Benchmark SSE double: " , 0, 1, "l8/area51_full_0.m", "l8/area51_rhs_0", "l8/area51_init_0");
 SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_0double9("SM ELL 0 L9 CG Benchmark SSE double: " , 0, 1, "l9/area51_full_0.m", "l9/area51_rhs_0", "l9/area51_init_0");
 SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_0double10("SM ELL 0 L10 CG Benchmark SSE double: " , 0, 1, "l10/area51_full_0.m", "l10/area51_rhs_0", "l10/area51_init_0");
@@ -120,8 +121,9 @@ SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_3double9("SM ELL 3 L9 CG Be
 SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_3double10("SM ELL 3 L10 CG Benchmark SSE double: " , 0, 1, "l10/area51_full_3.m", "l10/area51_rhs_3", "l10/area51_init_3");
 SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_4double7("SM ELL 4 L7 CG Benchmark SSE double: " , 0, 1, "l7/area51_full_4.m", "l7/area51_rhs_4", "l7/area51_init_4");
 SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_4double8("SM ELL 4 L8 CG Benchmark SSE double: " , 0, 1, "l8/area51_full_4.m", "l8/area51_rhs_4", "l8/area51_init_4");
-SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_4double9("SM ELL 4 L9 CG Benchmark SSE double: " , 0, 1, "l9/area51_full_4.m", "l9/area51_rhs_4", "l9/area51_init_4");
+SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_4double9("SM ELL 4 L9 CG Benchmark SSE double: " , 0, 1, "l9/area51_full_4.m", "l9/area51_rhs_4", "l9/area51_init_4");*/
 SMELLCGBench<tags::CPU::SSE, double> sseSMELLCGBench_4double10("SM ELL 4 L10 CG Benchmark SSE double: " , 0, 1, "l10/area51_full_4.m", "l10/area51_rhs_4", "l10/area51_init_4");
+/*SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_0double7("SM ELL 0 L7 CG Benchmark MultiCore::SSE double: " , 0, 1, "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_init_0");
 SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_0double7("SM ELL 0 L7 CG Benchmark MultiCore::SSE double: " , 0, 1, "l7/area51_full_0.m", "l7/area51_rhs_0", "l7/area51_init_0");
 SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_0double8("SM ELL 0 L8 CG Benchmark MultiCore::SSE double: " , 0, 1, "l8/area51_full_0.m", "l8/area51_rhs_0", "l8/area51_init_0");
 SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_0double9("SM ELL 0 L9 CG Benchmark MultiCore::SSE double: " , 0, 1, "l9/area51_full_0.m", "l9/area51_rhs_0", "l9/area51_init_0");
@@ -141,10 +143,11 @@ SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_3double10("SM E
 SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_4double7("SM ELL 4 L7 CG Benchmark MultiCore::SSE double: " , 0, 1, "l7/area51_full_4.m", "l7/area51_rhs_4", "l7/area51_init_4");
 SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_4double8("SM ELL 4 L8 CG Benchmark MultiCore::SSE double: " , 0, 1, "l8/area51_full_4.m", "l8/area51_rhs_4", "l8/area51_init_4");
 SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_4double9("SM ELL 4 L9 CG Benchmark MultiCore::SSE double: " , 0, 1, "l9/area51_full_4.m", "l9/area51_rhs_4", "l9/area51_init_4");
-SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_4double10("SM ELL 4 L10 CG Benchmark MultiCore::SSE double: " , 0, 1, "l10/area51_full_4.m", "l10/area51_rhs_4", "l10/area51_init_4");
+SMELLCGBench<tags::CPU::MultiCore::SSE, double> msseSMELLCGBench_4double10("SM ELL 4 L10 CG Benchmark MultiCore::SSE double: " , 0, 1, "l10/area51_full_4.m", "l10/area51_rhs_4", "l10/area51_init_4");*/
 #endif
 #ifdef HONEI_CUDA_DOUBLE
-SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_0double7("SM ELL 0 L7 CG Benchmark CUDA double: " , 0, 1, "l7/area51_full_0.m", "l7/area51_rhs_0", "l7/area51_init_0");
+SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_0double7("SM ELL 0 L2 CG Benchmark CUDA double: " , 0, 1, "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_init_0");
+/*SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_0double7("SM ELL 0 L7 CG Benchmark CUDA double: " , 0, 1, "l7/area51_full_0.m", "l7/area51_rhs_0", "l7/area51_init_0");
 SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_0double8("SM ELL 0 L8 CG Benchmark CUDA double: " , 0, 1, "l8/area51_full_0.m", "l8/area51_rhs_0", "l8/area51_init_0");
 SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_0double9("SM ELL 0 L9 CG Benchmark CUDA double: " , 0, 1, "l9/area51_full_0.m", "l9/area51_rhs_0", "l9/area51_init_0");
 SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_0double10("SM ELL 0 L10 CG Benchmark CUDA double: " , 0, 1, "l10/area51_full_0.m", "l10/area51_rhs_0", "l10/area51_init_0");
@@ -163,5 +166,5 @@ SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_3double10("SM ELL 3 L10 C
 SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_4double7("SM ELL 4 L7 CG Benchmark CUDA double: " , 0, 1, "l7/area51_full_4.m", "l7/area51_rhs_4", "l7/area51_init_4");
 SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_4double8("SM ELL 4 L8 CG Benchmark CUDA double: " , 0, 1, "l8/area51_full_4.m", "l8/area51_rhs_4", "l8/area51_init_4");
 SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_4double9("SM ELL 4 L9 CG Benchmark CUDA double: " , 0, 1, "l9/area51_full_4.m", "l9/area51_rhs_4", "l9/area51_init_4");
-SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_4double10("SM ELL 4 L10 CG Benchmark CUDA double: " , 0, 1, "l10/area51_full_4.m", "l10/area51_rhs_4", "l10/area51_init_4");
+SMELLCGBench<tags::GPU::CUDA, double> cudaSMELLCGBench_4double10("SM ELL 4 L10 CG Benchmark CUDA double: " , 0, 1, "l10/area51_full_4.m", "l10/area51_rhs_4", "l10/area51_init_4");*/
 #endif
