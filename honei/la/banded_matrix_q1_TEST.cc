@@ -19,6 +19,7 @@
 
 #include <honei/la/banded_matrix_q1.hh>
 #include <honei/la/banded_matrix.hh>
+#include <honei/la/sparse_matrix.hh>
 #include <honei/la/vector_error.hh>
 #include <unittest/unittest.hh>
 
@@ -68,6 +69,15 @@ class BandedMatrixQ1QuickTest :
             /*TEST_CHECK_EQUAL(am, bm1);
             TEST_CHECK_EQUAL(bm3, am) */;
             TEST_CHECK_EQUAL(bm1, bm3);
+
+            SparseMatrix<DataType_> sm(bm1);
+            for (unsigned long row(0) ; row < sm.rows() ; ++row)
+            {
+                for (typename SparseVector<DataType_>::NonZeroElementIterator i(sm[row].begin_non_zero_elements()) ; i < sm[row].end_non_zero_elements() ; ++i)
+                {
+                    TEST_CHECK_EQUAL(*i, bm1(row, i.index()));
+                }
+            }
 
 
             DenseVector<DataType_> dv01(5, DataType_(1));
