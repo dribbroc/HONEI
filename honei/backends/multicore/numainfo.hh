@@ -45,9 +45,14 @@
 #elif defined(__ia64__)
 #define __NR_sched_getaffinity    1232
 
-#elif defined(__ppc__) || defined (__PPU__)
+#elif defined(__powerpc__)
 #define __NR_sched_getaffinity    233
+
+#else
+#error "Architecture note supported by multicore backend!"
+
 #endif
+
 
 namespace honei
 {
