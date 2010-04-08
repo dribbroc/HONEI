@@ -434,7 +434,7 @@ class PoissonBenchmarkMGBandedQ1Float:
                 BENCHMARK(
                         for (unsigned long j(0) ; j < 1 ; ++j)
                         {
-                        (result = Multigrid<Tag_, Tag_, JAC, CYCLE::V, FIXED >::value(A, b_v, (unsigned long)11, std::numeric_limits<double>::epsilon(), info));
+                        (Multigrid<Tag_, Tag_, JAC, CYCLE::V, FIXED >::value(A, b_v, result, (unsigned long)11, std::numeric_limits<double>::epsilon(), info));
                         }
                 );
             }

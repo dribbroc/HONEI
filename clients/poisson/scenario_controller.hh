@@ -227,7 +227,7 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                         }
 
                         DenseVector<Prec_> result(n, Prec_(0));
-                        result = Multigrid<Tag_, Tag_, JAC, CYCLE::V, FIXED >::value(info.a[info.max_level], info.rhs[info.max_level], (unsigned long)11, std::numeric_limits<Prec_>::epsilon(), info);
+                        Multigrid<Tag_, Tag_, JAC, CYCLE::V, FIXED >::value(info.a[info.max_level], info.rhs[info.max_level], result, (unsigned long)11, std::numeric_limits<Prec_>::epsilon(), info);
 
                         //write result to scalarfield:
                         unsigned long row_index(0);
@@ -419,9 +419,9 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                         DenseVector<Prec_> result(n, Prec_(0));
 
 #ifdef HONEI_SSE
-                        result = Multigrid<tags::CPU::SSE, tags::CPU::SSE, JAC, CYCLE::V, MIXED>::value(A, RHS, (unsigned long)11, std::numeric_limits<double>::epsilon(), info);
+                        Multigrid<tags::CPU::SSE, tags::CPU::SSE, JAC, CYCLE::V, MIXED>::value(A, RHS, result, (unsigned long)11, std::numeric_limits<double>::epsilon(), info);
 #else
-                        result = Multigrid<tags::CPU, tags::CPU, JAC, CYCLE::V, MIXED>::value(A, RHS, (unsigned long)11, std::numeric_limits<double>::epsilon(), info);
+                        Multigrid<tags::CPU, tags::CPU, JAC, CYCLE::V, MIXED>::value(A, RHS, result, (unsigned long)11, std::numeric_limits<double>::epsilon(), info);
 #endif
 
                         //write result to scalarfield:
