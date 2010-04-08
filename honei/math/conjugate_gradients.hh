@@ -37,7 +37,7 @@
 #include <honei/la/algorithm.hh>
 #include <iostream>
 
-#define SOLVER_VERBOSE_L2 1
+//#define SOLVER_VERBOSE_L2 1
 //#define SOLVER_VERBOSE_L1 1
 
 using namespace methods;

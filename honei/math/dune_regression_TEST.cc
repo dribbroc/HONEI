@@ -190,10 +190,12 @@ class DuneRegressionTestSparseELL:
         }
 };
 
+#ifdef HONEI_SSE
 DuneRegressionTestSparseELL<tags::CPU::SSE, double> sse_dune_regression_test_double_sparse_ell2("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
 //DuneRegressionTestSparseELL<tags::CPU::SSE, double> sse_dune_regression_test_double_sparse_ell8("double", "l8/area51_full_0.m", "l8/area51_rhs_0", "l8/area51_sol_0", "l8/area51_init_0");
 DuneRegressionTestSparseELL<tags::CPU::MultiCore::SSE, double> mc_sse_dune_regression_test_double_sparse_ell2("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
 //DuneRegressionTestSparseELL<tags::CPU::MultiCore::SSE, double> mc_sse_dune_regression_test_double_sparse_ell8("double", "l8/area51_full_0.m", "l8/area51_rhs_0", "l8/area51_sol_0", "l8/area51_init_0");
+#endif
 #ifdef HONEI_CUDA_DOUBLE
 DuneRegressionTestSparseELL<tags::GPU::CUDA, double> cuda_dune_regression_test_double_sparse_ell2("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
 //DuneRegressionTestSparseELL<tags::GPU::CUDA, double> cuda_dune_regression_test_double_sparse_ell8("double", "l8/area51_full_0.m", "l8/area51_rhs_0", "l8/area51_sol_0", "l8/area51_init_0");
