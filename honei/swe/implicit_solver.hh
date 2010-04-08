@@ -502,7 +502,8 @@ namespace honei {
                 std::cout<<*_height_bound;
                 std::cout<<"Finished assembly!"<<std::endl;
 #endif
-                DenseVector<ResPrec_> w_new(ConjugateGradients<Tag_, NONE>::value(*_system_matrix, *_right_hand_side, std::numeric_limits<ResPrec_>::epsilon()));
+                DenseVector<ResPrec_> w_new(_right_hand_side->size(), ResPrec_(0));
+                ConjugateGradients<Tag_, NONE>::value(*_system_matrix, *_right_hand_side, w_new, std::numeric_limits<ResPrec_>::epsilon());
 #ifdef SOLVER_VERBOSE
                 std::cout<<"Finished CG!"<< std::endl;
                 std::cout<<"u before update: " << *_x_veloc_bound << std::endl;
