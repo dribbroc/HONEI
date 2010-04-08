@@ -54,7 +54,7 @@ class PoissonBenchmarkMGBandedQ1Mixed:
         {
             unsigned long _root_n(_size);
             unsigned long n(_root_n * _root_n);
-            MGInfo<float> info;
+            MGInfo<float, BandedMatrixQ1<float> > info;
             //configuration constants: /TODO: set/allocate!!!
             info.is_smoother = false;
             DenseVector<unsigned long> mask(8);

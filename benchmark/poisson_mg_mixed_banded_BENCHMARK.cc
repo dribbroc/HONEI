@@ -179,7 +179,7 @@ class PoissonBenchmarkMGBandedQ1Mixed:
             //std::cout<< n << " " << A << " "<< root_n<<endl;
 
             //----Load in POISSON - specific data:----------------------
-            MGInfo<float> info;
+            MGInfo<float, BandedMatrixQ1<float> > info;
             //configuration constants: /TODO: set/allocate!!!
             info.is_smoother = false;
             DenseVector<unsigned long> mask(8);

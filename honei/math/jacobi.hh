@@ -468,6 +468,23 @@ namespace honei
             }
 
             template <typename DT1_, typename DT2_>
+            static inline void value(SparseMatrixELL<DT1_> & system_matrix,
+                    DenseVector<DT2_> & right_hand_side,
+                    DenseVector<DT2_> & x,
+                    DT1_ omega,
+                    DenseVector<DT1_> & diag_inverted)
+            {
+                CONTEXT("When smoothing sparse linear system with Jacobi (fixed # iterations):");
+#ifdef SOLVER_VERBOSE_L2
+                std::cout << "Calling JACOBI smoother, datalayout=ELLPACK, MULTIGRID (1)" << std::endl;
+#endif
+                DenseVector<DT1_> temp(diag_inverted.size());
+                copy<Tag_>(diag_inverted, temp);
+                ElementProduct<Tag_>::value(temp, right_hand_side);
+                x = temp;
+            }
+
+            template <typename DT1_, typename DT2_>
             static inline void value(DenseVector<DT1_>& to_smooth,
                     SparseMatrixELL<DT1_> & system_matrix,
                     DenseVector<DT2_> & right_hand_side,
@@ -478,7 +495,7 @@ namespace honei
             {
                 CONTEXT("When solving sparse linear system (ELL) with Jacobi (fixed # iterations):");
 #ifdef SOLVER_VERBOSE_L2
-                std::cout << "Calling JACOBI smoother, datalayout=ELLPACK, MULTIGRID" << std::endl;
+                std::cout << "Calling JACOBI smoother, datalayout=ELLPACK, MULTIGRID (2)" << std::endl;
 #endif
                 DenseVector<DT1_> ts_c(to_smooth.size());
                 for(unsigned long i = 0; i<iter_number; ++i)

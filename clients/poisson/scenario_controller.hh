@@ -69,7 +69,7 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                         _root_n = 33;
                         unsigned long n(_root_n * _root_n);
                         _u = new DenseMatrix<float>(_root_n, _root_n, Prec_(0.00));
-                        MGInfo<Prec_> info;
+                        MGInfo<Prec_, BandedMatrixQ1<Prec_> > info;
                         //configuration constants: /TODO: set/allocate!!!
                         info.is_smoother = false;
                         DenseVector<unsigned long> mask(8);
@@ -254,7 +254,7 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                         _root_n = 33;
                         unsigned long n(_root_n * _root_n);
                         _u = new DenseMatrix<float>(_root_n, _root_n, Prec_(0.00));
-                        MGInfo<float> info;
+                        MGInfo<float, BandedMatrixQ1<float> > info;
                         //configuration constants: /TODO: set/allocate!!!
                         info.is_smoother = false;
                         DenseVector<unsigned long> mask(8);

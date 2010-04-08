@@ -173,7 +173,7 @@ class PoissonTestMGBandedQ1Double:
             //std::cout<< n << " " << A << " "<< root_n<<endl;
 
             //----Load in POISSON - specific data:----------------------
-            MGInfo<double> info;
+            MGInfo<double, BandedMatrixQ1<double> > info;
             //configuration constants: /TODO: set/allocate!!!
             info.is_smoother = false;
             DenseVector<unsigned long> mask(8);
