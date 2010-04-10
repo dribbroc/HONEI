@@ -532,7 +532,7 @@ namespace honei
             template <typename DT1_>
             static DT1_ value(const DenseVectorContinuousBase<DT1_> & x)
             {
-                CONTEXT("When calculating DVCB, DBCB dot product using backend : " + Tag_::name);
+                CONTEXT("When calculating DVCB, DBCB dot product using backend : " + tags::CPU::MultiCore::SSE::name);
 
 
                 DT1_ result(0);
@@ -551,7 +551,7 @@ namespace honei
             template <typename DT1_>
             static DT1_ value(const DenseVectorContinuousBase<DT1_> & x)
             {
-                CONTEXT("When calculating DVCB, DBCB dot product using backend : " + Tag_::name);
+                CONTEXT("When calculating DVCB, DBCB dot product using backend : " + tags::CPU::MultiCore::SSE::name);
 
 
                 DT1_ result(0);
