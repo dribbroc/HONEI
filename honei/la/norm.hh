@@ -27,6 +27,8 @@
 #include <honei/backends/multicore/operation.hh>
 #include <honei/backends/multicore/thread_pool.hh>
 #include <honei/util/configuration.hh>
+#include <honei/la/dense_matrix.hh>
+#include <honei/la/dense_vector.hh>
 
 #include <cmath>
 
@@ -454,10 +456,15 @@ namespace honei
 
         static double value(const DenseVectorContinuousBase<double> & x);
 
+        static float value(const DenseMatrix<float> & x);
+
+        static double value(const DenseMatrix<double> & x);
+
         static float value(const SparseVector<float> & x);
 
         static double value(const SparseVector<double> & x);
     };
+
     template <> struct Norm<vnt_l_two, true, tags::CPU::SSE>
     {
         /**
@@ -474,6 +481,10 @@ namespace honei
         static float value(const DenseVectorContinuousBase<float> & x);
 
         static double value(const DenseVectorContinuousBase<double> & x);
+
+        static float value(const DenseMatrix<float> & x);
+
+        static double value(const DenseMatrix<double> & x);
 
         static float value(const SparseVector<float> & x);
 

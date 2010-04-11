@@ -52,6 +52,34 @@ double Norm<vnt_l_two, true, tags::CPU::SSE>::value(const DenseVectorContinuousB
     return sqrt(sse::norm_l2(a.elements(), a.size()));
 }
 
+float Norm<vnt_l_two, false, tags::CPU::SSE>::value(const DenseMatrix<float> & a)
+{
+    CONTEXT("When calculating L2 norm (false) of DenseMatrix<float> (SSE):");
+
+    return sse::norm_l2(a.elements(), a.size());
+}
+
+double Norm<vnt_l_two, false, tags::CPU::SSE>::value(const DenseMatrix<double> & a)
+{
+    CONTEXT("When calculating L2 norm (false) of DenseMatrix<double> (SSE):");
+
+    return sse::norm_l2(a.elements(), a.size());
+}
+
+float Norm<vnt_l_two, true, tags::CPU::SSE>::value(const DenseMatrix<float> & a)
+{
+    CONTEXT("When calculating L2 norm (true) of DenseMatrix<float> (SSE):");
+
+    return sse::norm_l2(a.elements(), a.size());
+}
+
+double Norm<vnt_l_two, true, tags::CPU::SSE>::value(const DenseMatrix<double> & a)
+{
+    CONTEXT("When calculating L2 norm (true) of DenseMatrix<double> (SSE):");
+
+    return sse::norm_l2(a.elements(), a.size());
+}
+
 float Norm<vnt_l_two, false, tags::CPU::SSE>::value(const SparseVector<float> & a)
 {
     CONTEXT("When calculating L2 norm (false) of SparseVector<float> (SSE):");
