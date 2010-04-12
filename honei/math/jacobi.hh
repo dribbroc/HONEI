@@ -406,10 +406,7 @@ namespace honei
                 right_hand_side.unlock(lm_read_only);
                 return x;*/
                 //NEW:
-                DenseVector<DT1_> temp(diag_inverted.size());
-                copy<Tag_>(diag_inverted, temp);
-                ElementProduct<Tag_>::value(temp, right_hand_side);
-                x = temp;
+                ElementProduct<Tag_>::value(x, diag_inverted, right_hand_side);
             }
 
             template <typename DT1_, typename DT2_>
@@ -449,21 +446,10 @@ namespace honei
                     else
                         return to_smooth;*/
 
-                DenseVector<DT1_> ts_c(to_smooth.size());
                 for(unsigned long i = 0; i<iter_number; ++i)
                 {
                     jacobi_kernel(to_smooth, system_matrix, right_hand_side, x, diag_inverted, system_matrix, omega);
-                    copy<Tag_>(to_smooth, ts_c);
-
-                    DenseVector<DT1_> temp(to_smooth);
-                    to_smooth = x;
-                    x = temp;
                 }
-                if(iter_number % 2 != 0)
-                {
-                }
-                else
-                    x = to_smooth;
             }
 
             template <typename DT1_, typename DT2_>
@@ -477,10 +463,7 @@ namespace honei
 #ifdef SOLVER_VERBOSE_L2
                 std::cout << "Calling JACOBI smoother, datalayout=ELLPACK, MULTIGRID (1)" << std::endl;
 #endif
-                DenseVector<DT1_> temp(diag_inverted.size());
-                copy<Tag_>(diag_inverted, temp);
-                ElementProduct<Tag_>::value(temp, right_hand_side);
-                x = temp;
+                ElementProduct<Tag_>::value(x, diag_inverted, right_hand_side);
             }
 
             template <typename DT1_, typename DT2_>
@@ -496,21 +479,10 @@ namespace honei
 #ifdef SOLVER_VERBOSE_L2
                 std::cout << "Calling JACOBI smoother, datalayout=ELLPACK, MULTIGRID (2)" << std::endl;
 #endif
-                DenseVector<DT1_> ts_c(to_smooth.size());
                 for(unsigned long i = 0; i<iter_number; ++i)
                 {
                     jacobi_kernel(to_smooth, system_matrix, right_hand_side, x, diag_inverted, system_matrix, omega);
-                    copy<Tag_>(to_smooth, ts_c);
-
-                    DenseVector<DT1_> temp(to_smooth);
-                    to_smooth = x;
-                    x = temp;
                 }
-                if(iter_number % 2 != 0)
-                {
-                }
-                else
-                    x = to_smooth;
             }
 //end MG types
 
