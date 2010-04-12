@@ -17,6 +17,9 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#define SOLVER_VERBOSE_L2
+#define SOLVER_VERBOSE
+
 #include <honei/math/multigrid.hh>
 #include <honei/math/conjugate_gradients.hh>
 #include <unittest/unittest.hh>

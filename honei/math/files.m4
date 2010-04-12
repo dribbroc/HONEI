@@ -49,6 +49,8 @@ add(`poisson_mixedprec_cg',                   `test',                   `benchma
 add(`poisson_mg_float_banded',                `test')
 add(`poisson_mg_double_banded',               `test')
 add(`poisson_mg_mixed_banded',                `test')
+add(`poisson_mg_fixed_ell',                   `test')
+add(`poisson_mg_fixed_ell_modules',           `test')
 add(`prolongation',                     `hh', `cuda', `test')
 add(`qr_decomposition',                 `hh', `test')
 add(`quadrature',                       `hh', `test')
