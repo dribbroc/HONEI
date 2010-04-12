@@ -45,8 +45,8 @@ class MMIOTest:
             filename += "/honei/math/testdata/5pt_10x10.mtx";
             unsigned long non_zeros(0);
             DenseMatrix<DT_> matrix = MatrixIO<io_formats::MTX>::read_matrix(filename, DT_(0), non_zeros);
-            std::cout << matrix;
-            std::cout << "Non zero elements: " << non_zeros << std::endl;
+            //std::cout << matrix;
+            //std::cout << "Non zero elements: " << non_zeros << std::endl;
 
             DenseVector<DT_> x(matrix.rows());
             DenseVector<DT_> y(matrix.rows());
@@ -72,12 +72,12 @@ class MMIOTest:
             DenseVector<DT_> data(non_zeros_2);
 
             MatrixIO<io_formats::MTX>::read_matrix(filename, r, c, data);
-            std::cout << "Row Indices:" << std::endl;
+            /*std::cout << "Row Indices:" << std::endl;
             std::cout << r;
             std::cout << "Column Indices:" << std::endl;
             std::cout << c;
             std::cout << "Data:" << std::endl;
-            std::cout << data;
+            std::cout << data;*/
 
             for(unsigned long i(0) ; i < non_zeros_2 ; ++i)
             {
@@ -98,24 +98,24 @@ class MMIOTest:
 
             MatrixIO<io_formats::M>::get_sizes(filename_2, r_2, c_2, n_z_2, non_data_2);
 
-            std::cout << r_2 << " " << c_2 << " " << n_z_2 << " " << non_data_2 << std::endl;
+            //std::cout << r_2 << " " << c_2 << " " << n_z_2 << " " << non_data_2 << std::endl;
 
             //------------------------------------------------------------------------------
             unsigned long length_matlab(MatrixIO<io_formats::M>::get_non_zeros(filename_2));
-            std::cout << "LENGTH = " << length_matlab << std::endl;
+            //std::cout << "LENGTH = " << length_matlab << std::endl;
             DenseVector<unsigned long> r_matlab(length_matlab);
             DenseVector<unsigned long> c_matlab(length_matlab);
             DenseVector<DT_> data_matlab(length_matlab);
             MatrixIO<io_formats::M>::read_matrix(filename_2, r_matlab, c_matlab, data_matlab);
 
-            std::cout << r_matlab << std::endl;
+            /*std::cout << r_matlab << std::endl;
             std::cout << c_matlab << std::endl;
-            std::cout << data_matlab << std::endl;
+            std::cout << data_matlab << std::endl;*/
 
             SparseMatrix<DT_> tsmatrix3(r_2, c_2, r_matlab, c_matlab, data_matlab);
             SparseMatrixELL<DT_> smatrix3(tsmatrix3);
 
-            std::cout << smatrix3 << std::endl;
+            //std::cout << smatrix3 << std::endl;
         }
 };
 MMIOTest<float, tags::CPU> mmio_test_float_dense("float");

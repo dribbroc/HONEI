@@ -189,7 +189,6 @@ class PoissonTestMGSparseELL:
                 BandedMatrixQ1<DT1_> current_matrix(N, band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy());
                 DenseVector<DT1_> current_rhs(N);
 
-
                 FillMatrix<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(current_matrix);
 
                 FillVector<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(current_rhs);
@@ -221,10 +220,9 @@ class PoissonTestMGSparseELL:
             DenseVector<DT1_> rhs(info.rhs[info.max_level]);
             SparseMatrixELL<DT1_> system(info.a[info.max_level]);
             Multigrid<Tag_, Tag_, JAC, CYCLE::V, FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<double>::epsilon(), info);
-            //Reading analytical result:
             result.lock(lm_read_only);
             result.unlock(lm_read_only);
-            std::cout<< result <<endl;
+            //std::cout<< result <<endl;
         }
 };
 PoissonTestMGSparseELL<tags::CPU, double> poisson_test_mg_banded_double("double", 33ul, "1089.bin");
