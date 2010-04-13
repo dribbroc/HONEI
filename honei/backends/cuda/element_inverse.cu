@@ -32,6 +32,18 @@ namespace honei
                     x[idx] = 1 / x[idx];
             }
         }
+
+#ifdef HONEI_CUDA_DOUBLE
+        __global__ void element_inverse_gpu(double * x, unsigned long size)
+        {
+            unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+            if (idx < size)
+            {
+                if (x[idx] != 0)
+                    x[idx] = 1 / x[idx];
+            }
+        }
+#endif
     }
 }
 
@@ -47,3 +59,18 @@ extern "C" void cuda_element_inverse_one_float(float * x, unsigned long size, un
 
     CUDA_ERROR();
 }
+
+#ifdef HONEI_CUDA_DOUBLE
+extern "C" void cuda_element_inverse_one_double(double * x, unsigned long size, unsigned long blocksize)
+{
+    dim3 grid;
+    dim3 block;
+    grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
+    grid.y = grid.x;
+    double * x_gpu((double *)x);
+
+    honei::cuda::element_inverse_gpu<<<grid, block>>>(x_gpu, size);
+
+    CUDA_ERROR();
+}
+#endif

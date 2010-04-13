@@ -53,6 +53,32 @@ namespace
                 fine.unlock(lm_write_only);
             }
     };
+
+    class cudaProlongationDVdouble
+    {
+        private:
+            DenseVector<double> & fine;
+            const DenseVector<double> & coarse;
+            const DenseVector<unsigned long> & mask;
+            unsigned long blocksize;
+        public:
+            cudaProlongationDVdouble(DenseVector<double> & fine, const DenseVector<double> & coarse, const DenseVector<unsigned long> & mask, unsigned long blocksize) :
+                fine(fine),
+                coarse(coarse),
+                mask(mask),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * fine_gpu (fine.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * coarse_gpu (coarse.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                cuda_prolongation_double(fine_gpu, fine.size(), coarse_gpu, coarse.size(), mask.elements(), blocksize);
+                coarse.unlock(lm_read_only);
+                fine.unlock(lm_write_only);
+            }
+    };
 }
 
 DenseVector<float> & Prolongation<tags::GPU::CUDA>::value(DenseVector<float> & fine,
@@ -75,3 +101,26 @@ DenseVector<float> & Prolongation<tags::GPU::CUDA>::value(DenseVector<float> & f
 
     return fine;
 }
+
+#ifdef HONEI_CUDA_DOUBLE
+DenseVector<double> & Prolongation<tags::GPU::CUDA>::value(DenseVector<double> & fine,
+        const DenseVector<double> & coarse, const DenseVector<unsigned long> & mask)
+{
+    CONTEXT("When prolongating from coarse to fine (CUDA):");
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::prolongation_double", 64ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaProlongationDVdouble task(fine, coarse, mask, blocksize);
+        task();
+    }
+    else
+    {
+        cudaProlongationDVdouble task(fine, coarse, mask, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
+
+    return fine;
+}
+#endif

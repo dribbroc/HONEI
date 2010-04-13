@@ -48,6 +48,26 @@ namespace
             }
     };
 
+    class cudaElementInverseDVdouble
+    {
+        private:
+            DenseVectorContinuousBase<double> & a;
+            unsigned long blocksize;
+        public:
+            cudaElementInverseDVdouble(DenseVectorContinuousBase<double> & a, unsigned long blocksize) :
+                a(a),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                cuda_element_inverse_one_double(a_gpu, a.size(), blocksize);
+                a.unlock(lm_read_and_write);
+            }
+    };
+
     class cudaElementInverseDMfloat
     {
         private:
@@ -88,6 +108,28 @@ DenseVectorContinuousBase<float> & ElementInverse<tags::GPU::CUDA>::value(DenseV
 
     return x;
 }
+
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorContinuousBase<double> & ElementInverse<tags::GPU::CUDA>::value(DenseVectorContinuousBase<double> & x)
+{
+    CONTEXT("When inverting DenseVectorContinuousBase<double> (CUDA):");
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::element_inverse_one_double", 128ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaElementInverseDVdouble task(x, blocksize);
+        task();
+    }
+    else
+    {
+        cudaElementInverseDVdouble task(x, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
+
+    return x;
+}
+#endif
 
 DenseMatrix<float> & ElementInverse<tags::GPU::CUDA>::value(DenseMatrix<float> & x)
 {

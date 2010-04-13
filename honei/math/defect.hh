@@ -246,6 +246,9 @@
                 static DenseVector<float> value(const DenseVectorContinuousBase<float> & right_hand_side,
                         const BandedMatrixQ1<float> & system, const DenseVectorContinuousBase<float> & x);
 
+                static DenseVector<double> value(const DenseVectorContinuousBase<double> & right_hand_side,
+                        const BandedMatrixQ1<double> & system, const DenseVectorContinuousBase<double> & x);
+
                 static DenseVector<float> value(const DenseVectorContinuousBase<float> & right_hand_side,
                         const SparseMatrixELL<float> & system, const DenseVectorContinuousBase<float> & x);
 

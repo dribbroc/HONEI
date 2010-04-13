@@ -53,6 +53,32 @@ namespace
                 coarse.unlock(lm_write_only);
             }
     };
+
+    class cudaRestrictionDVdouble
+    {
+        private:
+            DenseVector<double> & coarse;
+            const DenseVector<double> & fine;
+            const DenseVector<unsigned long> & mask;
+            unsigned long blocksize;
+        public:
+            cudaRestrictionDVdouble(DenseVector<double> & coarse, const DenseVector<double> & fine, const DenseVector<unsigned long> & mask, unsigned long blocksize) :
+                coarse(coarse),
+                fine(fine),
+                mask(mask),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * coarse_gpu (coarse.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * fine_gpu (fine.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                cuda_restriction_double(coarse_gpu, coarse.size(), fine_gpu, fine.size(), mask.elements(), blocksize);
+                fine.unlock(lm_read_only);
+                coarse.unlock(lm_write_only);
+            }
+    };
 }
 
 DenseVector<float> & Restriction<tags::GPU::CUDA>::value(DenseVector<float> & coarse,
@@ -75,3 +101,26 @@ DenseVector<float> & Restriction<tags::GPU::CUDA>::value(DenseVector<float> & co
 
     return coarse;
 }
+
+#ifdef HONEI_CUDA_DOUBLE
+DenseVector<double> & Restriction<tags::GPU::CUDA>::value(DenseVector<double> & coarse,
+        const DenseVector<double> & fine, const DenseVector<unsigned long> & mask)
+{
+    CONTEXT("When restricting from fine to coarse (CUDA):");
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::restriction_double", 64ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaRestrictionDVdouble task(coarse, fine, mask, blocksize);
+        task();
+    }
+    else
+    {
+        cudaRestrictionDVdouble task(coarse, fine, mask, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
+
+    return coarse;
+}
+#endif

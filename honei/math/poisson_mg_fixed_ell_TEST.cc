@@ -225,10 +225,12 @@ class PoissonTestMGSparseELL:
             //std::cout<< result <<endl;
         }
 };
-PoissonTestMGSparseELL<tags::CPU, double> poisson_test_mg_banded_double("double", 33ul, "1089.bin");
-/*#ifdef HONEI_SSE
-PoissonTestMGSparseELLDouble<tags::CPU::SSE, double> sse_poisson_test_mg_banded_double("double");
+//PoissonTestMGSparseELL<tags::CPU, double> poisson_test_mg_banded_double("double", 33ul, "1089.bin");
+#ifdef HONEI_SSE
+//PoissonTestMGSparseELL<tags::CPU::SSE, double> sse_poisson_test_mg_banded_double("double", 33ul, "1089.bin");
 #endif
-#ifdef HONEI_CELL
-PoissonTestMGSparseELLDouble<tags::Cell, double> cell_poisson_test_mg_banded_double("double");
-#endif*/
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
+PoissonTestMGSparseELL<tags::GPU::CUDA, double> cuda_poisson_test_mg_banded_double("double", 33ul, "1089.bin");
+#endif
+#endif

@@ -91,6 +91,9 @@ DenseVectorElementInverseTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_ve
 #endif
 #ifdef HONEI_CUDA
 DenseVectorElementInverseTest<tags::GPU::CUDA, float> cuda_dense_vector_element_inverse_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorElementInverseTest<tags::GPU::CUDA, double> cuda_dense_vector_element_inverse_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CELL
 DenseVectorElementInverseTest<tags::Cell, float> cell_dense_vector_element_inverse_test_float("Cell float");
@@ -160,6 +163,9 @@ DenseVectorElementInverseQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_den
 #endif
 #ifdef HONEI_CUDA
 DenseVectorElementInverseQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_element_inverse_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorElementInverseQuickTest<tags::GPU::CUDA, double> cuda_dense_vector_element_inverse_quick_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CELL
 DenseVectorElementInverseQuickTest<tags::Cell, float> cell_dense_vector_element_inverse_quick_test_float("Cell float");
@@ -235,6 +241,9 @@ DenseVectorRangeElementInverseTest<tags::CPU::MultiCore::SSE, double> sse_mc_den
 #endif
 #ifdef HONEI_CUDA
 DenseVectorRangeElementInverseTest<tags::GPU::CUDA, float> cuda_dense_vector_range_element_inverse_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorRangeElementInverseTest<tags::GPU::CUDA, double> cuda_dense_vector_range_element_inverse_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CELL
 DenseVectorRangeElementInverseTest<tags::Cell, float> cell_dense_vector_range_element_inverse_test_float("Cell float");
@@ -308,6 +317,9 @@ DenseVectorRangeElementInverseQuickTest<tags::CPU::MultiCore::SSE, double> sse_m
 #endif
 #ifdef HONEI_CUDA
 DenseVectorRangeElementInverseQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_range_element_inverse_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorRangeElementInverseQuickTest<tags::GPU::CUDA, double> cuda_dense_vector_range_element_inverse_quick_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CELL
 DenseVectorRangeElementInverseQuickTest<tags::Cell, float> cell_dense_vector_range_element_inverse_quick_test_float("Cell float");

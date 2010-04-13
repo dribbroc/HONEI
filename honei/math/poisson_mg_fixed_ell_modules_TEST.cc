@@ -97,7 +97,7 @@ class PoissonTestMGModulesSparseELL:
                 sparse_result_3.lock(lm_read_only);
                 sparse_result_3.unlock(lm_read_only);
                 for(unsigned long j(0) ; j < banded_result_3.size() ; ++j)
-                    TEST_CHECK_EQUAL_WITHIN_EPS(sparse_result_3[j], banded_result_3[j], std::numeric_limits<DT1_>::epsilon() * DT1_(1e2));
+                    TEST_CHECK_EQUAL_WITHIN_EPS(sparse_result_3[j], banded_result_3[j], std::numeric_limits<DT1_>::epsilon() * DT1_(1e3));
                 //----------------------------------------------------------------------
 
                 DenseVector<DT1_> banded_result_2(size, DT1_(0));
@@ -125,4 +125,7 @@ PoissonTestMGModulesSparseELL<tags::CPU::SSE, double> poisson_test_mg_banded_dou
 #endif
 #ifdef HONEI_CUDA
 PoissonTestMGModulesSparseELL<tags::GPU::CUDA, float> poisson_test_mg_banded_float_cuda("CUDA float");
+#ifdef HONEI_CUDA_DOUBLE
+PoissonTestMGModulesSparseELL<tags::GPU::CUDA, double> poisson_test_mg_banded_double_cuda("CUDA double");
+#endif
 #endif

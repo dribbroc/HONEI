@@ -166,6 +166,9 @@ namespace honei
     {
         static DenseVector<float> & value(DenseVector<float> & coarse,
                 const DenseVector<float> & fine, const DenseVector<unsigned long> & mask);
+
+        static DenseVector<double> & value(DenseVector<double> & coarse,
+                const DenseVector<double> & fine, const DenseVector<unsigned long> & mask);
     };
 }
 #endif

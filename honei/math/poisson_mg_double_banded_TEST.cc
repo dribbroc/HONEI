@@ -453,6 +453,11 @@ PoissonTestMGBandedQ1Double<tags::CPU, double> poisson_test_mg_banded_double("do
 #ifdef HONEI_SSE
 PoissonTestMGBandedQ1Double<tags::CPU::SSE, double> sse_poisson_test_mg_banded_double("double");
 #endif
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
+PoissonTestMGBandedQ1Double<tags::GPU::CUDA, double> cuda_poisson_test_mg_banded_double("double");
+#endif
+#endif
 #ifdef HONEI_CELL
 PoissonTestMGBandedQ1Double<tags::Cell, double> cell_poisson_test_mg_banded_double("double");
 #endif

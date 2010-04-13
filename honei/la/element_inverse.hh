@@ -252,6 +252,8 @@ namespace honei
          */
         static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & x);
 
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & x);
+
         static DenseMatrix<float> & value(DenseMatrix<float> & x);
 
         /// \}

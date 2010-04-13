@@ -30,6 +30,11 @@ extern "C"
             void * ul, void * ud, void *uu, void * x, void * y,
             unsigned long size, unsigned long blocksize, unsigned long m);
 
+    void cuda_defect_q1_double(void * rhs, void * ll, void * ld, void * lu,
+            void * dl, void * dd, void *du,
+            void * ul, void * ud, void *uu, void * x, void * y,
+            unsigned long size, unsigned long blocksize, unsigned long m);
+
     void cuda_defect_smell_dv_float(void * rhs, void * result, void * Aj, void * Ax, void * b,
             unsigned long rows, unsigned long columns, unsigned long num_cols_per_row, unsigned long stride,
             unsigned long blocksize);
@@ -47,6 +52,7 @@ extern "C"
             unsigned long gridsize);
 
     void cuda_element_inverse_one_float(void * x, unsigned long size, unsigned long blocksize);
+    void cuda_element_inverse_one_double(void * x, unsigned long size, unsigned long blocksize);
 
     void cuda_element_product_three_float(void * r, void * a, const void * b, unsigned long size, unsigned long blocksize);
     void cuda_element_product_three_double(void * r, void * a, const void * b, unsigned long size, unsigned long blocksize);
@@ -78,7 +84,13 @@ extern "C"
     void cuda_prolongation_float(void * fine, unsigned long size_fine, void * coarse, unsigned long size_coarse,
             unsigned long * macroBorderMask, unsigned long blocksize);
 
+    void cuda_prolongation_double(void * fine, unsigned long size_fine, void * coarse, unsigned long size_coarse,
+            unsigned long * macroBorderMask, unsigned long blocksize);
+
     void cuda_restriction_float(void * coarse, unsigned long size_coarse, void * fine, unsigned long size_fine,
+            unsigned long * macroBorderMask, unsigned long blocksize);
+
+    void cuda_restriction_double(void * coarse, unsigned long size_coarse, void * fine, unsigned long size_fine,
             unsigned long * macroBorderMask, unsigned long blocksize);
 
     void cuda_scaled_sum_three_float_s(void * x, void * y, void * z, float s, unsigned long size, unsigned long blocksize);

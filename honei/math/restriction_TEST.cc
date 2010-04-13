@@ -77,7 +77,9 @@ class RestrictionTest:
             }
         }
 };
-RestrictionTest<tags::CPU, float> restriction_test("float");
 #ifdef HONEI_CUDA
-RestrictionTest<tags::GPU::CUDA, float> cuda_restriction_test("float");
+RestrictionTest<tags::GPU::CUDA, float> cuda_restriction_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+RestrictionTest<tags::GPU::CUDA, double> cuda_restriction_test_double("double");
+#endif
 #endif

@@ -50,7 +50,7 @@ class ProlongationTest:
                 //unsigned long width_coarse = (unsigned long)sqrt((double)N_coarse);
 
                 DenseVector<DT1_> fine(N_fine, DT1_(4711));
-                DenseVector<DT1_> fine_ref(N_fine, DT1_(4711));
+                DenseVector<DT1_> fine_ref(N_fine, DT1_(42));
                 DenseVector<DT1_> coarse(N_coarse, DT1_(1));
                 /*for (unsigned long i(0) ; i < coarse.size() ; ++i)
                 {
@@ -59,13 +59,15 @@ class ProlongationTest:
                 DenseVector<unsigned long> mask(8);
                 for(unsigned long i(0) ; i < 8 ; ++i)
                 {
-                    mask[i] = 2;
+                    mask[i] = 2ul;
                 }
 
                 Prolongation<Tag_>::value(fine, coarse, mask);
                 Prolongation<tags::CPU>::value(fine_ref, coarse, mask);
                 fine.lock(lm_read_only);
                 fine_ref.lock(lm_read_only);
+                fine.unlock(lm_read_only);
+                fine_ref.unlock(lm_read_only);
                 std::cout << "At level: " << level + 1 << std::endl;
                 for(unsigned long i(0) ; i < fine.size() ; ++i)
                 {
@@ -73,13 +75,12 @@ class ProlongationTest:
                         std::cout << "Not matching: " << i << std::endl;
                 }
                 TEST_CHECK_EQUAL(fine, fine_ref);
-
-                fine.unlock(lm_read_only);
-                fine_ref.unlock(lm_read_only);
             }
         }
 };
-ProlongationTest<tags::CPU, float> prolongate_test("float");
 #ifdef HONEI_CUDA
-ProlongationTest<tags::GPU::CUDA, float> cuda_prolongate_test("float");
+ProlongationTest<tags::GPU::CUDA, float> cuda_prolongate_test_float("float");
+#ifdef HONEI_CUDA
+ProlongationTest<tags::GPU::CUDA, double> cuda_prolongate_test_double("double");
+#endif
 #endif
