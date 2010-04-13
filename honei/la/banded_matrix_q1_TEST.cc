@@ -73,10 +73,8 @@ class BandedMatrixQ1QuickTest :
             SparseMatrix<DataType_> sm(bm1);
             for (unsigned long row(0) ; row < sm.rows() ; ++row)
             {
-                for (typename SparseVector<DataType_>::NonZeroElementIterator i(sm[row].begin_non_zero_elements()) ; i < sm[row].end_non_zero_elements() ; ++i)
-                {
-                    TEST_CHECK_EQUAL(*i, bm1(row, i.index()));
-                }
+                for (unsigned long column(0) ; column < sm.columns() ; ++column)
+                    TEST_CHECK_EQUAL(sm(row, column), bm1(row, column));
             }
 
 

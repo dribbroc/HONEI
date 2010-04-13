@@ -170,13 +170,69 @@ namespace honei
 
                 _row_vectors[src.rows()].reset(new SparseVector<DataType_>(src.columns(), 1));
 
-                for (unsigned long row(0) ; row < src.rows() ; ++row)
+                /*for (unsigned long row(0) ; row < src.rows() ; ++row)
                 {
                     for (unsigned long column(0) ; column < src.columns() ; ++column)
                     {
                         if (src(row, column) != DataType_(0))
                             (*this)(row, column) = src(row, column);
                     }
+                }*/
+                long root(src.root());
+
+                DenseVector<DataType_> band_ll(src.band(LL));
+                for (unsigned long i(root + 1) ; i < band_ll.size() ; ++i)
+                {
+                    if (band_ll.elements()[i] != DataType_(0))
+                        (*this)(i, -root - 1 + i) = band_ll.elements()[i];
+                }
+                DenseVector<DataType_> band_ld(src.band(LD));
+                for (unsigned long i(root) ; i < band_ld.size() ; ++i)
+                {
+                    if (band_ld.elements()[i] != DataType_(0))
+                        (*this)(i, -root + i) = band_ld.elements()[i];
+                }
+                DenseVector<DataType_> band_lu(src.band(LU));
+                for (unsigned long i(root -1) ; i < band_lu.size() ; ++i)
+                {
+                    if (band_lu.elements()[i] != DataType_(0))
+                        (*this)(i, -root + 1 + i) = band_lu.elements()[i];
+                }
+                DenseVector<DataType_> band_dl(src.band(DL));
+                for (unsigned long i(1) ; i < band_dl.size() ; ++i)
+                {
+                    if (band_dl.elements()[i] != DataType_(0))
+                        (*this)(i, - 1 + i) = band_dl.elements()[i];
+                }
+                DenseVector<DataType_> band_dd(src.band(DD));
+                for (unsigned long i(0) ; i < band_dd.size() ; ++i)
+                {
+                    if (band_dd.elements()[i] != DataType_(0))
+                        (*this)(i, i) = band_dd.elements()[i];
+                }
+                DenseVector<DataType_> band_du(src.band(DU));
+                for (unsigned long i(0) ; i < band_du.size() - 1; ++i)
+                {
+                    if (band_du.elements()[i] != DataType_(0))
+                        (*this)(i, 1 + i) = band_du.elements()[i];
+                }
+                DenseVector<DataType_> band_ul(src.band(UL));
+                for (unsigned long i(0) ; i < band_ul.size() - root + 1; ++i)
+                {
+                    if (band_ul.elements()[i] != DataType_(0))
+                        (*this)(i, root - 1 + i) = band_ul.elements()[i];
+                }
+                DenseVector<DataType_> band_ud(src.band(UD));
+                for (unsigned long i(0) ; i < band_ud.size() - root ; ++i)
+                {
+                    if (band_ud.elements()[i] != DataType_(0))
+                        (*this)(i, root + i) = band_ud.elements()[i];
+                }
+                DenseVector<DataType_> band_uu(src.band(UU));
+                for (unsigned long i(0) ; i < band_uu.size() - root + -1; ++i)
+                {
+                    if (band_uu.elements()[i] != DataType_(0))
+                        (*this)(i, root + 1 + i) = band_uu.elements()[i];
                 }
             }
 
