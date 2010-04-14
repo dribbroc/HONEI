@@ -219,17 +219,18 @@ class PoissonTestMGSparseELL:
             DenseVector<DT1_> result(n, DT1_(0));
             DenseVector<DT1_> rhs(info.rhs[info.max_level]);
             SparseMatrixELL<DT1_> system(info.a[info.max_level]);
-            Multigrid<Tag_, Tag_, JAC, CYCLE::V, FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<double>::epsilon(), info);
+            Multigrid<Tag_, Tag_, JAC, CYCLE::V, FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info);
             result.lock(lm_read_only);
             result.unlock(lm_read_only);
             //std::cout<< result <<endl;
         }
 };
-//PoissonTestMGSparseELL<tags::CPU, double> poisson_test_mg_banded_double("double", 33ul, "1089.bin");
+PoissonTestMGSparseELL<tags::CPU, double> poisson_test_mg_banded_double("double", 33ul, "1089.bin");
 #ifdef HONEI_SSE
-//PoissonTestMGSparseELL<tags::CPU::SSE, double> sse_poisson_test_mg_banded_double("double", 33ul, "1089.bin");
+PoissonTestMGSparseELL<tags::CPU::SSE, double> sse_poisson_test_mg_banded_double("double", 33ul, "1089.bin");
 #endif
 #ifdef HONEI_CUDA
+PoissonTestMGSparseELL<tags::GPU::CUDA, float> cuda_poisson_test_mg_banded_float("float", 33ul, "1089.bin");
 #ifdef HONEI_CUDA_DOUBLE
 PoissonTestMGSparseELL<tags::GPU::CUDA, double> cuda_poisson_test_mg_banded_double("double", 33ul, "1089.bin");
 #endif

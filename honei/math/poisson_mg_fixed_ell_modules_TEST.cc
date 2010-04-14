@@ -118,7 +118,6 @@ class PoissonTestMGModulesSparseELL:
 };
 PoissonTestMGModulesSparseELL<tags::CPU, float> poisson_test_mg_banded_float("float");
 PoissonTestMGModulesSparseELL<tags::CPU, double> poisson_test_mg_banded_double("double");
-
 #ifdef HONEI_SSE
 PoissonTestMGModulesSparseELL<tags::CPU::SSE, float> poisson_test_mg_banded_float_sse("SSE float");
 PoissonTestMGModulesSparseELL<tags::CPU::SSE, double> poisson_test_mg_banded_double_sse("SSE double");
