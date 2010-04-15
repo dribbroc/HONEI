@@ -321,7 +321,7 @@ namespace honei
                     if (src_i->second.writer != tags::tv_none)
                         _backends[src_i->second.writer]->download(src_id, src_address, bytes);
                     src_i->second.writer = tags::tv_none;
-                    TypeTraits<double>::convert((float*) dest_address, (double*)src_address, bytes/sizeof(double));
+                    TypeTraits<double>::convert((float*)dest_address, (double*)src_address, bytes/sizeof(double));
                     dest_i->second.readers.clear();
                     dest_i->second.writer = memory;
                     dest_i->second.readers.insert(memory);

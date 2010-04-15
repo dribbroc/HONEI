@@ -58,7 +58,7 @@ class PoissonTestMGSparseELLMixed:
         {
             unsigned long _root_n(_size);
             unsigned long n(_root_n * _root_n);
-            MGInfo<DT1_, SparseMatrixELL<DT1_> > info;
+            MGInfo<float, SparseMatrixELL<float> > info;
             //configuration constants: /TODO: set/allocate!!!
             info.is_smoother = false;
             DenseVector<unsigned long> mask(8);
@@ -146,19 +146,19 @@ class PoissonTestMGSparseELLMixed:
                 if(i == 0)
                     size = 9;
 
-                DenseVector<DT1_> dummy_band(size, DT1_(0));
-                BandedMatrixQ1<DT1_> ac_a(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
-                SparseMatrix<DT1_> sm(ac_a);
-                SparseMatrixELL<DT1_> ac_s(sm);
+                DenseVector<float> dummy_band(size, float(0));
+                BandedMatrixQ1<float> ac_a(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
+                SparseMatrix<float> sm(ac_a);
+                SparseMatrixELL<float> ac_s(sm);
                 info.a.push_back(ac_s);
                 // iteration vectors
-                DenseVector<DT1_> ac_c(size, DT1_(0));
+                DenseVector<float> ac_c(size, float(0));
                 info.c.push_back(ac_c);
-                DenseVector<DT1_> ac_d(size, DT1_(0));
+                DenseVector<float> ac_d(size, float(0));
                 info.d.push_back(ac_d);
-                DenseVector<DT1_> ac_rhs(size, DT1_(0));
+                DenseVector<float> ac_rhs(size, float(0));
                 info.rhs.push_back(ac_rhs);
-                DenseVector<DT1_> ac_x(size, DT1_(0));
+                DenseVector<float> ac_x(size, float(0));
                 info.x.push_back(ac_x);
 
                 info.diags_inverted.push_back(dummy_band.copy());
@@ -170,14 +170,14 @@ class PoissonTestMGSparseELLMixed:
                 unsigned long size = (unsigned long)(((unsigned long)pow((DT1_)2, (DT1_)i) + 1) * ((unsigned long)pow((DT1_)2, (DT1_)i) + 1));
                 std::cout << size << std::endl;
                 // iteration vectors
-                DenseVector<DT1_> ac_c(size, DT1_(0));
+                DenseVector<float> ac_c(size, float(0));
                 info.c.push_back(ac_c);
-                DenseVector<DT1_> ac_d(size, DT1_(0));
+                DenseVector<float> ac_d(size, float(0));
                 info.d.push_back(ac_d);
-                DenseVector<DT1_> ac_x(size, DT1_(0));
+                DenseVector<float> ac_x(size, float(0));
                 info.x.push_back(ac_x);
 
-                DenseVector<DT1_> dummy_band(size, DT1_(0));
+                DenseVector<float> dummy_band(size, float(0));
                 //info.diags_inverted.push_back(dummy_band.copy());
             }
 
@@ -185,9 +185,9 @@ class PoissonTestMGSparseELLMixed:
             for(unsigned long i(info.min_level); i <= info.max_level; ++i)
             {
                 unsigned long N = (unsigned long)(((unsigned long)pow((DT1_)2, (DT1_)i) + 1) * ((unsigned long)pow((DT1_)2, (DT1_)i) + 1));
-                DenseVector<DT1_> band(N);
-                BandedMatrixQ1<DT1_> current_matrix(N, band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy());
-                DenseVector<DT1_> current_rhs(N);
+                DenseVector<float> band(N);
+                BandedMatrixQ1<float> current_matrix(N, band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy());
+                DenseVector<float> current_rhs(N);
 
                 FillMatrix<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(current_matrix);
 
@@ -195,11 +195,11 @@ class PoissonTestMGSparseELLMixed:
 
                 info.rhs.push_back(current_rhs);
 
-                SparseMatrix<DT1_> sm(current_matrix);
-                SparseMatrixELL<DT1_> smell(sm);
+                SparseMatrix<float> sm(current_matrix);
+                SparseMatrixELL<float> smell(sm);
                 info.a.push_back(smell);
 
-                DenseVector<DT1_> scaled_diag_inverted(current_matrix.band(DD).copy());
+                DenseVector<float> scaled_diag_inverted(current_matrix.band(DD).copy());
                 ElementInverse<OTag_>::value(scaled_diag_inverted);
                 Scale<OTag_>::value(scaled_diag_inverted, 0.7);
 
@@ -212,14 +212,19 @@ class PoissonTestMGSparseELLMixed:
                 if(size==0)
                     size = 9;
 
-                DenseVector<DT1_> null(size , DT1_(0));
+                DenseVector<float> null(size , float(0));
                 info.x[i] = null.copy();
             }
 
+            DenseVector<DT1_> null(info.rhs[info.max_level].size() , DT1_(0));
+            BandedMatrixQ1<DT1_> A(info.rhs[info.max_level].size() , null.copy(), null.copy() , null.copy(), null.copy() , null.copy(), null.copy(), null.copy(), null.copy(), null.copy());
+            FillMatrix<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(A);
+            SparseMatrix<DT1_> sm(A);
+            SparseMatrixELL<DT1_> system(sm);
+            DenseVector<DT1_> RHS( info.rhs[info.max_level].size(), DT1_(0.));
+            FillVector<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(RHS);
             DenseVector<DT1_> result(n, DT1_(0));
-            DenseVector<DT1_> rhs(info.rhs[info.max_level]);
-            SparseMatrixELL<DT1_> system(info.a[info.max_level]);
-            Multigrid<ITag_, OTag_, JAC, CYCLE::V, MIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info);
+            Multigrid<ITag_, OTag_, JAC, CYCLE::V, MIXED >::value(system, RHS, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info);
             result.lock(lm_read_only);
             result.unlock(lm_read_only);
             //std::cout<< result <<endl;
@@ -230,7 +235,11 @@ PoissonTestMGSparseELLMixed<tags::CPU, tags::CPU, double> poisson_test_mg_banded
 PoissonTestMGSparseELLMixed<tags::CPU::SSE, tags::CPU::SSE, double> sse_poisson_test_mg_banded_double("double", 33ul, "1089.bin");
 #endif
 #ifdef HONEI_CUDA
-PoissonTestMGSparseELLMixed<tags::GPU::CUDA, tags::CPU::SSE, double> cuda_poisson_test_mg_banded_float("float", 33ul, "1089.bin");
+#ifdef HONEI_SSE
+PoissonTestMGSparseELLMixed<tags::GPU::CUDA, tags::CPU::SSE, double> cuda_poisson_test_mg_banded_double_2("double", 33ul, "1089.bin");
+#endif
+#endif
+#ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
 PoissonTestMGSparseELLMixed<tags::GPU::CUDA, tags::GPU::CUDA, double> cuda_poisson_test_mg_banded_double("double", 33ul, "1089.bin");
 #endif

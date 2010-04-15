@@ -96,7 +96,7 @@ extern "C" void cuda_convert_float_double(void * src, void * dest, unsigned long
 
 extern "C" void cuda_convert_double_float(void * src, void * dest, unsigned long bytes)
 {
-    unsigned long size = bytes / sizeof(float);
+    unsigned long size = bytes / sizeof(double);
     dim3 grid;
     dim3 block;
     block.x = 128;

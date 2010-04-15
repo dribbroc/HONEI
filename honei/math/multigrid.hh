@@ -1646,7 +1646,7 @@ endCycleLoop:
             {
                 CONTEXT("When solving banded q1 linear system with MULTIGRID: ");
 #ifdef SOLVER_VERBOSE_L2
-                std::cout << "Calling MG solver, presmoothing=JACOBI, postsmoothing=JACOBI, coarse-grid solver=CG, datalayout=Q1, precision=MIXED" << std::endl;
+                std::cout << "Calling MG solver, presmoothing=JACOBI, postsmoothing=JACOBI, coarse-grid solver=CG, datalayout=ELL, precision=MIXED" << std::endl;
 #endif
 #ifdef SOLVER_BENCHMARK
                 TimeStamp ab, ae;
@@ -1682,7 +1682,7 @@ endCycleLoop:
                   initial_guess[i] = right_hand_side[i];
                   }*/
 
-                convert<Tag_>(info.x[info.max_level], initial_guess);
+                convert<OuterTag_>(info.x[info.max_level], initial_guess);
 
                 unsigned long inner_iterations(0);
                 unsigned long outer_iterations(0);
@@ -1710,7 +1710,7 @@ endCycleLoop:
                     ob.take();
 #endif
                     // set defect as RHS to inner solver
-                    convert<Tag_>(info.rhs[info.max_level], outer_defect);
+                    convert<OuterTag_>(info.rhs[info.max_level], outer_defect);
 
                     // run inner solver as long as neccessary
 
@@ -1729,14 +1729,17 @@ endCycleLoop:
 
                     // get "solution" and update outer solution
 
-                    result.lock(lm_read_and_write);
+                    /*result.lock(lm_read_and_write);
                     info.x[info.max_level].lock(lm_read_only);
                     for (unsigned long i(0); i < right_hand_side.size(); ++i)
                     {
                         result[i] += scale_factor * (OuterPrec_)(info.x[info.max_level])[i];
                     }
                     result.unlock(lm_read_and_write);
-                    info.x[info.max_level].unlock(lm_read_only);
+                    info.x[info.max_level].unlock(lm_read_only);*/
+                    DenseVector<OuterPrec_> temp42(result.size());
+                    convert<OuterTag_>(temp42, info.x[info.max_level]);
+                    ScaledSum<OuterTag_>::value(result, temp42, scale_factor);
 
 
                     // calculate defect
