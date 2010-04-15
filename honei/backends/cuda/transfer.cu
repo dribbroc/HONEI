@@ -18,6 +18,33 @@
  */
 
 #include <honei/backends/cuda/cuda_util.hh>
+#include <iostream>
+
+namespace honei
+{
+    namespace cuda
+    {
+#ifdef HONEI_CUDA_DOUBLE
+        __global__ void convert_float_double_gpu(float * src, double * dest, unsigned long size)
+        {
+            unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+            if (idx < size)
+            {
+                dest[idx] = src[idx];
+            }
+        }
+
+        __global__ void convert_double_float_gpu(double * src, float * dest, unsigned long size)
+        {
+            unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
+            if (idx < size)
+            {
+                dest[idx] = src[idx];
+            }
+        }
+#endif
+    }
+}
 
 extern "C" void * cuda_malloc(unsigned long bytes)
 {
@@ -50,6 +77,50 @@ extern "C" void cuda_copy(void * src, void * dest, unsigned long bytes)
     cudaMemcpy(dest, src, bytes, cudaMemcpyDeviceToDevice);
     CUDA_ERROR();
 }
+
+#ifdef HONEI_CUDA_DOUBLE
+extern "C" void cuda_convert_float_double(void * src, void * dest, unsigned long bytes)
+{
+    unsigned long size = bytes / sizeof(float);
+    dim3 grid;
+    dim3 block;
+    block.x = 128;
+    grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
+    grid.y = grid.x;
+    float * src_gpu((float *)src);
+    double * dest_gpu((double *)dest);
+
+    honei::cuda::convert_float_double_gpu<<<grid, block>>>(src_gpu, dest_gpu, size);
+    CUDA_ERROR();
+}
+
+extern "C" void cuda_convert_double_float(void * src, void * dest, unsigned long bytes)
+{
+    unsigned long size = bytes / sizeof(float);
+    dim3 grid;
+    dim3 block;
+    block.x = 128;
+    grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
+    grid.y = grid.x;
+    double * src_gpu((double *)src);
+    float * dest_gpu((float *)dest);
+
+    honei::cuda::convert_double_float_gpu<<<grid, block>>>(src_gpu, dest_gpu, size);
+    CUDA_ERROR();
+}
+#else
+extern "C" void cuda_convert_float_double(void * src, void * dest, unsigned long bytes)
+{
+    std::cout<<"cuda convert not available without --enable-cuda_double!";
+    exit(1);
+}
+
+extern "C" void cuda_convert_double_float(void * src, void * dest, unsigned long bytes)
+{
+    std::cout<<"cuda convert not available without --enable-cuda_double!";
+    exit(1);
+}
+#endif
 
 extern "C" void cuda_fill_zero(void * dest, unsigned long bytes)
 {

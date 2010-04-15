@@ -124,6 +124,46 @@ namespace honei
                 }
         };
 
+        class ConvertFloatDoubleTask
+        {
+            private:
+                void * src;
+                void * dest;
+                unsigned long bytes;
+            public:
+                ConvertFloatDoubleTask(void * s, void * d, unsigned long b) :
+                    src(s),
+                    dest(d),
+                    bytes(b)
+                {
+                }
+
+                void operator() ()
+                {
+                    cuda_convert_float_double(src, dest, bytes);
+                }
+        };
+
+        class ConvertDoubleFloatTask
+        {
+            private:
+                void * src;
+                void * dest;
+                unsigned long bytes;
+            public:
+                ConvertDoubleFloatTask(void * s, void * d, unsigned long b) :
+                    src(s),
+                    dest(d),
+                    bytes(b)
+                {
+                }
+
+                void operator() ()
+                {
+                    cuda_convert_double_float(src, dest, bytes);
+                }
+        };
+
         class FillTask
         {
             private:
@@ -347,6 +387,78 @@ namespace honei
             }
         }
 
+        void convert_float_double(void * src_id, void * src_address, void * dest_id,
+                void * dest_address, unsigned long bytes)
+        {
+            std::map<void *, void *>::iterator src_i(_address_map.find(src_address));
+            std::map<void *, void *>::iterator dest_i(_address_map.find(dest_address));
+            if (src_i == _address_map.end() || dest_i == _address_map.end())
+            {
+                throw InternalError("MemoryBackend<tags::GPU::CUDA>::copy address not found!");
+            }
+            else
+            {
+                std::map<void *, int>::iterator j_source(_device_map.find(src_address));
+                std::map<void *, int>::iterator j_dest(_device_map.find(dest_address));
+                if (j_source->second != j_dest->second)
+                    throw InternalError("MemoryBackend<tags::GPU::CUDA>::copy src and dest on different devices!");
+
+                bool idle(cuda::GPUPool::instance()->idle());
+                //running in slave thread
+                if (j_source->second == cuda_get_device() && ! idle)
+                {
+                    cuda_convert_float_double(src_i->second, dest_i->second, bytes);
+                }
+                else
+                {
+                    if (! idle)
+                        throw InternalError("MemoryBackend<tags::GPU::CUDA>::copy Data is located on another device!");
+                    //running in master thread -> switch to slave thread
+                    else
+                    {
+                        cuda::ConvertFloatDoubleTask ct(src_i->second, dest_i->second, bytes);
+                        cuda::GPUPool::instance()->enqueue(ct, j_source->second)->wait();
+                    }
+                }
+            }
+        }
+
+        void convert_double_float(void * src_id, void * src_address, void * dest_id,
+                void * dest_address, unsigned long bytes)
+        {
+            std::map<void *, void *>::iterator src_i(_address_map.find(src_address));
+            std::map<void *, void *>::iterator dest_i(_address_map.find(dest_address));
+            if (src_i == _address_map.end() || dest_i == _address_map.end())
+            {
+                throw InternalError("MemoryBackend<tags::GPU::CUDA>::copy address not found!");
+            }
+            else
+            {
+                std::map<void *, int>::iterator j_source(_device_map.find(src_address));
+                std::map<void *, int>::iterator j_dest(_device_map.find(dest_address));
+                if (j_source->second != j_dest->second)
+                    throw InternalError("MemoryBackend<tags::GPU::CUDA>::copy src and dest on different devices!");
+
+                bool idle(cuda::GPUPool::instance()->idle());
+                //running in slave thread
+                if (j_source->second == cuda_get_device() && ! idle)
+                {
+                    cuda_convert_double_float(src_i->second, dest_i->second, bytes);
+                }
+                else
+                {
+                    if (! idle)
+                        throw InternalError("MemoryBackend<tags::GPU::CUDA>::copy Data is located on another device!");
+                    //running in master thread -> switch to slave thread
+                    else
+                    {
+                        cuda::ConvertDoubleFloatTask ct(src_i->second, dest_i->second, bytes);
+                        cuda::GPUPool::instance()->enqueue(ct, j_source->second)->wait();
+                    }
+                }
+            }
+        }
+
         void fill(void * memid, void * address, unsigned long bytes, float proto)
         {
             std::map<void *, void *>::iterator i(_address_map.find(address));
@@ -427,6 +539,20 @@ namespace honei
     {
         CONTEXT("When copying data (CUDA):");
         _imp->copy(src_id, src_address, dest_id, dest_address, bytes);
+    }
+
+    void MemoryBackend<tags::GPU::CUDA>::convert_float_double(void * src_id, void * src_address, void * dest_id,
+            void * dest_address, unsigned long bytes)
+    {
+        CONTEXT("When converting data (CUDA):");
+        _imp->convert_float_double(src_id, src_address, dest_id, dest_address, bytes);
+    }
+
+    void MemoryBackend<tags::GPU::CUDA>::convert_double_float(void * src_id, void * src_address, void * dest_id,
+            void * dest_address, unsigned long bytes)
+    {
+        CONTEXT("When converting data (CUDA):");
+        _imp->convert_double_float(src_id, src_address, dest_id, dest_address, bytes);
     }
 
     void MemoryBackend<tags::GPU::CUDA>::fill(void * memid, void * address, unsigned long bytes, float proto)

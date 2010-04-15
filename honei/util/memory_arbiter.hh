@@ -79,6 +79,18 @@ namespace honei
                     void * dest_address, unsigned long bytes);
 
             /**
+             * convert src float to dest double in target memory
+             */
+            void convert_float_double(tags::TagValue memory, void * src_id, void * src_address, void * dest_id,
+                    void * dest_address, unsigned long bytes);
+
+            /**
+             * convert src double to dest float in target memory
+             */
+            void convert_double_float(tags::TagValue memory, void * src_id, void * src_address, void * dest_id,
+                    void * dest_address, unsigned long bytes);
+
+            /**
              * Fill target with protoin target memory
              */
             void fill(tags::TagValue memory, void * memid, void * address, unsigned long bytes, float proto);

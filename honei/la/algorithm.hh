@@ -105,7 +105,7 @@ namespace honei
      *
      * \ingroup grpalgorithm
      */
-    template <typename DataType_> void convert(DenseVector<DataType_> & copy,
+    template <typename Tag_, typename DataType_> void convert(DenseVector<DataType_> & copy,
             const DenseVector<DataType_> & orig)
     {
         CONTEXT("When converting DenseVector to DenseVector:");
@@ -113,22 +113,32 @@ namespace honei
         if (copy.size() != orig.size())
             throw VectorSizeDoesNotMatch(orig.size(), copy.size());
 
-        copy = orig.copy();
+        MemoryArbiter::instance()->copy(Tag_::memory_value, orig.memid(), orig.address(),
+                copy.memid(), copy.address(), orig.size() * sizeof(DataType_));
     }
 
-    template <typename DataType_, typename OrigType_> void convert(DenseVector<DataType_> & copy,
-            const DenseVector<OrigType_> & orig)
+    template <typename Tag_> void convert(DenseVector<double> & copy,
+            const DenseVector<float> & orig)
     {
         CONTEXT("When converting DenseVector to DenseVector:");
 
         if (copy.size() != orig.size())
             throw VectorSizeDoesNotMatch(orig.size(), copy.size());
 
-        copy.lock(lm_write_only);
-        orig.lock(lm_read_only);
-        TypeTraits<OrigType_>::convert(copy.elements(), orig.elements(), orig.size());
-        copy.unlock(lm_write_only);
-        orig.unlock(lm_read_only);
+        MemoryArbiter::instance()->convert_float_double(Tag_::memory_value, orig.memid(), orig.address(),
+                copy.memid(), copy.address(), orig.size() * sizeof(float));
+    }
+
+    template <typename Tag_> void convert(DenseVector<float> & copy,
+            const DenseVector<double> & orig)
+    {
+        CONTEXT("When converting DenseVector to DenseVector:");
+
+        if (copy.size() != orig.size())
+            throw VectorSizeDoesNotMatch(orig.size(), copy.size());
+
+        MemoryArbiter::instance()->convert_double_float(Tag_::memory_value, orig.memid(), orig.address(),
+                copy.memid(), copy.address(), orig.size() * sizeof(double));
     }
 
     template <typename DataType_> void convert(DenseVectorBase<DataType_> & copy,

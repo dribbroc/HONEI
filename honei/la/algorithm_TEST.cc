@@ -233,6 +233,7 @@ class DenseMatrixConvertQuickTest :
         }
 } dense_matrix_convert_quick_test;
 
+template <typename Tag_>
 class DenseVectorConvertTest :
     public BaseTest
 {
@@ -240,14 +241,15 @@ class DenseVectorConvertTest :
         DenseVectorConvertTest() :
             BaseTest("dense_vector_convert_test")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
         {
             for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
             {
-                DenseVector<float> dvf1(size), dvf2(size), dvfr(size);
-                DenseVector<double> dvd1(size), dvd2(size), dvdr(size);
+                DenseVector<float> dvf1(size), dvf2(size, 4711), dvfr(size), dvf3(size);
+                DenseVector<double> dvd1(size), dvd2(size, 4711), dvdr(size), dvd3(size);
                 DenseVector<float>::ElementIterator fr(dvfr.begin_elements());
                 DenseVector<double>::ElementIterator dr(dvdr.begin_elements());
                 DenseVector<float>::ElementIterator f1(dvf1.begin_elements());
@@ -259,9 +261,29 @@ class DenseVectorConvertTest :
                     *f1 = float(fr.index()) / 1.1234;
                     *d1 = double(fr.index()) / 1.1234;
                 }
-                convert(dvf2, dvd1);
-                convert(dvd2, dvf1);
+                convert<Tag_>(dvf2, dvd1);
+                convert<Tag_>(dvd2, dvf1);
+                dvf1.lock(lm_read_only, Tag_::memory_value);
+                dvf1.unlock(lm_read_only);
+                dvd1.lock(lm_read_only, Tag_::memory_value);
+                dvd1.unlock(lm_read_only);
+                dvf3.lock(lm_read_only, Tag_::memory_value);
+                dvf3.unlock(lm_read_only);
+                dvd3.lock(lm_read_only, Tag_::memory_value);
+                dvd3.unlock(lm_read_only);
+                convert<Tag_>(dvf3, dvd1);
+                convert<Tag_>(dvd3, dvf1);
+
+                dvf2.lock(lm_read_only);
+                dvd2.lock(lm_read_only);
+                dvf2.unlock(lm_read_only);
+                dvd2.unlock(lm_read_only);
+                dvf3.lock(lm_read_only);
+                dvd3.lock(lm_read_only);
+                dvf3.unlock(lm_read_only);
+                dvd3.unlock(lm_read_only);
                 TEST_CHECK_EQUAL(dvf2, dvfr);
+                TEST_CHECK_EQUAL(dvf3, dvfr);
                 for (DenseVector<double>::ConstElementIterator i(dvd2.begin_elements()), r(dvdr.begin_elements()), i_end(dvd2.end_elements())
                         ; i != i_end ; ++i, ++r)
                 {
@@ -273,8 +295,18 @@ class DenseVectorConvertTest :
             TEST_CHECK_THROWS(convert(dvf01, dvd01), VectorSizeDoesNotMatch);
             TEST_CHECK_THROWS(convert(dvd02, dvf02), VectorSizeDoesNotMatch);
         }
-} dense_vector_convert_test;
+};
+DenseVectorConvertTest<tags::CPU> dense_vector_convert_test;
+#ifdef HONEI_SSE
+DenseVectorConvertTest<tags::CPU::SSE> sse_dense_vector_convert_test;
+#endif
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorConvertTest<tags::GPU::CUDA> cuda_dense_vector_convert_test;
+#endif
+#endif
 
+template <typename Tag_>
 class DenseVectorConvertQuickTest :
     public QuickTest
 {
@@ -282,13 +314,14 @@ class DenseVectorConvertQuickTest :
         DenseVectorConvertQuickTest() :
             QuickTest("dense_vector_convert_quick_test")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
         {
             unsigned long size(4711);
-            DenseVector<float> dvf1(size), dvf2(size), dvfr(size);
-            DenseVector<double> dvd1(size), dvd2(size), dvdr(size);
+            DenseVector<float> dvf1(size), dvf2(size, 4711), dvfr(size), dvf3(size);
+            DenseVector<double> dvd1(size), dvd2(size, 4711), dvdr(size), dvd3(size);
             DenseVector<float>::ElementIterator fr(dvfr.begin_elements());
             DenseVector<double>::ElementIterator dr(dvdr.begin_elements());
             DenseVector<float>::ElementIterator f1(dvf1.begin_elements());
@@ -300,10 +333,36 @@ class DenseVectorConvertQuickTest :
                 *f1 = float(fr.index()) / 1.1234;
                 *d1 = double(fr.index()) / 1.1234;
             }
-            convert(dvf2, dvd1);
-            convert(dvd2, dvf1);
+            convert<Tag_>(dvf2, dvd1);
+            convert<Tag_>(dvd2, dvf1);
+
+            dvf1.lock(lm_read_only, Tag_::memory_value);
+            dvf1.unlock(lm_read_only);
+            dvd1.lock(lm_read_only, Tag_::memory_value);
+            dvd1.unlock(lm_read_only);
+            dvf3.lock(lm_read_only, Tag_::memory_value);
+            dvf3.unlock(lm_read_only);
+            dvd3.lock(lm_read_only, Tag_::memory_value);
+            dvd3.unlock(lm_read_only);
+            convert<Tag_>(dvf3, dvd1);
+            convert<Tag_>(dvd3, dvf1);
+
+            dvf2.lock(lm_read_only);
+            dvd2.lock(lm_read_only);
+            dvf2.unlock(lm_read_only);
+            dvd2.unlock(lm_read_only);
+            dvf3.lock(lm_read_only);
+            dvd3.lock(lm_read_only);
+            dvf3.unlock(lm_read_only);
+            dvd3.unlock(lm_read_only);
             TEST_CHECK_EQUAL(dvf2, dvfr);
+            TEST_CHECK_EQUAL(dvf3, dvfr);
             for (DenseVector<double>::ConstElementIterator i(dvd2.begin_elements()), r(dvdr.begin_elements()), i_end(dvd2.end_elements())
+                    ; i != i_end ; ++i, ++r)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(*i, *r, sqrt(std::numeric_limits<float>::epsilon()));
+            }
+            for (DenseVector<double>::ConstElementIterator i(dvd3.begin_elements()), r(dvdr.begin_elements()), i_end(dvd3.end_elements())
                     ; i != i_end ; ++i, ++r)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, *r, sqrt(std::numeric_limits<float>::epsilon()));
@@ -313,7 +372,16 @@ class DenseVectorConvertQuickTest :
             TEST_CHECK_THROWS(convert(dvf01, dvd01), VectorSizeDoesNotMatch);
             TEST_CHECK_THROWS(convert(dvd02, dvf02), VectorSizeDoesNotMatch);
         }
-} dense_vector_convert_quick_test;
+};
+DenseVectorConvertQuickTest<tags::CPU> dense_vector_convert_quick_test;
+#ifdef HONEI_SSE
+DenseVectorConvertQuickTest<tags::CPU::SSE> sse_dense_vector_convert_quick_test;
+#endif
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorConvertQuickTest<tags::GPU::CUDA> cuda_dense_vector_convert_quick_test;
+#endif
+#endif
 
 class DenseVectorRangeConvertTest :
     public BaseTest

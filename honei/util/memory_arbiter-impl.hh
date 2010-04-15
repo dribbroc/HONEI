@@ -33,6 +33,7 @@
 #include <honei/util/mutex.hh>
 #include <honei/util/condition_variable.hh>
 #include <honei/util/memory_backend_base.hh>
+#include <honei/util/type_traits.hh>
 
 #include <cstring>
 #include <set>
@@ -185,6 +186,144 @@ namespace honei
                         _backends[src_i->second.writer]->download(src_id, src_address, bytes);
                     src_i->second.writer = tags::tv_none;
                     std::memcpy((char *)dest_address, (char *)src_address, bytes);
+                    dest_i->second.readers.clear();
+                    dest_i->second.writer = memory;
+                    dest_i->second.readers.insert(memory);
+                    _backends[memory]->upload(dest_id, dest_address, bytes);
+                }
+            }
+        }
+
+        void convert_float_double(tags::TagValue memory, void * src_id, void * src_address, void * dest_id,
+                void * dest_address, unsigned long bytes)
+        {
+            Lock l(*_mutex);
+            std::map<void *, MemoryBlock>::iterator src_i(_blocks.find(src_id));
+            // Wait until no one writes on our src memory block
+            while (src_i != _blocks.end() && (src_i->second.write_count != 0))
+            {
+                _access_finished->wait(*_mutex);
+                src_i = _blocks.find(src_id);
+            }
+            std::map<void *, MemoryBlock>::iterator dest_i(_blocks.find(dest_id));
+            // Wait until no one reads or writes on our dest memory block
+            while (dest_i != _blocks.end() && (dest_i->second.write_count != 0 || dest_i->second.read_count != 0))
+            {
+                _access_finished->wait(*_mutex);
+                dest_i = _blocks.find(dest_id);
+            }
+
+            if (src_i == _blocks.end() || dest_i == _blocks.end())
+            {
+                throw InternalError("MemoryArbiter: Memory Block not found!");
+            }
+            else
+            {
+                // If we can convert just in our local device memory
+                if ((src_i->second.writer == tags::tv_none || src_i->second.writer == memory) && _backends[memory]->knows(src_id, src_address))
+                {
+                    // Delete the deprecated memory block in all relevant memory backends
+                    for (std::set<tags::TagValue>::iterator j(dest_i->second.readers.begin()), j_end(dest_i->second.readers.end()) ;
+                            j != j_end ; ++j)
+                    {
+                        if (*j != memory)
+                        {
+                            _backends[*j]->free(dest_id);
+                        }
+
+                    }
+                    dest_i->second.readers.clear();
+                    dest_i->second.writer = memory;
+                    dest_i->second.readers.insert(memory);
+                    _backends[memory]->alloc(dest_id, dest_address, bytes);
+                    _backends[memory]->convert_float_double(src_id, src_address, dest_id, dest_address, bytes);
+                }
+
+                // If our src memory block was changed on any other remote side, write it back to the main memory
+                // and upload it to the dest memory.
+                else
+                {
+                    // Delete the deprecated memory block in all relevant memory backends
+                    for (std::set<tags::TagValue>::iterator j(dest_i->second.readers.begin()), j_end(dest_i->second.readers.end()) ;
+                            j != j_end ; ++j)
+                    {
+                        _backends[*j]->free(dest_id);
+
+                    }
+                    if (src_i->second.writer != tags::tv_none)
+                        _backends[src_i->second.writer]->download(src_id, src_address, bytes);
+                    src_i->second.writer = tags::tv_none;
+                    //std::memcpy((char *)dest_address, (char *)src_address, bytes);
+                    TypeTraits<float>::convert((double*) dest_address, (float*)src_address, bytes/sizeof(float));
+                    dest_i->second.readers.clear();
+                    dest_i->second.writer = memory;
+                    dest_i->second.readers.insert(memory);
+                    _backends[memory]->upload(dest_id, dest_address, bytes);
+                }
+            }
+        }
+
+        void convert_double_float(tags::TagValue memory, void * src_id, void * src_address, void * dest_id,
+                void * dest_address, unsigned long bytes)
+        {
+            Lock l(*_mutex);
+            std::map<void *, MemoryBlock>::iterator src_i(_blocks.find(src_id));
+            // Wait until no one writes on our src memory block
+            while (src_i != _blocks.end() && (src_i->second.write_count != 0))
+            {
+                _access_finished->wait(*_mutex);
+                src_i = _blocks.find(src_id);
+            }
+            std::map<void *, MemoryBlock>::iterator dest_i(_blocks.find(dest_id));
+            // Wait until no one reads or writes on our dest memory block
+            while (dest_i != _blocks.end() && (dest_i->second.write_count != 0 || dest_i->second.read_count != 0))
+            {
+                _access_finished->wait(*_mutex);
+                dest_i = _blocks.find(dest_id);
+            }
+
+            if (src_i == _blocks.end() || dest_i == _blocks.end())
+            {
+                throw InternalError("MemoryArbiter: Memory Block not found!");
+            }
+            else
+            {
+                // If we can convert just in our local device memory
+                if ((src_i->second.writer == tags::tv_none || src_i->second.writer == memory) && _backends[memory]->knows(src_id, src_address))
+                {
+                    // Delete the deprecated memory block in all relevant memory backends
+                    for (std::set<tags::TagValue>::iterator j(dest_i->second.readers.begin()), j_end(dest_i->second.readers.end()) ;
+                            j != j_end ; ++j)
+                    {
+                        if (*j != memory)
+                        {
+                            _backends[*j]->free(dest_id);
+                        }
+
+                    }
+                    dest_i->second.readers.clear();
+                    dest_i->second.writer = memory;
+                    dest_i->second.readers.insert(memory);
+                    _backends[memory]->alloc(dest_id, dest_address, bytes);
+                    _backends[memory]->convert_double_float(src_id, src_address, dest_id, dest_address, bytes);
+                }
+
+                // If our src memory block was changed on any other remote side, write it back to the main memory
+                // and upload it to the dest memory.
+                else
+                {
+                    // Delete the deprecated memory block in all relevant memory backends
+                    for (std::set<tags::TagValue>::iterator j(dest_i->second.readers.begin()), j_end(dest_i->second.readers.end()) ;
+                            j != j_end ; ++j)
+                    {
+                        _backends[*j]->free(dest_id);
+
+                    }
+                    if (src_i->second.writer != tags::tv_none)
+                        _backends[src_i->second.writer]->download(src_id, src_address, bytes);
+                    src_i->second.writer = tags::tv_none;
+                    //std::memcpy((char *)dest_address, (char *)src_address, bytes);
+                    TypeTraits<double>::convert((float*) dest_address, (double*)src_address, bytes/sizeof(double));
                     dest_i->second.readers.clear();
                     dest_i->second.writer = memory;
                     dest_i->second.readers.insert(memory);
@@ -398,6 +537,18 @@ namespace honei
             void * dest_address, unsigned long bytes)
     {
         _imp->copy(memory, src_id, src_address, dest_id, dest_address, bytes);
+    }
+
+    void MemoryArbiter::convert_float_double(tags::TagValue memory, void * src_id, void * src_address, void * dest_id,
+            void * dest_address, unsigned long bytes)
+    {
+        _imp->convert_float_double(memory, src_id, src_address, dest_id, dest_address, bytes);
+    }
+
+    void MemoryArbiter::convert_double_float(tags::TagValue memory, void * src_id, void * src_address, void * dest_id,
+            void * dest_address, unsigned long bytes)
+    {
+        _imp->convert_double_float(memory, src_id, src_address, dest_id, dest_address, bytes);
     }
 
     void MemoryArbiter::fill(tags::TagValue memory, void * memid, void * address, unsigned long bytes, float proto)

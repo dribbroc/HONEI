@@ -41,7 +41,7 @@ namespace honei
                 x[idx] = x[idx] + y[idx];
             }
         }
-        #endif
+#endif
     }
 }
 
