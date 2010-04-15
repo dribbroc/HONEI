@@ -1682,7 +1682,7 @@ endCycleLoop:
                   initial_guess[i] = right_hand_side[i];
                   }*/
 
-                convert(info.x[info.max_level], initial_guess);
+                convert<Tag_>(info.x[info.max_level], initial_guess);
 
                 unsigned long inner_iterations(0);
                 unsigned long outer_iterations(0);
@@ -1710,7 +1710,7 @@ endCycleLoop:
                     ob.take();
 #endif
                     // set defect as RHS to inner solver
-                    convert(info.rhs[info.max_level], outer_defect);
+                    convert<Tag_>(info.rhs[info.max_level], outer_defect);
 
                     // run inner solver as long as neccessary
 

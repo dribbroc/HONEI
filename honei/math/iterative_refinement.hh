@@ -189,7 +189,7 @@ namespace honei
                     inner_defect = defect_result.copy();
 
                     //reconvert
-                    convert(defect, inner_defect);
+                    convert<Tag_>(defect, inner_defect);
 
                     ///Update solution:
                     Scale<Tag_>::value(defect, alpha);
@@ -452,7 +452,7 @@ namespace honei
                     inner_defect = defect_result;
 
                     //reconvert
-                    convert(defect, inner_defect);
+                    convert<Tag_>(defect, inner_defect);
 
                     ///Update solution:
                     Scale<Tag_>::value(defect, alpha);
@@ -716,7 +716,7 @@ namespace honei
                     inner_defect = defect_result.copy();
 
                     //reconvert
-                    convert(defect, inner_defect);
+                    convert<Tag_>(defect, inner_defect);
 
                     ///Update solution:
                     Scale<Tag_>::value(defect, alpha);
