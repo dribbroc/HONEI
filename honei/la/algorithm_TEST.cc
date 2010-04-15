@@ -248,8 +248,8 @@ class DenseVectorConvertTest :
         {
             for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
             {
-                DenseVector<float> dvf1(size), dvf2(size, 4711), dvfr(size), dvf3(size);
-                DenseVector<double> dvd1(size), dvd2(size, 4711), dvdr(size), dvd3(size);
+                DenseVector<float> dvf1(size), dvf2(size), dvfr(size), dvf3(size), dvff(size);
+                DenseVector<double> dvd1(size), dvd2(size), dvdr(size), dvd3(size), dvdf(size);
                 DenseVector<float>::ElementIterator fr(dvfr.begin_elements());
                 DenseVector<double>::ElementIterator dr(dvdr.begin_elements());
                 DenseVector<float>::ElementIterator f1(dvf1.begin_elements());
@@ -273,6 +273,8 @@ class DenseVectorConvertTest :
                 dvd3.unlock(lm_read_only);
                 convert<Tag_>(dvf3, dvd1);
                 convert<Tag_>(dvd3, dvf1);
+                convert<Tag_>(dvdf, dvf3);
+                convert<Tag_>(dvff, dvd3);
 
                 dvf2.lock(lm_read_only);
                 dvd2.lock(lm_read_only);
@@ -284,7 +286,22 @@ class DenseVectorConvertTest :
                 dvd3.unlock(lm_read_only);
                 TEST_CHECK_EQUAL(dvf2, dvfr);
                 TEST_CHECK_EQUAL(dvf3, dvfr);
+                dvff.lock(lm_read_only);
+                dvff.unlock(lm_read_only);
+                dvdf.lock(lm_read_only);
+                dvdf.unlock(lm_read_only);
+                TEST_CHECK_EQUAL(dvff, dvfr);
                 for (DenseVector<double>::ConstElementIterator i(dvd2.begin_elements()), r(dvdr.begin_elements()), i_end(dvd2.end_elements())
+                        ; i != i_end ; ++i, ++r)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *r, sqrt(std::numeric_limits<float>::epsilon()));
+                }
+                for (DenseVector<double>::ConstElementIterator i(dvd3.begin_elements()), r(dvdr.begin_elements()), i_end(dvd3.end_elements())
+                        ; i != i_end ; ++i, ++r)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, *r, sqrt(std::numeric_limits<float>::epsilon()));
+                }
+                for (DenseVector<double>::ConstElementIterator i(dvdf.begin_elements()), r(dvdr.begin_elements()), i_end(dvdf.end_elements())
                         ; i != i_end ; ++i, ++r)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, *r, sqrt(std::numeric_limits<float>::epsilon()));
