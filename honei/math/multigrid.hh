@@ -1535,7 +1535,7 @@ endCycleLoop:
                   initial_guess[i] = right_hand_side[i];
                   }*/
 
-                convert(info.x[info.max_level], initial_guess);
+                convert<OuterTag_>(info.x[info.max_level], initial_guess);
 
                 unsigned long inner_iterations(0);
                 unsigned long outer_iterations(0);
@@ -1555,6 +1555,7 @@ endCycleLoop:
                 pe.take();
                 std::cout << "PreProc TOE: "<< (pe.sec() - pb.sec()) + (pe.usec() - pb.usec())/1e6 << std::endl;
 #endif
+                DenseVector<OuterPrec_> x_outer(result.size());
                 while(inner_iterations < 8)
                 {
 #ifdef SOLVER_BENCHMARK
@@ -1562,7 +1563,7 @@ endCycleLoop:
                     ob.take();
 #endif
                     // set defect as RHS to inner solver
-                    convert(info.rhs[info.max_level], outer_defect);
+                    convert<OuterTag_>(info.rhs[info.max_level], outer_defect);
 
                     // run inner solver as long as neccessary
 
@@ -1581,14 +1582,8 @@ endCycleLoop:
 
                     // get "solution" and update outer solution
 
-                    result.lock(lm_read_and_write);
-                    info.x[info.max_level].lock(lm_read_only);
-                    for (unsigned long i(0); i < right_hand_side.size(); ++i)
-                    {
-                        result[i] += scale_factor * (OuterPrec_)(info.x[info.max_level])[i];
-                    }
-                    result.unlock(lm_read_and_write);
-                    info.x[info.max_level].unlock(lm_read_only);
+                    convert<OuterTag_>(x_outer, info.x[info.max_level]);
+                    ScaledSum<OuterTag_>::value(result, x_outer, scale_factor);
 
 
                     // calculate defect
@@ -1703,6 +1698,7 @@ endCycleLoop:
                 pe.take();
                 std::cout << "PreProc TOE: "<< (pe.sec() - pb.sec()) + (pe.usec() - pb.usec())/1e6 << std::endl;
 #endif
+                DenseVector<OuterPrec_> x_outer(result.size());
                 while(inner_iterations < 8)
                 {
 #ifdef SOLVER_BENCHMARK
@@ -1729,17 +1725,8 @@ endCycleLoop:
 
                     // get "solution" and update outer solution
 
-                    /*result.lock(lm_read_and_write);
-                    info.x[info.max_level].lock(lm_read_only);
-                    for (unsigned long i(0); i < right_hand_side.size(); ++i)
-                    {
-                        result[i] += scale_factor * (OuterPrec_)(info.x[info.max_level])[i];
-                    }
-                    result.unlock(lm_read_and_write);
-                    info.x[info.max_level].unlock(lm_read_only);*/
-                    DenseVector<OuterPrec_> temp42(result.size());
-                    convert<OuterTag_>(temp42, info.x[info.max_level]);
-                    ScaledSum<OuterTag_>::value(result, temp42, scale_factor);
+                    convert<OuterTag_>(x_outer, info.x[info.max_level]);
+                    ScaledSum<OuterTag_>::value(result, x_outer, scale_factor);
 
 
                     // calculate defect

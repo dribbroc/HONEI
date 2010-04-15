@@ -454,3 +454,6 @@ PoissonTestMGBandedQ1Mixed<tags::GPU::CUDA, tags::CPU::SSE> cuda_sse_poisson_tes
 #ifdef HONEI_CUDA
 PoissonTestMGBandedQ1Mixed<tags::GPU::CUDA, tags::CPU> cuda_cpu_poisson_test_mg_bandedMixed("Mixed CUDA/CPU");
 #endif
+#if defined HONEI_CUDA && defined HONEI_CUDA_DOUBLE
+PoissonTestMGBandedQ1Mixed<tags::GPU::CUDA, tags::GPU::CUDA> cuda_cuda_poisson_test_mg_bandedMixed("Mixed CUDA/CUDA");
+#endif
