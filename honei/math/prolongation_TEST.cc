@@ -80,7 +80,7 @@ class ProlongationTest:
 };
 #ifdef HONEI_CUDA
 ProlongationTest<tags::GPU::CUDA, float> cuda_prolongate_test_float("float");
-#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
 ProlongationTest<tags::GPU::CUDA, double> cuda_prolongate_test_double("double");
 #endif
 #endif
