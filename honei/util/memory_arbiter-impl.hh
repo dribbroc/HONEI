@@ -235,7 +235,7 @@ namespace honei
                     dest_i->second.readers.clear();
                     dest_i->second.writer = memory;
                     dest_i->second.readers.insert(memory);
-                    _backends[memory]->alloc(dest_id, dest_address, bytes);
+                    _backends[memory]->alloc(dest_id, dest_address, bytes * 2);
                     _backends[memory]->convert_float_double(src_id, src_address, dest_id, dest_address, bytes);
                 }
 
@@ -253,12 +253,11 @@ namespace honei
                     if (src_i->second.writer != tags::tv_none)
                         _backends[src_i->second.writer]->download(src_id, src_address, bytes);
                     src_i->second.writer = tags::tv_none;
-                    //std::memcpy((char *)dest_address, (char *)src_address, bytes);
                     TypeTraits<float>::convert((double*) dest_address, (float*)src_address, bytes/sizeof(float));
                     dest_i->second.readers.clear();
                     dest_i->second.writer = memory;
                     dest_i->second.readers.insert(memory);
-                    _backends[memory]->upload(dest_id, dest_address, bytes);
+                    _backends[memory]->upload(dest_id, dest_address, bytes * 2);
                 }
             }
         }
@@ -304,7 +303,7 @@ namespace honei
                     dest_i->second.readers.clear();
                     dest_i->second.writer = memory;
                     dest_i->second.readers.insert(memory);
-                    _backends[memory]->alloc(dest_id, dest_address, bytes);
+                    _backends[memory]->alloc(dest_id, dest_address, bytes/2);
                     _backends[memory]->convert_double_float(src_id, src_address, dest_id, dest_address, bytes);
                 }
 
@@ -322,12 +321,11 @@ namespace honei
                     if (src_i->second.writer != tags::tv_none)
                         _backends[src_i->second.writer]->download(src_id, src_address, bytes);
                     src_i->second.writer = tags::tv_none;
-                    //std::memcpy((char *)dest_address, (char *)src_address, bytes);
                     TypeTraits<double>::convert((float*) dest_address, (double*)src_address, bytes/sizeof(double));
                     dest_i->second.readers.clear();
                     dest_i->second.writer = memory;
                     dest_i->second.readers.insert(memory);
-                    _backends[memory]->upload(dest_id, dest_address, bytes);
+                    _backends[memory]->upload(dest_id, dest_address, bytes / 2);
                 }
             }
         }
