@@ -254,3 +254,16 @@ PoissonBenchmarkMGSparseELLMixed<tags::GPU::CUDA, tags::CPU::SSE, double> poisso
 PoissonBenchmarkMGSparseELLMixed<tags::GPU::CUDA, tags::CPU::SSE, double> poisson_bench_mg_ell_mixed_10("MG mixed GPU/CPU L10", 1025, 1);
     #endif
 #endif
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
+PoissonBenchmarkMGSparseELLMixed<tags::GPU::CUDA, tags::GPU::CUDA, double> poisson_bench_mg_ell_mixed_cudacuda2("MG mixed GPU/GPU L2", 5, 1);
+PoissonBenchmarkMGSparseELLMixed<tags::GPU::CUDA, tags::GPU::CUDA, double> poisson_bench_mg_ell_mixed_cudacuda3("MG mixed GPU/GPU L3", 9, 1);
+PoissonBenchmarkMGSparseELLMixed<tags::GPU::CUDA, tags::GPU::CUDA, double> poisson_bench_mg_ell_mixed_cudacuda4("MG mixed GPU/GPU L4", 17, 1);
+PoissonBenchmarkMGSparseELLMixed<tags::GPU::CUDA, tags::GPU::CUDA, double> poisson_bench_mg_ell_mixed_cudacuda5("MG mixed GPU/GPU L5", 33, 1);
+PoissonBenchmarkMGSparseELLMixed<tags::GPU::CUDA, tags::GPU::CUDA, double> poisson_bench_mg_ell_mixed_cudacuda6("MG mixed GPU/GPU L6", 65, 1);
+PoissonBenchmarkMGSparseELLMixed<tags::GPU::CUDA, tags::GPU::CUDA, double> poisson_bench_mg_ell_mixed_cudacuda7("MG mixed GPU/GPU L7", 129, 1);
+PoissonBenchmarkMGSparseELLMixed<tags::GPU::CUDA, tags::GPU::CUDA, double> poisson_bench_mg_ell_mixed_cudacuda8("MG mixed GPU/GPU L8", 257, 1);
+PoissonBenchmarkMGSparseELLMixed<tags::GPU::CUDA, tags::GPU::CUDA, double> poisson_bench_mg_ell_mixed_cudacuda9("MG mixed GPU/GPU L9", 513, 1);
+PoissonBenchmarkMGSparseELLMixed<tags::GPU::CUDA, tags::GPU::CUDA, double> poisson_bench_mg_ell_mixed_cudacuda10("MG mixed GPU/GPU L10", 1025, 1);
+#endif
+#endif
