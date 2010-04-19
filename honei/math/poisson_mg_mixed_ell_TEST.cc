@@ -233,10 +233,12 @@ class PoissonTestMGSparseELLMixed:
 PoissonTestMGSparseELLMixed<tags::CPU, tags::CPU, double> poisson_test_mg_banded_double("double", 33ul, "1089.bin");
 #ifdef HONEI_SSE
 PoissonTestMGSparseELLMixed<tags::CPU::SSE, tags::CPU::SSE, double> sse_poisson_test_mg_banded_double("double", 33ul, "1089.bin");
+PoissonTestMGSparseELLMixed<tags::CPU::MultiCore::SSE, tags::CPU::MultiCore::SSE, double> mcsse_poisson_test_mg_banded_double("double", 33ul, "1089.bin");
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_SSE
 PoissonTestMGSparseELLMixed<tags::GPU::CUDA, tags::CPU::SSE, double> cuda_poisson_test_mg_banded_double_2("double", 33ul, "1089.bin");
+PoissonTestMGSparseELLMixed<tags::GPU::CUDA, tags::CPU::MultiCore::SSE, double> mcsse_cuda_poisson_test_mg_banded_double_2("double", 33ul, "1089.bin");
 #endif
 #endif
 #ifdef HONEI_CUDA

@@ -243,16 +243,36 @@ PoissonBenchmarkMGELLFixed<tags::CPU::SSE, double> poisson_bench_mg_ell_double_7
 PoissonBenchmarkMGELLFixed<tags::CPU::SSE, double> poisson_bench_mg_ell_double_8("MG double SSE L8", 257, 1);
 PoissonBenchmarkMGELLFixed<tags::CPU::SSE, double> poisson_bench_mg_ell_double_9("MG double SSE L9", 513, 1);
 PoissonBenchmarkMGELLFixed<tags::CPU::SSE, double> poisson_bench_mg_ell_double_10("MG double SSE L10", 1025, 1);
+PoissonBenchmarkMGELLFixed<tags::CPU::MultiCore::SSE, double> poisson_bench_mg_ell_double_mc_2("MG double MC SSE L2", 5, 1);
+PoissonBenchmarkMGELLFixed<tags::CPU::MultiCore::SSE, double> poisson_bench_mg_ell_double_mc_3("MG double MC SSE L3", 9, 1);
+PoissonBenchmarkMGELLFixed<tags::CPU::MultiCore::SSE, double> poisson_bench_mg_ell_double_mc_4("MG double MC SSE L4", 17, 1);
+PoissonBenchmarkMGELLFixed<tags::CPU::MultiCore::SSE, double> poisson_bench_mg_ell_double_mc_5("MG double MC SSE L5", 33, 1);
+PoissonBenchmarkMGELLFixed<tags::CPU::MultiCore::SSE, double> poisson_bench_mg_ell_double_mc_6("MG double MC SSE L6", 65, 1);
+PoissonBenchmarkMGELLFixed<tags::CPU::MultiCore::SSE, double> poisson_bench_mg_ell_double_mc_7("MG double MC SSE L7", 129, 1);
+PoissonBenchmarkMGELLFixed<tags::CPU::MultiCore::SSE, double> poisson_bench_mg_ell_double_mc_8("MG double MC SSE L8", 257, 1);
+PoissonBenchmarkMGELLFixed<tags::CPU::MultiCore::SSE, double> poisson_bench_mg_ell_double_mc_9("MG double MC SSE L9", 513, 1);
+PoissonBenchmarkMGELLFixed<tags::CPU::MultiCore::SSE, double> poisson_bench_mg_ell_double_mc_10("MG double MC SSE L10", 1025, 1);
 #endif
 
 #ifdef HONEI_CUDA
-PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_a2("MG float CUDA L2", 5, 1);
-PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_a3("MG float CUDA L3", 9, 1);
-PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_a4("MG float CUDA L4", 17, 1);
-PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_a5("MG float CUDA L5", 33, 1);
-PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_a6("MG float CUDA L6", 65, 1);
-PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_a7("MG float CUDA L7", 129, 1);
-PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_a8("MG float CUDA L8", 257, 1);
-PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_a9("MG float CUDA L9", 513, 1);
-PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_a10("MG float CUDA L10", 1025, 1);
+PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_cuda2("MG float CUDA L2", 5, 1);
+PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_cuda3("MG float CUDA L3", 9, 1);
+PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_cuda4("MG float CUDA L4", 17, 1);
+PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_cuda5("MG float CUDA L5", 33, 1);
+PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_cuda6("MG float CUDA L6", 65, 1);
+PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_cuda7("MG float CUDA L7", 129, 1);
+PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_cuda8("MG float CUDA L8", 257, 1);
+PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_cuda9("MG float CUDA L9", 513, 1);
+PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_cuda10("MG float CUDA L10", 1025, 1);
+#ifdef HONEI_CUDA_DOUBLE
+PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, double> poisson_bench_mg_ell_double_cuda2("MG double CUDA L2", 5, 1);
+PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, double> poisson_bench_mg_ell_double_cuda3("MG double CUDA L3", 9, 1);
+PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, double> poisson_bench_mg_ell_double_cuda4("MG double CUDA L4", 17, 1);
+PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, double> poisson_bench_mg_ell_double_cuda5("MG double CUDA L5", 33, 1);
+PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, double> poisson_bench_mg_ell_double_cuda6("MG double CUDA L6", 65, 1);
+PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, double> poisson_bench_mg_ell_double_cuda7("MG double CUDA L7", 129, 1);
+PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, double> poisson_bench_mg_ell_double_cuda8("MG double CUDA L8", 257, 1);
+PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, double> poisson_bench_mg_ell_double_cuda9("MG double CUDA L9", 513, 1);
+PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, double> poisson_bench_mg_ell_double_cuda10("MG double CUDA L10", 1025, 1);
+#endif
 #endif
