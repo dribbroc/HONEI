@@ -2,7 +2,8 @@ AM_CXXFLAGS = -I$(top_srcdir)
 
 MAINTAINERCLEANFILES = Makefile.in
 AUTOMAKE_OPTIONS = foreign dist-bzip2
-EXTRA_DIST = scaled_sum.cl
+EXTRA_DIST = scaled_sum.cl \
+	     product.cl
 CLEANFILES = *~
 
 DEFS = \
@@ -24,6 +25,7 @@ libhoneibackendsopencl_la_SOURCES = operations.hh \
 				    memory_backend_cpu.cc \
 				    memory_backend_gpu.cc \
 				    opencl_backend.hh \
+				    product.cc \
 				    scaled_sum.cc
 
 

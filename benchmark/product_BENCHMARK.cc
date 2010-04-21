@@ -521,6 +521,10 @@ SMELLDenseVectorProductBench<tags::GPU::CUDA, double> cudaSMELLDVPBenchdouble0("
 //SMELLDenseVectorProductBench<tags::GPU::CUDA, double> cudaSMELLDVPBenchdouble0("CUDA SM 2 ELL Dense Vector Product Benchmark - matrix size: L8, double", 1025ul*1025, 10, "l8/area51_full_2.m");
 #endif
 #endif
+#ifdef HONEI_OPENCL
+SMELLDenseVectorProductBench<tags::OpenCL::CPU, double> ocl_cpu_SMELLDVPBenchdouble0("OpenCL GPU SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, double", 1025ul*1025, 10, "l2/area51_full_2.m");
+SMELLDenseVectorProductBench<tags::OpenCL::GPU, double> ocl_gpu_SMELLDVPBenchdouble0("OpenCL GPU SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, double", 1025ul*1025, 10, "l2/area51_full_2.m");
+#endif
 
 
 template <typename Tag_, typename DataType_>

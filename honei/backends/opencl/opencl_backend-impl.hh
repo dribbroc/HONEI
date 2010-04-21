@@ -94,7 +94,9 @@ namespace honei
             cl_int status = clBuildProgram(program, 1, &device, "-Werror", NULL, NULL);
             if (status != CL_SUCCESS)
                 print_program_info(program, device);
-            cl_kernel kernel = clCreateKernel(program, kernel_name.c_str(), NULL);
+            cl_kernel kernel = clCreateKernel(program, kernel_name.c_str(), &status);
+            if (status != CL_SUCCESS)
+                throw InternalError("OpenCL: Error in clCreateKernel!");
             KSD temp;
             temp.kernel = kernel;
             temp.kernel_name = kernel_name;
