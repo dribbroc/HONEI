@@ -17,11 +17,7 @@
 * Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#if defined _PPU_
-#pragma OPENCLEXTENSION cl_khr_fp64 : enable
-#else
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-#endif
 
 __kernel void scaled_sum_float(__global  float * output,
                                    __global  float * input,

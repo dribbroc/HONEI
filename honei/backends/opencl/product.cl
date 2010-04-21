@@ -18,11 +18,7 @@
  */
 
 
-#if defined _PPU_
-#pragma OPENCLEXTENSION cl_khr_fp64 : enable
-#else
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-#endif
 
 __kernel void product_smell_dv_float(__global float * x, __global float * y, __global unsigned long * Aj, __global float * Ax,
         unsigned long num_rows, unsigned long num_cols_per_row, unsigned long stride)

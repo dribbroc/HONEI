@@ -22,8 +22,7 @@ libhoneibackendsopencl_la_SOURCES = operations.hh \
 				    operations.cc \
 				    opencl_backend.cc \
 				    opencl_backend-impl.hh \
-				    memory_backend_cpu.cc \
-				    memory_backend_gpu.cc \
+				    memory_backend.cc \
 				    opencl_backend.hh \
 				    product.cc \
 				    scaled_sum.cc

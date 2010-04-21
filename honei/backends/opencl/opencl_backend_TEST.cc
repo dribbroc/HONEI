@@ -94,4 +94,6 @@ class OpenclBackendQuickTest :
 };
 OpenclBackendQuickTest cpu_opencl_backend_quick_test(CL_DEVICE_TYPE_CPU);
 OpenclBackendQuickTest gpu_opencl_backend_quick_test(CL_DEVICE_TYPE_GPU);
-//OpenclBackendQuickTest cell_opencl_backend_quick_test(CL_DEVICE_TYPE_ACCELERATOR);
+#ifdef __PPC__
+OpenclBackendQuickTest accelerator_opencl_backend_quick_test(CL_DEVICE_TYPE_ACCELERATOR);
+#endif

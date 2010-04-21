@@ -47,7 +47,7 @@ class MemoryBackendQuickTest :
 
             MemoryBackend<Tag_>::instance()->upload(0, data, 5 * sizeof(float));
 
-            if (Tag_::memory_value != honei::tags::tv_opencl_cpu)
+            if (Tag_::memory_value == honei::tags::tv_opencl_gpu)
                 data_array[3] = -50;
             MemoryBackend<Tag_>::instance()->download(0, data, 5 * sizeof(float));
             MemoryBackend<Tag_>::instance()->free(0);
@@ -56,6 +56,9 @@ class MemoryBackendQuickTest :
 };
 MemoryBackendQuickTest<tags::OpenCL::CPU> ocl_cpu_memory_backend_quick_test;
 MemoryBackendQuickTest<tags::OpenCL::GPU> ocl_gpu_memory_backend_quick_test;
+#ifdef __PPC__
+MemoryBackendQuickTest<tags::OpenCL::Accelerator> ocl_accelerator_memory_backend_quick_test;
+#endif
 
 template <typename Tag_>
 class OpenCLMemoryArbiterQuickTest :
@@ -101,3 +104,6 @@ class OpenCLMemoryArbiterQuickTest :
 };
 OpenCLMemoryArbiterQuickTest<tags::OpenCL::CPU> ocl_cpu_memory_arbiter_quick_test;
 OpenCLMemoryArbiterQuickTest<tags::OpenCL::GPU> ocl_gpu_memory_arbiter_quick_test;
+#ifdef __PPC__
+OpenCLMemoryArbiterQuickTest<tags::OpenCL::Accelerator> ocl_accelerator_memory_arbiter_quick_test;
+#endif

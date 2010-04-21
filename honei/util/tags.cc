@@ -35,6 +35,7 @@ const std::string tags::GPU::MultiCore::CUDA::name = "mc-cuda";
 const std::string tags::OpenCL::name = "opencl";
 const std::string tags::OpenCL::CPU::name = "opencl-cpu";
 const std::string tags::OpenCL::GPU::name = "opencl-gpu";
+const std::string tags::OpenCL::Accelerator::name = "opencl-accelerator";
 const std::string tags::NONE::name = "none";
 
 std::ostream & honei::operator<< (std::ostream & left, tags::TagValue value)
@@ -77,6 +78,10 @@ std::ostream & honei::operator<< (std::ostream & left, tags::TagValue value)
 
             case tags::tv_opencl_gpu:
                 left << "OpenCL GPU";
+                continue;
+
+            case tags::tv_opencl_accelerator:
+                left << "OpenCL Accelerator";
                 continue;
 
             case tags::tv_none:

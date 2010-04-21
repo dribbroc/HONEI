@@ -27,12 +27,12 @@
 namespace honei
 {
     /**
-     * \brief MemoryBackend<tags::OpenCL::GPU>::Implementation is the private implementation class for
-     * MemoryBackend<tags::OpenCL::GPU>.
+     * \brief MemoryBackend<Tag_>::Implementation is the private implementation class for
+     * OpenCL MemoryBackends.
      *
      * \ingroup grpvector
      */
-    template <> struct Implementation<MemoryBackend<tags::OpenCL::GPU> >
+    template <typename Tag_> struct Implementation<MemoryBackend<Tag_> >
     {
         struct Chunk
         {
@@ -52,6 +52,29 @@ namespace honei
 
         std::multimap<void *, Chunk> _id_map;
 
+        cl_device_type type;
+
+        Implementation<MemoryBackend<Tag_> >()
+        {
+            switch(Tag_::memory_value)
+            {
+                case tags::tv_opencl_cpu:
+                    type = CL_DEVICE_TYPE_CPU;
+                    break;
+
+                case tags::tv_opencl_gpu:
+                    type = CL_DEVICE_TYPE_GPU;
+                    break;
+
+                case tags::tv_opencl_accelerator:
+                    type = CL_DEVICE_TYPE_ACCELERATOR;
+                    break;
+
+                default:
+                    throw InternalError("Tag_ not supported!");
+            }
+        }
+
         void * upload(void * memid, void * address, unsigned long bytes)
         {
             std::map<void *, void *>::iterator i(_address_map.find(address));
@@ -59,7 +82,7 @@ namespace honei
             if (i == _address_map.end())
             {
                 void * device(this->alloc(memid, address, bytes));
-                DCQ dcq = OpenCLBackend::instance()->prepare_device(CL_DEVICE_TYPE_GPU);
+                DCQ dcq = OpenCLBackend::instance()->prepare_device(type);
                 clEnqueueWriteBuffer(dcq.command_queue, (cl_mem)device, CL_TRUE, 0, bytes, address, 0, NULL, NULL);
                 return device;
             }
@@ -72,18 +95,18 @@ namespace honei
 
         void download(void * memid, void * address, unsigned long bytes)
         {
-            std::pair<std::multimap<void *, Chunk>::iterator, std::multimap<void *, Chunk>::iterator> range(_id_map.equal_range(memid));
+            std::pair<typename std::multimap<void *, Chunk>::iterator, typename std::multimap<void *, Chunk>::iterator> range(_id_map.equal_range(memid));
             if (range.first == range.second)
             {
                 //address not known
-                throw InternalError("MemoryBackend<tags::OpenCL::GPU>::download address not found!");
+                throw InternalError("MemoryBackend<Tag_>::download address not found!");
             }
             else
             {
-                for (std::multimap<void *, Chunk>::iterator map_i(range.first) ; map_i != range.second ; ++map_i)
+                for (typename std::multimap<void *, Chunk>::iterator map_i(range.first) ; map_i != range.second ; ++map_i)
                 {
                     std::map<void *, void *>::iterator i(_address_map.find(address));
-                    DCQ dcq = OpenCLBackend::instance()->prepare_device(CL_DEVICE_TYPE_GPU);
+                    DCQ dcq = OpenCLBackend::instance()->prepare_device(type);
                     clEnqueueReadBuffer(dcq.command_queue, map_i->second.device, CL_TRUE, 0, map_i->second.bytes, map_i->second.address, 0, NULL, NULL);
                     clFinish(dcq.command_queue);
                 }
@@ -97,10 +120,10 @@ namespace honei
             if (i == _address_map.end())
             {
                 cl_mem device(0);
-                DCQ dcq = OpenCLBackend::instance()->prepare_device(CL_DEVICE_TYPE_GPU);
+                DCQ dcq = OpenCLBackend::instance()->prepare_device(type);
                 device = OpenCLBackend::instance()->create_buffer(bytes, dcq.context, address);
                 if (device == 0)
-                    throw InternalError("MemoryBackend<tags::OpenCL::GPU>::alloc CudaMallocError!");
+                    throw InternalError("MemoryBackend<Tag_>::alloc CudaMallocError!");
                 _id_map.insert(std::pair<void *, Chunk>(memid, Chunk(address, device, bytes)));
                 _address_map.insert(std::pair<void *, void *>(address, device));
                 return device;
@@ -109,15 +132,15 @@ namespace honei
             else
             {
                 return i->second;
-                //throw InternalError("MemoryBackend<tags::OpenCL::GPU>::alloc address already known!");
+                //throw InternalError("MemoryBackend<Tag_>::alloc address already known!");
             }
         }
 
         void free(void * memid)
         {
-            std::multimap<void *, Chunk>::iterator i;
-            std::pair<std::multimap<void *, Chunk>::iterator, std::multimap<void *, Chunk>::iterator> range(_id_map.equal_range(memid));
-            for (std::multimap<void *, Chunk>::iterator i(range.first) ; i != range.second ; ++i)
+            typename std::multimap<void *, Chunk>::iterator i;
+            std::pair<typename std::multimap<void *, Chunk>::iterator, typename std::multimap<void *, Chunk>::iterator> range(_id_map.equal_range(memid));
+            for (typename std::multimap<void *, Chunk>::iterator i(range.first) ; i != range.second ; ++i)
             {
                 clReleaseMemObject(i->second.device);
                 _address_map.erase(i->second.address);
@@ -132,14 +155,14 @@ namespace honei
             std::map<void *, void *>::iterator dest_i(_address_map.find(dest_address));
             if (src_i == _address_map.end() || dest_i == _address_map.end())
             {
-                throw InternalError("MemoryBackend<tags::OpenCL::GPU>::copy address not found!");
+                throw InternalError("MemoryBackend<Tag_>::copy address not found!");
             }
             else
             {
                 std::map<void *, int>::iterator j_source(_device_map.find(src_address));
                 std::map<void *, int>::iterator j_dest(_device_map.find(dest_address));
                 if (j_source->second != j_dest->second)
-                    throw InternalError("MemoryBackend<tags::OpenCL::GPU>::copy src and dest on different devices!");
+                    throw InternalError("MemoryBackend<Tag_>::copy src and dest on different devices!");
 
                 bool idle(cuda::GPUPool::instance()->idle());
                 //running in slave thread
@@ -150,7 +173,7 @@ namespace honei
                 else
                 {
                     if (! idle)
-                        throw InternalError("MemoryBackend<tags::OpenCL::GPU>::copy Data is located on another device!");
+                        throw InternalError("MemoryBackend<Tag_>::copy Data is located on another device!");
                     //running in master thread -> switch to slave thread
                     else
                     {
@@ -166,12 +189,12 @@ namespace honei
             /*std::map<void *, void *>::iterator i(_address_map.find(address));
             if (i == _address_map.end())
             {
-                throw InternalError("MemoryBackend<tags::OpenCL::GPU>::fill address not found!");
+                throw InternalError("MemoryBackend<Tag_>::fill address not found!");
             }
             else
             {
                 if (proto != 0)
-                    throw InternalError("OpenCL::GPU fill != zero not supported yet!");
+                    throw InternalError("OpenCL::CPU fill != zero not supported yet!");
 
                 std::map<void *, int>::iterator j(_device_map.find(address));
                 bool idle(cuda::GPUPool::instance()->idle());
@@ -183,7 +206,7 @@ namespace honei
                 else
                 {
                     if (! idle)
-                        throw InternalError("MemoryBackend<tags::OpenCL::GPU>::fill Data is located on another device!");
+                        throw InternalError("MemoryBackend<Tag_>::fill Data is located on another device!");
                     //running in master thread -> switch to slave thread
                     else
                     {
@@ -200,6 +223,69 @@ namespace honei
             return (i != _address_map.end());
         }
     };
+
+    MemoryBackend<tags::OpenCL::CPU>::MemoryBackend() :
+        PrivateImplementationPattern<MemoryBackend<tags::OpenCL::CPU>, Single>(new Implementation<MemoryBackend<tags::OpenCL::CPU> >)
+    {
+        CONTEXT("When creating MemoryBackend<tags::OpenCL::CPU>:");
+    }
+
+    MemoryBackend<tags::OpenCL::CPU>::~MemoryBackend()
+    {
+        CONTEXT("When destroying MemoryBackend<tags::OpenCL::CPU>:");
+    }
+
+    void * MemoryBackend<tags::OpenCL::CPU>::upload(void * memid, void * address, unsigned long bytes)
+    {
+        CONTEXT("When uploading data (OpenCL::CPU):");
+        return _imp->upload(memid, address, bytes);
+    }
+
+    void MemoryBackend<tags::OpenCL::CPU>::download(void * memid, void * address, unsigned long bytes)
+    {
+        CONTEXT("When downloading data (OpenCL::CPU):");
+        _imp->download(memid, address, bytes);
+    }
+
+    void * MemoryBackend<tags::OpenCL::CPU>::alloc(void * memid, void * address, unsigned long bytes)
+    {
+        CONTEXT("When allocating data (OpenCL::CPU):");
+        return _imp->alloc(memid, address, bytes);
+    }
+
+    void MemoryBackend<tags::OpenCL::CPU>::free(void * memid)
+    {
+        CONTEXT("When freeing data (OpenCL::CPU):");
+        _imp->free(memid);
+    }
+
+    void MemoryBackend<tags::OpenCL::CPU>::copy(void * src_id, void * src_address, void * dest_id,
+            void * dest_address, unsigned long bytes)
+    {
+        CONTEXT("When copying data (OpenCL::CPU):");
+        _imp->copy(src_id, src_address, dest_id, dest_address, bytes);
+    }
+
+    void MemoryBackend<tags::OpenCL::CPU>::convert_float_double(void * src_id, void * src_address, void * dest_id,
+                    void * dest_address, unsigned long bytes)
+    {
+    }
+
+    void MemoryBackend<tags::OpenCL::CPU>::convert_double_float(void * src_id, void * src_address, void * dest_id,
+                    void * dest_address, unsigned long bytes)
+    {
+    }
+
+    void MemoryBackend<tags::OpenCL::CPU>::fill(void * memid, void * address, unsigned long bytes, float proto)
+    {
+        CONTEXT("When filling data (OpenCL::CPU):");
+        _imp->fill(memid, address, bytes, proto);
+    }
+
+    bool MemoryBackend<tags::OpenCL::CPU>::knows(void * memid, void * address)
+    {
+        return _imp->knows(memid, address);
+    }
 
     MemoryBackend<tags::OpenCL::GPU>::MemoryBackend() :
         PrivateImplementationPattern<MemoryBackend<tags::OpenCL::GPU>, Single>(new Implementation<MemoryBackend<tags::OpenCL::GPU> >)
@@ -264,10 +350,81 @@ namespace honei
         return _imp->knows(memid, address);
     }
 
+    MemoryBackend<tags::OpenCL::Accelerator>::MemoryBackend() :
+        PrivateImplementationPattern<MemoryBackend<tags::OpenCL::Accelerator>, Single>(new Implementation<MemoryBackend<tags::OpenCL::Accelerator> >)
+    {
+        CONTEXT("When creating MemoryBackend<tags::OpenCL::Accelerator>:");
+    }
+
+    MemoryBackend<tags::OpenCL::Accelerator>::~MemoryBackend()
+    {
+        CONTEXT("When destroying MemoryBackend<tags::OpenCL::Accelerator>:");
+    }
+
+    void * MemoryBackend<tags::OpenCL::Accelerator>::upload(void * memid, void * address, unsigned long bytes)
+    {
+        CONTEXT("When uploading data (OpenCL::Accelerator):");
+        return _imp->upload(memid, address, bytes);
+    }
+
+    void MemoryBackend<tags::OpenCL::Accelerator>::download(void * memid, void * address, unsigned long bytes)
+    {
+        CONTEXT("When downloading data (OpenCL::Accelerator):");
+        _imp->download(memid, address, bytes);
+    }
+
+    void * MemoryBackend<tags::OpenCL::Accelerator>::alloc(void * memid, void * address, unsigned long bytes)
+    {
+        CONTEXT("When allocating data (OpenCL::Accelerator):");
+        return _imp->alloc(memid, address, bytes);
+    }
+
+    void MemoryBackend<tags::OpenCL::Accelerator>::free(void * memid)
+    {
+        CONTEXT("When freeing data (OpenCL::Accelerator):");
+        _imp->free(memid);
+    }
+
+    void MemoryBackend<tags::OpenCL::Accelerator>::copy(void * src_id, void * src_address, void * dest_id,
+            void * dest_address, unsigned long bytes)
+    {
+        CONTEXT("When copying data (OpenCL::Accelerator):");
+        _imp->copy(src_id, src_address, dest_id, dest_address, bytes);
+    }
+
+    void MemoryBackend<tags::OpenCL::Accelerator>::convert_float_double(void * src_id, void * src_address, void * dest_id,
+                    void * dest_address, unsigned long bytes)
+    {
+    }
+
+    void MemoryBackend<tags::OpenCL::Accelerator>::convert_double_float(void * src_id, void * src_address, void * dest_id,
+                    void * dest_address, unsigned long bytes)
+    {
+    }
+
+    void MemoryBackend<tags::OpenCL::Accelerator>::fill(void * memid, void * address, unsigned long bytes, float proto)
+    {
+        CONTEXT("When filling data (OpenCL::Accelerator):");
+        _imp->fill(memid, address, bytes, proto);
+    }
+
+    bool MemoryBackend<tags::OpenCL::Accelerator>::knows(void * memid, void * address)
+    {
+        return _imp->knows(memid, address);
+    }
+
+    template class InstantiationPolicy<MemoryBackend<tags::OpenCL::Accelerator>, Singleton>;
+    //template class MemoryBackend<tags::OpenCL::Accelerator>;
+
     template class InstantiationPolicy<MemoryBackend<tags::OpenCL::GPU>, Singleton>;
     //template class MemoryBackend<tags::OpenCL::GPU>;
+
+    template class InstantiationPolicy<MemoryBackend<tags::OpenCL::CPU>, Singleton>;
+    //template class MemoryBackend<tags::OpenCL::CPU>;
 }
 
 using namespace honei;
 
+static MemoryBackendRegistrator opencl_cpu_backend_registrator(tags::OpenCL::CPU::memory_value, MemoryBackend<tags::OpenCL::CPU>::instance());
 static MemoryBackendRegistrator opencl_gpu_backend_registrator(tags::OpenCL::GPU::memory_value, MemoryBackend<tags::OpenCL::GPU>::instance());
+static MemoryBackendRegistrator opencl_accelerator_backend_registrator(tags::OpenCL::Accelerator::memory_value, MemoryBackend<tags::OpenCL::Accelerator>::instance());

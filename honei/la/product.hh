@@ -483,7 +483,7 @@ namespace honei
             if (a.columns() != b.rows())
                 throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
-            typename SparseMatrix<DT1_>::ElementIterator i(r.begin_elements());
+            typename DenseMatrixTile<DT1_>::ElementIterator i(r.begin_elements());
 
             for (unsigned long j(0) ; j < a.rows() ; ++j)
             {

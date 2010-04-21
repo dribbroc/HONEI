@@ -224,5 +224,40 @@ namespace honei
 
             virtual bool knows(void * memid, void * address);
     };
+
+    template<>
+    class MemoryBackend<tags::OpenCL::Accelerator> :
+        public MemoryBackendBase,
+        public InstantiationPolicy<MemoryBackend<tags::OpenCL::Accelerator>, Singleton>,
+        public PrivateImplementationPattern<MemoryBackend<tags::OpenCL::Accelerator>, Single>
+    {
+        public:
+            /// Constructor.
+            MemoryBackend<tags::OpenCL::Accelerator>();
+
+            /// Destructor.
+            virtual ~MemoryBackend<tags::OpenCL::Accelerator>();
+
+            virtual void * upload(void * memid, void * address, unsigned long bytes);
+
+            virtual void download(void * memid, void * address, unsigned long bytes);
+
+            virtual void * alloc(void * memid, void * address, unsigned long bytes);
+
+            virtual void free(void * memid);
+
+            virtual void copy(void * src_id, void * src_address, void * dest_id,
+                    void * dest_address, unsigned long bytes);
+
+            virtual void convert_float_double(void * src_id, void * src_address, void * dest_id,
+                    void * dest_address, unsigned long bytes);
+
+            virtual void convert_double_float(void * src_id, void * src_address, void * dest_id,
+                    void * dest_address, unsigned long bytes);
+
+            virtual void fill(void * memid, void * address, unsigned long bytes, float proto);
+
+            virtual bool knows(void * memid, void * address);
+    };
 }
 #endif

@@ -42,6 +42,7 @@ namespace honei
             tv_opencl,
             tv_opencl_cpu,
             tv_opencl_gpu,
+            tv_opencl_accelerator,
             tv_fake, /* used by unit tests */
             tv_none
         };
@@ -205,6 +206,19 @@ namespace honei
             {
                 const static TagValue tag_value = tv_opencl;
                 const static TagValue memory_value = tv_opencl_gpu;
+                const static std::string name;
+            };
+
+            /**
+             * Tag-type for Accelerator-optimised operations.
+             *
+             * \ingroup grptagsocl
+             */
+            struct Accelerator :
+                public InstantiationPolicy<OpenCL::Accelerator, NonCopyable>
+            {
+                const static TagValue tag_value = tv_opencl;
+                const static TagValue memory_value = tv_opencl_accelerator;
                 const static std::string name;
             };
 

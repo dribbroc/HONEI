@@ -40,6 +40,15 @@ BACKEND_LIBS += \
 
 endif
 
+if OPENCL
+
+OPENCLFILES = opencllist
+BACKEND_LIBS += \
+	$(top_builddir)/honei/backends/opencl/libhoneibackendsopencl.la
+
+endif
+
+
 bin_PROGRAMS = honei-qt
 honei_qt_SOURCES = honei_qt.cc window.hh window.cc gl_widget.hh gl_widget.cc simulation.hh simulation_controller.hh
 honei_qt_CXXFLAGS = $(QT_CXXFLAGS) $(QT_INCPATH) $(AM_CXXFLAGS)
