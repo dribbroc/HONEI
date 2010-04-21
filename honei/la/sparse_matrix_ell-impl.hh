@@ -43,6 +43,7 @@ namespace honei
 
         DenseVector<unsigned long> Aj;//column indices stored in a (cols_per_row x stride) matrix
         DenseVector<DataType_> Ax;//nonzero values stored in a (cols_per_row x stride) matrix
+        DenseVector<unsigned long> Arl;//length of every single row
 
         /// Our row count.
         unsigned long rows;
@@ -67,14 +68,17 @@ namespace honei
             num_cols_per_row(num_cols_per_row),
             Aj(Aj),
             Ax(Ax),
+            Arl(1),
             rows(rows),
             columns(columns)
         {
+            Arl = row_length();
         }
 
         Implementation(SparseMatrix<DataType_> & src) :
             Aj(1),
             Ax(1),
+            Arl(1),
             rows(1),
             columns(1)
         {
@@ -102,9 +106,12 @@ namespace honei
                 for (typename SparseVector<DataType_>::NonZeroElementIterator i(src[row].begin_non_zero_elements()) ;
                         i < src[row].end_non_zero_elements() ; ++i)
                 {
-                    pAj[target + row * num_cols_per_row] = i.index();
-                    pAx[target + row * num_cols_per_row] = *i;
-                    target++;
+                    if(*i != DataType_(0))
+                    {
+                        pAj[target + row * num_cols_per_row] = i.index();
+                        pAx[target + row * num_cols_per_row] = *i;
+                        target++;
+                    }
                 }
             }
 
@@ -122,6 +129,25 @@ namespace honei
             }
             Aj = tAj;
             Ax = tAx;
+            Arl = row_length();
+        }
+
+        private:
+        DenseVector<unsigned long> row_length()
+        {
+            DenseVector<unsigned long> rl(rows, 0);
+            for (unsigned long row(0) ; row < rows ; ++row)
+            {
+                unsigned long count(0);
+                for (unsigned long i(row) ; i < Ax.size() ; i+=stride)
+                {
+                    if (Ax[i] == DataType_(0))
+                        break;
+                    ++count;
+                }
+                rl[row] = count;
+            }
+            return rl;
         }
     };
 
@@ -204,6 +230,13 @@ namespace honei
     }
 
     template <typename DataType_>
+    DenseVector<unsigned long> &
+    SparseMatrixELL<DataType_>::Arl() const
+    {
+        return this->_imp->Arl;
+    }
+
+    template <typename DataType_>
     const DataType_ SparseMatrixELL<DataType_>::operator() (unsigned long row, unsigned long column) const
     {
         for (unsigned long i(row) ; i < this->Aj().size() && this->Aj()[i] <= column ; i += this->stride())
@@ -219,6 +252,7 @@ namespace honei
     {
         this->_imp->Aj.lock(mode);
         this->_imp->Ax.lock(mode);
+        this->_imp->Arl.lock(mode);
     }
 
     template <typename DataType_>
@@ -226,6 +260,7 @@ namespace honei
     {
         this->_imp->Aj.unlock(mode);
         this->_imp->Ax.unlock(mode);
+        this->_imp->Arl.unlock(mode);
     }
 
     template <typename DataType_>
@@ -285,6 +320,7 @@ namespace honei
         lhs << "NumColsPerRow: "<< b.num_cols_per_row() << " Stride: "<< b.stride() << std::endl;
         lhs << "Aj: " << b.Aj();
         lhs << "Ax: " << b.Ax();
+        lhs << "Arl: " << b.Arl();
         return lhs;
     }
 }

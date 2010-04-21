@@ -21,7 +21,7 @@
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
 
 __kernel void product_smell_dv_float(__global float * x, __global float * y, __global unsigned long * Aj, __global float * Ax,
-        unsigned long num_rows, unsigned long num_cols_per_row, unsigned long stride)
+                                              __global unsigned long * Arl, unsigned long num_rows, unsigned long stride)
 {
     uint row = get_global_id(0);
 
@@ -31,7 +31,8 @@ __kernel void product_smell_dv_float(__global float * x, __global float * y, __g
     Aj += row;
     Ax += row;
 
-    for(unsigned long n = 0; n < num_cols_per_row; n++){
+    const unsigned long max = Arl[row];
+    for(unsigned long n = 0; n < max ; n++){
         const float A_ij = *Ax;
 
         //if (A_ij != 0)
@@ -48,7 +49,7 @@ __kernel void product_smell_dv_float(__global float * x, __global float * y, __g
 }
 
 __kernel void product_smell_dv_double(__global double * x, __global double * y, __global unsigned long * Aj, __global double * Ax,
-        unsigned long num_rows, unsigned long num_cols_per_row, unsigned long stride)
+                                               __global unsigned long * Arl, unsigned long num_rows, unsigned long stride)
 {
     uint row = get_global_id(0);
 
@@ -58,7 +59,8 @@ __kernel void product_smell_dv_double(__global double * x, __global double * y, 
     Aj += row;
     Ax += row;
 
-    for(unsigned long n = 0; n < num_cols_per_row; n++){
+    const unsigned long max = Arl[row];
+    for(unsigned long n = 0; n < max ; n++){
         const double A_ij = *Ax;
 
         //if (A_ij != 0)

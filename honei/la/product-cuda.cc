@@ -172,14 +172,16 @@ namespace
                 void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
                 void * Aj_gpu(a.Aj().lock(lm_read_only, tags::GPU::CUDA::memory_value));
                 void * Ax_gpu(a.Ax().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * Arl_gpu(a.Arl().lock(lm_read_only, tags::GPU::CUDA::memory_value));
 
-                cuda_product_smell_dv_float(b_gpu, result_gpu, Aj_gpu, Ax_gpu,
+                cuda_product_smell_dv_float(b_gpu, result_gpu, Aj_gpu, Ax_gpu, Arl_gpu,
                         a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), blocksize);
 
                 result.unlock(lm_write_only);
                 b.unlock(lm_read_only);
                 a.Aj().unlock(lm_read_only);
                 a.Ax().unlock(lm_read_only);
+                a.Arl().unlock(lm_read_only);
             }
     };
 
@@ -205,14 +207,16 @@ namespace
                 void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
                 void * Aj_gpu(a.Aj().lock(lm_read_only, tags::GPU::CUDA::memory_value));
                 void * Ax_gpu(a.Ax().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * Arl_gpu(a.Arl().lock(lm_read_only, tags::GPU::CUDA::memory_value));
 
-                cuda_product_smell_dv_double(b_gpu, result_gpu, Aj_gpu, Ax_gpu,
+                cuda_product_smell_dv_double(b_gpu, result_gpu, Aj_gpu, Ax_gpu, Arl_gpu,
                         a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), blocksize);
 
                 result.unlock(lm_write_only);
                 b.unlock(lm_read_only);
                 a.Aj().unlock(lm_read_only);
                 a.Ax().unlock(lm_read_only);
+                a.Arl().unlock(lm_read_only);
             }
     };
 }

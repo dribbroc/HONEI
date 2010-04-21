@@ -23,7 +23,7 @@ namespace honei
 {
     namespace opencl
     {
-        void product_smell_dv_float(void * x, void * y, void * Aj, void * Ax,
+        void product_smell_dv_float(void * x, void * y, void * Aj, void * Ax, void * Arl,
                 unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
                 unsigned long stride, cl_device_type type)
         {
@@ -47,15 +47,15 @@ namespace honei
             clSetKernelArg(kernel, 1, sizeof(cl_mem), &y);
             clSetKernelArg(kernel, 2, sizeof(cl_mem), &Aj);
             clSetKernelArg(kernel, 3, sizeof(cl_mem), &Ax);
-            clSetKernelArg(kernel, 4, sizeof(unsigned long), (void *)&num_rows);
-            clSetKernelArg(kernel, 5, sizeof(unsigned long), (void *)&num_cols_per_row);
+            clSetKernelArg(kernel, 4, sizeof(cl_mem), &Arl);
+            clSetKernelArg(kernel, 5, sizeof(unsigned long), (void *)&num_rows);
             clSetKernelArg(kernel, 6, sizeof(unsigned long), (void *)&stride);
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
             clFinish(command_queue);
         }
 
-        void product_smell_dv_double(void * x, void * y, void * Aj, void * Ax,
+        void product_smell_dv_double(void * x, void * y, void * Aj, void * Ax, void * Arl,
                 unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
                 unsigned long stride, cl_device_type type)
         {
@@ -79,8 +79,8 @@ namespace honei
             clSetKernelArg(kernel, 1, sizeof(cl_mem), &y);
             clSetKernelArg(kernel, 2, sizeof(cl_mem), &Aj);
             clSetKernelArg(kernel, 3, sizeof(cl_mem), &Ax);
-            clSetKernelArg(kernel, 4, sizeof(unsigned long), (void *)&num_rows);
-            clSetKernelArg(kernel, 5, sizeof(unsigned long), (void *)&num_cols_per_row);
+            clSetKernelArg(kernel, 4, sizeof(cl_mem), &Arl);
+            clSetKernelArg(kernel, 5, sizeof(unsigned long), (void *)&num_rows);
             clSetKernelArg(kernel, 6, sizeof(unsigned long), (void *)&stride);
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);

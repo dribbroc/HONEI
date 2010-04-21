@@ -88,6 +88,9 @@ namespace honei
             /// Retrieves our Ax (data) vector.
             DenseVector<DataType_> & Ax() const;
 
+            /// Retrieves our Arl (row length) vector.
+            DenseVector<unsigned long> & Arl() const;
+
             /// Retrieves element at (row, column), unassignable.
             const DataType_ operator() (unsigned long row, unsigned long column) const;
 

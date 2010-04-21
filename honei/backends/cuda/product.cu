@@ -161,7 +161,7 @@ namespace honei
         }
         #endif
 
-        __global__ void product_smell_dv_gpu(float * x, float * y, unsigned long * Aj, float * Ax,
+        __global__ void product_smell_dv_gpu(float * x, float * y, unsigned long * Aj, float * Ax, unsigned long * Arl,
                 unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row, unsigned long stride)
         {
             const unsigned long row = large_grid_thread_id();
@@ -174,7 +174,9 @@ namespace honei
             Aj += row;
             Ax += row;
 
-            for(unsigned long n = 0; n < num_cols_per_row; n++){
+            const unsigned long max = Arl[row];
+            for(unsigned long n = 0; n < max ; n++)
+            {
                 const float A_ij = *Ax;
 
                 //if (A_ij != 0)
@@ -192,7 +194,7 @@ namespace honei
         }
 
 #ifdef HONEI_CUDA_DOUBLE
-        __global__ void product_smell_dv_gpu(double * x, double * y, unsigned long * Aj, double * Ax,
+        __global__ void product_smell_dv_gpu(double * x, double * y, unsigned long * Aj, double * Ax, unsigned long * Arl,
                 unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row, unsigned long stride)
         {
             const unsigned long row = large_grid_thread_id();
@@ -205,7 +207,9 @@ namespace honei
             Aj += row;
             Ax += row;
 
-            for(unsigned long n = 0; n < num_cols_per_row; n++){
+            const unsigned long max = Arl[row];
+            for(unsigned long n = 0; n < max ; n++)
+            {
                 const double A_ij = *Ax;
 
                 //if (A_ij != 0)
@@ -282,7 +286,7 @@ extern "C" void cuda_product_bmdv_q1_double (void * ll, void * ld, void * lu,
 }
 #endif
 
-extern "C" void cuda_product_smell_dv_float(void * x, void * y, void * Aj, void * Ax,
+extern "C" void cuda_product_smell_dv_float(void * x, void * y, void * Aj, void * Ax, void *Arl,
         unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
         unsigned long stride, unsigned long blocksize)
 {
@@ -292,9 +296,10 @@ extern "C" void cuda_product_smell_dv_float(void * x, void * y, void * Aj, void 
     float * y_gpu((float *)y);
     unsigned long * Aj_gpu((unsigned long *)Aj);
     float * Ax_gpu((float *)Ax);
+    unsigned long * Arl_gpu((unsigned long *)Arl);
 
     cudaBindTexture(NULL, tex_x_float_product, x_gpu);
-    honei::cuda::product_smell_dv_gpu<<<grid, blocksize>>>(x_gpu, y_gpu, Aj_gpu, Ax_gpu,
+    honei::cuda::product_smell_dv_gpu<<<grid, blocksize>>>(x_gpu, y_gpu, Aj_gpu, Ax_gpu, Arl_gpu,
             num_rows, num_cols, num_cols_per_row, stride);
     cudaUnbindTexture(tex_x_float_product);
 
@@ -302,7 +307,7 @@ extern "C" void cuda_product_smell_dv_float(void * x, void * y, void * Aj, void 
 }
 
 #ifdef HONEI_CUDA_DOUBLE
-extern "C" void cuda_product_smell_dv_double(void * x, void * y, void * Aj, void * Ax,
+extern "C" void cuda_product_smell_dv_double(void * x, void * y, void * Aj, void * Ax, void * Arl,
         unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
         unsigned long stride, unsigned long blocksize)
 {
@@ -312,9 +317,10 @@ extern "C" void cuda_product_smell_dv_double(void * x, void * y, void * Aj, void
     double * y_gpu((double *)y);
     unsigned long * Aj_gpu((unsigned long *)Aj);
     double * Ax_gpu((double *)Ax);
+    unsigned long * Arl_gpu((unsigned long *)Arl);
 
     cudaBindTexture(NULL, tex_x_double_product, x_gpu);
-    honei::cuda::product_smell_dv_gpu<<<grid, blocksize>>>(x_gpu, y_gpu, Aj_gpu, Ax_gpu,
+    honei::cuda::product_smell_dv_gpu<<<grid, blocksize>>>(x_gpu, y_gpu, Aj_gpu, Ax_gpu, Arl_gpu,
             num_rows, num_cols, num_cols_per_row, stride);
     cudaUnbindTexture(tex_x_double_product);
 

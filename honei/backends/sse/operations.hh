@@ -60,12 +60,12 @@ namespace honei
                 unsigned long, unsigned long m);
         void product_smell_dv(float * result, unsigned long * Aj, float * Ax, float * b,
             unsigned long stride, unsigned long rows, unsigned long num_cols_per_row);
-        void product_smell_dv(float * result, unsigned long * Aj, float * Ax, float * b,
+        void product_smell_dv(float * result, unsigned long * Aj, float * Ax, unsigned long * Arl, float * b,
             unsigned long stride, unsigned long rows, unsigned long num_cols_per_row,
             unsigned long row_start, unsigned long row_end);
         void product_smell_dv(double * result, unsigned long * Aj, double * Ax, double * b,
             unsigned long stride, unsigned long rows, unsigned long num_cols_per_row);
-        void product_smell_dv(double * result, unsigned long * Aj, double * Ax, double * b,
+        void product_smell_dv(double * result, unsigned long * Aj, double * Ax, unsigned long * Arl, double * b,
             unsigned long stride, unsigned long rows, unsigned long num_cols_per_row,
             unsigned long row_start, unsigned long row_end);
 

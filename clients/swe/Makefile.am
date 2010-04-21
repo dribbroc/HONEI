@@ -37,6 +37,14 @@ BACKEND_LIBS += \
 
 endif
 
+if OPENCL
+
+OPENCLFILES = opencllist
+BACKEND_LIBS += \
+	$(top_builddir)/honei/backends/opencl/libhoneibackendsopencl.la
+
+endif
+
 bin_PROGRAMS = honei-swe
 honei_swe_SOURCES = honei_swe.hh scenario_controller.hh honei_swe.cc
 honei_swe_LDADD = \

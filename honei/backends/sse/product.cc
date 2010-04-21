@@ -1016,7 +1016,7 @@ namespace honei
                 }
             }
         }
-        void product_smell_dv(float * result, unsigned long * Aj, float * Ax, float * b,
+        void product_smell_dv(float * result, unsigned long * Aj, float * Ax, unsigned long * Arl, float * b,
                 unsigned long stride, unsigned long rows, unsigned long num_cols_per_row,
                 unsigned long row_start, unsigned long row_end)
         {
@@ -1028,7 +1028,8 @@ namespace honei
                 tAj += row;
                 tAx += row;
 
-                for(unsigned long n = 0; n < num_cols_per_row; n++)
+                const unsigned long max(Arl[row]);
+                for(unsigned long n = 0; n < max ; n++)
                 {
                     const float A_ij = *tAx;
 
@@ -1060,7 +1061,7 @@ namespace honei
             }
         }
 
-        void product_smell_dv(double * result, unsigned long * Aj, double * Ax, double * b,
+        void product_smell_dv(double * result, unsigned long * Aj, double * Ax, unsigned long * Arl, double * b,
                 unsigned long stride, unsigned long rows, unsigned long num_cols_per_row,
                 unsigned long row_start, unsigned long row_end)
         {
@@ -1072,7 +1073,8 @@ namespace honei
                 tAj += row;
                 tAx += row;
 
-                for(unsigned long n = 0; n < num_cols_per_row; n++)
+                const unsigned long max(Arl[row]);
+                for(unsigned long n = 0; n < max ; n++)
                 {
                     const double A_ij = *tAx;
 

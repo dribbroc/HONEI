@@ -29,10 +29,10 @@ namespace honei
         void scaled_sum_float(void * x, void * y, float b, unsigned long size, cl_device_type type);
         void scaled_sum_double(void * x, void * y, double b, unsigned long size, cl_device_type type);
 
-        void product_smell_dv_float(void * x, void * y, void * Aj, void * Ax,
+        void product_smell_dv_float(void * x, void * y, void * Aj, void * Ax, void * Arl,
                 unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
                 unsigned long stride, cl_device_type type);
-        void product_smell_dv_double(void * x, void * y, void * Aj, void * Ax,
+        void product_smell_dv_double(void * x, void * y, void * Aj, void * Ax, void * Arl,
                 unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
                 unsigned long stride, cl_device_type type);
 
