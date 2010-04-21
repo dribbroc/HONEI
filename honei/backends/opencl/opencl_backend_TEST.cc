@@ -25,14 +25,15 @@
 using namespace honei;
 using namespace tests;
 
+template <typename Tag_>
 class OpenclBackendQuickTest :
-    public QuickTest
+    public QuickTaggedTest<Tag_>
 {
     private:
         cl_device_type _type;
     public:
         OpenclBackendQuickTest(cl_device_type type) :
-            QuickTest("opencl_backend_test")
+            QuickTaggedTest<Tag_>("opencl_backend_test")
         {
             _type = type;
         }
@@ -92,8 +93,8 @@ class OpenclBackendQuickTest :
             std::cout<<std::endl;
         }
 };
-OpenclBackendQuickTest cpu_opencl_backend_quick_test(CL_DEVICE_TYPE_CPU);
-OpenclBackendQuickTest gpu_opencl_backend_quick_test(CL_DEVICE_TYPE_GPU);
+OpenclBackendQuickTest<tags::OpenCL::CPU> cpu_opencl_backend_quick_test(CL_DEVICE_TYPE_CPU);
+OpenclBackendQuickTest<tags::OpenCL::GPU> gpu_opencl_backend_quick_test(CL_DEVICE_TYPE_GPU);
 #ifdef __PPC__
-OpenclBackendQuickTest accelerator_opencl_backend_quick_test(CL_DEVICE_TYPE_ACCELERATOR);
+OpenclBackendQuickTest<tags::OpenCL::Accelerator> accelerator_opencl_backend_quick_test(CL_DEVICE_TYPE_ACCELERATOR);
 #endif
