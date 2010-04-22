@@ -225,7 +225,7 @@ class PoissonBenchmarkMGBandedQ1Mixed:
                 BENCHMARK(
                         for (unsigned long j(0) ; j < 1 ; ++j)
                         {
-                        (Multigrid<ITag_, OTag_, JAC, CYCLE::V, MIXED >::value(A, RHS, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info));
+                        (Multigrid<ITag_, OTag_, NONE, JAC, CYCLE::V, MIXED >::value(A, RHS, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info));
                         }
                         );
             }
