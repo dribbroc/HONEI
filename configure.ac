@@ -442,6 +442,7 @@ AC_OUTPUT(
 	benchmark/Makefile
 	clients/Makefile
 	clients/config/Makefile
+	clients/io_convert/Makefile
 	clients/mpi/Makefile
 	clients/swe/Makefile
 	clients/lbm/Makefile

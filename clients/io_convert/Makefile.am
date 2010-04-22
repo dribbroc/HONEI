@@ -3,13 +3,6 @@ AM_CXXFLAGS = -I$(top_srcdir)
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in
 
-DEFS = \
-	$(CELLDEF) \
-	$(SSEDEF) \
-	$(CUDADEF) \
-	$(DEBUGDEF) \
-	$(PROFILERDEF)
-
 BACKEND_LIBS = \
        $(top_builddir)/honei/backends/multicore/libhoneibackendsmulticore.la
 
@@ -46,13 +39,18 @@ BACKEND_LIBS += \
 
 endif
 
-bin_PROGRAMS = honei-swe
-honei_swe_SOURCES = honei_swe.hh scenario_controller.hh honei_swe.cc
-honei_swe_LDADD = \
+bin_PROGRAMS = m2ell mtx2ell
+
+m2ell_SOURCES = mtoell.cc
+m2ell_LDADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/la/libhoneila.la \
-	$(top_builddir)/honei/swe/libhoneiswe.la \
-	$(BACKEND_LIBS) \
-	-lGL \
-	-lglut \
-	-lGLU
+	$(top_builddir)/honei/math/libhoneimath.la \
+	$(BACKEND_LIBS)
+
+mtx2ell_SOURCES = mtxtoell.cc
+mtx2ell_LDADD = \
+	$(top_builddir)/honei/util/libhoneiutil.la \
+	$(top_builddir)/honei/la/libhoneila.la \
+	$(top_builddir)/honei/math/libhoneimath.la \
+	$(BACKEND_LIBS)

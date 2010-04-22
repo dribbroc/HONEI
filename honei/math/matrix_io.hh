@@ -26,6 +26,8 @@
 #include <string>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/dense_vector.hh>
+#include <honei/la/sparse_matrix_ell.hh>
+#include <honei/la/algorithm.hh>
 
 using namespace honei;
 
@@ -33,6 +35,7 @@ namespace io_formats
 {
     class MTX;
     class M;
+    class ELL;
 }
 
 template<typename IOFormat_>
@@ -452,5 +455,56 @@ class MatrixIO<io_formats::MTX>
 
                 return result;
             }
+};
+template<>
+class MatrixIO<io_formats::ELL>
+{
+    public:
+    static void write_matrix(std::string output, SparseMatrixELL<double> smatrix)
+    {
+            FILE* file;
+            file = fopen(output.c_str(), "wb");
+            unsigned long size(smatrix.Aj().size());
+            unsigned long rows(smatrix.rows());
+            unsigned long columns(smatrix.columns());
+            unsigned long stride(smatrix.stride());
+            unsigned long num_cols_per_row(smatrix.num_cols_per_row());
+            fwrite(&size, sizeof(unsigned long), 1, file);
+            fwrite(&rows, sizeof(unsigned long), 1, file);
+            fwrite(&columns, sizeof(unsigned long), 1, file);
+            fwrite(&stride, sizeof(unsigned long), 1, file);
+            fwrite(&num_cols_per_row, sizeof(unsigned long), 1, file);
+            fwrite(smatrix.Aj().elements(), sizeof(unsigned long), size, file);
+            fwrite(smatrix.Ax().elements(), sizeof(double), size, file);
+            fclose(file);
+    }
+
+    template <typename DT_>
+    static SparseMatrixELL<DT_> read_matrix(std::string input, DT_ datatype)
+    {
+            FILE* file;
+            file = fopen(input.c_str(), "rb");
+            if (file == NULL)
+                throw InternalError("File "+input+" not found!");
+            unsigned long size;
+            unsigned long rows;
+            unsigned long columns;
+            unsigned long stride;
+            unsigned long num_cols_per_row;
+            fread(&size, sizeof(unsigned long), 1, file);
+            fread(&rows, sizeof(unsigned long), 1, file);
+            fread(&columns, sizeof(unsigned long), 1, file);
+            fread(&stride, sizeof(unsigned long), 1, file);
+            fread(&num_cols_per_row, sizeof(unsigned long), 1, file);
+            DenseVector<unsigned long> aj(size);
+            DenseVector<double> ax(size);
+            fread(aj.elements(), sizeof(unsigned long), size, file);
+            fread(ax.elements(), sizeof(double), size, file);
+            fclose(file);
+            DenseVector<DT_> axc(size);
+            convert<tags::CPU>(axc, ax);
+            SparseMatrixELL<DT_> smatrix(rows, columns, stride, num_cols_per_row, aj, axc);
+            return smatrix;
+    }
 };
 #endif

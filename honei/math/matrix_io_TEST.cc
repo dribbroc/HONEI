@@ -116,6 +116,16 @@ class MMIOTest:
             SparseMatrixELL<DT_> smatrix3(tsmatrix3);
 
             //std::cout << smatrix3 << std::endl;
+
+            std::string filename_3(HONEI_SOURCEDIR);
+            filename_3 +="/honei/math/testdata/area51_full_0.ell";
+            SparseMatrixELL<DT_> smatrix4 = MatrixIO<io_formats::ELL>::read_matrix(filename_3, DT_(1));
+            TEST_CHECK_EQUAL(smatrix4, smatrix3);
+
+            std::string filename_4(HONEI_SOURCEDIR);
+            filename_4 += "/honei/math/testdata/5pt_10x10.ell";
+            SparseMatrixELL<DT_> smatrix5 = MatrixIO<io_formats::ELL>::read_matrix(filename_4, DT_(1));
+            TEST_CHECK_EQUAL(smatrix5, smatrix2);
         }
 };
 MMIOTest<float, tags::CPU> mmio_test_float_dense("float");
