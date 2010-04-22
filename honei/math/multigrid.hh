@@ -60,7 +60,7 @@ namespace honei
      *
      */
     template <typename Prec_, typename DataLayout_>
-        struct MGInfo
+    struct MGInfo
         {
             public:
                 //configuration constants:
@@ -131,16 +131,19 @@ namespace honei
                 std::vector<DenseVector<Prec_> > rhs;
                 std::vector<DenseVector<Prec_> > x;
                 std::vector<DenseVector<Prec_> > diags_inverted;
+
                 std::vector<DataLayout_ > a;
+                std::vector<DataLayout_ > prolmats;
+                std::vector<DataLayout_ > resmats;
         };
 
-    template<typename Tag_, typename OuterTag_, typename SmootherType_, typename CycleType_, typename Mode_>
+    template<typename Tag_, typename OuterTag_, typename ProlType_, typename SmootherType_, typename CycleType_, typename Mode_>
     struct Multigrid
     {
     };
 
-    template<typename Tag_, typename OuterTag_>
-    class Multigrid<Tag_, OuterTag_, JAC, CYCLE::V, FIXED>
+    template<typename Tag_, typename OuterTag_, typename ProlType_>
+    class Multigrid<Tag_, OuterTag_, ProlType_, JAC, CYCLE::V, FIXED>
     {
         template <typename Prec_>
         static DenseVector<Prec_> _multigrid_kernel(BandedMatrixQ1<Prec_>&  system, DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ * cappa, MGInfo<Prec_, BandedMatrixQ1<Prec_> > & info)
@@ -326,7 +329,7 @@ endRestrictionLoop:
                               }
                               else*/
                             {
-                                /*info.c[current_level] =*/ Prolongation<Tag_>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask);
+                                /*info.c[current_level] =*/ Prolongation<Tag_, ProlType_>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask, info.prolmats[current_level]);
                             }
 #ifdef SOLVER_VERBOSE
                             std::cout << "Prolongated." << std::endl;
@@ -635,7 +638,7 @@ endRestrictionLoop:
                               }
                               else*/
                             {
-                                /*info.c[current_level] =*/ Prolongation<Tag_>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask);
+                                /*info.c[current_level] =*/ Prolongation<Tag_, ProlType_>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask, info.prolmats[current_level]);
                             }
 #ifdef SOLVER_VERBOSE
                             std::cout << "Prolongated." << std::endl;
@@ -852,8 +855,8 @@ endCycleLoop:
     };
     //------------------MIXED PRECISION-------------------------
 
-    template<typename Tag_ , typename OuterTag_>
-    class Multigrid<Tag_ , OuterTag_ , JAC, CYCLE::V, MIXED>
+    template<typename Tag_ , typename OuterTag_, typename ProlType_>
+    class Multigrid<Tag_ , OuterTag_ , ProlType_, JAC, CYCLE::V, MIXED>
     {
         template <typename Prec_>
         static DenseVector<Prec_> _multigrid_kernel(unsigned long max_levels, Prec_ * cappa, MGInfo<Prec_, BandedMatrixQ1<Prec_> > & info)
@@ -1042,7 +1045,7 @@ endRestrictionLoop:
                               }
                               else*/
                             {
-                                info.c[current_level] = Prolongation<Tag_>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask);
+                                info.c[current_level] = Prolongation<Tag_, ProlType_>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask, info.prolmats[current_level]);
                             }
 #ifdef SOLVER_VERBOSE
                             std::cout << "Prolongated." << std::endl;
@@ -1358,7 +1361,7 @@ endRestrictionLoop:
                               }
                               else*/
                             {
-                                info.c[current_level] = Prolongation<Tag_>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask);
+                                info.c[current_level] = Prolongation<Tag_, ProlType_>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask, info.prolmats[current_level]);
                             }
 #ifdef SOLVER_VERBOSE
                             std::cout << "Prolongated." << std::endl;

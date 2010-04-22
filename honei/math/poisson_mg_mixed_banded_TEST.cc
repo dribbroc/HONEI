@@ -425,7 +425,7 @@ class PoissonTestMGBandedQ1Mixed:
             }
             //--------End loading of data----------------------------------
             DenseVector<double> result(n, double(0));
-            Multigrid<Tag_, OuterTag_, JAC, CYCLE::V, MIXED >::value(A, b_v, result, (unsigned long)11, std::numeric_limits<double>::epsilon(), info);
+            Multigrid<Tag_, OuterTag_, NONE, JAC, CYCLE::V, MIXED >::value(A, b_v, result, (unsigned long)11, std::numeric_limits<double>::epsilon(), info);
 
             result.lock(lm_read_only);
             for(int i = 0; i < n; i++)

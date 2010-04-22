@@ -81,8 +81,29 @@ namespace
     };
 }
 
-DenseVector<float> & Prolongation<tags::GPU::CUDA>::value(DenseVector<float> & fine,
-        const DenseVector<float> & coarse, const DenseVector<unsigned long> & mask)
+DenseVector<float> & Prolongation<tags::GPU::CUDA, NONE>::value(DenseVector<float> & fine,
+        const DenseVector<float> & coarse, const DenseVector<unsigned long> & mask, BandedMatrixQ1<float> & prolmat)
+{
+    CONTEXT("When prolongating from coarse to fine (CUDA):");
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::prolongation_float", 64ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaProlongationDVfloat task(fine, coarse, mask, blocksize);
+        task();
+    }
+    else
+    {
+        cudaProlongationDVfloat task(fine, coarse, mask, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
+
+    return fine;
+}
+
+DenseVector<float> & Prolongation<tags::GPU::CUDA, NONE>::value(DenseVector<float> & fine,
+        const DenseVector<float> & coarse, const DenseVector<unsigned long> & mask, SparseMatrixELL<float> & prolmat)
 {
     CONTEXT("When prolongating from coarse to fine (CUDA):");
 
@@ -103,8 +124,28 @@ DenseVector<float> & Prolongation<tags::GPU::CUDA>::value(DenseVector<float> & f
 }
 
 #ifdef HONEI_CUDA_DOUBLE
-DenseVector<double> & Prolongation<tags::GPU::CUDA>::value(DenseVector<double> & fine,
-        const DenseVector<double> & coarse, const DenseVector<unsigned long> & mask)
+DenseVector<double> & Prolongation<tags::GPU::CUDA, NONE>::value(DenseVector<double> & fine,
+        const DenseVector<double> & coarse, const DenseVector<unsigned long> & mask, BandedMatrixQ1<double> & prolmat)
+{
+    CONTEXT("When prolongating from coarse to fine (CUDA):");
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::prolongation_double", 64ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaProlongationDVdouble task(fine, coarse, mask, blocksize);
+        task();
+    }
+    else
+    {
+        cudaProlongationDVdouble task(fine, coarse, mask, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
+
+    return fine;
+}
+DenseVector<double> & Prolongation<tags::GPU::CUDA, NONE>::value(DenseVector<double> & fine,
+        const DenseVector<double> & coarse, const DenseVector<unsigned long> & mask, SparseMatrixELL<double> & prolmat)
 {
     CONTEXT("When prolongating from coarse to fine (CUDA):");
 

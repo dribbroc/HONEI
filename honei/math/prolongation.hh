@@ -21,6 +21,9 @@
 #define MATH_GUARD_PROLONGATE_HH 1
 
 #include<honei/la/dense_vector.hh>
+#include<honei/la/banded_matrix.hh>
+#include<honei/la/sparse_matrix.hh>
+#include<honei/util/attributes.hh>
 #include<honei/math/methods.hh>
 #include<honei/math/apply_dirichlet_boundaries.hh>
 #include<cmath>
@@ -28,12 +31,20 @@
 using namespace methods;
 namespace honei
 {
-    template<typename Tag_>
+    template<typename Tag_, typename Type_>
         class Prolongation
         {
+        };
+
+    template<typename Tag_>
+        class Prolongation<Tag_, NONE>
+        {
             public:
-                template <typename Prec_>
-                    static DenseVector<Prec_> & value(DenseVector<Prec_>&  fine, DenseVector<Prec_>& coarse, DenseVector<unsigned long>& mask)
+                template <typename Prec_, typename MatrixType_>
+                    static DenseVector<Prec_> & value(DenseVector<Prec_>&  fine,
+                            DenseVector<Prec_>& coarse,
+                            DenseVector<unsigned long>& mask,
+                            HONEI_UNUSED MatrixType_ & prolmat)
                     {
                         unsigned long n_fine(fine.size());
                         unsigned long n_x_fine((unsigned long)sqrt((Prec_)n_fine) - 1);
@@ -125,13 +136,19 @@ namespace honei
                     }
         };
 
-    template <> struct Prolongation<tags::GPU::CUDA>
+    template <> struct Prolongation<tags::GPU::CUDA, NONE>
     {
         static DenseVector<float> & value(DenseVector<float> & fine,
-                const DenseVector<float> & coarse, const DenseVector<unsigned long> & mask);
+                const DenseVector<float> & coarse, const DenseVector<unsigned long> & mask, HONEI_UNUSED BandedMatrixQ1<float> & prolmat);
 
         static DenseVector<double> & value(DenseVector<double> & fine,
-                const DenseVector<double> & coarse, const DenseVector<unsigned long> & mask);
+                const DenseVector<double> & coarse, const DenseVector<unsigned long> & mask, HONEI_UNUSED BandedMatrixQ1<double> & prolmat);
+
+        static DenseVector<float> & value(DenseVector<float> & fine,
+                const DenseVector<float> & coarse, const DenseVector<unsigned long> & mask, HONEI_UNUSED SparseMatrixELL<float> & prolmat);
+
+        static DenseVector<double> & value(DenseVector<double> & fine,
+                const DenseVector<double> & coarse, const DenseVector<unsigned long> & mask, HONEI_UNUSED SparseMatrixELL<double> & prolmat);
     };
 }
 #endif

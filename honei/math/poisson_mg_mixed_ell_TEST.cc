@@ -224,7 +224,7 @@ class PoissonTestMGSparseELLMixed:
             DenseVector<DT1_> RHS( info.rhs[info.max_level].size(), DT1_(0.));
             FillVector<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(RHS);
             DenseVector<DT1_> result(n, DT1_(0));
-            Multigrid<ITag_, OTag_, JAC, CYCLE::V, MIXED >::value(system, RHS, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info);
+            Multigrid<ITag_, OTag_, NONE, JAC, CYCLE::V, MIXED >::value(system, RHS, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info);
             result.lock(lm_read_only);
             result.unlock(lm_read_only);
             //std::cout<< result <<endl;
