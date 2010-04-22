@@ -81,8 +81,28 @@ namespace
     };
 }
 
-DenseVector<float> & Restriction<tags::GPU::CUDA>::value(DenseVector<float> & coarse,
-        const DenseVector<float> & fine, const DenseVector<unsigned long> & mask)
+DenseVector<float> & Restriction<tags::GPU::CUDA, methods::NONE>::value(DenseVector<float> & coarse,
+        const DenseVector<float> & fine, const DenseVector<unsigned long> & mask, BandedMatrixQ1<float> & resmat)
+{
+    CONTEXT("When restricting from fine to coarse (CUDA):");
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::restriction_float", 64ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaRestrictionDVfloat task(coarse, fine, mask, blocksize);
+        task();
+    }
+    else
+    {
+        cudaRestrictionDVfloat task(coarse, fine, mask, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
+
+    return coarse;
+}
+DenseVector<float> & Restriction<tags::GPU::CUDA, methods::NONE>::value(DenseVector<float> & coarse,
+        const DenseVector<float> & fine, const DenseVector<unsigned long> & mask, SparseMatrixELL<float> & resmat)
 {
     CONTEXT("When restricting from fine to coarse (CUDA):");
 
@@ -103,8 +123,28 @@ DenseVector<float> & Restriction<tags::GPU::CUDA>::value(DenseVector<float> & co
 }
 
 #ifdef HONEI_CUDA_DOUBLE
-DenseVector<double> & Restriction<tags::GPU::CUDA>::value(DenseVector<double> & coarse,
-        const DenseVector<double> & fine, const DenseVector<unsigned long> & mask)
+DenseVector<double> & Restriction<tags::GPU::CUDA, methods::NONE>::value(DenseVector<double> & coarse,
+        const DenseVector<double> & fine, const DenseVector<unsigned long> & mask, BandedMatrixQ1<double> & resmat)
+{
+    CONTEXT("When restricting from fine to coarse (CUDA):");
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::restriction_double", 64ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaRestrictionDVdouble task(coarse, fine, mask, blocksize);
+        task();
+    }
+    else
+    {
+        cudaRestrictionDVdouble task(coarse, fine, mask, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
+
+    return coarse;
+}
+DenseVector<double> & Restriction<tags::GPU::CUDA, methods::NONE>::value(DenseVector<double> & coarse,
+        const DenseVector<double> & fine, const DenseVector<unsigned long> & mask, SparseMatrixELL<double> & resmat)
 {
     CONTEXT("When restricting from fine to coarse (CUDA):");
 
