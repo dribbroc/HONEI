@@ -11,7 +11,7 @@ DEFS = \
 	$(PROFILERDEF)
 
 BACKEND_LIBS = \
-	$(top_builddir)/honei/backends/multicore/libhoneibackendsmulticore.la
+       $(top_builddir)/honei/backends/multicore/libhoneibackendsmulticore.la
 
 if CELL
 
@@ -35,6 +35,14 @@ if SSE
 SSEFILES = sselist
 BACKEND_LIBS += \
 	$(top_builddir)/honei/backends/sse/libhoneibackendssse.la
+
+endif
+
+if OPENCL
+
+OPENCLFILES = opencllist
+BACKEND_LIBS += \
+	$(top_builddir)/honei/backends/opencl/libhoneibackendsopencl.la
 
 endif
 
