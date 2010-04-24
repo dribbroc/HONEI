@@ -29,7 +29,8 @@ define(`add', `addthis(`$1',`$2')addthis(`$1',`$3')')dnl
 
 include(`honei/visual/files.m4')
 
-BACKEND_LIBS =
+BACKEND_LIBS = \
+       $(top_builddir)/honei/backends/multicore/libhoneibackendsmulticore.la
 
 if CELL
 
@@ -53,6 +54,14 @@ if SSE
 SSEFILES = sselist
 BACKEND_LIBS += \
 	$(top_builddir)/honei/backends/sse/libhoneibackendssse.la
+
+endif
+
+if OPENCL
+
+OPENCLFILES = opencllist
+BACKEND_LIBS += \
+	$(top_builddir)/honei/backends/opencl/libhoneibackendsopencl.la
 
 endif
 
