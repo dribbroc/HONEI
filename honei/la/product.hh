@@ -525,23 +525,11 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
             SparseMatrix<DT1_> result(a.rows(), b.columns());
-            typename SparseMatrix<DT1_>::ElementIterator i(result.begin_elements());
-            ///\todo: Should be optimized !!! (Use NonZeroIterators, less []-access ...)
-            for (unsigned int l_row(0) ; l_row < a.rows() ; ++l_row)
+            for (typename SparseMatrix<DT1_>::NonZeroConstElementIterator i(a.begin_non_zero_elements()) ; i != a.end_non_zero_elements() ; ++i)
             {
-                const SparseVector<DT1_> a_row(a[l_row]);
-                for (unsigned int r_column(0); r_column < b.columns() ; ++r_column)
+                for (unsigned long j(0) ; j < b.columns() ; ++j)
                 {
-                    typename SparseVector<DT1_>::ConstElementIterator l(a_row.begin_elements());
-                    for (unsigned int r_row(0); r_row < b.rows() ; ++r_row)
-                    {
-                        const SparseVector<DT2_> b_row(b[r_row]);
-                        DT2_ b_value(b_row[r_column]);
-                        //result[l_row][r_column] += b_value * *l;
-                        *i += b_value * *l;
-                        ++l;
-                    }
-                    ++i;
+                    result(i.row(), j) += *i * b(i.column(), j);
                 }
             }
             return result;
@@ -556,8 +544,8 @@ namespace honei
                 throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
             DenseMatrix<DT1_> result(a.rows(), b.columns(), DT1_(0));
-            for( typename SparseMatrix<DT1_>::NonZeroConstElementIterator i(a.begin_non_zero_elements()), i_end(a.end_non_zero_elements()) ;
-                    i < i_end ; ++i )
+            for (typename SparseMatrix<DT1_>::NonZeroConstElementIterator i(a.begin_non_zero_elements()), i_end(a.end_non_zero_elements()) ;
+                    i < i_end ; ++i)
             {
                 typename DenseMatrix<DT1_>::Row row(result[i.row()]);
                 ScaledSum<>::value(row, b[i.column()], *i);

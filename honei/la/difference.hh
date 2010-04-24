@@ -162,6 +162,35 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
+        static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & result, SparseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
+        {
+            CONTEXT("When subtracting SparseMatrix from SparseMatrix:");
+
+            if (a.columns() != b.columns())
+            {
+                throw MatrixColumnsDoNotMatch(b.columns(), a.columns());
+            }
+
+            if (a.rows() != b.rows())
+            {
+                throw MatrixRowsDoNotMatch(b.rows(), a.rows());
+            }
+
+            for (typename SparseMatrix<DT1_>::NonZeroConstElementIterator l(a.begin_non_zero_elements()),
+                    l_end(a.end_non_zero_elements()) ; l != l_end ; ++l)
+            {
+                result(l.row(), l.column()) += *l;
+            }
+            for (typename SparseMatrix<DT2_>::NonZeroConstElementIterator r(b.begin_non_zero_elements()),
+                    r_end(b.end_non_zero_elements()) ; r != r_end ; ++r)
+            {
+                result(r.row(), r.column()) -= *r;
+            }
+
+            return result;
+        }
+
+        template <typename DT1_, typename DT2_>
         static BandedMatrix<DT1_> & value(BandedMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
         {
             CONTEXT("When subtracting BandedMatrix from BandedMatrix:");

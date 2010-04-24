@@ -85,6 +85,17 @@ namespace honei
             return result;
         }
 
+        template <typename DT_>
+        static DT_ value(const SparseMatrix<DT_> & x)
+        {
+            CONTEXT("When calculating norm of a SparseMatrix:");
+            DT_ result(0);
+
+            result = Norm<norm_type_, root_>::value(x);
+
+            return result;
+        }
+
         /// \}
     };
 
@@ -150,6 +161,27 @@ namespace honei
                     result = fabs(*l);
                 }
             }
+            return result;
+        }
+
+        template <typename DT_>
+        static DT_ value(const SparseMatrix<DT_> & x)
+        {
+            CONTEXT("When calculating norm of a SparseMatrix:");
+
+            DT_ result(0);
+
+            for (unsigned long row(0) ; row < x.rows() ; ++x)
+            {
+                for (typename SparseVector<DT_>::NonZeroConstElementIterator l(x[row].begin_non_zero_elements()), l_end(x[row].end_non_zero_elements()) ;
+                        l != l_end ; ++l)
+                {
+                    if (fabs(*l) > result)
+                    {
+                        result = fabs(*l);
+                    }
+                }
+            }
 
             return result;
         }
@@ -186,35 +218,53 @@ namespace honei
          */
 
         template <typename DT_>
-        static DT_ value(const DenseVectorBase<DT_> & x)
-        {
-            CONTEXT("When calculating norm of a DenseVectorBase:");
-
-            DT_ result(0);
-
-            for (typename DenseVectorBase<DT_>::ConstElementIterator l(x.begin_elements()), l_end(x.end_elements()) ;
-                    l != l_end ; ++l)
+            static DT_ value(const DenseVectorBase<DT_> & x)
             {
-                result += fabs(*l);
-            }
+                CONTEXT("When calculating norm of a DenseVectorBase:");
 
-            return result;
-        }
+                DT_ result(0);
+
+                for (typename DenseVectorBase<DT_>::ConstElementIterator l(x.begin_elements()), l_end(x.end_elements()) ;
+                        l != l_end ; ++l)
+                {
+                    result += fabs(*l);
+                }
+
+                return result;
+            }
 
         template <typename DT_>
-        static DT_ value(const SparseVector<DT_> & x)
-        {
-            CONTEXT("When calculating norm of a SparseVector:");
-            DT_ result(0);
-
-            for (typename SparseVector<DT_>::NonZeroConstElementIterator l(x.begin_non_zero_elements()), l_end(x.end_non_zero_elements()) ;
-                    l != l_end ; ++l)
+            static DT_ value(const SparseVector<DT_> & x)
             {
-                result += fabs(*l);
+                CONTEXT("When calculating norm of a SparseVector:");
+                DT_ result(0);
+
+                for (typename SparseVector<DT_>::NonZeroConstElementIterator l(x.begin_non_zero_elements()), l_end(x.end_non_zero_elements()) ;
+                        l != l_end ; ++l)
+                {
+                    result += fabs(*l);
+                }
+
+                return result;
             }
 
-            return result;
-        }
+        template <typename DT_>
+            static DT_ value(const SparseMatrix<DT_> & x)
+            {
+                CONTEXT("When calculating norm of a SparseMatrix:");
+                DT_ result(0);
+
+                for (unsigned long row(0) ; row < x.rows() ; ++row)
+                {
+                    for (typename SparseVector<DT_>::NonZeroConstElementIterator l(x[row].begin_non_zero_elements()), l_end(x[row].end_non_zero_elements()) ;
+                            l != l_end ; ++l)
+                    {
+                        result += fabs(*l);
+                    }
+                }
+
+                return result;
+            }
 
         /// \}
     };
@@ -261,6 +311,18 @@ namespace honei
             return DotProduct<tags::CPU>::value(x, x);
         }
 
+        template <typename DT_>
+        static DT_ value(const SparseMatrix<DT_> & x)
+        {
+            CONTEXT("When calculating norm of a SparseMatrix:");
+            DT_ result(0);
+            for (unsigned long row(0) ; row < x.rows() ; ++row)
+            {
+                result += DotProduct<tags::CPU>::value(x[row], x[row]);
+            }
+            return result;
+        }
+
         /// \}
     };
 
@@ -300,9 +362,9 @@ namespace honei
         }
 
         template <typename DT_>
-        static DT_ value(const SparseVector<DT_> & x)
+        static DT_ value(const SparseMatrix<DT_> & x)
         {
-            CONTEXT("When calculating norm of a SparseVector:");
+            CONTEXT("When calculating norm of a SparseMatrix:");
             return sqrt(Norm<vnt_l_two, false>::value(x));
         }
 

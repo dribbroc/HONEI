@@ -445,6 +445,7 @@ AC_OUTPUT(
 	clients/Makefile
 	clients/config/Makefile
 	clients/io_convert/Makefile
+	clients/spai/Makefile
 	clients/mpi/Makefile
 	clients/swe/Makefile
 	clients/lbm/Makefile
