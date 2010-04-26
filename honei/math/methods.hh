@@ -46,6 +46,8 @@ namespace methods
     };
     class FIXED;
     class MIXED;
+
+    class PROLMAT;
 }
 
 

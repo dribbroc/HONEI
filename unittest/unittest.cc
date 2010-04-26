@@ -249,7 +249,7 @@ int main(int argc, char** argv)
             i != i_end ; )
     {
         CONTEXT("When running test case '" + (*i)->id() + "':");
-        try
+        //try
         {
             /*if (quick && (!(*i)->is_quick_test()) )
                 continue;
@@ -276,7 +276,7 @@ int main(int argc, char** argv)
             (*i)->run();
             std::cout << "PASSED" << std::endl;
         }
-        catch (TestFailedException & e)
+        /*catch (TestFailedException & e)
         {
             std::cout << "FAILED: " << std::endl << stringify(e.what()) << std::endl;
             result = EXIT_FAILURE;
@@ -290,7 +290,7 @@ int main(int argc, char** argv)
         {
             std::cout << "Caught exception:" << std::endl << e.what() << std::endl;
             throw;
-        }
+        }*/
         i = TestList::instance()->erase(i);
         iterator_index++;
     }

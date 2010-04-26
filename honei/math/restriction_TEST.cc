@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2008 Markus Geveler <apryde@gmx.de>
+ * Copyright (c) 2008 - 2010 Markus Geveler <apryde@gmx.de>
  * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the Math C++ library. LibMath is free software;
@@ -19,6 +19,8 @@
  */
 
 #include <honei/math/restriction.hh>
+#include <honei/math/matrix_io.hh>
+#include <honei/math/transposition.hh>
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <iostream>
@@ -83,5 +85,36 @@ class RestrictionTest:
 RestrictionTest<tags::GPU::CUDA, float> cuda_restriction_test_float("float");
 #ifdef HONEI_CUDA_DOUBLE
 RestrictionTest<tags::GPU::CUDA, double> cuda_restriction_test_double("double");
+#endif
+#endif
+
+template <typename Tag_, typename DT1_>
+class RestrictionVisualTest:
+    public BaseTest
+{
+    public:
+        RestrictionVisualTest(const std::string & tag) :
+            BaseTest("Restriction visual test <" + tag + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            std::string prol_file(HONEI_SOURCEDIR);
+            prol_file += "/honei/math/testdata/poisson/";
+            prol_file += "poisson_prol_2.ell";
+            SparseMatrixELL<DT1_> prolmat(MatrixIO<io_formats::ELL>::read_matrix(prol_file, DT1_(0)));
+            SparseMatrix<DT1_> prol(prolmat);
+            SparseMatrix<DT1_> res(prol.columns(), prol.rows());
+            Transposition<Tag_>::value(prol, res);
+            SparseMatrixELL<DT1_> resmat(res);
+            std::cout << resmat << std::endl;
+        }
+};
+#ifdef HONEI_CUDA
+RestrictionVisualTest<tags::GPU::CUDA, float> cuda_restriction_vis__test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+RestrictionVisualTest<tags::GPU::CUDA, double> cuda_restriction_vis_test_double("double");
 #endif
 #endif

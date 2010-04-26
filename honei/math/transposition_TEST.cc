@@ -52,4 +52,5 @@ class TranspositionTEST:
             TEST_CHECK_EQUAL(target, ref);
         }
 };
+TranspositionTEST<tags::CPU, float> transposition_test_float("Transposition TEST float, CPU: ");
 

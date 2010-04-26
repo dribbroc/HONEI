@@ -254,7 +254,7 @@ namespace honei
                             // set homogeneous Dirichlet boundary conditions in the restricted defect vector
                             // depending on Dirichlet mask (see routine for details), and store a copy in RHS
 
-                            /*info.d[current_level] =*/ Restriction<Tag_, ProlType_>::value((info.d[current_level]), (info.d[current_level + 1]), *info.macro_border_mask, info.resmats[current_level]);
+                            /*info.d[current_level] =*/ Restriction<Tag_, ProlType_>::value((info.d[current_level]), (info.d[current_level + 1]), *info.macro_border_mask, info.resmats[current_level + 1]);
 #ifdef SOLVER_VERBOSE
                             std::cout << "Restricted." << std::endl;
 #endif
@@ -563,7 +563,7 @@ endCycleLoop:
                             // set homogeneous Dirichlet boundary conditions in the restricted defect vector
                             // depending on Dirichlet mask (see routine for details), and store a copy in RHS
 
-                            /*info.d[current_level] =*/ Restriction<Tag_, ProlType_>::value((info.d[current_level]), (info.d[current_level + 1]), *info.macro_border_mask, info.resmats[current_level]);
+                            /*info.d[current_level] =*/ Restriction<Tag_, ProlType_>::value((info.d[current_level]), (info.d[current_level + 1]), *info.macro_border_mask, info.resmats[current_level + 1]);
 #ifdef SOLVER_VERBOSE
                             std::cout << "Restricted." << std::endl;
 #endif
@@ -970,7 +970,7 @@ endCycleLoop:
                             // set homogeneous Dirichlet boundary conditions in the restricted defect vector
                             // depending on Dirichlet mask (see routine for details), and store a copy in RHS
 
-                            info.d[current_level] = Restriction<Tag_, ProlType_>::value((info.d[current_level]), (info.d[current_level + 1]), *info.macro_border_mask, info.resmats[current_level]);
+                            info.d[current_level] = Restriction<Tag_, ProlType_>::value((info.d[current_level]), (info.d[current_level + 1]), *info.macro_border_mask, info.resmats[current_level + 1]);
 #ifdef SOLVER_VERBOSE
                             std::cout << "Restricted." << std::endl;
 #endif
@@ -1286,7 +1286,7 @@ endCycleLoop:
                             // set homogeneous Dirichlet boundary conditions in the restricted defect vector
                             // depending on Dirichlet mask (see routine for details), and store a copy in RHS
 
-                            info.d[current_level] = Restriction<Tag_, ProlType_>::value((info.d[current_level]), (info.d[current_level + 1]), *info.macro_border_mask, info.resmats[current_level]);
+                            info.d[current_level] = Restriction<Tag_, ProlType_>::value((info.d[current_level]), (info.d[current_level + 1]), *info.macro_border_mask, info.resmats[current_level + 1]);
 #ifdef SOLVER_VERBOSE
                             std::cout << "Restricted." << std::endl;
 #endif

@@ -23,6 +23,7 @@
 #include<honei/la/dense_vector.hh>
 #include<honei/la/banded_matrix.hh>
 #include<honei/la/sparse_matrix.hh>
+#include<honei/la/product.hh>
 #include<honei/util/attributes.hh>
 #include<honei/math/methods.hh>
 #include<honei/math/apply_dirichlet_boundaries.hh>
@@ -166,6 +167,19 @@ namespace honei
                         }
                     }
                     ApplyDirichletBoundaries<Tag_>::value(coarse, mask);
+                    return coarse;
+                }
+    };
+
+    template<typename Tag_>
+    struct Restriction<Tag_, PROLMAT>
+    {
+        public:
+            template <typename Prec_, typename MatrixType_>
+                static DenseVector<Prec_> & value(DenseVector<Prec_>&  coarse, DenseVector<Prec_>& fine, DenseVector<unsigned long>& mask, HONEI_UNUSED MatrixType_ & resmat = NULL)
+                {
+                    Product<Tag_>::value(coarse, resmat, fine);
+                    //ApplyDirichletBoundaries<Tag_>::value(coarse, mask);
                     return coarse;
                 }
     };
