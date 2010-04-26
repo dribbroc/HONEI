@@ -424,6 +424,39 @@ namespace honei
         static double value(const DenseVectorContinuousBase<double> & x);
     };
 
+    template <> struct Norm<vnt_l_two, false, tags::GPU::MultiCore::CUDA>
+    {
+        /**
+         * \name Norms
+         * \{
+         *
+         * \brief Returns the L2 norm of a vector.
+         *
+         * \param x The entity whose norm is to be computed.
+         *
+         * \retval r Will create a new object of type DT_ and return it.
+         */
+
+        static float value(const DenseVectorContinuousBase<float> & x);
+        static double value(const DenseVectorContinuousBase<double> & x);
+    };
+    template <> struct Norm<vnt_l_two, true, tags::GPU::MultiCore::CUDA>
+    {
+        /**
+         * \name Norms
+         * \{
+         *
+         * \brief Returns the square root of the L2 norm of a vector.
+         *
+         * \param x The entity whose norm is to be computed.
+         *
+         * \retval r Will create a new object of type DT_ and return it.
+         */
+
+        static float value(const DenseVectorContinuousBase<float> & x);
+        static double value(const DenseVectorContinuousBase<double> & x);
+    };
+
     /**
      * \brief Norm of an entity (SSE Implementaion).
      *

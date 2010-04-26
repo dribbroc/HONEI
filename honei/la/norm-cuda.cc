@@ -218,3 +218,171 @@ double Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuous
     return sqrt(result);
 }
 #endif
+
+float Norm<vnt_l_two, false, tags::GPU::MultiCore::CUDA>::value(const DenseVectorContinuousBase<float> & a)
+{
+    CONTEXT("When calculating L2 norm (false) of DenseVectorContinuousBase<float> (MC CUDA):");
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::norm_l2_one_float", 128ul));
+    unsigned long gridsize(Configuration::instance()->get_value("cuda::norm_l2_one_float_grid", 16ul));
+
+    float result (0.);
+
+    if (a.size() < gridsize * blocksize * 3)
+    {
+        a.lock(lm_read_only);
+        for (unsigned long i(0) ; i < a.size() ; ++i)
+        {
+            result += a[i] * a[i];
+        }
+        a.unlock(lm_read_only);
+    }
+    else
+    {
+        if (! cuda::GPUPool::instance()->idle())
+        {
+            throw InternalError("You should not run this operation within any MC CUDA op!");
+        }
+        else
+        {
+            float result1(0.);
+            float result2(0.);
+            DenseVectorRange<float> a1(a.range(a.size()/2, 0));
+            cudaNormL2oneDVfloat task1(a1, &result1, blocksize, gridsize);
+            DenseVectorRange<float> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
+            cudaNormL2oneDVfloat task2(a2, &result2, blocksize, gridsize);
+            cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
+            cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+            result = result1 + result2;
+        }
+    }
+
+    return result;
+}
+
+#ifdef HONEI_CUDA_DOUBLE
+double Norm<vnt_l_two, false, tags::GPU::MultiCore::CUDA>::value(const DenseVectorContinuousBase<double> & a)
+{
+    CONTEXT("When calculating L2 norm (false) of DenseVectorContinuousBase<double> (MC CUDA):");
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::norm_l2_one_double", 128ul));
+    unsigned long gridsize(Configuration::instance()->get_value("cuda::norm_l2_one_double", 16ul));
+
+    double result (0.);
+
+    if (a.size() < gridsize * blocksize * 3)
+    {
+        a.lock(lm_read_only);
+        for (unsigned long i(0) ; i < a.size() ; ++i)
+        {
+            result += a[i] * a[i];
+        }
+        a.unlock(lm_read_only);
+    }
+    else
+    {
+        if (! cuda::GPUPool::instance()->idle())
+        {
+            throw InternalError("You should not run this operation within any MC CUDA op!");
+        }
+        else
+        {
+            double result1(0.);
+            double result2(0.);
+            DenseVectorRange<double> a1(a.range(a.size()/2, 0));
+            cudaNormL2oneDVdouble task1(a1, &result1, blocksize, gridsize);
+            DenseVectorRange<double> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
+            cudaNormL2oneDVdouble task2(a2, &result2, blocksize, gridsize);
+            cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
+            cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+            result = result1 + result2;
+        }
+    }
+
+    return result;
+}
+#endif
+
+float Norm<vnt_l_two, true, tags::GPU::MultiCore::CUDA>::value(const DenseVectorContinuousBase<float> & a)
+{
+    CONTEXT("When calculating L2 norm (true) of DenseVectorContinuousBase<float> (MC CUDA):");
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::norm_l2_one_float", 128ul));
+    unsigned long gridsize(Configuration::instance()->get_value("cuda::norm_l2_one_float_grid", 16ul));
+
+    float result (0.);
+
+    if (a.size() < gridsize * blocksize * 3)
+    {
+        a.lock(lm_read_only);
+        for (unsigned long i(0) ; i < a.size() ; ++i)
+        {
+            result += a[i] * a[i];
+        }
+        a.unlock(lm_read_only);
+    }
+    else
+    {
+        if (! cuda::GPUPool::instance()->idle())
+        {
+            throw InternalError("You should not run this operation within any MC CUDA op!");
+        }
+        else
+        {
+            float result1(0.);
+            float result2(0.);
+            DenseVectorRange<float> a1(a.range(a.size()/2, 0));
+            cudaNormL2oneDVfloat task1(a1, &result1, blocksize, gridsize);
+            DenseVectorRange<float> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
+            cudaNormL2oneDVfloat task2(a2, &result2, blocksize, gridsize);
+            cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
+            cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+            result = result1 + result2;
+        }
+    }
+
+    return sqrt(result);
+}
+
+#ifdef HONEI_CUDA_DOUBLE
+double Norm<vnt_l_two, true, tags::GPU::MultiCore::CUDA>::value(const DenseVectorContinuousBase<double> & a)
+{
+    CONTEXT("When calculating L2 norm (true) of DenseVectorContinuousBase<double> (MC CUDA):");
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::norm_l2_one_double", 128ul));
+    unsigned long gridsize(Configuration::instance()->get_value("cuda::norm_l2_one_double", 16ul));
+
+    double result (0.);
+
+    if (a.size() < gridsize * blocksize * 3)
+    {
+        a.lock(lm_read_only);
+        for (unsigned long i(0) ; i < a.size() ; ++i)
+        {
+            result += a[i] * a[i];
+        }
+        a.unlock(lm_read_only);
+    }
+    else
+    {
+        if (! cuda::GPUPool::instance()->idle())
+        {
+            throw InternalError("You should not run this operation within any MC CUDA op!");
+        }
+        else
+        {
+            double result1(0.);
+            double result2(0.);
+            DenseVectorRange<double> a1(a.range(a.size()/2, 0));
+            cudaNormL2oneDVdouble task1(a1, &result1, blocksize, gridsize);
+            DenseVectorRange<double> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
+            cudaNormL2oneDVdouble task2(a2, &result2, blocksize, gridsize);
+            cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
+            cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+            result = result1 + result2;
+        }
+    }
+
+    return sqrt(result);
+}
+#endif

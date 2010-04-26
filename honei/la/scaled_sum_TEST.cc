@@ -197,8 +197,10 @@ DenseVectorResScaledSumTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vect
 #endif
 #ifdef HONEI_CUDA
 DenseVectorResScaledSumTest<tags::GPU::CUDA, float> cuda_dense_vector_res_scaled_sum_test_float("float");
+DenseVectorResScaledSumTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_dense_vector_res_scaled_sum_test_float("float");
 #ifdef HONEI_CUDA_DOUBLE
 DenseVectorResScaledSumTest<tags::GPU::CUDA, double> cuda_dense_vector_res_scaled_sum_test_double("double");
+DenseVectorResScaledSumTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector_res_scaled_sum_test_double("double");
 #endif
 #endif
 
@@ -246,8 +248,10 @@ DenseVectorResScaledSumQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense
 #endif
 #ifdef HONEI_CUDA
 DenseVectorResScaledSumQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_res_scaled_sum_quick_test_float("float");
+DenseVectorResScaledSumQuickTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_dense_vector_res_scaled_sum_quick_test_float("float");
 #ifdef HONEI_CUDA_DOUBLE
 DenseVectorResScaledSumQuickTest<tags::GPU::CUDA, double> cuda_dense_vector_res_scaled_sum_quick_test_double("double");
+DenseVectorResScaledSumQuickTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector_res_scaled_sum_quick_test_double("double");
 #endif
 #endif
 

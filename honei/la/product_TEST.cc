@@ -777,8 +777,10 @@ SparseMatrixELLDenseVectorProductTest<double, tags::OpenCL::GPU> ocl_gpu_sparse_
 #endif
 #ifdef HONEI_CUDA
 SparseMatrixELLDenseVectorProductTest<float, tags::GPU::CUDA> cuda_sparse_matrix_ell_dense_vector_product_test_float("float");
+SparseMatrixELLDenseVectorProductTest<float, tags::GPU::MultiCore::CUDA> mc_cuda_sparse_matrix_ell_dense_vector_product_test_float("float");
 #ifdef HONEI_CUDA_DOUBLE
 SparseMatrixELLDenseVectorProductTest<double, tags::GPU::CUDA> cuda_sparse_matrix_ell_dense_vector_product_test_double("double");
+SparseMatrixELLDenseVectorProductTest<double, tags::GPU::MultiCore::CUDA> mc_cuda_sparse_matrix_ell_dense_vector_product_test_double("double");
 #endif
 #endif
 
@@ -832,8 +834,10 @@ SparseMatrixELLDenseVectorProductQuickTest<double, tags::OpenCL::GPU> ocl_gpu_sp
 #endif
 #ifdef HONEI_CUDA
 SparseMatrixELLDenseVectorProductQuickTest<float, tags::GPU::CUDA> cuda_sparse_matrix_ell_dense_vector_product_quick_test_float("float");
+SparseMatrixELLDenseVectorProductQuickTest<float, tags::GPU::MultiCore::CUDA> mc_cuda_sparse_matrix_ell_dense_vector_product_quick_test_float("float");
 #ifdef HONEI_CUDA_DOUBLE
 SparseMatrixELLDenseVectorProductQuickTest<double, tags::GPU::CUDA> cuda_sparse_matrix_ell_dense_vector_product_quick_test_double("double");
+SparseMatrixELLDenseVectorProductQuickTest<double, tags::GPU::MultiCore::CUDA> mc_cuda_sparse_matrix_ell_dense_vector_product_quick_test_double("double");
 #endif
 #endif
 

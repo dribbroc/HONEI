@@ -74,11 +74,11 @@ extern "C"
             unsigned long size, unsigned long blocksize, unsigned long m);
 
     void cuda_product_smell_dv_float(void * x, void * y, void * Aj, void * Ax, void * Arl,
-            unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
+            unsigned long row_start, unsigned long row_end, unsigned long num_cols_per_row,
             unsigned long stride, unsigned long blocksize);
 
     void cuda_product_smell_dv_double(void * x, void * y, void * Aj, void * Ax, void * Arl,
-            unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
+            unsigned long row_start, unsigned long row_end, unsigned long num_cols_per_row,
             unsigned long stride, unsigned long blocksize);
 
     void cuda_prolongation_float(void * fine, unsigned long size_fine, void * coarse, unsigned long size_coarse,

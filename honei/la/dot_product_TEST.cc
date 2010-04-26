@@ -85,8 +85,10 @@ DenseDotProductTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_scalar_produ
 #endif
 #ifdef HONEI_CUDA
 DenseDotProductTest<tags::GPU::CUDA, float> cuda_dense_scalar_product_test_float("float");
+DenseDotProductTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_dense_scalar_product_test_float("float");
 #ifdef HONEI_CUDA_DOUBLE
 DenseDotProductTest<tags::GPU::CUDA, double> cuda_dense_scalar_product_test_double("double");
+DenseDotProductTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_scalar_product_test_double("double");
 #endif
 #endif
 
@@ -142,8 +144,10 @@ DenseDotProductQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_scalar_
 #endif
 #ifdef HONEI_CUDA
 DenseDotProductQuickTest<tags::GPU::CUDA, float> cuda_dense_scalar_product_quick_test_float("float");
+DenseDotProductQuickTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_dense_scalar_product_quick_test_float("float");
 #ifdef HONEI_CUDA_DOUBLE
 DenseDotProductQuickTest<tags::GPU::CUDA, double> cuda_dense_scalar_product_quick_test_double("double");
+DenseDotProductQuickTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_scalar_product_quick_test_double("double");
 #endif
 #endif
 
@@ -298,6 +302,11 @@ DenseVectorRangeDotProductTest<tags::CPU::MultiCore::SSE, double> sse_mc_dense_v
 #endif
 #ifdef HONEI_CUDA
 DenseVectorRangeDotProductTest<tags::GPU::CUDA, float> cuda_dense_vector_range_scalar_product_test_float("float");
+DenseVectorRangeDotProductTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_dense_vector_range_scalar_product_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorRangeDotProductTest<tags::GPU::CUDA, double> cuda_dense_vector_range_scalar_product_test_double("double");
+DenseVectorRangeDotProductTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector_range_scalar_product_test_double("double");
+#endif
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -357,6 +366,11 @@ DenseVectorRangeDotProductQuickTest<tags::CPU::MultiCore::SSE, double> sse_mc_de
 #endif
 #ifdef HONEI_CUDA
 DenseVectorRangeDotProductQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_range_scalar_product_quick_test_float("float");
+DenseVectorRangeDotProductQuickTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_dense_vector_range_scalar_product_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorRangeDotProductQuickTest<tags::GPU::CUDA, double> cuda_dense_vector_range_scalar_product_quick_test_double("double");
+DenseVectorRangeDotProductQuickTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector_range_scalar_product_quick_test_double("double");
+#endif
 #endif
 
 template <typename Tag_, typename DataType_>

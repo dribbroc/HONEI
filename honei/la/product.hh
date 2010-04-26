@@ -1346,6 +1346,33 @@ namespace honei
         /// \}
     };
 
+    template <> struct Product<tags::GPU::MultiCore::CUDA>
+    {
+        /**
+         * \name Products
+         * \{
+         *
+         * \brief Returns the product of a Matrix and a Vector.
+         *
+         * \param a The matrix that is the first factor of the operation.
+         * \param b The vector that is the second factor of the operation.
+         *
+         * \retval c Will create a new entity with Datatype of the first factor and return it.
+         *
+         * \exception MatrixSizeDoesNotMatch is thrown if two banded matrices do not have the same size.
+         * \exception MatrixRowsDoNotMatch is thrown if two matrices do not have the same number of rows.
+         * \exception MatrixColumnsDoNotMatch is thrown if two matrices do not have the same number of columns.
+         * \exception MatrixIsNotSquare is thrown if a row access matrix's number of rows does not equal its number of columns.
+         * \exception VectorSizeDoesNotMatch is thrown if two vectors do not have the same size.
+         */
+
+        static DenseVector<float> value(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b);
+
+        static DenseVector<double> value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b);
+
+        /// \}
+    };
+
     /**
      * \brief Product of two entities.
      *

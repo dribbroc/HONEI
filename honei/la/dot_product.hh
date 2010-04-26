@@ -296,6 +296,28 @@ namespace honei
         /// \}
     };
 
+    template <> struct DotProduct<tags::GPU::MultiCore::CUDA>
+    {
+        /**
+         * \{
+         *
+         * Returns the dot product of two given vectors.
+         *
+         * \param x One of the vectors of which the dot product shall be computed.
+         * \param y idem
+         *
+         * \retval r Will return an instance of the used data type containing the scalar product.
+         *
+         * \exception VectorSizeDoesNotMatch is thrown if the two vectors don't have the same size.
+         */
+
+        static float value(const DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+
+        static double value(const DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+
+        /// \}
+    };
+
     /**
      * \brief DotProduct of two vectors.
      *

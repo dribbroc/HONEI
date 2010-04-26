@@ -48,12 +48,13 @@ namespace honei
 
 extern "C" void * cuda_malloc(unsigned long bytes)
 {
-    void * gpu;
+    void * gpu(NULL);
     if (cudaErrorMemoryAllocation == cudaMalloc((void**)&gpu, bytes))
         return 0;
     CUDA_ERROR();
     return gpu;
 }
+
 extern "C" void cuda_upload(void * cpu, void * gpu, unsigned long bytes)
 {
     cudaMemcpy(gpu, cpu, bytes, cudaMemcpyHostToDevice);

@@ -153,15 +153,20 @@ namespace
     class cudaProductSMELLDVfloat
     {
         private:
-            DenseVector<float> & result;;
+            DenseVectorContinuousBase<float> & result;
             const SparseMatrixELL<float> & a;
-            const DenseVector<float> & b;
+            const DenseVectorContinuousBase<float> & b;
+            unsigned long row_start;
+            unsigned long row_end;
             unsigned long blocksize;
         public:
-            cudaProductSMELLDVfloat(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b, unsigned long blocksize) :
+            cudaProductSMELLDVfloat(DenseVectorContinuousBase<float> & result, const SparseMatrixELL<float> & a, const DenseVectorContinuousBase<float> & b,
+                    unsigned long row_start, unsigned long row_end, unsigned long blocksize) :
                 result(result),
                 a(a),
                 b(b),
+                row_start(row_start),
+                row_end(row_end),
                 blocksize(blocksize)
             {
             }
@@ -175,7 +180,7 @@ namespace
                 void * Arl_gpu(a.Arl().lock(lm_read_only, tags::GPU::CUDA::memory_value));
 
                 cuda_product_smell_dv_float(b_gpu, result_gpu, Aj_gpu, Ax_gpu, Arl_gpu,
-                        a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), blocksize);
+                        row_start, row_end, a.num_cols_per_row(), a.stride(), blocksize);
 
                 result.unlock(lm_write_only);
                 b.unlock(lm_read_only);
@@ -188,15 +193,20 @@ namespace
     class cudaProductSMELLDVdouble
     {
         private:
-            DenseVector<double> & result;;
+            DenseVectorContinuousBase<double> & result;
             const SparseMatrixELL<double> & a;
-            const DenseVector<double> & b;
+            const DenseVectorContinuousBase<double> & b;
+            unsigned long row_start;
+            unsigned long row_end;
             unsigned long blocksize;
         public:
-            cudaProductSMELLDVdouble(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b, unsigned long blocksize) :
+            cudaProductSMELLDVdouble(DenseVectorContinuousBase<double> & result, const SparseMatrixELL<double> & a, const DenseVectorContinuousBase<double> & b,
+                    unsigned long row_start, unsigned long row_end, unsigned long blocksize) :
                 result(result),
                 a(a),
                 b(b),
+                row_start(row_start),
+                row_end(row_end),
                 blocksize(blocksize)
             {
             }
@@ -210,7 +220,7 @@ namespace
                 void * Arl_gpu(a.Arl().lock(lm_read_only, tags::GPU::CUDA::memory_value));
 
                 cuda_product_smell_dv_double(b_gpu, result_gpu, Aj_gpu, Ax_gpu, Arl_gpu,
-                        a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), blocksize);
+                        row_start, row_end, a.num_cols_per_row(), a.stride(), blocksize);
 
                 result.unlock(lm_write_only);
                 b.unlock(lm_read_only);
@@ -361,12 +371,12 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(DenseVector<float> & result, 
 
     if (! cuda::GPUPool::instance()->idle())
     {
-        cudaProductSMELLDVfloat task(result, a, b, blocksize);
+        cudaProductSMELLDVfloat task(result, a, b, 0, a.rows(), blocksize);
         task();
     }
     else
     {
-        cudaProductSMELLDVfloat task(result, a, b, blocksize);
+        cudaProductSMELLDVfloat task(result, a, b, 0, a.rows(), blocksize);
         cuda::GPUPool::instance()->enqueue(task, 0)->wait();
     }
 
@@ -391,13 +401,79 @@ DenseVector<double> Product<tags::GPU::CUDA>::value(DenseVector<double> & result
 
     if (! cuda::GPUPool::instance()->idle())
     {
-        cudaProductSMELLDVdouble task(result, a, b, blocksize);
+        cudaProductSMELLDVdouble task(result, a, b, 0, a.rows(), blocksize);
         task();
     }
     else
     {
-        cudaProductSMELLDVdouble task(result, a, b, blocksize);
+        cudaProductSMELLDVdouble task(result, a, b, 0, a.rows(), blocksize);
         cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
+
+    return result;
+}
+#endif
+
+DenseVector<float> Product<tags::GPU::MultiCore::CUDA>::value(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b)
+{
+    CONTEXT("When multiplying SparseMatrixELL<float> with DenseVectorContinuousBase<float> (MC CUDA):");
+
+    if (b.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+    }
+    if (a.rows() != result.size())
+    {
+        throw VectorSizeDoesNotMatch(a.rows(), result.size());
+    }
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_float", 256ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        throw InternalError("You should not run this operation within any MC CUDA op!");
+    }
+    else
+    {
+        DenseVectorRange<float> result1(result.range(result.size()/2, 0));
+        cudaProductSMELLDVfloat task1(result1, a, b, 0, result1.size(), blocksize);
+        DenseVectorRange<float> result2(result.range(result.size()/2 + result.size()%2, result.size()/2));
+        cudaProductSMELLDVfloat task2(result2, a, b, result1.size(), a.rows(), blocksize);
+        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+    }
+
+    return result;
+}
+
+#ifdef HONEI_CUDA_DOUBLE
+DenseVector<double> Product<tags::GPU::MultiCore::CUDA>::value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b)
+{
+    CONTEXT("When multiplying SparseMatrixELL<double> with DenseVectorContinuousBase<double> (MC CUDA):");
+
+    if (b.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+    }
+    if (a.rows() != result.size())
+    {
+        throw VectorSizeDoesNotMatch(a.rows(), result.size());
+    }
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_double", 256ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        throw InternalError("You should not run this operation within any MC CUDA op!");
+    }
+    else
+    {
+        DenseVectorRange<double> result1(result.range(result.size()/2, 0));
+        cudaProductSMELLDVdouble task1(result1, a, b, 0, result1.size(), blocksize);
+        DenseVectorRange<double> result2(result.range(result.size()/2 + result.size()%2, result.size()/2));
+        cudaProductSMELLDVdouble task2(result2, a, b, result1.size(), a.rows(), blocksize);
+        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
     }
 
     return result;

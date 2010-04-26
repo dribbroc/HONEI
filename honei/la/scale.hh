@@ -226,6 +226,27 @@ namespace honei
         /// \}
     };
 
+    template <> struct Scale<tags::GPU::MultiCore::CUDA>
+    {
+        /**
+         * \name Scales
+         * \{
+         *
+         * \brief Returns the product of a scalar factor and a given entity.
+         *
+         * \param a The scalar factor.
+         * \param x The entity that shall be scaled.
+         *
+         * \retval x Will modify the entity x and return it.
+         */
+
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & x, const float a);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & x, const double a);
+
+        /// \}
+    };
+
     /**
      * \brief Result of scaling an entity by a scalar factor.
      *

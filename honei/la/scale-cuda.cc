@@ -138,6 +138,55 @@ DenseVectorContinuousBase<double> & Scale<tags::GPU::CUDA>::value(DenseVectorCon
 }
 #endif
 
+
+DenseVectorContinuousBase<float> & Scale<tags::GPU::MultiCore::CUDA>::value(DenseVectorContinuousBase<float> & x, const float a)
+{
+    CONTEXT("When scaling DenseVectorContinuousBase<float> by float (MC CUDA):");
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::scale_one_float", 128ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        throw InternalError("You should not run this operation within any MC CUDA op!");
+    }
+    else
+    {
+        DenseVectorRange<float> x1(x.range(x.size()/2, 0));
+        cudaScaleDVfloat task1(x1, a, blocksize);
+        DenseVectorRange<float> x2(x.range(x.size()/2 + x.size()%2, x.size()/2));
+        cudaScaleDVfloat task2(x2, a, blocksize);
+        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+    }
+
+    return x;
+}
+
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorContinuousBase<double> & Scale<tags::GPU::MultiCore::CUDA>::value(DenseVectorContinuousBase<double> & x, const double a)
+{
+    CONTEXT("When scaling DenseVectorContinuousBase<double> by double (MC CUDA):");
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::scale_one_double", 128ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        throw InternalError("You should not run this operation within any MC CUDA op!");
+    }
+    else
+    {
+        DenseVectorRange<double> x1(x.range(x.size()/2, 0));
+        cudaScaleDVdouble task1(x1, a, blocksize);
+        DenseVectorRange<double> x2(x.range(x.size()/2 + x.size()%2, x.size()/2));
+        cudaScaleDVdouble task2(x2, a, blocksize);
+        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+    }
+
+    return x;
+}
+#endif
+
 DenseMatrix<float> & Scale<tags::GPU::CUDA>::value(DenseMatrix<float> & x, const float a)
 {
     CONTEXT("When scaling DenseMatrix<float> by float (CUDA):");

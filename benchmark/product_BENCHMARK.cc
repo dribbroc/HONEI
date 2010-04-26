@@ -500,9 +500,11 @@ class SMELLDenseVectorProductBench :
 #endif
                         );
             }
+            {
             BenchmarkInfo info;
             info.flops = non_zeros * 2;
             evaluate(info * 1000);
+            }
         }
 };
 /// \todo Embed real world matrix with proper size
@@ -518,7 +520,9 @@ SMELLDenseVectorProductBench<tags::GPU::CUDA, float> cudaSMELLDVPBenchfloat0("CU
 //SMELLDenseVectorProductBench<tags::GPU::CUDA, float> cudaSMELLDVPBenchfloat0("CUDA SM 2 ELL Dense Vector Product Benchmark - matrix size: L8, float", 1025ul*1025, 10, "l8/area51_full_2.m");
 #ifdef HONEI_CUDA_DOUBLE
 SMELLDenseVectorProductBench<tags::GPU::CUDA, double> cudaSMELLDVPBenchdouble0("CUDA SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, double", 1025ul*1025, 10, "l2/area51_full_2.m");
-//SMELLDenseVectorProductBench<tags::GPU::CUDA, double> cudaSMELLDVPBenchdouble0("CUDA SM 2 ELL Dense Vector Product Benchmark - matrix size: L8, double", 1025ul*1025, 10, "l8/area51_full_2.m");
+SMELLDenseVectorProductBench<tags::GPU::MultiCore::CUDA, double> mccudaSMELLDVPBenchdouble0("MC CUDA SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, double", 1025ul*1025, 10, "l2/area51_full_2.m");
+//SMELLDenseVectorProductBench<tags::GPU::CUDA, double> cudaSMELLDVPBenchdouble8("CUDA SM 2 ELL Dense Vector Product Benchmark - matrix size: L8, double", 1025ul*1025, 10, "l8/area51_full_2.m");
+//SMELLDenseVectorProductBench<tags::GPU::MultiCore::CUDA, double> mccudaSMELLDVPBenchdouble8("MC CUDA SM 2 ELL Dense Vector Product Benchmark - matrix size: L8, double", 1025ul*1025, 10, "l8/area51_full_2.m");
 #endif
 #endif
 #ifdef HONEI_OPENCL
