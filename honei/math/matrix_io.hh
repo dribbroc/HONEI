@@ -23,6 +23,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <stdint.h>
 #include <string>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/dense_vector.hh>
@@ -464,17 +465,17 @@ class MatrixIO<io_formats::ELL>
     {
             FILE* file;
             file = fopen(output.c_str(), "wb");
-            unsigned long size(smatrix.Aj().size());
-            unsigned long rows(smatrix.rows());
-            unsigned long columns(smatrix.columns());
-            unsigned long stride(smatrix.stride());
-            unsigned long num_cols_per_row(smatrix.num_cols_per_row());
-            fwrite(&size, sizeof(unsigned long), 1, file);
-            fwrite(&rows, sizeof(unsigned long), 1, file);
-            fwrite(&columns, sizeof(unsigned long), 1, file);
-            fwrite(&stride, sizeof(unsigned long), 1, file);
-            fwrite(&num_cols_per_row, sizeof(unsigned long), 1, file);
-            fwrite(smatrix.Aj().elements(), sizeof(unsigned long), size, file);
+            uint64_t size(smatrix.Aj().size());
+            uint64_t rows(smatrix.rows());
+            uint64_t columns(smatrix.columns());
+            uint64_t stride(smatrix.stride());
+            uint64_t num_cols_per_row(smatrix.num_cols_per_row());
+            fwrite(&size, sizeof(uint64_t), 1, file);
+            fwrite(&rows, sizeof(uint64_t), 1, file);
+            fwrite(&columns, sizeof(uint64_t), 1, file);
+            fwrite(&stride, sizeof(uint64_t), 1, file);
+            fwrite(&num_cols_per_row, sizeof(uint64_t), 1, file);
+            fwrite(smatrix.Aj().elements(), sizeof(uint64_t), size, file);
             fwrite(smatrix.Ax().elements(), sizeof(double), size, file);
             fclose(file);
     }
@@ -486,19 +487,19 @@ class MatrixIO<io_formats::ELL>
             file = fopen(input.c_str(), "rb");
             if (file == NULL)
                 throw InternalError("File "+input+" not found!");
-            unsigned long size;
-            unsigned long rows;
-            unsigned long columns;
-            unsigned long stride;
-            unsigned long num_cols_per_row;
-            fread(&size, sizeof(unsigned long), 1, file);
-            fread(&rows, sizeof(unsigned long), 1, file);
-            fread(&columns, sizeof(unsigned long), 1, file);
-            fread(&stride, sizeof(unsigned long), 1, file);
-            fread(&num_cols_per_row, sizeof(unsigned long), 1, file);
-            DenseVector<unsigned long> aj(size);
+            uint64_t size;
+            uint64_t rows;
+            uint64_t columns;
+            uint64_t stride;
+            uint64_t num_cols_per_row;
+            fread(&size, sizeof(uint64_t), 1, file);
+            fread(&rows, sizeof(uint64_t), 1, file);
+            fread(&columns, sizeof(uint64_t), 1, file);
+            fread(&stride, sizeof(uint64_t), 1, file);
+            fread(&num_cols_per_row, sizeof(uint64_t), 1, file);
+            DenseVector<uint64_t> aj(size);
             DenseVector<double> ax(size);
-            fread(aj.elements(), sizeof(unsigned long), size, file);
+            fread(aj.elements(), sizeof(uint64_t), size, file);
             fread(ax.elements(), sizeof(double), size, file);
             fclose(file);
             DenseVector<DT_> axc(size);
