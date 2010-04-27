@@ -33,7 +33,23 @@ EXTRA_DIST = \
 	l2/area51_sol_1 \
 	l2/area51_sol_2 \
 	l2/area51_sol_3 \
-	l2/area51_sol_4
+	l2/area51_sol_4 \
+	poisson/poisson_A_1.ell \
+	poisson/poisson_A_2.ell \
+	poisson/poisson_A_3.ell \
+	poisson/poisson_A_4.ell \
+	poisson/poisson_A_5.ell \
+	poisson/poisson_A_6.ell \
+	poisson/poisson_full.ell \
+	poisson/poisson_init \
+	poisson/poisson_rhs \
+	poisson/poisson_sol \
+	poisson/poisson_prol_1.ell \
+	poisson/poisson_prol_2.ell \
+	poisson/poisson_prol_3.ell \
+	poisson/poisson_prol_4.ell \
+	poisson/poisson_prol_5.ell \
+	poisson/poisson_prol_6.ell
 
 
 DEFS = \
