@@ -82,7 +82,7 @@ AM_CXXFLAGS = -I$(top_srcdir)
 
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in Makefile.am
-EXTRA_DIST = Makefile.am.m4 files.m4
+EXTRA_DIST = Makefile.am.m4 files.m4 sample.nc
 DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \

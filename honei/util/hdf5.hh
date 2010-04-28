@@ -23,6 +23,7 @@
 #include <honei/util/exception.hh>
 #include <honei/util/log.hh>
 #include <honei/util/private_implementation_pattern.hh>
+#include <honei/util/private_implementation_pattern-impl.hh>
 #include <honei/util/stringify.hh>
 
 #include <string>
@@ -148,6 +149,7 @@ namespace honei
         public:
             friend class HDF5Group;
 
+            ~HDF5File(){}
             /**
              * Constructor.
              *

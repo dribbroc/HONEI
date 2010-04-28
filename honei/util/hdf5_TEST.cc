@@ -9,6 +9,8 @@
 #include <unittest/unittest.hh>
 
 #include <cstdio>
+#include <algorithm>
+#include <limits>
 #include <iostream>
 #include <sys/stat.h>
 

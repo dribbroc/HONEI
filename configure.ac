@@ -279,7 +279,7 @@ dnl {{{ check for optional packages
 dnl {{{ check for HDF5 support
 AC_MSG_CHECKING([whether to build HDF5 wrappers])
 AC_ARG_WITH([hdf5],
-	AS_HELP_STRING([--with-hdf5], [Build HDF5 wrappers (needs packages: libhdf5)]),
+	AS_HELP_STRING([--with-hdf5], [Build HDF5 and NETCDFwrappers (needs packages: libhdf5, libnetcdf)]),
 		[WITH_HDF5=$withval
 		  AC_MSG_RESULT([$withval])],
 		[WITH_HDF5=no
@@ -290,7 +290,9 @@ if test "x$WITH_HDF5" = "xyes"; then
 	dnl {{{ check for libhdf5
 	AC_CHECK_LIB(hdf5, H5open,
 		[have_hdf5=yes])
-	if test "x$have_hdf5" != "xyes" ; then
+	AC_CHECK_LIB(netcdf, nc_enddef,
+				 [have_netcdf=yes])
+	if test "x$have_hdf5" != "xyes" || "x$have_netcdf" != "xyes" ; then
 		AC_MSG_ERROR([libhdf5 (hdf.ncsa.uiuc.edu/HDF5/) not found.])
 	fi
 	dnl }}}

@@ -49,7 +49,7 @@ if HDF5
 HDF5SOURCES = hdf5_filelist
 HDF5TESTS = hdf5_testlist
 HDF5HEADERS = hdf5_headerlist
-HDF5LIBS = -lhdf5
+HDF5LIBS = -lhdf5 -lnetcdf -lnetcdf_c++
 
 else
 

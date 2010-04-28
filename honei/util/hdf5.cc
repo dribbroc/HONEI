@@ -145,7 +145,7 @@ namespace honei
         Implementation(const HDF5File & f, const std::string & n) :
             file(f),
             name(n),
-            id(H5Gopen(file.id(), n.c_str()))
+            id(H5Gopen1(file.id(), n.c_str()))
         {
             if (H5I_INVALID_HID == id)
                 throw HDF5Error("H5Gopen", id);
@@ -159,7 +159,7 @@ namespace honei
         Implementation(const HDF5File & f, const std::string & n, std::size_t unused) :
             file(f),
             name(n),
-            id(H5Gcreate(file.id(), n.c_str(), 0))
+            id(H5Gcreate1(file.id(), n.c_str(), 0))
         {
             if (H5I_INVALID_HID == id)
                 throw HDF5Error("H5Gcreate", id);
@@ -326,7 +326,7 @@ namespace honei
         Implementation(const HDF5File & f, const std::string & n, const HDF5SimpleDataSpace & d, hid_t t) :
             file(f),
             name(n),
-            id(H5Dcreate(file.id(), name.c_str(), t, d.id(), H5P_DEFAULT)),
+            id(H5Dcreate1(file.id(), name.c_str(), t, d.id(), H5P_DEFAULT)),
             type_id(t),
             data_space(new HDF5SimpleDataSpace(d))
         {
@@ -338,7 +338,7 @@ namespace honei
         Implementation(const HDF5File & f, const std::string & n) :
             file(f),
             name(n),
-            id(H5Dopen(file.id(), name.c_str())),
+            id(H5Dopen1(file.id(), name.c_str())),
             type_id(H5Dget_type(id)),
             data_space(new HDF5LoadedDataSpace(H5Dget_space(id)))
         {
