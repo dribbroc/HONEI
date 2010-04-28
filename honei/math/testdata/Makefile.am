@@ -19,6 +19,11 @@ EXTRA_DIST = \
 	l2/area51_full_2.m \
 	l2/area51_full_3.m \
 	l2/area51_full_4.m \
+	l2/area51_full_0.ell \
+	l2/area51_full_1.ell \
+	l2/area51_full_2.ell \
+	l2/area51_full_3.ell \
+	l2/area51_full_4.ell \
 	l2/area51_init_0 \
 	l2/area51_init_1 \
 	l2/area51_init_2 \
