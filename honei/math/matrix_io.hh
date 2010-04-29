@@ -503,8 +503,17 @@ class MatrixIO<io_formats::ELL>
             fread(ax.elements(), sizeof(double), size, file);
             fclose(file);
             DenseVector<DT_> axc(size);
+            DenseVector<unsigned long> ajc(size);
+            unsigned long crows(rows);
+            unsigned long ccolumns(columns);
+            unsigned long cstride(stride);
+            unsigned long cnum_cols_per_row(num_cols_per_row);
             convert<tags::CPU>(axc, ax);
-            SparseMatrixELL<DT_> smatrix(rows, columns, stride, num_cols_per_row, aj, axc);
+            for (unsigned long i(0) ; i < size ; ++i)
+            {
+                ajc[i] = aj[i];
+            }
+            SparseMatrixELL<DT_> smatrix(crows, ccolumns, cstride, cnum_cols_per_row, ajc, axc);
             return smatrix;
     }
 };

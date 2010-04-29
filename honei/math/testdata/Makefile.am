@@ -49,7 +49,6 @@ EXTRA_DIST = \
 	poisson/poisson_init \
 	poisson/poisson_rhs \
 	poisson/poisson_sol \
-	poisson/poisson_prol_1.ell \
 	poisson/poisson_prol_2.ell \
 	poisson/poisson_prol_3.ell \
 	poisson/poisson_prol_4.ell \

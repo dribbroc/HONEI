@@ -28,7 +28,15 @@ using namespace honei;
 int main(int argc, char ** argv)
 {
     if (argc != 3)
+    {
         std::cout<<"Usage 'm2ell m-file ell-file'"<<std::endl;
+        exit(EXIT_FAILURE);
+    }
+    if (sizeof(unsigned long) != sizeof(uint64_t))
+    {
+        std::cout<<"Dont run this on 32bit machines"<<std::endl;
+        exit(EXIT_FAILURE);
+    }
     /*for (int i(0) ; i < argc ; ++i)
         std::cout<<argv[i]<<std::endl;*/
 
