@@ -497,9 +497,9 @@ class MatrixIO<io_formats::ELL>
             fread(&columns, sizeof(uint64_t), 1, file);
             fread(&stride, sizeof(uint64_t), 1, file);
             fread(&num_cols_per_row, sizeof(uint64_t), 1, file);
-            DenseVector<uint64_t> aj(size);
+            uint64_t aj[size];
             DenseVector<double> ax(size);
-            fread(aj.elements(), sizeof(uint64_t), size, file);
+            fread(aj, sizeof(uint64_t), size, file);
             fread(ax.elements(), sizeof(double), size, file);
             fclose(file);
             DenseVector<DT_> axc(size);
