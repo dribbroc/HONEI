@@ -456,7 +456,7 @@ class PoissonTestMGSparseELLProlMat:
                 info.x[i] = null.copy();
             }
 
-            for(unsigned long i(0) ; i < info.max_level ; ++i)
+            /*for(unsigned long i(0) ; i < info.max_level ; ++i)
             {
                 std::cout << "VECSIZE d " << info.d.at(i).size() << std::endl;
                 std::cout << "VECSIZE rhs " << info.rhs.at(i).size() << std::endl;
@@ -470,7 +470,7 @@ class PoissonTestMGSparseELLProlMat:
                 std::cout <<"ROW: " << info.prolmats.at(i).rows() << std::endl;
                 std::cout <<"COLS: " << info.prolmats.at(i).columns() << std::endl;
 
-            }
+            }*/
             DenseVector<DT1_> result(n, DT1_(0));
             DenseVector<DT1_> rhs(info.rhs[info.max_level]);
             SparseMatrixELL<DT1_> system(info.a[info.max_level]);

@@ -498,9 +498,9 @@ class PoissonTestMGSparseELLProlMat:
             }
         }
 };
-//PoissonTestMGSparseELLProlMat<tags::CPU, float> poisson_test_mg_sparse_prolmat_float("float", 65ul);
+PoissonTestMGSparseELLProlMat<tags::CPU, float> poisson_test_mg_sparse_prolmat_float("float", 65ul);
 PoissonTestMGSparseELLProlMat<tags::GPU::CUDA, tags::CPU::SSE, double> poisson_test_mg_sparse_prolmat_double("double", 65ul);
-/*#ifdef HONEI_SSE
+#ifdef HONEI_SSE
   PoissonTestMGSparseELLProlMat<tags::CPU::SSE, float> sse_poisson_test_mg_sparse_prolmat_float("float", 65ul);
   PoissonTestMGSparseELLProlMat<tags::CPU::MultiCore::SSE, float> mc_sse_poisson_test_mg_sparse_prolmat_float("float", 65ul);
   PoissonTestMGSparseELLProlMat<tags::CPU::SSE, double> sse_poisson_test_mg_sparse_prolmat_double("double", 65ul);
@@ -511,4 +511,4 @@ PoissonTestMGSparseELLProlMat<tags::GPU::CUDA, float> cuda_poisson_test_mg_spars
 #ifdef HONEI_CUDA_DOUBLE
 PoissonTestMGSparseELLProlMat<tags::GPU::CUDA, double> cuda_poisson_test_mg_sparse_prolmat_double("double", 65ul);
 #endif
-#endif*/
+#endif
