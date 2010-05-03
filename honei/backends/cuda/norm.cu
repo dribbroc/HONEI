@@ -18,6 +18,9 @@
  */
 
 #include <honei/backends/cuda/cuda_util.hh>
+#ifdef HONEI_CUBLAS
+#include <cublas.h>
+#endif
 
 namespace honei
 {
@@ -74,6 +77,12 @@ namespace honei
 extern "C" float cuda_norm_l2_one_float(const void * x, unsigned long size, unsigned long blocksize,
         unsigned long gridsize)
 {
+#ifdef HONEI_CUBLAS
+    float * x_gpu((float *)x);
+    cublasInit();
+    float result = cublasSnrm2(size, x_gpu, 1);
+    cublasShutdown();
+#else
     float result(0.);
 
     dim3 grid(gridsize);
@@ -99,6 +108,7 @@ extern "C" float cuda_norm_l2_one_float(const void * x, unsigned long size, unsi
     delete tmp_cpu;
 
     CUDA_ERROR();
+#endif
     return result;
 }
 
@@ -106,6 +116,12 @@ extern "C" float cuda_norm_l2_one_float(const void * x, unsigned long size, unsi
 extern "C" double cuda_norm_l2_one_double(const void * x, unsigned long size, unsigned long blocksize,
         unsigned long gridsize)
 {
+#ifdef HONEI_CUBLAS
+    double * x_gpu((double *)x);
+    cublasInit();
+    double result = cublasDnrm2(size, x_gpu, 1);
+    cublasShutdown();
+#else
     double result(0.);
 
     dim3 grid(gridsize);
@@ -131,6 +147,7 @@ extern "C" double cuda_norm_l2_one_double(const void * x, unsigned long size, un
     delete tmp_cpu;
 
     CUDA_ERROR();
+#endif
     return result;
 }
 #endif

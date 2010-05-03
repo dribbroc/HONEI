@@ -87,6 +87,7 @@ DEFS = \
 	$(SSEDEF) \
 	$(CUDADEF) \
 	$(CUDA_DOUBLEDEF) \
+	$(CUBLASDEF) \
 	$(DEBUGDEF) \
 	$(PROFILERDEF) \
 	$(DUNEDEF) \

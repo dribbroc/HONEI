@@ -66,8 +66,10 @@ DotProductBench<double, tags::CPU::MultiCore::SSE> SSEMCDPBenchdouble("MC: SSE  
 #endif
 #ifdef HONEI_CUDA
 DotProductBench<float, tags::GPU::CUDA> CUDADPBenchfloat("CUDA Dot Product Benchmark dense/dense - vector size: 64^4 float", 64ul*64*64*64, 10);
+DotProductBench<float, tags::GPU::MultiCore::CUDA> mc_CUDADPBenchfloat("MC CUDA Dot Product Benchmark dense/dense - vector size: 64^4 float", 64ul*64*64*64, 10);
 #ifdef HONEI_CUDA_DOUBLE
 DotProductBench<double, tags::GPU::CUDA> CUDADPBenchdouble("CUDA Dot Product Benchmark dense/dense - vector size: 64^4 double", 64ul*64*64*64, 10);
+DotProductBench<double, tags::GPU::MultiCore::CUDA> mc_CUDADPBenchdouble("MC CUDA Dot Product Benchmark dense/dense - vector size: 64^4 double", 64ul*64*64*64, 10);
 #endif
 #endif
 #ifdef HONEI_CELL

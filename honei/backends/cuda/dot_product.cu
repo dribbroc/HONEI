@@ -18,6 +18,9 @@
  */
 
 #include <honei/backends/cuda/cuda_util.hh>
+#ifdef HONEI_CUBLAS
+#include <cublas.h>
+#endif
 
 namespace honei
 {
@@ -74,11 +77,17 @@ namespace honei
 extern "C" float cuda_dot_product_two_float(const void * x, const void * y, unsigned long size, unsigned long blocksize,
         unsigned long gridsize)
 {
+#ifdef HONEI_CUBLAS
+    float * x_gpu((float *)x);
+    float * y_gpu((float *)y);
+    cublasInit();
+    float result = cublasSdot(size, x_gpu, 1, y_gpu, 1);
+    cublasShutdown();
+#else
     float result(0.);
-
     dim3 grid(gridsize);
     dim3 block(blocksize);
-    float * x_gpu((float* )x);
+    float * x_gpu((float *)x);
     float * y_gpu((float *)y);
     float * tmp_cpu(0);
     float * tmp_gpu(0);
@@ -100,6 +109,7 @@ extern "C" float cuda_dot_product_two_float(const void * x, const void * y, unsi
     delete tmp_cpu;
 
     CUDA_ERROR();
+#endif
     return result;
 }
 
@@ -107,11 +117,17 @@ extern "C" float cuda_dot_product_two_float(const void * x, const void * y, unsi
 extern "C" double cuda_dot_product_two_double(const void * x, const void * y, unsigned long size, unsigned long blocksize,
         unsigned long gridsize)
 {
+#ifdef HONEI_CUBLAS
+    double * x_gpu((double *)x);
+    double * y_gpu((double *)y);
+    cublasInit();
+    double result = cublasDdot(size, x_gpu, 1, y_gpu, 1);
+    cublasShutdown();
+#else
     double result(0.);
-
     dim3 grid(gridsize);
     dim3 block(blocksize);
-    double * x_gpu((double* )x);
+    double * x_gpu((double *)x);
     double * y_gpu((double *)y);
     double * tmp_cpu(0);
     double * tmp_gpu(0);
@@ -133,6 +149,7 @@ extern "C" double cuda_dot_product_two_double(const void * x, const void * y, un
     delete tmp_cpu;
 
     CUDA_ERROR();
+#endif
     return result;
 }
 #endif

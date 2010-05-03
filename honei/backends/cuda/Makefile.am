@@ -12,6 +12,7 @@ DEFS = \
 	$(SSEDEF) \
 	$(CUDADEF) \
 	$(CUDA_DOUBLEDEF) \
+	$(CUBLASDEF) \
 	$(DEBUGDEF) \
 	$(PROFILERDEF)
 
@@ -86,7 +87,8 @@ libhoneibackendscuda_la_SOURCES = \
 				 ticket.hh
 libhoneibackendscuda_la_LIBADD = \
 				 $(top_builddir)/honei/util/libhoneiutil.la \
-				-lcudart
+				-lcudart \
+				-lcublas
 
 libhoneibackendscuda_includedir = $(includedir)/honei/backends/cuda/
 

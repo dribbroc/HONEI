@@ -192,6 +192,31 @@ if test "x$ENABLE_CUDA_DOUBLE" = "xyes"; then
 fi
 AC_SUBST([CUDA_DOUBLEDEF])
 dnl }}}
+dnl {{{ check for cublas support
+AC_MSG_CHECKING([whether to use cublas wrappers])
+AC_ARG_WITH([cublas],
+	AS_HELP_STRING([--with-cublas], [Build CuBlas wrappers (needs packages: cublas)]),
+		[WITH_CUBLAS=$withval
+		  AC_MSG_RESULT([$withval])],
+		[WITH_CUBLAS=no
+		  AC_MSG_RESULT([no])])
+AC_SUBST([WITH_CUBLAS])
+AM_CONDITIONAL([CUBLAS], test "x$WITH_CUBLAS" = "xyes")
+if test "x$WITH_CUBLAS" = "xyes"; then
+	dnl {{{ check for libcublas
+	AC_CHECK_LIB(cublas, cublasInit,
+		[have_cublas=yes])
+	if test "x$have_cublas" != "xyes" ; then
+		AC_MSG_ERROR([libcublas not found.])
+	fi
+if test "x$WITH_CUBLAS" = "xyes"; then
+	CUBLASDEF="-DHONEI_CUBLAS"
+	dnl }}}
+fi
+	dnl }}}
+fi
+dnl }}}
+AC_SUBST([CUBLASDEF])
 dnl {{{ check for SSE support
 AC_MSG_CHECKING([whether to build SSE support])
 AC_ARG_ENABLE([sse],

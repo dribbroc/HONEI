@@ -123,7 +123,9 @@ PoissonTestMGModulesSparseELL<tags::CPU::SSE, float> poisson_test_mg_banded_floa
 PoissonTestMGModulesSparseELL<tags::CPU::SSE, double> poisson_test_mg_banded_double_sse("SSE double");
 #endif
 #ifdef HONEI_CUDA
+#ifndef HONEI_CUBLAS
 PoissonTestMGModulesSparseELL<tags::GPU::CUDA, float> poisson_test_mg_banded_float_cuda("CUDA float");
+#endif
 #ifdef HONEI_CUDA_DOUBLE
 PoissonTestMGModulesSparseELL<tags::GPU::CUDA, double> poisson_test_mg_banded_double_cuda("CUDA double");
 #endif
