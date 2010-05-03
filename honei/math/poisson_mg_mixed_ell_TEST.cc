@@ -336,14 +336,14 @@ class PoissonTestMGSparseELLProlMat:
                     }
                     break;
                 default:
-                    throw InternalError("Uknown size!");
+                    throw InternalError("Unknown size!");
                     break;
             }
 
-            info.min_level = 1;
-            info.n_max_iter = 2;
+            info.min_level = 2;
+            info.n_max_iter = 1000;
             info.initial_zero = true;
-            info.tolerance = 1e-2;
+            info.tolerance = 1e-8;
             info.convergence_check = true;
 
             info.n_pre_smooth = 4;
@@ -463,7 +463,7 @@ class PoissonTestMGSparseELLProlMat:
                 info.x[i] = null.copy();
             }
 
-            for(unsigned long i(0) ; i < info.max_level ; ++i)
+            /*for(unsigned long i(0) ; i < info.max_level ; ++i)
             {
                 std::cout << "VECSIZE d " << info.d.at(i).size() << std::endl;
                 std::cout << "VECSIZE rhs " << info.rhs.at(i).size() << std::endl;
@@ -477,7 +477,7 @@ class PoissonTestMGSparseELLProlMat:
                 std::cout <<"ROW: " << info.prolmats.at(i).rows() << std::endl;
                 std::cout <<"COLS: " << info.prolmats.at(i).columns() << std::endl;
 
-            }
+            }*/
             DenseVector<float> result(n, float(0));
             DenseVector<float> rhs(info.rhs[info.max_level]);
             SparseMatrixELL<float> system(info.a[info.max_level]);
@@ -494,21 +494,23 @@ class PoissonTestMGSparseELLProlMat:
             for(unsigned long i(0) ; i < ref_result.size() ; ++i)
             {
                 std::cout << result[i] << " " << ref_result[i] << std::endl;
-                TEST_CHECK_EQUAL_WITHIN_EPS(result[i], ref_result[i], std::numeric_limits<double>::epsilon()*1e11);
+                TEST_CHECK_EQUAL_WITHIN_EPS(result[i], ref_result[i], std::numeric_limits<double>::epsilon()*1e14);
             }
         }
 };
-PoissonTestMGSparseELLProlMat<tags::CPU, float> poisson_test_mg_sparse_prolmat_float("float", 65ul);
-PoissonTestMGSparseELLProlMat<tags::GPU::CUDA, tags::CPU::SSE, double> poisson_test_mg_sparse_prolmat_double("double", 65ul);
+PoissonTestMGSparseELLProlMat<tags::CPU, tags::CPU, double> poisson_test_mg_sparse_prolmat_double_1("double", 65ul);
 #ifdef HONEI_SSE
-  PoissonTestMGSparseELLProlMat<tags::CPU::SSE, float> sse_poisson_test_mg_sparse_prolmat_float("float", 65ul);
-  PoissonTestMGSparseELLProlMat<tags::CPU::MultiCore::SSE, float> mc_sse_poisson_test_mg_sparse_prolmat_float("float", 65ul);
-  PoissonTestMGSparseELLProlMat<tags::CPU::SSE, double> sse_poisson_test_mg_sparse_prolmat_double("double", 65ul);
-  PoissonTestMGSparseELLProlMat<tags::CPU::MultiCore::SSE, double> mc_sse_poisson_test_mg_sparse_prolmat_double("double", 65ul);
+PoissonTestMGSparseELLProlMat<tags::CPU::SSE,tags::CPU::SSE, double> sse_poisson_test_mg_sparse_prolmat_double_4("double", 65ul);
+PoissonTestMGSparseELLProlMat<tags::CPU::MultiCore::SSE, tags::CPU::MultiCore::SSE, double> mc_sse_poisson_test_mg_sparse_prolmat_double_5("double", 65ul);
 #endif
 #ifdef HONEI_CUDA
-PoissonTestMGSparseELLProlMat<tags::GPU::CUDA, float> cuda_poisson_test_mg_sparse_prolmat_float("float", 65ul);
 #ifdef HONEI_CUDA_DOUBLE
-PoissonTestMGSparseELLProlMat<tags::GPU::CUDA, double> cuda_poisson_test_mg_sparse_prolmat_double("double", 65ul);
+PoissonTestMGSparseELLProlMat<tags::GPU::CUDA, tags::GPU::CUDA, double> cuda_poisson_test_mg_sparse_prolmat_double_8("double", 65ul);
+#endif
+#endif
+#if defined HONEI_CUDA && defined HONEI_SSE
+#if defined HONEI_CUDA_DOUBLE
+PoissonTestMGSparseELLProlMat<tags::GPU::CUDA, tags::CPU::SSE, double> cuda_poisson_test_mg_sparse_prolmat_double_11("double", 65ul);
+PoissonTestMGSparseELLProlMat<tags::GPU::CUDA, tags::CPU::MultiCore::SSE, double> cuda_poisson_test_mg_sparse_prolmat_double_12("double", 65ul);
 #endif
 #endif
