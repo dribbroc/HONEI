@@ -102,7 +102,8 @@ DEFS = \
 	$(CUDA_DOUBLEDEF) \
 	$(DEBUGDEF) \
 	$(BOOSTDEF) \
-	$(PROFILERDEF)
+	$(PROFILERDEF) \
+	-DHONEI_SOURCEDIR='"$(top_srcdir)"'
 
 lib_LTLIBRARIES = libhoneilbm.la
 
@@ -116,6 +117,17 @@ libhoneilbm_includedir = $(includedir)/honei/lbm
 libhoneilbm_include_HEADERS = headerlist
 
 TESTS = testlist
+if HDF5
+  TESTS += solver_lbm_grid_netcdf_TEST
+  solver_lbm_grid_netcdf_TEST_SOURCES = solver_lbm_grid_netcdf_TEST.cc
+  solver_lbm_grid_netcdf_TEST_LDADD = \
+		  $(top_builddir)/honei/util/libhoneiutil.la \
+		  $(BACKEND_LIBS) \
+		  $(top_builddir)/honei/la/libhoneila.la \
+		  libhoneilbm.la \
+	$(DYNAMIC_LD_LIBS)
+  solver_lbm_grid_netcdf_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
+endif
 TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_srcdir)/honei/util/run.sh
 
 check_PROGRAMS = $(TESTS)
