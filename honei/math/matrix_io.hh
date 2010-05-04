@@ -483,7 +483,7 @@ class MatrixIO<io_formats::ELL>
     template <typename DT_>
     static SparseMatrixELL<DT_> read_matrix(std::string input, DT_ datatype)
     {
-            FILE* file;
+            FILE* file(NULL);
             file = fopen(input.c_str(), "rb");
             if (file == NULL)
                 throw InternalError("File "+input+" not found!");

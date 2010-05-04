@@ -25,12 +25,14 @@
 #include <cstdlib>
 #include <string>
 #include <honei/la/dense_vector.hh>
+#include <honei/la/algorithm.hh>
 
 using namespace honei;
 
 namespace io_formats
 {
     class EXP;
+    class DV;
 }
 
 
@@ -114,4 +116,36 @@ class VectorIO<io_formats::EXP>
             }
 };
 
+template<>
+class VectorIO<io_formats::DV>
+{
+    public:
+    static void write_vector(std::string output, DenseVector<double> dv)
+    {
+            FILE* file;
+            file = fopen(output.c_str(), "wb");
+            uint64_t size(dv.size());
+            fwrite(&size, sizeof(uint64_t), 1, file);
+            fwrite(dv.elements(), sizeof(double), size, file);
+            fclose(file);
+    }
+
+    template <typename DT_>
+    static DenseVector<DT_> read_vector(std::string input, DT_ datatype)
+    {
+            FILE* file(NULL);
+            file = fopen(input.c_str(), "rb");
+            if (file == NULL)
+                throw InternalError("File "+input+" not found!");
+            uint64_t size;
+            fread(&size, sizeof(uint64_t), 1, file);
+            DenseVector<double> ax(size);
+            fread(ax.elements(), sizeof(double), size, file);
+            fclose(file);
+            DenseVector<DT_> axc(size);
+            convert<tags::CPU>(axc, ax);
+            return axc;
+    }
+
+};
 #endif

@@ -51,6 +51,13 @@ class VectorIOTest:
             VectorIO<io_formats::EXP>::read_vector(filename, data);
 
             std::cout << data << std::endl;
+
+            std::string filename2(HONEI_SOURCEDIR);
+            filename2 += "/honei/math/testdata/area51_rhs_0.dv";
+
+            DenseVector<DT_> data2(VectorIO<io_formats::DV>::read_vector(filename2, DT_(1)));;
+
+            TEST_CHECK_EQUAL(data2, data);
         }
 };
 VectorIOTest<float, tags::CPU> vecio_test_float_dense("float");
