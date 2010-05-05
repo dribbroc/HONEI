@@ -497,22 +497,34 @@ class MatrixIO<io_formats::ELL>
             fread(&columns, sizeof(uint64_t), 1, file);
             fread(&stride, sizeof(uint64_t), 1, file);
             fread(&num_cols_per_row, sizeof(uint64_t), 1, file);
-            uint64_t aj[size];
+            DenseVector<unsigned long> ajc(size);
+            if (sizeof(unsigned long) == sizeof(uint64_t))
+            {
+                DenseVector<unsigned long> aj(size);
+                fread(aj.elements(), sizeof(uint64_t), size, file);
+                for (unsigned long i(0) ; i < size ; ++i)
+                {
+                    ajc[i] = aj[i];
+                }
+            }
+            else
+            {
+                uint64_t aj[size];
+                fread(aj, sizeof(uint64_t), size, file);
+                for (unsigned long i(0) ; i < size ; ++i)
+                {
+                    ajc[i] = aj[i];
+                }
+            }
             DenseVector<double> ax(size);
-            fread(aj, sizeof(uint64_t), size, file);
             fread(ax.elements(), sizeof(double), size, file);
             fclose(file);
             DenseVector<DT_> axc(size);
-            DenseVector<unsigned long> ajc(size);
             unsigned long crows(rows);
             unsigned long ccolumns(columns);
             unsigned long cstride(stride);
             unsigned long cnum_cols_per_row(num_cols_per_row);
             convert<tags::CPU>(axc, ax);
-            for (unsigned long i(0) ; i < size ; ++i)
-            {
-                ajc[i] = aj[i];
-            }
             SparseMatrixELL<DT_> smatrix(crows, ccolumns, cstride, cnum_cols_per_row, ajc, axc);
             return smatrix;
     }
