@@ -239,7 +239,8 @@ namespace honei
     template <typename DataType_>
     const DataType_ SparseMatrixELL<DataType_>::operator() (unsigned long row, unsigned long column) const
     {
-        for (unsigned long i(row) ; i < this->Aj().size() && this->Aj()[i] <= column ; i += this->stride())
+        unsigned long max(this->Arl()[row]);
+        for (unsigned long i(row), j(0) ; j < max && this->Aj()[i] <= column ; i += this->stride(), ++j)
         {
             if (this->Aj()[i] == column)
                 return this->Ax()[i];

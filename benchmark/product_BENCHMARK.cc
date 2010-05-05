@@ -391,7 +391,7 @@ class SparseMatrixProductBench :
             SparseMatrix<DataType_> sm(_size, _size, (unsigned long)((_size*_size)/10));
             for (typename SparseMatrix<DataType_>::ElementIterator i_end(sm.end_elements()), i(sm.begin_elements()) ; i != i_end ; ++i)
             {
-                if (i.index() % 20 == 0)
+                if (i.index() % 30 == 0)
                 {
                     *i = DataType_(rand());
                 }
@@ -399,7 +399,7 @@ class SparseMatrixProductBench :
             SparseMatrix<DataType_> sm2(_size, _size);
             for (typename SparseMatrix<DataType_>::ElementIterator i_end(sm2.end_elements()), i(sm2.begin_elements()) ; i != i_end ; ++i)
             {
-                if (i.index() % 15 == 0)
+                if (i.index() % 20 == 0)
                 {
                     *i = DataType_(rand());
                 }
@@ -413,8 +413,56 @@ class SparseMatrixProductBench :
             evaluate();
         }
 };
-SparseMatrixProductBench<tags::CPU, float> SMPBenchfloat2("Matrix Product Benchmark sparse/sparse - matrix size: 256x256, float", 256, 10);
-SparseMatrixProductBench<tags::CPU, double> SMPBenchdouble2("Matrix Product Benchmark sparse/sparse - matrix size: 256x256, double", 256, 10);
+SparseMatrixProductBench<tags::CPU, float> SMPBenchfloat2("Matrix Product Benchmark sparse/sparse - matrix size: 1256x1256, float", 1256, 10);
+SparseMatrixProductBench<tags::CPU, double> SMPBenchdouble2("Matrix Product Benchmark sparse/sparse - matrix size: 1256x1256, double", 1256, 10);
+
+template <typename Tag_, typename DataType_>
+class SparseMatrixELLProductBench :
+    public Benchmark
+{
+    private:
+        unsigned long _size;
+        unsigned long _count;
+    public:
+        SparseMatrixELLProductBench(const std::string & id, unsigned long size, unsigned long count) :
+            Benchmark(id)
+        {
+            register_tag(Tag_::name);
+            _size = size;
+            _count = count;
+        }
+
+        virtual void run()
+        {
+            SparseMatrix<DataType_> sm(_size, _size, (unsigned long)((_size*_size)/10));
+            for (typename SparseMatrix<DataType_>::ElementIterator i_end(sm.end_elements()), i(sm.begin_elements()) ; i != i_end ; ++i)
+            {
+                if (i.index() % 30 == 0)
+                {
+                    *i = DataType_(rand());
+                }
+            }
+            SparseMatrix<DataType_> sm2(_size, _size);
+            for (typename SparseMatrix<DataType_>::ElementIterator i_end(sm2.end_elements()), i(sm2.begin_elements()) ; i != i_end ; ++i)
+            {
+                if (i.index() % 25 == 0)
+                {
+                    *i = DataType_(rand());
+                }
+            }
+            SparseMatrixELL<DataType_> ell(sm);
+            SparseMatrixELL<DataType_> ell2(sm2);
+            for(unsigned long i = 0; i < _count; ++i)
+            {
+                BENCHMARK(Product<Tag_>::value(ell, ell2));
+            }
+            //BenchmarkInfo info(Product<>::get_benchmark_info(sm, dm));
+            //evaluate(info);
+            evaluate();
+        }
+};
+SparseMatrixELLProductBench<tags::CPU, float> SMELLPBenchfloat2("Matrix Product Benchmark ELL sparse/sparse - matrix size: 1256x1256, float", 1256, 10);
+SparseMatrixELLProductBench<tags::CPU, double> SMELLPBenchdouble2("Matrix Product Benchmark ELL sparse/sparse - matrix size: 1256x1256, double", 1256, 10);
 
 template <typename Tag_, typename DataType_>
 class BandedMatrixProductBench :

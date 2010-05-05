@@ -166,6 +166,11 @@ namespace honei
                         result[i] += Ax_n[i] * b[Aj_n[i]];
                 }
             }
+            ///todo warum is das langsamer?
+            /*for (unsigned long i(0) ; i < a.Ax().size() ; ++i)
+            {
+                result[i % a.stride()] += a.Ax()[i] * b[a.Aj()[i]];
+            }*/
 
             return result;
         }
@@ -527,12 +532,36 @@ namespace honei
             SparseMatrix<DT1_> result(a.rows(), b.columns());
             for (typename SparseMatrix<DT1_>::NonZeroConstElementIterator i(a.begin_non_zero_elements()) ; i != a.end_non_zero_elements() ; ++i)
             {
-                for (unsigned long j(0) ; j < b.columns() ; ++j)
+                for (typename SparseVector<DT1_>::NonZeroConstElementIterator j(b[i.column()].begin_non_zero_elements()) ; j != b[i.column()].end_non_zero_elements() ; ++j)
                 {
-                    result(i.row(), j) += *i * b(i.column(), j);
+                    result(i.row(), j.index()) += *i * *j;
                 }
             }
             return result;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static SparseMatrixELL<DT1_> value(const SparseMatrixELL<DT1_> & a, const SparseMatrixELL<DT2_> & b)
+        {
+            CONTEXT("When multiplying SparseMatrixELL with SparseMatrixELL:");
+
+            if (a.columns() != b.rows())
+                throw MatrixRowsDoNotMatch(b.rows(), a.columns());
+
+            SparseMatrix<DT1_> result(a.rows(), b.columns(), a.num_cols_per_row());
+            for (unsigned long row(0) ; row < a.rows() ; ++row)
+            {
+                for(unsigned long ac(0), i(row) ; ac < a.Arl()[row] ; i+=a.stride(), ++ac)
+                {
+                    for (unsigned long bc(0), j(a.Aj()[i]) ; bc < b.Arl()[a.Aj()[i]] ; j+=b.stride(), ++bc)
+                    {
+                        result(row, b.Aj()[j]) += a.Ax()[i] * b.Ax()[j];
+                    }
+                }
+            }
+
+            SparseMatrixELL<DT1_> resultell(result);
+            return resultell;
         }
 
         template <typename DT1_, typename DT2_>

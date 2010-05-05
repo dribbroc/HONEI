@@ -1667,7 +1667,7 @@ class SparseMatrixProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(2);
+            unsigned long size(20);
             SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1),
                 sm2(size, size+1, size / 7 + 1), sm3(size + 1, size + 1, size / 7 + 1);
             for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
@@ -1697,6 +1697,98 @@ class SparseMatrixProductQuickTest :
 };
 SparseMatrixProductQuickTest<float> sparse_matrix_product_quick_test_float("float");
 SparseMatrixProductQuickTest<double> sparse_matrix_product_quick_test_double("double");
+
+template <typename Tag_, typename DataType_>
+class SparseMatrixELLProductTest :
+    public BaseTest
+{
+    public:
+        SparseMatrixELLProductTest(const std::string & type) :
+            BaseTest("sparse_matrixell_product_test<" + type + ">")
+    {
+        register_tag(Tag_::name);
+    }
+
+        virtual void run() const
+        {
+            for (unsigned long size(100) ; size < (1 << 9) ; size <<= 1)
+            {
+                SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1),
+                    sm2(size, size+1, size / 7 + 1);
+                for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
+                        i_end(sm1.end_elements()) ; i != i_end ; ++i)
+                {
+                    if (i.index() % 30 == 0)
+                        *i = i.index() / 5.1;
+                }
+                for (typename SparseMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
+                        i_end(sm2.end_elements()) ; i != i_end ; ++i)
+                {
+                    if (i.index() % 50 == 0)
+                        *i = i.index() / 5.3;
+                }
+
+                SparseMatrixELL<DataType_> sm1ell(sm1);
+                SparseMatrixELL<DataType_> sm2ell(sm2);
+                SparseMatrixELL<DataType_> prod(Product<Tag_>::value(sm1ell, sm2ell));
+
+                SparseMatrix<DataType_> ref(Product<tags::CPU>::value(sm1, sm2));
+                SparseMatrixELL<DataType_> refell(ref);
+
+                //TEST_CHECK_EQUAL(prod, refell);
+                for (unsigned long i(0) ; i < prod.rows() ; ++i)
+                    for (unsigned long j(0) ; j < prod.columns() ; ++j)
+                        TEST_CHECK_EQUAL(prod(i,j), refell(i,j));
+            }
+        }
+};
+SparseMatrixELLProductTest<tags::CPU, float> sparse_matrixell_product_test_float("float");
+SparseMatrixELLProductTest<tags::CPU, double> sparse_matrixell_product_test_double("double");
+
+template <typename Tag_, typename DataType_>
+class SparseMatrixELLProductQuickTest :
+    public QuickTest
+{
+    public:
+        SparseMatrixELLProductQuickTest(const std::string & type) :
+            QuickTest("sparse_matrixell_product_quick_test<" + type + ">")
+    {
+        register_tag(Tag_::name);
+    }
+
+        virtual void run() const
+        {
+            unsigned long size(471);
+            SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1),
+                sm2(size, size+1, size / 7 + 1);
+            for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
+                    i_end(sm1.end_elements()) ; i != i_end ; ++i)
+            {
+                if (i.index() % 30 == 0)
+                    *i = i.index() / 5.1;
+            }
+            for (typename SparseMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
+                    i_end(sm2.end_elements()) ; i != i_end ; ++i)
+            {
+                if (i.index() % 50 == 0)
+                    *i = i.index() / 5.3;
+            }
+
+            SparseMatrixELL<DataType_> sm1ell(sm1);
+            SparseMatrixELL<DataType_> sm2ell(sm2);
+            SparseMatrixELL<DataType_> prod(Product<Tag_>::value(sm1ell, sm2ell));
+
+            SparseMatrix<DataType_> ref(Product<tags::CPU>::value(sm1, sm2));
+            SparseMatrixELL<DataType_> refell(ref);
+
+            //TEST_CHECK_EQUAL(prod, refell);
+            for (unsigned long i(0) ; i < prod.rows() ; ++i)
+                for (unsigned long j(0) ; j < prod.columns() ; ++j)
+                    TEST_CHECK_EQUAL(prod(i,j), refell(i,j));
+        }
+};
+SparseMatrixELLProductQuickTest<tags::CPU, float> sparse_matrixell_product_quick_test_float("float");
+SparseMatrixELLProductQuickTest<tags::CPU, double> sparse_matrixell_product_quick_test_double("double");
 
 template <typename DataType_>
 class BandedMatrixDenseMatrixProductTest :
