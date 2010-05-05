@@ -31,11 +31,13 @@ EXTRA_DIST = \
 	l2/area51_init_3 \
 	l2/area51_init_4 \
 	l2/area51_rhs_0 \
+	l2/area51_rhs_0.dv \
 	l2/area51_rhs_1 \
 	l2/area51_rhs_2 \
 	l2/area51_rhs_3 \
 	l2/area51_rhs_4 \
 	l2/area51_sol_0 \
+	l2/area51_sol_0.dv \
 	l2/area51_sol_1 \
 	l2/area51_sol_2 \
 	l2/area51_sol_3 \
@@ -49,7 +51,9 @@ EXTRA_DIST = \
 	poisson/poisson_full.ell \
 	poisson/poisson_init \
 	poisson/poisson_rhs \
+	poisson/poisson_rhs.dv \
 	poisson/poisson_sol \
+	poisson/poisson_sol.dv \
 	poisson/poisson_prol_2.ell \
 	poisson/poisson_prol_3.ell \
 	poisson/poisson_prol_4.ell \
