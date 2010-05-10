@@ -23,6 +23,7 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
+#include <stdint.h>
 #include <string>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/algorithm.hh>
