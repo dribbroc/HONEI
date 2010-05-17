@@ -31,14 +31,16 @@
     using namespace honei;
     namespace honei
     {
-        template<typename Tag_ = tags::CPU> struct Defect
+        template<typename Tag_ = tags::CPU> struct Defect;
+
+        template <> struct Defect<tags::CPU>
         {
             public:
                 template<typename DT_>
                 static DenseVector<DT_> value(DenseVector<DT_> & right_hand_side, BandedMatrixQ1<DT_> & system, DenseVector<DT_> & x)
                 {
                     /*DenseVector<DT_> result(right_hand_side.copy());
-                    return Difference<Tag_>::value(result,Product<Tag_>::value(system, x) );
+                    return Difference<tags::CPU>::value(result,Product<tags::CPU>::value(system, x) );
     */
                     if (x.size() != system.columns())
                     {
@@ -191,8 +193,8 @@
 
                     DenseVector<DT_> result(right_hand_side.copy());
                     DenseVector<DT_> temp(right_hand_side.size());
-                    Product<Tag_>::value(temp, system, x);
-                    Difference<Tag_>::value(result, temp);
+                    Product<tags::CPU>::value(temp, system, x);
+                    Difference<tags::CPU>::value(result, temp);
                     return result;
                 }
 
@@ -209,7 +211,7 @@
                     }
 
                     DenseVector<DT_> temp(right_hand_side.size());
-                    Product<Tag_>::value(temp, system, x);
+                    Product<tags::CPU>::value(temp, system, x);
 
                     result.lock(lm_write_only);
                     right_hand_side.lock(lm_read_only);
@@ -261,6 +263,7 @@
                         const SparseMatrixELL<double> & system, const DenseVectorContinuousBase<double> & x);
 
         };
+
     template<>
         struct Defect<tags::CPU::SSE>
         {
@@ -302,17 +305,56 @@
 
                     DenseVector<DT_> temp(right_hand_side.size());
                     Product<tags::CPU::SSE>::value(temp, system, x);
+                    Difference<tags::CPU::SSE>::value(result, right_hand_side, temp);
 
-                    result.lock(lm_write_only);
-                    right_hand_side.lock(lm_read_only);
-                    temp.lock(lm_read_only);
-                    for(unsigned long i(0) ; i < result.size() ; ++i)
+                    return result;
+                }
+        };
+
+    template<>
+        struct Defect<tags::CPU::MultiCore::SSE>
+        {
+
+            public:
+                static DenseVector<double> value(DenseVector<double> & right_hand_side, BandedMatrixQ1<double> & system, DenseVector<double> & x);
+                static DenseVector<float> value(DenseVector<float> & right_hand_side, BandedMatrixQ1<float> & system, DenseVector<float> & x);
+
+                template<typename DT_>
+                static DenseVector<DT_> value(DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
+                {
+                    if (x.size() != system.columns())
                     {
-                        result.elements()[i] = right_hand_side.elements()[i] - temp.elements()[i];
+                        throw VectorSizeDoesNotMatch(x.size(), system.columns());
                     }
-                    result.unlock(lm_write_only);
-                    right_hand_side.unlock(lm_read_only);
-                    temp.unlock(lm_read_only);
+                    if (right_hand_side.size() != system.columns())
+                    {
+                        throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
+                    }
+
+                    DenseVector<DT_> result(right_hand_side.size());
+                    DenseVector<DT_> temp(right_hand_side.size());
+                    Product<tags::CPU::MultiCore::SSE>::value(temp, system, x);
+                    //todo use mc difference
+                    Difference<tags::CPU::SSE>::value(result, right_hand_side, temp);
+                    return result;
+                }
+
+                template<typename DT_>
+                static DenseVector<DT_> & value(DenseVector<DT_> & result, DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
+                {
+                    if (x.size() != system.columns())
+                    {
+                        throw VectorSizeDoesNotMatch(x.size(), system.columns());
+                    }
+                    if (right_hand_side.size() != system.columns())
+                    {
+                        throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
+                    }
+
+                    DenseVector<DT_> temp(right_hand_side.size());
+                    Product<tags::CPU::MultiCore::SSE>::value(temp, system, x);
+                    //todo use mc difference
+                    Difference<tags::CPU::SSE>::value(result, right_hand_side, temp);
 
                     return result;
                 }
