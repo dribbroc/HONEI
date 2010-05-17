@@ -49,6 +49,34 @@ DenseVectorContinuousBase<double> & Difference<tags::CPU::SSE>::value(DenseVecto
     return a;
 }
 
+DenseVectorContinuousBase<float> & Difference<tags::CPU::SSE>::value(DenseVectorContinuousBase<float> & result,
+        const DenseVectorContinuousBase<float> & a,
+        const DenseVectorContinuousBase<float> & b)
+{
+    CONTEXT("When subtracting DenseVectorContinuousBase<float> from DenseVectorContinuousBase<float> (SSE):");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+    sse::difference(result.elements(), a.elements(), b.elements(), a.size());
+
+    return result;
+}
+
+DenseVectorContinuousBase<double> & Difference<tags::CPU::SSE>::value(DenseVectorContinuousBase<double> & result,
+        const DenseVectorContinuousBase<double> & a,
+        const DenseVectorContinuousBase<double> & b)
+{
+    CONTEXT("When subtracting DenseVectorContinuousBase<double> from DenseVectorContinuousBase<double> (SSE):");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+    sse::difference(result.elements(), a.elements(), b.elements(), a.size());
+
+    return result;
+}
+
 DenseMatrix<float> & Difference<tags::CPU::SSE>::value(DenseMatrix<float> & a, const DenseMatrix<float> & b)
 {
     CONTEXT("When subtracting DenseMatrix<float> from DenseMatrix<float> (SSE):");

@@ -155,7 +155,7 @@ namespace honei
                 DT1_ lower = DotProduct<Tag_>::value(energy, utility);
                 DenseVector<DT1_> u_c(utility.size());
                 copy<Tag_>(utility, u_c);
-                //TODO DIRK
+                //todo DIRK
                 //TODO kein uc anlegen sondern 3 op scale direkt in energy schreiben
                 if(fabs(lower) >= std::numeric_limits<DT1_>::epsilon())
                 {

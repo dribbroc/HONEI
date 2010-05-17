@@ -253,6 +253,8 @@ namespace honei
             template<typename DT1_, typename DT2_>
             static inline void jacobi_kernel(DenseVector<DT1_> to_smooth, SparseMatrixELL<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, SparseMatrixELL<DT1_> & difference, DT1_ omega)
             {
+                //todo DIRK
+                //TODO use Defect including result vector to avoid temp vector usage
                 DenseVector<DT1_> temp(Defect<Tag_>::value(right_hand_side, system_matrix, to_smooth));
                 former_result = to_smooth;
                 ScaledSum<Tag_>::value(former_result, temp, diag_inverted);

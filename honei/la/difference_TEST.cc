@@ -738,6 +738,51 @@ DenseVectorDifferenceQuickTest<tags::Cell, float> cell_dense_vector_difference_q
 DenseVectorDifferenceQuickTest<tags::Cell, double> cell_dense_vector_difference_quick_test_double("Cell double");
 #endif
 
+
+template <typename Tag_, typename DT_>
+class DenseVectorDifferenceResultTest :
+    public BaseTest
+{
+    public:
+        DenseVectorDifferenceResultTest(const std::string & type) :
+            BaseTest("dense_vector_difference_result_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            {
+                DenseVector<DT_> dv1(size), dv2(size), dv3(size, DT_(0));
+
+                for (typename DenseVector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
+                }
+                for (typename DenseVector<DT_>::ElementIterator i(dv2.begin_elements()), i_end(dv2.end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
+                }
+
+                DenseVector<DT_> result(size);
+                Difference<Tag_>::value(result, dv1, dv2);
+
+                TEST(result.lock(lm_read_only), TEST_CHECK_EQUAL(result, dv3), result.unlock(lm_read_only));
+            }
+
+            DenseVector<DT_> dv00(1, DT_(1));
+            DenseVector<DT_> dv01(5, DT_(1));
+            TEST_CHECK_THROWS(Difference<Tag_>::value(dv00, dv01), VectorSizeDoesNotMatch);
+        }
+};
+#ifdef HONEI_SSE
+DenseVectorDifferenceResultTest<tags::CPU::SSE, float> sse_dense_vector_difference_result_test_float("SSE float");
+DenseVectorDifferenceResultTest<tags::CPU::SSE, double> sse_dense_vector_difference_result_test_double("SSE double");
+#endif
+
 template <typename Tag_, typename DT_>
 class DenseVectorRangeDifferenceTest :
     public BaseTest

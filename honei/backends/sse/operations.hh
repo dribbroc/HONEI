@@ -27,6 +27,8 @@ namespace honei
         ///////////// LA
         void difference(float * a, const float * b, unsigned long size);
         void difference(double * a, const double * b, unsigned long size);
+        void difference(float * result, const float * a, const float * b, unsigned long size);
+        void difference(double * result, const double * a, const double * b, unsigned long size);
 
         float dot_product(const float * a, float * b, unsigned long size);
         double dot_product(double * a, double * b, unsigned long size);

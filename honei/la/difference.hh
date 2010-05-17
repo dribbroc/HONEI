@@ -657,6 +657,10 @@ namespace honei
 
         static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
 
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+
         static DenseMatrix<float> & value(DenseMatrix<float> & a, const DenseMatrix<float> & b);
 
         static DenseMatrix<double> & value(DenseMatrix<double> & a, const DenseMatrix<double> & b);

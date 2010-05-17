@@ -31,8 +31,7 @@
     using namespace honei;
     namespace honei
     {
-        template<typename Tag_ = tags::CPU>
-        struct Defect
+        template<typename Tag_ = tags::CPU> struct Defect
         {
             public:
                 template<typename DT_>
@@ -282,10 +281,10 @@
                         throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
                     }
 
-                    DenseVector<DT_> result(right_hand_side.copy());
+                    DenseVector<DT_> result(right_hand_side.size());
                     DenseVector<DT_> temp(right_hand_side.size());
                     Product<tags::CPU::SSE>::value(temp, system, x);
-                    Difference<tags::CPU::SSE>::value(result, temp);
+                    Difference<tags::CPU::SSE>::value(result, right_hand_side, temp);
                     return result;
                 }
 
