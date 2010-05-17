@@ -1667,28 +1667,29 @@ class SparseMatrixProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(20);
+            unsigned long size(471);
             SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1),
-                sm2(size, size+1, size / 7 + 1), sm3(size + 1, size + 1, size / 7 + 1);
+                sm2(size, size+1, size / 7 + 1);
             for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                     i_end(sm1.end_elements()) ; i != i_end ; ++i)
             {
-                *i = 2;
+                if (i.index() % 3 == 0)
+                    *i = 2/(i.index()+1);
             }
             for (typename SparseMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
                     i_end(sm2.end_elements()) ; i != i_end ; ++i)
             {
-                *i = 3;
+                if (i.index() % 5 == 0)
+                    *i = 3/(i.index()+1);
             }
-            for (typename SparseMatrix<DataType_>::ElementIterator i(sm3.begin_elements()),
-                    i_end(sm3.end_elements()) ; i != i_end ; ++i)
-            {
-                *i = 6 * size;
-            }
+            DenseMatrix<DataType_> ref1(sm1);
+            DenseMatrix<DataType_> ref2(sm2);
 
             SparseMatrix<DataType_> prod(Product<>::value(sm1, sm2));
+            DenseMatrix<DataType_> ref_prod(Product<>::value(ref1, ref2));
 
-            TEST_CHECK_EQUAL(prod, sm3);
+            DenseMatrix<DataType_> prod_dense(prod);
+            TEST_CHECK_EQUAL(prod_dense, ref_prod);
 
             SparseMatrix<DataType_> sm01(3, 3, 1), sm02(3, 4, 1);
 

@@ -38,6 +38,7 @@
 #include <honei/la/sum.hh>
 #include <honei/util/benchmark_info.hh>
 #include <honei/util/tags.hh>
+#include <honei/la/algorithm.hh>
 
 #include <cmath>
 
@@ -156,7 +157,7 @@ namespace honei
             //DenseVector<DT1_> result(a.rows(), DT1_(0));
             fill<tags::CPU>(result, DT1_(0));
 
-            for(unsigned long n(0) ; n < a.num_cols_per_row() ; n++)
+            /*for(unsigned long n(0) ; n < a.num_cols_per_row() ; n++)
             {
                 const unsigned long * Aj_n = a.Aj().elements() + n * a.stride();
                 const DT1_ * Ax_n = a.Ax().elements() + n * a.stride();
@@ -165,12 +166,30 @@ namespace honei
                     if(Ax_n[i] != DT1_(0))
                         result[i] += Ax_n[i] * b[Aj_n[i]];
                 }
-            }
-            ///todo warum is das langsamer?
-            /*for (unsigned long i(0) ; i < a.Ax().size() ; ++i)
-            {
-                result[i % a.stride()] += a.Ax()[i] * b[a.Aj()[i]];
             }*/
+            /*const unsigned long size(a.Ax().size());
+            const unsigned long stride(a.stride());
+            const DT1_ * aax(a.Ax().elements());
+            const unsigned long * aaj(a.Aj().elements());
+            for (unsigned long i(0) ; i < size ; ++i)
+            {
+                result.elements()[i % stride] += aax[i] * b.elements()[aaj[i]];
+            }*/
+            const unsigned long stride(a.stride());
+            const DT1_ * bx(b.elements());
+            const DT1_ * aax(a.Ax().elements());
+            const unsigned long * aaj(a.Aj().elements());
+            const unsigned long * aarl(a.Arl().elements());
+            DT1_ sum(0);
+            for (unsigned long row(0) ; row < a.rows() ; ++row)
+            {
+                sum = 0;
+                for (unsigned long col(0), j(row) ; col < aarl[row] ; ++col, j+=stride)
+                {
+                    sum+= aax[j] * bx[aaj[j]];
+                }
+                result.elements()[row] = sum;
+            }
 
             return result;
         }
@@ -548,14 +567,23 @@ namespace honei
             if (a.columns() != b.rows())
                 throw MatrixRowsDoNotMatch(b.rows(), a.columns());
 
-            SparseMatrix<DT1_> result(a.rows(), b.columns(), a.num_cols_per_row());
+            SparseMatrix<DT1_> result(a.rows(), b.columns(), b.num_cols_per_row());
+            const DT1_ * aax = a.Ax().elements();
+            const DT2_ * bax = b.Ax().elements();
+            const unsigned long astride(a.stride());
+            const unsigned long bstride(b.stride());
+            const unsigned long * arl(a.Arl().elements());
+            const unsigned long * brl(b.Arl().elements());
+            const unsigned long * aaj(a.Aj().elements());
+            const unsigned long * baj(b.Aj().elements());
+
             for (unsigned long row(0) ; row < a.rows() ; ++row)
             {
-                for(unsigned long ac(0), i(row) ; ac < a.Arl()[row] ; i+=a.stride(), ++ac)
+                for(unsigned long ac(0), i(row) ; ac < arl[row] ; i+=astride, ++ac)
                 {
-                    for (unsigned long bc(0), j(a.Aj()[i]) ; bc < b.Arl()[a.Aj()[i]] ; j+=b.stride(), ++bc)
+                    for (unsigned long bc(0), j(aaj[i]) ; bc < brl[aaj[i]] ; j+=bstride, ++bc)
                     {
-                        result(row, b.Aj()[j]) += a.Ax()[i] * b.Ax()[j];
+                        result(row, baj[j]) += aax[i] * bax[j];
                     }
                 }
             }

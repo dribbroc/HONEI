@@ -408,9 +408,17 @@ class SparseMatrixProductBench :
             {
                 BENCHMARK(Product<Tag_>::value(sm, sm2));
             }
-            //BenchmarkInfo info(Product<>::get_benchmark_info(sm, dm));
-            //evaluate(info);
-            evaluate();
+
+            unsigned long nz1(0), rpc(0);
+            for (unsigned long i(0) ; i < sm.rows() ; ++i)
+                nz1+=sm[i].used_elements();
+            for (unsigned long i(0) ; i < sm2.rows() ; ++i)
+                if (rpc < sm2[i].used_elements())
+                    rpc = sm2[i].used_elements();
+
+            BenchmarkInfo info;
+            info.flops=nz1 * rpc * 2;
+            evaluate(info);
         }
 };
 SparseMatrixProductBench<tags::CPU, float> SMPBenchfloat2("Matrix Product Benchmark sparse/sparse - matrix size: 1256x1256, float", 1256, 10);
@@ -456,9 +464,14 @@ class SparseMatrixELLProductBench :
             {
                 BENCHMARK(Product<Tag_>::value(ell, ell2));
             }
-            //BenchmarkInfo info(Product<>::get_benchmark_info(sm, dm));
-            //evaluate(info);
-            evaluate();
+
+            unsigned long nz1(0);
+            for (unsigned long i(0) ; i < ell.Arl().size() ; ++i)
+                nz1+=ell.Arl()[i];
+
+            BenchmarkInfo info;
+            info.flops=nz1 * ell2.num_cols_per_row() * 2;
+            evaluate(info);
         }
 };
 SparseMatrixELLProductBench<tags::CPU, float> SMELLPBenchfloat2("Matrix Product Benchmark ELL sparse/sparse - matrix size: 1256x1256, float", 1256, 10);
@@ -687,6 +700,8 @@ class Q1MatrixELLDenseVectorProductBench :
         }
 };
 #ifdef HONEI_SSE
+Q1MatrixELLDenseVectorProductBench<tags::CPU, float> Q1ELLDVPBenchfloat("ELL Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10);
+Q1MatrixELLDenseVectorProductBench<tags::CPU, double> Q1ELLDVPBenchdouble("ELL Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10);
 Q1MatrixELLDenseVectorProductBench<tags::CPU::SSE, float> sseQ1ELLDVPBenchfloat("SSE ELL Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10);
 Q1MatrixELLDenseVectorProductBench<tags::CPU::SSE, double> sseQ1ELLDVPBenchdouble("SSE ELL Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10);
 Q1MatrixELLDenseVectorProductBench<tags::CPU::MultiCore::SSE, float> mcsseQ1ELLDVPBenchfloat("MC SSE ELL Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10);

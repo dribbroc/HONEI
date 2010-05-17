@@ -115,6 +115,7 @@ namespace honei
                 }
             }
 
+            /// \todo avoid transposition, correct the above loops
             DenseVector<unsigned long> tAj(num_cols_per_row * stride, (unsigned long)(0));
             DenseVector<DataType_> tAx(num_cols_per_row * stride, DataType_(0));
             unsigned long t(0);
