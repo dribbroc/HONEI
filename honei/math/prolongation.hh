@@ -17,8 +17,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef MATH_GUARD_PROLONGATE_HH
-#define MATH_GUARD_PROLONGATE_HH 1
+#ifndef MATH_GUARD_PROLONGATION_HH
+#define MATH_GUARD_PROLONGATION_HH 1
 
 #include<honei/la/dense_vector.hh>
 #include<honei/la/banded_matrix.hh>
@@ -145,7 +145,7 @@ namespace honei
                     static DenseVector<Prec_> & value(DenseVector<Prec_>&  fine,
                             DenseVector<Prec_>& coarse,
                             DenseVector<unsigned long>& mask,
-                            HONEI_UNUSED MatrixType_ & prolmat)
+                            MatrixType_ & prolmat)
                     {
                         Product<Tag_>::value(fine, prolmat, coarse);
                         //ApplyDirichletBoundaries<Tag_>::value(fine, mask);
