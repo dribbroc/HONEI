@@ -48,6 +48,9 @@ namespace methods
     class MIXED;
 
     class PROLMAT;
+
+    class NATURAL;
+    class TWO_LEVEL;
 }
 
 
