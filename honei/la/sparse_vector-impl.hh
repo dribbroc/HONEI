@@ -950,6 +950,8 @@ namespace honei
         for (typename SparseVector<DataType_>::ConstElementIterator i(a.begin_elements()), i_end(a.end_elements()),
                 j(b.begin_elements()) ; i != i_end ; ++i, ++j)
         {
+            if (*i != *i || *j != *j)
+                return false;
             if (std::fabs(*i - *j) > std::numeric_limits<DataType_>::epsilon())
                 return false;
         }

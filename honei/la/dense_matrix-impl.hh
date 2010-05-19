@@ -612,6 +612,12 @@ namespace honei
                 continue;
             }
 
+            if (*i == *i || *j == *j)
+            {
+                ++j;
+                continue;
+            }
+
             result = false;
             break;
         }
