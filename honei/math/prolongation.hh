@@ -25,6 +25,7 @@
 #include<honei/la/sparse_matrix.hh>
 #include<honei/la/product.hh>
 #include<honei/util/attributes.hh>
+#include<honei/la/algorithm.hh>
 #include<honei/math/methods.hh>
 #include<honei/math/apply_dirichlet_boundaries.hh>
 #include<cmath>
