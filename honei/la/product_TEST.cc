@@ -1667,7 +1667,7 @@ class SparseMatrixProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(471);
+            unsigned long size(11);
             SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1),
                 sm2(size, size+1, size / 7 + 1);
             for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
@@ -1759,19 +1759,19 @@ class SparseMatrixELLProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(471);
+            unsigned long size(22);
             SparseMatrix<DataType_> sm1(size+1, size, size / 8 + 1),
                 sm2(size, size+1, size / 7 + 1);
             for (typename SparseMatrix<DataType_>::ElementIterator i(sm1.begin_elements()),
                     i_end(sm1.end_elements()) ; i != i_end ; ++i)
             {
-                if (i.index() % 30 == 0)
+                if (i.index() % 5 == 0)
                     *i = i.index() / 5.1;
             }
             for (typename SparseMatrix<DataType_>::ElementIterator i(sm2.begin_elements()),
                     i_end(sm2.end_elements()) ; i != i_end ; ++i)
             {
-                if (i.index() % 50 == 0)
+                if (i.index() % 7 == 0)
                     *i = i.index() / 5.3;
             }
 
