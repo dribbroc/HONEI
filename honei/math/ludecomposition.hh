@@ -23,7 +23,6 @@
 
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
-#include <iostream>
 
 namespace honei
 {
@@ -57,6 +56,34 @@ namespace honei
 
                 for (unsigned long k(0) ; k < u.rows() - 1 ; ++k)
                 {
+                    //search maximum pivot in column k
+                    unsigned long pivot = k;
+                    for (unsigned long t(k + 1) ; t < u.rows() ; ++t)
+                    {
+                        if (fabs(u(t, k)) > fabs(u(pivot, k)))
+                                pivot = t;
+                    }
+                    //switch row k and row pivot
+                    if (pivot != k)
+                    {
+                        for (unsigned long i(k) ; i < a.columns() ; ++i)
+                        {
+                            DT_ temp(u(k, i));
+                            u(k, i) = u(pivot, i);
+                            u(pivot, i) = temp;
+                        }
+                        for (unsigned long i(0) ; i < k  ; ++i)
+                        {
+                            DT_ temp(l(k, i));
+                            l(k, i) = l(pivot, i);
+                            l(pivot, i) = temp;
+                        }
+                        DT_ temp(b[k]);
+                        b[k] = b[pivot];
+                        b[pivot] = temp;
+                    }
+
+                    //todo calc and store LU insitu in A
                     for (unsigned long j(k + 1) ; j < u.rows() ; ++j)
                     {
                         l(j, k) = u(j, k) / u(k, k);
