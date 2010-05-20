@@ -49,7 +49,6 @@ namespace honei
                 if(target.columns() != indices_coarse.size())
                     throw InternalError("Matrix column count " + stringify(target.columns()) + " does not match size of coarse index array (" + stringify(indices_coarse.size()) + ")");
                 unsigned long fine_grid_dim((unsigned long)sqrt(indices_fine.size())); ///we have a squared grid
-                std::cout << fine_grid_dim << std::endl;
 
                 for(unsigned long i(0) ; i < fine_grid_dim ; ++i)
                     for(unsigned long j(0) ; j < fine_grid_dim ; ++j)
