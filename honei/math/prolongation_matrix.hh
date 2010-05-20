@@ -32,70 +32,71 @@ namespace honei
     {
         private:
 
-            static inline unsigned long _coarse_index(unsigned long fine_index, unsigned long fine_grid_row)
+            static inline unsigned long _coarse_index(unsigned long fine_index, unsigned long fine_grid_row, unsigned long offset)
             {
-                return fine_index / 2 - fine_grid_row;
+                return (fine_index / 2) - ((fine_grid_row / 2) * ((offset - 1) / 2));
             }
 
         public:
 
             template <typename DT_>
-                static void value(SparseMatrix<DT_> & target, DenseVector<unsigned long> & indices_fine, DenseVector<unsigned long> & indices_coarse)
-                {
-                    CONTEXT("During assembly of prolongation matrix: ");
+            static void value(SparseMatrix<DT_> & target, DenseVector<unsigned long> & indices_fine, DenseVector<unsigned long> & indices_coarse)
+            {
+                CONTEXT("During assembly of prolongation matrix: ");
 
-                    if(target.rows() != indices_fine.size())
-                        throw InternalError("Matrix row count " + stringify(target.rows()) + " does not match size of fine index array (" + stringify(indices_fine.size()) + ")");
-                    if(target.columns() != indices_coarse.size())
-                        throw InternalError("Matrix column count " + stringify(target.columns()) + " does not match size of coarse index array (" + stringify(indices_coarse.size()) + ")");
-                    unsigned long fine_grid_dim(sqrt(indices_fine.size())); ///we have a squared grid
+                if(target.rows() != indices_fine.size())
+                    throw InternalError("Matrix row count " + stringify(target.rows()) + " does not match size of fine index array (" + stringify(indices_fine.size()) + ")");
+                if(target.columns() != indices_coarse.size())
+                    throw InternalError("Matrix column count " + stringify(target.columns()) + " does not match size of coarse index array (" + stringify(indices_coarse.size()) + ")");
+                unsigned long fine_grid_dim((unsigned long)sqrt(indices_fine.size())); ///we have a squared grid
+                std::cout << fine_grid_dim << std::endl;
 
-                    for(unsigned long i(0) ; i < fine_grid_dim ; ++i)
-                        for(unsigned long j(0) ; j < fine_grid_dim ; ++j)
+                for(unsigned long i(0) ; i < fine_grid_dim ; ++i)
+                    for(unsigned long j(0) ; j < fine_grid_dim ; ++j)
+                    {
+                        DT_ coeff(0);
+                        unsigned long i_fine, i_coarse;
+                        i_fine = i * fine_grid_dim + j;
+
+                        if(i % 2 == 0)
                         {
-                            DT_ coeff(0);
-                            unsigned long i_fine, i_coarse;
-                            i_fine = i * fine_grid_dim + j;
-
-                            if(i % 2 == 0)
+                            if(j % 2 == 0) ///exact on coarse grid -> write only one coeff
                             {
-                                if(j % 2 == 0) ///exact on coarse grid -> write only one coeff
-                                {
-                                    coeff = DT_(1);
-                                    i_coarse = _coarse_index(i_fine, i);
-                                    target(indices_fine[i_fine] , indices_coarse[i_coarse]) = coeff;
-                                }
-                                else ///on coarse grid row but not on coarse grid column -> write two coeffs
-                                {
-                                    coeff = DT_(0.5);
-                                    i_coarse = _coarse_index(i_fine - 1, i);
-                                    target(indices_fine[i_fine] , indices_coarse[i_coarse]) = coeff;
-                                    i_coarse = _coarse_index(i_fine + 1, i);
-                                    target(indices_fine[i_fine] , indices_coarse[i_coarse]) = coeff;
-                                }
+                                coeff = DT_(1);
+                                i_coarse = _coarse_index(i_fine, i, fine_grid_dim);
+                                target(indices_fine[i_fine] , indices_coarse[i_coarse]) = coeff;
                             }
-                            else if(j % 2 == 0) ///on coarse grid column but not on row -> write two coeffs
+                            else ///on coarse grid row but not on coarse grid column -> write two coeffs
                             {
                                 coeff = DT_(0.5);
-                                i_coarse = _coarse_index(i_fine + fine_grid_dim, i + 1);
+                                i_coarse = _coarse_index(i_fine - 1, i, fine_grid_dim);
                                 target(indices_fine[i_fine] , indices_coarse[i_coarse]) = coeff;
-                                i_coarse = _coarse_index(i_fine - fine_grid_dim, i - 1);
-                                target(indices_fine[i_fine] , indices_coarse[i_coarse]) = coeff;
-                            }
-                            else ///neither on coarse grid row nor column -> write four coeffs
-                            {
-                                coeff = DT_(0.25);
-                                i_coarse = _coarse_index(i_fine + fine_grid_dim + 1, i + 1);
-                                target(indices_fine[i_fine] , indices_coarse[i_coarse]) = coeff;
-                                i_coarse = _coarse_index(i_fine + fine_grid_dim - 1, i + 1);
-                                target(indices_fine[i_fine] , indices_coarse[i_coarse]) = coeff;
-                                i_coarse = _coarse_index(i_fine - fine_grid_dim + 1, i - 1);
-                                target(indices_fine[i_fine] , indices_coarse[i_coarse]) = coeff;
-                                i_coarse = _coarse_index(i_fine - fine_grid_dim - 1, i - 1);
+                                i_coarse = _coarse_index(i_fine + 1, i, fine_grid_dim);
                                 target(indices_fine[i_fine] , indices_coarse[i_coarse]) = coeff;
                             }
                         }
-                }
+                        else if(j % 2 == 0) ///on coarse grid column but not on row -> write two coeffs
+                        {
+                            coeff = DT_(0.5);
+                            i_coarse = _coarse_index(i_fine + fine_grid_dim, i + 1, fine_grid_dim);
+                            target(indices_fine[i_fine] , indices_coarse[i_coarse]) = coeff;
+                            i_coarse = _coarse_index(i_fine - fine_grid_dim, i - 1, fine_grid_dim);
+                            target(indices_fine[i_fine] , indices_coarse[i_coarse]) = coeff;
+                        }
+                        else ///neither on coarse grid row nor column -> write four coeffs
+                        {
+                            coeff = DT_(0.25);
+                            i_coarse = _coarse_index(i_fine + fine_grid_dim + 1, i + 1, fine_grid_dim);
+                            target(indices_fine[i_fine] , indices_coarse[i_coarse]) = coeff;
+                            i_coarse = _coarse_index(i_fine + fine_grid_dim - 1, i + 1, fine_grid_dim);
+                            target(indices_fine[i_fine] , indices_coarse[i_coarse]) = coeff;
+                            i_coarse = _coarse_index(i_fine - fine_grid_dim + 1, i - 1, fine_grid_dim);
+                            target(indices_fine[i_fine] , indices_coarse[i_coarse]) = coeff;
+                            i_coarse = _coarse_index(i_fine - fine_grid_dim - 1, i - 1, fine_grid_dim);
+                            target(indices_fine[i_fine] , indices_coarse[i_coarse]) = coeff;
+                        }
+                    }
+            }
     };
 }
 

@@ -134,15 +134,15 @@ class PoissonTestMGSparseELLProlMat2:
             }
 
             info.min_level = 1;
-            info.n_max_iter = 1000;
-            info.initial_zero = true;
+            info.n_max_iter = 16;
+            info.initial_zero = false;
             info.tolerance = 1e-8;
             info.convergence_check = true;
 
-            info.n_pre_smooth = 4;
-            info.n_post_smooth = 4;
+            info.n_pre_smooth = 2;
+            info.n_post_smooth = 2;
             info.n_max_iter_coarse = ((unsigned long)sqrt((DT1_)(pow((DT1_)2 , (DT1_)info.max_level) + 1)*(pow((DT1_)2 , (DT1_)info.max_level) + 1)));
-            info.tolerance_coarse = std::numeric_limits<double>::epsilon();
+            info.tolerance_coarse = 1e-8;
             info.adapt_correction_factor = 1.;
 
             for (unsigned long i(0) ; i < info.min_level; ++i)
@@ -280,4 +280,4 @@ class PoissonTestMGSparseELLProlMat2:
 
         }
 };
-PoissonTestMGSparseELLProlMat2<tags::CPU, double> poisson_test_mg_sparse_prolmat_double("double", 17ul);
+PoissonTestMGSparseELLProlMat2<tags::CPU, double> poisson_test_mg_sparse_prolmat_double("double", 9ul);

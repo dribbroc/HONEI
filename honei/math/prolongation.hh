@@ -149,7 +149,7 @@ namespace honei
                             MatrixType_ & prolmat)
                     {
                         Product<Tag_>::value(fine, prolmat, coarse);
-                        //ApplyDirichletBoundaries<Tag_>::value(fine, mask);
+                        ApplyDirichletBoundaries<Tag_>::value(fine, mask);
                         return fine;
                     }
         };
