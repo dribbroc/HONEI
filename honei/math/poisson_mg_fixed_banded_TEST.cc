@@ -280,4 +280,4 @@ class PoissonTestMGSparseELLProlMat2:
 
         }
 };
-PoissonTestMGSparseELLProlMat2<tags::CPU, double> poisson_test_mg_sparse_prolmat_double("double", 9ul);
+PoissonTestMGSparseELLProlMat2<tags::CPU, double> poisson_test_mg_sparse_prolmat_double("double", 33ul);
