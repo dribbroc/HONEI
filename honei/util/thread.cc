@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2010 Sven Mallach <mallach@honei.org>
  *
  * Based upon 'thread.cc' from Paludis, which is:
  *     Copyright (c) 2007 Ciaran McCreesh
@@ -20,6 +21,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/util/configuration.hh>
 #include <honei/util/exception.hh>
 #include <honei/util/instantiation_policy-impl.hh>
 #include <honei/util/lock.hh>
@@ -43,6 +45,12 @@ namespace honei
 
         /// Our thread.
         pthread_t * const thread;
+
+        /// The threads' attributes.
+        pthread_attr_t attributes;
+
+        /// This threads' stacksize
+        size_t stacksize;
 
         /// Our mutex.
         Mutex * const mutex;
@@ -81,9 +89,16 @@ namespace honei
             mutex(new Mutex),
             completed(false)
         {
+            pthread_attr_init(&attributes);
+
+            stacksize = Configuration::instance()->get_value("thread::stacksize", 0);
+
+            if (stacksize != 0)
+                    pthread_attr_setstacksize(&attributes, stacksize);
+
             int retval;
 
-            if (0 != (retval = pthread_create(thread, 0, &thread_function, this)))
+            if (0 != (retval = pthread_create(thread, &attributes, &thread_function, this)))
                 throw ExternalError("libpthread", "pthread_create failed, " + stringify(strerror(retval)));
         }
 
@@ -93,6 +108,7 @@ namespace honei
 
             delete thread;
             delete mutex;
+            pthread_attr_destroy(&attributes);
         }
     };
 }
@@ -113,4 +129,11 @@ bool Thread::completed() const
     Lock l(*_imp->mutex);
 
     return _imp->completed;
+}
+
+size_t Thread::get_stacksize() const
+{
+    size_t ret;
+    pthread_attr_getstacksize(&_imp->attributes, &ret);
+    return ret;
 }

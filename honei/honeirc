@@ -4,6 +4,7 @@
 
 # Util
 ##########
+thread::stacksize = 0
 profiler::output = /dev/null
 log::categories = all
 

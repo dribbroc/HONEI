@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2010 Sven Mallach <mallach@honei.org>
  *
  * Based upon 'thread.hh' from Paludis, which is:
  *     Copyright (c) 2007 Ciaran McCreesh
@@ -60,8 +61,11 @@ namespace honei
 
             /// \}
 
-            /// Return wether we have yet completed executing our function.
+            /// Return whether we have yet completed executing our function.
             bool completed() const;
+
+            /// Return the current stack size of this thread.
+            size_t get_stacksize() const;
     };
 }
 
