@@ -24,6 +24,8 @@
 #include <cmath>
 #include <honei/math/gmg.hh>
 #include <honei/math/methods.hh>
+#include <honei/la/sum.hh>
+#include <honei/util/operation_wrapper.hh>
 
 using namespace honei;
 using namespace tests;
@@ -42,9 +44,20 @@ class GMGTest:
 
         virtual void run() const
         {
-            GMGInfo<DT1_> info;
-
+            GMGInfo<DT1_> info(GMGInfoFactory<DT1_, methods::CYCLE::V>::create());
             GMG<Tag_, methods::NONE>::value(info);
+
+            /*std::list<std::tr1::function<void ()> > functors;
+            DenseVector<DT1_> bla(100, DT1_(4711));
+            DenseVector<DT1_> blup(100, DT1_(4713));
+
+            OperationWrapper<Sum<Tag_>, DenseVectorContinuousBase<DT1_>, DenseVectorContinuousBase<DT1_>, DenseVectorContinuousBase<DT1_> > sum_operation(blup);
+            std::tr1::function<void ()> func(std::tr1::bind(sum_operation, bla, blup));
+            functors.push_back(func);
+
+            functors.front()();
+            std::cout << bla;*/
+
         }
 };
 GMGTest<tags::CPU, float> cpu_gmg_test_float("float");

@@ -22,14 +22,14 @@
 
 #include<list>
 #include<tr1/functional>
+#include<honei/math/methods.hh>
+
 
 namespace honei
 {
     template<typename Prec_>
-    class GMGInfo
+    struct GMGInfo
     {
-        private:
-
         public:
             std::list<unsigned long> cycle;
             std::list<std::tr1::function<void ()> > smoother_functors;
@@ -38,7 +38,19 @@ namespace honei
             std::list<std::tr1::function<void ()> > coarse_solver_functors;
             unsigned long start_level;
             unsigned long min_level;
+    };
 
+    template<typename Prec_, typename CycleType_>
+    struct GMGInfoFactory;
+
+    template<typename Prec_>
+    struct GMGInfoFactory<Prec_, methods::CYCLE::V>
+    {
+        static GMGInfo<Prec_> create()
+        {
+            GMGInfo<Prec_> result;
+            return result;
+        }
     };
 
     template<typename Prec_>
