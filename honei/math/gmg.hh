@@ -20,6 +20,9 @@
 #ifndef MATH_GUARD_GMG_HH
 #define MATH_GUARD_GMG_HH 1
 
+#include<list>
+#include<tr1/functional>
+
 namespace honei
 {
     template<typename Prec_>
@@ -34,6 +37,7 @@ namespace honei
 
             std::list<std::tr1::function<void ()> > coarse_solver_functors;
             unsigned long start_level;
+            unsigned long min_level;
 
     };
 
@@ -51,22 +55,30 @@ namespace honei
             {
             }
 
-            void descent(std::tr1::function<void ()> smoother_functor, std::tr1::function<void ()> transfer_functor)
+            void descent(std::tr1::function<void ()> & smoother_functor, std::tr1::function<void ()> & transfer_functor)
             {
-
+                smoother_functor();
+                transfer_functor();
             }
 
-            void rise(std::tr1::function<void ()> smoother_functor, std::tr1::function<void ()> transfer_functor)
+            void rise(std::tr1::function<void ()> & smoother_functor, std::tr1::function<void ()> & transfer_functor)
             {
+                transfer_functor();
+                smoother_functor();
+            }
+
+            void solve_coarse(std::tr1::function<void ()> & coarse_smoother_functor)
+            {
+                coarse_smoother_functor();
             }
 
     };
 
-    template<typename Tag_>
+    template<typename Tag_, typename Mode_>
     struct GMG
     {
         public:
-            template<typename Prec_, typename Mode_>
+            template<typename Prec_>
             static void value(GMGInfo<Prec_> & info)
             {
                 GMGState<Prec_> state(info);
@@ -74,7 +86,7 @@ namespace honei
                 std::list<std::tr1::function<void ()> >::iterator smoother_functors_iterator(info.smoother_functors.begin());
                 std::list<std::tr1::function<void ()> >::iterator coarse_solver_functors_iterator(info.coarse_solver_functors.begin());
                 std::list<std::tr1::function<void ()> >::iterator transfer_functors_iterator(info.transfer_functors.begin());
-                for(; cycle_iterator < info.cycle.end() ; ++cycle_iterator, ++smoother_functors_iterator, ++transfer_functors_iterator)
+                for(; cycle_iterator != info.cycle.end() ; ++cycle_iterator, ++smoother_functors_iterator, ++transfer_functors_iterator)
                 {
                     if(*cycle_iterator < state.current_level)
                         state.descent(*smoother_functors_iterator, *transfer_functors_iterator);
@@ -83,7 +95,7 @@ namespace honei
 
                     if(state.current_level == info.min_level)
                     {
-                        state.solve_coarse(*coarse_functors_iterator);
+                        state.solve_coarse(*coarse_solver_functors_iterator);
                         ++coarse_solver_functors_iterator;
                     }
 
