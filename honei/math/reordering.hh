@@ -53,7 +53,7 @@ namespace honei
 
         static void value(DenseVector<unsigned long> & fine, DenseVector<unsigned long> & coarse)
         {
-            unsigned long fine_grid_dim(sqrt(fine.size()));
+            unsigned long fine_grid_dim((unsigned long)sqrt(fine.size()));
             unsigned long fine_index(coarse.size());
             unsigned long coarse_index(0);
             for(unsigned long i(0) ; i < fine_grid_dim ; ++i)
