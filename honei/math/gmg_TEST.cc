@@ -24,6 +24,7 @@
 #include <cmath>
 #include <honei/math/gmg.hh>
 #include <honei/math/methods.hh>
+#include <honei/math/multigrid.hh>
 #include <honei/la/sum.hh>
 #include <honei/util/operation_wrapper.hh>
 
@@ -36,6 +37,9 @@ class GMGTest:
     public BaseTest
 {
     public:
+        static void factory(std::list<SparseMatrixELL<DT1_> > & a, std::list<SparseMatrixELL<DT1_> > & b, std::list<SparseMatrixELL<DT1_> > & c, std::list<DenseVector<DT1_> > & d, unsigned long min, unsigned long max)
+        {
+        }
         GMGTest(const std::string & tag) :
             BaseTest("GMG test <" + tag + ">")
         {
@@ -44,7 +48,7 @@ class GMGTest:
 
         virtual void run() const
         {
-            GMGInfo<DT1_> info(GMGInfoFactory<DT1_, methods::CYCLE::V>::create());
+            GMGInfo<DT1_, SparseMatrixELL<DT1_>, SparseMatrixELL<DT1_> > info(GMGInfoFactory<DT1_, SparseMatrixELL<DT1_>, SparseMatrixELL<DT1_>, Jacobi<Tag_>, ConjugateGradients<Tag_, methods::NONE>, Prolongation<Tag_, methods::NONE>, Restriction<Tag_, methods::NONE>, Norm<vnt_l_two, false, Tag_>, methods::CYCLE::V>::create(GMGTest::factory, 1ul, 1ul, 1ul, 1ul, 1ul, 1ul, 1ul, DT1_(0), DT1_(0), DT1_(0)));
             GMG<Tag_, methods::NONE>::value(info);
 
             /*std::list<std::tr1::function<void ()> > functors;

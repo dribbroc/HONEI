@@ -22,98 +22,151 @@
 
 #include<list>
 #include<tr1/functional>
+#include<honei/la/dense_vector.hh>
 #include<honei/math/methods.hh>
 
 
 namespace honei
 {
-    template<typename Prec_>
+    template<typename Prec_, typename MatrixType_, typename ProlMatrixType_>
     struct GMGInfo
     {
         public:
             std::list<unsigned long> cycle;
             std::list<std::tr1::function<void ()> > smoother_functors;
             std::list<std::tr1::function<void ()> > transfer_functors;
-
             std::list<std::tr1::function<void ()> > coarse_solver_functors;
+
+            std::list<MatrixType_> system_matrices;
+            std::list<ProlMatrixType_> prolongation_matrices;
+            std::list<ProlMatrixType_> restriction_matrices;
+            std::list<DenseVector<Prec_> > rhs_vectors;
+            std::list<DenseVector<Prec_> > result_vectors;
+            std::list<DenseVector<Prec_> > c_vectors;
+            std::list<DenseVector<Prec_> > d_vectors;
+
             unsigned long start_level;
             unsigned long min_level;
+            unsigned long max_level;
+            unsigned long end_level;
+            unsigned long max_iters_global;
+            unsigned long max_iters_smoother;
+            unsigned long max_iters_coarse_solver;
+            Prec_ tolerance;
+            Prec_ tolerance_coarse;
+            Prec_ adaptive_correction_factor;
     };
 
-    template<typename Prec_, typename CycleType_>
+    template<typename Prec_,
+             typename MatrixType_,
+             typename ProlMatrixType_,
+             typename SmootherType_,
+             typename CoarseSolverType_,
+             typename ProlType_,
+             typename ResType_,
+             typename NormType_,
+             typename CycleType_>
     struct GMGInfoFactory;
 
-    template<typename Prec_>
-    struct GMGInfoFactory<Prec_, methods::CYCLE::V>
+    template<typename Prec_,
+             typename MatrixType_,
+             typename ProlMatrixType_,
+             typename SmootherType_,
+             typename CoarseSolverType_,
+             typename ProlType_,
+             typename ResType_,
+             typename NormType_>
+    struct GMGInfoFactory<Prec_,
+                          MatrixType_,
+                          ProlMatrixType_,
+                          SmootherType_,
+                          CoarseSolverType_,
+                          ProlType_,
+                          ResType_,
+                          NormType_,
+                          methods::CYCLE::V>
     {
-        static GMGInfo<Prec_> create()
-        {
-            GMGInfo<Prec_> result;
-            return result;
-        }
-    };
-
-    template<typename Prec_>
-    class GMGState
-    {
-        private:
-            GMGInfo<Prec_> & _info;
-
         public:
-            unsigned long current_level;
-            GMGState(GMGInfo<Prec_> & info) :
-                _info(info),
-                current_level(info.start_level)
+            static GMGInfo<Prec_, MatrixType_, ProlMatrixType_> create(std::tr1::function<void (std::list<MatrixType_>, std::list<ProlMatrixType_>, std::list<ProlMatrixType_>, std::list<DenseVector<Prec_> >, unsigned long, unsigned long)> problem_factory,
+            unsigned long min_level,
+            unsigned long max_level,
+            unsigned long start_level,
+            unsigned long end_level,
+            unsigned long max_iters_global,
+            unsigned long max_iters_smoother,
+            unsigned long max_iters_coarse_solver,
+            Prec_ tolerance,
+            Prec_ tolerance_coarse,
+            Prec_ adaptive_correction_factor)
             {
-            }
+                GMGInfo<Prec_, MatrixType_, ProlMatrixType_> result;
 
-            void descent(std::tr1::function<void ()> & smoother_functor, std::tr1::function<void ()> & transfer_functor)
-            {
-                smoother_functor();
-                transfer_functor();
-            }
 
-            void rise(std::tr1::function<void ()> & smoother_functor, std::tr1::function<void ()> & transfer_functor)
-            {
-                transfer_functor();
-                smoother_functor();
+                return result;
             }
-
-            void solve_coarse(std::tr1::function<void ()> & coarse_smoother_functor)
-            {
-                coarse_smoother_functor();
-            }
-
     };
+
+    template<typename Prec_, typename MatrixType_, typename ProlMatrixType_>
+        class GMGState
+        {
+            private:
+                GMGInfo<Prec_, MatrixType_, ProlMatrixType_> & _info;
+
+            public:
+                unsigned long current_level;
+                GMGState(GMGInfo<Prec_, MatrixType_, ProlMatrixType_> & info) :
+                    _info(info),
+                    current_level(info.start_level)
+            {
+            }
+
+                void descent(std::tr1::function<void ()> & smoother_functor, std::tr1::function<void ()> & transfer_functor)
+                {
+                    smoother_functor();
+                    transfer_functor();
+                }
+
+                void rise(std::tr1::function<void ()> & smoother_functor, std::tr1::function<void ()> & transfer_functor)
+                {
+                    transfer_functor();
+                    smoother_functor();
+                }
+
+                void solve_coarse(std::tr1::function<void ()> & coarse_smoother_functor)
+                {
+                    coarse_smoother_functor();
+                }
+
+        };
 
     template<typename Tag_, typename Mode_>
-    struct GMG
-    {
-        public:
-            template<typename Prec_>
-            static void value(GMGInfo<Prec_> & info)
-            {
-                GMGState<Prec_> state(info);
-                std::list<unsigned long>::iterator cycle_iterator(info.cycle.begin());
-                std::list<std::tr1::function<void ()> >::iterator smoother_functors_iterator(info.smoother_functors.begin());
-                std::list<std::tr1::function<void ()> >::iterator coarse_solver_functors_iterator(info.coarse_solver_functors.begin());
-                std::list<std::tr1::function<void ()> >::iterator transfer_functors_iterator(info.transfer_functors.begin());
-                for(; cycle_iterator != info.cycle.end() ; ++cycle_iterator, ++smoother_functors_iterator, ++transfer_functors_iterator)
-                {
-                    if(*cycle_iterator < state.current_level)
-                        state.descent(*smoother_functors_iterator, *transfer_functors_iterator);
-                    else
-                        state.rise(*smoother_functors_iterator, *transfer_functors_iterator);
-
-                    if(state.current_level == info.min_level)
+        struct GMG
+        {
+            public:
+                template<typename Prec_, typename MatrixType_, typename ProlMatrixType_>
+                    static void value(GMGInfo<Prec_, MatrixType_, ProlMatrixType_> & info)
                     {
-                        state.solve_coarse(*coarse_solver_functors_iterator);
-                        ++coarse_solver_functors_iterator;
-                    }
+                        GMGState<Prec_, MatrixType_, ProlMatrixType_> state(info);
+                        std::list<unsigned long>::iterator cycle_iterator(info.cycle.begin());
+                        std::list<std::tr1::function<void ()> >::iterator smoother_functors_iterator(info.smoother_functors.begin());
+                        std::list<std::tr1::function<void ()> >::iterator coarse_solver_functors_iterator(info.coarse_solver_functors.begin());
+                        std::list<std::tr1::function<void ()> >::iterator transfer_functors_iterator(info.transfer_functors.begin());
+                        for(; cycle_iterator != info.cycle.end() ; ++cycle_iterator, ++smoother_functors_iterator, ++transfer_functors_iterator)
+                        {
+                            if(*cycle_iterator < state.current_level)
+                                state.descent(*smoother_functors_iterator, *transfer_functors_iterator);
+                            else
+                                state.rise(*smoother_functors_iterator, *transfer_functors_iterator);
 
-                }
-            }
-    };
+                            if(state.current_level == info.min_level)
+                            {
+                                state.solve_coarse(*coarse_solver_functors_iterator);
+                                ++coarse_solver_functors_iterator;
+                            }
+
+                        }
+                    }
+        };
 }
 
 #endif
