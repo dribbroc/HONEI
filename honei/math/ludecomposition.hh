@@ -94,15 +94,14 @@ namespace honei
                     }
                 }
 
-                DenseVector<DT_> y(b.size());
-                for (unsigned long i(0) ; i < y.size() ; ++i)
+                for (unsigned long i(0) ; i < x.size() ; ++i)
                 {
                     DT_ sum(0);
                     for (unsigned long j(0) ; j < i ; ++j)
                     {
-                        sum += l(i,j) * y[j];
+                        sum += l(i,j) * x[j];
                     }
-                    y[i] = DT_(1) / l(i, i) * (b[i] - sum);
+                    x[i] = DT_(1) / l(i, i) * (b[i] - sum);
                 }
 
                 for (long i(x.size() - 1) ; i >= 0 ; --i)
@@ -112,7 +111,7 @@ namespace honei
                     {
                         sum += u(i,j) * x[j];
                     }
-                    x[i] = DT_(1) / u(i, i) * (y[i] - sum);
+                    x[i] = DT_(1) / u(i, i) * (x[i] - sum);
                 }
             }
     };
