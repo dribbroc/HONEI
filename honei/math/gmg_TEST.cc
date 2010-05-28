@@ -23,6 +23,7 @@
 #include <iostream>
 #include <cmath>
 #include <honei/math/gmg.hh>
+#include <honei/math/problem_factory.hh>
 #include <honei/math/methods.hh>
 #include <honei/math/multigrid.hh>
 #include <honei/la/sum.hh>
@@ -32,26 +33,33 @@ using namespace honei;
 using namespace tests;
 using namespace std;
 
+
 template <typename Tag_, typename DT1_>
 class GMGTest:
     public BaseTest
 {
     public:
-        static void factory(std::list<SparseMatrixELL<DT1_> > & a, std::list<SparseMatrixELL<DT1_> > & b, std::list<SparseMatrixELL<DT1_> > & c, std::list<DenseVector<DT1_> > & d, unsigned long min, unsigned long max)
+
+        static void factory(std::vector<SparseMatrixELL<DT1_> > & a, std::vector<SparseMatrixELL<DT1_> > & b, std::vector<SparseMatrixELL<DT1_> > & c, std::vector<DenseVector<DT1_> > & d, unsigned long min, unsigned long max)
         {
+            DenseVector<DT1_> blub(10, 5);
+            d.push_back(blub);
         }
+
         GMGTest(const std::string & tag) :
-            BaseTest("GMG test <" + tag + ">")
+        BaseTest("GMG test <" + tag + ">")
         {
             register_tag(Tag_::name);
         }
 
         virtual void run() const
         {
-            GMGInfo<DT1_, SparseMatrixELL<DT1_>, SparseMatrixELL<DT1_> > info(GMGInfoFactory<DT1_, SparseMatrixELL<DT1_>, SparseMatrixELL<DT1_>, Jacobi<Tag_>, ConjugateGradients<Tag_, methods::NONE>, Prolongation<Tag_, methods::NONE>, Restriction<Tag_, methods::NONE>, Norm<vnt_l_two, false, Tag_>, methods::CYCLE::V>::create(GMGTest::factory, 1ul, 1ul, 1ul, 1ul, 1ul, 1ul, 1ul, DT1_(0), DT1_(0), DT1_(0)));
+            FileFactory<DT1_, SparseMatrixELL<DT1_>, SparseMatrixELL<DT1_> > factory("bla");
+            GMGInfo<DT1_, SparseMatrixELL<DT1_>, SparseMatrixELL<DT1_> > info(GMGInfoFactory<DT1_, SparseMatrixELL<DT1_>, SparseMatrixELL<DT1_>, Jacobi<Tag_>, ConjugateGradients<Tag_, methods::NONE>, Prolongation<Tag_, methods::NONE>, Restriction<Tag_, methods::NONE>, Norm<vnt_l_two, false, Tag_>, methods::CYCLE::V>::create(factory.factory, 1ul, 1ul, 1ul, 1ul, 1ul, 1ul, 1ul, DT1_(0), DT1_(0), DT1_(0)));
             GMG<Tag_, methods::NONE>::value(info);
+            std::cout<<info.rhs_vectors.front();
 
-            /*std::list<std::tr1::function<void ()> > functors;
+            /*std::vector<std::tr1::function<void ()> > functors;
             DenseVector<DT1_> bla(100, DT1_(4711));
             DenseVector<DT1_> blup(100, DT1_(4713));
 

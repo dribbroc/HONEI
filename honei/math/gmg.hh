@@ -20,10 +20,10 @@
 #ifndef MATH_GUARD_GMG_HH
 #define MATH_GUARD_GMG_HH 1
 
-#include<list>
-#include<tr1/functional>
-#include<honei/la/dense_vector.hh>
-#include<honei/math/methods.hh>
+#include <vector>
+#include <tr1/functional>
+#include <honei/la/dense_vector.hh>
+#include <honei/math/methods.hh>
 
 
 namespace honei
@@ -32,18 +32,18 @@ namespace honei
     struct GMGInfo
     {
         public:
-            std::list<unsigned long> cycle;
-            std::list<std::tr1::function<void ()> > smoother_functors;
-            std::list<std::tr1::function<void ()> > transfer_functors;
-            std::list<std::tr1::function<void ()> > coarse_solver_functors;
+            std::vector<unsigned long> cycle;
+            std::vector<std::tr1::function<void ()> > smoother_functors;
+            std::vector<std::tr1::function<void ()> > transfer_functors;
+            std::vector<std::tr1::function<void ()> > coarse_solver_functors;
 
-            std::list<MatrixType_> system_matrices;
-            std::list<ProlMatrixType_> prolongation_matrices;
-            std::list<ProlMatrixType_> restriction_matrices;
-            std::list<DenseVector<Prec_> > rhs_vectors;
-            std::list<DenseVector<Prec_> > result_vectors;
-            std::list<DenseVector<Prec_> > c_vectors;
-            std::list<DenseVector<Prec_> > d_vectors;
+            std::vector<MatrixType_> system_matrices;
+            std::vector<ProlMatrixType_> prolongation_matrices;
+            std::vector<ProlMatrixType_> restriction_matrices;
+            std::vector<DenseVector<Prec_> > rhs_vectors;
+            std::vector<DenseVector<Prec_> > result_vectors;
+            std::vector<DenseVector<Prec_> > c_vectors;
+            std::vector<DenseVector<Prec_> > d_vectors;
 
             unsigned long start_level;
             unsigned long min_level;
@@ -87,7 +87,7 @@ namespace honei
                           methods::CYCLE::V>
     {
         public:
-            static GMGInfo<Prec_, MatrixType_, ProlMatrixType_> create(std::tr1::function<void (std::list<MatrixType_>, std::list<ProlMatrixType_>, std::list<ProlMatrixType_>, std::list<DenseVector<Prec_> >, unsigned long, unsigned long)> problem_factory,
+            static GMGInfo<Prec_, MatrixType_, ProlMatrixType_> create(std::tr1::function<void (std::vector<MatrixType_> &, std::vector<ProlMatrixType_> &, std::vector<ProlMatrixType_> &, std::vector<DenseVector<Prec_> > & , unsigned long, unsigned long)> problem_factory,
             unsigned long min_level,
             unsigned long max_level,
             unsigned long start_level,
@@ -99,10 +99,9 @@ namespace honei
             Prec_ tolerance_coarse,
             Prec_ adaptive_correction_factor)
             {
-                GMGInfo<Prec_, MatrixType_, ProlMatrixType_> result;
-
-
-                return result;
+                GMGInfo<Prec_, MatrixType_, ProlMatrixType_> info;
+                problem_factory(info.system_matrices, info.prolongation_matrices, info.restriction_matrices, info.rhs_vectors, min_level, max_level);
+                return info;
             }
     };
 
@@ -147,10 +146,10 @@ namespace honei
                     static void value(GMGInfo<Prec_, MatrixType_, ProlMatrixType_> & info)
                     {
                         GMGState<Prec_, MatrixType_, ProlMatrixType_> state(info);
-                        std::list<unsigned long>::iterator cycle_iterator(info.cycle.begin());
-                        std::list<std::tr1::function<void ()> >::iterator smoother_functors_iterator(info.smoother_functors.begin());
-                        std::list<std::tr1::function<void ()> >::iterator coarse_solver_functors_iterator(info.coarse_solver_functors.begin());
-                        std::list<std::tr1::function<void ()> >::iterator transfer_functors_iterator(info.transfer_functors.begin());
+                        std::vector<unsigned long>::iterator cycle_iterator(info.cycle.begin());
+                        std::vector<std::tr1::function<void ()> >::iterator smoother_functors_iterator(info.smoother_functors.begin());
+                        std::vector<std::tr1::function<void ()> >::iterator coarse_solver_functors_iterator(info.coarse_solver_functors.begin());
+                        std::vector<std::tr1::function<void ()> >::iterator transfer_functors_iterator(info.transfer_functors.begin());
                         for(; cycle_iterator != info.cycle.end() ; ++cycle_iterator, ++smoother_functors_iterator, ++transfer_functors_iterator)
                         {
                             if(*cycle_iterator < state.current_level)
