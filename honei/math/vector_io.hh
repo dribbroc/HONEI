@@ -139,9 +139,9 @@ class VectorIO<io_formats::DV>
             if (file == NULL)
                 throw InternalError("File "+input+" not found!");
             uint64_t size;
-            fread(&size, sizeof(uint64_t), 1, file);
+            int status = fread(&size, sizeof(uint64_t), 1, file);
             DenseVector<double> ax(size);
-            fread(ax.elements(), sizeof(double), size, file);
+            status = fread(ax.elements(), sizeof(double), size, file);
             fclose(file);
             DenseVector<DT_> axc(size);
             convert<tags::CPU>(axc, ax);

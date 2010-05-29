@@ -492,16 +492,16 @@ class MatrixIO<io_formats::ELL>
             uint64_t columns;
             uint64_t stride;
             uint64_t num_cols_per_row;
-            fread(&size, sizeof(uint64_t), 1, file);
-            fread(&rows, sizeof(uint64_t), 1, file);
-            fread(&columns, sizeof(uint64_t), 1, file);
-            fread(&stride, sizeof(uint64_t), 1, file);
-            fread(&num_cols_per_row, sizeof(uint64_t), 1, file);
+            int status = fread(&size, sizeof(uint64_t), 1, file);
+            status = fread(&rows, sizeof(uint64_t), 1, file);
+            status = fread(&columns, sizeof(uint64_t), 1, file);
+            status = fread(&stride, sizeof(uint64_t), 1, file);
+            status = fread(&num_cols_per_row, sizeof(uint64_t), 1, file);
             DenseVector<unsigned long> ajc(size);
             if (sizeof(unsigned long) == sizeof(uint64_t))
             {
                 DenseVector<unsigned long> aj(size);
-                fread(aj.elements(), sizeof(uint64_t), size, file);
+                status = fread(aj.elements(), sizeof(uint64_t), size, file);
                 for (unsigned long i(0) ; i < size ; ++i)
                 {
                     ajc[i] = aj[i];
@@ -510,14 +510,14 @@ class MatrixIO<io_formats::ELL>
             else
             {
                 uint64_t aj[size];
-                fread(aj, sizeof(uint64_t), size, file);
+                status = fread(aj, sizeof(uint64_t), size, file);
                 for (unsigned long i(0) ; i < size ; ++i)
                 {
                     ajc[i] = aj[i];
                 }
             }
             DenseVector<double> ax(size);
-            fread(ax.elements(), sizeof(double), size, file);
+            status = fread(ax.elements(), sizeof(double), size, file);
             fclose(file);
             DenseVector<DT_> axc(size);
             unsigned long crows(rows);
