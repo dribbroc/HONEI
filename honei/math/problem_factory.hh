@@ -48,6 +48,14 @@ namespace honei
                 DenseVector<DT1_> blub(10, 5);
                 d.push_back(blub);
                 std::cout<<_filebase<<std::endl;
+
+                /*std::string system_file_base(FileFactory::_filebase);
+                std::string rhs_file_base(FileFactory::_filebase);
+                std::string prol_file_base(FileFactory::_filebase);
+
+                system_file_base += "_system";
+                rhs_file_base += "_rhs";
+                prol_file_base += "_prol";*/
             }
     };
 }
