@@ -10,6 +10,7 @@ dnl on this file at present...
 
 add(`general', `assertion',                      `hh', `cc', `test')
 add(`general', `attributes',                     `hh')
+add(`general', `barrier',                        `hh', `cc')
 add(`general', `benchmark_info',                 `hh')
 add(`general', `condition_variable',             `hh', `cc')
 add(`general', `configuration',                  `hh', `cc', `test')
