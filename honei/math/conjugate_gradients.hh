@@ -62,6 +62,9 @@ namespace honei
             template<typename DT1_, typename DT2_>
             static inline void cg_kernel(DenseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility)
             {
+#ifdef SOLVER_VERBOSE_L3
+                std::cout << "    Calling CG kernel, datalayout=DENSE, version=1" << std::endl;
+#endif
                 ///Compute x_i+1:
                 DT1_ upper = DotProduct<Tag_>::value(former_gradient, former_gradient);
                 DenseVector<DT1_> energy = Product<Tag_>::value(system_matrix, utility);
@@ -105,6 +108,9 @@ namespace honei
             template<typename DT1_, typename DT2_>
             static inline void cg_kernel(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility)
             {
+#ifdef SOLVER_VERBOSE_L3
+                std::cout << "    Calling CG kernel, datalayout=Q1, version=1" << std::endl;
+#endif
                 ///Compute x_i+1: (in energy)
                 DT1_ upper = Norm<vnt_l_two, false, Tag_>::value(former_gradient);
                 DenseVector<DT1_> energy = Product<Tag_>::value(system_matrix, utility);
@@ -148,6 +154,9 @@ namespace honei
             template<typename DT1_, typename DT2_>
             static inline void cg_kernel(SparseMatrixELL<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility)
             {
+#ifdef SOLVER_VERBOSE_L3
+                std::cout << "    Calling CG kernel, datalayout=ELL, version=1" << std::endl;
+#endif
                 ///Compute x_i+1: (in energy)
                 DT1_ upper = Norm<vnt_l_two, false, Tag_>::value(former_gradient);
                 DenseVector<DT1_> energy(utility.size());
@@ -195,6 +204,9 @@ namespace honei
             template<typename DT1_>
             static inline void cg_kernel(SparseMatrixELL<DT1_> & system_matrix, DenseVector<DT1_> & right_hand_side, DenseVector<DT1_> & x, DenseVector<DT1_> & r, DenseVector<DT1_> & p, DenseVector<DT1_> & v, unsigned long max_iters)
             {
+#ifdef SOLVER_VERBOSE_L3
+                std::cout << "    Calling CG kernel, datalayout=ELL, version=2" << std::endl;
+#endif
                 //MARKE
                 DT1_ alpha, alpha_old, lambda, initial_defect;
                 unsigned long iterations(0);
@@ -239,6 +251,9 @@ namespace honei
             template<typename DT1_, typename DT2_>
             static inline void cg_kernel(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility)
             {
+#ifdef SOLVER_VERBOSE_L3
+                std::cout << "    Calling CG kernel, datalayout=BANDED, version=1" << std::endl;
+#endif
                 ///Compute x_i+1: (in energy)
                 DT1_ upper = DotProduct<Tag_>::value(former_gradient, former_gradient);
                 DenseVector<DT1_> energy = Product<Tag_>::value(system_matrix, utility);
@@ -281,6 +296,9 @@ namespace honei
             template<typename DT1_, typename DT2_>
             static inline void cg_kernel(SparseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility)
             {
+#ifdef SOLVER_VERBOSE_L3
+                std::cout << "    Calling CG kernel, datalayout=SPARSE, version=1" << std::endl;
+#endif
                 ///Compute x_i+1: (in energy)
                 DT1_ upper = DotProduct<Tag_>::value(former_gradient, former_gradient);
                 DenseVector<DT1_> energy = Product<Tag_>::value(system_matrix, utility);
@@ -337,7 +355,7 @@ namespace honei
                     unsigned long iter_number)
             {
                 CONTEXT("When solving dense linear system with CG (fixed # iterations):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling CG solver, preconditioning=NONE, datalayout=DENSE" << std::endl;
 #endif
 
@@ -368,7 +386,7 @@ namespace honei
                     double konv_rad)
             {
                 CONTEXT("When solving dense linear system with CG (with given convergence parameter):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling CG solver, preconditioning=NONE, datalayout=DENSE" << std::endl;
 #endif
 
@@ -408,7 +426,7 @@ namespace honei
                     unsigned long iter_number)
             {
                 CONTEXT("When solving banded linear system with CG (with fixed # of iterations):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling CG solver, preconditioning=NONE, datalayout=BANDED" << std::endl;
 #endif
                 DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
@@ -438,7 +456,7 @@ namespace honei
                     double konv_rad)
             {
                 CONTEXT("When solving banded linear system with CG (with given convergence parameter):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling CG solver, preconditioning=NONE, datalayout=BANDED" << std::endl;
 #endif
                 DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
@@ -476,7 +494,7 @@ namespace honei
                     double konv_rad)
             {
                 CONTEXT("When solving banded Q1 linear system with CG (with given convergence parameter):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling CG solver, preconditioning=NONE, datalayout=Q1, MULTIGRID" << std::endl;
 #endif
 
@@ -499,7 +517,7 @@ namespace honei
                     norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
                     copy<Tag_>(x, x_last);
                 }
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 DenseVector<DT1_> r_def(Defect<Tag_>::value(right_hand_side, system_matrix, x));
                 DT1_ norm_bla = Norm<vnt_l_two, false, Tag_>::value(r_def);
                 std::cout << norm_bla << std::endl;
@@ -513,7 +531,7 @@ namespace honei
                     unsigned long iters)
             {
                 CONTEXT("When solving banded Q1 linear system with CG (with given convergence parameter):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling CG solver, preconditioning=NONE, datalayout=Q1" << std::endl;
 #endif
                 fill<Tag_>(x, DT1_(0));
@@ -557,7 +575,7 @@ namespace honei
                     unsigned long max_iters)
             {
                 CONTEXT("When solving sparse ELL linear system with CG :");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling CG solver, preconditioning=NONE, datalayout=ELLPACK" << std::endl;
 #endif
                 DenseVector<DT1_> p(right_hand_side.size());
@@ -573,7 +591,7 @@ namespace honei
                     double konv_rad)
             {
                 CONTEXT("When solving ELL linear system with CG (with given convergence parameter):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling CG solver, preconditioning=NONE, datalayout=ELL, MULTIGRID" << std::endl;
 #endif
 
@@ -597,7 +615,7 @@ namespace honei
                     norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
                     copy<Tag_>(x, x_last);
                 }
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 DenseVector<DT1_> r_def(Defect<Tag_>::value(right_hand_side, system_matrix, x));
                 DT1_ norm_bla = Norm<vnt_l_two, false, Tag_>::value(r_def);
                 std::cout << norm_bla << std::endl;
@@ -611,7 +629,7 @@ namespace honei
                                                double konv_rad)
             {
                 CONTEXT("When solving sparse linear system with CG (with given convergence parameter):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling CG solver, preconditioning=NONE, datalayout=SPARSE" << std::endl;
 #endif
                 DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
@@ -643,7 +661,7 @@ namespace honei
                                            int mixed_prec_iter_num)
             {
                 CONTEXT("When solving banded linear system with CG (with given convergence parameter), MIXEDPREC:");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling CG solver, preconditioning=NONE, datalayout=BANDED, MIXEDPREC (k-version)" << std::endl;
 #endif
                 DenseVector<DT1_> g = Product<Tag_>::value(system_matrix, x);
@@ -714,8 +732,8 @@ namespace honei
                     static inline void cg_kernel(DenseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility, DenseVector<DT1_> & former_residual, DenseVector<DT1_> & diag_inverted)
                     {
                         CONTEXT("When calling CG kernel, preconditioner=JACOBI, datalayout=DENSE.");
-#ifdef SOLVER_VERBOSE_L1
-                        std::cout << "Calling single iteration of CG, preconditioner=JACOBI, datalayout=DENSE." << std::endl;
+#ifdef SOLVER_VERBOSE_L3
+                std::cout << "    Calling PCG kernel, datalayout=DENSE, version=1" << std::endl;
 #endif
 
                         DT1_ alpha, beta, upper, lower;
@@ -765,8 +783,8 @@ namespace honei
             static inline void cg_kernel(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility, DenseVector<DT1_> & former_residual, DenseVector<DT1_> & diag_inverted)
             {
                 CONTEXT("When calling CG kernel, preconditioner=JACOBI, datalayout=BANDED.");
-#ifdef SOLVER_VERBOSE_L1
-                std::cout << "Calling single iteration of CG, preconditioner=JACOBI, datalayout=BANDED." << std::endl;
+#ifdef SOLVER_VERBOSE_L3
+                std::cout << "    Calling PCG kernel, datalayout=BANDED, version=1" << std::endl;
 #endif
 
                 DT1_ alpha, beta, upper, lower;
@@ -816,8 +834,8 @@ namespace honei
             static inline void cg_kernel(SparseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility, DenseVector<DT1_> & former_residual, DenseVector<DT1_> & diag_inverted)
             {
                 CONTEXT("When calling CG kernel, preconditioner=JACOBI, datalayout=SPARSE.");
-#ifdef SOLVER_VERBOSE_L1
-                std::cout << "Calling single iteration of CG, preconditioner=JACOBI, datalayout=SPARSE." << std::endl;
+#ifdef SOLVER_VERBOSE_L3
+                std::cout << "    Calling PCG kernel, datalayout=SPARSE, version=1" << std::endl;
 #endif
 
                 DT1_ alpha, beta, upper, lower;
@@ -874,8 +892,8 @@ namespace honei
                                          DenseVector<DT_> & temp_0)
             {
                 CONTEXT("When calling CG kernel, preconditioner=JACOBI, datalayout=ELLPACK.");
-#ifdef SOLVER_VERBOSE_L1
-                std::cout << "Calling single iteration of CG, preconditioner=JACOBI, datalayout=ELL." << std::endl;
+#ifdef SOLVER_VERBOSE_L3
+                std::cout << "    Calling PCG kernel, datalayout=ELL, version=1" << std::endl;
 #endif
 
                 DT_ alpha, beta;
@@ -912,7 +930,7 @@ namespace honei
                                            double konv_rad)
             {
                 CONTEXT("When solving dense linear system with PCG-Jacobi (with given convergence parameter):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling CG solver, preconditioning=JACOBI, datalayout=DENSE" << std::endl;
 #endif
 
@@ -977,7 +995,7 @@ namespace honei
                               double konv_rad)
             {
                 CONTEXT("When solving banded linear system with PCG-Jacobi (with given convergence parameter):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling CG solver, preconditioning=JACOBI, datalayout=BANDED" << std::endl;
 #endif
 
@@ -1041,7 +1059,7 @@ namespace honei
                          double konv_rad)
             {
                 CONTEXT("When solving sparse linear system with PCG-Jacobi (with given convergence parameter):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling CG solver, preconditioning=JACOBI, datalayout=SPARSE" << std::endl;
 #endif
 
@@ -1099,7 +1117,7 @@ namespace honei
                                            DT_ eps_relative = 1e-8)
             {
                 CONTEXT("When solving sparse ELL linear system with PCG-Jacobi: ");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling CG solver, preconditioning=JACOBI, datalayout=ELL" << std::endl;
 #endif
                 DenseVector<DT_> t_0(right_hand_side.size());

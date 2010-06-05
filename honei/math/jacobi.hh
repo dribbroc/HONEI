@@ -53,6 +53,9 @@ namespace honei
             template<typename DT1_, typename DT2_>
             static inline void jacobi_kernel(DenseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag, DenseVector<DT1_> & diag_inverted, DenseMatrix<DT1_> & difference)
             {
+#ifdef SOLVER_VERBOSE_L3
+                std::cout << "    Calling JACOBI kernel, datalayout=DENSE, version=1" << std::endl;
+#endif
                 DenseVector<DT1_> temp = Product<Tag_>::value(difference, former_result.copy());
 
                 DenseVector<DT1_> temp2(right_hand_side.copy());
@@ -65,6 +68,9 @@ namespace honei
             template<typename DT1_, typename DT2_>
             static inline void jacobi_kernel(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag, DenseVector<DT1_> & diag_inverted, BandedMatrix<DT1_> & difference)
             {
+#ifdef SOLVER_VERBOSE_L3
+                std::cout << "    Calling JACOBI kernel, datalayout=BANDED, version=1" << std::endl;
+#endif
                 DenseVector<DT1_> temp = Product<Tag_>::value(difference, former_result.copy());
 
                 DenseVector<DT1_> temp2(right_hand_side.copy());
@@ -78,6 +84,9 @@ namespace honei
             template<typename DT1_, typename DT2_>
             static inline void jacobi_kernel(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, BandedMatrixQ1<DT1_> & difference)
             {
+#ifdef SOLVER_VERBOSE_L3
+                std::cout << "    Calling JACOBI kernel, datalayout=Q1, version=1" << std::endl;
+#endif
                 DenseVector<DT1_> temp = Product<Tag_>::value(difference, former_result);
 
                 DenseVector<DT1_> temp2(right_hand_side.size());
@@ -90,6 +99,9 @@ namespace honei
             template<typename DT1_, typename DT2_>
             static inline void jacobi_kernel(DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, SparseMatrixELL<DT1_> & difference)
             {
+#ifdef SOLVER_VERBOSE_L3
+                std::cout << "    Calling JACOBI kernel, datalayout=ELL, version=1" << std::endl;
+#endif
                 DenseVector<DT1_> temp(right_hand_side.size());
                 Product<Tag_>::value(temp, difference, former_result);
 
@@ -105,6 +117,9 @@ namespace honei
             template<typename DT1_, typename DT2_>
             static inline void jacobi_kernel(DenseVector<DT1_> to_smooth, BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, BandedMatrixQ1<DT1_> & difference, DT1_ omega)
             {
+#ifdef SOLVER_VERBOSE_L3
+                std::cout << "    Calling JACOBI kernel, datalayout=Q1, version=2" << std::endl;
+#endif
                 //OLD HONEI:
                 /*DenseVector<DT1_> temp(Product<Tag_>::value(difference, to_smooth));
 
@@ -253,6 +268,9 @@ namespace honei
             template<typename DT1_, typename DT2_>
             static inline void jacobi_kernel(DenseVector<DT1_> to_smooth, SparseMatrixELL<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, SparseMatrixELL<DT1_> & difference, DT1_ omega)
             {
+#ifdef SOLVER_VERBOSE_L3
+                std::cout << "    Calling JACOBI kernel, datalayout=ELL, version=2" << std::endl;
+#endif
                 //todo DIRK
                 //TODO use Defect including result vector to avoid temp vector usage
                 DenseVector<DT1_> temp(Defect<Tag_>::value(right_hand_side, system_matrix, to_smooth));
@@ -263,6 +281,9 @@ namespace honei
             template<typename DT1_, typename DT2_>
             static inline void jacobi_kernel(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted)
             {
+#ifdef SOLVER_VERBOSE_L3
+                std::cout << "    Calling JACOBI kernel, datalayout=Q1, version=3" << std::endl;
+#endif
                 DenseVector<DT1_> temp2(right_hand_side.size());
                 copy<Tag_>(right_hand_side, temp2);
 
@@ -273,6 +294,9 @@ namespace honei
             template<typename DT1_, typename DT2_>
             static inline void jacobi_kernel(SparseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag, DenseVector<DT1_> & diag_inverted, SparseMatrix<DT1_> & difference)
             {
+#ifdef SOLVER_VERBOSE_L3
+                std::cout << "    Calling JACOBI kernel, datalayout=SPARSE, version=1" << std::endl;
+#endif
                 DenseVector<DT1_> temp = Product<Tag_>::value(difference, former_result.copy());
 
                 DenseVector<DT1_> temp2(right_hand_side.copy());
@@ -300,7 +324,7 @@ namespace honei
                     unsigned long iter_number)
             {
                 CONTEXT("When solving banded linear system (Q1) with Jacobi (fixed # iterations):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling JACOBI solver, datalayout=Q1" << std::endl;
 #endif
                 DenseVector<DT1_> diag(right_hand_side.size(), DT1_(0));
@@ -346,7 +370,7 @@ namespace honei
                     DT1_ omega)
             {
                 CONTEXT("When solving banded linear system (Q1) with Jacobi (fixed # iterations):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling JACOBI solver, datalayout=Q1" << std::endl;
 #endif
                 DenseVector<DT1_> diag_inverted(right_hand_side.size());
@@ -379,7 +403,7 @@ namespace honei
                     DenseVector<DT1_> & diag_inverted)
             {
                 CONTEXT("When solving banded linear system (Q1) with Jacobi (fixed # iterations):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling JACOBI smoother, datalayout=Q1, MULTIGRID (1)" << std::endl;
 #endif
                 /*DenseVector<DT1_> diag_inverted(right_hand_side.size());
@@ -421,7 +445,7 @@ namespace honei
                     DenseVector<DT1_> & diag_inverted)
             {
                 CONTEXT("When solving banded linear system (Q1) with Jacobi (fixed # iterations):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling JACOBI smoother, datalayout=Q1, MULTIGRID (2)" << std::endl;
 #endif
 
@@ -462,7 +486,7 @@ namespace honei
                     DenseVector<DT1_> & diag_inverted)
             {
                 CONTEXT("When smoothing sparse linear system with Jacobi (fixed # iterations):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling JACOBI smoother, datalayout=ELLPACK, MULTIGRID (1)" << std::endl;
 #endif
                 ElementProduct<Tag_>::value(x, diag_inverted, right_hand_side);
@@ -478,7 +502,7 @@ namespace honei
                     DenseVector<DT1_> & diag_inverted)
             {
                 CONTEXT("When solving sparse linear system (ELL) with Jacobi (fixed # iterations):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling JACOBI smoother, datalayout=ELLPACK, MULTIGRID (2)" << std::endl;
 #endif
                 for(unsigned long i = 0; i<iter_number; ++i)
@@ -504,7 +528,7 @@ namespace honei
                     unsigned long iter_number)
             {
                 CONTEXT("When solving dense linear system with Jacobi (fixed # iterations):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling JACOBI solver, datalayout=DENSE" << std::endl;
 #endif
                 DenseVector<DT1_> diag(right_hand_side.size(), DT1_(0));
@@ -542,7 +566,7 @@ namespace honei
                     double konv_rad)
             {
                 CONTEXT("When solving dense linear system with Jacobi (with given convergence parameter):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling JACOBI solver, datalayout=DENSE" << std::endl;
 #endif
                 DenseVector<DT1_> x_last(x.copy());
@@ -593,7 +617,7 @@ namespace honei
                     unsigned long iter_number)
             {
                 CONTEXT("When solving banded linear system with Jacobi (fixed # iterations):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling JACOBI solver, datalayout=BANDED" << std::endl;
 #endif
                 DenseVector<DT1_> diag(right_hand_side.size(), DT1_(0));
@@ -632,7 +656,7 @@ namespace honei
                     double konv_rad)
             {
                 CONTEXT("When solving banded linear system with Jacobi (with given convergence parameter):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling JACOBI solver, datalayout=BANDED" << std::endl;
 #endif
                 DenseVector<DT1_> x_last(x.copy());
@@ -681,7 +705,7 @@ namespace honei
                     DT1_ eps_relative = 1e-8)
             {
                 CONTEXT("When solving sparse linear system (ELL) with Jacobi:");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling JACOBI solver, datalayout=ELLPACK" << std::endl;
 #endif
                 DenseVector<DT1_> defect(right_hand_side.size());
@@ -725,7 +749,7 @@ namespace honei
                         unsigned long iter_number)
                 {
                     CONTEXT("When solving sparse linear system with Jacobi (fixed # iterations):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                     std::cout << "Calling JACOBI solver, datalayout=SPARSE" << std::endl;
 #endif
                     DenseVector<DT1_> diag(right_hand_side.size(), DT1_(0));
@@ -764,7 +788,7 @@ namespace honei
                         double konv_rad)
                 {
                     CONTEXT("When solving sparse linear system with Jacobi (with given convergence parameter):");
-#ifdef SOLVER_VERBOSE_L2
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                     std::cout << "Calling JACOBI solver, datalayout=SPARSE" << std::endl;
 #endif
                     DenseVector<DT1_> x_last(x.copy());
