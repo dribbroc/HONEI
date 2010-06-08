@@ -391,6 +391,27 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
+        static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & r, const DenseVectorBase<DT1_> & a, const DenseVectorBase<DT2_> & b)
+        {
+            CONTEXT("When subtracting DenseVectorBase from DenseVectorBase:");
+
+            if (a.size() != b.size())
+                throw VectorSizeDoesNotMatch(b.size(), a.size());
+            if (a.size() != r.size())
+                throw VectorSizeDoesNotMatch(r.size(), a.size());
+
+            typename DenseVectorBase<DT2_>::ConstElementIterator bi(b.begin_elements());
+            typename DenseVectorBase<DT1_>::ConstElementIterator ai(a.begin_elements());
+            for (typename DenseVectorBase<DT1_>::ElementIterator ri(r.begin_elements()),
+                    i_end(r.end_elements()) ; ri != i_end ; ++ri, ++bi, ++ai)
+            {
+                *ri = *ai - *bi;
+            }
+
+            return r;
+        }
+
+        template <typename DT1_, typename DT2_>
         static inline DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & a, const DenseVectorBase<DT2_> & b)
         {
             CONTEXT("When subtracting DenseVectorBase from DenseVectorContinuousBase:");
@@ -398,6 +419,18 @@ namespace honei
             DenseVectorBase<DT1_> & temp = a;
             Difference<>::value(temp, b);
             return a;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & r,
+                const DenseVectorContinuousBase<DT1_> & a, const DenseVectorBase<DT2_> & b)
+        {
+            CONTEXT("When subtracting DenseVectorBase from DenseVectorContinuousBase:");
+
+            const DenseVectorBase<DT1_> & temp = a;
+            DenseVectorBase<DT1_> & temp2 = r;
+            Difference<>::value(temp2, temp, b);
+            return r;
         }
 
         template <typename DT1_, typename DT2_>
@@ -616,7 +649,23 @@ namespace honei
 
         static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
 
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & r, const DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & r, const DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+
         static DenseMatrix<float> & value(DenseMatrix<float> & a, const DenseMatrix<float> & b);
+    };
+
+    template <>
+    struct Difference<tags::GPU::MultiCore::CUDA>
+    {
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & r, const DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & r, const DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
     };
 
     /**
@@ -784,6 +833,19 @@ namespace honei
             }
 
             template <typename DT1_, typename DT2_>
+            static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & r, const DenseVectorBase<DT1_> & x, const DenseVectorBase<DT2_> & y)
+            {
+                CONTEXT("When calculating Difference (DenseVectorBase, DenseVectorBase) using backend : " + Tag_::name);
+                unsigned long min_part_size(Configuration::instance()->get_value("mc::Difference(DVB,DVB)::min_part_size", 128));
+                unsigned long max_count(Configuration::instance()->get_value("mc::Difference(DVB,DVB)::max_count",
+                            mc::ThreadPool::instance()->num_threads()));
+
+                Operation<honei::Difference<typename Tag_::DelegateTo> >::op(r, x, y, min_part_size, max_count);
+
+                return r;
+            }
+
+            template <typename DT1_, typename DT2_>
             static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & x, const DenseVectorContinuousBase<DT2_> & y)
             {
                 CONTEXT("When calculating Difference (DenseVectorContinuousBase, DenseVectorContinuousBase) using backend : " + Tag_::name);
@@ -795,6 +857,21 @@ namespace honei
                 Operation<honei::Difference<typename Tag_::DelegateTo> >::op(x, y, min_part_size, max_count);
 
                 return x;
+            }
+
+            template <typename DT1_, typename DT2_>
+            static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & r,
+                    const DenseVectorContinuousBase<DT1_> & x, const DenseVectorContinuousBase<DT2_> & y)
+            {
+                CONTEXT("When calculating Difference (DenseVectorContinuousBase, DenseVectorContinuousBase) using backend : " + Tag_::name);
+
+                unsigned long min_part_size(Configuration::instance()->get_value("mc::Difference(DVCB,DVCB)::min_part_size", 128));
+                unsigned long max_count(Configuration::instance()->get_value("mc::Difference(DVCB,DVCB)::max_count",
+                            mc::ThreadPool::instance()->num_threads()));
+
+                Operation<honei::Difference<typename Tag_::DelegateTo> >::op(r, x, y, min_part_size, max_count);
+
+                return r;
             }
 
             // Dummy

@@ -435,6 +435,9 @@ DenseVector<float> Product<tags::GPU::MultiCore::CUDA>::value(DenseVector<float>
     }
     else
     {
+        //todo DIRK remove lock hack
+        b.lock(lm_read_and_write);
+        b.unlock(lm_read_and_write);
         DenseVectorRange<float> result1(result.range(result.size()/2, 0));
         cudaProductSMELLDVfloat task1(result1, a, b, 0, result1.size(), blocksize);
         DenseVectorRange<float> result2(result.range(result.size()/2 + result.size()%2, result.size()/2));
@@ -468,6 +471,9 @@ DenseVector<double> Product<tags::GPU::MultiCore::CUDA>::value(DenseVector<doubl
     }
     else
     {
+        //todo DIRK remove lock hack
+        b.lock(lm_read_and_write);
+        b.unlock(lm_read_and_write);
         DenseVectorRange<double> result1(result.range(result.size()/2, 0));
         cudaProductSMELLDVdouble task1(result1, a, b, 0, result1.size(), blocksize);
         DenseVectorRange<double> result2(result.range(result.size()/2 + result.size()%2, result.size()/2));

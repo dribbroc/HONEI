@@ -709,8 +709,10 @@ Q1MatrixELLDenseVectorProductBench<tags::CPU::MultiCore::SSE, double> mcsseQ1ELL
 #endif
 #ifdef HONEI_CUDA
 Q1MatrixELLDenseVectorProductBench<tags::GPU::CUDA, float> CUDAQ1ELLDVPBenchfloat("CUDA ELL Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, float",1025ul * 1025 , 10);
+Q1MatrixELLDenseVectorProductBench<tags::GPU::MultiCore::CUDA, float> MCCUDAQ1ELLDVPBenchfloat("MC CUDA ELL Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, float",1025ul * 1025 , 10);
 #ifdef HONEI_CUDA_DOUBLE
 Q1MatrixELLDenseVectorProductBench<tags::GPU::CUDA, double> CUDAQ1ELLDVPBenchdouble("CUDA ELL Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, double",1025ul * 1025 , 10);
+Q1MatrixELLDenseVectorProductBench<tags::GPU::MultiCore::CUDA, double> MCCUDAQ1ELLDVPBenchdouble("MC CUDA ELL Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025*1025, double",1025ul * 1025 , 10);
 #endif
 #endif
 

@@ -209,6 +209,68 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::CUDA>::value(Dense
 }
 #endif
 
+DenseVectorContinuousBase<float> & ElementProduct<tags::GPU::MultiCore::CUDA>::value(DenseVectorContinuousBase<float> & a,
+        const DenseVectorContinuousBase<float> & b)
+{
+    CONTEXT("When multiplying DenseVectorContinuousBase<float> and DenseVectorContinuousBase<float> elementwise "
+            "(CUDA):");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::element_inverse_one_float", 128ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        throw InternalError("You should not run this operation within any MC CUDA op!");
+    }
+    else
+    {
+        DenseVectorRange<float> a1(a.range(a.size()/2, 0));
+        DenseVectorRange<float> b1(b.range(b.size()/2, 0));
+        cudaElementProductDVfloat task1(a1, b1, blocksize);
+        DenseVectorRange<float> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
+        DenseVectorRange<float> b2(b.range(b.size()/2 + b.size()%2, b.size()/2));
+        cudaElementProductDVfloat task2(a2, b2, blocksize);
+        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+    }
+
+    return a;
+}
+
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::MultiCore::CUDA>::value(DenseVectorContinuousBase<double> & a,
+        const DenseVectorContinuousBase<double> & b)
+{
+    CONTEXT("When multiplying DenseVectorContinuousBase<double> and DenseVectorContinuousBase<double> elementwise "
+            "(CUDA):");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::element_inverse_one_double", 128ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        throw InternalError("You should not run this operation within any MC CUDA op!");
+    }
+    else
+    {
+        DenseVectorRange<double> a1(a.range(a.size()/2, 0));
+        DenseVectorRange<double> b1(b.range(b.size()/2, 0));
+        cudaElementProductDVdouble task1(a1, b1, blocksize);
+        DenseVectorRange<double> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
+        DenseVectorRange<double> b2(b.range(b.size()/2 + b.size()%2, b.size()/2));
+        cudaElementProductDVdouble task2(a2, b2, blocksize);
+        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+    }
+
+    return a;
+}
+#endif
+
 DenseVectorContinuousBase<float> & ElementProduct<tags::GPU::CUDA>::value(DenseVectorContinuousBase<float> & result, DenseVectorContinuousBase<float> & a,
         const DenseVectorContinuousBase<float> & b)
 {
@@ -255,6 +317,72 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::CUDA>::value(Dense
     {
         cudaElementProduct3DVdouble task(result, a, b, blocksize);
         cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
+
+    return result;
+}
+#endif
+
+DenseVectorContinuousBase<float> & ElementProduct<tags::GPU::MultiCore::CUDA>::value(DenseVectorContinuousBase<float> & result, DenseVectorContinuousBase<float> & a,
+        const DenseVectorContinuousBase<float> & b)
+{
+    CONTEXT("When multiplying DenseVectorContinuousBase<float> and DenseVectorContinuousBase<float> elementwise "
+            "(CUDA):");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::element_inverse_one_float", 128ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        throw InternalError("You should not run this operation within any MC CUDA op!");
+    }
+    else
+    {
+        DenseVectorRange<float> r1(result.range(result.size()/2, 0));
+        DenseVectorRange<float> a1(a.range(a.size()/2, 0));
+        DenseVectorRange<float> b1(b.range(b.size()/2, 0));
+        cudaElementProduct3DVfloat task1(r1, a1, b1, blocksize);
+        DenseVectorRange<float> r2(result.range(result.size()/2 + result.size()%2, result.size()/2));
+        DenseVectorRange<float> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
+        DenseVectorRange<float> b2(b.range(b.size()/2 + b.size()%2, b.size()/2));
+        cudaElementProduct3DVfloat task2(r2, a2, b2, blocksize);
+        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+    }
+
+    return result;
+}
+
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::MultiCore::CUDA>::value(DenseVectorContinuousBase<double> & result, DenseVectorContinuousBase<double> & a,
+        const DenseVectorContinuousBase<double> & b)
+{
+    CONTEXT("When multiplying DenseVectorContinuousBase<double> and DenseVectorContinuousBase<double> elementwise "
+            "(CUDA):");
+
+    if (a.size() != b.size())
+        throw VectorSizeDoesNotMatch(b.size(), a.size());
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::element_inverse_one_double", 128ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        throw InternalError("You should not run this operation within any MC CUDA op!");
+    }
+    else
+    {
+        DenseVectorRange<double> r1(result.range(result.size()/2, 0));
+        DenseVectorRange<double> a1(a.range(a.size()/2, 0));
+        DenseVectorRange<double> b1(b.range(b.size()/2, 0));
+        cudaElementProduct3DVdouble task1(r1, a1, b1, blocksize);
+        DenseVectorRange<double> r2(result.range(result.size()/2 + result.size()%2, result.size()/2));
+        DenseVectorRange<double> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
+        DenseVectorRange<double> b2(b.range(b.size()/2 + b.size()%2, b.size()/2));
+        cudaElementProduct3DVdouble task2(r1, a2, b2, blocksize);
+        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
     }
 
     return result;

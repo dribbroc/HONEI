@@ -36,6 +36,7 @@
 
 namespace honei
 {
+    template <typename Tag_ = tags::CPU> struct ElementProduct;
     /**
      * \brief Multiplication of the elements of two given entities.
      *
@@ -50,7 +51,7 @@ namespace honei
      * \ingroup grplamatrixoperations
      * \ingroup grplavectoroperations
      */
-    template <typename Tag_ = tags::CPU> struct ElementProduct
+    template<> struct ElementProduct<tags::CPU>
     {
         /**
          * \name Element products
@@ -558,6 +559,36 @@ namespace honei
         static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & result, DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
 
         static DenseMatrix<float> & value(DenseMatrix<float> & a, const DenseMatrix<float> & b);
+        /// \}
+    };
+
+    template <> struct ElementProduct<tags::GPU::MultiCore::CUDA>
+    {
+        /**
+         * \name Element products
+         * \{
+         *
+         * \brief Returns the the result of elementwise multiplication of two entities.
+         *
+         * \param a Entity that is a factor of the operation.
+         * \param b idem
+         *
+         * \retval a Will modify the factor a and return it.
+         *
+         * \exception MatrixSizeDoesNotMatch is thrown if two banded matrices do not have the same size.
+         * \exception MatrixRowsDoNotMatch is thrown if two matrices do not have the same number of rows.
+         * \exception MatrixColumnsDoNotMatch is thrown if two matrices do not have the same number of columns.
+         * \exception MatrixIsNotSquare is thrown if a row access matrix's number of rows does not equal its number of columns.
+         */
+
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & result, DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & result, DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+
         /// \}
     };
 

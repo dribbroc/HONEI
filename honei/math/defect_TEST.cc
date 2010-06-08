@@ -79,8 +79,10 @@ DefectTest<double, tags::CPU::SSE> sse_defect_test_double_sparse("double");
 #endif
 #ifdef HONEI_CUDA
 DefectTest<float, tags::GPU::CUDA> cuda_defect_test_float_sparse("float");
+DefectTest<float, tags::GPU::MultiCore::CUDA> mc_cuda_defect_test_float_sparse("float");
 #ifdef HONEI_CUDA_DOUBLE
 DefectTest<double, tags::GPU::CUDA> cuda_defect_test_double_sparse("double");
+DefectTest<double, tags::GPU::MultiCore::CUDA> mc_cuda_defect_test_double_sparse("double");
 #endif
 #endif
 
@@ -122,30 +124,44 @@ class DefectRegressionTest:
             DenseVector<DT_> rhs(rows, DT_(0));
             VectorIO<io_formats::EXP>::read_vector(filename_2, rhs);
 
-            DenseVector<DT_> x(rows, DT_(1));
+            DenseVector<DT_> x(rows, DT_(0));
+            for (unsigned long i(0) ; i < x.size() ; ++i)
+                if (i%2 == 0) x[i] = 1;
+
             DenseVector<DT_> ref_result(Defect<tags::CPU>::value(rhs, smatrix2, x));
 
             DenseVector<DT_> result(Defect<Tag_>::value(rhs, smatrix2, x));
             DenseVector<DT_> result2(result.size());
+            DenseVector<DT_> result3(result.size());
             Defect<Tag_>::value(result2, rhs, smatrix2, x);
+            Defect<Tag_>::value(result3, rhs, smatrix2, result2);
+            DenseVector<DT_> ref_result3(Defect<tags::CPU>::value(rhs, smatrix2, ref_result));
 
             result.lock(lm_read_only);
             result2.lock(lm_read_only);
+            result3.lock(lm_read_only);
             TEST_CHECK_EQUAL(result, ref_result);
             TEST_CHECK_EQUAL(result2, ref_result);
+            for (unsigned long i(0) ; i < x.size() ; ++i)
+            TEST_CHECK_EQUAL_WITHIN_EPS(result3[i], ref_result3[i], 1e-3);
             result2.unlock(lm_read_only);
             result.unlock(lm_read_only);
+            result3.unlock(lm_read_only);
         }
 };
-DefectRegressionTest<float, tags::CPU> regression_defect_test_float_sparse("Regression float", "area51_full_0.m", "area51_rhs_0");
-DefectRegressionTest<double, tags::CPU> regression_defect_test_double_sparse("Regression double", "area51_full_0.m", "area51_rhs_0");
+DefectRegressionTest<float, tags::CPU> regression_defect_test_float_sparse("Regression float", "l2/area51_full_0.m", "l2/area51_rhs_0");
+DefectRegressionTest<double, tags::CPU> regression_defect_test_double_sparse("Regression double", "l2/area51_full_0.m", "l2/area51_rhs_0");
 #ifdef HONEI_SSE
-DefectRegressionTest<float, tags::CPU::SSE> sse_regression_defect_test_float_sparse("Regression float", "area51_full_0.m", "area51_rhs_0");
-DefectRegressionTest<double, tags::CPU::SSE> sse_regression_defect_test_double_sparse("Regression double", "area51_full_0.m", "area51_rhs_0");
+DefectRegressionTest<float, tags::CPU::SSE> sse_regression_defect_test_float_sparse("Regression float", "l2/area51_full_0.m", "l2/area51_rhs_0");
+DefectRegressionTest<double, tags::CPU::SSE> sse_regression_defect_test_double_sparse("Regression double", "l2/area51_full_0.m", "l2/area51_rhs_0");
+DefectRegressionTest<float, tags::CPU::MultiCore::SSE> mc_sse_regression_defect_test_float_sparse("Regression float", "l2/area51_full_0.m", "l2/area51_rhs_0");
+DefectRegressionTest<double, tags::CPU::MultiCore::SSE> mc_sse_regression_defect_test_double_sparse("Regression double", "l2/area51_full_0.m", "l2/area51_rhs_0");
 #endif
 #ifdef HONEI_CUDA
-DefectRegressionTest<float, tags::GPU::CUDA> cuda_regression_defect_test_float_sparse("CUDA Regression float", "area51_full_0.m", "area51_rhs_0");
+DefectRegressionTest<float, tags::GPU::CUDA> cuda_regression_defect_test_float_sparse("CUDA Regression float", "l2/area51_full_0.m", "l2/area51_rhs_0");
+DefectRegressionTest<float, tags::GPU::MultiCore::CUDA> mc_cuda_regression_defect_test_float_sparse("CUDA Regression float", "l2/area51_full_0.m", "l2/area51_rhs_0");
 #ifdef HONEI_CUDA_DOUBLE
 DefectRegressionTest<double, tags::GPU::CUDA> cuda_regression_defect_test_double_sparse("CUDA Regression double", "area51_full_0.m", "area51_rhs_0");
+DefectRegressionTest<double, tags::GPU::MultiCore::CUDA> mc_cuda_regression_defect_test_double_sparse("CUDA Regression double", "area51_full_0.m", "area51_rhs_0");
 #endif
 #endif
