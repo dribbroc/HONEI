@@ -267,6 +267,7 @@ PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_cu
 PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_cuda8("MG float CUDA L8", 257, 1);
 PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_cuda9("MG float CUDA L9", 513, 1);
 PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_cuda10("MG float CUDA L10", 1025, 1);
+PoissonBenchmarkMGELLFixed<tags::GPU::MultiCore::CUDA, float> poisson_bench_mg_ell_float_mc_cuda8("MG float MC CUDA L8", 257, 1);
 #ifdef HONEI_CUDA_DOUBLE
 PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, double> poisson_bench_mg_ell_double_cuda2("MG double CUDA L2", 5, 1);
 PoissonBenchmarkMGELLFixed<tags::GPU::CUDA, double> poisson_bench_mg_ell_double_cuda3("MG double CUDA L3", 9, 1);
@@ -529,6 +530,8 @@ PoissonBenchmarkMGELLFixedPROLMAT<tags::CPU::SSE, double> poisson_bench_mg_ell_d
 PoissonBenchmarkMGELLFixedPROLMAT<tags::CPU::MultiCore::SSE, double> poisson_bench_mg_ell_double_mcsse_L10("MG MCSSE double PROLMAT L10", 1025, 1);
 #endif
 #ifdef HONEI_CUDA
+PoissonBenchmarkMGELLFixedPROLMAT<tags::GPU::CUDA, float> poisson_bench_mg_ell_float_cuda_L9("MG CUDA float PROLMAT L9", 513, 1);
+PoissonBenchmarkMGELLFixedPROLMAT<tags::GPU::MultiCore::CUDA, float> poisson_bench_mg_ell_float_mc_cuda_L9("MG MC CUDA float PROLMAT L9", 513, 1);
 #ifdef HONEI_CUDA_DOUBLE
 PoissonBenchmarkMGELLFixedPROLMAT<tags::GPU::CUDA, double> poisson_bench_mg_ell_double_cuda_L9("MG CUDA double PROLMAT L9", 513, 1);
 PoissonBenchmarkMGELLFixedPROLMAT<tags::GPU::CUDA, double> poisson_bench_mg_ell_double_cuda_L10("MG CUDA double PROLMAT L10", 1025, 1);

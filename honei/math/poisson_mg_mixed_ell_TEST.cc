@@ -233,7 +233,7 @@ class PoissonTestMGSparseELLMixed:
             //std::cout<< result <<endl;
         }
 };
-/*PoissonTestMGSparseELLMixed<tags::CPU, tags::CPU, double> poisson_test_mg_banded_double("double", 33ul, "1089.bin");
+PoissonTestMGSparseELLMixed<tags::CPU, tags::CPU, double> poisson_test_mg_banded_double("double", 33ul, "1089.bin");
 #ifdef HONEI_SSE
 PoissonTestMGSparseELLMixed<tags::CPU::SSE, tags::CPU::SSE, double> sse_poisson_test_mg_banded_double("double", 33ul, "1089.bin");
 PoissonTestMGSparseELLMixed<tags::CPU::MultiCore::SSE, tags::CPU::MultiCore::SSE, double> mcsse_poisson_test_mg_banded_double("double", 33ul, "1089.bin");
@@ -242,13 +242,14 @@ PoissonTestMGSparseELLMixed<tags::CPU::MultiCore::SSE, tags::CPU::MultiCore::SSE
 #ifdef HONEI_SSE
 PoissonTestMGSparseELLMixed<tags::GPU::CUDA, tags::CPU::SSE, double> cuda_poisson_test_mg_banded_double_2("double", 33ul, "1089.bin");
 PoissonTestMGSparseELLMixed<tags::GPU::CUDA, tags::CPU::MultiCore::SSE, double> mcsse_cuda_poisson_test_mg_banded_double_2("double", 33ul, "1089.bin");
+PoissonTestMGSparseELLMixed<tags::GPU::MultiCore::CUDA, tags::CPU::MultiCore::SSE, double> mcsse_mccuda_poisson_test_mg_banded_double_2("mc/mc double", 33ul, "1089.bin");
 #endif
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
 PoissonTestMGSparseELLMixed<tags::GPU::CUDA, tags::GPU::CUDA, double> cuda_poisson_test_mg_banded_double("double", 33ul, "1089.bin");
 #endif
-#endif*/
+#endif
 
 template <typename ITag_, typename OTag_, typename DT1_>
 class PoissonTestMGSparseELLProlMat:
@@ -509,8 +510,9 @@ PoissonTestMGSparseELLProlMat<tags::GPU::CUDA, tags::GPU::CUDA, double> cuda_poi
 #endif
 #endif
 #if defined HONEI_CUDA && defined HONEI_SSE
-#if defined HONEI_CUDA_DOUBLE
 PoissonTestMGSparseELLProlMat<tags::GPU::CUDA, tags::CPU::SSE, double> cuda_poisson_test_mg_sparse_prolmat_double_11("double", 65ul);
 PoissonTestMGSparseELLProlMat<tags::GPU::CUDA, tags::CPU::MultiCore::SSE, double> cuda_poisson_test_mg_sparse_prolmat_double_12("double", 65ul);
+PoissonTestMGSparseELLProlMat<tags::GPU::MultiCore::CUDA, tags::CPU::MultiCore::SSE, double> mccuda_poisson_test_mg_sparse_prolmat_double_12("double", 65ul);
+#if defined HONEI_CUDA_DOUBLE
 #endif
 #endif
