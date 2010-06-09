@@ -493,8 +493,11 @@ class PoissonTestMGSparseELLProlMat:
   PoissonTestMGSparseELLProlMat<tags::CPU::MultiCore::SSE, double> mc_sse_poisson_test_mg_sparse_prolmat_double("double", 65ul);
 #endif
 #ifdef HONEI_CUDA
+PoissonTestMGSparseELLProlMat<tags::GPU::CUDA, float> cuda_poisson_test_mg_sparse_prolmat_float("float", 65ul);
+//PoissonTestMGSparseELLProlMat<tags::GPU::MultiCore::CUDA, float> mc_cuda_poisson_test_mg_sparse_prolmat_float("float", 65ul);
 #ifdef HONEI_CUDA_DOUBLE
 PoissonTestMGSparseELLProlMat<tags::GPU::CUDA, double> cuda_poisson_test_mg_sparse_prolmat_double("double", 65ul);
+//PoissonTestMGSparseELLProlMat<tags::GPU::MultiCore::CUDA, double> mc_cuda_poisson_test_mg_sparse_prolmat_double("double", 65ul);
 #endif
 #endif*/
 

@@ -107,9 +107,8 @@ namespace honei
                 Product<Tag_>::value(temp, difference, former_result);
 
                 DenseVector<DT1_> temp2(right_hand_side.size());
-                copy<Tag_>(right_hand_side, temp2);
 
-                Difference<Tag_>::value(temp2, temp);
+                Difference<Tag_>::value(temp2, right_hand_side, temp);
                 ElementProduct<Tag_>::value(temp2, diag_inverted);
 
                 former_result = temp2;
