@@ -51,8 +51,27 @@ namespace honei
         if (source.size() != dest.size())
             throw VectorSizeDoesNotMatch(dest.size(), source.size());
 
-        MemoryArbiter::instance()->copy(Tag_::memory_value, source.memid(), source.address(),
-                dest.memid(), dest.address(), source.size() * sizeof(DT_));
+        if (Tag_::tag_value == tags::tv_gpu_multi_core)
+        {
+            // TODO copy vektor parts direkt to the corresponding gpu memory
+            /*DenseVectorRange<DT_> s1(source.range(source.size()/2, 0));
+            DenseVectorRange<DT_> d1(dest.range(dest.size()/2, 0));
+            DenseVectorRange<DT_> s2(source.range(source.size()/2 + source.size()%2, source.size()/2));
+            DenseVectorRange<DT_> d2(dest.range(dest.size()/2 + dest.size()%2, dest.size()/2));
+            cudaSumDVdouble task1(a1, b1, blocksize);
+            cuda::GPUPool::instance()->enqueue(task2, 0)->wait();
+            cuda::GPUPool::instance()->enqueue(task2, 1)->wait();*/
+            dest.lock(lm_write_only);
+            source.lock(lm_read_only);
+            dest.unlock(lm_write_only);
+            source.unlock(lm_read_only);
+            TypeTraits<DT_>::copy(source.elements(), dest.elements(), dest.size());
+        }
+        else
+        {
+            MemoryArbiter::instance()->copy(Tag_::memory_value, source.memid(), source.address(),
+                    dest.memid(), dest.address(), source.size() * sizeof(DT_));
+        }
     }
 
     template <typename IT_, typename DT_> void copy(const IT_ & begin, const IT_ & end,

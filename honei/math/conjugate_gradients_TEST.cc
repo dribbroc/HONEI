@@ -620,8 +620,10 @@ ConjugateGradientsTestSparseELL<tags::CPU::SSE, double> sse_cg_test_double_spars
 #endif
 #ifdef HONEI_CUDA
 ConjugateGradientsTestSparseELL<tags::GPU::CUDA, float> cuda_cg_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
+ConjugateGradientsTestSparseELL<tags::GPU::MultiCore::CUDA, float> mc_cuda_cg_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
 #ifdef HONEI_CUDA_DOUBLE
 ConjugateGradientsTestSparseELL<tags::GPU::CUDA, double> cuda_cg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
+ConjugateGradientsTestSparseELL<tags::GPU::MultiCore::CUDA, double> mc_cuda_cg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
 #endif
 #endif
 
@@ -735,8 +737,10 @@ PreconditionedConjugateGradientsTestSparseELL<tags::CPU::MultiCore::SSE, double>
 #endif
 #ifdef HONEI_CUDA
 PreconditionedConjugateGradientsTestSparseELL<tags::GPU::CUDA, float> cuda_pcg_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
+PreconditionedConjugateGradientsTestSparseELL<tags::GPU::MultiCore::CUDA, float> mc_cuda_pcg_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
 #ifdef HONEI_CUDA_DOUBLE
 PreconditionedConjugateGradientsTestSparseELL<tags::GPU::CUDA, double> cuda_pcg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
+PreconditionedConjugateGradientsTestSparseELL<tags::GPU::MultiCore::CUDA, double> mc_cuda_pcg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
 #endif
 #endif
 
