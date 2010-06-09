@@ -47,7 +47,7 @@ int main(int argc, char ** argv)
     SparseMatrixELL<double> smatrix(tsmatrix);
 
     // Write out ell file matrix
-    MatrixIO<io_formats::ELL>::write_matrix(output, smatrix);
+    MatrixIO<io_formats::ELL, SparseMatrixELL<double> >::write_matrix(output, smatrix);
 
     return EXIT_SUCCESS;
 }

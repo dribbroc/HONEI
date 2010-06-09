@@ -21,6 +21,7 @@
 #include <honei/math/vector_io.hh>
 #include <honei/math/defect.hh>
 #include <honei/util/unittest.hh>
+#include <honei/math/methods.hh>
 #include <honei/util/stringify.hh>
 #include <honei/la/product.hh>
 
@@ -44,7 +45,7 @@ class DefectTest:
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/5pt_10x10.mtx";
             unsigned long non_zeros(0);
-            DenseMatrix<DT_> matrix = MatrixIO<io_formats::MTX>::read_matrix(filename, DT_(0), non_zeros);
+            DenseMatrix<DT_> matrix = MatrixIO<io_formats::MTX, methods::NONE>::read_matrix(filename, DT_(0), non_zeros);
 
             DenseVector<DT_> x(matrix.rows());
             DenseVector<DT_> b(matrix.rows(), DT_(1.234));

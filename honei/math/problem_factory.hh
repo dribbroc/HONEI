@@ -43,19 +43,25 @@ namespace honei
                 FileFactory::_filebase = (filebase);
             }
 
-            static void factory(std::vector<MatrixType_ > & a, std::vector<ProlmatType_ > & b, std::vector<ProlmatType_ > & c, std::vector<DenseVector<DT1_> > & d, unsigned long min, unsigned long max)
+            static void factory(std::vector<MatrixType_ > & a,
+                                std::vector<ProlmatType_ > & b,
+                                std::vector<ProlmatType_ > & c,
+                                std::vector<DenseVector<DT1_> > & d,
+                                unsigned long min,
+                                unsigned long max)
             {
                 DenseVector<DT1_> blub(10, 5);
                 d.push_back(blub);
                 std::cout<<_filebase<<std::endl;
-
-                /*std::string system_file_base(FileFactory::_filebase);
+                /*
+                std::string system_file_base(FileFactory::_filebase);
                 std::string rhs_file_base(FileFactory::_filebase);
                 std::string prol_file_base(FileFactory::_filebase);
 
-                system_file_base += "_system";
-                rhs_file_base += "_rhs";
-                prol_file_base += "_prol";*/
+                system_file_base += "_system_";
+                rhs_file_base += "_rhs_";
+                prol_file_base += "_prol_";
+                */
             }
     };
 }

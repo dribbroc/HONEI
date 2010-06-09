@@ -32,7 +32,7 @@ class RichardsonTESTArb :
             std::string file (dir + "/honei/math/testdata/l2/");
             file += "area51_full_0";
             file += ".ell";
-            SparseMatrixELL<DT1_> A(MatrixIO<io_formats::ELL>::read_matrix(file, DT1_(0)));
+            SparseMatrixELL<DT1_> A(MatrixIO<io_formats::ELL, SparseMatrixELL<double> >::read_matrix(file, DT1_(0)));
 
             SparseMatrix<DT1_> precon(A);
 

@@ -19,6 +19,7 @@
 
 #include <benchmark/benchmark.hh>
 #include <honei/math/matrix_io.hh>
+#include <honei/math/methods.hh>
 
 #include <cstdlib>
 

@@ -33,6 +33,7 @@
 #include <honei/util/attributes.hh>
 #include <vector>
 #include <algorithm>
+#include <honei/math/methods.hh>
 
 using namespace honei;
 
@@ -43,13 +44,13 @@ namespace io_formats
     class ELL;
 }
 
-template<typename IOFormat_>
+template<typename IOFormat_, typename ReturnType_>
 class MatrixIO
 {
 };
 
 template<>
-class MatrixIO<io_formats::M>
+class MatrixIO<io_formats::M, methods::NONE>
 {
     public:
         template<typename DT_>
@@ -130,7 +131,7 @@ class MatrixIO<io_formats::M>
 
 //MATRIX MARKET TYPE
 template<>
-class MatrixIO<io_formats::MTX>
+class MatrixIO<io_formats::MTX, methods::NONE>
 {
     private:
         static void get_sizes(std::string filename, unsigned long & r,
@@ -375,7 +376,7 @@ class MatrixIO<io_formats::MTX>
 };
 
 template<>
-class MatrixIO<io_formats::ELL>
+class MatrixIO<io_formats::ELL, SparseMatrixELL<double> >
 {
     public:
         template <typename DT_>

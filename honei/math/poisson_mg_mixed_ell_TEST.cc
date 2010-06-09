@@ -405,7 +405,7 @@ class PoissonTestMGSparseELLProlMat:
                 A_file += "poisson_A_";
                 A_file += stringify(i);
                 A_file += ".ell";
-                SparseMatrixELL<float> smell(MatrixIO<io_formats::ELL>::read_matrix(A_file, float(0)));
+                SparseMatrixELL<float> smell(MatrixIO<io_formats::ELL, SparseMatrixELL<double> >::read_matrix(A_file, float(0)));
 
                 std::string rhs_file(HONEI_SOURCEDIR);
                 rhs_file += "/honei/math/testdata/poisson/";
@@ -441,7 +441,7 @@ class PoissonTestMGSparseELLProlMat:
                         prol_file += "poisson_prol_";
                         prol_file += stringify(i);
                         prol_file += ".ell";
-                        SparseMatrixELL<float> prolmat(MatrixIO<io_formats::ELL>::read_matrix(prol_file, float(0)));
+                        SparseMatrixELL<float> prolmat(MatrixIO<io_formats::ELL, SparseMatrixELL<double> >::read_matrix(prol_file, float(0)));
                         info.prolmats.push_back(prolmat);
 
                         SparseMatrix<float> prol(prolmat);

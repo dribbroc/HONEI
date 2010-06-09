@@ -9,6 +9,7 @@
 #include <honei/math/matrix_io.hh>
 #include <honei/math/vector_io.hh>
 #include <honei/math/conjugate_gradients.hh>
+#include <honei/math/methods.hh>
 #include <honei/util/configuration.hh>
 #include <honei/backends/cuda/operations.hh>
 #include <honei/backends/cuda/gpu_pool.hh>
@@ -43,7 +44,6 @@ class SMELLCGBench :
             filename += "/honei/math/testdata/";
             //std::string filename = "/home/mgeveler/testdata/";
             filename += _m_f;
-
             SparseMatrix<DataType_> tsmatrix2(MatrixIO<io_formats::M>::read_matrix(filename, DataType_(0)));
             SparseMatrixELL<DataType_> smatrix2(tsmatrix2);
 

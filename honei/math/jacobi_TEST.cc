@@ -26,6 +26,7 @@
 #include <iostream>
 #include <honei/math/matrix_io.hh>
 #include <honei/math/vector_io.hh>
+#include <honei/math/methods.hh>
 
 using namespace honei;
 using namespace tests;
@@ -311,7 +312,6 @@ class JacobiSparseELLComparisonTest:
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/";
             filename += _m_f;
-
             SparseMatrix<DT1_> tsmatrix2(MatrixIO<io_formats::M>::read_matrix(filename, DT1_(0)));
             SparseMatrixELL<DT1_> smatrix2(tsmatrix2);
 

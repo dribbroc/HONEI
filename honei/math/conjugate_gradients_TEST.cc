@@ -26,6 +26,7 @@
 #include <iomanip>
 #include <honei/math/fill_matrix.hh>
 #include <honei/math/fill_vector.hh>
+#include <honei/math/methods.hh>
 
 using namespace honei;
 using namespace tests;
