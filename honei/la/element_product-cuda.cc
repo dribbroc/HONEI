@@ -380,7 +380,7 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::MultiCore::CUDA>::
         DenseVectorRange<double> r2(result.range(result.size()/2 + result.size()%2, result.size()/2));
         DenseVectorRange<double> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
         DenseVectorRange<double> b2(b.range(b.size()/2 + b.size()%2, b.size()/2));
-        cudaElementProduct3DVdouble task2(r1, a2, b2, blocksize);
+        cudaElementProduct3DVdouble task2(r2, a2, b2, blocksize);
         cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
         cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
     }
