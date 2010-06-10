@@ -50,10 +50,9 @@ namespace honei
                                 unsigned long min,
                                 unsigned long max)
             {
-                DenseVector<DT1_> blub(10, 5);
+                /*DenseVector<DT1_> blub(10, 5);
                 d.push_back(blub);
-                std::cout<<_filebase<<std::endl;
-                /*
+                std::cout<<_filebase<<std::endl;*/
                 std::string system_file_base(FileFactory::_filebase);
                 std::string rhs_file_base(FileFactory::_filebase);
                 std::string prol_file_base(FileFactory::_filebase);
@@ -61,7 +60,12 @@ namespace honei
                 system_file_base += "_system_";
                 rhs_file_base += "_rhs_";
                 prol_file_base += "_prol_";
-                */
+
+                for(unsigned long i(min) ; i <= max ; ++i)
+                {
+                    unsigned long n = (unsigned long)(((unsigned long)pow((DT1_)2, (DT1_)i) + 1) * ((unsigned long)pow((DT1_)2, (DT1_)i) + 1));
+                    MatrixType_ level_system(MatrixIO<io_formats::ELL, SparseMatrixELL<double> >::read_matrix(A_file, float(0)));
+                }
             }
     };
 }
