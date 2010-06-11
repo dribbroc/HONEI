@@ -58,7 +58,23 @@ EXTRA_DIST = \
 	poisson/poisson_prol_3.ell \
 	poisson/poisson_prol_4.ell \
 	poisson/poisson_prol_5.ell \
-	poisson/poisson_prol_6.ell
+	poisson/poisson_prol_6.ell \
+	poisson_advanced/A_1.ell \
+	poisson_advanced/A_2.ell \
+	poisson_advanced/A_3.ell \
+	poisson_advanced/A_4.ell \
+	poisson_advanced/A_5.ell \
+	poisson_advanced/A_6.ell \
+	poisson_advanced/A_7.ell \
+	poisson_advanced/prol_2.ell \
+	poisson_advanced/prol_3.ell \
+	poisson_advanced/prol_4.ell \
+	poisson_advanced/prol_5.ell \
+	poisson_advanced/prol_6.ell \
+	poisson_advanced/prol_7.ell \
+	poisson_advanced/rhs \
+	poisson_advanced/init \
+	poisson_advanced/sol
 
 
 DEFS = \
