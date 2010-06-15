@@ -68,6 +68,7 @@ namespace honei
              typename CycleType_>
     struct GMGInfoFactory;
 
+    ///TODO:Why did we specialize that?
     template<typename Prec_,
              typename MatrixType_,
              typename ProlMatrixType_,
@@ -139,6 +140,7 @@ namespace honei
 
             void solve_coarse(std::tr1::function<void ()> & coarse_smoother_functor)
             {
+                ///TODO:Coarse Grid corrector?
                 coarse_smoother_functor();
             }
     };

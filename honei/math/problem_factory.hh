@@ -22,10 +22,14 @@
 
 #include <vector>
 #include <string>
+#include <cmath>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/banded_matrix_q1.hh>
 #include <honei/la/sparse_matrix_ell.hh>
 #include <honei/math/methods.hh>
+#include <honei/math/matrix_io.hh>
+#include <honei/math/vector_io.hh>
+#include <honei/math/transposition.hh>
 
 #include <iostream>
 
@@ -53,19 +57,36 @@ namespace honei
                 /*DenseVector<DT1_> blub(10, 5);
                 d.push_back(blub);
                 std::cout<<_filebase<<std::endl;*/
-                std::string system_file_base(FileFactory::_filebase);
+                std::string A_file_base(FileFactory::_filebase);
                 std::string rhs_file_base(FileFactory::_filebase);
                 std::string prol_file_base(FileFactory::_filebase);
+                std::string matrix_suffix(".ell");
 
-                system_file_base += "_system_";
-                rhs_file_base += "_rhs_";
-                prol_file_base += "_prol_";
+                A_file_base += "A_";
+                rhs_file_base += "rhs";
+                prol_file_base += "prol_";
 
+                ///Only store matrices from min to max level
                 for(unsigned long i(min) ; i <= max ; ++i)
                 {
-                    unsigned long n = (unsigned long)(((unsigned long)pow((DT1_)2, (DT1_)i) + 1) * ((unsigned long)pow((DT1_)2, (DT1_)i) + 1));
-                    MatrixType_ level_system(MatrixIO<io_formats::ELL, SparseMatrixELL<double> >::read_matrix(A_file, float(0)));
+                    std::string A_file(A_file_base + stringify(i) + matrix_suffix);
+                    std::string prol_file(A_file_base + stringify(i) + matrix_suffix);
+
+                    MatrixType_ current_A(MatrixIO<io_formats::ELL, MatrixType_ >::read_matrix(A_file, DT1_(0)));
+                    MatrixType_ current_prol(MatrixIO<io_formats::ELL, MatrixType_ >::read_matrix(prol_file, DT1_(0)));
+
+                    SparseMatrix<DT1_> prol(current_prol);
+                    SparseMatrix<DT1_> res(current_prol.columns(), current_prol.rows());
+                    Transposition<tags::CPU>::value(prol, res);
+                    SparseMatrixELL<DT1_> current_res(res);
+
+                    a.push_back(current_A);
+                    b.push_back(current_prol);
+                    c.push_back(current_res);
                 }
+
+                DenseVector<DT1_> rhs(a.at(max).rows());
+                VectorIO<io_formats::EXP>::read_vector(rhs_file_base, rhs);
             }
     };
 }

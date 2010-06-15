@@ -26,11 +26,5 @@ namespace honei
 
     template class FileFactory<double, SparseMatrixELL<double>, SparseMatrixELL<double> >;
     template<> std::string FileFactory<double, SparseMatrixELL<double>, SparseMatrixELL<double> >::_filebase("4711");
-
-    template class FileFactory<float, BandedMatrixQ1<float>, SparseMatrixELL<float> >;
-    template<> std::string FileFactory<float, BandedMatrixQ1<float>, SparseMatrixELL<float> >::_filebase("4711");
-
-    template class FileFactory<double, BandedMatrixQ1<double>, SparseMatrixELL<double> >;
-    template<> std::string FileFactory<double, BandedMatrixQ1<double>, SparseMatrixELL<double> >::_filebase("4711");
 }
 

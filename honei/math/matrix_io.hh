@@ -47,6 +47,11 @@ namespace io_formats
 template<typename IOFormat_, typename ReturnType_>
 class MatrixIO
 {
+    public:
+        template<typename DT_>
+        static ReturnType_ read_matrix(std::string filename, DT_ dummy)
+        {
+        }
 };
 
 template<>
@@ -456,5 +461,77 @@ class MatrixIO<io_formats::ELL, SparseMatrixELL<double> >
                 SparseMatrixELL<DT_> smatrix(crows, ccolumns, cstride, cnum_cols_per_row, ajc, axc);
                 return smatrix;
             }
+};
+template<>
+class MatrixIO<io_formats::ELL, SparseMatrixELL<float> >
+{
+    public:
+    static void write_matrix(std::string output, SparseMatrixELL<float> smatrix)
+    {
+            FILE* file;
+            file = fopen(output.c_str(), "wb");
+            uint64_t size(smatrix.Aj().size());
+            uint64_t rows(smatrix.rows());
+            uint64_t columns(smatrix.columns());
+            uint64_t stride(smatrix.stride());
+            uint64_t num_cols_per_row(smatrix.num_cols_per_row());
+            fwrite(&size, sizeof(uint64_t), 1, file);
+            fwrite(&rows, sizeof(uint64_t), 1, file);
+            fwrite(&columns, sizeof(uint64_t), 1, file);
+            fwrite(&stride, sizeof(uint64_t), 1, file);
+            fwrite(&num_cols_per_row, sizeof(uint64_t), 1, file);
+            fwrite(smatrix.Aj().elements(), sizeof(uint64_t), size, file);
+            fwrite(smatrix.Ax().elements(), sizeof(double), size, file);
+            fclose(file);
+    }
+
+    template <typename DT_>
+    static SparseMatrixELL<DT_> read_matrix(std::string input, DT_ datatype)
+    {
+            FILE* file(NULL);
+            file = fopen(input.c_str(), "rb");
+            if (file == NULL)
+                throw InternalError("File "+input+" not found!");
+            uint64_t size;
+            uint64_t rows;
+            uint64_t columns;
+            uint64_t stride;
+            uint64_t num_cols_per_row;
+            fread(&size, sizeof(uint64_t), 1, file);
+            fread(&rows, sizeof(uint64_t), 1, file);
+            fread(&columns, sizeof(uint64_t), 1, file);
+            fread(&stride, sizeof(uint64_t), 1, file);
+            fread(&num_cols_per_row, sizeof(uint64_t), 1, file);
+            DenseVector<unsigned long> ajc(size);
+            if (sizeof(unsigned long) == sizeof(uint64_t))
+            {
+                DenseVector<unsigned long> aj(size);
+                fread(aj.elements(), sizeof(uint64_t), size, file);
+                for (unsigned long i(0) ; i < size ; ++i)
+                {
+                    ajc[i] = aj[i];
+                }
+            }
+            else
+            {
+                uint64_t aj[size];
+                fread(aj, sizeof(uint64_t), size, file);
+                for (unsigned long i(0) ; i < size ; ++i)
+                {
+                    ajc[i] = aj[i];
+                }
+            }
+            DenseVector<double> ax(size);
+            fread(ax.elements(), sizeof(double), size, file);
+            fclose(file);
+            DenseVector<DT_> axc(size);
+            unsigned long crows(rows);
+            unsigned long ccolumns(columns);
+            unsigned long cstride(stride);
+            unsigned long cnum_cols_per_row(num_cols_per_row);
+            convert<tags::CPU>(axc, ax);
+            SparseMatrixELL<DT_> smatrix(crows, ccolumns, cstride, cnum_cols_per_row, ajc, axc);
+            return smatrix;
+    }
 };
 #endif
