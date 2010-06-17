@@ -22,6 +22,7 @@
 #define LIBMATH_GUARD_PRECONDITIONING_HH 1
 
 #include <methods.hh>
+#include <honei/util/attributes.hh>
 
 namespace honei
 {
@@ -46,12 +47,36 @@ namespace honei
             * \param source A.
             *
             */
-            template <typename MatrixSourceType_, typename MatrixTargetType_>
-            static void value(
-                    HONEI_UNUSED MatrixSourceType_ & target,
-                    HONEI_UNUSED MatrixTargetType_ & source)
+            template <typename MatrixType_>
+            static MatrixType_ value(HONEI_UNUSED MatrixType_ & target)
             {
                 CONTEXT("When computing approximate inverse for preconditioning: ");
+                //Does nothing - inverse has to be passed to this routine
+            }
+    };
+
+    template <typename Tag_>
+    struct Preconditioning<Tag_, methods::JAC>
+    {
+        public:
+            /**
+            * \brief Computes approximate inverse
+            *
+            * \param target The approximate inverse of A.
+            * \param source A.
+            *
+            */
+            template <typename MatrixType_>
+            static MatrixType_ value(HONEI_UNUSED MatrixType_ & target)
+            {
+                CONTEXT("When computing approximate inverse for preconditioning with Jacobi: ");
+                //Does nothing - inverse has to be passed to this routine
+            }
+
+            template <typename MatrixType_>
+            static DenseVector<typename MatrixType_::DataType> value(HONEI_UNUSED MatrixType_ & target)
+            {
+                CONTEXT("When computing approximate inverse for preconditioning with Jacobi: ");
                 //Does nothing - inverse has to be passed to this routine
             }
     };

@@ -87,6 +87,7 @@ namespace honei
 
                 DenseVector<DT1_> rhs(a.at(max).rows());
                 VectorIO<io_formats::EXP>::read_vector(rhs_file_base, rhs);
+                d.push_back(rhs);
             }
     };
 }

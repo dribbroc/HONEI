@@ -45,6 +45,9 @@ namespace honei
         PrivateImplementationPattern<BandedMatrix<DataType_>, Shared>
     {
         public:
+            /// Type of our data type.
+            typedef DataType_ DataType;
+
             /// \name Friends of BandedMatrix
             /// \{
 

@@ -29,6 +29,7 @@
 #include <honei/util/memory_arbiter.hh>
 #include <honei/la/algorithm.hh>
 #include <honei/math/defect.hh>
+#include <honei/math/methods.hh>
 #include <honei/math/preconditioning.hh>
 
 namespace honei
@@ -118,7 +119,7 @@ namespace honei
             {
                 CONTEXT("When solving linear system with Richardson: ");
 
-                Preconditioner_::value(*data.precon_matrix, *data.system_matrix);
+                *data.precon_matrix = Preconditioner_::value(*data.system_matrix);
                 if(info.damping)
                 {
                     Scale<Tag_>::value(data.precon_matrix->Ax(), DataType_(info.damping_factor));

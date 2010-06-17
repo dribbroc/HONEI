@@ -45,6 +45,9 @@ namespace honei
             std::vector<DenseVector<Prec_> > c_vectors;
             std::vector<DenseVector<Prec_> > d_vectors;
 
+            std::vector<MatrixType_> precon_matrices;
+            std::vector<DenseVector<Prec_> > precon_vectors;
+
             unsigned long start_level;
             unsigned long min_level;
             unsigned long max_level;
@@ -61,31 +64,12 @@ namespace honei
              typename MatrixType_,
              typename ProlMatrixType_,
              typename SmootherType_,
-             typename CoarseSolverType_,
-             typename ProlType_,
-             typename ResType_,
-             typename NormType_,
-             typename CycleType_>
-    struct GMGInfoFactory;
-
-    ///TODO:Why did we specialize that?
-    template<typename Prec_,
-             typename MatrixType_,
-             typename ProlMatrixType_,
-             typename SmootherType_,
+             typename PreconType_,
              typename CoarseSolverType_,
              typename ProlType_,
              typename ResType_,
              typename NormType_>
-    struct GMGInfoFactory<Prec_,
-                          MatrixType_,
-                          ProlMatrixType_,
-                          SmootherType_,
-                          CoarseSolverType_,
-                          ProlType_,
-                          ResType_,
-                          NormType_,
-                          methods::CYCLE::V>
+    struct GMGInfoFactory
     {
         public:
             static GMGInfo<Prec_, MatrixType_, ProlMatrixType_> create(std::tr1::function<void (std::vector<MatrixType_> &,
@@ -102,10 +86,17 @@ namespace honei
             unsigned long max_iters_coarse_solver,
             Prec_ tolerance,
             Prec_ tolerance_coarse,
-            Prec_ adaptive_correction_factor)
+            Prec_ adaptive_correction_factor,
+            std::vector<unsigned long> & cycle)
             {
                 GMGInfo<Prec_, MatrixType_, ProlMatrixType_> info;
                 problem_factory(info.system_matrices, info.prolongation_matrices, info.restriction_matrices, info.rhs_vectors, min_level, max_level);
+                info.cycle = cycle;
+
+                for (unsigned long i(0) ; i < max_level - min_level ; ++i)
+                {
+                    info.precon_matrices.push_back(PreconType_::value(info.system_matrices.at(i)));
+                }
                 return info;
             }
     };

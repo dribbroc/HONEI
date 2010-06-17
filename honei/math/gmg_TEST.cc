@@ -25,6 +25,7 @@
 #include <honei/math/gmg.hh>
 #include <honei/math/problem_factory.hh>
 #include <honei/math/methods.hh>
+#include <honei/math/preconditioning.hh>
 #include <honei/math/multigrid.hh>
 #include <honei/la/sum.hh>
 #include <honei/util/operation_wrapper.hh>
@@ -54,8 +55,9 @@ class GMGTest:
 
         virtual void run() const
         {
+            std::vector<unsigned long> test_cycle;
             FileFactory<DT1_, SparseMatrixELL<DT1_>, SparseMatrixELL<DT1_> > factory("bla");
-            GMGInfo<DT1_, SparseMatrixELL<DT1_>, SparseMatrixELL<DT1_> > info(GMGInfoFactory<DT1_, SparseMatrixELL<DT1_>, SparseMatrixELL<DT1_>, Jacobi<Tag_>, ConjugateGradients<Tag_, methods::NONE>, Prolongation<Tag_, methods::NONE>, Restriction<Tag_, methods::NONE>, Norm<vnt_l_two, false, Tag_>, methods::CYCLE::V>::create(factory.factory, 1ul, 1ul, 1ul, 1ul, 1ul, 1ul, 1ul, DT1_(0), DT1_(0), DT1_(0)));
+            GMGInfo<DT1_, SparseMatrixELL<DT1_>, SparseMatrixELL<DT1_> > info(GMGInfoFactory<DT1_, SparseMatrixELL<DT1_>, SparseMatrixELL<DT1_>, Jacobi<Tag_>, Preconditioning<Tag_, methods::NONE>, ConjugateGradients<Tag_, methods::NONE>, Prolongation<Tag_, methods::NONE>, Restriction<Tag_, methods::NONE>, Norm<vnt_l_two, false, Tag_> >::create(factory.factory, 1ul, 1ul, 1ul, 1ul, 1ul, 1ul, 1ul, DT1_(0), DT1_(0), DT1_(0), test_cycle));
             GMG<Tag_, methods::NONE>::value(info);
             std::cout<<info.rhs_vectors.front();
 

@@ -72,6 +72,9 @@ namespace honei
             /// Type of the iterator over our elements.
             typedef honei::ElementIterator<storage::Dense, container::Vector, DataType_> ElementIterator;
 
+            /// Type of our data type.
+            typedef DataType_ DataType;
+
             /// Constructors
             /// \{
 

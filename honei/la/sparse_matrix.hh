@@ -91,6 +91,8 @@ namespace honei
 
             void _synch_column_vectors();
 
+            /// Type of our data type.
+            typedef DataType_ DataType;
 
             /// \name Constructors
             /// \{
