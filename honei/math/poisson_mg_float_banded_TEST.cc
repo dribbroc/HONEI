@@ -452,5 +452,5 @@ PoissonTestMGBandedQ1Float<tags::CPU::SSE, float> sse_poisson_test_mg_banded_flo
 PoissonTestMGBandedQ1Float<tags::GPU::CUDA, float> cuda_poisson_test_mg_banded_float("float");
 #endif
 #ifdef HONEI_CELL
-PoissonTestMGBandedQ1Float<tags::Cell, float> cell_poisson_test_mg_banded_float("float");
+//PoissonTestMGBandedQ1Float<tags::Cell, float> cell_poisson_test_mg_banded_float("float");
 #endif

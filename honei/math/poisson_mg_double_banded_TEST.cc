@@ -459,5 +459,5 @@ PoissonTestMGBandedQ1Double<tags::GPU::CUDA, double> cuda_poisson_test_mg_banded
 #endif
 #endif
 #ifdef HONEI_CELL
-PoissonTestMGBandedQ1Double<tags::Cell, double> cell_poisson_test_mg_banded_double("double");
+//PoissonTestMGBandedQ1Double<tags::Cell, double> cell_poisson_test_mg_banded_double("double");
 #endif

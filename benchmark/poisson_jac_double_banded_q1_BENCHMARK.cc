@@ -184,7 +184,7 @@ PoissonJACBenchQ1_1<tags::CPU, double> poisson_jac_bench_float("Poisson JAC Smoo
 PoissonJACBenchQ1_1<tags::CPU::SSE, double> poisson_jac_bench_float_sse("Poisson JAC Smoother 1 benchmark double SSE", 100);
 #endif
 #ifdef HONEI_CELL
-PoissonJACBenchQ1_1<tags::Cell, double> poisson_jac_bench_float_cell("Poisson JAC Smoother 1 benchmark double Cell", 100);
+//PoissonJACBenchQ1_1<tags::Cell, double> poisson_jac_bench_float_cell("Poisson JAC Smoother 1 benchmark double Cell", 100);
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -342,5 +342,5 @@ PoissonJACBenchQ1_2<tags::CPU, double> poisson_jac_bench_float_2("Poisson JAC Sm
 PoissonJACBenchQ1_2<tags::CPU::SSE, double> poisson_jac_bench_float_sse_2("Poisson JAC Smoother 2 benchmark double SSE", 100);
 #endif
 #ifdef HONEI_CELL
-PoissonJACBenchQ1_2<tags::Cell, double> poisson_jac_bench_float_cell_2("Poisson JAC Smoother 2 benchmark double Cell", 100);
+//PoissonJACBenchQ1_2<tags::Cell, double> poisson_jac_bench_float_cell_2("Poisson JAC Smoother 2 benchmark double Cell", 100);
 #endif

@@ -184,7 +184,7 @@ PoissonJACBenchQ1_1<tags::CPU, float> poisson_jac_bench_float("Poisson JAC Smoot
 PoissonJACBenchQ1_1<tags::CPU::SSE, float> poisson_jac_bench_float_sse("Poisson JAC Smoother 1 benchmark float SSE", 100);
 #endif
 #ifdef HONEI_CELL
-PoissonJACBenchQ1_1<tags::Cell, float> poisson_jac_bench_float_cell("Poisson JAC Smoother 1 benchmark float Cell", 100);
+//PoissonJACBenchQ1_1<tags::Cell, float> poisson_jac_bench_float_cell("Poisson JAC Smoother 1 benchmark float Cell", 100);
 #endif
 #ifdef HONEI_CUDA
 PoissonJACBenchQ1_1<tags::GPU::CUDA, float> poisson_jac_bench_float_cuda("Poisson JAC Smoother 1 benchmark float CUDA", 100);
@@ -346,7 +346,7 @@ PoissonJACBenchQ1_2<tags::CPU, float> poisson_jac_bench_float_2("Poisson JAC Smo
 PoissonJACBenchQ1_2<tags::CPU::SSE, float> poisson_jac_bench_float_sse_2("Poisson JAC Smoother 2 benchmark float SSE", 100);
 #endif
 #ifdef HONEI_CELL
-PoissonJACBenchQ1_2<tags::Cell, float> poisson_jac_bench_float_cell_2("Poisson JAC Smoother 2 benchmark float Cell", 100);
+//PoissonJACBenchQ1_2<tags::Cell, float> poisson_jac_bench_float_cell_2("Poisson JAC Smoother 2 benchmark float Cell", 100);
 #endif
 #ifdef HONEI_CUDA
 PoissonJACBenchQ1_2<tags::GPU::CUDA, float> poisson_jac_bench_float_cuda_2("Poisson JAC Smoother 2 benchmark float CUDA", 100);

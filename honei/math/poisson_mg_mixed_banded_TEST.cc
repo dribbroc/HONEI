@@ -446,7 +446,7 @@ PoissonTestMGBandedQ1Mixed<tags::CPU, tags::CPU> poisson_test_mg_bandedMixed("Mi
 PoissonTestMGBandedQ1Mixed<tags::CPU::SSE, tags::CPU::SSE> sse_poisson_test_mg_bandedMixed("Mixed, SSE/SSE");
 #endif
 #ifdef HONEI_CELL
-PoissonTestMGBandedQ1Mixed<tags::Cell, tags::Cell> cell_poisson_test_mg_bandedMixed("Mixed CELL/CELL");
+//PoissonTestMGBandedQ1Mixed<tags::Cell, tags::Cell> cell_poisson_test_mg_bandedMixed("Mixed CELL/CELL");
 #endif
 #if defined HONEI_CUDA && defined HONEI_SSE
 PoissonTestMGBandedQ1Mixed<tags::GPU::CUDA, tags::CPU::SSE> cuda_sse_poisson_test_mg_bandedMixed("Mixed CUDA/SSE");

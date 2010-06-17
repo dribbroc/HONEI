@@ -54,8 +54,8 @@ DefectBench<tags::CPU::SSE, float> defect_bench_float_sse("Defect bench float SS
 DefectBench<tags::CPU::SSE, double> defect_bench_double_sse("Defect bench double SSE", 16641, 100);
 #endif
 #ifdef HONEI_CELL
-DefectBench<tags::Cell, float> defect_bench_float_cell("Defect bench float Cell", 16641, 100);
-DefectBench<tags::Cell, double> defect_bench_double_cell("Defect bench double Cell", 16641, 100);
+//DefectBench<tags::Cell, float> defect_bench_float_cell("Defect bench float Cell", 16641, 100);
+//DefectBench<tags::Cell, double> defect_bench_double_cell("Defect bench double Cell", 16641, 100);
 #endif
 #ifdef HONEI_CUDA
 DefectBench<tags::GPU::CUDA, float> defect_bench_float_cuda("Defect bench float CUDA", 16641, 100);
