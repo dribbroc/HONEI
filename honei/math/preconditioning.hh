@@ -48,7 +48,7 @@ namespace honei
             *
             */
             template <typename MatrixType_>
-            static MatrixType_ value(HONEI_UNUSED MatrixType_ & target)
+            static MatrixType_ value(HONEI_UNUSED MatrixType_ & source)
             {
                 CONTEXT("When computing approximate inverse for preconditioning: ");
                 //Does nothing - inverse has to be passed to this routine
@@ -67,14 +67,14 @@ namespace honei
             *
             */
             template <typename MatrixType_>
-            static MatrixType_ value(HONEI_UNUSED MatrixType_ & target)
+            static MatrixType_ value(HONEI_UNUSED MatrixType_ & source)
             {
                 CONTEXT("When computing approximate inverse for preconditioning with Jacobi: ");
                 //Does nothing - inverse has to be passed to this routine
             }
 
             template <typename MatrixType_>
-            static DenseVector<typename MatrixType_::DataType> value(HONEI_UNUSED MatrixType_ & target)
+            static DenseVector<typename MatrixType_::DataType> value(HONEI_UNUSED MatrixType_ & source)
             {
                 CONTEXT("When computing approximate inverse for preconditioning with Jacobi: ");
                 //Does nothing - inverse has to be passed to this routine
