@@ -309,6 +309,10 @@ class PoissonAdvancedBENCHMGSparseELLProlMat:
         {
             switch(level)
             {
+                case 10:
+                    {
+                        return 2101248;
+                    }
                 case 9:
                     {
                         return 526336;
