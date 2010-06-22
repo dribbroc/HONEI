@@ -72,9 +72,9 @@ EXTRA_DIST = \
 	poisson_advanced/sort_0/prol_5.ell \
 	poisson_advanced/sort_0/prol_6.ell \
 	poisson_advanced/sort_0/prol_7.ell \
-	poisson_advanced/sort_0/rhs \
-	poisson_advanced/sort_0/init \
-	poisson_advanced/sort_0/sol
+	poisson_advanced/sort_0/rhs_7 \
+	poisson_advanced/sort_0/init_7 \
+	poisson_advanced/sort_0/sol_7
 
 
 DEFS = \
