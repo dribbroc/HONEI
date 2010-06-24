@@ -9,6 +9,8 @@ EXTRA_DIST = \
 	area51_rhs_0.dv \
 	5pt_10x10.mtx \
 	5pt_10x10.ell \
+	5pt_10x10_spai.mtx \
+	5pt_10x10_spai.ell \
 	9.bin \
 	25.bin \
 	81.bin \
