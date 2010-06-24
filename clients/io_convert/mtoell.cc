@@ -52,6 +52,11 @@ int main(int argc, char ** argv)
     MatrixIO<io_formats::M>::read_matrix(input, r, c, data);
     MatrixIO<io_formats::M>::get_sizes(input, rows, columns, ax, bx);
     SparseMatrix<double> tsmatrix(rows, columns, r, c, data);
+    DenseVector<unsigned long> zeroul(1);
+    DenseVector<double> zerod(1);
+    r = zeroul;
+    c = zeroul;
+    data = zerod;
     SparseMatrixELL<double> smatrix(tsmatrix);
 
     // Write out ell file matrix
