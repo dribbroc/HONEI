@@ -40,6 +40,8 @@ int main(int argc, char ** argv)
     std::string input(argv[1]);*/
     std::string input("../../honei/math/testdata/5pt_10x10.ell");
     std::string spai_input("../../honei/math/testdata/5pt_10x10_spai.ell");
+    //std::string input("A.ell");
+    //std::string spai_input("M.ell");
 
     SparseMatrixELL<double> smatrixell = MatrixIO<io_formats::ELL>::read_matrix(input, double(1));
     SparseMatrix<double> smatrix(smatrixell);
@@ -57,15 +59,24 @@ int main(int argc, char ** argv)
     {
         c(i, i) = 1. / smatrix(i, i);
     }
+    unsigned long basenz(0);
+    for (unsigned long i(0) ; i < smatrix.rows() ; ++i)
+        basenz += smatrix[i].used_elements();
+    std::cout<<"Size: "<<smatrix.size()<<" Nonzeros: "<<basenz<<std::endl;
+
     SparseMatrix<double> temp(c.rows(), c.columns());
     double min = Norm<vnt_l_one, false, tags::CPU::SSE>::value(Difference<tags::CPU>::value(temp, ident, Product<tags::CPU>::value(smatrix, c)));
     std::cout<<"C jacobi style "<<min<<std::endl;
     SparseMatrix<double> temp2(c.rows(), c.columns());
     double min2 = Norm<vnt_l_one, false, tags::CPU::SSE>::value(Difference<tags::CPU>::value(temp2, ident, Product<tags::CPU>::value(smatrix, sspai)));
     std::cout<<"SPAI ref "<<min2<<std::endl;
+    unsigned long refnz(0);
+    for (unsigned long i(0) ; i < sspai.rows() ; ++i)
+        refnz += sspai[i].used_elements();
+    std::cout<<"Size: "<<spai_ref.size()<<" Nonzeros: "<<refnz<<std::endl;
 
 
-    for (unsigned long iter(0) ; iter < 10 ; ++iter)
+    for (unsigned long iter(0) ; iter < 1000 ; ++iter)
     {
         SparseMatrix<double> ttemp(c.rows(), c.columns());
         SparseMatrix<double> tc(c.copy());

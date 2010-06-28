@@ -23,6 +23,7 @@
 #include <honei/la/product.hh>
 #include <honei/la/sparse_matrix_ell.hh>
 #include <iostream>
+#include <cstdio>
 
 using namespace honei;
 using namespace tests;
@@ -126,6 +127,26 @@ class MMIOTest:
             filename_4 += "/honei/math/testdata/5pt_10x10.ell";
             SparseMatrixELL<DT_> smatrix5 = MatrixIO<io_formats::ELL>::read_matrix(filename_4, DT_(1));
             TEST_CHECK_EQUAL(smatrix5, smatrix2);
+
+            /// \todo ell write_matrix test
+
+            //-------------------------- MTX write matrix test
+            std::string filename_5(HONEI_SOURCEDIR);
+            filename_5 += "/honei/math/testdata/5pt_10x10-out.mtx";
+            MatrixIO<io_formats::MTX>::write_matrix(filename_5, tsmatrix2);
+
+            non_zeros = (MatrixIO<io_formats::MTX>::get_non_zeros(filename_5));
+            DenseVector<unsigned long> rw(non_zeros);
+            DenseVector<unsigned long> cw(non_zeros);
+            DenseVector<DT_> dataw(non_zeros);
+            MatrixIO<io_formats::MTX>::read_matrix(filename_5, rw, cw, dataw);
+            MatrixIO<io_formats::MTX>::get_sizes(filename_5, rows, columns, ax, bx);
+            SparseMatrix<DT_> tsmatrixw(rows, columns, rw, cw, dataw);
+
+            TEST_CHECK_EQUAL(tsmatrixw, tsmatrix2);
+
+            remove(filename_5.c_str());
+
         }
 };
 MMIOTest<float, tags::CPU> mmio_test_float_dense("float");

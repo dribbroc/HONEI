@@ -215,6 +215,7 @@ class MatrixIO<io_formats::M>
                 }
                 file.close();
             }
+
 };
 
 //MATRIX MARKET TYPE
@@ -456,7 +457,39 @@ class MatrixIO<io_formats::MTX>
 
                 return result;
             }
+
+        template<typename DT_>
+            static void write_matrix(std::string filename, const SparseMatrix<DT_> & matrix)
+            {
+                unsigned long used_elements(0);
+                for (unsigned long i(0) ; i < matrix.rows() ; ++i)
+                    used_elements += matrix[i].used_elements();
+
+                FILE* file;
+                file = fopen(filename.c_str(), "w");
+                std::string header("%%MatrixMarket matrix coordinate real general\n");
+                std::string mnl;
+                mnl += stringify(matrix.rows());
+                mnl += " ";
+                mnl += stringify(matrix.columns());
+                mnl += " ";
+                mnl += stringify(used_elements);
+                mnl += "\n";
+                fprintf(file, "%s", header.c_str());
+                fprintf(file, "%s", mnl.c_str());
+                for (typename SparseMatrix<DT_>::NonZeroConstElementIterator i(matrix.begin_non_zero_elements()), i_end(matrix.end_non_zero_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    std::string temp;
+                    temp += stringify(i.row() + 1) + " ";
+                    temp += stringify(i.column() + 1) + " ";
+                    temp += stringify(*i) + "\n";
+                    fprintf(file, "%s", temp.c_str());
+                }
+                fclose(file);
+            }
 };
+
 template<>
 class MatrixIO<io_formats::ELL>
 {

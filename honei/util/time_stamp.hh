@@ -20,7 +20,7 @@
 #ifndef LIBUTIL_GUARD_TIME_STAMP_HH
 #define LIBUTIL_GUARD_TIME_STAMP_HH 1
 
-#ifdef linux
+#ifdef __linux
 #  include <sys/time.h>
 #else
 #  error "TimeStamp is not yet supported on your platform!"
