@@ -39,7 +39,7 @@ BACKEND_LIBS += \
 
 endif
 
-bin_PROGRAMS = m2ell mtx2ell exp2dv
+bin_PROGRAMS = m2ell mtx2ell exp2dv ell2mtx
 
 m2ell_SOURCES = mtoell.cc
 m2ell_LDADD = \
@@ -57,6 +57,13 @@ mtx2ell_LDADD = \
 
 exp2dv_SOURCES = exptodv.cc
 exp2dv_LDADD = \
+	$(top_builddir)/honei/util/libhoneiutil.la \
+	$(top_builddir)/honei/la/libhoneila.la \
+	$(top_builddir)/honei/math/libhoneimath.la \
+	$(BACKEND_LIBS)
+
+ell2mtx_SOURCES = elltomtx.cc
+ell2mtx_LDADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/la/libhoneila.la \
 	$(top_builddir)/honei/math/libhoneimath.la \
