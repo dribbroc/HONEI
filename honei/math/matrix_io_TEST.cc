@@ -35,7 +35,7 @@ class MMIOTest:
 {
     public:
         MMIOTest(const std::string & tag) :
-            BaseTest("Matrix Market Format I/O test")
+            BaseTest("Matrix Market Format I/O test <" + tag + ">")
         {
             register_tag(Tag_::name);
         }
@@ -128,7 +128,17 @@ class MMIOTest:
             SparseMatrixELL<DT_> smatrix5 = MatrixIO<io_formats::ELL>::read_matrix(filename_4, DT_(1));
             TEST_CHECK_EQUAL(smatrix5, smatrix2);
 
-            /// \todo ell write_matrix test
+            //--------------------- ell write_matrix test
+            if (sizeof(DT_) == 8)
+            {
+                std::cout<<"double"<<std::endl;
+                std::string filename_6(HONEI_SOURCEDIR);
+                filename_6 += "/honei/math/testdata/5pt_10x10-out.ell";
+                MatrixIO<io_formats::ELL>::write_matrix(filename_6, smatrix5);
+                SparseMatrixELL<DT_> smatrix6 = MatrixIO<io_formats::ELL>::read_matrix(filename_6, DT_(1));
+                TEST_CHECK_EQUAL(smatrix6, smatrix5);
+                remove(filename_6.c_str());
+            }
 
             //-------------------------- MTX write matrix test
             std::string filename_5(HONEI_SOURCEDIR);

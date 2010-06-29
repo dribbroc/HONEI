@@ -494,8 +494,13 @@ template<>
 class MatrixIO<io_formats::ELL>
 {
     public:
-    static void write_matrix(std::string output, SparseMatrixELL<double> smatrix)
+    template <typename DT_>
+    static void write_matrix(std::string & output, SparseMatrixELL<DT_> smatrix)
     {
+        if (sizeof(DT_) != 8)
+            throw InternalError("Only double ell output supported!");
+        else
+        {
             FILE* file;
             file = fopen(output.c_str(), "wb");
             uint64_t size(smatrix.Aj().size());
@@ -511,6 +516,7 @@ class MatrixIO<io_formats::ELL>
             fwrite(smatrix.Aj().elements(), sizeof(uint64_t), size, file);
             fwrite(smatrix.Ax().elements(), sizeof(double), size, file);
             fclose(file);
+        }
     }
 
     template <typename DT_>
