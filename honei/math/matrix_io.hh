@@ -499,6 +499,10 @@ class MatrixIO<io_formats::ELL>
     {
         if (sizeof(DT_) != 8)
             throw InternalError("Only double ell output supported!");
+        else if (sizeof(unsigned long) != 8)
+            throw InternalError("Only 64 bit machine output supported!");
+        /// \todo convert uint32 to uint64 if needed (see read_matrix for conversion)
+
         else
         {
             FILE* file;

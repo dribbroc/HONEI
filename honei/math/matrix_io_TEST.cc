@@ -129,9 +129,8 @@ class MMIOTest:
             TEST_CHECK_EQUAL(smatrix5, smatrix2);
 
             //--------------------- ell write_matrix test
-            if (sizeof(DT_) == 8)
+            if (sizeof(DT_) == 8 && sizeof(unsigned long) ==  8)
             {
-                std::cout<<"double"<<std::endl;
                 std::string filename_6(HONEI_SOURCEDIR);
                 filename_6 += "/honei/math/testdata/5pt_10x10-out.ell";
                 MatrixIO<io_formats::ELL>::write_matrix(filename_6, smatrix5);
