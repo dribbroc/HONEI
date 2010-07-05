@@ -131,7 +131,7 @@ class MMIOTest:
             //--------------------- ell write_matrix test
             if (sizeof(DT_) == 8 && sizeof(unsigned long) ==  8)
             {
-                std::string filename_6(HONEI_SOURCEDIR);
+                std::string filename_6(HONEI_BUILDDIR);
                 filename_6 += "/honei/math/testdata/5pt_10x10-out.ell";
                 MatrixIO<io_formats::ELL>::write_matrix(filename_6, smatrix5);
                 SparseMatrixELL<DT_> smatrix6 = MatrixIO<io_formats::ELL>::read_matrix(filename_6, DT_(1));
@@ -140,7 +140,7 @@ class MMIOTest:
             }
 
             //-------------------------- MTX write matrix test
-            std::string filename_5(HONEI_SOURCEDIR);
+            std::string filename_5(HONEI_BUILDDIR);
             filename_5 += "/honei/math/testdata/5pt_10x10-out.mtx";
             MatrixIO<io_formats::MTX>::write_matrix(filename_5, tsmatrix2);
 

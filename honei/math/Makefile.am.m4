@@ -91,7 +91,8 @@ DEFS = \
 	$(DEBUGDEF) \
 	$(PROFILERDEF) \
 	$(DUNEDEF) \
-	-DHONEI_SOURCEDIR='"$(top_srcdir)"'
+	-DHONEI_SOURCEDIR='"$(top_srcdir)"' \
+	-DHONEI_BUILDDIR='"$(top_builddir)"'
 
 lib_LTLIBRARIES = libhoneimath.la
 
