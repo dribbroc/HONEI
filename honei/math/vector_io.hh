@@ -74,7 +74,7 @@ class VectorIO<io_formats::EXP>
                 --n_z;
             }
             else
-                throw honei::InternalError("Unable to open Vector file.");
+                throw honei::InternalError("Unable to open Vector file " + filename);
         }
 
         template<typename DT_>
@@ -84,7 +84,8 @@ class VectorIO<io_formats::EXP>
                 get_size(filename, non_zeros, non_data_lines);
 
                 std::ifstream file(filename.c_str());
-                file.is_open();
+                if (! file.is_open())
+                    throw honei::InternalError("Unable to open Vector file " + filename);
 
                 for(unsigned long i(0) ; i < non_data_lines ; ++i)
                 {
