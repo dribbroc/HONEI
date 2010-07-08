@@ -231,6 +231,13 @@ public:
             TEST_CHECK_EQUAL(*i, counter);
             ++counter;
         }
+
+        SparseVector<DataType_> sv6(size, 2);
+        unsigned long prenz(sv6.used_elements());
+        const DataType_ temp = ((const SparseVector<DataType_>)sv6)[2];
+        TEST_CHECK_EQUAL(temp, DataType_(0));
+        unsigned long postnz(sv6.used_elements());
+        TEST_CHECK_EQUAL(postnz, prenz);
     }
 };
 SparseVectorQuickTest<float> sparse_vector_quick_test_float("float");

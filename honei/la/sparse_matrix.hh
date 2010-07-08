@@ -31,7 +31,6 @@
 #include <honei/util/shared_array-impl.hh>
 #include <limits>
 
-
 namespace honei
 {
     // Forward declarations
@@ -348,18 +347,18 @@ namespace honei
             }
 
             /// Retrieves element at (row, column), unassignable.
-            inline const DataType_ & operator() (unsigned long row, unsigned long column) const
+            const DataType_ & operator() (unsigned long row, unsigned long column) const
             {
                 if (! _row_vectors[row])
                     /// \todo access element directly
                     return _zero_vector[0];
 
                 /// \todo access element directly
-                return (*_row_vectors[row])[column];
+                return ((const SparseVector<DataType_>)*_row_vectors[row])[column];
             }
 
             /// Retrieves element at (row, column), assignable.
-            inline DataType_ & operator() (unsigned long row, unsigned long column)
+            DataType_ & operator() (unsigned long row, unsigned long column)
             {
                 if (! _row_vectors[row])
                     _row_vectors[row].reset(new SparseVector<DataType_>(_columns, _capacity));

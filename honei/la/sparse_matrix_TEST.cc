@@ -182,6 +182,14 @@ class SparseMatrixQuickTest :
             DenseMatrix<DataType_> dm0(sm3);
             SparseMatrix<DataType_> sm4(dm0);
             TEST_CHECK_EQUAL(sm4, sm3);
+
+            unsigned long prenz(sm3[2].used_elements());
+            const DataType_ temp = ((const SparseMatrix<DataType_>)sm3)[2][0];
+            const DataType_ temp2(((const SparseMatrix<DataType_>)sm3)(2, 2));
+            TEST_CHECK_EQUAL(temp, DataType_(0));
+            TEST_CHECK_EQUAL(temp2, DataType_(0));
+            unsigned long postnz(sm3[2].used_elements());
+            TEST_CHECK_EQUAL(postnz, prenz);
         }
 };
 SparseMatrixQuickTest<float>  sparse_matrix_quick_test_float("float");

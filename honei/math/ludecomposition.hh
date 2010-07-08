@@ -114,6 +114,104 @@ namespace honei
                     x[i] = DT_(1) / u(i, i) * (x[i] - sum);
                 }
             }
+
+            template <typename DT_>
+            static void value(SparseMatrix<DT_> & a, DenseVector<DT_> & b, DenseVector<DT_> & x)
+            {
+                if (a.rows() != a.columns())
+                {
+                    throw VectorSizeDoesNotMatch(a.rows(), a.columns());
+                }
+                if (a.rows() != b.size())
+                {
+                    throw VectorSizeDoesNotMatch(a.rows(), b.size());
+                }
+                if (a.rows() != x.size())
+                {
+                    throw VectorSizeDoesNotMatch(a.rows(), x.size());
+                }
+
+                SparseMatrix<DT_> u(a.copy());
+                SparseMatrix<DT_> l(a.rows(), a.columns());
+                for (unsigned long i(0) ; i < a.rows() ; ++i)
+                {
+                    l(i, i) = 1;
+                }
+
+                for (unsigned long k(0) ; k < u.rows() - 1 ; ++k)
+                {
+                    //search maximum pivot in column k
+                    unsigned long pivot = k;
+                    for (unsigned long t(k + 1) ; t < u.rows() ; ++t)
+                    {
+                        if (fabs(((const SparseMatrix<DT_>)u)(t, k)) > fabs(((const SparseMatrix<DT_>)u)(pivot, k)))
+                                pivot = t;
+                    }
+                    //switch row k and row pivot
+                    DT_ nzt;
+                    if (pivot != k)
+                    {
+                        for (unsigned long i(k) ; i < a.columns() ; ++i)
+                        {
+                            const DT_ temp(((const SparseMatrix<DT_>)u)(k, i));
+                            nzt = ((const SparseMatrix<DT_>)u)(pivot, i);
+                            if (nzt != DT_(0) || temp != DT_(0))
+                            {
+                                nzt = u(k, i);
+                                u(pivot, i) = temp;
+                            }
+                        }
+                        for (unsigned long i(0) ; i < k  ; ++i)
+                        {
+                            const DT_ temp(((const SparseMatrix<DT_>)l)(k, i));
+                            nzt = ((const SparseMatrix<DT_>)l)(pivot, i);
+                            if (nzt != DT_(0) || temp != DT_(0))
+                            {
+                                l(k, i) = nzt;
+                                l(pivot, i) = temp;
+                            }
+                        }
+                        DT_ temp(b[k]);
+                        b[k] = b[pivot];
+                        b[pivot] = temp;
+                    }
+
+                    //todo calc and store LU insitu in A
+                    //todo use non zero elemment iterators
+                    for (unsigned long j(k + 1) ; j < u.rows() ; ++j)
+                    {
+                        nzt = ((const SparseMatrix<DT_>)u)(j, k) / ((const SparseMatrix<DT_>)u)(k, k);
+                        if (nzt != DT_(0))
+                            l(j, k) = nzt;
+                        for (unsigned long i(k) ; i < u.rows() ; ++i)
+                        {
+                            nzt = ((const SparseMatrix<DT_>)u)(j, i) - ((const SparseMatrix<DT_>)l)(j, k) * ((const SparseMatrix<DT_>)u)(k, i);
+                            if (nzt != DT_(0))
+                                u(j, i) = nzt;
+                        }
+                    }
+                }
+
+                for (unsigned long i(0) ; i < x.size() ; ++i)
+                {
+                    DT_ sum(0);
+                    for (unsigned long j(0) ; j < i ; ++j)
+                    {
+                        sum += ((const SparseMatrix<DT_>)l)(i,j) * x[j];
+                    }
+                    x[i] = DT_(1) / ((const SparseMatrix<DT_>)l)(i, i) * (b[i] - sum);
+                }
+
+                for (long i(x.size() - 1) ; i >= 0 ; --i)
+                {
+                    DT_ sum(0);
+                    for (unsigned long j(i+1) ; j < x.size() ; ++j)
+                    {
+                        sum += ((const SparseMatrix<DT_>)u)(i,j) * x[j];
+                    }
+                    x[i] = DT_(1) / ((const SparseMatrix<DT_>)u)(i, i) * (x[i] - sum);
+                }
+            }
     };
 }
 #endif

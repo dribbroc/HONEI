@@ -154,17 +154,17 @@ class PLUQuickTest:
 PLUQuickTest<double, tags::CPU> plu_quick_test_double("double");
 
 template <typename Tag_, typename DT1_>
-class LUTestSparseELL:
+class LUTestDenseELL:
     public BaseTest
 {
     private:
         std::string _m_f, _v_f, _i_f;
     public:
-        LUTestSparseELL(const std::string & tag,
+        LUTestDenseELL(const std::string & tag,
                 std::string m_file,
                 std::string v_file,
                 std::string init_file) :
-            BaseTest("LU Test (sparse ELL system)<" + tag + ">")
+            BaseTest("LU Test (Dense ELL system)<" + tag + ">")
         {
             register_tag(Tag_::name);
             _m_f = m_file;
@@ -242,5 +242,69 @@ class LUTestSparseELL:
             }
         }
 };
+LUTestDenseELL<tags::CPU, double> lu_test_dense_ell_double_2("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_init_0");
 
-LUTestSparseELL<tags::CPU, double> lu_test_sparse_ell_double_2("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_init_0");
+template <typename Tag_, typename DT1_>
+class LUTestSparseELL:
+    public BaseTest
+{
+    private:
+        std::string _m_f, _v_f, _r_f;
+    public:
+        LUTestSparseELL(const std::string & tag,
+                std::string m_file,
+                std::string v_file,
+                std::string ref_file) :
+            BaseTest("LU Test (sparse ELL system)<" + tag + ">")
+        {
+            register_tag(Tag_::name);
+            _m_f = m_file;
+            _v_f = v_file;
+            _r_f = ref_file;
+        }
+
+        virtual void run() const
+        {
+
+            std::string filename(HONEI_SOURCEDIR);
+            filename += "/honei/math/testdata/";
+            filename += _m_f;
+
+            SparseMatrixELL<DT1_> smatrix(MatrixIO<io_formats::ELL>::read_matrix(filename, DT1_(0)));
+
+            std::string filename_2(HONEI_SOURCEDIR);
+            filename_2 += "/honei/math/testdata/";
+            filename_2 += _v_f;
+            DenseVector<DT1_> rhs(smatrix.rows(), DT1_(0));
+            VectorIO<io_formats::EXP>::read_vector(filename_2, rhs);
+
+
+            std::string filename_4(HONEI_SOURCEDIR);
+            filename_4 += "/honei/math/testdata/";
+            filename_4 += _r_f;
+            DenseVector<DT1_> result_ref(rhs.size());
+            VectorIO<io_formats::EXP>::read_vector(filename_4, result_ref);
+
+
+            DenseVector<DT1_> lu_result(rhs.size());
+            SparseMatrix<DT1_> tsmatrix(smatrix);
+            LUDecomposition<Tag_>::value(tsmatrix, rhs, lu_result);
+
+            DT1_ base_digits(3);
+            DT1_ additional_digits(2);
+
+            DT1_ base_eps(1 / pow(10, base_digits));
+            DT1_ add_eps(base_eps / pow(10, additional_digits));
+
+            DT1_ m((add_eps - base_eps) / DT1_(4));
+            DT1_ b(base_eps - (DT1_(4) * m));
+
+            DT1_ eps(m * sizeof(DT1_) + b);
+            eps *= DT1_(3);
+            for (unsigned long i(0) ; i < result_ref.size() ; ++i)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(lu_result[i], result_ref[i], eps);
+            }
+        }
+};
+LUTestSparseELL<tags::CPU, double> lu_test_sparse_ell_double_2("double", "poisson_advanced/sort_0/A_7.ell", "poisson_advanced/sort_0/rhs_7", "poisson_advanced/sort_0/sol_7");

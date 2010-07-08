@@ -29,7 +29,7 @@ namespace honei
     {
         public:
         template <typename DT_>
-        static inline void value(SparseMatrix<DT_> & source, SparseMatrix<DT_> & target)
+        static inline void value(const SparseMatrix<DT_> & source, SparseMatrix<DT_> & target)
         {
             CONTEXT("When transposing sparse matrix: ");
             if(source.rows() != target.columns() || source.columns() != target.rows())
