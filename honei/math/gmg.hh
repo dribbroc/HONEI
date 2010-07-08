@@ -72,22 +72,24 @@ namespace honei
     struct GMGInfoFactory
     {
         public:
-            static GMGInfo<Prec_, MatrixType_, ProlMatrixType_> create(std::tr1::function<void (std::vector<MatrixType_> &,
-                                                                       std::vector<ProlMatrixType_> &,
-                                                                       std::vector<ProlMatrixType_> &,
-                                                                       std::vector<DenseVector<Prec_> > &,
-                                                                       unsigned long, unsigned long)> problem_factory,
-            unsigned long min_level,
-            unsigned long max_level,
-            unsigned long start_level,
-            unsigned long end_level,
-            unsigned long max_iters_global,
-            unsigned long max_iters_smoother,
-            unsigned long max_iters_coarse_solver,
-            Prec_ tolerance,
-            Prec_ tolerance_coarse,
-            Prec_ adaptive_correction_factor,
-            std::vector<unsigned long> & cycle)
+            static GMGInfo<Prec_,
+                           MatrixType_,
+                           ProlMatrixType_> create(std::tr1::function<void (std::vector<MatrixType_> &,
+                                                                            std::vector<ProlMatrixType_> &,
+                                                                            std::vector<ProlMatrixType_> &,
+                                                                            std::vector<DenseVector<Prec_> > &,
+                                                                            unsigned long, unsigned long)> problem_factory,
+                                                   unsigned long min_level,
+                                                   unsigned long max_level,
+                                                   unsigned long start_level,
+                                                   unsigned long end_level,
+                                                   unsigned long max_iters_global,
+                                                   unsigned long max_iters_smoother,
+                                                   unsigned long max_iters_coarse_solver,
+                                                   Prec_ tolerance,
+                                                   Prec_ tolerance_coarse,
+                                                   Prec_ adaptive_correction_factor,
+                                                   std::vector<unsigned long> & cycle)
             {
                 GMGInfo<Prec_, MatrixType_, ProlMatrixType_> info;
                 problem_factory(info.system_matrices, info.prolongation_matrices, info.restriction_matrices, info.rhs_vectors, min_level, max_level);
