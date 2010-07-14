@@ -102,7 +102,7 @@ namespace honei
              *
              * \param other The SparseVector to densify.
              */
-            DenseVector(const SparseVector<DataType_> & other);
+            explicit DenseVector(const SparseVector<DataType_> & other);
 
             /// Copy-constructor.
             DenseVector(const DenseVector<DataType_> & other);

@@ -131,6 +131,8 @@ namespace honei
                     throw VectorSizeDoesNotMatch(a.rows(), x.size());
                 }
 
+                //todo use non zero elemment iterators
+
                 SparseMatrix<DT_> u(a.copy());
                 SparseMatrix<DT_> l(a.rows(), a.columns());
                 for (unsigned long i(0) ; i < a.rows() ; ++i)
@@ -177,7 +179,6 @@ namespace honei
                     }
 
                     //todo calc and store LU insitu in A
-                    //todo use non zero elemment iterators
                     for (unsigned long j(k + 1) ; j < u.rows() ; ++j)
                     {
                         nzt = ((const SparseMatrix<DT_>)u)(j, k) / ((const SparseMatrix<DT_>)u)(k, k);

@@ -78,7 +78,7 @@ namespace honei
              *
              * \param src The BandedMatrix our matrix will be created from.
              */
-            BandedMatrixQ1(BandedMatrix<DataType_> & src);
+            explicit BandedMatrixQ1(BandedMatrix<DataType_> & src);
 
             /// Copy-constructor.
             BandedMatrixQ1(const BandedMatrixQ1<DataType_> & other);

@@ -133,7 +133,7 @@ namespace honei
                 }
             }
 
-            SparseMatrix(const SparseMatrixELL<DataType_> & src, unsigned long capacity = 1) :
+            explicit SparseMatrix(const SparseMatrixELL<DataType_> & src, unsigned long capacity = 1) :
                 _capacity(capacity),
                 _columns(src.columns()),
                 _rows(src.rows()),
@@ -156,7 +156,7 @@ namespace honei
                 }
             }
 
-            SparseMatrix(const BandedMatrixQ1<DataType_> & src, unsigned long capacity = 1) :
+            explicit SparseMatrix(const BandedMatrixQ1<DataType_> & src, unsigned long capacity = 1) :
                 _capacity(capacity),
                 _columns(src.columns()),
                 _rows(src.rows()),

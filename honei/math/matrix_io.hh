@@ -158,6 +158,8 @@ class MatrixIO<io_formats::M>
             {
                 unsigned long columns, rows, non_data_lines, non_zeros;
                 get_sizes(filename, rows, columns, non_zeros, non_data_lines);
+                if (non_zeros != row_indices.size() || non_zeros != column_indices.size() || non_zeros != data.size())
+                    throw InternalError("Vectorsize does not match!");
 
                 std::ifstream file(filename.c_str());
                 file.is_open();
@@ -349,6 +351,8 @@ class MatrixIO<io_formats::MTX>
             {
                 unsigned long columns, rows, non_data_lines, non_zeros;
                 get_sizes(filename, rows, columns, non_zeros, non_data_lines);
+                if (non_zeros != row_indices.size() || non_zeros != column_indices.size() || non_zeros != data.size())
+                    throw InternalError("Vectorsize does not match!");
 
                 std::ifstream file(filename.c_str());
                 file.is_open();

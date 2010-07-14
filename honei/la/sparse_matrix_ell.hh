@@ -57,7 +57,7 @@ namespace honei
              *
              * \param src The SparseMatrix our matrix will be created from.
              */
-            SparseMatrixELL(SparseMatrix<DataType_> & src);
+            explicit SparseMatrixELL(SparseMatrix<DataType_> & src);
 
             /// Copy-constructor.
             SparseMatrixELL(const SparseMatrixELL<DataType_> & other);

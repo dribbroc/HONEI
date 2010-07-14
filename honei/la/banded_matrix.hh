@@ -89,7 +89,7 @@ namespace honei
              *
              * \param source The q1 matrix our matrix will be created from.
              */
-            BandedMatrix(const BandedMatrixQ1<DataType_> & src);
+            explicit BandedMatrix(const BandedMatrixQ1<DataType_> & src);
 
             /// Destructor.
             ~BandedMatrix();

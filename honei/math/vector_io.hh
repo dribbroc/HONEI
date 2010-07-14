@@ -82,6 +82,8 @@ class VectorIO<io_formats::EXP>
             {
                 unsigned long non_data_lines, non_zeros;
                 get_size(filename, non_zeros, non_data_lines);
+                if (non_zeros != data.size())
+                    throw InternalError("Vectorsize does not match!");
 
                 std::ifstream file(filename.c_str());
                 if (! file.is_open())

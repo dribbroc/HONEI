@@ -224,13 +224,15 @@ public:
                 i_end(sv5.end_non_zero_elements()) ; i != i_end ; ++i)
         {
             TEST_CHECK_EQUAL(*i, counter);
-            if (*i == DataType_(2)) 
+            if (*i == DataType_(2))
             {
                 sv5[2] = DataType_(9);
             }
             TEST_CHECK_EQUAL(*i, counter);
             ++counter;
         }
+        typename SparseVector<DataType_>::NonZeroConstElementIterator ati(sv5.non_zero_element_at(3));
+        TEST_CHECK_EQUAL(*ati, DataType_(3));
 
         SparseVector<DataType_> sv6(size, 2);
         unsigned long prenz(sv6.used_elements());

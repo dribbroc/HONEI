@@ -38,6 +38,8 @@ template class InstantiationPolicy<GPUPool, Singleton>;
 GPUPool::GPUPool() :
     num_gpus(std::min(Configuration::instance()->get_value("cuda::num_gpu", 2), cuda_device_count()))
 {
+    if (num_gpus == 0)
+        throw InternalError("No GPU Found!");
     for (unsigned i(0) ; i < num_gpus ; ++i)
     {
         tasks.push_back(new std::queue<GPUTask *>);

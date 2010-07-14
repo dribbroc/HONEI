@@ -94,7 +94,7 @@ namespace honei
              *
              * \param other The SparseMatrix to densify.
              */
-            DenseMatrix(const SparseMatrix<DataType_> & other);
+            explicit DenseMatrix(const SparseMatrix<DataType_> & other);
 
             /**
              * Constructor
