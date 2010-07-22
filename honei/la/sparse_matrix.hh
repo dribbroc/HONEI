@@ -3,7 +3,7 @@
 /*
  * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
  * Copyright (c) 2007 Sven Mallach <sven.mallach@honei.org>
- * Copyright (c) 2009 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2009, 2010 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -56,8 +56,16 @@ namespace honei
             /// Our row-vectors.
             SharedArray<std::tr1::shared_ptr<SparseVector<DataType_> > > _row_vectors;
 
+            /// Our column-vectors.
+            SharedArray<std::tr1::shared_ptr<SparseVector<DataType_> > > _column_vectors;
+
             /// Our zero-vector.
             SparseVector<DataType_> _zero_vector;
+
+            /// Our zero-column-vector.
+            SparseVector<DataType_> _zero_column_vector;
+
+            void _synch_column_vectors();
 
         public:
             friend class honei::ConstElementIterator<storage::Sparse, container::Matrix, DataType_>;
@@ -97,7 +105,9 @@ namespace honei
                 _columns(columns),
                 _rows(rows),
                 _row_vectors(rows + 1),
-                _zero_vector(columns, 1)
+                _column_vectors(columns + 1),
+                _zero_vector(columns, 1),
+                _zero_column_vector(rows, 1)
             {
                 CONTEXT("When creating SparseMatrix:");
                 ASSERT(rows > 0, "number of rows is zero!");
@@ -106,20 +116,24 @@ namespace honei
                         stringify(columns) + "'!");
 
                 _row_vectors[rows].reset(new SparseVector<DataType_>(columns, 1));
+                _column_vectors[columns].reset(new SparseVector<DataType_>(rows, 1));
             }
 
-            SparseMatrix(DenseMatrix<DataType_> & src, unsigned long capacity = 1) :
+            explicit SparseMatrix(DenseMatrix<DataType_> & src, unsigned long capacity = 1) :
                 _capacity(capacity),
                 _columns(src.columns()),
                 _rows(src.rows()),
                 _row_vectors(src.rows() + 1),
-                _zero_vector(src.columns(), 1)
+                _column_vectors(src.columns() + 1),
+                _zero_vector(src.columns(), 1),
+                _zero_column_vector(src.rows(), 1)
             {
                 CONTEXT("When creating SparseMatrix:");
                 ASSERT(src.columns() >= capacity, "capacity '" + stringify(capacity) + "' exceeds row-vector size '" +
                         stringify(src.columns()) + "'!");
 
                 _row_vectors[src.rows()].reset(new SparseVector<DataType_>(src.columns(), 1));
+                _column_vectors[src.columns()].reset(new SparseVector<DataType_>(src.rows(), 1));
 
                 typename DenseMatrix<DataType_>::ElementIterator i(src.begin_elements());
                 typename SparseMatrix<DataType_>::ElementIterator si(this->begin_elements());
@@ -131,6 +145,8 @@ namespace honei
                     ++i;
                     ++si;
                 }
+
+                _synch_column_vectors();
             }
 
             explicit SparseMatrix(const SparseMatrixELL<DataType_> & src, unsigned long capacity = 1) :
@@ -138,7 +154,9 @@ namespace honei
                 _columns(src.columns()),
                 _rows(src.rows()),
                 _row_vectors(src.rows() + 1),
-                _zero_vector(src.columns(), 1)
+                _column_vectors(src.columns() + 1),
+                _zero_vector(src.columns(), 1),
+                _zero_column_vector(src.rows(), 1)
             {
                 CONTEXT("When creating SparseMatrix from SparseMatrixELL:");
                 ASSERT(src.columns() >= capacity, "capacity '" + stringify(capacity) + "' exceeds row-vector size '" +
@@ -154,6 +172,8 @@ namespace honei
                             (*this)(row, src.Aj()[i]) = src.Ax()[i];
                     }
                 }
+
+                _synch_column_vectors();
             }
 
             explicit SparseMatrix(const BandedMatrixQ1<DataType_> & src, unsigned long capacity = 1) :
@@ -161,7 +181,9 @@ namespace honei
                 _columns(src.columns()),
                 _rows(src.rows()),
                 _row_vectors(src.rows() + 1),
-                _zero_vector(src.columns(), 1)
+                _column_vectors(src.columns() + 1),
+                _zero_vector(src.columns(), 1),
+                _zero_column_vector(src.rows(), 1)
             {
                 CONTEXT("When creating SparseMatrix from BandedMatrixQ1:");
                 ASSERT(src.columns() >= capacity, "capacity '" + stringify(capacity) + "' exceeds row-vector size '" +
@@ -233,15 +255,19 @@ namespace honei
                     if (band_uu.elements()[i] != DataType_(0))
                         (*this)(i, root + 1 + i) = band_uu.elements()[i];
                 }
+
+                _synch_column_vectors();
             }
 
-            SparseMatrix(unsigned long rows, unsigned long columns, DenseVector<unsigned long> & row_indices,
+            explicit SparseMatrix(unsigned long rows, unsigned long columns, DenseVector<unsigned long> & row_indices,
                     DenseVector<unsigned long> & column_indices, DenseVector<DataType_> & data) :
                 _capacity(1),
                 _columns(columns),
                 _rows(rows),
                 _row_vectors(rows + 1),
-                _zero_vector(columns, 1)
+                _column_vectors(columns + 1),
+                _zero_vector(columns, 1),
+                _zero_column_vector(rows, 1)
             {
                 CONTEXT("When creating SparseMatrix:");
                 ASSERT(rows > 0, "number of rows is zero!");
@@ -255,6 +281,8 @@ namespace honei
                 {
                     (*this)(row_indices[i], column_indices[i]) = data[i];
                 }
+
+                _synch_column_vectors();
             }
 
             ~SparseMatrix()
@@ -346,6 +374,26 @@ namespace honei
                 return *_row_vectors[row];
             }
 
+            /// Retrieves column vector by index, zero-based, unassignable.
+            /// Only usable with operator(row, column, value) !
+            const SparseVector<DataType_> & column(unsigned long column) const
+            {
+                if (! _column_vectors[column])
+                    return _zero_column_vector;
+
+                return *_column_vectors[column];
+            }
+
+            /// Retrieves column vector by index, zero-based, assignable.
+            /// Only usable with operator(row, column, value) !
+            SparseVector<DataType_> & column(unsigned long column)
+            {
+                if (! _column_vectors[column])
+                    _column_vectors[column].reset(new SparseVector<DataType_>(_rows, _capacity));
+
+                return *_column_vectors[column];
+            }
+
             /// Retrieves element at (row, column), unassignable.
             const DataType_ & operator() (unsigned long row, unsigned long column) const
             {
@@ -367,6 +415,20 @@ namespace honei
                 return (*_row_vectors[row])[column];
             }
 
+            /// Writes element at (row, column).
+            void operator() (unsigned long row, unsigned long column, DataType_ value)
+            {
+                if (! _row_vectors[row])
+                    _row_vectors[row].reset(new SparseVector<DataType_>(_columns, _capacity));
+
+                if (! _column_vectors[column])
+                    _column_vectors[column].reset(new SparseVector<DataType_>(_rows, _capacity));
+
+                /// \todo access element directly
+                (*_row_vectors[row])[column] = value;
+                (*_column_vectors[column])[row] = value;
+            }
+
             /// Returns a copy of the matrix.
             SparseMatrix copy() const
             {
@@ -379,9 +441,27 @@ namespace honei
                         result._row_vectors[i].reset(new SparseVector<DataType_>(_row_vectors[i]->copy()));
                 }
 
+                for (unsigned long i(0) ; i < _columns ; ++i)
+                {
+                    if (_column_vectors[i])
+                        result._column_vectors[i].reset(new SparseVector<DataType_>(_column_vectors[i]->copy()));
+                }
+
                 return result;
             }
+
+
     };
+
+    template <typename DataType_>
+    void SparseMatrix<DataType_>::_synch_column_vectors()
+    {
+        for (typename SparseMatrix<DataType_>::NonZeroConstElementIterator i(this->begin_non_zero_elements()) ;
+                i != this->end_non_zero_elements() ; ++i)
+        {
+            this->column(i.column())[i.row()] = *i;
+        }
+    }
 
     template <typename DataType_> struct Implementation<ConstElementIterator<storage::Sparse, container::Matrix, DataType_> >
     {

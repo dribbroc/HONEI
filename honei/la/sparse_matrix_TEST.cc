@@ -102,7 +102,8 @@ class SparseMatrixLayoutTest :
                 for (typename SparseMatrix<DataType_>::ElementIterator i(sm.begin_elements()), i_end(sm.end_elements()) ;
                         i != i_end ; ++i)
                 {
-                    *i = static_cast<DataType_>(i.index());
+                    //*i = static_cast<DataType_>(i.index());
+                    sm(i.row(), i.column(), i.index());
                 }
 
                 TEST_CHECK_EQUAL(sm.columns(), columns);
@@ -110,11 +111,22 @@ class SparseMatrixLayoutTest :
 
                 SparseVector<DataType_> & row1 = sm[0];
                 TEST_CHECK_EQUAL(row1.size(), columns);
+                //SparseMatrixELL<DataType_> ell(sm);
+                //SparseMatrix<DataType_> sm2(ell);
+                //SparseVector<DataType_> & col1 = sm2.column(0);
+                SparseVector<DataType_> & col1 = sm.column(0);
+                TEST_CHECK_EQUAL(col1.size(), rows);
 
                 for (typename SparseVector<DataType_>::ConstElementIterator i(row1.begin_elements()), i_end(row1.end_elements()) ;
                         i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, i.index(), std::numeric_limits<DataType_>::epsilon());
+                }
+
+                for (typename SparseVector<DataType_>::ConstElementIterator i(col1.begin_elements()), i_end(col1.end_elements()) ;
+                        i != i_end ; ++i)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*i, i.index() * columns, std::numeric_limits<DataType_>::epsilon());
                 }
             }
         }
