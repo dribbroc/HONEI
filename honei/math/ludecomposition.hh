@@ -24,6 +24,8 @@
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
 
+#include <iostream>
+
 namespace honei
 {
     template <typename Tag_> struct LUDecomposition;
@@ -137,58 +139,79 @@ namespace honei
                 SparseMatrix<DT_> l(a.rows(), a.columns());
                 for (unsigned long i(0) ; i < a.rows() ; ++i)
                 {
-                    l(i, i) = 1;
+                    l(i, i, 1);
                 }
 
                 for (unsigned long k(0) ; k < u.rows() - 1 ; ++k)
                 {
                     //search maximum pivot in column k
                     unsigned long pivot = k;
-                    for (unsigned long t(k + 1) ; t < u.rows() ; ++t)
+                    DT_ piv_value = ((const SparseMatrix<DT_>)u)(pivot, k);
+                    SparseVector<DT_> act_col(u.column(k));
+                    for (typename SparseVector<DT_>::NonZeroConstElementIterator ci(act_col.begin_non_zero_elements()) ;
+                            ci != act_col.end_non_zero_elements() ; ++ci)
                     {
-                        if (fabs(((const SparseMatrix<DT_>)u)(t, k)) > fabs(((const SparseMatrix<DT_>)u)(pivot, k)))
-                                pivot = t;
+                        if (ci.index() < k + 1)
+                            continue;
+
+                        if (fabs(*ci) > fabs(piv_value))
+                        {
+                                pivot = ci.index();
+                                piv_value = *ci;
+                        }
                     }
+
                     //switch row k and row pivot
-                    DT_ nzt;
                     if (pivot != k)
                     {
-                        for (unsigned long i(k) ; i < a.columns() ; ++i)
-                        {
-                            const DT_ temp(((const SparseMatrix<DT_>)u)(k, i));
-                            nzt = ((const SparseMatrix<DT_>)u)(pivot, i);
-                            if (nzt != DT_(0) || temp != DT_(0))
-                            {
-                                nzt = u(k, i);
-                                u(pivot, i) = temp;
-                            }
-                        }
-                        for (unsigned long i(0) ; i < k  ; ++i)
-                        {
-                            const DT_ temp(((const SparseMatrix<DT_>)l)(k, i));
-                            nzt = ((const SparseMatrix<DT_>)l)(pivot, i);
-                            if (nzt != DT_(0) || temp != DT_(0))
-                            {
-                                l(k, i) = nzt;
-                                l(pivot, i) = temp;
-                            }
-                        }
+                        SparseVector<DT_> tempu = u[k];
+                        u[k] = u[pivot];
+                        u[pivot] = tempu;
+
+                        SparseVector<DT_> templ = l[k];
+                        l[k] = l[pivot];
+                        l[pivot] = templ;
+
                         DT_ temp(b[k]);
                         b[k] = b[pivot];
                         b[pivot] = temp;
                     }
+                }
+                u._synch_column_vectors();
+                l._synch_column_vectors();
 
+                DT_ nzt;
+                for (unsigned long k(0) ; k < u.rows() - 1 ; ++k)
+                {
                     //todo calc and store LU insitu in A
-                    for (unsigned long j(k + 1) ; j < u.rows() ; ++j)
+                    DT_ ukk(((const SparseMatrix<DT_>)u)(k, k));
+                    SparseVector<DT_> act_col(u.column(k));
+                    for (typename SparseVector<DT_>::NonZeroConstElementIterator ci(act_col.begin_non_zero_elements()) ;
+                            ci != act_col.end_non_zero_elements() ; ++ci)
                     {
-                        nzt = ((const SparseMatrix<DT_>)u)(j, k) / ((const SparseMatrix<DT_>)u)(k, k);
-                        if (nzt != DT_(0))
-                            l(j, k) = nzt;
-                        for (unsigned long i(k) ; i < u.rows() ; ++i)
+                        if (ci.index() < k + 1)
+                            continue;
+
+                        l(ci.index(), k, *ci / ukk);
+                    }
+
+                    act_col = l.column(k);
+                    for (typename SparseVector<DT_>::NonZeroConstElementIterator ci(act_col.begin_non_zero_elements()) ;
+                            ci != act_col.end_non_zero_elements() ; ++ci)
+                    {
+                        if (ci.index() < k + 1)
+                            continue;
+
+                        SparseVector<DT_> act_row(u[k]);
+                        for (typename SparseVector<DT_>::NonZeroConstElementIterator ri(act_row.begin_non_zero_elements()) ;
+                                ri != act_row.end_non_zero_elements() ; ++ri)
                         {
-                            nzt = ((const SparseMatrix<DT_>)u)(j, i) - ((const SparseMatrix<DT_>)l)(j, k) * ((const SparseMatrix<DT_>)u)(k, i);
+                            if (ri.index() < k)
+                                continue;
+
+                            nzt = ((const SparseMatrix<DT_>)u)(ci.index(), ri.index()) - *ci * *ri;
                             if (nzt != DT_(0))
-                                u(j, i) = nzt;
+                                u(ci.index(), ri.index(), nzt);
                         }
                     }
                 }
@@ -212,6 +235,18 @@ namespace honei
                     }
                     x[i] = DT_(1) / ((const SparseMatrix<DT_>)u)(i, i) * (x[i] - sum);
                 }
+
+                unsigned long nza(0);
+                unsigned long nzl(0);
+                unsigned long nzu(0);
+                for (unsigned long i(0) ; i < a.rows() ; ++i)
+                {
+                    nza += a[i].used_elements();
+                    nzl += l[i].used_elements();
+                    nzu += u[i].used_elements();
+                }
+                std::cout<<"NZ A: "<<nza<<" L: "<<nzl<<" U: "<<nzu<<std::endl;
+
             }
     };
 }

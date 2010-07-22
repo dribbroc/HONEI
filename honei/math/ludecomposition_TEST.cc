@@ -278,13 +278,11 @@ class LUTestSparseELL:
             DenseVector<DT1_> rhs(smatrix.rows(), DT1_(0));
             VectorIO<io_formats::EXP>::read_vector(filename_2, rhs);
 
-
             std::string filename_4(HONEI_SOURCEDIR);
             filename_4 += "/honei/math/testdata/";
             filename_4 += _r_f;
             DenseVector<DT1_> result_ref(rhs.size());
             VectorIO<io_formats::EXP>::read_vector(filename_4, result_ref);
-
 
             DenseVector<DT1_> lu_result(rhs.size());
             SparseMatrix<DT1_> tsmatrix(smatrix);

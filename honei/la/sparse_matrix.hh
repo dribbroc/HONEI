@@ -65,8 +65,6 @@ namespace honei
             /// Our zero-column-vector.
             SparseVector<DataType_> _zero_column_vector;
 
-            void _synch_column_vectors();
-
         public:
             friend class honei::ConstElementIterator<storage::Sparse, container::Matrix, DataType_>;
             friend class honei::ElementIterator<storage::Sparse, container::Matrix, DataType_>;
@@ -89,6 +87,9 @@ namespace honei
 
             /// Type of the iterator over our non zero elements.
             typedef honei::ElementIterator<storage::SparseNonZero, container::Matrix, DataType_> NonZeroElementIterator;
+
+            void _synch_column_vectors();
+
 
             /// \name Constructors
             /// \{
