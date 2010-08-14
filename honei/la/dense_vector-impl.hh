@@ -539,6 +539,8 @@ namespace honei
         if (a.size() != b.size())
             throw VectorSizeDoesNotMatch(a.size(), b.size());
 
+        a.lock(lm_read_only);
+        b.lock(lm_read_only);
         for (typename DenseVectorBase<DataType_>::ConstElementIterator i(a.begin_elements()), i_end(a.end_elements()),
                 j(b.begin_elements()) ; i != i_end ; ++i, ++j)
         {
@@ -547,6 +549,8 @@ namespace honei
             if (std::fabs(*i - *j) > std::numeric_limits<DataType_>::epsilon())
                 return false;
         }
+        a.unlock(lm_read_only);
+        b.unlock(lm_read_only);
 
         return true;
     }
@@ -555,6 +559,7 @@ namespace honei
     std::ostream &
     operator<< (std::ostream & lhs, const DenseVector<DataType_> & b)
     {
+        b.lock(lm_read_only);
         lhs << "[";
         for (typename DenseVector<DataType_>::ConstElementIterator i(b.begin_elements()), i_end(b.end_elements()) ;
                 i != i_end ; ++i)
@@ -562,6 +567,7 @@ namespace honei
             lhs << "  " << *i;
         }
         lhs << "]" << std::endl;
+        b.unlock(lm_read_only);
 
         return lhs;
     }
