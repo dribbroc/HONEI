@@ -13,4 +13,4 @@ if MPI
   MPIDIR = mpi
 endif
 
-SUBDIRS = $(VISUALDIR) $(MPIDIR) $(HQTDIR) config io_convert spai
+SUBDIRS = $(VISUALDIR) $(MPIDIR) $(HQTDIR) config io_convert spai fortran
