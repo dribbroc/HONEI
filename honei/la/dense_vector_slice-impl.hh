@@ -243,7 +243,11 @@ namespace honei
                 j(b.begin_elements()) ; i != i_end ; ++i, ++j)
         {
             if (std::fabs(*i - *j) > std::numeric_limits<DataType_>::epsilon())
+            {
+                a.unlock(lm_read_only);
+                b.unlock(lm_read_only);
                 return false;
+            }
         }
         a.unlock(lm_read_only);
         b.unlock(lm_read_only);
