@@ -27,6 +27,12 @@ extern "C"
     void push_rhs_(double* data, long* size);
     void push_x_(double* data, long* size);
     void push_diags_inverted_(double* data, long* size);
+    void push_a_(long* rows, long* columns, long* nz,
+            long* row_indices, long* column_indices, double* data);
+    void push_prolmats_(long* rows, long* columns, long* nz,
+            long* row_indices, long* column_indices, double* data);
+    void push_resmats_(long* rows, long* columns, long* nz,
+            long* row_indices, long* column_indices, double* data);
 
 
     void run_();
@@ -188,6 +194,59 @@ void push_diags_inverted_(double* data, long* size)
     MG::info()->diags_inverted.push_back(diags_inverted);
 }
 
+void push_a_(long* rows, long* columns, long* nz,
+        long* row_indices, long* column_indices, double* data)
+{
+    DenseVector<unsigned long> row_dv(*nz);
+    DenseVector<unsigned long> column_dv(*nz);
+    DenseVector<double> data_dv(*nz);
+    for (long i(0) ; i < *nz ; ++i)
+    {
+        row_dv[i] = row_indices[i];
+        column_dv[i] = column_indices[i];
+        data_dv[i] = data[i];
+    }
+
+    SparseMatrix<double> sm(*rows, *columns, row_dv, column_dv, data_dv);
+    SparseMatrixELL<double> smell(sm);
+    MG::info()->a.push_back(smell);
+}
+
+void push_prolmats_(long* rows, long* columns, long* nz,
+        long* row_indices, long* column_indices, double* data)
+{
+    DenseVector<unsigned long> row_dv(*nz);
+    DenseVector<unsigned long> column_dv(*nz);
+    DenseVector<double> data_dv(*nz);
+    for (long i(0) ; i < *nz ; ++i)
+    {
+        row_dv[i] = row_indices[i];
+        column_dv[i] = column_indices[i];
+        data_dv[i] = data[i];
+    }
+
+    SparseMatrix<double> sm(*rows, *columns, row_dv, column_dv, data_dv);
+    SparseMatrixELL<double> smell(sm);
+    MG::info()->prolmats.push_back(smell);
+}
+
+void push_resmats_(long* rows, long* columns, long* nz,
+        long* row_indices, long* column_indices, double* data)
+{
+    DenseVector<unsigned long> row_dv(*nz);
+    DenseVector<unsigned long> column_dv(*nz);
+    DenseVector<double> data_dv(*nz);
+    for (long i(0) ; i < *nz ; ++i)
+    {
+        row_dv[i] = row_indices[i];
+        column_dv[i] = column_indices[i];
+        data_dv[i] = data[i];
+    }
+
+    SparseMatrix<double> sm(*rows, *columns, row_dv, column_dv, data_dv);
+    SparseMatrixELL<double> smell(sm);
+    MG::info()->resmats.push_back(smell);
+}
 
 
 
@@ -197,5 +256,5 @@ void run_()
     DenseVector<double> rhs(MG::info()->rhs[MG::info()->max_level]);
     DenseVector<double> result(rhs.size(), double(0));
     SparseMatrixELL<double> system(MG::info()->a[MG::info()->max_level]);
-    Multigrid<tags::CPU::SSE, tags::CPU::SSE, NONE, JAC, CYCLE::V, FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<double>::epsilon(), *MG::info());
+    Multigrid<tags::CPU::SSE, tags::CPU::SSE, methods::NONE, JAC, CYCLE::V, FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<double>::epsilon(), *MG::info());
 }

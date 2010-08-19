@@ -53,6 +53,6 @@ libhoneifortran_la_SOURCES = ftoh.cc
 #libhoneifortran_include_HEADERS =
 
 feat: libhoneifortran.la
-	gfortran -o feat feat.f90 -lhoneifortran -L.libs
+	gfortran $(CXXFLAGS) -o feat feat.f90 -lhoneifortran -L.libs
 	@echo To run the test application, run
-	@echo LD_LIBRARY_PATH="$LD_LIBRARY_PATH:.libs" ./feat
+	@echo LD_LIBRARY_PATH=\"{DOLLAR}LD_LIBRARY_PATH:.libs\" ./feat
