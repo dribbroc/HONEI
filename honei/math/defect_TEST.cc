@@ -34,7 +34,7 @@ class DefectTest:
 {
     public:
         DefectTest(const std::string & tag) :
-            BaseTest("Defect Test")
+            BaseTest("Defect Test " + tag)
         {
             register_tag(Tag_::name);
         }
@@ -92,7 +92,7 @@ class DefectRegressionTest:
         std::string _m_f, _v_f;
     public:
         DefectRegressionTest(const std::string & tag, std::string m_file, std::string v_file) :
-            BaseTest("Defect Regression Test")
+            BaseTest("Defect Regression Test " + tag)
         {
             register_tag(Tag_::name);
             _m_f = m_file;

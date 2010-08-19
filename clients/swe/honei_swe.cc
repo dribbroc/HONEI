@@ -175,7 +175,7 @@ static void resize (int width, int height)
     glutPostRedisplay ();
 }
 
-static void keyboard (unsigned char key, int x, int y)
+static void keyboard (unsigned char key, HONEI_UNUSED int x, HONEI_UNUSED int y)
 {
     switch (key)
     {
@@ -255,7 +255,7 @@ static void keyboard (unsigned char key, int x, int y)
     }
 }
 
-static void keyboard_s (int key, int x, int y)
+static void keyboard_s (int key, HONEI_UNUSED int x, HONEI_UNUSED int y)
 {
     switch (key)
     {
@@ -299,7 +299,7 @@ static void keyboard_s (int key, int x, int y)
     }
 }
 
-static void mouse (int button, int state, int x, int y)
+static void mouse (HONEI_UNUSED int button, HONEI_UNUSED int state, HONEI_UNUSED int x, HONEI_UNUSED int y)
 {
     /*if (button == GLUT_LEFT_BUTTON && state ==GLUT_DOWN)
       glutSetCursor(GLUT_CURSOR_INFO);

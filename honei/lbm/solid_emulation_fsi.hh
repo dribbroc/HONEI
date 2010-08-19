@@ -41,8 +41,8 @@ namespace honei
             {
                 public:
                     template<typename DT_>
-                        static unsigned long value(DT_ tx, DT_ ty, PackedSolidData<lbm_lattice_types::D2Q9, DT_> & solids,
-                                          PackedGridData<lbm_lattice_types::D2Q9, DT_> & data)
+                        static unsigned long value(DT_ tx, DT_ ty, HONEI_UNUSED PackedSolidData<lbm_lattice_types::D2Q9, DT_> & solids,
+                                          HONEI_UNUSED PackedGridData<lbm_lattice_types::D2Q9, DT_> & data)
 
                         {
                             DenseVector<DT_> t(2ul, DT_(0));

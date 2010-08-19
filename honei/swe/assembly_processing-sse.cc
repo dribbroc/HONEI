@@ -27,7 +27,7 @@
 using namespace std;
 using namespace honei;
 
-BandedMatrix<float> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK::M6>::value(BandedMatrix<float> & m1, BandedMatrix<float> & result, DenseVector<float> & c, unsigned long d_width, unsigned long d_height)
+BandedMatrix<float> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK::M6>::value(BandedMatrix<float> & m1, BandedMatrix<float> & result, DenseVector<float> & c, HONEI_UNUSED unsigned long d_width, HONEI_UNUSED unsigned long d_height)
 {
     DenseVector<float> m6diag(m1.size());
     DenseVector<float> m6bandplus3(m1.size());
@@ -200,7 +200,7 @@ BandedMatrix<float> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK::
     return result;
 }
 
-BandedMatrix<double> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK::M6>::value(BandedMatrix<double> & m1, BandedMatrix<double> & result, DenseVector<double> & c, unsigned long d_width, unsigned long d_height)
+BandedMatrix<double> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK::M6>::value(BandedMatrix<double> & m1, BandedMatrix<double> & result, DenseVector<double> & c, HONEI_UNUSED unsigned long d_width, HONEI_UNUSED unsigned long d_height)
 {
     DenseVector<double> m6diag(m1.size());
     DenseVector<double> m6bandplus3(m1.size());
@@ -375,7 +375,7 @@ BandedMatrix<double> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK:
 
 //------------M8------------
 
-BandedMatrix<float> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK::M8>::value(BandedMatrix<float> & m2, BandedMatrix<float> & result, DenseVector<float> & d, unsigned long d_width, unsigned long d_height)
+BandedMatrix<float> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK::M8>::value(BandedMatrix<float> & m2, BandedMatrix<float> & result, DenseVector<float> & d, HONEI_UNUSED unsigned long d_width, HONEI_UNUSED unsigned long d_height)
 {
     DenseVector<float> m8diag(m2.size());
     DenseVector<float> m8bandplus3(m2.size());
@@ -548,7 +548,7 @@ BandedMatrix<float> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK::
     return result;
 }
 
-BandedMatrix<double> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK::M8>::value(BandedMatrix<double> & m2, BandedMatrix<double> & result, DenseVector<double> & d, unsigned long d_width, unsigned long d_height)
+BandedMatrix<double> & AssemblyProcessing<tags::CPU::SSE, assembly_types::QUICK::M8>::value(BandedMatrix<double> & m2, BandedMatrix<double> & result, DenseVector<double> & d, HONEI_UNUSED unsigned long d_width, HONEI_UNUSED unsigned long d_height)
 {
     DenseVector<double> m8diag(m2.size());
     DenseVector<double> m8bandplus3(m2.size());

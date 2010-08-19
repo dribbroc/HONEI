@@ -1261,11 +1261,11 @@ namespace honei {
         typename DenseVector<WorkPrec_>::ElementIterator bminus1(m1bandMinus1.begin_elements());
 
         ///Iterate through the vectors in order to avoid boundary access.
-        for( ; i.index() < 6*(_d_width+4); ++i);
-        for( ; d.index() < 6*(_d_width+4); ++d);
-        for( ; b1.index() < 6*(_d_width+4); ++b1);
-        for( ; b2.index() < 6*(_d_width+4); ++b2);
-        for( ; bminus1.index() < 6*(_d_width+4); ++bminus1);
+        for( ; i.index() < 6*(_d_width+4); ++i) {}
+        for( ; d.index() < 6*(_d_width+4); ++d) {}
+        for( ; b1.index() < 6*(_d_width+4); ++b1) {}
+        for( ; b2.index() < 6*(_d_width+4); ++b2) {}
+        for( ; bminus1.index() < 6*(_d_width+4); ++bminus1) {}
 
         while(i.index() < 3*(_d_width + 4) * (_d_height + 2))
         {
@@ -1430,7 +1430,7 @@ namespace honei {
              typename InitPrec1_,
              typename InitPrec2_>
     template<typename WorkPrec_>
-    void RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_setup_stage1(DenseVector<WorkPrec_>& su, DenseVector<WorkPrec_>& sv, DenseVector<WorkPrec_>& sw)
+    void RelaxSolver<Tag_, ResPrec_, PredictionPrec1_, PredictionPrec2_, InitPrec1_, InitPrec2_>:: _do_setup_stage1(HONEI_UNUSED DenseVector<WorkPrec_>& su, DenseVector<WorkPrec_>& sv, DenseVector<WorkPrec_>& sw)
     {
         WorkPrec_ prefac(0);
         if(_eps != _delta_t)
@@ -2174,10 +2174,10 @@ namespace honei {
         DenseVector<WorkPrec_> c_squared((_c->copy()));
         ElementProduct<Tag_>::value(c_squared, (*_c));
 
-        for( ; d.index() < 6*(_d_width+4); ++d);
-        for( ; b1.index() < 6*(_d_width+4); ++b1);
-        for( ; b2.index() < 6*(_d_width+4); ++b2);
-        for( ; bminus1.index() < 6*(_d_width+4); ++bminus1);
+        for( ; d.index() < 6*(_d_width+4); ++d) {}
+        for( ; b1.index() < 6*(_d_width+4); ++b1) {}
+        for( ; b2.index() < 6*(_d_width+4); ++b2) {}
+        for( ; bminus1.index() < 6*(_d_width+4); ++bminus1) {}
 
         while(d.index() < 3*(_d_width+4)*(_d_height+2))
         {
@@ -2250,10 +2250,10 @@ namespace honei {
         DenseVector<WorkPrec_> d_squared(((_d->copy())));
         ElementProduct<Tag_>::value(d_squared, (*_d));
 
-        for( ; d.index() < 6*(_d_width + 4); ++d);
-        for( ; b1.index() < 6*(_d_width + 4); ++b1);
-        for( ; b2.index() < 6*(_d_width + 4); ++b2);
-        for( ; bminus1.index() < 6*(_d_width + 4); ++bminus1);
+        for( ; d.index() < 6*(_d_width + 4); ++d) {}
+        for( ; b1.index() < 6*(_d_width + 4); ++b1) {}
+        for( ; b2.index() < 6*(_d_width + 4); ++b2) {}
+        for( ; bminus1.index() < 6*(_d_width + 4); ++bminus1) {}
 
         while(d.index() < 3*(_d_width+4)*(_d_height+2))
         {

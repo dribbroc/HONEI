@@ -112,7 +112,7 @@ template<typename Tag_, typename Prec_> class ScenarioController
             delete _solver;
         }
 
-        static int get_precision(int scen_id)
+        static int get_precision(HONEI_UNUSED int scen_id)
         {
             return 0; // todo return the correct accuracy (0(float) or 1(double))
         }

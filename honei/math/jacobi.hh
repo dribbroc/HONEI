@@ -51,7 +51,7 @@ namespace honei
     {
         private:
             template<typename DT1_, typename DT2_>
-            static inline void jacobi_kernel(DenseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag, DenseVector<DT1_> & diag_inverted, DenseMatrix<DT1_> & difference)
+            static inline void jacobi_kernel(HONEI_UNUSED DenseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, HONEI_UNUSED DenseVector<DT1_> & diag, DenseVector<DT1_> & diag_inverted, DenseMatrix<DT1_> & difference)
             {
 #ifdef SOLVER_VERBOSE_L3
                 std::cout << "    Calling JACOBI kernel, datalayout=DENSE, version=1" << std::endl;
@@ -66,7 +66,7 @@ namespace honei
             }
 
             template<typename DT1_, typename DT2_>
-            static inline void jacobi_kernel(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag, DenseVector<DT1_> & diag_inverted, BandedMatrix<DT1_> & difference)
+            static inline void jacobi_kernel(HONEI_UNUSED BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, HONEI_UNUSED DenseVector<DT1_> & diag, DenseVector<DT1_> & diag_inverted, BandedMatrix<DT1_> & difference)
             {
 #ifdef SOLVER_VERBOSE_L3
                 std::cout << "    Calling JACOBI kernel, datalayout=BANDED, version=1" << std::endl;
@@ -82,7 +82,7 @@ namespace honei
 
 
             template<typename DT1_, typename DT2_>
-            static inline void jacobi_kernel(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, BandedMatrixQ1<DT1_> & difference)
+            static inline void jacobi_kernel(HONEI_UNUSED BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, BandedMatrixQ1<DT1_> & difference)
             {
 #ifdef SOLVER_VERBOSE_L3
                 std::cout << "    Calling JACOBI kernel, datalayout=Q1, version=1" << std::endl;
@@ -115,7 +115,7 @@ namespace honei
             }
 //MG types:
             template<typename DT1_, typename DT2_>
-            static inline void jacobi_kernel(DenseVector<DT1_> to_smooth, BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, BandedMatrixQ1<DT1_> & difference, DT1_ omega)
+            static inline void jacobi_kernel(DenseVector<DT1_> to_smooth, BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, HONEI_UNUSED BandedMatrixQ1<DT1_> & difference, HONEI_UNUSED DT1_ omega)
             {
 #ifdef SOLVER_VERBOSE_L3
                 std::cout << "    Calling JACOBI kernel, datalayout=Q1, version=2" << std::endl;
@@ -266,7 +266,7 @@ namespace honei
                 former_result.unlock(lm_write_only);*/
             }
             template<typename DT1_, typename DT2_>
-            static inline void jacobi_kernel(DenseVector<DT1_> to_smooth, SparseMatrixELL<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, SparseMatrixELL<DT1_> & difference, DT1_ omega)
+            static inline void jacobi_kernel(DenseVector<DT1_> to_smooth, SparseMatrixELL<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, HONEI_UNUSED SparseMatrixELL<DT1_> & difference, HONEI_UNUSED DT1_ omega)
             {
 #ifdef SOLVER_VERBOSE_L3
                 std::cout << "    Calling JACOBI kernel, datalayout=ELL, version=2" << std::endl;
@@ -292,7 +292,7 @@ namespace honei
             }
 //end MG types
             template<typename DT1_, typename DT2_>
-            static inline void jacobi_kernel(SparseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag, DenseVector<DT1_> & diag_inverted, SparseMatrix<DT1_> & difference)
+            static inline void jacobi_kernel(HONEI_UNUSED SparseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, HONEI_UNUSED DenseVector<DT1_> & diag, DenseVector<DT1_> & diag_inverted, SparseMatrix<DT1_> & difference)
             {
 #ifdef SOLVER_VERBOSE_L3
                 std::cout << "    Calling JACOBI kernel, datalayout=SPARSE, version=1" << std::endl;
@@ -396,10 +396,10 @@ namespace honei
             }
 //MG types:
             template <typename DT1_, typename DT2_>
-            static inline void value(BandedMatrixQ1<DT1_> & system_matrix,
+            static inline void value(HONEI_UNUSED BandedMatrixQ1<DT1_> & system_matrix,
                     DenseVector<DT2_> & right_hand_side,
                     DenseVector<DT2_> & x,
-                    DT1_ omega,
+                    HONEI_UNUSED DT1_ omega,
                     DenseVector<DT1_> & diag_inverted)
             {
                 CONTEXT("When solving banded linear system (Q1) with Jacobi (fixed # iterations):");
@@ -479,11 +479,11 @@ namespace honei
             }
 
             template <typename DT1_, typename DT2_>
-            static inline void value(SparseMatrixELL<DT1_> & system_matrix,
+            static inline void value(HONEI_UNUSED SparseMatrixELL<DT1_> & system_matrix,
                     DenseVector<DT2_> & right_hand_side,
                     DenseVector<DT2_> & x,
-                    DT1_ omega,
-                    DenseVector<DT1_> & diag_inverted)
+                    HONEI_UNUSED DT1_ omega,
+                    HONEI_UNUSED DenseVector<DT1_> & diag_inverted)
             {
                 CONTEXT("When smoothing sparse linear system with Jacobi (fixed # iterations):");
 #if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)

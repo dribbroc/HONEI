@@ -21,6 +21,7 @@
 #define LIBUTIL_GUARD_TAGS_HH 1
 
 #include <honei/util/instantiation_policy.hh>
+#include <honei/util/attributes.hh>
 
 #include <ostream>
 

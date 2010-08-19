@@ -82,7 +82,7 @@ namespace
 }
 
 DenseVector<float> & Restriction<tags::GPU::CUDA, methods::NONE>::value(DenseVector<float> & coarse,
-        const DenseVector<float> & fine, const DenseVector<unsigned long> & mask, BandedMatrixQ1<float> & resmat)
+        const DenseVector<float> & fine, const DenseVector<unsigned long> & mask, HONEI_UNUSED BandedMatrixQ1<float> & resmat)
 {
     CONTEXT("When restricting from fine to coarse (CUDA):");
 
@@ -102,7 +102,7 @@ DenseVector<float> & Restriction<tags::GPU::CUDA, methods::NONE>::value(DenseVec
     return coarse;
 }
 DenseVector<float> & Restriction<tags::GPU::CUDA, methods::NONE>::value(DenseVector<float> & coarse,
-        const DenseVector<float> & fine, const DenseVector<unsigned long> & mask, SparseMatrixELL<float> & resmat)
+        const DenseVector<float> & fine, const DenseVector<unsigned long> & mask, HONEI_UNUSED SparseMatrixELL<float> & resmat)
 {
     CONTEXT("When restricting from fine to coarse (CUDA):");
 

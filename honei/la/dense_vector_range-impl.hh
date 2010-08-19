@@ -91,6 +91,7 @@ namespace honei
 
     template <typename DataType_>
     DenseVectorRange<DataType_>::DenseVectorRange(const DenseVectorRange<DataType_> & other) :
+        DenseVectorContinuousBase<DataType_>(),
         PrivateImplementationPattern<DenseVectorRange<DataType_>, Shared>(new Implementation<DenseVectorRange<DataType_> >(
                     other._imp->elements, other._imp->size, other._imp->offset))
     {

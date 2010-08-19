@@ -253,7 +253,7 @@ namespace honei
                 float * h, float * u, float * v,
                 float * f_0, float * f_1, float * f_2,
                 float * f_3, float * f_4, float * f_5,
-                float * f_6, float * f_7, float * f_8, float epsilon)
+                float * f_6, float * f_7, float * f_8, float /*epsilon*/)
         {
             unsigned long size(end - begin);
 
@@ -431,7 +431,7 @@ namespace honei
                 double * h, double * u, double * v,
                 double * f_0, double * f_1, double * f_2,
                 double * f_3, double * f_4, double * f_5,
-                double * f_6, double * f_7, double * f_8, double epsilon)
+                double * f_6, double * f_7, double * f_8, double /*epsilon*/)
         {
             unsigned long size(end - begin);
 

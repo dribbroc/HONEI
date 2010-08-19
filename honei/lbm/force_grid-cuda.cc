@@ -190,7 +190,7 @@ namespace
 }
 
 void ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(
-        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float g, float d_x, float d_y, float d_t, float manning)
+        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float g, float d_x, float d_y, float d_t, HONEI_UNUSED float manning)
 {
     CONTEXT("When computing LABSWE source term (CUDA):");
 

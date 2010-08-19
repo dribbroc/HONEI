@@ -477,7 +477,7 @@
                         }
                 }
 
-                Implementation(AbstractGraph<DataType_> & graph, DataType_ edgeLength) :
+                Implementation(AbstractGraph<DataType_> & graph, HONEI_UNUSED DataType_ edgeLength) :
                     _coordinates(*graph.coordinates()),
                     _weights_of_nodes(*graph.node_weights()),
                     _weights_of_edges(*graph.edges()),
@@ -755,7 +755,7 @@
                         throw GraphError("Graph must be coherent");
                 }
 
-                Implementation(AbstractGraph<DataType_> & graph, DataType_ edge_length) :
+                Implementation(AbstractGraph<DataType_> & graph, HONEI_UNUSED DataType_ edge_length) :
                     _coordinates(*graph.coordinates()),
                     _weights_of_nodes(*graph.node_weights()),
                     _weights_of_edges(*graph.edges()),

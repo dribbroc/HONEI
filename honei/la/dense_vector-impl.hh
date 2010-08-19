@@ -141,6 +141,7 @@ namespace honei
 
     template <typename DataType_>
     DenseVector<DataType_>::DenseVector(const DenseVector<DataType_> & other) :
+        DenseVectorContinuousBase<DataType_>(),
         PrivateImplementationPattern<DenseVector<DataType_>, Shared>(other._imp)
     {
     }

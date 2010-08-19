@@ -70,7 +70,7 @@ namespace honei
     {
         public:
             template<typename DT1_, typename DT2_>
-            static inline  DenseVector<DT1_> value(DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, BandedMatrix<DT1_> & difference, DenseVector<DT2_> & scaled_d)
+            static inline  DenseVector<DT1_> value(DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, BandedMatrix<DT1_> & difference, HONEI_UNUSED DenseVector<DT2_> & scaled_d)
             {
                 DenseVector<DT1_> temp = Product<tags::CPU>::value(difference, former_result.copy());
 

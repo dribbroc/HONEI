@@ -583,7 +583,7 @@ namespace honei
 
         public:
 
-            static void compose(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
+            static void compose(HONEI_UNUSED PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
                     std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list)
             {
                 data.h->lock(lm_read_and_write);
@@ -607,7 +607,7 @@ namespace honei
                 }
             }
 
-            static void synch(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
+            static void synch(HONEI_UNUSED PackedGridInfo<D2Q9> & info, HONEI_UNUSED PackedGridData<D2Q9, DT_> & data,
                     std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list,
                     std::vector<PackedGridFringe<D2Q9> > & fringe_list)
             {

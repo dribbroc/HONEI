@@ -982,7 +982,7 @@ namespace honei
 
     template <typename DataType_>
     ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_> &
-    ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::operator+= (const unsigned long step)
+    ConstElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::operator+= (const unsigned long /*step*/)
     {
         throw InternalError("Not implemented yet!");
     }
@@ -1172,7 +1172,7 @@ namespace honei
 
     template <typename DataType_>
     ElementIterator<storage::SparseNonZero, container::Matrix, DataType_> &
-    ElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::operator+= (const unsigned long step)
+    ElementIterator<storage::SparseNonZero, container::Matrix, DataType_>::operator+= (const unsigned long /*step*/)
     {
         throw InternalError("Not implemented yet!");
     }

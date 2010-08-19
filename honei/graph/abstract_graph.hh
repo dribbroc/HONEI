@@ -69,27 +69,27 @@ namespace honei
         }
 
         virtual int node_count() = 0;
-        
+
         virtual bool includes_timeslices()
         {
             return false;
         }
-        
+
         virtual inline int slice_count()
         {
             return 0;
         }
-                
-        virtual inline int timeslice_index(int node_index)
+
+        virtual inline int timeslice_index(HONEI_UNUSED int node_index)
         {
             return 0;
         }
 
-        virtual inline bool same_timeslice(int index1, int index2)
+        virtual inline bool same_timeslice(HONEI_UNUSED int index1, HONEI_UNUSED int index2)
         {
             return true;
         }
-        
+
         void write_gml(const char filename[], bool include_coordinates = false)
         {
             std::ofstream fs(filename, std::ios_base::out);
@@ -121,7 +121,7 @@ namespace honei
                         fs << "        weight " << *i << "\n";
                         fs << "    ]\n";
                 }
-            fs << "]\n";                
+            fs << "]\n";
         fs.close();
         }
     };

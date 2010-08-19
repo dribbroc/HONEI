@@ -34,7 +34,7 @@ namespace honei
                     return veloc * (g_w * d_x) / (d_x * d_x * (2. * tau - 1.)/ (6. * d_t));
                 }
 
-                static double adjust_veloc(double reynolds, double veloc, double g_w, double d_x, double d_t, double tau)
+                static double adjust_veloc(double reynolds, HONEI_UNUSED double veloc, double g_w, double d_x, double d_t, double tau)
                 {
                     return (reynolds * (d_x * d_x / d_t) * (2. * tau - 1.))/(6. * g_w * d_x);
                 }

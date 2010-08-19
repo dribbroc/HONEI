@@ -20,6 +20,7 @@
  */
 
 #include <honei/util/stringify.hh>
+#include <honei/util/attributes.hh>
 #include <honei/util/exception.hh>
 #include <honei/util/tags.hh>
 #include <honei/util/benchmark_info.hh>
@@ -100,8 +101,8 @@ class BenchFailedException :
         /**
          * Constructor.
          */
-        BenchFailedException(const char * const function, const char * const file,
-            const long line, const std::string & message) throw ()
+        BenchFailedException(HONEI_UNUSED const char * const function, HONEI_UNUSED const char * const file,
+            HONEI_UNUSED const long line, const std::string & message) throw ()
         {
             _message = message;
         }

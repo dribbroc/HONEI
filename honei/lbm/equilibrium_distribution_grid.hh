@@ -188,7 +188,7 @@ namespace honei
                 }
 
             template<typename DT1_>
-            static inline BenchmarkInfo get_benchmark_info(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT1_> * data)
+            static inline BenchmarkInfo get_benchmark_info(HONEI_UNUSED PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT1_> * data)
                 {
                     BenchmarkInfo result;
                     result.flops = data->h->size() * 12 + 8 * data->h->size() * 27;
@@ -207,7 +207,7 @@ namespace honei
              *
              */
             template<typename DT1_, typename DT2_>
-                static void value(DT2_ g, DT2_ e, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data)
+                static void value(HONEI_UNUSED DT2_ g, DT2_ e, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data)
                 {
                     CONTEXT("When computing LABNAVSTO local equilibrium distribution function:");
 

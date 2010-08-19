@@ -175,7 +175,7 @@ namespace honei
     {
         public:
             template <typename Prec_, typename MatrixType_>
-                static DenseVector<Prec_> & value(DenseVector<Prec_>&  coarse, DenseVector<Prec_>& fine, DenseVector<unsigned long>& mask, HONEI_UNUSED MatrixType_ & resmat = NULL)
+                static DenseVector<Prec_> & value(DenseVector<Prec_>&  coarse, DenseVector<Prec_>& fine, HONEI_UNUSED DenseVector<unsigned long>& mask, HONEI_UNUSED MatrixType_ & resmat = NULL)
                 {
                     Product<Tag_>::value(coarse, resmat, fine);
                     //ApplyDirichletBoundaries<Tag_>::value(coarse, mask);

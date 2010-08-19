@@ -48,10 +48,10 @@ namespace honei
     {
         public:
             /// Our size.
-            virtual const unsigned long size() const = 0;;
+            virtual unsigned long size() const = 0;;
 
             /// Our offset.
-            virtual const unsigned long offset() const = 0;
+            virtual unsigned long offset() const = 0;
 
             /// Return our memory id
             virtual void * memid() const = 0;
@@ -82,13 +82,13 @@ namespace honei
 
         public:
             /// Our size.
-            virtual const unsigned long size() const
+            virtual unsigned long size() const
             {
                 return _v.size();
             }
 
             /// Our offset.
-            virtual const unsigned long offset() const
+            virtual unsigned long offset() const
             {
                 return _v.offset();
             }

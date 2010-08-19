@@ -490,7 +490,7 @@ namespace honei {
             /**
              * Solution capsule for one timestep.
              **/
-            void solve(unsigned long iter_numbers)
+            void solve(HONEI_UNUSED unsigned long iter_numbers)
             {
                 _assemble_matrix<ResPrec_>();
                 _assemble_right_hand_side<ResPrec_>();

@@ -29,7 +29,7 @@
 
 using namespace honei;
 
-int main(int argc, char ** argv)
+int main(HONEI_UNUSED int argc, HONEI_UNUSED char ** argv)
 {
     srand(time(NULL));
     /*if (argc != 3)

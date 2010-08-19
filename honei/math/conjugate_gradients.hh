@@ -729,7 +729,7 @@ namespace honei
         {
             private:
                 template<typename DT1_, typename DT2_>
-                    static inline void cg_kernel(DenseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility, DenseVector<DT1_> & former_residual, DenseVector<DT1_> & diag_inverted)
+                    static inline void cg_kernel(DenseMatrix<DT1_> & system_matrix, HONEI_UNUSED DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility, DenseVector<DT1_> & former_residual, DenseVector<DT1_> & diag_inverted)
                     {
                         CONTEXT("When calling CG kernel, preconditioner=JACOBI, datalayout=DENSE.");
 #ifdef SOLVER_VERBOSE_L3
@@ -780,7 +780,7 @@ namespace honei
             }
 
             template<typename DT1_, typename DT2_>
-            static inline void cg_kernel(BandedMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility, DenseVector<DT1_> & former_residual, DenseVector<DT1_> & diag_inverted)
+            static inline void cg_kernel(BandedMatrix<DT1_> & system_matrix, HONEI_UNUSED DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility, DenseVector<DT1_> & former_residual, DenseVector<DT1_> & diag_inverted)
             {
                 CONTEXT("When calling CG kernel, preconditioner=JACOBI, datalayout=BANDED.");
 #ifdef SOLVER_VERBOSE_L3
@@ -831,7 +831,7 @@ namespace honei
             }
 
             template<typename DT1_, typename DT2_>
-            static inline void cg_kernel(SparseMatrix<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility, DenseVector<DT1_> & former_residual, DenseVector<DT1_> & diag_inverted)
+            static inline void cg_kernel(SparseMatrix<DT1_> & system_matrix, HONEI_UNUSED DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility, DenseVector<DT1_> & former_residual, DenseVector<DT1_> & diag_inverted)
             {
                 CONTEXT("When calling CG kernel, preconditioner=JACOBI, datalayout=SPARSE.");
 #ifdef SOLVER_VERBOSE_L3

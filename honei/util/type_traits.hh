@@ -21,6 +21,7 @@
 #define LIBUTIL_GUARD_TYPE_TRAITS_HH 1
 
 #include <honei/util/instantiation_policy.hh>
+#include <honei/util/attributes.hh>
 
 #include <cstdlib>
 #include <new>
@@ -75,7 +76,7 @@ namespace honei
              *
              * \note Empty for plain old data types (POD).
              */
-            static inline void create(DT_ * location, std::size_t count, const DT_ & proto = DT_(0))
+            static inline void create(DT_ * /*location*/, std::size_t /*count*/, HONEI_UNUSED const DT_ & proto = DT_(0))
             {
             }
 
@@ -106,7 +107,7 @@ namespace honei
              *
              * \note Empty for plain old data types (POD).
              */
-            static inline void destroy(DT_ * location, std::size_t count)
+            static inline void destroy(DT_ * /*location*/, std::size_t /*count*/)
             {
             }
 
@@ -116,7 +117,7 @@ namespace honei
              * \param location Memory location whose memory shall be freed.
              * \param count Count of instances for which memory was allocated.
              */
-            static inline void free(DT_ * location, std::size_t count)
+            static inline void free(DT_ * location, std::size_t /*count*/)
             {
                 ::free(location);
             }
@@ -220,7 +221,7 @@ namespace honei
              * \param location Memory location whose memory shall be freed.
              * \param count Count of instances for which memory was allocated.
              */
-            static inline void free(DT_ * location, std::size_t count)
+            static inline void free(DT_ * location, std::size_t /*count*/)
             {
                 ::free(location);
             }

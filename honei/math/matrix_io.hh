@@ -29,6 +29,7 @@
 #include <honei/la/dense_vector.hh>
 #include <honei/la/sparse_matrix_ell.hh>
 #include <honei/la/algorithm.hh>
+#include <honei/util/attributes.hh>
 
 using namespace honei;
 
@@ -528,7 +529,7 @@ class MatrixIO<io_formats::ELL>
     }
 
     template <typename DT_>
-    static SparseMatrixELL<DT_> read_matrix(std::string input, DT_ datatype)
+    static SparseMatrixELL<DT_> read_matrix(std::string input, HONEI_UNUSED DT_ datatype)
     {
             FILE* file(NULL);
             file = fopen(input.c_str(), "rb");

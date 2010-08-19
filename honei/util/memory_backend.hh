@@ -62,58 +62,58 @@ namespace honei
         public InstantiationPolicy<MemoryBackend<tags::CPU>, Singleton>
     {
     public:
-        virtual void * upload(void * memid, void * address, unsigned long bytes)
+        virtual void * upload(void * /*memid*/, void * address, unsigned long /*bytes*/)
         {
             CONTEXT("When uploading data (CPU):");
 
             return address;
         }
 
-        virtual void download(void * memid, void * address, unsigned long bytes)
+        virtual void download(void * /*memid*/, void * /*address*/, unsigned long /*bytes*/)
         {
             CONTEXT("When downloading data (CPU):");
         }
 
-        virtual void * alloc(void * memid, void * address, unsigned long bytes)
+        virtual void * alloc(void * /*memid*/, void * address, unsigned long /*bytes*/)
         {
             CONTEXT("When allocating data (CPU):");
 
             return address;
         }
 
-        virtual void free(void * memid)
+        virtual void free(void * /*memid*/)
         {
            CONTEXT("When freeing data (CPU):");
         }
 
-        virtual void copy(void * src_id, void * src_address, void * dest_id,
+        virtual void copy(void * /*src_id*/, void * src_address, void * /*dest_id*/,
                 void * dest_address, unsigned long bytes)
         {
            CONTEXT("When copying data (CPU):");
            std::memcpy((char *)dest_address, (char *)src_address, bytes);
         }
 
-        virtual void convert_float_double(void * src_id, void * src_address, void * dest_id,
+        virtual void convert_float_double(void * /*src_id*/, void * src_address, void * /*dest_id*/,
                 void * dest_address, unsigned long bytes)
         {
            CONTEXT("When converting float->double data (CPU):");
            TypeTraits<float>::convert((double*) dest_address, (float*)src_address, bytes/sizeof(float));
         }
 
-        virtual void convert_double_float(void * src_id, void * src_address, void * dest_id,
+        virtual void convert_double_float(void * /*src_id*/, void * src_address, void * /*dest_id*/,
                 void * dest_address, unsigned long bytes)
         {
            CONTEXT("When converting double->float data (CPU):");
            TypeTraits<double>::convert((float*) dest_address, (double*)src_address, bytes/sizeof(double));
         }
 
-        virtual void fill(void * memid, void * address, unsigned long bytes, float proto)
+        virtual void fill(void * /*memid*/, void * address, unsigned long bytes, float proto)
         {
             CONTEXT("When filling data (CPU):");
             TypeTraits<float>::fill((float *)address, bytes / 4, proto);
         }
 
-        virtual bool knows(void * memid, void * address)
+        virtual bool knows(void * /*memid*/, void * /*address*/)
         {
             return true;
         }

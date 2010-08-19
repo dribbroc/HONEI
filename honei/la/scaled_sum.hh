@@ -202,7 +202,7 @@ namespace honei
         /// \}
 
         template <typename DT1_, typename DT2_, typename DT3_>
-        static inline BenchmarkInfo get_benchmark_info(DenseVectorBase<DT1_> & a, DenseVectorBase<DT2_> & b, DT3_ c)
+        static inline BenchmarkInfo get_benchmark_info(DenseVectorBase<DT1_> & a, DenseVectorBase<DT2_> & b, HONEI_UNUSED DT3_ c)
         {
             BenchmarkInfo result;
             result.flops = a.size() * 2;

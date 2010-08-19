@@ -55,7 +55,7 @@ namespace honei
 
                     template <typename DT_>
                         static inline void _flag_line_neighbours(PackedGridInfo<lbm_lattice_types::D2Q9> & info,
-                                                                 PackedGridData<lbm_lattice_types::D2Q9, DT_> & data,
+                                                                 HONEI_UNUSED PackedGridData<lbm_lattice_types::D2Q9, DT_> & data,
                                                                  PackedSolidData<lbm_lattice_types::D2Q9, DT_> & solids,
                                                                  unsigned long packed_index)
                         {
@@ -177,8 +177,8 @@ namespace honei
 
                     template <typename DT_>
                         static void _local_scan_fill(Grid<D2Q9, DT_> & grid,
-                                                     PackedGridInfo<lbm_lattice_types::D2Q9> & info,
-                                                     PackedGridData<lbm_lattice_types::D2Q9, DT_> & data,
+                                                     HONEI_UNUSED PackedGridInfo<lbm_lattice_types::D2Q9> & info,
+                                                     HONEI_UNUSED PackedGridData<lbm_lattice_types::D2Q9, DT_> & data,
                                                      PackedSolidData<lbm_lattice_types::D2Q9, DT_> & solids,
                                                      Polygon<DT_, lbm_solid_dims::D2> & polygon,
                                                      bool rect)

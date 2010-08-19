@@ -265,7 +265,7 @@ namespace honei
             }
         }
 
-        void download(void * memid, void * address, unsigned long bytes)
+        void download(void * memid, void * /*address*/, unsigned long /*bytes*/)
         {
             //std::multimap<void *, Chunk>::iterator map_i;
             std::pair<std::multimap<void *, Chunk>::iterator, std::multimap<void *, Chunk>::iterator> range(_id_map.equal_range(memid));
@@ -394,7 +394,7 @@ namespace honei
             _id_map.erase(range.first, range.second);
         }
 
-        void copy(void * src_id, void * src_address, void * dest_id,
+        void copy(void * /*src_id*/, void * src_address, void * /*dest_id*/,
                 void * dest_address, unsigned long bytes)
         {
             std::map<void *, void *>::iterator src_i(_address_map.find(src_address));
@@ -430,7 +430,7 @@ namespace honei
             }
         }
 
-        void convert_float_double(void * src_id, void * src_address, void * dest_id,
+        void convert_float_double(void * /*src_id*/, void * src_address, void * /*dest_id*/,
                 void * dest_address, unsigned long bytes)
         {
             std::map<void *, void *>::iterator src_i(_address_map.find(src_address));
@@ -466,7 +466,7 @@ namespace honei
             }
         }
 
-        void convert_double_float(void * src_id, void * src_address, void * dest_id,
+        void convert_double_float(void * /*src_id*/, void * src_address, void * /*dest_id*/,
                 void * dest_address, unsigned long bytes)
         {
             std::map<void *, void *>::iterator src_i(_address_map.find(src_address));
@@ -502,7 +502,7 @@ namespace honei
             }
         }
 
-        void fill(void * memid, void * address, unsigned long bytes, float proto)
+        void fill(void * /*memid*/, void * address, unsigned long bytes, float proto)
         {
             std::map<void *, void *>::iterator i(_address_map.find(address));
             if (i == _address_map.end())
@@ -535,7 +535,7 @@ namespace honei
             }
         }
 
-        bool knows(void * memid, void * address)
+        bool knows(void * /*memid*/, void * address)
         {
             std::map<void *, void *>::iterator i(_address_map.find(address));
             return (i != _address_map.end());

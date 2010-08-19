@@ -135,7 +135,7 @@ class VectorIO<io_formats::DV>
     }
 
     template <typename DT_>
-    static DenseVector<DT_> read_vector(std::string input, DT_ datatype)
+    static DenseVector<DT_> read_vector(std::string input, DT_ HONEI_UNUSED datatype)
     {
             FILE* file(NULL);
             file = fopen(input.c_str(), "rb");

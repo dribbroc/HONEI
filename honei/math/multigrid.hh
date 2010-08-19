@@ -146,7 +146,7 @@ namespace honei
     class Multigrid<Tag_, OuterTag_, ProlType_, JAC, CYCLE::V, FIXED>
     {
         template <typename Prec_>
-        static DenseVector<Prec_> _multigrid_kernel(BandedMatrixQ1<Prec_>&  system, DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ * cappa, MGInfo<Prec_, BandedMatrixQ1<Prec_> > & info)
+        static DenseVector<Prec_> _multigrid_kernel(HONEI_UNUSED BandedMatrixQ1<Prec_>&  system, HONEI_UNUSED DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ * cappa, MGInfo<Prec_, BandedMatrixQ1<Prec_> > & info)
         {
             bool restriction_started(false);
             // compute initial defect
@@ -455,7 +455,7 @@ endCycleLoop:
         }
 
         template <typename Prec_>
-        static DenseVector<Prec_> _multigrid_kernel(SparseMatrixELL<Prec_>&  system, DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ * cappa, MGInfo<Prec_, SparseMatrixELL<Prec_> > & info)
+        static DenseVector<Prec_> _multigrid_kernel(HONEI_UNUSED SparseMatrixELL<Prec_>&  system, HONEI_UNUSED DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ * cappa, MGInfo<Prec_, SparseMatrixELL<Prec_> > & info)
         {
             bool restriction_started(false);
             // compute initial defect
@@ -764,11 +764,11 @@ endCycleLoop:
         }
         public:
         template<typename Prec_>
-        static inline void value(BandedMatrixQ1<Prec_>&  system,
+        static inline void value(HONEI_UNUSED BandedMatrixQ1<Prec_>&  system,
                 DenseVector<Prec_>& right_hand_side,
                 DenseVector<Prec_>& x,
                 unsigned long max_levels,
-                Prec_ conv_rad,
+                HONEI_UNUSED Prec_ conv_rad,
                 MGInfo<Prec_, BandedMatrixQ1<Prec_> > & info)
         {
             CONTEXT("When solving banded q1 linear system with MULTIGRID: ");
@@ -809,11 +809,11 @@ endCycleLoop:
         }
 
         template<typename Prec_>
-        static inline void value(SparseMatrixELL<Prec_>&  system,
+        static inline void value(HONEI_UNUSED SparseMatrixELL<Prec_>&  system,
                 DenseVector<Prec_>& right_hand_side,
                 DenseVector<Prec_>& x,
                 unsigned long max_levels,
-                Prec_ conv_rad,
+                HONEI_UNUSED Prec_ conv_rad,
                 MGInfo<Prec_, SparseMatrixELL<Prec_> > & info)
         {
             CONTEXT("When solving sparse ELL linear system with MULTIGRID: ");
@@ -1497,7 +1497,7 @@ endCycleLoop:
                 DenseVector<OuterPrec_>& right_hand_side,
                 DenseVector<OuterPrec_>& x,
                 unsigned long max_levels,
-                OuterPrec_ conv_rad,
+                HONEI_UNUSED OuterPrec_ conv_rad,
                 MGInfo<InnerPrec_, BandedMatrixQ1<InnerPrec_> > & info)
             {
                 CONTEXT("When solving banded q1 linear system with MULTIGRID: ");
@@ -1639,7 +1639,7 @@ endCycleLoop:
                 DenseVector<OuterPrec_>& right_hand_side,
                 DenseVector<OuterPrec_>& x,
                 unsigned long max_levels,
-                OuterPrec_ conv_rad,
+                HONEI_UNUSED OuterPrec_ conv_rad,
                 MGInfo<InnerPrec_, SparseMatrixELL<InnerPrec_> > & info)
             {
                 CONTEXT("When solving banded q1 linear system with MULTIGRID: ");

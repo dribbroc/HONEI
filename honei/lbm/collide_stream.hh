@@ -578,10 +578,10 @@ namespace honei
         static void value(DenseMatrix<DT1_>& result,
                           DenseMatrix<DT1_>& dist,
                           DenseMatrix<DT1_>& eq_dist,
-                          DenseMatrix<DT1_>& s_x,
-                          DenseMatrix<DT1_>& s_y,
-                          DT2_ e_x,
-                          DT2_ e_y,
+                          HONEI_UNUSED DenseMatrix<DT1_>& s_x,
+                          HONEI_UNUSED DenseMatrix<DT1_>& s_y,
+                          HONEI_UNUSED DT2_ e_x,
+                          HONEI_UNUSED DT2_ e_y,
                           DT2_ tau)
         {
 
@@ -1608,10 +1608,10 @@ namespace honei
         static void value(DenseMatrix<DT1_>& result,
                           DenseMatrix<DT1_>& dist,
                           DenseMatrix<DT1_>& eq_dist,
-                          DenseMatrix<DT1_>& s_x,
-                          DenseMatrix<DT1_>& s_y,
-                          DT2_ e_x,
-                          DT2_ e_y,
+                          HONEI_UNUSED DenseMatrix<DT1_>& s_x,
+                          HONEI_UNUSED DenseMatrix<DT1_>& s_y,
+                          HONEI_UNUSED DT2_ e_x,
+                          HONEI_UNUSED DT2_ e_y,
                           DT2_ tau)
         {
 

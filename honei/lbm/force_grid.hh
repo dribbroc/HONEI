@@ -541,7 +541,7 @@ namespace honei
             }
 
             template<typename DT1_>
-                static inline BenchmarkInfo get_benchmark_info(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT1_> * data)
+                static inline BenchmarkInfo get_benchmark_info(HONEI_UNUSED PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT1_> * data)
                 {
                     BenchmarkInfo result;
                     result.flops = data->h->size() * 60;
@@ -813,7 +813,7 @@ namespace honei
             }
 
             template<typename DT1_>
-            static inline BenchmarkInfo get_benchmark_info(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT1_> * data)
+            static inline BenchmarkInfo get_benchmark_info(HONEI_UNUSED PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT1_> * data)
                 {
                     // \todo Insert real data
                     BenchmarkInfo result;
@@ -865,7 +865,7 @@ namespace honei
             }
 
             template<typename DT1_>
-                static inline BenchmarkInfo get_benchmark_info(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT1_> * data)
+                static inline BenchmarkInfo get_benchmark_info(HONEI_UNUSED PackedGridInfo<D2Q9> * info, HONEI_UNUSED PackedGridData<D2Q9, DT1_> * data)
                 {
                     BenchmarkInfo result;
                     return result;
@@ -875,7 +875,7 @@ namespace honei
     struct ForceGrid<Tag_, lbm_applications::LABNAVSTO, lbm_force::NONE, lbm_source_schemes::NONE>
     {
         template<typename DT1_, typename DT2_>
-            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data, DT2_ g, DT2_ d_x, DT2_ d_y, DT2_ d_t, DT2_ manning)
+            static void value(PackedGridInfo<D2Q9> & /*info*/, PackedGridData<D2Q9, DT1_> & /*data*/, DT2_ /*g*/, DT2_ /*d_x*/, DT2_ /*d_y*/, DT2_ /*d_t*/, DT2_ /*manning*/)
             {
             }
 

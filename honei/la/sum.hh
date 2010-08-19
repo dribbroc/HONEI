@@ -445,7 +445,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static inline BenchmarkInfo get_benchmark_info(const DenseMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
+        static inline BenchmarkInfo get_benchmark_info(HONEI_UNUSED const DenseMatrix<DT1_> & a, const BandedMatrix<DT2_> & b)
         {
             BenchmarkInfo result;
             for (typename BandedMatrix<DT2_>::ConstBandIterator r(b.begin_non_zero_bands()), r_end(b.end_non_zero_bands()) ;
@@ -494,7 +494,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static inline BenchmarkInfo get_benchmark_info(const DenseMatrix<DT1_> & a, DT2_ b)
+        static inline BenchmarkInfo get_benchmark_info(const DenseMatrix<DT1_> & a, HONEI_UNUSED DT2_ b)
         {
             BenchmarkInfo result;
             result.flops = a.rows() * a.columns();
@@ -505,7 +505,7 @@ namespace honei
         }
 
         template <typename DT1_>
-        static inline BenchmarkInfo get_benchmark_info(const DenseVectorBase<DT1_> & a, float b)
+        static inline BenchmarkInfo get_benchmark_info(const DenseVectorBase<DT1_> & a, HONEI_UNUSED float b)
         {
             BenchmarkInfo result;
             result.flops = a.size();
@@ -516,7 +516,7 @@ namespace honei
         }
 
         template <typename DT1_>
-        static inline BenchmarkInfo get_benchmark_info(const DenseVectorBase<DT1_> & a, double b)
+        static inline BenchmarkInfo get_benchmark_info(const DenseVectorBase<DT1_> & a, HONEI_UNUSED double b)
         {
             BenchmarkInfo result;
             result.flops = a.size();

@@ -18,6 +18,7 @@
  */
 
 #include <honei/util/configuration.hh>
+#include <honei/util/attributes.hh>
 
 #include <cstdlib>
 #include <iomanip>
@@ -25,7 +26,7 @@
 
 namespace h = honei;
 
-int main(int argc, char ** argv)
+int main(HONEI_UNUSED int argc, HONEI_UNUSED char ** argv)
 {
     std::cout << "# Configuration file '" << h::Configuration::instance()->filename() << "'" << std::endl;
 

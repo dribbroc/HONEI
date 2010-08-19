@@ -318,7 +318,7 @@ using namespace precision_modes;
               *
               **/
             template<typename WorkPrec_>
-            void _do_setup_stage1(DenseVector<WorkPrec_>& su, DenseVector<WorkPrec_>& sv, DenseVector<WorkPrec_>& sw)
+            void _do_setup_stage1(HONEI_UNUSED DenseVector<WorkPrec_>& su, DenseVector<WorkPrec_>& sv, DenseVector<WorkPrec_>& sw)
             {
                 WorkPrec_ prefac(0);
                 if(_eps != _delta_t)
@@ -1168,7 +1168,7 @@ using namespace precision_modes;
              *
              **/
             template<typename WorkPrec_>
-                void _do_setup_stage1(DenseVector<WorkPrec_>& su, DenseVector<WorkPrec_>& sv, DenseVector<WorkPrec_>& sw)
+                void _do_setup_stage1(HONEI_UNUSED DenseVector<WorkPrec_>& su, DenseVector<WorkPrec_>& sv, DenseVector<WorkPrec_>& sw)
                 {
                     WorkPrec_ prefac(0);
                     if(_eps != _delta_t)

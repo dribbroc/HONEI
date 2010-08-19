@@ -26,7 +26,7 @@ using namespace std;
 using namespace honei;
 using namespace cascade_quantities;
 
-DenseVector<float> JacobiKernelCascade<tags::CPU::SSE, ONCE, NONE>::value(DenseVector<float> & b, DenseVector<float> & x, DenseVector<float> & d, BandedMatrix<float> & a, DenseVector<float> & ds)
+DenseVector<float> JacobiKernelCascade<tags::CPU::SSE, ONCE, NONE>::value(DenseVector<float> & b, DenseVector<float> & x, DenseVector<float> & d, BandedMatrix<float> & a, DenseVector<float> & /*ds*/)
 {
 
     CONTEXT("When performing singlestep Jacobi method with SSE:");

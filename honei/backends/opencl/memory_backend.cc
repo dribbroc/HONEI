@@ -93,7 +93,7 @@ namespace honei
             }
         }
 
-        void download(void * memid, void * address, unsigned long bytes)
+        void download(void * memid, void * address, unsigned long /*bytes*/)
         {
             std::pair<typename std::multimap<void *, Chunk>::iterator, typename std::multimap<void *, Chunk>::iterator> range(_id_map.equal_range(memid));
             if (range.first == range.second)
@@ -148,8 +148,8 @@ namespace honei
             _id_map.erase(range.first, range.second);
         }
 
-        void copy(void * src_id, void * src_address, void * dest_id,
-                void * dest_address, unsigned long bytes)
+        void copy(void * /*src_id*/, void * /*src_address*/, void * /*dest_id*/,
+                void * /*dest_address*/, unsigned long /*bytes*/)
         {
             /*std::map<void *, void *>::iterator src_i(_address_map.find(src_address));
             std::map<void *, void *>::iterator dest_i(_address_map.find(dest_address));
@@ -184,7 +184,7 @@ namespace honei
             }*/
         }
 
-        void fill(void * memid, void * address, unsigned long bytes, float proto)
+        void fill(void * /*memid*/, void * /*address*/, unsigned long /*bytes*/, float /*proto*/)
         {
             /*std::map<void *, void *>::iterator i(_address_map.find(address));
             if (i == _address_map.end())
@@ -217,7 +217,7 @@ namespace honei
             }*/
         }
 
-        bool knows(void * memid, void * address)
+        bool knows(void * /*memid*/, void * address)
         {
             std::map<void *, void *>::iterator i(_address_map.find(address));
             return (i != _address_map.end());
@@ -266,13 +266,13 @@ namespace honei
         _imp->copy(src_id, src_address, dest_id, dest_address, bytes);
     }
 
-    void MemoryBackend<tags::OpenCL::CPU>::convert_float_double(void * src_id, void * src_address, void * dest_id,
-                    void * dest_address, unsigned long bytes)
+    void MemoryBackend<tags::OpenCL::CPU>::convert_float_double(void * /*src_id*/, void * /*src_address*/, void * /*dest_id*/,
+                    void * /*dest_address*/, unsigned long /*bytes*/)
     {
     }
 
-    void MemoryBackend<tags::OpenCL::CPU>::convert_double_float(void * src_id, void * src_address, void * dest_id,
-                    void * dest_address, unsigned long bytes)
+    void MemoryBackend<tags::OpenCL::CPU>::convert_double_float(void * /*src_id*/, void * /*src_address*/, void * /*dest_id*/,
+                    void * /*dest_address*/, unsigned long /*bytes*/)
     {
     }
 
@@ -329,13 +329,13 @@ namespace honei
         _imp->copy(src_id, src_address, dest_id, dest_address, bytes);
     }
 
-    void MemoryBackend<tags::OpenCL::GPU>::convert_float_double(void * src_id, void * src_address, void * dest_id,
-                    void * dest_address, unsigned long bytes)
+    void MemoryBackend<tags::OpenCL::GPU>::convert_float_double(void * /*src_id*/, void * /*src_address*/, void * /*dest_id*/,
+                    void * /*dest_address*/, unsigned long /*bytes*/)
     {
     }
 
-    void MemoryBackend<tags::OpenCL::GPU>::convert_double_float(void * src_id, void * src_address, void * dest_id,
-                    void * dest_address, unsigned long bytes)
+    void MemoryBackend<tags::OpenCL::GPU>::convert_double_float(void * /*src_id*/, void * /*src_address*/, void * /*dest_id*/,
+                    void * /*dest_address*/, unsigned long /*bytes*/)
     {
     }
 
@@ -392,13 +392,13 @@ namespace honei
         _imp->copy(src_id, src_address, dest_id, dest_address, bytes);
     }
 
-    void MemoryBackend<tags::OpenCL::Accelerator>::convert_float_double(void * src_id, void * src_address, void * dest_id,
-                    void * dest_address, unsigned long bytes)
+    void MemoryBackend<tags::OpenCL::Accelerator>::convert_float_double(void * /*src_id*/, void * /*src_address*/, void * /*dest_id*/,
+                    void * /*dest_address*/, unsigned long /*bytes*/)
     {
     }
 
-    void MemoryBackend<tags::OpenCL::Accelerator>::convert_double_float(void * src_id, void * src_address, void * dest_id,
-                    void * dest_address, unsigned long bytes)
+    void MemoryBackend<tags::OpenCL::Accelerator>::convert_double_float(void * /*src_id*/, void * /*src_address*/, void * /*dest_id*/,
+                    void * /*dest_address*/, unsigned long /*bytes*/)
     {
     }
 

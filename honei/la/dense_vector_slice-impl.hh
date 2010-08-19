@@ -92,6 +92,7 @@ namespace honei
     /// Copy-Constructor
     template <typename DataType_>
     DenseVectorSlice<DataType_>::DenseVectorSlice(const DenseVectorSlice<DataType_> & other) :
+        DenseVectorBase<DataType_>(),
         PrivateImplementationPattern<DenseVectorSlice<DataType_>, Shared>(new Implementation<DenseVectorSlice<DataType_> >(
                     other._imp->elements, other._imp->size, other._imp->offset, other._imp->stepsize))
     {

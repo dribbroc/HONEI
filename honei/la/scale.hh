@@ -151,7 +151,7 @@ namespace honei
         /// \}
 
         template <typename DT1_, typename DT2_>
-        static inline BenchmarkInfo get_benchmark_info(DenseMatrix<DT2_> & b, DT1_ a)
+        static inline BenchmarkInfo get_benchmark_info(DenseMatrix<DT2_> & b, HONEI_UNUSED DT1_ a)
         {
             BenchmarkInfo result;
             result.flops = b.rows() * b.columns();
@@ -179,7 +179,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static inline BenchmarkInfo get_benchmark_info(DenseVector<DT2_> & b, DT1_ a)
+        static inline BenchmarkInfo get_benchmark_info(DenseVector<DT2_> & b, HONEI_UNUSED DT1_ a)
         {
             BenchmarkInfo result;
             result.flops = b.size();
