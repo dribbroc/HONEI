@@ -206,12 +206,12 @@ namespace honei
                             return (signed long)(coord / delta);
                         }
 
-                    static void _flag_line_neighbours(DenseMatrix<bool> & target, unsigned long i, unsigned long j)
+                    static void _flag_line_neighbours(DenseMatrix<bool> & target, long i, long j)
                     {
-                        unsigned long max_i((i + 1 < target.rows()) ? (i + 1) : i);
-                        unsigned long max_j((j + 1 < target.columns()) ? (j + 1) : j);
-                        unsigned long min_i((i - 1 >= 0) ? (i - 1) : i);
-                        unsigned long min_j((j - 1 >= 0) ? (j - 1) : j);
+                        long max_i((i + 1 < (long)target.rows()) ? (i + 1) : i);
+                        long max_j((j + 1 < (long)target.columns()) ? (j + 1) : j);
+                        long min_i((i - 1 >= 0) ? (i - 1) : i);
+                        long min_j((j - 1 >= 0) ? (j - 1) : j);
 
                         target[i][max_j] = true;
                         target[max_i][max_j] = true;
@@ -523,8 +523,8 @@ namespace honei
                                 DenseMatrix<Prec_> & target_h,
                                 DenseMatrix<Prec_> & target_u,
                                 DenseMatrix<Prec_> & target_v,
-                                Prec_ u,     //x-veloc of solid
-                                Prec_ v,     //y-veloc of solid
+                                HONEI_UNUSED Prec_ u,     //x-veloc of solid
+                                HONEI_UNUSED Prec_ v,     //y-veloc of solid
                                 Prec_ alpha, //control parameter
                                 Prec_ depth) //of solid under water
                         {
@@ -583,7 +583,7 @@ namespace honei
                                     }
 
                                 //dir 4
-                                if(stf_row_index[i] + 1 < obstacles.rows() && stf_column_index[i] - 1 >= 0)
+                                if(stf_row_index[i] + 1 < obstacles.rows() && (long)stf_column_index[i] - 1 >= 0)
                                     if(!obstacles[stf_row_index[i] + 1][stf_column_index[i] - 1] && !solids_to_fluids[stf_row_index[i] + 1][stf_column_index[i] - 1])
                                     {
                                         nb_row_index.push_back(stf_row_index[i] + 1);
@@ -592,7 +592,7 @@ namespace honei
                                     }
 
                                 //dir 5
-                                if(stf_column_index[i] - 1 >= 0)
+                                if((long)stf_column_index[i] - 1 >= 0)
                                     if(!obstacles[stf_row_index[i]][stf_column_index[i] - 1] && !solids_to_fluids[stf_row_index[i]][stf_column_index[i] - 1])
                                     {
                                         nb_row_index.push_back(stf_row_index[i]);
@@ -601,7 +601,7 @@ namespace honei
                                     }
 
                                 //dir 6
-                                if(stf_row_index[i] - 1 >= 0 && stf_column_index[i] - 1 >= 0)
+                                if((long)stf_row_index[i] - 1 >= 0 && (long)stf_column_index[i] - 1 >= 0)
                                     if(!obstacles[stf_row_index[i] - 1][stf_column_index[i] - 1] && !solids_to_fluids[stf_row_index[i] - 1][stf_column_index[i] - 1])
                                     {
                                         nb_row_index.push_back(stf_row_index[i] - 1);
@@ -610,7 +610,7 @@ namespace honei
                                     }
 
                                 //dir 7
-                                if(stf_row_index[i] - 1 >= 0)
+                                if((long)stf_row_index[i] - 1 >= 0)
                                     if(!obstacles[stf_row_index[i] - 1][stf_column_index[i]] && !solids_to_fluids[stf_row_index[i] - 1][stf_column_index[i]])
                                     {
                                         nb_row_index.push_back(stf_row_index[i] - 1);
@@ -619,7 +619,7 @@ namespace honei
                                     }
 
                                 //dir 8
-                                if(stf_row_index[i] - 1 >= 0 && stf_column_index[i] + 1 < obstacles.columns() && !solids_to_fluids[stf_row_index[i] - 1][stf_column_index[i] + 1])
+                                if((long)stf_row_index[i] - 1 >= 0 && stf_column_index[i] + 1 < obstacles.columns() && !solids_to_fluids[stf_row_index[i] - 1][stf_column_index[i] + 1])
                                     if(!obstacles[stf_row_index[i] - 1][stf_column_index[i] + 1])
                                     {
                                         nb_row_index.push_back(stf_row_index[i] - 1);
@@ -681,8 +681,8 @@ namespace honei
                                 DenseMatrix<Prec_> & target_v,
                                 Prec_ u,
                                 Prec_ v,
-                                Prec_ alpha,
-                                Prec_ depth)
+                                HONEI_UNUSED Prec_ alpha,
+                                HONEI_UNUSED Prec_ depth)
                         {
                             ///For h: determine displaced amount of water by diving-depth and distribute it amongst FTS cells
                             //First: preprocess elements (only operated on the boolean stf matrix):
@@ -738,7 +738,7 @@ namespace honei
                                     }
 
                                 //dir 4
-                                if(stf_row_index[i] + 1 < obstacles.rows() && stf_column_index[i] - 1 >= 0)
+                                if(stf_row_index[i] + 1 < obstacles.rows() && (long)stf_column_index[i] - 1 >= 0)
                                     if(!obstacles[stf_row_index[i] + 1][stf_column_index[i] - 1] && !fluids_to_solids[stf_row_index[i] + 1][stf_column_index[i] - 1])
                                     {
                                         nb_row_index.push_back(stf_row_index[i] + 1);
@@ -747,7 +747,7 @@ namespace honei
                                     }
 
                                 //dir 5
-                                if(stf_column_index[i] - 1 >= 0)
+                                if((long)stf_column_index[i] - 1 >= 0)
                                     if(!obstacles[stf_row_index[i]][stf_column_index[i] - 1] && !fluids_to_solids[stf_row_index[i]][stf_column_index[i] - 1])
                                     {
                                         nb_row_index.push_back(stf_row_index[i]);
@@ -756,7 +756,7 @@ namespace honei
                                     }
 
                                 //dir 6
-                                if(stf_row_index[i] - 1 >= 0 && stf_column_index[i] - 1 >= 0)
+                                if((long)stf_row_index[i] - 1 >= 0 && (long)stf_column_index[i] - 1 >= 0)
                                     if(!obstacles[stf_row_index[i] - 1][stf_column_index[i] - 1] && !fluids_to_solids[stf_row_index[i] - 1][stf_column_index[i] - 1])
                                     {
                                         nb_row_index.push_back(stf_row_index[i] - 1);
@@ -765,7 +765,7 @@ namespace honei
                                     }
 
                                 //dir 7
-                                if(stf_row_index[i] - 1 >= 0)
+                                if((long)stf_row_index[i] - 1 >= 0)
                                     if(!obstacles[stf_row_index[i] - 1][stf_column_index[i]] && !fluids_to_solids[stf_row_index[i] - 1][stf_column_index[i]])
                                     {
                                         nb_row_index.push_back(stf_row_index[i] - 1);
@@ -774,7 +774,7 @@ namespace honei
                                     }
 
                                 //dir 8
-                                if(stf_row_index[i] - 1 >= 0 && stf_column_index[i] + 1 < obstacles.columns() && !fluids_to_solids[stf_row_index[i] - 1][stf_column_index[i] + 1])
+                                if((long)stf_row_index[i] - 1 >= 0 && stf_column_index[i] + 1 < obstacles.columns() && !fluids_to_solids[stf_row_index[i] - 1][stf_column_index[i] + 1])
                                     if(!obstacles[stf_row_index[i] - 1][stf_column_index[i] + 1])
                                     {
                                         nb_row_index.push_back(stf_row_index[i] - 1);
@@ -841,8 +841,8 @@ namespace honei
                                 DenseMatrix<bool> & obstacles,
                                 unsigned long i,
                                 unsigned long j,
-                                DT_ dx,
-                                DT_ h_b)
+                                HONEI_UNUSED DT_ dx,
+                                HONEI_UNUSED DT_ h_b)
                         {
                             bool prev((j >= 1) ? true : false);
                             bool pre_prev((j >= 2) ? true : false);
@@ -862,12 +862,12 @@ namespace honei
                         }
 
                     template<typename DT_>
-                        static DT_ _interpolation(DenseMatrix<DT_> & target,
-                                DenseMatrix<bool> & obstacles,
-                                unsigned long i,
-                                unsigned long j,
+                        static DT_ _interpolation(HONEI_UNUSED DenseMatrix<DT_> & target,
+                                HONEI_UNUSED DenseMatrix<bool> & obstacles,
+                                HONEI_UNUSED unsigned long i,
+                                HONEI_UNUSED unsigned long j,
                                 DT_ dx,
-                                DT_ dt,
+                                HONEI_UNUSED DT_ dt,
                                 DT_ u_x)
                         {
                             return dx * u_x;
