@@ -81,7 +81,7 @@ namespace
     };
 }
 
-DenseVector<float> & Prolongation<tags::GPU::CUDA, NONE>::value(DenseVector<float> & fine,
+DenseVector<float> & Prolongation<tags::GPU::CUDA, methods::NONE>::value(DenseVector<float> & fine,
         const DenseVector<float> & coarse, const DenseVector<unsigned long> & mask, BandedMatrixQ1<float> & prolmat)
 {
     CONTEXT("When prolongating from coarse to fine (CUDA):");
@@ -102,7 +102,7 @@ DenseVector<float> & Prolongation<tags::GPU::CUDA, NONE>::value(DenseVector<floa
     return fine;
 }
 
-DenseVector<float> & Prolongation<tags::GPU::CUDA, NONE>::value(DenseVector<float> & fine,
+DenseVector<float> & Prolongation<tags::GPU::CUDA, methods::NONE>::value(DenseVector<float> & fine,
         const DenseVector<float> & coarse, const DenseVector<unsigned long> & mask, SparseMatrixELL<float> & prolmat)
 {
     CONTEXT("When prolongating from coarse to fine (CUDA):");
