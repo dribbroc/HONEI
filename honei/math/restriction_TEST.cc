@@ -64,8 +64,8 @@ class RestrictionTest:
 
                 SparseMatrix<DT1_> sm(1, 1);
                 SparseMatrixELL<DT1_> dummy(sm);
-                Restriction<Tag_, NONE>::value(coarse, fine, mask, dummy);
-                Restriction<tags::CPU,NONE>::value(coarse_ref, fine, mask, dummy);
+                Restriction<Tag_, methods::NONE>::value(coarse, fine, mask, dummy);
+                Restriction<tags::CPU, methods::NONE>::value(coarse_ref, fine, mask, dummy);
                 coarse.lock(lm_read_only);
                 coarse_ref.lock(lm_read_only);
                 std::cout << "At level: " << level + 1 << std::endl;

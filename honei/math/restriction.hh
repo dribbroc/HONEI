@@ -29,7 +29,6 @@
 #include<honei/math/apply_dirichlet_boundaries.hh>
 #include<cmath>
 
-using namespace methods;
 namespace honei
 {
     template<typename Tag_, typename Type_>
@@ -38,7 +37,7 @@ namespace honei
     };
 
     template<typename Tag_>
-    struct Restriction<Tag_, NONE>
+    struct Restriction<Tag_, methods::NONE>
     {
         public:
             template <typename Prec_, typename MatrixType_>
@@ -172,7 +171,7 @@ namespace honei
     };
 
     template<typename Tag_>
-    struct Restriction<Tag_, PROLMAT>
+    struct Restriction<Tag_, methods::PROLMAT>
     {
         public:
             template <typename Prec_, typename MatrixType_>
@@ -184,7 +183,7 @@ namespace honei
                 }
     };
 
-    template <> struct Restriction<tags::GPU::CUDA, NONE>
+    template <> struct Restriction<tags::GPU::CUDA, methods::NONE>
     {
         static DenseVector<float> & value(DenseVector<float> & coarse,
                 const DenseVector<float> & fine, const DenseVector<unsigned long> & mask, HONEI_UNUSED BandedMatrixQ1<float> & resmat);

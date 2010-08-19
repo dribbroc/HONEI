@@ -66,8 +66,8 @@ class ProlongationTest:
 
                 SparseMatrix<DT1_> sm(1, 1);
                 SparseMatrixELL<DT1_> dummy(sm);
-                Prolongation<Tag_, NONE>::value(fine, coarse, mask, dummy);
-                Prolongation<tags::CPU, NONE>::value(fine_ref, coarse, mask, dummy);
+                Prolongation<Tag_, methods::NONE>::value(fine, coarse, mask, dummy);
+                Prolongation<tags::CPU, methods::NONE>::value(fine_ref, coarse, mask, dummy);
                 fine.lock(lm_read_only);
                 fine_ref.lock(lm_read_only);
                 fine.unlock(lm_read_only);
