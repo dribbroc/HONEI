@@ -297,25 +297,25 @@ namespace honei {
                     ///Assemble vector:
                     unsigned long current_row(1);
                     unsigned long current_column(1);
-                    unsigned long index(_grid_width + 3);
+                    long index(_grid_width + 3);
                     WorkPrec_ beta_x(_delta_t * WorkPrec_(1)/(WorkPrec_(2) * _delta_x));
                     WorkPrec_ beta_y(_delta_t * WorkPrec_(1)/(WorkPrec_(2) * _delta_y));
-                    for(; index < (_grid_width + 2) * (_grid_height + 2) - (_grid_width + 2); ++index)
+                    for(; index < (long)((_grid_width + 2) * (_grid_height + 2) - (_grid_width + 2)) ; ++index)
                     {
                         WorkPrec_ b_diff_1((*_bottom_bound)[current_row + 1][current_column] - (*_bottom_bound)[current_row -1][current_column]);
                         WorkPrec_ b_diff_2((*_bottom_bound)[current_row][current_column + 1] - (*_bottom_bound)[current_row][current_column - 1]);
                         WorkPrec_ v_x_diff, v_y_diff;
 
-                        if(index - (_grid_width + 2) >= 0 && index + (_grid_width + 2) < (_grid_width + 2) * (_grid_height + 2))
+                        if(index - (long)(_grid_width + 2) >= 0 && index + (long)(_grid_width + 2) < (long)((_grid_width + 2) * (_grid_height + 2)))
                         {
                             v_y_diff = ((*_v_temp)[index + _grid_width + 2] - (*_v_temp)[index - (_grid_width + 2)]);
                         }
-                        else if ( index - (_grid_width + 2) < 0 && index + (_grid_width + 2) < (_grid_width + 2) * (_grid_height + 2))
+                        else if ( index - (long)(_grid_width + 2) < 0 && index + (long)(_grid_width + 2) < (long)((_grid_width + 2) * (_grid_height + 2)))
                         {
                             v_y_diff = ((*_v_temp)[index + _grid_width + 2] - (*_v_temp)[index]);
 
                         }
-                        else if (index - (_grid_width + 2) >= 0 && index + (_grid_width + 2) >= (_grid_width + 2) * (_grid_height + 2))
+                        else if (index - (long)(_grid_width + 2) >= 0 && index + (long)(_grid_width + 2) >= (long)((_grid_width + 2) * (_grid_height + 2)))
                         {
                             v_y_diff = ((*_v_temp)[index] - (*_v_temp)[index -( _grid_width + 2)]);
 
@@ -325,16 +325,16 @@ namespace honei {
                             v_y_diff = ((*_v_temp)[index] - (*_v_temp)[index]);
                         }
 
-                        if(index - 1 >= 0 && index + 1 < (_grid_width + 2) * (_grid_height + 2))
+                        if(index - 1 >= 0 && index + 1 < (long)((_grid_width + 2) * (_grid_height + 2)))
                         {
                             v_x_diff = ((*_u_temp)[index + 1] - (*_u_temp)[index - 1]);
                         }
-                        else if ( index - 1 < 0 && index + 1 < (_grid_width + 2) * (_grid_height + 2))
+                        else if ( index - 1 < 0 && index + 1 < (long)((_grid_width + 2) * (_grid_height + 2)))
                         {
                             v_x_diff = ((*_u_temp)[index + 1] - (*_u_temp)[index]);
 
                         }
-                        else if (index - 1 >= 0 && index + 1 >= (_grid_width + 2) * (_grid_height + 2))
+                        else if (index - 1 >= 0 && index + 1 >= (long)((_grid_width + 2) * (_grid_height + 2)))
                         {
                             v_x_diff = ((*_u_temp)[index] - (*_u_temp)[index -( _grid_width + 2)]);
 
@@ -433,17 +433,17 @@ namespace honei {
             void _update(DenseVector<WorkPrec_>& w_new)
             {
 
-                unsigned long index(_grid_width + 3);
+                long index(_grid_width + 3);
                 unsigned long actual_row(1);
                 unsigned long actual_column(1);
                 WorkPrec_ gamma = - WorkPrec_(9.81) * _delta_t;
-                while(index < (_grid_width + 2) * (_grid_height + 2) - (_grid_width + 2))
+                while(index < (long)((_grid_width + 2) * (_grid_height + 2) - (_grid_width + 2)))
                 {
                     WorkPrec_ h_new(w_new[index] - (*_bottom_bound)[actual_row][actual_column]);
 
                     WorkPrec_ delta_h_1, delta_h_2;
 
-                    if( index - 1 >= 0 && index - (_grid_width + 2) >= 0)
+                    if( index - 1 >= 0 && index - ((long)_grid_width + 2) >= 0)
                     {
                         delta_h_1 = (w_new[index] - w_new[index - 1]);
                         delta_h_2 = (w_new[index] - w_new[index - (_grid_width + 2)]);
