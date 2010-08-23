@@ -19,6 +19,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
 #ifndef LIBLA_GUARD_DENSE_MATRIX_HH
 #define LIBLA_GUARD_DENSE_MATRIX_HH 1
 

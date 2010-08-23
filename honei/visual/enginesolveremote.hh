@@ -16,6 +16,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
 #ifndef LIBSWE_GUARD_ENGINESOLVEREMOTE_HH
 #define LIBSWE_GUARD_ENGINESOLVEREMOTE_HH 1
 

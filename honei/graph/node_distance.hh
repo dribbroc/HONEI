@@ -20,6 +20,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
 #ifndef LIBGRAPH_GUARD_NODE_DISTANCE_HH
 #define LIBGRAPH_GUARD_NODE_DISTANCE_HH 1
 

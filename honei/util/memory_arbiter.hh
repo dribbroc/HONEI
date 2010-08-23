@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
 #ifndef MEMORY_GUARD_MEMORY_ARBITER_HH
 #define MEMORY_GUARD_MEMORY_ARBITER_HH 1
 

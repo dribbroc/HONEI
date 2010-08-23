@@ -16,6 +16,7 @@
   * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
   */
 
+#pragma once
 #ifndef LIBLA_GUARD_RESIDUAL_HH
 #define LIBLA_GUARD_RESIDUAL_HH 1
 

@@ -17,6 +17,7 @@
 * Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#pragma once
 #ifndef LIBMATH_GUARD_JACOBI_KERNEL_HH
 #define LIBMATH_GUARD_JACOBI_KERNEL_HH 1
 

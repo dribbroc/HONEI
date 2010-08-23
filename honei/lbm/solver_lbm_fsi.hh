@@ -18,6 +18,7 @@
  */
 
 
+#pragma once
 #ifndef LBM_GUARD_SOLVER_LBM_GRID_HH
 #define LBM_GUARD_SOLVER_LBM_GRID_HH 1
 

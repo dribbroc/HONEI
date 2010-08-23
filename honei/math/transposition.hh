@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
 #ifndef MATH_GUARD_TRANSPOSITION_HH
 #define MATH_GUARD_TRANSPOSITION_HH 1
 

@@ -18,6 +18,7 @@
  */
 
 
+#pragma once
 #ifndef LBM_GUARD_PARTIAL_DERIVATIVE_HH
 #define LBM_GUARD_PARTIAL_DERIVATIVE_HH 1
 

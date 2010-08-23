@@ -18,6 +18,7 @@
  */
 
 
+#pragma once
 #ifndef LIBMATH_GUARD_ENDIAN_SWAP_HH
 #define LIBMATH_GUARD_ENDIAN_SWAP_HH 1
 

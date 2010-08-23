@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
 #ifndef SSE_GUARD_OPERATIONS_HH
 #define SSE_GUARD_OPERATIONS_HH 1
 

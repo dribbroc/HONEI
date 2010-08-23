@@ -19,6 +19,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
 #ifndef HONEI_GUARD_LA_DENSE_MATRIX_IMPL_HH
 #define HONEI_GUARD_LA_DENSE_MATRIX_IMPL_HH 1
 

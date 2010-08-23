@@ -18,6 +18,7 @@
  */
 
 
+#pragma once
 #ifndef MATH_GUARD_LU_DECOMPOSITION_HH
 #define MATH_GUARD_LU_DECOMPOSITION_HH 1
 

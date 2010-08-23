@@ -19,6 +19,7 @@
  */
 
 
+#pragma once
 #ifndef LBM_GUARD_GRID_HH
 #define LBM_GUARD_GRID_HH 1
 

@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
 #ifndef HONEI_GUARD_MULTICORE_TICKET_HH
 #define HONEI_GUARD_MULTICORE_TICKET_HH 1
 

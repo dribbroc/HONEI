@@ -18,6 +18,7 @@
  */
 
 
+#pragma once
 #ifndef LBM_GUARD_SCENARIO_COLLECTION_HH
 #define LBM_GUARD_SCENARIO_COLLECTION_HH 1
 

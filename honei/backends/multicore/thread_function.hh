@@ -16,6 +16,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
 #ifndef MULTICORE_GUARD_THREAD_OBJECT_HH
 #define MULTICORE_GUARD_THREAD_OBJECT_HH 1
 

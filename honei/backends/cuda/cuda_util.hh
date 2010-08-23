@@ -18,6 +18,7 @@
  */
 
 
+#pragma once
 #ifndef CUDA_GUARD_CUDA_UTIL_HH
 #define CUDA_GUARD_CUDA_UTIL_HH 1
 

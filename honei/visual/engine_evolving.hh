@@ -1,5 +1,6 @@
 /* vim: set sw=4 sts=4 et nofoldenable nu : */
 
+#pragma once
 #ifndef LIBSWE_GUARD_ENGINE_HH
 #define LIBSWE_GUARD_ENGINE_HH 1
  /*

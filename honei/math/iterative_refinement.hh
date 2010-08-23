@@ -1,5 +1,6 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
+#pragma once
 #ifndef LIBMATH_GUARD_ITERATIVE_REFINEMENT_HH
 #define LIBMATH_GUARD_ITERATIVE_REFINEMENT_HH 1
 

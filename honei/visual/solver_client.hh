@@ -16,6 +16,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
 #ifndef LIBSWE_GUARD_SOLVER_CLIENT_HH
 #define LIBSWE_GUARD_SOLVER_CLIENT_HH 1
 #include <honei/la/dense_matrix.hh>

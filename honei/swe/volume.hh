@@ -18,6 +18,7 @@
  */
 
 
+#pragma once
 #ifndef LIBSWE_GUARD_VOLUME_HH
 #define LIBSWE_GUARD_VOLUME_HH 1
 

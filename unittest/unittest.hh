@@ -20,6 +20,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
 #ifndef UNITTEST_GUARD_UNITTEST_HH
 #define UNITTEST_GUARD_UNITTEST_HH 1
 

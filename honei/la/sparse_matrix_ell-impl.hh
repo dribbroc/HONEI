@@ -18,6 +18,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
 #ifndef LIBLA_GUARD_SPARSE_MATRIX_ELL_IMPL_HH
 #define LIBLA_GUARD_SPARSE_MATRIX_ELL_IMPL_HH 1
 

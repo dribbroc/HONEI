@@ -18,6 +18,7 @@
  */
 
 
+#pragma once
 #ifndef LBM_GUARD_TAGS_HH
 #define LBM_GUARD_TAGS_HH 1
 

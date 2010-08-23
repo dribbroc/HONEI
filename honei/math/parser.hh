@@ -17,6 +17,7 @@
  */
 
 
+#pragma once
 #ifndef LIBUTIL_GUARD_PARSER_HH
 #define LIBUTIL_GUARD_PARSER_HH 1
 

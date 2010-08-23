@@ -18,6 +18,7 @@
  */
 
 
+#pragma once
 #ifndef LBM_GUARD_SOLVER_LABSWE_HH
 #define LBM_GUARD_SOLVER_LABSWE_HH 1
 

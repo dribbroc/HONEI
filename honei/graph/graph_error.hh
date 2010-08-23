@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
 #ifndef LIBGRAPH_GUARD_GRAPH_ERROR_HH
 #define LIBGRAPH_GUARD_GRAPH_ERROR_HH 1
 

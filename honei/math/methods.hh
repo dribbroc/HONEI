@@ -1,5 +1,6 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
+#pragma once
 #ifndef LIBMATH_GUARD_METHODS_HH
 #define LIBMATH_GUARD_METHODS_HH 1
 /*

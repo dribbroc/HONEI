@@ -18,6 +18,7 @@
  */
 
 
+#pragma once
 #ifndef LBM_GUARD_GRID_PARTITIONER_HH
 #define LBM_GUARD_GRID_PARTITIONER_HH 1
 

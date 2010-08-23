@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
 #ifndef TOPOLOGY_GUARD_HH
 #define TOPOLOGY_GUARD_HH 1
 

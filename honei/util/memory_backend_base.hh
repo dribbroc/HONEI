@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
 #ifndef UTIL_GUARD_MEMORY_BACKEND_BASE_HH
 #define UTIL_GUARD_MEMORY_BACKEND_BASE_HH 1
 

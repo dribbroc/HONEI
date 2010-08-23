@@ -18,6 +18,7 @@
  */
 
 
+#pragma once
 #ifndef LIBSWE_GUARD_FLOW_PROCESSING_HH
 #define LIBSWE_GUARD_FLOW_PROCESSING_HH 1
 

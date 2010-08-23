@@ -18,6 +18,7 @@
  */
 
 
+#pragma once
 #ifndef LBM_GUARD_COLLIDE_STREAM_HH
 #define LBM_GUARD_COLLIDE_STREAM_HH 1
 

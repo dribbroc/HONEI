@@ -19,6 +19,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
 #ifndef LIBMATH_GUARD_QUADRATURE_HH
 #define LIBMATH_GUARD_QUADRATURE_HH 1
 

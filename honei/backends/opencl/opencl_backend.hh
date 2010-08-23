@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
 #ifndef OPENCL_GUARD_OPENCL_BACKEND_HH
 #define OPENCL_GUARD_OPENCL_BACKEND_HH 1
 

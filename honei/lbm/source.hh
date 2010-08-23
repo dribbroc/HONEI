@@ -18,6 +18,7 @@
  */
 
 
+#pragma once
 #ifndef LBM_GUARD_SOURCE_HH
 #define LBM_GUARD_SOURCE_HH 1
 

@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
 #ifndef LBM_GUARD_SOLID_EMULATION_FSI_HH
 #define LBM_GUARD_SOLID_EMULATION_FSI_HH 1
 

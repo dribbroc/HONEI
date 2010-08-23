@@ -18,6 +18,7 @@
  */
 
 
+#pragma once
 #ifndef LIBMATH_GUARD_DEFECT_HH
 #define LIBMATH_GUARD_DEFECT_HH 1
 

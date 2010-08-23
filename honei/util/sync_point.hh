@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
 #ifndef LIBUTIL_GUARD_SYNC_POINT_HH
 #define LIBUTIL_GUARD_SYNC_POINT_HH 1
 

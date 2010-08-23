@@ -19,6 +19,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
 #ifndef LIBUTIL_GUARD_BENCHMARK_INFO_HH
 #define LIBUTIL_GUARD_BENCHMARK_INFO_HH 1
 

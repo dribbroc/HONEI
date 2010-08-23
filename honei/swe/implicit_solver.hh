@@ -38,6 +38,7 @@
  * \ingroup grplibswe
  **/
 
+#pragma once
 #ifndef LIBSWE_GUARD_IMPLICIT_SOLVER_HH
 #define LIBSWE_GUARD_IMPLICIT_SOLVER_HH 1
 

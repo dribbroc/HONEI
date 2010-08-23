@@ -18,6 +18,7 @@
  */
 
 
+#pragma once
 #ifndef LIBSWE_GUARD_SCENARIO_MANAGER_HH
 #define LIBSWE_GUARD_SCENARIO_MANAGER_HH 1
 
