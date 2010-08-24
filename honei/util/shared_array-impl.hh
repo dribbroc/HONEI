@@ -111,7 +111,7 @@ namespace honei
     {
         CONTEXT("When accessing SharedArray-element at index '" + stringify(index) + "' in array of size '" +
                 stringify(this->_imp->size) + "':");
-        ASSERT(index >= 0, "index '" + stringify(index) + "' is out of bounds!");
+        //ASSERT(index >= 0, "index '" + stringify(index) + "' is out of bounds!");
         ASSERT(index < this->_imp->size, "index '" + stringify(index) + "' is out of bounds!");
 
         return this->_imp->array[index];

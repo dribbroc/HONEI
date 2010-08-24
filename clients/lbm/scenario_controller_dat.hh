@@ -117,7 +117,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerDat :
             }
         }
 
-        void render(bool show_ground, bool use_quads, bool enable_alpha_blending, bool show_water, float alpha)
+        void render(bool /*show_ground*/, bool use_quads, bool enable_alpha_blending, bool show_water, float alpha)
         {
             glScalef(1.0f, 1.0f, 100.0f);
             if(enable_alpha_blending)

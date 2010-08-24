@@ -67,7 +67,7 @@ template<typename Tag_, typename Prec_> class ScenarioControllerGrid :
             _info.destroy();
         }
 
-        static int get_precision(int scen_id)
+        static int get_precision(int /*scen_id*/)
         {
             return 1; // todo return the correct accuracy (0(float) or 1(double))
         }

@@ -131,7 +131,7 @@ template<typename Tag_, typename Prec_> class ScenarioController :
             delete _d_y;
         }
 
-        static int get_precision(int scen_id)
+        static int get_precision(int /*scen_id*/)
         {
             return 0; // todo return the correct accuracy (0(float) or 1(double))
         }
