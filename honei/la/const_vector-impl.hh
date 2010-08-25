@@ -199,7 +199,7 @@ namespace honei
     ConstVector<DataType_>::operator[] (unsigned long index) const
     {
         CONTEXT("When retrieving ConstVector element, unassignable:");
-        ASSERT(index < this->_imp->size() && index >= 0, "index is out of bounds!");
+        ASSERT(index < this->_imp->size(), "index is out of bounds!");
 
         return this->_imp->element(index);
     }

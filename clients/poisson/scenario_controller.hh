@@ -52,7 +52,7 @@ template<typename Tag_, typename Prec_> class ScenarioController :
             delete _u;
         }
 
-        static int get_precision(int scen_id)
+        static int get_precision(int /*scen_id*/)
         {
             return 1; // todo return the correct accuracy (0(float) or 1(double))
         }
@@ -454,7 +454,7 @@ template<typename Tag_, typename Prec_> class ScenarioController :
             ++_timestep;
         }
 
-        void render(bool show_ground, bool use_quads, bool enable_alpha_blending, bool show_water, float alpha)
+        void render(HONEI_UNUSED bool show_ground, bool use_quads, bool enable_alpha_blending, bool show_water, float alpha)
         {
             if(enable_alpha_blending)
             {

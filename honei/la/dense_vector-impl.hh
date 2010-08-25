@@ -204,7 +204,7 @@ namespace honei
     inline const DataType_ & DenseVector<DataType_>::operator[] (unsigned long index) const
     {
         CONTEXT("When retrieving DenseVector element, unassignable:");
-        ASSERT(index < this->_imp->size && index >= 0, "index is out of bounds!");
+        ASSERT(index < this->_imp->size, "index is out of bounds!");
         return this->_imp->elements[index];
     }
 
@@ -212,7 +212,7 @@ namespace honei
     inline DataType_ & DenseVector<DataType_>::operator[] (unsigned long index)
     {
         CONTEXT("When retrieving DenseVector element, assignable:");
-        ASSERT(index < this->_imp->size && index >= 0, "index is out of bounds!");
+        ASSERT(index < this->_imp->size, "index is out of bounds!");
         return this->_imp->elements[index];
     }
 

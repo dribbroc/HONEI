@@ -182,8 +182,8 @@ namespace honei
     BandedMatrixQ1<DataType_>::operator() (unsigned long row, unsigned long column) const
     {
         CONTEXT("When retrieving BandedMatrixQ1 element, unassignable:");
-        ASSERT(row < this->_imp->size && row >= 0, "row index '" + stringify(row) + "' is out of bounds!");
-        ASSERT(column < this->_imp->size && column >= 0, "column index '" + stringify(column) + "' is out of bounds!");
+        ASSERT(row < this->_imp->size, "row index '" + stringify(row) + "' is out of bounds!");
+        ASSERT(column < this->_imp->size, "column index '" + stringify(column) + "' is out of bounds!");
 
         long index(column - row);
         long root(this->_imp->root);
