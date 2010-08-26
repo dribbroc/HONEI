@@ -78,7 +78,7 @@ namespace honei
                 glutPostRedisplay ();
             }
 
-            static void keyboard (unsigned char key, HONEI_UNUSED int x, HONEI_UNUSED int y)
+            static void keyboard (unsigned char key, int /*x*/, int /*y*/)
             {
                 switch (key)
                 {
@@ -132,7 +132,7 @@ namespace honei
                 }
             }
 
-            static void keyboard_s (int key, HONEI_UNUSED int x, HONEI_UNUSED int y)
+            static void keyboard_s (int key, int /*x*/, int /*y*/)
             {
                 switch (key)
                 {
