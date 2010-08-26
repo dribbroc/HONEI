@@ -20,6 +20,7 @@
 #include <honei/util/hdf5.hh>
 #include <honei/util/instantiation_policy-impl.hh>
 #include <honei/util/private_implementation_pattern-impl.hh>
+#include <honei/util/attributes.hh>
 
 #include <map>
 #include <tr1/memory>
@@ -156,7 +157,7 @@ namespace honei
          *
          * Creates a named group in a given HDF5File.
          */
-        Implementation(const HDF5File & f, const std::string & n, std::size_t unused) :
+        Implementation(const HDF5File & f, const std::string & n, HONEI_UNUSED std::size_t unused) :
             file(f),
             name(n),
             id(H5Gcreate1(file.id(), n.c_str(), 0))

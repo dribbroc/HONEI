@@ -109,7 +109,7 @@ namespace honei
                 if (_socket != -1) close(_socket);
             }
 
-            void init(const char *  hostname, int port, int scenario)
+            void init(const char *  hostname, int port, HONEI_UNUSED int scenario)
             {
                 if (_socket != -1) close(_socket);
                 struct sockaddr_in srv;

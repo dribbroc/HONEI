@@ -56,7 +56,7 @@ namespace honei
             static void value(SparseMatrixELL<DT_> & system_matrix,
                     DenseVector<DT_> & right_hand_side,
                     DenseVector<DT_> & x,
-                    DenseVector<DT_> & dd_inverted,
+                    HONEI_UNUSED DenseVector<DT_> & dd_inverted,
                     unsigned long max_iters,
                     DT_ eps_relative = 1e-8)
             {

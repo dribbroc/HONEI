@@ -73,23 +73,23 @@ namespace honei
         float ebene_z = 0.0f;
         bool calculate = false;
         void * animator;
-        
-        
+
+
         float edgeMaterial[] = {0.2, 0.2, 0.2, 0.8};
         float edgeTransparent[] = {0.4, 0.4, 0.6, 0.4};
     }
-    
+
     template <typename Tag_, typename DataType_>
     class EngineEvolving
     {
         private:
-        
+
         public:
             static void setTestCase(EvolvingAnimator<Tag_, DataType_> & animator)
-            {               
+            {
                 gl_globals::animator = &animator;
-            }            
-            
+            }
+
             static void init(void)
             {
                     gl_globals::colors[0] = new Color(1.0f, 0.0f, 0.0f);
@@ -112,15 +112,15 @@ namespace honei
                 glEnable(GL_LINE_SMOOTH);
                 glEnable(GL_LIGHT0);
                 float pos[] = {100.0, -100.0, -100.0, 1};
-                glLightfv(GL_LIGHT0, GL_POSITION, pos); 
-                
+                glLightfv(GL_LIGHT0, GL_POSITION, pos);
+
                 glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
-            } 
+            }
 
             static void resize (int width, int height)
              {
-                gl_globals::screen_width=width; 
-                gl_globals::screen_height=height; 
+                gl_globals::screen_width=width;
+                gl_globals::screen_height=height;
                 glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 glViewport(0,0,gl_globals::screen_width,gl_globals::screen_height);
                 glShadeModel(GL_SMOOTH);
@@ -132,7 +132,7 @@ namespace honei
                 glutPostRedisplay ();
             }
 
-            static void keyboard (unsigned char key, int x, int y)
+            static void keyboard (unsigned char key, HONEI_UNUSED int x, HONEI_UNUSED int y)
              {
                 switch (key)
                  {
@@ -192,7 +192,7 @@ namespace honei
                 }
             }
 
-            static void keyboard_s (int key, int x, int y)
+            static void keyboard_s (int key, HONEI_UNUSED int x, HONEI_UNUSED int y)
              {
                 switch (key)
                 {
@@ -210,7 +210,7 @@ namespace honei
                         break;
                 }
             }
-            
+
             static inline EvolvingAnimator<Tag_, DataType_> * getAnimator()
             {
                 return reinterpret_cast<EvolvingAnimator<Tag_, DataType_> *> (gl_globals::animator);
@@ -242,23 +242,23 @@ namespace honei
                 glTranslatef(gl_globals::translation_x, 0.0, 0.0);
                 glTranslatef(0.0, gl_globals::translation_y, 0.0);
                 glTranslatef(0.0, 0.0 , gl_globals::translation_z);
-                
-                
-                //int timeslice = (int)gl_globals::time;     
+
+
+                //int timeslice = (int)gl_globals::time;
 
                 glBegin(GL_LINES);
-                
-                
+
+
                 EvolvingAnimator<Tag_, DataType_> * animator(getAnimator());
-                
-                
+
+
                 for (typename SparseMatrix<DataType_>::NonZeroElementIterator i(animator->edges()->begin_non_zero_elements()), i_end(animator->edges()->end_non_zero_elements()); i != i_end ; ++i)
                 {
                     if (i.row() > i.column())
                     {
                        glLineWidth((GLfloat)*i * 8);
                        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, gl_globals::edgeMaterial);
-                            
+
                         DenseVectorRange<DataType_> v1((animator->coordinates())[i.row()]);
                         DenseVectorRange<DataType_> v2((animator->coordinates())[i.column()]);
                         glVertex3f((GLfloat) v1[0],(GLfloat)v1[1], gl_globals::ebene_z);
@@ -271,9 +271,9 @@ namespace honei
                         glVertex3f((GLfloat) v1[0], (GLfloat)v1[1], gl_globals::ebene_z);
                         glVertex3f((GLfloat) v2[0], (GLfloat)v2[1], gl_globals::ebene_z);*/
                 }
-                
+
                 glEnd();
-                
+
                 // build geometry
                 for(unsigned int i = 0; i < animator->coordinates().rows(); ++i)
                 {
@@ -294,10 +294,10 @@ namespace honei
                     gluSphere(quad, (GLfloat)(*animator->node_weights())[i] / 10, 8, 8);
                     glPopMatrix();
                 }
-                
-                
-                
-                
+
+
+
+
                 glFlush();
                 glutSwapBuffers();
                 std::cout << "time = " << animator->time() << "\n";

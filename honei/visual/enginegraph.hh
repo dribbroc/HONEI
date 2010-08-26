@@ -44,7 +44,7 @@ namespace honei
             this->b = b;
             this->alpha = 0.9;
         }
-        
+
     };
 
     namespace gl_globals {
@@ -71,9 +71,9 @@ namespace honei
         double translation_x = 0;
         double translation_y = 0;
         double translation_z = 0;
-        
+
         double initial_distance = -10;
-        
+
         float edgeMaterial[] = {0.2, 0.2, 0.2, 0.8};
         float edgeTransparent[] = {0.4, 0.4, 0.6, 0.4};
         Color * colors[10];
@@ -83,27 +83,27 @@ namespace honei
         void * graph;
             void * positions;
     }
-    
+
     template <typename Tag_, typename DataType_, typename GraphTag_>
     class EngineGraph
     {
         private:
-            
-            
+
+
         public:
             static void setTestCase(AbstractGraph<DataType_> &graph, Positions<Tag_, DataType_, GraphTag_> * positions, int steps, double initial_distance = -10)
-            {                
+            {
                 gl_globals::steps = steps;
                 gl_globals::graph = &graph;
                 gl_globals::positions = positions;
                 gl_globals::initial_distance = initial_distance;
                 positions->init();
-            }            
-            
+            }
+
             static void init(void)
             {
-                
-                
+
+
                     gl_globals::colors[0] = new Color(1.0f, 0.0f, 0.0f);
                     gl_globals::colors[1] = new Color(0.0f, 1.0f, 0.0f);
                     gl_globals::colors[2] = new Color(0.0f, 0.0f, 1.0f);
@@ -124,15 +124,15 @@ namespace honei
                 glEnable(GL_LINE_SMOOTH);
                 glEnable(GL_LIGHT0);
                 float pos[] = {100.0, -100.0, -100.0, 1};
-                glLightfv(GL_LIGHT0, GL_POSITION, pos); 
-                
+                glLightfv(GL_LIGHT0, GL_POSITION, pos);
+
                 glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
-            } 
+            }
 
             static void resize (int width, int height)
              {
-                gl_globals::screen_width=width; 
-                gl_globals::screen_height=height; 
+                gl_globals::screen_width=width;
+                gl_globals::screen_height=height;
                 glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 glViewport(0,0,gl_globals::screen_width,gl_globals::screen_height);
                 glShadeModel(GL_SMOOTH);
@@ -144,7 +144,7 @@ namespace honei
                 glutPostRedisplay ();
             }
 
-            static void keyboard (unsigned char key, int x, int y)
+            static void keyboard (unsigned char key, HONEI_UNUSED int x, HONEI_UNUSED int y)
              {
                 switch (key)
                  {
@@ -201,7 +201,7 @@ namespace honei
                 }
             }
 
-            static void keyboard_s (int key, int x, int y)
+            static void keyboard_s (int key, HONEI_UNUSED int x, HONEI_UNUSED int y)
              {
                 switch (key)
                 {
@@ -252,7 +252,7 @@ namespace honei
                     reinterpret_cast<Positions<Tag_, DataType_, GraphTag_> *>(gl_globals::positions);
                 //if (gl_globals::actualstep < 10)
                 if (gl_globals::calculate)
-                {                 
+                {
                     for (int i = 0; i < gl_globals::steps; ++i)
                         positions->step();
                      std::cout << "Iteration " <<  positions->number_of_iterations() + 1 << "\t  Fehler: " << positions->step() << "\n";
@@ -277,8 +277,8 @@ namespace honei
                 */
 
                 // build geometry
-                DataType_ offset(graph->slice_count() / 4); 
-                
+                DataType_ offset(graph->slice_count() / 4);
+
                 glBegin(GL_LINES);
                 for (typename SparseMatrix<DataType_>::NonZeroElementIterator i(graph->edges()->begin_non_zero_elements()), i_end(graph->edges()->end_non_zero_elements()); i != i_end ; ++i)
                 {
@@ -289,7 +289,7 @@ namespace honei
                             glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, gl_globals::edgeMaterial);
                         else
                             glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, gl_globals::edgeTransparent);
-                            
+
                         DenseVectorRange<DataType_> v1((*graph->coordinates())[i.row()]);
                         DenseVectorRange<DataType_> v2((*graph->coordinates())[i.column()]);
                         glVertex3f((GLfloat) v1[0],(GLfloat)(- offset + 0.5 * graph->timeslice_index(i.row())), (GLfloat)v1[1]);
@@ -297,8 +297,8 @@ namespace honei
                     }
                 }
                 glEnd();
-                
-                
+
+
                 for(unsigned int i = 0; i < graph->coordinates()->rows(); ++i)
                 {
                     DenseVectorRange<DataType_> dv((*graph->coordinates())[i]);
@@ -319,7 +319,7 @@ namespace honei
                     glPopMatrix();
                 }
 
-                
+
                 glFlush();
                 glutSwapBuffers();
             }

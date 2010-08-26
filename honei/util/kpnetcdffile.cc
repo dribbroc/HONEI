@@ -7,6 +7,7 @@
  */
 
 #include <honei/util/kpnetcdffile.hh>
+#include <honei/util/attributes.hh>
 
 #include <iostream>
 #include <cstdlib>
@@ -110,7 +111,7 @@ void KPNetCDFFile::writeDims(const KPInitialConditions& init) {
     file->sync();
 }
 
-void KPNetCDFFile::readDims(KPInitialConditions& init) {
+void KPNetCDFFile::readDims(HONEI_UNUSED KPInitialConditions& init) {
     //Get dimensions
     layout.dims.i = file->get_dim("I");
     layout.dims.j = file->get_dim("J");
@@ -161,7 +162,7 @@ void KPNetCDFFile::writeVars(const KPInitialConditions& init) {
     file->sync();
 }
 
-void KPNetCDFFile::readVars(KPInitialConditions& init) {
+void KPNetCDFFile::readVars(HONEI_UNUSED KPInitialConditions& init) {
     //Create initial condidion variables
     layout.vars.init_B = file->get_var("init_B");
 
@@ -172,7 +173,7 @@ void KPNetCDFFile::readVars(KPInitialConditions& init) {
 }
 
 
-void KPNetCDFFile::writeAtts(const KPInitialConditions& init) {
+void KPNetCDFFile::writeAtts(HONEI_UNUSED const KPInitialConditions& init) {
     stringstream tmp;
 
     tmp.str("");
@@ -189,7 +190,7 @@ void KPNetCDFFile::writeAtts(const KPInitialConditions& init) {
 }
 
 
-void KPNetCDFFile::readAtts(KPInitialConditions& init) {
+void KPNetCDFFile::readAtts(HONEI_UNUSED KPInitialConditions& init) {
     cout << "created_by   = " << file->get_att("created_by")->as_string(0) << endl;
     cout << "created_on   = " << file->get_att("created_on")->as_string(0) << endl;
     cout << "created_with = " << file->get_att("created_with")->as_string(0) << endl;
