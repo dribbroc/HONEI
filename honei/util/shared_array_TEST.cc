@@ -51,7 +51,7 @@ class SharedArrayAlignmentTest :
                 unsigned long lsbs(reinterpret_cast<unsigned long>(array.get()));
 
                 lsbs &= 0xf;
-                TEST_CHECK_EQUAL(lsbs, 0);
+                TEST_CHECK_EQUAL(lsbs, 0ul);
             }
         }
 };

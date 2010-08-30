@@ -33,7 +33,7 @@
 #include <honei/la/sparse_vector-fwd.hh>
 #include <honei/la/sparse_matrix-fwd.hh>
 #include <honei/util/private_implementation_pattern.hh>
-#include <honei/util/shared_array-fwd.hh>
+#include <honei/util/shared_array.hh>
 
 #include <iterator>
 #include <tr1/memory>

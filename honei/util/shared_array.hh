@@ -84,7 +84,7 @@ namespace honei
             void reset(unsigned long size, DataType_ * array) const;
     };
 
-/*    extern template class SharedArray<float>;
+    extern template class SharedArray<float>;
 
     extern template class SharedArray<double>;
 
@@ -94,7 +94,7 @@ namespace honei
 
     extern template class SharedArray<long>;
 
-    extern template class SharedArray<unsigned long>;*/
+    extern template class SharedArray<unsigned long>;
 }
 
 #endif
