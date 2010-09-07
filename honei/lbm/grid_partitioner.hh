@@ -312,6 +312,7 @@ namespace honei
             static void _add_external_fringe(unsigned long self, std::vector<PackedGridFringe<D2Q9> > & fringe_list)
             {
                 std::vector<unsigned long> temp_external_h;
+                std::vector<unsigned long> temp_external_h_targets;
                 for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].h_targets->size() ; ++i)
@@ -325,6 +326,7 @@ namespace honei
                         {
                             temp_external_h.push_back((*fringe_list[index].h_index)[i*2]);
                             temp_external_h.push_back((*fringe_list[index].h_index)[i*2 + 1]);
+                            temp_external_h_targets.push_back(index);
                         }
                     }
                 }
@@ -333,6 +335,7 @@ namespace honei
                 {
                     temp_external_h.push_back(0);
                     temp_external_h.push_back(0);
+                    temp_external_h_targets.push_back(0);
                 }
 
                 fringe_list[self].external_h_index = new DenseVector<unsigned long>(temp_external_h.size());
@@ -340,8 +343,14 @@ namespace honei
                 {
                     (*fringe_list[self].external_h_index)[i] = temp_external_h.at(i);
                 }
+                fringe_list[self].external_h_targets = new DenseVector<unsigned long>(temp_external_h_targets.size());
+                for (unsigned long i(0) ; i < temp_external_h_targets.size() ; ++i)
+                {
+                    (*fringe_list[self].external_h_targets)[i] = temp_external_h_targets.at(i);
+                }
 
                 std::vector<unsigned long> temp_external_1;
+                std::vector<unsigned long> temp_external_targets_1;
                 for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_1->size() ; ++i)
@@ -355,6 +364,7 @@ namespace honei
                         {
                             temp_external_1.push_back((*fringe_list[index].dir_index_1)[i*2]);
                             temp_external_1.push_back((*fringe_list[index].dir_index_1)[i*2 + 1]);
+                            temp_external_targets_1.push_back(index);
                         }
                     }
                 }
@@ -363,6 +373,7 @@ namespace honei
                 {
                     temp_external_1.push_back(0);
                     temp_external_1.push_back(0);
+                    temp_external_targets_1.push_back(0);
                 }
 
                 fringe_list[self].external_dir_index_1 = new DenseVector<unsigned long>(temp_external_1.size());
@@ -370,8 +381,14 @@ namespace honei
                 {
                     (*fringe_list[self].external_dir_index_1)[i] = temp_external_1.at(i);
                 }
+                fringe_list[self].external_dir_targets_1 = new DenseVector<unsigned long>(temp_external_targets_1.size());
+                for (unsigned long i(0) ; i < temp_external_targets_1.size() ; ++i)
+                {
+                    (*fringe_list[self].external_dir_targets_1)[i] = temp_external_targets_1.at(i);
+                }
 
                 std::vector<unsigned long> temp_external_2;
+                std::vector<unsigned long> temp_external_targets_2;
                 for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_2->size() ; ++i)
@@ -385,6 +402,7 @@ namespace honei
                         {
                             temp_external_2.push_back((*fringe_list[index].dir_index_2)[i*2]);
                             temp_external_2.push_back((*fringe_list[index].dir_index_2)[i*2 + 1]);
+                            temp_external_targets_2.push_back(index);
                         }
                     }
                 }
@@ -393,6 +411,7 @@ namespace honei
                 {
                     temp_external_2.push_back(0);
                     temp_external_2.push_back(0);
+                    temp_external_targets_2.push_back(0);
                 }
 
                 fringe_list[self].external_dir_index_2 = new DenseVector<unsigned long>(temp_external_2.size());
@@ -400,8 +419,14 @@ namespace honei
                 {
                     (*fringe_list[self].external_dir_index_2)[i] = temp_external_2.at(i);
                 }
+                fringe_list[self].external_dir_targets_2 = new DenseVector<unsigned long>(temp_external_targets_2.size());
+                for (unsigned long i(0) ; i < temp_external_targets_2.size() ; ++i)
+                {
+                    (*fringe_list[self].external_dir_targets_2)[i] = temp_external_targets_2.at(i);
+                }
 
                 std::vector<unsigned long> temp_external_3;
+                std::vector<unsigned long> temp_external_targets_3;
                 for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_3->size() ; ++i)
@@ -415,6 +440,7 @@ namespace honei
                         {
                             temp_external_3.push_back((*fringe_list[index].dir_index_3)[i*2]);
                             temp_external_3.push_back((*fringe_list[index].dir_index_3)[i*2 + 1]);
+                            temp_external_targets_3.push_back(index);
                         }
                     }
                 }
@@ -423,6 +449,7 @@ namespace honei
                 {
                     temp_external_3.push_back(0);
                     temp_external_3.push_back(0);
+                    temp_external_targets_3.push_back(0);
                 }
 
                 fringe_list[self].external_dir_index_3 = new DenseVector<unsigned long>(temp_external_3.size());
@@ -430,8 +457,14 @@ namespace honei
                 {
                     (*fringe_list[self].external_dir_index_3)[i] = temp_external_3.at(i);
                 }
+                fringe_list[self].external_dir_targets_3 = new DenseVector<unsigned long>(temp_external_targets_3.size());
+                for (unsigned long i(0) ; i < temp_external_targets_3.size() ; ++i)
+                {
+                    (*fringe_list[self].external_dir_targets_3)[i] = temp_external_targets_3.at(i);
+                }
 
                 std::vector<unsigned long> temp_external_4;
+                std::vector<unsigned long> temp_external_targets_4;
                 for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_4->size() ; ++i)
@@ -445,6 +478,7 @@ namespace honei
                         {
                             temp_external_4.push_back((*fringe_list[index].dir_index_4)[i*2]);
                             temp_external_4.push_back((*fringe_list[index].dir_index_4)[i*2 + 1]);
+                            temp_external_targets_4.push_back(index);
                         }
                     }
                 }
@@ -453,6 +487,7 @@ namespace honei
                 {
                     temp_external_4.push_back(0);
                     temp_external_4.push_back(0);
+                    temp_external_targets_4.push_back(0);
                 }
 
                 fringe_list[self].external_dir_index_4 = new DenseVector<unsigned long>(temp_external_4.size());
@@ -460,8 +495,14 @@ namespace honei
                 {
                     (*fringe_list[self].external_dir_index_4)[i] = temp_external_4.at(i);
                 }
+                fringe_list[self].external_dir_targets_4 = new DenseVector<unsigned long>(temp_external_targets_4.size());
+                for (unsigned long i(0) ; i < temp_external_targets_4.size() ; ++i)
+                {
+                    (*fringe_list[self].external_dir_targets_4)[i] = temp_external_targets_4.at(i);
+                }
 
                 std::vector<unsigned long> temp_external_5;
+                std::vector<unsigned long> temp_external_targets_5;
                 for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_5->size() ; ++i)
@@ -475,6 +516,7 @@ namespace honei
                         {
                             temp_external_5.push_back((*fringe_list[index].dir_index_5)[i*2]);
                             temp_external_5.push_back((*fringe_list[index].dir_index_5)[i*2 + 1]);
+                            temp_external_targets_5.push_back(index);
                         }
                     }
                 }
@@ -483,6 +525,7 @@ namespace honei
                 {
                     temp_external_5.push_back(0);
                     temp_external_5.push_back(0);
+                    temp_external_targets_5.push_back(0);
                 }
 
                 fringe_list[self].external_dir_index_5 = new DenseVector<unsigned long>(temp_external_5.size());
@@ -490,8 +533,14 @@ namespace honei
                 {
                     (*fringe_list[self].external_dir_index_5)[i] = temp_external_5.at(i);
                 }
+                fringe_list[self].external_dir_targets_5 = new DenseVector<unsigned long>(temp_external_targets_5.size());
+                for (unsigned long i(0) ; i < temp_external_targets_5.size() ; ++i)
+                {
+                    (*fringe_list[self].external_dir_targets_5)[i] = temp_external_targets_5.at(i);
+                }
 
                 std::vector<unsigned long> temp_external_6;
+                std::vector<unsigned long> temp_external_targets_6;
                 for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_6->size() ; ++i)
@@ -505,6 +554,7 @@ namespace honei
                         {
                             temp_external_6.push_back((*fringe_list[index].dir_index_6)[i*2]);
                             temp_external_6.push_back((*fringe_list[index].dir_index_6)[i*2 + 1]);
+                            temp_external_targets_6.push_back(index);
                         }
                     }
                 }
@@ -513,6 +563,7 @@ namespace honei
                 {
                     temp_external_6.push_back(0);
                     temp_external_6.push_back(0);
+                    temp_external_targets_6.push_back(0);
                 }
 
                 fringe_list[self].external_dir_index_6 = new DenseVector<unsigned long>(temp_external_6.size());
@@ -520,8 +571,14 @@ namespace honei
                 {
                     (*fringe_list[self].external_dir_index_6)[i] = temp_external_6.at(i);
                 }
+                fringe_list[self].external_dir_targets_6 = new DenseVector<unsigned long>(temp_external_targets_6.size());
+                for (unsigned long i(0) ; i < temp_external_targets_6.size() ; ++i)
+                {
+                    (*fringe_list[self].external_dir_targets_6)[i] = temp_external_targets_6.at(i);
+                }
 
                 std::vector<unsigned long> temp_external_7;
+                std::vector<unsigned long> temp_external_targets_7;
                 for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_7->size() ; ++i)
@@ -535,6 +592,7 @@ namespace honei
                         {
                             temp_external_7.push_back((*fringe_list[index].dir_index_7)[i*2]);
                             temp_external_7.push_back((*fringe_list[index].dir_index_7)[i*2 + 1]);
+                            temp_external_targets_7.push_back(index);
                         }
                     }
                 }
@@ -543,6 +601,7 @@ namespace honei
                 {
                     temp_external_7.push_back(0);
                     temp_external_7.push_back(0);
+                    temp_external_targets_7.push_back(0);
                 }
 
                 fringe_list[self].external_dir_index_7 = new DenseVector<unsigned long>(temp_external_7.size());
@@ -550,8 +609,14 @@ namespace honei
                 {
                     (*fringe_list[self].external_dir_index_7)[i] = temp_external_7.at(i);
                 }
+                fringe_list[self].external_dir_targets_7 = new DenseVector<unsigned long>(temp_external_targets_7.size());
+                for (unsigned long i(0) ; i < temp_external_targets_7.size() ; ++i)
+                {
+                    (*fringe_list[self].external_dir_targets_7)[i] = temp_external_targets_7.at(i);
+                }
 
                 std::vector<unsigned long> temp_external_8;
+                std::vector<unsigned long> temp_external_targets_8;
                 for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_8->size() ; ++i)
@@ -565,6 +630,7 @@ namespace honei
                         {
                             temp_external_8.push_back((*fringe_list[index].dir_index_8)[i*2]);
                             temp_external_8.push_back((*fringe_list[index].dir_index_8)[i*2 + 1]);
+                            temp_external_targets_8.push_back(index);
                         }
                     }
                 }
@@ -573,12 +639,18 @@ namespace honei
                 {
                     temp_external_8.push_back(0);
                     temp_external_8.push_back(0);
+                    temp_external_targets_8.push_back(0);
                 }
 
                 fringe_list[self].external_dir_index_8 = new DenseVector<unsigned long>(temp_external_8.size());
                 for (unsigned long i(0) ; i < temp_external_8.size() ; ++i)
                 {
                     (*fringe_list[self].external_dir_index_8)[i] = temp_external_8.at(i);
+                }
+                fringe_list[self].external_dir_targets_8 = new DenseVector<unsigned long>(temp_external_targets_8.size());
+                for (unsigned long i(0) ; i < temp_external_targets_8.size() ; ++i)
+                {
+                    (*fringe_list[self].external_dir_targets_8)[i] = temp_external_targets_8.at(i);
                 }
             }
 

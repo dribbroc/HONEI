@@ -96,8 +96,11 @@ class GridPartitionerTest :
                 std::cout<<"fringe h index "<<*fringe_list[i].h_index;
                 std::cout<<"fringe h targets "<<*fringe_list[i].h_targets;
                 std::cout<<"fringe external h index "<<*fringe_list[i].external_h_index;
+                std::cout<<"fringe external h targets "<<*fringe_list[i].external_h_targets;
                 std::cout<<"limits "<<*info_list[i].limits;
                 std::cout<<"h size: "<<data_list[i].h->size()<<std::endl;
+                std::cout<<"fringe dir 1 targets "<<*fringe_list[i].dir_targets_1;
+                std::cout<<"fringe dir 1 external targets "<<*fringe_list[i].external_dir_targets_1;
             }
 
             TEST_CHECK(true);
@@ -170,4 +173,4 @@ class DirPartitionerTest :
             TEST_CHECK(true);
         }
 };
-//DirPartitionerTest<tags::CPU, float> dptest_float("float");
+DirPartitionerTest<tags::CPU, float> dptest_float("float");

@@ -469,6 +469,7 @@ namespace honei
                 h_index(0),
                 h_targets(0),
                 external_h_index(0),
+                external_h_targets(0),
                 dir_index_1(0),
                 dir_targets_1(0),
                 dir_index_2(0),
@@ -492,7 +493,15 @@ namespace honei
                 external_dir_index_5(0),
                 external_dir_index_6(0),
                 external_dir_index_7(0),
-                external_dir_index_8(0)
+                external_dir_index_8(0),
+                external_dir_targets_1(0),
+                external_dir_targets_2(0),
+                external_dir_targets_3(0),
+                external_dir_targets_4(0),
+                external_dir_targets_5(0),
+                external_dir_targets_6(0),
+                external_dir_targets_7(0),
+                external_dir_targets_8(0)
             {
             }
 
@@ -501,6 +510,7 @@ namespace honei
                 delete h_index;
                 delete h_targets;
                 delete external_h_index;
+                delete external_h_targets;
                 delete dir_index_1;
                 delete dir_targets_1;
                 delete dir_index_2;
@@ -525,10 +535,19 @@ namespace honei
                 delete external_dir_index_6;
                 delete external_dir_index_7;
                 delete external_dir_index_8;
+                delete external_dir_targets_1;
+                delete external_dir_targets_2;
+                delete external_dir_targets_3;
+                delete external_dir_targets_4;
+                delete external_dir_targets_5;
+                delete external_dir_targets_6;
+                delete external_dir_targets_7;
+                delete external_dir_targets_8;
 
                 h_index = 0;
                 h_targets = 0;
                 external_h_index = 0;
+                external_h_targets = 0;
                 dir_index_1 = 0;
                 dir_targets_1 = 0;
                 dir_index_2 = 0;
@@ -553,11 +572,20 @@ namespace honei
                 external_dir_index_6 = 0;
                 external_dir_index_7 = 0;
                 external_dir_index_8 = 0;
+                external_dir_targets_1 = 0;
+                external_dir_targets_2 = 0;
+                external_dir_targets_3 = 0;
+                external_dir_targets_4 = 0;
+                external_dir_targets_5 = 0;
+                external_dir_targets_6 = 0;
+                external_dir_targets_7 = 0;
+                external_dir_targets_8 = 0;
             }
 
             DenseVector<unsigned long> * h_index;
             DenseVector<unsigned long> * h_targets;
             DenseVector<unsigned long> * external_h_index;
+            DenseVector<unsigned long> * external_h_targets;
             DenseVector<unsigned long> * dir_index_1;
             DenseVector<unsigned long> * dir_targets_1;
             DenseVector<unsigned long> * dir_index_2;
@@ -582,6 +610,14 @@ namespace honei
             DenseVector<unsigned long> * external_dir_index_6;
             DenseVector<unsigned long> * external_dir_index_7;
             DenseVector<unsigned long> * external_dir_index_8;
+            DenseVector<unsigned long> * external_dir_targets_1;
+            DenseVector<unsigned long> * external_dir_targets_2;
+            DenseVector<unsigned long> * external_dir_targets_3;
+            DenseVector<unsigned long> * external_dir_targets_4;
+            DenseVector<unsigned long> * external_dir_targets_5;
+            DenseVector<unsigned long> * external_dir_targets_6;
+            DenseVector<unsigned long> * external_dir_targets_7;
+            DenseVector<unsigned long> * external_dir_targets_8;
     };
 }
 
