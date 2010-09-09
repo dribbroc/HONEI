@@ -122,13 +122,15 @@ class SolverLBMFSIExternalComparisonTest_CDUB :
 
             SolverLBMFSI<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, &solids, grid.d_x, grid.d_y, grid.d_t, grid.tau);
 
+            solids.current_u = DataType_(0);
+            solids.current_v = DataType_(0);
             solver.do_preprocessing();
             for(unsigned long i(0); i < _max_timesteps; ++i)
             {
 #ifdef SOLVER_VERBOSE
                 std::cout<<"Timestep: " << i << "/" << _max_timesteps << std::endl;
 #endif
-                solver.solve(1ul);
+                solver.solve(0ul);
 #ifdef SOLVER_POSTPROCESSING
                 solver.do_postprocessing();
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
@@ -152,6 +154,7 @@ class SolverLBMFSIExternalComparisonTest_CDUB :
                 for(unsigned long j(0) ; j < grid.h->columns() ; ++j)
                     (h_plus_b)[i][j] /= max_v;
 
+            //std::cout << h_plus_b << std::endl;
             BitmapIO<io_formats::PPM>::write_scalar_field(h_plus_b, "ext_result_h_b_cdub.ppm");
             DenseMatrix<DataType_> bluppy2(BitmapIO<io_formats::PPM>::read_scalar_field("ext_result_h_b_cdub.ppm", DataType_(1.)));
         }
