@@ -335,6 +335,12 @@ namespace honei
 
             static void pack(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data, bool alloc_all = true)
             {
+                grid.obstacles->lock(lm_read_only);
+                grid.h->lock(lm_read_only);
+                grid.b->lock(lm_read_only);
+                grid.u->lock(lm_read_only);
+                grid.v->lock(lm_read_only);
+
                 unsigned long fluid_count(0);
                 for(unsigned long i(0); i < grid.obstacles->rows(); ++i)
                 {
@@ -599,6 +605,12 @@ namespace honei
                         ++index2;
                     }
                 }
+
+                grid.obstacles->unlock(lm_read_only);
+                grid.h->unlock(lm_read_only);
+                grid.b->unlock(lm_read_only);
+                grid.u->unlock(lm_read_only);
+                grid.v->unlock(lm_read_only);
             }
 
             ///Generalized unpacking and extraction
