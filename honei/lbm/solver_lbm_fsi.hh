@@ -19,8 +19,8 @@
 
 
 #pragma once
-#ifndef LBM_GUARD_SOLVER_LBM_GRID_HH
-#define LBM_GUARD_SOLVER_LBM_GRID_HH 1
+#ifndef LBM_GUARD_SOLVER_LBM_FSI_HH
+#define LBM_GUARD_SOLVER_LBM_FSI_HH 1
 
 /**
  * \file

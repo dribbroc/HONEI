@@ -267,7 +267,7 @@ class SolverLBMGridExternalComparisonTest_CDUB :
 
             DenseMatrix<DataType_> h_plus_b(grid.h->copy());
             Sum<Tag_>::value(h_plus_b, b);
-
+            h_plus_b.lock(lm_read_and_write);
             DataType_ max_v(0);
             for(unsigned long i(0) ; i < grid.h->rows() ; ++i)
                 for(unsigned long j(0) ; j < grid.h->columns() ; ++j)
@@ -277,6 +277,7 @@ class SolverLBMGridExternalComparisonTest_CDUB :
             for(unsigned long i(0) ; i < grid.h->rows() ; ++i)
                 for(unsigned long j(0) ; j < grid.h->columns() ; ++j)
                     (h_plus_b)[i][j] /= max_v;
+            h_plus_b.unlock(lm_read_and_write);
 
             BitmapIO<io_formats::PPM>::write_scalar_field(h_plus_b, "ext_result_h_b_cdub.ppm");
             DenseMatrix<DataType_> bluppy2(BitmapIO<io_formats::PPM>::read_scalar_field("ext_result_h_b_cdub.ppm", DataType_(1.)));
