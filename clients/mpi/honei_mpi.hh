@@ -757,6 +757,7 @@ namespace honei
 
             void _load_scenario(unsigned long scenario, Grid<D2Q9, DataType_> & grid, unsigned long size)
             {
+                std::cout<<"Loading scenario "<< scenario << std::endl;
                 switch (scenario)
                 {
                     case 0:

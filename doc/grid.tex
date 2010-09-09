@@ -76,7 +76,7 @@ Der nächste Bereich beginnt dann bei h\_index[x + 2].
 Die Koordinaten beziehen sich auf den globalen h Vektor.
 
 \subsubsection{h\_targets}
-Enthält den Löser, der den gewünschte Bereich von u, h und v  beschrieben hat.
+Enthält den Löser, der den gewünschte Bereich von u, h und v  beschrieben hat, beginnend bei 0.
 
 Beachte: h\_targets.size() = 0.5 * h\_index.size().
 
@@ -87,7 +87,7 @@ Der nächste Bereich beginnt dann bei external\_h\_index[x + 2].
 Die Koordinaten beziehen sich auf den globalen h Vektor.
 
 \subsubsection{external\_h\_targets}
-Enthält den Löser, dem der Bereich von h\_index mitgeteilt werden muss.
+Enthält den Löser, dem der Bereich von h\_index mitgeteilt werden muss, beginnend bei 0.
 
 \subsubsection{dir\_index\_n}
 Enthält die Abschnitte, in denen der f\_temp\_n Vektor anderen Lösern mitgeteilt werden muss.
@@ -96,7 +96,7 @@ Der nächste Bereich beginnt dann bei dir\_index\_n[x + 2].
 Die Koordinaten beziehen sich auf den globalen f\_temp\_n Vektor.
 
 \subsubsection{dir\_targets\_n}
-Enthält den Löser, dem der Bereich von f\_temp\_n mitgeteilt werden muss.
+Enthält den Löser, dem der Bereich von f\_temp\_n mitgeteilt werden muss, beginnend bei 0.
 
 Beachte: dir\_targets\_n.size() = 0.5 * dir\_index\_n.size().
 
@@ -107,7 +107,7 @@ Der nächste Bereich beginnt dann bei external\_dir\_index\_n[x + 2].
 Die Koordinaten beziehen sich auf den globalen h Vektor.
 
 \subsubsection{external\_dir\_targets\_n}
-Enthält den Löser, der den Bereich von f\_temp\_n beschrieben hat.
+Enthält den Löser, der den Bereich von f\_temp\_n beschrieben hat, beginnend bei 0.
 
 \section{Grid Tools}
 \subsection{GridPacker}

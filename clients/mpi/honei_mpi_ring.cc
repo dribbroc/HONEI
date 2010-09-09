@@ -17,11 +17,11 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei_mpi.hh>
+#include <honei_mpi_ring.hh>
 
 using namespace honei;
 
 int main(int argc, char ** argv)
 {
-    MPISolver<tags::CPU::SSE, float> mpis(argc, argv);
+    MPIRingSolver<tags::CPU::SSE, float> mpis(argc, argv);
 }
