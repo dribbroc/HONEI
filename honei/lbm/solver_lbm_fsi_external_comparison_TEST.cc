@@ -18,6 +18,7 @@
  */
 
 #include <honei/lbm/solver_lbm_fsi.hh>
+//#include <honei/lbm/solver_lbm_grid.hh>
 #include <honei/lbm/bitmap_io.hh>
 #include <honei/swe/post_processing.hh>
 #include <unittest/unittest.hh>
@@ -121,6 +122,7 @@ class SolverLBMFSIExternalComparisonTest_CDUB :
             GridPackerFSI<D2Q9, NOSLIP, DataType_>::pack(grid, data, solids, line, bound, stf, sol, *grid.obstacles);
 
             SolverLBMFSI<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, &solids, grid.d_x, grid.d_y, grid.d_t, grid.tau);
+            //SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, grid.d_x, grid.d_y, grid.d_t, grid.tau);
 
             solids.current_u = DataType_(0);
             solids.current_v = DataType_(0);
@@ -131,6 +133,7 @@ class SolverLBMFSIExternalComparisonTest_CDUB :
                 std::cout<<"Timestep: " << i << "/" << _max_timesteps << std::endl;
 #endif
                 solver.solve(0ul);
+                //solver.solve();
 #ifdef SOLVER_POSTPROCESSING
                 solver.do_postprocessing();
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
@@ -144,6 +147,7 @@ class SolverLBMFSIExternalComparisonTest_CDUB :
             DenseMatrix<DataType_> h_plus_b(grid.h->copy());
             Sum<Tag_>::value(h_plus_b, b);
 
+            h_plus_b.lock(lm_read_and_write);
             DataType_ max_v(0);
             for(unsigned long i(0) ; i < grid.h->rows() ; ++i)
                 for(unsigned long j(0) ; j < grid.h->columns() ; ++j)
@@ -153,14 +157,14 @@ class SolverLBMFSIExternalComparisonTest_CDUB :
             for(unsigned long i(0) ; i < grid.h->rows() ; ++i)
                 for(unsigned long j(0) ; j < grid.h->columns() ; ++j)
                     (h_plus_b)[i][j] /= max_v;
+            h_plus_b.unlock(lm_read_and_write);
 
-            //std::cout << h_plus_b << std::endl;
             BitmapIO<io_formats::PPM>::write_scalar_field(h_plus_b, "ext_result_h_b_cdub.ppm");
             DenseMatrix<DataType_> bluppy2(BitmapIO<io_formats::PPM>::read_scalar_field("ext_result_h_b_cdub.ppm", DataType_(1.)));
         }
 
 };
-SolverLBMFSIExternalComparisonTest_CDUB<tags::CPU, float> cpu_solver_test_float_cdub("float", "ext_initial_h_cdub.ppm", "ext_initial_vx_cdub.ppm", "ext_initial_vy_cdub.ppm", "ext_initial_b_cdub.ppm", "ext_obstacles_cdub.ppm", 200ul, 0.08f, 1.0f, 1.0f, 0.08f, 0.01f, 0.01f, 0.01f, 1.5f);
+SolverLBMFSIExternalComparisonTest_CDUB<tags::CPU, float> cpu_solver_test_float_cdub("float", "ext_initial_h_cdub.ppm", "ext_initial_vx_cdub.ppm", "ext_initial_vy_cdub.ppm", "ext_initial_b_cdub.ppm", "ext_obstacles_cdub.ppm", 200ul, 0.08f, 1.0f, 1.0f, 0.08f, 0.01f, 0.01f, 0.01f, 1.1f);
 #ifdef HONEI_CUDA
-SolverLBMFSIExternalComparisonTest_CDUB<tags::GPU::CUDA, float> cuda_solver_test_float_cdub("float", "ext_initial_h_cdub.ppm", "ext_initial_vx_cdub.ppm", "ext_initial_vy_cdub.ppm", "ext_initial_b_cdub.ppm", "ext_obstacles_cdub.ppm", 200ul, 0.08f, 1.0f, 1.0f, 0.08f, 0.01f, 0.01f, 0.01f, 1.5f);
+SolverLBMFSIExternalComparisonTest_CDUB<tags::GPU::CUDA, float> cuda_solver_test_float_cdub("float", "ext_initial_h_cdub.ppm", "ext_initial_vx_cdub.ppm", "ext_initial_vy_cdub.ppm", "ext_initial_b_cdub.ppm", "ext_obstacles_cdub.ppm", 200ul, 0.08f, 1.0f, 1.0f, 0.08f, 0.01f, 0.01f, 0.01f, 1.1f);
 #endif
