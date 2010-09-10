@@ -143,7 +143,8 @@ namespace honei
                 GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list, fringe_list);
                 GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
-                PostProcessing<output_types::GNUPLOT>::value(*grid.h, 1, grid.h->columns(), grid.h->rows(), 0);*/
+                std::cout<<*grid.h;*/
+                //PostProcessing<output_types::GNUPLOT>::value(*grid.h, 1, grid.h->columns(), grid.h->rows(), 0);
             }
 
             void _slave()
@@ -762,9 +763,8 @@ namespace honei
                 {
                     case 0:
                         {
-                            unsigned long g_h(50);
-                            unsigned long g_w(50);
-
+                            unsigned long g_h(size);
+                            unsigned long g_w(size);
                             grid.h = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.05));
                             Cylinder<DataType_> c1(*grid.h, DataType_(0.06), 25, 25);
                             c1.value();
@@ -802,8 +802,8 @@ namespace honei
 
                     case 2:
                         {
-                            unsigned long g_h(100);
-                            unsigned long g_w(200);
+                            unsigned long g_h(size);
+                            unsigned long g_w(size);
                             grid.h = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.05));
                             Cylinder<DataType_> c1(*grid.h, DataType_(0.03), 35, 16);
                             c1.value();

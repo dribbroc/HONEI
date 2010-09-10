@@ -1,10 +1,10 @@
 # #PBS -o mpi_output.txt
-#PBS -l walltime=00:03:00,nodes=17
+#PBS -l walltime=00:10:00,nodes=9
 #PBS -M dribbrock@gmail.com
 #PBS -m bae
-#PBS -q short_ib
+#PBS -q short_eth
 #PBS -N honei-mpi
 #PBS -j oe
-echo 17
+echo ring 9
 cd $HOME/honei/trunk/clients/mpi
-mpirun -np 17 ./honei-mpi 2400
+mpirun -np 9 ./honei-mpi-ring 2000
