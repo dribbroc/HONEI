@@ -35,6 +35,7 @@
 #include <honei/lbm/grid_packer.hh>
 #include <honei/lbm/grid_partitioner.hh>
 #include <honei/util/time_stamp.hh>
+#include <honei/lbm/scenario_collection.hh>
 
 #include <iostream>
 
@@ -73,9 +74,11 @@ namespace honei
         private:
             void _master(unsigned long gridsize)
             {
+                std::cout<<"Star LBM Solver with " << _numprocs << " nodes:" << std::endl;
                 unsigned long timesteps(100);
                 Grid<D2Q9, DataType_> grid;
-                _load_scenario(1, grid, gridsize);
+                ScenarioCollection::get_scenario(1, gridsize, gridsize, grid);
+                std::cout << "Solving: " << grid.description << std::endl;
 
                 PackedGridData<D2Q9, DataType_>  data;
                 PackedGridInfo<D2Q9> info;
@@ -753,80 +756,6 @@ namespace honei
                     unsigned long h_offset((*fringe.h_index)[i * 2]);
                     unsigned long h_size((*fringe.h_index)[i * 2 + 1] - h_offset);
                     if (h_size > 0) mpi::mpi_recv(data.h->elements() + h_offset - offset, h_size, target, target);
-                }
-            }
-
-            void _load_scenario(unsigned long scenario, Grid<D2Q9, DataType_> & grid, unsigned long size)
-            {
-                std::cout<<"Loading scenario "<< scenario << std::endl;
-                switch (scenario)
-                {
-                    case 0:
-                        {
-                            unsigned long g_h(size);
-                            unsigned long g_w(size);
-                            grid.h = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.05));
-                            Cylinder<DataType_> c1(*grid.h, DataType_(0.06), 25, 25);
-                            c1.value();
-
-                            grid.u = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.));
-                            grid.v = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.));
-                            DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
-                            grid.b = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.));
-
-                            grid.obstacles = new DenseMatrix<bool> (g_h, g_w, false);
-                        }
-                        break;
-
-                    case 1:
-                        {
-                            unsigned long g_h(size);
-                            unsigned long g_w(size);
-                            grid.h = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.05));
-                            Cylinder<DataType_> c1(*grid.h, DataType_(0.06), 25, 25);
-                            c1.value();
-
-                            grid.u = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.));
-                            grid.v = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.));
-                            DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
-                            grid.b = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.));
-
-                            grid.obstacles = new DenseMatrix<bool> (g_h, g_w, false);
-
-                            Cuboid<bool> q2(*grid.obstacles, 15, 5, 1, 10, 0);
-                            q2.value();
-                            Cuboid<bool> q3(*grid.obstacles, 40, 5, 1, 10, 30);
-                            q3.value();
-                        }
-                        break;
-
-                    case 2:
-                        {
-                            unsigned long g_h(size);
-                            unsigned long g_w(size);
-                            grid.h = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.05));
-                            Cylinder<DataType_> c1(*grid.h, DataType_(0.03), 35, 16);
-                            c1.value();
-
-                            grid.u = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.));
-                            grid.v = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.));
-                            DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
-                            //build up the hill:
-                            for(unsigned long i(0) ; i < g_h ; ++i)
-                            {
-                                for(unsigned long j(0) ; j < g_w ; ++j)
-                                {
-                                    double x(j * 0.01);
-                                    double y(i * 0.01);
-                                    if(sqrt(y * y + x * x) >= 0.4)
-                                        b(i , j) = 0.4 * exp((-5.) * (x - 1.) * (x - 1.) - 50. * (y - 0.5) * (y - 0.5));
-                                }
-                            }
-                            grid.b = new DenseMatrix<DataType_> (g_h, g_w, DataType_(0.));
-
-                            grid.obstacles = new DenseMatrix<bool> (g_h, g_w, false);
-                        }
-                        break;
                 }
             }
     };
