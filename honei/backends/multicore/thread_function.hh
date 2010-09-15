@@ -26,7 +26,6 @@
 #include <honei/util/private_implementation_pattern.hh>
 
 #include <list>
-#include <tr1/functional>
 
 namespace honei
 {
@@ -39,7 +38,7 @@ namespace honei
 
             public:
 
-                ThreadFunction(Mutex * const mutex, ConditionVariable * const barrier, std::list<ThreadTask *> * const list, unsigned pool_id, unsigned sched_id);
+                ThreadFunction(Mutex * const mutex, ConditionVariable * const barrier, SegmentList * const list, unsigned pool_id, unsigned sched_id);
 
                 ~ThreadFunction();
 

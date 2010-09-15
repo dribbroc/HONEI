@@ -16,7 +16,9 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/backends/multicore/segment_list.hh>
 #include <honei/backends/multicore/thread_function.hh>
+#include <honei/backends/multicore/thread_task.hh>
 #include <honei/util/attributes.hh>
 #include <honei/util/exception.hh>
 #include <honei/util/lock.hh>
@@ -43,7 +45,7 @@ namespace honei
         Mutex * const pool_mutex;
 
         /// The task list administrated by the thread pool.
-        std::list<mc::ThreadTask *> * const tasklist;
+        SegmentList * const tasklist;
 
         /// ConditionVariable for work-status.
         ConditionVariable * const global_barrier;
@@ -52,7 +54,7 @@ namespace honei
         volatile bool terminate;
 
         Implementation(Mutex * const mutex, ConditionVariable * const barrier,
-                std::list<mc::ThreadTask *> * const list, unsigned pid, unsigned sched) :
+                SegmentList * const list, unsigned pid, unsigned sched) :
             pool_id(pid),
             thread_id(0),
             sched_lpu(sched),
@@ -71,7 +73,7 @@ namespace honei
 
 using namespace honei::mc;
 
-ThreadFunction::ThreadFunction(Mutex * const mutex, ConditionVariable * const barrier, std::list<ThreadTask *> * const list, unsigned pool_id, unsigned sched_id) :
+ThreadFunction::ThreadFunction(Mutex * const mutex, ConditionVariable * const barrier, SegmentList * const list, unsigned pool_id, unsigned sched_id) :
     PrivateImplementationPattern<ThreadFunction, Shared>(new Implementation<ThreadFunction>(mutex, barrier, list, pool_id, sched_id))
 {
 }
@@ -124,19 +126,14 @@ void ThreadFunction::operator() ()
         {
             Lock l(*_imp->pool_mutex); // Try to avoid this lock...
 
-            for (i = _imp->tasklist->begin(), i_end = _imp->tasklist->end() ; i != i_end ; ++i)
-            {
-                if ((*comp)(*i))
-                {
-                    task = *i;
-                    unsigned & sched_id = task->ticket->sid();
-                    sched_id = _imp->sched_lpu;
-                    _imp->tasklist->remove(*i);
-                    break;
-                }
-            }
+            task = tasklist->extract(*comp);
 
-            if (task == 0)
+            if (task != NULL)
+            {
+                unsigned & sched_id = task->ticket->sid();
+                sched_id = sched_lpu;
+            }
+            else
             {
                 if (! _imp->terminate)
                     _imp->global_barrier->wait(*_imp->pool_mutex);

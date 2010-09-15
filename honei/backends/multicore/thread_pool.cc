@@ -40,7 +40,8 @@ ThreadPool::ThreadPool() :
     _inst_ctr(0),
     _mutex(new Mutex),
     _global_barrier(new ConditionVariable),
-    _affinity(Configuration::instance()->get_value("mc::affinity", true))
+    _affinity(Configuration::instance()->get_value("mc::affinity", true)),
+    _tasks(new SegmentList(Configuration::instance()->get_value("mc::num_threads", _topology->num_lpus() - 1)))
 {
 #ifdef linux
     if (_affinity)
@@ -59,7 +60,7 @@ ThreadPool::ThreadPool() :
     {
         unsigned sched_id(i % (_topology->num_lpus() - 1));
 
-        ThreadFunction * tobj = new ThreadFunction(_mutex, _global_barrier, &_tasks, _inst_ctr, (_affinity ? sched_id : 0xFFFF));
+        ThreadFunction * tobj = new ThreadFunction(_mutex, _global_barrier, _tasks, _inst_ctr, (_affinity ? sched_id : 0xFFFF));
         Thread * t = new Thread(*tobj);
         while (tobj->tid() == 0); // Wait until the thread is really setup / got cpu time for the first time
 
@@ -88,6 +89,7 @@ ThreadPool::~ThreadPool()
         delete (*i).first;
     }
 
+    delete _tasks;
     delete[] _affinity_mask;
     delete _global_barrier;
     delete _mutex;
@@ -110,7 +112,7 @@ void ThreadPool::add_threads(const unsigned num)
     {
         unsigned sched_id(i % (_topology->num_lpus() - 1));
 
-        ThreadFunction * tobj = new ThreadFunction(_mutex, _global_barrier, &_tasks, _inst_ctr, (_affinity ? sched_id : 0xFFFF));
+        ThreadFunction * tobj = new ThreadFunction(_mutex, _global_barrier, _tasks, _inst_ctr, (_affinity ? sched_id : 0xFFFF));
         Thread * t = new Thread(*tobj);
         unsigned tid(0);
         do
@@ -192,9 +194,11 @@ Ticket<tags::CPU::MultiCore> * ThreadPool::enqueue(const std::tr1::function<void
 
     ThreadTask * t_task(new ThreadTask(task, ticket));
 
-    Lock l(*_mutex);
-    _tasks.push_back(t_task);
+    _tasks->push_back(t_task);
 
+    Lock l(*_mutex);
+
+//    _tasks->consistency_check();
     _global_barrier->broadcast();
 
     return ticket;

@@ -17,10 +17,10 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#pragma once
 #ifndef MULTICORE_GUARD_THREAD_POOL_HH
 #define MULTICORE_GUARD_THREAD_POOL_HH 1
 
+#include <honei/backends/multicore/segment_list.hh>
 #include <honei/backends/multicore/dispatch_policy.hh>
 #include <honei/backends/multicore/ticket.hh>
 #include <honei/backends/multicore/thread_function.hh>
@@ -55,7 +55,7 @@ namespace honei
                 std::list<std::pair<Thread *, ThreadFunction *> > _threads;
 
                 /// Waiting list of worker tasks to be executed
-                std::list<ThreadTask *> _tasks;
+                SegmentList * _tasks;
 
                 /// Our Mutex
                 Mutex * const _mutex;
