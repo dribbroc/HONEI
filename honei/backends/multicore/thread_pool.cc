@@ -61,6 +61,8 @@ ThreadPool::ThreadPool() :
 
         ThreadFunction * tobj = new ThreadFunction(_mutex, _global_barrier, &_tasks, _inst_ctr, (_affinity ? sched_id : 0xFFFF));
         Thread * t = new Thread(*tobj);
+        while (tobj->tid() == 0) ; // Wait until the thread is really setup / got cpu time for the first time
+
         _threads.push_back(std::make_pair(t, tobj));
         ++_inst_ctr;
 
@@ -110,6 +112,16 @@ void ThreadPool::add_threads(const unsigned num)
 
         ThreadFunction * tobj = new ThreadFunction(_mutex, _global_barrier, &_tasks, _inst_ctr, (_affinity ? sched_id : 0xFFFF));
         Thread * t = new Thread(*tobj);
+        unsigned tid(0);
+        do
+        {
+            // Wait until the thread is really setup. (got cpu time for the first time)
+            tid = tobj->tid();
+        }
+        while (tid == 0);
+
+        Lock l(*_mutex);
+
         _threads.push_back(std::make_pair(t, tobj));
         ++_inst_ctr;
 
@@ -119,7 +131,7 @@ void ThreadPool::add_threads(const unsigned num)
             _sched_ids.push_back(sched_id);
             CPU_ZERO(&_affinity_mask[i]);
             CPU_SET(sched_id, &_affinity_mask[i]);
-            if(sched_setaffinity(tobj->tid(), sizeof(cpu_set_t), &_affinity_mask[i]) != 0)
+            if(sched_setaffinity(tid, sizeof(cpu_set_t), &_affinity_mask[i]) != 0)
                 throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
         }
 #endif
@@ -133,9 +145,14 @@ void ThreadPool::delete_threads(const unsigned num)
     for (unsigned i(0) ; i < num ; ++i)
     {
         std::pair<Thread *, ThreadFunction *> t = _threads.back();
-        _threads.pop_back();
-        _sched_ids.pop_back();
-        t.second->stop();
+        {
+            Lock l(*_mutex);
+            _sched_ids.pop_back();
+            _threads.pop_back();
+            t.second->stop();
+
+        }
+
         delete t.second;
         delete t.first;
         --_inst_ctr;

@@ -43,7 +43,7 @@ namespace honei
                 /// \{
 
                 /// Information about processor topology (such as number of processing units)
-                Topology * _topology;
+                Topology * const _topology;
 
                 /// Number of currently pooled threads
                 unsigned _num_threads;

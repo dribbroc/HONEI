@@ -31,10 +31,10 @@ namespace honei
         {
             typedef std::tr1::function<void () throw ()> WorkFunctor;
 
-            WorkFunctor * functor;
-            Ticket<tags::CPU::MultiCore> * ticket;
+            WorkFunctor * const functor;
+            Ticket<tags::CPU::MultiCore> * const ticket;
 
-            template <typename WorkerTask> ThreadTask(WorkerTask & task, Ticket<tags::CPU::MultiCore> * tick) :
+            template <typename WorkerTask> ThreadTask(WorkerTask & task, Ticket<tags::CPU::MultiCore> * const tick) :
                 functor(new WorkFunctor(task)),
                 ticket(tick)
             {
@@ -48,17 +48,17 @@ namespace honei
 
         struct TaskComp
         {
-            unsigned sched_lpu;
+            const unsigned sched_lpu;
 
             TaskComp(unsigned slpu) :
                 sched_lpu(slpu)
             {
             }
 
-            bool operator () (ThreadTask * t)
+            bool operator () (ThreadTask * const t) const
             {
-                unsigned sched_min = t->ticket->sid_min();
-                unsigned sched_max = t->ticket->sid_max();
+                const unsigned sched_min = t->ticket->sid_min();
+                const unsigned sched_max = t->ticket->sid_max();
 
                 if (sched_min == 0xFFFF || (sched_min <= sched_lpu && sched_lpu <= sched_max))
                     return true;
