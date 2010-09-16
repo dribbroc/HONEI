@@ -17,8 +17,11 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
 #ifndef MPI_GUARD_OPERATIONS_HH
 #define MPI_GUARD_OPERATIONS_HH 1
+
+#include <mpi.h>
 
 namespace honei
 {
@@ -31,6 +34,44 @@ namespace honei
         template <typename DT_> void mpi_bcast(DT_ * data, unsigned long size, int sender);
         template <typename DT_> void mpi_send(DT_ * data, unsigned long size, int target, int tag);
         template <typename DT_> void mpi_recv(DT_ * data, unsigned long size, int sender, int tag);
+        template <typename DT_> MPI::Request mpi_isend(DT_ * data, unsigned long size, int target, int tag);
+        template <typename DT_> MPI::Request mpi_irecv(DT_ * data, unsigned long size, int sender, int tag);
+
+        template <typename DT_>
+        class MPIType
+        {
+        };
+
+        template <>
+        class MPIType<float>
+        {
+            public:
+                static inline MPI_Datatype value()
+                {
+                    return MPI_FLOAT;
+                }
+        };
+
+        template <>
+        class MPIType<double>
+        {
+            public:
+                static inline MPI_Datatype value()
+                {
+                    return MPI_DOUBLE;
+                }
+        };
+
+        template <>
+        class MPIType<unsigned long>
+        {
+            public:
+                static inline MPI_Datatype value()
+                {
+                    return MPI_UNSIGNED_LONG;
+                }
+        };
+
     }
 }
 

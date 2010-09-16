@@ -40,6 +40,7 @@
 #include <vector>
 
 
+
 #include <mpi.h>
 
 namespace honei
@@ -80,7 +81,7 @@ namespace honei
                 std::cout<<"Ring LBM Solver with " << _numprocs << " nodes:" << std::endl;
                 unsigned long timesteps(100);
                 Grid<D2Q9, DataType_> grid;
-                ScenarioCollection::get_scenario(1, gridsize, gridsize, grid);
+                ScenarioCollection::get_scenario(0, gridsize, gridsize, grid);
                 std::cout << "Solving: " << grid.description << std::endl;
 
                 PackedGridData<D2Q9, DataType_>  data;
@@ -143,15 +144,34 @@ namespace honei
                 std::cout<<"MLUPS: "<< (double(grid.h->rows()) * double(grid.h->columns()) * double(timesteps)) / (1e6 * (bt.total() - at.total())) <<std::endl;
 
                 // generate output
-                /*for (signed long target(1) ; target < _numprocs ; ++target)
+                for (signed long target(1) ; target < _numprocs ; ++target)
                 {
-                    _recv_full_sync(target, info_list[target - 1], data_list[target - 1], fringe_list[target - 1]);
+                    _recv_full_sync(target, data_list[target - 1]);
                 }
                 GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list, fringe_list);
                 GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);
-                GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
-                std::cout<<*grid.h;*/
-                //PostProcessing<output_types::GNUPLOT>::value(*grid.h, 1, grid.h->columns(), grid.h->rows(), 0);
+                //GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
+                //std::cout<<*grid.h;
+                //PostProcessing<output_types::GNUPLOT>::value(*grid.h, 1, grid.h->columns(), grid.h->rows(),
+
+                Grid<D2Q9, DataType_> grid_ref;
+                ScenarioCollection::get_scenario(0, gridsize, gridsize, grid_ref);
+
+                PackedGridData<D2Q9, DataType_>  data_ref;
+                PackedGridInfo<D2Q9> info_ref;
+
+                GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_ref, info_ref, data_ref);
+                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info_ref, &data_ref, 0.01, 0.01, 0.01, 1.1);
+                solver.do_preprocessing();
+                for(unsigned long i(0); i < timesteps; ++i)
+                {
+                    solver.solve();
+                }
+                for (unsigned long i(0) ; i < data.h->size() ; ++i)
+                {
+                    if (fabs((*data.h)[i] - (*data_ref.h)[i]) > 0.0001)
+                        std::cout<<(*data.h)[i]<<" "<<(*data_ref.h)[i]<<std::endl;
+                }
             }
 
             void _slave()
@@ -167,7 +187,7 @@ namespace honei
                 _recv_data(data);
                 _recv_fringe(fringe);
 
-                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info, &data, 0.01, 0.01, 0.01, 1.1);
+                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, 0.01, 0.01, 0.01, 1.1);
 
                 solver.do_preprocessing();
 
@@ -184,7 +204,7 @@ namespace honei
                     _circle_sync(info, data, fringe);
                 }
                 MPI_Barrier(MPI_COMM_WORLD);
-                //_send_full_sync(0, info, data, fringe);
+                _send_full_sync(0, data);
             }
 
             void _send_info(unsigned long target, PackedGridInfo<D2Q9> & info)
@@ -656,7 +676,7 @@ namespace honei
                 mpi::mpi_recv(fringe.external_dir_targets_8->elements(), fringe.external_dir_targets_8->size(), 0, 0);
             }
 
-            void _send_full_sync(unsigned long target, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & fringe)
+            void _send_full_sync(unsigned long target, PackedGridData<D2Q9, DataType_> & data)
             {
                 mpi::mpi_send(data.h->elements(), data.h->size(), target, _myid);
 
@@ -670,7 +690,7 @@ namespace honei
                 mpi::mpi_send(data.f_temp_8->elements(), data.h->size(), target, _myid);
             }
 
-            void _recv_full_sync(unsigned long target, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & fringe)
+            void _recv_full_sync(unsigned long target, PackedGridData<D2Q9, DataType_> & data)
             {
                 mpi::mpi_recv(data.h->elements(), data.h->size(), target, target);
 
@@ -839,7 +859,7 @@ namespace honei
                     unsigned long source_1((*fringe.external_dir_targets_1)[0] + 1);
                     unsigned long f1_offset((*fringe.external_dir_index_1)[0]);
                     unsigned long f1_size((*fringe.external_dir_index_1)[fringe.external_dir_index_1->size()-1] - f1_offset);
-                    if (f1_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.f_temp_1->elements() + f1_offset - offset, f1_size * sizeof(DataType_), MPI_BYTE, source_1, source_1));
+                    if (f1_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.f_temp_1->elements() + f1_offset - offset, f1_size, mpi::MPIType<DataType_>::value(), source_1, source_1));
 
                     unsigned long source_2((*fringe.external_dir_targets_2)[0] + 1);
                     unsigned long f2_offset((*fringe.external_dir_index_2)[0]);
@@ -920,22 +940,22 @@ namespace honei
                 }
 
                 {
-                    for (unsigned long i(0) ; i < fringe.external_h_index->size() / 2 ; ++i)
-                    {
-                        unsigned long h_target((*fringe.external_h_targets)[i] + 1);
-                        unsigned long h_offset((*fringe.external_h_index)[i * 2]);
-                        unsigned long h_size((*fringe.external_h_index)[i * 2 + 1] - h_offset);
-                        if (h_size > 0) requests.push_back(MPI::COMM_WORLD.Isend(data.h->elements() + h_offset - offset, h_size * sizeof(DataType_), MPI_BYTE, h_target, _myid));
-                    }
-                }
-
-                {
                     for (unsigned long i(0) ; i < fringe.h_index->size() / 2 ; ++i)
                     {
                         unsigned long h_source((*fringe.h_targets)[i] + 1);
                         unsigned long h_offset((*fringe.h_index)[i * 2]);
                         unsigned long h_size((*fringe.h_index)[i * 2 + 1] - h_offset);
                         if (h_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.h->elements() + h_offset - offset, h_size * sizeof(DataType_), MPI_BYTE, h_source, h_source));
+                    }
+                }
+
+                {
+                    for (unsigned long i(0) ; i < fringe.external_h_index->size() / 2 ; ++i)
+                    {
+                        unsigned long h_target((*fringe.external_h_targets)[i] + 1);
+                        unsigned long h_offset((*fringe.external_h_index)[i * 2]);
+                        unsigned long h_size((*fringe.external_h_index)[i * 2 + 1] - h_offset);
+                        if (h_size > 0) requests.push_back(MPI::COMM_WORLD.Isend(data.h->elements() + h_offset - offset, h_size * sizeof(DataType_), MPI_BYTE, h_target, _myid));
                     }
                 }
 
