@@ -17,9 +17,10 @@
  */
 
 #pragma once
-#ifndef MULTICORE_GUARD_THREAD_OBJECT_HH
-#define MULTICORE_GUARD_THREAD_OBJECT_HH 1
+#ifndef MULTICORE_GUARD_THREAD_FUNCTION_HH
+#define MULTICORE_GUARD_THREAD_FUNCTION_HH 1
 
+#include <honei/backends/multicore/thread_task.hh>
 #include <honei/backends/multicore/ticket.hh>
 #include <honei/util/condition_variable.hh>
 #include <honei/util/private_implementation_pattern.hh>
@@ -31,25 +32,6 @@ namespace honei
 {
     namespace mc
     {
-        struct ThreadTask
-        {
-            typedef std::tr1::function<void () throw ()> WorkFunctor;
-
-            WorkFunctor * functor;
-            Ticket<tags::CPU::MultiCore> * ticket;
-
-            template <typename WorkerTask> ThreadTask(WorkerTask & task, Ticket<tags::CPU::MultiCore> * tick) :
-                functor(new WorkFunctor(task)),
-                ticket(tick)
-            {
-            }
-
-            ~ThreadTask()
-            {
-                delete functor;
-            }
-        };
-
         class ThreadFunction :
             public PrivateImplementationPattern<ThreadFunction, Shared>
         {

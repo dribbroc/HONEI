@@ -37,8 +37,8 @@ namespace honei
         /// Our Thread ID (given by the operating system)
         unsigned thread_id;
 
-        /// The logical processor this thread is bound to
-        /// scheduler id - only used when affinity enabled
+        /* The logical processor this thread is bound to, in fact a
+         * scheduler id which is only used with affinity enabled. */
         const unsigned sched_lpu;
 
         /// The thread pool's mutex (for grabbing work).
@@ -53,8 +53,11 @@ namespace honei
         /// Flag if the Thread shall stop.
         bool terminate;
 
-        /// The current ThreadTask to execute
+        /// The ThreadTask to be currently executed by the thread.
         mc::ThreadTask * task;
+
+        /// A comparison object for mc::ThreadTask objects.
+        mc::TaskComp * const comp;
 
         /// Helper function to pick work out of the pool's task list
         inline void pick_work() HONEI_INLINE
@@ -65,10 +68,7 @@ namespace honei
 
             for (std::list<mc::ThreadTask *>::iterator i(tasklist->begin()) , i_end(tasklist->end()) ; i != i_end ; ++i)
             {
-                unsigned sched_min = (*i)->ticket->sid_min();
-                unsigned sched_max = (*i)->ticket->sid_max();
-
-                if (sched_min == 0xFFFF || (sched_min <= sched_lpu && sched_lpu <= sched_max))
+                if ((*comp)(*i))
                 {
                     task = *i;
                     unsigned & sched_id = task->ticket->sid();
@@ -88,7 +88,8 @@ namespace honei
             tasklist(list),
             global_barrier(barrier),
             terminate(false),
-            task((mc::ThreadTask *) 1)
+            task(0),
+            comp(new mc::TaskComp(sched))
             {
             }
 
