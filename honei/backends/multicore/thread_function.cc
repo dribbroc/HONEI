@@ -23,18 +23,16 @@
 #include <honei/util/private_implementation_pattern-impl.hh>
 #include <honei/util/stringify.hh>
 
-#include <errno.h>
-#include <utility>
 #include <sys/syscall.h>
 
 namespace honei
 {
     template <> struct Implementation<mc::ThreadFunction>
     {
-        /// Our internal ID
+        /// Our internal ID.
         const unsigned pool_id;
 
-        /// Our Thread ID (given by the operating system)
+        /// Our Thread ID (given by the operating system).
         unsigned thread_id;
 
         /* The logical processor this thread is bound to, in fact a
@@ -51,33 +49,7 @@ namespace honei
         ConditionVariable * const global_barrier;
 
         /// Flag if the Thread shall stop.
-        bool terminate;
-
-        /// The ThreadTask to be currently executed by the thread.
-        mc::ThreadTask * task;
-
-        /// A comparison object for mc::ThreadTask objects.
-        mc::TaskComp * const comp;
-
-        /// Helper function to pick work out of the pool's task list
-        inline void pick_work() HONEI_INLINE
-        {
-            Lock l(*pool_mutex);
-
-            task = 0;
-
-            for (std::list<mc::ThreadTask *>::iterator i(tasklist->begin()) , i_end(tasklist->end()) ; i != i_end ; ++i)
-            {
-                if ((*comp)(*i))
-                {
-                    task = *i;
-                    unsigned & sched_id = task->ticket->sid();
-                    sched_id = sched_lpu;
-                    tasklist->remove(*i);
-                    break;
-                }
-            }
-        }
+        volatile bool terminate;
 
         Implementation(Mutex * const mutex, ConditionVariable * const barrier,
                 std::list<mc::ThreadTask *> * const list, unsigned pid, unsigned sched) :
@@ -87,17 +59,8 @@ namespace honei
             pool_mutex(mutex),
             tasklist(list),
             global_barrier(barrier),
-            terminate(false),
-            task(0),
-            comp(new mc::TaskComp(sched))
+            terminate(false)
             {
-            }
-
-            void stop()
-            {
-                Lock l(*pool_mutex);
-                terminate = true;
-                global_barrier->broadcast();
             }
 
             ~Implementation()
@@ -115,54 +78,85 @@ ThreadFunction::ThreadFunction(Mutex * const mutex, ConditionVariable * const ba
 
 ThreadFunction::~ThreadFunction()
 {
+    bool loop(true);
+    // Loop until the thread really stopped executing this
+    // ThreadFunction object.
+    do
+    {
+        loop = _imp->terminate;
+    }
+    while (loop);
 }
 
 void ThreadFunction::stop()
 {
-    _imp->stop();
+    Lock l(*_imp->pool_mutex);
+    _imp->terminate = true;
+    _imp->global_barrier->broadcast();
 }
 
 void ThreadFunction::operator() ()
 {
-    _imp->thread_id = syscall(__NR_gettid);
+    /// The ThreadTask to be currently executed by the thread.
+    mc::ThreadTask * task(0);
+
+    /// A comparison object for mc::ThreadTask objects.
+    mc::TaskComp * const comp(new mc::TaskComp(_imp->sched_lpu));
+
+    std::list<mc::ThreadTask *>::iterator i, i_end;
+
+    /* Set thread_id from operating system and use this on the pool
+     * side as sign for the thread to be setup. Then let the thread
+     * go to sleep until it will be assigned its first task. */
+
+    {
+        Lock l(*_imp->pool_mutex);
+        _imp->thread_id = syscall(__NR_gettid);
+        _imp->global_barrier->wait(*_imp->pool_mutex);
+    }
 
     do
     {
+        task = 0;
+
         // Check work-status and condition again under same mutex protection to avoid race conditions
         // between pick / if and wait
         {
-            Lock l(*_imp->pool_mutex);
-            _imp->pick_work();
-            if (_imp->task == 0 && ! _imp->terminate)
+            Lock l(*_imp->pool_mutex); // Try to avoid this lock...
+
+            for (i = _imp->tasklist->begin(), i_end = _imp->tasklist->end() ; i != i_end ; ++i)
             {
-                _imp->global_barrier->wait(*_imp->pool_mutex);
-                _imp->pick_work();
+                if ((*comp)(*i))
+                {
+                    task = *i;
+                    unsigned & sched_id = task->ticket->sid();
+                    sched_id = _imp->sched_lpu;
+                    _imp->tasklist->remove(*i);
+                    break;
+                }
+            }
+
+            if (task == 0)
+            {
+                if (! _imp->terminate)
+                    _imp->global_barrier->wait(*_imp->pool_mutex);
+                else
+                    break;
             }
         }
 
-        while (_imp->task != 0)
+        if (task != 0)
         {
-            (*_imp->task->functor)();
-            _imp->task->ticket->mark();
-            delete _imp->task;
-            _imp->pick_work();
+            (*task->functor)();
+            task->ticket->mark();
+            delete task;
         }
     }
-    while (! _imp->terminate);
+    while (true);
 
-    /* Make sure that this thread does not terminate and
-     * there are still tasks dedicated to it in the task list */
+    delete comp;
 
-    _imp->pick_work();
-
-    while (_imp->task != 0)
-    {
-        (*_imp->task->functor)();
-        _imp->task->ticket->mark();
-        delete _imp->task;
-        _imp->task = 0;
-        _imp->pick_work();
-    }
+    _imp->terminate = false; // Signal ThreadFunction DTOR that we arrived here
 }
 
 unsigned ThreadFunction::pool_id() const
