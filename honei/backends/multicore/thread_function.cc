@@ -104,6 +104,7 @@ void ThreadFunction::operator() ()
 
     /// A comparison object for mc::ThreadTask objects.
     mc::TaskComp * const comp(new mc::TaskComp(_imp->sched_lpu));
+    std::tr1::function<bool (ThreadTask * const)> f(*comp);
 
     std::list<mc::ThreadTask *>::iterator i, i_end;
 
@@ -126,12 +127,12 @@ void ThreadFunction::operator() ()
         {
             Lock l(*_imp->pool_mutex); // Try to avoid this lock...
 
-            task = tasklist->extract(*comp);
+            task = _imp->tasklist->extract(f);
 
             if (task != NULL)
             {
                 unsigned & sched_id = task->ticket->sid();
-                sched_id = sched_lpu;
+                sched_id = _imp->sched_lpu;
             }
             else
             {

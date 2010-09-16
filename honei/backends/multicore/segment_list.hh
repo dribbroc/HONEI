@@ -109,7 +109,7 @@ namespace honei
 
             SegmentEntry * h(head);
 
-            for (int i(1) ; i < count; ++i)
+            for (unsigned i(1) ; i < count; ++i)
                 h = h->next;
 
 //            std::cout << "push. count = " << count << ",  using h = " << h << std::endl;

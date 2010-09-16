@@ -45,8 +45,8 @@ namespace
             int exec_ctr;
 
             TestTask() :
-                exec_ctr(0),
-                _mutex(new Mutex)
+                _mutex(new Mutex),
+                exec_ctr(0)
             {
             }
 
@@ -74,8 +74,8 @@ namespace
             }
 
             EnqueuerTask(const EnqueuerTask & other) :
-                l(other.l),
-                tv(other.tv)
+                tv(other.tv),
+                l(other.l)
             {
             }
 

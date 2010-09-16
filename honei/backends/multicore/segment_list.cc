@@ -84,7 +84,7 @@ void SegmentList::push_back(ThreadTask * elem)
 
 }
 
-ThreadTask * SegmentList::extract(std::tr1::function<bool (ThreadTask *)> & comp)
+ThreadTask * SegmentList::extract(std::tr1::function<bool (ThreadTask * const)> & comp)
 {
     ThreadTask * res(NULL);
     unsigned seg_id(0);

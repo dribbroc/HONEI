@@ -54,9 +54,6 @@ namespace honei
                 /// List of user POSIX threads
                 std::list<std::pair<Thread *, ThreadFunction *> > _threads;
 
-                /// Waiting list of worker tasks to be executed
-                SegmentList * _tasks;
-
                 /// Our Mutex
                 Mutex * const _mutex;
 
@@ -65,6 +62,9 @@ namespace honei
 
                 /// Flag whether to use thread affinity
                 const bool _affinity;
+
+                /// Waiting list of worker tasks to be executed
+                SegmentList * _tasks;
 
 #ifdef linux
                 /// Mapping of threads to the scheduler ids of the cores they run on
