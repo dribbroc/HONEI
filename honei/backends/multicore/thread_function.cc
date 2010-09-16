@@ -148,6 +148,20 @@ void ThreadFunction::operator() ()
         }
     }
     while (! _imp->terminate);
+
+    /* Make sure that this thread does not terminate and
+     * there are still tasks dedicated to it in the task list */
+
+    _imp->pick_work();
+
+    while (_imp->task != 0)
+    {
+        (*_imp->task->functor)();
+        _imp->task->ticket->mark();
+        delete _imp->task;
+        _imp->task = 0;
+        _imp->pick_work();
+    }
 }
 
 unsigned ThreadFunction::pool_id() const

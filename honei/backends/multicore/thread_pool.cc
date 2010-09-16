@@ -59,7 +59,6 @@ ThreadPool::ThreadPool() :
     {
         unsigned sched_id(i % (_topology->num_lpus() - 1));
 
-        // ToDo: Remove branch!
         ThreadFunction * tobj = new ThreadFunction(_mutex, _global_barrier, &_tasks, _inst_ctr, (_affinity ? sched_id : 0xFFFF));
         Thread * t = new Thread(*tobj);
         _threads.push_back(std::make_pair(t, tobj));
@@ -109,7 +108,6 @@ void ThreadPool::add_threads(const unsigned num)
     {
         unsigned sched_id(i % (_topology->num_lpus() - 1));
 
-        // ToDo: Remove branch!
         ThreadFunction * tobj = new ThreadFunction(_mutex, _global_barrier, &_tasks, _inst_ctr, (_affinity ? sched_id : 0xFFFF));
         Thread * t = new Thread(*tobj);
         _threads.push_back(std::make_pair(t, tobj));
@@ -145,10 +143,15 @@ void ThreadPool::delete_threads(const unsigned num)
 
     _num_threads -= num;
 
-    cpu_set_t * aff_mask = new cpu_set_t[_num_threads + 1];
-    std::copy(_affinity_mask, _affinity_mask + _num_threads + 1, aff_mask);
-    delete[] _affinity_mask;
-    _affinity_mask = aff_mask;
+#ifdef linux
+    if (_affinity)
+    {
+        cpu_set_t * aff_mask = new cpu_set_t[_num_threads + 1];
+        std::copy(_affinity_mask, _affinity_mask + _num_threads + 1, aff_mask);
+        delete[] _affinity_mask;
+        _affinity_mask = aff_mask;
+    }
+#endif
 }
 
 unsigned ThreadPool::num_nodes() const
