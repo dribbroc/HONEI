@@ -895,6 +895,14 @@ namespace honei
                     unsigned long f8_offset((*fringe.external_dir_index_8)[0]);
                     unsigned long f8_size((*fringe.external_dir_index_8)[fringe.external_dir_index_8->size()-1] - f8_offset);
                     if (f8_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.f_temp_8->elements() + f8_offset - offset, f8_size, mpi::MPIType<DataType_>::value(), source_8, source_8));
+
+                    for (unsigned long i(0) ; i < fringe.h_index->size() / 2 ; ++i)
+                    {
+                        unsigned long h_source((*fringe.h_targets)[i] + 1);
+                        unsigned long h_offset((*fringe.h_index)[i * 2]);
+                        unsigned long h_size((*fringe.h_index)[i * 2 + 1] - h_offset);
+                        if (h_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.h->elements() + h_offset - offset, h_size, mpi::MPIType<DataType_>::value(), h_source, h_source));
+                    }
                 }
 
                 {
@@ -937,19 +945,7 @@ namespace honei
                     unsigned long f8_offset((*fringe.dir_index_8)[0]);
                     unsigned long f8_size((*fringe.dir_index_8)[fringe.dir_index_8->size()-1] - f8_offset);
                     if (f8_size > 0) requests.push_back(MPI::COMM_WORLD.Isend(data.f_temp_8->elements() + f8_offset - offset, f8_size, mpi::MPIType<DataType_>::value(), target_8, _myid));
-                }
 
-                {
-                    for (unsigned long i(0) ; i < fringe.h_index->size() / 2 ; ++i)
-                    {
-                        unsigned long h_source((*fringe.h_targets)[i] + 1);
-                        unsigned long h_offset((*fringe.h_index)[i * 2]);
-                        unsigned long h_size((*fringe.h_index)[i * 2 + 1] - h_offset);
-                        if (h_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.h->elements() + h_offset - offset, h_size, mpi::MPIType<DataType_>::value(), h_source, h_source));
-                    }
-                }
-
-                {
                     for (unsigned long i(0) ; i < fringe.external_h_index->size() / 2 ; ++i)
                     {
                         unsigned long h_target((*fringe.external_h_targets)[i] + 1);
