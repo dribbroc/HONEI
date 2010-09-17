@@ -148,17 +148,17 @@ namespace honei
                 std::cout<<"MLUPS: "<< (double(grid.h->rows()) * double(grid.h->columns()) * double(timesteps)) / (1e6 * (bt.total() - at.total())) <<std::endl;
 
                 // generate output
-                for (signed long target(1) ; target < _numprocs ; ++target)
+                /*for (signed long target(1) ; target < _numprocs ; ++target)
                 {
                     _recv_full_sync(target, data_list[target - 1]);
                 }
                 GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list, fringe_list);
-                GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);
+                GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);*/
                 //GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
                 //std::cout<<*grid.h;
                 //PostProcessing<output_types::GNUPLOT>::value(*grid.h, 1, grid.h->columns(), grid.h->rows(),
 
-                Grid<D2Q9, DataType_> grid_ref;
+                /*Grid<D2Q9, DataType_> grid_ref;
                 ScenarioCollection::get_scenario(0, gridsize, gridsize, grid_ref);
 
                 PackedGridData<D2Q9, DataType_>  data_ref;
@@ -172,11 +172,13 @@ namespace honei
                 {
                     solver.solve();
                 }
+                data_ref.h->lock(lm_read_only);
                 for (unsigned long i(0) ; i < data.h->size() ; ++i)
                 {
                     if (fabs((*data.h)[i] - (*data_ref.h)[i]) > 0.0001)
                         std::cout<<(*data.h)[i]<<" "<<(*data_ref.h)[i]<<std::endl;
                 }
+                data_ref.h->unlock(lm_read_only);*/
             }
 
             void _slave()
@@ -215,7 +217,7 @@ namespace honei
                     _circle_sync(info, data, fringe);
                 }
                 MPI_Barrier(MPI_COMM_WORLD);
-                _send_full_sync(0, data);
+                //_send_full_sync(0, data);
             }
 
             void _send_info(unsigned long target, PackedGridInfo<D2Q9> & info)
@@ -689,8 +691,17 @@ namespace honei
 
             void _send_full_sync(unsigned long target, PackedGridData<D2Q9, DataType_> & data)
             {
-                mpi::mpi_send(data.h->elements(), data.h->size(), target, _myid);
+                data.h->lock(lm_read_only);
+                data.f_temp_1->lock(lm_read_only);
+                data.f_temp_2->lock(lm_read_only);
+                data.f_temp_3->lock(lm_read_only);
+                data.f_temp_4->lock(lm_read_only);
+                data.f_temp_5->lock(lm_read_only);
+                data.f_temp_6->lock(lm_read_only);
+                data.f_temp_7->lock(lm_read_only);
+                data.f_temp_8->lock(lm_read_only);
 
+                mpi::mpi_send(data.h->elements(), data.h->size(), target, _myid);
                 mpi::mpi_send(data.f_temp_1->elements(), data.h->size(), target, _myid);
                 mpi::mpi_send(data.f_temp_2->elements(), data.h->size(), target, _myid);
                 mpi::mpi_send(data.f_temp_3->elements(), data.h->size(), target, _myid);
@@ -699,12 +710,31 @@ namespace honei
                 mpi::mpi_send(data.f_temp_6->elements(), data.h->size(), target, _myid);
                 mpi::mpi_send(data.f_temp_7->elements(), data.h->size(), target, _myid);
                 mpi::mpi_send(data.f_temp_8->elements(), data.h->size(), target, _myid);
+
+                data.h->unlock(lm_read_only);
+                data.f_temp_1->unlock(lm_read_only);
+                data.f_temp_2->unlock(lm_read_only);
+                data.f_temp_3->unlock(lm_read_only);
+                data.f_temp_4->unlock(lm_read_only);
+                data.f_temp_5->unlock(lm_read_only);
+                data.f_temp_6->unlock(lm_read_only);
+                data.f_temp_7->unlock(lm_read_only);
+                data.f_temp_8->unlock(lm_read_only);
             }
 
             void _recv_full_sync(unsigned long target, PackedGridData<D2Q9, DataType_> & data)
             {
-                mpi::mpi_recv(data.h->elements(), data.h->size(), target, target);
+                data.h->lock(lm_read_and_write);
+                data.f_temp_1->lock(lm_read_and_write);
+                data.f_temp_2->lock(lm_read_and_write);
+                data.f_temp_3->lock(lm_read_and_write);
+                data.f_temp_4->lock(lm_read_and_write);
+                data.f_temp_5->lock(lm_read_and_write);
+                data.f_temp_6->lock(lm_read_and_write);
+                data.f_temp_7->lock(lm_read_and_write);
+                data.f_temp_8->lock(lm_read_and_write);
 
+                mpi::mpi_recv(data.h->elements(), data.h->size(), target, target);
                 mpi::mpi_recv(data.f_temp_1->elements(), data.h->size(), target, target);
                 mpi::mpi_recv(data.f_temp_2->elements(), data.h->size(), target, target);
                 mpi::mpi_recv(data.f_temp_3->elements(), data.h->size(), target, target);
@@ -713,10 +743,30 @@ namespace honei
                 mpi::mpi_recv(data.f_temp_6->elements(), data.h->size(), target, target);
                 mpi::mpi_recv(data.f_temp_7->elements(), data.h->size(), target, target);
                 mpi::mpi_recv(data.f_temp_8->elements(), data.h->size(), target, target);
+
+                data.h->unlock(lm_read_and_write);
+                data.f_temp_1->unlock(lm_read_and_write);
+                data.f_temp_2->unlock(lm_read_and_write);
+                data.f_temp_3->unlock(lm_read_and_write);
+                data.f_temp_4->unlock(lm_read_and_write);
+                data.f_temp_5->unlock(lm_read_and_write);
+                data.f_temp_6->unlock(lm_read_and_write);
+                data.f_temp_7->unlock(lm_read_and_write);
+                data.f_temp_8->unlock(lm_read_and_write);
             }
 
             void _send_master_sync(unsigned long target, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & fringe)
             {
+                data.h->lock(lm_read_only);
+                data.f_temp_1->lock(lm_read_only);
+                data.f_temp_2->lock(lm_read_only);
+                data.f_temp_3->lock(lm_read_only);
+                data.f_temp_4->lock(lm_read_only);
+                data.f_temp_5->lock(lm_read_only);
+                data.f_temp_6->lock(lm_read_only);
+                data.f_temp_7->lock(lm_read_only);
+                data.f_temp_8->lock(lm_read_only);
+
                 unsigned long offset(info.offset);
                 unsigned long f1_offset((*fringe.dir_index_1)[0]);
                 unsigned long f1_size((*fringe.dir_index_1)[fringe.dir_index_1->size()-1] - f1_offset);
@@ -750,10 +800,29 @@ namespace honei
                     if (h_size > 0) mpi::mpi_send(data.h->elements() + h_offset - offset, h_size, target, _myid);
                 }
 
+                data.h->unlock(lm_read_only);
+                data.f_temp_1->unlock(lm_read_only);
+                data.f_temp_2->unlock(lm_read_only);
+                data.f_temp_3->unlock(lm_read_only);
+                data.f_temp_4->unlock(lm_read_only);
+                data.f_temp_5->unlock(lm_read_only);
+                data.f_temp_6->unlock(lm_read_only);
+                data.f_temp_7->unlock(lm_read_only);
+                data.f_temp_8->unlock(lm_read_only);
             }
 
             void _recv_slave_sync(unsigned long target, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & fringe)
             {
+                data.h->lock(lm_read_and_write);
+                data.f_temp_1->lock(lm_read_and_write);
+                data.f_temp_2->lock(lm_read_and_write);
+                data.f_temp_3->lock(lm_read_and_write);
+                data.f_temp_4->lock(lm_read_and_write);
+                data.f_temp_5->lock(lm_read_and_write);
+                data.f_temp_6->lock(lm_read_and_write);
+                data.f_temp_7->lock(lm_read_and_write);
+                data.f_temp_8->lock(lm_read_and_write);
+
                 unsigned long offset(info.offset);
                 unsigned long f1_offset((*fringe.dir_index_1)[0]);
                 unsigned long f1_size((*fringe.dir_index_1)[fringe.dir_index_1->size()-1] - f1_offset);
@@ -786,10 +855,30 @@ namespace honei
                     unsigned long h_size((*fringe.external_h_index)[i * 2 + 1] - h_offset);
                     if (h_size > 0) mpi::mpi_recv(data.h->elements() + h_offset - offset, h_size, target, target);
                 }
+
+                data.h->unlock(lm_read_and_write);
+                data.f_temp_1->unlock(lm_read_and_write);
+                data.f_temp_2->unlock(lm_read_and_write);
+                data.f_temp_3->unlock(lm_read_and_write);
+                data.f_temp_4->unlock(lm_read_and_write);
+                data.f_temp_5->unlock(lm_read_and_write);
+                data.f_temp_6->unlock(lm_read_and_write);
+                data.f_temp_7->unlock(lm_read_and_write);
+                data.f_temp_8->unlock(lm_read_and_write);
             }
 
             void _send_slave_sync(unsigned long target, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & fringe)
             {
+                data.h->lock(lm_read_only);
+                data.f_temp_1->lock(lm_read_only);
+                data.f_temp_2->lock(lm_read_only);
+                data.f_temp_3->lock(lm_read_only);
+                data.f_temp_4->lock(lm_read_only);
+                data.f_temp_5->lock(lm_read_only);
+                data.f_temp_6->lock(lm_read_only);
+                data.f_temp_7->lock(lm_read_only);
+                data.f_temp_8->lock(lm_read_only);
+
                 unsigned long offset(info.offset);
                 unsigned long f1_offset((*fringe.external_dir_index_1)[0]);
                 unsigned long f1_size((*fringe.external_dir_index_1)[fringe.external_dir_index_1->size()-1] - f1_offset);
@@ -822,10 +911,30 @@ namespace honei
                     unsigned long h_size((*fringe.h_index)[i * 2 + 1] - h_offset);
                     if (h_size > 0) mpi::mpi_send(data.h->elements() + h_offset - offset, h_size, target, _myid);
                 }
+
+                data.h->unlock(lm_read_only);
+                data.f_temp_1->unlock(lm_read_only);
+                data.f_temp_2->unlock(lm_read_only);
+                data.f_temp_3->unlock(lm_read_only);
+                data.f_temp_4->unlock(lm_read_only);
+                data.f_temp_5->unlock(lm_read_only);
+                data.f_temp_6->unlock(lm_read_only);
+                data.f_temp_7->unlock(lm_read_only);
+                data.f_temp_8->unlock(lm_read_only);
             }
 
             void _recv_master_sync(unsigned long target, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & fringe)
             {
+                data.h->lock(lm_read_and_write);
+                data.f_temp_1->lock(lm_read_and_write);
+                data.f_temp_2->lock(lm_read_and_write);
+                data.f_temp_3->lock(lm_read_and_write);
+                data.f_temp_4->lock(lm_read_and_write);
+                data.f_temp_5->lock(lm_read_and_write);
+                data.f_temp_6->lock(lm_read_and_write);
+                data.f_temp_7->lock(lm_read_and_write);
+                data.f_temp_8->lock(lm_read_and_write);
+
                 unsigned long offset(info.offset);
                 unsigned long f1_offset((*fringe.external_dir_index_1)[0]);
                 unsigned long f1_size((*fringe.external_dir_index_1)[fringe.external_dir_index_1->size()-1] - f1_offset);
@@ -858,11 +967,31 @@ namespace honei
                     unsigned long h_size((*fringe.h_index)[i * 2 + 1] - h_offset);
                     if (h_size > 0) mpi::mpi_recv(data.h->elements() + h_offset - offset, h_size, target, target);
                 }
+
+                data.h->unlock(lm_read_and_write);
+                data.f_temp_1->unlock(lm_read_and_write);
+                data.f_temp_2->unlock(lm_read_and_write);
+                data.f_temp_3->unlock(lm_read_and_write);
+                data.f_temp_4->unlock(lm_read_and_write);
+                data.f_temp_5->unlock(lm_read_and_write);
+                data.f_temp_6->unlock(lm_read_and_write);
+                data.f_temp_7->unlock(lm_read_and_write);
+                data.f_temp_8->unlock(lm_read_and_write);
             }
 
             void _circle_sync(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & fringe)
             {
                 /// \todo global buffer for requests and in/out data
+
+                data.h->lock(lm_read_and_write);
+                data.f_temp_1->lock(lm_read_and_write);
+                data.f_temp_2->lock(lm_read_and_write);
+                data.f_temp_3->lock(lm_read_and_write);
+                data.f_temp_4->lock(lm_read_and_write);
+                data.f_temp_5->lock(lm_read_and_write);
+                data.f_temp_6->lock(lm_read_and_write);
+                data.f_temp_7->lock(lm_read_and_write);
+                data.f_temp_8->lock(lm_read_and_write);
 
                 std::vector<MPI::Request> requests;
                 unsigned long offset(info.offset);
@@ -1007,6 +1136,16 @@ namespace honei
                 TypeTraits<DataType_>::copy(down_buffer_recv + temp_size, data.f_temp_7->elements() + f7_offset_recv - offset, f7_size_recv);
                 temp_size += f7_size_recv;
                 TypeTraits<DataType_>::copy(down_buffer_recv + temp_size, data.f_temp_8->elements() + f8_offset_recv - offset, f8_size_recv);
+
+                data.h->unlock(lm_read_and_write);
+                data.f_temp_1->unlock(lm_read_and_write);
+                data.f_temp_2->unlock(lm_read_and_write);
+                data.f_temp_3->unlock(lm_read_and_write);
+                data.f_temp_4->unlock(lm_read_and_write);
+                data.f_temp_5->unlock(lm_read_and_write);
+                data.f_temp_6->unlock(lm_read_and_write);
+                data.f_temp_7->unlock(lm_read_and_write);
+                data.f_temp_8->unlock(lm_read_and_write);
             }
     };
 }
