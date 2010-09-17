@@ -1019,36 +1019,42 @@ namespace honei
                 unsigned long f2_offset_recv((*fringe.external_dir_index_2)[0]);
                 unsigned long f2_size_recv((*fringe.external_dir_index_2)[fringe.external_dir_index_2->size()-1] - f2_offset_recv);
 
-                //unsigned long source_3_recv((*fringe.external_dir_targets_3)[0] + 1);
+                unsigned long source_3_recv((*fringe.external_dir_targets_3)[0] + 1);
                 unsigned long f3_offset_recv((*fringe.external_dir_index_3)[0]);
                 unsigned long f3_size_recv((*fringe.external_dir_index_3)[fringe.external_dir_index_3->size()-1] - f3_offset_recv);
 
-                //unsigned long source_4_recv((*fringe.external_dir_targets_4)[0] + 1);
+                unsigned long source_4_recv((*fringe.external_dir_targets_4)[0] + 1);
                 unsigned long f4_offset_recv((*fringe.external_dir_index_4)[0]);
                 unsigned long f4_size_recv((*fringe.external_dir_index_4)[fringe.external_dir_index_4->size()-1] - f4_offset_recv);
 
-                //unsigned long source_5_recv((*fringe.external_dir_targets_5)[0] + 1);
+                unsigned long source_5_recv((*fringe.external_dir_targets_5)[0] + 1);
                 unsigned long f5_offset_recv((*fringe.external_dir_index_5)[0]);
                 unsigned long f5_size_recv((*fringe.external_dir_index_5)[fringe.external_dir_index_5->size()-1] - f5_offset_recv);
 
-                //unsigned long source_6_recv((*fringe.external_dir_targets_6)[0] + 1);
+                unsigned long source_6_recv((*fringe.external_dir_targets_6)[0] + 1);
                 unsigned long f6_offset_recv((*fringe.external_dir_index_6)[0]);
                 unsigned long f6_size_recv((*fringe.external_dir_index_6)[fringe.external_dir_index_6->size()-1] - f6_offset_recv);
 
-                //unsigned long source_7_recv((*fringe.external_dir_targets_7)[0] + 1);
+                unsigned long source_7_recv((*fringe.external_dir_targets_7)[0] + 1);
                 unsigned long f7_offset_recv((*fringe.external_dir_index_7)[0]);
                 unsigned long f7_size_recv((*fringe.external_dir_index_7)[fringe.external_dir_index_7->size()-1] - f7_offset_recv);
 
-                //unsigned long source_8((*fringe.external_dir_targets_8)[0] + 1);
+                unsigned long source_8_recv((*fringe.external_dir_targets_8)[0] + 1);
                 unsigned long f8_offset_recv((*fringe.external_dir_index_8)[0]);
                 unsigned long f8_size_recv((*fringe.external_dir_index_8)[fringe.external_dir_index_8->size()-1] - f8_offset_recv);
 
                 unsigned long up_size_recv(f2_size_recv + f3_size_recv + f4_size_recv + f5_size_recv);
                 DataType_ up_buffer_recv[up_size_recv];
                 unsigned long source_up_recv(source_2_recv);
+                source_up_recv = std::max(source_up_recv, source_3_recv);
+                source_up_recv = std::max(source_up_recv, source_4_recv);
+                source_up_recv = std::max(source_up_recv, source_5_recv);
                 unsigned long down_size_recv(f1_size_recv + f6_size_recv + f7_size_recv + f8_size_recv);
                 DataType_ down_buffer_recv[down_size_recv];
                 unsigned long source_down_recv(source_1_recv);
+                source_down_recv = std::max(source_down_recv, source_6_recv);
+                source_down_recv = std::max(source_down_recv, source_7_recv);
+                source_down_recv = std::max(source_down_recv, source_8_recv);
 
                 if (up_size_recv > 0) requests.push_back(MPI::COMM_WORLD.Irecv(up_buffer_recv, up_size_recv, mpi::MPIType<DataType_>::value(), source_up_recv, source_up_recv));
                 if (down_size_recv > 0) requests.push_back(MPI::COMM_WORLD.Irecv(down_buffer_recv, down_size_recv, mpi::MPIType<DataType_>::value(), source_down_recv, source_down_recv));
@@ -1062,27 +1068,27 @@ namespace honei
                 unsigned long f2_offset_send((*fringe.dir_index_2)[0]);
                 unsigned long f2_size_send((*fringe.dir_index_2)[fringe.dir_index_2->size()-1] - f2_offset_send);
 
-                //unsigned long target_3_send((*fringe.dir_targets_3)[0] + 1);
+                unsigned long target_3_send((*fringe.dir_targets_3)[0] + 1);
                 unsigned long f3_offset_send((*fringe.dir_index_3)[0]);
                 unsigned long f3_size_send((*fringe.dir_index_3)[fringe.dir_index_3->size()-1] - f3_offset_send);
 
-                //unsigned long target_4_send((*fringe.dir_targets_4)[0] + 1);
+                unsigned long target_4_send((*fringe.dir_targets_4)[0] + 1);
                 unsigned long f4_offset_send((*fringe.dir_index_4)[0]);
                 unsigned long f4_size_send((*fringe.dir_index_4)[fringe.dir_index_4->size()-1] - f4_offset_send);
 
-                //unsigned long target_5_send((*fringe.dir_targets_5)[0] + 1);
+                unsigned long target_5_send((*fringe.dir_targets_5)[0] + 1);
                 unsigned long f5_offset_send((*fringe.dir_index_5)[0]);
                 unsigned long f5_size_send((*fringe.dir_index_5)[fringe.dir_index_5->size()-1] - f5_offset_send);
 
-                //unsigned long target_6_send((*fringe.dir_targets_6)[0] + 1);
+                unsigned long target_6_send((*fringe.dir_targets_6)[0] + 1);
                 unsigned long f6_offset_send((*fringe.dir_index_6)[0]);
                 unsigned long f6_size_send((*fringe.dir_index_6)[fringe.dir_index_6->size()-1] - f6_offset_send);
 
-                //unsigned long target_7_send((*fringe.dir_targets_7)[0] + 1);
+                unsigned long target_7_send((*fringe.dir_targets_7)[0] + 1);
                 unsigned long f7_offset_send((*fringe.dir_index_7)[0]);
                 unsigned long f7_size_send((*fringe.dir_index_7)[fringe.dir_index_7->size()-1] - f7_offset_send);
 
-                //unsigned long target_8_send((*fringe.dir_targets_8)[0] + 1);
+                unsigned long target_8_send((*fringe.dir_targets_8)[0] + 1);
                 unsigned long f8_offset_send((*fringe.dir_index_8)[0]);
                 unsigned long f8_size_send((*fringe.dir_index_8)[fringe.dir_index_8->size()-1] - f8_offset_send);
 
@@ -1090,9 +1096,15 @@ namespace honei
                 unsigned long up_size_send(f2_size_send + f3_size_send + f4_size_send + f5_size_send);
                 DataType_ up_buffer_send[up_size_send];
                 unsigned long target_up_send(target_2_send);
+                target_up_send = std::max(target_up_send, target_3_send);
+                target_up_send = std::max(target_up_send, target_4_send);
+                target_up_send = std::max(target_up_send, target_5_send);
                 unsigned long down_size_send(f1_size_send + f6_size_send + f7_size_send + f8_size_send);
                 DataType_ down_buffer_send[down_size_send];
                 unsigned long target_down_send(target_1_send);
+                target_down_send = std::max(target_down_send, target_6_send);
+                target_down_send = std::max(target_down_send, target_7_send);
+                target_down_send = std::max(target_down_send, target_8_send);
                 unsigned long temp_size(0);
 
                 TypeTraits<DataType_>::copy(data.f_temp_2->elements() + f2_offset_send - offset, up_buffer_send + temp_size, f2_size_send);
