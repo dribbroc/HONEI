@@ -864,79 +864,79 @@ namespace honei
                     unsigned long source_2((*fringe.external_dir_targets_2)[0] + 1);
                     unsigned long f2_offset((*fringe.external_dir_index_2)[0]);
                     unsigned long f2_size((*fringe.external_dir_index_2)[fringe.external_dir_index_2->size()-1] - f2_offset);
-                    if (f2_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.f_temp_2->elements() + f2_offset - offset, f2_size * sizeof(DataType_), MPI_BYTE, source_2, source_2));
+                    if (f2_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.f_temp_2->elements() + f2_offset - offset, f2_size, mpi::MPIType<DataType_>::value(), source_2, source_2));
 
                     unsigned long source_3((*fringe.external_dir_targets_3)[0] + 1);
                     unsigned long f3_offset((*fringe.external_dir_index_3)[0]);
                     unsigned long f3_size((*fringe.external_dir_index_3)[fringe.external_dir_index_3->size()-1] - f3_offset);
-                    if (f3_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.f_temp_3->elements() + f3_offset - offset, f3_size * sizeof(DataType_), MPI_BYTE, source_3, source_3));
+                    if (f3_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.f_temp_3->elements() + f3_offset - offset, f3_size, mpi::MPIType<DataType_>::value(), source_3, source_3));
 
                     unsigned long source_4((*fringe.external_dir_targets_4)[0] + 1);
                     unsigned long f4_offset((*fringe.external_dir_index_4)[0]);
                     unsigned long f4_size((*fringe.external_dir_index_4)[fringe.external_dir_index_4->size()-1] - f4_offset);
-                    if (f4_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.f_temp_4->elements() + f4_offset - offset, f4_size * sizeof(DataType_), MPI_BYTE, source_4, source_4));
+                    if (f4_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.f_temp_4->elements() + f4_offset - offset, f4_size, mpi::MPIType<DataType_>::value(), source_4, source_4));
 
                     unsigned long source_5((*fringe.external_dir_targets_5)[0] + 1);
                     unsigned long f5_offset((*fringe.external_dir_index_5)[0]);
                     unsigned long f5_size((*fringe.external_dir_index_5)[fringe.external_dir_index_5->size()-1] - f5_offset);
-                    if (f5_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.f_temp_5->elements() + f5_offset - offset, f5_size * sizeof(DataType_), MPI_BYTE, source_5, source_5));
+                    if (f5_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.f_temp_5->elements() + f5_offset - offset, f5_size, mpi::MPIType<DataType_>::value(), source_5, source_5));
 
                     unsigned long source_6((*fringe.external_dir_targets_6)[0] + 1);
                     unsigned long f6_offset((*fringe.external_dir_index_6)[0]);
                     unsigned long f6_size((*fringe.external_dir_index_6)[fringe.external_dir_index_6->size()-1] - f6_offset);
-                    if (f6_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.f_temp_6->elements() + f6_offset - offset, f6_size * sizeof(DataType_), MPI_BYTE, source_6, source_6));
+                    if (f6_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.f_temp_6->elements() + f6_offset - offset, f6_size, mpi::MPIType<DataType_>::value(), source_6, source_6));
 
                     unsigned long source_7((*fringe.external_dir_targets_7)[0] + 1);
                     unsigned long f7_offset((*fringe.external_dir_index_7)[0]);
                     unsigned long f7_size((*fringe.external_dir_index_7)[fringe.external_dir_index_7->size()-1] - f7_offset);
-                    if (f7_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.f_temp_7->elements() + f7_offset - offset, f7_size * sizeof(DataType_), MPI_BYTE, source_7, source_7));
+                    if (f7_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.f_temp_7->elements() + f7_offset - offset, f7_size, mpi::MPIType<DataType_>::value(), source_7, source_7));
 
                     unsigned long source_8((*fringe.external_dir_targets_8)[0] + 1);
                     unsigned long f8_offset((*fringe.external_dir_index_8)[0]);
                     unsigned long f8_size((*fringe.external_dir_index_8)[fringe.external_dir_index_8->size()-1] - f8_offset);
-                    if (f8_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.f_temp_8->elements() + f8_offset - offset, f8_size * sizeof(DataType_), MPI_BYTE, source_8, source_8));
+                    if (f8_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.f_temp_8->elements() + f8_offset - offset, f8_size, mpi::MPIType<DataType_>::value(), source_8, source_8));
                 }
 
                 {
                     unsigned long target_1((*fringe.dir_targets_1)[0] + 1);
                     unsigned long f1_offset((*fringe.dir_index_1)[0]);
                     unsigned long f1_size((*fringe.dir_index_1)[fringe.dir_index_1->size()-1] - f1_offset);
-                    if (f1_size > 0) requests.push_back(MPI::COMM_WORLD.Isend(data.f_temp_1->elements() + f1_offset - offset, f1_size * sizeof(DataType_), MPI_BYTE, target_1, _myid));
+                    if (f1_size > 0) requests.push_back(MPI::COMM_WORLD.Isend(data.f_temp_1->elements() + f1_offset - offset, f1_size, mpi::MPIType<DataType_>::value(), target_1, _myid));
 
                     unsigned long target_2((*fringe.dir_targets_2)[0] + 1);
                     unsigned long f2_offset((*fringe.dir_index_2)[0]);
                     unsigned long f2_size((*fringe.dir_index_2)[fringe.dir_index_2->size()-1] - f2_offset);
-                    if (f2_size > 0) requests.push_back(MPI::COMM_WORLD.Isend(data.f_temp_2->elements() + f2_offset - offset, f2_size * sizeof(DataType_), MPI_BYTE, target_2, _myid));
+                    if (f2_size > 0) requests.push_back(MPI::COMM_WORLD.Isend(data.f_temp_2->elements() + f2_offset - offset, f2_size, mpi::MPIType<DataType_>::value(), target_2, _myid));
 
                     unsigned long target_3((*fringe.dir_targets_3)[0] + 1);
                     unsigned long f3_offset((*fringe.dir_index_3)[0]);
                     unsigned long f3_size((*fringe.dir_index_3)[fringe.dir_index_3->size()-1] - f3_offset);
-                    if (f3_size > 0) requests.push_back(MPI::COMM_WORLD.Isend(data.f_temp_3->elements() + f3_offset - offset, f3_size * sizeof(DataType_), MPI_BYTE, target_3, _myid));
+                    if (f3_size > 0) requests.push_back(MPI::COMM_WORLD.Isend(data.f_temp_3->elements() + f3_offset - offset, f3_size, mpi::MPIType<DataType_>::value(), target_3, _myid));
 
                     unsigned long target_4((*fringe.dir_targets_4)[0] + 1);
                     unsigned long f4_offset((*fringe.dir_index_4)[0]);
                     unsigned long f4_size((*fringe.dir_index_4)[fringe.dir_index_4->size()-1] - f4_offset);
-                    if (f4_size > 0) requests.push_back(MPI::COMM_WORLD.Isend(data.f_temp_4->elements() + f4_offset - offset, f4_size * sizeof(DataType_), MPI_BYTE, target_4, _myid));
+                    if (f4_size > 0) requests.push_back(MPI::COMM_WORLD.Isend(data.f_temp_4->elements() + f4_offset - offset, f4_size, mpi::MPIType<DataType_>::value(), target_4, _myid));
 
                     unsigned long target_5((*fringe.dir_targets_5)[0] + 1);
                     unsigned long f5_offset((*fringe.dir_index_5)[0]);
                     unsigned long f5_size((*fringe.dir_index_5)[fringe.dir_index_5->size()-1] - f5_offset);
-                    if (f5_size > 0) requests.push_back(MPI::COMM_WORLD.Isend(data.f_temp_5->elements() + f5_offset - offset, f5_size * sizeof(DataType_), MPI_BYTE, target_5, _myid));
+                    if (f5_size > 0) requests.push_back(MPI::COMM_WORLD.Isend(data.f_temp_5->elements() + f5_offset - offset, f5_size, mpi::MPIType<DataType_>::value(), target_5, _myid));
 
                     unsigned long target_6((*fringe.dir_targets_6)[0] + 1);
                     unsigned long f6_offset((*fringe.dir_index_6)[0]);
                     unsigned long f6_size((*fringe.dir_index_6)[fringe.dir_index_6->size()-1] - f6_offset);
-                    if (f6_size > 0) requests.push_back(MPI::COMM_WORLD.Isend(data.f_temp_6->elements() + f6_offset - offset, f6_size * sizeof(DataType_), MPI_BYTE, target_6, _myid));
+                    if (f6_size > 0) requests.push_back(MPI::COMM_WORLD.Isend(data.f_temp_6->elements() + f6_offset - offset, f6_size, mpi::MPIType<DataType_>::value(), target_6, _myid));
 
                     unsigned long target_7((*fringe.dir_targets_7)[0] + 1);
                     unsigned long f7_offset((*fringe.dir_index_7)[0]);
                     unsigned long f7_size((*fringe.dir_index_7)[fringe.dir_index_7->size()-1] - f7_offset);
-                    if (f7_size > 0) requests.push_back(MPI::COMM_WORLD.Isend(data.f_temp_7->elements() + f7_offset - offset, f7_size * sizeof(DataType_), MPI_BYTE, target_7, _myid));
+                    if (f7_size > 0) requests.push_back(MPI::COMM_WORLD.Isend(data.f_temp_7->elements() + f7_offset - offset, f7_size, mpi::MPIType<DataType_>::value(), target_7, _myid));
 
                     unsigned long target_8((*fringe.dir_targets_8)[0] + 1);
                     unsigned long f8_offset((*fringe.dir_index_8)[0]);
                     unsigned long f8_size((*fringe.dir_index_8)[fringe.dir_index_8->size()-1] - f8_offset);
-                    if (f8_size > 0) requests.push_back(MPI::COMM_WORLD.Isend(data.f_temp_8->elements() + f8_offset - offset, f8_size * sizeof(DataType_), MPI_BYTE, target_8, _myid));
+                    if (f8_size > 0) requests.push_back(MPI::COMM_WORLD.Isend(data.f_temp_8->elements() + f8_offset - offset, f8_size, mpi::MPIType<DataType_>::value(), target_8, _myid));
                 }
 
                 {
@@ -945,7 +945,7 @@ namespace honei
                         unsigned long h_source((*fringe.h_targets)[i] + 1);
                         unsigned long h_offset((*fringe.h_index)[i * 2]);
                         unsigned long h_size((*fringe.h_index)[i * 2 + 1] - h_offset);
-                        if (h_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.h->elements() + h_offset - offset, h_size * sizeof(DataType_), MPI_BYTE, h_source, h_source));
+                        if (h_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.h->elements() + h_offset - offset, h_size, mpi::MPIType<DataType_>::value(), h_source, h_source));
                     }
                 }
 
@@ -955,7 +955,7 @@ namespace honei
                         unsigned long h_target((*fringe.external_h_targets)[i] + 1);
                         unsigned long h_offset((*fringe.external_h_index)[i * 2]);
                         unsigned long h_size((*fringe.external_h_index)[i * 2 + 1] - h_offset);
-                        if (h_size > 0) requests.push_back(MPI::COMM_WORLD.Isend(data.h->elements() + h_offset - offset, h_size * sizeof(DataType_), MPI_BYTE, h_target, _myid));
+                        if (h_size > 0) requests.push_back(MPI::COMM_WORLD.Isend(data.h->elements() + h_offset - offset, h_size, mpi::MPIType<DataType_>::value(), h_target, _myid));
                     }
                 }
 
