@@ -7,4 +7,4 @@
 #PBS -j oe
 #echo stern 5
 cd $HOME/honei/trunk/clients/mpi
-mpirun -np 5 ./honei-mpi-ring 2000
+mpirun -np 5 ./honei-mpi-ring 1000

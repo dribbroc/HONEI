@@ -38,10 +38,6 @@
 #include <iostream>
 #include <vector>
 
-
-
-#include <mpi.h>
-
 namespace honei
 {
     template <typename Tag_, typename DataType_>
@@ -166,7 +162,7 @@ namespace honei
 
                 GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_ref, info_ref, data_ref);
                 //SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info_ref, &data_ref, grid_ref.d_x, grid_ref.d_y, grid_ref.d_t, grid_ref.tau);
-                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info_ref, &data_ref, grid_ref.d_x, grid_ref.d_y, grid_ref.d_t, grid_ref.tau);
+                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info_ref, &data_ref, grid_ref.d_x, grid_ref.d_y, grid_ref.d_t, grid_ref.tau);
                 solver.do_preprocessing();
                 for(unsigned long i(0); i < timesteps; ++i)
                 {
@@ -200,7 +196,7 @@ namespace honei
                 _recv_fringe(fringe);
 
                 //SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, d_x, d_y, d_t, tau);
-                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, d_x, d_y, d_t, tau);
+                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info, &data, d_x, d_y, d_t, tau);
 
                 solver.do_preprocessing();
 
@@ -993,7 +989,7 @@ namespace honei
                 data.f_temp_7->lock(lm_read_and_write);
                 data.f_temp_8->lock(lm_read_and_write);
 
-                std::vector<MPI::Request> requests;
+                std::vector<MPI_Request> requests;
                 unsigned long offset(info.offset);
 
                 for (unsigned long i(0) ; i < fringe.h_index->size() / 2 ; ++i)
@@ -1001,14 +997,14 @@ namespace honei
                     unsigned long h_source((*fringe.h_targets)[i] + 1);
                     unsigned long h_offset((*fringe.h_index)[i * 2]);
                     unsigned long h_size((*fringe.h_index)[i * 2 + 1] - h_offset);
-                    if (h_size > 0) requests.push_back(MPI::COMM_WORLD.Irecv(data.h->elements() + h_offset - offset, h_size, mpi::MPIType<DataType_>::value(), h_source, h_source));
+                    if (h_size > 0) requests.push_back(mpi::mpi_irecv(data.h->elements() + h_offset - offset, h_size, h_source, h_source));
                 }
                 for (unsigned long i(0) ; i < fringe.external_h_index->size() / 2 ; ++i)
                 {
                     unsigned long h_target((*fringe.external_h_targets)[i] + 1);
                     unsigned long h_offset((*fringe.external_h_index)[i * 2]);
                     unsigned long h_size((*fringe.external_h_index)[i * 2 + 1] - h_offset);
-                    if (h_size > 0) requests.push_back(MPI::COMM_WORLD.Isend(data.h->elements() + h_offset - offset, h_size, mpi::MPIType<DataType_>::value(), h_target, _myid));
+                    if (h_size > 0) requests.push_back(mpi::mpi_isend(data.h->elements() + h_offset - offset, h_size, h_target, _myid));
                 }
 
                 unsigned long source_1_recv((*fringe.external_dir_targets_1)[0] + 1);
@@ -1056,8 +1052,8 @@ namespace honei
                 source_down_recv = std::max(source_down_recv, source_7_recv);
                 source_down_recv = std::max(source_down_recv, source_8_recv);
 
-                if (up_size_recv > 0) requests.push_back(MPI::COMM_WORLD.Irecv(up_buffer_recv, up_size_recv, mpi::MPIType<DataType_>::value(), source_up_recv, source_up_recv));
-                if (down_size_recv > 0) requests.push_back(MPI::COMM_WORLD.Irecv(down_buffer_recv, down_size_recv, mpi::MPIType<DataType_>::value(), source_down_recv, source_down_recv));
+                if (up_size_recv > 0) requests.push_back(mpi::mpi_irecv(up_buffer_recv, up_size_recv, source_up_recv, source_up_recv));
+                if (down_size_recv > 0) requests.push_back(mpi::mpi_irecv(down_buffer_recv, down_size_recv, source_down_recv, source_down_recv));
 
 
                 unsigned long target_1_send((*fringe.dir_targets_1)[0] + 1);
@@ -1124,12 +1120,11 @@ namespace honei
                 temp_size += f7_size_send;
                 TypeTraits<DataType_>::copy(data.f_temp_8->elements() + f8_offset_send - offset, down_buffer_send + temp_size, f8_size_send);
 
-                if (up_size_send > 0) requests.push_back(MPI::COMM_WORLD.Isend(up_buffer_send, up_size_send, mpi::MPIType<DataType_>::value(), target_up_send, _myid));
-                if (down_size_send > 0) requests.push_back(MPI::COMM_WORLD.Isend(down_buffer_send, down_size_send, mpi::MPIType<DataType_>::value(), target_down_send, _myid));
+                if (up_size_send > 0) requests.push_back(mpi::mpi_isend(up_buffer_send, up_size_send, target_up_send, _myid));
+                if (down_size_send > 0) requests.push_back(mpi::mpi_isend(down_buffer_send, down_size_send, target_down_send, _myid));
 
 
-                //write all received data into the vectors
-                MPI::Request::Waitall(requests.size(), &requests[0]);
+                MPI_Waitall(requests.size(), &requests[0], MPI_STATUSES_IGNORE);
 
                 temp_size = 0;
                 TypeTraits<DataType_>::copy(up_buffer_recv + temp_size, data.f_temp_2->elements() + f2_offset_recv - offset, f2_size_recv);

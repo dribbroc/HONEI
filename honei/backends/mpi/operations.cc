@@ -63,14 +63,18 @@ namespace honei
             MPI_Recv(data, size, MPIType<DT_>::value(), sender, tag, MPI_COMM_WORLD, &_stat);
         }
 
-        template <typename DT_> MPI::Request mpi_isend(DT_ * data, unsigned long size, int target, int tag)
+        template <typename DT_> MPI_Request mpi_isend(DT_ * data, unsigned long size, int target, int tag)
         {
-            return MPI::COMM_WORLD.Isend(data, size, mpi::MPIType<DT_>::value(), target, tag);
+            MPI_Request request;
+            MPI_Isend(data, size, mpi::MPIType<DT_>::value(), target, tag, MPI_COMM_WORLD, &(request));
+            return request;
         }
 
-        template <typename DT_> MPI::Request mpi_irecv(DT_ * data, unsigned long size, int sender, int tag)
+        template <typename DT_> MPI_Request mpi_irecv(DT_ * data, unsigned long size, int sender, int tag)
         {
-            return MPI::COMM_WORLD.Irecv(data, size, mpi::MPIType<DT_>::value(), sender, tag);
+            MPI_Request request;
+            MPI_Irecv(data, size, mpi::MPIType<DT_>::value(), sender, tag, MPI_COMM_WORLD, &(request));
+            return request;
         }
 
         template void mpi_bcast<float>(float * data, unsigned long size, int sender);
@@ -85,12 +89,12 @@ namespace honei
         template void mpi_recv<double>(double * data, unsigned long size, int sender, int tag);
         template void mpi_recv<unsigned long>(unsigned long * data, unsigned long size, int sender, int tag);
 
-        template MPI::Request mpi_isend<float>(float * data, unsigned long size, int target, int tag);
-        template MPI::Request mpi_isend<double>(double * data, unsigned long size, int target, int tag);
-        template MPI::Request mpi_isend<unsigned long>(unsigned long * data, unsigned long size, int target, int tag);
+        template MPI_Request mpi_isend<float>(float * data, unsigned long size, int target, int tag);
+        template MPI_Request mpi_isend<double>(double * data, unsigned long size, int target, int tag);
+        template MPI_Request mpi_isend<unsigned long>(unsigned long * data, unsigned long size, int target, int tag);
 
-        template MPI::Request mpi_irecv<float>(float * data, unsigned long size, int sender, int tag);
-        template MPI::Request mpi_irecv<double>(double * data, unsigned long size, int sender, int tag);
-        template MPI::Request mpi_irecv<unsigned long>(unsigned long * data, unsigned long size, int sender, int tag);
+        template MPI_Request mpi_irecv<float>(float * data, unsigned long size, int sender, int tag);
+        template MPI_Request mpi_irecv<double>(double * data, unsigned long size, int sender, int tag);
+        template MPI_Request mpi_irecv<unsigned long>(unsigned long * data, unsigned long size, int sender, int tag);
     }
 }

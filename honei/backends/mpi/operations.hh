@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2008, 2010 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -34,8 +34,8 @@ namespace honei
         template <typename DT_> void mpi_bcast(DT_ * data, unsigned long size, int sender);
         template <typename DT_> void mpi_send(DT_ * data, unsigned long size, int target, int tag);
         template <typename DT_> void mpi_recv(DT_ * data, unsigned long size, int sender, int tag);
-        template <typename DT_> MPI::Request mpi_isend(DT_ * data, unsigned long size, int target, int tag);
-        template <typename DT_> MPI::Request mpi_irecv(DT_ * data, unsigned long size, int sender, int tag);
+        template <typename DT_> MPI_Request mpi_isend(DT_ * data, unsigned long size, int target, int tag);
+        template <typename DT_> MPI_Request mpi_irecv(DT_ * data, unsigned long size, int sender, int tag);
 
         template <typename DT_>
         class MPIType
