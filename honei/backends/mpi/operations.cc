@@ -34,67 +34,67 @@ namespace honei
             MPI_Finalize();
         }
 
-        void mpi_comm_size(int * size)
+        void mpi_comm_size(int * size, MPI_Comm com)
         {
-            MPI_Comm_size(MPI_COMM_WORLD, size);
+            MPI_Comm_size(com, size);
         }
 
-        void mpi_comm_rank(int * id)
+        void mpi_comm_rank(int * id, MPI_Comm com)
         {
-            MPI_Comm_rank(MPI_COMM_WORLD, id);
-        }
-
-        template <typename DT_>
-        void mpi_bcast(DT_ * data, unsigned long size, int sender)
-        {
-            MPI_Bcast(data, size, MPIType<DT_>::value(), sender, MPI_COMM_WORLD);
+            MPI_Comm_rank(com, id);
         }
 
         template <typename DT_>
-        void mpi_send(DT_ * data, unsigned long size, int target, int tag)
+        void mpi_bcast(DT_ * data, unsigned long size, int sender, MPI_Comm com)
         {
-            MPI_Send(data, size, MPIType<DT_>::value(), target, tag, MPI_COMM_WORLD);
+            MPI_Bcast(data, size, MPIType<DT_>::value(), sender, com);
         }
 
         template <typename DT_>
-        void mpi_recv(DT_ * data, unsigned long size, int sender, int tag)
+        void mpi_send(DT_ * data, unsigned long size, int target, int tag, MPI_Comm com)
+        {
+            MPI_Send(data, size, MPIType<DT_>::value(), target, tag, com);
+        }
+
+        template <typename DT_>
+        void mpi_recv(DT_ * data, unsigned long size, int sender, int tag, MPI_Comm com)
         {
             MPI_Status _stat;
-            MPI_Recv(data, size, MPIType<DT_>::value(), sender, tag, MPI_COMM_WORLD, &_stat);
+            MPI_Recv(data, size, MPIType<DT_>::value(), sender, tag, com, &_stat);
         }
 
-        template <typename DT_> MPI_Request mpi_isend(DT_ * data, unsigned long size, int target, int tag)
+        template <typename DT_> MPI_Request mpi_isend(DT_ * data, unsigned long size, int target, int tag, MPI_Comm com)
         {
             MPI_Request request;
-            MPI_Isend(data, size, mpi::MPIType<DT_>::value(), target, tag, MPI_COMM_WORLD, &(request));
+            MPI_Isend(data, size, mpi::MPIType<DT_>::value(), target, tag, com, &(request));
             return request;
         }
 
-        template <typename DT_> MPI_Request mpi_irecv(DT_ * data, unsigned long size, int sender, int tag)
+        template <typename DT_> MPI_Request mpi_irecv(DT_ * data, unsigned long size, int sender, int tag, MPI_Comm com)
         {
             MPI_Request request;
-            MPI_Irecv(data, size, mpi::MPIType<DT_>::value(), sender, tag, MPI_COMM_WORLD, &(request));
+            MPI_Irecv(data, size, mpi::MPIType<DT_>::value(), sender, tag, com, &(request));
             return request;
         }
 
-        template void mpi_bcast<float>(float * data, unsigned long size, int sender);
-        template void mpi_bcast<double>(double * data, unsigned long size, int sender);
-        template void mpi_bcast<unsigned long>(unsigned long * data, unsigned long size, int sender);
+        template void mpi_bcast<float>(float * data, unsigned long size, int sender, MPI_Comm com);
+        template void mpi_bcast<double>(double * data, unsigned long size, int sender, MPI_Comm com);
+        template void mpi_bcast<unsigned long>(unsigned long * data, unsigned long size, int sender, MPI_Comm com);
 
-        template void mpi_send<float>(float * data, unsigned long size, int target, int tag);
-        template void mpi_send<double>(double * data, unsigned long size, int target, int tag);
-        template void mpi_send<unsigned long>(unsigned long * data, unsigned long size, int target, int tag);
+        template void mpi_send<float>(float * data, unsigned long size, int target, int tag, MPI_Comm com);
+        template void mpi_send<double>(double * data, unsigned long size, int target, int tag, MPI_Comm com);
+        template void mpi_send<unsigned long>(unsigned long * data, unsigned long size, int target, int tag, MPI_Comm com);
 
-        template void mpi_recv<float>(float * data, unsigned long size, int sender, int tag);
-        template void mpi_recv<double>(double * data, unsigned long size, int sender, int tag);
-        template void mpi_recv<unsigned long>(unsigned long * data, unsigned long size, int sender, int tag);
+        template void mpi_recv<float>(float * data, unsigned long size, int sender, int tag, MPI_Comm com);
+        template void mpi_recv<double>(double * data, unsigned long size, int sender, int tag, MPI_Comm com);
+        template void mpi_recv<unsigned long>(unsigned long * data, unsigned long size, int sender, int tag, MPI_Comm com);
 
-        template MPI_Request mpi_isend<float>(float * data, unsigned long size, int target, int tag);
-        template MPI_Request mpi_isend<double>(double * data, unsigned long size, int target, int tag);
-        template MPI_Request mpi_isend<unsigned long>(unsigned long * data, unsigned long size, int target, int tag);
+        template MPI_Request mpi_isend<float>(float * data, unsigned long size, int target, int tag, MPI_Comm com);
+        template MPI_Request mpi_isend<double>(double * data, unsigned long size, int target, int tag, MPI_Comm com);
+        template MPI_Request mpi_isend<unsigned long>(unsigned long * data, unsigned long size, int target, int tag, MPI_Comm com);
 
-        template MPI_Request mpi_irecv<float>(float * data, unsigned long size, int sender, int tag);
-        template MPI_Request mpi_irecv<double>(double * data, unsigned long size, int sender, int tag);
-        template MPI_Request mpi_irecv<unsigned long>(unsigned long * data, unsigned long size, int sender, int tag);
+        template MPI_Request mpi_irecv<float>(float * data, unsigned long size, int sender, int tag, MPI_Comm com);
+        template MPI_Request mpi_irecv<double>(double * data, unsigned long size, int sender, int tag, MPI_Comm com);
+        template MPI_Request mpi_irecv<unsigned long>(unsigned long * data, unsigned long size, int sender, int tag, MPI_Comm com);
     }
 }

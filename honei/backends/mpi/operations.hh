@@ -29,13 +29,13 @@ namespace honei
     {
         void mpi_init(int * argc, char*** argv);
         void mpi_finalize();
-        void mpi_comm_size(int * size);
-        void mpi_comm_rank(int * id);
-        template <typename DT_> void mpi_bcast(DT_ * data, unsigned long size, int sender);
-        template <typename DT_> void mpi_send(DT_ * data, unsigned long size, int target, int tag);
-        template <typename DT_> void mpi_recv(DT_ * data, unsigned long size, int sender, int tag);
-        template <typename DT_> MPI_Request mpi_isend(DT_ * data, unsigned long size, int target, int tag);
-        template <typename DT_> MPI_Request mpi_irecv(DT_ * data, unsigned long size, int sender, int tag);
+        void mpi_comm_size(int * size, MPI_Comm com = MPI_COMM_WORLD);
+        void mpi_comm_rank(int * id, MPI_Comm com = MPI_COMM_WORLD);
+        template <typename DT_> void mpi_bcast(DT_ * data, unsigned long size, int sender, MPI_Comm com = MPI_COMM_WORLD);
+        template <typename DT_> void mpi_send(DT_ * data, unsigned long size, int target, int tag, MPI_Comm com = MPI_COMM_WORLD);
+        template <typename DT_> void mpi_recv(DT_ * data, unsigned long size, int sender, int tag, MPI_Comm com = MPI_COMM_WORLD);
+        template <typename DT_> MPI_Request mpi_isend(DT_ * data, unsigned long size, int target, int tag, MPI_Comm com = MPI_COMM_WORLD);
+        template <typename DT_> MPI_Request mpi_irecv(DT_ * data, unsigned long size, int sender, int tag, MPI_Comm com = MPI_COMM_WORLD);
 
         template <typename DT_>
         class MPIType
