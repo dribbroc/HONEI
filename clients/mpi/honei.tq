@@ -1,10 +1,10 @@
 # #PBS -o mpi_output.txt
-#PBS -l walltime=00:10:00,nodes=5
 #PBS -M dribbrock@gmail.com
 #PBS -m bae
 #PBS -q short_eth
 #PBS -N honei-mpi
 #PBS -j oe
 #echo stern 5
+#PBS -l walltime=00:10:00,nodes=10
 cd $HOME/honei/trunk/clients/mpi
-mpirun -np 5 ./honei-mpi-ring 1000
+mpirun -np 10 ./honei-mpi-ring 1000

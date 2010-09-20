@@ -37,6 +37,7 @@
 
 #include <iostream>
 #include <vector>
+#include <list>
 
 namespace honei
 {
@@ -94,12 +95,17 @@ namespace honei
                 mpi::mpi_bcast(&grid.d_t, 1, 0);
                 mpi::mpi_bcast(&grid.tau, 1, 0);
 
+                std::list<unsigned long> ul_buffer;
+                std::vector<MPI_Request> requests;
                 for (signed long target(1) ; target < _numprocs ; ++target)
                 {
-                    _send_info(target, info_list[target - 1]);
-                    _send_data(target, data_list[target - 1]);
-                    _send_fringe(target, fringe_list[target - 1]);
+                    _send_info(target, info_list[target - 1], ul_buffer, requests);
+                    _send_data(target, data_list[target - 1], ul_buffer, requests);
+                    _send_fringe(target, fringe_list[target - 1], ul_buffer, requests);
                 }
+                MPI_Waitall(requests.size(), &requests[0], MPI_STATUSES_IGNORE);
+                requests.clear();
+                ul_buffer.clear();
 
 
                 for (signed long target(1) ; target < _numprocs ; ++target)
@@ -216,63 +222,63 @@ namespace honei
                 //_send_full_sync(0, data);
             }
 
-            void _send_info(unsigned long target, PackedGridInfo<D2Q9> & info)
+            void _send_info(unsigned long target, PackedGridInfo<D2Q9> & info, std::list<unsigned long> & ul_buffer, std::vector<MPI_Request> & requests)
             {
-                unsigned long limits_size(info.limits->size());
-                unsigned long dir_index_1_size(info.dir_index_1->size());
-                unsigned long dir_1_size(info.dir_1->size());
-                unsigned long dir_index_2_size(info.dir_index_2->size());
-                unsigned long dir_2_size(info.dir_2->size());
-                unsigned long dir_index_3_size(info.dir_index_3->size());
-                unsigned long dir_3_size(info.dir_3->size());
-                unsigned long dir_index_4_size(info.dir_index_4->size());
-                unsigned long dir_4_size(info.dir_4->size());
-                unsigned long dir_index_5_size(info.dir_index_5->size());
-                unsigned long dir_5_size(info.dir_5->size());
-                unsigned long dir_index_6_size(info.dir_index_6->size());
-                unsigned long dir_6_size(info.dir_6->size());
-                unsigned long dir_index_7_size(info.dir_index_7->size());
-                unsigned long dir_7_size(info.dir_7->size());
-                unsigned long dir_index_8_size(info.dir_index_8->size());
-                unsigned long dir_8_size(info.dir_8->size());
+                ul_buffer.push_back(info.offset);
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(info.limits->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(info.dir_index_1->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(info.dir_1->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(info.dir_index_2->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(info.dir_2->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(info.dir_index_3->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(info.dir_3->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(info.dir_index_4->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(info.dir_4->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(info.dir_index_5->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(info.dir_5->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(info.dir_index_6->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(info.dir_6->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(info.dir_index_7->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(info.dir_7->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(info.dir_index_8->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(info.dir_8->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
 
-                mpi::mpi_send(&info.offset, 1, target, _myid);
-                mpi::mpi_send(&limits_size, 1, target, _myid);
-                mpi::mpi_send(&dir_index_1_size, 1, target, _myid);
-                mpi::mpi_send(&dir_1_size, 1, target, _myid);
-                mpi::mpi_send(&dir_index_2_size, 1, target, _myid);
-                mpi::mpi_send(&dir_2_size, 1, target, _myid);
-                mpi::mpi_send(&dir_index_3_size, 1, target, _myid);
-                mpi::mpi_send(&dir_3_size, 1, target, _myid);
-                mpi::mpi_send(&dir_index_4_size, 1, target, _myid);
-                mpi::mpi_send(&dir_4_size, 1, target, _myid);
-                mpi::mpi_send(&dir_index_5_size, 1, target, _myid);
-                mpi::mpi_send(&dir_5_size, 1, target, _myid);
-                mpi::mpi_send(&dir_index_6_size, 1, target, _myid);
-                mpi::mpi_send(&dir_6_size, 1, target, _myid);
-                mpi::mpi_send(&dir_index_7_size, 1, target, _myid);
-                mpi::mpi_send(&dir_7_size, 1, target, _myid);
-                mpi::mpi_send(&dir_index_8_size, 1, target, _myid);
-                mpi::mpi_send(&dir_8_size, 1, target, _myid);
-
-                mpi::mpi_send(info.limits->elements(), info.limits->size(), target, _myid);
-                mpi::mpi_send(info.types->elements(), info.types->size(), target, _myid);
-                mpi::mpi_send(info.dir_index_1->elements(), info.dir_index_1->size(), target, _myid);
-                mpi::mpi_send(info.dir_1->elements(), info.dir_1->size(), target, _myid);
-                mpi::mpi_send(info.dir_index_2->elements(), info.dir_index_2->size(), target, _myid);
-                mpi::mpi_send(info.dir_2->elements(), info.dir_2->size(), target, _myid);
-                mpi::mpi_send(info.dir_index_3->elements(), info.dir_index_3->size(), target, _myid);
-                mpi::mpi_send(info.dir_3->elements(), info.dir_3->size(), target, _myid);
-                mpi::mpi_send(info.dir_index_4->elements(), info.dir_index_4->size(), target, _myid);
-                mpi::mpi_send(info.dir_4->elements(), info.dir_4->size(), target, _myid);
-                mpi::mpi_send(info.dir_index_5->elements(), info.dir_index_5->size(), target, _myid);
-                mpi::mpi_send(info.dir_5->elements(), info.dir_5->size(), target, _myid);
-                mpi::mpi_send(info.dir_index_6->elements(), info.dir_index_6->size(), target, _myid);
-                mpi::mpi_send(info.dir_6->elements(), info.dir_6->size(), target, _myid);
-                mpi::mpi_send(info.dir_index_7->elements(), info.dir_index_7->size(), target, _myid);
-                mpi::mpi_send(info.dir_7->elements(), info.dir_7->size(), target, _myid);
-                mpi::mpi_send(info.dir_index_8->elements(), info.dir_index_8->size(), target, _myid);
-                mpi::mpi_send(info.dir_8->elements(), info.dir_8->size(), target, _myid);
+                requests.push_back(mpi::mpi_isend(info.limits->elements(), info.limits->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(info.types->elements(), info.types->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(info.dir_index_1->elements(), info.dir_index_1->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(info.dir_1->elements(), info.dir_1->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(info.dir_index_2->elements(), info.dir_index_2->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(info.dir_2->elements(), info.dir_2->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(info.dir_index_3->elements(), info.dir_index_3->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(info.dir_3->elements(), info.dir_3->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(info.dir_index_4->elements(), info.dir_index_4->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(info.dir_4->elements(), info.dir_4->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(info.dir_index_5->elements(), info.dir_index_5->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(info.dir_5->elements(), info.dir_5->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(info.dir_index_6->elements(), info.dir_index_6->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(info.dir_6->elements(), info.dir_6->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(info.dir_index_7->elements(), info.dir_index_7->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(info.dir_7->elements(), info.dir_7->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(info.dir_index_8->elements(), info.dir_index_8->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(info.dir_8->elements(), info.dir_8->size(), target, _myid));
             }
 
             void _recv_info(PackedGridInfo<D2Q9> & info)
@@ -353,18 +359,17 @@ namespace honei
                 mpi::mpi_recv(info.dir_8->elements(), info.dir_8->size(), 0, 0);
             }
 
-            void _send_data(unsigned long target, PackedGridData<D2Q9, DataType_> & data)
+            void _send_data(unsigned long target, PackedGridData<D2Q9, DataType_> & data, std::list<unsigned long> & ul_buffer, std::vector<MPI_Request> & requests)
             {
-                unsigned long h_size(data.h->size());
-                unsigned long dist_size(data.distribution_x->size());
+                ul_buffer.push_back(data.h->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(data.distribution_x->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
 
-                mpi::mpi_send(&h_size, 1, target, _myid);
-                mpi::mpi_send(&dist_size, 1, target, _myid);
-
-                mpi::mpi_send(data.h->elements(), data.h->size(), target, _myid);
-                mpi::mpi_send(data.u->elements(), data.u->size(), target, _myid);
-                mpi::mpi_send(data.v->elements(), data.v->size(), target, _myid);
-                mpi::mpi_send(data.b->elements(), data.b->size(), target, _myid);
+                requests.push_back(mpi::mpi_isend(data.h->elements(), data.h->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(data.u->elements(), data.u->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(data.v->elements(), data.v->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(data.b->elements(), data.b->size(), target, _myid));
             }
 
             void _recv_data(PackedGridData<D2Q9, DataType_> & data)
@@ -420,118 +425,117 @@ namespace honei
                 data.distribution_y = new DenseVector<DataType_>(dist_size);
             }
 
-            void _send_fringe(unsigned long target, PackedGridFringe<D2Q9> & fringe)
+            void _send_fringe(unsigned long target, PackedGridFringe<D2Q9> & fringe, std::list<unsigned long> & ul_buffer, std::vector<MPI_Request> & requests)
             {
-                unsigned long h_targets_size(fringe.h_targets->size());
-                unsigned long h_index_size(fringe.h_index->size());
-                unsigned long external_h_index_size(fringe.external_h_index->size());
-                unsigned long dir_targets_1_size(fringe.dir_targets_1->size());
-                unsigned long dir_index_1_size(fringe.dir_index_1->size());
-                unsigned long dir_targets_2_size(fringe.dir_targets_2->size());
-                unsigned long dir_index_2_size(fringe.dir_index_2->size());
-                unsigned long dir_targets_3_size(fringe.dir_targets_3->size());
-                unsigned long dir_index_3_size(fringe.dir_index_3->size());
-                unsigned long dir_targets_4_size(fringe.dir_targets_4->size());
-                unsigned long dir_index_4_size(fringe.dir_index_4->size());
-                unsigned long dir_targets_5_size(fringe.dir_targets_5->size());
-                unsigned long dir_index_5_size(fringe.dir_index_5->size());
-                unsigned long dir_targets_6_size(fringe.dir_targets_6->size());
-                unsigned long dir_index_6_size(fringe.dir_index_6->size());
-                unsigned long dir_targets_7_size(fringe.dir_targets_7->size());
-                unsigned long dir_index_7_size(fringe.dir_index_7->size());
-                unsigned long dir_targets_8_size(fringe.dir_targets_8->size());
-                unsigned long dir_index_8_size(fringe.dir_index_8->size());
-                unsigned long external_dir_index_1_size(fringe.external_dir_index_1->size());
-                unsigned long external_dir_index_2_size(fringe.external_dir_index_2->size());
-                unsigned long external_dir_index_3_size(fringe.external_dir_index_3->size());
-                unsigned long external_dir_index_4_size(fringe.external_dir_index_4->size());
-                unsigned long external_dir_index_5_size(fringe.external_dir_index_5->size());
-                unsigned long external_dir_index_6_size(fringe.external_dir_index_6->size());
-                unsigned long external_dir_index_7_size(fringe.external_dir_index_7->size());
-                unsigned long external_dir_index_8_size(fringe.external_dir_index_8->size());
-                unsigned long external_h_targets_size(fringe.external_h_targets->size());
-                unsigned long external_dir_targets_1_size(fringe.external_dir_targets_1->size());
-                unsigned long external_dir_targets_2_size(fringe.external_dir_targets_2->size());
-                unsigned long external_dir_targets_3_size(fringe.external_dir_targets_3->size());
-                unsigned long external_dir_targets_4_size(fringe.external_dir_targets_4->size());
-                unsigned long external_dir_targets_5_size(fringe.external_dir_targets_5->size());
-                unsigned long external_dir_targets_6_size(fringe.external_dir_targets_6->size());
-                unsigned long external_dir_targets_7_size(fringe.external_dir_targets_7->size());
-                unsigned long external_dir_targets_8_size(fringe.external_dir_targets_8->size());
+                ul_buffer.push_back(fringe.h_targets->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.h_index->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.external_h_index->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.dir_targets_1->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.dir_index_1->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.dir_targets_2->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.dir_index_2->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.dir_targets_3->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.dir_index_3->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.dir_targets_4->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.dir_index_4->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.dir_targets_5->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.dir_index_5->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.dir_targets_6->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.dir_index_6->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.dir_targets_7->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.dir_index_7->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.dir_targets_8->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.dir_index_8->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.external_dir_index_1->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.external_dir_index_2->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.external_dir_index_3->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.external_dir_index_4->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.external_dir_index_5->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.external_dir_index_6->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.external_dir_index_7->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.external_dir_index_8->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.external_h_targets->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.external_dir_targets_1->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.external_dir_targets_2->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.external_dir_targets_3->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.external_dir_targets_4->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.external_dir_targets_5->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.external_dir_targets_6->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.external_dir_targets_7->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                ul_buffer.push_back(fringe.external_dir_targets_8->size());
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
 
-                mpi::mpi_send(&h_targets_size, 1, target, _myid);
-                mpi::mpi_send(&h_index_size, 1, target, _myid);
-                mpi::mpi_send(&external_h_index_size, 1, target, _myid);
-                mpi::mpi_send(&dir_targets_1_size, 1, target, _myid);
-                mpi::mpi_send(&dir_index_1_size, 1, target, _myid);
-                mpi::mpi_send(&dir_targets_2_size, 1, target, _myid);
-                mpi::mpi_send(&dir_index_2_size, 1, target, _myid);
-                mpi::mpi_send(&dir_targets_3_size, 1, target, _myid);
-                mpi::mpi_send(&dir_index_3_size, 1, target, _myid);
-                mpi::mpi_send(&dir_targets_4_size, 1, target, _myid);
-                mpi::mpi_send(&dir_index_4_size, 1, target, _myid);
-                mpi::mpi_send(&dir_targets_5_size, 1, target, _myid);
-                mpi::mpi_send(&dir_index_5_size, 1, target, _myid);
-                mpi::mpi_send(&dir_targets_6_size, 1, target, _myid);
-                mpi::mpi_send(&dir_index_6_size, 1, target, _myid);
-                mpi::mpi_send(&dir_targets_7_size, 1, target, _myid);
-                mpi::mpi_send(&dir_index_7_size, 1, target, _myid);
-                mpi::mpi_send(&dir_targets_8_size, 1, target, _myid);
-                mpi::mpi_send(&dir_index_8_size, 1, target, _myid);
-                mpi::mpi_send(&external_dir_index_1_size, 1, target, _myid);
-                mpi::mpi_send(&external_dir_index_2_size, 1, target, _myid);
-                mpi::mpi_send(&external_dir_index_3_size, 1, target, _myid);
-                mpi::mpi_send(&external_dir_index_4_size, 1, target, _myid);
-                mpi::mpi_send(&external_dir_index_5_size, 1, target, _myid);
-                mpi::mpi_send(&external_dir_index_6_size, 1, target, _myid);
-                mpi::mpi_send(&external_dir_index_7_size, 1, target, _myid);
-                mpi::mpi_send(&external_dir_index_8_size, 1, target, _myid);
-                mpi::mpi_send(&external_h_targets_size, 1, target, _myid);
-                mpi::mpi_send(&external_dir_targets_1_size, 1, target, _myid);
-                mpi::mpi_send(&external_dir_targets_2_size, 1, target, _myid);
-                mpi::mpi_send(&external_dir_targets_3_size, 1, target, _myid);
-                mpi::mpi_send(&external_dir_targets_4_size, 1, target, _myid);
-                mpi::mpi_send(&external_dir_targets_5_size, 1, target, _myid);
-                mpi::mpi_send(&external_dir_targets_6_size, 1, target, _myid);
-                mpi::mpi_send(&external_dir_targets_7_size, 1, target, _myid);
-                mpi::mpi_send(&external_dir_targets_8_size, 1, target, _myid);
-
-                mpi::mpi_send(fringe.h_targets->elements(), fringe.h_targets->size(), target, _myid);
-                mpi::mpi_send(fringe.h_index->elements(), fringe.h_index->size(), target, _myid);
-                mpi::mpi_send(fringe.external_h_index->elements(), fringe.external_h_index->size(), target, _myid);
-                mpi::mpi_send(fringe.dir_targets_1->elements(), fringe.dir_targets_1->size(), target, _myid);
-                mpi::mpi_send(fringe.dir_index_1->elements(), fringe.dir_index_1->size(), target, _myid);
-                mpi::mpi_send(fringe.dir_targets_2->elements(), fringe.dir_targets_2->size(), target, _myid);
-                mpi::mpi_send(fringe.dir_index_2->elements(), fringe.dir_index_2->size(), target, _myid);
-                mpi::mpi_send(fringe.dir_targets_3->elements(), fringe.dir_targets_3->size(), target, _myid);
-                mpi::mpi_send(fringe.dir_index_3->elements(), fringe.dir_index_3->size(), target, _myid);
-                mpi::mpi_send(fringe.dir_targets_4->elements(), fringe.dir_targets_4->size(), target, _myid);
-                mpi::mpi_send(fringe.dir_index_4->elements(), fringe.dir_index_4->size(), target, _myid);
-                mpi::mpi_send(fringe.dir_targets_5->elements(), fringe.dir_targets_5->size(), target, _myid);
-                mpi::mpi_send(fringe.dir_index_5->elements(), fringe.dir_index_5->size(), target, _myid);
-                mpi::mpi_send(fringe.dir_targets_6->elements(), fringe.dir_targets_6->size(), target, _myid);
-                mpi::mpi_send(fringe.dir_index_6->elements(), fringe.dir_index_6->size(), target, _myid);
-                mpi::mpi_send(fringe.dir_targets_7->elements(), fringe.dir_targets_7->size(), target, _myid);
-                mpi::mpi_send(fringe.dir_index_7->elements(), fringe.dir_index_7->size(), target, _myid);
-                mpi::mpi_send(fringe.dir_targets_8->elements(), fringe.dir_targets_8->size(), target, _myid);
-                mpi::mpi_send(fringe.dir_index_8->elements(), fringe.dir_index_8->size(), target, _myid);
-                mpi::mpi_send(fringe.external_dir_index_1->elements(), fringe.external_dir_index_1->size(), target, _myid);
-                mpi::mpi_send(fringe.external_dir_index_2->elements(), fringe.external_dir_index_2->size(), target, _myid);
-                mpi::mpi_send(fringe.external_dir_index_3->elements(), fringe.external_dir_index_3->size(), target, _myid);
-                mpi::mpi_send(fringe.external_dir_index_4->elements(), fringe.external_dir_index_4->size(), target, _myid);
-                mpi::mpi_send(fringe.external_dir_index_5->elements(), fringe.external_dir_index_5->size(), target, _myid);
-                mpi::mpi_send(fringe.external_dir_index_6->elements(), fringe.external_dir_index_6->size(), target, _myid);
-                mpi::mpi_send(fringe.external_dir_index_7->elements(), fringe.external_dir_index_7->size(), target, _myid);
-                mpi::mpi_send(fringe.external_dir_index_8->elements(), fringe.external_dir_index_8->size(), target, _myid);
-                mpi::mpi_send(fringe.external_h_targets->elements(), fringe.external_h_targets->size(), target, _myid);
-                mpi::mpi_send(fringe.external_dir_targets_1->elements(), fringe.external_dir_targets_1->size(), target, _myid);
-                mpi::mpi_send(fringe.external_dir_targets_2->elements(), fringe.external_dir_targets_2->size(), target, _myid);
-                mpi::mpi_send(fringe.external_dir_targets_3->elements(), fringe.external_dir_targets_3->size(), target, _myid);
-                mpi::mpi_send(fringe.external_dir_targets_4->elements(), fringe.external_dir_targets_4->size(), target, _myid);
-                mpi::mpi_send(fringe.external_dir_targets_5->elements(), fringe.external_dir_targets_5->size(), target, _myid);
-                mpi::mpi_send(fringe.external_dir_targets_6->elements(), fringe.external_dir_targets_6->size(), target, _myid);
-                mpi::mpi_send(fringe.external_dir_targets_7->elements(), fringe.external_dir_targets_7->size(), target, _myid);
-                mpi::mpi_send(fringe.external_dir_targets_8->elements(), fringe.external_dir_targets_8->size(), target, _myid);
+                requests.push_back(mpi::mpi_isend(fringe.h_targets->elements(), fringe.h_targets->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.h_index->elements(), fringe.h_index->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.external_h_index->elements(), fringe.external_h_index->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.dir_targets_1->elements(), fringe.dir_targets_1->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.dir_index_1->elements(), fringe.dir_index_1->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.dir_targets_2->elements(), fringe.dir_targets_2->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.dir_index_2->elements(), fringe.dir_index_2->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.dir_targets_3->elements(), fringe.dir_targets_3->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.dir_index_3->elements(), fringe.dir_index_3->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.dir_targets_4->elements(), fringe.dir_targets_4->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.dir_index_4->elements(), fringe.dir_index_4->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.dir_targets_5->elements(), fringe.dir_targets_5->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.dir_index_5->elements(), fringe.dir_index_5->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.dir_targets_6->elements(), fringe.dir_targets_6->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.dir_index_6->elements(), fringe.dir_index_6->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.dir_targets_7->elements(), fringe.dir_targets_7->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.dir_index_7->elements(), fringe.dir_index_7->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.dir_targets_8->elements(), fringe.dir_targets_8->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.dir_index_8->elements(), fringe.dir_index_8->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_1->elements(), fringe.external_dir_index_1->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_2->elements(), fringe.external_dir_index_2->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_3->elements(), fringe.external_dir_index_3->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_4->elements(), fringe.external_dir_index_4->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_5->elements(), fringe.external_dir_index_5->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_6->elements(), fringe.external_dir_index_6->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_7->elements(), fringe.external_dir_index_7->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_8->elements(), fringe.external_dir_index_8->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.external_h_targets->elements(), fringe.external_h_targets->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_1->elements(), fringe.external_dir_targets_1->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_2->elements(), fringe.external_dir_targets_2->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_3->elements(), fringe.external_dir_targets_3->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_4->elements(), fringe.external_dir_targets_4->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_5->elements(), fringe.external_dir_targets_5->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_6->elements(), fringe.external_dir_targets_6->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_7->elements(), fringe.external_dir_targets_7->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_8->elements(), fringe.external_dir_targets_8->size(), target, _myid));
             }
 
             void _recv_fringe(PackedGridFringe<D2Q9> & fringe)
