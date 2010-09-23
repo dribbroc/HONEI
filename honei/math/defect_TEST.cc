@@ -133,20 +133,28 @@ class DefectRegressionTest:
             DenseVector<DT_> result(Defect<Tag_>::value(rhs, smatrix2, x));
             DenseVector<DT_> result2(result.size());
             DenseVector<DT_> result3(result.size());
+            DenseVector<DT_> result4(result.size());
             Defect<Tag_>::value(result2, rhs, smatrix2, x);
             Defect<Tag_>::value(result3, rhs, smatrix2, result2);
+            Defect<Tag_>::value(result4, rhs, smatrix2, result3);
             DenseVector<DT_> ref_result3(Defect<tags::CPU>::value(rhs, smatrix2, ref_result));
+            DenseVector<DT_> ref_result4(Defect<tags::CPU>::value(rhs, smatrix2, ref_result3));
 
             result.lock(lm_read_only);
             result2.lock(lm_read_only);
             result3.lock(lm_read_only);
+            result4.lock(lm_read_only);
             TEST_CHECK_EQUAL(result, ref_result);
             TEST_CHECK_EQUAL(result2, ref_result);
             for (unsigned long i(0) ; i < x.size() ; ++i)
-            TEST_CHECK_EQUAL_WITHIN_EPS(result3[i], ref_result3[i], 1e-3);
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(result3[i], ref_result3[i], 1e-3);
+                TEST_CHECK_EQUAL_WITHIN_EPS(result4[i], ref_result4[i], 1e-3);
+            }
             result2.unlock(lm_read_only);
             result.unlock(lm_read_only);
             result3.unlock(lm_read_only);
+            result4.unlock(lm_read_only);
         }
 };
 DefectRegressionTest<float, tags::CPU> regression_defect_test_float_sparse("Regression float", "l2/area51_full_0.m", "l2/area51_rhs_0");
