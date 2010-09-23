@@ -354,7 +354,7 @@ DenseVector<double> Product<tags::GPU::CUDA>::value(const BandedMatrixQ1<double>
 }
 #endif
 
-DenseVector<float> Product<tags::GPU::CUDA>::value(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b)
+DenseVector<float> & Product<tags::GPU::CUDA>::value(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b)
 {
     CONTEXT("When multiplying SparseMatrixELL<float> with DenseVectorContinuousBase<float> (CUDA):");
 
@@ -384,7 +384,7 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(DenseVector<float> & result, 
 }
 
 #ifdef HONEI_CUDA_DOUBLE
-DenseVector<double> Product<tags::GPU::CUDA>::value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b)
+DenseVector<double> & Product<tags::GPU::CUDA>::value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b)
 {
     CONTEXT("When multiplying SparseMatrixELL<double> with DenseVectorContinuousBase<double> (CUDA):");
 
@@ -414,7 +414,7 @@ DenseVector<double> Product<tags::GPU::CUDA>::value(DenseVector<double> & result
 }
 #endif
 
-DenseVector<float> Product<tags::GPU::MultiCore::CUDA>::value(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b)
+DenseVector<float> & Product<tags::GPU::MultiCore::CUDA>::value(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b)
 {
     CONTEXT("When multiplying SparseMatrixELL<float> with DenseVectorContinuousBase<float> (MC CUDA):");
 
@@ -450,7 +450,7 @@ DenseVector<float> Product<tags::GPU::MultiCore::CUDA>::value(DenseVector<float>
 }
 
 #ifdef HONEI_CUDA_DOUBLE
-DenseVector<double> Product<tags::GPU::MultiCore::CUDA>::value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b)
+DenseVector<double> & Product<tags::GPU::MultiCore::CUDA>::value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b)
 {
     CONTEXT("When multiplying SparseMatrixELL<double> with DenseVectorContinuousBase<double> (MC CUDA):");
 
