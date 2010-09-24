@@ -87,7 +87,7 @@ namespace honei
                 std::vector<PackedGridInfo<D2Q9> > info_list;
                 std::vector<PackedGridData<D2Q9, DataType_> > data_list;
                 std::vector<PackedGridFringe<D2Q9> > fringe_list;
-                GridPartitioner<D2Q9, DataType_>::decompose(_numprocs - 1, info, data, info_list, data_list, fringe_list);
+                GridPartitioner<D2Q9, DataType_>::decompose(_numprocs, info, data, info_list, data_list, fringe_list);
 
                 mpi::mpi_bcast(&timesteps, 1, 0);
                 mpi::mpi_bcast(&grid.d_x, 1, 0);
@@ -99,25 +99,29 @@ namespace honei
                 std::vector<MPI_Request> requests;
                 for (signed long target(1) ; target < _numprocs ; ++target)
                 {
-                    _send_info(target, info_list[target - 1], ul_buffer, requests);
-                    _send_data(target, data_list[target - 1], ul_buffer, requests);
-                    _send_fringe(target, fringe_list[target - 1], ul_buffer, requests);
+                    _send_info(target, info_list.at(target), ul_buffer, requests);
+                    _send_data(target, data_list.at(target), ul_buffer, requests);
+                    _send_fringe(target, fringe_list.at(target), ul_buffer, requests);
                 }
                 MPI_Waitall(requests.size(), &requests[0], MPI_STATUSES_IGNORE);
                 requests.clear();
                 ul_buffer.clear();
 
 
+                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info_list.at(0), &data_list.at(0), grid.d_x, grid.d_y, grid.d_t, grid.tau);
+
+                solver.do_preprocessing();
+
                 for (signed long target(1) ; target < _numprocs ; ++target)
                 {
-                    _recv_slave_sync(target, info_list[target - 1], data_list[target - 1], fringe_list[target - 1]);
+                    _recv_slave_sync(target, info_list.at(target), data_list.at(target), fringe_list.at(target));
                 }
 
                 GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list, fringe_list);
 
                 for (signed long target(1) ; target < _numprocs ; ++target)
                 {
-                    _send_slave_sync(target, info_list[target - 1], data_list[target - 1], fringe_list[target - 1]);
+                    _send_slave_sync(target, info_list.at(target), data_list.at(target), fringe_list.at(target));
                 }
 
                 //GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);
@@ -129,21 +133,11 @@ namespace honei
                 at.take();
                 for(unsigned long i(0); i < timesteps; ++i)
                 {
-                    //here are the solvers solving...
-                    //and finished
-                    /*for (signed long target(1) ; target < _numprocs ; ++target)
-                    {
-                        _recv_slave_sync(target, info_list[target - 1], data_list[target - 1], fringe_list[target - 1]);
-                    }
+                    solver.solve();
 
-                    GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list, fringe_list);
-
-                    for (signed long target(1) ; target < _numprocs ; ++target)
-                    {
-                        _send_slave_sync(target, info_list[target - 1], data_list[target - 1], fringe_list[target - 1]);
-                    }*/
+                    _circle_sync(info_list.at(0), data_list.at(0), fringe_list.at(0));
                 }
-                MPI_Barrier(MPI_COMM_WORLD);
+                //MPI_Barrier(MPI_COMM_WORLD);
                 bt.take();
                 std::cout<<"Gridsize: "<<grid.h->rows()<<" x "<<grid.h->columns()<<std::endl;
                 std::cout<<"Timesteps: " << timesteps << " TOE: "<<bt.total() - at.total()<<std::endl;
@@ -152,7 +146,7 @@ namespace honei
                 // generate output
                 /*for (signed long target(1) ; target < _numprocs ; ++target)
                 {
-                    _recv_full_sync(target, data_list[target - 1]);
+                    _recv_full_sync(target, data_list.at(target));
                 }
                 GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list, fringe_list);
                 GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);*/
@@ -168,11 +162,11 @@ namespace honei
 
                 GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_ref, info_ref, data_ref);
                 //SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info_ref, &data_ref, grid_ref.d_x, grid_ref.d_y, grid_ref.d_t, grid_ref.tau);
-                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info_ref, &data_ref, grid_ref.d_x, grid_ref.d_y, grid_ref.d_t, grid_ref.tau);
-                solver.do_preprocessing();
+                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver_ref(&info_ref, &data_ref, grid_ref.d_x, grid_ref.d_y, grid_ref.d_t, grid_ref.tau);
+                solver_ref.do_preprocessing();
                 for(unsigned long i(0); i < timesteps; ++i)
                 {
-                    solver.solve();
+                    solver_ref.solve();
                 }
                 data_ref.h->lock(lm_read_only);
                 for (unsigned long i(0) ; i < data.h->size() ; ++i)
@@ -213,12 +207,9 @@ namespace honei
                 {
                     solver.solve();
 
-                    //_send_master_sync(0, info, data, fringe);
-                    //_recv_master_sync(0, info, data, fringe);
-
                     _circle_sync(info, data, fringe);
                 }
-                MPI_Barrier(MPI_COMM_WORLD);
+                //MPI_Barrier(MPI_COMM_WORLD);
                 //_send_full_sync(0, data);
             }
 
@@ -998,48 +989,48 @@ namespace honei
 
                 for (unsigned long i(0) ; i < fringe.h_index->size() / 2 ; ++i)
                 {
-                    unsigned long h_source((*fringe.h_targets)[i] + 1);
+                    unsigned long h_source((*fringe.h_targets)[i]);
                     unsigned long h_offset((*fringe.h_index)[i * 2]);
                     unsigned long h_size((*fringe.h_index)[i * 2 + 1] - h_offset);
                     if (h_size > 0) requests.push_back(mpi::mpi_irecv(data.h->elements() + h_offset - offset, h_size, h_source, h_source));
                 }
                 for (unsigned long i(0) ; i < fringe.external_h_index->size() / 2 ; ++i)
                 {
-                    unsigned long h_target((*fringe.external_h_targets)[i] + 1);
+                    unsigned long h_target((*fringe.external_h_targets)[i]);
                     unsigned long h_offset((*fringe.external_h_index)[i * 2]);
                     unsigned long h_size((*fringe.external_h_index)[i * 2 + 1] - h_offset);
                     if (h_size > 0) requests.push_back(mpi::mpi_isend(data.h->elements() + h_offset - offset, h_size, h_target, _myid));
                 }
 
-                unsigned long source_1_recv((*fringe.external_dir_targets_1)[0] + 1);
+                unsigned long source_1_recv((*fringe.external_dir_targets_1)[0]);
                 unsigned long f1_offset_recv((*fringe.external_dir_index_1)[0]);
                 unsigned long f1_size_recv((*fringe.external_dir_index_1)[fringe.external_dir_index_1->size()-1] - f1_offset_recv);
 
-                unsigned long source_2_recv((*fringe.external_dir_targets_2)[0] + 1);
+                unsigned long source_2_recv((*fringe.external_dir_targets_2)[0]);
                 unsigned long f2_offset_recv((*fringe.external_dir_index_2)[0]);
                 unsigned long f2_size_recv((*fringe.external_dir_index_2)[fringe.external_dir_index_2->size()-1] - f2_offset_recv);
 
-                unsigned long source_3_recv((*fringe.external_dir_targets_3)[0] + 1);
+                unsigned long source_3_recv((*fringe.external_dir_targets_3)[0]);
                 unsigned long f3_offset_recv((*fringe.external_dir_index_3)[0]);
                 unsigned long f3_size_recv((*fringe.external_dir_index_3)[fringe.external_dir_index_3->size()-1] - f3_offset_recv);
 
-                unsigned long source_4_recv((*fringe.external_dir_targets_4)[0] + 1);
+                unsigned long source_4_recv((*fringe.external_dir_targets_4)[0]);
                 unsigned long f4_offset_recv((*fringe.external_dir_index_4)[0]);
                 unsigned long f4_size_recv((*fringe.external_dir_index_4)[fringe.external_dir_index_4->size()-1] - f4_offset_recv);
 
-                unsigned long source_5_recv((*fringe.external_dir_targets_5)[0] + 1);
+                unsigned long source_5_recv((*fringe.external_dir_targets_5)[0]);
                 unsigned long f5_offset_recv((*fringe.external_dir_index_5)[0]);
                 unsigned long f5_size_recv((*fringe.external_dir_index_5)[fringe.external_dir_index_5->size()-1] - f5_offset_recv);
 
-                unsigned long source_6_recv((*fringe.external_dir_targets_6)[0] + 1);
+                unsigned long source_6_recv((*fringe.external_dir_targets_6)[0]);
                 unsigned long f6_offset_recv((*fringe.external_dir_index_6)[0]);
                 unsigned long f6_size_recv((*fringe.external_dir_index_6)[fringe.external_dir_index_6->size()-1] - f6_offset_recv);
 
-                unsigned long source_7_recv((*fringe.external_dir_targets_7)[0] + 1);
+                unsigned long source_7_recv((*fringe.external_dir_targets_7)[0]);
                 unsigned long f7_offset_recv((*fringe.external_dir_index_7)[0]);
                 unsigned long f7_size_recv((*fringe.external_dir_index_7)[fringe.external_dir_index_7->size()-1] - f7_offset_recv);
 
-                unsigned long source_8_recv((*fringe.external_dir_targets_8)[0] + 1);
+                unsigned long source_8_recv((*fringe.external_dir_targets_8)[0]);
                 unsigned long f8_offset_recv((*fringe.external_dir_index_8)[0]);
                 unsigned long f8_size_recv((*fringe.external_dir_index_8)[fringe.external_dir_index_8->size()-1] - f8_offset_recv);
 
@@ -1060,35 +1051,35 @@ namespace honei
                 if (down_size_recv > 0) requests.push_back(mpi::mpi_irecv(down_buffer_recv, down_size_recv, source_down_recv, source_down_recv));
 
 
-                unsigned long target_1_send((*fringe.dir_targets_1)[0] + 1);
+                unsigned long target_1_send((*fringe.dir_targets_1)[0]);
                 unsigned long f1_offset_send((*fringe.dir_index_1)[0]);
                 unsigned long f1_size_send((*fringe.dir_index_1)[fringe.dir_index_1->size()-1] - f1_offset_send);
 
-                unsigned long target_2_send((*fringe.dir_targets_2)[0] + 1);
+                unsigned long target_2_send((*fringe.dir_targets_2)[0]);
                 unsigned long f2_offset_send((*fringe.dir_index_2)[0]);
                 unsigned long f2_size_send((*fringe.dir_index_2)[fringe.dir_index_2->size()-1] - f2_offset_send);
 
-                unsigned long target_3_send((*fringe.dir_targets_3)[0] + 1);
+                unsigned long target_3_send((*fringe.dir_targets_3)[0]);
                 unsigned long f3_offset_send((*fringe.dir_index_3)[0]);
                 unsigned long f3_size_send((*fringe.dir_index_3)[fringe.dir_index_3->size()-1] - f3_offset_send);
 
-                unsigned long target_4_send((*fringe.dir_targets_4)[0] + 1);
+                unsigned long target_4_send((*fringe.dir_targets_4)[0]);
                 unsigned long f4_offset_send((*fringe.dir_index_4)[0]);
                 unsigned long f4_size_send((*fringe.dir_index_4)[fringe.dir_index_4->size()-1] - f4_offset_send);
 
-                unsigned long target_5_send((*fringe.dir_targets_5)[0] + 1);
+                unsigned long target_5_send((*fringe.dir_targets_5)[0]);
                 unsigned long f5_offset_send((*fringe.dir_index_5)[0]);
                 unsigned long f5_size_send((*fringe.dir_index_5)[fringe.dir_index_5->size()-1] - f5_offset_send);
 
-                unsigned long target_6_send((*fringe.dir_targets_6)[0] + 1);
+                unsigned long target_6_send((*fringe.dir_targets_6)[0]);
                 unsigned long f6_offset_send((*fringe.dir_index_6)[0]);
                 unsigned long f6_size_send((*fringe.dir_index_6)[fringe.dir_index_6->size()-1] - f6_offset_send);
 
-                unsigned long target_7_send((*fringe.dir_targets_7)[0] + 1);
+                unsigned long target_7_send((*fringe.dir_targets_7)[0]);
                 unsigned long f7_offset_send((*fringe.dir_index_7)[0]);
                 unsigned long f7_size_send((*fringe.dir_index_7)[fringe.dir_index_7->size()-1] - f7_offset_send);
 
-                unsigned long target_8_send((*fringe.dir_targets_8)[0] + 1);
+                unsigned long target_8_send((*fringe.dir_targets_8)[0]);
                 unsigned long f8_offset_send((*fringe.dir_index_8)[0]);
                 unsigned long f8_size_send((*fringe.dir_index_8)[fringe.dir_index_8->size()-1] - f8_offset_send);
 
