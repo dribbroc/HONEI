@@ -136,6 +136,12 @@ namespace honei
                     solver.solve();
 
                     _circle_sync(info_list.at(0), data_list.at(0), fringe_list.at(0));
+                    MPI_File fh;
+                    std::string filename("h_"+stringify(i)+"_out.dat");
+                    MPI_File_open(MPI_COMM_WORLD, (char*)filename.c_str(), MPI_MODE_WRONLY | MPI_MODE_CREATE, MPI_INFO_NULL, &fh);
+                    MPI_File_set_view(fh, 0, mpi::MPIType<DataType_>::value(), mpi::MPIType<DataType_>::value(), "native", MPI_INFO_NULL);
+                    MPI_File_write_at_all(fh, info.offset + (*info.limits)[0], data.h->elements() + (*info.limits)[0], (*info.limits)[info.limits->size() - 1] - (*info.limits)[0], mpi::MPIType<DataType_>::value(), MPI_STATUSES_IGNORE);
+                    MPI_File_close(&fh);
                 }
                 //MPI_Barrier(MPI_COMM_WORLD);
                 bt.take();
@@ -143,10 +149,19 @@ namespace honei
                 std::cout<<"Timesteps: " << timesteps << " TOE: "<<bt.total() - at.total()<<std::endl;
                 std::cout<<"MLUPS: "<< (double(grid.h->rows()) * double(grid.h->columns()) * double(timesteps)) / (1e6 * (bt.total() - at.total())) <<std::endl;
 
+                /*std::cout<<*data.h;
+                MPI_File fh;
+                std::string filename("h_"+stringify(5)+"_out.dat");
+                MPI_File_open(MPI_COMM_SELF, (char*)filename.c_str(), MPI_MODE_RDONLY, MPI_INFO_NULL, &fh);
+                MPI_File_set_view(fh, 0, mpi::MPIType<DataType_>::value(), mpi::MPIType<DataType_>::value(), "native", MPI_INFO_NULL);
+                MPI_File_read_at(fh, 0, data.h->elements(), (*info.limits)[info.limits->size() - 1] - (*info.limits)[0], mpi::MPIType<DataType_>::value(), MPI_STATUSES_IGNORE);
+                MPI_File_close(&fh);
+                std::cout<<*data.h;*/
+
                 // generate output
                 /*for (signed long target(1) ; target < _numprocs ; ++target)
-                {
-                    _recv_full_sync(target, data_list.at(target));
+                  {
+                  _recv_full_sync(target, data_list.at(target));
                 }
                 GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list, fringe_list);
                 GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);*/
@@ -208,6 +223,12 @@ namespace honei
                     solver.solve();
 
                     _circle_sync(info, data, fringe);
+                    MPI_File fh;
+                    std::string filename("h_"+stringify(i)+"_out.dat");
+                    MPI_File_open(MPI_COMM_WORLD, (char*)filename.c_str(), MPI_MODE_WRONLY | MPI_MODE_CREATE, MPI_INFO_NULL, &fh);
+                    MPI_File_set_view(fh, 0, mpi::MPIType<DataType_>::value(), mpi::MPIType<DataType_>::value(), "native", MPI_INFO_NULL);
+                    MPI_File_write_at_all(fh, info.offset + (*info.limits)[0], data.h->elements() + (*info.limits)[0], (*info.limits)[info.limits->size() - 1] - (*info.limits)[0], mpi::MPIType<DataType_>::value(), MPI_STATUSES_IGNORE);
+                    MPI_File_close(&fh);
                 }
                 //MPI_Barrier(MPI_COMM_WORLD);
                 //_send_full_sync(0, data);
