@@ -76,24 +76,28 @@ namespace honei
             {
                 std::cout<<"Ring LBM Solver with " << _numprocs << " nodes:" << std::endl << std::endl;
                 unsigned long timesteps(100);
-                Grid<D2Q9, DataType_> grid;
-                ScenarioCollection::get_scenario(0, gridsize, gridsize, grid);
-                std::cout << "Solving: " << grid.long_description << std::endl;
+                Grid<D2Q9, DataType_> grid_global;
+                ScenarioCollection::get_scenario(0, gridsize, gridsize, grid_global);
+                std::cout << "Solving: " << grid_global.long_description << std::endl;
+                std::cout<<"Gridsize: "<<grid_global.h->rows()<<" x "<<grid_global.h->columns()<<std::endl;
 
-                PackedGridData<D2Q9, DataType_>  data;
-                PackedGridInfo<D2Q9> info;
+                PackedGridData<D2Q9, DataType_>  data_global;
+                PackedGridInfo<D2Q9> info_global;
 
-                GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
+                GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_global, info_global, data_global);
                 std::vector<PackedGridInfo<D2Q9> > info_list;
                 std::vector<PackedGridData<D2Q9, DataType_> > data_list;
                 std::vector<PackedGridFringe<D2Q9> > fringe_list;
-                GridPartitioner<D2Q9, DataType_>::decompose(_numprocs, info, data, info_list, data_list, fringe_list);
+                GridPartitioner<D2Q9, DataType_>::decompose(_numprocs, info_global, data_global, info_list, data_list, fringe_list);
+
+                PackedGridData<D2Q9, DataType_> data_lokal(data_list.at(0));
+                PackedGridInfo<D2Q9> info_lokal(info_list.at(0));
 
                 mpi::mpi_bcast(&timesteps, 1, 0);
-                mpi::mpi_bcast(&grid.d_x, 1, 0);
-                mpi::mpi_bcast(&grid.d_y, 1, 0);
-                mpi::mpi_bcast(&grid.d_t, 1, 0);
-                mpi::mpi_bcast(&grid.tau, 1, 0);
+                mpi::mpi_bcast(&grid_global.d_x, 1, 0);
+                mpi::mpi_bcast(&grid_global.d_y, 1, 0);
+                mpi::mpi_bcast(&grid_global.d_t, 1, 0);
+                mpi::mpi_bcast(&grid_global.tau, 1, 0);
 
                 std::list<unsigned long> ul_buffer;
                 std::vector<MPI_Request> requests;
@@ -108,7 +112,7 @@ namespace honei
                 ul_buffer.clear();
 
 
-                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info_list.at(0), &data_list.at(0), grid.d_x, grid.d_y, grid.d_t, grid.tau);
+                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info_lokal, &data_lokal, grid_global.d_x, grid_global.d_y, grid_global.d_t, grid_global.tau);
 
                 solver.do_preprocessing();
 
@@ -117,16 +121,16 @@ namespace honei
                     _recv_slave_sync(target, info_list.at(target), data_list.at(target), fringe_list.at(target));
                 }
 
-                GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list, fringe_list);
+                GridPartitioner<D2Q9, DataType_>::synch(info_global, data_global, info_list, data_list, fringe_list);
 
                 for (signed long target(1) ; target < _numprocs ; ++target)
                 {
                     _send_slave_sync(target, info_list.at(target), data_list.at(target), fringe_list.at(target));
                 }
 
-                //GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);
-                //GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
-                //PostProcessing<output_types::GNUPLOT>::value(*grid.h, 1, grid.h->columns(), grid.h->rows(), 101);
+                //GridPartitioner<D2Q9, DataType_>::compose(info_global, data_global, info_list, data_list);
+                //GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid_global, info_global, data_global);
+                //PostProcessing<output_types::GNUPLOT>::value(*grid_global.h, 1, grid_global.h->columns(), grid_global.h->rows(), 101);
                 // Preproc finished
                 // start timesteps
                 TimeStamp at, bt;
@@ -135,39 +139,39 @@ namespace honei
                 {
                     solver.solve();
 
-                    _circle_sync(info_list.at(0), data_list.at(0), fringe_list.at(0));
                     MPI_File fh;
                     std::string filename("h_"+stringify(i)+"_out.dat");
                     MPI_File_open(MPI_COMM_WORLD, (char*)filename.c_str(), MPI_MODE_WRONLY | MPI_MODE_CREATE, MPI_INFO_NULL, &fh);
                     MPI_File_set_view(fh, 0, mpi::MPIType<DataType_>::value(), mpi::MPIType<DataType_>::value(), "native", MPI_INFO_NULL);
-                    MPI_File_write_at_all(fh, info.offset + (*info.limits)[0], data.h->elements() + (*info.limits)[0], (*info.limits)[info.limits->size() - 1] - (*info.limits)[0], mpi::MPIType<DataType_>::value(), MPI_STATUSES_IGNORE);
+                    MPI_File_write_at_all(fh, info_lokal.offset + (*info_lokal.limits)[0], data_lokal.h->elements() + (*info_lokal.limits)[0], (*info_lokal.limits)[info_lokal.limits->size() - 1] - (*info_lokal.limits)[0], mpi::MPIType<DataType_>::value(), MPI_STATUSES_IGNORE);
                     MPI_File_close(&fh);
+
+                    _circle_sync(info_lokal, data_lokal, fringe_list.at(0));
                 }
                 //MPI_Barrier(MPI_COMM_WORLD);
                 bt.take();
-                std::cout<<"Gridsize: "<<grid.h->rows()<<" x "<<grid.h->columns()<<std::endl;
                 std::cout<<"Timesteps: " << timesteps << " TOE: "<<bt.total() - at.total()<<std::endl;
-                std::cout<<"MLUPS: "<< (double(grid.h->rows()) * double(grid.h->columns()) * double(timesteps)) / (1e6 * (bt.total() - at.total())) <<std::endl;
+                std::cout<<"MLUPS: "<< (double(grid_global.h->rows()) * double(grid_global.h->columns()) * double(timesteps)) / (1e6 * (bt.total() - at.total())) <<std::endl;
 
-                /*std::cout<<*data.h;
+                /*std::cout<<*data_global.h;
                 MPI_File fh;
-                std::string filename("h_"+stringify(5)+"_out.dat");
+                std::string filename("h_"+stringify(99)+"_out.dat");
                 MPI_File_open(MPI_COMM_SELF, (char*)filename.c_str(), MPI_MODE_RDONLY, MPI_INFO_NULL, &fh);
                 MPI_File_set_view(fh, 0, mpi::MPIType<DataType_>::value(), mpi::MPIType<DataType_>::value(), "native", MPI_INFO_NULL);
-                MPI_File_read_at(fh, 0, data.h->elements(), (*info.limits)[info.limits->size() - 1] - (*info.limits)[0], mpi::MPIType<DataType_>::value(), MPI_STATUSES_IGNORE);
+                MPI_File_read_at(fh, 0, data_global.h->elements(), (*info_global.limits)[info_global.limits->size() - 1] - (*info_global.limits)[0], mpi::MPIType<DataType_>::value(), MPI_STATUSES_IGNORE);
                 MPI_File_close(&fh);
-                std::cout<<*data.h;*/
+                std::cout<<*data_global.h;*/
 
                 // generate output
                 /*for (signed long target(1) ; target < _numprocs ; ++target)
                   {
                   _recv_full_sync(target, data_list.at(target));
                 }
-                GridPartitioner<D2Q9, DataType_>::synch(info, data, info_list, data_list, fringe_list);
-                GridPartitioner<D2Q9, DataType_>::compose(info, data, info_list, data_list);*/
-                //GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
-                //std::cout<<*grid.h;
-                //PostProcessing<output_types::GNUPLOT>::value(*grid.h, 1, grid.h->columns(), grid.h->rows(),
+                GridPartitioner<D2Q9, DataType_>::synch(info_global, data_global, info_list, data_list, fringe_list);
+                GridPartitioner<D2Q9, DataType_>::compose(info_global, data_global, info_list, data_list);*/
+                //GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid_global, info_global, data_global);
+                //std::cout<<*grid_global.h;
+                //PostProcessing<output_types::GNUPLOT>::value(*grid_global.h, 1, grid_global.h->columns(), grid_global.h->rows(),
 
                 /*Grid<D2Q9, DataType_> grid_ref;
                 ScenarioCollection::get_scenario(0, gridsize, gridsize, grid_ref);
@@ -184,10 +188,10 @@ namespace honei
                     solver_ref.solve();
                 }
                 data_ref.h->lock(lm_read_only);
-                for (unsigned long i(0) ; i < data.h->size() ; ++i)
+                for (unsigned long i(0) ; i < data_global.h->size() ; ++i)
                 {
-                    if (fabs((*data.h)[i] - (*data_ref.h)[i]) > 0.0001)
-                        std::cout<<(*data.h)[i]<<" "<<(*data_ref.h)[i]<<std::endl;
+                    if (fabs((*data_global.h)[i] - (*data_ref.h)[i]) > 0.0001)
+                        std::cout<<(*data_global.h)[i]<<" "<<(*data_ref.h)[i]<<std::endl;
                 }
                 data_ref.h->unlock(lm_read_only);*/
             }
@@ -222,13 +226,14 @@ namespace honei
                 {
                     solver.solve();
 
-                    _circle_sync(info, data, fringe);
                     MPI_File fh;
                     std::string filename("h_"+stringify(i)+"_out.dat");
                     MPI_File_open(MPI_COMM_WORLD, (char*)filename.c_str(), MPI_MODE_WRONLY | MPI_MODE_CREATE, MPI_INFO_NULL, &fh);
                     MPI_File_set_view(fh, 0, mpi::MPIType<DataType_>::value(), mpi::MPIType<DataType_>::value(), "native", MPI_INFO_NULL);
                     MPI_File_write_at_all(fh, info.offset + (*info.limits)[0], data.h->elements() + (*info.limits)[0], (*info.limits)[info.limits->size() - 1] - (*info.limits)[0], mpi::MPIType<DataType_>::value(), MPI_STATUSES_IGNORE);
                     MPI_File_close(&fh);
+
+                    _circle_sync(info, data, fringe);
                 }
                 //MPI_Barrier(MPI_COMM_WORLD);
                 //_send_full_sync(0, data);
