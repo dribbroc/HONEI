@@ -51,14 +51,22 @@ namespace honei
         public:
             MPIRingSolver(int argc, char **argv)
             {
-                unsigned long gridsize(atoi(argv[1]));
                 mpi::mpi_init(&argc, &argv);
                 mpi::mpi_comm_size(&_numprocs);
                 mpi::mpi_comm_rank(&_myid);
+                if (argc != 4)
+                {
+                    if(_myid == 0) std::cout<<"Usage: honei-mpi-ring grid_x grid_y timesteps"<<std::endl;
+                    mpi::mpi_finalize();
+                    exit(1);
+                }
+                unsigned long gridsize_x(atoi(argv[1]));
+                unsigned long gridsize_y(atoi(argv[2]));
+                unsigned long timesteps(atoi(argv[3]));
 
                 if (_myid == 0)
                 {
-                    _master(gridsize);
+                    _master(gridsize_x, gridsize_y, timesteps);
                 }
                 else
                 {
@@ -72,14 +80,14 @@ namespace honei
             }
 
         private:
-            void _master(unsigned long gridsize)
+            void _master(unsigned long gridsize_x, unsigned long gridsize_y, unsigned long timesteps)
             {
                 std::cout<<"Ring LBM Solver with " << _numprocs << " nodes:" << std::endl << std::endl;
-                unsigned long timesteps(100);
                 Grid<D2Q9, DataType_> grid_global;
-                ScenarioCollection::get_scenario(0, gridsize, gridsize, grid_global);
+                ScenarioCollection::get_scenario(0, gridsize_x, gridsize_y, grid_global);
                 std::cout << "Solving: " << grid_global.long_description << std::endl;
                 std::cout<<"Gridsize: "<<grid_global.h->rows()<<" x "<<grid_global.h->columns()<<std::endl;
+                std::cout<<"Timesteps: "<<timesteps<<std::endl;
 
                 PackedGridData<D2Q9, DataType_>  data_global;
                 PackedGridInfo<D2Q9> info_global;
@@ -178,7 +186,7 @@ namespace honei
                 //PostProcessing<output_types::GNUPLOT>::value(*grid_global.h, 1, grid_global.h->columns(), grid_global.h->rows(),
 
                 /*Grid<D2Q9, DataType_> grid_ref;
-                ScenarioCollection::get_scenario(0, gridsize, gridsize, grid_ref);
+                ScenarioCollection::get_scenario(0, gridsize_x, gridsize_y, grid_ref);
 
                 PackedGridData<D2Q9, DataType_>  data_ref;
                 PackedGridInfo<D2Q9> info_ref;
