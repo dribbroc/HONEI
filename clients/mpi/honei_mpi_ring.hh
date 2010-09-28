@@ -149,18 +149,18 @@ namespace honei
                 {
                     solver.solve();
 
-                    MPI_File fh;
+                    /*MPI_File fh;
                     std::string filename("h_"+stringify(i)+"_out.dat");
                     MPI_File_open(MPI_COMM_WORLD, (char*)filename.c_str(), MPI_MODE_WRONLY | MPI_MODE_CREATE, MPI_INFO_NULL, &fh);
                     MPI_File_set_view(fh, 0, mpi::MPIType<DataType_>::value(), mpi::MPIType<DataType_>::value(), "native", MPI_INFO_NULL);
                     MPI_File_set_size(fh, mpi_file_size);
                     MPI_Request request;
-                    MPI_File_iwrite_at(fh, info_lokal.offset + (*info_lokal.limits)[0], data_lokal.h->elements() + (*info_lokal.limits)[0], (*info_lokal.limits)[info_lokal.limits->size() - 1] - (*info_lokal.limits)[0], mpi::MPIType<DataType_>::value(), &request);
+                    MPI_File_iwrite_at(fh, info_lokal.offset + (*info_lokal.limits)[0], data_lokal.h->elements() + (*info_lokal.limits)[0], (*info_lokal.limits)[info_lokal.limits->size() - 1] - (*info_lokal.limits)[0], mpi::MPIType<DataType_>::value(), &request);*/
 
                     _circle_sync(info_lokal, data_lokal, fringe_list.at(0));
 
-                    MPI_Wait(&request, MPI_STATUS_IGNORE);
-                    MPI_File_close(&fh);
+                    //MPI_Wait(&request, MPI_STATUS_IGNORE);
+                    //MPI_File_close(&fh);
                 }
                 //MPI_Barrier(MPI_COMM_WORLD);
                 bt.take();
@@ -241,18 +241,18 @@ namespace honei
                 {
                     solver.solve();
 
-                    MPI_File fh;
+                    /*MPI_File fh;
                     std::string filename("h_"+stringify(i)+"_out.dat");
                     MPI_File_open(MPI_COMM_WORLD, (char*)filename.c_str(), MPI_MODE_WRONLY | MPI_MODE_CREATE, MPI_INFO_NULL, &fh);
                     MPI_File_set_view(fh, 0, mpi::MPIType<DataType_>::value(), mpi::MPIType<DataType_>::value(), "native", MPI_INFO_NULL);
                     MPI_File_set_size(fh, mpi_file_size);
                     MPI_Request request;
-                    MPI_File_iwrite_at(fh, info.offset + (*info.limits)[0], data.h->elements() + (*info.limits)[0], (*info.limits)[info.limits->size() - 1] - (*info.limits)[0], mpi::MPIType<DataType_>::value(), &request);
+                    MPI_File_iwrite_at(fh, info.offset + (*info.limits)[0], data.h->elements() + (*info.limits)[0], (*info.limits)[info.limits->size() - 1] - (*info.limits)[0], mpi::MPIType<DataType_>::value(), &request);*/
 
                     _circle_sync(info, data, fringe);
 
-                    MPI_Wait(&request, MPI_STATUS_IGNORE);
-                    MPI_File_close(&fh);
+                    //MPI_Wait(&request, MPI_STATUS_IGNORE);
+                    //MPI_File_close(&fh);
                 }
                 //MPI_Barrier(MPI_COMM_WORLD);
                 //_send_full_sync(0, data);
