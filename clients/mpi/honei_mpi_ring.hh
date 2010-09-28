@@ -101,7 +101,9 @@ namespace honei
                 PackedGridData<D2Q9, DataType_> data_lokal(data_list.at(0));
                 PackedGridInfo<D2Q9> info_lokal(info_list.at(0));
 
+                unsigned long mpi_file_size(data_global.h->size() * sizeof(DataType_));
                 mpi::mpi_bcast(&timesteps, 1, 0);
+                mpi::mpi_bcast(&mpi_file_size, 1, 0);
                 mpi::mpi_bcast(&grid_global.d_x, 1, 0);
                 mpi::mpi_bcast(&grid_global.d_y, 1, 0);
                 mpi::mpi_bcast(&grid_global.d_t, 1, 0);
@@ -151,7 +153,7 @@ namespace honei
                     std::string filename("h_"+stringify(i)+"_out.dat");
                     MPI_File_open(MPI_COMM_WORLD, (char*)filename.c_str(), MPI_MODE_WRONLY | MPI_MODE_CREATE, MPI_INFO_NULL, &fh);
                     MPI_File_set_view(fh, 0, mpi::MPIType<DataType_>::value(), mpi::MPIType<DataType_>::value(), "native", MPI_INFO_NULL);
-                    //MPI_File_set_size(fh, 50*50*sizeof(float));
+                    MPI_File_set_size(fh, mpi_file_size);
                     MPI_Request request;
                     MPI_File_iwrite_at(fh, info_lokal.offset + (*info_lokal.limits)[0], data_lokal.h->elements() + (*info_lokal.limits)[0], (*info_lokal.limits)[info_lokal.limits->size() - 1] - (*info_lokal.limits)[0], mpi::MPIType<DataType_>::value(), &request);
 
@@ -213,10 +215,11 @@ namespace honei
                 PackedGridData<D2Q9, DataType_> data;
                 PackedGridInfo<D2Q9> info;
                 PackedGridFringe<D2Q9> fringe;
-                unsigned long timesteps;
+                unsigned long timesteps, mpi_file_size;
                 DataType_ d_x, d_y, d_t, tau;
 
                 mpi::mpi_bcast(&timesteps, 1, 0);
+                mpi::mpi_bcast(&mpi_file_size, 1, 0);
                 mpi::mpi_bcast(&d_x, 1, 0);
                 mpi::mpi_bcast(&d_y, 1, 0);
                 mpi::mpi_bcast(&d_t, 1, 0);
@@ -242,7 +245,7 @@ namespace honei
                     std::string filename("h_"+stringify(i)+"_out.dat");
                     MPI_File_open(MPI_COMM_WORLD, (char*)filename.c_str(), MPI_MODE_WRONLY | MPI_MODE_CREATE, MPI_INFO_NULL, &fh);
                     MPI_File_set_view(fh, 0, mpi::MPIType<DataType_>::value(), mpi::MPIType<DataType_>::value(), "native", MPI_INFO_NULL);
-                    //MPI_File_set_size(fh, 50*50*sizeof(float));
+                    MPI_File_set_size(fh, mpi_file_size);
                     MPI_Request request;
                     MPI_File_iwrite_at(fh, info.offset + (*info.limits)[0], data.h->elements() + (*info.limits)[0], (*info.limits)[info.limits->size() - 1] - (*info.limits)[0], mpi::MPIType<DataType_>::value(), &request);
 
