@@ -61,7 +61,7 @@ namespace honei
                     unsigned long target(targets[i / 2]);
                     for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
                     {
-                        (*data_list[target].f_temp_1)[j - info_list[target].offset] = (*data_list[patch].f_temp_1)[j - info_list[patch].offset];
+                        if (target < data_list.size()) (*data_list[target].f_temp_1)[j - info_list[target].offset] = (*data_list[patch].f_temp_1)[j - info_list[patch].offset];
                     }
                 }
             }
@@ -75,7 +75,7 @@ namespace honei
                     unsigned long target(targets[i / 2]);
                     for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
                     {
-                        (*data_list[target].f_temp_2)[j - info_list[target].offset] = (*data_list[patch].f_temp_2)[j - info_list[patch].offset];
+                        if (target < data_list.size()) (*data_list[target].f_temp_2)[j - info_list[target].offset] = (*data_list[patch].f_temp_2)[j - info_list[patch].offset];
                     }
                 }
             }
@@ -89,7 +89,7 @@ namespace honei
                     unsigned long target(targets[i / 2]);
                     for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
                     {
-                        (*data_list[target].f_temp_3)[j - info_list[target].offset] = (*data_list[patch].f_temp_3)[j - info_list[patch].offset];
+                        if (target < data_list.size()) (*data_list[target].f_temp_3)[j - info_list[target].offset] = (*data_list[patch].f_temp_3)[j - info_list[patch].offset];
                     }
                 }
             }
@@ -103,7 +103,7 @@ namespace honei
                     unsigned long target(targets[i / 2]);
                     for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
                     {
-                        (*data_list[target].f_temp_4)[j - info_list[target].offset] = (*data_list[patch].f_temp_4)[j - info_list[patch].offset];
+                        if (target < data_list.size()) (*data_list[target].f_temp_4)[j - info_list[target].offset] = (*data_list[patch].f_temp_4)[j - info_list[patch].offset];
                     }
                 }
             }
@@ -117,7 +117,7 @@ namespace honei
                     unsigned long target(targets[i / 2]);
                     for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
                     {
-                        (*data_list[target].f_temp_5)[j - info_list[target].offset] = (*data_list[patch].f_temp_5)[j - info_list[patch].offset];
+                        if (target < data_list.size()) (*data_list[target].f_temp_5)[j - info_list[target].offset] = (*data_list[patch].f_temp_5)[j - info_list[patch].offset];
                     }
                 }
             }
@@ -131,7 +131,7 @@ namespace honei
                     unsigned long target(targets[i / 2]);
                     for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
                     {
-                        (*data_list[target].f_temp_6)[j - info_list[target].offset] = (*data_list[patch].f_temp_6)[j - info_list[patch].offset];
+                        if (target < data_list.size()) (*data_list[target].f_temp_6)[j - info_list[target].offset] = (*data_list[patch].f_temp_6)[j - info_list[patch].offset];
                     }
                 }
             }
@@ -145,7 +145,7 @@ namespace honei
                     unsigned long target(targets[i / 2]);
                     for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
                     {
-                        (*data_list[target].f_temp_7)[j - info_list[target].offset] = (*data_list[patch].f_temp_7)[j - info_list[patch].offset];
+                        if (target < data_list.size()) (*data_list[target].f_temp_7)[j - info_list[target].offset] = (*data_list[patch].f_temp_7)[j - info_list[patch].offset];
                     }
                 }
             }
@@ -159,7 +159,7 @@ namespace honei
                     unsigned long target(targets[i / 2]);
                     for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
                     {
-                        (*data_list[target].f_temp_8)[j - info_list[target].offset] = (*data_list[patch].f_temp_8)[j - info_list[patch].offset];
+                        if (target < data_list.size()) (*data_list[target].f_temp_8)[j - info_list[target].offset] = (*data_list[patch].f_temp_8)[j - info_list[patch].offset];
                     }
                 }
             }
@@ -174,7 +174,7 @@ namespace honei
                     for (unsigned long j(index_vector[i]) ; j < index_vector[i + 1] ; ++j)
                     {
                         unsigned long target(targets[i / 2]);
-                        (*data_list[patch].h)[j - info_list[patch].offset] = (*data_list[target].h)[j - info_list[target].offset];
+                        if (target < data_list.size()) (*data_list[patch].h)[j - info_list[patch].offset] = (*data_list[target].h)[j - info_list[target].offset];
                         //(*data_list[patch].u)[j - info_list[patch].offset] = (*data_list[target].u)[j - info_list[target].offset];
                         //(*data_list[patch].v)[j - info_list[patch].offset] = (*data_list[target].v)[j - info_list[target].offset];
                     }

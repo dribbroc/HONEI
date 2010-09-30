@@ -164,6 +164,7 @@ namespace honei
                 }
                 //MPI_Barrier(MPI_COMM_WORLD);
                 bt.take();
+                solver.do_postprocessing();
                 std::cout<<"Timesteps: " << timesteps << " TOE: "<<bt.total() - at.total()<<std::endl;
                 std::cout<<"MLUPS: "<< (double(grid_global.h->rows()) * double(grid_global.h->columns()) * double(timesteps)) / (1e6 * (bt.total() - at.total())) <<std::endl;
 
@@ -201,6 +202,7 @@ namespace honei
                 {
                     solver_ref.solve();
                 }
+                solver.do_postprocessing();
                 data_ref.h->lock(lm_read_only);
                 for (unsigned long i(0) ; i < data_global.h->size() ; ++i)
                 {
@@ -255,6 +257,7 @@ namespace honei
                     //MPI_File_close(&fh);
                 }
                 //MPI_Barrier(MPI_COMM_WORLD);
+                solver.do_postprocessing();
                 //_send_full_sync(0, data);
             }
 
