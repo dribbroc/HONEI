@@ -47,6 +47,8 @@ namespace honei
         private:
             int _numprocs;
             int _myid;
+            int _mycartid;
+            MPI_Comm _comm_cart;
 
         public:
             MPIRingSolver(int argc, char **argv)
@@ -63,6 +65,15 @@ namespace honei
                 unsigned long gridsize_x(atoi(argv[1]));
                 unsigned long gridsize_y(atoi(argv[2]));
                 unsigned long timesteps(atoi(argv[3]));
+
+                // create new communicator
+                int dims[1];
+                dims[0] = _numprocs;
+                int periods[1];
+                periods[0] = false;
+                MPI_Cart_create(MPI_COMM_WORLD, 1, dims, periods, true, &_comm_cart);
+                mpi::mpi_comm_rank(&_mycartid, _comm_cart);
+                //std::cout<<_myid<<" "<<_mycartid<<std::endl;
 
                 if (_myid == 0)
                 {
