@@ -48,6 +48,8 @@ namespace honei
             int _numprocs;
             int _myid;
             int _mycartid;
+            int _masterid;
+            int _mycartpos;
             MPI_Comm _comm_cart;
 
         public:
@@ -73,9 +75,18 @@ namespace honei
                 periods[0] = false;
                 MPI_Cart_create(MPI_COMM_WORLD, 1, dims, periods, true, &_comm_cart);
                 mpi::mpi_comm_rank(&_mycartid, _comm_cart);
-                //std::cout<<_myid<<" "<<_mycartid<<std::endl;
+                int position(0);
+                MPI_Cart_rank(_comm_cart, &position, &_masterid);
+                MPI_Cart_coords(_comm_cart, _mycartid, 1, &_mycartpos);
+                /*std::cout<<_myid<<" "<<_mycartid<<std::endl;
+                int test;
+                int input(4);
+                MPI_Cart_rank(_comm_cart, &input, &test);
+                std::cout<<test<<std::endl;;
+                MPI_Cart_shift(_comm_cart, 0, 1, &input, &test);
+                std::cout<<input<<" -> "<<test<<std::endl;*/
 
-                if (_myid == 0)
+                if (_mycartid == _masterid)
                 {
                     _master(gridsize_x, gridsize_y, timesteps);
                 }
@@ -113,20 +124,22 @@ namespace honei
                 PackedGridInfo<D2Q9> info_lokal(info_list.at(0));
 
                 unsigned long mpi_file_size(data_global.h->size() * sizeof(DataType_));
-                mpi::mpi_bcast(&timesteps, 1, 0);
-                mpi::mpi_bcast(&mpi_file_size, 1, 0);
-                mpi::mpi_bcast(&grid_global.d_x, 1, 0);
-                mpi::mpi_bcast(&grid_global.d_y, 1, 0);
-                mpi::mpi_bcast(&grid_global.d_t, 1, 0);
-                mpi::mpi_bcast(&grid_global.tau, 1, 0);
+                mpi::mpi_bcast(&timesteps, 1, _masterid, _comm_cart);
+                mpi::mpi_bcast(&mpi_file_size, 1, _masterid, _comm_cart);
+                mpi::mpi_bcast(&grid_global.d_x, 1, _masterid, _comm_cart);
+                mpi::mpi_bcast(&grid_global.d_y, 1, _masterid, _comm_cart);
+                mpi::mpi_bcast(&grid_global.d_t, 1, _masterid, _comm_cart);
+                mpi::mpi_bcast(&grid_global.tau, 1, _masterid, _comm_cart);
 
                 std::list<unsigned long> ul_buffer;
                 std::vector<MPI_Request> requests;
-                for (signed long target(1) ; target < _numprocs ; ++target)
+                for (int target(1) ; target < _numprocs ; ++target)
                 {
-                    _send_info(target, info_list.at(target), ul_buffer, requests);
-                    _send_data(target, data_list.at(target), ul_buffer, requests);
-                    _send_fringe(target, fringe_list.at(target), ul_buffer, requests);
+                    int rank;
+                    MPI_Cart_rank(_comm_cart, &target, &rank);
+                    _send_info(rank, info_list.at(target), ul_buffer, requests);
+                    _send_data(rank, data_list.at(target), ul_buffer, requests);
+                    _send_fringe(rank, fringe_list.at(target), ul_buffer, requests);
                 }
                 MPI_Waitall(requests.size(), &requests[0], MPI_STATUSES_IGNORE);
                 requests.clear();
@@ -137,16 +150,20 @@ namespace honei
 
                 solver.do_preprocessing();
 
-                for (signed long target(1) ; target < _numprocs ; ++target)
+                for (int target(1) ; target < _numprocs ; ++target)
                 {
-                    _recv_slave_sync(target, info_list.at(target), data_list.at(target), fringe_list.at(target));
+                    int rank;
+                    MPI_Cart_rank(_comm_cart, &target, &rank);
+                    _recv_slave_sync(rank, info_list.at(target), data_list.at(target), fringe_list.at(target));
                 }
 
                 GridPartitioner<D2Q9, DataType_>::synch(info_global, data_global, info_list, data_list, fringe_list);
 
-                for (signed long target(1) ; target < _numprocs ; ++target)
+                for (int target(1) ; target < _numprocs ; ++target)
                 {
-                    _send_slave_sync(target, info_list.at(target), data_list.at(target), fringe_list.at(target));
+                    int rank;
+                    MPI_Cart_rank(_comm_cart, &target, &rank);
+                    _send_slave_sync(rank, info_list.at(target), data_list.at(target), fringe_list.at(target));
                 }
 
                 //GridPartitioner<D2Q9, DataType_>::compose(info_global, data_global, info_list, data_list);
@@ -189,9 +206,11 @@ namespace honei
                 std::cout<<*data_global.h;*/
 
                 // generate output
-                /*for (signed long target(1) ; target < _numprocs ; ++target)
-                  {
-                  _recv_full_sync(target, data_list.at(target));
+                /*for (int target(1) ; target < _numprocs ; ++target)
+                {
+                    int rank;
+                    MPI_Cart_rank(_comm_cart, &target, &rank);
+                    _recv_full_sync(target, data_list.at(target));
                 }
                 GridPartitioner<D2Q9, DataType_>::synch(info_global, data_global, info_list, data_list, fringe_list);
                 GridPartitioner<D2Q9, DataType_>::compose(info_global, data_global, info_list, data_list);*/
@@ -231,12 +250,12 @@ namespace honei
                 unsigned long timesteps, mpi_file_size;
                 DataType_ d_x, d_y, d_t, tau;
 
-                mpi::mpi_bcast(&timesteps, 1, 0);
-                mpi::mpi_bcast(&mpi_file_size, 1, 0);
-                mpi::mpi_bcast(&d_x, 1, 0);
-                mpi::mpi_bcast(&d_y, 1, 0);
-                mpi::mpi_bcast(&d_t, 1, 0);
-                mpi::mpi_bcast(&tau, 1, 0);
+                mpi::mpi_bcast(&timesteps, 1, _masterid, _comm_cart);
+                mpi::mpi_bcast(&mpi_file_size, 1, _masterid, _comm_cart);
+                mpi::mpi_bcast(&d_x, 1, _masterid, _comm_cart);
+                mpi::mpi_bcast(&d_y, 1, _masterid, _comm_cart);
+                mpi::mpi_bcast(&d_t, 1, _masterid, _comm_cart);
+                mpi::mpi_bcast(&tau, 1, _masterid, _comm_cart);
 
                 _recv_info(info);
                 _recv_data(data);
@@ -247,8 +266,8 @@ namespace honei
 
                 solver.do_preprocessing();
 
-                _send_master_sync(0, info, data, fringe);
-                _recv_master_sync(0, info, data, fringe);
+                _send_master_sync(_masterid, info, data, fringe);
+                _recv_master_sync(_masterid, info, data, fringe);
 
                 for(unsigned long i(0); i < timesteps; ++i)
                 {
@@ -269,66 +288,66 @@ namespace honei
                 }
                 //MPI_Barrier(MPI_COMM_WORLD);
                 solver.do_postprocessing();
-                //_send_full_sync(0, data);
+                //_send_full_sync(_masterid, data);
             }
 
-            void _send_info(unsigned long target, PackedGridInfo<D2Q9> & info, std::list<unsigned long> & ul_buffer, std::vector<MPI_Request> & requests)
+            void _send_info(int target, PackedGridInfo<D2Q9> & info, std::list<unsigned long> & ul_buffer, std::vector<MPI_Request> & requests)
             {
                 ul_buffer.push_back(info.offset);
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(info.limits->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(info.dir_index_1->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(info.dir_1->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(info.dir_index_2->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(info.dir_2->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(info.dir_index_3->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(info.dir_3->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(info.dir_index_4->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(info.dir_4->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(info.dir_index_5->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(info.dir_5->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(info.dir_index_6->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(info.dir_6->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(info.dir_index_7->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(info.dir_7->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(info.dir_index_8->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(info.dir_8->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
 
-                requests.push_back(mpi::mpi_isend(info.limits->elements(), info.limits->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(info.types->elements(), info.types->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(info.dir_index_1->elements(), info.dir_index_1->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(info.dir_1->elements(), info.dir_1->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(info.dir_index_2->elements(), info.dir_index_2->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(info.dir_2->elements(), info.dir_2->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(info.dir_index_3->elements(), info.dir_index_3->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(info.dir_3->elements(), info.dir_3->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(info.dir_index_4->elements(), info.dir_index_4->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(info.dir_4->elements(), info.dir_4->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(info.dir_index_5->elements(), info.dir_index_5->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(info.dir_5->elements(), info.dir_5->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(info.dir_index_6->elements(), info.dir_index_6->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(info.dir_6->elements(), info.dir_6->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(info.dir_index_7->elements(), info.dir_index_7->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(info.dir_7->elements(), info.dir_7->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(info.dir_index_8->elements(), info.dir_index_8->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(info.dir_8->elements(), info.dir_8->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(info.limits->elements(), info.limits->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(info.types->elements(), info.types->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(info.dir_index_1->elements(), info.dir_index_1->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(info.dir_1->elements(), info.dir_1->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(info.dir_index_2->elements(), info.dir_index_2->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(info.dir_2->elements(), info.dir_2->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(info.dir_index_3->elements(), info.dir_index_3->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(info.dir_3->elements(), info.dir_3->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(info.dir_index_4->elements(), info.dir_index_4->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(info.dir_4->elements(), info.dir_4->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(info.dir_index_5->elements(), info.dir_index_5->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(info.dir_5->elements(), info.dir_5->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(info.dir_index_6->elements(), info.dir_index_6->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(info.dir_6->elements(), info.dir_6->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(info.dir_index_7->elements(), info.dir_index_7->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(info.dir_7->elements(), info.dir_7->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(info.dir_index_8->elements(), info.dir_index_8->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(info.dir_8->elements(), info.dir_8->size(), target, _mycartid, _comm_cart));
             }
 
             void _recv_info(PackedGridInfo<D2Q9> & info)
@@ -351,24 +370,24 @@ namespace honei
                 unsigned long dir_index_8_size;
                 unsigned long dir_8_size;
 
-                mpi::mpi_recv(&info.offset, 1, 0, 0);
-                mpi::mpi_recv(&limits_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_index_1_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_1_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_index_2_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_2_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_index_3_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_3_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_index_4_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_4_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_index_5_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_5_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_index_6_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_6_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_index_7_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_7_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_index_8_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_8_size, 1, 0, 0);
+                mpi::mpi_recv(&info.offset, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&limits_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_index_1_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_1_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_index_2_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_2_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_index_3_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_3_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_index_4_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_4_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_index_5_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_5_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_index_6_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_6_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_index_7_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_7_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_index_8_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_8_size, 1, _masterid, _masterid, _comm_cart);
 
                 info.limits = new DenseVector<unsigned long>(limits_size);
                 info.types = new DenseVector<unsigned long>(limits_size);
@@ -389,37 +408,37 @@ namespace honei
                 info.dir_index_8 = new DenseVector<unsigned long>(dir_index_8_size);
                 info.dir_8 = new DenseVector<unsigned long>(dir_8_size);
 
-                mpi::mpi_recv(info.limits->elements(), info.limits->size(), 0, 0);
-                mpi::mpi_recv(info.types->elements(), info.types->size(), 0, 0);
-                mpi::mpi_recv(info.dir_index_1->elements(), info.dir_index_1->size(), 0, 0);
-                mpi::mpi_recv(info.dir_1->elements(), info.dir_1->size(), 0, 0);
-                mpi::mpi_recv(info.dir_index_2->elements(), info.dir_index_2->size(), 0, 0);
-                mpi::mpi_recv(info.dir_2->elements(), info.dir_2->size(), 0, 0);
-                mpi::mpi_recv(info.dir_index_3->elements(), info.dir_index_3->size(), 0, 0);
-                mpi::mpi_recv(info.dir_3->elements(), info.dir_3->size(), 0, 0);
-                mpi::mpi_recv(info.dir_index_4->elements(), info.dir_index_4->size(), 0, 0);
-                mpi::mpi_recv(info.dir_4->elements(), info.dir_4->size(), 0, 0);
-                mpi::mpi_recv(info.dir_index_5->elements(), info.dir_index_5->size(), 0, 0);
-                mpi::mpi_recv(info.dir_5->elements(), info.dir_5->size(), 0, 0);
-                mpi::mpi_recv(info.dir_index_6->elements(), info.dir_index_6->size(), 0, 0);
-                mpi::mpi_recv(info.dir_6->elements(), info.dir_6->size(), 0, 0);
-                mpi::mpi_recv(info.dir_index_7->elements(), info.dir_index_7->size(), 0, 0);
-                mpi::mpi_recv(info.dir_7->elements(), info.dir_7->size(), 0, 0);
-                mpi::mpi_recv(info.dir_index_8->elements(), info.dir_index_8->size(), 0, 0);
-                mpi::mpi_recv(info.dir_8->elements(), info.dir_8->size(), 0, 0);
+                mpi::mpi_recv(info.limits->elements(), info.limits->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(info.types->elements(), info.types->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(info.dir_index_1->elements(), info.dir_index_1->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(info.dir_1->elements(), info.dir_1->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(info.dir_index_2->elements(), info.dir_index_2->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(info.dir_2->elements(), info.dir_2->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(info.dir_index_3->elements(), info.dir_index_3->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(info.dir_3->elements(), info.dir_3->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(info.dir_index_4->elements(), info.dir_index_4->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(info.dir_4->elements(), info.dir_4->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(info.dir_index_5->elements(), info.dir_index_5->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(info.dir_5->elements(), info.dir_5->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(info.dir_index_6->elements(), info.dir_index_6->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(info.dir_6->elements(), info.dir_6->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(info.dir_index_7->elements(), info.dir_index_7->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(info.dir_7->elements(), info.dir_7->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(info.dir_index_8->elements(), info.dir_index_8->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(info.dir_8->elements(), info.dir_8->size(), _masterid, _masterid, _comm_cart);
             }
 
-            void _send_data(unsigned long target, PackedGridData<D2Q9, DataType_> & data, std::list<unsigned long> & ul_buffer, std::vector<MPI_Request> & requests)
+            void _send_data(int target, PackedGridData<D2Q9, DataType_> & data, std::list<unsigned long> & ul_buffer, std::vector<MPI_Request> & requests)
             {
                 ul_buffer.push_back(data.h->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(data.distribution_x->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
 
-                requests.push_back(mpi::mpi_isend(data.h->elements(), data.h->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(data.u->elements(), data.u->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(data.v->elements(), data.v->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(data.b->elements(), data.b->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(data.h->elements(), data.h->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(data.u->elements(), data.u->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(data.v->elements(), data.v->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(data.b->elements(), data.b->size(), target, _mycartid, _comm_cart));
             }
 
             void _recv_data(PackedGridData<D2Q9, DataType_> & data)
@@ -427,8 +446,8 @@ namespace honei
                 unsigned long h_size;
                 unsigned long dist_size;
 
-                mpi::mpi_recv(&h_size, 1, 0, 0);
-                mpi::mpi_recv(&dist_size, 1, 0, 0);
+                mpi::mpi_recv(&h_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dist_size, 1, _masterid, _masterid, _comm_cart);
 
                 data.h = new DenseVector<DataType_>(h_size);
                 data.u = new DenseVector<DataType_>(h_size);
@@ -436,10 +455,10 @@ namespace honei
                 data.b = new DenseVector<DataType_>(h_size);
                 data.temp = new DenseVector<DataType_>(h_size);
 
-                mpi::mpi_recv(data.h->elements(), data.h->size(), 0, 0);
-                mpi::mpi_recv(data.u->elements(), data.u->size(), 0, 0);
-                mpi::mpi_recv(data.v->elements(), data.v->size(), 0, 0);
-                mpi::mpi_recv(data.b->elements(), data.b->size(), 0, 0);
+                mpi::mpi_recv(data.h->elements(), data.h->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(data.u->elements(), data.u->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(data.v->elements(), data.v->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(data.b->elements(), data.b->size(), _masterid, _masterid, _comm_cart);
 
                 data.f_0 = new DenseVector<DataType_>(h_size);
                 data.f_1 = new DenseVector<DataType_>(h_size);
@@ -475,117 +494,117 @@ namespace honei
                 data.distribution_y = new DenseVector<DataType_>(dist_size);
             }
 
-            void _send_fringe(unsigned long target, PackedGridFringe<D2Q9> & fringe, std::list<unsigned long> & ul_buffer, std::vector<MPI_Request> & requests)
+            void _send_fringe(int target, PackedGridFringe<D2Q9> & fringe, std::list<unsigned long> & ul_buffer, std::vector<MPI_Request> & requests)
             {
                 ul_buffer.push_back(fringe.h_targets->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.h_index->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.external_h_index->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.dir_targets_1->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.dir_index_1->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.dir_targets_2->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.dir_index_2->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.dir_targets_3->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.dir_index_3->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.dir_targets_4->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.dir_index_4->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.dir_targets_5->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.dir_index_5->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.dir_targets_6->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.dir_index_6->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.dir_targets_7->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.dir_index_7->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.dir_targets_8->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.dir_index_8->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.external_dir_index_1->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.external_dir_index_2->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.external_dir_index_3->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.external_dir_index_4->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.external_dir_index_5->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.external_dir_index_6->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.external_dir_index_7->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.external_dir_index_8->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.external_h_targets->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.external_dir_targets_1->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.external_dir_targets_2->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.external_dir_targets_3->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.external_dir_targets_4->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.external_dir_targets_5->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.external_dir_targets_6->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.external_dir_targets_7->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
                 ul_buffer.push_back(fringe.external_dir_targets_8->size());
-                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _myid));
+                requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
 
-                requests.push_back(mpi::mpi_isend(fringe.h_targets->elements(), fringe.h_targets->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.h_index->elements(), fringe.h_index->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.external_h_index->elements(), fringe.external_h_index->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.dir_targets_1->elements(), fringe.dir_targets_1->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.dir_index_1->elements(), fringe.dir_index_1->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.dir_targets_2->elements(), fringe.dir_targets_2->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.dir_index_2->elements(), fringe.dir_index_2->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.dir_targets_3->elements(), fringe.dir_targets_3->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.dir_index_3->elements(), fringe.dir_index_3->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.dir_targets_4->elements(), fringe.dir_targets_4->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.dir_index_4->elements(), fringe.dir_index_4->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.dir_targets_5->elements(), fringe.dir_targets_5->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.dir_index_5->elements(), fringe.dir_index_5->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.dir_targets_6->elements(), fringe.dir_targets_6->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.dir_index_6->elements(), fringe.dir_index_6->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.dir_targets_7->elements(), fringe.dir_targets_7->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.dir_index_7->elements(), fringe.dir_index_7->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.dir_targets_8->elements(), fringe.dir_targets_8->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.dir_index_8->elements(), fringe.dir_index_8->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_1->elements(), fringe.external_dir_index_1->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_2->elements(), fringe.external_dir_index_2->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_3->elements(), fringe.external_dir_index_3->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_4->elements(), fringe.external_dir_index_4->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_5->elements(), fringe.external_dir_index_5->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_6->elements(), fringe.external_dir_index_6->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_7->elements(), fringe.external_dir_index_7->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_8->elements(), fringe.external_dir_index_8->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.external_h_targets->elements(), fringe.external_h_targets->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_1->elements(), fringe.external_dir_targets_1->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_2->elements(), fringe.external_dir_targets_2->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_3->elements(), fringe.external_dir_targets_3->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_4->elements(), fringe.external_dir_targets_4->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_5->elements(), fringe.external_dir_targets_5->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_6->elements(), fringe.external_dir_targets_6->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_7->elements(), fringe.external_dir_targets_7->size(), target, _myid));
-                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_8->elements(), fringe.external_dir_targets_8->size(), target, _myid));
+                requests.push_back(mpi::mpi_isend(fringe.h_targets->elements(), fringe.h_targets->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.h_index->elements(), fringe.h_index->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.external_h_index->elements(), fringe.external_h_index->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.dir_targets_1->elements(), fringe.dir_targets_1->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.dir_index_1->elements(), fringe.dir_index_1->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.dir_targets_2->elements(), fringe.dir_targets_2->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.dir_index_2->elements(), fringe.dir_index_2->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.dir_targets_3->elements(), fringe.dir_targets_3->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.dir_index_3->elements(), fringe.dir_index_3->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.dir_targets_4->elements(), fringe.dir_targets_4->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.dir_index_4->elements(), fringe.dir_index_4->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.dir_targets_5->elements(), fringe.dir_targets_5->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.dir_index_5->elements(), fringe.dir_index_5->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.dir_targets_6->elements(), fringe.dir_targets_6->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.dir_index_6->elements(), fringe.dir_index_6->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.dir_targets_7->elements(), fringe.dir_targets_7->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.dir_index_7->elements(), fringe.dir_index_7->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.dir_targets_8->elements(), fringe.dir_targets_8->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.dir_index_8->elements(), fringe.dir_index_8->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_1->elements(), fringe.external_dir_index_1->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_2->elements(), fringe.external_dir_index_2->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_3->elements(), fringe.external_dir_index_3->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_4->elements(), fringe.external_dir_index_4->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_5->elements(), fringe.external_dir_index_5->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_6->elements(), fringe.external_dir_index_6->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_7->elements(), fringe.external_dir_index_7->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_index_8->elements(), fringe.external_dir_index_8->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.external_h_targets->elements(), fringe.external_h_targets->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_1->elements(), fringe.external_dir_targets_1->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_2->elements(), fringe.external_dir_targets_2->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_3->elements(), fringe.external_dir_targets_3->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_4->elements(), fringe.external_dir_targets_4->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_5->elements(), fringe.external_dir_targets_5->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_6->elements(), fringe.external_dir_targets_6->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_7->elements(), fringe.external_dir_targets_7->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(fringe.external_dir_targets_8->elements(), fringe.external_dir_targets_8->size(), target, _mycartid, _comm_cart));
             }
 
             void _recv_fringe(PackedGridFringe<D2Q9> & fringe)
@@ -627,42 +646,42 @@ namespace honei
                 unsigned long external_dir_targets_7_size;
                 unsigned long external_dir_targets_8_size;
 
-                mpi::mpi_recv(&h_targets_size, 1, 0, 0);
-                mpi::mpi_recv(&h_index_size, 1, 0, 0);
-                mpi::mpi_recv(&external_h_index_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_targets_1_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_index_1_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_targets_2_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_index_2_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_targets_3_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_index_3_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_targets_4_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_index_4_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_targets_5_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_index_5_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_targets_6_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_index_6_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_targets_7_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_index_7_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_targets_8_size, 1, 0, 0);
-                mpi::mpi_recv(&dir_index_8_size, 1, 0, 0);
-                mpi::mpi_recv(&external_dir_index_1_size, 1, 0, 0);
-                mpi::mpi_recv(&external_dir_index_2_size, 1, 0, 0);
-                mpi::mpi_recv(&external_dir_index_3_size, 1, 0, 0);
-                mpi::mpi_recv(&external_dir_index_4_size, 1, 0, 0);
-                mpi::mpi_recv(&external_dir_index_5_size, 1, 0, 0);
-                mpi::mpi_recv(&external_dir_index_6_size, 1, 0, 0);
-                mpi::mpi_recv(&external_dir_index_7_size, 1, 0, 0);
-                mpi::mpi_recv(&external_dir_index_8_size, 1, 0, 0);
-                mpi::mpi_recv(&external_h_targets_size, 1, 0, 0);
-                mpi::mpi_recv(&external_dir_targets_1_size, 1, 0, 0);
-                mpi::mpi_recv(&external_dir_targets_2_size, 1, 0, 0);
-                mpi::mpi_recv(&external_dir_targets_3_size, 1, 0, 0);
-                mpi::mpi_recv(&external_dir_targets_4_size, 1, 0, 0);
-                mpi::mpi_recv(&external_dir_targets_5_size, 1, 0, 0);
-                mpi::mpi_recv(&external_dir_targets_6_size, 1, 0, 0);
-                mpi::mpi_recv(&external_dir_targets_7_size, 1, 0, 0);
-                mpi::mpi_recv(&external_dir_targets_8_size, 1, 0, 0);
+                mpi::mpi_recv(&h_targets_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&h_index_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&external_h_index_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_targets_1_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_index_1_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_targets_2_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_index_2_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_targets_3_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_index_3_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_targets_4_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_index_4_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_targets_5_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_index_5_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_targets_6_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_index_6_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_targets_7_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_index_7_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_targets_8_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&dir_index_8_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&external_dir_index_1_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&external_dir_index_2_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&external_dir_index_3_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&external_dir_index_4_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&external_dir_index_5_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&external_dir_index_6_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&external_dir_index_7_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&external_dir_index_8_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&external_h_targets_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&external_dir_targets_1_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&external_dir_targets_2_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&external_dir_targets_3_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&external_dir_targets_4_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&external_dir_targets_5_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&external_dir_targets_6_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&external_dir_targets_7_size, 1, _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(&external_dir_targets_8_size, 1, _masterid, _masterid, _comm_cart);
 
                 fringe.h_targets = new DenseVector<unsigned long>(h_targets_size);
                 fringe.h_index = new DenseVector<unsigned long>(h_index_size);
@@ -701,42 +720,42 @@ namespace honei
                 fringe.external_dir_targets_7 = new DenseVector<unsigned long>(external_dir_targets_7_size);
                 fringe.external_dir_targets_8 = new DenseVector<unsigned long>(external_dir_targets_8_size);
 
-                mpi::mpi_recv(fringe.h_targets->elements(), fringe.h_targets->size(), 0, 0);
-                mpi::mpi_recv(fringe.h_index->elements(), fringe.h_index->size(), 0, 0);
-                mpi::mpi_recv(fringe.external_h_index->elements(), fringe.external_h_index->size(), 0, 0);
-                mpi::mpi_recv(fringe.dir_targets_1->elements(), fringe.dir_targets_1->size(), 0, 0);
-                mpi::mpi_recv(fringe.dir_index_1->elements(), fringe.dir_index_1->size(), 0, 0);
-                mpi::mpi_recv(fringe.dir_targets_2->elements(), fringe.dir_targets_2->size(), 0, 0);
-                mpi::mpi_recv(fringe.dir_index_2->elements(), fringe.dir_index_2->size(), 0, 0);
-                mpi::mpi_recv(fringe.dir_targets_3->elements(), fringe.dir_targets_3->size(), 0, 0);
-                mpi::mpi_recv(fringe.dir_index_3->elements(), fringe.dir_index_3->size(), 0, 0);
-                mpi::mpi_recv(fringe.dir_targets_4->elements(), fringe.dir_targets_4->size(), 0, 0);
-                mpi::mpi_recv(fringe.dir_index_4->elements(), fringe.dir_index_4->size(), 0, 0);
-                mpi::mpi_recv(fringe.dir_targets_5->elements(), fringe.dir_targets_5->size(), 0, 0);
-                mpi::mpi_recv(fringe.dir_index_5->elements(), fringe.dir_index_5->size(), 0, 0);
-                mpi::mpi_recv(fringe.dir_targets_6->elements(), fringe.dir_targets_6->size(), 0, 0);
-                mpi::mpi_recv(fringe.dir_index_6->elements(), fringe.dir_index_6->size(), 0, 0);
-                mpi::mpi_recv(fringe.dir_targets_7->elements(), fringe.dir_targets_7->size(), 0, 0);
-                mpi::mpi_recv(fringe.dir_index_7->elements(), fringe.dir_index_7->size(), 0, 0);
-                mpi::mpi_recv(fringe.dir_targets_8->elements(), fringe.dir_targets_8->size(), 0, 0);
-                mpi::mpi_recv(fringe.dir_index_8->elements(), fringe.dir_index_8->size(), 0, 0);
-                mpi::mpi_recv(fringe.external_dir_index_1->elements(), fringe.external_dir_index_1->size(), 0, 0);
-                mpi::mpi_recv(fringe.external_dir_index_2->elements(), fringe.external_dir_index_2->size(), 0, 0);
-                mpi::mpi_recv(fringe.external_dir_index_3->elements(), fringe.external_dir_index_3->size(), 0, 0);
-                mpi::mpi_recv(fringe.external_dir_index_4->elements(), fringe.external_dir_index_4->size(), 0, 0);
-                mpi::mpi_recv(fringe.external_dir_index_5->elements(), fringe.external_dir_index_5->size(), 0, 0);
-                mpi::mpi_recv(fringe.external_dir_index_6->elements(), fringe.external_dir_index_6->size(), 0, 0);
-                mpi::mpi_recv(fringe.external_dir_index_7->elements(), fringe.external_dir_index_7->size(), 0, 0);
-                mpi::mpi_recv(fringe.external_dir_index_8->elements(), fringe.external_dir_index_8->size(), 0, 0);
-                mpi::mpi_recv(fringe.external_h_targets->elements(), fringe.external_h_targets->size(), 0, 0);
-                mpi::mpi_recv(fringe.external_dir_targets_1->elements(), fringe.external_dir_targets_1->size(), 0, 0);
-                mpi::mpi_recv(fringe.external_dir_targets_2->elements(), fringe.external_dir_targets_2->size(), 0, 0);
-                mpi::mpi_recv(fringe.external_dir_targets_3->elements(), fringe.external_dir_targets_3->size(), 0, 0);
-                mpi::mpi_recv(fringe.external_dir_targets_4->elements(), fringe.external_dir_targets_4->size(), 0, 0);
-                mpi::mpi_recv(fringe.external_dir_targets_5->elements(), fringe.external_dir_targets_5->size(), 0, 0);
-                mpi::mpi_recv(fringe.external_dir_targets_6->elements(), fringe.external_dir_targets_6->size(), 0, 0);
-                mpi::mpi_recv(fringe.external_dir_targets_7->elements(), fringe.external_dir_targets_7->size(), 0, 0);
-                mpi::mpi_recv(fringe.external_dir_targets_8->elements(), fringe.external_dir_targets_8->size(), 0, 0);
+                mpi::mpi_recv(fringe.h_targets->elements(), fringe.h_targets->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.h_index->elements(), fringe.h_index->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.external_h_index->elements(), fringe.external_h_index->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.dir_targets_1->elements(), fringe.dir_targets_1->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.dir_index_1->elements(), fringe.dir_index_1->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.dir_targets_2->elements(), fringe.dir_targets_2->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.dir_index_2->elements(), fringe.dir_index_2->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.dir_targets_3->elements(), fringe.dir_targets_3->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.dir_index_3->elements(), fringe.dir_index_3->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.dir_targets_4->elements(), fringe.dir_targets_4->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.dir_index_4->elements(), fringe.dir_index_4->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.dir_targets_5->elements(), fringe.dir_targets_5->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.dir_index_5->elements(), fringe.dir_index_5->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.dir_targets_6->elements(), fringe.dir_targets_6->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.dir_index_6->elements(), fringe.dir_index_6->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.dir_targets_7->elements(), fringe.dir_targets_7->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.dir_index_7->elements(), fringe.dir_index_7->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.dir_targets_8->elements(), fringe.dir_targets_8->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.dir_index_8->elements(), fringe.dir_index_8->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.external_dir_index_1->elements(), fringe.external_dir_index_1->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.external_dir_index_2->elements(), fringe.external_dir_index_2->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.external_dir_index_3->elements(), fringe.external_dir_index_3->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.external_dir_index_4->elements(), fringe.external_dir_index_4->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.external_dir_index_5->elements(), fringe.external_dir_index_5->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.external_dir_index_6->elements(), fringe.external_dir_index_6->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.external_dir_index_7->elements(), fringe.external_dir_index_7->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.external_dir_index_8->elements(), fringe.external_dir_index_8->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.external_h_targets->elements(), fringe.external_h_targets->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.external_dir_targets_1->elements(), fringe.external_dir_targets_1->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.external_dir_targets_2->elements(), fringe.external_dir_targets_2->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.external_dir_targets_3->elements(), fringe.external_dir_targets_3->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.external_dir_targets_4->elements(), fringe.external_dir_targets_4->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.external_dir_targets_5->elements(), fringe.external_dir_targets_5->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.external_dir_targets_6->elements(), fringe.external_dir_targets_6->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.external_dir_targets_7->elements(), fringe.external_dir_targets_7->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(fringe.external_dir_targets_8->elements(), fringe.external_dir_targets_8->size(), _masterid, _masterid, _comm_cart);
             }
 
             void _send_full_sync(unsigned long target, PackedGridData<D2Q9, DataType_> & data)
@@ -751,15 +770,15 @@ namespace honei
                 data.f_temp_7->lock(lm_read_only);
                 data.f_temp_8->lock(lm_read_only);
 
-                mpi::mpi_send(data.h->elements(), data.h->size(), target, _myid);
-                mpi::mpi_send(data.f_temp_1->elements(), data.h->size(), target, _myid);
-                mpi::mpi_send(data.f_temp_2->elements(), data.h->size(), target, _myid);
-                mpi::mpi_send(data.f_temp_3->elements(), data.h->size(), target, _myid);
-                mpi::mpi_send(data.f_temp_4->elements(), data.h->size(), target, _myid);
-                mpi::mpi_send(data.f_temp_5->elements(), data.h->size(), target, _myid);
-                mpi::mpi_send(data.f_temp_6->elements(), data.h->size(), target, _myid);
-                mpi::mpi_send(data.f_temp_7->elements(), data.h->size(), target, _myid);
-                mpi::mpi_send(data.f_temp_8->elements(), data.h->size(), target, _myid);
+                mpi::mpi_send(data.h->elements(), data.h->size(), target, _mycartid, _comm_cart);
+                mpi::mpi_send(data.f_temp_1->elements(), data.h->size(), target, _mycartid, _comm_cart);
+                mpi::mpi_send(data.f_temp_2->elements(), data.h->size(), target, _mycartid, _comm_cart);
+                mpi::mpi_send(data.f_temp_3->elements(), data.h->size(), target, _mycartid, _comm_cart);
+                mpi::mpi_send(data.f_temp_4->elements(), data.h->size(), target, _mycartid, _comm_cart);
+                mpi::mpi_send(data.f_temp_5->elements(), data.h->size(), target, _mycartid, _comm_cart);
+                mpi::mpi_send(data.f_temp_6->elements(), data.h->size(), target, _mycartid, _comm_cart);
+                mpi::mpi_send(data.f_temp_7->elements(), data.h->size(), target, _mycartid, _comm_cart);
+                mpi::mpi_send(data.f_temp_8->elements(), data.h->size(), target, _mycartid, _comm_cart);
 
                 data.h->unlock(lm_read_only);
                 data.f_temp_1->unlock(lm_read_only);
@@ -772,7 +791,7 @@ namespace honei
                 data.f_temp_8->unlock(lm_read_only);
             }
 
-            void _recv_full_sync(unsigned long target, PackedGridData<D2Q9, DataType_> & data)
+            void _recv_full_sync(int target, PackedGridData<D2Q9, DataType_> & data)
             {
                 data.h->lock(lm_read_and_write);
                 data.f_temp_1->lock(lm_read_and_write);
@@ -784,15 +803,15 @@ namespace honei
                 data.f_temp_7->lock(lm_read_and_write);
                 data.f_temp_8->lock(lm_read_and_write);
 
-                mpi::mpi_recv(data.h->elements(), data.h->size(), target, target);
-                mpi::mpi_recv(data.f_temp_1->elements(), data.h->size(), target, target);
-                mpi::mpi_recv(data.f_temp_2->elements(), data.h->size(), target, target);
-                mpi::mpi_recv(data.f_temp_3->elements(), data.h->size(), target, target);
-                mpi::mpi_recv(data.f_temp_4->elements(), data.h->size(), target, target);
-                mpi::mpi_recv(data.f_temp_5->elements(), data.h->size(), target, target);
-                mpi::mpi_recv(data.f_temp_6->elements(), data.h->size(), target, target);
-                mpi::mpi_recv(data.f_temp_7->elements(), data.h->size(), target, target);
-                mpi::mpi_recv(data.f_temp_8->elements(), data.h->size(), target, target);
+                mpi::mpi_recv(data.h->elements(), data.h->size(), target, target, _comm_cart);
+                mpi::mpi_recv(data.f_temp_1->elements(), data.h->size(), target, target, _comm_cart);
+                mpi::mpi_recv(data.f_temp_2->elements(), data.h->size(), target, target, _comm_cart);
+                mpi::mpi_recv(data.f_temp_3->elements(), data.h->size(), target, target, _comm_cart);
+                mpi::mpi_recv(data.f_temp_4->elements(), data.h->size(), target, target, _comm_cart);
+                mpi::mpi_recv(data.f_temp_5->elements(), data.h->size(), target, target, _comm_cart);
+                mpi::mpi_recv(data.f_temp_6->elements(), data.h->size(), target, target, _comm_cart);
+                mpi::mpi_recv(data.f_temp_7->elements(), data.h->size(), target, target, _comm_cart);
+                mpi::mpi_recv(data.f_temp_8->elements(), data.h->size(), target, target, _comm_cart);
 
                 data.h->unlock(lm_read_and_write);
                 data.f_temp_1->unlock(lm_read_and_write);
@@ -805,7 +824,7 @@ namespace honei
                 data.f_temp_8->unlock(lm_read_and_write);
             }
 
-            void _send_master_sync(unsigned long target, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & fringe)
+            void _send_master_sync(int target, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & fringe)
             {
                 data.h->lock(lm_read_only);
                 data.f_temp_1->lock(lm_read_only);
@@ -820,34 +839,34 @@ namespace honei
                 unsigned long offset(info.offset);
                 unsigned long f1_offset((*fringe.dir_index_1)[0]);
                 unsigned long f1_size((*fringe.dir_index_1)[fringe.dir_index_1->size()-1] - f1_offset);
-                if (f1_size > 0) mpi::mpi_send(data.f_temp_1->elements() + f1_offset - offset, f1_size, target, _myid);
+                if (f1_size > 0) mpi::mpi_send(data.f_temp_1->elements() + f1_offset - offset, f1_size, target, _mycartid, _comm_cart);
                 unsigned long f2_offset((*fringe.dir_index_2)[0]);
                 unsigned long f2_size((*fringe.dir_index_2)[fringe.dir_index_2->size()-1] - f2_offset);
-                if (f2_size > 0)mpi::mpi_send(data.f_temp_2->elements() + f2_offset - offset, f2_size, target, _myid);
+                if (f2_size > 0)mpi::mpi_send(data.f_temp_2->elements() + f2_offset - offset, f2_size, target, _mycartid, _comm_cart);
                 unsigned long f3_offset((*fringe.dir_index_3)[0]);
                 unsigned long f3_size((*fringe.dir_index_3)[fringe.dir_index_3->size()-1] - f3_offset);
-                if (f3_size > 0) mpi::mpi_send(data.f_temp_3->elements() + f3_offset - offset, f3_size, target, _myid);
+                if (f3_size > 0) mpi::mpi_send(data.f_temp_3->elements() + f3_offset - offset, f3_size, target, _mycartid, _comm_cart);
                 unsigned long f4_offset((*fringe.dir_index_4)[0]);
                 unsigned long f4_size((*fringe.dir_index_4)[fringe.dir_index_4->size()-1] - f4_offset);
-                if (f4_size > 0) mpi::mpi_send(data.f_temp_4->elements() + f4_offset - offset, f4_size, target, _myid);
+                if (f4_size > 0) mpi::mpi_send(data.f_temp_4->elements() + f4_offset - offset, f4_size, target, _mycartid, _comm_cart);
                 unsigned long f5_offset((*fringe.dir_index_5)[0]);
                 unsigned long f5_size((*fringe.dir_index_5)[fringe.dir_index_5->size()-1] - f5_offset);
-                if (f5_size > 0) mpi::mpi_send(data.f_temp_5->elements() + f5_offset - offset, f5_size, target, _myid);
+                if (f5_size > 0) mpi::mpi_send(data.f_temp_5->elements() + f5_offset - offset, f5_size, target, _mycartid, _comm_cart);
                 unsigned long f6_offset((*fringe.dir_index_6)[0]);
                 unsigned long f6_size((*fringe.dir_index_6)[fringe.dir_index_6->size()-1] - f6_offset);
-                if (f6_size > 0) mpi::mpi_send(data.f_temp_6->elements() + f6_offset - offset, f6_size, target, _myid);
+                if (f6_size > 0) mpi::mpi_send(data.f_temp_6->elements() + f6_offset - offset, f6_size, target, _mycartid, _comm_cart);
                 unsigned long f7_offset((*fringe.dir_index_7)[0]);
                 unsigned long f7_size((*fringe.dir_index_7)[fringe.dir_index_7->size()-1] - f7_offset);
-                if (f7_size > 0) mpi::mpi_send(data.f_temp_7->elements() + f7_offset - offset, f7_size, target, _myid);
+                if (f7_size > 0) mpi::mpi_send(data.f_temp_7->elements() + f7_offset - offset, f7_size, target, _mycartid, _comm_cart);
                 unsigned long f8_offset((*fringe.dir_index_8)[0]);
                 unsigned long f8_size((*fringe.dir_index_8)[fringe.dir_index_8->size()-1] - f8_offset);
-                if (f8_size > 0) mpi::mpi_send(data.f_temp_8->elements() + f8_offset - offset, f8_size, target, _myid);
+                if (f8_size > 0) mpi::mpi_send(data.f_temp_8->elements() + f8_offset - offset, f8_size, target, _mycartid, _comm_cart);
 
                 for (unsigned long i(0) ; i < fringe.external_h_index->size() / 2 ; ++i)
                 {
                     unsigned long h_offset((*fringe.external_h_index)[i * 2]);
                     unsigned long h_size((*fringe.external_h_index)[i * 2 + 1] - h_offset);
-                    if (h_size > 0) mpi::mpi_send(data.h->elements() + h_offset - offset, h_size, target, _myid);
+                    if (h_size > 0) mpi::mpi_send(data.h->elements() + h_offset - offset, h_size, target, _mycartid, _comm_cart);
                 }
 
                 data.h->unlock(lm_read_only);
@@ -861,7 +880,7 @@ namespace honei
                 data.f_temp_8->unlock(lm_read_only);
             }
 
-            void _recv_slave_sync(unsigned long target, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & fringe)
+            void _recv_slave_sync(int target, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & fringe)
             {
                 data.h->lock(lm_read_and_write);
                 data.f_temp_1->lock(lm_read_and_write);
@@ -876,34 +895,34 @@ namespace honei
                 unsigned long offset(info.offset);
                 unsigned long f1_offset((*fringe.dir_index_1)[0]);
                 unsigned long f1_size((*fringe.dir_index_1)[fringe.dir_index_1->size()-1] - f1_offset);
-                if (f1_size > 0) mpi::mpi_recv(data.f_temp_1->elements() + f1_offset - offset, f1_size, target, target);
+                if (f1_size > 0) mpi::mpi_recv(data.f_temp_1->elements() + f1_offset - offset, f1_size, target, target, _comm_cart);
                 unsigned long f2_offset((*fringe.dir_index_2)[0]);
                 unsigned long f2_size((*fringe.dir_index_2)[fringe.dir_index_2->size()-1] - f2_offset);
-                if (f2_size > 0) mpi::mpi_recv(data.f_temp_2->elements() + f2_offset - offset, f2_size, target, target);
+                if (f2_size > 0) mpi::mpi_recv(data.f_temp_2->elements() + f2_offset - offset, f2_size, target, target, _comm_cart);
                 unsigned long f3_offset((*fringe.dir_index_3)[0]);
                 unsigned long f3_size((*fringe.dir_index_3)[fringe.dir_index_3->size()-1] - f3_offset);
-                if (f3_size > 0) mpi::mpi_recv(data.f_temp_3->elements() + f3_offset - offset, f3_size, target, target);
+                if (f3_size > 0) mpi::mpi_recv(data.f_temp_3->elements() + f3_offset - offset, f3_size, target, target, _comm_cart);
                 unsigned long f4_offset((*fringe.dir_index_4)[0]);
                 unsigned long f4_size((*fringe.dir_index_4)[fringe.dir_index_4->size()-1] - f4_offset);
-                if (f4_size > 0) mpi::mpi_recv(data.f_temp_4->elements() + f4_offset - offset, f4_size, target, target);
+                if (f4_size > 0) mpi::mpi_recv(data.f_temp_4->elements() + f4_offset - offset, f4_size, target, target, _comm_cart);
                 unsigned long f5_offset((*fringe.dir_index_5)[0]);
                 unsigned long f5_size((*fringe.dir_index_5)[fringe.dir_index_5->size()-1] - f5_offset);
-                if (f5_size > 0) mpi::mpi_recv(data.f_temp_5->elements() + f5_offset - offset, f5_size, target, target);
+                if (f5_size > 0) mpi::mpi_recv(data.f_temp_5->elements() + f5_offset - offset, f5_size, target, target, _comm_cart);
                 unsigned long f6_offset((*fringe.dir_index_6)[0]);
                 unsigned long f6_size((*fringe.dir_index_6)[fringe.dir_index_6->size()-1] - f6_offset);
-                if (f6_size > 0) mpi::mpi_recv(data.f_temp_6->elements() + f6_offset - offset, f6_size, target, target);
+                if (f6_size > 0) mpi::mpi_recv(data.f_temp_6->elements() + f6_offset - offset, f6_size, target, target, _comm_cart);
                 unsigned long f7_offset((*fringe.dir_index_7)[0]);
                 unsigned long f7_size((*fringe.dir_index_7)[fringe.dir_index_7->size()-1] - f7_offset);
-                if (f7_size > 0) mpi::mpi_recv(data.f_temp_7->elements() + f7_offset - offset, f7_size, target, target);
+                if (f7_size > 0) mpi::mpi_recv(data.f_temp_7->elements() + f7_offset - offset, f7_size, target, target, _comm_cart);
                 unsigned long f8_offset((*fringe.dir_index_8)[0]);
                 unsigned long f8_size((*fringe.dir_index_8)[fringe.dir_index_8->size()-1] - f8_offset);
-                if (f8_size > 0) mpi::mpi_recv(data.f_temp_8->elements() + f8_offset - offset, f8_size, target, target);
+                if (f8_size > 0) mpi::mpi_recv(data.f_temp_8->elements() + f8_offset - offset, f8_size, target, target, _comm_cart);
 
                 for (unsigned long i(0) ; i < fringe.external_h_index->size() / 2 ; ++i)
                 {
                     unsigned long h_offset((*fringe.external_h_index)[i * 2]);
                     unsigned long h_size((*fringe.external_h_index)[i * 2 + 1] - h_offset);
-                    if (h_size > 0) mpi::mpi_recv(data.h->elements() + h_offset - offset, h_size, target, target);
+                    if (h_size > 0) mpi::mpi_recv(data.h->elements() + h_offset - offset, h_size, target, target, _comm_cart);
                 }
 
                 data.h->unlock(lm_read_and_write);
@@ -917,7 +936,7 @@ namespace honei
                 data.f_temp_8->unlock(lm_read_and_write);
             }
 
-            void _send_slave_sync(unsigned long target, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & fringe)
+            void _send_slave_sync(int target, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & fringe)
             {
                 data.h->lock(lm_read_only);
                 data.f_temp_1->lock(lm_read_only);
@@ -932,34 +951,34 @@ namespace honei
                 unsigned long offset(info.offset);
                 unsigned long f1_offset((*fringe.external_dir_index_1)[0]);
                 unsigned long f1_size((*fringe.external_dir_index_1)[fringe.external_dir_index_1->size()-1] - f1_offset);
-                if (f1_size > 0) mpi::mpi_send(data.f_temp_1->elements() + f1_offset - offset, f1_size, target, _myid);
+                if (f1_size > 0) mpi::mpi_send(data.f_temp_1->elements() + f1_offset - offset, f1_size, target, _mycartid, _comm_cart);
                 unsigned long f2_offset((*fringe.external_dir_index_2)[0]);
                 unsigned long f2_size((*fringe.external_dir_index_2)[fringe.external_dir_index_2->size()-1] - f2_offset);
-                if (f2_size > 0)mpi::mpi_send(data.f_temp_2->elements() + f2_offset - offset, f2_size, target, _myid);
+                if (f2_size > 0)mpi::mpi_send(data.f_temp_2->elements() + f2_offset - offset, f2_size, target, _mycartid, _comm_cart);
                 unsigned long f3_offset((*fringe.external_dir_index_3)[0]);
                 unsigned long f3_size((*fringe.external_dir_index_3)[fringe.external_dir_index_3->size()-1] - f3_offset);
-                if (f3_size > 0) mpi::mpi_send(data.f_temp_3->elements() + f3_offset - offset, f3_size, target, _myid);
+                if (f3_size > 0) mpi::mpi_send(data.f_temp_3->elements() + f3_offset - offset, f3_size, target, _mycartid, _comm_cart);
                 unsigned long f4_offset((*fringe.external_dir_index_4)[0]);
                 unsigned long f4_size((*fringe.external_dir_index_4)[fringe.external_dir_index_4->size()-1] - f4_offset);
-                if (f4_size > 0) mpi::mpi_send(data.f_temp_4->elements() + f4_offset - offset, f4_size, target, _myid);
+                if (f4_size > 0) mpi::mpi_send(data.f_temp_4->elements() + f4_offset - offset, f4_size, target, _mycartid, _comm_cart);
                 unsigned long f5_offset((*fringe.external_dir_index_5)[0]);
                 unsigned long f5_size((*fringe.external_dir_index_5)[fringe.external_dir_index_5->size()-1] - f5_offset);
-                if (f5_size > 0) mpi::mpi_send(data.f_temp_5->elements() + f5_offset - offset, f5_size, target, _myid);
+                if (f5_size > 0) mpi::mpi_send(data.f_temp_5->elements() + f5_offset - offset, f5_size, target, _mycartid, _comm_cart);
                 unsigned long f6_offset((*fringe.external_dir_index_6)[0]);
                 unsigned long f6_size((*fringe.external_dir_index_6)[fringe.external_dir_index_6->size()-1] - f6_offset);
-                if (f6_size > 0) mpi::mpi_send(data.f_temp_6->elements() + f6_offset - offset, f6_size, target, _myid);
+                if (f6_size > 0) mpi::mpi_send(data.f_temp_6->elements() + f6_offset - offset, f6_size, target, _mycartid, _comm_cart);
                 unsigned long f7_offset((*fringe.external_dir_index_7)[0]);
                 unsigned long f7_size((*fringe.external_dir_index_7)[fringe.external_dir_index_7->size()-1] - f7_offset);
-                if (f7_size > 0) mpi::mpi_send(data.f_temp_7->elements() + f7_offset - offset, f7_size, target, _myid);
+                if (f7_size > 0) mpi::mpi_send(data.f_temp_7->elements() + f7_offset - offset, f7_size, target, _mycartid, _comm_cart);
                 unsigned long f8_offset((*fringe.external_dir_index_8)[0]);
                 unsigned long f8_size((*fringe.external_dir_index_8)[fringe.external_dir_index_8->size()-1] - f8_offset);
-                if (f8_size > 0) mpi::mpi_send(data.f_temp_8->elements() + f8_offset - offset, f8_size, target, _myid);
+                if (f8_size > 0) mpi::mpi_send(data.f_temp_8->elements() + f8_offset - offset, f8_size, target, _mycartid, _comm_cart);
 
                 for (unsigned long i(0) ; i < fringe.h_index->size() / 2 ; ++i)
                 {
                     unsigned long h_offset((*fringe.h_index)[i * 2]);
                     unsigned long h_size((*fringe.h_index)[i * 2 + 1] - h_offset);
-                    if (h_size > 0) mpi::mpi_send(data.h->elements() + h_offset - offset, h_size, target, _myid);
+                    if (h_size > 0) mpi::mpi_send(data.h->elements() + h_offset - offset, h_size, target, _mycartid, _comm_cart);
                 }
 
                 data.h->unlock(lm_read_only);
@@ -973,7 +992,7 @@ namespace honei
                 data.f_temp_8->unlock(lm_read_only);
             }
 
-            void _recv_master_sync(unsigned long target, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & fringe)
+            void _recv_master_sync(int target, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & fringe)
             {
                 data.h->lock(lm_read_and_write);
                 data.f_temp_1->lock(lm_read_and_write);
@@ -988,34 +1007,34 @@ namespace honei
                 unsigned long offset(info.offset);
                 unsigned long f1_offset((*fringe.external_dir_index_1)[0]);
                 unsigned long f1_size((*fringe.external_dir_index_1)[fringe.external_dir_index_1->size()-1] - f1_offset);
-                if (f1_size > 0) mpi::mpi_recv(data.f_temp_1->elements() + f1_offset - offset, f1_size, target, target);
+                if (f1_size > 0) mpi::mpi_recv(data.f_temp_1->elements() + f1_offset - offset, f1_size, target, target, _comm_cart);
                 unsigned long f2_offset((*fringe.external_dir_index_2)[0]);
                 unsigned long f2_size((*fringe.external_dir_index_2)[fringe.external_dir_index_2->size()-1] - f2_offset);
-                if (f2_size > 0) mpi::mpi_recv(data.f_temp_2->elements() + f2_offset - offset, f2_size, target, target);
+                if (f2_size > 0) mpi::mpi_recv(data.f_temp_2->elements() + f2_offset - offset, f2_size, target, target, _comm_cart);
                 unsigned long f3_offset((*fringe.external_dir_index_3)[0]);
                 unsigned long f3_size((*fringe.external_dir_index_3)[fringe.external_dir_index_3->size()-1] - f3_offset);
-                if (f3_size > 0) mpi::mpi_recv(data.f_temp_3->elements() + f3_offset - offset, f3_size, target, target);
+                if (f3_size > 0) mpi::mpi_recv(data.f_temp_3->elements() + f3_offset - offset, f3_size, target, target, _comm_cart);
                 unsigned long f4_offset((*fringe.external_dir_index_4)[0]);
                 unsigned long f4_size((*fringe.external_dir_index_4)[fringe.external_dir_index_4->size()-1] - f4_offset);
-                if (f4_size > 0) mpi::mpi_recv(data.f_temp_4->elements() + f4_offset - offset, f4_size, target, target);
+                if (f4_size > 0) mpi::mpi_recv(data.f_temp_4->elements() + f4_offset - offset, f4_size, target, target, _comm_cart);
                 unsigned long f5_offset((*fringe.external_dir_index_5)[0]);
                 unsigned long f5_size((*fringe.external_dir_index_5)[fringe.external_dir_index_5->size()-1] - f5_offset);
-                if (f5_size > 0) mpi::mpi_recv(data.f_temp_5->elements() + f5_offset - offset, f5_size, target, target);
+                if (f5_size > 0) mpi::mpi_recv(data.f_temp_5->elements() + f5_offset - offset, f5_size, target, target, _comm_cart);
                 unsigned long f6_offset((*fringe.external_dir_index_6)[0]);
                 unsigned long f6_size((*fringe.external_dir_index_6)[fringe.external_dir_index_6->size()-1] - f6_offset);
-                if (f6_size > 0) mpi::mpi_recv(data.f_temp_6->elements() + f6_offset - offset, f6_size, target, target);
+                if (f6_size > 0) mpi::mpi_recv(data.f_temp_6->elements() + f6_offset - offset, f6_size, target, target, _comm_cart);
                 unsigned long f7_offset((*fringe.external_dir_index_7)[0]);
                 unsigned long f7_size((*fringe.external_dir_index_7)[fringe.external_dir_index_7->size()-1] - f7_offset);
-                if (f7_size > 0) mpi::mpi_recv(data.f_temp_7->elements() + f7_offset - offset, f7_size, target, target);
+                if (f7_size > 0) mpi::mpi_recv(data.f_temp_7->elements() + f7_offset - offset, f7_size, target, target, _comm_cart);
                 unsigned long f8_offset((*fringe.external_dir_index_8)[0]);
                 unsigned long f8_size((*fringe.external_dir_index_8)[fringe.external_dir_index_8->size()-1] - f8_offset);
-                if (f8_size > 0) mpi::mpi_recv(data.f_temp_8->elements() + f8_offset - offset, f8_size, target, target);
+                if (f8_size > 0) mpi::mpi_recv(data.f_temp_8->elements() + f8_offset - offset, f8_size, target, target, _comm_cart);
 
                 for (unsigned long i(0) ; i < fringe.h_index->size() / 2 ; ++i)
                 {
                     unsigned long h_offset((*fringe.h_index)[i * 2]);
                     unsigned long h_size((*fringe.h_index)[i * 2 + 1] - h_offset);
-                    if (h_size > 0) mpi::mpi_recv(data.h->elements() + h_offset - offset, h_size, target, target);
+                    if (h_size > 0) mpi::mpi_recv(data.h->elements() + h_offset - offset, h_size, target, target, _comm_cart);
                 }
 
                 data.h->unlock(lm_read_and_write);
@@ -1045,116 +1064,109 @@ namespace honei
 
                 std::vector<MPI_Request> requests;
                 unsigned long offset(info.offset);
+                int source_up_recv, source_down_recv, target_up_send, target_down_send;
+                MPI_Cart_shift(_comm_cart, 0, 1, &source_down_recv, &target_down_send);
+                MPI_Cart_shift(_comm_cart, 0, -1, &source_up_recv, &target_up_send);
+
 
                 for (unsigned long i(0) ; i < fringe.h_index->size() / 2 ; ++i)
                 {
-                    unsigned long h_source((*fringe.h_targets)[i]);
+                    int h_source((*fringe.h_targets)[i]);
                     unsigned long h_offset((*fringe.h_index)[i * 2]);
                     unsigned long h_size((*fringe.h_index)[i * 2 + 1] - h_offset);
-                    if (h_size > 0) requests.push_back(mpi::mpi_irecv(data.h->elements() + h_offset - offset, h_size, h_source, h_source));
+                    int source;
+                    MPI_Cart_rank(_comm_cart, &h_source, &source);
+                    if (h_size > 0) requests.push_back(mpi::mpi_irecv(data.h->elements() + h_offset - offset, h_size, source, source, _comm_cart));
                 }
                 for (unsigned long i(0) ; i < fringe.external_h_index->size() / 2 ; ++i)
                 {
-                    unsigned long h_target((*fringe.external_h_targets)[i]);
+                    int h_target((*fringe.external_h_targets)[i]);
                     unsigned long h_offset((*fringe.external_h_index)[i * 2]);
                     unsigned long h_size((*fringe.external_h_index)[i * 2 + 1] - h_offset);
-                    if (h_size > 0) requests.push_back(mpi::mpi_isend(data.h->elements() + h_offset - offset, h_size, h_target, _myid));
+                    int target;
+                    MPI_Cart_rank(_comm_cart, &h_target, &target);
+                    if (h_size > 0) requests.push_back(mpi::mpi_isend(data.h->elements() + h_offset - offset, h_size, target, _mycartid, _comm_cart));
                 }
 
-                unsigned long source_1_recv((*fringe.external_dir_targets_1)[0]);
+                //unsigned long source_1_recv((*fringe.external_dir_targets_1)[0]);
                 unsigned long f1_offset_recv((*fringe.external_dir_index_1)[0]);
                 unsigned long f1_size_recv((*fringe.external_dir_index_1)[fringe.external_dir_index_1->size()-1] - f1_offset_recv);
 
-                unsigned long source_2_recv((*fringe.external_dir_targets_2)[0]);
+                //unsigned long source_2_recv((*fringe.external_dir_targets_2)[0]);
                 unsigned long f2_offset_recv((*fringe.external_dir_index_2)[0]);
                 unsigned long f2_size_recv((*fringe.external_dir_index_2)[fringe.external_dir_index_2->size()-1] - f2_offset_recv);
 
-                unsigned long source_3_recv((*fringe.external_dir_targets_3)[0]);
+                //unsigned long source_3_recv((*fringe.external_dir_targets_3)[0]);
                 unsigned long f3_offset_recv((*fringe.external_dir_index_3)[0]);
                 unsigned long f3_size_recv((*fringe.external_dir_index_3)[fringe.external_dir_index_3->size()-1] - f3_offset_recv);
 
-                unsigned long source_4_recv((*fringe.external_dir_targets_4)[0]);
+                //unsigned long source_4_recv((*fringe.external_dir_targets_4)[0]);
                 unsigned long f4_offset_recv((*fringe.external_dir_index_4)[0]);
                 unsigned long f4_size_recv((*fringe.external_dir_index_4)[fringe.external_dir_index_4->size()-1] - f4_offset_recv);
 
-                unsigned long source_5_recv((*fringe.external_dir_targets_5)[0]);
+                //unsigned long source_5_recv((*fringe.external_dir_targets_5)[0]);
                 unsigned long f5_offset_recv((*fringe.external_dir_index_5)[0]);
                 unsigned long f5_size_recv((*fringe.external_dir_index_5)[fringe.external_dir_index_5->size()-1] - f5_offset_recv);
 
-                unsigned long source_6_recv((*fringe.external_dir_targets_6)[0]);
+                //unsigned long source_6_recv((*fringe.external_dir_targets_6)[0]);
                 unsigned long f6_offset_recv((*fringe.external_dir_index_6)[0]);
                 unsigned long f6_size_recv((*fringe.external_dir_index_6)[fringe.external_dir_index_6->size()-1] - f6_offset_recv);
 
-                unsigned long source_7_recv((*fringe.external_dir_targets_7)[0]);
+                //unsigned long source_7_recv((*fringe.external_dir_targets_7)[0]);
                 unsigned long f7_offset_recv((*fringe.external_dir_index_7)[0]);
                 unsigned long f7_size_recv((*fringe.external_dir_index_7)[fringe.external_dir_index_7->size()-1] - f7_offset_recv);
 
-                unsigned long source_8_recv((*fringe.external_dir_targets_8)[0]);
+                //unsigned long source_8_recv((*fringe.external_dir_targets_8)[0]);
                 unsigned long f8_offset_recv((*fringe.external_dir_index_8)[0]);
                 unsigned long f8_size_recv((*fringe.external_dir_index_8)[fringe.external_dir_index_8->size()-1] - f8_offset_recv);
 
                 unsigned long up_size_recv(f2_size_recv + f3_size_recv + f4_size_recv + f5_size_recv);
                 DataType_ up_buffer_recv[up_size_recv];
-                unsigned long source_up_recv(source_2_recv);
-                source_up_recv = std::max(source_up_recv, source_3_recv);
-                source_up_recv = std::max(source_up_recv, source_4_recv);
-                source_up_recv = std::max(source_up_recv, source_5_recv);
                 unsigned long down_size_recv(f1_size_recv + f6_size_recv + f7_size_recv + f8_size_recv);
                 DataType_ down_buffer_recv[down_size_recv];
-                unsigned long source_down_recv(source_1_recv);
-                source_down_recv = std::max(source_down_recv, source_6_recv);
-                source_down_recv = std::max(source_down_recv, source_7_recv);
-                source_down_recv = std::max(source_down_recv, source_8_recv);
-
-                if (up_size_recv > 0) requests.push_back(mpi::mpi_irecv(up_buffer_recv, up_size_recv, source_up_recv, source_up_recv));
-                if (down_size_recv > 0) requests.push_back(mpi::mpi_irecv(down_buffer_recv, down_size_recv, source_down_recv, source_down_recv));
 
 
-                unsigned long target_1_send((*fringe.dir_targets_1)[0]);
+                if (up_size_recv > 0) requests.push_back(mpi::mpi_irecv(up_buffer_recv, up_size_recv, source_up_recv, source_up_recv, _comm_cart));
+                if (down_size_recv > 0) requests.push_back(mpi::mpi_irecv(down_buffer_recv, down_size_recv, source_down_recv, source_down_recv, _comm_cart));
+
+
+                //unsigned long target_1_send((*fringe.dir_targets_1)[0]);
                 unsigned long f1_offset_send((*fringe.dir_index_1)[0]);
                 unsigned long f1_size_send((*fringe.dir_index_1)[fringe.dir_index_1->size()-1] - f1_offset_send);
 
-                unsigned long target_2_send((*fringe.dir_targets_2)[0]);
+                //unsigned long target_2_send((*fringe.dir_targets_2)[0]);
                 unsigned long f2_offset_send((*fringe.dir_index_2)[0]);
                 unsigned long f2_size_send((*fringe.dir_index_2)[fringe.dir_index_2->size()-1] - f2_offset_send);
 
-                unsigned long target_3_send((*fringe.dir_targets_3)[0]);
+                //unsigned long target_3_send((*fringe.dir_targets_3)[0]);
                 unsigned long f3_offset_send((*fringe.dir_index_3)[0]);
                 unsigned long f3_size_send((*fringe.dir_index_3)[fringe.dir_index_3->size()-1] - f3_offset_send);
 
-                unsigned long target_4_send((*fringe.dir_targets_4)[0]);
+                //unsigned long target_4_send((*fringe.dir_targets_4)[0]);
                 unsigned long f4_offset_send((*fringe.dir_index_4)[0]);
                 unsigned long f4_size_send((*fringe.dir_index_4)[fringe.dir_index_4->size()-1] - f4_offset_send);
 
-                unsigned long target_5_send((*fringe.dir_targets_5)[0]);
+                //unsigned long target_5_send((*fringe.dir_targets_5)[0]);
                 unsigned long f5_offset_send((*fringe.dir_index_5)[0]);
                 unsigned long f5_size_send((*fringe.dir_index_5)[fringe.dir_index_5->size()-1] - f5_offset_send);
 
-                unsigned long target_6_send((*fringe.dir_targets_6)[0]);
+                //unsigned long target_6_send((*fringe.dir_targets_6)[0]);
                 unsigned long f6_offset_send((*fringe.dir_index_6)[0]);
                 unsigned long f6_size_send((*fringe.dir_index_6)[fringe.dir_index_6->size()-1] - f6_offset_send);
 
-                unsigned long target_7_send((*fringe.dir_targets_7)[0]);
+                //unsigned long target_7_send((*fringe.dir_targets_7)[0]);
                 unsigned long f7_offset_send((*fringe.dir_index_7)[0]);
                 unsigned long f7_size_send((*fringe.dir_index_7)[fringe.dir_index_7->size()-1] - f7_offset_send);
 
-                unsigned long target_8_send((*fringe.dir_targets_8)[0]);
+                //unsigned long target_8_send((*fringe.dir_targets_8)[0]);
                 unsigned long f8_offset_send((*fringe.dir_index_8)[0]);
                 unsigned long f8_size_send((*fringe.dir_index_8)[fringe.dir_index_8->size()-1] - f8_offset_send);
 
 
                 unsigned long up_size_send(f2_size_send + f3_size_send + f4_size_send + f5_size_send);
                 DataType_ up_buffer_send[up_size_send];
-                unsigned long target_up_send(target_2_send);
-                target_up_send = std::max(target_up_send, target_3_send);
-                target_up_send = std::max(target_up_send, target_4_send);
-                target_up_send = std::max(target_up_send, target_5_send);
                 unsigned long down_size_send(f1_size_send + f6_size_send + f7_size_send + f8_size_send);
                 DataType_ down_buffer_send[down_size_send];
-                unsigned long target_down_send(target_1_send);
-                target_down_send = std::max(target_down_send, target_6_send);
-                target_down_send = std::max(target_down_send, target_7_send);
-                target_down_send = std::max(target_down_send, target_8_send);
                 unsigned long temp_size(0);
 
                 TypeTraits<DataType_>::copy(data.f_temp_2->elements() + f2_offset_send - offset, up_buffer_send + temp_size, f2_size_send);
@@ -1174,8 +1186,8 @@ namespace honei
                 temp_size += f7_size_send;
                 TypeTraits<DataType_>::copy(data.f_temp_8->elements() + f8_offset_send - offset, down_buffer_send + temp_size, f8_size_send);
 
-                if (up_size_send > 0) requests.push_back(mpi::mpi_isend(up_buffer_send, up_size_send, target_up_send, _myid));
-                if (down_size_send > 0) requests.push_back(mpi::mpi_isend(down_buffer_send, down_size_send, target_down_send, _myid));
+                if (up_size_send > 0) requests.push_back(mpi::mpi_isend(up_buffer_send, up_size_send, target_up_send, _myid, _comm_cart));
+                if (down_size_send > 0) requests.push_back(mpi::mpi_isend(down_buffer_send, down_size_send, target_down_send, _myid, _comm_cart));
 
 
                 MPI_Waitall(requests.size(), &requests[0], MPI_STATUSES_IGNORE);
