@@ -1186,8 +1186,8 @@ namespace honei
                 temp_size += f7_size_send;
                 TypeTraits<DataType_>::copy(data.f_temp_8->elements() + f8_offset_send - offset, down_buffer_send + temp_size, f8_size_send);
 
-                if (up_size_send > 0) requests.push_back(mpi::mpi_isend(up_buffer_send, up_size_send, target_up_send, _myid, _comm_cart));
-                if (down_size_send > 0) requests.push_back(mpi::mpi_isend(down_buffer_send, down_size_send, target_down_send, _myid, _comm_cart));
+                if (up_size_send > 0) requests.push_back(mpi::mpi_isend(up_buffer_send, up_size_send, target_up_send, _mycartid, _comm_cart));
+                if (down_size_send > 0) requests.push_back(mpi::mpi_isend(down_buffer_send, down_size_send, target_down_send, _mycartid, _comm_cart));
 
 
                 MPI_Waitall(requests.size(), &requests[0], MPI_STATUSES_IGNORE);
