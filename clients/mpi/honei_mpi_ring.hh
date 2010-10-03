@@ -1065,150 +1065,185 @@ namespace honei
                 std::vector<MPI_Request> requests;
                 unsigned long offset(info.offset);
                 int source_up_recv, source_down_recv, target_up_send, target_down_send;
+                unsigned long up_size_recv(0);
+                unsigned long down_size_recv(0);
+                unsigned long up_size_send(0);
+                unsigned long down_size_send(0);
                 MPI_Cart_shift(_comm_cart, 0, 1, &source_down_recv, &target_down_send);
                 MPI_Cart_shift(_comm_cart, 0, -1, &source_up_recv, &target_up_send);
 
 
+                unsigned long f1_offset_recv((*fringe.external_dir_index_1)[0]);
+                unsigned long f1_size_recv((*fringe.external_dir_index_1)[fringe.external_dir_index_1->size()-1] - f1_offset_recv);
+
+                unsigned long f2_offset_recv((*fringe.external_dir_index_2)[0]);
+                unsigned long f2_size_recv((*fringe.external_dir_index_2)[fringe.external_dir_index_2->size()-1] - f2_offset_recv);
+
+                unsigned long f3_offset_recv((*fringe.external_dir_index_3)[0]);
+                unsigned long f3_size_recv((*fringe.external_dir_index_3)[fringe.external_dir_index_3->size()-1] - f3_offset_recv);
+
+                unsigned long f4_offset_recv((*fringe.external_dir_index_4)[0]);
+                unsigned long f4_size_recv((*fringe.external_dir_index_4)[fringe.external_dir_index_4->size()-1] - f4_offset_recv);
+
+                unsigned long f5_offset_recv((*fringe.external_dir_index_5)[0]);
+                unsigned long f5_size_recv((*fringe.external_dir_index_5)[fringe.external_dir_index_5->size()-1] - f5_offset_recv);
+
+                unsigned long f6_offset_recv((*fringe.external_dir_index_6)[0]);
+                unsigned long f6_size_recv((*fringe.external_dir_index_6)[fringe.external_dir_index_6->size()-1] - f6_offset_recv);
+
+                unsigned long f7_offset_recv((*fringe.external_dir_index_7)[0]);
+                unsigned long f7_size_recv((*fringe.external_dir_index_7)[fringe.external_dir_index_7->size()-1] - f7_offset_recv);
+
+                unsigned long f8_offset_recv((*fringe.external_dir_index_8)[0]);
+                unsigned long f8_size_recv((*fringe.external_dir_index_8)[fringe.external_dir_index_8->size()-1] - f8_offset_recv);
+
+                up_size_recv += f2_size_recv + f3_size_recv + f4_size_recv + f5_size_recv;
+                down_size_recv += f1_size_recv + f6_size_recv + f7_size_recv + f8_size_recv;
+
+                unsigned long h_up_size_recv(0);
+                unsigned long h_down_size_recv(0);
+                unsigned long h_up_offset_recv(0);
+                unsigned long h_down_offset_recv(0);
                 for (unsigned long i(0) ; i < fringe.h_index->size() / 2 ; ++i)
                 {
                     int h_source((*fringe.h_targets)[i]);
                     unsigned long h_offset((*fringe.h_index)[i * 2]);
                     unsigned long h_size((*fringe.h_index)[i * 2 + 1] - h_offset);
-                    int source;
-                    MPI_Cart_rank(_comm_cart, &h_source, &source);
-                    if (h_size > 0) requests.push_back(mpi::mpi_irecv(data.h->elements() + h_offset - offset, h_size, source, source, _comm_cart));
+                    if (h_source < _mycartpos)
+                    {
+                        down_size_recv += h_size;
+                        h_down_size_recv = h_size;
+                        h_down_offset_recv = h_offset;
+                    }
+                    else
+                    {
+                        up_size_recv += h_size;
+                        h_up_size_recv = h_size;
+                        h_up_offset_recv = h_offset;
+                    }
                 }
-                for (unsigned long i(0) ; i < fringe.external_h_index->size() / 2 ; ++i)
-                {
-                    int h_target((*fringe.external_h_targets)[i]);
-                    unsigned long h_offset((*fringe.external_h_index)[i * 2]);
-                    unsigned long h_size((*fringe.external_h_index)[i * 2 + 1] - h_offset);
-                    int target;
-                    MPI_Cart_rank(_comm_cart, &h_target, &target);
-                    if (h_size > 0) requests.push_back(mpi::mpi_isend(data.h->elements() + h_offset - offset, h_size, target, _mycartid, _comm_cart));
-                }
 
-                //unsigned long source_1_recv((*fringe.external_dir_targets_1)[0]);
-                unsigned long f1_offset_recv((*fringe.external_dir_index_1)[0]);
-                unsigned long f1_size_recv((*fringe.external_dir_index_1)[fringe.external_dir_index_1->size()-1] - f1_offset_recv);
-
-                //unsigned long source_2_recv((*fringe.external_dir_targets_2)[0]);
-                unsigned long f2_offset_recv((*fringe.external_dir_index_2)[0]);
-                unsigned long f2_size_recv((*fringe.external_dir_index_2)[fringe.external_dir_index_2->size()-1] - f2_offset_recv);
-
-                //unsigned long source_3_recv((*fringe.external_dir_targets_3)[0]);
-                unsigned long f3_offset_recv((*fringe.external_dir_index_3)[0]);
-                unsigned long f3_size_recv((*fringe.external_dir_index_3)[fringe.external_dir_index_3->size()-1] - f3_offset_recv);
-
-                //unsigned long source_4_recv((*fringe.external_dir_targets_4)[0]);
-                unsigned long f4_offset_recv((*fringe.external_dir_index_4)[0]);
-                unsigned long f4_size_recv((*fringe.external_dir_index_4)[fringe.external_dir_index_4->size()-1] - f4_offset_recv);
-
-                //unsigned long source_5_recv((*fringe.external_dir_targets_5)[0]);
-                unsigned long f5_offset_recv((*fringe.external_dir_index_5)[0]);
-                unsigned long f5_size_recv((*fringe.external_dir_index_5)[fringe.external_dir_index_5->size()-1] - f5_offset_recv);
-
-                //unsigned long source_6_recv((*fringe.external_dir_targets_6)[0]);
-                unsigned long f6_offset_recv((*fringe.external_dir_index_6)[0]);
-                unsigned long f6_size_recv((*fringe.external_dir_index_6)[fringe.external_dir_index_6->size()-1] - f6_offset_recv);
-
-                //unsigned long source_7_recv((*fringe.external_dir_targets_7)[0]);
-                unsigned long f7_offset_recv((*fringe.external_dir_index_7)[0]);
-                unsigned long f7_size_recv((*fringe.external_dir_index_7)[fringe.external_dir_index_7->size()-1] - f7_offset_recv);
-
-                //unsigned long source_8_recv((*fringe.external_dir_targets_8)[0]);
-                unsigned long f8_offset_recv((*fringe.external_dir_index_8)[0]);
-                unsigned long f8_size_recv((*fringe.external_dir_index_8)[fringe.external_dir_index_8->size()-1] - f8_offset_recv);
-
-                unsigned long up_size_recv(f2_size_recv + f3_size_recv + f4_size_recv + f5_size_recv);
-                DataType_ up_buffer_recv[up_size_recv];
-                unsigned long down_size_recv(f1_size_recv + f6_size_recv + f7_size_recv + f8_size_recv);
                 DataType_ down_buffer_recv[down_size_recv];
-
+                DataType_ up_buffer_recv[up_size_recv];
 
                 if (up_size_recv > 0) requests.push_back(mpi::mpi_irecv(up_buffer_recv, up_size_recv, source_up_recv, source_up_recv, _comm_cart));
                 if (down_size_recv > 0) requests.push_back(mpi::mpi_irecv(down_buffer_recv, down_size_recv, source_down_recv, source_down_recv, _comm_cart));
 
 
-                //unsigned long target_1_send((*fringe.dir_targets_1)[0]);
                 unsigned long f1_offset_send((*fringe.dir_index_1)[0]);
                 unsigned long f1_size_send((*fringe.dir_index_1)[fringe.dir_index_1->size()-1] - f1_offset_send);
 
-                //unsigned long target_2_send((*fringe.dir_targets_2)[0]);
                 unsigned long f2_offset_send((*fringe.dir_index_2)[0]);
                 unsigned long f2_size_send((*fringe.dir_index_2)[fringe.dir_index_2->size()-1] - f2_offset_send);
 
-                //unsigned long target_3_send((*fringe.dir_targets_3)[0]);
                 unsigned long f3_offset_send((*fringe.dir_index_3)[0]);
                 unsigned long f3_size_send((*fringe.dir_index_3)[fringe.dir_index_3->size()-1] - f3_offset_send);
 
-                //unsigned long target_4_send((*fringe.dir_targets_4)[0]);
                 unsigned long f4_offset_send((*fringe.dir_index_4)[0]);
                 unsigned long f4_size_send((*fringe.dir_index_4)[fringe.dir_index_4->size()-1] - f4_offset_send);
 
-                //unsigned long target_5_send((*fringe.dir_targets_5)[0]);
                 unsigned long f5_offset_send((*fringe.dir_index_5)[0]);
                 unsigned long f5_size_send((*fringe.dir_index_5)[fringe.dir_index_5->size()-1] - f5_offset_send);
 
-                //unsigned long target_6_send((*fringe.dir_targets_6)[0]);
                 unsigned long f6_offset_send((*fringe.dir_index_6)[0]);
                 unsigned long f6_size_send((*fringe.dir_index_6)[fringe.dir_index_6->size()-1] - f6_offset_send);
 
-                //unsigned long target_7_send((*fringe.dir_targets_7)[0]);
                 unsigned long f7_offset_send((*fringe.dir_index_7)[0]);
                 unsigned long f7_size_send((*fringe.dir_index_7)[fringe.dir_index_7->size()-1] - f7_offset_send);
 
-                //unsigned long target_8_send((*fringe.dir_targets_8)[0]);
                 unsigned long f8_offset_send((*fringe.dir_index_8)[0]);
                 unsigned long f8_size_send((*fringe.dir_index_8)[fringe.dir_index_8->size()-1] - f8_offset_send);
 
 
-                unsigned long up_size_send(f2_size_send + f3_size_send + f4_size_send + f5_size_send);
+                up_size_send += f2_size_send + f3_size_send + f4_size_send + f5_size_send;
+                down_size_send += f1_size_send + f6_size_send + f7_size_send + f8_size_send;
+
+                unsigned long h_up_size_send(0);
+                unsigned long h_down_size_send(0);
+                unsigned long h_up_offset_send(0);
+                unsigned long h_down_offset_send(0);
+                for (unsigned long i(0) ; i < fringe.external_h_index->size() / 2 ; ++i)
+                {
+                    int h_target((*fringe.external_h_targets)[i]);
+                    unsigned long h_offset((*fringe.external_h_index)[i * 2]);
+                    unsigned long h_size((*fringe.external_h_index)[i * 2 + 1] - h_offset);
+                    if (h_target > _mycartpos)
+                    {
+                        down_size_send += h_size;
+                        h_down_size_send = h_size;
+                        h_down_offset_send = h_offset;
+                    }
+                    else
+                    {
+                        up_size_send += h_size;
+                        h_up_size_send = h_size;
+                        h_up_offset_send = h_offset;
+                    }
+                }
+
                 DataType_ up_buffer_send[up_size_send];
-                unsigned long down_size_send(f1_size_send + f6_size_send + f7_size_send + f8_size_send);
                 DataType_ down_buffer_send[down_size_send];
-                unsigned long temp_size(0);
 
-                TypeTraits<DataType_>::copy(data.f_temp_2->elements() + f2_offset_send - offset, up_buffer_send + temp_size, f2_size_send);
-                temp_size += f2_size_send;
-                TypeTraits<DataType_>::copy(data.f_temp_3->elements() + f3_offset_send - offset, up_buffer_send + temp_size, f3_size_send);
-                temp_size += f3_size_send;
-                TypeTraits<DataType_>::copy(data.f_temp_4->elements() + f4_offset_send - offset, up_buffer_send + temp_size, f4_size_send);
-                temp_size += f4_size_send;
-                TypeTraits<DataType_>::copy(data.f_temp_5->elements() + f5_offset_send - offset, up_buffer_send + temp_size, f5_size_send);
+                if (up_size_send > 0)
+                {
+                    unsigned long temp_size(0);
+                    TypeTraits<DataType_>::copy(data.f_temp_2->elements() + f2_offset_send - offset, up_buffer_send + temp_size, f2_size_send);
+                    temp_size += f2_size_send;
+                    TypeTraits<DataType_>::copy(data.f_temp_3->elements() + f3_offset_send - offset, up_buffer_send + temp_size, f3_size_send);
+                    temp_size += f3_size_send;
+                    TypeTraits<DataType_>::copy(data.f_temp_4->elements() + f4_offset_send - offset, up_buffer_send + temp_size, f4_size_send);
+                    temp_size += f4_size_send;
+                    TypeTraits<DataType_>::copy(data.f_temp_5->elements() + f5_offset_send - offset, up_buffer_send + temp_size, f5_size_send);
+                    temp_size += f5_size_send;
+                    TypeTraits<DataType_>::copy(data.h->elements() + h_up_offset_send - offset, up_buffer_send + temp_size, h_up_size_send);
+                    requests.push_back(mpi::mpi_isend(up_buffer_send, up_size_send, target_up_send, _mycartid, _comm_cart));
+                }
 
-                temp_size = 0;
-                TypeTraits<DataType_>::copy(data.f_temp_1->elements() + f1_offset_send - offset, down_buffer_send + temp_size, f1_size_send);
-                temp_size += f1_size_send;
-                TypeTraits<DataType_>::copy(data.f_temp_6->elements() + f6_offset_send - offset, down_buffer_send + temp_size, f6_size_send);
-                temp_size += f6_size_send;
-                TypeTraits<DataType_>::copy(data.f_temp_7->elements() + f7_offset_send - offset, down_buffer_send + temp_size, f7_size_send);
-                temp_size += f7_size_send;
-                TypeTraits<DataType_>::copy(data.f_temp_8->elements() + f8_offset_send - offset, down_buffer_send + temp_size, f8_size_send);
-
-                if (up_size_send > 0) requests.push_back(mpi::mpi_isend(up_buffer_send, up_size_send, target_up_send, _mycartid, _comm_cart));
-                if (down_size_send > 0) requests.push_back(mpi::mpi_isend(down_buffer_send, down_size_send, target_down_send, _mycartid, _comm_cart));
+                if (down_size_send > 0)
+                {
+                    unsigned long temp_size(0);
+                    TypeTraits<DataType_>::copy(data.f_temp_1->elements() + f1_offset_send - offset, down_buffer_send + temp_size, f1_size_send);
+                    temp_size += f1_size_send;
+                    TypeTraits<DataType_>::copy(data.f_temp_6->elements() + f6_offset_send - offset, down_buffer_send + temp_size, f6_size_send);
+                    temp_size += f6_size_send;
+                    TypeTraits<DataType_>::copy(data.f_temp_7->elements() + f7_offset_send - offset, down_buffer_send + temp_size, f7_size_send);
+                    temp_size += f7_size_send;
+                    TypeTraits<DataType_>::copy(data.f_temp_8->elements() + f8_offset_send - offset, down_buffer_send + temp_size, f8_size_send);
+                    temp_size += f8_size_send;
+                    TypeTraits<DataType_>::copy(data.h->elements() + h_down_offset_send - offset, down_buffer_send + temp_size, h_down_size_send);
+                    requests.push_back(mpi::mpi_isend(down_buffer_send, down_size_send, target_down_send, _mycartid, _comm_cart));
+                }
 
 
                 MPI_Waitall(requests.size(), &requests[0], MPI_STATUSES_IGNORE);
 
-                temp_size = 0;
-                TypeTraits<DataType_>::copy(up_buffer_recv + temp_size, data.f_temp_2->elements() + f2_offset_recv - offset, f2_size_recv);
-                temp_size += f2_size_recv;
-                TypeTraits<DataType_>::copy(up_buffer_recv + temp_size, data.f_temp_3->elements() + f3_offset_recv - offset, f3_size_recv);
-                temp_size += f3_size_recv;
-                TypeTraits<DataType_>::copy(up_buffer_recv + temp_size, data.f_temp_4->elements() + f4_offset_recv - offset, f4_size_recv);
-                temp_size += f4_size_recv;
-                TypeTraits<DataType_>::copy(up_buffer_recv + temp_size, data.f_temp_5->elements() + f5_offset_recv - offset, f5_size_recv);
+                if (up_size_recv > 0)
+                {
+                    unsigned long temp_size(0);
+                    TypeTraits<DataType_>::copy(up_buffer_recv + temp_size, data.f_temp_2->elements() + f2_offset_recv - offset, f2_size_recv);
+                    temp_size += f2_size_recv;
+                    TypeTraits<DataType_>::copy(up_buffer_recv + temp_size, data.f_temp_3->elements() + f3_offset_recv - offset, f3_size_recv);
+                    temp_size += f3_size_recv;
+                    TypeTraits<DataType_>::copy(up_buffer_recv + temp_size, data.f_temp_4->elements() + f4_offset_recv - offset, f4_size_recv);
+                    temp_size += f4_size_recv;
+                    TypeTraits<DataType_>::copy(up_buffer_recv + temp_size, data.f_temp_5->elements() + f5_offset_recv - offset, f5_size_recv);
+                    temp_size += f5_size_recv;
+                    TypeTraits<DataType_>::copy(up_buffer_recv + temp_size, data.h->elements() + h_up_offset_recv - offset, h_up_size_recv);
+                }
 
-                temp_size = 0;
-                TypeTraits<DataType_>::copy(down_buffer_recv + temp_size, data.f_temp_1->elements() + f1_offset_recv - offset, f1_size_recv);
-                temp_size += f1_size_recv;
-                TypeTraits<DataType_>::copy(down_buffer_recv + temp_size, data.f_temp_6->elements() + f6_offset_recv - offset, f6_size_recv);
-                temp_size += f6_size_recv;
-                TypeTraits<DataType_>::copy(down_buffer_recv + temp_size, data.f_temp_7->elements() + f7_offset_recv - offset, f7_size_recv);
-                temp_size += f7_size_recv;
-                TypeTraits<DataType_>::copy(down_buffer_recv + temp_size, data.f_temp_8->elements() + f8_offset_recv - offset, f8_size_recv);
+                if (down_size_recv > 0)
+                {
+                    unsigned long temp_size(0);
+                    TypeTraits<DataType_>::copy(down_buffer_recv + temp_size, data.f_temp_1->elements() + f1_offset_recv - offset, f1_size_recv);
+                    temp_size += f1_size_recv;
+                    TypeTraits<DataType_>::copy(down_buffer_recv + temp_size, data.f_temp_6->elements() + f6_offset_recv - offset, f6_size_recv);
+                    temp_size += f6_size_recv;
+                    TypeTraits<DataType_>::copy(down_buffer_recv + temp_size, data.f_temp_7->elements() + f7_offset_recv - offset, f7_size_recv);
+                    temp_size += f7_size_recv;
+                    TypeTraits<DataType_>::copy(down_buffer_recv + temp_size, data.f_temp_8->elements() + f8_offset_recv - offset, f8_size_recv);
+                    temp_size += f8_size_recv;
+                    TypeTraits<DataType_>::copy(down_buffer_recv + temp_size, data.h->elements() + h_down_offset_recv - offset, h_down_size_recv);
+                }
 
                 data.h->unlock(lm_read_and_write);
                 data.f_temp_1->unlock(lm_read_and_write);

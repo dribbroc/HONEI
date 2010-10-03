@@ -49,16 +49,16 @@ class GridPartitionerTest :
              ++++*+++++++
              +++X++++++++
              */
-            //obst(0,5) = true;
+            obst(0,5) = true;
             obst(0, 11) = true;
             obst(1, 11) = true;
             obst(2, 4) = true;
 
-            /*obst(0,4) = true;
+            obst(0,4) = true;
             obst(1,5) = true;
             obst(1,6) = true;
             obst(0,6) = true;
-            for (MutableMatrix<bool>::ElementIterator i(obst.begin_elements()) ; i.index() < 62 ; ++i)
+            /*for (MutableMatrix<bool>::ElementIterator i(obst.begin_elements()) ; i.index() < 62 ; ++i)
             {
                 *i = true;
             }*/
