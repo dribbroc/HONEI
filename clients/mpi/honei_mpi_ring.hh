@@ -34,6 +34,7 @@
 #include <honei/lbm/grid_partitioner.hh>
 #include <honei/util/time_stamp.hh>
 #include <honei/lbm/scenario_collection.hh>
+#include <honei/math/vector_io.hh>
 
 #include <iostream>
 #include <vector>
@@ -51,6 +52,8 @@ namespace honei
             int _masterid;
             int _mycartpos;
             MPI_Comm _comm_cart;
+            std::string _base_file_name;
+            bool _file_output;
 
         public:
             MPIRingSolver(int argc, char **argv)
@@ -58,15 +61,21 @@ namespace honei
                 mpi::mpi_init(&argc, &argv);
                 mpi::mpi_comm_size(&_numprocs);
                 mpi::mpi_comm_rank(&_myid);
-                if (argc != 4)
+                if (argc < 4 || argc > 5)
                 {
-                    if(_myid == 0) std::cout<<"Usage: honei-mpi-ring grid_x grid_y timesteps"<<std::endl;
+                    if(_myid == 0) std::cout<<"Usage: honei-mpi-ring grid_x grid_y timesteps [base_file_name]"<<std::endl;
                     mpi::mpi_finalize();
                     exit(1);
                 }
                 unsigned long gridsize_x(atoi(argv[1]));
                 unsigned long gridsize_y(atoi(argv[2]));
                 unsigned long timesteps(atoi(argv[3]));
+                _file_output = false;
+                if (argc == 5)
+                {
+                    _base_file_name = argv[4];
+                    _file_output = true;
+                }
 
                 // create new communicator
                 int dims[1];
@@ -104,7 +113,11 @@ namespace honei
         private:
             void _master(unsigned long gridsize_x, unsigned long gridsize_y, unsigned long timesteps)
             {
-                std::cout<<"Ring LBM Solver with " << _numprocs << " nodes:" << std::endl << std::endl;
+                std::cout<<"Ring LBM Solver with " << _numprocs << " nodes:" << std::endl;
+                if (_file_output)
+                    std::cout<<"with file output activated"<<std::endl<<std::endl;
+                else
+                    std::cout<<std::endl;
                 Grid<D2Q9, DataType_> grid_global;
                 ScenarioCollection::get_scenario(0, gridsize_x, gridsize_y, grid_global);
                 std::cout << "Solving: " << grid_global.long_description << std::endl;
@@ -187,14 +200,44 @@ namespace honei
 
                     _circle_sync(info_lokal, data_lokal, fringe_list.at(0));
 
+                    if (_file_output)
+                    {
+                        std::string fn("h_"+_base_file_name+"_"+stringify(i)+"_"+stringify(_mycartpos)+".dat");
+                        DenseVectorRange<DataType_> range(data_lokal.h->range((*info_lokal.limits)[info_lokal.limits->size() - 1] - (*info_lokal.limits)[0], (*info_lokal.limits)[0]));
+                        VectorIO<io_formats::DV>::write_vector(fn, range);
+                    }
+
                     //MPI_Wait(&request, MPI_STATUS_IGNORE);
                     //MPI_File_close(&fh);
                 }
-                //MPI_Barrier(MPI_COMM_WORLD);
                 bt.take();
+                MPI_Barrier(MPI_COMM_WORLD);
                 solver.do_postprocessing();
                 std::cout<<"Timesteps: " << timesteps << " TOE: "<<bt.total() - at.total()<<std::endl;
                 std::cout<<"MLUPS: "<< (double(grid_global.h->rows()) * double(grid_global.h->columns()) * double(timesteps)) / (1e6 * (bt.total() - at.total())) <<std::endl;
+
+
+                if (_file_output)
+                {
+                    for (unsigned long i(0) ; i < timesteps ; ++i)
+                    {
+                        DenseVector<DataType_> global_h(data_global.h->size());
+                        unsigned long global_i(0);
+                        for (unsigned long j(0) ; j < _numprocs ; ++j)
+                        {
+                            std::string fn("h_"+_base_file_name+"_"+stringify(i)+"_"+stringify(j)+".dat");
+                            DenseVector<DataType_> temp(VectorIO<io_formats::DV>::read_vector(fn, DataType_(0)));
+                            for (unsigned long x(0) ; x < temp.size() ; ++x)
+                            {
+                                global_h[global_i] = temp[x];
+                                ++global_i;
+                            }
+                            remove(fn.c_str());
+                        }
+                        std::string out_filename("h_"+stringify(i)+".dat");
+                        VectorIO<io_formats::DV>::write_vector(out_filename, global_h);
+                    }
+                }
 
                 /*std::cout<<*data_global.h;
                 MPI_File fh;
@@ -283,11 +326,18 @@ namespace honei
 
                     _circle_sync(info, data, fringe);
 
+                    if (_file_output)
+                    {
+                        std::string fn("h_"+_base_file_name+"_"+stringify(i)+"_"+stringify(_mycartpos)+".dat");
+                        DenseVectorRange<DataType_> range(data.h->range((*info.limits)[info.limits->size() - 1] - (*info.limits)[0], (*info.limits)[0]));
+                        VectorIO<io_formats::DV>::write_vector(fn, range);
+                    }
+
                     //MPI_Wait(&request, MPI_STATUS_IGNORE);
                     //MPI_File_close(&fh);
                 }
-                //MPI_Barrier(MPI_COMM_WORLD);
                 solver.do_postprocessing();
+                MPI_Barrier(MPI_COMM_WORLD);
                 //_send_full_sync(_masterid, data);
             }
 

@@ -5,6 +5,7 @@
 #PBS -N honei-mpi
 #PBS -j oe
 #echo stern 5
-#PBS -l walltime=00:10:00,vmem=15360mb,nodes=4:ppn=4
+#PBS -l walltime=00:20:00,vmem=15360mb,nodes=2:ppn=4
 cd $HOME/honei/trunk/clients/mpi
-mpirun -np 16 ./honei-mpi-ring 500 500 100
+mpirun -np 8 ./honei-mpi-ring 1000 1000 100
+#mpirun -np 8 ./honei-mpi-ring 1000 1000 10 $PBS_JOBID
