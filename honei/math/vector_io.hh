@@ -125,13 +125,26 @@ template<>
 class VectorIO<io_formats::DV>
 {
     public:
-    static void write_vector(std::string output, DenseVector<double> dv)
+    static void write_vector(std::string output, DenseVectorContinuousBase<double> & dv)
     {
             FILE* file;
             file = fopen(output.c_str(), "wb");
             uint64_t size(dv.size());
             fwrite(&size, sizeof(uint64_t), 1, file);
             fwrite(dv.elements(), sizeof(double), size, file);
+            fclose(file);
+    }
+
+    template <typename DT_>
+    static void write_vector(std::string output, DenseVectorContinuousBase<DT_> & dv)
+    {
+            FILE* file;
+            file = fopen(output.c_str(), "wb");
+            uint64_t size(dv.size());
+            DenseVector<double> src(dv.size());
+            convert(src, dv);
+            fwrite(&size, sizeof(uint64_t), 1, file);
+            fwrite(src.elements(), sizeof(double), size, file);
             fclose(file);
     }
 
