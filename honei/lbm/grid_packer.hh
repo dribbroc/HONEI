@@ -587,7 +587,7 @@ namespace honei
             }
 
             ///Generalized unpacking and extraction
-            static void deflate(Grid<D2Q9, DT_> & grid, HONEI_UNUSED PackedGridData<D2Q9, DT_> & data, DenseVector<DT_> * from, DenseMatrix<DT_> * to)
+            static void deflate(Grid<D2Q9, DT_> & grid, DenseVector<DT_> * from, DenseMatrix<DT_> * to)
             {
                 grid.obstacles->lock(lm_read_only);
                 to->lock(lm_write_only);
@@ -802,7 +802,7 @@ namespace honei
                 to->unlock(lm_write_only);
                 from->unlock(lm_read_only);
             }
-            static void deflate(Grid<D2Q9, DT_> & grid, PackedSolidData<D2Q9, DT_> & data, DenseVector<DT_> * from, DenseMatrix<DT_> * to)
+            static void deflate(Grid<D2Q9, DT_> & grid, HONEI_UNUSED PackedSolidData<D2Q9, DT_> & data, DenseVector<DT_> * from, DenseMatrix<DT_> * to)
             {
                 grid.obstacles->lock(lm_read_only);
                 to->lock(lm_write_only);

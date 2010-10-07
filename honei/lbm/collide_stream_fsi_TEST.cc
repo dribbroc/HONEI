@@ -329,8 +329,8 @@ class CollideStreamFSITest :
             solids.f_mea_7->lock(lm_read_only);
             solids.f_mea_8->lock(lm_read_only);
 
-            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.f_temp_1 , &ref);
-            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2, data_2.f_temp_1, &res);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data.f_temp_1 , &ref);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2.f_temp_1, &res);
             std::cout << ref << std::endl;
             std::cout << res << std::endl;
             for(unsigned long i(0) ; i < ref.rows() ; ++i)
@@ -340,8 +340,8 @@ class CollideStreamFSITest :
                     TEST_CHECK_EQUAL_WITHIN_EPS(res[i][j], ref[i][j], std::numeric_limits<DataType_>::epsilon() * 10);
                 }
             }
-            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.f_temp_2 , &ref);
-            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2, data_2.f_temp_2, &res);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data.f_temp_2 , &ref);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2.f_temp_2, &res);
 
             for(unsigned long i(0) ; i < ref.rows() ; ++i)
             {
@@ -351,8 +351,8 @@ class CollideStreamFSITest :
                 }
             }
 
-            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.f_temp_3 , &ref);
-            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2, data_2.f_temp_3, &res);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data.f_temp_3 , &ref);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2.f_temp_3, &res);
 
             for(unsigned long i(0) ; i < ref.rows() ; ++i)
             {
@@ -362,8 +362,8 @@ class CollideStreamFSITest :
                 }
             }
 
-            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.f_temp_4 , &ref);
-            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2, data_2.f_temp_4, &res);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data.f_temp_4 , &ref);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2.f_temp_4, &res);
 
             for(unsigned long i(0) ; i < ref.rows() ; ++i)
             {
@@ -373,8 +373,8 @@ class CollideStreamFSITest :
                 }
             }
 
-            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.f_temp_5 , &ref);
-            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2, data_2.f_temp_5, &res);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data.f_temp_5 , &ref);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2.f_temp_5, &res);
 
             for(unsigned long i(0) ; i < ref.rows() ; ++i)
             {
@@ -384,8 +384,8 @@ class CollideStreamFSITest :
                 }
             }
 
-            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.f_temp_6 , &ref);
-            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2, data_2.f_temp_6, &res);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data.f_temp_6 , &ref);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2.f_temp_6, &res);
 
             for(unsigned long i(0) ; i < ref.rows() ; ++i)
             {
@@ -395,8 +395,8 @@ class CollideStreamFSITest :
                 }
             }
 
-            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.f_temp_7 , &ref);
-            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2, data_2.f_temp_7, &res);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data.f_temp_7 , &ref);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2.f_temp_7, &res);
 
             for(unsigned long i(0) ; i < ref.rows() ; ++i)
             {
@@ -406,8 +406,8 @@ class CollideStreamFSITest :
                 }
             }
 
-            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.f_temp_8 , &ref);
-            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2, data_2.f_temp_8, &res);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data.f_temp_8 , &ref);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid_2, data_2.f_temp_8, &res);
 
             for(unsigned long i(0) ; i < ref.rows() ; ++i)
             {

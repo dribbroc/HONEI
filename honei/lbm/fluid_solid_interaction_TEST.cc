@@ -88,9 +88,9 @@ class FSISolverLBMGridTest :
             for(unsigned long i(0); i < timesteps; ++i)
             {
 
-                GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.h, grid.h);
-                GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.u, grid.u);
-                GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.v, grid.v);
+                GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data.h, grid.h);
+                GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data.u, grid.u);
+                GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data.v, grid.v);
 
                 for(unsigned long j(0); j < stf.rows() ; ++j)
                 {

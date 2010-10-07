@@ -113,9 +113,9 @@ class BoundaryInitFSITest :
             DenseMatrix<DataType_> res_u(h.rows(), h.columns());
             DenseMatrix<DataType_> res_v(h.rows(), h.columns());
 
-            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.h, &res_h);
-            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.u, &res_u);
-            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data, data.v, &res_v);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data.h, &res_h);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data.u, &res_u);
+            GridPacker<D2Q9, NOSLIP, DataType_>::deflate(grid, data.v, &res_v);
 
             std::cout << res_h << std::endl;
             std::cout << res_u << std::endl;
