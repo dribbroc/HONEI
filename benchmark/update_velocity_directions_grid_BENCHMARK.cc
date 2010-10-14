@@ -93,8 +93,9 @@ class UpdateVelocityDirectionsGridBench :
                         (UpdateVelocityDirectionsGrid<Tag_, NOSLIP>::
                          value(info, data));
                         }
-                        if (Tag_::tag_value == tags::tv_gpu_cuda)
-                            cuda_thread_synchronize();
+#ifdef HONEI_CUDA
+                        cuda::GPUPool::instance()->flush();
+#endif
                         );
             }
             evaluate();

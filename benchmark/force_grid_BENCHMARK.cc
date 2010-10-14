@@ -1,7 +1,7 @@
 /* vim: set number sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2009 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2010 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -19,11 +19,11 @@
 
 #ifndef ALLBENCH
 #include <benchmark/benchmark.cc>
-
+#include <tr1/memory>
 #include <string>
 #endif
 
-#include <honei/lbm/equilibrium_distribution_grid.hh>
+#include <honei/lbm/force_grid.hh>
 #include <honei/lbm/grid_packer.hh>
 #include <honei/lbm/solver_lbm_grid.hh>
 #include <honei/swe/volume.hh>
@@ -35,15 +35,15 @@ using namespace honei;
 using namespace lbm;
 using namespace lbm_lattice_types;
 
-template <typename Tag_, typename DataType_>
-class EquilibriumDistributionGridBench :
+template <typename Tag_, typename DataType_, typename ForceType_, typename SourceType_>
+class ForceGridBench :
     public Benchmark
 {
     private:
         unsigned long _size;
         int _count;
     public:
-        EquilibriumDistributionGridBench(const std::string & id, unsigned long size, int count) :
+        ForceGridBench(const std::string & id, unsigned long size, int count) :
             Benchmark(id)
         {
             register_tag(Tag_::name);
@@ -81,32 +81,40 @@ class EquilibriumDistributionGridBench :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, 1., 1., 1., 1.5);
+            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, 1., 1., 1., 1.5);
 
             solver.do_preprocessing();
 
-            DataType_ g(9.81);
-            DataType_ e(1.);
+            DataType_ dt(1.);
 
             for(int i = 0; i < _count; ++i)
             {
                 BENCHMARK(
-                        for (unsigned long j(0) ; j < 5 ; ++j)
+                        for (unsigned long j(0) ; j < 1 ; ++j)
                         {
-                        (EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::value(g, e, info, data));
+                        (ForceGrid<Tag_, lbm_applications::LABSWE, ForceType_, SourceType_>::
+                        value(info, data, dt, dt, dt, dt, dt));
                         }
 #ifdef HONEI_CUDA
                         cuda::GPUPool::instance()->flush();
 #endif
                         );
             }
-            BenchmarkInfo benchinfo(EquilibriumDistributionGrid<tags::CPU, lbm_applications::LABSWE>::get_benchmark_info(&info, &data));
-            evaluate(benchinfo * 5);
+            BenchmarkInfo benchinfo(ForceGrid<tags::CPU, lbm_applications::LABSWE, ForceType_, SourceType_>::get_benchmark_info(&info, &data));
+            evaluate(benchinfo * 1);
             data.destroy();
             info.destroy();
         }
 };
 
+#ifdef HONEI_SSE
+ForceGridBench<tags::CPU::SSE, float, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION> sse_force_grid_bench_float_friction("SSE ForceGridBenchmark Friction - size: 1000, float", 1000, 10);
+ForceGridBench<tags::CPU::SSE, double, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION> sse_force_grid_bench_double_friction("SSE ForceGridBenchmark Friction - size: 1000, double", 1000, 10);
+ForceGridBench<tags::CPU::SSE, float, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE> sse_force_grid_bench_float_slope("SSE ForceGridBenchmark Slope - size: 1000, float", 1000, 10);
+ForceGridBench<tags::CPU::SSE, double, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE> sse_force_grid_bench_double_slope("SSE ForceGridBenchmark Slope - size: 1000, double", 1000, 10);
+#endif
+
 #ifdef HONEI_CUDA
-EquilibriumDistributionGridBench<tags::GPU::CUDA, float> cuda_eq_dist_grid_bench_float("CUDA EquilibriumDistributionGridBenchmark - size: 2000, float", 2000, 100);
+ForceGridBench<tags::GPU::CUDA, float, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION> cuda_force_grid_bench_float_friction("CUDA ForceGridBenchmark Friction - size: 1000, float", 1000, 10);
+ForceGridBench<tags::GPU::CUDA, float, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE> cuda_force_grid_bench_float_slope("CUDA ForceGridBenchmark Slope - size: 1000, float", 1000, 10);
 #endif
