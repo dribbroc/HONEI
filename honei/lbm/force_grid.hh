@@ -942,14 +942,8 @@ namespace honei
     template <>
         struct ForceGrid<tags::CPU::SSE, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>
         {
-            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float g, float d_x, float d_y, float d_t, float manning)
-            {
-                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(info, data, g, d_x, d_y, d_t, manning);
-            }
-            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data, double g, double d_x, double d_y, double d_t, double manning)
-            {
-                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(info, data, g, d_x, d_y, d_t, manning);
-            }
+            template <typename DT_>
+            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data, DT_ g, DT_ d_x, DT_ d_y, DT_ d_t, DT_ manning);
         };
 
     template <>
