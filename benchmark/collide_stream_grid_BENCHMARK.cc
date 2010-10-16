@@ -90,23 +90,29 @@ class CollideStreamGridBench :
             for(int i = 0; i < _count; ++i)
             {
                 BENCHMARK(
-                        for (unsigned long j(0) ; j < 5 ; ++j)
+                        for (unsigned long j(0) ; j < 10 ; ++j)
                         {
                         (CollideStreamGrid<Tag_, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::
                         value(info, data, dt));
                         }
 #ifdef HONEI_CUDA
-                        cuda::GPUPool::instance()->flush();
+                        if (Tag_::tag_value == tags::tv_gpu_cuda)
+                            cuda::GPUPool::instance()->flush();
 #endif
                         );
             }
             BenchmarkInfo benchinfo(CollideStreamGrid<tags::CPU, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::get_benchmark_info(&info, &data));
-            evaluate(benchinfo * 5);
+            evaluate(benchinfo * 10);
             data.destroy();
             info.destroy();
         }
 };
 
+#ifdef HONEI_SSE
+CollideStreamGridBench<tags::CPU::SSE, float> sse_collide_stream_grid_bench_float("SSE CollideStreamGridBenchmark - size: 2000, float", 2000, 10);
+CollideStreamGridBench<tags::CPU::SSE, double> sse_collide_stream_grid_bench_double("SSE CollideStreamGridBenchmark - size: 2000, double", 2000, 10);
+#endif
+
 #ifdef HONEI_CUDA
-CollideStreamGridBench<tags::GPU::CUDA, float> cuda_collide_stream_grid_bench_float("CUDA CollideStreamGridBenchmark - size: 2000, float", 2000, 100);
+CollideStreamGridBench<tags::GPU::CUDA, float> cuda_collide_stream_grid_bench_float("CUDA CollideStreamGridBenchmark - size: 2000, float", 2000, 10);
 #endif

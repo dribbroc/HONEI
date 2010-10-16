@@ -88,22 +88,35 @@ class ExtractionGridBench :
             for(int i = 0; i < _count; ++i)
             {
                 BENCHMARK(
-                        for (unsigned long j(0) ; j < 1 ; ++j)
+                        for (unsigned long j(0) ; j < 10 ; ++j)
                         {
                         (ExtractionGrid<Tag_, LbmMode_>::value(info, data, DataType_(10e-5)));
                         }
 #ifdef HONEI_CUDA
-                        cuda::GPUPool::instance()->flush();
+                        if (Tag_::tag_value == tags::tv_gpu_cuda)
+                            cuda::GPUPool::instance()->flush();
 #endif
                         );
             }
             BenchmarkInfo benchinfo(ExtractionGrid<tags::CPU, LbmMode_>::get_benchmark_info(&info, &data));
-            evaluate(benchinfo * 5);
+            evaluate(benchinfo * 10);
             data.destroy();
             info.destroy();
         }
 };
 
+#ifdef HONEI_SSE
+ExtractionGridBench<tags::CPU::SSE, float, lbm_modes::WET> sse_wet_extraction_grid_bench_float("SSE WET ExtractionGridBench - size: 2000, float", 2000, 10);
+ExtractionGridBench<tags::CPU::SSE, double, lbm_modes::WET> sse_wet_extraction_grid_bench_double("SSE WET ExtractionGridBench - size: 2000, double", 2000, 10);
+#endif
 #ifdef HONEI_CUDA
-ExtractionGridBench<tags::GPU::CUDA, float, lbm_modes::WET> wet_cuda_extraction_grid_bench_float("WET CUDA ExtractionGridBench - size: 2000, float", 1300, 100);
+ExtractionGridBench<tags::GPU::CUDA, float, lbm_modes::WET> cuda_wet_extraction_grid_bench_float("CUDA WET ExtractionGridBench - size: 2000, float", 2000, 10);
+#endif
+
+#ifdef HONEI_SSE
+ExtractionGridBench<tags::CPU::SSE, float, lbm_modes::DRY> sse_dry_extraction_grid_bench_float("SSE DRY ExtractionGridBench - size: 2000, float", 2000, 10);
+ExtractionGridBench<tags::CPU::SSE, double, lbm_modes::DRY> sse_dry_extraction_grid_bench_double("SSE DRY ExtractionGridBench - size: 2000, double", 2000, 10);
+#endif
+#ifdef HONEI_CUDA
+ExtractionGridBench<tags::GPU::CUDA, float, lbm_modes::DRY> cuda_dry_extraction_grid_bench_float("CUDA DRY ExtractionGridBench - size: 2000, float", 2000, 10);
 #endif

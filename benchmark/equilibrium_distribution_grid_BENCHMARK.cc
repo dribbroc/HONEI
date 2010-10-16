@@ -91,22 +91,28 @@ class EquilibriumDistributionGridBench :
             for(int i = 0; i < _count; ++i)
             {
                 BENCHMARK(
-                        for (unsigned long j(0) ; j < 5 ; ++j)
+                        for (unsigned long j(0) ; j < 10 ; ++j)
                         {
                         (EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::value(g, e, info, data));
                         }
 #ifdef HONEI_CUDA
-                        cuda::GPUPool::instance()->flush();
+                        if (Tag_::tag_value == tags::tv_gpu_cuda)
+                            cuda::GPUPool::instance()->flush();
 #endif
                         );
             }
             BenchmarkInfo benchinfo(EquilibriumDistributionGrid<tags::CPU, lbm_applications::LABSWE>::get_benchmark_info(&info, &data));
-            evaluate(benchinfo * 5);
+            evaluate(benchinfo * 10);
             data.destroy();
             info.destroy();
         }
 };
 
+#ifdef HONEI_SSE
+EquilibriumDistributionGridBench<tags::CPU::SSE, float> sse_eq_dist_grid_bench_float("SSE EquilibriumDistributionGridBenchmark - size: 2000, float", 2000, 10);
+EquilibriumDistributionGridBench<tags::CPU::SSE, double> sse_eq_dist_grid_bench_double("SSE EquilibriumDistributionGridBenchmark - size: 2000, double", 2000, 10);
+#endif
+
 #ifdef HONEI_CUDA
-EquilibriumDistributionGridBench<tags::GPU::CUDA, float> cuda_eq_dist_grid_bench_float("CUDA EquilibriumDistributionGridBenchmark - size: 2000, float", 2000, 100);
+EquilibriumDistributionGridBench<tags::GPU::CUDA, float> cuda_eq_dist_grid_bench_float("CUDA EquilibriumDistributionGridBenchmark - size: 2000, float", 2000, 10);
 #endif
