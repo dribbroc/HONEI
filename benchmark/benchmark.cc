@@ -20,6 +20,9 @@
  */
 
 #include <benchmark/benchmark.hh>
+#include <honei/backends/cuda/gpu_pool.hh>
+#include <honei/backends/multicore/thread_pool.hh>
+#include <honei/util/memory_arbiter.hh>
 
 #include <cstdlib>
 #include <utility>
@@ -81,6 +84,12 @@ Benchmark::Benchmark(const std::string & id) :
     _plots(false)
 {
     BenchmarkList::instance()->register_bench(this);
+    //preload most common used intances
+    honei::MemoryArbiter::instance();
+    honei::mc::ThreadPool::instance();
+#ifdef HONEI_CUDA
+    honei::cuda::GPUPool::instance()->flush();
+#endif
 }
 
 void Benchmark::calculate()
