@@ -21,11 +21,13 @@ libhoneibackendssse_la_SOURCES = operations.hh \
 				 element_product.cc \
 				 eq_dist_grid.cc \
 				 extraction_grid.cc \
+				 force_grid.cc \
 				 norm.cc \
 				 product.cc \
 				 reduction.cc \
 				 scaled_sum.cc \
 				 scale.cc \
+				 sse_mathfun.hh \
 				 sum.cc \
 				 up_vel_dir_grid.cc
 

@@ -253,22 +253,27 @@ template void ForceGrid<tags::CPU::SSE, lbm_applications::LABSWE, lbm_force::CEN
 
 
 
-template <typename DT_>
-void force_friction(const unsigned long * dir_index, unsigned long dir_index_size, DT_ * f_temp, const DT_ * h,
-        const DT_ * u, const DT_ * v, DT_ force_multiplier, DT_ dist, DT_ manning_const_sq)
+void force_friction(const unsigned long * dir_index, unsigned long dir_index_size, double * f_temp, const double * h,
+        const double * u, const double * v, double force_multiplier, double dist, double manning_const_sq)
 {
-    DT_ divisor(1./3.);
-    DT_ factor(force_multiplier * dist * manning_const_sq);
+    double divisor(1./3.);
+    double factor(force_multiplier * dist * manning_const_sq);
     for (unsigned long begin(0) ; begin + 1 < dir_index_size ; begin+=2)
     {
         for (unsigned long i(dir_index[begin]) ; i < dir_index[begin + 1] ; ++i)
         {
-            if ( (pow(h[i], divisor)) > std::numeric_limits<DT_>::epsilon() || (pow(h[i], divisor)) < DT_(-std::numeric_limits<DT_>::epsilon()) )
+            if ( (pow(h[i], divisor)) > std::numeric_limits<double>::epsilon() || (pow(h[i], divisor)) < double(-std::numeric_limits<double>::epsilon()) )
             {
                 f_temp[i] -= factor * u[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / (pow(h[i], divisor));
             }
         }
     }
+}
+
+inline void force_friction(const unsigned long * dir_index, unsigned long dir_index_size, float * f_temp, const float * h,
+        const float * u, const float * v, float force_multiplier, float dist, float manning_const_sq)
+{
+    sse::force_friction(dir_index, dir_index_size, f_temp, h, u, v, force_multiplier, dist, manning_const_sq);
 }
 
 template <typename DT_>

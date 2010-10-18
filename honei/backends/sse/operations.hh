@@ -180,6 +180,9 @@ namespace honei
                 double * f_temp_1, double * f_temp_2,  double * f_temp_3,
                 double * f_temp_4, double * f_temp_5,  double * f_temp_6,
                 double * f_temp_7, double * f_temp_8);
+
+        void force_friction(const unsigned long * dir_index, unsigned long dir_index_size, float * f_temp, const float * h,
+                const float * u, const float * v, float force_multiplier, float dist, float manning_const_sq);
     }
 }
 
