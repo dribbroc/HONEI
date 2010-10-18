@@ -155,7 +155,7 @@ class SolverLBMGridRegressionTest :
 
                 Difference<tags::CPU>::value(result_grid, result_standard);
                 double l2 = Norm<vnt_l_two, false, tags::CPU>::value(result_grid);
-                TEST_CHECK_EQUAL_WITHIN_EPS(l2, DataType_(0.), std::numeric_limits<DataType_>::epsilon() * 2);
+                TEST_CHECK_EQUAL_WITHIN_EPS(l2, DataType_(0.), std::numeric_limits<DataType_>::epsilon() /** 2*/);
 
                 std::cout << "L2 norm " << l2 << std::endl;
             }
