@@ -108,10 +108,10 @@ class ForceGridBench :
         }
 };
 
-ForceGridBench<tags::CPU, float, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION> force_grid_bench_float_friction("CPU ForceGridBenchmark Friction - size: 2000, float", 2000, 10);
-ForceGridBench<tags::CPU, double, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION> force_grid_bench_double_friction("CPU ForceGridBenchmark Friction - size: 2000, double", 2000, 10);
-ForceGridBench<tags::CPU, float, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE> force_grid_bench_float_slope("CPU ForceGridBenchmark Slope - size: 2000, float", 2000, 10);
-ForceGridBench<tags::CPU, double, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE> force_grid_bench_double_slope("CPU ForceGridBenchmark Slope - size: 2000, double", 2000, 10);
+ForceGridBench<tags::CPU, float, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION> force_grid_bench_float_friction("CPU ForceGridBenchmark Friction - size: 2000, float", 2000, 1);
+ForceGridBench<tags::CPU, double, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION> force_grid_bench_double_friction("CPU ForceGridBenchmark Friction - size: 2000, double", 2000, 1);
+ForceGridBench<tags::CPU, float, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE> force_grid_bench_float_slope("CPU ForceGridBenchmark Slope - size: 2000, float", 2000, 1);
+ForceGridBench<tags::CPU, double, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE> force_grid_bench_double_slope("CPU ForceGridBenchmark Slope - size: 2000, double", 2000, 1);
 
 #ifdef HONEI_SSE
 ForceGridBench<tags::CPU::SSE, float, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION> sse_force_grid_bench_float_friction("SSE ForceGridBenchmark Friction - size: 2000, float", 2000, 10);
