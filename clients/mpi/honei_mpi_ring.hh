@@ -131,10 +131,11 @@ namespace honei
                 std::vector<PackedGridInfo<D2Q9> > info_list;
                 std::vector<PackedGridData<D2Q9, DataType_> > data_list;
                 std::vector<PackedGridFringe<D2Q9> > fringe_list;
-                GridPartitioner<D2Q9, DataType_>::decompose(_numprocs, info_global, data_global, info_list, data_list, fringe_list);
+                GridPartitioner<D2Q9, DataType_>::decompose(_numprocs, info_global, data_global, info_list, data_list, fringe_list, false);
 
                 PackedGridData<D2Q9, DataType_> data_lokal(data_list.at(0));
                 PackedGridInfo<D2Q9> info_lokal(info_list.at(0));
+                _alloc_lokal_data(data_lokal);
 
                 unsigned long mpi_file_size(data_global.h->size() * sizeof(DataType_));
                 mpi::mpi_bcast(&timesteps, 1, _masterid, _comm_cart);
@@ -163,7 +164,7 @@ namespace honei
 
                 solver.do_preprocessing();
 
-                for (int target(1) ; target < _numprocs ; ++target)
+                /*for (int target(1) ; target < _numprocs ; ++target)
                 {
                     int rank;
                     MPI_Cart_rank(_comm_cart, &target, &rank);
@@ -177,7 +178,9 @@ namespace honei
                     int rank;
                     MPI_Cart_rank(_comm_cart, &target, &rank);
                     _send_slave_sync(rank, info_list.at(target), data_list.at(target), fringe_list.at(target));
-                }
+                }*/
+
+                _circle_sync(info_lokal, data_lokal, fringe_list.at(0));
 
                 //GridPartitioner<D2Q9, DataType_>::compose(info_global, data_global, info_list, data_list);
                 //GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid_global, info_global, data_global);
@@ -309,8 +312,9 @@ namespace honei
 
                 solver.do_preprocessing();
 
-                _send_master_sync(_masterid, info, data, fringe);
-                _recv_master_sync(_masterid, info, data, fringe);
+                //_send_master_sync(_masterid, info, data, fringe);
+                //_recv_master_sync(_masterid, info, data, fringe);
+                _circle_sync(info, data, fringe);
 
                 for(unsigned long i(0); i < timesteps; ++i)
                 {
@@ -339,6 +343,44 @@ namespace honei
                 solver.do_postprocessing();
                 MPI_Barrier(MPI_COMM_WORLD);
                 //_send_full_sync(_masterid, data);
+            }
+
+            void _alloc_lokal_data(PackedGridData<D2Q9, DataType_> & data_lokal)
+            {
+                data_lokal.temp = new DenseVector<DataType_>(data_lokal.h->size());
+
+                data_lokal.f_0 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_1 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_2 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_3 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_4 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_5 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_6 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_7 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_8 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+
+                data_lokal.f_eq_0 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_eq_1 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_eq_2 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_eq_3 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_eq_4 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_eq_5 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_eq_6 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_eq_7 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_eq_8 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+
+                data_lokal.f_temp_0 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_temp_1 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_temp_2 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_temp_3 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_temp_4 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_temp_5 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_temp_6 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_temp_7 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+                data_lokal.f_temp_8 = new DenseVector<DataType_>(data_lokal.h->size(), DataType_(0));
+
+                data_lokal.distribution_x = new DenseVector<DataType_>(9ul, DataType_(0));
+                data_lokal.distribution_y = new DenseVector<DataType_>(9ul, DataType_(0));
             }
 
             void _send_info(int target, PackedGridInfo<D2Q9> & info, std::list<unsigned long> & ul_buffer, std::vector<MPI_Request> & requests)
@@ -482,7 +524,8 @@ namespace honei
             {
                 ul_buffer.push_back(data.h->size());
                 requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
-                ul_buffer.push_back(data.distribution_x->size());
+                //ul_buffer.push_back(data.distribution_x->size());
+                ul_buffer.push_back(9);
                 requests.push_back(mpi::mpi_isend(&(ul_buffer.back()), 1, target, _mycartid, _comm_cart));
 
                 requests.push_back(mpi::mpi_isend(data.h->elements(), data.h->size(), target, _mycartid, _comm_cart));

@@ -793,7 +793,7 @@ namespace honei
 
             static void decompose(unsigned long parts, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
                     std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list,
-                    std::vector<PackedGridFringe<D2Q9> > & fringe_list)
+                    std::vector<PackedGridFringe<D2Q9> > & fringe_list, bool alloc_all = true)
             {
                 CONTEXT("When creating grid partitions:");
                 std::vector<unsigned long> temp_limits;
@@ -1197,40 +1197,44 @@ namespace honei
                     new_data.u = new DenseVector<DT_>(data_size + 1);
                     new_data.v = new DenseVector<DT_>(data_size + 1);
                     new_data.b = new DenseVector<DT_>(data_size + 1);
-                    new_data.temp = new DenseVector<DT_>(data_size + 1);
 
-                    new_data.f_0 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_1 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_2 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_3 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_4 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_5 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_6 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_7 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_8 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                    if (alloc_all)
+                    {
+                        new_data.temp = new DenseVector<DT_>(data_size + 1);
 
-                    new_data.f_eq_0 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_eq_1 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_eq_2 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_eq_3 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_eq_4 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_eq_5 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_eq_6 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_eq_7 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_eq_8 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_0 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_1 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_2 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_3 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_4 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_5 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_6 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_7 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_8 = new DenseVector<DT_>(data_size + 1, DT_(0));
 
-                    new_data.f_temp_0 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_temp_1 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_temp_2 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_temp_3 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_temp_4 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_temp_5 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_temp_6 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_temp_7 = new DenseVector<DT_>(data_size + 1, DT_(0));
-                    new_data.f_temp_8 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_eq_0 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_eq_1 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_eq_2 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_eq_3 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_eq_4 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_eq_5 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_eq_6 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_eq_7 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_eq_8 = new DenseVector<DT_>(data_size + 1, DT_(0));
 
-                    new_data.distribution_x = new DenseVector<DT_>(9ul, DT_(0));
-                    new_data.distribution_y = new DenseVector<DT_>(9ul, DT_(0));
+                        new_data.f_temp_0 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_temp_1 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_temp_2 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_temp_3 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_temp_4 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_temp_5 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_temp_6 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_temp_7 = new DenseVector<DT_>(data_size + 1, DT_(0));
+                        new_data.f_temp_8 = new DenseVector<DT_>(data_size + 1, DT_(0));
+
+                        new_data.distribution_x = new DenseVector<DT_>(9ul, DT_(0));
+                        new_data.distribution_y = new DenseVector<DT_>(9ul, DT_(0));
+                    }
 
                     for (unsigned long j(0) ; j < new_max - new_min  + 1 ; ++j)
                     {
