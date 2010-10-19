@@ -127,7 +127,7 @@ namespace honei
                 PackedGridData<D2Q9, DataType_>  data_global;
                 PackedGridInfo<D2Q9> info_global;
 
-                GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_global, info_global, data_global);
+                GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_global, info_global, data_global, false);
                 std::vector<PackedGridInfo<D2Q9> > info_list;
                 std::vector<PackedGridData<D2Q9, DataType_> > data_list;
                 std::vector<PackedGridFringe<D2Q9> > fringe_list;
@@ -234,7 +234,7 @@ namespace honei
                             }
                             remove(fn.c_str());
                         }
-                        std::string out_filename("h_"+stringify(i)+".dat");
+                        std::string out_filename("h_"+_base_file_name+"_"+stringify(i)+".dat");
                         VectorIO<io_formats::DV>::write_vector(out_filename, global_h);
                     }
                 }

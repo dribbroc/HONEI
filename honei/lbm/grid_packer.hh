@@ -324,7 +324,7 @@ namespace honei
                 info.cuda_dir_8 = new_dir_8;
             }
 
-            static void pack(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
+            static void pack(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data, bool alloc_all = true)
             {
                 unsigned long fluid_count(0);
                 for(unsigned long i(0); i < grid.obstacles->rows(); ++i)
@@ -361,39 +361,44 @@ namespace honei
                 data.b = new DenseVector<DT_>(fluid_count);
                 data.u = new DenseVector<DT_>(fluid_count);
                 data.v = new DenseVector<DT_>(fluid_count);
-                data.temp = new DenseVector<DT_>(fluid_count);
 
-                data.f_0 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_1 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_2 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_3 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_4 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_5 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_6 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_7 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_8 = new DenseVector<DT_>(fluid_count, DT_(0));
+                if (alloc_all)
+                {
+                    data.temp = new DenseVector<DT_>(fluid_count);
 
-                data.f_eq_0 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_eq_1 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_eq_2 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_eq_3 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_eq_4 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_eq_5 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_eq_6 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_eq_7 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_eq_8 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_0 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_1 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_2 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_3 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_4 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_5 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_6 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_7 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_8 = new DenseVector<DT_>(fluid_count, DT_(0));
 
-                data.f_temp_0 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_temp_1 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_temp_2 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_temp_3 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_temp_4 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_temp_5 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_temp_6 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_temp_7 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.f_temp_8 = new DenseVector<DT_>(fluid_count, DT_(0));
-                data.distribution_x = new DenseVector<DT_>(9ul, DT_(0));
-                data.distribution_y = new DenseVector<DT_>(9ul, DT_(0));
+                    data.f_eq_0 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_eq_1 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_eq_2 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_eq_3 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_eq_4 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_eq_5 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_eq_6 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_eq_7 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_eq_8 = new DenseVector<DT_>(fluid_count, DT_(0));
+
+                    data.f_temp_0 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_temp_1 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_temp_2 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_temp_3 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_temp_4 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_temp_5 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_temp_6 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_temp_7 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.f_temp_8 = new DenseVector<DT_>(fluid_count, DT_(0));
+                    data.distribution_x = new DenseVector<DT_>(9ul, DT_(0));
+                    data.distribution_y = new DenseVector<DT_>(9ul, DT_(0));
+                }
+
                 std::vector<unsigned long> temp_limits;
                 std::vector<unsigned long> temp_types;
                 std::vector<unsigned long> dir_1;
@@ -851,13 +856,13 @@ namespace honei
             }
 
             static void pack(Grid<D2Q9, DT_> & grid,
-                             HONEI_UNUSED PackedGridData<D2Q9, DT_> & data,
-                             PackedSolidData<D2Q9, DT_> & solids,
-                             DenseMatrix<bool> & lines,
-                             DenseMatrix<bool> & boundaries,
-                             DenseMatrix<bool> & solid,
-                             DenseMatrix<bool> & solid_to_fluid,
-                             DenseMatrix<bool> & stationary)
+                    HONEI_UNUSED PackedGridData<D2Q9, DT_> & data,
+                    PackedSolidData<D2Q9, DT_> & solids,
+                    DenseMatrix<bool> & lines,
+                    DenseMatrix<bool> & boundaries,
+                    DenseMatrix<bool> & solid,
+                    DenseMatrix<bool> & solid_to_fluid,
+                    DenseMatrix<bool> & stationary)
             {
 
                 solids.boundary_flags->lock(lm_write_only);
