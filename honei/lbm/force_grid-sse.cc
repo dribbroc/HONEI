@@ -256,18 +256,7 @@ template void ForceGrid<tags::CPU::SSE, lbm_applications::LABSWE, lbm_force::CEN
 void force_friction(const unsigned long * dir_index, unsigned long dir_index_size, double * f_temp, const double * h,
         const double * u, const double * v, double force_multiplier, double dist, double manning_const_sq)
 {
-    double divisor(1./3.);
-    double factor(force_multiplier * dist * manning_const_sq);
-    for (unsigned long begin(0) ; begin + 1 < dir_index_size ; begin+=2)
-    {
-        for (unsigned long i(dir_index[begin]) ; i < dir_index[begin + 1] ; ++i)
-        {
-            if ( (pow(h[i], divisor)) > std::numeric_limits<double>::epsilon() || (pow(h[i], divisor)) < double(-std::numeric_limits<double>::epsilon()) )
-            {
-                f_temp[i] -= factor * u[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / (pow(h[i], divisor));
-            }
-        }
-    }
+    sse::force_friction(dir_index, dir_index_size, f_temp, h, u, v, force_multiplier, dist, manning_const_sq);
 }
 
 inline void force_friction(const unsigned long * dir_index, unsigned long dir_index_size, float * f_temp, const float * h,

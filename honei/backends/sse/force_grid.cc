@@ -114,6 +114,105 @@ namespace honei
                 }
             }
         }
+
+        void force_friction(const unsigned long * dir_index, unsigned long dir_index_size, double * f_temp, const double * h,
+                const double * u, const double * v, double force_multiplier, double dist, double manning_const_sq)
+        {
+            double divisor(double(1.)/double(3.));
+            double factor(force_multiplier * dist * manning_const_sq);
+            //__m128d factorv = _mm_set1_pd(factor);
+            //double HONEI_ALIGNED(16) inf(std::numeric_limits<double>::infinity());
+            //__m128d infv = _mm_load1_pd(&inf);
+            double HONEI_ALIGNED(16) eps(std::numeric_limits<double>::epsilon());
+            __m128d epsv = _mm_load1_pd(&eps);
+
+            for (unsigned long begin(0) ; begin + 1 < dir_index_size; begin+=2)
+            {
+                unsigned long start(dir_index[begin]);
+                unsigned long size(dir_index[begin + 1] - start);
+
+                unsigned long x_address((unsigned long)&f_temp[start]);
+                unsigned long x_offset(x_address % 16);
+
+                unsigned long z_offset(x_offset / 8);
+
+                unsigned long quad_start(z_offset + start);
+                unsigned long quad_end(dir_index[begin + 1] - ((dir_index[begin + 1] - quad_start) % 2));
+
+                if (size < 16)
+                {
+                    quad_end = start;
+                    quad_start = start;
+                }
+
+                for (unsigned long index(start) ; index < quad_start ; ++index)
+                {
+                    double powh(pow(h[index], divisor));
+                    if ( (powh) > std::numeric_limits<double>::epsilon() || (powh) < double(-std::numeric_limits<double>::epsilon()) )
+                    {
+                        f_temp[index] -= factor * u[index] * sqrt(u[index] * u[index] + v[index] * v[index]) / (powh);
+                    }
+                }
+                for (unsigned long index(quad_end) ; index < dir_index[begin + 1] ; ++index)
+                {
+                    double powh(pow(h[index], divisor));
+                    if ( (powh) > std::numeric_limits<double>::epsilon() || (powh) < double(-std::numeric_limits<double>::epsilon()) )
+                    {
+                        f_temp[index] -= factor * u[index] * sqrt(u[index] * u[index] + v[index] * v[index]) / (powh);
+                    }
+                }
+
+                __m128d m1, m2, m3/*, m4*/;
+                for (unsigned long index(quad_start) ; index < quad_end ; index += 2)
+                {
+                /*    // calc cubic root of h by exp(ln(h) / 3)
+                    m1 = _mm_load_pd(h + index);
+                    m1 = log_pd(m1);
+                    m2 = _mm_set1_pd(double(3.0));
+                    m1 = _mm_div_pd(m1, m2);
+                    m1 = exp_pd(m1);
+
+                    // sqrt(u[index] * u[index] + v[index] * v[index])
+                    m4 = _mm_load_pd(u + index);
+                    m2 = _mm_mul_pd(m4, m4);
+                    m3 = _mm_load_pd(v + index);
+                    m3 = _mm_mul_pd(m3, m3);
+                    m2 = _mm_add_pd(m2, m3);
+                    m2 = _mm_sqrt_pd(m2);
+
+                    // factor * u * sqrt() / powh
+                    m2 = _mm_mul_pd(m2, m4);
+                    m2 = _mm_mul_pd(factorv, m2);
+                    m2 = _mm_div_pd(m2, m1);
+*/
+                    double HONEI_ALIGNED(16) temp_pow[2];
+                    temp_pow[0]=(pow(h[index], divisor));
+                    temp_pow[1]=(pow(h[index + 1], divisor));
+                    double HONEI_ALIGNED(16) temp[2];
+                    temp[0] = (factor * u[index] * sqrt(u[index] * u[index] + v[index] * v[index]));
+                    temp[1] = (factor * u[index + 1] * sqrt(u[index + 1] * u[index + 1] + v[index + 1] * v[index + 1]));
+                    m1 = _mm_load_pd(temp_pow);
+                    m2 = _mm_load_pd(temp);
+                    m2 = _mm_div_pd(m2, m1);
+
+
+                    // cmp with infinity
+                    // \todo Capture negative values of h resulting in negative infinity...
+                    //m1 = _mm_cmpneq_pd(m2, infv);
+                    //m2 = _mm_and_pd(m2, m1);
+
+                    m3 = _mm_load_pd(h + index);
+                    m1 = _mm_cmpnle_pd(m3, epsv);
+                    m2 = _mm_and_pd(m2, m1);
+                    //m1 = _mm_cmple_pd(m2, mepsv);
+                    //m2 = _mm_and_pd(m2, m1);
+
+                    m1 = _mm_load_pd(f_temp + index);
+                    m1 = _mm_sub_pd(m1, m2);
+                    _mm_store_pd(f_temp + index, m1);
+                }
+            }
+        }
     }
 }
 

@@ -183,6 +183,9 @@ namespace honei
 
         void force_friction(const unsigned long * dir_index, unsigned long dir_index_size, float * f_temp, const float * h,
                 const float * u, const float * v, float force_multiplier, float dist, float manning_const_sq);
+
+        void force_friction(const unsigned long * dir_index, unsigned long dir_index_size, double * f_temp, const double * h,
+                const double * u, const double * v, double force_multiplier, double dist, double manning_const_sq);
     }
 }
 
