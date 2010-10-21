@@ -164,7 +164,7 @@ namespace honei
                 struct CUDA :
                     public InstantiationPolicy<MultiCore::CUDA, NonCopyable>
                 {
-                    const static TagValue tag_value = tv_gpu_cuda;
+                    const static TagValue tag_value = tv_gpu_multi_core;
                     const static TagValue memory_value = tv_gpu_cuda;
                     const static std::string name;
 

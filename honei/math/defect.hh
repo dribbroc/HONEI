@@ -29,20 +29,20 @@
 #include<honei/la/product.hh>
 #include<honei/la/difference.hh>
 
-    using namespace honei;
-    namespace honei
-    {
-        template<typename Tag_ = tags::CPU> struct Defect;
+using namespace honei;
+namespace honei
+{
+    template<typename Tag_ = tags::CPU> struct Defect;
 
-        template <> struct Defect<tags::CPU>
-        {
-            public:
-                template<typename DT_>
+    template <> struct Defect<tags::CPU>
+    {
+        public:
+            template<typename DT_>
                 static DenseVector<DT_> value(DenseVector<DT_> & right_hand_side, BandedMatrixQ1<DT_> & system, DenseVector<DT_> & x)
                 {
                     /*DenseVector<DT_> result(right_hand_side.copy());
-                    return Difference<tags::CPU>::value(result,Product<tags::CPU>::value(system, x) );
-    */
+                      return Difference<tags::CPU>::value(result,Product<tags::CPU>::value(system, x) );
+                      */
                     if (x.size() != system.columns())
                     {
                         throw VectorSizeDoesNotMatch(x.size(), system.columns());
@@ -79,99 +79,99 @@
                     unsigned long i(0);
                     //index 0
                     x_new[i] = ((rhs [i] - (dd[i] * x_old[i] +
-                               du[i] * x_old[1] +
-                               ul[i] * x_old[root_n - 1] +
-                               ud[i] * x_old[root_n] +
-                               uu[i] * x_old[root_n + 1])));
+                                    du[i] * x_old[1] +
+                                    ul[i] * x_old[root_n - 1] +
+                                    ud[i] * x_old[root_n] +
+                                    uu[i] * x_old[root_n + 1])));
 
                     //index in [1, root_n -1[
                     i = 1;
                     for(; i < root_n - 1 ; ++i)
                     {
                         x_new[i] = ((rhs[i] - (dl[i] * x_old[i - 1] +
-                                   dd[i] * x_old[i] +
-                                   du[i] * x_old[i + 1] +
-                                   ul[i] * x_old[i + root_n - 1] +
-                                   ud[i] * x_old[i + root_n] +
-                                   uu[i] * x_old[i + root_n + 1])));
+                                        dd[i] * x_old[i] +
+                                        du[i] * x_old[i + 1] +
+                                        ul[i] * x_old[i + root_n - 1] +
+                                        ud[i] * x_old[i + root_n] +
+                                        uu[i] * x_old[i + root_n + 1])));
                     }
 
                     //index root_n -1
                     i = root_n - 1;
                     x_new[i] = ((rhs[i] - (lu[i] * x_old[i - (root_n - 1)] +
-                               dl[i] * x_old[i - 1] +
-                               dd[i] * x_old[i] +
-                               du[i] * x_old[i + 1] +
-                               ul[i] * x_old[i + root_n - 1] +
-                               ud[i] * x_old[i + root_n] +
-                               uu[i] * x_old[i + root_n + 1])));
+                                    dl[i] * x_old[i - 1] +
+                                    dd[i] * x_old[i] +
+                                    du[i] * x_old[i + 1] +
+                                    ul[i] * x_old[i + root_n - 1] +
+                                    ud[i] * x_old[i + root_n] +
+                                    uu[i] * x_old[i + root_n + 1])));
 
                     //index root_n
                     i = root_n;
                     x_new[i] = ((rhs[i] - (ld[i] * x_old[i - root_n] +
-                               lu[i] * x_old[i - (root_n - 1)] +
-                               dl[i] * x_old[i - 1] +
-                               dd[i] * x_old[i] +
-                               du[i] * x_old[ i + 1] +
-                               ul[i] * x_old[i + root_n - 1] +
-                               ud[i] * x_old[i + root_n] +
-                               uu[i] * x_old[i + root_n + 1])));
+                                    lu[i] * x_old[i - (root_n - 1)] +
+                                    dl[i] * x_old[i - 1] +
+                                    dd[i] * x_old[i] +
+                                    du[i] * x_old[ i + 1] +
+                                    ul[i] * x_old[i + root_n - 1] +
+                                    ud[i] * x_old[i + root_n] +
+                                    uu[i] * x_old[i + root_n + 1])));
 
                     //index in [root_n + 1, n - (root_n + 1)[
                     i = root_n + 1;
                     for(; i < n - (root_n  + 1) ; ++i)
                     {
                         x_new[i] = ((rhs[i] - (ll[i] * x_old[i - root_n - 1] +
-                                   ld[i] * x_old[i - root_n] +
-                                   lu[i] * x_old[i - root_n + 1] +
-                                   dl[i] * x_old[i - 1] +
-                                   dd[i] * x_old[i] +
-                                   du[i] * x_old[ i + 1] +
-                                   ul[i] * x_old[i + root_n - 1] +
-                                   ud[i] * x_old[i + root_n] +
-                                   uu[i] * x_old[i + root_n + 1])));
+                                        ld[i] * x_old[i - root_n] +
+                                        lu[i] * x_old[i - root_n + 1] +
+                                        dl[i] * x_old[i - 1] +
+                                        dd[i] * x_old[i] +
+                                        du[i] * x_old[ i + 1] +
+                                        ul[i] * x_old[i + root_n - 1] +
+                                        ud[i] * x_old[i + root_n] +
+                                        uu[i] * x_old[i + root_n + 1])));
                     }
 
                     //index n - (root_n + 1)
                     i = n - (root_n + 1);
                     x_new[i] = ((rhs[i] - (ll[i] * x_old[i - (n - (root_n + 1))] +
-                               ld[i] * x_old[i - root_n] +
-                               lu[i] * x_old[i - root_n + 1] +
-                               dl[i] * x_old[i - 1] +
-                               dd[i] * x_old[i] +
-                               du[i] * x_old[ i + 1] +
-                               ul[i] * x_old[i + root_n - 1] +
-                               ud[i] * x_old[i + root_n])));
+                                    ld[i] * x_old[i - root_n] +
+                                    lu[i] * x_old[i - root_n + 1] +
+                                    dl[i] * x_old[i - 1] +
+                                    dd[i] * x_old[i] +
+                                    du[i] * x_old[ i + 1] +
+                                    ul[i] * x_old[i + root_n - 1] +
+                                    ud[i] * x_old[i + root_n])));
 
                     //index n - root_n
                     i = n - root_n;
                     x_new[i] = ((rhs[i] - (ll[i] * x_old[i - (n - (root_n + 1))] +
-                               ld[i] * x_old[i - root_n] +
-                               lu[i] * x_old[i - root_n + 1] +
-                               dl[i] * x_old[i - 1] +
-                               dd[i] * x_old[i] +
-                               du[i] * x_old[ i + 1] +
-                               ul[i] * x_old[i + root_n - 1])));
+                                    ld[i] * x_old[i - root_n] +
+                                    lu[i] * x_old[i - root_n + 1] +
+                                    dl[i] * x_old[i - 1] +
+                                    dd[i] * x_old[i] +
+                                    du[i] * x_old[ i + 1] +
+                                    ul[i] * x_old[i + root_n - 1])));
 
                     //index in [n - root_n + 1, n -1[
                     i = n - root_n + 1;
                     for(; i < n - 1; ++i)
                     {
                         x_new[i] = ((rhs[i] - (ll[i] * x_old[i - (n - (root_n + 1))] +
-                                   ld[i] * x_old[i - root_n] +
-                                   lu[i] * x_old[i - root_n + 1] +
-                                   dl[i] * x_old[i - 1] +
-                                   dd[i] * x_old[i] +
-                                   du[i] * x_old[ i + 1])));
+                                        ld[i] * x_old[i - root_n] +
+                                        lu[i] * x_old[i - root_n + 1] +
+                                        dl[i] * x_old[i - 1] +
+                                        dd[i] * x_old[i] +
+                                        du[i] * x_old[ i + 1])));
                     }
 
                     //index n - 1
                     i = n - 1;
                     x_new[i] = ((rhs[i] - (ll[i] * x_old[i - (n - (root_n + 1))] +
-                        ld[i] * x_old[i - root_n] +
-                        lu[i] * x_old[i - root_n + 1] +
-                        dl[i] * x_old[i - 1] +
-                        dd[i] * x_old[i])));
+                                    ld[i] * x_old[i - root_n] +
+                                    lu[i] * x_old[i - root_n + 1] +
+                                    dl[i] * x_old[i - 1] +
+                                    dd[i] * x_old[i])));
 
                     right_hand_side.unlock(lm_read_only);
                     system.unlock(lm_read_only);
@@ -180,7 +180,7 @@
                     return result;
                 }
 
-                template<typename DT_>
+            template<typename DT_>
                 static DenseVector<DT_> value(DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
                 {
                     if (x.size() != system.columns())
@@ -199,7 +199,7 @@
                     return result;
                 }
 
-                template<typename DT_>
+            template<typename DT_>
                 static DenseVector<DT_> & value(DenseVector<DT_> & result, DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
                 {
                     if (x.size() != system.columns())
@@ -229,16 +229,16 @@
                 }
 
             /*template <typename DT_>
-                static inline BenchmarkInfo get_benchmark_info(const DenseVector<DT_> & right_hand_side, const SparseMatrixELL<DT_> & system, const DenseVector<DT_> & x)
-                {
-                    BenchmarkInfo result;
-                    result.flops = :;
-                    result.load = a.rows() * a.columns() * (sizeof(DT1_) + sizeof(DT2_));
-                    result.store = a.rows() * a.columns() * sizeof(DT1_);
-                    result.size.push_back(a.rows() * a.columns());
-                    result.size.push_back(b.rows() * b.columns());
-                    return result;
-                }*/
+              static inline BenchmarkInfo get_benchmark_info(const DenseVector<DT_> & right_hand_side, const SparseMatrixELL<DT_> & system, const DenseVector<DT_> & x)
+              {
+              BenchmarkInfo result;
+              result.flops = :;
+              result.load = a.rows() * a.columns() * (sizeof(DT1_) + sizeof(DT2_));
+              result.store = a.rows() * a.columns() * sizeof(DT1_);
+              result.size.push_back(a.rows() * a.columns());
+              result.size.push_back(b.rows() * b.columns());
+              return result;
+              }*/
     };
 
     template<>
@@ -274,42 +274,88 @@
                 static DenseVector<float> value(DenseVector<float> & right_hand_side, BandedMatrixQ1<float> & system, DenseVector<float> & x);
 
                 template<typename DT_>
-                static DenseVector<DT_> value(DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
-                {
-                    if (x.size() != system.columns())
+                    static DenseVector<DT_> value(DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
                     {
-                        throw VectorSizeDoesNotMatch(x.size(), system.columns());
-                    }
-                    if (right_hand_side.size() != system.columns())
-                    {
-                        throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
-                    }
+                        if (x.size() != system.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(x.size(), system.columns());
+                        }
+                        if (right_hand_side.size() != system.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
+                        }
 
-                    DenseVector<DT_> result(right_hand_side.size());
-                    DenseVector<DT_> temp(right_hand_side.size());
-                    Product<tags::CPU::SSE>::value(temp, system, x);
-                    Difference<tags::CPU::SSE>::value(result, right_hand_side, temp);
-                    return result;
-                }
+                        DenseVector<DT_> result(right_hand_side.size());
+                        DenseVector<DT_> temp(right_hand_side.size());
+                        Product<tags::CPU::SSE>::value(temp, system, x);
+                        Difference<tags::CPU::SSE>::value(result, right_hand_side, temp);
+                        return result;
+                    }
 
                 template<typename DT_>
-                static DenseVector<DT_> & value(DenseVector<DT_> & result, DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
-                {
-                    if (x.size() != system.columns())
+                    static DenseVector<DT_> & value(DenseVector<DT_> & result, DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
                     {
-                        throw VectorSizeDoesNotMatch(x.size(), system.columns());
+                        if (x.size() != system.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(x.size(), system.columns());
+                        }
+                        if (right_hand_side.size() != system.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
+                        }
+
+                        DenseVector<DT_> temp(right_hand_side.size());
+                        Product<tags::CPU::SSE>::value(temp, system, x);
+                        Difference<tags::CPU::SSE>::value(result, right_hand_side, temp);
+
+                        return result;
                     }
-                    if (right_hand_side.size() != system.columns())
+        };
+
+    template<>
+        struct Defect<tags::GPU::MultiCore::CUDA>
+        {
+
+            //todo DIRK
+            //TODO use atomar MC cuda defect
+            public:
+                template<typename DT_>
+                    static DenseVector<DT_> value(DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
                     {
-                        throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
+                        if (x.size() != system.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(x.size(), system.columns());
+                        }
+                        if (right_hand_side.size() != system.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
+                        }
+
+                        DenseVector<DT_> result(right_hand_side.size());
+                        DenseVector<DT_> temp(right_hand_side.size());
+                        Product<tags::GPU::MultiCore::CUDA>::value(temp, system, x);
+                        Difference<tags::GPU::MultiCore::CUDA>::value(result, right_hand_side, temp);
+                        return result;
                     }
 
-                    DenseVector<DT_> temp(right_hand_side.size());
-                    Product<tags::CPU::SSE>::value(temp, system, x);
-                    Difference<tags::CPU::SSE>::value(result, right_hand_side, temp);
+                template<typename DT_>
+                    static DenseVector<DT_> & value(DenseVector<DT_> & result, DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
+                    {
+                        if (x.size() != system.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(x.size(), system.columns());
+                        }
+                        if (right_hand_side.size() != system.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
+                        }
 
-                    return result;
-                }
+                        DenseVector<DT_> temp(right_hand_side.size());
+                        Product<tags::GPU::MultiCore::CUDA>::value(temp, system, x);
+                        Difference<tags::GPU::MultiCore::CUDA>::value(result, right_hand_side, temp);
+
+                        return result;
+                    }
         };
 
     template<>
@@ -321,44 +367,44 @@
                 static DenseVector<float> value(DenseVector<float> & right_hand_side, BandedMatrixQ1<float> & system, DenseVector<float> & x);
 
                 template<typename DT_>
-                static DenseVector<DT_> value(DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
-                {
-                    if (x.size() != system.columns())
+                    static DenseVector<DT_> value(DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
                     {
-                        throw VectorSizeDoesNotMatch(x.size(), system.columns());
-                    }
-                    if (right_hand_side.size() != system.columns())
-                    {
-                        throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
-                    }
+                        if (x.size() != system.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(x.size(), system.columns());
+                        }
+                        if (right_hand_side.size() != system.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
+                        }
 
-                    DenseVector<DT_> result(right_hand_side.size());
-                    DenseVector<DT_> temp(right_hand_side.size());
-                    Product<tags::CPU::MultiCore::SSE>::value(temp, system, x);
-                    //todo use mc difference
-                    Difference<tags::CPU::SSE>::value(result, right_hand_side, temp);
-                    return result;
-                }
+                        DenseVector<DT_> result(right_hand_side.size());
+                        DenseVector<DT_> temp(right_hand_side.size());
+                        Product<tags::CPU::MultiCore::SSE>::value(temp, system, x);
+                        //todo use mc difference
+                        Difference<tags::CPU::SSE>::value(result, right_hand_side, temp);
+                        return result;
+                    }
 
                 template<typename DT_>
-                static DenseVector<DT_> & value(DenseVector<DT_> & result, DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
-                {
-                    if (x.size() != system.columns())
+                    static DenseVector<DT_> & value(DenseVector<DT_> & result, DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
                     {
-                        throw VectorSizeDoesNotMatch(x.size(), system.columns());
-                    }
-                    if (right_hand_side.size() != system.columns())
-                    {
-                        throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
-                    }
+                        if (x.size() != system.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(x.size(), system.columns());
+                        }
+                        if (right_hand_side.size() != system.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
+                        }
 
-                    DenseVector<DT_> temp(right_hand_side.size());
-                    Product<tags::CPU::MultiCore::SSE>::value(temp, system, x);
-                    //todo use mc difference
-                    Difference<tags::CPU::SSE>::value(result, right_hand_side, temp);
+                        DenseVector<DT_> temp(right_hand_side.size());
+                        Product<tags::CPU::MultiCore::SSE>::value(temp, system, x);
+                        //todo use mc difference
+                        Difference<tags::CPU::SSE>::value(result, right_hand_side, temp);
 
-                    return result;
-                }
+                        return result;
+                    }
         };
 }
 

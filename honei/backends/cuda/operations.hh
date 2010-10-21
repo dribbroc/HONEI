@@ -46,6 +46,8 @@ extern "C"
 
     void cuda_difference_two_float(void * a, const void * b, unsigned long size, unsigned long blocksize);
     void cuda_difference_two_double(void * a, const void * b, unsigned long size, unsigned long blocksize);
+    void cuda_difference_three_float(void * r, const void * a, const void * b, unsigned long size, unsigned long blocksize);
+    void cuda_difference_three_double(void * r, const void * a, const void * b, unsigned long size, unsigned long blocksize);
 
     float cuda_dot_product_two_float(const void * a, const void *b, unsigned long size, unsigned long blocksize,
             unsigned long gridsize);

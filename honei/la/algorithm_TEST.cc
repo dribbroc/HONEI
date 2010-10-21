@@ -850,5 +850,10 @@ DenseVectorCopyQuickTest<tags::CPU, float> dense_vector_copy_quick_test_float("f
 DenseVectorCopyQuickTest<tags::CPU, double> dense_vector_copy_quick_test_double("double");
 #ifdef HONEI_CUDA
 DenseVectorCopyQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_copy_quick_test_float("float");
+DenseVectorCopyQuickTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_dense_vector_copy_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorCopyQuickTest<tags::GPU::CUDA, double> cuda_dense_vector_copy_quick_test_double("double");
+DenseVectorCopyQuickTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector_copy_quick_test_double("double");
+#endif
 #endif
 
