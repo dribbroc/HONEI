@@ -44,7 +44,7 @@
 #include <honei/util/tags.hh>
 
 #include <cmath>
-#include <tr1/memory>
+
 #include <iostream>
 #include <fstream> 
 #include <queue>

@@ -70,7 +70,7 @@ class DenseVectorRangeCopyTest :
             {
                 DenseVector<DataType_> dv1(size, DataType_(0)), dv2(size, DataType_(1));
                 DenseVectorRange<DataType_> dvr1(dv1, size - 1, 0), dvr2(dv2, size - 1, 0);
-                std::tr1::shared_ptr<DenseVector<DataType_> > c(new DenseVector<DataType_>(dvr1.copy()));
+                shared_ptr<DenseVector<DataType_> > c(new DenseVector<DataType_>(dvr1.copy()));
 
                 for (typename DenseVector<DataType_>::ElementIterator i(c->begin_elements()), i_end(c->end_elements()) ;
                         i != i_end ; ++i)

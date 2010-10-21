@@ -58,10 +58,10 @@ namespace honei
             unsigned long _columns;
 
             /// Our row-vectors.
-            SharedArray<std::tr1::shared_ptr<DenseVectorRange<DataType_> > > _row_vectors;
+            SharedArray<shared_ptr<DenseVectorRange<DataType_> > > _row_vectors;
 
             /// Our column-vectors.
-            SharedArray<std::tr1::shared_ptr<DenseVectorSlice<DataType_> > > _column_vectors;
+            SharedArray<shared_ptr<DenseVectorSlice<DataType_> > > _column_vectors;
 
             /// Our row-offset.
             unsigned long _row_offset;

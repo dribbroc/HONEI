@@ -21,7 +21,7 @@
 
 #include <honei/backends/multicore/ticket.hh>
 
-#include <tr1/functional>
+#include <honei/util/tr1_boost.hh>
 
 namespace honei
 {
@@ -29,7 +29,7 @@ namespace honei
     {
         struct ThreadTask
         {
-            typedef std::tr1::function<void () throw ()> WorkFunctor;
+            typedef function<void () throw ()> WorkFunctor;
 
             WorkFunctor * const functor;
             Ticket<tags::CPU::MultiCore> * const ticket;

@@ -25,7 +25,7 @@
 #include <honei/la/sum.hh>
 
 #include <cmath>
-#include <tr1/memory>
+
 #include <iostream>
 /**
  * \file

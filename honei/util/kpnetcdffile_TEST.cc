@@ -40,10 +40,10 @@ class KPNetCDFFileTest :
             std::string path(HONEI_SOURCEDIR);
             path += "/honei/lbm/sample.nc";
             KPInitialConditions cond;
-            std::tr1::shared_ptr<Field> b;
-            std::tr1::shared_ptr<Field> u1;
-            std::tr1::shared_ptr<Field> u2;
-            std::tr1::shared_ptr<Field> u3;
+            shared_ptr<Field> b;
+            shared_ptr<Field> u1;
+            shared_ptr<Field> u2;
+            shared_ptr<Field> u3;
             KPNetCDFFile file(path, cond, b, u1, u2, u3);
             unsigned long nx, ny;
             TEST_CHECK(cond.isValid());
@@ -51,7 +51,7 @@ class KPNetCDFFileTest :
             ny = cond.getNy();
             std::cout<<"Gridsize: "<<nx<<" x "<<ny<<std::endl;
             std::cout<<u1->data[5]<<std::endl;
-            std::tr1::shared_ptr<TimeStep> ts(new TimeStep(nx, ny));
+            shared_ptr<TimeStep> ts(new TimeStep(nx, ny));
             file.readTimeStep(ts, 0);
             std::cout<<ts->U[0]->data[5]<<std::endl;
             file.readTimeStep(ts, 30);

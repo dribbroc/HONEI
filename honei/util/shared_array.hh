@@ -25,7 +25,6 @@
 #include <honei/util/private_implementation_pattern.hh>
 
 #include <string>
-#include <tr1/memory>
 
 namespace honei
 {

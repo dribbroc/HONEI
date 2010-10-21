@@ -26,7 +26,6 @@
 #include <honei/util/private_implementation_pattern.hh>
 
 #include <list>
-#include <tr1/functional>
 
 namespace honei
 {

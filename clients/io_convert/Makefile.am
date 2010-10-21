@@ -3,6 +3,10 @@ AM_CXXFLAGS = -I$(top_srcdir)
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in
 
+DEFS = \
+	$(DEBUGDEF) \
+	$(BOOSTDEF)
+
 BACKEND_LIBS = \
        $(top_builddir)/honei/backends/multicore/libhoneibackendsmulticore.la
 

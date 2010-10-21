@@ -38,9 +38,9 @@ namespace
     class Counter
     {
         private:
-            std::tr1::shared_ptr<unsigned> _value;
+            shared_ptr<unsigned> _value;
 
-            std::tr1::shared_ptr<Mutex> _mutex;
+            shared_ptr<Mutex> _mutex;
 
         public:
             Counter() :

@@ -83,6 +83,7 @@ DEFS = \
 	$(SSEDEF) \
 	$(CUDADEF) \
 	$(DEBUGDEF) \
+	$(BOOSTDEF) \
 	$(PROFILERDEF)
 
 lib_LTLIBRARIES = libhoneiswe.la

@@ -26,8 +26,8 @@
 #endif
 
 #include <sstream>
+#include <honei/util/tr1_boost.hh>
 #include <string>
-#include <tr1/memory>
 
 namespace honei
 {
@@ -69,7 +69,7 @@ namespace honei
          * \ingroup grpstringify
          */
         template <typename T_>
-        struct CheckType<std::tr1::shared_ptr<T_> >
+        struct CheckType<shared_ptr<T_> >
         {
         };
     }

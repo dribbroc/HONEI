@@ -36,7 +36,6 @@
 #include <honei/util/shared_array.hh>
 
 #include <iterator>
-#include <tr1/memory>
 
 namespace honei
 {

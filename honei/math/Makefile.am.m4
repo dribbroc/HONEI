@@ -89,6 +89,7 @@ DEFS = \
 	$(CUDA_DOUBLEDEF) \
 	$(CUBLASDEF) \
 	$(DEBUGDEF) \
+	$(BOOSTDEF) \
 	$(PROFILERDEF) \
 	$(DUNEDEF) \
 	-DHONEI_SOURCEDIR='"$(top_srcdir)"' \

@@ -1588,7 +1588,7 @@ namespace honei
                 {
                     OperationWrapper<honei::Product<typename Tag_::DelegateTo>, DenseVector<DT_>,
                         DenseVector<DT_>, SparseMatrixELL<DT_>, DenseVector<DT_>, unsigned long, unsigned long > wrapper(result);
-                    tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper, result, a, b, limits[i], limits[i+1])));
+                    tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, result, a, b, limits[i], limits[i+1])));
                 }
 
                 tickets.wait();

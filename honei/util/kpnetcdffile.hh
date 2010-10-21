@@ -12,7 +12,7 @@
 #include <honei/util/netcdf_datatypes.hh>
 #include <honei/util/instantiation_policy.hh>
 
-#include <tr1/memory>
+#include <honei/util/tr1_boost.hpp>
 
 #include <netcdfcpp.h>
 #include <netcdf.h>
@@ -23,21 +23,21 @@ class KPNetCDFFile :
     public:
         KPNetCDFFile(std::string filename, const KPInitialConditions& init);
         KPNetCDFFile(std::string filename, KPInitialConditions& init,
-                std::tr1::shared_ptr<Field>& init_B,
-                std::tr1::shared_ptr<Field>& init_U1,
-                std::tr1::shared_ptr<Field>& init_U2,
-                std::tr1::shared_ptr<Field>& init_U3);
+                shared_ptr<Field>& init_B,
+                shared_ptr<Field>& init_U1,
+                shared_ptr<Field>& init_U2,
+                shared_ptr<Field>& init_U3);
         ~KPNetCDFFile();
 
         void readInitialConditions(KPInitialConditions& init,
-                std::tr1::shared_ptr<Field>& init_B,
-                std::tr1::shared_ptr<Field>& init_U1,
-                std::tr1::shared_ptr<Field>& init_U2,
-                std::tr1::shared_ptr<Field>& init_U3);
+                shared_ptr<Field>& init_B,
+                shared_ptr<Field>& init_U1,
+                shared_ptr<Field>& init_U2,
+                shared_ptr<Field>& init_U3);
         void writeInitialConditions(const KPInitialConditions& init);
 
-        void writeTimeStep(std::tr1::shared_ptr<TimeStep> ts, int index=-1);
-        void readTimeStep(std::tr1::shared_ptr<TimeStep> ts, int index=-1);
+        void writeTimeStep(shared_ptr<TimeStep> ts, int index=-1);
+        void readTimeStep(shared_ptr<TimeStep> ts, int index=-1);
 
     private:
         void writeDims(const KPInitialConditions& init);
@@ -49,7 +49,7 @@ class KPNetCDFFile :
         void readVars(KPInitialConditions& init);
 
     private:
-        std::tr1::shared_ptr<NcFile> file;
+        shared_ptr<NcFile> file;
 
         struct {
             struct {

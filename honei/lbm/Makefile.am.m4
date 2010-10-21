@@ -89,6 +89,7 @@ DEFS = \
 	$(CUDADEF) \
 	$(CUDA_DOUBLEDEF) \
 	$(DEBUGDEF) \
+	$(BOOSTDEF) \
 	$(PROFILERDEF)
 
 lib_LTLIBRARIES = libhoneilbm.la

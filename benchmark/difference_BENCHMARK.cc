@@ -2,7 +2,7 @@
 
 #ifndef ALLBENCH
 #include <benchmark/benchmark.cc>
-#include <tr1/memory>
+
 #include <string>
 #endif
 

@@ -21,7 +21,7 @@
 #ifndef LIBGRAPH_GUARD_TEST_SCENARIO
 #define LIBGRAPH_GUARD_TEST_SCENARIO 1
 
-#include <tr1/memory>
+
 #include <honei/graph/graph.hh>
 #include <honei/graph/evolving_graph.hh>
 #include <iostream>

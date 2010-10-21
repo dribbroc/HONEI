@@ -25,7 +25,7 @@
 #include <honei/backends/multicore/topology.hh>
 #include <honei/util/attributes.hh>
 
-#include <tr1/functional>
+#include <honei/util/tr1_boost.hh>
 #include <vector>
 #include <algorithm>
 
@@ -155,13 +155,13 @@ namespace honei
         {
             private:
 
-                const std::tr1::function<Ticket<tags::CPU::MultiCore> * (std::vector<unsigned> & sids)> policy;
+                const function<Ticket<tags::CPU::MultiCore> * (std::vector<unsigned> & sids)> policy;
 
                 /// \name Basic Operations
                 /// \{
 
                 /// Constructor
-                DispatchPolicy(const std::tr1::function<Ticket<tags::CPU::MultiCore> * (std::vector<unsigned> & sids)> p) :
+                DispatchPolicy(const function<Ticket<tags::CPU::MultiCore> * (std::vector<unsigned> & sids)> p) :
                     policy(p)
                 {
                 }

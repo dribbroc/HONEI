@@ -61,24 +61,6 @@ int main(int, char **)
 		 AC_MSG_ERROR([Your C++ compiler doesn't compile C++ code])
 		])
 
-dnl {{{ check for tr1 shared pointers
-AC_MSG_CHECKING([for std::tr1::shared_ptr<>])
-AC_COMPILE_IFELSE([
-#include <tr1/memory>
-
-int main(int, char **)
-{
-	std::tr1::shared_ptr<int> x(new int(10));
-	return *x;
-}
-],
-		[AC_MSG_RESULT([yes])],
-		[
-		 AC_MSG_RESULT([no])
-		 AC_MSG_ERROR([Your C++ Standard Library doesn't support std::tr1::shared_ptr<>.])
-		])
-dnl }}}
-
 dnl {{{ check for numeric limits
 AC_MSG_CHECKING([for std::numeric_limits<>])
 AC_COMPILE_IFELSE([
@@ -301,6 +283,62 @@ dnl }}}
 dnl }}}
 
 dnl {{{ check for optional packages
+dnl {{{ check for boost support
+AC_MSG_CHECKING([whether to use boost headers])
+AC_ARG_WITH([boost],
+	AS_HELP_STRING([--with-boost], [Use boost headers instead of tr1]),
+		[WITH_BOOST=$withval
+		  AC_MSG_RESULT([$withval])],
+		[WITH_BOOST=no
+		  AC_MSG_RESULT([no])])
+AC_SUBST([WITH_BOOST])
+AM_CONDITIONAL([BOOST], test "x$WITH_BOOST" = "xyes")
+if test "x$WITH_BOOST" = "xno"; then
+	dnl {{{ check for tr1
+		dnl {{{ check for tr1 shared pointers
+		AC_MSG_CHECKING([for std::tr1::shared_ptr<>])
+		AC_COMPILE_IFELSE([
+		#include <tr1/memory>
+
+		int main(int, char **)
+		{
+			std::tr1::shared_ptr<int> x(new int(10));
+			return *x;
+		}
+		],
+				[AC_MSG_RESULT([yes])],
+				[
+				 AC_MSG_RESULT([no])
+				 AC_MSG_ERROR([Your C++ Standard Library doesn't support std::tr1::shared_ptr<>.])
+				])
+		dnl }}}
+	dnl }}}
+fi
+if test "x$WITH_BOOST" = "xyes"; then
+	dnl {{{ check for boost
+		dnl {{{ check for boost shared pointers
+		AC_MSG_CHECKING([for boost::shared_ptr<>])
+		AC_COMPILE_IFELSE([
+		#include <boost/shared_ptr.hpp>
+
+		int main(int, char **)
+		{
+			boost::shared_ptr<int> x(new int(10));
+			return *x;
+		}
+		],
+				[AC_MSG_RESULT([yes])],
+				[
+				 AC_MSG_RESULT([no])
+				 AC_MSG_ERROR([Boost headers not found in your include path.])
+				])
+		dnl }}}
+	BOOSTDEF="-DHONEI_BOOST"
+	dnl }}}
+fi
+AC_SUBST([BOOSTDEF])
+dnl }}}
+
 dnl {{{ check for HDF5 support
 AC_MSG_CHECKING([whether to build HDF5 wrappers])
 AC_ARG_WITH([hdf5],

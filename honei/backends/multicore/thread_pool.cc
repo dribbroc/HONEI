@@ -186,7 +186,7 @@ unsigned ThreadPool::main_node() const
     return _topology->get_node(_topology->num_lpus() - 1);
 }
 
-Ticket<tags::CPU::MultiCore> * ThreadPool::enqueue(const std::tr1::function<void ()> & task, DispatchPolicy p)
+Ticket<tags::CPU::MultiCore> * ThreadPool::enqueue(const function<void ()> & task, DispatchPolicy p)
 {
     Ticket<tags::CPU::MultiCore> * ticket((_affinity ? p.apply(_sched_ids) : DispatchPolicy::any_core().apply(_sched_ids)));
 

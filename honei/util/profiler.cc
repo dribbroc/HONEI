@@ -32,7 +32,7 @@
 #include <list>
 #include <map>
 #include <string>
-#include <tr1/functional>
+#include <honei/util/tr1_boost.hh>
 
 #include <syscall.h>
 
@@ -165,7 +165,7 @@ namespace honei
 
         typedef std::map<intern::ProfileId, TimingList> ResultMap;
 
-        typedef std::tr1::function<void (const std::string &, const std::string &, unsigned, float, float, float)> EvaluationFunction;
+        typedef function<void (const std::string &, const std::string &, unsigned, float, float, float)> EvaluationFunction;
 
         typedef std::list<EvaluationFunction> EvaluationFunctions;
 
@@ -353,12 +353,12 @@ namespace honei
         {
             output << "== New profiler session started ==" << std::endl;
 
-            evaluation_functions.push_back(EvaluationFunction(std::tr1::bind(
-                        std::tr1::mem_fn(&Profiler::evaluation_printer),
-                        this, std::tr1::placeholders::_1, std::tr1::placeholders::_2,
-                        std::tr1::placeholders::_3, std::tr1::placeholders::_4,
-                        std::tr1::placeholders::_5, std::tr1::placeholders::_6)));
-            thread = new Thread(std::tr1::bind(std::tr1::mem_fn(&Profiler::profiler_function), this));
+            evaluation_functions.push_back(EvaluationFunction(bind(
+                        mem_fn(&Profiler::evaluation_printer),
+                        this, HONEI_PLACEHOLDERS_1, HONEI_PLACEHOLDERS_2,
+                        HONEI_PLACEHOLDERS_3, HONEI_PLACEHOLDERS_4,
+                        HONEI_PLACEHOLDERS_5, HONEI_PLACEHOLDERS_6)));
+            thread = new Thread(bind(mem_fn(&Profiler::profiler_function), this));
         }
 
         ~Profiler()

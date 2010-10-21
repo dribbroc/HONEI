@@ -61,7 +61,6 @@
 #include <honei/backends/multicore/thread_pool.hh>
 
 #include <iostream>
-#include <tr1/functional>
 #include <vector>
 
 using namespace honei::lbm;

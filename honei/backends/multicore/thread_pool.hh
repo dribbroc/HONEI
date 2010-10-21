@@ -117,7 +117,7 @@ namespace honei
                 /// Retrieve the number of created threads
                 unsigned num_threads() const;
 
-                Ticket<tags::CPU::MultiCore> * enqueue(const std::tr1::function<void ()> & task, DispatchPolicy p = DispatchPolicy::any_core());
+                Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, DispatchPolicy p = DispatchPolicy::any_core());
 
                 /// \}
         };

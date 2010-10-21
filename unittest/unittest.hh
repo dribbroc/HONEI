@@ -347,7 +347,7 @@ namespace tests
                     "'\nbut got\n'" + s_a + "'"); \
         } catch (const TestFailedException &) { \
             throw; \
-        } catch (const exception & test_e) { \
+        } catch (const std::exception & test_e) { \
             throw TestFailedException(__PRETTY_FUNCTION__, __FILE__, __LINE__, \
                     "Test threw unexpected exception  "+ honei::stringify(test_e.what()) + \
                     " inside a TEST_CHECK_STRINGIFY_EQUAL block"); \

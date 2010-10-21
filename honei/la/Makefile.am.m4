@@ -95,6 +95,7 @@ DEFS = \
 	$(CUDA_DOUBLEDEF) \
 	$(CUBLASDEF) \
 	$(DEBUGDEF) \
+	$(BOOSTDEF) \
 	$(PROFILERDEF)
 
 lib_LTLIBRARIES = libhoneila.la

@@ -28,7 +28,7 @@
 #include <honei/util/instantiation_policy.hh>
 #include <honei/util/private_implementation_pattern.hh>
 
-#include <tr1/functional>
+#include <honei/util/tr1_boost.hh>
 
 namespace honei
 {
@@ -45,7 +45,7 @@ namespace honei
     {
         public:
             /// Our function type.
-            typedef std::tr1::function<void ()> Function;
+            typedef function<void ()> Function;
 
             /// \name Constructor and destructor
             /// \{

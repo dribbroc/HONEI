@@ -78,7 +78,7 @@ namespace honei
 
                 unsigned get_num_gpus() const;
 
-                Ticket<tags::GPU::MultiCore> * enqueue(const std::tr1::function<void ()> & task, int device);
+                Ticket<tags::GPU::MultiCore> * enqueue(const function<void ()> & task, int device);
 
                 bool idle();
 

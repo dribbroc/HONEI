@@ -35,7 +35,7 @@ namespace honei
     }
 
     template <typename T_>
-    PrivateImplementationPattern<T_, Shared>::PrivateImplementationPattern(std::tr1::shared_ptr<Implementation<T_> > imp) :
+    PrivateImplementationPattern<T_, Shared>::PrivateImplementationPattern(shared_ptr<Implementation<T_> > imp) :
         _imp(imp)
     {
     }

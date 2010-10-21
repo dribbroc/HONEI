@@ -27,7 +27,6 @@
 #include <unittest/unittest.hh>
 
 #include <limits>
-#include <tr1/memory>
 
 using namespace honei;
 using namespace tests;

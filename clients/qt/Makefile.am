@@ -10,6 +10,7 @@ DEFS = \
 	$(SSEDEF) \
 	$(CUDADEF) \
 	$(DEBUGDEF) \
+	$(BOOSTDEF) \
 	$(PROFILERDEF)
 
 BACKEND_LIBS = \

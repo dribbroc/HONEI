@@ -107,7 +107,7 @@ class DenseVectorSliceCopyTest :
             {
                 DenseVector<DataType_> dv(size, DataType_(0));
                 DenseVectorSlice<DataType_> dvs(dv, size - 5, 3, 1);
-                std::tr1::shared_ptr<DenseVector<DataType_> > c(new DenseVector<DataType_>(dvs.copy()));
+                shared_ptr<DenseVector<DataType_> > c(new DenseVector<DataType_>(dvs.copy()));
 
                 for (typename DenseVector<DataType_>::ElementIterator i(c->begin_elements()), i_end(c->end_elements()) ;
                         i != i_end ; ++i)

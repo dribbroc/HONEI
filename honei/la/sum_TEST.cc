@@ -26,7 +26,6 @@
 #include <honei/util/memory_arbiter.hh>
 
 #include <limits>
-#include <tr1/memory>
 #include <cstdlib>
 
 using namespace honei;

@@ -25,7 +25,7 @@
 #include <honei/backends/cuda/ticket.hh>
 
 #include <queue>
-#include <tr1/functional>
+#include <honei/util/tr1_boost.hh>
 
 namespace honei
 {
@@ -33,7 +33,7 @@ namespace honei
     {
         struct GPUTask
         {
-            typedef std::tr1::function<void () throw ()> WorkFunctor;
+            typedef function<void () throw ()> WorkFunctor;
 
             WorkFunctor * functor;
             Ticket<tags::GPU::MultiCore> * ticket;

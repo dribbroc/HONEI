@@ -22,7 +22,7 @@
 #define LIBGRAPH_GUARD_NODE 1
 
 #include <iostream>
-#include <tr1/memory>
+
 #include <honei/la/dense_vector.hh>
 
 namespace honei

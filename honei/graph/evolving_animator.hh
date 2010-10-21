@@ -21,7 +21,7 @@
 #ifndef LIBGRAPH_GUARD_EVOLVING_ANIMATOR
 #define LIBGRAPH_GUARD_EVOLVING_ANIMATOR 1
 
-#include <tr1/memory>
+
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/sparse_matrix.hh>

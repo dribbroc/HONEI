@@ -5,13 +5,14 @@ unittest_TEST_LDADD = \
 	$(DYNAMIC_LD_LIBS)
 unittest_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 
-AM_CXXFLAGS = -I$(top_srcdir)
+AM_CXXFLAGS = -I$(top_srcdir) -I$(top_srcdir)/deps
 
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST = run.sh
 DEFS = \
-	$(DEBUGDEF)
+	$(DEBUGDEF) \
+	$(BOOSTDEF)
 
 noinst_LIBRARIES = libunittest.a
 libunittest_a_SOURCES = \

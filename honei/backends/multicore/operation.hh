@@ -29,7 +29,7 @@
 #include <honei/util/partitioner.hh>
 #include <honei/util/tags.hh>
 
-#include <tr1/functional>
+#include <honei/util/tr1_boost.hh>
 
 namespace honei
 {
@@ -59,7 +59,7 @@ namespace honei
                         OperationWrapper<DelegateOperationType_, DenseVectorBase<DT1_>,
                         DenseVectorBase<DT1_>, DenseVectorBase<DT2_>, DT2_> wrapper(x_slice);
 
-                        tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper, x_slice, a)));
+                        tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, x_slice, a)));
                     }
 
                     DenseVectorSlice<DT1_> x_slice(x, p->size, x.offset() + (p->start * x.stepsize()), x.stepsize());
@@ -90,7 +90,7 @@ namespace honei
                         DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
 
                         OperationWrapper<DelegateOperationType_, DenseVectorContinuousBase<DT1_>, DenseVectorContinuousBase<DT1_>, DT2_ > wrapper(x_range);
-                        tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper, x_range, a)));
+                        tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, x_range, a)));
                     }
 
                     DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
@@ -125,7 +125,7 @@ namespace honei
 
                         OperationWrapper<DelegateOperationType_, DT1_,
                         DenseVectorContinuousBase<DT2_> > wrapper(temp[i]);
-                        tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper, x_range)));
+                        tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, x_range)));
                         i++;
                     }
                     real_part_count = i + 1;
@@ -168,7 +168,7 @@ namespace honei
                         DenseVectorSlice<DT1_> y_slice(y, p->size, y.offset() + (p->start * y.stepsize()), y.stepsize());
 
                         OperationWrapper<DelegateOperationType_, DenseVectorBase<DT1_>, DenseVectorBase<DT1_>, DenseVectorBase<DT2_> > wrapper(x_slice);
-                        tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper, x_slice, y_slice)));
+                        tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, x_slice, y_slice)));
                     }
 
                     DenseVectorSlice<DT1_> x_slice(x, p->size, x.offset() + (p->start * x.stepsize()), x.stepsize());
@@ -205,7 +205,7 @@ namespace honei
 
                         OperationWrapper<DelegateOperationType_, DenseVectorContinuousBase<DT1_>,
                         DenseVectorContinuousBase<DT1_>, DenseVectorContinuousBase<DT2_> > wrapper(x_range);
-                        tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper, x_range, y_range)));
+                        tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, x_range, y_range)));
                     }
 
                     DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
@@ -245,7 +245,7 @@ namespace honei
 
                         OperationWrapper<DelegateOperationType_, DT3_,
                         DenseVectorContinuousBase<DT1_>, DenseVectorContinuousBase<DT2_> > wrapper(temp[i]);
-                        tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper, x_range, y_range)));
+                        tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, x_range, y_range)));
                         i++;
                     }
                     real_part_count = i + 1;
@@ -290,7 +290,7 @@ namespace honei
 
                         OperationWrapper<DelegateOperationType_, DenseVectorBase<DT1_>,
                         DenseVectorBase<DT1_>, DenseVectorBase<DT2_>, DT2_> wrapper(x_slice);
-                        tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper, x_slice, y_slice, b)));
+                        tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, x_slice, y_slice, b)));
                     }
 
                     DenseVectorSlice<DT1_> x_slice(x, p->size, x.offset() + (p->start * x.stepsize()), x.stepsize());
@@ -328,7 +328,7 @@ namespace honei
 
                         OperationWrapper<DelegateOperationType_, DenseVectorContinuousBase<DT1_>,
                         DenseVectorContinuousBase<DT1_>, DenseVectorContinuousBase<DT2_>, DT2_> wrapper(x_range);
-                        tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper, x_range, y_range, b)));
+                        tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, x_range, y_range, b)));
                     }
 
                         DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
@@ -374,7 +374,7 @@ namespace honei
                         OperationWrapper<DelegateOperationType_, DenseVectorBase<DT1_>,
                             DenseVectorBase<DT1_>, DenseVectorBase<DT2_>,
                             DenseVectorBase<DT2_> > wrapper(x_slice);
-                        tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper,
+                        tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper,
                         x_slice, y_slice, z_slice)));
                     }
 
@@ -421,7 +421,7 @@ namespace honei
                         OperationWrapper<DelegateOperationType_, DenseVectorContinuousBase<DT1_>,
                             DenseVectorContinuousBase<DT1_>, DenseVectorContinuousBase<DT2_>,
                             DenseVectorContinuousBase<DT2_> > wrapper(x_range);
-                        tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper, x_range, y_range, z_range)));
+                        tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, x_range, y_range, z_range)));
                     }
 
                     DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));
@@ -465,7 +465,7 @@ namespace honei
                         OperationWrapper<DelegateOperationType_, DenseVectorContinuousBase<DT1_>,
                             DenseVectorContinuousBase<DT1_>, DenseVectorContinuousBase<DT1_>,
                             DenseVectorContinuousBase<DT2_>, DT2_> wrapper(x_range);
-                        tickets.push_back(mc::ThreadPool::instance()->enqueue(std::tr1::bind(wrapper, x_range, y_range, z_range, a)));
+                        tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, x_range, y_range, z_range, a)));
                     }
 
                     DenseVectorRange<DT1_> x_range(x.range(p->size, p->start));

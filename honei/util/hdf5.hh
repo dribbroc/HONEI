@@ -28,7 +28,6 @@
 #include <honei/util/stringify.hh>
 
 #include <string>
-#include <tr1/memory>
 
 #include <hdf5.h>
 

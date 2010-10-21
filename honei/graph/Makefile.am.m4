@@ -83,7 +83,8 @@ DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \
 	$(CUDADEF) \
-	$(DEBUGDEF)
+	$(DEBUGDEF) \
+	$(BOOSTDEF) \
 	$(PROFILERDEF)
 
 lib_LTLIBRARIES = libhoneigraph.la

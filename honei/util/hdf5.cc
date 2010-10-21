@@ -23,7 +23,7 @@
 #include <honei/util/attributes.hh>
 
 #include <map>
-#include <tr1/memory>
+#include <boost/shared_ptr.hpp>
 
 namespace honei
 {
@@ -40,7 +40,7 @@ namespace honei
     template <> struct Implementation<HDF5File> :
         public InstantiationPolicy<Implementation<HDF5File>, NonCopyable>
     {
-        typedef std::map<std::string, std::tr1::shared_ptr<Implementation<HDF5Group> > > GroupMap;
+        typedef std::map<std::string, shared_ptr<Implementation<HDF5Group> > > GroupMap;
 
         /// Our HDF5 file id.
         const hid_t id;

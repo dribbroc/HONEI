@@ -24,7 +24,7 @@
 #include <honei/util/instantiation_policy.hh>
 
 #include <string>
-#include <tr1/functional>
+#include <honei/util/tr1_boost.hh>
 
 namespace honei
 {
@@ -54,7 +54,7 @@ namespace honei
         public:
             friend struct LogQueue;
 
-            typedef std::tr1::function<void (const std::string &, const std::string, unsigned, float, float, float)> EvaluationFunction;
+            typedef function<void (const std::string &, const std::string, unsigned, float, float, float)> EvaluationFunction;
 
             /**
              * Constructor.

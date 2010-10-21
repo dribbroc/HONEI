@@ -24,7 +24,7 @@
 #ifndef LIBUTIL_GUARD_PRIVATE_IMPLEMENTATION_PATTERN_HH
 #define LIBUTIL_GUARD_PRIVATE_IMPLEMENTATION_PATTERN_HH 1
 
-#include <tr1/memory>
+#include <honei/util/tr1_boost.hh>
 
 namespace honei
 {
@@ -66,12 +66,12 @@ namespace honei
     {
         protected:
             /// Our implementation.
-            std::tr1::shared_ptr<Implementation<T_> > _imp;
+            shared_ptr<Implementation<T_> > _imp;
 
         public:
             explicit PrivateImplementationPattern(Implementation<T_> * imp);
 
-            explicit PrivateImplementationPattern(std::tr1::shared_ptr<Implementation<T_> > imp);
+            explicit PrivateImplementationPattern(shared_ptr<Implementation<T_> > imp);
 
             ~PrivateImplementationPattern();
     };

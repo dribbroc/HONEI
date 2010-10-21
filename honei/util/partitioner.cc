@@ -78,7 +78,7 @@ PartitionList::Filler::operator() (unsigned long start, unsigned long size)
 }
 
 Partitioner<tags::Cell>::Partitioner(unsigned long max_count, unsigned long best_part_size, unsigned long overall_size,
-    std::tr1::function<void(unsigned long, unsigned long)> dispatch)
+    function<void(unsigned long, unsigned long)> dispatch)
 {
     CONTEXT("When partitioning problem of size '" + stringify(overall_size) + "' (Cell):");
 
@@ -132,7 +132,7 @@ Partitioner<tags::Cell>::Partitioner(unsigned long max_count, unsigned long best
 
 Partitioner<tags::CPU::MultiCore>::Partitioner(unsigned long max_count, unsigned long best_part_size,
         unsigned long quantization, unsigned long overall_size,
-        std::tr1::function<void(unsigned long, unsigned long)> dispatch)
+        function<void(unsigned long, unsigned long)> dispatch)
 {
     CONTEXT("When partitioning problem of size '" + stringify(overall_size) + "' (MC):");
 

@@ -41,6 +41,7 @@ DEFS = \
 	$(SSEDEF) \
 	$(CUDADEF) \
 	$(DEBUGDEF) \
+	$(BOOSTDEF) \
 	$(PROFILERDEF) \
 	-DHONEI_SOURCEDIR='"$(top_srcdir)"'
 

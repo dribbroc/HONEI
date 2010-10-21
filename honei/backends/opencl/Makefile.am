@@ -9,6 +9,7 @@ CLEANFILES = *~
 DEFS = \
 	$(OPENCLDEF) \
 	$(DEBUGDEF) \
+	$(BOOSTEF) \
 	$(PROFILERDEF) \
 	-DHONEI_SOURCEDIR='"$(abs_top_srcdir)"'
 

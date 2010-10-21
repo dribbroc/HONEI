@@ -72,7 +72,7 @@ unsigned GPUPool::get_num_gpus() const
     return num_gpus;
 }
 
-Ticket<tags::GPU::MultiCore> * GPUPool::enqueue(const std::tr1::function<void ()> & task, int device)
+Ticket<tags::GPU::MultiCore> * GPUPool::enqueue(const function<void ()> & task, int device)
 {
     Ticket<tags::GPU::MultiCore> * ticket = new Ticket<tags::GPU::MultiCore>();
 

@@ -62,7 +62,7 @@
 #include <honei/backends/cuda/transfer.hh>
 
 #include <iostream>
-#include <tr1/functional>
+#include <honei/util/tr1_boost.hh>
 #include <vector>
 
 
@@ -288,7 +288,7 @@ namespace honei
                         for (unsigned long i(0) ; i < _parts ; ++i)
                         {
                             _tickets.push_back(mc::ThreadPool::instance()->enqueue(
-                                        std::tr1::bind(
+                                        bind(
                                             honei::GridPartitioner<D2Q9, ResPrec_>::recompose, &_info_list.at(i), &_data_list.at(i)),
                                             DispatchPolicy::on_core(i)));
                             tickets.push_back(_tickets.at(i));
@@ -297,8 +297,8 @@ namespace honei
                         for (unsigned long i(0) ; i < _parts ; ++i)
                         {
                             tickets.push_back(mc::ThreadPool::instance()->enqueue(
-                                        std::tr1::bind(
-                                            std::tr1::mem_fn(&honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>::do_preprocessing),
+                                        bind(
+                                            mem_fn(&honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>::do_preprocessing),
                                             *(_solver_list.at(i))
                                             ), DispatchPolicy::same_core_as(_tickets.at(i))));
                         }
@@ -312,8 +312,8 @@ namespace honei
                         for (unsigned long i(0) ; i < _parts ; ++i)
                         {
                             tickets.push_back(mc::ThreadPool::instance()->enqueue(
-                                        std::tr1::bind(
-                                            std::tr1::mem_fn(&honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>::do_postprocessing),
+                                        bind(
+                                            mem_fn(&honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>::do_postprocessing),
                                             *(_solver_list.at(i))
                                             ), DispatchPolicy::same_core_as(_tickets.at(i))));
                         }
@@ -327,8 +327,8 @@ namespace honei
                         for (unsigned long i(0) ; i < _parts ; ++i)
                         {
                             tickets.push_back(mc::ThreadPool::instance()->enqueue(
-                                        std::tr1::bind(
-                                            std::tr1::mem_fn(&honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>::solve),
+                                        bind(
+                                            mem_fn(&honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>::solve),
                                             *(_solver_list.at(i))
                                             ), DispatchPolicy::same_core_as(_tickets.at(i))));
                         }
@@ -477,8 +477,8 @@ namespace honei
                         for (unsigned long i(0) ; i < _parts ; ++i)
                         {
                             tickets.push_back(cuda::GPUPool::instance()->enqueue(
-                                        std::tr1::bind(
-                                            std::tr1::mem_fn(&honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>::do_preprocessing),
+                                        bind(
+                                            mem_fn(&honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>::do_preprocessing),
                                             *(_solver_list.at(i))
                                             ), i));
                         }
@@ -516,8 +516,8 @@ namespace honei
                         for (unsigned long i(0) ; i < _parts ; ++i)
                         {
                             tickets.push_back(cuda::GPUPool::instance()->enqueue(
-                                        std::tr1::bind(
-                                            std::tr1::mem_fn(&honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>::do_postprocessing),
+                                        bind(
+                                            mem_fn(&honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>::do_postprocessing),
                                             *(_solver_list.at(i))
                                             ), i));
                         }
@@ -531,8 +531,8 @@ namespace honei
                         for (unsigned long i(0) ; i < _parts ; ++i)
                         {
                             tickets.push_back(cuda::GPUPool::instance()->enqueue(
-                                        std::tr1::bind(
-                                            std::tr1::mem_fn(&honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>::solve),
+                                        bind(
+                                            mem_fn(&honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>::solve),
                                             *(_solver_list.at(i))
                                             ), i));
                         }

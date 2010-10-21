@@ -6,6 +6,7 @@ DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \
 	$(DEBUGDEF) \
+	$(BOOSTDEF) \
 	$(PROFILERDEF)
 
 lib_LTLIBRARIES = libhoneibackendsmulticore.la

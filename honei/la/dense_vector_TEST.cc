@@ -68,7 +68,7 @@ class DenseVectorCopyTest :
             for (unsigned long size(10) ; size < (1 << 8) ; size <<= 1)
             {
                 DenseVector<DataType_> dv1(size, static_cast<DataType_>(0)), dv2(size, static_cast<DataType_>(1));
-                std::tr1::shared_ptr<DenseVector<DataType_> > c(new DenseVector<DataType_>(dv1.copy()));
+                shared_ptr<DenseVector<DataType_> > c(new DenseVector<DataType_>(dv1.copy()));
 
                 for (typename DenseVector<DataType_>::ElementIterator i(c->begin_elements()), i_end(c->end_elements()) ;
                         i != i_end ; ++i)

@@ -27,8 +27,7 @@
 #include <honei/util/tags.hh>
 #include <honei/util/wrapped_forward_iterator.hh>
 
-#include <tr1/functional>
-#include <tr1/memory>
+#include <honei/util/tr1_boost.hh>
 
 namespace honei
 {
@@ -110,7 +109,7 @@ namespace honei
     {
         public:
             Partitioner(unsigned long max_count, unsigned long best_part_size, unsigned long overall_size,
-                    std::tr1::function<void(unsigned long, unsigned long)> dispatch);
+                    function<void(unsigned long, unsigned long)> dispatch);
     };
 
     template <> class Partitioner<tags::CPU::MultiCore> :
@@ -118,7 +117,7 @@ namespace honei
     {
         public:
             Partitioner(unsigned long max_count, unsigned long best_part_size, unsigned long quantization,
-                    unsigned long overall_size, std::tr1::function<void(unsigned long, unsigned long)> dispatch);
+                    unsigned long overall_size, function<void(unsigned long, unsigned long)> dispatch);
     };
 }
 

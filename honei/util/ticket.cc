@@ -27,7 +27,6 @@
 #include <honei/util/ticket.hh>
 
 #include <vector>
-#include <tr1/memory>
 
 namespace honei
 {

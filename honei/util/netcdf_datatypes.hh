@@ -16,7 +16,7 @@
 #include <iostream>
 #include <iomanip>
 #include <limits>
-#include <tr1/memory>
+#include <honei/util/tr1_boost.hpp>
 
 #include <honei/util/instantiation_policy.hh>
 #include <honei/util/kpnetcdf_types.hh>
@@ -45,8 +45,8 @@ struct Field {
     }
 };
 
-typedef std::tr1::shared_ptr<Field> shared_field_ptr_array3[3];
-typedef std::tr1::shared_ptr<Field> shared_field_ptr;
+typedef shared_ptr<Field> shared_field_ptr_array3[3];
+typedef shared_ptr<Field> shared_field_ptr;
 
 inline std::ostream& operator<<(std::ostream& out, const Field& f) {
     out << "Field [" << f.nx << "x" << f.ny << "]" << "x[" << f.dx << "x" << f.dy << "], no_data_value=" << f.no_data_value << std::endl;

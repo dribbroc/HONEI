@@ -24,8 +24,7 @@
 #define HONEI_GUARD_HONEI_UTIL_WRAPPED_FORWARD_ITERATOR_HH 1
 
 #include <iterator>
-#include <tr1/type_traits>
-#include <tr1/functional>
+#include <honei/util/tr1_boost.hh>
 
 namespace honei
 {
@@ -60,9 +59,9 @@ namespace honei
             ///\name Standard library typedefs
             ///\{
 
-            typedef typename std::tr1::remove_reference<Value_>::type & value_type;
-            typedef typename std::tr1::remove_reference<Value_>::type & reference;
-            typedef typename std::tr1::remove_reference<Value_>::type * pointer;
+            typedef typename remove_reference<Value_>::type & value_type;
+            typedef typename remove_reference<Value_>::type & reference;
+            typedef typename remove_reference<Value_>::type * pointer;
             typedef std::ptrdiff_t difference_type;
             typedef std::forward_iterator_tag iterator_category;
 

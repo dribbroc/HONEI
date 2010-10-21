@@ -25,6 +25,7 @@
 #include <unittest/unittest.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/util/tags.hh>
+#include <honei/util/tr1_boost.hh>
 
 #include <string>
 
@@ -193,7 +194,7 @@ class WeightedFruchtermanReingoldPositionsQuickTest :
                                          1, 0};
 
             // Now, fill that numbers into the real matrices
-            std::tr1::shared_ptr<DenseMatrix<DataType_> > pPosition(new DenseMatrix<DataType_>(2,2));
+            shared_ptr<DenseMatrix<DataType_> > pPosition(new DenseMatrix<DataType_>(2,2));
             int i(0);
             for (typename DenseMatrix<DataType_>::ElementIterator e(pPosition->begin_elements()),
                     e_end(pPosition->end_elements());e != e_end ; ++e)
@@ -202,7 +203,7 @@ class WeightedFruchtermanReingoldPositionsQuickTest :
             }
 
             i = 0;
-            std::tr1::shared_ptr<DenseVector<DataType_> > pNode_Weights(new DenseVector<DataType_>(2));
+            shared_ptr<DenseVector<DataType_> > pNode_Weights(new DenseVector<DataType_>(2));
             for (typename DenseVector<DataType_>::ElementIterator e(pNode_Weights->begin_elements()),
                     e_end(pNode_Weights->end_elements()); e != e_end ; ++e)
             {
@@ -210,7 +211,7 @@ class WeightedFruchtermanReingoldPositionsQuickTest :
             }
 
             i = 0;
-            std::tr1::shared_ptr<SparseMatrix<DataType_> > pEdge_Weights(new SparseMatrix<DataType_>(2,2));
+            shared_ptr<SparseMatrix<DataType_> > pEdge_Weights(new SparseMatrix<DataType_>(2,2));
             for (typename SparseMatrix<DataType_>::ElementIterator e(pEdge_Weights->begin_elements()),
                     e_end(pEdge_Weights->end_elements()); e != e_end ; ++e)
             {
@@ -268,7 +269,7 @@ class WeightedKamadaKawaiPositionsQuickTest :
                                          1, 0};
 
             // Now, fill that numbers into the real matrices
-            std::tr1::shared_ptr<DenseMatrix<DataType_> > pPosition(new DenseMatrix<DataType_>(2,2));
+            shared_ptr<DenseMatrix<DataType_> > pPosition(new DenseMatrix<DataType_>(2,2));
             int i(0);
             for (typename DenseMatrix<DataType_>::ElementIterator e(pPosition->begin_elements()),
                     e_end(pPosition->end_elements());e != e_end ; ++e)
@@ -277,7 +278,7 @@ class WeightedKamadaKawaiPositionsQuickTest :
             }
 
             i = 0;
-            std::tr1::shared_ptr<DenseVector<DataType_> > pNode_Weights(new DenseVector<DataType_>(2));
+            shared_ptr<DenseVector<DataType_> > pNode_Weights(new DenseVector<DataType_>(2));
             for (typename DenseVector<DataType_>::ElementIterator e(pNode_Weights->begin_elements()),
                     e_end(pNode_Weights->end_elements()); e != e_end ; ++e)
             {
@@ -285,7 +286,7 @@ class WeightedKamadaKawaiPositionsQuickTest :
             }
 
             i = 0;
-            std::tr1::shared_ptr<SparseMatrix<DataType_> > pEdge_Weights(new SparseMatrix<DataType_>(2,2));
+            shared_ptr<SparseMatrix<DataType_> > pEdge_Weights(new SparseMatrix<DataType_>(2,2));
             for (typename SparseMatrix<DataType_>::ElementIterator e(pEdge_Weights->begin_elements()),
                     e_end(pEdge_Weights->end_elements()); e != e_end ; ++e)
             {

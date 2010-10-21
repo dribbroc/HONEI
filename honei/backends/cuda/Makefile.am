@@ -14,6 +14,7 @@ DEFS = \
 	$(CUDA_DOUBLEDEF) \
 	$(CUBLASDEF) \
 	$(DEBUGDEF) \
+	$(BOOSTDEF) \
 	$(PROFILERDEF)
 
 NVCC = nvcc

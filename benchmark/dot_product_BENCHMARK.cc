@@ -3,7 +3,7 @@
 #ifndef ALLBENCH
 #include <benchmark/benchmark.cc>
 #include <string>
-#include <tr1/memory>
+
 #endif
 
 #include <honei/la/dot_product.hh>

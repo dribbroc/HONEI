@@ -29,7 +29,7 @@
 #include <unittest/unittest.hh>
 
 #include <cmath>
-#include <tr1/memory>
+#include <honei/util/tr1_boost.hh>
 
 using namespace honei;
 using namespace tests;
@@ -77,9 +77,9 @@ class ProfilerTest :
     public QuickTest
 {
     private:
-        std::tr1::shared_ptr<Mutex> _mutex;
+        shared_ptr<Mutex> _mutex;
 
-        std::tr1::shared_ptr<ConditionVariable> _done;
+        shared_ptr<ConditionVariable> _done;
 
         bool _complete;
 
@@ -93,11 +93,11 @@ class ProfilerTest :
             _complete(false),
             _passed(false)
         {
-            ProfilerMessage(ProfilerMessage::EvaluationFunction(std::tr1::bind(
-                            std::tr1::mem_fn(&ProfilerTest::evaluation), this,
-                            std::tr1::placeholders::_1, std::tr1::placeholders::_2,
-                            std::tr1::placeholders::_3, std::tr1::placeholders::_4,
-                            std::tr1::placeholders::_5, std::tr1::placeholders::_6)));
+            ProfilerMessage(ProfilerMessage::EvaluationFunction(bind(
+                            mem_fn(&ProfilerTest::evaluation), this,
+                            HONEI_PLACEHOLDERS_1, HONEI_PLACEHOLDERS_2,
+                            HONEI_PLACEHOLDERS_3, HONEI_PLACEHOLDERS_4,
+                            HONEI_PLACEHOLDERS_5, HONEI_PLACEHOLDERS_6)));
         }
 
         void evaluation(const std::string & function, const std::string & tag, unsigned count, float highest, float average, float lowest)
