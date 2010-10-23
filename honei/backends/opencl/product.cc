@@ -18,13 +18,14 @@
  */
 
 #include <honei/backends/opencl/opencl_backend.hh>
+#include <honei/util/attributes.hh>
 
 namespace honei
 {
     namespace opencl
     {
         void product_smell_dv_float(void * x, void * y, void * Aj, void * Ax, void * Arl,
-                unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
+                unsigned long num_rows, HONEI_UNUSED unsigned long num_cols, HONEI_UNUSED unsigned long num_cols_per_row,
                 unsigned long stride, cl_device_type type)
         {
             cl_command_queue command_queue;
@@ -56,7 +57,7 @@ namespace honei
         }
 
         void product_smell_dv_double(void * x, void * y, void * Aj, void * Ax, void * Arl,
-                unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
+                unsigned long num_rows, HONEI_UNUSED unsigned long num_cols, HONEI_UNUSED unsigned long num_cols_per_row,
                 unsigned long stride, cl_device_type type)
         {
             cl_command_queue command_queue;
