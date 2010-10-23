@@ -1,0 +1,37 @@
+The SPAI code was originally written by Marcus J. Grote.  It was rewritten
+and parallelized by Stephen Barnard who was formerly at NASA Ames.  Oliver
+Broeker added the GNU autoconf and GNU automake configuration to the
+package, which was further modified and is currently maintained by Michael
+Hagemann.
+
+Please direct any questions to the SPAI mailing list at
+`spai@maillist.unibas.ch', or browse the archives under
+`https://www.maillist.unibas.ch/mailman/listinfo/spai'.
+
+-----
+
+Stephen Barnard
+Marcus Grote
+Oliver Broeker
+Michael Hagemann
+
+
+-----
+
+Copyright (c) 1999, 2000, 2001, 2002, 2005, 2006 Marcus J. Grote
+
+This file is part of SPAI.
+
+SPAI is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+Marcus J. Grote; either version 3.1, or any later version.
+
+SPAI is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+for more details.
+
+You should have received a copy of the GNU General Public License
+along with SPAI; see the file COPYING. If not, write to the Free
+Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+02111-1307, USA.

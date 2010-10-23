@@ -1,0 +1,157 @@
+SPAI Version 3.2
+================
+
+Two new execution modes have been added. They let the user specify the
+structure of the approximate inverse M, rather than rely on the adaptive
+procedure (mode 0, which remains the default).  They do not work for
+block matrices, but only with block size 1.
+
+In mode 1, a new parameter tau between zero and one (default zero) has the
+following effect: exactly those Mij are included for which the corresponding
+|Aij| > (1-tau)*max{j}|Aij|, i.e. which are larger than the maximal entry in
+row i, multiplied by (1-tau).  The main diagonal is always included.  Thus
+for tau = 0 (default) only the main diagonal of M will be included, whereas
+for tau = 1 M will have exactly the same sparsity structure as A.
+
+In mode 2, the user can define a band structure for M. The main diagonal is
+always included; in addition, one can specify the number of diagonals below
+(-ld, default 0) and above (-ud, default 0) the main diagonal.
+
+
+Detailed list of changes from version 3.1 to version 3.2
+========================================================
+
+files/routines:
+--------------
+basics.h: #include <stdio.h> added; #include <malloc.h> removed.
+          mmalloc definition added (see below).
+
+basics.c: routine mmalloc added; is called everywhere instead of malloc.
+          Prints an error message if memory allocation fails. Returns
+          pointer as before (which may be NULL).
+
+bicgstab.c:
+   int bicgstab_R and int bicgstab_L return error code != 0 in case of error.
+   Both routines rewritten (code is shorter and clearer).
+   Convergence criterion (residual) printed every 10 steps only.
+
+qr.c:
+   int qr returns error code != 0 in case of error. The Fortran
+   library routines are called directly now (with underscore).
+
+command_line.c:
+   Several new options added (see below for full list). The argument -h
+   or -help (as first and only argument) prints a list of all options
+   on standard output.
+   Only one data statement for help printout  and default definition.
+
+spai.h: routine definitions changed.
+
+spai.c:
+    int bspai returns error code != 0 in case of error.
+    int spai returns error code != 0 in case of error.
+    Externs are integrated (no file externs.h anymore).
+    Several new options in argument list:
+int bspai
+(matrix *A, matrix **bspai_matrix,
+ FILE *messages_arg,   /* file for warning messages */
+ double epsilon_arg,   /* tolerance */
+ int nbsteps_arg,      /* max number of accepted elements per line
+                          (spar_arg = 0); is set to ld+lu+1 for spar = 2 */
+ int max_arg,          /* max dimensions of I, q, etc. */
+ int maxnew_arg,       /* max number of new entries per step */
+ int bs,               /* block size */
+ int cache_size_arg,   /* one of (1,2,3,4,5,6) indicating size of cache */
+                       /* cache_size == 0 indicates no caching */
+ int verbose_arg,
+ int spar_arg,
+ int lower_diag_arg,
+ int upper_diag_arg,
+ double tau_arg)
+
+int spai
+(matrix *A, matrix **spai_mat,
+ FILE *messages_arg,   /* file for warning messages */
+ double epsilon_arg,   /* tolerance */
+ int nbsteps_arg,      /* max number of "improvement" steps per line */
+ int max_arg,          /* max dimensions of I, q, etc. */
+ int maxnew_arg,       /* max number of new entries per step */
+ int cache_size_arg,   /* one of (1,2,3,4,5,6) indicating size of cache */
+                       /* cache_size == 0 indicates no caching */
+ int verbose_arg,
+ int spar_arg,
+ int lower_diag_arg,
+ int upper_diag_arg,
+ double tau_arg)
+
+test_spai.c
+-----------
+ New timing added; new options read.
+
+
+Full list of options:
+=====================
+
+           -sc:  sparsity control:
+		 0 = adaptive,
+		 1 = specified tau,
+                 2 = fixed diagonals (-ud & -ld)
+
+		 Main diagonal always included
+	         default is 0
+
+	   -bi:  read matrix as a binary file
+	         default is 0
+
+	   -bs:  block size
+	         default is 1, variable is 0
+
+	   -cs:  cache size {0,1,2,3,4,5} in SPAI
+	         default is 5 (the biggest cache size)
+
+	   -db:  debugging level
+	         default is 0
+
+           -ep:  epsilon parameter for SPAI
+                 default is .6
+
+           -ld:  no. of lower (below main) diagonals (for -sc = 2)
+	         default is 0
+
+	   -lp:  left preconditioning
+                 default is 0 => right preconditioning
+
+	   -mb:  size of various working buffers in SPAI
+	         default is 100000
+
+	   -mf:  message file for warning messages
+	         default is 0
+
+	   -mi:  maximum number of iterations in BICGSTAB
+	         default is 500
+
+	   -mn:  maximum number of new nonzero candidate per step
+	         default is 5
+
+           -ns:  maximum number of improvement steps per row in SPAI
+	         default is 5
+
+	   -sp:  symmetric pattern
+	         default is 0
+
+           -ta:  (tau) only those entries Mij included for which
+                 |Aij| > (1-ta)*max_{j}|Aij|        (for -sc = 1)
+                 i.e. ta=0: main diagonal, ta=1: full pattern of A
+
+                 Main diagonal always included
+	         default is 0
+
+	   -to:  tolerance in BICGSTAB
+	         default is 1.0e-8
+
+           -ud:  no. of upper (above main) diagonals (for -sc = 2)
+	         default is 0
+
+	   -vb:  verbose: print parameters, timings and matrix statistics
+	         default is 1
+

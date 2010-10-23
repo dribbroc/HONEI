@@ -1,0 +1,295 @@
+
+  ++++++++++++++++++++++++++++++++
+  ++++++++++++++++++++++++++++++++
+
+numprocs                   1
+matrix file                ../data/m1.mm
+rhs file                   ../data/m1_rhs.mm
+epsilon (ep)               6.000000e-01
+nbsteps (ns)               5
+max (mb)                   100000
+maxnew (mn)                5
+cache size (cs)            5
+message file (mf)
+max_iter (mi)              500
+tolerance (to)             1.000000e-08
+block size (bs)            1
+symmetric pattern (sp)     0
+left preconditioner (lp)   0
+binary (bi)                0
+verbose (vb)               1
+debug (db)                 0
+sparsity parameter (sc)    0
+lower_diag (ld)            0
+upper_diag (ud)            0
+tau (ta)                   0.000000
+
+Matrix statistics for A
+--------------------------------------
+Size of matrix              =  93
+Total number of nnz entries =  945
+Max. nb of nnz per column   =  21
+Max. nb of nnz per row      =  21
+Min. nb of nnz per column   =  1
+Min. nb of nnz per row      =  1
+Min. block size             =  1
+Max. block size             =  1
+Avg. block size             =  1.000000e+00
+
+
+Constructing scalar SPAI matrix M from A
+
+
+Computing SPAI: epsilon = 0.600000
+
+Matrix statistics for M
+--------------------------------------
+Size of matrix              =  93
+Total number of nnz entries =  476
+Max. nb of nnz per column   =  21
+Max. nb of nnz per row      =  ***
+Min. nb of nnz per column   =  1
+Min. nb of nnz per row      =  ***
+Min. block size             =  1
+Max. block size             =  1
+Avg. block size             =  1.000000e+00
+  *** => this matrix has no explicit row structure
+
+
+
+      bicgstab_R: tol=1.000000e-08 maxiter=500
+iteration     residual
+        1 1.795309e-01
+        2 4.812068e-02
+        3 1.176415e-01
+        4 1.135077e-02
+        5 1.654899e-02
+        6 5.230431e-03
+        7 2.427106e-03
+        8 1.133378e-03
+        9 2.657749e-04
+       10 1.846431e-04
+       11 2.229827e-05
+       12 2.545844e-05
+       13 1.263855e-05
+       14 2.783023e-06
+       15 1.630343e-06
+       16 1.701491e-06
+       17 4.531399e-07
+       18 3.152475e-07
+       19 4.642660e-08
+       20 1.877140e-08
+       21 1.509644e-08
+       22 1.600275e-09
+
+       22 1.600275e-09
+
+  ++++++++++++++++++++++++++++++++
+  ++++++++++++++++++++++++++++++++
+
+numprocs                   1
+matrix file                ../data/m1.mm
+rhs file                   ../data/m1_rhs.mm
+epsilon (ep)               6.000000e-01
+nbsteps (ns)               5
+max (mb)                   100000
+maxnew (mn)                5
+cache size (cs)            5
+message file (mf)
+max_iter (mi)              500
+tolerance (to)             1.000000e-08
+block size (bs)            1
+symmetric pattern (sp)     0
+left preconditioner (lp)   0
+binary (bi)                0
+verbose (vb)               1
+debug (db)                 0
+sparsity parameter (sc)    1
+lower_diag (ld)            0
+upper_diag (ud)            0
+tau (ta)                   0.000000
+
+Matrix statistics for A
+--------------------------------------
+Size of matrix              =  93
+Total number of nnz entries =  945
+Max. nb of nnz per column   =  21
+Max. nb of nnz per row      =  21
+Min. nb of nnz per column   =  1
+Min. nb of nnz per row      =  1
+Min. block size             =  1
+Max. block size             =  1
+Avg. block size             =  1.000000e+00
+
+
+Constructing scalar SPAI matrix M from A
+
+
+Computing SPAI: tau = 0.000000
+
+Matrix statistics for M
+--------------------------------------
+Size of matrix              =  93
+Total number of nnz entries =  93
+Max. nb of nnz per column   =  1
+Max. nb of nnz per row      =  ***
+Min. nb of nnz per column   =  1
+Min. nb of nnz per row      =  ***
+Min. block size             =  1
+Max. block size             =  1
+Avg. block size             =  1.000000e+00
+  *** => this matrix has no explicit row structure
+
+
+
+      bicgstab_R: tol=1.000000e-08 maxiter=500
+iteration     residual
+        1 4.128152e-01
+        2 2.324214e-01
+        3 2.006590e-01
+        4 1.238249e-01
+        5 9.506680e-02
+        6 4.495403e-01
+        7 2.611014e-01
+        8 3.509857e-01
+        9 3.068707e-01
+       10 5.820828e-02
+       11 2.779679e-02
+       12 2.421981e-02
+       13 6.586633e-02
+       14 1.251127e-02
+       15 5.192484e-03
+       16 3.449838e-03
+       17 1.014652e-02
+       18 2.003982e-03
+       19 9.527573e-04
+       20 1.325808e-03
+       21 6.082303e-04
+       22 3.916389e-04
+       23 3.875677e-04
+       24 1.889463e-04
+       25 1.945264e-04
+       26 1.102844e-04
+       27 5.630451e-05
+       28 3.710859e-05
+       29 1.866659e-05
+       30 8.409056e-06
+       31 6.173345e-06
+       32 6.623728e-06
+       33 1.841897e-05
+       34 4.931855e-06
+       35 1.708030e-06
+       36 2.259775e-06
+       37 3.564621e-07
+       38 2.445074e-07
+       39 4.431920e-07
+       40 2.337724e-07
+       41 3.003084e-08
+       42 1.521660e-09
+
+       42 1.521660e-09
+
+  ++++++++++++++++++++++++++++++++
+  ++++++++++++++++++++++++++++++++
+
+numprocs                   1
+matrix file                ../data/m1.mm
+rhs file                   ../data/m1_rhs.mm
+epsilon (ep)               6.000000e-01
+nbsteps (ns)               5
+max (mb)                   100000
+maxnew (mn)                5
+cache size (cs)            5
+message file (mf)
+max_iter (mi)              500
+tolerance (to)             1.000000e-08
+block size (bs)            1
+symmetric pattern (sp)     0
+left preconditioner (lp)   0
+binary (bi)                0
+verbose (vb)               1
+debug (db)                 0
+sparsity parameter (sc)    2
+lower_diag (ld)            0
+upper_diag (ud)            0
+tau (ta)                   0.000000
+
+Matrix statistics for A
+--------------------------------------
+Size of matrix              =  93
+Total number of nnz entries =  945
+Max. nb of nnz per column   =  21
+Max. nb of nnz per row      =  21
+Min. nb of nnz per column   =  1
+Min. nb of nnz per row      =  1
+Min. block size             =  1
+Max. block size             =  1
+Avg. block size             =  1.000000e+00
+
+
+Constructing scalar SPAI matrix M from A
+
+
+Computing SPAI: # diagonals = 1
+
+Matrix statistics for M
+--------------------------------------
+Size of matrix              =  93
+Total number of nnz entries =  93
+Max. nb of nnz per column   =  1
+Max. nb of nnz per row      =  ***
+Min. nb of nnz per column   =  1
+Min. nb of nnz per row      =  ***
+Min. block size             =  1
+Max. block size             =  1
+Avg. block size             =  1.000000e+00
+  *** => this matrix has no explicit row structure
+
+
+
+      bicgstab_R: tol=1.000000e-08 maxiter=500
+iteration     residual
+        1 4.128152e-01
+        2 2.324214e-01
+        3 2.006590e-01
+        4 1.238249e-01
+        5 9.506680e-02
+        6 4.495403e-01
+        7 2.611014e-01
+        8 3.509857e-01
+        9 3.068707e-01
+       10 5.820828e-02
+       11 2.779679e-02
+       12 2.421981e-02
+       13 6.586633e-02
+       14 1.251127e-02
+       15 5.192484e-03
+       16 3.449838e-03
+       17 1.014652e-02
+       18 2.003982e-03
+       19 9.527573e-04
+       20 1.325808e-03
+       21 6.082303e-04
+       22 3.916389e-04
+       23 3.875677e-04
+       24 1.889463e-04
+       25 1.945264e-04
+       26 1.102844e-04
+       27 5.630451e-05
+       28 3.710859e-05
+       29 1.866659e-05
+       30 8.409056e-06
+       31 6.173345e-06
+       32 6.623728e-06
+       33 1.841897e-05
+       34 4.931855e-06
+       35 1.708030e-06
+       36 2.259775e-06
+       37 3.564621e-07
+       38 2.445074e-07
+       39 4.431920e-07
+       40 2.337724e-07
+       41 3.003084e-08
+       42 1.521660e-09
+
+       42 1.521660e-09

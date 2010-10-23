@@ -1,0 +1,159 @@
+matlab
+
+>> >> >> >> SPAI parameters:
+
+   ep = 4.00e-01
+   ns = 10
+   mn = 5
+   bs = 1
+   mb = 100000
+   vb = 1
+   sc = 0
+   ld = 0
+   ud = 0
+   ta = 0.00e+00
+
+Matrix statistics for A
+--------------------------------------
+Size of matrix              =  93
+Total number of nnz entries =  945
+Max. nb of nnz per column   =  21
+Max. nb of nnz per row      =  21
+Min. nb of nnz per column   =  1
+Min. nb of nnz per row      =  1
+Min. block size             =  1
+Max. block size             =  1
+Avg. block size             =  1.000000e+00
+
+
+Constructing scalar SPAI matrix M from A
+
+
+Computing SPAI: epsilon = 0.400000
+
+Matrix statistics for M
+--------------------------------------
+Size of matrix              =  93
+Total number of nnz entries =  927
+Max. nb of nnz per column   =  26
+Max. nb of nnz per row      =  ***
+Min. nb of nnz per column   =  1
+Min. nb of nnz per row      =  ***
+Min. block size             =  1
+Max. block size             =  1
+Avg. block size             =  1.000000e+00
+  *** => this matrix has no explicit row structure
+
+>> >> >> >>
+x =
+
+    1.0000
+    0.1634
+    0.5101
+    1.0481
+    0.9147
+    0.1115
+    2.0000
+    1.0000
+    0.2612
+    0.1114
+    0.2197
+    0.2332
+    0.4993
+    0.1786
+    0.2500
+    0.4711
+    0.4035
+    0.2470
+    1.0190
+    0.9949
+    0.1552
+    2.0000
+    1.0000
+    0.1655
+    0.2874
+    0.4836
+    0.4869
+    0.4584
+    0.2308
+    0.9855
+    0.9145
+    0.1220
+    2.0000
+    1.0000
+    0.1288
+    0.2385
+    0.5045
+    0.4491
+    0.4104
+    0.2433
+    1.0139
+    0.4892
+    0.1511
+    1.0000
+    1.0000
+    0.1765
+    0.1047
+    0.2532
+    0.4300
+    0.2433
+    0.1779
+    0.2011
+    0.0587
+    0.2767
+    0.0438
+    0.3804
+    0.1958
+    0.0039
+    0.1073
+    0.0658
+    0.3735
+    0.0365
+    1.0000
+    1.0000
+    2.0000
+    0.2434
+    0.3645
+    0.1242
+    0.3346
+    0.1258
+    0.0178
+    0.3417
+    1.0000
+    2.0000
+    0.1839
+    0.3573
+    0.0365
+    0.3454
+    0.1805
+    0.0416
+    0.3429
+    1.0000
+    2.0000
+    0.2543
+    0.2943
+    0.0714
+    0.2027
+    0.1631
+    0.0168
+    0.1859
+    1.0000
+    1.0000
+    0.0417
+
+
+flag =
+
+     0
+
+
+relres =
+
+   4.4508e-10
+
+
+iter =
+
+     8
+
+>>

@@ -82,7 +82,7 @@ BACKEND_LIBS += \
 
 endif
 
-SUBDIRS = testdata
+SUBDIRS = testdata spai
 
 AM_CXXFLAGS = -I$(top_srcdir)
 

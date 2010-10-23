@@ -556,6 +556,10 @@ AC_OUTPUT(
 	honei/lbm/Makefile
 	honei/math/Makefile
 	honei/math/testdata/Makefile
+	honei/math/spai/Makefile
+	honei/math/spai/src/Makefile
+	honei/math/spai/blas/Makefile
+	honei/math/spai/lapack/Makefile
 	honei/swe/Makefile
 	honei/util/Makefile
 	honei/visual/Makefile

@@ -1,0 +1,1026 @@
+\documentclass[a4paper,DIV12]{scrartcl}
+
+\usepackage[latin1]{inputenc}
+
+\usepackage[american]{babel}
+\usepackage[dvips]{graphicx}
+
+\usepackage{ifpdf}
+
+
+\setlength{\parindent}{1em}
+
+\ifpdf
+  \usepackage[pdftex,colorlinks=true,urlcolor=blue,linkcolor=blue]{hyperref}
+  \pdfcompresslevel=9
+\else
+%  \usepackage{t1enc}
+  \usepackage{url}
+%  \usepackage[dvips]{hyperref}
+\fi
+
+
+\title{SPAI -- SParse Approximate Inverse Preconditioner}
+\author{Marcus Grote
+  \thanks{Department of Mathematics, University of Basel,
+    Rheinsprung 21, 4051 Basel, Switzerland, {\tt Marcus.Grote @unibas.ch}.}
+\and Michael Hagemann
+  \thanks{Department of Computer Science, University of Basel.}}
+
+% \date{2005-09-30}
+
+
+
+
+\begin{document}
+
+
+\maketitle
+\tableofcontents
+
+
+\section{Introduction}
+
+Given a sparse matrix $A$ the SPAI Algorithm computes a sparse approximate
+inverse $M$ by minimizing $ \| AM - I \| $ in the Frobenius norm. The
+approximate inverse is computed explicitly and can then be applied as a
+preconditioner to an iterative method. The sparsity pattern of the
+approximate inverse is either fixed a priori or captured automatically:
+\begin{description}
+
+  \item[Fixed sparsity] The sparsity pattern of $M$ is either banded or
+    a subset of the sparsity pattern of $A$.
+
+  \item[Adaptive sparsity] The algorithm proceeds until the 2-norm of each
+    column of $AM-I$ is less than \emph{eps}.  By varying \emph{eps} the
+    user controls the quality and the cost of computing the preconditioner.
+    Usually the optimal \emph{eps} lies between 0.5 and 0.7.
+
+\end{description}
+A very sparse preconditioner is very cheap to compute but may not lead to
+much improvement, while if $M$ becomes rather dense it becomes too expensive
+to compute.  The optimal preconditioner lies between these two extremes and
+is problem and computer architecture dependent.
+
+The approximate inverse $M$ can also be used as a robust (parallel) smoother
+for (algebraic) multi-grid methods.  For further details please refer to
+\cite{7,8,9}.
+
+
+\section{News}
+
+Please see the \texttt{NEWS} file for a detailed list of changes.  Some
+notable improvements over version 3.1 include:
+\begin{itemize}
+  \item Simplified installation procedure (\texttt{autoconf} based)
+  \item Threshold based construction of preconditioner, with new
+    \textsc{Matlab} interface function \texttt{spaitau}.
+  \item Banded structure of preconditioner, with new \textsc{Matlab}
+    interface function \texttt{spaidiags}.
+\end{itemize}
+
+
+\section{Installation}
+
+\subsection{For the impatient}
+
+The following gives you the basic commands for a quick build of SPAI, and
+illustrates some simple ways to get you started with using SPAI as a
+preconditioner:
+
+\begin{description}
+  \item[Step 1:]
+    % Decide where your \texttt{installdir} will be. e.g. for a local
+    % installation you may decide to use
+    % \texttt{\$$\{$HOME$\}$/spaiinstalldir}
+
+    Unpack the SPAI package, and change to the respective directory:
+    \begin{quote}
+\begin{verbatim}
+gunzip spai-3.2.tar.gz
+tar xvf spai-3.2.tar
+cd spai-3.2
+\end{verbatim}
+    \end{quote}
+
+  \item[Step 2:]
+    Run the following sequence and keep your fingers crossed:
+    \begin{quote}
+        % --prefix=${HOME}/spaiinstalldir
+        % make install
+\begin{verbatim}
+configure --with-matlab
+make
+make check
+\end{verbatim}
+    \end{quote}
+
+    (Please note that a working \textsc{Fortran} compiler is required to
+    detect the system calling conventions.
+    %
+    Furthermore, \textsc{Matlab} needs to be in the current \texttt{\$PATH}
+    in order to be detected and used.  See Section \ref{sec:platforms} for
+    further configuration options on various platforms.)
+
+  \item[Step 3:]
+    % Look at \texttt{ls -R (installdir)}
+
+    Test the command line interface:
+    \begin{quote}
+\begin{verbatim}
+cd src
+./spai ../data/m1.mm
+./spai ../data/m1.mm -sc 1 -ta 0.7
+\end{verbatim}
+    \end{quote}
+    (Please note that the matrix file needs to be the first parameter.)
+
+  \item[Step 4:]
+    % Have fun using SPAI!
+
+    Test the \textsc{Matlab} interface (if available):
+    \begin{quote}
+% >> % A is simple Poisson problem, b=A*1
+% >> A = gallery('poisson', 100);
+\begin{verbatim}
+cd ../matlab
+matlab
+>> help spai
+>> % Load A as matrix `m1.dat' and create RHS b=A*1.
+>> A = spconvert(load('m1.dat'));
+>> b = A * ones(size(A,1), 1);
+
+>> % Solve Ax=b, without preconditioning
+>> x = bicgstab(A, b, 1e-8, 200);
+
+>> % Compute adaptive SPAI preconditioner (SPAI 3.1)
+>> M = spai(A);
+>> spy(M);
+
+>> % Solve Ax=b, with SPAI preconditioning
+>> x = bicgstab(A, b, 1e-8, 200, @(y) M*y);
+
+>> % Compute block SPAI preconditioner (block size=3)
+>> M = spai(A, 0.6, 5, 5, 3, 100000, 0);
+
+>> % Compute threshold based SPAI preconditioner
+>> M = spaitau(A, 0.8, 0);
+
+>> % Compute banded SPAI preconditioner
+>> M = spaidiags(A, 5, 5, 0);
+\end{verbatim}
+    \end{quote}
+
+\end{description}
+
+See Figure \ref{fig:matlab-spy} for a comparison of the sparsity patterns
+for the above Matlab function calls, and the convergence history of a
+preconditioned BICGSTAB iteration.
+
+\begin{figure}[p]
+    \centering
+    \includegraphics[width=0.9\linewidth]{fig-m1}
+    \caption{Comparison of sparsity patterns for different SPAI Matlab
+      functions, and convergence history of preconditioned BICGSTAB
+      iteration.}
+    \label{fig:matlab-spy}
+\end{figure}
+
+% Note that this will install a copy of the libraries, the binaries, the
+% mexfiles and the documentation in the subdirectory \texttt{spaiinstalldir}
+% of your home directory. It also compiles versions of BLAS and LAPACK that
+% come with the SPAI-package.
+
+% This is a good start for experimenting with SPAI. Nonetheless for large
+% matrices this building procedure may be improved by using vendor supplied
+% BLAS and LAPACK libraries and using optimal compiler flags.
+
+\subsection{Detailed installation instructions}
+
+% \subsubsection{Directory tree of package}
+
+% This package consists of the following subdirectories:
+
+% \begin{description}
+%   \item[\texttt{src}]
+%     Contains code for SPAI library. This can be compiled as either a
+%     parallel MPI version or a serial version that doesn't require MPI
+%     (default).
+
+%     Also contains a main program for testing SPAI. The executable "spai"
+%     will read a matrix $A$ and (optionally) a right hand side $b$, construct
+%     the SPAI preconditioner $M$ using a combination of various options, and
+%     run BICGSTAB to solver $Ax=b$.
+
+%   \item[\texttt{matlab}]
+%     Contains an interface to Matlab (supports only the serial version of
+%     SPAI).
+
+%   \item[\texttt{data}]
+%     An example matrix and rhs.
+
+%   \item[\texttt{doc}]
+%     Contains this documentation.
+
+% \end{description}
+
+
+\subsubsection{Using configure}
+
+The `\texttt{configure}' shell script attempts to guess correct values for
+various system-dependent variables used during compilation.  It uses those
+values to create a \texttt{Makefile} in each directory of the package.  It
+may also create one or more \texttt{.h} files containing system-dependent
+definitions.  Finally, it creates a shell script \texttt{config.status} that
+you can run in the future to recreate the current configuration, a file
+\texttt{config.cache} that saves the results of its tests to speed up
+reconfiguring, and a file \texttt{config.log} containing compiler output
+(useful mainly for debugging \texttt{configure}).
+
+% If you need to do unusual things to compile the package, please try to
+% figure out how \texttt{configure} could check whether to do them, and
+% mail diffs or instructions to \texttt{broeker@inf.ethz.ch}.
+
+% If at some point \texttt{config.cache} contains results you don't want to
+% keep, you may remove or edit it.
+
+% The file \texttt{configure.in} is used to create \texttt{configure} by a
+% program called \texttt{autoconf}.  You only need \texttt{configure.in} if
+% you want to change it or regenerate \texttt{configure} using a newer
+% version of \texttt{autoconf}.
+
+The simplest way to compile this package is:
+
+\begin{enumerate}
+  \item \texttt{cd} to the directory containing the package's source code
+    and type \texttt{./configure} to configure the package for your
+    system.  If you're using \texttt{csh} on an old version of System V,
+    you might need to type \texttt{sh ./configure} instead to prevent
+    \texttt{csh} from trying to execute \texttt{configure} itself.
+
+    Running \texttt{configure} takes a while.  While running, it prints
+    some messages telling which features it is checking for.
+
+  \item Type \texttt{make} to compile the package.
+
+  \item Optionally, type \texttt{make check} to run any self-tests that
+    come with the package.
+
+  \item Type \texttt{make install} to install the programs and any data
+    files and documentation.
+
+  \item You can remove the program binaries and object files from the source
+    code directory by typing \texttt{make clean}.  To also remove the
+    files that \texttt{configure} created (so you can compile the package
+    for a different kind of computer), type \texttt{make distclean}.
+
+    % There is also a \texttt{make maintainer-clean} target, but that is
+    % intended mainly for the package's developers.  If you use it, you may
+    % have to get all sorts of other programs in order to regenerate files
+    % that came with the distribution.
+\end{enumerate}
+
+
+\subsubsection{Optional Features}
+
+\texttt{configure} accepts the following command line options:
+
+\begin{description}
+  \item[\texttt{-{}-help}]
+    Print a summary of the options of \texttt{configure}, and exit.
+
+
+  \item[\texttt{-{}-with-blas=\{no|"-llibrary1 -llibrary2"\}}]
+
+    Override the default option for BLAS libraries.  By default, various
+    known and vendor specific BLAS libraries are searched for and tested.
+    This search can be overridden by specifying the BLAS linker options.
+
+    \textbf{Example:} To build with a free \textsc{Atlas} BLAS installed in
+    a non-standard place, try the following:
+\begin{verbatim}
+   ./configure --with-blas="-L/opt/atlas -lf77blas -lcblas -latlas"
+\end{verbatim}
+
+    If no suitable system BLAS library is found, a local library is built.
+    This will typically decrease the performance of \texttt{spai}.
+
+
+  \item[\texttt{-{}-with-lapack=\{no|"-llibrary1 -llibrary2"|/path/to/lapack-libary.a\}}]
+
+    Override the default option for LAPACK libraries.  By default, various
+    known and vendor specific LAPACK libraries are searched for and tested.
+    This search can be overridden by specifying the LAPACK linker options.
+
+    If no suitable system LAPACK library is found, a local library is built.
+    This will typically decrease the performance of \texttt{spai}.
+
+
+  \item[\texttt{-{}-with-matlab}]
+
+    Checks for a \textsc{Matlab} installation and compiles the
+    \textsc{Matlab} interface.  \textsc{Matlab} must be in the current
+    \texttt{\$PATH}.
+
+
+  \item[\texttt{-{}-with-MPI=\{lam|mpich|generic\}}]
+    Compiles a parallel version using an already installed version of the
+    MPI library.
+
+    The value \texttt{lam} configures the package using specific details
+    of the LAM implementation of MPI. See the {\em LAM homepage}
+    \url{http://www.lam-mpi.org/} for details on how to obtain, install and
+    run LAM.
+
+    The value \texttt{mpich} configures the package using specific
+    details of the MPICH implementation of MPI. See the {\em MPICH homepage}
+    \url{http://www-unix.mcs.anl.gov/mpi/mpich/} for details on how to
+    obtain, install and run MPICH.
+
+    The value \texttt{generic} tries to guess the needed libraries and
+    binaries needed.
+
+\end{description}
+
+
+
+\subsubsection{Compilers and Options}
+\label{sec:platforms}
+
+Some systems require unusual options for compilation or linking that the
+\texttt{configure} script does not know about.  You can give
+\texttt{configure} initial values for variables by setting them in the
+environment.  Using a Bourne-compatible shell, you can do that on the
+command line like this:
+\begin{quote}
+\begin{verbatim}
+CC=c89 CFLAGS=-O2 LIBS=-lposix  ./configure
+\end{verbatim}
+\end{quote}
+
+Or on systems that have the \texttt{env} program, you can do it like this:
+\begin{quote}
+\begin{verbatim}
+env CC=c89 CFLAGS=-O2 LIBS=-lposix  ./configure
+\end{verbatim}
+\end{quote}
+%
+We have successfully installed and tested SPAI on the following systems:
+
+\begin{itemize}
+
+  \item  \textbf{i686-pc-linux-gnu} with GNU \texttt{gcc}
+
+    All features are typically discovered automatically.  A working
+    \textsc{Fortran} compiler needs to be installed.
+    %
+    Tested for \texttt{libspai.a} library, CLI, Matlab-interface, and MPI
+    (LAM).
+
+  \item  \textbf{sparc-sun-solaris2.8} with SUN \texttt{cc} and SUN high performance library
+
+    We used the following options to avoid linking problems due to the
+    \textsc{OpenMP} stubs.
+\begin{verbatim}
+  CC=cc F77=f90 CFLAGS="-xopenmp=stubs"  ./configure
+\end{verbatim}
+    The \texttt{sunperf} libraries are detected automatically.  If you want
+    to compile the \textsc{Matlab} interface, you cannot link to the
+    \texttt{sunperf} libraries.  A possible solution is to compile the local
+    BLAS and LAPACK libraries with:
+\begin{verbatim}
+  CC=cc F77=f90 CFLAGS="-xopenmp=stubs"  ./configure  \
+        --with-matlab --with-blas=no --with-lapack=no
+\end{verbatim}
+
+  \item  \textbf{x86\_64-unknown-linux-gnu}
+
+    We use the \textsc{AMD} \texttt{ACML} library:
+\begin{verbatim}
+  ./configure --with-blas=/opt/acml/gnu64/lib/libacml.a
+\end{verbatim}
+
+    With \textsc{Matlab}, the following options were necessary, in order to
+    make the library dynamically linkable:
+\begin{verbatim}
+  CFLAGS=-fpic ./configure --with-matlab  \
+                           --with-blas=/opt/acml/gnu64/lib/libacml.a
+\end{verbatim}
+
+  \item  \textbf{powerpc-apple-darwin8.2.0} (with gcc)
+
+    All features are typically discovered automatically.
+    %
+    Tested for library, and CLI.
+
+\end{itemize}
+
+
+
+\subsection{Installation}
+
+Automatic installation is available through the \texttt{automake} package
+(\texttt{make install}), but we recommend a local installation.  If the
+library needs to be accessible to multiple users, the \texttt{libspai.a}
+file can be copied to an appropriate location (\texttt{/usr/local/lib}).
+
+
+\subsubsection{Matlab interface}
+
+If you want to use the \textsc{Matlab} interface outside of the
+\texttt{spai-3.2/matlab} directory, the simplest way is to include the
+directory in the \texttt{\$MATLABPATH} environment variable.
+
+Inside \textsc{Matlab}, this is possible with the \texttt{addpath} and
+\texttt{path} functions:
+\begin{itemize}
+
+  \item Prepend to \texttt{MATLABPATH}:
+\begin{verbatim}
+  >> addpath /dir1 /dir2
+\end{verbatim}
+
+  \item Append to \texttt{MATLABPATH}:
+\begin{verbatim}
+  >> p = path()
+  >> path (p, '/dir1')
+\end{verbatim}
+
+\end{itemize}
+
+You can include these commands in the \texttt{~/matlab/startup.m} file,
+which is automatically loaded every time \textsc{Matlab} is started.
+%
+You can also change the path permanently by setting the environment variable
+\texttt{\$MATLABPATH} in your shell startup script.
+
+
+% By default, \texttt{make install} will install the package's files in
+% \texttt{/usr/local/bin}, \texttt{/usr/local/man}, etc.  You can
+% specify an installation prefix other than \texttt{/usr/local} by giving
+% \texttt{configure} the option \texttt{-{}-prefix=PATH}.
+
+% You can specify separate installation prefixes for architecture-specific
+% files and architecture-independent files.  If you give \texttt{configure}
+% the option \texttt{--exec-prefix=PATH}, the package will use PATH as the
+% prefix for installing programs and libraries.  Documentation and other data
+% files will still use the regular prefix.
+
+% In addition, if you use an unusual directory layout you can give options
+% like \texttt{--bindir=PATH} to specify different values for particular
+% kinds of files.  Run \texttt{configure --help} for a list of the
+% directories you can set and what kinds of files go in them.
+
+% If the package supports it, you can cause programs to be installed with an
+% extra prefix or suffix on their names by giving \texttt{configure} the
+% option \texttt{--program-prefix=PREFIX} or \texttt{--program-suffix=SUFFIX}.
+
+
+\subsubsection{Installed files}
+
+If you use the \texttt{make install} command for the installation, the
+following files are installed in the \texttt{\$PREFIX} directory (the
+default is \texttt{/usr/local/}):
+\begin{verbatim}
+  $(PREFIX)/bin
+  $(PREFIX)/bin/spai
+  $(PREFIX)/bin/convert
+  $(PREFIX)/lib
+  $(PREFIX)/lib/libspai.a
+  $(PREFIX)/matlab
+  $(PREFIX)/matlab/spai
+  $(PREFIX)/matlab/spai/spai_full.mexglx
+  $(PREFIX)/matlab/spai/spai.m
+  $(PREFIX)/matlab/spai/spaitau.m
+  $(PREFIX)/matlab/spai/spaidiags.m
+  $(PREFIX)/share
+  $(PREFIX)/share/doc
+  $(PREFIX)/share/doc/spai
+  $(PREFIX)/share/doc/spai/spaidoc.ps
+  $(PREFIX)/share/doc/spai/spaidoc.pdf
+\end{verbatim}
+You can change the \texttt{\$PREFIX} directory with the \texttt{-{}-prefix=}
+option of the \texttt{configure} script.
+
+
+\subsection{Usage}
+
+\subsubsection{Test program "spai"}
+
+The test program is called "spai" and \texttt{make install} will install it
+in your \texttt{\$prefix/bin} directory. You can set your \texttt{PATH}
+environment variable accordingly.
+
+The program will
+\begin{enumerate}
+  \item  Read a sparse matrix $A$
+  \item  Optionally read a rhs vector $b$ (or construct one)
+  \item  Construct a SPAI preconditioner $M$
+  \item  use BICGSTAB to solve $Ax = b$, using $M$ as a preconditioner.
+\end{enumerate}
+
+The serial program is executed with:
+\begin{quote}
+\begin{verbatim}
+spai <A> [b] [options]
+\end{verbatim}
+\end{quote}
+
+while the parallel version is executed with:
+\begin{quote}
+\begin{verbatim}
+mpirun -np <n> ./spai <A> [b] [options]
+\end{verbatim}
+\end{quote}
+
+(Items in \texttt{$<$$>$} are required; items in {[}] are optional.)
+
+
+\texttt{$<$A$>$} must be a file in Matrix Market coordinate format. See
+the file data/m1.mm for an example. (Matrix Market is a repository of sparse
+matrices on the web.  The only Matrix Market format currently supported is
+"real general". This format is very similar to the MATLAB sparse matrix
+format.  See the {\em MatrixMarket Homepage}
+\url{http://math.nist.gov/MatrixMarket/} for details.
+
+\texttt{[b]} is an optional dense vector giving the right-hand-side for the
+BICGSTAB solver. It must be a file in Matrix Market array format. See the
+file \texttt{data/m1\_rhs.mm} for an example. If the RHS is not given then
+BICGSTAB will will use $A * 1\!\!1$ as a RHS, where $1\!\!1$ is a vector of
+all ones.  The solution of the system $Ax=b$ will be written to the file
+\texttt{solution.mm}.
+
+\medskip
+
+There are a number of optional parameters.  They all have default values and
+are of the form \texttt{-xx s}, where \texttt{xx} is a two-letter
+abbreviation of the parameter's name, and \texttt{s} determines its value.
+Usually only a few need to be modified in practice.
+
+\begin{description}
+
+  \item[-sc]  sparsity control;  default is 0
+
+    0 = adaptive \{\texttt{-ep}, \texttt{-mn}, \texttt{-ns}, \texttt{-bs} \} \\
+    1 = specified tau \{ \texttt{-ta} \},\\
+    2 = fixed diagonals \{ \texttt{-ud}, \texttt{-ld} \}
+
+    These options for sparsity control are mutually exclusive.\\
+    The main diagonal is always included.
+
+  \item[-ep]
+    $eps$ parameter for SPAI;  default is 0.6
+
+    $eps$ must be between 0 and 1.  It controls the quality of the
+    approximation of $M$ to the inverse of $A$.  Higher values of $eps$ lead
+    to more work, more fill-in, and usually better preconditioners.
+
+    % In many cases the best choice for $eps$ is the one that divides the
+    % total solution time equally between the preconditioner and the solver.
+
+  \item[-bs]
+    block size;  default is 1
+
+    A block size of 1 treats $A$ as a matrix of scalar elements. A block
+    size of $s > 1$ treats both $A$ and $M$ as $s \times s$ block
+    matrices.  A block size of 0 treats A as a matrix with variable sized
+    blocks, which are determined by searching for dense square diagonal
+    blocks in A.  This can be very effective for finite-element matrices.
+
+    SPAI will convert A to block form, use a block version of the
+    preconditioner algorithm, and then convert the result back to scalar
+    form.
+
+    In many cases a block-size parameter $s \neq 1$ can lead to significant
+    improvements in performance.
+
+  \item[-ns]
+    maximum number of improvement steps per row in SPAI;  default is 5
+
+    SPAI constructs an approximation to every column of $A^{-1}$ in a series
+    of improvement steps.  The quality of the approximation is determined by
+    $eps$.  If a residual less than $eps$ is not achieved after \texttt{ns}
+    steps, SPAI simply uses the best approximation obtained so far.
+
+  \item[-mf]
+    message file for warning messages;  default is 0 (\texttt{/dev/null})
+
+    Suppose you are using the option \texttt{"-mf foo"}.  Whenever SPAI fails
+    to achieve an approximation of epsilon for a column of M it writes a
+    message to the file "fooi" where i is the MPI rank of the processor
+    generating the message (or i=0 in the serial case).
+
+  \item[-mn]
+    maximum number of new nonzero candidates per step;  default is 5
+
+  \item[-sp]
+    symmetric pattern;  default is 0
+
+    If A has a symmetric nonzero pattern use \texttt{-sp} 1 to improve
+    performance by eliminating some communication in the parallel version.
+
+  \item[-mb]
+    size of various working buffers in SPAI;  default is 100000
+
+    Increase this if you run into problems with crashes.  100000 is a very
+    generous size for most problems.
+
+  \item[-cs]
+    cache size $\{$0,1,2,3,4,5$\}$ in SPAI;  default is 5 (the biggest cache
+    size)
+
+    SPAI uses a hash table to cache messages and avoid redundant
+    communication.  We recommend always using \texttt{-cs 5}.  This
+    parameter is irrelevant in the serial version.
+
+  \item[-mi]
+    maximum number of iterations in BICGSTAB;  default is 500
+
+  \item[-to]
+    tolerance in BICGSTAB default;  is 1.0e-8
+
+  \item[-lp]
+    left preconditioning;  default is $0 \rightarrow$ right preconditioning
+
+    SPAI stores matrices in a compressed-column format and by default
+    computes a right preconditioner.  If the -lp 1 option is given SPAI will
+    use a compressed-row format and compute a left preconditioner.
+
+  \item[-bi]
+    read matrix as a binary file;  default is 0
+
+    There is a program called "convert" in the driver directory that
+    converts an ASCII matrix file (in Matrix Market format) to a binary
+    file. This can greatly speed up the input of large matrices.
+
+    Try:
+\begin{verbatim}
+  convert  ../data/m1.mm  m1.binary
+  spai  m1.binary  -bi 1
+\end{verbatim}
+
+  \item[-vb]
+    verbose;  default is 1
+
+    Print parameters, timings and matrix statistics.
+
+  \item[-db]  debugging level;  default is 0
+
+  \item[-ld]  \# of lower (below main) diagonals;  default is 0
+
+    The main diagonal is always included.
+
+  \item[-ud]  \# of upper (above main) diagonals;  default is 0
+
+
+  \item[-ta]  (tau) Threshold for non-zero entries in $M$;  default is 0
+
+    Only those entries $M_{ij}$ are included for which
+    \[ |A_{ij}| > (1-tau) * max_{j} |A_{ij}| \textrm{, \ \ i.e.} \]
+
+    $tau = 0$: main diagonal only,\\
+    $tau = 1$: full pattern of A.
+
+    The main diagonal is always included.
+\end{description}
+
+
+
+% \subsubsection{Matlab interface}
+
+% Installation of the MATLAB interface may require some manual configuration
+% of the compilation parameters of the mex compiler. The mex compiler is set
+% up with \texttt{mex -setup}. Interactively configure \texttt{mex} to
+% your needs. This will create a \texttt{mexopts.sh} file - most likely in
+% a subdirectory of \texttt{\~{}/.matlab/}. Here is part of the output when
+% we configured mex to use the \texttt{gcc}.
+
+% \begin{quote}
+% \begin{verbatim}
+% > mex -setup
+% [...]
+% The options files available for mex are:
+
+%   1: /pub/matlab/6.0_r12/bin/gccopts.sh :
+%       Template Options file for building gcc MEX-files
+
+%   2: /pub/matlab/6.0_r12/bin/mexopts.sh :
+%       Template Options file for building MEX-files via the
+%       system ANSI compiler
+
+
+% Enter the number of the options file to use as your default options file:
+
+% 1
+
+% /home/broeker/.matlab/R12 does not exist. It will be created.
+
+
+% /pub/matlab/6.0_r12/bin/gccopts.sh is being copied to
+% /home/broeker/.matlab/R12/mexopts.sh
+% \end{verbatim}
+% \end{quote}
+
+% Edit this file if necessary. Use \texttt{mex -v} to check that your local
+% mexfile is really being and what parameters are being used in what order.
+
+% Run \texttt{make all}. The matlab interface should compile.
+
+
+\subsubsection{Running \texttt{make} in general}
+
+\paragraph{Running checks}
+
+You can run \texttt{make check} to perform some automatic checks to see
+if the libraries and the optional MATLAB interface have been compiled
+correctly. Numerical codes obviously usually do not execute identically on
+different machines. Therefore small changes in the computations and
+consequently in the output do occur. If there really is a difference between
+the expected output and the output produce by your compilation you will see
+the difference produce by \texttt{diff}. You will most probably see
+something like this:
+
+\begin{quote}
+\begin{verbatim}
+63c63
+< 10 4.020936e-10
+---
+> 10 4.020935e-10
+65c65
+< 12 2.528134e-12
+---
+> 12 2.528133e-12
+check difference in output!!!
+\end{verbatim}
+\end{quote}
+
+
+Anything much worse than this points to an error. Note that the test may
+still be considered as "passed" by make.
+
+The same might apply for the MATLAB interface, even for differing versions
+of MATLAB:
+
+\begin{quote}
+\begin{verbatim}
+3,5c3,5
+<                   Copyright 1984-2000 The MathWorks, Inc.
+<                         Version 6.0.0.88 Release 12
+<                                 Sep 21 2000
+---
+>                   Copyright 1984-2001 The MathWorks, Inc.
+>                        Version 6.1.0.450 Release 12.1
+>                                 May 18 2001
+check difference in output!!!
+\end{verbatim}
+\end{quote}
+
+
+% \paragraph{Cleaning the source tree}
+% \paragraph{Installing libraries, binaries and documentation}
+
+\subsubsection{Remarks}
+
+The BICGSTAB routine is only intended for testing.  It is not efficient in a
+parallel environment because it uses a sparse matrix-vector multiply that
+does not scale well.  There is a PETSc interface to SPAI, please consult the
+PETSc documentation.
+
+% There will soon be a PETSc interface for version 3 of SPAI.  PETSc is a
+% parallel system of linear solver and preconditioners developed, maintained,
+% and distributed by Argonne National Laboratory. (See the URL
+% http://www-unix.mcs.anl.gov/petsc/.)
+
+BICGSTAB may sometimes produces slightly different results when run on
+different numbers of processors.  This is not a bug.  The arithmetic
+operations are done in different order, and can therefore lead to different
+convergence histories.  SPAI always produces the same preconditioning matrix
+on any number of processors when the \texttt{"-bs 1"} option is used.  This
+is because the scalar-valued matrix is distributed before blocking is done
+and the distribution might break up blocks.
+
+To find good SPAI parameters for your application we suggest that you start
+with a fairly large value for $eps$, like 0.7, and then decrease $eps$
+until you find the best setting.  Start the -ns parameter as something large,
+like 20, and use the -mf parameter to see how many columns don't achieve
+$eps$ (if any).  It may be most practical to use a value for -ns that
+results in some columns not achieving $eps$.  We also encourage you to
+try the different -bs options available.
+
+You can write the matrices (either $A$ or $M$) with a routine called
+"\texttt{write\_mm\_matrix}".  Look for some commented-out code in
+\texttt{test\_spai.c} (in driver) to see how this is done.
+
+% This code should work on any parallel system using standard MPI.  However,
+% it is very sensitive to latency.
+
+Finally, if you are modifying the code there is a debugging trick that is
+very helpful.  If you use an option "-db 1" the program will create n files:
+dbg0, dbg1, ..., where n is the number of processors.  If you insert code
+like the following into your program you can print out information from
+different processors in these files.
+
+\begin{quote}
+\begin{verbatim}
+if (debug) {
+  fprintf(fptr_dbg,...);
+  fflush(fptr_dbg);
+}
+\end{verbatim}
+\end{quote}
+See the file \texttt{spai.c} in \texttt{lib} for an example.
+
+
+\section{FAQ}
+
+\subsection{Why is SPAI taking forever to compute the preconditioner?}
+
+You are probably using too low a value for $eps$.  You should start with a
+relatively large value, say $eps$=0.7 or 0.8, and progressively reduce $eps$
+until the total execution time starts to increase again.  This is usually the
+value of $eps$ for which the time spent to compute the preconditioner is
+approximately equal to that spent in the iterative solver.  Usually the
+optimal value for $eps$ lies between 0.5 and 0.7.
+
+
+\subsection{When I reduce $eps$ the preconditioner does not really improve, why?}
+
+If you reduce $eps$ and the preconditioner does not improve, rerun SPAI with
+the \texttt{-mf my\_file} option and check whether any messages have been
+written to my\_file. If any columns in the preconditioner did not satisfy
+the $eps$ criterion, \texttt{my\_file} will say so, and you need to increase
+the number of improvement steps with the -ns option (try 5, 10, 20), before
+decreasing $eps$ any further.  However, if \texttt{my\_file} is empty simply
+proceed in further reducing $eps$.
+
+
+\subsection{What does SPAI stand for? }
+
+SPAI stands for SParse Approximate Inverse. The name was invented some time
+in the Spring of 1994 during a typical lunch outside on the beautiful lawn
+of the Main Quad at Stanford University: an improvised "d\'ejeuner sur
+l'herbe" amongst Rodin sculptures below sunny Californian skies. Present
+were M. Grote, T. Huckle (TU-Munich), and A.-J. van der Veen (TU-Delft).
+
+
+% \subsection{On which parallel architecture does SPAI 3.0 yield good performance? }
+
+% You can expect excellent scaling with increasing number of processors on the
+% CRAY T3E and the SGI Origin2000, if you are using the SHMEM interface.  You
+% can expect good scaling also on the IBM SP2. However you should expect poor
+% scaling on a typical network of workstations, because the present version of
+% the code is very sensitive to latency (despite caching) due to the large
+% number of short messages sent between processors.
+
+
+\subsection{Why does the preconditioner tend to get worse as I increase the
+  block size while keeping $eps$ fixed?}
+
+For the same value of $eps$ an increase in the block size often results in a
+slight deterioration in the quality of the preconditioner; this is usually
+compensated by a large reduction in computing time. The reason is that the
+$eps$ criterion is more stringent in the scalar (bs = 1) than in the block
+case. Nevertheless, the overall reduction of $\| AM-I \|_F$ is usually
+identical.
+
+
+\subsection{Does SPAI always work? }
+
+In principle, yes. Unlike many other preconditioners, SPAI cannot break down
+if the matrix A is non-singular. Moreover, if one keeps reducing $eps$, SPAI
+will eventually compute the exact inverse. Of course this may take a VERY
+long time...
+
+
+\subsection{Configure hangs at \texttt{mexfileextension}-check. Why?}
+
+You probably have the \texttt{DISPLAY} variable not set correctly.
+Configure then hangs trying to start MATLAB.  Try starting MATLAB manually.
+When successful, try \texttt{configure} again.
+
+
+\subsection{I still have questions, where do I get further information?}
+
+Please direct your questions to the SPAI mailing list under
+\begin{center}
+    \url{https://www.maillist.unibas.ch/mailman/listinfo/spai}.
+\end{center}
+
+\section{Authors}
+
+% \subsection{Contacts}
+
+% Marcus J. Grote:
+% \begin{verbatim}
+% Marcus J. Grote
+%   Department of Mathematics
+%   University of Basel
+%   Rheinsprung 21
+%   CH-4051 Basel
+%   Switzerland
+% Tel +41 (0)61 267 39 96
+% Fax +41 (0)61 267 3995
+% Email: grote@math.unibas.ch
+% Homepage: http://www.math.unibas.ch/~grote/
+% \end{verbatim}
+
+% \noindent
+% Oliver Broeker:
+% \begin{verbatim}
+% Oliver Broeker
+%   Institut fuer Wissenschaftliches Rechnen
+%   ETH Zentrum, RZ F9
+%   CH-8092 Zuerich
+%   Switzerland
+% Tel +41 1 632 74 33
+% Fax +41 1 632 16 20
+% Email: broeker@inf.ethz.ch
+% Homepage: http://www.inf.ethz.ch/personal/broeker/
+% \end{verbatim}
+
+
+% \subsection{Used tools}
+% This package uses:
+% \begin{itemize}
+%   \item  BLAS: Basic Linear Algebra subroutines
+%   \item  LAPACK: Linear Algebra Package
+%   \item  optionally MPI. Message Passing interface
+%   \item  GNU autoconf and GNU automake
+% \end{itemize}
+
+
+% \subsection{Thanks}
+
+The main authors of the SPAI code are Stephen Barnard and Marcus Grote.  The
+configuration system was programmed by Oliver Bröker and Michael Hagemann.
+
+We would also like to thank the following people for using SPAI and helping
+to improve the package: Victor Eijkhout (PETSc interface), Oliver Ernst, Hans Grote, Jan
+Hesthaven, Thomas Huckle, Olaf Schenk, Barry Smith, Bora U\c car.
+
+
+\addcontentsline{toc}{section}{\protect\numberline{\mbox{}}{References}}
+
+
+% @PhdThesis{Broeker:2003:PMM,
+%   author =	 {Oliver Bröker},
+%   title =	 {Parallel Multigrid Methods using Sparse Approximate
+%                   Inverses},
+%   school =	 {ETH Zurich},
+%   year =	 {2003}
+% }
+
+% @Article{Broeker:2002:SAPIN,
+%   author =	 {Oliver Bröker and Marcus~J.~Grote},
+%   title =	 {Sparse approximate inverse smoothers for geometric
+%                   and algebraic multigrid},
+%   journal =	 {Applied Numerical Mathematics},
+%   year =	 {2002},
+%   volume =	 {41},
+%   number =	 {1},
+%   pages =	 {61--80}
+% }
+
+
+\begin{thebibliography}{99}
+  \bibitem{1} A Block Version of the SPAI Preconditioner, S.T. Barnard and
+    M. J.  Grote, in Proc. 9th SIAM Conf. on Parall. Process. for Sci.
+    Comp., held March 1999.
+
+  \bibitem{2} A Portable MPI Implementation of the SPAI Preconditioner in
+    ISIS++, S.T.  Barnard and R.L. Clay, in Proc. Eighth SIAM Conf. on
+    Parallel Process.  for Sci. Comp., held March 1997.
+
+  \bibitem{3} An MPI Implementation of the SPAI Preconditioner on the T3E,
+    S. Barnard, L.M. Bernardo and H.D. Simon, technical report LBNL-40794,
+    1997.
+
+  \bibitem{4} Parallel Preconditioning with Sparse Approximate Inverses,
+    M.J. Grote and T.  Huckle, SIAM J. of Scient. Comput. 18(3), 1997.
+
+  \bibitem{5} Effective Parallel Preconditioning with Sparse Approximate
+    Inverses, M.  Grote and T. Huckle, in Proc. Seventh SIAM Conf. on
+    Parallel Process.  for Sci. Comp., held February 1995.
+
+  \bibitem{6} Parallel Preconditioning and Approximate Inverses on the
+    Connection Machine, M. Grote and H.D. Simon, in Proc. Sixth SIAM Conf.
+    on Parallel Process. for Sci. Comp., held March 1993.
+
+  \bibitem{7} Sparse approximate inverse smoothers for geometric and
+    algebraic multigrid, O. Bröker and M.J. Grote, Applied Numerical
+    Mathematics 41(1), 2002. %, pp. 61--80.
+
+  \bibitem{8} Parallel Multigrid Methods using Sparse Approximate Inverses,
+    O.~Bröker, PhD Thesis, Dept. of Computer Science, ETH Zurich, 2003.
+
+  \bibitem{9} Robust Parallel Smoothing for Multigrid Via Sparse Approximate
+    Inverses, O.~Bröker, M.~Grote, C.~Mayer, and A.~Reusken, SIAM J. of
+    Scient. Comput. 23(4), 2001.
+
+  \bibitem{10} O. Br\"oker and M.J. Grote, Parallel Algebraic
+    Multigrid via Sparse Approximate Inverses, in Proc. of 16th IMACS
+    World Congress 2000, held August 2000.
+
+\end{thebibliography}
+
+\end{document}

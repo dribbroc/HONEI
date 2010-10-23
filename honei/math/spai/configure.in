@@ -1,0 +1,234 @@
+# Process this file with autoconf to produce a configure script.
+
+#  Init AutoConf
+#
+AC_PREREQ(2.59)
+
+AC_INIT(spai, 3.2)
+
+AC_CONFIG_SRCDIR([src/spai.c])
+AC_CONFIG_HEADER([config.h])
+
+AC_CANONICAL_TARGET
+
+
+#  Init AutoMake
+#
+AM_INIT_AUTOMAKE([dist-bzip2])
+
+
+#  C Compilers
+#
+AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+AC_PROG_RANLIB
+
+# Header files
+AC_HEADER_STDC
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_TYPE_SIZE_T
+AC_STRUCT_TM
+
+# Checks for library functions.
+AC_CHECK_LIB([m], [floor])
+AC_FUNC_MALLOC
+AC_FUNC_REALLOC
+AC_FUNC_STRTOD
+AC_CHECK_FUNCS([floor memset sqrt strdup strstr])
+
+
+#  Fortran Compilers
+#
+AC_PROG_F77
+AC_F77_WRAPPERS
+
+
+#  Check special Apple link problem
+_STAR_RESTFP_FIX
+
+
+#  OS-dependent default settings
+#
+case "$target_os" in
+esac
+
+
+#  Compiler dependent settings
+#
+case "$CC" in
+    gcc|hcc)
+	AC_MSG_NOTICE([configuring for gcc])
+	CFLAGS="$CFLAGS -Wall -Wno-unused"
+	AC_CHECK_LIB(
+	    [g2c],[s_cmp],,
+	    [AC_MSG_WARN(Could not find g2c library, you might encounter trouble linking with fortran routines!)])
+	dnl CCLIBPATH=`$CC -v 2>&1 | awk '/.*Reading specs.*/ {print substr($4,0,length($4)-6)}'`
+	dnl LIBS="-L$CCLIBPATH $LIBS"
+	;;
+    *)
+	AC_MSG_NOTICE([no special compiler settings])
+esac
+
+
+#  Recognized environment variables
+#
+AC_ARG_VAR(LIBS,[libraries that are linked])
+AC_ARG_VAR(MATLAB,[location of the matlab binary])
+AC_ARG_VAR(MEX,[location of the matlab mex compiler])
+AC_ARG_VAR(MEXEXT,[extension of the mex-files])
+AC_ARG_VAR(MPIRUN,[location of MPIRUN command])
+AC_ARG_VAR(MPIBOOT,[location of optional MPI-boot command])
+
+
+#  Check for BLAS and LAPACK
+#     Variables:   BLAS_LIBS  LAPACK_LIBS
+ACX_BLAS
+ACX_LAPACK
+
+AM_CONDITIONAL([BUILD_OWN_BLAS], [test "$acx_blas_ok" = no])
+AM_CONDITIONAL([BUILD_OWN_LAPACK], [test "$acx_lapack_ok" = no])
+
+if test "x$acx_blas_ok" = xno;  then
+    AC_MSG_NOTICE([*** Building local BLAS library.])
+    BLAS_LIBS=`pwd`/blas/libblas.a
+fi
+
+if test "x$acx_lapack_ok" = xno;  then
+    AC_MSG_NOTICE([*** Building local LAPACK library.])
+    LAPACK_LIBS=`pwd`/lapack/liblapack.a
+fi
+
+
+#  Matlab
+#
+AC_ARG_WITH(matlab,
+	    AC_HELP_STRING([--with-matlab],
+			   [compile matlab interface (default is NO)]),
+	    [check_matlab=$withval],
+	    [check_matlab=no])
+
+if test "x$check_matlab" != "xno"; then
+    AC_PATH_PROG(MATLAB,matlab)
+    if test "x$MATLAB" != "x"; then
+	AC_PATH_PROG(MEX,mex)
+	AC_MSG_CHECKING([mex-file extension])
+	$MATLAB -nodesktop -nosplash > test.matlab 2>&1 << END
+mexext
+exit
+END
+	MEXEXT=`tail -n3 test.matlab | head -1`
+	rm -f test.matlab
+	AC_MSG_RESULT($MEXEXT)
+	build_matlab=yes
+    else
+	build_matlab=no
+    fi
+else
+    build_matlab=no
+fi
+
+if test "$build_matlab" = yes; then
+    AC_MSG_NOTICE([*** Building MATLAB interface])
+else
+    AC_MSG_NOTICE([*** NOT building MATLAB interface])
+fi
+
+AM_CONDITIONAL([BUILD_MATLAB_IF], [test "x$build_matlab" = xyes])
+
+
+#  Parallel version build
+#
+AC_ARG_WITH(
+    mpi,
+    AC_HELP_STRING([--with-mpi],[configure parallel version (default is NO)]),
+    [AC_MSG_NOTICE([compiling parallel version using MPI])
+	mpi=$withval
+	AC_SUBST(SRCTESTS,'test_spai_par_01.sh')
+	],
+    [AC_MSG_NOTICE([compiling serial version])
+	mpi=no
+	AC_SUBST(SRCTESTS,'test_spai_01.sh')
+    ]
+)
+
+case "$mpi" in
+    lam)
+	AC_MSG_NOTICE([configuring for LAM])
+	AC_PATH_PROGS(CC,hcc)
+	AC_PATH_PROGS(MPIBOOT,lamboot)
+	AC_CHECK_LIB(
+	    [mpi],[MPI_Init],,
+	    [AC_MSG_ERROR(Could not find mpi library!)])
+	AC_PATH_PROG(MPIRUN,mpirun)
+	CFLAGS="$CFLAGS -DMPI"
+	;;
+    mpich)
+	AC_MSG_NOTICE([configuring for MPICH])
+	AC_MSG_ERROR(mpich support not completed!)
+	;;
+    no)
+	;;
+    *)
+	AC_MSG_NOTICE([configuring for generic MPI])
+	;;
+esac
+
+
+#  Create Makefiles
+#
+AC_OUTPUT([
+    Makefile
+    src/Makefile
+    src/test_spai_par_01.sh
+    blas/Makefile
+    lapack/Makefile
+    matlab/Makefile
+    doc/Makefile
+    data/Makefile
+])
+
+
+#  Print summary
+#
+cat <<EOP
+
+  Summary:
+  --------
+
+EOP
+
+if test ! "$acx_blas_ok" = yes; then
+   cat <<EOP
+  NOTE: Unable to find system BLAS libraries.  Building local
+        libraries.  This typically results in much REDUCED
+        PERFORMANCE!  Please use the \`--with-blas' options to specify
+        system libraries.
+
+EOP
+fi
+
+if test ! "$acx_lapack_ok" = yes; then
+   cat <<EOP
+  NOTE: Unable to find system LAPACK libraries.  Building local
+        libraries.  This typically results in much REDUCED
+        PERFORMANCE!  Please use the \`--with-lapack' options to
+        specify system libraries.
+
+EOP
+fi
+
+cat <<EOP
+  CC:		    ${CC}
+  F77:		    ${F77}
+
+  Matlab:	    ${build_matlab}
+
+  BLAS:		    ${BLAS_LIBS}
+  LAPACK:	    ${LAPACK_LIBS}
+
+EOP

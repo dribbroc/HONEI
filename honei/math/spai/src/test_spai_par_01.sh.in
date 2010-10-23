@@ -1,0 +1,3 @@
+#!/bin/sh
+@MPIBOOT@ > test_spai_par_01.check
+@MPIRUN@ -np 4 ./spai ../data/m1.mm ../data/m1_rhs.mm >> test_spai_par_01.check
