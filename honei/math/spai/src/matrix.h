@@ -151,7 +151,7 @@ int count_nonzeros
 
 void write_matrix_mm
 (matrix *,
- char *,
+ const char *,
  int);
 
 void matrix_statistics

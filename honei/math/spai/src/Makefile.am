@@ -18,10 +18,11 @@ libspai_a_SOURCES	= basics.c bicgstab.c blocks.c com_server.c		\
   load_balance.c matrix.c mmio.c qr.c read_mm_matrix.c spai.c spai_sub.c	\
   timing.c variable_blocks.c vector.c						\
 										\
-  basics.h bicgstab.h								\
+  basics.h bicgstab.h config.h							\
   blocks.h com_server.h command_line.h debug.h hash_table.h			\
   index_set.h load_balance.h matrix.h mmio.h qr.h read_mm_matrix.h		\
   spai.h spai_error.h spai_sub.h timing.h variable_blocks.h vector.h
+
 
 # fortran.h
 

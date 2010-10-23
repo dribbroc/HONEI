@@ -20,7 +20,7 @@
 /* (transpose == 1) =>The matrix values are stored by row.    */
 
 matrix *read_mm_matrix
-(char *matrix_file,
+(const char *matrix_file,
  int bs,
  int chunk_size,
  int symmetric_pattern,

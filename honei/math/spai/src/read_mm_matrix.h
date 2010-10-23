@@ -23,7 +23,7 @@ struct mm_data {
 typedef struct mm_data mm_data;
 
 matrix *read_mm_matrix
-(char *,
+(const char *,
  int,
  int,
  int,

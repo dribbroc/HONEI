@@ -575,7 +575,7 @@ int count_nonzeros
 
 void write_matrix_mm
 (matrix *A,
- char *filename,
+ const char *filename,
  int transposed)
 {
   int pe,i,j,len,k, row,col, nnz, next;

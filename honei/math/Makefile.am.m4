@@ -15,7 +15,11 @@ $1_TEST_LDADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(BACKEND_LIBS) \
 	$(top_builddir)/honei/la/libhoneila.la \
+	$(top_builddir)/honei/math/spai/src/libspai.a \
 	libhoneimath.la \
+	$(top_builddir)/honei/math/spai/lapack/liblapack.a \
+	$(top_builddir)/honei/math/spai/blas/libblas.a \
+	$(FLIBS) \
 	$(DYNAMIC_LD_LIBS)
 $1_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 ')dnl
@@ -110,6 +114,7 @@ libhoneimath_la_SOURCES = filelist $(CELLFILES) $(SSEFILES) $(CUDAFILES)
 libhoneimath_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/la/libhoneila.la
+	$(top_builddir)/honei/math/spai/src/libspai.a \
 	$(CELLLIB)
 
 libhoneimath_includedir = $(includedir)/honei/math
