@@ -12,7 +12,6 @@ define(`hdf5_headerlist', `')dnl
 define(`addtest', `define(`$1_testlist', $1_testlist `$2_TEST')dnl
 $2_TEST_SOURCES = $2_TEST.cc
 $2_TEST_LDADD = \
-	$(top_builddir)/unittest/libunittest.a \
 	libhoneiutil.la \
 	$(DYNAMIC_LD_LIBS)
 $2_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
@@ -35,7 +34,7 @@ AM_CXXFLAGS = -I$(top_srcdir)
 
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in Makefile.am
-EXTRA_DIST = Makefile.am.m4 files.m4
+EXTRA_DIST = Makefile.am.m4 files.m4 run.sh
 DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \
@@ -69,7 +68,7 @@ libhoneiutil_includedir = $(includedir)/honei/util
 libhoneiutil_include_HEADERS = general_headerlist $(HDF5HEADERS)
 
 TESTS = general_testlist $(HDF5TESTS)
-TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_srcdir)/unittest/run.sh
+TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_srcdir)/honei/util/run.sh
 
 check_PROGRAMS = $(TESTS)
 

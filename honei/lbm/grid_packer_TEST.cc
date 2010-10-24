@@ -18,7 +18,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include <honei/lbm/grid_packer.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <iostream>
 
 using namespace honei;

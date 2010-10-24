@@ -24,7 +24,7 @@
 #include <honei/math/fill_matrix.hh>
 #include <honei/math/fill_vector.hh>
 #include <honei/math/transposition.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <iostream>
 #include <honei/math/endian_swap.hh>

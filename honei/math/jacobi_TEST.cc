@@ -21,7 +21,7 @@
 
 #include <honei/math/jacobi.hh>
 #include <honei/math/matrix_io.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <iostream>
 #include <honei/math/matrix_io.hh>

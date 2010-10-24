@@ -19,7 +19,7 @@
  */
 
 #include <honei/math/prolongation_matrix.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <iostream>
 #include <honei/la/dense_matrix.hh>

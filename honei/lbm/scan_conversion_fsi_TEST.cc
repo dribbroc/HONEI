@@ -18,7 +18,7 @@
  */
 #include <honei/lbm/scan_conversion_fsi.hh>
 #include <honei/swe/post_processing.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <iostream>
 #include <honei/swe/volume.hh>
 #include <honei/math/quadrature.hh>

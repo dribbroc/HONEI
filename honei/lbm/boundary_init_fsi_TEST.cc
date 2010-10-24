@@ -19,7 +19,7 @@
 
 #include <limits>
 #include <honei/lbm/tags.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <honei/lbm/grid.hh>
 #include <honei/lbm/boundary_init_fsi.hh>
 #include <honei/lbm/grid_packer.hh>

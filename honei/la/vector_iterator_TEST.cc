@@ -18,7 +18,7 @@
  */
 
 #include <honei/la/banded_matrix.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <string>
 #include <limits>

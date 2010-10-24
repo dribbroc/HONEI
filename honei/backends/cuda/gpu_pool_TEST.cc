@@ -29,7 +29,7 @@
 #include <honei/util/memory_arbiter.hh>
 #include <honei/util/lock.hh>
 #include <honei/util/stringify.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <iostream>
 

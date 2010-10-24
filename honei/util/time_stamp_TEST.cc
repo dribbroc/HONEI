@@ -6,7 +6,7 @@
 #endif
 
 #include <honei/util/time_stamp.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 using namespace honei;
 using namespace tests;

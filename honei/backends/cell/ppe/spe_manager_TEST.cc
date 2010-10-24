@@ -8,7 +8,7 @@
 #include <honei/backends/cell/ppe/spe_manager.hh>
 #include <honei/util/mutex.hh>
 #include <honei/util/lock.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <iostream>
 

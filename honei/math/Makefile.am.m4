@@ -12,7 +12,6 @@ define(`testlist', `')dnl
 define(`addtest', `define(`testlist', testlist `$1_TEST')dnl
 $1_TEST_SOURCES = $1_TEST.cc
 $1_TEST_LDADD = \
-	$(top_builddir)/unittest/libunittest.a \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(BACKEND_LIBS) \
 	$(top_builddir)/honei/la/libhoneila.la \
@@ -117,7 +116,7 @@ libhoneimath_includedir = $(includedir)/honei/math
 libhoneimath_include_HEADERS = headerlist
 
 TESTS = testlist
-TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_srcdir)/unittest/run.sh
+TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_srcdir)/honei/util/run.sh
 
 check_PROGRAMS = $(TESTS)
 

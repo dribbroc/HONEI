@@ -23,7 +23,7 @@
 #define SOLVER_VERBOSE
 #endif
 #include "implicit_solver.hh"
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <string>
 #include <honei/swe/scenario.hh>

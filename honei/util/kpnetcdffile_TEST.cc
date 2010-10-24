@@ -19,7 +19,7 @@
 
 #include <honei/util/netcdf_datatypes.hh>
 #include <honei/util/kpnetcdffile.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <iostream>
 

@@ -24,7 +24,7 @@
 #include <honei/backends/multicore/thread_pool.hh>
 #include <honei/util/lock.hh>
 #include <honei/util/stringify.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 using namespace honei::mc;
 using namespace tests;

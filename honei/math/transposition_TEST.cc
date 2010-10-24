@@ -18,7 +18,7 @@
  */
 
 #include <honei/math/transposition.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 using namespace honei;
 using namespace tests;

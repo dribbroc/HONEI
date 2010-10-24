@@ -18,7 +18,7 @@
  */
 
 #include <honei/math/jacobi_kernel.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <iostream>
 

@@ -19,7 +19,7 @@
  */
 #include <honei/lbm/grid_partitioner.hh>
 #include <honei/lbm/grid_packer.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <iostream>
 
 using namespace honei;

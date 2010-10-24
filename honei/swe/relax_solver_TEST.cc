@@ -25,7 +25,7 @@
 #include <honei/swe/relax_solver.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <string>
 #include <honei/swe/scenario.hh>

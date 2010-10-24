@@ -20,7 +20,7 @@
 #include <honei/math/matrix_io.hh>
 #include <honei/math/vector_io.hh>
 #include <honei/math/defect.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <honei/la/product.hh>
 

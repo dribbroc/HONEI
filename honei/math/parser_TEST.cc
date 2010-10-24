@@ -18,7 +18,7 @@
  */
 
 #include <honei/math/parser.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 using namespace tests;
 using namespace std;

@@ -24,7 +24,7 @@
 #include <honei/la/product.hh>
 #include <honei/la/matrix_error.cc>
 #include <honei/la/reduction.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <limits>
 

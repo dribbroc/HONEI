@@ -20,7 +20,7 @@
 #include <honei/lbm/partial_derivative.hh>
 #include <honei/swe/post_processing.hh>
 #include <honei/swe/volume.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <iostream>
 #include <honei/swe/volume.hh>
 #include <honei/math/quadrature.hh>

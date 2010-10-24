@@ -20,7 +20,7 @@
 #include <honei/la/trace.hh>
 #include <honei/math/hessenberg.hh>
 #include <honei/math/qr_decomposition.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <honei/util/stringify.hh>
 
 using namespace honei;

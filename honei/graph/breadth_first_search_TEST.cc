@@ -19,7 +19,7 @@
 
 
 #include <honei/graph/breadth_first_search.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <honei/la/dense_matrix.hh>
 
 #include <string>

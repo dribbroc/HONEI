@@ -17,7 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <honei/util/memory_arbiter.hh>
 #include <honei/util/memory_backend.hh>
 #include <honei/backends/opencl/opencl_backend.hh>

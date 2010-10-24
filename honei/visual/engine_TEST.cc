@@ -2,7 +2,7 @@
 
 #include <honei/visual/engine.hh>
 #include <honei/swe/solver.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <string>
 

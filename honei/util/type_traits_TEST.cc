@@ -23,7 +23,7 @@
 #endif
 
 #include <honei/util/type_traits.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <limits>
 

@@ -3,7 +3,7 @@
 
 #include <honei/math/richardson.hh>
 #include <honei/math/preconditioning.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <iostream>
 #include <honei/math/matrix_io.hh>

@@ -23,7 +23,7 @@
 #include <const_vector.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/sparse_vector.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <string>
 #include <limits>

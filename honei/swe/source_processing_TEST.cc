@@ -18,7 +18,7 @@
  */
 
 #include <honei/swe/source_processing.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <iostream>
 

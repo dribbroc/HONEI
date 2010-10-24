@@ -19,7 +19,7 @@
 
 #include <honei/la/residual.hh>
 #include <honei/la/product.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <limits>
 

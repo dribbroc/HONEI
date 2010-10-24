@@ -559,5 +559,4 @@ AC_OUTPUT(
 	honei/swe/Makefile
 	honei/util/Makefile
 	honei/visual/Makefile
-	unittest/Makefile
 )

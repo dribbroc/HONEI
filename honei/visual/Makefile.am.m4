@@ -9,7 +9,6 @@ define(`headerlist', `')dnl
 define(`addtest', `define(`testlist', testlist `$1_TEST')dnl
 $1_TEST_SOURCES = $1_TEST.cc
 $1_TEST_LDADD = \
-	$(top_builddir)/unittest/libunittest.a \
 	$(top_builddir)/honei/la/libhoneila.la \
 	libhoneivisual.la \
 	$(top_builddir)/honei/util/libhoneiutil.la \
@@ -103,7 +102,7 @@ libhoneivisual_includedir = $(includedir)/honei/visual
 libhoneivisual_include_HEADERS = headerlist
 
 TESTS = testlist
-TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_srcdir)/unittest/run.sh
+TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_srcdir)/honei/util/run.sh
 
 check_PROGRAMS = $(TESTS)
 

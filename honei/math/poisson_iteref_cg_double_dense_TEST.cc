@@ -20,7 +20,7 @@
 #include <honei/math/jacobi.hh>
 #include <honei/math/conjugate_gradients.hh>
 #include <honei/math/iterative_refinement.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <iostream>
 #include <endian_swap.hh>

@@ -19,7 +19,7 @@
 
 #include <honei/la/dense_vector_range.hh>
 #include <honei/la/vector_error.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <cmath>
 #include <limits>

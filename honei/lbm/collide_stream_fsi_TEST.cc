@@ -19,7 +19,7 @@
 
 #include <limits>
 #include <honei/lbm/tags.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <honei/lbm/grid.hh>
 #include <honei/lbm/collide_stream_fsi.hh>
 #include <honei/lbm/collide_stream_grid.hh>

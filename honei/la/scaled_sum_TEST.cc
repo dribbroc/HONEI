@@ -21,7 +21,7 @@
 #include <honei/la/norm.hh>
 #include <honei/la/scaled_sum.hh>
 #include <honei/la/sparse_vector.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <limits>
 

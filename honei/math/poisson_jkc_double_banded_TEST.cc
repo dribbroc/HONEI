@@ -18,7 +18,7 @@
  */
 
 #include <honei/math/jacobi_kernel_cascade.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <iostream>
 #include <endian_swap.hh>

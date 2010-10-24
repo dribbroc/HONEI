@@ -29,7 +29,6 @@ endif
 
 memory_backend_TEST_SOURCES = memory_backend_TEST.cc
 memory_backend_TEST_LDADD = \
-	$(top_builddir)/unittest/libunittest.a \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	libhoneibackendscuda.la \
 	$(DYNAMIC_LD_LIBS)
@@ -37,7 +36,6 @@ memory_backend__TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 
 multi_gpu_TEST_SOURCES = multi_gpu_TEST.cc
 multi_gpu_TEST_LDADD = \
-	$(top_builddir)/unittest/libunittest.a \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	libhoneibackendscuda.la \
 	$(DYNAMIC_LD_LIBS)
@@ -45,7 +43,6 @@ multi_gpu_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 
 gpu_pool_TEST_SOURCES = gpu_pool_TEST.cc
 gpu_pool_TEST_LDADD = \
-	$(top_builddir)/unittest/libunittest.a \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	libhoneibackendscuda.la \
 	$(DYNAMIC_LD_LIBS)
@@ -102,7 +99,7 @@ libhoneibackendscuda_include_HEADERS = operations.hh \
 				       ticket.hh
 
 TESTS =  memory_backend_TEST multi_gpu_TEST gpu_pool_TEST
-TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_srcdir)/unittest/run.sh
+TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_srcdir)/honei/util/run.sh
 
 check_PROGRAMS = $(TESTS)
 

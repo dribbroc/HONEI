@@ -6,7 +6,7 @@
 #endif
 
 #include <honei/util/hdf5.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <cstdio>
 #include <algorithm>

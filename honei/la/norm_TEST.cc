@@ -22,7 +22,7 @@
 #include <honei/la/dense_vector_range.hh>
 #include <honei/la/norm.hh>
 #include <honei/la/sparse_vector.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <limits>
 

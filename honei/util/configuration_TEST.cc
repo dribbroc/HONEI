@@ -23,7 +23,7 @@
 #endif
 
 #include <honei/util/configuration.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <cstdlib>
 #include <fstream>

@@ -18,7 +18,7 @@
  */
 
 #include <honei/la/element_inverse.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <string>
 

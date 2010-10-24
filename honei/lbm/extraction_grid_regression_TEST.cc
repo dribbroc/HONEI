@@ -18,7 +18,7 @@
  */
 #include <honei/lbm/solver_lbm_grid.hh>
 #include <honei/swe/volume.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <iostream>
 #include <honei/swe/volume.hh>
 #include <honei/math/quadrature.hh>

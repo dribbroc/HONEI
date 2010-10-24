@@ -20,7 +20,7 @@
 
 #include <honei/la/sparse_vector.hh>
 #include <honei/la/sparse_vector-impl.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <string>
 #include <map>

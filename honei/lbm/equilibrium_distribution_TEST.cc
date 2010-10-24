@@ -17,7 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include <honei/lbm/tags.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <honei/lbm/equilibrium_distribution.hh>
 
 #include <limits>

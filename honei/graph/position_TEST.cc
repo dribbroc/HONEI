@@ -22,7 +22,7 @@
 
 
 #include <honei/graph/position.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/util/tags.hh>
 #include <honei/util/tr1_boost.hh>

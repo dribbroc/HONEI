@@ -24,7 +24,7 @@
 #endif
 
 #include <honei/backends/cell/ppe/spe_transfer_list.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <iostream>
 

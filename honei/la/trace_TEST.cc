@@ -19,7 +19,7 @@
 
 #include <honei/la/trace.hh>
 #include <honei/la/dense_matrix.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <limits>
 

@@ -18,7 +18,7 @@
  */
 
 #include <iostream>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <honei/backends/cuda/multi_gpu.hh>
 #include <honei/util/memory_backend.hh>
 

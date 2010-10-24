@@ -25,7 +25,7 @@
 #include <honei/util/lock.hh>
 #include <honei/util/mutex.hh>
 #include <honei/util/thread.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <string>
 #include <vector>

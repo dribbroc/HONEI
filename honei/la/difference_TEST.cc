@@ -21,7 +21,7 @@
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/difference.hh>
 #include <honei/la/matrix_error.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <limits>
 

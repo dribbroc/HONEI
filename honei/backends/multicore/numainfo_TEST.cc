@@ -22,7 +22,7 @@
 #endif
 
 #include <honei/backends/multicore/numainfo.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 using namespace honei::mc;
 using namespace tests;

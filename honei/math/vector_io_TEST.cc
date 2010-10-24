@@ -18,7 +18,7 @@
  */
 
 #include <honei/math/vector_io.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <honei/la/product.hh>
 #include <iostream>

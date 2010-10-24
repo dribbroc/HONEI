@@ -20,7 +20,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
+#include <honei/util/instantiation_policy-impl.hh>
 
 #include <cstdlib>
 #include <exception>
@@ -32,24 +33,15 @@
 using namespace honei;
 using namespace tests;
 
-class TestList
+class TestList :
+        public InstantiationPolicy<TestList, Singleton>
 {
     private:
         static std::list<BaseTest *> _tests;
 
-        TestList()
-        {
-        }
-
     public:
+        friend class InstantiationPolicy<TestList, Singleton>;
         typedef std::list<BaseTest*>::iterator Iterator;
-
-        static TestList * instance()
-        {
-            static TestList result;
-
-            return &result;
-        }
 
         void register_test(BaseTest * const test)
         {

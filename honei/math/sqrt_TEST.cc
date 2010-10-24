@@ -18,7 +18,7 @@
  */
 
 #include <honei/math/sqrt.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <cmath>
 #include <limits>

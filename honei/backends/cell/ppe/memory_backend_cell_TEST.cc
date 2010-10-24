@@ -9,7 +9,7 @@
 #include <honei/backends/cell/ppe/spe_manager.hh>
 #include <honei/util/assertion.hh>
 #include <honei/util/stringify.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <cmath>
 #include <map>

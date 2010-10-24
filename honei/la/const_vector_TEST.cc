@@ -19,7 +19,7 @@
 
 #include <honei/la/dense_vector.hh>
 #include <honei/la/const_vector.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 using namespace honei;
 using namespace tests;

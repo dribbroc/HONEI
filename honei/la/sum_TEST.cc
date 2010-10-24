@@ -22,7 +22,7 @@
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/matrix_error.hh>
 #include <honei/la/sum.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <honei/util/memory_arbiter.hh>
 
 #include <limits>

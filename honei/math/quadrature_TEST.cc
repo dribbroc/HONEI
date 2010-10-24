@@ -19,7 +19,7 @@
  */
 
 #include <honei/math/quadrature.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <cmath>
 #include <limits>

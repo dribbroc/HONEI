@@ -26,7 +26,7 @@
 #include <honei/util/lock.hh>
 #include <honei/util/mutex.hh>
 #include <honei/util/profiler.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <cmath>
 #include <honei/util/tr1_boost.hh>

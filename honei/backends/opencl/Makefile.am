@@ -34,7 +34,6 @@ libhoneibackendsopencl_include_HEADERS =  operations.hh opencl_backend.hh opencl
 
 opencl_backend_TEST_SOURCES = opencl_backend_TEST.cc
 opencl_backend_TEST_LDADD = \
-	$(top_builddir)/unittest/libunittest.a \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	libhoneibackendsopencl.la \
 	$(DYNAMIC_LD_LIBS)
@@ -42,13 +41,12 @@ opencl_backend__TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 
 memory_backend_TEST_SOURCES = memory_backend_TEST.cc
 memory_backend_TEST_LDADD = \
-	$(top_builddir)/unittest/libunittest.a \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	libhoneibackendsopencl.la \
 	$(DYNAMIC_LD_LIBS)
 memory_backend__TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 
 TESTS =  opencl_backend_TEST memory_backend_TEST
-TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_srcdir)/unittest/run.sh
+TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE=$(TYPE) bash $(top_srcdir)/honei/util/run.sh
 
 check_PROGRAMS = $(TESTS)

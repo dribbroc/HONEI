@@ -22,7 +22,7 @@
 #include <honei/la/sparse_vector.hh>
 #include <honei/la/element_product.hh>
 #include <honei/la/vector_error.cc>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <limits>
 #include <iostream>

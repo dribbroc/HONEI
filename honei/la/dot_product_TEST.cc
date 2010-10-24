@@ -22,7 +22,7 @@
 #include <honei/la/dot_product.hh>
 #include <honei/la/norm.hh>
 #include <honei/la/sparse_vector.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 
 #include <limits>
 
