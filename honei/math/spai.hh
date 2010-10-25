@@ -42,11 +42,11 @@ namespace honei
     struct SPAI
     {
         template <typename DT_>
-        static SparseMatrix<DT_> value(SparseMatrix<DT_> & src)
+        static SparseMatrix<DT_> value(const SparseMatrix<DT_> & src)
         {
             /* SPAI parameters */
             double epsilon_param=0.6;
-            int    nbsteps_param=5;
+            int    nbsteps_param=20;
             int    max_param=100000;
             int    maxnew_param=5;
             int    cache_size_param=5;
@@ -58,22 +58,39 @@ namespace honei
             int    lower_diag_param=0;
             int    upper_diag_param=0;
             double tau_param=0;
-            int binary_param=0;
-
-            std::string temp_file("spai_temp.mtx");
-            // src schreiben in mm file
-            MatrixIO<io_formats::MTX>::write_matrix(temp_file.c_str(), src);
 
             matrix *A = NULL;
             matrix *M = NULL;
-            A = read_mm_matrix(temp_file.c_str(),
-                    1,
-                    1,
-                    symmetric_pattern_param,
-                    left_precon_param,
-                    binary_param,
-                    verbose_param,
-                    NULL);
+
+            unsigned long used_elements(0);
+            for (unsigned i(0) ; i < src.rows() ; ++i)
+                used_elements+= src[i].used_elements();
+
+            mm_data rows_array[used_elements];
+            mm_data cols_array[used_elements];
+            unsigned long tmp_i(0);
+            for (typename SparseMatrix<DT_>::NonZeroConstElementIterator i(src.begin_non_zero_elements()) ; i < src.end_non_zero_elements() ; ++i)
+            {
+                rows_array[tmp_i].i = i.row();
+                rows_array[tmp_i].j = i.column();
+                rows_array[tmp_i].val = *i;
+                cols_array[tmp_i].i = i.row();
+                cols_array[tmp_i].j = i.column();
+                cols_array[tmp_i].val = *i;
+                tmp_i++;
+            }
+
+            A = mm_to_matrix
+                (left_precon_param,
+                 symmetric_pattern_param,
+                 src.rows(),
+                 1,
+                 src.rows(),
+                 rows_array, used_elements,
+                 cols_array, used_elements,
+                 NULL);
+
+            order_pointers(A);
 
             bspai
                 (A, &M,
@@ -90,23 +107,36 @@ namespace honei
                  upper_diag_param,
                  tau_param);
 
-            write_matrix_mm(M,temp_file.c_str(),left_precon_param);
 
-            // m einlesen in sparsematrix
-            unsigned long non_zeros(MatrixIO<io_formats::MTX>::get_non_zeros(temp_file.c_str()));
-            unsigned long rows, columns, ax, bx;
-            DenseVector<unsigned long> r(non_zeros);
-            DenseVector<unsigned long> c(non_zeros);
-            DenseVector<DT_> data(non_zeros);
+            SparseMatrix<DT_> tsmatrix(src.rows(), src.columns());
+            int ptr;
+            for (long j=0; j<M->mnl; j++) {
 
-            MatrixIO<io_formats::MTX>::read_matrix(temp_file.c_str(), r, c, data);
-            MatrixIO<io_formats::MTX>::get_sizes(temp_file.c_str(), rows, columns, ax, bx);
-            SparseMatrix<DT_> tsmatrix(rows, columns, r, c, data);
+                for (long i=0; i<M->lines->len[j]; i++) {
+                    unsigned long row, col;
 
-            remove(temp_file.c_str());
+                    ptr = M->lines->ptrs[j][i];
+
+                    if (! M->transposed) {
+                        row = ptr;
+                        col = j+M->my_start_index;
+                    }
+                    else {
+                        col = ptr;
+                        row = j+M->my_start_index;
+                    }
+
+                    if (M->bs == 1) {
+                        tsmatrix(row, col) = M->lines->A[j][i];
+                    }
+                    else {
+                        std::cout<<"Error: Dirk hat blocksize != 1 vergessen!"<<std::endl;
+                        exit(1);
+                    }
+                }
+            }
             return tsmatrix;
         }
     };
-
 }
 #endif

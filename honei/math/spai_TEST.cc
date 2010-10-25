@@ -22,6 +22,9 @@
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <iostream>
+#include <honei/la/product.hh>
+#include <honei/la/norm.hh>
+#include <honei/la/difference.hh>
 
 
 using namespace honei;
@@ -41,18 +44,34 @@ class SpaiTestSparse:
 
         virtual void run() const
         {
-            SparseMatrix<DT_> sm(10, 10);
-            for (unsigned long i(0) ; i < 10 ; i++)
-            {
-                sm(i,i) = 3;
-            }
-            sm(1, 0) = 5.123;
-            sm(9, 8) = -5.123;
-            sm(8, 0) = 1.123;
-            std::cout<<sm;
+            std::string filename(HONEI_SOURCEDIR);
+            filename += "/honei/math/testdata/poisson_advanced/sort_0/A_7.ell";
+            SparseMatrixELL<DT_> smell = MatrixIO<io_formats::ELL>::read_matrix(filename, DT_(1));
+            SparseMatrix<DT_> sm(smell);
+            unsigned long used_elements(0);
+            for (unsigned i(0) ; i < sm.rows() ; ++i)
+                used_elements+= sm[i].used_elements();
+            std::cout<<"Non Zero Elements of A: "<<used_elements<<std::endl;
             SparseMatrix<DT_> m(SPAI::value(sm));
-            std::cout<<m;
+            used_elements = 0;
+            for (unsigned i(0) ; i < m.rows() ; ++i)
+                used_elements+= m[i].used_elements();
+            std::cout<<"Non Zero Elements of M: "<<used_elements<<std::endl;
 
+            SparseMatrix<DT_> temp(sm.rows(), sm.columns());
+            SparseMatrix<DT_> ident(sm.rows(), sm.columns(), 1);
+            SparseMatrix<DT_> jac(sm.rows(), sm.columns(), 1);
+            for (unsigned long i(0) ; i < ident.rows() ; ++i)
+            {
+                ident(i, i) = 1;
+            }
+            for (unsigned long i(0) ; i < ident.rows() ; ++i)
+            {
+                jac(i, i) = DT_(1) / sm(i, i);
+            }
+            double min = Norm<vnt_l_one, false, tags::CPU>::value(Difference<tags::CPU>::value(temp, ident, Product<tags::CPU>::value(sm, m)));
+            double jacnorm = Norm<vnt_l_one, false, tags::CPU>::value(Difference<tags::CPU>::value(temp, ident, Product<tags::CPU>::value(sm, jac)));
+            std::cout<<"SPAI Norm: "<<min<<" Jac Norm: "<<jacnorm<<std::endl;
         }
 };
 
