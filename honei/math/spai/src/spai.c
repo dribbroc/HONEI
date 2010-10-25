@@ -13,7 +13,7 @@
 FILE *message;        /* file for warning messages */
 double epsilon;       /* tolerance */
 int nbsteps;          /* max number of "improvement" steps per line */
-int max;              /* max dimensions of I, q, etc. */
+int max_dim;              /* max dimensions of I, q, etc. */
 int maxnew;           /* max number of new entries per step */
 
 int maxapi;           /* maximum number of nonzeros for any column of M */
@@ -253,10 +253,10 @@ int spai
     fflush(stdout);
   }
 
-  message = messages_arg;
   epsilon = epsilon_arg;
-  max = max_arg;
+  message = messages_arg;
   maxnew = maxnew_arg;
+  max_dim = max_arg;
 
   /* Determine maximum number of scalar nonzeros
      for any column of M */
@@ -444,7 +444,7 @@ int spai_line
 
     com_server(A,M);
 
-    full_matrix(A,M,max, Ahat);
+    full_matrix(A,M,max_dim, Ahat);
 
     n2[s] = I->slen - dimr;
 
@@ -457,7 +457,7 @@ int spai_line
     /* is solution good enough? */
     /* Use Froebenius norm */
     convert_to_block
-      (res,resb,col,I->ptr,A,max,I->len);
+      (res,resb,col,I->ptr,A,max_dim,I->len);
     block_resnorm = frobenius_norm(resb,block_width,I->slen);
 
     if (debug) {
@@ -498,7 +498,7 @@ int spai_line
     for (i=0; i<block_width; i++) {
       if (block_resnorm <= adjust_epsilon) block_flag = " ";
       else block_flag = "*";
-      scalar_resnorm = frobenius_norm(&res[i*max],1,I->slen);
+      scalar_resnorm = frobenius_norm(&res[i*max_dim],1,I->slen);
       if (scalar_resnorm <= epsilon) scalar_flag = " ";
       else scalar_flag = "*";
       fprintf(resplot_fptr,"%6d   %5.3lf %s %6d   %5.3lf %s\n",
@@ -515,7 +515,7 @@ int spai_line
   /* current solution in x, up to nnz, written to M(k,:) */
   /* convert x to block structure */
   convert_to_block
-    (x,xb,col,J->ptr,A,max,nnz);
+    (x,xb,col,J->ptr,A,max_dim,nnz);
 
   put_Mline(A,M, col, J->ptr, xb, nnz, J->slen);
 
@@ -545,25 +545,25 @@ void allocate_globals
   bs = A->max_block_size;
   bs2 = bs*bs;
 
-  J = new_index_set(NULL,max,"J");
-  I = new_index_set(NULL,max,"I");
-  J_tilde = new_index_set(NULL,max,"J_tilde");
-  I_tilde = new_index_set(NULL,max,"I_tilde");
+  J = new_index_set(NULL,max_dim,"J");
+  I = new_index_set(NULL,max_dim,"I");
+  J_tilde = new_index_set(NULL,max_dim,"J_tilde");
+  I_tilde = new_index_set(NULL,max_dim,"I_tilde");
 
   remote_buf = new_int_array(NULL,A->maxnz,"remote_buf");
   remote_rbuf   = new_int_array(NULL,A->maxnz,"remote_rbuf");
   remote_abuf   = new_double_array(NULL,bs2*(A->maxnz+1),"remote_abuf");
 
-  is = new_index_set(NULL,max,"is");
+  is = new_index_set(NULL,max_dim,"is");
 
-  isres = new_index_set(NULL,max,"isres");
-  res = new_double_array(NULL,bs2*max,"res");
-  resb = new_double_array(NULL,bs2*max,"resb");
+  isres = new_index_set(NULL,max_dim,"isres");
+  res = new_double_array(NULL,bs2*max_dim,"res");
+  resb = new_double_array(NULL,bs2*max_dim,"resb");
 
   n1     = new_int_array(NULL,nbsteps+1,"n1");
   n2     = new_int_array(NULL,nbsteps,"n2");
 
-  Ahat_size = max*maxapi;
+  Ahat_size = max_dim*maxapi;
   Ahat   = new_double_array(NULL,Ahat_size,"Ahat");
   if (debug) init_double_array(Ahat,Ahat_size,init_val);
 
@@ -581,11 +581,11 @@ void allocate_globals
   Z      = new_double_array(NULL,Z_size,"Z");
   if (debug) init_double_array(Z,Z_size,init_val);
 
-  rw = new_double_array(NULL,bs2*max,"rw");
-  rs     = new_double_array(NULL,bs2*max,"rs");
-  rz     = new_double_array(NULL,bs2*max,"rz");
-  x      = new_double_array(NULL,bs2*max,"x");
-  xb     = new_double_array(NULL,bs2*max,"xb");
+  rw = new_double_array(NULL,bs2*max_dim,"rw");
+  rs     = new_double_array(NULL,bs2*max_dim,"rs");
+  rz     = new_double_array(NULL,bs2*max_dim,"rz");
+  x      = new_double_array(NULL,bs2*max_dim,"x");
+  xb     = new_double_array(NULL,bs2*max_dim,"xb");
 
   Qlist = (double **) mmalloc(nbsteps*sizeof(double *));
   for (i=0; i<nbsteps; i++) Qlist[i] = NULL;

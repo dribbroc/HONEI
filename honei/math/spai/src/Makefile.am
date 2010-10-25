@@ -11,9 +11,9 @@
 #convert_DEPENDENCIES	= libspai.a
 
 
-lib_LIBRARIES	= libspai.a
+lib_LTLIBRARIES	= libspai.la
 
-libspai_a_SOURCES	= basics.c bicgstab.c blocks.c com_server.c		\
+libspai_la_SOURCES	= basics.c bicgstab.c blocks.c com_server.c		\
   debug.c hash_table.c index_set.c						\
   load_balance.c matrix.c mmio.c qr.c read_mm_matrix.c spai.c spai_sub.c	\
   timing.c variable_blocks.c vector.c						\

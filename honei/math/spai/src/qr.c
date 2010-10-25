@@ -63,7 +63,7 @@ int qr
 	 j<nline_A;
 	 j++,
 	   jj+=maxapi,
-	   jjj+=max)
+	   jjj+=max_dim)
       for (i=0; i<dimr; i++)
 	R[i + jj] = Ahat[i+jjj];
   }
@@ -73,8 +73,8 @@ int qr
   offset = n1[nbq]-block_width;
 
   /* Make sure Z is big enough */
-  if ((nline_A*max + n2[nbq]) > Z_size) {
-    Z_size = nline_A*max + n2[nbq];
+  if ((nline_A*max_dim + n2[nbq]) > Z_size) {
+    Z_size = nline_A*max_dim + n2[nbq];
     Z = new_double_array(Z,Z_size,"Z");
   }
 
@@ -82,14 +82,14 @@ int qr
 	 jj=0;
        j<nline_A;
        j++,
-	 jj+=max)
+	 jj+=max_dim)
     for (i=0; i<n2[nbq]; i++)
       Z[i + jj] = Ahat[i+offset + jj];
 
-  if (max < n2[nbq]) {
+  if (max_dim < n2[nbq]) {
     printf(".. illegal value in dgeqrf: \n");
-    printf("   n2[nbq]=%d must be <= max=%d\n",
-	   n2[nbq],max);
+    printf("   n2[nbq]=%d must be <= max_dim=%d\n",
+	   n2[nbq],max_dim);
     printf(".. Try increasing the -mb parameter\n");
     return SPAI_BLAS_ERROR;
   }
@@ -101,14 +101,14 @@ int qr
     TAU    = new_double_array(TAU,TAU_size,"TAU");
   }
 
-  F77_FUNC(dgeqrf,DGEQRF)(&n2[nbq],&nline_A,Z,&max,&TAU[TAU_ptr[nbq]],rw,&max,&info);
+  F77_FUNC(dgeqrf,DGEQRF)(&n2[nbq],&nline_A,Z,&max_dim,&TAU[TAU_ptr[nbq]],rw,&max_dim,&info);
 
 /* #if defined(T3D) */
-/*   SGEQRF(&n2[nbq],&nline_A,Z,&max,&TAU[TAU_ptr[nbq]],rw,&max,&info); */
+/*   SGEQRF(&n2[nbq],&nline_A,Z,&max_dim,&TAU[TAU_ptr[nbq]],rw,&max_dim,&info); */
 /* #elif defined(SP2) */
-/*   dgeqrf(&n2[nbq],&nline_A,Z,&max,&TAU[TAU_ptr[nbq]],rw,&max,&info); */
+/*   dgeqrf(&n2[nbq],&nline_A,Z,&max_dim,&TAU[TAU_ptr[nbq]],rw,&max_dim,&info); */
 /* #else */
-/*   dgeqrf_(&n2[nbq],&nline_A,Z,&max,&TAU[TAU_ptr[nbq]],rw,&max,&info); */
+/*   dgeqrf_(&n2[nbq],&nline_A,Z,&max_dim,&TAU[TAU_ptr[nbq]],rw,&max_dim,&info); */
 /* #endif */
 
   if (info) {
@@ -124,7 +124,7 @@ int qr
        j<nline_A;
        j++,
 	 jj+=maxapi,
-	 jjj+=max)
+	 jjj+=max_dim)
     for (i=0; i<=j; i++)
       R[dimr+i + jj] = Z[i + jjj];
 
@@ -136,7 +136,7 @@ int qr
        j<nline_A;
        j++,
 	 jj+=n2[nbq],
-	 jjj+=max)
+	 jjj+=max_dim)
     for (i=j+1; i<n2[nbq]; i++)
       Q[i + jj] = Z[i + jjj];
 
@@ -145,19 +145,19 @@ int qr
   /* set X, like ek */
   /* !!!! do the following more efficiently */
   unblocked_len = scalar_len(I,A);
-  fill_zeros(nrhs,max,unblocked_len,x);
+  fill_zeros(nrhs,max_dim,unblocked_len,x);
   indx = seek_ptr(A,I,col,&jj_start);
   if (indx < 0) {
 
     /* not found in I */
     (I->ptr)[(I->len)++] = col;
-    fill_zeros(block_width,max,jj_start,res);
+    fill_zeros(block_width,max_dim,jj_start,res);
 
     for (j=0,
 	   jj=jj_start;
 	 j<nrhs;
 	 j++,
-	   jj+=max)
+	   jj+=max_dim)
       for (i=0; i<block_width; i++) {
 	if (i == j) res[jj + i] = 1.0;
 	else res[jj + i] = 0.0;
@@ -171,7 +171,7 @@ int qr
 	   jj=jj_start;
 	 j<nrhs;
 	 j++,
-	   jj+=max)
+	   jj+=max_dim)
       for (i=0; i<block_width; i++) {
 	if (i == j) x[jj + i] = 1.0;
 	else x[jj + i] = 0.0;
@@ -180,13 +180,13 @@ int qr
     multq(Tchar, nbq, x,nrhs, block_width);
 
     /* compute residual */
-    fill_zeros(block_width,max,unblocked_len,res);
+    fill_zeros(block_width,max_dim,unblocked_len,res);
 
     for (j=0,
 	   jj=0;
 	 j<nrhs;
 	 j++,
-	   jj+=max) {
+	   jj+=max_dim) {
       for (i=dimr; i<unblocked_len; i++) {
 	res[jj + i] = -x[jj + i];
       }
@@ -197,17 +197,17 @@ int qr
     /* solve upper triangular system, solution in x */
 
     F77_FUNC(dtrtrs,DTRTRS)(Uchar,Nchar,Nchar,
-           &dimr,&nrhs,R,&maxapi,x,&max,&info);
+           &dimr,&nrhs,R,&maxapi,x,&max_dim,&info);
 
 /* #if defined(T3D) */
 /*     STRTRS(Uchar_fcd,Nchar_fcd,Nchar_fcd, */
-/*            &dimr,&nrhs,R,&maxapi,x,&max,&info); */
+/*            &dimr,&nrhs,R,&maxapi,x,&max_dim,&info); */
 /* #elif defined(SP2) */
 /*     dtrtrs(Uchar,Nchar,Nchar, */
-/*            &dimr,&nrhs,R,&maxapi,x,&max,&info); */
+/*            &dimr,&nrhs,R,&maxapi,x,&max_dim,&info); */
 /* #else */
 /*     dtrtrs_(Uchar,Nchar,Nchar, */
-/*            &dimr,&nrhs,R,&maxapi,x,&max,&info); */
+/*            &dimr,&nrhs,R,&maxapi,x,&max_dim,&info); */
 /* #endif */
 
     if (info) {
@@ -221,7 +221,7 @@ int qr
 /**********************************************************************/
 /* for debugging */
 
-void write_unblocked(double *v, int max, int nrhs, int n)
+void write_unblocked(double *v, int max_dim, int nrhs, int n)
 {
   int i,j,jj;
 
@@ -230,7 +230,7 @@ void write_unblocked(double *v, int max, int nrhs, int n)
 	   jj=0;
 	 j<nrhs;
 	 j++,
-	   jj+=max) {
+	   jj+=max_dim) {
       printf("%le ",v[jj+i]);
     }
     printf("\n");
@@ -254,8 +254,8 @@ void multq
       offset = n1[iq]-block_width;
 
       /* Make sure Z is big enough */
-      if ((nline_A*max + n2[nbq]) > Z_size) {
-	Z_size = nline_A*max + n2[nbq];
+      if ((nline_A*max_dim + n2[nbq]) > Z_size) {
+	Z_size = nline_A*max_dim + n2[nbq];
 	Z = new_double_array(Z,Z_size,"Z");
       }
 
@@ -264,7 +264,7 @@ void multq
 	     jj=0;
 	   j<nline_A;
 	   j++,
-	     jj+=max)
+	     jj+=max_dim)
 	for (i=0; i<n2[iq]; i++)
 	  Z[i + jj] = A[i+offset + jj];
 
@@ -276,41 +276,41 @@ void multq
 /* 	     Qlist[iq], */
 /* 	     &n2[iq], */
 /* 	     &TAU[TAU_ptr[iq]], */
-/* 	     Z,&max,rw,&max,&info); */
+/* 	     Z,&max_dim,rw,&max_dim,&info); */
 
 /* #elif ORIGIN */
 /*       dormqr_(Lchar,Tchar,&n2[iq],&nline_A,&dif, */
 /* 	      Qlist[iq], */
 /* 	      &n2[iq], */
 /* 	      &TAU[TAU_ptr[iq]], */
-/* 	     Z,&max,rw,&max,&info); */
+/* 	     Z,&max_dim,rw,&max_dim,&info); */
 
 /* #elif INDY */
 /*       dormqr_(Lchar,Tchar,&n2[iq],&nline_A,&dif, */
 /* 	      Qlist[iq], */
 /* 	      &n2[iq], */
 /* 	      &TAU[TAU_ptr[iq]], */
-/* 	      Z,&max,rw,&max,&info); */
+/* 	      Z,&max_dim,rw,&max_dim,&info); */
 
 /* #elif SP2 */
 /*       dormqr(Lchar,Tchar,&n2[iq],&nline_A,&dif, */
 /* 	     Qlist[iq], */
 /* 	     &n2[iq], */
 /* 	     &TAU[TAU_ptr[iq]], */
-/* 	     Z,&max,rw,&max,&info); */
+/* 	     Z,&max_dim,rw,&max_dim,&info); */
 
 /* #elif Darwin */
 /*       dormqr_(Lchar,Tchar,&n2[iq],&nline_A,&dif, */
 /* 	      Qlist[iq], */
 /* 	      &n2[iq], */
 /* 	      &TAU[TAU_ptr[iq]], */
-/* 	      Z,&max,rw,&max,&info); */
+/* 	      Z,&max_dim,rw,&max_dim,&info); */
 /* #else */
 /*       dormqr_(Lchar,Tchar,&n2[iq],&nline_A,&dif, */
 /* 	      Qlist[iq], */
 /* 	      &n2[iq], */
 /* 	      &TAU[TAU_ptr[iq]], */
-/* 	      Z,&max,rw,&max,&info); */
+/* 	      Z,&max_dim,rw,&max_dim,&info); */
 /* #endif */
 
       F77_FUNC (dormqr,DORMQR)
@@ -318,13 +318,13 @@ void multq
 	       Qlist[iq],
 	       &n2[iq],
 	       &TAU[TAU_ptr[iq]],
-	       Z,&max,rw,&max,&info);
+	       Z,&max_dim,rw,&max_dim,&info);
 
       if (info) fprintf(stdout,"problem in DORMQR\n");
 
       for (j=0, jj=0;
 	   j<nline_A;
-	   j++, jj+=max)
+	   j++, jj+=max_dim)
 	for (i=0; i<n2[iq]; i++) {
 	  A[i+offset + jj] = Z[i + jj];
 	}
@@ -337,8 +337,8 @@ void multq
       offset = n1[iq]-block_width;
 
       /* Make sure Z is big enough */
-      if ((nline_A*max + n2[nbq]) > Z_size) {
-	Z_size = nline_A*max + n2[nbq];
+      if ((nline_A*max_dim + n2[nbq]) > Z_size) {
+	Z_size = nline_A*max_dim + n2[nbq];
 	Z = new_double_array(Z,Z_size,"Z");
       }
 
@@ -347,7 +347,7 @@ void multq
 	     jj=0;
 	   j<nline_A;
 	   j++,
-	     jj+=max)
+	     jj+=max_dim)
 	for (i=0; i<n2[iq]; i++)
 	  Z[i + jj] = A[i+offset + jj];
 
@@ -358,49 +358,49 @@ void multq
 	     Qlist[iq],
 	     &n2[iq],
 	     &TAU[TAU_ptr[iq]],
-	     Z,&max,rw,&max,&info);
+	     Z,&max_dim,rw,&max_dim,&info);
 
 /* #ifdef T3D */
 /*       SORMQR(Lchar_fcd,Nchar_fcd,&n2[iq],&nline_A,&dif, */
 /* 	     Qlist[iq], */
 /* 	     &n2[iq], */
 /* 	     &TAU[TAU_ptr[iq]], */
-/* 	     Z,&max,rw,&max,&info); */
+/* 	     Z,&max_dim,rw,&max_dim,&info); */
 
 /* #elif ORIGIN */
 /*       dormqr_(Lchar,Nchar,&n2[iq],&nline_A,&dif, */
 /* 	     Qlist[iq], */
 /* 	     &n2[iq], */
 /* 	     &TAU[TAU_ptr[iq]], */
-/* 	     Z,&max,rw,&max,&info); */
+/* 	     Z,&max_dim,rw,&max_dim,&info); */
 
 /* #elif INDY */
 /*       dormqr_(Lchar,Nchar,&n2[iq],&nline_A,&dif, */
 /* 	      Qlist[iq], */
 /* 	      &n2[iq], */
 /* 	      &TAU[TAU_ptr[iq]], */
-/* 	      Z,&max,rw,&max,&info); */
+/* 	      Z,&max_dim,rw,&max_dim,&info); */
 
 /* #elif SP2 */
 /*       dormqr(Lchar,Nchar,&n2[iq],&nline_A,&dif, */
 /* 	     Qlist[iq], */
 /* 	     &n2[iq], */
 /* 	     &TAU[TAU_ptr[iq]], */
-/* 	     Z,&max,rw,&max,&info); */
+/* 	     Z,&max_dim,rw,&max_dim,&info); */
 
 /* #elif Darwin */
 /*       dormqr_(Lchar,Nchar,&n2[iq],&nline_A,&dif, */
 /* 	      Qlist[iq], */
 /* 	      &n2[iq], */
 /* 	      &TAU[TAU_ptr[iq]], */
-/* 	      Z,&max,rw,&max,&info); */
+/* 	      Z,&max_dim,rw,&max_dim,&info); */
 
 /* #else */
 /*       dormqr_(Lchar,Nchar,&n2[iq],&nline_A,&dif, */
 /* 	      Qlist[iq], */
 /* 	      &n2[iq], */
 /* 	      &TAU[TAU_ptr[iq]], */
-/* 	      Z,&max,rw,&max,&info); */
+/* 	      Z,&max_dim,rw,&max_dim,&info); */
 /* #endif */
 
       if (info) fprintf(stdout,"problem in DORMQR\n");
@@ -410,7 +410,7 @@ void multq
 	     jj=0;
 	   j<nline_A;
 	   j++,
-	     jj+=max)
+	     jj+=max_dim)
 	for (i=0; i<n2[iq]; i++)
 	  A[i+offset + jj] = Z[i + jj];
 
@@ -444,11 +444,11 @@ int seek_ptr
 
 /**********************************************************************/
 
-void fill_zeros(int nrhs, int max, int len, double *v)
+void fill_zeros(int nrhs, int max_dim, int len, double *v)
 {
   int i,j,jj;
 
-  for (j=0, jj=0; j<nrhs; j++, jj+=max)
+  for (j=0, jj=0; j<nrhs; j++, jj+=max_dim)
     for (i=0; i<len; i++)
       v[jj+i] = 0.0;
 }

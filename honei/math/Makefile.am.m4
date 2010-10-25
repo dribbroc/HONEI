@@ -15,7 +15,7 @@ $1_TEST_LDADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(BACKEND_LIBS) \
 	$(top_builddir)/honei/la/libhoneila.la \
-	$(top_builddir)/honei/math/spai/src/libspai.a \
+	$(top_builddir)/honei/math/spai/src/libspai.la \
 	libhoneimath.la \
 	$(top_builddir)/honei/math/spai/lapack/liblapack.a \
 	$(top_builddir)/honei/math/spai/blas/libblas.a \
@@ -114,7 +114,9 @@ libhoneimath_la_SOURCES = filelist $(CELLFILES) $(SSEFILES) $(CUDAFILES)
 libhoneimath_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/la/libhoneila.la
-	$(top_builddir)/honei/math/spai/src/libspai.a \
+	$(top_builddir)/honei/math/spai/src/libspai.la \
+	$(top_builddir)/honei/math/spai/lapack/liblapack.a \
+	$(top_builddir)/honei/math/spai/blas/libblas.a \
 	$(CELLLIB)
 
 libhoneimath_includedir = $(includedir)/honei/math

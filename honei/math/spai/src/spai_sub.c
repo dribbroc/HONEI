@@ -269,7 +269,7 @@ void getcols
 void full_matrix
 (matrix *A,
  matrix *M,
- int max,
+ int max_dim,
  double *Ahat)
 {
   int nb,mb;
@@ -299,7 +299,7 @@ void full_matrix
 
   if (n)
    {
-    if ((n*max + m) > Ahat_size)
+    if ((n*max_dim + m) > Ahat_size)
      {
       printf("error in full_matrix: exceeded Ahat size\n");
       exit(1);
@@ -308,13 +308,13 @@ void full_matrix
     /* initialize */
     for (col=0, col2=0;
 	 col<n;
-	 col++, col2+=max)
+	 col++, col2+=max_dim)
       for (row=0; row<m; row++)
         Ahat[col2+row]=0.0;
 
     for (col_start=0, j=0;
 	 j<J_tilde->len;
-	 j++, col_start += (nb*max))
+	 j++, col_start += (nb*max_dim))
      {
       get_line(A, M, (J_tilde->ptr)[j], &len, &rlen, &buf, &rbuf, &vbuf);
 
@@ -341,7 +341,7 @@ void full_matrix
 	for (jb=0,
 	       col=col_start;
 	     jb<nb;
-	     jb++, col+=max)
+	     jb++, col+=max_dim)
          {
 	  for (ib=0, row=row_start;
 	       ib<mb;
@@ -363,12 +363,12 @@ void full_matrix
 /**********************************************************************/
 /* for debugging */
 
-void write_full_matrix(FILE *fptr, double *Ahat, int m, int n, int max)
+void write_full_matrix(FILE *fptr, double *Ahat, int m, int n, int max_dim)
 {
   int i,j,jj,bmax;
 
   for (i=0; i<m; i++) {
-    for (j=0, jj=0; j<n; j++, jj+=max) {
+    for (j=0, jj=0; j<n; j++, jj+=max_dim) {
       fprintf(fptr,"%12.4le ",Ahat[jj+i]);
     }
     fprintf(fptr,";\n");
@@ -588,10 +588,10 @@ int append
 (index_set *isa,
  index_set *isb)
 {
-  if (isa->len + isb->len > max) {
+  if (isa->len + isb->len > max_dim) {
     if (message) {
       fprintf(message,
-	      "Not enough memory in work arrays.  Increase max.\n");
+	      "Not enough memory in work arrays.  Increase max_dim.\n");
       return(0);
     }
   }

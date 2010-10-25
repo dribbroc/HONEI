@@ -23,7 +23,7 @@
 extern FILE *message;
 extern double epsilon;
 extern int nbsteps;
-extern int max;
+extern int max_dim;
 extern int maxnew;
 
 extern int maxapi;
