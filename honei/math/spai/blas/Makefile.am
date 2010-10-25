@@ -1,6 +1,6 @@
 
-lib_LIBRARIES = libblas.a
-libblas_a_SOURCES = \
+lib_LTLIBRARIES = libblas.la
+libblas_la_SOURCES = \
   caxpy.f cher2.f csymm.f daxpy.f drotmg.f dsyr.f icamax.f sgbmv.f sspr2.f stpsv.f zgbmv.f zhpmv.f ztpsv.f \
   ccopy.f cher2k.f csyr2k.f dcabs1.f dsbmv.f dsyrk.f idamax.f sgemm.f sspr.f strmm.f zgemm.f zhpr2.f ztrmm.f \
   cdotc.f cher.f csyrk.f dcopy.f dscal.f dtbmv.f isamax.f sgemv.f sswap.f strmv.f zgemv.f zhpr.f ztrmv.f \

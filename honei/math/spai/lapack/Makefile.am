@@ -1,3 +1,3 @@
 
-lib_LIBRARIES = liblapack.a
-liblapack_a_SOURCES = lapack_subs.f
+lib_LTLIBRARIES = liblapack.la
+liblapack_la_SOURCES = lapack_subs.f

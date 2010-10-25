@@ -17,8 +17,8 @@ $1_TEST_LDADD = \
 	$(top_builddir)/honei/la/libhoneila.la \
 	$(top_builddir)/honei/math/spai/src/libspai.la \
 	libhoneimath.la \
-	$(top_builddir)/honei/math/spai/lapack/liblapack.a \
-	$(top_builddir)/honei/math/spai/blas/libblas.a \
+	$(top_builddir)/honei/math/spai/lapack/liblapack.la \
+	$(top_builddir)/honei/math/spai/blas/libblas.la \
 	$(FLIBS) \
 	$(DYNAMIC_LD_LIBS)
 $1_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
@@ -115,8 +115,8 @@ libhoneimath_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/la/libhoneila.la
 	$(top_builddir)/honei/math/spai/src/libspai.la \
-	$(top_builddir)/honei/math/spai/lapack/liblapack.a \
-	$(top_builddir)/honei/math/spai/blas/libblas.a \
+	$(top_builddir)/honei/math/spai/lapack/liblapack.la \
+	$(top_builddir)/honei/math/spai/blas/libblas.la \
 	$(CELLLIB)
 
 libhoneimath_includedir = $(includedir)/honei/math
