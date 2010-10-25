@@ -77,6 +77,9 @@ namespace honei
             /// Returns our size, equal to rows and columns.
             unsigned long size() const;
 
+            /// Returns out non zero element count.
+            unsigned long used_elements() const;
+
             /// Returns our Aj / Ax row count.
             unsigned long stride() const;
 

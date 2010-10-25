@@ -205,6 +205,17 @@ namespace honei
 
     template <typename DataType_>
     unsigned long
+    SparseMatrixELL<DataType_>::used_elements() const
+    {
+        unsigned long ue(0);
+        for(unsigned long i(0) ; i < this->_imp->Arl.size() ; ++i)
+            ue += this->_imp->Arl.elements()[i];
+
+        return ue;
+    }
+
+    template <typename DataType_>
+    unsigned long
     SparseMatrixELL<DataType_>::stride() const
     {
         return this->_imp->stride;

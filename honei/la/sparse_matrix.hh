@@ -353,9 +353,20 @@ namespace honei
                 return _rows;
             }
 
+            /// Returns our size = rows * columns.
             unsigned long size() const
             {
                 return _rows * _columns;
+            }
+
+            /// Return number of non zero elements.
+            unsigned long used_elements() const
+            {
+                unsigned long ue(0);
+                for (unsigned long i(0) ; i < rows() ; ++i)
+                    if (_row_vectors[i])
+                        ue += _row_vectors[i]->used_elements();
+                return ue;
             }
 
             /// Retrieves row vector by index, zero-based, unassignable.
