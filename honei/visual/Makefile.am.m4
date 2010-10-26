@@ -65,6 +65,14 @@ BACKEND_LIBS += \
 
 endif
 
+if ITANIUM
+
+ITANIUMFILES = itaniumlist
+BACKEND_LIBS += \
+	$(top_builddir)/honei/backends/itanium/libhoneibackendsitanium.la
+
+endif
+
 AM_CXXFLAGS = -I$(top_srcdir)
 
 CLEANFILES = *~
@@ -75,6 +83,8 @@ DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \
 	$(CUDADEF) \
+	$(OPENCLDEF) \
+	$(ITANIUMDEF) \
 	$(DEBUGDEF) \
 	$(BOOSTDEF) \
 	$(PROFILERDEF)

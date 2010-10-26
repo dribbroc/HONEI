@@ -67,6 +67,14 @@ BACKEND_LIBS += \
 
 endif
 
+if ITANIUM
+
+ITANIUMFILES = itaniumlist
+BACKEND_LIBS += \
+	$(top_builddir)/honei/backends/itanium/libhoneibackendsitanium.la
+
+endif
+
 if OPENCL
 
 OPENCLFILES = opencllist
@@ -85,6 +93,8 @@ EXTRA_DIST = Makefile.am.m4 files.m4
 DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \
+	$(OPENCLDEF) \
+	$(ITANIUMDEF) \
 	$(CUDADEF) \
 	$(CUDA_DOUBLEDEF) \
 	$(CUBLASDEF) \

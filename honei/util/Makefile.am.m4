@@ -40,6 +40,8 @@ DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \
 	$(CUDADEF) \
+	$(OPENCLDEF) \
+	$(ITANIUMDEF) \
 	$(DEBUGDEF) \
 	$(BOOSTDEF) \
 	$(PROFILERDEF) \

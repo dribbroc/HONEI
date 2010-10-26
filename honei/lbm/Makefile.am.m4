@@ -97,6 +97,7 @@ EXTRA_DIST = Makefile.am.m4 files.m4 sample.nc
 DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \
+	$(OPENCLDEF) \
 	$(ITANIUMDEF) \
 	$(CUDADEF) \
 	$(CUDA_DOUBLEDEF) \
