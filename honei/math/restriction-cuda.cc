@@ -124,7 +124,7 @@ DenseVector<float> & Restriction<tags::GPU::CUDA, methods::NONE>::value(DenseVec
 
 #ifdef HONEI_CUDA_DOUBLE
 DenseVector<double> & Restriction<tags::GPU::CUDA, methods::NONE>::value(DenseVector<double> & coarse,
-        const DenseVector<double> & fine, const DenseVector<unsigned long> & mask, BandedMatrixQ1<double> & resmat)
+        const DenseVector<double> & fine, const DenseVector<unsigned long> & mask, HONEI_UNUSED BandedMatrixQ1<double> & resmat)
 {
     CONTEXT("When restricting from fine to coarse (CUDA):");
 
@@ -144,7 +144,7 @@ DenseVector<double> & Restriction<tags::GPU::CUDA, methods::NONE>::value(DenseVe
     return coarse;
 }
 DenseVector<double> & Restriction<tags::GPU::CUDA, methods::NONE>::value(DenseVector<double> & coarse,
-        const DenseVector<double> & fine, const DenseVector<unsigned long> & mask, SparseMatrixELL<double> & resmat)
+        const DenseVector<double> & fine, const DenseVector<unsigned long> & mask, HONEI_UNUSED SparseMatrixELL<double> & resmat)
 {
     CONTEXT("When restricting from fine to coarse (CUDA):");
 

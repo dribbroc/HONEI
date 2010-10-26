@@ -20,13 +20,13 @@
 #ifdef HONEI_DUNE
 #define SOLVER_VERBOSE_L2
 
-#include <honei/math/dune_solvers.hh>
 #include <honei/math/conjugate_gradients.hh>
 #include <honei/math/jacobi.hh>
 #include <honei/math/matrix_io.hh>
 #include <honei/math/vector_io.hh>
 #include <unittest/unittest.hh>
 #include <honei/util/stringify.hh>
+#include <honei/math/dune_solvers.hh>
 #include <iostream>
 
 
