@@ -259,3 +259,8 @@ LBMGSimpleSolverBench<tags::GPU::CUDA, float> cuda_solver_simple_bench_float_6("
 LBMGSimpleSolverBench<tags::GPU::CUDA, float> cuda_solver_simple_bench_float_7("CUDA LBM Simple Grid solver Benchmark - size: 1500, float", 1500, 25);
 LBMGSimpleSolverBench<tags::GPU::MultiCore::CUDA, float> mc_cuda_solver_simple_bench_float_7("MC CUDA LBM Simple Grid solver Benchmark - size: 1500, float", 1500, 25);
 #endif
+
+#ifdef HONEI_ITANIUM
+LBMGSimpleSolverBench<tags::CPU::Itanium, float> sse_solver_simple_bench_float_1("Itanium LBM Simple Grid solver Benchmark - size: 1500, float", 1500, 25);
+LBMGSimpleSolverBench<tags::CPU::Itanium, double> sse_solver_simple_bench_double_1("Itanium LBM Simple Grid solver Benchmark - size: 1500, double", 1500, 25);
+#endif

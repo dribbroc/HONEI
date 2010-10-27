@@ -112,6 +112,10 @@ ExtractionGridBench<tags::CPU::SSE, double, lbm_modes::WET> sse_wet_extraction_g
 #ifdef HONEI_CUDA
 ExtractionGridBench<tags::GPU::CUDA, float, lbm_modes::WET> cuda_wet_extraction_grid_bench_float("CUDA WET ExtractionGridBench - size: 2000, float", 2000, 10);
 #endif
+#ifdef HONEI_ITANIUM
+ExtractionGridBench<tags::CPU::Itanium, float, lbm_modes::WET> sse_wet_extraction_grid_bench_float("Itanium WET ExtractionGridBench - size: 2000, float", 2000, 10);
+ExtractionGridBench<tags::CPU::Itanium, double, lbm_modes::WET> sse_wet_extraction_grid_bench_double("Itanium WET ExtractionGridBench - size: 2000, double", 2000, 10);
+#endif
 
 #ifdef HONEI_SSE
 ExtractionGridBench<tags::CPU::SSE, float, lbm_modes::DRY> sse_dry_extraction_grid_bench_float("SSE DRY ExtractionGridBench - size: 2000, float", 2000, 10);
