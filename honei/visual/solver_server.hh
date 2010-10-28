@@ -181,7 +181,7 @@ namespace honei
                 srv.sin_port = htons(4711);
                 srv.sin_family = AF_INET;
 
-                if (bind(s, (struct sockaddr*)&srv, sizeof(srv)) == -1)
+                if (::bind(s, (struct sockaddr*)&srv, sizeof(srv)) == -1)
                 {
                     perror("bind() failed");
                 }
