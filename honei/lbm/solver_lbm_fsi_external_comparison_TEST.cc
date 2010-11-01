@@ -411,15 +411,27 @@ class SolverLBMFSIExternalComparisonTest_ArbGeomNonStat :
                     DenseVector<bool> line_flags_new(solids.boundary_flags->size());
                     DenseVector<bool> solid_flags_new(solids.boundary_flags->size());
 
+                    solids.boundary_flags->lock(lm_read_and_write);
+                    solids.line_flags->lock(lm_read_and_write);
+                    solids.solid_flags->lock(lm_read_and_write);
+
+                    info.cuda_dir_1->lock(lm_read_only);
                     for(unsigned long j(0) ; j < solids.boundary_flags->size() ; ++j)
                     {
                         boundary_flags_new[(*info.cuda_dir_1)[j]] = (*solids.boundary_flags)[j];
                         line_flags_new[(*info.cuda_dir_1)[j]] = (*solids.line_flags)[j];
                         solid_flags_new[(*info.cuda_dir_1)[j]] = (*solids.solid_flags)[j];
                     }
-                    *solids.boundary_flags = boundary_flags_new;
-                    *solids.line_flags = line_flags_new;
-                    *solids.solid_flags = solid_flags_new;
+                    for(unsigned long j(0) ; j < solids.boundary_flags->size() ; ++j)
+                    {
+                        (*solids.boundary_flags)[j] = boundary_flags_new[j];
+                        (*solids.line_flags)[j] = boundary_flags_new[j];
+                        (*solids.solid_flags)[j] = boundary_flags_new[j];
+                    }
+                    info.cuda_dir_1->unlock(lm_read_only);
+                    solids.boundary_flags->unlock(lm_read_and_write);
+                    solids.line_flags->unlock(lm_read_and_write);
+                    solids.solid_flags->unlock(lm_read_and_write);
                     solver.solve(1ul);
                 }
                 else if(i < 100)
@@ -464,5 +476,5 @@ class SolverLBMFSIExternalComparisonTest_ArbGeomNonStat :
 };
 SolverLBMFSIExternalComparisonTest_ArbGeomNonStat<tags::CPU, float> cpu_solver_test_float_agns("float", "ext_initial_h_agns.ppm", "ext_initial_vx_ag.ppm", "ext_initial_vy_ag.ppm", "ext_initial_b_ag.ppm", "ext_obstacles_ag.ppm", "ext_solids_agns.ppm", 100ul, 0.08f, 1.0f, 1.0f, 0.08f, 0.01f, 0.01f, 0.01f, 1.1f);
 #ifdef HONEI_CUDA
-//SolverLBMFSIExternalComparisonTest_ArbGeomNonStat<tags::GPU::CUDA, float> gpu_solver_test_float_agns("float", "ext_initial_h_agns.ppm", "ext_initial_vx_ag.ppm", "ext_initial_vy_ag.ppm", "ext_initial_b_ag.ppm", "ext_obstacles_ag.ppm", "ext_solids_agns.ppm", 100ul, 0.08f, 1.0f, 1.0f, 0.08f, 0.01f, 0.01f, 0.01f, 1.1f);
+// SolverLBMFSIExternalComparisonTest_ArbGeomNonStat<tags::GPU::CUDA, float> gpu_solver_test_float_agns("float", "ext_initial_h_agns.ppm", "ext_initial_vx_ag.ppm", "ext_initial_vy_ag.ppm", "ext_initial_b_ag.ppm", "ext_obstacles_ag.ppm", "ext_solids_agns.ppm", 100ul, 0.08f, 1.0f, 1.0f, 0.08f, 0.01f, 0.01f, 0.01f, 1.1f);
 #endif
