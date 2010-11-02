@@ -48,7 +48,7 @@ int main(int argc, char ** argv)
     SparseMatrix<double> sspai(SPAI::value(ssmatrix));
     SparseMatrixELL<double> spai(sspai);
 
-    // Write out mtx file matrix
+    // Write out spai matrix
     MatrixIO<io_formats::ELL>::write_matrix(output, spai);
 
     return EXIT_SUCCESS;
