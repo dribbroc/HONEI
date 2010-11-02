@@ -19,8 +19,10 @@
 
 
 #include <iostream>
-#include <honei/math/vector_io.hh>
-#include <honei/la/dense_vector.hh>
+#include <honei/math/matrix_io.hh>
+#include <honei/la/sparse_matrix.hh>
+#include <honei/la/sparse_matrix_ell.hh>
+#include <honei/math/spai.hh>
 
 using namespace honei;
 
@@ -28,7 +30,7 @@ int main(int argc, char ** argv)
 {
     if (argc != 3)
     {
-        std::cout<<"Usage 'exp2dv exp-file dv-file'"<<std::endl;
+        std::cout<<"Usage 'ell2spai ell-file spai-ell-file'"<<std::endl;
         exit(EXIT_FAILURE);
     }
     if (sizeof(unsigned long) != sizeof(uint64_t))
@@ -37,16 +39,17 @@ int main(int argc, char ** argv)
         exit(EXIT_FAILURE);
     }
 
-    // Read in exp file vector
+    // Read in ell file matrix
     std::string input(argv[1]);
     std::string output(argv[2]);
-    unsigned long size, start;
-    VectorIO<io_formats::EXP>::get_size(input, size, start);
-    DenseVector<double> data(size);
-    VectorIO<io_formats::EXP>::read_vector(input, data);
 
-    // Write out ell file matrix
-    VectorIO<io_formats::DV>::write_vector(output, data);
+    SparseMatrixELL<double> smatrix(MatrixIO<io_formats::ELL>::read_matrix(input, double(0)));
+    SparseMatrix<double> ssmatrix(smatrix);
+    SparseMatrix<double> sspai(SPAI::value(ssmatrix));
+    SparseMatrixELL<double> spai(sspai);
+
+    // Write out mtx file matrix
+    MatrixIO<io_formats::ELL>::write_matrix(output, spai);
 
     return EXIT_SUCCESS;
 }

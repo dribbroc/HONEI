@@ -14,6 +14,9 @@ $1_BENCHMARK_LDADD = \
 	$(top_builddir)/honei/lbm/libhoneilbm.la \
 	$(top_builddir)/honei/graph/libhoneigraph.la \
 	$(top_builddir)/honei/util/libhoneiutil.la \
+	$(top_builddir)/honei/math/spai/src/libspai.la \
+	$(top_builddir)/honei/math/spai/lapack/liblapack.la \
+	$(top_builddir)/honei/math/spai/blas/libblas.la \
 	$(BACKEND_LIBS) \
 	$(DYNAMIC_LD_LIBS)
 $1_BENCHMARK_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)

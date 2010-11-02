@@ -501,7 +501,7 @@ class MatrixIO<io_formats::ELL>
 {
     public:
     template <typename DT_>
-    static void write_matrix(std::string & output, SparseMatrixELL<DT_> smatrix)
+    static void write_matrix(std::string & output, SparseMatrixELL<DT_> & smatrix)
     {
         if (sizeof(DT_) != 8)
             throw InternalError("Only double ell output supported!");
