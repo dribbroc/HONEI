@@ -130,8 +130,8 @@ namespace honei
                     }
                 }
             }
-            delete rows_array;
-            delete cols_array;
+            delete [] rows_array;
+            delete [] cols_array;
             return tsmatrix;
         }
     };

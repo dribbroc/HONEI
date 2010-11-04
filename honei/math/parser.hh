@@ -116,8 +116,8 @@ namespace honei
                             ++i;
                         }
                 }
-                delete target;
-                delete line;
+                delete [] target;
+                delete [] line;
 
                 ifs.close();
                 return result;
@@ -257,8 +257,8 @@ namespace honei
                             ++i;
                         }
                 }
-                delete target;
-                delete line;
+                delete [] target;
+                delete [] line;
 
                 ifs.close();
                 return result;
