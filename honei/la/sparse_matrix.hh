@@ -165,6 +165,7 @@ namespace honei
                         stringify(src.columns()) + "'!");
 
                 _row_vectors[src.rows()].reset(new SparseVector<DataType_>(src.columns(), 1));
+                _column_vectors[src.columns()].reset(new SparseVector<DataType_>(src.rows(), 1));
 
                 for (unsigned long row(0) ; row < src.rows() ; ++row)
                 {
@@ -192,6 +193,7 @@ namespace honei
                         stringify(src.columns()) + "'!");
 
                 _row_vectors[src.rows()].reset(new SparseVector<DataType_>(src.columns(), 1));
+                _column_vectors[src.columns()].reset(new SparseVector<DataType_>(src.rows(), 1));
 
                 /*for (unsigned long row(0) ; row < src.rows() ; ++row)
                 {
@@ -278,6 +280,7 @@ namespace honei
                         stringify(columns) + "'!");
 
                 _row_vectors[rows].reset(new SparseVector<DataType_>(columns, 1));
+                _column_vectors[columns].reset(new SparseVector<DataType_>(rows, 1));
 
                 for (unsigned long i(0) ; i < data.size() ; ++i)
                 {
