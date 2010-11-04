@@ -59,21 +59,19 @@ namespace honei
             matrix *A = NULL;
             matrix *M = NULL;
 
-            unsigned long used_elements(0);
-            for (unsigned i(0) ; i < src.rows() ; ++i)
-                used_elements+= src[i].used_elements();
-
-            mm_data rows_array[used_elements];
-            mm_data cols_array[used_elements];
+            unsigned long used_elements(src.used_elements());
+            mm_data * rows_array = new mm_data[used_elements];
+            mm_data * cols_array = new mm_data[used_elements];
             unsigned long tmp_i(0);
-            for (typename SparseMatrix<DT_>::NonZeroConstElementIterator i(src.begin_non_zero_elements()) ; i < src.end_non_zero_elements() ; ++i)
+
+            for (typename SparseMatrix<DT_>::NonZeroConstElementIterator iter(src.begin_non_zero_elements()) ; iter != src.end_non_zero_elements() ; ++iter)
             {
-                rows_array[tmp_i].i = i.row();
-                rows_array[tmp_i].j = i.column();
-                rows_array[tmp_i].val = *i;
-                cols_array[tmp_i].i = i.row();
-                cols_array[tmp_i].j = i.column();
-                cols_array[tmp_i].val = *i;
+                rows_array[tmp_i].i = iter.row();
+                rows_array[tmp_i].j = iter.column();
+                rows_array[tmp_i].val = *iter;
+                cols_array[tmp_i].i = iter.row();
+                cols_array[tmp_i].j = iter.column();
+                cols_array[tmp_i].val = *iter;
                 tmp_i++;
             }
 
@@ -132,6 +130,8 @@ namespace honei
                     }
                 }
             }
+            delete rows_array;
+            delete cols_array;
             return tsmatrix;
         }
     };
