@@ -57,6 +57,8 @@ class MatrixIO<io_formats::M>
         {
             n_z = 0;
             data_begin = 0;
+            r = 0;
+            c = 0;
 
             std::string c_s, r_s;
             std::ifstream file(filename.c_str());
@@ -101,8 +103,8 @@ class MatrixIO<io_formats::M>
                         first_digit = line.find_first_not_of(" ");
                         line.erase(0, first_digit);
 
-                        c = (unsigned long)atol(c_s.c_str());
-                        r = (unsigned long)atol(r_s.c_str());
+                        c = std::max(c ,(unsigned long)atol(c_s.c_str()));
+                        r = std::max(r, (unsigned long)atol(r_s.c_str()));
 
                         c_s.clear();
                         r_s.clear();
@@ -272,7 +274,6 @@ class MatrixIO<io_formats::MTX>
 
                         ++data_index;
                         break;
-
                     }
                 }
 
