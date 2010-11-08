@@ -745,14 +745,13 @@ class SparseMatrixELLDenseVectorProductTest :
                     if (i.index() % 5 == 0)
                         *i = DataType_(i.index()) / 1.234;
                 }
-                DenseMatrix<DataType_> dm0(sms);
                 SparseMatrixELL<DataType_> sm0(sms);
                 DenseVector<DataType_> dv1(size + 3, DataType_(4));
                 DenseVector<DataType_> result(size, DataType_(4711));
                 dv1[0] = 1;
                 dv1[1] = 2;
                 DenseVector<DataType_> prod(Product<Tag_>::value(result, sm0, dv1));
-                DenseVector<DataType_> prod_ref(Product<>::value(dm0, dv1));
+                DenseVector<DataType_> prod_ref(Product<>::value(sms, dv1));
 
                 prod.lock(lm_read_only);
                 TEST_CHECK_EQUAL(prod, prod_ref);
@@ -803,14 +802,13 @@ class SparseMatrixELLDenseVectorProductQuickTest :
                 if (i.index() % 5 == 0)
                     *i = DataType_(i.index()) / 1.234;
             }
-            DenseMatrix<DataType_> dm0(sms);
             SparseMatrixELL<DataType_> sm0(sms);
             DenseVector<DataType_> dv1(size + 3, DataType_(4));
             DenseVector<DataType_> result(size, DataType_(4711));
             dv1[0] = 1;
             dv1[1] = 2;
             DenseVector<DataType_> prod(Product<Tag_>::value(result, sm0, dv1));
-            DenseVector<DataType_> prod_ref(Product<tags::CPU>::value(dm0, dv1));
+            DenseVector<DataType_> prod_ref(Product<tags::CPU>::value(sms, dv1));
 
             prod.lock(lm_read_only);
             TEST_CHECK_EQUAL(prod, prod_ref);
