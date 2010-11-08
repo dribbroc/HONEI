@@ -36,14 +36,16 @@ namespace methods
 
     class PCG
     {
-        class JAC;
+        public:
+            class JAC;
     };
 
     class CYCLE
     {
-        class F;
-        class W;
-        class V;
+        public:
+            class F;
+            class W;
+            class V;
     };
     class FIXED;
     class MIXED;
@@ -63,7 +65,8 @@ namespace boundary_types
 {
     class DIRICHLET
     {
-        class DIRICHLET_0;
+        public:
+            class DIRICHLET_0;
     };
     class NEUMANN;
     class DIRICHLET_NEUMANN

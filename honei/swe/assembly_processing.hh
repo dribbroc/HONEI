@@ -43,13 +43,15 @@ namespace honei
     {
         class MAIN
         {
-            class M1M3;
-            class M2M4;
+            public:
+                class M1M3;
+                class M2M4;
         };
         class QUICK
         {
-            class M6;
-            class M8;
+            public:
+                class M6;
+                class M8;
         };
     }
 
