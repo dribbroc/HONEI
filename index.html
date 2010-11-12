@@ -4,30 +4,45 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>HONEI</title>
-<link rel="stylesheet" href="honei-hp/css/screen.css" type="text/css" media="screen, projection">
-<link rel="stylesheet" href="honei-hp/css/print.css" type="text/css" media="print">
-<!--[if lt IE 8]><link rel="stylesheet" href="honei-hp/css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]--
+<link rel="stylesheet" href="homepage/css/screen.css" type="text/css" media="screen, projection">
+<link rel="stylesheet" href="homepage/css/print.css" type="text/css" media="print">
+<!--[if lt IE 8]><link rel="stylesheet" href="homepage/css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
 
-<script type="text/javascript" src="honei-hp/javascript/jquery.js"></script>
-<script type="text/javascript" src="honei-hp/javascript/anim.js"></script>
+<script type="text/javascript" src="homepage/javascript/jquery.js"></script>
+<script type="text/javascript" src="homepage/javascript/anim.js"></script>
 
 </head>
 <body>
   <div class="container">
     <div class="span-24 last prepend-top">
-      <a id="logo" class="right" href="http://honei.org/index.html"><img src="./honei-hp/images/bee_140.png" alt="HONEI Logo" /></a>
+      <a id="logo" class="right" href="http://honei.org/index.html"><img src="homepage/images/bee_140.png" alt="HONEI Logo" /></a>
       <h2>
         HONEI<br /><span class="quiet" style="font-style: italic;">Hardware oriented numerics, efficiently implemented</span>
       </h2>
     </div>
     <hr />
 
-
-    <div class="span-12">
-
     <p>
-    HONEI is an open-source collection of libraries offering a hardware
-    oriented approach to numerical calculations.
+    [
+    <a href="#overview">Overview</a> |
+    <a href="#download"> Download </a> |
+    <a href="#documentation">Documentation</a> |
+    <a href="#publications">Publications</a> |
+    <a href="#showcases">Showcases</a> |
+    <a href="#authors"> Authors </a>
+
+    ]
+    </p>
+
+    <hr />
+
+    <div class="span-24">
+
+      <p>
+      <h3 id="overview"> Overview </h3>
+
+      HONEI is an open-source collection of libraries offering a hardware
+      oriented approach to numerical calculations.
     </p>
 
     <p>
@@ -53,9 +68,9 @@
 
     </div>
 
+    <!--
     <div class="push-1 span-9 box">
     <ul>
-    <!-- <li><a href="developers.html">We</a> use <a href="http://honei.org/trac/">Trac</a> for bug reports, feature requests etc.</li> -->
     <li>There is a <a href="./honei-CPC.tar.bz2">pre-release</a> version available.</li>
     <li>You can also download a more recent <a href="http://github.com/dribbroc/HONEI/archives/master" target="_blank">snapshot</a> of our master branch, which we consider stable.</li>
     <li><a href="developers.html">We</a> have written a <a href="./tutorial.pdf">tutorial</a> on how to use HONEI.</li>
@@ -67,12 +82,78 @@
     <ul>
     <li>We use <a href="http://git-scm.com/">Git</a> to maintain our source code.</li>
     <li>Currently, our master branch can be accessed <a href="http://git.honei.org">here</a>.</li>
-    <!-- <li>More specific development branches are available via our web-based <a href="http://github.com/dribbroc/HONEI">repository</a>.</li> -->
     </ul>
+    </div>
+    --!>
+
+    <hr />
+
+    <div class="span-24">
+      <h3 id="download"> Download </h3>
+      <p>
+      The latest stable version can be downloaded either as
+      <a href="http://github.com/dribbroc/HONEI/zipball/master">zip</a> or
+      <a href="http://github.com/dribbroc/HONEI/tarball/master">tar</a> formats.
+      </p>
+      <p>
+      Currently, our master branch can be accessed via <a href="http://github.com/dribbroc/HONEI">GitHub</a>.
+      </p>
+
     </div>
 
     <hr />
 
+    <div class="span-24">
+      <h3 id="documentation"> Documentation </h3>
+      <p>
+      We have written a <a href="./homepage/tutorial.pdf">tutorial</a> on how to use HONEI.
+      </p>
+
+    </div>
+
+    <hr />
+
+    <div class="span-24">
+      <h3 id="publications"> Publications</h3>
+      <h4>
+        Paper
+      </h4>
+      <ul>
+        <li><a href="http://www.mathematik.uni-dortmund.de/lsiii/static/showpdffile_vanDykGevelerMallachRibbrockGoeddekeGutwenger2009.pdf">HONEI: A collection of libraries for numerical computations targeting multiple processor architectures </a></li>
+        <li><a href="http://www.mathematik.uni-dortmund.de/lsiii/static/showpdffile_GevelerRibbrockGoeddekeTurek2009.pdf">Lattice-Boltzmann Simulation of the Shallow-Water Equations with Fluid-Structure Interaction on Multi- and Manycore Processors </a></li>
+        <li><a href="http://www.mathematik.uni-dortmund.de/lsiii/static/showpdffile_RibbrockGevelerGoeddekeTurek2010.pdf">Performance and Accuracy of Lattice-Boltzmann Kernels on Multi- and Manycore Architectures</a></li>
+      </ul>
+
+      <h4>
+        Talks
+      </h4>
+
+      <ul>
+      <li><a href="http://www.mathematik.uni-dortmund.de/lsiii/static/showpdffile_GevelerRibbrock2009.pdf">A brief introduction to the (standard) Lattice-Boltzmann Method and the HONEI approach </a></li>
+      <li><a href="http://www.mathematik.uni-dortmund.de/lsiii/static/showpdffile_GevelerRibbrockGoeddekeTurek2009a.pdf">Hardware oriented numerics for real-time CFD applications on parallel hardware architectures </a></li>
+      <li><a href="http://www.mathematik.uni-dortmund.de/lsiii/static/showpdffile_GevelerRibbrockGoeddekeTurek2010a.pdf">Lattice-Boltzmann Simulation of the Shallow-Water Equations with Fluid-Structure Interaction on Multi- and Many-core Processors</a></li>
+      </ul>
+
+    </div>
+
+    <hr />
+
+    <div class="span-24">
+      <h3 id="showcases"> Showcases</h3>
+      <p>
+      fancy pictures
+      </p>
+
+    </div>
+
+    <hr />
+
+    <div class="span-24">
+      <h3 id="authors"> Authors </h3>
+      <p>
+      Danny van Dyk (danny.dyk@tu-dortmund.de)<br/>Dirk Ribbrock (dirk.ribbrock@math.uni-dortmund.de)<br/>Sven Mallach (mallach@honei.org)<br/>Markus Geveler (markus.geveler@tu-dortmund.de)<br/>
+      </p>
+    <!-->
     <div class="span-24">
       <div class="right">
         &copy; 2010 Dirk Ribbrock, Markus Geveler
@@ -81,6 +162,7 @@
         Contact: <a href="honei@honei.org">honei@honei.org</a>
       </div>
     </div>
+    <--!>
 
   </div>
 
