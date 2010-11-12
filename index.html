@@ -1,82 +1,89 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>HONEI</title>
+<link rel="stylesheet" href="honei-hp/css/screen.css" type="text/css" media="screen, projection">
+<link rel="stylesheet" href="honei-hp/css/print.css" type="text/css" media="print">
+<!--[if lt IE 8]><link rel="stylesheet" href="honei-hp/css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]--
 
-	<title>dribbroc/HONEI @ GitHub</title>
-	
-	<style type="text/css">
-		body {
-  		margin-top: 1.0em;
-  		background-color: #9b812c;
-		  font-family: "Helvetica,Arial,FreeSans";
-  		color: #ffffff;
-    }
-    #container {
-      margin: 0 auto;
-      width: 700px;
-    }
-		h1 { font-size: 3.8em; color: #647ed3; margin-bottom: 3px; }
-		h1 .small { font-size: 0.4em; }
-		h1 a { text-decoration: none }
-		h2 { font-size: 1.5em; color: #647ed3; }
-    h3 { text-align: center; color: #647ed3; }
-    a { color: #647ed3; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-		pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
-	</style>
-	
+<script type="text/javascript" src="honei-hp/javascript/jquery.js"></script>
+<script type="text/javascript" src="honei-hp/javascript/anim.js"></script>
+
 </head>
-
 <body>
-  <a href="http://github.com/dribbroc/HONEI"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
-
-  <div id="container">
-
-    <div class="download">
-      <a href="http://github.com/dribbroc/HONEI/zipball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
-      <a href="http://github.com/dribbroc/HONEI/tarball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
+  <div class="container">
+    <div class="span-24 last prepend-top">
+      <a id="logo" class="right" href="http://honei.org/index.html"><img src="./honei-hp/images/bee_140.png" alt="HONEI Logo" /></a>
+      <h2>
+        HONEI<br /><span class="quiet" style="font-style: italic;">Hardware oriented numerics, efficiently implemented</span>
+      </h2>
     </div>
-
-    <h1><a href="http://github.com/dribbroc/HONEI">HONEI</a>
-      <span class="small">by <a href="http://github.com/dribbroc">dribbroc</a></span></h1>
-
-    <div class="description">
-      Hardware oriented numerics, efficiently implemented 
-    </div>
-
-    <h2>License</h2>
-<p>GPL</p>
-<h2>Authors</h2>
-<p>Danny van Dyk (danny.dyk@tu-dortmund.de)<br/>Dirk Ribbrock (dirk.ribbrock@math.uni-dortmund.de)<br/>Sven Mallach (mallach@honei.org)<br/>Markus Geveler (markus.geveler@tu-dortmund.de)<br/></p>
-<h2>Contact</h2>
-<p> (dribbrock@gmail.com)<br/>      </p>
+    <hr />
 
 
-    <h2>Download</h2>
+    <div class="span-12">
+
     <p>
-      You can download this project in either
-      <a href="http://github.com/dribbroc/HONEI/zipball/master">zip</a> or
-      <a href="http://github.com/dribbroc/HONEI/tarball/master">tar</a> formats.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-      <pre>$ git clone git://github.com/dribbroc/HONEI</pre>
+    HONEI is an open-source collection of libraries offering a hardware
+    oriented approach to numerical calculations.
     </p>
 
-    <div class="footer">
-      get the source code on GitHub : <a href="http://github.com/dribbroc/HONEI">dribbroc/HONEI</a>
+    <p>
+    HONEI abstracts the hardware, and applications written on top of HONEI
+    can be executed on a wide range of computer
+    architectures such as common CPUs, GPUs and the Cell processor.
+    </p>
+
+
+    <p>
+    An important aspect of our approach is that the full performance
+    capabilities of the hardware under consideration
+    can be exploited by implementing optimised application-specific operations on top of HONEIs libraries.
+    </p>
+
+    <p>
+    HONEI provides all necessary infrastructure for and significantly simplifies the development and evaluation of such kernels.
+    </p>
+
+    <p>
+    Additionally, HONEI implements typical numerical operations on vectors and matrices being a basis for many high-level algorithms.
+    </p>
+
+    </div>
+
+    <div class="push-1 span-9 box">
+    <ul>
+    <!-- <li><a href="developers.html">We</a> use <a href="http://honei.org/trac/">Trac</a> for bug reports, feature requests etc.</li> -->
+    <li>There is a <a href="./honei-CPC.tar.bz2">pre-release</a> version available.</li>
+    <li>You can also download a more recent <a href="http://github.com/dribbroc/HONEI/archives/master" target="_blank">snapshot</a> of our master branch, which we consider stable.</li>
+    <li><a href="developers.html">We</a> have written a <a href="./tutorial.pdf">tutorial</a> on how to use HONEI.</li>
+    <li>Publications about HONEI can be obtained <a href="publications.html">here</a>.</li>
+    </ul>
+
+    <hr style="color:black; background-color:black;" />
+
+    <ul>
+    <li>We use <a href="http://git-scm.com/">Git</a> to maintain our source code.</li>
+    <li>Currently, our master branch can be accessed <a href="http://git.honei.org">here</a>.</li>
+    <!-- <li>More specific development branches are available via our web-based <a href="http://github.com/dribbroc/HONEI">repository</a>.</li> -->
+    </ul>
+    </div>
+
+    <hr />
+
+    <div class="span-24">
+      <div class="right">
+        &copy; 2010 Dirk Ribbrock, Markus Geveler
+      </div>
+      <div>
+        Contact: <a href="honei@honei.org">honei@honei.org</a>
+      </div>
     </div>
 
   </div>
 
-  
 </body>
 </html>
+
