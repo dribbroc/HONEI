@@ -18,7 +18,12 @@ The most common parameters are (see below for dependencies and additional
 details):
 --enable-cell           Build Cell BE support
 --enable-cuda           Build CUDA support
+--enable-cuda_double    Add CUDA support with double precission
 --enable-sse            Build SSE support
+--enable-opencl         Build OpenCL support
+--enable-mpi            Build MPI support
+--with-cublas           Use the nvidia CuBlas
+--with-boost            Use boost instead of tr1 headers
 --with-visual           Include GUI support (required for the GUI applications)
 
 Currently only common versions of the GNU Compiler Collection's
