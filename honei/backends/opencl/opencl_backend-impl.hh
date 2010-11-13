@@ -28,6 +28,7 @@
 #include <honei/util/mutex.hh>
 #include <honei/backends/opencl/opencl_backend.hh>
 #include <honei/util/file_to_string.hh>
+#include <honei/util/stringify.hh>
 #include <iostream>
 #include <vector>
 
@@ -63,12 +64,12 @@ namespace honei
         void print_program_info(cl_program program, cl_device_id device)
         {
             Lock l(*_mutex);
-            char output2[1000];
+            char output2[10000];
             size_t size = 0;
             clGetProgramInfo(program, CL_PROGRAM_SOURCE, 0, NULL, &size);
             char  output[size];
             clGetProgramInfo(program, CL_PROGRAM_SOURCE, size, (void *) output, NULL);
-            clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_LOG, 1000, (void *) output2, NULL);
+            clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_LOG, 10000, (void *) output2, NULL);
             std::cout<<"Program Source: "<<output<<std::endl;
             std::cout<<"Build Log: "<<output2<<std::endl;
         }
@@ -91,13 +92,23 @@ namespace honei
             const char * source = sourceStr.c_str();
             size_t source_size[] = { strlen(source) };
             cl_program program(NULL);
-            program = clCreateProgramWithSource(context, 1, &source, source_size, NULL);
-            cl_int status = clBuildProgram(program, 1, &device, "-Werror", NULL, NULL);
+            cl_int status(CL_SUCCESS);
+            program = clCreateProgramWithSource(context, 1, &source, source_size, &status);
             if (status != CL_SUCCESS)
+            {
+                throw InternalError("OpenCL: Error " + stringify(status) + " in clCrateProgramWithSource!");
+            }
+            std::string cl_flags("-Werror");
+            status = clBuildProgram(program, 1, &device, cl_flags.c_str(), NULL, NULL);
+            if (status != CL_SUCCESS)
+            {
+                print_device_info(device);
                 print_program_info(program, device);
+                throw InternalError("OpenCL: Error " + stringify(status) + " in clBuildProgram!");
+            }
             cl_kernel kernel = clCreateKernel(program, kernel_name.c_str(), &status);
             if (status != CL_SUCCESS)
-                throw InternalError("OpenCL: Error in clCreateKernel!");
+                throw InternalError("OpenCL: Error " + stringify(status) + " in clCreateKernel!");
             KSD temp;
             temp.kernel = kernel;
             temp.kernel_name = kernel_name;
