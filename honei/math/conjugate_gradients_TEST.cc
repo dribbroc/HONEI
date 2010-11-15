@@ -555,8 +555,7 @@ class ConjugateGradientsTestSparseELL:
             std::string filename_2(HONEI_SOURCEDIR);
             filename_2 += "/honei/math/testdata/";
             filename_2 += _v_f;
-            DenseVector<DT1_> rhs(rows, DT1_(0));
-            VectorIO<io_formats::EXP>::read_vector(filename_2, rhs);
+            DenseVector<DT1_> rhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT1_(0)));
 
             DenseVector<DT1_> diag_inverted(rows, DT1_(0));
             for(unsigned long i(0) ; i < data.size() ; ++i)
@@ -565,7 +564,6 @@ class ConjugateGradientsTestSparseELL:
                     diag_inverted[r[i]] = DT1_(1)/data[i];
             }
 
-            DenseVector<DT1_> result(rhs.size(), DT1_(0));
             /*SparseMatrix<DT1_> bla(smatrix2.rows(), smatrix2.columns());
             for(unsigned long i(0) ; i < bla.rows() ; ++i)
                 for(unsigned long j(0) ; j < bla.columns() ; ++ j)
@@ -577,14 +575,13 @@ class ConjugateGradientsTestSparseELL:
             std::string filename_4(HONEI_SOURCEDIR);
             filename_4 += "/honei/math/testdata/";
             filename_4 += _i_f;
-            VectorIO<io_formats::EXP>::read_vector(filename_4, result);
+            DenseVector<DT1_> result(VectorIO<io_formats::EXP>::read_vector(filename_4, DT1_(0)));
             ConjugateGradients<Tag_, NONE>::value(smatrix2, rhs, result, 10000ul);
 
             std::string filename_3(HONEI_SOURCEDIR);
             filename_3 += "/honei/math/testdata/";
             filename_3 += _r_f;
-            DenseVector<DT1_> ref_result(rows, DT1_(0));
-            VectorIO<io_formats::EXP>::read_vector(filename_3, ref_result);
+            DenseVector<DT1_> ref_result(VectorIO<io_formats::EXP>::read_vector(filename_3, DT1_(0)));
 
             result.lock(lm_read_only);
             //std::cout << result << std::endl;
@@ -666,8 +663,7 @@ class PreconditionedConjugateGradientsTestSparseELL:
             std::string filename_2(HONEI_SOURCEDIR);
             filename_2 += "/honei/math/testdata/";
             filename_2 += _v_f;
-            DenseVector<DT1_> rhs(rows, DT1_(0));
-            VectorIO<io_formats::EXP>::read_vector(filename_2, rhs);
+            DenseVector<DT1_> rhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT1_(0)));
 
             DenseVector<DT1_> diag_inverted(rows, DT1_(0));
             for(unsigned long i(0) ; i < data.size() ; ++i)
@@ -676,7 +672,6 @@ class PreconditionedConjugateGradientsTestSparseELL:
                     diag_inverted[r[i]] = DT1_(1)/data[i];
             }
 
-            DenseVector<DT1_> result(rhs.size(), DT1_(0));
             /*SparseMatrix<DT1_> bla(smatrix2.rows(), smatrix2.columns());
             for(unsigned long i(0) ; i < bla.rows() ; ++i)
                 for(unsigned long j(0) ; j < bla.columns() ; ++ j)
@@ -688,7 +683,7 @@ class PreconditionedConjugateGradientsTestSparseELL:
             std::string filename_4(HONEI_SOURCEDIR);
             filename_4 += "/honei/math/testdata/";
             filename_4 += _i_f;
-            VectorIO<io_formats::EXP>::read_vector(filename_4, result);
+            DenseVector<DT1_> result(VectorIO<io_formats::EXP>::read_vector(filename_4, DT1_(0)));
 
             unsigned long used_iters(0);
             ConjugateGradients<Tag_, JAC>::value(smatrix2, rhs, result, diag_inverted, 10000ul, used_iters, DT1_(1e-8));
@@ -696,8 +691,7 @@ class PreconditionedConjugateGradientsTestSparseELL:
             std::string filename_3(HONEI_SOURCEDIR);
             filename_3 += "/honei/math/testdata/";
             filename_3 += _r_f;
-            DenseVector<DT1_> ref_result(rows, DT1_(0));
-            VectorIO<io_formats::EXP>::read_vector(filename_3, ref_result);
+            DenseVector<DT1_> ref_result(VectorIO<io_formats::EXP>::read_vector(filename_3, DT1_(0)));
 
             result.lock(lm_read_only);
             //std::cout << result << std::endl;

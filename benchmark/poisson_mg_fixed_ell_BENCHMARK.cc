@@ -195,7 +195,7 @@ class PoissonBenchmarkMGELLFixed:
                 rhs_file += "/honei/math/testdata/poisson/";
                 rhs_file += "poisson_rhs";
                 if(i == info.max_level)
-                    VectorIO<io_formats::EXP>::read_vector(rhs_file, current_rhs);
+                    current_rhs = VectorIO<io_formats::EXP>::read_vector(rhs_file, DT1_(0));
 
                 info.rhs.push_back(current_rhs);
                 info.a.push_back(smell);
@@ -264,12 +264,6 @@ class PoissonBenchmarkMGELLFixed:
             }*/
             DenseVector<DT1_> rhs(info.rhs[info.max_level]);
             SparseMatrixELL<DT1_> system(info.a[info.max_level]);
-            DenseVector<DT1_> ref_result(rhs.size());
-            std::string sol_file(HONEI_SOURCEDIR);
-            sol_file += "/honei/math/testdata/poisson/";
-            sol_file += "poisson_sol";
-            VectorIO<io_formats::EXP>::read_vector(sol_file, ref_result);
-
 
             DenseVector<DT1_> result(n, DT1_(0));
             for (int i(0) ; i < 1 ; ++i)
@@ -365,7 +359,7 @@ class PoissonAdvancedBENCHMGSparseELLProlMat:
 
         virtual void run()
         {
-            unsigned long n(_level_to_size(_size));
+            //unsigned long n(_level_to_size(_size));
             MGInfo<DT1_, SparseMatrixELL<DT1_> > info;
             //configuration constants: /TODO: set/allocate!!!
             info.is_smoother = false;
@@ -453,7 +447,7 @@ class PoissonAdvancedBENCHMGSparseELLProlMat:
                 std::string rhs_file(file_base);
                 rhs_file += "rhs_" + stringify(_size);
                 if(i == info.max_level)
-                    VectorIO<io_formats::EXP>::read_vector(rhs_file, current_rhs);
+                    current_rhs = VectorIO<io_formats::EXP>::read_vector(rhs_file, DT1_(0));
 
                 info.rhs.push_back(current_rhs);
                 info.a.push_back(smell);
@@ -521,8 +515,7 @@ class PoissonAdvancedBENCHMGSparseELLProlMat:
             }*/
             std::string init_file(file_base);
             init_file += "init_" + stringify(_size);
-            DenseVector<DT1_> result(n, DT1_(0));
-            VectorIO<io_formats::EXP>::read_vector(init_file, result);
+            DenseVector<DT1_> result(VectorIO<io_formats::EXP>::read_vector(init_file, DT1_(0)));
 
             DenseVector<DT1_> rhs(info.rhs[info.max_level]);
             SparseMatrixELL<DT1_> system(info.a[info.max_level]);

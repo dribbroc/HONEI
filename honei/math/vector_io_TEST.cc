@@ -42,20 +42,18 @@ class VectorIOTest:
         {
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/area51_rhs_0";
-            unsigned long non_zeros, non_data;
 
-            VectorIO<io_formats::EXP>::get_size(filename, non_zeros, non_data);
-            std::cout << "NZ: " << non_zeros << std::endl;
-            DenseVector<DT_> data(non_zeros);
+            DenseVector<DT_> data(VectorIO<io_formats::EXP>::read_vector(filename, DT_(0)));
 
-            VectorIO<io_formats::EXP>::read_vector(filename, data);
-
+            std::cout << "NZ: " << data.size() << std::endl;
             std::cout << data << std::endl;
 
             std::string filename2(HONEI_SOURCEDIR);
             filename2 += "/honei/math/testdata/area51_rhs_0.dv";
 
             DenseVector<DT_> data2(VectorIO<io_formats::DV>::read_vector(filename2, DT_(1)));;
+            std::cout << "NZ: " << data2.size() << std::endl;
+            std::cout << data2 << std::endl;
 
             TEST_CHECK_EQUAL(data2, data);
         }

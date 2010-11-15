@@ -40,10 +40,7 @@ int main(int argc, char ** argv)
     // Read in exp file vector
     std::string input(argv[1]);
     std::string output(argv[2]);
-    unsigned long size, start;
-    VectorIO<io_formats::EXP>::get_size(input, size, start);
-    DenseVector<double> data(size);
-    VectorIO<io_formats::EXP>::read_vector(input, data);
+    DenseVector<double> data(VectorIO<io_formats::EXP>::read_vector(input, double(0)));
 
     // Write out ell file matrix
     VectorIO<io_formats::DV>::write_vector(output, data);

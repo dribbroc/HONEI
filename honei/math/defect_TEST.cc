@@ -121,8 +121,7 @@ class DefectRegressionTest:
             std::string filename_2(HONEI_SOURCEDIR);
             filename_2 += "/honei/math/testdata/";
             filename_2 += _v_f;
-            DenseVector<DT_> rhs(rows, DT_(0));
-            VectorIO<io_formats::EXP>::read_vector(filename_2, rhs);
+            DenseVector<DT_> rhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT_(0)));
 
             DenseVector<DT_> x(rows, DT_(0));
             for (unsigned long i(0) ; i < x.size() ; ++i)

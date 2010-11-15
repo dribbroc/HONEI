@@ -28,6 +28,7 @@
 #include <string>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/algorithm.hh>
+#include <vector>
 
 using namespace honei;
 
@@ -47,59 +48,23 @@ template<>
 class VectorIO<io_formats::EXP>
 {
     public:
-        static void get_size(std::string filename, unsigned long & n_z, unsigned long & data_begin)
-        {
-            n_z = 0;
-            data_begin = 0;
-
-            std::ifstream file(filename.c_str());
-            if(file.is_open())
-            {
-                while(!file.eof())
-                {
-                    std::string line;
-                    std::getline(file, line);
-
-                    if(line.find("#", 0) < line.npos)
-                    {
-                        ++data_begin;
-                    }
-                    else
-                    {
-                        ++n_z;
-                    }
-
-                }
-
-                file.close();
-                --n_z;
-            }
-            else
-                throw honei::InternalError("Unable to open Vector file " + filename);
-        }
-
         template<typename DT_>
-            static void read_vector(std::string filename, DenseVector<DT_> & data)
+            static DenseVector<DT_> read_vector(std::string filename, DT_)
             {
-                unsigned long non_data_lines, non_zeros;
-                get_size(filename, non_zeros, non_data_lines);
-                if (non_zeros != data.size())
-                    throw InternalError("Vectorsize does not match!");
+                std::vector<DT_> data;
 
                 std::ifstream file(filename.c_str());
                 if (! file.is_open())
                     throw honei::InternalError("Unable to open Vector file " + filename);
 
-                for(unsigned long i(0) ; i < non_data_lines ; ++i)
+                while(!file.eof())
                 {
                     std::string line;
                     std::getline(file, line);
-                }
-
-                for(unsigned long j(0) ; j < non_zeros ; ++j)
-                {
-                    std::string line;
-                    std::getline(file, line);
+                    if(line.find("#", 0) < line.npos)
+                        continue;
+                    if(file.eof())
+                        break;
 
                     std::string n_z_s;
 
@@ -113,11 +78,13 @@ class VectorIO<io_formats::EXP>
 
                     DT_ n_z = (DT_)atof(n_z_s.c_str());
 
-                    data[j] = n_z;
+                    data.push_back(n_z);
 
                 }
                 file.close();
-
+                DenseVector<DT_> result(data.size(), 0);
+                TypeTraits<DT_>::copy(&(data[0]), result.elements(), data.size());
+                return result;
             }
 };
 

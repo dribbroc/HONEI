@@ -411,7 +411,7 @@ class PoissonTestMGSparseELLProlMat:
                 rhs_file += "/honei/math/testdata/poisson/";
                 rhs_file += "poisson_rhs";
                 if(i == info.max_level)
-                    VectorIO<io_formats::EXP>::read_vector(rhs_file, current_rhs);
+                    current_rhs = VectorIO<io_formats::EXP>::read_vector(rhs_file, float(0));
 
                 info.rhs.push_back(current_rhs);
                 info.a.push_back(smell);
@@ -485,11 +485,10 @@ class PoissonTestMGSparseELLProlMat:
             result.lock(lm_read_only);
             result.unlock(lm_read_only);
             //std::cout<< result <<endl;
-            DenseVector<float> ref_result(rhs.size());
             std::string sol_file(HONEI_SOURCEDIR);
             sol_file += "/honei/math/testdata/poisson/";
             sol_file += "poisson_sol";
-            VectorIO<io_formats::EXP>::read_vector(sol_file, ref_result);
+            DenseVector<float> ref_result(VectorIO<io_formats::EXP>::read_vector(sol_file, float(0)));
 
             for(unsigned long i(0) ; i < ref_result.size() ; ++i)
             {

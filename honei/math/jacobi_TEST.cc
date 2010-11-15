@@ -334,8 +334,7 @@ class JacobiSparseELLComparisonTest:
             std::string filename_2(HONEI_SOURCEDIR);
             filename_2 += "/honei/math/testdata/";
             filename_2 += _v_f;
-            DenseVector<DT1_> rhs(rows, DT1_(0));
-            VectorIO<io_formats::EXP>::read_vector(filename_2, rhs);
+            DenseVector<DT1_> rhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT1_(0)));
 
             DenseVector<DT1_> diag_inverted(rows, DT1_(0));
             for(unsigned long i(0) ; i < data.size() ; ++i)
@@ -361,8 +360,7 @@ class JacobiSparseELLComparisonTest:
             std::string filename_3(HONEI_SOURCEDIR);
             filename_3 += "/honei/math/testdata/";
             filename_3 += _r_f;
-            DenseVector<DT1_> ref_result(rows, DT1_(0));
-            VectorIO<io_formats::EXP>::read_vector(filename_3, ref_result);
+            DenseVector<DT1_> ref_result(VectorIO<io_formats::EXP>::read_vector(filename_3, DT1_(0)));
 
             result.lock(lm_read_only);
             //std::cout << result << std::endl;

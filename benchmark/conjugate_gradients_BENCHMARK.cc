@@ -57,8 +57,7 @@ class SMELLCGBench :
             std::string filename_2(HONEI_SOURCEDIR);
             filename_2 += "/honei/math/testdata/";
             filename_2 += _v_f;
-            DenseVector<DataType_> rhs(rows, DataType_(0));
-            VectorIO<io_formats::EXP>::read_vector(filename_2, rhs);
+            DenseVector<DataType_> rhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DataType_(0)));
 
             DenseVector<DataType_> diag_inverted(rows, DataType_(0));
             for(unsigned long i(0) ; i < data.size() ; ++i)
@@ -73,8 +72,7 @@ class SMELLCGBench :
                 std::string filename_3(HONEI_SOURCEDIR);
                 filename_3 += "/honei/math/testdata/";
                 filename_3 += _i_f;
-                DenseVector<DataType_> result(rows, DataType_(0));
-                VectorIO<io_formats::EXP>::read_vector(filename_3, result);
+                DenseVector<DataType_> result(VectorIO<io_formats::EXP>::read_vector(filename_3, DataType_(0)));
 
                 if (Tag_::tag_value == tags::tv_gpu_cuda)
                 {

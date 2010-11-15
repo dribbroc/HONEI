@@ -192,8 +192,7 @@ class LUTestDenseELL:
             std::string filename_2(HONEI_SOURCEDIR);
             filename_2 += "/honei/math/testdata/";
             filename_2 += _v_f;
-            DenseVector<DT1_> rhs(rows, DT1_(0));
-            VectorIO<io_formats::EXP>::read_vector(filename_2, rhs);
+            DenseVector<DT1_> rhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT1_(0)));
 
             DenseVector<DT1_> diag_inverted(rows, DT1_(0));
             for(unsigned long i(0) ; i < data.size() ; ++i)
@@ -209,11 +208,10 @@ class LUTestDenseELL:
             SparseMatrix<DT1_> tdifference(rows, columns, r, c, data);
             SparseMatrixELL<DT1_> difference(tdifference);
 
-            DenseVector<DT1_> init(rhs.size(), DT1_(0));
             std::string filename_4(HONEI_SOURCEDIR);
             filename_4 += "/honei/math/testdata/";
             filename_4 += _i_f;
-            VectorIO<io_formats::EXP>::read_vector(filename_4, init);
+            DenseVector<DT1_> init(VectorIO<io_formats::EXP>::read_vector(filename_4, DT1_(0)));
             DenseVector<DT1_> result(init.copy());
 
             unsigned long used_iters(0);
@@ -275,14 +273,12 @@ class LUTestSparseELL:
             std::string filename_2(HONEI_SOURCEDIR);
             filename_2 += "/honei/math/testdata/";
             filename_2 += _v_f;
-            DenseVector<DT1_> rhs(smatrix.rows(), DT1_(0));
-            VectorIO<io_formats::EXP>::read_vector(filename_2, rhs);
+            DenseVector<DT1_> rhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT1_(0)));
 
             std::string filename_4(HONEI_SOURCEDIR);
             filename_4 += "/honei/math/testdata/";
             filename_4 += _r_f;
-            DenseVector<DT1_> result_ref(rhs.size());
-            VectorIO<io_formats::EXP>::read_vector(filename_4, result_ref);
+            DenseVector<DT1_> result_ref(VectorIO<io_formats::EXP>::read_vector(filename_4, DT1_(0)));
 
             DenseVector<DT1_> lu_result(rhs.size());
             SparseMatrix<DT1_> tsmatrix(smatrix);
