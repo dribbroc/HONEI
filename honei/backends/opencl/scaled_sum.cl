@@ -17,7 +17,7 @@
 * Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#pragma OPENCL EXTENSION cl_khr_fp64 : enable
+#ifdef __CPU__
 
 __kernel void scaled_sum_float(__global  float * output,
                                    __global  float * input,
@@ -29,6 +29,7 @@ __kernel void scaled_sum_float(__global  float * output,
     if (tid < size) output[tid] = output[tid] + input[tid] * multiplier;
 }
 
+#pragma OPENCL EXTENSION cl_amd_fp64 : enable
 __kernel void scaled_sum_double(__global  double * output,
                                    __global  double * input,
                                    const     double multiplier,
@@ -38,3 +39,18 @@ __kernel void scaled_sum_double(__global  double * output,
 
     if (tid < size) output[tid] = output[tid] + input[tid] * multiplier;
 }
+//#endif
+
+#else
+//#ifdef __GPU__
+
+__kernel void scaled_sum_float(__global  float * output,
+                                   __global  float * input,
+                                   const     float multiplier,
+                                   const unsigned int size)
+{
+    uint tid = get_global_id(0);
+
+    if (tid < size) output[tid] = output[tid] + input[tid] * multiplier;
+}
+#endif

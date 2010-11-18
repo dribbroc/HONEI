@@ -18,7 +18,7 @@
  */
 
 
-#pragma OPENCL EXTENSION cl_khr_fp64 : enable
+#ifdef __CPU__
 
 __kernel void product_smell_dv_float(__global float * x, __global float * y, __global unsigned int * Aj, __global float * Ax,
                                               __global unsigned int * Arl, unsigned int num_rows, unsigned int stride)
@@ -48,6 +48,7 @@ __kernel void product_smell_dv_float(__global float * x, __global float * y, __g
     y[row] = sum;
 }
 
+#pragma OPENCL EXTENSION cl_amd_fp64 : enable
 __kernel void product_smell_dv_double(__global double * x, __global double * y, __global unsigned int * Aj, __global double * Ax,
                                                __global unsigned int * Arl, unsigned int num_rows, unsigned int stride)
 {
@@ -75,3 +76,33 @@ __kernel void product_smell_dv_double(__global double * x, __global double * y, 
 
     y[row] = sum;
 }
+
+#else
+__kernel void product_smell_dv_float(__global float * x, __global float * y, __global unsigned int * Aj, __global float * Ax,
+                                              __global unsigned int * Arl, unsigned int num_rows, unsigned int stride)
+{
+    uint row = get_global_id(0);
+
+    if(row >= num_rows){ return; }
+    float sum = 0.f;
+
+    Aj += row;
+    Ax += row;
+
+    const unsigned int max = Arl[row];
+    for(unsigned int n = 0; n < max ; n++){
+        const float A_ij = *Ax;
+
+        //if (A_ij != 0)
+        {
+            const unsigned int col = *Aj;
+            sum += A_ij * x[col];
+        }
+
+        Aj += stride;
+        Ax += stride;
+    }
+
+    y[row] = sum;
+}
+#endif

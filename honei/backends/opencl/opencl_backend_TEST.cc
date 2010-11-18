@@ -26,6 +26,23 @@ using namespace honei;
 using namespace tests;
 
 template <typename Tag_>
+class OpenclPlatformQuickTest :
+    public QuickTaggedTest<Tag_>
+{
+    public:
+        OpenclPlatformQuickTest() :
+            QuickTaggedTest<Tag_>("opencl_platform_test")
+        {
+        }
+
+        virtual void run() const
+        {
+            OpenCLBackend::instance()->print_platform_info();
+        }
+};
+OpenclPlatformQuickTest<tags::OpenCL> opencl_platform_quick_test;
+
+template <typename Tag_>
 class OpenclBackendQuickTest :
     public QuickTaggedTest<Tag_>
 {

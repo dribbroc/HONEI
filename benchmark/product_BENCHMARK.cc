@@ -605,7 +605,7 @@ SMELLDenseVectorProductBench<tags::GPU::MultiCore::CUDA, double> mccudaSMELLDVPB
 SMELLDenseVectorProductBench<tags::OpenCL::CPU, float> ocl_cpu_SMELLDVPBenchfloat("OpenCL CPU SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
 SMELLDenseVectorProductBench<tags::OpenCL::CPU, float> ocl_cpu_SMELLDVPBenchfloat_pa7("OpenCL CPU SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
 SMELLDenseVectorProductBench<tags::OpenCL::GPU, float> ocl_gpu_SMELLDVPBenchfloat("OpenCL GPU SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
-SMELLDenseVectorProductBench<tags::OpenCL::GPU, float> ocl_gpu_SMELLDVPBenchfloat_pa7("OpenCL GPU SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+//SMELLDenseVectorProductBench<tags::OpenCL::GPU, float> ocl_gpu_SMELLDVPBenchfloat_pa7("OpenCL GPU SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
 #endif
 
 

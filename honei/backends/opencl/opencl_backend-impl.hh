@@ -77,12 +77,59 @@ namespace honei
         void print_device_info(cl_device_id device)
         {
             Lock l(*_mutex);
-            char output[100];
-            char output2[100];
-            clGetDeviceInfo(device, CL_DEVICE_VENDOR, 100, (void *) output, NULL);
+            char output[1000];
+            char output2[1000];
+            char output3[10000];
+            clGetDeviceInfo(device, CL_DEVICE_VENDOR, 1000, (void *) output, NULL);
             std::cout<<"Device vendor: "<<output<<std::endl;
-            clGetDeviceInfo(device, CL_DEVICE_NAME, 100, (void *) output2, NULL);
+            clGetDeviceInfo(device, CL_DEVICE_NAME, 1000, (void *) output2, NULL);
             std::cout<<"Device name: "<<output2<<std::endl;
+            clGetDeviceInfo(device, CL_DEVICE_EXTENSIONS, 10000, (void *) output3, NULL);
+            std::cout<<"Extensions: "<<output3<<std::endl;
+        }
+
+        void print_platform_info()
+        {
+            cl_uint numPlatforms;
+            cl_platform_id platform = NULL;
+            clGetPlatformIDs(0, NULL, &numPlatforms);
+            if(numPlatforms > 0)
+            {
+                cl_platform_id* platforms = new cl_platform_id[numPlatforms];
+                clGetPlatformIDs(numPlatforms, platforms, NULL);
+                for(unsigned int i=0; i < numPlatforms; ++i)
+                {
+                    if (i != 0) std::cout<<"--------------------"<<std::endl;
+
+                    char pbuff[1000];
+                    clGetPlatformInfo(
+                            platforms[i],
+                            CL_PLATFORM_VENDOR,
+                            sizeof(pbuff),
+                            pbuff,
+                            NULL);
+                    platform = platforms[i];
+                    std::cout<<"Platform:"<<std::endl;
+                    std::cout<<pbuff<<std::endl;
+                    clGetPlatformInfo(
+                            platforms[i],
+                            CL_PLATFORM_NAME,
+                            sizeof(pbuff),
+                            pbuff,
+                            NULL);
+                    std::cout<<pbuff<<std::endl;
+                    cl_device_id devices [10];
+                    cl_uint device_count(0);
+                    clGetDeviceIDs(platform, CL_DEVICE_TYPE_ALL, 10, devices, &device_count);
+                    std::cout<<"Devices:"<<std::endl;
+                    for (unsigned long i(0) ; i < device_count ; ++i)
+                    {
+                        print_device_info(devices[i]);
+                    }
+                }
+                delete platforms;
+            }
+            else throw InternalError("OpenCL: No platform found!");
         }
 
 
@@ -231,6 +278,11 @@ namespace honei
     void OpenCLBackend::print_device_info(cl_device_id device)
     {
         _imp->print_device_info(device);
+    }
+
+    void OpenCLBackend::print_platform_info()
+    {
+        _imp->print_platform_info();
     }
 
     void OpenCLBackend::print_program_info(cl_program program, cl_device_id device)

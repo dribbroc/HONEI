@@ -48,6 +48,7 @@ namespace honei
             DCQ prepare_device(cl_device_type type);
             void print_device_info(cl_device_id device);
             void print_program_info(cl_program program, cl_device_id device);
+            void print_platform_info();
             cl_mem create_empty_buffer(unsigned long bytes, cl_context context);
             cl_mem create_buffer(unsigned long size, cl_context context, void * src);
 
