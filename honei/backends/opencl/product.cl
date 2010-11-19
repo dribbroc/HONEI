@@ -20,8 +20,8 @@
 
 #ifdef __CPU__
 
-__kernel void product_smell_dv_float(__global float * x, __global float * y, __global unsigned int * Aj, __global float * Ax,
-                                              __global unsigned int * Arl, unsigned int num_rows, unsigned int stride)
+__kernel void product_smell_dv_float(__global float * x, __global float * y, __global unsigned long * Aj, __global float * Ax,
+                                              __global unsigned long * Arl, unsigned long num_rows, unsigned long stride)
 {
     uint row = get_global_id(0);
 
@@ -31,13 +31,13 @@ __kernel void product_smell_dv_float(__global float * x, __global float * y, __g
     Aj += row;
     Ax += row;
 
-    const unsigned int max = Arl[row];
-    for(unsigned int n = 0; n < max ; n++){
+    const unsigned long max = Arl[row];
+    for(unsigned long n = 0; n < max ; n++){
         const float A_ij = *Ax;
 
         //if (A_ij != 0)
         {
-            const unsigned int col = *Aj;
+            const unsigned long col = *Aj;
             sum += A_ij * x[col];
         }
 
@@ -49,8 +49,8 @@ __kernel void product_smell_dv_float(__global float * x, __global float * y, __g
 }
 
 #pragma OPENCL EXTENSION cl_amd_fp64 : enable
-__kernel void product_smell_dv_double(__global double * x, __global double * y, __global unsigned int * Aj, __global double * Ax,
-                                               __global unsigned int * Arl, unsigned int num_rows, unsigned int stride)
+__kernel void product_smell_dv_double(__global double * x, __global double * y, __global unsigned long * Aj, __global double * Ax,
+                                               __global unsigned long * Arl, unsigned long num_rows, unsigned long stride)
 {
     uint row = get_global_id(0);
 
@@ -60,13 +60,13 @@ __kernel void product_smell_dv_double(__global double * x, __global double * y, 
     Aj += row;
     Ax += row;
 
-    const unsigned int max = Arl[row];
-    for(unsigned int n = 0; n < max ; n++){
+    const unsigned long max = Arl[row];
+    for(unsigned long n = 0; n < max ; n++){
         const double A_ij = *Ax;
 
         //if (A_ij != 0)
         {
-            const unsigned int col = *Aj;
+            const unsigned long col = *Aj;
             sum += A_ij * x[col];
         }
 
@@ -78,8 +78,8 @@ __kernel void product_smell_dv_double(__global double * x, __global double * y, 
 }
 
 #else
-__kernel void product_smell_dv_float(__global float * x, __global float * y, __global unsigned int * Aj, __global float * Ax,
-                                              __global unsigned int * Arl, unsigned int num_rows, unsigned int stride)
+__kernel void product_smell_dv_float(__global float * x, __global float * y, __global unsigned long * Aj, __global float * Ax,
+                                              __global unsigned long * Arl, unsigned long num_rows, unsigned long stride)
 {
     uint row = get_global_id(0);
 
@@ -89,13 +89,13 @@ __kernel void product_smell_dv_float(__global float * x, __global float * y, __g
     Aj += row;
     Ax += row;
 
-    const unsigned int max = Arl[row];
-    for(unsigned int n = 0; n < max ; n++){
+    const unsigned long max = Arl[row];
+    for(unsigned long n = 0; n < max ; n++){
         const float A_ij = *Ax;
 
         //if (A_ij != 0)
         {
-            const unsigned int col = *Aj;
+            const unsigned long col = *Aj;
             sum += A_ij * x[col];
         }
 
@@ -105,4 +105,35 @@ __kernel void product_smell_dv_float(__global float * x, __global float * y, __g
 
     y[row] = sum;
 }
+
+#ifdef HONEI_CUDA_DOUBLE
+#pragma OPENCL EXTENSION cl_khr_fp64 : enable
+__kernel void product_smell_dv_double(__global double * x, __global double * y, __global unsigned long * Aj, __global double * Ax,
+                                               __global unsigned long * Arl, unsigned long num_rows, unsigned long stride)
+{
+    uint row = get_global_id(0);
+
+    if(row >= num_rows){ return; }
+    double sum = 0.;
+
+    Aj += row;
+    Ax += row;
+
+    const unsigned long max = Arl[row];
+    for(unsigned long n = 0; n < max ; n++){
+        const double A_ij = *Ax;
+
+        //if (A_ij != 0)
+        {
+            const unsigned long col = *Aj;
+            sum += A_ij * x[col];
+        }
+
+        Aj += stride;
+        Ax += stride;
+    }
+
+    y[row] = sum;
+}
+#endif
 #endif

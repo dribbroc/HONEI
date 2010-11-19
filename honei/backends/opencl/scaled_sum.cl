@@ -53,4 +53,17 @@ __kernel void scaled_sum_float(__global  float * output,
 
     if (tid < size) output[tid] = output[tid] + input[tid] * multiplier;
 }
+
+#ifdef HONEI_CUDA_DOUBLE
+#pragma OPENCL EXTENSION cl_khr_fp64 : enable
+__kernel void scaled_sum_double(__global  double * output,
+                                   __global  double * input,
+                                   const     double multiplier,
+                                   const unsigned int size)
+{
+    uint tid = get_global_id(0);
+
+    if (tid < size) output[tid] = output[tid] + input[tid] * multiplier;
+}
+#endif
 #endif

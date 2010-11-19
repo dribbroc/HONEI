@@ -771,7 +771,9 @@ SparseMatrixELLDenseVectorProductTest<double, tags::CPU::MultiCore::SSE> mc_sse_
 SparseMatrixELLDenseVectorProductTest<float, tags::OpenCL::CPU> ocl_cpu_sparse_matrix_ell_dense_vector_product_test_float("float");
 SparseMatrixELLDenseVectorProductTest<double, tags::OpenCL::CPU> ocl_cpu_sparse_matrix_ell_dense_vector_product_test_double("double");
 SparseMatrixELLDenseVectorProductTest<float, tags::OpenCL::GPU> ocl_gpu_sparse_matrix_ell_dense_vector_product_test_float("float");
-//SparseMatrixELLDenseVectorProductTest<double, tags::OpenCL::GPU> ocl_gpu_sparse_matrix_ell_dense_vector_product_test_double("double");
+#ifdef HONEI_CUDA_DOUBLE
+SparseMatrixELLDenseVectorProductTest<double, tags::OpenCL::GPU> ocl_gpu_sparse_matrix_ell_dense_vector_product_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CUDA
 SparseMatrixELLDenseVectorProductTest<float, tags::GPU::CUDA> cuda_sparse_matrix_ell_dense_vector_product_test_float("float");
@@ -827,7 +829,9 @@ SparseMatrixELLDenseVectorProductQuickTest<double, tags::CPU::MultiCore::SSE> mc
 SparseMatrixELLDenseVectorProductQuickTest<float, tags::OpenCL::CPU> ocl_cpu_sparse_matrix_ell_dense_vector_product_quick_test_float("float");
 SparseMatrixELLDenseVectorProductQuickTest<double, tags::OpenCL::CPU> ocl_cpu_sparse_matrix_ell_dense_vector_product_quick_test_double("double");
 SparseMatrixELLDenseVectorProductQuickTest<float, tags::OpenCL::GPU> ocl_gpu_sparse_matrix_ell_dense_vector_product_quick_test_float("float");
-//SparseMatrixELLDenseVectorProductQuickTest<double, tags::OpenCL::GPU> ocl_gpu_sparse_matrix_ell_dense_vector_product_quick_test_double("double");
+#ifdef HONEI_CUDA_DOUBLE
+SparseMatrixELLDenseVectorProductQuickTest<double, tags::OpenCL::GPU> ocl_gpu_sparse_matrix_ell_dense_vector_product_quick_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CUDA
 SparseMatrixELLDenseVectorProductQuickTest<float, tags::GPU::CUDA> cuda_sparse_matrix_ell_dense_vector_product_quick_test_float("float");

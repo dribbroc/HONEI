@@ -69,8 +69,10 @@ namespace honei
             clGetProgramInfo(program, CL_PROGRAM_SOURCE, 0, NULL, &size);
             char  output[size];
             clGetProgramInfo(program, CL_PROGRAM_SOURCE, size, (void *) output, NULL);
-            clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_LOG, 10000, (void *) output2, NULL);
             std::cout<<"Program Source: "<<output<<std::endl;
+            clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_OPTIONS, 10000, (void *) output2, NULL);
+            std::cout<<"Build Options: "<<output2<<std::endl;
+            clGetProgramBuildInfo(program, device, CL_PROGRAM_BUILD_LOG, 10000, (void *) output2, NULL);
             std::cout<<"Build Log: "<<output2<<std::endl;
         }
 
@@ -146,6 +148,9 @@ namespace honei
                 throw InternalError("OpenCL: Error " + stringify(status) + " in clCrateProgramWithSource!");
             }
             std::string cl_flags("-Werror");
+#ifdef HONEI_CUDA_DOUBLE
+            cl_flags += " -D HONEI_CUDA_DOUBLE";
+#endif
             status = clBuildProgram(program, 1, &device, cl_flags.c_str(), NULL, NULL);
             if (status != CL_SUCCESS)
             {

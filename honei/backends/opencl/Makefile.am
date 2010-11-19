@@ -10,6 +10,8 @@ DEFS = \
 	$(OPENCLDEF) \
 	$(DEBUGDEF) \
 	$(BOOSTEF) \
+	$(CUDADEF) \
+	$(CUDA_DOUBLEDEF) \
 	$(PROFILERDEF) \
 	-DHONEI_SOURCEDIR='"$(abs_top_srcdir)"'
 
