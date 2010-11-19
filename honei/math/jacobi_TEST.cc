@@ -243,29 +243,20 @@ class JacobiTestSparseELL:
 
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/5pt_10x10.mtx";
-            unsigned long non_zeros(MatrixIO<io_formats::MTX>::get_non_zeros(filename));
-            unsigned long rows, columns, ax, bx;
-            DenseVector<unsigned long> r(non_zeros);
-            DenseVector<unsigned long> c(non_zeros);
-            DenseVector<DT1_> data(non_zeros);
-
-            MatrixIO<io_formats::MTX>::read_matrix(filename, r, c, data);
-            MatrixIO<io_formats::MTX>::get_sizes(filename, rows, columns, ax, bx);
-            SparseMatrix<DT1_> tsmatrix2(rows, columns, r, c, data);
+            SparseMatrix<DT1_> tsmatrix2(MatrixIO<io_formats::MTX>::read_matrix(filename, DT1_(0)));
             SparseMatrixELL<DT1_> smatrix2(tsmatrix2);
 
-            DenseVector<DT1_> x(rows, DT1_(1.2345));
+            DenseVector<DT1_> x(tsmatrix2.rows(), DT1_(1.2345));
 
-            DenseVector<DT1_> rhs(rows, DT1_(0));
+            DenseVector<DT1_> rhs(x.size(), DT1_(0));
 
             Product<Tag_>::value(rhs, smatrix2, x);
 
-            DenseVector<DT1_> initial_guess(rows, DT1_(1));
-            DenseVector<DT1_> diag_inverted(rows, DT1_(0));
-            for(unsigned long i(0) ; i < data.size() ; ++i)
+            DenseVector<DT1_> initial_guess(x.size(), DT1_(1));
+            DenseVector<DT1_> diag_inverted(x.size(), DT1_(0));
+            for(unsigned long i(0) ; i < diag_inverted.size() ; ++i)
             {
-                if(r[i] == c[i])
-                    diag_inverted[r[i]] = DT1_(1)/data[i];
+                    diag_inverted[i] = DT1_(1)/tsmatrix2(i, i);
             }
 
             //Initial defect (for convergence purposes later):
@@ -320,15 +311,8 @@ class JacobiSparseELLComparisonTest:
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/";
             filename += _m_f;
-            unsigned long non_zeros(MatrixIO<io_formats::M>::get_non_zeros(filename));
-            unsigned long rows, columns, ax, bx;
-            DenseVector<unsigned long> r(non_zeros);
-            DenseVector<unsigned long> c(non_zeros);
-            DenseVector<DT1_> data(non_zeros);
 
-            MatrixIO<io_formats::M>::read_matrix(filename, r, c, data);
-            MatrixIO<io_formats::M>::get_sizes(filename, rows, columns, ax, bx);
-            SparseMatrix<DT1_> tsmatrix2(rows, columns, r, c, data);
+            SparseMatrix<DT1_> tsmatrix2(MatrixIO<io_formats::M>::read_matrix(filename, DT1_(0)));
             SparseMatrixELL<DT1_> smatrix2(tsmatrix2);
 
             std::string filename_2(HONEI_SOURCEDIR);
@@ -336,18 +320,16 @@ class JacobiSparseELLComparisonTest:
             filename_2 += _v_f;
             DenseVector<DT1_> rhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT1_(0)));
 
-            DenseVector<DT1_> diag_inverted(rows, DT1_(0));
-            for(unsigned long i(0) ; i < data.size() ; ++i)
+            DenseVector<DT1_> diag_inverted(tsmatrix2.rows(), DT1_(0));
+            for(unsigned long i(0) ; i < diag_inverted.size() ; ++i)
             {
-                if(r[i] == c[i])
-                    diag_inverted[r[i]] = DT1_(1)/data[i];
+                    diag_inverted[i] = DT1_(1)/tsmatrix2(i, i);
             }
-            for(unsigned long i(0) ; i < data.size() ; ++i)
+            SparseMatrix<DT1_> tdifference(tsmatrix2.copy());
+            for(unsigned long i(0) ; i < tdifference.rows() ; ++i)
             {
-                if(r[i] == c[i])
-                     data[i] = DT1_(0);
+                     tdifference(i, i) = DT1_(0);
             }
-            SparseMatrix<DT1_> tdifference(rows, columns, r, c, data);
             SparseMatrixELL<DT1_> difference(tdifference);
 
             DenseVector<DT1_> result(rhs.size(), DT1_(0));

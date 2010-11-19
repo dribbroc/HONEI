@@ -43,20 +43,8 @@ int main(int argc, char ** argv)
     // Read in m file matrix
     std::string input(argv[1]);
     std::string output(argv[2]);
-    unsigned long non_zeros(MatrixIO<io_formats::M>::get_non_zeros(input));
-    unsigned long rows, columns, ax, bx;
-    DenseVector<unsigned long> r(non_zeros);
-    DenseVector<unsigned long> c(non_zeros);
-    DenseVector<double> data(non_zeros);
 
-    MatrixIO<io_formats::M>::read_matrix(input, r, c, data);
-    MatrixIO<io_formats::M>::get_sizes(input, rows, columns, ax, bx);
-    SparseMatrix<double> tsmatrix(rows, columns, r, c, data);
-    DenseVector<unsigned long> zeroul(1);
-    DenseVector<double> zerod(1);
-    r = zeroul;
-    c = zeroul;
-    data = zerod;
+    SparseMatrix<double> tsmatrix(MatrixIO<io_formats::M>::read_matrix(input, double(0)));
     SparseMatrixELL<double> smatrix(tsmatrix);
 
     // Write out ell file matrix

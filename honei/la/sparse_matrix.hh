@@ -263,8 +263,8 @@ namespace honei
                 _synch_column_vectors();
             }
 
-            explicit SparseMatrix(unsigned long rows, unsigned long columns, DenseVector<unsigned long> & row_indices,
-                    DenseVector<unsigned long> & column_indices, DenseVector<DataType_> & data) :
+            explicit SparseMatrix(unsigned long rows, unsigned long columns, unsigned long * row_indices,
+                    unsigned long * column_indices, DataType_ * data, unsigned long nnz) :
                 _capacity(1),
                 _columns(columns),
                 _rows(rows),
@@ -282,7 +282,7 @@ namespace honei
                 _row_vectors[rows].reset(new SparseVector<DataType_>(columns, 1));
                 _column_vectors[columns].reset(new SparseVector<DataType_>(rows, 1));
 
-                for (unsigned long i(0) ; i < data.size() ; ++i)
+                for (unsigned long i(0) ; i < nnz ; ++i)
                 {
                     (*this)(row_indices[i], column_indices[i]) = data[i];
                 }

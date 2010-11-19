@@ -207,7 +207,7 @@ void push_a_(long* rows, long* columns, long* nz,
         data_dv[i] = data[i];
     }
 
-    SparseMatrix<double> sm(*rows, *columns, row_dv, column_dv, data_dv);
+    SparseMatrix<double> sm(*rows, *columns, row_dv.elements(), column_dv.elements(), data_dv.elements(), *nz);
     SparseMatrixELL<double> smell(sm);
     MG::info()->a.push_back(smell);
 }
@@ -225,7 +225,7 @@ void push_prolmats_(long* rows, long* columns, long* nz,
         data_dv[i] = data[i];
     }
 
-    SparseMatrix<double> sm(*rows, *columns, row_dv, column_dv, data_dv);
+    SparseMatrix<double> sm(*rows, *columns, row_dv.elements(), column_dv.elements(), data_dv.elements(), *nz);
     SparseMatrixELL<double> smell(sm);
     MG::info()->prolmats.push_back(smell);
 }
@@ -243,7 +243,7 @@ void push_resmats_(long* rows, long* columns, long* nz,
         data_dv[i] = data[i];
     }
 
-    SparseMatrix<double> sm(*rows, *columns, row_dv, column_dv, data_dv);
+    SparseMatrix<double> sm(*rows, *columns, row_dv.elements(), column_dv.elements(), data_dv.elements(), *nz);
     SparseMatrixELL<double> smell(sm);
     MG::info()->resmats.push_back(smell);
 }

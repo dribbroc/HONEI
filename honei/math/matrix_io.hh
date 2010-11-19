@@ -31,6 +31,8 @@
 #include <honei/la/sparse_matrix_ell.hh>
 #include <honei/la/algorithm.hh>
 #include <honei/util/attributes.hh>
+#include <vector>
+#include <algorithm>
 
 using namespace honei;
 
@@ -50,135 +52,33 @@ template<>
 class MatrixIO<io_formats::M>
 {
     public:
-        static void get_sizes(std::string filename, unsigned long & r,
-                                                    unsigned long & c,
-                                                    unsigned long & n_z,
-                                                    unsigned long & data_begin)
-        {
-            n_z = 0;
-            data_begin = 0;
-            r = 0;
-            c = 0;
-
-            std::string c_s, r_s;
-            std::ifstream file(filename.c_str());
-
-
-            if(file.is_open())
-            {
-                while(!file.eof())
-                {
-                    std::string line;
-                    std::getline(file, line);
-
-                    //ignore header and footer
-                    if(line.find("]", 0) < line.npos)
-                        break;
-
-                    if(line.find("data", 0) < line.npos)
-                    {
-                        ++data_begin;
-                        continue;
-                    }
-                    else
-                    {
-                        ++n_z;
-                        std::string::size_type first_digit(line.find_first_not_of(" "));
-                        line.erase(0, first_digit);
-                        std::string::size_type first_blank(line.find_first_of(" "));
-                        for(unsigned long i(0) ; i < first_blank ; ++i)
-                        {
-                            r_s.append(1, line[i]);
-                        }
-                        line.erase(0, first_blank + 1);
-                        first_digit = line.find_first_not_of(" ");
-                        line.erase(0, first_digit);
-
-                        std::string::size_type second_blank(line.find_first_of(" "));
-                        for(unsigned long i(0) ; i < second_blank ; ++i)
-                        {
-                            c_s.append(1, line[i]);
-                        }
-                        line.erase(0, second_blank + 1);
-                        first_digit = line.find_first_not_of(" ");
-                        line.erase(0, first_digit);
-
-                        c = std::max(c ,(unsigned long)atol(c_s.c_str()));
-                        r = std::max(r, (unsigned long)atol(r_s.c_str()));
-
-                        c_s.clear();
-                        r_s.clear();
-
-                    }
-
-                }
-
-                file.close();
-
-            }
-            else
-                throw honei::InternalError("Unable to open MATLAB file.");
-        }
-
-        static unsigned long get_non_zeros(std::string filename)
-        {
-            unsigned long n_z(0);
-            std::ifstream file(filename.c_str());
-            if(file.is_open())
-            {
-                while(!file.eof())
-                {
-                    std::string line;
-                    std::getline(file, line);
-
-                    //ignore header and footer
-                    if(line.find("]", 0) < line.npos)
-                        break;
-
-                    if(line.find("data", 0) < line.npos)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        ++n_z;
-                    }
-
-                }
-
-                file.close();
-
-            }
-            else
-                throw honei::InternalError("Unable to open MATLAB file.");
-
-            return n_z;
-        }
-
         template<typename DT_>
-            static void read_matrix(std::string filename, DenseVector<unsigned long> & row_indices,
-                                                          DenseVector<unsigned long> & column_indices,
-                                                          DenseVector<DT_> & data)
+            static SparseMatrix<DT_> read_matrix(std::string filename, DT_)
             {
-                unsigned long columns, rows, non_data_lines, non_zeros;
-                get_sizes(filename, rows, columns, non_zeros, non_data_lines);
-                if (non_zeros != row_indices.size() || non_zeros != column_indices.size() || non_zeros != data.size())
-                    throw InternalError("Vectorsize does not match!");
-
                 std::ifstream file(filename.c_str());
-                file.is_open();
+                if (!file.is_open())
+                throw honei::InternalError("Unable to open MATLAB file: " + filename);
 
-                for(unsigned long i(0) ; i < non_data_lines ; ++i)
-                {
-                    std::string line;
-                    std::getline(file, line);
-                }
+                std::vector<unsigned long> row_indices;
+                std::vector<unsigned long> column_indices;
+                std::vector<DT_> data;
 
                 ///Attention: MatrixMarket indices are 1-based!!!
-                for(unsigned long j(0) ; j < non_zeros ; ++j)
+                while(!file.eof())
                 {
                     std::string line;
                     std::getline(file, line);
+
+                    if(line.find("]", 0) < line.npos)
+                        break;
+
+                    if(line.find("data", 0) < line.npos)
+                    {
+                        continue;
+                    }
+
+                    if(file.eof())
+                        break;
 
                     std::string c_s, r_s, n_z_s;
 
@@ -214,12 +114,16 @@ class MatrixIO<io_formats::M>
                     unsigned long r = (unsigned long)atol(r_s.c_str());
                     DT_ n_z = (DT_)atof(n_z_s.c_str());
 
-                    row_indices[j] = r - 1;
-                    column_indices[j] = c -1;
-                    data[j] = n_z;
+                    row_indices.push_back(r-1);
+                    column_indices.push_back(c-1);
+                    data.push_back(n_z);
 
                 }
                 file.close();
+                unsigned long columns(*std::max_element(column_indices.begin(), column_indices.end()) + 1);
+                unsigned long rows(*std::max_element(row_indices.begin(), row_indices.end()) + 1);
+                SparseMatrix<DT_> result(rows, columns, &row_indices[0], &column_indices[0], &data[0], data.size());
+                return result;
             }
 
 };
@@ -228,7 +132,7 @@ class MatrixIO<io_formats::M>
 template<>
 class MatrixIO<io_formats::MTX>
 {
-    public:
+    private:
         static void get_sizes(std::string filename, unsigned long & r,
                 unsigned long & c,
                 unsigned long & n_z,
@@ -289,27 +193,38 @@ class MatrixIO<io_formats::MTX>
                 throw honei::InternalError("Unable to open MatrixMarket file.");
         }
 
-        ///Only read size for sparse data and index vectors
-        static unsigned long get_non_zeros(std::string filename)
-        {
-            std::string c_s, r_s, n_z_s;
-            std::ifstream file(filename.c_str());
-
-            unsigned long data_index(0);
-
-            if(file.is_open())
+    public:
+        ///Read in sparse data only
+        template<typename DT_>
+            static SparseMatrix<DT_> read_matrix(std::string filename, DT_)
             {
-                while(true)
+                unsigned long cols(0), rows(0);
+
+                std::ifstream file(filename.c_str());
+                if (!file.is_open())
+                    throw honei::InternalError("Unable to open Matrixmarket M file: "+ filename);
+
+                ///Attention: MatrixMarket indices are 1-based!!!
+
+                std::vector<unsigned long> column_indices;
+                std::vector<unsigned long> row_indices;
+                std::vector<DT_> data;
+                bool first(true);
+
+                while(!file.eof())
                 {
                     std::string line;
                     std::getline(file, line);
                     if(line.find("%", 0) < line.npos)
                     {
-                        ++data_index;
                         continue;
                     }
-                    else
+                    if(file.eof())
+                        break;
+
+                    if (first)
                     {
+                        std::string c_s, r_s;
                         std::string::size_type first_blank(line.find_first_of(" "));
                         for(unsigned long i(0) ; i < first_blank ; ++i)
                         {
@@ -322,89 +237,51 @@ class MatrixIO<io_formats::MTX>
                         {
                             c_s.append(1, line[i]);
                         }
+
+                        cols = (unsigned long)atol(c_s.c_str());
+                        rows = (unsigned long)atol(r_s.c_str());
+                        first = false;
+                        continue;
+                    }
+
+                    else
+                    {
+                        std::string c_s, r_s, n_z_s;
+
+                        std::string::size_type first_blank(line.find_first_of(" "));
+                        for(unsigned long j(0) ; j < first_blank ; ++j)
+                        {
+                            r_s.append(1, line[j]);
+                        }
+                        line.erase(0, first_blank + 1);
+
+                        std::string::size_type second_blank(line.find_first_of(" "));
+                        for(unsigned long j(0) ; j < second_blank ; ++j)
+                        {
+                            c_s.append(1, line[j]);
+                        }
                         line.erase(0, second_blank + 1);
 
                         std::string::size_type eol(line.length());
-                        for(unsigned long i(0) ; i < eol ; ++i)
+                        for(unsigned long j(0) ; j < eol ; ++j)
                         {
-                            n_z_s.append(1, line[i]);
+                            n_z_s.append(1, line[j]);
                         }
 
-                        ++data_index;
-                        break;
 
+                        unsigned long c = (unsigned long)atol(c_s.c_str());
+                        unsigned long r = (unsigned long)atol(r_s.c_str());
+                        DT_ n_z = (DT_)atof(n_z_s.c_str());
+
+                        row_indices.push_back(r - 1);
+                        column_indices.push_back(c -1);
+                        data.push_back(n_z);
                     }
-                }
-
-                file.close();
-                unsigned long n_z((unsigned long)atol(n_z_s.c_str()));
-
-                return n_z;
-
-            }
-            else
-                throw honei::InternalError("Unable to open MatrixMarket file.");
-        }
-
-        ///Read in sparse data only
-        template<typename DT_>
-            static void read_matrix(std::string filename, DenseVector<unsigned long> & row_indices,
-                    DenseVector<unsigned long> & column_indices,
-                    DenseVector<DT_> & data)
-            {
-                unsigned long columns, rows, non_data_lines, non_zeros;
-                get_sizes(filename, rows, columns, non_zeros, non_data_lines);
-                if (non_zeros != row_indices.size() || non_zeros != column_indices.size() || non_zeros != data.size())
-                    throw InternalError("Vectorsize does not match!");
-
-                std::ifstream file(filename.c_str());
-                file.is_open();
-
-                for(unsigned long i(0) ; i < non_data_lines ; ++i)
-                {
-                    std::string line;
-                    std::getline(file, line);
-                }
-
-                ///Attention: MatrixMarket indices are 1-based!!!
-                for(unsigned long i(0) ; i < non_zeros ; ++i)
-                {
-                    std::string line;
-                    std::getline(file, line);
-
-                    std::string c_s, r_s, n_z_s;
-
-                    std::string::size_type first_blank(line.find_first_of(" "));
-                    for(unsigned long j(0) ; j < first_blank ; ++j)
-                    {
-                        r_s.append(1, line[j]);
-                    }
-                    line.erase(0, first_blank + 1);
-
-                    std::string::size_type second_blank(line.find_first_of(" "));
-                    for(unsigned long j(0) ; j < second_blank ; ++j)
-                    {
-                        c_s.append(1, line[j]);
-                    }
-                    line.erase(0, second_blank + 1);
-
-                    std::string::size_type eol(line.length());
-                    for(unsigned long j(0) ; j < eol ; ++j)
-                    {
-                        n_z_s.append(1, line[j]);
-                    }
-
-
-                    unsigned long c = (unsigned long)atol(c_s.c_str());
-                    unsigned long r = (unsigned long)atol(r_s.c_str());
-                    DT_ n_z = (DT_)atof(n_z_s.c_str());
-
-                    row_indices[i] = r - 1;
-                    column_indices[i] = c -1;
-                    data[i] = n_z;
 
                 }
                 file.close();
+                SparseMatrix<DT_> result(rows, cols, &row_indices[0], &column_indices[0], &data[0], data.size());
+                return result;
             }
 
 
@@ -501,82 +378,82 @@ template<>
 class MatrixIO<io_formats::ELL>
 {
     public:
-    template <typename DT_>
-    static void write_matrix(std::string & output, SparseMatrixELL<DT_> & smatrix)
-    {
-        if (sizeof(DT_) != 8)
-            throw InternalError("Only double ell output supported!");
-        else if (sizeof(unsigned long) != 8)
-            throw InternalError("Only 64 bit machine output supported!");
-        /// \todo convert uint32 to uint64 if needed (see read_matrix for conversion)
-
-        else
-        {
-            FILE* file;
-            file = fopen(output.c_str(), "wb");
-            uint64_t size(smatrix.Aj().size());
-            uint64_t rows(smatrix.rows());
-            uint64_t columns(smatrix.columns());
-            uint64_t stride(smatrix.stride());
-            uint64_t num_cols_per_row(smatrix.num_cols_per_row());
-            fwrite(&size, sizeof(uint64_t), 1, file);
-            fwrite(&rows, sizeof(uint64_t), 1, file);
-            fwrite(&columns, sizeof(uint64_t), 1, file);
-            fwrite(&stride, sizeof(uint64_t), 1, file);
-            fwrite(&num_cols_per_row, sizeof(uint64_t), 1, file);
-            fwrite(smatrix.Aj().elements(), sizeof(uint64_t), size, file);
-            fwrite(smatrix.Ax().elements(), sizeof(double), size, file);
-            fclose(file);
-        }
-    }
-
-    template <typename DT_>
-    static SparseMatrixELL<DT_> read_matrix(std::string input, HONEI_UNUSED DT_ datatype)
-    {
-            FILE* file(NULL);
-            file = fopen(input.c_str(), "rb");
-            if (file == NULL)
-                throw InternalError("File "+input+" not found!");
-            uint64_t size;
-            uint64_t rows;
-            uint64_t columns;
-            uint64_t stride;
-            uint64_t num_cols_per_row;
-            int status = fread(&size, sizeof(uint64_t), 1, file);
-            status = fread(&rows, sizeof(uint64_t), 1, file);
-            status = fread(&columns, sizeof(uint64_t), 1, file);
-            status = fread(&stride, sizeof(uint64_t), 1, file);
-            status = fread(&num_cols_per_row, sizeof(uint64_t), 1, file);
-            DenseVector<unsigned long> ajc(size);
-            if (sizeof(unsigned long) == sizeof(uint64_t))
+        template <typename DT_>
+            static void write_matrix(std::string & output, SparseMatrixELL<DT_> & smatrix)
             {
-                DenseVector<unsigned long> aj(size);
-                status = fread(aj.elements(), sizeof(uint64_t), size, file);
-                for (unsigned long i(0) ; i < size ; ++i)
+                if (sizeof(DT_) != 8)
+                    throw InternalError("Only double ell output supported!");
+                else if (sizeof(unsigned long) != 8)
+                    throw InternalError("Only 64 bit machine output supported!");
+                /// \todo convert uint32 to uint64 if needed (see read_matrix for conversion)
+
+                else
                 {
-                    ajc[i] = aj[i];
+                    FILE* file;
+                    file = fopen(output.c_str(), "wb");
+                    uint64_t size(smatrix.Aj().size());
+                    uint64_t rows(smatrix.rows());
+                    uint64_t columns(smatrix.columns());
+                    uint64_t stride(smatrix.stride());
+                    uint64_t num_cols_per_row(smatrix.num_cols_per_row());
+                    fwrite(&size, sizeof(uint64_t), 1, file);
+                    fwrite(&rows, sizeof(uint64_t), 1, file);
+                    fwrite(&columns, sizeof(uint64_t), 1, file);
+                    fwrite(&stride, sizeof(uint64_t), 1, file);
+                    fwrite(&num_cols_per_row, sizeof(uint64_t), 1, file);
+                    fwrite(smatrix.Aj().elements(), sizeof(uint64_t), size, file);
+                    fwrite(smatrix.Ax().elements(), sizeof(double), size, file);
+                    fclose(file);
                 }
             }
-            else
+
+        template <typename DT_>
+            static SparseMatrixELL<DT_> read_matrix(std::string input, HONEI_UNUSED DT_ datatype)
             {
-                uint64_t aj[size];
-                status = fread(aj, sizeof(uint64_t), size, file);
-                for (unsigned long i(0) ; i < size ; ++i)
+                FILE* file(NULL);
+                file = fopen(input.c_str(), "rb");
+                if (file == NULL)
+                    throw InternalError("File "+input+" not found!");
+                uint64_t size;
+                uint64_t rows;
+                uint64_t columns;
+                uint64_t stride;
+                uint64_t num_cols_per_row;
+                int status = fread(&size, sizeof(uint64_t), 1, file);
+                status = fread(&rows, sizeof(uint64_t), 1, file);
+                status = fread(&columns, sizeof(uint64_t), 1, file);
+                status = fread(&stride, sizeof(uint64_t), 1, file);
+                status = fread(&num_cols_per_row, sizeof(uint64_t), 1, file);
+                DenseVector<unsigned long> ajc(size);
+                if (sizeof(unsigned long) == sizeof(uint64_t))
                 {
-                    ajc[i] = aj[i];
+                    DenseVector<unsigned long> aj(size);
+                    status = fread(aj.elements(), sizeof(uint64_t), size, file);
+                    for (unsigned long i(0) ; i < size ; ++i)
+                    {
+                        ajc[i] = aj[i];
+                    }
                 }
+                else
+                {
+                    uint64_t aj[size];
+                    status = fread(aj, sizeof(uint64_t), size, file);
+                    for (unsigned long i(0) ; i < size ; ++i)
+                    {
+                        ajc[i] = aj[i];
+                    }
+                }
+                DenseVector<double> ax(size);
+                status = fread(ax.elements(), sizeof(double), size, file);
+                fclose(file);
+                DenseVector<DT_> axc(size);
+                unsigned long crows(rows);
+                unsigned long ccolumns(columns);
+                unsigned long cstride(stride);
+                unsigned long cnum_cols_per_row(num_cols_per_row);
+                convert<tags::CPU>(axc, ax);
+                SparseMatrixELL<DT_> smatrix(crows, ccolumns, cstride, cnum_cols_per_row, ajc, axc);
+                return smatrix;
             }
-            DenseVector<double> ax(size);
-            status = fread(ax.elements(), sizeof(double), size, file);
-            fclose(file);
-            DenseVector<DT_> axc(size);
-            unsigned long crows(rows);
-            unsigned long ccolumns(columns);
-            unsigned long cstride(stride);
-            unsigned long cnum_cols_per_row(num_cols_per_row);
-            convert<tags::CPU>(axc, ax);
-            SparseMatrixELL<DT_> smatrix(crows, ccolumns, cstride, cnum_cols_per_row, ajc, axc);
-            return smatrix;
-    }
 };
 #endif

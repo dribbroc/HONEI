@@ -44,28 +44,19 @@ class SMELLJacobiBench :
             //filename += "/honei/math/testdata/test_0.mtx";
             std::string filename = "/home/user/mgeveler/nobackup/feat2/Featflow2/area51/renumbenchmark/";
             filename += _m_f;
-            unsigned long non_zeros(MatrixIO<io_formats::M>::get_non_zeros(filename));
-            unsigned long rows, columns, ax, bx;
-            DenseVector<unsigned long> r(non_zeros);
-            DenseVector<unsigned long> c(non_zeros);
-            DenseVector<DataType_> data(non_zeros);
 
-            MatrixIO<io_formats::M>::read_matrix(filename, r, c, data);
-            MatrixIO<io_formats::M>::get_sizes(filename, rows, columns, ax, bx);
-            SparseMatrix<DataType_> tsmatrix2(rows, columns, r, c, data);
+            SparseMatrix<DataType_> tsmatrix2(MatrixIO<io_formats::M>::read_matrix(filename, DataType_(0)));
             SparseMatrixELL<DataType_> smatrix2(tsmatrix2);
 
             std::string filename_2 = "/home/user/mgeveler/nobackup/feat2/Featflow2/area51/renumbenchmark/";
             filename_2 += _v_f;
-            DenseVector<DataType_> rhs(rows, DataType_(0));
-            VectorIO<io_formats::EXP>::read_vector(filename_2, rhs);
+            DenseVector<DataType_> rhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DataType_(0)));
 
-            DenseVector<DataType_> initial_guess(rows, DataType_(1));
-            DenseVector<DataType_> diag_inverted(rows, DataType_(0));
-            for(unsigned long i(0) ; i < data.size() ; ++i)
+            DenseVector<DataType_> initial_guess(tsmatrix2.rows(), DataType_(1));
+            DenseVector<DataType_> diag_inverted(tsmatrix2.rows(), DataType_(0));
+            for(unsigned long i(0) ; i < diag_inverted.size() ; ++i)
             {
-                if(r[i] == c[i])
-                    diag_inverted[r[i]] = DataType_(1)/data[i];
+                    diag_inverted[i] = DataType_(1)/tsmatrix2(i, i);
             }
 
             for(unsigned long i(0) ; i < _count ; ++i)
@@ -79,7 +70,7 @@ class SMELLJacobiBench :
 #endif
             }
             BenchmarkInfo info;
-            info.flops = non_zeros * 2 + 3 * rows;
+            info.flops = tsmatrix2.used_elements() * 2 + 3 * tsmatrix2.rows();
             evaluate(info * 100);
         }
 };

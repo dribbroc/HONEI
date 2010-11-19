@@ -51,7 +51,10 @@ class ELLMatrixIOBench :
             filename += "/honei/math/testdata/";
             filename += _file;
             BENCHMARK(
+                    for (unsigned long i(0) ; i < 100 ; ++i)
+                    {
                     SparseMatrixELL<DataType_> smatrix = MatrixIO<io_formats::ELL>::read_matrix(filename, DataType_(1));
+                    }
                     );
             evaluate();
         }
@@ -87,20 +90,9 @@ class MTXMatrixIOBench :
             filename += _file;
             {
                 BENCHMARK(
-                        for (unsigned long i(0) ; i < 1 ; ++i)
+                        for (unsigned long i(0) ; i < 100 ; ++i)
                         {
-                        unsigned long non_zeros(MatrixIO<io_formats::MTX>::get_non_zeros(filename));
-                        unsigned long rows;
-                        unsigned long columns;
-                        unsigned long ax;
-                        unsigned long bx;
-                        DenseVector<unsigned long> r(non_zeros);
-                        DenseVector<unsigned long> c(non_zeros);
-                        DenseVector<double> data(non_zeros);
-
-                        MatrixIO<io_formats::MTX>::read_matrix(filename, r, c, data);
-                        MatrixIO<io_formats::MTX>::get_sizes(filename, rows, columns, ax, bx);
-                        SparseMatrix<double> tsmatrix(rows, columns, r, c, data);
+                        SparseMatrix<double> tsmatrix(MatrixIO<io_formats::MTX>::read_matrix(filename, double(0)));
                         SparseMatrixELL<double> smatrix(tsmatrix);
                         }
                         );
