@@ -76,18 +76,16 @@ class DuneRegressionTestSparseELL:
             filename_2 += _v_f;
             DenseVector<DT1_> rhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT1_(0)));
 
-            DenseVector<DT1_> diag_inverted(rows, DT1_(0));
-            for(unsigned long i(0) ; i < data.size() ; ++i)
+            DenseVector<DT1_> diag_inverted(tsmatrix.rows(), DT1_(0));
+            for(unsigned long i(0) ; i < diag_inverted.size() ; ++i)
             {
-                if(r[i] == c[i])
-                    diag_inverted[r[i]] = DT1_(1)/data[i];
+                    diag_inverted[i] = DT1_(1)/tsmatrix(i, i);
             }
-            for(unsigned long i(0) ; i < data.size() ; ++i)
+            SparseMatrix<DT1_> tdifference(tsmatrix.copy());
+            for(unsigned long i(0) ; i < tsmatrix.rows() ; ++i)
             {
-                if(r[i] == c[i])
-                     data[i] = DT1_(0);
+                     tdifference(i, i) = DT1_(0);
             }
-            SparseMatrix<DT1_> tdifference(rows, columns, r, c, data);
             SparseMatrixELL<DT1_> difference(tdifference);
 
             std::string filename_4(HONEI_SOURCEDIR);
