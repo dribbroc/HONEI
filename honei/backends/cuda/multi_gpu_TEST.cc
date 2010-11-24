@@ -43,9 +43,8 @@ class MultiGPUQuickTest :
             TEST_CHECK(device_count > 0);
             for (int device(0) ; device < device_count; ++device)
             {
-                std::cout<<"Device " << device << ": ";
-                cuda_print_device_name(device);
-                std::cout << std::endl;
+                std::cout<<"Device " << device << ": " << std::endl;
+                cuda_print_device_info(device);
             }
 
         }

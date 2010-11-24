@@ -27,6 +27,8 @@ extern "C"
 
     void cuda_print_device_name(int device);
 
+    void cuda_print_device_info(int device);
+
     int cuda_get_device();
 
     void cuda_set_device(int device);
