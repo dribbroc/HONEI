@@ -7,8 +7,11 @@ DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \
 	$(CUDADEF) \
+	$(CUDA_DOUBLEDEF) \
+	$(CUBLASDEF) \
 	$(MPIDEF) \
 	$(DEBUGDEF) \
+	$(BOOSTDEF) \
 	$(PROFILERDEF)
 
 BACKEND_LIBS = \

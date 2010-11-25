@@ -40,6 +40,7 @@
 #include <vector>
 #include <list>
 
+
 namespace honei
 {
     template <typename Tag_, typename DataType_>
@@ -54,6 +55,7 @@ namespace honei
             MPI_Comm _comm_cart;
             std::string _base_file_name;
             bool _file_output;
+            int _gpu_device;
 
         public:
             MPIRingSolver(int argc, char **argv)
@@ -61,6 +63,7 @@ namespace honei
                 mpi::mpi_init(&argc, &argv);
                 mpi::mpi_comm_size(&_numprocs);
                 mpi::mpi_comm_rank(&_myid);
+                _gpu_device = 0;
                 if (argc < 4 || argc > 5)
                 {
                     if(_myid == 0) std::cout<<"Usage: honei-mpi-ring grid_x grid_y timesteps [base_file_name]"<<std::endl;
@@ -1145,15 +1148,94 @@ namespace honei
             {
                 /// \todo global buffer for requests and in/out data
 
-                data.h->lock(lm_read_and_write);
-                data.f_temp_1->lock(lm_read_and_write);
-                data.f_temp_2->lock(lm_read_and_write);
-                data.f_temp_3->lock(lm_read_and_write);
-                data.f_temp_4->lock(lm_read_and_write);
-                data.f_temp_5->lock(lm_read_and_write);
-                data.f_temp_6->lock(lm_read_and_write);
-                data.f_temp_7->lock(lm_read_and_write);
-                data.f_temp_8->lock(lm_read_and_write);
+                if (Tag_::tag_value != tags::tv_gpu_cuda)
+                {
+                    data.h->lock(lm_read_and_write);
+                    data.f_temp_1->lock(lm_read_and_write);
+                    data.f_temp_2->lock(lm_read_and_write);
+                    data.f_temp_3->lock(lm_read_and_write);
+                    data.f_temp_4->lock(lm_read_and_write);
+                    data.f_temp_5->lock(lm_read_and_write);
+                    data.f_temp_6->lock(lm_read_and_write);
+                    data.f_temp_7->lock(lm_read_and_write);
+                    data.f_temp_8->lock(lm_read_and_write);
+                }
+                else
+                {
+                    TicketVector tickets;
+                    //todo target nur einmal abrufen und dann speichern
+                    void * target;
+                    void * target1;
+                    void * target2;
+                    void * target3;
+                    void * target4;
+                    void * target5;
+                    void * target6;
+                    void * target7;
+                    void * target8;
+                    DetectTask detask(data.h->address(), &target);
+                    cuda::GPUPool::instance()->enqueue(detask, _gpu_device)->wait();
+                    DetectTask detask1(data.f_temp_1->address(), &target1);
+                    cuda::GPUPool::instance()->enqueue(detask1, _gpu_device)->wait();
+                    DetectTask detask2(data.f_temp_2->address(), &target2);
+                    cuda::GPUPool::instance()->enqueue(detask2, _gpu_device)->wait();
+                    DetectTask detask3(data.f_temp_3->address(), &target3);
+                    cuda::GPUPool::instance()->enqueue(detask3, _gpu_device)->wait();
+                    DetectTask detask4(data.f_temp_4->address(), &target4);
+                    cuda::GPUPool::instance()->enqueue(detask4, _gpu_device)->wait();
+                    DetectTask detask5(data.f_temp_5->address(), &target5);
+                    cuda::GPUPool::instance()->enqueue(detask5, _gpu_device)->wait();
+                    DetectTask detask6(data.f_temp_6->address(), &target6);
+                    cuda::GPUPool::instance()->enqueue(detask6, _gpu_device)->wait();
+                    DetectTask detask7(data.f_temp_7->address(), &target7);
+                    cuda::GPUPool::instance()->enqueue(detask7, _gpu_device)->wait();
+                    DetectTask detask8(data.f_temp_8->address(), &target8);
+                    cuda::GPUPool::instance()->enqueue(detask8, _gpu_device)->wait();
+
+                    unsigned long offset(info.offset);
+                    unsigned long f1_offset((*fringe.dir_index_1)[0]);
+                    unsigned long f1_size((*fringe.dir_index_1)[fringe.dir_index_1->size()-1] - f1_offset);
+                    DownloadTask dtask1((void *)((DataType_*)target1 + f1_offset - offset), (void *)((DataType_*)data.f_temp_1->address() + f1_offset - offset), f1_size * sizeof(DataType_));
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(dtask1, _gpu_device));
+                    unsigned long f2_offset((*fringe.dir_index_2)[0]);
+                    unsigned long f2_size((*fringe.dir_index_2)[fringe.dir_index_2->size()-1] - f2_offset);
+                    DownloadTask dtask2((void *)((DataType_*)target2 + f2_offset - offset), (void *)((DataType_*)data.f_temp_2->address() + f2_offset - offset), f2_size * sizeof(DataType_));
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(dtask2, _gpu_device));
+                    unsigned long f3_offset((*fringe.dir_index_3)[0]);
+                    unsigned long f3_size((*fringe.dir_index_3)[fringe.dir_index_3->size()-1] - f3_offset);
+                    DownloadTask dtask3((void *)((DataType_*)target3 + f3_offset - offset), (void *)((DataType_*)data.f_temp_3->address() + f3_offset - offset), f3_size * sizeof(DataType_));
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(dtask3, _gpu_device));
+                    unsigned long f4_offset((*fringe.dir_index_4)[0]);
+                    unsigned long f4_size((*fringe.dir_index_4)[fringe.dir_index_4->size()-1] - f4_offset);
+                    DownloadTask dtask4((void *)((DataType_*)target4 + f4_offset - offset), (void *)((DataType_*)data.f_temp_4->address() + f4_offset - offset), f4_size * sizeof(DataType_));
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(dtask4, _gpu_device));
+                    unsigned long f5_offset((*fringe.dir_index_5)[0]);
+                    unsigned long f5_size((*fringe.dir_index_5)[fringe.dir_index_5->size()-1] - f5_offset);
+                    DownloadTask dtask5((void *)((DataType_*)target5 + f5_offset - offset), (void *)((DataType_*)data.f_temp_5->address() + f5_offset - offset), f5_size * sizeof(DataType_));
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(dtask5, _gpu_device));
+                    unsigned long f6_offset((*fringe.dir_index_6)[0]);
+                    unsigned long f6_size((*fringe.dir_index_6)[fringe.dir_index_6->size()-1] - f6_offset);
+                    DownloadTask dtask6((void *)((DataType_*)target6 + f6_offset - offset), (void *)((DataType_*)data.f_temp_6->address() + f6_offset - offset), f6_size * sizeof(DataType_));
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(dtask6, _gpu_device));
+                    unsigned long f7_offset((*fringe.dir_index_7)[0]);
+                    unsigned long f7_size((*fringe.dir_index_7)[fringe.dir_index_7->size()-1] - f7_offset);
+                    DownloadTask dtask7((void *)((DataType_*)target7 + f7_offset - offset), (void *)((DataType_*)data.f_temp_7->address() + f7_offset - offset), f7_size * sizeof(DataType_));
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(dtask7, _gpu_device));
+                    unsigned long f8_offset((*fringe.dir_index_8)[0]);
+                    unsigned long f8_size((*fringe.dir_index_8)[fringe.dir_index_8->size()-1] - f8_offset);
+                    DownloadTask dtask8((void *)((DataType_*)target8 + f8_offset - offset), (void *)((DataType_*)data.f_temp_8->address() + f8_offset - offset), f8_size * sizeof(DataType_));
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(dtask8, _gpu_device));
+
+                    for (unsigned long j(0) ; j < fringe.external_h_index->size() / 2 ; ++j)
+                    {
+                        unsigned long h_offset((*fringe.external_h_index)[j * 2]);
+                        unsigned long h_size((*fringe.external_h_index)[j * 2 + 1] - h_offset);
+                        DownloadTask dtask((void *)((DataType_*)target + h_offset - offset), (void *)((DataType_*)data.h->address() + h_offset - offset), h_size * sizeof(DataType_));
+                        tickets.push_back(cuda::GPUPool::instance()->enqueue(dtask, _gpu_device));
+                    }
+
+                    tickets.wait();
+                }
 
                 std::vector<MPI_Request> requests;
                 unsigned long offset(info.offset);
@@ -1338,15 +1420,94 @@ namespace honei
                     TypeTraits<DataType_>::copy(down_buffer_recv + temp_size, data.h->elements() + h_down_offset_recv - offset, h_down_size_recv);
                 }
 
-                data.h->unlock(lm_read_and_write);
-                data.f_temp_1->unlock(lm_read_and_write);
-                data.f_temp_2->unlock(lm_read_and_write);
-                data.f_temp_3->unlock(lm_read_and_write);
-                data.f_temp_4->unlock(lm_read_and_write);
-                data.f_temp_5->unlock(lm_read_and_write);
-                data.f_temp_6->unlock(lm_read_and_write);
-                data.f_temp_7->unlock(lm_read_and_write);
-                data.f_temp_8->unlock(lm_read_and_write);
+                if (Tag_::tag_value != tags::tv_gpu_cuda)
+                {
+                    data.h->unlock(lm_read_and_write);
+                    data.f_temp_1->unlock(lm_read_and_write);
+                    data.f_temp_2->unlock(lm_read_and_write);
+                    data.f_temp_3->unlock(lm_read_and_write);
+                    data.f_temp_4->unlock(lm_read_and_write);
+                    data.f_temp_5->unlock(lm_read_and_write);
+                    data.f_temp_6->unlock(lm_read_and_write);
+                    data.f_temp_7->unlock(lm_read_and_write);
+                    data.f_temp_8->unlock(lm_read_and_write);
+                }
+                else
+                {
+                    TicketVector tickets;
+                    //todo target nur einmal abrufen und dann speichern
+                    void * target;
+                    void * target1;
+                    void * target2;
+                    void * target3;
+                    void * target4;
+                    void * target5;
+                    void * target6;
+                    void * target7;
+                    void * target8;
+                    DetectTask detask(data.h->address(), &target);
+                    cuda::GPUPool::instance()->enqueue(detask, _gpu_device)->wait();
+                    DetectTask detask1(data.f_temp_1->address(), &target1);
+                    cuda::GPUPool::instance()->enqueue(detask1, _gpu_device)->wait();
+                    DetectTask detask2(data.f_temp_2->address(), &target2);
+                    cuda::GPUPool::instance()->enqueue(detask2, _gpu_device)->wait();
+                    DetectTask detask3(data.f_temp_3->address(), &target3);
+                    cuda::GPUPool::instance()->enqueue(detask3, _gpu_device)->wait();
+                    DetectTask detask4(data.f_temp_4->address(), &target4);
+                    cuda::GPUPool::instance()->enqueue(detask4, _gpu_device)->wait();
+                    DetectTask detask5(data.f_temp_5->address(), &target5);
+                    cuda::GPUPool::instance()->enqueue(detask5, _gpu_device)->wait();
+                    DetectTask detask6(data.f_temp_6->address(), &target6);
+                    cuda::GPUPool::instance()->enqueue(detask6, _gpu_device)->wait();
+                    DetectTask detask7(data.f_temp_7->address(), &target7);
+                    cuda::GPUPool::instance()->enqueue(detask7, _gpu_device)->wait();
+                    DetectTask detask8(data.f_temp_8->address(), &target8);
+                    cuda::GPUPool::instance()->enqueue(detask8, _gpu_device)->wait();
+
+                    unsigned long offset(info.offset);
+                    unsigned long f1_offset((*fringe.external_dir_index_1)[0]);
+                    unsigned long f1_size((*fringe.external_dir_index_1)[fringe.external_dir_index_1->size()-1] - f1_offset);
+                    UploadTask utask1((void *)((DataType_*)data.f_temp_1->address() + f1_offset - offset), (void *)((DataType_*)target1 + f1_offset - offset), f1_size * sizeof(DataType_));
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(utask1, _gpu_device));
+                    unsigned long f2_offset((*fringe.external_dir_index_2)[0]);
+                    unsigned long f2_size((*fringe.external_dir_index_2)[fringe.external_dir_index_2->size()-1] - f2_offset);
+                    UploadTask utask2((void *)((DataType_*)data.f_temp_2->address() + f2_offset - offset), (void *)((DataType_*)target2 + f2_offset - offset), f2_size * sizeof(DataType_));
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(utask2, _gpu_device));
+                    unsigned long f3_offset((*fringe.external_dir_index_3)[0]);
+                    unsigned long f3_size((*fringe.external_dir_index_3)[fringe.external_dir_index_3->size()-1] - f3_offset);
+                    UploadTask utask3((void *)((DataType_*)data.f_temp_3->address() + f3_offset - offset), (void *)((DataType_*)target3 + f3_offset - offset), f3_size * sizeof(DataType_));
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(utask3, _gpu_device));
+                    unsigned long f4_offset((*fringe.external_dir_index_4)[0]);
+                    unsigned long f4_size((*fringe.external_dir_index_4)[fringe.external_dir_index_4->size()-1] - f4_offset);
+                    UploadTask utask4((void *)((DataType_*)data.f_temp_4->address() + f4_offset - offset), (void *)((DataType_*)target4 + f4_offset - offset), f4_size * sizeof(DataType_));
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(utask4, _gpu_device));
+                    unsigned long f5_offset((*fringe.external_dir_index_5)[0]);
+                    unsigned long f5_size((*fringe.external_dir_index_5)[fringe.external_dir_index_5->size()-1] - f5_offset);
+                    UploadTask utask5((void *)((DataType_*)data.f_temp_5->address() + f5_offset - offset), (void *)((DataType_*)target5 + f5_offset - offset), f5_size * sizeof(DataType_));
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(utask5, _gpu_device));
+                    unsigned long f6_offset((*fringe.external_dir_index_6)[0]);
+                    unsigned long f6_size((*fringe.external_dir_index_6)[fringe.external_dir_index_6->size()-1] - f6_offset);
+                    UploadTask utask6((void *)((DataType_*)data.f_temp_6->address() + f6_offset - offset), (void *)((DataType_*)target6 + f6_offset - offset), f6_size * sizeof(DataType_));
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(utask6, _gpu_device));
+                    unsigned long f7_offset((*fringe.external_dir_index_7)[0]);
+                    unsigned long f7_size((*fringe.external_dir_index_7)[fringe.external_dir_index_7->size()-1] - f7_offset);
+                    UploadTask utask7((void *)((DataType_*)data.f_temp_7->address() + f7_offset - offset), (void *)((DataType_*)target7 + f7_offset - offset), f7_size * sizeof(DataType_));
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(utask7, _gpu_device));
+                    unsigned long f8_offset((*fringe.external_dir_index_8)[0]);
+                    unsigned long f8_size((*fringe.external_dir_index_8)[fringe.external_dir_index_8->size()-1] - f8_offset);
+                    UploadTask utask8((void *)((DataType_*)data.f_temp_8->address() + f8_offset - offset), (void *)((DataType_*)target8 + f8_offset - offset), f8_size * sizeof(DataType_));
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(utask8, _gpu_device));
+
+                    for (unsigned long j(0) ; j < fringe.h_index->size() / 2 ; ++j)
+                    {
+                        unsigned long h_offset((*fringe.h_index)[j * 2]);
+                        unsigned long h_size((*fringe.h_index)[j * 2 + 1] - h_offset);
+                        UploadTask utask((void *)((DataType_*)data.h->address() + h_offset - offset), (void *)((DataType_*)target + h_offset - offset), h_size * sizeof(DataType_));
+                        tickets.push_back(cuda::GPUPool::instance()->enqueue(utask, _gpu_device));
+                    }
+
+                    tickets.wait();
+                }
             }
     };
 }
