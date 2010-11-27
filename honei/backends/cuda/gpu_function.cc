@@ -120,6 +120,7 @@ bool GPUFunction::idle()
 
 void GPUFunction::operator() ()
 {
+    cuda_thread_exit();
     cuda_set_device(_imp->gpu_id);
     do
     {

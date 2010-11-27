@@ -64,3 +64,8 @@ extern "C" void cuda_set_device(int device)
 {
     cudaSetDevice(device);
 }
+
+extern "C" void cuda_thread_exit()
+{
+    cudaThreadExit();
+}

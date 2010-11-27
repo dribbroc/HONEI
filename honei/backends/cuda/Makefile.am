@@ -13,6 +13,7 @@ DEFS = \
 	$(CUDADEF) \
 	$(CUDA_DOUBLEDEF) \
 	$(CUBLASDEF) \
+	$(MPIDEF) \
 	$(DEBUGDEF) \
 	$(BOOSTDEF) \
 	$(PROFILERDEF)

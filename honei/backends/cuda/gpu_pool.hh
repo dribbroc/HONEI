@@ -83,6 +83,8 @@ namespace honei
                 bool idle();
 
                 void flush();
+
+                void single_start(int device);
         };
     }
 }

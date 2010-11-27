@@ -103,6 +103,9 @@ namespace honei
                 //gethostname(hostname, 255);
                 //std::cout<<"this is process " << _mycartid << " on machine "<<hostname<<std::endl;
 
+                if (Tag_::tag_value == tags::tv_gpu_cuda)
+                    cuda::GPUPool::instance()->single_start(_mycartid % 2);
+
                 if (_mycartid == _masterid)
                 {
                     _master(gridsize_x, gridsize_y, timesteps);
@@ -293,7 +296,8 @@ namespace honei
                     if (fabs((*data_global.h)[i] - (*data_ref.h)[i]) > 0.0001)
                         std::cout<<(*data_global.h)[i]<<" "<<(*data_ref.h)[i]<<std::endl;
                 }
-                data_ref.h->unlock(lm_read_only);*/
+                data_ref.h->unlock(lm_read_only);
+                std::cout<<"Comparison finished sucessfully!"<<std::endl;*/
             }
 
             void _slave()

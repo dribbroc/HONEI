@@ -32,5 +32,7 @@ extern "C"
     int cuda_get_device();
 
     void cuda_set_device(int device);
+
+    void cuda_thread_exit();
 }
 #endif

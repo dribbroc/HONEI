@@ -115,3 +115,23 @@ void GPUPool::flush()
     {
     }
 }
+
+void GPUPool::single_start(int device)
+{
+    if (!idle())
+        throw InternalError("Cannot restart in single mode if GPUPool is not idle!");
+
+    for(std::vector<std::pair<Thread *, GPUFunction *> >::iterator i(threads.begin()), i_end(threads.end()) ; i != i_end ; ++i)
+    {
+        (*i).second->stop();
+        delete (*i).second;
+        delete (*i).first;
+    }
+
+    threads.clear();
+    num_gpus = 1;
+
+    GPUFunction * tobj = new GPUFunction(device, mutexe.at(0), barriers.at(0), (tasks.at(0)));
+    Thread * t = new Thread(*tobj);
+    threads.push_back(std::make_pair(t, tobj));
+}
