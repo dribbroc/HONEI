@@ -39,6 +39,7 @@
 #include <iostream>
 #include <vector>
 #include <list>
+//#include <netdb.h>
 
 
 namespace honei
@@ -97,6 +98,10 @@ namespace honei
                 std::cout<<test<<std::endl;;
                 MPI_Cart_shift(_comm_cart, 0, 1, &input, &test);
                 std::cout<<input<<" -> "<<test<<std::endl;*/
+
+                //char hostname [256];
+                //gethostname(hostname, 255);
+                //std::cout<<"this is process " << _mycartid << " on machine "<<hostname<<std::endl;
 
                 if (_mycartid == _masterid)
                 {
@@ -217,8 +222,8 @@ namespace honei
                     //MPI_File_close(&fh);
                 }
                 bt.take();
-                MPI_Barrier(MPI_COMM_WORLD);
                 solver.do_postprocessing();
+                MPI_Barrier(MPI_COMM_WORLD);
                 std::cout<<"Timesteps: " << timesteps << " TOE: "<<bt.total() - at.total()<<std::endl;
                 std::cout<<"MLUPS: "<< (double(grid_global.h->rows()) * double(grid_global.h->columns()) * double(timesteps)) / (1e6 * (bt.total() - at.total())) <<std::endl;
 
@@ -275,7 +280,7 @@ namespace honei
 
                 GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_ref, info_ref, data_ref);
                 //SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info_ref, &data_ref, grid_ref.d_x, grid_ref.d_y, grid_ref.d_t, grid_ref.tau);
-                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver_ref(&info_ref, &data_ref, grid_ref.d_x, grid_ref.d_y, grid_ref.d_t, grid_ref.tau);
+                SolverLBMGrid<tags::CPU::SSE, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver_ref(&info_ref, &data_ref, grid_ref.d_x, grid_ref.d_y, grid_ref.d_t, grid_ref.tau);
                 solver_ref.do_preprocessing();
                 for(unsigned long i(0); i < timesteps; ++i)
                 {
@@ -1174,23 +1179,24 @@ namespace honei
                     void * target7;
                     void * target8;
                     DetectTask detask(data.h->address(), &target);
-                    cuda::GPUPool::instance()->enqueue(detask, _gpu_device)->wait();
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(detask, _gpu_device));
                     DetectTask detask1(data.f_temp_1->address(), &target1);
-                    cuda::GPUPool::instance()->enqueue(detask1, _gpu_device)->wait();
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(detask1, _gpu_device));
                     DetectTask detask2(data.f_temp_2->address(), &target2);
-                    cuda::GPUPool::instance()->enqueue(detask2, _gpu_device)->wait();
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(detask2, _gpu_device));
                     DetectTask detask3(data.f_temp_3->address(), &target3);
-                    cuda::GPUPool::instance()->enqueue(detask3, _gpu_device)->wait();
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(detask3, _gpu_device));
                     DetectTask detask4(data.f_temp_4->address(), &target4);
-                    cuda::GPUPool::instance()->enqueue(detask4, _gpu_device)->wait();
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(detask4, _gpu_device));
                     DetectTask detask5(data.f_temp_5->address(), &target5);
-                    cuda::GPUPool::instance()->enqueue(detask5, _gpu_device)->wait();
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(detask5, _gpu_device));
                     DetectTask detask6(data.f_temp_6->address(), &target6);
-                    cuda::GPUPool::instance()->enqueue(detask6, _gpu_device)->wait();
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(detask6, _gpu_device));
                     DetectTask detask7(data.f_temp_7->address(), &target7);
-                    cuda::GPUPool::instance()->enqueue(detask7, _gpu_device)->wait();
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(detask7, _gpu_device));
                     DetectTask detask8(data.f_temp_8->address(), &target8);
-                    cuda::GPUPool::instance()->enqueue(detask8, _gpu_device)->wait();
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(detask8, _gpu_device));
+                    tickets.wait();
 
                     unsigned long offset(info.offset);
                     unsigned long f1_offset((*fringe.dir_index_1)[0]);
@@ -1446,23 +1452,24 @@ namespace honei
                     void * target7;
                     void * target8;
                     DetectTask detask(data.h->address(), &target);
-                    cuda::GPUPool::instance()->enqueue(detask, _gpu_device)->wait();
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(detask, _gpu_device));
                     DetectTask detask1(data.f_temp_1->address(), &target1);
-                    cuda::GPUPool::instance()->enqueue(detask1, _gpu_device)->wait();
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(detask1, _gpu_device));
                     DetectTask detask2(data.f_temp_2->address(), &target2);
-                    cuda::GPUPool::instance()->enqueue(detask2, _gpu_device)->wait();
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(detask2, _gpu_device));
                     DetectTask detask3(data.f_temp_3->address(), &target3);
-                    cuda::GPUPool::instance()->enqueue(detask3, _gpu_device)->wait();
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(detask3, _gpu_device));
                     DetectTask detask4(data.f_temp_4->address(), &target4);
-                    cuda::GPUPool::instance()->enqueue(detask4, _gpu_device)->wait();
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(detask4, _gpu_device));
                     DetectTask detask5(data.f_temp_5->address(), &target5);
-                    cuda::GPUPool::instance()->enqueue(detask5, _gpu_device)->wait();
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(detask5, _gpu_device));
                     DetectTask detask6(data.f_temp_6->address(), &target6);
-                    cuda::GPUPool::instance()->enqueue(detask6, _gpu_device)->wait();
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(detask6, _gpu_device));
                     DetectTask detask7(data.f_temp_7->address(), &target7);
-                    cuda::GPUPool::instance()->enqueue(detask7, _gpu_device)->wait();
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(detask7, _gpu_device));
                     DetectTask detask8(data.f_temp_8->address(), &target8);
-                    cuda::GPUPool::instance()->enqueue(detask8, _gpu_device)->wait();
+                    tickets.push_back(cuda::GPUPool::instance()->enqueue(detask8, _gpu_device));
+                    tickets.wait();
 
                     unsigned long offset(info.offset);
                     unsigned long f1_offset((*fringe.external_dir_index_1)[0]);
