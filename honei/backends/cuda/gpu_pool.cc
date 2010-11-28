@@ -121,6 +121,9 @@ void GPUPool::single_start(int device)
     if (!idle())
         throw InternalError("Cannot restart in single mode if GPUPool is not idle!");
 
+    if (device >= cuda_device_count())
+        throw InternalError("Invalid device!");
+
     for(std::vector<std::pair<Thread *, GPUFunction *> >::iterator i(threads.begin()), i_end(threads.end()) ; i != i_end ; ++i)
     {
         (*i).second->stop();
