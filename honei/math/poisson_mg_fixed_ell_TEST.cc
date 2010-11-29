@@ -632,7 +632,7 @@ class PoissonAdvancedTestMGSparseELLProlMat:
 
             info.min_level = 1;
             info.max_level = _size;
-            info.n_max_iter = 100;
+            info.n_max_iter = 30;
             info.initial_zero = false;
             info.tolerance = 1e-8;
             info.convergence_check = true;
@@ -640,7 +640,7 @@ class PoissonAdvancedTestMGSparseELLProlMat:
             info.n_pre_smooth = 4;
             info.n_post_smooth = 4;
             //info.n_max_iter_coarse = ((unsigned long)sqrt((DT1_)(pow((DT1_)2 , (DT1_)info.max_level) + 1)*(pow((DT1_)2 , (DT1_)info.max_level) + 1)));
-            info.n_max_iter_coarse = 10000;
+            info.n_max_iter_coarse = 1000;
             info.tolerance_coarse = 1e-8;
             info.adapt_correction_factor = 1.;
 
@@ -688,7 +688,7 @@ class PoissonAdvancedTestMGSparseELLProlMat:
 
             std::string file_base(HONEI_SOURCEDIR);
             file_base += _file_base + stringify(_sorting) + "/";
-            std::cout << "File:" << file_base << std::endl;
+            std::cout << "Filebase:" << file_base << std::endl;
             //assemble all needed levels' matrices:
             for(unsigned long i(info.min_level); i <= info.max_level; ++i)
             {
@@ -698,10 +698,12 @@ class PoissonAdvancedTestMGSparseELLProlMat:
                 A_file += "A_";
                 A_file += stringify(i);
                 A_file += ".ell";
+                std::cout << "File:" << A_file << std::endl;
                 SparseMatrixELL<DT1_> smell(MatrixIO<io_formats::ELL>::read_matrix(A_file, DT1_(0)));
 
                 std::string rhs_file(file_base);
                 rhs_file += "rhs_" + stringify(_size);
+                std::cout << "File:" << rhs_file << std::endl;
                 if(i == info.max_level)
                     current_rhs = VectorIO<io_formats::EXP>::read_vector(rhs_file, DT1_(0));
 
@@ -732,6 +734,7 @@ class PoissonAdvancedTestMGSparseELLProlMat:
                         prol_file += "prol_";
                         prol_file += stringify(i);
                         prol_file += ".ell";
+                        std::cout << "File:" << prol_file << std::endl;
                         SparseMatrixELL<DT1_> prolmat(MatrixIO<io_formats::ELL>::read_matrix(prol_file, DT1_(0)));
                         info.prolmats.push_back(prolmat);
 
@@ -771,6 +774,7 @@ class PoissonAdvancedTestMGSparseELLProlMat:
             }*/
             std::string init_file(file_base);
             init_file += "init_" + stringify(_size);
+            std::cout << "File:" << init_file << std::endl;
             DenseVector<DT1_> result(VectorIO<io_formats::EXP>::read_vector(init_file, DT1_(0)));
 
             DenseVector<DT1_> rhs(info.rhs[info.max_level]);
@@ -781,21 +785,32 @@ class PoissonAdvancedTestMGSparseELLProlMat:
             //std::cout<< result <<endl;
             std::string sol_file(file_base);
             sol_file += "sol_" + stringify(_size);
+            std::cout << "File:" << sol_file << std::endl;
             DenseVector<DT1_> ref_result(VectorIO<io_formats::EXP>::read_vector(sol_file, DT1_(0)));
 
             for(unsigned long i(0) ; i < ref_result.size() ; ++i)
             {
-                std::cout << result[i] << " " << ref_result[i] << std::endl;
+                //std::cout << result[i] << " " << ref_result[i] << std::endl;
                 TEST_CHECK_EQUAL_WITHIN_EPS(result[i], ref_result[i], std::numeric_limits<DT1_>::epsilon()*1e12);
             }
         }
 };
 #ifdef HONEI_SSE
-//  PoissonAdvancedTestMGSparseELLProlMat<tags::CPU::MultiCore::SSE, double> mcsse_poisson_advanced_test_mg_sparse_prolmat_double("double", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/q2_sort_", 2);
-  PoissonAdvancedTestMGSparseELLProlMat<tags::CPU::SSE, double> sse_poisson_advanced_test_mg_sparse_prolmat_double("double", 8ul, 2ul, "/honei/math/testdata/poisson_advanced/sort_", 0);
+PoissonAdvancedTestMGSparseELLProlMat<tags::CPU::SSE, double> sse_poisson_advanced_test_mg_sparse_prolmat_double("double", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/sort_", 0);
+
+PoissonAdvancedTestMGSparseELLProlMat<tags::CPU::MultiCore::SSE, double> mcsse_poisson_advanced_test_mg_sparse_prolmat_double("double", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/sort_", 0);
+
+PoissonAdvancedTestMGSparseELLProlMat<tags::CPU::SSE, double> sse_poisson_advanced_test_mg_sparse_prolmat_double_q2("double", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/q2_sort_", 2);
+
+PoissonAdvancedTestMGSparseELLProlMat<tags::CPU::MultiCore::SSE, double> mcsse_poisson_advanced_test_mg_sparse_prolmat_double_q2("double", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/q2_sort_", 2);
+
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
-//  PoissonAdvancedTestMGSparseELLProlMat<tags::GPU::CUDA, double> cuda_poisson_advanced_test_mg_sparse_prolmat_double("double", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/q2_sort_", 2);
+
+PoissonAdvancedTestMGSparseELLProlMat<tags::GPU::CUDA, double> cuda_poisson_advanced_test_mg_sparse_prolmat_double("double", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/sort_", 0);
+
+PoissonAdvancedTestMGSparseELLProlMat<tags::GPU::CUDA, double> cuda_poisson_advanced_test_mg_sparse_prolmat_double_q2("double", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/q2_sort_", 2);
+
 #endif
 #endif
