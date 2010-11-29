@@ -127,7 +127,9 @@ class ProlongationPROLMATTest:
 
             Prolongation<Tag_, methods::NONE>::value(defect_fine, defect_coarse, mask, prolmat);
             DenseVector<DT1_> ref_res(defect_fine.copy());
+
             Prolongation<Tag_, methods::PROLMAT>::value(defect_fine, defect_coarse, mask, prolmat);
+            ApplyDirichletBoundaries<Tag_>::value(defect_fine, mask);
 
             TEST_CHECK_EQUAL(defect_fine, ref_res);
 
