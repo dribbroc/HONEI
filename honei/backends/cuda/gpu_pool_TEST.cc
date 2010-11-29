@@ -111,7 +111,7 @@ class GPUPoolQuickTest :
             TEST_CHECK(GPUPool::instance()->idle());
             std::cout<<"Used GPU's: "<<GPUPool::instance()->get_num_gpus()<<std::endl;
             GPUPool::instance()->single_start(0);
-            TEST_CHECK_EQUAL(GPUPool::instance()->get_num_gpus(), 1);
+            TEST_CHECK_EQUAL(GPUPool::instance()->get_num_gpus(), 1ul);
         }
 } gpu_pool_quick_test;
 
