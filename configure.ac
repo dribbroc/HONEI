@@ -375,7 +375,10 @@ if test "x$WITH_HDF5" = "xyes"; then
 		[have_hdf5=yes])
 	AC_CHECK_LIB(netcdf, nc_enddef,
 				 [have_netcdf=yes])
-	if test "x$have_hdf5" != "xyes" || "x$have_netcdf" != "xyes" ; then
+	if test "x$have_hdf5" != "xyes" ; then
+		AC_MSG_ERROR([libhdf5 (hdf.ncsa.uiuc.edu/HDF5/) not found.])
+	fi
+	if test "x$have_netcdf" != "xyes" ; then
 		AC_MSG_ERROR([libhdf5 (hdf.ncsa.uiuc.edu/HDF5/) not found.])
 	fi
 	dnl }}}
