@@ -37,7 +37,7 @@ class MultiGPUQuickTest :
 
         virtual void run() const
         {
-            int device_count(4711);
+            int device_count(-1);
             device_count = cuda_device_count();
             std::cout<<"Device Count: " << device_count<<std::endl;
             TEST_CHECK(device_count > 0);
