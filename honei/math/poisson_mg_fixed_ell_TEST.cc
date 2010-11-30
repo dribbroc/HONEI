@@ -18,7 +18,7 @@
  */
 
 //#define SOLVER_VERBOSE_L2
-#define SOLVER_VERBOSE
+//#define SOLVER_VERBOSE
 
 #include <honei/math/multigrid.hh>
 #include <honei/math/fill_matrix.hh>
