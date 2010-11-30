@@ -145,11 +145,11 @@ namespace honei
                 template <typename Prec_, typename MatrixType_>
                     static DenseVector<Prec_> & value(DenseVector<Prec_>&  fine,
                             DenseVector<Prec_>& coarse,
-                            DenseVector<unsigned long>& mask,
+                            HONEI_UNUSED DenseVector<unsigned long>& mask,
                             MatrixType_ & prolmat)
                     {
                         Product<Tag_>::value(fine, prolmat, coarse);
-                        ApplyDirichletBoundaries<Tag_>::value(fine, mask);
+                        //ApplyDirichletBoundaries<Tag_>::value(fine, mask);
                         return fine;
                     }
         };

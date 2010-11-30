@@ -503,40 +503,99 @@ class PoissonAdvancedTestMGSparseELLProlMat:
 {
     private:
         unsigned long _size;
-        std::string _res_f;
+        std::string _res_f, _file_base;
         unsigned long _sorting;
+        unsigned _nc;
 
-        static unsigned long _level_to_size(unsigned long level)
+        static unsigned long _level_to_size(unsigned long level, unsigned elem_type) // 0 = q1 , 1 = q1t , 2 = q2
         {
             switch(level)
             {
+                case 10:
+                    {
+                        if(elem_type == 0)
+                            return 2101248;
+                    }
+                case 9:
+                    {
+                        if(elem_type == 0)
+                            return 526336;
+                        else if(elem_type == 1)
+                            return 1050624;
+                        else
+                            return 2101248;
+                    }
+                case 8:
+                    {
+                        if(elem_type == 0)
+                            return 132096;
+                        else if(elem_type == 1)
+                            return 263168;
+                        else
+                            return 526336;
+                    }
                 case 7:
                     {
-                        return 33280;
+                        if(elem_type == 0)
+                            return 33280;
+                        else if(elem_type == 1)
+                            return 66048;
+                        else
+                            return 132096;
                     }
                 case 6:
                     {
-                        return 8448;
+                        if(elem_type == 0)
+                            return 8448;
+                        else if(elem_type == 1)
+                            return 16640;
+                        else
+                            return 33280;
                     }
                 case 5:
                     {
-                        return 2176;
+                        if(elem_type == 0)
+                            return 2176;
+                        else if(elem_type == 1)
+                            return 4224;
+                        else
+                            return 8448;
                     }
                 case 4:
                     {
-                        return 576;
+                        if(elem_type == 0)
+                            return 576;
+                        else if(elem_type == 1)
+                            return 1088;
+                        else
+                            return 2176;
                     }
                 case 3:
                     {
-                        return 160;
+                        if(elem_type == 0)
+                            return 160;
+                        else if(elem_type == 1)
+                            return 288;
+                        else
+                            return 576;
                     }
                 case 2:
                     {
-                        return 48;
+                        if(elem_type == 0)
+                            return 48;
+                        else if(elem_type == 1)
+                            return 80;
+                        else
+                            return 160;
                     }
                 case 1:
                     {
-                        return 16;
+                        if(elem_type == 0)
+                            return 16;
+                        else if(elem_type == 1)
+                            return 24;
+                        else
+                            return 48;
                     }
                 default:
                     return 1;
@@ -545,16 +604,18 @@ class PoissonAdvancedTestMGSparseELLProlMat:
 
     public:
         PoissonAdvancedTestMGSparseELLProlMat(const std::string & tag,
-                unsigned long level, unsigned long sorting) :
+                unsigned long level, unsigned long sorting, std::string file_base, unsigned nc) :
             BaseTest("Poisson advanced test for itrerative LES solvers, ProlMat, MG (ELLPACK system)<" + tag + ">" + " Level= " + stringify(level) + " Sorting= " + stringify(sorting))
     {
         register_tag(Tag_::name);
         _size = level;
         _sorting = sorting;
+        _file_base = file_base;
+        _nc = nc;
     }
         virtual void run() const
         {
-            //unsigned long n(_level_to_size(_size));
+            unsigned long n(_level_to_size(_size, _nc));
             MGInfo<DT1_, SparseMatrixELL<DT1_> > info;
             //configuration constants: /TODO: set/allocate!!!
             info.is_smoother = false;
@@ -571,21 +632,21 @@ class PoissonAdvancedTestMGSparseELLProlMat:
 
             info.min_level = 1;
             info.max_level = _size;
-            info.n_max_iter = 30;
+            info.n_max_iter = 100;
             info.initial_zero = false;
-            info.tolerance = 1e-5;
+            info.tolerance = 1e-8;
             info.convergence_check = true;
 
             info.n_pre_smooth = 4;
             info.n_post_smooth = 4;
             //info.n_max_iter_coarse = ((unsigned long)sqrt((DT1_)(pow((DT1_)2 , (DT1_)info.max_level) + 1)*(pow((DT1_)2 , (DT1_)info.max_level) + 1)));
-            info.n_max_iter_coarse = 100;
-            info.tolerance_coarse = 1e-2;
+            info.n_max_iter_coarse = 10000;
+            info.tolerance_coarse = 1e-8;
             info.adapt_correction_factor = 1.;
 
             for (unsigned long i(0) ; i < info.min_level; ++i)
             {
-                unsigned long size(_level_to_size(i));
+                unsigned long size(_level_to_size(i, _nc));
                 if(i == 0)
                     size = 9;
 
@@ -609,10 +670,9 @@ class PoissonAdvancedTestMGSparseELLProlMat:
                 info.diags_inverted.push_back(dummy_band.copy());
             }
 
-
             for (unsigned long i(info.min_level) ; i <= info.max_level; ++i)
             {
-                unsigned long size(_level_to_size(i));
+                unsigned long size(_level_to_size(i, _nc));
                 std::cout << size << std::endl;
                 // iteration vectors
                 DenseVector<DT1_> ac_c(size, DT1_(0));
@@ -627,11 +687,12 @@ class PoissonAdvancedTestMGSparseELLProlMat:
             }
 
             std::string file_base(HONEI_SOURCEDIR);
-            file_base += "/honei/math/testdata/poisson_advanced/sort_" + stringify(_sorting) + "/";
+            file_base += _file_base + stringify(_sorting) + "/";
+            std::cout << "File:" << file_base << std::endl;
             //assemble all needed levels' matrices:
             for(unsigned long i(info.min_level); i <= info.max_level; ++i)
             {
-                unsigned long N(_level_to_size(i));
+                unsigned long N(_level_to_size(i, _nc));
                 DenseVector<DT1_> current_rhs(N);
                 std::string A_file(file_base);
                 A_file += "A_";
@@ -685,7 +746,7 @@ class PoissonAdvancedTestMGSparseELLProlMat:
             //clear x data
             for(unsigned long i(0) ; i < info.max_level ; ++i)
             {
-                unsigned long size(_level_to_size(i));
+                unsigned long size(_level_to_size(i, _nc));
                 if(size==0)
                     size = 9;
 
@@ -729,13 +790,12 @@ class PoissonAdvancedTestMGSparseELLProlMat:
             }
         }
 };
-//PoissonAdvancedTestMGSparseELLProlMat<tags::CPU, double> poisson_advanced_test_mg_sparse_prolmat_double("double", 7ul, 0ul);
 #ifdef HONEI_SSE
-  PoissonAdvancedTestMGSparseELLProlMat<tags::CPU::SSE, double> sse_poisson_advanced_test_mg_sparse_prolmat_double("double", 7ul, 0ul);
-//  PoissonAdvancedTestMGSparseELLProlMat<tags::CPU::MultiCore::SSE, double> mc_sse_poisson_advanced_test_mg_sparse_prolmat_double("double", 7ul, 0ul);
+//  PoissonAdvancedTestMGSparseELLProlMat<tags::CPU::MultiCore::SSE, double> mcsse_poisson_advanced_test_mg_sparse_prolmat_double("double", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/q2_sort_", 2);
+  PoissonAdvancedTestMGSparseELLProlMat<tags::CPU::SSE, double> sse_poisson_advanced_test_mg_sparse_prolmat_double("double", 8ul, 2ul, "/honei/math/testdata/poisson_advanced/sort_", 0);
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
-//PoissonAdvancedTestMGSparseELLProlMat<tags::GPU::CUDA, double> cuda_poisson_advanced_test_mg_sparse_prolmat_double("double", 7ul, 0ul);
+//  PoissonAdvancedTestMGSparseELLProlMat<tags::GPU::CUDA, double> cuda_poisson_advanced_test_mg_sparse_prolmat_double("double", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/q2_sort_", 2);
 #endif
 #endif
