@@ -615,7 +615,7 @@ class PoissonAdvancedTestMGSparseELLProlMat:
     }
         virtual void run() const
         {
-            unsigned long n(_level_to_size(_size, _nc));
+            //unsigned long n(_level_to_size(_size, _nc));
             MGInfo<DT1_, SparseMatrixELL<DT1_> > info;
             //configuration constants: /TODO: set/allocate!!!
             info.is_smoother = false;
