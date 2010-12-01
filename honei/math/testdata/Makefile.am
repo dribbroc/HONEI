@@ -82,8 +82,41 @@ EXTRA_DIST = \
 	poisson_advanced/sort_0/prol_7.ell \
 	poisson_advanced/sort_0/rhs_7 \
 	poisson_advanced/sort_0/init_7 \
-	poisson_advanced/sort_0/sol_7
-
+	poisson_advanced/sort_0/sol_7 \
+	poisson_advanced/q2_sort_0/A_1.ell \
+	poisson_advanced/q2_sort_0/A_2.ell \
+	poisson_advanced/q2_sort_0/A_3.ell \
+	poisson_advanced/q2_sort_0/A_4.ell \
+	poisson_advanced/q2_sort_0/A_5.ell \
+	poisson_advanced/q2_sort_0/A_6.ell \
+	poisson_advanced/q2_sort_0/A_7.ell \
+	poisson_advanced/q2_sort_0/prol_2.ell \
+	poisson_advanced/q2_sort_0/prol_3.ell \
+	poisson_advanced/q2_sort_0/prol_4.ell \
+	poisson_advanced/q2_sort_0/prol_5.ell \
+	poisson_advanced/q2_sort_0/prol_6.ell \
+	poisson_advanced/q2_sort_0/prol_7.ell \
+	poisson_advanced/q2_sort_0/rhs_1 \
+	poisson_advanced/q2_sort_0/rhs_2 \
+	poisson_advanced/q2_sort_0/rhs_3 \
+	poisson_advanced/q2_sort_0/rhs_4 \
+	poisson_advanced/q2_sort_0/rhs_5 \
+	poisson_advanced/q2_sort_0/rhs_6 \
+	poisson_advanced/q2_sort_0/rhs_7 \
+	poisson_advanced/q2_sort_0/init_1 \
+	poisson_advanced/q2_sort_0/init_2 \
+	poisson_advanced/q2_sort_0/init_3 \
+	poisson_advanced/q2_sort_0/init_4 \
+	poisson_advanced/q2_sort_0/init_5 \
+	poisson_advanced/q2_sort_0/init_6 \
+	poisson_advanced/q2_sort_0/init_7 \
+	poisson_advanced/q2_sort_0/sol_1 \
+	poisson_advanced/q2_sort_0/sol_2 \
+	poisson_advanced/q2_sort_0/sol_3 \
+	poisson_advanced/q2_sort_0/sol_4 \
+	poisson_advanced/q2_sort_0/sol_5 \
+	poisson_advanced/q2_sort_0/sol_6 \
+	poisson_advanced/q2_sort_0/sol_7
 
 DEFS = \
 	$(CELLDEF) \
