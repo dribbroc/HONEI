@@ -474,7 +474,63 @@ class SolverLBMFSIExternalComparisonTest_ArbGeomNonStat :
         }
 
 };
-SolverLBMFSIExternalComparisonTest_ArbGeomNonStat<tags::CPU, float> cpu_solver_test_float_agns("float", "ext_initial_h_agns.ppm", "ext_initial_vx_ag.ppm", "ext_initial_vy_ag.ppm", "ext_initial_b_ag.ppm", "ext_obstacles_ag.ppm", "ext_solids_agns.ppm", 100ul, 0.08f, 1.0f, 1.0f, 0.08f, 0.01f, 0.01f, 0.01f, 1.1f);
+//SolverLBMFSIExternalComparisonTest_ArbGeomNonStat<tags::CPU, float> cpu_solver_test_float_agns("float", "ext_initial_h_agns.ppm", "ext_initial_vx_ag.ppm", "ext_initial_vy_ag.ppm", "ext_initial_b_ag.ppm", "ext_obstacles_ag.ppm", "ext_solids_agns.ppm", 100ul, 0.08f, 1.0f, 1.0f, 0.08f, 0.01f, 0.01f, 0.01f, 1.1f);
 #ifdef HONEI_CUDA
 // SolverLBMFSIExternalComparisonTest_ArbGeomNonStat<tags::GPU::CUDA, float> gpu_solver_test_float_agns("float", "ext_initial_h_agns.ppm", "ext_initial_vx_ag.ppm", "ext_initial_vy_ag.ppm", "ext_initial_b_ag.ppm", "ext_obstacles_ag.ppm", "ext_solids_agns.ppm", 100ul, 0.08f, 1.0f, 1.0f, 0.08f, 0.01f, 0.01f, 0.01f, 1.1f);
 #endif
+
+
+
+template <typename Tag_, typename DataType_>
+class SolverLBMFSIExternalComparisonTest_Malpasset :
+    public TaggedTest<Tag_>
+{
+    private:
+        std::string _filename;
+        unsigned long _max_timesteps;
+        DataType_ _dt, _tau;
+    public:
+        SolverLBMFSIExternalComparisonTest_Malpasset(const std::string & type,
+                                                const std::string & fn,
+                                                unsigned long max_ts,
+                                                DataType_ dt,
+                                                DataType_ tau) :
+            TaggedTest<Tag_>("solver_lbm_fsi_external_comparison_test<" + type + ">")
+        {
+            _filename = fn;
+            _max_timesteps =max_ts;
+            _dt = dt;
+            _tau = tau;
+        }
+
+        virtual void run() const
+        {
+            ifstream fin(_filename.c_str());
+            unsigned int width, height;
+            float tmp;
+            float dx;
+            float no_data_value;
+            char buffer[255];
+            float* data;
+            fin >> buffer >> width;
+            fin >> buffer >> height;
+            fin >> buffer >> tmp;
+            fin >> buffer >> tmp;
+            fin >> buffer >> dx;
+            fin >> buffer >> no_data_value;
+            data = new float[width*height];
+            for (int i = 0; i < width*height; i++)
+                fin >> data[i];
+            fin.close();
+
+            DenseMatrix<DataType_> target((unsigned long)height, (unsigned long)width, DataType_(0));
+            for (unsigned long i = 0; i < height; ++i)
+                for (unsigned long j = 0; j < width; ++j)
+                target[i][j] = data[i * width + j];
+
+            PostProcessing<GNUPLOT>::value(target, 1, width, height, 2);
+
+        }
+
+};
+SolverLBMFSIExternalComparisonTest_Malpasset<tags::CPU, float> malpasset_cpu_float("float", "MALP_ZB_dx15wm.dem", 100, 0.01, 0.5);
