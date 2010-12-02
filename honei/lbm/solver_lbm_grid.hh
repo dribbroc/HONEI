@@ -71,6 +71,14 @@ using namespace honei::lbm::lbm_boundary_types;
 
 namespace honei
 {
+    class SolverLBMGridBase
+    {
+        public:
+            virtual void do_preprocessing() = 0;
+            virtual void do_postprocessing() = 0;
+            virtual void solve() = 0;
+
+    };
 
     template<typename Tag_,
         typename Application_,
@@ -86,7 +94,7 @@ namespace honei
             };
 
     template<typename Tag_, typename Application_, typename ResPrec_, typename Force_, typename SourceScheme_, typename LbmMode_>
-        class SolverLBMGrid<Tag_, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>
+        class SolverLBMGrid<Tag_, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_> : public SolverLBMGridBase
         {
             private:
                 /** Global variables.
@@ -129,7 +137,7 @@ namespace honei
                 }
             }
 
-                ~SolverLBMGrid()
+                virtual ~SolverLBMGrid()
                 {
                     CONTEXT("When destroying LABSWE solver.");
                 }
@@ -248,7 +256,7 @@ namespace honei
                 };
 
         template<typename Tag_, typename Application_, typename ResPrec_, typename Force_, typename SourceScheme_, typename LbmMode_>
-            class SolverLBMGrid<Tag_, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>
+            class SolverLBMGrid<Tag_, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_> : public SolverLBMGridBase
             {
                 private:
                     unsigned long _parts;
@@ -275,7 +283,7 @@ namespace honei
                     }
                 }
 
-                    ~SolverLBMGrid()
+                    virtual ~SolverLBMGrid()
                     {
                         CONTEXT("When destroying LABSWE solver.");
                     }
@@ -438,7 +446,7 @@ namespace honei
                 };
 
         template<typename Tag_, typename Application_, typename ResPrec_, typename Force_, typename SourceScheme_, typename LbmMode_>
-            class SolverLBMGrid<Tag_, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>
+            class SolverLBMGrid<Tag_, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_> : public SolverLBMGridBase
             {
                 private:
                     unsigned long _parts;
@@ -464,7 +472,7 @@ namespace honei
                     }
                 }
 
-                    ~SolverLBMGrid()
+                    virtual ~SolverLBMGrid()
                     {
                         CONTEXT("When destroying LABSWE solver.");
                     }
