@@ -44,7 +44,7 @@
 
 namespace honei
 {
-    template <typename Tag_, typename DataType_>
+    template <typename Tag1_, typename Tag2_, typename DataType_>
     class MPIRingSolver
     {
         private:
@@ -57,6 +57,9 @@ namespace honei
             std::string _base_file_name;
             bool _file_output;
             int _gpu_device;
+            tags::TagValue _solver_tag_value;
+            std::vector<double> tag1_part_fraction;
+            std::vector<double> tag2_part_fraction;
 
         public:
             MPIRingSolver(int argc, char **argv)
@@ -81,6 +84,15 @@ namespace honei
                     _file_output = true;
                 }
 
+                //create topology information
+                tag1_part_fraction.push_back(1);
+                /*tag1_part_fraction.push_back(0.01);
+                tag1_part_fraction.push_back(0.01);
+                tag1_part_fraction.push_back(0.01);
+                tag1_part_fraction.push_back(0.01);
+                tag2_part_fraction.push_back(0.48);
+                tag2_part_fraction.push_back(0.48);*/
+
                 // create new communicator
                 int dims[1];
                 dims[0] = _numprocs;
@@ -102,9 +114,6 @@ namespace honei
                 //char hostname [256];
                 //gethostname(hostname, 255);
                 //std::cout<<"this is process " << _mycartid << " on machine "<<hostname<<std::endl;
-
-                if (Tag_::tag_value == tags::tv_gpu_cuda)
-                    cuda::GPUPool::instance()->single_start(_mycartid % 2);
 
                 if (_mycartid == _masterid)
                 {
@@ -142,16 +151,28 @@ namespace honei
                 std::vector<PackedGridInfo<D2Q9> > info_list;
                 std::vector<PackedGridData<D2Q9, DataType_> > data_list;
                 std::vector<PackedGridFringe<D2Q9> > fringe_list;
+
+                //decompose patches
                 {
+                    if (_numprocs % (tag1_part_fraction.size() + tag2_part_fraction.size()) != 0)
+                        throw InternalError("numprocs / part_fraction missmatch!");
+
                     std::vector<unsigned long> patch_sizes;
-                    unsigned long normal_size((data_global.u->size() / _numprocs));
-                    unsigned long first_size((data_global.u->size() / _numprocs) + (data_global.u->size() % _numprocs));
-                    unsigned long end(0);
-                    for (unsigned long i(0) ; i < _numprocs ; ++i)
+                    unsigned long nodes(_numprocs / (tag1_part_fraction.size() + tag2_part_fraction.size()));
+                    unsigned long size_per_node(data_global.u->size() / nodes);
+
+                    for (unsigned long node(0) ; node < nodes ; ++node)
                     {
-                        end += (i==0 ? first_size : normal_size);
-                        patch_sizes.push_back(end);
+                        for (unsigned long i(0) ; i < tag1_part_fraction.size() ; ++i)
+                            patch_sizes.push_back(size_per_node * tag1_part_fraction.at(i));
+                        for (unsigned long i(0) ; i < tag2_part_fraction.size() ; ++i)
+                            patch_sizes.push_back(size_per_node * tag2_part_fraction.at(i));
+                        unsigned long whole_size(0);
+                        for (unsigned long i(node * (tag1_part_fraction.size() + tag2_part_fraction.size())) ; i < patch_sizes.size() ; ++i)
+                            whole_size += patch_sizes.at(i);
+                        patch_sizes.back() += size_per_node - whole_size;
                     }
+                    patch_sizes.back() += data_global.u->size() % nodes;
                     GridPartitioner<D2Q9, DataType_>::decompose_intern(patch_sizes, info_global, data_global, info_list, data_list, fringe_list, false);
                 }
 
@@ -182,9 +203,23 @@ namespace honei
                 ul_buffer.clear();
 
 
-                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info_lokal, &data_lokal, grid_global.d_x, grid_global.d_y, grid_global.d_t, grid_global.tau);
+                SolverLBMGridBase * solver(NULL);
+                if (tag2_part_fraction.size() == 0 || _mycartid < tag1_part_fraction.size() % (tag1_part_fraction.size() + tag2_part_fraction.size()))
+                {
+                    _solver_tag_value = Tag1_::tag_value;
+                    if (_solver_tag_value == tags::tv_gpu_cuda)
+                        cuda::GPUPool::instance()->single_start(_mycartid % (tag1_part_fraction.size() + tag2_part_fraction.size()));
+                    solver = new SolverLBMGrid<Tag1_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (&info_lokal, &data_lokal, grid_global.d_x, grid_global.d_y, grid_global.d_t, grid_global.tau);
+                }
+                else
+                {
+                    _solver_tag_value = Tag2_::tag_value;
+                    if (_solver_tag_value == tags::tv_gpu_cuda)
+                        cuda::GPUPool::instance()->single_start(_mycartid % (tag1_part_fraction.size() + tag2_part_fraction.size()) - tag1_part_fraction.size());
+                    solver = new SolverLBMGrid<Tag2_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (&info_lokal, &data_lokal, grid_global.d_x, grid_global.d_y, grid_global.d_t, grid_global.tau);
+                }
 
-                solver.do_preprocessing();
+                solver->do_preprocessing();
 
                 /*for (int target(1) ; target < _numprocs ; ++target)
                 {
@@ -213,7 +248,7 @@ namespace honei
                 at.take();
                 for(unsigned long i(0); i < timesteps; ++i)
                 {
-                    solver.solve();
+                    solver->solve();
 
                     /*MPI_File fh;
                     std::string filename("h_"+stringify(i)+"_out.dat");
@@ -236,7 +271,7 @@ namespace honei
                     //MPI_File_close(&fh);
                 }
                 bt.take();
-                solver.do_postprocessing();
+                solver->do_postprocessing();
                 MPI_Barrier(MPI_COMM_WORLD);
                 std::cout<<"Timesteps: " << timesteps << " TOE: "<<bt.total() - at.total()<<std::endl;
                 std::cout<<"MLUPS: "<< (double(grid_global.h->rows()) * double(grid_global.h->columns()) * double(timesteps)) / (1e6 * (bt.total() - at.total())) <<std::endl;
@@ -293,14 +328,13 @@ namespace honei
                 PackedGridInfo<D2Q9> info_ref;
 
                 GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_ref, info_ref, data_ref);
-                //SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info_ref, &data_ref, grid_ref.d_x, grid_ref.d_y, grid_ref.d_t, grid_ref.tau);
                 SolverLBMGrid<tags::CPU::SSE, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver_ref(&info_ref, &data_ref, grid_ref.d_x, grid_ref.d_y, grid_ref.d_t, grid_ref.tau);
                 solver_ref.do_preprocessing();
                 for(unsigned long i(0); i < timesteps; ++i)
                 {
                     solver_ref.solve();
                 }
-                solver.do_postprocessing();
+                solver_ref.do_postprocessing();
                 data_ref.h->lock(lm_read_only);
                 for (unsigned long i(0) ; i < data_global.h->size() ; ++i)
                 {
@@ -330,10 +364,23 @@ namespace honei
                 _recv_data(data);
                 _recv_fringe(fringe);
 
-                //SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, d_x, d_y, d_t, tau);
-                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info, &data, d_x, d_y, d_t, tau);
+                SolverLBMGridBase * solver(NULL);
+                if (tag2_part_fraction.size() == 0 || _mycartid < tag1_part_fraction.size() % (tag1_part_fraction.size() + tag2_part_fraction.size()))
+                {
+                    _solver_tag_value = Tag1_::tag_value;
+                    if (_solver_tag_value == tags::tv_gpu_cuda)
+                        cuda::GPUPool::instance()->single_start(_mycartid % (tag1_part_fraction.size() + tag2_part_fraction.size()));
+                    solver = new SolverLBMGrid<Tag1_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (&info, &data, d_x, d_y, d_t, tau);
+                }
+                else
+                {
+                    _solver_tag_value = Tag2_::tag_value;
+                    if (_solver_tag_value == tags::tv_gpu_cuda)
+                        cuda::GPUPool::instance()->single_start(_mycartid % (tag1_part_fraction.size() + tag2_part_fraction.size()) - tag1_part_fraction.size());
+                    solver = new SolverLBMGrid<Tag2_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (&info, &data, d_x, d_y, d_t, tau);
+                }
 
-                solver.do_preprocessing();
+                solver->do_preprocessing();
 
                 //_send_master_sync(_masterid, info, data, fringe);
                 //_recv_master_sync(_masterid, info, data, fringe);
@@ -341,7 +388,7 @@ namespace honei
 
                 for(unsigned long i(0); i < timesteps; ++i)
                 {
-                    solver.solve();
+                    solver->solve();
 
                     /*MPI_File fh;
                     std::string filename("h_"+stringify(i)+"_out.dat");
@@ -363,7 +410,7 @@ namespace honei
                     //MPI_Wait(&request, MPI_STATUS_IGNORE);
                     //MPI_File_close(&fh);
                 }
-                solver.do_postprocessing();
+                solver->do_postprocessing();
                 MPI_Barrier(MPI_COMM_WORLD);
                 //_send_full_sync(_masterid, data);
             }
@@ -1168,7 +1215,7 @@ namespace honei
             {
                 /// \todo global buffer for requests and in/out data
 
-                if (Tag_::tag_value != tags::tv_gpu_cuda)
+                if (_solver_tag_value != tags::tv_gpu_cuda)
                 {
                     data.h->lock(lm_read_and_write);
                     data.f_temp_1->lock(lm_read_and_write);
@@ -1441,7 +1488,7 @@ namespace honei
                     TypeTraits<DataType_>::copy(down_buffer_recv + temp_size, data.h->elements() + h_down_offset_recv - offset, h_down_size_recv);
                 }
 
-                if (Tag_::tag_value != tags::tv_gpu_cuda)
+                if (_solver_tag_value != tags::tv_gpu_cuda)
                 {
                     data.h->unlock(lm_read_and_write);
                     data.f_temp_1->unlock(lm_read_and_write);
