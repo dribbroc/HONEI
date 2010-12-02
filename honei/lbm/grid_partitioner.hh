@@ -184,7 +184,7 @@ namespace honei
             /// Store the element indices, that other patches need from us
             static void _create_dir_fringe(unsigned long patch, DenseVector<unsigned long> & dir_index,
                     DenseVector<unsigned long> & dir,
-                    std::vector<PackedGridInfo<D2Q9> > & info_list,
+                    PackedGridInfo<D2Q9> & info,
                     DenseVector<unsigned long> * &new_dir_index, DenseVector<unsigned long> * &new_dir_targets)
             {
                 std::vector<unsigned long> temp_dir_index;
@@ -197,18 +197,18 @@ namespace honei
                     for (unsigned long offset(0) ; offset < end - start ; ++offset)
                     {
                         // elements before our own data
-                        if (dir[index] + offset < (*info_list[patch].limits)[0])
+                        if (dir[index] + offset < (*info.limits)[0])
                         {
                             temp_dir_targets.push_back(patch - 1);
-                            temp_dir_index.push_back(dir[index] + info_list[patch].offset + offset);
-                            temp_dir_index.push_back(dir[index] + info_list[patch].offset + 1 + offset);
+                            temp_dir_index.push_back(dir[index] + info.offset + offset);
+                            temp_dir_index.push_back(dir[index] + info.offset + 1 + offset);
                         }
                         // elements behind our own data
-                        if (dir[index] + offset >= (*info_list[patch].limits)[info_list[patch].limits->size() - 1])
+                        if (dir[index] + offset >= (*info.limits)[info.limits->size() - 1])
                         {
                             temp_dir_targets.push_back(patch + 1);
-                            temp_dir_index.push_back(dir[index] + info_list[patch].offset + offset);
-                            temp_dir_index.push_back(dir[index] + info_list[patch].offset + 1 + offset);
+                            temp_dir_index.push_back(dir[index] + info.offset + offset);
+                            temp_dir_index.push_back(dir[index] + info.offset + 1 + offset);
                         }
                     }
                 }
@@ -252,7 +252,7 @@ namespace honei
             /// Store the element indices, that we need from other patches
             static void _create_h_fringe(unsigned long patch, DenseVector<unsigned long> & limits,
                     DenseVector<DT_> & h,
-                    std::vector<PackedGridInfo<D2Q9> > & info_list,
+                    PackedGridInfo<D2Q9> & info,
                     DenseVector<unsigned long> * &new_h_index, DenseVector<unsigned long> * &new_h_targets)
             {
                 std::vector<unsigned long> temp_h_index;
@@ -262,15 +262,15 @@ namespace honei
                 for (unsigned long index(0) ; index < limits[0] ; ++index)
                 {
                     temp_h_targets.push_back(patch - 1);
-                    temp_h_index.push_back(index + info_list[patch].offset);
-                    temp_h_index.push_back(index + info_list[patch].offset + 1);
+                    temp_h_index.push_back(index + info.offset);
+                    temp_h_index.push_back(index + info.offset + 1);
                 }
                 // elements behind our own data
                 for (unsigned long index(limits[limits.size() - 1]) ; index < h.size() ; ++index)
                 {
                     temp_h_targets.push_back(patch + 1);
-                    temp_h_index.push_back(index + info_list[patch].offset);
-                    temp_h_index.push_back(index + info_list[patch].offset + 1);
+                    temp_h_index.push_back(index + info.offset);
+                    temp_h_index.push_back(index + info.offset + 1);
                 }
                 if (temp_h_targets.size() == 0)
                 {
@@ -313,7 +313,7 @@ namespace honei
             {
                 std::vector<unsigned long> temp_external_h;
                 std::vector<unsigned long> temp_external_h_targets;
-                for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
+                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, fringe_list.size()) ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].h_targets->size() ; ++i)
                     {
@@ -351,7 +351,7 @@ namespace honei
 
                 std::vector<unsigned long> temp_external_1;
                 std::vector<unsigned long> temp_external_targets_1;
-                for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
+                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, fringe_list.size()) ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_1->size() ; ++i)
                     {
@@ -389,7 +389,7 @@ namespace honei
 
                 std::vector<unsigned long> temp_external_2;
                 std::vector<unsigned long> temp_external_targets_2;
-                for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
+                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, fringe_list.size()) ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_2->size() ; ++i)
                     {
@@ -427,7 +427,7 @@ namespace honei
 
                 std::vector<unsigned long> temp_external_3;
                 std::vector<unsigned long> temp_external_targets_3;
-                for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
+                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, fringe_list.size()) ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_3->size() ; ++i)
                     {
@@ -465,7 +465,7 @@ namespace honei
 
                 std::vector<unsigned long> temp_external_4;
                 std::vector<unsigned long> temp_external_targets_4;
-                for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
+                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, fringe_list.size()) ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_4->size() ; ++i)
                     {
@@ -503,7 +503,7 @@ namespace honei
 
                 std::vector<unsigned long> temp_external_5;
                 std::vector<unsigned long> temp_external_targets_5;
-                for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
+                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, fringe_list.size()) ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_5->size() ; ++i)
                     {
@@ -541,7 +541,7 @@ namespace honei
 
                 std::vector<unsigned long> temp_external_6;
                 std::vector<unsigned long> temp_external_targets_6;
-                for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
+                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, fringe_list.size()) ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_6->size() ; ++i)
                     {
@@ -579,7 +579,7 @@ namespace honei
 
                 std::vector<unsigned long> temp_external_7;
                 std::vector<unsigned long> temp_external_targets_7;
-                for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
+                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, fringe_list.size()) ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_7->size() ; ++i)
                     {
@@ -617,7 +617,7 @@ namespace honei
 
                 std::vector<unsigned long> temp_external_8;
                 std::vector<unsigned long> temp_external_targets_8;
-                for (unsigned long index(0) ; index < fringe_list.size() ; ++index)
+                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, fringe_list.size()) ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_8->size() ; ++i)
                     {
@@ -791,7 +791,7 @@ namespace honei
                 }
             }
 
-            static void decompose(unsigned long parts, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
+            static void decompose_intern(std::vector<unsigned long> & part_sizes, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
                     std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list,
                     std::vector<PackedGridFringe<D2Q9> > & fringe_list, bool alloc_all = true)
             {
@@ -878,22 +878,14 @@ namespace honei
                     temp_dir_index_8.push_back((*info.dir_index_8)[i * 2 + 1]);
                 }
 
-                if (parts == 0)
-                    throw InternalError("GridPartitioner: Cannot decompose into 0 parts!");
-
-                if (data.u->size() < parts)
-                    parts = data.u->size();
-
-                unsigned long normal_size((data.u->size() / parts));
-                unsigned long first_size((data.u->size() / parts) + (data.u->size() % parts));
 
                 unsigned long end(0);
                 unsigned long start(0);
                 barriers.push_back(0);
-                for (unsigned long i(0) ; i < parts ; ++i)
+                for (unsigned long i(0) ; i < part_sizes.size() ; ++i)
                 {
-                    end += (i==0 ? first_size : normal_size);
-                    std::vector<unsigned long>::iterator start_index(std::lower_bound(temp_limits.begin(), temp_limits.end(), start));
+                    end += part_sizes.at(i);
+                    //std::vector<unsigned long>::iterator start_index(std::lower_bound(temp_limits.begin(), temp_limits.end(), start));
                     std::vector<unsigned long>::iterator end_index(std::lower_bound(temp_limits.begin(), temp_limits.end(), end));
                     //std::cout<<"start: "<<start<<" "<<*start_index<<std::endl;
                     //std::cout<<"end: "<<end<<" "<<*end_index<<std::endl;
@@ -1244,38 +1236,59 @@ namespace honei
                         (*new_data.b)[j] = (*data.b)[j + new_info.offset];
                     }
                     data_list.push_back(new_data);
-                }
 
-                // Compute fringes
-                for (unsigned long i(0) ; i < info_list.size() ; ++i)
-                {
+                    // Compute fringes
                     PackedGridFringe<D2Q9> new_fringe;
 
-                    _create_dir_fringe(i, *info_list[i].dir_index_1, *info_list[i].dir_1, info_list,
+                    _create_dir_fringe(i, *info_list[i].dir_index_1, *info_list[i].dir_1, info_list[i],
                             new_fringe.dir_index_1, new_fringe.dir_targets_1);
-                    _create_dir_fringe(i, *info_list[i].dir_index_2, *info_list[i].dir_2, info_list,
+                    _create_dir_fringe(i, *info_list[i].dir_index_2, *info_list[i].dir_2, info_list[i],
                             new_fringe.dir_index_2, new_fringe.dir_targets_2);
-                    _create_dir_fringe(i, *info_list[i].dir_index_3, *info_list[i].dir_3, info_list,
+                    _create_dir_fringe(i, *info_list[i].dir_index_3, *info_list[i].dir_3, info_list[i],
                             new_fringe.dir_index_3, new_fringe.dir_targets_3);
-                    _create_dir_fringe(i, *info_list[i].dir_index_4, *info_list[i].dir_4, info_list,
+                    _create_dir_fringe(i, *info_list[i].dir_index_4, *info_list[i].dir_4, info_list[i],
                             new_fringe.dir_index_4, new_fringe.dir_targets_4);
-                    _create_dir_fringe(i, *info_list[i].dir_index_5, *info_list[i].dir_5, info_list,
+                    _create_dir_fringe(i, *info_list[i].dir_index_5, *info_list[i].dir_5, info_list[i],
                             new_fringe.dir_index_5, new_fringe.dir_targets_5);
-                    _create_dir_fringe(i, *info_list[i].dir_index_6, *info_list[i].dir_6, info_list,
+                    _create_dir_fringe(i, *info_list[i].dir_index_6, *info_list[i].dir_6, info_list[i],
                             new_fringe.dir_index_6, new_fringe.dir_targets_6);
-                    _create_dir_fringe(i, *info_list[i].dir_index_7, *info_list[i].dir_7, info_list,
+                    _create_dir_fringe(i, *info_list[i].dir_index_7, *info_list[i].dir_7, info_list[i],
                             new_fringe.dir_index_7, new_fringe.dir_targets_7);
-                    _create_dir_fringe(i, *info_list[i].dir_index_8, *info_list[i].dir_8, info_list,
+                    _create_dir_fringe(i, *info_list[i].dir_index_8, *info_list[i].dir_8, info_list[i],
                             new_fringe.dir_index_8, new_fringe.dir_targets_8);
-                    _create_h_fringe(i, *info_list[i].limits, *data_list[i].h, info_list,
+                    _create_h_fringe(i, *info_list[i].limits, *data_list[i].h, info_list[i],
                             new_fringe.h_index, new_fringe.h_targets);
                     fringe_list.push_back(new_fringe);
                 }
+
                 // Add external_fringe data
                 for (unsigned long i(0) ; i < info_list.size() ; ++i)
                 {
                     _add_external_fringe(i, fringe_list);
                 }
+            }
+
+
+            static void decompose(unsigned long parts, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data,
+                    std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list,
+                    std::vector<PackedGridFringe<D2Q9> > & fringe_list, bool alloc_all = true)
+            {
+                if (parts == 0)
+                    throw InternalError("GridPartitioner: Cannot decompose into 0 parts!");
+
+                if (data.u->size() < parts)
+                    parts = data.u->size();
+
+                std::vector<unsigned long> part_sizes;
+                unsigned long normal_size((data.u->size() / parts));
+                unsigned long first_size((data.u->size() / parts) + (data.u->size() % parts));
+                unsigned long end(0);
+                for (unsigned long i(0) ; i < parts ; ++i)
+                {
+                    end = (i==0 ? first_size : normal_size);
+                    part_sizes.push_back(end);
+                }
+                decompose_intern(part_sizes, info, data, info_list, data_list, fringe_list, alloc_all);
             }
 
             static void recompose(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT_> * data)

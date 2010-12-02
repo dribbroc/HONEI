@@ -142,7 +142,18 @@ namespace honei
                 std::vector<PackedGridInfo<D2Q9> > info_list;
                 std::vector<PackedGridData<D2Q9, DataType_> > data_list;
                 std::vector<PackedGridFringe<D2Q9> > fringe_list;
-                GridPartitioner<D2Q9, DataType_>::decompose(_numprocs, info_global, data_global, info_list, data_list, fringe_list, false);
+                {
+                    std::vector<unsigned long> patch_sizes;
+                    unsigned long normal_size((data_global.u->size() / _numprocs));
+                    unsigned long first_size((data_global.u->size() / _numprocs) + (data_global.u->size() % _numprocs));
+                    unsigned long end(0);
+                    for (unsigned long i(0) ; i < _numprocs ; ++i)
+                    {
+                        end += (i==0 ? first_size : normal_size);
+                        patch_sizes.push_back(end);
+                    }
+                    GridPartitioner<D2Q9, DataType_>::decompose_intern(patch_sizes, info_global, data_global, info_list, data_list, fringe_list, false);
+                }
 
                 PackedGridData<D2Q9, DataType_> data_lokal(data_list.at(0));
                 PackedGridInfo<D2Q9> info_lokal(info_list.at(0));
