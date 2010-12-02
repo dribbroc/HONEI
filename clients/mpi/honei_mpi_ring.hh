@@ -49,6 +49,7 @@ namespace honei
     {
         private:
             int _numprocs;
+            int _nodes;
             int _myid;
             int _mycartid;
             int _masterid;
@@ -86,12 +87,14 @@ namespace honei
 
                 //create topology information
                 tag1_part_fraction.push_back(1);
-                /*tag1_part_fraction.push_back(0.01);
-                tag1_part_fraction.push_back(0.01);
-                tag1_part_fraction.push_back(0.01);
-                tag1_part_fraction.push_back(0.01);
-                tag2_part_fraction.push_back(0.48);
-                tag2_part_fraction.push_back(0.48);*/
+                /*tag1_part_fraction.push_back(0.025);
+                tag1_part_fraction.push_back(0.025);
+                tag1_part_fraction.push_back(0.025);
+                tag1_part_fraction.push_back(0.025);
+                tag2_part_fraction.push_back(0.45);
+                tag2_part_fraction.push_back(0.45);*/
+
+                _nodes = _numprocs / (tag1_part_fraction.size() + tag2_part_fraction.size());
 
                 // create new communicator
                 int dims[1];
@@ -133,7 +136,7 @@ namespace honei
         private:
             void _master(unsigned long gridsize_x, unsigned long gridsize_y, unsigned long timesteps)
             {
-                std::cout<<"Ring LBM Solver with " << _numprocs << " nodes:" << std::endl;
+                std::cout<<"Ring LBM Solver with " << _numprocs << " procs on " << _nodes << " nodes." << std::endl;
                 if (_file_output)
                     std::cout<<"with file output activated"<<std::endl<<std::endl;
                 else
@@ -158,10 +161,9 @@ namespace honei
                         throw InternalError("numprocs / part_fraction missmatch!");
 
                     std::vector<unsigned long> patch_sizes;
-                    unsigned long nodes(_numprocs / (tag1_part_fraction.size() + tag2_part_fraction.size()));
-                    unsigned long size_per_node(data_global.u->size() / nodes);
+                    unsigned long size_per_node(data_global.u->size() / _nodes);
 
-                    for (unsigned long node(0) ; node < nodes ; ++node)
+                    for (unsigned long node(0) ; node < _nodes ; ++node)
                     {
                         for (unsigned long i(0) ; i < tag1_part_fraction.size() ; ++i)
                             patch_sizes.push_back(size_per_node * tag1_part_fraction.at(i));
@@ -172,7 +174,7 @@ namespace honei
                             whole_size += patch_sizes.at(i);
                         patch_sizes.back() += size_per_node - whole_size;
                     }
-                    patch_sizes.back() += data_global.u->size() % nodes;
+                    patch_sizes.back() += data_global.u->size() % _nodes;
                     GridPartitioner<D2Q9, DataType_>::decompose_intern(patch_sizes, info_global, data_global, info_list, data_list, fringe_list, false);
                 }
 
@@ -204,7 +206,7 @@ namespace honei
 
 
                 SolverLBMGridBase * solver(NULL);
-                if (tag2_part_fraction.size() == 0 || _mycartid < tag1_part_fraction.size() % (tag1_part_fraction.size() + tag2_part_fraction.size()))
+                if (tag2_part_fraction.size() == 0 || _mycartid % (tag1_part_fraction.size() + tag2_part_fraction.size()) < tag1_part_fraction.size())
                 {
                     _solver_tag_value = Tag1_::tag_value;
                     if (_solver_tag_value == tags::tv_gpu_cuda)
@@ -365,7 +367,7 @@ namespace honei
                 _recv_fringe(fringe);
 
                 SolverLBMGridBase * solver(NULL);
-                if (tag2_part_fraction.size() == 0 || _mycartid < tag1_part_fraction.size() % (tag1_part_fraction.size() + tag2_part_fraction.size()))
+                if (tag2_part_fraction.size() == 0 || _mycartid % (tag1_part_fraction.size() + tag2_part_fraction.size()) < tag1_part_fraction.size())
                 {
                     _solver_tag_value = Tag1_::tag_value;
                     if (_solver_tag_value == tags::tv_gpu_cuda)
