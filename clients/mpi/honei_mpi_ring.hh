@@ -61,6 +61,9 @@ namespace honei
             tags::TagValue _solver_tag_value;
             std::vector<double> tag1_part_fraction;
             std::vector<double> tag2_part_fraction;
+            double _sync_time_up;
+            double _sync_time_down;
+            std::string _device_name;
 
         public:
             MPIRingSolver(int argc, char **argv)
@@ -69,6 +72,8 @@ namespace honei
                 mpi::mpi_comm_size(&_numprocs);
                 mpi::mpi_comm_rank(&_myid);
                 _gpu_device = 0;
+                _sync_time_up = 0;
+                _sync_time_down = 0;
                 if (argc < 4 || argc > 5)
                 {
                     if(_myid == 0) std::cout<<"Usage: honei-mpi-ring grid_x grid_y timesteps [base_file_name]"<<std::endl;
@@ -86,13 +91,13 @@ namespace honei
                 }
 
                 //create topology information
-                tag1_part_fraction.push_back(1);
-                /*tag1_part_fraction.push_back(0.025);
-                tag1_part_fraction.push_back(0.025);
-                tag1_part_fraction.push_back(0.025);
-                tag1_part_fraction.push_back(0.025);
-                tag2_part_fraction.push_back(0.45);
-                tag2_part_fraction.push_back(0.45);*/
+                //tag1_part_fraction.push_back(1);
+                tag1_part_fraction.push_back(0.02);
+                tag1_part_fraction.push_back(0.02);
+                tag1_part_fraction.push_back(0.02);
+                tag1_part_fraction.push_back(0.02);
+                tag2_part_fraction.push_back(0.46);
+                tag2_part_fraction.push_back(0.46);
 
                 _nodes = _numprocs / (tag1_part_fraction.size() + tag2_part_fraction.size());
 
@@ -208,6 +213,7 @@ namespace honei
                 SolverLBMGridBase * solver(NULL);
                 if (tag2_part_fraction.size() == 0 || _mycartid % (tag1_part_fraction.size() + tag2_part_fraction.size()) < tag1_part_fraction.size())
                 {
+                    _device_name = Tag1_::name;
                     _solver_tag_value = Tag1_::tag_value;
                     if (_solver_tag_value == tags::tv_gpu_cuda)
                         cuda::GPUPool::instance()->single_start(_mycartid % (tag1_part_fraction.size() + tag2_part_fraction.size()));
@@ -215,6 +221,7 @@ namespace honei
                 }
                 else
                 {
+                    _device_name = Tag2_::name;
                     _solver_tag_value = Tag2_::tag_value;
                     if (_solver_tag_value == tags::tv_gpu_cuda)
                         cuda::GPUPool::instance()->single_start(_mycartid % (tag1_part_fraction.size() + tag2_part_fraction.size()) - tag1_part_fraction.size());
@@ -272,11 +279,13 @@ namespace honei
                     //MPI_Wait(&request, MPI_STATUS_IGNORE);
                     //MPI_File_close(&fh);
                 }
+                MPI_Barrier(MPI_COMM_WORLD);
                 bt.take();
                 solver->do_postprocessing();
-                MPI_Barrier(MPI_COMM_WORLD);
                 std::cout<<"Timesteps: " << timesteps << " TOE: "<<bt.total() - at.total()<<std::endl;
                 std::cout<<"MLUPS: "<< (double(grid_global.h->rows()) * double(grid_global.h->columns()) * double(timesteps)) / (1e6 * (bt.total() - at.total())) <<std::endl;
+
+                std::cout<<_mycartid << " (" << _device_name << "): up "<<_sync_time_up<<" down "<<_sync_time_down<<std::endl;
 
 
                 if (_file_output)
@@ -369,6 +378,7 @@ namespace honei
                 SolverLBMGridBase * solver(NULL);
                 if (tag2_part_fraction.size() == 0 || _mycartid % (tag1_part_fraction.size() + tag2_part_fraction.size()) < tag1_part_fraction.size())
                 {
+                    _device_name = Tag1_::name;
                     _solver_tag_value = Tag1_::tag_value;
                     if (_solver_tag_value == tags::tv_gpu_cuda)
                         cuda::GPUPool::instance()->single_start(_mycartid % (tag1_part_fraction.size() + tag2_part_fraction.size()));
@@ -376,6 +386,7 @@ namespace honei
                 }
                 else
                 {
+                    _device_name = Tag2_::name;
                     _solver_tag_value = Tag2_::tag_value;
                     if (_solver_tag_value == tags::tv_gpu_cuda)
                         cuda::GPUPool::instance()->single_start(_mycartid % (tag1_part_fraction.size() + tag2_part_fraction.size()) - tag1_part_fraction.size());
@@ -412,8 +423,9 @@ namespace honei
                     //MPI_Wait(&request, MPI_STATUS_IGNORE);
                     //MPI_File_close(&fh);
                 }
-                solver->do_postprocessing();
                 MPI_Barrier(MPI_COMM_WORLD);
+                solver->do_postprocessing();
+                std::cout<<_mycartid << " (" << _device_name << "): up "<<_sync_time_up<<" down "<<_sync_time_down<<std::endl;
                 //_send_full_sync(_masterid, data);
             }
 
@@ -1307,7 +1319,8 @@ namespace honei
                     tickets.wait();
                 }
 
-                std::vector<MPI_Request> requests;
+                std::vector<MPI_Request> requests_up;
+                std::vector<MPI_Request> requests_down;
                 unsigned long offset(info.offset);
                 int source_up_recv, source_down_recv, target_up_send, target_down_send;
                 unsigned long up_size_recv(0);
@@ -1371,8 +1384,8 @@ namespace honei
                 DataType_ down_buffer_recv[down_size_recv];
                 DataType_ up_buffer_recv[up_size_recv];
 
-                if (up_size_recv > 0) requests.push_back(mpi::mpi_irecv(up_buffer_recv, up_size_recv, source_up_recv, source_up_recv, _comm_cart));
-                if (down_size_recv > 0) requests.push_back(mpi::mpi_irecv(down_buffer_recv, down_size_recv, source_down_recv, source_down_recv, _comm_cart));
+                if (up_size_recv > 0) requests_up.push_back(mpi::mpi_irecv(up_buffer_recv, up_size_recv, source_up_recv, source_up_recv, _comm_cart));
+                if (down_size_recv > 0) requests_down.push_back(mpi::mpi_irecv(down_buffer_recv, down_size_recv, source_down_recv, source_down_recv, _comm_cart));
 
 
                 unsigned long f1_offset_send((*fringe.dir_index_1)[0]);
@@ -1441,7 +1454,7 @@ namespace honei
                     TypeTraits<DataType_>::copy(data.f_temp_5->elements() + f5_offset_send - offset, up_buffer_send + temp_size, f5_size_send);
                     temp_size += f5_size_send;
                     TypeTraits<DataType_>::copy(data.h->elements() + h_up_offset_send - offset, up_buffer_send + temp_size, h_up_size_send);
-                    requests.push_back(mpi::mpi_isend(up_buffer_send, up_size_send, target_up_send, _mycartid, _comm_cart));
+                    requests_up.push_back(mpi::mpi_isend(up_buffer_send, up_size_send, target_up_send, _mycartid, _comm_cart));
                 }
 
                 if (down_size_send > 0)
@@ -1456,11 +1469,31 @@ namespace honei
                     TypeTraits<DataType_>::copy(data.f_temp_8->elements() + f8_offset_send - offset, down_buffer_send + temp_size, f8_size_send);
                     temp_size += f8_size_send;
                     TypeTraits<DataType_>::copy(data.h->elements() + h_down_offset_send - offset, down_buffer_send + temp_size, h_down_size_send);
-                    requests.push_back(mpi::mpi_isend(down_buffer_send, down_size_send, target_down_send, _mycartid, _comm_cart));
+                    requests_down.push_back(mpi::mpi_isend(down_buffer_send, down_size_send, target_down_send, _mycartid, _comm_cart));
                 }
 
 
-                MPI_Waitall(requests.size(), &requests[0], MPI_STATUSES_IGNORE);
+                TimeStamp ca, cu, cd;
+                int up_fin(false);
+                int down_fin(false);
+                ca.take();
+                while (!up_fin || !down_fin)
+                {
+                    if (!down_fin)
+                    {
+                        MPI_Testall(requests_down.size(),  &requests_down[0], &down_fin, MPI_STATUSES_IGNORE);
+                        cd.take();
+                    }
+                    if (!up_fin)
+                    {
+                        MPI_Testall(requests_up.size(),  &requests_up[0], &up_fin, MPI_STATUSES_IGNORE);
+                        cu.take();
+                    }
+                }
+                //MPI_Waitall(requests_up.size(), &requests_up[0], MPI_STATUSES_IGNORE);
+                //MPI_Waitall(requests_down.size(), &requests_down[0], MPI_STATUSES_IGNORE);
+                _sync_time_up+=cu.total() - ca.total();
+                _sync_time_down+=cd.total() - ca.total();
 
                 if (up_size_recv > 0)
                 {
