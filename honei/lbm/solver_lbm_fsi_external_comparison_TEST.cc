@@ -28,6 +28,7 @@
 #include <honei/lbm/grid_packer.hh>
 #include <honei/la/difference.hh>
 #include <honei/la/sum.hh>
+#include <honei/la/scale.hh>
 
 using namespace honei;
 using namespace tests;
@@ -35,7 +36,7 @@ using namespace std;
 using namespace output_types;
 using namespace lbm::lbm_lattice_types;
 
-//#define SOLVER_VERBOSE 1
+#define SOLVER_VERBOSE 1
 #define SOLVER_POSTPROCESSING 1
 template <typename Tag_, typename DataType_>
 class SolverLBMFSIExternalComparisonTest_CDUB :
@@ -486,18 +487,36 @@ class SolverLBMFSIExternalComparisonTest_Malpasset :
     public TaggedTest<Tag_>
 {
     private:
-        std::string _filename;
         unsigned long _max_timesteps;
         DataType_ _dt, _tau;
+
+        /*DenseMatrix<DataType_> read_file(const std::string s, unsigned int & width, unsigned int & height, float & dx)
+        {
+            ifstream fin(s.c_str());
+            float tmp, no_data_value;
+            char buffer[255];
+            float* data;
+            fin >> buffer_1 >> width;
+            fin >> buffer_1 >> height;
+            fin >> buffer_1 >> tmp;
+            fin >> buffer_1 >> tmp;
+            fin >> buffer_1 >> dx;
+            fin >> buffer_1 >> no_data_value;
+            data = new float[width*height];
+            for (unsigned int i = 0; i < width*height; i++)
+                fin >> data[i];
+            fin.close();
+
+            DenseMatrix<DataType_> result //BLAAAAAAAAAAAAAAAAAAAA
+        }*/
+
     public:
         SolverLBMFSIExternalComparisonTest_Malpasset(const std::string & type,
-                                                const std::string & fn,
                                                 unsigned long max_ts,
                                                 DataType_ dt,
                                                 DataType_ tau) :
             TaggedTest<Tag_>("solver_lbm_fsi_external_comparison_test<" + type + ">")
         {
-            _filename = fn;
             _max_timesteps =max_ts;
             _dt = dt;
             _tau = tau;
@@ -505,32 +524,159 @@ class SolverLBMFSIExternalComparisonTest_Malpasset :
 
         virtual void run() const
         {
-            ifstream fin(_filename.c_str());
+            float* data_1;
+            float* data_2;
+            float* data_3;
+
+            unsigned int width_g, height_g;
+            float dx_g;
+
+            {
+            std::string file_1("MALP_ZB_dx15hm.dem");
+            ifstream fin_1(file_1.c_str());
             unsigned int width, height;
-            float tmp;
             float dx;
+            float tmp;
             float no_data_value;
-            char buffer[255];
-            float* data;
-            fin >> buffer >> width;
-            fin >> buffer >> height;
-            fin >> buffer >> tmp;
-            fin >> buffer >> tmp;
-            fin >> buffer >> dx;
-            fin >> buffer >> no_data_value;
-            data = new float[width*height];
-            for (int i = 0; i < width*height; i++)
-                fin >> data[i];
-            fin.close();
+            char buffer_1[255];
+            fin_1 >> buffer_1 >> width;
+            fin_1 >> buffer_1 >> height;
+            fin_1 >> buffer_1 >> tmp;
+            fin_1 >> buffer_1 >> tmp;
+            fin_1 >> buffer_1 >> dx;
+            fin_1 >> buffer_1 >> no_data_value;
+            data_1 = new float[width*height];
+            for (unsigned int i = 0; i < width*height; i++)
+                fin_1 >> data_1[i];
+            fin_1.close();
 
-            DenseMatrix<DataType_> target((unsigned long)height, (unsigned long)width, DataType_(0));
-            for (unsigned long i = 0; i < height; ++i)
-                for (unsigned long j = 0; j < width; ++j)
-                target[i][j] = data[i * width + j];
+            width_g = width;
+            height_g = height;
+            dx_g = dx;
+            }
 
-            PostProcessing<GNUPLOT>::value(target, 1, width, height, 2);
+            {
+            std::string file_2("MALP_ZB_dx15hm_new.dem");
+            ifstream fin_2(file_2.c_str());
+            unsigned int width, height;
+            float dx;
+            float tmp;
+            float no_data_value;
+            char buffer_2[255];
+            fin_2 >> buffer_2 >> width;
+            fin_2 >> buffer_2 >> height;
+            fin_2 >> buffer_2 >> tmp;
+            fin_2 >> buffer_2 >> tmp;
+            fin_2 >> buffer_2 >> dx;
+            fin_2 >> buffer_2 >> no_data_value;
+            data_2 = new float[width*height];
+            for (unsigned int i = 0; i < width*height; i++)
+                fin_2 >> data_2[i];
+            fin_2.close();
+            }
 
+            {
+            std::string file_3("MALP_ZB_dx15wm.dem");
+            ifstream fin_3(file_3.c_str());
+            unsigned int width, height;
+            float dx;
+            float tmp;
+            float no_data_value;
+            char buffer_3[255];
+            fin_3 >> buffer_3 >> width;
+            fin_3 >> buffer_3 >> height;
+            fin_3 >> buffer_3 >> tmp;
+            fin_3 >> buffer_3 >> tmp;
+            fin_3 >> buffer_3 >> dx;
+            fin_3 >> buffer_3 >> no_data_value;
+            data_3 = new float[width*height];
+            for (unsigned int i = 0; i < width*height; i++)
+                fin_3 >> data_3[i];
+            fin_3.close();
+            }
+
+            DenseMatrix<DataType_> h((unsigned long)height_g, (unsigned long)width_g, DataType_(0));
+            DenseMatrix<DataType_> u((unsigned long)height_g, (unsigned long)width_g, DataType_(0));
+            DenseMatrix<DataType_> v((unsigned long)height_g, (unsigned long)width_g, DataType_(0));
+            DenseMatrix<DataType_> b((unsigned long)height_g, (unsigned long)width_g, DataType_(0));
+            DenseMatrix<bool> o((unsigned long)height_g, (unsigned long)width_g, DataType_(0));
+            DenseMatrix<bool> s((unsigned long)height_g, (unsigned long)width_g, DataType_(0));
+            DenseMatrix<DataType_> h_b((unsigned long)height_g, (unsigned long)width_g, DataType_(0));
+
+            DenseMatrix<DataType_> pre_s((unsigned long)height_g, (unsigned long)width_g, DataType_(0));
+
+            for (unsigned long i = 0; i < height_g; ++i)
+            {
+                for (unsigned long j = 0; j < width_g; ++j)
+                {
+                    pre_s[i][j] = data_1[i * width_g + j];
+                    s[i][j] = data_1[i * width_g + j] == 110 ? true : false;
+                    b[i][j] = data_2[i * width_g + j];
+                    h_b[i][j] = data_3[i * width_g + j];
+
+                    h[i][j] = h_b[i][j] - b[i][j];
+                }
+            }
+            PostProcessing<GNUPLOT>::value(b, 1, b.columns(), b.rows(), 0);
+
+            DenseMatrix<DataType_> twenty((unsigned long)height_g, (unsigned long)width_g, DataType_(20));
+            Sum<Tag_>::value(b ,twenty);
+            Sum<Tag_>::value(h ,twenty);
+
+            Scale<Tag_>::value(b, DataType_(1./1000));
+            Scale<Tag_>::value(h, DataType_(1./1000));
+            dx_g /= 1000;
+
+            Grid<D2Q9, DataType_> grid;
+            grid.h = &h;
+            grid.u = &u;
+            grid.v = &v;
+            grid.b = &b;
+            grid.obstacles = &o;
+
+            grid.d_x = dx_g;
+            grid.d_y = dx_g;
+            grid.d_t = _dt;
+            grid.tau = _tau;
+
+            PackedGridData<D2Q9, DataType_>  data;
+            PackedSolidData<D2Q9, DataType_>  solids;
+            PackedGridInfo<D2Q9> info;
+
+            GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
+            GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::cuda_pack(info, data);
+            GridPackerFSI<D2Q9, NOSLIP, DataType_>::allocate(data, solids);
+
+            DenseMatrix<bool> line(s.copy());
+            DenseMatrix<bool> bound(s.copy());
+            DenseMatrix<bool> stf(s.copy());
+            GridPackerFSI<D2Q9, NOSLIP, DataType_>::pack(grid, data, solids, line, bound, stf, s, *grid.obstacles);
+
+            SolverLBMFSI<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, &solids, grid.d_x, grid.d_y, grid.d_t, grid.tau);
+
+            solids.current_u = DataType_(0);
+            solids.current_v = DataType_(0);
+            solver.do_preprocessing();
+
+            for(unsigned long i(0); i < _max_timesteps; ++i)
+            {
+#ifdef SOLVER_VERBOSE
+                std::cout<<"Timestep: " << i << "/" << _max_timesteps << std::endl;
+#endif
+                solver.solve(0ul);
+#ifdef SOLVER_POSTPROCESSING
+                solver.do_postprocessing();
+                GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
+                //PostProcessing<GNUPLOT>::value(*grid.h, _max_timesteps - 1 , h.columns(), h.rows(), i);
+                PostProcessing<GNUPLOT>::value(*grid.h, 1, h.columns(), h.rows(), i);
+#endif
+            }
+            solver.do_postprocessing();
+            GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
+
+            DenseMatrix<DataType_> result(grid.h->copy());
+            Sum<Tag_>::value(result, b);
+            //std::cout << result << std::endl;
         }
-
 };
-SolverLBMFSIExternalComparisonTest_Malpasset<tags::CPU, float> malpasset_cpu_float("float", "MALP_ZB_dx15wm.dem", 100, 0.01, 0.5);
+SolverLBMFSIExternalComparisonTest_Malpasset<tags::CPU, float> malpasset_cpu_float("float", 10, 0.01, 1.5);
