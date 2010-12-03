@@ -531,7 +531,6 @@ AC_OUTPUT(
 	clients/Makefile
 	clients/config/Makefile
 	clients/io_tools/Makefile
-	clients/spai/Makefile
 	clients/fortran/Makefile
 	clients/mpi/Makefile
 	clients/swe/Makefile
