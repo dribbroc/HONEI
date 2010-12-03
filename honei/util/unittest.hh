@@ -410,8 +410,8 @@ namespace tests
         try { \
             BaseTest::WithinEpsCalculator calc(a, b, eps); \
             check(__PRETTY_FUNCTION__, __FILE__, __LINE__, calc.result,  \
-                this->_id + "\n" + "Expected '|" #a " - " #b \
-                "|' < '" + stringify(eps) + "' but was '" + calc.s_diff +"'"); \
+                this->_id + "\n" + "Expected '|" #a "(" + stringify(a) + ") - " #b \
+                "(" + stringify(b) + ")|' < '" + stringify(eps) + "' but was '" + calc.s_diff +"'"); \
         } catch (const TestFailedException & test_e) { \
             throw;  \
         } catch (const std::exception & test_e) { \
