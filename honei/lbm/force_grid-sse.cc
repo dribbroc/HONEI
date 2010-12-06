@@ -253,16 +253,16 @@ template void ForceGrid<tags::CPU::SSE, lbm_applications::LABSWE, lbm_force::CEN
 
 
 
-void force_friction(const unsigned long * dir_index, unsigned long dir_index_size, double * f_temp, const double * h,
+void force_friction(const unsigned long start, const unsigned long end, double * f_temp, const double * h,
         const double * u, const double * v, double force_multiplier, double dist, double manning_const_sq)
 {
-    sse::force_friction(dir_index, dir_index_size, f_temp, h, u, v, force_multiplier, dist, manning_const_sq);
+    sse::force_friction(start, end, f_temp, h, u, v, force_multiplier, dist, manning_const_sq);
 }
 
-inline void force_friction(const unsigned long * dir_index, unsigned long dir_index_size, float * f_temp, const float * h,
+inline void force_friction(const unsigned long start, const unsigned long end, float * f_temp, const float * h,
         const float * u, const float * v, float force_multiplier, float dist, float manning_const_sq)
 {
-    sse::force_friction(dir_index, dir_index_size, f_temp, h, u, v, force_multiplier, dist, manning_const_sq);
+    sse::force_friction(start, end, f_temp, h, u, v, force_multiplier, dist, manning_const_sq);
 }
 
 template <typename DT_>
@@ -271,23 +271,7 @@ void ForceGrid<tags::CPU::SSE, lbm_applications::LABSWE, lbm_force::CENTRED, lbm
 {
     CONTEXT("When computing LABSWE force term: FRICTION SSE");
 
-    info.dir_index_1->lock(lm_read_only);
-    info.dir_index_2->lock(lm_read_only);
-    info.dir_index_3->lock(lm_read_only);
-    info.dir_index_4->lock(lm_read_only);
-    info.dir_index_5->lock(lm_read_only);
-    info.dir_index_6->lock(lm_read_only);
-    info.dir_index_7->lock(lm_read_only);
-    info.dir_index_8->lock(lm_read_only);
-
-    info.dir_1->lock(lm_read_only);
-    info.dir_2->lock(lm_read_only);
-    info.dir_3->lock(lm_read_only);
-    info.dir_4->lock(lm_read_only);
-    info.dir_5->lock(lm_read_only);
-    info.dir_6->lock(lm_read_only);
-    info.dir_7->lock(lm_read_only);
-    info.dir_8->lock(lm_read_only);
+    info.limits->lock(lm_read_only);
 
     data.h->lock(lm_read_only);
     data.b->lock(lm_read_only);
@@ -310,80 +294,63 @@ void ForceGrid<tags::CPU::SSE, lbm_applications::LABSWE, lbm_force::CENTRED, lbm
 
     //-----------alpha = 1 ----------------------------------------------------------------------------------------------
 
-    force_friction(info.dir_index_1->elements(), info.dir_index_1->size(), data.f_temp_1->elements(), data.h->elements(),
+    force_friction((*info.limits)[0], (*info.limits)[info.limits->size() - 1], data.f_temp_1->elements(), data.h->elements(),
             data.u->elements(), data.v->elements(), force_multiplier, (*data.distribution_x)[1], manning_const_sq);
 
 
     //-----------alpha = 2 ----------------------------------------------------------------------------------------------
 
-    force_friction(info.dir_index_2->elements(), info.dir_index_2->size(), data.f_temp_2->elements(), data.h->elements(),
+    force_friction((*info.limits)[0], (*info.limits)[info.limits->size() - 1], data.f_temp_2->elements(), data.h->elements(),
             data.u->elements(), data.v->elements(), force_multiplier, (*data.distribution_x)[2], manning_const_sq);
 
-    force_friction(info.dir_index_2->elements(), info.dir_index_2->size(), data.f_temp_2->elements(), data.h->elements(),
+    force_friction((*info.limits)[0], (*info.limits)[info.limits->size() - 1], data.f_temp_2->elements(), data.h->elements(),
             data.v->elements(), data.u->elements(), force_multiplier, (*data.distribution_y)[2], manning_const_sq);
 
 
     //-----------alpha = 3 ----------------------------------------------------------------------------------------------
 
-    force_friction(info.dir_index_3->elements(), info.dir_index_3->size(), data.f_temp_3->elements(), data.h->elements(),
+    force_friction((*info.limits)[0], (*info.limits)[info.limits->size() - 1], data.f_temp_3->elements(), data.h->elements(),
             data.v->elements(), data.u->elements(), force_multiplier, (*data.distribution_y)[3], manning_const_sq);
 
     //-----------alpha = 4 ----------------------------------------------------------------------------------------------
 
-    force_friction(info.dir_index_4->elements(), info.dir_index_4->size(), data.f_temp_4->elements(), data.h->elements(),
+    force_friction((*info.limits)[0], (*info.limits)[info.limits->size() - 1], data.f_temp_4->elements(), data.h->elements(),
             data.u->elements(), data.v->elements(), force_multiplier, (*data.distribution_x)[4], manning_const_sq);
 
-    force_friction(info.dir_index_4->elements(), info.dir_index_4->size(), data.f_temp_4->elements(), data.h->elements(),
+    force_friction((*info.limits)[0], (*info.limits)[info.limits->size() - 1], data.f_temp_4->elements(), data.h->elements(),
             data.v->elements(), data.u->elements(), force_multiplier, (*data.distribution_y)[4], manning_const_sq);
 
 
     //-----------alpha = 5 ----------------------------------------------------------------------------------------------
 
-    force_friction(info.dir_index_5->elements(), info.dir_index_5->size(), data.f_temp_5->elements(), data.h->elements(),
+    force_friction((*info.limits)[0], (*info.limits)[info.limits->size() - 1], data.f_temp_5->elements(), data.h->elements(),
             data.u->elements(), data.v->elements(), force_multiplier, (*data.distribution_x)[5], manning_const_sq);
 
     //-----------alpha = 6 ----------------------------------------------------------------------------------------------
 
-    force_friction(info.dir_index_6->elements(), info.dir_index_6->size(), data.f_temp_6->elements(), data.h->elements(),
+    force_friction((*info.limits)[0], (*info.limits)[info.limits->size() - 1], data.f_temp_6->elements(), data.h->elements(),
             data.u->elements(), data.v->elements(), force_multiplier, (*data.distribution_x)[6], manning_const_sq);
 
-    force_friction(info.dir_index_6->elements(), info.dir_index_6->size(), data.f_temp_6->elements(), data.h->elements(),
+    force_friction((*info.limits)[0], (*info.limits)[info.limits->size() - 1], data.f_temp_6->elements(), data.h->elements(),
             data.v->elements(), data.u->elements(), force_multiplier, (*data.distribution_y)[6], manning_const_sq);
 
     //-----------alpha = 7 ----------------------------------------------------------------------------------------------
 
-    force_friction(info.dir_index_7->elements(), info.dir_index_7->size(), data.f_temp_7->elements(), data.h->elements(),
+    force_friction((*info.limits)[0], (*info.limits)[info.limits->size() - 1], data.f_temp_7->elements(), data.h->elements(),
             data.v->elements(), data.u->elements(), force_multiplier, (*data.distribution_y)[7], manning_const_sq);
 
 
     //-----------alpha = 8 ----------------------------------------------------------------------------------------------
 
-    force_friction(info.dir_index_8->elements(), info.dir_index_8->size(), data.f_temp_8->elements(), data.h->elements(),
+    force_friction((*info.limits)[0], (*info.limits)[info.limits->size() - 1], data.f_temp_8->elements(), data.h->elements(),
             data.u->elements(), data.v->elements(), force_multiplier, (*data.distribution_x)[8], manning_const_sq);
 
-    force_friction(info.dir_index_8->elements(), info.dir_index_8->size(), data.f_temp_8->elements(), data.h->elements(),
+    force_friction((*info.limits)[0], (*info.limits)[info.limits->size() - 1], data.f_temp_8->elements(), data.h->elements(),
             data.v->elements(), data.u->elements(), force_multiplier, (*data.distribution_y)[8], manning_const_sq);
 
 
 
-
-    info.dir_index_1->unlock(lm_read_only);
-    info.dir_index_2->unlock(lm_read_only);
-    info.dir_index_3->unlock(lm_read_only);
-    info.dir_index_4->unlock(lm_read_only);
-    info.dir_index_5->unlock(lm_read_only);
-    info.dir_index_6->unlock(lm_read_only);
-    info.dir_index_7->unlock(lm_read_only);
-    info.dir_index_8->unlock(lm_read_only);
-
-    info.dir_1->unlock(lm_read_only);
-    info.dir_2->unlock(lm_read_only);
-    info.dir_3->unlock(lm_read_only);
-    info.dir_4->unlock(lm_read_only);
-    info.dir_5->unlock(lm_read_only);
-    info.dir_6->unlock(lm_read_only);
-    info.dir_7->unlock(lm_read_only);
-    info.dir_8->unlock(lm_read_only);
+    info.limits->unlock(lm_read_only);
 
     data.h->unlock(lm_read_only);
     data.b->unlock(lm_read_only);

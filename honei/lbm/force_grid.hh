@@ -580,23 +580,7 @@ namespace honei
             {
                 CONTEXT("When computing LABSWE force term:");
 
-                info.dir_index_1->lock(lm_read_only);
-                info.dir_index_2->lock(lm_read_only);
-                info.dir_index_3->lock(lm_read_only);
-                info.dir_index_4->lock(lm_read_only);
-                info.dir_index_5->lock(lm_read_only);
-                info.dir_index_6->lock(lm_read_only);
-                info.dir_index_7->lock(lm_read_only);
-                info.dir_index_8->lock(lm_read_only);
-
-                info.dir_1->lock(lm_read_only);
-                info.dir_2->lock(lm_read_only);
-                info.dir_3->lock(lm_read_only);
-                info.dir_4->lock(lm_read_only);
-                info.dir_5->lock(lm_read_only);
-                info.dir_6->lock(lm_read_only);
-                info.dir_7->lock(lm_read_only);
-                info.dir_8->lock(lm_read_only);
+                info.limits->lock(lm_read_only);
 
                 data.h->lock(lm_read_only);
                 data.b->lock(lm_read_only);
@@ -618,185 +602,133 @@ namespace honei
 
                 //-----------alpha = 1 ----------------------------------------------------------------------------------------------
 
-                for (unsigned long begin(0), half(0) ; begin < info.dir_index_1->size() - 1; begin+=2, ++half)
+                for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                 {
-                    for (unsigned long i((*info.dir_index_1)[begin]), offset(0) ; i < (*info.dir_index_1)[begin + 1] ; ++i, ++offset)
+                    if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()) )
                     {
-                        if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()) )
-                        {
-                            (*data.f_temp_1)[i] -= force_multiplier * (*data.distribution_x)[1] * (manning_const * manning_const) *
-                                (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
-                        }
+                        (*data.f_temp_1)[i] -= force_multiplier * (*data.distribution_x)[1] * (manning_const * manning_const) *
+                            (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                     }
                 }
 
 
                 //-----------alpha = 2 ----------------------------------------------------------------------------------------------
 
-                for (unsigned long begin(0), half(0) ; begin < info.dir_index_2->size() - 1; begin+=2, ++half)
+                for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                 {
-                    for (unsigned long i((*info.dir_index_2)[begin]), offset(0) ; i < (*info.dir_index_2)[begin + 1] ; ++i, ++offset)
+                    if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
                     {
-                        if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
-                        {
-                            (*data.f_temp_2)[i] -= force_multiplier * (*data.distribution_x)[2] * (manning_const * manning_const) *
-                                (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
-                        }
+                        (*data.f_temp_2)[i] -= force_multiplier * (*data.distribution_x)[2] * (manning_const * manning_const) *
+                            (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                     }
                 }
 
-                for (unsigned long begin(0), half(0) ; begin < info.dir_index_2->size() - 1; begin+=2, ++half)
+                for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                 {
-                    for (unsigned long i((*info.dir_index_2)[begin]), offset(0) ; i < (*info.dir_index_2)[begin + 1] ; ++i, ++offset)
+                    if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
                     {
-                        if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
-                        {
-                            (*data.f_temp_2)[i] -= force_multiplier * (*data.distribution_y)[2] * (manning_const * manning_const) *
-                                (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
-                        }
+                        (*data.f_temp_2)[i] -= force_multiplier * (*data.distribution_y)[2] * (manning_const * manning_const) *
+                            (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                     }
                 }
 
 
                 //-----------alpha = 3 ----------------------------------------------------------------------------------------------
 
-                for (unsigned long begin(0), half(0) ; begin < info.dir_index_3->size() - 1; begin+=2, ++half)
+                for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                 {
-                    for (unsigned long i((*info.dir_index_3)[begin]), offset(0) ; i < (*info.dir_index_3)[begin + 1] ; ++i, ++offset)
+                    if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
                     {
-                        if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
-                        {
-                            (*data.f_temp_3)[i] -= force_multiplier * (*data.distribution_y)[3] * (manning_const * manning_const) *
-                                (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
-                        }
+                        (*data.f_temp_3)[i] -= force_multiplier * (*data.distribution_y)[3] * (manning_const * manning_const) *
+                            (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                     }
                 }
 
                 //-----------alpha = 4 ----------------------------------------------------------------------------------------------
 
-                for (unsigned long begin(0), half(0) ; begin < info.dir_index_4->size() - 1; begin+=2, ++half)
+                for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                 {
-                    for (unsigned long i((*info.dir_index_4)[begin]), offset(0) ; i < (*info.dir_index_4)[begin + 1] ; ++i, ++offset)
+                    if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
                     {
-                        if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
-                        {
-                            (*data.f_temp_4)[i] -= force_multiplier * (*data.distribution_x)[4] * (manning_const * manning_const) *
-                                (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
-                        }
+                        (*data.f_temp_4)[i] -= force_multiplier * (*data.distribution_x)[4] * (manning_const * manning_const) *
+                            (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                     }
                 }
 
-                for (unsigned long begin(0), half(0) ; begin < info.dir_index_4->size() - 1; begin+=2, ++half)
+                for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                 {
-                    for (unsigned long i((*info.dir_index_4)[begin]), offset(0) ; i < (*info.dir_index_4)[begin + 1] ; ++i, ++offset)
+                    if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
                     {
-                        if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
-                        {
-                            (*data.f_temp_4)[i] -= force_multiplier * (*data.distribution_y)[4] * (manning_const * manning_const) *
-                                (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
-                        }
+                        (*data.f_temp_4)[i] -= force_multiplier * (*data.distribution_y)[4] * (manning_const * manning_const) *
+                            (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                     }
                 }
 
 
                 //-----------alpha = 5 ----------------------------------------------------------------------------------------------
 
-                for (unsigned long begin(0), half(0) ; begin < info.dir_index_5->size() - 1; begin+=2, ++half)
+                for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                 {
-                    for (unsigned long i((*info.dir_index_5)[begin]), offset(0) ; i < (*info.dir_index_5)[begin + 1] ; ++i, ++offset)
+                    if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
                     {
-                        if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
-                        {
-                            (*data.f_temp_5)[i] -= force_multiplier * (*data.distribution_x)[5] * (manning_const * manning_const) *
-                                (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
-                        }
+                        (*data.f_temp_5)[i] -= force_multiplier * (*data.distribution_x)[5] * (manning_const * manning_const) *
+                            (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                     }
                 }
 
                 //-----------alpha = 6 ----------------------------------------------------------------------------------------------
 
-                for (unsigned long begin(0), half(0) ; begin < info.dir_index_6->size() - 1; begin+=2, ++half)
+                for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                 {
-                    for (unsigned long i((*info.dir_index_6)[begin]), offset(0) ; i < (*info.dir_index_6)[begin + 1] ; ++i, ++offset)
+                    if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
                     {
-                        if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
-                        {
-                            (*data.f_temp_6)[i] -= force_multiplier * (*data.distribution_x)[6] * (manning_const * manning_const) *
-                                (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
-                        }
+                        (*data.f_temp_6)[i] -= force_multiplier * (*data.distribution_x)[6] * (manning_const * manning_const) *
+                            (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                     }
                 }
 
-                for (unsigned long begin(0), half(0) ; begin < info.dir_index_6->size() - 1; begin+=2, ++half)
+                for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                 {
-                    for (unsigned long i((*info.dir_index_6)[begin]), offset(0) ; i < (*info.dir_index_6)[begin + 1] ; ++i, ++offset)
+                    if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
                     {
-                        if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
-                        {
-                            (*data.f_temp_6)[i] -= force_multiplier * (*data.distribution_y)[6] * (manning_const * manning_const) *
-                                (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
-                        }
+                        (*data.f_temp_6)[i] -= force_multiplier * (*data.distribution_y)[6] * (manning_const * manning_const) *
+                            (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                     }
                 }
 
                 //-----------alpha = 7 ----------------------------------------------------------------------------------------------
 
-                for (unsigned long begin(0), half(0) ; begin < info.dir_index_7->size() - 1; begin+=2, ++half)
+                for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                 {
-                    for (unsigned long i((*info.dir_index_7)[begin]), offset(0) ; i < (*info.dir_index_7)[begin + 1] ; ++i, ++offset)
+                    if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
                     {
-                        if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
-                        {
-                            (*data.f_temp_7)[i] -= force_multiplier * (*data.distribution_y)[7] * (manning_const * manning_const) *
-                                (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
-                        }
+                        (*data.f_temp_7)[i] -= force_multiplier * (*data.distribution_y)[7] * (manning_const * manning_const) *
+                            (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                     }
                 }
 
 
                 //-----------alpha = 8 ----------------------------------------------------------------------------------------------
 
-                for (unsigned long begin(0), half(0) ; begin < info.dir_index_8->size() - 1; begin+=2, ++half)
+                for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                 {
-                    for (unsigned long i((*info.dir_index_8)[begin]), offset(0) ; i < (*info.dir_index_8)[begin + 1] ; ++i, ++offset)
+                    if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
                     {
-                        if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
-                        {
-                            (*data.f_temp_8)[i] -= force_multiplier * (*data.distribution_x)[8] * (manning_const * manning_const) *
-                                (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
-                        }
+                        (*data.f_temp_8)[i] -= force_multiplier * (*data.distribution_x)[8] * (manning_const * manning_const) *
+                            (*data.u)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                     }
                 }
 
-                for (unsigned long begin(0), half(0) ; begin < info.dir_index_8->size() - 1; begin+=2, ++half)
+                for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
                 {
-                    for (unsigned long i((*info.dir_index_8)[begin]), offset(0) ; i < (*info.dir_index_8)[begin + 1] ; ++i, ++offset)
+                    if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
                     {
-                        if ( (pow((*data.h)[i], DT2_(1./3.))) > std::numeric_limits<DT2_>::epsilon() || (pow((*data.h)[i], DT2_(1./3.))) < DT2_(-std::numeric_limits<DT2_>::epsilon()))
-                        {
-                            (*data.f_temp_8)[i] -= force_multiplier * (*data.distribution_y)[8] * (manning_const * manning_const) *
-                                (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
-                        }
+                        (*data.f_temp_8)[i] -= force_multiplier * (*data.distribution_y)[8] * (manning_const * manning_const) *
+                            (*data.v)[i] * sqrt((*data.u)[i] * (*data.u)[i] + (*data.v)[i] * (*data.v)[i]) / (pow((*data.h)[i], DT2_(1./3.)));
                     }
                 }
 
-                info.dir_index_1->unlock(lm_read_only);
-                info.dir_index_2->unlock(lm_read_only);
-                info.dir_index_3->unlock(lm_read_only);
-                info.dir_index_4->unlock(lm_read_only);
-                info.dir_index_5->unlock(lm_read_only);
-                info.dir_index_6->unlock(lm_read_only);
-                info.dir_index_7->unlock(lm_read_only);
-                info.dir_index_8->unlock(lm_read_only);
-
-                info.dir_1->unlock(lm_read_only);
-                info.dir_2->unlock(lm_read_only);
-                info.dir_3->unlock(lm_read_only);
-                info.dir_4->unlock(lm_read_only);
-                info.dir_5->unlock(lm_read_only);
-                info.dir_6->unlock(lm_read_only);
-                info.dir_7->unlock(lm_read_only);
-                info.dir_8->unlock(lm_read_only);
+                info.limits->unlock(lm_read_only);
 
                 data.h->unlock(lm_read_only);
                 data.b->unlock(lm_read_only);
@@ -813,28 +745,28 @@ namespace honei
                 data.f_temp_8->unlock(lm_read_and_write);
             }
 
-            template<typename DT1_>
+        template<typename DT1_>
             static inline BenchmarkInfo get_benchmark_info(HONEI_UNUSED PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT1_> * data)
-                {
-                    // \todo Insert real data
-                    BenchmarkInfo result;
-                    result.flops = data->h->size() * 44 + data->h->size() * 88;
-                    result.load = data->h->size() * 40 * sizeof(DT1_) + 5 * sizeof(DT1_);
-                    result.store = data->h->size() * 9 * sizeof(DT1_);
-                    result.size.push_back(data->h->size());
-                    return result;
-                }
+            {
+                // \todo Insert real data
+                BenchmarkInfo result;
+                result.flops = data->h->size() * 44 + data->h->size() * 88;
+                result.load = data->h->size() * 40 * sizeof(DT1_) + 5 * sizeof(DT1_);
+                result.store = data->h->size() * 9 * sizeof(DT1_);
+                result.size.push_back(data->h->size());
+                return result;
+            }
     };
 
     template <typename Tag_>
-    struct ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FULL>
-    {
-        template<typename DT1_, typename DT2_>
-            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data, DT2_ g, DT2_ d_x, DT2_ d_y, DT2_ d_t, DT2_ manning)
-            {
-                ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(info, data, g, d_x, d_y, d_t, manning);
-                ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(info, data, g, d_x, d_y, d_t, manning);
-            }
+        struct ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FULL>
+        {
+            template<typename DT1_, typename DT2_>
+                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data, DT2_ g, DT2_ d_x, DT2_ d_y, DT2_ d_t, DT2_ manning)
+                {
+                    ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(info, data, g, d_x, d_y, d_t, manning);
+                    ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(info, data, g, d_x, d_y, d_t, manning);
+                }
 
             template<typename DT1_>
                 static inline BenchmarkInfo get_benchmark_info(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT1_> * data)
@@ -847,23 +779,23 @@ namespace honei
                     result.size.push_back(data->h->size());
                     return result;
                 }
-    };
+        };
 
     template <typename Tag_>
-    struct ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::NONE, lbm_source_schemes::NONE>
-    {
-        template<typename DT1_, typename DT2_>
-            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9,  DT1_> & data, DT2_ g, DT2_ d_x, DT2_ d_y, DT2_ d_t, DT2_ manning)
-            {
-                /// \todo Find out, why massive use of HONEI_UNUSED triggers compiler errors
-                (void) data;
-                (void) info;
-                (void) g;
-                (void) d_x;
-                (void) d_y;
-                (void) d_t;
-                (void) manning;
-            }
+        struct ForceGrid<Tag_, lbm_applications::LABSWE, lbm_force::NONE, lbm_source_schemes::NONE>
+        {
+            template<typename DT1_, typename DT2_>
+                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9,  DT1_> & data, DT2_ g, DT2_ d_x, DT2_ d_y, DT2_ d_t, DT2_ manning)
+                {
+                    /// \todo Find out, why massive use of HONEI_UNUSED triggers compiler errors
+                    (void) data;
+                    (void) info;
+                    (void) g;
+                    (void) d_x;
+                    (void) d_y;
+                    (void) d_t;
+                    (void) manning;
+                }
 
             template<typename DT1_>
                 static inline BenchmarkInfo get_benchmark_info(HONEI_UNUSED PackedGridInfo<D2Q9> * info, HONEI_UNUSED PackedGridData<D2Q9, DT1_> * data)
@@ -871,14 +803,14 @@ namespace honei
                     BenchmarkInfo result;
                     return result;
                 }
-    };
+        };
     template <typename Tag_>
-    struct ForceGrid<Tag_, lbm_applications::LABNAVSTO, lbm_force::NONE, lbm_source_schemes::NONE>
-    {
-        template<typename DT1_, typename DT2_>
-            static void value(PackedGridInfo<D2Q9> & /*info*/, PackedGridData<D2Q9, DT1_> & /*data*/, DT2_ /*g*/, DT2_ /*d_x*/, DT2_ /*d_y*/, DT2_ /*d_t*/, DT2_ /*manning*/)
-            {
-            }
+        struct ForceGrid<Tag_, lbm_applications::LABNAVSTO, lbm_force::NONE, lbm_source_schemes::NONE>
+        {
+            template<typename DT1_, typename DT2_>
+                static void value(PackedGridInfo<D2Q9> & /*info*/, PackedGridData<D2Q9, DT1_> & /*data*/, DT2_ /*g*/, DT2_ /*d_x*/, DT2_ /*d_y*/, DT2_ /*d_t*/, DT2_ /*manning*/)
+                {
+                }
 
             template<typename DT1_>
                 static inline BenchmarkInfo get_benchmark_info(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT1_> * data)
@@ -886,7 +818,7 @@ namespace honei
                     BenchmarkInfo result;
                     return result;
                 }
-    };
+        };
 
 
     template <>
@@ -923,34 +855,34 @@ namespace honei
         struct ForceGrid<tags::CPU::Itanium, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>
         {
             template <typename DT1_>
-            static void value(PackedGridData<D2Q9, DT1_> & data, PackedGridInfo<D2Q9> & info, DT1_ g, DT1_ d_x, DT1_ d_y, DT1_ d_t, DT1_ manning)
-            {
-                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(data, info, g, d_x, d_y, d_t, manning);
-            }
+                static void value(PackedGridData<D2Q9, DT1_> & data, PackedGridInfo<D2Q9> & info, DT1_ g, DT1_ d_x, DT1_ d_y, DT1_ d_t, DT1_ manning)
+                {
+                    ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(data, info, g, d_x, d_y, d_t, manning);
+                }
         };
 
     template <>
         struct ForceGrid<tags::CPU::Itanium, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>
         {
             template <typename DT1_>
-            static void value(PackedGridData<D2Q9, DT1_> & data, PackedGridInfo<D2Q9> & info, DT1_ g, DT1_ d_x, DT1_ d_y, DT1_ d_t, DT1_ m)
-            {
-                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(data, info, g, d_x, d_y, d_t, m);
-            }
+                static void value(PackedGridData<D2Q9, DT1_> & data, PackedGridInfo<D2Q9> & info, DT1_ g, DT1_ d_x, DT1_ d_y, DT1_ d_t, DT1_ m)
+                {
+                    ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(data, info, g, d_x, d_y, d_t, m);
+                }
         };
 
     template <>
         struct ForceGrid<tags::CPU::SSE, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>
         {
             template <typename DT_>
-            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data, DT_ g, DT_ d_x, DT_ d_y, DT_ d_t, DT_ manning);
+                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data, DT_ g, DT_ d_x, DT_ d_y, DT_ d_t, DT_ manning);
         };
 
     template <>
         struct ForceGrid<tags::CPU::SSE, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>
         {
             template <typename DT_>
-            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data, DT_ g, DT_ d_x, DT_ d_y, DT_ d_t, DT_ manning);
+                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data, DT_ g, DT_ d_x, DT_ d_y, DT_ d_t, DT_ manning);
         };
 }
 #endif

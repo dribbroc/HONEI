@@ -173,6 +173,15 @@ class ForceFrictionLBMGridTest :
 
             ScenarioCollection::get_scenario(5, g_h, g_w, grid);
 
+            for(unsigned long i(0) ; i < grid.h->rows() ; ++i)
+            {
+                for(unsigned long j(0) ; j < grid.h->columns() ; ++j)
+                {
+                    (*grid.u)[i][j] = DataType_(1);
+                    (*grid.v)[i][j] = DataType_(1);
+                }
+            }
+
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
 
@@ -201,6 +210,14 @@ class ForceFrictionLBMGridTest :
             Grid<D2Q9, DataType_> grid_2;
 
             ScenarioCollection::get_scenario(5, g_h, g_w, grid_2);
+            for(unsigned long i(0) ; i < grid_2.h->rows() ; ++i)
+            {
+                for(unsigned long j(0) ; j < grid_2.h->columns() ; ++j)
+                {
+                    (*grid_2.u)[i][j] = DataType_(1);
+                    (*grid_2.v)[i][j] = DataType_(1);
+                }
+            }
 
             PackedGridData<D2Q9, DataType_>  data_2;
             PackedGridInfo<D2Q9> info_2;
@@ -228,6 +245,14 @@ class ForceFrictionLBMGridTest :
             data_2.f_temp_6->lock(lm_read_only);
             data_2.f_temp_7->lock(lm_read_only);
             data_2.f_temp_8->lock(lm_read_only);
+
+            /*data.f_temp_3->lock(lm_read_only);
+            std::cout << *data.f_temp_3 << std::endl;
+            data.f_temp_3->unlock(lm_read_only);
+            data_2.f_temp_3->lock(lm_read_only);
+            std::cout << *data_2.f_temp_3 << std::endl;
+            data_2.f_temp_3->unlock(lm_read_only);*/
+
             for(unsigned long i(0) ; i < temp_1_ref.size() ; ++i)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS((*data_2.f_temp_1)[i], temp_1_ref[i], std::numeric_limits<DataType_>::epsilon());
@@ -248,12 +273,6 @@ class ForceFrictionLBMGridTest :
             data_2.f_temp_7->unlock(lm_read_only);
             data_2.f_temp_8->unlock(lm_read_only);
 
-            /*data.f_temp_1->lock(lm_read_only);
-            std::cout << *data.f_temp_1 << std::endl;
-            data.f_temp_1->unlock(lm_read_only);
-            data_2.f_temp_1->lock(lm_read_only);
-            std::cout << *data_2.f_temp_1 << std::endl;
-            data_2.f_temp_1->unlock(lm_read_only);*/
         }
 
 };
