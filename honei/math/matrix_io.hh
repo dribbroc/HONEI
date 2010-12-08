@@ -57,7 +57,7 @@ class MatrixIO<io_formats::M>
             {
                 std::ifstream file(filename.c_str());
                 if (!file.is_open())
-                throw honei::InternalError("Unable to open MATLAB file: " + filename);
+                    throw honei::InternalError("Unable to open MATLAB file: " + filename);
 
                 std::vector<unsigned long> row_indices;
                 std::vector<unsigned long> column_indices;
