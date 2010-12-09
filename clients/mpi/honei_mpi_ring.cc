@@ -23,5 +23,5 @@ using namespace honei;
 
 int main(int argc, char ** argv)
 {
-    MPIRingSolver<tags::CPU::SSE, tags::GPU::CUDA, float> mpis(argc, argv);
+    MPIRingSolver<float> mpis(argc, argv);
 }

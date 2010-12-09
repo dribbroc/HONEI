@@ -46,7 +46,7 @@
 
 namespace honei
 {
-    template <typename Tag1_, typename Tag2_, typename DataType_>
+    template <typename DataType_>
     class MPIRingSolver
     {
         private:
@@ -1257,6 +1257,7 @@ namespace honei
                 }
                 else
                 {
+#ifdef HONEI_CUDA
                     TicketVector tickets;
                     //todo target nur einmal abrufen und dann speichern
                     void * target;
@@ -1331,6 +1332,7 @@ namespace honei
                     }
 
                     tickets.wait();
+#endif
                 }
 
                 std::vector<MPI_Request> requests_up;
@@ -1551,6 +1553,7 @@ namespace honei
                 }
                 else
                 {
+#ifdef HONEI_CUDA
                     TicketVector tickets;
                     //todo target nur einmal abrufen und dann speichern
                     void * target;
@@ -1625,6 +1628,7 @@ namespace honei
                     }
 
                     tickets.wait();
+#endif
                 }
             }
 
