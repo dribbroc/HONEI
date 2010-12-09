@@ -161,7 +161,8 @@ Exception::what() const throw ()
         }
     }
     if (_what_str.empty())
-        _what_str = stringify(std::exception::what());
+        //_what_str = stringify(std::exception::what());
+        _what_str += " (" + message() + ")";
     return _what_str.c_str();
 }
 

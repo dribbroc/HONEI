@@ -35,8 +35,10 @@
 #include <honei/util/time_stamp.hh>
 #include <honei/lbm/scenario_collection.hh>
 #include <honei/math/vector_io.hh>
+#include <honei/util/string_tokenizer.hh>
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <list>
 //#include <netdb.h>
@@ -61,9 +63,12 @@ namespace honei
             tags::TagValue _solver_tag_value;
             std::vector<double> tag1_part_fraction;
             std::vector<double> tag2_part_fraction;
+            std::vector<std::string> _backends;
+            std::vector<double> _fractions;
             double _sync_time_up;
             double _sync_time_down;
             std::string _device_name;
+            unsigned long _scenario;
 
         public:
             MPIRingSolver(int argc, char **argv)
@@ -91,13 +96,16 @@ namespace honei
                 }
 
                 //create topology information
-                //tag1_part_fraction.push_back(1);
-                tag1_part_fraction.push_back(0.02);
+                tag1_part_fraction.push_back(1);
+                /*tag1_part_fraction.push_back(0.02);
                 tag1_part_fraction.push_back(0.02);
                 tag1_part_fraction.push_back(0.02);
                 tag1_part_fraction.push_back(0.02);
                 tag2_part_fraction.push_back(0.46);
-                tag2_part_fraction.push_back(0.46);
+                tag2_part_fraction.push_back(0.46);*/
+
+                //read in configuration file
+                _read_config("/home/user/dribbroc/honei/trunk/clients/mpi/config", _scenario, _backends, _fractions, _file_output, _base_file_name);
 
                 _nodes = _numprocs / (tag1_part_fraction.size() + tag2_part_fraction.size());
 
@@ -147,7 +155,7 @@ namespace honei
                 else
                     std::cout<<std::endl;
                 Grid<D2Q9, DataType_> grid_global;
-                ScenarioCollection::get_scenario(0, gridsize_x, gridsize_y, grid_global);
+                ScenarioCollection::get_scenario(_scenario, gridsize_x, gridsize_y, grid_global);
                 std::cout << "Solving: " << grid_global.long_description << std::endl;
                 std::cout<<"Gridsize: "<<grid_global.h->rows()<<" x "<<grid_global.h->columns()<<std::endl;
                 std::cout<<"Timesteps: "<<timesteps<<std::endl;
@@ -1612,6 +1620,61 @@ namespace honei
 
                     tickets.wait();
                 }
+            }
+
+            void _read_config(std::string filename, unsigned long & scenario, std::vector<std::string> & backends,
+                    std::vector<double> & fractions, bool & file_output, std::string & base_filename)
+            {
+                std::cout<<"reading..."<<filename<<std::endl;
+                std::ifstream file(filename.c_str());
+                if (!file.is_open())
+                    throw honei::InternalError("Unable to open mpi config file: " + filename);
+
+                while(!file.eof())
+                {
+                    std::string line;
+                    std::getline(file, line);
+                    if (file.eof())
+                        break;
+
+                    //skip blank lines
+                    if (line.size() == 0)
+                        continue;
+
+                    //skip comment lines
+                    if(line.find("#") == 0)
+                        continue;
+
+                    //read in valueable lines
+                    std::vector<std::string> line_parts(string_tokenizer(line, " "));
+
+                    if (line_parts.at(0).compare("scenario") == 0)
+                    {
+                        if (line_parts.size() != 2)
+                            throw InternalError("Wrong argument count to scenario statement: " + line);
+
+                        scenario = atoi(line_parts.at(1).c_str());
+                    }
+                    else if (line_parts.at(0).compare("proc") == 0)
+                    {
+                        if (line_parts.size() != 3)
+                            throw InternalError("Wrong argument count to proc statement: " + line);
+
+                        backends.push_back(line_parts.at(1));
+                        fractions.push_back(atof(line_parts.at(2).c_str()));
+                    }
+                    else if (line_parts.at(0).compare("fileoutput") == 0)
+                    {
+                        if (line_parts.size() != 2)
+                            throw InternalError("Wrong argument count to fileoutput statement: " + line);
+
+                        base_filename = line_parts.at(1);
+                        file_output = true;
+                    }
+                    else
+                        throw InternalError("Error: config file entry not known: " + line);
+                }
+                file.close();
             }
     };
 }

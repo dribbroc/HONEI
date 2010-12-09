@@ -1,0 +1,8 @@
+# choose scenario
+scenario 0
+
+# describe procs on this node
+proc sse 1
+
+#activate fileoutput
+#fileoutput output
