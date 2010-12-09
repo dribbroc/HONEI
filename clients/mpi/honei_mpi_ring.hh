@@ -61,8 +61,6 @@ namespace honei
             bool _file_output;
             int _gpu_device;
             tags::TagValue _solver_tag_value;
-            std::vector<double> tag1_part_fraction;
-            std::vector<double> tag2_part_fraction;
             std::vector<std::string> _backends;
             std::vector<double> _fractions;
             double _sync_time_up;
@@ -95,19 +93,11 @@ namespace honei
                     _file_output = true;
                 }
 
-                //create topology information
-                tag1_part_fraction.push_back(1);
-                /*tag1_part_fraction.push_back(0.02);
-                tag1_part_fraction.push_back(0.02);
-                tag1_part_fraction.push_back(0.02);
-                tag1_part_fraction.push_back(0.02);
-                tag2_part_fraction.push_back(0.46);
-                tag2_part_fraction.push_back(0.46);*/
-
                 //read in configuration file
                 _read_config("/home/user/dribbroc/honei/trunk/clients/mpi/config", _scenario, _backends, _fractions, _file_output, _base_file_name);
+                // \TODO default werte setzen falls kein config eintrag?
 
-                _nodes = _numprocs / (tag1_part_fraction.size() + tag2_part_fraction.size());
+                _nodes = _numprocs / (_fractions.size());
 
                 // create new communicator
                 int dims[1];
@@ -170,20 +160,18 @@ namespace honei
 
                 //decompose patches
                 {
-                    if (_numprocs % (tag1_part_fraction.size() + tag2_part_fraction.size()) != 0)
-                        throw InternalError("numprocs / part_fraction missmatch!");
+                    if (_numprocs % (_fractions.size()) != 0)
+                        throw InternalError("numprocs / _fractions missmatch!");
 
                     std::vector<unsigned long> patch_sizes;
                     unsigned long size_per_node(data_global.u->size() / _nodes);
 
                     for (unsigned long node(0) ; node < _nodes ; ++node)
                     {
-                        for (unsigned long i(0) ; i < tag1_part_fraction.size() ; ++i)
-                            patch_sizes.push_back(size_per_node * tag1_part_fraction.at(i));
-                        for (unsigned long i(0) ; i < tag2_part_fraction.size() ; ++i)
-                            patch_sizes.push_back(size_per_node * tag2_part_fraction.at(i));
+                        for (unsigned long i(0) ; i < _fractions.size() ; ++i)
+                            patch_sizes.push_back(size_per_node * _fractions.at(i));
                         unsigned long whole_size(0);
-                        for (unsigned long i(node * (tag1_part_fraction.size() + tag2_part_fraction.size())) ; i < patch_sizes.size() ; ++i)
+                        for (unsigned long i(node * _fractions.size()) ; i < patch_sizes.size() ; ++i)
                             whole_size += patch_sizes.at(i);
                         patch_sizes.back() += size_per_node - whole_size;
                     }
@@ -219,40 +207,49 @@ namespace honei
 
 
                 SolverLBMGridBase * solver(NULL);
-                if (tag2_part_fraction.size() == 0 || _mycartid % (tag1_part_fraction.size() + tag2_part_fraction.size()) < tag1_part_fraction.size())
+                if(_backends.at(_mycartid % _backends.size()).compare(tags::CPU::SSE::name) == 0)
                 {
-                    _device_name = Tag1_::name;
-                    _solver_tag_value = Tag1_::tag_value;
-                    if (_solver_tag_value == tags::tv_gpu_cuda)
-                        cuda::GPUPool::instance()->single_start(_mycartid % (tag1_part_fraction.size() + tag2_part_fraction.size()));
-                    solver = new SolverLBMGrid<Tag1_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (&info_lokal, &data_lokal, grid_global.d_x, grid_global.d_y, grid_global.d_t, grid_global.tau);
+#ifdef HONEI_SSE
+                    _device_name = tags::CPU::SSE::name;
+                    _solver_tag_value = tags::CPU::SSE::tag_value;
+                    solver = new SolverLBMGrid<tags::CPU::SSE, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (&info_lokal, &data_lokal, grid_global.d_x, grid_global.d_y, grid_global.d_t, grid_global.tau);
+#else
+                    throw InternalError("Backend not activated: " + _backends.at(_mycartid % _backends.size()));
+#endif
+                }
+                else if(_backends.at(_mycartid % _backends.size()).compare(tags::GPU::CUDA::name) == 0)
+                {
+#ifdef HONEI_CUDA
+                    _device_name = tags::GPU::CUDA::name;
+                    _solver_tag_value = tags::GPU::CUDA::tag_value;
+                    cuda::GPUPool::instance()->single_start(_mycartid % _backends.size());
+                    solver = new SolverLBMGrid<tags::GPU::CUDA, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (&info_lokal, &data_lokal, grid_global.d_x, grid_global.d_y, grid_global.d_t, grid_global.tau);
+#else
+                    throw InternalError("Backend not activated: " + _backends.at(_mycartid % _backends.size()));
+#endif
                 }
                 else
                 {
-                    _device_name = Tag2_::name;
-                    _solver_tag_value = Tag2_::tag_value;
-                    if (_solver_tag_value == tags::tv_gpu_cuda)
-                        cuda::GPUPool::instance()->single_start(_mycartid % (tag1_part_fraction.size() + tag2_part_fraction.size()) - tag1_part_fraction.size());
-                    solver = new SolverLBMGrid<Tag2_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (&info_lokal, &data_lokal, grid_global.d_x, grid_global.d_y, grid_global.d_t, grid_global.tau);
+                    throw InternalError("Backend not known: " + _backends.at(_mycartid % _backends.size()));
                 }
 
                 solver->do_preprocessing();
 
                 /*for (int target(1) ; target < _numprocs ; ++target)
-                {
-                    int rank;
-                    MPI_Cart_rank(_comm_cart, &target, &rank);
-                    _recv_slave_sync(rank, info_list.at(target), data_list.at(target), fringe_list.at(target));
-                }
+                  {
+                  int rank;
+                  MPI_Cart_rank(_comm_cart, &target, &rank);
+                  _recv_slave_sync(rank, info_list.at(target), data_list.at(target), fringe_list.at(target));
+                  }
 
-                GridPartitioner<D2Q9, DataType_>::synch(info_global, data_global, info_list, data_list, fringe_list);
+                  GridPartitioner<D2Q9, DataType_>::synch(info_global, data_global, info_list, data_list, fringe_list);
 
-                for (int target(1) ; target < _numprocs ; ++target)
-                {
-                    int rank;
-                    MPI_Cart_rank(_comm_cart, &target, &rank);
-                    _send_slave_sync(rank, info_list.at(target), data_list.at(target), fringe_list.at(target));
-                }*/
+                  for (int target(1) ; target < _numprocs ; ++target)
+                  {
+                  int rank;
+                  MPI_Cart_rank(_comm_cart, &target, &rank);
+                  _send_slave_sync(rank, info_list.at(target), data_list.at(target), fringe_list.at(target));
+                  }*/
 
                 _circle_sync(info_lokal, data_lokal, fringe_list.at(0));
 
@@ -268,12 +265,12 @@ namespace honei
                     solver->solve();
 
                     /*MPI_File fh;
-                    std::string filename("h_"+stringify(i)+"_out.dat");
-                    MPI_File_open(MPI_COMM_WORLD, (char*)filename.c_str(), MPI_MODE_WRONLY | MPI_MODE_CREATE, MPI_INFO_NULL, &fh);
-                    MPI_File_set_view(fh, 0, mpi::MPIType<DataType_>::value(), mpi::MPIType<DataType_>::value(), "native", MPI_INFO_NULL);
-                    MPI_File_set_size(fh, mpi_file_size);
-                    MPI_Request request;
-                    MPI_File_iwrite_at(fh, info_lokal.offset + (*info_lokal.limits)[0], data_lokal.h->elements() + (*info_lokal.limits)[0], (*info_lokal.limits)[info_lokal.limits->size() - 1] - (*info_lokal.limits)[0], mpi::MPIType<DataType_>::value(), &request);*/
+                      std::string filename("h_"+stringify(i)+"_out.dat");
+                      MPI_File_open(MPI_COMM_WORLD, (char*)filename.c_str(), MPI_MODE_WRONLY | MPI_MODE_CREATE, MPI_INFO_NULL, &fh);
+                      MPI_File_set_view(fh, 0, mpi::MPIType<DataType_>::value(), mpi::MPIType<DataType_>::value(), "native", MPI_INFO_NULL);
+                      MPI_File_set_size(fh, mpi_file_size);
+                      MPI_Request request;
+                      MPI_File_iwrite_at(fh, info_lokal.offset + (*info_lokal.limits)[0], data_lokal.h->elements() + (*info_lokal.limits)[0], (*info_lokal.limits)[info_lokal.limits->size() - 1] - (*info_lokal.limits)[0], mpi::MPIType<DataType_>::value(), &request);*/
 
                     _circle_sync(info_lokal, data_lokal, fringe_list.at(0));
 
@@ -319,13 +316,13 @@ namespace honei
                 }
 
                 /*std::cout<<*data_global.h;
-                MPI_File fh;
-                std::string filename("h_"+stringify(99)+"_out.dat");
-                MPI_File_open(MPI_COMM_SELF, (char*)filename.c_str(), MPI_MODE_RDONLY, MPI_INFO_NULL, &fh);
-                MPI_File_set_view(fh, 0, mpi::MPIType<DataType_>::value(), mpi::MPIType<DataType_>::value(), "native", MPI_INFO_NULL);
-                MPI_File_read_at(fh, 0, data_global.h->elements(), (*info_global.limits)[info_global.limits->size() - 1] - (*info_global.limits)[0], mpi::MPIType<DataType_>::value(), MPI_STATUSES_IGNORE);
-                MPI_File_close(&fh);
-                std::cout<<*data_global.h;*/
+                  MPI_File fh;
+                  std::string filename("h_"+stringify(99)+"_out.dat");
+                  MPI_File_open(MPI_COMM_SELF, (char*)filename.c_str(), MPI_MODE_RDONLY, MPI_INFO_NULL, &fh);
+                  MPI_File_set_view(fh, 0, mpi::MPIType<DataType_>::value(), mpi::MPIType<DataType_>::value(), "native", MPI_INFO_NULL);
+                  MPI_File_read_at(fh, 0, data_global.h->elements(), (*info_global.limits)[info_global.limits->size() - 1] - (*info_global.limits)[0], mpi::MPIType<DataType_>::value(), MPI_STATUSES_IGNORE);
+                  MPI_File_close(&fh);
+                  std::cout<<*data_global.h;*/
 
                 // generate output
                 /*for (int target(1) ; target < _numprocs ; ++target)
@@ -384,21 +381,30 @@ namespace honei
                 _recv_fringe(fringe);
 
                 SolverLBMGridBase * solver(NULL);
-                if (tag2_part_fraction.size() == 0 || _mycartid % (tag1_part_fraction.size() + tag2_part_fraction.size()) < tag1_part_fraction.size())
+                if(_backends.at(_mycartid % _backends.size()).compare(tags::CPU::SSE::name) == 0)
                 {
-                    _device_name = Tag1_::name;
-                    _solver_tag_value = Tag1_::tag_value;
-                    if (_solver_tag_value == tags::tv_gpu_cuda)
-                        cuda::GPUPool::instance()->single_start(_mycartid % (tag1_part_fraction.size() + tag2_part_fraction.size()));
-                    solver = new SolverLBMGrid<Tag1_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (&info, &data, d_x, d_y, d_t, tau);
+#ifdef HONEI_SSE
+                    _device_name = tags::CPU::SSE::name;
+                    _solver_tag_value = tags::CPU::SSE::tag_value;
+                    solver = new SolverLBMGrid<tags::CPU::SSE, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (&info, &data, d_x, d_y, d_t, tau);
+#else
+                    throw InternalError("Backend not activated: " + _backends.at(_mycartid % _backends.size()));
+#endif
+                }
+                else if(_backends.at(_mycartid % _backends.size()).compare(tags::GPU::CUDA::name) == 0)
+                {
+#ifdef HONEI_CUDA
+                    _device_name = tags::GPU::CUDA::name;
+                    _solver_tag_value = tags::GPU::CUDA::tag_value;
+                    cuda::GPUPool::instance()->single_start(_mycartid % _backends.size());
+                    solver = new SolverLBMGrid<tags::GPU::CUDA, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (&info, &data, d_x, d_y, d_t, tau);
+#else
+                    throw InternalError("Backend not activated: " + _backends.at(_mycartid % _backends.size()));
+#endif
                 }
                 else
                 {
-                    _device_name = Tag2_::name;
-                    _solver_tag_value = Tag2_::tag_value;
-                    if (_solver_tag_value == tags::tv_gpu_cuda)
-                        cuda::GPUPool::instance()->single_start(_mycartid % (tag1_part_fraction.size() + tag2_part_fraction.size()) - tag1_part_fraction.size());
-                    solver = new SolverLBMGrid<Tag2_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (&info, &data, d_x, d_y, d_t, tau);
+                    throw InternalError("Backend not known: " + _backends.at(_mycartid % _backends.size()));
                 }
 
                 solver->do_preprocessing();
@@ -412,12 +418,12 @@ namespace honei
                     solver->solve();
 
                     /*MPI_File fh;
-                    std::string filename("h_"+stringify(i)+"_out.dat");
-                    MPI_File_open(MPI_COMM_WORLD, (char*)filename.c_str(), MPI_MODE_WRONLY | MPI_MODE_CREATE, MPI_INFO_NULL, &fh);
-                    MPI_File_set_view(fh, 0, mpi::MPIType<DataType_>::value(), mpi::MPIType<DataType_>::value(), "native", MPI_INFO_NULL);
-                    MPI_File_set_size(fh, mpi_file_size);
-                    MPI_Request request;
-                    MPI_File_iwrite_at(fh, info.offset + (*info.limits)[0], data.h->elements() + (*info.limits)[0], (*info.limits)[info.limits->size() - 1] - (*info.limits)[0], mpi::MPIType<DataType_>::value(), &request);*/
+                      std::string filename("h_"+stringify(i)+"_out.dat");
+                      MPI_File_open(MPI_COMM_WORLD, (char*)filename.c_str(), MPI_MODE_WRONLY | MPI_MODE_CREATE, MPI_INFO_NULL, &fh);
+                      MPI_File_set_view(fh, 0, mpi::MPIType<DataType_>::value(), mpi::MPIType<DataType_>::value(), "native", MPI_INFO_NULL);
+                      MPI_File_set_size(fh, mpi_file_size);
+                      MPI_Request request;
+                      MPI_File_iwrite_at(fh, info.offset + (*info.limits)[0], data.h->elements() + (*info.limits)[0], (*info.limits)[info.limits->size() - 1] - (*info.limits)[0], mpi::MPIType<DataType_>::value(), &request);*/
 
                     _circle_sync(info, data, fringe);
 
