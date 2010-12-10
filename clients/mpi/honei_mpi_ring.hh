@@ -77,27 +77,17 @@ namespace honei
                 _gpu_device = 0;
                 _sync_time_up = 0;
                 _sync_time_down = 0;
-                if (argc < 4 || argc > 5)
+                if (argc != 5)
                 {
-                    if(_myid == 0) std::cout<<"Usage: honei-mpi-ring grid_x grid_y timesteps [base_file_name]"<<std::endl;
+                    if(_myid == 0) std::cout<<"Usage: honei-mpi-ring grid_x grid_y timesteps config_file_name"<<std::endl;
                     mpi::mpi_finalize();
                     exit(1);
                 }
                 unsigned long gridsize_x(atoi(argv[1]));
                 unsigned long gridsize_y(atoi(argv[2]));
                 unsigned long timesteps(atoi(argv[3]));
+                std::string config_file_name(argv[4]);
                 _file_output = false;
-                if (argc == 5)
-                {
-                    _base_file_name = argv[4];
-                    _file_output = true;
-                }
-
-                //read in configuration file
-                _read_config("/home/user/dribbroc/honei/trunk/clients/mpi/config", _scenario, _backends, _fractions, _file_output, _base_file_name);
-                // \TODO default werte setzen falls kein config eintrag?
-
-                _nodes = _numprocs / (_fractions.size());
 
                 // create new communicator
                 int dims[1];
@@ -120,6 +110,13 @@ namespace honei
                 //char hostname [256];
                 //gethostname(hostname, 255);
                 //std::cout<<"this is process " << _mycartid << " on machine "<<hostname<<std::endl;
+
+                //read in configuration file
+                _read_config(config_file_name, _scenario, _backends, _fractions, _file_output, _base_file_name);
+                // \TODO default werte setzen falls kein config eintrag?
+
+                _nodes = _numprocs / (_fractions.size());
+
 
                 if (_mycartid == _masterid)
                 {
@@ -310,7 +307,7 @@ namespace honei
                             }
                             remove(fn.c_str());
                         }
-                        std::string out_filename("h_"+_base_file_name+"_"+stringify(i)+".dat");
+                        std::string out_filename("h_"+_base_file_name+"_"+stringify(i)+".dv");
                         VectorIO<io_formats::DV>::write_vector(out_filename, global_h);
                     }
                 }
@@ -1635,7 +1632,9 @@ namespace honei
             void _read_config(std::string filename, unsigned long & scenario, std::vector<std::string> & backends,
                     std::vector<double> & fractions, bool & file_output, std::string & base_filename)
             {
-                std::cout<<"reading..."<<filename<<std::endl;
+                if (_mycartid == _masterid)
+                    std::cout<<"reading..."<<filename<<std::endl;
+
                 std::ifstream file(filename.c_str());
                 if (!file.is_open())
                     throw honei::InternalError("Unable to open mpi config file: " + filename);
