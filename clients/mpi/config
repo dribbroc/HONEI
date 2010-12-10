@@ -1,6 +1,9 @@
 # choose scenario
 scenario 0
 
+# seconds to wait beforce load balancing
+syncthreshold 0.01
+
 # describe procs on this node
 proc sse 1
 

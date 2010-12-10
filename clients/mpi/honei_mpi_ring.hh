@@ -67,6 +67,7 @@ namespace honei
             double _sync_time_down;
             std::string _device_name;
             unsigned long _scenario;
+            double _sync_threshold;
 
         public:
             MPIRingSolver(int argc, char **argv)
@@ -136,7 +137,7 @@ namespace honei
         private:
             void _master(unsigned long gridsize_x, unsigned long gridsize_y, unsigned long timesteps)
             {
-                std::cout<<"Ring LBM Solver with " << _numprocs << " procs on " << _nodes << " nodes." << std::endl;
+                std::cout<<"Ring LBM Solver with " << _numprocs << " procs on " << _nodes << " nodes (" << _numprocs / _nodes << " jobs per node)" << std::endl;
                 if (_file_output)
                     std::cout<<"with file output activated"<<std::endl<<std::endl;
                 else
@@ -224,6 +225,7 @@ namespace honei
                   _send_slave_sync(rank, info_list.at(target), data_list.at(target), fringe_list.at(target));
                   }*/
 
+                MPI_Barrier(MPI_COMM_WORLD);
                 _circle_sync(info_lokal, data_lokal, fringe_list.at(0));
 
                 //GridPartitioner<D2Q9, DataType_>::compose(info_global, data_global, info_list, data_list);
@@ -360,6 +362,7 @@ namespace honei
 
                 //_send_master_sync(_masterid, info, data, fringe);
                 //_recv_master_sync(_masterid, info, data, fringe);
+                MPI_Barrier(MPI_COMM_WORLD);
                 _circle_sync(info, data, fringe);
 
                 for(unsigned long i(0); i < timesteps; ++i)
@@ -1457,8 +1460,9 @@ namespace honei
                 }
                 //MPI_Waitall(requests_up.size(), &requests_up[0], MPI_STATUSES_IGNORE);
                 //MPI_Waitall(requests_down.size(), &requests_down[0], MPI_STATUSES_IGNORE);
-                _sync_time_up+=cu.total() - ca.total();
-                _sync_time_down+=cd.total() - ca.total();
+                _sync_time_down+=cu.total() - ca.total();
+                _sync_time_up+=cd.total() - ca.total();
+                _balance_load(cu.total() - ca.total(), cd.total() - ca.total());
 
                 if (up_size_recv > 0)
                 {
@@ -1581,6 +1585,95 @@ namespace honei
                 }
             }
 
+            void _balance_load(double delta_down, double delta_up)
+            {
+                std::vector<MPI_Request> requests;
+                int source_up_recv, source_down_recv, target_up_send, target_down_send;
+
+                MPI_Cart_shift(_comm_cart, 0, 1, &source_up_recv, &target_down_send);
+                MPI_Cart_shift(_comm_cart, 0, -1, &source_down_recv, &target_up_send);
+
+                // Load Balancing Requests
+
+                // 0 means: nothing to do
+                // 1 means: give me data, you are to slow
+                unsigned long status_in_up(0);
+                unsigned long status_in_down(0);
+                if (source_up_recv != MPI_PROC_NULL) requests.push_back(mpi::mpi_irecv(&status_in_up, 1, source_up_recv, source_up_recv, _comm_cart));
+                if (source_down_recv != MPI_PROC_NULL) requests.push_back(mpi::mpi_irecv(&status_in_down, 1, source_down_recv, source_down_recv, _comm_cart));
+
+                unsigned long status_out_up(0);
+                unsigned long status_out_down(0);
+
+                if (delta_up > _sync_threshold)
+                    status_out_up = 1;
+
+                if (delta_down > _sync_threshold)
+                    status_out_down = 1;
+
+                if (target_up_send != MPI_PROC_NULL) requests.push_back(mpi::mpi_isend(&status_out_up, 1, target_up_send, _mycartid, _comm_cart));
+                if (target_down_send != MPI_PROC_NULL) requests.push_back(mpi::mpi_isend(&status_out_down, 1, target_down_send, _mycartid, _comm_cart));
+                MPI_Waitall(requests.size(), &requests[0], MPI_STATUSES_IGNORE);
+                requests.clear();
+
+                // Answers
+
+                // 0 means: go ahead, i am waiting, too | or if no request was sent, gives a dummy answer
+                // 1 means: ok, i will give you some data
+
+                unsigned long old_out_up = status_out_up;
+                unsigned long old_out_down = status_out_down;
+                // if up is waiting for us
+                if (status_in_up == 1 && old_out_down == 0)
+                {
+                    status_out_up = 1;
+                    std::cout<<_mycartid<<": up waits for me"<<std::endl;
+                }
+                // if down is waiting for us
+                if (status_in_down == 1 && old_out_up == 0)
+                {
+                    status_out_down = 1;
+                    std::cout<<_mycartid<<": down waits for me"<<std::endl;
+                }
+                // if up is waiting for us but we are waiting for down, too
+                if (status_in_up == 1 && old_out_down == 1)
+                {
+                    status_out_up = 0;
+                    std::cout<<_mycartid<<": up waits for me, but i wait for down"<<std::endl;
+                }
+                // if down is waiting for us but we are waiting for up, too
+                if (status_in_down == 1 && old_out_up == 1)
+                {
+                    status_out_down = 0;
+                    std::cout<<_mycartid<<": down waits for me, but i wait for up"<<std::endl;
+                }
+                // up wants nothing from us
+                if (status_in_up == 0)
+                {
+                    status_out_up = 0;
+                }
+                // down wants nothing from us
+                if (status_in_down == 0)
+                {
+                    status_out_down = 0;
+                }
+
+                if (source_up_recv != MPI_PROC_NULL) requests.push_back(mpi::mpi_irecv(&status_in_up, 1, source_up_recv, source_up_recv, _comm_cart));
+                if (source_down_recv != MPI_PROC_NULL) requests.push_back(mpi::mpi_irecv(&status_in_down, 1, source_down_recv, source_down_recv, _comm_cart));
+                if (target_up_send != MPI_PROC_NULL) requests.push_back(mpi::mpi_isend(&status_out_up, 1, target_up_send, _mycartid, _comm_cart));
+                if (target_down_send != MPI_PROC_NULL) requests.push_back(mpi::mpi_isend(&status_out_down, 1, target_down_send, _mycartid, _comm_cart));
+
+                MPI_Waitall(requests.size(), &requests[0], MPI_STATUSES_IGNORE);
+                requests.clear();
+
+                // if status_out up/down == 1 -> send/recv data
+                // \TODO recv/send real data
+                if (status_in_up == 1)
+                    std::cout<<_mycartid<<": up gives me data"<<std::endl;
+                if (status_in_down == 1)
+                    std::cout<<_mycartid<<": down gives me data"<<std::endl;
+            }
+
             void _read_config(std::string filename, unsigned long & scenario, std::vector<std::string> & backends,
                     std::vector<double> & fractions, bool & file_output, std::string & base_filename)
             {
@@ -1631,6 +1724,13 @@ namespace honei
 
                         base_filename = line_parts.at(1);
                         file_output = true;
+                    }
+                    else if (line_parts.at(0).compare("syncthreshold") == 0)
+                    {
+                        if (line_parts.size() != 2)
+                            throw InternalError("Wrong argument count to syncthreshold statement: " + line);
+
+                        _sync_threshold = atof(line_parts.at(1).c_str());
                     }
                     else
                         throw InternalError("Error: config file entry not known: " + line);
