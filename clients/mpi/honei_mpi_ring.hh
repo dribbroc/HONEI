@@ -170,9 +170,9 @@ namespace honei
                         unsigned long whole_size(0);
                         for (unsigned long i(node * _fractions.size()) ; i < patch_sizes.size() ; ++i)
                             whole_size += patch_sizes.at(i);
-                        patch_sizes.back() += size_per_node - whole_size;
+                        patch_sizes.at(node * _fractions.size()) += size_per_node - whole_size;
                     }
-                    patch_sizes.back() += data_global.u->size() % _nodes;
+                    patch_sizes.front() += data_global.u->size() % _nodes;
                     GridPartitioner<D2Q9, DataType_>::decompose_intern(patch_sizes, info_global, data_global, info_list, data_list, fringe_list, false);
                 }
 
@@ -204,31 +204,7 @@ namespace honei
 
 
                 SolverLBMGridBase * solver(NULL);
-                if(_backends.at(_mycartid % _backends.size()).compare(tags::CPU::SSE::name) == 0)
-                {
-#ifdef HONEI_SSE
-                    _device_name = tags::CPU::SSE::name;
-                    _solver_tag_value = tags::CPU::SSE::tag_value;
-                    solver = new SolverLBMGrid<tags::CPU::SSE, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (&info_lokal, &data_lokal, grid_global.d_x, grid_global.d_y, grid_global.d_t, grid_global.tau);
-#else
-                    throw InternalError("Backend not activated: " + _backends.at(_mycartid % _backends.size()));
-#endif
-                }
-                else if(_backends.at(_mycartid % _backends.size()).compare(tags::GPU::CUDA::name) == 0)
-                {
-#ifdef HONEI_CUDA
-                    _device_name = tags::GPU::CUDA::name;
-                    _solver_tag_value = tags::GPU::CUDA::tag_value;
-                    cuda::GPUPool::instance()->single_start(_mycartid % _backends.size());
-                    solver = new SolverLBMGrid<tags::GPU::CUDA, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (&info_lokal, &data_lokal, grid_global.d_x, grid_global.d_y, grid_global.d_t, grid_global.tau);
-#else
-                    throw InternalError("Backend not activated: " + _backends.at(_mycartid % _backends.size()));
-#endif
-                }
-                else
-                {
-                    throw InternalError("Backend not known: " + _backends.at(_mycartid % _backends.size()));
-                }
+                _init_solver(solver, _mycartid % _backends.size(), info_lokal, data_lokal, grid_global.d_x, grid_global.d_y, grid_global.d_t, grid_global.tau);
 
                 solver->do_preprocessing();
 
@@ -378,31 +354,7 @@ namespace honei
                 _recv_fringe(fringe);
 
                 SolverLBMGridBase * solver(NULL);
-                if(_backends.at(_mycartid % _backends.size()).compare(tags::CPU::SSE::name) == 0)
-                {
-#ifdef HONEI_SSE
-                    _device_name = tags::CPU::SSE::name;
-                    _solver_tag_value = tags::CPU::SSE::tag_value;
-                    solver = new SolverLBMGrid<tags::CPU::SSE, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (&info, &data, d_x, d_y, d_t, tau);
-#else
-                    throw InternalError("Backend not activated: " + _backends.at(_mycartid % _backends.size()));
-#endif
-                }
-                else if(_backends.at(_mycartid % _backends.size()).compare(tags::GPU::CUDA::name) == 0)
-                {
-#ifdef HONEI_CUDA
-                    _device_name = tags::GPU::CUDA::name;
-                    _solver_tag_value = tags::GPU::CUDA::tag_value;
-                    cuda::GPUPool::instance()->single_start(_mycartid % _backends.size());
-                    solver = new SolverLBMGrid<tags::GPU::CUDA, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (&info, &data, d_x, d_y, d_t, tau);
-#else
-                    throw InternalError("Backend not activated: " + _backends.at(_mycartid % _backends.size()));
-#endif
-                }
-                else
-                {
-                    throw InternalError("Backend not known: " + _backends.at(_mycartid % _backends.size()));
-                }
+                _init_solver(solver, _mycartid % _backends.size(), info, data, d_x, d_y, d_t, tau);
 
                 solver->do_preprocessing();
 
@@ -1684,6 +1636,35 @@ namespace honei
                         throw InternalError("Error: config file entry not known: " + line);
                 }
                 file.close();
+            }
+
+            void _init_solver(SolverLBMGridBase *& solver, unsigned long id, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, DataType_ d_x, DataType_ d_y, DataType_ d_t, DataType_ tau)
+            {
+                if(_backends.at(id).compare(tags::CPU::SSE::name) == 0)
+                {
+#ifdef HONEI_SSE
+                    _device_name = tags::CPU::SSE::name;
+                    _solver_tag_value = tags::CPU::SSE::tag_value;
+                    solver = new SolverLBMGrid<tags::CPU::SSE, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (&info, &data, d_x, d_y, d_t, tau);
+#else
+                    throw InternalError("Backend not activated: " + _backends.at(id));
+#endif
+                }
+                else if(_backends.at(id).compare(tags::GPU::CUDA::name) == 0)
+                {
+#ifdef HONEI_CUDA
+                    _device_name = tags::GPU::CUDA::name;
+                    _solver_tag_value = tags::GPU::CUDA::tag_value;
+                    cuda::GPUPool::instance()->single_start(id);
+                    solver = new SolverLBMGrid<tags::GPU::CUDA, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (&info, &data, d_x, d_y, d_t, tau);
+#else
+                    throw InternalError("Backend not activated: " + _backends.at(id));
+#endif
+                }
+                else
+                {
+                    throw InternalError("Backend not known: " + _backends.at(id));
+                }
             }
     };
 }
