@@ -68,6 +68,7 @@ namespace honei
             std::string _device_name;
             unsigned long _scenario;
             double _sync_threshold;
+            bool _recently_synched;
 
         public:
             MPIRingSolver(int argc, char **argv)
@@ -78,6 +79,7 @@ namespace honei
                 _gpu_device = 0;
                 _sync_time_up = 0;
                 _sync_time_down = 0;
+                _recently_synched = false;
                 if (argc != 5)
                 {
                     if(_myid == 0) std::cout<<"Usage: honei-mpi-ring grid_x grid_y timesteps config_file_name"<<std::endl;
@@ -1647,16 +1649,19 @@ namespace honei
                     status_out_down = 0;
                     std::cout<<_mycartid<<": down waits for me, but i wait for up"<<std::endl;
                 }
-                // up wants nothing from us
-                if (status_in_up == 0)
+                // up wants nothing from us or we synched recently
+                if (status_in_up == 0 || _recently_synched)
                 {
                     status_out_up = 0;
+                    status_in_up = 0;
                 }
-                // down wants nothing from us
-                if (status_in_down == 0)
+                // down wants nothing from us or we synched recently
+                if (status_in_down == 0 || _recently_synched)
                 {
                     status_out_down = 0;
+                    status_in_down = 0;
                 }
+                _recently_synched = false;
 
                 if (source_up_recv != MPI_PROC_NULL) requests.push_back(mpi::mpi_irecv(&status_in_up, 1, source_up_recv, source_up_recv, _comm_cart));
                 if (source_down_recv != MPI_PROC_NULL) requests.push_back(mpi::mpi_irecv(&status_in_down, 1, source_down_recv, source_down_recv, _comm_cart));
@@ -1668,10 +1673,31 @@ namespace honei
 
                 // if status_out up/down == 1 -> send/recv data
                 // \TODO recv/send real data
+
+                // receive data from up
                 if (status_in_up == 1)
+                {
+                    _recently_synched = true;
                     std::cout<<_mycartid<<": up gives me data"<<std::endl;
+                }
+                // receive data from down
                 if (status_in_down == 1)
+                {
+                    _recently_synched = true;
                     std::cout<<_mycartid<<": down gives me data"<<std::endl;
+                }
+                // send data to up
+                if (status_out_up == 1)
+                {
+                    _recently_synched = true;
+                    std::cout<<_mycartid<<": i give up data"<<std::endl;
+                }
+                // send data to down
+                if (status_out_down == 1)
+                {
+                    _recently_synched = true;
+                    std::cout<<_mycartid<<": i give down data"<<std::endl;
+                }
             }
 
             void _read_config(std::string filename, unsigned long & scenario, std::vector<std::string> & backends,
