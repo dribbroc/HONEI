@@ -2,10 +2,12 @@
 scenario 0
 
 # seconds to wait beforce load balancing
-syncthreshold 0.01
+syncthreshold 0.00005
 
 # describe procs on this node
-proc sse 1
+proc sse 0.3
+proc sse 0.4
+proc sse 0.3
 
 #activate fileoutput
 #fileoutput output

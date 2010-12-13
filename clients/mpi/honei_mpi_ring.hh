@@ -43,7 +43,6 @@
 #include <list>
 //#include <netdb.h>
 
-
 namespace honei
 {
     template <typename DataType_>
@@ -69,6 +68,9 @@ namespace honei
             unsigned long _scenario;
             double _sync_threshold;
             bool _recently_synched;
+
+            //test
+            double _sleeptime;
 
         public:
             MPIRingSolver(int argc, char **argv)
@@ -239,7 +241,12 @@ namespace honei
                 at.take();
                 for(unsigned long i(0); i < timesteps; ++i)
                 {
-                    solver->solve();
+                    //solver->solve();
+                    // test
+                    timespec ts;
+                    ts.tv_sec = _sleeptime * 10;
+                    ts.tv_nsec = 0;
+                    nanosleep(&ts, &ts);
 
                     /*MPI_File fh;
                       std::string filename("h_"+stringify(i)+"_out.dat");
@@ -250,6 +257,9 @@ namespace honei
                       MPI_File_iwrite_at(fh, info_lokal.offset + (*info_lokal.limits)[0], data_lokal.h->elements() + (*info_lokal.limits)[0], (*info_lokal.limits)[info_lokal.limits->size() - 1] - (*info_lokal.limits)[0], mpi::MPIType<DataType_>::value(), &request);*/
 
                     _circle_sync(info_lokal, data_lokal, fringe_list.at(0));
+                    // test
+                    MPI_Barrier(MPI_COMM_WORLD);
+                    std::cout<<"-----------------------------"<<std::endl;
 
                     if (_file_output)
                     {
@@ -369,7 +379,12 @@ namespace honei
 
                 for(unsigned long i(0); i < timesteps; ++i)
                 {
-                    solver->solve();
+                    //solver->solve();
+                    // test
+                    timespec ts;
+                    ts.tv_sec = _sleeptime * 10;
+                    ts.tv_nsec = 0;
+                    nanosleep(&ts, &ts);
 
                     /*MPI_File fh;
                       std::string filename("h_"+stringify(i)+"_out.dat");
@@ -380,6 +395,8 @@ namespace honei
                       MPI_File_iwrite_at(fh, info.offset + (*info.limits)[0], data.h->elements() + (*info.limits)[0], (*info.limits)[info.limits->size() - 1] - (*info.limits)[0], mpi::MPIType<DataType_>::value(), &request);*/
 
                     _circle_sync(info, data, fringe);
+                    // test
+                    MPI_Barrier(MPI_COMM_WORLD);
 
                     if (_file_output)
                     {
@@ -1625,23 +1642,17 @@ namespace honei
 
                 unsigned long old_out_up = status_out_up;
                 unsigned long old_out_down = status_out_down;
-                // if up is waiting for us
-                if (status_in_up == 1 && old_out_down == 0)
-                {
-                    status_out_up = 1;
-                    std::cout<<_mycartid<<": up waits for me"<<std::endl;
-                }
                 // if down is waiting for us
                 if (status_in_down == 1 && old_out_up == 0)
                 {
                     status_out_down = 1;
                     std::cout<<_mycartid<<": down waits for me"<<std::endl;
                 }
-                // if up is waiting for us but we are waiting for down, too
-                if (status_in_up == 1 && old_out_down == 1)
+                // if up is waiting for us
+                if (status_in_up == 1 && old_out_down == 0)
                 {
-                    status_out_up = 0;
-                    std::cout<<_mycartid<<": up waits for me, but i wait for down"<<std::endl;
+                    status_out_up = 1;
+                    std::cout<<_mycartid<<": up waits for me"<<std::endl;
                 }
                 // if down is waiting for us but we are waiting for up, too
                 if (status_in_down == 1 && old_out_up == 1)
@@ -1649,17 +1660,30 @@ namespace honei
                     status_out_down = 0;
                     std::cout<<_mycartid<<": down waits for me, but i wait for up"<<std::endl;
                 }
-                // up wants nothing from us or we synched recently
-                if (status_in_up == 0 || _recently_synched)
+                // if up is waiting for us but we are waiting for down, too
+                if (status_in_up == 1 && old_out_down == 1)
                 {
                     status_out_up = 0;
-                    status_in_up = 0;
+                    std::cout<<_mycartid<<": up waits for me, but i wait for down"<<std::endl;
                 }
+                /* // if down and up are waiting for us
+                if (status_in_up == 1 && status_in_down == 1)
+                {
+                    status_out_up = 0;
+                    status_out_down = 1;
+                    std::cout<<_mycartid<<": up and down waits for me, favouring down"<<std::endl;
+                }*/
                 // down wants nothing from us or we synched recently
                 if (status_in_down == 0 || _recently_synched)
                 {
                     status_out_down = 0;
                     status_in_down = 0;
+                }
+                // up wants nothing from us or we synched recently
+                if (status_in_up == 0 || _recently_synched)
+                {
+                    status_out_up = 0;
+                    status_in_up = 0;
                 }
                 _recently_synched = false;
 
@@ -1679,25 +1703,30 @@ namespace honei
                 {
                     _recently_synched = true;
                     std::cout<<_mycartid<<": up gives me data"<<std::endl;
+                    _sleeptime += 0.05;
                 }
                 // receive data from down
                 if (status_in_down == 1)
                 {
                     _recently_synched = true;
                     std::cout<<_mycartid<<": down gives me data"<<std::endl;
+                    _sleeptime += 0.05;
                 }
                 // send data to up
                 if (status_out_up == 1)
                 {
                     _recently_synched = true;
                     std::cout<<_mycartid<<": i give up data"<<std::endl;
+                    _sleeptime -= 0.05;
                 }
                 // send data to down
                 if (status_out_down == 1)
                 {
                     _recently_synched = true;
                     std::cout<<_mycartid<<": i give down data"<<std::endl;
+                    _sleeptime -= 0.05;
                 }
+                std::cout<<_mycartid<<": current load "<<_sleeptime<<std::endl;
             }
 
             void _read_config(std::string filename, unsigned long & scenario, std::vector<std::string> & backends,
@@ -1766,6 +1795,7 @@ namespace honei
 
             void _init_solver(SolverLBMGridBase *& solver, unsigned long id, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, DataType_ d_x, DataType_ d_y, DataType_ d_t, DataType_ tau)
             {
+                _sleeptime = _fractions.at(id);
                 if(_backends.at(id).compare(tags::CPU::SSE::name) == 0)
                 {
 #ifdef HONEI_SSE
