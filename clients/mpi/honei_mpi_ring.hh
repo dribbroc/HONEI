@@ -1811,7 +1811,12 @@ namespace honei
 #ifdef HONEI_CUDA
                     _device_name = tags::GPU::CUDA::name;
                     _solver_tag_value = tags::GPU::CUDA::tag_value;
-                    cuda::GPUPool::instance()->single_start(id);
+                    // die wievielte gpu sind wir auf dem knoten?
+                    unsigned long gpu_number(0);
+                    for (unsigned long i(0) ; i < id ; ++i)
+                        if (_backends.at(i).compare(tags::GPU::CUDA::name) == 0)
+                            gpu_number++;
+                    cuda::GPUPool::instance()->single_start(gpu_number);
                     solver = new SolverLBMGrid<tags::GPU::CUDA, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (&info, &data, d_x, d_y, d_t, tau);
 #else
                     throw InternalError("Backend not activated: " + _backends.at(id));

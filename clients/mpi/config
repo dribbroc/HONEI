@@ -7,7 +7,7 @@ syncthreshold 0.00005
 # describe procs on this node
 proc sse 0.3
 proc sse 0.4
-proc sse 0.3
+proc cuda 0.3
 
 #activate fileoutput
 #fileoutput output
