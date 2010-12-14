@@ -258,7 +258,7 @@ namespace honei
 
                     _circle_sync(info_lokal, data_lokal, fringe_list.at(0));
                     // test
-                    MPI_Barrier(MPI_COMM_WORLD);
+                    //MPI_Barrier(MPI_COMM_WORLD);
                     std::cout<<"-----------------------------"<<std::endl;
 
                     if (_file_output)
@@ -396,7 +396,7 @@ namespace honei
 
                     _circle_sync(info, data, fringe);
                     // test
-                    MPI_Barrier(MPI_COMM_WORLD);
+                    //MPI_Barrier(MPI_COMM_WORLD);
 
                     if (_file_output)
                     {
@@ -1469,12 +1469,14 @@ namespace honei
                     if (!down_fin)
                     {
                         MPI_Testall(requests_down.size(),  &requests_down[0], &down_fin, MPI_STATUSES_IGNORE);
-                        cd.take();
+                        if (down_fin)
+                            cd.take();
                     }
                     if (!up_fin)
                     {
                         MPI_Testall(requests_up.size(),  &requests_up[0], &up_fin, MPI_STATUSES_IGNORE);
-                        cu.take();
+                        if (up_fin)
+                            cu.take();
                     }
                 }
                 //MPI_Waitall(requests_up.size(), &requests_up[0], MPI_STATUSES_IGNORE);
@@ -1639,32 +1641,51 @@ namespace honei
 
                 // 0 means: go ahead, i am waiting, too | or if no request was sent, gives a dummy answer
                 // 1 means: ok, i will give you some data
+                // A -> B means: A -> waits for B, where A is over B
 
                 unsigned long old_out_up = status_out_up;
                 unsigned long old_out_down = status_out_down;
                 // if down is waiting for us
+                // N -> W
                 if (status_in_down == 1 && old_out_up == 0)
                 {
                     status_out_down = 1;
                     std::cout<<_mycartid<<": down waits for me"<<std::endl;
                 }
                 // if up is waiting for us
+                // N <- W
                 if (status_in_up == 1 && old_out_down == 0)
                 {
                     status_out_up = 1;
                     std::cout<<_mycartid<<": up waits for me"<<std::endl;
                 }
                 // if down is waiting for us but we are waiting for up, too
+                // N <- W <- N
                 if (status_in_down == 1 && old_out_up == 1)
                 {
                     status_out_down = 0;
                     std::cout<<_mycartid<<": down waits for me, but i wait for up"<<std::endl;
                 }
                 // if up is waiting for us but we are waiting for down, too
+                // N -> W -> N
                 if (status_in_up == 1 && old_out_down == 1)
                 {
                     status_out_up = 0;
                     std::cout<<_mycartid<<": up waits for me, but i wait for down"<<std::endl;
+                }
+                // if down is waiting for us and we are waiting for up, but up is waiting for us too
+                // N <-> W <- N
+                if (status_in_down == 1 && old_out_up == 1 && status_in_up == 1)
+                {
+                    status_out_down = 1;
+                    std::cout<<_mycartid<<": down and up waits for me, i wait for up"<<std::endl;
+                }
+                // if up is waiting for us and we are waiting for down, but down is waiting for us too
+                // N -> W <-> N
+                if (status_in_up == 1 && old_out_down == 1 && status_in_down == 1)
+                {
+                    status_out_up = 1;
+                    std::cout<<_mycartid<<": up and down waits for me, i wait for down"<<std::endl;
                 }
                 /* // if down and up are waiting for us
                 if (status_in_up == 1 && status_in_down == 1)
@@ -1685,6 +1706,22 @@ namespace honei
                     status_out_up = 0;
                     status_in_up = 0;
                 }
+                // if down waits for us and we wait for down
+                // W <-> N
+                if (status_in_down == 1 && old_out_down == 1 && !_recently_synched)
+                {
+                    status_out_down = 0;
+                    //status_out_up = 1; //experimentell
+                    std::cout<<_mycartid<<": down waits for me, i wait for down"<<std::endl;
+                }
+                // if up waits for us and we wait for up
+                // N <-> W
+                if (status_in_up == 1 && old_out_up == 1 && !_recently_synched)
+                {
+                    status_out_up = 0;
+                    //status_out_down = 1; //experimentell
+                    std::cout<<_mycartid<<": up waits for me, i wait for up"<<std::endl;
+                }
                 _recently_synched = false;
 
                 if (source_up_recv != MPI_PROC_NULL) requests.push_back(mpi::mpi_irecv(&status_in_up, 1, source_up_recv, source_up_recv, _comm_cart));
@@ -1695,6 +1732,8 @@ namespace honei
                 MPI_Waitall(requests.size(), &requests[0], MPI_STATUSES_IGNORE);
                 requests.clear();
 
+                // status_in == 0 : you get no data
+                // status_in == 1 : you get data
                 // if status_out up/down == 1 -> send/recv data
                 // \TODO recv/send real data
 
@@ -1726,7 +1765,7 @@ namespace honei
                     std::cout<<_mycartid<<": i give down data"<<std::endl;
                     _sleeptime -= 0.05;
                 }
-                std::cout<<_mycartid<<": current load "<<_sleeptime<<std::endl;
+                std::cout<<_mycartid<<": current load "<<_sleeptime<<", delta down: "<<delta_down<<", delta up: "<<delta_up<<std::endl;
             }
 
             void _read_config(std::string filename, unsigned long & scenario, std::vector<std::string> & backends,
