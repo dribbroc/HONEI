@@ -1371,8 +1371,8 @@ namespace honei
                 DataType_ down_buffer_recv[down_size_recv];
                 DataType_ up_buffer_recv[up_size_recv];
 
-                if (up_size_recv > 0) requests_up.push_back(mpi::mpi_irecv(up_buffer_recv, up_size_recv, source_up_recv, source_up_recv, _comm_cart));
-                if (down_size_recv > 0) requests_down.push_back(mpi::mpi_irecv(down_buffer_recv, down_size_recv, source_down_recv, source_down_recv, _comm_cart));
+                if (up_size_recv > 0) requests_down.push_back(mpi::mpi_irecv(up_buffer_recv, up_size_recv, source_up_recv, source_up_recv, _comm_cart));
+                if (down_size_recv > 0) requests_up.push_back(mpi::mpi_irecv(down_buffer_recv, down_size_recv, source_down_recv, source_down_recv, _comm_cart));
 
 
                 unsigned long f1_offset_send((*fringe.dir_index_1)[0]);
@@ -1463,6 +1463,8 @@ namespace honei
                 TimeStamp ca, cu, cd;
                 int up_fin(false);
                 int down_fin(false);
+                double delta_up(0);
+                double delta_down(0);
                 ca.take();
                 while (!up_fin || !down_fin)
                 {
@@ -1481,9 +1483,11 @@ namespace honei
                 }
                 //MPI_Waitall(requests_up.size(), &requests_up[0], MPI_STATUSES_IGNORE);
                 //MPI_Waitall(requests_down.size(), &requests_down[0], MPI_STATUSES_IGNORE);
-                _sync_time_down+=cu.total() - ca.total();
-                _sync_time_up+=cd.total() - ca.total();
-                _balance_load(cu.total() - ca.total(), cd.total() - ca.total());
+                delta_down = cd.total() - ca.total();
+                _sync_time_down+=delta_down;
+                delta_up = cu.total() - ca.total();
+                _sync_time_up+=delta_up;
+                _balance_load(delta_up, delta_down);
 
                 if (up_size_recv > 0)
                 {
@@ -1606,7 +1610,7 @@ namespace honei
                 }
             }
 
-            void _balance_load(double delta_down, double delta_up)
+            void _balance_load(double delta_up, double delta_down)
             {
                 std::vector<MPI_Request> requests;
                 int source_up_recv, source_down_recv, target_up_send, target_down_send;
@@ -1678,14 +1682,14 @@ namespace honei
                 if (status_in_down == 1 && old_out_up == 1 && status_in_up == 1)
                 {
                     status_out_down = 1;
-                    std::cout<<_mycartid<<": down and up waits for me, i wait for up"<<std::endl;
+                    std::cout<<_mycartid<<": down and up wait for me, i wait for up"<<std::endl;
                 }
                 // if up is waiting for us and we are waiting for down, but down is waiting for us too
                 // N -> W <-> N
                 if (status_in_up == 1 && old_out_down == 1 && status_in_down == 1)
                 {
                     status_out_up = 1;
-                    std::cout<<_mycartid<<": up and down waits for me, i wait for down"<<std::endl;
+                    std::cout<<_mycartid<<": up and down wait for me, i wait for down"<<std::endl;
                 }
                 /* // if down and up are waiting for us
                 if (status_in_up == 1 && status_in_down == 1)
@@ -1731,6 +1735,7 @@ namespace honei
 
                 MPI_Waitall(requests.size(), &requests[0], MPI_STATUSES_IGNORE);
                 requests.clear();
+                std::cout<<_mycartid<<": current load "<<_sleeptime<<", delta down: "<<delta_down<<", delta up: "<<delta_up<<std::endl;
 
                 // status_in == 0 : you get no data
                 // status_in == 1 : you get data
@@ -1742,30 +1747,29 @@ namespace honei
                 {
                     _recently_synched = true;
                     std::cout<<_mycartid<<": up gives me data"<<std::endl;
-                    _sleeptime += 0.05;
+                    _sleeptime += 0.01;
                 }
                 // receive data from down
                 if (status_in_down == 1)
                 {
                     _recently_synched = true;
                     std::cout<<_mycartid<<": down gives me data"<<std::endl;
-                    _sleeptime += 0.05;
+                    _sleeptime += 0.01;
                 }
                 // send data to up
                 if (status_out_up == 1)
                 {
                     _recently_synched = true;
                     std::cout<<_mycartid<<": i give up data"<<std::endl;
-                    _sleeptime -= 0.05;
+                    _sleeptime -= 0.01;
                 }
                 // send data to down
                 if (status_out_down == 1)
                 {
                     _recently_synched = true;
                     std::cout<<_mycartid<<": i give down data"<<std::endl;
-                    _sleeptime -= 0.05;
+                    _sleeptime -= 0.01;
                 }
-                std::cout<<_mycartid<<": current load "<<_sleeptime<<", delta down: "<<delta_down<<", delta up: "<<delta_up<<std::endl;
             }
 
             void _read_config(std::string filename, unsigned long & scenario, std::vector<std::string> & backends,

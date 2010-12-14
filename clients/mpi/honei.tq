@@ -1,11 +1,10 @@
 # #PBS -o mpi_output.txt
 #PBS -M dribbrock@gmail.com
 #PBS -m bae
-#PBS -q short_eth
+#PBS -q short_ib
 #PBS -N honei-mpi
 #PBS -j oe
 #echo stern 5
-#PBS -l walltime=00:20:00,vmem=15360mb,nodes=2:ppn=4
+#PBS -l walltime=00:20:00,vmem=15360mb,nodes=2:ppn=2
 cd $HOME/honei/trunk/clients/mpi
-mpirun -np 8 ./honei-mpi-ring 1000 1000 100
-#mpirun -np 8 ./honei-mpi-ring 1000 1000 10 $PBS_JOBID
+mpirun -np 4 ./honei-mpi-ring 100 100 20 config
