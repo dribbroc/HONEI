@@ -320,7 +320,7 @@ namespace honei
                 PackedGridInfo<D2Q9> info_ref;
 
                 GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_ref, info_ref, data_ref);
-                SolverLBMGrid<tags::CPU::SSE, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver_ref(&info_ref, &data_ref, grid_ref.d_x, grid_ref.d_y, grid_ref.d_t, grid_ref.tau);
+                SolverLBMGrid<tags::CPU::SSE, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver_ref(&info_ref, &data_ref, grid_ref.d_x, grid_ref.d_y, grid_ref.d_t, grid_ref.tau);
                 solver_ref.do_preprocessing();
                 for(unsigned long i(0); i < timesteps; ++i)
                 {
@@ -1821,7 +1821,7 @@ namespace honei
 #ifdef HONEI_SSE
                     _device_name = tags::CPU::SSE::name;
                     _solver_tag_value = tags::CPU::SSE::tag_value;
-                    solver = new SolverLBMGrid<tags::CPU::SSE, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (&info, &data, d_x, d_y, d_t, tau);
+                    solver = new SolverLBMGrid<tags::CPU::SSE, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> (&info, &data, d_x, d_y, d_t, tau);
 #else
                     throw InternalError("Backend not activated: " + _backends.at(id));
 #endif
@@ -1837,7 +1837,7 @@ namespace honei
                         if (_backends.at(i).compare(tags::GPU::CUDA::name) == 0)
                             gpu_number++;
                     cuda::GPUPool::instance()->single_start(gpu_number);
-                    solver = new SolverLBMGrid<tags::GPU::CUDA, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> (&info, &data, d_x, d_y, d_t, tau);
+                    solver = new SolverLBMGrid<tags::GPU::CUDA, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> (&info, &data, d_x, d_y, d_t, tau);
 #else
                     throw InternalError("Backend not activated: " + _backends.at(id));
 #endif
