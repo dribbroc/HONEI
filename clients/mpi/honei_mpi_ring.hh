@@ -69,9 +69,6 @@ namespace honei
             double _sync_threshold;
             bool _recently_synched;
 
-            //test
-            double _sleeptime;
-
         public:
             MPIRingSolver(int argc, char **argv)
             {
@@ -241,12 +238,7 @@ namespace honei
                 at.take();
                 for(unsigned long i(0); i < timesteps; ++i)
                 {
-                    //solver->solve();
-                    // test
-                    timespec ts;
-                    ts.tv_sec = _sleeptime * 10;
-                    ts.tv_nsec = 0;
-                    nanosleep(&ts, &ts);
+                    solver->solve();
 
                     /*MPI_File fh;
                       std::string filename("h_"+stringify(i)+"_out.dat");
@@ -257,9 +249,6 @@ namespace honei
                       MPI_File_iwrite_at(fh, info_lokal.offset + (*info_lokal.limits)[0], data_lokal.h->elements() + (*info_lokal.limits)[0], (*info_lokal.limits)[info_lokal.limits->size() - 1] - (*info_lokal.limits)[0], mpi::MPIType<DataType_>::value(), &request);*/
 
                     _circle_sync(info_lokal, data_lokal, fringe_list.at(0));
-                    // test
-                    //MPI_Barrier(MPI_COMM_WORLD);
-                    std::cout<<"-----------------------------"<<std::endl;
 
                     if (_file_output)
                     {
@@ -379,12 +368,7 @@ namespace honei
 
                 for(unsigned long i(0); i < timesteps; ++i)
                 {
-                    //solver->solve();
-                    // test
-                    timespec ts;
-                    ts.tv_sec = _sleeptime * 10;
-                    ts.tv_nsec = 0;
-                    nanosleep(&ts, &ts);
+                    solver->solve();
 
                     /*MPI_File fh;
                       std::string filename("h_"+stringify(i)+"_out.dat");
@@ -395,8 +379,6 @@ namespace honei
                       MPI_File_iwrite_at(fh, info.offset + (*info.limits)[0], data.h->elements() + (*info.limits)[0], (*info.limits)[info.limits->size() - 1] - (*info.limits)[0], mpi::MPIType<DataType_>::value(), &request);*/
 
                     _circle_sync(info, data, fringe);
-                    // test
-                    //MPI_Barrier(MPI_COMM_WORLD);
 
                     if (_file_output)
                     {
@@ -1654,42 +1636,42 @@ namespace honei
                 if (status_in_down == 1 && old_out_up == 0)
                 {
                     status_out_down = 1;
-                    std::cout<<_mycartid<<": down waits for me"<<std::endl;
+                    //std::cout<<_mycartid<<": down waits for me"<<std::endl;
                 }
                 // if up is waiting for us
                 // N <- W
                 if (status_in_up == 1 && old_out_down == 0)
                 {
                     status_out_up = 1;
-                    std::cout<<_mycartid<<": up waits for me"<<std::endl;
+                    //std::cout<<_mycartid<<": up waits for me"<<std::endl;
                 }
                 // if down is waiting for us but we are waiting for up, too
                 // N <- W <- N
                 if (status_in_down == 1 && old_out_up == 1)
                 {
                     status_out_down = 0;
-                    std::cout<<_mycartid<<": down waits for me, but i wait for up"<<std::endl;
+                    //std::cout<<_mycartid<<": down waits for me, but i wait for up"<<std::endl;
                 }
                 // if up is waiting for us but we are waiting for down, too
                 // N -> W -> N
                 if (status_in_up == 1 && old_out_down == 1)
                 {
                     status_out_up = 0;
-                    std::cout<<_mycartid<<": up waits for me, but i wait for down"<<std::endl;
+                    //std::cout<<_mycartid<<": up waits for me, but i wait for down"<<std::endl;
                 }
                 // if down is waiting for us and we are waiting for up, but up is waiting for us too
                 // N <-> W <- N
                 if (status_in_down == 1 && old_out_up == 1 && status_in_up == 1)
                 {
                     status_out_down = 1;
-                    std::cout<<_mycartid<<": down and up wait for me, i wait for up"<<std::endl;
+                    //std::cout<<_mycartid<<": down and up wait for me, i wait for up"<<std::endl;
                 }
                 // if up is waiting for us and we are waiting for down, but down is waiting for us too
                 // N -> W <-> N
                 if (status_in_up == 1 && old_out_down == 1 && status_in_down == 1)
                 {
                     status_out_up = 1;
-                    std::cout<<_mycartid<<": up and down wait for me, i wait for down"<<std::endl;
+                    //std::cout<<_mycartid<<": up and down wait for me, i wait for down"<<std::endl;
                 }
                 /* // if down and up are waiting for us
                 if (status_in_up == 1 && status_in_down == 1)
@@ -1716,7 +1698,7 @@ namespace honei
                 {
                     status_out_down = 0;
                     //status_out_up = 1; //experimentell
-                    std::cout<<_mycartid<<": down waits for me, i wait for down"<<std::endl;
+                    //std::cout<<_mycartid<<": down waits for me, i wait for down"<<std::endl;
                 }
                 // if up waits for us and we wait for up
                 // N <-> W
@@ -1724,7 +1706,7 @@ namespace honei
                 {
                     status_out_up = 0;
                     //status_out_down = 1; //experimentell
-                    std::cout<<_mycartid<<": up waits for me, i wait for up"<<std::endl;
+                    //std::cout<<_mycartid<<": up waits for me, i wait for up"<<std::endl;
                 }
                 _recently_synched = false;
 
@@ -1735,7 +1717,7 @@ namespace honei
 
                 MPI_Waitall(requests.size(), &requests[0], MPI_STATUSES_IGNORE);
                 requests.clear();
-                std::cout<<_mycartid<<": current load "<<_sleeptime<<", delta down: "<<delta_down<<", delta up: "<<delta_up<<std::endl;
+                //std::cout<<_mycartid<<": "<<delta_down<<", delta up: "<<delta_up<<std::endl;
 
                 // status_in == 0 : you get no data
                 // status_in == 1 : you get data
@@ -1746,29 +1728,25 @@ namespace honei
                 if (status_in_up == 1)
                 {
                     _recently_synched = true;
-                    std::cout<<_mycartid<<": up gives me data"<<std::endl;
-                    _sleeptime += 0.01;
+                    //std::cout<<_mycartid<<": up gives me data"<<std::endl;
                 }
                 // receive data from down
                 if (status_in_down == 1)
                 {
                     _recently_synched = true;
-                    std::cout<<_mycartid<<": down gives me data"<<std::endl;
-                    _sleeptime += 0.01;
+                    //std::cout<<_mycartid<<": down gives me data"<<std::endl;
                 }
                 // send data to up
                 if (status_out_up == 1)
                 {
                     _recently_synched = true;
-                    std::cout<<_mycartid<<": i give up data"<<std::endl;
-                    _sleeptime -= 0.01;
+                    //std::cout<<_mycartid<<": i give up data"<<std::endl;
                 }
                 // send data to down
                 if (status_out_down == 1)
                 {
                     _recently_synched = true;
-                    std::cout<<_mycartid<<": i give down data"<<std::endl;
-                    _sleeptime -= 0.01;
+                    //std::cout<<_mycartid<<": i give down data"<<std::endl;
                 }
             }
 
@@ -1838,7 +1816,6 @@ namespace honei
 
             void _init_solver(SolverLBMGridBase *& solver, unsigned long id, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, DataType_ d_x, DataType_ d_y, DataType_ d_t, DataType_ tau)
             {
-                _sleeptime = _fractions.at(id);
                 if(_backends.at(id).compare(tags::CPU::SSE::name) == 0)
                 {
 #ifdef HONEI_SSE
