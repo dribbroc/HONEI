@@ -260,13 +260,13 @@ namespace honei
                     //MPI_Wait(&request, MPI_STATUS_IGNORE);
                     //MPI_File_close(&fh);
                 }
+                std::cout<<_mycartid << " (" << _device_name << "): up "<<_sync_time_up<<" down "<<_sync_time_down<<std::endl;
                 MPI_Barrier(MPI_COMM_WORLD);
                 bt.take();
                 solver->do_postprocessing();
                 std::cout<<"Timesteps: " << timesteps << " TOE: "<<bt.total() - at.total()<<std::endl;
                 std::cout<<"MLUPS: "<< (double(grid_global.h->rows()) * double(grid_global.h->columns()) * double(timesteps)) / (1e6 * (bt.total() - at.total())) <<std::endl;
 
-                std::cout<<_mycartid << " (" << _device_name << "): up "<<_sync_time_up<<" down "<<_sync_time_down<<std::endl;
 
 
                 if (_file_output)
@@ -390,9 +390,9 @@ namespace honei
                     //MPI_Wait(&request, MPI_STATUS_IGNORE);
                     //MPI_File_close(&fh);
                 }
+                std::cout<<_mycartid << " (" << _device_name << "): up "<<_sync_time_up<<" down "<<_sync_time_down<<std::endl;
                 MPI_Barrier(MPI_COMM_WORLD);
                 solver->do_postprocessing();
-                std::cout<<_mycartid << " (" << _device_name << "): up "<<_sync_time_up<<" down "<<_sync_time_down<<std::endl;
                 //_send_full_sync(_masterid, data);
             }
 
@@ -1774,6 +1774,9 @@ namespace honei
                     //skip comment lines
                     if(line.find("#") == 0)
                         continue;
+
+                    if (_mycartid == _masterid)
+                        std::cout<<line<<std::endl;
 
                     //read in valueable lines
                     std::vector<std::string> line_parts(string_tokenizer(line, " "));
