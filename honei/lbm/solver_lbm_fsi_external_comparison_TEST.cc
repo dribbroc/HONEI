@@ -22,13 +22,14 @@
 //#include <honei/lbm/solver_lbm_grid.hh>
 #include <honei/lbm/bitmap_io.hh>
 #include <honei/swe/post_processing.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <iostream>
 #include <honei/lbm/grid.hh>
 #include <honei/lbm/grid_packer.hh>
 #include <honei/la/difference.hh>
 #include <honei/la/sum.hh>
 #include <honei/la/scale.hh>
+#include <honei/math/matrix_io.hh>
 
 using namespace honei;
 using namespace tests;
@@ -490,26 +491,6 @@ class SolverLBMFSIExternalComparisonTest_Malpasset :
         unsigned long _max_timesteps;
         DataType_ _dt, _tau;
 
-        /*DenseMatrix<DataType_> read_file(const std::string s, unsigned int & width, unsigned int & height, float & dx)
-        {
-            ifstream fin(s.c_str());
-            float tmp, no_data_value;
-            char buffer[255];
-            float* data;
-            fin >> buffer_1 >> width;
-            fin >> buffer_1 >> height;
-            fin >> buffer_1 >> tmp;
-            fin >> buffer_1 >> tmp;
-            fin >> buffer_1 >> dx;
-            fin >> buffer_1 >> no_data_value;
-            data = new float[width*height];
-            for (unsigned int i = 0; i < width*height; i++)
-                fin >> data[i];
-            fin.close();
-
-            DenseMatrix<DataType_> result //BLAAAAAAAAAAAAAAAAAAAA
-        }*/
-
     public:
         SolverLBMFSIExternalComparisonTest_Malpasset(const std::string & type,
                                                 unsigned long max_ts,
@@ -524,108 +505,46 @@ class SolverLBMFSIExternalComparisonTest_Malpasset :
 
         virtual void run() const
         {
-            float* data_1;
-            float* data_2;
-            float* data_3;
+            float dx(15);
 
-            unsigned int width_g, height_g;
-            float dx_g;
+            SparseMatrixELL<DataType_> pre_h_b(MatrixIO<io_formats::ELL>::read_matrix("malp_initial.ell", DataType_(0)));
+            DenseMatrix<DataType_> h_b(pre_h_b.rows(), pre_h_b.columns());
 
+            SparseMatrixELL<DataType_> pre_pre_s(MatrixIO<io_formats::ELL>::read_matrix("malp_domain.ell", DataType_(0)));
+            DenseMatrix<DataType_> pre_s(pre_h_b.rows(), pre_h_b.columns());
+
+            SparseMatrixELL<DataType_> pre_b(MatrixIO<io_formats::ELL>::read_matrix("malp_bottom.ell", DataType_(0)));
+            DenseMatrix<DataType_> b(pre_h_b.rows(), pre_h_b.columns());
+
+            unsigned long height(pre_h_b.rows());
+            unsigned long width(pre_h_b.columns());
+            DenseMatrix<DataType_> h((unsigned long)height, (unsigned long)width, DataType_(0));
+            DenseMatrix<DataType_> u((unsigned long)height, (unsigned long)width, DataType_(0));
+            DenseMatrix<DataType_> v((unsigned long)height, (unsigned long)width, DataType_(0));
+            DenseMatrix<bool> o((unsigned long)height, (unsigned long)width, DataType_(0));
+            DenseMatrix<bool> s((unsigned long)height, (unsigned long)width, DataType_(0));
+
+            for (unsigned long i = 0; i < height; ++i)
             {
-            std::string file_1("MALP_ZB_dx15hm.dem");
-            ifstream fin_1(file_1.c_str());
-            unsigned int width, height;
-            float dx;
-            float tmp;
-            float no_data_value;
-            char buffer_1[255];
-            fin_1 >> buffer_1 >> width;
-            fin_1 >> buffer_1 >> height;
-            fin_1 >> buffer_1 >> tmp;
-            fin_1 >> buffer_1 >> tmp;
-            fin_1 >> buffer_1 >> dx;
-            fin_1 >> buffer_1 >> no_data_value;
-            data_1 = new float[width*height];
-            for (unsigned int i = 0; i < width*height; i++)
-                fin_1 >> data_1[i];
-            fin_1.close();
-
-            width_g = width;
-            height_g = height;
-            dx_g = dx;
-            }
-
-            {
-            std::string file_2("MALP_ZB_dx15hm_new.dem");
-            ifstream fin_2(file_2.c_str());
-            unsigned int width, height;
-            float dx;
-            float tmp;
-            float no_data_value;
-            char buffer_2[255];
-            fin_2 >> buffer_2 >> width;
-            fin_2 >> buffer_2 >> height;
-            fin_2 >> buffer_2 >> tmp;
-            fin_2 >> buffer_2 >> tmp;
-            fin_2 >> buffer_2 >> dx;
-            fin_2 >> buffer_2 >> no_data_value;
-            data_2 = new float[width*height];
-            for (unsigned int i = 0; i < width*height; i++)
-                fin_2 >> data_2[i];
-            fin_2.close();
-            }
-
-            {
-            std::string file_3("MALP_ZB_dx15wm.dem");
-            ifstream fin_3(file_3.c_str());
-            unsigned int width, height;
-            float dx;
-            float tmp;
-            float no_data_value;
-            char buffer_3[255];
-            fin_3 >> buffer_3 >> width;
-            fin_3 >> buffer_3 >> height;
-            fin_3 >> buffer_3 >> tmp;
-            fin_3 >> buffer_3 >> tmp;
-            fin_3 >> buffer_3 >> dx;
-            fin_3 >> buffer_3 >> no_data_value;
-            data_3 = new float[width*height];
-            for (unsigned int i = 0; i < width*height; i++)
-                fin_3 >> data_3[i];
-            fin_3.close();
-            }
-
-            DenseMatrix<DataType_> h((unsigned long)height_g, (unsigned long)width_g, DataType_(0));
-            DenseMatrix<DataType_> u((unsigned long)height_g, (unsigned long)width_g, DataType_(0));
-            DenseMatrix<DataType_> v((unsigned long)height_g, (unsigned long)width_g, DataType_(0));
-            DenseMatrix<DataType_> b((unsigned long)height_g, (unsigned long)width_g, DataType_(0));
-            DenseMatrix<bool> o((unsigned long)height_g, (unsigned long)width_g, DataType_(0));
-            DenseMatrix<bool> s((unsigned long)height_g, (unsigned long)width_g, DataType_(0));
-            DenseMatrix<DataType_> h_b((unsigned long)height_g, (unsigned long)width_g, DataType_(0));
-
-            DenseMatrix<DataType_> pre_s((unsigned long)height_g, (unsigned long)width_g, DataType_(0));
-
-            for (unsigned long i = 0; i < height_g; ++i)
-            {
-                for (unsigned long j = 0; j < width_g; ++j)
+                for (unsigned long j = 0; j < width; ++j)
                 {
-                    pre_s[i][j] = data_1[i * width_g + j];
-                    s[i][j] = data_1[i * width_g + j] == 110 ? true : false;
-                    b[i][j] = data_2[i * width_g + j];
-                    h_b[i][j] = data_3[i * width_g + j];
-
+                    h_b[i][j] = pre_h_b(i , j);
+                    pre_s[i][j] = pre_pre_s(i , j);
+                    s[i][j] = pre_s[i][j] == 110 ? true : false;
+                    b[i][j] = s(i , j) ? DataType_(0) : pre_s(i , j);
                     h[i][j] = h_b[i][j] - b[i][j];
                 }
             }
-            PostProcessing<GNUPLOT>::value(b, 1, b.columns(), b.rows(), 0);
+            //PostProcessing<GNUPLOT>::value(b, 1, b.columns(), b.rows(), 1000);
+            //PostProcessing<GNUPLOT>::value(h, 1, b.columns(), b.rows(), 2000);
 
-            DenseMatrix<DataType_> twenty((unsigned long)height_g, (unsigned long)width_g, DataType_(20));
+            DenseMatrix<DataType_> twenty((unsigned long)height, (unsigned long)width, DataType_(20));
             Sum<Tag_>::value(b ,twenty);
             Sum<Tag_>::value(h ,twenty);
 
             Scale<Tag_>::value(b, DataType_(1./1000));
             Scale<Tag_>::value(h, DataType_(1./1000));
-            dx_g /= 1000;
+            dx /= 1000;
 
             Grid<D2Q9, DataType_> grid;
             grid.h = &h;
@@ -634,8 +553,8 @@ class SolverLBMFSIExternalComparisonTest_Malpasset :
             grid.b = &b;
             grid.obstacles = &o;
 
-            grid.d_x = dx_g;
-            grid.d_y = dx_g;
+            grid.d_x = dx;
+            grid.d_y = dx;
             grid.d_t = _dt;
             grid.tau = _tau;
 
@@ -668,7 +587,8 @@ class SolverLBMFSIExternalComparisonTest_Malpasset :
                 solver.do_postprocessing();
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
                 //PostProcessing<GNUPLOT>::value(*grid.h, _max_timesteps - 1 , h.columns(), h.rows(), i);
-                PostProcessing<GNUPLOT>::value(*grid.h, 1, h.columns(), h.rows(), i);
+                //Sum<Tag_>::value(*grid.h, *grid.b);
+                PostProcessing<GNUPLOT>::value(*grid.h, 10, h.columns(), h.rows(), i);
 #endif
             }
             solver.do_postprocessing();
@@ -679,4 +599,55 @@ class SolverLBMFSIExternalComparisonTest_Malpasset :
             //std::cout << result << std::endl;
         }
 };
-SolverLBMFSIExternalComparisonTest_Malpasset<tags::CPU, float> malpasset_cpu_float("float", 10, 0.01, 1.5);
+//SolverLBMFSIExternalComparisonTest_Malpasset<tags::CPU, float> malpasset_cpu_float("float", 1000, 0.015, 1.5);
+SolverLBMFSIExternalComparisonTest_Malpasset<tags::CPU, float> malpasset_cpu_float("float", 7500, 0.0005, 1.5);
+
+template <typename Tag_, typename DataType_>
+class IO_Malpasset :
+    public TaggedTest<Tag_>
+{
+    private:
+        const std::string filename_in;
+        const std::string filename_out;
+    public:
+        IO_Malpasset(const std::string in,
+                const std::string out) :
+            TaggedTest<Tag_>("Malpasset IO" ),
+            filename_in(in),
+            filename_out(out)
+    {
+    }
+
+        virtual void run() const
+        {
+            ifstream fin_1(filename_in.c_str());
+            unsigned int width, height;
+            float* data_1;
+            float dx;
+            float tmp;
+            float no_data_value;
+            char buffer_1[255];
+            fin_1 >> buffer_1 >> width;
+            fin_1 >> buffer_1 >> height;
+            fin_1 >> buffer_1 >> tmp;
+            fin_1 >> buffer_1 >> tmp;
+            fin_1 >> buffer_1 >> dx;
+            fin_1 >> buffer_1 >> no_data_value;
+            data_1 = new float[width*height];
+            for (unsigned int i = 0; i < width*height; i++)
+                fin_1 >> data_1[i];
+            fin_1.close();
+
+            SparseMatrix<DataType_> target(height, width);
+            for(unsigned long i(0) ; i < height ; ++i)
+                for(unsigned long j(0) ; j < width ; ++j)
+                {
+                    target(i,j) = data_1[i * width +j];
+                }
+
+            MatrixIO<io_formats::MTX>::write_matrix(filename_out, target);
+        }
+};
+/*IO_Malpasset<tags::CPU, float> io_malp1("MALP_ZB_dx15hm.dem", "malp_domain.mtx");
+IO_Malpasset<tags::CPU, float> io_malp2("MALP_ZB_dx15hm_new.dem", "malp_bottom.mtx");
+IO_Malpasset<tags::CPU, float> io_malp3("MALP_ZB_dx15wm.dem", "malp_initial.mtx");*/

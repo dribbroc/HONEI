@@ -20,7 +20,7 @@
 #include <honei/lbm/solver_lbm_grid.hh>
 #include <honei/lbm/bitmap_io.hh>
 #include <honei/swe/post_processing.hh>
-#include <unittest/unittest.hh>
+#include <honei/util/unittest.hh>
 #include <iostream>
 #include <honei/lbm/grid.hh>
 #include <honei/lbm/grid_packer.hh>

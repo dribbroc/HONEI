@@ -207,7 +207,7 @@ namespace honei
                         value(*_info, *_data);
 
                     //extract velocities out of h from previous timestep:
-                    ExtractionGrid<Tag_, LbmMode_>::value(*_info, *_data, ResPrec_(10e-5));
+                    ExtractionGrid<Tag_, LbmMode_>::value(*_info, *_data, ResPrec_(std::numeric_limits<float>::epsilon()));
 
                     ++_time;
 
