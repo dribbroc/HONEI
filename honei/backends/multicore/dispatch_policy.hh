@@ -24,7 +24,6 @@
 #include <honei/backends/multicore/ticket.hh>
 #include <honei/backends/multicore/topology.hh>
 #include <honei/util/attributes.hh>
-
 #include <honei/util/tr1_boost.hh>
 #include <vector>
 #include <algorithm>

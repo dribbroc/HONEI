@@ -50,10 +50,13 @@
 #define __NR_sched_getaffinity    233
 
 #else
-#error "Architecture note supported by multicore backend!"
+#error "Architecture not supported by multicore backend!"
 
 #endif
 
+#include <honei/util/exception.hh>
+#include <honei/util/log.hh>
+#include <honei/util/stringify.hh>
 
 namespace honei
 {
@@ -186,6 +189,8 @@ namespace honei
 
             static unsigned retrieve_num_nodes()
             {
+                CONTEXT("When checking the NUMA filesystem:\n");
+
                 DIR * d;
                 struct dirent * de;
 
@@ -193,7 +198,13 @@ namespace honei
 
                 d = opendir("/sys/devices/system/node");
                 if (!d)
+                {
+#ifdef DEBUG
+                    std::string msg ="Unable to open NUMA filesystem - will assume to have ONE node. \n";
+                    LOGMESSAGE(lc_backend, msg);
+#endif
                     num_nodes = 1;
+                }
                 else
                 {
                     while ((de = readdir(d)) != NULL)
@@ -202,6 +213,10 @@ namespace honei
                             num_nodes++;
                     }
                     closedir(d);
+#ifdef DEBUG
+                    std::string msg ="Successfully read NUMA filesystem - found " + stringify(num_nodes) + " node(s). \n";
+                    LOGMESSAGE(lc_backend, msg);
+#endif
                 }
                 return num_nodes;
             }

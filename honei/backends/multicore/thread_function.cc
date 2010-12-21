@@ -20,6 +20,7 @@
 #include <honei/util/attributes.hh>
 #include <honei/util/exception.hh>
 #include <honei/util/lock.hh>
+#include <honei/util/log.hh>
 #include <honei/util/private_implementation_pattern-impl.hh>
 #include <honei/util/stringify.hh>
 
@@ -132,6 +133,10 @@ void ThreadFunction::operator() ()
                     unsigned & sched_id = task->ticket->sid();
                     sched_id = _imp->sched_lpu;
                     _imp->tasklist->remove(*i);
+#ifdef DEBUG
+                    std::string msg = "Thread " + stringify(_imp->pool_id) + " on LPU " + stringify(_imp->sched_lpu) + " will execute ticket " + stringify(task->ticket->uid()) + "\n";
+                    LOGMESSAGE(lc_backend, msg);
+#endif
                     break;
                 }
             }

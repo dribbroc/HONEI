@@ -22,6 +22,7 @@
 #include <honei/util/exception.hh>
 #include <honei/util/instantiation_policy-impl.hh>
 #include <honei/util/lock.hh>
+#include <honei/util/log.hh>
 #include <honei/util/stringify.hh>
 
 #include <errno.h>
@@ -42,9 +43,17 @@ ThreadPool::ThreadPool() :
     _global_barrier(new ConditionVariable),
     _affinity(Configuration::instance()->get_value("mc::affinity", true))
 {
+    CONTEXT("When initializing the thread pool:\n");
+#ifdef DEBUG
+    std::string msg = "Will create " + stringify(_num_threads) + " POSIX worker threads \n";
+#endif
+
 #ifdef linux
     if (_affinity)
     {
+#ifdef DEBUG
+        msg += "Thread Affinity is configured to be enabled - will assign threads to definite logical processing units. \n";
+#endif
         _affinity_mask = new cpu_set_t[_num_threads + 1];
 
         // set own affinity first
@@ -52,6 +61,11 @@ ThreadPool::ThreadPool() :
         CPU_SET(_topology->num_lpus() - 1, &_affinity_mask[_num_threads]);
         if(sched_setaffinity(syscall(__NR_gettid), sizeof(cpu_set_t), &_affinity_mask[_num_threads]) != 0)
             throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
+
+#ifdef DEBUG
+        msg += "THREAD \t\t POOL_ID \t LPU \t NODE \n";
+        msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->get_node(_topology->num_lpus() - 1)) + " \n";
+#endif
     }
 #endif
 
@@ -74,9 +88,17 @@ ThreadPool::ThreadPool() :
             CPU_SET(sched_id, &_affinity_mask[i]);
             if(sched_setaffinity(tobj->tid(), sizeof(cpu_set_t), &_affinity_mask[i]) != 0)
                 throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
+
+#ifdef DEBUG
+            msg += stringify(tobj->tid()) + "\t\t" + stringify(_inst_ctr - 1) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(_topology->get_node(sched_id)) + " \n";
+#endif
         }
 #endif
     }
+
+#ifdef DEBUG
+    LOGMESSAGE(lc_backend, msg);
+#endif
 }
 
 ThreadPool::~ThreadPool()
@@ -188,6 +210,8 @@ unsigned ThreadPool::main_node() const
 
 Ticket<tags::CPU::MultiCore> * ThreadPool::enqueue(const function<void ()> & task, DispatchPolicy p)
 {
+    CONTEXT("When creating a ThreadTask:\n");
+
     Ticket<tags::CPU::MultiCore> * ticket((_affinity ? p.apply(_sched_ids) : DispatchPolicy::any_core().apply(_sched_ids)));
 
     ThreadTask * t_task(new ThreadTask(task, ticket));
