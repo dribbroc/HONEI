@@ -44,7 +44,7 @@ class SMELLCGBench :
             filename += "/honei/math/testdata/";
             //std::string filename = "/home/mgeveler/testdata/";
             filename += _m_f;
-            SparseMatrix<DataType_> tsmatrix2(MatrixIO<io_formats::M>::read_matrix(filename, DataType_(0)));
+            SparseMatrix<DataType_> tsmatrix2(MatrixIO<io_formats::M, SparseMatrix<DataType_> >::read_matrix(filename));
             SparseMatrixELL<DataType_> smatrix2(tsmatrix2);
 
             std::string filename_2(HONEI_SOURCEDIR);

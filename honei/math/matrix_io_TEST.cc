@@ -22,7 +22,6 @@
 #include <honei/util/stringify.hh>
 #include <honei/la/product.hh>
 #include <honei/la/sparse_matrix_ell.hh>
-#include <honei/math/methods.hh>
 #include <iostream>
 #include <cstdio>
 
@@ -46,7 +45,7 @@ class MMIOTest:
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/5pt_10x10.mtx";
             unsigned long non_zeros(0);
-            DenseMatrix<DT_> matrix = MatrixIO<io_formats::MTX, methods::NONE>::read_matrix(filename, DT_(0), non_zeros);
+            DenseMatrix<DT_> matrix = MatrixIO<io_formats::MTX, DenseMatrix<DT_> >::read_matrix(filename, DT_(0), non_zeros);
             //std::cout << matrix;
             //std::cout << "Non zero elements: " << non_zeros << std::endl;
 
@@ -75,7 +74,7 @@ class MMIOTest:
             std::cout << data;*/
 
 
-            SparseMatrix<DT_> tsmatrix2(MatrixIO<io_formats::MTX>::read_matrix(filename, DT_(0)));
+            SparseMatrix<DT_> tsmatrix2(MatrixIO<io_formats::MTX, SparseMatrix<DT_> >::read_matrix(filename));
             SparseMatrixELL<DT_> smatrix2(tsmatrix2);
 
             TEST_CHECK_EQUAL(smatrix2, smatrix);
@@ -87,20 +86,20 @@ class MMIOTest:
             std::cout << c_matlab << std::endl;
             std::cout << data_matlab << std::endl;*/
 
-            SparseMatrix<DT_> tsmatrix3(MatrixIO<io_formats::M>::read_matrix(filename_2, DT_(0)));
+            SparseMatrix<DT_> tsmatrix3(MatrixIO<io_formats::M, SparseMatrix<DT_> >::read_matrix(filename_2));
             SparseMatrixELL<DT_> smatrix3(tsmatrix3);
 
             //std::cout << smatrix3 << std::endl;
 
             std::string filename_3(HONEI_SOURCEDIR);
             filename_3 +="/honei/math/testdata/area51_full_0.ell";
-            SparseMatrixELL<DT_> smatrix4 = MatrixIO<io_formats::ELL>::read_matrix(filename_3, DT_(1));
+            SparseMatrixELL<DT_> smatrix4 = MatrixIO<io_formats::ELL, SparseMatrixELL<DT_> >::read_matrix(filename_3);
             //std::cout << smatrix4 << std::endl;
             TEST_CHECK_EQUAL(smatrix4, smatrix3);
 
             std::string filename_4(HONEI_SOURCEDIR);
             filename_4 += "/honei/math/testdata/5pt_10x10.ell";
-            SparseMatrixELL<DT_> smatrix5 = MatrixIO<io_formats::ELL, SparseMatrixELL<double> >::read_matrix(filename_4, DT_(1));
+            SparseMatrixELL<DT_> smatrix5 = MatrixIO<io_formats::ELL, SparseMatrixELL<DT_> >::read_matrix(filename_4);
             TEST_CHECK_EQUAL(smatrix5, smatrix2);
 
             //--------------------- ell write_matrix test
@@ -108,8 +107,8 @@ class MMIOTest:
             {
                 std::string filename_6(HONEI_BUILDDIR);
                 filename_6 += "/honei/math/testdata/5pt_10x10-out.ell";
-                MatrixIO<io_formats::ELL>::write_matrix(filename_6, smatrix5);
-                SparseMatrixELL<DT_> smatrix6 = MatrixIO<io_formats::ELL>::read_matrix(filename_6, DT_(1));
+                MatrixIO<io_formats::ELL, SparseMatrixELL<DT_> >::write_matrix(filename_6, smatrix5);
+                SparseMatrixELL<DT_> smatrix6 = MatrixIO<io_formats::ELL, SparseMatrixELL<DT_> >::read_matrix(filename_6);
                 TEST_CHECK_EQUAL(smatrix6, smatrix5);
                 remove(filename_6.c_str());
             }
@@ -117,9 +116,9 @@ class MMIOTest:
             //-------------------------- MTX write matrix test
             std::string filename_5(HONEI_BUILDDIR);
             filename_5 += "/honei/math/testdata/5pt_10x10-out.mtx";
-            MatrixIO<io_formats::MTX>::write_matrix(filename_5, tsmatrix2);
+            MatrixIO<io_formats::MTX, SparseMatrix<DT_> >::write_matrix(filename_5, tsmatrix2);
 
-            SparseMatrix<DT_> tsmatrixw(MatrixIO<io_formats::MTX>::read_matrix(filename_5, DT_(0)));
+            SparseMatrix<DT_> tsmatrixw(MatrixIO<io_formats::MTX, SparseMatrix<DT_> >::read_matrix(filename_5));
 
             TEST_CHECK_EQUAL(tsmatrixw, tsmatrix2);
 

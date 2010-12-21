@@ -44,7 +44,7 @@ class SMELLJacobiBench :
             //filename += "/honei/math/testdata/test_0.mtx";
             std::string filename = "/home/user/mgeveler/nobackup/feat2/Featflow2/area51/renumbenchmark/";
             filename += _m_f;
-            SparseMatrix<DataType_> tsmatrix2(MatrixIO<io_formats::M>::read_matrix(filename, DataType_(0)));
+            SparseMatrix<DataType_> tsmatrix2(MatrixIO<io_formats::M, SparseMatrix<DataType_> >::read_matrix(filename));
             SparseMatrixELL<DataType_> smatrix2(tsmatrix2);
 
             std::string filename_2 = "/home/user/mgeveler/nobackup/feat2/Featflow2/area51/renumbenchmark/";

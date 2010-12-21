@@ -43,13 +43,13 @@ int main(int argc, char ** argv)
     std::string input(argv[1]);
     std::string output(argv[2]);
 
-    SparseMatrixELL<double> smatrix(MatrixIO<io_formats::ELL>::read_matrix(input, double(0)));
+    SparseMatrixELL<double> smatrix(MatrixIO<io_formats::ELL, SparseMatrixELL<double> >::read_matrix(input));
     SparseMatrix<double> ssmatrix(smatrix);
     SparseMatrix<double> sspai(SPAI::value(ssmatrix));
     SparseMatrixELL<double> spai(sspai);
 
     // Write out spai matrix
-    MatrixIO<io_formats::ELL>::write_matrix(output, spai);
+    MatrixIO<io_formats::ELL, SparseMatrixELL<double> >::write_matrix(output, spai);
 
     return EXIT_SUCCESS;
 }

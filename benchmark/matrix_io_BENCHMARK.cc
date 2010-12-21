@@ -53,9 +53,7 @@ class ELLMatrixIOBench :
             filename += _file;
             BENCHMARK(
                     for (unsigned long i(0) ; i < 100 ; ++i)
-                    {
-                    SparseMatrixELL<DataType_> smatrix = MatrixIO<io_formats::ELL>::read_matrix(filename, DataType_(1));
-                    }
+                        SparseMatrixELL<DataType_> smatrix(MatrixIO<io_formats::ELL, SparseMatrixELL<DataType_> >::read_matrix(filename));
                     );
             evaluate();
         }
@@ -93,7 +91,7 @@ class MTXMatrixIOBench :
                 BENCHMARK(
                         for (unsigned long i(0) ; i < 100 ; ++i)
                         {
-                        SparseMatrix<double> tsmatrix(MatrixIO<io_formats::MTX>::read_matrix(filename, double(0)));
+                        SparseMatrix<double> tsmatrix(MatrixIO<io_formats::MTX, SparseMatrix<double> >::read_matrix(filename));
                         SparseMatrixELL<double> smatrix(tsmatrix);
                         }
                         );

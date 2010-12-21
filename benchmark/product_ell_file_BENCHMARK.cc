@@ -56,7 +56,7 @@ class ProductELLFileBenchmark:
             std::string filebase(HONEI_SOURCEDIR);
             filebase += "/honei/math/";
             _file_name = filebase + _file_name;
-            SparseMatrixELL<DT_> smatrix = MatrixIO<io_formats::ELL>::read_matrix(_file_name, DT_(1));
+            SparseMatrixELL<DT_> smatrix = MatrixIO<io_formats::ELL, SparseMatrixELL<DT_> >::read_matrix(_file_name);
             DenseVector<DT_> x(smatrix.rows());
             DenseVector<DT_> y(smatrix.rows());
             for (unsigned long i(0) ; i < x.size() ; ++i)

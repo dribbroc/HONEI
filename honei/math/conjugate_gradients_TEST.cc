@@ -542,7 +542,7 @@ class ConjugateGradientsTestSparseELL:
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/";
             filename += _m_f;
-            SparseMatrix<DT1_> tsmatrix2(MatrixIO<io_formats::M>::read_matrix(filename, DT1_(0)));
+            SparseMatrix<DT1_> tsmatrix2(MatrixIO<io_formats::M, SparseMatrix<DT1_> >::read_matrix(filename));
             SparseMatrixELL<DT1_> smatrix2(tsmatrix2);
 
             std::string filename_2(HONEI_SOURCEDIR);
@@ -614,6 +614,7 @@ ConjugateGradientsTestSparseELL<tags::GPU::CUDA, double> cuda_cg_test_double_spa
 #endif
 #endif
 
+
 template <typename Tag_, typename DT1_>
 class PreconditionedConjugateGradientsTestSparseELL:
     public BaseTest
@@ -641,7 +642,7 @@ class PreconditionedConjugateGradientsTestSparseELL:
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/";
             filename += _m_f;
-            SparseMatrix<DT1_> tsmatrix2(MatrixIO<io_formats::M>::read_matrix(filename, DT1_(0)));
+            SparseMatrix<DT1_> tsmatrix2(MatrixIO<io_formats::M, SparseMatrix<DT1_> >::read_matrix(filename));
             SparseMatrixELL<DT1_> smatrix2(tsmatrix2);
 
             std::string filename_2(HONEI_SOURCEDIR);

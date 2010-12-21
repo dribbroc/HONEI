@@ -44,11 +44,11 @@ int main(int argc, char ** argv)
     std::string input(argv[1]);
     std::string output(argv[2]);
 
-    SparseMatrix<double> tsmatrix(MatrixIO<io_formats::M>::read_matrix(input, double(0)));
+    SparseMatrix<double> tsmatrix(MatrixIO<io_formats::M, SparseMatrix<double> >::read_matrix(input));
     SparseMatrixELL<double> smatrix(tsmatrix);
 
     // Write out ell file matrix
-    MatrixIO<io_formats::ELL>::write_matrix(output, smatrix);
+    MatrixIO<io_formats::ELL, SparseMatrixELL<double> >::write_matrix(output, smatrix);
 
     return EXIT_SUCCESS;
 }

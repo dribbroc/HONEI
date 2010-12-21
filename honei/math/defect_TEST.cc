@@ -45,7 +45,7 @@ class DefectTest:
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/5pt_10x10.mtx";
             unsigned long non_zeros(0);
-            DenseMatrix<DT_> matrix = MatrixIO<io_formats::MTX, methods::NONE>::read_matrix(filename, DT_(0), non_zeros);
+            DenseMatrix<DT_> matrix = MatrixIO<io_formats::MTX, DenseMatrix<DT_> >::read_matrix(filename, DT_(0), non_zeros);
 
             DenseVector<DT_> x(matrix.rows());
             DenseVector<DT_> b(matrix.rows(), DT_(1.234));
@@ -108,7 +108,7 @@ class DefectRegressionTest:
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/";
             filename += _m_f;
-            SparseMatrix<DT_> tsmatrix2(MatrixIO<io_formats::M>::read_matrix(filename, DT_(0)));
+            SparseMatrix<DT_> tsmatrix2(MatrixIO<io_formats::M, SparseMatrix<DT_> >::read_matrix(filename));
             SparseMatrixELL<DT_> smatrix2(tsmatrix2);
 
             std::string filename_2(HONEI_SOURCEDIR);

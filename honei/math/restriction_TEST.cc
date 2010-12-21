@@ -104,7 +104,7 @@ class RestrictionVisualTest:
             std::string prol_file(HONEI_SOURCEDIR);
             prol_file += "/honei/math/testdata/poisson/";
             prol_file += "poisson_prol_2.ell";
-            SparseMatrixELL<DT1_> prolmat(MatrixIO<io_formats::ELL, SparseMatrixELL<double> >::read_matrix(prol_file, DT1_(0)));
+            SparseMatrixELL<DT1_> prolmat(MatrixIO<io_formats::ELL, SparseMatrixELL<DT1_> >::read_matrix(prol_file));
             SparseMatrix<DT1_> prol(prolmat);
             SparseMatrix<DT1_> res(prol.columns(), prol.rows());
             Transposition<Tag_>::value(prol, res);

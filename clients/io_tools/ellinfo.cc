@@ -29,13 +29,13 @@ int main(int argc, char ** argv)
 {
     if (argc != 2)
     {
-        std::cout<<"Usage 'ellinfo mtx-file'"<<std::endl;
+        std::cout<<"Usage 'ellinfo ell-file'"<<std::endl;
         exit(EXIT_FAILURE);
     }
 
     // Read in m file matrix
     std::string input(argv[1]);
-    SparseMatrix<double> tsmatrix(MatrixIO<io_formats::ELL>::read_matrix(input, double(0)));
+    SparseMatrixELL<double> tsmatrix(MatrixIO<io_formats::ELL, SparseMatrixELL<double> >::read_matrix(input));
 
     std::cout<<"ELL Matrix info for " + input << std::endl;
     std::cout<<"Rows: " << tsmatrix.rows() << std::endl;

@@ -68,7 +68,7 @@ class DuneRegressionTestSparseELL:
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/";
             filename += _m_f;
-            SparseMatrix<DT1_> tsmatrix(MatrixIO<io_formats::M>::read_matrix(filename, DT1_(0)));
+            SparseMatrix<DT1_> tsmatrix(MatrixIO<io_formats::M, SparseMatrix<DT1_> >::read_matrix(filename));
             SparseMatrixELL<DT1_> smatrix(tsmatrix);
 
             std::string filename_2(HONEI_SOURCEDIR);

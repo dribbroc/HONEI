@@ -405,7 +405,7 @@ class PoissonTestMGSparseELLProlMat:
                 A_file += "poisson_A_";
                 A_file += stringify(i);
                 A_file += ".ell";
-                SparseMatrixELL<float> smell(MatrixIO<io_formats::ELL, SparseMatrixELL<double> >::read_matrix(A_file, float(0)));
+                SparseMatrixELL<float> smell(MatrixIO<io_formats::ELL, SparseMatrixELL<float> >::read_matrix(A_file));
 
                 std::string rhs_file(HONEI_SOURCEDIR);
                 rhs_file += "/honei/math/testdata/poisson/";
@@ -441,7 +441,7 @@ class PoissonTestMGSparseELLProlMat:
                         prol_file += "poisson_prol_";
                         prol_file += stringify(i);
                         prol_file += ".ell";
-                        SparseMatrixELL<float> prolmat(MatrixIO<io_formats::ELL, SparseMatrixELL<double> >::read_matrix(prol_file, float(0)));
+                        SparseMatrixELL<float> prolmat(MatrixIO<io_formats::ELL, SparseMatrixELL<float> >::read_matrix(prol_file));
                         info.prolmats.push_back(prolmat);
 
                         SparseMatrix<float> prol(prolmat);
@@ -711,7 +711,7 @@ class PoissonAdvancedTestMGSparseELLProlMat:
                 A_file += "A_";
                 A_file += stringify(i);
                 A_file += ".ell";
-                SparseMatrixELL<DT1_> smell(MatrixIO<io_formats::ELL>::read_matrix(A_file, DT1_(0)));
+                SparseMatrixELL<DT1_> smell(MatrixIO<io_formats::ELL, SparseMatrixELL<DT1_> >::read_matrix(A_file));
 
                 std::string rhs_file(file_base);
                 rhs_file += "rhs_" + stringify(_size);
@@ -745,7 +745,7 @@ class PoissonAdvancedTestMGSparseELLProlMat:
                         prol_file += "prol_";
                         prol_file += stringify(i);
                         prol_file += ".ell";
-                        SparseMatrixELL<DT1_> prolmat(MatrixIO<io_formats::ELL>::read_matrix(prol_file, DT1_(0)));
+                        SparseMatrixELL<DT1_> prolmat(MatrixIO<io_formats::ELL, SparseMatrixELL<DT1_> >::read_matrix(prol_file));
                         info.prolmats.push_back(prolmat);
 
                         SparseMatrix<DT1_> prol(prolmat);

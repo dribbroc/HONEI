@@ -35,7 +35,7 @@ int main(int argc, char ** argv)
 
     // Read in m file matrix
     std::string input(argv[1]);
-    SparseMatrix<double> tsmatrix(MatrixIO<io_formats::M>::read_matrix(input, double(0)));
+    SparseMatrix<double> tsmatrix(MatrixIO<io_formats::M, SparseMatrix<double> >::read_matrix(input));
 
     std::cout<<"M Matrix info for " + input << std::endl;
     std::cout<<"Rows: " << tsmatrix.rows() << std::endl;

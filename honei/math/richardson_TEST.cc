@@ -32,13 +32,14 @@ class RichardsonTESTArb :
             std::string file (dir + "/honei/math/testdata/l2/");
             file += "area51_full_0";
             file += ".ell";
-            SparseMatrixELL<DT1_> A(MatrixIO<io_formats::ELL, SparseMatrixELL<double> >::read_matrix(file, DT1_(0)));
+            SparseMatrixELL<DT1_> A(MatrixIO<io_formats::ELL, SparseMatrixELL<DT1_> >::read_matrix(file));
 
             SparseMatrix<DT1_> precon(A);
 
             std::string rhs_file(dir + "/honei/math/testdata/l2/");
             rhs_file += "area51_rhs_0.dv";
             DenseVector<DT1_> b(VectorIO<io_formats::DV>::read_vector(rhs_file, DT1_(0)));
+            std::cout << "Finished data I/O." << std::endl;
 
             //TODO sparsify
             for(typename SparseMatrix<DT1_>::NonZeroElementIterator i(precon.begin_non_zero_elements()) ; i != precon.end_non_zero_elements() ; ++i)
@@ -55,7 +56,6 @@ class RichardsonTESTArb :
 
             unsigned long iters(23);
             LSInfo info(true, true, 1e-08, DT1_(0.7), 1000ul, iters);
-            std::cout << "Finished data I/O." << std::endl;
             Richardson<Tag_, Preconditioning<Tag_, methods::NONE> >::value(data, info);
 
             std::string sol_file(dir + "/honei/math/testdata/l2/");
@@ -88,7 +88,7 @@ class RichardsonSPAITEST :
             std::string file (dir + "/honei/math/testdata/l2/");
             file += "area51_full_0";
             file += ".ell";
-            SparseMatrixELL<DT1_> A(MatrixIO<io_formats::ELL>::read_matrix(file, DT1_(0)));
+            SparseMatrixELL<DT1_> A(MatrixIO<io_formats::ELL, SparseMatrixELL<DT1_> >::read_matrix(file));
 
             SparseMatrix<DT1_> precon(A);
             SparseMatrix<DT1_> spai(SPAI::value(precon, 0.1, 25, 25));

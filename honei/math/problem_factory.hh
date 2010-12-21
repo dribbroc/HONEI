@@ -72,8 +72,8 @@ namespace honei
                     std::string A_file(A_file_base + stringify(i) + matrix_suffix);
                     std::string prol_file(A_file_base + stringify(i) + matrix_suffix);
 
-                    MatrixType_ current_A(MatrixIO<io_formats::ELL, MatrixType_ >::read_matrix(A_file, DT1_(0)));
-                    MatrixType_ current_prol(MatrixIO<io_formats::ELL, MatrixType_ >::read_matrix(prol_file, DT1_(0)));
+                    MatrixType_ current_A(MatrixIO<io_formats::ELL, MatrixType_ >::read_matrix(A_file));
+                    MatrixType_ current_prol(MatrixIO<io_formats::ELL, MatrixType_ >::read_matrix(prol_file));
 
                     SparseMatrix<DT1_> prol(current_prol);
                     SparseMatrix<DT1_> res(current_prol.columns(), current_prol.rows());
