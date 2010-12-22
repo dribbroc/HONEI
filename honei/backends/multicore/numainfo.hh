@@ -200,7 +200,7 @@ namespace honei
                 if (!d)
                 {
 #ifdef DEBUG
-                    std::string msg ="Unable to open NUMA filesystem - will assume to have ONE node. \n";
+                    std::string msg = "Unable to open NUMA filesystem - will assume to have ONE node.\n";
                     LOGMESSAGE(lc_backend, msg);
 #endif
                     num_nodes = 1;
@@ -214,7 +214,7 @@ namespace honei
                     }
                     closedir(d);
 #ifdef DEBUG
-                    std::string msg ="Successfully read NUMA filesystem - found " + stringify(num_nodes) + " node(s). \n";
+                    std::string msg = "Successfully read NUMA filesystem - found " + stringify(num_nodes) + " node(s).\n";
                     LOGMESSAGE(lc_backend, msg);
 #endif
                 }

@@ -60,7 +60,7 @@ namespace honei
 
         static void * thread_function(void * argument)
         {
-            CONTEXT("When runing libutil-thread");
+            CONTEXT("When running libutil-thread");
             Implementation * imp(static_cast<Implementation *>(argument));
 
             /// \todo Implement exception handling for the call to function.

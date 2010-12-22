@@ -40,21 +40,25 @@ Topology::Topology() :
     _num_nodes(1),
     _lpus_per_node(1)
 {
-    CONTEXT("When investigating the system topology:\n");
-
 #if defined linux
     _num_lpus = sysconf(_SC_NPROCESSORS_CONF);
 
 #ifdef DEBUG
-    std::string msg = "Found " + stringify(_num_lpus) + " logical processing units \n";
-    LOGMESSAGE(lc_backend, msg);
+    {
+        CONTEXT("When investigating the system topology:\n");
+        std::string msg = "Found " + stringify(_num_lpus) + " logical processing units \n";
+        LOGMESSAGE(lc_backend, msg);
+    }
 #endif
 
     _num_nodes = intern::num_nodes();
 #endif
 
+    unsigned nodes_to_use;
+
     if (_num_nodes == 1)
     {
+        nodes_to_use = 1;
         cpu_to_node = new unsigned[_num_lpus];
         for (unsigned i(0) ; i < _num_lpus ; ++i)
             cpu_to_node[i] = 0;
@@ -70,7 +74,7 @@ Topology::Topology() :
         cpu_to_node = intern::cpu_to_node_array(_num_nodes, _num_lpus);
 
         // Leave out the last node only if each of multiple nodes consists of a single LPU
-        unsigned nodes_to_use((_num_nodes == _num_lpus && _num_lpus > 1) ? _num_nodes - 1 : _num_nodes);
+        nodes_to_use = ((_num_nodes == _num_lpus && _num_lpus > 1) ? _num_nodes - 1 : _num_nodes);
 
         range_min = new unsigned[nodes_to_use];
         range_max = new unsigned[nodes_to_use];
@@ -90,18 +94,25 @@ Topology::Topology() :
             if (i > range_max[cpu_to_node[i]])
                 range_max[cpu_to_node[i]] = i;
         }
-
-        for (unsigned i(0) ; i < nodes_to_use ; ++i)
-        {
-#ifdef DEBUG
-            std::string msg = "Node " + stringify(i) + " has logical processing units " + stringify(range_min[i]) + " to " + stringify(range_max[i]) + " \n";
-            LOGMESSAGE(lc_backend, msg);
-#endif
-        }
     }
+
+#ifdef DEBUG
+    for (unsigned i(0) ; i < nodes_to_use ; ++i)
+    {
+        CONTEXT("When investigating the system topology:\n");
+        std::string msg = "Node " + stringify(i) + " has logical processing units " + stringify(range_min[i]) + " to " + stringify(range_max[i]) + "\n";
+        LOGMESSAGE(lc_backend, msg);
+    }
+#endif
 
 #if defined(__i386__) || defined(__x86_64__)
     init_x86(_vendor, _num_cores, _ht_factor);
+
+    // Problem here: num_cores can be > _num_lpus
+    // if HT is available but disabled.
+    // Temporary workaround:
+    if (_num_cores > _num_lpus)
+        _num_cores = _num_lpus;
 
     if (_vendor == UNDEFINED)
     {
