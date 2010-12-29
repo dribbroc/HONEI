@@ -33,7 +33,7 @@
 #include <honei/math/quadrature.hh>
 #include <honei/backends/cuda/operations.hh>
 
-using namespace std;
+//using namespace std;
 using namespace honei;
 using namespace lbm;
 using namespace lbm_lattice_types;

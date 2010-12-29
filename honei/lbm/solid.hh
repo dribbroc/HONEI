@@ -143,10 +143,10 @@ namespace honei
                         }
                         else
                         {
-                            line_min_x_level = min(line.x_min_level, line_min_x_level);
-                            line_min_y_level = min(line.y_min_level, line_min_y_level);
-                            line_max_x_level = max(line.x_max_level, line_max_x_level);
-                            line_max_y_level = max(line.y_max_level, line_max_y_level);
+                            line_min_x_level = std::min(line.x_min_level, line_min_x_level);
+                            line_min_y_level = std::min(line.y_min_level, line_min_y_level);
+                            line_max_x_level = std::max(line.x_max_level, line_max_x_level);
+                            line_max_y_level = std::max(line.y_max_level, line_max_y_level);
                         }
                         ++lines_inserted;
                     }
