@@ -313,7 +313,7 @@ namespace honei
             {
                 std::vector<unsigned long> temp_external_h;
                 std::vector<unsigned long> temp_external_h_targets;
-                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, fringe_list.size()) ; ++index)
+                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, (unsigned long)fringe_list.size()) ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].h_targets->size() ; ++i)
                     {
@@ -351,7 +351,7 @@ namespace honei
 
                 std::vector<unsigned long> temp_external_1;
                 std::vector<unsigned long> temp_external_targets_1;
-                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, fringe_list.size()) ; ++index)
+                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, (unsigned long)fringe_list.size()) ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_1->size() ; ++i)
                     {
@@ -389,7 +389,7 @@ namespace honei
 
                 std::vector<unsigned long> temp_external_2;
                 std::vector<unsigned long> temp_external_targets_2;
-                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, fringe_list.size()) ; ++index)
+                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, (unsigned long)fringe_list.size()) ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_2->size() ; ++i)
                     {
@@ -427,7 +427,7 @@ namespace honei
 
                 std::vector<unsigned long> temp_external_3;
                 std::vector<unsigned long> temp_external_targets_3;
-                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, fringe_list.size()) ; ++index)
+                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, (unsigned long)fringe_list.size()) ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_3->size() ; ++i)
                     {
@@ -465,7 +465,7 @@ namespace honei
 
                 std::vector<unsigned long> temp_external_4;
                 std::vector<unsigned long> temp_external_targets_4;
-                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, fringe_list.size()) ; ++index)
+                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, (unsigned long)fringe_list.size()) ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_4->size() ; ++i)
                     {
@@ -503,7 +503,7 @@ namespace honei
 
                 std::vector<unsigned long> temp_external_5;
                 std::vector<unsigned long> temp_external_targets_5;
-                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, fringe_list.size()) ; ++index)
+                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, (unsigned long)fringe_list.size()) ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_5->size() ; ++i)
                     {
@@ -541,7 +541,7 @@ namespace honei
 
                 std::vector<unsigned long> temp_external_6;
                 std::vector<unsigned long> temp_external_targets_6;
-                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, fringe_list.size()) ; ++index)
+                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, (unsigned long)fringe_list.size()) ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_6->size() ; ++i)
                     {
@@ -579,7 +579,7 @@ namespace honei
 
                 std::vector<unsigned long> temp_external_7;
                 std::vector<unsigned long> temp_external_targets_7;
-                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, fringe_list.size()) ; ++index)
+                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, (unsigned long)fringe_list.size()) ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_7->size() ; ++i)
                     {
@@ -617,7 +617,7 @@ namespace honei
 
                 std::vector<unsigned long> temp_external_8;
                 std::vector<unsigned long> temp_external_targets_8;
-                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, fringe_list.size()) ; ++index)
+                for (unsigned long index(std::max(0, ((int)self) - 1)) ; index < std::min(self + 2, (unsigned long)fringe_list.size()) ; ++index)
                 {
                     for (unsigned long i(0) ; i < fringe_list[index].dir_targets_8->size() ; ++i)
                     {
