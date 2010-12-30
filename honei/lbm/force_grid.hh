@@ -855,20 +855,20 @@ namespace honei
         struct ForceGrid<tags::CPU::Itanium, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>
         {
             template <typename DT1_>
-                static void value(PackedGridData<D2Q9, DT1_> & data, PackedGridInfo<D2Q9> & info, DT1_ g, DT1_ d_x, DT1_ d_y, DT1_ d_t, DT1_ manning)
-                {
-                    ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(data, info, g, d_x, d_y, d_t, manning);
-                }
+            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data, DT1_ g, DT1_ d_x, DT1_ d_y, DT1_ d_t, DT1_ manning)
+            {
+                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>::value(info, data, g, d_x, d_y, d_t, manning);
+            }
         };
 
     template <>
         struct ForceGrid<tags::CPU::Itanium, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>
         {
             template <typename DT1_>
-                static void value(PackedGridData<D2Q9, DT1_> & data, PackedGridInfo<D2Q9> & info, DT1_ g, DT1_ d_x, DT1_ d_y, DT1_ d_t, DT1_ m)
-                {
-                    ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(data, info, g, d_x, d_y, d_t, m);
-                }
+            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data, DT1_ g, DT1_ d_x, DT1_ d_y, DT1_ d_t, DT1_ m)
+            {
+                ForceGrid<tags::CPU, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(info, data, g, d_x, d_y, d_t, m);
+            }
         };
 
     template <>
