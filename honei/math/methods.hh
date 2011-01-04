@@ -30,6 +30,10 @@ namespace methods
     {
     };
 
+    class SPAI
+    {
+    };
+
     class NONE
     {
     };

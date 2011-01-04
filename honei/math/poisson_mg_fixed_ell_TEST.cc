@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <honei/math/matrix_io.hh>
 #include <honei/math/vector_io.hh>
+#include <honei/math/spai.hh>
 
 //#include <cstdio>
 //#include <cstdlib>
@@ -470,7 +471,7 @@ class PoissonTestMGSparseELLProlMat:
             DenseVector<DT1_> result(n, DT1_(0));
             DenseVector<DT1_> rhs(info.rhs[info.max_level]);
             SparseMatrixELL<DT1_> system(info.a[info.max_level]);
-            Multigrid<Tag_, Tag_, methods::PROLMAT, JAC, CYCLE::V, FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info);
+            Multigrid<Tag_, Tag_, methods::PROLMAT, methods::JAC, CYCLE::V, FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info);
             result.lock(lm_read_only);
             result.unlock(lm_read_only);
             //std::cout<< result <<endl;
@@ -813,4 +814,318 @@ PoissonAdvancedTestMGSparseELLProlMat<tags::GPU::CUDA, double> cuda_poisson_adva
 PoissonAdvancedTestMGSparseELLProlMat<tags::GPU::CUDA, double> cuda_poisson_advanced_test_mg_sparse_prolmat_double_q2("double", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/q2_sort_", 2);
 
 #endif
+#endif
+
+template <typename Tag_, typename DT1_>
+class PoissonAdvancedTestMGSparseELLProlMatSpai:
+    public BaseTest
+{
+    private:
+        unsigned long _size;
+        std::string _res_f, _file_base;
+        unsigned long _sorting;
+        unsigned _nc;
+
+        static unsigned long _level_to_size(unsigned long level, unsigned elem_type) // 0 = q1 , 1 = q1t , 2 = q2
+        {
+            switch(level)
+            {
+                case 10:
+                    {
+                        if(elem_type == 0)
+                            return 2101248;
+                    }
+                case 9:
+                    {
+                        if(elem_type == 0)
+                            return 526336;
+                        else if(elem_type == 1)
+                            return 1050624;
+                        else
+                            return 2101248;
+                    }
+                case 8:
+                    {
+                        if(elem_type == 0)
+                            return 132096;
+                        else if(elem_type == 1)
+                            return 263168;
+                        else
+                            return 526336;
+                    }
+                case 7:
+                    {
+                        if(elem_type == 0)
+                            return 33280;
+                        else if(elem_type == 1)
+                            return 66048;
+                        else
+                            return 132096;
+                    }
+                case 6:
+                    {
+                        if(elem_type == 0)
+                            return 8448;
+                        else if(elem_type == 1)
+                            return 16640;
+                        else
+                            return 33280;
+                    }
+                case 5:
+                    {
+                        if(elem_type == 0)
+                            return 2176;
+                        else if(elem_type == 1)
+                            return 4224;
+                        else
+                            return 8448;
+                    }
+                case 4:
+                    {
+                        if(elem_type == 0)
+                            return 576;
+                        else if(elem_type == 1)
+                            return 1088;
+                        else
+                            return 2176;
+                    }
+                case 3:
+                    {
+                        if(elem_type == 0)
+                            return 160;
+                        else if(elem_type == 1)
+                            return 288;
+                        else
+                            return 576;
+                    }
+                case 2:
+                    {
+                        if(elem_type == 0)
+                            return 48;
+                        else if(elem_type == 1)
+                            return 80;
+                        else
+                            return 160;
+                    }
+                case 1:
+                    {
+                        if(elem_type == 0)
+                            return 16;
+                        else if(elem_type == 1)
+                            return 24;
+                        else
+                            return 48;
+                    }
+                default:
+                    return 1;
+            }
+        }
+
+    public:
+        PoissonAdvancedTestMGSparseELLProlMatSpai(const std::string & tag,
+                unsigned long level, unsigned long sorting, std::string file_base, unsigned nc) :
+            BaseTest("Poisson advanced test for itrerative LES solvers, ProlMat, MG, Spai (ELLPACK system)<" + tag + ">" + " Level= " + stringify(level) + " Sorting= " + stringify(sorting))
+    {
+        register_tag(Tag_::name);
+        _size = level;
+        _sorting = sorting;
+        _file_base = file_base;
+        _nc = nc;
+    }
+        virtual void run() const
+        {
+            //unsigned long n(_level_to_size(_size, _nc));
+            MGInfo<DT1_, SparseMatrixELL<DT1_> > info;
+            //configuration constants: /TODO: set/allocate!!!
+            info.is_smoother = false;
+            DenseVector<unsigned long> mask(8);
+
+            info.macro_border_mask = new DenseVector<unsigned long>(8);
+            for(int i(0); i < 8; ++i)
+            {
+                (*info.macro_border_mask)[i] = 2;
+            }
+            //set Neumann boundaries:
+            //(*info.macro_border_mask)[5] =1;
+
+
+            info.min_level = 1;
+            info.max_level = _size;
+            info.n_max_iter = 30;
+            info.initial_zero = false;
+            info.tolerance = 1e-8;
+            info.convergence_check = true;
+
+            info.n_pre_smooth = 4;
+            info.n_post_smooth = 4;
+            //info.n_max_iter_coarse = ((unsigned long)sqrt((DT1_)(pow((DT1_)2 , (DT1_)info.max_level) + 1)*(pow((DT1_)2 , (DT1_)info.max_level) + 1)));
+            info.n_max_iter_coarse = 1000;
+            info.tolerance_coarse = 1e-8;
+            info.adapt_correction_factor = 1.;
+
+            for (unsigned long i(0) ; i < info.min_level; ++i)
+            {
+                unsigned long size(_level_to_size(i, _nc));
+                if(i == 0)
+                    size = 9;
+
+                DenseVector<DT1_> dummy_band(size, DT1_(0));
+                BandedMatrixQ1<DT1_> ac_a(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
+                SparseMatrix<DT1_> sm(ac_a);
+                SparseMatrixELL<DT1_> ac_s(sm);
+                info.a.push_back(ac_s);
+                info.prolmats.push_back(ac_s.copy());
+                info.resmats.push_back(ac_s.copy());
+                // iteration vectors
+                DenseVector<DT1_> ac_c(size, DT1_(0));
+                info.c.push_back(ac_c);
+                DenseVector<DT1_> ac_d(size, DT1_(0));
+                info.d.push_back(ac_d);
+                DenseVector<DT1_> ac_rhs(size, DT1_(0));
+                info.rhs.push_back(ac_rhs);
+                DenseVector<DT1_> ac_x(size, DT1_(0));
+                info.x.push_back(ac_x);
+
+                info.diags_inverted.push_back(dummy_band.copy());
+                info.spais.push_back(ac_s.copy());
+            }
+
+            for (unsigned long i(info.min_level) ; i <= info.max_level; ++i)
+            {
+                unsigned long size(_level_to_size(i, _nc));
+                std::cout << size << std::endl;
+                // iteration vectors
+                DenseVector<DT1_> ac_c(size, DT1_(0));
+                info.c.push_back(ac_c);
+                DenseVector<DT1_> ac_d(size, DT1_(0));
+                info.d.push_back(ac_d);
+                DenseVector<DT1_> ac_x(size, DT1_(0));
+                info.x.push_back(ac_x);
+
+                DenseVector<DT1_> dummy_band(size, DT1_(0));
+                //info.diags_inverted.push_back(dummy_band.copy());
+            }
+
+            std::string file_base(HONEI_SOURCEDIR);
+            file_base += _file_base + stringify(_sorting) + "/";
+            std::cout << "Filebase:" << file_base << std::endl;
+            //assemble all needed levels' matrices:
+            for(unsigned long i(info.min_level); i <= info.max_level; ++i)
+            {
+                unsigned long N(_level_to_size(i, _nc));
+                DenseVector<DT1_> current_rhs(N);
+                std::string A_file(file_base);
+                A_file += "A_";
+                A_file += stringify(i);
+                A_file += ".ell";
+                std::cout << "File:" << A_file << std::endl;
+                SparseMatrixELL<DT1_> smell(MatrixIO<io_formats::ELL>::read_matrix(A_file, DT1_(0)));
+
+                if(i == info.max_level)
+                {
+                    std::string rhs_file(file_base);
+                    rhs_file += "rhs_" + stringify(_size);
+                    std::cout << "File:" << rhs_file << std::endl;
+                    current_rhs = VectorIO<io_formats::EXP>::read_vector(rhs_file, DT1_(0));
+                }
+
+                info.rhs.push_back(current_rhs);
+                info.a.push_back(smell);
+
+                DenseVector<DT1_> scaled_diag_inverted(N);
+                for(unsigned long j(0) ; j < N ; ++ j)
+                    scaled_diag_inverted[j] = smell(j, j);
+
+                ElementInverse<Tag_>::value(scaled_diag_inverted);
+                Scale<Tag_>::value(scaled_diag_inverted, 0.7);
+
+                info.diags_inverted.push_back(scaled_diag_inverted.copy());
+
+                SparseMatrix<DT1_> spai(smell);
+                double spai_eps(0.2);
+                if (i < 5)
+                    spai_eps = 0.1;
+                std::cout<<"Calc spai for lvl "<<i<<" with eps="<<spai_eps<<std::endl;
+                SparseMatrix<DT1_> sm_m(honei::SPAI::value(spai, spai_eps, 50, 50));
+                SparseMatrixELL<DT1_> spai_m(sm_m);
+                info.spais.push_back(spai_m.copy());
+
+                if(i >= info.min_level)
+                {
+                    if(i == 1)
+                    {
+                        SparseMatrix<DT1_> prol(1, 1);
+                        SparseMatrixELL<DT1_> prolmat(prol);
+                        info.prolmats.push_back(prolmat);
+                        info.resmats.push_back(prolmat);
+                    }
+                    else
+                    {
+                        std::string prol_file(file_base);
+                        prol_file += "prol_";
+                        prol_file += stringify(i);
+                        prol_file += ".ell";
+                        std::cout << "File:" << prol_file << std::endl;
+                        SparseMatrixELL<DT1_> prolmat(MatrixIO<io_formats::ELL>::read_matrix(prol_file, DT1_(0)));
+                        info.prolmats.push_back(prolmat);
+
+                        SparseMatrix<DT1_> prol(prolmat);
+                        SparseMatrix<DT1_> res(prol.columns(), prol.rows());
+                        Transposition<Tag_>::value(prol, res);
+                        SparseMatrixELL<DT1_> resmat(res);
+                        info.resmats.push_back(resmat);
+                    }
+                }
+            }
+            //clear x data
+            for(unsigned long i(0) ; i < info.max_level ; ++i)
+            {
+                unsigned long size(_level_to_size(i, _nc));
+                if(size==0)
+                    size = 9;
+
+                DenseVector<DT1_> null(size , DT1_(0));
+                info.x[i] = null.copy();
+            }
+
+            /*for(unsigned long i(0) ; i < info.max_level ; ++i)
+            {
+                std::cout << "VECSIZE d " << info.d.at(i).size() << std::endl;
+                std::cout << "VECSIZE rhs " << info.rhs.at(i).size() << std::endl;
+                std::cout <<"SYSTEM"<<std::endl;
+                std::cout <<"ROW: " << info.a.at(i).rows() << std::endl;
+                std::cout <<"COLS: " << info.a.at(i).columns() << std::endl;
+                std::cout <<"RESTRICTION"<<std::endl;
+                std::cout <<"ROW: " << info.resmats.at(i).rows() << std::endl;
+                std::cout <<"COLS: " << info.resmats.at(i).columns() << std::endl;
+                std::cout <<"PROLONGATION"<<std::endl;
+                std::cout <<"ROW: " << info.prolmats.at(i).rows() << std::endl;
+                std::cout <<"COLS: " << info.prolmats.at(i).columns() << std::endl;
+
+            }*/
+            std::string init_file(file_base);
+            init_file += "init_" + stringify(_size);
+            std::cout << "File:" << init_file << std::endl;
+            DenseVector<DT1_> result(VectorIO<io_formats::EXP>::read_vector(init_file, DT1_(0)));
+
+            DenseVector<DT1_> rhs(info.rhs[info.max_level]);
+            SparseMatrixELL<DT1_> system(info.a[info.max_level]);
+            Multigrid<Tag_, Tag_, methods::PROLMAT, methods::SPAI, CYCLE::V, FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info);
+            result.lock(lm_read_only);
+            result.unlock(lm_read_only);
+            //std::cout<< result <<endl;
+            std::string sol_file(file_base);
+            sol_file += "sol_" + stringify(_size);
+            std::cout << "File:" << sol_file << std::endl;
+            DenseVector<DT1_> ref_result(VectorIO<io_formats::EXP>::read_vector(sol_file, DT1_(0)));
+
+            for(unsigned long i(0) ; i < ref_result.size() ; ++i)
+            {
+                //std::cout << result[i] << " " << ref_result[i] << std::endl;
+                TEST_CHECK_EQUAL_WITHIN_EPS(result[i], ref_result[i], std::numeric_limits<DT1_>::epsilon()*1e12);
+            }
+        }
+};
+#ifdef HONEI_SSE
+PoissonAdvancedTestMGSparseELLProlMatSpai<tags::CPU::SSE, double> sse_poisson_advanced_test_mg_sparse_prolmat_spai_double("double", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/sort_", 0);
 #endif
