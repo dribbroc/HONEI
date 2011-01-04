@@ -180,7 +180,7 @@ class PoissonCGBenchDouble :
 
             //std::cout<< n << " " << A << " "<< root_n<<endl;
             DenseVector<double> result(n, double(0));
-            BENCHMARK((ConjugateGradients<Tag_, NONE>::value(A, b_v, result, std::numeric_limits<double>::epsilon())));
+            BENCHMARK((ConjugateGradients<Tag_, methods::NONE>::value(A, b_v, result, std::numeric_limits<double>::epsilon())));
             evaluate();
         }
 };

@@ -223,7 +223,7 @@ class PoissonTestMGSparseELL:
             DenseVector<DT1_> result(n, DT1_(0));
             DenseVector<DT1_> rhs(info.rhs[info.max_level]);
             SparseMatrixELL<DT1_> system(info.a[info.max_level]);
-            Multigrid<Tag_, Tag_, NONE, JAC, CYCLE::V, FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info);
+            Multigrid<Tag_, Tag_, methods::NONE, methods::JAC, methods::CYCLE::V, methods::FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info);
             result.lock(lm_read_only);
             result.unlock(lm_read_only);
             //std::cout<< result <<endl;
@@ -471,7 +471,7 @@ class PoissonTestMGSparseELLProlMat:
             DenseVector<DT1_> result(n, DT1_(0));
             DenseVector<DT1_> rhs(info.rhs[info.max_level]);
             SparseMatrixELL<DT1_> system(info.a[info.max_level]);
-            Multigrid<Tag_, Tag_, methods::PROLMAT, methods::JAC, CYCLE::V, FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info);
+            Multigrid<Tag_, Tag_, methods::PROLMAT, methods::JAC, methods::CYCLE::V, methods::FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info);
             result.lock(lm_read_only);
             result.unlock(lm_read_only);
             //std::cout<< result <<endl;
@@ -780,7 +780,7 @@ class PoissonAdvancedTestMGSparseELLProlMat:
 
             DenseVector<DT1_> rhs(info.rhs[info.max_level]);
             SparseMatrixELL<DT1_> system(info.a[info.max_level]);
-            Multigrid<Tag_, Tag_, methods::PROLMAT, JAC, CYCLE::V, FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info);
+            Multigrid<Tag_, Tag_, methods::PROLMAT, methods::JAC, methods::CYCLE::V, methods::FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info);
             result.lock(lm_read_only);
             result.unlock(lm_read_only);
             //std::cout<< result <<endl;
@@ -1046,7 +1046,7 @@ class PoissonAdvancedTestMGSparseELLProlMatSpai:
                 if (i < 5)
                     spai_eps = 0.1;
                 std::cout<<"Calc spai for lvl "<<i<<" with eps="<<spai_eps<<std::endl;
-                SparseMatrix<DT1_> sm_m(honei::SPAI::value(spai, spai_eps, 50, 50));
+                SparseMatrix<DT1_> sm_m(SPAI::value(spai, spai_eps, 50, 50));
                 SparseMatrixELL<DT1_> spai_m(sm_m);
                 info.spais.push_back(spai_m.copy());
 
@@ -1110,7 +1110,7 @@ class PoissonAdvancedTestMGSparseELLProlMatSpai:
 
             DenseVector<DT1_> rhs(info.rhs[info.max_level]);
             SparseMatrixELL<DT1_> system(info.a[info.max_level]);
-            Multigrid<Tag_, Tag_, methods::PROLMAT, methods::SPAI, CYCLE::V, FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info);
+            Multigrid<Tag_, Tag_, methods::PROLMAT, methods::SPAI, methods::CYCLE::V, methods::FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info);
             result.lock(lm_read_only);
             result.unlock(lm_read_only);
             //std::cout<< result <<endl;

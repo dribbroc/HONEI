@@ -179,7 +179,7 @@ class PoissonTestCGMIXEDPREC:
 
             //std::cout<< n << " " << A << " "<< root_n<<endl;
             DenseVector<float> result(n, float(0));
-            ConjugateGradients<Tag_, NONE>::value(A, b_v, result, std::numeric_limits<float>::epsilon(), 20);
+            ConjugateGradients<Tag_, methods::NONE>::value(A, b_v, result, std::numeric_limits<float>::epsilon(), 20);
             //std::cout<< result <<endl;
             //std::cout<< ana_sol_v <<endl;
             //std::cout<< ref_sol_v <<endl;

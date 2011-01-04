@@ -167,7 +167,7 @@ class PoissonCGQ1Bench :
             DenseVector<float> res(ll_v.size());
             for(int i(0); i < 100; ++i)
             {
-                BENCHMARK((ConjugateGradients<Tag_, NONE>::value(A, b_v, res, std::numeric_limits<float>::epsilon())));
+                BENCHMARK((ConjugateGradients<Tag_, methods::NONE>::value(A, b_v, res, std::numeric_limits<float>::epsilon())));
             }
             evaluate();
         }

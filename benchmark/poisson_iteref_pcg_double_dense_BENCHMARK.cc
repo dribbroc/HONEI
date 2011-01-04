@@ -180,7 +180,7 @@ class PoissonIteRefPCGBenchDouble :
 
             //std::cout<< n << " " << A << " "<< root_n<<endl;
             DenseVector<double> result(n, double(0));
-            BENCHMARK((IterativeRefinement<PCG::JAC, Tag_>::value(A, b_v, result, std::numeric_limits<double>::epsilon(), std::numeric_limits<double>::epsilon())));
+            BENCHMARK((IterativeRefinement<methods::PCG::JAC, Tag_>::value(A, b_v, result, std::numeric_limits<double>::epsilon(), std::numeric_limits<double>::epsilon())));
             evaluate();
         }
 };

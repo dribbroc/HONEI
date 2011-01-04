@@ -89,8 +89,8 @@ class PoissonTestMGModulesSparseELL:
                 //----------------------------------------------------------------------
                 DenseVector<DT1_> banded_result_3(size, DT1_(0));
                 DenseVector<DT1_> sparse_result_3(size, DT1_(0));
-                ConjugateGradients<Tag_, NONE>::value(banded_matrix, rhs, banded_result_3, std::numeric_limits<DT1_>::epsilon());
-                ConjugateGradients<Tag_, NONE>::value(sparse_matrix, rhs, sparse_result_3, std::numeric_limits<DT1_>::epsilon());
+                ConjugateGradients<Tag_, methods::NONE>::value(banded_matrix, rhs, banded_result_3, std::numeric_limits<DT1_>::epsilon());
+                ConjugateGradients<Tag_, methods::NONE>::value(sparse_matrix, rhs, sparse_result_3, std::numeric_limits<DT1_>::epsilon());
                 banded_result_3.lock(lm_read_only);
                 banded_result_3.unlock(lm_read_only);
 

@@ -180,7 +180,7 @@ class PoissonTestPCGBandedFloat:
 
             //std::cout<< n << " " << A << " "<< root_n<<endl;
             DenseVector<float> result(n, float(0));
-            ConjugateGradients<Tag_, JAC>::value(A, b_v, result, std::numeric_limits<double>::epsilon());
+            ConjugateGradients<Tag_, methods::JAC>::value(A, b_v, result, std::numeric_limits<double>::epsilon());
             //std::cout<< result <<endl;
             //std::cout<< ana_sol_v <<endl;
             //std::cout<< ref_sol_v <<endl;

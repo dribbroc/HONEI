@@ -26,7 +26,6 @@
 #include<honei/math/methods.hh>
 #include<cmath>
 
-using namespace methods;
 namespace honei
 {
     template <typename Tag_, typename Application_, typename BoundaryType_>

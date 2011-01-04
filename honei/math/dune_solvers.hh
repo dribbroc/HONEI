@@ -38,7 +38,6 @@
 
 using namespace honei;
 using namespace Dune;
-using namespace methods;
 
 
 namespace honei

@@ -179,7 +179,7 @@ class PoissonTestIterefPCGBandedFloat:
 
             //std::cout<< n << " " << A << " "<< root_n<<endl;
             DenseVector<float> result(n, float(0));
-            IterativeRefinement<PCG::JAC, Tag_>::value(A, b_v, result, std::numeric_limits<float>::epsilon(), std::numeric_limits<float>::epsilon());
+            IterativeRefinement<methods::PCG::JAC, Tag_>::value(A, b_v, result, std::numeric_limits<float>::epsilon(), std::numeric_limits<float>::epsilon());
             //std::cout<< result <<endl;
             //std::cout<< ana_sol_v <<endl;
             //std::cout<< ref_sol_v <<endl;

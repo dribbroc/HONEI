@@ -25,7 +25,6 @@
 #include <honei/math/jacobi.hh>
 #include <honei/math/methods.hh>
 
-using namespace methods;
 namespace honei
 {
     template<typename Method_, typename Tag_>

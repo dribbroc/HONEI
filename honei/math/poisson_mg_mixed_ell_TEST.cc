@@ -227,7 +227,7 @@ class PoissonTestMGSparseELLMixed:
             DenseVector<DT1_> RHS( info.rhs[info.max_level].size(), DT1_(0.));
             FillVector<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(RHS);
             DenseVector<DT1_> result(n, DT1_(0));
-            Multigrid<ITag_, OTag_, NONE, JAC, CYCLE::V, MIXED >::value(system, RHS, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info);
+            Multigrid<ITag_, OTag_, methods::NONE, methods::JAC, methods::CYCLE::V, methods::MIXED >::value(system, RHS, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info);
             result.lock(lm_read_only);
             result.unlock(lm_read_only);
             //std::cout<< result <<endl;
@@ -481,7 +481,7 @@ class PoissonTestMGSparseELLProlMat:
             DenseVector<float> result(n, float(0));
             DenseVector<float> rhs(info.rhs[info.max_level]);
             SparseMatrixELL<float> system(info.a[info.max_level]);
-            Multigrid<ITag_, OTag_, methods::PROLMAT, JAC, CYCLE::V, MIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<float>::epsilon(), info);
+            Multigrid<ITag_, OTag_, methods::PROLMAT, methods::JAC, methods::CYCLE::V, methods::MIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<float>::epsilon(), info);
             result.lock(lm_read_only);
             result.unlock(lm_read_only);
             //std::cout<< result <<endl;
@@ -789,7 +789,7 @@ class PoissonAdvancedTestMGSparseELLProlMat:
 
             DenseVector<DT1_> rhs(info.rhs[info.max_level]);
             SparseMatrixELL<DT1_> system(info.a[info.max_level]);
-            Multigrid<ITag_, OTag_, methods::PROLMAT, JAC, CYCLE::V, MIXED>::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info);
+            Multigrid<ITag_, OTag_, methods::PROLMAT, methods::JAC, methods::CYCLE::V, methods::MIXED>::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info);
             result.lock(lm_read_only);
             result.unlock(lm_read_only);
             //std::cout<< result <<endl;

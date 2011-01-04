@@ -271,7 +271,7 @@ class PoissonBenchmarkMGELLFixed:
                 BENCHMARK(
                         for (unsigned long j(0) ; j < 1 ; ++j)
                         {
-                        (Multigrid<Tag_, Tag_, methods::PROLMAT, JAC, CYCLE::V, FIXED >::value(info.a[info.max_level], info.rhs[info.max_level], result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info));
+                        (Multigrid<Tag_, Tag_, methods::PROLMAT, methods::JAC, methods::CYCLE::V, methods::FIXED >::value(info.a[info.max_level], info.rhs[info.max_level], result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info));
                         }
                         );
             }
@@ -572,7 +572,7 @@ class PoissonAdvancedBENCHMGSparseELLProlMat:
             SparseMatrixELL<DT1_> system(info.a[info.max_level]);
 
             BENCHMARK(
-                      (Multigrid<Tag_, Tag_, methods::PROLMAT, JAC, CYCLE::V, FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info));
+                      (Multigrid<Tag_, Tag_, methods::PROLMAT, methods::JAC, methods::CYCLE::V, methods::FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info));
                      );
 
             evaluate();
@@ -977,7 +977,7 @@ class PoissonAdvancedANHEURYSMBENCHMGSparseELLProlMat:
             SparseMatrixELL<DT1_> system(info.a[info.max_level]);
 
             BENCHMARK(
-                      (Multigrid<Tag_, Tag_, methods::PROLMAT, JAC, CYCLE::V, FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info));
+                      (Multigrid<Tag_, Tag_, methods::PROLMAT, methods::JAC, methods::CYCLE::V, methods::FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info));
                      );
 
             evaluate();

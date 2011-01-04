@@ -28,7 +28,6 @@
 #include<cmath>
 #include <iostream>
 
-using namespace methods;
 namespace honei
 {
     template <typename Tag_, typename Application_, typename BoundaryType_>

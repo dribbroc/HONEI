@@ -67,7 +67,7 @@ class PoissonTestCGBandedFloatQ1:
             FillMatrix<Tag_, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(A);
             FillVector<Tag_, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(b_v);
             DenseVector<double> result(n, double(0));
-            ConjugateGradients<Tag_, NONE>::value(A, b_v, result, 20ul);
+            ConjugateGradients<Tag_, methods::NONE>::value(A, b_v, result, 20ul);
             result.lock(lm_read_only);
             DenseMatrix<double> view(root_n, root_n);
             unsigned long r(0), c(0);

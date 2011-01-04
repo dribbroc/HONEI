@@ -145,7 +145,7 @@ namespace honei
     };
 
     template<typename Tag_, typename OuterTag_, typename ProlType_>
-    class Multigrid<Tag_, OuterTag_, ProlType_, methods::JAC, CYCLE::V, FIXED>
+    class Multigrid<Tag_, OuterTag_, ProlType_, methods::JAC, methods::CYCLE::V, methods::FIXED>
     {
         template <typename Prec_>
         static DenseVector<Prec_> _multigrid_kernel(HONEI_UNUSED BandedMatrixQ1<Prec_>&  system, HONEI_UNUSED DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ * cappa, MGInfo<Prec_, BandedMatrixQ1<Prec_> > & info)
@@ -282,7 +282,7 @@ endRestrictionLoop:
                             // the following coarse grid correction (and no smoothing) is done.
 
                             //(info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
-                            ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
+                            ConjugateGradients<Tag_, methods::NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
 
                             DenseVector<Prec_> defect_3(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                             info.d[current_level] = defect_3;
@@ -298,7 +298,7 @@ endRestrictionLoop:
                             // started with a zero start vector
 
                             //(info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
-                            ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
+                            ConjugateGradients<Tag_, methods::NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
 #ifdef SOLVER_VERBOSE
                             std::cout << "Coarse Grid solver." << std::endl;
 #endif
@@ -591,7 +591,7 @@ endRestrictionLoop:
                             // the following coarse grid correction (and no smoothing) is done.
 
                             //(info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
-                            ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
+                            ConjugateGradients<Tag_, methods::NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
 
                             DenseVector<Prec_> defect_3(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                             info.d[current_level] = defect_3;
@@ -607,7 +607,7 @@ endRestrictionLoop:
                             // started with a zero start vector
 
                             //(info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
-                            ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
+                            ConjugateGradients<Tag_, methods::NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
 #ifdef SOLVER_VERBOSE
                             std::cout << "Coarse Grid solver." << std::endl;
 #endif
@@ -857,7 +857,7 @@ endCycleLoop:
     };
 
     template<typename Tag_, typename OuterTag_, typename ProlType_>
-    class Multigrid<Tag_, OuterTag_, ProlType_, methods::SPAI, CYCLE::V, FIXED>
+    class Multigrid<Tag_, OuterTag_, ProlType_, methods::SPAI, methods::CYCLE::V, methods::FIXED>
     {
         template <typename Prec_>
         static DenseVector<Prec_> _multigrid_kernel(HONEI_UNUSED SparseMatrixELL<Prec_>&  system, HONEI_UNUSED DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ * cappa, MGInfo<Prec_, SparseMatrixELL<Prec_> > & info)
@@ -1006,7 +1006,7 @@ endRestrictionLoop:
                             // the following coarse grid correction (and no smoothing) is done.
 
                             //(info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
-                            ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
+                            ConjugateGradients<Tag_, methods::NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
 
                             DenseVector<Prec_> defect_3(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                             info.d[current_level] = defect_3;
@@ -1022,7 +1022,7 @@ endRestrictionLoop:
                             // started with a zero start vector
 
                             //(info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
-                            ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
+                            ConjugateGradients<Tag_, methods::NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
 #ifdef SOLVER_VERBOSE
                             std::cout << "Coarse Grid solver." << std::endl;
 #endif
@@ -1235,7 +1235,7 @@ endCycleLoop:
     //------------------MIXED PRECISION-------------------------
 
     template<typename Tag_ , typename OuterTag_, typename ProlType_>
-    class Multigrid<Tag_ , OuterTag_ , ProlType_, methods::JAC, CYCLE::V, MIXED>
+    class Multigrid<Tag_ , OuterTag_ , ProlType_, methods::JAC, methods::CYCLE::V, methods::MIXED>
     {
         template <typename Prec_>
         static DenseVector<Prec_> _multigrid_kernel(unsigned long max_levels, Prec_ * cappa, MGInfo<Prec_, BandedMatrixQ1<Prec_> > & info)
@@ -1375,7 +1375,7 @@ endRestrictionLoop:
                             // the following coarse grid correction (and no smoothing) is done.
 
                             //(info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
-                            ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
+                            ConjugateGradients<Tag_, methods::NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
 
                             DenseVector<Prec_> defect_3(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                             info.d[current_level] = defect_3;
@@ -1391,7 +1391,7 @@ endRestrictionLoop:
                             // started with a zero start vector
 
                             //(info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
-                            ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
+                            ConjugateGradients<Tag_, methods::NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
 #ifdef SOLVER_VERBOSE
                             std::cout << "Coarse Grid solver." << std::endl;
 #endif
@@ -1691,7 +1691,7 @@ endRestrictionLoop:
                             // the following coarse grid correction (and no smoothing) is done.
 
                             //(info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
-                            ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
+                            ConjugateGradients<Tag_, methods::NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
 
                             DenseVector<Prec_> defect_3(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                             info.d[current_level] = defect_3;
@@ -1707,7 +1707,7 @@ endRestrictionLoop:
                             // started with a zero start vector
 
                             //(info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
-                            ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
+                            ConjugateGradients<Tag_, methods::NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
 #ifdef SOLVER_VERBOSE
                             std::cout << "Coarse Grid solver." << std::endl;
 #endif

@@ -256,5 +256,5 @@ void run_()
     DenseVector<double> rhs(MG::info()->rhs[MG::info()->max_level]);
     DenseVector<double> result(rhs.size(), double(0));
     SparseMatrixELL<double> system(MG::info()->a[MG::info()->max_level]);
-    Multigrid<tags::CPU::SSE, tags::CPU::SSE, methods::NONE, JAC, CYCLE::V, FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<double>::epsilon(), *MG::info());
+    Multigrid<tags::CPU::SSE, tags::CPU::SSE, methods::NONE, methods::JAC, methods::CYCLE::V, methods::FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<double>::epsilon(), *MG::info());
 }

@@ -181,7 +181,7 @@ class PoissonPCGBench :
 
             //std::cout<< n << " " << A << " "<< root_n<<endl;
             DenseVector<float> result(n, float(0));
-            BENCHMARK((ConjugateGradients<Tag_, JAC>::value(A, b_v, result, std::numeric_limits<float>::epsilon())));
+            BENCHMARK((ConjugateGradients<Tag_, methods::JAC>::value(A, b_v, result, std::numeric_limits<float>::epsilon())));
             evaluate();
         }
 };

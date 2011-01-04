@@ -21,7 +21,7 @@
 #ifndef LIBMATH_GUARD_PRECONDITIONING_HH
 #define LIBMATH_GUARD_PRECONDITIONING_HH 1
 
-#include <methods.hh>
+#include <honei/math/methods.hh>
 
 namespace honei
 {
