@@ -95,7 +95,7 @@ class DuneRegressionTestSparseELL:
             DenseVector<DT1_> result(init.copy());
 
             unsigned long used_iters(0);
-            ConjugateGradients<Tag_, JAC>::value(smatrix, rhs, result, diag_inverted, 10000ul, used_iters, DT1_(1e-8));
+            ConjugateGradients<Tag_, methods::JAC>::value(smatrix, rhs, result, diag_inverted, 10000ul, used_iters, DT1_(1e-8));
             //Jacobi<Tag_>::value(smatrix, difference, rhs, result, diag_inverted, 10000ul, used_iters, DT1_(1e-8));
 
 
