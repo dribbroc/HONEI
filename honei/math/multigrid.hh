@@ -751,7 +751,10 @@ endCycleLoop:
                         *cappa = std::pow((double)(defect / initial_defect), 1.0/((Prec_)iter));
 
                         if (defect <= initial_defect * info.tolerance)
+                        {
+                            std::cout<<"Finished in " << iter << " iterations."<<std::endl;
                             break;
+                        }
                     }
                     else
                     {
@@ -941,7 +944,7 @@ endCycleLoop:
                                 DenseVector<Prec_> t1(info.c[current_level].size());
                                 LSData<SparseMatrixELL<Prec_> , SparseMatrixELL<Prec_> , Prec_> data(&info.a[current_level], &info.spais[current_level], &info.d[current_level], &info.c[current_level], &t0, &t1);
                                 unsigned long iterst(4);
-                                LSInfo lsinfo(true, false, 1e-10, Prec_(1.0), info.n_pre_smooth, iterst);
+                                LSInfo lsinfo(false, false, 1e-10, Prec_(1.0), info.n_pre_smooth, iterst);
                                 Richardson<Tag_, Preconditioning<Tag_, methods::NONE> >::value(data, lsinfo);
 
                                 Sum<Tag_>::value(info.x[current_level], info.c[current_level]);
@@ -959,7 +962,7 @@ endCycleLoop:
                                 DenseVector<Prec_> t1(info.c[current_level].size());
                                 LSData<SparseMatrixELL<Prec_> , SparseMatrixELL<Prec_> , Prec_> data(&info.a[current_level], &info.spais[current_level], &info.d[current_level], &info.x[current_level], &t0, &t1);
                                 unsigned long iterst(4);
-                                LSInfo lsinfo(true, false, 1e-10, Prec_(1.0), info.n_pre_smooth, iterst);
+                                LSInfo lsinfo(false, false, 1e-10, Prec_(1.0), info.n_pre_smooth, iterst);
                                 Richardson<Tag_, Preconditioning<Tag_, methods::NONE> >::value(data, lsinfo);
                                 //END NEWTEST
                             }
@@ -1105,7 +1108,7 @@ endRestrictionLoop:
                             DenseVector<Prec_> t1(info.c[current_level].size());
                             LSData<SparseMatrixELL<Prec_> , SparseMatrixELL<Prec_> , Prec_> data(&info.a[current_level], &info.spais[current_level], &info.rhs[current_level], &info.x[current_level], &t0, &t1);
                             unsigned long iterst(4);
-                            LSInfo lsinfo(true, false, 1e-10, Prec_(1.0), info.n_pre_smooth, iterst);
+                            LSInfo lsinfo(false, false, 1e-10, Prec_(1.0), info.n_pre_smooth, iterst);
                             Richardson<Tag_, Preconditioning<Tag_, methods::NONE> >::value(data, lsinfo);
                             //end NEWTEST
 #ifdef SOLVER_VERBOSE
@@ -1172,7 +1175,10 @@ endCycleLoop:
                         *cappa = std::pow((double)(defect / initial_defect), 1.0/((Prec_)iter));
 
                         if (defect <= initial_defect * info.tolerance)
+                        {
+                            std::cout<<"Finished in " << iter << " iterations."<<std::endl;
                             break;
+                        }
                     }
                     else
                     {

@@ -1042,9 +1042,9 @@ class PoissonAdvancedTestMGSparseELLProlMatSpai:
                 info.diags_inverted.push_back(scaled_diag_inverted.copy());
 
                 SparseMatrix<DT1_> spai(smell);
-                double spai_eps(0.2);
-                if (i < 5)
-                    spai_eps = 0.1;
+                unsigned long stellen(log10(spai.rows()));
+                ++stellen;
+                double spai_eps(double(stellen) / 10.);
                 std::cout<<"Calc spai for lvl "<<i<<" with eps="<<spai_eps<<std::endl;
                 SparseMatrix<DT1_> sm_m(SPAI::value(spai, spai_eps, 50, 50));
                 SparseMatrixELL<DT1_> spai_m(sm_m);
@@ -1128,4 +1128,5 @@ class PoissonAdvancedTestMGSparseELLProlMatSpai:
 };
 #ifdef HONEI_SSE
 PoissonAdvancedTestMGSparseELLProlMatSpai<tags::CPU::SSE, double> sse_poisson_advanced_test_mg_sparse_prolmat_spai_double("double", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/sort_", 0);
+//PoissonAdvancedTestMGSparseELLProlMatSpai<tags::CPU::SSE, double> sse_poisson_advanced_test_mg_sparse_prolmat_spai_double_2("double", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/q2_sort_", 2);
 #endif
