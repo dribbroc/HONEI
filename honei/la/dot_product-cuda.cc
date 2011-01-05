@@ -98,6 +98,7 @@ float DotProduct<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<float> 
 
     float result (0.);
 
+#ifndef HONEI_CUBLAS
     if (a.size() < gridsize * blocksize)
     {
         /// \todo run mini dot product in cuda
@@ -111,6 +112,7 @@ float DotProduct<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<float> 
         b.unlock(lm_read_only);
     }
     else
+#endif
     {
         if (! cuda::GPUPool::instance()->idle())
         {
@@ -142,6 +144,7 @@ double DotProduct<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<double
 
     double result (0.);
 
+#ifndef HONEI_CUBLAS
     if (a.size() < gridsize * blocksize)
     {
         /// \todo run mini dot product in cuda
@@ -155,6 +158,7 @@ double DotProduct<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<double
         b.unlock(lm_read_only);
     }
     else
+#endif
     {
         if (! cuda::GPUPool::instance()->idle())
         {
@@ -186,6 +190,7 @@ float DotProduct<tags::GPU::MultiCore::CUDA>::value(const DenseVectorContinuousB
 
     float result (0.);
 
+#ifndef HONEI_CUBLAS
     if (a.size() < gridsize * blocksize * 3)
     {
         /// \todo run mini dot product in cuda
@@ -199,6 +204,7 @@ float DotProduct<tags::GPU::MultiCore::CUDA>::value(const DenseVectorContinuousB
         b.unlock(lm_read_only);
     }
     else
+#endif
     {
         if (! cuda::GPUPool::instance()->idle())
         {
@@ -238,6 +244,7 @@ double DotProduct<tags::GPU::MultiCore::CUDA>::value(const DenseVectorContinuous
 
     double result (0.);
 
+#ifndef HONEI_CUBLAS
     if (a.size() < gridsize * blocksize * 3)
     {
         /// \todo run mini dot product in cuda
@@ -251,6 +258,7 @@ double DotProduct<tags::GPU::MultiCore::CUDA>::value(const DenseVectorContinuous
         b.unlock(lm_read_only);
     }
     else
+#endif
     {
         if (! cuda::GPUPool::instance()->idle())
         {

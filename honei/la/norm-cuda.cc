@@ -86,6 +86,7 @@ float Norm<vnt_l_two, false, tags::GPU::CUDA>::value(const DenseVectorContinuous
 
     float result (0.);
 
+#ifndef HONEI_CUBLAS
     if (a.size() < gridsize * blocksize)
     {
         a.lock(lm_read_only);
@@ -96,6 +97,7 @@ float Norm<vnt_l_two, false, tags::GPU::CUDA>::value(const DenseVectorContinuous
         a.unlock(lm_read_only);
     }
     else
+#endif
     {
         if (! cuda::GPUPool::instance()->idle())
         {
@@ -121,6 +123,7 @@ float Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuousB
 
     float result (0.);
 
+#ifndef HONEI_CUBLAS
     if (a.size() < gridsize * blocksize)
     {
         a.lock(lm_read_only);
@@ -131,6 +134,7 @@ float Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuousB
         a.unlock(lm_read_only);
     }
     else
+#endif
     {
         if (! cuda::GPUPool::instance()->idle())
         {
@@ -157,6 +161,7 @@ double Norm<vnt_l_two, false, tags::GPU::CUDA>::value(const DenseVectorContinuou
 
     double result (0.);
 
+#ifndef HONEI_CUBLAS
     if (a.size() < gridsize * blocksize)
     {
         a.lock(lm_read_only);
@@ -167,6 +172,7 @@ double Norm<vnt_l_two, false, tags::GPU::CUDA>::value(const DenseVectorContinuou
         a.unlock(lm_read_only);
     }
     else
+#endif
     {
         if (! cuda::GPUPool::instance()->idle())
         {
@@ -192,6 +198,7 @@ double Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuous
 
     double result (0.);
 
+#ifndef HONEI_CUBLAS
     if (a.size() < gridsize * blocksize)
     {
         a.lock(lm_read_only);
@@ -202,6 +209,7 @@ double Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuous
         a.unlock(lm_read_only);
     }
     else
+#endif
     {
         if (! cuda::GPUPool::instance()->idle())
         {
@@ -228,6 +236,7 @@ float Norm<vnt_l_two, false, tags::GPU::MultiCore::CUDA>::value(const DenseVecto
 
     float result (0.);
 
+#ifndef HONEI_CUBLAS
     if (a.size() < gridsize * blocksize * 3)
     {
         a.lock(lm_read_only);
@@ -238,6 +247,7 @@ float Norm<vnt_l_two, false, tags::GPU::MultiCore::CUDA>::value(const DenseVecto
         a.unlock(lm_read_only);
     }
     else
+#endif
     {
         if (! cuda::GPUPool::instance()->idle())
         {
@@ -270,6 +280,7 @@ double Norm<vnt_l_two, false, tags::GPU::MultiCore::CUDA>::value(const DenseVect
 
     double result (0.);
 
+#ifndef HONEI_CUBLAS
     if (a.size() < gridsize * blocksize * 3)
     {
         a.lock(lm_read_only);
@@ -280,6 +291,7 @@ double Norm<vnt_l_two, false, tags::GPU::MultiCore::CUDA>::value(const DenseVect
         a.unlock(lm_read_only);
     }
     else
+#endif
     {
         if (! cuda::GPUPool::instance()->idle())
         {
@@ -312,6 +324,7 @@ float Norm<vnt_l_two, true, tags::GPU::MultiCore::CUDA>::value(const DenseVector
 
     float result (0.);
 
+#ifndef HONEI_CUBLAS
     if (a.size() < gridsize * blocksize * 3)
     {
         a.lock(lm_read_only);
@@ -322,6 +335,7 @@ float Norm<vnt_l_two, true, tags::GPU::MultiCore::CUDA>::value(const DenseVector
         a.unlock(lm_read_only);
     }
     else
+#endif
     {
         if (! cuda::GPUPool::instance()->idle())
         {
@@ -354,6 +368,7 @@ double Norm<vnt_l_two, true, tags::GPU::MultiCore::CUDA>::value(const DenseVecto
 
     double result (0.);
 
+#ifndef HONEI_CUBLAS
     if (a.size() < gridsize * blocksize * 3)
     {
         a.lock(lm_read_only);
@@ -364,6 +379,7 @@ double Norm<vnt_l_two, true, tags::GPU::MultiCore::CUDA>::value(const DenseVecto
         a.unlock(lm_read_only);
     }
     else
+#endif
     {
         if (! cuda::GPUPool::instance()->idle())
         {
