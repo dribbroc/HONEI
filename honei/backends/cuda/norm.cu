@@ -82,6 +82,7 @@ extern "C" float cuda_norm_l2_one_float(const void * x, unsigned long size, unsi
     cublasInit();
     float result = cublasSnrm2(size, x_gpu, 1);
     cublasShutdown();
+    return result;
 #else
     float result(0.);
 
@@ -108,8 +109,8 @@ extern "C" float cuda_norm_l2_one_float(const void * x, unsigned long size, unsi
     delete tmp_cpu;
 
     CUDA_ERROR();
+    return sqrt(result);
 #endif
-    return result;
 }
 
 #ifdef HONEI_CUDA_DOUBLE
@@ -121,6 +122,7 @@ extern "C" double cuda_norm_l2_one_double(const void * x, unsigned long size, un
     cublasInit();
     double result = cublasDnrm2(size, x_gpu, 1);
     cublasShutdown();
+    return result;
 #else
     double result(0.);
 
@@ -147,7 +149,7 @@ extern "C" double cuda_norm_l2_one_double(const void * x, unsigned long size, un
     delete tmp_cpu;
 
     CUDA_ERROR();
+    return sqrt(result);
 #endif
-    return result;
 }
 #endif

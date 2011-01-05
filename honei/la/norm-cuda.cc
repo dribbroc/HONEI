@@ -95,6 +95,7 @@ float Norm<vnt_l_two, false, tags::GPU::CUDA>::value(const DenseVectorContinuous
             result += a[i] * a[i];
         }
         a.unlock(lm_read_only);
+        return result;
     }
     else
 #endif
@@ -109,9 +110,8 @@ float Norm<vnt_l_two, false, tags::GPU::CUDA>::value(const DenseVectorContinuous
             cudaNormL2oneDVfloat task(a, &result, blocksize, gridsize);
             cuda::GPUPool::instance()->enqueue(task, 0)->wait();
         }
+        return result * result;
     }
-
-    return result;
 }
 
 float Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuousBase<float> & a)
@@ -132,6 +132,7 @@ float Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuousB
             result += a[i] * a[i];
         }
         a.unlock(lm_read_only);
+        return sqrt(result);
     }
     else
 #endif
@@ -146,9 +147,8 @@ float Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuousB
             cudaNormL2oneDVfloat task(a, &result, blocksize, gridsize);
             cuda::GPUPool::instance()->enqueue(task, 0)->wait();
         }
+        return result;
     }
-
-    return sqrt(result);
 }
 
 #ifdef HONEI_CUDA_DOUBLE
@@ -170,6 +170,7 @@ double Norm<vnt_l_two, false, tags::GPU::CUDA>::value(const DenseVectorContinuou
             result += a[i] * a[i];
         }
         a.unlock(lm_read_only);
+        return result;
     }
     else
 #endif
@@ -184,9 +185,8 @@ double Norm<vnt_l_two, false, tags::GPU::CUDA>::value(const DenseVectorContinuou
             cudaNormL2oneDVdouble task(a, &result, blocksize, gridsize);
             cuda::GPUPool::instance()->enqueue(task, 0)->wait();
         }
+        return result * result;
     }
-
-    return result;
 }
 
 double Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuousBase<double> & a)
@@ -207,6 +207,7 @@ double Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuous
             result += a[i] * a[i];
         }
         a.unlock(lm_read_only);
+        return sqrt(result);
     }
     else
 #endif
@@ -221,9 +222,8 @@ double Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuous
             cudaNormL2oneDVdouble task(a, &result, blocksize, gridsize);
             cuda::GPUPool::instance()->enqueue(task, 0)->wait();
         }
+        return result;
     }
-
-    return sqrt(result);
 }
 #endif
 
@@ -245,6 +245,7 @@ float Norm<vnt_l_two, false, tags::GPU::MultiCore::CUDA>::value(const DenseVecto
             result += a[i] * a[i];
         }
         a.unlock(lm_read_only);
+        return result;
     }
     else
 #endif
@@ -265,9 +266,8 @@ float Norm<vnt_l_two, false, tags::GPU::MultiCore::CUDA>::value(const DenseVecto
             cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
             result = result1 + result2;
         }
+        return result * result;
     }
-
-    return result;
 }
 
 #ifdef HONEI_CUDA_DOUBLE
@@ -289,6 +289,7 @@ double Norm<vnt_l_two, false, tags::GPU::MultiCore::CUDA>::value(const DenseVect
             result += a[i] * a[i];
         }
         a.unlock(lm_read_only);
+        return result;
     }
     else
 #endif
@@ -309,9 +310,8 @@ double Norm<vnt_l_two, false, tags::GPU::MultiCore::CUDA>::value(const DenseVect
             cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
             result = result1 + result2;
         }
+        return result * result;
     }
-
-    return result;
 }
 #endif
 
@@ -333,6 +333,7 @@ float Norm<vnt_l_two, true, tags::GPU::MultiCore::CUDA>::value(const DenseVector
             result += a[i] * a[i];
         }
         a.unlock(lm_read_only);
+        return sqrt(result);
     }
     else
 #endif
@@ -353,9 +354,8 @@ float Norm<vnt_l_two, true, tags::GPU::MultiCore::CUDA>::value(const DenseVector
             cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
             result = result1 + result2;
         }
+            return result;
     }
-
-    return sqrt(result);
 }
 
 #ifdef HONEI_CUDA_DOUBLE
@@ -377,6 +377,7 @@ double Norm<vnt_l_two, true, tags::GPU::MultiCore::CUDA>::value(const DenseVecto
             result += a[i] * a[i];
         }
         a.unlock(lm_read_only);
+        return sqrt(result);
     }
     else
 #endif
@@ -398,7 +399,6 @@ double Norm<vnt_l_two, true, tags::GPU::MultiCore::CUDA>::value(const DenseVecto
             result = result1 + result2;
         }
     }
-
-    return sqrt(result);
+    return result;
 }
 #endif
