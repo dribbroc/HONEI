@@ -91,7 +91,7 @@ DenseVectorNormValueTest<tags::Cell, double> cell_dense_vector_norm_value_test_d
 #endif
 #ifdef HONEI_CUDA
 DenseVectorNormValueTest<tags::GPU::CUDA, float> cuda_dense_vector_norm_value_test_float("float");
-DenseVectorNormValueTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_dense_vector_norm_value_test_float("float");
+//DenseVectorNormValueTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_dense_vector_norm_value_test_float("float");
 #ifdef HONEI_CUDA_DOUBLE
 DenseVectorNormValueTest<tags::GPU::CUDA, double> cuda_dense_vector_norm_value_test_double("double");
 DenseVectorNormValueTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector_norm_value_test_double("double");
@@ -145,7 +145,7 @@ class DenseVectorNormQuickTest :
 };
 DenseVectorNormQuickTest<tags::CPU, float>  dense_vector_norm_quick_test_float("float");
 DenseVectorNormQuickTest<tags::CPU, double> dense_vector_norm_quick_test_double("double");
-DenseVectorNormQuickTest<tags::CPU::MultiCore, float>  mc_dense_vector_norm_quick_test_float("MC float");
+//DenseVectorNormQuickTest<tags::CPU::MultiCore, float>  mc_dense_vector_norm_quick_test_float("MC float");
 DenseVectorNormQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_norm_quick_test_double("MC double");
 #ifdef HONEI_CELL
 DenseVectorNormQuickTest<tags::Cell, float> cell_dense_vector_norm_quick_test_float("float (Cell)");
@@ -153,7 +153,7 @@ DenseVectorNormQuickTest<tags::Cell, double> cell_dense_vector_norm_quick_test_d
 #endif
 #ifdef HONEI_CUDA
 DenseVectorNormQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_norm_quick_test_float("float");
-DenseVectorNormQuickTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_dense_vector_norm_quick_test_float("float");
+//DenseVectorNormQuickTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_dense_vector_norm_quick_test_float("float");
 #ifdef HONEI_CUDA_DOUBLE
 DenseVectorNormQuickTest<tags::GPU::CUDA, double> cuda_dense_vector_norm_quick_test_double("double");
 DenseVectorNormQuickTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector_norm_quick_test_double("double");
@@ -299,7 +299,7 @@ DenseVectorRangeNormQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_ve
 #endif
 #ifdef HONEI_CUDA
 DenseVectorRangeNormQuickTest<tags::GPU::CUDA, float>  cuda_dense_vector_range_norm_quick_test_float("float");
-DenseVectorRangeNormQuickTest<tags::GPU::MultiCore::CUDA, float>  mc_cuda_dense_vector_range_norm_quick_test_float("float");
+//DenseVectorRangeNormQuickTest<tags::GPU::MultiCore::CUDA, float>  mc_cuda_dense_vector_range_norm_quick_test_float("float");
 #ifdef HONEI_CUDA_DOUBLE
 DenseVectorRangeNormQuickTest<tags::GPU::CUDA, double>  cuda_dense_vector_range_norm_quick_test_double("double");
 DenseVectorRangeNormQuickTest<tags::GPU::MultiCore::CUDA, double>  mc_cuda_dense_vector_range_norm_quick_test_double("double");
