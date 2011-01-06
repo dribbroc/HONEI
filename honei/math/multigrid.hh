@@ -1108,7 +1108,7 @@ endRestrictionLoop:
                             DenseVector<Prec_> t1(info.c[current_level].size());
                             LSData<SparseMatrixELL<Prec_> , SparseMatrixELL<Prec_> , Prec_> data(&info.a[current_level], &info.spais[current_level], &info.rhs[current_level], &info.x[current_level], &t0, &t1);
                             unsigned long iterst(4);
-                            LSInfo lsinfo(false, false, 1e-10, Prec_(1.0), info.n_pre_smooth, iterst);
+                            LSInfo lsinfo(false, false, 1e-10, Prec_(1.0), info.n_post_smooth, iterst);
                             Richardson<Tag_, Preconditioning<Tag_, methods::NONE> >::value(data, lsinfo);
                             //end NEWTEST
 #ifdef SOLVER_VERBOSE
@@ -1203,7 +1203,7 @@ endCycleLoop:
         {
             CONTEXT("When solving sparse ELL linear system with MULTIGRID: ");
 #ifdef SOLVER_VERBOSE_L2
-            std::cout << "Calling MG solver, presmoothing=JACOBI, postsmoothing=JACOBI, coarse-grid solver=CG, datalayout=ELLPACK, precision=FIXED" << std::endl;
+            std::cout << "Calling MG solver, presmoothing=SPAI, postsmoothing=SPAI, coarse-grid solver=CG, datalayout=ELLPACK, precision=FIXED" << std::endl;
 #endif
             Prec_ cappa;
 

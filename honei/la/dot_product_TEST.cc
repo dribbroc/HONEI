@@ -42,7 +42,7 @@ class DenseDotProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 13) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
             {
                 DenseVector<DataType_> dv0 (size, DataType_(0)), dv1(size, DataType_(1));
 

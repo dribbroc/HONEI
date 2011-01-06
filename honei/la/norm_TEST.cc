@@ -43,7 +43,7 @@ class DenseVectorNormValueTest :
 
         virtual void run() const
         {
-            for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
+            for (unsigned long size(1) ; size < (1 << 14) ; size <<= 1)
             {
                 DenseVector<DataType_>dv(size);
                 for (typename DenseVector<DataType_>::ElementIterator i(dv.begin_elements()), i_end(dv.end_elements()) ;
@@ -226,8 +226,10 @@ DenseVectorRangeNormValueTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_ve
 #endif
 #ifdef HONEI_CUDA
 DenseVectorRangeNormValueTest<tags::GPU::CUDA, float> cuda_dense_vector_range_norm_value_test_float("float");
+//DenseVectorRangeNormValueTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_dense_vector_range_norm_value_test_float("float");
 #ifdef HONEI_CUDA_DOUBLE
 DenseVectorRangeNormValueTest<tags::GPU::CUDA, double> cuda_dense_vector_range_norm_value_test_double("double");
+DenseVectorRangeNormValueTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector_range_norm_value_test_double("double");
 #endif
 #endif
 #ifdef HONEI_CELL
