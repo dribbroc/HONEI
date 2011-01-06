@@ -1041,13 +1041,19 @@ class PoissonAdvancedTestMGSparseELLProlMatSpai:
 
                 info.diags_inverted.push_back(scaled_diag_inverted.copy());
 
-                SparseMatrix<DT1_> spai(smell);
+                /*SparseMatrix<DT1_> spai(smell);
                 double stellen(log10(smell.used_elements()));
                 double spai_eps(stellen / 10.);
                 std::cout<<"Calc spai for lvl "<<i<<" with eps="<<spai_eps<<std::endl;
                 SparseMatrix<DT1_> sm_m(SPAI::value(spai, spai_eps, 35, 35));
-                SparseMatrixELL<DT1_> spai_m(sm_m);
-                info.spais.push_back(spai_m.copy());
+                SparseMatrixELL<DT1_> spai_m(sm_m);*/
+                std::string SPAI_file(file_base);
+                SPAI_file += "A_";
+                SPAI_file += stringify(i);
+                SPAI_file += "_spai.ell";
+                std::cout << "File:" << SPAI_file << std::endl;
+                SparseMatrixELL<DT1_> spai_m(MatrixIO<io_formats::ELL>::read_matrix(SPAI_file, DT1_(0)));
+                info.spais.push_back(spai_m);
 
                 if(i >= info.min_level)
                 {
