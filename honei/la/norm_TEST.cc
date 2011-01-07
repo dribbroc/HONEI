@@ -79,12 +79,14 @@ class DenseVectorNormValueTest :
 
 DenseVectorNormValueTest<tags::CPU, float> dense_vector_norm_value_test_float("float");
 DenseVectorNormValueTest<tags::CPU, double> dense_vector_norm_value_test_double("double");
+#ifdef HONEI_SST
 DenseVectorNormValueTest<tags::CPU::SSE, float> sse_dense_vector_norm_value_test_float("float");
 DenseVectorNormValueTest<tags::CPU::SSE, double> sse_dense_vector_norm_value_test_double("double");
 DenseVectorNormValueTest<tags::CPU::MultiCore, float> mc_dense_vector_norm_value_test_float("MC float");
 DenseVectorNormValueTest<tags::CPU::MultiCore, double> mc_dense_vector_norm_value_test_double("MC double");
 DenseVectorNormValueTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_norm_value_test_float("MC SSE float");
 DenseVectorNormValueTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_norm_value_test_double("MC SSE double");
+#endif
 #ifdef HONEI_CELL
 DenseVectorNormValueTest<tags::Cell, float> cell_dense_vector_norm_value_test_float("float (Cell)");
 DenseVectorNormValueTest<tags::Cell, double> cell_dense_vector_norm_value_test_double("double (Cell)");
@@ -145,8 +147,14 @@ class DenseVectorNormQuickTest :
 };
 DenseVectorNormQuickTest<tags::CPU, float>  dense_vector_norm_quick_test_float("float");
 DenseVectorNormQuickTest<tags::CPU, double> dense_vector_norm_quick_test_double("double");
-//DenseVectorNormQuickTest<tags::CPU::MultiCore, float>  mc_dense_vector_norm_quick_test_float("MC float");
+DenseVectorNormQuickTest<tags::CPU::MultiCore, float>  mc_dense_vector_norm_quick_test_float("MC float");
 DenseVectorNormQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_norm_quick_test_double("MC double");
+#ifdef HONEI_SSE
+DenseVectorNormQuickTest<tags::CPU::SSE, float>  sse_dense_vector_norm_quick_test_float("float");
+DenseVectorNormQuickTest<tags::CPU::SSE, double> sse_dense_vector_norm_quick_test_double("double");
+DenseVectorNormQuickTest<tags::CPU::MultiCore::SSE, float>  mc_sse_dense_vector_norm_quick_test_float("MC float");
+DenseVectorNormQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_norm_quick_test_double("MC double");
+#endif
 #ifdef HONEI_CELL
 DenseVectorNormQuickTest<tags::Cell, float> cell_dense_vector_norm_quick_test_float("float (Cell)");
 DenseVectorNormQuickTest<tags::Cell, double> cell_dense_vector_norm_quick_test_double("double (Cell)");
