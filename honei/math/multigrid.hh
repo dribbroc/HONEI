@@ -132,6 +132,8 @@ namespace honei
                 std::vector<DenseVector<Prec_> > rhs;
                 std::vector<DenseVector<Prec_> > x;
                 std::vector<DenseVector<Prec_> > diags_inverted;
+                std::vector<DenseVector<Prec_> > temp_0;
+                std::vector<DenseVector<Prec_> > temp_1;
 
                 std::vector<DataLayout_ > a;
                 std::vector<DataLayout_ > prolmats;
@@ -940,9 +942,8 @@ endCycleLoop:
                                 Jacobi<Tag_>::value(info.a[current_level], info.d[current_level], (info.c[current_level]), Prec_(0.7), info.diags_inverted[current_level]);
                                 //(info.c[current_level]) = (Jacobi<Tag_>::value(info.c[current_level] , info.a[current_level], info.d[current_level], info.n_pre_smooth - 1, Prec_(0.7), info.diags_inverted[current_level]));
                                 //Jacobi<Tag_>::value(info.c[current_level] , info.a[current_level], info.d[current_level], (info.c[current_level]), info.n_pre_smooth - 1, Prec_(0.7), info.diags_inverted[current_level]);
-                                DenseVector<Prec_> t0(info.c[current_level].size());
-                                DenseVector<Prec_> t1(info.c[current_level].size());
-                                LSData<SparseMatrixELL<Prec_> , SparseMatrixELL<Prec_> , Prec_> data(&info.a[current_level], &info.spais[current_level], &info.d[current_level], &info.c[current_level], &t0, &t1);
+                                LSData<SparseMatrixELL<Prec_> , SparseMatrixELL<Prec_> , Prec_> data(&info.a[current_level],
+                                        &info.spais[current_level], &info.d[current_level], &info.c[current_level], &info.temp_0[current_level], &info.temp_1[current_level]);
                                 unsigned long iterst(4);
                                 LSInfo lsinfo(false, false, 1e-10, Prec_(1.0), info.n_pre_smooth, iterst);
                                 Richardson<Tag_, Preconditioning<Tag_, methods::NONE> >::value(data, lsinfo);
@@ -958,9 +959,7 @@ endCycleLoop:
                                 Jacobi<Tag_>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], Prec_(0.7), info.diags_inverted[current_level]);
                                 //info.x[current_level] = (Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.d[current_level]), info.n_pre_smooth - 1, Prec_(0.7), info.diags_inverted[current_level]));
                                 //Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.d[current_level]),info.x[current_level], info.n_pre_smooth - 1, Prec_(0.7), info.diags_inverted[current_level]);
-                                DenseVector<Prec_> t0(info.c[current_level].size());
-                                DenseVector<Prec_> t1(info.c[current_level].size());
-                                LSData<SparseMatrixELL<Prec_> , SparseMatrixELL<Prec_> , Prec_> data(&info.a[current_level], &info.spais[current_level], &info.d[current_level], &info.x[current_level], &t0, &t1);
+                                LSData<SparseMatrixELL<Prec_> , SparseMatrixELL<Prec_> , Prec_> data(&info.a[current_level], &info.spais[current_level], &info.d[current_level], &info.x[current_level],  &info.temp_0[current_level], &info.temp_1[current_level]);
                                 unsigned long iterst(4);
                                 LSInfo lsinfo(false, false, 1e-10, Prec_(1.0), info.n_pre_smooth, iterst);
                                 Richardson<Tag_, Preconditioning<Tag_, methods::NONE> >::value(data, lsinfo);
@@ -1104,9 +1103,7 @@ endRestrictionLoop:
 
                             //(info.x[current_level]) =(Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.rhs[current_level]), info.n_pre_smooth, Prec_(0.7), info.diags_inverted[current_level]));
                             //Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.rhs[current_level]),(info.x[current_level]), info.n_pre_smooth, Prec_(0.7), info.diags_inverted[current_level]);
-                            DenseVector<Prec_> t0(info.c[current_level].size());
-                            DenseVector<Prec_> t1(info.c[current_level].size());
-                            LSData<SparseMatrixELL<Prec_> , SparseMatrixELL<Prec_> , Prec_> data(&info.a[current_level], &info.spais[current_level], &info.rhs[current_level], &info.x[current_level], &t0, &t1);
+                            LSData<SparseMatrixELL<Prec_> , SparseMatrixELL<Prec_> , Prec_> data(&info.a[current_level], &info.spais[current_level], &info.rhs[current_level], &info.x[current_level], &info.temp_0[current_level], &info.temp_1[current_level]);
                             unsigned long iterst(4);
                             LSInfo lsinfo(false, false, 1e-10, Prec_(1.0), info.n_post_smooth, iterst);
                             Richardson<Tag_, Preconditioning<Tag_, methods::NONE> >::value(data, lsinfo);

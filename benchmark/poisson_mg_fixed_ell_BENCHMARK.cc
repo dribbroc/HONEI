@@ -1159,6 +1159,8 @@ class PoissonAdvancedBENCHMGSparseELLProlMatSPAI:
                 info.x.push_back(ac_x);
 
                 info.diags_inverted.push_back(dummy_band.copy());
+                info.temp_0.push_back(dummy_band.copy());
+                info.temp_1.push_back(dummy_band.copy());
                 info.spais.push_back(ac_s.copy());
             }
 
@@ -1208,6 +1210,8 @@ class PoissonAdvancedBENCHMGSparseELLProlMatSPAI:
                 Scale<Tag_>::value(scaled_diag_inverted, 0.7);
 
                 info.diags_inverted.push_back(scaled_diag_inverted.copy());
+                info.temp_0.push_back(scaled_diag_inverted.copy());
+                info.temp_1.push_back(scaled_diag_inverted.copy());
 
                 SparseMatrix<DT1_> spai(smell);
                 /*//double stellen(log10(smell.used_elements()));

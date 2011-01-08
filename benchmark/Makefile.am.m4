@@ -79,6 +79,7 @@ DEFS = \
 	$(OPENCLDEF) \
 	$(ITANIUMDEF) \
 	$(CUDADEF) \
+	$(CUBLASDEF) \
 	$(CUDA_DOUBLEDEF) \
 	$(DEBUGDEF) \
 	$(BOOSTDEF) \
