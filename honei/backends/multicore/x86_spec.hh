@@ -48,8 +48,10 @@ namespace honei
         {
             uint32_t eax, ebx, ecx, edx;
             __asm__ (
+                "push %%ebx\n\t"
                 "cpuid\n\t"
                 "movl %%ebx, %0\n\t"
+                "pop %%ebx\n\t"
                 : "=a" (eax), "=r" (ebx), "=c" (ecx), "=d" (edx)
                 : "a" (infoType), "c" (ecx_init)
                 : "cc"
