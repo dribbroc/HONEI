@@ -107,8 +107,8 @@ namespace honei
 
         bool realloc(this->_imp->_capacity <= this->_imp->_used_elements + 1);
         unsigned long capacity(realloc ? std::min(this->_imp->_capacity + 10, this->_imp->_size + 1) : this->_imp->_capacity);
-        DataType_ * elements(realloc ? new DataType_[capacity] : this->_imp->_elements.get());
-        unsigned long * indices(realloc ? new unsigned long[capacity] : this->_imp->_indices.get());
+        DataType_ * elements(realloc ? TypeTraits<DataType_>::allocate(capacity) : this->_imp->_elements.get());
+        unsigned long * indices(realloc ? TypeTraits<unsigned long>::allocate(capacity) : this->_imp->_indices.get());
 
         ASSERT(position < capacity, "position '" + stringify(position) + "' out of bounds!");
         ASSERT(index < this->_imp->_size, "index '" + stringify(index) + "' out of bounds!");
