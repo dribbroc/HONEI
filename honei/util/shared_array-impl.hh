@@ -29,6 +29,7 @@
 #include <honei/util/stringify.hh>
 #include <honei/util/type_traits.hh>
 #include <honei/util/memory_arbiter.hh>
+#include <honei/util/memory_pool.hh>
 
 #include <algorithm>
 
@@ -50,10 +51,12 @@ namespace honei
 
         /// Constructor.
         Implementation(unsigned long s) :
-            array(TypeTraits<DataType_>::allocate(s)), // Needs to be 'free'ed!
+            //array(TypeTraits<DataType_>::allocate(s)), // Needs to be 'free'ed!
+            array(reinterpret_cast<DataType_ *>(MemoryPool<tags::CPU>::instance()->alloc(s * sizeof(DataType_)))),
             size(s),
             mutex(new Mutex)
         {
+            Lock l(*mutex);
             TypeTraits<DataType_>::create(array, s, DataType_());
             MemoryArbiter::instance()->register_address(array);
         }
@@ -67,9 +70,13 @@ namespace honei
         /// Destructor.
         ~Implementation()
         {
-            MemoryArbiter::instance()->remove_address(array);
-            TypeTraits<DataType_>::destroy(array, size);
-            TypeTraits<DataType_>::free(array, size);
+            {
+                Lock l(*mutex);
+                MemoryArbiter::instance()->remove_address(array);
+                TypeTraits<DataType_>::destroy(array, size);
+                //TypeTraits<DataType_>::free(array, size);
+                MemoryPool<tags::CPU>::instance()->free((void *)array);
+            }
 
             delete mutex;
         }
@@ -81,7 +88,8 @@ namespace honei
         {
             MemoryArbiter::instance()->remove_address(array);
             TypeTraits<DataType_>::destroy(array, size);
-            TypeTraits<DataType_>::free(array, size);
+            //TypeTraits<DataType_>::free(array, size);
+            MemoryPool<tags::CPU>::instance()->free((void *)array);
 
             array = a;
             size = s;

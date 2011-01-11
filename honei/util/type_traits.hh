@@ -217,7 +217,7 @@ namespace honei
             }
 
             /**
-             * Free memory that was previously allocated by PODTraits::allocate.
+             * Free memory that was previously allocated by DefaultTraits::allocate.
              *
              * \param location Memory location whose memory shall be freed.
              * \param count Count of instances for which memory was allocated.
@@ -282,6 +282,12 @@ namespace honei
     template <> struct TypeTraits<double> :
         public intern::PODTraits<double>,
         public intern::PODConversionTraits<double>
+    {
+    };
+
+    template <> struct TypeTraits<unsigned long> :
+        public intern::PODTraits<unsigned long>,
+        public intern::PODConversionTraits<unsigned long>
     {
     };
     /// \}

@@ -18,8 +18,8 @@
  */
 
 #pragma once
-#ifndef MEMORY_GUARD_MEMORY_ARBITER_IMPL_HH
-#define MEMORY_GUARD_MEMORY_ARBITER_IMPL_HH 1
+#ifndef UTIL_GUARD_MEMORY_ARBITER_IMPL_HH
+#define UTIL_GUARD_MEMORY_ARBITER_IMPL_HH 1
 
 #include <honei/util/instantiation_policy-impl.hh>
 #include <honei/util/private_implementation_pattern.hh>
