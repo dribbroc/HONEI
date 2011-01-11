@@ -27,14 +27,26 @@
 #include <honei/util/mutex.hh>
 #include <honei/util/lock.hh>
 #include <honei/util/exception.hh>
-#include <honei/util/type_traits.hh>
 
 #include <cstring>
 #include <map>
 #include <string>
+#include <cstdlib>
+#include <new>
 
 namespace honei
 {
+    namespace intern
+    {
+#ifndef DOXYGEN
+        static inline unsigned multiple_of_sixteen(unsigned v)
+        {
+            unsigned r(v & 0xF);
+            return (r > 0) ? v + 16 - r : v;
+        }
+#endif
+    }
+
     template<typename Tag_>
         class MemoryPool
         {
@@ -63,7 +75,7 @@ namespace honei
                     _release_free();
                 }
                 if (_used_chunks.size() != 0)
-                    //throw InternalError("MemoryPool deconstructor called with elements still unfreeed");
+                    throw InternalError("MemoryPool deconstructor called with elements still unfreeed");
                 delete _mutex;
             }
 
@@ -138,7 +150,7 @@ namespace honei
                 }
                 else
                 {
-                    //throw InternalError("MemoryPool: memory chunk not found!");
+                    throw InternalError("MemoryPool: memory chunk not found!");
                 }
 
             }

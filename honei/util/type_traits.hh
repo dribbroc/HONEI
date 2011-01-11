@@ -23,6 +23,8 @@
 
 #include <honei/util/instantiation_policy.hh>
 #include <honei/util/attributes.hh>
+#include <honei/util/memory_pool.hh>
+#include <honei/util/memory_arbiter.hh>
 
 #include <cstdlib>
 #include <new>
@@ -31,14 +33,6 @@ namespace honei
 {
     namespace intern
     {
-#ifndef DOXYGEN
-        static inline unsigned multiple_of_sixteen(unsigned v)
-        {
-            unsigned r(v & 0xF);
-            return (r > 0) ? v + 16 - r : v;
-        }
-#endif
-
         /**
          * Type traits for plain old data types.
          */
@@ -59,10 +53,12 @@ namespace honei
              */
             static inline DT_ * allocate(std::size_t count)
             {
-                void * result(0);
+                //void * result(0);
 
-                if (0 != posix_memalign(&result, 16, multiple_of_sixteen(sizeof(DT_) * count)))
-                    throw std::bad_alloc();
+                //if (0 != posix_memalign(&result, 16, multiple_of_sixteen(sizeof(DT_) * count)))
+                //    throw std::bad_alloc();
+                void * result(MemoryPool<tags::CPU>::instance()->alloc(count * sizeof(DT_)));
+                MemoryArbiter::instance()->register_address(result);
 
                 return reinterpret_cast<DT_ *>(result);
             }
@@ -120,7 +116,9 @@ namespace honei
              */
             static inline void free(DT_ * location, std::size_t /*count*/)
             {
-                ::free(location);
+                //::free(location);
+                MemoryArbiter::instance()->remove_address(location);
+                MemoryPool<tags::CPU>::instance()->free((void *)location);
             }
         };
 
@@ -287,7 +285,7 @@ namespace honei
 
     template <> struct TypeTraits<unsigned long> :
         public intern::PODTraits<unsigned long>,
-        public intern::PODConversionTraits<unsigned long>
+        public intern::DefaultConversionTraits<unsigned long>
     {
     };
     /// \}

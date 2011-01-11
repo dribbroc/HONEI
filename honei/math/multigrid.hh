@@ -76,7 +76,7 @@ namespace honei
                  * the four corners of the parameterplane. Allowed values are 1 vor NEUMANN boundaries
                  * and 2 for DIRICHLET boundaries. Used by Restriction and Prolongation.
                  */
-                DenseVector<unsigned long>* macro_border_mask;
+                DenseVector<unsigned long> macro_border_mask;
 
                 /**
                  * The coasest and finest levels in the cycle.
@@ -139,6 +139,11 @@ namespace honei
                 std::vector<DataLayout_ > prolmats;
                 std::vector<DataLayout_ > resmats;
                 std::vector<DataLayout_ > spais;
+
+                MGInfo() :
+                    macro_border_mask(8)
+                {
+                }
         };
 
     template<typename Tag_, typename OuterTag_, typename ProlType_, typename SmootherType_, typename CycleType_, typename Mode_>
@@ -258,7 +263,7 @@ namespace honei
                             // set homogeneous Dirichlet boundary conditions in the restricted defect vector
                             // depending on Dirichlet mask (see routine for details), and store a copy in RHS
 
-                            /*info.d[current_level] =*/ Restriction<Tag_, ProlType_>::value((info.d[current_level]), (info.d[current_level + 1]), *info.macro_border_mask, info.resmats[current_level + 1]);
+                            /*info.d[current_level] =*/ Restriction<Tag_, ProlType_>::value((info.d[current_level]), (info.d[current_level + 1]), info.macro_border_mask, info.resmats[current_level + 1]);
 #ifdef SOLVER_VERBOSE
                             std::cout << "Restricted." << std::endl;
 #endif
@@ -327,13 +332,13 @@ endRestrictionLoop:
                               {
                               info.c[current_level].lock(lm_write_only);
                               info.x[current_level - 1].lock(lm_read_only);
-                              info.c[current_level] = Prolongation<tags::CPU>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask);
+                              info.c[current_level] = Prolongation<tags::CPU>::value((info.c[current_level]), (info.x[current_level - 1]), info.macro_border_mask);
                               info.c[current_level].unlock(lm_write_only);
                               info.x[current_level - 1].unlock(lm_read_only);
                               }
                               else*/
                             {
-                                /*info.c[current_level] =*/ Prolongation<Tag_, ProlType_>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask, info.prolmats[current_level]);
+                                /*info.c[current_level] =*/ Prolongation<Tag_, ProlType_>::value((info.c[current_level]), (info.x[current_level - 1]), info.macro_border_mask, info.prolmats[current_level]);
                             }
 #ifdef SOLVER_VERBOSE
                             std::cout << "Prolongated." << std::endl;
@@ -567,7 +572,7 @@ endCycleLoop:
                             // set homogeneous Dirichlet boundary conditions in the restricted defect vector
                             // depending on Dirichlet mask (see routine for details), and store a copy in RHS
 
-                            /*info.d[current_level] =*/ Restriction<Tag_, ProlType_>::value((info.d[current_level]), (info.d[current_level + 1]), *info.macro_border_mask, info.resmats[current_level + 1]);
+                            /*info.d[current_level] =*/ Restriction<Tag_, ProlType_>::value((info.d[current_level]), (info.d[current_level + 1]), info.macro_border_mask, info.resmats[current_level + 1]);
 #ifdef SOLVER_VERBOSE
                             std::cout << "Restricted." << std::endl;
 #endif
@@ -636,13 +641,13 @@ endRestrictionLoop:
                               {
                               info.c[current_level].lock(lm_write_only);
                               info.x[current_level - 1].lock(lm_read_only);
-                              info.c[current_level] = Prolongation<tags::CPU>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask);
+                              info.c[current_level] = Prolongation<tags::CPU>::value((info.c[current_level]), (info.x[current_level - 1]), info.macro_border_mask);
                               info.c[current_level].unlock(lm_write_only);
                               info.x[current_level - 1].unlock(lm_read_only);
                               }
                               else*/
                             {
-                                /*info.c[current_level] =*/ Prolongation<Tag_, ProlType_>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask, info.prolmats[current_level]);
+                                /*info.c[current_level] =*/ Prolongation<Tag_, ProlType_>::value((info.c[current_level]), (info.x[current_level - 1]), info.macro_border_mask, info.prolmats[current_level]);
                             }
 #ifdef SOLVER_VERBOSE
                             std::cout << "Prolongated." << std::endl;
@@ -982,7 +987,7 @@ endCycleLoop:
                             // set homogeneous Dirichlet boundary conditions in the restricted defect vector
                             // depending on Dirichlet mask (see routine for details), and store a copy in RHS
 
-                            /*info.d[current_level] =*/ Restriction<Tag_, ProlType_>::value((info.d[current_level]), (info.d[current_level + 1]), *info.macro_border_mask, info.resmats[current_level + 1]);
+                            /*info.d[current_level] =*/ Restriction<Tag_, ProlType_>::value((info.d[current_level]), (info.d[current_level + 1]), info.macro_border_mask, info.resmats[current_level + 1]);
 #ifdef SOLVER_VERBOSE
                             std::cout << "Restricted." << std::endl;
 #endif
@@ -1051,13 +1056,13 @@ endRestrictionLoop:
                               {
                               info.c[current_level].lock(lm_write_only);
                               info.x[current_level - 1].lock(lm_read_only);
-                              info.c[current_level] = Prolongation<tags::CPU>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask);
+                              info.c[current_level] = Prolongation<tags::CPU>::value((info.c[current_level]), (info.x[current_level - 1]), info.macro_border_mask);
                               info.c[current_level].unlock(lm_write_only);
                               info.x[current_level - 1].unlock(lm_read_only);
                               }
                               else*/
                             {
-                                /*info.c[current_level] =*/ Prolongation<Tag_, ProlType_>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask, info.prolmats[current_level]);
+                                /*info.c[current_level] =*/ Prolongation<Tag_, ProlType_>::value((info.c[current_level]), (info.x[current_level - 1]), info.macro_border_mask, info.prolmats[current_level]);
                             }
 #ifdef SOLVER_VERBOSE
                             std::cout << "Prolongated." << std::endl;
@@ -1352,7 +1357,7 @@ endCycleLoop:
                             // set homogeneous Dirichlet boundary conditions in the restricted defect vector
                             // depending on Dirichlet mask (see routine for details), and store a copy in RHS
 
-                            info.d[current_level] = Restriction<Tag_, ProlType_>::value((info.d[current_level]), (info.d[current_level + 1]), *info.macro_border_mask, info.resmats[current_level + 1]);
+                            info.d[current_level] = Restriction<Tag_, ProlType_>::value((info.d[current_level]), (info.d[current_level + 1]), info.macro_border_mask, info.resmats[current_level + 1]);
 #ifdef SOLVER_VERBOSE
                             std::cout << "Restricted." << std::endl;
 #endif
@@ -1421,13 +1426,13 @@ endRestrictionLoop:
                               {
                               info.c[current_level].lock(lm_write_only);
                               info.x[current_level - 1].lock(lm_read_only);
-                              info.c[current_level] = Prolongation<tags::CPU>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask);
+                              info.c[current_level] = Prolongation<tags::CPU>::value((info.c[current_level]), (info.x[current_level - 1]), info.macro_border_mask);
                               info.c[current_level].unlock(lm_write_only);
                               info.x[current_level - 1].unlock(lm_read_only);
                               }
                               else*/
                             {
-                                info.c[current_level] = Prolongation<Tag_, ProlType_>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask, info.prolmats[current_level]);
+                                info.c[current_level] = Prolongation<Tag_, ProlType_>::value((info.c[current_level]), (info.x[current_level - 1]), info.macro_border_mask, info.prolmats[current_level]);
                             }
 #ifdef SOLVER_VERBOSE
                             std::cout << "Prolongated." << std::endl;
@@ -1668,7 +1673,7 @@ endCycleLoop:
                             // set homogeneous Dirichlet boundary conditions in the restricted defect vector
                             // depending on Dirichlet mask (see routine for details), and store a copy in RHS
 
-                            info.d[current_level] = Restriction<Tag_, ProlType_>::value((info.d[current_level]), (info.d[current_level + 1]), *info.macro_border_mask, info.resmats[current_level + 1]);
+                            info.d[current_level] = Restriction<Tag_, ProlType_>::value((info.d[current_level]), (info.d[current_level + 1]), info.macro_border_mask, info.resmats[current_level + 1]);
 #ifdef SOLVER_VERBOSE
                             std::cout << "Restricted." << std::endl;
 #endif
@@ -1737,13 +1742,13 @@ endRestrictionLoop:
                               {
                               info.c[current_level].lock(lm_write_only);
                               info.x[current_level - 1].lock(lm_read_only);
-                              info.c[current_level] = Prolongation<tags::CPU>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask);
+                              info.c[current_level] = Prolongation<tags::CPU>::value((info.c[current_level]), (info.x[current_level - 1]), info.macro_border_mask);
                               info.c[current_level].unlock(lm_write_only);
                               info.x[current_level - 1].unlock(lm_read_only);
                               }
                               else*/
                             {
-                                info.c[current_level] = Prolongation<Tag_, ProlType_>::value((info.c[current_level]), (info.x[current_level - 1]), *info.macro_border_mask, info.prolmats[current_level]);
+                                info.c[current_level] = Prolongation<Tag_, ProlType_>::value((info.c[current_level]), (info.x[current_level - 1]), info.macro_border_mask, info.prolmats[current_level]);
                             }
 #ifdef SOLVER_VERBOSE
                             std::cout << "Prolongated." << std::endl;

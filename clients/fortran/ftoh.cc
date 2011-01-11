@@ -86,10 +86,9 @@ void is_smoother_(bool* flag)
 
 void set_border_mask_(int* mask)
 {
-    MG::info()->macro_border_mask = new DenseVector<unsigned long>(8);
     for (unsigned long i(0) ; i < 8 ; ++i)
     {
-        (*MG::info()->macro_border_mask)[i] = mask[i];
+        (MG::info()->macro_border_mask)[i] = mask[i];
     }
 }
 

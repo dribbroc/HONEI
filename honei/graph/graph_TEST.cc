@@ -56,6 +56,7 @@ class GraphTest :
         //std::string file("test.gml");
         //g->write_gml(file.c_str(), true);
         TEST_CHECK(true);
+        delete g;
     }
 };
 

@@ -52,6 +52,12 @@ namespace honei
         }
 
         template <> void
+        PODTraits<unsigned long>::copy(const unsigned long * source, unsigned long * dest, std::size_t count)
+        {
+            std::memcpy(dest, source, sizeof(unsigned long) * count);
+        }
+
+        template <> void
         PODTraits<float>::fill(float * dest, std::size_t count, const float & proto)
         {
             /// \todo load data, mask and and it and store using vec_stl
@@ -99,6 +105,15 @@ namespace honei
             }
 
             for (unsigned i((count - offset) & ~0x3) ; i < count ; ++i)
+            {
+                dest[i] = proto;
+            }
+        }
+
+        template <> void
+        PODTraits<unsigned long>::fill(unsigned long * dest, std::size_t count, const unsigned long & proto)
+        {
+            for (unsigned i(0) ; i < count ; ++i)
             {
                 dest[i] = proto;
             }
@@ -220,6 +235,12 @@ namespace honei
         }
 
         template <> void
+        PODTraits<unsigned long>::copy(const unsigned long * source, unsigned long * dest, std::size_t count)
+        {
+            std::memcpy(dest, source, sizeof(unsigned long) * count);
+        }
+
+        template <> void
         PODTraits<float>::fill(float * dest, std::size_t count, const float & v)
         {
             __m128 m1;
@@ -303,6 +324,15 @@ namespace honei
             for (unsigned long index = quad_end ; index < count ; index++)
             {
                 dest[index] = v;
+            }
+        }
+
+        template <> void
+        PODTraits<unsigned long>::fill(unsigned long * dest, std::size_t count, const unsigned long & proto)
+        {
+            for (unsigned i(0) ; i < count ; ++i)
+            {
+                dest[i] = proto;
             }
         }
 
@@ -425,6 +455,11 @@ namespace honei
             std::memcpy(dest, source, sizeof(double) * count);
         }
 
+        PODTraits<unsigned long>::copy(const unsigned long * source, unsigned long * dest, std::size_t count)
+        {
+            std::memcpy(dest, source, sizeof(unsigned long) * count);
+        }
+
         template <> void
         PODTraits<float>::fill(float * dest, std::size_t count, const float & proto)
         {
@@ -436,6 +471,15 @@ namespace honei
 
         template <> void
         PODTraits<double>::fill(double * dest, std::size_t count, const double & proto)
+        {
+            for (unsigned i(0) ; i < count ; ++i)
+            {
+                dest[i] = proto;
+            }
+        }
+
+        template <> void
+        PODTraits<unsigned long>::fill(unsigned long * dest, std::size_t count, const unsigned long & proto)
         {
             for (unsigned i(0) ; i < count ; ++i)
             {
@@ -461,6 +505,5 @@ namespace honei
             }
         }
 #endif
-
     }
 }

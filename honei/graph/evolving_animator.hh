@@ -71,9 +71,8 @@ namespace honei
         
         ~EvolvingAnimator()
         {
-          //  for(int i(0);  i < _interpolation_coordinates.size(); ++i)
-          //      if (_interpolation_coordinates[i] != 0)
-          //          delete(_interpolation_coordinates[i]);
+          for(int unsigned long i(0);  i < _interpolation_coordinates.size(); ++i)
+            delete _interpolation_coordinates.at(i);
         }
 
        

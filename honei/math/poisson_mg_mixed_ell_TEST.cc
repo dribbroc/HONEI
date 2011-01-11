@@ -64,15 +64,13 @@ class PoissonTestMGSparseELLMixed:
             MGInfo<float, SparseMatrixELL<float> > info;
             //configuration constants: /TODO: set/allocate!!!
             info.is_smoother = false;
-            DenseVector<unsigned long> mask(8);
 
-            info.macro_border_mask = new DenseVector<unsigned long>(8);
             for(int i(0); i < 8; ++i)
             {
-                (*info.macro_border_mask)[i] = 2;
+                (info.macro_border_mask)[i] = 2;
             }
             //set Neumann boundaries:
-            (*info.macro_border_mask)[5] =1;
+            (info.macro_border_mask)[5] =1;
 
             info.min_level = 1;
             switch(n)
@@ -273,15 +271,13 @@ class PoissonTestMGSparseELLProlMat:
             MGInfo<float, SparseMatrixELL<float> > info;
             //configuration constants: /TODO: set/allocate!!!
             info.is_smoother = false;
-            DenseVector<unsigned long> mask(8);
 
-            info.macro_border_mask = new DenseVector<unsigned long>(8);
             for(int i(0); i < 8; ++i)
             {
-                (*info.macro_border_mask)[i] = 2;
+                (info.macro_border_mask)[i] = 2;
             }
             //set Neumann boundaries:
-            //(*info.macro_border_mask)[5] =1;
+            //(info.macro_border_mask)[5] =1;
 
             switch(n)
             {
@@ -632,7 +628,6 @@ class PoissonAdvancedTestMGSparseELLProlMat:
             MGInfo<DT1_, SparseMatrixELL<DT1_> > info;
             //configuration constants: /TODO: set/allocate!!!
             info.is_smoother = false;
-            DenseVector<unsigned long> mask(8);
 
             /*info.macro_border_mask = new DenseVector<unsigned long>(8);
             for(int i(0); i < 8; ++i)

@@ -69,6 +69,11 @@ namespace honei
             this->_node_weights = new DenseVector<DataType_>(nodes, (DataType_)1);
         }
 
+        virtual ~Graph()
+        {
+          delete[] _nodes;
+        }
+
         /// adds a node to this graph, puts its initial position and its weight into the relevant matrices
         void add_node(NodeType * node)
         {

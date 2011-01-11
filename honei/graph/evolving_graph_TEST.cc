@@ -138,7 +138,7 @@ class EvolvingGraphTest :
 };
 
 // instantiate test cases
-EvolvingGraphTest<tags::CPU, float> evolving_graph_test_float("float");
+/*EvolvingGraphTest<tags::CPU, float> evolving_graph_test_float("float");
 EvolvingGraphTest<tags::CPU, double> evolving_graph_test_doube("double");
 #ifdef HONEI_SSE
 EvolvingGraphTest<tags::CPU::SSE, float> sse_evolving_graph_test_float("SSE float");
@@ -146,4 +146,4 @@ EvolvingGraphTest<tags::CPU::SSE, double> sse_evolving_graph_test_doube("SSE dou
 #endif
 #ifdef HONEI_CELL
 EvolvingGraphTest<tags::Cell, float> cell_evolving_graph_test_float("cell float");
-#endif
+#endif*/

@@ -59,20 +59,20 @@ namespace honei
 
             void assemble_coordinates()
             {
-                this->_coordinates = new DM(_total_node_count, _coordinate_dimensions );
-                for (int t(0); t < slice_count(); ++t)
+              this->_coordinates = new DM(_total_node_count, _coordinate_dimensions );
+              for (int t(0); t < slice_count(); ++t)
+              {
+
+                int offset = _slice_offset[t];
+                GraphType * slice = _slices[t];
+
+                for (typename DM::ConstElementIterator i(slice->coordinates()->begin_elements()),
+                    i_end(slice->coordinates()->end_elements()); i != i_end; ++i)
                 {
-                
-                    int offset = _slice_offset[t];
-                    GraphType * slice = _slices[t];
-                   
-                    for (typename DM::ConstElementIterator i(slice->coordinates()->begin_elements()),
-                            i_end(slice->coordinates()->end_elements()); i != i_end; ++i)
-                    {
-                        (*this->_coordinates)(offset + i.row(), i.column()) = *i;
-                    }
-                     
+                  (*this->_coordinates)(offset + i.row(), i.column()) = *i;
                 }
+
+              }
             }
 
             /// creates and returns the complete nodeweight vector for the whole evolving graph
@@ -140,6 +140,10 @@ void assemble_edges()
           //  for(int i(0);  i < _interpolation_coordinates.size(); ++i)
           //      if (_interpolation_coordinates[i] != 0)
           //          delete(_interpolation_coordinates[i]);
+          for (unsigned long i(0) ; i < _slices.size() ; ++i)
+            delete _slices.at(i);
+          for(unsigned long i(0);  i < _interpolation_coordinates.size(); ++i)
+            delete _interpolation_coordinates.at(i);
         }
 
         /// adds a node to the evolving graph. this is necessary to put the same nodes to different timeslice-graphs
@@ -272,11 +276,13 @@ void assemble_edges()
             std::cout <<"reassemble graph\n";
            if(this->_coordinates)
               delete(this->_coordinates);
+           this->coordinates = 0;
             std::cout <<"reassemble coords\n";
             assemble_coordinates();
             
             if(this->_node_weights)
                delete(this->_node_weights);
+            this->_node_weights = 0;
             std::cout <<"reassemble weights\n";
             assemble_node_weights();
             if(this->_edges)
