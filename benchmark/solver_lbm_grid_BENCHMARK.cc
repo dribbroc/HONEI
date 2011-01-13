@@ -75,11 +75,11 @@ class LBMGSolverBench :
             q2.value();
             Cuboid<bool> q3(obstacles, 40, 5, 1, 10, 30);
             q3.value();
-            grid.obstacles = &obstacles;
-            grid.h = &h;
-            grid.u = &u;
-            grid.v = &v;
-            grid.b = &b;
+            grid.obstacles = new DenseMatrix<bool>(obstacles);
+            grid.h = new DenseMatrix<DataType_>(h);
+            grid.u = new DenseMatrix<DataType_>(u);
+            grid.v = new DenseMatrix<DataType_>(v);
+            grid.b = new DenseMatrix<DataType_>(b);
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
 
@@ -106,6 +106,7 @@ class LBMGSolverBench :
             evaluate(benchinfo * 25);
             data.destroy();
             info.destroy();
+            grid.destroy();
         }
 };
 
@@ -164,11 +165,11 @@ class LBMGSimpleSolverBench :
             q2.value();
             Cuboid<bool> q3(obstacles, 40, 5, 1, 10, 30);
             q3.value();
-            grid.obstacles = &obstacles;
-            grid.h = &h;
-            grid.u = &u;
-            grid.v = &v;
-            grid.b = &b;
+            grid.obstacles = new DenseMatrix<bool>(obstacles);
+            grid.h = new DenseMatrix<DataType_>(h);
+            grid.u = new DenseMatrix<DataType_>(u);
+            grid.v = new DenseMatrix<DataType_>(v);
+            grid.b = new DenseMatrix<DataType_>(b);
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
 
@@ -193,6 +194,7 @@ class LBMGSimpleSolverBench :
             }
             LBMBenchmarkInfo benchinfo(SolverLBMGrid<tags::CPU, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET>::get_benchmark_info(&grid, &info, &data));
             evaluate(benchinfo * 25);
+            grid.destroy();
             info.destroy();
             data.destroy();
         }

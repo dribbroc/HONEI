@@ -92,6 +92,10 @@ class SolverLBMGridTest :
                 for (unsigned long i(0) ; i < (*grid.h).rows() ; ++i)
                     for(unsigned long j(0) ; j < (*grid.h).columns() ; ++j)
                         TEST_CHECK_EQUAL_WITHIN_EPS((*grid.h)( i , j), DataType_(0.02), DataType_(0.1));
+
+                info.destroy();
+                data.destroy();
+                grid.destroy();
             }
         }
 
@@ -114,7 +118,6 @@ SolverLBMGridTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_solver_test_float("
 #ifdef HONEI_CELL
 SolverLBMGridTest<tags::Cell, float> cell_solver_test_float("float");
 #endif
-
 
 template <typename Tag_, typename DataType_>
 class SolverLBMGridMassConservationTest :
@@ -143,11 +146,11 @@ class SolverLBMGridMassConservationTest :
 
             Grid<D2Q9, DataType_> grid;
             DenseMatrix<bool> obstacles(g_h, g_w, false);
-            grid.obstacles = &obstacles;
-            grid.h = &h;
-            grid.u = &u;
-            grid.v = &v;
-            grid.b = &b;
+            grid.obstacles = new DenseMatrix<bool>(obstacles);
+            grid.h = new DenseMatrix<DataType_>(h);
+            grid.u = new DenseMatrix<DataType_>(u);
+            grid.v = new DenseMatrix<DataType_>(v);
+            grid.b = new DenseMatrix<DataType_>(b);
 
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
@@ -177,6 +180,10 @@ class SolverLBMGridMassConservationTest :
             DataType_ vol = GaussianQuadrature2D<tags::CPU, tags::Trapezoid>::value(h, DataType_(0), DataType_(g_w), DataType_(1.), DataType_(1.));
             std::cout << "Vol.: " << vol << std::endl;
             TEST_CHECK_EQUAL_WITHIN_EPS(vol, ana_vol, 0.1);
+
+            info.destroy();
+            data.destroy();
+            grid.destroy();
         }
 
 };
@@ -226,11 +233,11 @@ class SimpleSolverLBMGridMassConservationTest :
 
             Grid<D2Q9, DataType_> grid;
             DenseMatrix<bool> obstacles(g_h, g_w, false);
-            grid.obstacles = &obstacles;
-            grid.h = &h;
-            grid.u = &u;
-            grid.v = &v;
-            grid.b = &b;
+            grid.obstacles = new DenseMatrix<bool>(obstacles);
+            grid.h = new DenseMatrix<DataType_>(h);
+            grid.u = new DenseMatrix<DataType_>(u);
+            grid.v = new DenseMatrix<DataType_>(v);
+            grid.b = new DenseMatrix<DataType_>(b);
 
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
@@ -260,6 +267,10 @@ class SimpleSolverLBMGridMassConservationTest :
             DataType_ vol = GaussianQuadrature2D<tags::CPU, tags::Trapezoid>::value(h, DataType_(0), DataType_(g_w), DataType_(1.), DataType_(1.));
             std::cout << "Vol.: " << vol << std::endl;
             TEST_CHECK_EQUAL_WITHIN_EPS(vol, ana_vol, 0.1);
+
+            info.destroy();
+            data.destroy();
+            grid.destroy();
         }
 
 };

@@ -57,6 +57,7 @@ class ScenarioCollectionTest :
                 std::cout << "______________________________\n";
 
                 TEST_CHECK(true);
+                grid.destroy();
             }
         }
 };

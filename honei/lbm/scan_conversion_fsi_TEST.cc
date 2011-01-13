@@ -91,6 +91,11 @@ class ScanConversionFSITest :
             std::cout << line_res << std::endl;
             std::cout << boundary_res << std::endl;
             std::cout << solid_res << std::endl;
+
+            solids.destroy();
+            grid.destroy();
+            data.destroy();
+            info.destroy();
         }
 
 

@@ -57,11 +57,11 @@ class CollideStreamFSITest :
             Grid<D2Q9, DataType_> grid;
             DenseMatrix<bool> obstacles_ref(g_h, g_w, false);
             obstacles_ref[5][5] = true;
-            grid.obstacles = &obstacles_ref;
-            grid.h = &h;
-            grid.u = &u;
-            grid.v = &v;
-            grid.b = &b;
+            grid.obstacles = new DenseMatrix<bool>(obstacles_ref);
+            grid.h = new DenseMatrix<DataType_>(h);
+            grid.u = new DenseMatrix<DataType_>(u);
+            grid.v = new DenseMatrix<DataType_>(v);
+            grid.b = new DenseMatrix<DataType_>(b);
 
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
@@ -178,11 +178,11 @@ class CollideStreamFSITest :
             //------------------------------------------------------------------------------------------
             Grid<D2Q9, DataType_> grid_2;
             DenseMatrix<bool> obstacles(g_h, g_w, false);
-            grid_2.obstacles = &obstacles;
-            grid_2.h = &h;
-            grid_2.u = &u;
-            grid_2.v = &v;
-            grid_2.b = &b;
+            grid_2.obstacles = new DenseMatrix<bool>(obstacles);
+            grid_2.h = new DenseMatrix<DataType_>(h);
+            grid_2.u = new DenseMatrix<DataType_>(u);
+            grid_2.v = new DenseMatrix<DataType_>(v);
+            grid_2.b = new DenseMatrix<DataType_>(b);
 
             PackedGridData<D2Q9, DataType_>  data_2;
             PackedGridInfo<D2Q9> info_2;
@@ -448,6 +448,14 @@ class CollideStreamFSITest :
             solids.f_mea_6->unlock(lm_read_only);
             solids.f_mea_7->unlock(lm_read_only);
             solids.f_mea_8->unlock(lm_read_only);
+
+            solids.destroy();
+            data.destroy();
+            grid.destroy();
+            info.destroy();
+            data_2.destroy();
+            grid_2.destroy();
+            info_2.destroy();
         }
 };
 CollideStreamFSITest<tags::CPU, float> collidestream_grid_test_float("float");

@@ -140,6 +140,12 @@ class ForceSlopeLBMGridTest :
             data_2.f_temp_1->lock(lm_read_only);
             std::cout << *data_2.f_temp_1 << std::endl;
             data_2.f_temp_1->unlock(lm_read_only);*/
+            grid.destroy();
+            data.destroy();
+            info.destroy();
+            grid_2.destroy();
+            data_2.destroy();
+            info_2.destroy();
         }
 
 };
@@ -273,6 +279,12 @@ class ForceFrictionLBMGridTest :
             data_2.f_temp_7->unlock(lm_read_only);
             data_2.f_temp_8->unlock(lm_read_only);
 
+            grid.destroy();
+            data.destroy();
+            info.destroy();
+            grid_2.destroy();
+            data_2.destroy();
+            info_2.destroy();
         }
 
 };

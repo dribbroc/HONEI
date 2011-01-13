@@ -96,6 +96,11 @@ class SolverLBMFSITest :
             for (unsigned long i(0) ; i < (*grid.h).rows() ; ++i)
                 for(unsigned long j(0) ; j < (*grid.h).columns() ; ++j)
                     TEST_CHECK_EQUAL_WITHIN_EPS((*grid.h)( i , j), DataType_(0.02), DataType_(0.1));
+
+            info.destroy();
+            data.destroy();
+            grid.destroy();
+            solids.destroy();
         }
 
 };
@@ -175,6 +180,10 @@ class SolverLBMFSIStationaryTest :
 #ifdef SOLVER_VERBOSE
             std::cout << *grid.h << std::endl;
 #endif
+            info.destroy();
+            data.destroy();
+            grid.destroy();
+            solids.destroy();
         }
 
 };

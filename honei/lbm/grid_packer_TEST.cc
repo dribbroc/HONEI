@@ -100,6 +100,9 @@ class GridPackerTest :
             GridPacker<D2Q9, lbm_boundary_types::NOSLIP, DataType_>::cuda_pack(info, data);
             std::cout<<"cuda dir 7: "<<*info.cuda_dir_7;
             TEST_CHECK(true);
+            grid.destroy();
+            info.destroy();
+            data.destroy();
         }
 };
 GridPackerTest<tags::CPU, float> gptest_float("float");

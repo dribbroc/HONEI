@@ -62,11 +62,11 @@ class BoundaryInitFSITest :
 
             Grid<D2Q9, DataType_> grid;
             DenseMatrix<bool> obstacles_ref(g_h, g_w, false);
-            grid.obstacles = &obstacles_ref;
-            grid.h = &h;
-            grid.u = &u;
-            grid.v = &v;
-            grid.b = &b;
+            grid.obstacles = new DenseMatrix<bool>(obstacles_ref);
+            grid.h = new DenseMatrix<DataType_>(h);
+            grid.u = new DenseMatrix<DataType_>(u);
+            grid.v = new DenseMatrix<DataType_>(v);
+            grid.b = new DenseMatrix<DataType_>(b);
 
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
@@ -156,7 +156,10 @@ class BoundaryInitFSITest :
             TEST_CHECK_EQUAL_WITHIN_EPS(res_u[5][6], DataType_(0.1), std::numeric_limits<DataType_>::epsilon());
             TEST_CHECK_EQUAL_WITHIN_EPS(res_v[5][6], DataType_(0.1), std::numeric_limits<DataType_>::epsilon());
 
-
+            info.destroy();
+            data.destroy();
+            grid.destroy();
+            solids.destroy();
         }
 };
 BoundaryInitFSITest<tags::CPU, float> collidestream_fsi_test_float("float");

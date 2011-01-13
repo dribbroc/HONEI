@@ -91,6 +91,9 @@ class EqDisGridLABSWETest :
             data.f_eq_6->unlock(lm_read_only);
             data.f_eq_7->unlock(lm_read_only);
             data.f_eq_8->unlock(lm_read_only);
+
+            data.destroy();
+            info.destroy();
         }
 };
 EqDisGridLABSWETest<tags::CPU, float> eq_dist_grid_test_float("float");

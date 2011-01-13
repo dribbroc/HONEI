@@ -154,6 +154,11 @@ class MinAngleTest :
             solids.current_v =  -1;
             result = (MinAngle2D<tags::CPU>::value(solids.current_u, solids.current_v, solids, data));
             TEST_CHECK_EQUAL(result, 1ul);
+
+            solids.destroy();
+            grid.destroy();
+            info.destroy();
+            data.destroy();
         }
 };
 MinAngleTest<tags::CPU, float> min_angle("float");
@@ -236,6 +241,10 @@ class SolverLBMFSINonStationaryREACTIONTest :
 #ifdef SOLVER_VERBOSE
             std::cout << *grid.h << std::endl;
 #endif
+            solids.destroy();
+            grid.destroy();
+            info.destroy();
+            data.destroy();
         }
 
 };

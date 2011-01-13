@@ -158,6 +158,13 @@ class SolverLBMGridRegressionTest :
                 TEST_CHECK_EQUAL_WITHIN_EPS(l2, DataType_(0.), std::numeric_limits<DataType_>::epsilon() /** 2*/);
 
                 std::cout << "L2 norm " << l2 << std::endl;
+
+                grid.destroy();
+                info.destroy();
+                data.destroy();
+                grid_standard.destroy();
+                info_standard.destroy();
+                data_standard.destroy();
             }
         }
 };
@@ -300,6 +307,13 @@ class SimpleSolverLBMGridRegressionTest :
                 TEST_CHECK_EQUAL_WITHIN_EPS(l2, DataType_(0.), std::numeric_limits<DataType_>::epsilon() * 2);
 
                 std::cout << "L2 norm " << l2 << std::endl;
+
+                grid.destroy();
+                info.destroy();
+                data.destroy();
+                grid_standard.destroy();
+                info_standard.destroy();
+                data_standard.destroy();
             }
         }
 };

@@ -131,6 +131,7 @@ class CollideStreamFSIBench :
                         );
             }
             evaluate();
+            grid.destroy();
             data.destroy();
             info.destroy();
             solids.destroy();

@@ -75,14 +75,18 @@ class GridPackerPackBench :
                 q2.value();
                 Cuboid<bool> q3(obstacles, 40, 5, 1, 10, 30);
                 q3.value();
-                grid.obstacles = &obstacles;
-                grid.h = &h;
-                grid.u = &u;
-                grid.v = &v;
-                grid.b = &b;
+                grid.obstacles = new DenseMatrix<bool>(obstacles);
+                grid.h = new DenseMatrix<DataType_>(h);
+                grid.u = new DenseMatrix<DataType_>(u);
+                grid.v = new DenseMatrix<DataType_>(v);
+                grid.b = new DenseMatrix<DataType_>(b);
                 PackedGridData<D2Q9, DataType_>  data;
                 PackedGridInfo<D2Q9> info;
                 BENCHMARK((GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data)));
+
+                grid.destroy();
+                info.destroy();
+                data.destroy();
             }
             evaluate();
         }

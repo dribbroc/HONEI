@@ -288,6 +288,12 @@ namespace honei
         public intern::DefaultConversionTraits<unsigned long>
     {
     };
+
+    template <> struct TypeTraits<bool> :
+        public intern::PODTraits<bool>,
+        public intern::DefaultConversionTraits<bool>
+    {
+    };
     /// \}
 
 }

@@ -272,22 +272,22 @@ namespace honei
                     SolverLBMGrid(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, ResPrec_> * data, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, ResPrec_ rel_time):
                         _info(info),
                         _data(data)
-                {
-                    _parts = Configuration::instance()->get_value("mc::SolverLabsweGrid::patch_count", 4ul);
-                    CONTEXT("When creating LABSWE solver:");
-                    GridPartitioner<D2Q9, ResPrec_>::decompose(_parts, *_info, *_data, _info_list, _data_list, _fringe_list);
-
-                    for(unsigned long i(0) ; i < _parts ; ++i)
                     {
-                        _solver_list.push_back(new honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>(&_info_list[i], &_data_list[i], dx, dy, dt, rel_time));
+                        _parts = Configuration::instance()->get_value("mc::SolverLabsweGrid::patch_count", 4ul);
+                        CONTEXT("When creating LABSWE solver:");
+                        GridPartitioner<D2Q9, ResPrec_>::decompose(_parts, *_info, *_data, _info_list, _data_list, _fringe_list);
+
+                        for(unsigned long i(0) ; i < _parts ; ++i)
+                        {
+                            _solver_list.push_back(new honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>(&_info_list[i], &_data_list[i], dx, dy, dt, rel_time));
+                        }
                     }
-                }
 
                     virtual ~SolverLBMGrid()
                     {
                         CONTEXT("When destroying LABSWE solver.");
+                        honei::GridPartitioner<D2Q9, ResPrec_>::destroy(_info_list, _data_list, _fringe_list);
                     }
-
                     void do_preprocessing()
                     {
                         CONTEXT("When performing LABSWE preprocessing.");
@@ -475,6 +475,7 @@ namespace honei
                     virtual ~SolverLBMGrid()
                     {
                         CONTEXT("When destroying LABSWE solver.");
+                        honei::GridPartitioner<D2Q9, ResPrec_>::destroy(_info_list, _data_list, _fringe_list);
                     }
 
                     void do_preprocessing()

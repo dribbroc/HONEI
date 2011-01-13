@@ -51,11 +51,11 @@ class CollideStreamGridLABSWETest :
 
             Grid<D2Q9, DataType_> grid;
             DenseMatrix<bool> obstacles(g_h, g_w, false);
-            grid.obstacles = &obstacles;
-            grid.h = &h;
-            grid.u = &u;
-            grid.v = &v;
-            grid.b = &b;
+            grid.obstacles = new DenseMatrix<bool>(obstacles);
+            grid.h = new DenseMatrix<DataType_>(h);
+            grid.u = new DenseMatrix<DataType_>(u);
+            grid.v = new DenseMatrix<DataType_>(v);
+            grid.b = new DenseMatrix<DataType_>(b);
 
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
@@ -99,6 +99,10 @@ class CollideStreamGridLABSWETest :
             data.f_temp_1->lock(lm_read_only);
             //std::cout<<*data.f_temp_1;
             data.f_temp_1->unlock(lm_read_only);
+
+            info.destroy();
+            data.destroy();
+            grid.destroy();
         }
 };
 CollideStreamGridLABSWETest<tags::CPU, float> collidestream_grid_test_float("float");

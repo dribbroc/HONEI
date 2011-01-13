@@ -137,6 +137,9 @@ class FSISolverLBMGridTest :
 #ifdef SOLVER_VERBOSE
             std::cout << *grid.h << std::endl;
 #endif
+            grid.destroy();
+            info.destroy();
+            data.destroy();
         }
 };
 

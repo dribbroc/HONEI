@@ -104,6 +104,10 @@ class GridPartitionerTest :
             }
 
             TEST_CHECK(true);
+            GridPartitioner<D2Q9, DataType_>::destroy(info_list, data_list, fringe_list);
+            info.destroy();
+            data.destroy();
+            grid.destroy();
         }
 };
 GridPartitionerTest<tags::CPU, float> gptest_float("float");

@@ -64,11 +64,11 @@ class SolverLBMGridMultiTest :
 
             Grid<D2Q9, DataType_> grid;
             DenseMatrix<bool> obstacles(g_h, g_w, false);
-            grid.obstacles = &obstacles;
-            grid.h = &h;
-            grid.u = &u;
-            grid.v = &v;
-            grid.b = &b;
+            grid.obstacles = new DenseMatrix<bool>(obstacles);
+            grid.h = new DenseMatrix<DataType_>(h);
+            grid.u = new DenseMatrix<DataType_>(u);
+            grid.v = new DenseMatrix<DataType_>(v);
+            grid.b = new DenseMatrix<DataType_>(b);
 
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
@@ -124,6 +124,11 @@ class SolverLBMGridMultiTest :
             std::cout << *grid.h << std::endl;
 #endif
             TEST_CHECK(true);
+
+            GridPartitioner<D2Q9, DataType_>::destroy(info_list, data_list, fringe_list);
+            grid.destroy();
+            info.destroy();
+            data.destroy();
         }
 };
 SolverLBMGridMultiTest<tags::CPU, double> solver_multi_test_double("double");

@@ -64,11 +64,11 @@ class CollideStreamGridRegressionTest :
             q2.value();
             Cuboid<bool> q3(obstacles, 40, 5, 1, 10, 30);
             q3.value();
-            grid.obstacles = &obstacles;
-            grid.h = &h;
-            grid.u = &u;
-            grid.v = &v;
-            grid.b = &b;
+            grid.obstacles = new DenseMatrix<bool>(obstacles);
+            grid.h = new DenseMatrix<DataType_>(h);
+            grid.u = new DenseMatrix<DataType_>(u);
+            grid.v = new DenseMatrix<DataType_>(v);
+            grid.b = new DenseMatrix<DataType_>(b);
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
 
@@ -103,11 +103,11 @@ class CollideStreamGridRegressionTest :
             q2_standard.value();
             Cuboid<bool> q3_standard(obstacles_standard, 40, 5, 1, 10, 30);
             q3_standard.value();
-            grid_standard.obstacles = &obstacles_standard;
-            grid_standard.h = &h_standard;
-            grid_standard.u = &u_standard;
-            grid_standard.v = &v_standard;
-            grid_standard.b = &b_standard;
+            grid_standard.obstacles = new DenseMatrix<bool>(obstacles_standard);
+            grid_standard.h = new DenseMatrix<DataType_>(h_standard);
+            grid_standard.u = new DenseMatrix<DataType_>(u_standard);
+            grid_standard.v = new DenseMatrix<DataType_>(v_standard);
+            grid_standard.b = new DenseMatrix<DataType_>(b_standard);
             PackedGridData<D2Q9, DataType_>  data_standard;
             PackedGridInfo<D2Q9> info_standard;
 
@@ -153,6 +153,13 @@ class CollideStreamGridRegressionTest :
             data.f_temp_6->unlock(lm_read_only);
             data.f_temp_7->unlock(lm_read_only);
             data.f_temp_8->unlock(lm_read_only);
+
+            grid.destroy();
+            info.destroy();
+            data.destroy();
+            grid_standard.destroy();
+            info_standard.destroy();
+            data_standard.destroy();
         }
 };
 #ifdef HONEI_SSE

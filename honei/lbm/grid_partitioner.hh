@@ -1291,6 +1291,17 @@ namespace honei
                 decompose_intern(part_sizes, info, data, info_list, data_list, fringe_list, alloc_all);
             }
 
+            static void destroy(std::vector<PackedGridInfo<D2Q9> > & info_list, std::vector<PackedGridData<D2Q9, DT_> > & data_list,
+                    std::vector<PackedGridFringe<D2Q9> > & fringe_list)
+            {
+                for (unsigned long i(0) ; i < info_list.size() ; ++i)
+                    info_list.at(i).destroy();
+                for (unsigned long i(0) ; i < data_list.size() ; ++i)
+                    data_list.at(i).destroy();
+                for (unsigned long i(0) ; i < fringe_list.size() ; ++i)
+                    fringe_list.at(i).destroy();
+            }
+
             static void recompose(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT_> * data)
             {
                 DenseVector<unsigned long> * tempul;

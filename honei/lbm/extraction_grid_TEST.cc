@@ -80,6 +80,7 @@ class ExtractionGridTest :
             //for(unsigned long i((*info.limits)[0]); i < (*info.limits)[info.limits->size() - 1]; ++i)
             for(unsigned long i(0); i < data.h->size(); ++i)
             {
+                (*data.h)[i] = 4711;
 
                 //accumulate
                 (*data.h)[i] = (*data.f_0)[i] +
@@ -92,6 +93,7 @@ class ExtractionGridTest :
                     (*data.f_7)[i] +
                     (*data.f_8)[i];
 
+                (*data.u)[i] = 4711;
                 (*data.u)[i] = ((*data.distribution_x)[0] * (*data.f_0)[i] +
                         (*data.distribution_x)[1] * (*data.f_1)[i] +
                         (*data.distribution_x)[2] * (*data.f_2)[i] +
@@ -102,6 +104,7 @@ class ExtractionGridTest :
                         (*data.distribution_x)[7] * (*data.f_7)[i] +
                         (*data.distribution_x)[8] * (*data.f_8)[i]) / (*data.h)[i];
 
+                (*data.v)[i] = 4711;
                 (*data.v)[i] = ((*data.distribution_y)[0] * (*data.f_0)[i] +
                         (*data.distribution_y)[1] * (*data.f_1)[i] +
                         (*data.distribution_y)[2] * (*data.f_2)[i] +
@@ -118,6 +121,9 @@ class ExtractionGridTest :
                 TEST_CHECK_EQUAL_WITHIN_EPS(calc_u[i], (*data.u)[i], std::numeric_limits<DataType_>::epsilon() * 50.);
                 TEST_CHECK_EQUAL_WITHIN_EPS(calc_v[i], (*data.v)[i], std::numeric_limits<DataType_>::epsilon() * 50.);
             }
+
+            data.destroy();
+            info.destroy();
 
         }
 };

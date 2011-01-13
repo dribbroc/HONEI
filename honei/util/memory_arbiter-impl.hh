@@ -92,6 +92,7 @@ namespace honei
 
         void register_address(void * memid)
         {
+            CONTEXT("When registering memory block...");
             Lock l(*_mutex);
             std::map<void *, MemoryBlock>::iterator i(_blocks.find(memid));
             if (i != _blocks.end())
@@ -107,6 +108,7 @@ namespace honei
 
         void remove_address(void * memid)
         {
+            CONTEXT("When removing memory block...");
             Lock l(*_mutex);
             std::map<void *, MemoryBlock>::iterator i(_blocks.find(memid));
             if (i == _blocks.end())

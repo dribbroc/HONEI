@@ -292,6 +292,7 @@ namespace honei
                         (*new_types)[i] = (*info.types)[begin];
                     }
                 }
+                delete info.cuda_types;
                 info.cuda_types = new_types;
 
                 // expand direction vectors
@@ -314,6 +315,14 @@ namespace honei
                 _expand_direction(new_dir_7, info.dir_7, info.dir_index_7);
                 _expand_direction(new_dir_8, info.dir_8, info.dir_index_8);
 
+                delete info.cuda_dir_1;
+                delete info.cuda_dir_2;
+                delete info.cuda_dir_3;
+                delete info.cuda_dir_4;
+                delete info.cuda_dir_5;
+                delete info.cuda_dir_6;
+                delete info.cuda_dir_7;
+                delete info.cuda_dir_8;
                 info.cuda_dir_1 = new_dir_1;
                 info.cuda_dir_2 = new_dir_2;
                 info.cuda_dir_3 = new_dir_3;
@@ -356,6 +365,7 @@ namespace honei
                         }
                     }
                 }
+                delete grid.h_index;
                 grid.h_index = new DenseMatrix<unsigned long>(grid.h->rows(), grid.h->columns(), grid.h->size());
                 data.h = new DenseVector<DT_>(fluid_count);
                 data.b = new DenseVector<DT_>(fluid_count);
