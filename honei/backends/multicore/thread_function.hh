@@ -1,6 +1,6 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 /*
- * Copyright (c) 2009, 2010 Sven Mallach <mallach@honei.org>
+ * Copyright (c) 2009, 2010, 2011 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -31,6 +31,24 @@ namespace honei
 {
     namespace mc
     {
+        struct PoolSyncData
+        {
+            Mutex * const mutex;
+            ConditionVariable * const barrier;
+
+            PoolSyncData() :
+                mutex(new Mutex),
+                barrier(new ConditionVariable)
+            {
+            }
+
+            ~PoolSyncData()
+            {
+                delete barrier;
+                delete mutex;
+            }
+        };
+
         class ThreadFunction :
             public PrivateImplementationPattern<ThreadFunction, Shared>
         {
@@ -38,7 +56,7 @@ namespace honei
 
             public:
 
-                ThreadFunction(Mutex * const mutex, ConditionVariable * const barrier, std::list<ThreadTask *> * const list, unsigned pool_id, unsigned sched_id);
+                ThreadFunction(PoolSyncData * const psync, std::list<ThreadTask *> * const list, unsigned pool_id, unsigned sched_id);
 
                 ~ThreadFunction();
 

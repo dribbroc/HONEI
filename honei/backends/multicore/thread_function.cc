@@ -1,6 +1,6 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 /*
- * Copyright (c) 2009, 2010 Sven Mallach <mallach@honei.org>
+ * Copyright (c) 2009, 2010, 2011 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -52,14 +52,13 @@ namespace honei
         /// Flag if the Thread shall stop.
         volatile bool terminate;
 
-        Implementation(Mutex * const mutex, ConditionVariable * const barrier,
-                std::list<mc::ThreadTask *> * const list, unsigned pid, unsigned sched) :
+        Implementation(mc::PoolSyncData * const psync, std::list<mc::ThreadTask *> * const list, unsigned pid, unsigned sched) :
             pool_id(pid),
             thread_id(0),
             sched_lpu(sched),
-            pool_mutex(mutex),
+            pool_mutex(psync->mutex),
             tasklist(list),
-            global_barrier(barrier),
+            global_barrier(psync->barrier),
             terminate(false)
             {
             }
@@ -72,8 +71,9 @@ namespace honei
 
 using namespace honei::mc;
 
-ThreadFunction::ThreadFunction(Mutex * const mutex, ConditionVariable * const barrier, std::list<ThreadTask *> * const list, unsigned pool_id, unsigned sched_id) :
-    PrivateImplementationPattern<ThreadFunction, Shared>(new Implementation<ThreadFunction>(mutex, barrier, list, pool_id, sched_id))
+ThreadFunction::ThreadFunction(PoolSyncData * const psync, std::list<ThreadTask *> * const list,
+        unsigned pool_id, unsigned sched_id) :
+    PrivateImplementationPattern<ThreadFunction, Shared>(new Implementation<ThreadFunction>(psync, list, pool_id, sched_id))
 {
 }
 

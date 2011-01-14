@@ -42,8 +42,7 @@ ThreadPool::ThreadPool() :
     _demanded_threads(Configuration::instance()->get_value("mc::num_threads", _topology->num_lpus())),
     _num_threads(_demanded_threads > _topology->num_lpus() ? _demanded_threads : _topology->num_lpus()),
     _inst_ctr(0),
-    _mutex(new Mutex),
-    _global_barrier(new ConditionVariable),
+    _pool_sync(new PoolSyncData),
     _affinity(Configuration::instance()->get_value("mc::affinity", true))
 {
     CONTEXT("When initializing the thread pool:\n");
@@ -64,7 +63,7 @@ ThreadPool::ThreadPool() :
     if (_affinity)
     {
 #ifdef DEBUG
-        msg += "Thread Affinity is configured to be enabled - will assign threads to definite logical processing units. \n";
+        msg += "Thread Affinity is enabled - assigninh threads to definite logical processing units. \n";
 #endif
         _affinity_mask = new cpu_set_t[_num_threads + 1];
 
@@ -85,7 +84,7 @@ ThreadPool::ThreadPool() :
     {
         unsigned sched_id(i % (_topology->num_lpus()));
 
-        ThreadFunction * tobj = new ThreadFunction(_mutex, _global_barrier, &_tasks, _inst_ctr, (_affinity ? sched_id : 0xFFFF));
+        ThreadFunction * tobj = new ThreadFunction(_pool_sync, &_tasks, _inst_ctr, (_affinity ? sched_id : 0xFFFF));
         Thread * t = new Thread(*tobj);
         while (tobj->tid() == 0) ; // Wait until the thread is really setup / got cpu time for the first time
 
@@ -122,9 +121,10 @@ ThreadPool::~ThreadPool()
         delete (*i).first;
     }
 
+#ifdef linux
     delete[] _affinity_mask;
-    delete _global_barrier;
-    delete _mutex;
+#endif
+    delete _pool_sync;
 }
 
 unsigned ThreadPool::num_threads() const
@@ -140,10 +140,10 @@ Ticket<tags::CPU::MultiCore> * ThreadPool::enqueue(const function<void ()> & tas
 
     ThreadTask * t_task(new ThreadTask(task, ticket));
 
-    Lock l(*_mutex);
+    Lock l(*_pool_sync->mutex);
     _tasks.push_back(t_task);
 
-    _global_barrier->broadcast();
+    _pool_sync->barrier->broadcast();
 
     return ticket;
 }
@@ -157,10 +157,10 @@ Ticket<tags::CPU::MultiCore> * ThreadPool::enqueue(const function<void ()> & tas
 
     ThreadTask * t_task(new ThreadTask(task, ticket));
 
-    Lock l(*_mutex);
+    Lock l(*_pool_sync->mutex);
     _tasks.push_back(t_task);
 
-    _global_barrier->broadcast();
+    _pool_sync->barrier->broadcast();
 
     return ticket;
 }

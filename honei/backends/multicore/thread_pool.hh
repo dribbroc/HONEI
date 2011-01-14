@@ -60,11 +60,8 @@ namespace honei
                 /// Waiting list of worker tasks to be executed
                 std::list<ThreadTask *> _tasks;
 
-                /// Our Mutex
-                Mutex * const _mutex;
-
-                /// Condition Variable used to synchronize all threads
-                ConditionVariable * const _global_barrier;
+                /// Exchange data between the pool and its threads
+                PoolSyncData * const _pool_sync;
 
                 /// Flag whether to use thread affinity
                 const bool _affinity;

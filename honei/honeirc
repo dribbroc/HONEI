@@ -122,7 +122,7 @@ mc::num_threads = 4
 mc::affinity = 1
 
 # Default DispatchPolicy (anycore, alternating, linear)
-mc::dispatch = anycore
+mc::dispatch = alternating
 
 # Partition size and partition count settings on a per_operation base
 mc::Difference(DVCB,DVCB)::min_part_size = 16
