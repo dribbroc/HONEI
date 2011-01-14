@@ -69,7 +69,7 @@ namespace honei
                 {
                     unsigned sched_id(other->sid());
 
-                    // Make sure that there is STILL a thread running on that core.
+                    // Make sure that there is a thread running on that core.
                     if (sids.end() == std::find(sids.begin(), sids.end(), sched_id))
                         sched_id = 0xFFFF;
 
@@ -282,13 +282,35 @@ namespace honei
                     return last;
                 }
 
-                /// Named constructors
+                /// \name Named constructors
+                /// \{
+
+                /// \name Policies that are able to be used as default
+                /// \{
 
                 /// Dispatch on any core available
                 static DispatchPolicy any_core()
                 {
                     return DispatchPolicy(AnyCorePolicy());
                 }
+
+                /// Dispatch alternatingly on next NUMA node
+                static DispatchPolicy alternating_node()
+                {
+                    return DispatchPolicy(AlternatingNodePolicy(last));
+                }
+
+                /// Dispatch linearly on NUMA nodes
+                static DispatchPolicy linear_node()
+                {
+                    return DispatchPolicy(LinearNodePolicy(last));
+                }
+
+                /// \}
+
+                /// \name Policies that are designed to be used
+                /// explicitly as a parameter to ThreadPool::enqueue()
+                /// \{
 
                 /// Dispatch on same core as earlier task
                 static DispatchPolicy same_core_as(Ticket<tags::CPU::MultiCore> * ticket)
@@ -314,17 +336,7 @@ namespace honei
                     return DispatchPolicy(OnNodePolicy(node_id));
                 }
 
-                /// Dispatch alternatingly on next NUMA node
-                static DispatchPolicy alternating_node()
-                {
-                    return DispatchPolicy(AlternatingNodePolicy(last));
-                }
-
-                /// Dispatch linearly on NUMA nodes
-                static DispatchPolicy linear_node()
-                {
-                    return DispatchPolicy(LinearNodePolicy(last));
-                }
+                /// \}
         };
     }
 }

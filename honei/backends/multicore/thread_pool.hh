@@ -45,8 +45,11 @@ namespace honei
                 /// Information about processor topology (such as number of processing units)
                 Topology * const _topology;
 
-                /// Number of currently pooled threads
-                unsigned _num_threads;
+                /// Number of demanded threads (via honeirc)
+                const unsigned _demanded_threads;
+
+                /// Number of pooled threads
+                const unsigned _num_threads;
 
                 /// A thread instantiation counter
                 unsigned _inst_ctr;
@@ -104,18 +107,6 @@ namespace honei
 
                 /// \name Public members
                 /// \{
-
-                /// Add threads to the pool
-                void add_threads(const unsigned num);
-
-                /// Remove threads from the pool
-                void delete_threads(const unsigned num);
-
-                /// Retrieve the number of NUMA nodes
-                unsigned num_nodes() const;
-
-                /// Retrieve the node on which the main thread runs (use only when affinity enabled)
-                unsigned main_node() const;
 
                 /// Retrieve the number of created threads
                 unsigned num_threads() const;

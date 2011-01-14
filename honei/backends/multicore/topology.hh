@@ -111,6 +111,9 @@ namespace honei
                 /// Return the highest sched_id of a lpu belong to the node
                 unsigned node_max(unsigned node) const;
 
+                /// Return the node which the main thread is running on
+                unsigned main_node() const;
+
 #if defined(__i386__) || defined(__x86_64__)
 
                 /// Return the number of PUs per physical processor package

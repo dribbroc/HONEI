@@ -39,7 +39,8 @@ Ticket<tags::CPU::MultiCore> * DispatchPolicy::last(NULL);
 
 ThreadPool::ThreadPool() :
     _topology(Topology::instance()),
-    _num_threads(Configuration::instance()->get_value("mc::num_threads", _topology->num_lpus())),
+    _demanded_threads(Configuration::instance()->get_value("mc::num_threads", _topology->num_lpus())),
+    _num_threads(_demanded_threads > _topology->num_lpus() ? _demanded_threads : _topology->num_lpus()),
     _inst_ctr(0),
     _mutex(new Mutex),
     _global_barrier(new ConditionVariable),
@@ -126,97 +127,9 @@ ThreadPool::~ThreadPool()
     delete _mutex;
 }
 
-void ThreadPool::add_threads(const unsigned num)
-{
-#ifdef linux
-    if (_affinity)
-    {
-        cpu_set_t * aff_mask = new cpu_set_t[_num_threads + num + 1];
-        std::copy(_affinity_mask, _affinity_mask + _num_threads + 1, aff_mask);
-
-        delete[] _affinity_mask;
-        _affinity_mask = aff_mask;
-    }
-#endif
-
-    for (unsigned i(_num_threads + num - 1) ; i >= _num_threads ; --i)
-    {
-        unsigned sched_id(i % (_topology->num_lpus() - 1));
-
-        ThreadFunction * tobj = new ThreadFunction(_mutex, _global_barrier, &_tasks, _inst_ctr, (_affinity ? sched_id : 0xFFFF));
-        Thread * t = new Thread(*tobj);
-        unsigned tid(0);
-        do
-        {
-            // Wait until the thread is really setup. (got cpu time for the first time)
-            tid = tobj->tid();
-        }
-        while (tid == 0);
-
-        Lock l(*_mutex);
-
-        _threads.push_back(std::make_pair(t, tobj));
-        ++_inst_ctr;
-
-#ifdef linux
-        if (_affinity)
-        {
-            _sched_ids.push_back(sched_id);
-            CPU_ZERO(&_affinity_mask[i]);
-            CPU_SET(sched_id, &_affinity_mask[i]);
-            if(sched_setaffinity(tid, sizeof(cpu_set_t), &_affinity_mask[i]) != 0)
-                throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
-        }
-#endif
-    }
-
-    _num_threads += num;
-}
-
-void ThreadPool::delete_threads(const unsigned num)
-{
-    for (unsigned i(0) ; i < num ; ++i)
-    {
-        std::pair<Thread *, ThreadFunction *> t = _threads.back();
-        {
-            Lock l(*_mutex);
-            _sched_ids.pop_back();
-            _threads.pop_back();
-            t.second->stop();
-
-        }
-
-        delete t.second;
-        delete t.first;
-        --_inst_ctr;
-    }
-
-    _num_threads -= num;
-
-#ifdef linux
-    if (_affinity)
-    {
-        cpu_set_t * aff_mask = new cpu_set_t[_num_threads + 1];
-        std::copy(_affinity_mask, _affinity_mask + _num_threads + 1, aff_mask);
-        delete[] _affinity_mask;
-        _affinity_mask = aff_mask;
-    }
-#endif
-}
-
-unsigned ThreadPool::num_nodes() const
-{
-    return _topology->num_nodes();
-}
-
 unsigned ThreadPool::num_threads() const
 {
     return _num_threads;
-}
-
-unsigned ThreadPool::main_node() const
-{
-    return _topology->get_node(_topology->num_lpus() - 1);
 }
 
 Ticket<tags::CPU::MultiCore> * ThreadPool::enqueue(const function<void ()> & task, DispatchPolicy p)

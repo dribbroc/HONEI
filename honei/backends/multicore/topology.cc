@@ -1,6 +1,6 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 /*
- * Copyright (c) 2010 Sven Mallach <mallach@honei.org>
+ * Copyright (c) 2010, 2011 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -54,11 +54,8 @@ Topology::Topology() :
     _num_nodes = intern::num_nodes();
 #endif
 
-    unsigned nodes_to_use;
-
     if (_num_nodes == 1)
     {
-        nodes_to_use = 1;
         cpu_to_node = new unsigned[_num_lpus];
         for (unsigned i(0) ; i < _num_lpus ; ++i)
             cpu_to_node[i] = 0;
@@ -73,20 +70,16 @@ Topology::Topology() :
     {
         cpu_to_node = intern::cpu_to_node_array(_num_nodes, _num_lpus);
 
-        // Leave out the last node only if each of multiple nodes consists of a single LPU
-        nodes_to_use = ((_num_nodes == _num_lpus && _num_lpus > 1) ? _num_nodes - 1 : _num_nodes);
+        range_min = new unsigned[_num_nodes];
+        range_max = new unsigned[_num_nodes];
 
-        range_min = new unsigned[nodes_to_use];
-        range_max = new unsigned[nodes_to_use];
-
-        for (unsigned i(0) ; i < nodes_to_use ; ++i)
+        for (unsigned i(0) ; i < _num_nodes ; ++i)
         {
             range_min[i] = std::numeric_limits<unsigned>::max();
             range_max[i] = std::numeric_limits<unsigned>::min();
         }
 
-        // Leave out the last LPU which is reserved for the main thread
-        for (unsigned i(0) ; i < _num_lpus - 1 ; ++i)
+        for (unsigned i(0) ; i < _num_lpus ; ++i)
         {
             if (i < range_min[cpu_to_node[i]])
                 range_min[cpu_to_node[i]] = i;
@@ -97,7 +90,7 @@ Topology::Topology() :
     }
 
 #ifdef DEBUG
-    for (unsigned i(0) ; i < nodes_to_use ; ++i)
+    for (unsigned i(0) ; i < _num_nodes ; ++i)
     {
         CONTEXT("When investigating the system topology:\n");
         std::string msg = "Node " + stringify(i) + " has logical processing units " + stringify(range_min[i]) + " to " + stringify(range_max[i]) + "\n";
@@ -164,6 +157,11 @@ unsigned Topology::node_max(unsigned node) const
 unsigned Topology::get_node(unsigned lpu) const
 {
     return cpu_to_node[lpu];
+}
+
+unsigned Topology::main_node() const
+{
+    return cpu_to_node[_num_lpus - 1];
 }
 
 #if defined(__i386__) || defined(__x86_64__)

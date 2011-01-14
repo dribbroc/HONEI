@@ -114,12 +114,14 @@ cell::extraction_grid_float = 5
 ###########
 
 # Number of concurrent worker threads to use
+# will be regarded only if the value is greater
+# that the number of available processing units.
 mc::num_threads = 4
 
 # Wheather to use affinity (1 = true, 0 = false)
 mc::affinity = 1
 
-# Default DispatchPolicy
+# Default DispatchPolicy (anycore, alternating, linear)
 mc::dispatch = anycore
 
 # Partition size and partition count settings on a per_operation base

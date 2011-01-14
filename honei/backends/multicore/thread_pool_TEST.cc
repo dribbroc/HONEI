@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2008, 2009 Sven Mallach <mallach@honei.org>
+ * Copyright (c) 2008, 2009, 2010, 2011 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -73,7 +73,6 @@ class ThreadPoolTest :
             {
                 tickets.push_back(ThreadPool::instance()->enqueue(t));
             }
-
             for (unsigned i(500) ; i < 750 ; ++i)
             {
                 tickets.push_back(ThreadPool::instance()->enqueue(t, DispatchPolicy::on_core(2 * sysconf(_SC_NPROCESSORS_CONF))));
@@ -106,28 +105,6 @@ class ThreadPoolTest :
             tickets.wait();
 
             TEST_CHECK_EQUAL(v, 1784u);
-
-            unsigned old_num = ThreadPool::instance()->num_threads();
-
-            ThreadPool::instance()->add_threads(3);
-
-            for (unsigned i(0) ; i < 250 ; ++i)
-            {
-                tickets.push_back(ThreadPool::instance()->enqueue(u, DispatchPolicy::on_core(old_num + (i % 3))));
-            }
-
-            ThreadPool::instance()->delete_threads(3);
-
-            Ticket<tags::CPU::MultiCore> * tick(static_cast<Ticket<tags::CPU::MultiCore> *>(tickets[200]));
-
-            for (unsigned i(250) ; i < 500 ; ++i)
-            {
-                tickets.push_back(ThreadPool::instance()->enqueue(u, DispatchPolicy::same_core_as(tick)));
-            }
-
-            tickets.wait();
-
-            TEST_CHECK_EQUAL(w, 534u);
         }
 } thread_pool_test;
 
