@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2008, 2009, 2010 Sven Mallach <mallach@honei.org>
+ * Copyright (c) 2008, 2009, 2010, 2011 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -32,6 +32,10 @@ namespace honei
 {
     namespace mc
     {
+        /* Dispatch on an arbitrary processing unit.
+         * It will usually be the one that is able to
+         * response at fastest */
+
         class AnyCorePolicy
         {
             private:
@@ -43,6 +47,10 @@ namespace honei
                     return new Ticket<tags::CPU::MultiCore>();
                 }
         };
+
+        /* Dispatch on the same processing unit as
+         * with a previous ticket gained by OnCorePolicy,
+         * which is to provide here */
 
         class SameCorePolicy
         {
@@ -71,6 +79,8 @@ namespace honei
                 }
         };
 
+        /* Dispatch on an explicit processing unit */
+
         class OnCorePolicy
         {
             private:
@@ -97,6 +107,10 @@ namespace honei
                 }
         };
 
+        /* Dispatch on an arbitrary core on the same node as
+         * with a previous ticket gained by OnNodePolicy,
+         * which is to provide here */
+
         class SameNodePolicy
         {
             private:
@@ -121,6 +135,8 @@ namespace honei
                 }
         };
 
+        /* Dispatch on an arbitrary core on an explicit node. */
+
         class OnNodePolicy
         {
             private:
@@ -140,6 +156,94 @@ namespace honei
 
                     Ticket<tags::CPU::MultiCore> * ticket =
                         new Ticket<tags::CPU::MultiCore>(top->node_min(node_id), top->node_max(node_id));
+
+                    return ticket;
+                }
+        };
+
+        /* Fill the avaiable nodes processing unit by processing unit */
+
+        class LinearNodePolicy
+        {
+            private:
+
+                Ticket<tags::CPU::MultiCore> * last;
+
+            public:
+
+                LinearNodePolicy(Ticket<tags::CPU::MultiCore> * l) :
+                    last(l)
+                {
+                }
+
+                Ticket<tags::CPU::MultiCore> * operator() (HONEI_UNUSED std::vector<unsigned> & sids)
+                {
+                    Ticket<tags::CPU::MultiCore> * ticket(NULL);
+                    Topology * top = Topology::instance();
+
+                    if (last == NULL)
+                    {
+                        ticket = new Ticket<tags::CPU::MultiCore>(0, 0);
+                    }
+                    else
+                    {
+                        unsigned last_core = last->sid_min();
+
+                        if (last_core == top->num_lpus() - 1)
+                            last_core = 0;
+                        else
+                            ++last_core;
+
+                        ticket = new Ticket<tags::CPU::MultiCore>(last_core, last_core);
+                    }
+
+                    return ticket;
+                }
+
+        };
+
+        /* Fill the avaiable nodes in an alternaing manner concerning
+         * their processing units */
+
+        class AlternatingNodePolicy
+        {
+            private:
+
+                Ticket<tags::CPU::MultiCore> * last;
+
+            public:
+
+                AlternatingNodePolicy(Ticket<tags::CPU::MultiCore> * l) :
+                    last(l)
+                {
+                }
+
+                Ticket<tags::CPU::MultiCore> * operator() (HONEI_UNUSED std::vector<unsigned> & sids)
+                {
+                    Ticket<tags::CPU::MultiCore> * ticket(NULL);
+                    Topology * top = Topology::instance();
+                    unsigned num_nodes = top->num_nodes();
+
+                    if (last == NULL)
+                    {
+                        ticket = new Ticket<tags::CPU::MultiCore>(0, 0);
+                    }
+                    else
+                    {
+                        unsigned last_node = top->get_node(last->sid_min());
+                        unsigned next_node = (last_node == num_nodes - 1) ? 0 : ++last_node;
+
+                        unsigned next_core = last->sid_min() % top->lpus_per_node(); // usually the same
+                        if (next_node == 0) // except if we came back to the first node.
+                        {
+                            if (next_core == top->lpus_per_node() - 1)
+                                next_core = 0;
+                            else
+                                ++next_core;
+                        }
+
+                        ticket = new Ticket<tags::CPU::MultiCore>(next_core, next_core);
+                    }
 
                     return ticket;
                 }
@@ -169,10 +273,13 @@ namespace honei
 
             public:
 
+                static Ticket<tags::CPU::MultiCore> * last; // Store history
+
                 /// Creates a new Ticket and assures the given way of dispatching
                 Ticket<tags::CPU::MultiCore> * apply(std::vector<unsigned> & sids)
                 {
-                    return policy(sids);
+                    last = policy(sids);
+                    return last;
                 }
 
                 /// Named constructors
@@ -205,6 +312,18 @@ namespace honei
                 static DispatchPolicy on_node(unsigned node_id)
                 {
                     return DispatchPolicy(OnNodePolicy(node_id));
+                }
+
+                /// Dispatch alternatingly on next NUMA node
+                static DispatchPolicy alternating_node()
+                {
+                    return DispatchPolicy(AlternatingNodePolicy(last));
+                }
+
+                /// Dispatch linearly on NUMA nodes
+                static DispatchPolicy linear_node()
+                {
+                    return DispatchPolicy(LinearNodePolicy(last));
                 }
         };
     }

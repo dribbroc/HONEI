@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2008, 2009, 2010 Sven Mallach <mallach@honei.org>
+ * Copyright (c) 2008, 2009, 2010, 2011 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -66,6 +66,9 @@ namespace honei
                 /// Flag whether to use thread affinity
                 const bool _affinity;
 
+                /// Function pointer to any of the default dispatch strategies
+                DispatchPolicy (* policy) ();
+
 #ifdef linux
                 /// Mapping of threads to the scheduler ids of the cores they run on
                 std::vector<unsigned> _sched_ids;
@@ -117,7 +120,11 @@ namespace honei
                 /// Retrieve the number of created threads
                 unsigned num_threads() const;
 
-                Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, DispatchPolicy p = DispatchPolicy::any_core());
+                /// Dispatch a task using a specified dispatch strategy
+                Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, DispatchPolicy p);
+
+                /// Dispatch a task using the default dispatch strategy setup through honeirc
+                Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task);
 
                 /// \}
         };

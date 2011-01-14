@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2008, 2009, 2010 Sven Mallach <mallach@honei.org>
+ * Copyright (c) 2008, 2009, 2010, 2011 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -35,9 +35,11 @@ using namespace honei::mc;
 
 template class InstantiationPolicy<ThreadPool, Singleton>;
 
+Ticket<tags::CPU::MultiCore> * DispatchPolicy::last(NULL);
+
 ThreadPool::ThreadPool() :
     _topology(Topology::instance()),
-    _num_threads(Configuration::instance()->get_value("mc::num_threads", _topology->num_lpus() - 1)),
+    _num_threads(Configuration::instance()->get_value("mc::num_threads", _topology->num_lpus())),
     _inst_ctr(0),
     _mutex(new Mutex),
     _global_barrier(new ConditionVariable),
@@ -47,6 +49,15 @@ ThreadPool::ThreadPool() :
 #ifdef DEBUG
     std::string msg = "Will create " + stringify(_num_threads) + " POSIX worker threads \n";
 #endif
+
+    std::string dis = Configuration::instance()->get_value("mc::dispatch", "anycore");
+
+    if (! _affinity || dis == "anycore")
+        policy = &DispatchPolicy::any_core;
+    else if (dis == "alternating")
+        policy = &DispatchPolicy::alternating_node;
+    else if (dis == "linear")
+        policy = &DispatchPolicy::linear_node;
 
 #ifdef linux
     if (_affinity)
@@ -71,7 +82,7 @@ ThreadPool::ThreadPool() :
 
     for (int i(_num_threads - 1) ; i >= 0 ; --i)
     {
-        unsigned sched_id(i % (_topology->num_lpus() - 1));
+        unsigned sched_id(i % (_topology->num_lpus()));
 
         ThreadFunction * tobj = new ThreadFunction(_mutex, _global_barrier, &_tasks, _inst_ctr, (_affinity ? sched_id : 0xFFFF));
         Thread * t = new Thread(*tobj);
@@ -213,6 +224,23 @@ Ticket<tags::CPU::MultiCore> * ThreadPool::enqueue(const function<void ()> & tas
     CONTEXT("When creating a ThreadTask:\n");
 
     Ticket<tags::CPU::MultiCore> * ticket((_affinity ? p.apply(_sched_ids) : DispatchPolicy::any_core().apply(_sched_ids)));
+
+    ThreadTask * t_task(new ThreadTask(task, ticket));
+
+    Lock l(*_mutex);
+    _tasks.push_back(t_task);
+
+    _global_barrier->broadcast();
+
+    return ticket;
+}
+
+/// Use default policy
+Ticket<tags::CPU::MultiCore> * ThreadPool::enqueue(const function<void ()> & task)
+{
+    CONTEXT("When creating a ThreadTask:\n");
+
+    Ticket<tags::CPU::MultiCore> * ticket(policy().apply(_sched_ids));
 
     ThreadTask * t_task(new ThreadTask(task, ticket));
 
