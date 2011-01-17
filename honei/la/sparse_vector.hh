@@ -185,12 +185,6 @@ namespace honei
 
     extern template std::ostream & operator<< (std::ostream & lhs, const SparseVector<double> & vector);
 
-    extern template class SparseVector<int>;
-
-    extern template bool operator== (const SparseVector<int> & a, const SparseVector<int> & b);
-
-    extern template std::ostream & operator<< (std::ostream & lhs, const SparseVector<int> & vector);
-
     extern template class SparseVector<long>;
 
     extern template bool operator== (const SparseVector<long> & a, const SparseVector<long> & b);

@@ -135,6 +135,7 @@ namespace honei
             this->_imp->_elements.reset(capacity, elements);
             this->_imp->_indices.reset(capacity, indices);
             this->_imp->_capacity = capacity;
+            //TODO avoid copying on old elements/indices vectors and use typetraits::reallocate above
         }
 
         // Set new element's index and reset it to zero.

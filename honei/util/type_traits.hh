@@ -63,6 +63,15 @@ namespace honei
                 return reinterpret_cast<DT_ *>(result);
             }
 
+            static inline DT_ * reallocate(void * address, std::size_t count)
+            {
+                void * result(MemoryPool<tags::CPU>::instance()->realloc(address, count * sizeof(DT_)));
+                MemoryArbiter::instance()->remove_address(address);
+                MemoryArbiter::instance()->register_address(result);
+
+                return reinterpret_cast<DT_ *>(result);
+            }
+
             /**
              * Create count instances of DT_ at location by copying proto.
              *
@@ -286,6 +295,12 @@ namespace honei
     template <> struct TypeTraits<unsigned long> :
         public intern::PODTraits<unsigned long>,
         public intern::DefaultConversionTraits<unsigned long>
+    {
+    };
+
+    template <> struct TypeTraits<long> :
+        public intern::PODTraits<long>,
+        public intern::DefaultConversionTraits<long>
     {
     };
 

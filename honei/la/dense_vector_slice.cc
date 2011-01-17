@@ -34,12 +34,6 @@ namespace honei
 
     template std::ostream & operator<< (std::ostream & lhs, const DenseVectorSlice<double> & vector);
 
-    template class DenseVectorSlice<int>;
-
-    template bool operator== (const DenseVectorSlice<int> & a, const DenseVectorSlice<int> & b);
-
-    template std::ostream & operator<< (std::ostream & lhs, const DenseVectorSlice<int> & vector);
-
     template class DenseVectorSlice<long>;
 
     template bool operator== (const DenseVectorSlice<long> & a, const DenseVectorSlice<long> & b);

@@ -196,12 +196,6 @@ namespace honei
 
     extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorRange<double> & vector);
 
-    extern template class DenseVectorRange<int>;
-
-    extern template bool operator== (const DenseVectorRange<int> & a, const DenseVectorRange<int> & b);
-
-    extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorRange<int> & vector);
-
     extern template class DenseVectorRange<long>;
 
     extern template bool operator== (const DenseVectorRange<long> & a, const DenseVectorRange<long> & b);

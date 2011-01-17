@@ -129,8 +129,6 @@ namespace honei
 
     extern template class ConstVector<double>;
 
-    extern template class ConstVector<int>;
-
     extern template class ConstVector<long>;
 
     extern template class ConstVector<unsigned long>;

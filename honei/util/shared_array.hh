@@ -80,7 +80,7 @@ namespace honei
             DataType_ * get() const;
 
             /// Reset us with a new size and a new POA.
-            void reset(unsigned long size, DataType_ * array) const;
+            void reset(unsigned long size, DataType_ * array, bool free = true) const;
     };
 
     extern template class SharedArray<float>;

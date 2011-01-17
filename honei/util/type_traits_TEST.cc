@@ -73,6 +73,7 @@ class TypeTraitsTest :
                 TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_(7), std::numeric_limits<DataType_>::epsilon());
             }
 
+            elements = TypeTraits<DataType_>::reallocate(elements, size + 21);
             TypeTraits<DataType_>::free(elements, size);
             TEST_CHECK(true);
 
@@ -87,3 +88,4 @@ class TypeTraitsTest :
 };
 TypeTraitsTest<float> type_traits_test_float("float");
 TypeTraitsTest<double> type_traits_test_double("double");
+TypeTraitsTest<unsigned long> type_traits_test_ulong("unsigned long");

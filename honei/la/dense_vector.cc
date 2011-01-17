@@ -42,16 +42,6 @@ namespace honei
 
     template std::ostream & operator<< (std::ostream & lhs, const DenseVector<double> & vector);
 
-    template class ConstElementIterator<storage::Dense, container::Vector, int>;
-
-    template class DenseVector<int>;
-
-    template class ElementIterator<storage::Dense, container::Vector, int>;
-
-    template bool operator== (const DenseVectorBase<int> & a, const DenseVectorBase<int> & b);
-
-    template std::ostream & operator<< (std::ostream & lhs, const DenseVector<int> & vector);
-
     template class ConstElementIterator<storage::Dense, container::Vector, long>;
 
     template class DenseVector<long>;

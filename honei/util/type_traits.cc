@@ -478,6 +478,21 @@ namespace honei
         }
 
         template <> void
+        PODTraits<long>::copy(const long * source, long * dest, std::size_t count)
+        {
+            std::memcpy(dest, source, sizeof(long) * count);
+        }
+
+        template <> void
+        PODTraits<long>::fill(long * dest, std::size_t count, const long & proto)
+        {
+            for (unsigned i(0) ; i < count ; ++i)
+            {
+                dest[i] = proto;
+            }
+        }
+
+        template <> void
         PODTraits<bool>::copy(const bool * source, bool * dest, std::size_t count)
         {
             std::memcpy(dest, source, sizeof(bool) * count);

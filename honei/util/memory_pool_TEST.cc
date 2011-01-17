@@ -43,11 +43,12 @@ class MemoryPoolQuickTest :
             data_array = (int*)data;
             TEST_CHECK_EQUAL(data_array[3], 3);
             MemoryPool<Tag_>::instance()->free(data);
+            MemoryPool<Tag_>::instance()->release_free();
 
             void * data2 = MemoryPool<Tag_>::instance()->alloc(30 * sizeof(unsigned long));
+            data2 = MemoryPool<Tag_>::instance()->realloc(data2, 35 * sizeof(unsigned long));
             MemoryPool<Tag_>::instance()->free(data2);
 
-            MemoryPool<Tag_>::instance()->release_free();
         }
 };
 MemoryPoolQuickTest<tags::CPU> memory_pool_quick_test;

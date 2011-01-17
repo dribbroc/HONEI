@@ -51,20 +51,6 @@ namespace honei
 
     template std::ostream & operator<< (std::ostream & lhs, const SparseVector<double> & vector);
 
-    template class ConstElementIterator<storage::Sparse, container::Vector, int>;
-
-    template class ConstElementIterator<storage::SparseNonZero, container::Vector, int>;
-
-    template class SparseVector<int>;
-
-    template class ElementIterator<storage::Sparse, container::Vector, int>;
-
-    template class ElementIterator<storage::SparseNonZero, container::Vector, int>;
-
-    template bool operator== (const SparseVector<int> & a, const SparseVector<int> & b);
-
-    template std::ostream & operator<< (std::ostream & lhs, const SparseVector<int> & vector);
-
     template class ConstElementIterator<storage::Sparse, container::Vector, long>;
 
     template class ConstElementIterator<storage::SparseNonZero, container::Vector, long>;

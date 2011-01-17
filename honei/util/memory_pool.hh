@@ -33,6 +33,7 @@
 #include <string>
 #include <cstdlib>
 #include <new>
+#include <iostream>
 
 namespace honei
 {
@@ -61,7 +62,7 @@ namespace honei
             Mutex * const _mutex;
 
             std::multimap<unsigned long, void *> _free_chunks;
-            std::multimap<void*, unsigned long> _used_chunks;
+            std::map<void*, unsigned long> _used_chunks;
 
             MemoryPool() :
                 _mutex(new Mutex)
@@ -72,6 +73,8 @@ namespace honei
             {
                 {
                     Lock l(*_mutex);
+                    //std::cout<<"free chunks size: "<<_free_chunks.size()<<std::endl;
+                    //std::cout<<"used chunks size: "<<_used_chunks.size()<<std::endl;
                     _release_free();
                 }
                 if (_used_chunks.size() != 0)
@@ -94,19 +97,22 @@ namespace honei
 
             void * alloc(unsigned long bytes)
             {
-                unsigned long real_size(intern::multiple_of_sixteen(bytes));
                 CONTEXT("When allocating data (CPU):");
-                Lock l(*_mutex);
+                unsigned long real_size(intern::multiple_of_sixteen(bytes));
+                /*void * result(0);
+                posix_memalign(&result, 16, real_size);
+                return result;*/
 
+                Lock l(*_mutex);
                 std::multimap<unsigned long, void*>::iterator free_it;
-                std::multimap<void*, unsigned long>::iterator used_it;
 
                 free_it = _free_chunks.find(real_size);
                 if (free_it != _free_chunks.end())
                 {
-                    used_it = _used_chunks.insert (std::pair<void*, unsigned long>(free_it->second, free_it->first));
+                    void * ret(free_it->second);
+                    _used_chunks.insert (std::pair<void*, unsigned long>(free_it->second, free_it->first));
                     _free_chunks.erase(free_it);
-                    return used_it->first;
+                    return ret;
                 }
                 else
                 {
@@ -135,17 +141,68 @@ namespace honei
 
             }
 
+            void * realloc(void * address, unsigned long bytes)
+            {
+                CONTEXT("When allocating data (CPU):");
+                unsigned long real_size(intern::multiple_of_sixteen(bytes));
+
+                Lock l(*_mutex);
+                std::map<void *, unsigned long>::iterator used_it;
+
+                used_it = _used_chunks.find(address);
+                if (used_it != _used_chunks.end())
+                {
+                    if (real_size == used_it->second)
+                    {
+                        return address;
+                    }
+                    else
+                    {
+                        void * result(0);
+                        int status(0);
+
+                        status = posix_memalign(&result, 16, real_size);
+                        if (status == 0)
+                        {
+                            _used_chunks.insert (std::pair<void*, unsigned long>(result, real_size));
+                            //return result;
+                        }
+                        else
+                        {
+                            _release_free();
+                            status = posix_memalign(&result, 16, real_size);
+                        }
+                        if (status == 0)
+                        {
+                            _used_chunks.insert (std::pair<void*, unsigned long>(result, real_size));
+                            //return result;
+                        }
+                        else
+                            throw InternalError("MemoryPool: bad alloc or out of memory!");
+
+                        memcpy(result, address, used_it->second);
+                        ::free(address);
+                        _used_chunks.erase(used_it);
+                        return result;
+                    }
+                }
+                else
+                {
+                    throw InternalError("MemoryPool: realloc address not found!");
+                }
+            }
+
             void free(void * memid)
             {
                 CONTEXT("When freeing data (CPU):");
+                //::free(memid);
                 Lock l(*_mutex);
-                std::multimap<unsigned long, void*>::iterator free_it;
-                std::multimap<void*, unsigned long>::iterator used_it;
+                std::map<void*, unsigned long>::iterator used_it;
 
                 used_it = _used_chunks.find(memid);
                 if (used_it != _used_chunks.end())
                 {
-                    free_it = _free_chunks.insert(std::pair<unsigned long, void*>(used_it->second, used_it->first));
+                    _free_chunks.insert(std::pair<unsigned long, void*>(used_it->second, used_it->first));
                     _used_chunks.erase(used_it);
                 }
                 else

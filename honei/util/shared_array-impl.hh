@@ -78,10 +78,13 @@ namespace honei
         /// \}
 
         /// Reset us with a new array.
-        inline void reset(unsigned long s, DataType_ * a)
+        inline void reset(unsigned long s, DataType_ * a, bool free)
         {
-            TypeTraits<DataType_>::destroy(array, size);
-            TypeTraits<DataType_>::free(array, size);
+            if (free)
+            {
+                TypeTraits<DataType_>::destroy(array, size);
+                TypeTraits<DataType_>::free(array, size);
+            }
 
             array = a;
             size = s;
@@ -135,14 +138,14 @@ namespace honei
     }
 
     template <typename DataType_>
-    void SharedArray<DataType_>::reset(unsigned long size, DataType_ * array) const
+    void SharedArray<DataType_>::reset(unsigned long size, DataType_ * array, bool free) const
     {
         CONTEXT("When resetting SharedArray of size '" + stringify(this->_imp->size) + "' with POA '" +
                 stringify(array) + "':");
         ASSERT(this->_imp->array != array, "new array is identical with old array!");
         Lock l(*this->_imp->mutex);
 
-        this->_imp->reset(size, array);
+        this->_imp->reset(size, array, free);
     }
 }
 
