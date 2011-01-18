@@ -115,9 +115,12 @@ int main(int argc, char ** argv)
 
     switch_scenario(100);
 
+    atexit(destructor);
     glutMainLoop();
+}
 
-
+void destructor()
+{
     delete controller_f;
     delete controller_d;
 }

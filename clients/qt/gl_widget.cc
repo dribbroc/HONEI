@@ -71,6 +71,10 @@ GLWidget::~GLWidget()
 {
     makeCurrent();
     glDeleteLists(m_object, 1);
+    delete _idle_hb;
+    delete _idle_b;
+    delete _sim_control_float;
+    delete _sim_control_double;
 }
 
 

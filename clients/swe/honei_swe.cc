@@ -109,9 +109,12 @@ int main(int argc, char ** argv)
         controller_d->init();
     }
 
+    atexit(destructor);
     glutMainLoop();
+}
 
-
+void destructor()
+{
     delete controller_f;
     delete controller_d;
 }

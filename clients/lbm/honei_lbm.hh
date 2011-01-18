@@ -70,6 +70,7 @@ static void menu_main(GLint index);
 static void ogl_init();
 static void display();
 static void display_null(){}
+static void destructor();
 
 
 #endif

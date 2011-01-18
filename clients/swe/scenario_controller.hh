@@ -95,6 +95,18 @@ template<typename Tag_, typename Prec_> class ScenarioController
             scenario_id(scen_id)
     {
         srand(time(NULL));
+         _height=0;
+         _bottom=0;
+         _u1=0;
+         _u2=0;
+         _u=0;
+         _v=0;
+         _w=0;
+         _bx=0;
+         _by=0;
+        _c=0;
+        _d=0;
+        _solver=0;
     }
         ~ScenarioController()
         {
@@ -119,6 +131,19 @@ template<typename Tag_, typename Prec_> class ScenarioController
 
         void init(void)
         {
+            delete _height;
+            delete _bottom;
+            delete _u1;
+            delete _u2;
+            delete _u;
+            delete _v;
+            delete _w;
+            delete _bx;
+            delete _by;
+            delete _c;
+            delete _d;
+            delete _solver;
+
             _timestep = 0;
             //todo delete old data
             switch (scenario_id)

@@ -111,6 +111,20 @@ class SimulationController
         _cpu_simulation = 0;
     }
 
+        ~SimulationController()
+        {
+            delete _cpu_full_dry_simulation;
+            delete _sse_full_dry_simulation;
+            delete _sse_full_wet_simulation;
+            delete _sse_simulation;
+            delete _cpu_full_dry_simulation;
+            delete _cuda_full_dry_simulation;
+            delete _cuda_full_wet_simulation;
+            delete _cuda_simulation;
+            delete _cpu_full_wet_simulation;
+            delete _cpu_simulation;
+        }
+
         solver_type get_solver_type()
         {
             return _current_solver;
