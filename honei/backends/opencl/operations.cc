@@ -23,7 +23,7 @@ namespace honei
 {
     namespace opencl
     {
-        void copy_float(void * x, void * y, unsigned long size, cl_device_type type)
+        /*void copy_float(void * x, void * y, unsigned long size, cl_device_type type)
         {
             cl_command_queue command_queue;
             cl_kernel kernel;
@@ -47,7 +47,6 @@ namespace honei
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
             clFinish(command_queue);
-
-        }
+        }*/
     }
 }
