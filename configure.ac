@@ -561,6 +561,9 @@ AC_OUTPUT(
 	honei/lbm/Makefile
 	honei/math/Makefile
 	honei/math/testdata/Makefile
+	honei/math/SuperLU_4.1/Makefile
+	honei/math/SuperLU_4.1/CBLAS/Makefile
+	honei/math/SuperLU_4.1/SRC/Makefile
 	honei/math/spai/Makefile
 	honei/math/spai/src/Makefile
 	honei/math/spai/blas/Makefile
