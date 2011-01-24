@@ -1,74 +1,98 @@
-#include "honei/math/SuperLU_4.1/SRC/slu_ddefs.h"
+/* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
-main(int argc, char *argv[])
-{
 /*
- * Purpose
- * =======
+ * Copyright (c) 2011 Dirk Ribbrock <dirk.ribbrock@math.uni-dortmund.de>
  *
- * This is the small 5x5 example used in the Sections 2 and 3 of the
- * Users' Guide to illustrate how to call a SuperLU routine, and the
- * matrix data structures used by SuperLU.
+ * This file is part of the HONEI C++ library. HONEI is free software;
+ * you can redistribute it and/or modify it under the terms of the GNU General
+ * Public License version 2, as published by the Free Software Foundation.
  *
+ * HONEI is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA  02111-1307  USA
  */
-    SuperMatrix A, L, U, B;
-    double   *a, *rhs;
-    double   s, u, p, e, r, l;
-    int      *asub, *xa;
-    int      *perm_r; /* row permutations from partial pivoting */
-    int      *perm_c; /* column permutation vector */
-    int      nrhs, info, i, m, n, nnz, permc_spec;
-    superlu_options_t options;
-    SuperLUStat_t stat;
 
-    /* Initialize matrix A. */
-    m = n = 5;
-    nnz = 12;
-    if ( !(a = doubleMalloc(nnz)) ) ABORT("Malloc fails for a[].");
-    if ( !(asub = intMalloc(nnz)) ) ABORT("Malloc fails for asub[].");
-    if ( !(xa = intMalloc(n+1)) ) ABORT("Malloc fails for xa[].");
-    s = 19.0; u = 21.0; p = 16.0; e = 5.0; r = 18.0; l = 12.0;
-    a[0] = s; a[1] = l; a[2] = l; a[3] = u; a[4] = l; a[5] = l;
-    a[6] = u; a[7] = p; a[8] = u; a[9] = e; a[10]= u; a[11]= r;
-    asub[0] = 0; asub[1] = 1; asub[2] = 4; asub[3] = 1;
-    asub[4] = 2; asub[5] = 4; asub[6] = 0; asub[7] = 2;
-    asub[8] = 0; asub[9] = 3; asub[10]= 3; asub[11]= 4;
-    xa[0] = 0; xa[1] = 3; xa[2] = 6; xa[3] = 8; xa[4] = 10; xa[5] = 12;
 
-    /* Create matrix A in the format expected by SuperLU. */
-    dCreate_CompCol_Matrix(&A, m, n, nnz, a, asub, xa, SLU_NC, SLU_D, SLU_GE);
+#include <honei/math/superlu.hh>
+#include <honei/util/unittest.hh>
+#include <honei/math/matrix_io.hh>
+#include <honei/math/vector_io.hh>
+#include <honei/util/stringify.hh>
+#include <honei/math/conjugate_gradients.hh>
+#include <iostream>
 
-    /* Create right-hand side matrix B. */
-    nrhs = 1;
-    if ( !(rhs = doubleMalloc(m * nrhs)) ) ABORT("Malloc fails for rhs[].");
-    for (i = 0; i < m; ++i) rhs[i] = 1.0;
-    dCreate_Dense_Matrix(&B, m, nrhs, rhs, m, SLU_DN, SLU_D, SLU_GE);
 
-    if ( !(perm_r = intMalloc(m)) ) ABORT("Malloc fails for perm_r[].");
-    if ( !(perm_c = intMalloc(n)) ) ABORT("Malloc fails for perm_c[].");
+using namespace honei;
+using namespace tests;
+using namespace std;
 
-    /* Set the default input options. */
-    set_default_options(&options);
-    options.ColPerm = NATURAL;
+template <typename Tag_, typename DT1_>
+class SuperLUTestSparseELL:
+    public BaseTest
+{
+    private:
+        std::string _m_f, _v_f, _ref_f;
+    public:
+        SuperLUTestSparseELL(const std::string & tag,
+                std::string m_file,
+                std::string v_file,
+                std::string ref_file) :
+            BaseTest("Super LU Test (sparse ELL system)<" + tag + ">")
+        {
+            register_tag(Tag_::name);
+            _m_f = m_file;
+            _v_f = v_file;
+            _ref_f = ref_file;
+        }
 
-    /* Initialize the statistics variables. */
-    StatInit(&stat);
+        virtual void run() const
+        {
 
-    /* Solve the linear system. */
-    dgssv(&options, &A, perm_c, perm_r, &L, &U, &B, &stat, &info);
+            std::string filename(HONEI_SOURCEDIR);
+            filename += "/honei/math/testdata/";
+            filename += _m_f;
 
-    dPrint_CompCol_Matrix("A", &A);
-    dPrint_CompCol_Matrix("U", &U);
-    dPrint_SuperNode_Matrix("L", &L);
-    print_int_vec("\nperm_r", m, perm_r);
+            SparseMatrixELL<DT1_> smatrix(MatrixIO<io_formats::ELL>::read_matrix(filename, DT1_(0)));
 
-    /* De-allocate storage */
-    SUPERLU_FREE (rhs);
-    SUPERLU_FREE (perm_r);
-    SUPERLU_FREE (perm_c);
-    Destroy_CompCol_Matrix(&A);
-    Destroy_SuperMatrix_Store(&B);
-    Destroy_SuperNode_Matrix(&L);
-    Destroy_CompCol_Matrix(&U);
-    StatFree(&stat);
-}
+            std::string filename_2(HONEI_SOURCEDIR);
+            filename_2 += "/honei/math/testdata/";
+            filename_2 += _v_f;
+            DenseVector<DT1_> rhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT1_(0)));
+
+            std::string filename_3(HONEI_SOURCEDIR);
+            filename_3 += "/honei/math/testdata/";
+            filename_3 += _ref_f;
+            DenseVector<DT1_> ref(VectorIO<io_formats::EXP>::read_vector(filename_3, DT1_(0)));
+
+
+            DenseVector<DT1_> result(rhs.size(), 4711);
+            SuperLU::value(smatrix, rhs, result);
+
+            result.lock(lm_read_only);
+            result.unlock(lm_read_only);
+            DT1_ base_digits(3);
+            DT1_ additional_digits(2);
+
+            DT1_ base_eps(1 / pow(10, base_digits));
+            DT1_ add_eps(base_eps / pow(10, additional_digits));
+
+            DT1_ m((add_eps - base_eps) / DT1_(4));
+            DT1_ b(base_eps - (DT1_(4) * m));
+
+            DT1_ eps(m * sizeof(DT1_) + b);
+            eps *= DT1_(3);
+            for (unsigned long i(0) ; i < result.size() ; ++i)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(result[i], ref[i], eps);
+                //std::cout<<result[i]<<"  "<<result_result[i]<<std::endl;
+            }
+        }
+};
+
+SuperLUTestSparseELL<tags::CPU, double> superlu_test_sparse_ell_double_1("double", "l2/area51_full_0.ell", "l2/area51_rhs_0", "l2/area51_sol_0");
+SuperLUTestSparseELL<tags::CPU, double> superlu_test_sparse_ell_double_2("double", "poisson_advanced/q2_sort_0/A_7.ell", "poisson_advanced/q2_sort_0/rhs_7", "poisson_advanced/q2_sort_0/sol_7");
