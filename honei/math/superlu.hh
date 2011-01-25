@@ -46,8 +46,8 @@ namespace honei
         static void value(const SparseMatrixELL<DT_> & in_matrix, const DenseVector<DT_> & in_rhs, DenseVector<DT_> & out_result)
         {
             SuperMatrix A, L, U, B;
-            double   *a, *rhs;
-            int      *asub, *xa;
+            double   *a, *rhs, *ta;
+            int      *asub, *xa, *tasub, *txa;
             int      *perm_r; /* row permutations from partial pivoting */
             int      *perm_c; /* column permutation vector */
             int      nrhs, info, i, m, n, nnz;//, permc_spec;
@@ -61,25 +61,30 @@ namespace honei
             if ( !(a = doubleMalloc(nnz)) ) ABORT("Malloc fails for a[].");
             if ( !(asub = intMalloc(nnz)) ) ABORT("Malloc fails for asub[].");
             if ( !(xa = intMalloc(n+1)) ) ABORT("Malloc fails for xa[].");
+            if ( !(ta = doubleMalloc(nnz)) ) ABORT("Malloc fails for ta[].");
+            if ( !(tasub = intMalloc(nnz)) ) ABORT("Malloc fails for tasub[].");
+            if ( !(txa = intMalloc(m+1)) ) ABORT("Malloc fails for txa[].");
 
             unsigned long ti(0);
-            for (unsigned long ij(0) ; ij < in_matrix.columns() ; ++ij)
+            for (unsigned long ii(0) ; ii < in_matrix.rows() ; ++ii)
             {
-                xa[ij] = ti;
-                for (unsigned long ii(0) ; ii < in_matrix.rows() ; ++ii)
+                xa[ii] = ti;
+                for (unsigned long ij(0) ; ij < in_matrix.columns() ; ++ij)
                 {
                     if (in_matrix(ii, ij) != DT_(0))
                     {
                         a[ti] = in_matrix(ii, ij);
-                        asub[ti] = ii;
+                        asub[ti] = ij;
                         ++ti;
                     }
                 }
             }
             xa[n] = nnz;
 
+            dCompRow_to_CompCol(m, n, nnz, a, asub, xa, &ta, &tasub, &txa);
+
             /* Create matrix A in the format expected by SuperLU. */
-            dCreate_CompCol_Matrix(&A, m, n, nnz, a, asub, xa, SLU_NC, SLU_D, SLU_GE);
+            dCreate_CompRow_Matrix(&A, m, n, nnz, ta, tasub, txa, SLU_NC, SLU_D, SLU_GE);
 
             /* Create right-hand side matrix B. */
             nrhs = 1;
@@ -113,6 +118,9 @@ namespace honei
             SUPERLU_FREE (rhs);
             SUPERLU_FREE (perm_r);
             SUPERLU_FREE (perm_c);
+            SUPERLU_FREE (a);
+            SUPERLU_FREE (asub);
+            SUPERLU_FREE (xa);
             Destroy_CompCol_Matrix(&A);
             Destroy_SuperMatrix_Store(&B);
             Destroy_SuperNode_Matrix(&L);
