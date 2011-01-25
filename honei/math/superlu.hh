@@ -66,7 +66,7 @@ namespace honei
             if ( !(txa = intMalloc(m+1)) ) ABORT("Malloc fails for txa[].");
 
             unsigned long ti(0);
-            for (unsigned long ii(0) ; ii < in_matrix.rows() ; ++ii)
+            /*for (unsigned long ii(0) ; ii < in_matrix.rows() ; ++ii)
             {
                 xa[ii] = ti;
                 for (unsigned long ij(0) ; ij < in_matrix.columns() ; ++ij)
@@ -78,7 +78,19 @@ namespace honei
                         ++ti;
                     }
                 }
+            }*/
+            for (unsigned long srow(0) ; srow < in_matrix.rows() ; ++srow)
+            {
+                xa[srow] = ti;
+                for (unsigned long ii(srow) ; ii < in_matrix.Ax().size() && ii/in_matrix.stride() < in_matrix.Arl()[srow] ; ii+=in_matrix.stride())
+                {
+                    a[ti] = in_matrix.Ax()[ii];
+                    asub[ti] = in_matrix.Aj()[ii];
+                    ++ti;
+                }
             }
+
+
             xa[n] = nnz;
 
             dCompRow_to_CompCol(m, n, nnz, a, asub, xa, &ta, &tasub, &txa);
