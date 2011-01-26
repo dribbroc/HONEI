@@ -27,12 +27,6 @@
 #include <honei/math/matrix_io.hh>
 #include "honei/math/SuperLU_4.1/SRC/slu_ddefs.h"
 
-extern "C"
-{
-#include <honei/math/spai/src/spai.h>
-#include <honei/math/spai/src/read_mm_matrix.h>
-}
-
 #include <iostream>
 #include <cstdio>
 
@@ -45,12 +39,19 @@ namespace honei
         template <typename DT_>
         static void value(const SparseMatrixELL<DT_> & in_matrix, const DenseVector<DT_> & in_rhs, DenseVector<DT_> & out_result)
         {
-            SuperMatrix A, L, U, B;
-            double   *a, *rhs, *ta;
+            char     equed[1];
+            SuperMatrix A, L, U, B, X;
+            double   *a, *rhs, *rhsx, *ta;
             int      *asub, *xa, *tasub, *txa;
             int      *perm_r; /* row permutations from partial pivoting */
             int      *perm_c; /* column permutation vector */
-            int      nrhs, info, i, m, n, nnz;//, permc_spec;
+            int      lwork, nrhs, info, i, m, n, nnz;//, permc_spec;
+            int      *etree;
+            void     *work(NULL);
+            double   rpg, rcond;
+            double   *R, *C;
+            double   *ferr, *berr;
+            mem_usage_t    mem_usage;
             superlu_options_t options;
             SuperLUStat_t stat;
 
@@ -103,22 +104,52 @@ namespace honei
             if ( !(rhs = doubleMalloc(m * nrhs)) ) ABORT("Malloc fails for rhs[].");
             for (i = 0; i < m; ++i) rhs[i] = in_rhs[i];
             dCreate_Dense_Matrix(&B, m, nrhs, rhs, m, SLU_DN, SLU_D, SLU_GE);
+            if ( !(rhsx = doubleMalloc(m * nrhs)) ) ABORT("Malloc fails for rhsx[].");
+            dCreate_Dense_Matrix(&X, m, nrhs, rhsx, m, SLU_DN, SLU_D, SLU_GE);
 
+            if ( !(etree = intMalloc(n)) ) ABORT("Malloc fails for etree[].");
             if ( !(perm_r = intMalloc(m)) ) ABORT("Malloc fails for perm_r[].");
             if ( !(perm_c = intMalloc(n)) ) ABORT("Malloc fails for perm_c[].");
+            if ( !(R = (double *) SUPERLU_MALLOC(A.nrow * sizeof(double))) )
+                ABORT("SUPERLU_MALLOC fails for R[].");
+            if ( !(C = (double *) SUPERLU_MALLOC(A.ncol * sizeof(double))) )
+                ABORT("SUPERLU_MALLOC fails for C[].");
+            if ( !(ferr = (double *) SUPERLU_MALLOC(nrhs * sizeof(double))) )
+                ABORT("SUPERLU_MALLOC fails for ferr[].");
+            if ( !(berr = (double *) SUPERLU_MALLOC(nrhs * sizeof(double))) )
+                ABORT("SUPERLU_MALLOC fails for berr[].");
 
             /* Set the default input options. */
             set_default_options(&options);
+            /* Defaults */
+            lwork = 0;
+            options.Equil = YES;
+            options.DiagPivotThresh = 1.0;
+            options.Trans = NOTRANS;
             options.ColPerm = NATURAL;
+            options.PrintStat = NO;
+            /* Add more functionalities that the defaults. */
+            options.PivotGrowth = YES;    /* Compute reciprocal pivot growth */
+            options.ConditionNumber = YES;/* Compute reciprocal condition number */
+            options.IterRefine = DOUBLE;  /* Perform double-precision refinement */
+            if ( lwork > 0 ) {
+                work = SUPERLU_MALLOC(lwork);
+                if ( !work ) {
+                    ABORT("DLINSOLX: cannot allocate work[]");
+                }
+            }
 
             /* Initialize the statistics variables. */
             StatInit(&stat);
 
             /* Solve the linear system. */
-            dgssv(&options, &A, perm_c, perm_r, &L, &U, &B, &stat, &info);
+            //dgssv(&options, &A, perm_c, perm_r, &L, &U, &B, &stat, &info);
+            dgssvx(&options, &A, perm_c, perm_r, etree, equed, R, C,
+                    &L, &U, work, lwork, &B, &X, &rpg, &rcond, ferr, berr,
+                    &mem_usage, &stat, &info);
 
 
-            double *sol = (double*) ((DNformat*) B.Store)->nzval;
+            double *sol = (double*) ((DNformat*) X.Store)->nzval;
             for (i = 0; i < m; ++i) out_result[i] = sol[i];
 
             //dPrint_CompCol_Matrix("A", &A);
@@ -130,13 +161,23 @@ namespace honei
             SUPERLU_FREE (rhs);
             SUPERLU_FREE (perm_r);
             SUPERLU_FREE (perm_c);
+            SUPERLU_FREE (R);
+            SUPERLU_FREE (C);
+            SUPERLU_FREE (ferr);
+            SUPERLU_FREE (berr);
+            SUPERLU_FREE (etree);
             SUPERLU_FREE (a);
             SUPERLU_FREE (asub);
             SUPERLU_FREE (xa);
             Destroy_CompCol_Matrix(&A);
             Destroy_SuperMatrix_Store(&B);
-            Destroy_SuperNode_Matrix(&L);
-            Destroy_CompCol_Matrix(&U);
+            if ( lwork == 0 ) {
+                Destroy_SuperNode_Matrix(&L);
+                Destroy_CompCol_Matrix(&U);
+            } else if ( lwork > 0 ) {
+                SUPERLU_FREE(work);
+            }
+            Destroy_SuperMatrix_Store(&X);
             StatFree(&stat);
         }
     };
