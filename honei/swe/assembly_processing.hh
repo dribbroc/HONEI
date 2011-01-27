@@ -541,10 +541,10 @@ namespace honei
                         CONTEXT("When processing RelaxSolver assembly, quick stage, matrix m_6:");
 
                         ///Bands of the matrix which will be assembled.
-                        DenseVector<WorkPrec_> m6diag = (m1.band((unsigned long)(0))).copy();
-                        DenseVector<WorkPrec_> m6bandplus3 = (m1.band((unsigned long)(3))).copy();
-                        DenseVector<WorkPrec_> m6bandplus6 = (m1.band((unsigned long)(6))).copy();
-                        DenseVector<WorkPrec_> m6bandminus3 = (m1.band((unsigned long)(-3))).copy();
+                        DenseVector<WorkPrec_> m6diag = (m1.band(0)).copy();
+                        DenseVector<WorkPrec_> m6bandplus3 = (m1.band(3)).copy();
+                        DenseVector<WorkPrec_> m6bandplus6 = (m1.band(6)).copy();
+                        DenseVector<WorkPrec_> m6bandminus3 = (m1.band(-3)).copy();
                         ///Needed Iterators.
                         typename DenseVector<WorkPrec_>::ElementIterator d(m6diag.begin_elements());
                         typename DenseVector<WorkPrec_>::ElementIterator b1(m6bandplus3.begin_elements());
@@ -611,10 +611,10 @@ namespace honei
                     {
                         CONTEXT("When processing RelaxSolver assembly, quick stage, matrix m_8:");
 
-                        DenseVector<WorkPrec_> m8diag = (m2.band((unsigned long)(0))).copy();
-                        DenseVector<WorkPrec_> m8bandplus3 = (m2.band((unsigned long)(3*(d_width +4)))).copy();
-                        DenseVector<WorkPrec_> m8bandplus6 = (m2.band((unsigned long)(6*(d_width +4)))).copy();
-                        DenseVector<WorkPrec_> m8bandminus3 = (m2.band((unsigned long)((-3)*(d_width +4)))).copy();
+                        DenseVector<WorkPrec_> m8diag = (m2.band(0)).copy();
+                        DenseVector<WorkPrec_> m8bandplus3 = (m2.band(3*(d_width +4))).copy();
+                        DenseVector<WorkPrec_> m8bandplus6 = (m2.band(6*(d_width +4))).copy();
+                        DenseVector<WorkPrec_> m8bandminus3 = (m2.band((-3)*(d_width +4))).copy();
                         ///Needed Iterators.
                         typename DenseVector<WorkPrec_>::ElementIterator d(m8diag.begin_elements());
                         typename DenseVector<WorkPrec_>::ElementIterator b1(m8bandplus3.begin_elements());
