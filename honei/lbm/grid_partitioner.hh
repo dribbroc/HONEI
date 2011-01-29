@@ -25,6 +25,7 @@
 #include <honei/lbm/grid.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
+#include <honei/util/memory_pool.hh>
 
 #include <algorithm>
 #include <iostream>
@@ -1304,6 +1305,8 @@ namespace honei
 
             static void recompose(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT_> * data)
             {
+                MemoryPool<tags::CPU>::instance()->release_free();
+
                 DenseVector<unsigned long> * tempul;
 
                 tempul = new DenseVector<unsigned long>(info->limits->copy());

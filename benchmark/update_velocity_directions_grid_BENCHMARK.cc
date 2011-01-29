@@ -70,11 +70,11 @@ class UpdateVelocityDirectionsGridBench :
 
             Grid<D2Q9, DataType_> grid;
             DenseMatrix<bool> obstacles(g_h, g_w, false);
-            grid.obstacles = &obstacles;
-            grid.h = &h;
-            grid.u = &u;
-            grid.v = &v;
-            grid.b = &b;
+            grid.obstacles = new DenseMatrix<bool>(obstacles);
+            grid.h = new DenseMatrix<DataType_>(h);
+            grid.u = new DenseMatrix<DataType_>(u);
+            grid.v = new DenseMatrix<DataType_>(v);
+            grid.b = new DenseMatrix<DataType_>(b);
 
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
@@ -102,6 +102,7 @@ class UpdateVelocityDirectionsGridBench :
             evaluate();
             data.destroy();
             info.destroy();
+            grid.destroy();
         }
 };
 
