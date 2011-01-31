@@ -334,7 +334,18 @@ namespace honei
                         std::cout<<(*data_global.h)[i]<<" "<<(*data_ref.h)[i]<<std::endl;
                 }
                 data_ref.h->unlock(lm_read_only);
+                grid_ref.destroy();
+                info_ref.destroy();
+                data_ref.destroy();
                 std::cout<<"Comparison finished sucessfully!"<<std::endl;*/
+
+                delete solver;
+                data_lokal.destroy();
+                data_list.erase(data_list.begin());
+                honei::GridPartitioner<D2Q9, DataType_>::destroy(info_list, data_list, fringe_list);
+                grid_global.destroy();
+                info_global.destroy();
+                data_global.destroy();
             }
 
             void _slave()
@@ -394,6 +405,11 @@ namespace honei
                 MPI_Barrier(MPI_COMM_WORLD);
                 solver->do_postprocessing();
                 //_send_full_sync(_masterid, data);
+
+                delete solver;
+                fringe.destroy();
+                info.destroy();
+                data.destroy();
             }
 
             void _alloc_lokal_data(PackedGridData<D2Q9, DataType_> & data_lokal)

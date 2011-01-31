@@ -147,6 +147,11 @@ namespace honei
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
                 std::cout<<*grid.h;*/
                 //PostProcessing<output_types::GNUPLOT>::value(*grid.h, 1, grid.h->columns(), grid.h->rows(), 0);
+
+                honei::GridPartitioner<D2Q9, DataType_>::destroy(info_list, data_list, fringe_list);
+                grid.destroy();
+                info.destroy();
+                data.destroy();
             }
 
             void _slave()
@@ -177,6 +182,10 @@ namespace honei
                     _recv_master_sync(0, info, data, fringe);
                 }
                 //_send_full_sync(0, info, data, fringe);
+
+                info.destroy();
+                data.destroy();
+                fringe.destroy();
             }
 
             void _send_info(unsigned long target, PackedGridInfo<D2Q9> & info)
