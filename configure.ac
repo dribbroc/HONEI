@@ -384,6 +384,23 @@ if test "x$WITH_HDF5" = "xyes"; then
 	dnl }}}
 fi
 dnl }}}
+dnl {{{ check for BLAPACK support
+AC_MSG_CHECKING([whether use external BLAS and Lapack library])
+AC_ARG_WITH([blapack],
+	AS_HELP_STRING([--with-blapack], [use external BLAS and Lapack library]),
+		[WITH_BLAPACK=$withval
+		  AC_MSG_RESULT([$withval])],
+		[WITH_BLAPACK=no
+		  AC_MSG_RESULT([no])])
+AC_SUBST([WITH_BLAPACK])
+AM_CONDITIONAL([BLAPACK], test "x$WITH_BLAPACK" = "xyes")
+if test "x$WITH_BLAPACK" = "xyes"; then
+	dnl {{{ enable blapack support
+	BLAPACKDEF="-DHONEI_BLAPACK"
+	dnl }}}
+fi
+AC_SUBST([BLAPACKDEF])
+dnl }}}
 dnl {{{ check for DUNE support
 AC_MSG_CHECKING([whether to build DUNE support])
 AC_ARG_WITH([dune],

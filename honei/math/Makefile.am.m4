@@ -18,12 +18,20 @@ $1_TEST_LDADD = \
 	$(top_builddir)/honei/math/spai/src/libspai.la \
 	libhoneimath.la \
 	$(top_builddir)/honei/math/spai/lapack/liblapack.la \
-	$(top_builddir)/honei/math/spai/blas/libblas.la \
-	$(top_builddir)/honei/math/SuperLU_4.1/CBLAS/libsblas.la \
 	$(top_builddir)/honei/math/SuperLU_4.1/SRC/libsuperlu.la \
 	libhoneimath.la \
 	$(FLIBS) \
 	$(DYNAMIC_LD_LIBS)
+
+if BLAPACK
+
+else
+
+  $1_TEST_LDADD += \
+	$(top_builddir)/honei/math/spai/blas/libblas.la \
+	$(top_builddir)/honei/math/SuperLU_4.1/CBLAS/libsblas.la
+
+endif
 $1_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 ')dnl
 define(`addhh', `define(`filelist', filelist `$1.hh')define(`headerlist', headerlist `$1.hh')')dnl
@@ -53,7 +61,8 @@ if CELL
 CELLFILES = celllist
 BACKEND_LIBS += \
 	$(top_builddir)/honei/backends/cell/ppe/libhoneibackendscellppe.la \
-	$(top_builddir)/honei/backends/cell/spe/libhoneibackendscellspe.la
+	$(top_builddir)/honei/backends/cell/spe/libhoneibackendscellspe.la \
+	$(CELLLIB)
 
 endif
 
@@ -119,10 +128,7 @@ libhoneimath_la_LIBADD = \
 	$(top_builddir)/honei/la/libhoneila.la
 	$(top_builddir)/honei/math/spai/src/libspai.la \
 	$(top_builddir)/honei/math/spai/lapack/liblapack.la \
-	$(top_builddir)/honei/math/spai/blas/libblas.la \
-	$(top_builddir)/honei/math/SuperLU_4.1/CBLAS/libsblas.la \
-	$(top_builddir)/honei/math/SuperLU_4.1/SRC/libsuperlu.la \
-	$(CELLLIB)
+	$(top_builddir)/honei/math/SuperLU_4.1/SRC/libsuperlu.la
 
 libhoneimath_includedir = $(includedir)/honei/math
 libhoneimath_include_HEADERS = headerlist

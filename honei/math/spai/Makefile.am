@@ -10,13 +10,15 @@
 #  Conditional automake subdirectories.
 # --------------------------------------------------------------------- #
 
-#if BUILD_OWN_BLAS
+if BLAPACK
+else
    OPT_BLAS=blas
-#endif
+endif
 
-#if BUILD_OWN_LAPACK
+if BLAPACK
+else
    OPT_LAPACK=lapack
-#endif
+endif
 
 #if BUILD_MATLAB_IF
 #   OPT_MATLAB=matlab

@@ -111,3 +111,9 @@ ell2spai_LDADD = \
 	$(top_builddir)/honei/math/spai/lapack/liblapack.la \
 	$(top_builddir)/honei/math/spai/blas/libblas.la \
 	$(BACKEND_LIBS)
+
+if BLAPACK
+else
+  ell2spai_LDADD += \
+	$(top_builddir)/honei/math/spai/blas/libblas.la
+endif
