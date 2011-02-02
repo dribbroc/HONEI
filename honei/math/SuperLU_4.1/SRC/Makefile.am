@@ -60,4 +60,6 @@ libsuperlu_la_SOURCES = \
 			zgsisx.c zgsitrf.c zldperm.c \
 			ilu_zdrop_row.c ilu_zsnode_dfs.c \
 			ilu_zcolumn_dfs.c ilu_zpanel_dfs.c ilu_zcopy_to_ucol.c \
-			ilu_zpivotL.c zdiagonal.c
+			ilu_zpivotL.c zdiagonal.c \
+			colamd.h html_mainpage.h slu_Cnames.h slu_cdefs.h slu_dcomplex.h slu_ddefs.h \
+			slu_scomplex.h slu_sdefs.h slu_util.h slu_zdefs.h superlu_enum_consts.h supermatrix.h

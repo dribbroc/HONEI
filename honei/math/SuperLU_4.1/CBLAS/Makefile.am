@@ -14,4 +14,4 @@ libsblas_la_SOURCES = \
 		      cgemv.c chemv.c ctrsv.c cgerc.c cher2.c\
 		      izamax.c dzasum.c zaxpy.c zcopy.c dznrm2.c \
 		      zscal.c dcabs1.c zswap.c\
-		      zgemv.c zhemv.c ztrsv.c zgerc.c zher2.c
+		      zgemv.c zhemv.c ztrsv.c zgerc.c zher2.c f2c.h superlu_f2c.h
