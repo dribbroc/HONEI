@@ -767,6 +767,8 @@ endCycleLoop:
                     {
                         *cappa = Prec_(-1);
                     }
+                    if (iter == info.n_max_iter)
+                            std::cout<<"Max Iter Count " << iter << " reached!"<<std::endl;
                 }
             }
             /*DenseVector<Prec_> result(info.x[info.max_level].size());
@@ -1186,6 +1188,8 @@ endCycleLoop:
                     {
                         *cappa = Prec_(-1);
                     }
+                    if (iter == info.n_max_iter)
+                            std::cout<<"Max Iter Count " << iter << " reached!"<<std::endl;
                 }
             }
             /*DenseVector<Prec_> result(info.x[info.max_level].size());
