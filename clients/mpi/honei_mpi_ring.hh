@@ -1366,8 +1366,10 @@ namespace honei
                     }
                 }
 
-                DataType_ down_buffer_recv[down_size_recv];
-                DataType_ up_buffer_recv[up_size_recv];
+                //DataType_ down_buffer_recv[down_size_recv];
+                //DataType_ up_buffer_recv[up_size_recv];
+                DataType_ * up_buffer_recv(TypeTraits<DataType_>::allocate(up_size_recv));
+                DataType_ * down_buffer_recv(TypeTraits<DataType_>::allocate(down_size_recv));
 
                 if (up_size_recv > 0) requests_down.push_back(mpi::mpi_irecv(up_buffer_recv, up_size_recv, source_up_recv, source_up_recv, _comm_cart));
                 if (down_size_recv > 0) requests_up.push_back(mpi::mpi_irecv(down_buffer_recv, down_size_recv, source_down_recv, source_down_recv, _comm_cart));
@@ -1424,8 +1426,10 @@ namespace honei
                     }
                 }
 
-                DataType_ up_buffer_send[up_size_send];
-                DataType_ down_buffer_send[down_size_send];
+                //DataType_ up_buffer_send[up_size_send];
+                //DataType_ down_buffer_send[down_size_send];
+                DataType_ * up_buffer_send(TypeTraits<DataType_>::allocate(up_size_send));
+                DataType_ * down_buffer_send(TypeTraits<DataType_>::allocate(down_size_send));
 
                 if (up_size_send > 0)
                 {
@@ -1514,6 +1518,11 @@ namespace honei
                     temp_size += f8_size_recv;
                     TypeTraits<DataType_>::copy(down_buffer_recv + temp_size, data.h->elements() + h_down_offset_recv - offset, h_down_size_recv);
                 }
+
+                TypeTraits<DataType_>::free(up_buffer_send, up_size_send);
+                TypeTraits<DataType_>::free(down_buffer_send, down_size_send);
+                TypeTraits<DataType_>::free(up_buffer_recv, up_size_recv);
+                TypeTraits<DataType_>::free(down_buffer_recv, down_size_recv);
 
                 if (_solver_tag_value != tags::tv_gpu_cuda)
                 {
