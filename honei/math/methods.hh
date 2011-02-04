@@ -34,6 +34,10 @@ namespace methods
     {
     };
 
+    class ILU
+    {
+    };
+
     class NONE
     {
     };
