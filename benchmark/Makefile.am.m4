@@ -15,7 +15,6 @@ $1_BENCHMARK_LDADD = \
 	$(top_builddir)/honei/graph/libhoneigraph.la \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/math/spai/src/libspai.la \
-	$(top_builddir)/honei/math/spai/lapack/liblapack.la \
 	$(top_builddir)/honei/math/SuperLU_4.1/SRC/libsuperlu.la \
 	$(BACKEND_LIBS) \
 	$(DYNAMIC_LD_LIBS)
@@ -24,6 +23,7 @@ if BLAPACK
 else
   $1_BENCHMARK_LDADD += \
 	$(top_builddir)/honei/math/spai/blas/libblas.la \
+	$(top_builddir)/honei/math/spai/lapack/liblapack.la \
 	$(top_builddir)/honei/math/SuperLU_4.1/CBLAS/libsblas.la
 endif
 $1_BENCHMARK_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)

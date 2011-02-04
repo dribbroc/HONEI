@@ -17,7 +17,6 @@ $1_TEST_LDADD = \
 	$(top_builddir)/honei/la/libhoneila.la \
 	$(top_builddir)/honei/math/spai/src/libspai.la \
 	libhoneimath.la \
-	$(top_builddir)/honei/math/spai/lapack/liblapack.la \
 	$(top_builddir)/honei/math/SuperLU_4.1/SRC/libsuperlu.la \
 	libhoneimath.la \
 	$(FLIBS) \
@@ -29,6 +28,7 @@ else
 
   $1_TEST_LDADD += \
 	$(top_builddir)/honei/math/spai/blas/libblas.la \
+	$(top_builddir)/honei/math/spai/lapack/liblapack.la \
 	$(top_builddir)/honei/math/SuperLU_4.1/CBLAS/libsblas.la
 
 endif
@@ -127,7 +127,6 @@ libhoneimath_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/la/libhoneila.la
 	$(top_builddir)/honei/math/spai/src/libspai.la \
-	$(top_builddir)/honei/math/spai/lapack/liblapack.la \
 	$(top_builddir)/honei/math/SuperLU_4.1/SRC/libsuperlu.la
 
 libhoneimath_includedir = $(includedir)/honei/math
