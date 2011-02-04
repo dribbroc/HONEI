@@ -5,8 +5,9 @@ HONEI README FILE
 INSTALLING
 ----------
 
-* Decompress and untar the honei archive.
-* Run './configure' in the untarred honei archive's top-level directory.
+* Decompress and untar the honei archive or fetch it from github.
+* Run './autogen.bash' in the top-level directory.
+* Run './configure' in the top-level directory.
 * Run 'make' to build all libraries and applications.
 * Optionally run 'make check TYPE=quick'.
 
@@ -25,6 +26,7 @@ details):
 --with-cublas           Use the nvidia CuBlas
 --with-boost            Use boost instead of tr1 headers
 --with-visual           Include GUI support (required for the GUI applications)
+--with-cublas           Use CudaBlas for reduction operations
 
 Currently only common versions of the GNU Compiler Collection's
 c++ compiler are fully supported and tested. Examples include
