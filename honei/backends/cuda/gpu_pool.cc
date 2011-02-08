@@ -46,10 +46,7 @@ GPUPool::GPUPool() :
         barriers.push_back(new ConditionVariable);
         mutexe.push_back(new Mutex);
         GPUFunction * tobj(0);
-        if (cuda_device_count() < 3)
-            tobj = new GPUFunction(i, mutexe.at(i), barriers.at(i), (tasks.at(i)));
-        else
-            tobj = new GPUFunction(cuda_device_count() - i - 1, mutexe.at(i), barriers.at(i), (tasks.at(i)));
+        tobj = new GPUFunction(i, mutexe.at(i), barriers.at(i), (tasks.at(i)));
         Thread * t = new Thread(*tobj);
         threads.push_back(std::make_pair(t, tobj));
     }
