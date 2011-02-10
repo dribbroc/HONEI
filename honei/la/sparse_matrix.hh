@@ -169,10 +169,13 @@ namespace honei
 
                 for (unsigned long row(0) ; row < src.rows() ; ++row)
                 {
-                    for (unsigned long i(row) ; i < src.Aj().size() ; i += src.stride())
+                    for (unsigned long i(row*src.threads()) ; i < src.Aj().size() ; i += src.stride())
                     {
-                        if (src.Ax()[i] != 0)
-                            (*this)(row, src.Aj()[i]) = src.Ax()[i];
+                        for (unsigned long thread(0) ; thread < src.threads() ; ++thread)
+                        {
+                            if (src.Ax()[i + thread] != 0)
+                                (*this)(row, src.Aj()[i + thread]) = src.Ax()[i + thread];
+                        }
                     }
                 }
 

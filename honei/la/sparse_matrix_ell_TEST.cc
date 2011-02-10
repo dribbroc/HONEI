@@ -41,29 +41,32 @@ class SparseMatrixELLQuickTest :
 
         virtual void run() const
         {
-            unsigned long size (111);
-            SparseMatrix<DataType_> sms(size, size + 3);
-            for (typename SparseMatrix<DataType_>::ElementIterator i(sms.begin_elements()) ; i < sms.end_elements() ; ++i)
+            for (unsigned long threads(1) ; threads <= 16 ; threads*=2)
             {
-                if (i.index() % 5 == 0)
-                    *i = (DataType_(i.index()) / 1.234 + 1);
-            }
-            sms[0][0] = 4711;
-
-            SparseMatrixELL<DataType_> sm0(sms);
-
-            TEST_CHECK_EQUAL(sm0, sm0);
-            TEST_CHECK_EQUAL(sm0, sm0.copy());
-            TEST_CHECK_EQUAL(sms.used_elements(), sm0.used_elements());
-            for (unsigned long row(0) ; row < sm0.rows() ; ++row)
-            {
-                for (unsigned long col(0) ; col < sm0.columns() ; ++col)
+                unsigned long size (111);
+                SparseMatrix<DataType_> sms(size, size + 3);
+                for (typename SparseMatrix<DataType_>::ElementIterator i(sms.begin_elements()) ; i < sms.end_elements() ; ++i)
                 {
-                    TEST_CHECK_EQUAL(sm0(row, col), sms(row, col));
+                    if (i.index() % 5 == 0)
+                        *i = (DataType_(i.index()) / 1.234 + 1);
                 }
+                sms[0][0] = 4711;
+
+                SparseMatrixELL<DataType_> sm0(sms, threads);
+
+                TEST_CHECK_EQUAL(sm0, sm0);
+                TEST_CHECK_EQUAL(sm0, sm0.copy());
+                TEST_CHECK_EQUAL(sms.used_elements(), sm0.used_elements());
+                for (unsigned long row(0) ; row < sm0.rows() ; ++row)
+                {
+                    for (unsigned long col(0) ; col < sm0.columns() ; ++col)
+                    {
+                        TEST_CHECK_EQUAL(sm0(row, col), sms(row, col));
+                    }
+                }
+                SparseMatrix<DataType_> sms2(sm0);
+                TEST_CHECK_EQUAL(sms, sms2);
             }
-            SparseMatrix<DataType_> sms2(sm0);
-            TEST_CHECK_EQUAL(sms, sms2);
         }
 };
 SparseMatrixELLQuickTest<float> sparse_matrix_ell_quick_test_float("float");

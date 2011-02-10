@@ -386,6 +386,8 @@ class MatrixIO<io_formats::ELL>
                 else if (sizeof(unsigned long) != 8)
                     throw InternalError("Only 64 bit machine output supported!");
                 /// \todo convert uint32 to uint64 if needed (see read_matrix for conversion)
+                else if (smatrix.threads() != 1)
+                    throw InternalError("Only Matrices with 1 threads data layout are supported for export");
 
                 else
                 {

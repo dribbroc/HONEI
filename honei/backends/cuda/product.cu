@@ -146,71 +146,113 @@ namespace honei
         #endif
 
         __global__ void product_smell_dv_gpu(float * x, float * y, unsigned long * Aj, float * Ax, unsigned long * Arl,
-                unsigned long row_start, unsigned long row_end, unsigned long num_cols_per_row, unsigned long stride)
+                unsigned long row_start, unsigned long row_end, unsigned long num_cols_per_row, unsigned long stride, unsigned long threads)
         {
-            unsigned long row = blockDim.x*blockIdx.x+threadIdx.x;
-            row+=row_start;
+            extern __shared__ float  shared_ell_float[];
 
-            if(row >= row_end){ return; }
+            const unsigned long T = threads;
+            const unsigned long idx = blockDim.x*blockIdx.x+threadIdx.x + (row_start * T);
+            const unsigned long idb = threadIdx.x;
+            const unsigned long idp = idb % T;
+            const unsigned long row = idx / T;
 
-            //float sum = y[row];
-            float sum = float(0);
-
-            Aj += row;
-            Ax += row;
-
-            const unsigned long max = Arl[row];
-            for(unsigned long n = 0; n < max ; n++)
+            shared_ell_float[idb] = 0;
+            if(row <  row_end)
             {
-                const float A_ij = *Ax;
+                float sum = float(0);
 
-                //if (A_ij != 0)
+                const unsigned long max = Arl[row];
+                //const unsigned long max = num_cols_per_row;
+                for(unsigned long k = 0; k < max ; ++k)
                 {
-                    const unsigned long col = *Aj;
-                    //sum += A_ij * x[col];
-                    sum += A_ij * tex1Dfetch(tex_x_float_product, col);
+                    const float value = Ax[k*stride+row*T+idp];
+                    if (value != 0)
+                    {
+                        const unsigned long col = Aj[k*stride+row*T+idp];
+                        //sum += value * x[col];
+                        sum += value * tex1Dfetch(tex_x_float_product, col);
+                    }
                 }
+                shared_ell_float[idb] = sum;
 
-                Aj += stride;
-                Ax += stride;
+                switch (threads)
+                {
+                    case 16:
+                        if (idp < 8)
+                            shared_ell_float[idb] += shared_ell_float[idb + 8];
+                    case 8:
+                        if (idp < 4)
+                            shared_ell_float[idb] += shared_ell_float[idb + 4];
+                    case 4:
+                        if (idp < 2)
+                            shared_ell_float[idb] += shared_ell_float[idb + 2];
+                    case 2:
+                        if (idp == 0)
+                            y[row - row_start] = shared_ell_float[idb] + shared_ell_float[idb + 1];
+                        break;
+                    case 1:
+                        y[row - row_start] = shared_ell_float[idb];
+                        break;
+                    default:
+                        break;
+                }
             }
-
-            y[row - row_start] = sum;
         }
 
 #ifdef HONEI_CUDA_DOUBLE
         __global__ void product_smell_dv_gpu(double * x, double * y, unsigned long * Aj, double * Ax, unsigned long * Arl,
-                unsigned long row_start, unsigned long row_end, unsigned long num_cols_per_row, unsigned long stride)
+                unsigned long row_start, unsigned long row_end, unsigned long num_cols_per_row, unsigned long stride, unsigned long threads)
         {
-            unsigned long row = blockDim.x*blockIdx.x+threadIdx.x;
-            row+=row_start;
+            extern __shared__ double  shared_ell_double[];
 
-            if(row >= row_end){ return; }
+            const unsigned long T = threads;
+            const unsigned long idx = blockDim.x*blockIdx.x+threadIdx.x + (row_start * T);
+            const unsigned long idb = threadIdx.x;
+            const unsigned long idp = idb % T;
+            const unsigned long row = idx / T;
 
-            //double sum = y[row];
-            double sum = double(0);
-
-            Aj += row;
-            Ax += row;
-
-            const unsigned long max = Arl[row];
-            for(unsigned long n = 0; n < max ; n++)
+            shared_ell_double[idb] = 0;
+            if(row <  row_end)
             {
-                const double A_ij = *Ax;
+                double sum = double(0);
 
-                //if (A_ij != 0)
+                const unsigned long max = Arl[row];
+                //const unsigned long max = num_cols_per_row;
+                for(unsigned long k = 0; k < max ; ++k)
                 {
-                    const unsigned long col = *Aj;
-                    //sum += A_ij * x[col];
-                    int2 v = tex1Dfetch(tex_x_double_product, col);
-                    sum += A_ij * __hiloint2double(v.y, v.x);
+                    const double value = Ax[k*stride+row*T+idp];
+                    if (value != 0)
+                    {
+                        const unsigned long col = Aj[k*stride+row*T+idp];
+                        //sum += value * x[col];
+                        int2 v = tex1Dfetch(tex_x_double_product, col);
+                        sum += value * __hiloint2double(v.y, v.x);
+                    }
                 }
+                shared_ell_double[idb] = sum;
 
-                Aj += stride;
-                Ax += stride;
+                switch (threads)
+                {
+                    case 16:
+                        if (idp < 8)
+                            shared_ell_double[idb] += shared_ell_double[idb + 8];
+                    case 8:
+                        if (idp < 4)
+                            shared_ell_double[idb] += shared_ell_double[idb + 4];
+                    case 4:
+                        if (idp < 2)
+                            shared_ell_double[idb] += shared_ell_double[idb + 2];
+                    case 2:
+                        if (idp == 0)
+                            y[row - row_start] = shared_ell_double[idb] + shared_ell_double[idb + 1];
+                        break;
+                    case 1:
+                        y[row - row_start] = shared_ell_double[idb];
+                        break;
+                    default:
+                        break;
+                }
             }
-
-            y[row - row_start] = sum;
         }
 #endif
     }
@@ -274,13 +316,12 @@ extern "C" void cuda_product_bmdv_q1_double (void * ll, void * ld, void * lu,
 
 extern "C" void cuda_product_smell_dv_float(void * x, void * y, void * Aj, void * Ax, void * Arl,
         unsigned long row_start, unsigned long row_end, unsigned long num_cols_per_row,
-        unsigned long stride, unsigned long blocksize)
+        unsigned long stride, unsigned long blocksize, unsigned long threads)
 {
-    unsigned long size(row_end - row_start);
     dim3 grid;
     dim3 block;
     block.x = blocksize;
-    grid.x = (unsigned)ceil(size/(double)(block.x));
+    grid.x = (unsigned)ceil((threads*(row_end - row_start))/(double)(block.x));
 
     float * x_gpu((float *)x);
     float * y_gpu((float *)y);
@@ -289,8 +330,8 @@ extern "C" void cuda_product_smell_dv_float(void * x, void * y, void * Aj, void 
     unsigned long * Arl_gpu((unsigned long *)Arl);
 
     cudaBindTexture(NULL, tex_x_float_product, x_gpu);
-    honei::cuda::product_smell_dv_gpu<<<grid, blocksize>>>(x_gpu, y_gpu, Aj_gpu, Ax_gpu, Arl_gpu,
-            row_start, row_end, num_cols_per_row, stride);
+    honei::cuda::product_smell_dv_gpu<<<grid, block, block.x * sizeof(float)>>>(x_gpu, y_gpu, Aj_gpu, Ax_gpu, Arl_gpu,
+            row_start, row_end, num_cols_per_row, stride, threads);
     cudaUnbindTexture(tex_x_float_product);
 
     CUDA_ERROR();
@@ -299,13 +340,12 @@ extern "C" void cuda_product_smell_dv_float(void * x, void * y, void * Aj, void 
 #ifdef HONEI_CUDA_DOUBLE
 extern "C" void cuda_product_smell_dv_double(void * x, void * y, void * Aj, void * Ax, void * Arl,
         unsigned long row_start, unsigned long row_end, unsigned long num_cols_per_row,
-        unsigned long stride, unsigned long blocksize)
+        unsigned long stride, unsigned long blocksize, unsigned long threads)
 {
-    unsigned long size(row_end - row_start);
     dim3 grid;
     dim3 block;
     block.x = blocksize;
-    grid.x = (unsigned)ceil(size/(double)(block.x));
+    grid.x = (unsigned)ceil((threads*(row_end - row_start))/(double)(block.x));
 
     double * x_gpu((double *)x);
     double * y_gpu((double *)y);
@@ -314,8 +354,8 @@ extern "C" void cuda_product_smell_dv_double(void * x, void * y, void * Aj, void
     unsigned long * Arl_gpu((unsigned long *)Arl);
 
     cudaBindTexture(NULL, tex_x_double_product, x_gpu);
-    honei::cuda::product_smell_dv_gpu<<<grid, blocksize>>>(x_gpu, y_gpu, Aj_gpu, Ax_gpu, Arl_gpu,
-            row_start, row_end, num_cols_per_row, stride);
+    honei::cuda::product_smell_dv_gpu<<<grid, block, block.x * sizeof(double)>>>(x_gpu, y_gpu, Aj_gpu, Ax_gpu, Arl_gpu,
+            row_start, row_end, num_cols_per_row, stride, threads);
     cudaUnbindTexture(tex_x_double_product);
 
     CUDA_ERROR();

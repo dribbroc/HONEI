@@ -50,15 +50,17 @@ namespace honei
             SparseMatrixELL(unsigned long rows, unsigned columns, unsigned long stride,
                     unsigned long num_cols_per_row,
                     const DenseVector<unsigned long> & Aj,
-                    const DenseVector<DataType_> & Ax);
+                    const DenseVector<DataType_> & Ax,
+                    unsigned long threads = 1);
 
 
             /**
              * Constructor.
              *
              * \param src The SparseMatrix our matrix will be created from.
+             * \param threads The thread count we want to support.
              */
-            explicit SparseMatrixELL(SparseMatrix<DataType_> & src);
+            explicit SparseMatrixELL(SparseMatrix<DataType_> & src, unsigned long threads = 1);
 
             /// Copy-constructor.
             SparseMatrixELL(const SparseMatrixELL<DataType_> & other);
@@ -85,6 +87,9 @@ namespace honei
 
             /// Returns our Aj / Ax column count.
             unsigned long num_cols_per_row() const;
+
+            /// Returns the thread count, e.g. the packed data count per Aj row
+            unsigned long threads() const;
 
             /// Retrieves our Aj (indices) vector.
             DenseVector<unsigned long> & Aj() const;

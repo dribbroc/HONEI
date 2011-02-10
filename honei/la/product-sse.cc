@@ -266,13 +266,13 @@ DenseVector<float> & Product<tags::CPU::SSE>::value(DenseVector<float> & result,
     {
         fill<tags::CPU::SSE>(result, float(0));
         honei::sse::product_smell_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), b.elements(),
-                a.stride(), a.rows(), a.num_cols_per_row());
+                a.stride(), a.rows(), a.num_cols_per_row(), a.threads());
     }
 
     else
     {
         honei::sse::product_smell_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), a.Arl().elements(), b.elements(),
-                a.stride(), a.rows(), a.num_cols_per_row(), row_start, row_end);
+                a.stride(), a.rows(), a.num_cols_per_row(), row_start, row_end, a.threads());
     }
 
     return result;
@@ -292,13 +292,13 @@ DenseVector<double> & Product<tags::CPU::SSE>::value(DenseVector<double> & resul
     {
         fill<tags::CPU::SSE>(result, double(0));
         honei::sse::product_smell_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), b.elements(),
-                a.stride(), a.rows(), a.num_cols_per_row());
+                a.stride(), a.rows(), a.num_cols_per_row(), a.threads());
     }
 
     else
     {
         honei::sse::product_smell_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), a.Arl().elements(), b.elements(),
-                a.stride(), a.rows(), a.num_cols_per_row(), row_start, row_end);
+                a.stride(), a.rows(), a.num_cols_per_row(), row_start, row_end, a.threads());
     }
 
     return result;

@@ -25,6 +25,9 @@
 #include <honei/util/stringify.hh>
 #include <iostream>
 #include <honei/backends/cuda/gpu_pool.hh>
+#ifdef HONEI_OPENCL
+#include <honei/backends/opencl/opencl_backend.hh>
+#endif
 
 //#include <cstdio>
 //#include <cstdlib>
@@ -56,7 +59,10 @@ class ProductELLFileBenchmark:
             std::string filebase(HONEI_SOURCEDIR);
             filebase += "/honei/math/";
             _file_name = filebase + _file_name;
-            SparseMatrixELL<DT_> smatrix = MatrixIO<io_formats::ELL>::read_matrix(_file_name, DT_(1));
+            SparseMatrixELL<DT_> bsmatrix = MatrixIO<io_formats::ELL>::read_matrix(_file_name, DT_(1));
+            SparseMatrix<DT_> bla(bsmatrix);
+            SparseMatrixELL<DT_>smatrix(bla, 1);
+            std::cout<<smatrix.num_cols_per_row()<<" "<<smatrix.rows()<<std::endl;
             DenseVector<DT_> x(smatrix.rows());
             DenseVector<DT_> y(smatrix.rows());
             for (unsigned long i(0) ; i < x.size() ; ++i)
@@ -75,6 +81,10 @@ class ProductELLFileBenchmark:
                         if (Tag_::tag_value == tags::tv_gpu_cuda)
                             cuda::GPUPool::instance()->flush();
 #endif
+#ifdef HONEI_OPENCL
+                        if (Tag_::tag_value == tags::tv_opencl)
+                            OpenCLBackend::instance()->flush();
+#endif
                         );
             }
             {
@@ -87,7 +97,6 @@ class ProductELLFileBenchmark:
             std::cout<<"Non Zero Elements: "<<smatrix.used_elements()<<std::endl;
         }
 };
-/*
 #ifdef HONEI_SSE
 ProductELLFileBenchmark<tags::CPU::SSE, double> sse_pareng_7_double_q1_0("ELL  Product double sse L7, q1 sort 0", "testdata/poisson_advanced/sort_0/A_7.ell", 10);
 ProductELLFileBenchmark<tags::CPU::SSE, double> sse_pareng_8_double_q1_0("ELL  Product double sse L8, q1 sort 0", "testdata/poisson_advanced/sort_0/A_8.ell", 10);
@@ -242,4 +251,107 @@ ProductELLFileBenchmark<tags::GPU::CUDA, double> cuda_pareng_7_double_q2_4("ELL 
 ProductELLFileBenchmark<tags::GPU::CUDA, double> cuda_pareng_8_double_q2_4("ELL  Product double cuda L8, q2 sort 4", "testdata/poisson_advanced/q2_sort_4/A_8.ell", 10);
 ProductELLFileBenchmark<tags::GPU::CUDA, double> cuda_pareng_9_double_q2_4("ELL  Product double cuda L9, q2 sort 4", "testdata/poisson_advanced/q2_sort_4/A_9.ell", 10);
 #endif
-#endif*/
+#endif
+
+#ifdef HONEI_OPENCL
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_7_double_q1_0("ELL  Product double opencl_cpu L7, q1 sort 0", "testdata/poisson_advanced/sort_0/A_7.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_8_double_q1_0("ELL  Product double opencl_cpu L8, q1 sort 0", "testdata/poisson_advanced/sort_0/A_8.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_9_double_q1_0("ELL  Product double opencl_cpu L9, q1 sort 0", "testdata/poisson_advanced/sort_0/A_9.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_10_double_q1_0("ELL  Product double opencl_cpu L10, q1 sort 0", "testdata/poisson_advanced/sort_0/A_10.ell", 10);
+
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_7_double_q1_1("ELL  Product double opencl_cpu L7, q1 sort 1", "testdata/poisson_advanced/sort_1/A_7.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_8_double_q1_1("ELL  Product double opencl_cpu L8, q1 sort 1", "testdata/poisson_advanced/sort_1/A_8.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_9_double_q1_1("ELL  Product double opencl_cpu L9, q1 sort 1", "testdata/poisson_advanced/sort_1/A_9.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_10_double_q1_1("ELL  Product double opencl_cpu L10, q1 sort 1", "testdata/poisson_advanced/sort_1/A_10.ell", 10);
+
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_7_double_q1_2("ELL  Product double opencl_cpu L7, q1 sort 2", "testdata/poisson_advanced/sort_2/A_7.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_8_double_q1_2("ELL  Product double opencl_cpu L8, q1 sort 2", "testdata/poisson_advanced/sort_2/A_8.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_9_double_q1_2("ELL  Product double opencl_cpu L9, q1 sort 2", "testdata/poisson_advanced/sort_2/A_9.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_10_double_q1_2("ELL  Product double opencl_cpu L10, q1 sort 2", "testdata/poisson_advanced/sort_2/A_10.ell", 10);
+
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_7_double_q1_3("ELL  Product double opencl_cpu L7, q1 sort 3", "testdata/poisson_advanced/sort_3/A_7.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_8_double_q1_3("ELL  Product double opencl_cpu L8, q1 sort 3", "testdata/poisson_advanced/sort_3/A_8.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_9_double_q1_3("ELL  Product double opencl_cpu L9, q1 sort 3", "testdata/poisson_advanced/sort_3/A_9.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_10_double_q1_3("ELL  Product double opencl_cpu L10, q1 sort 3", "testdata/poisson_advanced/sort_3/A_10.ell", 10);
+
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_7_double_q1_4("ELL  Product double opencl_cpu L7, q1 sort 4", "testdata/poisson_advanced/sort_4/A_7.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_8_double_q1_4("ELL  Product double opencl_cpu L8, q1 sort 4", "testdata/poisson_advanced/sort_4/A_8.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_9_double_q1_4("ELL  Product double opencl_cpu L9, q1 sort 4", "testdata/poisson_advanced/sort_4/A_9.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_10_double_q1_4("ELL  Product double opencl_cpu L10, q1 sort 4", "testdata/poisson_advanced/sort_4/A_10.ell", 10);
+
+ProductELLFileBenchmark<tags::OpenCL::CPU, float> opencl_cpu_pareng_6_float_q2_0("ELL  Product float opencl_cpu L6, q2 sort 0", "testdata/poisson_advanced/q2_sort_0/A_6.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_7_double_q2_0("ELL  Product double opencl_cpu L7, q2 sort 0", "testdata/poisson_advanced/q2_sort_0/A_7.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_8_double_q2_0("ELL  Product double opencl_cpu L8, q2 sort 0", "testdata/poisson_advanced/q2_sort_0/A_8.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_9_double_q2_0("ELL  Product double opencl_cpu L9, q2 sort 0", "testdata/poisson_advanced/q2_sort_0/A_9.ell", 10);
+
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_6_double_q2_1("ELL  Product double opencl_cpu L6, q2 sort 1", "testdata/poisson_advanced/q2_sort_1/A_6.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_7_double_q2_1("ELL  Product double opencl_cpu L7, q2 sort 1", "testdata/poisson_advanced/q2_sort_1/A_7.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_8_double_q2_1("ELL  Product double opencl_cpu L8, q2 sort 1", "testdata/poisson_advanced/q2_sort_1/A_8.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_9_double_q2_1("ELL  Product double opencl_cpu L9, q2 sort 1", "testdata/poisson_advanced/q2_sort_1/A_9.ell", 10);
+
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_6_double_q2_2("ELL  Product double opencl_cpu L6, q2 sort 2", "testdata/poisson_advanced/q2_sort_2/A_6.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_7_double_q2_2("ELL  Product double opencl_cpu L7, q2 sort 2", "testdata/poisson_advanced/q2_sort_2/A_7.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_8_double_q2_2("ELL  Product double opencl_cpu L8, q2 sort 2", "testdata/poisson_advanced/q2_sort_2/A_8.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_9_double_q2_2("ELL  Product double opencl_cpu L9, q2 sort 2", "testdata/poisson_advanced/q2_sort_2/A_9.ell", 10);
+
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_6_double_q2_3("ELL  Product double opencl_cpu L6, q2 sort 3", "testdata/poisson_advanced/q2_sort_3/A_6.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_7_double_q2_3("ELL  Product double opencl_cpu L7, q2 sort 3", "testdata/poisson_advanced/q2_sort_3/A_7.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_8_double_q2_3("ELL  Product double opencl_cpu L8, q2 sort 3", "testdata/poisson_advanced/q2_sort_3/A_8.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_9_double_q2_3("ELL  Product double opencl_cpu L9, q2 sort 3", "testdata/poisson_advanced/q2_sort_3/A_9.ell", 10);
+
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_6_double_q2_4("ELL  Product double opencl_cpu L6, q2 sort 4", "testdata/poisson_advanced/q2_sort_4/A_6.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_7_double_q2_4("ELL  Product double opencl_cpu L7, q2 sort 4", "testdata/poisson_advanced/q2_sort_4/A_7.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_8_double_q2_4("ELL  Product double opencl_cpu L8, q2 sort 4", "testdata/poisson_advanced/q2_sort_4/A_8.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::CPU, double> opencl_cpu_pareng_9_double_q2_4("ELL  Product double opencl_cpu L9, q2 sort 4", "testdata/poisson_advanced/q2_sort_4/A_9.ell", 10);
+#ifdef HONEI_CUDA_DOUBLE
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_7_double_q1_0("ELL  Product double opencl_gpu L7, q1 sort 0", "testdata/poisson_advanced/sort_0/A_7.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_8_double_q1_0("ELL  Product double opencl_gpu L8, q1 sort 0", "testdata/poisson_advanced/sort_0/A_8.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_9_double_q1_0("ELL  Product double opencl_gpu L9, q1 sort 0", "testdata/poisson_advanced/sort_0/A_9.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_10_double_q1_0("ELL  Product double opencl_gpu L10, q1 sort 0", "testdata/poisson_advanced/sort_0/A_10.ell", 10);
+
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_7_double_q1_1("ELL  Product double opencl_gpu L7, q1 sort 1", "testdata/poisson_advanced/sort_1/A_7.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_8_double_q1_1("ELL  Product double opencl_gpu L8, q1 sort 1", "testdata/poisson_advanced/sort_1/A_8.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_9_double_q1_1("ELL  Product double opencl_gpu L9, q1 sort 1", "testdata/poisson_advanced/sort_1/A_9.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_10_double_q1_1("ELL  Product double opencl_gpu L10, q1 sort 1", "testdata/poisson_advanced/sort_1/A_10.ell", 10);
+
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_7_double_q1_2("ELL  Product double opencl_gpu L7, q1 sort 2", "testdata/poisson_advanced/sort_2/A_7.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_8_double_q1_2("ELL  Product double opencl_gpu L8, q1 sort 2", "testdata/poisson_advanced/sort_2/A_8.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_9_double_q1_2("ELL  Product double opencl_gpu L9, q1 sort 2", "testdata/poisson_advanced/sort_2/A_9.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_10_double_q1_2("ELL  Product double opencl_gpu L10, q1 sort 2", "testdata/poisson_advanced/sort_2/A_10.ell", 10);
+
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_7_double_q1_3("ELL  Product double opencl_gpu L7, q1 sort 3", "testdata/poisson_advanced/sort_3/A_7.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_8_double_q1_3("ELL  Product double opencl_gpu L8, q1 sort 3", "testdata/poisson_advanced/sort_3/A_8.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_9_double_q1_3("ELL  Product double opencl_gpu L9, q1 sort 3", "testdata/poisson_advanced/sort_3/A_9.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_10_double_q1_3("ELL  Product double opencl_gpu L10, q1 sort 3", "testdata/poisson_advanced/sort_3/A_10.ell", 10);
+
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_7_double_q1_4("ELL  Product double opencl_gpu L7, q1 sort 4", "testdata/poisson_advanced/sort_4/A_7.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_8_double_q1_4("ELL  Product double opencl_gpu L8, q1 sort 4", "testdata/poisson_advanced/sort_4/A_8.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_9_double_q1_4("ELL  Product double opencl_gpu L9, q1 sort 4", "testdata/poisson_advanced/sort_4/A_9.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_10_double_q1_4("ELL  Product double opencl_gpu L10, q1 sort 4", "testdata/poisson_advanced/sort_4/A_10.ell", 10);
+
+ProductELLFileBenchmark<tags::OpenCL::GPU, float> opencl_gpu_pareng_6_float_q2_0("ELL  Product float opencl_gpu L6, q2 sort 0", "testdata/poisson_advanced/q2_sort_0/A_6.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_7_double_q2_0("ELL  Product double opencl_gpu L7, q2 sort 0", "testdata/poisson_advanced/q2_sort_0/A_7.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_8_double_q2_0("ELL  Product double opencl_gpu L8, q2 sort 0", "testdata/poisson_advanced/q2_sort_0/A_8.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_9_double_q2_0("ELL  Product double opencl_gpu L9, q2 sort 0", "testdata/poisson_advanced/q2_sort_0/A_9.ell", 10);
+
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_6_double_q2_1("ELL  Product double opencl_gpu L6, q2 sort 1", "testdata/poisson_advanced/q2_sort_1/A_6.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_7_double_q2_1("ELL  Product double opencl_gpu L7, q2 sort 1", "testdata/poisson_advanced/q2_sort_1/A_7.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_8_double_q2_1("ELL  Product double opencl_gpu L8, q2 sort 1", "testdata/poisson_advanced/q2_sort_1/A_8.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_9_double_q2_1("ELL  Product double opencl_gpu L9, q2 sort 1", "testdata/poisson_advanced/q2_sort_1/A_9.ell", 10);
+
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_6_double_q2_2("ELL  Product double opencl_gpu L6, q2 sort 2", "testdata/poisson_advanced/q2_sort_2/A_6.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_7_double_q2_2("ELL  Product double opencl_gpu L7, q2 sort 2", "testdata/poisson_advanced/q2_sort_2/A_7.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_8_double_q2_2("ELL  Product double opencl_gpu L8, q2 sort 2", "testdata/poisson_advanced/q2_sort_2/A_8.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_9_double_q2_2("ELL  Product double opencl_gpu L9, q2 sort 2", "testdata/poisson_advanced/q2_sort_2/A_9.ell", 10);
+
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_6_double_q2_3("ELL  Product double opencl_gpu L6, q2 sort 3", "testdata/poisson_advanced/q2_sort_3/A_6.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_7_double_q2_3("ELL  Product double opencl_gpu L7, q2 sort 3", "testdata/poisson_advanced/q2_sort_3/A_7.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_8_double_q2_3("ELL  Product double opencl_gpu L8, q2 sort 3", "testdata/poisson_advanced/q2_sort_3/A_8.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_9_double_q2_3("ELL  Product double opencl_gpu L9, q2 sort 3", "testdata/poisson_advanced/q2_sort_3/A_9.ell", 10);
+
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_6_double_q2_4("ELL  Product double opencl_gpu L6, q2 sort 4", "testdata/poisson_advanced/q2_sort_4/A_6.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_7_double_q2_4("ELL  Product double opencl_gpu L7, q2 sort 4", "testdata/poisson_advanced/q2_sort_4/A_7.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_8_double_q2_4("ELL  Product double opencl_gpu L8, q2 sort 4", "testdata/poisson_advanced/q2_sort_4/A_8.ell", 10);
+ProductELLFileBenchmark<tags::OpenCL::GPU, double> opencl_gpu_pareng_9_double_q2_4("ELL  Product double opencl_gpu L9, q2 sort 4", "testdata/poisson_advanced/q2_sort_4/A_9.ell", 10);
+#endif
+#endif

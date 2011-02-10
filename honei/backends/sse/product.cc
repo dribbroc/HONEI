@@ -1003,40 +1003,45 @@ namespace honei
         }
 
         void product_smell_dv(float * result, unsigned long * Aj, float * Ax, float * b,
-                unsigned long stride, unsigned long rows, unsigned long num_cols_per_row)
+                unsigned long stride, unsigned long rows, unsigned long num_cols_per_row, unsigned long threads)
         {
             for(unsigned long n(0) ; n < num_cols_per_row ; n++)
             {
                 const unsigned long * Aj_n = Aj + n * stride;
                 const float * Ax_n = Ax + n * stride;
-                for(unsigned i(0) ; i < rows ; i++)
+                for(unsigned i(0) ; i < rows * threads ; i++)
                 {
                     //if(Ax_n[i] != float(0))
-                        result[i] += Ax_n[i] * b[Aj_n[i]];
+                    const unsigned long row(i/threads);
+                    result[row] += Ax_n[i] * b[Aj_n[i]];
                 }
             }
         }
+
         void product_smell_dv(float * result, const unsigned long * Aj, const float * Ax, const unsigned long * Arl, const float * b,
                 unsigned long stride, unsigned long /*rows*/, unsigned long /*num_cols_per_row*/,
-                unsigned long row_start, unsigned long row_end)
+                unsigned long row_start, unsigned long row_end, unsigned long threads)
         {
             for (unsigned long row(row_start) ; row < row_end ; ++row)
             {
                 const unsigned long * tAj(Aj);
                 const float * tAx(Ax);
                 float sum(0);
-                tAj += row;
-                tAx += row;
+                tAj += row * threads;
+                tAx += row * threads;
 
                 const unsigned long max(Arl[row]);
                 for(unsigned long n = 0; n < max ; n++)
                 {
-                    const float A_ij = *tAx;
-
-                    //if (A_ij != 0)
+                    for (unsigned long thread(0) ; thread < threads ; ++thread)
                     {
-                        const unsigned long col = *tAj;
-                        sum += A_ij * b[col];
+                        const float A_ij = *(tAx + thread);
+
+                        //if (A_ij != 0)
+                        {
+                            const unsigned long col = *(tAj + thread);
+                            sum += A_ij * b[col];
+                        }
                     }
 
                     tAj += stride;
@@ -1047,41 +1052,45 @@ namespace honei
         }
 
         void product_smell_dv(double * result, unsigned long * Aj, double * Ax, double * b,
-                unsigned long stride, unsigned long rows, unsigned long num_cols_per_row)
+                unsigned long stride, unsigned long rows, unsigned long num_cols_per_row, unsigned long threads)
         {
             for(unsigned long n(0) ; n < num_cols_per_row ; n++)
             {
                 const unsigned long * Aj_n = Aj + n * stride;
                 const double * Ax_n = Ax + n * stride;
-                for(unsigned i(0) ; i < rows ; i++)
+                for(unsigned i(0) ; i < rows * threads ; i++)
                 {
                     //if(Ax_n[i] != double(0))
-                        result[i] += Ax_n[i] * b[Aj_n[i]];
+                    const unsigned long row(i/threads);
+                    result[row] += Ax_n[i] * b[Aj_n[i]];
                 }
             }
         }
 
         void product_smell_dv(double * result, const unsigned long * Aj, const double * Ax, const unsigned long * Arl, const double * b,
                 unsigned long stride, unsigned long /*rows*/, unsigned long /*num_cols_per_row*/,
-                unsigned long row_start, unsigned long row_end)
+                unsigned long row_start, unsigned long row_end, unsigned long threads)
         {
             for (unsigned long row(row_start) ; row < row_end ; ++row)
             {
                 const unsigned long * tAj(Aj);
                 const double * tAx(Ax);
                 double sum(0);
-                tAj += row;
-                tAx += row;
+                tAj += row * threads;
+                tAx += row * threads;
 
                 const unsigned long max(Arl[row]);
                 for(unsigned long n = 0; n < max ; n++)
                 {
-                    const double A_ij = *tAx;
-
-                    //if (A_ij != 0)
+                    for (unsigned long thread(0) ; thread < threads ; ++thread)
                     {
-                        const unsigned long col = *tAj;
-                        sum += A_ij * b[col];
+                        const double A_ij = *(tAx + thread);
+
+                        //if (A_ij != 0)
+                        {
+                            const unsigned long col = *(tAj + thread);
+                            sum += A_ij * b[col];
+                        }
                     }
 
                     tAj += stride;

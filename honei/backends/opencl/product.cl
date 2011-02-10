@@ -17,59 +17,169 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-__kernel void product_smell_dv_float(__global float * x, __global float * y, __global unsigned long * Aj, __global float * Ax,
-                                              __global unsigned long * Arl, unsigned long num_rows, unsigned long stride)
-{
-    uint row = get_global_id(0);
-
-    if(row >= num_rows){ return; }
-    float sum = 0.f;
-
-    Aj += row;
-    Ax += row;
-
-    const unsigned long max = Arl[row];
-    for(unsigned long n = 0; n < max ; n++){
-        const float A_ij = *Ax;
-
-        //if (A_ij != 0)
-        {
-            const unsigned long col = *Aj;
-            sum += A_ij * x[col];
-        }
-
-        Aj += stride;
-        Ax += stride;
-    }
-
-    y[row] = sum;
-}
-
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-__kernel void product_smell_dv_double(__global double * x, __global double * y, __global unsigned long * Aj, __global double * Ax,
-                                               __global unsigned long * Arl, unsigned long num_rows, unsigned long stride)
+
+#ifdef __CPU__
+__kernel void product_smell_dv_float(__global float * x, __global float * y, __global unsigned long * Aj, __global float * Ax,
+                                              __global unsigned long * Arl, unsigned long num_rows, unsigned long stride, unsigned long threads,
+                                              __local float * shared_ell_float)
 {
-    uint row = get_global_id(0);
+    uint idx = get_global_id(0);
+    uint idb = get_local_id(0);
+    uint row = idx;
 
-    if(row >= num_rows){ return; }
-    double sum = 0.;
+            shared_ell_float[idb] = 0;
+            if(row <  num_rows)
+            {
+                float sum = 0;
 
-    Aj += row;
-    Ax += row;
+                uint max = Arl[row];
+                //const unsigned long max = num_cols_per_row;
+                for(uint k = 0; k < max ; ++k)
+                {
+                    for (uint thread = 0 ; thread < threads ; ++thread)
+                    {
+                        float value = Ax[k*stride+row*threads+ thread];
+                        uint col = Aj[k*stride+row*threads + thread];
+                        sum += value * x[col];
+                    }
+                }
 
-    const unsigned long max = Arl[row];
-    for(unsigned long n = 0; n < max ; n++){
-        const double A_ij = *Ax;
-
-        //if (A_ij != 0)
-        {
-            const unsigned long col = *Aj;
-            sum += A_ij * x[col];
-        }
-
-        Aj += stride;
-        Ax += stride;
-    }
-
-    y[row] = sum;
+                y[row] = sum;
+            }
 }
+
+__kernel void product_smell_dv_double(__global double * x, __global double * y, __global unsigned long * Aj, __global double * Ax,
+                                              __global unsigned long * Arl, unsigned long num_rows, unsigned long stride, unsigned long threads,
+                                              __local double * shared_ell_double)
+{
+    uint idx = get_global_id(0);
+    uint idb = get_local_id(0);
+    uint row = idx;
+
+            shared_ell_double[idb] = 0;
+            if(row <  num_rows)
+            {
+                double sum = 0;
+
+                uint max = Arl[row];
+                //const unsigned long max = num_cols_per_row;
+                for(uint k = 0; k < max ; ++k)
+                {
+                    for (uint thread = 0 ; thread < threads ; ++thread)
+                    {
+                        double value = Ax[k*stride+row*threads+ thread];
+                        uint col = Aj[k*stride+row*threads + thread];
+                        sum += value * x[col];
+                    }
+                }
+
+                y[row] = sum;
+            }
+}
+#else
+__kernel void product_smell_dv_float(__global float * x, __global float * y, __global unsigned long * Aj, __global float * Ax,
+                                              __global unsigned long * Arl, unsigned long num_rows, unsigned long stride, unsigned long threads,
+                                              __local float * shared_ell_float)
+{
+    uint T = threads;
+    uint idx = get_global_id(0);
+    uint idb = get_local_id(0);
+    uint idp = idb % T;
+    uint row = idx / T;
+
+            shared_ell_float[idb] = 0;
+            if(row <  num_rows)
+            {
+                float sum = 0;
+
+                uint max = Arl[row];
+                //const unsigned long max = num_cols_per_row;
+                for(uint k = 0; k < max ; ++k)
+                {
+                    float value = Ax[k*stride+row*T+idp];
+                    if (value != 0)
+                    {
+                        uint col = Aj[k*stride+row*T+idp];
+                        sum += value * x[col];
+                    }
+                }
+                shared_ell_float[idb] = sum;
+                mem_fence(CLK_LOCAL_MEM_FENCE);
+
+                switch (threads)
+                {
+                    case 16:
+                        if (idp < 8)
+                            shared_ell_float[idb] += shared_ell_float[idb + 8];
+                    case 8:
+                        if (idp < 4)
+                            shared_ell_float[idb] += shared_ell_float[idb + 4];
+                    case 4:
+                        if (idp < 2)
+                            shared_ell_float[idb] += shared_ell_float[idb + 2];
+                    case 2:
+                        if (idp == 0)
+                            y[row] = shared_ell_float[idb] + shared_ell_float[idb + 1];
+                        break;
+                    case 1:
+                        y[row] = shared_ell_float[idb];
+                        break;
+                    default:
+                        break;
+                }
+            }
+}
+
+__kernel void product_smell_dv_double(__global double * x, __global double * y, __global unsigned long * Aj, __global double * Ax,
+                                              __global unsigned long * Arl, unsigned long num_rows, unsigned long stride, unsigned long threads,
+                                              __local double * shared_ell_double)
+{
+    uint T = threads;
+    uint idx = get_global_id(0);
+    uint idb = get_local_id(0);
+    uint idp = idb % T;
+    uint row = idx / T;
+
+            shared_ell_double[idb] = 0;
+            if(row <  num_rows)
+            {
+                double sum = 0;
+
+                const unsigned long max = Arl[row];
+                //const unsigned long max = num_cols_per_row;
+                for(unsigned long k = 0; k < max ; ++k)
+                {
+                    const double value = Ax[k*stride+row*T+idp];
+                    if (value != 0)
+                    {
+                        const unsigned long col = Aj[k*stride+row*T+idp];
+                        sum += value * x[col];
+                    }
+                }
+                shared_ell_double[idb] = sum;
+
+                switch (threads)
+                {
+                    case 16:
+                        if (idp < 8)
+                            shared_ell_double[idb] += shared_ell_double[idb + 8];
+                    case 8:
+                        if (idp < 4)
+                            shared_ell_double[idb] += shared_ell_double[idb + 4];
+                    case 4:
+                        if (idp < 2)
+                            shared_ell_double[idb] += shared_ell_double[idb + 2];
+                    case 2:
+                        if (idp == 0)
+                            y[row] = shared_ell_double[idb] + shared_ell_double[idb + 1];
+                        break;
+                    case 1:
+                        y[row] = shared_ell_double[idb];
+                        break;
+                    default:
+                        break;
+                }
+            }
+}
+#endif

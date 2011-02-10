@@ -41,7 +41,7 @@ DenseVector<float> Product<tags::OpenCL::CPU>::value(DenseVector<float> & result
     void * Ax_cl(a.Ax().lock(lm_read_only, tags::OpenCL::CPU::memory_value));
     void * Arl_cl(a.Arl().lock(lm_read_only, tags::OpenCL::CPU::memory_value));
     opencl::product_smell_dv_float(b_cl, result_cl, Aj_cl, Ax_cl, Arl_cl,
-            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), CL_DEVICE_TYPE_CPU);
+            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), a.threads(), CL_DEVICE_TYPE_CPU);
     result.unlock(lm_write_only);
     b.unlock(lm_read_only);
     a.Aj().unlock(lm_read_only);
@@ -70,7 +70,7 @@ DenseVector<double> Product<tags::OpenCL::CPU>::value(DenseVector<double> & resu
     void * Ax_cl(a.Ax().lock(lm_read_only, tags::OpenCL::CPU::memory_value));
     void * Arl_cl(a.Arl().lock(lm_read_only, tags::OpenCL::CPU::memory_value));
     opencl::product_smell_dv_double(b_cl, result_cl, Aj_cl, Ax_cl, Arl_cl,
-            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), CL_DEVICE_TYPE_CPU);
+            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), a.threads(), CL_DEVICE_TYPE_CPU);
     result.unlock(lm_write_only);
     b.unlock(lm_read_only);
     a.Aj().unlock(lm_read_only);
@@ -99,7 +99,7 @@ DenseVector<float> Product<tags::OpenCL::GPU>::value(DenseVector<float> & result
     void * Ax_cl(a.Ax().lock(lm_read_only, tags::OpenCL::GPU::memory_value));
     void * Arl_cl(a.Arl().lock(lm_read_only, tags::OpenCL::GPU::memory_value));
     opencl::product_smell_dv_float(b_cl, result_cl, Aj_cl, Ax_cl, Arl_cl,
-            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), CL_DEVICE_TYPE_GPU);
+            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), a.threads(), CL_DEVICE_TYPE_GPU);
     result.unlock(lm_write_only);
     b.unlock(lm_read_only);
     a.Aj().unlock(lm_read_only);
@@ -128,7 +128,7 @@ DenseVector<double> Product<tags::OpenCL::GPU>::value(DenseVector<double> & resu
     void * Ax_cl(a.Ax().lock(lm_read_only, tags::OpenCL::GPU::memory_value));
     void * Arl_cl(a.Arl().lock(lm_read_only, tags::OpenCL::GPU::memory_value));
     opencl::product_smell_dv_double(b_cl, result_cl, Aj_cl, Ax_cl, Arl_cl,
-            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), CL_DEVICE_TYPE_GPU);
+            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), a.threads(), CL_DEVICE_TYPE_GPU);
     result.unlock(lm_write_only);
     b.unlock(lm_read_only);
     a.Aj().unlock(lm_read_only);

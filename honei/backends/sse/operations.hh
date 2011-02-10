@@ -62,15 +62,15 @@ namespace honei
                 double * b, double * result,
                 unsigned long, unsigned long m);
         void product_smell_dv(float * result, unsigned long * Aj, float * Ax, float * b,
-            unsigned long stride, unsigned long rows, unsigned long num_cols_per_row);
+            unsigned long stride, unsigned long rows, unsigned long num_cols_per_row, unsigned long threads);
         void product_smell_dv(float * result, const unsigned long * Aj, const float * Ax, const unsigned long * Arl, const float * b,
             unsigned long stride, unsigned long rows, unsigned long num_cols_per_row,
-            unsigned long row_start, unsigned long row_end);
+            unsigned long row_start, unsigned long row_end, unsigned long threads);
         void product_smell_dv(double * result, unsigned long * Aj, double * Ax, double * b,
-            unsigned long stride, unsigned long rows, unsigned long num_cols_per_row);
+            unsigned long stride, unsigned long rows, unsigned long num_cols_per_row, unsigned long threads);
         void product_smell_dv(double * result, const unsigned long * Aj, const double * Ax, const unsigned long * Arl, const double * b,
             unsigned long stride, unsigned long rows, unsigned long num_cols_per_row,
-            unsigned long row_start, unsigned long row_end);
+            unsigned long row_start, unsigned long row_end, unsigned long threads);
 
         float reduction_sum(const float * a, unsigned long size);
         double reduction_sum(double * a, unsigned long size);

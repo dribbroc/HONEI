@@ -19,6 +19,7 @@
 
 #include <honei/backends/opencl/opencl_backend.hh>
 #include <honei/util/attributes.hh>
+#include <iostream>
 
 namespace honei
 {
@@ -26,13 +27,17 @@ namespace honei
     {
         void product_smell_dv_float(void * x, void * y, void * Aj, void * Ax, void * Arl,
                 unsigned long num_rows, HONEI_UNUSED unsigned long num_cols, HONEI_UNUSED unsigned long num_cols_per_row,
-                unsigned long stride, cl_device_type type)
+                unsigned long stride, unsigned long ell_threads, cl_device_type type)
         {
             cl_command_queue command_queue;
             cl_kernel kernel;
             cl_context context;
             cl_device_id device;
-            size_t threads = num_rows;
+            size_t threads;
+            if (type == CL_DEVICE_TYPE_CPU)
+                threads = num_rows;
+            else
+                threads = num_rows * ell_threads;
 
             DCQ dcq = OpenCLBackend::instance()->prepare_device(type);
             device = dcq.device;
@@ -51,19 +56,27 @@ namespace honei
             clSetKernelArg(kernel, 4, sizeof(cl_mem), &Arl);
             clSetKernelArg(kernel, 5, sizeof(unsigned long), (void *)&num_rows);
             clSetKernelArg(kernel, 6, sizeof(unsigned long), (void *)&stride);
+            clSetKernelArg(kernel, 7, sizeof(unsigned long), (void *)&ell_threads);
+            size_t tmp_work_group_size;
+            clGetKernelWorkGroupInfo(kernel, device, CL_KERNEL_WORK_GROUP_SIZE, sizeof(size_t), (void*)&tmp_work_group_size, NULL);
+            clSetKernelArg(kernel, 8, tmp_work_group_size*sizeof(float), NULL);
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
         }
 
         void product_smell_dv_double(void * x, void * y, void * Aj, void * Ax, void * Arl,
                 unsigned long num_rows, HONEI_UNUSED unsigned long num_cols, HONEI_UNUSED unsigned long num_cols_per_row,
-                unsigned long stride, cl_device_type type)
+                unsigned long stride, unsigned long ell_threads, cl_device_type type)
         {
             cl_command_queue command_queue;
             cl_kernel kernel;
             cl_context context;
             cl_device_id device;
-            size_t threads = num_rows;
+            size_t threads;
+            if (type == CL_DEVICE_TYPE_CPU)
+                threads = num_rows;
+            else
+                threads = num_rows * ell_threads;
 
             DCQ dcq = OpenCLBackend::instance()->prepare_device(type);
             device = dcq.device;
@@ -82,6 +95,10 @@ namespace honei
             clSetKernelArg(kernel, 4, sizeof(cl_mem), &Arl);
             clSetKernelArg(kernel, 5, sizeof(unsigned long), (void *)&num_rows);
             clSetKernelArg(kernel, 6, sizeof(unsigned long), (void *)&stride);
+            clSetKernelArg(kernel, 7, sizeof(unsigned long), (void *)&ell_threads);
+            size_t tmp_work_group_size;
+            clGetKernelWorkGroupInfo(kernel, device, CL_KERNEL_WORK_GROUP_SIZE, sizeof(size_t), (void*)&tmp_work_group_size, NULL);
+            clSetKernelArg(kernel, 8, tmp_work_group_size*sizeof(double), NULL);
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
         }

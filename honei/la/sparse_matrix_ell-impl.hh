@@ -41,6 +41,7 @@ namespace honei
     {
         unsigned long stride;
         unsigned long num_cols_per_row;
+        unsigned long threads;
 
         DenseVector<unsigned long> Aj;//column indices stored in a (cols_per_row x stride) matrix
         DenseVector<DataType_> Ax;//nonzero values stored in a (cols_per_row x stride) matrix
@@ -56,9 +57,10 @@ namespace honei
         static const DataType_ zero_element;
 
         Implementation(unsigned long rows, unsigned long columns, unsigned long stride, unsigned long num_cols_per_row,
-                const DenseVector<unsigned long> & Aj, const DenseVector<DataType_> & Ax) :
+                const DenseVector<unsigned long> & Aj, const DenseVector<DataType_> & Ax, unsigned long threads) :
             stride(stride),
             num_cols_per_row(num_cols_per_row),
+            threads(threads),
             Aj(Aj),
             Ax(Ax),
             Arl(1),
@@ -68,7 +70,8 @@ namespace honei
             Arl = row_length();
         }
 
-        Implementation(SparseMatrix<DataType_> & src) :
+        Implementation(SparseMatrix<DataType_> & src, unsigned long threads) :
+            threads(threads),
             Aj(1),
             Ax(1),
             Arl(1),
@@ -86,9 +89,10 @@ namespace honei
                     num_cols_per_row = src[i].used_elements();
                 }
             }
+            num_cols_per_row = ceil(double(num_cols_per_row) / double(threads));
             /// \todo remove hardcoded numbers
             unsigned long alignment(32);
-            stride = alignment * ((rows + alignment - 1)/ alignment);
+            stride = alignment * (((rows * threads) + alignment - 1)/ alignment);
 
             DenseVector<unsigned long> pAj(num_cols_per_row * stride, (unsigned long)(0));
             DenseVector<DataType_> pAx(num_cols_per_row * stride, DataType_(0));
@@ -101,8 +105,8 @@ namespace honei
                 {
                     if(*i != DataType_(0))
                     {
-                        pAj[row + target * stride] = i.index();
-                        pAx[row + target * stride] = *i;
+                        pAj[(target%threads) + (row * threads)+ target/threads * stride] = i.index();
+                        pAx[(target%threads) + (row * threads) + target/threads * stride] = *i;
                         target++;
                     }
                 }
@@ -120,11 +124,18 @@ namespace honei
             for (unsigned long row(0) ; row < rows ; ++row)
             {
                 unsigned long count(0);
-                for (unsigned long i(row) ; i < Ax.size() ; i+=stride)
+                for (unsigned long i(row * threads) ; i < Ax.size() ; i+=stride)
                 {
-                    if (Ax[i] == DataType_(0))
-                        break;
-                    ++count;
+                    for (unsigned long thread(0) ; thread < threads ; thread++)
+                    {
+                        if (Ax[i + thread] == DataType_(0))
+                        {
+                            i = Ax.size();
+                            break;
+                        }
+                        if (thread == 0)
+                            ++count;
+                    }
                 }
                 rl[row] = count;
             }
@@ -137,15 +148,15 @@ namespace honei
     SparseMatrixELL<DataType_>::SparseMatrixELL(unsigned long rows, unsigned columns, unsigned long stride,
             unsigned long num_cols_per_row,
             const DenseVector<unsigned long> & Aj,
-            const DenseVector<DataType_> & Ax) :
-        PrivateImplementationPattern<SparseMatrixELL<DataType_>, Shared>(new Implementation<SparseMatrixELL<DataType_> >(rows, columns, stride, num_cols_per_row, Aj, Ax))
+            const DenseVector<DataType_> & Ax, unsigned long threads) :
+        PrivateImplementationPattern<SparseMatrixELL<DataType_>, Shared>(new Implementation<SparseMatrixELL<DataType_> >(rows, columns, stride, num_cols_per_row, Aj, Ax, threads))
     {
         CONTEXT("When creating SparseMatrixELL:");
     }
 
     template <typename DataType_>
-    SparseMatrixELL<DataType_>::SparseMatrixELL(SparseMatrix<DataType_> & src) :
-        PrivateImplementationPattern<SparseMatrixELL<DataType_>, Shared>(new Implementation<SparseMatrixELL<DataType_> >(src))
+    SparseMatrixELL<DataType_>::SparseMatrixELL(SparseMatrix<DataType_> & src, unsigned long threads) :
+        PrivateImplementationPattern<SparseMatrixELL<DataType_>, Shared>(new Implementation<SparseMatrixELL<DataType_> >(src, threads))
     {
         CONTEXT("When creating SparseMatrixELL from SparseMatrix:");
     }
@@ -187,8 +198,11 @@ namespace honei
     SparseMatrixELL<DataType_>::used_elements() const
     {
         unsigned long ue(0);
-        for(unsigned long i(0) ; i < this->_imp->Arl.size() ; ++i)
-            ue += this->_imp->Arl.elements()[i];
+        for(unsigned long i(0) ; i < this->_imp->Ax.size() ; ++i)
+        {
+            if (this->_imp->Ax[i] != DataType_(0))
+                ue++;
+        }
 
         return ue;
     }
@@ -205,6 +219,13 @@ namespace honei
     SparseMatrixELL<DataType_>::num_cols_per_row() const
     {
         return this->_imp->num_cols_per_row;
+    }
+
+    template <typename DataType_>
+    unsigned long
+    SparseMatrixELL<DataType_>::threads() const
+    {
+        return this->_imp->threads;
     }
 
     template <typename DataType_>
@@ -232,10 +253,13 @@ namespace honei
     const DataType_ SparseMatrixELL<DataType_>::operator() (unsigned long row, unsigned long column) const
     {
         unsigned long max(this->Arl()[row]);
-        for (unsigned long i(row), j(0) ; j < max && this->Aj()[i] <= column ; i += this->stride(), ++j)
+        for (unsigned long i(row * this->threads()), j(0) ; j < max && this->Aj()[i] <= column ; i += this->stride(), ++j)
         {
-            if (this->Aj()[i] == column)
-                return this->Ax()[i];
+            for (unsigned long thread(0) ; thread < this->threads() ; thread++)
+            {
+                if (this->Aj()[i + thread] == column)
+                    return this->Ax()[i + thread];
+            }
         }
         return this->_imp->zero_element;
     }
@@ -266,7 +290,8 @@ namespace honei
                 this->_imp->stride,
                 this->_imp->num_cols_per_row,
                 this->_imp->Aj.copy(),
-                this->_imp->Ax.copy());
+                this->_imp->Ax.copy(),
+                this->_imp->threads);
 
         return result;
     }
@@ -310,7 +335,7 @@ namespace honei
         }
         lhs << "]" << std::endl;
 
-        lhs << "NumColsPerRow: "<< b.num_cols_per_row() << " Stride: "<< b.stride() << std::endl;
+        lhs << "NumColsPerRow: " << b.num_cols_per_row() << " Stride: " << b.stride() << " Threads: " << b.threads() << std::endl;
         lhs << "Aj: " << b.Aj();
         lhs << "Ax: " << b.Ax();
         lhs << "Arl: " << b.Arl();

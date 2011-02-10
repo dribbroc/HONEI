@@ -185,9 +185,10 @@ namespace honei
             for (unsigned long row(0) ; row < a.rows() ; ++row)
             {
                 sum = 0;
-                for (unsigned long col(0), j(row) ; col < aarl[row] ; ++col, j+=stride)
+                for (unsigned long col(0), j(row * a.threads()) ; col < aarl[row] ; ++col, j+=stride)
                 {
-                    sum+= aax[j] * bx[aaj[j]];
+                    for (unsigned long thread(0) ; thread < a.threads() ; ++thread)
+                        sum+= aax[j + thread] * bx[aaj[j + thread]];
                 }
                 result.elements()[row] = sum;
             }
