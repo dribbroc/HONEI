@@ -292,6 +292,7 @@ namespace honei
 
             ~SparseMatrix()
             {
+                MemoryPool<tags::CPU>::instance()->release_free();
             }
 
             /// \}

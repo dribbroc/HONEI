@@ -94,6 +94,7 @@ namespace honei
          */
         ~Implementation()
         {
+                MemoryPool<tags::CPU>::instance()->release_free();
         }
 
         /// \}
