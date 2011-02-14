@@ -94,17 +94,21 @@ class GPUPoolQuickTest :
         {
             TicketVector tickets;
 
-            int data [10];
+            int data [15];
             TransferTask trans(data);
             TransferTask trans2(data+5);
-            for (int i(0) ; i < 10 ; ++i)
+            TransferTask trans3(data+10);
+            for (int i(0) ; i < 15 ; ++i)
             {
                 data[i] = i;
             }
             tickets.push_back(GPUPool::instance()->enqueue(trans,0));
+            tickets.wait();
             tickets.push_back(GPUPool::instance()->enqueue(trans2,1));
             tickets.wait();
-            for (int i(0) ; i < 10 ; ++i)
+            tickets.push_back(GPUPool::instance()->enqueue(trans3,2));
+            tickets.wait();
+            for (int i(0) ; i < 15 ; ++i)
             {
                 TEST_CHECK_EQUAL(data[i], i);
             }
@@ -132,26 +136,37 @@ class GPUPoolArbiterQuickTest :
             char  data_array2 [10];
             void * data2 = data_array2;
             void * mem2(data2);
+            char  data_array3 [10];
+            void * data3 = data_array3;
+            void * mem3(data3);
             data_array1[0]='a';
             data_array2[0]='a';
+            data_array3[0]='a';
             MemoryArbiter::instance()->register_address(mem1);
             MemoryArbiter::instance()->register_address(mem2);
+            MemoryArbiter::instance()->register_address(mem3);
             TicketVector tickets;
             LockTask lt1(data1);
             LockTask lt2(data2);
+            LockTask lt3(data3);
 
             tickets.push_back(GPUPool::instance()->enqueue(lt1,0));
             tickets.push_back(GPUPool::instance()->enqueue(lt2,1));
+            tickets.push_back(GPUPool::instance()->enqueue(lt3,2));
             tickets.wait();
 
             MemoryArbiter::instance()->lock(lm_read_only, tags::CPU::memory_value, mem1, data1, 1);
             MemoryArbiter::instance()->lock(lm_read_only, tags::CPU::memory_value, mem2, data2, 1);
+            MemoryArbiter::instance()->lock(lm_read_only, tags::CPU::memory_value, mem3, data3, 1);
             TEST_CHECK_EQUAL(data_array1[0], 'a');
             TEST_CHECK_EQUAL(data_array2[0], 'a');
+            TEST_CHECK_EQUAL(data_array3[0], 'a');
             MemoryArbiter::instance()->unlock(lm_read_only, mem1);
             MemoryArbiter::instance()->unlock(lm_read_only, mem2);
+            MemoryArbiter::instance()->unlock(lm_read_only, mem3);
 
             MemoryArbiter::instance()->remove_address(mem2);
             MemoryArbiter::instance()->remove_address(mem1);
+            MemoryArbiter::instance()->remove_address(mem3);
         }
 } gpu_pool_arbiter_quick_test;
