@@ -40,13 +40,14 @@ GPUPool::GPUPool() :
 {
     if (num_gpus == 0)
         throw InternalError("No GPU Found!");
+    num_gpus = 1;
     for (unsigned i(0) ; i < num_gpus ; ++i)
     {
         tasks.push_back(new std::queue<GPUTask *>);
         barriers.push_back(new ConditionVariable);
         mutexe.push_back(new Mutex);
         GPUFunction * tobj(0);
-        tobj = new GPUFunction(i, mutexe.at(i), barriers.at(i), (tasks.at(i)));
+        tobj = new GPUFunction(2, mutexe.at(i), barriers.at(i), (tasks.at(i)));
         Thread * t = new Thread(*tobj);
         threads.push_back(std::make_pair(t, tobj));
     }

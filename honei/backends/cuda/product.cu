@@ -34,8 +34,8 @@ dim3 make_large_grid_product(const unsigned int num_threads, const unsigned int 
     }
 }
 
-texture<float,1> tex_x_float_product;
-texture<int2,1>  tex_x_double_product;
+//texture<float,1> tex_x_float_product;
+//texture<int2,1>  tex_x_double_product;
 
 namespace honei
 {
@@ -182,8 +182,8 @@ namespace honei
                 //if (A_ij != 0)
                 {
                     const unsigned long col = *Aj;
-                    //sum += A_ij * x[col];
-                    sum += A_ij * tex1Dfetch(tex_x_float_product, col);
+                    sum += A_ij * x[col];
+                    //sum += A_ij * tex1Dfetch(tex_x_float_product, col);
                 }
 
                 Aj += stride;
@@ -215,9 +215,9 @@ namespace honei
                 //if (A_ij != 0)
                 {
                     const unsigned long col = *Aj;
-                    //sum += A_ij * x[col];
-                    int2 v = tex1Dfetch(tex_x_double_product, col);
-                    sum += A_ij * __hiloint2double(v.y, v.x);
+                    sum += A_ij * x[col];
+                    //int2 v = tex1Dfetch(tex_x_double_product, col);
+                    //sum += A_ij * __hiloint2double(v.y, v.x);
                 }
 
                 Aj += stride;
@@ -298,10 +298,10 @@ extern "C" void cuda_product_smell_dv_float(void * x, void * y, void * Aj, void 
     float * Ax_gpu((float *)Ax);
     unsigned long * Arl_gpu((unsigned long *)Arl);
 
-    cudaBindTexture(NULL, tex_x_float_product, x_gpu);
+    //cudaBindTexture(NULL, tex_x_float_product, x_gpu);
     honei::cuda::product_smell_dv_gpu<<<grid, blocksize>>>(x_gpu, y_gpu, Aj_gpu, Ax_gpu, Arl_gpu,
             row_start, row_end, num_cols_per_row, stride);
-    cudaUnbindTexture(tex_x_float_product);
+    //cudaUnbindTexture(tex_x_float_product);
 
     CUDA_ERROR();
 }
@@ -319,10 +319,10 @@ extern "C" void cuda_product_smell_dv_double(void * x, void * y, void * Aj, void
     double * Ax_gpu((double *)Ax);
     unsigned long * Arl_gpu((unsigned long *)Arl);
 
-    cudaBindTexture(NULL, tex_x_double_product, x_gpu);
+    //cudaBindTexture(NULL, tex_x_double_product, x_gpu);
     honei::cuda::product_smell_dv_gpu<<<grid, blocksize>>>(x_gpu, y_gpu, Aj_gpu, Ax_gpu, Arl_gpu,
             row_start, row_end, num_cols_per_row, stride);
-    cudaUnbindTexture(tex_x_double_product);
+    //cudaUnbindTexture(tex_x_double_product);
 
     CUDA_ERROR();
 }
