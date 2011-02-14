@@ -394,7 +394,7 @@ namespace honei
             _id_map.erase(range.first, range.second);
         }
 
-        void copy(void * /*src_id*/, void * src_address, void * /*dest_id*/,
+        void copy(void * /*src_id*/, void * src_address, void * dest_id,
                 void * dest_address, unsigned long bytes)
         {
             std::map<void *, void *>::iterator src_i(_address_map.find(src_address));
@@ -407,14 +407,27 @@ namespace honei
             {
                 std::map<void *, int>::iterator j_source(_device_map.find(src_address));
                 std::map<void *, int>::iterator j_dest(_device_map.find(dest_address));
+                void * dest_device (0);
                 if (j_source->second != j_dest->second)
-                    throw InternalError("MemoryBackend<tags::GPU::CUDA>::copy src and dest on different devices!");
+                {
+                    //throw InternalError("MemoryBackend<tags::GPU::CUDA>::copy src and dest on different devices!");
+                    this->free(dest_id);
+                    cuda::AllocTask at(&dest_device, bytes);
+                    cuda::GPUPool::instance()->enqueue(at, j_source->second)->wait();
+                    if (dest_device == 0)
+                        throw InternalError("MemoryBackend<tags::GPU::CUDA>::alloc CudaMallocError!");
+                    _id_map.insert(std::pair<void *, Chunk>(dest_id, Chunk(dest_address, dest_device, bytes, j_source->second)));
+                    _address_map.insert(std::pair<void *, void *>(dest_address, dest_device));
+                    _device_map.insert(std::pair<void *, int>(dest_address, j_source->second));
+                }
+                else
+                    dest_device = dest_i->second;
 
                 bool idle(cuda::GPUPool::instance()->idle());
                 //running in slave thread
                 if (j_source->second == cuda_get_device() && ! idle)
                 {
-                    cuda_copy(src_i->second, dest_i->second, bytes);
+                    cuda_copy(src_i->second, dest_device, bytes);
                 }
                 else
                 {
@@ -423,7 +436,7 @@ namespace honei
                     //running in master thread -> switch to slave thread
                     else
                     {
-                        cuda::CopyTask ct(src_i->second, dest_i->second, bytes);
+                        cuda::CopyTask ct(src_i->second, dest_device, bytes);
                         cuda::GPUPool::instance()->enqueue(ct, j_source->second)->wait();
                     }
                 }
