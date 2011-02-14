@@ -98,7 +98,7 @@ BACKEND_LIBS += \
 
 endif
 
-SUBDIRS = testdata spai
+SUBDIRS = testdata spai SuperLU_4.1
 
 AM_CXXFLAGS = -I$(top_srcdir)
 
