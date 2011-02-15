@@ -11,10 +11,10 @@
 
 #include "slu_ddefs.h"
 
-extern int_t mc64id_(int_t*);
-extern int_t mc64ad_(int_t*, int_t*, int_t*, int_t [], int_t [], double [],
-                    int_t*, int_t [], int_t*, int_t[], int_t*, double [],
-                    int_t [], int_t []);
+extern int mc64id_(int*);
+extern int mc64ad_(int*, int*, int*, int [], int [], double [],
+                    int*, int [], int*, int[], int*, double [],
+                    int [], int []);
 
 /*! \brief
  *
@@ -82,11 +82,11 @@ extern int_t mc64ad_(int_t*, int_t*, int_t*, int_t [], int_t [], double [],
  */
 
 int
-dldperm(int_t job, int_t n, int_t nnz, int_t colptr[], int_t adjncy[],
-        double nzval[], int_t *perm, double u[], double v[])
+dldperm(int job, int n, int nnz, int colptr[], int adjncy[],
+        double nzval[], int *perm, double u[], double v[])
 {
-    int_t i, liw, ldw, num;
-    int_t *iw, icntl[10], info[10];
+    int i, liw, ldw, num;
+    int *iw, icntl[10], info[10];
     double *dw;
 
 #if ( DEBUGlevel>=1 )

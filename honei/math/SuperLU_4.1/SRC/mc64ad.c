@@ -17,8 +17,8 @@
 
 /* Table of constant values */
 
-static int_t c__1 = 1;
-static int_t c__2 = 2;
+static int c__1 = 1;
+static int c__2 = 2;
 
 /* CCCC COPYRIGHT (c) 1999  Council for the Central Laboratory of the */
 /* CCCC Research Councils.    All rights reserved. */
@@ -48,9 +48,9 @@ static int_t c__2 = 2;
 /* None of the comments from the Copyright notice up to and including this */
 /* one shall be removed or altered in any way. */
 /* ********************************************************************** */
-/* Subroutine */ int_t mc64id_(int_t *icntl)
+/* Subroutine */ int mc64id_(int *icntl)
 {
-    int_t i__;
+    int i__;
 
 
 /* *** Copyright (c) 1999  Council for the Central Laboratory of the */
@@ -112,32 +112,32 @@ static int_t c__2 = 2;
 } /* mc64id_ */
 
 /* ********************************************************************** */
-/* Subroutine */ int_t mc64ad_(int_t *job, int_t *n, int_t *ne, int_t *
-        ip, int_t *irn, double *a, int_t *num, int_t *cperm,
-        int_t *liw, int_t *iw, int_t *ldw, double *dw, int_t *
-        icntl, int_t *info)
+/* Subroutine */ int mc64ad_(int *job, int *n, int *ne, int *
+        ip, int *irn, double *a, int *num, int *cperm,
+        int *liw, int *iw, int *ldw, double *dw, int *
+        icntl, int *info)
 {
     /* System generated locals */
-    int_t i__1, i__2;
+    int i__1, i__2;
     double d__1, d__2;
 
     /* Builtin functions */
     double log(double);
 
     /* Local variables */
-    int_t i__, j, k;
+    int i__, j, k;
     double fact, rinf;
 
-    extern /* Subroutine */ int_t mc21ad_(int_t *, int_t *, int_t *,
-            int_t *, int_t *, int_t *, int_t *, int_t *), mc64bd_(
-            int_t *, int_t *, int_t *, int_t *, double *, int_t
-            *, int_t *, int_t *, int_t *, int_t *, int_t *,
-            double *), mc64rd_(int_t *, int_t *, int_t *, int_t *,
-             double *), mc64sd_(int_t *, int_t *, int_t *, int_t *
-            , double *, int_t *, int_t *, int_t *, int_t *,
-            int_t *, int_t *, int_t *, int_t *, int_t *), mc64wd_(
-            int_t *, int_t *, int_t *, int_t *, double *, int_t
-            *, int_t *, int_t *, int_t *, int_t *, int_t *, int_t
+    extern /* Subroutine */ int mc21ad_(int *, int *, int *,
+            int *, int *, int *, int *, int *), mc64bd_(
+            int *, int *, int *, int *, double *, int
+            *, int *, int *, int *, int *, int *,
+            double *), mc64rd_(int *, int *, int *, int *,
+             double *), mc64sd_(int *, int *, int *, int *
+            , double *, int *, int *, int *, int *,
+            int *, int *, int *, int *, int *), mc64wd_(
+            int *, int *, int *, int *, double *, int
+            *, int *, int *, int *, int *, int *, int
             *, double *, double *);
 
 /* *** Copyright (c) 1999  Council for the Central Laboratory of the */
@@ -171,7 +171,7 @@ static int_t c__2 = 2;
 /*  ========== */
 
 
-/* JOB is an INT_T variable which must be set by the user to */
+/* JOB is an int variable which must be set by the user to */
 /* control the action. It is not altered by the subroutine. */
 /* Possible values for JOB are: */
 /*   1 Compute a column permutation of the matrix so that the */
@@ -196,21 +196,21 @@ static int_t c__2 = 2;
 /*     absolute value. See [3]. */
 /*  Restriction: 1 <= JOB <= 5. */
 
-/* N is an INT_T variable which must be set by the user to the */
+/* N is an int variable which must be set by the user to the */
 /*   order of the matrix A. It is not altered by the subroutine. */
 /*   Restriction: N >= 1. */
 
-/* NE is an INT_T variable which must be set by the user to the */
+/* NE is an int variable which must be set by the user to the */
 /*   number of entries in the matrix. It is not altered by the */
 /*   subroutine. */
 /*   Restriction: NE >= 1. */
 
-/* IP is an INT_T array of length N+1. */
+/* IP is an int array of length N+1. */
 /*   IP(J), J=1..N, must be set by the user to the position in array IRN */
 /*   of the first row index of an entry in column J. IP(N+1) must be set */
 /*   to NE+1. It is not altered by the subroutine. */
 
-/* IRN is an INT_T array of length NE. */
+/* IRN is an int array of length NE. */
 /*   IRN(K), K=1..NE, must be set by the user to hold the row indices of */
 /*   the entries of the matrix. Those belonging to column J must be */
 /*   stored contiguously in the positions IP(J)..IP(J+1)-1. The ordering */
@@ -224,17 +224,17 @@ static int_t c__2 = 2;
 /*   It is not used by the subroutine when JOB = 1. */
 /*   It is not altered by the subroutine. */
 
-/* NUM is an INT_T variable that need not be set by the user. */
+/* NUM is an int variable that need not be set by the user. */
 /*   On successful exit, NUM will be the number of entries on the */
 /*   diagonal of the permuted matrix. */
 /*   If NUM < N, the matrix is structurally singular. */
 
-/* CPERM is an INT_T array of length N that need not be set by the */
+/* CPERM is an int array of length N that need not be set by the */
 /*   user. On successful exit, CPERM contains the column permutation. */
 /*   Column CPERM(J) of the original matrix is column J in the permuted */
 /*   matrix, J=1..N. */
 
-/* LIW is an INT_T variable that must be set by the user to */
+/* LIW is an int variable that must be set by the user to */
 /*   the dimension of array IW. It is not altered by the subroutine. */
 /*   Restriction: */
 /*     JOB = 1 :  LIW >= 5N */
@@ -243,9 +243,9 @@ static int_t c__2 = 2;
 /*     JOB = 4 :  LIW >= 5N */
 /*     JOB = 5 :  LIW >= 5N */
 
-/* IW is an INT_T array of length LIW that is used for workspace. */
+/* IW is an int array of length LIW that is used for workspace. */
 
-/* LDW is an INT_T variable that must be set by the user to the */
+/* LDW is an int variable that must be set by the user to the */
 /*   dimension of array DW. It is not altered by the subroutine. */
 /*   Restriction: */
 /*     JOB = 1 :  LDW is not used */
@@ -258,7 +258,7 @@ static int_t c__2 = 2;
 /*   that is used for workspace. If JOB = 5, on return, */
 /*   DW(i) contains u_i, i=1..N, and DW(N+j) contains v_j, j=1..N. */
 
-/* ICNTL is an INT_T array of length 10. Its components control the */
+/* ICNTL is an int array of length 10. Its components control the */
 /*   output of MC64A/AD and must be set by the user before calling */
 /*   MC64A/AD. They are not altered by the subroutine. */
 
@@ -278,7 +278,7 @@ static int_t c__2 = 2;
 /*   checking of the input data. */
 /*   The default value set by MC46I/ID is 0. */
 
-/* INFO is an INT_T array of length 10 which need not be set by the */
+/* INFO is an int array of length 10 which need not be set by the */
 /*   user. INFO(1) is set non-negative to indicate success. A negative */
 /*   value is returned if an error occurred, a positive value if a */
 /*   warning occurred. INFO(2) holds further information on the error. */
@@ -654,33 +654,33 @@ L99:
 } /* mc64ad_ */
 
 /* ********************************************************************** */
-/* Subroutine */ int_t mc64bd_(int_t *n, int_t *ne, int_t *ip, int_t *
-        irn, double *a, int_t *iperm, int_t *num, int_t *jperm,
-        int_t *pr, int_t *q, int_t *l, double *d__)
+/* Subroutine */ int mc64bd_(int *n, int *ne, int *ip, int *
+        irn, double *a, int *iperm, int *num, int *jperm,
+        int *pr, int *q, int *l, double *d__)
 {
     /* System generated locals */
-    int_t i__1, i__2, i__3;
+    int i__1, i__2, i__3;
     double d__1, d__2, d__3;
 
     /* Local variables */
-    int_t i__, j, k;
+    int i__, j, k;
     double a0;
-    int_t i0, q0;
+    int i0, q0;
     double ai, di;
-    int_t ii, jj, kk;
+    int ii, jj, kk;
     double bv;
-    int_t up;
+    int up;
     double dq0;
-    int_t kk1, kk2;
+    int kk1, kk2;
     double csp;
-    int_t isp, jsp, low;
+    int isp, jsp, low;
     double dnew;
-    int_t jord, qlen, idum, jdum;
+    int jord, qlen, idum, jdum;
     double rinf;
-    extern /* Subroutine */ int_t mc64dd_(int_t *, int_t *, int_t *,
-            double *, int_t *, int_t *), mc64ed_(int_t *, int_t *,
-             int_t *, double *, int_t *, int_t *), mc64fd_(int_t *
-            , int_t *, int_t *, int_t *, double *, int_t *, int_t *);
+    extern /* Subroutine */ int mc64dd_(int *, int *, int *,
+            double *, int *, int *), mc64ed_(int *, int *,
+             int *, double *, int *, int *), mc64fd_(int *
+            , int *, int *, int *, double *, int *, int *);
 
 
 /* *** Copyright (c) 1999  Council for the Central Laboratory of the */
@@ -696,11 +696,11 @@ L99:
 /* A is a REAL (DOUBLE PRECISION in the D-version) array of length */
 /*   NE. A(K), K=1..NE, must be set to the value of the entry */
 /*   that corresponds to IRN(K). It is not altered. */
-/* IPERM is an INT_T array of length N. On exit, it contains the */
+/* IPERM is an int array of length N. On exit, it contains the */
 /*    matching: IPERM(I) = 0 or row I is matched to column IPERM(I). */
-/* NUM is INT_T variable. On exit, it contains the cardinality of the */
+/* NUM is int variable. On exit, it contains the cardinality of the */
 /*    matching stored in IPERM. */
-/* IW is an INT_T work array of length 4N. */
+/* IW is an int work array of length 4N. */
 /* DW is a REAL (DOUBLE PRECISION in D-version) work array of length N. */
 /* Local variables */
 /* Local parameters */
@@ -1081,15 +1081,15 @@ L1000:
 } /* mc64bd_ */
 
 /* ********************************************************************** */
-/* Subroutine */ int_t mc64dd_(int_t *i__, int_t *n, int_t *q, double
-        *d__, int_t *l, int_t *iway)
+/* Subroutine */ int mc64dd_(int *i__, int *n, int *q, double
+        *d__, int *l, int *iway)
 {
     /* System generated locals */
-    int_t i__1;
+    int i__1;
 
     /* Local variables */
     double di;
-    int_t qk, pos, idum, posk;
+    int qk, pos, idum, posk;
 
 
 /* *** Copyright (c) 1999  Council for the Central Laboratory of the */
@@ -1159,16 +1159,16 @@ L20:
 } /* mc64dd_ */
 
 /* ********************************************************************** */
-/* Subroutine */ int_t mc64ed_(int_t *qlen, int_t *n, int_t *q,
-        double *d__, int_t *l, int_t *iway)
+/* Subroutine */ int mc64ed_(int *qlen, int *n, int *q,
+        double *d__, int *l, int *iway)
 {
     /* System generated locals */
-    int_t i__1;
+    int i__1;
 
     /* Local variables */
-    int_t i__;
+    int i__;
     double di, dk, dr;
-    int_t pos, idum, posk;
+    int pos, idum, posk;
 
 
 /* *** Copyright (c) 1999  Council for the Central Laboratory of the */
@@ -1254,16 +1254,16 @@ L20:
 } /* mc64ed_ */
 
 /* ********************************************************************** */
-/* Subroutine */ int_t mc64fd_(int_t *pos0, int_t *qlen, int_t *n,
-        int_t *q, double *d__, int_t *l, int_t *iway)
+/* Subroutine */ int mc64fd_(int *pos0, int *qlen, int *n,
+        int *q, double *d__, int *l, int *iway)
 {
     /* System generated locals */
-    int_t i__1;
+    int i__1;
 
     /* Local variables */
-    int_t i__;
+    int i__;
     double di, dk, dr;
-    int_t qk, pos, idum, posk;
+    int qk, pos, idum, posk;
 
 
 /* *** Copyright (c) 1999  Council for the Central Laboratory of the */
@@ -1392,18 +1392,18 @@ L40:
 } /* mc64fd_ */
 
 /* ********************************************************************** */
-/* Subroutine */ int_t mc64rd_(int_t *n, int_t *ne, int_t *ip, int_t *
+/* Subroutine */ int mc64rd_(int *n, int *ne, int *ip, int *
         irn, double *a)
 {
     /* System generated locals */
-    int_t i__1, i__2, i__3;
+    int i__1, i__2, i__3;
 
     /* Local variables */
-    int_t j, k, r__, s;
+    int j, k, r__, s;
     double ha;
-    int_t hi, td, mid, len, ipj;
+    int hi, td, mid, len, ipj;
     double key;
-    int_t last, todo[50], first;
+    int last, todo[50], first;
 
 
 /* *** Copyright (c) 1999  Council for the Central Laboratory of the */
@@ -1540,23 +1540,23 @@ L100:
 } /* mc64rd_ */
 
 /* ********************************************************************** */
-/* Subroutine */ int_t mc64sd_(int_t *n, int_t *ne, int_t *ip, int_t *
-        irn, double *a, int_t *iperm, int_t *numx, int_t *w,
-        int_t *len, int_t *lenl, int_t *lenh, int_t *fc, int_t *iw,
-        int_t *iw4)
+/* Subroutine */ int mc64sd_(int *n, int *ne, int *ip, int *
+        irn, double *a, int *iperm, int *numx, int *w,
+        int *len, int *lenl, int *lenh, int *fc, int *iw,
+        int *iw4)
 {
     /* System generated locals */
-    int_t i__1, i__2, i__3, i__4;
+    int i__1, i__2, i__3, i__4;
 
     /* Local variables */
-    int_t i__, j, k, l, ii, mod, cnt, num;
+    int i__, j, k, l, ii, mod, cnt, num;
     double bval, bmin, bmax, rinf;
-    int_t nval, wlen, idum1, idum2, idum3;
-    extern /* Subroutine */ int_t mc64qd_(int_t *, int_t *, int_t *,
-            int_t *, int_t *, double *, int_t *, double *),
-            mc64ud_(int_t *, int_t *, int_t *, int_t *, int_t *,
-            int_t *, int_t *, int_t *, int_t *, int_t *, int_t *,
-            int_t *, int_t *, int_t *, int_t *);
+    int nval, wlen, idum1, idum2, idum3;
+    extern /* Subroutine */ int mc64qd_(int *, int *, int *,
+            int *, int *, double *, int *, double *),
+            mc64ud_(int *, int *, int *, int *, int *,
+            int *, int *, int *, int *, int *, int *,
+            int *, int *, int *, int *);
 
 /* *** Copyright (c) 1999  Council for the Central Laboratory of the */
 /*     Research Councils                                             *** */
@@ -1572,26 +1572,26 @@ L100:
 /*   A(K), K=1..NE, must be set to the value of the entry that */
 /*   corresponds to IRN(k). The entries in each column must be */
 /*   non-negative and ordered by decreasing value. */
-/* IPERM is an INT_T array of length N. On exit, it contains the */
+/* IPERM is an int array of length N. On exit, it contains the */
 /*   bottleneck matching: IPERM(I) - 0 or row I is matched to column */
 /*   IPERM(I). */
-/* NUMX is an INT_T variable. On exit, it contains the cardinality */
+/* NUMX is an int variable. On exit, it contains the cardinality */
 /*   of the matching stored in IPERM. */
-/* IW is an INT_T work array of length 10N. */
-/* FC is an int_t array of length N that contains the list of */
+/* IW is an int work array of length 10N. */
+/* FC is an int array of length N that contains the list of */
 /*   unmatched columns. */
-/* LEN(J), LENL(J), LENH(J) are int_t arrays of length N that point */
+/* LEN(J), LENL(J), LENH(J) are int arrays of length N that point */
 /*   to entries in matrix column J. */
 /*   In the matrix defined by the column parts IP(J)+LENL(J) we know */
 /*   a matching does not exist; in the matrix defined by the column */
 /*   parts IP(J)+LENH(J) we know one exists. */
 /*   LEN(J) lies between LENL(J) and LENH(J) and determines the matrix */
 /*   that is tested for a maximum matching. */
-/* W is an int_t array of length N and contains the indices of the */
+/* W is an int array of length N and contains the indices of the */
 /*   columns for which LENL ne LENH. */
 /* WLEN is number of indices stored in array W. */
-/* IW is int_t work array of length N. */
-/* IW4 is int_t work array of length 4N used by MC64U/UD. */
+/* IW is int work array of length N. */
+/* IW4 is int work array of length 4N used by MC64U/UD. */
 /*      EXTERNAL FD05AD,MC64QD,MC64UD */
 /*      DOUBLE PRECISION FD05AD */
 /* BMIN and BMAX are such that a maximum matching exists for the input */
@@ -1856,17 +1856,17 @@ L1000:
 } /* mc64sd_ */
 
 /* ********************************************************************** */
-/* Subroutine */ int_t mc64qd_(int_t *ip, int_t *lenl, int_t *lenh,
-        int_t *w, int_t *wlen, double *a, int_t *nval, double *
+/* Subroutine */ int mc64qd_(int *ip, int *lenl, int *lenh,
+        int *w, int *wlen, double *a, int *nval, double *
         val)
 {
     /* System generated locals */
-    int_t i__1, i__2, i__3;
+    int i__1, i__2, i__3;
 
     /* Local variables */
-    int_t j, k, s;
+    int j, k, s;
     double ha;
-    int_t ii, pos;
+    int ii, pos;
     double split[10];
 
 
@@ -1951,16 +1951,16 @@ L11:
 } /* mc64qd_ */
 
 /* ********************************************************************** */
-/* Subroutine */ int_t mc64ud_(int_t *id, int_t *mod, int_t *n, int_t *
-        irn, int_t *lirn, int_t *ip, int_t *lenc, int_t *fc, int_t *
-        iperm, int_t *num, int_t *numx, int_t *pr, int_t *arp,
-        int_t *cv, int_t *out)
+/* Subroutine */ int mc64ud_(int *id, int *mod, int *n, int *
+        irn, int *lirn, int *ip, int *lenc, int *fc, int *
+        iperm, int *num, int *numx, int *pr, int *arp,
+        int *cv, int *out)
 {
     /* System generated locals */
-    int_t i__1, i__2, i__3, i__4;
+    int i__1, i__2, i__3, i__4;
 
     /* Local variables */
-    int_t i__, j, k, j1, ii, kk, id0, id1, in1, in2, nfc, num0, num1, num2,
+    int i__, j, k, j1, ii, kk, id0, id1, in1, in2, nfc, num0, num1, num2,
             jord, last;
 
 
@@ -2154,32 +2154,32 @@ L101:
 } /* mc64ud_ */
 
 /* ********************************************************************** */
-/* Subroutine */ int_t mc64wd_(int_t *n, int_t *ne, int_t *ip, int_t *
-        irn, double *a, int_t *iperm, int_t *num, int_t *jperm,
-        int_t *out, int_t *pr, int_t *q, int_t *l, double *u,
+/* Subroutine */ int mc64wd_(int *n, int *ne, int *ip, int *
+        irn, double *a, int *iperm, int *num, int *jperm,
+        int *out, int *pr, int *q, int *l, double *u,
         double *d__)
 {
     /* System generated locals */
-    int_t i__1, i__2, i__3;
+    int i__1, i__2, i__3;
 
     /* Local variables */
-    int_t i__, j, k, i0, k0, k1, k2, q0;
+    int i__, j, k, i0, k0, k1, k2, q0;
     double di;
-    int_t ii, jj, kk;
+    int ii, jj, kk;
     double vj;
-    int_t up;
+    int up;
     double dq0;
-    int_t kk1, kk2;
+    int kk1, kk2;
     double csp;
-    int_t isp, jsp, low;
+    int isp, jsp, low;
     double dmin__, dnew;
-    int_t jord, qlen, jdum;
+    int jord, qlen, jdum;
     double rinf;
-    extern /* Subroutine */ int_t mc64dd_(int_t *, int_t *, int_t *,
-            double *, int_t *, int_t *), mc64ed_(int_t *, int_t *,
-             int_t *, double *, int_t *, int_t *), mc64fd_(int_t *
-            , int_t *, int_t *, int_t *, double *, int_t *,
-            int_t *);
+    extern /* Subroutine */ int mc64dd_(int *, int *, int *,
+            double *, int *, int *), mc64ed_(int *, int *,
+             int *, double *, int *, int *), mc64fd_(int *
+            , int *, int *, int *, double *, int *,
+            int *);
 
 
 /* *** Copyright (c) 1999  Council for the Central Laboratory of the */
@@ -2196,12 +2196,12 @@ L101:
 /*   A(K), K=1..NE, must be set to the value of the entry that */
 /*   corresponds to IRN(K). It is not altered. */
 /*   All values A(K) must be non-negative. */
-/* IPERM is an INT_T array of length N. On exit, it contains the */
+/* IPERM is an int array of length N. On exit, it contains the */
 /*   weighted matching: IPERM(I) = 0 or row I is matched to column */
 /*   IPERM(I). */
-/* NUM is an INT_T variable. On exit, it contains the cardinality of */
+/* NUM is an int variable. On exit, it contains the cardinality of */
 /*   the matching stored in IPERM. */
-/* IW is an INT_T work array of length 5N. */
+/* IW is an int work array of length 5N. */
 /* DW is a REAL (DOUBLE PRECISION in the D-version) array of length 2N. */
 /*   On exit, U = D(1:N) contains the dual row variable and */
 /*   V = D(N+1:2N) contains the dual column variable. If the matrix */
