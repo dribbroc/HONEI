@@ -55,10 +55,13 @@ namespace honei
                 unsigned _inst_ctr;
 
                 /// List of user POSIX threads
-                std::list<std::pair<Thread *, ThreadFunction *> > _threads;
+                std::list<std::pair<Thread *, ThreadFunctionBase *> > _threads;
 
-                /// Waiting list of worker tasks to be executed
+                /// Waiting list of worker tasks to be executed (if affinity)
                 std::list<ThreadTask *> _tasks;
+
+                /// Waiting list of worker tasks to be executed (else)
+                AtomicSList<ThreadTask *> _ttasks;
 
                 /// Exchange data between the pool and its threads
                 PoolSyncData * const _pool_sync;

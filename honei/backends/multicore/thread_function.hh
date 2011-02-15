@@ -20,6 +20,7 @@
 #ifndef MULTICORE_GUARD_THREAD_FUNCTION_HH
 #define MULTICORE_GUARD_THREAD_FUNCTION_HH 1
 
+#include <honei/backends/multicore/atomic_slist.hh>
 #include <honei/backends/multicore/thread_task.hh>
 #include <honei/backends/multicore/ticket.hh>
 #include <honei/util/condition_variable.hh>
@@ -49,26 +50,64 @@ namespace honei
             }
         };
 
-        class ThreadFunction :
-            public PrivateImplementationPattern<ThreadFunction, Shared>
+        class ThreadFunctionBase
         {
             private:
 
             public:
 
-                ThreadFunction(PoolSyncData * const psync, std::list<ThreadTask *> * const list, unsigned pool_id, unsigned sched_id);
+//              virtual ~ThreadFunctionBase();
 
-                ~ThreadFunction();
+                virtual void operator() () = 0;
+
+                virtual void stop() = 0;
+
+                virtual unsigned tid() const = 0;
+        };
+
+        class AffinityThreadFunction :
+            public ThreadFunctionBase,
+            public PrivateImplementationPattern<AffinityThreadFunction, Shared>
+        {
+            private:
+
+            public:
+
+                AffinityThreadFunction(PoolSyncData * const psync, std::list<ThreadTask *> * const list, unsigned pool_id, unsigned sched_id);
+
+                virtual ~AffinityThreadFunction();
 
                 /// The threads' main function
-                void operator() ();
+                virtual void operator() ();
 
-                void stop();
+                virtual void stop();
+
+                virtual unsigned tid() const;
 
                 unsigned pool_id() const;
-
-                unsigned tid() const;
         };
+
+        class SimpleThreadFunction :
+            public ThreadFunctionBase,
+            public PrivateImplementationPattern<SimpleThreadFunction, Shared>
+        {
+            private:
+
+            public:
+
+                SimpleThreadFunction(PoolSyncData * const psync, AtomicSList<ThreadTask *> * const list, unsigned pool_id);
+
+                virtual ~SimpleThreadFunction();
+
+                /// The threads' main function
+                virtual void operator() ();
+
+                virtual void stop();
+
+                virtual unsigned tid() const;
+        };
+
+
     }
 }
 #endif

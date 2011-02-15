@@ -46,8 +46,13 @@ ThreadPool::ThreadPool() :
     _affinity(Configuration::instance()->get_value("mc::affinity", true))
 {
     CONTEXT("When initializing the thread pool:\n");
+
 #ifdef DEBUG
     std::string msg = "Will create " + stringify(_num_threads) + " POSIX worker threads \n";
+#endif
+
+#ifndef linux
+    _affinity = false;
 #endif
 
     std::string dis = Configuration::instance()->get_value("mc::dispatch", "anycore");
@@ -59,7 +64,6 @@ ThreadPool::ThreadPool() :
     else if (dis == "linear")
         policy = &DispatchPolicy::linear_node;
 
-#ifdef linux
     if (_affinity)
     {
 #ifdef DEBUG
@@ -78,22 +82,16 @@ ThreadPool::ThreadPool() :
         msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->get_node(_topology->num_lpus() - 1)) + " \n";
 #endif
     }
-#endif
 
     for (int i(_num_threads - 1) ; i >= 0 ; --i)
     {
-        unsigned sched_id(i % (_topology->num_lpus()));
-
-        ThreadFunction * tobj = new ThreadFunction(_pool_sync, &_tasks, _inst_ctr, (_affinity ? sched_id : 0xFFFF));
-        Thread * t = new Thread(*tobj);
-        while (tobj->tid() == 0) ; // Wait until the thread is really setup / got cpu time for the first time
-
-        _threads.push_back(std::make_pair(t, tobj));
-        ++_inst_ctr;
-
-#ifdef linux
         if (_affinity)
         {
+            unsigned sched_id(i % (_topology->num_lpus()));
+            AffinityThreadFunction * tobj = new AffinityThreadFunction(_pool_sync, &_tasks, _inst_ctr, sched_id);
+            Thread * t = new Thread(*tobj);
+            while (tobj->tid() == 0) ; // Wait until the thread is really setup / got cpu time for the first time
+            _threads.push_back(std::make_pair(t, tobj));
             _sched_ids.push_back(sched_id);
             CPU_ZERO(&_affinity_mask[i]);
             CPU_SET(sched_id, &_affinity_mask[i]);
@@ -104,7 +102,15 @@ ThreadPool::ThreadPool() :
             msg += stringify(tobj->tid()) + "\t\t" + stringify(_inst_ctr - 1) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(_topology->get_node(sched_id)) + " \n";
 #endif
         }
-#endif
+        else
+        {
+            SimpleThreadFunction * tobj = new SimpleThreadFunction(_pool_sync, &_ttasks, _inst_ctr);
+            Thread * t = new Thread(*tobj);
+            while (tobj->tid() == 0) ; // Wait until the thread is really setup / got cpu time for the first time
+            _threads.push_back(std::make_pair(t, tobj));
+        }
+
+        ++_inst_ctr;
     }
 
 #ifdef DEBUG
@@ -114,7 +120,7 @@ ThreadPool::ThreadPool() :
 
 ThreadPool::~ThreadPool()
 {
-    for(std::list<std::pair<Thread *, ThreadFunction *> >::iterator i(_threads.begin()), i_end(_threads.end()) ; i != i_end ; ++i)
+    for(std::list<std::pair<Thread *, ThreadFunctionBase *> >::iterator i(_threads.begin()), i_end(_threads.end()) ; i != i_end ; ++i)
     {
         (*i).second->stop();
         delete (*i).second;
@@ -140,8 +146,13 @@ Ticket<tags::CPU::MultiCore> * ThreadPool::enqueue(const function<void ()> & tas
 
     ThreadTask * t_task(new ThreadTask(task, ticket));
 
-    Lock l(*_pool_sync->mutex);
-    _tasks.push_back(t_task);
+    if (_affinity)
+    {
+        Lock l(*_pool_sync->mutex);
+        _tasks.push_back(t_task);
+    }
+    else
+        _ttasks.push_back(t_task);
 
     _pool_sync->barrier->broadcast();
 
@@ -157,10 +168,18 @@ Ticket<tags::CPU::MultiCore> * ThreadPool::enqueue(const function<void ()> & tas
 
     ThreadTask * t_task(new ThreadTask(task, ticket));
 
-    Lock l(*_pool_sync->mutex);
-    _tasks.push_back(t_task);
-
-    _pool_sync->barrier->broadcast();
+    if (_affinity)
+    {
+        Lock l(*_pool_sync->mutex);
+        _tasks.push_back(t_task);
+        _pool_sync->barrier->broadcast();
+    }
+    else
+    {
+        _ttasks.push_back(t_task);
+        Lock l(*_pool_sync->mutex);
+        _pool_sync->barrier->broadcast();
+    }
 
     return ticket;
 }
