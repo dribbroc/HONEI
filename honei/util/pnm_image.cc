@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <inttypes.h>
 //#include <boost/cstdint.hpp>
 
 using namespace honei;
