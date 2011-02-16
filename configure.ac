@@ -550,6 +550,7 @@ AC_OUTPUT(
 	clients/io_tools/Makefile
 	clients/fortran/Makefile
 	clients/mpi/Makefile
+	clients/norwegen/Makefile
 	clients/swe/Makefile
 	clients/lbm/Makefile
 	clients/qt/Makefile

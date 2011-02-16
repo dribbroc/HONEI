@@ -1,0 +1,9 @@
+#PBS -o /dev/null
+#PBS -M dribbrock@gmail.com
+# #PBS -m bae
+#PBS -q med_eth
+#PBS -N honei-mpi
+#PBS -j oe
+#PBS -l walltime=04:00:00,nodes=1
+cd $HOME/nobackup/honei/clients/norwegen
+./norwegen 0.15 TAU

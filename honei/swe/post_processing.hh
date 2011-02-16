@@ -84,9 +84,8 @@ namespace honei
             CONTEXT("When processing RelaxSolver post output:");
             if(solve_time % every == 0 || solve_time == 0)
             {
-                std::string filename;
                 std::ofstream file;
-                if (filename == "")
+                if (filename.length() == 0)
                     filename = "out" + stringify(solve_time) + ".dat";
                 file.open(filename.c_str());
 
