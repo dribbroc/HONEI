@@ -56,7 +56,7 @@ namespace honei
 
             public:
 
-//              virtual ~ThreadFunctionBase();
+                virtual ~ThreadFunctionBase();
 
                 virtual void operator() () = 0;
 

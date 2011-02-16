@@ -120,16 +120,17 @@ ThreadPool::ThreadPool() :
 
 ThreadPool::~ThreadPool()
 {
-    for(std::list<std::pair<Thread *, ThreadFunctionBase *> >::iterator i(_threads.begin()), i_end(_threads.end()) ; i != i_end ; ++i)
+    for(std::list<std::pair<Thread *, ThreadFunctionBase *> >::iterator i(_threads.begin()),
+            i_end(_threads.end()) ; i != i_end ; ++i)
     {
         (*i).second->stop();
         delete (*i).second;
         delete (*i).first;
     }
 
-#ifdef linux
-    delete[] _affinity_mask;
-#endif
+    if (_affinity)
+        delete[] _affinity_mask;
+
     delete _pool_sync;
 }
 

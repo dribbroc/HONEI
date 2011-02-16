@@ -121,6 +121,10 @@ namespace honei
 
 using namespace honei::mc;
 
+ThreadFunctionBase::~ThreadFunctionBase()
+{
+}
+
 AffinityThreadFunction::AffinityThreadFunction(PoolSyncData * const psync,
         std::list<ThreadTask *> * const list, unsigned pool_id, unsigned sched_id) :
     PrivateImplementationPattern<AffinityThreadFunction, Shared>(new
