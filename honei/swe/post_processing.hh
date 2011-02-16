@@ -79,14 +79,15 @@ namespace honei
     struct PostProcessing<output_types::GNUPLOT>
     {
         template<typename ResPrec_>
-        static inline void value(DenseMatrix<ResPrec_> & height, unsigned long every, unsigned long d_width, unsigned long d_height, unsigned long solve_time)
+        static inline void value(DenseMatrix<ResPrec_> & height, unsigned long every, unsigned long d_width, unsigned long d_height, unsigned long solve_time, std::string filename = "")
         {
             CONTEXT("When processing RelaxSolver post output:");
             if(solve_time % every == 0 || solve_time == 0)
             {
                 std::string filename;
                 std::ofstream file;
-                filename = "out" + stringify(solve_time) + ".dat";
+                if (filename == "")
+                    filename = "out" + stringify(solve_time) + ".dat";
                 file.open(filename.c_str());
 
                 ///Write header to file:

@@ -585,14 +585,14 @@ class SolverLBMFSIExternalComparisonTest_Malpasset :
                 solver.solve(0ul);
 #ifdef SOLVER_POSTPROCESSING
                 solver.do_postprocessing();
-                GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
                 //PostProcessing<GNUPLOT>::value(*grid.h, _max_timesteps - 1 , h.columns(), h.rows(), i);
                 //Sum<Tag_>::value(*grid.h, *grid.b);
-                PostProcessing<GNUPLOT>::value(*grid.h, _max_timesteps - 1, h.columns(), h.rows(), i);
 #endif
             }
             solver.do_postprocessing();
             GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
+            PostProcessing<GNUPLOT>::value(*grid.h, 0, h.columns(), h.rows(), 0);
+            //GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
 
             DenseMatrix<DataType_> result(grid.h->copy());
             Sum<Tag_>::value(result, b);
@@ -600,7 +600,7 @@ class SolverLBMFSIExternalComparisonTest_Malpasset :
         }
 };
 //SolverLBMFSIExternalComparisonTest_Malpasset<tags::CPU, float> malpasset_cpu_float("float", 1000, 0.015, 1.5);
-SolverLBMFSIExternalComparisonTest_Malpasset<tags::CPU, float> malpasset_cpu_float("float", 10000, 0.0015, 0.51);
+SolverLBMFSIExternalComparisonTest_Malpasset<tags::CPU, float> malpasset_cpu_float("float", /*10000*/100, 0.0015, 0.51);
 
 template <typename Tag_, typename DataType_>
 class IO_Malpasset :
