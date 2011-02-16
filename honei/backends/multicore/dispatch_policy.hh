@@ -42,7 +42,7 @@ namespace honei
 
             public:
 
-                Ticket<tags::CPU::MultiCore> * operator() (HONEI_UNUSED std::vector<unsigned> & sids)
+                Ticket<tags::CPU::MultiCore> * operator() ()
                 {
                     return new Ticket<tags::CPU::MultiCore>();
                 }
@@ -65,13 +65,9 @@ namespace honei
                 {
                 }
 
-                Ticket<tags::CPU::MultiCore> * operator() (std::vector<unsigned> & sids)
+                Ticket<tags::CPU::MultiCore> * operator() ()
                 {
                     unsigned sched_id(other->sid());
-
-                    // Make sure that there is a thread running on that core.
-                    if (sids.end() == std::find(sids.begin(), sids.end(), sched_id))
-                        sched_id = 0xFFFF;
 
                     Ticket<tags::CPU::MultiCore> * ticket = new Ticket<tags::CPU::MultiCore>(sched_id, sched_id);
 
@@ -94,11 +90,12 @@ namespace honei
                 {
                 }
 
-                Ticket<tags::CPU::MultiCore> * operator() (std::vector<unsigned> & sids)
+                Ticket<tags::CPU::MultiCore> * operator() ()
                 {
-                    // Use core_nr as equal to sched_id and make sure that there is a thread on it
-                    if (sids.end() == std::find(sids.begin(), sids.end(), core_id))
-                        core_id = 0xFFFF;
+                    Topology * top = Topology::instance();
+
+                    if (core_id > top->num_lpus() - 1)
+                        core_id = top->num_lpus() - 1;
 
                     Ticket<tags::CPU::MultiCore> * ticket =
                         new Ticket<tags::CPU::MultiCore>(core_id, core_id);
@@ -124,7 +121,7 @@ namespace honei
                 {
                 }
 
-                Ticket<tags::CPU::MultiCore> * operator() (HONEI_UNUSED std::vector<unsigned> & sids)
+                Ticket<tags::CPU::MultiCore> * operator() ()
                 {
                     unsigned sched_min(other->sid_min());
                     unsigned sched_max(other->sid_max());
@@ -150,7 +147,7 @@ namespace honei
                 {
                 }
 
-                Ticket<tags::CPU::MultiCore> * operator() (HONEI_UNUSED std::vector<unsigned> & sids)
+                Ticket<tags::CPU::MultiCore> * operator() ()
                 {
                     Topology * top = Topology::instance();
 
@@ -176,7 +173,7 @@ namespace honei
                 {
                 }
 
-                Ticket<tags::CPU::MultiCore> * operator() (HONEI_UNUSED std::vector<unsigned> & sids)
+                Ticket<tags::CPU::MultiCore> * operator() ()
                 {
                     Ticket<tags::CPU::MultiCore> * ticket(NULL);
                     Topology * top = Topology::instance();
@@ -218,7 +215,7 @@ namespace honei
                 {
                 }
 
-                Ticket<tags::CPU::MultiCore> * operator() (HONEI_UNUSED std::vector<unsigned> & sids)
+                Ticket<tags::CPU::MultiCore> * operator() ()
                 {
                     Ticket<tags::CPU::MultiCore> * ticket(NULL);
                     Topology * top = Topology::instance();
@@ -258,13 +255,13 @@ namespace honei
         {
             private:
 
-                const function<Ticket<tags::CPU::MultiCore> * (std::vector<unsigned> & sids)> policy;
+                const function<Ticket<tags::CPU::MultiCore> * ()> policy;
 
                 /// \name Basic Operations
                 /// \{
 
                 /// Constructor
-                DispatchPolicy(const function<Ticket<tags::CPU::MultiCore> * (std::vector<unsigned> & sids)> p) :
+                DispatchPolicy(const function<Ticket<tags::CPU::MultiCore> * ()> p) :
                     policy(p)
                 {
                 }
@@ -276,9 +273,9 @@ namespace honei
                 static Ticket<tags::CPU::MultiCore> * last; // Store history
 
                 /// Creates a new Ticket and assures the given way of dispatching
-                Ticket<tags::CPU::MultiCore> * apply(std::vector<unsigned> & sids)
+                Ticket<tags::CPU::MultiCore> * apply()
                 {
-                    last = policy(sids);
+                    last = policy();
                     return last;
                 }
 

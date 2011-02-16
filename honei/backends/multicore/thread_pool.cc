@@ -47,28 +47,45 @@ ThreadPool::ThreadPool() :
 {
     CONTEXT("When initializing the thread pool:\n");
 
-#ifdef DEBUG
-    std::string msg = "Will create " + stringify(_num_threads) + " POSIX worker threads \n";
-#endif
-
 #ifndef linux
     _affinity = false;
+#endif
+
+#ifdef DEBUG
+    std::string msg = "Will create " + stringify(_num_threads) + " POSIX worker threads\n";
+    if (_affinity)
+        msg += "Found Thread Affinity to be enabled\n";
+    else
+        msg += "Found Thread Affinity to be disabled\n";
+    msg += "Default dispatch policy is configured as ";
 #endif
 
     std::string dis = Configuration::instance()->get_value("mc::dispatch", "anycore");
 
     if (! _affinity || dis == "anycore")
+    {
         policy = &DispatchPolicy::any_core;
+#ifdef DEBUG
+    msg += "arbitrary - the next available thread will execute a task\n";
+#endif
+    }
     else if (dis == "alternating")
+    {
         policy = &DispatchPolicy::alternating_node;
+#ifdef DEBUG
+    msg += "alternating - tasks shall be assigned alternatingly on available NUMA nodes\n";
+#endif
+    }
     else if (dis == "linear")
+    {
         policy = &DispatchPolicy::linear_node;
+#ifdef DEBUG
+    msg += "linear - tasks shall be assigned to fill up available NUMA nodes one-by-one\n";
+#endif
+    }
 
     if (_affinity)
     {
-#ifdef DEBUG
-        msg += "Thread Affinity is enabled - assigninh threads to definite logical processing units. \n";
-#endif
         _affinity_mask = new cpu_set_t[_num_threads + 1];
 
         // set own affinity first
@@ -99,7 +116,7 @@ ThreadPool::ThreadPool() :
                 throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 
 #ifdef DEBUG
-            msg += stringify(tobj->tid()) + "\t\t" + stringify(_inst_ctr - 1) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(_topology->get_node(sched_id)) + " \n";
+            msg += stringify(tobj->tid()) + "\t\t" + stringify(_inst_ctr) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(_topology->get_node(sched_id)) + " \n";
 #endif
         }
         else
@@ -143,19 +160,24 @@ Ticket<tags::CPU::MultiCore> * ThreadPool::enqueue(const function<void ()> & tas
 {
     CONTEXT("When creating a ThreadTask:\n");
 
-    Ticket<tags::CPU::MultiCore> * ticket((_affinity ? p.apply(_sched_ids) : DispatchPolicy::any_core().apply(_sched_ids)));
-
-    ThreadTask * t_task(new ThreadTask(task, ticket));
+    Ticket<tags::CPU::MultiCore> * ticket(NULL);
 
     if (_affinity)
     {
+        ticket = p.apply();
+        ThreadTask * t_task(new ThreadTask(task, ticket));
         Lock l(*_pool_sync->mutex);
         _tasks.push_back(t_task);
+        _pool_sync->barrier->broadcast();
     }
     else
+    {
+        ticket = DispatchPolicy::any_core().apply();
+        ThreadTask * t_task(new ThreadTask(task, ticket));
         _ttasks.push_back(t_task);
-
-    _pool_sync->barrier->broadcast();
+        Lock l(*_pool_sync->mutex);
+        _pool_sync->barrier->broadcast();
+    }
 
     return ticket;
 }
@@ -165,7 +187,7 @@ Ticket<tags::CPU::MultiCore> * ThreadPool::enqueue(const function<void ()> & tas
 {
     CONTEXT("When creating a ThreadTask:\n");
 
-    Ticket<tags::CPU::MultiCore> * ticket(policy().apply(_sched_ids));
+    Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
 
     ThreadTask * t_task(new ThreadTask(task, ticket));
 

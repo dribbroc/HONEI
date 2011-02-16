@@ -57,10 +57,10 @@ namespace honei
                 /// List of user POSIX threads
                 std::list<std::pair<Thread *, ThreadFunctionBase *> > _threads;
 
-                /// Waiting list of worker tasks to be executed (if affinity)
+                /// Waiting list of worker tasks to be executed (if affinity is enabled)
                 std::list<ThreadTask *> _tasks;
 
-                /// Waiting list of worker tasks to be executed (else)
+                /// Waiting list of worker tasks to be executed (otherwise)
                 AtomicSList<ThreadTask *> _ttasks;
 
                 /// Exchange data between the pool and its threads
@@ -72,10 +72,10 @@ namespace honei
                 /// Function pointer to any of the default dispatch strategies
                 DispatchPolicy (* policy) ();
 
-#ifdef linux
                 /// Mapping of threads to the scheduler ids of the cores they run on
                 std::vector<unsigned> _sched_ids;
 
+#ifdef linux
                 /// Array of affinity masks for main process and all controlled threads
                 cpu_set_t * _affinity_mask;
 #endif

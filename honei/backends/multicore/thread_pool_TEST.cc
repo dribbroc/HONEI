@@ -17,10 +17,6 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef DEBUG
-#define DEBUG 1
-#endif
-
 #include <honei/backends/multicore/thread_pool.hh>
 #include <honei/util/lock.hh>
 #include <honei/util/stringify.hh>
