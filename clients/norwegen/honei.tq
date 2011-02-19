@@ -6,4 +6,4 @@
 #PBS -j oe
 #PBS -l walltime=04:00:00,nodes=1
 cd $HOME/nobackup/honei/clients/norwegen
-./norwegen 0.15 TAU
+./norwegen DELTAT TAU

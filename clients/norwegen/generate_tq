@@ -1,14 +1,21 @@
 #!/usr/bin/env bash
-
-taubase=0.50
-for i in {1..151}
+#cd /home/uma408/nobackup/honei/clients/norwegen
+dtbase=0.1573
+taubase=2.068
+for i in {0..500}
 do
     cp honei.tq honei.tq.tmp
-    tau=$(echo scale=5\;$taubase+0.01|bc)
+    tau=$(echo scale=6\;$taubase+0.001|bc)
     taubase=${tau}
+    dt=$(echo scale=6\;$dtbase+0.0001|bc)
+    dtbase=${dt}
     sed "s/TAU/${tau}/g" <honei.tq.tmp >honei.tq.tmp2
     mv honei.tq.tmp2 honei.tq.tmp
+    sed "s/DELTAT/${dt}/g" <honei.tq.tmp >honei.tq.tmp2
+    mv honei.tq.tmp2 honei.tq.tmp
     qsub honei.tq.tmp
-    #echo $tau
+    #echo $dt $tau
 done
 rm -f honei.tq.tmp
+echo letzte werte: dt = $dt tau = $tau
+#echo letzte werte: dt = $dt tau = $tau  | mail -s"LIDO generate gestartet" dribbrock@gmail.com
