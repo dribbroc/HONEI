@@ -27,6 +27,7 @@
 #include <honei/backends/multicore/topology.hh>
 #include <honei/util/attributes.hh>
 #include <honei/util/instantiation_policy.hh>
+#include <honei/util/private_implementation_pattern.hh>
 #include <honei/util/thread.hh>
 
 #include <vector>
@@ -36,49 +37,13 @@ namespace honei
     namespace mc
     {
         class ThreadPool :
+            public PrivateImplementationPattern<ThreadPool, Single>,
             public InstantiationPolicy<ThreadPool, Singleton>
         {
             private:
+
                 /// \name Private members
                 /// \{
-
-                /// Information about processor topology (such as number of processing units)
-                Topology * const _topology;
-
-                /// Number of demanded threads (via honeirc)
-                const unsigned _demanded_threads;
-
-                /// Number of pooled threads
-                const unsigned _num_threads;
-
-                /// A thread instantiation counter
-                unsigned _inst_ctr;
-
-                /// List of user POSIX threads
-                std::list<std::pair<Thread *, ThreadFunctionBase *> > _threads;
-
-                /// Waiting list of worker tasks to be executed (if affinity is enabled)
-                std::list<ThreadTask *> _tasks;
-
-                /// Waiting list of worker tasks to be executed (otherwise)
-                AtomicSList<ThreadTask *> _ttasks;
-
-                /// Exchange data between the pool and its threads
-                PoolSyncData * const _pool_sync;
-
-                /// Flag whether to use thread affinity
-                const bool _affinity;
-
-                /// Function pointer to any of the default dispatch strategies
-                DispatchPolicy (* policy) ();
-
-                /// Mapping of threads to the scheduler ids of the cores they run on
-                std::vector<unsigned> _sched_ids;
-
-#ifdef linux
-                /// Array of affinity masks for main process and all controlled threads
-                cpu_set_t * _affinity_mask;
-#endif
                 /// \}
 
             protected:
@@ -89,7 +54,6 @@ namespace honei
                 /// \{
 
                 /// Constructor
-
                 ThreadPool();
 
                 /// \}
@@ -100,7 +64,6 @@ namespace honei
                 /// \{
 
                 /// Destructor
-
                 ~ThreadPool();
 
                 /// \}
