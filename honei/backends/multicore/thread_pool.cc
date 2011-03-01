@@ -47,6 +47,25 @@ namespace honei
         /// A thread instantiation counter
         unsigned _inst_ctr;
 
+        Implementation() :
+            _topology(mc::Topology::instance()),
+            _demanded_threads(Configuration::instance()->get_value("mc::num_threads", _topology->num_lpus())),
+            _num_threads(_demanded_threads > _topology->num_lpus() ? _demanded_threads : _topology->num_lpus()),
+            _inst_ctr(0)
+        {
+        }
+
+        virtual ~Implementation()
+        {
+        }
+
+        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy p) = 0;
+        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task) = 0;
+    };
+
+    struct StandardImplementation :
+        public Implementation<mc::ThreadPool>
+    {
         /// List of user POSIX threads
         std::list<std::pair<Thread *, mc::ThreadFunctionBase *> > _threads;
 
@@ -73,11 +92,8 @@ namespace honei
         cpu_set_t * _affinity_mask;
 #endif
 
-        Implementation() :
-            _topology(mc::Topology::instance()),
-            _demanded_threads(Configuration::instance()->get_value("mc::num_threads", _topology->num_lpus())),
-            _num_threads(_demanded_threads > _topology->num_lpus() ? _demanded_threads : _topology->num_lpus()),
-            _inst_ctr(0),
+        StandardImplementation() :
+            Implementation<mc::ThreadPool>(),
             _pool_sync(new mc::PoolSyncData),
             _affinity(Configuration::instance()->get_value("mc::affinity", true))
         {
@@ -171,7 +187,7 @@ namespace honei
 #endif
         }
 
-        ~Implementation()
+        ~StandardImplementation()
         {
             for(std::list<std::pair<Thread *, mc::ThreadFunctionBase *> >::iterator i(_threads.begin()),
                 i_end(_threads.end()) ; i != i_end ; ++i)
@@ -186,6 +202,56 @@ namespace honei
 
             delete _pool_sync;
         }
+
+        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy p)
+        {
+            CONTEXT("When creating a ThreadTask:\n");
+
+            Ticket<tags::CPU::MultiCore> * ticket(NULL);
+
+            if (_affinity)
+            {
+                ticket = p.apply();
+                mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
+                Lock l(*_pool_sync->mutex);
+                _tasks.push_back(t_task);
+                _pool_sync->barrier->broadcast();
+            }
+            else
+            {
+                ticket = mc::DispatchPolicy::any_core().apply();
+                mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
+                _ttasks.push_back(t_task);
+                Lock l(*_pool_sync->mutex);
+                _pool_sync->barrier->broadcast();
+            }
+
+            return ticket;
+        }
+
+        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task)
+        {
+            CONTEXT("When creating a ThreadTask:\n");
+
+            Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
+
+            mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
+
+            if (_affinity)
+            {
+                Lock l(*_pool_sync->mutex);
+                _tasks.push_back(t_task);
+                _pool_sync->barrier->broadcast();
+            }
+            else
+            {
+                _ttasks.push_back(t_task);
+                Lock l(*_pool_sync->mutex);
+                _pool_sync->barrier->broadcast();
+            }
+
+            return ticket;
+        }
     };
 }
 
@@ -196,9 +262,8 @@ template class InstantiationPolicy<ThreadPool, Singleton>;
 
 Ticket<tags::CPU::MultiCore> * DispatchPolicy::last(NULL);
 
-
 ThreadPool::ThreadPool() :
-    PrivateImplementationPattern<ThreadPool, Single>(new Implementation<ThreadPool>)
+    PrivateImplementationPattern<ThreadPool, Single>(new StandardImplementation)
 {
 }
 
@@ -213,51 +278,11 @@ unsigned ThreadPool::num_threads() const
 
 Ticket<tags::CPU::MultiCore> * ThreadPool::enqueue(const function<void ()> & task, DispatchPolicy p)
 {
-    CONTEXT("When creating a ThreadTask:\n");
-
-    Ticket<tags::CPU::MultiCore> * ticket(NULL);
-
-    if (_imp->_affinity)
-    {
-        ticket = p.apply();
-        ThreadTask * t_task(new ThreadTask(task, ticket));
-        Lock l(*_imp->_pool_sync->mutex);
-        _imp->_tasks.push_back(t_task);
-        _imp->_pool_sync->barrier->broadcast();
-    }
-    else
-    {
-        ticket = DispatchPolicy::any_core().apply();
-        ThreadTask * t_task(new ThreadTask(task, ticket));
-        _imp->_ttasks.push_back(t_task);
-        Lock l(*_imp->_pool_sync->mutex);
-        _imp->_pool_sync->barrier->broadcast();
-    }
-
-    return ticket;
+    return _imp->enqueue(task, p);
 }
 
 /// Use default policy
 Ticket<tags::CPU::MultiCore> * ThreadPool::enqueue(const function<void ()> & task)
 {
-    CONTEXT("When creating a ThreadTask:\n");
-
-    Ticket<tags::CPU::MultiCore> * ticket(_imp->policy().apply());
-
-    ThreadTask * t_task(new ThreadTask(task, ticket));
-
-    if (_imp->_affinity)
-    {
-        Lock l(*_imp->_pool_sync->mutex);
-        _imp->_tasks.push_back(t_task);
-        _imp->_pool_sync->barrier->broadcast();
-    }
-    else
-    {
-        _imp->_ttasks.push_back(t_task);
-        Lock l(*_imp->_pool_sync->mutex);
-        _imp->_pool_sync->barrier->broadcast();
-    }
-
-    return ticket;
+    return _imp->enqueue(task);
 }
