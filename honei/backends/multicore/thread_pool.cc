@@ -44,30 +44,37 @@ namespace honei
         /// Number of pooled threads
         const unsigned _num_threads;
 
-        /// A thread instantiation counter
-        unsigned _inst_ctr;
+        /// Exchange data between the pool and its threads
+        mc::PoolSyncData * const _pool_sync;
 
         Implementation() :
             _topology(mc::Topology::instance()),
             _demanded_threads(Configuration::instance()->get_value("mc::num_threads", _topology->num_lpus())),
             _num_threads(_demanded_threads > _topology->num_lpus() ? _demanded_threads : _topology->num_lpus()),
-            _inst_ctr(0)
+            _pool_sync(new mc::PoolSyncData)
         {
+#ifdef DEBUG
+            std::string msg = "Will create " + stringify(_num_threads) + " POSIX worker threads\n";
+            LOGMESSAGE(lc_backend, msg);
+#endif
         }
 
         virtual ~Implementation()
         {
+            delete _pool_sync;
         }
 
         virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy p) = 0;
         virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task) = 0;
     };
 
+    /* StandardImplementation assumes affinity to be disabled. */
+
     struct StandardImplementation :
         public Implementation<mc::ThreadPool>
     {
         /// List of user POSIX threads
-        std::list<std::pair<Thread *, mc::ThreadFunctionBase *> > _threads;
+        std::list<std::pair<Thread *, mc::SimpleThreadFunction *> > _threads;
 
         /// Waiting list of worker tasks to be executed (if affinity is enabled)
         std::list<mc::ThreadTask *> _tasks;
@@ -75,47 +82,106 @@ namespace honei
         /// Waiting list of worker tasks to be executed (otherwise)
         mc::AtomicSList<mc::ThreadTask *> _ttasks;
 
-        /// Exchange data between the pool and its threads
-        mc::PoolSyncData * const _pool_sync;
-
-        /// Flag whether to use thread affinity
-        const bool _affinity;
-
         /// Function pointer to any of the default dispatch strategies
         mc::DispatchPolicy (* policy) ();
+
+        StandardImplementation() :
+            Implementation<mc::ThreadPool>(),
+            policy(&mc::DispatchPolicy::any_core)
+        {
+            CONTEXT("When initializing the thread pool:\n");
+#ifdef DEBUG
+            std::string msg = "Affinity is disabled, using standard thread pool.\n";
+            msg += "DispatchPolicy: arbitrary - the next available thread will execute a task\n";
+            LOGMESSAGE(lc_backend, msg);
+#endif
+
+            int inst_ctr(0);
+
+            for (int i(_num_threads - 1) ; i >= 0 ; --i)
+            {
+                mc::SimpleThreadFunction * tobj = new mc::SimpleThreadFunction(_pool_sync, &_ttasks, inst_ctr);
+                Thread * t = new Thread(*tobj);
+                while (tobj->tid() == 0) ; // Wait until the thread is really setup / got cpu time for the first time
+                _threads.push_back(std::make_pair(t, tobj));
+
+                ++inst_ctr;
+            }
+
+#ifdef DEBUG
+            LOGMESSAGE(lc_backend, msg);
+#endif
+        }
+
+        ~StandardImplementation()
+        {
+            for(std::list<std::pair<Thread *, mc::SimpleThreadFunction *> >::iterator i(_threads.begin()),
+                i_end(_threads.end()) ; i != i_end ; ++i)
+            {
+                (*i).second->stop();
+                delete (*i).second;
+                delete (*i).first;
+            }
+        }
+
+        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy p)
+        {
+            return enqueue(task);
+        }
+
+        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task)
+        {
+            CONTEXT("When creating a ThreadTask:\n");
+
+            Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
+
+            mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
+
+            _ttasks.push_back(t_task);
+
+            {
+                Lock l(*_pool_sync->mutex);
+                _pool_sync->barrier->broadcast();
+            }
+
+            return ticket;
+        }
+    };
+
+    struct AffinityImplementation :
+        public Implementation<mc::ThreadPool>
+    {
+        /// List of user POSIX threads
+        std::list<std::pair<Thread *, mc::AffinityThreadFunction *> > _threads;
+
+        /// Waiting list of worker tasks to be executed (if affinity is enabled)
+        std::list<mc::ThreadTask *> _tasks;
+
+        /// Waiting list of worker tasks to be executed (otherwise)
+        mc::AtomicSList<mc::ThreadTask *> _ttasks;
 
         /// Mapping of threads to the scheduler ids of the cores they run on
         std::vector<unsigned> _sched_ids;
 
-#ifdef linux
         /// Array of affinity masks for main process and all controlled threads
         cpu_set_t * _affinity_mask;
-#endif
 
-        StandardImplementation() :
-            Implementation<mc::ThreadPool>(),
-            _pool_sync(new mc::PoolSyncData),
-            _affinity(Configuration::instance()->get_value("mc::affinity", true))
+        /// Function pointer to any of the default dispatch strategies
+        mc::DispatchPolicy (* policy) ();
+
+        AffinityImplementation() :
+            Implementation<mc::ThreadPool>()
         {
             CONTEXT("When initializing the thread pool:\n");
 
-#ifndef linux
-            _affinity = false;
-#endif
-
 #ifdef DEBUG
-            std::string msg = "Will create " + stringify(_num_threads) + " POSIX worker threads\n";
-            if (_affinity)
-                msg += "Found Thread Affinity to be enabled\n";
-            else
-                msg += "Found Thread Affinity to be disabled\n";
-
-            msg += "Default dispatch policy is configured as ";
+            std::string msg = "Affinity is enabled, using thread pool with affinity support.\n";
+            msg += "The default DispatchPolicy is configured to be: \n";
 #endif
 
             std::string dis = Configuration::instance()->get_value("mc::dispatch", "anycore");
 
-            if (! _affinity || dis == "anycore")
+            if (dis == "anycore")
             {
                 policy = &mc::DispatchPolicy::any_core;
 #ifdef DEBUG
@@ -137,49 +203,38 @@ namespace honei
 #endif
             }
 
-            if (_affinity)
-            {
-                _affinity_mask = new cpu_set_t[_num_threads + 1];
+            _affinity_mask = new cpu_set_t[_num_threads + 1];
 
-                // set own affinity first
-                CPU_ZERO(&_affinity_mask[_num_threads]);
-                CPU_SET(_topology->num_lpus() - 1, &_affinity_mask[_num_threads]);
-                if(sched_setaffinity(syscall(__NR_gettid), sizeof(cpu_set_t), &_affinity_mask[_num_threads]) != 0)
-                    throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
+            // set own affinity first
+            CPU_ZERO(&_affinity_mask[_num_threads]);
+            CPU_SET(_topology->num_lpus() - 1, &_affinity_mask[_num_threads]);
+            if(sched_setaffinity(syscall(__NR_gettid), sizeof(cpu_set_t), &_affinity_mask[_num_threads]) != 0)
+                throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 
 #ifdef DEBUG
-                msg += "THREAD \t\t POOL_ID \t LPU \t NODE \n";
-                msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->get_node(_topology->num_lpus() - 1)) + " \n";
+            msg += "THREAD \t\t POOL_ID \t LPU \t NODE \n";
+            msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->get_node(_topology->num_lpus() - 1)) + " \n";
 #endif
-            }
+
+            int inst_ctr(0);
 
             for (int i(_num_threads - 1) ; i >= 0 ; --i)
             {
-                if (_affinity)
-                {
-                    unsigned sched_id(i % (_topology->num_lpus()));
-                    mc::AffinityThreadFunction * tobj = new mc::AffinityThreadFunction(_pool_sync, &_tasks, _inst_ctr, sched_id);
-                    Thread * t = new Thread(*tobj);
-                    while (tobj->tid() == 0) ; // Wait until the thread is really setup / got cpu time for the first time
-                    _threads.push_back(std::make_pair(t, tobj));
-                    _sched_ids.push_back(sched_id);
-                    CPU_ZERO(&_affinity_mask[i]);
-                    CPU_SET(sched_id, &_affinity_mask[i]);
-                    if(sched_setaffinity(tobj->tid(), sizeof(cpu_set_t), &_affinity_mask[i]) != 0)
-                        throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
+                unsigned sched_id(i % (_topology->num_lpus()));
+                mc::AffinityThreadFunction * tobj = new mc::AffinityThreadFunction(_pool_sync, &_tasks, inst_ctr, sched_id);
+                Thread * t = new Thread(*tobj);
+                while (tobj->tid() == 0) ; // Wait until the thread is really setup / got cpu time for the first time
+                _threads.push_back(std::make_pair(t, tobj));
+                _sched_ids.push_back(sched_id);
+                CPU_ZERO(&_affinity_mask[i]);
+                CPU_SET(sched_id, &_affinity_mask[i]);
+                if(sched_setaffinity(tobj->tid(), sizeof(cpu_set_t), &_affinity_mask[i]) != 0)
+                    throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 #ifdef DEBUG
-                    msg += stringify(tobj->tid()) + "\t\t" + stringify(_inst_ctr) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(_topology->get_node(sched_id)) + " \n";
+                msg += stringify(tobj->tid()) + "\t\t" + stringify(inst_ctr) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(_topology->get_node(sched_id)) + " \n";
 #endif
-                }
-                else
-                {
-                    mc::SimpleThreadFunction * tobj = new mc::SimpleThreadFunction(_pool_sync, &_ttasks, _inst_ctr);
-                    Thread * t = new Thread(*tobj);
-                    while (tobj->tid() == 0) ; // Wait until the thread is really setup / got cpu time for the first time
-                    _threads.push_back(std::make_pair(t, tobj));
-                }
 
-                ++_inst_ctr;
+                ++inst_ctr;
             }
 
 #ifdef DEBUG
@@ -187,9 +242,9 @@ namespace honei
 #endif
         }
 
-        ~StandardImplementation()
+        ~AffinityImplementation()
         {
-            for(std::list<std::pair<Thread *, mc::ThreadFunctionBase *> >::iterator i(_threads.begin()),
+            for(std::list<std::pair<Thread *, mc::AffinityThreadFunction *> >::iterator i(_threads.begin()),
                 i_end(_threads.end()) ; i != i_end ; ++i)
             {
                 (*i).second->stop();
@@ -197,32 +252,20 @@ namespace honei
                 delete (*i).first;
             }
 
-            if (_affinity)
-                delete[] _affinity_mask;
+            delete[] _affinity_mask;
 
-            delete _pool_sync;
         }
 
         virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy p)
         {
             CONTEXT("When creating a ThreadTask:\n");
 
-            Ticket<tags::CPU::MultiCore> * ticket(NULL);
+            Ticket<tags::CPU::MultiCore> * ticket(p.apply());
+            mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
-            if (_affinity)
             {
-                ticket = p.apply();
-                mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
                 Lock l(*_pool_sync->mutex);
                 _tasks.push_back(t_task);
-                _pool_sync->barrier->broadcast();
-            }
-            else
-            {
-                ticket = mc::DispatchPolicy::any_core().apply();
-                mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
-                _ttasks.push_back(t_task);
-                Lock l(*_pool_sync->mutex);
                 _pool_sync->barrier->broadcast();
             }
 
@@ -237,16 +280,9 @@ namespace honei
 
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
-            if (_affinity)
             {
                 Lock l(*_pool_sync->mutex);
                 _tasks.push_back(t_task);
-                _pool_sync->barrier->broadcast();
-            }
-            else
-            {
-                _ttasks.push_back(t_task);
-                Lock l(*_pool_sync->mutex);
                 _pool_sync->barrier->broadcast();
             }
 
@@ -263,12 +299,26 @@ template class InstantiationPolicy<ThreadPool, Singleton>;
 Ticket<tags::CPU::MultiCore> * DispatchPolicy::last(NULL);
 
 ThreadPool::ThreadPool() :
-    PrivateImplementationPattern<ThreadPool, Single>(new StandardImplementation)
+    PrivateImplementationPattern<ThreadPool, Single>(select_impl())
 {
 }
 
 ThreadPool::~ThreadPool()
 {
+}
+
+Implementation<ThreadPool> * ThreadPool::select_impl()
+{
+    bool affinity = Configuration::instance()->get_value("mc::affinity", 1);
+
+#ifndef linux
+    affinity = false;
+#endif
+
+    if (affinity)
+        return new AffinityImplementation;
+    else
+        return new StandardImplementation;
 }
 
 unsigned ThreadPool::num_threads() const

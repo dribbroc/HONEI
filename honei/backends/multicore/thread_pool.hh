@@ -46,6 +46,8 @@ namespace honei
                 /// \{
                 /// \}
 
+                Implementation<ThreadPool> * select_impl();
+
             protected:
 
                 friend class InstantiationPolicy<ThreadPool, Singleton>;
@@ -71,7 +73,7 @@ namespace honei
                 /// \name Public members
                 /// \{
 
-                /// Retrieve the number of created threads
+                /// Retrieve the number of pooled threads
                 unsigned num_threads() const;
 
                 /// Dispatch a task using a specified dispatch strategy
