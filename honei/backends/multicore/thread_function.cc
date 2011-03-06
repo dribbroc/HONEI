@@ -18,6 +18,7 @@
 
 #include <honei/backends/multicore/atomic_slist-impl.hh>
 #include <honei/backends/multicore/thread_function.hh>
+#include <honei/backends/multicore/ticket.hh>
 #include <honei/util/attributes.hh>
 #include <honei/util/exception.hh>
 #include <honei/util/lock.hh>

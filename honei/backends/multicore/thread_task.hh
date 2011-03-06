@@ -66,6 +66,24 @@ namespace honei
                 return false;
             }
         };
+
+        struct PoolSyncData
+        {
+            Mutex * const mutex;
+            ConditionVariable * const barrier;
+
+            PoolSyncData() :
+                mutex(new Mutex),
+                barrier(new ConditionVariable)
+            {
+            }
+
+            ~PoolSyncData()
+            {
+                delete barrier;
+                delete mutex;
+            }
+        };
     }
 }
 #endif

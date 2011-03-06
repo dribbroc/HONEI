@@ -23,14 +23,9 @@
 
 #include <honei/backends/multicore/dispatch_policy.hh>
 #include <honei/backends/multicore/ticket.hh>
-#include <honei/backends/multicore/thread_function.hh>
-#include <honei/backends/multicore/topology.hh>
 #include <honei/util/attributes.hh>
 #include <honei/util/instantiation_policy.hh>
 #include <honei/util/private_implementation_pattern.hh>
-#include <honei/util/thread.hh>
-
-#include <vector>
 
 namespace honei
 {

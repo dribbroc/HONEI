@@ -18,6 +18,8 @@
  */
 
 #include <honei/backends/multicore/thread_pool.hh>
+#include <honei/backends/multicore/thread_function.hh>
+#include <honei/backends/multicore/topology.hh>
 #include <honei/util/configuration.hh>
 #include <honei/util/exception.hh>
 #include <honei/util/instantiation_policy-impl.hh>
@@ -25,6 +27,9 @@
 #include <honei/util/lock.hh>
 #include <honei/util/log.hh>
 #include <honei/util/stringify.hh>
+#include <honei/util/thread.hh>
+
+#include <vector>
 
 #include <errno.h>
 #include <sched.h>
@@ -76,11 +81,8 @@ namespace honei
         /// List of user POSIX threads
         std::list<std::pair<Thread *, mc::SimpleThreadFunction *> > _threads;
 
-        /// Waiting list of worker tasks to be executed (if affinity is enabled)
-        std::list<mc::ThreadTask *> _tasks;
-
         /// Waiting list of worker tasks to be executed (otherwise)
-        mc::AtomicSList<mc::ThreadTask *> _ttasks;
+        mc::AtomicSList<mc::ThreadTask *> _tasks;
 
         /// Function pointer to any of the default dispatch strategies
         mc::DispatchPolicy (* policy) ();
@@ -100,7 +102,7 @@ namespace honei
 
             for (int i(_num_threads - 1) ; i >= 0 ; --i)
             {
-                mc::SimpleThreadFunction * tobj = new mc::SimpleThreadFunction(_pool_sync, &_ttasks, inst_ctr);
+                mc::SimpleThreadFunction * tobj = new mc::SimpleThreadFunction(_pool_sync, &_tasks, inst_ctr);
                 Thread * t = new Thread(*tobj);
                 while (tobj->tid() == 0) ; // Wait until the thread is really setup / got cpu time for the first time
                 _threads.push_back(std::make_pair(t, tobj));
@@ -137,7 +139,7 @@ namespace honei
 
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
-            _ttasks.push_back(t_task);
+            _tasks.push_back(t_task);
 
             {
                 Lock l(*_pool_sync->mutex);
@@ -156,9 +158,6 @@ namespace honei
 
         /// Waiting list of worker tasks to be executed (if affinity is enabled)
         std::list<mc::ThreadTask *> _tasks;
-
-        /// Waiting list of worker tasks to be executed (otherwise)
-        mc::AtomicSList<mc::ThreadTask *> _ttasks;
 
         /// Mapping of threads to the scheduler ids of the cores they run on
         std::vector<unsigned> _sched_ids;

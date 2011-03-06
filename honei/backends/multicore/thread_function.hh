@@ -22,7 +22,6 @@
 
 #include <honei/backends/multicore/atomic_slist.hh>
 #include <honei/backends/multicore/thread_task.hh>
-#include <honei/backends/multicore/ticket.hh>
 #include <honei/util/condition_variable.hh>
 #include <honei/util/private_implementation_pattern.hh>
 
@@ -32,23 +31,6 @@ namespace honei
 {
     namespace mc
     {
-        struct PoolSyncData
-        {
-            Mutex * const mutex;
-            ConditionVariable * const barrier;
-
-            PoolSyncData() :
-                mutex(new Mutex),
-                barrier(new ConditionVariable)
-            {
-            }
-
-            ~PoolSyncData()
-            {
-                delete barrier;
-                delete mutex;
-            }
-        };
 
         class ThreadFunctionBase
         {
@@ -106,8 +88,6 @@ namespace honei
 
                 virtual unsigned tid() const;
         };
-
-
     }
 }
 #endif
