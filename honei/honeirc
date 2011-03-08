@@ -121,6 +121,10 @@ mc::num_threads = 4
 # Wheather to use affinity (1 = true, 0 = false)
 mc::affinity = 1
 
+# Wheather to enable_workstealing (1 = true, 0 = false)
+# Note: Only works with affinity enabled
+mc::work_stealing = 0
+
 # Default DispatchPolicy (anycore, alternating, linear)
 mc::dispatch = alternating
 

@@ -18,6 +18,7 @@
 
 #include <honei/backends/multicore/atomic_slist-impl.hh>
 #include <honei/backends/multicore/thread_function.hh>
+#include <honei/backends/multicore/thread_pool.hh>
 #include <honei/backends/multicore/ticket.hh>
 #include <honei/util/attributes.hh>
 #include <honei/util/exception.hh>
@@ -25,15 +26,17 @@
 #include <honei/util/log.hh>
 #include <honei/util/private_implementation_pattern-impl.hh>
 #include <honei/util/stringify.hh>
+#include <honei/util/thread.hh>
 
 #include <sys/syscall.h>
+#include <math.h>
 
 namespace honei
 {
-    /* AffinityThreadFunction is the type of thread function
-     * assigned to a pool thread if affinity is enabled. */
-
-    template <> struct Implementation<mc::AffinityThreadFunction>
+    /* TFImplementationBase is a base-class for all concrete implementations
+     * of a ThreadFunction and provides the members that all derivatives
+     * (have to) share. */
+    struct TFImplementationBase
     {
         /// Our internal ID.
         const unsigned pool_id;
@@ -41,15 +44,8 @@ namespace honei
         /// Our Thread ID (given by the operating system).
         unsigned thread_id;
 
-        /* The logical processor this thread is bound to, in fact a
-         * scheduler id which is only used with affinity enabled. */
-        const unsigned sched_lpu;
-
         /// The thread pool's mutex (for grabbing work).
         Mutex * const pool_mutex;
-
-        /// The task list administrated by the thread pool.
-        std::list<mc::ThreadTask *> * const tasklist;
 
         /// ConditionVariable for work-status.
         ConditionVariable * const global_barrier;
@@ -57,21 +53,118 @@ namespace honei
         /// Flag if the Thread shall stop.
         volatile bool terminate;
 
-        Implementation(mc::PoolSyncData * const psync, std::list<mc::ThreadTask *> * const list,
-                unsigned pid, unsigned sched) :
+        TFImplementationBase(mc::PoolSyncData * const psync, unsigned pid) :
             pool_id(pid),
             thread_id(0),
-            sched_lpu(sched),
             pool_mutex(psync->mutex),
-            tasklist(list),
             global_barrier(psync->barrier),
             terminate(false)
-            {
-            }
+        {
+        }
 
-            ~Implementation()
+        virtual ~TFImplementationBase()
+        {
+            bool loop(true);
+            // Loop until the thread really stopped executing the
+            // ThreadFunction object.
+            do
             {
+                loop = terminate;
             }
+            while (loop);
+        }
+
+        void stop()
+        {
+            Lock l(*pool_mutex);
+            terminate = true;
+            global_barrier->broadcast();
+        }
+    };
+
+    /* AffinityThreadFunction is the type of thread function
+     * assigned to a pool thread if affinity is enabled. */
+    template <> struct Implementation<mc::AffinityThreadFunction> :
+        public TFImplementationBase
+    {
+        /* The logical processor this thread is bound to, in fact a
+         * scheduler id which is only used with affinity enabled. */
+        const unsigned sched_lpu;
+
+        /// The task list administrated by the thread pool.
+        std::list<mc::ThreadTask *> * const tasklist;
+
+        Implementation(mc::PoolSyncData * const psync, std::list<mc::ThreadTask *> * const list,
+                unsigned pid, unsigned sched) :
+            TFImplementationBase(psync, pid),
+            sched_lpu(sched),
+            tasklist(list)
+        {
+        }
+
+        ~Implementation()
+        {
+        }
+    };
+
+    template <> struct Implementation<mc::WorkStealingThreadFunction> :
+        public TFImplementationBase
+    {
+        /* The logical processor this thread is bound to, in fact a
+         * scheduler id which is only used with affinity enabled. */
+        const unsigned sched_lpu;
+
+        /// The task list (local to this thread!)
+        std::list<mc::ThreadTask *> tasklist;
+
+        /// Reference to the thread-vector of the thread pool (for stealing)
+        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction *> > & threads;
+
+        /// Local mutual exclusion
+        Mutex * const local_mutex;
+
+        /// The overall number of pooled threads
+        const unsigned num_threads;
+
+        Implementation(mc::PoolSyncData * const psync, unsigned pid, unsigned sched,
+                const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction *> > & thr, unsigned num_thr) :
+            TFImplementationBase(psync, pid),
+            sched_lpu(sched),
+            threads(thr),
+            local_mutex(new Mutex),
+            num_threads(num_thr)
+        {
+        }
+
+        ~Implementation()
+        {
+            delete local_mutex;
+        }
+
+        void enqueue(mc::ThreadTask * task)
+        {
+            Lock l(*local_mutex);
+            tasklist.push_back(task);
+        }
+
+        bool steal(std::list<mc::ThreadTask *> & thief_list)
+        {
+            Lock l(*local_mutex);
+
+            if (tasklist.empty())
+                return false;
+            else
+            {
+                int size = tasklist.size();
+                std::list<mc::ThreadTask *>::iterator it(tasklist.begin());
+
+                for (int i(0) ; i < size / 2 ; ++i)
+                    ++it;
+
+                thief_list.splice(thief_list.end(), tasklist, it, tasklist.end());
+                return true;
+            }
+        }
     };
 
     /* SimpleThreadFunction is the type of thread function
@@ -83,40 +176,22 @@ namespace honei
     // for a ThreadTask pointer
     template class AtomicSList<mc::ThreadTask *>;
 
-    template <> struct Implementation<mc::SimpleThreadFunction>
+    template <> struct Implementation<mc::SimpleThreadFunction> :
+        public TFImplementationBase
     {
-        /// Our internal ID.
-        const unsigned pool_id;
-
-        /// Our Thread ID (given by the operating system).
-        unsigned thread_id;
-
-        /// The thread pool's mutex (for grabbing work).
-        Mutex * const pool_mutex;
-
-        /// ConditionVariable for work-status.
-        ConditionVariable * const global_barrier;
-
         /// The task list administrated by the thread pool.
         AtomicSList<mc::ThreadTask *> * const tasklist;
 
-        /// Flag if the Thread shall stop.
-        volatile bool terminate;
-
         Implementation(mc::PoolSyncData * const psync, AtomicSList<mc::ThreadTask *> * const list,
                 unsigned pid) :
-            pool_id(pid),
-            thread_id(0),
-            pool_mutex(psync->mutex),
-            global_barrier(psync->barrier),
-            tasklist(list),
-            terminate(false)
-            {
-            }
+            TFImplementationBase(psync, pid),
+            tasklist(list)
+        {
+        }
 
-            ~Implementation()
-            {
-            }
+        ~Implementation()
+        {
+        }
     };
 }
 
@@ -135,21 +210,11 @@ AffinityThreadFunction::AffinityThreadFunction(PoolSyncData * const psync,
 
 AffinityThreadFunction::~AffinityThreadFunction()
 {
-    bool loop(true);
-    // Loop until the thread really stopped executing this
-    // AffinityThreadFunction object.
-    do
-    {
-        loop = _imp->terminate;
-    }
-    while (loop);
 }
 
 void AffinityThreadFunction::stop()
 {
-    Lock l(*_imp->pool_mutex);
-    _imp->terminate = true;
-    _imp->global_barrier->broadcast();
+    _imp->stop();
 }
 
 void AffinityThreadFunction::operator() ()
@@ -219,7 +284,7 @@ void AffinityThreadFunction::operator() ()
 
     delete comp;
 
-    _imp->terminate = false; // Signal AffinityThreadFunction DTOR that we arrived here
+    _imp->terminate = false; // Signal Implementation DTOR that we arrived here
 }
 
 unsigned AffinityThreadFunction::pool_id() const
@@ -228,6 +293,119 @@ unsigned AffinityThreadFunction::pool_id() const
 }
 
 unsigned AffinityThreadFunction::tid() const
+{
+    return _imp->thread_id;
+}
+
+WorkStealingThreadFunction::WorkStealingThreadFunction(PoolSyncData * const psync,
+        unsigned pool_id, unsigned sched_id, const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction *> > & threads, unsigned num_thr) :
+    PrivateImplementationPattern<WorkStealingThreadFunction, Shared>(new
+            Implementation<WorkStealingThreadFunction>(psync, pool_id, sched_id, threads, num_thr))
+{
+}
+
+WorkStealingThreadFunction::~WorkStealingThreadFunction()
+{
+}
+
+void WorkStealingThreadFunction::stop()
+{
+    _imp->stop();
+}
+
+void WorkStealingThreadFunction::enqueue(mc::ThreadTask * task)
+{
+    _imp->enqueue(task);
+}
+
+void WorkStealingThreadFunction::operator() ()
+{
+    /// The ThreadTask to be currently executed by the thread.
+    mc::ThreadTask * task(0);
+
+    /// A comparison object for mc::ThreadTask objects.
+    mc::TaskComp * const comp(new mc::TaskComp(_imp->sched_lpu));
+
+    std::list<mc::ThreadTask *>::iterator i, i_end;
+
+    /* Set thread_id from operating system and use this on the pool
+     * side as sign for the thread to be setup. Then let the thread
+     * go to sleep until it will be assigned its first task. */
+
+    {
+        Lock l(*_imp->pool_mutex);
+        _imp->thread_id = syscall(__NR_gettid);
+        _imp->global_barrier->wait(*_imp->pool_mutex);
+    }
+
+    do
+    {
+        task = 0;
+
+        {
+            Lock l(*_imp->local_mutex);
+
+            if (! _imp->tasklist.empty())
+            {
+                task = _imp->tasklist.front();
+                _imp->tasklist.pop_front();
+            }
+        }
+
+        if (task == 0)
+        {
+            const int iter(rand() % _imp->num_threads);
+            WorkStealingThreadFunction * const tfunc = _imp->threads[iter].second;
+
+            Lock l(*_imp->pool_mutex);
+            Lock ll(*_imp->local_mutex);
+            bool ok = tfunc->_imp->steal(_imp->tasklist);
+
+            if (ok)
+            {
+                task = _imp->tasklist.front();
+                _imp->tasklist.pop_front();
+            }
+        }
+
+        if (task != 0)
+        {
+            unsigned & sched_id = task->ticket->sid();
+            sched_id = _imp->sched_lpu;
+#ifdef DEBUG
+            std::string msg = "Thread " + stringify(_imp->pool_id) + " on LPU " +
+                stringify(_imp->sched_lpu) + " will execute ticket " +
+                stringify(task->ticket->uid()) + "\n";
+            LOGMESSAGE(lc_backend, msg);
+#endif
+
+            (*task->functor)();
+            task->ticket->mark();
+            delete task;
+        }
+        else
+        {
+            Lock l(*_imp->pool_mutex);
+
+            if (! _imp->terminate)
+                _imp->global_barrier->wait(*_imp->pool_mutex);
+            else
+                break;
+        }
+    }
+    while (true);
+
+    delete comp;
+
+    _imp->terminate = false; // Signal Implementation DTOR that we arrived here
+}
+
+unsigned WorkStealingThreadFunction::pool_id() const
+{
+    return _imp->pool_id;
+}
+
+unsigned WorkStealingThreadFunction::tid() const
 {
     return _imp->thread_id;
 }
@@ -241,21 +419,11 @@ SimpleThreadFunction::SimpleThreadFunction(PoolSyncData * const psync, AtomicSLi
 
 SimpleThreadFunction::~SimpleThreadFunction()
 {
-    bool loop(true);
-    // Loop until the thread really stopped executing this
-    // SimpleThreadFunction object.
-    do
-    {
-        loop = _imp->terminate;
-    }
-    while (loop);
 }
 
 void SimpleThreadFunction::stop()
 {
-    Lock l(*_imp->pool_mutex);
-    _imp->terminate = true;
-    _imp->global_barrier->broadcast();
+    _imp->stop();
 }
 
 void SimpleThreadFunction::operator() ()
@@ -301,7 +469,7 @@ void SimpleThreadFunction::operator() ()
     }
     while (true);
 
-    _imp->terminate = false; // Signal SimpleThreadFunction DTOR that we arrived here
+    _imp->terminate = false; // Signal Implementation DTOR that we arrived here
 }
 
 unsigned SimpleThreadFunction::tid() const

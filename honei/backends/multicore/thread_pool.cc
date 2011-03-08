@@ -29,8 +29,6 @@
 #include <honei/util/stringify.hh>
 #include <honei/util/thread.hh>
 
-#include <vector>
-
 #include <errno.h>
 #include <sched.h>
 #include <stdlib.h>
@@ -288,6 +286,145 @@ namespace honei
             return ticket;
         }
     };
+
+    struct WorkStealingImplementation :
+        public Implementation<mc::ThreadPool>
+    {
+        /// List of user POSIX threads
+        std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction *> > _threads;
+
+        /// Mapping of threads to the scheduler ids of the cores they run on
+        std::vector<unsigned> _sched_ids;
+
+        /// Array of affinity masks for main process and all controlled threads
+        cpu_set_t * _affinity_mask;
+
+        /// Function pointer to any of the default dispatch strategies
+        mc::DispatchPolicy (* policy) ();
+
+        WorkStealingImplementation() :
+            Implementation<mc::ThreadPool>()
+        {
+            CONTEXT("When initializing the thread pool:\n");
+
+#ifdef DEBUG
+            std::string msg = "Affinity is enabled, using thread pool with affinity support.\n";
+            msg += "The default DispatchPolicy is configured to be: \n";
+#endif
+
+            std::string dis = Configuration::instance()->get_value("mc::dispatch", "anycore");
+
+            if (dis == "anycore")
+            {
+                policy = &mc::DispatchPolicy::any_core;
+#ifdef DEBUG
+                msg += "arbitrary - the next available thread will execute a task\n";
+#endif
+            }
+            else if (dis == "alternating")
+            {
+                policy = &mc::DispatchPolicy::alternating_node;
+#ifdef DEBUG
+                msg += "alternating - tasks shall be assigned alternatingly on available NUMA nodes\n";
+#endif
+            }
+            else if (dis == "linear")
+            {
+                policy = &mc::DispatchPolicy::linear_node;
+#ifdef DEBUG
+                msg += "linear - tasks shall be assigned to fill up available NUMA nodes one-by-one\n";
+#endif
+            }
+
+            _affinity_mask = new cpu_set_t[_num_threads + 1];
+
+            // set own affinity first
+            CPU_ZERO(&_affinity_mask[_num_threads]);
+            CPU_SET(_topology->num_lpus() - 1, &_affinity_mask[_num_threads]);
+            if(sched_setaffinity(syscall(__NR_gettid), sizeof(cpu_set_t), &_affinity_mask[_num_threads]) != 0)
+                throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
+
+#ifdef DEBUG
+            msg += "THREAD \t\t POOL_ID \t LPU \t NODE \n";
+            msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->get_node(_topology->num_lpus() - 1)) + " \n";
+#endif
+
+            int inst_ctr(0);
+
+            for (int i(_num_threads - 1) ; i >= 0 ; --i)
+            {
+                unsigned sched_id(i % (_topology->num_lpus()));
+                mc::WorkStealingThreadFunction * tobj = new mc::WorkStealingThreadFunction(_pool_sync, inst_ctr, sched_id, _threads, _num_threads);
+                Thread * t = new Thread(*tobj);
+                while (tobj->tid() == 0) ; // Wait until the thread is really setup / got cpu time for the first time
+                _threads.push_back(std::make_pair(t, tobj));
+                _sched_ids.push_back(sched_id);
+                CPU_ZERO(&_affinity_mask[i]);
+                CPU_SET(sched_id, &_affinity_mask[i]);
+                if(sched_setaffinity(tobj->tid(), sizeof(cpu_set_t), &_affinity_mask[i]) != 0)
+                    throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
+#ifdef DEBUG
+                msg += stringify(tobj->tid()) + "\t\t" + stringify(inst_ctr) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(_topology->get_node(sched_id)) + " \n";
+#endif
+
+                ++inst_ctr;
+            }
+
+#ifdef DEBUG
+            LOGMESSAGE(lc_backend, msg);
+#endif
+        }
+
+        ~WorkStealingImplementation()
+        {
+            for(std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction *> >::iterator i(_threads.begin()),
+                i_end(_threads.end()) ; i != i_end ; ++i)
+            {
+                (*i).second->stop();
+                delete (*i).second;
+                delete (*i).first;
+            }
+
+            delete[] _affinity_mask;
+        }
+
+        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy p)
+        {
+            CONTEXT("When creating a ThreadTask:\n");
+
+            Ticket<tags::CPU::MultiCore> * ticket(p.apply());
+            mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
+
+            mc::WorkStealingThreadFunction * wfunc(_threads[ticket->sid_min()].second);
+            wfunc->enqueue(t_task);
+
+            {
+                Lock l(*_pool_sync->mutex);
+                _pool_sync->barrier->broadcast();
+            }
+
+            return ticket;
+        }
+
+        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task)
+        {
+            CONTEXT("When creating a ThreadTask:\n");
+
+            Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
+
+            mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
+
+            mc::WorkStealingThreadFunction * wfunc(_threads[ticket->sid_min()].second);
+            wfunc->enqueue(t_task);
+
+            {
+                Lock l(*_pool_sync->mutex);
+                _pool_sync->barrier->broadcast();
+            }
+
+            return ticket;
+        }
+    };
 }
 
 using namespace honei;
@@ -315,7 +452,14 @@ Implementation<ThreadPool> * ThreadPool::select_impl()
 #endif
 
     if (affinity)
-        return new AffinityImplementation;
+    {
+        bool works = Configuration::instance()->get_value("mc::work_stealing", 1);
+
+        if (works)
+            return new WorkStealingImplementation;
+        else
+            return new AffinityImplementation;
+    }
     else
         return new StandardImplementation;
 }

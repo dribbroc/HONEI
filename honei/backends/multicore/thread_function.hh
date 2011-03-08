@@ -24,8 +24,10 @@
 #include <honei/backends/multicore/thread_task.hh>
 #include <honei/util/condition_variable.hh>
 #include <honei/util/private_implementation_pattern.hh>
+#include <honei/util/thread.hh>
 
 #include <list>
+#include <vector>
 
 namespace honei
 {
@@ -87,6 +89,30 @@ namespace honei
                 virtual void stop();
 
                 virtual unsigned tid() const;
+        };
+
+        class WorkStealingThreadFunction :
+            public ThreadFunctionBase,
+            public PrivateImplementationPattern<WorkStealingThreadFunction, Shared>
+        {
+            private:
+
+            public:
+
+                WorkStealingThreadFunction(PoolSyncData * const psync, unsigned pool_id, unsigned sched_id, const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction *> > & threads, unsigned num_thr);
+
+                virtual ~WorkStealingThreadFunction();
+
+                /// The threads' main function
+                virtual void operator() ();
+
+                virtual void stop();
+
+                void enqueue(mc::ThreadTask * task);
+
+                virtual unsigned tid() const;
+
+                unsigned pool_id() const;
         };
     }
 }
