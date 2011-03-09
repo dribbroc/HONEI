@@ -126,13 +126,16 @@ namespace honei
         /// The overall number of pooled threads
         const unsigned num_threads;
 
+        volatile bool & global_terminate;
+
         Implementation(mc::PoolSyncData * const psync, unsigned pid, unsigned sched,
-                const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction *> > & thr, unsigned num_thr) :
+                const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction *> > & thr, unsigned num_thr, volatile bool & term) :
             TFImplementationBase(psync, pid),
             sched_lpu(sched),
             threads(thr),
             local_mutex(new Mutex),
-            num_threads(num_thr)
+            num_threads(num_thr),
+            global_terminate(term)
         {
         }
 
@@ -298,9 +301,9 @@ unsigned AffinityThreadFunction::tid() const
 }
 
 WorkStealingThreadFunction::WorkStealingThreadFunction(PoolSyncData * const psync,
-        unsigned pool_id, unsigned sched_id, const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction *> > & threads, unsigned num_thr) :
+        unsigned pool_id, unsigned sched_id, const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction *> > & threads, unsigned num_thr, volatile bool & terminate) :
     PrivateImplementationPattern<WorkStealingThreadFunction, Shared>(new
-            Implementation<WorkStealingThreadFunction>(psync, pool_id, sched_id, threads, num_thr))
+            Implementation<WorkStealingThreadFunction>(psync, pool_id, sched_id, threads, num_thr, terminate))
 {
 }
 
@@ -358,13 +361,41 @@ void WorkStealingThreadFunction::operator() ()
             WorkStealingThreadFunction * const tfunc = _imp->threads[iter].second;
 
             Lock l(*_imp->pool_mutex);
-            Lock ll(*_imp->local_mutex);
-            bool ok = tfunc->_imp->steal(_imp->tasklist);
+            pthread_mutex_lock(_imp->local_mutex->mutex());
 
-            if (ok)
+            // Make sure that no task has been added after unlocking the local
+            // mutex. this is a possible race-condition to circumvent here!
+
+            if (! _imp->tasklist.empty())
             {
                 task = _imp->tasklist.front();
                 _imp->tasklist.pop_front();
+                pthread_mutex_unlock(_imp->local_mutex->mutex());
+            }
+            else
+            {
+                // Ok there is really no local task, so let's steal one.
+                bool ok = (_imp->global_terminate ? false : tfunc->_imp->steal(_imp->tasklist));
+
+                if (ok)
+                {
+                    task = _imp->tasklist.front();
+                    _imp->tasklist.pop_front();
+                    pthread_mutex_unlock(_imp->local_mutex->mutex());
+                }
+                else
+                {
+                    if (! _imp->terminate)
+                    {
+                        pthread_mutex_unlock(_imp->local_mutex->mutex());
+                        _imp->global_barrier->wait(*_imp->pool_mutex);
+                    }
+                    else
+                    {
+                        pthread_mutex_unlock(_imp->local_mutex->mutex());
+                        break;
+                    }
+                }
             }
         }
 
@@ -382,15 +413,6 @@ void WorkStealingThreadFunction::operator() ()
             (*task->functor)();
             task->ticket->mark();
             delete task;
-        }
-        else
-        {
-            Lock l(*_imp->pool_mutex);
-
-            if (! _imp->terminate)
-                _imp->global_barrier->wait(*_imp->pool_mutex);
-            else
-                break;
         }
     }
     while (true);
@@ -445,14 +467,17 @@ void SimpleThreadFunction::operator() ()
     {
         task = _imp->tasklist->pop_front();
 
-        if (task == 0)
         {
             Lock l(*_imp->pool_mutex);
 
-            if (! _imp->terminate)
-                _imp->global_barrier->wait(*_imp->pool_mutex);
-            else
-                break;
+            if (task == 0)
+            {
+
+                if (! _imp->terminate)
+                    _imp->global_barrier->wait(*_imp->pool_mutex);
+                else
+                    break;
+            }
         }
 
         if (task != 0)

@@ -228,16 +228,22 @@ namespace honei
                     else
                     {
                         unsigned last_node = top->get_node(last->sid_min());
-                        unsigned next_node = (last_node == num_nodes - 1) ? 0 : ++last_node;
+                        unsigned core_pos = last->sid_min() % top->lpus_per_node();
 
-                        unsigned next_core = last->sid_min() % top->lpus_per_node(); // usually the same
-                        if (next_node == 0) // except if we came back to the first node.
+                        unsigned next_node(1 + last_node);
+
+                        if (last_node == num_nodes - 1)
                         {
-                            if (next_core == top->lpus_per_node() - 1)
-                                next_core = 0;
+                            next_node = 0; // overwrite increase and reset to 0
+
+                            if (core_pos == top->lpus_per_node() - 1)
+                                core_pos = 0;
                             else
-                                ++next_core;
+                                ++core_pos;
                         }
+                        // else leave increase as set above
+
+                        unsigned next_core = next_node * top->lpus_per_node() + core_pos;
 
                         ticket = new Ticket<tags::CPU::MultiCore>(next_core, next_core);
                     }

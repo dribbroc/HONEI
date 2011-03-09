@@ -302,8 +302,11 @@ namespace honei
         /// Function pointer to any of the default dispatch strategies
         mc::DispatchPolicy (* policy) ();
 
+        volatile bool global_terminate;
+
         WorkStealingImplementation() :
-            Implementation<mc::ThreadPool>()
+            Implementation<mc::ThreadPool>(),
+            global_terminate(false)
         {
             CONTEXT("When initializing the thread pool:\n");
 
@@ -354,7 +357,7 @@ namespace honei
             for (int i(_num_threads - 1) ; i >= 0 ; --i)
             {
                 unsigned sched_id(i % (_topology->num_lpus()));
-                mc::WorkStealingThreadFunction * tobj = new mc::WorkStealingThreadFunction(_pool_sync, inst_ctr, sched_id, _threads, _num_threads);
+                mc::WorkStealingThreadFunction * tobj = new mc::WorkStealingThreadFunction(_pool_sync, inst_ctr, sched_id, _threads, _num_threads, global_terminate);
                 Thread * t = new Thread(*tobj);
                 while (tobj->tid() == 0) ; // Wait until the thread is really setup / got cpu time for the first time
                 _threads.push_back(std::make_pair(t, tobj));
@@ -377,6 +380,8 @@ namespace honei
 
         ~WorkStealingImplementation()
         {
+            global_terminate = true;
+
             for(std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction *> >::iterator i(_threads.begin()),
                 i_end(_threads.end()) ; i != i_end ; ++i)
             {

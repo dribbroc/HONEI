@@ -99,7 +99,7 @@ namespace honei
 
             public:
 
-                WorkStealingThreadFunction(PoolSyncData * const psync, unsigned pool_id, unsigned sched_id, const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction *> > & threads, unsigned num_thr);
+                WorkStealingThreadFunction(PoolSyncData * const psync, unsigned pool_id, unsigned sched_id, const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction *> > & threads, unsigned num_thr, volatile bool & terminate);
 
                 virtual ~WorkStealingThreadFunction();
 
