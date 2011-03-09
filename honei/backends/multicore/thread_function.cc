@@ -360,42 +360,33 @@ void WorkStealingThreadFunction::operator() ()
             const int iter(rand() % _imp->num_threads);
             WorkStealingThreadFunction * const tfunc = _imp->threads[iter].second;
 
-            Lock l(*_imp->pool_mutex);
+            pthread_mutex_lock(_imp->pool_mutex->mutex());
             pthread_mutex_lock(_imp->local_mutex->mutex());
+            bool ok = (_imp->global_terminate ? false : tfunc->_imp->steal(_imp->tasklist));
 
-            // Make sure that no task has been added after unlocking the local
-            // mutex. this is a possible race-condition to circumvent here!
-
-            if (! _imp->tasklist.empty())
+            if (! ok && _imp->tasklist.empty())
             {
-                task = _imp->tasklist.front();
-                _imp->tasklist.pop_front();
-                pthread_mutex_unlock(_imp->local_mutex->mutex());
-            }
-            else
-            {
-                // Ok there is really no local task, so let's steal one.
-                bool ok = (_imp->global_terminate ? false : tfunc->_imp->steal(_imp->tasklist));
-
-                if (ok)
+                // Have to make sure that no task has been added after unlocking the local
+                // mutex. this is a possible race-condition to circumvent here!
+                if (! _imp->terminate)
                 {
-                    task = _imp->tasklist.front();
-                    _imp->tasklist.pop_front();
                     pthread_mutex_unlock(_imp->local_mutex->mutex());
+                    _imp->global_barrier->wait(*_imp->pool_mutex);
+                    pthread_mutex_unlock(_imp->pool_mutex->mutex());
                 }
                 else
                 {
-                    if (! _imp->terminate)
-                    {
-                        pthread_mutex_unlock(_imp->local_mutex->mutex());
-                        _imp->global_barrier->wait(*_imp->pool_mutex);
-                    }
-                    else
-                    {
-                        pthread_mutex_unlock(_imp->local_mutex->mutex());
-                        break;
-                    }
+                    pthread_mutex_unlock(_imp->pool_mutex->mutex());
+                    pthread_mutex_unlock(_imp->local_mutex->mutex());
+                    break;
                 }
+            }
+            else
+            {
+                pthread_mutex_unlock(_imp->pool_mutex->mutex());
+                task = _imp->tasklist.front();
+                _imp->tasklist.pop_front();
+                pthread_mutex_unlock(_imp->local_mutex->mutex());
             }
         }
 
@@ -472,7 +463,6 @@ void SimpleThreadFunction::operator() ()
 
             if (task == 0)
             {
-
                 if (! _imp->terminate)
                     _imp->global_barrier->wait(*_imp->pool_mutex);
                 else
