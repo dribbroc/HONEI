@@ -450,7 +450,7 @@ ThreadPool::~ThreadPool()
 
 Implementation<ThreadPool> * ThreadPool::select_impl()
 {
-    bool affinity = Configuration::instance()->get_value("mc::affinity", 1);
+    bool affinity = Configuration::instance()->get_value("mc::affinity", true);
 
 #ifndef linux
     affinity = false;
@@ -458,7 +458,7 @@ Implementation<ThreadPool> * ThreadPool::select_impl()
 
     if (affinity)
     {
-        bool works = Configuration::instance()->get_value("mc::work_stealing", 1);
+        bool works = Configuration::instance()->get_value("mc::work_stealing", false);
 
         if (works)
             return new WorkStealingImplementation;
