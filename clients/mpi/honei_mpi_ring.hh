@@ -1657,14 +1657,14 @@ namespace honei
                 unsigned long old_out_up = status_out_up;
                 unsigned long old_out_down = status_out_down;
                 // if down is waiting for us
-                // N -> W
+                // W <- N
                 if (status_in_down == 1 && old_out_up == 0)
                 {
                     status_out_down = 1;
                     //std::cout<<_mycartid<<": down waits for me"<<std::endl;
                 }
                 // if up is waiting for us
-                // N <- W
+                // N -> W
                 if (status_in_up == 1 && old_out_down == 0)
                 {
                     status_out_up = 1;
