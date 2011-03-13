@@ -33,7 +33,6 @@ namespace honei
 {
     namespace mc
     {
-
         class ThreadFunctionBase
         {
             private:

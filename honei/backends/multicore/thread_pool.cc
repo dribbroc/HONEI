@@ -124,7 +124,7 @@ namespace honei
             }
         }
 
-        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy p)
+        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy)
         {
             return enqueue(task);
         }
@@ -134,7 +134,6 @@ namespace honei
             CONTEXT("When creating a ThreadTask:\n");
 
             Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
-
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
             _tasks.push_back(t_task);
@@ -274,7 +273,6 @@ namespace honei
             CONTEXT("When creating a ThreadTask:\n");
 
             Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
-
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
             {
@@ -416,7 +414,6 @@ namespace honei
             CONTEXT("When creating a ThreadTask:\n");
 
             Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
-
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
             mc::WorkStealingThreadFunction * wfunc(_threads[ticket->sid_min()].second);
@@ -440,7 +437,7 @@ template class InstantiationPolicy<ThreadPool, Singleton>;
 Ticket<tags::CPU::MultiCore> * DispatchPolicy::last(NULL);
 
 ThreadPool::ThreadPool() :
-    PrivateImplementationPattern<ThreadPool, Single>(select_impl())
+    PrivateImplementationPattern<ThreadPool, Shared>(select_impl())
 {
 }
 

@@ -32,7 +32,7 @@ namespace honei
     namespace mc
     {
         class ThreadPool :
-            public PrivateImplementationPattern<ThreadPool, Single>,
+            public PrivateImplementationPattern<ThreadPool, Shared>,
             public InstantiationPolicy<ThreadPool, Singleton>
         {
             private:
