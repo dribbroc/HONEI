@@ -18,22 +18,6 @@
  */
 #include <honei/backends/cuda/cuda_util.hh>
 
-// ceil(x/y) for integers, used to determine # of blocks/warps etc.
-#define DIVIDE_INTO(x,y) ((x + y - 1)/y)
-#define large_grid_thread_id(void) ((__umul24(blockDim.x,blockIdx.x + __umul24(blockIdx.y,gridDim.x)) + threadIdx.x))
-
-dim3 make_large_grid_product(const unsigned int num_threads, const unsigned int blocksize){
-    const unsigned int num_blocks = DIVIDE_INTO(num_threads, blocksize);
-    if (num_blocks <= 65535){
-        //fits in a 1D grid
-        return dim3(num_blocks);
-    } else {
-        //2D grid is required
-        const unsigned int side = (unsigned int) ceil(sqrt((double)num_blocks));
-        return dim3(side,side);
-    }
-}
-
 texture<float,1> tex_x_float_product;
 texture<int2,1>  tex_x_double_product;
 
@@ -164,7 +148,8 @@ namespace honei
         __global__ void product_smell_dv_gpu(float * x, float * y, unsigned long * Aj, float * Ax, unsigned long * Arl,
                 unsigned long row_start, unsigned long row_end, unsigned long num_cols_per_row, unsigned long stride)
         {
-            const unsigned long row = large_grid_thread_id() + row_start;
+            unsigned long row = blockDim.x*blockIdx.x+threadIdx.x;
+            row+=row_start;
 
             if(row >= row_end){ return; }
 
@@ -197,7 +182,8 @@ namespace honei
         __global__ void product_smell_dv_gpu(double * x, double * y, unsigned long * Aj, double * Ax, unsigned long * Arl,
                 unsigned long row_start, unsigned long row_end, unsigned long num_cols_per_row, unsigned long stride)
         {
-            const unsigned long row = large_grid_thread_id() + row_start;
+            unsigned long row = blockDim.x*blockIdx.x+threadIdx.x;
+            row+=row_start;
 
             if(row >= row_end){ return; }
 
@@ -290,7 +276,11 @@ extern "C" void cuda_product_smell_dv_float(void * x, void * y, void * Aj, void 
         unsigned long row_start, unsigned long row_end, unsigned long num_cols_per_row,
         unsigned long stride, unsigned long blocksize)
 {
-    const dim3 grid = make_large_grid_product(row_end - row_start, blocksize);
+    unsigned long size(row_end - row_start);
+    dim3 grid;
+    dim3 block;
+    block.x = blocksize;
+    grid.x = (unsigned)ceil(size/(double)(block.x));
 
     float * x_gpu((float *)x);
     float * y_gpu((float *)y);
@@ -311,7 +301,11 @@ extern "C" void cuda_product_smell_dv_double(void * x, void * y, void * Aj, void
         unsigned long row_start, unsigned long row_end, unsigned long num_cols_per_row,
         unsigned long stride, unsigned long blocksize)
 {
-    const dim3 grid = make_large_grid_product(row_end - row_start, blocksize);
+    unsigned long size(row_end - row_start);
+    dim3 grid;
+    dim3 block;
+    block.x = blocksize;
+    grid.x = (unsigned)ceil(size/(double)(block.x));
 
     double * x_gpu((double *)x);
     double * y_gpu((double *)y);
