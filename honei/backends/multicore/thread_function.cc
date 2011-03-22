@@ -161,7 +161,7 @@ namespace honei
                 int size = tasklist.size();
                 std::list<mc::ThreadTask *>::iterator it(tasklist.begin());
 
-                for (int i(0) ; i < size / 2 ; ++i)
+                for (int i(0) ; i < size >> 2 ; ++i)
                     ++it;
 
                 thief_list.splice(thief_list.end(), tasklist, it, tasklist.end());

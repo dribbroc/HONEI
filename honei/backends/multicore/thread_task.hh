@@ -20,7 +20,6 @@
 #define MULTICORE_GUARD_THREAD_TASK_HH 1
 
 #include <honei/backends/multicore/ticket.hh>
-
 #include <honei/util/tr1_boost.hh>
 
 namespace honei

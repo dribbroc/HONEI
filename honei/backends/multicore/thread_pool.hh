@@ -41,7 +41,7 @@ namespace honei
                 /// \{
                 /// \}
 
-                Implementation<ThreadPool> * select_impl();
+                Implementation<ThreadPool> * const select_impl();
 
             protected:
 
