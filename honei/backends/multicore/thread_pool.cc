@@ -445,7 +445,7 @@ ThreadPool::~ThreadPool()
 {
 }
 
-Implementation<ThreadPool> * const ThreadPool::select_impl()
+Implementation<ThreadPool> * ThreadPool::select_impl()
 {
     bool affinity = Configuration::instance()->get_value("mc::affinity", true);
 

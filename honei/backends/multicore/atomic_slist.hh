@@ -58,7 +58,7 @@ namespace honei
                 Mutex * const _front;
                 Mutex * const _back;
 
-                unsigned long long _size;
+                unsigned long _size;
 
                 bool acquire_front();
                 void release_front(bool back);
