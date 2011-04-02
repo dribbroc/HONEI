@@ -165,7 +165,7 @@ namespace honei
                     std::vector<unsigned long> patch_sizes;
                     unsigned long size_per_node(data_global.u->size() / _nodes);
 
-                    for (unsigned long node(0) ; node < _nodes ; ++node)
+                    for (long node(0) ; node < _nodes ; ++node)
                     {
                         for (unsigned long i(0) ; i < _fractions.size() ; ++i)
                             patch_sizes.push_back(size_per_node * _fractions.at(i));
@@ -275,7 +275,7 @@ namespace honei
                     {
                         DenseVector<DataType_> global_h(data_global.h->size());
                         unsigned long global_i(0);
-                        for (unsigned long j(0) ; j < _numprocs ; ++j)
+                        for (long j(0) ; j < _numprocs ; ++j)
                         {
                             std::string fn("h_"+_base_file_name+"_"+stringify(i)+"_"+stringify(j)+".dat");
                             DenseVector<DataType_> temp(VectorIO<io_formats::DV>::read_vector(fn, DataType_(0)));

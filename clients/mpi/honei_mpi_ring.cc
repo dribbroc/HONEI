@@ -17,7 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei_mpi_ring.hh>
+#include <clients/mpi/honei_mpi_ring.hh>
 
 using namespace honei;
 
