@@ -3,7 +3,6 @@ AM_CXXFLAGS = -I$(top_srcdir)
 CLEANFILES = *~ *.linkinfo
 MAINTAINERCLEANFILES = Makefile.in
 AUTOMAKE_OPTIONS = foreign dist-bzip2
-EXTRA_DIST = libtool-hack.in
 
 lib_LTLIBRARIES = libhoneibackendscuda.la
 
@@ -26,7 +25,7 @@ endif
 
 .cu.lo: libtool-hack.in
 	$(NVCC) $(NVCCFLAGS) -Xcompiler -fPIC -c -o $(patsubst %.lo,%.o,$@) $<
-	sed -e 's/@NAME@/$(patsubst %.lo,%.o,$@)/' < $(srcdir)/libtool-hack.in > $@
+	sed -e 's/@NAME@/$(patsubst %.lo,%.o,$@)/' < $(top_srcdir)/libtool-hack.in > $@
 
 memory_backend_TEST_SOURCES = memory_backend_TEST.cc
 memory_backend_TEST_LDADD = \

@@ -13,7 +13,9 @@ define(`addtest', `define(`$1_testlist', $1_testlist `$2_TEST')dnl
 $2_TEST_SOURCES = $2_TEST.cc
 $2_TEST_LDADD = \
 	libhoneiutil.la \
-	$(DYNAMIC_LD_LIBS)
+	$(DYNAMIC_LD_LIBS) \
+	$(HDF5LIBS) \
+	$(CUDALIBS)
 $2_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 ')dnl
 define(`addhh', `define(`$1_filelist', $1_filelist `$2.hh')define(`$1_headerlist', $1_headerlist `$2.hh')')dnl
@@ -39,6 +41,7 @@ DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \
 	$(CUDADEF) \
+	$(CUDADOUBLEDEF) \
 	$(OPENCLDEF) \
 	$(ITANIUMDEF) \
 	$(DEBUGDEF) \
@@ -57,12 +60,22 @@ else
 
 endif
 
+if CUDA
+  CUDASOURCES = cuda_memory.cu
+  CUDALIBS = -lcudart
+endif
+
+NVCC = nvcc
+NVCCFLAGS = -g --ptxas-options=-v -O3 -I$(top_srcdir) $(DEFS) -use_fast_math
+
+
 lib_LTLIBRARIES = libhoneiutil.la
 
-libhoneiutil_la_SOURCES = general_filelist $(HDF5SOURCES)
+libhoneiutil_la_SOURCES = general_filelist $(HDF5SOURCES) $(CUDASOURCES)
 libhoneiutil_la_LIBADD = \
 	-lpthread \
-	$(HDF5LIBS)
+	$(HDF5LIBS) \
+	$(CUDALIBS)
 
 libhoneiutil_includedir = $(includedir)/honei/util
 libhoneiutil_include_HEADERS = general_headerlist $(HDF5HEADERS)
@@ -74,3 +87,7 @@ check_PROGRAMS = $(TESTS)
 
 Makefile.am : Makefile.am.m4 files.m4
 	cd $(top_srcdir) ; ./misc/do_m4.bash honei/util/Makefile.am
+
+.cu.lo: libtool-hack.in
+	$(NVCC) $(NVCCFLAGS) -Xcompiler -fPIC -c -o $(patsubst %.lo,%.o,$@) $<
+	sed -e 's/@NAME@/$(patsubst %.lo,%.o,$@)/' < $(top_srcdir)/libtool-hack.in > $@

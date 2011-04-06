@@ -35,6 +35,10 @@
 #include <new>
 #include <iostream>
 
+#ifdef HONEI_CUDA
+#include <honei/util/cuda_memory.hh>
+#endif
+
 namespace honei
 {
     namespace intern
@@ -87,7 +91,11 @@ namespace honei
                 std::multimap<unsigned long, void*>::iterator free_it;
                 for (free_it = _free_chunks.begin() ; free_it != _free_chunks.end() ; ++free_it)
                 {
-                    ::free(free_it->second);
+#ifdef HONEI_CUDA
+                        cuda_free_host(free_it->second);
+#else
+                        ::free(free_it->second);
+#endif
                 }
                 _free_chunks.clear();
             }
@@ -119,7 +127,11 @@ namespace honei
                     void * result(0);
                     int status(0);
 
+#ifdef HONEI_CUDA
+                    status = cuda_malloc_host(&result, real_size);
+#else
                     status = posix_memalign(&result, 16, real_size);
+#endif
                     if (status == 0)
                     {
                         _used_chunks.insert (std::pair<void*, unsigned long>(result, real_size));
@@ -128,7 +140,11 @@ namespace honei
                     else
                     {
                         _release_free();
+#ifdef HONEI_CUDA
+                        status = cuda_malloc_host(&result, real_size);
+#else
                         status = posix_memalign(&result, 16, real_size);
+#endif
                     }
                     if (status == 0)
                     {
@@ -161,7 +177,11 @@ namespace honei
                         void * result(0);
                         int status(0);
 
+#ifdef HONEI_CUDA
+                        status = cuda_malloc_host(&result, real_size);
+#else
                         status = posix_memalign(&result, 16, real_size);
+#endif
                         if (status == 0)
                         {
                             _used_chunks.insert (std::pair<void*, unsigned long>(result, real_size));
@@ -170,7 +190,11 @@ namespace honei
                         else
                         {
                             _release_free();
+#ifdef HONEI_CUDA
+                            status = cuda_malloc_host(&result, real_size);
+#else
                             status = posix_memalign(&result, 16, real_size);
+#endif
                         }
                         if (status == 0)
                         {
@@ -181,7 +205,11 @@ namespace honei
                             throw InternalError("MemoryPool: bad alloc or out of memory!");
 
                         memcpy(result, address, used_it->second);
+#ifdef HONEI_CUDA
+                        cuda_free_host(address);
+#else
                         ::free(address);
+#endif
                         _used_chunks.erase(used_it);
                         return result;
                     }
