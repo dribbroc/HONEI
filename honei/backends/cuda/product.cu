@@ -272,7 +272,7 @@ extern "C" void cuda_product_bmdv_q1_double (void * ll, void * ld, void * lu,
 }
 #endif
 
-extern "C" void cuda_product_smell_dv_float(void * x, void * y, void * Aj, void * Ax, void *Arl,
+extern "C" void cuda_product_smell_dv_float(void * x, void * y, void * Aj, void * Ax, void * Arl,
         unsigned long row_start, unsigned long row_end, unsigned long num_cols_per_row,
         unsigned long stride, unsigned long blocksize)
 {

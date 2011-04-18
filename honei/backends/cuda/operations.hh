@@ -36,11 +36,11 @@ extern "C"
             void * ul, void * ud, void *uu, void * x, void * y,
             unsigned long size, unsigned long blocksize, unsigned long m);
 
-    void cuda_defect_smell_dv_float(void * rhs, void * result, void * Aj, void * Ax, void * b,
+    void cuda_defect_smell_dv_float(void * rhs, void * result, void * Aj, void * Ax, void * Arl, void * b,
             unsigned long rows, unsigned long columns, unsigned long num_cols_per_row, unsigned long stride,
             unsigned long blocksize);
 
-    void cuda_defect_smell_dv_double(void * rhs, void * result, void * Aj, void * Ax, void * b,
+    void cuda_defect_smell_dv_double(void * rhs, void * result, void * Aj, void * Ax, void * Arl, void * b,
             unsigned long rows, unsigned long columns, unsigned long num_cols_per_row, unsigned long stride,
             unsigned long blocksize);
 

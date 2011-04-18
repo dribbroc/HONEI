@@ -18,22 +18,6 @@
  */
 #include <honei/backends/cuda/cuda_util.hh>
 
-// ceil(x/y) for integers, used to determine # of blocks/warps etc.
-#define DIVIDE_INTO(x,y) ((x + y - 1)/y)
-#define large_grid_thread_id(void) ((__umul24(blockDim.x,blockIdx.x + __umul24(blockIdx.y,gridDim.x)) + threadIdx.x))
-
-dim3 make_large_grid_defect(const unsigned int num_threads, const unsigned int blocksize){
-    const unsigned int num_blocks = DIVIDE_INTO(num_threads, blocksize);
-    if (num_blocks <= 65535){
-        //fits in a 1D grid
-        return dim3(num_blocks);
-    } else {
-        //2D grid is required
-        const unsigned int side = (unsigned int) ceil(sqrt((double)num_blocks));
-        return dim3(side,side);
-    }
-}
-
 texture<float,1> tex_x_float_defect;
 texture<int2,1>  tex_x_double_defect;
 
@@ -162,10 +146,10 @@ namespace honei
         }
 #endif
 
-        __global__ void defect_smell_dv_gpu(float * rhs, float * y, unsigned long * Aj, float * Ax, float * x,
+        __global__ void defect_smell_dv_gpu(float * rhs, float * y, unsigned long * Aj, float * Ax, unsigned long * Arl, float * x,
                 unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row, unsigned long stride)
         {
-            const unsigned long row = large_grid_thread_id();
+            unsigned long row = blockDim.x*blockIdx.x+threadIdx.x;
 
             if(row >= num_rows){ return; }
 
@@ -175,10 +159,13 @@ namespace honei
             Aj += row;
             Ax += row;
 
-            for(unsigned long n = 0; n < num_cols_per_row; n++){
+            const unsigned long max = Arl[row];
+            for(unsigned long n = 0; n < max ; n++)
+            {
                 const float A_ij = *Ax;
 
-                if (A_ij != 0){
+                //if (A_ij != 0)
+                {
                     const unsigned long col = *Aj;
                     //sum += A_ij * x[col];
                     sum += A_ij * tex1Dfetch(tex_x_float_defect, col);
@@ -192,10 +179,10 @@ namespace honei
         }
 
 #ifdef HONEI_CUDA_DOUBLE
-        __global__ void defect_smell_dv_gpu(double * rhs, double * y, unsigned long * Aj, double * Ax, double * x,
+        __global__ void defect_smell_dv_gpu(double * rhs, double * y, unsigned long * Aj, double * Ax, unsigned long * Arl, double * x,
                 unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row, unsigned long stride)
         {
-            const unsigned long row = large_grid_thread_id();
+            unsigned long row = blockDim.x*blockIdx.x+threadIdx.x;
 
             if(row >= num_rows){ return; }
 
@@ -205,10 +192,13 @@ namespace honei
             Aj += row;
             Ax += row;
 
-            for(unsigned long n = 0; n < num_cols_per_row; n++){
+            const unsigned long max = Arl[row];
+            for(unsigned long n = 0; n < max ; n++)
+            {
                 const double A_ij = *Ax;
 
-                if (A_ij != 0){
+                //if (A_ij != 0)
+                {
                     const unsigned long col = *Aj;
                     //sum += A_ij * x[col];
                     int2 v = tex1Dfetch(tex_x_double_defect, col);
@@ -287,20 +277,25 @@ extern "C" void cuda_defect_q1_double (void * rhs, void * ll, void * ld, void * 
 }
 #endif
 
-extern "C" void cuda_defect_smell_dv_float(void * rhs, void * result, void * Aj, void * Ax, void * b,
+extern "C" void cuda_defect_smell_dv_float(void * rhs, void * result, void * Aj, void * Ax, void * Arl, void * b,
         unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row, unsigned long stride,
         unsigned long blocksize)
 {
-    const dim3 grid = make_large_grid_defect(num_rows, blocksize);
+    unsigned long size = num_rows;
+    dim3 grid;
+    dim3 block;
+    block.x = blocksize;
+    grid.x = (unsigned)ceil(size/(double)(block.x));
 
     float * rhs_gpu((float *)rhs);
     float * result_gpu((float *)result);
     float * b_gpu((float *)b);
     unsigned long * Aj_gpu((unsigned long *)Aj);
     float * Ax_gpu((float *)Ax);
+    unsigned long * Arl_gpu((unsigned long *)Arl);
 
     cudaBindTexture(NULL, tex_x_float_defect, b_gpu);
-    honei::cuda::defect_smell_dv_gpu<<<grid, blocksize>>>(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, b_gpu,
+    honei::cuda::defect_smell_dv_gpu<<<grid, blocksize>>>(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Arl_gpu, b_gpu,
             num_rows, num_cols, num_cols_per_row, stride);
     cudaUnbindTexture(tex_x_float_defect);
 
@@ -308,20 +303,25 @@ extern "C" void cuda_defect_smell_dv_float(void * rhs, void * result, void * Aj,
 }
 
 #ifdef HONEI_CUDA_DOUBLE
-extern "C" void cuda_defect_smell_dv_double(void * rhs, void * result, void * Aj, void * Ax, void * b,
+extern "C" void cuda_defect_smell_dv_double(void * rhs, void * result, void * Aj, void * Ax, void * Arl, void * b,
         unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row, unsigned long stride,
         unsigned long blocksize)
 {
-    const dim3 grid = make_large_grid_defect(num_rows, blocksize);
+    unsigned long size = num_rows;
+    dim3 grid;
+    dim3 block;
+    block.x = blocksize;
+    grid.x = (unsigned)ceil(size/(double)(block.x));
 
     double * rhs_gpu((double *)rhs);
     double * result_gpu((double *)result);
     double * b_gpu((double *)b);
     unsigned long * Aj_gpu((unsigned long *)Aj);
     double * Ax_gpu((double *)Ax);
+    unsigned long * Arl_gpu((unsigned long *)Arl);
 
     cudaBindTexture(NULL, tex_x_double_defect, b_gpu);
-    honei::cuda::defect_smell_dv_gpu<<<grid, blocksize>>>(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, b_gpu,
+    honei::cuda::defect_smell_dv_gpu<<<grid, blocksize>>>(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Arl_gpu, b_gpu,
             num_rows, num_cols, num_cols_per_row, stride);
     cudaUnbindTexture(tex_x_double_defect);
 
