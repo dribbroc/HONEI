@@ -425,7 +425,7 @@ class PoissonAdvancedBENCHMGSparseELLProlMat:
             info.min_level = 1;
             info.max_level = _size;
             info.n_max_iter = 100;
-            info.initial_zero = false;
+            info.initial_zero = true;
             info.tolerance = 1e-8;
             info.convergence_check = true;
 
@@ -842,12 +842,12 @@ class PoissonAdvancedANHEURYSMBENCHMGSparseELLProlMat:
             info.min_level = 1;
             info.max_level = _size;
             info.n_max_iter = 34;
-            info.initial_zero = false;
+            info.initial_zero = true;
             info.tolerance = 1e-8;
             info.convergence_check = true;
 
-            info.n_pre_smooth = 64;
-            info.n_post_smooth = 64;
+            info.n_pre_smooth = 4;
+            info.n_post_smooth = 4;
             //info.n_max_iter_coarse = ((unsigned long)sqrt((DT1_)(pow((DT1_)2 , (DT1_)info.max_level) + 1)*(pow((DT1_)2 , (DT1_)info.max_level) + 1)));
             info.n_max_iter_coarse = 10000;
             info.tolerance_coarse = 1e-8;
