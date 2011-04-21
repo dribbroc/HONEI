@@ -74,7 +74,11 @@ namespace honei
 
         std::string backtrace(const std::string & delimiter) const
         {
-            return join(local_context_stack.begin(), local_context_stack.end(), delimiter);
+            if (context_stack)
+            {
+                return join(local_context_stack.begin(), local_context_stack.end(), delimiter);
+            }
+            else return "";
         }
     };
 }
