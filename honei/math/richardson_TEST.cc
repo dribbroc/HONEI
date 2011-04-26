@@ -91,7 +91,7 @@ class RichardsonSPAITEST :
             SparseMatrixELL<DT1_> A(MatrixIO<io_formats::ELL>::read_matrix(file, DT1_(0)));
 
             SparseMatrix<DT1_> precon(A);
-            SparseMatrix<DT1_> spai(SPAI::value(precon, 0.3, 27, 27));
+            SparseMatrix<DT1_> spai(SPAI::value(precon));
 
             SparseMatrixELL<DT1_> C(spai);
 

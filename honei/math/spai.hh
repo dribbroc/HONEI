@@ -42,19 +42,22 @@ namespace honei
     struct SPAI
     {
         template <typename DT_>
-        static SparseMatrix<DT_> value(const SparseMatrix<DT_> & src, double epsilon_param = 0.6, int nbsteps_param = 5, int maxnew_param = 5)
+        static SparseMatrix<DT_> value(const SparseMatrix<DT_> & src)
         {
             /* SPAI parameters */
-            int    max_param=100000;
+            int    max_param=1000000;
             int    cache_size_param=5;
-            int    block_size_param=0;
+            int    block_size_param=1;
             int    symmetric_pattern_param=0;
             int    left_precon_param=0;
             int    verbose_param=0;
-            int    spar_param =0;
+            int    spar_param =1; // 0: eps, 1: tau
             int    lower_diag_param=0;
             int    upper_diag_param=0;
-            double tau_param=0;
+            double tau_param=1;
+            double epsilon_param = 0.6;
+            int nbsteps_param = 5;
+            int maxnew_param = 5;
 
             matrix *A = NULL;
             matrix *M = NULL;
