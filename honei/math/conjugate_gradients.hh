@@ -1154,6 +1154,96 @@ namespace honei
             }
 
         };
+
+    /**
+     * \brief Solution of linear system with PCG - SPAI
+     *
+     * \ingroup grpmatrixoperations
+     * \ingroup grpvectoroperations
+     */
+    template <typename Tag_>
+        struct ConjugateGradients<Tag_, methods::SPAI>
+        {
+            private:
+            ///SMELL type:
+            template<typename DT_>
+            static inline void cg_kernel(SparseMatrixELL<DT_> & A,
+                                         DenseVector<DT_> & r,
+                                         DenseVector<DT_> & z,
+                                         DenseVector<DT_> & d,
+                                         DenseVector<DT_> & x,
+                                         SparseMatrixELL<DT_> & precon,
+                                         DenseVector<DT_> & temp_0)
+            {
+                CONTEXT("When calling CG kernel, preconditioner=SPAI, datalayout=ELLPACK.");
+#ifdef SOLVER_VERBOSE_L3
+                std::cout << "    Calling PCG kernel, datalayout=ELL, version=1" << std::endl;
+#endif
+
+                DT_ alpha, beta;
+                beta = DotProduct<Tag_>::value(r, z);
+                Product<Tag_>::value(temp_0, A, d);
+                alpha = DotProduct<Tag_>::value(d, temp_0);
+                alpha = std::fabs(alpha) >= std::numeric_limits<DT_>::epsilon() ? beta / alpha : beta / std::numeric_limits<DT_>::epsilon();
+                ScaledSum<Tag_>::value(x, d, alpha);
+                ScaledSum<Tag_>::value(r, temp_0, -alpha);
+
+                //ElementProduct<Tag_>::value(z, dd_inverted, r);
+                Product<Tag_>::value(z, precon, r);
+                beta = std::fabs(beta) >= std::numeric_limits<DT_>::epsilon() ? DotProduct<Tag_>::value(z, r) / beta : DotProduct<Tag_>::value(z, r) / std::numeric_limits<DT_>::epsilon();
+
+                copy<Tag_>(d, temp_0);
+                ScaledSum<Tag_>::value(d, z, temp_0, beta);
+
+            }
+            public:
+            template <typename DT_>
+            static void value(SparseMatrixELL<DT_> & system_matrix,
+                                           DenseVector<DT_> & right_hand_side,
+                                           DenseVector<DT_> & x,
+                                           SparseMatrixELL<DT_> & precon,
+                                           unsigned long max_iters,
+                                           unsigned long & used_iters,
+                                           DT_ eps_relative = 1e-8)
+            {
+                CONTEXT("When solving sparse ELL linear system with PCG-Jacobi: ");
+#if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
+                std::cout << "Calling CG solver, preconditioning=JACOBI, datalayout=ELL" << std::endl;
+#endif
+                DenseVector<DT_> t_0(right_hand_side.size());
+
+                DenseVector<DT_> r(right_hand_side.size());
+                Defect<Tag_>::value(r, right_hand_side, system_matrix, x);
+                DT_ initial_defect_norm(Norm<vnt_l_two, true, Tag_>::value(r));
+                std::cout << "Initial defect NORM: " << initial_defect_norm << std::endl;
+
+                DenseVector<DT_> z(right_hand_side.size());
+                Product<Tag_>::value(z, precon, r);
+                DenseVector<DT_> d(z.size());
+                copy<Tag_>(z , d);
+
+                DenseVector<DT_> t_1(right_hand_side.size());
+                for(unsigned long i(0) ; i < max_iters ; ++i)
+                {
+                    cg_kernel(system_matrix, r, z, d, x, precon, t_0);
+                    DT_ current_defect_norm(Norm<vnt_l_two, true, Tag_>::value(r));
+
+                    if(current_defect_norm < initial_defect_norm * eps_relative)
+                    {
+                        std::cout << "Converged after " << i + 1 << " iterations: NORM: " << current_defect_norm << std::endl;
+                        used_iters = i + 1;
+                        break;
+                    }
+                    if(i == max_iters - 1)
+                    {
+                        std::cout << "NO convergence after " << i + 1 << " iterations: NORM: " << current_defect_norm << std::endl;
+                        used_iters = i + 1;
+                    }
+                }
+
+            }
+            //end SMELL type
+        };
 }
 
 #endif

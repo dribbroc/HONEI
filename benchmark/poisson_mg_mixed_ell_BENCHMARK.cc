@@ -206,7 +206,6 @@ class PoissonAdvancedBENCHMGSparseELLProlMat:
                 info.rhs.push_back(ac_rhs);
                 DenseVector<float> ac_x(size, float(0));
                 info.x.push_back(ac_x);
-                info.spais.push_back(ac_s.copy());
 
                 info.diags_inverted.push_back(dummy_band.copy());
             }
@@ -329,7 +328,7 @@ class PoissonAdvancedBENCHMGSparseELLProlMat:
             std::cout.flush();
 
             BENCHMARK(
-                      (Multigrid<ITag_, OTag_, methods::PROLMAT, methods::JAC, methods::CYCLE::V, methods::MIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info));
+                      (Multigrid<ITag_, OTag_, methods::PROLMAT, methods::JAC, methods::CYCLE::V, methods::MIXED >::value(system, rhs, result, (unsigned long)11, 1e-8, info));
                      );
 
             evaluate();
@@ -595,6 +594,9 @@ class PoissonAdvancedBENCHMGSparseELLProlMatSPAI:
                 info.rhs.push_back(ac_rhs);
                 DenseVector<float> ac_x(size, float(0));
                 info.x.push_back(ac_x);
+                info.spais.push_back(ac_s.copy());
+                info.temp_0.push_back(dummy_band.copy());
+                info.temp_1.push_back(dummy_band.copy());
 
                 info.diags_inverted.push_back(dummy_band.copy());
             }
@@ -646,6 +648,8 @@ class PoissonAdvancedBENCHMGSparseELLProlMatSPAI:
 
                 info.diags_inverted.push_back(scaled_diag_inverted.copy());
 
+                info.temp_0.push_back(scaled_diag_inverted.copy());
+                info.temp_1.push_back(scaled_diag_inverted.copy());
                 SparseMatrix<float> spai(smell);
                 std::string SPAI_file(file_base);
                 SPAI_file += "A_";
@@ -725,7 +729,7 @@ class PoissonAdvancedBENCHMGSparseELLProlMatSPAI:
             std::cout.flush();
 
             BENCHMARK(
-                      (Multigrid<ITag_, OTag_, methods::PROLMAT, methods::SPAI, methods::CYCLE::V, methods::MIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info));
+                      (Multigrid<ITag_, OTag_, methods::PROLMAT, methods::SPAI, methods::CYCLE::V, methods::MIXED >::value(system, rhs, result, (unsigned long)11, 1e-8, info));
                      );
 
             evaluate();
@@ -734,7 +738,6 @@ class PoissonAdvancedBENCHMGSparseELLProlMatSPAI:
 #ifdef HONEI_SSE
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
-
 //SORT 0
 //CUDA-MCSSE
 PoissonAdvancedBENCHMGSparseELLProlMatSPAI<tags::GPU::CUDA, tags::CPU::MultiCore::SSE, double> cudamc_poisson_advanced_bench_mg_sparse_prolmat_spai_double_7_0_q1("PARENG MG SPAI double cuda-mcsse L7, q1 sort 0", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/sort_", 0);
