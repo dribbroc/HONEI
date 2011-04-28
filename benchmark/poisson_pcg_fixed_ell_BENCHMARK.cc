@@ -498,6 +498,9 @@ class CGPoissonAdvancedELLBENCHSPAI:
             spai_file += "_spai.ell";
             SparseMatrixELL<DT1_> precon(MatrixIO<io_formats::ELL>::read_matrix(spai_file, DT1_(0)));
 
+            DT1_ damping_factor(0.1);
+            Scale<Tag_>::value(precon.Ax(), damping_factor);
+
             std::string init_file(file_base);
             init_file += "init_" + stringify(_size);
             DenseVector<DT1_> result(VectorIO<io_formats::EXP>::read_vector(init_file, DT1_(0)));
