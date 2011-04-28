@@ -18,7 +18,7 @@
  */
 
 
-#include <honei/math/spai.hh>
+#include <honei/math/spai2.hh>
 #include <honei/util/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <iostream>
@@ -33,12 +33,12 @@ using namespace tests;
 using namespace std;
 
 template <typename Tag_, typename DT_>
-class SpaiTestSparse:
+class Spai2TestSparse:
     public BaseTest
 {
     public:
-        SpaiTestSparse(const std::string & tag) :
-            BaseTest("Spai test <" + tag + ">")
+        Spai2TestSparse(const std::string & tag) :
+            BaseTest("Spai2 test <" + tag + ">")
         {
             register_tag(Tag_::name);
         }
@@ -53,7 +53,7 @@ class SpaiTestSparse:
             for (unsigned i(0) ; i < sm.rows() ; ++i)
                 used_elements+= sm[i].used_elements();
             std::cout<<"Non Zero Elements of A: "<<used_elements<<std::endl;
-            SparseMatrix<DT_> m(SPAI::value(sm));
+            SparseMatrix<DT_> m(SPAI2::value(sm));
             used_elements = 0;
             for (unsigned i(0) ; i < m.rows() ; ++i)
                 used_elements+= m[i].used_elements();
@@ -72,10 +72,10 @@ class SpaiTestSparse:
             }
             double min = Norm<vnt_l_one, false, tags::CPU>::value(Difference<tags::CPU>::value(temp, ident, Product<tags::CPU>::value(sm, m)));
             double jacnorm = Norm<vnt_l_one, false, tags::CPU>::value(Difference<tags::CPU>::value(temp, ident, Product<tags::CPU>::value(sm, jac)));
-            std::cout<<"SPAI Norm: "<<min<<" Jac Norm: "<<jacnorm<<std::endl;
+            std::cout<<"SPAI2 Norm: "<<min<<" Jac Norm: "<<jacnorm<<std::endl;
             TEST_CHECK(jacnorm > min);
         }
 };
 
-SpaiTestSparse<tags::CPU, float> spai_test_sparse_ell_float("float");
-SpaiTestSparse<tags::CPU, double> spai_test_sparse_ell_double("double");
+//Spai2TestSparse<tags::CPU, float> spai2_test_sparse_ell_float("float");
+Spai2TestSparse<tags::CPU, double> spai2_test_sparse_ell_double("double");
