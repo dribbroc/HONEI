@@ -2317,7 +2317,7 @@ endCycleLoop:
                 std::cout << "PreProc TOE: "<< (pe.sec() - pb.sec()) + (pe.usec() - pb.usec())/1e6 << std::endl;
 #endif
                 DenseVector<OuterPrec_> x_outer(result.size());
-                while(inner_iterations < 8)
+                while(true)
                 {
 #ifdef SOLVER_BENCHMARK
                     TimeStamp ob, oe, ib, ie;
@@ -2335,6 +2335,7 @@ endCycleLoop:
                     ib.take();
 #endif
                     info.x[info.max_level] = (_multigrid_kernel<InnerPrec_>(max_levels, &cappa, info));
+                    outer_iterations++;
 #ifdef SOLVER_BENCHMARK
                     ie.take();
 #endif
@@ -2357,7 +2358,7 @@ endCycleLoop:
                     std::cout << "initial_defect: " << initial_defect << std::endl;
 #endif
                     // check for convergence
-                    OuterPrec_ outer_eps(1e-8);
+                    OuterPrec_ outer_eps(info.tolerance);
                     if (def_norm  < outer_eps * initial_defect)
                     {
 #ifdef SOLVER_BENCHMARK
@@ -2373,7 +2374,6 @@ endCycleLoop:
                     inv = (1.0 / scale_factor);
                     Scale<OuterTag_>::value(outer_defect, inv);
 
-                    outer_iterations++;
 #ifdef SOLVER_BENCHMARK
                     oe.take();
                     std::cout << "Outer TOE: "<< (oe.sec() - ob.sec()) + (oe.usec() - ob.usec())/1e6<< std::endl;
@@ -2400,7 +2400,7 @@ endCycleLoop:
                 HONEI_UNUSED OuterPrec_ conv_rad,
                 MGInfo<InnerPrec_, SparseMatrixELL<InnerPrec_> > & info)
             {
-                CONTEXT("When solving banded q1 linear system with MULTIGRID: ");
+                CONTEXT("When solving banded ell linear system with MULTIGRID: ");
 #ifdef SOLVER_VERBOSE_L2
                 std::cout << "Calling MG solver, presmoothing=JACOBI, postsmoothing=JACOBI, coarse-grid solver=CG, datalayout=ELL, precision=MIXED" << std::endl;
 #endif
@@ -2460,7 +2460,7 @@ endCycleLoop:
                 std::cout << "PreProc TOE: "<< (pe.sec() - pb.sec()) + (pe.usec() - pb.usec())/1e6 << std::endl;
 #endif
                 DenseVector<OuterPrec_> x_outer(result.size());
-                while(inner_iterations < 8)
+                while(true)
                 {
 #ifdef SOLVER_BENCHMARK
                     TimeStamp ob, oe, ib, ie;
@@ -2478,6 +2478,7 @@ endCycleLoop:
                     ib.take();
 #endif
                     info.x[info.max_level] = (_multigrid_kernel<InnerPrec_>(max_levels, &cappa, info));
+                    outer_iterations++;
 #ifdef SOLVER_BENCHMARK
                     ie.take();
 #endif
@@ -2500,7 +2501,7 @@ endCycleLoop:
                     std::cout << "initial_defect: " << initial_defect << std::endl;
 #endif
                     // check for convergence
-                    OuterPrec_ outer_eps(1e-8);
+                    OuterPrec_ outer_eps(info.tolerance);
                     if (def_norm  < outer_eps * initial_defect)
                     {
 #ifdef SOLVER_BENCHMARK
@@ -2516,7 +2517,6 @@ endCycleLoop:
                     inv = (1.0 / scale_factor);
                     Scale<OuterTag_>::value(outer_defect, inv);
 
-                    outer_iterations++;
 #ifdef SOLVER_BENCHMARK
                     oe.take();
                     std::cout << "Outer TOE: "<< (oe.sec() - ob.sec()) + (oe.usec() - ob.usec())/1e6<< std::endl;
@@ -2946,7 +2946,7 @@ endCycleLoop:
                 std::cout << "PreProc TOE: "<< (pe.sec() - pb.sec()) + (pe.usec() - pb.usec())/1e6 << std::endl;
 #endif
                 DenseVector<OuterPrec_> x_outer(result.size());
-                while(inner_iterations < 8)
+                while(true)
                 {
 #ifdef SOLVER_BENCHMARK
                     TimeStamp ob, oe, ib, ie;
@@ -2964,6 +2964,7 @@ endCycleLoop:
                     ib.take();
 #endif
                     info.x[info.max_level] = (_multigrid_kernel<InnerPrec_>(max_levels, &cappa, info));
+                    outer_iterations++;
 #ifdef SOLVER_BENCHMARK
                     ie.take();
 #endif
@@ -2986,7 +2987,7 @@ endCycleLoop:
                     std::cout << "initial_defect: " << initial_defect << std::endl;
 #endif
                     // check for convergence
-                    OuterPrec_ outer_eps(1e-8);
+                    OuterPrec_ outer_eps(info.tolerance);
                     if (def_norm  < outer_eps * initial_defect)
                     {
 #ifdef SOLVER_BENCHMARK
@@ -3002,7 +3003,6 @@ endCycleLoop:
                     inv = (1.0 / scale_factor);
                     Scale<OuterTag_>::value(outer_defect, inv);
 
-                    outer_iterations++;
 #ifdef SOLVER_BENCHMARK
                     oe.take();
                     std::cout << "Outer TOE: "<< (oe.sec() - ob.sec()) + (oe.usec() - ob.usec())/1e6<< std::endl;
