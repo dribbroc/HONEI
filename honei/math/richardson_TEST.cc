@@ -30,14 +30,14 @@ class RichardsonTESTArb :
             //Read in data:
             std::string dir(HONEI_SOURCEDIR);
             std::string file (dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            file += "A_3";
+            file += "A_4";
             file += ".ell";
             SparseMatrixELL<DT1_> A(MatrixIO<io_formats::ELL>::read_matrix(file, DT1_(0)));
 
             SparseMatrix<DT1_> precon(A);
 
             std::string rhs_file(dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            rhs_file += "rhs_3";
+            rhs_file += "rhs_4";
             DenseVector<DT1_> b(VectorIO<io_formats::EXP>::read_vector(rhs_file, DT1_(0)));
 
             //TODO sparsify
@@ -54,12 +54,12 @@ class RichardsonTESTArb :
             LSData<SparseMatrixELL<DT1_> , SparseMatrixELL<DT1_> , DT1_> data(&A, &C, &b, &result, &t0, &t1);
 
             unsigned long iters(23);
-            LSInfo info(true, true, 1e-10, DT1_(0.7), 10000ul, iters);
+            LSInfo info(true, true, 1e-11, DT1_(0.7), 100000ul, iters);
             std::cout << "Finished data I/O." << std::endl;
             Richardson<Tag_, Preconditioning<Tag_, methods::NONE> >::value(data, info);
 
             std::string sol_file(dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            sol_file += "sol_3";
+            sol_file += "sol_4";
             DenseVector<DT1_> sol(VectorIO<io_formats::EXP>::read_vector(sol_file, DT1_(0)));
 
             std::cout << "#Iterations: " << info.iters << std::endl;
@@ -86,7 +86,7 @@ class RichardsonSPAITEST :
             //Read in data:
             std::string dir(HONEI_SOURCEDIR);
             std::string file (dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            file += "A_3";
+            file += "A_4";
             file += ".ell";
             SparseMatrixELL<DT1_> A(MatrixIO<io_formats::ELL>::read_matrix(file, DT1_(0)));
 
@@ -96,7 +96,7 @@ class RichardsonSPAITEST :
             SparseMatrixELL<DT1_> C(spai);
 
             std::string rhs_file(dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            rhs_file += "rhs_3";
+            rhs_file += "rhs_4";
             DenseVector<DT1_> b(VectorIO<io_formats::EXP>::read_vector(rhs_file, DT1_(0)));
 
             //set up data and info structures:
@@ -106,12 +106,12 @@ class RichardsonSPAITEST :
             LSData<SparseMatrixELL<DT1_> , SparseMatrixELL<DT1_> , DT1_> data(&A, &C, &b, &result, &t0, &t1);
 
             unsigned long iters(23);
-            LSInfo info(true, true, 1e-10, DT1_(0.7), 1000ul, iters);
+            LSInfo info(true, false, 1e-11, DT1_(1), 10000ul, iters);
             std::cout << "Finished data I/O." << std::endl;
             Richardson<Tag_, Preconditioning<Tag_, methods::NONE> >::value(data, info);
 
             std::string sol_file(dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            sol_file += "sol_3";
+            sol_file += "sol_4";
             DenseVector<DT1_> sol(VectorIO<io_formats::EXP>::read_vector(sol_file, DT1_(0)));
 
             std::cout << "#Iterations: " << info.iters << std::endl;
