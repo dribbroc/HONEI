@@ -19,51 +19,95 @@
 
 #ifdef __CPU__
 
-__kernel void scaled_sum_float(__global  float * output,
-                                   __global  float * input,
+__kernel void scaled_sum_three_float_s(__global  float * output,
+                                   __global  float * x,
+                                   __global  float * y,
                                    const     float multiplier,
                                    const unsigned int size)
 {
     uint tid = get_global_id(0);
 
-    if (tid < size) output[tid] = output[tid] + input[tid] * multiplier;
+    if (tid < size) output[tid] = x[tid] + y[tid] * multiplier;
+}
+
+__kernel void scaled_sum_three_float(__global  float * output,
+                                   __global  float * x,
+                                   __global  float * y,
+                                   const unsigned int size)
+{
+    uint tid = get_global_id(0);
+
+    if (tid < size) output[tid] = output[tid] + x[tid] * y[tid];
 }
 
 #pragma OPENCL EXTENSION cl_amd_fp64 : enable
-__kernel void scaled_sum_double(__global  double * output,
-                                   __global  double * input,
+__kernel void scaled_sum_three_double_s(__global  double * output,
+                                   __global  double * x,
+                                   __global  double * y,
                                    const     double multiplier,
                                    const unsigned int size)
 {
     uint tid = get_global_id(0);
 
-    if (tid < size) output[tid] = output[tid] + input[tid] * multiplier;
+    if (tid < size) output[tid] = x[tid] + y[tid] * multiplier;
+}
+
+__kernel void scaled_sum_three_double(__global  double * output,
+                                   __global  double * x,
+                                   __global  double * y,
+                                   const unsigned int size)
+{
+    uint tid = get_global_id(0);
+
+    if (tid < size) output[tid] = output[tid] + x[tid] * y[tid];
 }
 //#endif
 
 #else
 //#ifdef __GPU__
 
-__kernel void scaled_sum_float(__global  float * output,
-                                   __global  float * input,
+__kernel void scaled_sum_three_float_s(__global  float * output,
+                                   __global  float * x,
+                                   __global  float * y,
                                    const     float multiplier,
                                    const unsigned int size)
 {
     uint tid = get_global_id(0);
 
-    if (tid < size) output[tid] = output[tid] + input[tid] * multiplier;
+    if (tid < size) output[tid] = x[tid] + y[tid] * multiplier;
+}
+
+__kernel void scaled_sum_three_float(__global  float * output,
+                                   __global  float * x,
+                                   __global  float * y,
+                                   const unsigned int size)
+{
+    uint tid = get_global_id(0);
+
+    if (tid < size) output[tid] = output[tid] + x[tid] * y[tid];
 }
 
 #ifdef HONEI_CUDA_DOUBLE
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-__kernel void scaled_sum_double(__global  double * output,
-                                   __global  double * input,
+__kernel void scaled_sum_three_double_s(__global  double * output,
+                                   __global  double * x,
+                                   __global  double * y,
                                    const     double multiplier,
                                    const unsigned int size)
 {
     uint tid = get_global_id(0);
 
-    if (tid < size) output[tid] = output[tid] + input[tid] * multiplier;
+    if (tid < size) output[tid] = x[tid] + y[tid] * multiplier;
+}
+
+__kernel void scaled_sum_three_double(__global  double * output,
+                                   __global  double * x,
+                                   __global  double * y,
+                                   const unsigned int size)
+{
+    uint tid = get_global_id(0);
+
+    if (tid < size) output[tid] = output[tid] + x[tid] * y[tid];
 }
 #endif
 #endif

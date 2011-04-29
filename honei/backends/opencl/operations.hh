@@ -27,8 +27,22 @@ namespace honei
 {
     namespace opencl
     {
-        void scaled_sum_float(void * x, void * y, float b, unsigned long size, cl_device_type type);
-        void scaled_sum_double(void * x, void * y, double b, unsigned long size, cl_device_type type);
+        void difference_float(void * r, void * x, void * y, unsigned long size, cl_device_type type);
+        void difference_double(void * r, void * x, void * y, unsigned long size, cl_device_type type);
+
+        void element_product_float(void * r, void * x, void * y, unsigned long size, cl_device_type type);
+        void element_product_double(void * r, void * x, void * y, unsigned long size, cl_device_type type);
+
+        void scale_float(void * x, float a, unsigned long size, cl_device_type type);
+        void scale_double(void * x, double a, unsigned long size, cl_device_type type);
+
+        void scaled_sum_float(void * r, void * x, void * y, float b, unsigned long size, cl_device_type type);
+        void scaled_sum_double(void * r, void * x, void * y, double b, unsigned long size, cl_device_type type);
+        void scaled_sum_float(void * r, void * x, void * y, unsigned long size, cl_device_type type);
+        void scaled_sum_double(void * r, void * x, void * y, unsigned long size, cl_device_type type);
+
+        void sum_float(void * r, void * x, void * y, unsigned long size, cl_device_type type);
+        void sum_double(void * r, void * x, void * y, unsigned long size, cl_device_type type);
 
         void product_smell_dv_float(void * x, void * y, void * Aj, void * Ax, void * Arl,
                 unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
@@ -37,8 +51,12 @@ namespace honei
                 unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
                 unsigned long stride, cl_device_type type);
 
-        //void copy_float(void * x, void * y, unsigned long size, cl_device_type type);
-        //void copy_double(void * x, void * y, unsigned long size, cl_device_type type);
+        void defect_smell_dv_float(void * rhs, void * x, void * y, void * Aj, void * Ax, void * Arl,
+                unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
+                unsigned long stride, cl_device_type type);
+        void defect_smell_dv_double(void * rhs, void * x, void * y, void * Aj, void * Ax, void * Arl,
+                unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
+                unsigned long stride, cl_device_type type);
     }
 }
 #endif

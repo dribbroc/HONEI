@@ -2,7 +2,12 @@ AM_CXXFLAGS = -I$(top_srcdir)
 
 MAINTAINERCLEANFILES = Makefile.in
 AUTOMAKE_OPTIONS = foreign dist-bzip2
-EXTRA_DIST = scaled_sum.cl \
+EXTRA_DIST = defect.cl \
+	     difference.cl \
+	     element_product.cl \
+	     scaled_sum.cl \
+	     scale.cl \
+	     sum.cl \
 	     product.cl
 CLEANFILES = *~
 
@@ -21,14 +26,18 @@ libhoneibackendsopencl_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	-lOpenCL
 
-libhoneibackendsopencl_la_SOURCES = operations.hh \
-				    operations.cc \
+libhoneibackendsopencl_la_SOURCES = defect.cc \
+				    difference.cc \
+				    element_product.cc \
+				    operations.hh \
 				    opencl_backend.cc \
 				    opencl_backend-impl.hh \
 				    memory_backend.cc \
 				    opencl_backend.hh \
-				    product.cc \
-				    scaled_sum.cc
+				    scale.cc \
+				    scaled_sum.cc \
+				    sum.cc \
+				    product.cc
 
 
 libhoneibackendsopencl_includedir = $(includedir)/honei/backends/opencl/

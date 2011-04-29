@@ -682,6 +682,14 @@ DenseVectorDifferenceTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vect
 DenseVectorDifferenceTest<tags::Cell, float> cell_dense_vector_difference_test_float("Cell float");
 DenseVectorDifferenceTest<tags::Cell, double> cell_dense_vector_difference_test_double("Cell double");
 #endif
+#ifdef HONEI_OPENCL
+DenseVectorDifferenceTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_difference_test_float("float");
+DenseVectorDifferenceTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_difference_test_double("double");
+DenseVectorDifferenceTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_difference_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorDifferenceTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_difference_test_double("double");
+#endif
+#endif
 
 template <typename Tag_, typename DT_>
 class DenseVectorDifferenceQuickTest :
@@ -740,6 +748,14 @@ DenseVectorDifferenceQuickTest<tags::GPU::MultiCore::CUDA, double>  mc_cuda_dens
 DenseVectorDifferenceQuickTest<tags::Cell, float> cell_dense_vector_difference_quick_test_float("Cell float");
 DenseVectorDifferenceQuickTest<tags::Cell, double> cell_dense_vector_difference_quick_test_double("Cell double");
 #endif
+#ifdef HONEI_OPENCL
+DenseVectorDifferenceQuickTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_difference_quick_test_float("float");
+DenseVectorDifferenceQuickTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_difference_quick_test_double("double");
+DenseVectorDifferenceQuickTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_difference_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorDifferenceQuickTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_difference_quick_test_double("double");
+#endif
+#endif
 
 
 template <typename Tag_, typename DT_>
@@ -797,6 +813,14 @@ DenseVectorDifferenceResultTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_dense
 #ifdef HONEI_CUDA_DOUBLE
 DenseVectorDifferenceResultTest<tags::GPU::CUDA, double> cuda_dense_vector_difference_result_test_double("double");
 DenseVectorDifferenceResultTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector_difference_result_test_double("double");
+#endif
+#endif
+#ifdef HONEI_OPENCL
+DenseVectorDifferenceResultTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_difference_result_test_float("float");
+DenseVectorDifferenceResultTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_difference_result_test_double("double");
+DenseVectorDifferenceResultTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_difference_result_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorDifferenceResultTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_difference_result_test_double("double");
 #endif
 #endif
 
@@ -861,6 +885,14 @@ DenseVectorRangeDifferenceTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense
 DenseVectorRangeDifferenceTest<tags::Cell, float> cell_dense_vector_range_difference_test_float("Cell float");
 DenseVectorRangeDifferenceTest<tags::Cell, double> cell_dense_vector_range_difference_test_double("Cell double");
 #endif
+#ifdef HONEI_OPENCL
+DenseVectorRangeDifferenceTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_range_difference_test_float("float");
+DenseVectorRangeDifferenceTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_range_difference_test_double("double");
+DenseVectorRangeDifferenceTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_range_difference_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorRangeDifferenceTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_range_difference_test_double("double");
+#endif
+#endif
 
 template <typename Tag_, typename DT_>
 class DenseVectorRangeDifferenceQuickTest :
@@ -920,6 +952,14 @@ DenseVectorRangeDifferenceQuickTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_
 #ifdef HONEI_CELL
 DenseVectorRangeDifferenceQuickTest<tags::Cell, float> cell_dense_vector_range_difference_quick_test_float("Cell float");
 DenseVectorRangeDifferenceQuickTest<tags::Cell, double> cell_dense_vector_range_difference_quick_test_double("Cell double");
+#endif
+#ifdef HONEI_OPENCL
+DenseVectorRangeDifferenceQuickTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_range_difference_quick_test_float("float");
+DenseVectorRangeDifferenceQuickTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_range_difference_quick_test_double("double");
+DenseVectorRangeDifferenceQuickTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_range_difference_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorRangeDifferenceQuickTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_range_difference_quick_test_double("double");
+#endif
 #endif
 
 template <typename Tag_, typename DT_>

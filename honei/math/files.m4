@@ -10,7 +10,7 @@ dnl on this file at present...
 
 add(`apply_dirichlet_boundaries',       `hh')
 add(`conjugate_gradients',              `hh', `test')
-add(`defect',                           `hh', `test',   `sse',                        `cuda')
+add(`defect',                           `hh', `test',   `sse',                        `cuda', `opencl')
 add(`dune_regression',                        `test')
 add(`dune_solvers',                     `hh', `test')
 add(`endian_swap',                      `hh')

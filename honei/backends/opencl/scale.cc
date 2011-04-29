@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2010 Dirk Ribbrock <dirk.ribbrock@math.uni-dortmund.de>
+ * Copyright (c) 2011 Dirk Ribbrock <dirk.ribbrock@math.uni-dortmund.de>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -23,13 +23,13 @@ namespace honei
 {
     namespace opencl
     {
-        /*void copy_float(void * x, void * y, unsigned long size, cl_device_type type)
+        void scale_float(void * x, float b, unsigned long size, cl_device_type type)
         {
             cl_command_queue command_queue;
             cl_kernel kernel;
             cl_context context;
             cl_device_id device;
-            size_t threads =size;
+            size_t threads = size;
 
             DCQ dcq = OpenCLBackend::instance()->prepare_device(type);
             device = dcq.device;
@@ -39,14 +39,40 @@ namespace honei
             //print_device_info(device);
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/backends/opencl/";
-            filename += "operations.cl";
-            kernel = OpenCLBackend::instance()->create_kernel(filename, "copy_float", context, device);
+            filename += "scale.cl";
+            kernel = OpenCLBackend::instance()->create_kernel(filename, "scale_float", context, device);
             clSetKernelArg(kernel, 0, sizeof(cl_mem), &x);
-            clSetKernelArg(kernel, 1, sizeof(cl_mem), &y);
+            clSetKernelArg(kernel, 1, sizeof(cl_float), (void *)&b);
             clSetKernelArg(kernel, 2, sizeof(cl_uint), (void *)&size);
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
             clFinish(command_queue);
-        }*/
+        }
+
+        void scale_double(void * x, double b, unsigned long size, cl_device_type type)
+        {
+            cl_command_queue command_queue;
+            cl_kernel kernel;
+            cl_context context;
+            cl_device_id device;
+            size_t threads = size;
+
+            DCQ dcq = OpenCLBackend::instance()->prepare_device(type);
+            device = dcq.device;
+            context = dcq.context;
+            command_queue = dcq.command_queue;
+
+            //print_device_info(device);
+            std::string filename(HONEI_SOURCEDIR);
+            filename += "/honei/backends/opencl/";
+            filename += "scale.cl";
+            kernel = OpenCLBackend::instance()->create_kernel(filename, "scale_double", context, device);
+            clSetKernelArg(kernel, 0, sizeof(cl_mem), &x);
+            clSetKernelArg(kernel, 1, sizeof(cl_double), (void *)&b);
+            clSetKernelArg(kernel, 2, sizeof(cl_uint), (void *)&size);
+
+            clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
+            clFinish(command_queue);
+        }
     }
 }

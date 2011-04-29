@@ -799,6 +799,20 @@ namespace honei
         /// \}
     };
 
+    template <> struct Sum<tags::OpenCL::CPU>
+    {
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+    };
+
+    template <> struct Sum<tags::OpenCL::GPU>
+    {
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+    };
+
     /**
      * \brief Sum of two entities
      *

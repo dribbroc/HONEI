@@ -810,6 +810,13 @@ PoissonAdvancedTestMGSparseELLProlMat<tags::GPU::CUDA, double> cuda_poisson_adva
 #endif
 #endif
 
+#ifdef HONEI_OPENCL
+PoissonAdvancedTestMGSparseELLProlMat<tags::OpenCL::CPU, double> ocl_cpu_poisson_advanced_test_mg_sparse_prolmat_double("double", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/sort_", 0);
+#ifdef HONEI_CUDA_DOUBLE
+PoissonAdvancedTestMGSparseELLProlMat<tags::OpenCL::GPU, double> ocl_gpu_poisson_advanced_test_mg_sparse_prolmat_double("double", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/sort_", 0);
+#endif
+#endif
+
 template <typename Tag_, typename DT1_>
 class PoissonAdvancedTestMGSparseELLProlMatSpai:
     public BaseTest

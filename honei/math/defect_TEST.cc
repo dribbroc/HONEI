@@ -85,6 +85,14 @@ DefectTest<double, tags::GPU::CUDA> cuda_defect_test_double_sparse("double");
 DefectTest<double, tags::GPU::MultiCore::CUDA> mc_cuda_defect_test_double_sparse("double");
 #endif
 #endif
+#ifdef HONEI_OPENCL
+DefectTest<float, tags::OpenCL::CPU> ocl_cpu_defect_test_float_sparse("float");
+DefectTest<double, tags::OpenCL::CPU> ocl_cpu_defect_test_double_sparse("double");
+DefectTest<float, tags::OpenCL::GPU> ocl_gpu_defect_test_float_sparse("float");
+#ifdef HONEI_CUDA_DOUBLE
+DefectTest<double, tags::OpenCL::GPU> ocl_gpu_defect_test_double_sparse("double");
+#endif
+#endif
 
 template<typename DT_, typename Tag_>
 class DefectRegressionTest:
@@ -162,5 +170,13 @@ DefectRegressionTest<float, tags::GPU::MultiCore::CUDA> mc_cuda_regression_defec
 #ifdef HONEI_CUDA_DOUBLE
 DefectRegressionTest<double, tags::GPU::CUDA> cuda_regression_defect_test_double_sparse("CUDA Regression double", "area51_full_0.m", "area51_rhs_0");
 DefectRegressionTest<double, tags::GPU::MultiCore::CUDA> mc_cuda_regression_defect_test_double_sparse("CUDA Regression double", "area51_full_0.m", "area51_rhs_0");
+#endif
+#endif
+#ifdef HONEI_OPENCL
+DefectRegressionTest<float, tags::OpenCL::CPU> ocl_cpu_regression_defect_test_float_sparse("Regression float", "l2/area51_full_0.m", "l2/area51_rhs_0");
+DefectRegressionTest<double, tags::OpenCL::CPU> ocl_cpu_regression_defect_test_double_sparse("Regression double", "l2/area51_full_0.m", "l2/area51_rhs_0");
+DefectRegressionTest<float, tags::OpenCL::GPU> ocl_gpu_regression_defect_test_float_sparse("Regression float", "l2/area51_full_0.m", "l2/area51_rhs_0");
+#ifdef HONEI_CUDA_DOUBLE
+DefectRegressionTest<double, tags::OpenCL::GPU> ocl_gpu_regression_defect_test_double_sparse("Regression double", "l2/area51_full_0.m", "l2/area51_rhs_0");
 #endif
 #endif

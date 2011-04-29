@@ -988,6 +988,14 @@ DenseVectorRangeSumTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector
 DenseVectorRangeSumTest<tags::Cell, float> cell_dense_vector_range_sum_test_float("Cell float");
 DenseVectorRangeSumTest<tags::Cell, double> cell_dense_vector_range_sum_test_double("Cell double");
 #endif
+#ifdef HONEI_OPENCL
+DenseVectorRangeSumTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_range_sum_test_float("float");
+DenseVectorRangeSumTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_range_sum_test_double("double");
+DenseVectorRangeSumTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_range_sum_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorRangeSumTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_range_sum_test_double("double");
+#endif
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseVectorRangeSumQuickTest :
@@ -1050,6 +1058,14 @@ DenseVectorRangeSumQuickTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_v
 #ifdef HONEI_CELL
 DenseVectorRangeSumQuickTest<tags::Cell, float> cell_dense_vector_range_sum_quick_test_float("Cell float");
 DenseVectorRangeSumQuickTest<tags::Cell, double> cell_dense_vector_range_sum_quick_test_double("Cell double");
+#endif
+#ifdef HONEI_OPENCL
+DenseVectorRangeSumQuickTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_range_sum_quick_test_float("float");
+DenseVectorRangeSumQuickTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_range_sum_quick_test_double("double");
+DenseVectorRangeSumQuickTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_range_sum_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorRangeSumQuickTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_range_sum_quick_test_double("double");
+#endif
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -1124,6 +1140,14 @@ DenseVectorSumTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector_sum_
 DenseVectorSumTest<tags::Cell, float> cell_dense_vector_sum_test_float("Cell float");
 DenseVectorSumTest<tags::Cell, double> cell_dense_vector_sum_test_double("Cell double");
 #endif
+#ifdef HONEI_OPENCL
+DenseVectorSumTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_sum_test_float("float");
+DenseVectorSumTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_sum_test_double("double");
+DenseVectorSumTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_sum_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorSumTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_sum_test_double("double");
+#endif
+#endif
 
 
 template <typename Tag_, typename DataType_>
@@ -1192,6 +1216,14 @@ DenseVectorSumQuickTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector
 #ifdef HONEI_CELL
 DenseVectorSumQuickTest<tags::Cell, float> cell_dense_vector_sum_quick_test_float("Cell float");
 DenseVectorSumQuickTest<tags::Cell, double> cell_dense_vector_sum_quick_test_double("Cell double");
+#endif
+#ifdef HONEI_OPENCL
+DenseVectorSumQuickTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_sum_quick_test_float("float");
+DenseVectorSumQuickTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_sum_quick_test_double("double");
+DenseVectorSumQuickTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_sum_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorSumQuickTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_sum_quick_test_double("double");
+#endif
 #endif
 
 template <typename Tag_, typename DataType_>

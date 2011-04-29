@@ -175,7 +175,7 @@ namespace
 DenseVectorContinuousBase<float> & Difference<tags::GPU::CUDA>::value(DenseVectorContinuousBase<float> & a,
         const DenseVectorContinuousBase<float> & b)
 {
-    CONTEXT("When subtractiong DenseVectorContinuousBase<float> from DenseVectorContinuousBase<float> (CUDA):");
+    CONTEXT("When subtracting DenseVectorContinuousBase<float> from DenseVectorContinuousBase<float> (CUDA):");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -200,7 +200,7 @@ DenseVectorContinuousBase<float> & Difference<tags::GPU::CUDA>::value(DenseVecto
 DenseVectorContinuousBase<double> & Difference<tags::GPU::CUDA>::value(DenseVectorContinuousBase<double> & a,
         const DenseVectorContinuousBase<double> & b)
 {
-    CONTEXT("When subtractiong DenseVectorContinuousBase<double> from DenseVectorContinuousBase<double> (CUDA):");
+    CONTEXT("When subtracting DenseVectorContinuousBase<double> from DenseVectorContinuousBase<double> (CUDA):");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -286,7 +286,7 @@ DenseVectorContinuousBase<float> & Difference<tags::GPU::CUDA>::value(DenseVecto
         const DenseVectorContinuousBase<float> & a,
         const DenseVectorContinuousBase<float> & b)
 {
-    CONTEXT("When subtractiong DenseVectorContinuousBase<float> from DenseVectorContinuousBase<float> (CUDA):");
+    CONTEXT("When subtracting DenseVectorContinuousBase<float> from DenseVectorContinuousBase<float> (CUDA):");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -314,7 +314,7 @@ DenseVectorContinuousBase<double> & Difference<tags::GPU::CUDA>::value(DenseVect
         const DenseVectorContinuousBase<double> & a,
         const DenseVectorContinuousBase<double> & b)
 {
-    CONTEXT("When subtractiong DenseVectorContinuousBase<double> from DenseVectorContinuousBase<double> (CUDA):");
+    CONTEXT("When subtracting DenseVectorContinuousBase<double> from DenseVectorContinuousBase<double> (CUDA):");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());

@@ -293,6 +293,20 @@ namespace honei
         /// \}
     };
 
+    template <> struct Scale<tags::OpenCL::CPU>
+    {
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & x, const float a);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & x, const double a);
+    };
+
+    template <> struct Scale<tags::OpenCL::GPU>
+    {
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & x, const float a);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & x, const double a);
+    };
+
     /**
      * \brief Result of scaling an entity by a scalar factor.
      *

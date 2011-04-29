@@ -72,7 +72,7 @@ class OpenclBackendQuickTest :
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/backends/opencl/";
             filename += "scaled_sum.cl";
-            kernel = OpenCLBackend::instance()->create_kernel(filename, "scaled_sum_float", context, device);
+            kernel = OpenCLBackend::instance()->create_kernel(filename, "scaled_sum_three_float_s", context, device);
 
             float x[10];
             float y[10];
@@ -92,9 +92,10 @@ class OpenclBackendQuickTest :
 
             float b = 2;
             clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *)&x_buffer);
-            clSetKernelArg(kernel, 1, sizeof(cl_mem), (void *)&y_buffer);
-            clSetKernelArg(kernel, 2, sizeof(cl_float), (void *)&b);
-            clSetKernelArg(kernel, 3, sizeof(cl_uint), (void *)&size);
+            clSetKernelArg(kernel, 1, sizeof(cl_mem), (void *)&x_buffer);
+            clSetKernelArg(kernel, 2, sizeof(cl_mem), (void *)&y_buffer);
+            clSetKernelArg(kernel, 3, sizeof(cl_float), (void *)&b);
+            clSetKernelArg(kernel, 4, sizeof(cl_uint), (void *)&size);
 
             size_t threads = size;
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);

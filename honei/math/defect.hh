@@ -266,6 +266,40 @@ namespace honei
         };
 
     template<>
+        struct Defect<tags::OpenCL::CPU>
+        {
+            public:
+                static DenseVector<float> value(const DenseVectorContinuousBase<float> & right_hand_side,
+                        const SparseMatrixELL<float> & system, const DenseVectorContinuousBase<float> & x);
+
+                static DenseVector<double> value(const DenseVectorContinuousBase<double> & right_hand_side,
+                        const SparseMatrixELL<double> & system, const DenseVectorContinuousBase<double> & x);
+
+                static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & right_hand_side,
+                        const SparseMatrixELL<float> & system, const DenseVectorContinuousBase<float> & x);
+
+                static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & right_hand_side,
+                        const SparseMatrixELL<double> & system, const DenseVectorContinuousBase<double> & x);
+        };
+
+    template<>
+        struct Defect<tags::OpenCL::GPU>
+        {
+            public:
+                static DenseVector<float> value(const DenseVectorContinuousBase<float> & right_hand_side,
+                        const SparseMatrixELL<float> & system, const DenseVectorContinuousBase<float> & x);
+
+                static DenseVector<double> value(const DenseVectorContinuousBase<double> & right_hand_side,
+                        const SparseMatrixELL<double> & system, const DenseVectorContinuousBase<double> & x);
+
+                static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & right_hand_side,
+                        const SparseMatrixELL<float> & system, const DenseVectorContinuousBase<float> & x);
+
+                static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & right_hand_side,
+                        const SparseMatrixELL<double> & system, const DenseVectorContinuousBase<double> & x);
+        };
+
+    template<>
         struct Defect<tags::CPU::SSE>
         {
 

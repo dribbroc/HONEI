@@ -92,6 +92,14 @@ DenseVectorElementProductTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_
 DenseVectorElementProductTest<tags::Cell, float> cell_dense_vector_element_product_test_float("Cell float");
 DenseVectorElementProductTest<tags::Cell, double> cell_dense_vector_element_product_test_double("Cell double");
 #endif
+#ifdef HONEI_OPENCL
+DenseVectorElementProductTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_elementwise_product_test_float("float");
+DenseVectorElementProductTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_elementwise_product_test_double("double");
+DenseVectorElementProductTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_elementwise_product_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorElementProductTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_elementwise_product_test_double("double");
+#endif
+#endif
 
 
 template <typename Tag_, typename DataType_>
@@ -161,6 +169,14 @@ DenseVectorElementProductQuickTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_d
 DenseVectorElementProductQuickTest<tags::Cell, float> cell_dense_vector_element_product_quick_test_float("Cell float");
 DenseVectorElementProductQuickTest<tags::Cell, double> cell_dense_vector_element_product_quick_test_double("Cell double");
 #endif
+#ifdef HONEI_OPENCL
+DenseVectorElementProductQuickTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_elementwise_product_quick_test_float("float");
+DenseVectorElementProductQuickTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_elementwise_product_quick_test_double("double");
+DenseVectorElementProductQuickTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_elementwise_product_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorElementProductQuickTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_elementwise_product_quick_test_double("double");
+#endif
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseVector3ElementProductTest :
@@ -219,6 +235,14 @@ DenseVector3ElementProductTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_dense_
 #ifdef HONEI_CUDA_DOUBLE
 DenseVector3ElementProductTest<tags::GPU::CUDA, double> cuda_dense_vector_3_elementwise_product_test_double("double");
 DenseVector3ElementProductTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector_3_elementwise_product_test_double("double");
+#endif
+#endif
+#ifdef HONEI_OPENCL
+DenseVector3ElementProductTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_3_elementwise_product_test_float("float");
+DenseVector3ElementProductTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_3_elementwise_product_test_double("double");
+DenseVector3ElementProductTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_3_elementwise_product_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVector3ElementProductTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_3_elementwise_product_test_double("double");
 #endif
 #endif
 
@@ -291,6 +315,14 @@ DenseVector3ElementProductQuickTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_d
 #ifdef HONEI_CUDA_DOUBLE
 DenseVector3ElementProductQuickTest<tags::GPU::CUDA, double> cuda_dense_vector_3_elementwise_product_quick_test_double("double");
 DenseVector3ElementProductQuickTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector_3_elementwise_product_quick_test_double("double");
+#endif
+#endif
+#ifdef HONEI_OPENCL
+DenseVector3ElementProductQuickTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_3_elementwise_product_quick_test_float("float");
+DenseVector3ElementProductQuickTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_3_elementwise_product_quick_test_double("double");
+DenseVector3ElementProductQuickTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_3_elementwise_product_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVector3ElementProductQuickTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_3_elementwise_product_quick_test_double("double");
 #endif
 #endif
 
@@ -378,6 +410,14 @@ DenseVectorRangeElementProductTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_d
 DenseVectorRangeElementProductTest<tags::Cell, float> cell_dense_vector_range_element_product_test_float("Cell float");
 DenseVectorRangeElementProductTest<tags::Cell, double> cell_dense_vector_range_element_product_test_double("Cell double");
 #endif
+#ifdef HONEI_OPENCL
+DenseVectorRangeElementProductTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_range_elementwise_product_test_float("float");
+DenseVectorRangeElementProductTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_range_elementwise_product_test_double("double");
+DenseVectorRangeElementProductTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_range_elementwise_product_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorRangeElementProductTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_range_elementwise_product_test_double("double");
+#endif
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseVectorRangeElementProductQuickTest :
@@ -462,6 +502,14 @@ DenseVectorRangeElementProductQuickTest<tags::GPU::MultiCore::CUDA, double> mc_c
 #ifdef HONEI_CELL
 DenseVectorRangeElementProductQuickTest<tags::Cell, float> cell_dense_vector_range_element_product_quick_test_float("Cell float");
 DenseVectorRangeElementProductQuickTest<tags::Cell, double> cell_dense_vector_range_element_product_quick_test_double("Cell double");
+#endif
+#ifdef HONEI_OPENCL
+DenseVectorRangeElementProductQuickTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_range_elementwise_product_quick_test_float("float");
+DenseVectorRangeElementProductQuickTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_range_elementwise_product_quick_test_double("double");
+DenseVectorRangeElementProductQuickTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_range_elementwise_product_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorRangeElementProductQuickTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_range_elementwise_product_quick_test_double("double");
+#endif
 #endif
 
 template <typename Tag_, typename DataType_>

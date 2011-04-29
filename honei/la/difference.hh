@@ -742,6 +742,30 @@ namespace honei
         /// \}
     };
 
+    template <>
+    struct Difference<tags::OpenCL::CPU>
+    {
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+    };
+
+    template <>
+    struct Difference<tags::OpenCL::GPU>
+    {
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+    };
+
    /**
      * \brief Difference of two entities.
      *

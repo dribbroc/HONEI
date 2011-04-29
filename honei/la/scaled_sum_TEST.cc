@@ -214,6 +214,14 @@ DenseVectorResScaledSumTest<tags::GPU::CUDA, double> cuda_dense_vector_res_scale
 DenseVectorResScaledSumTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector_res_scaled_sum_test_double("double");
 #endif
 #endif
+#ifdef HONEI_OPENCL
+DenseVectorResScaledSumTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_scaled_res_sum_test_float("float");
+DenseVectorResScaledSumTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_scaled_res_sum_test_double("double");
+DenseVectorResScaledSumTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_scaled_res_sum_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorResScaledSumTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_scaled_res_sum_test_double("double");
+#endif
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseVectorResScaledSumQuickTest :
@@ -263,6 +271,14 @@ DenseVectorResScaledSumQuickTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_dens
 #ifdef HONEI_CUDA_DOUBLE
 DenseVectorResScaledSumQuickTest<tags::GPU::CUDA, double> cuda_dense_vector_res_scaled_sum_quick_test_double("double");
 DenseVectorResScaledSumQuickTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector_res_scaled_sum_quick_test_double("double");
+#endif
+#endif
+#ifdef HONEI_OPENCL
+DenseVectorResScaledSumQuickTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_scaled_res_sum_quick_test_float("float");
+DenseVectorResScaledSumQuickTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_scaled_res_sum_quick_test_double("double");
+DenseVectorResScaledSumQuickTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_scaled_res_sum_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorResScaledSumQuickTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_scaled_res_sum_quick_test_double("double");
 #endif
 #endif
 
@@ -571,6 +587,14 @@ DenseVector3ScaledSumTest<tags::GPU::CUDA, double> cuda_dense_vector_3_scaled_su
 DenseVector3ScaledSumTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector_3_scaled_sum_test_double("double");
 #endif
 #endif
+#ifdef HONEI_OPENCL
+DenseVector3ScaledSumTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_3_scaled_sum_test_float("float");
+DenseVector3ScaledSumTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_scaled_3_sum_test_double("double");
+DenseVector3ScaledSumTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_3_scaled_sum_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVector3ScaledSumTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_scaled_3_sum_test_double("double");
+#endif
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseVector3ScaledSumQuickTest :
@@ -622,6 +646,14 @@ DenseVector3ScaledSumQuickTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_dense_
 #ifdef HONEI_CUDA_DOUBLE
 DenseVector3ScaledSumQuickTest<tags::GPU::CUDA, double> cuda_dense_vector_3_scaled_sum_quick_test_double("double");
 DenseVector3ScaledSumQuickTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector_3_scaled_sum_quick_test_double("double");
+#endif
+#endif
+#ifdef HONEI_OPENCL
+DenseVector3ScaledSumQuickTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_3_scaled_sum_quick_test_float("float");
+DenseVector3ScaledSumQuickTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_scaled_3_sum_quick_test_double("double");
+DenseVector3ScaledSumQuickTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_3_scaled_sum_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVector3ScaledSumQuickTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_scaled_3_sum_quick_test_double("double");
 #endif
 #endif
 
