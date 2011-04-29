@@ -148,10 +148,10 @@ namespace honei
             _id_map.erase(range.first, range.second);
         }
 
-        void copy(void * /*src_id*/, void * /*src_address*/, void * /*dest_id*/,
-                void * /*dest_address*/, unsigned long /*bytes*/)
+        void copy(void * /*src_id*/, void * src_address, void * /*dest_id*/,
+                void * dest_address, unsigned long bytes)
         {
-            /*std::map<void *, void *>::iterator src_i(_address_map.find(src_address));
+            std::map<void *, void *>::iterator src_i(_address_map.find(src_address));
             std::map<void *, void *>::iterator dest_i(_address_map.find(dest_address));
             if (src_i == _address_map.end() || dest_i == _address_map.end())
             {
@@ -159,29 +159,9 @@ namespace honei
             }
             else
             {
-                std::map<void *, int>::iterator j_source(_device_map.find(src_address));
-                std::map<void *, int>::iterator j_dest(_device_map.find(dest_address));
-                if (j_source->second != j_dest->second)
-                    throw InternalError("MemoryBackend<Tag_>::copy src and dest on different devices!");
-
-                bool idle(cuda::GPUPool::instance()->idle());
-                //running in slave thread
-                if (j_source->second == cuda_get_device() && ! idle)
-                {
-                    cuda_copy(src_i->second, dest_i->second, bytes);
-                }
-                else
-                {
-                    if (! idle)
-                        throw InternalError("MemoryBackend<Tag_>::copy Data is located on another device!");
-                    //running in master thread -> switch to slave thread
-                    else
-                    {
-                        cuda::CopyTask ct(src_i->second, dest_i->second, bytes);
-                        cuda::GPUPool::instance()->enqueue(ct, j_source->second)->wait();
-                    }
-                }
-            }*/
+                DCQ dcq = OpenCLBackend::instance()->prepare_device(type);
+                clEnqueueCopyBuffer(dcq.command_queue, (cl_mem)src_i->second, (cl_mem)dest_i->second, 0, 0, bytes, 0, NULL, NULL);
+            }
         }
 
         void fill(void * /*memid*/, void * /*address*/, unsigned long /*bytes*/, float /*proto*/)
@@ -269,17 +249,20 @@ namespace honei
     void MemoryBackend<tags::OpenCL::CPU>::convert_float_double(void * /*src_id*/, void * /*src_address*/, void * /*dest_id*/,
                     void * /*dest_address*/, unsigned long /*bytes*/)
     {
+        throw InternalError("convert not supported!");
     }
 
     void MemoryBackend<tags::OpenCL::CPU>::convert_double_float(void * /*src_id*/, void * /*src_address*/, void * /*dest_id*/,
                     void * /*dest_address*/, unsigned long /*bytes*/)
     {
+        throw InternalError("convert not supported!");
     }
 
     void MemoryBackend<tags::OpenCL::CPU>::fill(void * memid, void * address, unsigned long bytes, float proto)
     {
         CONTEXT("When filling data (OpenCL::CPU):");
         _imp->fill(memid, address, bytes, proto);
+        throw InternalError("fill not supported!");
     }
 
     bool MemoryBackend<tags::OpenCL::CPU>::knows(void * memid, void * address)
@@ -332,17 +315,20 @@ namespace honei
     void MemoryBackend<tags::OpenCL::GPU>::convert_float_double(void * /*src_id*/, void * /*src_address*/, void * /*dest_id*/,
                     void * /*dest_address*/, unsigned long /*bytes*/)
     {
+        throw InternalError("convert not supported!");
     }
 
     void MemoryBackend<tags::OpenCL::GPU>::convert_double_float(void * /*src_id*/, void * /*src_address*/, void * /*dest_id*/,
                     void * /*dest_address*/, unsigned long /*bytes*/)
     {
+        throw InternalError("convert not supported!");
     }
 
     void MemoryBackend<tags::OpenCL::GPU>::fill(void * memid, void * address, unsigned long bytes, float proto)
     {
         CONTEXT("When filling data (OpenCL::GPU):");
         _imp->fill(memid, address, bytes, proto);
+        throw InternalError("fill not supported!");
     }
 
     bool MemoryBackend<tags::OpenCL::GPU>::knows(void * memid, void * address)

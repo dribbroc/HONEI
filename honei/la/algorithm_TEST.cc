@@ -844,6 +844,30 @@ class DenseVectorCopyQuickTest :
             TEST_CHECK_EQUAL(dv2, dv);
             dv.unlock(lm_read_only);
             dv2.unlock(lm_read_only);
+
+
+            dv.lock(lm_write_only);
+            dv2.lock(lm_write_only);
+            for (unsigned long i(0) ; i < dv.size() ; ++i)
+            {
+                dv[i] = DT_(i % 10);
+            }
+            for (unsigned long i(0) ; i < dv.size() ; ++i)
+            {
+                dv2[i] = DT_(i);
+            }
+            dv.unlock(lm_write_only);
+            dv2.unlock(lm_write_only);
+            dv.lock(lm_read_only, Tag_::memory_value);
+            dv2.lock(lm_read_only, Tag_::memory_value);
+            dv.unlock(lm_read_only);
+            dv2.unlock(lm_read_only);
+            copy<Tag_>(dv, dv2);
+            dv.lock(lm_read_only);
+            dv2.lock(lm_read_only);
+            TEST_CHECK_EQUAL(dv2, dv);
+            dv.unlock(lm_read_only);
+            dv2.unlock(lm_read_only);
         }
 };
 DenseVectorCopyQuickTest<tags::CPU, float> dense_vector_copy_quick_test_float("float");
@@ -856,4 +880,13 @@ DenseVectorCopyQuickTest<tags::GPU::CUDA, double> cuda_dense_vector_copy_quick_t
 DenseVectorCopyQuickTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector_copy_quick_test_double("double");
 #endif
 #endif
-
+#ifdef HONEI_OPENCL
+DenseVectorCopyQuickTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_copy_quick_test_float("float");
+DenseVectorCopyQuickTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_copy_quick_test_double("double");
+#ifdef HONEI_CUDA
+DenseVectorCopyQuickTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_copy_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorCopyQuickTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_copy_quick_test_double("double");
+#endif
+#endif
+#endif
