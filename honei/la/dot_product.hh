@@ -353,6 +353,20 @@ namespace honei
         /// \}
     };
 
+    template <> struct DotProduct<tags::OpenCL::CPU>
+    {
+        static float value(const DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+
+        static double value(const DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+    };
+
+    template <> struct DotProduct<tags::OpenCL::GPU>
+    {
+        static float value(const DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+
+        static double value(const DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+    };
+
     namespace mc
     {
         template <typename Tag_> struct DotProduct

@@ -90,6 +90,14 @@ DenseDotProductTest<tags::GPU::CUDA, double> cuda_dense_scalar_product_test_doub
 DenseDotProductTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_scalar_product_test_double("double");
 #endif
 #endif
+#ifdef HONEI_OPENCL
+DenseDotProductTest<tags::OpenCL::CPU, float> ocl_cpu_dense_scalar_product_test_float("float");
+DenseDotProductTest<tags::OpenCL::CPU, double> ocl_cpu_dense_scalar_product_test_double("double");
+DenseDotProductTest<tags::OpenCL::GPU, float> ocl_gpu_dense_scalar_product_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseDotProductTest<tags::OpenCL::GPU, double> ocl_gpu_dense_scalar_product_test_double("double");
+#endif
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseDotProductQuickTest :
@@ -147,6 +155,14 @@ DenseDotProductQuickTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_dense_scalar
 #ifdef HONEI_CUDA_DOUBLE
 DenseDotProductQuickTest<tags::GPU::CUDA, double> cuda_dense_scalar_product_quick_test_double("double");
 DenseDotProductQuickTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_scalar_product_quick_test_double("double");
+#endif
+#endif
+#ifdef HONEI_OPENCL
+DenseDotProductQuickTest<tags::OpenCL::CPU, float> ocl_cpu_dense_scalar_product_quick_test_float("float");
+DenseDotProductQuickTest<tags::OpenCL::CPU, double> ocl_cpu_dense_scalar_product_quick_test_double("double");
+DenseDotProductQuickTest<tags::OpenCL::GPU, float> ocl_gpu_dense_scalar_product_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseDotProductQuickTest<tags::OpenCL::GPU, double> ocl_gpu_dense_scalar_product_quick_test_double("double");
 #endif
 #endif
 
@@ -307,6 +323,14 @@ DenseVectorRangeDotProductTest<tags::GPU::CUDA, double> cuda_dense_vector_range_
 DenseVectorRangeDotProductTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector_range_scalar_product_test_double("double");
 #endif
 #endif
+#ifdef HONEI_OPENCL
+DenseVectorRangeDotProductTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_range_scalar_product_test_float("float");
+DenseVectorRangeDotProductTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_range_scalar_product_test_double("double");
+DenseVectorRangeDotProductTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_range_scalar_product_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorRangeDotProductTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_range_scalar_product_test_double("double");
+#endif
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseVectorRangeDotProductQuickTest :
@@ -343,7 +367,7 @@ class DenseVectorRangeDotProductQuickTest :
                 DenseVectorRange<DataType_> dvr2 (dv2, size, i);
                 DataType_ v2(Norm<vnt_l_two, false>::value(dvr2));
                 DataType_ p2(DotProduct<Tag_>::value(dvr2, dvr2));
-                TEST_CHECK_EQUAL_WITHIN_EPS((v2/p2), 1, (5*std::numeric_limits<DataType_>::epsilon()));
+                TEST_CHECK_EQUAL_WITHIN_EPS((v2/p2), 1, (10*std::numeric_limits<DataType_>::epsilon()));
             }
 
             DenseVector<DataType_> dv00(4, DataType_(1)), dv01(4, DataType_(1));
@@ -369,6 +393,14 @@ DenseVectorRangeDotProductQuickTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_d
 #ifdef HONEI_CUDA_DOUBLE
 DenseVectorRangeDotProductQuickTest<tags::GPU::CUDA, double> cuda_dense_vector_range_scalar_product_quick_test_double("double");
 DenseVectorRangeDotProductQuickTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector_range_scalar_product_quick_test_double("double");
+#endif
+#endif
+#ifdef HONEI_OPENCL
+DenseVectorRangeDotProductQuickTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_range_scalar_product_quick_test_float("float");
+DenseVectorRangeDotProductQuickTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_range_scalar_productquick__test_double("double");
+DenseVectorRangeDotProductQuickTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_range_scalar_product_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorRangeDotProductQuickTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_range_scalar_product_quick_test_double("double");
 #endif
 #endif
 

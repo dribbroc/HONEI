@@ -254,6 +254,7 @@ namespace honei
             Lock l(*_mutex);
             return clCreateBuffer(context, CL_MEM_READ_WRITE, bytes, NULL, NULL);
         }
+
         cl_mem create_buffer(unsigned long bytes, cl_context context, void * src)
         {
             Lock l(*_mutex);

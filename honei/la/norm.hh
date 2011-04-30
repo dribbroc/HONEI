@@ -587,6 +587,34 @@ namespace honei
         static double value(const SparseVector<double> & x);
     };
 
+    template <> struct Norm<vnt_l_two, false, tags::OpenCL::CPU>
+    {
+        static float value(const DenseVectorContinuousBase<float> & x);
+
+        static double value(const DenseVectorContinuousBase<double> & x);
+    };
+
+    template <> struct Norm<vnt_l_two, true, tags::OpenCL::CPU>
+    {
+        static float value(const DenseVectorContinuousBase<float> & x);
+
+        static double value(const DenseVectorContinuousBase<double> & x);
+    };
+
+    template <> struct Norm<vnt_l_two, false, tags::OpenCL::GPU>
+    {
+        static float value(const DenseVectorContinuousBase<float> & x);
+
+        static double value(const DenseVectorContinuousBase<double> & x);
+    };
+
+    template <> struct Norm<vnt_l_two, true, tags::OpenCL::GPU>
+    {
+        static float value(const DenseVectorContinuousBase<float> & x);
+
+        static double value(const DenseVectorContinuousBase<double> & x);
+    };
+
      /**
      * \brief Norm of an entity (Cell-implementation).
      *

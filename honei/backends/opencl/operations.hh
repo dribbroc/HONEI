@@ -30,8 +30,14 @@ namespace honei
         void difference_float(void * r, void * x, void * y, unsigned long size, cl_device_type type);
         void difference_double(void * r, void * x, void * y, unsigned long size, cl_device_type type);
 
+        float dot_product_float(void * x, void * y, unsigned long size, cl_device_type type);
+        double dot_product_double(void * x, void * y, unsigned long size, cl_device_type type);
+
         void element_product_float(void * r, void * x, void * y, unsigned long size, cl_device_type type);
         void element_product_double(void * r, void * x, void * y, unsigned long size, cl_device_type type);
+
+        float norm_l2_false_float(void * x, unsigned long size, cl_device_type type);
+        double norm_l2_false_double(void * x, unsigned long size, cl_device_type type);
 
         void scale_float(void * x, float a, unsigned long size, cl_device_type type);
         void scale_double(void * x, double a, unsigned long size, cl_device_type type);

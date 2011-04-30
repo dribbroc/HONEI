@@ -4,7 +4,9 @@ MAINTAINERCLEANFILES = Makefile.in
 AUTOMAKE_OPTIONS = foreign dist-bzip2
 EXTRA_DIST = defect.cl \
 	     difference.cl \
+	     dot_product.cl \
 	     element_product.cl \
+	     norm.cl \
 	     scaled_sum.cl \
 	     scale.cl \
 	     sum.cl \
@@ -28,7 +30,9 @@ libhoneibackendsopencl_la_LIBADD = \
 
 libhoneibackendsopencl_la_SOURCES = defect.cc \
 				    difference.cc \
+				    dot_product.cc \
 				    element_product.cc \
+				    norm.cc \
 				    operations.hh \
 				    opencl_backend.cc \
 				    opencl_backend-impl.hh \

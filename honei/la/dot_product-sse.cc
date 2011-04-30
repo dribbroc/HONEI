@@ -32,6 +32,10 @@ float DotProduct<tags::CPU::SSE>::value(const DenseVectorContinuousBase<float> &
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
 
+    a.lock(lm_read_only);
+    b.lock(lm_read_only);
+    a.unlock(lm_read_only);
+    b.unlock(lm_read_only);
     return sse::dot_product(a.elements(), b.elements(), a.size());
 }
 
@@ -44,6 +48,10 @@ double DotProduct<tags::CPU::SSE>::value(const DenseVectorContinuousBase<double>
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
 
+    a.lock(lm_read_only);
+    b.lock(lm_read_only);
+    a.unlock(lm_read_only);
+    b.unlock(lm_read_only);
     return sse::dot_product(a.elements(), b.elements(), a.size());
 }
 

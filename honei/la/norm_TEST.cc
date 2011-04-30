@@ -139,6 +139,14 @@ DenseVectorNormValueTest<tags::GPU::CUDA, double> cuda_dense_vector_norm_value_t
 DenseVectorNormValueTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector_norm_value_test_double("double");
 #endif
 #endif
+#ifdef HONEI_OPENCL
+DenseVectorNormValueTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_norm_value_test_float("float");
+DenseVectorNormValueTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_norm_value_test_double("double");
+DenseVectorNormValueTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_norm_value_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorNormValueTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_norm_value_test_double("double");
+#endif
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseVectorNormQuickTest :
@@ -196,6 +204,14 @@ DenseVectorNormQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_norm_quick_te
 #ifdef HONEI_CUDA_DOUBLE
 DenseVectorNormQuickTest<tags::GPU::CUDA, double> cuda_dense_vector_norm_quick_test_double("double");
 DenseVectorNormQuickTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector_norm_quick_test_double("double");
+#endif
+#endif
+#ifdef HONEI_OPENCL
+DenseVectorNormQuickTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_norm_quick_test_float("float");
+DenseVectorNormQuickTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_norm_quick_test_double("double");
+DenseVectorNormQuickTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_norm_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorNormQuickTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_norm_quick_test_double("double");
 #endif
 #endif
 
@@ -266,6 +282,14 @@ DenseVectorRangeNormValueTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_
 DenseVectorRangeNormValueTest<tags::Cell, float> cell_dense_vector_range_norm_value_test_float("float (Cell)");
 DenseVectorRangeNormValueTest<tags::Cell, double> cell_dense_vector_range_norm_value_test_double("double (Cell)");
 #endif
+#ifdef HONEI_OPENCL
+DenseVectorRangeNormValueTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_range_norm_value_test_float("float");
+DenseVectorRangeNormValueTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_range_norm_value_test_double("double");
+DenseVectorRangeNormValueTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_range_norm_value_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorRangeNormValueTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_range_norm_value_test_double("double");
+#endif
+#endif
 
 template <typename Tag_, typename DataType_>
 class DenseVectorRangeNormQuickTest :
@@ -331,6 +355,14 @@ DenseVectorRangeNormQuickTest<tags::GPU::MultiCore::CUDA, double>  mc_cuda_dense
 #ifdef HONEI_CELL
 DenseVectorRangeNormQuickTest<tags::Cell, float> cell_dense_vector_range_norm_quick_test_float("float (Cell)");
 DenseVectorRangeNormQuickTest<tags::Cell, double> cell_dense_vector_range_norm_quick_test_double("double (Cell)");
+#endif
+#ifdef HONEI_OPENCL
+DenseVectorRangeNormQuickTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_range_norm_quick_test_float("float");
+DenseVectorRangeNormQuickTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_range_norm_quick_test_double("double");
+DenseVectorRangeNormQuickTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_range_norm_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorRangeNormQuickTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_range_norm_quick_test_double("double");
+#endif
 #endif
 
 
