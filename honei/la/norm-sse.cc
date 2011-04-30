@@ -84,27 +84,27 @@ float Norm<vnt_l_two, false, tags::CPU::SSE>::value(const SparseVector<float> & 
 {
     CONTEXT("When calculating L2 norm (false) of SparseVector<float> (SSE):");
 
-    return sse::norm_l2(a.elements(), a.size());
+    return sse::norm_l2(a.elements(), a.used_elements());
 }
 
 double Norm<vnt_l_two, false, tags::CPU::SSE>::value(const SparseVector<double> & a)
 {
     CONTEXT("When calculating L2 norm (false) of SparseVector<double> (SSE):");
 
-    return sse::norm_l2(a.elements(), a.size());
+    return sse::norm_l2(a.elements(), a.used_elements());
 }
 
 float Norm<vnt_l_two, true, tags::CPU::SSE>::value(const SparseVector<float> & a)
 {
     CONTEXT("When calculating L2 norm (true) of SparseVector<float> (SSE):");
 
-    return sqrt(sse::norm_l2(a.elements(), a.size()));
+    return sqrt(sse::norm_l2(a.elements(), a.used_elements()));
 }
 
 double Norm<vnt_l_two, true, tags::CPU::SSE>::value(const SparseVector<double> & a)
 {
     CONTEXT("When calculating L2 norm (true) of SparseVector<double> (SSE):");
 
-    return sqrt(sse::norm_l2(a.elements(), a.size()));
+    return sqrt(sse::norm_l2(a.elements(), a.used_elements()));
 }
 
