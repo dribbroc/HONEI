@@ -147,7 +147,7 @@ namespace honei
             {
                 throw InternalError("OpenCL: Error " + stringify(status) + " in clCrateProgramWithSource!");
             }
-            std::string cl_flags("-Werror");
+            std::string cl_flags("-Werror -cl-strict-aliasing -cl-mad-enable -cl-unsafe-math-optimizations");
 #ifdef HONEI_CUDA_DOUBLE
             cl_flags += " -D HONEI_CUDA_DOUBLE";
 #endif

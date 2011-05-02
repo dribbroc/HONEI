@@ -121,7 +121,7 @@ namespace honei
             {
                 cl_mem device(0);
                 DCQ dcq = OpenCLBackend::instance()->prepare_device(type);
-                device = OpenCLBackend::instance()->create_buffer(bytes, dcq.context, address);
+                device = OpenCLBackend::instance()->create_empty_buffer(bytes, dcq.context);
                 if (device == 0)
                     throw InternalError("MemoryBackend<Tag_>::alloc CudaMallocError!");
                 _id_map.insert(std::pair<void *, Chunk>(memid, Chunk(address, device, bytes)));

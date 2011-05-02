@@ -39,7 +39,7 @@ namespace honei
 
             cl_mem tmp_device(0);
             float * tmp_cpu = new float[threads];
-            tmp_device = OpenCLBackend::instance()->create_buffer(threads*sizeof(float), dcq.context, (void*)tmp_cpu);
+            tmp_device = OpenCLBackend::instance()->create_empty_buffer(threads*sizeof(float), dcq.context);
 
             //print_device_info(device);
             std::string filename(HONEI_SOURCEDIR);
@@ -81,7 +81,7 @@ namespace honei
 
             cl_mem tmp_device(0);
             double * tmp_cpu = new double[threads];
-            tmp_device = OpenCLBackend::instance()->create_buffer(threads*sizeof(double), dcq.context, (void*)tmp_cpu);
+            tmp_device = OpenCLBackend::instance()->create_empty_buffer(threads*sizeof(double), dcq.context);
 
             //print_device_info(device);
             std::string filename(HONEI_SOURCEDIR);
