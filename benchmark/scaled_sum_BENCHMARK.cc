@@ -10,6 +10,7 @@
 #include <honei/backends/cuda/operations.hh>
 #include <honei/util/configuration.hh>
 #include <honei/backends/cuda/gpu_pool.hh>
+#include <honei/backends/opencl/opencl_backend.hh>
 
 using namespace std;
 using namespace honei;
@@ -44,6 +45,10 @@ class DenseVectorScaledSumBench :
 #ifdef HONEI_CUDA
                         if (Tag_::tag_value == tags::tv_gpu_cuda)
                             cuda::GPUPool::instance()->flush();
+#endif
+#ifdef HONEI_OPENCL
+                        if (Tag_::tag_value == tags::tv_opencl)
+                            OpenCLBackend::instance()->flush();
 #endif
                         }
                         );

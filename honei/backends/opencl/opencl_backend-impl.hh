@@ -134,6 +134,13 @@ namespace honei
             else throw InternalError("OpenCL: No platform found!");
         }
 
+        void flush()
+        {
+            DCQ dcq = prepare_device(CL_DEVICE_TYPE_CPU);
+            clFinish(dcq.command_queue);
+            dcq = prepare_device(CL_DEVICE_TYPE_GPU);
+            clFinish(dcq.command_queue);
+        }
 
         cl_kernel add_kernel(std::string file, std::string kernel_name, cl_context context, cl_device_id device)
         {
@@ -294,6 +301,11 @@ namespace honei
     void OpenCLBackend::print_program_info(cl_program program, cl_device_id device)
     {
         _imp->print_program_info(program, device);
+    }
+
+    void OpenCLBackend::flush()
+    {
+        _imp->flush();
     }
 
     cl_mem OpenCLBackend::create_empty_buffer(unsigned long bytes, cl_context context)
