@@ -10,7 +10,9 @@
 #include <honei/backends/cuda/operations.hh>
 #include <honei/util/configuration.hh>
 #include <honei/backends/cuda/gpu_pool.hh>
+#ifdef HONEI_OPENCL
 #include <honei/backends/opencl/opencl_backend.hh>
+#endif
 
 using namespace std;
 using namespace honei;
