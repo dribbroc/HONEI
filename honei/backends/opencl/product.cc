@@ -53,7 +53,6 @@ namespace honei
             clSetKernelArg(kernel, 6, sizeof(unsigned long), (void *)&stride);
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
-            clFinish(command_queue);
         }
 
         void product_smell_dv_double(void * x, void * y, void * Aj, void * Ax, void * Arl,
@@ -85,7 +84,6 @@ namespace honei
             clSetKernelArg(kernel, 6, sizeof(unsigned long), (void *)&stride);
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
-            clFinish(command_queue);
         }
     }
 }

@@ -46,7 +46,6 @@ namespace honei
             clSetKernelArg(kernel, 2, sizeof(cl_uint), (void *)&size);
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
-            clFinish(command_queue);
         }
 
         void scale_double(void * x, double b, unsigned long size, cl_device_type type)
@@ -72,7 +71,6 @@ namespace honei
             clSetKernelArg(kernel, 2, sizeof(cl_uint), (void *)&size);
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
-            clFinish(command_queue);
         }
     }
 }

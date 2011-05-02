@@ -47,7 +47,6 @@ namespace honei
             clSetKernelArg(kernel, 3, sizeof(cl_uint), (void *)&size);
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
-            clFinish(command_queue);
         }
 
         void difference_double(void *r, void * x, void * y, unsigned long size, cl_device_type type)
@@ -74,7 +73,6 @@ namespace honei
             clSetKernelArg(kernel, 3, sizeof(cl_uint), (void *)&size);
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
-            clFinish(command_queue);
         }
     }
 }

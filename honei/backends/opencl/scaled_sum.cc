@@ -47,7 +47,6 @@ namespace honei
             clSetKernelArg(kernel, 3, sizeof(cl_uint), (void *)&size);
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
-            clFinish(command_queue);
 
         }
 
@@ -75,7 +74,6 @@ namespace honei
             clSetKernelArg(kernel, 3, sizeof(cl_uint), (void *)&size);
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
-            clFinish(command_queue);
         }
 
         void scaled_sum_float(void * r, void * x, void * y, float b, unsigned long size, cl_device_type type)
@@ -103,7 +101,6 @@ namespace honei
             clSetKernelArg(kernel, 4, sizeof(cl_uint), (void *)&size);
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
-            clFinish(command_queue);
         }
 
         void scaled_sum_double(void * r, void * x, void * y, double b, unsigned long size, cl_device_type type)
@@ -131,7 +128,6 @@ namespace honei
             clSetKernelArg(kernel, 4, sizeof(cl_uint), (void *)&size);
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
-            clFinish(command_queue);
         }
 
         void scaled_sum_float(void * r, void * x, void * y, unsigned long size, cl_device_type type)
@@ -158,7 +154,6 @@ namespace honei
             clSetKernelArg(kernel, 3, sizeof(cl_uint), (void *)&size);
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
-            clFinish(command_queue);
         }
 
         void scaled_sum_double(void * r, void * x, void * y, unsigned long size, cl_device_type type)
@@ -185,7 +180,6 @@ namespace honei
             clSetKernelArg(kernel, 3, sizeof(cl_uint), (void *)&size);
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
-            clFinish(command_queue);
         }
     }
 }
