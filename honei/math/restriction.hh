@@ -42,7 +42,7 @@ namespace honei
     {
         public:
             template <typename Prec_, typename MatrixType_>
-                static DenseVector<Prec_> & value(DenseVector<Prec_>&  coarse, DenseVector<Prec_>& fine, DenseVector<unsigned long>& mask, HONEI_UNUSED MatrixType_ & resmat = NULL)
+                static DenseVector<Prec_> & value(DenseVector<Prec_>&  coarse, DenseVector<Prec_>& fine, DenseVector<unsigned long>& mask, HONEI_UNUSED MatrixType_ & resmat)
                 {
                     unsigned long n_fine(fine.size());
                     unsigned long n_x_fine((unsigned long)sqrt((Prec_)n_fine) - 1);
@@ -176,7 +176,7 @@ namespace honei
     {
         public:
             template <typename Prec_, typename MatrixType_>
-                static DenseVector<Prec_> & value(DenseVector<Prec_>&  coarse, DenseVector<Prec_>& fine, HONEI_UNUSED DenseVector<unsigned long>& mask, HONEI_UNUSED MatrixType_ & resmat = NULL)
+                static DenseVector<Prec_> & value(DenseVector<Prec_>&  coarse, DenseVector<Prec_>& fine, HONEI_UNUSED DenseVector<unsigned long>& mask, HONEI_UNUSED MatrixType_ & resmat)
                 {
                     Product<Tag_>::value(coarse, resmat, fine);
                     //ApplyDirichletBoundaries<Tag_>::value(coarse, mask);
