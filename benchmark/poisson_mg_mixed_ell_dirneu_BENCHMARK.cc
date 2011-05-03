@@ -240,7 +240,7 @@ PoissonBenchmarkMGSparseELLMixed<tags::CPU::SSE, tags::CPU::SSE, double> poisson
 PoissonBenchmarkMGSparseELLMixed<tags::CPU::SSE, tags::CPU::SSE, double> poisson_bench_mg_ell_mixed_8_cpu("MG mixed CPU/CPU L8", 257, 1);
 PoissonBenchmarkMGSparseELLMixed<tags::CPU::SSE, tags::CPU::SSE, double> poisson_bench_mg_ell_mixed_9_cpu("MG mixed CPU/CPU L9", 513, 1);
 PoissonBenchmarkMGSparseELLMixed<tags::CPU::SSE, tags::CPU::SSE, double> poisson_bench_mg_ell_mixed_10_cpu("MG mixed CPU/CPU L10", 1025, 1);
-    #ifdef HONEI_CUDA
+#ifdef HONEI_CUDA
 PoissonBenchmarkMGSparseELLMixed<tags::GPU::CUDA, tags::CPU::SSE, double> poisson_bench_mg_ell_mixed_2("MG mixed GPU/CPU L2", 5, 1);
 PoissonBenchmarkMGSparseELLMixed<tags::GPU::CUDA, tags::CPU::SSE, double> poisson_bench_mg_ell_mixed_3("MG mixed GPU/CPU L3", 9, 1);
 PoissonBenchmarkMGSparseELLMixed<tags::GPU::CUDA, tags::CPU::SSE, double> poisson_bench_mg_ell_mixed_4("MG mixed GPU/CPU L4", 17, 1);
@@ -250,7 +250,7 @@ PoissonBenchmarkMGSparseELLMixed<tags::GPU::CUDA, tags::CPU::SSE, double> poisso
 PoissonBenchmarkMGSparseELLMixed<tags::GPU::CUDA, tags::CPU::SSE, double> poisson_bench_mg_ell_mixed_8("MG mixed GPU/CPU L8", 257, 1);
 PoissonBenchmarkMGSparseELLMixed<tags::GPU::CUDA, tags::CPU::SSE, double> poisson_bench_mg_ell_mixed_9("MG mixed GPU/CPU L9", 513, 1);
 PoissonBenchmarkMGSparseELLMixed<tags::GPU::CUDA, tags::CPU::SSE, double> poisson_bench_mg_ell_mixed_10("MG mixed GPU/CPU L10", 1025, 1);
-    #endif
+#endif
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE

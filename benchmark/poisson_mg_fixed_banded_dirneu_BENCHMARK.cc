@@ -255,4 +255,15 @@ PoissonBenchmarkMGBandedQ1Fixed<tags::GPU::CUDA, float> poisson_bench_mg_banded_
 PoissonBenchmarkMGBandedQ1Fixed<tags::GPU::CUDA, float> poisson_bench_mg_banded_float_a8("MG float CUDA L8", 257, 1);
 PoissonBenchmarkMGBandedQ1Fixed<tags::GPU::CUDA, float> poisson_bench_mg_banded_float_a9("MG float CUDA L9", 513, 1);
 PoissonBenchmarkMGBandedQ1Fixed<tags::GPU::CUDA, float> poisson_bench_mg_banded_float_a10("MG float CUDA L10", 1025, 1);
+#ifdef HONEI_CUDA_DOUBLE
+PoissonBenchmarkMGBandedQ1Fixed<tags::GPU::CUDA, double> poisson_bench_mg_banded_double_a2("MG double CUDA L2", 5, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::GPU::CUDA, double> poisson_bench_mg_banded_double_a3("MG double CUDA L3", 9, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::GPU::CUDA, double> poisson_bench_mg_banded_double_a4("MG double CUDA L4", 17, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::GPU::CUDA, double> poisson_bench_mg_banded_double_a5("MG double CUDA L5", 33, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::GPU::CUDA, double> poisson_bench_mg_banded_double_a6("MG double CUDA L6", 65, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::GPU::CUDA, double> poisson_bench_mg_banded_double_a7("MG double CUDA L7", 129, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::GPU::CUDA, double> poisson_bench_mg_banded_double_a8("MG double CUDA L8", 257, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::GPU::CUDA, double> poisson_bench_mg_banded_double_a9("MG double CUDA L9", 513, 1);
+PoissonBenchmarkMGBandedQ1Fixed<tags::GPU::CUDA, double> poisson_bench_mg_banded_double_a10("MG double CUDA L10", 1025, 1);
+#endif
 #endif
