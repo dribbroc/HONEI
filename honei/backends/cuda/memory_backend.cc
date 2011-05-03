@@ -548,6 +548,39 @@ namespace honei
             }
         }
 
+        void fill(void * /*memid*/, void * address, unsigned long bytes, double proto)
+        {
+            std::map<void *, void *>::iterator i(_address_map.find(address));
+            if (i == _address_map.end())
+            {
+                throw InternalError("MemoryBackend<tags::GPU::CUDA>::fill address not found!");
+            }
+            else
+            {
+                if (proto != 0)
+                    throw InternalError("CUDA fill != zero not supported yet!");
+
+                std::map<void *, int>::iterator j(_device_map.find(address));
+                bool idle(cuda::GPUPool::instance()->idle());
+                //running in slave thread
+                if (j->second == cuda_get_device() && ! idle)
+                {
+                    cuda_fill_zero(i->second, bytes);
+                }
+                else
+                {
+                    if (! idle)
+                        throw InternalError("MemoryBackend<tags::GPU::CUDA>::fill Data is located on another device!");
+                    //running in master thread -> switch to slave thread
+                    else
+                    {
+                        cuda::FillTask ft(i->second, bytes);
+                        cuda::GPUPool::instance()->enqueue(ft, j->second)->wait();
+                    }
+                }
+            }
+        }
+
         bool knows(void * /*memid*/, void * address)
         {
             std::map<void *, void *>::iterator i(_address_map.find(address));
@@ -612,6 +645,12 @@ namespace honei
     }
 
     void MemoryBackend<tags::GPU::CUDA>::fill(void * memid, void * address, unsigned long bytes, float proto)
+    {
+        CONTEXT("When filling data (CUDA):");
+        _imp->fill(memid, address, bytes, proto);
+    }
+
+    void MemoryBackend<tags::GPU::CUDA>::fill(void * memid, void * address, unsigned long bytes, double proto)
     {
         CONTEXT("When filling data (CUDA):");
         _imp->fill(memid, address, bytes, proto);

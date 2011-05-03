@@ -325,6 +325,16 @@ namespace honei
     }
 
     template <typename Tag_>
+    void fill(const DenseVectorContinuousBase<double> & dest, const double & proto = double(0))
+    {
+        CONTEXT("When filling DenseVectorContinuousBase with '" + stringify(proto) + "':");
+
+        //TypeTraits<DT_>::fill(dest.elements(), dest.size(), proto);
+        MemoryArbiter::instance()->fill(Tag_::memory_value, dest.memid(), dest.address(),
+                dest.size() * sizeof(double), proto);
+    }
+
+    template <typename Tag_>
     void fill(const DenseMatrix<float> & dest, const float & proto = float(0))
     {
         CONTEXT("When filling DenseMatrix with '" + stringify(proto) + "':");

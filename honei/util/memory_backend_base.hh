@@ -52,6 +52,7 @@ namespace honei
                     void * dest_address, unsigned long bytes) = 0;
 
             virtual void fill(void * memid, void * address, unsigned long bytes, float proto) = 0;
+            virtual void fill(void * memid, void * address, unsigned long bytes, double proto) = 0;
 
             virtual bool knows(void * memid, void * address) = 0;
     };

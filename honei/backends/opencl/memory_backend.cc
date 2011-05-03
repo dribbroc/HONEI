@@ -197,6 +197,10 @@ namespace honei
             }*/
         }
 
+        void fill(void * /*memid*/, void * /*address*/, unsigned long /*bytes*/, double /*proto*/)
+        {
+        }
+
         bool knows(void * /*memid*/, void * address)
         {
             std::map<void *, void *>::iterator i(_address_map.find(address));
@@ -259,6 +263,13 @@ namespace honei
     }
 
     void MemoryBackend<tags::OpenCL::CPU>::fill(void * memid, void * address, unsigned long bytes, float proto)
+    {
+        CONTEXT("When filling data (OpenCL::CPU):");
+        _imp->fill(memid, address, bytes, proto);
+        throw InternalError("fill not supported!");
+    }
+
+    void MemoryBackend<tags::OpenCL::CPU>::fill(void * memid, void * address, unsigned long bytes, double proto)
     {
         CONTEXT("When filling data (OpenCL::CPU):");
         _imp->fill(memid, address, bytes, proto);
@@ -331,6 +342,13 @@ namespace honei
         throw InternalError("fill not supported!");
     }
 
+    void MemoryBackend<tags::OpenCL::GPU>::fill(void * memid, void * address, unsigned long bytes, double proto)
+    {
+        CONTEXT("When filling data (OpenCL::GPU):");
+        _imp->fill(memid, address, bytes, proto);
+        throw InternalError("fill not supported!");
+    }
+
     bool MemoryBackend<tags::OpenCL::GPU>::knows(void * memid, void * address)
     {
         return _imp->knows(memid, address);
@@ -389,6 +407,12 @@ namespace honei
     }
 
     void MemoryBackend<tags::OpenCL::Accelerator>::fill(void * memid, void * address, unsigned long bytes, float proto)
+    {
+        CONTEXT("When filling data (OpenCL::Accelerator):");
+        _imp->fill(memid, address, bytes, proto);
+    }
+
+    void MemoryBackend<tags::OpenCL::Accelerator>::fill(void * memid, void * address, unsigned long bytes, double proto)
     {
         CONTEXT("When filling data (OpenCL::Accelerator):");
         _imp->fill(memid, address, bytes, proto);

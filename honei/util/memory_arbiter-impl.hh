@@ -367,6 +367,40 @@ namespace honei
             }
         }
 
+        void fill(tags::TagValue memory, void * memid, void * address, unsigned long bytes, double proto)
+        {
+            Lock l(*_mutex);
+            std::map<void *, MemoryBlock>::iterator i(_blocks.find(memid));
+            // Wait until no one reads or writes on our memory block
+            while (i != _blocks.end() && (i->second.write_count != 0 || i->second.read_count != 0))
+            {
+                _access_finished->wait(*_mutex);
+                i = _blocks.find(memid);
+            }
+            if (i == _blocks.end())
+            {
+                throw InternalError("MemoryArbiter: Memory Block not found!");
+            }
+            else
+            {
+                // Delete the deprecated memory block in all relevant memory backends
+                for (std::set<tags::TagValue>::iterator j(i->second.readers.begin()), j_end(i->second.readers.end()) ;
+                        j != j_end ; ++j)
+                {
+                    if (*j != memory)
+                    {
+                        _backends[*j]->free(memid);
+                    }
+
+                }
+                i->second.readers.clear();
+                i->second.writer = memory;
+                i->second.readers.insert(memory);
+                _backends[memory]->alloc(memid, address, bytes);
+                _backends[memory]->fill(memid, address, bytes, proto);
+            }
+        }
+
         void * read_only(tags::TagValue memory, void * memid, void * address, unsigned long bytes)
         {
             Lock l(*_mutex);
@@ -553,6 +587,11 @@ namespace honei
     }
 
     void MemoryArbiter::fill(tags::TagValue memory, void * memid, void * address, unsigned long bytes, float proto)
+    {
+        _imp->fill(memory, memid, address, bytes, proto);
+    }
+
+    void MemoryArbiter::fill(tags::TagValue memory, void * memid, void * address, unsigned long bytes, double proto)
     {
         _imp->fill(memory, memid, address, bytes, proto);
     }

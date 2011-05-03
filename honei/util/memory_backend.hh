@@ -114,6 +114,12 @@ namespace honei
             TypeTraits<float>::fill((float *)address, bytes / 4, proto);
         }
 
+        virtual void fill(void * /*memid*/, void * address, unsigned long bytes, double proto)
+        {
+            CONTEXT("When filling data (CPU):");
+            TypeTraits<double>::fill((double *)address, bytes / 8, proto);
+        }
+
         virtual bool knows(void * /*memid*/, void * /*address*/)
         {
             return true;
@@ -152,6 +158,7 @@ namespace honei
                     void * dest_address, unsigned long bytes);
 
             virtual void fill(void * memid, void * address, unsigned long bytes, float proto);
+            virtual void fill(void * memid, void * address, unsigned long bytes, double proto);
 
             virtual bool knows(void * memid, void * address);
     };
@@ -187,6 +194,7 @@ namespace honei
                     void * dest_address, unsigned long bytes);
 
             virtual void fill(void * memid, void * address, unsigned long bytes, float proto);
+            virtual void fill(void * memid, void * address, unsigned long bytes, double proto);
 
             virtual bool knows(void * memid, void * address);
     };
@@ -222,6 +230,7 @@ namespace honei
                     void * dest_address, unsigned long bytes);
 
             virtual void fill(void * memid, void * address, unsigned long bytes, float proto);
+            virtual void fill(void * memid, void * address, unsigned long bytes, double proto);
 
             virtual bool knows(void * memid, void * address);
     };
@@ -257,6 +266,7 @@ namespace honei
                     void * dest_address, unsigned long bytes);
 
             virtual void fill(void * memid, void * address, unsigned long bytes, float proto);
+            virtual void fill(void * memid, void * address, unsigned long bytes, double proto);
 
             virtual bool knows(void * memid, void * address);
     };

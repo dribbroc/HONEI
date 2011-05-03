@@ -95,6 +95,7 @@ namespace honei
              * Fill target with protoin target memory
              */
             void fill(tags::TagValue memory, void * memid, void * address, unsigned long bytes, float proto);
+            void fill(tags::TagValue memory, void * memid, void * address, unsigned long bytes, double proto);
 
             /**
              * Request a read lock for a specific memory block.
