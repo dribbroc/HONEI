@@ -599,7 +599,6 @@ class ConjugateGradientsTestSparseELL:
             }
         }
 };
-
 ConjugateGradientsTestSparseELL<tags::CPU, float> cg_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
 ConjugateGradientsTestSparseELL<tags::CPU, double> cg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
 #ifdef HONEI_SSE
@@ -610,6 +609,14 @@ ConjugateGradientsTestSparseELL<tags::CPU::SSE, double> sse_cg_test_double_spars
 ConjugateGradientsTestSparseELL<tags::GPU::CUDA, float> cuda_cg_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
 #ifdef HONEI_CUDA_DOUBLE
 ConjugateGradientsTestSparseELL<tags::GPU::CUDA, double> cuda_cg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
+#endif
+#endif
+#ifdef HONEI_OPENCL
+ConjugateGradientsTestSparseELL<tags::OpenCL::CPU, float> ocl_cpu_cg_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
+ConjugateGradientsTestSparseELL<tags::OpenCL::CPU, double> ocl_cpu_cg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
+ConjugateGradientsTestSparseELL<tags::OpenCL::GPU, float> ocl_gpu_cg_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
+#ifdef HONEI_CUDA_DOUBLE
+ConjugateGradientsTestSparseELL<tags::OpenCL::GPU, double> ocl_gpu_cg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
 #endif
 #endif
 
@@ -700,7 +707,6 @@ class PreconditionedConjugateGradientsTestSparseELL:
             }
         }
 };
-
 PreconditionedConjugateGradientsTestSparseELL<tags::CPU, float> pcg_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
 PreconditionedConjugateGradientsTestSparseELL<tags::CPU, double> pcg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
 #ifdef HONEI_SSE
@@ -715,4 +721,11 @@ PreconditionedConjugateGradientsTestSparseELL<tags::GPU::CUDA, float> cuda_pcg_t
 PreconditionedConjugateGradientsTestSparseELL<tags::GPU::CUDA, double> cuda_pcg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
 #endif
 #endif
-
+#ifdef HONEI_OPENCL
+PreconditionedConjugateGradientsTestSparseELL<tags::OpenCL::CPU, float> ocg_cpu_pcg_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
+PreconditionedConjugateGradientsTestSparseELL<tags::OpenCL::CPU, double> ocg_cpu_pcg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
+PreconditionedConjugateGradientsTestSparseELL<tags::OpenCL::GPU, float> ocg_gpu_pcg_test_float_sparse_ell("float", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
+#ifdef HONEI_CUDA_DOUBLE
+PreconditionedConjugateGradientsTestSparseELL<tags::OpenCL::GPU, double> ocg_gpu_pcg_test_double_sparse_ell("double", "l2/area51_full_0.m", "l2/area51_rhs_0", "l2/area51_sol_0", "l2/area51_init_0");
+#endif
+#endif
