@@ -6,6 +6,7 @@ EXTRA_DIST = defect.cl \
 	     difference.cl \
 	     dot_product.cl \
 	     element_product.cl \
+	     fill.cl \
 	     norm.cl \
 	     scaled_sum.cl \
 	     scale.cl \
@@ -32,6 +33,7 @@ libhoneibackendsopencl_la_SOURCES = defect.cc \
 				    difference.cc \
 				    dot_product.cc \
 				    element_product.cc \
+				    fill.cc \
 				    norm.cc \
 				    operations.hh \
 				    opencl_backend.cc \

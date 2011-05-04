@@ -19,6 +19,7 @@
 
 #include <honei/util/exception.hh>
 #include <honei/util/memory_backend.hh>
+#include <honei/backends/opencl/operations.hh>
 #include <honei/util/instantiation_policy-impl.hh>
 #include <honei/util/private_implementation_pattern-impl.hh>
 #include <honei/backends/opencl/opencl_backend.hh>
@@ -164,41 +165,30 @@ namespace honei
             }
         }
 
-        void fill(void * /*memid*/, void * /*address*/, unsigned long /*bytes*/, float /*proto*/)
+        void fill(void * /*memid*/, void * address, unsigned long bytes, float proto)
         {
-            /*std::map<void *, void *>::iterator i(_address_map.find(address));
+            std::map<void *, void *>::iterator i(_address_map.find(address));
             if (i == _address_map.end())
             {
                 throw InternalError("MemoryBackend<Tag_>::fill address not found!");
             }
             else
             {
-                if (proto != 0)
-                    throw InternalError("OpenCL::CPU fill != zero not supported yet!");
-
-                std::map<void *, int>::iterator j(_device_map.find(address));
-                bool idle(cuda::GPUPool::instance()->idle());
-                //running in slave thread
-                if (j->second == cuda_get_device() && ! idle)
-                {
-                    cuda_fill_zero(i->second, bytes);
-                }
-                else
-                {
-                    if (! idle)
-                        throw InternalError("MemoryBackend<Tag_>::fill Data is located on another device!");
-                    //running in master thread -> switch to slave thread
-                    else
-                    {
-                        cuda::FillTask ft(i->second, bytes);
-                        cuda::GPUPool::instance()->enqueue(ft, j->second)->wait();
-                    }
-                }
-            }*/
+                opencl::fill_float(i->second, proto, bytes / sizeof(float), type);
+            }
         }
 
-        void fill(void * /*memid*/, void * /*address*/, unsigned long /*bytes*/, double /*proto*/)
+        void fill(void * /*memid*/, void * address, unsigned long bytes, double proto)
         {
+            std::map<void *, void *>::iterator i(_address_map.find(address));
+            if (i == _address_map.end())
+            {
+                throw InternalError("MemoryBackend<Tag_>::fill address not found!");
+            }
+            else
+            {
+                opencl::fill_double(i->second, proto, bytes / sizeof(double), type);
+            }
         }
 
         bool knows(void * /*memid*/, void * address)
@@ -266,14 +256,12 @@ namespace honei
     {
         CONTEXT("When filling data (OpenCL::CPU):");
         _imp->fill(memid, address, bytes, proto);
-        throw InternalError("fill not supported!");
     }
 
     void MemoryBackend<tags::OpenCL::CPU>::fill(void * memid, void * address, unsigned long bytes, double proto)
     {
         CONTEXT("When filling data (OpenCL::CPU):");
         _imp->fill(memid, address, bytes, proto);
-        throw InternalError("fill not supported!");
     }
 
     bool MemoryBackend<tags::OpenCL::CPU>::knows(void * memid, void * address)
@@ -339,14 +327,12 @@ namespace honei
     {
         CONTEXT("When filling data (OpenCL::GPU):");
         _imp->fill(memid, address, bytes, proto);
-        throw InternalError("fill not supported!");
     }
 
     void MemoryBackend<tags::OpenCL::GPU>::fill(void * memid, void * address, unsigned long bytes, double proto)
     {
         CONTEXT("When filling data (OpenCL::GPU):");
         _imp->fill(memid, address, bytes, proto);
-        throw InternalError("fill not supported!");
     }
 
     bool MemoryBackend<tags::OpenCL::GPU>::knows(void * memid, void * address)

@@ -776,6 +776,17 @@ class CudaDenseMatrixFillQuickTest :
 };
 #ifdef HONEI_CUDA
 CudaDenseMatrixFillQuickTest<tags::GPU::CUDA, float> cuda_dense_matrix_fill_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+CudaDenseMatrixFillQuickTest<tags::GPU::CUDA, double> cuda_dense_matrix_fill_quick_test_double("double");
+#endif
+#endif
+#ifdef HONEI_OPENCL
+CudaDenseMatrixFillQuickTest<tags::OpenCL::CPU, float> ocl_cpu_dense_matrix_fill_quick_test_float("float");
+CudaDenseMatrixFillQuickTest<tags::OpenCL::CPU, double> ocl_cpu_dense_matrix_fill_quick_test_double("double");
+CudaDenseMatrixFillQuickTest<tags::OpenCL::GPU, float> ocl_gpu_dense_matrix_fill_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+CudaDenseMatrixFillQuickTest<tags::OpenCL::GPU, double> ocl_gpu_dense_matrix_fill_quick_test_double("double");
+#endif
 #endif
 
 template <typename DT_>
