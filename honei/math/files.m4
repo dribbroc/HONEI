@@ -9,6 +9,7 @@ dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
 add(`apply_dirichlet_boundaries',       `hh')
+add(`bi_conjugate_gradients_stabilised',`hh', `test')
 add(`conjugate_gradients',              `hh', `test')
 add(`defect',                           `hh', `test',   `sse',                        `cuda', `opencl')
 add(`dune_regression',                        `test')

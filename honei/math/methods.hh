@@ -42,6 +42,10 @@ namespace methods
     {
     };
 
+    class VAR
+    {
+    };
+
     class PCG
     {
         public:
