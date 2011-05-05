@@ -60,7 +60,8 @@ namespace honei
 
                 DenseVector<DT_> t(right_hand_side.size());
 
-                DenseVector<DT_> r_tilde(r.copy());
+                DenseVector<DT_> r_tilde(r.size());
+                copy<Tag_>(r, r_tilde);
                 DT_ norm_initial(Norm<vnt_l_two, false, Tag_>::value(r));
                 std::cout << "initial_norm: " << norm_initial << std::endl;
 
@@ -68,6 +69,7 @@ namespace honei
 
                 for(unsigned long i(0) ; i < max_iters ; ++i)
                 {
+                    used_iters = i + 1;
                     std::cout << "iter:" << i << std::endl;
                     rho_new = DotProduct<Tag_>::value(r_tilde, r);
                     if(fabs(rho_new) <= std::numeric_limits<DT_>::epsilon())
@@ -78,7 +80,7 @@ namespace honei
 
                     if(i == 0)
                     {
-                        p = r.copy();
+                        copy<Tag_>(r, p);
                     }
                     else
                     {
@@ -131,12 +133,9 @@ namespace honei
                     }
 
                     rho_old = rho_new;
-
                 }
 
             }
         };
 }
-
-
 #endif
