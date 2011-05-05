@@ -131,7 +131,7 @@ class DenseDotProductQuickTest :
             DataType_ p2(DotProduct<Tag_>::value(dv2, dv2));
             //float eps(exp(-20 + 3.88127 * log(size))); // Cell limits...
             //TEST_CHECK_EQUAL_WITHIN_EPS(v2, p2, eps);
-            TEST_CHECK_EQUAL_WITHIN_EPS((v2/p2), 1, (5*std::numeric_limits<DataType_>::epsilon()));
+            TEST_CHECK_EQUAL_WITHIN_EPS((v2/p2), 1, (10*std::numeric_limits<DataType_>::epsilon()));
 
             DenseVector<DataType_> dv00(1, DataType_(1));
             DenseVector<DataType_> dv01(2, DataType_(1));
