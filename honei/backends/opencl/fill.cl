@@ -17,8 +17,6 @@
 * Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifdef __CPU__
-
 __kernel void fill_float(__global  float * output,
                                    const     float proto,
                                    const unsigned int size)
@@ -28,30 +26,6 @@ __kernel void fill_float(__global  float * output,
     if (tid < size) output[tid] = proto;
 }
 
-#pragma OPENCL EXTENSION cl_amd_fp64 : enable
-__kernel void fill_double(__global  double * output,
-                                   const     double proto,
-                                   const unsigned int size)
-{
-    uint tid = get_global_id(0);
-
-    if (tid < size) output[tid] = proto;
-}
-//#endif
-
-#else
-//#ifdef __GPU__
-
-__kernel void fill_float(__global  float * output,
-                                   const     float proto,
-                                   const unsigned int size)
-{
-    uint tid = get_global_id(0);
-
-    if (tid < size) output[tid] = proto;
-}
-
-#ifdef HONEI_CUDA_DOUBLE
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
 __kernel void fill_double(__global  double * output,
                                    const     double proto,
@@ -61,5 +35,3 @@ __kernel void fill_double(__global  double * output,
 
     if (tid < size) output[tid] = proto;
 }
-#endif
-#endif
