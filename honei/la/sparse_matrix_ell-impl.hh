@@ -109,28 +109,15 @@ namespace honei
                 {
                     if(*i != DataType_(0))
                     {
-                        pAj[target + row * num_cols_per_row] = i.index();
-                        pAx[target + row * num_cols_per_row] = *i;
+                        pAj[row + target * stride] = i.index();
+                        pAx[row + target * stride] = *i;
                         target++;
                     }
                 }
             }
 
-            /// \todo avoid transposition, correct the above loops
-            DenseVector<unsigned long> tAj(num_cols_per_row * stride, (unsigned long)(0));
-            DenseVector<DataType_> tAx(num_cols_per_row * stride, DataType_(0));
-            unsigned long t(0);
-            for (unsigned long j(0) ; j < num_cols_per_row ; ++j)
-            {
-                for (unsigned long i(0) ; i < tAj.size() ; i+=num_cols_per_row)
-                {
-                    tAj[t] = pAj[j + i];
-                    tAx[t] = pAx[j + i];
-                    ++t;
-                }
-            }
-            Aj = tAj;
-            Ax = tAx;
+            Aj = pAj;
+            Ax = pAx;
             Arl = row_length();
         }
 
