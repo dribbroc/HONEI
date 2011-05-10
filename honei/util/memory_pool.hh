@@ -202,7 +202,9 @@ namespace honei
                 used_it = _used_chunks.find(memid);
                 if (used_it != _used_chunks.end())
                 {
-                    _free_chunks.insert(std::pair<unsigned long, void*>(used_it->second, used_it->first));
+                    /// \todo reactivate free_chunk insertion, to store allocated chunks
+                    //_free_chunks.insert(std::pair<unsigned long, void*>(used_it->second, used_it->first));
+                    ::free(used_it->first);
                     _used_chunks.erase(used_it);
                 }
                 else
