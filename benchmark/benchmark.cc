@@ -23,6 +23,7 @@
 #include <honei/backends/cuda/gpu_pool.hh>
 #include <honei/backends/multicore/thread_pool.hh>
 #include <honei/util/memory_arbiter.hh>
+#include <honei/util/memory_pool.hh>
 
 #include <cstdlib>
 #include <utility>
@@ -758,12 +759,36 @@ int main(int argc, char** argv)
                         tmp += a[0];
                         a.erase(0,1);
                         b = a[0];
-                    } 
-                    b = atoi(tmp.c_str());
-                    if ((b > 0) && (b <= BenchmarkList::instance()->bench_count())) 
+                    }
+                    if (a[0] == 45)
                     {
-                        runrs.push_back(b-1);
-                        std::cout << b << " ";
+                        int start  = atoi(tmp.c_str());
+                        tmp = "";
+                        a.erase(0,1);
+                        b = a[0];
+
+                        while ((b >=  48) && (b <= 65))
+                        {
+                            tmp += a[0];
+                            a.erase(0,1);
+                            b = a[0];
+                        }
+                        int stop  = atoi(tmp.c_str());
+                        if ((start > 0) && (stop <= BenchmarkList::instance()->bench_count()))
+                        {
+                            for (int ti(start) ; ti <= stop ; ti++)
+                                runrs.push_back(ti-1);
+                            std::cout << start << "-" << stop;
+                        }
+                    }
+                    else
+                    {
+                        b = atoi(tmp.c_str());
+                        if ((b > 0) && (b <= BenchmarkList::instance()->bench_count()))
+                        {
+                            runrs.push_back(b-1);
+                            std::cout << b << " ";
+                        }
                     }
                 }
             }
@@ -836,6 +861,7 @@ int main(int argc, char** argv)
                 }
             }
             i = BenchmarkList::instance()->erase(i);
+            honei::MemoryPool<honei::tags::CPU>::instance()->release_free();
         }
     }
     if (plot)
