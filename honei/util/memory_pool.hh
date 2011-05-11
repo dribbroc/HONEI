@@ -78,7 +78,7 @@ namespace honei
                     _release_free();
                 }
                 if (_used_chunks.size() != 0)
-                    throw InternalError("MemoryPool deconstructor called with elements still unfreeed");
+                    throw InternalError("MemoryPool destructor called with elements still unfreed");
                 delete _mutex;
             }
 
@@ -204,7 +204,7 @@ namespace honei
                 {
                     /// \todo reactivate free_chunk insertion, to store allocated chunks
                     //_free_chunks.insert(std::pair<unsigned long, void*>(used_it->second, used_it->first));
-                    ::free(used_it->first);
+                    ::free(memid);
                     _used_chunks.erase(used_it);
                 }
                 else
