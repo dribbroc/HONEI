@@ -38,6 +38,25 @@ using namespace tests;
 
 namespace
 {
+    class InfoTask
+    {
+        private:
+            int thread;
+        public:
+            InfoTask(int thread) :
+                thread(thread)
+            {
+            }
+
+            void operator() ()
+            {
+                std::cout<<"GPU Thread: " << thread << std::endl;
+                int device = cuda_get_device();
+                std::cout<<"Device: " << device << std::endl;
+                cuda_print_device_name(device);
+            }
+    };
+
     class TransferTask
     {
         private:
@@ -114,6 +133,13 @@ class GPUPoolQuickTest :
             }
             TEST_CHECK(GPUPool::instance()->idle());
             std::cout<<"Used GPU's: "<<GPUPool::instance()->get_num_gpus()<<std::endl;
+
+            for (unsigned long device(0) ; device < GPUPool::instance()->get_num_gpus() ; ++device)
+            {
+                InfoTask info(device);
+                GPUPool::instance()->enqueue(info, device)->wait();
+            }
+
             GPUPool::instance()->single_start(0);
             TEST_CHECK_EQUAL(GPUPool::instance()->get_num_gpus(), 1ul);
         }
