@@ -21,6 +21,7 @@
 #include <honei/util/lock.hh>
 #include <honei/util/stringify.hh>
 #include <honei/util/unittest.hh>
+#include <iostream>
 
 using namespace honei::mc;
 using namespace tests;
@@ -140,5 +141,7 @@ class ThreadPoolQuickTest :
             tickets.wait();
 
             TEST_CHECK_EQUAL(v, 534u);
+
+            std::cout<<"Used threads: "<< ThreadPool::instance()->num_threads() << std::endl;
         }
 } thread_pool_quick_test;
