@@ -106,7 +106,7 @@ extern "C" float cuda_norm_l2_one_float(const void * x, unsigned long size, unsi
 
     cudaFree(tmp_gpu);
     //cudaFreeHost(tmp_cpu);
-    delete tmp_cpu;
+    delete[] tmp_cpu;
 
     CUDA_ERROR();
     return sqrt(result);
@@ -146,7 +146,7 @@ extern "C" double cuda_norm_l2_one_double(const void * x, unsigned long size, un
 
     cudaFree(tmp_gpu);
     //cudaFreeHost(tmp_cpu);
-    delete tmp_cpu;
+    delete[] tmp_cpu;
 
     CUDA_ERROR();
     return sqrt(result);

@@ -106,7 +106,7 @@ extern "C" float cuda_dot_product_two_float(const void * x, const void * y, unsi
 
     cudaFree(tmp_gpu);
     //cudaFreeHost(tmp_cpu);
-    delete tmp_cpu;
+    delete[] tmp_cpu;
 
     CUDA_ERROR();
 #endif
@@ -146,7 +146,7 @@ extern "C" double cuda_dot_product_two_double(const void * x, const void * y, un
 
     cudaFree(tmp_gpu);
     //cudaFreeHost(tmp_cpu);
-    delete tmp_cpu;
+    delete[] tmp_cpu;
 
     CUDA_ERROR();
 #endif
