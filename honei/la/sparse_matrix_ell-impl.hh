@@ -58,6 +58,7 @@ namespace honei
         Implementation(unsigned long rows, unsigned long columns) :
             Aj(1),
             Ax(1),
+            Arl(1),
             rows(rows),
             columns(columns)
         {
@@ -86,7 +87,7 @@ namespace honei
             rows = src.rows();
             columns = src.columns();
 
-            num_cols_per_row = 0;
+            num_cols_per_row = 1;
             for (unsigned long i(0) ; i < rows ; ++i)
             {
                 if (src[i].used_elements() > num_cols_per_row)
