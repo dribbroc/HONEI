@@ -55,15 +55,6 @@ namespace honei
         /// Our zero element.
         static const DataType_ zero_element;
 
-        Implementation(unsigned long rows, unsigned long columns) :
-            Aj(1),
-            Ax(1),
-            Arl(1),
-            rows(rows),
-            columns(columns)
-        {
-        }
-
         Implementation(unsigned long rows, unsigned long columns, unsigned long stride, unsigned long num_cols_per_row,
                 const DenseVector<unsigned long> & Aj, const DenseVector<DataType_> & Ax) :
             stride(stride),
