@@ -34,8 +34,9 @@ using namespace honei;
 
 namespace io_formats
 {
-    class EXP;
     class DV;
+    class EXP;
+    class M;
 }
 
 
@@ -84,6 +85,93 @@ class VectorIO<io_formats::EXP>
                 file.close();
                 DenseVector<DT_> result(data.size(), 0);
                 TypeTraits<DT_>::copy(&(data[0]), result.elements(), data.size());
+                return result;
+            }
+};
+
+template<>
+class VectorIO<io_formats::M>
+{
+    public:
+        template<typename DT_>
+            static DenseVector<DT_> read_vector(std::string filename, DT_)
+            {
+                std::vector<DT_> data;
+                std::vector<unsigned long> row_indices;
+                std::vector<unsigned long> column_indices;
+                std::string last_line("");
+
+                std::ifstream file(filename.c_str());
+                if (! file.is_open())
+                    throw honei::InternalError("Unable to open Matlab Vector file " + filename);
+
+                while(!file.eof())
+                {
+                    std::string line;
+                    std::getline(file, line);
+                    if(line.find("#", 0) < line.npos)
+                        continue;
+                    if(line.find("sparse", 0) < line.npos)
+                    {
+                        last_line = line;
+                        break;
+                    }
+                    if(line.find("data", 0) < line.npos)
+                        continue;
+                    if(line.find("]", 0) < line.npos)
+                        continue;
+                    if(file.eof())
+                        break;
+
+                    std::string c_s, r_s, n_z_s;
+
+                    std::string::size_type first_digit(line.find_first_not_of(" "));
+                    line.erase(0, first_digit);
+                    std::string::size_type first_blank(line.find_first_of(" "));
+                    for(unsigned long i(0) ; i < first_blank ; ++i)
+                    {
+                        r_s.append(1, line[i]);
+                    }
+                    line.erase(0, first_blank + 1);
+                    first_digit = line.find_first_not_of(" ");
+                    line.erase(0, first_digit);
+
+                    std::string::size_type second_blank(line.find_first_of(" "));
+                    for(unsigned long i(0) ; i < second_blank ; ++i)
+                    {
+                        c_s.append(1, line[i]);
+                    }
+                    line.erase(0, second_blank + 1);
+                    first_digit = line.find_first_not_of(" ");
+                    line.erase(0, first_digit);
+
+                    std::string::size_type first_semicolon(line.find_first_of(";"));
+                    for(unsigned long i(0) ; i < first_semicolon ; ++i)
+                    {
+                        n_z_s.append(1, line[i]);
+                    }
+
+
+                    unsigned long c = (unsigned long)atol(c_s.c_str());
+                    unsigned long r = (unsigned long)atol(r_s.c_str());
+                    DT_ n_z = (DT_)atof(n_z_s.c_str());
+
+                    row_indices.push_back(r-1);
+                    column_indices.push_back(c-1);
+                    data.push_back(n_z);
+
+                }
+                file.close();
+
+                int s_start = last_line.rfind(",");
+                int s_end = last_line.rfind(")");
+                std::string ssize = last_line.substr(s_start+1, s_end - s_start - 1);
+                DenseVector<DT_> result(atof(ssize.c_str()), 0);
+
+                for (unsigned long i(0) ; i < data.size() ; ++i)
+                {
+                    result[column_indices.at(i)] = data.at(i);
+                }
                 return result;
             }
 };
