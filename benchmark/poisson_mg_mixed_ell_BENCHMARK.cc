@@ -170,16 +170,16 @@ class PoissonAdvancedBENCHMGSparseELLProlMat:
 
             info.min_level = 1;
             info.max_level = _size;
-            info.n_max_iter = 2;
+            info.n_max_iter = 3;
             info.initial_zero = true;
-            info.tolerance = 1e-8;
+            info.tolerance = 1e-7;
             info.convergence_check = true;
 
             info.n_pre_smooth = 4;
             info.n_post_smooth = 4;
             //info.n_max_iter_coarse = ((unsigned long)sqrt((float)(pow((float)2 , (float)info.max_level) + 1)*(pow((float)2 , (float)info.max_level) + 1)));
-            info.n_max_iter_coarse = 10000;
-            info.tolerance_coarse = 1e-8;
+            info.n_max_iter_coarse = 1000;
+            info.tolerance_coarse = 1e-2;
             info.adapt_correction_factor = 1.;
 
             std::cout << "Info is set up." << std::endl;

@@ -24,6 +24,7 @@
 #include <honei/backends/multicore/thread_pool.hh>
 #include <honei/util/memory_arbiter.hh>
 #include <honei/util/memory_pool.hh>
+#include <honei/util/tags.hh>
 
 #include <cstdlib>
 #include <utility>

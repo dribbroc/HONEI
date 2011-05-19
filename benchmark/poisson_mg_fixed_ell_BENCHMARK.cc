@@ -125,7 +125,7 @@ class PoissonBenchmarkMGELLFixed:
             }
 
             info.min_level = 1;
-            info.n_max_iter = 1000;
+            info.n_max_iter = 24;
             info.initial_zero = true;
             info.tolerance = 1e-8;
             info.convergence_check = true;
@@ -425,7 +425,7 @@ class PoissonAdvancedBENCHMGSparseELLProlMat:
 
             info.min_level = 1;
             info.max_level = _size;
-            info.n_max_iter = 100;
+            info.n_max_iter = 24;
             info.initial_zero = true;
             info.tolerance = 1e-8;
             info.convergence_check = true;
@@ -887,7 +887,7 @@ class PoissonAdvancedANHEURYSMBENCHMGSparseELLProlMat:
 
             info.min_level = 1;
             info.max_level = _size;
-            info.n_max_iter = 34;
+            info.n_max_iter = 24;
             info.initial_zero = true;
             info.tolerance = 1e-8;
             info.convergence_check = true;
@@ -1161,7 +1161,7 @@ class PoissonAdvancedBENCHMGSparseELLProlMatSPAI:
 
             info.min_level = 1;
             info.max_level = _size;
-            info.n_max_iter = 100;
+            info.n_max_iter = 7;
             info.initial_zero = false;
             info.tolerance = 1e-8;
             info.convergence_check = true;
@@ -1630,7 +1630,7 @@ class PoissonAdvancedBENCHMGSparseELLProlMatILU:
 
             info.min_level = 1;
             info.max_level = _size;
-            info.n_max_iter = 100;
+            info.n_max_iter = 24;
             info.initial_zero = false;
             info.tolerance = 1e-8;
             info.convergence_check = true;

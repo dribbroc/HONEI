@@ -202,11 +202,6 @@ CGPoissonAdvancedEllBENCH<tags::CPU::SSE, double> sse_poisson_advanced_bench_cg_
 CGPoissonAdvancedEllBENCH<tags::CPU::SSE, double> sse_poisson_advanced_bench_cg_sparse_prolmat_double_7_0_q2("PARENG CG double sse L7, q2 sort 0", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/q2_sort_", 2);
 CGPoissonAdvancedEllBENCH<tags::CPU::SSE, double> sse_poisson_advanced_bench_cg_sparse_prolmat_double_8_0_q2("PARENG CG double sse L8, q2 sort 0", 8ul, 0ul, "/honei/math/testdata/poisson_advanced/q2_sort_", 2);
 CGPoissonAdvancedEllBENCH<tags::CPU::SSE, double> sse_poisson_advanced_bench_cg_sparse_prolmat_double_9_0_q2("PARENG CG double sse L9, q2 sort 0", 9ul, 0ul, "/honei/math/testdata/poisson_advanced/q2_sort_", 2);
-CGPoissonAdvancedEllBENCH<tags::CPU::SSE, double> sse_poisson_advanced_bench_cg_sparse_prolmat_double_7_0_q1t("PARENG CG double sse L7, q1t sort 0", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/q1t_sort_", 1);
-CGPoissonAdvancedEllBENCH<tags::CPU::SSE, double> sse_poisson_advanced_bench_cg_sparse_prolmat_double_8_0_q1t("PARENG CG double sse L8, q1t sort 0", 8ul, 0ul, "/honei/math/testdata/poisson_advanced/q1t_sort_", 1);
-CGPoissonAdvancedEllBENCH<tags::CPU::SSE, double> sse_poisson_advanced_bench_cg_sparse_prolmat_double_9_0_q1t("PARENG CG double sse L9, q1t sort 0", 9ul, 0ul, "/honei/math/testdata/poisson_advanced/q1t_sort_", 1);
-CGPoissonAdvancedEllBENCH<tags::CPU::SSE, double> sse_poisson_advanced_bench_cg_sparse_prolmat_double_10_0_q1t("PARENG CG double sse L10, q1t sort 0", 10ul, 0ul, "/honei/math/testdata/poisson_advanced/q1t_sort_", 1);
-
 
 
 CGPoissonAdvancedEllBENCH<tags::CPU::MultiCore::SSE, double> mcsse_poisson_advanced_bench_cg_sparse_prolmat_double_7_0_q1("PARENG CG double mcsse L7, q1 sort 0", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/sort_", 0);
@@ -361,7 +356,7 @@ CGPoissonAdvancedEllBENCH<tags::GPU::CUDA, double> cuda_poisson_advanced_bench_c
 #endif
 #endif
 
-template <typename Tag_, typename DT1_>
+/*template <typename Tag_, typename DT1_>
 class CGPoissonAdvancedELLBENCHSPAI:
     public Benchmark
 {
@@ -526,11 +521,6 @@ CGPoissonAdvancedELLBENCHSPAI<tags::CPU::SSE, double> sse_poisson_advanced_bench
 CGPoissonAdvancedELLBENCHSPAI<tags::CPU::SSE, double> sse_poisson_advanced_bench_cg_spai_sparse_prolmat_double_7_0_q2("PARENG CG SPAI double sse L7, q2 sort 0", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/q2_sort_", 2);
 CGPoissonAdvancedELLBENCHSPAI<tags::CPU::SSE, double> sse_poisson_advanced_bench_cg_spai_sparse_prolmat_double_8_0_q2("PARENG CG SPAI double sse L8, q2 sort 0", 8ul, 0ul, "/honei/math/testdata/poisson_advanced/q2_sort_", 2);
 CGPoissonAdvancedELLBENCHSPAI<tags::CPU::SSE, double> sse_poisson_advanced_bench_cg_spai_sparse_prolmat_double_9_0_q2("PARENG CG SPAI double sse L9, q2 sort 0", 9ul, 0ul, "/honei/math/testdata/poisson_advanced/q2_sort_", 2);
-CGPoissonAdvancedELLBENCHSPAI<tags::CPU::SSE, double> sse_poisson_advanced_bench_cg_spai_sparse_prolmat_double_7_0_q1t("PARENG CG SPAI double sse L7, q1t sort 0", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/q1t_sort_", 1);
-CGPoissonAdvancedELLBENCHSPAI<tags::CPU::SSE, double> sse_poisson_advanced_bench_cg_spai_sparse_prolmat_double_8_0_q1t("PARENG CG SPAI double sse L8, q1t sort 0", 8ul, 0ul, "/honei/math/testdata/poisson_advanced/q1t_sort_", 1);
-CGPoissonAdvancedELLBENCHSPAI<tags::CPU::SSE, double> sse_poisson_advanced_bench_cg_spai_sparse_prolmat_double_9_0_q1t("PARENG CG SPAI double sse L9, q1t sort 0", 9ul, 0ul, "/honei/math/testdata/poisson_advanced/q1t_sort_", 1);
-CGPoissonAdvancedELLBENCHSPAI<tags::CPU::SSE, double> sse_poisson_advanced_bench_cg_spai_sparse_prolmat_double_10_0_q1t("PARENG CG SPAI double sse L10, q1t sort 0", 10ul, 0ul, "/honei/math/testdata/poisson_advanced/q1t_sort_", 1);
-
 
 
 CGPoissonAdvancedELLBENCHSPAI<tags::CPU::MultiCore::SSE, double> mcsse_poisson_advanced_bench_cg_spai_sparse_prolmat_double_7_0_q1("PARENG CG SPAI double mcsse L7, q1 sort 0", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/sort_", 0);
@@ -683,4 +673,4 @@ CGPoissonAdvancedELLBENCHSPAI<tags::GPU::CUDA, double> cuda_poisson_advanced_ben
 CGPoissonAdvancedELLBENCHSPAI<tags::GPU::CUDA, double> cuda_poisson_advanced_bench_cg_spai_sparse_prolmat_double_8_4_q2("PARENG CG SPAI double cuda L8, q2 sort 4", 8ul, 4ul, "/honei/math/testdata/poisson_advanced/q2_sort_", 2);
 CGPoissonAdvancedELLBENCHSPAI<tags::GPU::CUDA, double> cuda_poisson_advanced_bench_cg_spai_sparse_prolmat_double_9_4_q2("PARENG CG SPAI double cuda L9, q2 sort 4", 9ul, 4ul, "/honei/math/testdata/poisson_advanced/q2_sort_", 2);
 #endif
-#endif
+#endif*/

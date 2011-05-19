@@ -70,11 +70,14 @@ namespace honei
                 for(unsigned long i(0) ; i < max_iters ; ++i)
                 {
                     used_iters = i + 1;
-                    std::cout << "iter:" << i << std::endl;
+                    //std::cout << "iter:" << i << std::endl;
                     rho_new = DotProduct<Tag_>::value(r_tilde, r);
+                    //if(fabs(rho_new) <= std::numeric_limits<DT_>::epsilon())
                     if(fabs(rho_new) <= std::numeric_limits<DT_>::epsilon())
                     {
                         std::cout << "Method fails!" << std::endl;
+                        DT_ norm_failed(Norm<vnt_l_two, false, Tag_>::value(r));
+                        std::cout << "norm: " << norm_failed << " at iteration " << i << std::endl;
                         break;
                     }
 
@@ -101,7 +104,7 @@ namespace honei
                     if(norm / norm_initial <= eps_relative)
                     {
                         ScaledSum<Tag_>::value(x, p_hat, alpha);
-                        std::cout << "1st Converged with norm" << norm << std::endl;
+                        std::cout << "1st Converged with norm" << norm << " in iteration " << i << std::endl;
                         break;
                     }
 
@@ -118,11 +121,11 @@ namespace honei
 
                     norm = Norm<vnt_l_two, false, Tag_>::value(r);
 
-                    std::cout << "rNORM: " << norm << std::endl;
+                    //std::cout << "rNORM: " << norm << std::endl;
 
                     if(norm / norm_initial <= eps_relative)
                     {
-                        std::cout << "2nd Converged with norm" << norm << std::endl;
+                        std::cout << "2nd Converged with norm" << norm << " in iteration " << i << std::endl;
                         break;
                     }
 
@@ -134,6 +137,8 @@ namespace honei
 
                     rho_old = rho_new;
                 }
+
+                std::cout << "No convergence after " << max_iters << " iterations. Norm: " << Norm<vnt_l_two, false, Tag_>::value(r) << std::endl;
 
             }
         };
