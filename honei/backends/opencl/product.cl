@@ -88,46 +88,44 @@ __kernel void product_smell_dv_float(__global float * x, __global float * y, __g
     uint idp = idb % T;
     uint row = idx / T;
 
+            if(row >= num_rows){ return; }
             shared_ell_float[idb] = 0;
-            if(row <  num_rows)
+            float sum = 0;
+
+            const unsigned long max = Arl[row];
+            Ax += (row*T)+idp;
+            Aj += (row*T)+idp;
+            for(unsigned long k = 0; k < max ; ++k)
             {
-                float sum = 0;
+                sum += *Ax * x[*Aj];
+                Ax += stride;
+                Aj += stride;
+            }
+            shared_ell_float[idb] = sum;
 
-                uint max = Arl[row];
-                //const unsigned long max = num_cols_per_row;
-                for(uint k = 0; k < max ; ++k)
-                {
-                    float value = Ax[k*stride+row*T+idp];
-                    if (value != 0)
-                    {
-                        uint col = Aj[k*stride+row*T+idp];
-                        sum += value * x[col];
-                    }
-                }
-                shared_ell_float[idb] = sum;
-                mem_fence(CLK_LOCAL_MEM_FENCE);
-
-                switch (threads)
-                {
-                    case 16:
-                        if (idp < 8)
-                            shared_ell_float[idb] += shared_ell_float[idb + 8];
-                    case 8:
-                        if (idp < 4)
-                            shared_ell_float[idb] += shared_ell_float[idb + 4];
-                    case 4:
-                        if (idp < 2)
-                            shared_ell_float[idb] += shared_ell_float[idb + 2];
-                    case 2:
-                        if (idp == 0)
-                            y[row] = shared_ell_float[idb] + shared_ell_float[idb + 1];
-                        break;
-                    case 1:
-                        y[row] = shared_ell_float[idb];
-                        break;
-                    default:
-                        break;
-                }
+            switch (threads)
+            {
+                case 32:
+                    if (idp < 16)
+                        shared_ell_float[idb] += shared_ell_float[idb + 16];
+                case 16:
+                    if (idp < 8)
+                        shared_ell_float[idb] += shared_ell_float[idb + 8];
+                case 8:
+                    if (idp < 4)
+                        shared_ell_float[idb] += shared_ell_float[idb + 4];
+                case 4:
+                    if (idp < 2)
+                        shared_ell_float[idb] += shared_ell_float[idb + 2];
+                case 2:
+                    if (idp == 0)
+                        y[row] = shared_ell_float[idb] + shared_ell_float[idb + 1];
+                    break;
+                case 1:
+                    y[row] = shared_ell_float[idb];
+                    break;
+                default:
+                    break;
             }
 }
 
@@ -141,45 +139,44 @@ __kernel void product_smell_dv_double(__global double * x, __global double * y, 
     uint idp = idb % T;
     uint row = idx / T;
 
+            if(row >= num_rows){ return; }
             shared_ell_double[idb] = 0;
-            if(row <  num_rows)
+            double sum = 0;
+
+            const unsigned long max = Arl[row];
+            Ax += (row*T)+idp;
+            Aj += (row*T)+idp;
+            for(unsigned long k = 0; k < max ; ++k)
             {
-                double sum = 0;
+                sum += *Ax * x[*Aj];
+                Ax += stride;
+                Aj += stride;
+            }
+            shared_ell_double[idb] = sum;
 
-                const unsigned long max = Arl[row];
-                //const unsigned long max = num_cols_per_row;
-                for(unsigned long k = 0; k < max ; ++k)
-                {
-                    const double value = Ax[k*stride+row*T+idp];
-                    if (value != 0)
-                    {
-                        const unsigned long col = Aj[k*stride+row*T+idp];
-                        sum += value * x[col];
-                    }
-                }
-                shared_ell_double[idb] = sum;
-
-                switch (threads)
-                {
-                    case 16:
-                        if (idp < 8)
-                            shared_ell_double[idb] += shared_ell_double[idb + 8];
-                    case 8:
-                        if (idp < 4)
-                            shared_ell_double[idb] += shared_ell_double[idb + 4];
-                    case 4:
-                        if (idp < 2)
-                            shared_ell_double[idb] += shared_ell_double[idb + 2];
-                    case 2:
-                        if (idp == 0)
-                            y[row] = shared_ell_double[idb] + shared_ell_double[idb + 1];
-                        break;
-                    case 1:
-                        y[row] = shared_ell_double[idb];
-                        break;
-                    default:
-                        break;
-                }
+            switch (threads)
+            {
+                case 32:
+                    if (idp < 16)
+                        shared_ell_double[idb] += shared_ell_double[idb + 16];
+                case 16:
+                    if (idp < 8)
+                        shared_ell_double[idb] += shared_ell_double[idb + 8];
+                case 8:
+                    if (idp < 4)
+                        shared_ell_double[idb] += shared_ell_double[idb + 4];
+                case 4:
+                    if (idp < 2)
+                        shared_ell_double[idb] += shared_ell_double[idb + 2];
+                case 2:
+                    if (idp == 0)
+                        y[row] = shared_ell_double[idb] + shared_ell_double[idb + 1];
+                    break;
+                case 1:
+                    y[row] = shared_ell_double[idb];
+                    break;
+                default:
+                    break;
             }
 }
 #endif
