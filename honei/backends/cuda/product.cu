@@ -145,7 +145,7 @@ namespace honei
         }
         #endif
 
-        __global__ void product_smell_dv_gpu(float * x, float * y, unsigned long * Aj, float * Ax, unsigned long * Arl,
+        __global__ void product_smell_dv_gpu(float * x, float * y, const unsigned long * Aj, const float * Ax, const unsigned long * Arl,
                 unsigned long row_start, unsigned long row_end, unsigned long num_cols_per_row, unsigned long stride, unsigned long threads)
         {
             extern __shared__ float  shared_ell_float[];
@@ -156,51 +156,50 @@ namespace honei
             const unsigned long idp = idb % T;
             const unsigned long row = idx / T;
 
+            if(row >= row_end){ return; }
             shared_ell_float[idb] = 0;
-            if(row <  row_end)
+            float sum = float(0);
+
+            const unsigned long max = Arl[row];
+            Ax += (row*T)+idp;
+            Aj += (row*T)+idp;
+            for(unsigned long k = 0; k < max ; ++k)
             {
-                float sum = float(0);
+                //sum += value * x[col];
+                sum += *Ax * tex1Dfetch(tex_x_float_product, *Aj);
+                Ax += stride;
+                Aj += stride;
+            }
+            shared_ell_float[idb] = sum;
 
-                const unsigned long max = Arl[row];
-                //const unsigned long max = num_cols_per_row;
-                for(unsigned long k = 0; k < max ; ++k)
-                {
-                    const float value = Ax[k*stride+row*T+idp];
-                    if (value != 0)
-                    {
-                        const unsigned long col = Aj[k*stride+row*T+idp];
-                        //sum += value * x[col];
-                        sum += value * tex1Dfetch(tex_x_float_product, col);
-                    }
-                }
-                shared_ell_float[idb] = sum;
-
-                switch (threads)
-                {
-                    case 16:
-                        if (idp < 8)
-                            shared_ell_float[idb] += shared_ell_float[idb + 8];
-                    case 8:
-                        if (idp < 4)
-                            shared_ell_float[idb] += shared_ell_float[idb + 4];
-                    case 4:
-                        if (idp < 2)
-                            shared_ell_float[idb] += shared_ell_float[idb + 2];
-                    case 2:
-                        if (idp == 0)
-                            y[row - row_start] = shared_ell_float[idb] + shared_ell_float[idb + 1];
-                        break;
-                    case 1:
-                        y[row - row_start] = shared_ell_float[idb];
-                        break;
-                    default:
-                        break;
-                }
+            switch (threads)
+            {
+                case 32:
+                    if (idp < 16)
+                        shared_ell_float[idb] += shared_ell_float[idb + 16];
+                case 16:
+                    if (idp < 8)
+                        shared_ell_float[idb] += shared_ell_float[idb + 8];
+                case 8:
+                    if (idp < 4)
+                        shared_ell_float[idb] += shared_ell_float[idb + 4];
+                case 4:
+                    if (idp < 2)
+                        shared_ell_float[idb] += shared_ell_float[idb + 2];
+                case 2:
+                    if (idp == 0)
+                        y[row - row_start] = shared_ell_float[idb] + shared_ell_float[idb + 1];
+                    break;
+                case 1:
+                    y[row - row_start] = shared_ell_float[idb];
+                    break;
+                default:
+                    break;
             }
         }
 
 #ifdef HONEI_CUDA_DOUBLE
-        __global__ void product_smell_dv_gpu(double * x, double * y, unsigned long * Aj, double * Ax, unsigned long * Arl,
+        __global__ void product_smell_dv_gpu(double * x, double * y, const unsigned long * Aj, const double * Ax, const unsigned long * Arl,
                 unsigned long row_start, unsigned long row_end, unsigned long num_cols_per_row, unsigned long stride, unsigned long threads)
         {
             extern __shared__ double  shared_ell_double[];
@@ -211,47 +210,46 @@ namespace honei
             const unsigned long idp = idb % T;
             const unsigned long row = idx / T;
 
+            if(row >= row_end){ return; }
             shared_ell_double[idb] = 0;
-            if(row <  row_end)
+            double sum = double(0);
+
+            const unsigned long max = Arl[row];
+            Ax += (row*T)+idp;
+            Aj += (row*T)+idp;
+            for(unsigned long k = 0; k < max ; ++k)
             {
-                double sum = double(0);
+                //sum += value * x[col];
+                int2 v = tex1Dfetch(tex_x_double_product, *Aj);
+                sum += *Ax * __hiloint2double(v.y, v.x);
+                Ax += stride;
+                Aj += stride;
+            }
+            shared_ell_double[idb] = sum;
 
-                const unsigned long max = Arl[row];
-                //const unsigned long max = num_cols_per_row;
-                for(unsigned long k = 0; k < max ; ++k)
-                {
-                    const double value = Ax[k*stride+row*T+idp];
-                    if (value != 0)
-                    {
-                        const unsigned long col = Aj[k*stride+row*T+idp];
-                        //sum += value * x[col];
-                        int2 v = tex1Dfetch(tex_x_double_product, col);
-                        sum += value * __hiloint2double(v.y, v.x);
-                    }
-                }
-                shared_ell_double[idb] = sum;
-
-                switch (threads)
-                {
-                    case 16:
-                        if (idp < 8)
-                            shared_ell_double[idb] += shared_ell_double[idb + 8];
-                    case 8:
-                        if (idp < 4)
-                            shared_ell_double[idb] += shared_ell_double[idb + 4];
-                    case 4:
-                        if (idp < 2)
-                            shared_ell_double[idb] += shared_ell_double[idb + 2];
-                    case 2:
-                        if (idp == 0)
-                            y[row - row_start] = shared_ell_double[idb] + shared_ell_double[idb + 1];
-                        break;
-                    case 1:
-                        y[row - row_start] = shared_ell_double[idb];
-                        break;
-                    default:
-                        break;
-                }
+            switch (threads)
+            {
+                case 32:
+                    if (idp < 16)
+                        shared_ell_double[idb] += shared_ell_double[idb + 16];
+                case 16:
+                    if (idp < 8)
+                        shared_ell_double[idb] += shared_ell_double[idb + 8];
+                case 8:
+                    if (idp < 4)
+                        shared_ell_double[idb] += shared_ell_double[idb + 4];
+                case 4:
+                    if (idp < 2)
+                        shared_ell_double[idb] += shared_ell_double[idb + 2];
+                case 2:
+                    if (idp == 0)
+                        y[row - row_start] = shared_ell_double[idb] + shared_ell_double[idb + 1];
+                    break;
+                case 1:
+                    y[row - row_start] = shared_ell_double[idb];
+                    break;
+                default:
+                    break;
             }
         }
 #endif
