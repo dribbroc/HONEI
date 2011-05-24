@@ -322,8 +322,29 @@ namespace honei
                             output << "function[tag] : count highest[us] average[us] lowest[us] total[us]" << std::endl;
                             output << "------------------------------------------------------------------" << std::endl;
 
-                            for (ResultMap::const_iterator r(results.begin()), r_end(results.end()) ; r != r_end ; ++r)
+                            unsigned long gsize(results.size());
+                            for (unsigned long i(0) ; i < gsize ; ++i)
                             {
+                                unsigned long maxi(0);
+                                float totali(0.0f);
+                                unsigned long i(0);
+                                for (ResultMap::const_iterator r(results.begin()), r_end(results.end()) ; r != r_end ; ++r, ++i)
+                                {
+                                    float totalt(0.0f);
+                                    for (TimingList::const_iterator t(r->second.begin()), t_end(r->second.end()) ; t != t_end ; ++t)
+                                    {
+                                        totalt += *t;
+                                    }
+                                    if (totalt > totali)
+                                    {
+                                        totali = totalt;
+                                        maxi = i;
+                                    }
+                                }
+                                ResultMap::iterator r(results.begin());
+                                for (unsigned long x(0) ; x < maxi ; ++r, ++x)
+                                {
+                                }
                                 unsigned count(0);
                                 float total(0.0f), highest(0.0f), average(0.0f), lowest(std::numeric_limits<float>::max());
                                 for (TimingList::const_iterator t(r->second.begin()), t_end(r->second.end()) ; t != t_end ; ++t)
@@ -341,6 +362,7 @@ namespace honei
                                     EvaluationFunction ef(*f);
                                     ef(r->first.function, r->first.tag, count, highest, average, lowest, total);
                                 }
+                                results.erase(r);
                             }
                         }
                         break;
