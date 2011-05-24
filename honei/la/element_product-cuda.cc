@@ -22,6 +22,7 @@
 #include <honei/backends/cuda/gpu_pool.hh>
 #include <honei/util/memory_arbiter.hh>
 #include <honei/util/configuration.hh>
+#include <honei/util/profiler.hh>
 
 
 using namespace honei;
@@ -188,6 +189,7 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::CUDA>::value(Dense
 {
     CONTEXT("When multiplying DenseVectorContinuousBase<double> and DenseVectorContinuousBase<double> elementwise "
             "(CUDA):");
+    PROFILER_START("ElementProduct DV double tags::GPU::CUDA");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -205,6 +207,7 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::CUDA>::value(Dense
         cuda::GPUPool::instance()->enqueue(task, 0)->wait();
     }
 
+    PROFILER_STOP("ElementProduct DV double tags::GPU::CUDA");
     return a;
 }
 #endif
@@ -245,6 +248,7 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::MultiCore::CUDA>::
 {
     CONTEXT("When multiplying DenseVectorContinuousBase<double> and DenseVectorContinuousBase<double> elementwise "
             "(CUDA):");
+    PROFILER_START("ElementProduct DV double tags::GPU::CUDA");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -267,6 +271,7 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::MultiCore::CUDA>::
         cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
     }
 
+    PROFILER_STOP("ElementProduct DV double tags::GPU::CUDA");
     return a;
 }
 #endif
@@ -302,6 +307,7 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::CUDA>::value(Dense
 {
     CONTEXT("When multiplying DenseVectorContinuousBase<double> and DenseVectorContinuousBase<double> elementwise "
             "(CUDA):");
+    PROFILER_START("ElementProduct DV double tags::GPU::CUDA");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -319,6 +325,7 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::CUDA>::value(Dense
         cuda::GPUPool::instance()->enqueue(task, 0)->wait();
     }
 
+    PROFILER_STOP("ElementProduct DV double tags::GPU::CUDA");
     return result;
 }
 #endif

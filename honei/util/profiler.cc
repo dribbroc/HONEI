@@ -335,6 +335,9 @@ namespace honei
                         }
                     }
                 }
+                else
+                    throw InternalError("Profiler: Message type unknown!");
+
 
                 delete data;
             }

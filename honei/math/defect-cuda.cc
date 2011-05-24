@@ -22,6 +22,7 @@
 #include <honei/backends/cuda/gpu_pool.hh>
 #include <honei/util/memory_arbiter.hh>
 #include <honei/util/configuration.hh>
+#include <honei/util/profiler.hh>
 
 using namespace honei;
 
@@ -319,6 +320,7 @@ DenseVector<double> Defect<tags::GPU::CUDA>::value(const DenseVectorContinuousBa
         const DenseVectorContinuousBase<double> & b)
 {
     CONTEXT("When calculating Defect<double> (CUDA):");
+    PROFILER_START("Defect SMELL double tags::GPU::CUDA");
 
     if (b.size() != a.columns())
     {
@@ -344,6 +346,7 @@ DenseVector<double> Defect<tags::GPU::CUDA>::value(const DenseVectorContinuousBa
         cuda::GPUPool::instance()->enqueue(task, 0)->wait();
     }
 
+    PROFILER_STOP("Defect SMELL double tags::GPU::CUDA");
     return result;
 }
 #endif
@@ -386,6 +389,7 @@ DenseVectorContinuousBase<double> & Defect<tags::GPU::CUDA>::value(DenseVectorCo
         const DenseVectorContinuousBase<double> & b)
 {
     CONTEXT("When calculating Defect<double> (CUDA):");
+    PROFILER_START("Defect SMELL double tags::GPU::CUDA");
 
     if (b.size() != a.columns())
     {
@@ -410,6 +414,7 @@ DenseVectorContinuousBase<double> & Defect<tags::GPU::CUDA>::value(DenseVectorCo
         cuda::GPUPool::instance()->enqueue(task, 0)->wait();
     }
 
+    PROFILER_STOP("Defect SMELL double tags::GPU::CUDA");
     return result;
 }
 #endif

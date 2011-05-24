@@ -22,6 +22,8 @@
 #include <honei/backends/cuda/gpu_pool.hh>
 #include <honei/util/memory_arbiter.hh>
 #include <honei/util/configuration.hh>
+#include <honei/util/profiler.hh>
+#include <honei/util/profiler.hh>
 
 
 using namespace honei;
@@ -226,6 +228,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::GPU::CUDA>::value(DenseVecto
         const DenseVectorContinuousBase<double> & y, double b)
 {
     CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<double> (CUDA):");
+    PROFILER_START("ScaledSum DV double tags::GPU::CUDA");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
@@ -243,6 +246,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::GPU::CUDA>::value(DenseVecto
         cuda::GPUPool::instance()->enqueue(task, 0)->wait();
     }
 
+    PROFILER_STOP("ScaledSum DV double tags::GPU::CUDA");
     return x;
 }
 #endif
@@ -336,6 +340,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::GPU::CUDA>::value(DenseVecto
         const DenseVectorContinuousBase<double> & y, double b)
 {
     CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<double> (CUDA):");
+    PROFILER_START("ScaledSum DV double tags::GPU::CUDA");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
@@ -353,6 +358,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::GPU::CUDA>::value(DenseVecto
         cuda::GPUPool::instance()->enqueue(task, 0)->wait();
     }
 
+    PROFILER_STOP("ScaledSum DV double tags::GPU::CUDA");
     return result;
 }
 #endif
@@ -455,6 +461,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::GPU::CUDA>::value(DenseVecto
 {
     CONTEXT("When calculating ScaledSum (DenseVectorContinuousBase<double>, DenseVectorContinuousBase<double>, "
             "DenseVectorContinuousBase<double>) (CUDA):");
+    PROFILER_START("ScaledSum DV double tags::GPU::CUDA");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -475,6 +482,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::GPU::CUDA>::value(DenseVecto
         cuda::GPUPool::instance()->enqueue(task, 0)->wait();
     }
 
+    PROFILER_STOP("ScaledSum DV double tags::GPU::CUDA");
     return a;
 }
 #endif

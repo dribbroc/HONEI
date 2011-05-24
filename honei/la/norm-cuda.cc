@@ -22,6 +22,7 @@
 #include <honei/backends/cuda/gpu_pool.hh>
 #include <honei/util/memory_arbiter.hh>
 #include <honei/util/configuration.hh>
+#include <honei/util/profiler.hh>
 
 
 using namespace honei;
@@ -151,6 +152,7 @@ float Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuousB
 double Norm<vnt_l_two, false, tags::GPU::CUDA>::value(const DenseVectorContinuousBase<double> & a)
 {
     CONTEXT("When calculating L2 norm (false) of DenseVectorContinuousBase<double> (CUDA):");
+    PROFILER_START("Norm DV L2 false double tags::GPU::CUDA");
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::norm_l2_one_double", 128ul));
     unsigned long gridsize(Configuration::instance()->get_value("cuda::norm_l2_one_double", 16ul));
@@ -165,6 +167,7 @@ double Norm<vnt_l_two, false, tags::GPU::CUDA>::value(const DenseVectorContinuou
             result += a[i] * a[i];
         }
         a.unlock(lm_read_only);
+        PROFILER_STOP("Norm DV L2 false double tags::GPU::CUDA");
         return result;
     }
     else
@@ -179,6 +182,7 @@ double Norm<vnt_l_two, false, tags::GPU::CUDA>::value(const DenseVectorContinuou
             cudaNormL2oneDVdouble task(a, &result, blocksize, gridsize);
             cuda::GPUPool::instance()->enqueue(task, 0)->wait();
         }
+        PROFILER_STOP("Norm DV L2 false double tags::GPU::CUDA");
         return result * result;
     }
 }
@@ -186,6 +190,7 @@ double Norm<vnt_l_two, false, tags::GPU::CUDA>::value(const DenseVectorContinuou
 double Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuousBase<double> & a)
 {
     CONTEXT("When calculating L2 norm (true) of DenseVectorContinuousBase<double> (CUDA):");
+    PROFILER_START("Norm DV L2 true double tags::GPU::CUDA");
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::norm_l2_one_double", 128ul));
     unsigned long gridsize(Configuration::instance()->get_value("cuda::norm_l2_one_double", 16ul));
@@ -200,6 +205,7 @@ double Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuous
             result += a[i] * a[i];
         }
         a.unlock(lm_read_only);
+        PROFILER_STOP("Norm DV L2 true double tags::GPU::CUDA");
         return sqrt(result);
     }
     else
@@ -214,6 +220,7 @@ double Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuous
             cudaNormL2oneDVdouble task(a, &result, blocksize, gridsize);
             cuda::GPUPool::instance()->enqueue(task, 0)->wait();
         }
+        PROFILER_STOP("Norm DV L2 true double tags::GPU::CUDA");
         return result;
     }
 }

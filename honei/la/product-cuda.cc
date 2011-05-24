@@ -23,6 +23,7 @@
 #include <honei/backends/cuda/gpu_pool.hh>
 #include <honei/util/memory_arbiter.hh>
 #include <honei/util/configuration.hh>
+#include <honei/util/profiler.hh>
 
 using namespace honei;
 
@@ -387,6 +388,7 @@ DenseVector<float> & Product<tags::GPU::CUDA>::value(DenseVector<float> & result
 DenseVector<double> & Product<tags::GPU::CUDA>::value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b)
 {
     CONTEXT("When multiplying SparseMatrixELL<double> with DenseVectorContinuousBase<double> (CUDA):");
+    PROFILER_START("Product SMELL double tags::GPU::CUDA");
 
     if (b.size() != a.columns())
     {
@@ -410,6 +412,7 @@ DenseVector<double> & Product<tags::GPU::CUDA>::value(DenseVector<double> & resu
         cuda::GPUPool::instance()->enqueue(task, 0)->wait();
     }
 
+    PROFILER_STOP("Product SMELL double tags::GPU::CUDA");
     return result;
 }
 #endif

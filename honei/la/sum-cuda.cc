@@ -22,6 +22,7 @@
 #include <honei/backends/cuda/gpu_pool.hh>
 #include <honei/util/memory_arbiter.hh>
 #include <honei/util/configuration.hh>
+#include <honei/util/profiler.hh>
 
 using namespace honei;
 
@@ -135,6 +136,7 @@ DenseVectorContinuousBase<double> & Sum<tags::GPU::CUDA>::value(DenseVectorConti
         const DenseVectorContinuousBase<double> & b)
 {
     CONTEXT("When adding DenseVectorContinuousBase<double> to DenseVectorContinuousBase<double> (CUDA):");
+    PROFILER_START("Sum DV double tags::GPU::CUDA");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -152,6 +154,7 @@ DenseVectorContinuousBase<double> & Sum<tags::GPU::CUDA>::value(DenseVectorConti
         cuda::GPUPool::instance()->enqueue(task, 0)->wait();
     }
 
+    PROFILER_STOP("Sum DV double tags::GPU::CUDA");
     return a;
 }
 #endif
@@ -222,6 +225,7 @@ DenseVectorContinuousBase<double> & Sum<tags::GPU::MultiCore::CUDA>::value(Dense
         const DenseVectorContinuousBase<double> & b)
 {
     CONTEXT("When adding DenseVectorContinuousBase<double> to DenseVectorContinuousBase<double> (MC CUDA):");
+    PROFILER_START("Sum DV double tags::GPU::CUDA");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -247,5 +251,6 @@ DenseVectorContinuousBase<double> & Sum<tags::GPU::MultiCore::CUDA>::value(Dense
     }
 
     return a;
+    PROFILER_STOP("Sum DV double tags::GPU::CUDA");
 }
 #endif

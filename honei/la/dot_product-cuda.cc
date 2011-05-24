@@ -22,6 +22,7 @@
 #include <honei/backends/cuda/gpu_pool.hh>
 #include <honei/util/memory_arbiter.hh>
 #include <honei/util/configuration.hh>
+#include <honei/util/profiler.hh>
 
 using namespace honei;
 
@@ -87,8 +88,7 @@ namespace
 float DotProduct<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<float> & a,
         const DenseVectorContinuousBase<float> & b)
 {
-    CONTEXT("When calculating dot-product of DenseVectorContinuousBase<float> with DenseVectorContinuousBase<float> "
-            "(CUDA):");
+    CONTEXT("When calculating dot-product of DenseVectorContinuousBase<float> with DenseVectorContinuousBase<float> (CUDA):");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -131,8 +131,8 @@ float DotProduct<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<float> 
 double DotProduct<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<double> & a,
         const DenseVectorContinuousBase<double> & b)
 {
-    CONTEXT("When calculating dot-product of DenseVectorContinuousBase<double> with DenseVectorContinuousBase<double> "
-            "(CUDA):");
+    CONTEXT("When calculating dot-product of DenseVectorContinuousBase<double> with DenseVectorContinuousBase<double> (CUDA):");
+    PROFILER_START("DotProduct DV double tags::GPU::CUDA");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -168,6 +168,7 @@ double DotProduct<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<double
         }
     }
 
+    PROFILER_STOP("DotProduct DV double tags::GPU::CUDA");
     return result;
 }
 #endif
@@ -175,8 +176,7 @@ double DotProduct<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<double
 float DotProduct<tags::GPU::MultiCore::CUDA>::value(const DenseVectorContinuousBase<float> & a,
         const DenseVectorContinuousBase<float> & b)
 {
-    CONTEXT("When calculating dot-product of DenseVectorContinuousBase<float> with DenseVectorContinuousBase<float> "
-            "(MC CUDA):");
+    CONTEXT("When calculating dot-product of DenseVectorContinuousBase<float> with DenseVectorContinuousBase<float> (MC CUDA):");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -227,8 +227,7 @@ float DotProduct<tags::GPU::MultiCore::CUDA>::value(const DenseVectorContinuousB
 double DotProduct<tags::GPU::MultiCore::CUDA>::value(const DenseVectorContinuousBase<double> & a,
         const DenseVectorContinuousBase<double> & b)
 {
-    CONTEXT("When calculating dot-product of DenseVectorContinuousBase<double> with DenseVectorContinuousBase<double> "
-            "(MC CUDA):");
+    CONTEXT("When calculating dot-product of DenseVectorContinuousBase<double> with DenseVectorContinuousBase<double> (MC CUDA):");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
