@@ -10,6 +10,9 @@
 #include <honei/util/configuration.hh>
 #include <honei/backends/cuda/operations.hh>
 #include <honei/backends/cuda/gpu_pool.hh>
+#ifdef HONEI_OPENCL
+#include <honei/backends/opencl/opencl_backend.hh>
+#endif
 
 using namespace std;
 using namespace honei;
@@ -43,11 +46,15 @@ class DotProductBench :
                         for (unsigned long j(0) ; j < 10 ; ++j)
                         {
                         p0 = DotProduct<Tag_>::value(dv0, dv1);
+                        }
 #ifdef HONEI_CUDA
                         if (Tag_::tag_value == tags::tv_gpu_cuda)
                             cuda::GPUPool::instance()->flush();
 #endif
-                        }
+#ifdef HONEI_OPENCL
+                        if (Tag_::tag_value == tags::tv_opencl)
+                            OpenCLBackend::instance()->flush();
+#endif
                         );
             }
             BenchmarkInfo info(DotProduct<>::get_benchmark_info(dv1, dv0));
@@ -74,6 +81,14 @@ DotProductBench<double, tags::GPU::MultiCore::CUDA> mc_CUDADPBenchdouble("MC CUD
 #endif
 #ifdef HONEI_CELL
 DotProductBench<float, tags::Cell> CELLDPBenchfloat("Cell Dot Product Benchmark dense/dense - vector size: 64^4 float", 64ul*64*64*64, 10);
+#endif
+#ifdef HONEI_OPENCL
+DotProductBench<float, tags::OpenCL::CPU> ocl_cpu_DPBenchfloat("OpenCL CPU Dot Product Benchmark dense/dense - vector size: 64^4 float", 64ul*64*64*64, 10);
+DotProductBench<double, tags::OpenCL::CPU> ocl_cpu_DPBenchdouble("OpenCL CPU Dot Product Benchmark dense/dense - vector size: 64^4 double", 64ul*64*64*64, 10);
+DotProductBench<float, tags::OpenCL::GPU> ocl_gpu_DPBenchfloat("OpenCL GPU Dot Product Benchmark dense/dense - vector size: 64^4 float", 64ul*64*64*64, 10);
+#ifdef HONEI_CUDA_DOUBLE
+DotProductBench<double, tags::OpenCL::GPU> ocl_gpu_DPBenchdouble("OpenCL GPU Dot Product Benchmark dense/dense - vector size: 64^4 double", 64ul*64*64*64, 10);
+#endif
 #endif
 
 template <typename DataType_, typename Tag_>
