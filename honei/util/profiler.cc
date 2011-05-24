@@ -165,7 +165,7 @@ namespace honei
 
         typedef std::map<intern::ProfileId, TimingList> ResultMap;
 
-        typedef function<void (const std::string &, const std::string &, unsigned, float, float, float)> EvaluationFunction;
+        typedef function<void (const std::string &, const std::string &, unsigned, float, float, float, float)> EvaluationFunction;
 
         typedef std::list<EvaluationFunction> EvaluationFunctions;
 
@@ -310,28 +310,28 @@ namespace honei
                 {
                     Lock l(*mutex);
 
-                    output << "--------------------------------------------------------" << std::endl;
-                    output << "function[tag] : count highest[us] average[us] lowest[us]" << std::endl;
-                    output << "--------------------------------------------------------" << std::endl;
+                    output << "------------------------------------------------------------------" << std::endl;
+                    output << "function[tag] : count highest[us] average[us] lowest[us] total[us]" << std::endl;
+                    output << "------------------------------------------------------------------" << std::endl;
 
                     for (ResultMap::const_iterator r(results.begin()), r_end(results.end()) ; r != r_end ; ++r)
                     {
                         unsigned count(0);
-                        float highest(0.0f), average(0.0f), lowest(std::numeric_limits<float>::max());
+                        float total(0.0f), highest(0.0f), average(0.0f), lowest(std::numeric_limits<float>::max());
                         for (TimingList::const_iterator t(r->second.begin()), t_end(r->second.end()) ; t != t_end ; ++t)
                         {
                             ++count;
                             highest = std::max(highest, *t);
-                            average += *t;
+                            total += *t;
                             lowest = std::min(lowest, *t);
                         }
                         if (count > 0)
-                            average /= count;
+                            average = total / count;
 
                         for (EvaluationFunctions::iterator f(evaluation_functions.begin()), f_end(evaluation_functions.end()) ; f != f_end ; ++f)
                         {
                             EvaluationFunction ef(*f);
-                            ef(r->first.function, r->first.tag, count, highest, average, lowest);
+                            ef(r->first.function, r->first.tag, count, highest, average, lowest, total);
                         }
                     }
                 }
@@ -343,9 +343,9 @@ namespace honei
             }
         }
 
-        void evaluation_printer(const std::string & function, const std::string & tag, unsigned count, float highest, float average, float lowest)
+        void evaluation_printer(const std::string & function, const std::string & tag, unsigned count, float highest, float average, float lowest, float total)
         {
-            output << function << "[" << tag << "] : " << count << " " << highest << " " << average << " " << lowest << std::endl;
+            output << function << "[" << tag << "] : " << count << " " << highest << " " << average << " " << lowest << " " << total << std::endl;
         }
 
         Profiler() :
@@ -360,7 +360,8 @@ namespace honei
                         mem_fn(&Profiler::evaluation_printer),
                         this, HONEI_PLACEHOLDERS_1, HONEI_PLACEHOLDERS_2,
                         HONEI_PLACEHOLDERS_3, HONEI_PLACEHOLDERS_4,
-                        HONEI_PLACEHOLDERS_5, HONEI_PLACEHOLDERS_6)));
+                        HONEI_PLACEHOLDERS_5, HONEI_PLACEHOLDERS_6,
+                        HONEI_PLACEHOLDERS_7)));
             thread = new Thread(bind(mem_fn(&Profiler::profiler_function), this));
         }
 

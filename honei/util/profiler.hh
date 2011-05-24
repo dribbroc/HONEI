@@ -54,7 +54,7 @@ namespace honei
         public:
             friend struct LogQueue;
 
-            typedef function<void (const std::string &, const std::string, unsigned, float, float, float)> EvaluationFunction;
+            typedef function<void (const std::string &, const std::string, unsigned, float, float, float, float)> EvaluationFunction;
 
             /**
              * Constructor.
