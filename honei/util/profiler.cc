@@ -236,107 +236,119 @@ namespace honei
                     }
                 }
 
-                if (data->type == pmt_start)
+                switch(data->type)
                 {
-                    Lock l(*mutex);
+                    case pmt_start:
+                        {
+                            Lock l(*mutex);
 
-                    sessions.push_back(intern::ProfilerSession(data->function, data->tag, data->thread, data->stamp));
-                }
-                else if (data->type == pmt_stop)
-                {
-                    Lock l(*mutex);
+                            sessions.push_back(intern::ProfilerSession(data->function, data->tag, data->thread, data->stamp));
+                            break;
+                        }
 
-                    SessionList::iterator i(sessions.begin()), i_end(sessions.end());
-                    for ( ; i != i_end ; ++i)
-                    {
-                        // Compare thread first, as integer comparison is fast.
-                        if (i->thread != data->thread)
-                            continue;
+                    case pmt_stop:
+                        {
+                            Lock l(*mutex);
 
-                        if (i->function != data->function)
-                            continue;
+                            SessionList::iterator i(sessions.begin()), i_end(sessions.end());
+                            for ( ; i != i_end ; ++i)
+                            {
+                                // Compare thread first, as integer comparison is fast.
+                                if (i->thread != data->thread)
+                                    continue;
 
-                        if (i->tag != data->tag)
-                            continue;
+                                if (i->function != data->function)
+                                    continue;
 
+                                if (i->tag != data->tag)
+                                    continue;
+
+                                break;
+                            }
+
+                            if (i == i_end)
+                            {
+                                output << "Received profiler stop message for '" << data->function << "@" << stringify(data->thread)
+                                    << ":" << data->tag << "' that has no been started." << std::endl;
+                            }
+                            else
+                            {
+                                intern::ProfileId id(data->function, data->tag);
+                                float timing((data->stamp.usec() - i->stamp.usec()) + 1e6 * (data->stamp.sec() - i->stamp.sec()));
+
+                                ResultMap::iterator j(results.find(id)), j_end(results.end());
+                                if (j_end == j)
+                                {
+                                    TimingList list;
+                                    list.push_back(timing);
+                                    results.insert(ResultMap::value_type(id, list));
+                                }
+                                else
+                                {
+                                    j->second.push_back(timing);
+                                }
+
+                                sessions.erase(i);
+                            }
+                            break;
+                        }
+
+                    case pmt_direct:
+                        {
+                            Lock l(*mutex);
+
+                            intern::ProfileId id(data->function, data->tag);
+                            float timing(data->time);
+
+                            ResultMap::iterator i(results.find(id)), i_end(results.end());
+                            if (i_end == i)
+                            {
+                                TimingList list;
+                                list.push_back(timing);
+                                results.insert(ResultMap::value_type(id, list));
+                            }
+                            else
+                            {
+                                i->second.push_back(timing);
+                            }
+                            break;
+                        }
+
+                    case pmt_evaluate:
+                        {
+                            Lock l(*mutex);
+
+                            output << "------------------------------------------------------------------" << std::endl;
+                            output << "function[tag] : count highest[us] average[us] lowest[us] total[us]" << std::endl;
+                            output << "------------------------------------------------------------------" << std::endl;
+
+                            for (ResultMap::const_iterator r(results.begin()), r_end(results.end()) ; r != r_end ; ++r)
+                            {
+                                unsigned count(0);
+                                float total(0.0f), highest(0.0f), average(0.0f), lowest(std::numeric_limits<float>::max());
+                                for (TimingList::const_iterator t(r->second.begin()), t_end(r->second.end()) ; t != t_end ; ++t)
+                                {
+                                    ++count;
+                                    highest = std::max(highest, *t);
+                                    total += *t;
+                                    lowest = std::min(lowest, *t);
+                                }
+                                if (count > 0)
+                                    average = total / count;
+
+                                for (EvaluationFunctions::iterator f(evaluation_functions.begin()), f_end(evaluation_functions.end()) ; f != f_end ; ++f)
+                                {
+                                    EvaluationFunction ef(*f);
+                                    ef(r->first.function, r->first.tag, count, highest, average, lowest, total);
+                                }
+                            }
+                        }
                         break;
-                    }
 
-                    if (i == i_end)
-                    {
-                        output << "Received profiler stop message for '" << data->function << "@" << stringify(data->thread)
-                                << ":" << data->tag << "' that has no been started." << std::endl;
-                    }
-                    else
-                    {
-                        intern::ProfileId id(data->function, data->tag);
-                        float timing((data->stamp.usec() - i->stamp.usec()) + 1e6 * (data->stamp.sec() - i->stamp.sec()));
-
-                        ResultMap::iterator j(results.find(id)), j_end(results.end());
-                        if (j_end == j)
-                        {
-                            TimingList list;
-                            list.push_back(timing);
-                            results.insert(ResultMap::value_type(id, list));
-                        }
-                        else
-                        {
-                            j->second.push_back(timing);
-                        }
-
-                        sessions.erase(i);
-                    }
+                    default:
+                        throw InternalError("Profiler: Message type unknown!");
+                        break;
                 }
-                else if (data->type == pmt_direct)
-                {
-                    Lock l(*mutex);
-
-                    intern::ProfileId id(data->function, data->tag);
-                    float timing(data->time);
-
-                    ResultMap::iterator i(results.find(id)), i_end(results.end());
-                    if (i_end == i)
-                    {
-                        TimingList list;
-                        list.push_back(timing);
-                        results.insert(ResultMap::value_type(id, list));
-                    }
-                    else
-                    {
-                        i->second.push_back(timing);
-                    }
-                }
-                else if (data->type == pmt_evaluate)
-                {
-                    Lock l(*mutex);
-
-                    output << "------------------------------------------------------------------" << std::endl;
-                    output << "function[tag] : count highest[us] average[us] lowest[us] total[us]" << std::endl;
-                    output << "------------------------------------------------------------------" << std::endl;
-
-                    for (ResultMap::const_iterator r(results.begin()), r_end(results.end()) ; r != r_end ; ++r)
-                    {
-                        unsigned count(0);
-                        float total(0.0f), highest(0.0f), average(0.0f), lowest(std::numeric_limits<float>::max());
-                        for (TimingList::const_iterator t(r->second.begin()), t_end(r->second.end()) ; t != t_end ; ++t)
-                        {
-                            ++count;
-                            highest = std::max(highest, *t);
-                            total += *t;
-                            lowest = std::min(lowest, *t);
-                        }
-                        if (count > 0)
-                            average = total / count;
-
-                        for (EvaluationFunctions::iterator f(evaluation_functions.begin()), f_end(evaluation_functions.end()) ; f != f_end ; ++f)
-                        {
-                            EvaluationFunction ef(*f);
-                            ef(r->first.function, r->first.tag, count, highest, average, lowest, total);
-                        }
-                    }
-                }
-                else
-                    throw InternalError("Profiler: Message type unknown!");
 
 
                 delete data;
@@ -357,11 +369,11 @@ namespace honei
             output << "== New profiler session started ==" << std::endl;
 
             evaluation_functions.push_back(EvaluationFunction(bind(
-                        mem_fn(&Profiler::evaluation_printer),
-                        this, HONEI_PLACEHOLDERS_1, HONEI_PLACEHOLDERS_2,
-                        HONEI_PLACEHOLDERS_3, HONEI_PLACEHOLDERS_4,
-                        HONEI_PLACEHOLDERS_5, HONEI_PLACEHOLDERS_6,
-                        HONEI_PLACEHOLDERS_7)));
+                            mem_fn(&Profiler::evaluation_printer),
+                            this, HONEI_PLACEHOLDERS_1, HONEI_PLACEHOLDERS_2,
+                            HONEI_PLACEHOLDERS_3, HONEI_PLACEHOLDERS_4,
+                            HONEI_PLACEHOLDERS_5, HONEI_PLACEHOLDERS_6,
+                            HONEI_PLACEHOLDERS_7)));
             thread = new Thread(bind(mem_fn(&Profiler::profiler_function), this));
         }
 

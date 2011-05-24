@@ -225,7 +225,6 @@ DenseVectorContinuousBase<double> & Sum<tags::GPU::MultiCore::CUDA>::value(Dense
         const DenseVectorContinuousBase<double> & b)
 {
     CONTEXT("When adding DenseVectorContinuousBase<double> to DenseVectorContinuousBase<double> (MC CUDA):");
-    PROFILER_START("Sum DV double tags::GPU::CUDA");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -251,6 +250,5 @@ DenseVectorContinuousBase<double> & Sum<tags::GPU::MultiCore::CUDA>::value(Dense
     }
 
     return a;
-    PROFILER_STOP("Sum DV double tags::GPU::CUDA");
 }
 #endif

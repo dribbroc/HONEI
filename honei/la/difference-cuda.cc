@@ -22,6 +22,7 @@
 #include <honei/util/configuration.hh>
 #include <honei/backends/cuda/gpu_pool.hh>
 #include <honei/util/memory_arbiter.hh>
+#include <honei/util/profiler.hh>
 
 
 using namespace honei;
@@ -201,6 +202,7 @@ DenseVectorContinuousBase<double> & Difference<tags::GPU::CUDA>::value(DenseVect
         const DenseVectorContinuousBase<double> & b)
 {
     CONTEXT("When subtracting DenseVectorContinuousBase<double> from DenseVectorContinuousBase<double> (CUDA):");
+    PROFILER_START("Difference DV double tags::GPU::CUDA");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -218,6 +220,7 @@ DenseVectorContinuousBase<double> & Difference<tags::GPU::CUDA>::value(DenseVect
         cuda::GPUPool::instance()->enqueue(task, 0)->wait();
     }
 
+    PROFILER_STOP("Difference DV double tags::GPU::CUDA");
     return a;
 }
 #endif
@@ -315,6 +318,7 @@ DenseVectorContinuousBase<double> & Difference<tags::GPU::CUDA>::value(DenseVect
         const DenseVectorContinuousBase<double> & b)
 {
     CONTEXT("When subtracting DenseVectorContinuousBase<double> from DenseVectorContinuousBase<double> (CUDA):");
+    PROFILER_START("Difference DV double tags::GPU::CUDA");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -334,6 +338,7 @@ DenseVectorContinuousBase<double> & Difference<tags::GPU::CUDA>::value(DenseVect
         cuda::GPUPool::instance()->enqueue(task, 0)->wait();
     }
 
+    PROFILER_STOP("Difference DV double tags::GPU::CUDA");
     return r;
 }
 #endif

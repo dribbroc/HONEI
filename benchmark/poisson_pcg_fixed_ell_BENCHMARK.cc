@@ -28,6 +28,7 @@
 #include <iostream>
 #include <honei/math/endian_swap.hh>
 #include <honei/math/spai.hh>
+#include <honei/util/profiler.hh>
 
 //#include <cstdio>
 //#include <cstdlib>
@@ -183,9 +184,11 @@ class CGPoissonAdvancedEllBENCH:
 
             unsigned long used_iters(0);
 
+            PROFILER_START("ganzer pcg");
             BENCHMARK(
                       (ConjugateGradients<Tag_, methods::JAC>::value(system, rhs, result, diag, 5000ul, used_iters));
                      );
+            PROFILER_STOP("ganzer pcg");
 
             evaluate();
         }

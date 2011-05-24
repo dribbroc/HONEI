@@ -22,6 +22,7 @@
 #include <honei/backends/cuda/gpu_pool.hh>
 #include <honei/util/memory_arbiter.hh>
 #include <honei/util/configuration.hh>
+#include <honei/util/profiler.hh>
 
 
 using namespace honei;
@@ -120,6 +121,7 @@ DenseVectorContinuousBase<float> & Scale<tags::GPU::CUDA>::value(DenseVectorCont
 DenseVectorContinuousBase<double> & Scale<tags::GPU::CUDA>::value(DenseVectorContinuousBase<double> & x, const double a)
 {
     CONTEXT("When scaling DenseVectorContinuousBase<double> by double (CUDA):");
+    PROFILER_START("Scale DV double tags::GPU::CUDA");
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::scale_one_double", 128ul));
 
@@ -134,6 +136,7 @@ DenseVectorContinuousBase<double> & Scale<tags::GPU::CUDA>::value(DenseVectorCon
         cuda::GPUPool::instance()->enqueue(task, 0)->wait();
     }
 
+    PROFILER_STOP("Scale DV double tags::GPU::CUDA");
     return x;
 }
 #endif

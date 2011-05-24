@@ -27,6 +27,7 @@
 #include <iostream>
 #include <honei/math/endian_swap.hh>
 #include <honei/math/spai.hh>
+#include <honei/util/profiler.hh>
 
 //#include <cstdio>
 //#include <cstdlib>
@@ -568,9 +569,11 @@ class PoissonAdvancedBENCHMGSparseELLProlMat:
             DenseVector<DT1_> rhs(info.rhs[info.max_level]);
             SparseMatrixELL<DT1_> system(info.a[info.max_level]);
 
+            PROFILER_START("ganzer mg");
             BENCHMARK(
                       (Multigrid<Tag_, Tag_, methods::PROLMAT, methods::JAC, methods::CYCLE::V, methods::FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info));
                      );
+            PROFILER_STOP("ganzer mg");
 
             evaluate();
         }
