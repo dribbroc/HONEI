@@ -367,7 +367,7 @@ DenseVector<float> & Product<tags::GPU::CUDA>::value(DenseVector<float> & result
         throw VectorSizeDoesNotMatch(a.rows(), result.size());
     }
 
-    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_float", 256ul));
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_float", 128ul));
 
     if (! cuda::GPUPool::instance()->idle())
     {
@@ -397,7 +397,7 @@ DenseVector<double> & Product<tags::GPU::CUDA>::value(DenseVector<double> & resu
         throw VectorSizeDoesNotMatch(a.rows(), result.size());
     }
 
-    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_double", 256ul));
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_double", 128ul));
 
     if (! cuda::GPUPool::instance()->idle())
     {
@@ -427,7 +427,7 @@ DenseVector<float> & Product<tags::GPU::MultiCore::CUDA>::value(DenseVector<floa
         throw VectorSizeDoesNotMatch(a.rows(), result.size());
     }
 
-    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_float", 256ul));
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_float", 128ul));
 
     if (! cuda::GPUPool::instance()->idle())
     {
@@ -463,7 +463,7 @@ DenseVector<double> & Product<tags::GPU::MultiCore::CUDA>::value(DenseVector<dou
         throw VectorSizeDoesNotMatch(a.rows(), result.size());
     }
 
-    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_double", 256ul));
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_double", 128ul));
 
     if (! cuda::GPUPool::instance()->idle())
     {

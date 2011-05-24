@@ -8,6 +8,10 @@ thread::stacksize = 0
 profiler::output = /dev/null
 log::categories = all
 
+# LA
+#ell thread count, pick 0 for heuristic configuration
+ell::threads = 1
+
 # CUDA
 ######
 # Number of GPU's
@@ -35,8 +39,8 @@ cuda::norm_l2_one_double = 16
 cuda::product_bmdv_q1_float = 128
 cuda::product_bmdv_q1_double = 128
 
-cuda::product_smell_dv_float = 256
-cuda::product_smell_dv_double = 256
+cuda::product_smell_dv_float = 128
+cuda::product_smell_dv_double = 128
 
 cuda::scaled_sum_two_float = 128
 cuda::scaled_sum_two_double = 128

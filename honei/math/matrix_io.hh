@@ -31,6 +31,7 @@
 #include <honei/la/sparse_matrix_ell.hh>
 #include <honei/la/algorithm.hh>
 #include <honei/util/attributes.hh>
+#include <honei/util/configuration.hh>
 #include <vector>
 #include <algorithm>
 
@@ -454,7 +455,13 @@ class MatrixIO<io_formats::ELL>
                 unsigned long cstride(stride);
                 unsigned long cnum_cols_per_row(num_cols_per_row);
                 convert<tags::CPU>(axc, ax);
-                SparseMatrixELL<DT_> smatrix(crows, ccolumns, cstride, cnum_cols_per_row, ajc, axc);
+                SparseMatrixELL<DT_> smatrix(crows, ccolumns, cstride, cnum_cols_per_row, ajc, axc, 1);
+                if (Configuration::instance()->get_value("ell::threads", 1) != 1)
+                {
+                    SparseMatrix<DT_> bla(smatrix);
+                    SparseMatrixELL<DT_> smatrix2(bla);
+                    return smatrix2;
+                }
                 return smatrix;
             }
 };

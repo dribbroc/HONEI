@@ -60,12 +60,14 @@ class ProductELLFileBenchmark:
 
         virtual void run()
         {
+            Configuration::instance()->set_value("cuda::product_smell_dv_double", _blocks);
+            Configuration::instance()->set_value("ell::threads", _threads);
             std::string filebase(HONEI_SOURCEDIR);
             filebase += "/honei/math/";
             _file_name = filebase + _file_name;
             SparseMatrixELL<DT_> bsmatrix = MatrixIO<io_formats::ELL>::read_matrix(_file_name, DT_(1));
             SparseMatrix<DT_> bla(bsmatrix);
-            SparseMatrixELL<DT_>smatrix(bla, _threads);
+            SparseMatrixELL<DT_>smatrix(bla);
             std::cout<<smatrix.num_cols_per_row()<<" "<<smatrix.rows()<<std::endl;
             DenseVector<DT_> x(smatrix.rows());
             DenseVector<DT_> y(smatrix.rows());
@@ -74,7 +76,6 @@ class ProductELLFileBenchmark:
                 x[i] = DT_(i) / 1.234;
             }
 
-            Configuration::instance()->set_value("cuda::product_smell_dv_double", _blocks);
 
             for (unsigned long i(0) ; i < _count ; i++)
             {

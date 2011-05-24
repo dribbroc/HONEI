@@ -737,6 +737,7 @@ class SparseMatrixELLDenseVectorProductTest :
 
         virtual void run() const
         {
+            unsigned long old_threads = Configuration::instance()->get_value("ell::threads", 1);
             for (unsigned long size(11) ; size < (1 << 9) ; size <<= 1)
             {
                 SparseMatrix<DataType_> sms(size, size + 3);
@@ -747,7 +748,8 @@ class SparseMatrixELLDenseVectorProductTest :
                 }
                 for (unsigned long threads(1) ; threads <= 16 ; threads *= 2)
                 {
-                    SparseMatrixELL<DataType_> sm0(sms, threads);
+                    Configuration::instance()->set_value("ell::threads", threads);
+                    SparseMatrixELL<DataType_> sm0(sms);
                     DenseVector<DataType_> dv1(size + 3, DataType_(4));
                     DenseVector<DataType_> result(size, DataType_(4711));
                     dv1[0] = 1;
@@ -761,6 +763,7 @@ class SparseMatrixELLDenseVectorProductTest :
                     prod.unlock(lm_read_only);
                 }
             }
+            Configuration::instance()->set_value("ell::threads", old_threads);
         }
 };
 SparseMatrixELLDenseVectorProductTest<float, tags::CPU> sparse_matrix_ell_dense_vector_product_test_float("float");
@@ -801,6 +804,7 @@ class SparseMatrixELLDenseVectorProductQuickTest :
 
         virtual void run() const
         {
+            unsigned long old_threads = Configuration::instance()->get_value("ell::threads", 1);
             unsigned long size (50);
             SparseMatrix<DataType_> sms(size, size + 3);
             for (typename SparseMatrix<DataType_>::ElementIterator i(sms.begin_elements()) ; i < sms.end_elements() ; ++i)
@@ -810,7 +814,8 @@ class SparseMatrixELLDenseVectorProductQuickTest :
             }
             for (unsigned long threads(1) ; threads <= 16 ; threads *= 2)
             {
-                SparseMatrixELL<DataType_> sm0(sms, threads);
+                Configuration::instance()->set_value("ell::threads", threads);
+                SparseMatrixELL<DataType_> sm0(sms);
                 DenseVector<DataType_> dv1(size + 3, DataType_(4));
                 DenseVector<DataType_> result(size, DataType_(4711));
                 dv1[0] = 1;
@@ -823,6 +828,7 @@ class SparseMatrixELLDenseVectorProductQuickTest :
                     TEST_CHECK_EQUAL_WITHIN_EPS(prod[i], prod_ref[i], 1e6*std::numeric_limits<DataType_>::epsilon());
                 prod.unlock(lm_read_only);
             }
+            Configuration::instance()->set_value("ell::threads", old_threads);
         }
 };
 SparseMatrixELLDenseVectorProductQuickTest<float, tags::CPU> sparse_matrix_ell_dense_vector_product_quick_test_float("float");

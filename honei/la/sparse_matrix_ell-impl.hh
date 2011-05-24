@@ -32,6 +32,7 @@
 #include <honei/util/private_implementation_pattern-impl.hh>
 #include <honei/util/shared_array-impl.hh>
 #include <honei/util/stringify.hh>
+#include <honei/util/configuration.hh>
 
 #include <cmath>
 
@@ -70,8 +71,8 @@ namespace honei
             Arl = row_length();
         }
 
-        Implementation(SparseMatrix<DataType_> & src, unsigned long threads) :
-            threads(threads),
+        Implementation(SparseMatrix<DataType_> & src) :
+            threads(Configuration::instance()->get_value("ell::threads", 1)),
             Aj(1),
             Ax(1),
             Arl(1),
@@ -89,6 +90,8 @@ namespace honei
                     num_cols_per_row = src[i].used_elements();
                 }
             }
+            /// \todo add thread optimisation heuristic
+            //if (threads == 0)...
             num_cols_per_row = ceil(double(num_cols_per_row) / double(threads));
             /// \todo remove hardcoded numbers
             unsigned long alignment(32);
@@ -148,15 +151,16 @@ namespace honei
     SparseMatrixELL<DataType_>::SparseMatrixELL(unsigned long rows, unsigned columns, unsigned long stride,
             unsigned long num_cols_per_row,
             const DenseVector<unsigned long> & Aj,
-            const DenseVector<DataType_> & Ax, unsigned long threads) :
+            const DenseVector<DataType_> & Ax,
+            unsigned long threads) :
         PrivateImplementationPattern<SparseMatrixELL<DataType_>, Shared>(new Implementation<SparseMatrixELL<DataType_> >(rows, columns, stride, num_cols_per_row, Aj, Ax, threads))
     {
         CONTEXT("When creating SparseMatrixELL:");
     }
 
     template <typename DataType_>
-    SparseMatrixELL<DataType_>::SparseMatrixELL(SparseMatrix<DataType_> & src, unsigned long threads) :
-        PrivateImplementationPattern<SparseMatrixELL<DataType_>, Shared>(new Implementation<SparseMatrixELL<DataType_> >(src, threads))
+    SparseMatrixELL<DataType_>::SparseMatrixELL(SparseMatrix<DataType_> & src) :
+        PrivateImplementationPattern<SparseMatrixELL<DataType_>, Shared>(new Implementation<SparseMatrixELL<DataType_> >(src))
     {
         CONTEXT("When creating SparseMatrixELL from SparseMatrix:");
     }

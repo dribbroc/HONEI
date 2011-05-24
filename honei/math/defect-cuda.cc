@@ -297,7 +297,7 @@ DenseVector<float> Defect<tags::GPU::CUDA>::value(const DenseVectorContinuousBas
 
     DenseVector<float> result(a.rows());
 
-    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_float", 256ul));
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_float", 128ul));
 
     if (! cuda::GPUPool::instance()->idle())
     {
@@ -331,7 +331,7 @@ DenseVector<double> Defect<tags::GPU::CUDA>::value(const DenseVectorContinuousBa
 
     DenseVector<double> result(a.rows());
 
-    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_double", 256ul));
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_double", 128ul));
 
     if (! cuda::GPUPool::instance()->idle())
     {
@@ -364,7 +364,7 @@ DenseVectorContinuousBase<float> & Defect<tags::GPU::CUDA>::value(DenseVectorCon
     }
 
 
-    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_float", 256ul));
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_float", 128ul));
 
     if (! cuda::GPUPool::instance()->idle())
     {
@@ -397,7 +397,7 @@ DenseVectorContinuousBase<double> & Defect<tags::GPU::CUDA>::value(DenseVectorCo
     }
 
 
-    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_double", 256ul));
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_double", 128ul));
 
     if (! cuda::GPUPool::instance()->idle())
     {

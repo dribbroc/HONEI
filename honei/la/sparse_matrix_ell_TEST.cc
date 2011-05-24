@@ -22,6 +22,7 @@
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/vector_error.hh>
 #include <honei/util/unittest.hh>
+#include <honei/util/configuration.hh>
 
 #include <string>
 #include <iostream>
@@ -43,6 +44,7 @@ class SparseMatrixELLQuickTest :
         {
             for (unsigned long threads(1) ; threads <= 16 ; threads*=2)
             {
+                Configuration::instance()->set_value("ell::threads", threads);
                 unsigned long size (111);
                 SparseMatrix<DataType_> sms(size, size + 3);
                 for (typename SparseMatrix<DataType_>::ElementIterator i(sms.begin_elements()) ; i < sms.end_elements() ; ++i)
@@ -52,7 +54,7 @@ class SparseMatrixELLQuickTest :
                 }
                 sms[0][0] = 4711;
 
-                SparseMatrixELL<DataType_> sm0(sms, threads);
+                SparseMatrixELL<DataType_> sm0(sms);
 
                 TEST_CHECK_EQUAL(sm0, sm0);
                 TEST_CHECK_EQUAL(sm0, sm0.copy());

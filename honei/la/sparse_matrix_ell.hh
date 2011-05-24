@@ -51,16 +51,15 @@ namespace honei
                     unsigned long num_cols_per_row,
                     const DenseVector<unsigned long> & Aj,
                     const DenseVector<DataType_> & Ax,
-                    unsigned long threads = 1);
+                    unsigned long threads);
 
 
             /**
              * Constructor.
              *
              * \param src The SparseMatrix our matrix will be created from.
-             * \param threads The thread count we want to support.
              */
-            explicit SparseMatrixELL(SparseMatrix<DataType_> & src, unsigned long threads = 1);
+            explicit SparseMatrixELL(SparseMatrix<DataType_> & src);
 
             /// Copy-constructor.
             SparseMatrixELL(const SparseMatrixELL<DataType_> & other);
