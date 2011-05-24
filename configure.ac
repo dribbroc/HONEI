@@ -291,8 +291,8 @@ AC_ARG_ENABLE([profiler],
 	AS_HELP_STRING([--enable-profiler], [Build profiler support (needs packages: none)]),
 		[ENABLE_PROFILER=$enableval
 		  AC_MSG_RESULT([$enableval])],
-		[ENABLE_PROFILER=yes
-		  AC_MSG_RESULT([yes])])
+		[ENABLE_PROFILER=no
+		  AC_MSG_RESULT([no])])
 AC_SUBST([ENABLE_PROFILER])
 if test "x$ENABLE_PROFILER" = "xyes"; then
 	PROFILERDEF="-DHONEI_PROFILER"
