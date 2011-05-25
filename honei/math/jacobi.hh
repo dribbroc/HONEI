@@ -266,14 +266,14 @@ namespace honei
                 former_result.unlock(lm_write_only);*/
             }
             template<typename DT1_, typename DT2_>
-            static inline void jacobi_kernel(DenseVector<DT1_> to_smooth, SparseMatrixELL<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, HONEI_UNUSED SparseMatrixELL<DT1_> & difference, HONEI_UNUSED DT1_ omega)
+            static inline void jacobi_kernel(DenseVector<DT1_> & to_smooth, SparseMatrixELL<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, HONEI_UNUSED SparseMatrixELL<DT1_> & difference, HONEI_UNUSED DT1_ omega, DenseVector<DT1_> & temp)
             {
 #ifdef SOLVER_VERBOSE_L3
                 std::cout << "    Calling JACOBI kernel, datalayout=ELL, version=2" << std::endl;
 #endif
                 //todo DIRK
                 //TODO use Defect including result vector to avoid temp vector usage
-                DenseVector<DT1_> temp(Defect<Tag_>::value(right_hand_side, system_matrix, to_smooth));
+                Defect<Tag_>::value(temp, right_hand_side, system_matrix, to_smooth);
                 former_result = to_smooth;
                 ScaledSum<Tag_>::value(former_result, temp, diag_inverted);
             }
@@ -497,17 +497,18 @@ namespace honei
                     SparseMatrixELL<DT1_> & system_matrix,
                     DenseVector<DT2_> & right_hand_side,
                     DenseVector<DT2_> & x,
-                    unsigned long iter_number,
-                    DT1_ omega,
+                    const unsigned long iter_number,
+                    HONEI_UNUSED DT1_ omega,
                     DenseVector<DT1_> & diag_inverted)
             {
                 CONTEXT("When solving sparse linear system (ELL) with Jacobi (fixed # iterations):");
 #if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling JACOBI smoother, datalayout=ELLPACK, MULTIGRID (2)" << std::endl;
 #endif
+                DenseVector<DT1_> temp(x.size());
                 for(unsigned long i = 0; i<iter_number; ++i)
                 {
-                    jacobi_kernel(to_smooth, system_matrix, right_hand_side, x, diag_inverted, system_matrix, omega);
+                    jacobi_kernel(to_smooth, system_matrix, right_hand_side, x, diag_inverted, system_matrix, omega, temp);
                 }
             }
 //end MG types
