@@ -388,7 +388,9 @@ namespace honei
             work_pending(new ConditionVariable),
             output(Configuration::instance()->get_value("profiler::output", "/dev/null").c_str(), std::ios_base::out | std::ios_base::app)
         {
+#if defined (HONEI_PROFILER)
             output << "== New profiler session started ==" << std::endl;
+#endif
 
             evaluation_functions.push_back(EvaluationFunction(bind(
                             mem_fn(&Profiler::evaluation_printer),
@@ -401,7 +403,9 @@ namespace honei
 
         ~Profiler()
         {
+#if defined (HONEI_PROFILER)
             enqueue(new intern::ProfilerData("", "", pmt_evaluate, 0, TimeStamp()));
+#endif
             enqueue(new intern::ProfilerData);
 
             delete thread;
