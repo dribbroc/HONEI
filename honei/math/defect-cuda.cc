@@ -161,7 +161,7 @@ namespace
                 void * Arl_gpu(a.Arl().lock(lm_read_only, tags::GPU::CUDA::memory_value));
 
                 cuda_defect_smell_dv_float(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Arl_gpu, b_gpu,
-                        a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), blocksize);
+                        a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), blocksize, a.threads());
 
                 result.unlock(lm_write_only);
                 rhs.unlock(lm_read_only);
@@ -200,7 +200,7 @@ namespace
                 void * Arl_gpu(a.Arl().lock(lm_read_only, tags::GPU::CUDA::memory_value));
 
                 cuda_defect_smell_dv_double(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Arl_gpu, b_gpu,
-                        a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), blocksize);
+                        a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), blocksize, a.threads());
 
                 result.unlock(lm_write_only);
                 rhs.unlock(lm_read_only);

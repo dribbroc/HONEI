@@ -46,7 +46,7 @@ DenseVector<float> Defect<tags::OpenCL::CPU>::value(const DenseVectorContinuousB
     void * Ax_cl(a.Ax().lock(lm_read_only, tags::OpenCL::CPU::memory_value));
     void * Arl_cl(a.Arl().lock(lm_read_only, tags::OpenCL::CPU::memory_value));
     opencl::defect_smell_dv_float(rhs_cl, b_cl, result_cl, Aj_cl, Ax_cl, Arl_cl,
-            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), CL_DEVICE_TYPE_CPU);
+            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), a.threads(), CL_DEVICE_TYPE_CPU);
     result.unlock(lm_write_only);
     rhs.unlock(lm_read_only);
     b.unlock(lm_read_only);
@@ -81,7 +81,7 @@ DenseVector<double> Defect<tags::OpenCL::CPU>::value(const DenseVectorContinuous
     void * Ax_cl(a.Ax().lock(lm_read_only, tags::OpenCL::CPU::memory_value));
     void * Arl_cl(a.Arl().lock(lm_read_only, tags::OpenCL::CPU::memory_value));
     opencl::defect_smell_dv_double(rhs_cl, b_cl, result_cl, Aj_cl, Ax_cl, Arl_cl,
-            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), CL_DEVICE_TYPE_CPU);
+            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), a.threads(), CL_DEVICE_TYPE_CPU);
     result.unlock(lm_write_only);
     rhs.unlock(lm_read_only);
     b.unlock(lm_read_only);
@@ -116,7 +116,7 @@ DenseVector<float> Defect<tags::OpenCL::GPU>::value(const DenseVectorContinuousB
     void * Ax_cl(a.Ax().lock(lm_read_only, tags::OpenCL::GPU::memory_value));
     void * Arl_cl(a.Arl().lock(lm_read_only, tags::OpenCL::GPU::memory_value));
     opencl::defect_smell_dv_float(rhs_cl, b_cl, result_cl, Aj_cl, Ax_cl, Arl_cl,
-            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), CL_DEVICE_TYPE_GPU);
+            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), a.threads(), CL_DEVICE_TYPE_GPU);
     result.unlock(lm_write_only);
     rhs.unlock(lm_read_only);
     b.unlock(lm_read_only);
@@ -151,7 +151,7 @@ DenseVector<double> Defect<tags::OpenCL::GPU>::value(const DenseVectorContinuous
     void * Ax_cl(a.Ax().lock(lm_read_only, tags::OpenCL::GPU::memory_value));
     void * Arl_cl(a.Arl().lock(lm_read_only, tags::OpenCL::GPU::memory_value));
     opencl::defect_smell_dv_double(rhs_cl, b_cl, result_cl, Aj_cl, Ax_cl, Arl_cl,
-            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), CL_DEVICE_TYPE_GPU);
+            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), a.threads(), CL_DEVICE_TYPE_GPU);
     result.unlock(lm_write_only);
     rhs.unlock(lm_read_only);
     b.unlock(lm_read_only);
@@ -184,7 +184,7 @@ DenseVectorContinuousBase<float> & Defect<tags::OpenCL::CPU>::value(DenseVectorC
     void * Ax_cl(a.Ax().lock(lm_read_only, tags::OpenCL::CPU::memory_value));
     void * Arl_cl(a.Arl().lock(lm_read_only, tags::OpenCL::CPU::memory_value));
     opencl::defect_smell_dv_float(rhs_cl, b_cl, result_cl, Aj_cl, Ax_cl, Arl_cl,
-            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), CL_DEVICE_TYPE_CPU);
+            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), a.threads(), CL_DEVICE_TYPE_CPU);
     result.unlock(lm_write_only);
     rhs.unlock(lm_read_only);
     b.unlock(lm_read_only);
@@ -217,7 +217,7 @@ DenseVectorContinuousBase<double> & Defect<tags::OpenCL::CPU>::value(DenseVector
     void * Ax_cl(a.Ax().lock(lm_read_only, tags::OpenCL::CPU::memory_value));
     void * Arl_cl(a.Arl().lock(lm_read_only, tags::OpenCL::CPU::memory_value));
     opencl::defect_smell_dv_double(rhs_cl, b_cl, result_cl, Aj_cl, Ax_cl, Arl_cl,
-            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), CL_DEVICE_TYPE_CPU);
+            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), a.threads(), CL_DEVICE_TYPE_CPU);
     result.unlock(lm_write_only);
     rhs.unlock(lm_read_only);
     b.unlock(lm_read_only);
@@ -250,7 +250,7 @@ DenseVectorContinuousBase<float> & Defect<tags::OpenCL::GPU>::value(DenseVectorC
     void * Ax_cl(a.Ax().lock(lm_read_only, tags::OpenCL::GPU::memory_value));
     void * Arl_cl(a.Arl().lock(lm_read_only, tags::OpenCL::GPU::memory_value));
     opencl::defect_smell_dv_float(rhs_cl, b_cl, result_cl, Aj_cl, Ax_cl, Arl_cl,
-            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), CL_DEVICE_TYPE_GPU);
+            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), a.threads(), CL_DEVICE_TYPE_GPU);
     result.unlock(lm_write_only);
     rhs.unlock(lm_read_only);
     b.unlock(lm_read_only);
@@ -283,7 +283,7 @@ DenseVectorContinuousBase<double> & Defect<tags::OpenCL::GPU>::value(DenseVector
     void * Ax_cl(a.Ax().lock(lm_read_only, tags::OpenCL::GPU::memory_value));
     void * Arl_cl(a.Arl().lock(lm_read_only, tags::OpenCL::GPU::memory_value));
     opencl::defect_smell_dv_double(rhs_cl, b_cl, result_cl, Aj_cl, Ax_cl, Arl_cl,
-            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), CL_DEVICE_TYPE_GPU);
+            a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), a.threads(), CL_DEVICE_TYPE_GPU);
     result.unlock(lm_write_only);
     rhs.unlock(lm_read_only);
     b.unlock(lm_read_only);

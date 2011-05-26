@@ -22,6 +22,7 @@
 #include <honei/math/defect.hh>
 #include <honei/util/unittest.hh>
 #include <honei/util/stringify.hh>
+#include <honei/util/configuration.hh>
 #include <honei/la/product.hh>
 
 using namespace honei;
@@ -41,6 +42,7 @@ class DefectTest:
 
         virtual void run() const
         {
+            unsigned long old_threads = Configuration::instance()->get_value("ell::threads", 1);
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/5pt_10x10.mtx";
             unsigned long non_zeros(0);
@@ -54,21 +56,29 @@ class DefectTest:
                 x[i] = DT_(i) / 1.234;
             }
             SparseMatrix<DT_> ssmatrix(matrix);
-            SparseMatrixELL<DT_> smatrix(ssmatrix);
+            for (unsigned long threads(1) ; threads <= 16 ; threads *= 2)
+            {
+                Configuration::instance()->set_value("ell::threads", threads);
+                SparseMatrixELL<DT_> smatrix(ssmatrix);
 
-            DenseVector<DT_> y1(Defect<Tag_>::value(b, smatrix, x));
-            DenseVector<DT_> y2(b.size());
-            Defect<Tag_>::value(y2, b, smatrix, x);
-            DenseVector<DT_> yref(b.copy());
-            Difference<tags::CPU>::value(yref ,Product<tags::CPU>::value(matrix, x) );
+                DenseVector<DT_> y1(Defect<Tag_>::value(b, smatrix, x));
+                DenseVector<DT_> y2(b.size());
+                Defect<Tag_>::value(y2, b, smatrix, x);
+                DenseVector<DT_> yref(b.copy());
+                Difference<tags::CPU>::value(yref ,Product<tags::CPU>::value(matrix, x));
 
-            y1.lock(lm_read_only);
-            y1.unlock(lm_read_only);
-            y2.lock(lm_read_only);
-            y2.unlock(lm_read_only);
-            TEST_CHECK_EQUAL(y1, yref);
-            TEST_CHECK_EQUAL(y2, yref);
+                y1.lock(lm_read_only);
+                y1.unlock(lm_read_only);
+                y2.lock(lm_read_only);
+                y2.unlock(lm_read_only);
+                for (unsigned long i(0) ; i < x.size() ; ++i)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(y1[i], yref[i], 1e-3);
+                    TEST_CHECK_EQUAL_WITHIN_EPS(y2[i], yref[i], 1e-3);
+                }
+            }
 
+            Configuration::instance()->set_value("ell::threads", old_threads);
         }
 };
 DefectTest<float, tags::CPU> defect_test_float_sparse("float");
@@ -143,8 +153,11 @@ class DefectRegressionTest:
             result2.lock(lm_read_only);
             result3.lock(lm_read_only);
             result4.lock(lm_read_only);
-            TEST_CHECK_EQUAL(result, ref_result);
-            TEST_CHECK_EQUAL(result2, ref_result);
+            for (unsigned long i(0) ; i < x.size() ; ++i)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(result[i], ref_result[i], 1e-3);
+                TEST_CHECK_EQUAL_WITHIN_EPS(result2[i], ref_result[i], 1e-3);
+            }
             for (unsigned long i(0) ; i < x.size() ; ++i)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(result3[i], ref_result3[i], 1e-3);

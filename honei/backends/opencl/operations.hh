@@ -62,10 +62,10 @@ namespace honei
 
         void defect_smell_dv_float(void * rhs, void * x, void * y, void * Aj, void * Ax, void * Arl,
                 unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
-                unsigned long stride, cl_device_type type);
+                unsigned long stride, unsigned long threads, cl_device_type type);
         void defect_smell_dv_double(void * rhs, void * x, void * y, void * Aj, void * Ax, void * Arl,
                 unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
-                unsigned long stride, cl_device_type type);
+                unsigned long stride, unsigned long threads, cl_device_type type);
     }
 }
 #endif

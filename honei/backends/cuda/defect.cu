@@ -21,7 +21,6 @@
 texture<float,1> tex_x_float_defect;
 texture<int2,1>  tex_x_double_defect;
 
-
 namespace honei
 {
     namespace cuda
@@ -147,69 +146,111 @@ namespace honei
 #endif
 
         __global__ void defect_smell_dv_gpu(float * rhs, float * y, unsigned long * Aj, float * Ax, unsigned long * Arl, float * x,
-                unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row, unsigned long stride)
+                unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row, unsigned long stride, unsigned long threads)
         {
-            unsigned long row = blockDim.x*blockIdx.x+threadIdx.x;
+            extern __shared__ float  shared_ell_float[];
+
+            const unsigned long T = threads;
+            const unsigned long idx = blockDim.x*blockIdx.x+threadIdx.x;
+            const unsigned long idb = threadIdx.x;
+            const unsigned long idp = idb % T;
+            const unsigned long row = idx / T;
 
             if(row >= num_rows){ return; }
-
-            //float sum = y[row];
-            float sum(float(0));
-
-            Aj += row;
-            Ax += row;
+            shared_ell_float[idb] = 0;
+            float sum = float(0);
 
             const unsigned long max = Arl[row];
-            for(unsigned long n = 0; n < max ; n++)
+            Ax += (row*T)+idp;
+            Aj += (row*T)+idp;
+            for(unsigned long k = 0; k < max ; ++k)
             {
-                const float A_ij = *Ax;
-
-                //if (A_ij != 0)
-                {
-                    const unsigned long col = *Aj;
-                    //sum += A_ij * x[col];
-                    sum += A_ij * tex1Dfetch(tex_x_float_defect, col);
-                }
-
-                Aj += stride;
+                //sum += value * x[col];
+                sum += *Ax * tex1Dfetch(tex_x_float_defect, *Aj);
                 Ax += stride;
+                Aj += stride;
             }
+            shared_ell_float[idb] = sum;
 
-            y[row] = rhs[row] - sum;
+            switch (threads)
+            {
+                case 32:
+                    if (idp < 16)
+                        shared_ell_float[idb] += shared_ell_float[idb + 16];
+                case 16:
+                    if (idp < 8)
+                        shared_ell_float[idb] += shared_ell_float[idb + 8];
+                case 8:
+                    if (idp < 4)
+                        shared_ell_float[idb] += shared_ell_float[idb + 4];
+                case 4:
+                    if (idp < 2)
+                        shared_ell_float[idb] += shared_ell_float[idb + 2];
+                case 2:
+                    if (idp == 0)
+                        y[row] = rhs[row] - (shared_ell_float[idb] + shared_ell_float[idb + 1]);
+                    break;
+                case 1:
+                    y[row] = rhs[row] - shared_ell_float[idb];
+                    break;
+                default:
+                    break;
+            }
         }
 
 #ifdef HONEI_CUDA_DOUBLE
         __global__ void defect_smell_dv_gpu(double * rhs, double * y, unsigned long * Aj, double * Ax, unsigned long * Arl, double * x,
-                unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row, unsigned long stride)
+                unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row, unsigned long stride, unsigned long threads)
         {
-            unsigned long row = blockDim.x*blockIdx.x+threadIdx.x;
+            extern __shared__ double  shared_ell_double[];
+
+            const unsigned long T = threads;
+            const unsigned long idx = blockDim.x*blockIdx.x+threadIdx.x;
+            const unsigned long idb = threadIdx.x;
+            const unsigned long idp = idb % T;
+            const unsigned long row = idx / T;
 
             if(row >= num_rows){ return; }
-
-            //double sum = y[row];
-            double sum(double(0));
-
-            Aj += row;
-            Ax += row;
+            shared_ell_double[idb] = 0;
+            double sum = double(0);
 
             const unsigned long max = Arl[row];
-            for(unsigned long n = 0; n < max ; n++)
+            Ax += (row*T)+idp;
+            Aj += (row*T)+idp;
+            for(unsigned long k = 0; k < max ; ++k)
             {
-                const double A_ij = *Ax;
-
-                //if (A_ij != 0)
-                {
-                    const unsigned long col = *Aj;
-                    //sum += A_ij * x[col];
-                    int2 v = tex1Dfetch(tex_x_double_defect, col);
-                    sum += A_ij * __hiloint2double(v.y, v.x);
-                }
-
-                Aj += stride;
+                //sum += value * x[col];
+                int2 v = tex1Dfetch(tex_x_double_defect, *Aj);
+                sum += *Ax * __hiloint2double(v.y, v.x);
                 Ax += stride;
+                Aj += stride;
             }
+            shared_ell_double[idb] = sum;
 
-            y[row] = rhs[row] - sum;
+            switch (threads)
+            {
+                case 32:
+                    if (idp < 16)
+                        shared_ell_double[idb] += shared_ell_double[idb + 16];
+                case 16:
+                    if (idp < 8)
+                        shared_ell_double[idb] += shared_ell_double[idb + 8];
+                case 8:
+                    if (idp < 4)
+                        shared_ell_double[idb] += shared_ell_double[idb + 4];
+                case 4:
+                    if (idp < 2)
+                        shared_ell_double[idb] += shared_ell_double[idb + 2];
+                case 2:
+                    if (idp == 0)
+                        y[row] = rhs[row] - (shared_ell_double[idb] + shared_ell_double[idb + 1]);
+                    break;
+                case 1:
+                    y[row] = rhs[row] - shared_ell_double[idb];
+                    break;
+                default:
+                    break;
+            }
         }
 #endif
     }
@@ -279,13 +320,13 @@ extern "C" void cuda_defect_q1_double (void * rhs, void * ll, void * ld, void * 
 
 extern "C" void cuda_defect_smell_dv_float(void * rhs, void * result, void * Aj, void * Ax, void * Arl, void * b,
         unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row, unsigned long stride,
-        unsigned long blocksize)
+        unsigned long blocksize, unsigned long threads)
 {
     unsigned long size = num_rows;
     dim3 grid;
     dim3 block;
     block.x = blocksize;
-    grid.x = (unsigned)ceil(size/(double)(block.x));
+    grid.x = (unsigned)ceil((threads * size)/(double)(block.x));
 
     float * rhs_gpu((float *)rhs);
     float * result_gpu((float *)result);
@@ -295,8 +336,8 @@ extern "C" void cuda_defect_smell_dv_float(void * rhs, void * result, void * Aj,
     unsigned long * Arl_gpu((unsigned long *)Arl);
 
     cudaBindTexture(NULL, tex_x_float_defect, b_gpu);
-    honei::cuda::defect_smell_dv_gpu<<<grid, blocksize>>>(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Arl_gpu, b_gpu,
-            num_rows, num_cols, num_cols_per_row, stride);
+    honei::cuda::defect_smell_dv_gpu<<<grid, blocksize, block.x * sizeof(float)>>>(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Arl_gpu, b_gpu,
+            num_rows, num_cols, num_cols_per_row, stride, threads);
     cudaUnbindTexture(tex_x_float_defect);
 
     CUDA_ERROR();
@@ -305,13 +346,13 @@ extern "C" void cuda_defect_smell_dv_float(void * rhs, void * result, void * Aj,
 #ifdef HONEI_CUDA_DOUBLE
 extern "C" void cuda_defect_smell_dv_double(void * rhs, void * result, void * Aj, void * Ax, void * Arl, void * b,
         unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row, unsigned long stride,
-        unsigned long blocksize)
+        unsigned long blocksize, unsigned long threads)
 {
     unsigned long size = num_rows;
     dim3 grid;
     dim3 block;
     block.x = blocksize;
-    grid.x = (unsigned)ceil(size/(double)(block.x));
+    grid.x = (unsigned)ceil((threads * size)/(double)(block.x));
 
     double * rhs_gpu((double *)rhs);
     double * result_gpu((double *)result);
@@ -321,8 +362,8 @@ extern "C" void cuda_defect_smell_dv_double(void * rhs, void * result, void * Aj
     unsigned long * Arl_gpu((unsigned long *)Arl);
 
     cudaBindTexture(NULL, tex_x_double_defect, b_gpu);
-    honei::cuda::defect_smell_dv_gpu<<<grid, blocksize>>>(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Arl_gpu, b_gpu,
-            num_rows, num_cols, num_cols_per_row, stride);
+    honei::cuda::defect_smell_dv_gpu<<<grid, blocksize, block.x * sizeof(double)>>>(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Arl_gpu, b_gpu,
+            num_rows, num_cols, num_cols_per_row, stride, threads);
     cudaUnbindTexture(tex_x_double_defect);
 
     CUDA_ERROR();
