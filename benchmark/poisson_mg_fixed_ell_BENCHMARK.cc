@@ -574,6 +574,7 @@ class PoissonAdvancedBENCHMGSparseELLProlMat:
                       (Multigrid<Tag_, Tag_, methods::PROLMAT, methods::JAC, methods::CYCLE::V, methods::FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info));
                      );
             PROFILER_STOP("ganzer mg");
+            PROFILER_EVALUATE;
 
             evaluate();
         }

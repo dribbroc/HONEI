@@ -19,6 +19,7 @@
 
 #include <honei/la/difference.hh>
 #include <honei/backends/opencl/operations.hh>
+#include <honei/util/profiler.hh>
 
 
 using namespace honei;
@@ -26,6 +27,7 @@ using namespace honei;
 DenseVectorContinuousBase<float> & Difference<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<float> & x, const DenseVectorContinuousBase<float> & y)
 {
     CONTEXT("When calculating the difference of two DenseVectorContinuousBase<float> (OpenCL CPU):");
+    PROFILER_START("Difference tags::OpenCL::CPU");
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(y.size(), x.size());
 
@@ -35,12 +37,14 @@ DenseVectorContinuousBase<float> & Difference<tags::OpenCL::CPU>::value(DenseVec
     x.unlock(lm_read_and_write);
     y.unlock(lm_read_only);
 
+    PROFILER_STOP("Difference tags::OpenCL::CPU");
     return x;
 }
 
 DenseVectorContinuousBase<double> & Difference<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<double> & x, const DenseVectorContinuousBase<double> & y)
 {
     CONTEXT("When calculating the difference of two DenseVectorContinuousBase<double> (OpenCL CPU):");
+    PROFILER_START("Difference tags::OpenCL::CPU");
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(y.size(), x.size());
 
@@ -50,12 +54,14 @@ DenseVectorContinuousBase<double> & Difference<tags::OpenCL::CPU>::value(DenseVe
     x.unlock(lm_read_and_write);
     y.unlock(lm_read_only);
 
+    PROFILER_STOP("Difference tags::OpenCL::CPU");
     return x;
 }
 
 DenseVectorContinuousBase<float> & Difference<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<float> & x, const DenseVectorContinuousBase<float> & y)
 {
     CONTEXT("When calculating the difference of two DenseVectorContinuousBase<float> (OpenCL GPU):");
+    PROFILER_START("Difference tags::OpenCL::GPU");
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(y.size(), x.size());
 
@@ -65,12 +71,14 @@ DenseVectorContinuousBase<float> & Difference<tags::OpenCL::GPU>::value(DenseVec
     x.unlock(lm_read_and_write);
     y.unlock(lm_read_only);
 
+    PROFILER_STOP("Difference tags::OpenCL::GPU");
     return x;
 }
 
 DenseVectorContinuousBase<double> & Difference<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> & x, const DenseVectorContinuousBase<double> & y)
 {
     CONTEXT("When calculating the difference of two DenseVectorContinuousBase<double> (OpenCL GPU):");
+    PROFILER_START("Difference tags::OpenCL::GPU");
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(y.size(), x.size());
 
@@ -80,12 +88,14 @@ DenseVectorContinuousBase<double> & Difference<tags::OpenCL::GPU>::value(DenseVe
     x.unlock(lm_read_and_write);
     y.unlock(lm_read_only);
 
+    PROFILER_STOP("Difference tags::OpenCL::GPU");
     return x;
 }
 
 DenseVectorContinuousBase<float> & Difference<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & x, const DenseVectorContinuousBase<float> & y)
 {
     CONTEXT("When calculating the difference of two DenseVectorContinuousBase<float> (OpenCL CPU):");
+    PROFILER_START("Difference tags::OpenCL::CPU");
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(y.size(), x.size());
     if (result.size() != y.size())
@@ -99,12 +109,14 @@ DenseVectorContinuousBase<float> & Difference<tags::OpenCL::CPU>::value(DenseVec
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
 
+    PROFILER_STOP("Difference tags::OpenCL::CPU");
     return result;
 }
 
 DenseVectorContinuousBase<double> & Difference<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & x, const DenseVectorContinuousBase<double> & y)
 {
     CONTEXT("When calculating the difference of two DenseVectorContinuousBase<double> (OpenCL CPU):");
+    PROFILER_START("Difference tags::OpenCL::CPU");
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(y.size(), x.size());
     if (result.size() != y.size())
@@ -118,12 +130,14 @@ DenseVectorContinuousBase<double> & Difference<tags::OpenCL::CPU>::value(DenseVe
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
 
+    PROFILER_STOP("Difference tags::OpenCL::CPU");
     return result;
 }
 
 DenseVectorContinuousBase<float> & Difference<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & x, const DenseVectorContinuousBase<float> & y)
 {
     CONTEXT("When calculating the difference of two DenseVectorContinuousBase<float> (OpenCL GPU):");
+    PROFILER_START("Difference tags::OpenCL::GPU");
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(y.size(), x.size());
     if (result.size() != y.size())
@@ -137,12 +151,14 @@ DenseVectorContinuousBase<float> & Difference<tags::OpenCL::GPU>::value(DenseVec
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
 
+    PROFILER_STOP("Difference tags::OpenCL::GPU");
     return result;
 }
 
 DenseVectorContinuousBase<double> & Difference<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & x, const DenseVectorContinuousBase<double> & y)
 {
     CONTEXT("When calculating the difference of two DenseVectorContinuousBase<double> (OpenCL GPU):");
+    PROFILER_START("Difference tags::OpenCL::GPU");
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(y.size(), x.size());
     if (result.size() != y.size())
@@ -156,5 +172,6 @@ DenseVectorContinuousBase<double> & Difference<tags::OpenCL::GPU>::value(DenseVe
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
 
+    PROFILER_STOP("Difference tags::OpenCL::GPU");
     return result;
 }

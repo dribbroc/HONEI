@@ -19,6 +19,7 @@
 
 #include <honei/la/norm.hh>
 #include <honei/backends/opencl/operations.hh>
+#include <honei/util/profiler.hh>
 
 
 using namespace honei;
@@ -26,6 +27,7 @@ using namespace honei;
 float Norm<vnt_l_two, false, tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<float> & x)
 {
     CONTEXT("When calculating L2 norm (false) of DenseVectorContinuousBase<float> (OpenCL CPU):");
+    PROFILER_START("Norm l2 false tags::OpenCL::CPU");
 
     float result(0);
     if (x.size() < 16 * 128)
@@ -43,12 +45,14 @@ float Norm<vnt_l_two, false, tags::OpenCL::CPU>::value(const DenseVectorContinuo
         result = opencl::norm_l2_false_float(x_cl, x.size(), CL_DEVICE_TYPE_CPU);
         x.unlock(lm_read_only);
     }
+    PROFILER_STOP("Norm l2 false tags::OpenCL::CPU");
     return result;
 }
 
 double Norm<vnt_l_two, false, tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<double> & x)
 {
     CONTEXT("When calculating L2 norm (false) of DenseVectorContinuousBase<double> (OpenCL CPU):");
+    PROFILER_START("Norm l2 false tags::OpenCL::CPU");
 
     double result(0);
     if (x.size() < 16 * 128)
@@ -66,12 +70,14 @@ double Norm<vnt_l_two, false, tags::OpenCL::CPU>::value(const DenseVectorContinu
         result = opencl::norm_l2_false_double(x_cl, x.size(), CL_DEVICE_TYPE_CPU);
         x.unlock(lm_read_only);
     }
+    PROFILER_STOP("Norm l2 false tags::OpenCL::CPU");
     return result;
 }
 
 float Norm<vnt_l_two, true, tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<float> & x)
 {
     CONTEXT("When calculating L2 norm (false) of DenseVectorContinuousBase<float> (OpenCL CPU):");
+    PROFILER_START("Norm l2 true tags::OpenCL::CPU");
 
     float result(0);
     if (x.size() < 16 * 128)
@@ -89,12 +95,14 @@ float Norm<vnt_l_two, true, tags::OpenCL::CPU>::value(const DenseVectorContinuou
         result = opencl::norm_l2_false_float(x_cl, x.size(), CL_DEVICE_TYPE_CPU);
         x.unlock(lm_read_only);
     }
+    PROFILER_STOP("Norm l2 true tags::OpenCL::CPU");
     return sqrt(result);
 }
 
 double Norm<vnt_l_two, true, tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<double> & x)
 {
     CONTEXT("When calculating L2 norm (false) of DenseVectorContinuousBase<double> (OpenCL CPU):");
+    PROFILER_START("Norm l2 true tags::OpenCL::CPU");
 
     double result(0);
     if (x.size() < 16 * 128)
@@ -112,12 +120,14 @@ double Norm<vnt_l_two, true, tags::OpenCL::CPU>::value(const DenseVectorContinuo
         result = opencl::norm_l2_false_double(x_cl, x.size(), CL_DEVICE_TYPE_CPU);
         x.unlock(lm_read_only);
     }
+    PROFILER_STOP("Norm l2 true tags::OpenCL::CPU");
     return sqrt(result);
 }
 
 float Norm<vnt_l_two, false, tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<float> & x)
 {
     CONTEXT("When calculating L2 norm (false) of DenseVectorContinuousBase<float> (OpenCL GPU):");
+    PROFILER_START("Norm l2 false tags::OpenCL::GPU");
 
     float result(0);
     if (x.size() < 16 * 128)
@@ -135,12 +145,14 @@ float Norm<vnt_l_two, false, tags::OpenCL::GPU>::value(const DenseVectorContinuo
         result = opencl::norm_l2_false_float(x_cl, x.size(), CL_DEVICE_TYPE_GPU);
         x.unlock(lm_read_only);
     }
+    PROFILER_STOP("Norm l2 false tags::OpenCL::GPU");
     return result;
 }
 
 double Norm<vnt_l_two, false, tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<double> & x)
 {
     CONTEXT("When calculating L2 norm (false) of DenseVectorContinuousBase<double> (OpenCL GPU):");
+    PROFILER_START("Norm l2 false tags::OpenCL::GPU");
 
     double result(0);
     if (x.size() < 16 * 128)
@@ -158,12 +170,14 @@ double Norm<vnt_l_two, false, tags::OpenCL::GPU>::value(const DenseVectorContinu
         result = opencl::norm_l2_false_double(x_cl, x.size(), CL_DEVICE_TYPE_GPU);
         x.unlock(lm_read_only);
     }
+    PROFILER_STOP("Norm l2 false tags::OpenCL::GPU");
     return result;
 }
 
 float Norm<vnt_l_two, true, tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<float> & x)
 {
     CONTEXT("When calculating L2 norm (false) of DenseVectorContinuousBase<float> (OpenCL GPU):");
+    PROFILER_START("Norm l2 true tags::OpenCL::GPU");
 
     float result(0);
     if (x.size() < 16 * 128)
@@ -181,12 +195,14 @@ float Norm<vnt_l_two, true, tags::OpenCL::GPU>::value(const DenseVectorContinuou
         result = opencl::norm_l2_false_float(x_cl, x.size(), CL_DEVICE_TYPE_GPU);
         x.unlock(lm_read_only);
     }
+    PROFILER_STOP("Norm l2 true tags::OpenCL::GPU");
     return sqrt(result);
 }
 
 double Norm<vnt_l_two, true, tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<double> & x)
 {
     CONTEXT("When calculating L2 norm (false) of DenseVectorContinuousBase<double> (OpenCL GPU):");
+    PROFILER_START("Norm l2 true tags::OpenCL::GPU");
 
     double result(0);
     if (x.size() < 16 * 128)
@@ -204,5 +220,6 @@ double Norm<vnt_l_two, true, tags::OpenCL::GPU>::value(const DenseVectorContinuo
         result = opencl::norm_l2_false_double(x_cl, x.size(), CL_DEVICE_TYPE_GPU);
         x.unlock(lm_read_only);
     }
+    PROFILER_STOP("Norm l2 true tags::OpenCL::GPU");
     return sqrt(result);
 }

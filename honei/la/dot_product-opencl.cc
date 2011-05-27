@@ -19,6 +19,7 @@
 
 #include <honei/la/dot_product.hh>
 #include <honei/backends/opencl/operations.hh>
+#include <honei/util/profiler.hh>
 
 
 using namespace honei;
@@ -26,6 +27,7 @@ using namespace honei;
 float DotProduct<tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<float> & x, const DenseVectorContinuousBase<float> & y)
 {
     CONTEXT("When calculating dot product of DenseVectorContinuousBase<float>(OpenCL CPU):");
+    PROFILER_START("DotProduct tags::OpenCL::CPU");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(y.size(), x.size());
@@ -50,12 +52,14 @@ float DotProduct<tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<float
         x.unlock(lm_read_only);
         y.unlock(lm_read_only);
     }
+    PROFILER_STOP("DotProduct tags::OpenCL::CPU");
     return result;
 }
 
 double DotProduct<tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<double> & x, const DenseVectorContinuousBase<double> & y)
 {
     CONTEXT("When calculating dot product of DenseVectorContinuousBase<double>(OpenCL CPU):");
+    PROFILER_START("DotProduct tags::OpenCL::CPU");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(y.size(), x.size());
@@ -80,12 +84,14 @@ double DotProduct<tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<doub
         x.unlock(lm_read_only);
         y.unlock(lm_read_only);
     }
+    PROFILER_STOP("DotProduct tags::OpenCL::CPU");
     return result;
 }
 
 float DotProduct<tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<float> & x, const DenseVectorContinuousBase<float> & y)
 {
     CONTEXT("When calculating dot product of DenseVectorContinuousBase<float>(OpenCL GPU):");
+    PROFILER_START("DotProduct tags::OpenCL::GPU");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(y.size(), x.size());
@@ -110,12 +116,14 @@ float DotProduct<tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<float
         x.unlock(lm_read_only);
         y.unlock(lm_read_only);
     }
+    PROFILER_STOP("DotProduct tags::OpenCL::GPU");
     return result;
 }
 
 double DotProduct<tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<double> & x, const DenseVectorContinuousBase<double> & y)
 {
     CONTEXT("When calculating dot product of DenseVectorContinuousBase<double>(OpenCL GPU):");
+    PROFILER_START("DotProduct tags::OpenCL::GPU");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(y.size(), x.size());
@@ -140,5 +148,6 @@ double DotProduct<tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<doub
         x.unlock(lm_read_only);
         y.unlock(lm_read_only);
     }
+    PROFILER_STOP("DotProduct tags::OpenCL::GPU");
     return result;
 }

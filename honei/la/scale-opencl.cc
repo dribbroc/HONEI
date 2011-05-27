@@ -19,6 +19,7 @@
 
 #include <honei/la/scale.hh>
 #include <honei/backends/opencl/operations.hh>
+#include <honei/util/profiler.hh>
 
 
 using namespace honei;
@@ -26,44 +27,52 @@ using namespace honei;
 DenseVectorContinuousBase<float> & Scale<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<float> & x, const float a)
 {
     CONTEXT("When scaling DenseVectorContinuousBase<float> by scalar (OpenCL CPU):");
+    PROFILER_START("Scale tags::OpenCL::CPU");
 
     void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::CPU::memory_value));
     opencl::scale_float(x_cl, a, x.size(), CL_DEVICE_TYPE_CPU);
     x.unlock(lm_read_and_write);
 
+    PROFILER_STOP("Scale tags::OpenCL::CPU");
     return x;
 }
 
 DenseVectorContinuousBase<double> & Scale<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<double> & x, const double a)
 {
     CONTEXT("When scaling DenseVectorContinuousBase<double> by scalar (OpenCL CPU):");
+    PROFILER_START("Scale tags::OpenCL::CPU");
 
     void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::CPU::memory_value));
     opencl::scale_double(x_cl, a, x.size(), CL_DEVICE_TYPE_CPU);
     x.unlock(lm_read_and_write);
 
+    PROFILER_STOP("Scale tags::OpenCL::CPU");
     return x;
 }
 
 DenseVectorContinuousBase<float> & Scale<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<float> & x, const float a)
 {
     CONTEXT("When scaling DenseVectorContinuousBase<float> by scalar (OpenCL GPU):");
+    PROFILER_START("Scale tags::OpenCL::GPU");
 
     void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::GPU::memory_value));
     opencl::scale_float(x_cl, a, x.size(), CL_DEVICE_TYPE_GPU);
     x.unlock(lm_read_and_write);
 
+    PROFILER_STOP("Scale tags::OpenCL::GPU");
     return x;
 }
 
 DenseVectorContinuousBase<double> & Scale<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> & x, const double a)
 {
     CONTEXT("When scaling DenseVectorContinuousBase<double> by scalar (OpenCL GPU):");
+    PROFILER_START("Scale tags::OpenCL::GPU");
 
     void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::GPU::memory_value));
     opencl::scale_double(x_cl, a, x.size(), CL_DEVICE_TYPE_GPU);
     x.unlock(lm_read_and_write);
 
+    PROFILER_STOP("Scale tags::OpenCL::GPU");
     return x;
 }
 

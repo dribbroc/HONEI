@@ -19,12 +19,14 @@
 
 #include <honei/la/product.hh>
 #include <honei/backends/opencl/operations.hh>
+#include <honei/util/profiler.hh>
 
 using namespace honei;
 
 DenseVector<float> Product<tags::OpenCL::CPU>::value(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b)
 {
     CONTEXT("When multiplying SparseMatrixELL<float> with DenseVectorContinuousBase<float> (OpenCL CPU):");
+    PROFILER_START("Product tags::OpenCL::CPU");
 
     if (b.size() != a.columns())
     {
@@ -48,12 +50,14 @@ DenseVector<float> Product<tags::OpenCL::CPU>::value(DenseVector<float> & result
     a.Ax().unlock(lm_read_only);
     a.Arl().unlock(lm_read_only);
 
+    PROFILER_STOP("Product tags::OpenCL::CPU");
     return result;
 }
 
 DenseVector<double> Product<tags::OpenCL::CPU>::value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b)
 {
     CONTEXT("When multiplying SparseMatrixELL<double> with DenseVectorContinuousBase<double> (OpenCL CPU):");
+    PROFILER_START("Product tags::OpenCL::CPU");
 
     if (b.size() != a.columns())
     {
@@ -77,12 +81,14 @@ DenseVector<double> Product<tags::OpenCL::CPU>::value(DenseVector<double> & resu
     a.Ax().unlock(lm_read_only);
     a.Arl().unlock(lm_read_only);
 
+    PROFILER_STOP("Product tags::OpenCL::CPU");
     return result;
 }
 
 DenseVector<float> Product<tags::OpenCL::GPU>::value(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b)
 {
     CONTEXT("When multiplying SparseMatrixELL<float> with DenseVectorContinuousBase<float> (OpenCL GPU):");
+    PROFILER_START("Product tags::OpenCL::GPU");
 
     if (b.size() != a.columns())
     {
@@ -106,12 +112,14 @@ DenseVector<float> Product<tags::OpenCL::GPU>::value(DenseVector<float> & result
     a.Ax().unlock(lm_read_only);
     a.Arl().unlock(lm_read_only);
 
+    PROFILER_STOP("Product tags::OpenCL::GPU");
     return result;
 }
 
 DenseVector<double> Product<tags::OpenCL::GPU>::value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b)
 {
     CONTEXT("When multiplying SparseMatrixELL<double> with DenseVectorContinuousBase<double> (OpenCL GPU):");
+    PROFILER_START("Product tags::OpenCL::GPU");
 
     if (b.size() != a.columns())
     {
@@ -135,5 +143,6 @@ DenseVector<double> Product<tags::OpenCL::GPU>::value(DenseVector<double> & resu
     a.Ax().unlock(lm_read_only);
     a.Arl().unlock(lm_read_only);
 
+    PROFILER_STOP("Product tags::OpenCL::GPU");
     return result;
 }

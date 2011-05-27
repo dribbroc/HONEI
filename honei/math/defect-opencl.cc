@@ -19,6 +19,7 @@
 
 #include <honei/math/defect.hh>
 #include <honei/backends/opencl/operations.hh>
+#include <honei/util/profiler.hh>
 
 using namespace honei;
 
@@ -27,6 +28,7 @@ DenseVector<float> Defect<tags::OpenCL::CPU>::value(const DenseVectorContinuousB
         const DenseVectorContinuousBase<float> & b)
 {
     CONTEXT("When calculating Defect<float> (OpenCL CPU):");
+    PROFILER_START("Defect tags::OpenCL::CPU");
 
     if (b.size() != a.columns())
     {
@@ -54,6 +56,7 @@ DenseVector<float> Defect<tags::OpenCL::CPU>::value(const DenseVectorContinuousB
     a.Ax().unlock(lm_read_only);
     a.Arl().unlock(lm_read_only);
 
+    PROFILER_STOP("Defect tags::OpenCL::CPU");
     return result;
 }
 
@@ -62,6 +65,7 @@ DenseVector<double> Defect<tags::OpenCL::CPU>::value(const DenseVectorContinuous
         const DenseVectorContinuousBase<double> & b)
 {
     CONTEXT("When calculating Defect<double> (OpenCL CPU):");
+    PROFILER_START("Defect tags::OpenCL::CPU");
 
     if (b.size() != a.columns())
     {
@@ -89,6 +93,7 @@ DenseVector<double> Defect<tags::OpenCL::CPU>::value(const DenseVectorContinuous
     a.Ax().unlock(lm_read_only);
     a.Arl().unlock(lm_read_only);
 
+    PROFILER_STOP("Defect tags::OpenCL::CPU");
     return result;
 }
 
@@ -97,6 +102,7 @@ DenseVector<float> Defect<tags::OpenCL::GPU>::value(const DenseVectorContinuousB
         const DenseVectorContinuousBase<float> & b)
 {
     CONTEXT("When calculating Defect<float> (OpenCL GPU):");
+    PROFILER_START("Defect tags::OpenCL::GPU");
 
     if (b.size() != a.columns())
     {
@@ -124,6 +130,7 @@ DenseVector<float> Defect<tags::OpenCL::GPU>::value(const DenseVectorContinuousB
     a.Ax().unlock(lm_read_only);
     a.Arl().unlock(lm_read_only);
 
+    PROFILER_STOP("Defect tags::OpenCL::GPU");
     return result;
 }
 
@@ -132,6 +139,7 @@ DenseVector<double> Defect<tags::OpenCL::GPU>::value(const DenseVectorContinuous
         const DenseVectorContinuousBase<double> & b)
 {
     CONTEXT("When calculating Defect<double> (OpenCL GPU):");
+    PROFILER_START("Defect tags::OpenCL::GPU");
 
     if (b.size() != a.columns())
     {
@@ -159,6 +167,7 @@ DenseVector<double> Defect<tags::OpenCL::GPU>::value(const DenseVectorContinuous
     a.Ax().unlock(lm_read_only);
     a.Arl().unlock(lm_read_only);
 
+    PROFILER_STOP("Defect tags::OpenCL::GPU");
     return result;
 }
 
@@ -167,6 +176,7 @@ DenseVectorContinuousBase<float> & Defect<tags::OpenCL::CPU>::value(DenseVectorC
         const DenseVectorContinuousBase<float> & b)
 {
     CONTEXT("When calculating Defect<float> (OpenCL CPU):");
+    PROFILER_START("Defect tags::OpenCL::CPU");
 
     if (b.size() != a.columns())
     {
@@ -192,6 +202,7 @@ DenseVectorContinuousBase<float> & Defect<tags::OpenCL::CPU>::value(DenseVectorC
     a.Ax().unlock(lm_read_only);
     a.Arl().unlock(lm_read_only);
 
+    PROFILER_STOP("Defect tags::OpenCL::CPU");
     return result;
 }
 
@@ -200,6 +211,7 @@ DenseVectorContinuousBase<double> & Defect<tags::OpenCL::CPU>::value(DenseVector
         const DenseVectorContinuousBase<double> & b)
 {
     CONTEXT("When calculating Defect<double> (OpenCL CPU):");
+    PROFILER_START("Defect tags::OpenCL::CPU");
 
     if (b.size() != a.columns())
     {
@@ -225,6 +237,7 @@ DenseVectorContinuousBase<double> & Defect<tags::OpenCL::CPU>::value(DenseVector
     a.Ax().unlock(lm_read_only);
     a.Arl().unlock(lm_read_only);
 
+    PROFILER_STOP("Defect tags::OpenCL::CPU");
     return result;
 }
 
@@ -233,6 +246,7 @@ DenseVectorContinuousBase<float> & Defect<tags::OpenCL::GPU>::value(DenseVectorC
         const DenseVectorContinuousBase<float> & b)
 {
     CONTEXT("When calculating Defect<float> (OpenCL GPU):");
+    PROFILER_START("Defect tags::OpenCL::GPU");
 
     if (b.size() != a.columns())
     {
@@ -258,6 +272,7 @@ DenseVectorContinuousBase<float> & Defect<tags::OpenCL::GPU>::value(DenseVectorC
     a.Ax().unlock(lm_read_only);
     a.Arl().unlock(lm_read_only);
 
+    PROFILER_STOP("Defect tags::OpenCL::GPU");
     return result;
 }
 
@@ -266,6 +281,7 @@ DenseVectorContinuousBase<double> & Defect<tags::OpenCL::GPU>::value(DenseVector
         const DenseVectorContinuousBase<double> & b)
 {
     CONTEXT("When calculating Defect<double> (OpenCL GPU):");
+    PROFILER_START("Defect tags::OpenCL::GPU");
 
     if (b.size() != a.columns())
     {
@@ -291,5 +307,6 @@ DenseVectorContinuousBase<double> & Defect<tags::OpenCL::GPU>::value(DenseVector
     a.Ax().unlock(lm_read_only);
     a.Arl().unlock(lm_read_only);
 
+    PROFILER_STOP("Defect tags::OpenCL::GPU");
     return result;
 }

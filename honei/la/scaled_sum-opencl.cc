@@ -19,6 +19,7 @@
 
 #include <honei/la/scaled_sum.hh>
 #include <honei/backends/opencl/operations.hh>
+#include <honei/util/profiler.hh>
 
 
 using namespace honei;
@@ -27,6 +28,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::CPU>::value(DenseVect
         const DenseVectorContinuousBase<float> & y, float b)
 {
     CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<float> (OpenCL CPU):");
+    PROFILER_START("ScaledSum tags::OpenCL::CPU");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
@@ -37,6 +39,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::CPU>::value(DenseVect
     x.unlock(lm_read_and_write);
     y.unlock(lm_read_only);
 
+    PROFILER_STOP("ScaledSum tags::OpenCL::CPU");
     return x;
 }
 
@@ -44,6 +47,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::CPU>::value(DenseVec
         const DenseVectorContinuousBase<double> & y, double b)
 {
     CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<double> (OpenCL CPU):");
+    PROFILER_START("ScaledSum tags::OpenCL::CPU");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
@@ -54,6 +58,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::CPU>::value(DenseVec
     x.unlock(lm_read_and_write);
     y.unlock(lm_read_only);
 
+    PROFILER_STOP("ScaledSum tags::OpenCL::CPU");
     return x;
 }
 
@@ -61,6 +66,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::GPU>::value(DenseVect
         const DenseVectorContinuousBase<float> & y, float b)
 {
     CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<float> (OpenCL GPU):");
+    PROFILER_START("ScaledSum tags::OpenCL::GPU");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
@@ -71,6 +77,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::GPU>::value(DenseVect
     x.unlock(lm_read_and_write);
     y.unlock(lm_read_only);
 
+    PROFILER_STOP("ScaledSum tags::OpenCL::GPU");
     return x;
 }
 
@@ -78,6 +85,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::GPU>::value(DenseVec
         const DenseVectorContinuousBase<double> & y, double b)
 {
     CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<double> (OpenCL GPU):");
+    PROFILER_START("ScaledSum tags::OpenCL::GPU");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
@@ -88,6 +96,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::GPU>::value(DenseVec
     x.unlock(lm_read_and_write);
     y.unlock(lm_read_only);
 
+    PROFILER_STOP("ScaledSum tags::OpenCL::GPU");
     return x;
 }
 
@@ -95,6 +104,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::CPU>::value(DenseVect
         const DenseVectorContinuousBase<float> & y, float b)
 {
     CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<float> (OpenCL CPU):");
+    PROFILER_START("ScaledSum tags::OpenCL::CPU");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
@@ -109,6 +119,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::CPU>::value(DenseVect
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
 
+    PROFILER_STOP("ScaledSum tags::OpenCL::CPU");
     return r;
 }
 
@@ -116,6 +127,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::CPU>::value(DenseVec
         const DenseVectorContinuousBase<double> & y, double b)
 {
     CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<double> (OpenCL CPU):");
+    PROFILER_START("ScaledSum tags::OpenCL::CPU");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
@@ -130,6 +142,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::CPU>::value(DenseVec
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
 
+    PROFILER_STOP("ScaledSum tags::OpenCL::CPU");
     return r;
 }
 
@@ -137,6 +150,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::GPU>::value(DenseVect
         const DenseVectorContinuousBase<float> & y, float b)
 {
     CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<float> (OpenCL GPU):");
+    PROFILER_START("ScaledSum tags::OpenCL::GPU");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
@@ -151,6 +165,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::GPU>::value(DenseVect
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
 
+    PROFILER_STOP("ScaledSum tags::OpenCL::GPU");
     return r;
 }
 
@@ -158,6 +173,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::GPU>::value(DenseVec
         const DenseVectorContinuousBase<double> & y, double b)
 {
     CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<double> (OpenCL GPU):");
+    PROFILER_START("ScaledSum tags::OpenCL::GPU");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
@@ -172,6 +188,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::GPU>::value(DenseVec
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
 
+    PROFILER_STOP("ScaledSum tags::OpenCL::GPU");
     return r;
 }
 
@@ -179,6 +196,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::CPU>::value(DenseVect
         const DenseVectorContinuousBase<float> & y)
 {
     CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<float> (OpenCL CPU):");
+    PROFILER_START("ScaledSum tags::OpenCL::CPU");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
@@ -193,6 +211,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::CPU>::value(DenseVect
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
 
+    PROFILER_STOP("ScaledSum tags::OpenCL::CPU");
     return r;
 }
 
@@ -200,6 +219,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::CPU>::value(DenseVec
         const DenseVectorContinuousBase<double> & y)
 {
     CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<double> (OpenCL CPU):");
+    PROFILER_START("ScaledSum tags::OpenCL::CPU");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
@@ -214,6 +234,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::CPU>::value(DenseVec
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
 
+    PROFILER_STOP("ScaledSum tags::OpenCL::CPU");
     return r;
 }
 
@@ -221,6 +242,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::GPU>::value(DenseVect
         const DenseVectorContinuousBase<float> & y)
 {
     CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<float> (OpenCL GPU):");
+    PROFILER_START("ScaledSum tags::OpenCL::GPU");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
@@ -235,6 +257,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::GPU>::value(DenseVect
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
 
+    PROFILER_STOP("ScaledSum tags::OpenCL::GPU");
     return r;
 }
 
@@ -242,6 +265,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::GPU>::value(DenseVec
         const DenseVectorContinuousBase<double> & y)
 {
     CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<double> (OpenCL GPU):");
+    PROFILER_START("ScaledSum tags::OpenCL::GPU");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
@@ -256,5 +280,6 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::GPU>::value(DenseVec
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
 
+    PROFILER_STOP("ScaledSum tags::OpenCL::GPU");
     return r;
 }
