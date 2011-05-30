@@ -100,7 +100,11 @@ namespace honei
      * \ingroup grpmatrixoperations
      * \ingroup grpvectoroperations
      */
+
     template <typename Tag_ = tags::CPU, typename Preconditioner_ = Preconditioning<Tag_, methods::NONE> >
+    struct Richardson;
+
+    template <typename Tag_, typename Preconditioner_>
     struct Richardson
     {
         public:
