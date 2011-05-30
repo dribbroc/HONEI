@@ -138,7 +138,7 @@ namespace honei
 
                     if(info.convergence_control_relative)
                     {
-                        Defect<Tag_>::value(*data.temp_0, *data.rhs, *data.system_matrix, *data.result);
+                        //Defect<Tag_>::value(*data.temp_0, *data.rhs, *data.system_matrix, *data.result);
                         if(Norm<vnt_l_two, false, Tag_>::value(*data.temp_0) < info.tolerance_relative * initial_defect_norm)
                         {
                             info.iters = i;
