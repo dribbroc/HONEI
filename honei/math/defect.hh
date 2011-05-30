@@ -28,6 +28,8 @@
 #include<honei/la/algorithm.hh>
 #include<honei/la/product.hh>
 #include<honei/la/difference.hh>
+#include<honei/backends/multicore/thread_pool.hh>
+#include<honei/util/operation_wrapper.hh>
 
 using namespace honei;
 namespace honei
@@ -326,24 +328,9 @@ namespace honei
                         return result;
                     }
 
-                template<typename DT_>
-                    static DenseVector<DT_> & value(DenseVector<DT_> & result, DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
-                    {
-                        if (x.size() != system.columns())
-                        {
-                            throw VectorSizeDoesNotMatch(x.size(), system.columns());
-                        }
-                        if (right_hand_side.size() != system.columns())
-                        {
-                            throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
-                        }
+                    static DenseVector<float> & value(DenseVector<float> & result, const DenseVector<float> & right_hand_side, const SparseMatrixELL<float> & system, const DenseVector<float> & x, unsigned long row_start = 0, unsigned long row_end = 0);
 
-                        DenseVector<DT_> temp(right_hand_side.size());
-                        Product<tags::CPU::SSE>::value(temp, system, x);
-                        Difference<tags::CPU::SSE>::value(result, right_hand_side, temp);
-
-                        return result;
-                    }
+                    static DenseVector<double> & value(DenseVector<double> & result, const DenseVector<double> & right_hand_side, const SparseMatrixELL<double> & system, const DenseVector<double> & x, unsigned long row_start = 0, unsigned long row_end = 0);
         };
 
     template<>
@@ -392,54 +379,96 @@ namespace honei
                     }
         };
 
-    template<>
-        struct Defect<tags::CPU::MultiCore::SSE>
+    namespace mc
+    {
+        template <typename Tag_> struct Defect
         {
+            template <typename DT_>
+            static DenseVector<DT_> value(const DenseVector<DT_> & rhs, const SparseMatrixELL<DT_> & a, const DenseVector<DT_> & b)
+            {
+                if (b.size() != a.columns())
+                {
+                    throw VectorSizeDoesNotMatch(b.size(), a.columns());
+                }
+                if (a.rows() != rhs.size())
+                {
+                    throw VectorSizeDoesNotMatch(a.rows(), rhs.size());
+                }
 
-            public:
-                static DenseVector<double> value(DenseVector<double> & right_hand_side, BandedMatrixQ1<double> & system, DenseVector<double> & x);
-                static DenseVector<float> value(DenseVector<float> & right_hand_side, BandedMatrixQ1<float> & system, DenseVector<float> & x);
+                DenseVector<DT_> result(a.rows());
+                //fill<typename Tag_::DelegateTo>(result, DT_(0));
 
-                template<typename DT_>
-                    static DenseVector<DT_> value(DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
-                    {
-                        if (x.size() != system.columns())
-                        {
-                            throw VectorSizeDoesNotMatch(x.size(), system.columns());
-                        }
-                        if (right_hand_side.size() != system.columns())
-                        {
-                            throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
-                        }
+                unsigned long max_count(Configuration::instance()->get_value("mc::Product(DV,SMELL,DV)::max_count",
+                            mc::ThreadPool::instance()->num_threads()));
 
-                        DenseVector<DT_> result(right_hand_side.size());
-                        DenseVector<DT_> temp(right_hand_side.size());
-                        Product<tags::CPU::MultiCore::SSE>::value(temp, system, x);
-                        //todo use mc difference
-                        Difference<tags::CPU::SSE>::value(result, right_hand_side, temp);
-                        return result;
-                    }
+                TicketVector tickets;
 
-                template<typename DT_>
-                    static DenseVector<DT_> & value(DenseVector<DT_> & result, DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
-                    {
-                        if (x.size() != system.columns())
-                        {
-                            throw VectorSizeDoesNotMatch(x.size(), system.columns());
-                        }
-                        if (right_hand_side.size() != system.columns())
-                        {
-                            throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
-                        }
+                unsigned long limits[max_count + 1];
+                limits[0] = 0;
+                for (unsigned long i(1) ; i < max_count; ++i)
+                {
+                    limits[i] = limits[i-1] + a.rows() / max_count;
+                }
+                limits[max_count] = a.rows();
 
-                        DenseVector<DT_> temp(right_hand_side.size());
-                        Product<tags::CPU::MultiCore::SSE>::value(temp, system, x);
-                        //todo use mc difference
-                        Difference<tags::CPU::SSE>::value(result, right_hand_side, temp);
+                for (unsigned long i(0) ; i < max_count ; ++i)
+                {
+                    OperationWrapper<honei::Defect<typename Tag_::DelegateTo>, DenseVector<DT_>, DenseVector<DT_>,
+                        DenseVector<DT_>, SparseMatrixELL<DT_>, DenseVector<DT_>, unsigned long, unsigned long > wrapper(result);
+                    tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, result, rhs, a, b, limits[i], limits[i+1])));
+                }
 
-                        return result;
-                    }
+                tickets.wait();
+
+                return result;
+            }
+
+            template <typename DT_>
+            static DenseVector<DT_> value(DenseVector<DT_> & result, const DenseVector<DT_> & rhs, const SparseMatrixELL<DT_> & a, const DenseVector<DT_> & b)
+            {
+                if (b.size() != a.columns())
+                {
+                    throw VectorSizeDoesNotMatch(b.size(), a.columns());
+                }
+                if (a.rows() != result.size())
+                {
+                    throw VectorSizeDoesNotMatch(a.rows(), result.size());
+                }
+
+                //fill<typename Tag_::DelegateTo>(result, DT_(0));
+
+                unsigned long max_count(Configuration::instance()->get_value("mc::Product(DV,SMELL,DV)::max_count",
+                            mc::ThreadPool::instance()->num_threads()));
+
+                TicketVector tickets;
+
+                unsigned long limits[max_count + 1];
+                limits[0] = 0;
+                for (unsigned long i(1) ; i < max_count; ++i)
+                {
+                    limits[i] = limits[i-1] + a.rows() / max_count;
+                }
+                limits[max_count] = a.rows();
+
+                for (unsigned long i(0) ; i < max_count ; ++i)
+                {
+                    OperationWrapper<honei::Defect<typename Tag_::DelegateTo>, DenseVector<DT_>, DenseVector<DT_>,
+                        DenseVector<DT_>, SparseMatrixELL<DT_>, DenseVector<DT_>, unsigned long, unsigned long > wrapper(result);
+                    tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, result, rhs, a, b, limits[i], limits[i+1])));
+                }
+
+                tickets.wait();
+
+                return result;
+            }
         };
+
+    }
+
+    template <> struct Defect<tags::CPU::MultiCore::SSE> :
+        public mc::Defect<tags::CPU::MultiCore::SSE>
+    {
+    };
 }
 
 #endif

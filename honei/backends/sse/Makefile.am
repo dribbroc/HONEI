@@ -15,6 +15,7 @@ libhoneibackendssse_la_LIBADD = \
 
 libhoneibackendssse_la_SOURCES = operations.hh \
 				 collide_stream_grid.cc \
+				 defect.cc \
 				 difference.cc \
 				 dot_product.cc \
 				 element_inverse.cc \

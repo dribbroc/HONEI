@@ -26,6 +26,17 @@ namespace honei
     namespace sse
     {
         ///////////// LA
+        void defect_smell_dv(float * result, float * rhs, unsigned long * Aj, float * Ax, float * b,
+            unsigned long stride, unsigned long rows, unsigned long num_cols_per_row, unsigned long threads);
+        void defect_smell_dv(float * result, const float * rhs, const unsigned long * Aj, const float * Ax, const unsigned long * Arl, const float * b,
+            unsigned long stride, unsigned long rows, unsigned long num_cols_per_row,
+            unsigned long row_start, unsigned long row_end, unsigned long threads);
+        void defect_smell_dv(double * result, double * rhs, unsigned long * Aj, double * Ax, double * b,
+            unsigned long stride, unsigned long rows, unsigned long num_cols_per_row, unsigned long threads);
+        void defect_smell_dv(double * result, const double * rhs, const unsigned long * Aj, const double * Ax, const unsigned long * Arl, const double * b,
+            unsigned long stride, unsigned long rows, unsigned long num_cols_per_row,
+            unsigned long row_start, unsigned long row_end, unsigned long threads);
+
         void difference(float * a, const float * b, unsigned long size);
         void difference(double * a, const double * b, unsigned long size);
         void difference(float * result, const float * a, const float * b, unsigned long size);

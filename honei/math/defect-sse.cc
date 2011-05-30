@@ -18,6 +18,7 @@
  */
 
 #include <honei/math/defect.hh>
+#include <honei/backends/sse/operations.hh>
 
 #include <xmmintrin.h>
 #include <emmintrin.h>
@@ -660,6 +661,68 @@ namespace honei
                 + lu[index] * x_old[index - root_n + 1]
                 + ld[index] * x_old[index - root_n]
                 + dl[index] * x_old[index - 1]);
+
+        return result;
+    }
+
+    DenseVector<float> & Defect<tags::CPU::SSE>::value(DenseVector<float> & result, const DenseVector<float> & right_hand_side, const SparseMatrixELL<float> & a, const DenseVector<float> & b,
+            unsigned long row_start, unsigned long row_end)
+    {
+        CONTEXT("When calculating defect of SparseMatrixELL<float> with DenseVector<float> (SSE):");
+
+        if (b.size() != a.columns())
+        {
+            throw VectorSizeDoesNotMatch(b.size(), a.columns());
+        }
+        if (right_hand_side.size() != result.size())
+        {
+            throw VectorSizeDoesNotMatch(result.size(), right_hand_side.size());
+        }
+
+
+        if (row_end == 0)
+        {
+            fill<tags::CPU::SSE>(result, float(0));
+            honei::sse::defect_smell_dv(result.elements(), right_hand_side.elements(), a.Aj().elements(), a.Ax().elements(), b.elements(),
+                    a.stride(), a.rows(), a.num_cols_per_row(), a.threads());
+        }
+
+        else
+        {
+            honei::sse::defect_smell_dv(result.elements(), right_hand_side.elements(), a.Aj().elements(), a.Ax().elements(), a.Arl().elements(), b.elements(),
+                    a.stride(), a.rows(), a.num_cols_per_row(), row_start, row_end, a.threads());
+        }
+
+        return result;
+    }
+
+    DenseVector<double> & Defect<tags::CPU::SSE>::value(DenseVector<double> & result, const DenseVector<double> & right_hand_side, const SparseMatrixELL<double> & a, const DenseVector<double> & b,
+            unsigned long row_start, unsigned long row_end)
+    {
+        CONTEXT("When calculating defect of SparseMatrixELL<double> with DenseVector<double> (SSE):");
+
+        if (b.size() != a.columns())
+        {
+            throw VectorSizeDoesNotMatch(b.size(), a.columns());
+        }
+        if (right_hand_side.size() != result.size())
+        {
+            throw VectorSizeDoesNotMatch(result.size(), right_hand_side.size());
+        }
+
+
+        if (row_end == 0)
+        {
+            fill<tags::CPU::SSE>(result, double(0));
+            honei::sse::defect_smell_dv(result.elements(), right_hand_side.elements(), a.Aj().elements(), a.Ax().elements(), b.elements(),
+                    a.stride(), a.rows(), a.num_cols_per_row(), a.threads());
+        }
+
+        else
+        {
+            honei::sse::defect_smell_dv(result.elements(), right_hand_side.elements(), a.Aj().elements(), a.Ax().elements(), a.Arl().elements(), b.elements(),
+                    a.stride(), a.rows(), a.num_cols_per_row(), row_start, row_end, a.threads());
+        }
 
         return result;
     }
