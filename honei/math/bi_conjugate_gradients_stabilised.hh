@@ -62,7 +62,7 @@ namespace honei
 
                 DenseVector<DT_> r_tilde(r.size());
                 copy<Tag_>(r, r_tilde);
-                DT_ norm_initial(Norm<vnt_l_two, false, Tag_>::value(r));
+                DT_ norm_initial(Norm<vnt_l_two, true, Tag_>::value(r));
                 std::cout << "initial_norm: " << norm_initial << std::endl;
 
                 DT_ rho_old(1), rho_new(1), alpha(1), beta(1), omega(1);
@@ -76,7 +76,7 @@ namespace honei
                     if(fabs(rho_new) <= std::numeric_limits<DT_>::epsilon())
                     {
                         std::cout << "Method fails!" << std::endl;
-                        DT_ norm_failed(Norm<vnt_l_two, false, Tag_>::value(r));
+                        DT_ norm_failed(Norm<vnt_l_two, true, Tag_>::value(r));
                         std::cout << "norm: " << norm_failed << " at iteration " << i << std::endl;
                         break;
                     }
@@ -100,7 +100,7 @@ namespace honei
                     ScaledSum<Tag_>::value(s, r, v, -alpha);
 
                     //main convergence-control
-                    DT_ norm(Norm<vnt_l_two, false, Tag_>::value(s));
+                    DT_ norm(Norm<vnt_l_two, true, Tag_>::value(s));
                     if(norm / norm_initial <= eps_relative)
                     {
                         ScaledSum<Tag_>::value(x, p_hat, alpha);
@@ -119,7 +119,7 @@ namespace honei
                     Sum<Tag_>::value(x, s_hat);
                     ScaledSum<Tag_>::value(r, s, t, -omega);
 
-                    norm = Norm<vnt_l_two, false, Tag_>::value(r);
+                    norm = Norm<vnt_l_two, true, Tag_>::value(r);
 
                     //std::cout << "rNORM: " << norm << std::endl;
 
@@ -138,7 +138,7 @@ namespace honei
                     rho_old = rho_new;
                 }
 
-                std::cout << "No convergence after " << max_iters << " iterations. Norm: " << Norm<vnt_l_two, false, Tag_>::value(r) << std::endl;
+                std::cout << "No convergence after " << max_iters << " iterations. Norm: " << Norm<vnt_l_two, true, Tag_>::value(r) << std::endl;
 
             }
         };
