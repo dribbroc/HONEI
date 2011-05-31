@@ -35,11 +35,12 @@ int main(int argc, char ** argv)
 
     // Read in m file matrix
     std::string input(argv[1]);
-    SparseMatrix<double> tsmatrix(MatrixIO<io_formats::ELL>::read_matrix(input, double(0)));
+    SparseMatrixELL<double> tsmatrix(MatrixIO<io_formats::ELL>::read_matrix(input, double(0)));
 
     std::cout<<"ELL Matrix info for " + input << std::endl;
     std::cout<<"Rows: " << tsmatrix.rows() << std::endl;
     std::cout<<"Columns: " << tsmatrix.columns() << std::endl;
     std::cout<<"Non Zero Elements: " << tsmatrix.used_elements() << std::endl;
+    std::cout << "NumColsPerRow: " << tsmatrix.num_cols_per_row() << ", Stride: " << tsmatrix.stride() << ", Threads: " << tsmatrix.threads() << std::endl;
     return EXIT_SUCCESS;
 }
