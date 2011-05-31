@@ -33,7 +33,7 @@ float DotProduct<tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<float
         throw VectorSizeDoesNotMatch(y.size(), x.size());
 
     float result(0);
-    if (x.size() < 16 * 128)
+    if (x.size() < 32 * 128)
     {
         x.lock(lm_read_only);
         y.lock(lm_read_only);
@@ -65,7 +65,7 @@ double DotProduct<tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<doub
         throw VectorSizeDoesNotMatch(y.size(), x.size());
 
     double result(0);
-    if (x.size() < 16 * 128)
+    if (x.size() < 32 * 128)
     {
         x.lock(lm_read_only);
         y.lock(lm_read_only);
@@ -97,7 +97,7 @@ float DotProduct<tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<float
         throw VectorSizeDoesNotMatch(y.size(), x.size());
 
     float result(0);
-    if (x.size() < 16 * 128)
+    if (x.size() < 32 * 128)
     {
         x.lock(lm_read_only);
         y.lock(lm_read_only);
@@ -129,7 +129,7 @@ double DotProduct<tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<doub
         throw VectorSizeDoesNotMatch(y.size(), x.size());
 
     double result(0);
-    if (x.size() < 16 * 128)
+    if (x.size() < 32 * 128)
     {
         x.lock(lm_read_only);
         y.lock(lm_read_only);

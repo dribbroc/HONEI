@@ -29,23 +29,25 @@ namespace honei
             cl_kernel kernel;
             cl_context context;
             cl_device_id device;
-            size_t blocksize = 128;
-            size_t threads = blocksize * 16;
 
             DCQ dcq = OpenCLBackend::instance()->prepare_device(type);
             device = dcq.device;
             context = dcq.context;
             command_queue = dcq.command_queue;
 
-            cl_mem tmp_device(0);
-            float * tmp_cpu = new float[threads];
-            tmp_device = OpenCLBackend::instance()->create_empty_buffer(threads*sizeof(float), dcq.context);
 
             //print_device_info(device);
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/backends/opencl/";
             filename += "norm.cl";
             kernel = OpenCLBackend::instance()->create_kernel(filename, "norm_l2_false_float", context, device);
+            size_t tmp_work_group_size;
+            clGetKernelWorkGroupInfo(kernel, device, CL_KERNEL_WORK_GROUP_SIZE, sizeof(size_t), (void*)&tmp_work_group_size, NULL);
+            size_t blocksize = tmp_work_group_size;
+            size_t threads = blocksize * 32;
+            cl_mem tmp_device(0);
+            float * tmp_cpu = new float[threads];
+            tmp_device = OpenCLBackend::instance()->create_empty_buffer(threads*sizeof(float), dcq.context);
             clSetKernelArg(kernel, 0, sizeof(cl_mem), &x);
             clSetKernelArg(kernel, 1, sizeof(cl_mem), &tmp_device);
             clSetKernelArg(kernel, 2, sizeof(cl_uint), (void *)&size);
@@ -70,23 +72,25 @@ namespace honei
             cl_kernel kernel;
             cl_context context;
             cl_device_id device;
-            size_t blocksize = 128;
-            size_t threads = blocksize * 16;
 
             DCQ dcq = OpenCLBackend::instance()->prepare_device(type);
             device = dcq.device;
             context = dcq.context;
             command_queue = dcq.command_queue;
 
-            cl_mem tmp_device(0);
-            double * tmp_cpu = new double[threads];
-            tmp_device = OpenCLBackend::instance()->create_empty_buffer(threads*sizeof(double), dcq.context);
 
             //print_device_info(device);
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/backends/opencl/";
             filename += "norm.cl";
             kernel = OpenCLBackend::instance()->create_kernel(filename, "norm_l2_false_double", context, device);
+            size_t tmp_work_group_size;
+            clGetKernelWorkGroupInfo(kernel, device, CL_KERNEL_WORK_GROUP_SIZE, sizeof(size_t), (void*)&tmp_work_group_size, NULL);
+            size_t blocksize = tmp_work_group_size;
+            size_t threads = blocksize * 32;
+            cl_mem tmp_device(0);
+            double * tmp_cpu = new double[threads];
+            tmp_device = OpenCLBackend::instance()->create_empty_buffer(threads*sizeof(double), dcq.context);
             clSetKernelArg(kernel, 0, sizeof(cl_mem), &x);
             clSetKernelArg(kernel, 1, sizeof(cl_mem), &tmp_device);
             clSetKernelArg(kernel, 2, sizeof(cl_uint), (void *)&size);

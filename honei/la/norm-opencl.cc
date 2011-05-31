@@ -30,7 +30,7 @@ float Norm<vnt_l_two, false, tags::OpenCL::CPU>::value(const DenseVectorContinuo
     PROFILER_START("Norm l2 false tags::OpenCL::CPU");
 
     float result(0);
-    if (x.size() < 16 * 128)
+    if (x.size() < 32 * 128)
     {
         x.lock(lm_read_only);
         for (unsigned long i(0) ; i < x.size() ; ++i)
@@ -55,7 +55,7 @@ double Norm<vnt_l_two, false, tags::OpenCL::CPU>::value(const DenseVectorContinu
     PROFILER_START("Norm l2 false tags::OpenCL::CPU");
 
     double result(0);
-    if (x.size() < 16 * 128)
+    if (x.size() < 32 * 128)
     {
         x.lock(lm_read_only);
         for (unsigned long i(0) ; i < x.size() ; ++i)
@@ -80,7 +80,7 @@ float Norm<vnt_l_two, true, tags::OpenCL::CPU>::value(const DenseVectorContinuou
     PROFILER_START("Norm l2 true tags::OpenCL::CPU");
 
     float result(0);
-    if (x.size() < 16 * 128)
+    if (x.size() < 32 * 128)
     {
         x.lock(lm_read_only);
         for (unsigned long i(0) ; i < x.size() ; ++i)
@@ -105,7 +105,7 @@ double Norm<vnt_l_two, true, tags::OpenCL::CPU>::value(const DenseVectorContinuo
     PROFILER_START("Norm l2 true tags::OpenCL::CPU");
 
     double result(0);
-    if (x.size() < 16 * 128)
+    if (x.size() < 32 * 128)
     {
         x.lock(lm_read_only);
         for (unsigned long i(0) ; i < x.size() ; ++i)
@@ -130,7 +130,7 @@ float Norm<vnt_l_two, false, tags::OpenCL::GPU>::value(const DenseVectorContinuo
     PROFILER_START("Norm l2 false tags::OpenCL::GPU");
 
     float result(0);
-    if (x.size() < 16 * 128)
+    if (x.size() < 32 * 128)
     {
         x.lock(lm_read_only);
         for (unsigned long i(0) ; i < x.size() ; ++i)
@@ -155,7 +155,7 @@ double Norm<vnt_l_two, false, tags::OpenCL::GPU>::value(const DenseVectorContinu
     PROFILER_START("Norm l2 false tags::OpenCL::GPU");
 
     double result(0);
-    if (x.size() < 16 * 128)
+    if (x.size() < 32 * 128)
     {
         x.lock(lm_read_only);
         for (unsigned long i(0) ; i < x.size() ; ++i)
@@ -180,7 +180,7 @@ float Norm<vnt_l_two, true, tags::OpenCL::GPU>::value(const DenseVectorContinuou
     PROFILER_START("Norm l2 true tags::OpenCL::GPU");
 
     float result(0);
-    if (x.size() < 16 * 128)
+    if (x.size() < 32 * 128)
     {
         x.lock(lm_read_only);
         for (unsigned long i(0) ; i < x.size() ; ++i)
@@ -205,7 +205,7 @@ double Norm<vnt_l_two, true, tags::OpenCL::GPU>::value(const DenseVectorContinuo
     PROFILER_START("Norm l2 true tags::OpenCL::GPU");
 
     double result(0);
-    if (x.size() < 16 * 128)
+    if (x.size() < 32 * 128)
     {
         x.lock(lm_read_only);
         for (unsigned long i(0) ; i < x.size() ; ++i)
