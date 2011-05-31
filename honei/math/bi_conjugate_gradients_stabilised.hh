@@ -49,6 +49,7 @@ namespace honei
 #if (defined SOLVER_VERBOSE_L2 || defined SOLVER_VERBOSE_L3)
                 std::cout << "Calling CG solver, preconditioning=VAR, datalayout=ELL" << std::endl;
 #endif
+                bool converged(false);
                 DenseVector<DT_> r(right_hand_side.size(), DT_(0));
                 Defect<Tag_>::value(r, right_hand_side, system_matrix, x);
 
@@ -73,11 +74,12 @@ namespace honei
                     //std::cout << "iter:" << i << std::endl;
                     rho_new = DotProduct<Tag_>::value(r_tilde, r);
                     //if(fabs(rho_new) <= std::numeric_limits<DT_>::epsilon())
-                    if(fabs(rho_new) <= std::numeric_limits<DT_>::epsilon())
+                    if(fabs(rho_new)  <= std::numeric_limits<DT_>::epsilon())
                     {
-                        std::cout << "Method fails!" << std::endl;
+                        std::cout << "Search vectors orthogonal!" << std::endl;
                         DT_ norm_failed(Norm<vnt_l_two, true, Tag_>::value(r));
                         std::cout << "norm: " << norm_failed << " at iteration " << i << std::endl;
+                        converged = true;
                         break;
                     }
 
@@ -126,19 +128,21 @@ namespace honei
                     if(norm / norm_initial <= eps_relative)
                     {
                         std::cout << "2nd Converged with norm" << norm << " in iteration " << i << std::endl;
+                        converged = true;
                         break;
                     }
 
                     if(fabs(omega) < std::numeric_limits<DT_>::epsilon())
                     {
                         std::cout << "Omega near zero, aborting." << std::endl;
+                        converged = true;
                         break;
                     }
 
                     rho_old = rho_new;
                 }
-
-                std::cout << "No convergence after " << max_iters << " iterations. Norm: " << Norm<vnt_l_two, true, Tag_>::value(r) << std::endl;
+                if(!converged)
+                    std::cout << "No convergence after " << max_iters << " iterations. Norm: " << Norm<vnt_l_two, true, Tag_>::value(r) << std::endl;
 
             }
         };
