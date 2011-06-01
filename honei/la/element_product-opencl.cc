@@ -164,6 +164,6 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::OpenCL::GPU>::value(Den
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
 
-    PROFILER_START("ElementProduct tags::OpenCL::GPU");
+    PROFILER_STOP("ElementProduct tags::OpenCL::GPU");
     return r;
 }
