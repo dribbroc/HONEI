@@ -33,6 +33,35 @@ namespace honei
             }
     };
 
+    class OperatorList
+    {
+        private:
+            std::vector<Operator*> _ops;
+
+        public:
+            ~OperatorList()
+            {
+                for (unsigned long i(0) ; i < _ops.size() ; ++i)
+                    delete _ops.at(i);
+            }
+
+            void push_back(Operator * op)
+            {
+                _ops.push_back(op);
+            }
+
+            void value()
+            {
+                for (unsigned long i(0) ; i < _ops.size() ; ++i)
+                    _ops.at(i)->value();
+            }
+
+            Operator* operator[](unsigned long i)
+            {
+                return _ops.at(i);
+            }
+    };
+
     template<typename Tag_, typename MatType_, typename DT_>
     class DefectOperator : public Operator
     {
