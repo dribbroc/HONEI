@@ -31,17 +31,15 @@ class OperatorTest:
             DenseVector<double> rhs(system.rows(), double(1));
             DenseVector<double> x(system.rows(), double(0));
 
-            Operator* defop;
-            defop = new DefectOperator<Tag_, SparseMatrixELL<double>, double>(result_1, rhs, system, x);
+            OperatorList defop;
+            defop.push_back(new DefectOperator<Tag_, SparseMatrixELL<double>, double>(result_1, rhs, system, x));
 
-            defop->value();
+            defop.value();
 
             Defect<Tag_>::value(result_2, rhs, system, x);
 
             for(unsigned long i(0) ; i < x.size() ; ++i)
                 TEST_CHECK_EQUAL_WITHIN_EPS(result_2[i], result_1[i], std::numeric_limits<double>::epsilon());
-
-            delete defop;
         }
 };
 OperatorTest<tags::CPU> oest_cpu("cpu double");
