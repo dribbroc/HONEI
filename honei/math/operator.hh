@@ -21,6 +21,9 @@
 #define MATH_GUARD_OPERATOR_HH 1
 
 #include <honei/math/defect.hh>
+#include <honei/la/norm.hh>
+#include <honei/la/sum.hh>
+#include <honei/la/scaled_sum.hh>
 
 namespace honei
 {
@@ -88,6 +91,80 @@ namespace honei
             DenseVector<DT_> _b;
             MatType_ _A;
             DenseVector<DT_> _x;
+    };
+
+    template<typename Tag_, VectorNormType normtype, typename DT_, bool root>
+    class NormOperator : public Operator
+    {
+        public:
+            NormOperator(DT_& y, DenseVector<DT_>& x) :
+                _x(x),
+                _y(y)
+        {
+        }
+
+            virtual void value()
+            {
+                _y = Norm<normtype, root, Tag_>::value(_x);
+            }
+
+            virtual ~NormOperator()
+            {
+            }
+
+        private:
+            DenseVector<DT_> _x;
+            DT_& _y;
+    };
+
+    template<typename Tag_, typename DT_>
+    class SumOperator : public Operator
+    {
+        public:
+            SumOperator(DenseVector<DT_>& y, DenseVector<DT_>& x) :
+                _x(x),
+                _y(y)
+        {
+        }
+
+            virtual void value()
+            {
+                Sum<Tag_>::value(_y, _x);
+            }
+
+            virtual ~SumOperator()
+            {
+            }
+
+        private:
+            DenseVector<DT_> _x;
+            DenseVector<DT_> _y;
+    };
+
+    template<typename Tag_, typename DT_>
+    class ScaledSumOperator : public Operator
+    {
+        public:
+            ScaledSumOperator(DenseVector<DT_>& y, DenseVector<DT_>& x, DT_ alpha) :
+                _x(x),
+                _y(y),
+                _alpha(alpha)
+        {
+        }
+
+            virtual void value()
+            {
+                ScaledSum<Tag_>::value(_y, _x, _alpha);
+            }
+
+            virtual ~ScaledSumOperator()
+            {
+            }
+
+        private:
+            DenseVector<DT_> _x;
+            DenseVector<DT_> _y;
+            DT_ _alpha;
     };
 }
 #endif

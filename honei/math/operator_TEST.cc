@@ -40,6 +40,37 @@ class OperatorTest:
 
             for(unsigned long i(0) ; i < x.size() ; ++i)
                 TEST_CHECK_EQUAL_WITHIN_EPS(result_2[i], result_1[i], std::numeric_limits<double>::epsilon());
+
+            Operator* sumop;
+            sumop = new SumOperator<Tag_, double>(result_1, rhs);
+            Sum<Tag_>::value(result_2, rhs);
+
+            sumop->value();
+
+            for(unsigned long i(0) ; i < x.size() ; ++i)
+                TEST_CHECK_EQUAL_WITHIN_EPS(result_2[i], result_1[i], std::numeric_limits<double>::epsilon());
+
+            Operator* axpyop;
+            axpyop = new ScaledSumOperator<Tag_, double>(result_1, rhs, double(2));
+            ScaledSum<Tag_>::value(result_2, rhs, double(2));
+
+            axpyop->value();
+
+            for(unsigned long i(0) ; i < x.size() ; ++i)
+                TEST_CHECK_EQUAL_WITHIN_EPS(result_2[i], result_1[i], std::numeric_limits<double>::epsilon());
+
+            Operator* normop;
+            double norm_1;
+            normop = new NormOperator<Tag_, vnt_l_two, double, true>(norm_1, rhs);
+            double norm_2 = Norm<vnt_l_two, true, Tag_>::value(rhs);
+
+            normop->value();
+
+            TEST_CHECK_EQUAL_WITHIN_EPS(norm_1, norm_2, std::numeric_limits<double>::epsilon());
+
+            delete axpyop;
+            delete sumop;
+            delete normop;
         }
 };
 OperatorTest<tags::CPU> oest_cpu("cpu double");
