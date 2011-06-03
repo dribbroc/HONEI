@@ -28,10 +28,13 @@
 #include <honei/util/configuration.hh>
 #include <honei/backends/multicore/operation.hh>
 #include <honei/backends/multicore/thread_pool.hh>
+#include <honei/la/product.hh>
+#include <honei/math/ludecomposition.hh>
 #include <vector>
 #include <algorithm>
 #include <iostream>
-#include <mkl_lapacke.h>
+//#include <mkl_lapacke.h>
+//#include <omp.h>
 
 //based on "Parallel Preconditioning with Sparse Approximate Inverses" by Grote et al.
 namespace honei
@@ -98,11 +101,27 @@ namespace honei
                     }
                 }
 
-                LAPACKE_dgels(LAPACK_ROW_MAJOR, 'N', At.rows(), At.columns(), 1, At.elements(), At.columns(), et.elements(), 1);
-
+                /*LAPACKE_dgels(LAPACK_ROW_MAJOR, 'N', At.rows(), At.columns(), 1, At.elements(), At.columns(), et.elements(), 1);
                 for (unsigned long i(0) ; i < n2 ; ++i)
                 {
                     M(A.column(idx).indices()[i], idx, et[i]);
+                }*/
+
+                DenseMatrix<DT_> Atrans(n2, n1);
+                for (unsigned long i(0) ; i < At.rows() ; ++i)
+                {
+                    for (unsigned long j(0) ; j < At.columns() ; ++j)
+                    {
+                        Atrans(j, i) = At(i, j);
+                    }
+                }
+                DenseMatrix<DT_> product = Product<tags::CPU>::value(Atrans, At);
+                DenseVector<DT_> pro_v = Product<tags::CPU>::value(Atrans, et);
+                DenseVector<DT_> res(product.columns());
+                LUDecomposition<tags::CPU>::value(product, pro_v, res);
+                for (unsigned long i(0) ; i < n2 ; ++i)
+                {
+                    M(A.column(idx).indices()[i], idx, res[i]);
                 }
             }
 
@@ -158,9 +177,23 @@ namespace honei
                     }
                 }
 
-                LAPACKE_dgels(LAPACK_ROW_MAJOR, 'N', At.rows(), At.columns(), 1, At.elements(), At.columns(), et.elements(), 1);
+                //LAPACKE_dgels(LAPACK_ROW_MAJOR, 'N', At.rows(), At.columns(), 1, At.elements(), At.columns(), et.elements(), 1);
+                //result[idx] = et[0];
 
-                result[idx] = et[0];
+                DenseMatrix<DT_> Atrans(n2, n1);
+                for (unsigned long i(0) ; i < At.rows() ; ++i)
+                {
+                    for (unsigned long j(0) ; j < At.columns() ; ++j)
+                    {
+                        Atrans(j, i) = At(i, j);
+                    }
+                }
+                DenseMatrix<DT_> product = Product<tags::CPU>::value(Atrans, At);
+                DenseVector<DT_> pro_v = Product<tags::CPU>::value(Atrans, et);
+                DenseVector<DT_> res(product.columns());
+                LUDecomposition<tags::CPU>::value(product, pro_v, res);
+                result[idx] = res[0];
+
             }
 
             return result;
@@ -174,6 +207,7 @@ namespace honei
             template <typename DT_>
             static SparseMatrix<DT_> & value(SparseMatrix<DT_> & M, const SparseMatrix<DT_> & A)
             {
+                //omp_set_num_threads(1);
                 unsigned long max_count(Configuration::instance()->get_value("mc::Product(DV,SMELL,DV)::max_count",
                             mc::ThreadPool::instance()->num_threads()));
 

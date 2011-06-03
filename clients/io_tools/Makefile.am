@@ -118,6 +118,7 @@ ell2spai_LDADD = \
 	$(top_builddir)/honei/math/spai/lapack/liblapack.la \
 	$(top_builddir)/honei/math/spai/blas/libblas.la \
 	$(BACKEND_LIBS)
+#ell2spai_LDFLAGS = -Wl,--start-group -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -Wl,--end-group -lpthread -fopenmp
 
 ell2sainv_SOURCES = elltosainv.cc
 ell2sainv_LDADD = \
