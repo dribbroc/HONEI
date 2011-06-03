@@ -119,7 +119,7 @@ class PBiCGStabELLTEST:
         }
 };
 PBiCGStabELLTEST<tags::CPU, double> pbicgstab_test_double_sparse_ell("double", "poisson_advanced/sort_0/A_7.ell", "poisson_advanced/sort_0/A_7_spai.ell", "poisson_advanced/sort_0/rhs_7", "poisson_advanced/sort_0/sol_7", "poisson_advanced/sort_0/init_7");
-PBiCGStabELLTEST<tags::CPU::MultiCore, double> mc_pbicgstab_test_double_sparse_ell("double", "poisson_advanced/sort_0/A_7.ell", "poisson_advanced/sort_0/A_7_spai.ell", "poisson_advanced/sort_0/rhs_7", "poisson_advanced/sort_0/sol_7", "poisson_advanced/sort_0/init_7");
+//PBiCGStabELLTEST<tags::CPU::MultiCore, double> mc_pbicgstab_test_double_sparse_ell("double", "poisson_advanced/sort_0/A_7.ell", "poisson_advanced/sort_0/A_7_spai.ell", "poisson_advanced/sort_0/rhs_7", "poisson_advanced/sort_0/sol_7", "poisson_advanced/sort_0/init_7");
 #ifdef HONEI_SSE
 PBiCGStabELLTEST<tags::CPU::SSE, double> sse_pbicgstab_test_double_sparse_ell("double", "poisson_advanced/sort_0/A_7.ell", "poisson_advanced/sort_0/A_7_spai.ell", "poisson_advanced/sort_0/rhs_7", "poisson_advanced/sort_0/sol_7", "poisson_advanced/sort_0/init_7");
 PBiCGStabELLTEST<tags::CPU::MultiCore::SSE, double> mcsse_pbicgstab_test_double_sparse_ell("double", "poisson_advanced/sort_0/A_7.ell", "poisson_advanced/sort_0/A_7_spai.ell", "poisson_advanced/sort_0/rhs_7", "poisson_advanced/sort_0/sol_7", "poisson_advanced/sort_0/init_7");
