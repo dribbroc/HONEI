@@ -75,23 +75,22 @@ namespace honei
             threads(Configuration::instance()->get_value("ell::threads", 1)),
             Aj(1),
             Ax(1),
-            Arl(1),
-            rows(1),
-            columns(1)
+            Arl(src.rows(), 0),
+            rows(src.rows()),
+            columns(src.columns())
         {
-            rows = src.rows();
-            columns = src.columns();
+            /// \todo add thread optimisation heuristic
+            //if (threads == 0)...
 
             num_cols_per_row = 1;
             for (unsigned long i(0) ; i < rows ; ++i)
             {
+                Arl[i] = ceil(double(src[i].used_elements() / double(threads)));
                 if (src[i].used_elements() > num_cols_per_row)
                 {
                     num_cols_per_row = src[i].used_elements();
                 }
             }
-            /// \todo add thread optimisation heuristic
-            //if (threads == 0)...
             num_cols_per_row = ceil(double(num_cols_per_row) / double(threads));
             /// \todo remove hardcoded numbers
             unsigned long alignment(32);
@@ -117,7 +116,7 @@ namespace honei
 
             Aj = pAj;
             Ax = pAx;
-            Arl = row_length();
+            //Arl = row_length();
         }
 
         private:
