@@ -163,9 +163,12 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & result, SparseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
+        static SparseMatrix<DT1_> & value(SparseMatrix<DT1_> & result, const SparseMatrix<DT1_> & a, const SparseMatrix<DT2_> & b)
         {
             CONTEXT("When subtracting SparseMatrix from SparseMatrix:");
+
+            SparseMatrix<DT1_> r2(result.rows(), result.columns());
+            result = r2;
 
             if (a.columns() != b.columns())
             {
