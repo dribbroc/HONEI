@@ -272,13 +272,15 @@ namespace honei
         ASSERT(index < this->_imp->_size, "index '" + stringify(index) + "' exceeds size '" +
                 stringify(this->_imp->_size) + "'!");
 
+        const unsigned long * indices(this->_imp->_indices.get());
+        const DataType_ * elements(this->_imp->_elements.get());
+        const unsigned long used_elements(this->_imp->_used_elements);
         unsigned long i(0);
-
-        for ( ; (i < this->_imp->_used_elements) && (this->_imp->_indices[i] < index) ; ++i)
+        for ( ; (i < used_elements) && (indices[i] < index) ; ++i)
             ;
 
-        if (this->_imp->_indices[i] == index)
-            return this->_imp->_elements[i];
+        if (indices[i] == index)
+            return elements[i];
         else
             return _zero_element;
     }
@@ -290,12 +292,14 @@ namespace honei
         ASSERT(index < this->_imp->_size, "index '" + stringify(index) + "' exceeds size '" +
                 stringify(this->_imp->_size) + "'!");
 
+        const unsigned long * indices(this->_imp->_indices.get());
+        const unsigned long used_elements(this->_imp->_used_elements);
         unsigned long i(0);
 
-        for ( ; (i < this->_imp->_used_elements) && (this->_imp->_indices[i] < index) ; ++i)
+        for ( ; (i < used_elements) && (indices[i] < index) ; ++i)
             ;
 
-        if (this->_imp->_indices[i] != index)
+        if (indices[i] != index)
             _insert_element(i, index);
 
         return this->_imp->_elements[i];
