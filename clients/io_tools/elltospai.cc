@@ -22,7 +22,7 @@
 #include <honei/math/matrix_io.hh>
 #include <honei/la/sparse_matrix.hh>
 #include <honei/la/sparse_matrix_ell.hh>
-#include <honei/math/spai.hh>
+#include <honei/math/spai2.hh>
 
 using namespace honei;
 
@@ -45,7 +45,8 @@ int main(int argc, char ** argv)
 
     SparseMatrixELL<double> smatrix(MatrixIO<io_formats::ELL>::read_matrix(input, double(0)));
     SparseMatrix<double> ssmatrix(smatrix);
-    SparseMatrix<double> sspai(SPAI::value(ssmatrix));
+    SparseMatrix<double> sspai(ssmatrix.copy());
+    SPAI2<tags::CPU::MultiCore>::value(sspai, ssmatrix);
     SparseMatrixELL<double> spai(sspai);
 
     // Write out spai matrix
