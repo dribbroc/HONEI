@@ -50,6 +50,12 @@ namespace honei
     {
     };
 
+    /**
+     * \brief Solution of linear system with CG. No preconditioning.
+     *
+     * \ingroup grpmatrixoperations
+     * \ingroup grpvectoroperations
+     */
     template <typename Tag_>
     struct CG<Tag_, methods::NONE>
     {
@@ -70,13 +76,12 @@ namespace honei
 
                 DT_ alpha, alpha_old, lambda, initial_defect;
                 unsigned long iterations(0);
-                //r=p=b-Ax
+
                 Defect<Tag_>::value(r, b, A, x);
                 copy<Tag_>(r, p);
+
                 alpha = Norm<vnt_l_two, false, Tag_>::value(r);
                 initial_defect = sqrt(alpha);
-                //std::cout << "Initial defect NORM: " << initial_defect << std::endl;
-                //std::cout << "Initial alpha: " << alpha << std::endl;
                 while(iterations < max_iters)
                 {
                     Product<Tag_>::value(v, A, p);
@@ -95,19 +100,16 @@ namespace honei
                     if(current_defect < eps_relative * initial_defect)
                     {
                         used_iters = iterations + 1;
-                        //std::cout << "Final defect NORM: " << current_defect << " after " << iterations << " iterations." << std::endl;
                         break;
                     }
                     if(current_defect < eps_relative)
                     {
                         used_iters = iterations + 1;
-                        //std::cout << "ABORT. Final defect NORM: " << current_defect << " after " << iterations << " iterations." << std::endl;
                         break;
                     }
-                    if(iterations == max_iters + 1)
+                    if(iterations == max_iters)
                     {
                         used_iters = iterations;
-                        //std::cout << "NO CONVERGENCE after " << max_iters << " iterations! Norm: " << current_defect << std::endl;
                     }
                 }
 

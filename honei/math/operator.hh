@@ -24,6 +24,7 @@
 #include <honei/la/norm.hh>
 #include <honei/la/sum.hh>
 #include <honei/la/scaled_sum.hh>
+#include <honei/math/cg.hh>
 
 namespace honei
 {
@@ -165,6 +166,40 @@ namespace honei
             DenseVector<DT_> _x;
             DenseVector<DT_> _y;
             DT_ _alpha;
+    };
+
+    template<typename Tag_, typename SolverType_, typename MatrixType_, typename DT_>
+    class SolverOperator : public Operator
+    {
+        //TODO: how to build in preconditioning -> standard-value?
+        public:
+            SolverOperator(MatrixType_ & A,
+                           DenseVector<DT_> & b,
+                           DenseVector<DT_> & x,
+                           unsigned long max_iters,
+                           unsigned long & used_iters,
+                           DT_ eps_relative = 1e-8) :
+                _A(A),
+                _b(b),
+                _x(x),
+                _max_iters(max_iters),
+                _used_iters(used_iters),
+                _eps_relative(eps_relative)
+            {
+            }
+
+            virtual void value()
+            {
+                SolverType_::value(_A, _b, _x, _max_iters, _used_iters, _eps_relative);
+            }
+
+        private:
+            MatrixType_ _A;
+            DenseVector<DT_> _b;
+            DenseVector<DT_> _x;
+            unsigned long _max_iters;
+            unsigned long & _used_iters;
+            DT_ _eps_relative;
     };
 }
 #endif

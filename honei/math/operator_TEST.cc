@@ -5,6 +5,7 @@
 #include <honei/la/sparse_matrix_ell.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/math/matrix_io.hh>
+#include <honei/math/vector_io.hh>
 
 using namespace honei;
 using namespace tests;
@@ -68,9 +69,33 @@ class OperatorTest:
 
             TEST_CHECK_EQUAL_WITHIN_EPS(norm_1, norm_2, std::numeric_limits<double>::epsilon());
 
+            Operator* cgop;
+            std::string filename2(HONEI_SOURCEDIR);
+            filename2 += "/honei/math/testdata/poisson_advanced/sort_0/rhs_7";
+            DenseVector<double> b(VectorIO<io_formats::EXP>::read_vector(filename2, double(0)));
+
+            std::string filename3(HONEI_SOURCEDIR);
+            filename3 += "/honei/math/testdata/poisson_advanced/sort_0/init_7";
+            DenseVector<double> x1(VectorIO<io_formats::EXP>::read_vector(filename3, double(0)));
+            DenseVector<double> x2(x1.copy());
+
+            unsigned long used_iters(0);
+            cgop = new SolverOperator<Tag_, CG<Tag_, methods::NONE>, SparseMatrixELL<double>, double>(system, b, x1, 1000ul, used_iters, double(1e-8));
+            cgop->value();
+
+            unsigned long used_iters2(0);
+            CG<Tag_, methods::NONE>::value(system, b, x2, 1000ul, used_iters2, double(1e-8));
+
+            TEST_CHECK_EQUAL(used_iters, used_iters2);
+            for(unsigned long i(0) ; i < x1.size() ; ++i)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(x1[i], x2[i], std::numeric_limits<double>::epsilon());
+            }
+
+            delete cgop;
             delete axpyop;
             delete sumop;
             delete normop;
         }
 };
-OperatorTest<tags::CPU> oest_cpu("cpu double");
+OperatorTest<tags::CPU> otest_cpu("cpu");
