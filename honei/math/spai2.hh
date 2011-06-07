@@ -24,6 +24,10 @@
 #include <honei/util/tags.hh>
 #include <honei/la/sparse_matrix.hh>
 #include <honei/la/dense_matrix.hh>
+#include <honei/util/operation_wrapper.hh>
+#include <honei/util/configuration.hh>
+#include <honei/backends/multicore/operation.hh>
+#include <honei/backends/multicore/thread_pool.hh>
 #include <vector>
 #include <algorithm>
 #include <iostream>
@@ -31,14 +35,20 @@
 
 namespace honei
 {
-
+    template <typename Tag_>
     struct SPAI2
     {
+    };
+
+    template <>
+    struct SPAI2<tags::CPU>
+    {
         template <typename DT_>
-        static SparseMatrix<DT_> value(const SparseMatrix<DT_> & A)
+        static SparseMatrix<DT_> & value(SparseMatrix<DT_> & M, const SparseMatrix<DT_> & A, unsigned long col_start = 0, unsigned long col_end = 0)
         {
-            SparseMatrix<DT_> M(A.copy());
-            for (unsigned long idx(0) ; idx < A.columns() ; ++idx)
+            if (col_end == 0)
+                col_end = A.columns();
+            for (unsigned long idx(col_start) ; idx < col_end ; ++idx)
             {
                 unsigned long n2(A.column(idx).used_elements());
                 if (n2 == 0)
@@ -97,6 +107,45 @@ namespace honei
 
             return M;
         }
+    };
+
+    namespace mc
+    {
+        template <typename Tag_> struct SPAI2
+        {
+            template <typename DT_>
+            static SparseMatrix<DT_> & value(SparseMatrix<DT_> & M, const SparseMatrix<DT_> & A)
+            {
+                unsigned long max_count(Configuration::instance()->get_value("mc::Product(DV,SMELL,DV)::max_count",
+                            mc::ThreadPool::instance()->num_threads()));
+
+                TicketVector tickets;
+
+                unsigned long limits[max_count + 1];
+                limits[0] = 0;
+                for (unsigned long i(1) ; i < max_count; ++i)
+                {
+                    limits[i] = limits[i-1] + A.columns() / max_count;
+                }
+                limits[max_count] = A.columns();
+
+                for (unsigned long i(0) ; i < max_count ; ++i)
+                {
+                    OperationWrapper<honei::SPAI2<typename Tag_::DelegateTo>, SparseMatrix<DT_>,
+                        SparseMatrix<DT_>, SparseMatrix<DT_>, unsigned long, unsigned long > wrapper(M);
+                    tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, M, A, limits[i], limits[i+1])));
+                }
+
+                tickets.wait();
+
+                return M;
+            }
+        };
+    }
+
+    template <> struct SPAI2<tags::CPU::MultiCore> :
+        public mc::SPAI2<tags::CPU::MultiCore>
+    {
     };
 }
 #endif

@@ -53,7 +53,8 @@ class Spai2TestSparse:
             for (unsigned i(0) ; i < sm.rows() ; ++i)
                 used_elements+= sm[i].used_elements();
             std::cout<<"Non Zero Elements of A: "<<used_elements<<std::endl;
-            SparseMatrix<DT_> m(SPAI2::value(sm));
+            SparseMatrix<DT_> m(sm.copy());
+            SPAI2<Tag_>::value(m, sm);
             used_elements = 0;
             for (unsigned i(0) ; i < m.rows() ; ++i)
                 used_elements+= m[i].used_elements();
@@ -79,3 +80,4 @@ class Spai2TestSparse:
 
 //Spai2TestSparse<tags::CPU, float> spai2_test_sparse_ell_float("float");
 Spai2TestSparse<tags::CPU, double> spai2_test_sparse_ell_double("double");
+Spai2TestSparse<tags::CPU::MultiCore, double> mc_spai2_test_sparse_ell_double("double");
