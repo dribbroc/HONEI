@@ -102,10 +102,7 @@ namespace honei
         template<typename DT1_, typename DT2_>
         static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
         {
-            //TODO
-            DenseVector<DT1_> temp(a.copy());
-            ElementProduct<Tag_>::value(temp, b);
-            copy<Tag_>(temp, y);
+            ElementProduct<Tag_>::value(y, a, b);
             return y;
         }
 
@@ -1359,6 +1356,13 @@ namespace honei
 
         static DenseVector<double> value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b);
 
+        template<typename DT1_, typename DT2_>
+        static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
+        {
+            ElementProduct<tags::OpenCL::CPU>::value(y, a, b);
+            return y;
+        }
+
         /// \}
     };
 
@@ -1385,6 +1389,13 @@ namespace honei
         static DenseVector<float> value(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b);
 
         static DenseVector<double> value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b);
+
+        template<typename DT1_, typename DT2_>
+        static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
+        {
+            ElementProduct<tags::OpenCL::GPU>::value(y, a, b);
+            return y;
+        }
 
         /// \}
     };
@@ -1442,10 +1453,7 @@ namespace honei
         template<typename DT1_, typename DT2_>
         static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
         {
-            //TODO
-            DenseVector<DT1_> temp(a.copy());
-            ElementProduct<tags::GPU::CUDA>::value(temp, b);
-            copy<tags::GPU::CUDA>(temp, y);
+            ElementProduct<tags::GPU::CUDA>::value(y, a, b);
             return y;
         }
         /// \}
@@ -1551,10 +1559,7 @@ namespace honei
         template<typename DT1_, typename DT2_>
         static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
         {
-            //TODO
-            DenseVector<DT1_> temp(a.copy());
-            ElementProduct<tags::CPU::SSE>::value(temp, b);
-            copy<tags::CPU::SSE>(temp, y);
+            ElementProduct<tags::CPU::SSE>::value(y, a, b);
             return y;
         }
         /// \}
@@ -1590,10 +1595,7 @@ namespace honei
             template<typename DT1_, typename DT2_>
             static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
             {
-                //TODO
-                DenseVector<DT1_> temp(a.copy());
-                ElementProduct<Tag_>::value(temp, b);
-                copy<Tag_>(temp, y);
+                ElementProduct<Tag_>::value(y, a, b);
                 return y;
             }
 

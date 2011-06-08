@@ -276,7 +276,7 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::MultiCore::CUDA>::
 }
 #endif
 
-DenseVectorContinuousBase<float> & ElementProduct<tags::GPU::CUDA>::value(DenseVectorContinuousBase<float> & result, DenseVectorContinuousBase<float> & a,
+DenseVectorContinuousBase<float> & ElementProduct<tags::GPU::CUDA>::value(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & a,
         const DenseVectorContinuousBase<float> & b)
 {
     CONTEXT("When multiplying DenseVectorContinuousBase<float> and DenseVectorContinuousBase<float> elementwise "
@@ -302,7 +302,7 @@ DenseVectorContinuousBase<float> & ElementProduct<tags::GPU::CUDA>::value(DenseV
 }
 
 #ifdef HONEI_CUDA_DOUBLE
-DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::CUDA>::value(DenseVectorContinuousBase<double> & result, DenseVectorContinuousBase<double> & a,
+DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::CUDA>::value(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & a,
         const DenseVectorContinuousBase<double> & b)
 {
     CONTEXT("When multiplying DenseVectorContinuousBase<double> and DenseVectorContinuousBase<double> elementwise "
@@ -330,7 +330,7 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::CUDA>::value(Dense
 }
 #endif
 
-DenseVectorContinuousBase<float> & ElementProduct<tags::GPU::MultiCore::CUDA>::value(DenseVectorContinuousBase<float> & result, DenseVectorContinuousBase<float> & a,
+DenseVectorContinuousBase<float> & ElementProduct<tags::GPU::MultiCore::CUDA>::value(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & a,
         const DenseVectorContinuousBase<float> & b)
 {
     CONTEXT("When multiplying DenseVectorContinuousBase<float> and DenseVectorContinuousBase<float> elementwise "
@@ -363,7 +363,7 @@ DenseVectorContinuousBase<float> & ElementProduct<tags::GPU::MultiCore::CUDA>::v
 }
 
 #ifdef HONEI_CUDA_DOUBLE
-DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::MultiCore::CUDA>::value(DenseVectorContinuousBase<double> & result, DenseVectorContinuousBase<double> & a,
+DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::MultiCore::CUDA>::value(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & a,
         const DenseVectorContinuousBase<double> & b)
 {
     CONTEXT("When multiplying DenseVectorContinuousBase<double> and DenseVectorContinuousBase<double> elementwise "

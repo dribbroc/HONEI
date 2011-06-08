@@ -124,6 +124,24 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
+        static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
+        {
+            CONTEXT("When calculating the product of DenseVectorContinuousBases elements:");
+
+            typename DenseVectorBase<DT1_>::ConstElementIterator a_i(a.begin_elements());
+            typename DenseVectorBase<DT2_>::ConstElementIterator b_i(b.begin_elements());
+            typename DenseVectorBase<DT2_>::ElementIterator res_i(y.begin_elements());
+            for (typename DenseVectorBase<DT1_>::ConstElementIterator a_i_end(a.end_elements()) ; a_i != a_i_end ; ++a_i)
+            {
+                *res_i = *a_i * *b_i;
+                ++b_i;
+                ++res_i;
+            }
+
+            return y;
+        }
+
+        template <typename DT1_, typename DT2_>
         static SparseVector<DT1_> value(SparseVector<DT1_> & a, const SparseVector<DT2_> & b)
         {
             CONTEXT("When calculating the product of SparseVector elements:");
@@ -554,9 +572,9 @@ namespace honei
 
         static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
 
-        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & result, DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
 
-        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & result, DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
 
         static DenseMatrix<float> & value(DenseMatrix<float> & a, const DenseMatrix<float> & b);
         /// \}
@@ -585,9 +603,9 @@ namespace honei
 
         static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
 
-        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & result, DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
 
-        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & result, DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
 
         /// \}
     };
