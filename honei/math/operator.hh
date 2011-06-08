@@ -25,6 +25,7 @@
 #include <honei/la/sum.hh>
 #include <honei/la/scaled_sum.hh>
 #include <honei/math/cg.hh>
+#include <honei/math/ri.hh>
 
 namespace honei
 {
@@ -200,6 +201,43 @@ namespace honei
             unsigned long _max_iters;
             unsigned long & _used_iters;
             DT_ _eps_relative;
+    };
+
+    template<typename Tag_, typename SmootherType_, typename MatrixType_, typename PreconContType_, typename DT_>
+    class SmootherOperator : public Operator
+    {
+        //TODO: more temps, non-matrix preconditioning
+        public:
+            SmootherOperator(MatrixType_ & A,
+                             PreconContType_ & P,
+                             DenseVector<DT_> & b,
+                             DenseVector<DT_> & x,
+                             DenseVector<DT_> & temp_0,
+                             DenseVector<DT_> & temp_1,
+                             unsigned long max_iters) :
+                _A(A),
+                _P(P),
+                _b(b),
+                _x(x),
+                _temp_0(temp_0),
+                _temp_1(temp_1),
+                _max_iters(max_iters)
+            {
+            }
+
+            virtual void value()
+            {
+                SmootherType_::value(_A, _P, _b, _x, _temp_0, _temp_1, _max_iters);
+            }
+
+        private:
+            MatrixType_ _A;
+            PreconContType_ _P;
+            DenseVector<DT_> _b;
+            DenseVector<DT_> _x;
+            DenseVector<DT_> _temp_0;
+            DenseVector<DT_> _temp_1;
+            unsigned long _max_iters;
     };
 }
 #endif

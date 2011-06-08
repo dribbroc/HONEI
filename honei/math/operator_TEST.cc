@@ -1,6 +1,6 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
-#include <operator.hh>
+#include <honei/math/operator.hh>
 #include <honei/util/unittest.hh>
 #include <honei/la/sparse_matrix_ell.hh>
 #include <honei/la/dense_vector.hh>
@@ -93,6 +93,30 @@ class OperatorTest:
                 TEST_CHECK_EQUAL_WITHIN_EPS(x1[i], x2[i], std::numeric_limits<double>::epsilon());
             }
 
+            Operator* riop;
+
+            DenseVector<double> x3(VectorIO<io_formats::EXP>::read_vector(filename3, double(0)));
+            DenseVector<double> x4(x3.copy());
+
+            DenseVector<double> t1(x3.size());
+            DenseVector<double> t2(x3.size());
+
+            DenseVector<double> diag_inverted(x3.size(), double(0));
+            for(unsigned long i(0) ; i < diag_inverted.size() ; ++i)
+            {
+                    diag_inverted[i] = double(0.7)/system(i, i);
+            }
+            riop = new SmootherOperator<Tag_, RISmoother<Tag_>, SparseMatrixELL<double>, DenseVector<double>, double>(system, diag_inverted, b, x3, t1, t2, 1000ul);
+            riop->value();
+
+            RISmoother<Tag_>::value(system, diag_inverted, b, x4, t1, t2, 1000ul);
+
+            for(unsigned long i(0) ; i < x4.size() ; ++i)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(x3[i], x4[i], std::numeric_limits<double>::epsilon());
+            }
+
+            delete riop;
             delete cgop;
             delete axpyop;
             delete sumop;
