@@ -355,6 +355,58 @@ DenseVector<double> Product<tags::GPU::CUDA>::value(const BandedMatrixQ1<double>
 }
 #endif
 
+DenseVector<float> & Product<tags::GPU::CUDA>::value(DenseVector<float> & result, const BandedMatrixQ1<float> & a, const DenseVectorContinuousBase<float> & b)
+{
+    CONTEXT("When multiplying BandedMatrixQ1<float> with DenseVectorContinuousBase<float> (CUDA):");
+
+    if (b.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+    }
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_bmdv_q1_float", 128ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaProductBMQ1DVfloat task(result, a, b, blocksize);
+        task();
+    }
+    else
+    {
+        cudaProductBMQ1DVfloat task(result, a, b, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
+
+    return result;
+}
+
+#ifdef HONEI_CUDA_DOUBLE
+DenseVector<double> & Product<tags::GPU::CUDA>::value(DenseVector<double> & result, const BandedMatrixQ1<double> & a, const DenseVectorContinuousBase<double> & b)
+{
+    CONTEXT("When multiplying BandedMatrixQ1<double> with DenseVectorContinuousBase<double> (CUDA):");
+
+    if (b.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+    }
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_bmdv_q1_double", 128ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaProductBMQ1DVdouble task(result, a, b, blocksize);
+        task();
+    }
+    else
+    {
+        cudaProductBMQ1DVdouble task(result, a, b, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
+
+    return result;
+}
+#endif
+
 DenseVector<float> & Product<tags::GPU::CUDA>::value(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b)
 {
     CONTEXT("When multiplying SparseMatrixELL<float> with DenseVectorContinuousBase<float> (CUDA):");

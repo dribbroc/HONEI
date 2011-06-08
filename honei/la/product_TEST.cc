@@ -220,6 +220,8 @@ class Q1MatrixDenseVectorProductTest :
                 BandedMatrix<DataType_> bm2(bm1);
 
                 DenseVector<DataType_> prod(Product<Tag_>::value(bm1, dv1));
+                DenseVector<DataType_> prod2(prod.size());
+                Product<Tag_>::value(prod2, bm1, dv1);
 #ifdef HONEI_SSE
             DenseVector<DataType_> dv_ref(Product<tags::CPU::SSE>::value(bm2, dv1));
 #else
@@ -233,6 +235,14 @@ class Q1MatrixDenseVectorProductTest :
                     TEST_CHECK_EQUAL_WITHIN_EPS(*it, *dit, std::numeric_limits<DataType_>::epsilon());
                     },
                     prod.unlock(lm_read_only));
+
+            TEST(prod2.lock(lm_read_only),
+                    for (typename DenseVector<DataType_>::ConstElementIterator dit(dv_ref.begin_elements()), it(prod2.begin_elements()), i_end(prod2.end_elements()) ;
+                        it != i_end ; ++it, ++dit)
+                    {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*it, *dit, std::numeric_limits<DataType_>::epsilon());
+                    },
+                    prod2.unlock(lm_read_only));
             }
 
             DenseVector<DataType_> dv01(4, DataType_(1));
@@ -300,6 +310,8 @@ class Q1MatrixDenseVectorProductQuickTest :
             BandedMatrix<DataType_> bm2(bm1);
 
             DenseVector<DataType_> prod(Product<Tag_>::value(bm1, dv1));
+            DenseVector<DataType_> prod2(prod.size());
+            Product<Tag_>::value(prod2, bm1, dv1);
 #ifdef HONEI_SSE
             DenseVector<DataType_> dv_ref(Product<tags::CPU::SSE>::value(bm2, dv1));
 #else
@@ -313,6 +325,14 @@ class Q1MatrixDenseVectorProductQuickTest :
                     TEST_CHECK_EQUAL_WITHIN_EPS(*it, *dit, std::numeric_limits<DataType_>::epsilon());
                     },
                     prod.unlock(lm_read_only));
+
+            TEST(prod2.lock(lm_read_only),
+                    for (typename DenseVector<DataType_>::ConstElementIterator dit(dv_ref.begin_elements()), it(prod2.begin_elements()), i_end(prod2.end_elements()) ;
+                        it != i_end ; ++it, ++dit)
+                    {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*it, *dit, std::numeric_limits<DataType_>::epsilon());
+                    },
+                    prod2.unlock(lm_read_only));
 
             DenseVector<DataType_> dv01(4, DataType_(1));
             DenseVector<DataType_> dv02(1089, DataType_(1));
