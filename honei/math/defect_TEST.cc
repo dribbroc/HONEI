@@ -193,3 +193,89 @@ DefectRegressionTest<float, tags::OpenCL::GPU> ocl_gpu_regression_defect_test_fl
 DefectRegressionTest<double, tags::OpenCL::GPU> ocl_gpu_regression_defect_test_double_sparse("Regression double", "l2/area51_full_0.m", "l2/area51_rhs_0");
 #endif
 #endif
+
+template <typename Tag_, typename DataType_>
+class Q1MatrixDenseVectorDefectTest :
+    public BaseTest
+{
+    public:
+        Q1MatrixDenseVectorDefectTest(const std::string & type) :
+            BaseTest("q1_matrix_dense_vector_defect_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long size;
+            for (unsigned long level(1) ; level <= 10 ; ++level)
+            {
+                size  = (unsigned long)pow((pow(2, level) + 1), 2);
+                unsigned long num_limit(311); //value of used elements will be <= num_limit* size
+
+                DenseVector<DataType_> dv1(size, DataType_(1));
+                DenseVector<DataType_> dv2(size, DataType_(1));
+                DenseVector<DataType_> dv3(size, DataType_(1));
+                DenseVector<DataType_> dv4(size, DataType_(1));
+                DenseVector<DataType_> b(size, DataType_(0.4711));
+
+                for (unsigned long i(0); i < size; ++i)
+                {
+                    (dv1)[i]= DataType_((i + 2) % num_limit);
+                }
+                for (unsigned long i(0) ; i < size ; ++i)
+                {
+                    (dv2)[i]= DataType_((i + 1) % num_limit);
+                }
+                for (unsigned long i(0) ; i < size ; ++i)
+                {
+                    (dv3)[i]= DataType_((i + 25) % num_limit);
+                }
+                for (unsigned long i(0) ; i < size ; ++i)
+                {
+                    (dv4)[i]= DataType_((i + 7) % num_limit);
+                }
+
+                BandedMatrixQ1<DataType_> bm1(size, dv3, dv2, dv4, dv2, dv3, dv4, dv4, dv3, dv2);
+
+                DenseVector<DataType_> prod2(b.size());
+                Defect<Tag_>::value(prod2, b, bm1, dv1);
+#ifdef HONEI_SSE
+            DenseVector<DataType_> y_ref(b.copy());
+            Difference<tags::CPU::SSE>::value(y_ref ,Product<tags::CPU::SSE>::value(bm1, dv1));
+#else
+            DenseVector<DataType_> y_ref(b.copy());
+            Difference<tags::CPU>::value(y_ref ,Product<tags::CPU>::value(bm1, dv1));
+#endif
+
+            TEST(prod2.lock(lm_read_only),
+                    for (typename DenseVector<DataType_>::ConstElementIterator dit(y_ref.begin_elements()), it(prod2.begin_elements()), i_end(prod2.end_elements()) ;
+                        it != i_end ; ++it, ++dit)
+                    {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(*it, *dit, std::numeric_limits<DataType_>::epsilon());
+                    },
+                    prod2.unlock(lm_read_only));
+            }
+
+            DenseVector<DataType_> dv01(4, DataType_(1));
+            DenseVector<DataType_> dv02(1089, DataType_(1));
+            BandedMatrixQ1<DataType_> bm01(1089, dv02, dv02, dv02, dv02, dv02, dv02, dv02, dv02, dv02);
+            TEST_CHECK_THROWS(Product<Tag_>::value(bm01, dv01), VectorSizeDoesNotMatch);
+        }
+};
+Q1MatrixDenseVectorDefectTest<tags::CPU, float> q1_defect_test_float("float");
+Q1MatrixDenseVectorDefectTest<tags::CPU, double> q1_defect_test_double("double");
+//Q1MatrixDenseVectorDefectTest<tags::CPU::MultiCore, float> q1_prod_mc_test_float("MC float");
+//Q1MatrixDenseVectorDefectTest<tags::CPU::MultiCore, double> q1_prod_mc_test_double("MC double");
+#ifdef HONEI_SSE
+Q1MatrixDenseVectorDefectTest<tags::CPU::SSE, float> sse_q1_defect_test_float("float");
+Q1MatrixDenseVectorDefectTest<tags::CPU::SSE, double> sse_q1_defect_test_double("double");
+Q1MatrixDenseVectorDefectTest<tags::CPU::MultiCore::SSE, float> q1_prod_mc_sse_test_float("MC SSE float");
+Q1MatrixDenseVectorDefectTest<tags::CPU::MultiCore::SSE, double> q1_prod_mc_sse_test_double("MC SSE double");
+#endif
+#ifdef HONEI_CUDA
+Q1MatrixDenseVectorDefectTest<tags::GPU::CUDA, float> cuda_q1_defect_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+Q1MatrixDenseVectorDefectTest<tags::GPU::CUDA, double> cuda_q1_defect_test_double("double");
+#endif
+#endif

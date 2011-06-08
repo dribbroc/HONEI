@@ -80,7 +80,7 @@ namespace honei
 
                     unsigned long i(0);
                     //index 0
-                    x_new[i] = ((rhs [i] - (dd[i] * x_old[i] +
+                    x_new[i] = ((rhs[i] - (dd[i] * x_old[i] +
                                     du[i] * x_old[1] +
                                     ul[i] * x_old[root_n - 1] +
                                     ud[i] * x_old[root_n] +
@@ -222,7 +222,7 @@ namespace honei
 
                     unsigned long i(0);
                     //index 0
-                    x_new[i] = ((rhs [i] - (dd[i] * x_old[i] +
+                    x_new[i] = ((rhs[i] - (dd[i] * x_old[i] +
                                     du[i] * x_old[1] +
                                     ul[i] * x_old[root_n - 1] +
                                     ud[i] * x_old[root_n] +
