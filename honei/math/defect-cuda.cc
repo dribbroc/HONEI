@@ -281,6 +281,70 @@ DenseVector<double> Defect<tags::GPU::CUDA>::value(const DenseVectorContinuousBa
 }
 #endif
 
+DenseVector<float> & Defect<tags::GPU::CUDA>::value(DenseVector<float> & result, const DenseVectorContinuousBase<float> & rhs,
+        const BandedMatrixQ1<float> & a,
+        const DenseVectorContinuousBase<float> & b)
+{
+    CONTEXT("When calculating Defect<float> (CUDA):");
+
+    if (b.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+    }
+    if (rhs.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(rhs.size(), a.columns());
+    }
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_bmdv_q1_float", 128ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaDefectBMQ1DVfloat task(result, rhs, a, b, blocksize);
+        task();
+    }
+    else
+    {
+        cudaDefectBMQ1DVfloat task(result, rhs, a, b, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
+
+    return result;
+}
+
+#ifdef HONEI_CUDA_DOUBLE
+DenseVector<double> & Defect<tags::GPU::CUDA>::value(DenseVector<double> & result, const DenseVectorContinuousBase<double> & rhs,
+        const BandedMatrixQ1<double> & a,
+        const DenseVectorContinuousBase<double> & b)
+{
+    CONTEXT("When calculating Defect<double> (CUDA):");
+
+    if (b.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+    }
+    if (rhs.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(rhs.size(), a.columns());
+    }
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_bmdv_q1_double", 128ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaDefectBMQ1DVdouble task(result, rhs, a, b, blocksize);
+        task();
+    }
+    else
+    {
+        cudaDefectBMQ1DVdouble task(result, rhs, a, b, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+    }
+
+    return result;
+}
+#endif
+
 DenseVector<float> Defect<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<float> & rhs,
         const SparseMatrixELL<float> & a,
         const DenseVectorContinuousBase<float> & b)

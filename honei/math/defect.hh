@@ -40,7 +40,7 @@ namespace honei
     {
         public:
             template<typename DT_>
-                static DenseVector<DT_> value(DenseVector<DT_> & right_hand_side, BandedMatrixQ1<DT_> & system, DenseVector<DT_> & x)
+                static DenseVector<DT_> value(const DenseVector<DT_> & right_hand_side, const BandedMatrixQ1<DT_> & system, const DenseVector<DT_> & x)
                 {
                     /*DenseVector<DT_> result(right_hand_side.copy());
                       return Difference<tags::CPU>::value(result,Product<tags::CPU>::value(system, x) );
@@ -58,6 +58,148 @@ namespace honei
                     system.lock(lm_read_only);
                     x.lock(lm_read_only);
                     DenseVector<DT_> result(right_hand_side.size());
+                    result.lock(lm_write_only);
+                    unsigned long n = right_hand_side.size();
+                    unsigned long root_n = (unsigned long)sqrt(n);
+
+                    DT_ * rhs = right_hand_side.elements();
+                    DT_ * x_old = x.elements();
+                    DT_ * x_new = result.elements();
+
+                    DT_ * ll = system.band(LL).elements();
+                    DT_ * ld = system.band(LD).elements();
+                    DT_ * lu = system.band(LU).elements();
+
+                    DT_ * dl = system.band(DL).elements();
+                    DT_ * dd = system.band(DD).elements();
+                    DT_ * du = system.band(DU).elements();
+
+                    DT_ * ul = system.band(UL).elements();
+                    DT_ * ud = system.band(UD).elements();
+                    DT_ * uu = system.band(UU).elements();
+
+                    unsigned long i(0);
+                    //index 0
+                    x_new[i] = ((rhs [i] - (dd[i] * x_old[i] +
+                                    du[i] * x_old[1] +
+                                    ul[i] * x_old[root_n - 1] +
+                                    ud[i] * x_old[root_n] +
+                                    uu[i] * x_old[root_n + 1])));
+
+                    //index in [1, root_n -1[
+                    i = 1;
+                    for(; i < root_n - 1 ; ++i)
+                    {
+                        x_new[i] = ((rhs[i] - (dl[i] * x_old[i - 1] +
+                                        dd[i] * x_old[i] +
+                                        du[i] * x_old[i + 1] +
+                                        ul[i] * x_old[i + root_n - 1] +
+                                        ud[i] * x_old[i + root_n] +
+                                        uu[i] * x_old[i + root_n + 1])));
+                    }
+
+                    //index root_n -1
+                    i = root_n - 1;
+                    x_new[i] = ((rhs[i] - (lu[i] * x_old[i - (root_n - 1)] +
+                                    dl[i] * x_old[i - 1] +
+                                    dd[i] * x_old[i] +
+                                    du[i] * x_old[i + 1] +
+                                    ul[i] * x_old[i + root_n - 1] +
+                                    ud[i] * x_old[i + root_n] +
+                                    uu[i] * x_old[i + root_n + 1])));
+
+                    //index root_n
+                    i = root_n;
+                    x_new[i] = ((rhs[i] - (ld[i] * x_old[i - root_n] +
+                                    lu[i] * x_old[i - (root_n - 1)] +
+                                    dl[i] * x_old[i - 1] +
+                                    dd[i] * x_old[i] +
+                                    du[i] * x_old[ i + 1] +
+                                    ul[i] * x_old[i + root_n - 1] +
+                                    ud[i] * x_old[i + root_n] +
+                                    uu[i] * x_old[i + root_n + 1])));
+
+                    //index in [root_n + 1, n - (root_n + 1)[
+                    i = root_n + 1;
+                    for(; i < n - (root_n  + 1) ; ++i)
+                    {
+                        x_new[i] = ((rhs[i] - (ll[i] * x_old[i - root_n - 1] +
+                                        ld[i] * x_old[i - root_n] +
+                                        lu[i] * x_old[i - root_n + 1] +
+                                        dl[i] * x_old[i - 1] +
+                                        dd[i] * x_old[i] +
+                                        du[i] * x_old[ i + 1] +
+                                        ul[i] * x_old[i + root_n - 1] +
+                                        ud[i] * x_old[i + root_n] +
+                                        uu[i] * x_old[i + root_n + 1])));
+                    }
+
+                    //index n - (root_n + 1)
+                    i = n - (root_n + 1);
+                    x_new[i] = ((rhs[i] - (ll[i] * x_old[i - (n - (root_n + 1))] +
+                                    ld[i] * x_old[i - root_n] +
+                                    lu[i] * x_old[i - root_n + 1] +
+                                    dl[i] * x_old[i - 1] +
+                                    dd[i] * x_old[i] +
+                                    du[i] * x_old[ i + 1] +
+                                    ul[i] * x_old[i + root_n - 1] +
+                                    ud[i] * x_old[i + root_n])));
+
+                    //index n - root_n
+                    i = n - root_n;
+                    x_new[i] = ((rhs[i] - (ll[i] * x_old[i - (n - (root_n + 1))] +
+                                    ld[i] * x_old[i - root_n] +
+                                    lu[i] * x_old[i - root_n + 1] +
+                                    dl[i] * x_old[i - 1] +
+                                    dd[i] * x_old[i] +
+                                    du[i] * x_old[ i + 1] +
+                                    ul[i] * x_old[i + root_n - 1])));
+
+                    //index in [n - root_n + 1, n -1[
+                    i = n - root_n + 1;
+                    for(; i < n - 1; ++i)
+                    {
+                        x_new[i] = ((rhs[i] - (ll[i] * x_old[i - (n - (root_n + 1))] +
+                                        ld[i] * x_old[i - root_n] +
+                                        lu[i] * x_old[i - root_n + 1] +
+                                        dl[i] * x_old[i - 1] +
+                                        dd[i] * x_old[i] +
+                                        du[i] * x_old[ i + 1])));
+                    }
+
+                    //index n - 1
+                    i = n - 1;
+                    x_new[i] = ((rhs[i] - (ll[i] * x_old[i - (n - (root_n + 1))] +
+                                    ld[i] * x_old[i - root_n] +
+                                    lu[i] * x_old[i - root_n + 1] +
+                                    dl[i] * x_old[i - 1] +
+                                    dd[i] * x_old[i])));
+
+                    right_hand_side.unlock(lm_read_only);
+                    system.unlock(lm_read_only);
+                    x.unlock(lm_read_only);
+                    result.unlock(lm_write_only);
+                    return result;
+                }
+
+            template<typename DT_>
+                static DenseVector<DT_> & value(DenseVector<DT_> & result, const DenseVector<DT_> & right_hand_side, const BandedMatrixQ1<DT_> & system, const DenseVector<DT_> & x)
+                {
+                    /*DenseVector<DT_> result(right_hand_side.copy());
+                      return Difference<tags::CPU>::value(result,Product<tags::CPU>::value(system, x) );
+                      */
+                    if (x.size() != system.columns())
+                    {
+                        throw VectorSizeDoesNotMatch(x.size(), system.columns());
+                    }
+                    if (right_hand_side.size() != system.columns())
+                    {
+                        throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
+                    }
+
+                    right_hand_side.lock(lm_read_only);
+                    system.lock(lm_read_only);
+                    x.lock(lm_read_only);
                     result.lock(lm_write_only);
                     unsigned long n = right_hand_side.size();
                     unsigned long root_n = (unsigned long)sqrt(n);
@@ -253,6 +395,12 @@ namespace honei
                 static DenseVector<double> value(const DenseVectorContinuousBase<double> & right_hand_side,
                         const BandedMatrixQ1<double> & system, const DenseVectorContinuousBase<double> & x);
 
+                static DenseVector<float> & value(DenseVector<float> & result, const DenseVectorContinuousBase<float> & right_hand_side,
+                        const BandedMatrixQ1<float> & system, const DenseVectorContinuousBase<float> & x);
+
+                static DenseVector<double> & value(DenseVector<double> & result, const DenseVectorContinuousBase<double> & right_hand_side,
+                        const BandedMatrixQ1<double> & system, const DenseVectorContinuousBase<double> & x);
+
                 static DenseVector<float> value(const DenseVectorContinuousBase<float> & right_hand_side,
                         const SparseMatrixELL<float> & system, const DenseVectorContinuousBase<float> & x);
 
@@ -306,8 +454,11 @@ namespace honei
         {
 
             public:
-                static DenseVector<double> value(DenseVector<double> & right_hand_side, BandedMatrixQ1<double> & system, DenseVector<double> & x);
-                static DenseVector<float> value(DenseVector<float> & right_hand_side, BandedMatrixQ1<float> & system, DenseVector<float> & x);
+                static DenseVector<double> value(const DenseVector<double> & right_hand_side, const BandedMatrixQ1<double> & system, const DenseVector<double> & x);
+                static DenseVector<float> value(const DenseVector<float> & right_hand_side, const BandedMatrixQ1<float> & system, const DenseVector<float> & x);
+
+                static DenseVector<double> & value(DenseVector<double> & result, const DenseVector<double> & right_hand_side, const BandedMatrixQ1<double> & system, const DenseVector<double> & x);
+                static DenseVector<float> & value(DenseVector<float> & result, const DenseVector<float> & right_hand_side, const BandedMatrixQ1<float> & system, const DenseVector<float> & x);
 
                 template<typename DT_>
                     static DenseVector<DT_> value(DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
@@ -383,92 +534,112 @@ namespace honei
     {
         template <typename Tag_> struct Defect
         {
-            template <typename DT_>
-            static DenseVector<DT_> value(const DenseVector<DT_> & rhs, const SparseMatrixELL<DT_> & a, const DenseVector<DT_> & b)
-            {
-                if (b.size() != a.columns())
+
+                template<typename DT_>
+                static DenseVector<DT_> & value(DenseVector<DT_> & result, DenseVector<DT_> & right_hand_side, BandedMatrixQ1<DT_> & system, DenseVector<DT_> & x)
                 {
-                    throw VectorSizeDoesNotMatch(b.size(), a.columns());
-                }
-                if (a.rows() != rhs.size())
-                {
-                    throw VectorSizeDoesNotMatch(a.rows(), rhs.size());
-                }
+                    if (x.size() != system.columns())
+                    {
+                        throw VectorSizeDoesNotMatch(x.size(), system.columns());
+                    }
+                    if (right_hand_side.size() != system.columns())
+                    {
+                        throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
+                    }
 
-                DenseVector<DT_> result(a.rows());
-                //fill<typename Tag_::DelegateTo>(result, DT_(0));
+                    DenseVector<DT_> temp(right_hand_side.size());
+                    Product<Tag_>::value(temp, system, x);
+                    Difference<Tag_>::value(result, right_hand_side, temp);
 
-                unsigned long max_count(Configuration::instance()->get_value("mc::Product(DV,SMELL,DV)::max_count",
-                            mc::ThreadPool::instance()->num_threads()));
-
-                TicketVector tickets;
-
-                unsigned long limits[max_count + 1];
-                limits[0] = 0;
-                for (unsigned long i(1) ; i < max_count; ++i)
-                {
-                    limits[i] = limits[i-1] + a.rows() / max_count;
-                }
-                limits[max_count] = a.rows();
-
-                for (unsigned long i(0) ; i < max_count ; ++i)
-                {
-                    OperationWrapper<honei::Defect<typename Tag_::DelegateTo>, DenseVector<DT_>, DenseVector<DT_>,
-                        DenseVector<DT_>, SparseMatrixELL<DT_>, DenseVector<DT_>, unsigned long, unsigned long > wrapper(result);
-                    tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, result, rhs, a, b, limits[i], limits[i+1])));
+                    return result;
                 }
 
-                tickets.wait();
+                template <typename DT_>
+                    static DenseVector<DT_> value(const DenseVector<DT_> & rhs, const SparseMatrixELL<DT_> & a, const DenseVector<DT_> & b)
+                    {
+                        if (b.size() != a.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(b.size(), a.columns());
+                        }
+                        if (a.rows() != rhs.size())
+                        {
+                            throw VectorSizeDoesNotMatch(a.rows(), rhs.size());
+                        }
 
-                return result;
-            }
+                        DenseVector<DT_> result(a.rows());
+                        //fill<typename Tag_::DelegateTo>(result, DT_(0));
 
-            template <typename DT_>
-            static DenseVector<DT_> value(DenseVector<DT_> & result, const DenseVector<DT_> & rhs, const SparseMatrixELL<DT_> & a, const DenseVector<DT_> & b)
-            {
-                if (b.size() != a.columns())
-                {
-                    throw VectorSizeDoesNotMatch(b.size(), a.columns());
-                }
-                if (a.rows() != result.size())
-                {
-                    throw VectorSizeDoesNotMatch(a.rows(), result.size());
-                }
+                        unsigned long max_count(Configuration::instance()->get_value("mc::Product(DV,SMELL,DV)::max_count",
+                                    mc::ThreadPool::instance()->num_threads()));
 
-                //fill<typename Tag_::DelegateTo>(result, DT_(0));
+                        TicketVector tickets;
 
-                unsigned long max_count(Configuration::instance()->get_value("mc::Product(DV,SMELL,DV)::max_count",
-                            mc::ThreadPool::instance()->num_threads()));
+                        unsigned long limits[max_count + 1];
+                        limits[0] = 0;
+                        for (unsigned long i(1) ; i < max_count; ++i)
+                        {
+                            limits[i] = limits[i-1] + a.rows() / max_count;
+                        }
+                        limits[max_count] = a.rows();
 
-                TicketVector tickets;
+                        for (unsigned long i(0) ; i < max_count ; ++i)
+                        {
+                            OperationWrapper<honei::Defect<typename Tag_::DelegateTo>, DenseVector<DT_>, DenseVector<DT_>,
+                                DenseVector<DT_>, SparseMatrixELL<DT_>, DenseVector<DT_>, unsigned long, unsigned long > wrapper(result);
+                            tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, result, rhs, a, b, limits[i], limits[i+1])));
+                        }
 
-                unsigned long limits[max_count + 1];
-                limits[0] = 0;
-                for (unsigned long i(1) ; i < max_count; ++i)
-                {
-                    limits[i] = limits[i-1] + a.rows() / max_count;
-                }
-                limits[max_count] = a.rows();
+                        tickets.wait();
 
-                for (unsigned long i(0) ; i < max_count ; ++i)
-                {
-                    OperationWrapper<honei::Defect<typename Tag_::DelegateTo>, DenseVector<DT_>, DenseVector<DT_>,
-                        DenseVector<DT_>, SparseMatrixELL<DT_>, DenseVector<DT_>, unsigned long, unsigned long > wrapper(result);
-                    tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, result, rhs, a, b, limits[i], limits[i+1])));
-                }
+                        return result;
+                    }
 
-                tickets.wait();
+                template <typename DT_>
+                    static DenseVector<DT_> value(DenseVector<DT_> & result, const DenseVector<DT_> & rhs, const SparseMatrixELL<DT_> & a, const DenseVector<DT_> & b)
+                    {
+                        if (b.size() != a.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(b.size(), a.columns());
+                        }
+                        if (a.rows() != result.size())
+                        {
+                            throw VectorSizeDoesNotMatch(a.rows(), result.size());
+                        }
 
-                return result;
-            }
+                        //fill<typename Tag_::DelegateTo>(result, DT_(0));
+
+                        unsigned long max_count(Configuration::instance()->get_value("mc::Product(DV,SMELL,DV)::max_count",
+                                    mc::ThreadPool::instance()->num_threads()));
+
+                        TicketVector tickets;
+
+                        unsigned long limits[max_count + 1];
+                        limits[0] = 0;
+                        for (unsigned long i(1) ; i < max_count; ++i)
+                        {
+                            limits[i] = limits[i-1] + a.rows() / max_count;
+                        }
+                        limits[max_count] = a.rows();
+
+                        for (unsigned long i(0) ; i < max_count ; ++i)
+                        {
+                            OperationWrapper<honei::Defect<typename Tag_::DelegateTo>, DenseVector<DT_>, DenseVector<DT_>,
+                                DenseVector<DT_>, SparseMatrixELL<DT_>, DenseVector<DT_>, unsigned long, unsigned long > wrapper(result);
+                            tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, result, rhs, a, b, limits[i], limits[i+1])));
+                        }
+
+                        tickets.wait();
+
+                        return result;
+                    }
         };
 
     }
 
     template <> struct Defect<tags::CPU::MultiCore::SSE> :
         public mc::Defect<tags::CPU::MultiCore::SSE>
-    {
-    };
+        {
+        };
 }
 
 #endif

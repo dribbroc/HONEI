@@ -29,9 +29,8 @@ using namespace honei;
 
 namespace honei
 {
-    DenseVector<float> Defect<tags::CPU::SSE>::value(DenseVector<float> & right_hand_side, BandedMatrixQ1<float> & system, DenseVector<float> & x)
+    DenseVector<float> & Defect<tags::CPU::SSE>::value(DenseVector<float> & result, const DenseVector<float> & right_hand_side, const BandedMatrixQ1<float> & system, const DenseVector<float> & x)
     {
-        DenseVector<float> result(right_hand_side.size());
         unsigned long n = right_hand_side.size();
         unsigned long root_n = (unsigned long)sqrt(n);
 
@@ -347,9 +346,15 @@ namespace honei
         return result;
     }
 
-    DenseVector<double> Defect<tags::CPU::SSE>::value(DenseVector<double> & right_hand_side, BandedMatrixQ1<double> & system, DenseVector<double> & x)
+    DenseVector<float> Defect<tags::CPU::SSE>::value(const DenseVector<float> & right_hand_side, const BandedMatrixQ1<float> & system, const DenseVector<float> & x)
     {
-        DenseVector<double> result(right_hand_side.size());
+        DenseVector<float> result(right_hand_side.size());
+        Defect<tags::CPU::SSE>::value(result, right_hand_side, system, x);
+        return result;
+    }
+
+    DenseVector<double> & Defect<tags::CPU::SSE>::value(DenseVector<double> & result, const DenseVector<double> & right_hand_side, const BandedMatrixQ1<double> & system, const DenseVector<double> & x)
+    {
         unsigned long n = right_hand_side.size();
         unsigned long root_n = (unsigned long)sqrt(n);
 
@@ -662,6 +667,13 @@ namespace honei
                 + ld[index] * x_old[index - root_n]
                 + dl[index] * x_old[index - 1]);
 
+        return result;
+    }
+
+    DenseVector<double> Defect<tags::CPU::SSE>::value(const DenseVector<double> & right_hand_side, const BandedMatrixQ1<double> & system, const DenseVector<double> & x)
+    {
+        DenseVector<double> result(right_hand_side.size());
+        Defect<tags::CPU::SSE>::value(result, right_hand_side, system, x);
         return result;
     }
 
