@@ -19,6 +19,7 @@ class OperatorTest:
         OperatorTest(const std::string & tag) :
             BaseTest("OperatorTest<" + tag + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -98,4 +99,4 @@ class OperatorTest:
             delete normop;
         }
 };
-OperatorTest<tags::CPU> otest_cpu("cpu");
+OperatorTest<tags::CPU> otest_cpu("");
