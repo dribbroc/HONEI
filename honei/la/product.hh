@@ -3,6 +3,7 @@
 /*
  * Copyright (c) 2007, 2009 Sven Mallach <mallach@honei.org>
  * Copyright (c) 2007, 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
+ * Copyright (c) 2011 Markus Geveler <apryde@gmx.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -77,7 +78,6 @@ namespace honei
          * \exception VectorSizeDoesNotMatch is thrown if the vector's size does not match the matrix's number
          *            of columns.
          */
-
         template <typename DT1_, typename DT2_>
         static DenseVector<DT1_> value(const DenseMatrix<DT1_> & a, const DenseVectorBase<DT2_> & b)
         {
@@ -97,6 +97,16 @@ namespace honei
             }
 
             return result;
+        }
+
+        template<typename DT1_, typename DT2_>
+        static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
+        {
+            //TODO
+            DenseVector<DT1_> temp(a.copy());
+            ElementProduct<Tag_>::value(temp, b);
+            copy<Tag_>(temp, y);
+            return y;
         }
 
         template <typename DT1_, typename DT2_>
@@ -1429,6 +1439,15 @@ namespace honei
 
         static DenseVector<double> & value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b);
 
+        template<typename DT1_, typename DT2_>
+        static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
+        {
+            //TODO
+            DenseVector<DT1_> temp(a.copy());
+            ElementProduct<tags::GPU::CUDA>::value(temp, b);
+            copy<tags::GPU::CUDA>(temp, y);
+            return y;
+        }
         /// \}
     };
 
@@ -1528,6 +1547,16 @@ namespace honei
 
         static DenseVector<double> & value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b,
                 unsigned long row_start = 0, unsigned long row_end = 0);
+
+        template<typename DT1_, typename DT2_>
+        static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
+        {
+            //TODO
+            DenseVector<DT1_> temp(a.copy());
+            ElementProduct<tags::CPU::SSE>::value(temp, b);
+            copy<tags::CPU::SSE>(temp, y);
+            return y;
+        }
         /// \}
     };
 
@@ -1542,14 +1571,34 @@ namespace honei
         static DenseVector<float> value(const BandedMatrix<float> & a, const DenseVectorContinuousBase<float> & b);
         static DenseVector<double> value(const BandedMatrix<double> & a, const DenseVectorContinuousBase<double> & b);
         static DenseMatrix<float> value(const SparseMatrix<float> & a, const DenseMatrix<float> & b);
+
+        template<typename DT1_, typename DT2_>
+        static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
+        {
+            //TODO
+            DenseVector<DT1_> temp(a.copy());
+            ElementProduct<tags::Cell>::value(temp, b);
+            copy<tags::Cell>(temp, y);
+            return y;
+        }
     };
 
     namespace mc
     {
         template <typename Tag_> struct Product
         {
+            template<typename DT1_, typename DT2_>
+            static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
+            {
+                //TODO
+                DenseVector<DT1_> temp(a.copy());
+                ElementProduct<Tag_>::value(temp, b);
+                copy<Tag_>(temp, y);
+                return y;
+            }
+
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> value(const BandedMatrixQ1<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
+                static DenseVector<DT1_> value(const BandedMatrixQ1<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
             {
                 CONTEXT("When multiplying BandedMatrixQ1 with DenseVectorContinuousBase using backend : " + Tag_::name);
                 if (b.size() != a.columns())

@@ -50,12 +50,11 @@ namespace honei
                               VectorType_ & x,
                               VectorType_ & temp_0,
                               VectorType_ & temp_1,
-                              unsigned long max_iters,
-                              )
+                              unsigned long max_iters)
             {
                 CONTEXT("When smoothing with Richardson: ");
 
-            sum.hhgned long i(0) ; i < max_iters ; ++i)
+                for(unsigned long i(0) ; i < max_iters ; ++i)
                 {
                     Defect<Tag_>::value(temp_0, b, A, x);
                     Product<Tag_>::value(temp_1, P, temp_0);
