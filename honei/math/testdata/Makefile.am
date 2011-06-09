@@ -81,9 +81,15 @@ EXTRA_DIST = \
 	poisson_advanced/sort_0/prol_5.ell \
 	poisson_advanced/sort_0/prol_6.ell \
 	poisson_advanced/sort_0/prol_7.ell \
+	poisson_advanced/sort_0/prol_8.ell \
+	poisson_advanced/sort_0/rhs_4 \
 	poisson_advanced/sort_0/rhs_7 \
+	poisson_advanced/sort_0/rhs_8 \
 	poisson_advanced/sort_0/init_7 \
+	poisson_advanced/sort_0/init_4 \
+	poisson_advanced/sort_0/sol_4 \
 	poisson_advanced/sort_0/sol_7 \
+	poisson_advanced/sort_0/sol_8 \
 	poisson_advanced/q2_sort_0/A_1.ell \
 	poisson_advanced/q2_sort_0/A_2.ell \
 	poisson_advanced/q2_sort_0/A_3.ell \
