@@ -44,7 +44,7 @@ namespace honei
 
                 Ticket<tags::CPU::MultiCore> * operator() ()
                 {
-                    return new Ticket<tags::CPU::MultiCore>();
+                    return new Ticket<tags::CPU::MultiCore>;
                 }
         };
 

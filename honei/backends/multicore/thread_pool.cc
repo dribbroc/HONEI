@@ -480,7 +480,9 @@ namespace honei
             Ticket<tags::CPU::MultiCore> * ticket(p.apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
-            mc::WorkStealingThreadFunction * wfunc(_threads[ticket->sid_min()].second);
+            int idx((ticket->sid_min() == 0xFFFF) ? 0 : ticket->sid_min());
+
+            mc::WorkStealingThreadFunction * wfunc(_threads[idx].second);
             wfunc->enqueue(t_task);
 
             {
@@ -498,7 +500,9 @@ namespace honei
             Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
-            mc::WorkStealingThreadFunction * wfunc(_threads[ticket->sid_min()].second);
+            int idx((ticket->sid_min() == 0xFFFF) ? 0 : ticket->sid_min());
+
+            mc::WorkStealingThreadFunction * wfunc(_threads[idx].second);
             wfunc->enqueue(t_task);
 
             {

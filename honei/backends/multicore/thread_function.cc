@@ -403,8 +403,11 @@ void WorkStealingThreadFunction::operator() ()
             else
             {
                 pthread_mutex_unlock(_imp->pool_mutex->mutex());
-                task = _imp->tasklist.front();
-                _imp->tasklist.pop_front();
+                if (! _imp->tasklist.empty())
+                {
+                    task = _imp->tasklist.front();
+                    _imp->tasklist.pop_front();
+                }
                 pthread_mutex_unlock(_imp->local_mutex->mutex());
             }
         }
