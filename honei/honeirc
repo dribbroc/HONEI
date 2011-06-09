@@ -129,6 +129,9 @@ mc::affinity = 1
 # Note: Only works with affinity enabled
 mc::work_stealing = 0
 
+# List type to use in multicore backend (0 = STL, 1 = HONEI)
+mc::listtype = 0
+
 # Default DispatchPolicy (anycore, alternating, linear)
 mc::dispatch = alternating
 

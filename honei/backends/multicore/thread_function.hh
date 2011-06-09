@@ -70,15 +70,37 @@ namespace honei
                 unsigned pool_id() const;
         };
 
-        class SimpleThreadFunction :
+        template <typename ListType> class SimpleThreadFunction;
+
+        template <> class SimpleThreadFunction<AtomicSList<ThreadTask *> > :
             public ThreadFunctionBase,
-            public PrivateImplementationPattern<SimpleThreadFunction, Shared>
+            public PrivateImplementationPattern<SimpleThreadFunction<AtomicSList<ThreadTask *> >, Shared>
         {
             private:
 
             public:
 
                 SimpleThreadFunction(PoolSyncData * const psync, AtomicSList<ThreadTask *> * const list, unsigned pool_id);
+
+                virtual ~SimpleThreadFunction();
+
+                /// The threads' main function
+                virtual void operator() ();
+
+                virtual void stop();
+
+                virtual unsigned tid() const;
+        };
+
+        template <> class SimpleThreadFunction<std::list<ThreadTask *> > :
+            public ThreadFunctionBase,
+            public PrivateImplementationPattern<SimpleThreadFunction<std::list<ThreadTask *> >, Shared>
+        {
+            private:
+
+            public:
+
+                SimpleThreadFunction(PoolSyncData * const psync, std::list<ThreadTask *> * const list, unsigned pool_id);
 
                 virtual ~SimpleThreadFunction();
 

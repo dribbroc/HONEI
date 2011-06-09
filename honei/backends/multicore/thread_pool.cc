@@ -34,6 +34,8 @@
 #include <stdlib.h>
 #include <sys/syscall.h>
 
+#include <iostream>
+
 namespace honei
 {
     template <> struct Implementation<mc::ThreadPool>
@@ -73,11 +75,13 @@ namespace honei
 
     /* StandardImplementation assumes affinity to be disabled. */
 
-    struct StandardImplementation :
+    template <typename ListType> struct StandardImplementation;
+
+    template <> struct StandardImplementation<mc::AtomicSList<mc::ThreadTask *> > :
         public Implementation<mc::ThreadPool>
     {
         /// List of user POSIX threads
-        std::list<std::pair<Thread *, mc::SimpleThreadFunction *> > _threads;
+        std::list<std::pair<Thread *, mc::SimpleThreadFunction<mc::AtomicSList<mc::ThreadTask *> > *> > _threads;
 
         /// Waiting list of worker tasks to be executed (otherwise)
         mc::AtomicSList<mc::ThreadTask *> _tasks;
@@ -100,7 +104,8 @@ namespace honei
 
             for (int i(_num_threads - 1) ; i >= 0 ; --i)
             {
-                mc::SimpleThreadFunction * tobj = new mc::SimpleThreadFunction(_pool_sync, &_tasks, inst_ctr);
+                mc::SimpleThreadFunction<mc::AtomicSList<mc::ThreadTask *> > * tobj =
+                    new mc::SimpleThreadFunction<mc::AtomicSList<mc::ThreadTask *> >(_pool_sync, &_tasks, inst_ctr);
                 Thread * t = new Thread(*tobj);
                 while (tobj->tid() == 0) ; // Wait until the thread is really setup / got cpu time for the first time
                 _threads.push_back(std::make_pair(t, tobj));
@@ -115,7 +120,7 @@ namespace honei
 
         ~StandardImplementation()
         {
-            for(std::list<std::pair<Thread *, mc::SimpleThreadFunction *> >::iterator i(_threads.begin()),
+            for(std::list<std::pair<Thread *, mc::SimpleThreadFunction<mc::AtomicSList<mc::ThreadTask *> > *> >::iterator i(_threads.begin()),
                 i_end(_threads.end()) ; i != i_end ; ++i)
             {
                 (*i).second->stop();
@@ -140,6 +145,80 @@ namespace honei
 
             {
                 Lock l(*_pool_sync->mutex);
+                _pool_sync->barrier->broadcast();
+            }
+
+            return ticket;
+        }
+    };
+
+    template <> struct StandardImplementation<std::list<mc::ThreadTask *> > :
+        public Implementation<mc::ThreadPool>
+    {
+        /// List of user POSIX threads
+        std::list<std::pair<Thread *, mc::SimpleThreadFunction<std::list<mc::ThreadTask *> > *> > _threads;
+
+        /// Waiting list of worker tasks to be executed (otherwise)
+        std::list<mc::ThreadTask *> _tasks;
+
+        /// Function pointer to any of the default dispatch strategies
+        mc::DispatchPolicy (* policy) ();
+
+        StandardImplementation() :
+            Implementation<mc::ThreadPool>(),
+            policy(&mc::DispatchPolicy::any_core)
+        {
+            CONTEXT("When initializing the thread pool:\n");
+#ifdef DEBUG
+            std::string msg = "Affinity is disabled, using standard thread pool.\n";
+            msg += "DispatchPolicy: arbitrary - the next available thread will execute a task\n";
+            LOGMESSAGE(lc_backend, msg);
+#endif
+
+            int inst_ctr(0);
+
+            for (int i(_num_threads - 1) ; i >= 0 ; --i)
+            {
+                mc::SimpleThreadFunction<std::list<mc::ThreadTask *> > * tobj =
+                    new mc::SimpleThreadFunction<std::list<mc::ThreadTask *> >(_pool_sync, &_tasks, inst_ctr);
+                Thread * t = new Thread(*tobj);
+                while (tobj->tid() == 0) ; // Wait until the thread is really setup / got cpu time for the first time
+                _threads.push_back(std::make_pair(t, tobj));
+
+                ++inst_ctr;
+            }
+
+#ifdef DEBUG
+            LOGMESSAGE(lc_backend, msg);
+#endif
+        }
+
+        ~StandardImplementation()
+        {
+            for(std::list<std::pair<Thread *, mc::SimpleThreadFunction<std::list<mc::ThreadTask *> > *> >::iterator i(_threads.begin()),
+                i_end(_threads.end()) ; i != i_end ; ++i)
+            {
+                (*i).second->stop();
+                delete (*i).second;
+                delete (*i).first;
+            }
+        }
+
+        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy)
+        {
+            return enqueue(task);
+        }
+
+        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task)
+        {
+            CONTEXT("When creating a ThreadTask:\n");
+
+            Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
+            mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
+
+            {
+                Lock l(*_pool_sync->mutex);
+                _tasks.push_back(t_task);
                 _pool_sync->barrier->broadcast();
             }
 
@@ -217,7 +296,8 @@ namespace honei
             for (int i(_num_threads - 1) ; i >= 0 ; --i)
             {
                 unsigned sched_id(i % (_topology->num_lpus()));
-                mc::AffinityThreadFunction * tobj = new mc::AffinityThreadFunction(_pool_sync, &_tasks, inst_ctr, sched_id);
+                mc::AffinityThreadFunction * tobj =
+                    new mc::AffinityThreadFunction(_pool_sync, &_tasks, inst_ctr, sched_id);
                 Thread * t = new Thread(*tobj);
                 while (tobj->tid() == 0) ; // Wait until the thread is really setup / got cpu time for the first time
                 _threads.push_back(std::make_pair(t, tobj));
@@ -285,7 +365,9 @@ namespace honei
         }
     };
 
-    struct WorkStealingImplementation :
+    template <typename ListType> struct WorkStealingImplementation;
+
+    template <> struct WorkStealingImplementation<std::list<mc::ThreadTask *> > :
         public Implementation<mc::ThreadPool>
     {
         /// List of user POSIX threads
@@ -449,6 +531,8 @@ Implementation<ThreadPool> * ThreadPool::select_impl()
 {
     bool affinity = Configuration::instance()->get_value("mc::affinity", true);
 
+    int listtype = Configuration::instance()->get_value("mc::listtype", 0);
+
 #ifndef linux
     affinity = false;
 #endif
@@ -458,12 +542,23 @@ Implementation<ThreadPool> * ThreadPool::select_impl()
         bool works = Configuration::instance()->get_value("mc::work_stealing", false);
 
         if (works)
-            return new WorkStealingImplementation;
+            return new WorkStealingImplementation<std::list<mc::ThreadTask *> >;
         else
             return new AffinityImplementation;
     }
     else
-        return new StandardImplementation;
+    {
+        if (listtype == 1)
+        {
+            std::cout << "Using AtomicSList" << std::endl;
+            return new StandardImplementation<mc::AtomicSList<mc::ThreadTask *> >;
+        }
+        else
+        {
+            std::cout << "Using STL List" << std::endl;
+            return new StandardImplementation<std::list<mc::ThreadTask *> >;
+        }
+    }
 }
 
 unsigned ThreadPool::num_threads() const

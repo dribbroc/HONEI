@@ -179,7 +179,7 @@ namespace honei
     // for a ThreadTask pointer
     template class AtomicSList<mc::ThreadTask *>;
 
-    template <> struct Implementation<mc::SimpleThreadFunction> :
+    template <> struct Implementation<mc::SimpleThreadFunction<AtomicSList<mc::ThreadTask *> > > :
         public TFImplementationBase
     {
         /// The task list administrated by the thread pool.
@@ -196,6 +196,25 @@ namespace honei
         {
         }
     };
+
+    template <> struct Implementation<mc::SimpleThreadFunction<std::list<mc::ThreadTask *> > > :
+        public TFImplementationBase
+    {
+        /// The task list administrated by the thread pool.
+        std::list<mc::ThreadTask *> * const tasklist;
+
+        Implementation(mc::PoolSyncData * const psync, std::list<mc::ThreadTask *> * const list,
+                unsigned pid) :
+            TFImplementationBase(psync, pid),
+            tasklist(list)
+        {
+        }
+
+        ~Implementation()
+        {
+        }
+    };
+
 }
 
 using namespace honei::mc;
@@ -423,23 +442,24 @@ unsigned WorkStealingThreadFunction::tid() const
     return _imp->thread_id;
 }
 
-SimpleThreadFunction::SimpleThreadFunction(PoolSyncData * const psync, AtomicSList<ThreadTask *> * const list,
-        unsigned pool_id) :
-    PrivateImplementationPattern<SimpleThreadFunction, Shared>(new
+
+SimpleThreadFunction<AtomicSList<ThreadTask *> >::SimpleThreadFunction(PoolSyncData * const psync,
+        AtomicSList<ThreadTask *> * const list, unsigned pool_id) :
+    PrivateImplementationPattern<SimpleThreadFunction<AtomicSList<ThreadTask *> >, Shared>(new
             Implementation<SimpleThreadFunction>(psync, list, pool_id))
 {
 }
 
-SimpleThreadFunction::~SimpleThreadFunction()
+SimpleThreadFunction<AtomicSList<ThreadTask *> >::~SimpleThreadFunction()
 {
 }
 
-void SimpleThreadFunction::stop()
+void SimpleThreadFunction<AtomicSList<ThreadTask *> >::stop()
 {
     _imp->stop();
 }
 
-void SimpleThreadFunction::operator() ()
+void SimpleThreadFunction<AtomicSList<ThreadTask *> >::operator() ()
 {
     /// The ThreadTask to be currently executed by the thread.
     mc::ThreadTask * task(0);
@@ -487,7 +507,79 @@ void SimpleThreadFunction::operator() ()
     _imp->terminate = false; // Signal Implementation DTOR that we arrived here
 }
 
-unsigned SimpleThreadFunction::tid() const
+unsigned SimpleThreadFunction<AtomicSList<ThreadTask *> >::tid() const
+{
+    return _imp->thread_id;
+}
+
+
+SimpleThreadFunction<std::list<ThreadTask *> >::SimpleThreadFunction(PoolSyncData * const psync,
+        std::list<ThreadTask *> * const list, unsigned pool_id) :
+    PrivateImplementationPattern<SimpleThreadFunction<std::list<ThreadTask *> >, Shared>(new
+            Implementation<SimpleThreadFunction<std::list<ThreadTask *> > >(psync, list, pool_id))
+{
+}
+
+SimpleThreadFunction<std::list<ThreadTask *> >::~SimpleThreadFunction()
+{
+}
+
+void SimpleThreadFunction<std::list<ThreadTask *> >::stop()
+{
+    _imp->stop();
+}
+
+void SimpleThreadFunction<std::list<ThreadTask *> >::operator() ()
+{
+    /// The ThreadTask to be currently executed by the thread.
+    mc::ThreadTask * task(0);
+
+    /* Set thread_id from operating system and use this on the pool
+     * side as sign for the thread to be setup. Then let the thread
+     * go to sleep until it will be assigned its first task. */
+
+    {
+        Lock l(*_imp->pool_mutex);
+        _imp->thread_id = syscall(__NR_gettid);
+        _imp->global_barrier->wait(*_imp->pool_mutex);
+    }
+
+    do
+    {
+        {
+            Lock l(*_imp->pool_mutex);
+
+            task = (_imp->tasklist->empty() ? 0 : _imp->tasklist->front());
+
+            if (task == 0)
+            {
+                if (! _imp->terminate)
+                    _imp->global_barrier->wait(*_imp->pool_mutex);
+                else
+                    break;
+            }
+            else
+                _imp->tasklist->pop_front();
+        }
+
+        if (task != 0)
+        {
+#ifdef DEBUG
+            std::string msg = "Thread " + stringify(_imp->pool_id) + " will execute ticket " +
+                stringify(task->ticket->uid()) + "\n";
+            LOGMESSAGE(lc_backend, msg);
+#endif
+            (*task->functor)();
+            task->ticket->mark();
+            delete task;
+        }
+    }
+    while (true);
+
+    _imp->terminate = false; // Signal Implementation DTOR that we arrived here
+}
+
+unsigned SimpleThreadFunction<std::list<ThreadTask *> >::tid() const
 {
     return _imp->thread_id;
 }
