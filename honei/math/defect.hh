@@ -42,10 +42,12 @@ namespace honei
             template<typename DT_>
                 static DenseVector<DT_> value(const DenseVector<DT_> & right_hand_side, const BandedMatrixQ1<DT_> & system, const DenseVector<DT_> & x)
                 {
-                    /*DenseVector<DT_> result(right_hand_side.copy());
-                      return Difference<tags::CPU>::value(result,Product<tags::CPU>::value(system, x) );
-                      */
-                    if (x.size() != system.columns())
+                    DenseVector<DT_> result(right_hand_side.copy());
+                    DenseVector<DT_> prod(Product<tags::CPU>::value(system, x));
+                    Difference<tags::CPU>::value(result,prod);
+                    return result;
+
+                    /*if (x.size() != system.columns())
                     {
                         throw VectorSizeDoesNotMatch(x.size(), system.columns());
                     }
@@ -180,14 +182,16 @@ namespace honei
                     x.unlock(lm_read_only);
                     result.unlock(lm_write_only);
                     return result;
+                    */
                 }
 
             template<typename DT_>
                 static DenseVector<DT_> & value(DenseVector<DT_> & result, const DenseVector<DT_> & right_hand_side, const BandedMatrixQ1<DT_> & system, const DenseVector<DT_> & x)
                 {
-                    /*DenseVector<DT_> result(right_hand_side.copy());
-                      return Difference<tags::CPU>::value(result,Product<tags::CPU>::value(system, x) );
-                      */
+                    //DenseVector<DT_> result(right_hand_side.copy());
+                    Difference<tags::CPU>::value(result, right_hand_side, Product<tags::CPU>::value(system, x) );
+                    return result;
+                    /*
                     if (x.size() != system.columns())
                     {
                         throw VectorSizeDoesNotMatch(x.size(), system.columns());
@@ -322,6 +326,7 @@ namespace honei
                     x.unlock(lm_read_only);
                     result.unlock(lm_write_only);
                     return result;
+                    */
                 }
 
             template<typename DT_>
