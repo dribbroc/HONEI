@@ -134,6 +134,8 @@ namespace honei
 
                 void enqueue(mc::ThreadTask * task);
 
+                bool steal(std::list<mc::ThreadTask *> & thief_list);
+
                 virtual unsigned tid() const;
 
                 unsigned pool_id() const;
@@ -158,6 +160,8 @@ namespace honei
                 virtual void stop();
 
                 void enqueue(mc::ThreadTask * task);
+
+                bool steal(mc::AtomicSList<mc::ThreadTask *> & thief_list);
 
                 virtual unsigned tid() const;
 

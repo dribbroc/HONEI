@@ -74,6 +74,8 @@ namespace honei
             while (loop);
         }
 
+        virtual void operator() () = 0;
+
         void stop()
         {
             Lock l(*pool_mutex);
@@ -104,6 +106,76 @@ namespace honei
 
         ~Implementation()
         {
+        }
+
+        void operator() ()
+        {
+            /// The ThreadTask to be currently executed by the thread.
+            mc::ThreadTask * task(0);
+
+            /// A comparison object for mc::ThreadTask objects.
+            mc::TaskComp * const comp(new mc::TaskComp(sched_lpu));
+
+            std::list<mc::ThreadTask *>::iterator i, i_end;
+
+        /* Set thread_id from operating system and use this on the pool
+         * side as sign for the thread to be setup. Then let the thread
+         * go to sleep until it will be assigned its first task. */
+
+            {
+                Lock l(*pool_mutex);
+                thread_id = syscall(__NR_gettid);
+                global_barrier->wait(*pool_mutex);
+            }
+
+            do
+            {
+                task = 0;
+
+                // Check work-status and condition again under same mutex protection
+                // to avoid race conditions between pick / if and wait
+                {
+                    Lock l(*pool_mutex); // Try to avoid this lock...
+
+                    for (i = tasklist->begin(), i_end = tasklist->end() ; i != i_end ; ++i)
+                    {
+                        if ((*comp)(*i))
+                        {
+                            task = *i;
+                            unsigned & sched_id = task->ticket->sid();
+                            sched_id = sched_lpu;
+                            tasklist->remove(*i);
+#ifdef DEBUG
+                            std::string msg = "Thread " + stringify(pool_id) + " on LPU " +
+                            stringify(sched_lpu) + " will execute ticket " +
+                            stringify(task->ticket->uid()) + "\n";
+                            LOGMESSAGE(lc_backend, msg);
+#endif
+                            break;
+                        }
+                    }
+
+                    if (task == 0)
+                    {
+                        if (! terminate)
+                            global_barrier->wait(*pool_mutex);
+                        else
+                            break;
+                    }
+                }
+
+                if (task != 0)
+                {
+                    (*task->functor)();
+                    task->ticket->mark();
+                    delete task;
+                }
+            }
+            while (true);
+
+            delete comp;
+
+            terminate = false; // Signal Implementation DTOR that we arrived here
         }
     };
 
@@ -142,6 +214,99 @@ namespace honei
         ~Implementation()
         {
             delete local_mutex;
+        }
+
+        void operator() ()
+        {
+            /// The ThreadTask to be currently executed by the thread.
+            mc::ThreadTask * task(0);
+
+            /// A comparison object for mc::ThreadTask objects.
+            mc::TaskComp * const comp(new mc::TaskComp(sched_lpu));
+
+            std::list<mc::ThreadTask *>::iterator i, i_end;
+
+            /* Set thread_id from operating system and use this on the pool
+             * side as sign for the thread to be setup. Then let the thread
+             * go to sleep until it will be assigned its first task. */
+
+            {
+                Lock l(*pool_mutex);
+                thread_id = syscall(__NR_gettid);
+                global_barrier->wait(*pool_mutex);
+            }
+
+            do
+            {
+                task = 0;
+
+                {
+                    Lock l(*local_mutex);
+
+                    if (! tasklist.empty())
+                    {
+                        task = tasklist.pop_front();
+                    }
+                }
+
+                if (task == 0)
+                {
+                    const int iter(rand() % num_threads);
+                    mc::WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> > * const tfunc = threads[iter].second;
+
+                    pthread_mutex_lock(pool_mutex->mutex());
+                    pthread_mutex_lock(local_mutex->mutex());
+                    bool ok = (global_terminate ? false : tfunc->steal(tasklist));
+
+                    if (! ok && tasklist.empty())
+                    {
+                        // Have to make sure that no task has been added after unlocking the local
+                        // mutex. this is a possible race-condition to circumvent here!
+                        if (! terminate)
+                        {
+                            pthread_mutex_unlock(local_mutex->mutex());
+                            global_barrier->wait(*pool_mutex);
+                            pthread_mutex_unlock(pool_mutex->mutex());
+                        }
+                        else
+                        {
+                            pthread_mutex_unlock(pool_mutex->mutex());
+                            pthread_mutex_unlock(local_mutex->mutex());
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        pthread_mutex_unlock(pool_mutex->mutex());
+                        if (! tasklist.empty())
+                        {
+                            task = tasklist.pop_front();
+                        }
+                        pthread_mutex_unlock(local_mutex->mutex());
+                    }
+                }
+
+                if (task != 0)
+                {
+                    unsigned & sched_id = task->ticket->sid();
+                    sched_id = sched_lpu;
+#ifdef DEBUG
+                    std::string msg = "Thread " + stringify(pool_id) + " on LPU " +
+                    stringify(sched_lpu) + " will execute ticket " +
+                    stringify(task->ticket->uid()) + "\n";
+                    LOGMESSAGE(lc_backend, msg);
+#endif
+
+                    (*task->functor)();
+                    task->ticket->mark();
+                    delete task;
+                }
+            }
+            while (true);
+
+            delete comp;
+
+            terminate = false; // Signal Implementation DTOR that we arrived here
         }
 
         void enqueue(mc::ThreadTask * task)
@@ -202,6 +367,101 @@ namespace honei
             delete local_mutex;
         }
 
+        void operator() ()
+        {
+            /// The ThreadTask to be currently executed by the thread.
+            mc::ThreadTask * task(0);
+
+            /// A comparison object for mc::ThreadTask objects.
+            mc::TaskComp * const comp(new mc::TaskComp(sched_lpu));
+
+            std::list<mc::ThreadTask *>::iterator i, i_end;
+
+            /* Set thread_id from operating system and use this on the pool
+             * side as sign for the thread to be setup. Then let the thread
+             * go to sleep until it will be assigned its first task. */
+
+            {
+                Lock l(*pool_mutex);
+                thread_id = syscall(__NR_gettid);
+                global_barrier->wait(*pool_mutex);
+            }
+
+            do
+            {
+                task = 0;
+
+                {
+                    Lock l(*local_mutex);
+
+                    if (! tasklist.empty())
+                    {
+                        task = tasklist.front();
+                        tasklist.pop_front();
+                    }
+                }
+
+                if (task == 0)
+                {
+                    const int iter(rand() % num_threads);
+                    mc::WorkStealingThreadFunction<std::list<mc::ThreadTask *> >* const tfunc = threads[iter].second;
+
+                    pthread_mutex_lock(pool_mutex->mutex());
+                    pthread_mutex_lock(local_mutex->mutex());
+                    bool ok = (global_terminate ? false : tfunc->steal(tasklist));
+
+                    if (! ok && tasklist.empty())
+                    {
+                        // Have to make sure that no task has been added after unlocking the local
+                        // mutex. this is a possible race-condition to circumvent here!
+                        if (! terminate)
+                        {
+                            pthread_mutex_unlock(local_mutex->mutex());
+                            global_barrier->wait(*pool_mutex);
+                            pthread_mutex_unlock(pool_mutex->mutex());
+                        }
+                        else
+                        {
+                            pthread_mutex_unlock(pool_mutex->mutex());
+                            pthread_mutex_unlock(local_mutex->mutex());
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        pthread_mutex_unlock(pool_mutex->mutex());
+                        if (! tasklist.empty())
+                        {
+                            task = tasklist.front();
+                            tasklist.pop_front();
+                        }
+                        pthread_mutex_unlock(local_mutex->mutex());
+                    }
+                }
+
+                if (task != 0)
+                {
+                    unsigned & sched_id = task->ticket->sid();
+                    sched_id = sched_lpu;
+#ifdef DEBUG
+                    std::string msg = "Thread " + stringify(pool_id) + " on LPU " +
+                    stringify(sched_lpu) + " will execute ticket " +
+                    stringify(task->ticket->uid()) + "\n";
+                    LOGMESSAGE(lc_backend, msg);
+#endif
+
+                    (*task->functor)();
+                    task->ticket->mark();
+                    delete task;
+                }
+            }
+            while (true);
+
+            delete comp;
+
+            terminate = false; // Signal Implementation DTOR that we arrived here
+        }
+
         void enqueue(mc::ThreadTask * task)
         {
             Lock l(*local_mutex);
@@ -253,6 +513,53 @@ namespace honei
         ~Implementation()
         {
         }
+
+        void operator () ()
+        {
+            /// The ThreadTask to be currently executed by the thread.
+            mc::ThreadTask * task(0);
+
+            /* Set thread_id from operating system and use this on the pool
+             * side as sign for the thread to be setup. Then let the thread
+             * go to sleep until it will be assigned its first task. */
+
+            {
+                Lock l(*pool_mutex);
+                thread_id = syscall(__NR_gettid);
+                global_barrier->wait(*pool_mutex);
+            }
+
+            do
+            {
+                task = tasklist->pop_front();
+                {
+                    Lock l(*pool_mutex);
+
+                    if (task == 0)
+                    {
+                        if (! terminate)
+                            global_barrier->wait(*pool_mutex);
+                        else
+                            break;
+                    }
+                }
+
+                if (task != 0)
+                {
+#ifdef DEBUG
+                    std::string msg = "Thread " + stringify(_imp->pool_id) + " will execute ticket " +
+                    stringify(task->ticket->uid()) + "\n";
+                    LOGMESSAGE(lc_backend, msg);
+#endif
+                    (*task->functor)();
+                    task->ticket->mark();
+                    delete task;
+                }
+            }
+            while (true);
+
+            terminate = false; // Signal Implementation DTOR that we arrived here
+        }
     };
 
     template <> struct Implementation<mc::SimpleThreadFunction<std::list<mc::ThreadTask *> > > :
@@ -271,8 +578,57 @@ namespace honei
         ~Implementation()
         {
         }
-    };
 
+        void operator () ()
+        {
+            /// The ThreadTask to be currently executed by the thread.
+            mc::ThreadTask * task(0);
+
+            /* Set thread_id from operating system and use this on the pool
+             * side as sign for the thread to be setup. Then let the thread
+             * go to sleep until it will be assigned its first task. */
+
+            {
+                Lock l(*pool_mutex);
+                thread_id = syscall(__NR_gettid);
+                global_barrier->wait(*pool_mutex);
+            }
+
+            do
+            {
+                {
+                    Lock l(*pool_mutex);
+
+                    task = (tasklist->empty() ? 0 : tasklist->front());
+
+                    if (task == 0)
+                    {
+                        if (! terminate)
+                            global_barrier->wait(*pool_mutex);
+                        else
+                            break;
+                    }
+                    else
+                        tasklist->pop_front();
+                }
+
+                if (task != 0)
+                {
+#ifdef DEBUG
+                    std::string msg = "Thread " + stringify(pool_id) + " will execute ticket " +
+                    stringify(task->ticket->uid()) + "\n";
+                    LOGMESSAGE(lc_backend, msg);
+#endif
+                    (*task->functor)();
+                    task->ticket->mark();
+                    delete task;
+                }
+            }
+            while (true);
+
+            terminate = false; // Signal Implementation DTOR that we arrived here
+        }
+    };
 }
 
 using namespace honei::mc;
@@ -299,72 +655,7 @@ void AffinityThreadFunction::stop()
 
 void AffinityThreadFunction::operator() ()
 {
-    /// The ThreadTask to be currently executed by the thread.
-    mc::ThreadTask * task(0);
-
-    /// A comparison object for mc::ThreadTask objects.
-    mc::TaskComp * const comp(new mc::TaskComp(_imp->sched_lpu));
-
-    std::list<mc::ThreadTask *>::iterator i, i_end;
-
-    /* Set thread_id from operating system and use this on the pool
-     * side as sign for the thread to be setup. Then let the thread
-     * go to sleep until it will be assigned its first task. */
-
-    {
-        Lock l(*_imp->pool_mutex);
-        _imp->thread_id = syscall(__NR_gettid);
-        _imp->global_barrier->wait(*_imp->pool_mutex);
-    }
-
-    do
-    {
-        task = 0;
-
-        // Check work-status and condition again under same mutex protection
-        // to avoid race conditions between pick / if and wait
-        {
-            Lock l(*_imp->pool_mutex); // Try to avoid this lock...
-
-            for (i = _imp->tasklist->begin(), i_end = _imp->tasklist->end() ; i != i_end ; ++i)
-            {
-                if ((*comp)(*i))
-                {
-                    task = *i;
-                    unsigned & sched_id = task->ticket->sid();
-                    sched_id = _imp->sched_lpu;
-                    _imp->tasklist->remove(*i);
-#ifdef DEBUG
-                    std::string msg = "Thread " + stringify(_imp->pool_id) + " on LPU " +
-                        stringify(_imp->sched_lpu) + " will execute ticket " +
-                        stringify(task->ticket->uid()) + "\n";
-                    LOGMESSAGE(lc_backend, msg);
-#endif
-                    break;
-                }
-            }
-
-            if (task == 0)
-            {
-                if (! _imp->terminate)
-                    _imp->global_barrier->wait(*_imp->pool_mutex);
-                else
-                    break;
-            }
-        }
-
-        if (task != 0)
-        {
-            (*task->functor)();
-            task->ticket->mark();
-            delete task;
-        }
-    }
-    while (true);
-
-    delete comp;
-
-    _imp->terminate = false; // Signal Implementation DTOR that we arrived here
+    (*_imp)();
 }
 
 unsigned AffinityThreadFunction::pool_id() const
@@ -398,99 +689,14 @@ void WorkStealingThreadFunction<std::list<mc::ThreadTask *> >::enqueue(mc::Threa
     _imp->enqueue(task);
 }
 
+bool WorkStealingThreadFunction<std::list<mc::ThreadTask *> >::steal(std::list<mc::ThreadTask *> & thief_list)
+{
+    return _imp->steal(thief_list);
+}
+
 void WorkStealingThreadFunction<std::list<mc::ThreadTask *> >::operator() ()
 {
-    /// The ThreadTask to be currently executed by the thread.
-    mc::ThreadTask * task(0);
-
-    /// A comparison object for mc::ThreadTask objects.
-    mc::TaskComp * const comp(new mc::TaskComp(_imp->sched_lpu));
-
-    std::list<mc::ThreadTask *>::iterator i, i_end;
-
-    /* Set thread_id from operating system and use this on the pool
-     * side as sign for the thread to be setup. Then let the thread
-     * go to sleep until it will be assigned its first task. */
-
-    {
-        Lock l(*_imp->pool_mutex);
-        _imp->thread_id = syscall(__NR_gettid);
-        _imp->global_barrier->wait(*_imp->pool_mutex);
-    }
-
-    do
-    {
-        task = 0;
-
-        {
-            Lock l(*_imp->local_mutex);
-
-            if (! _imp->tasklist.empty())
-            {
-                task = _imp->tasklist.front();
-                _imp->tasklist.pop_front();
-            }
-        }
-
-        if (task == 0)
-        {
-            const int iter(rand() % _imp->num_threads);
-            WorkStealingThreadFunction * const tfunc = _imp->threads[iter].second;
-
-            pthread_mutex_lock(_imp->pool_mutex->mutex());
-            pthread_mutex_lock(_imp->local_mutex->mutex());
-            bool ok = (_imp->global_terminate ? false : tfunc->_imp->steal(_imp->tasklist));
-
-            if (! ok && _imp->tasklist.empty())
-            {
-                // Have to make sure that no task has been added after unlocking the local
-                // mutex. this is a possible race-condition to circumvent here!
-                if (! _imp->terminate)
-                {
-                    pthread_mutex_unlock(_imp->local_mutex->mutex());
-                    _imp->global_barrier->wait(*_imp->pool_mutex);
-                    pthread_mutex_unlock(_imp->pool_mutex->mutex());
-                }
-                else
-                {
-                    pthread_mutex_unlock(_imp->pool_mutex->mutex());
-                    pthread_mutex_unlock(_imp->local_mutex->mutex());
-                    break;
-                }
-            }
-            else
-            {
-                pthread_mutex_unlock(_imp->pool_mutex->mutex());
-                if (! _imp->tasklist.empty())
-                {
-                    task = _imp->tasklist.front();
-                    _imp->tasklist.pop_front();
-                }
-                pthread_mutex_unlock(_imp->local_mutex->mutex());
-            }
-        }
-
-        if (task != 0)
-        {
-            unsigned & sched_id = task->ticket->sid();
-            sched_id = _imp->sched_lpu;
-#ifdef DEBUG
-            std::string msg = "Thread " + stringify(_imp->pool_id) + " on LPU " +
-                stringify(_imp->sched_lpu) + " will execute ticket " +
-                stringify(task->ticket->uid()) + "\n";
-            LOGMESSAGE(lc_backend, msg);
-#endif
-
-            (*task->functor)();
-            task->ticket->mark();
-            delete task;
-        }
-    }
-    while (true);
-
-    delete comp;
-
-    _imp->terminate = false; // Signal Implementation DTOR that we arrived here
+    (*_imp)();
 }
 
 unsigned WorkStealingThreadFunction<std::list<mc::ThreadTask *> >::pool_id() const
@@ -524,97 +730,14 @@ void WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> >::enqueue(mc:
     _imp->enqueue(task);
 }
 
+bool WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> >::steal(mc::AtomicSList<mc::ThreadTask *> & thief_list)
+{
+    return _imp->steal(thief_list);
+}
+
 void WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> >::operator() ()
 {
-    /// The ThreadTask to be currently executed by the thread.
-    mc::ThreadTask * task(0);
-
-    /// A comparison object for mc::ThreadTask objects.
-    mc::TaskComp * const comp(new mc::TaskComp(_imp->sched_lpu));
-
-    std::list<mc::ThreadTask *>::iterator i, i_end;
-
-    /* Set thread_id from operating system and use this on the pool
-     * side as sign for the thread to be setup. Then let the thread
-     * go to sleep until it will be assigned its first task. */
-
-    {
-        Lock l(*_imp->pool_mutex);
-        _imp->thread_id = syscall(__NR_gettid);
-        _imp->global_barrier->wait(*_imp->pool_mutex);
-    }
-
-    do
-    {
-        task = 0;
-
-        {
-            Lock l(*_imp->local_mutex);
-
-            if (! _imp->tasklist.empty())
-            {
-                task = _imp->tasklist.pop_front();
-            }
-        }
-
-        if (task == 0)
-        {
-            const int iter(rand() % _imp->num_threads);
-            WorkStealingThreadFunction * const tfunc = _imp->threads[iter].second;
-
-            pthread_mutex_lock(_imp->pool_mutex->mutex());
-            pthread_mutex_lock(_imp->local_mutex->mutex());
-            bool ok = (_imp->global_terminate ? false : tfunc->_imp->steal(_imp->tasklist));
-
-            if (! ok && _imp->tasklist.empty())
-            {
-                // Have to make sure that no task has been added after unlocking the local
-                // mutex. this is a possible race-condition to circumvent here!
-                if (! _imp->terminate)
-                {
-                    pthread_mutex_unlock(_imp->local_mutex->mutex());
-                    _imp->global_barrier->wait(*_imp->pool_mutex);
-                    pthread_mutex_unlock(_imp->pool_mutex->mutex());
-                }
-                else
-                {
-                    pthread_mutex_unlock(_imp->pool_mutex->mutex());
-                    pthread_mutex_unlock(_imp->local_mutex->mutex());
-                    break;
-                }
-            }
-            else
-            {
-                pthread_mutex_unlock(_imp->pool_mutex->mutex());
-                if (! _imp->tasklist.empty())
-                {
-                    task = _imp->tasklist.pop_front();
-                }
-                pthread_mutex_unlock(_imp->local_mutex->mutex());
-            }
-        }
-
-        if (task != 0)
-        {
-            unsigned & sched_id = task->ticket->sid();
-            sched_id = _imp->sched_lpu;
-#ifdef DEBUG
-            std::string msg = "Thread " + stringify(_imp->pool_id) + " on LPU " +
-                stringify(_imp->sched_lpu) + " will execute ticket " +
-                stringify(task->ticket->uid()) + "\n";
-            LOGMESSAGE(lc_backend, msg);
-#endif
-
-            (*task->functor)();
-            task->ticket->mark();
-            delete task;
-        }
-    }
-    while (true);
-
-    delete comp;
-
-    _imp->terminate = false; // Signal Implementation DTOR that we arrived here
+    (*_imp)();
 }
 
 unsigned WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> >::pool_id() const
@@ -631,7 +754,7 @@ unsigned WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> >::tid() c
 SimpleThreadFunction<AtomicSList<ThreadTask *> >::SimpleThreadFunction(PoolSyncData * const psync,
         AtomicSList<ThreadTask *> * const list, unsigned pool_id) :
     PrivateImplementationPattern<SimpleThreadFunction<AtomicSList<ThreadTask *> >, Shared>(new
-            Implementation<SimpleThreadFunction>(psync, list, pool_id))
+            Implementation<SimpleThreadFunction<AtomicSList<ThreadTask *> > >(psync, list, pool_id))
 {
 }
 
@@ -646,50 +769,7 @@ void SimpleThreadFunction<AtomicSList<ThreadTask *> >::stop()
 
 void SimpleThreadFunction<AtomicSList<ThreadTask *> >::operator() ()
 {
-    /// The ThreadTask to be currently executed by the thread.
-    mc::ThreadTask * task(0);
-
-    /* Set thread_id from operating system and use this on the pool
-     * side as sign for the thread to be setup. Then let the thread
-     * go to sleep until it will be assigned its first task. */
-
-    {
-        Lock l(*_imp->pool_mutex);
-        _imp->thread_id = syscall(__NR_gettid);
-        _imp->global_barrier->wait(*_imp->pool_mutex);
-    }
-
-    do
-    {
-        task = _imp->tasklist->pop_front();
-
-        {
-            Lock l(*_imp->pool_mutex);
-
-            if (task == 0)
-            {
-                if (! _imp->terminate)
-                    _imp->global_barrier->wait(*_imp->pool_mutex);
-                else
-                    break;
-            }
-        }
-
-        if (task != 0)
-        {
-#ifdef DEBUG
-            std::string msg = "Thread " + stringify(_imp->pool_id) + " will execute ticket " +
-                stringify(task->ticket->uid()) + "\n";
-            LOGMESSAGE(lc_backend, msg);
-#endif
-            (*task->functor)();
-            task->ticket->mark();
-            delete task;
-        }
-    }
-    while (true);
-
-    _imp->terminate = false; // Signal Implementation DTOR that we arrived here
+    (*_imp)();
 }
 
 unsigned SimpleThreadFunction<AtomicSList<ThreadTask *> >::tid() const
@@ -716,52 +796,7 @@ void SimpleThreadFunction<std::list<ThreadTask *> >::stop()
 
 void SimpleThreadFunction<std::list<ThreadTask *> >::operator() ()
 {
-    /// The ThreadTask to be currently executed by the thread.
-    mc::ThreadTask * task(0);
-
-    /* Set thread_id from operating system and use this on the pool
-     * side as sign for the thread to be setup. Then let the thread
-     * go to sleep until it will be assigned its first task. */
-
-    {
-        Lock l(*_imp->pool_mutex);
-        _imp->thread_id = syscall(__NR_gettid);
-        _imp->global_barrier->wait(*_imp->pool_mutex);
-    }
-
-    do
-    {
-        {
-            Lock l(*_imp->pool_mutex);
-
-            task = (_imp->tasklist->empty() ? 0 : _imp->tasklist->front());
-
-            if (task == 0)
-            {
-                if (! _imp->terminate)
-                    _imp->global_barrier->wait(*_imp->pool_mutex);
-                else
-                    break;
-            }
-            else
-                _imp->tasklist->pop_front();
-        }
-
-        if (task != 0)
-        {
-#ifdef DEBUG
-            std::string msg = "Thread " + stringify(_imp->pool_id) + " will execute ticket " +
-                stringify(task->ticket->uid()) + "\n";
-            LOGMESSAGE(lc_backend, msg);
-#endif
-            (*task->functor)();
-            task->ticket->mark();
-            delete task;
-        }
-    }
-    while (true);
-
-    _imp->terminate = false; // Signal Implementation DTOR that we arrived here
+    (*_imp)();
 }
 
 unsigned SimpleThreadFunction<std::list<ThreadTask *> >::tid() const
