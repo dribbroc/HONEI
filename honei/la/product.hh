@@ -149,7 +149,8 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> value(DenseVector<DT1_> & result, const SparseMatrixELL<DT1_> & a, const DenseVector<DT2_> & b)
+        static DenseVector<DT1_> value(DenseVector<DT1_> & result, const SparseMatrixELL<DT1_> & a, const DenseVector<DT2_> & b,
+                unsigned long row_start = 0, unsigned long row_end = 0)
         {
             CONTEXT("When multiplying SparseMatrixELL with DenseVector:");
 
@@ -163,7 +164,7 @@ namespace honei
             }
 
             //DenseVector<DT1_> result(a.rows(), DT1_(0));
-            fill<tags::CPU>(result, DT1_(0));
+            //fill<tags::CPU>(result, DT1_(0));
 
             /*for(unsigned long n(0) ; n < a.num_cols_per_row() ; n++)
             {
@@ -183,13 +184,17 @@ namespace honei
             {
                 result.elements()[i % stride] += aax[i] * b.elements()[aaj[i]];
             }*/
+
+            if (row_end == 0)
+                row_end = a.rows();
+
             const unsigned long stride(a.stride());
             const DT1_ * bx(b.elements());
             const DT1_ * aax(a.Ax().elements());
             const unsigned long * aaj(a.Aj().elements());
             const unsigned long * aarl(a.Arl().elements());
             DT1_ sum(0);
-            for (unsigned long row(0) ; row < a.rows() ; ++row)
+            for (unsigned long row(row_start) ; row < row_end ; ++row)
             {
                 sum = 0;
                 for (unsigned long col(0), j(row * a.threads()) ; col < aarl[row] ; ++col, j+=stride)

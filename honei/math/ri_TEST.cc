@@ -120,6 +120,7 @@ class RITestSparseELL:
         }
 };
 RITestSparseELL<tags::CPU, double> ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RITestSparseELL<tags::CPU::MultiCore, double> mc_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #ifdef HONEI_SSE
 RITestSparseELL<tags::CPU::SSE, double> sse_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 RITestSparseELL<tags::CPU::MultiCore::SSE, double> mcsse_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");

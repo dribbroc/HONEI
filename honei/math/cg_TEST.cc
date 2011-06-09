@@ -119,6 +119,7 @@ class CGTestSparseELL:
         }
 };
 CGTestSparseELL<tags::CPU, double> cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
+CGTestSparseELL<tags::CPU::MultiCore, double> mc_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
 #ifdef HONEI_SSE
 CGTestSparseELL<tags::CPU::SSE, double> sse_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
 CGTestSparseELL<tags::CPU::MultiCore::SSE, double> mcsse_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");

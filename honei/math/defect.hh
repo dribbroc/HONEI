@@ -617,6 +617,52 @@ namespace honei
                     }
         };
 
+    template<>
+        struct Defect<tags::CPU::MultiCore>
+        {
+
+            //todo DIRK
+            //TODO use atomar MC cuda defect
+            public:
+                template<typename DT_>
+                    static DenseVector<DT_> value(DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
+                    {
+                        if (x.size() != system.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(x.size(), system.columns());
+                        }
+                        if (right_hand_side.size() != system.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
+                        }
+
+                        DenseVector<DT_> result(right_hand_side.size());
+                        DenseVector<DT_> temp(right_hand_side.size());
+                        Product<tags::CPU::MultiCore>::value(temp, system, x);
+                        Difference<tags::CPU::MultiCore>::value(result, right_hand_side, temp);
+                        return result;
+                    }
+
+                template<typename DT_>
+                    static DenseVector<DT_> & value(DenseVector<DT_> & result, DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
+                    {
+                        if (x.size() != system.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(x.size(), system.columns());
+                        }
+                        if (right_hand_side.size() != system.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
+                        }
+
+                        DenseVector<DT_> temp(right_hand_side.size());
+                        Product<tags::CPU::MultiCore>::value(temp, system, x);
+                        Difference<tags::CPU::MultiCore>::value(result, right_hand_side, temp);
+
+                        return result;
+                    }
+        };
+
     namespace mc
     {
         template <typename Tag_> struct Defect
