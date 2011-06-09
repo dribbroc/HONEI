@@ -81,7 +81,7 @@ class OperatorTest:
             DenseVector<double> x2(x1.copy());
 
             unsigned long used_iters(0);
-            cgop = new SolverOperator<Tag_, CG<Tag_, methods::NONE>, SparseMatrixELL<double>, double>(system, b, x1, 1000ul, used_iters, double(1e-8));
+            cgop = new SolverOperator<CG<Tag_, methods::NONE>, SparseMatrixELL<double>, double>(system, b, x1, 1000ul, used_iters, double(1e-8));
             cgop->value();
 
             unsigned long used_iters2(0);
@@ -106,7 +106,7 @@ class OperatorTest:
             {
                     diag_inverted[i] = double(0.7)/system(i, i);
             }
-            riop = new SmootherOperator<Tag_, RISmoother<Tag_>, SparseMatrixELL<double>, DenseVector<double>, double>(system, diag_inverted, b, x3, t1, t2, 1000ul);
+            riop = new SmootherOperator<RISmoother<Tag_>, SparseMatrixELL<double>, DenseVector<double>, double>(system, diag_inverted, b, x3, t1, t2, 1000ul);
             riop->value();
 
             RISmoother<Tag_>::value(system, diag_inverted, b, x4, t1, t2, 1000ul);
@@ -116,6 +116,31 @@ class OperatorTest:
                 TEST_CHECK_EQUAL_WITHIN_EPS(x3[i], x4[i], std::numeric_limits<double>::epsilon());
             }
 
+            Operator* transop;
+            string filename_fine(HONEI_SOURCEDIR);
+            filename_fine += "/honei/math/testdata/poisson_advanced/sort_0/sol_8";
+            string filename_coarse(HONEI_SOURCEDIR);
+            filename_coarse += "/honei/math/testdata/poisson_advanced/sort_0/sol_7";
+
+            DenseVector<double> fine_1(VectorIO<io_formats::EXP>::read_vector(filename_fine, double(0)));
+            DenseVector<double> fine_2(VectorIO<io_formats::EXP>::read_vector(filename_fine, double(0)));
+            DenseVector<double> coarse(VectorIO<io_formats::EXP>::read_vector(filename_coarse, double(0)));
+
+            string filename_prolmat(HONEI_SOURCEDIR);
+            filename_prolmat += "/honei/math/testdata/poisson_advanced/sort_0/prol_8.ell";
+            SparseMatrixELL<double> prolmat(MatrixIO<io_formats::ELL>::read_matrix(filename_prolmat, double(0)));
+
+            transop = new TransferOperator< Prolongation<Tag_, methods::PROLMAT>, SparseMatrixELL<double>, DenseVector<double> >(fine_1, coarse, prolmat);
+            transop->value();
+
+            DenseVector<unsigned long> dummy(1ul);
+            Prolongation<Tag_, methods::PROLMAT>::value(fine_2, coarse, dummy, prolmat);
+            for(unsigned long i(0) ; i < fine_1.size() ; ++i)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(fine_1[i], fine_2[i], std::numeric_limits<double>::epsilon());
+            }
+
+            delete transop;
             delete riop;
             delete cgop;
             delete axpyop;

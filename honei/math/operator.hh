@@ -26,6 +26,7 @@
 #include <honei/la/scaled_sum.hh>
 #include <honei/math/cg.hh>
 #include <honei/math/ri.hh>
+#include <honei/math/prolongation.hh>
 
 namespace honei
 {
@@ -169,7 +170,7 @@ namespace honei
             DT_ _alpha;
     };
 
-    template<typename Tag_, typename SolverType_, typename MatrixType_, typename DT_>
+    template<typename SolverType_, typename MatrixType_, typename DT_>
     class SolverOperator : public Operator
     {
         //TODO: how to build in preconditioning -> standard-value?
@@ -203,7 +204,7 @@ namespace honei
             DT_ _eps_relative;
     };
 
-    template<typename Tag_, typename SmootherType_, typename MatrixType_, typename PreconContType_, typename DT_>
+    template<typename SmootherType_, typename MatrixType_, typename PreconContType_, typename DT_>
     class SmootherOperator : public Operator
     {
         //TODO: more temps, non-matrix preconditioning
@@ -238,6 +239,30 @@ namespace honei
             DenseVector<DT_> _temp_0;
             DenseVector<DT_> _temp_1;
             unsigned long _max_iters;
+    };
+
+    template<typename TransferType_, typename MatrixType_, typename VectorType_>
+    class TransferOperator : public Operator
+    {
+        public:
+            TransferOperator(VectorType_ & left, VectorType_ & right, MatrixType_ & mat) :
+                _left(left),
+                _right(right),
+                _mat(mat)
+            {
+            }
+
+            virtual void value()
+            {
+                //TODO: think of new way to encode BCs -> separate operator?
+                DenseVector<unsigned long> dummy(1ul);
+                TransferType_::value(_left, _right, dummy, _mat);
+            }
+
+        private:
+            VectorType_ _left;
+            VectorType_ _right;
+            MatrixType_ _mat;
     };
 }
 #endif
