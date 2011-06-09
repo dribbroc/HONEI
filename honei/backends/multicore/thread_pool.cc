@@ -371,7 +371,7 @@ namespace honei
         public Implementation<mc::ThreadPool>
     {
         /// List of user POSIX threads
-        std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction *> > _threads;
+        std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<std::list<mc::ThreadTask *> > *> > _threads;
 
         /// Mapping of threads to the scheduler ids of the cores they run on
         std::vector<unsigned> _sched_ids;
@@ -390,6 +390,8 @@ namespace honei
         {
             CONTEXT("When initializing the thread pool:\n");
 
+            bool affinity = Configuration::instance()->get_value("mc::affinity", true);
+
 #ifdef DEBUG
             std::string msg = "Affinity is enabled, using thread pool with affinity support.\n";
             msg += "The default DispatchPolicy is configured to be: \n";
@@ -397,7 +399,7 @@ namespace honei
 
             std::string dis = Configuration::instance()->get_value("mc::dispatch", "anycore");
 
-            if (dis == "anycore")
+            if (! affinity || dis == "anycore")
             {
                 policy = &mc::DispatchPolicy::any_core;
 #ifdef DEBUG
@@ -419,6 +421,8 @@ namespace honei
 #endif
             }
 
+            if (affinity)
+            {
             _affinity_mask = new cpu_set_t[_num_threads + 1];
 
             // set own affinity first
@@ -431,24 +435,29 @@ namespace honei
             msg += "THREAD \t\t POOL_ID \t LPU \t NODE \n";
             msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->get_node(_topology->num_lpus() - 1)) + " \n";
 #endif
+            }
 
             int inst_ctr(0);
 
             for (int i(_num_threads - 1) ; i >= 0 ; --i)
             {
-                unsigned sched_id(i % (_topology->num_lpus()));
-                mc::WorkStealingThreadFunction * tobj = new mc::WorkStealingThreadFunction(_pool_sync, inst_ctr, sched_id, _threads, _num_threads, global_terminate);
+                unsigned sched_id(affinity ? (i % (_topology->num_lpus())) : 0xFFFF );
+                mc::WorkStealingThreadFunction<std::list<mc::ThreadTask *> > * tobj =
+                    new mc::WorkStealingThreadFunction<std::list<mc::ThreadTask *> >(_pool_sync, inst_ctr, sched_id, _threads, _num_threads, global_terminate);
                 Thread * t = new Thread(*tobj);
                 while (tobj->tid() == 0) ; // Wait until the thread is really setup / got cpu time for the first time
                 _threads.push_back(std::make_pair(t, tobj));
-                _sched_ids.push_back(sched_id);
-                CPU_ZERO(&_affinity_mask[i]);
-                CPU_SET(sched_id, &_affinity_mask[i]);
-                if(sched_setaffinity(tobj->tid(), sizeof(cpu_set_t), &_affinity_mask[i]) != 0)
-                    throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
+                if (affinity)
+                {
+                    _sched_ids.push_back(sched_id);
+                    CPU_ZERO(&_affinity_mask[i]);
+                    CPU_SET(sched_id, &_affinity_mask[i]);
+                    if(sched_setaffinity(tobj->tid(), sizeof(cpu_set_t), &_affinity_mask[i]) != 0)
+                        throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 #ifdef DEBUG
-                msg += stringify(tobj->tid()) + "\t\t" + stringify(inst_ctr) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(_topology->get_node(sched_id)) + " \n";
+                    msg += stringify(tobj->tid()) + "\t\t" + stringify(inst_ctr) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(_topology->get_node(sched_id)) + " \n";
 #endif
+                }
 
                 ++inst_ctr;
             }
@@ -462,7 +471,7 @@ namespace honei
         {
             global_terminate = true;
 
-            for(std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction *> >::iterator i(_threads.begin()),
+            for(std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<std::list<mc::ThreadTask *> > *> >::iterator i(_threads.begin()),
                 i_end(_threads.end()) ; i != i_end ; ++i)
             {
                 (*i).second->stop();
@@ -475,6 +484,9 @@ namespace honei
 
         virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy p)
         {
+//            if (! affinity)
+//                return enqueue(task);
+
             CONTEXT("When creating a ThreadTask:\n");
 
             Ticket<tags::CPU::MultiCore> * ticket(p.apply());
@@ -482,7 +494,7 @@ namespace honei
 
             int idx((ticket->sid_min() == 0xFFFF) ? 0 : ticket->sid_min());
 
-            mc::WorkStealingThreadFunction * wfunc(_threads[idx].second);
+            mc::WorkStealingThreadFunction<std::list<mc::ThreadTask *> > * wfunc(_threads[idx].second);
             wfunc->enqueue(t_task);
 
             {
@@ -502,7 +514,166 @@ namespace honei
 
             int idx((ticket->sid_min() == 0xFFFF) ? 0 : ticket->sid_min());
 
-            mc::WorkStealingThreadFunction * wfunc(_threads[idx].second);
+            mc::WorkStealingThreadFunction<std::list<mc::ThreadTask *> > * wfunc(_threads[idx].second);
+            wfunc->enqueue(t_task);
+
+            {
+                Lock l(*_pool_sync->mutex);
+                _pool_sync->barrier->broadcast();
+            }
+
+            return ticket;
+        }
+    };
+
+    template <> struct WorkStealingImplementation<mc::AtomicSList<mc::ThreadTask *> > :
+        public Implementation<mc::ThreadPool>
+    {
+        /// List of user POSIX threads
+        std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> > *> > _threads;
+
+        /// Mapping of threads to the scheduler ids of the cores they run on
+        std::vector<unsigned> _sched_ids;
+
+        /// Array of affinity masks for main process and all controlled threads
+        cpu_set_t * _affinity_mask;
+
+        /// Function pointer to any of the default dispatch strategies
+        mc::DispatchPolicy (* policy) ();
+
+        volatile bool global_terminate;
+
+        WorkStealingImplementation() :
+            Implementation<mc::ThreadPool>(),
+            global_terminate(false)
+        {
+            CONTEXT("When initializing the thread pool:\n");
+
+            bool affinity = Configuration::instance()->get_value("mc::affinity", true);
+
+#ifdef DEBUG
+            std::string msg = "Affinity is enabled, using thread pool with affinity support.\n";
+            msg += "The default DispatchPolicy is configured to be: \n";
+#endif
+
+            std::string dis = Configuration::instance()->get_value("mc::dispatch", "anycore");
+
+            if (! affinity || dis == "anycore")
+            {
+                policy = &mc::DispatchPolicy::any_core;
+#ifdef DEBUG
+                msg += "arbitrary - the next available thread will execute a task\n";
+#endif
+            }
+            else if (dis == "alternating")
+            {
+                policy = &mc::DispatchPolicy::alternating_node;
+#ifdef DEBUG
+                msg += "alternating - tasks shall be assigned alternatingly on available NUMA nodes\n";
+#endif
+            }
+            else if (dis == "linear")
+            {
+                policy = &mc::DispatchPolicy::linear_node;
+#ifdef DEBUG
+                msg += "linear - tasks shall be assigned to fill up available NUMA nodes one-by-one\n";
+#endif
+            }
+
+            if (affinity)
+            {
+                _affinity_mask = new cpu_set_t[_num_threads + 1];
+
+                // set own affinity first
+                CPU_ZERO(&_affinity_mask[_num_threads]);
+                CPU_SET(_topology->num_lpus() - 1, &_affinity_mask[_num_threads]);
+                if(sched_setaffinity(syscall(__NR_gettid), sizeof(cpu_set_t), &_affinity_mask[_num_threads]) != 0)
+                    throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
+
+#ifdef DEBUG
+            msg += "THREAD \t\t POOL_ID \t LPU \t NODE \n";
+            msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->get_node(_topology->num_lpus() - 1)) + " \n";
+#endif
+            }
+
+            int inst_ctr(0);
+
+            for (int i(_num_threads - 1) ; i >= 0 ; --i)
+            {
+                unsigned sched_id(affinity ? (i % (_topology->num_lpus())) : 0xFFFF);
+                mc::WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> > * tobj = new mc::WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> >(_pool_sync, inst_ctr, sched_id, _threads, _num_threads, global_terminate);
+                Thread * t = new Thread(*tobj);
+                while (tobj->tid() == 0) ; // Wait until the thread is really setup / got cpu time for the first time
+                _threads.push_back(std::make_pair(t, tobj));
+
+                if (affinity)
+                {
+                _sched_ids.push_back(sched_id);
+                CPU_ZERO(&_affinity_mask[i]);
+                CPU_SET(sched_id, &_affinity_mask[i]);
+                if(sched_setaffinity(tobj->tid(), sizeof(cpu_set_t), &_affinity_mask[i]) != 0)
+                    throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
+#ifdef DEBUG
+                msg += stringify(tobj->tid()) + "\t\t" + stringify(inst_ctr) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(_topology->get_node(sched_id)) + " \n";
+#endif
+                }
+
+                ++inst_ctr;
+            }
+
+#ifdef DEBUG
+            LOGMESSAGE(lc_backend, msg);
+#endif
+        }
+
+        ~WorkStealingImplementation()
+        {
+            global_terminate = true;
+
+            for(std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> > *> >::iterator i(_threads.begin()),
+                i_end(_threads.end()) ; i != i_end ; ++i)
+            {
+                (*i).second->stop();
+                delete (*i).second;
+                delete (*i).first;
+            }
+
+            delete[] _affinity_mask;
+        }
+
+        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy p)
+        {
+//            if (! affinity)
+//                return enqueue(task);
+
+            CONTEXT("When creating a ThreadTask:\n");
+
+            Ticket<tags::CPU::MultiCore> * ticket(p.apply());
+            mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
+
+            int idx((ticket->sid_min() == 0xFFFF) ? 0 : ticket->sid_min());
+
+            mc::WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> > * wfunc(_threads[idx].second);
+            wfunc->enqueue(t_task);
+
+            {
+                Lock l(*_pool_sync->mutex);
+                _pool_sync->barrier->broadcast();
+            }
+
+            return ticket;
+        }
+
+        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task)
+        {
+            CONTEXT("When creating a ThreadTask:\n");
+
+            Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
+            mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
+
+            int idx((ticket->sid_min() == 0xFFFF) ? 0 : ticket->sid_min());
+
+            mc::WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> > * wfunc(_threads[idx].second);
             wfunc->enqueue(t_task);
 
             {
@@ -533,6 +704,8 @@ ThreadPool::~ThreadPool()
 
 Implementation<ThreadPool> * ThreadPool::select_impl()
 {
+    bool works = Configuration::instance()->get_value("mc::work_stealing", false);
+
     bool affinity = Configuration::instance()->get_value("mc::affinity", true);
 
     int listtype = Configuration::instance()->get_value("mc::listtype", 0);
@@ -541,25 +714,30 @@ Implementation<ThreadPool> * ThreadPool::select_impl()
     affinity = false;
 #endif
 
-    if (affinity)
+    if (works)
     {
-        bool works = Configuration::instance()->get_value("mc::work_stealing", false);
-
-        if (works)
-            return new WorkStealingImplementation<std::list<mc::ThreadTask *> >;
+        if (listtype == 1)
+        {
+            return new WorkStealingImplementation<mc::AtomicSList<mc::ThreadTask *> >;
+        }
         else
-            return new AffinityImplementation;
+        {
+            return new WorkStealingImplementation<std::list<mc::ThreadTask *> >;
+        }
+
+    }
+    else if (affinity)
+    {
+        return new AffinityImplementation;
     }
     else
     {
         if (listtype == 1)
         {
-            std::cout << "Using AtomicSList" << std::endl;
             return new StandardImplementation<mc::AtomicSList<mc::ThreadTask *> >;
         }
         else
         {
-            std::cout << "Using STL List" << std::endl;
             return new StandardImplementation<std::list<mc::ThreadTask *> >;
         }
     }

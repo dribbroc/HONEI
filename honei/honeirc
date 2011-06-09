@@ -122,17 +122,18 @@ cell::extraction_grid_float = 5
 # that the number of available processing units.
 mc::num_threads = 4
 
+# Wheather to enable work stealing (1 = true, 0 = false)
+mc::work_stealing = 0
+
 # Wheather to use affinity (1 = true, 0 = false)
 mc::affinity = 1
 
-# Wheather to enable_workstealing (1 = true, 0 = false)
-# Note: Only works with affinity enabled
-mc::work_stealing = 0
-
 # List type to use in multicore backend (0 = STL, 1 = HONEI)
+# note that affinity without work stealing is always 0
 mc::listtype = 0
 
 # Default DispatchPolicy (anycore, alternating, linear)
+# note that without affinity the policy is always anycore
 mc::dispatch = alternating
 
 # Partition size and partition count settings on a per_operation base

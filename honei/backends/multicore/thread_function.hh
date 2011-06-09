@@ -112,15 +112,43 @@ namespace honei
                 virtual unsigned tid() const;
         };
 
-        class WorkStealingThreadFunction :
+        template <typename ListType> class WorkStealingThreadFunction;
+
+        template <> class WorkStealingThreadFunction<std::list<mc::ThreadTask *> > :
             public ThreadFunctionBase,
-            public PrivateImplementationPattern<WorkStealingThreadFunction, Shared>
+            public PrivateImplementationPattern<WorkStealingThreadFunction<std::list<mc::ThreadTask *> >, Shared>
         {
             private:
 
             public:
 
-                WorkStealingThreadFunction(PoolSyncData * const psync, unsigned pool_id, unsigned sched_id, const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction *> > & threads, unsigned num_thr, volatile bool & terminate);
+                WorkStealingThreadFunction(PoolSyncData * const psync, unsigned pool_id, unsigned sched_id,
+                        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<std::list<mc::ThreadTask *> > *> > & threads, unsigned num_thr, volatile bool & terminate);
+
+                virtual ~WorkStealingThreadFunction();
+
+                /// The threads' main function
+                virtual void operator() ();
+
+                virtual void stop();
+
+                void enqueue(mc::ThreadTask * task);
+
+                virtual unsigned tid() const;
+
+                unsigned pool_id() const;
+        };
+
+        template <> class WorkStealingThreadFunction<AtomicSList<mc::ThreadTask *> > :
+            public ThreadFunctionBase,
+            public PrivateImplementationPattern<WorkStealingThreadFunction<AtomicSList<mc::ThreadTask *> >, Shared>
+        {
+            private:
+
+            public:
+
+                WorkStealingThreadFunction(PoolSyncData * const psync, unsigned pool_id, unsigned sched_id,
+                        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<AtomicSList<mc::ThreadTask *> > *> > & threads, unsigned num_thr, volatile bool & terminate);
 
                 virtual ~WorkStealingThreadFunction();
 
