@@ -68,11 +68,11 @@ namespace honei
             }
     };
 
-    template<typename Tag_, typename MatType_, typename DT_>
+    template<typename Tag_, typename MatType_, typename VectorType_>
     class DefectOperator : public Operator
     {
         public:
-            DefectOperator(DenseVector<DT_>& y, DenseVector<DT_>& b, MatType_& A, DenseVector<DT_>& x) :
+            DefectOperator(VectorType_& y, VectorType_& b, MatType_& A, VectorType_& x) :
                 _y(y),
                 _b(b),
                 _A(A),
@@ -90,10 +90,10 @@ namespace honei
             }
 
         private:
-            DenseVector<DT_> _y;
-            DenseVector<DT_> _b;
+            VectorType_ _y;
+            VectorType_ _b;
             MatType_ _A;
-            DenseVector<DT_> _x;
+            VectorType_ _x;
     };
 
     template<typename Tag_, VectorNormType normtype, typename DT_, bool root>
@@ -120,11 +120,11 @@ namespace honei
             DT_& _y;
     };
 
-    template<typename Tag_, typename DT_>
+    template<typename Tag_, typename VectorType_>
     class SumOperator : public Operator
     {
         public:
-            SumOperator(DenseVector<DT_>& y, DenseVector<DT_>& x) :
+            SumOperator(VectorType_& y, VectorType_& x) :
                 _x(x),
                 _y(y)
         {
@@ -140,8 +140,8 @@ namespace honei
             }
 
         private:
-            DenseVector<DT_> _x;
-            DenseVector<DT_> _y;
+            VectorType_ _x;
+            VectorType_ _y;
     };
 
     template<typename Tag_, typename DT_>
@@ -170,17 +170,17 @@ namespace honei
             DT_ _alpha;
     };
 
-    template<typename SolverType_, typename MatrixType_, typename DT_>
+    template<typename SolverType_, typename MatrixType_, typename VectorType_>
     class SolverOperator : public Operator
     {
         //TODO: how to build in preconditioning -> standard-value?
         public:
             SolverOperator(MatrixType_ & A,
-                           DenseVector<DT_> & b,
-                           DenseVector<DT_> & x,
+                           VectorType_ & b,
+                           VectorType_ & x,
                            unsigned long max_iters,
                            unsigned long & used_iters,
-                           DT_ eps_relative = 1e-8) :
+                           double eps_relative = 1e-8) :
                 _A(A),
                 _b(b),
                 _x(x),
@@ -197,24 +197,24 @@ namespace honei
 
         private:
             MatrixType_ _A;
-            DenseVector<DT_> _b;
-            DenseVector<DT_> _x;
+            VectorType_ _b;
+            VectorType_ _x;
             unsigned long _max_iters;
             unsigned long & _used_iters;
-            DT_ _eps_relative;
+            double _eps_relative;
     };
 
-    template<typename SmootherType_, typename MatrixType_, typename PreconContType_, typename DT_>
+    template<typename SmootherType_, typename MatrixType_, typename VectorType_, typename PreconContType_>
     class SmootherOperator : public Operator
     {
         //TODO: more temps, non-matrix preconditioning
         public:
             SmootherOperator(MatrixType_ & A,
                              PreconContType_ & P,
-                             DenseVector<DT_> & b,
-                             DenseVector<DT_> & x,
-                             DenseVector<DT_> & temp_0,
-                             DenseVector<DT_> & temp_1,
+                             VectorType_ & b,
+                             VectorType_ & x,
+                             VectorType_ & temp_0,
+                             VectorType_ & temp_1,
                              unsigned long max_iters) :
                 _A(A),
                 _P(P),
@@ -234,10 +234,10 @@ namespace honei
         private:
             MatrixType_ _A;
             PreconContType_ _P;
-            DenseVector<DT_> _b;
-            DenseVector<DT_> _x;
-            DenseVector<DT_> _temp_0;
-            DenseVector<DT_> _temp_1;
+            VectorType_ _b;
+            VectorType_ _x;
+            VectorType_ _temp_0;
+            VectorType_ _temp_1;
             unsigned long _max_iters;
     };
 

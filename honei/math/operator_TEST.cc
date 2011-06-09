@@ -34,7 +34,7 @@ class OperatorTest:
             DenseVector<double> x(system.rows(), double(0));
 
             OperatorList defop;
-            defop.push_back(new DefectOperator<Tag_, SparseMatrixELL<double>, double>(result_1, rhs, system, x));
+            defop.push_back(new DefectOperator<Tag_, SparseMatrixELL<double>, DenseVector<double> >(result_1, rhs, system, x));
 
             defop.value();
 
@@ -44,7 +44,7 @@ class OperatorTest:
                 TEST_CHECK_EQUAL_WITHIN_EPS(result_2[i], result_1[i], std::numeric_limits<double>::epsilon());
 
             Operator* sumop;
-            sumop = new SumOperator<Tag_, double>(result_1, rhs);
+            sumop = new SumOperator<Tag_, DenseVector<double> >(result_1, rhs);
             Sum<Tag_>::value(result_2, rhs);
 
             sumop->value();
@@ -81,7 +81,7 @@ class OperatorTest:
             DenseVector<double> x2(x1.copy());
 
             unsigned long used_iters(0);
-            cgop = new SolverOperator<CG<Tag_, methods::NONE>, SparseMatrixELL<double>, double>(system, b, x1, 1000ul, used_iters, double(1e-8));
+            cgop = new SolverOperator<CG<Tag_, methods::NONE>, SparseMatrixELL<double>, DenseVector<double> >(system, b, x1, 1000ul, used_iters, double(1e-8));
             cgop->value();
 
             unsigned long used_iters2(0);
@@ -106,7 +106,7 @@ class OperatorTest:
             {
                     diag_inverted[i] = double(0.7)/system(i, i);
             }
-            riop = new SmootherOperator<RISmoother<Tag_>, SparseMatrixELL<double>, DenseVector<double>, double>(system, diag_inverted, b, x3, t1, t2, 1000ul);
+            riop = new SmootherOperator<RISmoother<Tag_>, SparseMatrixELL<double>, DenseVector<double>, DenseVector<double> >(system, diag_inverted, b, x3, t1, t2, 1000ul);
             riop->value();
 
             RISmoother<Tag_>::value(system, diag_inverted, b, x4, t1, t2, 1000ul);
