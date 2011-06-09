@@ -265,8 +265,8 @@ class Q1MatrixDenseVectorDefectTest :
 };
 Q1MatrixDenseVectorDefectTest<tags::CPU, float> q1_defect_test_float("float");
 Q1MatrixDenseVectorDefectTest<tags::CPU, double> q1_defect_test_double("double");
-//Q1MatrixDenseVectorDefectTest<tags::CPU::MultiCore, float> q1_prod_mc_test_float("MC float");
-//Q1MatrixDenseVectorDefectTest<tags::CPU::MultiCore, double> q1_prod_mc_test_double("MC double");
+Q1MatrixDenseVectorDefectTest<tags::CPU::MultiCore, float> q1_prod_mc_test_float("MC float");
+Q1MatrixDenseVectorDefectTest<tags::CPU::MultiCore, double> q1_prod_mc_test_double("MC double");
 #ifdef HONEI_SSE
 Q1MatrixDenseVectorDefectTest<tags::CPU::SSE, float> sse_q1_defect_test_float("float");
 Q1MatrixDenseVectorDefectTest<tags::CPU::SSE, double> sse_q1_defect_test_double("double");
