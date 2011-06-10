@@ -210,7 +210,7 @@ class Q1MatrixDenseVectorDefectTest :
             unsigned long size;
             for (unsigned long level(1) ; level <= 10 ; ++level)
             {
-                size  = (unsigned long)pow((pow(2, level) + 1), 2);
+                size  = (unsigned long)pow((pow(double(2), level) + 1), 2);
                 unsigned long num_limit(311); //value of used elements will be <= num_limit* size
 
                 DenseVector<DataType_> dv1(size, DataType_(1));
