@@ -423,13 +423,13 @@ namespace honei
 
             if (affinity)
             {
-            _affinity_mask = new cpu_set_t[_num_threads + 1];
+                _affinity_mask = new cpu_set_t[_num_threads + 1];
 
-            // set own affinity first
-            CPU_ZERO(&_affinity_mask[_num_threads]);
-            CPU_SET(_topology->num_lpus() - 1, &_affinity_mask[_num_threads]);
-            if(sched_setaffinity(syscall(__NR_gettid), sizeof(cpu_set_t), &_affinity_mask[_num_threads]) != 0)
-                throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
+                // set own affinity first
+                CPU_ZERO(&_affinity_mask[_num_threads]);
+                CPU_SET(_topology->num_lpus() - 1, &_affinity_mask[_num_threads]);
+                if(sched_setaffinity(syscall(__NR_gettid), sizeof(cpu_set_t), &_affinity_mask[_num_threads]) != 0)
+                    throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 
 #ifdef DEBUG
             msg += "THREAD \t\t POOL_ID \t LPU \t NODE \n";
@@ -492,7 +492,7 @@ namespace honei
             Ticket<tags::CPU::MultiCore> * ticket(p.apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
-            int idx((ticket->sid_min() == 0xFFFF) ? 0 : ticket->sid_min());
+            int idx((ticket->sid_min() == 0xFFFF) ? rand() % _num_threads : ticket->sid_min());
 
             mc::WorkStealingThreadFunction<std::list<mc::ThreadTask *> > * wfunc(_threads[idx].second);
             wfunc->enqueue(t_task);
@@ -512,7 +512,7 @@ namespace honei
             Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
-            int idx((ticket->sid_min() == 0xFFFF) ? 0 : ticket->sid_min());
+            int idx((ticket->sid_min() == 0xFFFF) ? rand() % _num_threads : ticket->sid_min());
 
             mc::WorkStealingThreadFunction<std::list<mc::ThreadTask *> > * wfunc(_threads[idx].second);
             wfunc->enqueue(t_task);
@@ -608,13 +608,13 @@ namespace honei
 
                 if (affinity)
                 {
-                _sched_ids.push_back(sched_id);
-                CPU_ZERO(&_affinity_mask[i]);
-                CPU_SET(sched_id, &_affinity_mask[i]);
-                if(sched_setaffinity(tobj->tid(), sizeof(cpu_set_t), &_affinity_mask[i]) != 0)
-                    throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
+                    _sched_ids.push_back(sched_id);
+                    CPU_ZERO(&_affinity_mask[i]);
+                    CPU_SET(sched_id, &_affinity_mask[i]);
+                    if(sched_setaffinity(tobj->tid(), sizeof(cpu_set_t), &_affinity_mask[i]) != 0)
+                        throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 #ifdef DEBUG
-                msg += stringify(tobj->tid()) + "\t\t" + stringify(inst_ctr) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(_topology->get_node(sched_id)) + " \n";
+                    msg += stringify(tobj->tid()) + "\t\t" + stringify(inst_ctr) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(_topology->get_node(sched_id)) + " \n";
 #endif
                 }
 
@@ -643,15 +643,12 @@ namespace honei
 
         virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy p)
         {
-//            if (! affinity)
-//                return enqueue(task);
-
             CONTEXT("When creating a ThreadTask:\n");
 
             Ticket<tags::CPU::MultiCore> * ticket(p.apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
-            int idx((ticket->sid_min() == 0xFFFF) ? 0 : ticket->sid_min());
+            int idx((ticket->sid_min() == 0xFFFF) ? rand() % _num_threads : ticket->sid_min());
 
             mc::WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> > * wfunc(_threads[idx].second);
             wfunc->enqueue(t_task);
@@ -671,7 +668,7 @@ namespace honei
             Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
-            int idx((ticket->sid_min() == 0xFFFF) ? 0 : ticket->sid_min());
+            int idx((ticket->sid_min() == 0xFFFF) ? rand() % _num_threads : ticket->sid_min());
 
             mc::WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> > * wfunc(_threads[idx].second);
             wfunc->enqueue(t_task);
