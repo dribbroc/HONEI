@@ -480,19 +480,27 @@ namespace honei
             else
             {
                 int size = tasklist.size();
-                /*
-                std::deque<mc::ThreadTask *>::iterator it(tasklist.begin());
 
-                for (int i(0) ; i < size >> 2 ; ++i)
-                    ++it;
-
-                thief_list.splice(thief_list.end(), tasklist, it, tasklist.end());
-                */
-
-                for (int i(0) ; i < size >> 2 ; ++i)
+                switch (size)
                 {
-                    thief_list.push_back(tasklist.back());
-                    tasklist.pop_back();
+                    case 1:
+                    {
+                        mc::ThreadTask * t = tasklist.back();
+                        tasklist.pop_back();
+                        thief_list.push_back(t);
+                        break;
+                    }
+
+                    default:
+                    {
+                        for (int i(0) ; i < (size >> 1) ; ++i)
+                        {
+                            mc::ThreadTask * t = tasklist.back();
+                            tasklist.pop_back();
+                            thief_list.push_back(t);
+                        }
+                    }
+
                 }
 
                 return true;
