@@ -469,7 +469,10 @@ namespace honei
 
         ~WorkStealingImplementation()
         {
-            global_terminate = true;
+            {
+                Lock l(*_pool_sync->mutex);
+                global_terminate = true;
+            }
 
             for(std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<std::list<mc::ThreadTask *> > *> >::iterator i(_threads.begin()),
                 i_end(_threads.end()) ; i != i_end ; ++i)
@@ -628,7 +631,10 @@ namespace honei
 
         ~WorkStealingImplementation()
         {
-            global_terminate = true;
+            {
+                Lock l(*_pool_sync->mutex);
+                global_terminate = true;
+            }
 
             for(std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> > *> >::iterator i(_threads.begin()),
                 i_end(_threads.end()) ; i != i_end ; ++i)

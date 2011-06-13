@@ -251,38 +251,37 @@ namespace honei
 
                 if (task == 0)
                 {
-                    const int iter(rand() % num_threads);
-                    mc::WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> > * const tfunc = threads[iter].second;
-
                     pthread_mutex_lock(pool_mutex->mutex());
                     pthread_mutex_lock(local_mutex->mutex());
-                    bool ok = (global_terminate ? false : tfunc->steal(tasklist));
 
-                    if (! ok && tasklist.empty())
+                    if (! tasklist.empty())
                     {
-                        // Have to make sure that no task has been added after unlocking the local
-                        // mutex. this is a possible race-condition to circumvent here!
-                        if (! terminate)
-                        {
-                            pthread_mutex_unlock(local_mutex->mutex());
-                            global_barrier->wait(*pool_mutex);
-                            pthread_mutex_unlock(pool_mutex->mutex());
-                        }
-                        else
-                        {
-                            pthread_mutex_unlock(pool_mutex->mutex());
-                            pthread_mutex_unlock(local_mutex->mutex());
-                            break;
-                        }
+                        task = tasklist.pop_front();
+                    }
+                    else if (! global_terminate)
+                    {
+                        const int iter(rand() % num_threads);
+                        mc::WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> > * const tfunc = threads[iter].second;
+                        if (tfunc->steal(tasklist))
+                            task = tasklist.pop_front();
+                    }
+
+                    if (task == 0 && ! (global_terminate || terminate))
+                    {
+                        pthread_mutex_unlock(local_mutex->mutex());
+                        global_barrier->wait(*pool_mutex);
+                        pthread_mutex_unlock(pool_mutex->mutex());
+                    }
+                    else if (terminate)
+                    {
+                        pthread_mutex_unlock(local_mutex->mutex());
+                        pthread_mutex_unlock(pool_mutex->mutex());
+                        break;
                     }
                     else
                     {
-                        pthread_mutex_unlock(pool_mutex->mutex());
-                        if (! tasklist.empty())
-                        {
-                            task = tasklist.pop_front();
-                        }
                         pthread_mutex_unlock(local_mutex->mutex());
+                        pthread_mutex_unlock(pool_mutex->mutex());
                     }
                 }
 
@@ -301,6 +300,7 @@ namespace honei
                     task->ticket->mark();
                     delete task;
                 }
+
             }
             while (true);
 
@@ -403,39 +403,41 @@ namespace honei
 
                 if (task == 0)
                 {
-                    const int iter(rand() % num_threads);
-                    mc::WorkStealingThreadFunction<std::list<mc::ThreadTask *> >* const tfunc = threads[iter].second;
-
                     pthread_mutex_lock(pool_mutex->mutex());
                     pthread_mutex_lock(local_mutex->mutex());
-                    bool ok = (global_terminate ? false : tfunc->steal(tasklist));
 
-                    if (! ok && tasklist.empty())
+                    if (! tasklist.empty())
                     {
-                        // Have to make sure that no task has been added after unlocking the local
-                        // mutex. this is a possible race-condition to circumvent here!
-                        if (! terminate)
-                        {
-                            pthread_mutex_unlock(local_mutex->mutex());
-                            global_barrier->wait(*pool_mutex);
-                            pthread_mutex_unlock(pool_mutex->mutex());
-                        }
-                        else
-                        {
-                            pthread_mutex_unlock(pool_mutex->mutex());
-                            pthread_mutex_unlock(local_mutex->mutex());
-                            break;
-                        }
+                        task = tasklist.front();
+                        tasklist.pop_front();
                     }
-                    else
+                    else if (! global_terminate)
                     {
-                        pthread_mutex_unlock(pool_mutex->mutex());
-                        if (! tasklist.empty())
+                        const int iter(rand() % num_threads);
+                        mc::WorkStealingThreadFunction<std::list<mc::ThreadTask *> > * const tfunc = threads[iter].second;
+                        if (tfunc->steal(tasklist))
                         {
                             task = tasklist.front();
                             tasklist.pop_front();
                         }
+                    }
+
+                    if (task == 0 && ! (global_terminate || terminate))
+                    {
                         pthread_mutex_unlock(local_mutex->mutex());
+                        global_barrier->wait(*pool_mutex);
+                        pthread_mutex_unlock(pool_mutex->mutex());
+                    }
+                    else if (terminate)
+                    {
+                        pthread_mutex_unlock(local_mutex->mutex());
+                        pthread_mutex_unlock(pool_mutex->mutex());
+                        break;
+                    }
+                    else
+                    {
+                        pthread_mutex_unlock(local_mutex->mutex());
+                        pthread_mutex_unlock(pool_mutex->mutex());
                     }
                 }
 
@@ -547,7 +549,7 @@ namespace honei
                 if (task != 0)
                 {
 #ifdef DEBUG
-                    std::string msg = "Thread " + stringify(_imp->pool_id) + " will execute ticket " +
+                    std::string msg = "Thread " + stringify(pool_id) + " will execute ticket " +
                     stringify(task->ticket->uid()) + "\n";
                     LOGMESSAGE(lc_backend, msg);
 #endif
