@@ -30,6 +30,7 @@
 
 #include <sys/syscall.h>
 #include <math.h>
+#include <deque>
 
 namespace honei
 {
@@ -94,9 +95,9 @@ namespace honei
         const unsigned sched_lpu;
 
         /// The task list administrated by the thread pool.
-        std::list<mc::ThreadTask *> * const tasklist;
+        std::deque<mc::ThreadTask *> * const tasklist;
 
-        Implementation(mc::PoolSyncData * const psync, std::list<mc::ThreadTask *> * const list,
+        Implementation(mc::PoolSyncData * const psync, std::deque<mc::ThreadTask *> * const list,
                 unsigned pid, unsigned sched) :
             TFImplementationBase(psync, pid),
             sched_lpu(sched),
@@ -116,7 +117,7 @@ namespace honei
             /// A comparison object for mc::ThreadTask objects.
             mc::TaskComp * const comp(new mc::TaskComp(sched_lpu));
 
-            std::list<mc::ThreadTask *>::iterator i, i_end;
+            std::deque<mc::ThreadTask *>::iterator i, i_end;
 
         /* Set thread_id from operating system and use this on the pool
          * side as sign for the thread to be setup. Then let the thread
@@ -144,7 +145,7 @@ namespace honei
                             task = *i;
                             unsigned & sched_id = task->ticket->sid();
                             sched_id = sched_lpu;
-                            tasklist->remove(*i);
+                            tasklist->erase(i);
 #ifdef DEBUG
                             std::string msg = "Thread " + stringify(pool_id) + " on LPU " +
                             stringify(sched_lpu) + " will execute ticket " +
@@ -224,7 +225,7 @@ namespace honei
             /// A comparison object for mc::ThreadTask objects.
             mc::TaskComp * const comp(new mc::TaskComp(sched_lpu));
 
-            std::list<mc::ThreadTask *>::iterator i, i_end;
+            std::deque<mc::ThreadTask *>::iterator i, i_end;
 
             /* Set thread_id from operating system and use this on the pool
              * side as sign for the thread to be setup. Then let the thread
@@ -330,7 +331,7 @@ namespace honei
         }
     };
 
-    template <> struct Implementation<mc::WorkStealingThreadFunction<std::list<mc::ThreadTask *> > > :
+    template <> struct Implementation<mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > > :
         public TFImplementationBase
     {
         /* The logical processor this thread is bound to, in fact a
@@ -338,10 +339,10 @@ namespace honei
         const unsigned sched_lpu;
 
         /// The task list (local to this thread!)
-        std::list<mc::ThreadTask *> tasklist;
+        std::deque<mc::ThreadTask *> tasklist;
 
         /// Reference to the thread-vector of the thread pool (for stealing)
-        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<std::list<mc::ThreadTask *> > *> > & threads;
+        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > *> > & threads;
 
         /// Local mutual exclusion
         Mutex * const local_mutex;
@@ -352,7 +353,7 @@ namespace honei
         volatile bool & global_terminate;
 
         Implementation(mc::PoolSyncData * const psync, unsigned pid, unsigned sched,
-                const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<std::list<mc::ThreadTask *> > *> > & thr, unsigned num_thr, volatile bool & term) :
+                const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > *> > & thr, unsigned num_thr, volatile bool & term) :
             TFImplementationBase(psync, pid),
             sched_lpu(sched),
             threads(thr),
@@ -375,7 +376,7 @@ namespace honei
             /// A comparison object for mc::ThreadTask objects.
             mc::TaskComp * const comp(new mc::TaskComp(sched_lpu));
 
-            std::list<mc::ThreadTask *>::iterator i, i_end;
+            std::deque<mc::ThreadTask *>::iterator i, i_end;
 
             /* Set thread_id from operating system and use this on the pool
              * side as sign for the thread to be setup. Then let the thread
@@ -414,7 +415,7 @@ namespace honei
                     else if (! global_terminate)
                     {
                         const int iter(rand() % num_threads);
-                        mc::WorkStealingThreadFunction<std::list<mc::ThreadTask *> > * const tfunc = threads[iter].second;
+                        mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > * const tfunc = threads[iter].second;
                         if (tfunc->steal(tasklist))
                         {
                             task = tasklist.front();
@@ -470,7 +471,7 @@ namespace honei
             tasklist.push_back(task);
         }
 
-        bool steal(std::list<mc::ThreadTask *> & thief_list)
+        bool steal(std::deque<mc::ThreadTask *> & thief_list)
         {
             Lock l(*local_mutex);
 
@@ -479,12 +480,21 @@ namespace honei
             else
             {
                 int size = tasklist.size();
-                std::list<mc::ThreadTask *>::iterator it(tasklist.begin());
+                /*
+                std::deque<mc::ThreadTask *>::iterator it(tasklist.begin());
 
                 for (int i(0) ; i < size >> 2 ; ++i)
                     ++it;
 
                 thief_list.splice(thief_list.end(), tasklist, it, tasklist.end());
+                */
+
+                for (int i(0) ; i < size >> 2 ; ++i)
+                {
+                    thief_list.push_back(tasklist.back());
+                    tasklist.pop_back();
+                }
+
                 return true;
             }
         }
@@ -564,13 +574,13 @@ namespace honei
         }
     };
 
-    template <> struct Implementation<mc::SimpleThreadFunction<std::list<mc::ThreadTask *> > > :
+    template <> struct Implementation<mc::SimpleThreadFunction<std::deque<mc::ThreadTask *> > > :
         public TFImplementationBase
     {
         /// The task list administrated by the thread pool.
-        std::list<mc::ThreadTask *> * const tasklist;
+        std::deque<mc::ThreadTask *> * const tasklist;
 
-        Implementation(mc::PoolSyncData * const psync, std::list<mc::ThreadTask *> * const list,
+        Implementation(mc::PoolSyncData * const psync, std::deque<mc::ThreadTask *> * const list,
                 unsigned pid) :
             TFImplementationBase(psync, pid),
             tasklist(list)
@@ -640,7 +650,7 @@ ThreadFunctionBase::~ThreadFunctionBase()
 }
 
 AffinityThreadFunction::AffinityThreadFunction(PoolSyncData * const psync,
-        std::list<ThreadTask *> * const list, unsigned pool_id, unsigned sched_id) :
+        std::deque<ThreadTask *> * const list, unsigned pool_id, unsigned sched_id) :
     PrivateImplementationPattern<AffinityThreadFunction, Shared>(new
             Implementation<AffinityThreadFunction>(psync, list, pool_id, sched_id))
 {
@@ -670,43 +680,43 @@ unsigned AffinityThreadFunction::tid() const
     return _imp->thread_id;
 }
 
-WorkStealingThreadFunction<std::list<mc::ThreadTask *> >::WorkStealingThreadFunction(PoolSyncData * const psync,
-        unsigned pool_id, unsigned sched_id, const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<std::list<mc::ThreadTask *> > *> > & threads, unsigned num_thr, volatile bool & terminate) :
-    PrivateImplementationPattern<WorkStealingThreadFunction<std::list<mc::ThreadTask *> >, Shared>(new
-            Implementation<WorkStealingThreadFunction<std::list<mc::ThreadTask *> > >(psync, pool_id, sched_id, threads, num_thr, terminate))
+WorkStealingThreadFunction<std::deque<mc::ThreadTask *> >::WorkStealingThreadFunction(PoolSyncData * const psync,
+        unsigned pool_id, unsigned sched_id, const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > *> > & threads, unsigned num_thr, volatile bool & terminate) :
+    PrivateImplementationPattern<WorkStealingThreadFunction<std::deque<mc::ThreadTask *> >, Shared>(new
+            Implementation<WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > >(psync, pool_id, sched_id, threads, num_thr, terminate))
 {
 }
 
-WorkStealingThreadFunction<std::list<mc::ThreadTask *> >::~WorkStealingThreadFunction()
+WorkStealingThreadFunction<std::deque<mc::ThreadTask *> >::~WorkStealingThreadFunction()
 {
 }
 
-void WorkStealingThreadFunction<std::list<mc::ThreadTask *> >::stop()
+void WorkStealingThreadFunction<std::deque<mc::ThreadTask *> >::stop()
 {
     _imp->stop();
 }
 
-void WorkStealingThreadFunction<std::list<mc::ThreadTask *> >::enqueue(mc::ThreadTask * task)
+void WorkStealingThreadFunction<std::deque<mc::ThreadTask *> >::enqueue(mc::ThreadTask * task)
 {
     _imp->enqueue(task);
 }
 
-bool WorkStealingThreadFunction<std::list<mc::ThreadTask *> >::steal(std::list<mc::ThreadTask *> & thief_list)
+bool WorkStealingThreadFunction<std::deque<mc::ThreadTask *> >::steal(std::deque<mc::ThreadTask *> & thief_list)
 {
     return _imp->steal(thief_list);
 }
 
-void WorkStealingThreadFunction<std::list<mc::ThreadTask *> >::operator() ()
+void WorkStealingThreadFunction<std::deque<mc::ThreadTask *> >::operator() ()
 {
     (*_imp)();
 }
 
-unsigned WorkStealingThreadFunction<std::list<mc::ThreadTask *> >::pool_id() const
+unsigned WorkStealingThreadFunction<std::deque<mc::ThreadTask *> >::pool_id() const
 {
     return _imp->pool_id;
 }
 
-unsigned WorkStealingThreadFunction<std::list<mc::ThreadTask *> >::tid() const
+unsigned WorkStealingThreadFunction<std::deque<mc::ThreadTask *> >::tid() const
 {
     return _imp->thread_id;
 }
@@ -780,28 +790,28 @@ unsigned SimpleThreadFunction<AtomicSList<ThreadTask *> >::tid() const
 }
 
 
-SimpleThreadFunction<std::list<ThreadTask *> >::SimpleThreadFunction(PoolSyncData * const psync,
-        std::list<ThreadTask *> * const list, unsigned pool_id) :
-    PrivateImplementationPattern<SimpleThreadFunction<std::list<ThreadTask *> >, Shared>(new
-            Implementation<SimpleThreadFunction<std::list<ThreadTask *> > >(psync, list, pool_id))
+SimpleThreadFunction<std::deque<ThreadTask *> >::SimpleThreadFunction(PoolSyncData * const psync,
+        std::deque<ThreadTask *> * const list, unsigned pool_id) :
+    PrivateImplementationPattern<SimpleThreadFunction<std::deque<ThreadTask *> >, Shared>(new
+            Implementation<SimpleThreadFunction<std::deque<ThreadTask *> > >(psync, list, pool_id))
 {
 }
 
-SimpleThreadFunction<std::list<ThreadTask *> >::~SimpleThreadFunction()
+SimpleThreadFunction<std::deque<ThreadTask *> >::~SimpleThreadFunction()
 {
 }
 
-void SimpleThreadFunction<std::list<ThreadTask *> >::stop()
+void SimpleThreadFunction<std::deque<ThreadTask *> >::stop()
 {
     _imp->stop();
 }
 
-void SimpleThreadFunction<std::list<ThreadTask *> >::operator() ()
+void SimpleThreadFunction<std::deque<ThreadTask *> >::operator() ()
 {
     (*_imp)();
 }
 
-unsigned SimpleThreadFunction<std::list<ThreadTask *> >::tid() const
+unsigned SimpleThreadFunction<std::deque<ThreadTask *> >::tid() const
 {
     return _imp->thread_id;
 }
