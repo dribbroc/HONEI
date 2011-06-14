@@ -20,7 +20,7 @@
 #ifndef MULTICORE_GUARD_THREAD_FUNCTION_HH
 #define MULTICORE_GUARD_THREAD_FUNCTION_HH 1
 
-#include <honei/backends/multicore/atomic_slist.hh>
+#include <honei/backends/multicore/concurrent_list.hh>
 #include <honei/backends/multicore/thread_task.hh>
 #include <honei/util/condition_variable.hh>
 #include <honei/util/private_implementation_pattern.hh>
@@ -73,15 +73,15 @@ namespace honei
 
         template <typename ListType> class SimpleThreadFunction;
 
-        template <> class SimpleThreadFunction<AtomicSList<ThreadTask *> > :
+        template <> class SimpleThreadFunction<ConcurrentList<ThreadTask *> > :
             public ThreadFunctionBase,
-            public PrivateImplementationPattern<SimpleThreadFunction<AtomicSList<ThreadTask *> >, Shared>
+            public PrivateImplementationPattern<SimpleThreadFunction<ConcurrentList<ThreadTask *> >, Shared>
         {
             private:
 
             public:
 
-                SimpleThreadFunction(PoolSyncData * const psync, AtomicSList<ThreadTask *> * const list, unsigned pool_id);
+                SimpleThreadFunction(PoolSyncData * const psync, ConcurrentList<ThreadTask *> * const list, unsigned pool_id);
 
                 virtual ~SimpleThreadFunction();
 
@@ -142,16 +142,16 @@ namespace honei
                 unsigned pool_id() const;
         };
 
-        template <> class WorkStealingThreadFunction<AtomicSList<mc::ThreadTask *> > :
+        template <> class WorkStealingThreadFunction<ConcurrentList<mc::ThreadTask *> > :
             public ThreadFunctionBase,
-            public PrivateImplementationPattern<WorkStealingThreadFunction<AtomicSList<mc::ThreadTask *> >, Shared>
+            public PrivateImplementationPattern<WorkStealingThreadFunction<ConcurrentList<mc::ThreadTask *> >, Shared>
         {
             private:
 
             public:
 
                 WorkStealingThreadFunction(PoolSyncData * const psync, unsigned pool_id, unsigned sched_id,
-                        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<AtomicSList<mc::ThreadTask *> > *> > & threads, unsigned num_thr, volatile bool & terminate);
+                        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<ConcurrentList<mc::ThreadTask *> > *> > & threads, unsigned num_thr, volatile bool & terminate);
 
                 virtual ~WorkStealingThreadFunction();
 
@@ -162,7 +162,7 @@ namespace honei
 
                 void enqueue(mc::ThreadTask * task);
 
-                bool steal(mc::AtomicSList<mc::ThreadTask *> & thief_list);
+                bool steal(mc::ConcurrentList<mc::ThreadTask *> & thief_list);
 
                 virtual unsigned tid() const;
 

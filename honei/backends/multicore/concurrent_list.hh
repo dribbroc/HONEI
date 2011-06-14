@@ -18,8 +18,8 @@
  */
 
 #pragma once
-#ifndef HONEI_GUARD_HONEI_BACKENDS_MULTICORE_ATOMIC_SLIST_HH
-#define HONEI_GUARD_HONEI_BACKENDS_MULTICORE_ATOMIC_SLIST_HH 1
+#ifndef HONEI_GUARD_HONEI_BACKENDS_MULTICORE_CONCURRENT_LIST_HH
+#define HONEI_GUARD_HONEI_BACKENDS_MULTICORE_CONCURRENT_LIST_HH 1
 
 #include <honei/backends/multicore/thread_task.hh>
 #include <honei/util/mutex.hh>
@@ -27,7 +27,7 @@
 /* Attention: This class requires the template parameter
  * to be a pointer type in order to function correctly.
  * For the moment, it's purpose is mainly to serve as a
- * AtomicSList<ThreadTask *>. */
+ * ConcurrentList<ThreadTask *>. */
 
 namespace honei
 {
@@ -35,12 +35,12 @@ namespace honei
     {
         namespace intern
         {
-            template <typename T> struct SListElement
+            template <typename T> struct CListElement
             {
                 T _data;
-                SListElement<T> * _next;
+                CListElement<T> * _next;
 
-                SListElement(T & d) :
+                CListElement(T & d) :
                     _data(d),
                     _next(NULL)
                 {
@@ -48,11 +48,11 @@ namespace honei
             };
         }
 
-        template <typename T> class AtomicSList
+        template <typename T> class ConcurrentList
         {
             private:
-                intern::SListElement<T> * _head;
-                intern::SListElement<T> * _tail;
+                intern::CListElement<T> * _head;
+                intern::CListElement<T> * _tail;
 
                 Mutex * const _global;
                 Mutex * const _front;
@@ -67,8 +67,8 @@ namespace honei
 
             public:
 
-                AtomicSList();
-                ~AtomicSList();
+                ConcurrentList();
+                ~ConcurrentList();
 
                 bool empty();
                 void push_back(T & data);

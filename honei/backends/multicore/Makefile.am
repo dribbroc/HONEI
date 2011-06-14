@@ -14,8 +14,8 @@ lib_LTLIBRARIES = libhoneibackendsmulticore.la
 libhoneibackendsmulticore_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la
 
-libhoneibackendsmulticore_la_SOURCES = atomic_slist.hh \
-				 atomic_slist-impl.hh \
+libhoneibackendsmulticore_la_SOURCES = concurrent_list.hh \
+				 concurrent_list-impl.hh \
 				 dispatch_policy.hh \
 				 numainfo.hh \
 				 operation.hh \
@@ -55,7 +55,7 @@ $(DYNAMIC_LD_LIBS)
 numainfo_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 
 libhoneibackendsmulticore_includedir = $(includedir)/honei/backends/multicore/
-libhoneibackendsmulticore_include_HEADERS = atomic_slist.hh atomic_slist-impl.hh dispatch_policy.hh numainfo.hh operation.hh \
+libhoneibackendsmulticore_include_HEADERS = concurrent_list.hh concurrent_list-impl.hh dispatch_policy.hh numainfo.hh operation.hh \
 						 ticket.hh thread_pool.hh thread_function.hh thread_task.hh \
 						 x86_spec.hh
 TESTS = numainfo_TEST thread_pool_TEST topology_TEST

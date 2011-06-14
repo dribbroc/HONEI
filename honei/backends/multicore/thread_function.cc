@@ -16,7 +16,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/backends/multicore/atomic_slist-impl.hh>
+#include <honei/backends/multicore/concurrent_list-impl.hh>
 #include <honei/backends/multicore/thread_function.hh>
 #include <honei/backends/multicore/thread_pool.hh>
 #include <honei/backends/multicore/ticket.hh>
@@ -180,7 +180,7 @@ namespace honei
         }
     };
 
-    template <> struct Implementation<mc::WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> > > :
+    template <> struct Implementation<mc::WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > > :
         public TFImplementationBase
     {
         /* The logical processor this thread is bound to, in fact a
@@ -188,10 +188,10 @@ namespace honei
         const unsigned sched_lpu;
 
         /// The task list (local to this thread!)
-        AtomicSList<mc::ThreadTask *> tasklist;
+        ConcurrentList<mc::ThreadTask *> tasklist;
 
         /// Reference to the thread-vector of the thread pool (for stealing)
-        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> > * > > & threads;
+        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > * > > & threads;
 
         /// Local mutual exclusion
         Mutex * const local_mutex;
@@ -202,7 +202,7 @@ namespace honei
         volatile bool & global_terminate;
 
         Implementation(mc::PoolSyncData * const psync, unsigned pid, unsigned sched,
-                const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> > *> > & thr, unsigned num_thr, volatile bool & term) :
+                const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > *> > & thr, unsigned num_thr, volatile bool & term) :
             TFImplementationBase(psync, pid),
             sched_lpu(sched),
             threads(thr),
@@ -262,7 +262,7 @@ namespace honei
                     else if (! global_terminate)
                     {
                         const int iter(rand() % num_threads);
-                        mc::WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> > * const tfunc = threads[iter].second;
+                        mc::WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > * const tfunc = threads[iter].second;
                         if (tfunc->steal(tasklist))
                             task = tasklist.pop_front();
                     }
@@ -316,7 +316,7 @@ namespace honei
             tasklist.push_back(task);
         }
 
-        bool steal(AtomicSList<mc::ThreadTask *> & thief_list)
+        bool steal(ConcurrentList<mc::ThreadTask *> & thief_list)
         {
             Lock l(*local_mutex);
 
@@ -513,17 +513,17 @@ namespace honei
      * This allows for a simplified task list implementation
      * which can save substantial locking delays */
 
-    // Tell the compiler that we want to instantiate AtomicSList
+    // Tell the compiler that we want to instantiate ConcurrentList
     // for a ThreadTask pointer
-    template class AtomicSList<mc::ThreadTask *>;
+    template class ConcurrentList<mc::ThreadTask *>;
 
-    template <> struct Implementation<mc::SimpleThreadFunction<AtomicSList<mc::ThreadTask *> > > :
+    template <> struct Implementation<mc::SimpleThreadFunction<ConcurrentList<mc::ThreadTask *> > > :
         public TFImplementationBase
     {
         /// The task list administrated by the thread pool.
-        AtomicSList<mc::ThreadTask *> * const tasklist;
+        ConcurrentList<mc::ThreadTask *> * const tasklist;
 
-        Implementation(mc::PoolSyncData * const psync, AtomicSList<mc::ThreadTask *> * const list,
+        Implementation(mc::PoolSyncData * const psync, ConcurrentList<mc::ThreadTask *> * const list,
                 unsigned pid) :
             TFImplementationBase(psync, pid),
             tasklist(list)
@@ -729,70 +729,70 @@ unsigned WorkStealingThreadFunction<std::deque<mc::ThreadTask *> >::tid() const
     return _imp->thread_id;
 }
 
-WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> >::WorkStealingThreadFunction(PoolSyncData * const psync,
-        unsigned pool_id, unsigned sched_id, const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> > *> > & threads, unsigned num_thr, volatile bool & terminate) :
-    PrivateImplementationPattern<WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> >, Shared>(new
-            Implementation<WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> > >(psync, pool_id, sched_id, threads, num_thr, terminate))
+WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> >::WorkStealingThreadFunction(PoolSyncData * const psync,
+        unsigned pool_id, unsigned sched_id, const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > *> > & threads, unsigned num_thr, volatile bool & terminate) :
+    PrivateImplementationPattern<WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> >, Shared>(new
+            Implementation<WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > >(psync, pool_id, sched_id, threads, num_thr, terminate))
 {
 }
 
-WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> >::~WorkStealingThreadFunction()
+WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> >::~WorkStealingThreadFunction()
 {
 }
 
-void WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> >::stop()
+void WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> >::stop()
 {
     _imp->stop();
 }
 
-void WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> >::enqueue(mc::ThreadTask * task)
+void WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> >::enqueue(mc::ThreadTask * task)
 {
     _imp->enqueue(task);
 }
 
-bool WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> >::steal(mc::AtomicSList<mc::ThreadTask *> & thief_list)
+bool WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> >::steal(mc::ConcurrentList<mc::ThreadTask *> & thief_list)
 {
     return _imp->steal(thief_list);
 }
 
-void WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> >::operator() ()
+void WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> >::operator() ()
 {
     (*_imp)();
 }
 
-unsigned WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> >::pool_id() const
+unsigned WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> >::pool_id() const
 {
     return _imp->pool_id;
 }
 
-unsigned WorkStealingThreadFunction<mc::AtomicSList<mc::ThreadTask *> >::tid() const
+unsigned WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> >::tid() const
 {
     return _imp->thread_id;
 }
 
 
-SimpleThreadFunction<AtomicSList<ThreadTask *> >::SimpleThreadFunction(PoolSyncData * const psync,
-        AtomicSList<ThreadTask *> * const list, unsigned pool_id) :
-    PrivateImplementationPattern<SimpleThreadFunction<AtomicSList<ThreadTask *> >, Shared>(new
-            Implementation<SimpleThreadFunction<AtomicSList<ThreadTask *> > >(psync, list, pool_id))
+SimpleThreadFunction<ConcurrentList<ThreadTask *> >::SimpleThreadFunction(PoolSyncData * const psync,
+        ConcurrentList<ThreadTask *> * const list, unsigned pool_id) :
+    PrivateImplementationPattern<SimpleThreadFunction<ConcurrentList<ThreadTask *> >, Shared>(new
+            Implementation<SimpleThreadFunction<ConcurrentList<ThreadTask *> > >(psync, list, pool_id))
 {
 }
 
-SimpleThreadFunction<AtomicSList<ThreadTask *> >::~SimpleThreadFunction()
+SimpleThreadFunction<ConcurrentList<ThreadTask *> >::~SimpleThreadFunction()
 {
 }
 
-void SimpleThreadFunction<AtomicSList<ThreadTask *> >::stop()
+void SimpleThreadFunction<ConcurrentList<ThreadTask *> >::stop()
 {
     _imp->stop();
 }
 
-void SimpleThreadFunction<AtomicSList<ThreadTask *> >::operator() ()
+void SimpleThreadFunction<ConcurrentList<ThreadTask *> >::operator() ()
 {
     (*_imp)();
 }
 
-unsigned SimpleThreadFunction<AtomicSList<ThreadTask *> >::tid() const
+unsigned SimpleThreadFunction<ConcurrentList<ThreadTask *> >::tid() const
 {
     return _imp->thread_id;
 }

@@ -17,14 +17,14 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/backends/multicore/atomic_slist.hh>
+#include <honei/backends/multicore/concurrent_list.hh>
 
 using namespace honei;
 using namespace honei::mc;
 using namespace honei::mc::intern;
 
 template <typename T>
-AtomicSList<T>::AtomicSList() :
+ConcurrentList<T>::ConcurrentList() :
     _head(NULL),
     _tail(NULL),
     _global(new Mutex),
@@ -35,7 +35,7 @@ AtomicSList<T>::AtomicSList() :
 }
 
 template <typename T>
-AtomicSList<T>::~AtomicSList()
+ConcurrentList<T>::~ConcurrentList()
 {
     delete _back;
     delete _front;
@@ -43,7 +43,7 @@ AtomicSList<T>::~AtomicSList()
 }
 
 template <typename T>
-bool AtomicSList<T>::acquire_front()
+bool ConcurrentList<T>::acquire_front()
 {
     bool ret(false);
     pthread_mutex_lock(_global->mutex());
@@ -61,7 +61,7 @@ bool AtomicSList<T>::acquire_front()
 }
 
 template <typename T>
-void AtomicSList<T>::release_front(bool back)
+void ConcurrentList<T>::release_front(bool back)
 {
     if (back)
         pthread_mutex_unlock(_back->mutex());
@@ -70,7 +70,7 @@ void AtomicSList<T>::release_front(bool back)
 }
 
 template <typename T>
-bool AtomicSList<T>::acquire_back()
+bool ConcurrentList<T>::acquire_back()
 {
     bool ret(false);
     pthread_mutex_lock(_global->mutex());
@@ -88,7 +88,7 @@ bool AtomicSList<T>::acquire_back()
 }
 
 template <typename T>
-void AtomicSList<T>::release_back(bool front)
+void ConcurrentList<T>::release_back(bool front)
 {
     if (front)
     {
@@ -99,7 +99,7 @@ void AtomicSList<T>::release_back(bool front)
 }
 
 template <typename T>
-bool AtomicSList<T>::empty()
+bool ConcurrentList<T>::empty()
 {
     pthread_mutex_lock(_global->mutex());
     bool ret = (_size == 0);
@@ -109,9 +109,9 @@ bool AtomicSList<T>::empty()
 }
 
 template <typename T>
-void AtomicSList<T>::push_back(T & data)
+void ConcurrentList<T>::push_back(T & data)
 {
-    SListElement<T> * e = new SListElement<T>(data);
+    CListElement<T> * e = new CListElement<T>(data);
 
     bool fr = acquire_back();
 
@@ -134,10 +134,10 @@ void AtomicSList<T>::push_back(T & data)
 }
 
 template <typename T>
-T AtomicSList<T>::pop_front()
+T ConcurrentList<T>::pop_front()
 {
     T retval(0);
-    SListElement<T> * fr(NULL);
+    CListElement<T> * fr(NULL);
 
     bool ba = acquire_front();
 
