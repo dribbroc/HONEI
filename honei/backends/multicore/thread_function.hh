@@ -124,7 +124,8 @@ namespace honei
             public:
 
                 WorkStealingThreadFunction(PoolSyncData * const psync, unsigned pool_id, unsigned sched_id,
-                        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > *> > & threads, unsigned num_thr, volatile bool & terminate);
+                        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > *> > & threads,
+                        unsigned num_thr, volatile bool & terminate, Mutex * const steal_mutex);
 
                 virtual ~WorkStealingThreadFunction();
 
@@ -151,7 +152,8 @@ namespace honei
             public:
 
                 WorkStealingThreadFunction(PoolSyncData * const psync, unsigned pool_id, unsigned sched_id,
-                        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<ConcurrentList<mc::ThreadTask *> > *> > & threads, unsigned num_thr, volatile bool & terminate);
+                        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<ConcurrentList<mc::ThreadTask *> > *> > & threads,
+                        unsigned num_thr, volatile bool & terminate, Mutex * const steal_mutex);
 
                 virtual ~WorkStealingThreadFunction();
 

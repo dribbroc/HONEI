@@ -384,9 +384,12 @@ namespace honei
 
         volatile bool global_terminate;
 
+        Mutex * const _steal_mutex;
+
         WorkStealingImplementation() :
             Implementation<mc::ThreadPool>(),
-            global_terminate(false)
+            global_terminate(false),
+            _steal_mutex(new Mutex)
         {
             CONTEXT("When initializing the thread pool:\n");
 
@@ -443,7 +446,7 @@ namespace honei
             {
                 unsigned sched_id(affinity ? (i % (_topology->num_lpus())) : 0xFFFF );
                 mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > * tobj =
-                    new mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> >(_pool_sync, inst_ctr, sched_id, _threads, _num_threads, global_terminate);
+                    new mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> >(_pool_sync, inst_ctr, sched_id, _threads, _num_threads, global_terminate, _steal_mutex);
                 Thread * t = new Thread(*tobj);
                 while (tobj->tid() == 0) ; // Wait until the thread is really setup / got cpu time for the first time
                 _threads.push_back(std::make_pair(t, tobj));
@@ -483,6 +486,7 @@ namespace honei
             }
 
             delete[] _affinity_mask;
+            delete _steal_mutex;
         }
 
         virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy p)
@@ -546,9 +550,12 @@ namespace honei
 
         volatile bool global_terminate;
 
+        Mutex * const _steal_mutex;
+
         WorkStealingImplementation() :
             Implementation<mc::ThreadPool>(),
-            global_terminate(false)
+            global_terminate(false),
+            _steal_mutex(new Mutex)
         {
             CONTEXT("When initializing the thread pool:\n");
 
@@ -604,7 +611,7 @@ namespace honei
             for (int i(_num_threads - 1) ; i >= 0 ; --i)
             {
                 unsigned sched_id(affinity ? (i % (_topology->num_lpus())) : 0xFFFF);
-                mc::WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > * tobj = new mc::WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> >(_pool_sync, inst_ctr, sched_id, _threads, _num_threads, global_terminate);
+                mc::WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > * tobj = new mc::WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> >(_pool_sync, inst_ctr, sched_id, _threads, _num_threads, global_terminate, _steal_mutex);
                 Thread * t = new Thread(*tobj);
                 while (tobj->tid() == 0) ; // Wait until the thread is really setup / got cpu time for the first time
                 _threads.push_back(std::make_pair(t, tobj));
@@ -645,6 +652,7 @@ namespace honei
             }
 
             delete[] _affinity_mask;
+            delete _steal_mutex;
         }
 
         virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy p)

@@ -201,14 +201,18 @@ namespace honei
 
         volatile bool & global_terminate;
 
+        Mutex * const steal_mutex;
+
         Implementation(mc::PoolSyncData * const psync, unsigned pid, unsigned sched,
-                const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > *> > & thr, unsigned num_thr, volatile bool & term) :
+                const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > *> > & thr,
+                unsigned num_thr, volatile bool & term, Mutex * const stm) :
             TFImplementationBase(psync, pid),
             sched_lpu(sched),
             threads(thr),
             local_mutex(new Mutex),
             num_threads(num_thr),
-            global_terminate(term)
+            global_terminate(term),
+            steal_mutex(stm)
         {
         }
 
@@ -221,11 +225,6 @@ namespace honei
         {
             /// The ThreadTask to be currently executed by the thread.
             mc::ThreadTask * task(0);
-
-            /// A comparison object for mc::ThreadTask objects.
-            mc::TaskComp * const comp(new mc::TaskComp(sched_lpu));
-
-            std::deque<mc::ThreadTask *>::iterator i, i_end;
 
             /* Set thread_id from operating system and use this on the pool
              * side as sign for the thread to be setup. Then let the thread
@@ -305,8 +304,6 @@ namespace honei
             }
             while (true);
 
-            delete comp;
-
             terminate = false; // Signal Implementation DTOR that we arrived here
         }
 
@@ -352,14 +349,18 @@ namespace honei
 
         volatile bool & global_terminate;
 
+        Mutex * const steal_mutex;
+
         Implementation(mc::PoolSyncData * const psync, unsigned pid, unsigned sched,
-                const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > *> > & thr, unsigned num_thr, volatile bool & term) :
+                const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > *> > & thr,
+                unsigned num_thr, volatile bool & term, Mutex * const stm) :
             TFImplementationBase(psync, pid),
             sched_lpu(sched),
             threads(thr),
             local_mutex(new Mutex),
             num_threads(num_thr),
-            global_terminate(term)
+            global_terminate(term),
+            steal_mutex(stm)
         {
         }
 
@@ -372,11 +373,6 @@ namespace honei
         {
             /// The ThreadTask to be currently executed by the thread.
             mc::ThreadTask * task(0);
-
-            /// A comparison object for mc::ThreadTask objects.
-            mc::TaskComp * const comp(new mc::TaskComp(sched_lpu));
-
-            std::deque<mc::ThreadTask *>::iterator i, i_end;
 
             /* Set thread_id from operating system and use this on the pool
              * side as sign for the thread to be setup. Then let the thread
@@ -404,7 +400,7 @@ namespace honei
 
                 if (task == 0)
                 {
-                    pthread_mutex_lock(pool_mutex->mutex());
+                    pthread_mutex_lock(steal_mutex->mutex());
                     pthread_mutex_lock(local_mutex->mutex());
 
                     if (! tasklist.empty())
@@ -422,9 +418,11 @@ namespace honei
                             tasklist.pop_front();
                         }
                     }
+                    pthread_mutex_unlock(steal_mutex->mutex());
 
                     if (task == 0 && ! (global_terminate || terminate))
                     {
+                        pthread_mutex_lock(pool_mutex->mutex());
                         pthread_mutex_unlock(local_mutex->mutex());
                         global_barrier->wait(*pool_mutex);
                         pthread_mutex_unlock(pool_mutex->mutex());
@@ -432,13 +430,11 @@ namespace honei
                     else if (terminate)
                     {
                         pthread_mutex_unlock(local_mutex->mutex());
-                        pthread_mutex_unlock(pool_mutex->mutex());
                         break;
                     }
                     else
                     {
                         pthread_mutex_unlock(local_mutex->mutex());
-                        pthread_mutex_unlock(pool_mutex->mutex());
                     }
                 }
 
@@ -459,8 +455,6 @@ namespace honei
                 }
             }
             while (true);
-
-            delete comp;
 
             terminate = false; // Signal Implementation DTOR that we arrived here
         }
@@ -688,10 +682,11 @@ unsigned AffinityThreadFunction::tid() const
     return _imp->thread_id;
 }
 
-WorkStealingThreadFunction<std::deque<mc::ThreadTask *> >::WorkStealingThreadFunction(PoolSyncData * const psync,
-        unsigned pool_id, unsigned sched_id, const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > *> > & threads, unsigned num_thr, volatile bool & terminate) :
+WorkStealingThreadFunction<std::deque<mc::ThreadTask *> >::WorkStealingThreadFunction(PoolSyncData * const psync, unsigned pool_id, unsigned sched_id,
+        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > *> > & threads,
+        unsigned num_thr, volatile bool & terminate, Mutex * const steal_mutex) :
     PrivateImplementationPattern<WorkStealingThreadFunction<std::deque<mc::ThreadTask *> >, Shared>(new
-            Implementation<WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > >(psync, pool_id, sched_id, threads, num_thr, terminate))
+            Implementation<WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > >(psync, pool_id, sched_id, threads, num_thr, terminate, steal_mutex))
 {
 }
 
@@ -729,10 +724,11 @@ unsigned WorkStealingThreadFunction<std::deque<mc::ThreadTask *> >::tid() const
     return _imp->thread_id;
 }
 
-WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> >::WorkStealingThreadFunction(PoolSyncData * const psync,
-        unsigned pool_id, unsigned sched_id, const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > *> > & threads, unsigned num_thr, volatile bool & terminate) :
+WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> >::WorkStealingThreadFunction(PoolSyncData * const psync, unsigned pool_id, unsigned sched_id,
+        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > *> > & threads,
+        unsigned num_thr, volatile bool & terminate, Mutex * const steal_mutex) :
     PrivateImplementationPattern<WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> >, Shared>(new
-            Implementation<WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > >(psync, pool_id, sched_id, threads, num_thr, terminate))
+            Implementation<WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > >(psync, pool_id, sched_id, threads, num_thr, terminate, steal_mutex))
 {
 }
 
