@@ -81,7 +81,7 @@ namespace honei
         public Implementation<mc::ThreadPool>
     {
         /// List of user POSIX threads
-        std::deque<std::pair<Thread *, mc::SimpleThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > *> > _threads;
+        std::list<std::pair<Thread *, mc::SimpleThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > *> > _threads;
 
         /// Waiting list of worker tasks to be executed (otherwise)
         mc::ConcurrentList<mc::ThreadTask *> _tasks;
@@ -120,7 +120,7 @@ namespace honei
 
         ~StandardImplementation()
         {
-            for(std::deque<std::pair<Thread *, mc::SimpleThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > *> >::iterator i(_threads.begin()),
+            for(std::list<std::pair<Thread *, mc::SimpleThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > *> >::iterator i(_threads.begin()),
                 i_end(_threads.end()) ; i != i_end ; ++i)
             {
                 (*i).second->stop();
@@ -156,7 +156,7 @@ namespace honei
         public Implementation<mc::ThreadPool>
     {
         /// List of user POSIX threads
-        std::deque<std::pair<Thread *, mc::SimpleThreadFunction<std::deque<mc::ThreadTask *> > *> > _threads;
+        std::list<std::pair<Thread *, mc::SimpleThreadFunction<std::deque<mc::ThreadTask *> > *> > _threads;
 
         /// Waiting list of worker tasks to be executed (otherwise)
         std::deque<mc::ThreadTask *> _tasks;
@@ -195,7 +195,7 @@ namespace honei
 
         ~StandardImplementation()
         {
-            for(std::deque<std::pair<Thread *, mc::SimpleThreadFunction<std::deque<mc::ThreadTask *> > *> >::iterator i(_threads.begin()),
+            for(std::list<std::pair<Thread *, mc::SimpleThreadFunction<std::deque<mc::ThreadTask *> > *> >::iterator i(_threads.begin()),
                 i_end(_threads.end()) ; i != i_end ; ++i)
             {
                 (*i).second->stop();
@@ -230,7 +230,7 @@ namespace honei
         public Implementation<mc::ThreadPool>
     {
         /// List of user POSIX threads
-        std::deque<std::pair<Thread *, mc::AffinityThreadFunction *> > _threads;
+        std::list<std::pair<Thread *, mc::AffinityThreadFunction *> > _threads;
 
         /// Waiting list of worker tasks to be executed (if affinity is enabled)
         std::deque<mc::ThreadTask *> _tasks;
@@ -320,7 +320,7 @@ namespace honei
 
         ~AffinityImplementation()
         {
-            for(std::deque<std::pair<Thread *, mc::AffinityThreadFunction *> >::iterator i(_threads.begin()),
+            for(std::list<std::pair<Thread *, mc::AffinityThreadFunction *> >::iterator i(_threads.begin()),
                 i_end(_threads.end()) ; i != i_end ; ++i)
             {
                 (*i).second->stop();
@@ -473,7 +473,7 @@ namespace honei
         ~WorkStealingImplementation()
         {
             {
-                Lock l(*_pool_sync->mutex);
+                Lock l(*_steal_mutex);
                 global_terminate = true;
             }
 
@@ -491,9 +491,6 @@ namespace honei
 
         virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy p)
         {
-//            if (! affinity)
-//                return enqueue(task);
-
             CONTEXT("When creating a ThreadTask:\n");
 
             Ticket<tags::CPU::MultiCore> * ticket(p.apply());
@@ -639,7 +636,7 @@ namespace honei
         ~WorkStealingImplementation()
         {
             {
-                Lock l(*_pool_sync->mutex);
+                Lock l(*_steal_mutex);
                 global_terminate = true;
             }
 

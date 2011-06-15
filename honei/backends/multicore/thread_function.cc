@@ -238,50 +238,44 @@ namespace honei
 
             do
             {
-                task = 0;
-
-                {
-                    Lock l(*local_mutex);
-
-                    if (! tasklist.empty())
-                    {
-                        task = tasklist.pop_front();
-                    }
-                }
+                task = tasklist.pop_front();
 
                 if (task == 0)
                 {
-                    pthread_mutex_lock(pool_mutex->mutex());
+                    pthread_mutex_lock(steal_mutex->mutex());
                     pthread_mutex_lock(local_mutex->mutex());
 
-                    if (! tasklist.empty())
-                    {
-                        task = tasklist.pop_front();
-                    }
-                    else if (! global_terminate)
+                    if (! global_terminate)
                     {
                         const int iter(rand() % num_threads);
                         mc::WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > * const tfunc = threads[iter].second;
-                        if (tfunc->steal(tasklist))
-                            task = tasklist.pop_front();
-                    }
+                        tfunc->steal(tasklist);
+                        pthread_mutex_unlock(steal_mutex->mutex());
 
-                    if (task == 0 && ! (global_terminate || terminate))
-                    {
-                        pthread_mutex_unlock(local_mutex->mutex());
-                        global_barrier->wait(*pool_mutex);
-                        pthread_mutex_unlock(pool_mutex->mutex());
-                    }
-                    else if (terminate)
-                    {
-                        pthread_mutex_unlock(local_mutex->mutex());
-                        pthread_mutex_unlock(pool_mutex->mutex());
-                        break;
+                        task = tasklist.pop_front();
+
+                        if (task == 0)
+                        {
+                            pthread_mutex_lock(pool_mutex->mutex());
+                            pthread_mutex_unlock(local_mutex->mutex());
+                            global_barrier->wait(*pool_mutex);
+                            pthread_mutex_unlock(pool_mutex->mutex());
+                        }
+                        else
+                            pthread_mutex_unlock(local_mutex->mutex());
                     }
                     else
                     {
+                        pthread_mutex_unlock(steal_mutex->mutex());
+
+                        task = tasklist.pop_front();
+                        if (task == 0 && terminate)
+                        {
+                            pthread_mutex_unlock(local_mutex->mutex());
+                            break;
+                        }
+
                         pthread_mutex_unlock(local_mutex->mutex());
-                        pthread_mutex_unlock(pool_mutex->mutex());
                     }
                 }
 
@@ -309,14 +303,12 @@ namespace honei
 
         void enqueue(mc::ThreadTask * task)
         {
-//            Lock l(*local_mutex);
+            Lock l(*local_mutex);
             tasklist.push_back(task);
         }
 
         bool steal(ConcurrentList<mc::ThreadTask *> & thief_list)
         {
-            Lock l(*local_mutex);
-
             if (tasklist.empty())
                 return false;
             else
