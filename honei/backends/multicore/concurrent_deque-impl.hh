@@ -62,8 +62,8 @@ int ConcurrentDeque<T>::size()
         c = c->_next;
         ++s;
     }
-    pthread_mutex_unlock(_front->mutex());
     pthread_mutex_unlock(_back->mutex());
+    pthread_mutex_unlock(_front->mutex());
 
     return s;
 }
