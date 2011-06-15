@@ -33,7 +33,7 @@ DenseVectorContinuousBase<float> & Difference<tags::OpenCL::CPU>::value(DenseVec
 
     void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::CPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-    opencl::difference_float(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU);
+    opencl::difference(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU, "difference_three_float");
     x.unlock(lm_read_and_write);
     y.unlock(lm_read_only);
 
@@ -50,7 +50,7 @@ DenseVectorContinuousBase<double> & Difference<tags::OpenCL::CPU>::value(DenseVe
 
     void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::CPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-    opencl::difference_double(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU);
+    opencl::difference(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU, "difference_three_double");
     x.unlock(lm_read_and_write);
     y.unlock(lm_read_only);
 
@@ -67,7 +67,7 @@ DenseVectorContinuousBase<float> & Difference<tags::OpenCL::GPU>::value(DenseVec
 
     void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::GPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-    opencl::difference_float(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU);
+    opencl::difference(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU, "difference_three_float");
     x.unlock(lm_read_and_write);
     y.unlock(lm_read_only);
 
@@ -84,7 +84,7 @@ DenseVectorContinuousBase<double> & Difference<tags::OpenCL::GPU>::value(DenseVe
 
     void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::GPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-    opencl::difference_double(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU);
+    opencl::difference(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU, "difference_three_double");
     x.unlock(lm_read_and_write);
     y.unlock(lm_read_only);
 
@@ -104,7 +104,7 @@ DenseVectorContinuousBase<float> & Difference<tags::OpenCL::CPU>::value(DenseVec
     void * r_cl(result.lock(lm_write_only, tags::OpenCL::CPU::memory_value));
     void * x_cl(x.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-    opencl::difference_float(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU);
+    opencl::difference(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU, "difference_three_float");
     result.unlock(lm_write_only);
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
@@ -125,7 +125,7 @@ DenseVectorContinuousBase<double> & Difference<tags::OpenCL::CPU>::value(DenseVe
     void * r_cl(result.lock(lm_write_only, tags::OpenCL::CPU::memory_value));
     void * x_cl(x.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-    opencl::difference_double(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU);
+    opencl::difference(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU, "difference_three_double");
     result.unlock(lm_write_only);
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
@@ -146,7 +146,7 @@ DenseVectorContinuousBase<float> & Difference<tags::OpenCL::GPU>::value(DenseVec
     void * r_cl(result.lock(lm_write_only, tags::OpenCL::GPU::memory_value));
     void * x_cl(x.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-    opencl::difference_float(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU);
+    opencl::difference(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU, "difference_three_float");
     result.unlock(lm_write_only);
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
@@ -167,7 +167,7 @@ DenseVectorContinuousBase<double> & Difference<tags::OpenCL::GPU>::value(DenseVe
     void * r_cl(result.lock(lm_write_only, tags::OpenCL::GPU::memory_value));
     void * x_cl(x.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-    opencl::difference_double(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU);
+    opencl::difference(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU, "difference_three_double");
     result.unlock(lm_write_only);
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);

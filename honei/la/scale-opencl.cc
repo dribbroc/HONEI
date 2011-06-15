@@ -30,7 +30,7 @@ DenseVectorContinuousBase<float> & Scale<tags::OpenCL::CPU>::value(DenseVectorCo
     PROFILER_START("Scale tags::OpenCL::CPU");
 
     void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::CPU::memory_value));
-    opencl::scale_float(x_cl, a, x.size(), CL_DEVICE_TYPE_CPU);
+    opencl::scale<float>(x_cl, a, x.size(), CL_DEVICE_TYPE_CPU, "scale_float");
     x.unlock(lm_read_and_write);
 
     PROFILER_STOP("Scale tags::OpenCL::CPU");
@@ -43,7 +43,7 @@ DenseVectorContinuousBase<double> & Scale<tags::OpenCL::CPU>::value(DenseVectorC
     PROFILER_START("Scale tags::OpenCL::CPU");
 
     void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::CPU::memory_value));
-    opencl::scale_double(x_cl, a, x.size(), CL_DEVICE_TYPE_CPU);
+    opencl::scale<double>(x_cl, a, x.size(), CL_DEVICE_TYPE_CPU, "scale_double");
     x.unlock(lm_read_and_write);
 
     PROFILER_STOP("Scale tags::OpenCL::CPU");
@@ -56,7 +56,7 @@ DenseVectorContinuousBase<float> & Scale<tags::OpenCL::GPU>::value(DenseVectorCo
     PROFILER_START("Scale tags::OpenCL::GPU");
 
     void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::GPU::memory_value));
-    opencl::scale_float(x_cl, a, x.size(), CL_DEVICE_TYPE_GPU);
+    opencl::scale<float>(x_cl, a, x.size(), CL_DEVICE_TYPE_GPU, "scale_float");
     x.unlock(lm_read_and_write);
 
     PROFILER_STOP("Scale tags::OpenCL::GPU");
@@ -69,7 +69,7 @@ DenseVectorContinuousBase<double> & Scale<tags::OpenCL::GPU>::value(DenseVectorC
     PROFILER_START("Scale tags::OpenCL::GPU");
 
     void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::GPU::memory_value));
-    opencl::scale_double(x_cl, a, x.size(), CL_DEVICE_TYPE_GPU);
+    opencl::scale<double>(x_cl, a, x.size(), CL_DEVICE_TYPE_GPU, "scale_double");
     x.unlock(lm_read_and_write);
 
     PROFILER_STOP("Scale tags::OpenCL::GPU");

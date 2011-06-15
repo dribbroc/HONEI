@@ -23,7 +23,7 @@ namespace honei
 {
     namespace opencl
     {
-        void sum_float(void * r, void * x, void * y, unsigned long size, cl_device_type type)
+        void sum(void * r, void * x, void * y, unsigned long size, cl_device_type type, std::string function)
         {
             cl_command_queue command_queue;
             cl_kernel kernel;
@@ -40,33 +40,7 @@ namespace honei
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/backends/opencl/";
             filename += "sum.cl";
-            kernel = OpenCLBackend::instance()->create_kernel(filename, "sum_three_float", context, device);
-            clSetKernelArg(kernel, 0, sizeof(cl_mem), &r);
-            clSetKernelArg(kernel, 1, sizeof(cl_mem), &x);
-            clSetKernelArg(kernel, 2, sizeof(cl_mem), &y);
-            clSetKernelArg(kernel, 3, sizeof(cl_uint), (void *)&size);
-
-            clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
-        }
-
-        void sum_double(void * r, void * x, void * y, unsigned long size, cl_device_type type)
-        {
-            cl_command_queue command_queue;
-            cl_kernel kernel;
-            cl_context context;
-            cl_device_id device;
-            size_t threads = size;
-
-            DCQ dcq = OpenCLBackend::instance()->prepare_device(type);
-            device = dcq.device;
-            context = dcq.context;
-            command_queue = dcq.command_queue;
-
-            //print_device_info(device);
-            std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/backends/opencl/";
-            filename += "sum.cl";
-            kernel = OpenCLBackend::instance()->create_kernel(filename, "sum_three_double", context, device);
+            kernel = OpenCLBackend::instance()->create_kernel(filename, function, context, device);
             clSetKernelArg(kernel, 0, sizeof(cl_mem), &r);
             clSetKernelArg(kernel, 1, sizeof(cl_mem), &x);
             clSetKernelArg(kernel, 2, sizeof(cl_mem), &y);

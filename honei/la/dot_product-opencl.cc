@@ -48,7 +48,7 @@ float DotProduct<tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<float
     {
         void * x_cl(x.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
         void * y_cl(y.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-        result = opencl::dot_product_float(x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU);
+        result = opencl::dot_product<float>(x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU, "dot_product_float");
         x.unlock(lm_read_only);
         y.unlock(lm_read_only);
     }
@@ -80,7 +80,7 @@ double DotProduct<tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<doub
     {
         void * x_cl(x.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
         void * y_cl(y.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-        result = opencl::dot_product_double(x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU);
+        result = opencl::dot_product<double>(x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU, "dot_product_double");
         x.unlock(lm_read_only);
         y.unlock(lm_read_only);
     }
@@ -112,7 +112,7 @@ float DotProduct<tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<float
     {
         void * x_cl(x.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
         void * y_cl(y.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-        result = opencl::dot_product_float(x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU);
+        result = opencl::dot_product<float>(x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU, "dot_product_float");
         x.unlock(lm_read_only);
         y.unlock(lm_read_only);
     }
@@ -144,7 +144,7 @@ double DotProduct<tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<doub
     {
         void * x_cl(x.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
         void * y_cl(y.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-        result = opencl::dot_product_double(x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU);
+        result = opencl::dot_product<double>(x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU, "dot_product_double");
         x.unlock(lm_read_only);
         y.unlock(lm_read_only);
     }

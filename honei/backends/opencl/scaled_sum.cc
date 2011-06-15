@@ -23,7 +23,8 @@ namespace honei
 {
     namespace opencl
     {
-        void scaled_sum_float(void * x, void * y, float b, unsigned long size, cl_device_type type)
+        template <typename DT_>
+        void scaled_sum(void * r, void * x, void * y, DT_ b, unsigned long size, cl_device_type type, std::string function)
         {
             cl_command_queue command_queue;
             cl_kernel kernel;
@@ -40,70 +41,20 @@ namespace honei
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/backends/opencl/";
             filename += "scaled_sum.cl";
-            kernel = OpenCLBackend::instance()->create_kernel(filename, "scaled_sum_float", context, device);
-            clSetKernelArg(kernel, 0, sizeof(cl_mem), &x);
-            clSetKernelArg(kernel, 1, sizeof(cl_mem), &y);
-            clSetKernelArg(kernel, 2, sizeof(cl_float), (void *)&b);
-            clSetKernelArg(kernel, 3, sizeof(cl_uint), (void *)&size);
-
-            clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
-
-        }
-
-        void scaled_sum_double(void * x, void * y, double b, unsigned long size, cl_device_type type)
-        {
-            cl_command_queue command_queue;
-            cl_kernel kernel;
-            cl_context context;
-            cl_device_id device;
-            size_t threads =size;
-
-            DCQ dcq = OpenCLBackend::instance()->prepare_device(type);
-            device = dcq.device;
-            context = dcq.context;
-            command_queue = dcq.command_queue;
-
-            //print_device_info(device);
-            std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/backends/opencl/";
-            filename += "scaled_sum.cl";
-            kernel = OpenCLBackend::instance()->create_kernel(filename, "scaled_sum_double", context, device);
-            clSetKernelArg(kernel, 0, sizeof(cl_mem), &x);
-            clSetKernelArg(kernel, 1, sizeof(cl_mem), &y);
-            clSetKernelArg(kernel, 2, sizeof(cl_double), (void *)&b);
-            clSetKernelArg(kernel, 3, sizeof(cl_uint), (void *)&size);
-
-            clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
-        }
-
-        void scaled_sum_float(void * r, void * x, void * y, float b, unsigned long size, cl_device_type type)
-        {
-            cl_command_queue command_queue;
-            cl_kernel kernel;
-            cl_context context;
-            cl_device_id device;
-            size_t threads = size;
-
-            DCQ dcq = OpenCLBackend::instance()->prepare_device(type);
-            device = dcq.device;
-            context = dcq.context;
-            command_queue = dcq.command_queue;
-
-            //print_device_info(device);
-            std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/backends/opencl/";
-            filename += "scaled_sum.cl";
-            kernel = OpenCLBackend::instance()->create_kernel(filename, "scaled_sum_three_float_s", context, device);
+            kernel = OpenCLBackend::instance()->create_kernel(filename, function, context, device);
             clSetKernelArg(kernel, 0, sizeof(cl_mem), &r);
             clSetKernelArg(kernel, 1, sizeof(cl_mem), &x);
             clSetKernelArg(kernel, 2, sizeof(cl_mem), &y);
-            clSetKernelArg(kernel, 3, sizeof(cl_float), (void *)&b);
+            clSetKernelArg(kernel, 3, sizeof(DT_), (void *)&b);
             clSetKernelArg(kernel, 4, sizeof(cl_uint), (void *)&size);
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
         }
+        template void scaled_sum<float> (void*, void*, void*, float, unsigned long, cl_device_type, std::string);
+        template void scaled_sum<double> (void*, void*, void*, double, unsigned long, cl_device_type, std::string);
 
-        void scaled_sum_double(void * r, void * x, void * y, double b, unsigned long size, cl_device_type type)
+        template <typename DT_>
+        void scaled_sum(void * r, void * x, void * y, unsigned long size, cl_device_type type, std::string function)
         {
             cl_command_queue command_queue;
             cl_kernel kernel;
@@ -120,34 +71,7 @@ namespace honei
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/backends/opencl/";
             filename += "scaled_sum.cl";
-            kernel = OpenCLBackend::instance()->create_kernel(filename, "scaled_sum_three_double_s", context, device);
-            clSetKernelArg(kernel, 0, sizeof(cl_mem), &r);
-            clSetKernelArg(kernel, 1, sizeof(cl_mem), &x);
-            clSetKernelArg(kernel, 2, sizeof(cl_mem), &y);
-            clSetKernelArg(kernel, 3, sizeof(cl_double), (void *)&b);
-            clSetKernelArg(kernel, 4, sizeof(cl_uint), (void *)&size);
-
-            clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
-        }
-
-        void scaled_sum_float(void * r, void * x, void * y, unsigned long size, cl_device_type type)
-        {
-            cl_command_queue command_queue;
-            cl_kernel kernel;
-            cl_context context;
-            cl_device_id device;
-            size_t threads = size;
-
-            DCQ dcq = OpenCLBackend::instance()->prepare_device(type);
-            device = dcq.device;
-            context = dcq.context;
-            command_queue = dcq.command_queue;
-
-            //print_device_info(device);
-            std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/backends/opencl/";
-            filename += "scaled_sum.cl";
-            kernel = OpenCLBackend::instance()->create_kernel(filename, "scaled_sum_three_float", context, device);
+            kernel = OpenCLBackend::instance()->create_kernel(filename, function, context, device);
             clSetKernelArg(kernel, 0, sizeof(cl_mem), &r);
             clSetKernelArg(kernel, 1, sizeof(cl_mem), &x);
             clSetKernelArg(kernel, 2, sizeof(cl_mem), &y);
@@ -155,31 +79,7 @@ namespace honei
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
         }
-
-        void scaled_sum_double(void * r, void * x, void * y, unsigned long size, cl_device_type type)
-        {
-            cl_command_queue command_queue;
-            cl_kernel kernel;
-            cl_context context;
-            cl_device_id device;
-            size_t threads = size;
-
-            DCQ dcq = OpenCLBackend::instance()->prepare_device(type);
-            device = dcq.device;
-            context = dcq.context;
-            command_queue = dcq.command_queue;
-
-            //print_device_info(device);
-            std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/backends/opencl/";
-            filename += "scaled_sum.cl";
-            kernel = OpenCLBackend::instance()->create_kernel(filename, "scaled_sum_three_double", context, device);
-            clSetKernelArg(kernel, 0, sizeof(cl_mem), &r);
-            clSetKernelArg(kernel, 1, sizeof(cl_mem), &x);
-            clSetKernelArg(kernel, 2, sizeof(cl_mem), &y);
-            clSetKernelArg(kernel, 3, sizeof(cl_uint), (void *)&size);
-
-            clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
-        }
+        template void scaled_sum<float> (void*, void*, void*, unsigned long, cl_device_type, std::string);
+        template void scaled_sum<double> (void*, void*, void*, unsigned long, cl_device_type, std::string);
     }
 }

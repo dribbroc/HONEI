@@ -22,50 +22,44 @@
 #define OPENCL_GUARD_OPERATIONS_HH 1
 
 #include <CL/cl.h>
+#include <string>
 
 namespace honei
 {
     namespace opencl
     {
-        void difference_float(void * r, void * x, void * y, unsigned long size, cl_device_type type);
-        void difference_double(void * r, void * x, void * y, unsigned long size, cl_device_type type);
+        void difference(void * r, void * x, void * y, unsigned long size, cl_device_type type, std::string function);
 
-        float dot_product_float(void * x, void * y, unsigned long size, cl_device_type type);
-        double dot_product_double(void * x, void * y, unsigned long size, cl_device_type type);
+        template <typename DT_>
+        DT_ dot_product(void * x, void * y, unsigned long size, cl_device_type type, std::string function);
 
-        void element_product_float(void * r, void * x, void * y, unsigned long size, cl_device_type type);
-        void element_product_double(void * r, void * x, void * y, unsigned long size, cl_device_type type);
+        void element_product(void * r, void * x, void * y, unsigned long size, cl_device_type type, std::string function);
 
         void fill_float(void * x, float a, unsigned long size, cl_device_type type);
         void fill_double(void * x, double a, unsigned long size, cl_device_type type);
 
-        float norm_l2_false_float(void * x, unsigned long size, cl_device_type type);
-        double norm_l2_false_double(void * x, unsigned long size, cl_device_type type);
+        template <typename DT_>
+        DT_ norm_l2_false(void * x, unsigned long size, cl_device_type type, std::string function);
 
-        void scale_float(void * x, float a, unsigned long size, cl_device_type type);
-        void scale_double(void * x, double a, unsigned long size, cl_device_type type);
+        template <typename DT_>
+        void scale(void * x, DT_ a, unsigned long size, cl_device_type type, std::string function);
 
-        void scaled_sum_float(void * r, void * x, void * y, float b, unsigned long size, cl_device_type type);
-        void scaled_sum_double(void * r, void * x, void * y, double b, unsigned long size, cl_device_type type);
-        void scaled_sum_float(void * r, void * x, void * y, unsigned long size, cl_device_type type);
-        void scaled_sum_double(void * r, void * x, void * y, unsigned long size, cl_device_type type);
+        template <typename DT_>
+        void scaled_sum(void * r, void * x, void * y, DT_ b, unsigned long size, cl_device_type type, std::string function);
+        template <typename DT_>
+        void scaled_sum(void * r, void * x, void * y, unsigned long size, cl_device_type type, std::string function);
 
-        void sum_float(void * r, void * x, void * y, unsigned long size, cl_device_type type);
-        void sum_double(void * r, void * x, void * y, unsigned long size, cl_device_type type);
+        void sum(void * r, void * x, void * y, unsigned long size, cl_device_type type, std::string function);
 
-        void product_smell_dv_float(void * x, void * y, void * Aj, void * Ax, void * Arl,
+        template <typename DT_>
+        void product_smell_dv(void * x, void * y, void * Aj, void * Ax, void * Arl,
                 unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
-                unsigned long stride, unsigned long threads, cl_device_type type);
-        void product_smell_dv_double(void * x, void * y, void * Aj, void * Ax, void * Arl,
-                unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
-                unsigned long stride, unsigned long threads, cl_device_type type);
+                unsigned long stride, unsigned long threads, cl_device_type type, std::string function);
 
-        void defect_smell_dv_float(void * rhs, void * x, void * y, void * Aj, void * Ax, void * Arl,
+        template <typename DT_>
+        void defect_smell_dv(void * rhs, void * x, void * y, void * Aj, void * Ax, void * Arl,
                 unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
-                unsigned long stride, unsigned long threads, cl_device_type type);
-        void defect_smell_dv_double(void * rhs, void * x, void * y, void * Aj, void * Ax, void * Arl,
-                unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
-                unsigned long stride, unsigned long threads, cl_device_type type);
+                unsigned long stride, unsigned long threads, cl_device_type type, std::string function);
     }
 }
 #endif

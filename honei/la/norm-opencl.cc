@@ -42,7 +42,7 @@ float Norm<vnt_l_two, false, tags::OpenCL::CPU>::value(const DenseVectorContinuo
     else
     {
         void * x_cl(x.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-        result = opencl::norm_l2_false_float(x_cl, x.size(), CL_DEVICE_TYPE_CPU);
+        result = opencl::norm_l2_false<float>(x_cl, x.size(), CL_DEVICE_TYPE_CPU, "norm_l2_false_float");
         x.unlock(lm_read_only);
     }
     PROFILER_STOP("Norm l2 false tags::OpenCL::CPU");
@@ -67,7 +67,7 @@ double Norm<vnt_l_two, false, tags::OpenCL::CPU>::value(const DenseVectorContinu
     else
     {
         void * x_cl(x.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-        result = opencl::norm_l2_false_double(x_cl, x.size(), CL_DEVICE_TYPE_CPU);
+        result = opencl::norm_l2_false<double>(x_cl, x.size(), CL_DEVICE_TYPE_CPU, "norm_l2_false_double");
         x.unlock(lm_read_only);
     }
     PROFILER_STOP("Norm l2 false tags::OpenCL::CPU");
@@ -92,7 +92,7 @@ float Norm<vnt_l_two, true, tags::OpenCL::CPU>::value(const DenseVectorContinuou
     else
     {
         void * x_cl(x.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-        result = opencl::norm_l2_false_float(x_cl, x.size(), CL_DEVICE_TYPE_CPU);
+        result = opencl::norm_l2_false<float>(x_cl, x.size(), CL_DEVICE_TYPE_CPU, "norm_l2_false_float");
         x.unlock(lm_read_only);
     }
     PROFILER_STOP("Norm l2 true tags::OpenCL::CPU");
@@ -117,7 +117,7 @@ double Norm<vnt_l_two, true, tags::OpenCL::CPU>::value(const DenseVectorContinuo
     else
     {
         void * x_cl(x.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-        result = opencl::norm_l2_false_double(x_cl, x.size(), CL_DEVICE_TYPE_CPU);
+        result = opencl::norm_l2_false<double>(x_cl, x.size(), CL_DEVICE_TYPE_CPU, "norm_l2_false_double");
         x.unlock(lm_read_only);
     }
     PROFILER_STOP("Norm l2 true tags::OpenCL::CPU");
@@ -142,7 +142,7 @@ float Norm<vnt_l_two, false, tags::OpenCL::GPU>::value(const DenseVectorContinuo
     else
     {
         void * x_cl(x.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-        result = opencl::norm_l2_false_float(x_cl, x.size(), CL_DEVICE_TYPE_GPU);
+        result = opencl::norm_l2_false<float>(x_cl, x.size(), CL_DEVICE_TYPE_GPU, "norm_l2_false_float");
         x.unlock(lm_read_only);
     }
     PROFILER_STOP("Norm l2 false tags::OpenCL::GPU");
@@ -167,7 +167,7 @@ double Norm<vnt_l_two, false, tags::OpenCL::GPU>::value(const DenseVectorContinu
     else
     {
         void * x_cl(x.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-        result = opencl::norm_l2_false_double(x_cl, x.size(), CL_DEVICE_TYPE_GPU);
+        result = opencl::norm_l2_false<double>(x_cl, x.size(), CL_DEVICE_TYPE_GPU, "norm_l2_false_double");
         x.unlock(lm_read_only);
     }
     PROFILER_STOP("Norm l2 false tags::OpenCL::GPU");
@@ -192,7 +192,7 @@ float Norm<vnt_l_two, true, tags::OpenCL::GPU>::value(const DenseVectorContinuou
     else
     {
         void * x_cl(x.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-        result = opencl::norm_l2_false_float(x_cl, x.size(), CL_DEVICE_TYPE_GPU);
+        result = opencl::norm_l2_false<float>(x_cl, x.size(), CL_DEVICE_TYPE_GPU, "norm_l2_false_float");
         x.unlock(lm_read_only);
     }
     PROFILER_STOP("Norm l2 true tags::OpenCL::GPU");
@@ -217,7 +217,7 @@ double Norm<vnt_l_two, true, tags::OpenCL::GPU>::value(const DenseVectorContinuo
     else
     {
         void * x_cl(x.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-        result = opencl::norm_l2_false_double(x_cl, x.size(), CL_DEVICE_TYPE_GPU);
+        result = opencl::norm_l2_false<double>(x_cl, x.size(), CL_DEVICE_TYPE_GPU, "norm_l2_false_double");
         x.unlock(lm_read_only);
     }
     PROFILER_STOP("Norm l2 true tags::OpenCL::GPU");

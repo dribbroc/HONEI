@@ -33,7 +33,7 @@ DenseVectorContinuousBase<float> & ElementProduct<tags::OpenCL::CPU>::value(Dens
 
     void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::CPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-    opencl::element_product_float(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU);
+    opencl::element_product(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU, "element_product_three_float");
     x.unlock(lm_read_and_write);
     y.unlock(lm_read_only);
 
@@ -50,7 +50,7 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::OpenCL::CPU>::value(Den
 
     void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::CPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-    opencl::element_product_double(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU);
+    opencl::element_product(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU, "element_product_three_double");
     x.unlock(lm_read_and_write);
     y.unlock(lm_read_only);
 
@@ -67,7 +67,7 @@ DenseVectorContinuousBase<float> & ElementProduct<tags::OpenCL::GPU>::value(Dens
 
     void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::GPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-    opencl::element_product_float(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU);
+    opencl::element_product(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU, "element_product_three_float");
     x.unlock(lm_read_and_write);
     y.unlock(lm_read_only);
 
@@ -84,7 +84,7 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::OpenCL::GPU>::value(Den
 
     void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::GPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-    opencl::element_product_double(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU);
+    opencl::element_product(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU, "element_product_three_double");
     x.unlock(lm_read_and_write);
     y.unlock(lm_read_only);
 
@@ -102,7 +102,7 @@ DenseVectorContinuousBase<float> & ElementProduct<tags::OpenCL::CPU>::value(Dens
     void * r_cl(r.lock(lm_write_only, tags::OpenCL::CPU::memory_value));
     void * x_cl(x.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-    opencl::element_product_float(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU);
+    opencl::element_product(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU, "element_product_three_float");
     r.unlock(lm_write_only);
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
@@ -121,7 +121,7 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::OpenCL::CPU>::value(Den
     void * r_cl(r.lock(lm_write_only, tags::OpenCL::CPU::memory_value));
     void * x_cl(x.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-    opencl::element_product_double(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU);
+    opencl::element_product(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU, "element_product_three_double");
     r.unlock(lm_write_only);
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
@@ -140,7 +140,7 @@ DenseVectorContinuousBase<float> & ElementProduct<tags::OpenCL::GPU>::value(Dens
     void * r_cl(r.lock(lm_write_only, tags::OpenCL::GPU::memory_value));
     void * x_cl(x.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-    opencl::element_product_float(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU);
+    opencl::element_product(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU, "element_product_three_float");
     r.unlock(lm_write_only);
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
@@ -159,7 +159,7 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::OpenCL::GPU>::value(Den
     void * r_cl(r.lock(lm_write_only, tags::OpenCL::GPU::memory_value));
     void * x_cl(x.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-    opencl::element_product_double(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU);
+    opencl::element_product(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU, "element_product_three_double");
     r.unlock(lm_write_only);
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);

@@ -35,7 +35,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::CPU>::value(DenseVect
 
     void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::CPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-    opencl::scaled_sum_float(x_cl, x_cl, y_cl, b, x.size(), CL_DEVICE_TYPE_CPU);
+    opencl::scaled_sum<float>(x_cl, x_cl, y_cl, b, x.size(), CL_DEVICE_TYPE_CPU, "scaled_sum_three_float_s");
     x.unlock(lm_read_and_write);
     y.unlock(lm_read_only);
 
@@ -54,7 +54,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::CPU>::value(DenseVec
 
     void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::CPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-    opencl::scaled_sum_double(x_cl, x_cl, y_cl, b, x.size(), CL_DEVICE_TYPE_CPU);
+    opencl::scaled_sum<double>(x_cl, x_cl, y_cl, b, x.size(), CL_DEVICE_TYPE_CPU, "scaled_sum_three_double_s");
     x.unlock(lm_read_and_write);
     y.unlock(lm_read_only);
 
@@ -73,7 +73,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::GPU>::value(DenseVect
 
     void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::GPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-    opencl::scaled_sum_float(x_cl, x_cl, y_cl, b, x.size(), CL_DEVICE_TYPE_GPU);
+    opencl::scaled_sum<float>(x_cl, x_cl, y_cl, b, x.size(), CL_DEVICE_TYPE_GPU, "scaled_sum_three_float_s");
     x.unlock(lm_read_and_write);
     y.unlock(lm_read_only);
 
@@ -92,7 +92,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::GPU>::value(DenseVec
 
     void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::GPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-    opencl::scaled_sum_double(x_cl, x_cl, y_cl, b, x.size(), CL_DEVICE_TYPE_GPU);
+    opencl::scaled_sum<double>(x_cl, x_cl, y_cl, b, x.size(), CL_DEVICE_TYPE_GPU, "scaled_sum_three_double_s");
     x.unlock(lm_read_and_write);
     y.unlock(lm_read_only);
 
@@ -114,7 +114,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::CPU>::value(DenseVect
     void * r_cl(r.lock(lm_write_only, tags::OpenCL::CPU::memory_value));
     void * x_cl(x.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-    opencl::scaled_sum_float(r_cl, x_cl, y_cl, b, x.size(), CL_DEVICE_TYPE_CPU);
+    opencl::scaled_sum<float>(r_cl, x_cl, y_cl, b, x.size(), CL_DEVICE_TYPE_CPU, "scaled_sum_three_float_s");
     r.unlock(lm_write_only);
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
@@ -137,7 +137,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::CPU>::value(DenseVec
     void * r_cl(r.lock(lm_write_only, tags::OpenCL::CPU::memory_value));
     void * x_cl(x.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-    opencl::scaled_sum_double(r_cl, x_cl, y_cl, b, x.size(), CL_DEVICE_TYPE_CPU);
+    opencl::scaled_sum<double>(r_cl, x_cl, y_cl, b, x.size(), CL_DEVICE_TYPE_CPU, "scaled_sum_three_double_s");
     r.unlock(lm_write_only);
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
@@ -160,7 +160,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::GPU>::value(DenseVect
     void * r_cl(r.lock(lm_write_only, tags::OpenCL::GPU::memory_value));
     void * x_cl(x.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-    opencl::scaled_sum_float(r_cl, x_cl, y_cl, b, x.size(), CL_DEVICE_TYPE_GPU);
+    opencl::scaled_sum<float>(r_cl, x_cl, y_cl, b, x.size(), CL_DEVICE_TYPE_GPU, "scaled_sum_three_float_s");
     r.unlock(lm_write_only);
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
@@ -183,7 +183,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::GPU>::value(DenseVec
     void * r_cl(r.lock(lm_write_only, tags::OpenCL::GPU::memory_value));
     void * x_cl(x.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-    opencl::scaled_sum_double(r_cl, x_cl, y_cl, b, x.size(), CL_DEVICE_TYPE_GPU);
+    opencl::scaled_sum<double>(r_cl, x_cl, y_cl, b, x.size(), CL_DEVICE_TYPE_GPU, "scaled_sum_three_double_s");
     r.unlock(lm_write_only);
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
@@ -206,7 +206,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::CPU>::value(DenseVect
     void * r_cl(r.lock(lm_read_and_write, tags::OpenCL::CPU::memory_value));
     void * x_cl(x.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-    opencl::scaled_sum_float(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU);
+    opencl::scaled_sum<float>(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU, "scaled_sum_three_float");
     r.unlock(lm_read_and_write);
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
@@ -229,7 +229,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::CPU>::value(DenseVec
     void * r_cl(r.lock(lm_read_and_write, tags::OpenCL::CPU::memory_value));
     void * x_cl(x.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-    opencl::scaled_sum_double(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU);
+    opencl::scaled_sum<double>(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU, "scaled_sum_three_double");
     r.unlock(lm_read_and_write);
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
@@ -252,7 +252,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::GPU>::value(DenseVect
     void * r_cl(r.lock(lm_read_and_write, tags::OpenCL::GPU::memory_value));
     void * x_cl(x.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-    opencl::scaled_sum_float(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU);
+    opencl::scaled_sum<float>(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU, "scaled_sum_three_float");
     r.unlock(lm_read_and_write);
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);
@@ -275,7 +275,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::GPU>::value(DenseVec
     void * r_cl(r.lock(lm_read_and_write, tags::OpenCL::GPU::memory_value));
     void * x_cl(x.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
     void * y_cl(y.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-    opencl::scaled_sum_double(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU);
+    opencl::scaled_sum<double>(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU, "scaled_sum_three_double");
     r.unlock(lm_read_and_write);
     x.unlock(lm_read_only);
     y.unlock(lm_read_only);

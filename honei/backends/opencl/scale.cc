@@ -23,7 +23,8 @@ namespace honei
 {
     namespace opencl
     {
-        void scale_float(void * x, float b, unsigned long size, cl_device_type type)
+        template <typename DT_>
+        void scale(void * x, DT_ b, unsigned long size, cl_device_type type, std::string function)
         {
             cl_command_queue command_queue;
             cl_kernel kernel;
@@ -40,37 +41,14 @@ namespace honei
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/backends/opencl/";
             filename += "scale.cl";
-            kernel = OpenCLBackend::instance()->create_kernel(filename, "scale_float", context, device);
+            kernel = OpenCLBackend::instance()->create_kernel(filename, function, context, device);
             clSetKernelArg(kernel, 0, sizeof(cl_mem), &x);
-            clSetKernelArg(kernel, 1, sizeof(cl_float), (void *)&b);
+            clSetKernelArg(kernel, 1, sizeof(DT_), (void *)&b);
             clSetKernelArg(kernel, 2, sizeof(cl_uint), (void *)&size);
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
         }
-
-        void scale_double(void * x, double b, unsigned long size, cl_device_type type)
-        {
-            cl_command_queue command_queue;
-            cl_kernel kernel;
-            cl_context context;
-            cl_device_id device;
-            size_t threads = size;
-
-            DCQ dcq = OpenCLBackend::instance()->prepare_device(type);
-            device = dcq.device;
-            context = dcq.context;
-            command_queue = dcq.command_queue;
-
-            //print_device_info(device);
-            std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/backends/opencl/";
-            filename += "scale.cl";
-            kernel = OpenCLBackend::instance()->create_kernel(filename, "scale_double", context, device);
-            clSetKernelArg(kernel, 0, sizeof(cl_mem), &x);
-            clSetKernelArg(kernel, 1, sizeof(cl_double), (void *)&b);
-            clSetKernelArg(kernel, 2, sizeof(cl_uint), (void *)&size);
-
-            clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
-        }
+        template void scale<float>(void*, float, unsigned long, cl_device_type, std::string);
+        template void scale<double>(void*, double, unsigned long, cl_device_type, std::string);
     }
 }
