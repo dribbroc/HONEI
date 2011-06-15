@@ -538,8 +538,11 @@ namespace honei
             do
             {
                 task = tasklist->pop_front();
+
+                if (task == 0)
                 {
                     Lock l(*pool_mutex);
+                    task = tasklist->pop_front();
 
                     if (task == 0)
                     {
