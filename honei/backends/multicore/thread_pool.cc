@@ -77,14 +77,14 @@ namespace honei
 
     template <typename ListType> struct StandardImplementation;
 
-    template <> struct StandardImplementation<mc::ConcurrentList<mc::ThreadTask *> > :
+    template <> struct StandardImplementation<mc::ConcurrentDeque<mc::ThreadTask *> > :
         public Implementation<mc::ThreadPool>
     {
         /// List of user POSIX threads
-        std::list<std::pair<Thread *, mc::SimpleThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > *> > _threads;
+        std::list<std::pair<Thread *, mc::SimpleThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> > *> > _threads;
 
         /// Waiting list of worker tasks to be executed (otherwise)
-        mc::ConcurrentList<mc::ThreadTask *> _tasks;
+        mc::ConcurrentDeque<mc::ThreadTask *> _tasks;
 
         /// Function pointer to any of the default dispatch strategies
         mc::DispatchPolicy (* policy) ();
@@ -104,8 +104,8 @@ namespace honei
 
             for (int i(_num_threads - 1) ; i >= 0 ; --i)
             {
-                mc::SimpleThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > * tobj =
-                    new mc::SimpleThreadFunction<mc::ConcurrentList<mc::ThreadTask *> >(_pool_sync, &_tasks, inst_ctr);
+                mc::SimpleThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> > * tobj =
+                    new mc::SimpleThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> >(_pool_sync, &_tasks, inst_ctr);
                 Thread * t = new Thread(*tobj);
                 while (tobj->tid() == 0) ; // Wait until the thread is really setup / got cpu time for the first time
                 _threads.push_back(std::make_pair(t, tobj));
@@ -120,7 +120,7 @@ namespace honei
 
         ~StandardImplementation()
         {
-            for(std::list<std::pair<Thread *, mc::SimpleThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > *> >::iterator i(_threads.begin()),
+            for(std::list<std::pair<Thread *, mc::SimpleThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> > *> >::iterator i(_threads.begin()),
                 i_end(_threads.end()) ; i != i_end ; ++i)
             {
                 (*i).second->stop();
@@ -530,11 +530,11 @@ namespace honei
         }
     };
 
-    template <> struct WorkStealingImplementation<mc::ConcurrentList<mc::ThreadTask *> > :
+    template <> struct WorkStealingImplementation<mc::ConcurrentDeque<mc::ThreadTask *> > :
         public Implementation<mc::ThreadPool>
     {
         /// List of user POSIX threads
-        std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > *> > _threads;
+        std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> > *> > _threads;
 
         /// Mapping of threads to the scheduler ids of the cores they run on
         std::vector<unsigned> _sched_ids;
@@ -608,7 +608,7 @@ namespace honei
             for (int i(_num_threads - 1) ; i >= 0 ; --i)
             {
                 unsigned sched_id(affinity ? (i % (_topology->num_lpus())) : 0xFFFF);
-                mc::WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > * tobj = new mc::WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> >(_pool_sync, inst_ctr, sched_id, _threads, _num_threads, global_terminate, _steal_mutex);
+                mc::WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> > * tobj = new mc::WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> >(_pool_sync, inst_ctr, sched_id, _threads, _num_threads, global_terminate, _steal_mutex);
                 Thread * t = new Thread(*tobj);
                 while (tobj->tid() == 0) ; // Wait until the thread is really setup / got cpu time for the first time
                 _threads.push_back(std::make_pair(t, tobj));
@@ -640,7 +640,7 @@ namespace honei
                 global_terminate = true;
             }
 
-            for(std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > *> >::iterator i(_threads.begin()),
+            for(std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> > *> >::iterator i(_threads.begin()),
                 i_end(_threads.end()) ; i != i_end ; ++i)
             {
                 (*i).second->stop();
@@ -661,7 +661,7 @@ namespace honei
 
             int idx((ticket->sid_min() == 0xFFFF) ? rand() % _num_threads : ticket->sid_min());
 
-            mc::WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > * wfunc(_threads[idx].second);
+            mc::WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> > * wfunc(_threads[idx].second);
             wfunc->enqueue(t_task);
 
             {
@@ -681,7 +681,7 @@ namespace honei
 
             int idx((ticket->sid_min() == 0xFFFF) ? rand() % _num_threads : ticket->sid_min());
 
-            mc::WorkStealingThreadFunction<mc::ConcurrentList<mc::ThreadTask *> > * wfunc(_threads[idx].second);
+            mc::WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> > * wfunc(_threads[idx].second);
             wfunc->enqueue(t_task);
 
             {
@@ -726,7 +726,7 @@ Implementation<ThreadPool> * ThreadPool::select_impl()
     {
         if (listtype == 1)
         {
-            return new WorkStealingImplementation<mc::ConcurrentList<mc::ThreadTask *> >;
+            return new WorkStealingImplementation<mc::ConcurrentDeque<mc::ThreadTask *> >;
         }
         else
         {
@@ -742,7 +742,7 @@ Implementation<ThreadPool> * ThreadPool::select_impl()
     {
         if (listtype == 1)
         {
-            return new StandardImplementation<mc::ConcurrentList<mc::ThreadTask *> >;
+            return new StandardImplementation<mc::ConcurrentDeque<mc::ThreadTask *> >;
         }
         else
         {
