@@ -57,7 +57,10 @@ namespace methods
         public:
             class F;
             class W;
-            class V;
+            class V
+            {
+                class STATIC;
+            };
     };
     class FIXED;
     class MIXED;

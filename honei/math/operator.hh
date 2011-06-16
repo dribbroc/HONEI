@@ -34,9 +34,12 @@ namespace honei
     {
         public:
             virtual void value() = 0;
+
             virtual ~Operator()
             {
             }
+
+            virtual std::string to_string() = 0;
     };
 
     class OperatorList
@@ -45,6 +48,7 @@ namespace honei
             std::vector<Operator*> _ops;
 
         public:
+
             ~OperatorList()
             {
                 for (unsigned long i(0) ; i < _ops.size() ; ++i)
@@ -66,12 +70,22 @@ namespace honei
             {
                 return _ops.at(i);
             }
+
+            unsigned long size()
+            {
+                return _ops.size();
+            }
     };
 
     template<typename Tag_, typename MatType_, typename VectorType_>
     class DefectOperator : public Operator
     {
         public:
+            virtual std::string to_string()
+            {
+                return "DefectOperator";
+            }
+
             DefectOperator(VectorType_& y, VectorType_& b, MatType_& A, VectorType_& x) :
                 _y(y),
                 _b(b),
@@ -100,6 +114,11 @@ namespace honei
     class NormOperator : public Operator
     {
         public:
+            virtual std::string to_string()
+            {
+                return "NormOperator";
+            }
+
             NormOperator(DT_& y, DenseVector<DT_>& x) :
                 _x(x),
                 _y(y)
@@ -124,6 +143,12 @@ namespace honei
     class SumOperator : public Operator
     {
         public:
+
+            virtual std::string to_string()
+            {
+                return "SumOperator";
+            }
+
             SumOperator(VectorType_& y, VectorType_& x) :
                 _x(x),
                 _y(y)
@@ -148,6 +173,11 @@ namespace honei
     class ScaledSumOperator : public Operator
     {
         public:
+            virtual std::string to_string()
+            {
+                return "AXPYOperator";
+            }
+
             ScaledSumOperator(DenseVector<DT_>& y, DenseVector<DT_>& x, DT_ alpha) :
                 _x(x),
                 _y(y),
@@ -175,6 +205,11 @@ namespace honei
     {
         //TODO: how to build in preconditioning -> standard-value?
         public:
+            virtual std::string to_string()
+            {
+                return "SolverOperator";
+            }
+
             SolverOperator(MatrixType_ & A,
                            VectorType_ & b,
                            VectorType_ & x,
@@ -209,6 +244,11 @@ namespace honei
     {
         //TODO: more temps, non-matrix preconditioning
         public:
+            virtual std::string to_string()
+            {
+                return "SmootherOperator";
+            }
+
             SmootherOperator(MatrixType_ & A,
                              PreconContType_ & P,
                              VectorType_ & b,
@@ -245,6 +285,11 @@ namespace honei
     class TransferOperator : public Operator
     {
         public:
+            virtual std::string to_string()
+            {
+                return "TransferOperator";
+            }
+
             TransferOperator(VectorType_ & left, VectorType_ & right, MatrixType_ & mat) :
                 _left(left),
                 _right(right),

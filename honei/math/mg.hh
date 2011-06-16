@@ -63,151 +63,233 @@ namespace honei
             }
     };
 
+    template<typename MatrixType_, typename VectorType_, typename PreconContType_>
+    struct MGData
+    {
+        public:
+            MGData(std::vector<MatrixType_> & systems,
+                   std::vector<MatrixType_> & resmats,
+                   std::vector<MatrixType_> & prolmats,
+                   std::vector<PreconContType_> & precons,
+                   std::vector<VectorType_> & rhss,
+                   std::vector<VectorType_> & xs,
+                   std::vector<VectorType_> & ds,
+                   std::vector<VectorType_> & cs,
+                   std::vector<VectorType_> & temp0s,
+                   std::vector<VectorType_> & temp1s,
+                   unsigned long p_max_iters_coarse = 0,
+                   unsigned long & p_used_iters = 0,
+                   unsigned long p_n_pre_smooth = 0,
+                   unsigned long p_n_post_smooth = 0,
+                   unsigned long p_min_level = 0,
+                   double p_eps_rel = 1e-8
+                   ) :
+                A(systems),
+                resmat(resmats),
+                prolmat(prolmats),
+                P(precons),
+                b(rhss),
+                x(xs),
+                d(ds),
+                c(cs),
+                temp_0(temp0s),
+                temp_1(temp1s),
+                max_iters_coarse(p_max_iters_coarse),
+                used_iters(p_used_iters),
+                n_pre_smooth(p_n_pre_smooth),
+                n_post_smooth(p_n_post_smooth),
+                min_level(p_min_level),
+                eps_relative(p_eps_rel)
+            {
+            }
+
+            std::vector<MatrixType_> A;
+            std::vector<MatrixType_> resmat;
+            std::vector<MatrixType_> prolmat;
+            std::vector<PreconContType_> P;
+            std::vector<VectorType_> b;
+            std::vector<VectorType_> x;
+            std::vector<VectorType_> d;
+            std::vector<VectorType_> c;
+            std::vector<VectorType_> temp_0;
+            std::vector<VectorType_> temp_1;
+            unsigned long max_iters_coarse;
+            unsigned long used_iters;
+            unsigned long n_pre_smooth;
+            unsigned long n_post_smooth;
+            unsigned long min_level;
+            double eps_relative;
+    };
+
+    template<typename MatrixType_, typename VectorType_, typename PreconContType_>
+    struct MGUtil
+    {
+        public:
+            MGData<MatrixType_, VectorType_, PreconContType_> load_data(std::string file_base, unsigned long sorting)
+            {
+                std::vector<MatrixType_> system;
+                std::vector<PreconContType_> P;
+                std::vector<VectorType_> b;
+                std::vector<VectorType_> x;
+                std::vector<VectorType_> d;
+                std::vector<VectorType_> c;
+                std::vector<VectorType_> temp_0;
+                std::vector<VectorType_> temp_1;
+
+                //TODO: load and push back data
+
+                MGData<MatrixType_, VectorType_, PreconContType_> result(system, P, b, x, d, c, temp_0, temp_1);
+                return result;
+            }
+
+
+    };
 
     //TODO: think of more flexible way (more than one smoothertype, ...) ; later, assembly is done here!
     template<typename Tag_,
              typename CycleShape_,
-             typename NormType_,
              typename CoarseGridSolverType_,
              typename SmootherType_,
-             typename PreconContType_,
              typename ResType_,
              typename ProlType_,
              typename DT_>
-    struct MGCycleDescriptor
+    struct MGCycleProcessing
     {
     };
 
     //specialise by cycle-shape
     template<typename Tag_,
-             typename NormType_,
              typename CoarseGridSolverType_,
              typename SmootherType_,
-             typename PreconContType_,
              typename ResType_,
-             typename ProlType_
+             typename ProlType_,
              typename DT_>
-    struct MGCycleDescriptor<Tag_,
-                             cycle::V::STATIC,
-                             NormType_,
+    struct MGCycleProcessing<Tag_,
+                             methods::CYCLE::V::STATIC,
                              CoarseGridSolverType_,
                              SmootherType_,
                              ResType_,
                              ProlType_,
                              DT_>
     {
-        static void value(std::string filename,
-                          std::vector<MatrixType_> & A_level,
-                          std::vector<MatrixType_> & prolmat_level,
-                          std::vector<MatrixType_> & resmat_level,
-                          std::vector<PreconContType_> & precon_level,
-                          std::vector<VectorType_> & b_level,
-                          std::vector<VectorType_> & x_level,
-                          std::vector<VectorType_> & c_level,
-                          std::vector<VectorType_> & d_level,
-                          std::vector<VectorType_> & temp_0_level,
-                          std::vector<VectorType_> & temp_1_level,
-                          OperatorList & cycle,
-                          unsigned long n_pre_smooth,
-                          unsigned long n_post_smooth,
-                          unsigned long & used_iters,
-                          unsigned long min_level = 1,
-                          DT_ eps_relative = 1e-8
-                          )
-        {
-            //load data
-            MGUtil<MatrixType_, VectorType_, PreconContType_>::load_data(filename,
-                                                                         A_level,
-                                                                         prolmat_level,
-                                                                         resmat_level,
-                                                                         precon_level,
-                                                                         b_level,
-                                                                         x_level,
-                                                                         c_level,
-                                                                         temp_0_level,
-                                                                         temp_1_level);
-
-            //build up operator list
-            unsigned long max_level = (unsigned long)A_level.size();
-
-            ///DESCENT
-            ///first PRESMOOTHING operator
-            cycle.push_back(new SmootherOperator<SmootherType_,
-                                                 MatrixType_,
-                                                 VectorType_,
-                                                 PreconContType_>(A_level[max_level],
-                                                                  precon_level[max_level],
-                                                                  d_level[max_level],
-                                                                  c_level[max_level],
-                                                                  temp_0_level[max_level],
-                                                                  temp_1_level[max_level],
-                                                                  n_pre_smooth) );
-            ///SUM operator (add correction to solution)
-            cycle.push_back(new SumOperator<Tag_, VectorType_>(x_level[max_level], c_level[max_level]));
-
-            ///DEFECT operator
-            cycle.push_back(DefectOperator<Tag_, MatrixType_, VectorType_>(d_level[i], b_level[i], A_level[i], x_level[i]));
-
-            for(unsigned long i(max_level - 1) ; i > min_level ; --i)
+        private:
+            template<typename MatrixType_, typename VectorType_, typename PreconContType_>
+            static void _build_cycle(
+                    std::vector<VectorType_> & x,
+                    std::vector<VectorType_> & b,
+                    unsigned long level,
+                    OperatorList & cycle,
+                    MGData<MatrixType_, VectorType_, PreconContType_> & data)
             {
-                ///PRESMOOTHING operator
-                cycle.push_back(new SmootherOperator<SmootherType_,
-                                                     MatrixType_,
-                                                     VectorType_,
-                                                     PreconContType_>(A_level[i],
-                                                                      precon_level[i],
-                                                                      d_level[i],
-                                                                      x_level[i],
-                                                                      temp_0_level[i],
-                                                                      temp_1_level[i],
-                                                                      n_pre_smooth) );
-                ///DEFECT operator
-                cycle.push_back(DefectOperator<Tag_, MatrixType_, VectorType_>(d_level[i], b_level[i], A_level[i], x_level[i]));
+                if(level == data.min_level)
+                {
+                    cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_>(
+                                data.A[data.min_level],
+                                b[data.min_level],
+                                x[data.min_level],
+                                data.max_iters_coarse,
+                                data.used_iters,
+                                data.eps_relative) );
+                }
+                else
+                {
+                    ///Presmoothing
+                    cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
+                                data.A.at(level),
+                                data.P.at(level),
+                                b[level],
+                                x[level],
+                                data.temp_0[level],
+                                data.temp_1[level],
+                                data.n_pre_smooth) );
 
-                ///RESTRICTION operator
-                cycle.push_back(new TransferOperator<ResType_, MatrixType_, VectorType_>(d_level[i - 1] , d_level[i], resmat[i]));
-                //-> d is equivalent to rhs on all levels => we dont need an b-stdvector
+                    ///Defect
+                    cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(data.d[level], b[level], data.A[level], x[level]));
+
+                    ///Restriction
+                    cycle.push_back(new TransferOperator<ResType_, MatrixType_, VectorType_>(data.d[level - 1] , data.d[level], data.resmat[level]));
+
+                    ///Recursion
+                    ///all vectors in c have to be initialised with 0
+                    _coarse_correction(data.c, data.d, level - 1, cycle, data);
+
+                    ///Prolongation
+                    cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(data.c[level + 1] , data.c[level], data.prolmat[level]));
+                    cycle.push_back(new SumOperator<Tag_, VectorType_>(data.x[level + 1], data.c[level + 1]));
+
+                    ///Postsmoothing
+                    cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
+                                data.A[level],
+                                data.P[level],
+                                data.b[level],
+                                data.x[level],
+                                data.temp_0[level],
+                                data.temp_1[level],
+                                data.n_post_smooth) );
+                }
             }
 
-            ///COARSE CORRECTION
-            ///COARSE GRID SOLVER operator
-            cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_>(A_level[min_level],
-                                                                                                d_level[min_level],
-                                                                                                x_level[min_level],
-                                                                                                max_iters,
-                                                                                                used_iters,
-                                                                                                eps_relative) );
-
-            ///RISE
-            for(unsigned long i(min_level) ; i < max_level ; ++i)
+            template<typename MatrixType_, typename VectorType_, typename PreconContType_>
+            static void _coarse_correction(
+                    std::vector<VectorType_> & x,
+                    std::vector<VectorType_> & b,
+                    unsigned long level,
+                    OperatorList & cycle,
+                    MGData<MatrixType_, VectorType_, PreconContType_> & data)
             {
-                ///PROLONGATION operator
-                cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(c_level[i + 1] , x_level[i], prolmat[i]));
+                if(level == data.min_level)
+                {
+                    cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_>(
+                                data.A[data.min_level],
+                                b[data.min_level],
+                                x[data.min_level],
+                                data.max_iters_coarse,
+                                data.used_iters,
+                                data.eps_relative) );
+                }
+                else
+                {
+                    ///Presmoothing
+                    cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
+                                data.A.at(level),
+                                data.P.at(level),
+                                b[level],
+                                x[level],
+                                data.temp_0[level],
+                                data.temp_1[level],
+                                data.n_pre_smooth) );
 
-                ///SUM operator (add correction TODO: adaptive correction)
-                cycle.push_back(new SumOperator<Tag_, VectorType_>(x_level[max_level], c_level[max_level]));
+                    ///Restriction
+                    cycle.push_back(new TransferOperator<ResType_, MatrixType_, VectorType_>(data.d[level - 1] , data.d[level], data.resmat[level]));
 
+                    ///Recursion
+                    ///all vectors in c have to be initialised with 0
+                    _coarse_correction(x, b, level - 1, cycle, data);
 
-                ///POSTMOOTHING operator
-                cycle.push_back(new SmootherOperator<SmootherType_,
-                                                     MatrixType_,
-                                                     VectorType_,
-                                                     PreconContType_>(A_level[i],
-                                                                      precon_level[i],
-                                                                      d_level[i],
-                                                                      x_level[i],
-                                                                      temp_0_level[i],
-                                                                      temp_1_level[i],
-                                                                      n_pre_smooth) );
-                ///DEFECT operator
-                cycle.push_back(DefectOperator<Tag_, MatrixType_, VectorType_>(temp_0_level[i], d_level[i], A_level[i], x_level[i]));
+                    ///Prolongation
+                    cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(x[level + 1] , x[level], data.prolmat[level]));
+                    cycle.push_back(new SumOperator<Tag_, VectorType_>(data.x[level + 1], x[level + 1]));
 
-                //BUT NOW?
-
+                    ///Postsmoothing
+                    cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
+                                data.A[level],
+                                data.P[level],
+                                b[level],
+                                x[level],
+                                data.temp_0[level],
+                                data.temp_1[level],
+                                data.n_post_smooth) );
+                }
             }
 
-
-        }
+        public:
+            template<typename MatrixType_, typename VectorType_, typename PreconContType_>
+            static OperatorList value(MGData<MatrixType_, VectorType_, PreconContType_> & data)
+            {
+                OperatorList cycle;
+                _build_cycle(data.x, data.b, data.A.size() - 1, cycle, data);
+                return cycle;
+            }
     };
 
 }
