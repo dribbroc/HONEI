@@ -17,7 +17,7 @@
 * Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-__kernel void sum_three_float(__global  float * output,
+__kernel void sum_three_f(__global  float * output,
                                   __global const float * x,
                                   __global const float * y,
                                   const unsigned int size)
@@ -28,7 +28,7 @@ uint tid = get_global_id(0);
 }
 
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-__kernel void sum_three_double(__global  double * output,
+__kernel void sum_three_d(__global  double * output,
                                   __global const double * x,
                                   __global const double * y,
                                   const unsigned int size)

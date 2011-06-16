@@ -23,6 +23,7 @@
 #include <honei/backends/opencl/operations.hh>
 
 using namespace honei;
+using namespace honei::opencl;
 using namespace tests;
 
 template <typename Tag_>

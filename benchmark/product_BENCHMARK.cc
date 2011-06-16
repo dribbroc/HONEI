@@ -573,7 +573,7 @@ class SMELLDenseVectorProductBench :
 #endif
 #ifdef HONEI_OPENCL
                         if (Tag_::tag_value == tags::tv_opencl)
-                            OpenCLBackend::instance()->flush();
+                            opencl::OpenCLBackend::instance()->flush();
 #endif
                         );
             }
@@ -712,7 +712,7 @@ class Q1MatrixELLDenseVectorProductBench :
 #endif
 #ifdef HONEI_OPENCL
                         if (Tag_::tag_value == tags::tv_opencl)
-                            OpenCLBackend::instance()->flush();
+                            opencl::OpenCLBackend::instance()->flush();
 #endif
                         }
                         );

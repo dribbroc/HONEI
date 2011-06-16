@@ -20,74 +20,52 @@
 #include <honei/la/sum.hh>
 #include <honei/backends/opencl/operations.hh>
 #include <honei/util/profiler.hh>
+#include <typeinfo>
 
+
+namespace honei
+{
+    namespace opencl
+    {
+        template <typename Tag_, typename DT_>
+        void common_sum(DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y)
+        {
+            if (x.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+            void * x_cl(x.lock(lm_read_and_write, Tag_::memory_value));
+            void * y_cl(y.lock(lm_read_only, Tag_::memory_value));
+            std::string opname("sum_three_");
+            opname += typeid(DT_).name();
+            opencl::sum(x_cl, x_cl, y_cl, x.size(), tag_to_device<Tag_>(), opname);
+            x.unlock(lm_read_and_write);
+            y.unlock(lm_read_only);
+        }
+    }
+}
 
 using namespace honei;
 
-DenseVectorContinuousBase<float> & Sum<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<float> & x, const DenseVectorContinuousBase<float> & y)
+template <typename DT_>
+DenseVectorContinuousBase<DT_> & Sum<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y)
 {
-    CONTEXT("When calculating the sum of two DenseVectorContinuousBase<float> (OpenCL CPU):");
+    CONTEXT("When calculating the sum of two DenseVectorContinuousBase<DT_> (OpenCL CPU):");
     PROFILER_START("Sum tags::OpenCL::CPU");
-    if (x.size() != y.size())
-        throw VectorSizeDoesNotMatch(y.size(), x.size());
-
-    void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::CPU::memory_value));
-    void * y_cl(y.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-    opencl::sum(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU, "sum_three_float");
-    x.unlock(lm_read_and_write);
-    y.unlock(lm_read_only);
-
+    opencl::common_sum<tags::OpenCL::CPU>(x, y);
     PROFILER_STOP("Sum tags::OpenCL::CPU");
     return x;
 }
+template DenseVectorContinuousBase<float> & Sum<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &);
+template DenseVectorContinuousBase<double> & Sum<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &);
 
-DenseVectorContinuousBase<double> & Sum<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<double> & x, const DenseVectorContinuousBase<double> & y)
+template <typename DT_>
+DenseVectorContinuousBase<DT_> & Sum<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y)
 {
-    CONTEXT("When calculating the sum of two DenseVectorContinuousBase<double> (OpenCL CPU):");
-    PROFILER_START("Sum tags::OpenCL::CPU");
-    if (x.size() != y.size())
-        throw VectorSizeDoesNotMatch(y.size(), x.size());
-
-    void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::CPU::memory_value));
-    void * y_cl(y.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-    opencl::sum(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU, "sum_three_double");
-    x.unlock(lm_read_and_write);
-    y.unlock(lm_read_only);
-
-    PROFILER_STOP("Sum tags::OpenCL::CPU");
-    return x;
-}
-
-DenseVectorContinuousBase<float> & Sum<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<float> & x, const DenseVectorContinuousBase<float> & y)
-{
-    CONTEXT("When calculating the sum of two DenseVectorContinuousBase<float> (OpenCL GPU):");
+    CONTEXT("When calculating the sum of two DenseVectorContinuousBase<DT_> (OpenCL GPU):");
     PROFILER_START("Sum tags::OpenCL::GPU");
-    if (x.size() != y.size())
-        throw VectorSizeDoesNotMatch(y.size(), x.size());
-
-    void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::GPU::memory_value));
-    void * y_cl(y.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-    opencl::sum(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU, "sum_three_float");
-    x.unlock(lm_read_and_write);
-    y.unlock(lm_read_only);
-
+    opencl::common_sum<tags::OpenCL::GPU>(x, y);
     PROFILER_STOP("Sum tags::OpenCL::GPU");
     return x;
 }
-
-DenseVectorContinuousBase<double> & Sum<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> & x, const DenseVectorContinuousBase<double> & y)
-{
-    CONTEXT("When calculating the sum of two DenseVectorContinuousBase<double> (OpenCL GPU):");
-    PROFILER_START("Sum tags::OpenCL::GPU");
-    if (x.size() != y.size())
-        throw VectorSizeDoesNotMatch(y.size(), x.size());
-
-    void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::GPU::memory_value));
-    void * y_cl(y.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-    opencl::sum(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU, "sum_three_double");
-    x.unlock(lm_read_and_write);
-    y.unlock(lm_read_only);
-
-    PROFILER_STOP("Sum tags::OpenCL::GPU");
-    return x;
-}
+template DenseVectorContinuousBase<float> & Sum<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &);
+template DenseVectorContinuousBase<double> & Sum<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &);

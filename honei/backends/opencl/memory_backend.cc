@@ -25,6 +25,8 @@
 #include <honei/backends/opencl/opencl_backend.hh>
 #include <honei/util/memory_arbiter.hh>
 
+using namespace honei::opencl;
+
 namespace honei
 {
     /**

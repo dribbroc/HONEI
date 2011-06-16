@@ -32,9 +32,10 @@
 #include <iostream>
 #include <vector>
 
+using namespace honei::opencl;
 namespace honei
 {
-    template <> struct Implementation<OpenCLBackend>
+    template <> struct Implementation<opencl::OpenCLBackend>
     {
         struct KSD
         {
@@ -268,54 +269,55 @@ namespace honei
             return clCreateBuffer(context, CL_MEM_READ_WRITE | CL_MEM_USE_HOST_PTR, bytes, src, NULL);
         }
     };
+}
+using namespace honei;
 
-    OpenCLBackend::OpenCLBackend() :
-        PrivateImplementationPattern<OpenCLBackend, Shared>(new Implementation<OpenCLBackend>())
-    {
-    }
+OpenCLBackend::OpenCLBackend() :
+    PrivateImplementationPattern<OpenCLBackend, Shared>(new Implementation<OpenCLBackend>())
+{
+}
 
-    OpenCLBackend::~OpenCLBackend()
-    {
-    }
+OpenCLBackend::~OpenCLBackend()
+{
+}
 
-    cl_kernel OpenCLBackend::create_kernel(std::string file, std::string kernel_name, cl_context context, cl_device_id device)
-    {
-        return _imp->create_kernel(file, kernel_name, context, device);
-    }
+cl_kernel OpenCLBackend::create_kernel(std::string file, std::string kernel_name, cl_context context, cl_device_id device)
+{
+    return _imp->create_kernel(file, kernel_name, context, device);
+}
 
-    DCQ OpenCLBackend::prepare_device(cl_device_type type)
-    {
-        return _imp->prepare_device(type);
-    }
+DCQ OpenCLBackend::prepare_device(cl_device_type type)
+{
+    return _imp->prepare_device(type);
+}
 
-    void OpenCLBackend::print_device_info(cl_device_id device)
-    {
-        _imp->print_device_info(device);
-    }
+void OpenCLBackend::print_device_info(cl_device_id device)
+{
+    _imp->print_device_info(device);
+}
 
-    void OpenCLBackend::print_platform_info()
-    {
-        _imp->print_platform_info();
-    }
+void OpenCLBackend::print_platform_info()
+{
+    _imp->print_platform_info();
+}
 
-    void OpenCLBackend::print_program_info(cl_program program, cl_device_id device)
-    {
-        _imp->print_program_info(program, device);
-    }
+void OpenCLBackend::print_program_info(cl_program program, cl_device_id device)
+{
+    _imp->print_program_info(program, device);
+}
 
-    void OpenCLBackend::flush()
-    {
-        _imp->flush();
-    }
+void OpenCLBackend::flush()
+{
+    _imp->flush();
+}
 
-    cl_mem OpenCLBackend::create_empty_buffer(unsigned long bytes, cl_context context)
-    {
-        return _imp->create_empty_buffer(bytes, context);
-    }
+cl_mem OpenCLBackend::create_empty_buffer(unsigned long bytes, cl_context context)
+{
+    return _imp->create_empty_buffer(bytes, context);
+}
 
-    cl_mem OpenCLBackend::create_buffer(unsigned long bytes, cl_context context, void * src)
-    {
-        return _imp->create_buffer(bytes, context, src);
-    }
+cl_mem OpenCLBackend::create_buffer(unsigned long bytes, cl_context context, void * src)
+{
+    return _imp->create_buffer(bytes, context, src);
 }
 #endif

@@ -24,5 +24,8 @@
 namespace honei
 {
     template class InstantiationPolicy<OpenCLBackend, Singleton>;
-    class OpenCLBackend;
+    namespace opencl
+    {
+        class OpenCLBackend;
+    }
 }

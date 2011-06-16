@@ -29,36 +29,39 @@
 
 namespace honei
 {
-    struct DCQ
+    namespace opencl
     {
-        cl_device_id device;
-        cl_context context;
-        cl_command_queue command_queue;
-        cl_device_type type;
-    };
+        struct DCQ
+        {
+            cl_device_id device;
+            cl_context context;
+            cl_command_queue command_queue;
+            cl_device_type type;
+        };
 
-    class OpenCLBackend :
-        public PrivateImplementationPattern<OpenCLBackend, Shared> ,
-        public InstantiationPolicy<OpenCLBackend, Singleton>
-    {
-        public:
-            friend class InstantiationPolicy<OpenCLBackend, Singleton>;
+        class OpenCLBackend :
+            public PrivateImplementationPattern<OpenCLBackend, Shared> ,
+            public InstantiationPolicy<OpenCLBackend, Singleton>
+        {
+            public:
+                friend class InstantiationPolicy<OpenCLBackend, Singleton>;
 
-            cl_kernel create_kernel(std::string file, std::string kernel_name, cl_context context, cl_device_id device);
-            DCQ prepare_device(cl_device_type type);
-            void print_device_info(cl_device_id device);
-            void print_program_info(cl_program program, cl_device_id device);
-            void print_platform_info();
-            void flush();
-            cl_mem create_empty_buffer(unsigned long bytes, cl_context context);
-            cl_mem create_buffer(unsigned long size, cl_context context, void * src);
+                cl_kernel create_kernel(std::string file, std::string kernel_name, cl_context context, cl_device_id device);
+                DCQ prepare_device(cl_device_type type);
+                void print_device_info(cl_device_id device);
+                void print_program_info(cl_program program, cl_device_id device);
+                void print_platform_info();
+                void flush();
+                cl_mem create_empty_buffer(unsigned long bytes, cl_context context);
+                cl_mem create_buffer(unsigned long size, cl_context context, void * src);
 
-        private:
-            /// Constructor
-            OpenCLBackend();
+            private:
+                /// Constructor
+                OpenCLBackend();
 
-            /// Destructor
-            ~OpenCLBackend();
-    };
+                /// Destructor
+                ~OpenCLBackend();
+        };
+    }
 }
 #endif
