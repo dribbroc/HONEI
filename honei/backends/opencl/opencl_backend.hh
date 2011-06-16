@@ -26,6 +26,8 @@
 #include <cstring>
 #include <honei/util/instantiation_policy.hh>
 #include <honei/util/private_implementation_pattern.hh>
+#include <honei/util/exception.hh>
+#include <honei/util/tags.hh>
 
 namespace honei
 {
@@ -38,6 +40,18 @@ namespace honei
             cl_command_queue command_queue;
             cl_device_type type;
         };
+
+        template <typename Tag_>
+        cl_device_type tag_to_device();
+
+        template <>
+        cl_device_type tag_to_device<tags::OpenCL::CPU>();
+
+        template <>
+        cl_device_type tag_to_device<tags::OpenCL::GPU>();
+
+        template <>
+        cl_device_type tag_to_device<tags::OpenCL::Accelerator>();
 
         class OpenCLBackend :
             public PrivateImplementationPattern<OpenCLBackend, Shared> ,

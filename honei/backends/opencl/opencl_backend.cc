@@ -27,5 +27,30 @@ namespace honei
     namespace opencl
     {
         class OpenCLBackend;
+
+        template <typename Tag_>
+        cl_device_type tag_to_device()
+        {
+            throw InternalError("Device not supported!");
+            return 0;
+        }
+
+        template <>
+        cl_device_type tag_to_device<tags::OpenCL::CPU>()
+        {
+            return CL_DEVICE_TYPE_CPU;
+        }
+
+        template <>
+        cl_device_type tag_to_device<tags::OpenCL::GPU>()
+        {
+            return CL_DEVICE_TYPE_GPU;
+        }
+
+        template <>
+        cl_device_type tag_to_device<tags::OpenCL::Accelerator>()
+        {
+            return CL_DEVICE_TYPE_ACCELERATOR;
+        }
     }
 }

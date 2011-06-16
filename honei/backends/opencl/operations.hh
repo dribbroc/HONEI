@@ -23,6 +23,7 @@
 
 #include <CL/cl.h>
 #include <string>
+#include <honei/backends/opencl/opencl_backend.hh>
 
 namespace honei
 {
