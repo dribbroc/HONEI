@@ -24,6 +24,7 @@
 #include <operator.hh>
 #include <operator_list.hh>
 #include <honei/util/profiler.hh>
+#include <methods.hh>
 
 namespace honei
 {
@@ -89,12 +90,12 @@ namespace honei
                    std::vector<VectorType_> & cs,
                    std::vector<VectorType_> & temp0s,
                    std::vector<VectorType_> & temp1s,
-                   unsigned long p_max_iters_coarse = 0,
-                   unsigned long & p_used_iters = 0,
-                   unsigned long p_n_pre_smooth = 0,
-                   unsigned long p_n_post_smooth = 0,
-                   unsigned long p_min_level = 0,
-                   double p_eps_rel = 1e-8
+                   unsigned long p_max_iters_coarse,
+                   unsigned long & p_used_iters,
+                   unsigned long p_n_pre_smooth,
+                   unsigned long p_n_post_smooth,
+                   unsigned long p_min_level,
+                   double p_eps_rel
                    ) :
                 A(systems),
                 resmat(resmats),
@@ -308,7 +309,6 @@ namespace honei
                 return cycle;
             }
     };
-
 }
 
 #endif
