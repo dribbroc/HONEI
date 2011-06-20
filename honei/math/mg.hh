@@ -22,6 +22,7 @@
 #define MATH_GUARD_MG_HH 1
 
 #include <operator.hh>
+#include <operator_list.hh>
 
 namespace honei
 {

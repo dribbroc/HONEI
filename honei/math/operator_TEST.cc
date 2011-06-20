@@ -1,6 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 #include <honei/math/operator.hh>
+#include <honei/math/operator_list.hh>
 #include <honei/util/unittest.hh>
 #include <honei/la/sparse_matrix_ell.hh>
 #include <honei/la/dense_vector.hh>

@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
 #ifndef MATH_GUARD_OPERATOR_HH
 #define MATH_GUARD_OPERATOR_HH 1
 
@@ -40,41 +41,6 @@ namespace honei
             }
 
             virtual std::string to_string() = 0;
-    };
-
-    class OperatorList
-    {
-        private:
-            std::vector<Operator*> _ops;
-
-        public:
-
-            ~OperatorList()
-            {
-                for (unsigned long i(0) ; i < _ops.size() ; ++i)
-                    delete _ops.at(i);
-            }
-
-            void push_back(Operator * op)
-            {
-                _ops.push_back(op);
-            }
-
-            void value()
-            {
-                for (unsigned long i(0) ; i < _ops.size() ; ++i)
-                    _ops.at(i)->value();
-            }
-
-            Operator* operator[](unsigned long i)
-            {
-                return _ops.at(i);
-            }
-
-            unsigned long size()
-            {
-                return _ops.size();
-            }
     };
 
     template<typename Tag_, typename MatType_, typename VectorType_>
