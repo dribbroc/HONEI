@@ -184,9 +184,9 @@ namespace honei
                 if(level == data.min_level)
                 {
                     cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_>(
-                                data.A[data.min_level],
-                                b[data.min_level],
-                                x[data.min_level],
+                                data.A.at(data.min_level),
+                                b.at(data.min_level),
+                                x.at(data.min_level),
                                 data.max_iters_coarse,
                                 data.used_iters,
                                 data.eps_relative) );
@@ -197,34 +197,34 @@ namespace honei
                     cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(level),
                                 data.P.at(level),
-                                b[level],
-                                x[level],
-                                data.temp_0[level],
-                                data.temp_1[level],
+                                b.at(level),
+                                x.at(level),
+                                data.temp_0.at(level),
+                                data.temp_1.at(level),
                                 data.n_pre_smooth) );
 
                     ///Defect
-                    cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(data.d[level], b[level], data.A[level], x[level]));
+                    cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(data.d.at(level), b.at(level), data.A.at(level), x.at(level)));
 
                     ///Restriction
-                    cycle.push_back(new TransferOperator<ResType_, MatrixType_, VectorType_>(data.d[level - 1] , data.d[level], data.resmat[level]));
+                    cycle.push_back(new TransferOperator<ResType_, MatrixType_, VectorType_>(data.d.at(level - 1) , data.d.at(level), data.resmat.at(level)));
 
                     ///Recursion
                     ///all vectors in c have to be initialised with 0
                     _coarse_correction(data.c, data.d, level - 1, cycle, data);
 
                     ///Prolongation
-                    cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(data.c[level + 1] , data.c[level], data.prolmat[level]));
-                    cycle.push_back(new SumOperator<Tag_, VectorType_>(data.x[level + 1], data.c[level + 1]));
+                    cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(data.c.at(level + 1) , data.c.at(level), data.prolmat.at(level)));
+                    cycle.push_back(new SumOperator<Tag_, VectorType_>(data.x.at(level + 1), data.c.at(level + 1)));
 
                     ///Postsmoothing
                     cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
-                                data.A[level],
-                                data.P[level],
-                                data.b[level],
-                                data.x[level],
-                                data.temp_0[level],
-                                data.temp_1[level],
+                                data.A.at(level),
+                                data.P.at(level),
+                                data.b.at(level),
+                                data.x.at(level),
+                                data.temp_0.at(level),
+                                data.temp_1.at(level),
                                 data.n_post_smooth) );
                 }
             }
@@ -240,9 +240,9 @@ namespace honei
                 if(level == data.min_level)
                 {
                     cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_>(
-                                data.A[data.min_level],
-                                b[data.min_level],
-                                x[data.min_level],
+                                data.A.at(data.min_level),
+                                b.at(data.min_level),
+                                x.at(data.min_level),
                                 data.max_iters_coarse,
                                 data.used_iters,
                                 data.eps_relative) );
@@ -253,31 +253,31 @@ namespace honei
                     cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(level),
                                 data.P.at(level),
-                                b[level],
-                                x[level],
-                                data.temp_0[level],
-                                data.temp_1[level],
+                                b.at(level),
+                                x.at(level),
+                                data.temp_0.at(level),
+                                data.temp_1.at(level),
                                 data.n_pre_smooth) );
 
                     ///Restriction
-                    cycle.push_back(new TransferOperator<ResType_, MatrixType_, VectorType_>(data.d[level - 1] , data.d[level], data.resmat[level]));
+                    cycle.push_back(new TransferOperator<ResType_, MatrixType_, VectorType_>(data.d.at(level - 1) , data.d.at(level), data.resmat.at(level)));
 
                     ///Recursion
                     ///all vectors in c have to be initialised with 0
                     _coarse_correction(x, b, level - 1, cycle, data);
 
                     ///Prolongation
-                    cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(x[level + 1] , x[level], data.prolmat[level]));
-                    cycle.push_back(new SumOperator<Tag_, VectorType_>(data.x[level + 1], x[level + 1]));
+                    cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(x.at(level + 1) , x.at(level), data.prolmat.at(level)));
+                    cycle.push_back(new SumOperator<Tag_, VectorType_>(data.x.at(level + 1), x.at(level + 1)));
 
                     ///Postsmoothing
                     cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
-                                data.A[level],
-                                data.P[level],
-                                b[level],
-                                x[level],
-                                data.temp_0[level],
-                                data.temp_1[level],
+                                data.A.at(level),
+                                data.P.at(level),
+                                b.at(level),
+                                x.at(level),
+                                data.temp_0.at(level),
+                                data.temp_1.at(level),
                                 data.n_post_smooth) );
                 }
             }
