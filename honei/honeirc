@@ -6,7 +6,7 @@
 ##########
 thread::stacksize = 0
 profiler::output = /dev/null
-log::categories = all
+log::categories = none
 
 # LA
 #ell thread count, pick 0 for heuristic configuration

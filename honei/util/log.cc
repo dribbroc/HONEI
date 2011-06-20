@@ -166,7 +166,7 @@ namespace honei
             work_pending(new ConditionVariable),
             previous_context("(none)")
         {
-            std::string config_string(Configuration::instance()->get_value("log::categories", "all"));
+            std::string config_string(Configuration::instance()->get_value("log::categories", "none"));
             if (config_string.find("transfer", 0) != std::string::npos)
             {
                 selections.insert(lc_transfer);
@@ -178,6 +178,10 @@ namespace honei
             if (config_string.find("application", 0) != std::string::npos)
             {
                 selections.insert(lc_application);
+            }
+            if (config_string.find("none", 0) != std::string::npos)
+            {
+                selections.insert(lc_none);
             }
 
             thread = new Thread(bind(mem_fn(&LogQueue::log_function), this));
