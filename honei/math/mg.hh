@@ -33,6 +33,9 @@ namespace honei
             template<typename MatrixType_, typename VectorType_, typename DT_>
             static void value(MatrixType_ & A, VectorType_ & b, VectorType_ & x, OperatorList & cycle, unsigned long max_iters, unsigned long & used_iters, DT_ eps_relative)
             {
+                CONTEXT("When solving linear system with MG :");
+                ASSERT(cycle.size() > 0, "OperatorList is empty!");
+
                 VectorType_ r(x.size());
                 Defect<Tag_>::value(r, b, A, x);
                 DT_ rnorm_initial(NormType_::value(r));
@@ -57,6 +60,9 @@ namespace honei
         public:
             static void value(OperatorList & cycle, unsigned long max_iters)
             {
+                CONTEXT("When smoothing linear system with MG :");
+                ASSERT(cycle.size() > 0, "OperatorList is empty!");
+
                 for(unsigned long i(0) ; i < max_iters ; ++i)
                 {
                     cycle.value();
@@ -102,6 +108,7 @@ namespace honei
                 min_level(p_min_level),
                 eps_relative(p_eps_rel)
             {
+                CONTEXT("When creating MGData:");
             }
 
             std::vector<MatrixType_> A;
@@ -128,6 +135,8 @@ namespace honei
         public:
             MGData<MatrixType_, VectorType_, PreconContType_> load_data(std::string file_base, unsigned long sorting)
             {
+                CONTEXT("When creating MGData from file:");
+
                 std::vector<MatrixType_> system;
                 std::vector<PreconContType_> P;
                 std::vector<VectorType_> b;
@@ -287,6 +296,8 @@ namespace honei
             template<typename MatrixType_, typename VectorType_, typename PreconContType_>
             static OperatorList value(MGData<MatrixType_, VectorType_, PreconContType_> & data)
             {
+                CONTEXT("When evaluating MGCycleProcessing:");
+
                 OperatorList cycle;
                 _build_cycle(data.x, data.b, data.A.size() - 1, cycle, data);
                 return cycle;

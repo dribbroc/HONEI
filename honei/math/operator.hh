@@ -58,15 +58,18 @@ namespace honei
                 _A(A),
                 _x(x)
             {
+                CONTEXT("When creating DefectOperator:");
             }
 
             virtual void value()
             {
+                CONTEXT("When evaluating DefectOperator:");
                 Defect<Tag_>::value(_y, _b, _A, _x);
             }
 
             virtual ~DefectOperator()
             {
+                CONTEXT("When destroying DefectOperator:");
             }
 
         private:
@@ -89,15 +92,18 @@ namespace honei
                 _x(x),
                 _y(y)
         {
+            CONTEXT("When creating NormOperator:");
         }
 
             virtual void value()
             {
+                CONTEXT("When evaluating NormOperator:");
                 _y = Norm<normtype, root, Tag_>::value(_x);
             }
 
             virtual ~NormOperator()
             {
+                CONTEXT("When destroying NormOperator:");
             }
 
         private:
@@ -119,15 +125,18 @@ namespace honei
                 _x(x),
                 _y(y)
         {
+            CONTEXT("When creating SumOperator:");
         }
 
             virtual void value()
             {
+                CONTEXT("When evaluating SumOperator:");
                 Sum<Tag_>::value(_y, _x);
             }
 
             virtual ~SumOperator()
             {
+                CONTEXT("When destroying SumOperator:");
             }
 
         private:
@@ -141,7 +150,7 @@ namespace honei
         public:
             virtual std::string to_string()
             {
-                return "AXPYOperator";
+                return "ScaledSumOperator";
             }
 
             ScaledSumOperator(DenseVector<DT_>& y, DenseVector<DT_>& x, DT_ alpha) :
@@ -149,15 +158,18 @@ namespace honei
                 _y(y),
                 _alpha(alpha)
         {
+            CONTEXT("When creating ScaledSumOperator:");
         }
 
             virtual void value()
             {
+                CONTEXT("When evaluating ScaledSumOperator:");
                 ScaledSum<Tag_>::value(_y, _x, _alpha);
             }
 
             virtual ~ScaledSumOperator()
             {
+                CONTEXT("When destroying ScaledSumOperator:");
             }
 
         private:
@@ -189,11 +201,18 @@ namespace honei
                 _used_iters(used_iters),
                 _eps_relative(eps_relative)
             {
+                CONTEXT("When creating SolverOperator:");
             }
 
             virtual void value()
             {
+                CONTEXT("When evaluating SolverOperator:");
                 SolverType_::value(_A, _b, _x, _max_iters, _used_iters, _eps_relative);
+            }
+
+            virtual ~SolverOperator()
+            {
+                CONTEXT("When destroying SolverOperator:");
             }
 
         private:
@@ -230,11 +249,18 @@ namespace honei
                 _temp_1(temp_1),
                 _max_iters(max_iters)
             {
+                CONTEXT("When creating SmootherOperator:");
             }
 
             virtual void value()
             {
+                CONTEXT("When evaluating SmootherOperator:");
                 SmootherType_::value(_A, _P, _b, _x, _temp_0, _temp_1, _max_iters);
+            }
+
+            virtual ~SmootherOperator()
+            {
+                CONTEXT("When destroying SmootherOperator:");
             }
 
         private:
@@ -261,13 +287,20 @@ namespace honei
                 _right(right),
                 _mat(mat)
             {
+                CONTEXT("When creating TransferOperator:");
             }
 
             virtual void value()
             {
+                CONTEXT("When evaluating TransferOperator:");
                 //TODO: think of new way to encode BCs -> separate operator?
                 DenseVector<unsigned long> dummy(1ul);
                 TransferType_::value(_left, _right, dummy, _mat);
+            }
+
+            virtual ~TransferOperator()
+            {
+                CONTEXT("When destroying TransferOperator:");
             }
 
         private:

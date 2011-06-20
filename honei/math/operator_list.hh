@@ -53,10 +53,12 @@ namespace honei
             OperatorList() :
                 PrivateImplementationPattern<OperatorList, Shared>(new Implementation<OperatorList>())
             {
+                CONTEXT("When constructing OperatorList:");
             }
 
             ~OperatorList()
             {
+                CONTEXT("When destructing OperatorList:");
             }
 
             void push_back(Operator * op)
@@ -66,6 +68,7 @@ namespace honei
 
             void value()
             {
+                CONTEXT("When running OperatorList::value():");
                 for (unsigned long i(0) ; i < _imp->_ops.size() ; ++i)
                     _imp->_ops.at(i)->value();
             }
