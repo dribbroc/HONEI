@@ -146,7 +146,7 @@ namespace honei
 
                 if (selections.size() == 0)
                 {
-                    if (previous_context == data->context)
+                    if (previous_context != "" && previous_context == data->context)
                         output << "(same context) " << data->message << std::endl;
                     else
                         output << data->context << std::endl << data->message << std::endl;
@@ -156,7 +156,7 @@ namespace honei
                 {
                     if (selections.count(data->category) == 1)
                     {
-                        if (previous_context == data->context)
+                        if (previous_context != "" && previous_context == data->context)
                             output << "(same context) " << data->message << std::endl;
                         else
                             output << data->context << std::endl << data->message << std::endl;
@@ -246,9 +246,15 @@ namespace honei
 
     LogMessage::LogMessage(const LogCategory category, const std::string & message)
     {
+#ifdef DEBUG
         intern::log_queue.enqueue(new intern::LogData(
                     "In thread ID '" + stringify(syscall(SYS_gettid)) + "':\n ... " + Context::backtrace("\n ... "),
                     category, message));
+#else
+        intern::log_queue.enqueue(new intern::LogData(
+                    "",
+                    category, message));
+#endif
     }
 
     LogMessage::~LogMessage()
