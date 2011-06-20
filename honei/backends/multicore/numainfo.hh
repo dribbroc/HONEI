@@ -189,7 +189,7 @@ namespace honei
 
             static unsigned retrieve_num_nodes()
             {
-                CONTEXT("When checking the NUMA filesystem:\n");
+                CONTEXT("When checking the NUMA filesystem:");
 
                 DIR * d;
                 struct dirent * de;

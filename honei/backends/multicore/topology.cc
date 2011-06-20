@@ -45,7 +45,7 @@ Topology::Topology() :
 
 #ifdef DEBUG
     {
-        CONTEXT("When investigating the system topology:\n");
+        CONTEXT("When investigating the system topology:");
         std::string msg = "Found " + stringify(_num_lpus) + " logical processing units \n";
         LOGMESSAGE(lc_backend, msg);
     }
@@ -92,7 +92,7 @@ Topology::Topology() :
 #ifdef DEBUG
     for (unsigned i(0) ; i < _num_nodes ; ++i)
     {
-        CONTEXT("When investigating the system topology:\n");
+        CONTEXT("When investigating the system topology:");
         std::string msg = "Node " + stringify(i) + " has logical processing units " + stringify(range_min[i]) + " to " + stringify(range_max[i]) + "\n";
         LOGMESSAGE(lc_backend, msg);
     }

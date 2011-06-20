@@ -93,7 +93,7 @@ namespace honei
             Implementation<mc::ThreadPool>(),
             policy(&mc::DispatchPolicy::any_core)
         {
-            CONTEXT("When initializing the thread pool:\n");
+            CONTEXT("When initializing the thread pool:");
 #ifdef DEBUG
             std::string msg = "Affinity is disabled, using standard thread pool.\n";
             msg += "DispatchPolicy: arbitrary - the next available thread will execute a task\n";
@@ -136,7 +136,7 @@ namespace honei
 
         virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task)
         {
-            CONTEXT("When creating a ThreadTask:\n");
+            CONTEXT("When creating a ThreadTask:");
 
             Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
@@ -168,7 +168,7 @@ namespace honei
             Implementation<mc::ThreadPool>(),
             policy(&mc::DispatchPolicy::any_core)
         {
-            CONTEXT("When initializing the thread pool:\n");
+            CONTEXT("When initializing the thread pool:");
 #ifdef DEBUG
             std::string msg = "Affinity is disabled, using standard thread pool.\n";
             msg += "DispatchPolicy: arbitrary - the next available thread will execute a task\n";
@@ -211,7 +211,7 @@ namespace honei
 
         virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task)
         {
-            CONTEXT("When creating a ThreadTask:\n");
+            CONTEXT("When creating a ThreadTask:");
 
             Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
@@ -247,7 +247,7 @@ namespace honei
         AffinityImplementation() :
             Implementation<mc::ThreadPool>()
         {
-            CONTEXT("When initializing the thread pool:\n");
+            CONTEXT("When initializing the thread pool:");
 
 #ifdef DEBUG
             std::string msg = "Affinity is enabled, using thread pool with affinity support.\n";
@@ -334,7 +334,7 @@ namespace honei
 
         virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy p)
         {
-            CONTEXT("When creating a ThreadTask:\n");
+            CONTEXT("When creating a ThreadTask:");
 
             Ticket<tags::CPU::MultiCore> * ticket(p.apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
@@ -350,7 +350,7 @@ namespace honei
 
         virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task)
         {
-            CONTEXT("When creating a ThreadTask:\n");
+            CONTEXT("When creating a ThreadTask:");
 
             Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
@@ -391,7 +391,7 @@ namespace honei
             global_terminate(false),
             _steal_mutex(new Mutex)
         {
-            CONTEXT("When initializing the thread pool:\n");
+            CONTEXT("When initializing the thread pool:");
 
             bool affinity = Configuration::instance()->get_value("mc::affinity", true);
 
@@ -491,7 +491,7 @@ namespace honei
 
         virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy p)
         {
-            CONTEXT("When creating a ThreadTask:\n");
+            CONTEXT("When creating a ThreadTask:");
 
             Ticket<tags::CPU::MultiCore> * ticket(p.apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
@@ -511,7 +511,7 @@ namespace honei
 
         virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task)
         {
-            CONTEXT("When creating a ThreadTask:\n");
+            CONTEXT("When creating a ThreadTask:");
 
             Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
@@ -554,7 +554,7 @@ namespace honei
             global_terminate(false),
             _steal_mutex(new Mutex)
         {
-            CONTEXT("When initializing the thread pool:\n");
+            CONTEXT("When initializing the thread pool:");
 
             bool affinity = Configuration::instance()->get_value("mc::affinity", true);
 
@@ -654,7 +654,7 @@ namespace honei
 
         virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy p)
         {
-            CONTEXT("When creating a ThreadTask:\n");
+            CONTEXT("When creating a ThreadTask:");
 
             Ticket<tags::CPU::MultiCore> * ticket(p.apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
@@ -674,7 +674,7 @@ namespace honei
 
         virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task)
         {
-            CONTEXT("When creating a ThreadTask:\n");
+            CONTEXT("When creating a ThreadTask:");
 
             Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));

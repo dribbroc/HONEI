@@ -32,6 +32,7 @@
 #include <honei/util/configuration.hh>
 
 #include <iostream>
+#include <fstream>
 #include <list>
 #include <set>
 #include <string>
@@ -100,6 +101,12 @@ namespace honei
         /// Our category selections
         std::set<LogCategory> selections;
 
+        /// Our output stream
+        std::ostream output;
+
+        /// Our output file stream, if present
+        std::ofstream output_file;
+
         /// Write out our log messages.
         void log_function()
         {
@@ -140,9 +147,9 @@ namespace honei
                 if (selections.size() == 0)
                 {
                     if (previous_context == data->context)
-                        std::cerr << "(same context) " << data->message << std::endl;
+                        output << "(same context) " << data->message << std::endl;
                     else
-                        std::cerr << data->context << data->message << std::endl;
+                        output << data->context << std::endl << data->message << std::endl;
                     previous_context = data->context;
                 }
                 else
@@ -150,9 +157,9 @@ namespace honei
                     if (selections.count(data->category) == 1)
                     {
                         if (previous_context == data->context)
-                            std::cerr << "(same context) " << data->message << std::endl;
+                            output << "(same context) " << data->message << std::endl;
                         else
-                            std::cerr << data->context << data->message << std::endl;
+                            output << data->context << std::endl << data->message << std::endl;
                         previous_context = data->context;
                     }
                 }
@@ -164,8 +171,32 @@ namespace honei
         LogQueue() :
             mutex(new Mutex),
             work_pending(new ConditionVariable),
-            previous_context("(none)")
+            previous_context("(none)"),
+            output(std::cout.rdbuf())
         {
+            std::string output_string(Configuration::instance()->get_value("log::output", "cerr"));
+            if (output_string == "cerr")
+            {
+                std::streambuf * buf;
+                buf = std::cerr.rdbuf();
+                output.rdbuf(buf);
+            }
+            else if (output_string == "cout")
+            {
+                std::streambuf * buf;
+                buf = std::cout.rdbuf();
+                output.rdbuf(buf);
+            }
+            else
+            {
+                output_file.open(output_string.c_str(), std::ios_base::out | std::ios_base::app);
+                if(!output_file.is_open())
+                    throw InternalError("Log: Cannot open log output file " + output_string);
+                std::streambuf * buf;
+                buf = output_file.rdbuf();
+                output.rdbuf(buf);
+            }
+
             std::string config_string(Configuration::instance()->get_value("log::categories", "none"));
             if (config_string.find("transfer", 0) != std::string::npos)
             {
@@ -190,6 +221,9 @@ namespace honei
         ~LogQueue()
         {
             enqueue(new intern::LogData);
+
+            if(output_file.is_open())
+                    output_file.close();
 
             delete thread;
             delete work_pending;

@@ -86,7 +86,7 @@ namespace honei
  *
  * \ingroup grpdebug
  */
-#if defined (DEBUG)
+#if defined (DEBUG) || defined (LOGGING)
 // C preprocessor abomination following...
 #define LOGMESSAGE(l, m) log(l, m)
 #else
