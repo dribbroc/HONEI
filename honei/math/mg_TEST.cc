@@ -101,7 +101,7 @@ class MGUtilLoadTest:
                                                                                             int, //TODO no int
                                                                                             io_formats::ELL,
                                                                                             io_formats::EXP,
-                                                                                            double>::load_data(file, 10));
+                                                                                            double>::load_data(file, 7));
         }
 };
 MGUtilLoadTest<tags::CPU> mgutilloadtest_cpu("double");
