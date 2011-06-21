@@ -27,7 +27,6 @@
 #include <honei/la/scaled_sum.hh>
 #include <honei/math/cg.hh>
 #include <honei/math/ri.hh>
-#include <honei/math/prolongation.hh>
 
 namespace honei
 {
