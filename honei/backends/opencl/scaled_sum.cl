@@ -17,7 +17,7 @@
 * Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-__kernel void scaled_sum_three_float_s(__global  float * output,
+__kernel void scaled_sum_three_s_f(__global  float * output,
                                    __global  float * x,
                                    __global  float * y,
                                    const     float multiplier,
@@ -28,7 +28,7 @@ __kernel void scaled_sum_three_float_s(__global  float * output,
     if (tid < size) output[tid] = x[tid] + y[tid] * multiplier;
 }
 
-__kernel void scaled_sum_three_float(__global  float * output,
+__kernel void scaled_sum_three_f(__global  float * output,
                                    __global  float * x,
                                    __global  float * y,
                                    const unsigned int size)
@@ -39,7 +39,7 @@ __kernel void scaled_sum_three_float(__global  float * output,
 }
 
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-__kernel void scaled_sum_three_double_s(__global  double * output,
+__kernel void scaled_sum_three_s_d(__global  double * output,
                                    __global  double * x,
                                    __global  double * y,
                                    const     double multiplier,
@@ -50,7 +50,7 @@ __kernel void scaled_sum_three_double_s(__global  double * output,
     if (tid < size) output[tid] = x[tid] + y[tid] * multiplier;
 }
 
-__kernel void scaled_sum_three_double(__global  double * output,
+__kernel void scaled_sum_three_d(__global  double * output,
                                    __global  double * x,
                                    __global  double * y,
                                    const unsigned int size)

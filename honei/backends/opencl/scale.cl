@@ -17,7 +17,7 @@
 * Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-__kernel void scale_float(__global  float * output,
+__kernel void scale_f(__global  float * output,
                                    const     float multiplier,
                                    const unsigned int size)
 {
@@ -27,7 +27,7 @@ __kernel void scale_float(__global  float * output,
 }
 
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-__kernel void scale_double(__global  double * output,
+__kernel void scale_d(__global  double * output,
                                    const     double multiplier,
                                    const unsigned int size)
 {

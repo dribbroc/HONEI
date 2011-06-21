@@ -17,7 +17,7 @@
 * Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-__kernel void norm_l2_false_float(__global  float * x,
+__kernel void norm_l2_false_f(__global  float * x,
                                           __global float * tmp,
                                           const unsigned int size)
 {
@@ -45,7 +45,7 @@ __kernel void norm_l2_false_float(__global  float * x,
 }
 
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-__kernel void norm_l2_false_double(__global  double * x,
+__kernel void norm_l2_false_d(__global  double * x,
                                           __global double * tmp,
                                           const unsigned int size)
 {

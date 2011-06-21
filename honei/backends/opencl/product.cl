@@ -20,7 +20,7 @@
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
 
 #ifdef __CPU__
-__kernel void product_smell_dv_float(__global float * x, __global float * y, __global unsigned long * Aj, __global float * Ax,
+__kernel void product_smell_dv_f(__global float * x, __global float * y, __global unsigned long * Aj, __global float * Ax,
                                               __global unsigned long * Arl, unsigned long num_rows, unsigned long stride, unsigned long threads,
                                               __local float * shared_ell_float)
 {
@@ -49,7 +49,7 @@ __kernel void product_smell_dv_float(__global float * x, __global float * y, __g
             }
 }
 
-__kernel void product_smell_dv_double(__global double * x, __global double * y, __global unsigned long * Aj, __global double * Ax,
+__kernel void product_smell_dv_d(__global double * x, __global double * y, __global unsigned long * Aj, __global double * Ax,
                                               __global unsigned long * Arl, unsigned long num_rows, unsigned long stride, unsigned long threads,
                                               __local double * shared_ell_double)
 {
@@ -78,7 +78,7 @@ __kernel void product_smell_dv_double(__global double * x, __global double * y, 
             }
 }
 #else
-__kernel void product_smell_dv_float(__global float * x, __global float * y, __global unsigned long * Aj, __global float * Ax,
+__kernel void product_smell_dv_f(__global float * x, __global float * y, __global unsigned long * Aj, __global float * Ax,
                                               __global unsigned long * Arl, unsigned long num_rows, unsigned long stride, unsigned long threads,
                                               __local float * shared_ell_float)
 {
@@ -129,7 +129,7 @@ __kernel void product_smell_dv_float(__global float * x, __global float * y, __g
             }
 }
 
-__kernel void product_smell_dv_double(__global double * x, __global double * y, __global unsigned long * Aj, __global double * Ax,
+__kernel void product_smell_dv_d(__global double * x, __global double * y, __global unsigned long * Aj, __global double * Ax,
                                               __global unsigned long * Arl, unsigned long num_rows, unsigned long stride, unsigned long threads,
                                               __local double * shared_ell_double)
 {

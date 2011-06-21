@@ -53,7 +53,6 @@ namespace honei
         template void scaled_sum<float> (void*, void*, void*, float, unsigned long, cl_device_type, std::string);
         template void scaled_sum<double> (void*, void*, void*, double, unsigned long, cl_device_type, std::string);
 
-        template <typename DT_>
         void scaled_sum(void * r, void * x, void * y, unsigned long size, cl_device_type type, std::string function)
         {
             cl_command_queue command_queue;
@@ -79,7 +78,5 @@ namespace honei
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
         }
-        template void scaled_sum<float> (void*, void*, void*, unsigned long, cl_device_type, std::string);
-        template void scaled_sum<double> (void*, void*, void*, unsigned long, cl_device_type, std::string);
     }
 }

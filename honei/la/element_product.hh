@@ -672,24 +672,20 @@ namespace honei
 
     template <> struct ElementProduct<tags::OpenCL::CPU>
     {
-        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+        template <typename DT_>
+        static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & a, const DenseVectorContinuousBase<DT_> & b);
 
-        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
-
-        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b, const DenseVectorContinuousBase<float> & c);
-
-        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b, const DenseVectorContinuousBase<double> & c);
+        template <typename DT_>
+        static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & a, const DenseVectorContinuousBase<DT_> & b, const DenseVectorContinuousBase<DT_> & c);
     };
 
     template <> struct ElementProduct<tags::OpenCL::GPU>
     {
-        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+        template <typename DT_>
+        static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & a, const DenseVectorContinuousBase<DT_> & b);
 
-        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
-
-        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b, const DenseVectorContinuousBase<float> & c);
-
-        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b, const DenseVectorContinuousBase<double> & c);
+        template <typename DT_>
+        static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & a, const DenseVectorContinuousBase<DT_> & b, const DenseVectorContinuousBase<DT_> & c);
     };
 
     /**

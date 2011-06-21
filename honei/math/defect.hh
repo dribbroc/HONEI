@@ -424,34 +424,26 @@ namespace honei
         struct Defect<tags::OpenCL::CPU>
         {
             public:
-                static DenseVector<float> value(const DenseVectorContinuousBase<float> & right_hand_side,
-                        const SparseMatrixELL<float> & system, const DenseVectorContinuousBase<float> & x);
+                template <typename DT_>
+                static DenseVector<DT_> value(const DenseVectorContinuousBase<DT_> & right_hand_side,
+                        const SparseMatrixELL<DT_> & system, const DenseVectorContinuousBase<DT_> & x);
 
-                static DenseVector<double> value(const DenseVectorContinuousBase<double> & right_hand_side,
-                        const SparseMatrixELL<double> & system, const DenseVectorContinuousBase<double> & x);
-
-                static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & right_hand_side,
-                        const SparseMatrixELL<float> & system, const DenseVectorContinuousBase<float> & x);
-
-                static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & right_hand_side,
-                        const SparseMatrixELL<double> & system, const DenseVectorContinuousBase<double> & x);
+                template <typename DT_>
+                static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & right_hand_side,
+                        const SparseMatrixELL<DT_> & system, const DenseVectorContinuousBase<DT_> & x);
         };
 
     template<>
         struct Defect<tags::OpenCL::GPU>
         {
             public:
-                static DenseVector<float> value(const DenseVectorContinuousBase<float> & right_hand_side,
-                        const SparseMatrixELL<float> & system, const DenseVectorContinuousBase<float> & x);
+                template <typename DT_>
+                static DenseVector<DT_> value(const DenseVectorContinuousBase<DT_> & right_hand_side,
+                        const SparseMatrixELL<DT_> & system, const DenseVectorContinuousBase<DT_> & x);
 
-                static DenseVector<double> value(const DenseVectorContinuousBase<double> & right_hand_side,
-                        const SparseMatrixELL<double> & system, const DenseVectorContinuousBase<double> & x);
-
-                static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & right_hand_side,
-                        const SparseMatrixELL<float> & system, const DenseVectorContinuousBase<float> & x);
-
-                static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & right_hand_side,
-                        const SparseMatrixELL<double> & system, const DenseVectorContinuousBase<double> & x);
+                template <typename DT_>
+                static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & right_hand_side,
+                        const SparseMatrixELL<DT_> & system, const DenseVectorContinuousBase<DT_> & x);
         };
 
     template<>

@@ -748,25 +748,22 @@ namespace honei
     template <>
     struct Difference<tags::OpenCL::CPU>
     {
-        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+        template <typename DT_>
+        static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & a, const DenseVectorContinuousBase<DT_> & b);
 
-        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
-
-        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
-
-        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+        template <typename DT_>
+        static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & a, const DenseVectorContinuousBase<DT_> & b);
     };
 
     template <>
     struct Difference<tags::OpenCL::GPU>
     {
-        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
+        template <typename DT_>
+        static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & a, const DenseVectorContinuousBase<DT_> & b);
 
-        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+        template <typename DT_>
+        static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & a, const DenseVectorContinuousBase<DT_> & b);
 
-        static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
-
-        static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
     };
 
    /**

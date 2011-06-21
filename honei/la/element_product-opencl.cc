@@ -21,149 +21,92 @@
 #include <honei/backends/opencl/operations.hh>
 #include <honei/util/profiler.hh>
 
+namespace honei
+{
+    namespace opencl
+    {
+        template <typename Tag_, typename DT_>
+        void common_element_product(DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y)
+        {
+            if (x.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+            void * x_cl(x.lock(lm_read_and_write, Tag_::memory_value));
+            void * y_cl(y.lock(lm_read_only, Tag_::memory_value));
+            std::string opname("element_product_three_");
+            opname += typeid(DT_).name();
+            element_product(x_cl, x_cl, y_cl, x.size(), tag_to_device<Tag_>(), opname);
+            x.unlock(lm_read_and_write);
+            y.unlock(lm_read_only);
+        }
+
+        template <typename Tag_, typename DT_>
+        void common_element_product(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y)
+        {
+            if (x.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
+            if (result.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+            void * result_cl(result.lock(lm_write_only, Tag_::memory_value));
+            void * x_cl(x.lock(lm_read_only, Tag_::memory_value));
+            void * y_cl(y.lock(lm_read_only, Tag_::memory_value));
+            std::string opname("element_product_three_");
+            opname += typeid(DT_).name();
+            element_product(result_cl, x_cl, y_cl, x.size(), tag_to_device<Tag_>(), opname);
+            result.unlock(lm_write_only);
+            x.unlock(lm_read_only);
+            y.unlock(lm_read_only);
+        }
+    }
+}
 
 using namespace honei;
 
-DenseVectorContinuousBase<float> & ElementProduct<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<float> & x, const DenseVectorContinuousBase<float> & y)
+template <typename DT_>
+DenseVectorContinuousBase<DT_> & ElementProduct<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y)
 {
-    CONTEXT("When calculating the element product of two DenseVectorContinuousBase<float> (OpenCL CPU):");
+    CONTEXT("When calculating the element product of two DenseVectorContinuousBase<DT_> (OpenCL CPU):");
     PROFILER_START("ElementProduct tags::OpenCL::CPU");
-    if (x.size() != y.size())
-        throw VectorSizeDoesNotMatch(y.size(), x.size());
-
-    void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::CPU::memory_value));
-    void * y_cl(y.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-    opencl::element_product(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU, "element_product_three_float");
-    x.unlock(lm_read_and_write);
-    y.unlock(lm_read_only);
-
+    opencl::common_element_product<tags::OpenCL::CPU>(x, y);
     PROFILER_STOP("ElementProduct tags::OpenCL::CPU");
     return x;
 }
+template DenseVectorContinuousBase<float> & ElementProduct<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &);
+template DenseVectorContinuousBase<double> & ElementProduct<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &);
 
-DenseVectorContinuousBase<double> & ElementProduct<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<double> & x, const DenseVectorContinuousBase<double> & y)
+template <typename DT_>
+DenseVectorContinuousBase<DT_> & ElementProduct<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y)
 {
-    CONTEXT("When calculating the element product of two DenseVectorContinuousBase<double> (OpenCL CPU):");
-    PROFILER_START("ElementProduct tags::OpenCL::CPU");
-    if (x.size() != y.size())
-        throw VectorSizeDoesNotMatch(y.size(), x.size());
-
-    void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::CPU::memory_value));
-    void * y_cl(y.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-    opencl::element_product(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU, "element_product_three_double");
-    x.unlock(lm_read_and_write);
-    y.unlock(lm_read_only);
-
-    PROFILER_STOP("ElementProduct tags::OpenCL::CPU");
-    return x;
-}
-
-DenseVectorContinuousBase<float> & ElementProduct<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<float> & x, const DenseVectorContinuousBase<float> & y)
-{
-    CONTEXT("When calculating the element product of two DenseVectorContinuousBase<float> (OpenCL GPU):");
+    CONTEXT("When calculating the element product of two DenseVectorContinuousBase<DT_> (OpenCL GPU):");
     PROFILER_START("ElementProduct tags::OpenCL::GPU");
-    if (x.size() != y.size())
-        throw VectorSizeDoesNotMatch(y.size(), x.size());
-
-    void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::GPU::memory_value));
-    void * y_cl(y.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-    opencl::element_product(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU, "element_product_three_float");
-    x.unlock(lm_read_and_write);
-    y.unlock(lm_read_only);
-
+    opencl::common_element_product<tags::OpenCL::GPU>(x, y);
     PROFILER_STOP("ElementProduct tags::OpenCL::GPU");
     return x;
 }
+template DenseVectorContinuousBase<float> & ElementProduct<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &);
+template DenseVectorContinuousBase<double> & ElementProduct<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &);
 
-DenseVectorContinuousBase<double> & ElementProduct<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> & x, const DenseVectorContinuousBase<double> & y)
+template <typename DT_>
+DenseVectorContinuousBase<DT_> & ElementProduct<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<DT_> & r, const DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y)
 {
-    CONTEXT("When calculating the element product of two DenseVectorContinuousBase<double> (OpenCL GPU):");
-    PROFILER_START("ElementProduct tags::OpenCL::GPU");
-    if (x.size() != y.size())
-        throw VectorSizeDoesNotMatch(y.size(), x.size());
-
-    void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::GPU::memory_value));
-    void * y_cl(y.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-    opencl::element_product(x_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU, "element_product_three_double");
-    x.unlock(lm_read_and_write);
-    y.unlock(lm_read_only);
-
-    PROFILER_STOP("ElementProduct tags::OpenCL::GPU");
-    return x;
-}
-
-DenseVectorContinuousBase<float> & ElementProduct<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<float> & r, const DenseVectorContinuousBase<float> & x, const DenseVectorContinuousBase<float> & y)
-{
-    CONTEXT("When calculating the element product of two DenseVectorContinuousBase<float> (OpenCL CPU):");
+    CONTEXT("When calculating the element product of two DenseVectorContinuousBase<DT_> (OpenCL CPU):");
     PROFILER_START("ElementProduct tags::OpenCL::CPU");
-    if (x.size() != y.size())
-        throw VectorSizeDoesNotMatch(y.size(), x.size());
-
-    void * r_cl(r.lock(lm_write_only, tags::OpenCL::CPU::memory_value));
-    void * x_cl(x.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-    void * y_cl(y.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-    opencl::element_product(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU, "element_product_three_float");
-    r.unlock(lm_write_only);
-    x.unlock(lm_read_only);
-    y.unlock(lm_read_only);
-
+    opencl::common_element_product<tags::OpenCL::CPU>(r, x, y);
     PROFILER_STOP("ElementProduct tags::OpenCL::CPU");
     return r;
 }
+template DenseVectorContinuousBase<float> & ElementProduct<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &);
+template DenseVectorContinuousBase<double> & ElementProduct<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &);
 
-DenseVectorContinuousBase<double> & ElementProduct<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<double> & r, const DenseVectorContinuousBase<double> & x, const DenseVectorContinuousBase<double> & y)
+template <typename DT_>
+DenseVectorContinuousBase<DT_> & ElementProduct<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<DT_> & r, const DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y)
 {
-    CONTEXT("When calculating the element product of two DenseVectorContinuousBase<double> (OpenCL CPU):");
-    PROFILER_START("ElementProduct tags::OpenCL::CPU");
-    if (x.size() != y.size())
-        throw VectorSizeDoesNotMatch(y.size(), x.size());
-
-    void * r_cl(r.lock(lm_write_only, tags::OpenCL::CPU::memory_value));
-    void * x_cl(x.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-    void * y_cl(y.lock(lm_read_only, tags::OpenCL::CPU::memory_value));
-    opencl::element_product(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_CPU, "element_product_three_double");
-    r.unlock(lm_write_only);
-    x.unlock(lm_read_only);
-    y.unlock(lm_read_only);
-
-    PROFILER_STOP("ElementProduct tags::OpenCL::CPU");
-    return r;
-}
-
-DenseVectorContinuousBase<float> & ElementProduct<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<float> & r, const DenseVectorContinuousBase<float> & x, const DenseVectorContinuousBase<float> & y)
-{
-    CONTEXT("When calculating the element product of two DenseVectorContinuousBase<float> (OpenCL GPU):");
+    CONTEXT("When calculating the element product of two DenseVectorContinuousBase<DT_> (OpenCL GPU):");
     PROFILER_START("ElementProduct tags::OpenCL::GPU");
-    if (x.size() != y.size())
-        throw VectorSizeDoesNotMatch(y.size(), x.size());
-
-    void * r_cl(r.lock(lm_write_only, tags::OpenCL::GPU::memory_value));
-    void * x_cl(x.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-    void * y_cl(y.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-    opencl::element_product(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU, "element_product_three_float");
-    r.unlock(lm_write_only);
-    x.unlock(lm_read_only);
-    y.unlock(lm_read_only);
-
+    opencl::common_element_product<tags::OpenCL::GPU>(r, x, y);
     PROFILER_STOP("ElementProduct tags::OpenCL::GPU");
     return r;
 }
-
-DenseVectorContinuousBase<double> & ElementProduct<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> & r, const DenseVectorContinuousBase<double> & x, const DenseVectorContinuousBase<double> & y)
-{
-    CONTEXT("When calculating the element product of two DenseVectorContinuousBase<double> (OpenCL GPU):");
-    PROFILER_START("ElementProduct tags::OpenCL::GPU");
-    if (x.size() != y.size())
-        throw VectorSizeDoesNotMatch(y.size(), x.size());
-
-    void * r_cl(r.lock(lm_write_only, tags::OpenCL::GPU::memory_value));
-    void * x_cl(x.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-    void * y_cl(y.lock(lm_read_only, tags::OpenCL::GPU::memory_value));
-    opencl::element_product(r_cl, x_cl, y_cl, x.size(), CL_DEVICE_TYPE_GPU, "element_product_three_double");
-    r.unlock(lm_write_only);
-    x.unlock(lm_read_only);
-    y.unlock(lm_read_only);
-
-    PROFILER_STOP("ElementProduct tags::OpenCL::GPU");
-    return r;
-}
+template DenseVectorContinuousBase<float> & ElementProduct<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &);
+template DenseVectorContinuousBase<double> & ElementProduct<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &);

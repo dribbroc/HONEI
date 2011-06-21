@@ -47,7 +47,6 @@ namespace honei
 
         template <typename DT_>
         void scaled_sum(void * r, void * x, void * y, DT_ b, unsigned long size, cl_device_type type, std::string function);
-        template <typename DT_>
         void scaled_sum(void * r, void * x, void * y, unsigned long size, cl_device_type type, std::string function);
 
         void sum(void * r, void * x, void * y, unsigned long size, cl_device_type type, std::string function);

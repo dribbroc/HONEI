@@ -17,7 +17,7 @@
 * Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-__kernel void dot_product_float(__global  float * x,
+__kernel void dot_product_f(__global  float * x,
                                           __global float * y,
                                           __global float * tmp,
                                           const unsigned int size)
@@ -46,7 +46,7 @@ __kernel void dot_product_float(__global  float * x,
 }
 
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
-__kernel void dot_product_double(__global  double * x,
+__kernel void dot_product_d(__global  double * x,
                                           __global double * y,
                                           __global double * tmp,
                                           const unsigned int size)

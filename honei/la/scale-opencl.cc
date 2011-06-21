@@ -21,58 +21,44 @@
 #include <honei/backends/opencl/operations.hh>
 #include <honei/util/profiler.hh>
 
+namespace honei
+{
+    namespace opencl
+    {
+        template <typename Tag_, typename DT_>
+        void common_scale(DenseVectorContinuousBase<DT_> & x, const DT_ a)
+        {
+            void * x_cl(x.lock(lm_read_and_write, Tag_::memory_value));
+            std::string opname("scale_");
+            opname += typeid(DT_).name();
+            scale(x_cl, a, x.size(), tag_to_device<Tag_>(), opname);
+            x.unlock(lm_read_and_write);
+        }
+    }
+}
 
 using namespace honei;
 
-DenseVectorContinuousBase<float> & Scale<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<float> & x, const float a)
+template <typename DT_>
+DenseVectorContinuousBase<DT_> & Scale<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<DT_> & x, const DT_ a)
 {
-    CONTEXT("When scaling DenseVectorContinuousBase<float> by scalar (OpenCL CPU):");
+    CONTEXT("When scaling DenseVectorContinuousBase<DT_> by scalar (OpenCL CPU):");
     PROFILER_START("Scale tags::OpenCL::CPU");
-
-    void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::CPU::memory_value));
-    opencl::scale<float>(x_cl, a, x.size(), CL_DEVICE_TYPE_CPU, "scale_float");
-    x.unlock(lm_read_and_write);
-
+    opencl::common_scale<tags::OpenCL::CPU>(x, a);
     PROFILER_STOP("Scale tags::OpenCL::CPU");
     return x;
 }
+template DenseVectorContinuousBase<float> & Scale<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<float> &, const float);
+template DenseVectorContinuousBase<double> & Scale<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<double> &, const double);
 
-DenseVectorContinuousBase<double> & Scale<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<double> & x, const double a)
+template <typename DT_>
+DenseVectorContinuousBase<DT_> & Scale<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<DT_> & x, const DT_ a)
 {
-    CONTEXT("When scaling DenseVectorContinuousBase<double> by scalar (OpenCL CPU):");
-    PROFILER_START("Scale tags::OpenCL::CPU");
-
-    void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::CPU::memory_value));
-    opencl::scale<double>(x_cl, a, x.size(), CL_DEVICE_TYPE_CPU, "scale_double");
-    x.unlock(lm_read_and_write);
-
-    PROFILER_STOP("Scale tags::OpenCL::CPU");
-    return x;
-}
-
-DenseVectorContinuousBase<float> & Scale<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<float> & x, const float a)
-{
-    CONTEXT("When scaling DenseVectorContinuousBase<float> by scalar (OpenCL GPU):");
+    CONTEXT("When scaling DenseVectorContinuousBase<DT_> by scalar (OpenCL GPU):");
     PROFILER_START("Scale tags::OpenCL::GPU");
-
-    void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::GPU::memory_value));
-    opencl::scale<float>(x_cl, a, x.size(), CL_DEVICE_TYPE_GPU, "scale_float");
-    x.unlock(lm_read_and_write);
-
+    opencl::common_scale<tags::OpenCL::GPU>(x, a);
     PROFILER_STOP("Scale tags::OpenCL::GPU");
     return x;
 }
-
-DenseVectorContinuousBase<double> & Scale<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> & x, const double a)
-{
-    CONTEXT("When scaling DenseVectorContinuousBase<double> by scalar (OpenCL GPU):");
-    PROFILER_START("Scale tags::OpenCL::GPU");
-
-    void * x_cl(x.lock(lm_read_and_write, tags::OpenCL::GPU::memory_value));
-    opencl::scale<double>(x_cl, a, x.size(), CL_DEVICE_TYPE_GPU, "scale_double");
-    x.unlock(lm_read_and_write);
-
-    PROFILER_STOP("Scale tags::OpenCL::GPU");
-    return x;
-}
-
+template DenseVectorContinuousBase<float> & Scale<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<float> &, const float);
+template DenseVectorContinuousBase<double> & Scale<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> &, const double);

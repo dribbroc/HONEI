@@ -22,7 +22,6 @@
 #include <honei/util/profiler.hh>
 #include <typeinfo>
 
-
 namespace honei
 {
     namespace opencl
@@ -37,7 +36,7 @@ namespace honei
             void * y_cl(y.lock(lm_read_only, Tag_::memory_value));
             std::string opname("sum_three_");
             opname += typeid(DT_).name();
-            opencl::sum(x_cl, x_cl, y_cl, x.size(), tag_to_device<Tag_>(), opname);
+            sum(x_cl, x_cl, y_cl, x.size(), tag_to_device<Tag_>(), opname);
             x.unlock(lm_read_and_write);
             y.unlock(lm_read_only);
         }

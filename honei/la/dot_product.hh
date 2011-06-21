@@ -355,16 +355,14 @@ namespace honei
 
     template <> struct DotProduct<tags::OpenCL::CPU>
     {
-        static float value(const DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
-
-        static double value(const DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+        template <typename DT_>
+        static DT_ value(const DenseVectorContinuousBase<DT_> & a, const DenseVectorContinuousBase<DT_> & b);
     };
 
     template <> struct DotProduct<tags::OpenCL::GPU>
     {
-        static float value(const DenseVectorContinuousBase<float> & a, const DenseVectorContinuousBase<float> & b);
-
-        static double value(const DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
+        template <typename DT_>
+        static DT_ value(const DenseVectorContinuousBase<DT_> & a, const DenseVectorContinuousBase<DT_> & b);
     };
 
     namespace mc

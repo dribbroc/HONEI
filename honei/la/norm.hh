@@ -589,30 +589,26 @@ namespace honei
 
     template <> struct Norm<vnt_l_two, false, tags::OpenCL::CPU>
     {
-        static float value(const DenseVectorContinuousBase<float> & x);
-
-        static double value(const DenseVectorContinuousBase<double> & x);
+        template <typename DT_>
+        static DT_ value(const DenseVectorContinuousBase<DT_> & x);
     };
 
     template <> struct Norm<vnt_l_two, true, tags::OpenCL::CPU>
     {
-        static float value(const DenseVectorContinuousBase<float> & x);
-
-        static double value(const DenseVectorContinuousBase<double> & x);
+        template <typename DT_>
+        static DT_ value(const DenseVectorContinuousBase<DT_> & x);
     };
 
     template <> struct Norm<vnt_l_two, false, tags::OpenCL::GPU>
     {
-        static float value(const DenseVectorContinuousBase<float> & x);
-
-        static double value(const DenseVectorContinuousBase<double> & x);
+        template <typename DT_>
+        static DT_ value(const DenseVectorContinuousBase<DT_> & x);
     };
 
     template <> struct Norm<vnt_l_two, true, tags::OpenCL::GPU>
     {
-        static float value(const DenseVectorContinuousBase<float> & x);
-
-        static double value(const DenseVectorContinuousBase<double> & x);
+        template <typename DT_>
+        static DT_ value(const DenseVectorContinuousBase<DT_> & x);
     };
 
      /**
