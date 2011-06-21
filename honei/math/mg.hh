@@ -23,6 +23,7 @@
 
 #include <operator.hh>
 #include <operator_list.hh>
+#include <honei/util/profiler.hh>
 
 namespace honei
 {
@@ -35,6 +36,7 @@ namespace honei
             {
                 CONTEXT("When solving linear system with MG :");
                 ASSERT(cycle.size() > 0, "OperatorList is empty!");
+                PROFILER_START("MGSolver");
 
                 VectorType_ r(x.size());
                 Defect<Tag_>::value(r, b, A, x);
@@ -52,6 +54,7 @@ namespace honei
                     if(rnorm_current < eps_relative * rnorm_initial)
                         break;
                 }
+                PROFILER_STOP("MGSolver");
             }
     };
 
@@ -62,11 +65,13 @@ namespace honei
             {
                 CONTEXT("When smoothing linear system with MG :");
                 ASSERT(cycle.size() > 0, "OperatorList is empty!");
+                PROFILER_START("MGSmoother");
 
                 for(unsigned long i(0) ; i < max_iters ; ++i)
                 {
                     cycle.value();
                 }
+                PROFILER_STOP("MGSmoother");
             }
     };
 

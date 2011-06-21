@@ -23,6 +23,7 @@
 #include <honei/la/product.hh>
 #include <honei/math/defect.hh>
 #include <honei/la/sum.hh>
+#include <honei/util/profiler.hh>
 
 namespace honei
 {
@@ -53,6 +54,7 @@ namespace honei
                               unsigned long max_iters)
             {
                 CONTEXT("When smoothing with Richardson: ");
+                PROFILER_START("RISmoother");
 
                 for(unsigned long i(0) ; i < max_iters ; ++i)
                 {
@@ -60,6 +62,8 @@ namespace honei
                     Product<Tag_>::value(temp_1, P, temp_0);
                     Sum<Tag_>::value(x, temp_1);
                 }
+
+                PROFILER_STOP("RISmoother");
             }
     };
 }

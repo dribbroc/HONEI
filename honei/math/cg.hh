@@ -35,6 +35,7 @@
 #include <honei/la/element_product.hh>
 #include <honei/la/sparse_matrix.hh>
 #include <honei/la/algorithm.hh>
+#include <honei/util/profiler.hh>
 #include <iostream>
 
 namespace honei
@@ -69,6 +70,7 @@ namespace honei
                                               DT_ eps_relative = 1e-8)
             {
                 CONTEXT("When solving linear system with CG :");
+                PROFILER_START("CGSolver NONE");
 
                 VectorType_ p(b.size());
                 VectorType_ r(b.size());
@@ -113,6 +115,7 @@ namespace honei
                     }
                 }
 
+                PROFILER_STOP("CGSolver NONE");
                 return x;
             }
     };
