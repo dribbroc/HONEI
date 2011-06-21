@@ -274,6 +274,24 @@ namespace honei
                                 data.max_iters_coarse,
                                 data.used_iters,
                                 data.eps_relative) );
+
+                    ///Prolongation
+                    std::cout << "Prol Accessing " << data.min_level << std::endl;
+                    std::cout << "Prol Accessing " << data.min_level - 1 << std::endl;
+                    cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(x.at(data.min_level) , x.at(data.min_level - 1), data.prolmat.at(data.min_level - 1)));
+                    std::cout << "Sum Accessing " << data.min_level << std::endl;
+                    cycle.push_back(new SumOperator<Tag_, VectorType_>(data.x.at(data.min_level), x.at(data.min_level)));
+
+                    ///Postsmoothing
+                    std::cout << "Smoother Accessing " << data.min_level << std::endl;
+                    cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
+                                data.A.at(data.min_level),
+                                data.P.at(data.min_level),
+                                b.at(data.min_level),
+                                x.at(data.min_level),
+                                data.temp_0.at(data.min_level),
+                                data.temp_1.at(data.min_level),
+                                data.n_post_smooth) );
                 }
                 else
                 {

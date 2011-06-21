@@ -40,7 +40,7 @@ class MGCycleProcessingTest:
             std::vector<DenseVector<double> > d;
             std::vector<DenseVector<double> > t0;
             std::vector<DenseVector<double> > t1;
-            for(unsigned long i(0); i < 10; ++i)
+            for(unsigned long i(0); i < 5; ++i)
             {
                 SparseMatrix<double> a_t(1,1);
                 a_t[0][0] = 1.;
