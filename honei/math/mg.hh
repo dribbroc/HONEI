@@ -21,10 +21,13 @@
 #ifndef MATH_GUARD_MG_HH
 #define MATH_GUARD_MG_HH 1
 
-#include <operator.hh>
-#include <operator_list.hh>
+#include <honei/math/operator.hh>
+#include <honei/math/operator_list.hh>
 #include <honei/util/profiler.hh>
-#include <methods.hh>
+#include <honei/math/methods.hh>
+#include <honei/math/matrix_io.hh>
+#include <honei/math/transposition.hh>
+#include <honei/math/vector_io.hh>
 
 namespace honei
 {
@@ -136,15 +139,17 @@ namespace honei
             double eps_relative;
     };
 
-    template<typename MatrixType_, typename VectorType_, typename PreconContType_>
+    template<typename Tag_, typename MatrixType_, typename VectorType_, typename PreconContType_, typename MatIOType_, typename VecIOType_, typename DT_>
     struct MGUtil
     {
         public:
-            MGData<MatrixType_, VectorType_, PreconContType_> load_data(std::string file_base, unsigned long sorting)
+            static MGData<MatrixType_, VectorType_, PreconContType_> load_data(std::string file_base, unsigned long max_level)
             {
-                CONTEXT("When creating MGData from file:");
+                CONTEXT("When creating MGData from file(s):");
 
-                std::vector<MatrixType_> system;
+                std::vector<MatrixType_> A;
+                std::vector<MatrixType_> Prol;
+                std::vector<MatrixType_> Res;
                 std::vector<PreconContType_> P;
                 std::vector<VectorType_> b;
                 std::vector<VectorType_> x;
@@ -155,11 +160,86 @@ namespace honei
 
                 //TODO: load and push back data
 
-                MGData<MatrixType_, VectorType_, PreconContType_> result(system, P, b, x, d, c, temp_0, temp_1);
+                std::string A_name(file_base);
+                std::string Prol_name(file_base);
+                std::string b_name(file_base);
+                std::string x_name(file_base);
+
+                A_name += "A_";
+                Prol_name += "prol_";
+                b_name += "rhs_";
+                x_name += "init_";
+
+                for(unsigned long i(0) ; i < max_level ; ++i)
+                {
+                    ///get system-matrix for level i+1
+                    std::string local_A_name(A_name);
+                    local_A_name += stringify(i + 1);
+                    local_A_name += ".ell";
+                    MatrixType_ local_A(MatrixIO<MatIOType_>::read_matrix(local_A_name, DT_(0)));
+                    A.push_back(local_A);
+
+                    ///get Prolmat P_{i+1}^{i+2}
+                    if(i == 0)
+                    {
+                        SparseMatrix<DT_> local_preProl(1,1);
+                        MatrixType_ local_Prol(local_preProl);
+                        Prol.push_back(local_Prol);
+                    }
+                    else
+                    {
+                        std::string local_Prol_name(Prol_name);
+                        local_Prol_name += stringify(i + 1);
+                        local_Prol_name += ".ell";
+                        MatrixType_ local_Prol(MatrixIO<MatIOType_>::read_matrix(local_Prol_name, DT_(0)));
+                        Prol.push_back(local_Prol);
+                    }
+
+                    ///get Resmat R_{i+2}^{i+1} = (P_{i+1}^{i+2})^T
+                    SparseMatrix<DT_> local_preProl(Prol.at(i));
+                    SparseMatrix<DT_> local_preRes(Prol.at(i).columns(), Prol.at(i).rows());
+                    Transposition<Tag_>::value(local_preProl, local_preRes);
+                    MatrixType_ local_Res(local_preRes);
+                    Res.push_back(local_Res);
+
+                    ///get vectors for level max_level
+                    if(i == max_level - 1)
+                    {
+                        std::string local_b_name(b_name);
+                        local_b_name += stringify(i + 1);
+                        VectorType_ max_b(VectorIO<VecIOType_>::read_vector(local_b_name, DT_(0)));
+                        b.push_back(max_b);
+
+                        std::string local_x_name(x_name);
+                        local_x_name += stringify(i + 1);
+                        VectorType_ max_x(VectorIO<VecIOType_>::read_vector(local_x_name, DT_(0)));
+                        x.push_back(max_x);
+                    }
+                    else
+                    {
+                        ///get vectors for level i+1
+                        VectorType_ zero(A.at(i).rows(), DT_(0));
+                        b.push_back(zero.copy());
+                        x.push_back(zero.copy());
+                        d.push_back(zero.copy());
+                        c.push_back(zero.copy());
+                        temp_0.push_back(zero.copy());
+                        temp_1.push_back(zero.copy());
+                    }
+
+                    //dirtymost preconhack
+                    if(typeid(PreconContType_) != typeid(methods::NONE))
+                    {
+                        std::string P_name(file_base);
+                        P_name += "A_spai_"; //TODO: we should rename all precalculated precons to "P_"; what if there are more types?
+                        //TODO
+                    }
+                }
+
+                unsigned long used_iters(0);
+                MGData<MatrixType_, VectorType_, PreconContType_> result(A, Prol, Res, P, b, x, d, c, temp_0, temp_1, 0, used_iters, 0, 0, 0, double(0.));
                 return result;
             }
-
-
     };
 
     //TODO: think of more flexible way (more than one smoothertype, ...) ; later, assembly is done here!

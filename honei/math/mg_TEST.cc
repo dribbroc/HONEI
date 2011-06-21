@@ -79,3 +79,29 @@ class MGCycleProcessingTest:
         }
 };
 MGCycleProcessingTest<tags::CPU> mgcycproctest_cpu("double");
+
+template<typename Tag_>
+class MGUtilLoadTest:
+    public BaseTest
+{
+    public:
+        MGUtilLoadTest(const std::string & tag) :
+            BaseTest("MGUtilLoadTest<" + tag + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            std::string file(HONEI_SOURCEDIR);
+            file += "/honei/math/testdata/poisson_advanced/sort_0/";
+            MGData<SparseMatrixELL<double>, DenseVector<double>, int> data(MGUtil<Tag_, //TODO: no int
+                                                                                            SparseMatrixELL<double>,
+                                                                                            DenseVector<double>,
+                                                                                            int, //TODO no int
+                                                                                            io_formats::ELL,
+                                                                                            io_formats::EXP,
+                                                                                            double>::load_data(file, 10));
+        }
+};
+MGUtilLoadTest<tags::CPU> mgutilloadtest_cpu("double");
