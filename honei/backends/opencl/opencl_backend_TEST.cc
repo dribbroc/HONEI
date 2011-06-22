@@ -73,7 +73,7 @@ class OpenclBackendQuickTest :
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/backends/opencl/";
             filename += "scaled_sum.cl";
-            kernel = OpenCLBackend::instance()->create_kernel(filename, "scaled_sum_three_float_s", context, device);
+            kernel = OpenCLBackend::instance()->create_kernel(filename, "scaled_sum_three_s_f", context, device);
 
             float x[10];
             float y[10];
