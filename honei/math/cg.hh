@@ -76,7 +76,7 @@ namespace honei
                 VectorType_ r(b.size());
                 VectorType_ v(b.size());
 
-                DT_ alpha, alpha_old, lambda, initial_defect;
+                DT_ alpha, alpha_old, lambda, initial_defect, current_defect(0);
                 unsigned long iterations(0);
 
                 Defect<Tag_>::value(r, b, A, x);
@@ -98,7 +98,7 @@ namespace honei
 
                     ++iterations;
 
-                    DT_ current_defect(sqrt(alpha));
+                    current_defect = sqrt(alpha);
                     if(current_defect < eps_relative * initial_defect)
                     {
                         used_iters = iterations + 1;
@@ -114,7 +114,7 @@ namespace honei
                         used_iters = iterations;
                     }
                 }
-
+                LOGMESSAGE(lc_solver, "CG(NONE) finished in " + stringify(used_iters) + " iterations with defect " + stringify(current_defect));
                 PROFILER_STOP("CGSolver NONE");
                 return x;
             }
