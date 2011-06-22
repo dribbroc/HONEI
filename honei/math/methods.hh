@@ -22,69 +22,69 @@
 
 namespace methods
 {
-    class CG
+    struct CG
     {
     };
 
-    class JAC
+    struct JAC
     {
     };
 
-    class SPAI
+    struct SPAI
     {
     };
 
-    class ILU
+    struct ILU
     {
     };
 
-    class NONE
+    struct NONE
     {
     };
 
-    class VAR
+    struct VAR
     {
     };
 
-    class PCG
+    struct PCG
     {
         public:
-            class JAC;
+            struct JAC;
     };
 
-    class CYCLE
+    struct CYCLE
     {
         public:
-            class F;
-            class W;
-            class V
+            struct F;
+            struct W;
+            struct V
             {
-                class STATIC;
+                struct STATIC;
             };
     };
-    class FIXED;
-    class MIXED;
+    struct FIXED;
+    struct MIXED;
 
-    class PROLMAT;
+    struct PROLMAT;
 
-    class NATURAL;
-    class TWO_LEVEL;
+    struct NATURAL;
+    struct TWO_LEVEL;
 }
 
 
 namespace applications
 {
-    class POISSON;
+    struct POISSON;
 }
 namespace boundary_types
 {
-    class DIRICHLET
+    struct DIRICHLET
     {
         public:
-            class DIRICHLET_0;
+            struct DIRICHLET_0;
     };
-    class NEUMANN;
-    class DIRICHLET_NEUMANN
+    struct NEUMANN;
+    struct DIRICHLET_NEUMANN
     {
     };
 }

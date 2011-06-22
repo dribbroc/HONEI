@@ -93,6 +93,7 @@ class MGUtilLoadTest:
 
         virtual void run() const
         {
+            unsigned long levels(4);
             std::string file(HONEI_SOURCEDIR);
             file += "/honei/math/testdata/poisson_advanced/sort_0/";
             MGData<SparseMatrixELL<double>, DenseVector<double>, int> data(MGUtil<Tag_, //TODO: no int
@@ -101,7 +102,22 @@ class MGUtilLoadTest:
                                                                                             int, //TODO no int
                                                                                             io_formats::ELL,
                                                                                             io_formats::EXP,
-                                                                                            double>::load_data(file, 7));
+                                                                                            double>::load_data(file, levels));
+
+            for(unsigned long i(0) ; i < levels ; ++i)
+            {
+                std::cout << "-----------------------------------" << std::endl;
+                std::cout << "A_" << i << " is a " << data.A.at(i).rows() << " x " << data.A.at(i).columns() << " matrix." << std::endl;
+                std::cout << "Prol_" << i << " is a " << data.prolmat.at(i).rows() << " x " << data.prolmat.at(i).columns() << " matrix." << std::endl;
+                std::cout << "Res_" << i << " is a " << data.resmat.at(i).rows() << " x " << data.resmat.at(i).columns() << " matrix." << std::endl;
+                std::cout << "b_" << i << " is a vector of size " << data.b.at(i).size() << std::endl;
+                std::cout << "x_" << i << " is a vector of size " << data.x.at(i).size() << std::endl;
+                std::cout << "c_" << i << " is a vector of size " << data.c.at(i).size() << std::endl;
+                std::cout << "d_" << i << " is a vector of size " << data.d.at(i).size() << std::endl;
+                std::cout << "temp0_" << i << " is a vector of size " << data.temp_0.at(i).size() << std::endl;
+                std::cout << "temp1_" << i << " is a vector of size " << data.temp_1.at(i).size() << std::endl;
+                std::cout << "-----------------------------------" << std::endl;
+            }
         }
 };
 MGUtilLoadTest<tags::CPU> mgutilloadtest_cpu("double");

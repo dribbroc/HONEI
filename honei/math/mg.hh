@@ -170,48 +170,58 @@ namespace honei
                 b_name += "rhs_";
                 x_name += "init_";
 
-                for(unsigned long i(0) ; i < max_level ; ++i)
+                for(unsigned long i(0) ; i <= max_level ; ++i)
                 {
-                    ///get system-matrix for level i+1
-                    std::string local_A_name(A_name);
-                    local_A_name += stringify(i + 1);
-                    local_A_name += ".ell";
-                    MatrixType_ local_A(MatrixIO<MatIOType_>::read_matrix(local_A_name, DT_(0)));
-                    A.push_back(local_A);
-
-                    ///get Prolmat P_{i+1}^{i+2}
+                    ///get system-matrix for level i
                     if(i == 0)
+                    {
+                        SparseMatrix<DT_> Adt(1,1);
+                        MatrixType_ Ad(Adt);
+                        A.push_back(Ad);
+                    }
+                    else
+                    {
+                        std::string local_A_name(A_name);
+                        local_A_name += stringify(i);
+                        local_A_name += ".ell";
+                        MatrixType_ local_A(MatrixIO<MatIOType_>::read_matrix(local_A_name, DT_(0)));
+                        A.push_back(local_A);
+                    }
+
+                    ///get Prolmat P_{i}^{i+1}
+                    if(i < 2)
                     {
                         SparseMatrix<DT_> local_preProl(1,1);
                         MatrixType_ local_Prol(local_preProl);
                         Prol.push_back(local_Prol);
+                        Res.push_back(local_Prol.copy());
                     }
                     else
                     {
                         std::string local_Prol_name(Prol_name);
-                        local_Prol_name += stringify(i + 1);
+                        local_Prol_name += stringify(i);
                         local_Prol_name += ".ell";
                         MatrixType_ local_Prol(MatrixIO<MatIOType_>::read_matrix(local_Prol_name, DT_(0)));
                         Prol.push_back(local_Prol);
+
+                        ///get Resmat R_{i+1}^{i} = (P_{i}^{i+1})^T
+                        SparseMatrix<DT_> local_preProl(Prol.at(i));
+                        SparseMatrix<DT_> local_preRes(Prol.at(i).columns(), Prol.at(i).rows());
+                        Transposition<Tag_>::value(local_preProl, local_preRes);
+                        MatrixType_ local_Res(local_preRes);
+                        Res.push_back(local_Res);
                     }
 
-                    ///get Resmat R_{i+2}^{i+1} = (P_{i+1}^{i+2})^T
-                    SparseMatrix<DT_> local_preProl(Prol.at(i));
-                    SparseMatrix<DT_> local_preRes(Prol.at(i).columns(), Prol.at(i).rows());
-                    Transposition<Tag_>::value(local_preProl, local_preRes);
-                    MatrixType_ local_Res(local_preRes);
-                    Res.push_back(local_Res);
-
                     ///get vectors for level max_level
-                    if(i == max_level - 1)
+                    if(i == max_level)
                     {
                         std::string local_b_name(b_name);
-                        local_b_name += stringify(i + 1);
+                        local_b_name += stringify(i);
                         VectorType_ max_b(VectorIO<VecIOType_>::read_vector(local_b_name, DT_(0)));
                         b.push_back(max_b);
 
                         std::string local_x_name(x_name);
-                        local_x_name += stringify(i + 1);
+                        local_x_name += stringify(i);
                         VectorType_ max_x(VectorIO<VecIOType_>::read_vector(local_x_name, DT_(0)));
                         x.push_back(max_x);
                     }
