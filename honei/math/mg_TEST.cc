@@ -104,7 +104,7 @@ class MGUtilLoadTest:
                                                                                             io_formats::EXP,
                                                                                             double>::load_data(file, levels));
 
-            for(unsigned long i(0) ; i < levels ; ++i)
+            for(unsigned long i(0) ; i <= levels ; ++i)
             {
                 std::cout << "-----------------------------------" << std::endl;
                 std::cout << "A_" << i << " is a " << data.A.at(i).rows() << " x " << data.A.at(i).columns() << " matrix." << std::endl;

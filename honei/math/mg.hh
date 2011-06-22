@@ -224,10 +224,16 @@ namespace honei
                         local_x_name += stringify(i);
                         VectorType_ max_x(VectorIO<VecIOType_>::read_vector(local_x_name, DT_(0)));
                         x.push_back(max_x);
+
+                        VectorType_ zero(A.at(i).rows(), DT_(0));
+                        d.push_back(zero.copy());
+                        c.push_back(zero.copy());
+                        temp_0.push_back(zero.copy());
+                        temp_1.push_back(zero.copy());
                     }
                     else
                     {
-                        ///get vectors for level i+1
+                        ///get vectors for level i
                         VectorType_ zero(A.at(i).rows(), DT_(0));
                         b.push_back(zero.copy());
                         x.push_back(zero.copy());
