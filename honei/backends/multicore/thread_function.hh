@@ -20,6 +20,7 @@
 #ifndef MULTICORE_GUARD_THREAD_FUNCTION_HH
 #define MULTICORE_GUARD_THREAD_FUNCTION_HH 1
 
+#include <honei/backends/multicore/cas_deque.hh>
 #include <honei/backends/multicore/concurrent_deque.hh>
 #include <honei/backends/multicore/thread_task.hh>
 #include <honei/util/condition_variable.hh>
@@ -73,15 +74,15 @@ namespace honei
 
         template <typename ListType> class SimpleThreadFunction;
 
-        template <> class SimpleThreadFunction<ConcurrentDeque<ThreadTask *> > :
+        template <> class SimpleThreadFunction<CASDeque<ThreadTask *> > :
             public ThreadFunctionBase,
-            public PrivateImplementationPattern<SimpleThreadFunction<ConcurrentDeque<ThreadTask *> >, Shared>
+            public PrivateImplementationPattern<SimpleThreadFunction<CASDeque<ThreadTask *> >, Shared>
         {
             private:
 
             public:
 
-                SimpleThreadFunction(PoolSyncData * const psync, ConcurrentDeque<ThreadTask *> * const list, unsigned pool_id);
+                SimpleThreadFunction(PoolSyncData * const psync, CASDeque<ThreadTask *> * const list, unsigned pool_id);
 
                 virtual ~SimpleThreadFunction();
 
@@ -143,16 +144,16 @@ namespace honei
                 unsigned pool_id() const;
         };
 
-        template <> class WorkStealingThreadFunction<ConcurrentDeque<mc::ThreadTask *> > :
+        template <> class WorkStealingThreadFunction<CASDeque<mc::ThreadTask *> > :
             public ThreadFunctionBase,
-            public PrivateImplementationPattern<WorkStealingThreadFunction<ConcurrentDeque<mc::ThreadTask *> >, Shared>
+            public PrivateImplementationPattern<WorkStealingThreadFunction<CASDeque<mc::ThreadTask *> >, Shared>
         {
             private:
 
             public:
 
                 WorkStealingThreadFunction(PoolSyncData * const psync, unsigned pool_id, unsigned sched_id,
-                        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<ConcurrentDeque<mc::ThreadTask *> > *> > & threads,
+                        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<CASDeque<mc::ThreadTask *> > *> > & threads,
                         unsigned num_thr, volatile bool & terminate, Mutex * const steal_mutex);
 
                 virtual ~WorkStealingThreadFunction();
@@ -164,7 +165,7 @@ namespace honei
 
                 void enqueue(mc::ThreadTask * task);
 
-                bool steal(mc::ConcurrentDeque<mc::ThreadTask *> & thief_list);
+                bool steal(mc::CASDeque<mc::ThreadTask *> & thief_list);
 
                 virtual unsigned tid() const;
 

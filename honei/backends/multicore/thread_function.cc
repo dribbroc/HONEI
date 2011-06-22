@@ -16,6 +16,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/backends/multicore/cas_deque-impl.hh>
 #include <honei/backends/multicore/concurrent_deque-impl.hh>
 #include <honei/backends/multicore/thread_function.hh>
 #include <honei/backends/multicore/thread_pool.hh>
@@ -180,7 +181,7 @@ namespace honei
         }
     };
 
-    template <> struct Implementation<mc::WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> > > :
+    template <> struct Implementation<mc::WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> > > :
         public TFImplementationBase
     {
         /* The logical processor this thread is bound to, in fact a
@@ -188,10 +189,10 @@ namespace honei
         const unsigned sched_lpu;
 
         /// The task list (local to this thread!)
-        ConcurrentDeque<mc::ThreadTask *> tasklist;
+        CASDeque<mc::ThreadTask *> tasklist;
 
         /// Reference to the thread-vector of the thread pool (for stealing)
-        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> > * > > & threads;
+        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> > * > > & threads;
 
         /// Local mutual exclusion
         Mutex * const local_mutex;
@@ -204,7 +205,7 @@ namespace honei
         Mutex * const steal_mutex;
 
         Implementation(mc::PoolSyncData * const psync, unsigned pid, unsigned sched,
-                const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> > *> > & thr,
+                const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> > *> > & thr,
                 unsigned num_thr, volatile bool & term, Mutex * const stm) :
             TFImplementationBase(psync, pid),
             sched_lpu(sched),
@@ -245,7 +246,7 @@ namespace honei
                     if (! global_terminate)
                     {
                         const int iter(rand() % num_threads);
-                        mc::WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> > * const tfunc = threads[iter].second;
+                        mc::WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> > * const tfunc = threads[iter].second;
                         tfunc->steal(tasklist);
 
                         pthread_mutex_lock(pool_mutex->mutex());
@@ -296,7 +297,7 @@ namespace honei
             tasklist.push_back(task);
         }
 
-        bool steal(ConcurrentDeque<mc::ThreadTask *> & thief_list)
+        bool steal(CASDeque<mc::ThreadTask *> & thief_list)
         {
             ThreadTask * t = tasklist.pop_back();
 
@@ -489,17 +490,17 @@ namespace honei
      * This allows for a simplified task list implementation
      * which can save substantial locking delays */
 
-    // Tell the compiler that we want to instantiate ConcurrentDeque
+    // Tell the compiler that we want to instantiate CASDeque
     // for a ThreadTask pointer
-    template class ConcurrentDeque<mc::ThreadTask *>;
+    template class CASDeque<mc::ThreadTask *>;
 
-    template <> struct Implementation<mc::SimpleThreadFunction<ConcurrentDeque<mc::ThreadTask *> > > :
+    template <> struct Implementation<mc::SimpleThreadFunction<CASDeque<mc::ThreadTask *> > > :
         public TFImplementationBase
     {
         /// The task list administrated by the thread pool.
-        ConcurrentDeque<mc::ThreadTask *> * const tasklist;
+        CASDeque<mc::ThreadTask *> * const tasklist;
 
-        Implementation(mc::PoolSyncData * const psync, ConcurrentDeque<mc::ThreadTask *> * const list,
+        Implementation(mc::PoolSyncData * const psync, CASDeque<mc::ThreadTask *> * const list,
                 unsigned pid) :
             TFImplementationBase(psync, pid),
             tasklist(list)
@@ -709,71 +710,71 @@ unsigned WorkStealingThreadFunction<std::deque<mc::ThreadTask *> >::tid() const
     return _imp->thread_id;
 }
 
-WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> >::WorkStealingThreadFunction(PoolSyncData * const psync, unsigned pool_id, unsigned sched_id,
-        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> > *> > & threads,
+WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> >::WorkStealingThreadFunction(PoolSyncData * const psync, unsigned pool_id, unsigned sched_id,
+        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> > *> > & threads,
         unsigned num_thr, volatile bool & terminate, Mutex * const steal_mutex) :
-    PrivateImplementationPattern<WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> >, Shared>(new
-            Implementation<WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> > >(psync, pool_id, sched_id, threads, num_thr, terminate, steal_mutex))
+    PrivateImplementationPattern<WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> >, Shared>(new
+            Implementation<WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> > >(psync, pool_id, sched_id, threads, num_thr, terminate, steal_mutex))
 {
 }
 
-WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> >::~WorkStealingThreadFunction()
+WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> >::~WorkStealingThreadFunction()
 {
 }
 
-void WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> >::stop()
+void WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> >::stop()
 {
     _imp->stop();
 }
 
-void WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> >::enqueue(mc::ThreadTask * task)
+void WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> >::enqueue(mc::ThreadTask * task)
 {
     _imp->enqueue(task);
 }
 
-bool WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> >::steal(mc::ConcurrentDeque<mc::ThreadTask *> & thief_list)
+bool WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> >::steal(mc::CASDeque<mc::ThreadTask *> & thief_list)
 {
     return _imp->steal(thief_list);
 }
 
-void WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> >::operator() ()
+void WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> >::operator() ()
 {
     (*_imp)();
 }
 
-unsigned WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> >::pool_id() const
+unsigned WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> >::pool_id() const
 {
     return _imp->pool_id;
 }
 
-unsigned WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> >::tid() const
+unsigned WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> >::tid() const
 {
     return _imp->thread_id;
 }
 
 
-SimpleThreadFunction<ConcurrentDeque<ThreadTask *> >::SimpleThreadFunction(PoolSyncData * const psync,
-        ConcurrentDeque<ThreadTask *> * const list, unsigned pool_id) :
-    PrivateImplementationPattern<SimpleThreadFunction<ConcurrentDeque<ThreadTask *> >, Shared>(new
-            Implementation<SimpleThreadFunction<ConcurrentDeque<ThreadTask *> > >(psync, list, pool_id))
+SimpleThreadFunction<CASDeque<ThreadTask *> >::SimpleThreadFunction(PoolSyncData * const psync,
+        CASDeque<ThreadTask *> * const list, unsigned pool_id) :
+    PrivateImplementationPattern<SimpleThreadFunction<CASDeque<ThreadTask *> >, Shared>(new
+            Implementation<SimpleThreadFunction<CASDeque<ThreadTask *> > >(psync, list, pool_id))
 {
 }
 
-SimpleThreadFunction<ConcurrentDeque<ThreadTask *> >::~SimpleThreadFunction()
+SimpleThreadFunction<CASDeque<ThreadTask *> >::~SimpleThreadFunction()
 {
 }
 
-void SimpleThreadFunction<ConcurrentDeque<ThreadTask *> >::stop()
+void SimpleThreadFunction<CASDeque<ThreadTask *> >::stop()
 {
     _imp->stop();
 }
 
-void SimpleThreadFunction<ConcurrentDeque<ThreadTask *> >::operator() ()
+void SimpleThreadFunction<CASDeque<ThreadTask *> >::operator() ()
 {
     (*_imp)();
 }
 
-unsigned SimpleThreadFunction<ConcurrentDeque<ThreadTask *> >::tid() const
+unsigned SimpleThreadFunction<CASDeque<ThreadTask *> >::tid() const
 {
     return _imp->thread_id;
 }
