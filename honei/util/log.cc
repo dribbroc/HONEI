@@ -146,8 +146,10 @@ namespace honei
 
                 if (selections.size() == 0)
                 {
-                    if (previous_context != "" && previous_context == data->context)
+                    if (data->context != "" && previous_context == data->context)
                         output << "(same context) " << data->message << std::endl;
+                    else if(data->context == "")
+                        output << data->message << std::endl;
                     else
                         output << data->context << std::endl << data->message << std::endl;
                     previous_context = data->context;
@@ -156,8 +158,10 @@ namespace honei
                 {
                     if (selections.count(data->category) == 1)
                     {
-                        if (previous_context != "" && previous_context == data->context)
+                        if (data->context != "" && previous_context == data->context)
                             output << "(same context) " << data->message << std::endl;
+                        else if(data->context == "")
+                            output << data->message << std::endl;
                         else
                             output << data->context << std::endl << data->message << std::endl;
                         previous_context = data->context;

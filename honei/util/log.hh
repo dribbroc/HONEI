@@ -41,6 +41,7 @@ namespace honei
         lc_transfer, ///< Data transfer specific messages
         lc_backend, ///< Backend specific messages
         lc_application, ///<Application specific messages
+        lc_solver, /// LA solver specific messages
         lc_none ///< Miscellaneous messages, not fitting in any other category
     };
 
