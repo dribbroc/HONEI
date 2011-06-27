@@ -31,53 +31,6 @@
 
 namespace honei
 {
-    template<typename Tag_, typename NormType_>
-    struct MG
-    {
-        public:
-            template<typename MatrixType_, typename VectorType_, typename DT_>
-            static void value(MatrixType_ & A, VectorType_ & b, VectorType_ & x, OperatorList & cycle, unsigned long max_iters, unsigned long & used_iters, DT_ eps_relative)
-            {
-                CONTEXT("When solving linear system with MG :");
-                ASSERT(cycle.size() > 0, "OperatorList is empty!");
-                PROFILER_START("MGSolver");
-
-                VectorType_ r(x.size());
-                Defect<Tag_>::value(r, b, A, x);
-                DT_ rnorm_initial(NormType_::value(r));
-                DT_ rnorm_current(1e16);
-
-                for(unsigned long i(0) ; i < max_iters ; ++i)
-                {
-                    cycle.value();
-                    Defect<Tag_>::value(r, b, A, x);
-                    rnorm_current = NormType_::value(r);
-
-                    used_iters = i + 1;
-
-                    if(rnorm_current < eps_relative * rnorm_initial)
-                        break;
-                }
-                PROFILER_STOP("MGSolver");
-            }
-    };
-
-    struct MGSmoother
-    {
-        public:
-            static void value(OperatorList & cycle, unsigned long max_iters)
-            {
-                CONTEXT("When smoothing linear system with MG :");
-                ASSERT(cycle.size() > 0, "OperatorList is empty!");
-                PROFILER_START("MGSmoother");
-
-                for(unsigned long i(0) ; i < max_iters ; ++i)
-                {
-                    cycle.value();
-                }
-                PROFILER_STOP("MGSmoother");
-            }
-    };
 
     template<typename MatrixType_, typename VectorType_, typename PreconContType_>
     struct MGData
@@ -143,7 +96,22 @@ namespace honei
     struct MGUtil
     {
         public:
-            static MGData<MatrixType_, VectorType_, PreconContType_> load_data(std::string file_base, unsigned long max_level)
+            static void configure(MGData<MatrixType_, VectorType_, PreconContType_> & target, unsigned long max_iters_coarse,
+                                                                                              unsigned long & used_iters,
+                                                                                              unsigned long n_pre_smooth,
+                                                                                              unsigned long n_post_smooth,
+                                                                                              unsigned long min_level,
+                                                                                              double eps_relative)
+            {
+                target.max_iters_coarse = max_iters_coarse;
+                target.used_iters = used_iters;
+                target.n_pre_smooth = n_pre_smooth;
+                target.n_post_smooth = n_post_smooth;
+                target.min_level = min_level;
+                target.eps_relative = eps_relative;
+            }
+
+            static MGData<MatrixType_, VectorType_, PreconContType_> load_data(std::string file_base, unsigned long max_level, unsigned long damping_factor)
             {
                 CONTEXT("When creating MGData from file(s):");
 
@@ -178,6 +146,10 @@ namespace honei
                         SparseMatrix<DT_> Adt(1,1);
                         MatrixType_ Ad(Adt);
                         A.push_back(Ad);
+
+                        PreconContType_ local_P(1);
+                        P.push_back(local_P);
+
                     }
                     else
                     {
@@ -186,6 +158,16 @@ namespace honei
                         local_A_name += ".ell";
                         MatrixType_ local_A(MatrixIO<MatIOType_>::read_matrix(local_A_name, DT_(0)));
                         A.push_back(local_A);
+
+                        if(typeid(PreconContType_) == typeid(DenseVector<DT_>))
+                        {
+                            PreconContType_ current_P(A.at(i).rows(), damping_factor);
+                            for(unsigned long j(0) ; j < current_P.size() ; ++j)
+                            {
+                                current_P[j] /= local_A(j, j);
+                            }
+                            P.push_back(current_P);
+                        }
                     }
 
                     ///get Prolmat P_{i}^{i+1}
@@ -243,8 +225,7 @@ namespace honei
                         temp_1.push_back(zero.copy());
                     }
 
-                    //dirtymost preconhack
-                    if(typeid(PreconContType_) != typeid(methods::NONE))
+                    if(typeid(PreconContType_) == typeid(MatrixType_))
                     {
                         std::string P_name(file_base);
                         P_name += "A_spai_"; //TODO: we should rename all precalculated precons to "P_"; what if there are more types?
@@ -294,7 +275,7 @@ namespace honei
                     OperatorList & cycle,
                     MGData<MatrixType_, VectorType_, PreconContType_> & data)
             {
-                if(level == data.min_level)
+                if(level == data.min_level - 1)
                 {
                     std::cout << "Solver Accessing " << data.min_level - 1 << std::endl;
                     cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_>(
@@ -360,7 +341,7 @@ namespace honei
                     OperatorList & cycle,
                     MGData<MatrixType_, VectorType_, PreconContType_> & data)
             {
-                if(level == data.min_level)
+                if(level == data.min_level - 1)
                 {
                     std::cout << "Solver Accessing " << level - 1 << std::endl;
                     cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_>(
@@ -440,6 +421,56 @@ namespace honei
                 OperatorList cycle;
                 _build_cycle(data.x, data.b, data.A.size(), cycle, data);
                 return cycle;
+            }
+    };
+
+    template<typename Tag_, typename NormType_>
+    struct MGSolver
+    {
+        public:
+            template<typename MatrixType_, typename VectorType_, typename PreconContType_>
+            static void value(MGData<MatrixType_, VectorType_, PreconContType_> & data, OperatorList & cycle, unsigned long max_iters, unsigned long & used_iters, double eps_relative)
+            {
+                CONTEXT("When solving linear system with MG :");
+                ASSERT(cycle.size() > 0, "OperatorList is empty!");
+                PROFILER_START("MGSolver");
+
+                VectorType_ r(data.x.at(data.x.size() - 1).size());
+                Defect<Tag_>::value(r, data.b.at(data.b.size() - 1), data.A.at(data.A.size() - 1), data.x.at(data.x.size() - 1));
+                double rnorm_initial(NormType_::value(r));
+                double rnorm_current(1e16);
+
+                std::cout << "starting cycles" << std::endl;
+                for(unsigned long i(0) ; i < max_iters ; ++i)
+                {
+                    cycle.value();
+                    Defect<Tag_>::value(r, data.b.at(data.b.size() - 1), data.A.at(data.A.size() - 1), data.x.at(data.x.size() - 1));
+                    rnorm_current = NormType_::value(r);
+
+                    used_iters = i + 1;
+
+                    if(rnorm_current < eps_relative * rnorm_initial)
+                        break;
+                }
+
+                PROFILER_STOP("MGSolver");
+            }
+    };
+
+    struct MGSmoother
+    {
+        public:
+            static void value(OperatorList & cycle, unsigned long max_iters)
+            {
+                CONTEXT("When smoothing linear system with MG :");
+                ASSERT(cycle.size() > 0, "OperatorList is empty!");
+                PROFILER_START("MGSmoother");
+
+                for(unsigned long i(0) ; i < max_iters ; ++i)
+                {
+                    cycle.value();
+                }
+                PROFILER_STOP("MGSmoother");
             }
     };
 }

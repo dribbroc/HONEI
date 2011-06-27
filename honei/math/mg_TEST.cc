@@ -96,18 +96,19 @@ class MGUtilLoadTest:
             unsigned long levels(4);
             std::string file(HONEI_SOURCEDIR);
             file += "/honei/math/testdata/poisson_advanced/sort_0/";
-            MGData<SparseMatrixELL<double>, DenseVector<double>, int> data(MGUtil<Tag_, //TODO: no int
+            MGData<SparseMatrixELL<double>, DenseVector<double>, DenseVector<double> > data(MGUtil<Tag_,
                                                                                             SparseMatrixELL<double>,
                                                                                             DenseVector<double>,
-                                                                                            int, //TODO no int
+                                                                                            DenseVector<double>,
                                                                                             io_formats::ELL,
                                                                                             io_formats::EXP,
-                                                                                            double>::load_data(file, levels));
+                                                                                            double>::load_data(file, levels, double(0.7)));
 
             for(unsigned long i(0) ; i <= levels ; ++i)
             {
                 std::cout << "-----------------------------------" << std::endl;
                 std::cout << "A_" << i << " is a " << data.A.at(i).rows() << " x " << data.A.at(i).columns() << " matrix." << std::endl;
+                std::cout << "P_" << i << " is a container of size" << data.P.at(i).size() << "." << std::endl;
                 std::cout << "Prol_" << i << " is a " << data.prolmat.at(i).rows() << " x " << data.prolmat.at(i).columns() << " matrix." << std::endl;
                 std::cout << "Res_" << i << " is a " << data.resmat.at(i).rows() << " x " << data.resmat.at(i).columns() << " matrix." << std::endl;
                 std::cout << "b_" << i << " is a vector of size " << data.b.at(i).size() << std::endl;
@@ -121,3 +122,51 @@ class MGUtilLoadTest:
         }
 };
 MGUtilLoadTest<tags::CPU> mgutilloadtest_cpu("double");
+
+template<typename Tag_>
+class MGSolverTest:
+    public BaseTest
+{
+    public:
+        MGSolverTest(const std::string & tag) :
+            BaseTest("MGSolverTest<" + tag + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long levels(4);
+            std::string file(HONEI_SOURCEDIR);
+            file += "/honei/math/testdata/poisson_advanced/sort_0/";
+            MGData<SparseMatrixELL<double>, DenseVector<double>, DenseVector<double> > data(MGUtil<Tag_,
+                                                                                            SparseMatrixELL<double>,
+                                                                                            DenseVector<double>,
+                                                                                            DenseVector<double>,
+                                                                                            io_formats::ELL,
+                                                                                            io_formats::EXP,
+                                                                                            double>::load_data(file, levels, double(0.7)));
+            unsigned long used_iters(0);
+            MGUtil<Tag_,
+                SparseMatrixELL<double>,
+                DenseVector<double>,
+                DenseVector<double>,
+                io_formats::ELL,
+                io_formats::EXP,
+                double>::configure(data, 1000, used_iters, 4, 4, 1, double(1e-8));
+
+            OperatorList ol(
+                    MGCycleProcessing<Tag_,
+                    methods::CYCLE::V::STATIC,
+                    CG<Tag_, methods::NONE>,
+                    RISmoother<Tag_>,
+                    Restriction<Tag_, methods::PROLMAT>,
+                    Prolongation<Tag_, methods::PROLMAT>,
+                    double>::value(data)
+                    );
+
+            unsigned long used_iters_mg(0);
+            MGSolver<Tag_, Norm<vnt_l_two, false, Tag_> >::value(data, ol, 100, used_iters_mg, double(1e-8));
+        }
+};
+MGSolverTest<tags::CPU> mg_solver_test_cpu("double");

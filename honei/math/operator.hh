@@ -278,7 +278,21 @@ namespace honei
         public:
             virtual std::string to_string()
             {
-                return "TransferOperator";
+                std::string result("TransferOperator\n");
+                result += "  left.size()= ";
+                result += stringify(_left.size());
+                result += "\n";
+                result += "  right.size()= ";
+                result += stringify(_right.size());
+                result += "\n";
+
+                result += "  mat_dims= ";
+                result += stringify(_mat.rows());
+                result += " x ";
+                result += stringify(_mat.columns());
+                result += "\n";
+
+                return result;
             }
 
             TransferOperator(VectorType_ & left, VectorType_ & right, MatrixType_ & mat) :
