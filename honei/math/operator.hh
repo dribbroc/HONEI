@@ -64,6 +64,7 @@ namespace honei
             {
                 CONTEXT("When evaluating DefectOperator:");
                 Defect<Tag_>::value(_y, _b, _A, _x);
+                //std::cout << _y << std::endl;
             }
 
             virtual ~DefectOperator()
@@ -117,7 +118,14 @@ namespace honei
 
             virtual std::string to_string()
             {
-                return "SumOperator";
+                std::string result("SumOperator\n");
+                result += "  left.size()= ";
+                result += stringify(_x.size());
+                result += "\n";
+                result += "  right.size()= ";
+                result += stringify(_y.size());
+                result += "\n";
+                return result;;
             }
 
             SumOperator(VectorType_& y, VectorType_& x) :
@@ -206,7 +214,9 @@ namespace honei
             virtual void value()
             {
                 CONTEXT("When evaluating SolverOperator:");
+                //std::cout << _x << std::endl;
                 SolverType_::value(_A, _b, _x, _max_iters, _used_iters, _eps_relative);
+                //std::cout << _x << std::endl;
             }
 
             virtual ~SolverOperator()
@@ -278,7 +288,21 @@ namespace honei
         public:
             virtual std::string to_string()
             {
-                return "TransferOperator";
+                std::string result("TransferOperator\n");
+                result += "  left.size()= ";
+                result += stringify(_left.size());
+                result += "\n";
+                result += "  right.size()= ";
+                result += stringify(_right.size());
+                result += "\n";
+
+                result += "  mat_dims= ";
+                result += stringify(_mat.rows());
+                result += " x ";
+                result += stringify(_mat.columns());
+                result += "\n";
+
+                return result;
             }
 
             TransferOperator(VectorType_ & left, VectorType_ & right, MatrixType_ & mat) :
@@ -294,7 +318,9 @@ namespace honei
                 CONTEXT("When evaluating TransferOperator:");
                 //TODO: think of new way to encode BCs -> separate operator?
                 DenseVector<unsigned long> dummy(1ul);
+                //std::cout << _left << _right << std::endl;
                 TransferType_::value(_left, _right, dummy, _mat);
+                //std::cout << _left << _right << std::endl;
             }
 
             virtual ~TransferOperator()

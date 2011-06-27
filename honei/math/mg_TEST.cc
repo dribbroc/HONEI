@@ -59,8 +59,7 @@ class MGCycleProcessingTest:
                 t1.push_back(dummy.copy());
             }
 
-            unsigned long used_iters(0);
-            MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double> > data(A, Res, Prol, P, b, x, c, d, t0, t1, 1000, used_iters, 4, 4, 1, 1e-8);
+            MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double> > data(A, Res, Prol, P, b, x, c, d, t0, t1, 1, 1000, 4, 4, 1, 1e-8);
 
             OperatorList ol(
             MGCycleProcessing<Tag_,
@@ -96,18 +95,19 @@ class MGUtilLoadTest:
             unsigned long levels(4);
             std::string file(HONEI_SOURCEDIR);
             file += "/honei/math/testdata/poisson_advanced/sort_0/";
-            MGData<SparseMatrixELL<double>, DenseVector<double>, int> data(MGUtil<Tag_, //TODO: no int
+            MGData<SparseMatrixELL<double>, DenseVector<double>, DenseVector<double> > data(MGUtil<Tag_,
                                                                                             SparseMatrixELL<double>,
                                                                                             DenseVector<double>,
-                                                                                            int, //TODO no int
+                                                                                            DenseVector<double>,
                                                                                             io_formats::ELL,
                                                                                             io_formats::EXP,
-                                                                                            double>::load_data(file, levels));
+                                                                                            double>::load_data(file, levels, double(0.7)));
 
             for(unsigned long i(0) ; i <= levels ; ++i)
             {
                 std::cout << "-----------------------------------" << std::endl;
                 std::cout << "A_" << i << " is a " << data.A.at(i).rows() << " x " << data.A.at(i).columns() << " matrix." << std::endl;
+                std::cout << "P_" << i << " is a container of size" << data.P.at(i).size() << "." << std::endl;
                 std::cout << "Prol_" << i << " is a " << data.prolmat.at(i).rows() << " x " << data.prolmat.at(i).columns() << " matrix." << std::endl;
                 std::cout << "Res_" << i << " is a " << data.resmat.at(i).rows() << " x " << data.resmat.at(i).columns() << " matrix." << std::endl;
                 std::cout << "b_" << i << " is a vector of size " << data.b.at(i).size() << std::endl;
@@ -121,3 +121,70 @@ class MGUtilLoadTest:
         }
 };
 MGUtilLoadTest<tags::CPU> mgutilloadtest_cpu("double");
+
+template<typename Tag_>
+class MGSolverTest:
+    public BaseTest
+{
+    public:
+        MGSolverTest(const std::string & tag) :
+            BaseTest("MGSolverTest<" + tag + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long levels(4);
+            std::string file(HONEI_SOURCEDIR);
+            file += "/honei/math/testdata/poisson_advanced/sort_0/";
+            MGData<SparseMatrixELL<double>, DenseVector<double>, DenseVector<double> > data(MGUtil<Tag_,
+                                                                                            SparseMatrixELL<double>,
+                                                                                            DenseVector<double>,
+                                                                                            DenseVector<double>,
+                                                                                            io_formats::ELL,
+                                                                                            io_formats::EXP,
+                                                                                            double>::load_data(file, levels, double(0.7)));
+            MGUtil<Tag_,
+                SparseMatrixELL<double>,
+                DenseVector<double>,
+                DenseVector<double>,
+                io_formats::ELL,
+                io_formats::EXP,
+                double>::configure(data, 100, 1000, 4, 4, 1, double(1e-8));
+
+            OperatorList ol(
+                    MGCycleProcessing<Tag_,
+                    methods::CYCLE::V::STATIC,
+                    CG<Tag_, methods::NONE>,
+                    RISmoother<Tag_>,
+                    Restriction<Tag_, methods::PROLMAT>,
+                    Prolongation<Tag_, methods::PROLMAT>,
+                    double>::value(data)
+                    );
+
+            MGSolver<Tag_, Norm<vnt_l_two, true, Tag_> >::value(data, ol);
+
+            std::cout << data.used_iters << std::endl;
+            std::cout << data.used_iters_coarse << std::endl;
+
+            std::string reffile(HONEI_SOURCEDIR);
+            reffile += "/honei/math/testdata/poisson_advanced/sort_0/sol_4";
+            DenseVector<double> ref(VectorIO<io_formats::EXP>::read_vector(reffile, double(0)));
+            double base_digits(3);
+            double additional_digits(2);
+
+            double base_eps(1 / pow(10, base_digits));
+            double add_eps(base_eps / pow(10, additional_digits));
+
+            double m((add_eps - base_eps) / double(4));
+            double b(base_eps - (double(4) * m));
+
+            double eps(m * sizeof(double) + b);
+            eps *= double(3);
+
+            for(unsigned long i(0) ; i < ref.size() ; ++i)
+                TEST_CHECK_EQUAL_WITHIN_EPS(data.x.at(4)[i], ref[i], eps*10);
+        }
+};
+MGSolverTest<tags::CPU> mg_solver_test_cpu("double");

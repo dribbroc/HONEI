@@ -117,6 +117,7 @@ namespace honei
                 }
                 LOGMESSAGE(lc_solver, "CG(NONE) finished in " + stringify(used_iters) + " iterations with defect " + stringify(current_defect));
                 PROFILER_STOP("CGSolver NONE");
+                std::cout << used_iters << " " << max_iters << " " << iterations << std::endl;
                 return x;
             }
     };
