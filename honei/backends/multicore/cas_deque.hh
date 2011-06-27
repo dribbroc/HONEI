@@ -39,9 +39,9 @@ namespace honei
         {
             template <typename T> struct CASDequeElement
             {
-                CASDequeElement<T> * _prev;
-                T _data;
-                CASDequeElement<T> * _next;
+                CASDequeElement<T> * volatile _prev;
+                volatile T _data;
+                CASDequeElement<T> * volatile _next;
 
                 CASDequeElement() :
                     _prev(NULL),
@@ -60,10 +60,10 @@ namespace honei
 
             template <typename T> struct CASDequeEndElement
             {
-                CASDequeElement<T> * _prev;
-                CASDequeElement<T> * _elem;
-                CASDequeElement<T> * _next;
-                int _blocked;
+                CASDequeElement<T> * volatile _prev;
+                CASDequeElement<T> * volatile _elem;
+                CASDequeElement<T> * volatile _next;
+                volatile int _blocked;
 
                 CASDequeEndElement() :
                     _prev(NULL),

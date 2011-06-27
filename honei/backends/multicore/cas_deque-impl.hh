@@ -18,15 +18,15 @@
  */
 
 #include <honei/backends/multicore/cas_deque.hh>
-//#include <iostream>
+#include <iostream>
 
 using namespace honei;
 using namespace honei::mc;
 using namespace honei::mc::intern;
 
-inline bool CAS(int * ptr, int cmp, int val) __attribute__((always_inline));
+inline bool CAS(volatile int * ptr, int cmp, int val) __attribute__((always_inline));
 
-bool CAS(int * ptr, int cmp, int val)
+bool CAS(volatile int * ptr, int cmp, int val)
 {
     return __sync_bool_compare_and_swap(ptr, cmp, val);
 }
@@ -36,7 +36,7 @@ CASDeque<T>::CASDeque() :
     _head(new CASDequeEndElement<T>),
     _tail(new CASDequeEndElement<T>)
 {
-//    std::cout << "Created list with _head = " << _head << " and _tail = " << _tail << std::endl;
+    std::cout << "Created list" << this << " with _head = " << _head << " and _tail = " << _tail << std::endl;
 }
 
 template <typename T>
@@ -54,7 +54,7 @@ void CASDeque<T>::push_back(T & data)
 
     do
     {
-        if (_head->_elem == NULL) // assume zero
+        if (_head->_elem == NULL && _tail->_elem == NULL) // assume zero
         {
             bool blockT = CAS(&_tail->_blocked, 0, 1);
             if (blockT && _tail->_elem == NULL)
@@ -62,11 +62,18 @@ void CASDeque<T>::push_back(T & data)
                 bool blockH = CAS(&_head->_blocked, 0, 1);
                 if (blockH && _head->_elem == NULL)
                 {
+                    /*
+                    if (_head->_next != NULL || _tail->_prev != NULL)
+                    {
+                        std::cout << this << " PB: CORRUPTION ON EMPTY." << std::endl;
+                    }
+                    */
+
                     _head->_elem = e;
                     _head->_next = NULL;
                     _tail->_prev = NULL;
                     _tail->_elem = e;
-//                    std::cout << "push-back on empty" << std::endl;
+//                    std::cout << this << " push-back on empty" << std::endl;
 //                    print();
                     _head->_blocked = 0;
                     _tail->_blocked = 0;
@@ -89,11 +96,17 @@ void CASDeque<T>::push_back(T & data)
         else if (_head->_next == NULL && _tail->_prev == NULL) // assume one
         {
             bool blockT = CAS(&_tail->_blocked, 0, 1);
-            if (blockT && _tail->_elem != NULL)
+            if (blockT && _tail->_elem != NULL && _tail->_prev == NULL)
             {
                 bool blockH = CAS(&_head->_blocked, 0, 1);
                 if (blockH && _head->_elem == _tail->_elem && _head->_next == NULL)
                 {
+                    /*
+                    if (_head->_elem == NULL || _tail->_elem == NULL)
+                    {
+                        std::cout << this << " PB: CORRUPTION ON ONE." << std::endl;
+                    }
+                    */
                     e->_prev = _tail->_elem;
 
                     _head->_elem->_next = e;
@@ -101,8 +114,8 @@ void CASDeque<T>::push_back(T & data)
 
                     _tail->_prev = _head->_elem;
                     _tail->_elem = e;
-//                    std::cout << "push-back on one" << std::endl;
-//                        print(); 
+//                    std::cout << this << " push-back on one" << std::endl;
+//                    print();
                     _head->_blocked = 0;
                     _tail->_blocked = 0;
                     ok = true;
@@ -129,14 +142,20 @@ void CASDeque<T>::push_back(T & data)
                 bool blockH = CAS(&_head->_blocked, 0, 1);
                 if (blockH && _head->_elem != NULL && _head->_elem != _tail->_elem && _head->_next != NULL)
                 {
-                    print();
+                    /*
+                    if (_head->_elem == NULL || _tail->_elem == NULL || _head->_next == NULL || _tail->_prev == NULL)
+                   {
+                        std::cout << this << " PB: CORRUPTION ON ONE." << std::endl;
+                   }
+                    */
+
                     CASDequeElement<T> * old_last = _tail->_elem;
                     old_last->_next = e;
                     e->_prev = old_last;
                     _tail->_elem = e;
                     _tail->_prev = e->_prev;
 
-//                    std::cout << "push-back on more" << std::endl;
+//                    std::cout << this << " push-back on more" << std::endl;
 //                    print();
                     _head->_blocked = 0;
                     _tail->_blocked = 0;
@@ -172,11 +191,11 @@ T CASDeque<T>::pop_front()
     {
         d = NULL;
         retval = 0;
-        if (_head->_elem == NULL) // assume zero
+        if (_head->_elem == NULL && _tail->_elem == NULL) // assume zero
         {
             ok = true; // or should we check???
         }
-        else if (_head->_next == NULL) // assume one
+        else if (_head->_next == NULL && _tail->_prev == NULL) // assume one
         {
             bool blockT = CAS(&_tail->_blocked, 0, 1);
             if (blockT && _tail->_elem != NULL && _tail->_prev == NULL)
@@ -189,7 +208,7 @@ T CASDeque<T>::pop_front()
 
                     _head->_elem = NULL;
                     _tail->_elem = NULL;
-//                    std::cout << "pop-front on one" << std::endl;
+//                    std::cout << this << " pop-front on one" << std::endl;
 //                    print();
                     _head->_blocked = 0;
                     _tail->_blocked = 0;
@@ -210,85 +229,126 @@ T CASDeque<T>::pop_front()
             }
 
         }
-        else // if (h->_next != NULL) // assume >= 2
+        else if (_head->_next == _tail->_elem && _tail->_prev == _head->_elem) // assume = 2
         {
-            if (_tail->_elem != NULL && _head->_next == _tail->_elem && _tail->_prev == _head->_elem) // assume 2
+            bool blockT = CAS(&_tail->_blocked, 0, 1);
+            if (blockT && _tail->_elem != NULL)
             {
-                bool blockT = CAS(&_tail->_blocked, 0, 1);
-                if (blockT && _tail->_elem != NULL)
+                bool blockH = CAS(&_head->_blocked, 0, 1);
+                if (blockH && _head->_elem == _tail->_prev && _head->_next == _tail->_elem)
                 {
-                    bool blockH = CAS(&_head->_blocked, 0, 1);
-                    if (blockH && _head->_elem == _tail->_prev && _head->_next == _tail->_elem)
-                    {
-                        d = _head->_elem;
-                        retval = d->_data;
-                        _head->_elem = _tail->_elem;
-                        _head->_next = NULL;
-                        _tail->_prev = NULL;
-//                        std::cout << "pop-front on two" << std::endl;
-//                        print();
+                    d = _head->_elem;
+                    retval = d->_data;
 
-                        _head->_blocked = 0;
-                        _tail->_blocked = 0;
-                        ok = true;
+                    _head->_elem = _tail->_elem;
+                    _head->_elem->_next = NULL;
+                    _tail->_elem->_prev = NULL;
+                    _head->_next = NULL;
+                    _tail->_prev = NULL;
+//                    std::cout << this << " pop-front on two" << std::endl;
+//                    print();
 
-                    }
-                    else
-                    {
-                        if (blockH)
-                            _head->_blocked = 0;
-
-                        _tail->_blocked = 0;
-                    }
+                    _head->_blocked = 0;
+                    _tail->_blocked = 0;
+                    ok = true;
                 }
                 else
                 {
-                    if (blockT)
-                        _tail->_blocked = 0;
+                    if (blockH)
+                        _head->_blocked = 0;
+
+                    _tail->_blocked = 0;
                 }
             }
-            else if (_tail->_elem != NULL && _head->_next != _tail->_elem && _tail->_prev != _head->_elem) // assume more
+            else
             {
-                bool blockT = CAS(&_tail->_blocked, 0, 1);
-                if (blockT && _tail->_elem != NULL && _tail->_prev != NULL)
+                if (blockT)
+                    _tail->_blocked = 0;
+            }
+        }
+        else if (_head->_next == _tail->_prev) // assume 3
+        {
+            bool blockT = CAS(&_tail->_blocked, 0, 1);
+            if (blockT && _tail->_prev != NULL)
+            {
+                bool blockH = CAS(&_head->_blocked, 0, 1);
+                if (blockH && _head->_next == _tail->_prev)
                 {
-                    bool blockH = CAS(&_head->_blocked, 0, 1);
-                    if (blockH && _head->_elem != NULL && _head->_next != NULL && _head->_next != _tail->_elem && _tail->_prev != _head->_elem)
-                    {
-                        d = _head->_elem;
-                        retval = d->_data;
+                    d = _head->_elem;
+                    retval = d->_data;
 
-                        // Set successor to be new head element
-                        _head->_elem = d->_next;
+                    _head->_elem = _head->_next;
+                    _head->_elem->_prev = NULL;
+//                    _head->_prev = NULL;
+                    _head->_next = _head->_elem->_next;
 
-                        _head->_elem->_prev = NULL; // it had "d" as predecessor
-                        _head->_prev = NULL;        // transfer changes to _head
-                        _head->_next = _head->_elem->_next; // transfer changes to _head
+//                    std::cout << this << " pop-front on three" << std::endl;
+//                    print(); 
 
-//                        std::cout << "pop-front on more" << std::endl;
-//                      print(); 
+                    _head->_blocked = 0;
+                    _tail->_blocked = 0;
+                    ok = true;
 
-                        _head->_blocked = 0;
-                        _tail->_blocked = 0;
-                        ok = true;
-                    }
-                    else
-                    {
-                        if (blockH)
-                            _head->_blocked = 0;
-
-                        _tail->_blocked = 0;
-                    }
                 }
                 else
                 {
-                    if (blockT)
-                        _tail->_blocked = 0;
+                    if (blockH)
+                        _head->_blocked = 0;
+
+                    _tail->_blocked = 0;
                 }
+            }
+            else
+            {
+                if (blockT)
+                    _tail->_blocked = 0;
+            }
+        }
+        else // assume more
+        {
+            bool blockT = CAS(&_tail->_blocked, 0, 1);
+            if (blockT && _tail->_elem != NULL && _tail->_prev != NULL)
+            {
+                bool blockH = CAS(&_head->_blocked, 0, 1);
+                if (blockH && _head->_elem != NULL && _head->_next != _tail->_elem && _head->_next != _tail->_prev)
+                {
+                    d = _head->_elem;
+                    retval = d->_data;
+
+                    // Set successor to be new head element
+                    _head->_elem = d->_next;
+
+                    _head->_elem->_prev = NULL; // it had "d" as predecessor
+                    _head->_prev = NULL;        // transfer changes to _head
+                    _head->_next = _head->_elem->_next; // transfer changes to _head
+
+//                    std::cout << "pop-front on more" << std::endl;
+//                    print();
+
+                    _head->_blocked = 0;
+                    _tail->_blocked = 0;
+                    ok = true;
+                }
+                else
+                {
+                    if (blockH)
+                        _head->_blocked = 0;
+
+                    _tail->_blocked = 0;
+                }
+            }
+            else
+            {
+                if (blockT)
+                    _tail->_blocked = 0;
             }
         }
     } while (! ok);
 
+    /*
+    if (d != 0)
+        std::cout << this << " front: returning " << d << std::endl;
+    */
     delete d;
     return retval;
 }
@@ -304,11 +364,11 @@ T CASDeque<T>::pop_back()
     {
         d = NULL;
         retval = 0;
-        if (_head->_elem == NULL) // assume zero
+        if (_head->_elem == NULL && _tail->_elem == NULL) // assume zero
         {
             ok = true; // or should we check???
         }
-        else if (_head->_next == NULL) // assume one
+        else if (_head->_next == NULL && _tail->_prev == NULL) // assume one
         {
             bool blockT = CAS(&_tail->_blocked, 0, 1);
             if (blockT && _tail->_elem != NULL && _tail->_prev == NULL)
@@ -321,8 +381,8 @@ T CASDeque<T>::pop_back()
 
                     _head->_elem = NULL;
                     _tail->_elem = NULL;
-//                    std::cout << "pop-back on one" << std::endl;
-//                    print();
+                    //std::cout << this << " pop-back on one" << std::endl;
+                    //print();
                     _head->_blocked = 0;
                     _tail->_blocked = 0;
                     ok = true;
@@ -342,84 +402,128 @@ T CASDeque<T>::pop_back()
             }
 
         }
-        else // if (h->_next != NULL) // assume >= 2
+        else if (_head->_next == _tail->_elem && _tail->_prev == _head->_elem) // assume = 2
         {
-            if (_tail->_elem != NULL && _head->_next == _tail->_elem && _tail->_prev == _head->_elem) // assume 2
+            bool blockT = CAS(&_tail->_blocked, 0, 1);
+            if (blockT && _tail->_elem != NULL)
             {
-                bool blockT = CAS(&_tail->_blocked, 0, 1);
-                if (blockT && _tail->_elem != NULL)
+                bool blockH = CAS(&_head->_blocked, 0, 1);
+                if (blockH && _head->_elem == _tail->_prev && _head->_next == _tail->_elem)
                 {
-                    bool blockH = CAS(&_head->_blocked, 0, 1);
-                    if (blockH && _head->_elem == _tail->_prev && _head->_next == _tail->_elem)
-                    {
-                        d = _tail->_elem;
-                        retval = d->_data;
-                        _tail->_elem = _head->_elem;
-                        _head->_next = NULL;
-                        _tail->_prev = NULL;
-//                        std::cout << "pop-back on two" << std::endl;
-//                        print(); 
+                    d = _tail->_elem;
+                    retval = d->_data;
+                    _tail->_elem = _head->_elem;
+                    _tail->_elem->_prev = NULL;
+                    _head->_elem->_next = NULL;
+                    _head->_next = NULL;
+                    _tail->_prev = NULL;
+                    //std::cout << this << " pop-back on two" << std::endl;
+                    //print();
 
-                        _head->_blocked = 0;
-                        _tail->_blocked = 0;
-                        ok = true;
+                    _head->_blocked = 0;
+                    _tail->_blocked = 0;
+                    ok = true;
 
-                    }
-                    else
-                    {
-                        if (blockH)
-                            _head->_blocked = 0;
-
-                        _tail->_blocked = 0;
-                    }
                 }
                 else
                 {
-                    if (blockT)
-                        _tail->_blocked = 0;
+                    if (blockH)
+                        _head->_blocked = 0;
+
+                    _tail->_blocked = 0;
                 }
             }
-            else if (_tail->_elem != NULL && _head->_next != _tail->_elem && _tail->_prev != _head->_elem) // assume more
+            else
             {
-                bool blockT = CAS(&_tail->_blocked, 0, 1);
-                if (blockT && _tail->_elem != NULL && _tail->_prev != NULL)
+                if (blockT)
+                    _tail->_blocked = 0;
+            }
+        }
+        else if (_head->_next == _tail->_prev) // assume 3
+        {
+            bool blockT = CAS(&_tail->_blocked, 0, 1);
+            if (blockT && _tail->_prev != NULL)
+            {
+                bool blockH = CAS(&_head->_blocked, 0, 1);
+                if (blockH && _head->_next == _tail->_prev)
                 {
-                    bool blockH = CAS(&_head->_blocked, 0, 1);
-                    if (blockH && _head->_elem != NULL && _head->_next != NULL && _head->_next != _tail->_elem && _tail->_prev != _head->_next)
-                    {
-                        d = _tail->_elem;
-                        retval = d->_data;
+                    d = _tail->_elem;
+                    retval = d->_data;
 
-                        // Set successor to be new head element
-                        _tail->_elem = d->_prev;
+                    _tail->_elem = _tail->_prev;
+                    _tail->_elem->_next = NULL;
+//                    _tail->_next = NULL;
+                    _tail->_prev = _tail->_elem->_prev;
 
-                        _tail->_elem->_next = NULL; // it had "d" as successor
-                        _tail->_next = NULL;        // transfer changes to _head
-                        _tail->_prev = _tail->_elem->_prev; // transfer changes to _head
+                    //std::cout << this << " pop-back on three" << std::endl;
+                    //print();
 
-//                        std::cout << "pop-back on more" << std::endl;
-//                        print(); 
+                    _head->_blocked = 0;
+                    _tail->_blocked = 0;
+                    ok = true;
 
-                        _head->_blocked = 0;
-                        _tail->_blocked = 0;
-                        ok = true;
-                    }
-                    else
-                    {
-                        if (blockH)
-                            _head->_blocked = 0;
-
-                        _tail->_blocked = 0;
-                    }
                 }
                 else
                 {
-                    if (blockT)
-                        _tail->_blocked = 0;
+                    if (blockH)
+                        _head->_blocked = 0;
+
+                    _tail->_blocked = 0;
                 }
+            }
+            else
+            {
+                if (blockT)
+                    _tail->_blocked = 0;
+            }
+
+        }
+        else // assume more
+        {
+            // it must be somehow made sure that there is no NULL/inconsistent case here
+            bool blockT = CAS(&_tail->_blocked, 0, 1);
+            if (blockT && _tail->_elem != NULL && _tail->_prev != NULL)
+            {
+                bool blockH = CAS(&_head->_blocked, 0, 1);
+                if (blockH && _head->_elem != NULL && _head->_next != _tail->_elem && _head->_next != _tail->_prev)
+                {
+                    d = _tail->_elem;
+                    retval = d->_data;
+
+                        // Set successor to be new head element
+                    _tail->_elem = d->_prev;
+
+                    _tail->_elem->_next = NULL; // it had "d" as successor
+                    _tail->_next = NULL;        // transfer changes to _head
+                    _tail->_prev = _tail->_elem->_prev; // transfer changes to _head
+
+//                    std::cout << "pop-back on more" << std::endl;
+//                    print();
+
+                    _head->_blocked = 0;
+                    _tail->_blocked = 0;
+                    ok = true;
+                }
+                else
+                {
+                    if (blockH)
+                        _head->_blocked = 0;
+
+                    _tail->_blocked = 0;
+                }
+            }
+            else
+            {
+                if (blockT)
+                    _tail->_blocked = 0;
             }
         }
     } while (! ok);
+
+    /*
+    if (d != 0)
+        std::cout << this << " back: returning " << d << std::endl;
+    */
 
     delete d;
     return retval;
@@ -428,7 +532,7 @@ T CASDeque<T>::pop_back()
 template <typename T>
 void CASDeque<T>::print()
 {
-    /*
+    std::cout << "List " << this << std::endl;
     std::cout << "head = " << _head << " - elem = " << _head->_elem << " - next = " << _head->_next << std::endl;
     std::cout << "tail = " << _tail << " - elem = " << _tail->_elem << " - prev = " << _tail->_prev << std::endl;
 
@@ -446,5 +550,5 @@ void CASDeque<T>::print()
         std::cout << cur << " -> ";
     }
     std::cout << std::endl;
-    */
+
 }
