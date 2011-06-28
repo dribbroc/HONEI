@@ -1,6 +1,6 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 /*
- * Copyright (c) 2009, 2010 Sven Mallach <mallach@honei.org>
+ * Copyright (c) 2009, 2010, 2011 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -70,17 +70,41 @@ namespace honei
         {
             Mutex * const mutex;
             ConditionVariable * const barrier;
+            Mutex * const steal_mutex; // Currently only used with work stealing
 
             PoolSyncData() :
                 mutex(new Mutex),
-                barrier(new ConditionVariable)
+                barrier(new ConditionVariable),
+                steal_mutex(new Mutex)
             {
             }
 
             ~PoolSyncData()
             {
+                delete steal_mutex;
                 delete barrier;
                 delete mutex;
+            }
+        };
+
+        struct ThreadData
+        {
+            volatile bool terminate;
+
+            // Mutex for making the local task list secure
+            // currently only used with work stealing with std::deque
+            // as a work around
+            Mutex * const local_mutex;
+
+            ThreadData() :
+                terminate(false),
+                local_mutex(new Mutex)
+            {
+            }
+
+            ~ThreadData()
+            {
+                delete local_mutex;
             }
         };
     }

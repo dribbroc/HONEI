@@ -45,8 +45,6 @@ namespace honei
 
                 virtual void operator() () = 0;
 
-                virtual void stop() = 0;
-
                 virtual unsigned tid() const = 0;
         };
 
@@ -58,14 +56,12 @@ namespace honei
 
             public:
 
-                AffinityThreadFunction(PoolSyncData * const psync, std::deque<ThreadTask *> * const list, unsigned pool_id, unsigned sched_id);
+                AffinityThreadFunction(PoolSyncData * const psync, ThreadData * const tdata, std::deque<ThreadTask *> * const list, unsigned pool_id, unsigned sched_id);
 
                 virtual ~AffinityThreadFunction();
 
                 /// The threads' main function
                 virtual void operator() ();
-
-                virtual void stop();
 
                 virtual unsigned tid() const;
 
@@ -82,14 +78,30 @@ namespace honei
 
             public:
 
-                SimpleThreadFunction(PoolSyncData * const psync, CASDeque<ThreadTask *> * const list, unsigned pool_id);
+                SimpleThreadFunction(PoolSyncData * const psync, ThreadData * const tdata, CASDeque<ThreadTask *> * const list, unsigned pool_id);
 
                 virtual ~SimpleThreadFunction();
 
                 /// The threads' main function
                 virtual void operator() ();
 
-                virtual void stop();
+                virtual unsigned tid() const;
+        };
+
+        template <> class SimpleThreadFunction<ConcurrentDeque<ThreadTask *> > :
+            public ThreadFunctionBase,
+            public PrivateImplementationPattern<SimpleThreadFunction<ConcurrentDeque<ThreadTask *> >, Shared>
+        {
+            private:
+
+            public:
+
+                SimpleThreadFunction(PoolSyncData * const psync, ThreadData * const tdata, ConcurrentDeque<ThreadTask *> * const list, unsigned pool_id);
+
+                virtual ~SimpleThreadFunction();
+
+                /// The threads' main function
+                virtual void operator() ();
 
                 virtual unsigned tid() const;
         };
@@ -102,14 +114,12 @@ namespace honei
 
             public:
 
-                SimpleThreadFunction(PoolSyncData * const psync, std::deque<ThreadTask *> * const list, unsigned pool_id);
+                SimpleThreadFunction(PoolSyncData * const psync, ThreadData * const tdata, std::deque<ThreadTask *> * const list, unsigned pool_id);
 
                 virtual ~SimpleThreadFunction();
 
                 /// The threads' main function
                 virtual void operator() ();
-
-                virtual void stop();
 
                 virtual unsigned tid() const;
         };
@@ -124,20 +134,44 @@ namespace honei
 
             public:
 
-                WorkStealingThreadFunction(PoolSyncData * const psync, unsigned pool_id, unsigned sched_id,
-                        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > *> > & threads,
-                        unsigned num_thr, volatile bool & terminate, Mutex * const steal_mutex);
+                WorkStealingThreadFunction(PoolSyncData * const psync, ThreadData * const tdata, unsigned pool_id, unsigned sched_id,
+                        const std::vector<mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > *> & threads,
+                        unsigned num_thr, volatile bool & terminate);
 
                 virtual ~WorkStealingThreadFunction();
 
                 /// The threads' main function
                 virtual void operator() ();
 
-                virtual void stop();
-
                 void enqueue(mc::ThreadTask * task);
 
                 bool steal(std::deque<mc::ThreadTask *> & thief_list);
+
+                virtual unsigned tid() const;
+
+                unsigned pool_id() const;
+        };
+
+        template <> class WorkStealingThreadFunction<ConcurrentDeque<mc::ThreadTask *> > :
+            public ThreadFunctionBase,
+            public PrivateImplementationPattern<WorkStealingThreadFunction<ConcurrentDeque<mc::ThreadTask *> >, Shared>
+        {
+            private:
+
+            public:
+
+                WorkStealingThreadFunction(PoolSyncData * const psync, ThreadData * const tdata, unsigned pool_id, unsigned sched_id,
+                        const std::vector<mc::WorkStealingThreadFunction<ConcurrentDeque<mc::ThreadTask *> > *> & threads,
+                        unsigned num_thr, volatile bool & terminate);
+
+                virtual ~WorkStealingThreadFunction();
+
+                /// The threads' main function
+                virtual void operator() ();
+
+                void enqueue(mc::ThreadTask * task);
+
+                bool steal(mc::ConcurrentDeque<mc::ThreadTask *> & thief_list);
 
                 virtual unsigned tid() const;
 
@@ -152,16 +186,14 @@ namespace honei
 
             public:
 
-                WorkStealingThreadFunction(PoolSyncData * const psync, unsigned pool_id, unsigned sched_id,
-                        const std::vector<std::pair<Thread *, mc::WorkStealingThreadFunction<CASDeque<mc::ThreadTask *> > *> > & threads,
-                        unsigned num_thr, volatile bool & terminate, Mutex * const steal_mutex);
+                WorkStealingThreadFunction(PoolSyncData * const psync, ThreadData * const tdata, unsigned pool_id, unsigned sched_id,
+                        const std::vector<mc::WorkStealingThreadFunction<CASDeque<mc::ThreadTask *> > *> & threads,
+                        unsigned num_thr, volatile bool & terminate);
 
                 virtual ~WorkStealingThreadFunction();
 
                 /// The threads' main function
                 virtual void operator() ();
-
-                virtual void stop();
 
                 void enqueue(mc::ThreadTask * task);
 
