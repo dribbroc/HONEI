@@ -189,7 +189,7 @@ class Q1MatrixDenseVectorProductTest :
         virtual void run() const
         {
             unsigned long size;
-            for (unsigned long level(1) ; level <= 10 ; ++level)
+            for (unsigned long level(1) ; level <= 8 ; ++level)
             {
                 size  = (unsigned long)pow((pow(2, level) + 1), 2);
                 unsigned long num_limit(311); //value of used elements will be <= num_limit* size
@@ -290,7 +290,7 @@ class Q1MatrixDenseVectorProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size(1025ul * 1025);
+            unsigned long size(513ul * 513);
             unsigned long num_limit(311); //value of used elements will be <= num_limit* size
 
             DenseVector<DataType_> dv1(size, DataType_(1));
@@ -788,10 +788,10 @@ class SparseMatrixELLDenseVectorProductTest :
                     Configuration::instance()->set_value("ell::threads", threads);
                     SparseMatrixELL<DataType_> sm0(sms);
                     DenseVector<DataType_> dv1(size + 3, DataType_(4));
-                    DenseVector<DataType_> result(size, DataType_(4711));
+                    DenseVector<DataType_> prod(size, DataType_(4711));
                     dv1[0] = 1;
                     dv1[1] = 2;
-                    DenseVector<DataType_> prod(Product<Tag_>::value(result, sm0, dv1));
+                    Product<Tag_>::value(prod, sm0, dv1);
                     DenseVector<DataType_> prod_ref(Product<>::value(sms, dv1));
 
                     prod.lock(lm_read_only);
@@ -854,10 +854,10 @@ class SparseMatrixELLDenseVectorProductQuickTest :
                 Configuration::instance()->set_value("ell::threads", threads);
                 SparseMatrixELL<DataType_> sm0(sms);
                 DenseVector<DataType_> dv1(size + 3, DataType_(4));
-                DenseVector<DataType_> result(size, DataType_(4711));
+                DenseVector<DataType_> prod(size, DataType_(4711));
                 dv1[0] = 1;
                 dv1[1] = 2;
-                DenseVector<DataType_> prod(Product<Tag_>::value(result, sm0, dv1));
+                Product<Tag_>::value(prod, sm0, dv1);
                 DenseVector<DataType_> prod_ref(Product<tags::CPU>::value(sms, dv1));
 
                 prod.lock(lm_read_only);

@@ -58,6 +58,56 @@ namespace honei
             a.Ax().unlock(lm_read_only);
             a.Arl().unlock(lm_read_only);
         }
+
+        template <typename Tag_, typename DT_>
+        void common_defect(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & rhs, const BandedMatrixQ1<DT_> & a, const DenseVectorContinuousBase<DT_> & b)
+        {
+            if (b.size() != a.columns())
+            {
+                throw VectorSizeDoesNotMatch(b.size(), a.columns());
+            }
+            if (result.size() != a.rows())
+            {
+                throw VectorSizeDoesNotMatch(result.size(), a.rows());
+            }
+            if (b.size() != rhs.size())
+            {
+                throw VectorSizeDoesNotMatch(b.size(), rhs.size());
+            }
+
+            void * rhs_cl(rhs.lock(lm_read_only, Tag_::memory_value));
+            void * b_cl(b.lock(lm_read_only, Tag_::memory_value));
+            void * result_cl(result.lock(lm_write_only, Tag_::memory_value));
+            void * ll_cl(a.band(LL).lock(lm_read_only, Tag_::memory_value));
+            void * ld_cl(a.band(LD).lock(lm_read_only, Tag_::memory_value));
+            void * lu_cl(a.band(LU).lock(lm_read_only, Tag_::memory_value));
+            void * dl_cl(a.band(DL).lock(lm_read_only, Tag_::memory_value));
+            void * dd_cl(a.band(DD).lock(lm_read_only, Tag_::memory_value));
+            void * du_cl(a.band(DU).lock(lm_read_only, Tag_::memory_value));
+            void * ul_cl(a.band(UL).lock(lm_read_only, Tag_::memory_value));
+            void * ud_cl(a.band(UD).lock(lm_read_only, Tag_::memory_value));
+            void * uu_cl(a.band(UU).lock(lm_read_only, Tag_::memory_value));
+
+            std::string opname("defect_q1_");
+            opname += typeid(DT_).name();
+            defect_q1<DT_>(ll_cl, ld_cl, lu_cl,
+                    dl_cl, dd_cl, du_cl,
+                    ul_cl, ud_cl, uu_cl,
+                    rhs_cl, b_cl, result_cl, a.size(), a.root(), tag_to_device<Tag_>(), opname);
+
+            rhs.unlock(lm_read_only);
+            result.unlock(lm_write_only);
+            b.unlock(lm_read_only);
+            a.band(LL).unlock(lm_read_only);
+            a.band(LD).unlock(lm_read_only);
+            a.band(LU).unlock(lm_read_only);
+            a.band(DL).unlock(lm_read_only);
+            a.band(DD).unlock(lm_read_only);
+            a.band(DU).unlock(lm_read_only);
+            a.band(UL).unlock(lm_read_only);
+            a.band(UD).unlock(lm_read_only);
+            a.band(UU).unlock(lm_read_only);
+        }
     }
 }
 
@@ -120,3 +170,61 @@ DenseVectorContinuousBase<DT_> & Defect<tags::OpenCL::GPU>::value(DenseVectorCon
 }
 template DenseVectorContinuousBase<float> & Defect<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &, const SparseMatrixELL<float> &, const DenseVectorContinuousBase<float> &);
 template DenseVectorContinuousBase<double> & Defect<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &, const SparseMatrixELL<double> &, const DenseVectorContinuousBase<double> &);
+
+template <typename DT_>
+DenseVector<DT_> Defect<tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<DT_> & rhs,
+        const BandedMatrixQ1<DT_> & a,
+        const DenseVectorContinuousBase<DT_> & b)
+{
+    CONTEXT("When calculating Defect<DT_> (OpenCL CPU):");
+    PROFILER_START("Defect tags::OpenCL::CPU");
+    DenseVector<DT_> result(a.rows());
+    opencl::common_defect<tags::OpenCL::CPU>(result, rhs, a, b);
+    PROFILER_STOP("Defect tags::OpenCL::CPU");
+    return result;
+}
+template DenseVector<float> Defect<tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<float> &, const BandedMatrixQ1<float> &, const DenseVectorContinuousBase<float> &);
+template DenseVector<double> Defect<tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<double> &, const BandedMatrixQ1<double> &, const DenseVectorContinuousBase<double> &);
+
+template <typename DT_>
+DenseVector<DT_> Defect<tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<DT_> & rhs,
+        const BandedMatrixQ1<DT_> & a,
+        const DenseVectorContinuousBase<DT_> & b)
+{
+    CONTEXT("When calculating Defect<DT_> (OpenCL GPU):");
+    PROFILER_START("Defect tags::OpenCL::GPU");
+    DenseVector<DT_> result(a.rows());
+    opencl::common_defect<tags::OpenCL::GPU>(result, rhs, a, b);
+    PROFILER_STOP("Defect tags::OpenCL::GPU");
+    return result;
+}
+template DenseVector<float> Defect<tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<float> &, const BandedMatrixQ1<float> &, const DenseVectorContinuousBase<float> &);
+template DenseVector<double> Defect<tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<double> &, const BandedMatrixQ1<double> &, const DenseVectorContinuousBase<double> &);
+
+template <typename DT_>
+DenseVectorContinuousBase<DT_> & Defect<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & rhs,
+        const BandedMatrixQ1<DT_> & a,
+        const DenseVectorContinuousBase<DT_> & b)
+{
+    CONTEXT("When calculating Defect<DT_> (OpenCL CPU):");
+    PROFILER_START("Defect tags::OpenCL::CPU");
+    opencl::common_defect<tags::OpenCL::CPU>(result, rhs, a, b);
+    PROFILER_STOP("Defect tags::OpenCL::CPU");
+    return result;
+}
+template DenseVectorContinuousBase<float> & Defect<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &, const BandedMatrixQ1<float> &, const DenseVectorContinuousBase<float> &);
+template DenseVectorContinuousBase<double> & Defect<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &, const BandedMatrixQ1<double> &, const DenseVectorContinuousBase<double> &);
+
+template <typename DT_>
+DenseVectorContinuousBase<DT_> & Defect<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & rhs,
+        const BandedMatrixQ1<DT_> & a,
+        const DenseVectorContinuousBase<DT_> & b)
+{
+    CONTEXT("When calculating Defect<DT_> (OpenCL GPU):");
+    PROFILER_START("Defect tags::OpenCL::GPU");
+    opencl::common_defect<tags::OpenCL::GPU>(result, rhs, a, b);
+    PROFILER_STOP("Defect tags::OpenCL::GPU");
+    return result;
+}
+template DenseVectorContinuousBase<float> & Defect<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &, const BandedMatrixQ1<float> &, const DenseVectorContinuousBase<float> &);
+template DenseVectorContinuousBase<double> & Defect<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &, const BandedMatrixQ1<double> &, const DenseVectorContinuousBase<double> &);

@@ -180,3 +180,239 @@ __kernel void defect_smell_dv_d(__global double * rhs, __global double * x, __gl
             }
 }
 #endif
+
+#ifdef __CPU__
+__kernel void defect_q1_f(__global float* ll, __global float* ld, __global float* lu,
+                                    __global float* dl, __global float * dd, __global float* du,
+                                    __global float* ul, __global float* ud, __global float* uu,
+                                    __global float * rhs, __global float * x, __global float * y, unsigned long n, unsigned long m,
+                                    __local float * smvf_cache)
+{
+
+unsigned long idx = get_global_id(0);
+
+// runs from 0 to blockDim.x-1
+unsigned long lindex = get_local_id(0);
+
+__local float* Dcache = smvf_cache;
+__local float* Lcache = smvf_cache + get_local_size(0) + 2;
+__local float* Ucache = smvf_cache + 2 * (get_local_size(0) + 2);
+
+// prefetch chunks from iteration vector
+//
+//
+// data needed for DD, DU, DL: each thread loads one element, the first and last one load the border cases
+// x_0 ... x_blockdim-1 into c_1...c_blockdim
+Dcache[lindex + 1] = x[idx];
+if (idx  >= m) Lcache[lindex + 1] = x[idx - m];
+if (idx + m < n) Ucache[lindex + 1] = x[idx + m];
+if (lindex == 0)
+{
+// x_-1 in c_0
+if (get_local_size(0) * get_group_id(0) - 1 < n) Dcache[0] = x[get_local_size(0) * get_group_id(0) - 1];
+if (get_local_size(0) * get_group_id(0) - m - 1 < n) Lcache[0] = x[get_local_size(0) * get_group_id(0) - m - 1];
+if (get_local_size(0) * get_group_id(0) + m - 1 < n) Ucache[0] = x[get_local_size(0) * get_group_id(0) + m - 1];
+}
+if (lindex == get_local_size(0) - 1)
+{
+// x_blockdim in c_blockdim+1
+if (get_local_size(0) * (get_group_id(0) + 1) < n) Dcache[get_local_size(0) + 1] = x[get_local_size(0) * (get_group_id(0) + 1)];
+if (get_local_size(0) * (get_group_id(0) + 1) - m < n) Lcache[get_local_size(0) + 1] = x[get_local_size(0) * (get_group_id(0) + 1) - m];
+if (get_local_size(0) * (get_group_id(0) + 1) + m  < n) Ucache[get_local_size(0) + 1] = x[get_local_size(0) * (get_group_id(0) + 1) + m];
+}
+
+// now, compute
+if (idx < n)
+{
+float ytemp1 = dd[idx] * x[idx];
+if (idx > 0) ytemp1 += dl[idx] * x[idx-1];
+if (idx < n - 1) ytemp1 += du[idx] * x[idx+1];
+
+if (idx > m) ytemp1 += ll[idx] * x[idx-m-1];
+if (idx > m - 1) ytemp1 += ld[idx] * x[idx-m];
+if (idx > m - 2) ytemp1 += lu[idx] * x[idx-m+1];
+
+if (idx < n - m + 1) ytemp1 += ul[idx] * x[idx + m - 1];
+if (idx < n - m) ytemp1 += ud[idx] * x[idx + m];;
+if (idx < n - m - 1) ytemp1 += uu[idx] * x[idx + m + 1];
+y[idx] = rhs[idx] - ytemp1;
+}
+}
+
+__kernel void defect_q1_d(__global double* ll, __global double* ld, __global double* lu,
+                                    __global double* dl, __global double * dd, __global double* du,
+                                    __global double* ul, __global double* ud, __global double* uu,
+                                    __global double * rhs, __global double * x, __global double * y, unsigned long n, unsigned long m,
+                                    __local double * smvf_cache)
+{
+
+unsigned long idx = get_global_id(0);
+
+// runs from 0 to blockDim.x-1
+unsigned long lindex = get_local_id(0);
+
+__local double* Dcache = smvf_cache;
+__local double* Lcache = smvf_cache + get_local_size(0) + 2;
+__local double* Ucache = smvf_cache + 2 * (get_local_size(0) + 2);
+
+// prefetch chunks from iteration vector
+//
+//
+// data needed for DD, DU, DL: each thread loads one element, the first and last one load the border cases
+// x_0 ... x_blockdim-1 into c_1...c_blockdim
+Dcache[lindex + 1] = x[idx];
+if (idx  >= m) Lcache[lindex + 1] = x[idx - m];
+if (idx + m < n) Ucache[lindex + 1] = x[idx + m];
+if (lindex == 0)
+{
+// x_-1 in c_0
+if (get_local_size(0) * get_group_id(0) - 1 < n) Dcache[0] = x[get_local_size(0) * get_group_id(0) - 1];
+if (get_local_size(0) * get_group_id(0) - m - 1 < n) Lcache[0] = x[get_local_size(0) * get_group_id(0) - m - 1];
+if (get_local_size(0) * get_group_id(0) + m - 1 < n) Ucache[0] = x[get_local_size(0) * get_group_id(0) + m - 1];
+}
+if (lindex == get_local_size(0) - 1)
+{
+// x_blockdim in c_blockdim+1
+if (get_local_size(0) * (get_group_id(0) + 1) < n) Dcache[get_local_size(0) + 1] = x[get_local_size(0) * (get_group_id(0) + 1)];
+if (get_local_size(0) * (get_group_id(0) + 1) - m < n) Lcache[get_local_size(0) + 1] = x[get_local_size(0) * (get_group_id(0) + 1) - m];
+if (get_local_size(0) * (get_group_id(0) + 1) + m  < n) Ucache[get_local_size(0) + 1] = x[get_local_size(0) * (get_group_id(0) + 1) + m];
+}
+
+// now, compute
+if (idx < n)
+{
+double ytemp1 = dd[idx] * x[idx];
+if (idx > 0) ytemp1 += dl[idx] * x[idx-1];
+if (idx < n - 1) ytemp1 += du[idx] * x[idx+1];
+
+if (idx > m) ytemp1 += ll[idx] * x[idx-m-1];
+if (idx > m - 1) ytemp1 += ld[idx] * x[idx-m];
+if (idx > m - 2) ytemp1 += lu[idx] * x[idx-m+1];
+
+if (idx < n - m + 1) ytemp1 += ul[idx] * x[idx + m - 1];
+if (idx < n - m) ytemp1 += ud[idx] * x[idx + m];;
+if (idx < n - m - 1) ytemp1 += uu[idx] * x[idx + m + 1];
+y[idx] = rhs[idx] - ytemp1;
+}
+}
+
+#else
+
+__kernel void defect_q1_f(__global float* ll, __global float* ld, __global float* lu,
+                                    __global float* dl, __global float * dd, __global float* du,
+                                    __global float* ul, __global float* ud, __global float* uu,
+                                    __global float * rhs, __global float * x, __global float * y, unsigned long n, unsigned long m,
+                                    __local float * smvf_cache)
+{
+
+unsigned long idx = get_global_id(0);
+
+// runs from 0 to blockDim.x-1
+unsigned long lindex = get_local_id(0);
+
+__local float* Dcache = smvf_cache;
+__local float* Lcache = smvf_cache + get_local_size(0) + 2;
+__local float* Ucache = smvf_cache + 2 * (get_local_size(0) + 2);
+
+// prefetch chunks from iteration vector
+//
+//
+// data needed for DD, DU, DL: each thread loads one element, the first and last one load the border cases
+// x_0 ... x_blockdim-1 into c_1...c_blockdim
+Dcache[lindex + 1] = x[idx];
+if (idx  >= m) Lcache[lindex + 1] = x[idx - m];
+if (idx + m < n) Ucache[lindex + 1] = x[idx + m];
+if (lindex == 0)
+{
+// x_-1 in c_0
+if (get_local_size(0) * get_group_id(0) - 1 < n) Dcache[0] = x[get_local_size(0) * get_group_id(0) - 1];
+if (get_local_size(0) * get_group_id(0) - m - 1 < n) Lcache[0] = x[get_local_size(0) * get_group_id(0) - m - 1];
+if (get_local_size(0) * get_group_id(0) + m - 1 < n) Ucache[0] = x[get_local_size(0) * get_group_id(0) + m - 1];
+}
+if (lindex == get_local_size(0) - 1)
+{
+// x_blockdim in c_blockdim+1
+if (get_local_size(0) * (get_group_id(0) + 1) < n) Dcache[get_local_size(0) + 1] = x[get_local_size(0) * (get_group_id(0) + 1)];
+if (get_local_size(0) * (get_group_id(0) + 1) - m < n) Lcache[get_local_size(0) + 1] = x[get_local_size(0) * (get_group_id(0) + 1) - m];
+if (get_local_size(0) * (get_group_id(0) + 1) + m  < n) Ucache[get_local_size(0) + 1] = x[get_local_size(0) * (get_group_id(0) + 1) + m];
+}
+
+mem_fence(CLK_LOCAL_MEM_FENCE);
+
+// now, compute
+if (idx < n)
+{
+float ytemp1 = dd[idx] * Dcache[lindex + 1];
+if (idx > 0) ytemp1 += dl[idx] * Dcache[lindex];
+if (idx < n - 1) ytemp1 += du[idx] * Dcache[lindex + 2];
+
+if (idx > m) ytemp1 += ll[idx] * Lcache[lindex];
+if (idx > m - 1) ytemp1 += ld[idx] * Lcache[lindex + 1];
+if (idx > m - 2) ytemp1 += lu[idx] * Lcache[lindex + 2];
+
+if (idx < n - m + 1) ytemp1 += ul[idx] * Ucache[lindex];
+if (idx < n - m) ytemp1 += ud[idx] * Ucache[lindex + 1];
+if (idx < n - m - 1) ytemp1 += uu[idx] * Ucache[lindex + 2];
+y[idx] = rhs[idx] - ytemp1;
+}
+}
+
+__kernel void defect_q1_d(__global double* ll, __global double* ld, __global double* lu,
+                                    __global double* dl, __global double * dd, __global double* du,
+                                    __global double* ul, __global double* ud, __global double* uu,
+                                    __global double * rhs, __global double * x, __global double * y, unsigned long n, unsigned long m,
+                                    __local double * smvf_cache)
+{
+
+unsigned long idx = get_global_id(0);
+
+// runs from 0 to blockDim.x-1
+unsigned long lindex = get_local_id(0);
+
+__local double* Dcache = smvf_cache;
+__local double* Lcache = smvf_cache + get_local_size(0) + 2;
+__local double* Ucache = smvf_cache + 2 * (get_local_size(0) + 2);
+
+// prefetch chunks from iteration vector
+//
+//
+// data needed for DD, DU, DL: each thread loads one element, the first and last one load the border cases
+// x_0 ... x_blockdim-1 into c_1...c_blockdim
+Dcache[lindex + 1] = x[idx];
+if (idx  >= m) Lcache[lindex + 1] = x[idx - m];
+if (idx + m < n) Ucache[lindex + 1] = x[idx + m];
+if (lindex == 0)
+{
+// x_-1 in c_0
+if (get_local_size(0) * get_group_id(0) - 1 < n) Dcache[0] = x[get_local_size(0) * get_group_id(0) - 1];
+if (get_local_size(0) * get_group_id(0) - m - 1 < n) Lcache[0] = x[get_local_size(0) * get_group_id(0) - m - 1];
+if (get_local_size(0) * get_group_id(0) + m - 1 < n) Ucache[0] = x[get_local_size(0) * get_group_id(0) + m - 1];
+}
+if (lindex == get_local_size(0) - 1)
+{
+// x_blockdim in c_blockdim+1
+if (get_local_size(0) * (get_group_id(0) + 1) < n) Dcache[get_local_size(0) + 1] = x[get_local_size(0) * (get_group_id(0) + 1)];
+if (get_local_size(0) * (get_group_id(0) + 1) - m < n) Lcache[get_local_size(0) + 1] = x[get_local_size(0) * (get_group_id(0) + 1) - m];
+if (get_local_size(0) * (get_group_id(0) + 1) + m  < n) Ucache[get_local_size(0) + 1] = x[get_local_size(0) * (get_group_id(0) + 1) + m];
+}
+
+mem_fence(CLK_LOCAL_MEM_FENCE);
+
+// now, compute
+if (idx < n)
+{
+double ytemp1 = dd[idx] * Dcache[lindex + 1];
+if (idx > 0) ytemp1 += dl[idx] * Dcache[lindex];
+if (idx < n - 1) ytemp1 += du[idx] * Dcache[lindex + 2];
+
+if (idx > m) ytemp1 += ll[idx] * Lcache[lindex];
+if (idx > m - 1) ytemp1 += ld[idx] * Lcache[lindex + 1];
+if (idx > m - 2) ytemp1 += lu[idx] * Lcache[lindex + 2];
+
+if (idx < n - m + 1) ytemp1 += ul[idx] * Ucache[lindex];
+if (idx < n - m) ytemp1 += ud[idx] * Ucache[lindex + 1];
+if (idx < n - m - 1) ytemp1 += uu[idx] * Ucache[lindex + 2];
+y[idx] = rhs[idx] - ytemp1;
+}
+}
+#endif

@@ -66,6 +66,12 @@ namespace honei
         void defect_smell_dv(void * rhs, void * x, void * y, void * Aj, void * Ax, void * Arl,
                 unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row,
                 unsigned long stride, unsigned long threads, cl_device_type type, std::string function);
+
+        template <typename DT_>
+        void defect_q1(void * ll, void * ld, void * lu,
+                void * dl, void * dd, void *du,
+                void * ul, void * ud, void *uu, void * rhs, void * x, void * y,
+                unsigned long size, unsigned long m, cl_device_type type, std::string function);
     }
 }
 #endif

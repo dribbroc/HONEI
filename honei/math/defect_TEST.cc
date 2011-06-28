@@ -279,3 +279,11 @@ Q1MatrixDenseVectorDefectTest<tags::GPU::CUDA, float> cuda_q1_defect_test_float(
 Q1MatrixDenseVectorDefectTest<tags::GPU::CUDA, double> cuda_q1_defect_test_double("double");
 #endif
 #endif
+#ifdef HONEI_OPENCL
+Q1MatrixDenseVectorDefectTest<tags::OpenCL::CPU, float> ocl_cpu_q1_defect_test_float("float");
+Q1MatrixDenseVectorDefectTest<tags::OpenCL::CPU, double> ocl_cpu_q1_defect_test_double("double");
+Q1MatrixDenseVectorDefectTest<tags::OpenCL::GPU, float> ocl_gpu_q1_defect_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+Q1MatrixDenseVectorDefectTest<tags::OpenCL::GPU, double> ocl_gpu_q1_defect_test_double("double");
+#endif
+#endif
