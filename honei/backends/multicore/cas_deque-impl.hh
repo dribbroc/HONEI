@@ -18,7 +18,7 @@
  */
 
 #include <honei/backends/multicore/cas_deque.hh>
-#include <iostream>
+//#include <iostream>
 
 using namespace honei;
 using namespace honei::mc;
@@ -36,7 +36,7 @@ CASDeque<T>::CASDeque() :
     _head(new CASDequeEndElement<T>),
     _tail(new CASDequeEndElement<T>)
 {
-    std::cout << "Created list" << this << " with _head = " << _head << " and _tail = " << _tail << std::endl;
+//    std::cout << "Created list" << this << " with _head = " << _head << " and _tail = " << _tail << std::endl;
 }
 
 template <typename T>
@@ -62,13 +62,6 @@ void CASDeque<T>::push_back(T & data)
                 bool blockH = CAS(&_head->_blocked, 0, 1);
                 if (blockH && _head->_elem == NULL)
                 {
-                    /*
-                    if (_head->_next != NULL || _tail->_prev != NULL)
-                    {
-                        std::cout << this << " PB: CORRUPTION ON EMPTY." << std::endl;
-                    }
-                    */
-
                     _head->_elem = e;
                     _head->_next = NULL;
                     _tail->_prev = NULL;
@@ -101,12 +94,6 @@ void CASDeque<T>::push_back(T & data)
                 bool blockH = CAS(&_head->_blocked, 0, 1);
                 if (blockH && _head->_elem == _tail->_elem && _head->_next == NULL)
                 {
-                    /*
-                    if (_head->_elem == NULL || _tail->_elem == NULL)
-                    {
-                        std::cout << this << " PB: CORRUPTION ON ONE." << std::endl;
-                    }
-                    */
                     e->_prev = _tail->_elem;
 
                     _head->_elem->_next = e;
@@ -139,16 +126,9 @@ void CASDeque<T>::push_back(T & data)
             bool blockT = CAS(&_tail->_blocked, 0, 1);
             if (blockT && _tail->_elem != NULL && _tail->_prev != NULL)
             {
-                bool blockH = CAS(&_head->_blocked, 0, 1);
-                if (blockH && _head->_elem != NULL && _head->_elem != _tail->_elem && _head->_next != NULL)
+//                bool blockH = CAS(&_head->_blocked, 0, 1);
+                if (/*blockH &&*/ _head->_elem != NULL && _head->_elem != _tail->_elem && _head->_next != NULL)
                 {
-                    /*
-                    if (_head->_elem == NULL || _tail->_elem == NULL || _head->_next == NULL || _tail->_prev == NULL)
-                   {
-                        std::cout << this << " PB: CORRUPTION ON ONE." << std::endl;
-                   }
-                    */
-
                     CASDequeElement<T> * old_last = _tail->_elem;
                     old_last->_next = e;
                     e->_prev = old_last;
@@ -157,14 +137,14 @@ void CASDeque<T>::push_back(T & data)
 
 //                    std::cout << this << " push-back on more" << std::endl;
 //                    print();
-                    _head->_blocked = 0;
+//                    _head->_blocked = 0;
                     _tail->_blocked = 0;
                     ok = true;
                 }
                 else
                 {
-                    if (blockH)
-                        _head->_blocked = 0;
+//                    if (blockH)
+//                        _head->_blocked = 0;
 
                     _tail->_blocked = 0;
                 }
@@ -306,8 +286,8 @@ T CASDeque<T>::pop_front()
         }
         else // assume more
         {
-            bool blockT = CAS(&_tail->_blocked, 0, 1);
-            if (blockT && _tail->_elem != NULL && _tail->_prev != NULL)
+//            bool blockT = CAS(&_tail->_blocked, 0, 1);
+            if (/*blockT &&*/ _tail->_elem != NULL && _tail->_prev != NULL)
             {
                 bool blockH = CAS(&_head->_blocked, 0, 1);
                 if (blockH && _head->_elem != NULL && _head->_next != _tail->_elem && _head->_next != _tail->_prev)
@@ -326,7 +306,7 @@ T CASDeque<T>::pop_front()
 //                    print();
 
                     _head->_blocked = 0;
-                    _tail->_blocked = 0;
+//                    _tail->_blocked = 0;
                     ok = true;
                 }
                 else
@@ -334,21 +314,17 @@ T CASDeque<T>::pop_front()
                     if (blockH)
                         _head->_blocked = 0;
 
-                    _tail->_blocked = 0;
+//                    _tail->_blocked = 0;
                 }
             }
             else
             {
-                if (blockT)
-                    _tail->_blocked = 0;
+//                if (blockT)
+//                    _tail->_blocked = 0;
             }
         }
     } while (! ok);
 
-    /*
-    if (d != 0)
-        std::cout << this << " front: returning " << d << std::endl;
-    */
     delete d;
     return retval;
 }
@@ -484,8 +460,8 @@ T CASDeque<T>::pop_back()
             bool blockT = CAS(&_tail->_blocked, 0, 1);
             if (blockT && _tail->_elem != NULL && _tail->_prev != NULL)
             {
-                bool blockH = CAS(&_head->_blocked, 0, 1);
-                if (blockH && _head->_elem != NULL && _head->_next != _tail->_elem && _head->_next != _tail->_prev)
+//                bool blockH = CAS(&_head->_blocked, 0, 1);
+                if (/*blockH &&*/ _head->_elem != NULL && _head->_next != _tail->_elem && _head->_next != _tail->_prev)
                 {
                     d = _tail->_elem;
                     retval = d->_data;
@@ -500,14 +476,14 @@ T CASDeque<T>::pop_back()
 //                    std::cout << "pop-back on more" << std::endl;
 //                    print();
 
-                    _head->_blocked = 0;
+//                    _head->_blocked = 0;
                     _tail->_blocked = 0;
                     ok = true;
                 }
                 else
                 {
-                    if (blockH)
-                        _head->_blocked = 0;
+//                    if (blockH)
+//                        _head->_blocked = 0;
 
                     _tail->_blocked = 0;
                 }
@@ -520,15 +496,10 @@ T CASDeque<T>::pop_back()
         }
     } while (! ok);
 
-    /*
-    if (d != 0)
-        std::cout << this << " back: returning " << d << std::endl;
-    */
-
     delete d;
     return retval;
 }
-
+/*
 template <typename T>
 void CASDeque<T>::print()
 {
@@ -552,3 +523,4 @@ void CASDeque<T>::print()
     std::cout << std::endl;
 
 }
+*/

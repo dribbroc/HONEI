@@ -29,8 +29,6 @@
  * For the moment, it's purpose is mainly to serve as a
  * CASDeque<ThreadTask *>. */
 
-//#include<iostream>
-
 namespace honei
 {
     namespace mc
@@ -39,9 +37,9 @@ namespace honei
         {
             template <typename T> struct CASDequeElement
             {
-                CASDequeElement<T> * volatile _prev;
-                volatile T _data;
-                CASDequeElement<T> * volatile _next;
+                CASDequeElement<T> * _prev;
+                T _data;
+                CASDequeElement<T> * _next;
 
                 CASDequeElement() :
                     _prev(NULL),
@@ -71,7 +69,6 @@ namespace honei
                     _next(NULL),
                     _blocked(0)
                 {
-//                    std::cout << "address of blocked = " << &_blocked << std::endl;
                 }
             };
 
@@ -88,8 +85,7 @@ namespace honei
                 CASDeque();
                 ~CASDeque();
 
-                void print();
-
+//                void print();
                 void push_back(T & data);
                 T pop_front();
                 T pop_back();
