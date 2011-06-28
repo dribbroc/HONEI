@@ -20,6 +20,7 @@
 #include <honei/backends/opencl/opencl_backend.hh>
 #include <honei/util/attributes.hh>
 #include <iostream>
+#include <cmath>
 
 namespace honei
 {
@@ -68,5 +69,52 @@ namespace honei
                 unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, cl_device_type, std::string);
         template void product_smell_dv<double>(void*, void*, void*, void*, void*,
                 unsigned long, unsigned long, unsigned long, unsigned long, unsigned long, cl_device_type, std::string);
+
+        template <typename DT_>
+        void product_bmdv_q1(void * ll, void * ld, void * lu,
+                void * dl, void * dd, void *du,
+                void * ul, void * ud, void *uu, void * x, void * y,
+                unsigned long size, unsigned long m, cl_device_type type, std::string function)
+        {
+            cl_command_queue command_queue;
+            cl_kernel kernel;
+            cl_context context;
+            cl_device_id device;
+
+            DCQ dcq = OpenCLBackend::instance()->prepare_device(type);
+            device = dcq.device;
+            context = dcq.context;
+            command_queue = dcq.command_queue;
+
+            //print_device_info(device);
+            std::string filename(HONEI_SOURCEDIR);
+            filename += "/honei/backends/opencl/";
+            filename += "product.cl";
+            kernel = OpenCLBackend::instance()->create_kernel(filename, function, context, device);
+            clSetKernelArg(kernel, 0, sizeof(cl_mem), &ll);
+            clSetKernelArg(kernel, 1, sizeof(cl_mem), &ld);
+            clSetKernelArg(kernel, 2, sizeof(cl_mem), &lu);
+            clSetKernelArg(kernel, 3, sizeof(cl_mem), &dl);
+            clSetKernelArg(kernel, 4, sizeof(cl_mem), &dd);
+            clSetKernelArg(kernel, 5, sizeof(cl_mem), &du);
+            clSetKernelArg(kernel, 6, sizeof(cl_mem), &ul);
+            clSetKernelArg(kernel, 7, sizeof(cl_mem), &ud);
+            clSetKernelArg(kernel, 8, sizeof(cl_mem), &uu);
+            clSetKernelArg(kernel, 9, sizeof(cl_mem), &x);
+            clSetKernelArg(kernel, 10, sizeof(cl_mem), &y);
+            clSetKernelArg(kernel, 11, sizeof(unsigned long), (void *)&size);
+            clSetKernelArg(kernel, 12, sizeof(unsigned long), (void *)&m);
+            size_t tmp_work_group_size;
+            clGetKernelWorkGroupInfo(kernel, device, CL_KERNEL_WORK_GROUP_SIZE, sizeof(size_t), (void*)&tmp_work_group_size, NULL);
+            clSetKernelArg(kernel, 13, 3 * (tmp_work_group_size + 2)*sizeof(DT_), NULL);
+            size_t threads = tmp_work_group_size * ((unsigned)ceil(size/(double)(tmp_work_group_size)));
+
+            clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, &tmp_work_group_size, 0, NULL, NULL);
+
+        }
+        template void product_bmdv_q1<float>(void*, void*, void*, void*, void*, void*, void*, void*, void*, void*, void*,
+                unsigned long, unsigned long, cl_device_type, std::string);
+        template void product_bmdv_q1<double>(void*, void*, void*, void*, void*, void*, void*, void*, void*, void*, void*,
+                unsigned long, unsigned long, cl_device_type, std::string);
     }
 }

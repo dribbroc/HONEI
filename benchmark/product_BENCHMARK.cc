@@ -123,17 +123,22 @@ class Q1MatrixDenseVectorProductBench :
 
             BandedMatrixQ1<DataType_> qm1(bm1);
             DenseVector<DataType_> dv2(_size, DataType_(4));
+            DenseVector<DataType_> dv3(_size);
             for (unsigned long i(0) ; i < _count ; i++)
             {
                 BENCHMARK(
                         for (unsigned long j(0) ; j < 10 ; ++j)
                         {
-                            Product<Tag_>::value(qm1, dv2);
+                            Product<Tag_>::value(dv3, qm1, dv2);
+                        }
 #ifdef HONEI_CUDA
                         if (Tag_::tag_value == tags::tv_gpu_cuda)
                             cuda::GPUPool::instance()->flush();
 #endif
-                        }
+#ifdef HONEI_OPENCL
+                        if (Tag_::tag_value == tags::tv_opencl)
+                            opencl::OpenCLBackend::instance()->flush();
+#endif
                         );
             }
             BenchmarkInfo info(Product<>::get_benchmark_info(bm1, dv2));
@@ -159,6 +164,14 @@ Q1MatrixDenseVectorProductBench<tags::GPU::CUDA, double> CUDAQ1DVPBenchdouble("C
 #ifdef HONEI_CELL
 Q1MatrixDenseVectorProductBench<tags::Cell, float> CELLQ1DVPBenchfloat("CELL Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025^2, float", 1025ul * 1025, 10);
 Q1MatrixDenseVectorProductBench<tags::Cell, double> CELLQ1DVPBenchdouble("CELL Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: 1025^2, double", 1025ul * 1025, 10);
+#endif
+#ifdef HONEI_OPENCL
+Q1MatrixDenseVectorProductBench<tags::OpenCL::CPU, float> ocl_cpu_Q1DVPBenchfloat("OpenCL CPU Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10);
+Q1MatrixDenseVectorProductBench<tags::OpenCL::CPU, double> ocl_cpu_Q1DVPBenchdouble("OpenCL CPU Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10);
+Q1MatrixDenseVectorProductBench<tags::OpenCL::GPU, float> ocl_gpu_Q1DVPBenchfloat("OpenCL GPU Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, float", 1025ul*1025, 10);
+#ifdef HONEI_CUDA_DOUBLE
+Q1MatrixDenseVectorProductBench<tags::OpenCL::GPU, double> ocl_gpu_Q1DVPBenchdouble("OpenCL GPU Banded Matrix (Q1) Dense Vector Product Benchmark - matrix size: L10, double", 1025ul*1025, 10);
+#endif
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -706,6 +719,7 @@ class Q1MatrixELLDenseVectorProductBench :
                         for (unsigned long j(0) ; j < 10 ; ++j)
                         {
                             Product<Tag_>::value(dv3, smell, dv2);
+                        }
 #ifdef HONEI_CUDA
                         if (Tag_::tag_value == tags::tv_gpu_cuda)
                             cuda::GPUPool::instance()->flush();
@@ -714,7 +728,6 @@ class Q1MatrixELLDenseVectorProductBench :
                         if (Tag_::tag_value == tags::tv_opencl)
                             opencl::OpenCLBackend::instance()->flush();
 #endif
-                        }
                         );
             }
             BenchmarkInfo info(Product<>::get_benchmark_info(bm1, dv2));

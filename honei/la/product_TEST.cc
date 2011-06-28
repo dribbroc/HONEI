@@ -227,7 +227,6 @@ class Q1MatrixDenseVectorProductTest :
 #else
             DenseVector<DataType_> dv_ref(Product<tags::CPU>::value(bm2, dv1));
 #endif
-
             TEST(prod.lock(lm_read_only),
                     for (typename DenseVector<DataType_>::ConstElementIterator dit(dv_ref.begin_elements()), it(prod.begin_elements()), i_end(prod.end_elements()) ;
                         it != i_end ; ++it, ++dit)
@@ -267,6 +266,16 @@ Q1MatrixDenseVectorProductTest<tags::GPU::CUDA, float> cuda_q1_prod_test_float("
 Q1MatrixDenseVectorProductTest<tags::GPU::CUDA, double> cuda_q1_prod_test_double("double");
 #endif
 #endif
+#ifdef HONEI_OPENCL
+Q1MatrixDenseVectorProductTest<tags::OpenCL::CPU, float> ocl_cpu_q1_prod_test_float("float");
+Q1MatrixDenseVectorProductTest<tags::OpenCL::CPU, double> ocl_cpu_q1_prod_test_double("double");
+Q1MatrixDenseVectorProductTest<tags::OpenCL::GPU, float> ocl_gpu_q1_prod_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+Q1MatrixDenseVectorProductTest<tags::OpenCL::GPU, double> ocl_gpu_q1_prod_test_double("double");
+#endif
+#endif
+
+
 
 template <typename Tag_, typename DataType_>
 class Q1MatrixDenseVectorProductQuickTest :
@@ -354,6 +363,14 @@ Q1MatrixDenseVectorProductQuickTest<tags::CPU::MultiCore::SSE, double> q1_prod_q
 Q1MatrixDenseVectorProductQuickTest<tags::GPU::CUDA, float> cuda_q1_prod_quick_test_float("float");
 #ifdef HONEI_CUDA_DOUBLE
 Q1MatrixDenseVectorProductQuickTest<tags::GPU::CUDA, double> cuda_q1_prod_quick_test_double("double");
+#endif
+#endif
+#ifdef HONEI_OPENCL
+Q1MatrixDenseVectorProductQuickTest<tags::OpenCL::CPU, float> ocl_cpu_q1_prod_quick_test_float("float");
+Q1MatrixDenseVectorProductQuickTest<tags::OpenCL::CPU, double> ocl_cpu_q1_prod_quick_test_double("double");
+Q1MatrixDenseVectorProductQuickTest<tags::OpenCL::GPU, float> ocl_gpu_q1_prod_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+Q1MatrixDenseVectorProductQuickTest<tags::OpenCL::GPU, double> ocl_gpu_q1_prod_quick_test_double("double");
 #endif
 #endif
 

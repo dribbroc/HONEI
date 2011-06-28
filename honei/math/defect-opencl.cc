@@ -49,7 +49,7 @@ namespace honei
             void * Arl_cl(a.Arl().lock(lm_read_only, Tag_::memory_value));
             std::string opname("defect_smell_dv_");
             opname += typeid(DT_).name();
-            opencl::defect_smell_dv<DT_>(rhs_cl, b_cl, result_cl, Aj_cl, Ax_cl, Arl_cl,
+            defect_smell_dv<DT_>(rhs_cl, b_cl, result_cl, Aj_cl, Ax_cl, Arl_cl,
                     a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), a.threads(), tag_to_device<Tag_>(), opname);
             result.unlock(lm_write_only);
             rhs.unlock(lm_read_only);

@@ -363,6 +363,10 @@ DenseVector<float> & Product<tags::GPU::CUDA>::value(DenseVector<float> & result
     {
         throw VectorSizeDoesNotMatch(b.size(), a.columns());
     }
+    if (result.size() != a.rows())
+    {
+        throw VectorSizeDoesNotMatch(result.size(), a.rows());
+    }
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::product_bmdv_q1_float", 128ul));
 
@@ -388,6 +392,10 @@ DenseVector<double> & Product<tags::GPU::CUDA>::value(DenseVector<double> & resu
     if (b.size() != a.columns())
     {
         throw VectorSizeDoesNotMatch(b.size(), a.columns());
+    }
+    if (result.size() != a.rows())
+    {
+        throw VectorSizeDoesNotMatch(result.size(), a.rows());
     }
 
     unsigned long blocksize(Configuration::instance()->get_value("cuda::product_bmdv_q1_double", 128ul));
