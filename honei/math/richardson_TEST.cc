@@ -226,3 +226,58 @@ class RichardsonSPAI2TEST :
         }
 };
 RichardsonSPAI2TEST<tags::CPU, double> rt_spai2_cpu("double");
+
+template <typename Tag_, typename DT1_>
+class RichardsonSPAI2_0TEST :
+    public BaseTest
+{
+    public:
+        RichardsonSPAI2_0TEST(const std::string & tag) :
+            BaseTest("Richardson solver test (SPAI2_0)" + tag + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            //Read in data:
+            std::string dir(HONEI_SOURCEDIR);
+            std::string file (dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
+            file += "A_4";
+            file += ".ell";
+            SparseMatrixELL<DT1_> A(MatrixIO<io_formats::ELL>::read_matrix(file, DT1_(0)));
+
+            SparseMatrix<DT1_> precon(A);
+            DenseVector<DT1_> spai(precon.rows());
+            SPAI2<Tag_>::value_0(spai, precon);
+
+            SparseMatrix<DT1_> sspai(precon.rows(), precon.columns());
+            for (unsigned long i(0) ; i < spai.size() ; ++i)
+                sspai(i, i, spai[i]);
+            SparseMatrixELL<DT1_> C(sspai);
+
+            std::string rhs_file(dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
+            rhs_file += "rhs_4";
+            DenseVector<DT1_> b(VectorIO<io_formats::EXP>::read_vector(rhs_file, DT1_(0)));
+
+            //set up data and info structures:
+            DenseVector<DT1_> result(b.size(), DT1_(0));
+            DenseVector<DT1_> t0(result.size());
+            DenseVector<DT1_> t1(result.size());
+            LSData<SparseMatrixELL<DT1_> , SparseMatrixELL<DT1_> , DT1_> data(&A, &C, &b, &result, &t0, &t1);
+
+            unsigned long iters(23);
+            LSInfo info(true, false, 1e-11, DT1_(1), 10000ul, iters);
+            std::cout << "Finished data I/O." << std::endl;
+            Richardson<Tag_, Preconditioning<Tag_, methods::NONE> >::value(data, info);
+
+            std::string sol_file(dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
+            sol_file += "sol_4";
+            DenseVector<DT1_> sol(VectorIO<io_formats::EXP>::read_vector(sol_file, DT1_(0)));
+
+            std::cout << "#Iterations: " << info.iters << std::endl;
+            for(unsigned long i(0) ; i < sol.size() ; ++i)
+                TEST_CHECK_EQUAL_WITHIN_EPS((*data.result)[i], sol[i], std::numeric_limits<DT1_>::epsilon() * 1e12);
+        }
+};
+RichardsonSPAI2_0TEST<tags::CPU, double> rt_spai2_0_cpu("double");
