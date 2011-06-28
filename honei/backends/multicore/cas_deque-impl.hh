@@ -18,6 +18,7 @@
  */
 
 #include <honei/backends/multicore/cas_deque.hh>
+#include <honei/util/lock.hh>
 //#include <iostream>
 
 using namespace honei;
@@ -28,7 +29,31 @@ inline bool CAS(volatile int * ptr, int cmp, int val) __attribute__((always_inli
 
 bool CAS(volatile int * ptr, int cmp, int val)
 {
+#if defined (__GNUC__)
     return __sync_bool_compare_and_swap(ptr, cmp, val);
+#elif defined (__i386__) || defined(__x86_64__)
+    int retval;
+
+    __asm__ __volatile__("lock; cmpxchg %3,%1"
+                         : "=a"(retval)
+                         : "m"(*ptr), "0"(cmp), "r"(val)
+                         : "memory");
+
+    return retval == cmp;
+#else
+#pragma message "Using slow compare-and-swap"
+    static Mutex m;
+    Lock l(m);
+
+    if (*ptr == cmp)
+    {
+        *ptr = val;
+        return true;
+    }
+    else
+        return false;
+
+#endif
 }
 
 template <typename T>
