@@ -17,6 +17,10 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
+#ifndef HONEI_GUARD_HONEI_BACKENDS_MULTICORE_CONCURRENT_LIST_IMPL_HH
+#define HONEI_GUARD_HONEI_BACKENDS_MULTICORE_CONCURRENT_LIST_IMPL_HH 1
+
 #include <honei/backends/multicore/concurrent_list.hh>
 
 using namespace honei;
@@ -161,3 +165,4 @@ T ConcurrentList<T>::pop_front()
 
     return retval;
 }
+#endif

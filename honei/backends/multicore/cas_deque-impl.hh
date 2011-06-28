@@ -17,6 +17,10 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
+#ifndef HONEI_GUARD_HONEI_BACKENDS_MULTICORE_CASDEQUE_IMPL_HH
+#define HONEI_GUARD_HONEI_BACKENDS_MULTICORE_CASDEQUE_IMPL_HH 1
+
 #include <honei/backends/multicore/cas_deque.hh>
 #include <honei/util/lock.hh>
 //#include <iostream>
@@ -25,6 +29,7 @@ using namespace honei;
 using namespace honei::mc;
 using namespace honei::mc::intern;
 
+/*
 inline bool CAS(volatile int * ptr, int cmp, int val) __attribute__((always_inline));
 
 bool CAS(volatile int * ptr, int cmp, int val)
@@ -55,11 +60,16 @@ bool CAS(volatile int * ptr, int cmp, int val)
 
 #endif
 }
+*/
 
 template <typename T>
 CASDeque<T>::CASDeque() :
     _head(new CASDequeEndElement<T>),
-    _tail(new CASDequeEndElement<T>)
+    _tail(new CASDequeEndElement<T>),
+    _hb_ptr(&_head->_blocked),
+    _tb_ptr(&_tail->_blocked),
+    zero(0),
+    one(1)
 {
 //    std::cout << "Created list" << this << " with _head = " << _head << " and _tail = " << _tail << std::endl;
 }
@@ -72,6 +82,64 @@ CASDeque<T>::~CASDeque()
 }
 
 template <typename T>
+bool CASDeque<T>::headCAS()
+{
+#if defined (__GNUC__)
+    return __sync_bool_compare_and_swap(_hb_ptr, zero, one);
+#elif defined (__i386__) || defined(__x86_64__)
+    int retval;
+
+    __asm__ __volatile__("lock; cmpxchg %3,%1"
+        : "=a"(retval)
+        : "m"(*_hb_ptr), "0"(zero), "r"(one)
+        : "memory");
+
+    return retval == cmp;
+#else
+#pragma message "Using slow compare-and-swap"
+    static Mutex m;
+    Lock l(m);
+
+    if (*_hb_ptr == zero)
+    {
+        *_hb_ptr = one;
+        return true;
+    }
+    else
+        return false;
+#endif
+}
+
+template <typename T>
+bool CASDeque<T>::tailCAS()
+{
+#if defined (__GNUC__)
+    return __sync_bool_compare_and_swap(_tb_ptr, zero, one);
+#elif defined (__i386__) || defined(__x86_64__)
+    int retval;
+
+    __asm__ __volatile__("lock; cmpxchg %3,%1"
+        : "=a"(retval)
+        : "m"(*_tb_ptr), "0"(zero), "r"(one)
+        : "memory");
+
+    return retval == cmp;
+#else
+#pragma message "Using slow compare-and-swap"
+    static Mutex m;
+    Lock l(m);
+
+    if (*_tb_ptr == zero)
+    {
+        *_tb_ptr = one;
+        return true;
+    }
+    else
+        return false;
+#endif
+}
+
+template <typename T>
 void CASDeque<T>::push_back(T & data)
 {
     bool ok(false);
@@ -81,10 +149,10 @@ void CASDeque<T>::push_back(T & data)
     {
         if (_head->_elem == NULL && _tail->_elem == NULL) // assume zero
         {
-            bool blockT = CAS(&_tail->_blocked, 0, 1);
+            bool blockT = tailCAS();
             if (blockT && _tail->_elem == NULL)
             {
-                bool blockH = CAS(&_head->_blocked, 0, 1);
+                bool blockH = headCAS();
                 if (blockH && _head->_elem == NULL)
                 {
                     _head->_elem = e;
@@ -113,10 +181,10 @@ void CASDeque<T>::push_back(T & data)
         }
         else if (_head->_next == NULL && _tail->_prev == NULL) // assume one
         {
-            bool blockT = CAS(&_tail->_blocked, 0, 1);
+            bool blockT = tailCAS();
             if (blockT && _tail->_elem != NULL && _tail->_prev == NULL)
             {
-                bool blockH = CAS(&_head->_blocked, 0, 1);
+                bool blockH = headCAS();
                 if (blockH && _head->_elem == _tail->_elem && _head->_next == NULL)
                 {
                     e->_prev = _tail->_elem;
@@ -148,10 +216,10 @@ void CASDeque<T>::push_back(T & data)
         }
         else if (_tail->_prev != NULL && _head->_next != NULL)
         {
-            bool blockT = CAS(&_tail->_blocked, 0, 1);
+            bool blockT = tailCAS();
             if (blockT && _tail->_elem != NULL && _tail->_prev != NULL)
             {
-//                bool blockH = CAS(&_head->_blocked, 0, 1);
+//                bool blockH = headCAS();
                 if (/*blockH &&*/ _head->_elem != NULL && _head->_elem != _tail->_elem && _head->_next != NULL)
                 {
                     CASDequeElement<T> * old_last = _tail->_elem;
@@ -202,10 +270,10 @@ T CASDeque<T>::pop_front()
         }
         else if (_head->_next == NULL && _tail->_prev == NULL) // assume one
         {
-            bool blockT = CAS(&_tail->_blocked, 0, 1);
+            bool blockT = tailCAS();
             if (blockT && _tail->_elem != NULL && _tail->_prev == NULL)
             {
-                bool blockH = CAS(&_head->_blocked, 0, 1);
+                bool blockH = headCAS();
                 if (blockH && _head->_elem == _tail->_elem && _head->_next == NULL)
                 {
                     d = _head->_elem;
@@ -236,10 +304,10 @@ T CASDeque<T>::pop_front()
         }
         else if (_head->_next == _tail->_elem && _tail->_prev == _head->_elem) // assume = 2
         {
-            bool blockT = CAS(&_tail->_blocked, 0, 1);
+            bool blockT = tailCAS();
             if (blockT && _tail->_elem != NULL)
             {
-                bool blockH = CAS(&_head->_blocked, 0, 1);
+                bool blockH = headCAS();
                 if (blockH && _head->_elem == _tail->_prev && _head->_next == _tail->_elem)
                 {
                     d = _head->_elem;
@@ -273,10 +341,10 @@ T CASDeque<T>::pop_front()
         }
         else if (_head->_next == _tail->_prev) // assume 3
         {
-            bool blockT = CAS(&_tail->_blocked, 0, 1);
+            bool blockT = tailCAS();
             if (blockT && _tail->_prev != NULL)
             {
-                bool blockH = CAS(&_head->_blocked, 0, 1);
+                bool blockH = headCAS();
                 if (blockH && _head->_next == _tail->_prev)
                 {
                     d = _head->_elem;
@@ -311,10 +379,10 @@ T CASDeque<T>::pop_front()
         }
         else // assume more
         {
-//            bool blockT = CAS(&_tail->_blocked, 0, 1);
+//            bool blockT = tailCAS();
             if (/*blockT &&*/ _tail->_elem != NULL && _tail->_prev != NULL)
             {
-                bool blockH = CAS(&_head->_blocked, 0, 1);
+                bool blockH = headCAS();
                 if (blockH && _head->_elem != NULL && _head->_next != _tail->_elem && _head->_next != _tail->_prev)
                 {
                     d = _head->_elem;
@@ -371,10 +439,10 @@ T CASDeque<T>::pop_back()
         }
         else if (_head->_next == NULL && _tail->_prev == NULL) // assume one
         {
-            bool blockT = CAS(&_tail->_blocked, 0, 1);
+            bool blockT = tailCAS();
             if (blockT && _tail->_elem != NULL && _tail->_prev == NULL)
             {
-                bool blockH = CAS(&_head->_blocked, 0, 1);
+                bool blockH = headCAS();
                 if (blockH && _head->_elem == _tail->_elem && _head->_next == NULL)
                 {
                     d = _head->_elem;
@@ -405,10 +473,10 @@ T CASDeque<T>::pop_back()
         }
         else if (_head->_next == _tail->_elem && _tail->_prev == _head->_elem) // assume = 2
         {
-            bool blockT = CAS(&_tail->_blocked, 0, 1);
+            bool blockT = tailCAS();
             if (blockT && _tail->_elem != NULL)
             {
-                bool blockH = CAS(&_head->_blocked, 0, 1);
+                bool blockH = headCAS();
                 if (blockH && _head->_elem == _tail->_prev && _head->_next == _tail->_elem)
                 {
                     d = _tail->_elem;
@@ -442,10 +510,10 @@ T CASDeque<T>::pop_back()
         }
         else if (_head->_next == _tail->_prev) // assume 3
         {
-            bool blockT = CAS(&_tail->_blocked, 0, 1);
+            bool blockT = tailCAS();
             if (blockT && _tail->_prev != NULL)
             {
-                bool blockH = CAS(&_head->_blocked, 0, 1);
+                bool blockH = headCAS();
                 if (blockH && _head->_next == _tail->_prev)
                 {
                     d = _tail->_elem;
@@ -482,10 +550,10 @@ T CASDeque<T>::pop_back()
         else // assume more
         {
             // it must be somehow made sure that there is no NULL/inconsistent case here
-            bool blockT = CAS(&_tail->_blocked, 0, 1);
+            bool blockT = tailCAS();
             if (blockT && _tail->_elem != NULL && _tail->_prev != NULL)
             {
-//                bool blockH = CAS(&_head->_blocked, 0, 1);
+//                bool blockH = headCAS();
                 if (/*blockH &&*/ _head->_elem != NULL && _head->_next != _tail->_elem && _head->_next != _tail->_prev)
                 {
                     d = _tail->_elem;
@@ -549,3 +617,4 @@ void CASDeque<T>::print()
 
 }
 */
+#endif

@@ -17,6 +17,10 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#pragma once
+#ifndef HONEI_GUARD_HONEI_BACKENDS_MULTICORE_CONDEQUE_IMPL_HH
+#define HONEI_GUARD_HONEI_BACKENDS_MULTICORE_CONDEQUE_IMPL_HH 1
+
 #include <honei/backends/multicore/concurrent_deque.hh>
 
 using namespace honei;
@@ -212,3 +216,4 @@ T ConcurrentDeque<T>::pop_back()
     delete fr;
     return retval;
 }
+#endif

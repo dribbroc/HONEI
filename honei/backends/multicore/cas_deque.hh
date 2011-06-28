@@ -22,7 +22,6 @@
 #define HONEI_GUARD_HONEI_BACKENDS_MULTICORE_CASDEQUE_HH 1
 
 #include <honei/backends/multicore/thread_task.hh>
-#include <honei/util/mutex.hh>
 
 /* Attention: This class requires the template parameter
  * to be a pointer type in order to function correctly.
@@ -79,6 +78,15 @@ namespace honei
             private:
                 intern::CASDequeEndElement<T> * const _head;
                 intern::CASDequeEndElement<T> * const _tail;
+
+                volatile int * const _hb_ptr;
+                volatile int * const _tb_ptr;
+
+                const int zero;
+                const int one;
+
+                inline bool headCAS() __attribute__((always_inline));
+                inline bool tailCAS() __attribute__((always_inline));
 
             public:
 
