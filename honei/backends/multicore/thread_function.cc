@@ -40,7 +40,6 @@ namespace honei
     template class ConcurrentDeque<mc::ThreadTask *>;
     template class CASDeque<mc::ThreadTask *>;
 
-
     /* TFImplementationBase is a base-class for all concrete implementations
      * of a ThreadFunction and provides the members that all derivatives
      * (have to) share. */
@@ -243,7 +242,7 @@ namespace honei
                         pthread_mutex_lock(pool_mutex->mutex());
                         task = tasklist.pop_front();
 
-                        if (task == 0)
+                        if (task == 0 && ! global_terminate)
                         {
                             global_barrier->wait(*pool_mutex);
                             pthread_mutex_unlock(pool_mutex->mutex());
@@ -373,7 +372,7 @@ namespace honei
                         pthread_mutex_lock(pool_mutex->mutex());
                         task = tasklist.pop_front();
 
-                        if (task == 0)
+                        if (task == 0 && ! global_terminate)
                         {
                             global_barrier->wait(*pool_mutex);
                             pthread_mutex_unlock(pool_mutex->mutex());
