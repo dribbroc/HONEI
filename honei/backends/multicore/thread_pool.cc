@@ -331,7 +331,7 @@ namespace honei
                 throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 
 #ifdef DEBUG
-            std::string msg == "THREAD \t\t POOL_ID \t LPU \t NODE \n";
+            std::string msg = "THREAD \t\t POOL_ID \t LPU \t NODE \n";
             msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->get_node(_topology->num_lpus() - 1)) + " \n";
 #endif
 
