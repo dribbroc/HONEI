@@ -28,13 +28,11 @@ namespace honei
     {
         struct ThreadTask
         {
-            typedef function<void () throw ()> WorkFunctor;
-
-            WorkFunctor * const functor;
+            const function<void ()> * functor;
             Ticket<tags::CPU::MultiCore> * const ticket;
 
-            template <typename WorkerTask> ThreadTask(WorkerTask & task, Ticket<tags::CPU::MultiCore> * const tick) :
-                functor(new WorkFunctor(task)),
+            ThreadTask(const function<void ()> & task, Ticket<tags::CPU::MultiCore> * const tick) :
+                functor(new function<void ()>(task)),
                 ticket(tick)
             {
             }

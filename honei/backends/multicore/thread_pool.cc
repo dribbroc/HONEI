@@ -99,7 +99,7 @@ namespace honei
             }
 
 #ifdef DEBUG
-            std::string msg = "Will create " + stringify(_num_threads) + " POSIX worker threads\n";
+            msg += "Will create " + stringify(_num_threads) + " POSIX worker threads\n";
             LOGMESSAGE(lc_backend, msg);
 #endif
         }
@@ -160,10 +160,6 @@ namespace honei
 
                 ++inst_ctr;
             }
-
-#ifdef DEBUG
-            LOGMESSAGE(lc_backend, msg);
-#endif
         }
 
         ~StandardImplementation()
@@ -223,10 +219,6 @@ namespace honei
 
                 ++inst_ctr;
             }
-
-#ifdef DEBUG
-            LOGMESSAGE(lc_backend, msg);
-#endif
         }
 
         ~StandardImplementation()
@@ -285,10 +277,6 @@ namespace honei
 
                 ++inst_ctr;
             }
-
-#ifdef DEBUG
-            LOGMESSAGE(lc_backend, msg);
-#endif
         }
 
         ~StandardImplementation()
@@ -343,7 +331,7 @@ namespace honei
                 throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 
 #ifdef DEBUG
-            msg += "THREAD \t\t POOL_ID \t LPU \t NODE \n";
+            std::string msg == "THREAD \t\t POOL_ID \t LPU \t NODE \n";
             msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->get_node(_topology->num_lpus() - 1)) + " \n";
 #endif
 
@@ -438,6 +426,7 @@ namespace honei
 
         WorkStealingImplementation() :
             Implementation<mc::ThreadPool>(),
+            _affinity_mask(NULL),
             global_terminate(false)
         {
             CONTEXT("When initializing the work stealing implementation thread pool:");
@@ -455,8 +444,8 @@ namespace honei
                     throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 
 #ifdef DEBUG
-            msg += "THREAD \t\t POOL_ID \t LPU \t NODE \n";
-            msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->get_node(_topology->num_lpus() - 1)) + " \n";
+                std::string msg = "THREAD \t\t POOL_ID \t LPU \t NODE \n";
+                msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->get_node(_topology->num_lpus() - 1)) + " \n";
 #endif
             }
 
@@ -578,6 +567,7 @@ namespace honei
 
         WorkStealingImplementation() :
             Implementation<mc::ThreadPool>(),
+            _affinity_mask(NULL),
             global_terminate(false)
         {
             CONTEXT("When initializing the work stealing implementation thread pool:");
@@ -595,8 +585,8 @@ namespace honei
                     throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 
 #ifdef DEBUG
-            msg += "THREAD \t\t POOL_ID \t LPU \t NODE \n";
-            msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->get_node(_topology->num_lpus() - 1)) + " \n";
+                std::string msg = "THREAD \t\t POOL_ID \t LPU \t NODE \n";
+                msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->get_node(_topology->num_lpus() - 1)) + " \n";
 #endif
             }
 
@@ -719,6 +709,7 @@ namespace honei
 
         WorkStealingImplementation() :
             Implementation<mc::ThreadPool>(),
+            _affinity_mask(NULL),
             global_terminate(false)
         {
             CONTEXT("When initializing the work stealing implementation thread pool:");
@@ -736,8 +727,8 @@ namespace honei
                     throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 
 #ifdef DEBUG
-            msg += "THREAD \t\t POOL_ID \t LPU \t NODE \n";
-            msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->get_node(_topology->num_lpus() - 1)) + " \n";
+                std::string msg = "THREAD \t\t POOL_ID \t LPU \t NODE \n";
+                msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->get_node(_topology->num_lpus() - 1)) + " \n";
 #endif
             }
 
