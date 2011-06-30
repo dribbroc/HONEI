@@ -433,6 +433,10 @@ namespace honei
 
             bool affinity = Configuration::instance()->get_value("mc::affinity", true);
 
+#ifdef DEBUG
+            std::string msg;
+#endif
+
             if (affinity)
             {
                 _affinity_mask = new cpu_set_t[_num_threads + 1];
@@ -444,7 +448,7 @@ namespace honei
                     throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 
 #ifdef DEBUG
-                std::string msg = "THREAD \t\t POOL_ID \t LPU \t NODE \n";
+                msg += "THREAD \t\t POOL_ID \t LPU \t NODE \n";
                 msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->get_node(_topology->num_lpus() - 1)) + " \n";
 #endif
             }
@@ -574,6 +578,10 @@ namespace honei
 
             bool affinity = Configuration::instance()->get_value("mc::affinity", true);
 
+#ifdef DEBUG
+            std::string msg;
+#endif
+
             if (affinity)
             {
                 _affinity_mask = new cpu_set_t[_num_threads + 1];
@@ -585,7 +593,7 @@ namespace honei
                     throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 
 #ifdef DEBUG
-                std::string msg = "THREAD \t\t POOL_ID \t LPU \t NODE \n";
+                msg += "THREAD \t\t POOL_ID \t LPU \t NODE \n";
                 msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->get_node(_topology->num_lpus() - 1)) + " \n";
 #endif
             }
@@ -716,6 +724,10 @@ namespace honei
 
             bool affinity = Configuration::instance()->get_value("mc::affinity", true);
 
+#ifdef DEBUG
+            std::string msg;
+#endif
+
             if (affinity)
             {
                 _affinity_mask = new cpu_set_t[_num_threads + 1];
@@ -727,7 +739,7 @@ namespace honei
                     throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 
 #ifdef DEBUG
-                std::string msg = "THREAD \t\t POOL_ID \t LPU \t NODE \n";
+                msg += "THREAD \t\t POOL_ID \t LPU \t NODE \n";
                 msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->get_node(_topology->num_lpus() - 1)) + " \n";
 #endif
             }
