@@ -63,11 +63,15 @@ using namespace honei;
 template <typename DT_>
 DT_ DotProduct<tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y)
 {
+#ifdef HONEI_SSE
+    return DotProduct<tags::CPU::MultiCore::SSE>::value(x, y);
+#else
     CONTEXT("When calculating dot product of DenseVectorContinuousBase<DT_>(OpenCL CPU):");
     PROFILER_START("DotProduct tags::OpenCL::CPU");
     DT_ result = opencl::common_dot_product<tags::OpenCL::CPU>(x, y);
     PROFILER_STOP("DotProduct tags::OpenCL::CPU");
     return result;
+#endif
 }
 template float DotProduct<tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &);
 template double DotProduct<tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &);
