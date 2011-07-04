@@ -883,6 +883,12 @@ class DenseVectorCopyQuickTest :
 };
 DenseVectorCopyQuickTest<tags::CPU, float> dense_vector_copy_quick_test_float("float");
 DenseVectorCopyQuickTest<tags::CPU, double> dense_vector_copy_quick_test_double("double");
+#ifdef HONEI_SSE
+DenseVectorCopyQuickTest<tags::CPU::SSE, float> sse_dense_vector_copy_quick_test_float("float");
+DenseVectorCopyQuickTest<tags::CPU::SSE, double> sse_dense_vector_copy_quick_test_double("double");
+DenseVectorCopyQuickTest<tags::CPU::MultiCore::SSE, float> mcsse_dense_vector_copy_quick_test_float("float");
+DenseVectorCopyQuickTest<tags::CPU::MultiCore::SSE, double> mcsse_dense_vector_copy_quick_test_double("double");
+#endif
 #ifdef HONEI_CUDA
 DenseVectorCopyQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_copy_quick_test_float("float");
 DenseVectorCopyQuickTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_dense_vector_copy_quick_test_float("float");
