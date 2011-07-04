@@ -507,6 +507,8 @@ DenseVector<float> & Product<tags::GPU::MultiCore::CUDA>::value(DenseVector<floa
         cudaProductSMELLDVfloat task2(result2, a, b, result1.size(), a.rows(), blocksize);
         cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
         cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+        b.lock(lm_read_and_write);
+        b.unlock(lm_read_and_write);
     }
 
     return result;
@@ -543,6 +545,8 @@ DenseVector<double> & Product<tags::GPU::MultiCore::CUDA>::value(DenseVector<dou
         cudaProductSMELLDVdouble task2(result2, a, b, result1.size(), a.rows(), blocksize);
         cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
         cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+        b.lock(lm_read_and_write);
+        b.unlock(lm_read_and_write);
     }
 
     return result;

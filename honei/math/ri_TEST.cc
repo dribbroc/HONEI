@@ -128,6 +128,7 @@ RITestSparseELL<tags::CPU::MultiCore::SSE, double> mcsse_ri_test_double_sparse_e
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
 RITestSparseELL<tags::GPU::CUDA, double> cuda_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RITestSparseELL<tags::GPU::MultiCore::CUDA, double> mccuda_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #endif
 #endif
 #ifdef HONEI_OPENCL

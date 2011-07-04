@@ -127,6 +127,7 @@ CGTestSparseELL<tags::CPU::MultiCore::SSE, double> mcsse_cg_test_double_sparse_e
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
 CGTestSparseELL<tags::GPU::CUDA, double> cuda_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
+CGTestSparseELL<tags::GPU::MultiCore::CUDA, double> mccuda_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
 #endif
 #endif
 #ifdef HONEI_OPENCL
