@@ -34,6 +34,7 @@
 #define HONEI_PLACEHOLDERS_5 _5
 #define HONEI_PLACEHOLDERS_6 _6
 #define HONEI_PLACEHOLDERS_7 _7
+#define HONEI_PLACEHOLDERS_8 _8
 using namespace boost;
 #else
 #include <tr1/memory>
@@ -46,6 +47,7 @@ using namespace boost;
 #define HONEI_PLACEHOLDERS_5 std::tr1::placeholders::_5
 #define HONEI_PLACEHOLDERS_6 std::tr1::placeholders::_6
 #define HONEI_PLACEHOLDERS_7 std::tr1::placeholders::_7
+#define HONEI_PLACEHOLDERS_8 std::tr1::placeholders::_8
 using namespace std::tr1;
 #endif
 

@@ -165,7 +165,7 @@ namespace honei
 
         typedef std::map<intern::ProfileId, TimingList> ResultMap;
 
-        typedef function<void (const std::string &, const std::string &, unsigned, float, float, float, float)> EvaluationFunction;
+        typedef function<void (const std::string &, const std::string &, unsigned, float, float, float, float, float)> EvaluationFunction;
 
         typedef std::list<EvaluationFunction> EvaluationFunctions;
 
@@ -318,9 +318,9 @@ namespace honei
                         {
                             Lock l(*mutex);
 
-                            output << "------------------------------------------------------------------" << std::endl;
-                            output << "function[tag] : count highest[us] average[us] lowest[us] total[us]" << std::endl;
-                            output << "------------------------------------------------------------------" << std::endl;
+                            output << "------------------------------------------------------------------------------" << std::endl;
+                            output << "function[tag] : count highest[us] average[us] median[us] lowest[us] total[us]" << std::endl;
+                            output << "------------------------------------------------------------------------------" << std::endl;
 
                             unsigned long gsize(results.size());
                             for (unsigned long i(0) ; i < gsize ; ++i)
@@ -346,7 +346,7 @@ namespace honei
                                 {
                                 }
                                 unsigned count(0);
-                                float total(0.0f), highest(0.0f), average(0.0f), lowest(std::numeric_limits<float>::max());
+                                float total(0.0f), highest(0.0f), average(0.0f), median(0.0f), lowest(std::numeric_limits<float>::max());
                                 for (TimingList::const_iterator t(r->second.begin()), t_end(r->second.end()) ; t != t_end ; ++t)
                                 {
                                     ++count;
@@ -357,10 +357,20 @@ namespace honei
                                 if (count > 0)
                                     average = total / count;
 
+                                r->second.sort();
+                                unsigned long target((r->second.size() +1) / 2);
+                                unsigned long j(0);
+                                TimingList::const_iterator t(r->second.begin());
+                                for (TimingList::const_iterator t_end(r->second.end()) ; j < target && t != t_end ; ++j)
+                                {
+                                    ++t;
+                                }
+                                median = *t;
+
                                 for (EvaluationFunctions::iterator f(evaluation_functions.begin()), f_end(evaluation_functions.end()) ; f != f_end ; ++f)
                                 {
                                     EvaluationFunction ef(*f);
-                                    ef(r->first.function, r->first.tag, count, highest, average, lowest, total);
+                                    ef(r->first.function, r->first.tag, count, highest, average, median, lowest, total);
                                 }
                                 results.erase(r);
                             }
@@ -377,9 +387,9 @@ namespace honei
             }
         }
 
-        void evaluation_printer(const std::string & function, const std::string & tag, unsigned count, float highest, float average, float lowest, float total)
+        void evaluation_printer(const std::string & function, const std::string & tag, unsigned count, float highest, float average, float median, float lowest, float total)
         {
-            output << function << "[" << tag << "] : " << count << " " << highest << " " << average << " " << lowest << " " << total << std::endl;
+            output << function << "[" << tag << "] : " << count << " " << highest << " " << average << " " << median << " "<< lowest << " " << total << std::endl;
         }
 
         Profiler() :
@@ -397,7 +407,7 @@ namespace honei
                             this, HONEI_PLACEHOLDERS_1, HONEI_PLACEHOLDERS_2,
                             HONEI_PLACEHOLDERS_3, HONEI_PLACEHOLDERS_4,
                             HONEI_PLACEHOLDERS_5, HONEI_PLACEHOLDERS_6,
-                            HONEI_PLACEHOLDERS_7)));
+                            HONEI_PLACEHOLDERS_7, HONEI_PLACEHOLDERS_8)));
             thread = new Thread(bind(mem_fn(&Profiler::profiler_function), this));
         }
 
