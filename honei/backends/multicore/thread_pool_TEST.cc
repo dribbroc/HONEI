@@ -41,6 +41,17 @@ namespace
             {
             }
 
+            TestTask(const TestTask & other) :
+                _v(other._v),
+                _mutex(new Mutex)
+            {
+            }
+
+            ~TestTask()
+            {
+                delete _mutex;
+            }
+
             void operator() ()
             {
                 Lock l(*_mutex);
@@ -70,6 +81,7 @@ class ThreadPoolTest :
             {
                 tickets.push_back(ThreadPool::instance()->enqueue(t));
             }
+
             for (unsigned i(500) ; i < 750 ; ++i)
             {
                 tickets.push_back(ThreadPool::instance()->enqueue(t, DispatchPolicy::on_core(2 * sysconf(_SC_NPROCESSORS_CONF))));
