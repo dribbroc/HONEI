@@ -116,6 +116,7 @@ namespace honei
                 }
 
                 PROFILER_STOP("CGSolver NONE");
+                std::cout << used_iters << " " << max_iters << " " << iterations << std::endl;
                 return x;
             }
     };

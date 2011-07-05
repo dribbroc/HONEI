@@ -117,7 +117,14 @@ namespace honei
 
             virtual std::string to_string()
             {
-                return "SumOperator";
+                std::string result("SumOperator\n");
+                result += "  left.size()= ";
+                result += stringify(_x.size());
+                result += "\n";
+                result += "  right.size()= ";
+                result += stringify(_y.size());
+                result += "\n";
+                return result;;
             }
 
             SumOperator(VectorType_& y, VectorType_& x) :

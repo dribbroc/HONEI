@@ -59,8 +59,7 @@ class MGCycleProcessingTest:
                 t1.push_back(dummy.copy());
             }
 
-            unsigned long used_iters(0);
-            MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double> > data(A, Res, Prol, P, b, x, c, d, t0, t1, 1000, used_iters, 4, 4, 1, 1e-8);
+            MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double> > data(A, Res, Prol, P, b, x, c, d, t0, t1, 1, 1000, 4, 4, 1, 1e-8);
 
             OperatorList ol(
             MGCycleProcessing<Tag_,
@@ -146,14 +145,13 @@ class MGSolverTest:
                                                                                             io_formats::ELL,
                                                                                             io_formats::EXP,
                                                                                             double>::load_data(file, levels, double(0.7)));
-            unsigned long used_iters(0);
             MGUtil<Tag_,
                 SparseMatrixELL<double>,
                 DenseVector<double>,
                 DenseVector<double>,
                 io_formats::ELL,
                 io_formats::EXP,
-                double>::configure(data, 1000, used_iters, 4, 4, 1, double(1e-8));
+                double>::configure(data, 20, 100, 4, 4, 1, double(1e-8));
 
             OperatorList ol(
                     MGCycleProcessing<Tag_,
@@ -165,8 +163,9 @@ class MGSolverTest:
                     double>::value(data)
                     );
 
-            unsigned long used_iters_mg(0);
-            MGSolver<Tag_, Norm<vnt_l_two, false, Tag_> >::value(data, ol, 100, used_iters_mg, double(1e-8));
+            MGSolver<Tag_, Norm<vnt_l_two, false, Tag_> >::value(data, ol);
+
+            std::cout << data.used_iters << std::endl;
         }
 };
 MGSolverTest<tags::CPU> mg_solver_test_cpu("double");
