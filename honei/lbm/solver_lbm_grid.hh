@@ -266,7 +266,7 @@ namespace honei
                     std::vector<PackedGridData<D2Q9, ResPrec_> > _data_list;
                     std::vector<PackedGridFringe<D2Q9> > _fringe_list;
                     std::vector<honei::SolverLBMGrid<typename Tag_::DelegateTo, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_> *> _solver_list;
-                    std::vector<Ticket<tags::CPU::MultiCore> *> _tickets;
+                    std::vector<Ticket<tags::CPU::MultiCore> > _tickets;
 
                 public:
                     SolverLBMGrid(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, ResPrec_> * data, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, ResPrec_ rel_time):
@@ -559,23 +559,23 @@ namespace honei
                             void * target7;
                             void * target8;
                             DetectTask detask(_data_list[i].h->address(), &target);
-                            cuda::GPUPool::instance()->enqueue(detask, i)->wait();
+                            cuda::GPUPool::instance()->enqueue(detask, i).wait();
                             DetectTask detask1(_data_list[i].f_temp_1->address(), &target1);
-                            cuda::GPUPool::instance()->enqueue(detask1, i)->wait();
+                            cuda::GPUPool::instance()->enqueue(detask1, i).wait();
                             DetectTask detask2(_data_list[i].f_temp_2->address(), &target2);
-                            cuda::GPUPool::instance()->enqueue(detask2, i)->wait();
+                            cuda::GPUPool::instance()->enqueue(detask2, i).wait();
                             DetectTask detask3(_data_list[i].f_temp_3->address(), &target3);
-                            cuda::GPUPool::instance()->enqueue(detask3, i)->wait();
+                            cuda::GPUPool::instance()->enqueue(detask3, i).wait();
                             DetectTask detask4(_data_list[i].f_temp_4->address(), &target4);
-                            cuda::GPUPool::instance()->enqueue(detask4, i)->wait();
+                            cuda::GPUPool::instance()->enqueue(detask4, i).wait();
                             DetectTask detask5(_data_list[i].f_temp_5->address(), &target5);
-                            cuda::GPUPool::instance()->enqueue(detask5, i)->wait();
+                            cuda::GPUPool::instance()->enqueue(detask5, i).wait();
                             DetectTask detask6(_data_list[i].f_temp_6->address(), &target6);
-                            cuda::GPUPool::instance()->enqueue(detask6, i)->wait();
+                            cuda::GPUPool::instance()->enqueue(detask6, i).wait();
                             DetectTask detask7(_data_list[i].f_temp_7->address(), &target7);
-                            cuda::GPUPool::instance()->enqueue(detask7, i)->wait();
+                            cuda::GPUPool::instance()->enqueue(detask7, i).wait();
                             DetectTask detask8(_data_list[i].f_temp_8->address(), &target8);
-                            cuda::GPUPool::instance()->enqueue(detask8, i)->wait();
+                            cuda::GPUPool::instance()->enqueue(detask8, i).wait();
 
                             unsigned long offset(_info_list[i].offset);
                             unsigned long f1_offset((*_fringe_list[i].dir_index_1)[0]);
@@ -634,23 +634,23 @@ namespace honei
                             void * target7;
                             void * target8;
                             DetectTask detask(_data_list[i].h->address(), &target);
-                            cuda::GPUPool::instance()->enqueue(detask, i)->wait();
+                            cuda::GPUPool::instance()->enqueue(detask, i).wait();
                             DetectTask detask1(_data_list[i].f_temp_1->address(), &target1);
-                            cuda::GPUPool::instance()->enqueue(detask1, i)->wait();
+                            cuda::GPUPool::instance()->enqueue(detask1, i).wait();
                             DetectTask detask2(_data_list[i].f_temp_2->address(), &target2);
-                            cuda::GPUPool::instance()->enqueue(detask2, i)->wait();
+                            cuda::GPUPool::instance()->enqueue(detask2, i).wait();
                             DetectTask detask3(_data_list[i].f_temp_3->address(), &target3);
-                            cuda::GPUPool::instance()->enqueue(detask3, i)->wait();
+                            cuda::GPUPool::instance()->enqueue(detask3, i).wait();
                             DetectTask detask4(_data_list[i].f_temp_4->address(), &target4);
-                            cuda::GPUPool::instance()->enqueue(detask4, i)->wait();
+                            cuda::GPUPool::instance()->enqueue(detask4, i).wait();
                             DetectTask detask5(_data_list[i].f_temp_5->address(), &target5);
-                            cuda::GPUPool::instance()->enqueue(detask5, i)->wait();
+                            cuda::GPUPool::instance()->enqueue(detask5, i).wait();
                             DetectTask detask6(_data_list[i].f_temp_6->address(), &target6);
-                            cuda::GPUPool::instance()->enqueue(detask6, i)->wait();
+                            cuda::GPUPool::instance()->enqueue(detask6, i).wait();
                             DetectTask detask7(_data_list[i].f_temp_7->address(), &target7);
-                            cuda::GPUPool::instance()->enqueue(detask7, i)->wait();
+                            cuda::GPUPool::instance()->enqueue(detask7, i).wait();
                             DetectTask detask8(_data_list[i].f_temp_8->address(), &target8);
-                            cuda::GPUPool::instance()->enqueue(detask8, i)->wait();
+                            cuda::GPUPool::instance()->enqueue(detask8, i).wait();
 
                             unsigned long offset(_info_list[i].offset);
                             unsigned long f1_offset((*_fringe_list[i].external_dir_index_1)[0]);

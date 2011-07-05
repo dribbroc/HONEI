@@ -72,10 +72,10 @@ namespace honei
                 unsigned num_threads() const;
 
                 /// Dispatch a task using a specified dispatch strategy
-                Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, DispatchPolicy p);
+                Ticket<tags::CPU::MultiCore> enqueue(const function<void ()> & task, DispatchPolicy p);
 
                 /// Dispatch a task using the default dispatch strategy setup through honeirc
-                Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task);
+                Ticket<tags::CPU::MultiCore> enqueue(const function<void ()> & task);
 
                 /// \}
         };

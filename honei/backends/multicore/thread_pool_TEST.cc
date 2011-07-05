@@ -75,28 +75,38 @@ class ThreadPoolTest :
                 tickets.push_back(ThreadPool::instance()->enqueue(t, DispatchPolicy::on_core(2 * sysconf(_SC_NPROCESSORS_CONF))));
             }
 
+            std::vector<Ticket<tags::CPU::MultiCore> > last250(250);
+
             for (unsigned i(750) ; i < 1000 ; ++i)
             {
-                tickets.push_back(ThreadPool::instance()->enqueue(t, DispatchPolicy::on_core(i % (sysconf(_SC_NPROCESSORS_CONF) - 1))));
+                Ticket<tags::CPU::MultiCore> ticket = ThreadPool::instance()->enqueue(t,
+                        DispatchPolicy::on_core(i % (sysconf(_SC_NPROCESSORS_CONF) - 1)));
+
+                last250.push_back(ticket);
+                tickets.push_back(ticket);
             }
 
             for (unsigned i(1000) ; i < 1250 ; ++i)
             {
-                Ticket<tags::CPU::MultiCore> * tick(static_cast<Ticket<tags::CPU::MultiCore> *>(tickets[750 + (i % 200)]));
-                tickets.push_back(ThreadPool::instance()->enqueue(t, DispatchPolicy::same_core_as(tick)));
+                tickets.push_back(ThreadPool::instance()->enqueue(t, DispatchPolicy::same_core_as(last250[i % 250])));
             }
 
             Topology * top = Topology::instance();
 
             for (unsigned i(1250) ; i < 1500 ; ++i)
             {
-                tickets.push_back(ThreadPool::instance()->enqueue(t, DispatchPolicy::on_node(i % top->num_nodes())));
+                Ticket<tags::CPU::MultiCore> ticket = ThreadPool::instance()->enqueue(t,
+                        DispatchPolicy::on_node(i % top->num_nodes()));
+                last250[i % 250] = ticket;
+                tickets.push_back(ticket);
             }
 
             for (unsigned i(1500) ; i < 1750 ; ++i)
             {
-                Ticket<tags::CPU::MultiCore> * tick(static_cast<Ticket<tags::CPU::MultiCore> *>(tickets[1250 + (i % 200)]));
-                tickets.push_back(ThreadPool::instance()->enqueue(t, DispatchPolicy::same_node_as(tick)));
+                Ticket<tags::CPU::MultiCore> ticket = ThreadPool::instance()->enqueue(t,
+                        DispatchPolicy::same_node_as(last250[i % 250]));
+
+                tickets.push_back(ticket);
             }
 
             tickets.wait();
@@ -121,12 +131,13 @@ class ThreadPoolQuickTest :
 
             TicketVector tickets;
 
-            for (unsigned i(0) ; i < 125 ; ++i)
+            Ticket<tags::CPU::MultiCore> first_t(ThreadPool::instance()->enqueue(t));
+            tickets.push_back(first_t);
+
+            for (unsigned i(1) ; i < 125 ; ++i)
             {
                 tickets.push_back(ThreadPool::instance()->enqueue(t));
             }
-
-            Ticket<tags::CPU::MultiCore> * first_t(static_cast<Ticket<tags::CPU::MultiCore> *>(tickets[0]));
 
             for (unsigned i(125) ; i < 250 ; ++i)
             {
@@ -142,6 +153,6 @@ class ThreadPoolQuickTest :
 
             TEST_CHECK_EQUAL(v, 534u);
 
-            std::cout<<"Used threads: "<< ThreadPool::instance()->num_threads() << std::endl;
+            std::cout<< "Used threads: " << ThreadPool::instance()->num_threads() << std::endl;
         }
 } thread_pool_quick_test;

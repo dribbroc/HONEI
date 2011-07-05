@@ -122,8 +122,8 @@ namespace honei
             delete _pool_sync;
         }
 
-        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy p) = 0;
-        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task) = 0;
+        virtual Ticket<tags::CPU::MultiCore> enqueue(const function<void ()> & task, mc::DispatchPolicy p) = 0;
+        virtual Ticket<tags::CPU::MultiCore> enqueue(const function<void ()> & task) = 0;
     };
 
     /* StandardImplementation assumes affinity to be disabled. */
@@ -166,16 +166,16 @@ namespace honei
         {
         }
 
-        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy)
+        virtual Ticket<tags::CPU::MultiCore> enqueue(const function<void ()> & task, mc::DispatchPolicy)
         {
             return enqueue(task);
         }
 
-        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task)
+        virtual Ticket<tags::CPU::MultiCore> enqueue(const function<void ()> & task)
         {
             CONTEXT("When creating a ThreadTask:");
 
-            Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
+            Ticket<tags::CPU::MultiCore> ticket(policy().apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
             _tasks.push_back(t_task);
@@ -225,16 +225,16 @@ namespace honei
         {
         }
 
-        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy)
+        virtual Ticket<tags::CPU::MultiCore> enqueue(const function<void ()> & task, mc::DispatchPolicy)
         {
             return enqueue(task);
         }
 
-        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task)
+        virtual Ticket<tags::CPU::MultiCore> enqueue(const function<void ()> & task)
         {
             CONTEXT("When creating a ThreadTask:");
 
-            Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
+            Ticket<tags::CPU::MultiCore> ticket(policy().apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
             _tasks.push_back(t_task);
@@ -283,16 +283,16 @@ namespace honei
         {
         }
 
-        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy)
+        virtual Ticket<tags::CPU::MultiCore> enqueue(const function<void ()> & task, mc::DispatchPolicy)
         {
             return enqueue(task);
         }
 
-        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task)
+        virtual Ticket<tags::CPU::MultiCore> enqueue(const function<void ()> & task)
         {
             CONTEXT("When creating a ThreadTask:");
 
-            Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
+            Ticket<tags::CPU::MultiCore> ticket(policy().apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
             {
@@ -375,11 +375,11 @@ namespace honei
             delete[] _affinity_mask;
         }
 
-        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy p)
+        virtual Ticket<tags::CPU::MultiCore> enqueue(const function<void ()> & task, mc::DispatchPolicy p)
         {
             CONTEXT("When creating a ThreadTask:");
 
-            Ticket<tags::CPU::MultiCore> * ticket(p.apply());
+            Ticket<tags::CPU::MultiCore> ticket(p.apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
             {
@@ -391,11 +391,11 @@ namespace honei
             return ticket;
         }
 
-        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task)
+        virtual Ticket<tags::CPU::MultiCore> enqueue(const function<void ()> & task)
         {
             CONTEXT("When creating a ThreadTask:");
 
-            Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
+            Ticket<tags::CPU::MultiCore> ticket(policy().apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
             {
@@ -514,14 +514,14 @@ namespace honei
             delete[] _affinity_mask;
         }
 
-        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy p)
+        virtual Ticket<tags::CPU::MultiCore> enqueue(const function<void ()> & task, mc::DispatchPolicy p)
         {
             CONTEXT("When creating a ThreadTask:");
 
-            Ticket<tags::CPU::MultiCore> * ticket(p.apply());
+            Ticket<tags::CPU::MultiCore> ticket(p.apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
-            int idx((ticket->sid_min() == 0xFFFF) ? rand() % _num_threads : ticket->sid_min());
+            int idx((ticket.sid_min() == 0xFFFF) ? rand() % _num_threads : ticket.sid_min());
 
             mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > * wfunc(_thread_fn[idx]);
             wfunc->enqueue(t_task);
@@ -534,14 +534,14 @@ namespace honei
             return ticket;
         }
 
-        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task)
+        virtual Ticket<tags::CPU::MultiCore> enqueue(const function<void ()> & task)
         {
             CONTEXT("When creating a ThreadTask:");
 
-            Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
+            Ticket<tags::CPU::MultiCore> ticket(policy().apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
-            int idx((ticket->sid_min() == 0xFFFF) ? rand() % _num_threads : ticket->sid_min());
+            int idx((ticket.sid_min() == 0xFFFF) ? rand() % _num_threads : ticket.sid_min());
 
             mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > * wfunc(_thread_fn[idx]);
             wfunc->enqueue(t_task);
@@ -660,14 +660,14 @@ namespace honei
             delete[] _affinity_mask;
         }
 
-        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy p)
+        virtual Ticket<tags::CPU::MultiCore> enqueue(const function<void ()> & task, mc::DispatchPolicy p)
         {
             CONTEXT("When creating a ThreadTask:");
 
-            Ticket<tags::CPU::MultiCore> * ticket(p.apply());
+            Ticket<tags::CPU::MultiCore> ticket(p.apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
-            int idx((ticket->sid_min() == 0xFFFF) ? rand() % _num_threads : ticket->sid_min());
+            int idx((ticket.sid_min() == 0xFFFF) ? rand() % _num_threads : ticket.sid_min());
 
             mc::WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> > * wfunc(_thread_fn[idx]);
             wfunc->enqueue(t_task);
@@ -680,14 +680,14 @@ namespace honei
             return ticket;
         }
 
-        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task)
+        virtual Ticket<tags::CPU::MultiCore> enqueue(const function<void ()> & task)
         {
             CONTEXT("When creating a ThreadTask:");
 
-            Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
+            Ticket<tags::CPU::MultiCore> ticket(policy().apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
-            int idx((ticket->sid_min() == 0xFFFF) ? rand() % _num_threads : ticket->sid_min());
+            int idx((ticket.sid_min() == 0xFFFF) ? rand() % _num_threads : ticket.sid_min());
 
             mc::WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> > * wfunc(_thread_fn[idx]);
             wfunc->enqueue(t_task);
@@ -806,14 +806,14 @@ namespace honei
             delete[] _affinity_mask;
         }
 
-        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task, mc::DispatchPolicy p)
+        virtual Ticket<tags::CPU::MultiCore> enqueue(const function<void ()> & task, mc::DispatchPolicy p)
         {
             CONTEXT("When creating a ThreadTask:");
 
-            Ticket<tags::CPU::MultiCore> * ticket(p.apply());
+            Ticket<tags::CPU::MultiCore> ticket(p.apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
-            int idx((ticket->sid_min() == 0xFFFF) ? rand() % _num_threads : ticket->sid_min());
+            int idx((ticket.sid_min() == 0xFFFF) ? rand() % _num_threads : ticket.sid_min());
 
             mc::WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> > * wfunc(_thread_fn[idx]);
             wfunc->enqueue(t_task);
@@ -826,14 +826,14 @@ namespace honei
             return ticket;
         }
 
-        virtual Ticket<tags::CPU::MultiCore> * enqueue(const function<void ()> & task)
+        virtual Ticket<tags::CPU::MultiCore> enqueue(const function<void ()> & task)
         {
             CONTEXT("When creating a ThreadTask:");
 
-            Ticket<tags::CPU::MultiCore> * ticket(policy().apply());
+            Ticket<tags::CPU::MultiCore> ticket(policy().apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
-            int idx((ticket->sid_min() == 0xFFFF) ? rand() % _num_threads : ticket->sid_min());
+            int idx((ticket.sid_min() == 0xFFFF) ? rand() % _num_threads : ticket.sid_min());
 
             mc::WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> > * wfunc(_thread_fn[idx]);
             wfunc->enqueue(t_task);
@@ -851,9 +851,9 @@ namespace honei
 using namespace honei;
 using namespace honei::mc;
 
-template class InstantiationPolicy<ThreadPool, Singleton>;
+Ticket<tags::CPU::MultiCore> DispatchPolicy::last;
 
-Ticket<tags::CPU::MultiCore> * DispatchPolicy::last(NULL);
+template class InstantiationPolicy<ThreadPool, Singleton>;
 
 ThreadPool::ThreadPool() :
     PrivateImplementationPattern<ThreadPool, Shared>(select_impl())
@@ -918,13 +918,13 @@ unsigned ThreadPool::num_threads() const
     return _imp->_num_threads;
 }
 
-Ticket<tags::CPU::MultiCore> * ThreadPool::enqueue(const function<void ()> & task, DispatchPolicy p)
+Ticket<tags::CPU::MultiCore> ThreadPool::enqueue(const function<void ()> & task, DispatchPolicy p)
 {
     return _imp->enqueue(task, p);
 }
 
 /// Use default policy
-Ticket<tags::CPU::MultiCore> * ThreadPool::enqueue(const function<void ()> & task)
+Ticket<tags::CPU::MultiCore> ThreadPool::enqueue(const function<void ()> & task)
 {
     return _imp->enqueue(task);
 }

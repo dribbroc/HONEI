@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2008, 2009, 2010 Sven Mallach <mallach@honei.org>
+ * Copyright (c) 2008, 2009, 2010, 2011 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -26,14 +26,9 @@
 
 namespace honei
 {
-        template <> struct Implementation<Ticket<tags::CPU::MultiCore> >
+        template <> struct Implementation<Ticket<tags::CPU::MultiCore> > :
+            public TicketBaseImpl
         {
-            Mutex mutex;
-
-            ConditionVariable completion;
-
-            bool completed;
-
             /// Counter for unique global ticket IDs
             static unsigned counter;
 
@@ -53,41 +48,37 @@ namespace honei
             unsigned thread_id;
 
             Implementation(const unsigned sid_min, const unsigned sid_max) :
-                completed(false),
+                TicketBaseImpl(),
                 id(counter),
                 sched_min(sid_min),
                 sched_max(sid_max),
-                sched_id(0xFFFF)
-             {
+                sched_id(0xFFFF),
+                thread_id(0)
+            {
                 ++counter;
+            }
+
+            virtual ~Implementation()
+            {
             }
         };
 
         Ticket<tags::CPU::MultiCore>::Ticket(const unsigned sid_min, const unsigned sid_max) :
-            PrivateImplementationPattern<Ticket<tags::CPU::MultiCore>, Shared>(new Implementation<Ticket<tags::CPU::MultiCore> >(sid_min, sid_max))
+            TicketBase(),
+            PrivateImplementationPattern<Ticket<tags::CPU::MultiCore>, Shared>(new
+                    Implementation<Ticket<tags::CPU::MultiCore> >(sid_min, sid_max))
         {
         }
 
-        void Ticket<tags::CPU::MultiCore>::mark()
+        Ticket<tags::CPU::MultiCore>::~Ticket()
         {
-            CONTEXT("When marking a ticket for completion:");
-            Lock l(_imp->mutex);
-
-            ASSERT(! _imp->completed, "ticket marked more than once!");
-
-            _imp->completed = true;
-            _imp->completion.signal();
         }
 
-        void Ticket<tags::CPU::MultiCore>::wait() const
+        Ticket<tags::CPU::MultiCore> & Ticket<tags::CPU::MultiCore>::operator= (const Ticket<tags::CPU::MultiCore> & other)
         {
-            CONTEXT("When waiting for ticket completion:");
-            Lock l(_imp->mutex);
-
-            while (! _imp->completed)
-            {
-                _imp->completion.wait(_imp->mutex);
-            }
+            _base = other._base;
+            _imp = other._imp;
+            return *this;
         }
 
         unsigned Ticket<tags::CPU::MultiCore>::uid() const

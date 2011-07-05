@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2010 Dirk Ribbrock <dirk.ribbrock@tu-dortmund.de>
+ * Copyright (c) 2011 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General

@@ -33,13 +33,11 @@ namespace honei
     {
         struct GPUTask
         {
-            typedef function<void () throw ()> WorkFunctor;
+            function<void ()> * functor;
+            Ticket<tags::GPU::MultiCore> ticket;
 
-            WorkFunctor * functor;
-            Ticket<tags::GPU::MultiCore> * ticket;
-
-            template <typename WorkerTask> GPUTask(WorkerTask & task, Ticket<tags::GPU::MultiCore> * tick) :
-                functor(new WorkFunctor(task)),
+            template <typename WorkerTask> GPUTask(WorkerTask & task, Ticket<tags::GPU::MultiCore> & tick) :
+                functor(new function<void ()>(task)),
                 ticket(tick)
             {
             }

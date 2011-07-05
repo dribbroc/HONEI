@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2008, 2009, 2010 Sven Mallach <mallach@honei.org>
+ * Copyright (c) 2008, 2009, 2010, 2011 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -32,6 +32,7 @@ namespace honei
             private:
                 /// \name Private members
                 /// \{
+
                 /// \}
 
             public:
@@ -41,13 +42,13 @@ namespace honei
                 /// Constructor
                 Ticket(const unsigned sid_min = 0xFFFF, const unsigned sid_max = 0xFFFF);
 
+                virtual ~Ticket();
+
                 /// \}
 
-                /// Mark ticket as completed.
-                virtual void mark();
+                /// Derive mark and wait from TicketBase
 
-                /// Wait for ticket completion.
-                virtual void wait() const;
+                Ticket<tags::CPU::MultiCore> & operator= (const Ticket<tags::CPU::MultiCore> & other);
 
                 /// Retrieve unique ticket ID
                 unsigned uid() const;

@@ -143,7 +143,7 @@ void GPUFunction::operator() ()
                 Lock l(*_imp->pool_mutex);
                 _imp->idle = true;
             }
-            _imp->task->ticket->mark();
+            _imp->task->ticket.mark();
             delete _imp->task;
             _imp->pick_work();
         }

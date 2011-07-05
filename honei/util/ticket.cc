@@ -2,7 +2,7 @@
 
 /*
  * Copyright (c) 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
- * Copyright (c) 2008, 2009 Sven Mallach <mallach@honei.org>
+ * Copyright (c) 2008, 2009, 2011 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -18,9 +18,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/util/assertion.hh>
 #include <honei/util/condition_variable.hh>
-#include <honei/util/exception.hh>
 #include <honei/util/lock.hh>
 #include <honei/util/mutex.hh>
 #include <honei/util/private_implementation_pattern-impl.hh>
@@ -30,55 +28,61 @@
 
 namespace honei
 {
-    template <> struct Implementation<TicketBase>
+    /* TicketBase member implementation */
+
+    TicketBase::TicketBase() :
+        _base(new TicketBaseImpl)
     {
-        Mutex mutex;
+    }
 
-        ConditionVariable completion;
+    TicketBase::~TicketBase()
+    {
+    }
 
-        bool completed;
+    void TicketBase::mark() const
+    {
+        _base->mark();
+    }
 
+    void TicketBase::wait() const
+    {
+        _base->wait();
+    }
+
+
+
+    template <> struct Implementation<Ticket<tags::CPU> > :
+        public TicketBaseImpl
+    {
         Implementation() :
-            completed(false)
+            TicketBaseImpl()
+        {
+        }
+
+        virtual ~Implementation()
         {
         }
     };
 
-    template <> struct Implementation<Ticket<tags::CPU> > :
-        public Implementation<TicketBase>
-    {
-    };
+
+    /* Ticket<tags::CPU>'s implementation - just adopting
+     * the basic implementation from TicketBase */
 
     Ticket<tags::CPU>::Ticket() :
+        TicketBase(),
         PrivateImplementationPattern<Ticket<tags::CPU>, Shared>(new Implementation<Ticket<tags::CPU> >)
     {
     }
 
-    void Ticket<tags::CPU>::mark()
+    Ticket<tags::CPU>::~Ticket()
     {
-        CONTEXT("When marking a ticket for completion:");
-        Lock l(_imp->mutex);
-
-        ASSERT(! _imp->completed, "ticket marked more than once!");
-
-        _imp->completed = true;
-        _imp->completion.signal();
     }
 
-    void Ticket<tags::CPU>::wait() const
-    {
-        CONTEXT("When waiting for ticket completion:");
-        Lock l(_imp->mutex);
-
-        while (! _imp->completed)
-        {
-            _imp->completion.wait(_imp->mutex);
-        }
-    }
+    /* Implementation of TicketVector */
 
     template <> struct Implementation<TicketVector>
     {
-        std::vector<TicketBase *> tickets;
+        std::vector<TicketBase> tickets;
     };
 
     TicketVector::TicketVector() :
@@ -91,7 +95,7 @@ namespace honei
     }
 
     void
-    TicketVector::push_back(TicketBase * ticket)
+    TicketVector::push_back(TicketBase ticket)
     {
         CONTEXT("When pushing a Ticket to the back of a TicketVector:");
 
@@ -105,14 +109,8 @@ namespace honei
 
         while (! _imp->tickets.empty())
         {
-            _imp->tickets.back()->wait();
+            _imp->tickets.back().wait();
             _imp->tickets.pop_back();
         }
-    }
-
-    TicketBase *
-    TicketVector::operator[] (const unsigned index)
-    {
-        return _imp->tickets[index];
     }
 }

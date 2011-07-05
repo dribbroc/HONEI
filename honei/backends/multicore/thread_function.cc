@@ -134,13 +134,13 @@ namespace honei
                         if ((*comp)(*i))
                         {
                             task = *i;
-                            unsigned & sched_id = task->ticket->sid();
+                            unsigned & sched_id = task->ticket.sid();
                             sched_id = sched_lpu;
                             tasklist->erase(i);
 #ifdef DEBUG
                             std::string msg = "Thread " + stringify(pool_id) + " on LPU " +
                             stringify(sched_lpu) + " will execute ticket " +
-                            stringify(task->ticket->uid()) + "\n";
+                            stringify(task->ticket.uid()) + "\n";
                             LOGMESSAGE(lc_backend, msg);
 #endif
                             break;
@@ -159,7 +159,7 @@ namespace honei
                 if (task != 0)
                 {
                     (*task->functor)();
-                    task->ticket->mark();
+                    task->ticket.mark();
                     delete task;
                 }
             }
@@ -262,17 +262,17 @@ namespace honei
 
                 if (task != 0)
                 {
-                    unsigned & sched_id = task->ticket->sid();
+                    unsigned & sched_id = task->ticket.sid();
                     sched_id = sched_lpu;
 #ifdef DEBUG
                     std::string msg = "Thread " + stringify(pool_id) + " on LPU " +
                     stringify(sched_lpu) + " will execute ticket " +
-                    stringify(task->ticket->uid()) + "\n";
+                    stringify(task->ticket.uid()) + "\n";
                     LOGMESSAGE(lc_backend, msg);
 #endif
 
                     (*task->functor)();
-                    task->ticket->mark();
+                    task->ticket.mark();
                     delete task;
                 }
 
@@ -392,17 +392,17 @@ namespace honei
 
                 if (task != 0)
                 {
-                    unsigned & sched_id = task->ticket->sid();
+                    unsigned & sched_id = task->ticket.sid();
                     sched_id = sched_lpu;
 #ifdef DEBUG
                     std::string msg = "Thread " + stringify(pool_id) + " on LPU " +
                     stringify(sched_lpu) + " will execute ticket " +
-                    stringify(task->ticket->uid()) + "\n";
+                    stringify(task->ticket.uid()) + "\n";
                     LOGMESSAGE(lc_backend, msg);
 #endif
 
                     (*task->functor)();
-                    task->ticket->mark();
+                    task->ticket.mark();
                     delete task;
                 }
 
@@ -543,17 +543,17 @@ namespace honei
 
                 if (task != 0)
                 {
-                    unsigned & sched_id = task->ticket->sid();
+                    unsigned & sched_id = task->ticket.sid();
                     sched_id = sched_lpu;
 #ifdef DEBUG
                     std::string msg = "Thread " + stringify(pool_id) + " on LPU " +
                     stringify(sched_lpu) + " will execute ticket " +
-                    stringify(task->ticket->uid()) + "\n";
+                    stringify(task->ticket.uid()) + "\n";
                     LOGMESSAGE(lc_backend, msg);
 #endif
 
                     (*task->functor)();
-                    task->ticket->mark();
+                    task->ticket.mark();
                     delete task;
                 }
             }
@@ -665,11 +665,11 @@ namespace honei
                 {
 #ifdef DEBUG
                     std::string msg = "Thread " + stringify(pool_id) + " will execute ticket " +
-                    stringify(task->ticket->uid()) + "\n";
+                    stringify(task->ticket.uid()) + "\n";
                     LOGMESSAGE(lc_backend, msg);
 #endif
                     (*task->functor)();
-                    task->ticket->mark();
+                    task->ticket.mark();
                     delete task;
                 }
             }
@@ -734,11 +734,11 @@ namespace honei
                 {
 #ifdef DEBUG
                     std::string msg = "Thread " + stringify(pool_id) + " will execute ticket " +
-                    stringify(task->ticket->uid()) + "\n";
+                    stringify(task->ticket.uid()) + "\n";
                     LOGMESSAGE(lc_backend, msg);
 #endif
                     (*task->functor)();
-                    task->ticket->mark();
+                    task->ticket.mark();
                     delete task;
                 }
             }
@@ -803,11 +803,11 @@ namespace honei
                 {
 #ifdef DEBUG
                     std::string msg = "Thread " + stringify(pool_id) + " will execute ticket " +
-                    stringify(task->ticket->uid()) + "\n";
+                    stringify(task->ticket.uid()) + "\n";
                     LOGMESSAGE(lc_backend, msg);
 #endif
                     (*task->functor)();
-                    task->ticket->mark();
+                    task->ticket.mark();
                     delete task;
                 }
             }

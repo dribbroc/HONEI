@@ -42,9 +42,10 @@ namespace honei
 
             public:
 
-                Ticket<tags::CPU::MultiCore> * operator() ()
+                Ticket<tags::CPU::MultiCore> operator() ()
                 {
-                    return new Ticket<tags::CPU::MultiCore>;
+                    Ticket<tags::CPU::MultiCore> ticket;
+                    return ticket;
                 }
         };
 
@@ -56,20 +57,20 @@ namespace honei
         {
             private:
 
-                Ticket<tags::CPU::MultiCore> * other;
+                Ticket<tags::CPU::MultiCore> other;
 
             public:
 
-                SameCorePolicy(Ticket<tags::CPU::MultiCore> * ticket) :
+                SameCorePolicy(Ticket<tags::CPU::MultiCore> & ticket) :
                     other(ticket)
                 {
                 }
 
-                Ticket<tags::CPU::MultiCore> * operator() ()
+                Ticket<tags::CPU::MultiCore> operator() ()
                 {
-                    unsigned sched_id(other->sid());
+                    unsigned sched_id(other.sid());
 
-                    Ticket<tags::CPU::MultiCore> * ticket = new Ticket<tags::CPU::MultiCore>(sched_id, sched_id);
+                    Ticket<tags::CPU::MultiCore> ticket(sched_id, sched_id);
 
                     return ticket;
                 }
@@ -90,15 +91,14 @@ namespace honei
                 {
                 }
 
-                Ticket<tags::CPU::MultiCore> * operator() ()
+                Ticket<tags::CPU::MultiCore> operator() ()
                 {
                     Topology * top = Topology::instance();
 
                     if (core_id > top->num_lpus() - 1)
                         core_id = top->num_lpus() - 1;
 
-                    Ticket<tags::CPU::MultiCore> * ticket =
-                        new Ticket<tags::CPU::MultiCore>(core_id, core_id);
+                    Ticket<tags::CPU::MultiCore> ticket(core_id, core_id);
 
                     return ticket;
                 }
@@ -112,21 +112,21 @@ namespace honei
         {
             private:
 
-                Ticket<tags::CPU::MultiCore> * other;
+                Ticket<tags::CPU::MultiCore> other;
 
             public:
 
-                SameNodePolicy(Ticket<tags::CPU::MultiCore> * ticket) :
+                SameNodePolicy(Ticket<tags::CPU::MultiCore> & ticket) :
                     other(ticket)
                 {
                 }
 
-                Ticket<tags::CPU::MultiCore> * operator() ()
+                Ticket<tags::CPU::MultiCore> operator() ()
                 {
-                    unsigned sched_min(other->sid_min());
-                    unsigned sched_max(other->sid_max());
+                    unsigned sched_min(other.sid_min());
+                    unsigned sched_max(other.sid_max());
 
-                    Ticket<tags::CPU::MultiCore> * ticket = new Ticket<tags::CPU::MultiCore>(sched_min, sched_max);
+                    Ticket<tags::CPU::MultiCore> ticket(sched_min, sched_max);
 
                     return ticket;
                 }
@@ -147,12 +147,11 @@ namespace honei
                 {
                 }
 
-                Ticket<tags::CPU::MultiCore> * operator() ()
+                Ticket<tags::CPU::MultiCore> operator() ()
                 {
                     Topology * top = Topology::instance();
 
-                    Ticket<tags::CPU::MultiCore> * ticket =
-                        new Ticket<tags::CPU::MultiCore>(top->node_min(node_id), top->node_max(node_id));
+                    Ticket<tags::CPU::MultiCore> ticket(top->node_min(node_id), top->node_max(node_id));
 
                     return ticket;
                 }
@@ -164,39 +163,37 @@ namespace honei
         {
             private:
 
-                Ticket<tags::CPU::MultiCore> * last;
+                Ticket<tags::CPU::MultiCore> last;
 
             public:
 
-                LinearNodePolicy(Ticket<tags::CPU::MultiCore> * l) :
+                LinearNodePolicy(Ticket<tags::CPU::MultiCore> & l) :
                     last(l)
                 {
                 }
 
-                Ticket<tags::CPU::MultiCore> * operator() ()
+                Ticket<tags::CPU::MultiCore> operator() ()
                 {
-                    Ticket<tags::CPU::MultiCore> * ticket(NULL);
                     Topology * top = Topology::instance();
 
-                    if (last == NULL)
+                    if (last.uid() == 0)
                     {
-                        ticket = new Ticket<tags::CPU::MultiCore>(0, 0);
+                        Ticket<tags::CPU::MultiCore> ticket(0, 0);
+                        return ticket;
                     }
                     else
                     {
-                        unsigned last_core = last->sid_min();
+                        unsigned last_core = last.sid_min();
 
                         if (last_core == top->num_lpus() - 1)
                             last_core = 0;
                         else
                             ++last_core;
 
-                        ticket = new Ticket<tags::CPU::MultiCore>(last_core, last_core);
+                        Ticket<tags::CPU::MultiCore> ticket(last_core, last_core);
+                        return ticket;
                     }
-
-                    return ticket;
                 }
-
         };
 
         /* Fill the avaiable nodes in an alternaing manner concerning
@@ -206,29 +203,29 @@ namespace honei
         {
             private:
 
-                Ticket<tags::CPU::MultiCore> * last;
+                Ticket<tags::CPU::MultiCore> last;
 
             public:
 
-                AlternatingNodePolicy(Ticket<tags::CPU::MultiCore> * l) :
+                AlternatingNodePolicy(Ticket<tags::CPU::MultiCore> & l) :
                     last(l)
                 {
                 }
 
-                Ticket<tags::CPU::MultiCore> * operator() ()
+                Ticket<tags::CPU::MultiCore> operator() ()
                 {
-                    Ticket<tags::CPU::MultiCore> * ticket(NULL);
                     Topology * top = Topology::instance();
                     unsigned num_nodes = top->num_nodes();
 
-                    if (last == NULL)
+                    if (last.uid() == 0)
                     {
-                        ticket = new Ticket<tags::CPU::MultiCore>(0, 0);
+                        Ticket<tags::CPU::MultiCore> ticket(0, 0);
+                        return ticket;
                     }
                     else
                     {
-                        unsigned last_node = top->get_node(last->sid_min());
-                        unsigned core_pos = last->sid_min() % top->lpus_per_node();
+                        unsigned last_node = top->get_node(last.sid_min());
+                        unsigned core_pos = last.sid_min() % top->lpus_per_node();
 
                         unsigned next_node(1 + last_node);
 
@@ -245,10 +242,9 @@ namespace honei
 
                         unsigned next_core = next_node * top->lpus_per_node() + core_pos;
 
-                        ticket = new Ticket<tags::CPU::MultiCore>(next_core, next_core);
+                        Ticket<tags::CPU::MultiCore> ticket(next_core, next_core);
+                        return ticket;
                     }
-
-                    return ticket;
                 }
         };
 
@@ -261,13 +257,13 @@ namespace honei
         {
             private:
 
-                const function<Ticket<tags::CPU::MultiCore> * ()> policy;
+                const function<Ticket<tags::CPU::MultiCore> ()> policy;
 
                 /// \name Basic Operations
                 /// \{
 
                 /// Constructor
-                DispatchPolicy(const function<Ticket<tags::CPU::MultiCore> * ()> p) :
+                DispatchPolicy(const function<Ticket<tags::CPU::MultiCore> ()> & p) :
                     policy(p)
                 {
                 }
@@ -276,10 +272,10 @@ namespace honei
 
             public:
 
-                static Ticket<tags::CPU::MultiCore> * last; // Store history
+                static Ticket<tags::CPU::MultiCore> last; // Store history
 
                 /// Creates a new Ticket and assures the given way of dispatching
-                Ticket<tags::CPU::MultiCore> * apply()
+                Ticket<tags::CPU::MultiCore> apply()
                 {
                     last = policy();
                     return last;
@@ -316,7 +312,7 @@ namespace honei
                 /// \{
 
                 /// Dispatch on same core as earlier task
-                static DispatchPolicy same_core_as(Ticket<tags::CPU::MultiCore> * ticket)
+                static DispatchPolicy same_core_as(Ticket<tags::CPU::MultiCore> & ticket)
                 {
                     return DispatchPolicy(SameCorePolicy(ticket));
                 }
@@ -328,7 +324,7 @@ namespace honei
                 }
 
                 /// Dispatch on same node as earlier task
-                static DispatchPolicy same_node_as(Ticket<tags::CPU::MultiCore> * ticket)
+                static DispatchPolicy same_node_as(Ticket<tags::CPU::MultiCore> & ticket)
                 {
                     return DispatchPolicy(SameNodePolicy(ticket));
                 }

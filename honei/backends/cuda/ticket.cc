@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2010 Dirk Ribbrock <dirk.ribbrock@tu-dortmund.de>
+ * Copyright (c) 2011 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -26,14 +27,9 @@
 
 namespace honei
 {
-        template <> struct Implementation<Ticket<tags::GPU::MultiCore> >
+        template <> struct Implementation<Ticket<tags::GPU::MultiCore> > :
+            public TicketBaseImpl
         {
-            Mutex mutex;
-
-            ConditionVariable completion;
-
-            bool completed;
-
             /// Counter for unique global ticket IDs
             static unsigned counter;
 
@@ -44,6 +40,7 @@ namespace honei
             unsigned thread_id;
 
             Implementation() :
+                TicketBaseImpl(),
                 completed(false),
                 id(counter)
             {
@@ -52,30 +49,9 @@ namespace honei
         };
 
         Ticket<tags::GPU::MultiCore>::Ticket() :
+            TicketBase(),
             PrivateImplementationPattern<Ticket<tags::GPU::MultiCore>, Shared>(new Implementation<Ticket<tags::GPU::MultiCore> >())
         {
-        }
-
-        void Ticket<tags::GPU::MultiCore>::mark()
-        {
-            CONTEXT("When marking a ticket for completion:");
-            Lock l(_imp->mutex);
-
-            ASSERT(! _imp->completed, "ticket marked more than once!");
-
-            _imp->completed = true;
-            _imp->completion.signal();
-        }
-
-        void Ticket<tags::GPU::MultiCore>::wait() const
-        {
-            CONTEXT("When waiting for ticket completion:");
-            Lock l(_imp->mutex);
-
-            while (! _imp->completed)
-            {
-                _imp->completion.wait(_imp->mutex);
-            }
         }
 
         unsigned Ticket<tags::GPU::MultiCore>::uid() const

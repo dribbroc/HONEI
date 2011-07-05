@@ -2,7 +2,7 @@
 
 /*
  * Copyright (c) 2008 Danny van Dyk <danny.dyk@uni-dortmund.de>
- * Copyright (c) 2008, 2009 Sven Mallach <mallach@honei.org>
+ * Copyright (c) 2008, 2009, 2011 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -22,38 +22,92 @@
 #ifndef HONEI_GUARD_UTIL_TICKET_HH
 #define HONEI_GUARD_UTIL_TICKET_HH 1
 
+#include <honei/util/assertion.hh>
 #include <honei/util/condition_variable.hh>
+#include <honei/util/exception.hh>
+#include <honei/util/lock.hh>
 #include <honei/util/private_implementation_pattern.hh>
 #include <honei/util/tags.hh>
 
 namespace honei
 {
-    // Forward declaration for Ticket.
-    class TicketVector;
+    struct TicketBaseImpl
+    {
+        Mutex mutex;
+
+        ConditionVariable completion;
+
+        bool completed;
+
+        TicketBaseImpl() :
+            completed(false)
+        {
+        }
+
+        virtual ~TicketBaseImpl()
+        {
+        }
+
+        void mark()
+        {
+            CONTEXT("When marking a ticket for completion:");
+            Lock l(mutex);
+
+            ASSERT(! completed, "ticket marked more than once!");
+
+            completed = true;
+            completion.signal();
+        }
+
+        void wait()
+        {
+            CONTEXT("When waiting for ticket completion:");
+            Lock l(mutex);
+
+            while (! completed)
+            {
+                completion.wait(mutex);
+            }
+        }
+    };
+
 
     /**
-     * TicketBase is the virtual base class for all types
+     * TicketBase is the base class for all types
      * of Tickets implemented for HONEIs backends.
+     * Never use directly!
      */
+
+    // Forward declaration.
+    class TicketVector;
 
     class TicketBase
     {
+        private:
+
+        protected:
+
+            shared_ptr<TicketBaseImpl> _base;
+
+            /// Constructor.
+            TicketBase();
+
         public:
 
             /// \name Basic Operations
             /// \{
 
             /// Destructor.
-            virtual ~TicketBase()
-            {
-            }
+            virtual ~TicketBase();
             /// \}
 
             /// Mark ticket as completed.
-            virtual void mark() = 0;
+            /// Do not overload!
+            void mark() const;
 
             /// Wait for ticket completion.
-            virtual void wait() const = 0;
+            /// Do not overload!
+            void wait() const;
 
             /// \name Friends of TicketBase
             /// \{
@@ -78,13 +132,11 @@ namespace honei
         /// Constructor.
         Ticket();
 
+        virtual ~Ticket();
+
         /// \}
 
-        /// Mark ticket as completed.
-        virtual void mark();
-
-        /// Wait for ticket completion.
-        virtual void wait() const;
+        // Derive mark and wait from TicketBase
     };
 
     /**
@@ -108,13 +160,10 @@ namespace honei
             /// \}
 
             /// Push a ticket to the back of the list.
-            void push_back(TicketBase * ticket);
+            void push_back(TicketBase ticket);
 
             /// Wait for ticket completion.
             void wait() const;
-
-            /// Retrieve a single given Ticket
-            TicketBase * operator[] (const unsigned index);
     };
 }
 

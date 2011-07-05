@@ -29,9 +29,9 @@ namespace honei
         struct ThreadTask
         {
             const function<void ()> * functor;
-            Ticket<tags::CPU::MultiCore> * const ticket;
+            Ticket<tags::CPU::MultiCore> ticket;
 
-            ThreadTask(const function<void ()> & task, Ticket<tags::CPU::MultiCore> * const tick) :
+            ThreadTask(const function<void ()> & task, Ticket<tags::CPU::MultiCore> & tick) :
                 functor(new function<void ()>(task)),
                 ticket(tick)
             {
@@ -54,8 +54,8 @@ namespace honei
 
             bool operator () (ThreadTask * const t) const
             {
-                const unsigned sched_min = t->ticket->sid_min();
-                const unsigned sched_max = t->ticket->sid_max();
+                const unsigned sched_min = t->ticket.sid_min();
+                const unsigned sched_max = t->ticket.sid_max();
 
                 if (sched_min == 0xFFFF || (sched_min <= sched_lpu && sched_lpu <= sched_max))
                     return true;
