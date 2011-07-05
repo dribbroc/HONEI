@@ -120,7 +120,7 @@ float DotProduct<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<float> 
         else
         {
             cudaDotProductDVfloat task(a, b, &result, blocksize, gridsize);
-            cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+            cuda::GPUPool::instance()->enqueue(task, 0).wait();
         }
     }
 
@@ -164,7 +164,7 @@ double DotProduct<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<double
         else
         {
             cudaDotProductDVdouble task(a, b, &result, blocksize, gridsize);
-            cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+            cuda::GPUPool::instance()->enqueue(task, 0).wait();
         }
     }
 
@@ -214,8 +214,8 @@ float DotProduct<tags::GPU::MultiCore::CUDA>::value(const DenseVectorContinuousB
             DenseVectorRange<float> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
             DenseVectorRange<float> b2(b.range(b.size()/2 + b.size()%2, b.size()/2));
             cudaDotProductDVfloat task2(a2, b2, &result2, blocksize, gridsize);
-            cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
-            cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+            cuda::GPUPool::instance()->enqueue(task1, 0).wait();
+            cuda::GPUPool::instance()->enqueue(task2, 1).wait();
             result = result1 + result2;
         }
     }
@@ -265,8 +265,8 @@ double DotProduct<tags::GPU::MultiCore::CUDA>::value(const DenseVectorContinuous
             DenseVectorRange<double> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
             DenseVectorRange<double> b2(b.range(b.size()/2 + b.size()%2, b.size()/2));
             cudaDotProductDVdouble task2(a2, b2, &result2, blocksize, gridsize);
-            cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
-            cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+            cuda::GPUPool::instance()->enqueue(task1, 0).wait();
+            cuda::GPUPool::instance()->enqueue(task2, 1).wait();
             result = result1 + result2;
         }
     }

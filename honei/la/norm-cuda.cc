@@ -107,7 +107,7 @@ float Norm<vnt_l_two, false, tags::GPU::CUDA>::value(const DenseVectorContinuous
         else
         {
             cudaNormL2oneDVfloat task(a, &result, blocksize, gridsize);
-            cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+            cuda::GPUPool::instance()->enqueue(task, 0).wait();
         }
         return result * result;
     }
@@ -142,7 +142,7 @@ float Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuousB
         else
         {
             cudaNormL2oneDVfloat task(a, &result, blocksize, gridsize);
-            cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+            cuda::GPUPool::instance()->enqueue(task, 0).wait();
         }
         return result;
     }
@@ -180,7 +180,7 @@ double Norm<vnt_l_two, false, tags::GPU::CUDA>::value(const DenseVectorContinuou
         else
         {
             cudaNormL2oneDVdouble task(a, &result, blocksize, gridsize);
-            cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+            cuda::GPUPool::instance()->enqueue(task, 0).wait();
         }
         PROFILER_STOP("Norm DV L2 false double tags::GPU::CUDA");
         return result * result;
@@ -218,7 +218,7 @@ double Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuous
         else
         {
             cudaNormL2oneDVdouble task(a, &result, blocksize, gridsize);
-            cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+            cuda::GPUPool::instance()->enqueue(task, 0).wait();
         }
         PROFILER_STOP("Norm DV L2 true double tags::GPU::CUDA");
         return result;
@@ -259,8 +259,8 @@ float Norm<vnt_l_two, false, tags::GPU::MultiCore::CUDA>::value(const DenseVecto
             cudaNormL2oneDVfloat task1(a1, &result1, blocksize, gridsize);
             DenseVectorRange<float> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
             cudaNormL2oneDVfloat task2(a2, &result2, blocksize, gridsize);
-            cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
-            cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+            cuda::GPUPool::instance()->enqueue(task1, 0).wait();
+            cuda::GPUPool::instance()->enqueue(task2, 1).wait();
             result = result1 + result2;
         }
         return result * result;
@@ -301,8 +301,8 @@ double Norm<vnt_l_two, false, tags::GPU::MultiCore::CUDA>::value(const DenseVect
             cudaNormL2oneDVdouble task1(a1, &result1, blocksize, gridsize);
             DenseVectorRange<double> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
             cudaNormL2oneDVdouble task2(a2, &result2, blocksize, gridsize);
-            cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
-            cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+            cuda::GPUPool::instance()->enqueue(task1, 0).wait();
+            cuda::GPUPool::instance()->enqueue(task2, 1).wait();
             result = result1 + result2;
         }
         return result * result;
@@ -343,8 +343,8 @@ float Norm<vnt_l_two, true, tags::GPU::MultiCore::CUDA>::value(const DenseVector
             cudaNormL2oneDVfloat task1(a1, &result1, blocksize, gridsize);
             DenseVectorRange<float> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
             cudaNormL2oneDVfloat task2(a2, &result2, blocksize, gridsize);
-            cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
-            cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+            cuda::GPUPool::instance()->enqueue(task1, 0).wait();
+            cuda::GPUPool::instance()->enqueue(task2, 1).wait();
             result = result1 + result2;
         }
             return result;
@@ -385,8 +385,8 @@ double Norm<vnt_l_two, true, tags::GPU::MultiCore::CUDA>::value(const DenseVecto
             cudaNormL2oneDVdouble task1(a1, &result1, blocksize, gridsize);
             DenseVectorRange<double> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
             cudaNormL2oneDVdouble task2(a2, &result2, blocksize, gridsize);
-            cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
-            cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+            cuda::GPUPool::instance()->enqueue(task1, 0).wait();
+            cuda::GPUPool::instance()->enqueue(task2, 1).wait();
             result = result1 + result2;
         }
     }

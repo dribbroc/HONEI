@@ -215,7 +215,7 @@ void ExtractionGrid<tags::GPU::CUDA, lbm_modes::DRY>::value(
     else
     {
         cudaExtractionGridDryfloat task(info, data, epsilon, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 }
 
@@ -265,7 +265,7 @@ void ExtractionGrid<tags::GPU::CUDA, lbm_modes::WET>::value(
     else
     {
         cudaExtractionGridWetfloat task(info, data, epsilon, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 }
 

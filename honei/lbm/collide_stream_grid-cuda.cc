@@ -168,7 +168,7 @@ void CollideStreamGrid<tags::GPU::CUDA, lbm_boundary_types::NOSLIP,
     else
     {
         cudaColStreamGridfloat task(info, data, tau, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 }
 

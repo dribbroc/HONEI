@@ -96,7 +96,7 @@ DenseVector<float> & Prolongation<tags::GPU::CUDA, methods::NONE>::value(DenseVe
     else
     {
         cudaProlongationDVfloat task(fine, coarse, mask, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return fine;
@@ -117,7 +117,7 @@ DenseVector<float> & Prolongation<tags::GPU::CUDA, methods::NONE>::value(DenseVe
     else
     {
         cudaProlongationDVfloat task(fine, coarse, mask, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return fine;
@@ -139,7 +139,7 @@ DenseVector<double> & Prolongation<tags::GPU::CUDA, methods::NONE>::value(DenseV
     else
     {
         cudaProlongationDVdouble task(fine, coarse, mask, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return fine;
@@ -159,7 +159,7 @@ DenseVector<double> & Prolongation<tags::GPU::CUDA, methods::NONE>::value(DenseV
     else
     {
         cudaProlongationDVdouble task(fine, coarse, mask, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return fine;

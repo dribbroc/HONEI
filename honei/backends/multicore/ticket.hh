@@ -42,6 +42,7 @@ namespace honei
                 /// Constructor
                 Ticket(const unsigned sid_min = 0xFFFF, const unsigned sid_max = 0xFFFF);
 
+                /// Destructor
                 virtual ~Ticket();
 
                 /// \}

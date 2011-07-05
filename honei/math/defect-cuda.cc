@@ -240,7 +240,7 @@ DenseVector<float> Defect<tags::GPU::CUDA>::value(const DenseVectorContinuousBas
     else
     {
         cudaDefectBMQ1DVfloat task(result, rhs, a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return result;
@@ -274,7 +274,7 @@ DenseVector<double> Defect<tags::GPU::CUDA>::value(const DenseVectorContinuousBa
     else
     {
         cudaDefectBMQ1DVdouble task(result, rhs, a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return result;
@@ -306,7 +306,7 @@ DenseVector<float> & Defect<tags::GPU::CUDA>::value(DenseVector<float> & result,
     else
     {
         cudaDefectBMQ1DVfloat task(result, rhs, a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return result;
@@ -338,7 +338,7 @@ DenseVector<double> & Defect<tags::GPU::CUDA>::value(DenseVector<double> & resul
     else
     {
         cudaDefectBMQ1DVdouble task(result, rhs, a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return result;
@@ -372,7 +372,7 @@ DenseVector<float> Defect<tags::GPU::CUDA>::value(const DenseVectorContinuousBas
     else
     {
         cudaDefectSMELLDVfloat task(result, rhs, a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return result;
@@ -407,7 +407,7 @@ DenseVector<double> Defect<tags::GPU::CUDA>::value(const DenseVectorContinuousBa
     else
     {
         cudaDefectSMELLDVdouble task(result, rhs, a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     PROFILER_STOP("Defect SMELL double tags::GPU::CUDA");
@@ -441,7 +441,7 @@ DenseVectorContinuousBase<float> & Defect<tags::GPU::CUDA>::value(DenseVectorCon
     else
     {
         cudaDefectSMELLDVfloat task(result, rhs, a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return result;
@@ -475,7 +475,7 @@ DenseVectorContinuousBase<double> & Defect<tags::GPU::CUDA>::value(DenseVectorCo
     else
     {
         cudaDefectSMELLDVdouble task(result, rhs, a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     PROFILER_STOP("Defect SMELL double tags::GPU::CUDA");

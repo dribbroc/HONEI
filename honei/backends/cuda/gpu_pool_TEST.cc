@@ -137,7 +137,7 @@ class GPUPoolQuickTest :
             for (unsigned long device(0) ; device < GPUPool::instance()->get_num_gpus() ; ++device)
             {
                 InfoTask info(device);
-                GPUPool::instance()->enqueue(info, device)->wait();
+                GPUPool::instance()->enqueue(info, device).wait();
             }
 
             GPUPool::instance()->single_start(0);

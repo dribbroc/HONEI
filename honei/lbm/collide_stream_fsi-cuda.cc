@@ -159,7 +159,7 @@ void CollideStreamFSI<tags::GPU::CUDA, lbm_boundary_types::NOSLIP, lbm_lattice_t
     else
     {
         cudaColStreamFSIGridfloat task(info, data, solids, d_x, d_y, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 }
 

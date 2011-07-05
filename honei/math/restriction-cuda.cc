@@ -96,7 +96,7 @@ DenseVector<float> & Restriction<tags::GPU::CUDA, methods::NONE>::value(DenseVec
     else
     {
         cudaRestrictionDVfloat task(coarse, fine, mask, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return coarse;
@@ -116,7 +116,7 @@ DenseVector<float> & Restriction<tags::GPU::CUDA, methods::NONE>::value(DenseVec
     else
     {
         cudaRestrictionDVfloat task(coarse, fine, mask, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return coarse;
@@ -138,7 +138,7 @@ DenseVector<double> & Restriction<tags::GPU::CUDA, methods::NONE>::value(DenseVe
     else
     {
         cudaRestrictionDVdouble task(coarse, fine, mask, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return coarse;
@@ -158,7 +158,7 @@ DenseVector<double> & Restriction<tags::GPU::CUDA, methods::NONE>::value(DenseVe
     else
     {
         cudaRestrictionDVdouble task(coarse, fine, mask, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return coarse;

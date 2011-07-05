@@ -115,7 +115,7 @@ void EquilibriumDistributionGrid<tags::GPU::CUDA, lbm_applications::LABSWE>::val
     else
     {
         cudaEqDistGridfloat task(g, e, info, data, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 }
 

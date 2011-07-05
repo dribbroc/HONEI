@@ -177,7 +177,7 @@ DenseVectorContinuousBase<float> & ElementProduct<tags::GPU::CUDA>::value(DenseV
     else
     {
         cudaElementProductDVfloat task(a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return a;
@@ -204,7 +204,7 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::CUDA>::value(Dense
     else
     {
         cudaElementProductDVdouble task(a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     PROFILER_STOP("ElementProduct DV double tags::GPU::CUDA");
@@ -235,8 +235,8 @@ DenseVectorContinuousBase<float> & ElementProduct<tags::GPU::MultiCore::CUDA>::v
         DenseVectorRange<float> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
         DenseVectorRange<float> b2(b.range(b.size()/2 + b.size()%2, b.size()/2));
         cudaElementProductDVfloat task2(a2, b2, blocksize);
-        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
-        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+        cuda::GPUPool::instance()->enqueue(task1, 0).wait();
+        cuda::GPUPool::instance()->enqueue(task2, 1).wait();
     }
 
     return a;
@@ -267,8 +267,8 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::MultiCore::CUDA>::
         DenseVectorRange<double> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
         DenseVectorRange<double> b2(b.range(b.size()/2 + b.size()%2, b.size()/2));
         cudaElementProductDVdouble task2(a2, b2, blocksize);
-        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
-        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+        cuda::GPUPool::instance()->enqueue(task1, 0).wait();
+        cuda::GPUPool::instance()->enqueue(task2, 1).wait();
     }
 
     PROFILER_STOP("ElementProduct DV double tags::GPU::CUDA");
@@ -295,7 +295,7 @@ DenseVectorContinuousBase<float> & ElementProduct<tags::GPU::CUDA>::value(DenseV
     else
     {
         cudaElementProduct3DVfloat task(result, a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return result;
@@ -322,7 +322,7 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::CUDA>::value(Dense
     else
     {
         cudaElementProduct3DVdouble task(result, a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     PROFILER_STOP("ElementProduct DV double tags::GPU::CUDA");
@@ -355,8 +355,8 @@ DenseVectorContinuousBase<float> & ElementProduct<tags::GPU::MultiCore::CUDA>::v
         DenseVectorRange<float> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
         DenseVectorRange<float> b2(b.range(b.size()/2 + b.size()%2, b.size()/2));
         cudaElementProduct3DVfloat task2(r2, a2, b2, blocksize);
-        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
-        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+        cuda::GPUPool::instance()->enqueue(task1, 0).wait();
+        cuda::GPUPool::instance()->enqueue(task2, 1).wait();
     }
 
     return result;
@@ -388,8 +388,8 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::GPU::MultiCore::CUDA>::
         DenseVectorRange<double> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
         DenseVectorRange<double> b2(b.range(b.size()/2 + b.size()%2, b.size()/2));
         cudaElementProduct3DVdouble task2(r2, a2, b2, blocksize);
-        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
-        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+        cuda::GPUPool::instance()->enqueue(task1, 0).wait();
+        cuda::GPUPool::instance()->enqueue(task2, 1).wait();
     }
 
     return result;
@@ -420,7 +420,7 @@ DenseMatrix<float> & ElementProduct<tags::GPU::CUDA>::value(DenseMatrix<float> &
     else
     {
         cudaElementProductDMfloat task(a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return a;

@@ -204,7 +204,7 @@ void ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lb
     else
     {
         cudaForceGridfloat task(info, data, g, d_x, d_y, d_t, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 }
 void ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>::value(
@@ -222,6 +222,6 @@ void ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lb
     else
     {
         cudaForceGrid2float task(info, data, g, d_x, d_y, d_t, manning, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 }

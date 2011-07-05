@@ -111,7 +111,7 @@ DenseVectorContinuousBase<float> & Scale<tags::GPU::CUDA>::value(DenseVectorCont
     else
     {
         cudaScaleDVfloat task(x, a, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return x;
@@ -133,7 +133,7 @@ DenseVectorContinuousBase<double> & Scale<tags::GPU::CUDA>::value(DenseVectorCon
     else
     {
         cudaScaleDVdouble task(x, a, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     PROFILER_STOP("Scale DV double tags::GPU::CUDA");
@@ -158,8 +158,8 @@ DenseVectorContinuousBase<float> & Scale<tags::GPU::MultiCore::CUDA>::value(Dens
         cudaScaleDVfloat task1(x1, a, blocksize);
         DenseVectorRange<float> x2(x.range(x.size()/2 + x.size()%2, x.size()/2));
         cudaScaleDVfloat task2(x2, a, blocksize);
-        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
-        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+        cuda::GPUPool::instance()->enqueue(task1, 0).wait();
+        cuda::GPUPool::instance()->enqueue(task2, 1).wait();
     }
 
     return x;
@@ -182,8 +182,8 @@ DenseVectorContinuousBase<double> & Scale<tags::GPU::MultiCore::CUDA>::value(Den
         cudaScaleDVdouble task1(x1, a, blocksize);
         DenseVectorRange<double> x2(x.range(x.size()/2 + x.size()%2, x.size()/2));
         cudaScaleDVdouble task2(x2, a, blocksize);
-        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
-        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+        cuda::GPUPool::instance()->enqueue(task1, 0).wait();
+        cuda::GPUPool::instance()->enqueue(task2, 1).wait();
     }
 
     return x;
@@ -204,7 +204,7 @@ DenseMatrix<float> & Scale<tags::GPU::CUDA>::value(DenseMatrix<float> & x, const
     else
     {
         cudaScaleDMfloat task(x, a, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return x;

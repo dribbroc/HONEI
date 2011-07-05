@@ -95,7 +95,7 @@ void UpdateVelocityDirectionsGrid<tags::GPU::CUDA, lbm_boundary_types::NOSLIP>::
     else
     {
         cudaUpVelDirGridfloat task(info, data, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 }
 

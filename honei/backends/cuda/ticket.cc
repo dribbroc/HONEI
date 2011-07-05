@@ -41,16 +41,23 @@ namespace honei
 
             Implementation() :
                 TicketBaseImpl(),
-                completed(false),
                 id(counter)
             {
                 ++counter;
+            }
+
+            virtual ~Implementation()
+            {
             }
         };
 
         Ticket<tags::GPU::MultiCore>::Ticket() :
             TicketBase(),
             PrivateImplementationPattern<Ticket<tags::GPU::MultiCore>, Shared>(new Implementation<Ticket<tags::GPU::MultiCore> >())
+        {
+        }
+
+        Ticket<tags::GPU::MultiCore>::~Ticket()
         {
         }
 

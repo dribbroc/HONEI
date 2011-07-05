@@ -1150,7 +1150,7 @@ void BoundaryInitFSI<tags::GPU::CUDA, D2Q9::DIR_1>::value(
     else
     {
         cudaBoundaryInitFSIGridfloatDir1 task(info, data, solids, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 }
 
@@ -1171,7 +1171,7 @@ void BoundaryInitFSI<tags::GPU::CUDA, D2Q9::DIR_2>::value(
     else
     {
         cudaBoundaryInitFSIGridfloatDir2 task(info, data, solids, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 }
 
@@ -1192,7 +1192,7 @@ void BoundaryInitFSI<tags::GPU::CUDA, D2Q9::DIR_3>::value(
     else
     {
         cudaBoundaryInitFSIGridfloatDir3 task(info, data, solids, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 }
 
@@ -1213,7 +1213,7 @@ void BoundaryInitFSI<tags::GPU::CUDA, D2Q9::DIR_4>::value(
     else
     {
         cudaBoundaryInitFSIGridfloatDir4 task(info, data, solids, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 }
 
@@ -1234,7 +1234,7 @@ void BoundaryInitFSI<tags::GPU::CUDA, D2Q9::DIR_5>::value(
     else
     {
         cudaBoundaryInitFSIGridfloatDir5 task(info, data, solids, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 }
 
@@ -1255,7 +1255,7 @@ void BoundaryInitFSI<tags::GPU::CUDA, D2Q9::DIR_6>::value(
     else
     {
         cudaBoundaryInitFSIGridfloatDir6 task(info, data, solids, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 }
 
@@ -1276,7 +1276,7 @@ void BoundaryInitFSI<tags::GPU::CUDA, D2Q9::DIR_7>::value(
     else
     {
         cudaBoundaryInitFSIGridfloatDir7 task(info, data, solids, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 }
 
@@ -1297,7 +1297,7 @@ void BoundaryInitFSI<tags::GPU::CUDA, D2Q9::DIR_8>::value(
     else
     {
         cudaBoundaryInitFSIGridfloatDir4 task(info, data, solids, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 }
 

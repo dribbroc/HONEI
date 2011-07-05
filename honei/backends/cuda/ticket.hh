@@ -42,13 +42,16 @@ namespace honei
                 /// Constructor
                 Ticket();
 
+                /// Destructor
+                virtual ~Ticket();
+
                 /// \}
 
                 /// Mark ticket as completed.
-                virtual void mark();
+                //virtual void mark();
 
                 /// Wait for ticket completion.
-                virtual void wait() const;
+                //virtual void wait() const;
 
                 /// Retrieve unique ticket ID
                 unsigned uid() const;

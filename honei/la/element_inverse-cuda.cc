@@ -103,7 +103,7 @@ DenseVectorContinuousBase<float> & ElementInverse<tags::GPU::CUDA>::value(DenseV
     else
     {
         cudaElementInverseDVfloat task(x, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return x;
@@ -124,7 +124,7 @@ DenseVectorContinuousBase<double> & ElementInverse<tags::GPU::CUDA>::value(Dense
     else
     {
         cudaElementInverseDVdouble task(x, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return x;
@@ -145,7 +145,7 @@ DenseMatrix<float> & ElementInverse<tags::GPU::CUDA>::value(DenseMatrix<float> &
     else
     {
         cudaElementInverseDMfloat task(x, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return x;

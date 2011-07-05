@@ -191,7 +191,7 @@ DenseVectorContinuousBase<float> & Difference<tags::GPU::CUDA>::value(DenseVecto
     else
     {
         cudaDifferenceDVfloat task(a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return a;
@@ -217,7 +217,7 @@ DenseVectorContinuousBase<double> & Difference<tags::GPU::CUDA>::value(DenseVect
     else
     {
         cudaDifferenceDVdouble task(a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     PROFILER_STOP("Difference DV double tags::GPU::CUDA");
@@ -247,8 +247,8 @@ DenseVectorContinuousBase<float> & Difference<tags::GPU::MultiCore::CUDA>::value
         DenseVectorRange<float> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
         DenseVectorRange<float> b2(b.range(b.size()/2 + b.size()%2, b.size()/2));
         cudaDifferenceDVfloat task2(a2, b2, blocksize);
-        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
-        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+        cuda::GPUPool::instance()->enqueue(task1, 0).wait();
+        cuda::GPUPool::instance()->enqueue(task2, 1).wait();
     }
 
     return a;
@@ -277,8 +277,8 @@ DenseVectorContinuousBase<double> & Difference<tags::GPU::MultiCore::CUDA>::valu
         DenseVectorRange<double> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
         DenseVectorRange<double> b2(b.range(b.size()/2 + b.size()%2, b.size()/2));
         cudaDifferenceDVdouble task2(a2, b2, blocksize);
-        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
-        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+        cuda::GPUPool::instance()->enqueue(task1, 0).wait();
+        cuda::GPUPool::instance()->enqueue(task2, 1).wait();
     }
 
     return a;
@@ -306,7 +306,7 @@ DenseVectorContinuousBase<float> & Difference<tags::GPU::CUDA>::value(DenseVecto
     else
     {
         cudaDifference3DVfloat task(r, a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return r;
@@ -335,7 +335,7 @@ DenseVectorContinuousBase<double> & Difference<tags::GPU::CUDA>::value(DenseVect
     else
     {
         cudaDifference3DVdouble task(r, a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     PROFILER_STOP("Difference DV double tags::GPU::CUDA");
@@ -370,8 +370,8 @@ DenseVectorContinuousBase<float> & Difference<tags::GPU::MultiCore::CUDA>::value
         DenseVectorRange<float> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
         DenseVectorRange<float> b2(b.range(b.size()/2 + b.size()%2, b.size()/2));
         cudaDifference3DVfloat task2(r2, a2, b2, blocksize);
-        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
-        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+        cuda::GPUPool::instance()->enqueue(task1, 0).wait();
+        cuda::GPUPool::instance()->enqueue(task2, 1).wait();
     }
 
     return r;
@@ -405,8 +405,8 @@ DenseVectorContinuousBase<double> & Difference<tags::GPU::MultiCore::CUDA>::valu
         DenseVectorRange<double> a2(a.range(a.size()/2 + a.size()%2, a.size()/2));
         DenseVectorRange<double> b2(b.range(b.size()/2 + b.size()%2, b.size()/2));
         cudaDifference3DVdouble task2(r2, a2, b2, blocksize);
-        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
-        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+        cuda::GPUPool::instance()->enqueue(task1, 0).wait();
+        cuda::GPUPool::instance()->enqueue(task2, 1).wait();
     }
 
     return r;
@@ -437,7 +437,7 @@ DenseMatrix<float> & Difference<tags::GPU::CUDA>::value(DenseMatrix<float> & a, 
     else
     {
         cudaDifferenceDMfloat task(a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return a;

@@ -268,7 +268,7 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrix<float> & a
             else
             {
                 cudaProductBMDVfloat task(result_gpu, band_gpu, temp_b_gpu, a.size() - op_offset, blocksize);
-                cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+                cuda::GPUPool::instance()->enqueue(task, 0).wait();
             }
             band->unlock(lm_read_only);
         }
@@ -286,7 +286,7 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrix<float> & a
             else
             {
                 cudaProductBMDVfloat task(temp_result_gpu, band_gpu, b_gpu, a.size() - op_offset, blocksize);
-                cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+                cuda::GPUPool::instance()->enqueue(task, 0).wait();
             }
             band->unlock(lm_read_only);
         }
@@ -320,7 +320,7 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrixQ1<float> &
     else
     {
         cudaProductBMQ1DVfloat task(result, a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return result;
@@ -348,7 +348,7 @@ DenseVector<double> Product<tags::GPU::CUDA>::value(const BandedMatrixQ1<double>
     else
     {
         cudaProductBMQ1DVdouble task(result, a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return result;
@@ -378,7 +378,7 @@ DenseVector<float> & Product<tags::GPU::CUDA>::value(DenseVector<float> & result
     else
     {
         cudaProductBMQ1DVfloat task(result, a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return result;
@@ -408,7 +408,7 @@ DenseVector<double> & Product<tags::GPU::CUDA>::value(DenseVector<double> & resu
     else
     {
         cudaProductBMQ1DVdouble task(result, a, b, blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return result;
@@ -438,7 +438,7 @@ DenseVector<float> & Product<tags::GPU::CUDA>::value(DenseVector<float> & result
     else
     {
         cudaProductSMELLDVfloat task(result, a, b, 0, a.rows(), blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     return result;
@@ -469,7 +469,7 @@ DenseVector<double> & Product<tags::GPU::CUDA>::value(DenseVector<double> & resu
     else
     {
         cudaProductSMELLDVdouble task(result, a, b, 0, a.rows(), blocksize);
-        cuda::GPUPool::instance()->enqueue(task, 0)->wait();
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
     PROFILER_STOP("Product SMELL double tags::GPU::CUDA");
@@ -505,8 +505,8 @@ DenseVector<float> & Product<tags::GPU::MultiCore::CUDA>::value(DenseVector<floa
         cudaProductSMELLDVfloat task1(result1, a, b, 0, result1.size(), blocksize);
         DenseVectorRange<float> result2(result.range(result.size()/2 + result.size()%2, result.size()/2));
         cudaProductSMELLDVfloat task2(result2, a, b, result1.size(), a.rows(), blocksize);
-        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
-        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+        cuda::GPUPool::instance()->enqueue(task1, 0).wait();
+        cuda::GPUPool::instance()->enqueue(task2, 1).wait();
         b.lock(lm_read_and_write);
         b.unlock(lm_read_and_write);
     }
@@ -543,8 +543,8 @@ DenseVector<double> & Product<tags::GPU::MultiCore::CUDA>::value(DenseVector<dou
         cudaProductSMELLDVdouble task1(result1, a, b, 0, result1.size(), blocksize);
         DenseVectorRange<double> result2(result.range(result.size()/2 + result.size()%2, result.size()/2));
         cudaProductSMELLDVdouble task2(result2, a, b, result1.size(), a.rows(), blocksize);
-        cuda::GPUPool::instance()->enqueue(task1, 0)->wait();
-        cuda::GPUPool::instance()->enqueue(task2, 1)->wait();
+        cuda::GPUPool::instance()->enqueue(task1, 0).wait();
+        cuda::GPUPool::instance()->enqueue(task2, 1).wait();
         b.lock(lm_read_and_write);
         b.unlock(lm_read_and_write);
     }

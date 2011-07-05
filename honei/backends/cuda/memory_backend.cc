@@ -230,7 +230,7 @@ namespace honei
                 {
                     void * device(this->alloc(memid, address, bytes));
                     cuda::UploadTask ut(address, device, bytes);
-                    cuda::GPUPool::instance()->enqueue(ut, cuda_get_device())->wait();
+                    cuda::GPUPool::instance()->enqueue(ut, cuda_get_device()).wait();
                     return device;
                 }
             }
@@ -258,7 +258,7 @@ namespace honei
                     {
                         void * device(this->alloc(memid, address, bytes));
                         cuda::UploadTask ut(address, device, bytes);
-                        cuda::GPUPool::instance()->enqueue(ut, cuda_get_device())->wait();
+                        cuda::GPUPool::instance()->enqueue(ut, cuda_get_device()).wait();
                         return device;
                     }
                 }
@@ -296,7 +296,7 @@ namespace honei
                         else
                         {
                             cuda::DownloadTask dt(map_i->second.device, map_i->second.address, map_i->second.bytes);
-                            cuda::GPUPool::instance()->enqueue(dt, map_i->second.device_id)->wait();
+                            cuda::GPUPool::instance()->enqueue(dt, map_i->second.device_id).wait();
                         }
                     }
                 }
@@ -321,7 +321,7 @@ namespace honei
                 else
                 {
                     cuda::AllocTask at(&device, bytes);
-                    cuda::GPUPool::instance()->enqueue(at, cuda_get_device())->wait();
+                    cuda::GPUPool::instance()->enqueue(at, cuda_get_device()).wait();
                 }
                 if (device == 0)
                     throw InternalError("MemoryBackend<tags::GPU::CUDA>::alloc CudaMallocError!");
@@ -352,7 +352,7 @@ namespace honei
                     else
                     {
                         cuda::AllocTask at(&device, bytes);
-                        cuda::GPUPool::instance()->enqueue(at, cuda_get_device())->wait();
+                        cuda::GPUPool::instance()->enqueue(at, cuda_get_device()).wait();
                     }
                     if (device == 0)
                         throw InternalError("MemoryBackend<tags::GPU::CUDA>::alloc CudaMallocError!");
@@ -385,7 +385,7 @@ namespace honei
                     else
                     {
                         cuda::FreeTask ft(i->second.device);
-                        cuda::GPUPool::instance()->enqueue(ft, i->second.device_id)->wait();
+                        cuda::GPUPool::instance()->enqueue(ft, i->second.device_id).wait();
                     }
                 }
                 _address_map.erase(i->second.address);
@@ -413,7 +413,7 @@ namespace honei
                     //throw InternalError("MemoryBackend<tags::GPU::CUDA>::copy src and dest on different devices!");
                     this->free(dest_id);
                     cuda::AllocTask at(&dest_device, bytes);
-                    cuda::GPUPool::instance()->enqueue(at, j_source->second)->wait();
+                    cuda::GPUPool::instance()->enqueue(at, j_source->second).wait();
                     if (dest_device == 0)
                         throw InternalError("MemoryBackend<tags::GPU::CUDA>::alloc CudaMallocError!");
                     _id_map.insert(std::pair<void *, Chunk>(dest_id, Chunk(dest_address, dest_device, bytes, j_source->second)));
@@ -437,7 +437,7 @@ namespace honei
                     else
                     {
                         cuda::CopyTask ct(src_i->second, dest_device, bytes);
-                        cuda::GPUPool::instance()->enqueue(ct, j_source->second)->wait();
+                        cuda::GPUPool::instance()->enqueue(ct, j_source->second).wait();
                     }
                 }
             }
@@ -473,7 +473,7 @@ namespace honei
                     else
                     {
                         cuda::ConvertFloatDoubleTask ct(src_i->second, dest_i->second, bytes);
-                        cuda::GPUPool::instance()->enqueue(ct, j_source->second)->wait();
+                        cuda::GPUPool::instance()->enqueue(ct, j_source->second).wait();
                     }
                 }
             }
@@ -509,7 +509,7 @@ namespace honei
                     else
                     {
                         cuda::ConvertDoubleFloatTask ct(src_i->second, dest_i->second, bytes);
-                        cuda::GPUPool::instance()->enqueue(ct, j_source->second)->wait();
+                        cuda::GPUPool::instance()->enqueue(ct, j_source->second).wait();
                     }
                 }
             }
@@ -542,7 +542,7 @@ namespace honei
                     else
                     {
                         cuda::FillTask ft(i->second, bytes);
-                        cuda::GPUPool::instance()->enqueue(ft, j->second)->wait();
+                        cuda::GPUPool::instance()->enqueue(ft, j->second).wait();
                     }
                 }
             }
@@ -575,7 +575,7 @@ namespace honei
                     else
                     {
                         cuda::FillTask ft(i->second, bytes);
-                        cuda::GPUPool::instance()->enqueue(ft, j->second)->wait();
+                        cuda::GPUPool::instance()->enqueue(ft, j->second).wait();
                     }
                 }
             }
