@@ -65,6 +65,7 @@ GPUPool::~GPUPool()
     {
         delete barriers.at(i);
         delete mutexe.at(i);
+        delete tasks.at(i);
     }
 }
 
