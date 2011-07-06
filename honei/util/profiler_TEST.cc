@@ -97,10 +97,11 @@ class ProfilerTest :
                             mem_fn(&ProfilerTest::evaluation), this,
                             HONEI_PLACEHOLDERS_1, HONEI_PLACEHOLDERS_2,
                             HONEI_PLACEHOLDERS_3, HONEI_PLACEHOLDERS_4,
-                            HONEI_PLACEHOLDERS_5, HONEI_PLACEHOLDERS_6)));
+                            HONEI_PLACEHOLDERS_5, HONEI_PLACEHOLDERS_6,
+                            HONEI_PLACEHOLDERS_7, HONEI_PLACEHOLDERS_8)));
         }
 
-        void evaluation(const std::string & function, const std::string & tag, unsigned count, float highest, float average, float lowest)
+        void evaluation(const std::string & function, const std::string & tag, unsigned count, float highest, float average, float /*median*/, float lowest, float /*total*/)
         {
             static unsigned calls(0);
 
