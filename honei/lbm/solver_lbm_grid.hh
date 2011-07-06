@@ -286,6 +286,9 @@ namespace honei
                     virtual ~SolverLBMGrid()
                     {
                         CONTEXT("When destroying LABSWE solver.");
+                        for (unsigned long i(0) ; i < _parts ; ++i)
+                            delete _solver_list.at(i);
+
                         honei::GridPartitioner<D2Q9, ResPrec_>::destroy(_info_list, _data_list, _fringe_list);
                     }
                     void do_preprocessing()
@@ -476,6 +479,9 @@ namespace honei
                     {
                         CONTEXT("When destroying LABSWE solver.");
                         honei::GridPartitioner<D2Q9, ResPrec_>::destroy(_info_list, _data_list, _fringe_list);
+
+                        for (unsigned long i(0) ; i < _parts ; ++i)
+                            delete _solver_list.at(i);
                     }
 
                     void do_preprocessing()
