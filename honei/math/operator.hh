@@ -64,6 +64,7 @@ namespace honei
             {
                 CONTEXT("When evaluating DefectOperator:");
                 Defect<Tag_>::value(_y, _b, _A, _x);
+                //std::cout << _y << std::endl;
             }
 
             virtual ~DefectOperator()
@@ -213,7 +214,9 @@ namespace honei
             virtual void value()
             {
                 CONTEXT("When evaluating SolverOperator:");
+                //std::cout << _x << std::endl;
                 SolverType_::value(_A, _b, _x, _max_iters, _used_iters, _eps_relative);
+                //std::cout << _x << std::endl;
             }
 
             virtual ~SolverOperator()
@@ -315,7 +318,9 @@ namespace honei
                 CONTEXT("When evaluating TransferOperator:");
                 //TODO: think of new way to encode BCs -> separate operator?
                 DenseVector<unsigned long> dummy(1ul);
+                //std::cout << _left << _right << std::endl;
                 TransferType_::value(_left, _right, dummy, _mat);
+                //std::cout << _left << _right << std::endl;
             }
 
             virtual ~TransferOperator()

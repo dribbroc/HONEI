@@ -151,7 +151,7 @@ class MGSolverTest:
                 DenseVector<double>,
                 io_formats::ELL,
                 io_formats::EXP,
-                double>::configure(data, 20, 100, 4, 4, 1, double(1e-8));
+                double>::configure(data, 100, 1000, 8, 8, 1, double(1e-8));
 
             OperatorList ol(
                     MGCycleProcessing<Tag_,
@@ -163,9 +163,28 @@ class MGSolverTest:
                     double>::value(data)
                     );
 
-            MGSolver<Tag_, Norm<vnt_l_two, false, Tag_> >::value(data, ol);
+            MGSolver<Tag_, Norm<vnt_l_two, true, Tag_> >::value(data, ol);
 
             std::cout << data.used_iters << std::endl;
+            std::cout << data.used_iters_coarse << std::endl;
+
+            std::string reffile(HONEI_SOURCEDIR);
+            reffile += "/honei/math/testdata/poisson_advanced/sort_0/sol_4";
+            DenseVector<double> ref(VectorIO<io_formats::EXP>::read_vector(reffile, double(0)));
+            double base_digits(3);
+            double additional_digits(2);
+
+            double base_eps(1 / pow(10, base_digits));
+            double add_eps(base_eps / pow(10, additional_digits));
+
+            double m((add_eps - base_eps) / double(4));
+            double b(base_eps - (double(4) * m));
+
+            double eps(m * sizeof(double) + b);
+            eps *= double(3);
+
+            for(unsigned long i(0) ; i < ref.size() ; ++i)
+                TEST_CHECK_EQUAL_WITHIN_EPS(data.c.at(4)[i], ref[i], eps*10);
         }
 };
 MGSolverTest<tags::CPU> mg_solver_test_cpu("double");
