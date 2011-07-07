@@ -151,7 +151,7 @@ class MGSolverTest:
                 DenseVector<double>,
                 io_formats::ELL,
                 io_formats::EXP,
-                double>::configure(data, 100, 1000, 8, 8, 1, double(1e-8));
+                double>::configure(data, 100, 1000, 4, 4, 1, double(1e-8));
 
             OperatorList ol(
                     MGCycleProcessing<Tag_,
@@ -184,7 +184,7 @@ class MGSolverTest:
             eps *= double(3);
 
             for(unsigned long i(0) ; i < ref.size() ; ++i)
-                TEST_CHECK_EQUAL_WITHIN_EPS(data.c.at(4)[i], ref[i], eps*10);
+                TEST_CHECK_EQUAL_WITHIN_EPS(data.x.at(4)[i], ref[i], eps*10);
         }
 };
 MGSolverTest<tags::CPU> mg_solver_test_cpu("double");

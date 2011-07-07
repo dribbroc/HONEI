@@ -212,7 +212,8 @@ namespace honei
                         VectorType_ zero(A.at(i).rows(), DT_(0));
                         d.push_back(zero.copy());
                         ///Set c = x on finest level
-                        c.push_back(max_x.copy());
+                        //c.push_back(max_x.copy());
+                        c.push_back(zero.copy());
                         temp_0.push_back(zero.copy());
                         temp_1.push_back(zero.copy());
                     }
@@ -319,7 +320,7 @@ namespace honei
                     ///Prolongation
                     std::cout << "Prol Accessing " << level << std::endl;
                     std::cout << "Prol Accessing " << level - 1 << std::endl;
-                    cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(data.temp_0.at(level) , x.at(level - 1), data.prolmat.at(level)));
+                    cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(data.temp_0.at(level) , data.c.at(level - 1), data.prolmat.at(level)));
 
                     std::cout << "Sum Accessing " << level << std::endl;
                     cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(level), data.temp_0.at(level)));
@@ -344,7 +345,7 @@ namespace honei
                 CONTEXT("When evaluating MGCycleProcessing:");
 
                 OperatorList cycle;
-                _build_cycle(data.c, data.b, data.A.size() - 1, cycle, data);
+                _build_cycle(data.x, data.b, data.A.size() - 1, cycle, data);
                 return cycle;
             }
     };
@@ -361,7 +362,7 @@ namespace honei
                 PROFILER_START("MGSolver");
 
                 VectorType_ r(data.x.at(data.x.size() - 1).size());
-                Defect<Tag_>::value(r, data.b.at(data.b.size() - 1), data.A.at(data.A.size() - 1), data.c.at(data.x.size() - 1));
+                Defect<Tag_>::value(r, data.b.at(data.b.size() - 1), data.A.at(data.A.size() - 1), data.x.at(data.x.size() - 1));
                 double rnorm_initial(NormType_::value(r));
                 double rnorm_current(1e16);
 
@@ -369,7 +370,7 @@ namespace honei
                 for(unsigned long i(0) ; i < data.max_iters ; ++i)
                 {
                     cycle.value();
-                    Defect<Tag_>::value(r, data.b.at(data.b.size() - 1), data.A.at(data.A.size() - 1), data.c.at(data.x.size() - 1));
+                    Defect<Tag_>::value(r, data.b.at(data.b.size() - 1), data.A.at(data.A.size() - 1), data.x.at(data.x.size() - 1));
                     rnorm_current = NormType_::value(r);
                     std::cout << "DEFECTNORM: " << rnorm_current << std::endl;
 
