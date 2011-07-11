@@ -42,6 +42,40 @@ namespace honei
             virtual std::string to_string() = 0;
     };
 
+    template<typename Tag_, typename VectorType_>
+    class CopyOperator : public Operator
+    {
+        public:
+
+            virtual std::string to_string()
+            {
+                std::string result("CopyOperator\n");
+                return result;;
+            }
+
+            CopyOperator(VectorType_& x, VectorType_& y) :
+                _x(x),
+                _y(y)
+        {
+            CONTEXT("When creating CopyOperator:");
+        }
+
+            virtual void value()
+            {
+                CONTEXT("When evaluating CopyOperator:");
+                copy<Tag_>(_x, _y);
+            }
+
+            virtual ~CopyOperator()
+            {
+                CONTEXT("When destroying CopyOperator:");
+            }
+
+        private:
+            VectorType_ _x;
+            VectorType_ _y;
+    };
+
     template<typename Tag_, typename MatType_, typename VectorType_>
     class DefectOperator : public Operator
     {

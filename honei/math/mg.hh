@@ -307,7 +307,6 @@ namespace honei
                     ///Defect
                     std::cout << "Defect Accessing " << level << std::endl;
                     cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(data.temp_0.at(level), b.at(level), data.A.at(level), x.at(level)));
-
                     ///Restriction
                     std::cout << " Restrict Accessing " << level << std::endl;
                     std::cout << " Restrict Accessing " << level - 1 << std::endl;
@@ -321,7 +320,6 @@ namespace honei
                     std::cout << "Prol Accessing " << level << std::endl;
                     std::cout << "Prol Accessing " << level - 1 << std::endl;
                     cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(data.temp_0.at(level) , data.c.at(level - 1), data.prolmat.at(level)));
-
                     std::cout << "Sum Accessing " << level << std::endl;
                     cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(level), data.temp_0.at(level)));
 
