@@ -24,7 +24,6 @@
 #include <honei/util/tags.hh>
 #include <honei/la/algorithm.hh>
 #include <honei/la/sparse_matrix.hh>
-#include <honei/math/matrix_io.hh>
 
 extern "C"
 {

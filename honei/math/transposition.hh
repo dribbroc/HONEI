@@ -38,7 +38,7 @@ namespace honei
 
             for(typename SparseMatrix<DT_>::NonZeroConstElementIterator i(source.begin_non_zero_elements()) ; i != source.end_non_zero_elements() ; ++i)
             {
-                target(i.column(), i.row()) = *i;
+                target(i.column(), i.row(), *i);
             }
         }
     };

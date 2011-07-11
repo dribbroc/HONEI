@@ -18,7 +18,7 @@
  */
 
 
-#include <honei/math/spai.hh>
+#include <honei/math/sainv.hh>
 #include <honei/util/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <iostream>
@@ -33,12 +33,12 @@ using namespace tests;
 using namespace std;
 
 template <typename Tag_, typename DT_>
-class SpaiTestSparse:
+class SainvTestSparse:
     public BaseTest
 {
     public:
-        SpaiTestSparse(const std::string & tag) :
-            BaseTest("Spai test <" + tag + ">")
+        SainvTestSparse(const std::string & tag) :
+            BaseTest("Sainv test <" + tag + ">")
         {
             register_tag(Tag_::name);
         }
@@ -46,14 +46,14 @@ class SpaiTestSparse:
         virtual void run() const
         {
             std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/math/testdata/poisson_advanced/sort_0/A_7.ell";
+            filename += "/honei/math/testdata/poisson_advanced/sort_0/A_2.ell";
             SparseMatrixELL<DT_> smell = MatrixIO<io_formats::ELL>::read_matrix(filename, DT_(1));
             SparseMatrix<DT_> sm(smell);
             unsigned long used_elements(0);
             for (unsigned i(0) ; i < sm.rows() ; ++i)
                 used_elements+= sm[i].used_elements();
             std::cout<<"Non Zero Elements of A: "<<used_elements<<std::endl;
-            SparseMatrix<DT_> m(SPAI::value(sm));
+            SparseMatrix<DT_> m(SAINV<Tag_>::value(sm));
             used_elements = 0;
             for (unsigned i(0) ; i < m.rows() ; ++i)
                 used_elements+= m[i].used_elements();
@@ -75,6 +75,5 @@ class SpaiTestSparse:
             std::cout<<"SPAI Norm: "<<min<<" Jac Norm: "<<jacnorm<<std::endl;
         }
 };
-
-SpaiTestSparse<tags::CPU, float> spai_test_sparse_ell_float("float");
-SpaiTestSparse<tags::CPU, double> spai_test_sparse_ell_double("double");
+//SainvTestSparse<tags::CPU, float> sainv_test_sparse_ell_float("float");
+SainvTestSparse<tags::CPU, double> sainv_test_sparse_ell_double("double");
