@@ -46,7 +46,7 @@ class SainvTestSparse:
         virtual void run() const
         {
             std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/math/testdata/poisson_advanced/sort_0/A_2.ell";
+            filename += "/honei/math/testdata/poisson_advanced/sort_0/A_3.ell";
             SparseMatrixELL<DT_> smell = MatrixIO<io_formats::ELL>::read_matrix(filename, DT_(1));
             SparseMatrix<DT_> sm(smell);
             unsigned long used_elements(0);
@@ -75,5 +75,5 @@ class SainvTestSparse:
             std::cout<<"SPAI Norm: "<<min<<" Jac Norm: "<<jacnorm<<std::endl;
         }
 };
-//SainvTestSparse<tags::CPU, float> sainv_test_sparse_ell_float("float");
+SainvTestSparse<tags::CPU, float> sainv_test_sparse_ell_float("float");
 SainvTestSparse<tags::CPU, double> sainv_test_sparse_ell_double("double");
