@@ -134,7 +134,7 @@ namespace honei
 
             DT1_ result(0);
 
-            typename SparseVector<DT2_>::NonZeroConstElementIterator r(y.begin_non_zero_elements());
+            /*typename SparseVector<DT2_>::NonZeroConstElementIterator r(y.begin_non_zero_elements());
             for (typename SparseVector<DT1_>::NonZeroConstElementIterator l(x.begin_non_zero_elements()),
                     l_end(x.end_non_zero_elements()) ; l != l_end ; )
             {
@@ -151,6 +151,23 @@ namespace honei
                 {
                     ++r;
                 }
+            }*/
+            unsigned long xi(0), yi(0);
+            const unsigned long * xidx(x.indices());
+            const unsigned long * yidx(y.indices());
+            const DT1_ * xval(x.elements());
+            const DT2_ * yval(y.elements());
+            while (xidx[xi] < x.size() && yidx[yi] < y.size())
+            {
+                if(xidx[xi] == yidx[yi])
+                {
+                    result += xval[xi] * yval[yi];
+                    ++xi, ++yi;
+                }
+                else if (xidx[xi] < yidx[yi])
+                    ++xi;
+                else
+                    ++yi;
             }
 
             return result;
