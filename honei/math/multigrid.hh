@@ -541,10 +541,13 @@ endCycleLoop:
 
                                 //(info.c[current_level]) = (Jacobi<Tag_>::value(info.a[current_level], info.d[current_level], Prec_(0.7), info.diags_inverted[current_level]));
                                 std::cout << "presmoothing 1" << std::endl;
+                                std::cout << "x before smoothing" << info.c[current_level];
+                                std::cout << "rhs" << info.d[current_level];
                                 Jacobi<Tag_>::value(info.a[current_level], info.d[current_level], (info.c[current_level]), Prec_(0.7), info.diags_inverted[current_level]);
 
                                 //(info.c[current_level]) = (Jacobi<Tag_>::value(info.c[current_level] , info.a[current_level], info.d[current_level], info.n_pre_smooth - 1, Prec_(0.7), info.diags_inverted[current_level]));
                                 Jacobi<Tag_>::value(info.c[current_level] , info.a[current_level], info.d[current_level], (info.c[current_level]), info.n_pre_smooth - 1, Prec_(0.7), info.diags_inverted[current_level]);
+                                std::cout << "after smoothing" << info.c[current_level];
                                 std::cout << "sum 1" << std::endl;
                                 Sum<Tag_>::value(info.x[current_level], info.c[current_level]);
                             }
