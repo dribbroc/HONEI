@@ -207,6 +207,7 @@ namespace honei
                         std::string local_x_name(x_name);
                         local_x_name += stringify(i);
                         VectorType_ max_x(VectorIO<VecIOType_>::read_vector(local_x_name, DT_(0)));
+                        //VectorType_ max_x(max_b.size(), DT_(0));
                         x.push_back(max_x);
 
                         VectorType_ zero(A.at(i).rows(), DT_(0));
