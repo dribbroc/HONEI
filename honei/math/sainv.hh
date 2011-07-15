@@ -38,7 +38,7 @@ namespace honei
     template<typename Tag_> struct SAINV
     {
         template <typename DT_>
-        static SparseMatrix<DT_> value(const SparseMatrix<DT_> & A, DT_ tolerance = 1e-1)
+        static SparseMatrix<DT_> value(const SparseMatrix<DT_> & A, DT_ tolerance = 13e-2)
         {
             // z holds the row vector z_i
             SparseMatrix<DT_> z(A.rows(), A.columns());
