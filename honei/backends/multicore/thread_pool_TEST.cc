@@ -28,35 +28,32 @@ using namespace tests;
 
 namespace
 {
-    class TestTask
+    struct TestTask
     {
-        private:
-            unsigned & _v;
-            Mutex * const _mutex;
+        unsigned & _v;
+        Mutex * const _mutex;
 
-        public:
-            TestTask(unsigned & v) :
-                _v(v),
-                _mutex(new Mutex)
-            {
-            }
+        TestTask(unsigned & v) :
+            _v(v),
+            _mutex(new Mutex)
+        {
+        }
 
-            TestTask(const TestTask & other) :
-                _v(other._v),
-                _mutex(new Mutex)
-            {
-            }
+        TestTask(const TestTask & other) :
+            _v(other._v),
+            _mutex(other._mutex)
+        {
+        }
 
-            ~TestTask()
-            {
-                delete _mutex;
-            }
+        ~TestTask()
+        {
+        }
 
-            void operator() ()
-            {
-                Lock l(*_mutex);
-                ++_v;
-            }
+        void operator() ()
+        {
+            Lock l(*_mutex);
+            ++_v;
+        }
     };
 }
 
@@ -71,9 +68,8 @@ class ThreadPoolTest :
 
         virtual void run() const
         {
-            unsigned v(34), w(34);
+            unsigned v(34);
             TestTask t(v);
-            TestTask u(w);
 
             TicketVector tickets;
 
@@ -123,6 +119,8 @@ class ThreadPoolTest :
 
             tickets.wait();
 
+            delete t._mutex;
+
             TEST_CHECK_EQUAL(v, 1784u);
         }
 } thread_pool_test;
@@ -162,6 +160,8 @@ class ThreadPoolQuickTest :
             }
 
             tickets.wait();
+
+            delete t._mutex;
 
             TEST_CHECK_EQUAL(v, 534u);
 
