@@ -27,6 +27,8 @@
 #include <honei/la/dot_product.hh>
 #include <honei/la/difference.hh>
 #include <honei/math/transposition.hh>
+#include <honei/util/time_stamp.hh>
+#include <honei/la/sparse_matrix_ell.hh>
 
 
 #include <iostream>
@@ -43,6 +45,7 @@ namespace honei
             // z holds the row vector z_i
             SparseMatrix<DT_> z(A.rows(), A.columns());
             DenseVector<DT_> p(z.rows(), DT_(0));
+            SparseMatrixELL<DT_> Aell(A);
 
             for(unsigned long i(0) ; i < z.rows() ; ++i)
             {
@@ -51,12 +54,22 @@ namespace honei
 
             for(unsigned long i(0) ; i < z.rows() ; ++i)
             {
-                SparseVector<DT_> v = Product<Tag_>::value(A, z[i]);
+                DenseVector<DT_> zi(z[i]);
+                DenseVector<DT_> v(Aell.columns());
+                Product<Tag_>::value(v, Aell, zi);
 
-                for(unsigned long j(i) ; j < z.rows() ; ++j)
+                /*for(unsigned long j(i) ; j < z.rows() ; ++j)
                 {
                     p[j] = DotProduct<Tag_>::value(v, z[j]);
+                }*/
+                SparseMatrixELL<DT_> zell(z);
+                DenseVector<DT_> pt(zell.columns());
+                Product<Tag_>::value(pt, zell, v);
+                for(unsigned long j(i) ; j < z.rows() ; ++j)
+                {
+                    p[j] = pt[j];
                 }
+
 
                 if (i == z.rows() - 1)
                     break;
@@ -107,8 +120,9 @@ namespace honei
                 z_d(i, i, DT_(1)/p[i]);
             }
 
-            SparseMatrix<DT_> z_temp = Product<Tag_>::value(z_d, z);
-            SparseMatrix<DT_> z_r = Product<Tag_>::value(z_t, z_temp);
+            // TODO Tag_ nicht hardverdrahten
+            SparseMatrix<DT_> z_temp = Product<tags::CPU>::value(z_d, z);
+            SparseMatrix<DT_> z_r = Product<tags::CPU>::value(z_t, z_temp);
 
             /* POST FILTERING
             unsigned long ue(0);

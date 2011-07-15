@@ -45,7 +45,11 @@ int main(int argc, char ** argv)
 
     SparseMatrixELL<double> smatrix(MatrixIO<io_formats::ELL>::read_matrix(input, double(0)));
     SparseMatrix<double> ssmatrix(smatrix);
+#ifdef HONEI_SSE
+    SparseMatrix<double> ssainv(SAINV<tags::CPU::MultiCore::SSE>::value(ssmatrix));
+#else
     SparseMatrix<double> ssainv(SAINV<tags::CPU>::value(ssmatrix));
+#endif
     SparseMatrixELL<double> sainv(ssainv);
 
     // Write out sainv matrix

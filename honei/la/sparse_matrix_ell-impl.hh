@@ -71,7 +71,7 @@ namespace honei
             Arl = row_length();
         }
 
-        Implementation(SparseMatrix<DataType_> & src) :
+        Implementation(const SparseMatrix<DataType_> & src) :
             threads(Configuration::instance()->get_value("ell::threads", 1)),
             Aj(1),
             Ax(1),
@@ -102,7 +102,7 @@ namespace honei
             for (unsigned long row(0); row < rows ; ++row)
             {
                 unsigned long target(0);
-                for (typename SparseVector<DataType_>::NonZeroElementIterator i(src[row].begin_non_zero_elements()) ;
+                for (typename SparseVector<DataType_>::NonZeroConstElementIterator i(src[row].begin_non_zero_elements()) ;
                         i < src[row].end_non_zero_elements() ; ++i)
                 {
                     if(*i != DataType_(0))
@@ -158,7 +158,7 @@ namespace honei
     }
 
     template <typename DataType_>
-    SparseMatrixELL<DataType_>::SparseMatrixELL(SparseMatrix<DataType_> & src) :
+    SparseMatrixELL<DataType_>::SparseMatrixELL(const SparseMatrix<DataType_> & src) :
         PrivateImplementationPattern<SparseMatrixELL<DataType_>, Shared>(new Implementation<SparseMatrixELL<DataType_> >(src))
     {
         CONTEXT("When creating SparseMatrixELL from SparseMatrix:");
