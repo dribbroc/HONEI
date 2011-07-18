@@ -84,7 +84,7 @@ class CGTestSparseELL:
             filename_4 += _i_f;
             DenseVector<DT1_> result(VectorIO<io_formats::EXP>::read_vector(filename_4, DT1_(0)));
             unsigned long used_iters;
-            CG<Tag_, methods::NONE>::value(smatrix2, rhs, result, 10000ul, used_iters, DT1_(1e-8));
+            CG<Tag_, methods::NONE>::value(smatrix2, rhs, rhs, result, 10000ul, used_iters, DT1_(1e-8));
 
             std::string filename_3(HONEI_SOURCEDIR);
             filename_3 += "/honei/math/testdata/poisson_advanced/sort_0/";
