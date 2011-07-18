@@ -151,12 +151,12 @@ class MGSolverTest:
                 DenseVector<double>,
                 io_formats::ELL,
                 io_formats::EXP,
-                double>::configure(data, 100, 1000, 4, 4, 1, double(1e-8));
+                double>::configure(data, 100, 100, 4, 4, 1, double(1e-8));
 
             OperatorList ol(
                     MGCycleProcessing<Tag_,
                     methods::CYCLE::V::STATIC,
-                    CG<Tag_, methods::NONE>,
+                    CG<Tag_, methods::VAR>,
                     RISmoother<Tag_>,
                     Restriction<Tag_, methods::PROLMAT>,
                     Prolongation<Tag_, methods::PROLMAT>,

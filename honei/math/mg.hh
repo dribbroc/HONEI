@@ -283,8 +283,9 @@ namespace honei
                 if(level == data.min_level)
                 {
                     std::cout << "Solver Accessing " << data.min_level << std::endl;
-                    cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_>(
+                    cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(data.min_level),
+                                data.P.at(data.min_level),
                                 b.at(data.min_level),
                                 x.at(data.min_level),
                                 data.max_iters_coarse,

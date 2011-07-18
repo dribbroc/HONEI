@@ -219,7 +219,7 @@ namespace honei
             DT_ _alpha;
     };
 
-    template<typename SolverType_, typename MatrixType_, typename VectorType_>
+    template<typename SolverType_, typename MatrixType_, typename VectorType_, typename PreconContType_>
     class SolverOperator : public Operator
     {
         //TODO: how to build in preconditioning -> standard-value?
@@ -230,12 +230,14 @@ namespace honei
             }
 
             SolverOperator(MatrixType_ & A,
+                           PreconContType_ & P,
                            VectorType_ & b,
                            VectorType_ & x,
                            unsigned long max_iters,
                            unsigned long & used_iters,
                            double eps_relative = 1e-8) :
                 _A(A),
+                _P(P),
                 _b(b),
                 _x(x),
                 _max_iters(max_iters),
@@ -249,7 +251,7 @@ namespace honei
             {
                 CONTEXT("When evaluating SolverOperator:");
                 //std::cout << _x << std::endl;
-                SolverType_::value(_A, _b, _x, _max_iters, _used_iters, _eps_relative);
+                SolverType_::value(_A, _P, _b, _x, _max_iters, _used_iters, _eps_relative);
                 //std::cout << _x << std::endl;
             }
 
@@ -260,6 +262,7 @@ namespace honei
 
         private:
             MatrixType_ _A;
+            PreconContType_ _P;
             VectorType_ _b;
             VectorType_ _x;
             unsigned long _max_iters;

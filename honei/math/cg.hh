@@ -62,8 +62,9 @@ namespace honei
     struct CG<Tag_, methods::NONE>
     {
         public:
-            template<typename DT_, typename MatrixType_, typename VectorType_>
+            template<typename DT_, typename MatrixType_, typename VectorType_, typename PreconContType_>
             static inline VectorType_ & value(MatrixType_ & A,
+                                              HONEI_UNUSED PreconContType_ & P,
                                               VectorType_ & b,
                                               VectorType_ & x,
                                               unsigned long max_iters,
@@ -72,6 +73,8 @@ namespace honei
             {
                 CONTEXT("When solving linear system with CG :");
                 PROFILER_START("CGSolver NONE");
+
+                std::cout << "MAX_ITERS IN CG" << max_iters << std::endl;
 
                 VectorType_ p(b.size());
                 VectorType_ r(b.size());
@@ -102,12 +105,12 @@ namespace honei
                     current_defect = sqrt(alpha);
                     if(current_defect < eps_relative * initial_defect)
                     {
-                        used_iters = iterations + 1;
+                        used_iters = iterations;
                         break;
                     }
                     if(current_defect < eps_relative)
                     {
-                        used_iters = iterations + 1;
+                        used_iters = iterations;
                         break;
                     }
                     if(iterations == max_iters)
@@ -177,12 +180,12 @@ namespace honei
                     DT_ current_defect(Norm<vnt_l_two, true, Tag_>::value(r));
                     if(current_defect < eps_relative * initial_defect)
                     {
-                        used_iters = iterations + 1;
+                        used_iters = iterations;
                         break;
                     }
                     if(current_defect < eps_relative)
                     {
-                        used_iters = iterations + 1;
+                        used_iters = iterations;
                         break;
                     }
                     if(iterations == max_iters)
