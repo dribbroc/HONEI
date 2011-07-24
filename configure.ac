@@ -575,6 +575,7 @@ AC_OUTPUT(
 	honei/backends/opencl/Makefile
 	honei/graph/Makefile
 	honei/la/Makefile
+	honei/mpi/Makefile
 	honei/lbm/Makefile
 	honei/math/Makefile
 	honei/math/testdata/Makefile

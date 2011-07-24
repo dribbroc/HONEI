@@ -26,6 +26,7 @@ misc/do_m4.bash honei/backends/cell/spe/Makefile.am || exit $?
 misc/do_m4.bash honei/backends/cell/spe/kernels/Makefile.am || exit $?
 misc/do_m4.bash honei/graph/Makefile.am || exit $?
 misc/do_m4.bash honei/la/Makefile.am || exit $?
+misc/do_m4.bash honei/mpi/Makefile.am || exit $?
 misc/do_m4.bash honei/math/Makefile.am || exit $?
 misc/do_m4.bash honei/swe/Makefile.am || exit $?
 misc/do_m4.bash honei/fem/Makefile.am || exit $?
