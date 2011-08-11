@@ -76,6 +76,38 @@ namespace honei
             VectorType_ _y;
     };
 
+    template<typename Tag_, typename VectorType_>
+    class FillOperator : public Operator
+    {
+        public:
+
+            virtual std::string to_string()
+            {
+                std::string result("FillOperator\n");
+                return result;;
+            }
+
+            FillOperator(VectorType_& x) :
+                _x(x)
+        {
+            CONTEXT("When creating FillOperator:");
+        }
+
+            virtual void value()
+            {
+                CONTEXT("When evaluating FillOperator:");
+                fill<Tag_>(_x);
+            }
+
+            virtual ~FillOperator()
+            {
+                CONTEXT("When destroying FillOperator:");
+            }
+
+        private:
+            VectorType_ _x;
+    };
+
     template<typename Tag_, typename MatType_, typename VectorType_>
     class DefectOperator : public Operator
     {
