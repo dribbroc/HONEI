@@ -549,7 +549,10 @@ endCycleLoop:
                                 Jacobi<Tag_>::value(info.c[current_level] , info.a[current_level], info.d[current_level], (info.c[current_level]), info.n_pre_smooth - 1, Prec_(0.7), info.diags_inverted[current_level]);
                                 std::cout << "after smoothing" << info.c[current_level];
                                 std::cout << "sum 1" << std::endl;
+                                std::cout << "left before: " << info.x[current_level];
+                                std::cout << "right before: " << info.c[current_level];
                                 Sum<Tag_>::value(info.x[current_level], info.c[current_level]);
+                                std::cout << "left after: " << info.x[current_level];
                             }
                             else
                             {
@@ -561,11 +564,15 @@ endCycleLoop:
                                 Jacobi<Tag_>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], Prec_(0.7), info.diags_inverted[current_level]);
                                 //info.x[current_level] = (Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.d[current_level]), info.n_pre_smooth - 1, Prec_(0.7), info.diags_inverted[current_level]));
                                 Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.d[current_level]),info.x[current_level], info.n_pre_smooth - 1, Prec_(0.7), info.diags_inverted[current_level]);
+                                std::cout << "x after" << info.x[current_level];
                                 //END NEWTEST
                             }
                             std::cout << "defect 1" << std::endl;
+                            std::cout << "b before: " << info.rhs[current_level];
+                            std::cout << "x before: " << info.x[current_level];
                             DenseVector<Prec_> defect_2(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                             info.d[current_level] = defect_2;
+                            std::cout << "y after: " << info.d[current_level];
 
 #ifdef SOLVER_VERBOSE
                             std::cout << "-----------------------------------------------------" << std::endl;
@@ -583,6 +590,7 @@ endCycleLoop:
 
                             std::cout << "restriction 1" << std::endl;
                             /*info.d[current_level] =*/ Restriction<Tag_, ProlType_>::value((info.d[current_level]), (info.d[current_level + 1]), info.macro_border_mask, info.resmats[current_level + 1]);
+                            std::cout << "d after: " << info.d[current_level];
 #ifdef SOLVER_VERBOSE
                             std::cout << "Restricted." << std::endl;
 #endif
@@ -631,6 +639,7 @@ endRestrictionLoop:
 #ifdef SOLVER_VERBOSE
                             std::cout << "Coarse Grid solver." << std::endl;
 #endif
+                            std::cout << "x after: " << info.x[current_level];
                         }
 
                         //-------------
@@ -662,6 +671,7 @@ endRestrictionLoop:
                             {
                                 std::cout << "prolongation 1" << std::endl;
                                 /*info.c[current_level] =*/ Prolongation<Tag_, ProlType_>::value((info.c[current_level]), (info.x[current_level - 1]), info.macro_border_mask, info.prolmats[current_level]);
+                                std::cout << "c after: " << info.c[current_level];
                             }
 #ifdef SOLVER_VERBOSE
                             std::cout << "Prolongated." << std::endl;
@@ -695,7 +705,11 @@ endRestrictionLoop:
                             // on the current level
                             //
                             std::cout << "sum 2" << std::endl;
+                            std::cout << "x before: " << info.x[current_level];
+                            std::cout << "c before: " << info.c[current_level];
+                            std::cout << "alpha: " << alpha;
                             ScaledSum<Tag_>::value((info.x[current_level]), (info.c[current_level]), alpha);
+                            std::cout << "x after: " << info.x[current_level];
 
 #ifdef SOLVER_VERBOSE
                             std::cout << "Prolongation on level " << current_level << " ||x|| " << Norm<vnt_l_two, true, Tag_>::value(info.x[current_level]) << std::endl;
@@ -709,6 +723,7 @@ endRestrictionLoop:
                             //(info.x[current_level]) =(Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.rhs[current_level]), info.n_pre_smooth, Prec_(0.7), info.diags_inverted[current_level]));
                             std::cout << "postsmoothing" << std::endl;
                             Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.rhs[current_level]),(info.x[current_level]), info.n_pre_smooth, Prec_(0.7), info.diags_inverted[current_level]);
+                            std::cout << "x after: " << info.x[current_level];
                             //end NEWTEST
 #ifdef SOLVER_VERBOSE
                             std::cout << "Postsmoothing ||X|| on level " << current_level << " " << Norm<vnt_l_two, true, Tag_>::value(info.x[current_level]) << std::endl;
@@ -719,6 +734,7 @@ endRestrictionLoop:
                             std::cout << "defect 3" << std::endl;
                             DenseVector<Prec_> defect_4(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                             info.d[current_level] = defect_4;
+                            std::cout << "d after: " << info.d[current_level];
 #ifdef SOLVER_VERBOSE
                             std::cout << "Defect on level " << current_level << "||D||: " << Norm<vnt_l_two, true, Tag_>::value(info.d[current_level]) << std::endl;
                             std::cout << "-----------------------------------------------------" << std::endl;
@@ -774,6 +790,12 @@ endCycleLoop:
 
                         *cappa = std::pow((double)(defect / initial_defect), 1.0/((Prec_)iter));
 
+                        std::cout << "===========================================================" << std::endl;
+                        std::cout << "===========================================================" << std::endl;
+                        std::cout << "===========================================================" << std::endl;
+                        std::cout << "===========================================================" << std::endl;
+                        std::cout << "===========================================================" << std::endl;
+                        std::cout << "===========================================================" << std::endl;
                         if (defect <= initial_defect * info.tolerance)
                         {
                             std::cout<<"Finished in " << iter << " iterations."<<std::endl;
@@ -860,7 +882,7 @@ endCycleLoop:
             // apply Dirichlet BCs for boundary nodes (semi-implicit approach)
             // note that we cleared the solution vector previously
             unsigned long sqrt_N((unsigned long)sqrt((double)right_hand_side.size()));
-            for (unsigned long i(0) ; i < sqrt_N; ++i)
+            /*for (unsigned long i(0) ; i < sqrt_N; ++i)
             {
                 initial_guess[i] = right_hand_side[i];
             }
@@ -871,7 +893,7 @@ endCycleLoop:
             for (unsigned long i(0); i < right_hand_side.size(); i += sqrt_N)
             {
                 initial_guess[i] = right_hand_side[i];
-            }
+            }*/
 
             /*for (unsigned long i(sqrt_N - 1); i < right_hand_side.size(); i += sqrt_N)
               {

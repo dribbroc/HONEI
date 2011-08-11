@@ -97,8 +97,10 @@ namespace honei
             virtual void value()
             {
                 CONTEXT("When evaluating DefectOperator:");
+                std::cout << "b before: " << _b;
+                std::cout << "x before: " << _x;
                 Defect<Tag_>::value(_y, _b, _A, _x);
-                //std::cout << _y << std::endl;
+                std::cout << "y after: " << _y;
             }
 
             virtual ~DefectOperator()
@@ -172,7 +174,10 @@ namespace honei
             virtual void value()
             {
                 CONTEXT("When evaluating SumOperator:");
+                std::cout << "left before: " << _y;
+                std::cout << "right before: " << _x;
                 Sum<Tag_>::value(_y, _x);
+                std::cout << "left after: " << _y;
             }
 
             virtual ~SumOperator()
@@ -252,7 +257,7 @@ namespace honei
                 CONTEXT("When evaluating SolverOperator:");
                 //std::cout << _x << std::endl;
                 SolverType_::value(_A, _P, _b, _x, _max_iters, _used_iters, _eps_relative);
-                //std::cout << _x << std::endl;
+                std::cout << "x after: " << _x;
             }
 
             virtual ~SolverOperator()
@@ -358,9 +363,9 @@ namespace honei
                 CONTEXT("When evaluating TransferOperator:");
                 //TODO: think of new way to encode BCs -> separate operator?
                 DenseVector<unsigned long> dummy(1ul);
-                //std::cout << _left << _right << std::endl;
                 TransferType_::value(_left, _right, dummy, _mat);
-                //std::cout << _left << _right << std::endl;
+                std::cout << "left after: " << _left;
+                std::cout << "right after: " << _right;
             }
 
             virtual ~TransferOperator()

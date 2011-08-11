@@ -151,7 +151,7 @@ class MGSolverTest:
                 DenseVector<double>,
                 io_formats::ELL,
                 io_formats::EXP,
-                double>::configure(data, 100, 100, 4, 4, 1, double(1e-8));
+                double>::configure(data, 1, 100, 4, 4, 1, double(1e-8));
 
             OperatorList ol(
                     MGCycleProcessing<Tag_,

@@ -202,7 +202,6 @@ namespace honei
                         std::string local_b_name(b_name);
                         local_b_name += stringify(i);
                         VectorType_ max_b(VectorIO<VecIOType_>::read_vector(local_b_name, DT_(0)));
-                        b.push_back(max_b);
 
                         std::string local_x_name(x_name);
                         local_x_name += stringify(i);
@@ -211,7 +210,13 @@ namespace honei
                         x.push_back(max_x);
 
                         VectorType_ zero(A.at(i).rows(), DT_(0));
-                        d.push_back(zero.copy());
+                        VectorType_ defect(A.at(i).rows());
+
+                        Defect<Tag_>::value(defect, max_b, A.at(i), max_x);
+                        b.push_back(max_b);
+                        d.push_back(defect.copy());
+
+                        //d.push_back(zero.copy());
                         ///Set c = x on finest level
                         //c.push_back(max_x.copy());
                         c.push_back(zero.copy());
@@ -286,8 +291,8 @@ namespace honei
                     cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(data.min_level),
                                 data.P.at(data.min_level),
-                                b.at(data.min_level),
-                                x.at(data.min_level),
+                                data.d.at(data.min_level),////
+                                data.x.at(data.min_level),
                                 data.max_iters_coarse,
                                 data.used_iters_coarse,
                                 data.eps_relative) );
@@ -295,24 +300,43 @@ namespace honei
                 else
                 {
                     ///Presmoothing
-                    std::cout << "Smoother Accessing " << level << std::endl;
-                    cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
-                                data.A.at(level),
-                                data.P.at(level),
-                                b.at(level),
-                                x.at(level),
-                                data.temp_0.at(level),
-                                data.temp_1.at(level),
-                                data.n_pre_smooth) );
+                    if(level == data.c.size() - 1)
+                    {
+                        std::cout << "Smoother Accessing " << level << std::endl;
+                        cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
+                                    data.A.at(level),
+                                    data.P.at(level),
+                                    data.d.at(level),//
+                                    data.c.at(level),//
+                                    data.temp_0.at(level),
+                                    data.temp_1.at(level),
+                                    data.n_pre_smooth) );
+
+                        cycle.push_back(new SumOperator<Tag_, VectorType_>(data.x.at(level), data.c.at(level)));
+                    }
+                    else
+                    {
+                        std::cout << "Smoother Accessing " << level << std::endl;
+                        cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
+                                    data.A.at(level),
+                                    data.P.at(level),
+                                    data.d.at(level),//
+                                    data.x.at(level),
+                                    data.temp_0.at(level),
+                                    data.temp_1.at(level),
+                                    data.n_pre_smooth) );
+                    }
 
 
                     ///Defect
                     std::cout << "Defect Accessing " << level << std::endl;
-                    cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(data.temp_0.at(level), b.at(level), data.A.at(level), x.at(level)));
+                    cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(data.d.at(level), data.b.at(level), data.A.at(level), data.x.at(level)));
+
                     ///Restriction
                     std::cout << " Restrict Accessing " << level << std::endl;
                     std::cout << " Restrict Accessing " << level - 1 << std::endl;
-                    cycle.push_back(new TransferOperator<ResType_, MatrixType_, VectorType_>(data.d.at(level - 1) , data.temp_0.at(level), data.resmat.at(level)));
+                    cycle.push_back(new TransferOperator<ResType_, MatrixType_, VectorType_>(data.d.at(level - 1) , data.d.at(level), data.resmat.at(level)));
+                    cycle.push_back(new CopyOperator<Tag_, VectorType_>(data.d.at(level - 1), data.b.at(level - 1)));
 
                     ///Recursion
                     ///all vectors in c have to be initialised with 0
@@ -321,20 +345,22 @@ namespace honei
                     ///Prolongation
                     std::cout << "Prol Accessing " << level << std::endl;
                     std::cout << "Prol Accessing " << level - 1 << std::endl;
-                    cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(data.temp_0.at(level) , data.c.at(level - 1), data.prolmat.at(level)));
+                    cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(data.c.at(level) , data.x.at(level - 1), data.prolmat.at(level)));
                     std::cout << "Sum Accessing " << level << std::endl;
-                    cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(level), data.temp_0.at(level)));
+                    cycle.push_back(new SumOperator<Tag_, VectorType_>(data.x.at(level), data.c.at(level)));
 
                     ///Postsmoothing
                     std::cout << "Smoother Accessing " << level << std::endl;
                     cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(level),
                                 data.P.at(level),
-                                b.at(level),
-                                x.at(level),
+                                data.b.at(level),//
+                                data.x.at(level),
                                 data.temp_0.at(level),
                                 data.temp_1.at(level),
                                 data.n_post_smooth) );
+
+                    cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(data.d.at(level), data.b.at(level), data.A.at(level), data.x.at(level)));
                 }
             }
 
@@ -345,7 +371,7 @@ namespace honei
                 CONTEXT("When evaluating MGCycleProcessing:");
 
                 OperatorList cycle;
-                _build_cycle(data.x, data.b, data.A.size() - 1, cycle, data);
+                _build_cycle(data.c, data.d, data.A.size() - 1, cycle, data);
                 return cycle;
             }
     };
@@ -370,14 +396,21 @@ namespace honei
                 for(unsigned long i(0) ; i < data.max_iters ; ++i)
                 {
                     cycle.value();
-                    Defect<Tag_>::value(r, data.b.at(data.b.size() - 1), data.A.at(data.A.size() - 1), data.x.at(data.x.size() - 1));
-                    rnorm_current = NormType_::value(r);
+                    //Defect<Tag_>::value(r, data.b.at(data.b.size() - 1), data.A.at(data.A.size() - 1), data.x.at(data.x.size() - 1));
+                    rnorm_current = NormType_::value(data.d.at(data.d.size() - 1));
                     std::cout << "DEFECTNORM: " << rnorm_current << std::endl;
 
                     data.used_iters = i + 1;
 
-                    if(rnorm_current < data.eps_relative * rnorm_initial)
+                    if(rnorm_current <= data.eps_relative * rnorm_initial)
                         break;
+
+                    std::cout << "=================================================" << std::endl;
+                    std::cout << "=================================================" << std::endl;
+                    std::cout << "=================================================" << std::endl;
+                    std::cout << "=================================================" << std::endl;
+                    std::cout << "=================================================" << std::endl;
+                    std::cout << "=================================================" << std::endl;
                 }
 
                 PROFILER_STOP("MGSolver");
