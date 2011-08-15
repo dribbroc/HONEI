@@ -61,6 +61,10 @@ namespace methods
                 {
                     struct STATIC;
                 };
+                struct W
+                {
+                    struct STATIC;
+                };
             };
             struct W
             {
