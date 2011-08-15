@@ -155,7 +155,7 @@ class MGSolverTest:
 
             OperatorList ol(
                     MGCycleProcessing<Tag_,
-                    methods::CYCLE::V::STATIC,
+                    methods::CYCLE::F::V::STATIC,
                     CG<Tag_, methods::VAR>,
                     RISmoother<Tag_>,
                     Restriction<Tag_, methods::PROLMAT>,
