@@ -71,7 +71,7 @@ namespace honei
                 CONTEXT("When running OperatorList::value():");
                 for (unsigned long i(0) ; i < _imp->_ops.size() ; ++i)
                 {
-                    std::cout << "CYCLE-SATUS: " << _imp->_ops.at(i)->to_string() << std::endl;
+                    //std::cout << "CYCLE-SATUS: " << _imp->_ops.at(i)->to_string() << std::endl;
                     _imp->_ops.at(i)->value();
                 }
             }

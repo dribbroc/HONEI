@@ -59,7 +59,7 @@ namespace honei
 
                 for(unsigned long i(0) ; i < max_iters ; ++i)
                 {
-                    std::cout << "SMOOTHING" << std::endl;
+                    //std::cout << "SMOOTHING" << std::endl;
                     Defect<Tag_>::value(temp_0, b, A, x);
                     Product<Tag_>::value(temp_1, P, temp_0);
                     Sum<Tag_>::value(x, temp_1);
