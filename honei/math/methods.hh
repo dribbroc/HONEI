@@ -56,7 +56,10 @@ namespace methods
     {
         public:
             struct F;
-            struct W;
+            struct W
+            {
+                struct STATIC;
+            };
             struct V
             {
                 struct STATIC;
