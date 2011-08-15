@@ -282,7 +282,7 @@ namespace honei
             {
                 if(level == data.min_level)
                 {
-                    std::cout << "Solver Accessing " << data.min_level << std::endl;
+                    //std::cout << "Solver Accessing " << data.min_level << std::endl;
                     cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(data.min_level),
                                 data.P.at(data.min_level),
@@ -295,7 +295,7 @@ namespace honei
                 else
                 {
                     ///Presmoothing
-                    std::cout << "Smoother Accessing " << level << std::endl;
+                    //std::cout << "Smoother Accessing " << level << std::endl;
                     cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(level),
                                 data.P.at(level),
@@ -307,11 +307,11 @@ namespace honei
 
 
                     ///Defect
-                    std::cout << "Defect Accessing " << level << std::endl;
+                    //std::cout << "Defect Accessing " << level << std::endl;
                     cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(data.temp_0.at(level), b.at(level), data.A.at(level), x.at(level)));
                     ///Restriction
-                    std::cout << " Restrict Accessing " << level << std::endl;
-                    std::cout << " Restrict Accessing " << level - 1 << std::endl;
+                    //std::cout << " Restrict Accessing " << level << std::endl;
+                    //std::cout << " Restrict Accessing " << level - 1 << std::endl;
                     cycle.push_back(new TransferOperator<ResType_, MatrixType_, VectorType_>(data.d.at(level - 1) , data.temp_0.at(level), data.resmat.at(level)));
 
                     ///Recursion
@@ -320,14 +320,14 @@ namespace honei
                     _build_cycle(data.c, data.d, level - 1, cycle, data);
 
                     ///Prolongation
-                    std::cout << "Prol Accessing " << level << std::endl;
-                    std::cout << "Prol Accessing " << level - 1 << std::endl;
+                    //std::cout << "Prol Accessing " << level << std::endl;
+                    //std::cout << "Prol Accessing " << level - 1 << std::endl;
                     cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(data.temp_0.at(level) , data.c.at(level - 1), data.prolmat.at(level)));
-                    std::cout << "Sum Accessing " << level << std::endl;
+                    //std::cout << "Sum Accessing " << level << std::endl;
                     cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(level), data.temp_0.at(level)));
 
                     ///Postsmoothing
-                    std::cout << "Smoother Accessing " << level << std::endl;
+                    //std::cout << "Smoother Accessing " << level << std::endl;
                     cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(level),
                                 data.P.at(level),
@@ -376,7 +376,7 @@ namespace honei
             {
                 if(level == data.min_level)
                 {
-                    std::cout << "Solver Accessing " << data.min_level << std::endl;
+                    //std::cout << "Solver Accessing " << data.min_level << std::endl;
                     cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(data.min_level),
                                 data.P.at(data.min_level),
@@ -389,7 +389,7 @@ namespace honei
                 else
                 {
                     ///Presmoothing
-                    std::cout << "Smoother Accessing " << level << std::endl;
+                    //std::cout << "Smoother Accessing " << level << std::endl;
                     cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(level),
                                 data.P.at(level),
@@ -401,11 +401,11 @@ namespace honei
 
 
                     ///Defect
-                    std::cout << "Defect Accessing " << level << std::endl;
+                    //std::cout << "Defect Accessing " << level << std::endl;
                     cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(data.temp_0.at(level), b.at(level), data.A.at(level), x.at(level)));
                     ///Restriction
-                    std::cout << " Restrict Accessing " << level << std::endl;
-                    std::cout << " Restrict Accessing " << level - 1 << std::endl;
+                    //std::cout << " Restrict Accessing " << level << std::endl;
+                    //std::cout << " Restrict Accessing " << level - 1 << std::endl;
                     cycle.push_back(new TransferOperator<ResType_, MatrixType_, VectorType_>(data.d.at(level - 1) , data.temp_0.at(level), data.resmat.at(level)));
 
                     ///Recursion
@@ -415,14 +415,14 @@ namespace honei
                     _build_cycle(data.c, data.d, level - 1, cycle, data);
 
                     ///Prolongation
-                    std::cout << "Prol Accessing " << level << std::endl;
-                    std::cout << "Prol Accessing " << level - 1 << std::endl;
+                    //std::cout << "Prol Accessing " << level << std::endl;
+                    //std::cout << "Prol Accessing " << level - 1 << std::endl;
                     cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(data.temp_0.at(level) , data.c.at(level - 1), data.prolmat.at(level)));
-                    std::cout << "Sum Accessing " << level << std::endl;
+                    //std::cout << "Sum Accessing " << level << std::endl;
                     cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(level), data.temp_0.at(level)));
 
                     ///Postsmoothing
-                    std::cout << "Smoother Accessing " << level << std::endl;
+                    //std::cout << "Smoother Accessing " << level << std::endl;
                     cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(level),
                                 data.P.at(level),
@@ -472,7 +472,7 @@ namespace honei
             {
                 if(level == data.min_level)
                 {
-                    std::cout << "Solver Accessing " << data.min_level << std::endl;
+                    //std::cout << "Solver Accessing " << data.min_level << std::endl;
                     cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(data.min_level),
                                 data.P.at(data.min_level),
@@ -485,7 +485,7 @@ namespace honei
                 else
                 {
                     ///Presmoothing
-                    std::cout << "Smoother Accessing " << level << std::endl;
+                    //std::cout << "Smoother Accessing " << level << std::endl;
                     cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(level),
                                 data.P.at(level),
@@ -497,11 +497,11 @@ namespace honei
 
 
                     ///Defect
-                    std::cout << "Defect Accessing " << level << std::endl;
+                    //std::cout << "Defect Accessing " << level << std::endl;
                     cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(data.temp_0.at(level), b.at(level), data.A.at(level), x.at(level)));
                     ///Restriction
-                    std::cout << " Restrict Accessing " << level << std::endl;
-                    std::cout << " Restrict Accessing " << level - 1 << std::endl;
+                    //std::cout << " Restrict Accessing " << level << std::endl;
+                    //std::cout << " Restrict Accessing " << level - 1 << std::endl;
                     cycle.push_back(new TransferOperator<ResType_, MatrixType_, VectorType_>(data.d.at(level - 1) , data.temp_0.at(level), data.resmat.at(level)));
 
                     ///Recursion
@@ -510,14 +510,14 @@ namespace honei
                     _build_cycle_V(data.c, data.d, level - 1, cycle, data);
 
                     ///Prolongation
-                    std::cout << "Prol Accessing " << level << std::endl;
-                    std::cout << "Prol Accessing " << level - 1 << std::endl;
+                    //std::cout << "Prol Accessing " << level << std::endl;
+                    //std::cout << "Prol Accessing " << level - 1 << std::endl;
                     cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(data.temp_0.at(level) , data.c.at(level - 1), data.prolmat.at(level)));
-                    std::cout << "Sum Accessing " << level << std::endl;
+                    //std::cout << "Sum Accessing " << level << std::endl;
                     cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(level), data.temp_0.at(level)));
 
                     ///Postsmoothing
-                    std::cout << "Smoother Accessing " << level << std::endl;
+                    //std::cout << "Smoother Accessing " << level << std::endl;
                     cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(level),
                                 data.P.at(level),
@@ -539,7 +539,7 @@ namespace honei
             {
                 if(level == data.min_level)
                 {
-                    std::cout << "Solver Accessing " << data.min_level << std::endl;
+                    //std::cout << "Solver Accessing " << data.min_level << std::endl;
                     cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(data.min_level),
                                 data.P.at(data.min_level),
@@ -552,7 +552,7 @@ namespace honei
                 else
                 {
                     ///Presmoothing
-                    std::cout << "Smoother Accessing " << level << std::endl;
+                    //std::cout << "Smoother Accessing " << level << std::endl;
                     cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(level),
                                 data.P.at(level),
@@ -564,11 +564,11 @@ namespace honei
 
 
                     ///Defect
-                    std::cout << "Defect Accessing " << level << std::endl;
+                    //std::cout << "Defect Accessing " << level << std::endl;
                     cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(data.temp_0.at(level), b.at(level), data.A.at(level), x.at(level)));
                     ///Restriction
-                    std::cout << " Restrict Accessing " << level << std::endl;
-                    std::cout << " Restrict Accessing " << level - 1 << std::endl;
+                    //std::cout << " Restrict Accessing " << level << std::endl;
+                    //std::cout << " Restrict Accessing " << level - 1 << std::endl;
                     cycle.push_back(new TransferOperator<ResType_, MatrixType_, VectorType_>(data.d.at(level - 1) , data.temp_0.at(level), data.resmat.at(level)));
 
                     ///Recursion
@@ -578,14 +578,14 @@ namespace honei
                     _build_cycle_V(data.c, data.d, level - 1, cycle, data);
 
                     ///Prolongation
-                    std::cout << "Prol Accessing " << level << std::endl;
-                    std::cout << "Prol Accessing " << level - 1 << std::endl;
+                    //std::cout << "Prol Accessing " << level << std::endl;
+                    //std::cout << "Prol Accessing " << level - 1 << std::endl;
                     cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(data.temp_0.at(level) , data.c.at(level - 1), data.prolmat.at(level)));
-                    std::cout << "Sum Accessing " << level << std::endl;
+                    //std::cout << "Sum Accessing " << level << std::endl;
                     cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(level), data.temp_0.at(level)));
 
                     ///Postsmoothing
-                    std::cout << "Smoother Accessing " << level << std::endl;
+                    //std::cout << "Smoother Accessing " << level << std::endl;
                     cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(level),
                                 data.P.at(level),
@@ -635,7 +635,7 @@ namespace honei
             {
                 if(level == data.min_level)
                 {
-                    std::cout << "Solver Accessing " << data.min_level << std::endl;
+                    //std::cout << "Solver Accessing " << data.min_level << std::endl;
                     cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(data.min_level),
                                 data.P.at(data.min_level),
@@ -648,7 +648,7 @@ namespace honei
                 else
                 {
                     ///Presmoothing
-                    std::cout << "Smoother Accessing " << level << std::endl;
+                    //std::cout << "Smoother Accessing " << level << std::endl;
                     cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(level),
                                 data.P.at(level),
@@ -660,11 +660,11 @@ namespace honei
 
 
                     ///Defect
-                    std::cout << "Defect Accessing " << level << std::endl;
+                    ////std::cout << "Defect Accessing " << level << std::endl;
                     cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(data.temp_0.at(level), b.at(level), data.A.at(level), x.at(level)));
                     ///Restriction
-                    std::cout << " Restrict Accessing " << level << std::endl;
-                    std::cout << " Restrict Accessing " << level - 1 << std::endl;
+                    //std::cout << " Restrict Accessing " << level << std::endl;
+                    //std::cout << " Restrict Accessing " << level - 1 << std::endl;
                     cycle.push_back(new TransferOperator<ResType_, MatrixType_, VectorType_>(data.d.at(level - 1) , data.temp_0.at(level), data.resmat.at(level)));
 
                     ///Recursion
@@ -674,14 +674,14 @@ namespace honei
                     _build_cycle_W(data.c, data.d, level - 1, cycle, data);
 
                     ///Prolongation
-                    std::cout << "Prol Accessing " << level << std::endl;
-                    std::cout << "Prol Accessing " << level - 1 << std::endl;
+                    //std::cout << "Prol Accessing " << level << std::endl;
+                    //std::cout << "Prol Accessing " << level - 1 << std::endl;
                     cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(data.temp_0.at(level) , data.c.at(level - 1), data.prolmat.at(level)));
-                    std::cout << "Sum Accessing " << level << std::endl;
+                    //std::cout << "Sum Accessing " << level << std::endl;
                     cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(level), data.temp_0.at(level)));
 
                     ///Postsmoothing
-                    std::cout << "Smoother Accessing " << level << std::endl;
+                    ////std::cout << "Smoother Accessing " << level << std::endl;
                     cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(level),
                                 data.P.at(level),
@@ -703,7 +703,7 @@ namespace honei
             {
                 if(level == data.min_level)
                 {
-                    std::cout << "Solver Accessing " << data.min_level << std::endl;
+                    //std::cout << "Solver Accessing " << data.min_level << std::endl;
                     cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(data.min_level),
                                 data.P.at(data.min_level),
@@ -716,7 +716,7 @@ namespace honei
                 else
                 {
                     ///Presmoothing
-                    std::cout << "Smoother Accessing " << level << std::endl;
+                    //std::cout << "Smoother Accessing " << level << std::endl;
                     cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(level),
                                 data.P.at(level),
@@ -728,11 +728,11 @@ namespace honei
 
 
                     ///Defect
-                    std::cout << "Defect Accessing " << level << std::endl;
+                    //std::cout << "Defect Accessing " << level << std::endl;
                     cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(data.temp_0.at(level), b.at(level), data.A.at(level), x.at(level)));
                     ///Restriction
-                    std::cout << " Restrict Accessing " << level << std::endl;
-                    std::cout << " Restrict Accessing " << level - 1 << std::endl;
+                    //std::cout << " Restrict Accessing " << level << std::endl;
+                    //std::cout << " Restrict Accessing " << level - 1 << std::endl;
                     cycle.push_back(new TransferOperator<ResType_, MatrixType_, VectorType_>(data.d.at(level - 1) , data.temp_0.at(level), data.resmat.at(level)));
 
                     ///Recursion
@@ -742,14 +742,14 @@ namespace honei
                     _build_cycle_W(data.c, data.d, level - 1, cycle, data);
 
                     ///Prolongation
-                    std::cout << "Prol Accessing " << level << std::endl;
-                    std::cout << "Prol Accessing " << level - 1 << std::endl;
+                    //std::cout << "Prol Accessing " << level << std::endl;
+                    //std::cout << "Prol Accessing " << level - 1 << std::endl;
                     cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(data.temp_0.at(level) , data.c.at(level - 1), data.prolmat.at(level)));
-                    std::cout << "Sum Accessing " << level << std::endl;
+                    //std::cout << "Sum Accessing " << level << std::endl;
                     cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(level), data.temp_0.at(level)));
 
                     ///Postsmoothing
-                    std::cout << "Smoother Accessing " << level << std::endl;
+                    //std::cout << "Smoother Accessing " << level << std::endl;
                     cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
                                 data.A.at(level),
                                 data.P.at(level),
@@ -790,7 +790,7 @@ namespace honei
                 double rnorm_initial(NormType_::value(r));
                 double rnorm_current(1e16);
 
-                std::cout << "starting cycles" << std::endl;
+                //std::cout << "starting cycles" << std::endl;
                 for(unsigned long i(0) ; i < data.max_iters ; ++i)
                 {
                     cycle.value();

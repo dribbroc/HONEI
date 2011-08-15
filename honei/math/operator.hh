@@ -333,10 +333,10 @@ namespace honei
             virtual void value()
             {
                 CONTEXT("When evaluating SmootherOperator:");
-                std::cout << "x before" << _x;
-                std::cout << "rhs" << _b;
+                //std::cout << "x before" << _x;
+                //std::cout << "rhs" << _b;
                 SmootherType_::value(_A, _P, _b, _x, _temp_0, _temp_1, _max_iters);
-                std::cout << "x after" << _x;
+                //std::cout << "x after" << _x;
             }
 
             virtual ~SmootherOperator()

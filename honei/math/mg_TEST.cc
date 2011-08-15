@@ -135,7 +135,7 @@ class MGSolverTest:
 
         virtual void run() const
         {
-            unsigned long levels(4);
+            unsigned long levels(7);
             std::string file(HONEI_SOURCEDIR);
             file += "/honei/math/testdata/poisson_advanced/sort_0/";
             MGData<SparseMatrixELL<double>, DenseVector<double>, DenseVector<double> > data(MGUtil<Tag_,
@@ -155,7 +155,7 @@ class MGSolverTest:
 
             OperatorList ol(
                     MGCycleProcessing<Tag_,
-                    methods::CYCLE::F::W::STATIC,
+                    methods::CYCLE::V::STATIC,
                     CG<Tag_, methods::VAR>,
                     RISmoother<Tag_>,
                     Restriction<Tag_, methods::PROLMAT>,
@@ -171,7 +171,7 @@ class MGSolverTest:
             std::string reffile(HONEI_SOURCEDIR);
             reffile += "/honei/math/testdata/poisson_advanced/sort_0/sol_4";
             DenseVector<double> ref(VectorIO<io_formats::EXP>::read_vector(reffile, double(0)));
-            double base_digits(4);
+            double base_digits(1);
             double additional_digits(2);
 
             double base_eps(1 / pow(10, base_digits));
@@ -181,10 +181,10 @@ class MGSolverTest:
             double b(base_eps - (double(4) * m));
 
             double eps(m * sizeof(double) + b);
-            eps *= double(3);
+            eps *= double(8);
 
             for(unsigned long i(0) ; i < ref.size() ; ++i)
-                TEST_CHECK_EQUAL_WITHIN_EPS(data.x.at(4)[i], ref[i], eps);
+                TEST_CHECK_EQUAL_WITHIN_EPS(data.x.at(levels)[i], ref[i], eps);
         }
 };
 MGSolverTest<tags::CPU> mg_solver_test_cpu("double");
