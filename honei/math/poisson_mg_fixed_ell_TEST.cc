@@ -627,7 +627,7 @@ class PoissonAdvancedTestMGSparseELLProlMat:
 
             info.min_level = 1;
             info.max_level = _size;
-            info.n_max_iter = 1;
+            info.n_max_iter = 100;
             info.initial_zero = false;
             info.tolerance = 1e-8;
             info.convergence_check = true;
