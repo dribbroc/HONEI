@@ -540,15 +540,10 @@ endCycleLoop:
                                 // When the restriction loop just started
 
                                 //(info.c[current_level]) = (Jacobi<Tag_>::value(info.a[current_level], info.d[current_level], Prec_(0.7), info.diags_inverted[current_level]));
-                                std::cout << "presmoothing 1" << std::endl;
-                                std::cout << "x before smoothing" << info.c[current_level];
-                                std::cout << "rhs" << info.d[current_level];
                                 Jacobi<Tag_>::value(info.a[current_level], info.d[current_level], (info.c[current_level]), Prec_(0.7), info.diags_inverted[current_level]);
 
                                 //(info.c[current_level]) = (Jacobi<Tag_>::value(info.c[current_level] , info.a[current_level], info.d[current_level], info.n_pre_smooth - 1, Prec_(0.7), info.diags_inverted[current_level]));
                                 Jacobi<Tag_>::value(info.c[current_level] , info.a[current_level], info.d[current_level], (info.c[current_level]), info.n_pre_smooth - 1, Prec_(0.7), info.diags_inverted[current_level]);
-                                std::cout << "after smoothing" << info.c[current_level];
-                                std::cout << "sum 1" << std::endl;
                                 Sum<Tag_>::value(info.x[current_level], info.c[current_level]);
                             }
                             else
@@ -557,13 +552,11 @@ endCycleLoop:
                                 // the cleared solution vector (as the solution vector itself represents
                                 // the defect correction here)
                                 //info.x[current_level] = (Jacobi<Tag_>::value((info.a[current_level]), (info.d[current_level]), Prec_(0.7), info.diags_inverted[current_level]));
-                                std::cout << "presmoothing 2" << std::endl;
                                 Jacobi<Tag_>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], Prec_(0.7), info.diags_inverted[current_level]);
                                 //info.x[current_level] = (Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.d[current_level]), info.n_pre_smooth - 1, Prec_(0.7), info.diags_inverted[current_level]));
                                 Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.d[current_level]),info.x[current_level], info.n_pre_smooth - 1, Prec_(0.7), info.diags_inverted[current_level]);
                                 //END NEWTEST
                             }
-                            std::cout << "defect 1" << std::endl;
                             DenseVector<Prec_> defect_2(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                             info.d[current_level] = defect_2;
 
@@ -581,7 +574,6 @@ endCycleLoop:
                             // set homogeneous Dirichlet boundary conditions in the restricted defect vector
                             // depending on Dirichlet mask (see routine for details), and store a copy in RHS
 
-                            std::cout << "restriction 1" << std::endl;
                             /*info.d[current_level] =*/ Restriction<Tag_, ProlType_>::value((info.d[current_level]), (info.d[current_level + 1]), info.macro_border_mask, info.resmats[current_level + 1]);
 #ifdef SOLVER_VERBOSE
                             std::cout << "Restricted." << std::endl;
@@ -608,10 +600,8 @@ endRestrictionLoop:
                             // the following coarse grid correction (and no smoothing) is done.
 
                             //(info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
-                            std::cout << "coarse grid solver 1" << std::endl;
                             ConjugateGradients<Tag_, methods::NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
 
-                            std::cout << "defect 2" << std::endl;
                             DenseVector<Prec_> defect_3(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                             info.d[current_level] = defect_3;
 
@@ -626,7 +616,6 @@ endRestrictionLoop:
                             // started with a zero start vector
 
                             //(info.x[current_level]) =(ConjugateGradients<Tag_, NONE>::value((info.a[current_level]), (info.d[current_level]), std::numeric_limits<Prec_>::epsilon()));
-                            std::cout << "coarse grid solver 2" << std::endl;
                             ConjugateGradients<Tag_, methods::NONE>::value((info.a[current_level]), (info.d[current_level]), info.x[current_level], std::numeric_limits<Prec_>::epsilon());
 #ifdef SOLVER_VERBOSE
                             std::cout << "Coarse Grid solver." << std::endl;
@@ -660,7 +649,6 @@ endRestrictionLoop:
                               }
                               else*/
                             {
-                                std::cout << "prolongation 1" << std::endl;
                                 /*info.c[current_level] =*/ Prolongation<Tag_, ProlType_>::value((info.c[current_level]), (info.x[current_level - 1]), info.macro_border_mask, info.prolmats[current_level]);
                             }
 #ifdef SOLVER_VERBOSE
@@ -694,7 +682,6 @@ endRestrictionLoop:
                             // add the prolongated correction to the iteration vector
                             // on the current level
                             //
-                            std::cout << "sum 2" << std::endl;
                             ScaledSum<Tag_>::value((info.x[current_level]), (info.c[current_level]), alpha);
 
 #ifdef SOLVER_VERBOSE
@@ -707,7 +694,6 @@ endRestrictionLoop:
                             // smooth A*x = rhs based on the RHS for that level we stored during restriction
 
                             //(info.x[current_level]) =(Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.rhs[current_level]), info.n_pre_smooth, Prec_(0.7), info.diags_inverted[current_level]));
-                            std::cout << "postsmoothing" << std::endl;
                             Jacobi<Tag_>::value(info.x[current_level], (info.a[current_level]), (info.rhs[current_level]),(info.x[current_level]), info.n_pre_smooth, Prec_(0.7), info.diags_inverted[current_level]);
                             //end NEWTEST
 #ifdef SOLVER_VERBOSE
@@ -716,7 +702,6 @@ endRestrictionLoop:
                             //
                             // update defect
                             //
-                            std::cout << "defect 3" << std::endl;
                             DenseVector<Prec_> defect_4(Defect<Tag_>::value(info.rhs[current_level], info.a[current_level], info.x[current_level]));
                             info.d[current_level] = defect_4;
 #ifdef SOLVER_VERBOSE
