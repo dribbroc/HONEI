@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 #cd /home/uma408/nobackup/honei/clients/norwegen
-dtbase=0.1573
-taubase=2.068
-for i in {0..500}
+dtbase=0.1569
+taubase=1.245
+tau=${taubase}
+for i in {0..400}
 do
     cp honei.tq honei.tq.tmp
-    tau=$(echo scale=6\;$taubase+0.001|bc)
-    taubase=${tau}
+    #tau=$(echo scale=6\;$taubase+0.01|bc)
+    #taubase=${tau}
     dt=$(echo scale=6\;$dtbase+0.0001|bc)
     dtbase=${dt}
     sed "s/TAU/${tau}/g" <honei.tq.tmp >honei.tq.tmp2

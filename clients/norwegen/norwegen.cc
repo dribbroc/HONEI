@@ -37,8 +37,8 @@ using namespace std;
 using namespace output_types;
 using namespace lbm::lbm_lattice_types;
 
-#define SOLVER_VERBOSE 1
-#define SOLVER_POSTPROCESSING 1
+//#define SOLVER_VERBOSE 1
+//#define SOLVER_POSTPROCESSING 1
 
 
 int main(int argc, char ** argv)
