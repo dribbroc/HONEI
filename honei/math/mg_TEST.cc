@@ -18,12 +18,12 @@ using namespace tests;
 using namespace std;
 
 template<typename Tag_>
-class MGCycleProcessingTest:
+class MGCycleCreationTest:
     public BaseTest
 {
     public:
-        MGCycleProcessingTest(const std::string & tag) :
-            BaseTest("MGCycleProcessingTest<" + tag + ">")
+        MGCycleCreationTest(const std::string & tag) :
+            BaseTest("MGCycleCreationTest<" + tag + ">")
         {
             register_tag(Tag_::name);
         }
@@ -62,7 +62,7 @@ class MGCycleProcessingTest:
             MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double> > data(A, Res, Prol, P, b, x, c, d, t0, t1, 1, 1000, 4, 4, 1, 1e-8);
 
             OperatorList ol(
-            MGCycleProcessing<Tag_,
+            MGCycleCreation<Tag_,
                               methods::CYCLE::V::STATIC,
                               CG<Tag_, methods::NONE>,
                               RISmoother<Tag_>,
@@ -77,7 +77,7 @@ class MGCycleProcessingTest:
             }
         }
 };
-MGCycleProcessingTest<tags::CPU> mgcycproctest_cpu("double");
+MGCycleCreationTest<tags::CPU> mgcycproctest_cpu("double");
 
 template<typename Tag_>
 class MGUtilLoadTest:
@@ -101,7 +101,7 @@ class MGUtilLoadTest:
                                                                                             DenseVector<double>,
                                                                                             io_formats::ELL,
                                                                                             io_formats::EXP,
-                                                                                            double>::load_data(file, levels, double(0.7)));
+                                                                                            double>::load_data(file, levels, double(0.7), "jac"));
 
             for(unsigned long i(0) ; i <= levels ; ++i)
             {
@@ -135,27 +135,27 @@ class MGSolverTest:
 
         virtual void run() const
         {
-            unsigned long levels(7);
+            unsigned long levels(4);
             std::string file(HONEI_SOURCEDIR);
             file += "/honei/math/testdata/poisson_advanced/sort_0/";
-            MGData<SparseMatrixELL<double>, DenseVector<double>, DenseVector<double> > data(MGUtil<Tag_,
+            MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double> >  data(MGUtil<Tag_,
                                                                                             SparseMatrixELL<double>,
                                                                                             DenseVector<double>,
-                                                                                            DenseVector<double>,
+                                                                                            SparseMatrixELL<double>,
                                                                                             io_formats::ELL,
                                                                                             io_formats::EXP,
-                                                                                            double>::load_data(file, levels, double(0.7)));
+                                                                                            double>::load_data(file, levels, double(0.7), "spai"));
             MGUtil<Tag_,
                 SparseMatrixELL<double>,
                 DenseVector<double>,
-                DenseVector<double>,
+                SparseMatrixELL<double>,
                 io_formats::ELL,
                 io_formats::EXP,
                 double>::configure(data, 100, 100, 4, 4, 1, double(1e-8));
 
             OperatorList ol(
-                    MGCycleProcessing<Tag_,
-                    methods::CYCLE::V::STATIC,
+                    MGCycleCreation<Tag_,
+                    methods::CYCLE::W::STATIC,
                     CG<Tag_, methods::VAR>,
                     RISmoother<Tag_>,
                     Restriction<Tag_, methods::PROLMAT>,
@@ -169,7 +169,8 @@ class MGSolverTest:
             std::cout << data.used_iters_coarse << std::endl;
 
             std::string reffile(HONEI_SOURCEDIR);
-            reffile += "/honei/math/testdata/poisson_advanced/sort_0/sol_4";
+            reffile += "/honei/math/testdata/poisson_advanced/sort_0/sol_";
+            reffile += stringify(levels);
             DenseVector<double> ref(VectorIO<io_formats::EXP>::read_vector(reffile, double(0)));
             double base_digits(1);
             double additional_digits(2);
@@ -183,8 +184,11 @@ class MGSolverTest:
             double eps(m * sizeof(double) + b);
             eps *= double(8);
 
+            data.x.at(levels).lock(lm_read_only);
+            ref.lock(lm_read_only);
             for(unsigned long i(0) ; i < ref.size() ; ++i)
                 TEST_CHECK_EQUAL_WITHIN_EPS(data.x.at(levels)[i], ref[i], eps);
         }
 };
 MGSolverTest<tags::CPU> mg_solver_test_cpu("double");
+MGSolverTest<tags::GPU::CUDA> mg_solver_test_gpu("double");

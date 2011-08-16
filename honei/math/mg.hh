@@ -96,9 +96,72 @@ namespace honei
             double eps_relative;
     };
 
+    template<typename PreconContType_,
+             typename MatrixType_,
+             typename DataType_>
+        struct PreconFill
+        {
+        };
+
+    template<typename MatrixType_, typename DataType_>
+        struct PreconFill<DenseVector<DataType_>, MatrixType_, DataType_>
+        {
+            public:
+
+                static void value(unsigned long i,
+                                  std::vector<DenseVector<DataType_> > & target,
+                                  std::string filename,
+                                  std::string precon_suffix,
+                                  MatrixType_ & A,
+                                  DataType_ damping_factor)
+                {
+                    DenseVector<DataType_> current_P(A.rows(), damping_factor);
+                    for(unsigned long j(0) ; j < current_P.size() ; ++j)
+                    {
+                        current_P[j] /= A(j, j);
+                    }
+                    target.push_back(current_P);
+                }
+
+                static void dummy(std::vector<DenseVector<DataType_> > & target)
+                {
+                    DenseVector<DataType_> d(1);
+                    target.push_back(d);
+                }
+        };
+
+    template<typename DataType_>
+        struct PreconFill<SparseMatrixELL<DataType_>, SparseMatrixELL<DataType_>, DataType_>
+        {
+            public:
+
+                static void value(unsigned long i,
+                                  std::vector<SparseMatrixELL<DataType_> > & target,
+                                  std::string filename,
+                                  std::string precon_suffix,
+                                  SparseMatrixELL<DataType_> & A,
+                                  DataType_ damping_factor)
+                {
+                    std::string local_P_name(filename);
+                    local_P_name += stringify(i);
+                    local_P_name += "_";
+                    local_P_name += precon_suffix;
+                    local_P_name += ".ell";
+                    SparseMatrixELL<DataType_> current_P(MatrixIO<io_formats::ELL>::read_matrix(local_P_name, DataType_(0)));
+                    target.push_back(current_P);
+                }
+
+                static void dummy(std::vector<SparseMatrixELL<DataType_> > & target)
+                {
+                    SparseMatrix<DataType_> d(1,1);
+                    SparseMatrixELL<DataType_> dell(d);
+                    target.push_back(dell);
+                }
+        };
+
     template<typename Tag_, typename MatrixType_, typename VectorType_, typename PreconContType_, typename MatIOType_, typename VecIOType_, typename DT_>
-    struct MGUtil
-    {
+        struct MGUtil
+        {
         public:
             static void configure(MGData<MatrixType_, VectorType_, PreconContType_> & target, unsigned long max_iters,
                                                                                               unsigned long max_iters_coarse,
@@ -115,7 +178,7 @@ namespace honei
                 target.eps_relative = eps_relative;
             }
 
-            static MGData<MatrixType_, VectorType_, PreconContType_> load_data(std::string file_base, unsigned long max_level, DT_ damping_factor)
+            static MGData<MatrixType_, VectorType_, PreconContType_> load_data(std::string file_base, unsigned long max_level, DT_ damping_factor, std::string precon_suffix = "jac")
             {
                 CONTEXT("When creating MGData from file(s):");
 
@@ -134,8 +197,12 @@ namespace honei
                 std::string Prol_name(file_base);
                 std::string b_name(file_base);
                 std::string x_name(file_base);
+                std::string P_name(file_base);
 
                 A_name += "A_";
+
+                P_name += "A_";
+
                 Prol_name += "prol_";
                 b_name += "rhs_";
                 x_name += "init_";
@@ -149,8 +216,9 @@ namespace honei
                         MatrixType_ Ad(Adt);
                         A.push_back(Ad);
 
-                        PreconContType_ local_P(1);
-                        P.push_back(local_P);
+                        //PreconContType_ local_P(1,1);
+                        //P.push_back(local_P);
+                        PreconFill<PreconContType_, MatrixType_, DT_>::dummy(P);
 
                     }
                     else
@@ -161,15 +229,7 @@ namespace honei
                         MatrixType_ local_A(MatrixIO<MatIOType_>::read_matrix(local_A_name, DT_(0)));
                         A.push_back(local_A);
 
-                        if(typeid(PreconContType_) == typeid(DenseVector<DT_>))
-                        {
-                            PreconContType_ current_P(A.at(i).rows(), damping_factor);
-                            for(unsigned long j(0) ; j < current_P.size() ; ++j)
-                            {
-                                current_P[j] /= local_A(j, j);
-                            }
-                            P.push_back(current_P);
-                        }
+                        PreconFill<PreconContType_, MatrixType_, DT_>::value(i, P, P_name, precon_suffix, local_A, damping_factor);
                     }
 
                     ///get Prolmat P_{i}^{i+1}
@@ -246,24 +306,24 @@ namespace honei
 
     //TODO: think of more flexible way (more than one smoothertype, ...) ; later, assembly is done here!
     template<typename Tag_,
-             typename CycleShape_,
-             typename CoarseGridSolverType_,
-             typename SmootherType_,
-             typename ResType_,
-             typename ProlType_,
-             typename DT_>
-    struct MGCycleProcessing
-    {
-    };
+        typename CycleShape_,
+        typename CoarseGridSolverType_,
+        typename SmootherType_,
+        typename ResType_,
+        typename ProlType_,
+        typename DT_>
+            struct MGCycleCreation
+            {
+            };
 
     //specialise by cycle-shape
     template<typename Tag_,
-             typename CoarseGridSolverType_,
-             typename SmootherType_,
-             typename ResType_,
-             typename ProlType_,
-             typename DT_>
-    struct MGCycleProcessing<Tag_,
+        typename CoarseGridSolverType_,
+        typename SmootherType_,
+        typename ResType_,
+        typename ProlType_,
+        typename DT_>
+            struct MGCycleCreation<Tag_,
                              methods::CYCLE::V::STATIC,
                              CoarseGridSolverType_,
                              SmootherType_,
@@ -343,7 +403,7 @@ namespace honei
             template<typename MatrixType_, typename VectorType_, typename PreconContType_>
             static OperatorList value(MGData<MatrixType_, VectorType_, PreconContType_> & data)
             {
-                CONTEXT("When evaluating MGCycleProcessing:");
+                CONTEXT("When evaluating MGCycleCreation:");
 
                 OperatorList cycle;
                 _build_cycle(data.x, data.b, data.A.size() - 1, cycle, data);
@@ -357,7 +417,7 @@ namespace honei
              typename ResType_,
              typename ProlType_,
              typename DT_>
-    struct MGCycleProcessing<Tag_,
+    struct MGCycleCreation<Tag_,
                              methods::CYCLE::W::STATIC,
                              CoarseGridSolverType_,
                              SmootherType_,
@@ -438,7 +498,7 @@ namespace honei
             template<typename MatrixType_, typename VectorType_, typename PreconContType_>
             static OperatorList value(MGData<MatrixType_, VectorType_, PreconContType_> & data)
             {
-                CONTEXT("When evaluating MGCycleProcessing:");
+                CONTEXT("When evaluating MGCycleCreation:");
 
                 OperatorList cycle;
                 _build_cycle(data.x, data.b, data.A.size() - 1, cycle, data);
@@ -453,7 +513,7 @@ namespace honei
              typename ResType_,
              typename ProlType_,
              typename DT_>
-    struct MGCycleProcessing<Tag_,
+    struct MGCycleCreation<Tag_,
                              methods::CYCLE::F::V::STATIC,
                              CoarseGridSolverType_,
                              SmootherType_,
@@ -601,7 +661,7 @@ namespace honei
             template<typename MatrixType_, typename VectorType_, typename PreconContType_>
             static OperatorList value(MGData<MatrixType_, VectorType_, PreconContType_> & data)
             {
-                CONTEXT("When evaluating MGCycleProcessing:");
+                CONTEXT("When evaluating MGCycleCreation:");
 
                 OperatorList cycle;
                 _build_cycle_F(data.x, data.b, data.A.size() - 1, cycle, data);
@@ -616,7 +676,7 @@ namespace honei
              typename ResType_,
              typename ProlType_,
              typename DT_>
-    struct MGCycleProcessing<Tag_,
+    struct MGCycleCreation<Tag_,
                              methods::CYCLE::F::W::STATIC,
                              CoarseGridSolverType_,
                              SmootherType_,
@@ -765,7 +825,7 @@ namespace honei
             template<typename MatrixType_, typename VectorType_, typename PreconContType_>
             static OperatorList value(MGData<MatrixType_, VectorType_, PreconContType_> & data)
             {
-                CONTEXT("When evaluating MGCycleProcessing:");
+                CONTEXT("When evaluating MGCycleCreation:");
 
                 OperatorList cycle;
                 _build_cycle_F(data.x, data.b, data.A.size() - 1, cycle, data);
