@@ -19,6 +19,7 @@
 
 #include <honei/math/defect.hh>
 #include <honei/backends/sse/operations.hh>
+#include <honei/util/profiler.hh>
 
 #include <xmmintrin.h>
 #include <emmintrin.h>
@@ -681,6 +682,7 @@ namespace honei
             unsigned long row_start, unsigned long row_end)
     {
         CONTEXT("When calculating defect of SparseMatrixELL<float> with DenseVector<float> (SSE):");
+        PROFILER_START("Defect SMELL float tags::CPU::SSE");
 
         if (b.size() != a.columns())
         {
@@ -705,6 +707,7 @@ namespace honei
                     a.stride(), a.rows(), a.num_cols_per_row(), row_start, row_end, a.threads());
         }
 
+        PROFILER_STOP("Defect SMELL float tags::CPU::SSE");
         return result;
     }
 
@@ -712,6 +715,7 @@ namespace honei
             unsigned long row_start, unsigned long row_end)
     {
         CONTEXT("When calculating defect of SparseMatrixELL<double> with DenseVector<double> (SSE):");
+        PROFILER_START("Defect SMELL double tags::CPU::SSE");
 
         if (b.size() != a.columns())
         {
@@ -736,6 +740,7 @@ namespace honei
                     a.stride(), a.rows(), a.num_cols_per_row(), row_start, row_end, a.threads());
         }
 
+        PROFILER_STOP("Defect SMELL double tags::CPU::SSE");
         return result;
     }
 }

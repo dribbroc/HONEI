@@ -19,6 +19,7 @@
 
 #include <honei/la/scaled_sum.hh>
 #include <honei/backends/sse/operations.hh>
+#include <honei/util/profiler.hh>
 
 
 using namespace honei;
@@ -27,12 +28,14 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::CPU::SSE>::value(DenseVectorC
         const DenseVectorContinuousBase<float> & y, float b)
 {
     CONTEXT("When calculating ScaledSum from DenseVectorContinuousBase<float> (SSE):");
+    PROFILER_START("ScaledSum DV float tags::CPU::SSE");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
 
     sse::scaled_sum(x.elements(), y.elements(), b, x.size());
 
+    PROFILER_STOP("ScaledSum DV float tags::CPU::SSE");
     return x;
 }
 
@@ -40,12 +43,14 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::CPU::SSE>::value(DenseVector
         const DenseVectorContinuousBase<double> & y, double b)
 {
     CONTEXT("When calculating ScaledSum from DenseVectoriContinuousBase<double> (SSE):");
+    PROFILER_START("ScaledSum DV double tags::CPU::SSE");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
 
     sse::scaled_sum(x.elements(), y.elements(), b, x.size());
 
+    PROFILER_STOP("ScaledSum DV double tags::CPU::SSE");
     return x;
 }
 
@@ -54,6 +59,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::CPU::SSE>::value(DenseVectorC
 {
     CONTEXT("When calculating ScaledSum (DenseVectorContinuousBase<float>, DenseVectorContinuousBase<float>, "
             "DenseVectorContinuousBase<float>) (SSE):");
+    PROFILER_START("ScaledSum DV float tags::CPU::SSE");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -63,6 +69,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::CPU::SSE>::value(DenseVectorC
 
     sse::scaled_sum(a.elements(), b.elements(), c.elements(), a.size());
 
+    PROFILER_STOP("ScaledSum DV float tags::CPU::SSE");
     return a;
 }
 
@@ -71,6 +78,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::CPU::SSE>::value(DenseVector
 {
     CONTEXT("When calculating ScaledSum (DenseVectorContinuousBase<doule>, DenseVectorContinuousBase<double>, "
             "DenseVectorContinuousBase<double>) (SSE):");
+    PROFILER_START("ScaledSum DV double tags::CPU::SSE");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -80,6 +88,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::CPU::SSE>::value(DenseVector
 
     sse::scaled_sum(a.elements(), b.elements(), c.elements(), a.size());
 
+    PROFILER_STOP("ScaledSum DV double tags::CPU::SSE");
     return a;
 }
 
@@ -87,6 +96,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::CPU::SSE>::value(DenseVectorC
         const DenseVectorContinuousBase<float> & y, const DenseVectorContinuousBase<float> & z, float b)
 {
     CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<float> (SSE):");
+    PROFILER_START("ScaledSum DV float tags::CPU::SSE");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
@@ -95,6 +105,7 @@ DenseVectorContinuousBase<float> & ScaledSum<tags::CPU::SSE>::value(DenseVectorC
 
     sse::scaled_sum(x.elements(), y.elements(), z.elements(), b, x.size());
 
+    PROFILER_STOP("ScaledSum DV float tags::CPU::SSE");
     return x;
 }
 
@@ -102,6 +113,7 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::CPU::SSE>::value(DenseVector
         const DenseVectorContinuousBase<double> & y, const DenseVectorContinuousBase<double> & z, double b)
 {
     CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<double> (SSE):");
+    PROFILER_START("ScaledSum DV double tags::CPU::SSE");
 
     if (x.size() != y.size())
         throw VectorSizeDoesNotMatch(x.size(), y.size());
@@ -110,5 +122,6 @@ DenseVectorContinuousBase<double> & ScaledSum<tags::CPU::SSE>::value(DenseVector
 
     sse::scaled_sum(x.elements(), y.elements(), z.elements(), b, x.size());
 
+    PROFILER_STOP("ScaledSum DV double tags::CPU::SSE");
     return x;
 }

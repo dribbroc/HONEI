@@ -19,6 +19,7 @@
 
 #include <honei/la/scale.hh>
 #include <honei/backends/sse/operations.hh>
+#include <honei/util/profiler.hh>
 
 
 using namespace honei;
@@ -26,18 +27,22 @@ using namespace honei;
 DenseVectorContinuousBase<float> & Scale<tags::CPU::SSE>::value(DenseVectorContinuousBase<float> & x, const float a)
 {
     CONTEXT("When scaling DenseVectorContinuousBase<float> by float (SSE):");
+    PROFILER_START("Scale DV float tags::CPU::SSE");
 
     sse::scale(a, x.elements(), x.size());
 
+    PROFILER_STOP("Scale DV float tags::CPU::SSE");
     return x;
 }
 
 DenseVectorContinuousBase<double> & Scale<tags::CPU::SSE>::value(DenseVectorContinuousBase<double> & x, const double a)
 {
     CONTEXT("When scaling DenseVectorContinuousBase<double> by double (SSE):");
+    PROFILER_START("Scale DV double tags::CPU::SSE");
 
     sse::scale(a, x.elements(), x.size());
 
+    PROFILER_STOP("Scale DV double tags::CPU::SSE");
     return x;
 }
 

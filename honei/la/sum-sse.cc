@@ -19,6 +19,7 @@
 
 #include <honei/la/sum.hh>
 #include <honei/backends/sse/operations.hh>
+#include <honei/util/profiler.hh>
 
 
 using namespace honei;
@@ -27,12 +28,14 @@ DenseVectorContinuousBase<float> & Sum<tags::CPU::SSE>::value(DenseVectorContinu
         const DenseVectorContinuousBase<float> & b)
 {
     CONTEXT("When adding DenseVectorContinuousBase<float> to DenseVectorContinuousBase<float> (SSE):");
+    PROFILER_START("Sum DV float tags::CPU::SSE");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
 
     sse::sum(a.elements(), b.elements(), a.size());
 
+    PROFILER_STOP("Sum DV float tags::CPU::SSE");
     return a;
 }
 
@@ -40,12 +43,14 @@ DenseVectorContinuousBase<double> & Sum<tags::CPU::SSE>::value(DenseVectorContin
         const DenseVectorContinuousBase<double> & b)
 {
     CONTEXT("When adding DenseVectorContinuousBase<double> to DenseVectorContinuousBase<double> (SSE):");
+    PROFILER_START("Sum DV double tags::CPU::SSE");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
 
     sse::sum(a.elements(), b.elements(), a.size());
 
+    PROFILER_STOP("Sum DV double tags::CPU::SSE");
     return a;
 }
 

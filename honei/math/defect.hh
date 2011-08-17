@@ -30,7 +30,7 @@
 #include<honei/la/difference.hh>
 #include<honei/backends/multicore/thread_pool.hh>
 #include<honei/util/operation_wrapper.hh>
-
+#include<honei/util/profiler.hh>
 using namespace honei;
 namespace honei
 {
@@ -476,6 +476,7 @@ namespace honei
                 template<typename DT_>
                     static DenseVector<DT_> value(DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
                     {
+                        PROFILER_START("Defect SMELL tags::CPU::SSE");
                         if (x.size() != system.columns())
                         {
                             throw VectorSizeDoesNotMatch(x.size(), system.columns());
@@ -489,6 +490,7 @@ namespace honei
                         DenseVector<DT_> temp(right_hand_side.size());
                         Product<tags::CPU::SSE>::value(temp, system, x);
                         Difference<tags::CPU::SSE>::value(result, right_hand_side, temp);
+                        PROFILER_STOP("Defect SMELL tags::CPU::SSE");
                         return result;
                     }
 

@@ -19,6 +19,7 @@
 
 #include <honei/la/element_product.hh>
 #include <honei/backends/sse/operations.hh>
+#include <honei/util/profiler.hh>
 
 
 using namespace honei;
@@ -28,12 +29,14 @@ DenseVectorContinuousBase<float> & ElementProduct<tags::CPU::SSE>::value(DenseVe
 {
     CONTEXT("When multiplying DenseVectorContinuousBase<float> and DenseVectorContinuousBase<float> elementwise "
             "(SSE):");
+    PROFILER_START("ElementProduct DV float tags::CPU::SSE");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
 
     sse::element_product(a.elements(), b.elements(), a.size());
 
+    PROFILER_START("ElementProduct DV float tags::CPU::SSE");
     return a;
 }
 
@@ -42,12 +45,14 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::CPU::SSE>::value(DenseV
 {
     CONTEXT("When multiplying DenseVectorContinuousBase<double> and DenseVectorContinuousBase<double> elementwise "
             "(SSE):");
+    PROFILER_START("ElementProduct DV double tags::CPU::SSE");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
 
     sse::element_product(a.elements(), b.elements(), a.size());
 
+    PROFILER_STOP("ElementProduct DV double tags::CPU::SSE");
     return a;
 }
 
@@ -56,6 +61,7 @@ DenseVectorContinuousBase<float> & ElementProduct<tags::CPU::SSE>::value(DenseVe
 {
     CONTEXT("When multiplying DenseVectorContinuousBase<float> and DenseVectorContinuousBase<float> elementwise "
             "(SSE):");
+    PROFILER_START("ElementProduct DV float tags::CPU::SSE");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -64,6 +70,7 @@ DenseVectorContinuousBase<float> & ElementProduct<tags::CPU::SSE>::value(DenseVe
 
     sse::element_product(a.elements(), b.elements(), c.elements(), a.size());
 
+    PROFILER_STOP("ElementProduct DV float tags::CPU::SSE");
     return a;
 }
 
@@ -72,6 +79,7 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::CPU::SSE>::value(DenseV
 {
     CONTEXT("When multiplying DenseVectorContinuousBase<double> and DenseVectorContinuousBase<double> elementwise "
             "(SSE):");
+    PROFILER_START("ElementProduct DV double tags::CPU::SSE");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -80,6 +88,7 @@ DenseVectorContinuousBase<double> & ElementProduct<tags::CPU::SSE>::value(DenseV
 
     sse::element_product(a.elements(), b.elements(), c.elements(), a.size());
 
+    PROFILER_STOP("ElementProduct DV double tags::CPU::SSE");
     return a;
 }
 

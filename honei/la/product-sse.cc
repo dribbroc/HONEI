@@ -21,6 +21,7 @@
 #include <honei/la/product.hh>
 #include <honei/backends/sse/operations.hh>
 #include <honei/la/dense_matrix_tile.hh>
+#include <honei/util/profiler.hh>
 
 namespace honei
 {
@@ -289,6 +290,7 @@ DenseVector<float> & Product<tags::CPU::SSE>::value(DenseVector<float> & result,
         unsigned long row_start, unsigned long row_end)
 {
     CONTEXT("When multiplying SparseMatrixELL<float> with DenseVector<float> (SSE):");
+    PROFILER_START("Product SMELL float tags::CPU::SSE");
 
     if (b.size() != a.columns())
     {
@@ -309,6 +311,7 @@ DenseVector<float> & Product<tags::CPU::SSE>::value(DenseVector<float> & result,
                 a.stride(), a.rows(), a.num_cols_per_row(), row_start, row_end, a.threads());
     }
 
+    PROFILER_STOP("Product SMELL float tags::CPU::SSE");
     return result;
 }
 
@@ -316,6 +319,7 @@ DenseVector<double> & Product<tags::CPU::SSE>::value(DenseVector<double> & resul
         unsigned long row_start, unsigned long row_end)
 {
     CONTEXT("When multiplying SparseMatrixELL<double> with DenseVector<double> (SSE):");
+    PROFILER_START("Product SMELL double tags::CPU::SSE");
 
     if (b.size() != a.columns())
     {
@@ -335,6 +339,7 @@ DenseVector<double> & Product<tags::CPU::SSE>::value(DenseVector<double> & resul
                 a.stride(), a.rows(), a.num_cols_per_row(), row_start, row_end, a.threads());
     }
 
+    PROFILER_STOP("Product SMELL double tags::CPU::SSE");
     return result;
 }
 
