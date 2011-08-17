@@ -108,10 +108,10 @@ namespace honei
         {
             public:
 
-                static void value(unsigned long i,
+                static void value(unsigned long /*i*/,
                                   std::vector<DenseVector<DataType_> > & target,
-                                  std::string filename,
-                                  std::string precon_suffix,
+                                  std::string /*filename*/,
+                                  std::string /*precon_suffix*/,
                                   MatrixType_ & A,
                                   DataType_ damping_factor)
                 {
@@ -139,7 +139,7 @@ namespace honei
                                   std::vector<SparseMatrixELL<DataType_> > & target,
                                   std::string filename,
                                   std::string precon_suffix,
-                                  SparseMatrixELL<DataType_> & A,
+                                  SparseMatrixELL<DataType_> & /*A*/,
                                   DataType_ damping_factor)
                 {
                     std::string local_P_name(filename);
@@ -148,7 +148,15 @@ namespace honei
                     local_P_name += precon_suffix;
                     local_P_name += ".ell";
                     SparseMatrixELL<DataType_> current_P(MatrixIO<io_formats::ELL>::read_matrix(local_P_name, DataType_(0)));
-                    target.push_back(current_P);
+                    if (damping_factor != DataType_(1))
+                    {
+                        SparseMatrix<DataType_> sm_P(current_P);
+                        Scale<tags::CPU>::value(sm_P, damping_factor);
+                        SparseMatrixELL<DataType_> new_P(sm_P);
+                        target.push_back(new_P);
+                    }
+                    else
+                        target.push_back(current_P);
                 }
 
                 static void dummy(std::vector<SparseMatrixELL<DataType_> > & target)

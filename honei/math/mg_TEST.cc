@@ -144,7 +144,7 @@ class MGSolverTest:
                                                                                             SparseMatrixELL<double>,
                                                                                             io_formats::ELL,
                                                                                             io_formats::EXP,
-                                                                                            double>::load_data(file, levels, double(0.7), "spai"));
+                                                                                            double>::load_data(file, levels, double(1), "spai"));
             MGUtil<Tag_,
                 SparseMatrixELL<double>,
                 DenseVector<double>,
