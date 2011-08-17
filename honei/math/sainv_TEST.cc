@@ -77,3 +77,7 @@ class SainvTestSparse:
 };
 SainvTestSparse<tags::CPU, float> sainv_test_sparse_ell_float("float");
 SainvTestSparse<tags::CPU, double> sainv_test_sparse_ell_double("double");
+#ifdef HONEI_SSE
+SainvTestSparse<tags::CPU::SSE, float> sse_sainv_test_sparse_ell_float("float");
+SainvTestSparse<tags::CPU::SSE, double> sse_sainv_test_sparse_ell_double("double");
+#endif

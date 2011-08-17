@@ -27,7 +27,6 @@
 #include <honei/la/dot_product.hh>
 #include <honei/la/difference.hh>
 #include <honei/math/transposition.hh>
-#include <honei/util/time_stamp.hh>
 #include <honei/la/sparse_matrix_ell.hh>
 
 
@@ -54,7 +53,7 @@ namespace honei
 
             for(unsigned long i(0) ; i < z.rows() ; ++i)
             {
-                DenseVector<DT_> zi(z[i]);
+                DenseVector<DT_> zi(((const SparseMatrix<DT_>)z)[i]);
                 DenseVector<DT_> v(Aell.columns());
                 Product<Tag_>::value(v, Aell, zi);
 
@@ -70,36 +69,39 @@ namespace honei
                     p[j] = pt[j];
                 }
 
-
                 if (i == z.rows() - 1)
                     break;
 
                 for(unsigned long j(i + 1) ; j < z.rows() ; ++j)
                 {
                     DT_ alpha = p[j] / p[i];
-                    SparseVector<DT_> z_tmp(z[i].copy());
-                    Scale<Tag_>::value(z_tmp, alpha);
-                    //Difference<Tag_>::value(z[j], z_tmp);
-                    //TODO integrate dropping strategy in difference and insert (virtual) zeros if dropping occurs
-                    typename SparseVector<DT_>::NonZeroElementIterator l(z[j].begin_non_zero_elements());
-                    for (typename SparseVector<DT_>::NonZeroConstElementIterator r(z_tmp.begin_non_zero_elements()),
-                            r_end(z_tmp.end_non_zero_elements()) ; r != r_end ; )
+                    if (alpha != DT_(0))
                     {
-                        if (r.index() < l.index())
+                        SparseVector<DT_> z_tmp(((const SparseMatrix<DT_>)z)[i].copy());
+                        Scale<Tag_>::value(z_tmp, alpha);
+
+                        //Difference<tags::CPU>::value(z[j], z_tmp);
+                        //TODO integrate dropping strategy in difference and insert (virtual) zeros if dropping occurs
+                        typename SparseVector<DT_>::NonZeroElementIterator l(z[j].begin_non_zero_elements());
+                        for (typename SparseVector<DT_>::NonZeroConstElementIterator r(z_tmp.begin_non_zero_elements()),
+                                r_end(z_tmp.end_non_zero_elements()) ; r != r_end ; )
                         {
-                            if(fabs(*r) > tolerance)
-                                z[j][r.index()] = -(*r);
-                            ++r;
-                        }
-                        else if (l.index() < r.index())
-                        {
-                            ++l;
-                        }
-                        else
-                        {
-                            //TODO BUG!: if dropping occurs: do not insert zero but delete the entry at z[j][x] if any exists
-                            *l = (*l - *r) * DT_(fabs(*l - *r) > tolerance);
-                            ++l; ++r;
+                            if (r.index() < l.index())
+                            {
+                                if(fabs(*r) > tolerance)
+                                    z[j][r.index()] = -(*r);
+                                ++r;
+                            }
+                            else if (l.index() < r.index())
+                            {
+                                ++l;
+                            }
+                            else
+                            {
+                                //TODO BUG!: if dropping occurs: do not insert zero but delete the entry at z[j][x] if any exists
+                                *l = (*l - *r) * DT_(fabs(*l - *r) > tolerance);
+                                ++l; ++r;
+                            }
                         }
                     }
                 }
@@ -125,17 +127,17 @@ namespace honei
             SparseMatrix<DT_> z_r = Product<tags::CPU>::value(z_t, z_temp);
 
             /* POST FILTERING
-            unsigned long ue(0);
-            for (typename SparseMatrix<DT_>::NonZeroElementIterator r(z_r.begin_non_zero_elements()),
-                    r_end(z_r.end_non_zero_elements()) ; r != r_end ; ++r)
-            {
-                if (fabs(*r) < tolerance / 5)
-                {
-                    ue++;
-                    *r = DT_(0);
-                }
-            }
-            std::cout<<ue<<std::endl;*/
+               unsigned long ue(0);
+               for (typename SparseMatrix<DT_>::NonZeroElementIterator r(z_r.begin_non_zero_elements()),
+               r_end(z_r.end_non_zero_elements()) ; r != r_end ; ++r)
+               {
+               if (fabs(*r) < tolerance / 5)
+               {
+               ue++;
+             *r = DT_(0);
+             }
+             }
+             std::cout<<ue<<std::endl;*/
             return z_r;
         }
     };
