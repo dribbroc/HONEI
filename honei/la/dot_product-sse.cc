@@ -19,6 +19,7 @@
 
 #include <honei/la/dot_product.hh>
 #include <honei/backends/sse/operations.hh>
+#include <honei/util/profiler.hh>
 
 
 using namespace honei;
@@ -28,6 +29,7 @@ float DotProduct<tags::CPU::SSE>::value(const DenseVectorContinuousBase<float> &
 {
     CONTEXT("When calculating dot-product of DenseVectorContinuousBase<float> with DenseVectorContinuousBase<float> "
             "(SSE):");
+    PROFILER_START("DotProduct DV float tags::CPU::SSE");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -36,7 +38,9 @@ float DotProduct<tags::CPU::SSE>::value(const DenseVectorContinuousBase<float> &
     b.lock(lm_read_only);
     a.unlock(lm_read_only);
     b.unlock(lm_read_only);
-    return sse::dot_product(a.elements(), b.elements(), a.size());
+    float result = sse::dot_product(a.elements(), b.elements(), a.size());
+    PROFILER_STOP("DotProduct DV float tags::CPU::SSE");
+    return result;
 }
 
 double DotProduct<tags::CPU::SSE>::value(const DenseVectorContinuousBase<double> & a,
@@ -44,6 +48,7 @@ double DotProduct<tags::CPU::SSE>::value(const DenseVectorContinuousBase<double>
 {
     CONTEXT("When calculating dot-product of DenseVectorContinuousBase<double> with DenseVectorContinuousBase<double> "
             "(SSE):");
+    PROFILER_START("DotProduct DV double tags::CPU::SSE");
 
     if (a.size() != b.size())
         throw VectorSizeDoesNotMatch(b.size(), a.size());
@@ -52,6 +57,8 @@ double DotProduct<tags::CPU::SSE>::value(const DenseVectorContinuousBase<double>
     b.lock(lm_read_only);
     a.unlock(lm_read_only);
     b.unlock(lm_read_only);
-    return sse::dot_product(a.elements(), b.elements(), a.size());
+    float result = sse::dot_product(a.elements(), b.elements(), a.size());
+    PROFILER_STOP("DotProduct DV double tags::CPU::SSE");
+    return result;
 }
 

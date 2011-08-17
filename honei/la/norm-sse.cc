@@ -19,6 +19,7 @@
 
 #include <honei/la/norm.hh>
 #include <honei/backends/sse/operations.hh>
+#include <honei/util/profiler.hh>
 
 
 using namespace honei;
@@ -27,37 +28,49 @@ using namespace honei;
 float Norm<vnt_l_two, false, tags::CPU::SSE>::value(const DenseVectorContinuousBase<float> & a)
 {
     CONTEXT("When calculating L2 norm (false) of DenseVectorContinuousBase<float> (SSE):");
+    PROFILER_START("Norm l2 false DV float tags::CPU::SSE");
 
     a.lock(lm_read_only);
     a.unlock(lm_read_only);
-    return sse::norm_l2(a.elements(), a.size());
+    float result = sse::norm_l2(a.elements(), a.size());
+    PROFILER_STOP("Norm l2 false DV float tags::CPU::SSE");
+    return result;
 }
 
 double Norm<vnt_l_two, false, tags::CPU::SSE>::value(const DenseVectorContinuousBase<double> & a)
 {
     CONTEXT("When calculating L2 norm (false) of DenseVectorContinuousBase<double> (SSE):");
+    PROFILER_START("Norm l2 false DV double tags::CPU::SSE");
 
     a.lock(lm_read_only);
     a.unlock(lm_read_only);
-    return sse::norm_l2(a.elements(), a.size());
+    double result = sse::norm_l2(a.elements(), a.size());
+    PROFILER_STOP("Norm l2 false DV double tags::CPU::SSE");
+    return result;
 }
 
 float Norm<vnt_l_two, true, tags::CPU::SSE>::value(const DenseVectorContinuousBase<float> & a)
 {
     CONTEXT("When calculating L2 norm (true) of DenseVectorContinuousBase<float> (SSE):");
+    PROFILER_START("Norm l2 true DV float tags::CPU::SSE");
 
     a.lock(lm_read_only);
     a.unlock(lm_read_only);
-    return sqrt(sse::norm_l2(a.elements(), a.size()));
+    float result = sqrt(sse::norm_l2(a.elements(), a.size()));
+    PROFILER_STOP("Norm l2 true DV float tags::CPU::SSE");
+    return result;
 }
 
 double Norm<vnt_l_two, true, tags::CPU::SSE>::value(const DenseVectorContinuousBase<double> & a)
 {
     CONTEXT("When calculating L2 norm (true) of DenseVectorContinuousBase<double> (SSE):");
+    PROFILER_START("Norm l2 true DV double tags::CPU::SSE");
 
     a.lock(lm_read_only);
     a.unlock(lm_read_only);
-    return sqrt(sse::norm_l2(a.elements(), a.size()));
+    double result = sqrt(sse::norm_l2(a.elements(), a.size()));
+    PROFILER_STOP("Norm l2 true DV double tags::CPU::SSE");
+    return result;
 }
 
 float Norm<vnt_l_two, false, tags::CPU::SSE>::value(const DenseMatrix<float> & a)
