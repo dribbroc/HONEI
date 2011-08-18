@@ -864,7 +864,7 @@ namespace honei
                     cycle.value();
                     Defect<Tag_>::value(r, data.b.at(data.b.size() - 1), data.A.at(data.A.size() - 1), data.x.at(data.x.size() - 1));
                     rnorm_current = NormType_::value(r);
-                    std::cout << "DEFECTNORM: " << rnorm_current << std::endl;
+                    //std::cout << "DEFECTNORM: " << rnorm_current << std::endl;
 
                     data.used_iters = i + 1;
 

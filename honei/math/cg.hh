@@ -74,7 +74,7 @@ namespace honei
                 CONTEXT("When solving linear system with CG :");
                 PROFILER_START("CGSolver NONE");
 
-                std::cout << "MAX_ITERS IN CG" << max_iters << std::endl;
+                //std::cout << "MAX_ITERS IN CG" << max_iters << std::endl;
 
                 VectorType_ p(b.size());
                 VectorType_ r(b.size());
@@ -120,7 +120,7 @@ namespace honei
                 }
                 LOGMESSAGE(lc_solver, "CG(NONE) finished in " + stringify(used_iters) + " iterations with defect " + stringify(current_defect));
                 PROFILER_STOP("CGSolver NONE");
-                std::cout << used_iters << " " << max_iters << " " << iterations << std::endl;
+                //std::cout << used_iters << " " << max_iters << " " << iterations << std::endl;
                 return x;
             }
     };
@@ -205,7 +205,7 @@ namespace honei
                 }
 
                 PROFILER_STOP("CGSolver VAR");
-                std::cout << used_iters << " " << max_iters << " " << iterations << std::endl;
+                //std::cout << used_iters << " " << max_iters << " " << iterations << std::endl;
                 return x;
             }
     };
