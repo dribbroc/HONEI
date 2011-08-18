@@ -57,7 +57,7 @@ double DotProduct<tags::CPU::SSE>::value(const DenseVectorContinuousBase<double>
     b.lock(lm_read_only);
     a.unlock(lm_read_only);
     b.unlock(lm_read_only);
-    float result = sse::dot_product(a.elements(), b.elements(), a.size());
+    double result = sse::dot_product(a.elements(), b.elements(), a.size());
     PROFILER_STOP("DotProduct DV double tags::CPU::SSE");
     return result;
 }
