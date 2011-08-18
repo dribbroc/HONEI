@@ -80,6 +80,67 @@ class MGCycleCreationTest:
 MGCycleCreationTest<tags::CPU> mgcycproctest_cpu("double");
 
 template<typename Tag_>
+class Q1MGCycleCreationTest:
+    public BaseTest
+{
+    public:
+        Q1MGCycleCreationTest(const std::string & tag) :
+            BaseTest("Q1MGCycleCreationTest<" + tag + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            std::vector<BandedMatrixQ1<double> > A;
+            std::vector<BandedMatrixQ1<double> > Res;
+            std::vector<BandedMatrixQ1<double> > Prol;
+            std::vector<BandedMatrixQ1<double> > P;
+            std::vector<DenseVector<double> > b;
+            std::vector<DenseVector<double> > x;
+            std::vector<DenseVector<double> > c;
+            std::vector<DenseVector<double> > d;
+            std::vector<DenseVector<double> > t0;
+            std::vector<DenseVector<double> > t1;
+            for(unsigned long i(0); i < 5; ++i)
+            {
+                BandedMatrix<double> a_t(9);
+                BandedMatrixQ1<double> a(a_t);
+                A.push_back(a);
+                Res.push_back(a.copy());
+                Prol.push_back(a.copy());
+                P.push_back(a.copy());
+
+                DenseVector<double> dummy(1 , 1);
+                b.push_back(dummy);
+                x.push_back(dummy.copy());
+                c.push_back(dummy.copy());
+                d.push_back(dummy.copy());
+                t0.push_back(dummy.copy());
+                t1.push_back(dummy.copy());
+            }
+
+            MGData<BandedMatrixQ1<double>, DenseVector<double>, BandedMatrixQ1<double> > data(A, Res, Prol, P, b, x, c, d, t0, t1, 1, 1000, 4, 4, 1, 1e-8);
+
+            OperatorList ol(
+            MGCycleCreation<Tag_,
+                              methods::CYCLE::V::STATIC,
+                              CG<Tag_, methods::NONE>,
+                              RISmoother<Tag_>,
+                              Restriction<Tag_, methods::PROLMAT>,
+                              Prolongation<Tag_, methods::PROLMAT>,
+                              double>::value(data)
+                    );
+
+            for(unsigned long i(0) ; i < ol.size() ; ++i)
+            {
+                std::cout << ol[i]->to_string() << std::endl;
+            }
+        }
+};
+Q1MGCycleCreationTest<tags::CPU::SSE> q1mgcycproctest_cpu("double");
+
+template<typename Tag_>
 class MGUtilLoadTest:
     public BaseTest
 {
