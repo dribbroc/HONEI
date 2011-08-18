@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+A=$(find . -type f -name '*.dat')
+for i in $A;
+do
+    cp auto.p auto.p.tmp
+    j=$(echo $i | sed "s/\./-/g" | sed "s/^..//")
+    mv $i $j
+    echo $j
+    sed "s/FILENAME/$j/g" <auto.p.tmp >auto.p.tmp2
+    mv auto.p.tmp2 auto.p.tmp
+    gnuplot auto.p.tmp
+    #echo $i
+    convert $j.eps $j.jpg
+done
+rm -f auto.p.tmp
+
+#echo "crontab abstellen" | mail -s"LIDO generate gestartet" dribbrock@gmail.com
