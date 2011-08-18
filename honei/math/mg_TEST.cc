@@ -252,4 +252,8 @@ class MGSolverTest:
         }
 };
 MGSolverTest<tags::CPU> mg_solver_test_cpu("double");
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
 MGSolverTest<tags::GPU::CUDA> mg_solver_test_gpu("double");
+#endif
+#endif
