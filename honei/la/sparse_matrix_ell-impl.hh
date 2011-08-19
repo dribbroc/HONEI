@@ -102,13 +102,15 @@ namespace honei
             for (unsigned long row(0); row < rows ; ++row)
             {
                 unsigned long target(0);
-                for (typename SparseVector<DataType_>::NonZeroConstElementIterator i(src[row].begin_non_zero_elements()) ;
-                        i < src[row].end_non_zero_elements() ; ++i)
+                //for (typename SparseVector<DataType_>::NonZeroConstElementIterator i(src[row].begin_non_zero_elements()) ;
+                //        i < src[row].end_non_zero_elements() ; ++i)
+                for (unsigned long i(0) ; i < src[row].used_elements() ; ++i)
                 {
-                    if(*i != DataType_(0))
+                    const SparseVector<DataType_> tmp_row(src[row]);
+                    if((tmp_row.elements())[i] != DataType_(0))
                     {
-                        pAj[(target%threads) + (row * threads)+ target/threads * stride] = i.index();
-                        pAx[(target%threads) + (row * threads) + target/threads * stride] = *i;
+                        pAj[(target%threads) + (row * threads)+ target/threads * stride] = (tmp_row.indices())[i];
+                        pAx[(target%threads) + (row * threads) + target/threads * stride] = (tmp_row.elements())[i];
                         target++;
                     }
                 }
