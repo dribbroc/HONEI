@@ -12,4 +12,4 @@ if MPI
   MPIDIR = mpi
 endif
 
-SUBDIRS = util backends la math graph swe lbm fem $(MPIDIR) $(VISUALDIR)
+SUBDIRS = util backends la math graph swe lbm woolb3 fem $(MPIDIR) $(VISUALDIR)
