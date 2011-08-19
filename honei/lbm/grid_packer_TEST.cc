@@ -29,11 +29,11 @@ using namespace lbm_lattice_types;
 
 template <typename Tag_, typename DataType_>
 class GridPackerTest :
-    public TaggedTest<Tag_>
+    public QuickTaggedTest<Tag_>
 {
     public:
         GridPackerTest(const std::string & type) :
-            TaggedTest<Tag_>("grid_packer_quick_test<" + type + ">")
+            QuickTaggedTest<Tag_>("grid_packer_quick_test<" + type + ">")
         {
         }
 

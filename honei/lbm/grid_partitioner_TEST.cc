@@ -30,11 +30,11 @@ using namespace lbm_lattice_types;
 
 template <typename Tag_, typename DataType_>
 class GridPartitionerTest :
-    public TaggedTest<Tag_>
+    public QuickTaggedTest<Tag_>
 {
     public:
         GridPartitionerTest(const std::string & type) :
-            TaggedTest<Tag_>("grid_partitioner_quick_test<" + type + ">")
+            QuickTaggedTest<Tag_>("grid_partitioner_quick_test<" + type + ">")
         {
         }
 
@@ -114,11 +114,11 @@ GridPartitionerTest<tags::CPU, float> gptest_float("float");
 
 template <typename Tag_, typename DataType_>
 class DirPartitionerTest :
-    public TaggedTest<Tag_>
+    public QuickTaggedTest<Tag_>
 {
     public:
         DirPartitionerTest(const std::string & type) :
-            TaggedTest<Tag_>("dir_partitioner_quick_test<" + type + ">")
+            QuickTaggedTest<Tag_>("dir_partitioner_quick_test<" + type + ">")
         {
         }
 
