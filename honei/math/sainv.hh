@@ -59,14 +59,19 @@ namespace honei
 
                 /*for(unsigned long j(i) ; j < z.rows() ; ++j)
                 {
-                    p[j] = DotProduct<Tag_>::value(v, z[j]);
+                    p[j] = DotProduct<tags::CPU>::value(v, z[j]);
                 }*/
-                SparseMatrixELL<DT_> zell(z);
-                DenseVector<DT_> pt(zell.columns());
-                Product<Tag_>::value(pt, zell, v);
                 for(unsigned long j(i) ; j < z.rows() ; ++j)
                 {
-                    p[j] = pt[j];
+                    DT_ pj(0);
+                    const SparseVector<DT_> zj(z[j]);
+                    const DT_ * ele(zj.elements());
+                    const unsigned long * ind(zj.indices());
+                    for (unsigned long k(0) ; k < zj.used_elements() ; ++k)
+                    {
+                        pj += ele[k] * v[ind[k]];
+                    }
+                    p[j] = pj;
                 }
 
                 if (i == z.rows() - 1)

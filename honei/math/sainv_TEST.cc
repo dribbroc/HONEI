@@ -72,7 +72,7 @@ class SainvTestSparse:
             }
             double min = Norm<vnt_l_one, false, tags::CPU>::value(Difference<tags::CPU>::value(temp, ident, Product<tags::CPU>::value(sm, m)));
             double jacnorm = Norm<vnt_l_one, false, tags::CPU>::value(Difference<tags::CPU>::value(temp, ident, Product<tags::CPU>::value(sm, jac)));
-            std::cout<<"SPAI Norm: "<<min<<" Jac Norm: "<<jacnorm<<std::endl;
+            std::cout<<"SAINV Norm: "<<min<<" Jac Norm: "<<jacnorm<<std::endl;
         }
 };
 SainvTestSparse<tags::CPU, float> sainv_test_sparse_ell_float("float");
