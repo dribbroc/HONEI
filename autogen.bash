@@ -32,6 +32,7 @@ misc/do_m4.bash honei/fem/Makefile.am || exit $?
 misc/do_m4.bash honei/util/Makefile.am || exit $?
 misc/do_m4.bash honei/visual/Makefile.am || exit $?
 misc/do_m4.bash honei/lbm/Makefile.am || exit $?
+misc/do_m4.bash honei/woolb3/Makefile.am || exit $?
 run mkdir -p config
 run $(get libtoolize 1.5 ) --copy --force --automake
 rm -f config.cache
