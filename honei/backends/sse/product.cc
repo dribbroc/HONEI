@@ -1003,7 +1003,7 @@ namespace honei
         }
 
         void product_smell_dv(float * result, unsigned long * Aj, float * Ax, float * b,
-                unsigned long stride, unsigned long rows, unsigned long num_cols_per_row, unsigned long threads)
+                unsigned long stride, unsigned long rows, unsigned long num_cols_per_row, const unsigned long threads)
         {
             for(unsigned long n(0) ; n < num_cols_per_row ; n++)
             {
@@ -1020,7 +1020,7 @@ namespace honei
 
         void product_smell_dv(float * result, const unsigned long * Aj, const float * Ax, const unsigned long * Arl, const float * b,
                 unsigned long stride, unsigned long /*rows*/, unsigned long /*num_cols_per_row*/,
-                unsigned long row_start, unsigned long row_end, unsigned long threads)
+                unsigned long row_start, unsigned long row_end, const unsigned long threads)
         {
             for (unsigned long row(row_start) ; row < row_end ; ++row)
             {
@@ -1052,7 +1052,7 @@ namespace honei
         }
 
         void product_smell_dv(double * result, unsigned long * Aj, double * Ax, double * b,
-                unsigned long stride, unsigned long rows, unsigned long num_cols_per_row, unsigned long threads)
+                unsigned long stride, unsigned long rows, unsigned long num_cols_per_row, const unsigned long threads)
         {
             for(unsigned long n(0) ; n < num_cols_per_row ; n++)
             {
@@ -1069,7 +1069,7 @@ namespace honei
 
         void product_smell_dv(double * result, const unsigned long * Aj, const double * Ax, const unsigned long * Arl, const double * b,
                 unsigned long stride, unsigned long /*rows*/, unsigned long /*num_cols_per_row*/,
-                unsigned long row_start, unsigned long row_end, unsigned long threads)
+                unsigned long row_start, unsigned long row_end, const unsigned long threads)
         {
             for (unsigned long row(row_start) ; row < row_end ; ++row)
             {
