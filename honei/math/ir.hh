@@ -27,7 +27,7 @@
 //TODO: innertag is only implicitly given in OperatorList cycle
 namespace honei
 {
-    template<typename OuterTag_, typename NormType_>
+    template<typename OuterTag_, typename InnerTag_, typename NormType_>
     struct IRSolver
     {
         public:
@@ -36,7 +36,7 @@ namespace honei
                      typename InnerMatrixType_,
                      typename InnerVectorType_,
                      typename InnerPreconContType_>
-            static void value(OuterMatrixType_ A, OuterVectorType_ b, OuterVectorType_ x, MGData<InnerMatrixType_, InnerVectorType_, InnerPreconContType_> & data, OperatorList & cycle)
+            static void value(OuterMatrixType_ A, OuterVectorType_ b, OuterVectorType_ x, MGData<InnerMatrixType_, InnerVectorType_, InnerPreconContType_> & data, OperatorList & cycle, double eps, unsigned long max_iters, unsigned long & used_iters)
             {
                 CONTEXT("When solving linear system with Iterative Refinement :");
                 ASSERT(cycle.size() > 0, "OperatorList is empty!");
@@ -49,7 +49,7 @@ namespace honei
 
                 //std::cout << "starting cycles" << std::endl;
                 //inner MG-cycles, TODO: see above
-                for(unsigned long i(0) ; i < data.max_iters ; ++i)
+                for(unsigned long i(0) ; i < max_iters ; ++i)
                 {
                     Defect<OuterTag_>::value(r, b, A, x);
                     if(i == 0)
@@ -57,15 +57,15 @@ namespace honei
                     else
                     {
                         rnorm_current = NormType_::value(r);
-                        data.used_iters = i;
+                        used_iters = i;
 
-                        if(rnorm_current < data.eps_relative * rnorm_initial)
+                        if(rnorm_current < eps * rnorm_initial)
                             break;
                     }
 
                     convert<OuterTag_>(data.b.at(data.b.size() - 1), r);//TODO: target, then source?
 
-                    cycle.value();//TODO:see above
+                    MGSolver<InnerTag_, NormType_>::value(data, cycle);
 
                     convert<OuterTag_>(c, data.x.at(data.x.size() - 1));//TODO: target, then source?
 

@@ -44,7 +44,7 @@ class IRSolverTest:
                 DenseVector<DTInner_>,
                 io_formats::ELL,
                 io_formats::EXP,
-                DTInner_>::configure(data, 100, 100, 4, 4, 1, DTInner_(1e-8));
+                DTInner_>::configure(data, 3, 100, 4, 4, 1, DTInner_(1e-8));
 
             OperatorList ol(
                     MGCycleCreation<InnerTag_,
@@ -72,8 +72,10 @@ class IRSolverTest:
             x_file += stringify(levels);
             DenseVector<DTOuter_> x(VectorIO<io_formats::EXP>::read_vector(x_file, DTOuter_(0)));
 
-            IRSolver<OuterTag_, Norm<vnt_l_two, true, OuterTag_> >::value(A, b, x, data, ol);
+            unsigned long used(0);
+            IRSolver<OuterTag_, InnerTag_, Norm<vnt_l_two, true, OuterTag_> >::value(A, b, x, data, ol, double(1e-8), 100ul, used);
 
+            std::cout << used << std::endl;
             std::cout << data.used_iters << std::endl;
             std::cout << data.used_iters_coarse << std::endl;
 
