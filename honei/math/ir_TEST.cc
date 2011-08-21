@@ -44,7 +44,7 @@ class IRSolverTest:
                 DenseVector<DTInner_>,
                 io_formats::ELL,
                 io_formats::EXP,
-                DTInner_>::configure(data, 3, 100, 4, 4, 1, DTInner_(1e-8));
+                DTInner_>::configure(data, 8, 100, 4, 4, 1, DTInner_(1e-8));
 
             OperatorList ol(
                     MGCycleCreation<InnerTag_,
