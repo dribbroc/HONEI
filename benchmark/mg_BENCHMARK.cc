@@ -113,7 +113,7 @@ class MGBench:
                 PreconContType_,
                 io_formats::ELL,
                 io_formats::EXP,
-                double>::configure(data, 100, 100, 4, 4, 1, double(1e-8));
+                double>::configure(data, 100, 10, 4, 4, 1, double(1e-8));
 
             OperatorList ol(
                     MGCycleCreation<Tag_,
