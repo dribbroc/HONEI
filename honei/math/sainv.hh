@@ -29,7 +29,6 @@
 #include <honei/math/transposition.hh>
 #include <honei/la/sparse_matrix_ell.hh>
 
-
 #include <iostream>
 #include <vector>
 
@@ -42,7 +41,7 @@ namespace honei
         static SparseMatrix<DT_> value(const SparseMatrix<DT_> & A, DT_ tolerance = 13e-2)
         {
             // z holds the row vector z_i
-            SparseMatrix<DT_> z(A.rows(), A.columns());
+            SparseMatrix<DT_> z(A.rows(), A.columns(), A[A.rows() / 2].used_elements());
             DenseVector<DT_> p(z.rows(), DT_(0));
             SparseMatrixELL<DT_> Aell(A);
 
@@ -56,22 +55,27 @@ namespace honei
                 DenseVector<DT_> zi(((const SparseMatrix<DT_>)z)[i]);
                 DenseVector<DT_> v(Aell.columns());
                 Product<Tag_>::value(v, Aell, zi);
+                /*SparseVector<DT_> v2(v.size(), 1);
+                for (unsigned long vi(0) ; vi < v.size() ; ++vi)
+                    if (v[vi] != DT_(0))
+                        v2[vi] = v[vi];*/
 
                 /*for(unsigned long j(i) ; j < z.rows() ; ++j)
                 {
-                    p[j] = DotProduct<tags::CPU>::value(v, z[j]);
+                    p[j] = DotProduct<tags::CPU>::value(v2, z[j]);
                 }*/
+                const DT_ * vele(v.elements());
+                DT_ * pele(p.elements());
                 for(unsigned long j(i) ; j < z.rows() ; ++j)
                 {
-                    DT_ pj(0);
-                    const SparseVector<DT_> zj(z[j]);
-                    const DT_ * ele(zj.elements());
-                    const unsigned long * ind(zj.indices());
-                    for (unsigned long k(0) ; k < zj.used_elements() ; ++k)
+                    const DT_ * ele(z[j].elements());
+                    const unsigned long * ind(z[j].indices());
+                    pele[j] = DT_(0);
+                    for (unsigned long k(0) ; k < (z[j]).used_elements() ; ++k)
                     {
-                        pj += ele[k] * v[ind[k]];
+                        pele[j] += ele[k] * vele[ind[k]];
                     }
-                    p[j] = pj;
+
                 }
 
                 if (i == z.rows() - 1)
