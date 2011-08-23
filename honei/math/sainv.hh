@@ -50,10 +50,10 @@ namespace honei
                 z(i, i, DT_(1));
             }
 
+            DenseVector<DT_> v(Aell.columns());
             for(unsigned long i(0) ; i < z.rows() ; ++i)
             {
                 DenseVector<DT_> zi(((const SparseMatrix<DT_>)z)[i]);
-                DenseVector<DT_> v(Aell.columns());
                 Product<Tag_>::value(v, Aell, zi);
                 /*SparseVector<DT_> v2(v.size(), 1);
                 for (unsigned long vi(0) ; vi < v.size() ; ++vi)
@@ -65,15 +65,15 @@ namespace honei
                     p[j] = DotProduct<tags::CPU>::value(v2, z[j]);
                 }*/
                 const DT_ * vele(v.elements());
-                DT_ * pele(p.elements());
-                for(unsigned long j(i) ; j < z.rows() ; ++j)
+                DT_ * pele(p.elements() + i);
+                for(unsigned long j(i) ; j < z.rows() ; ++j, ++pele)
                 {
                     const DT_ * ele(z[j].elements());
                     const unsigned long * ind(z[j].indices());
-                    pele[j] = DT_(0);
+                    *pele = DT_(0);
                     for (unsigned long k(0) ; k < (z[j]).used_elements() ; ++k)
                     {
-                        pele[j] += ele[k] * vele[ind[k]];
+                        *pele += ele[k] * vele[ind[k]];
                     }
 
                 }
