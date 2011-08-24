@@ -196,7 +196,8 @@ class MGSolverTest:
 
         virtual void run() const
         {
-            unsigned long levels(4);
+            unsigned long max_level(4);
+            unsigned long min_level(1);
             std::string file(HONEI_SOURCEDIR);
             file += "/honei/math/testdata/poisson_advanced/sort_0/";
             MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double> >  data(MGUtil<Tag_,
@@ -205,14 +206,14 @@ class MGSolverTest:
                                                                                             SparseMatrixELL<double>,
                                                                                             io_formats::ELL,
                                                                                             io_formats::EXP,
-                                                                                            double>::load_data(file, levels, double(1), "spai"));
+                                                                                            double>::load_data(file, max_level, double(1), "spai"));
             MGUtil<Tag_,
                 SparseMatrixELL<double>,
                 DenseVector<double>,
                 SparseMatrixELL<double>,
                 io_formats::ELL,
                 io_formats::EXP,
-                double>::configure(data, 100, 100, 4, 4, 1, double(1e-8));
+                double>::configure(data, 100, 100, 4, 4, min_level, double(1e-8));
 
             OperatorList ol(
                     MGCycleCreation<Tag_,
@@ -231,7 +232,7 @@ class MGSolverTest:
 
             std::string reffile(HONEI_SOURCEDIR);
             reffile += "/honei/math/testdata/poisson_advanced/sort_0/sol_";
-            reffile += stringify(levels);
+            reffile += stringify(max_level);
             DenseVector<double> ref(VectorIO<io_formats::EXP>::read_vector(reffile, double(0)));
             double base_digits(1);
             double additional_digits(2);
@@ -245,10 +246,12 @@ class MGSolverTest:
             double eps(m * sizeof(double) + b);
             eps *= double(8);
 
-            data.x.at(levels).lock(lm_read_only);
+            data.x.at(max_level).lock(lm_read_only);
             ref.lock(lm_read_only);
             for(unsigned long i(0) ; i < ref.size() ; ++i)
-                TEST_CHECK_EQUAL_WITHIN_EPS(data.x.at(levels)[i], ref[i], eps);
+                TEST_CHECK_EQUAL_WITHIN_EPS(data.x.at(max_level)[i], ref[i], eps);
+
+            print_cycle(ol, max_level, min_level);
         }
 };
 MGSolverTest<tags::CPU> mg_solver_test_cpu("double");

@@ -167,6 +167,75 @@ namespace honei
                 }
         };
 
+    void print_cycle(OperatorList & ol, unsigned long max_level, unsigned long min_level)
+    {
+        std::vector<unsigned long> transfers;
+        for (unsigned long i(0) ; i < ol.size() ; ++i)
+        {
+            if (ol[i]->transfer_type() > 0)
+                transfers.push_back(ol[i]->transfer_type());
+        }
+
+        DenseMatrix<unsigned long> graph((max_level - min_level + 1) * 2, transfers.size(), 0ul);
+        unsigned long acx(0);
+        for (unsigned long i(0) ; i < transfers.size() ; ++i)
+        {
+            switch (transfers.at(i))
+            {
+                case 1:
+                ++acx;
+                graph(acx, i) = transfers.at(i);
+                ++acx;
+                break;
+
+                case 2:
+                --acx;
+                graph(acx, i) = transfers.at(i);
+                --acx;
+                break;
+
+                case 3:
+                graph(acx, i) = transfers.at(i);
+                break;
+
+                case 4:
+                graph(acx, i) = transfers.at(i);
+                break;
+            }
+        }
+
+        std::cout<<"R: Restriction, P: Prolongation, S: Smoother, C: Solver"<<std::endl<<std::endl;
+        for (unsigned long i(0) ; i < graph.rows() ; ++i)
+        {
+            for (unsigned long j(0) ; j < graph.columns() ; ++j)
+            {
+                switch(graph(i, j))
+                {
+                    case 0:
+                        std::cout<<" ";
+                        break;
+
+                    case 1:
+                        std::cout<<"R";
+                        break;
+
+                    case 2:
+                        std::cout<<"P";
+                        break;
+
+                    case 3:
+                        std::cout<<"S";
+                        break;
+
+                    case 4:
+                        std::cout<<"C";
+                        break;
+                }
+            }
+            std::cout<<std::endl;
+        }
+    }
+
     template<typename Tag_, typename MatrixType_, typename VectorType_, typename PreconContType_, typename MatIOType_, typename VecIOType_, typename DT_>
         struct MGUtil
         {

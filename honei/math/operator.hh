@@ -40,6 +40,12 @@ namespace honei
             }
 
             virtual std::string to_string() = 0;
+
+            virtual unsigned long transfer_type()
+            {
+                //0 = no transfer | 1 = restriction | 2 = prolongation | 3 = smoother | 4 = solver
+                return 0;
+            }
     };
 
     template<typename Tag_, typename VectorType_>
@@ -256,6 +262,11 @@ namespace honei
     {
         //TODO: how to build in preconditioning -> standard-value?
         public:
+            virtual unsigned long transfer_type()
+            {
+                    return 4;
+            }
+
             virtual std::string to_string()
             {
                 return "SolverOperator";
@@ -307,6 +318,11 @@ namespace honei
     {
         //TODO: more temps, non-matrix preconditioning
         public:
+            virtual unsigned long transfer_type()
+            {
+                    return 3;
+            }
+
             virtual std::string to_string()
             {
                 return "SmootherOperator";
@@ -358,6 +374,14 @@ namespace honei
     class TransferOperator : public Operator
     {
         public:
+            virtual unsigned long transfer_type()
+            {
+                if (_left.size() > _right.size())
+                    return 2;
+                else
+                    return 1;
+            }
+
             virtual std::string to_string()
             {
                 std::string result("TransferOperator\n");
