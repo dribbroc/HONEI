@@ -548,7 +548,8 @@ namespace honei
                     ///Recursion
                     ///all vectors in c have to be initialised with 0
                     cycle.push_back(new FillOperator<Tag_, VectorType_>(data.c.at(level - 1)));
-                    _build_cycle(data.c, data.d, level - 1, cycle, data);
+                    if (level - 1 != data.min_level)
+                        _build_cycle(data.c, data.d, level - 1, cycle, data);
                     _build_cycle(data.c, data.d, level - 1, cycle, data);
 
                     ///Prolongation
@@ -807,7 +808,8 @@ namespace honei
                     ///Recursion
                     ///all vectors in c have to be initialised with 0
                     cycle.push_back(new FillOperator<Tag_, VectorType_>(data.c.at(level - 1)));
-                    _build_cycle_W(data.c, data.d, level - 1, cycle, data);
+                    if (level - 1 != data.min_level)
+                        _build_cycle_W(data.c, data.d, level - 1, cycle, data);
                     _build_cycle_W(data.c, data.d, level - 1, cycle, data);
 
                     ///Prolongation
