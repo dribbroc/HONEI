@@ -527,14 +527,15 @@ namespace honei
                 {
                     ///Presmoothing
                     //std::cout << "Smoother Accessing " << level << std::endl;
-                    cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
-                                data.A.at(level),
-                                data.P.at(level),
-                                b.at(level),
-                                x.at(level),
-                                data.temp_0.at(level),
-                                data.temp_1.at(level),
-                                data.n_pre_smooth) );
+                    if (cycle.size() == 0 || typeid(*(cycle[cycle.size()-1])) != typeid(SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>))
+                                cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
+                                        data.A.at(level),
+                                        data.P.at(level),
+                                        b.at(level),
+                                        x.at(level),
+                                        data.temp_0.at(level),
+                                        data.temp_1.at(level),
+                                        data.n_pre_smooth) );
 
 
                     ///Defect
@@ -624,14 +625,15 @@ namespace honei
                 {
                     ///Presmoothing
                     //std::cout << "Smoother Accessing " << level << std::endl;
-                    cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
-                                data.A.at(level),
-                                data.P.at(level),
-                                b.at(level),
-                                x.at(level),
-                                data.temp_0.at(level),
-                                data.temp_1.at(level),
-                                data.n_pre_smooth) );
+                    if (cycle.size() == 0 || typeid(*(cycle[cycle.size()-1])) != typeid(SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>))
+                        cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
+                                    data.A.at(level),
+                                    data.P.at(level),
+                                    b.at(level),
+                                    x.at(level),
+                                    data.temp_0.at(level),
+                                    data.temp_1.at(level),
+                                    data.n_pre_smooth) );
 
 
                     ///Defect
@@ -787,14 +789,15 @@ namespace honei
                 {
                     ///Presmoothing
                     //std::cout << "Smoother Accessing " << level << std::endl;
-                    cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
-                                data.A.at(level),
-                                data.P.at(level),
-                                b.at(level),
-                                x.at(level),
-                                data.temp_0.at(level),
-                                data.temp_1.at(level),
-                                data.n_pre_smooth) );
+                    if (cycle.size() == 0 || typeid(*(cycle[cycle.size()-1])) != typeid(SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>))
+                        cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
+                                    data.A.at(level),
+                                    data.P.at(level),
+                                    b.at(level),
+                                    x.at(level),
+                                    data.temp_0.at(level),
+                                    data.temp_1.at(level),
+                                    data.n_pre_smooth) );
 
 
                     ///Defect

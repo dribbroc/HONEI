@@ -63,7 +63,7 @@ class MGCycleCreationTest:
 
             OperatorList ol(
             MGCycleCreation<Tag_,
-                              methods::CYCLE::V::STATIC,
+                              methods::CYCLE::W::STATIC,
                               CG<Tag_, methods::NONE>,
                               RISmoother<Tag_>,
                               Restriction<Tag_, methods::PROLMAT>,
