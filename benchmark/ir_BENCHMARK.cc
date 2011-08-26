@@ -193,31 +193,31 @@ class IRBench:
 #ifdef HONEI_CUDA
 //JAC
 //q1
-IRBench<tags::GPU::CUDA, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort0_l7_jac_v("IRBench cuda/cuda | q1 | sort 0 | L7 | jac | V", 1 , 0, 7, "jac", 0.7, 8);
-IRBench<tags::GPU::CUDA, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort0_l8_jac_v("IRBench cuda/cuda | q1 | sort 0 | L8 | jac | V", 1 , 0, 8, "jac", 0.7, 8);
-IRBench<tags::GPU::CUDA, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort0_l9_jac_v("IRBench cuda/cuda | q1 | sort 0 | L9 | jac | V", 1 , 0, 9, "jac", 0.7, 8);
-IRBench<tags::GPU::CUDA, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort0_l10_jac_v("IRBench cuda/cuda | q1 | sort 0 | L10 | jac | V", 1 , 0, 10, "jac", 0.7, 8);
+IRBench<tags::CPU::MultiCore::SSE, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort0_l7_jac_v("IRBench cuda/cuda | q1 | sort 0 | L7 | jac | V", 1 , 0, 7, "jac", 0.7, 8);
+IRBench<tags::CPU::MultiCore::SSE, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort0_l8_jac_v("IRBench cuda/cuda | q1 | sort 0 | L8 | jac | V", 1 , 0, 8, "jac", 0.7, 8);
+IRBench<tags::CPU::MultiCore::SSE, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort0_l9_jac_v("IRBench cuda/cuda | q1 | sort 0 | L9 | jac | V", 1 , 0, 9, "jac", 0.7, 8);
+IRBench<tags::CPU::MultiCore::SSE, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort0_l10_jac_v("IRBench cuda/cuda | q1 | sort 0 | L10 | jac | V", 1 , 0, 10, "jac", 0.7, 8);
 
-IRBench<tags::GPU::CUDA, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort1_l7_jac_v("IRBench cuda/cuda | q1 | sort 1 | L7 | jac | V", 1 , 1, 7, "jac", 0.7, 15);
-IRBench<tags::GPU::CUDA, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort1_l8_jac_v("IRBench cuda/cuda | q1 | sort 1 | L8 | jac | V", 1 , 1, 8, "jac", 0.7, 15);
-IRBench<tags::GPU::CUDA, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort1_l9_jac_v("IRBench cuda/cuda | q1 | sort 1 | L9 | jac | V", 1 , 1, 9, "jac", 0.7, 15);
-IRBench<tags::GPU::CUDA, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort1_l10_jac_v("IRBench cuda/cuda | q1 | sort 1 | L10 | jac | V", 1 , 1, 10, "jac", 0.7, 15);
+IRBench<tags::CPU::MultiCore::SSE, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort1_l7_jac_v("IRBench cuda/cuda | q1 | sort 1 | L7 | jac | V", 1 , 1, 7, "jac", 0.7, 15);
+IRBench<tags::CPU::MultiCore::SSE, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort1_l8_jac_v("IRBench cuda/cuda | q1 | sort 1 | L8 | jac | V", 1 , 1, 8, "jac", 0.7, 15);
+IRBench<tags::CPU::MultiCore::SSE, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort1_l9_jac_v("IRBench cuda/cuda | q1 | sort 1 | L9 | jac | V", 1 , 1, 9, "jac", 0.7, 15);
+IRBench<tags::CPU::MultiCore::SSE, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort1_l10_jac_v("IRBench cuda/cuda | q1 | sort 1 | L10 | jac | V", 1 , 1, 10, "jac", 0.7, 15);
 
-IRBench<tags::GPU::CUDA, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort2_l7_jac_v("IRBench cuda/cuda | q1 | sort 2 | L7 | jac | V", 1 , 2, 7, "jac", 0.7, 15);
-IRBench<tags::GPU::CUDA, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort2_l8_jac_v("IRBench cuda/cuda | q1 | sort 2 | L8 | jac | V", 1 , 2, 8, "jac", 0.7, 15);
-IRBench<tags::GPU::CUDA, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort2_l9_jac_v("IRBench cuda/cuda | q1 | sort 2 | L9 | jac | V", 1 , 2, 9, "jac", 0.7, 15);
-IRBench<tags::GPU::CUDA, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort2_l10_jac_v("IRBench cuda/cuda | q1 | sort 2 | L10 | jac | V", 1 , 2, 10, "jac", 0.7, 15);
+IRBench<tags::CPU::MultiCore::SSE, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort2_l7_jac_v("IRBench cuda/cuda | q1 | sort 2 | L7 | jac | V", 1 , 2, 7, "jac", 0.7, 15);
+IRBench<tags::CPU::MultiCore::SSE, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort2_l8_jac_v("IRBench cuda/cuda | q1 | sort 2 | L8 | jac | V", 1 , 2, 8, "jac", 0.7, 15);
+IRBench<tags::CPU::MultiCore::SSE, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort2_l9_jac_v("IRBench cuda/cuda | q1 | sort 2 | L9 | jac | V", 1 , 2, 9, "jac", 0.7, 15);
+IRBench<tags::CPU::MultiCore::SSE, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort2_l10_jac_v("IRBench cuda/cuda | q1 | sort 2 | L10 | jac | V", 1 , 2, 10, "jac", 0.7, 15);
 
-IRBench<tags::GPU::CUDA, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort4_l7_jac_v("IRBench cuda/cuda | q1 | sort 4 | L7 | jac | V", 1 , 4, 7, "jac", 0.7, 15);
-IRBench<tags::GPU::CUDA, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort4_l8_jac_v("IRBench cuda/cuda | q1 | sort 4 | L8 | jac | V", 1 , 4, 8, "jac", 0.7, 15);
-IRBench<tags::GPU::CUDA, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort4_l9_jac_v("IRBench cuda/cuda | q1 | sort 4 | L9 | jac | V", 1 , 4, 9, "jac", 0.7, 15);
-IRBench<tags::GPU::CUDA, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort4_l10_jac_v("IRBench cuda/cuda | q1 | sort 4 | L10 | jac | V", 1 , 4, 10, "jac", 0.7, 15);
+IRBench<tags::CPU::MultiCore::SSE, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort4_l7_jac_v("IRBench cuda/cuda | q1 | sort 4 | L7 | jac | V", 1 , 4, 7, "jac", 0.7, 15);
+IRBench<tags::CPU::MultiCore::SSE, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort4_l8_jac_v("IRBench cuda/cuda | q1 | sort 4 | L8 | jac | V", 1 , 4, 8, "jac", 0.7, 15);
+IRBench<tags::CPU::MultiCore::SSE, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort4_l9_jac_v("IRBench cuda/cuda | q1 | sort 4 | L9 | jac | V", 1 , 4, 9, "jac", 0.7, 15);
+IRBench<tags::CPU::MultiCore::SSE, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q1_sort4_l10_jac_v("IRBench cuda/cuda | q1 | sort 4 | L10 | jac | V", 1 , 4, 10, "jac", 0.7, 15);
 
 //q2
-IRBench<tags::GPU::CUDA, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q2_sort0_l6_jac_v("IRBench cuda/cuda | q2 | sort 0 | L6 | jac | V", 2 , 0, 6, "jac", 0.7, 30);
-IRBench<tags::GPU::CUDA, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q2_sort0_l8_jac_v("IRBench cuda/cuda | q2 | sort 0 | L7 | jac | V", 2 , 0, 7, "jac", 0.7, 30);
-IRBench<tags::GPU::CUDA, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q2_sort0_l9_jac_v("IRBench cuda/cuda | q2 | sort 0 | L8 | jac | V", 2 , 0, 8, "jac", 0.7, 30);
-IRBench<tags::GPU::CUDA, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q2_sort0_l10_jac_v("IRBench cuda/cuda | q2 | sort 0 | L9 | jac | V", 2 , 0, 9, "jac", 0.7, 30);
+IRBench<tags::CPU::MultiCore::SSE, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q2_sort0_l6_jac_v("IRBench cuda/cuda | q2 | sort 0 | L6 | jac | V", 2 , 0, 6, "jac", 0.7, 30);
+IRBench<tags::CPU::MultiCore::SSE, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q2_sort0_l8_jac_v("IRBench cuda/cuda | q2 | sort 0 | L7 | jac | V", 2 , 0, 7, "jac", 0.7, 30);
+IRBench<tags::CPU::MultiCore::SSE, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q2_sort0_l9_jac_v("IRBench cuda/cuda | q2 | sort 0 | L8 | jac | V", 2 , 0, 8, "jac", 0.7, 30);
+IRBench<tags::CPU::MultiCore::SSE, tags::GPU::CUDA, double, float, methods::CYCLE::V::STATIC, DenseVector<float> > cuda_q2_sort0_l10_jac_v("IRBench cuda/cuda | q2 | sort 0 | L9 | jac | V", 2 , 0, 9, "jac", 0.7, 30);
 
 #endif
 #endif
