@@ -138,7 +138,7 @@ class Q1MGCycleCreationTest:
             }
         }
 };
-Q1MGCycleCreationTest<tags::CPU::SSE> q1mgcycproctest_cpu("double");
+Q1MGCycleCreationTest<tags::CPU> q1mgcycproctest_cpu("double");
 
 template<typename Tag_>
 class MGUtilLoadTest:
