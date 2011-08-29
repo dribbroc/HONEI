@@ -255,8 +255,18 @@ class MGSolverTest:
         }
 };
 MGSolverTest<tags::CPU> mg_solver_test_cpu("double");
+#ifdef HONEI_SSE
+MGSolverTest<tags::CPU::SSE> sse_mg_solver_test_cpu("double");
+MGSolverTest<tags::CPU::MultiCore::SSE> mcsse_mg_solver_test_cpu("double");
+#endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
 MGSolverTest<tags::GPU::CUDA> mg_solver_test_gpu("double");
+#endif
+#endif
+#ifdef HONEI_OPENCL
+MGSolverTest<tags::OpenCL::CPU> ocl_cpu_mg_solver_test_cpu("double");
+#ifdef HONEI_CUDA_DOUBLE
+MGSolverTest<tags::OpenCL::GPU> ocl_gpu_mg_solver_test_cpu("double");
 #endif
 #endif
