@@ -796,8 +796,8 @@ PoissonAdvancedTestMGSparseELLProlMat<tags::CPU::SSE, double> sse_poisson_advanc
 PoissonAdvancedTestMGSparseELLProlMat<tags::CPU::MultiCore::SSE, double> mcsse_poisson_advanced_test_mg_sparse_prolmat_double("double", 4ul, 0ul, "/honei/math/testdata/poisson_advanced/sort_", 0);
 #endif
 #ifdef HONEI_CUDA
-PoissonAdvancedTestMGSparseELLProlMat<tags::GPU::CUDA, double> cuda_poisson_advanced_test_mg_sparse_prolmat_double("double", 4ul, 0ul, "/honei/math/testdata/poisson_advanced/sort_", 0);
 #ifdef HONEI_CUDA_DOUBLE
+PoissonAdvancedTestMGSparseELLProlMat<tags::GPU::CUDA, double> cuda_poisson_advanced_test_mg_sparse_prolmat_double("double", 4ul, 0ul, "/honei/math/testdata/poisson_advanced/sort_", 0);
 #endif
 #endif
 #ifdef HONEI_OPENCL
