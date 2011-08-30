@@ -30,19 +30,20 @@ __kernel void dot_product_f(__global  float * x,
             unsigned int pos =  tid;
 
             // clear the output
-            tmp[pos] = 0;
+            float temp = 0;
 
             for (unsigned long i = 0 ; i < iter ; ++i)
             {
-                tmp[tid] += x[pos] * y[pos];
+                temp += x[pos] * y[pos];
                 pos += get_global_size(0);
             }
 
             // for the last iteration, check if the elements are still available
             if (pos < size)
             {
-                tmp[tid] += x[pos] * y[pos];
+                temp += x[pos] * y[pos];
             }
+            tmp[tid] = temp;
 }
 
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
@@ -59,17 +60,18 @@ __kernel void dot_product_d(__global  double * x,
             unsigned int pos =  tid;
 
             // clear the output
-            tmp[pos] = 0;
+            double temp = 0;
 
             for (unsigned long i = 0 ; i < iter ; ++i)
             {
-                tmp[tid] += x[pos] * y[pos];
+                temp += x[pos] * y[pos];
                 pos += get_global_size(0);
             }
 
             // for the last iteration, check if the elements are still available
             if (pos < size)
             {
-                tmp[tid] += x[pos] * y[pos];
+                temp += x[pos] * y[pos];
             }
+            tmp[tid] = temp;
 }
