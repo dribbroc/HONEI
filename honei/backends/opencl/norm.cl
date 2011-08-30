@@ -17,6 +17,72 @@
 * Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifdef __CPU__
+__kernel void norm_l2_false_f(__global  float * x,
+                                          __global float * tmp,
+                                          const unsigned int size)
+{
+        uint tid = get_global_id(0);
+        uint blocksize = get_local_size(0);
+
+            // calculate how many elements each thread needs to calculate
+            const unsigned int iter = size / (get_global_size(0));
+            unsigned int pos =  tid * iter;
+
+            // clear the output
+            float temp = 0;
+
+            for (unsigned long i = 0 ; i < iter ; ++i)
+            {
+                temp += x[pos + i] * x[pos + i];
+            }
+
+            // for the last iteration, check if the elements are still available
+            if (tid == get_global_size(0) - 1)
+            {
+                pos += iter;
+                while (pos < size)
+                {
+                    temp += x[pos] * x[pos];
+                    ++pos;
+                }
+            }
+            tmp[tid] = temp;
+}
+
+#pragma OPENCL EXTENSION cl_khr_fp64 : enable
+__kernel void norm_l2_false_d(__global  double * x,
+                                          __global double * tmp,
+                                          const unsigned int size)
+{
+        uint tid = get_global_id(0);
+        uint blocksize = get_local_size(0);
+
+            // calculate how many elements each thread needs to calculate
+            const unsigned int iter = size / (get_global_size(0));
+            unsigned int pos =  tid * iter;
+
+            // clear the output
+            double temp = 0;
+
+            for (unsigned long i = 0 ; i < iter ; ++i)
+            {
+                temp += x[pos + i] * x[pos + i];
+            }
+
+            // for the last iteration, check if the elements are still available
+            if (tid == get_global_size(0) - 1)
+            {
+                pos += iter;
+                while (pos < size)
+                {
+                    temp += x[pos] * x[pos];
+                    ++pos;
+                }
+            }
+            tmp[tid] = temp;
+}
+#else
 __kernel void norm_l2_false_f(__global  float * x,
                                           __global float * tmp,
                                           const unsigned int size)
@@ -73,3 +139,4 @@ __kernel void norm_l2_false_d(__global  double * x,
             }
             tmp[tid] = temp;
 }
+#endif

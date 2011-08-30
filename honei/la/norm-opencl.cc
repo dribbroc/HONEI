@@ -56,15 +56,11 @@ using namespace honei;
 template <typename DT_>
 DT_ Norm<vnt_l_two, false, tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<DT_> & x)
 {
-#ifdef HONEI_SSE
-    return Norm<vnt_l_two, false, tags::CPU::MultiCore::SSE>::value(x);
-#else
     CONTEXT("When calculating L2 norm (false) of DenseVectorContinuousBase<DT_> (OpenCL CPU):");
     PROFILER_START("Norm l2 false tags::OpenCL::CPU");
     DT_ result = opencl::common_norm_l2_false<tags::OpenCL::CPU>(x);
     PROFILER_STOP("Norm l2 false tags::OpenCL::CPU");
     return result;
-#endif
 }
 template float Norm<vnt_l_two, false, tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<float> &);
 template double Norm<vnt_l_two, false, tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<double> &);
@@ -72,15 +68,11 @@ template double Norm<vnt_l_two, false, tags::OpenCL::CPU>::value(const DenseVect
 template <typename DT_>
 DT_ Norm<vnt_l_two, true, tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<DT_> & x)
 {
-#ifdef HONEI_SSE
-    return Norm<vnt_l_two, true, tags::CPU::MultiCore::SSE>::value(x);
-#else
     CONTEXT("When calculating L2 norm (false) of DenseVectorContinuousBase<DT_> (OpenCL CPU):");
     PROFILER_START("Norm l2 true tags::OpenCL::CPU");
     DT_ result = opencl::common_norm_l2_false<tags::OpenCL::CPU>(x);
     PROFILER_STOP("Norm l2 true tags::OpenCL::CPU");
     return sqrt(result);
-#endif
 }
 template float Norm<vnt_l_two, true, tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<float> &);
 template double Norm<vnt_l_two, true, tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<double> &);
