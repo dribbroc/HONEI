@@ -16,6 +16,7 @@ add(`defect',                           `hh', `test',   `sse',                  
 add(`dune_regression',                        `test')
 add(`dune_solvers',                     `hh', `test')
 add(`endian_swap',                      `hh')
+add(`feast_aniso',                      `test')
 add(`fill_matrix',                      `hh', `test')
 add(`fill_vector',                      `hh', `test')
 add(`hessenberg',                       `hh', `test')
