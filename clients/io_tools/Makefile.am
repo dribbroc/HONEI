@@ -51,7 +51,7 @@ BACKEND_LIBS += \
 
 endif
 
-bin_PROGRAMS = m2ell mtx2ell exp2dv m2dv ell2mtx mtxinfo minfo ellinfo ell2spai ell2sainv feast2ell feast2dv
+bin_PROGRAMS = m2ell mtx2ell exp2dv m2dv ell2mtx mtxinfo minfo ellinfo ell2spai ell2sainv feast2ell feast2dv match_sainv
 
 m2ell_SOURCES = mtoell.cc
 m2ell_LDADD = \
@@ -136,6 +136,13 @@ feast2ell_LDADD = \
 
 feast2dv_SOURCES = feasttodv.cc
 feast2dv_LDADD = \
+	$(top_builddir)/honei/util/libhoneiutil.la \
+	$(top_builddir)/honei/la/libhoneila.la \
+	$(top_builddir)/honei/math/libhoneimath.la \
+	$(BACKEND_LIBS)
+
+match_sainv_SOURCES = match_sainv.cc
+match_sainv_LDADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/la/libhoneila.la \
 	$(top_builddir)/honei/math/libhoneimath.la \
