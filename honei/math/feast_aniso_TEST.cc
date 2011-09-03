@@ -136,4 +136,4 @@ class FeastTestSparseELLPrecon:
             }
         }
 };
-FeastTestSparseELLPrecon<tags::CPU, double> feast_precon_test_double_sparse_ell("double", "A_4.ell", "289_rhs.dv", "289_sol.dv", "289_rhs.dv");
+//FeastTestSparseELLPrecon<tags::CPU, double> feast_precon_test_double_sparse_ell("double", "A_4.ell", "289_rhs.dv", "289_sol.dv", "289_rhs.dv");
