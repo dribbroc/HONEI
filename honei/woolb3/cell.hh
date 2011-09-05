@@ -85,6 +85,26 @@ namespace honei
                     return _d_y;
                 }
 
+                DT_ get_h()
+                {
+                    return _h;
+                }
+
+                DT_ get_b()
+                {
+                    return _b;
+                }
+
+                DT_ get_u()
+                {
+                    return _u;
+                }
+
+                DT_ get_v()
+                {
+                    return _v;
+                }
+
                 void add_neighbour(Cell* neighbour, unsigned long direction)
                 {
                     ASSERT(direction < directions, "Cell::add_neighbour called with illegal direction");

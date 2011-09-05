@@ -38,8 +38,6 @@ namespace honei
         {
             private:
                 std::vector<Cell<DT_, directions> *> _cells;
-                unsigned long global_offset;
-                unsigned long start;
 
             public:
                 Grid()
@@ -127,6 +125,7 @@ namespace honei
                         }
                     }
 
+                    // remove obstacle cells
                     idx = 0;
                     typename std::vector<Cell<DT_, directions> *>::iterator i = _cells.begin();
                     for (unsigned long row(0) ; row < geometry.rows() ; ++row)
