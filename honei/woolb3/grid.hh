@@ -39,11 +39,31 @@ namespace honei
             private:
                 std::vector<Cell<DT_, directions> *> _cells;
 
-            public:
-                Grid()
+                unsigned long _bit_interleave(unsigned long x, unsigned long y)
                 {
+                    unsigned long r(0);
+                    for (unsigned long i(0) ; i < sizeof(unsigned long) * 8 ; ++i)
+                    {
+                        r |= (x & 1ul << i) << i | (y & 1ul << i) << (i + 1);
+                    }
+                    return r;
                 }
 
+                void _bit_deinterleave(unsigned long & x, unsigned long & y, unsigned long r)
+                {
+                    unsigned long s(r);
+
+                    for (unsigned long i(0) ; i < sizeof(unsigned long) * 8 ; i+=2)
+                    {
+                        x |= (s & 1ul) << (i/2);
+                        s >>= 1ul;
+                        y |= (s & 1ul) << (i/2);
+                        s >>= 1ul;
+                    }
+                }
+
+
+            public:
                 ~Grid()
                 {
                     for (unsigned long i(0) ; i < _cells.size() ; ++i)
@@ -70,6 +90,7 @@ namespace honei
 
                 Grid(DenseMatrix<bool> & geometry, DenseMatrix<DT_> & h, DenseMatrix<DT_> & b, DenseMatrix<DT_> & u, DenseMatrix<DT_> & v)
                 {
+                    /*
                     // read in cells
                     for (unsigned long row(0) ; row < geometry.rows() ; ++row)
                     {
@@ -142,6 +163,79 @@ namespace honei
                                 ++i;
                                 ++idx;
                             }
+                        }
+                    }*/
+
+                    // read in cells
+                    for (unsigned long idx(0) ; idx < geometry.size() ; ++idx)
+                    {
+                        unsigned long row(0);
+                        unsigned long col(0);
+                        _bit_deinterleave(col, row, idx);
+                        Cell<DT_, directions>* cell = new Cell<DT_, directions>(row + 0.5, col + 0.5, 1, 1,
+                                h(row, col), b(row, col), u(row, col), v(row, col));
+                        this->add_cell(cell);
+                    }
+
+                    // set neighbourhood
+                    for (unsigned long idx(0) ; idx < geometry.size() ; ++idx)
+                    {
+                        unsigned long row(0);
+                        unsigned long col(0);
+                        _bit_deinterleave(col, row, idx);
+                        if (geometry(row, col) == false)
+                        {
+                            // DIR 1
+                            if(col < geometry.columns() - 1 && geometry(row, col + 1) == false)
+                                _cells.at(idx)->add_neighbour(_cells.at(_bit_interleave(col+1, row)), 1);
+
+                            // DIR 2
+                            if(row > 0 && col < geometry.columns() - 1 && geometry(row - 1, col + 1) == false)
+                                _cells.at(idx)->add_neighbour(_cells.at(_bit_interleave(col+1, row-1)), 2);
+
+                            // DIR 3
+                            if(row > 0 && geometry(row - 1, col) == false)
+                                _cells.at(idx)->add_neighbour(_cells.at(_bit_interleave(col, row-1)), 3);
+
+                            // DIR 4
+                            if(row > 0 && col > 0 && geometry(row - 1, col - 1) == false)
+                                _cells.at(idx)->add_neighbour(_cells.at(_bit_interleave(col-1, row-1)), 4);
+
+                            // DIR 5
+                            if(col > 0 && geometry(row, col - 1) == false)
+                                _cells.at(idx)->add_neighbour(_cells.at(_bit_interleave(col-1, row)), 5);
+
+                            // DIR 6
+                            if(row < geometry.rows()  - 1&& col > 0 && geometry(row + 1, col - 1) == false)
+                                _cells.at(idx)->add_neighbour(_cells.at(_bit_interleave(col-1, row+1)), 6);
+
+                            // DIR 7
+                            if(row < geometry.rows() - 1 && geometry(row + 1, col) == false)
+                                _cells.at(idx)->add_neighbour(_cells.at(_bit_interleave(col, row+1)), 7);
+
+                            // DIR 8
+                            if(row < geometry.rows() - 1 && col < geometry.columns() - 1 && geometry(row + 1, col + 1) == false)
+                                _cells.at(idx)->add_neighbour(_cells.at(_bit_interleave(col+1, row+1)), 8);
+                        }
+                    }
+
+                    // remove obstacle cells
+                    typename std::vector<Cell<DT_, directions> *>::iterator i = _cells.begin();
+                    unsigned long id(0);
+                    for (unsigned long idx(0) ; idx < geometry.size() ; ++idx)
+                    {
+                        unsigned long row(0);
+                        unsigned long col(0);
+                        _bit_deinterleave(col, row, idx);
+                        if (geometry(row, col) == true)
+                        {
+                            i = _cells.erase(i);
+                        }
+                        else
+                        {
+                            (*i)->set_id(id);
+                            ++i;
+                            ++id;
                         }
                     }
                 }
