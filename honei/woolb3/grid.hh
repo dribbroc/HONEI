@@ -39,26 +39,53 @@ namespace honei
             private:
                 std::vector<Cell<DT_, directions> *> _cells;
 
-                unsigned long _bit_interleave(unsigned long x, unsigned long y)
+                static unsigned long _coord2idx(unsigned long x, unsigned long y, unsigned long max_col)
                 {
-                    unsigned long r(0);
-                    for (unsigned long i(0) ; i < sizeof(unsigned long) * 8 ; ++i)
+                    std::string method("z-curve");
+                    if (method.compare("z-curve") == 0)
                     {
-                        r |= (x & 1ul << i) << i | (y & 1ul << i) << (i + 1);
+                        unsigned long r(0);
+                        for (unsigned long i(0) ; i < sizeof(unsigned long) * 8 ; ++i)
+                        {
+                            r |= (x & 1ul << i) << i | (y & 1ul << i) << (i + 1);
+                        }
+                        return r;
                     }
-                    return r;
+                    else if (method.compare("row") == 0)
+                    {
+                        unsigned long r = max_col * y + x;
+                        return r;
+                    }
+                    else
+                    {
+                        throw InternalError(method + " is not a valid ordering scheme!");
+                        return 0;
+                    }
                 }
 
-                void _bit_deinterleave(unsigned long & x, unsigned long & y, unsigned long r)
+                static void _idx2coord(unsigned long & x, unsigned long & y, unsigned long r, unsigned long max_col)
                 {
-                    unsigned long s(r);
-
-                    for (unsigned long i(0) ; i < sizeof(unsigned long) * 8 ; i+=2)
+                    std::string method("z-curve");
+                    if (method.compare("z-curve") == 0)
                     {
-                        x |= (s & 1ul) << (i/2);
-                        s >>= 1ul;
-                        y |= (s & 1ul) << (i/2);
-                        s >>= 1ul;
+                        unsigned long s(r);
+
+                        for (unsigned long i(0) ; i < sizeof(unsigned long) * 8 ; i+=2)
+                        {
+                            x |= (s & 1ul) << (i/2);
+                            s >>= 1ul;
+                            y |= (s & 1ul) << (i/2);
+                            s >>= 1ul;
+                        }
+                    }
+                    else if (method.compare("row") == 0)
+                    {
+                        x = r % max_col;
+                        y = r / max_col;
+                    }
+                    else
+                    {
+                        throw InternalError(method + " is not a valid ordering scheme!");
                     }
                 }
 
@@ -88,90 +115,32 @@ namespace honei
                     return _cells.at(i);
                 }
 
+                static void print_numbering(DenseMatrix<bool> & geometry)
+                {
+                    DenseMatrix<long> result(geometry.rows(), geometry.columns(), -1);
+                    unsigned long i(0);
+                    for (unsigned long idx(0) ; idx < result.size() ; ++idx)
+                    {
+                        unsigned long row(0);
+                        unsigned long col(0);
+                        _idx2coord(col, row, idx, geometry.columns());
+                        if (geometry(row, col) == false)
+                        {
+                            result(row, col) = i;
+                            ++i;
+                        }
+                    }
+                    std::cout<<result;
+                }
+
                 Grid(DenseMatrix<bool> & geometry, DenseMatrix<DT_> & h, DenseMatrix<DT_> & b, DenseMatrix<DT_> & u, DenseMatrix<DT_> & v)
                 {
-                    /*
-                    // read in cells
-                    for (unsigned long row(0) ; row < geometry.rows() ; ++row)
-                    {
-                        for (unsigned long col(0) ; col < geometry.columns() ; ++col)
-                        {
-                            Cell<DT_, directions>* cell = new Cell<DT_, directions>(row + 0.5, col + 0.5, 1, 1,
-                                    h(row, col), b(row, col), u(row, col), v(row, col));
-                            this->add_cell(cell);
-                        }
-                    }
-
-                    // set neighbourhood
-                    unsigned long idx(0);
-                    for (unsigned long row(0) ; row < geometry.rows() ; ++row)
-                    {
-                        for (unsigned long col(0) ; col < geometry.columns() ; ++col)
-                        {
-                            if (geometry(row, col) == false)
-                            {
-                                // DIR 1
-                                if(col < geometry.columns() - 1 && geometry(row, col + 1) == false)
-                                    _cells.at(idx)->add_neighbour(_cells.at(idx + 1), 1);
-
-                                // DIR 2
-                                if(row > 0 && col < geometry.columns() - 1 && geometry(row - 1, col + 1) == false)
-                                    _cells.at(idx)->add_neighbour(_cells.at(geometry.columns() * (row-1) + (col+1)), 2);
-
-                                // DIR 3
-                                if(row > 0 && geometry(row - 1, col) == false)
-                                    _cells.at(idx)->add_neighbour(_cells.at(geometry.columns() * (row-1) + (col)), 3);
-
-                                // DIR 4
-                                if(row > 0 && col > 0 && geometry(row - 1, col - 1) == false)
-                                    _cells.at(idx)->add_neighbour(_cells.at(geometry.columns() * (row-1) + (col-1)), 4);
-
-                                // DIR 5
-                                if(col > 0 && geometry(row, col - 1) == false)
-                                    _cells.at(idx)->add_neighbour(_cells.at(idx - 1), 5);
-
-                                // DIR 6
-                                if(row < geometry.rows()  - 1&& col > 0 && geometry(row + 1, col - 1) == false)
-                                    _cells.at(idx)->add_neighbour(_cells.at(geometry.columns() * (row+1) + (col-1)), 6);
-
-                                // DIR 7
-                                if(row < geometry.rows() - 1 && geometry(row + 1, col) == false)
-                                    _cells.at(idx)->add_neighbour(_cells.at(geometry.columns() * (row+1) + (col)), 7);
-
-                                // DIR 8
-                                if(row < geometry.rows() - 1 && col < geometry.columns() - 1 && geometry(row + 1, col + 1) == false)
-                                    _cells.at(idx)->add_neighbour(_cells.at(geometry.columns() * (row+1) + (col+1)), 8);
-                            }
-                            ++idx;
-                        }
-                    }
-
-                    // remove obstacle cells
-                    idx = 0;
-                    typename std::vector<Cell<DT_, directions> *>::iterator i = _cells.begin();
-                    for (unsigned long row(0) ; row < geometry.rows() ; ++row)
-                    {
-                        for (unsigned long col(0) ; col < geometry.columns() ; ++col)
-                        {
-                            if (geometry(row, col) == true)
-                            {
-                                i = _cells.erase(i);
-                            }
-                            else
-                            {
-                                (*i)->set_id(idx);
-                                ++i;
-                                ++idx;
-                            }
-                        }
-                    }*/
-
                     // read in cells
                     for (unsigned long idx(0) ; idx < geometry.size() ; ++idx)
                     {
                         unsigned long row(0);
                         unsigned long col(0);
-                        _bit_deinterleave(col, row, idx);
+                        _idx2coord(col, row, idx, geometry.columns());
                         Cell<DT_, directions>* cell = new Cell<DT_, directions>(row + 0.5, col + 0.5, 1, 1,
                                 h(row, col), b(row, col), u(row, col), v(row, col));
                         this->add_cell(cell);
@@ -182,40 +151,40 @@ namespace honei
                     {
                         unsigned long row(0);
                         unsigned long col(0);
-                        _bit_deinterleave(col, row, idx);
+                        _idx2coord(col, row, idx, geometry.columns());
                         if (geometry(row, col) == false)
                         {
                             // DIR 1
                             if(col < geometry.columns() - 1 && geometry(row, col + 1) == false)
-                                _cells.at(idx)->add_neighbour(_cells.at(_bit_interleave(col+1, row)), 1);
+                                _cells.at(idx)->add_neighbour(_cells.at(_coord2idx(col+1, row, geometry.columns())), 1);
 
                             // DIR 2
                             if(row > 0 && col < geometry.columns() - 1 && geometry(row - 1, col + 1) == false)
-                                _cells.at(idx)->add_neighbour(_cells.at(_bit_interleave(col+1, row-1)), 2);
+                                _cells.at(idx)->add_neighbour(_cells.at(_coord2idx(col+1, row-1, geometry.columns())), 2);
 
                             // DIR 3
                             if(row > 0 && geometry(row - 1, col) == false)
-                                _cells.at(idx)->add_neighbour(_cells.at(_bit_interleave(col, row-1)), 3);
+                                _cells.at(idx)->add_neighbour(_cells.at(_coord2idx(col, row-1, geometry.columns())), 3);
 
                             // DIR 4
                             if(row > 0 && col > 0 && geometry(row - 1, col - 1) == false)
-                                _cells.at(idx)->add_neighbour(_cells.at(_bit_interleave(col-1, row-1)), 4);
+                                _cells.at(idx)->add_neighbour(_cells.at(_coord2idx(col-1, row-1, geometry.columns())), 4);
 
                             // DIR 5
                             if(col > 0 && geometry(row, col - 1) == false)
-                                _cells.at(idx)->add_neighbour(_cells.at(_bit_interleave(col-1, row)), 5);
+                                _cells.at(idx)->add_neighbour(_cells.at(_coord2idx(col-1, row, geometry.columns())), 5);
 
                             // DIR 6
                             if(row < geometry.rows()  - 1&& col > 0 && geometry(row + 1, col - 1) == false)
-                                _cells.at(idx)->add_neighbour(_cells.at(_bit_interleave(col-1, row+1)), 6);
+                                _cells.at(idx)->add_neighbour(_cells.at(_coord2idx(col-1, row+1, geometry.columns())), 6);
 
                             // DIR 7
                             if(row < geometry.rows() - 1 && geometry(row + 1, col) == false)
-                                _cells.at(idx)->add_neighbour(_cells.at(_bit_interleave(col, row+1)), 7);
+                                _cells.at(idx)->add_neighbour(_cells.at(_coord2idx(col, row+1, geometry.columns())), 7);
 
                             // DIR 8
                             if(row < geometry.rows() - 1 && col < geometry.columns() - 1 && geometry(row + 1, col + 1) == false)
-                                _cells.at(idx)->add_neighbour(_cells.at(_bit_interleave(col+1, row+1)), 8);
+                                _cells.at(idx)->add_neighbour(_cells.at(_coord2idx(col+1, row+1, geometry.columns())), 8);
                         }
                     }
 
@@ -226,7 +195,7 @@ namespace honei
                     {
                         unsigned long row(0);
                         unsigned long col(0);
-                        _bit_deinterleave(col, row, idx);
+                        _idx2coord(col, row, idx, geometry.columns());
                         if (geometry(row, col) == true)
                         {
                             i = _cells.erase(i);
