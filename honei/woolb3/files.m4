@@ -11,3 +11,4 @@ dnl on this file at present...
 add(`grid',               `hh', `test')
 add(`cell',               `hh')
 add(`packed_grid',        `hh', `test')
+add(`solver_lbm3',        `test')

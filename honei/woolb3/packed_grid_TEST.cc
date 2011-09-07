@@ -40,11 +40,11 @@ class PackedGridTest :
 
         virtual void run() const
         {
-            DenseMatrix<bool> geometry(4, 4, false);
-            DenseMatrix<DataType_> h(4, 4, 1);
-            DenseMatrix<DataType_> b(4, 4, 1);
-            DenseMatrix<DataType_> u(4, 4, 1);
-            DenseMatrix<DataType_> v(4, 4, 1);
+            DenseMatrix<bool> geometry(8, 8, false);
+            DenseMatrix<DataType_> h(8, 8, 1);
+            DenseMatrix<DataType_> b(8, 8, 1);
+            DenseMatrix<DataType_> u(8, 8, 1);
+            DenseMatrix<DataType_> v(8, 8, 1);
             geometry(1,1) = true;
             geometry(2,3) = true;
             Grid<DataType_, 9>::print_numbering(geometry);
@@ -53,12 +53,13 @@ class PackedGridTest :
 
             for (unsigned long i(0) ; i < grid.size() ; ++i)
             {
-                std::cout<<i<<":"<<std::endl;
+                std::cout<<grid.get_cell(i)->get_id()<<"("<<grid.get_cell(i)->get_y()<<"/"<<grid.get_cell(i)->get_x()<<")"<<":"<<std::endl;
                 for (unsigned long j(0) ; j < 9 ; ++j)
                 {
                     std::cout<<j<<": ";
                     if (grid.get_cell(i)->get_neighbours(j).size() > 0)
-                        std::cout << grid.get_cell(i)->get_neighbours(j).front()->get_id();
+                        std::cout << grid.get_cell(i)->get_neighbours(j).front()->get_id()<<
+                            "("<<grid.get_cell(i)->get_neighbours(j).front()->get_y()<<"/"<<grid.get_cell(i)->get_neighbours(j).front()->get_x()<<")";
                     std::cout<<" | ";
                 }
                 std::cout<<endl;
