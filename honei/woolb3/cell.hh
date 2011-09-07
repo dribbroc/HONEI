@@ -44,6 +44,7 @@ namespace honei
 
             public:
                 Cell(double x, double y, double d_x, double d_y, DT_ h, DT_ b, DT_ u, DT_ v) :
+                    _id(4711),
                     _x(x),
                     _y(y),
                     _d_x(d_x / DT_(2)),
