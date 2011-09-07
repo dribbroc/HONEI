@@ -47,6 +47,7 @@ class PackedGridTest :
             DenseMatrix<DataType_> v(4, 4, 1);
             geometry(1,1) = true;
             geometry(2,3) = true;
+            Grid<DataType_, 9>::print_numbering(geometry);
             std::cout<<geometry;
             Grid<DataType_, 9> grid(geometry, h, b, u, v);
 
