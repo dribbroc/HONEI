@@ -10,5 +10,6 @@ dnl on this file at present...
 
 add(`grid',               `hh', `test')
 add(`cell',               `hh')
+add(`collide_stream',     `hh', `test')
 add(`packed_grid',        `hh', `test')
 add(`solver_lbm3',        `test')

@@ -3,7 +3,7 @@
 /*
  * Copyright (c) 2011 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
- * This file is part of the SWE C++ library. HONEI is free software;
+ * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
  * Public License version 2, as published by the Free Software Foundation.
  *

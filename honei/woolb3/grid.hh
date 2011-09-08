@@ -160,7 +160,7 @@ namespace honei
                 }
 
                 Grid(DenseMatrix<bool> & geometry, DenseMatrix<DT_> & h, DenseMatrix<DT_> & b, DenseMatrix<DT_> & u,
-                        DenseMatrix<DT_> & v, unsigned long process_id = 1, unsigned long process_count = 3)
+                        DenseMatrix<DT_> & v, unsigned long process_id = 0, unsigned long process_count = 1)
                 {
                     //TODO iteration over every global cell and every single process is lame
                     // will be solved, when the partition vector is served from outside :)
@@ -231,6 +231,9 @@ namespace honei
                     std::map<unsigned long, Cell<DT_, directions> *> inner_halo;
                     typename std::map<unsigned long, Cell<DT_, directions> *>::iterator halo_it;
                     // set neighbourhood
+                    // TODO nicht über idx sondern ueber elemente in _cells iterieren
+                    // -> gleichzeitig unterschiedliche makro und mikro sortierung moeglich
+                    // der check ob nachbar lokal liegt, dann ueber idx2patch
                     for (unsigned long idx(_idx_start) ; idx < _idx_end ; ++idx)
                     {
                         unsigned long row(0);

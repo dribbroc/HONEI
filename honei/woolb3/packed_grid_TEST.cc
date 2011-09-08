@@ -69,11 +69,11 @@ class PackedGridTest :
             PackedGrid<DataType_, 9> pgrid(grid);
 
             std::cout<<"raw dir vectors: "<<std::endl;
-            for (unsigned long i(1) ; i < 9 ; ++i)
+            for (unsigned long i(0) ; i < 9 ; ++i)
                 std::cout<<i<<": "<<*(pgrid.neighbours[i]);
 
             std::cout<<std::endl<<"dir and dir index vectors:"<<std::endl;
-            for (unsigned long i(1) ; i < 9 ; ++i)
+            for (unsigned long i(0) ; i < 9 ; ++i)
             {
                 std::cout<<i<<": "<<std::endl;
                 std::cout<<*(pgrid.dir[i]);
