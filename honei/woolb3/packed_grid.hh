@@ -36,34 +36,43 @@ namespace honei
     template <typename DT_, unsigned long directions>
     class PackedGrid
     {
-
         public:
             SharedArray<shared_ptr<DenseVector<unsigned long> > > neighbours;
             SharedArray<shared_ptr<DenseVector<unsigned long> > > dir;
             SharedArray<shared_ptr<DenseVector<unsigned long> > > dir_index;
-            shared_ptr<DenseVector<unsigned long> > h;
-            shared_ptr<DenseVector<unsigned long> > b;
-            shared_ptr<DenseVector<unsigned long> > u;
-            shared_ptr<DenseVector<unsigned long> > v;
+
+            SharedArray<shared_ptr<DenseVector<DT_> > > f;
+            SharedArray<shared_ptr<DenseVector<DT_> > > f_eq;
+            SharedArray<shared_ptr<DenseVector<DT_> > > f_temp;
+
+            shared_ptr<DenseVector<DT_> > h;
+            shared_ptr<DenseVector<DT_> > b;
+            shared_ptr<DenseVector<DT_> > u;
+            shared_ptr<DenseVector<DT_> > v;
 
             PackedGrid(Grid<DT_, directions> & grid) :
                 neighbours(directions),
                 dir(directions),
-                dir_index(directions)
+                dir_index(directions),
+                f(directions),
+                f_eq(directions),
+                f_temp(directions)
             {
                 // fill raw neighbour vectors
-                for (unsigned long i(1) ; i < directions ; ++i)
+                for (unsigned long i(0) ; i < directions ; ++i)
                 {
                     neighbours[i].reset(new DenseVector<unsigned long>(grid.size(), -(1ul)));
                     for (unsigned long idx(0) ; idx < grid.size() ; ++idx)
                     {
-                        if (grid.get_cell(idx)->get_neighbours(i).size() != 0)
+                        if (i == 0)
+                            (*neighbours[i])[idx] = grid.get_cell(idx)->get_id();
+                        else if (grid.get_cell(idx)->get_neighbours(i).size() != 0)
                             (*neighbours[i])[idx] = grid.get_cell(idx)->get_neighbours(i).front()->get_id();
                     }
                 }
 
                 //fill packed direction vectors
-                for (unsigned long i(1) ; i < directions ; ++i)
+                for (unsigned long i(0) ; i < directions ; ++i)
                 {
                     unsigned long idx(0);
                     std::vector<unsigned long> temp_dir;
@@ -104,16 +113,23 @@ namespace honei
                 }
 
                 // fill h, b, u, v
-                h.reset(new DenseVector<unsigned long>(grid.size()));
-                b.reset(new DenseVector<unsigned long>(grid.size()));
-                u.reset(new DenseVector<unsigned long>(grid.size()));
-                v.reset(new DenseVector<unsigned long>(grid.size()));
+                h.reset(new DenseVector<DT_>(grid.size()));
+                b.reset(new DenseVector<DT_>(grid.size()));
+                u.reset(new DenseVector<DT_>(grid.size()));
+                v.reset(new DenseVector<DT_>(grid.size()));
                 for (unsigned long idx(0) ; idx < grid.size() ; ++idx)
                 {
                     (*h)[idx] = grid.get_cell(idx)->get_h();
                     (*b)[idx] = grid.get_cell(idx)->get_b();
                     (*u)[idx] = grid.get_cell(idx)->get_u();
                     (*v)[idx] = grid.get_cell(idx)->get_v();
+                }
+
+                for (unsigned long i(0) ; i < directions ; ++i)
+                {
+                    f[i].reset(new DenseVector<DT_>(grid.size(), 0));
+                    f_eq[i].reset(new DenseVector<DT_>(grid.size(), 0));
+                    f_temp[i].reset(new DenseVector<DT_>(grid.size(), 0));
                 }
             }
     };
