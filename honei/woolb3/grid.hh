@@ -27,6 +27,7 @@
 
 #include <vector>
 #include <map>
+#include <set>
 #include <algorithm>
 #include <iostream>
 
@@ -178,7 +179,7 @@ namespace honei
                     std::string inner_numbering("row");
                     //std::string inner_numbering("z-curve");
 
-                    //TODO iteration over every global cell and every single process is lame
+                    //TODO iteration twice over every global cell is lame
                     // will be solved, when the partition vector is served from outside :)
 
                     // calc global fluid cell count
@@ -192,17 +193,17 @@ namespace honei
                             ++fluid_cells;
                     }
 
-                    // find start and end of every patch
+                    // find start and end of every patch in idx coords, depending on fluid count
                     unsigned long idx_starts[process_count];
                     unsigned long idx_ends[process_count];
+                    unsigned long nfluid_cells = 0;
                     for (unsigned long process(0) ; process < process_count ; ++process)
                     {
                         unsigned long fluid_start(process * (fluid_cells / process_count));
                         unsigned long fluid_end(process == process_count - 1 ? fluid_cells : (process+1) * (fluid_cells / process_count));
-                        unsigned long nfluid_cells = 0;
                         idx_starts[process] = 0;
                         idx_ends[process] = 0;
-                        for (unsigned long idx(0) ; idx < geometry.size() ; ++idx)
+                        for (unsigned long idx(idx_ends[process == 0 ? 0 : process - 1]) ; idx < geometry.size() ; ++idx)
                         {
                             unsigned long row(0);
                             unsigned long col(0);
@@ -217,7 +218,10 @@ namespace honei
                                 }
 
                                 if (nfluid_cells == fluid_end)
+                                {
                                     idx_ends[process] = idx;
+                                    break;
+                                }
                                 ++nfluid_cells;
 
                             }
@@ -257,7 +261,7 @@ namespace honei
 
                     // inner and outer halo
                     std::map<unsigned long, Cell<DT_, directions> *> halo;
-                    std::vector<Cell<DT_, directions> *> inner_halo;
+                    std::set<Cell<DT_, directions> *> inner_halo;
                     typename std::map<unsigned long, Cell<DT_, directions> *>::iterator halo_it;
 
                     // set neighbourhood
@@ -280,7 +284,7 @@ namespace honei
                                 else
                                 {
                                     // mark cell itself as having outer neighbours
-                                    inner_halo.push_back(*i);
+                                    inner_halo.insert(*i);
                                     halo_it = halo.find(target_id);
                                     if(halo_it != halo.end())
                                     {
@@ -307,7 +311,7 @@ namespace honei
                                     (*i)->add_neighbour(temp_cells[target_id], 2);
                                 else
                                 {
-                                    inner_halo.push_back(*i);
+                                    inner_halo.insert(*i);
                                     halo_it = halo.find(target_id);
                                     if(halo_it != halo.end())
                                     {
@@ -334,7 +338,7 @@ namespace honei
                                     (*i)->add_neighbour(temp_cells[target_id], 3);
                                 else
                                 {
-                                    inner_halo.push_back(*i);
+                                    inner_halo.insert(*i);
                                     halo_it = halo.find(target_id);
                                     if(halo_it != halo.end())
                                     {
@@ -361,7 +365,7 @@ namespace honei
                                     (*i)->add_neighbour(temp_cells[target_id], 4);
                                 else
                                 {
-                                    inner_halo.push_back(*i);
+                                    inner_halo.insert(*i);
                                     halo_it = halo.find(target_id);
                                     if(halo_it != halo.end())
                                     {
@@ -388,7 +392,7 @@ namespace honei
                                     (*i)->add_neighbour(temp_cells[target_id], 5);
                                 else
                                 {
-                                    inner_halo.push_back(*i);
+                                    inner_halo.insert(*i);
                                     halo_it = halo.find(target_id);
                                     if(halo_it != halo.end())
                                     {
@@ -415,7 +419,7 @@ namespace honei
                                     (*i)->add_neighbour(temp_cells[target_id], 6);
                                 else
                                 {
-                                    inner_halo.push_back(*i);
+                                    inner_halo.insert(*i);
                                     halo_it = halo.find(target_id);
                                     if(halo_it != halo.end())
                                     {
@@ -442,7 +446,7 @@ namespace honei
                                     (*i)->add_neighbour(temp_cells[target_id], 7);
                                 else
                                 {
-                                    inner_halo.push_back(*i);
+                                    inner_halo.insert(*i);
                                     halo_it = halo.find(target_id);
                                     if(halo_it != halo.end())
                                     {
@@ -469,7 +473,7 @@ namespace honei
                                     (*i)->add_neighbour(temp_cells[target_id], 8);
                                 else
                                 {
-                                    inner_halo.push_back(*i);
+                                    inner_halo.insert(*i);
                                     halo_it = halo.find(target_id);
                                     if(halo_it != halo.end())
                                     {
@@ -502,12 +506,11 @@ namespace honei
                     std::cout<<"local size: "<<_local_size<<" inner halo size: "<<_inner_halo_size<< " outer halo size: "<<halo.size()<<std::endl;
 
                     // rearrange elements: inner cells in the front - inner halo at the end
-                    for (typename std::vector<Cell<DT_, directions> *>::iterator i = inner_halo.begin() ; i != inner_halo.end() ; ++i)
+                    for (typename std::set<Cell<DT_, directions> *>::iterator i = inner_halo.begin() ; i != inner_halo.end() ; ++i)
                     {
-                        Cell<DT_, directions> * temp = *i;
-                        typename std::vector<Cell<DT_, directions> * >::iterator t = std::find(_cells.begin(), _cells.end(), temp);
+                        typename std::vector<Cell<DT_, directions> * >::iterator t = std::find(_cells.begin(), _cells.end(), *i);
                         _cells.erase(t);
-                        _cells.push_back(temp);
+                        _cells.push_back(*i);
                     }
 
                     // remove obstacle cells and enumerate fluid cells according to their array position
