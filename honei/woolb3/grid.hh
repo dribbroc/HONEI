@@ -109,9 +109,10 @@ namespace honei
         class Grid
         {
             private:
-                std::vector<Cell<DT_, directions> *> _cells;
-                std::multimap<unsigned long, Cell<DT_, directions> *> _h_targets;
-                std::multimap<unsigned long, Cell<DT_, directions> *> _dir_targets[directions];
+                std::vector<Cell<DT_, directions> *> _cells; // all cells with ordering (inner|outer_halo|inner_halo)
+                std::multimap<unsigned long, Cell<DT_, directions> *> _h_targets; // mapping of process -> cell to send
+                std::multimap<unsigned long, Cell<DT_, directions> *> _dir_targets[directions]; // mapping of process -> cell to send
+                std::map<unsigned long, unsigned long> _halo_map; // mapping of global idx -> local index into _cells
                 unsigned long _idx_start;
                 unsigned long _idx_end;
                 unsigned long _local_size;
@@ -605,6 +606,12 @@ namespace honei
                         }
                     }
 
+                    // fill _halo_map
+                    for (unsigned long i(_local_size) ; i < _cells.size() ; ++i)
+                    {
+                        _halo_map.insert(std::pair<unsigned long, unsigned long>(
+                                    coord2idx(_cells.at(i)->get_x(), _cells.at(i)->get_y(), geometry.columns(), outer_numbering), i));
+                    }
                 }
         };
 }
