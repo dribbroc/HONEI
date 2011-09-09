@@ -40,14 +40,14 @@ class PackedGridTest :
 
         virtual void run() const
         {
-            DenseMatrix<bool> geometry(8, 8, false);
-            DenseMatrix<DataType_> h(8, 8, 1);
-            DenseMatrix<DataType_> b(8, 8, 1);
-            DenseMatrix<DataType_> u(8, 8, 1);
-            DenseMatrix<DataType_> v(8, 8, 1);
+            DenseMatrix<bool> geometry(4, 4, false);
+            DenseMatrix<DataType_> h(4, 4, 1);
+            DenseMatrix<DataType_> b(4, 4, 1);
+            DenseMatrix<DataType_> u(4, 4, 1);
+            DenseMatrix<DataType_> v(4, 4, 1);
             geometry(1,1) = true;
             geometry(2,3) = true;
-            Grid<DataType_, 9>::print_numbering(geometry);
+            Grid<DataType_, 9>::print_numbering(geometry, "z-curve");
             std::cout<<geometry;
             Grid<DataType_, 9> grid(geometry, h, b, u, v);
 
