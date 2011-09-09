@@ -47,7 +47,7 @@ class GridTest :
             geometry(1,1) = true;
             geometry(2,3) = true;
             std::cout<<geometry;
-            Grid<DataType_, 9>::print_numbering(geometry);
+            Grid<DataType_, 9>::print_numbering(geometry, "z-curve");
             Grid<DataType_, 9> grid(geometry, h, b, u, v);
 
             for (unsigned long i(0) ; i < grid.size() ; ++i)
