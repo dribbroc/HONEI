@@ -126,6 +126,108 @@ namespace honei
                     return process_count - 1;
                 }
 
+                bool _is_valid_direction(unsigned long dir, unsigned long row, unsigned long col, unsigned long & nrow, unsigned long & ncol, DenseMatrix<bool> & geometry)
+                {
+                    switch(dir)
+                    {
+                        case 0:
+                            throw InternalError("You should not check against direction zero!");
+                            break;
+
+                        case 1:
+                            if(col < geometry.columns() - 1 && geometry(row, col + 1) == false)
+                            {
+                                ncol = col + 1;
+                                nrow = row;
+                                return true;
+                            }
+                            else
+                                return false;
+                            break;
+
+                        case 2:
+                            if(row > 0 && col < geometry.columns() - 1 && geometry(row - 1, col + 1) == false)
+                            {
+                                ncol = col + 1;
+                                nrow = row - 1;
+                                return true;
+                            }
+                            else
+                                return false;
+                            break;
+
+                        case 3:
+                            if(row > 0 && geometry(row - 1, col) == false)
+                            {
+                                ncol = col;
+                                nrow = row - 1;
+                                return true;
+                            }
+                            else
+                                return false;
+                            break;
+
+                        case 4:
+                            if(row > 0 && col > 0 && geometry(row - 1, col - 1) == false)
+                            {
+                                ncol = col - 1;
+                                nrow = row - 1;
+                                return true;
+                            }
+                            else
+                                return false;
+                            break;
+
+                        case 5:
+                            if(col > 0 && geometry(row, col - 1) == false)
+                            {
+                                ncol = col - 1;
+                                nrow = row;
+                                return true;
+                            }
+                            else
+                                return false;
+                            break;
+
+                        case 6:
+                            if(row < geometry.rows() - 1 && col > 0 && geometry(row + 1, col - 1) == false)
+                            {
+                                ncol = col - 1;
+                                nrow = row + 1;
+                                return true;
+                            }
+                            else
+                                return false;
+                            break;
+
+                        case 7:
+                            if(row < geometry.rows() - 1 && geometry(row + 1, col) == false)
+                            {
+                                ncol = col;
+                                nrow = row + 1;
+                                return true;
+                            }
+                            else
+                                return false;
+                            break;
+
+                        case 8:
+                            if(row < geometry.rows() - 1 && col < geometry.columns() - 1 && geometry(row + 1, col + 1) == false)
+                            {
+                                ncol = col + 1;
+                                nrow = row + 1;
+                                return true;
+                            }
+                            else
+                                return false;
+                            break;
+
+                        default:
+                            throw InternalError("You should not check against unknow direction!");
+                            return false;
+                            break;
+                    }
+                }
 
             public:
                 ~Grid()
@@ -272,293 +374,49 @@ namespace honei
                     {
                         unsigned long row((*i)->get_y());
                         unsigned long col((*i)->get_x());
+                        unsigned long new_col(0);
+                        unsigned long new_row(0);
                         if (geometry(row, col) == false)
                         {
                             std::set<unsigned long> h_targets;
                             unsigned long target_id(0);
-                            unsigned long direction(0);
 
-                            // TODO umschreiben: get row col auf directino methode und dann nur ein block in for 1..9 schleife
-                            // und nachbar id auch nur einmal berechnen pro direction
-                            // DIR 1
-                            if(col < geometry.columns() - 1 && geometry(row, col + 1) == false)
+                            for (unsigned long direction(1) ; direction < directions ; ++direction)
                             {
-                                direction = 1;
-                                target_id = coord2idx(col+1, row, geometry.columns(), inner_numbering);
-                                unsigned long outer_target_id(coord2idx(col+1, row, geometry.columns(), outer_numbering));
-                                // if our neighbour is another "normal" cell
-                                if(_idx2process(outer_target_id, process_count, idx_starts, idx_ends) == process_id)
-                                    (*i)->add_neighbour(temp_cells[target_id], direction);
-                                // our neighbour lies outside
-                                else
+                                if(_is_valid_direction(direction, row, col, new_row, new_col, geometry))
                                 {
-                                    // mark cell itself as having outer neighbours
-                                    inner_halo.insert(*i);
-                                    h_targets.insert(_idx2process(outer_target_id, process_count, idx_starts, idx_ends));
-                                    halo_it = halo.find(target_id);
-                                    if(halo_it != halo.end())
-                                    {
-                                        (*i)->add_neighbour(halo_it->second, direction);
-                                        _dir_targets[direction].insert(std::pair<unsigned long, Cell<DT_, directions> *>(_idx2process(outer_target_id, process_count, idx_starts, idx_ends), halo_it->second));
-                                    }
+                                    target_id = coord2idx(new_col, new_row, geometry.columns(), inner_numbering);
+                                    unsigned long outer_target_id(coord2idx(new_col, new_row, geometry.columns(), outer_numbering));
+                                    // if our neighbour is another "normal" cell
+                                    if(_idx2process(outer_target_id, process_count, idx_starts, idx_ends) == process_id)
+                                        (*i)->add_neighbour(temp_cells[target_id], direction);
+                                    // our neighbour lies outside
                                     else
                                     {
-                                        unsigned long ncol(0);
-                                        unsigned long nrow(0);
-                                        idx2coord(ncol, nrow, target_id, geometry.columns(), inner_numbering);
-                                        Cell<DT_, directions>* cell = new Cell<DT_, directions>(ncol, nrow, 1, 1,
-                                                h(nrow, ncol), b(nrow, ncol), u(nrow, ncol), v(nrow, ncol));
-                                        halo[target_id] = cell;
-                                        (*i)->add_neighbour(cell, direction);
-                                        _dir_targets[direction].insert(std::pair<unsigned long, Cell<DT_, directions> *>(_idx2process(outer_target_id, process_count, idx_starts, idx_ends), cell));
+                                        // mark cell itself as having outer neighbours
+                                        inner_halo.insert(*i);
+                                        h_targets.insert(_idx2process(outer_target_id, process_count, idx_starts, idx_ends));
+                                        halo_it = halo.find(target_id);
+                                        if(halo_it != halo.end())
+                                        {
+                                            (*i)->add_neighbour(halo_it->second, direction);
+                                            _dir_targets[direction].insert(std::pair<unsigned long, Cell<DT_, directions> *>(_idx2process(outer_target_id, process_count, idx_starts, idx_ends), halo_it->second));
+                                        }
+                                        else
+                                        {
+                                            unsigned long ncol(0);
+                                            unsigned long nrow(0);
+                                            idx2coord(ncol, nrow, target_id, geometry.columns(), inner_numbering);
+                                            Cell<DT_, directions>* cell = new Cell<DT_, directions>(ncol, nrow, 1, 1,
+                                                    h(nrow, ncol), b(nrow, ncol), u(nrow, ncol), v(nrow, ncol));
+                                            halo[target_id] = cell;
+                                            (*i)->add_neighbour(cell, direction);
+                                            _dir_targets[direction].insert(std::pair<unsigned long, Cell<DT_, directions> *>(_idx2process(outer_target_id, process_count, idx_starts, idx_ends), cell));
+                                        }
                                     }
                                 }
                             }
 
-                            // DIR 2
-                            if(row > 0 && col < geometry.columns() - 1 && geometry(row - 1, col + 1) == false)
-                            {
-                                direction = 2;
-                                target_id = coord2idx(col+1, row-1, geometry.columns(), inner_numbering);
-                                unsigned long outer_target_id(coord2idx(col+1, row-1, geometry.columns(), outer_numbering));
-                                // if our neighbour is another "normal" cell
-                                if(_idx2process(outer_target_id, process_count, idx_starts, idx_ends) == process_id)
-                                    (*i)->add_neighbour(temp_cells[target_id], direction);
-                                // our neighbour lies outside
-                                else
-                                {
-                                    // mark cell itself as having outer neighbours
-                                    inner_halo.insert(*i);
-                                    h_targets.insert(_idx2process(outer_target_id, process_count, idx_starts, idx_ends));
-                                    halo_it = halo.find(target_id);
-                                    if(halo_it != halo.end())
-                                    {
-                                        (*i)->add_neighbour(halo_it->second, direction);
-                                        _dir_targets[direction].insert(std::pair<unsigned long, Cell<DT_, directions> *>(_idx2process(outer_target_id, process_count, idx_starts, idx_ends), halo_it->second));
-                                    }
-                                    else
-                                    {
-                                        unsigned long ncol(0);
-                                        unsigned long nrow(0);
-                                        idx2coord(ncol, nrow, target_id, geometry.columns(), inner_numbering);
-                                        Cell<DT_, directions>* cell = new Cell<DT_, directions>(ncol, nrow, 1, 1,
-                                                h(nrow, ncol), b(nrow, ncol), u(nrow, ncol), v(nrow, ncol));
-                                        halo[target_id] = cell;
-                                        (*i)->add_neighbour(cell, direction);
-                                        _dir_targets[direction].insert(std::pair<unsigned long, Cell<DT_, directions> *>(_idx2process(outer_target_id, process_count, idx_starts, idx_ends), cell));
-                                    }
-                                }
-                            }
-
-                            // DIR 3
-                            if(row > 0 && geometry(row - 1, col) == false)
-                            {
-                                direction = 3;
-                                target_id = coord2idx(col, row-1, geometry.columns(), inner_numbering);
-                                unsigned long outer_target_id(coord2idx(col, row-1, geometry.columns(), outer_numbering));
-                                // if our neighbour is another "normal" cell
-                                if(_idx2process(outer_target_id, process_count, idx_starts, idx_ends) == process_id)
-                                    (*i)->add_neighbour(temp_cells[target_id], direction);
-                                // our neighbour lies outside
-                                else
-                                {
-                                    // mark cell itself as having outer neighbours
-                                    inner_halo.insert(*i);
-                                    h_targets.insert(_idx2process(outer_target_id, process_count, idx_starts, idx_ends));
-                                    halo_it = halo.find(target_id);
-                                    if(halo_it != halo.end())
-                                    {
-                                        (*i)->add_neighbour(halo_it->second, direction);
-                                        _dir_targets[direction].insert(std::pair<unsigned long, Cell<DT_, directions> *>(_idx2process(outer_target_id, process_count, idx_starts, idx_ends), halo_it->second));
-                                    }
-                                    else
-                                    {
-                                        unsigned long ncol(0);
-                                        unsigned long nrow(0);
-                                        idx2coord(ncol, nrow, target_id, geometry.columns(), inner_numbering);
-                                        Cell<DT_, directions>* cell = new Cell<DT_, directions>(ncol, nrow, 1, 1,
-                                                h(nrow, ncol), b(nrow, ncol), u(nrow, ncol), v(nrow, ncol));
-                                        halo[target_id] = cell;
-                                        (*i)->add_neighbour(cell, direction);
-                                        _dir_targets[direction].insert(std::pair<unsigned long, Cell<DT_, directions> *>(_idx2process(outer_target_id, process_count, idx_starts, idx_ends), cell));
-                                    }
-                                }
-                            }
-
-                            // DIR 4
-                            if(row > 0 && col > 0 && geometry(row - 1, col - 1) == false)
-                            {
-                                direction = 4;
-                                target_id = coord2idx(col-1, row-1, geometry.columns(), inner_numbering);
-                                unsigned long outer_target_id(coord2idx(col-1, row-1, geometry.columns(), outer_numbering));
-                                // if our neighbour is another "normal" cell
-                                if(_idx2process(outer_target_id, process_count, idx_starts, idx_ends) == process_id)
-                                    (*i)->add_neighbour(temp_cells[target_id], direction);
-                                // our neighbour lies outside
-                                else
-                                {
-                                    // mark cell itself as having outer neighbours
-                                    inner_halo.insert(*i);
-                                    h_targets.insert(_idx2process(outer_target_id, process_count, idx_starts, idx_ends));
-                                    halo_it = halo.find(target_id);
-                                    if(halo_it != halo.end())
-                                    {
-                                        (*i)->add_neighbour(halo_it->second, direction);
-                                        _dir_targets[direction].insert(std::pair<unsigned long, Cell<DT_, directions> *>(_idx2process(outer_target_id, process_count, idx_starts, idx_ends), halo_it->second));
-                                    }
-                                    else
-                                    {
-                                        unsigned long ncol(0);
-                                        unsigned long nrow(0);
-                                        idx2coord(ncol, nrow, target_id, geometry.columns(), inner_numbering);
-                                        Cell<DT_, directions>* cell = new Cell<DT_, directions>(ncol, nrow, 1, 1,
-                                                h(nrow, ncol), b(nrow, ncol), u(nrow, ncol), v(nrow, ncol));
-                                        halo[target_id] = cell;
-                                        (*i)->add_neighbour(cell, direction);
-                                        _dir_targets[direction].insert(std::pair<unsigned long, Cell<DT_, directions> *>(_idx2process(outer_target_id, process_count, idx_starts, idx_ends), cell));
-                                    }
-                                }
-                            }
-
-                            // DIR 5
-                            if(col > 0 && geometry(row, col - 1) == false)
-                            {
-                                direction = 5;
-                                target_id = coord2idx(col-1, row, geometry.columns(), inner_numbering);
-                                unsigned long outer_target_id(coord2idx(col-1, row, geometry.columns(), outer_numbering));
-                                // if our neighbour is another "normal" cell
-                                if(_idx2process(outer_target_id, process_count, idx_starts, idx_ends) == process_id)
-                                    (*i)->add_neighbour(temp_cells[target_id], direction);
-                                // our neighbour lies outside
-                                else
-                                {
-                                    // mark cell itself as having outer neighbours
-                                    inner_halo.insert(*i);
-                                    h_targets.insert(_idx2process(outer_target_id, process_count, idx_starts, idx_ends));
-                                    halo_it = halo.find(target_id);
-                                    if(halo_it != halo.end())
-                                    {
-                                        (*i)->add_neighbour(halo_it->second, direction);
-                                        _dir_targets[direction].insert(std::pair<unsigned long, Cell<DT_, directions> *>(_idx2process(outer_target_id, process_count, idx_starts, idx_ends), halo_it->second));
-                                    }
-                                    else
-                                    {
-                                        unsigned long ncol(0);
-                                        unsigned long nrow(0);
-                                        idx2coord(ncol, nrow, target_id, geometry.columns(), inner_numbering);
-                                        Cell<DT_, directions>* cell = new Cell<DT_, directions>(ncol, nrow, 1, 1,
-                                                h(nrow, ncol), b(nrow, ncol), u(nrow, ncol), v(nrow, ncol));
-                                        halo[target_id] = cell;
-                                        (*i)->add_neighbour(cell, direction);
-                                        _dir_targets[direction].insert(std::pair<unsigned long, Cell<DT_, directions> *>(_idx2process(outer_target_id, process_count, idx_starts, idx_ends), cell));
-                                    }
-                                }
-                            }
-
-                            // DIR 6
-                            if(row < geometry.rows()  - 1&& col > 0 && geometry(row + 1, col - 1) == false)
-                            {
-                                direction = 6;
-                                target_id = coord2idx(col-1, row+1, geometry.columns(), inner_numbering);
-                                unsigned long outer_target_id(coord2idx(col-1, row+1, geometry.columns(), outer_numbering));
-                                // if our neighbour is another "normal" cell
-                                if(_idx2process(outer_target_id, process_count, idx_starts, idx_ends) == process_id)
-                                    (*i)->add_neighbour(temp_cells[target_id], direction);
-                                // our neighbour lies outside
-                                else
-                                {
-                                    // mark cell itself as having outer neighbours
-                                    inner_halo.insert(*i);
-                                    h_targets.insert(_idx2process(outer_target_id, process_count, idx_starts, idx_ends));
-                                    halo_it = halo.find(target_id);
-                                    if(halo_it != halo.end())
-                                    {
-                                        (*i)->add_neighbour(halo_it->second, direction);
-                                        _dir_targets[direction].insert(std::pair<unsigned long, Cell<DT_, directions> *>(_idx2process(outer_target_id, process_count, idx_starts, idx_ends), halo_it->second));
-                                    }
-                                    else
-                                    {
-                                        unsigned long ncol(0);
-                                        unsigned long nrow(0);
-                                        idx2coord(ncol, nrow, target_id, geometry.columns(), inner_numbering);
-                                        Cell<DT_, directions>* cell = new Cell<DT_, directions>(ncol, nrow, 1, 1,
-                                                h(nrow, ncol), b(nrow, ncol), u(nrow, ncol), v(nrow, ncol));
-                                        halo[target_id] = cell;
-                                        (*i)->add_neighbour(cell, direction);
-                                        _dir_targets[direction].insert(std::pair<unsigned long, Cell<DT_, directions> *>(_idx2process(outer_target_id, process_count, idx_starts, idx_ends), cell));
-                                    }
-                                }
-                            }
-
-                            // DIR 7
-                            if(row < geometry.rows() - 1 && geometry(row + 1, col) == false)
-                            {
-                                direction = 7;
-                                target_id = coord2idx(col, row+1, geometry.columns(), inner_numbering);
-                                unsigned long outer_target_id(coord2idx(col, row+1, geometry.columns(), outer_numbering));
-                                // if our neighbour is another "normal" cell
-                                if(_idx2process(outer_target_id, process_count, idx_starts, idx_ends) == process_id)
-                                    (*i)->add_neighbour(temp_cells[target_id], direction);
-                                // our neighbour lies outside
-                                else
-                                {
-                                    // mark cell itself as having outer neighbours
-                                    inner_halo.insert(*i);
-                                    h_targets.insert(_idx2process(outer_target_id, process_count, idx_starts, idx_ends));
-                                    halo_it = halo.find(target_id);
-                                    if(halo_it != halo.end())
-                                    {
-                                        (*i)->add_neighbour(halo_it->second, direction);
-                                        _dir_targets[direction].insert(std::pair<unsigned long, Cell<DT_, directions> *>(_idx2process(outer_target_id, process_count, idx_starts, idx_ends), halo_it->second));
-                                    }
-                                    else
-                                    {
-                                        unsigned long ncol(0);
-                                        unsigned long nrow(0);
-                                        idx2coord(ncol, nrow, target_id, geometry.columns(), inner_numbering);
-                                        Cell<DT_, directions>* cell = new Cell<DT_, directions>(ncol, nrow, 1, 1,
-                                                h(nrow, ncol), b(nrow, ncol), u(nrow, ncol), v(nrow, ncol));
-                                        halo[target_id] = cell;
-                                        (*i)->add_neighbour(cell, direction);
-                                        _dir_targets[direction].insert(std::pair<unsigned long, Cell<DT_, directions> *>(_idx2process(outer_target_id, process_count, idx_starts, idx_ends), cell));
-                                    }
-                                }
-                            }
-
-                            // DIR 8
-                            if(row < geometry.rows() - 1 && col < geometry.columns() - 1 && geometry(row + 1, col + 1) == false)
-                            {
-                                direction = 8;
-                                target_id = coord2idx(col+1, row+1, geometry.columns(), inner_numbering);
-                                unsigned long outer_target_id(coord2idx(col+1, row+1, geometry.columns(), outer_numbering));
-                                // if our neighbour is another "normal" cell
-                                if(_idx2process(outer_target_id, process_count, idx_starts, idx_ends) == process_id)
-                                    (*i)->add_neighbour(temp_cells[target_id], direction);
-                                // our neighbour lies outside
-                                else
-                                {
-                                    // mark cell itself as having outer neighbours
-                                    inner_halo.insert(*i);
-                                    h_targets.insert(_idx2process(outer_target_id, process_count, idx_starts, idx_ends));
-                                    halo_it = halo.find(target_id);
-                                    if(halo_it != halo.end())
-                                    {
-                                        (*i)->add_neighbour(halo_it->second, direction);
-                                        _dir_targets[direction].insert(std::pair<unsigned long, Cell<DT_, directions> *>(_idx2process(outer_target_id, process_count, idx_starts, idx_ends), halo_it->second));
-                                    }
-                                    else
-                                    {
-                                        unsigned long ncol(0);
-                                        unsigned long nrow(0);
-                                        idx2coord(ncol, nrow, target_id, geometry.columns(), inner_numbering);
-                                        Cell<DT_, directions>* cell = new Cell<DT_, directions>(ncol, nrow, 1, 1,
-                                                h(nrow, ncol), b(nrow, ncol), u(nrow, ncol), v(nrow, ncol));
-                                        halo[target_id] = cell;
-                                        (*i)->add_neighbour(cell, direction);
-                                        _dir_targets[direction].insert(std::pair<unsigned long, Cell<DT_, directions> *>(_idx2process(outer_target_id, process_count, idx_starts, idx_ends), cell));
-                                    }
-                                }
-                            }
                             // copy inner halo to _h_targets
                             for (typename std::set<unsigned long>::iterator t = h_targets.begin() ; t != h_targets.end() ; ++t)
                             {
