@@ -41,22 +41,33 @@ class CollideStreamTest :
 
         virtual void run() const
         {
-            //unsigned long size(2048);
-            unsigned long size(256);
-            DenseMatrix<bool> geometry(size, size, false);
-            DenseMatrix<DataType_> h(size, size, 1);
-            DenseMatrix<DataType_> b(size, size, 1);
-            DenseMatrix<DataType_> u(size, size, 1);
-            DenseMatrix<DataType_> v(size, size, 1);
+            unsigned long g_h(16);
+            unsigned long g_w(16);
 
+            DenseMatrix<DataType_> h(g_h, g_w, DataType_(0.05));
+
+            DenseMatrix<DataType_> u(g_h, g_w, DataType_(0.));
+            DenseMatrix<DataType_> v(g_h, g_w, DataType_(0.));
+
+            DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
+
+            DenseMatrix<bool> geometry(g_h, g_w, false);
             Grid<DataType_, 9> grid(geometry, h, b, u, v);
             PackedGrid<DataType_, 9> pgrid(grid);
 
-            TimeStamp at, bt;
-            at.take();
-            CollideStream<Tag_>::value(pgrid, DataType_(1.23456));
-            bt.take();
-            std::cout<<"TOE: "<<bt.total()-at.total()<<std::endl;
+            DataType_ tau (0.5);
+
+            for(unsigned long i(0); i < pgrid.h->size(); i++)
+            {
+                for (unsigned long j(0) ; j < 9 ; ++j)
+                {
+                    (*pgrid.f_eq[j])[i] = DataType_(1.234);
+                    (*pgrid.f[j])[i] = DataType_(11.234);
+                    (*pgrid.f_temp[j])[i] = DataType_(4711);
+                }
+            }
+            CollideStream<Tag_>::value(pgrid, tau);
+            //std::cout<< *pgrid.f_temp[2];
         }
 
 };
