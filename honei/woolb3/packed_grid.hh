@@ -50,6 +50,9 @@ namespace honei
             shared_ptr<DenseVector<DT_> > u;
             shared_ptr<DenseVector<DT_> > v;
 
+            shared_ptr<DenseVector<DT_> > distribution_x;
+            shared_ptr<DenseVector<DT_> > distribution_y;
+
             PackedGrid(Grid<DT_, directions> & grid) :
                 neighbours(directions),
                 dir(directions),
@@ -131,6 +134,9 @@ namespace honei
                     f_eq[i].reset(new DenseVector<DT_>(grid.size(), 0));
                     f_temp[i].reset(new DenseVector<DT_>(grid.size(), 0));
                 }
+
+                distribution_x.reset(new DenseVector<DT_>(directions));
+                distribution_y.reset(new DenseVector<DT_>(directions));
             }
     };
 }
