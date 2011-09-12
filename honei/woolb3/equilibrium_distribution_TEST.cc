@@ -21,7 +21,7 @@
 #include <iostream>
 #include <honei/woolb3/grid.hh>
 #include <honei/woolb3/packed_grid.hh>
-#include <honei/woolb3/collide_stream.hh>
+#include <honei/woolb3/equilibrium_distribution.hh>
 
 
 using namespace honei;
@@ -29,12 +29,12 @@ using namespace tests;
 
 
 template <typename Tag_, typename DataType_>
-class CollideStreamTest :
+class EquilibriumDistributionTest :
     public TaggedTest<Tag_>
 {
     public:
-        CollideStreamTest(const std::string & type) :
-            TaggedTest<Tag_>("collide_stream_test<" + type + ">")
+        EquilibriumDistributionTest(const std::string & type) :
+            TaggedTest<Tag_>("equilibrium_distribution_test<" + type + ">")
         {
         }
 
@@ -54,20 +54,12 @@ class CollideStreamTest :
             Grid<DataType_, 9> grid(geometry, h, b, u, v);
             PackedGrid<DataType_, 9> pgrid(grid);
 
-            DataType_ tau (0.5);
+            DataType_ e (0.5);
+            DataType_ g (9.81);
 
-            for(unsigned long i(0); i < pgrid.h->size(); i++)
-            {
-                for (unsigned long j(0) ; j < 9 ; ++j)
-                {
-                    (*pgrid.f_eq[j])[i] = DataType_(1.234);
-                    (*pgrid.f[j])[i] = DataType_(11.234);
-                    (*pgrid.f_temp[j])[i] = DataType_(4711);
-                }
-            }
-            CollideStream<Tag_>::value(pgrid, tau);
+            EquilibriumDistribution<Tag_>::value(pgrid, e, g);
             //std::cout<< *pgrid.f_temp[2];
         }
 
 };
-CollideStreamTest<tags::CPU, float> collide_stream_test_float("float");
+EquilibriumDistributionTest<tags::CPU, float> equilibrium_distribution_test_float("float");
