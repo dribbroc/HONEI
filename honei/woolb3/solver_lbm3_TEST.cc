@@ -76,6 +76,7 @@ class SolverLBM3Test :
             solver.do_preprocessing();
 
 
+            grid.destroy();
             ScenarioCollection::get_scenario(0, g_h, g_w, grid);
             Grid3<DataType_, 9> grid3(*grid.obstacles, *grid.h, *grid.b, *grid.u, *grid.v);
             PackedGrid3<DataType_, 9> pgrid3(grid3);
