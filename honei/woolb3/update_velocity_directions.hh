@@ -26,8 +26,8 @@
 
 #include <honei/lbm/tags.hh>
 #include <honei/la/dense_vector.hh>
-#include <honei/woolb3/packed_grid.hh>
-#include <honei/woolb3/grid.hh>
+#include <honei/woolb3/grid3.hh>
+#include <honei/woolb3/packed_grid3.hh>
 #include <cmath>
 
 namespace honei
@@ -41,14 +41,14 @@ namespace honei
     struct UpdateVelocityDirections<tags::CPU>
     {
         template <typename DT_, unsigned long directions>
-        static void value(Grid<DT_, directions> & grid, PackedGrid<DT_, directions> & pgrid)
+        static void value(Grid3<DT_, directions> & grid, PackedGrid3<DT_, directions> & pgrid)
         {
             for (unsigned long i(0) ; i < pgrid.h->size() ; ++i)
             {
                 for (unsigned long direction(1) ; direction < directions ; ++direction)
                 if(grid.get_cell(i)->get_neighbours(direction).size() == 0)
                 {
-                    (*pgrid.f_temp[(direction+4) % directions])[i] = (*pgrid.f_temp[direction])[i];
+                    (*pgrid.f_temp[direction + 4 < 9 ? direction + 4 : direction - 4])[i] = (*pgrid.f_temp[direction])[i];
                 }
 
                 //corners
@@ -62,7 +62,7 @@ namespace honei
                     (*pgrid.f_temp[4])[i] = (*pgrid.f_temp[2])[i];
                     (*pgrid.f_temp[8])[i] = (*pgrid.f_temp[2])[i];
                 }
-                if(grid.get_cell(i)->get_neighbours(1).size() == 0 && grid.get_cell(i)->get_neighbours(5).size() == 0)
+                if(grid.get_cell(i)->get_neighbours(1).size() == 0 && grid.get_cell(i)->get_neighbours(7).size() == 0)
                 {
                     (*pgrid.f_temp[2])[i] = (*pgrid.f_temp[4])[i];
                     (*pgrid.f_temp[6])[i] = (*pgrid.f_temp[4])[i];

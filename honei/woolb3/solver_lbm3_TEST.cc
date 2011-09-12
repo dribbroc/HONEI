@@ -26,6 +26,11 @@
 #include <honei/lbm/grid.hh>
 #include <honei/lbm/grid_packer.hh>
 #include <honei/lbm/scenario_collection.hh>
+#include <honei/util/time_stamp.hh>
+
+#include <honei/woolb3/grid3.hh>
+#include <honei/woolb3/packed_grid3.hh>
+#include <honei/woolb3/solver_lbm3.hh>
 
 #ifdef DEBUG
 #define SOLVER_VERBOSE
@@ -52,8 +57,8 @@ class SolverLBM3Test :
 
         virtual void run() const
         {
-            unsigned long g_h(32);
-            unsigned long g_w(32);
+            unsigned long g_h(64);
+            unsigned long g_w(64);
             unsigned long timesteps(100);
 
 
@@ -66,17 +71,84 @@ class SolverLBM3Test :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, grid.d_x, grid.d_y, grid.d_t, grid.tau);
+            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info, &data, grid.d_x, grid.d_y, grid.d_t, grid.tau);
 
             solver.do_preprocessing();
-            std::cout << "Solving: " << grid.description << std::endl;
+
+
+            ScenarioCollection::get_scenario(0, g_h, g_w, grid);
+            Grid3<DataType_, 9> grid3(*grid.obstacles, *grid.h, *grid.b, *grid.u, *grid.v);
+            PackedGrid3<DataType_, 9> pgrid3(grid3);
+            SolverLBM3<Tag_, DataType_, 9> solver3(grid3, pgrid3, grid.d_x, grid.d_y, grid.d_t, grid.tau);
+            solver3.do_preprocessing();
+
+            TEST_CHECK_EQUAL( *pgrid3.f_eq[0],*(data.f_eq_0));
+            TEST_CHECK_EQUAL( *pgrid3.f_eq[1],*(data.f_eq_1));
+            TEST_CHECK_EQUAL( *pgrid3.f_eq[2],*(data.f_eq_2));
+            TEST_CHECK_EQUAL( *pgrid3.f_eq[3],*(data.f_eq_3));
+            TEST_CHECK_EQUAL( *pgrid3.f_eq[4],*(data.f_eq_4));
+            TEST_CHECK_EQUAL( *pgrid3.f_eq[5],*(data.f_eq_5));
+            TEST_CHECK_EQUAL( *pgrid3.f_eq[6],*(data.f_eq_6));
+            TEST_CHECK_EQUAL( *pgrid3.f_eq[7],*(data.f_eq_7));
+            TEST_CHECK_EQUAL( *pgrid3.f_eq[8],*(data.f_eq_8));
+
+            TEST_CHECK_EQUAL( *pgrid3.f_temp[0],*(data.f_temp_0));
+            TEST_CHECK_EQUAL( *pgrid3.f_temp[1],*(data.f_temp_1));
+            TEST_CHECK_EQUAL( *pgrid3.f_temp[2],*(data.f_temp_2));
+            TEST_CHECK_EQUAL( *pgrid3.f_temp[3],*(data.f_temp_3));
+            TEST_CHECK_EQUAL( *pgrid3.f_temp[4],*(data.f_temp_4));
+            TEST_CHECK_EQUAL( *pgrid3.f_temp[5],*(data.f_temp_5));
+            TEST_CHECK_EQUAL( *pgrid3.f_temp[6],*(data.f_temp_6));
+            TEST_CHECK_EQUAL( *pgrid3.f_temp[7],*(data.f_temp_7));
+            TEST_CHECK_EQUAL( *pgrid3.f_temp[8],*(data.f_temp_8));
+
+
+            TimeStamp at, bt;
+            at.take();
             for (unsigned long i(0) ; i < timesteps ; ++i)
             {
                 solver.solve();
             }
-            solver.do_postprocessing();
-            GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
-            std::cout << *grid.h << std::endl;
+            bt.take();
+            std::cout<<"LBMGrid TOE: "<<bt.total()-at.total()<<std::endl;
+
+            at.take();
+            for (unsigned long i(0) ; i < timesteps ; ++i)
+            {
+                solver3.solve();
+            }
+            bt.take();
+            std::cout<<"LBM3 TOE: "<<bt.total()-at.total()<<std::endl;
+
+            TEST_CHECK_EQUAL( *pgrid3.f_temp[0],*(data.f_temp_0));
+            TEST_CHECK_EQUAL( *pgrid3.f_temp[1],*(data.f_temp_1));
+            TEST_CHECK_EQUAL( *pgrid3.f_temp[2],*(data.f_temp_2));
+            TEST_CHECK_EQUAL( *pgrid3.f_temp[3],*(data.f_temp_3));
+            TEST_CHECK_EQUAL( *pgrid3.f_temp[4],*(data.f_temp_4));
+            TEST_CHECK_EQUAL( *pgrid3.f_temp[5],*(data.f_temp_5));
+            TEST_CHECK_EQUAL( *pgrid3.f_temp[6],*(data.f_temp_6));
+            TEST_CHECK_EQUAL( *pgrid3.f_temp[7],*(data.f_temp_7));
+            TEST_CHECK_EQUAL( *pgrid3.f_temp[8],*(data.f_temp_8));
+
+            TEST_CHECK_EQUAL( *pgrid3.f_eq[0],*(data.f_eq_0));
+            TEST_CHECK_EQUAL( *pgrid3.f_eq[1],*(data.f_eq_1));
+            TEST_CHECK_EQUAL( *pgrid3.f_eq[2],*(data.f_eq_2));
+            TEST_CHECK_EQUAL( *pgrid3.f_eq[3],*(data.f_eq_3));
+            TEST_CHECK_EQUAL( *pgrid3.f_eq[4],*(data.f_eq_4));
+            TEST_CHECK_EQUAL( *pgrid3.f_eq[5],*(data.f_eq_5));
+            TEST_CHECK_EQUAL( *pgrid3.f_eq[6],*(data.f_eq_6));
+            TEST_CHECK_EQUAL( *pgrid3.f_eq[7],*(data.f_eq_7));
+            TEST_CHECK_EQUAL( *pgrid3.f_eq[8],*(data.f_eq_8));
+
+            TEST_CHECK_EQUAL( *pgrid3.h,*(data.h));
+            //TEST_CHECK_EQUAL( *pgrid3.u,*(data.u));
+            //TEST_CHECK_EQUAL( *pgrid3.v,*(data.v));
+
+            std::cout<<"MANUAL PASSED"<<std::endl;
+
+            //solver.do_postprocessing();
+            //GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
+            //std::cout << *grid.h << std::endl;
 
             info.destroy();
             data.destroy();

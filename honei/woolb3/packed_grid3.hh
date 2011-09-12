@@ -23,7 +23,7 @@
 #define WOOLB3_GUARD_PACKED_GRID_HH 1
 
 #include <honei/woolb3/cell.hh>
-#include <honei/woolb3/grid.hh>
+#include <honei/woolb3/grid3.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/util/shared_array-impl.hh>
 
@@ -34,7 +34,7 @@
 namespace honei
 {
     template <typename DT_, unsigned long directions>
-    class PackedGrid
+    class PackedGrid3
     {
         public:
             SharedArray<shared_ptr<DenseVector<unsigned long> > > neighbours;
@@ -53,7 +53,7 @@ namespace honei
             shared_ptr<DenseVector<DT_> > distribution_x;
             shared_ptr<DenseVector<DT_> > distribution_y;
 
-            PackedGrid(Grid<DT_, directions> & grid) :
+            PackedGrid3(Grid3<DT_, directions> & grid) :
                 neighbours(directions),
                 dir(directions),
                 dir_index(directions),

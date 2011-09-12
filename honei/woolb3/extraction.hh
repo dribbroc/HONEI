@@ -26,7 +26,7 @@
 
 #include <honei/lbm/tags.hh>
 #include <honei/la/dense_vector.hh>
-#include <honei/woolb3/packed_grid.hh>
+#include <honei/woolb3/packed_grid3.hh>
 #include <cmath>
 
 namespace honei
@@ -40,7 +40,7 @@ namespace honei
     struct Extraction<tags::CPU>
     {
         template <typename DT_, unsigned long directions>
-        static void value(PackedGrid<DT_, directions> & pgrid)
+        static void value(PackedGrid3<DT_, directions> & pgrid)
         {
             for (unsigned long direction(0) ; direction < directions ; ++direction)
             {
@@ -49,37 +49,44 @@ namespace honei
                 pgrid.f_temp[direction].reset(new DenseVector<DT_>(swap));
             }
 
+            DT_ * f[directions];
+            for (unsigned long dir(0) ; dir < directions ; ++dir)
+                f[dir] = pgrid.f[dir]->elements();
+            DT_ * h(pgrid.h->elements());
+            DT_ * u(pgrid.u->elements());
+            DT_ * v(pgrid.v->elements());
+
             for (unsigned long i(0) ; i < pgrid.h->size() ; ++i)
             {
-                (*pgrid.h)[i] = (*pgrid.f[0])[i] +
-                    (*pgrid.f[1])[i] +
-                    (*pgrid.f[2])[i] +
-                    (*pgrid.f[3])[i] +
-                    (*pgrid.f[4])[i] +
-                    (*pgrid.f[5])[i] +
-                    (*pgrid.f[6])[i] +
-                    (*pgrid.f[7])[i] +
-                    (*pgrid.f[8])[i];
+                (h)[i] = (f[0])[i] +
+                    (f[1])[i] +
+                    (f[2])[i] +
+                    (f[3])[i] +
+                    (f[4])[i] +
+                    (f[5])[i] +
+                    (f[6])[i] +
+                    (f[7])[i] +
+                    (f[8])[i];
 
-            (*pgrid.u)[i] = ((*pgrid.distribution_x)[0] * (*pgrid.f[0])[i] +
-                    (*pgrid.distribution_x)[1] * (*pgrid.f[1])[i] +
-                    (*pgrid.distribution_x)[2] * (*pgrid.f[2])[i] +
-                    (*pgrid.distribution_x)[3] * (*pgrid.f[3])[i] +
-                    (*pgrid.distribution_x)[4] * (*pgrid.f[4])[i] +
-                    (*pgrid.distribution_x)[5] * (*pgrid.f[5])[i] +
-                    (*pgrid.distribution_x)[6] * (*pgrid.f[6])[i] +
-                    (*pgrid.distribution_x)[7] * (*pgrid.f[7])[i] +
-                    (*pgrid.distribution_x)[8] * (*pgrid.f[8])[i]) / (*pgrid.h)[i];
+            (u)[i] = ((*pgrid.distribution_x)[0] * (f[0])[i] +
+                    (*pgrid.distribution_x)[1] * (f[1])[i] +
+                    (*pgrid.distribution_x)[2] * (f[2])[i] +
+                    (*pgrid.distribution_x)[3] * (f[3])[i] +
+                    (*pgrid.distribution_x)[4] * (f[4])[i] +
+                    (*pgrid.distribution_x)[5] * (f[5])[i] +
+                    (*pgrid.distribution_x)[6] * (f[6])[i] +
+                    (*pgrid.distribution_x)[7] * (f[7])[i] +
+                    (*pgrid.distribution_x)[8] * (f[8])[i]) / (*pgrid.h)[i];
 
-            (*pgrid.v)[i] = ((*pgrid.distribution_y)[0] * (*pgrid.f[0])[i] +
-                    (*pgrid.distribution_y)[1] * (*pgrid.f[1])[i] +
-                    (*pgrid.distribution_y)[2] * (*pgrid.f[2])[i] +
-                    (*pgrid.distribution_y)[3] * (*pgrid.f[3])[i] +
-                    (*pgrid.distribution_y)[4] * (*pgrid.f[4])[i] +
-                    (*pgrid.distribution_y)[5] * (*pgrid.f[5])[i] +
-                    (*pgrid.distribution_y)[6] * (*pgrid.f[6])[i] +
-                    (*pgrid.distribution_y)[7] * (*pgrid.f[7])[i] +
-                    (*pgrid.distribution_y)[8] * (*pgrid.f[8])[i]) / (*pgrid.h)[i];
+            (v)[i] = ((*pgrid.distribution_y)[0] * (f[0])[i] +
+                    (*pgrid.distribution_y)[1] * (f[1])[i] +
+                    (*pgrid.distribution_y)[2] * (f[2])[i] +
+                    (*pgrid.distribution_y)[3] * (f[3])[i] +
+                    (*pgrid.distribution_y)[4] * (f[4])[i] +
+                    (*pgrid.distribution_y)[5] * (f[5])[i] +
+                    (*pgrid.distribution_y)[6] * (f[6])[i] +
+                    (*pgrid.distribution_y)[7] * (f[7])[i] +
+                    (*pgrid.distribution_y)[8] * (f[8])[i]) / (*pgrid.h)[i];
             }
         }
     };

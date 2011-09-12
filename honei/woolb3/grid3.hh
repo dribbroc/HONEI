@@ -106,7 +106,7 @@ namespace honei
 
 
     template <typename DT_, unsigned long directions>
-        class Grid
+        class Grid3
         {
             private:
                 std::vector<Cell<DT_, directions> *> _cells; // all cells with ordering (inner|outer_halo|inner_halo)
@@ -230,11 +230,12 @@ namespace honei
                 }
 
             public:
-                ~Grid()
+                ~Grid3()
                 {
                     for (unsigned long i(0) ; i < _cells.size() ; ++i)
                     {
-                        delete _cells.at(i);
+                        //TODO shared impl fuer grid und dann im impl destructor deleten am ende
+                        //delete _cells.at(i);
                     }
                 }
 
@@ -276,7 +277,7 @@ namespace honei
                     std::cout<<result;
                 }
 
-                Grid(DenseMatrix<bool> & geometry, DenseMatrix<DT_> & h, DenseMatrix<DT_> & b, DenseMatrix<DT_> & u,
+                Grid3(DenseMatrix<bool> & geometry, DenseMatrix<DT_> & h, DenseMatrix<DT_> & b, DenseMatrix<DT_> & u,
                         DenseMatrix<DT_> & v, unsigned long process_id = 0, unsigned long process_count = 1)
                 {
                     std::string outer_numbering("z-curve");

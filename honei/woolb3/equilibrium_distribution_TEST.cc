@@ -19,8 +19,8 @@
 
 #include <honei/util/unittest.hh>
 #include <iostream>
-#include <honei/woolb3/grid.hh>
-#include <honei/woolb3/packed_grid.hh>
+#include <honei/woolb3/grid3.hh>
+#include <honei/woolb3/packed_grid3.hh>
 #include <honei/woolb3/equilibrium_distribution.hh>
 
 
@@ -51,8 +51,8 @@ class EquilibriumDistributionTest :
             DenseMatrix<DataType_> b(g_h, g_w, DataType_(0.));
 
             DenseMatrix<bool> geometry(g_h, g_w, false);
-            Grid<DataType_, 9> grid(geometry, h, b, u, v);
-            PackedGrid<DataType_, 9> pgrid(grid);
+            Grid3<DataType_, 9> grid(geometry, h, b, u, v);
+            PackedGrid3<DataType_, 9> pgrid(grid);
 
             DataType_ e (0.5);
             DataType_ g (9.81);

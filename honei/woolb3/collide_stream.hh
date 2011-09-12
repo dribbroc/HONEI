@@ -26,7 +26,7 @@
 
 #include <honei/lbm/tags.hh>
 #include <honei/la/dense_vector.hh>
-#include <honei/woolb3/packed_grid.hh>
+#include <honei/woolb3/packed_grid3.hh>
 #include <cmath>
 
 namespace honei
@@ -40,15 +40,15 @@ namespace honei
     struct CollideStream<tags::CPU>
     {
         template <typename DT_, unsigned long directions>
-        static void value(PackedGrid<DT_, directions> & pgrid, DT_ tau)
+        static void value(PackedGrid3<DT_, directions> & pgrid, DT_ tau)
         {
             for (unsigned long direction(0) ; direction < directions ; ++direction)
             {
-                const DT_ * f(pgrid.f[direction]->elements());
-                const DT_ * f_eq(pgrid.f_eq[direction]->elements());
+                const DT_ * const f(pgrid.f[direction]->elements());
+                const DT_ * const f_eq(pgrid.f_eq[direction]->elements());
                 DT_ * f_temp(pgrid.f_temp[direction]->elements());
-                const unsigned long * dir_index(pgrid.dir_index[direction]->elements());
-                const unsigned long * dir(pgrid.dir[direction]->elements());
+                const unsigned long * const dir_index(pgrid.dir_index[direction]->elements());
+                const unsigned long * const dir(pgrid.dir[direction]->elements());
                 for (unsigned long begin(0), half(0) ; begin < pgrid.dir_index[direction]->size() - 1; begin+=2, ++half)
                 {
                     const unsigned long end(dir_index[begin + 1]);
