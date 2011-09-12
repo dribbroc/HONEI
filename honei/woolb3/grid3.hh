@@ -24,6 +24,8 @@
 
 #include <honei/woolb3/cell.hh>
 #include <honei/la/dense_matrix.hh>
+#include <honei/util/private_implementation_pattern.hh>
+#include <honei/util/private_implementation_pattern-impl.hh>
 
 #include <vector>
 #include <map>
@@ -104,12 +106,30 @@ namespace honei
                 }
         };
 
+    template <typename DT_, unsigned long directions> class Grid3;
+
+    template <typename DT_, unsigned long directions> struct Implementation<Grid3<DT_, directions> >
+    {
+        std::vector<Cell<DT_, directions> *> cells; // all cells with ordering (inner|outer_halo|inner_halo)
+
+        Implementation()
+        {
+        }
+
+        ~Implementation()
+        {
+            for (unsigned long i(0) ; i < cells.size() ; ++i)
+            {
+                delete cells.at(i);
+            }
+        }
+    };
 
     template <typename DT_, unsigned long directions>
-        class Grid3
+        class Grid3 :
+            public PrivateImplementationPattern<Grid3<DT_, directions>, Shared>
         {
             private:
-                std::vector<Cell<DT_, directions> *> _cells; // all cells with ordering (inner|outer_halo|inner_halo)
                 std::multimap<unsigned long, Cell<DT_, directions> *> _h_targets; // mapping of process -> cell to send
                 std::multimap<unsigned long, Cell<DT_, directions> *> _dir_targets[directions]; // mapping of process -> cell to send
                 std::map<unsigned long, unsigned long> _halo_map; // mapping of global idx -> local index into _cells
@@ -230,18 +250,19 @@ namespace honei
                 }
 
             public:
+                // copy constructor
+                Grid3(const Grid3<DT_, directions> & other) :
+                    PrivateImplementationPattern<Grid3<DT_, directions>, Shared>(other._imp)
+                {
+                }
+
                 ~Grid3()
                 {
-                    for (unsigned long i(0) ; i < _cells.size() ; ++i)
-                    {
-                        //TODO shared impl fuer grid und dann im impl destructor deleten am ende
-                        //delete _cells.at(i);
-                    }
                 }
 
                 unsigned long size()
                 {
-                    return _cells.size();
+                    return this->_imp->cells.size();
                 }
 
                 unsigned long local_size()
@@ -256,7 +277,7 @@ namespace honei
 
                 Cell<DT_, directions> * get_cell(unsigned long i)
                 {
-                    return _cells.at(i);
+                    return this->_imp->cells.at(i);
                 }
 
                 static void print_numbering(DenseMatrix<bool> & geometry, std::string method)
@@ -278,7 +299,8 @@ namespace honei
                 }
 
                 Grid3(DenseMatrix<bool> & geometry, DenseMatrix<DT_> & h, DenseMatrix<DT_> & b, DenseMatrix<DT_> & u,
-                        DenseMatrix<DT_> & v, unsigned long process_id = 0, unsigned long process_count = 1)
+                        DenseMatrix<DT_> & v, unsigned long process_id = 0, unsigned long process_count = 1) :
+                    PrivateImplementationPattern<Grid3<DT_, directions>, Shared>(new Implementation<Grid3<DT_, directions> >())
                 {
                     std::string outer_numbering("z-curve");
                     //std::string outer_numbering("row");
@@ -348,21 +370,21 @@ namespace honei
                         idx2coord(col, row, idx, geometry.columns(), outer_numbering);
                         Cell<DT_, directions>* cell = new Cell<DT_, directions>(col, row, 1, 1,
                                 h(row, col), b(row, col), u(row, col), v(row, col));
-                        _cells.push_back(cell);
+                        this->_imp->cells.push_back(cell);
                         if (geometry(row, col) == false)
                             ++_local_size;
                     }
 
                     //resort cells by inner numbering
                     CellComparator<DT_, directions> cell_comp(geometry.columns(), inner_numbering);
-                    std::sort(_cells.begin(), _cells.end(), cell_comp);
+                    std::sort(this->_imp->cells.begin(), this->_imp->cells.end(), cell_comp);
 
                     // create temp cell map with global id keys
                     std::map<unsigned long, Cell<DT_, directions> *> temp_cells;
-                    for (unsigned long i(0) ; i < _cells.size() ; ++i)
+                    for (unsigned long i(0) ; i < this->_imp->cells.size() ; ++i)
                     {
                         temp_cells.insert(std::pair<unsigned long, Cell<DT_, directions> *>
-                                (coord2idx(_cells.at(i)->get_x(), _cells.at(i)->get_y(), geometry.columns(), inner_numbering), _cells.at(i)));
+                                (coord2idx(this->_imp->cells.at(i)->get_x(), this->_imp->cells.at(i)->get_y(), geometry.columns(), inner_numbering), this->_imp->cells.at(i)));
                     }
 
                     // inner and outer halo
@@ -371,7 +393,7 @@ namespace honei
                     typename std::map<unsigned long, Cell<DT_, directions> *>::iterator halo_it;
 
                     // set neighbourhood
-                    for (typename std::vector<Cell<DT_, directions> *>::iterator i = _cells.begin() ; i != _cells.end() ; ++i)
+                    for (typename std::vector<Cell<DT_, directions> *>::iterator i = this->_imp->cells.begin() ; i != this->_imp->cells.end() ; ++i)
                     {
                         unsigned long row((*i)->get_y());
                         unsigned long col((*i)->get_x());
@@ -430,7 +452,7 @@ namespace honei
                     // insert outer halo cells in cell vector
                     for (halo_it = halo.begin() ; halo_it != halo.end() ; ++halo_it)
                     {
-                        _cells.push_back(halo_it->second);
+                        this->_imp->cells.push_back(halo_it->second);
                     }
 
                     _inner_halo_size = inner_halo.size();
@@ -442,20 +464,20 @@ namespace honei
                     // rearrange elements: inner cells in the front - inner halo at the end
                     for (typename std::set<Cell<DT_, directions> *>::iterator i = inner_halo.begin() ; i != inner_halo.end() ; ++i)
                     {
-                        typename std::vector<Cell<DT_, directions> * >::iterator t = std::find(_cells.begin(), _cells.end(), *i);
-                        _cells.erase(t);
-                        _cells.push_back(*i);
+                        typename std::vector<Cell<DT_, directions> * >::iterator t = std::find(this->_imp->cells.begin(), this->_imp->cells.end(), *i);
+                        this->_imp->cells.erase(t);
+                        this->_imp->cells.push_back(*i);
                     }
 
                     // remove obstacle cells and enumerate fluid cells according to their array position
                     unsigned long id(0);
-                    for (typename std::vector<Cell<DT_, directions> *>::iterator i = _cells.begin() ; i != _cells.end() ; )
+                    for (typename std::vector<Cell<DT_, directions> *>::iterator i = this->_imp->cells.begin() ; i != this->_imp->cells.end() ; )
                     {
                         unsigned long row((*i)->get_y());
                         unsigned long col((*i)->get_x());
                         if (geometry(row, col) == true)
                         {
-                            i = _cells.erase(i);
+                            i = this->_imp->cells.erase(i);
                         }
                         else
                         {
@@ -466,10 +488,10 @@ namespace honei
                     }
 
                     // fill _halo_map
-                    for (unsigned long i(_local_size) ; i < _cells.size() ; ++i)
+                    for (unsigned long i(_local_size) ; i < this->_imp->cells.size() ; ++i)
                     {
                         _halo_map.insert(std::pair<unsigned long, unsigned long>(
-                                    coord2idx(_cells.at(i)->get_x(), _cells.at(i)->get_y(), geometry.columns(), outer_numbering), i));
+                                    coord2idx(this->_imp->cells.at(i)->get_x(), this->_imp->cells.at(i)->get_y(), geometry.columns(), outer_numbering), i));
                     }
                 }
         };
