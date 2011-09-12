@@ -18,8 +18,7 @@
  */
 
 #include <honei/la/dense_matrix.hh>
-#include <honei/woolb3/grid.hh>
-#include <honei/woolb3/packed_grid.hh>
+#include <honei/woolb3/grid3.hh>
 #include <honei/util/unittest.hh>
 
 #include <iostream>
@@ -29,12 +28,12 @@ using namespace tests;
 using namespace std;
 
 template <typename Tag_, typename DataType_>
-class PackedGridTest :
+class Grid3Test :
     public QuickTaggedTest<Tag_>
 {
     public:
-        PackedGridTest(const std::string & type) :
-            QuickTaggedTest<Tag_>("packed grid_quick_test<" + type + ">")
+        Grid3Test(const std::string & type) :
+            QuickTaggedTest<Tag_>("grid_quick_test<" + type + ">")
         {
         }
 
@@ -47,38 +46,22 @@ class PackedGridTest :
             DenseMatrix<DataType_> v(4, 4, 1);
             geometry(1,1) = true;
             geometry(2,3) = true;
-            Grid<DataType_, 9>::print_numbering(geometry, "z-curve");
             std::cout<<geometry;
-            Grid<DataType_, 9> grid(geometry, h, b, u, v);
+            Grid3<DataType_, 9>::print_numbering(geometry, "z-curve");
+            Grid3<DataType_, 9> grid(geometry, h, b, u, v);
 
             for (unsigned long i(0) ; i < grid.size() ; ++i)
             {
-                std::cout<<grid.get_cell(i)->get_id()<<"("<<grid.get_cell(i)->get_y()<<"/"<<grid.get_cell(i)->get_x()<<")"<<":"<<std::endl;
+                std::cout<<i<<":"<<std::endl;
                 for (unsigned long j(0) ; j < 9 ; ++j)
                 {
                     std::cout<<j<<": ";
                     if (grid.get_cell(i)->get_neighbours(j).size() > 0)
-                        std::cout << grid.get_cell(i)->get_neighbours(j).front()->get_id()<<
-                            "("<<grid.get_cell(i)->get_neighbours(j).front()->get_y()<<"/"<<grid.get_cell(i)->get_neighbours(j).front()->get_x()<<")";
+                        std::cout << grid.get_cell(i)->get_neighbours(j).front()->get_id();
                     std::cout<<" | ";
                 }
                 std::cout<<endl;
             }
-            std::cout<<endl;
-
-            PackedGrid<DataType_, 9> pgrid(grid);
-
-            std::cout<<"raw dir vectors: "<<std::endl;
-            for (unsigned long i(0) ; i < 9 ; ++i)
-                std::cout<<i<<": "<<*(pgrid.neighbours[i]);
-
-            std::cout<<std::endl<<"dir and dir index vectors:"<<std::endl;
-            for (unsigned long i(0) ; i < 9 ; ++i)
-            {
-                std::cout<<i<<": "<<std::endl;
-                std::cout<<*(pgrid.dir[i]);
-                std::cout<<*(pgrid.dir_index[i]);
-            }
         }
 };
-PackedGridTest<tags::CPU, double> packed_grid_test("double");
+Grid3Test<tags::CPU, double> grid_test("double");

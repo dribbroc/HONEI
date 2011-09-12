@@ -26,7 +26,7 @@
 
 #include <honei/lbm/tags.hh>
 #include <honei/la/dense_vector.hh>
-#include <honei/woolb3/packed_grid.hh>
+#include <honei/woolb3/packed_grid3.hh>
 #include <cmath>
 
 namespace honei
@@ -40,14 +40,14 @@ namespace honei
     struct EquilibriumDistribution<tags::CPU>
     {
         template <typename DT_, unsigned long directions>
-        static void value(PackedGrid<DT_, directions> & pgrid, DT_ g, DT_ e)
+        static void value(PackedGrid3<DT_, directions> & pgrid, DT_ g, DT_ e)
         {
             unsigned long direction(0);
 
             DT_ * f_eq(pgrid.f_eq[direction]->elements());
-            DT_ * h(pgrid.h->elements());
-            DT_ * u(pgrid.u->elements());
-            DT_ * v(pgrid.v->elements());
+            DT_ * const h(pgrid.h->elements());
+            DT_ * const u(pgrid.u->elements());
+            DT_ * const v(pgrid.v->elements());
             DT_ d_x;
             DT_ d_y;
 

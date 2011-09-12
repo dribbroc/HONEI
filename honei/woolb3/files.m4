@@ -8,11 +8,11 @@ dnl the base filename with no extension; later parameters can be `hh', `cc',
 dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
-add(`grid',                       `hh', `test')
+add(`grid3',                      `hh', `test')
 add(`cell',                       `hh')
 add(`collide_stream',             `hh', `test')
 add(`equilibrium_distribution',   `hh', `test')
 add(`extraction',                 `hh', `test')
-add(`packed_grid',                `hh', `test')
-add(`solver_lbm3',                `test')
+add(`packed_grid3',               `hh', `test')
+add(`solver_lbm3',                `hh', `test')
 add(`update_velocity_directions', `hh', `test')
