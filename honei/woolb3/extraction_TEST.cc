@@ -21,7 +21,7 @@
 #include <iostream>
 #include <honei/woolb3/grid.hh>
 #include <honei/woolb3/packed_grid.hh>
-#include <honei/woolb3/equilibrium_distribution.hh>
+#include <honei/woolb3/extraction.hh>
 
 
 using namespace honei;
@@ -29,12 +29,12 @@ using namespace tests;
 
 
 template <typename Tag_, typename DataType_>
-class EquilibriumDistributionTest :
+class ExtractionTest :
     public TaggedTest<Tag_>
 {
     public:
-        EquilibriumDistributionTest(const std::string & type) :
-            TaggedTest<Tag_>("equilibrium_distribution_test<" + type + ">")
+        ExtractionTest(const std::string & type) :
+            TaggedTest<Tag_>("extraction_test<" + type + ">")
         {
         }
 
@@ -54,11 +54,8 @@ class EquilibriumDistributionTest :
             Grid<DataType_, 9> grid(geometry, h, b, u, v);
             PackedGrid<DataType_, 9> pgrid(grid);
 
-            DataType_ e (0.5);
-            DataType_ g (9.81);
-
-            EquilibriumDistribution<Tag_>::value(pgrid, e, g);
+            Extraction<Tag_>::value(pgrid);
         }
 
 };
-EquilibriumDistributionTest<tags::CPU, float> equilibrium_distribution_test_float("float");
+ExtractionTest<tags::CPU, float> extraction_test_float("float");

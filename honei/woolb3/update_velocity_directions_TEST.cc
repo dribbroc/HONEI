@@ -21,7 +21,7 @@
 #include <iostream>
 #include <honei/woolb3/grid.hh>
 #include <honei/woolb3/packed_grid.hh>
-#include <honei/woolb3/equilibrium_distribution.hh>
+#include <honei/woolb3/update_velocity_directions.hh>
 
 
 using namespace honei;
@@ -29,12 +29,12 @@ using namespace tests;
 
 
 template <typename Tag_, typename DataType_>
-class EquilibriumDistributionTest :
+class UpVelDirTest :
     public TaggedTest<Tag_>
 {
     public:
-        EquilibriumDistributionTest(const std::string & type) :
-            TaggedTest<Tag_>("equilibrium_distribution_test<" + type + ">")
+        UpVelDirTest(const std::string & type) :
+            TaggedTest<Tag_>("upveldir_test<" + type + ">")
         {
         }
 
@@ -54,11 +54,8 @@ class EquilibriumDistributionTest :
             Grid<DataType_, 9> grid(geometry, h, b, u, v);
             PackedGrid<DataType_, 9> pgrid(grid);
 
-            DataType_ e (0.5);
-            DataType_ g (9.81);
-
-            EquilibriumDistribution<Tag_>::value(pgrid, e, g);
+            UpdateVelocityDirections<Tag_>::value(grid, pgrid);
         }
 
 };
-EquilibriumDistributionTest<tags::CPU, float> equilibrium_distribution_test_float("float");
+UpVelDirTest<tags::CPU, float> upveldir_test_float("float");
