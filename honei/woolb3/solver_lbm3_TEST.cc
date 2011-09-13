@@ -57,14 +57,14 @@ class SolverLBM3Test :
 
         virtual void run() const
         {
-            unsigned long g_h(64);
-            unsigned long g_w(64);
-            unsigned long timesteps(100);
+            unsigned long g_h(128);
+            unsigned long g_w(128);
+            unsigned long timesteps(250);
 
 
             Grid<D2Q9, DataType_> grid;
 
-            ScenarioCollection::get_scenario(0, g_h, g_w, grid);
+            ScenarioCollection::get_scenario(1, g_h, g_w, grid);
 
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
@@ -77,7 +77,7 @@ class SolverLBM3Test :
 
 
             grid.destroy();
-            ScenarioCollection::get_scenario(0, g_h, g_w, grid);
+            ScenarioCollection::get_scenario(1, g_h, g_w, grid);
             Grid3<DataType_, 9> grid3(*grid.obstacles, *grid.h, *grid.b, *grid.u, *grid.v);
             PackedGrid3<DataType_, 9> pgrid3(grid3);
             SolverLBM3<Tag_, DataType_, 9> solver3(grid3, pgrid3, grid.d_x, grid.d_y, grid.d_t, grid.tau);
@@ -152,7 +152,9 @@ class SolverLBM3Test :
             DenseMatrix<DataType_> h_3(grid.h->rows(), grid.h->columns(), 0);
             grid3.fill_h(h_3, *grid.obstacles, *pgrid3.h);
 
-            TEST_CHECK_EQUAL(h_3, *(grid.h));
+            for (unsigned long row(0) ; row < h_3.rows() ; ++row)
+                for (unsigned long col(0) ; col < h_3.columns() ; ++col)
+                    TEST_CHECK_EQUAL_WITHIN_EPS(h_3(row, col), (*grid.h)(row, col), 1e-5);
 
 
             info.destroy();
