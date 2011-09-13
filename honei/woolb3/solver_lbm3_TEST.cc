@@ -83,7 +83,7 @@ class SolverLBM3Test :
             SolverLBM3<Tag_, DataType_, 9> solver3(grid3, pgrid3, grid.d_x, grid.d_y, grid.d_t, grid.tau);
             solver3.do_preprocessing();
 
-            TEST_CHECK_EQUAL( *pgrid3.f_eq[0],*(data.f_eq_0));
+            /*TEST_CHECK_EQUAL( *pgrid3.f_eq[0],*(data.f_eq_0));
             TEST_CHECK_EQUAL( *pgrid3.f_eq[1],*(data.f_eq_1));
             TEST_CHECK_EQUAL( *pgrid3.f_eq[2],*(data.f_eq_2));
             TEST_CHECK_EQUAL( *pgrid3.f_eq[3],*(data.f_eq_3));
@@ -101,7 +101,7 @@ class SolverLBM3Test :
             TEST_CHECK_EQUAL( *pgrid3.f_temp[5],*(data.f_temp_5));
             TEST_CHECK_EQUAL( *pgrid3.f_temp[6],*(data.f_temp_6));
             TEST_CHECK_EQUAL( *pgrid3.f_temp[7],*(data.f_temp_7));
-            TEST_CHECK_EQUAL( *pgrid3.f_temp[8],*(data.f_temp_8));
+            TEST_CHECK_EQUAL( *pgrid3.f_temp[8],*(data.f_temp_8));*/
 
 
             TimeStamp at, bt;
@@ -121,7 +121,7 @@ class SolverLBM3Test :
             bt.take();
             std::cout<<"LBM3 TOE: "<<bt.total()-at.total()<<std::endl;
 
-            TEST_CHECK_EQUAL( *pgrid3.f_temp[0],*(data.f_temp_0));
+            /*TEST_CHECK_EQUAL( *pgrid3.f_temp[0],*(data.f_temp_0));
             TEST_CHECK_EQUAL( *pgrid3.f_temp[1],*(data.f_temp_1));
             TEST_CHECK_EQUAL( *pgrid3.f_temp[2],*(data.f_temp_2));
             TEST_CHECK_EQUAL( *pgrid3.f_temp[3],*(data.f_temp_3));
@@ -141,15 +141,19 @@ class SolverLBM3Test :
             TEST_CHECK_EQUAL( *pgrid3.f_eq[7],*(data.f_eq_7));
             TEST_CHECK_EQUAL( *pgrid3.f_eq[8],*(data.f_eq_8));
 
-            TEST_CHECK_EQUAL( *pgrid3.h,*(data.h));
+            TEST_CHECK_EQUAL( *pgrid3.h,*(data.h));*/
             //TEST_CHECK_EQUAL( *pgrid3.u,*(data.u));
             //TEST_CHECK_EQUAL( *pgrid3.v,*(data.v));
 
-            std::cout<<"MANUAL PASSED"<<std::endl;
 
-            //solver.do_postprocessing();
-            //GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
-            //std::cout << *grid.h << std::endl;
+            solver.do_postprocessing();
+            GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
+
+            DenseMatrix<DataType_> h_3(grid.h->rows(), grid.h->columns(), 0);
+            grid3.fill_h(h_3, *grid.obstacles, *pgrid3.h);
+
+            TEST_CHECK_EQUAL(h_3, *(grid.h));
+
 
             info.destroy();
             data.destroy();
