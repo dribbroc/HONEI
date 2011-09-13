@@ -36,56 +36,7 @@
 
 namespace honei
 {
-    unsigned long coord2idx(unsigned long x, unsigned long y, unsigned long max_col, std::string method)
-    {
-        if (method.compare("z-curve") == 0)
-        {
-            unsigned long r(0);
-            for (unsigned long i(0) ; i < sizeof(unsigned long) * 8 ; ++i)
-            {
-                r |= (x & 1ul << i) << i | (y & 1ul << i) << (i + 1);
-            }
-            return r;
-        }
-        else if (method.compare("row") == 0)
-        {
-            unsigned long r = max_col * y + x;
-            return r;
-        }
-        else
-        {
-            throw InternalError(method + " is not a valid ordering scheme!");
-            return 0;
-        }
-    }
-
-
-    void idx2coord(unsigned long & x, unsigned long & y, unsigned long r, unsigned long max_col, std::string method)
-    {
-        if (method.compare("z-curve") == 0)
-        {
-            unsigned long s(r);
-            x = 0;
-            y = 0;
-
-            for (unsigned long i(0) ; i < sizeof(unsigned long) * 8 ; i+=2)
-            {
-                x |= (s & 1ul) << (i/2);
-                s >>= 1ul;
-                y |= (s & 1ul) << (i/2);
-                s >>= 1ul;
-            }
-        }
-        else if (method.compare("row") == 0)
-        {
-            x = r % max_col;
-            y = r / max_col;
-        }
-        else
-        {
-            throw InternalError(method + " is not a valid ordering scheme!");
-        }
-    }
+    template <typename DT_, unsigned long directions> class Grid3;
 
     template <typename DT_, unsigned long directions>
         class CellComparator
@@ -102,11 +53,9 @@ namespace honei
 
                 bool operator() (Cell<DT_, directions> * i, Cell<DT_, directions> * j)
                 {
-                    return coord2idx(i->get_x(), i->get_y(), _max_col, _method) < coord2idx(j->get_x(), j->get_y(), _max_col, _method);
+                    return Grid3<DT_, directions>::coord2idx(i->get_x(), i->get_y(), _max_col, _method) < Grid3<DT_, directions>::coord2idx(j->get_x(), j->get_y(), _max_col, _method);
                 }
         };
-
-    template <typename DT_, unsigned long directions> class Grid3;
 
     template <typename DT_, unsigned long directions> struct Implementation<Grid3<DT_, directions> >
     {
@@ -138,7 +87,7 @@ namespace honei
                 unsigned long _local_size;
                 unsigned long _inner_halo_size;
 
-                unsigned long _idx2process(unsigned long idx, unsigned long process_count, unsigned long * /*starts*/, unsigned long * ends)
+                static unsigned long _idx2process(unsigned long idx, unsigned long process_count, unsigned long * /*starts*/, unsigned long * ends)
                 {
                     for (unsigned long i(0) ; i < process_count ; ++i)
                         if (idx < ends[i])
@@ -296,6 +245,57 @@ namespace honei
                         }
                     }
                     std::cout<<result;
+                }
+
+                static unsigned long coord2idx(unsigned long x, unsigned long y, unsigned long max_col, std::string method)
+                {
+                    if (method.compare("z-curve") == 0)
+                    {
+                        unsigned long r(0);
+                        for (unsigned long i(0) ; i < sizeof(unsigned long) * 8 ; ++i)
+                        {
+                            r |= (x & 1ul << i) << i | (y & 1ul << i) << (i + 1);
+                        }
+                        return r;
+                    }
+                    else if (method.compare("row") == 0)
+                    {
+                        unsigned long r = max_col * y + x;
+                        return r;
+                    }
+                    else
+                    {
+                        throw InternalError(method + " is not a valid ordering scheme!");
+                        return 0;
+                    }
+                }
+
+
+                static void idx2coord(unsigned long & x, unsigned long & y, unsigned long r, unsigned long max_col, std::string method)
+                {
+                    if (method.compare("z-curve") == 0)
+                    {
+                        unsigned long s(r);
+                        x = 0;
+                        y = 0;
+
+                        for (unsigned long i(0) ; i < sizeof(unsigned long) * 8 ; i+=2)
+                        {
+                            x |= (s & 1ul) << (i/2);
+                            s >>= 1ul;
+                            y |= (s & 1ul) << (i/2);
+                            s >>= 1ul;
+                        }
+                    }
+                    else if (method.compare("row") == 0)
+                    {
+                        x = r % max_col;
+                        y = r / max_col;
+                    }
+                    else
+                    {
+                        throw InternalError(method + " is not a valid ordering scheme!");
+                    }
                 }
 
                 Grid3(DenseMatrix<bool> & geometry, DenseMatrix<DT_> & h, DenseMatrix<DT_> & b, DenseMatrix<DT_> & u,
