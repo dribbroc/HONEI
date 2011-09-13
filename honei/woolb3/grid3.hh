@@ -86,6 +86,8 @@ namespace honei
                 unsigned long _idx_end;
                 unsigned long _local_size;
                 unsigned long _inner_halo_size;
+                std::string _inner_numbering;
+                std::string _outer_numbering;
 
                 static unsigned long _idx2process(unsigned long idx, unsigned long process_count, unsigned long * /*starts*/, unsigned long * ends)
                 {
@@ -247,6 +249,20 @@ namespace honei
                     std::cout<<result;
                 }
 
+                void fill_h(DenseMatrix<DT_> & h, DenseMatrix<bool> & geometry, DenseVector<DT_> & h_v)
+                {
+                    for (unsigned long idx(0) ; idx < h.size() ; ++idx)
+                    {
+                        unsigned long row(0);
+                        unsigned long col(0);
+                        idx2coord(col, row, idx, geometry.columns(), _inner_numbering);
+                        if (geometry(row, col) == false)
+                        {
+                            h(row, col) = h_v[idx];
+                        }
+                    }
+                }
+
                 static unsigned long coord2idx(unsigned long x, unsigned long y, unsigned long max_col, std::string method)
                 {
                     if (method.compare("z-curve") == 0)
@@ -302,10 +318,10 @@ namespace honei
                         DenseMatrix<DT_> & v, unsigned long process_id = 0, unsigned long process_count = 1) :
                     PrivateImplementationPattern<Grid3<DT_, directions>, Shared>(new Implementation<Grid3<DT_, directions> >())
                 {
-                    std::string outer_numbering("z-curve");
-                    //std::string outer_numbering("row");
-                    std::string inner_numbering("row");
-                    //std::string inner_numbering("z-curve");
+                    _outer_numbering = "z-curve";
+                    //_outer_numbering = "row";
+                    //_inner_numbering = "row";
+                    _inner_numbering = "z-curve";
 
                     //TODO iteration twice over every global cell is lame
                     // will be solved, when the partition vector is served from outside :)
@@ -316,7 +332,7 @@ namespace honei
                     {
                         unsigned long row(0);
                         unsigned long col(0);
-                        idx2coord(col, row, idx, geometry.columns(), outer_numbering);
+                        idx2coord(col, row, idx, geometry.columns(), _outer_numbering);
                         if (geometry(row, col) == false)
                             ++fluid_cells;
                     }
@@ -335,7 +351,7 @@ namespace honei
                         {
                             unsigned long row(0);
                             unsigned long col(0);
-                            idx2coord(col, row, idx, geometry.columns(), outer_numbering);
+                            idx2coord(col, row, idx, geometry.columns(), _outer_numbering);
                             if (geometry(row, col) == false)
                             {
                                 if (nfluid_cells == fluid_start)
@@ -367,7 +383,7 @@ namespace honei
                     {
                         unsigned long row(0);
                         unsigned long col(0);
-                        idx2coord(col, row, idx, geometry.columns(), outer_numbering);
+                        idx2coord(col, row, idx, geometry.columns(), _outer_numbering);
                         Cell<DT_, directions>* cell = new Cell<DT_, directions>(col, row, 1, 1,
                                 h(row, col), b(row, col), u(row, col), v(row, col));
                         this->_imp->cells.push_back(cell);
@@ -376,7 +392,7 @@ namespace honei
                     }
 
                     //resort cells by inner numbering
-                    CellComparator<DT_, directions> cell_comp(geometry.columns(), inner_numbering);
+                    CellComparator<DT_, directions> cell_comp(geometry.columns(), _inner_numbering);
                     std::sort(this->_imp->cells.begin(), this->_imp->cells.end(), cell_comp);
 
                     // create temp cell map with global id keys
@@ -384,7 +400,7 @@ namespace honei
                     for (unsigned long i(0) ; i < this->_imp->cells.size() ; ++i)
                     {
                         temp_cells.insert(std::pair<unsigned long, Cell<DT_, directions> *>
-                                (coord2idx(this->_imp->cells.at(i)->get_x(), this->_imp->cells.at(i)->get_y(), geometry.columns(), inner_numbering), this->_imp->cells.at(i)));
+                                (coord2idx(this->_imp->cells.at(i)->get_x(), this->_imp->cells.at(i)->get_y(), geometry.columns(), _inner_numbering), this->_imp->cells.at(i)));
                     }
 
                     // inner and outer halo
@@ -408,8 +424,8 @@ namespace honei
                             {
                                 if(_is_valid_direction(direction, row, col, new_row, new_col, geometry))
                                 {
-                                    target_id = coord2idx(new_col, new_row, geometry.columns(), inner_numbering);
-                                    unsigned long outer_target_id(coord2idx(new_col, new_row, geometry.columns(), outer_numbering));
+                                    target_id = coord2idx(new_col, new_row, geometry.columns(), _inner_numbering);
+                                    unsigned long outer_target_id(coord2idx(new_col, new_row, geometry.columns(), _outer_numbering));
                                     // if our neighbour is another "normal" cell
                                     if(_idx2process(outer_target_id, process_count, idx_starts, idx_ends) == process_id)
                                         (*i)->add_neighbour(temp_cells[target_id], direction);
@@ -429,7 +445,7 @@ namespace honei
                                         {
                                             unsigned long ncol(0);
                                             unsigned long nrow(0);
-                                            idx2coord(ncol, nrow, target_id, geometry.columns(), inner_numbering);
+                                            idx2coord(ncol, nrow, target_id, geometry.columns(), _inner_numbering);
                                             Cell<DT_, directions>* cell = new Cell<DT_, directions>(ncol, nrow, 1, 1,
                                                     h(nrow, ncol), b(nrow, ncol), u(nrow, ncol), v(nrow, ncol));
                                             halo[target_id] = cell;
@@ -491,7 +507,7 @@ namespace honei
                     for (unsigned long i(_local_size) ; i < this->_imp->cells.size() ; ++i)
                     {
                         this->_imp->halo_map.insert(std::pair<unsigned long, unsigned long>(
-                                    coord2idx(this->_imp->cells.at(i)->get_x(), this->_imp->cells.at(i)->get_y(), geometry.columns(), outer_numbering), i));
+                                    coord2idx(this->_imp->cells.at(i)->get_x(), this->_imp->cells.at(i)->get_y(), geometry.columns(), _outer_numbering), i));
                     }
                 }
         };
