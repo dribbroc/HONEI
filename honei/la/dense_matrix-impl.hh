@@ -590,8 +590,6 @@ namespace honei
     {
         CONTEXT("When comparing two dense matrices:");
 
-        bool result(true);
-
         if (left.columns() != right.columns())
         {
             throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
@@ -603,27 +601,22 @@ namespace honei
         }
 
         for (typename DenseMatrix<DataType_>::ConstElementIterator i(left.begin_elements()), i_end(left.end_elements()),
-                j(right.begin_elements()) ; i != i_end ; ++i)
+                j(right.begin_elements()) ; i != i_end ; ++i, ++j)
         {
             CONTEXT("When comparing elements at index '" + stringify(i.index()) + "':");
 
-            if (fabs((*i - *j)) <= std::numeric_limits<DataType_>::epsilon())
+            if (fabs((*i - *j)) > std::numeric_limits<DataType_>::epsilon())
             {
-                ++j;
-                continue;
+                return false;
             }
 
-            if (*i == *i || *j == *j)
+            if (*i != *i || *j != *j)
             {
-                ++j;
-                continue;
+                return false;
             }
-
-            result = false;
-            break;
         }
 
-        return result;
+        return true;
     }
 
     template <typename DataType_>
