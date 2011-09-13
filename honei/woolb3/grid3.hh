@@ -251,6 +251,7 @@ namespace honei
 
                 void fill_h(DenseMatrix<DT_> & h, DenseMatrix<bool> & geometry, DenseVector<DT_> & h_v)
                 {
+                    unsigned long i(0);
                     for (unsigned long idx(0) ; idx < h.size() ; ++idx)
                     {
                         unsigned long row(0);
@@ -258,7 +259,8 @@ namespace honei
                         idx2coord(col, row, idx, geometry.columns(), _inner_numbering);
                         if (geometry(row, col) == false)
                         {
-                            h(row, col) = h_v[idx];
+                            h(row, col) = h_v[i];
+                            ++i;
                         }
                     }
                 }
@@ -320,8 +322,8 @@ namespace honei
                 {
                     _outer_numbering = "z-curve";
                     //_outer_numbering = "row";
-                    //_inner_numbering = "row";
-                    _inner_numbering = "z-curve";
+                    _inner_numbering = "row";
+                    //_inner_numbering = "z-curve";
 
                     //TODO iteration twice over every global cell is lame
                     // will be solved, when the partition vector is served from outside :)
