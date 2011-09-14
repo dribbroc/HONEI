@@ -146,6 +146,66 @@ namespace honei
     }
 
     template <typename DataType_>
+    BandedMatrixQ1<DataType_>::BandedMatrixQ1(SparseMatrixELL<DataType_> & src) :
+        PrivateImplementationPattern<BandedMatrixQ1<DataType_>, Shared>(new Implementation<BandedMatrixQ1<DataType_> >(src.rows()))
+    {
+        CONTEXT("When creating BandedMatrixQ1 from SparseMatrixELL:");
+        ASSERT(src.rows() > 0, "size is zero!");
+
+        if(src.rows() != src.columns())
+            throw InternalError("Input Matrix is not square!");
+
+        unsigned long target;
+        for (unsigned long level(1) ; level <= 50 ; ++level)
+        {
+            target = (unsigned long)pow((pow(2, level) + 1), 2);
+            if (target >= src.rows())
+                break;
+        }
+        if (src.rows() != target)
+            throw InternalError("Size matches not ((2^L) +1)^2, L integer!");
+
+        this->_imp->bands[LL].reset(new DenseVector<DataType_>(src.rows()));
+        this->_imp->bands[LD].reset(new DenseVector<DataType_>(src.rows()));
+        this->_imp->bands[LU].reset(new DenseVector<DataType_>(src.rows()));
+        this->_imp->bands[DL].reset(new DenseVector<DataType_>(src.rows()));
+        this->_imp->bands[DD].reset(new DenseVector<DataType_>(src.rows()));
+        this->_imp->bands[DU].reset(new DenseVector<DataType_>(src.rows()));
+        this->_imp->bands[UL].reset(new DenseVector<DataType_>(src.rows()));
+        this->_imp->bands[UD].reset(new DenseVector<DataType_>(src.rows()));
+        this->_imp->bands[UU].reset(new DenseVector<DataType_>(src.rows()));
+
+        for (unsigned long i(0) ; i < src.rows() ; ++i)
+        {
+            if (i + this->root() + 1 < src.rows())
+                (*this->_imp->bands[LL])[i + this->root() + 1] = src(i + this->root() + 1, i);
+
+            if (i + this->root() < src.rows())
+                (*this->_imp->bands[LD])[i + this->root()] = src(i + this->root(), i);
+
+            if (i + this->root() - 1 < src.rows())
+                (*this->_imp->bands[LU])[i + this->root() - 1] = src(i + this->root() - 1, i);
+
+            if (i + 1 < src.rows())
+            (*this->_imp->bands[DL])[i + 1] = src(i + 1, i);
+
+            (*this->_imp->bands[DD])[i] = src(i, i);
+
+            if (i + 1 < src.rows())
+                (*this->_imp->bands[DU])[i] = src(i, i + 1);
+
+            if (i + this->root() - 1 < src.rows())
+                (*this->_imp->bands[UL])[i] = src(i, i + this->root() - 1);
+
+            if (i + this->root() < src.rows())
+                (*this->_imp->bands[UD])[i] = src(i, i + this->root());
+
+            if (i + this->root() + 1 < src.rows())
+                (*this->_imp->bands[UU])[i] = src(i, i + this->root() + 1);
+        }
+    }
+
+    template <typename DataType_>
     BandedMatrixQ1<DataType_>::BandedMatrixQ1(const BandedMatrixQ1<DataType_> & other) :
         PrivateImplementationPattern<BandedMatrixQ1<DataType_>, Shared>(other._imp)
     {

@@ -24,6 +24,7 @@
 
 #include <honei/la/dense_vector.hh>
 #include <honei/la/banded_matrix.hh>
+#include <honei/la/sparse_matrix_ell.hh>
 #include <honei/util/private_implementation_pattern.hh>
 
 namespace honei
@@ -80,6 +81,13 @@ namespace honei
              * \param src The BandedMatrix our matrix will be created from.
              */
             explicit BandedMatrixQ1(BandedMatrix<DataType_> & src);
+
+            /**
+             * Constructor.
+             *
+             * \param src The BandedMatrix our matrix will be created from.
+             */
+            explicit BandedMatrixQ1(SparseMatrixELL<DataType_> & src);
 
             /// Copy-constructor.
             BandedMatrixQ1(const BandedMatrixQ1<DataType_> & other);

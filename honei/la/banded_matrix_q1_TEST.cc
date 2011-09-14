@@ -20,6 +20,7 @@
 #include <honei/la/banded_matrix_q1.hh>
 #include <honei/la/banded_matrix.hh>
 #include <honei/la/sparse_matrix.hh>
+#include <honei/la/sparse_matrix_ell.hh>
 #include <honei/la/vector_error.hh>
 #include <honei/util/unittest.hh>
 
@@ -40,7 +41,7 @@ class BandedMatrixQ1QuickTest :
 
         virtual void run() const
         {
-            unsigned long size (1089);
+            unsigned long size (81);
             DenseVector<DataType_> dv0(size, DataType_(4711));
             for (unsigned long index(0) ; index < size ; ++index)
             {
@@ -75,6 +76,16 @@ class BandedMatrixQ1QuickTest :
             {
                 for (unsigned long column(0) ; column < sm.columns() ; ++column)
                     TEST_CHECK_EQUAL(sm(row, column), bm1(row, column));
+            }
+
+            SparseMatrixELL<DataType_> smell(sm);
+            BandedMatrixQ1<DataType_> bm4(smell);
+            for (unsigned long row(0) ; row < sm.rows() ; ++row)
+            {
+                for (unsigned long column(0) ; column < sm.columns() ; ++column)
+                {
+                    TEST_CHECK_EQUAL(bm4(row, column), smell(row, column));
+                }
             }
 
 
