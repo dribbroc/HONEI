@@ -163,14 +163,11 @@ namespace honei
 
                 alpha_new = DotProduct<Tag_>::value(r, p);
 
-                DT_ temp;
-
                 while(iterations < max_iters)
                 {
                     Product<Tag_>::value(v, A, p);
+                    lambda = alpha_new / DotProduct<Tag_>::value(v, p);
 
-                    temp = DotProduct<Tag_>::value(v, p);
-                    lambda = alpha_new / (fabs(temp) >= std::numeric_limits<DT_>::epsilon() ? temp : std::numeric_limits<DT_>::epsilon());
 
                     ++iterations;
                     ScaledSum<Tag_>::value(x, p, lambda);
@@ -200,7 +197,7 @@ namespace honei
 
                     alpha_new = DotProduct<Tag_>::value(r, z);
 
-                    Scale<Tag_>::value(p, alpha_new / (fabs(alpha) >= std::numeric_limits<DT_>::epsilon() ? alpha : std::numeric_limits<DT_>::epsilon()) );
+                    Scale<Tag_>::value(p, alpha_new / alpha);
                     Sum<Tag_>::value(p, z);
                 }
 
