@@ -41,9 +41,12 @@ namespace honei
     struct UpdateVelocityDirections<tags::CPU>
     {
         template <typename DT_, unsigned long directions>
-        static void value(Grid3<DT_, directions> & grid, PackedGrid3<DT_, directions> & pgrid)
+        static void value(Grid3<DT_, directions> & grid, PackedGrid3<DT_, directions> & pgrid, unsigned long start = 0, unsigned long end = 0)
         {
-            for (unsigned long i(0) ; i < pgrid.h->size() ; ++i)
+            if (end == 0)
+                end = pgrid.h->size();
+
+            for (unsigned long i(start) ; i < end ; ++i)
             {
                 for (unsigned long direction(1) ; direction < directions ; ++direction)
                 if(grid.get_cell(i)->get_neighbours(direction).size() == 0)

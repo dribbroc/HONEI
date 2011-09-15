@@ -57,12 +57,31 @@ namespace honei
                 }
         };
 
+    template <typename DT_, unsigned long directions>
+    struct SyncData
+    {
+        DT_ data;
+        unsigned long idx;
+        signed long target_vector; // 1..9 f_n ; -1 h ; -2 u ; -3 v
+        unsigned long process;
+        Cell<DT_, directions> * cell;
+
+        SyncData(DT_ _data, unsigned long _idx, signed long _target_vector, unsigned long _process, Cell<DT_, directions> * _cell):
+            data(_data),
+            idx(_idx),
+            target_vector(_target_vector),
+            process(_process),
+            cell(_cell)
+        {
+        }
+    };
+
+
     template <typename DT_, unsigned long directions> struct Implementation<Grid3<DT_, directions> >
     {
         std::vector<Cell<DT_, directions> *> cells; // all cells with ordering (inner|outer_halo|inner_halo)
-        std::multimap<unsigned long, Cell<DT_, directions> *> h_targets; // mapping of process -> cell to send
-        std::multimap<unsigned long, Cell<DT_, directions> *> dir_targets[directions]; // mapping of process -> cell to send
         std::map<unsigned long, unsigned long> halo_map; // mapping of global idx -> local index into _cells
+        std::vector<SyncData<DT_, directions> > send_targets; // list of all cells to send
 
         Implementation()
         {
@@ -88,6 +107,11 @@ namespace honei
                 unsigned long _inner_halo_size;
                 std::string _inner_numbering;
                 std::string _outer_numbering;
+
+                static bool _sync_data_comp(SyncData<DT_, directions> i, SyncData<DT_, directions> j)
+                {
+                    return i.process < j.process;
+                }
 
                 static unsigned long _idx2process(unsigned long idx, unsigned long process_count, unsigned long * /*starts*/, unsigned long * ends)
                 {
@@ -203,7 +227,13 @@ namespace honei
             public:
                 // copy constructor
                 Grid3(const Grid3<DT_, directions> & other) :
-                    PrivateImplementationPattern<Grid3<DT_, directions>, Shared>(other._imp)
+                    PrivateImplementationPattern<Grid3<DT_, directions>, Shared>(other._imp),
+                    _idx_start(other._idx_start),
+                    _idx_end(other._idx_end),
+                    _local_size(other._local_size),
+                    _inner_halo_size(other._inner_halo_size),
+                    _inner_numbering(other._inner_numbering),
+                    _outer_numbering(other._outer_numbering)
                 {
                 }
 
@@ -229,6 +259,11 @@ namespace honei
                 Cell<DT_, directions> * get_cell(unsigned long i)
                 {
                     return this->_imp->cells.at(i);
+                }
+
+                std::vector<SyncData<DT_, directions> > & send_targets()
+                {
+                    return this->_imp->send_targets;
                 }
 
                 static void print_numbering(DenseMatrix<bool> & geometry, std::string method)
@@ -322,8 +357,8 @@ namespace honei
                 {
                     _outer_numbering = "z-curve";
                     //_outer_numbering = "row";
-                    _inner_numbering = "row";
-                    //_inner_numbering = "z-curve";
+                    //_inner_numbering = "row";
+                    _inner_numbering = "z-curve";
 
                     //TODO iteration twice over every global cell is lame
                     // will be solved, when the partition vector is served from outside :)
@@ -441,10 +476,12 @@ namespace honei
                                         if(halo_it != halo.end())
                                         {
                                             (*i)->add_neighbour(halo_it->second, direction);
-                                            this->_imp->dir_targets[direction].insert(std::pair<unsigned long, Cell<DT_, directions> *>(_idx2process(outer_target_id, process_count, idx_starts, idx_ends), halo_it->second));
+                                            SyncData<DT_, directions> sync_data(0, outer_target_id, direction, _idx2process(outer_target_id, process_count, idx_starts, idx_ends), halo_it->second);
+                                            this->_imp->send_targets.push_back(sync_data);
                                         }
                                         else
                                         {
+                                            // TODO sind ncol/nrow mit new_row und new_col identisch?
                                             unsigned long ncol(0);
                                             unsigned long nrow(0);
                                             idx2coord(ncol, nrow, target_id, geometry.columns(), _inner_numbering);
@@ -452,7 +489,8 @@ namespace honei
                                                     h(nrow, ncol), b(nrow, ncol), u(nrow, ncol), v(nrow, ncol));
                                             halo[target_id] = cell;
                                             (*i)->add_neighbour(cell, direction);
-                                            this->_imp->dir_targets[direction].insert(std::pair<unsigned long, Cell<DT_, directions> *>(_idx2process(outer_target_id, process_count, idx_starts, idx_ends), cell));
+                                            SyncData<DT_, directions> sync_data(0, outer_target_id, direction, _idx2process(outer_target_id, process_count, idx_starts, idx_ends), cell);
+                                            this->_imp->send_targets.push_back(sync_data);
                                         }
                                     }
                                 }
@@ -461,11 +499,14 @@ namespace honei
                             // copy inner halo to this->_imp->h_targets
                             for (typename std::set<unsigned long>::iterator t = h_targets.begin() ; t != h_targets.end() ; ++t)
                             {
-                                this->_imp->h_targets.insert(std::pair<unsigned long, Cell<DT_, directions> *>(*t, *i));
+                                SyncData<DT_, directions> sync_data(0, coord2idx(col, row, geometry.columns(), _outer_numbering), -1, *t, *i);
+                                this->_imp->send_targets.push_back(sync_data);
                             }
                         }
                     }
 
+                    // sort sync_data by target process
+                    std::sort(this->_imp->send_targets.begin(), this->_imp->send_targets.end(), _sync_data_comp);
 
                     // insert outer halo cells in cell vector
                     for (halo_it = halo.begin() ; halo_it != halo.end() ; ++halo_it)
