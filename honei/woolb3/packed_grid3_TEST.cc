@@ -58,7 +58,7 @@ class PackedGrid3Test :
                 std::cout<<(*i).process<<" : "<<(*i).cell->get_id()<<"("<<(*i).cell->get_y()<<"/"<<(*i).cell->get_x()<<") dir:"<<(*i).target_vector<<std::endl;
             }
 
-            std::cout<<std::endl<<"cell in packed vector:"<<std::endl;
+            std::cout<<std::endl<<"cells in packed vector:"<<std::endl;
             for (unsigned long i(0) ; i < grid.size() ; ++i)
             {
                 std::cout<<grid.get_cell(i)->get_id()<<"("<<grid.get_cell(i)->get_y()<<"/"<<grid.get_cell(i)->get_x()<<")"<<":"<<std::endl;
