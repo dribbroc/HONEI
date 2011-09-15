@@ -41,7 +41,12 @@ namespace honei
             {
                 for (typename std::vector<SyncData<DT_, directions> >::iterator i(grid.send_targets().begin()) ; i != grid.send_targets().end() ; ++i)
                 {
-                    i->data = (*h)[i->cell->get_id()];
+                    if (i->target_vector == -1)
+                        i->data = (*h)[i->cell->get_id()];
+                    else if (i->target_vector >= 0 && i->target_vector < directions)
+                        i->data = (*f_temp[i->target_vector])[i->cell->get_id()];
+                    else
+                        throw InternalError("Wrong target_vector in SyncData found!");
                 }
             }
 

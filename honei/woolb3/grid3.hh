@@ -352,7 +352,7 @@ namespace honei
                 }
 
                 Grid3(DenseMatrix<bool> & geometry, DenseMatrix<DT_> & h, DenseMatrix<DT_> & b, DenseMatrix<DT_> & u,
-                        DenseMatrix<DT_> & v, unsigned long process_id = 1, unsigned long process_count = 2) :
+                        DenseMatrix<DT_> & v, unsigned long process_id = 0, unsigned long process_count = 1) :
                     PrivateImplementationPattern<Grid3<DT_, directions>, Shared>(new Implementation<Grid3<DT_, directions> >())
                 {
                     _outer_numbering = "z-curve";
