@@ -352,7 +352,7 @@ namespace honei
                 }
 
                 Grid3(DenseMatrix<bool> & geometry, DenseMatrix<DT_> & h, DenseMatrix<DT_> & b, DenseMatrix<DT_> & u,
-                        DenseMatrix<DT_> & v, unsigned long process_id = 0, unsigned long process_count = 1) :
+                        DenseMatrix<DT_> & v, unsigned long process_id = 1, unsigned long process_count = 2) :
                     PrivateImplementationPattern<Grid3<DT_, directions>, Shared>(new Implementation<Grid3<DT_, directions> >())
                 {
                     _outer_numbering = "z-curve";
@@ -481,12 +481,8 @@ namespace honei
                                         }
                                         else
                                         {
-                                            // TODO sind ncol/nrow mit new_row und new_col identisch?
-                                            unsigned long ncol(0);
-                                            unsigned long nrow(0);
-                                            idx2coord(ncol, nrow, target_id, geometry.columns(), _inner_numbering);
-                                            Cell<DT_, directions>* cell = new Cell<DT_, directions>(ncol, nrow, 1, 1,
-                                                    h(nrow, ncol), b(nrow, ncol), u(nrow, ncol), v(nrow, ncol));
+                                            Cell<DT_, directions>* cell = new Cell<DT_, directions>(new_col, new_row, 1, 1,
+                                                    h(new_row, new_col), b(new_row, new_col), u(new_row, new_col), v(new_row, new_col));
                                             halo[target_id] = cell;
                                             (*i)->add_neighbour(cell, direction);
                                             SyncData<DT_, directions> sync_data(0, outer_target_id, direction, _idx2process(outer_target_id, process_count, idx_starts, idx_ends), cell);
