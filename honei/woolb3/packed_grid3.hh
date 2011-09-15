@@ -37,6 +37,16 @@ namespace honei
     class PackedGrid3
     {
         public:
+            void setup_synch_data()
+            {
+                for (typename std::vector<SyncData<DT_, directions> >::iterator i(grid.send_targets().begin()) ; i != grid.send_targets().end() ; ++i)
+                {
+                    i->data = (*h)[i->cell->get_id()];
+                }
+            }
+
+            Grid3<DT_, directions> grid;
+
             SharedArray<shared_ptr<DenseVector<unsigned long> > > neighbours;
             SharedArray<shared_ptr<DenseVector<unsigned long> > > dir;
             SharedArray<shared_ptr<DenseVector<unsigned long> > > dir_index;
@@ -53,7 +63,9 @@ namespace honei
             shared_ptr<DenseVector<DT_> > distribution_x;
             shared_ptr<DenseVector<DT_> > distribution_y;
 
-            PackedGrid3(Grid3<DT_, directions> & grid) :
+
+            PackedGrid3(Grid3<DT_, directions> & grid3) :
+                grid(grid3),
                 neighbours(directions),
                 dir(directions),
                 dir_index(directions),
@@ -128,6 +140,7 @@ namespace honei
                     (*v)[idx] = grid.get_cell(idx)->get_v();
                 }
 
+                // fill f's
                 for (unsigned long i(0) ; i < directions ; ++i)
                 {
                     f[i].reset(new DenseVector<DT_>(grid.size(), 0));

@@ -40,13 +40,19 @@ namespace honei
     struct Extraction<tags::CPU>
     {
         template <typename DT_, unsigned long directions>
-        static void value(PackedGrid3<DT_, directions> & pgrid)
+        static void value(PackedGrid3<DT_, directions> & pgrid, unsigned long start = 0, unsigned long end = 0)
         {
+            if (end == 0)
+                end = pgrid.h->size();
+
             for (unsigned long direction(0) ; direction < directions ; ++direction)
             {
-                DenseVector<DT_> swap = *pgrid.f[direction];
-                pgrid.f[direction].reset(new DenseVector<DT_>(*pgrid.f_temp[direction]));
-                pgrid.f_temp[direction].reset(new DenseVector<DT_>(swap));
+                for (unsigned long i(start) ; i < end ; ++i)
+                {
+                    DT_ t = (*pgrid.f[direction])[i];
+                    (*pgrid.f[direction])[i] = (*pgrid.f_temp[direction])[i];
+                    (*pgrid.f_temp[direction])[i] = t;
+                }
             }
 
             DT_ * f[directions];
@@ -56,7 +62,7 @@ namespace honei
             DT_ * u(pgrid.u->elements());
             DT_ * v(pgrid.v->elements());
 
-            for (unsigned long i(0) ; i < pgrid.h->size() ; ++i)
+            for (unsigned long i(start) ; i < end ; ++i)
             {
                 (h)[i] = (f[0])[i] +
                     (f[1])[i] +

@@ -95,13 +95,36 @@ namespace honei
 
                 void solve()
                 {
-                    UpdateVelocityDirections<Tag_>::value(_grid, _pgrid);
+                    solve_outer();
+                    solve_inner();
+                }
 
-                    Extraction<Tag_>::value(_pgrid);
+                void solve_inner()
+                {
+                    unsigned long start(0);
+                    unsigned long end(_grid.local_size());
 
-                    EquilibriumDistribution<Tag_>::value(_pgrid, _gravity, _e);
+                    UpdateVelocityDirections<Tag_>::value(_grid, _pgrid, start, end);
 
-                    CollideStream<Tag_>::value(_pgrid, _relaxation_time);
+                    Extraction<Tag_>::value(_pgrid, start, end);
+
+                    EquilibriumDistribution<Tag_>::value(_pgrid, _gravity, _e, start, end);
+
+                    CollideStream<Tag_>::value(_pgrid, _relaxation_time, start, end);
+                }
+
+                void solve_outer()
+                {
+                    unsigned long start(_grid.size() - _grid.inner_halo_size());
+                    unsigned long end(_grid.size());
+
+                    UpdateVelocityDirections<Tag_>::value(_grid, _pgrid, start, end);
+
+                    Extraction<Tag_>::value(_pgrid, start, end);
+
+                    EquilibriumDistribution<Tag_>::value(_pgrid, _gravity, _e, start, end);
+
+                    CollideStream<Tag_>::value(_pgrid, _relaxation_time, start, end);
                 }
     };
 }

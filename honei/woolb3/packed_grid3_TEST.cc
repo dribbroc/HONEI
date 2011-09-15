@@ -50,7 +50,15 @@ class PackedGrid3Test :
             Grid3<DataType_, 9>::print_numbering(geometry, "z-curve");
             std::cout<<geometry;
             Grid3<DataType_, 9> grid(geometry, h, b, u, v);
+            PackedGrid3<DataType_, 9> pgrid(grid);
 
+            std::cout<<std::endl<<"'to send' targets:"<<std::endl;
+            for (typename std::vector<SyncData<DataType_, 9> >::iterator i(grid.send_targets().begin()) ; i != grid.send_targets().end() ; ++i)
+            {
+                std::cout<<(*i).process<<" : "<<(*i).cell->get_id()<<"("<<(*i).cell->get_y()<<"/"<<(*i).cell->get_x()<<") dir:"<<(*i).target_vector<<std::endl;
+            }
+
+            std::cout<<std::endl<<"cell in packed vector:"<<std::endl;
             for (unsigned long i(0) ; i < grid.size() ; ++i)
             {
                 std::cout<<grid.get_cell(i)->get_id()<<"("<<grid.get_cell(i)->get_y()<<"/"<<grid.get_cell(i)->get_x()<<")"<<":"<<std::endl;
@@ -66,7 +74,6 @@ class PackedGrid3Test :
             }
             std::cout<<endl;
 
-            PackedGrid3<DataType_, 9> pgrid(grid);
 
             std::cout<<"raw dir vectors: "<<std::endl;
             for (unsigned long i(0) ; i < 9 ; ++i)

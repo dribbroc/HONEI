@@ -154,7 +154,7 @@ class SolverLBM3Test :
 
             for (unsigned long row(0) ; row < h_3.rows() ; ++row)
                 for (unsigned long col(0) ; col < h_3.columns() ; ++col)
-                    TEST_CHECK_EQUAL_WITHIN_EPS(h_3(row, col), (*grid.h)(row, col), 1e-5);
+                    TEST_CHECK_EQUAL_WITHIN_EPS(h_3(row, col), (*grid.h)(row, col), 1e-6);
 
 
             info.destroy();

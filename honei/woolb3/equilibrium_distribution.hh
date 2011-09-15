@@ -40,8 +40,10 @@ namespace honei
     struct EquilibriumDistribution<tags::CPU>
     {
         template <typename DT_, unsigned long directions>
-        static void value(PackedGrid3<DT_, directions> & pgrid, DT_ g, DT_ e)
+        static void value(PackedGrid3<DT_, directions> & pgrid, DT_ g, DT_ e, unsigned long start = 0, unsigned long end = 0)
         {
+            if (end == 0)
+                end = pgrid.h->size();
             unsigned long direction(0);
 
             DT_ * f_eq(pgrid.f_eq[direction]->elements());
@@ -51,7 +53,7 @@ namespace honei
             DT_ d_x;
             DT_ d_y;
 
-            for (unsigned long i(0) ; i < pgrid.h->size() ; ++i)
+            for (unsigned long i(start) ; i < end ; ++i)
             {
                 f_eq[i] = h[i] - ((DT_(5.) * g * h[i] * h[i]) / (DT_(6.) * e * e)) -
                     ((DT_(2.) * h[i]) /(DT_(3.) * e * e) * (u[i] * u[i] + v[i] * v[i]));
@@ -62,7 +64,7 @@ namespace honei
                 f_eq = pgrid.f_eq[direction]->elements();
                 d_x = (*pgrid.distribution_x)[direction];
                 d_y = (*pgrid.distribution_y)[direction];
-                for (unsigned long i(0) ; i < pgrid.h->size() ; ++i)
+                for (unsigned long i(start) ; i < end ; ++i)
                 {
                     f_eq[i] = ((g * h[i] * h[i]) /(DT_(6.) * e * e)) +
                         ((h[i] / (DT_(3.) * e * e)) * (d_x * u[i] + d_y * v[i])) +
@@ -76,7 +78,7 @@ namespace honei
                 f_eq = pgrid.f_eq[direction]->elements();
                 d_x = (*pgrid.distribution_x)[direction];
                 d_y = (*pgrid.distribution_y)[direction];
-                for (unsigned long i(0) ; i < pgrid.h->size() ; ++i)
+                for (unsigned long i(start) ; i < end ; ++i)
                 {
                             f_eq[i] = ((g * h[i] * h[i]) /(DT_(24.) * e * e)) +
                                           ((h[i] / (DT_(12.) * e * e)) * (d_x * u[i] + d_y * v[i])) +

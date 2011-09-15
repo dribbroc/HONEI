@@ -40,14 +40,18 @@ namespace honei
     struct CollideStream<tags::CPU>
     {
         template <typename DT_, unsigned long directions>
-        static void value(PackedGrid3<DT_, directions> & pgrid, DT_ tau)
+        static void value(PackedGrid3<DT_, directions> & pgrid, DT_ tau, unsigned long start = 0, unsigned long end = 0)
         {
+            if (end == 0)
+                end = pgrid.h->size();
+
             for (unsigned long direction(0) ; direction < directions ; ++direction)
             {
                 const DT_ * const f(pgrid.f[direction]->elements());
                 const DT_ * const f_eq(pgrid.f_eq[direction]->elements());
                 DT_ * f_temp(pgrid.f_temp[direction]->elements());
-                const unsigned long * const dir_index(pgrid.dir_index[direction]->elements());
+                // TODO start und end punkt für dir_index vektoren finden ist garnicht so leicht
+                /*const unsigned long * const dir_index(pgrid.dir_index[direction]->elements());
                 const unsigned long * const dir(pgrid.dir[direction]->elements());
                 for (unsigned long begin(0), half(0) ; begin < pgrid.dir_index[direction]->size() - 1; begin+=2, ++half)
                 {
@@ -56,13 +60,13 @@ namespace honei
                     {
                         f_temp[dir[half] + offset] = f[i] - (f[i] - f_eq[i])/tau;
                     }
-                }
-                /*const unsigned long * neighbours(pgrid.neighbours[direction]->elements());
-                const unsigned long end(pgrid.h->size());
-                for (unsigned long i(0) ; i < end ; ++i)
-                {
-                    f_temp[neighbours[i]] = f[i] - (f[i] - f_eq[i])/tau;
                 }*/
+                const unsigned long * neighbours(pgrid.neighbours[direction]->elements());
+                for (unsigned long i(start) ; i < end ; ++i)
+                {
+                    if (neighbours[i] < pgrid.h->size())
+                        f_temp[neighbours[i]] = f[i] - (f[i] - f_eq[i])/tau;
+                }
             }
         }
     };
