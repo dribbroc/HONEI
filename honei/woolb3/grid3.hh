@@ -266,6 +266,11 @@ namespace honei
                     return this->_imp->send_targets;
                 }
 
+                std::map<unsigned long, unsigned long> & halo_map()
+                {
+                    return this->_imp->halo_map;
+                }
+
                 static void print_numbering(DenseMatrix<bool> & geometry, std::string method)
                 {
                     DenseMatrix<long> result(geometry.rows(), geometry.columns(), -1);
@@ -284,19 +289,19 @@ namespace honei
                     std::cout<<result;
                 }
 
-                void fill_h(DenseMatrix<DT_> & h, DenseMatrix<bool> & geometry, DenseVector<DT_> & h_v)
+                void fill_h(DenseMatrix<DT_> & h, DenseVector<DT_> & h_v)
                 {
-                    unsigned long i(0);
-                    for (unsigned long idx(0) ; idx < h.size() ; ++idx)
+                    if (h_v.size() != this->size())
+                        throw InternalError("Grid and Packed Vector size missmatch!");
+
+                    for (unsigned long idx(0) ; idx < _local_size ; ++idx)
                     {
-                        unsigned long row(0);
-                        unsigned long col(0);
-                        idx2coord(col, row, idx, geometry.columns(), _inner_numbering);
-                        if (geometry(row, col) == false)
-                        {
-                            h(row, col) = h_v[i];
-                            ++i;
-                        }
+                        h(this->get_cell(idx)->get_y(), this->get_cell(idx)->get_x()) = h_v[idx];
+                    }
+
+                    for (unsigned long idx(this->size() - _inner_halo_size) ; idx < this->size() ; ++idx)
+                    {
+                        h(this->get_cell(idx)->get_y(), this->get_cell(idx)->get_x()) = h_v[idx];
                     }
                 }
 
@@ -357,8 +362,8 @@ namespace honei
                 {
                     _outer_numbering = "z-curve";
                     //_outer_numbering = "row";
-                    //_inner_numbering = "row";
-                    _inner_numbering = "z-curve";
+                    _inner_numbering = "row";
+                    //_inner_numbering = "z-curve";
 
                     //TODO iteration twice over every global cell is lame
                     // will be solved, when the partition vector is served from outside :)

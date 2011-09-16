@@ -49,10 +49,10 @@ namespace honei
             for (unsigned long i(start) ; i < end ; ++i)
             {
                 for (unsigned long direction(1) ; direction < directions ; ++direction)
-                if(grid.get_cell(i)->get_neighbours(direction).size() == 0)
-                {
-                    (*pgrid.f_temp[direction + 4 < 9 ? direction + 4 : direction - 4])[i] = (*pgrid.f_temp[direction])[i];
-                }
+                    if(grid.get_cell(i)->get_neighbours(direction).size() == 0)
+                    {
+                        (*pgrid.f_temp[direction + 4 < 9 ? direction + 4 : direction - 4])[i] = (*pgrid.f_temp[direction])[i];
+                    }
 
                 //corners
                 if(grid.get_cell(i)->get_neighbours(3).size() == 0 && grid.get_cell(i)->get_neighbours(5).size() == 0)

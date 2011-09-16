@@ -149,8 +149,8 @@ class SolverLBM3Test :
             solver.do_postprocessing();
             GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data);
 
-            DenseMatrix<DataType_> h_3(grid.h->rows(), grid.h->columns(), 0);
-            grid3.fill_h(h_3, *grid.obstacles, *pgrid3.h);
+            DenseMatrix<DataType_> h_3(grid.h->rows(), grid.h->columns(), DataType_(0));
+            grid3.fill_h(h_3, *pgrid3.h);
 
             for (unsigned long row(0) ; row < h_3.rows() ; ++row)
                 for (unsigned long col(0) ; col < h_3.columns() ; ++col)
@@ -164,3 +164,89 @@ class SolverLBM3Test :
 
 };
 SolverLBM3Test<tags::CPU, float> solver_test_float("float");
+
+template <typename Tag_, typename DataType_>
+class MultiSolverLBM3Test :
+    public TaggedTest<Tag_>
+{
+    public:
+        MultiSolverLBM3Test(const std::string & type) :
+            TaggedTest<Tag_>("multi_solver_lbm3_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            unsigned long g_h(128);
+            unsigned long g_w(128);
+            unsigned long timesteps(250);
+
+
+            Grid<D2Q9, DataType_> grid;
+            ScenarioCollection::get_scenario(1, g_h, g_w, grid);
+            DenseMatrix<DataType_> h_p(grid.h->rows(), grid.h->columns(), 0);
+            DenseMatrix<DataType_> h_s(grid.h->rows(), grid.h->columns(), 0);
+
+            // serial solver
+            Grid3<DataType_, 9> grid_s(*grid.obstacles, *grid.h, *grid.b, *grid.u, *grid.v);
+            PackedGrid3<DataType_, 9> pgrid_s(grid_s);
+            SolverLBM3<Tag_, DataType_, 9> solver_s(grid_s, pgrid_s, grid.d_x, grid.d_y, grid.d_t, grid.tau);
+            solver_s.do_preprocessing();
+
+            for (unsigned long i(0) ; i < timesteps ; ++i)
+            {
+                solver_s.solve();
+            }
+
+
+            // parallel solver
+            //  TODO use stl vector for multiple process count
+            Grid3<DataType_, 9> grid_p1(*grid.obstacles, *grid.h, *grid.b, *grid.u, *grid.v, 0, 2);
+            PackedGrid3<DataType_, 9> pgrid_p1(grid_p1);
+            SolverLBM3<Tag_, DataType_, 9> solver_p1(grid_p1, pgrid_p1, grid.d_x, grid.d_y, grid.d_t, grid.tau);
+            solver_p1.do_preprocessing();
+
+            Grid3<DataType_, 9> grid_p2(*grid.obstacles, *grid.h, *grid.b, *grid.u, *grid.v, 1, 2);
+            PackedGrid3<DataType_, 9> pgrid_p2(grid_p2);
+            SolverLBM3<Tag_, DataType_, 9> solver_p2(grid_p2, pgrid_p2, grid.d_x, grid.d_y, grid.d_t, grid.tau);
+            solver_p2.do_preprocessing();
+
+
+            pgrid_p1.update_synch_data();
+            pgrid_p2.update_synch_data();
+            pgrid_p1.integrate_synch_data(grid_p2.send_targets());
+            pgrid_p2.integrate_synch_data(grid_p1.send_targets());
+
+
+            for (unsigned long i(0) ; i < timesteps ; ++i)
+            {
+                solver_p1.solve_outer();
+                solver_p2.solve_outer();
+
+                // TODO extract sync data to external array
+                pgrid_p1.update_synch_data();
+                pgrid_p2.update_synch_data();
+
+                solver_p1.solve_inner();
+                solver_p2.solve_inner();
+
+                pgrid_p1.integrate_synch_data(grid_p2.send_targets());
+                pgrid_p2.integrate_synch_data(grid_p1.send_targets());
+            }
+
+            grid_s.fill_h(h_s, *pgrid_s.h);
+            grid_p1.fill_h(h_p, *pgrid_p1.h);
+            grid_p2.fill_h(h_p, *pgrid_p2.h);
+
+            for (unsigned long row(0) ; row < h_s.rows() ; ++row)
+                for (unsigned long col(0) ; col < h_s.columns() ; ++col)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(h_p(row, col), h_s(row, col), 1e-6);
+                }
+
+
+            grid.destroy();
+        }
+
+};
+MultiSolverLBM3Test<tags::CPU, float> multi_solver_test_float("float");

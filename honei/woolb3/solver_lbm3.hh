@@ -91,6 +91,9 @@ namespace honei
                         _pgrid.f[direction].reset(new DenseVector<DT_>(_pgrid.f_eq[direction]->copy()));
 
                     CollideStream<Tag_>::value(_pgrid, _relaxation_time);
+                    for (unsigned long dir(0) ; dir < directions ; ++dir)
+                        for (unsigned long i(0) ; i < _pgrid.f_temp2[dir]->size() ; ++i)
+                            (*_pgrid.f_temp[dir])[i] = (*_pgrid.f_temp2[dir])[i];
                 }
 
                 void solve()
@@ -111,6 +114,10 @@ namespace honei
                     EquilibriumDistribution<Tag_>::value(_pgrid, _gravity, _e, start, end);
 
                     CollideStream<Tag_>::value(_pgrid, _relaxation_time, start, end);
+
+                    for (unsigned long dir(0) ; dir < directions ; ++dir)
+                        for (unsigned long i(0) ; i < _pgrid.f_temp2[dir]->size() ; ++i)
+                            (*_pgrid.f_temp[dir])[i] = (*_pgrid.f_temp2[dir])[i];
                 }
 
                 void solve_outer()
