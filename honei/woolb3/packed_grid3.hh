@@ -70,7 +70,7 @@ namespace honei
                         else if (j->target_vector > 0 && j->target_vector < (long) directions)
                             (*f_temp[j->target_vector])[grid.halo_map()[j->idx]] = j->data;
                         else
-                            throw InternalError("Wrong target_vector in SyncInfo found!");
+                            throw InternalError("Wrong target_vector in SyncTupple found!");
                     }
                 }
             }
