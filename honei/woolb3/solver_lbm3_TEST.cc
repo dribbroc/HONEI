@@ -180,6 +180,7 @@ class MultiSolverLBM3Test :
             unsigned long g_h(128);
             unsigned long g_w(128);
             unsigned long timesteps(250);
+            unsigned long process_count(8);
 
 
             Grid<D2Q9, DataType_> grid;
@@ -200,42 +201,77 @@ class MultiSolverLBM3Test :
 
 
             // parallel solver
-            //  TODO use stl vector for multiple process count
-            Grid3<DataType_, 9> grid_p1(*grid.obstacles, *grid.h, *grid.b, *grid.u, *grid.v, 0, 2);
-            PackedGrid3<DataType_, 9> pgrid_p1(grid_p1);
-            SolverLBM3<Tag_, DataType_, 9> solver_p1(grid_p1, pgrid_p1, grid.d_x, grid.d_y, grid.d_t, grid.tau);
-            solver_p1.do_preprocessing();
-
-            Grid3<DataType_, 9> grid_p2(*grid.obstacles, *grid.h, *grid.b, *grid.u, *grid.v, 1, 2);
-            PackedGrid3<DataType_, 9> pgrid_p2(grid_p2);
-            SolverLBM3<Tag_, DataType_, 9> solver_p2(grid_p2, pgrid_p2, grid.d_x, grid.d_y, grid.d_t, grid.tau);
-            solver_p2.do_preprocessing();
-
-
-            std::list<SyncData<DataType_> > p1_data = pgrid_p1.export_synch_data();
-            std::list<SyncData<DataType_> > p2_data = pgrid_p2.export_synch_data();
-            pgrid_p1.import_synch_data(p2_data);
-            pgrid_p2.import_synch_data(p1_data);
-
-
-            for (unsigned long i(0) ; i < timesteps ; ++i)
+            std::vector<Grid3<DataType_, 9> > grid_p;
+            for (unsigned long i(0) ; i < process_count ; ++i)
             {
-                solver_p1.solve_outer();
-                solver_p2.solve_outer();
+                Grid3<DataType_, 9> grid_t(*grid.obstacles, *grid.h, *grid.b, *grid.u, *grid.v, i, process_count);
+                grid_p.push_back(grid_t);
+            }
 
-                std::list<SyncData<DataType_> > p1_data = pgrid_p1.export_synch_data();
-                std::list<SyncData<DataType_> > p2_data = pgrid_p2.export_synch_data();
+            std::vector<PackedGrid3<DataType_, 9> > pgrid_p;
+            for (unsigned long i(0) ; i < process_count ; ++i)
+            {
+                PackedGrid3<DataType_, 9> pgrid_t(grid_p.at(i));
+                pgrid_p.push_back(pgrid_t);
+            }
 
-                solver_p1.solve_inner();
-                solver_p2.solve_inner();
+            std::vector<SolverLBM3<Tag_, DataType_, 9> > solver_p;
+            for (unsigned long i(0) ; i < process_count ; ++i)
+            {
+                SolverLBM3<Tag_, DataType_, 9> solver_t(grid_p.at(i), pgrid_p.at(i), grid.d_x, grid.d_y, grid.d_t, grid.tau);
+                solver_t.do_preprocessing();
+                solver_p.push_back(solver_t);
+            }
 
-                pgrid_p1.import_synch_data(p2_data);
-                pgrid_p2.import_synch_data(p1_data);
+
+            {
+                std::list<SyncData<DataType_> > receiver_data[process_count];
+                for (unsigned long i(0) ; i < process_count ; ++i)
+                {
+                    std::list<SyncData<DataType_> > p_data = pgrid_p.at(i).export_synch_data();
+                    for (typename std::list<SyncData<DataType_> >::iterator j(p_data.begin()) ; j != p_data.end() ; ++j)
+                    {
+                        receiver_data[j->process].push_back(*j);
+                    }
+                }
+                for (unsigned long i(0) ; i < process_count ; ++i)
+                {
+                    pgrid_p.at(i).import_synch_data(receiver_data[i]);
+                }
+            }
+
+            for (unsigned long t(0) ; t < timesteps ; ++t)
+            {
+                for (unsigned long i(0) ; i < process_count ; ++i)
+                {
+                    solver_p.at(i).solve_outer();
+                }
+
+                std::list<SyncData<DataType_> > receiver_data[process_count];
+                for (unsigned long i(0) ; i < process_count ; ++i)
+                {
+                    std::list<SyncData<DataType_> > p_data = pgrid_p.at(i).export_synch_data();
+                    for (typename std::list<SyncData<DataType_> >::iterator j(p_data.begin()) ; j != p_data.end() ; ++j)
+                    {
+                        receiver_data[j->process].push_back(*j);
+                    }
+                }
+
+
+                for (unsigned long i(0) ; i < process_count ; ++i)
+                {
+                    solver_p.at(i).solve_inner();
+                }
+
+                for (unsigned long i(0) ; i < process_count ; ++i)
+                {
+                    pgrid_p.at(i).import_synch_data(receiver_data[i]);
+                }
             }
 
             grid_s.fill_h(h_s, *pgrid_s.h);
-            grid_p1.fill_h(h_p, *pgrid_p1.h);
-            grid_p2.fill_h(h_p, *pgrid_p2.h);
+            for (unsigned long i(0) ; i < process_count ; ++i)
+                grid_p.at(i).fill_h(h_p, *(pgrid_p.at(i).h));
 
             for (unsigned long row(0) ; row < h_s.rows() ; ++row)
                 for (unsigned long col(0) ; col < h_s.columns() ; ++col)
