@@ -55,7 +55,13 @@ class PackedGrid3Test :
             std::cout<<std::endl<<"'to send' targets:"<<std::endl;
             for (typename std::vector<SyncData<DataType_, 9> >::iterator i(grid.send_targets().begin()) ; i != grid.send_targets().end() ; ++i)
             {
-                std::cout<<(*i).process<<" : "<<(*i).cell->get_id()<<"("<<(*i).cell->get_y()<<"/"<<(*i).cell->get_x()<<") dir:"<<(*i).target_vector<<std::endl;
+                std::cout<<(*i).process<<" : "<<(*i).cell->get_id()<<"("<<(*i).cell->get_y()<<"/"<<(*i).cell->get_x()<<") dir:"<<(*i).target_vector<<" idx: "<<(*i).idx<<std::endl;
+            }
+
+            std::cout<<std::endl<<"halo mapping:"<<std::endl;
+            for (typename std::map<unsigned long, unsigned long>::iterator i(grid.halo_map().begin()) ; i != grid.halo_map().end() ; ++i)
+            {
+                std::cout<<"global idx: "<<i->first<<" local idx: "<<i->second<<std::endl;
             }
 
             std::cout<<std::endl<<"cells in packed vector:"<<std::endl;

@@ -49,7 +49,7 @@ namespace honei
             {
                 const DT_ * const f(pgrid.f[direction]->elements());
                 const DT_ * const f_eq(pgrid.f_eq[direction]->elements());
-                DT_ * f_temp(pgrid.f_temp[direction]->elements());
+                DT_ * f_temp2(pgrid.f_temp2[direction]->elements());
                 // TODO start und end punkt für dir_index vektoren finden ist garnicht so leicht
                 /*const unsigned long * const dir_index(pgrid.dir_index[direction]->elements());
                 const unsigned long * const dir(pgrid.dir[direction]->elements());
@@ -58,14 +58,14 @@ namespace honei
                     const unsigned long end(dir_index[begin + 1]);
                     for (unsigned long i(dir_index[begin]), offset(0) ; i < end ; ++i, ++offset)
                     {
-                        f_temp[dir[half] + offset] = f[i] - (f[i] - f_eq[i])/tau;
+                        f_temp2[dir[half] + offset] = f[i] - (f[i] - f_eq[i])/tau;
                     }
                 }*/
                 const unsigned long * neighbours(pgrid.neighbours[direction]->elements());
                 for (unsigned long i(start) ; i < end ; ++i)
                 {
                     if (neighbours[i] < pgrid.h->size())
-                        f_temp[neighbours[i]] = f[i] - (f[i] - f_eq[i])/tau;
+                        f_temp2[neighbours[i]] = f[i] - (f[i] - f_eq[i])/tau;
                 }
             }
         }

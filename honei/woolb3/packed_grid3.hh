@@ -37,14 +37,27 @@ namespace honei
     class PackedGrid3
     {
         public:
-            void setup_synch_data()
+            void update_synch_data()
             {
                 for (typename std::vector<SyncData<DT_, directions> >::iterator i(grid.send_targets().begin()) ; i != grid.send_targets().end() ; ++i)
                 {
                     if (i->target_vector == -1)
                         i->data = (*h)[i->cell->get_id()];
-                    else if (i->target_vector >= 0 && i->target_vector < directions)
-                        i->data = (*f_temp[i->target_vector])[i->cell->get_id()];
+                    else if (i->target_vector >= 0 && i->target_vector < (long)directions)
+                        i->data = (*f_temp2[i->target_vector])[i->cell->get_id()];
+                    else
+                        throw InternalError("Wrong target_vector in SyncData found!");
+                }
+            }
+
+            void integrate_synch_data(std::vector<SyncData<DT_, directions> > & sync_data)
+            {
+                for (typename std::vector<SyncData<DT_, directions> >::iterator i(sync_data.begin()) ; i != sync_data.end() ; ++i)
+                {
+                    if (i->target_vector == -1)
+                        (*h)[grid.halo_map()[i->idx]] = i->data;
+                    else if (i->target_vector >= 0 && i->target_vector < (long)directions)
+                        (*f_temp[i->target_vector])[grid.halo_map()[i->idx]] = i->data;
                     else
                         throw InternalError("Wrong target_vector in SyncData found!");
                 }
@@ -59,6 +72,7 @@ namespace honei
             SharedArray<shared_ptr<DenseVector<DT_> > > f;
             SharedArray<shared_ptr<DenseVector<DT_> > > f_eq;
             SharedArray<shared_ptr<DenseVector<DT_> > > f_temp;
+            SharedArray<shared_ptr<DenseVector<DT_> > > f_temp2;
 
             shared_ptr<DenseVector<DT_> > h;
             shared_ptr<DenseVector<DT_> > b;
@@ -76,13 +90,21 @@ namespace honei
                 dir_index(directions),
                 f(directions),
                 f_eq(directions),
-                f_temp(directions)
+                f_temp(directions),
+                f_temp2(directions)
             {
                 // fill raw neighbour vectors
                 for (unsigned long i(0) ; i < directions ; ++i)
                 {
                     neighbours[i].reset(new DenseVector<unsigned long>(grid.size(), -(1ul)));
-                    for (unsigned long idx(0) ; idx < grid.size() ; ++idx)
+                    for (unsigned long idx(0) ; idx < grid.local_size() ; ++idx)
+                    {
+                        if (i == 0)
+                            (*neighbours[i])[idx] = grid.get_cell(idx)->get_id();
+                        else if (grid.get_cell(idx)->get_neighbours(i).size() != 0)
+                            (*neighbours[i])[idx] = grid.get_cell(idx)->get_neighbours(i).front()->get_id();
+                    }
+                    for (unsigned long idx(grid.size() - grid.inner_halo_size()) ; idx < grid.size() ; ++idx)
                     {
                         if (i == 0)
                             (*neighbours[i])[idx] = grid.get_cell(idx)->get_id();
@@ -151,6 +173,7 @@ namespace honei
                     f[i].reset(new DenseVector<DT_>(grid.size(), 0));
                     f_eq[i].reset(new DenseVector<DT_>(grid.size(), 0));
                     f_temp[i].reset(new DenseVector<DT_>(grid.size(), 0));
+                    f_temp2[i].reset(new DenseVector<DT_>(grid.size(), 0));
                 }
 
                 distribution_x.reset(new DenseVector<DT_>(directions));
