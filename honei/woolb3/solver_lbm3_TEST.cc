@@ -212,10 +212,10 @@ class MultiSolverLBM3Test :
             solver_p2.do_preprocessing();
 
 
-            pgrid_p1.update_synch_data();
-            pgrid_p2.update_synch_data();
-            pgrid_p1.integrate_synch_data(grid_p2.send_targets());
-            pgrid_p2.integrate_synch_data(grid_p1.send_targets());
+            std::list<SyncData<DataType_> > p1_data = pgrid_p1.export_synch_data();
+            std::list<SyncData<DataType_> > p2_data = pgrid_p2.export_synch_data();
+            pgrid_p1.import_synch_data(p2_data);
+            pgrid_p2.import_synch_data(p1_data);
 
 
             for (unsigned long i(0) ; i < timesteps ; ++i)
@@ -223,15 +223,14 @@ class MultiSolverLBM3Test :
                 solver_p1.solve_outer();
                 solver_p2.solve_outer();
 
-                // TODO extract sync data to external array
-                pgrid_p1.update_synch_data();
-                pgrid_p2.update_synch_data();
+                std::list<SyncData<DataType_> > p1_data = pgrid_p1.export_synch_data();
+                std::list<SyncData<DataType_> > p2_data = pgrid_p2.export_synch_data();
 
                 solver_p1.solve_inner();
                 solver_p2.solve_inner();
 
-                pgrid_p1.integrate_synch_data(grid_p2.send_targets());
-                pgrid_p2.integrate_synch_data(grid_p1.send_targets());
+                pgrid_p1.import_synch_data(p2_data);
+                pgrid_p2.import_synch_data(p1_data);
             }
 
             grid_s.fill_h(h_s, *pgrid_s.h);

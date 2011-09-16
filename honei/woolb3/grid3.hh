@@ -58,16 +58,14 @@ namespace honei
         };
 
     template <typename DT_, unsigned long directions>
-    struct SyncData
+    struct SyncInfo
     {
-        DT_ data;
         unsigned long idx;
         signed long target_vector; // 1..9 f_n ; -1 h ; -2 u ; -3 v
         unsigned long process;
         Cell<DT_, directions> * cell;
 
-        SyncData(DT_ _data, unsigned long _idx, signed long _target_vector, unsigned long _process, Cell<DT_, directions> * _cell):
-            data(_data),
+        SyncInfo(unsigned long _idx, signed long _target_vector, unsigned long _process, Cell<DT_, directions> * _cell):
             idx(_idx),
             target_vector(_target_vector),
             process(_process),
@@ -81,7 +79,7 @@ namespace honei
     {
         std::vector<Cell<DT_, directions> *> cells; // all cells with ordering (inner|outer_halo|inner_halo)
         std::map<unsigned long, unsigned long> halo_map; // mapping of global idx -> local index into _cells
-        std::vector<SyncData<DT_, directions> > send_targets; // list of all cells to send
+        std::vector<SyncInfo<DT_, directions> > send_targets; // list of all cells to send
 
         Implementation()
         {
@@ -108,7 +106,7 @@ namespace honei
                 std::string _inner_numbering;
                 std::string _outer_numbering;
 
-                static bool _sync_data_comp(SyncData<DT_, directions> i, SyncData<DT_, directions> j)
+                static bool _sync_data_comp(SyncInfo<DT_, directions> i, SyncInfo<DT_, directions> j)
                 {
                     return i.process < j.process;
                 }
@@ -261,7 +259,7 @@ namespace honei
                     return this->_imp->cells.at(i);
                 }
 
-                std::vector<SyncData<DT_, directions> > & send_targets()
+                std::vector<SyncInfo<DT_, directions> > & send_targets()
                 {
                     return this->_imp->send_targets;
                 }
@@ -481,7 +479,7 @@ namespace honei
                                         if(halo_it != halo.end())
                                         {
                                             (*i)->add_neighbour(halo_it->second, direction);
-                                            SyncData<DT_, directions> sync_data(0, outer_target_id, direction, _idx2process(outer_target_id, process_count, idx_starts, idx_ends), halo_it->second);
+                                            SyncInfo<DT_, directions> sync_data(outer_target_id, direction, _idx2process(outer_target_id, process_count, idx_starts, idx_ends), halo_it->second);
                                             this->_imp->send_targets.push_back(sync_data);
                                         }
                                         else
@@ -490,7 +488,7 @@ namespace honei
                                                     h(new_row, new_col), b(new_row, new_col), u(new_row, new_col), v(new_row, new_col));
                                             halo[target_id] = cell;
                                             (*i)->add_neighbour(cell, direction);
-                                            SyncData<DT_, directions> sync_data(0, outer_target_id, direction, _idx2process(outer_target_id, process_count, idx_starts, idx_ends), cell);
+                                            SyncInfo<DT_, directions> sync_data(outer_target_id, direction, _idx2process(outer_target_id, process_count, idx_starts, idx_ends), cell);
                                             this->_imp->send_targets.push_back(sync_data);
                                         }
                                     }
@@ -500,7 +498,7 @@ namespace honei
                             // copy inner halo to this->_imp->h_targets
                             for (typename std::set<unsigned long>::iterator t = h_targets.begin() ; t != h_targets.end() ; ++t)
                             {
-                                SyncData<DT_, directions> sync_data(0, coord2idx(col, row, geometry.columns(), _outer_numbering), -1, *t, *i);
+                                SyncInfo<DT_, directions> sync_data(coord2idx(col, row, geometry.columns(), _outer_numbering), -1, *t, *i);
                                 this->_imp->send_targets.push_back(sync_data);
                             }
                         }

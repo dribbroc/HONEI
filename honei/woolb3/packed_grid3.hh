@@ -33,34 +33,81 @@
 
 namespace honei
 {
+    template <typename DT_>
+    struct SyncTupple
+    {
+        DT_ data;
+        unsigned long idx;
+        long target_vector;
+
+        SyncTupple(DT_ _data, unsigned long _idx, long _target_vector) :
+            data(_data),
+            idx(_idx),
+            target_vector(_target_vector)
+        {
+        }
+    };
+
+    template <typename DT_>
+    struct SyncData
+    {
+        std::vector<SyncTupple<DT_> > data;
+        unsigned long process;
+    };
+
     template <typename DT_, unsigned long directions>
     class PackedGrid3
     {
         public:
-            void update_synch_data()
+            void import_synch_data(std::list<SyncData<DT_> > & data)
             {
-                for (typename std::vector<SyncData<DT_, directions> >::iterator i(grid.send_targets().begin()) ; i != grid.send_targets().end() ; ++i)
+                for (typename std::list<SyncData<DT_> >::iterator i(data.begin()) ; i != data.end() ; ++i)
                 {
-                    if (i->target_vector == -1)
-                        i->data = (*h)[i->cell->get_id()];
-                    else if (i->target_vector >= 0 && i->target_vector < (long)directions)
-                        i->data = (*f_temp2[i->target_vector])[i->cell->get_id()];
-                    else
-                        throw InternalError("Wrong target_vector in SyncData found!");
+                    for (typename std::vector<SyncTupple<DT_> >::iterator j(i->data.begin()) ; j != i->data.end() ; ++j)
+                    {
+                        if (j->target_vector == -1)
+                            (*h)[grid.halo_map()[j->idx]] = j->data;
+                        else if (j->target_vector > 0 && j->target_vector < (long) directions)
+                            (*f_temp[j->target_vector])[grid.halo_map()[j->idx]] = j->data;
+                        else
+                            throw InternalError("Wrong target_vector in SyncInfo found!");
+                    }
                 }
             }
 
-            void integrate_synch_data(std::vector<SyncData<DT_, directions> > & sync_data)
+            std::list<SyncData<DT_> > export_synch_data()
             {
-                for (typename std::vector<SyncData<DT_, directions> >::iterator i(sync_data.begin()) ; i != sync_data.end() ; ++i)
+                unsigned long process(grid.send_targets().front().process);
+                std::list<SyncData<DT_> > sync_list;
+                SyncData<DT_> sync_data;
+                sync_data.process = process;
+                sync_list.push_back(sync_data);
+
+                for (typename std::vector<SyncInfo<DT_, directions> >::iterator i(grid.send_targets().begin()) ; i != grid.send_targets().end() ; ++i)
                 {
+                    if (i->process != process)
+                    {
+                        process = i->process;
+                        SyncData<DT_> sync_data;
+                        sync_data.process = process;
+                        sync_list.push_back(sync_data);
+                    }
+
                     if (i->target_vector == -1)
-                        (*h)[grid.halo_map()[i->idx]] = i->data;
+                    {
+                        SyncTupple<DT_> sync_tupple((*h)[i->cell->get_id()], i->idx, i->target_vector);
+                        sync_list.back().data.push_back(sync_tupple);
+                    }
                     else if (i->target_vector >= 0 && i->target_vector < (long)directions)
-                        (*f_temp[i->target_vector])[grid.halo_map()[i->idx]] = i->data;
+                    {
+                        SyncTupple<DT_> sync_tupple((*f_temp2[i->target_vector])[i->cell->get_id()], i->idx, i->target_vector);
+                        sync_list.back().data.push_back(sync_tupple);
+                    }
                     else
-                        throw InternalError("Wrong target_vector in SyncData found!");
+                        throw InternalError("Wrong target_vector in SyncInfo found!");
                 }
+
+                return sync_list;
             }
 
             Grid3<DT_, directions> grid;
