@@ -53,7 +53,7 @@ class PackedGrid3Test :
             PackedGrid3<DataType_, 9> pgrid(grid);
 
             std::cout<<std::endl<<"'to send' targets:"<<std::endl;
-            for (typename std::vector<SyncData<DataType_, 9> >::iterator i(grid.send_targets().begin()) ; i != grid.send_targets().end() ; ++i)
+            for (typename std::vector<SyncInfo<DataType_, 9> >::iterator i(grid.send_targets().begin()) ; i != grid.send_targets().end() ; ++i)
             {
                 std::cout<<(*i).process<<" : "<<(*i).cell->get_id()<<"("<<(*i).cell->get_y()<<"/"<<(*i).cell->get_x()<<") dir:"<<(*i).target_vector<<" idx: "<<(*i).idx<<std::endl;
             }
