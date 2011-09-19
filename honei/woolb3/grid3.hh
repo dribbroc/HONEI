@@ -80,6 +80,7 @@ namespace honei
         std::vector<Cell<DT_, directions> *> cells; // all cells with ordering (inner|outer_halo|inner_halo)
         std::map<unsigned long, unsigned long> halo_map; // mapping of global idx -> local index into _cells
         std::vector<SyncInfo<DT_, directions> > send_targets; // list of all cells to send
+        std::set<Cell<DT_, directions> *> no_neighbour; // set of all cells with a minimum of one missing neighbour
 
         Implementation()
         {
@@ -267,6 +268,11 @@ namespace honei
                 std::map<unsigned long, unsigned long> & halo_map()
                 {
                     return this->_imp->halo_map;
+                }
+
+                std::set<Cell<DT_, directions> *> & no_neighbour()
+                {
+                    return this->_imp->no_neighbour;
                 }
 
                 static void print_numbering(DenseMatrix<bool> & geometry, std::string method)
@@ -492,6 +498,10 @@ namespace honei
                                             this->_imp->send_targets.push_back(sync_data);
                                         }
                                     }
+                                }
+                                else
+                                {
+                                    this->_imp->no_neighbour.insert(*i);
                                 }
                             }
 
