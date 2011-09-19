@@ -45,35 +45,37 @@ namespace honei
         {
             if (end == 0)
                 end = pgrid.h->size();
+            // TODO only update cells in current halo-region
+            (void)start;
 
-            for (unsigned long i(start) ; i < end ; ++i)
+            for (typename std::set<Cell<DT_, directions> *>::iterator i(grid.no_neighbour().begin()) ; i != grid.no_neighbour().end() ; ++i)
             {
                 for (unsigned long direction(1) ; direction < directions ; ++direction)
-                    if(grid.get_cell(i)->get_neighbours(direction).size() == 0)
+                    if((*i)->get_neighbours(direction).size() == 0)
                     {
-                        (*pgrid.f_temp[direction + 4 < 9 ? direction + 4 : direction - 4])[i] = (*pgrid.f_temp[direction])[i];
+                        (*pgrid.f_temp[direction + 4 < 9 ? direction + 4 : direction - 4])[(*i)->get_id()] = (*pgrid.f_temp[direction])[(*i)->get_id()];
                     }
 
                 //corners
-                if(grid.get_cell(i)->get_neighbours(3).size() == 0 && grid.get_cell(i)->get_neighbours(5).size() == 0)
+                if((*i)->get_neighbours(3).size() == 0 && (*i)->get_neighbours(5).size() == 0)
                 {
-                    (*pgrid.f_temp[2])[i] = (*pgrid.f_temp[8])[i];
-                    (*pgrid.f_temp[6])[i] = (*pgrid.f_temp[8])[i];
+                    (*pgrid.f_temp[2])[(*i)->get_id()] = (*pgrid.f_temp[8])[(*i)->get_id()];
+                    (*pgrid.f_temp[6])[(*i)->get_id()] = (*pgrid.f_temp[8])[(*i)->get_id()];
                 }
-                if(grid.get_cell(i)->get_neighbours(5).size() == 0 && grid.get_cell(i)->get_neighbours(7).size() == 0)
+                if((*i)->get_neighbours(5).size() == 0 && (*i)->get_neighbours(7).size() == 0)
                 {
-                    (*pgrid.f_temp[4])[i] = (*pgrid.f_temp[2])[i];
-                    (*pgrid.f_temp[8])[i] = (*pgrid.f_temp[2])[i];
+                    (*pgrid.f_temp[4])[(*i)->get_id()] = (*pgrid.f_temp[2])[(*i)->get_id()];
+                    (*pgrid.f_temp[8])[(*i)->get_id()] = (*pgrid.f_temp[2])[(*i)->get_id()];
                 }
-                if(grid.get_cell(i)->get_neighbours(1).size() == 0 && grid.get_cell(i)->get_neighbours(7).size() == 0)
+                if((*i)->get_neighbours(1).size() == 0 && (*i)->get_neighbours(7).size() == 0)
                 {
-                    (*pgrid.f_temp[2])[i] = (*pgrid.f_temp[4])[i];
-                    (*pgrid.f_temp[6])[i] = (*pgrid.f_temp[4])[i];
+                    (*pgrid.f_temp[2])[(*i)->get_id()] = (*pgrid.f_temp[4])[(*i)->get_id()];
+                    (*pgrid.f_temp[6])[(*i)->get_id()] = (*pgrid.f_temp[4])[(*i)->get_id()];
                 }
-                if(grid.get_cell(i)->get_neighbours(1).size() == 0 && grid.get_cell(i)->get_neighbours(3).size() == 0)
+                if((*i)->get_neighbours(1).size() == 0 && (*i)->get_neighbours(3).size() == 0)
                 {
-                    (*pgrid.f_temp[4])[i] = (*pgrid.f_temp[6])[i];
-                    (*pgrid.f_temp[8])[i] = (*pgrid.f_temp[6])[i];
+                    (*pgrid.f_temp[4])[(*i)->get_id()] = (*pgrid.f_temp[6])[(*i)->get_id()];
+                    (*pgrid.f_temp[8])[(*i)->get_id()] = (*pgrid.f_temp[6])[(*i)->get_id()];
                 }
             }
         }
