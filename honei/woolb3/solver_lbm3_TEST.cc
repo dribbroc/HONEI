@@ -59,7 +59,7 @@ class SolverLBM3Test :
         {
             unsigned long g_h(128);
             unsigned long g_w(128);
-            unsigned long timesteps(250);
+            unsigned long timesteps(500);
 
 
             Grid<D2Q9, DataType_> grid;
@@ -179,7 +179,7 @@ class MultiSolverLBM3Test :
         {
             unsigned long g_h(128);
             unsigned long g_w(128);
-            unsigned long timesteps(250);
+            unsigned long timesteps(500);
             unsigned long process_count(8);
 
 
@@ -273,11 +273,12 @@ class MultiSolverLBM3Test :
             for (unsigned long i(0) ; i < process_count ; ++i)
                 grid_p.at(i).fill_h(h_p, *(pgrid_p.at(i).h));
 
-            for (unsigned long row(0) ; row < h_s.rows() ; ++row)
+            /*for (unsigned long row(0) ; row < h_s.rows() ; ++row)
                 for (unsigned long col(0) ; col < h_s.columns() ; ++col)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(h_p(row, col), h_s(row, col), 1e-6);
-                }
+                }*/
+            TEST_CHECK_EQUAL(h_p, h_s);
 
 
             grid.destroy();
