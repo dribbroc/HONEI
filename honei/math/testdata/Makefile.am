@@ -75,6 +75,13 @@ EXTRA_DIST = \
 	poisson_advanced/sort_0/A_5_spai.ell \
 	poisson_advanced/sort_0/A_6_spai.ell \
 	poisson_advanced/sort_0/A_7_spai.ell \
+	poisson_advanced/sort_0/A_1_sainv.ell \
+	poisson_advanced/sort_0/A_2_sainv.ell \
+	poisson_advanced/sort_0/A_3_sainv.ell \
+	poisson_advanced/sort_0/A_4_sainv.ell \
+	poisson_advanced/sort_0/A_5_sainv.ell \
+	poisson_advanced/sort_0/A_6_sainv.ell \
+	poisson_advanced/sort_0/A_7_sainv.ell \
 	poisson_advanced/sort_0/prol_2.ell \
 	poisson_advanced/sort_0/prol_3.ell \
 	poisson_advanced/sort_0/prol_4.ell \
@@ -104,6 +111,12 @@ EXTRA_DIST = \
 	poisson_advanced/q2_sort_0/A_5_spai.ell \
 	poisson_advanced/q2_sort_0/A_6_spai.ell \
 	poisson_advanced/q2_sort_0/A_7_spai.ell \
+	poisson_advanced/q2_sort_0/A_1_sainv.ell \
+	poisson_advanced/q2_sort_0/A_2_sainv.ell \
+	poisson_advanced/q2_sort_0/A_3_sainv.ell \
+	poisson_advanced/q2_sort_0/A_4_sainv.ell \
+	poisson_advanced/q2_sort_0/A_5_sainv.ell \
+	poisson_advanced/q2_sort_0/A_6_sainv.ell \
 	poisson_advanced/q2_sort_0/prol_2.ell \
 	poisson_advanced/q2_sort_0/prol_3.ell \
 	poisson_advanced/q2_sort_0/prol_4.ell \
