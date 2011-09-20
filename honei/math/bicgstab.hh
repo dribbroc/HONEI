@@ -197,7 +197,7 @@ namespace honei
 
                 used_iters = iter + 1;
                 std::cout << "Norm: " << defnorm << std::endl;
-                LOGMESSAGE(lc_solver, "BiCgStab(VAR) finished in " + stringify(used_iters) + " iterations with defect " + stringify(current_defect));
+                LOGMESSAGE(lc_solver, "BiCgStab(VAR) finished in " + stringify(used_iters) + " iterations with defect " + stringify(defnorm));
                 PROFILER_STOP("CGSolver NONE");
 
                 return x;
