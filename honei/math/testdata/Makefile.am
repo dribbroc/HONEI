@@ -116,7 +116,6 @@ EXTRA_DIST = \
 	poisson_advanced/q2_sort_0/A_3_sainv.ell \
 	poisson_advanced/q2_sort_0/A_4_sainv.ell \
 	poisson_advanced/q2_sort_0/A_5_sainv.ell \
-	poisson_advanced/q2_sort_0/A_6_sainv.ell \
 	poisson_advanced/q2_sort_0/prol_2.ell \
 	poisson_advanced/q2_sort_0/prol_3.ell \
 	poisson_advanced/q2_sort_0/prol_4.ell \
