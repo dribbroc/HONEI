@@ -74,25 +74,34 @@ namespace honei
                     (f[7])[i] +
                     (f[8])[i];
 
-                (u)[i] = ((*pgrid.distribution_x)[0] * (f[0])[i] +
-                        (*pgrid.distribution_x)[1] * (f[1])[i] +
-                        (*pgrid.distribution_x)[2] * (f[2])[i] +
-                        (*pgrid.distribution_x)[3] * (f[3])[i] +
-                        (*pgrid.distribution_x)[4] * (f[4])[i] +
-                        (*pgrid.distribution_x)[5] * (f[5])[i] +
-                        (*pgrid.distribution_x)[6] * (f[6])[i] +
-                        (*pgrid.distribution_x)[7] * (f[7])[i] +
-                        (*pgrid.distribution_x)[8] * (f[8])[i]) / (*pgrid.h)[i];
+                if (fabs(h[i]) > 1e-4)
+                {
+                    (u)[i] = ((*pgrid.distribution_x)[0] * (f[0])[i] +
+                            (*pgrid.distribution_x)[1] * (f[1])[i] +
+                            (*pgrid.distribution_x)[2] * (f[2])[i] +
+                            (*pgrid.distribution_x)[3] * (f[3])[i] +
+                            (*pgrid.distribution_x)[4] * (f[4])[i] +
+                            (*pgrid.distribution_x)[5] * (f[5])[i] +
+                            (*pgrid.distribution_x)[6] * (f[6])[i] +
+                            (*pgrid.distribution_x)[7] * (f[7])[i] +
+                            (*pgrid.distribution_x)[8] * (f[8])[i]) / (*pgrid.h)[i];
 
-                (v)[i] = ((*pgrid.distribution_y)[0] * (f[0])[i] +
-                        (*pgrid.distribution_y)[1] * (f[1])[i] +
-                        (*pgrid.distribution_y)[2] * (f[2])[i] +
-                        (*pgrid.distribution_y)[3] * (f[3])[i] +
-                        (*pgrid.distribution_y)[4] * (f[4])[i] +
-                        (*pgrid.distribution_y)[5] * (f[5])[i] +
-                        (*pgrid.distribution_y)[6] * (f[6])[i] +
-                        (*pgrid.distribution_y)[7] * (f[7])[i] +
-                        (*pgrid.distribution_y)[8] * (f[8])[i]) / (*pgrid.h)[i];
+                    (v)[i] = ((*pgrid.distribution_y)[0] * (f[0])[i] +
+                            (*pgrid.distribution_y)[1] * (f[1])[i] +
+                            (*pgrid.distribution_y)[2] * (f[2])[i] +
+                            (*pgrid.distribution_y)[3] * (f[3])[i] +
+                            (*pgrid.distribution_y)[4] * (f[4])[i] +
+                            (*pgrid.distribution_y)[5] * (f[5])[i] +
+                            (*pgrid.distribution_y)[6] * (f[6])[i] +
+                            (*pgrid.distribution_y)[7] * (f[7])[i] +
+                            (*pgrid.distribution_y)[8] * (f[8])[i]) / (*pgrid.h)[i];
+                }
+                else
+                {
+                    h[i] = DT_(0);
+                    u[i] = DT_(0);
+                    v[i] = DT_(0);
+                }
             }
         }
     };
