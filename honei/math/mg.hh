@@ -36,6 +36,29 @@ namespace honei
     struct MGData
     {
         public:
+            std::vector<MatrixType_> A;
+            std::vector<MatrixType_> resmat;
+            std::vector<MatrixType_> prolmat;
+            std::vector<PreconContType_> P;
+            std::vector<VectorType_> b;
+            std::vector<VectorType_> x;
+            std::vector<VectorType_> d;
+            std::vector<VectorType_> c;
+            std::vector<VectorType_> temp_0;
+            std::vector<VectorType_> temp_1;
+            unsigned long max_iters;
+            unsigned long max_iters_coarse;
+            unsigned long used_iters_coarse;
+            unsigned long used_iters;
+            unsigned long n_pre_smooth;
+            unsigned long n_post_smooth;
+            unsigned long min_level;
+            double eps_relative;
+
+            MGData()
+            {
+            };
+
             MGData(std::vector<MatrixType_> & systems,
                    std::vector<MatrixType_> & resmats,
                    std::vector<MatrixType_> & prolmats,
@@ -76,24 +99,54 @@ namespace honei
                 ASSERT(p_min_level <= systems.size(), "Minimum level is larger then number of levels!");
             }
 
-            std::vector<MatrixType_> A;
-            std::vector<MatrixType_> resmat;
-            std::vector<MatrixType_> prolmat;
-            std::vector<PreconContType_> P;
-            std::vector<VectorType_> b;
-            std::vector<VectorType_> x;
-            std::vector<VectorType_> d;
-            std::vector<VectorType_> c;
-            std::vector<VectorType_> temp_0;
-            std::vector<VectorType_> temp_1;
-            unsigned long max_iters;
-            unsigned long max_iters_coarse;
-            unsigned long used_iters_coarse;
-            unsigned long used_iters;
-            unsigned long n_pre_smooth;
-            unsigned long n_post_smooth;
-            unsigned long min_level;
-            double eps_relative;
+            template<typename MatrixSrc_, typename VectorSrc_, typename PreconSrc_>
+            void convert(MGData<MatrixSrc_, VectorSrc_, PreconSrc_> & other)
+            {
+                for (unsigned long i(0) ; i < other.A.size() ; ++i)
+                {
+                    MatrixType_ t1(other.A.at(i));
+                    this->A.push_back(t1);
+                }
+
+                for (unsigned long i(0) ; i < other.resmat.size() ; ++i)
+                {
+                    MatrixType_ t2(other.resmat.at(i));
+                    this->resmat.push_back(t2);
+                    MatrixType_ t3(other.prolmat.at(i));
+                    this->prolmat.push_back(t3);
+                }
+
+                for (unsigned long i(0) ; i < other.P.size() ; ++i)
+                {
+                    PreconContType_ t1(other.P.at(i));
+                    this->P.push_back(t1);
+                }
+
+                for (unsigned long i(0) ; i < other.b.size() ; ++i)
+                {
+                    VectorType_ t1(other.b.at(i));
+                    this->b.push_back(t1);
+                    VectorType_ t2(other.x.at(i));
+                    this->x.push_back(t2);
+                    VectorType_ t3(other.d.at(i));
+                    this->d.push_back(t3);
+                    VectorType_ t4(other.c.at(i));
+                    this->c.push_back(t4);
+                    VectorType_ t5(other.temp_0.at(i));
+                    this->temp_0.push_back(t5);
+                    VectorType_ t6(other.temp_1.at(i));
+                    this->temp_1.push_back(t6);
+                }
+
+                this->max_iters = other.max_iters;
+                this->max_iters_coarse = other.max_iters_coarse;
+                this->n_pre_smooth = other.n_pre_smooth;
+                this->n_post_smooth = other.n_post_smooth;
+                this->min_level = other.min_level;
+                this->eps_relative = other.eps_relative;
+                this->used_iters = other.used_iters;
+                this->used_iters_coarse = other.used_iters_coarse;
+            }
     };
 
     template<typename PreconContType_,
@@ -161,7 +214,7 @@ namespace honei
 
                 static void dummy(std::vector<SparseMatrixELL<DataType_> > & target)
                 {
-                    SparseMatrix<DataType_> d(1,1);
+                    SparseMatrix<DataType_> d(9,9);
                     SparseMatrixELL<DataType_> dell(d);
                     target.push_back(dell);
                 }
@@ -289,7 +342,7 @@ namespace honei
                     ///get system-matrix for level i
                     if(i == 0)
                     {
-                        SparseMatrix<DT_> Adt(1,1);
+                        SparseMatrix<DT_> Adt(9,9);
                         MatrixType_ Ad(Adt);
                         A.push_back(Ad);
 
@@ -312,7 +365,7 @@ namespace honei
                     ///get Prolmat P_{i}^{i+1}
                     if(i < 2)
                     {
-                        SparseMatrix<DT_> local_preProl(1,1);
+                        SparseMatrix<DT_> local_preProl(9,9);
                         MatrixType_ local_Prol(local_preProl);
                         Prol.push_back(local_Prol);
                         Res.push_back(local_Prol.copy());
