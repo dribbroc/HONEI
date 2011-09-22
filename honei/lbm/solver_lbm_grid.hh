@@ -200,7 +200,7 @@ namespace honei
                  **/
                 void solve()
                 {
-                    ForceGrid<Tag_, Application_, Force_, SourceScheme_>::value(*_info, *_data, ResPrec_(9.81), _delta_x, _delta_y, _delta_t, ResPrec_(0.01));
+                    ForceGrid<Tag_, Application_, Force_, SourceScheme_>::value(*_info, *_data, _gravity, _delta_x, _delta_y, _delta_t, ResPrec_(0.01));
 
                     ///Boundary correction:
                     UpdateVelocityDirectionsGrid<Tag_, NOSLIP>::
