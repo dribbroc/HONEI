@@ -59,7 +59,7 @@ class SolverLBM3Test :
         {
             unsigned long g_h(128);
             unsigned long g_w(128);
-            unsigned long timesteps(500);
+            unsigned long timesteps(250);
 
 
             Grid<D2Q9, DataType_> grid;
@@ -71,7 +71,7 @@ class SolverLBM3Test :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info, &data, grid.d_x, grid.d_y, grid.d_t, grid.tau);
+            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, grid.d_x, grid.d_y, grid.d_t, grid.tau);
 
             solver.do_preprocessing();
 
@@ -80,7 +80,7 @@ class SolverLBM3Test :
             ScenarioCollection::get_scenario(1, g_h, g_w, grid);
             Grid3<DataType_, 9> grid3(*grid.obstacles, *grid.h, *grid.b, *grid.u, *grid.v);
             PackedGrid3<DataType_, 9> pgrid3(grid3);
-            SolverLBM3<Tag_, DataType_, 9> solver3(grid3, pgrid3, grid.d_x, grid.d_y, grid.d_t, grid.tau);
+            SolverLBM3<Tag_, DataType_, 9, lbm::lbm_source_schemes::BED_SLOPE> solver3(grid3, pgrid3, grid.d_x, grid.d_y, grid.d_t, grid.tau);
             solver3.do_preprocessing();
 
             /*TEST_CHECK_EQUAL( *pgrid3.f_eq[0],*(data.f_eq_0));
@@ -184,14 +184,14 @@ class MultiSolverLBM3Test :
 
 
             Grid<D2Q9, DataType_> grid;
-            ScenarioCollection::get_scenario(1, g_h, g_w, grid);
+            ScenarioCollection::get_scenario(0, g_h, g_w, grid);
             DenseMatrix<DataType_> h_p(grid.h->rows(), grid.h->columns(), 0);
             DenseMatrix<DataType_> h_s(grid.h->rows(), grid.h->columns(), 0);
 
             // serial solver
             Grid3<DataType_, 9> grid_s(*grid.obstacles, *grid.h, *grid.b, *grid.u, *grid.v);
             PackedGrid3<DataType_, 9> pgrid_s(grid_s);
-            SolverLBM3<Tag_, DataType_, 9> solver_s(grid_s, pgrid_s, grid.d_x, grid.d_y, grid.d_t, grid.tau);
+            SolverLBM3<Tag_, DataType_, 9, lbm::lbm_source_schemes::BED_SLOPE> solver_s(grid_s, pgrid_s, grid.d_x, grid.d_y, grid.d_t, grid.tau);
             solver_s.do_preprocessing();
 
             for (unsigned long i(0) ; i < timesteps ; ++i)
@@ -215,10 +215,10 @@ class MultiSolverLBM3Test :
                 pgrid_p.push_back(pgrid_t);
             }
 
-            std::vector<SolverLBM3<Tag_, DataType_, 9> > solver_p;
+            std::vector<SolverLBM3<Tag_, DataType_, 9, lbm::lbm_source_schemes::BED_SLOPE> > solver_p;
             for (unsigned long i(0) ; i < process_count ; ++i)
             {
-                SolverLBM3<Tag_, DataType_, 9> solver_t(grid_p.at(i), pgrid_p.at(i), grid.d_x, grid.d_y, grid.d_t, grid.tau);
+                SolverLBM3<Tag_, DataType_, 9, lbm::lbm_source_schemes::BED_SLOPE> solver_t(grid_p.at(i), pgrid_p.at(i), grid.d_x, grid.d_y, grid.d_t, grid.tau);
                 solver_t.do_preprocessing();
                 solver_p.push_back(solver_t);
             }
