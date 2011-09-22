@@ -413,7 +413,7 @@ namespace honei
             {
                 CONTEXT("When evaluating TransferOperator:");
                 //TODO: think of new way to encode BCs -> separate operator?
-                DenseVector<unsigned long> dummy(1ul);
+                DenseVector<unsigned long> dummy(8, 2ul);
                 //std::cout << _left << _right << std::endl;
                 TransferType_::value(_left, _right, dummy, _mat);
                 //std::cout << _left << _right << std::endl;

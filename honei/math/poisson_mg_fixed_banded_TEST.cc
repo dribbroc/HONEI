@@ -132,7 +132,7 @@ class PoissonTestMGSparseELLProlMat2:
             }
 
             info.min_level = 1;
-            info.n_max_iter = 16;
+            info.n_max_iter = 100;
             info.initial_zero = false;
             info.tolerance = 1e-8;
             info.convergence_check = true;
@@ -274,7 +274,7 @@ class PoissonTestMGSparseELLProlMat2:
             Multigrid<Tag_, Tag_, methods::PROLMAT, methods::JAC, methods::CYCLE::V, methods::FIXED >::value(system, rhs, result, (unsigned long)11, std::numeric_limits<DT1_>::epsilon(), info);
             result.lock(lm_read_only);
             result.unlock(lm_read_only);
-            std::cout << result;
+            //std::cout << result;
 
         }
 };

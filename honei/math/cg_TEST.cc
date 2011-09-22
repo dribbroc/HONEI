@@ -341,3 +341,100 @@ CGTestSparseELLPreconSAINV<tags::OpenCL::GPU, double> ocl_gpu_cg_precon_sainv_te
 #endif
 #endif
 */
+
+template <typename Tag_, typename DT1_>
+class CGTestSparseELLQuadPrecon:
+    public BaseTest
+{
+    private:
+        std::string _m_f, _v_f, _r_f, _i_f;
+    public:
+        CGTestSparseELLQuadPrecon(const std::string & tag,
+                std::string m_file,
+                std::string v_file,
+                std::string res_file,
+                std::string init_file) :
+            BaseTest("CG solver test (sparse ELL quad system)<" + tag + ">")
+        {
+            register_tag(Tag_::name);
+            _m_f = m_file;
+            _v_f = v_file;
+            _r_f = res_file;
+            _i_f = init_file;
+        }
+
+        virtual void run() const
+        {
+
+            std::string filename(HONEI_SOURCEDIR);
+            filename += "/honei/math/testdata/poisson/";
+            filename += _m_f;
+            SparseMatrixELL<DT1_> smatrix2(MatrixIO<io_formats::ELL>::read_matrix(filename, DT1_(0)));
+
+            std::string filename_2(HONEI_SOURCEDIR);
+            filename_2 += "/honei/math/testdata/poisson/";
+            filename_2 += _v_f;
+            DenseVector<DT1_> rhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT1_(0)));
+
+            DenseVector<DT1_> diag_inverted(smatrix2.rows(), DT1_(0));
+            for(unsigned long i(0) ; i < diag_inverted.size() ; ++i)
+            {
+                    diag_inverted[i] = DT1_(0.7)/smatrix2(i, i);
+            }
+
+            std::string filename_4(HONEI_SOURCEDIR);
+            filename_4 += "/honei/math/testdata/poisson/";
+            filename_4 += _i_f;
+            DenseVector<DT1_> result(VectorIO<io_formats::EXP>::read_vector(filename_4, DT1_(0)));
+            unsigned long used_iters;
+            CG<Tag_, methods::VAR>::value(smatrix2, diag_inverted, rhs, result, 700ul, used_iters, DT1_(1e-8));
+
+            std::string filename_3(HONEI_SOURCEDIR);
+            filename_3 += "/honei/math/testdata/poisson/";
+            filename_3 += _r_f;
+            DenseVector<DT1_> ref_result(VectorIO<io_formats::EXP>::read_vector(filename_3, DT1_(0)));
+
+            result.lock(lm_read_only);
+            //std::cout << result << std::endl;
+            result.unlock(lm_read_only);
+
+            std::cout << "Used iters: " << used_iters << std::endl;
+
+            DT1_ base_digits(3);
+            DT1_ additional_digits(2);
+
+            DT1_ base_eps(1 / pow(10, base_digits));
+            DT1_ add_eps(base_eps / pow(10, additional_digits));
+
+            DT1_ m((add_eps - base_eps) / DT1_(4));
+            DT1_ b(base_eps - (DT1_(4) * m));
+
+            DT1_ eps(m * sizeof(DT1_) + b);
+            eps *= DT1_(3);
+
+            std::cout << "Comparing with FEATFLOW2: eps= " << eps << std::endl;
+            for(unsigned long i(0) ; i < result.size() ; ++i)
+            {
+                if(fabs(result[i] - ref_result[i]) > eps)
+                    std::cout << std::setprecision(11) << result[i] << " " << ref_result[i] << " at index " << i << std::endl;
+                TEST_CHECK_EQUAL_WITHIN_EPS(result[i], ref_result[i], eps);
+            }
+        }
+};
+CGTestSparseELLQuadPrecon<tags::CPU, double> cg_precon_test_double_sparse_ell_quad("double JAC", "A_6.ell", "rhs_6", "sol_6", "init_6");
+CGTestSparseELLQuadPrecon<tags::CPU::MultiCore, double> mc_cg_precon_test_double_sparse_ell_quad("double JAC", "A_6.ell", "rhs_6", "sol_6", "init_6");
+#ifdef HONEI_SSE
+CGTestSparseELLQuadPrecon<tags::CPU::SSE, double> sse_cg_precon_test_double_sparse_ell_quad("double JAC", "A_6.ell", "rhs_6", "sol_6", "init_6");
+CGTestSparseELLQuadPrecon<tags::CPU::MultiCore::SSE, double> mcsse_cg_precon_test_double_sparse_ell_quad("double JAC", "A_6.ell", "rhs_6", "sol_6", "init_6");
+#endif
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
+CGTestSparseELLQuadPrecon<tags::GPU::CUDA, double> cuda_cg_precon_test_double_sparse_ell_quad("double JAC", "A_6.ell", "rhs_6", "sol_6", "init_6");
+#endif
+#endif
+#ifdef HONEI_OPENCL
+CGTestSparseELLQuadPrecon<tags::OpenCL::CPU, double> ocl_cpu_cg_precon_test_double_sparse_ell_quad("double JAC", "A_6.ell", "rhs_6", "sol_6", "init_6");
+#ifdef HONEI_CUDA_DOUBLE
+CGTestSparseELLQuadPrecon<tags::OpenCL::GPU, double> ocl_gpu_cg_precon_test_double_sparse_ell_quad("double JAC", "A_6.ell", "rhs_6", "sol_6", "init_6");
+#endif
+#endif
