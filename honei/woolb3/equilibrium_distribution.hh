@@ -24,7 +24,6 @@
 
 
 
-#include <honei/lbm/tags.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/woolb3/packed_grid3.hh>
 #include <cmath>

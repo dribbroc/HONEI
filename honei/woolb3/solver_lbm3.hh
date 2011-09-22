@@ -31,12 +31,13 @@
 #include <honei/woolb3/equilibrium_distribution.hh>
 #include <honei/woolb3/collide_stream.hh>
 #include <honei/woolb3/extraction.hh>
+#include <honei/woolb3/force.hh>
 #include <honei/woolb3/update_velocity_directions.hh>
 #include <cmath>
 
 namespace honei
 {
-    template <typename Tag_, typename DT_, unsigned long directions>
+    template <typename Tag_, typename DT_, unsigned long directions, typename SourceScheme_>
     struct SolverLBM3
     {
         private:
@@ -107,6 +108,8 @@ namespace honei
                     unsigned long start(0);
                     unsigned long end(_grid.local_size());
 
+                    Force<Tag_, SourceScheme_>::value(_pgrid, _gravity, _delta_x, _delta_y, _delta_t, DT_(0.01), start, end);
+
                     UpdateVelocityDirections<Tag_>::value(_grid, _pgrid, start, end);
 
                     Extraction<Tag_>::value(_pgrid, start, end);
@@ -124,6 +127,8 @@ namespace honei
                 {
                     unsigned long start(_grid.size() - _grid.inner_halo_size());
                     unsigned long end(_grid.size());
+
+                    Force<Tag_, SourceScheme_>::value(_pgrid, _gravity, _delta_x, _delta_y, _delta_t, DT_(0.01), start, end);
 
                     UpdateVelocityDirections<Tag_>::value(_grid, _pgrid, start, end);
 
