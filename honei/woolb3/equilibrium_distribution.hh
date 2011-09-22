@@ -46,7 +46,7 @@ namespace honei
             unsigned long direction(0);
 
             DT_ * f_eq(pgrid.f_eq[direction]->elements());
-            DT_ * const h(pgrid.h->elements());
+            DT_ * const h(pgrid.h2->elements());
             DT_ * const u(pgrid.u->elements());
             DT_ * const v(pgrid.v->elements());
             DT_ d_x;

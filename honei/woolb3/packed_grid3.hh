@@ -95,7 +95,7 @@ namespace honei
 
                     if (i->target_vector == -1)
                     {
-                        SyncTupple<DT_> sync_tupple((*h)[i->cell->get_id()], i->idx, i->target_vector);
+                        SyncTupple<DT_> sync_tupple((*h2)[i->cell->get_id()], i->idx, i->target_vector);
                         sync_list.back().data.push_back(sync_tupple);
                     }
                     else if (i->target_vector >= 0 && i->target_vector < (long)directions)
@@ -122,6 +122,7 @@ namespace honei
             SharedArray<shared_ptr<DenseVector<DT_> > > f_temp2;
 
             shared_ptr<DenseVector<DT_> > h;
+            shared_ptr<DenseVector<DT_> > h2;
             shared_ptr<DenseVector<DT_> > b;
             shared_ptr<DenseVector<DT_> > u;
             shared_ptr<DenseVector<DT_> > v;
@@ -203,12 +204,14 @@ namespace honei
 
                 // fill h, b, u, v
                 h.reset(new DenseVector<DT_>(grid.size()));
+                h2.reset(new DenseVector<DT_>(grid.size()));
                 b.reset(new DenseVector<DT_>(grid.size()));
                 u.reset(new DenseVector<DT_>(grid.size()));
                 v.reset(new DenseVector<DT_>(grid.size()));
                 for (unsigned long idx(0) ; idx < grid.size() ; ++idx)
                 {
                     (*h)[idx] = grid.get_cell(idx)->get_h();
+                    (*h2)[idx] = grid.get_cell(idx)->get_h();
                     (*b)[idx] = grid.get_cell(idx)->get_b();
                     (*u)[idx] = grid.get_cell(idx)->get_u();
                     (*v)[idx] = grid.get_cell(idx)->get_v();

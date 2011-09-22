@@ -64,7 +64,7 @@ class SolverLBM3Test :
 
             Grid<D2Q9, DataType_> grid;
 
-            ScenarioCollection::get_scenario(1, g_h, g_w, grid);
+            ScenarioCollection::get_scenario(4, g_h, g_w, grid);
 
             PackedGridData<D2Q9, DataType_>  data;
             PackedGridInfo<D2Q9> info;
@@ -77,7 +77,7 @@ class SolverLBM3Test :
 
 
             grid.destroy();
-            ScenarioCollection::get_scenario(1, g_h, g_w, grid);
+            ScenarioCollection::get_scenario(4, g_h, g_w, grid);
             Grid3<DataType_, 9> grid3(*grid.obstacles, *grid.h, *grid.b, *grid.u, *grid.v);
             PackedGrid3<DataType_, 9> pgrid3(grid3);
             SolverLBM3<Tag_, DataType_, 9, lbm::lbm_source_schemes::BED_SLOPE> solver3(grid3, pgrid3, grid.d_x, grid.d_y, grid.d_t, grid.tau);
@@ -184,7 +184,7 @@ class MultiSolverLBM3Test :
 
 
             Grid<D2Q9, DataType_> grid;
-            ScenarioCollection::get_scenario(0, g_h, g_w, grid);
+            ScenarioCollection::get_scenario(4, g_h, g_w, grid);
             DenseMatrix<DataType_> h_p(grid.h->rows(), grid.h->columns(), 0);
             DenseMatrix<DataType_> h_s(grid.h->rows(), grid.h->columns(), 0);
 
@@ -273,11 +273,6 @@ class MultiSolverLBM3Test :
             for (unsigned long i(0) ; i < process_count ; ++i)
                 grid_p.at(i).fill_h(h_p, *(pgrid_p.at(i).h));
 
-            /*for (unsigned long row(0) ; row < h_s.rows() ; ++row)
-                for (unsigned long col(0) ; col < h_s.columns() ; ++col)
-                {
-                    TEST_CHECK_EQUAL_WITHIN_EPS(h_p(row, col), h_s(row, col), 1e-6);
-                }*/
             TEST_CHECK_EQUAL(h_p, h_s);
 
 

@@ -62,7 +62,7 @@ namespace honei
                 }
             }
 
-            DT_ * h(pgrid.h->elements());
+            DT_ * h(pgrid.h2->elements());
             DT_ * u(pgrid.u->elements());
             DT_ * v(pgrid.v->elements());
 
