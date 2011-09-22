@@ -95,6 +95,8 @@ namespace honei
                     for (unsigned long dir(0) ; dir < directions ; ++dir)
                         for (unsigned long i(0) ; i < _pgrid.f_temp2[dir]->size() ; ++i)
                             (*_pgrid.f_temp[dir])[i] = (*_pgrid.f_temp2[dir])[i];
+                    for (unsigned long i(0) ; i < _pgrid.h2->size() ; ++i)
+                        (*_pgrid.h)[i] = (*_pgrid.h2)[i];
                 }
 
                 void solve()
@@ -118,9 +120,12 @@ namespace honei
 
                     CollideStream<Tag_>::value(_pgrid, _relaxation_time, start, end);
 
+                    // TODO is pointer swapping sufficient?
                     for (unsigned long dir(0) ; dir < directions ; ++dir)
                         for (unsigned long i(0) ; i < _pgrid.f_temp2[dir]->size() ; ++i)
                             (*_pgrid.f_temp[dir])[i] = (*_pgrid.f_temp2[dir])[i];
+                    for (unsigned long i(0) ; i < _pgrid.h2->size() ; ++i)
+                        (*_pgrid.h)[i] = (*_pgrid.h2)[i];
                 }
 
                 void solve_outer()
