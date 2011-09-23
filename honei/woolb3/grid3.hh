@@ -100,8 +100,6 @@ namespace honei
             public PrivateImplementationPattern<Grid3<DT_, directions>, Shared>
         {
             private:
-                unsigned long _idx_start;
-                unsigned long _idx_end;
                 unsigned long _local_size;
                 unsigned long _inner_halo_size;
                 std::string _inner_numbering;
@@ -227,8 +225,6 @@ namespace honei
                 // copy constructor
                 Grid3(const Grid3<DT_, directions> & other) :
                     PrivateImplementationPattern<Grid3<DT_, directions>, Shared>(other._imp),
-                    _idx_start(other._idx_start),
-                    _idx_end(other._idx_end),
                     _local_size(other._local_size),
                     _inner_halo_size(other._inner_halo_size),
                     _inner_numbering(other._inner_numbering),
@@ -419,13 +415,10 @@ namespace honei
                         if (idx_ends[process] == 0)
                             idx_ends[process] = geometry.size();
                     }
-                    _idx_start = idx_starts[process_id];
-                    _idx_end = idx_ends[process_id];
-
 
                     // read in cells
                     _local_size = 0;
-                    for (unsigned long idx(_idx_start) ; idx < _idx_end ; ++idx)
+                    for (unsigned long idx(idx_starts[process_id]) ; idx < idx_ends[process_id] ; ++idx)
                     {
                         unsigned long row(0);
                         unsigned long col(0);
@@ -436,6 +429,10 @@ namespace honei
                         if (geometry(row, col) == false)
                             ++_local_size;
                     }
+
+                    this->_imp->halo_map.clear();
+                    this->_imp->send_targets.clear();
+                    this->_imp->no_neighbour.clear();
 
                     //resort cells by inner numbering
                     CellComparator<DT_, directions> cell_comp(geometry.columns(), _inner_numbering);
