@@ -27,6 +27,7 @@
 #include <honei/la/dense_vector.hh>
 #include <honei/woolb3/packed_grid3.hh>
 #include <honei/lbm/lbm_limiter.hh>
+#include <honei/util/profiler.hh>
 #include <cmath>
 
 namespace honei
@@ -42,6 +43,8 @@ namespace honei
         template <typename DT_, unsigned long directions>
         static void value(PackedGrid3<DT_, directions> & pgrid, unsigned long start = 0, unsigned long end = 0)
         {
+            PROFILER_START("Extraction");
+
             if (end == 0)
                 end = pgrid.h->size();
 
@@ -112,6 +115,8 @@ namespace honei
                 }
                 h[i] = lbm::MinModLimiter<tags::CPU>::value(h[i]);
             }
+
+            PROFILER_STOP("Extraction");
         }
     };
 }

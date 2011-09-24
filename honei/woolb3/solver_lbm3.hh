@@ -33,6 +33,7 @@
 #include <honei/woolb3/extraction.hh>
 #include <honei/woolb3/force.hh>
 #include <honei/woolb3/update_velocity_directions.hh>
+#include <honei/util/profiler.hh>
 #include <cmath>
 
 namespace honei
@@ -101,12 +102,16 @@ namespace honei
 
                 void solve()
                 {
+                    PROFILER_START("SolverLBM3");
                     solve_outer();
                     solve_inner();
+                    PROFILER_STOP("SolverLBM3");
                 }
 
                 void solve_inner()
                 {
+                    PROFILER_START("SolverLBM3 inner");
+
                     unsigned long start(0);
                     unsigned long end(_grid.local_size());
 
@@ -126,10 +131,14 @@ namespace honei
                             (*_pgrid.f_temp[dir])[i] = (*_pgrid.f_temp2[dir])[i];
                     for (unsigned long i(0) ; i < _pgrid.h2->size() ; ++i)
                         (*_pgrid.h)[i] = (*_pgrid.h2)[i];
+
+                    PROFILER_STOP("SolverLBM3 inner");
                 }
 
                 void solve_outer()
                 {
+                    PROFILER_START("SolverLBM3 outer");
+
                     unsigned long start(_grid.size() - _grid.inner_halo_size());
                     unsigned long end(_grid.size());
 
@@ -142,6 +151,8 @@ namespace honei
                     EquilibriumDistribution<Tag_>::value(_pgrid, _gravity, _e, start, end);
 
                     CollideStream<Tag_>::value(_pgrid, _relaxation_time, start, end);
+
+                    PROFILER_STOP("SolverLBM3 outer");
                 }
     };
 }

@@ -27,6 +27,7 @@
 #include <honei/lbm/tags.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/woolb3/packed_grid3.hh>
+#include <honei/util/profiler.hh>
 #include <cmath>
 #include <limits>
 
@@ -392,8 +393,10 @@ namespace honei
         static void value(PackedGrid3<DT_, directions> & pgrid, DT_ g, DT_ d_x, DT_ d_y, DT_ d_t, DT_ manning,
                 unsigned long start = 0, unsigned long end = 0)
         {
+            PROFILER_START("Force BED_FULL");
             Force<Tag_, lbm::lbm_source_schemes::BED_SLOPE>::value(pgrid, g, d_x, d_y, d_t, manning, start, end);
             Force<Tag_, lbm::lbm_source_schemes::BED_FRICTION>::value(pgrid, g, d_x, d_y, d_t, manning, start, end);
+            PROFILER_STOP("Force BED_FULL");
         }
     };
 }
