@@ -59,7 +59,7 @@ class MGCycleCreationTest:
                 t1.push_back(dummy.copy());
             }
 
-            MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double> > data(A, Res, Prol, P, b, x, c, d, t0, t1, 1, 1000, 4, 4, 1, 1e-8);
+            MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double>, SparseMatrixELL<double> > data(A, Res, Prol, P, b, x, c, d, t0, t1, 1, 1000, 4, 4, 1, 1e-8);
 
             OperatorList ol(
             MGCycleCreation<Tag_,
@@ -93,8 +93,8 @@ class Q1MGCycleCreationTest:
         virtual void run() const
         {
             std::vector<BandedMatrixQ1<double> > A;
-            std::vector<BandedMatrixQ1<double> > Res;
-            std::vector<BandedMatrixQ1<double> > Prol;
+            std::vector<SparseMatrixELL<double> > Res;
+            std::vector<SparseMatrixELL<double> > Prol;
             std::vector<BandedMatrixQ1<double> > P;
             std::vector<DenseVector<double> > b;
             std::vector<DenseVector<double> > x;
@@ -106,9 +106,11 @@ class Q1MGCycleCreationTest:
             {
                 BandedMatrix<double> a_t(9);
                 BandedMatrixQ1<double> a(a_t);
+                SparseMatrix<double> trans(a);
+                SparseMatrixELL<double> transell(trans);
                 A.push_back(a);
-                Res.push_back(a.copy());
-                Prol.push_back(a.copy());
+                Res.push_back(transell.copy());
+                Prol.push_back(transell.copy());
                 P.push_back(a.copy());
 
                 DenseVector<double> dummy(1 , 1);
@@ -120,7 +122,7 @@ class Q1MGCycleCreationTest:
                 t1.push_back(dummy.copy());
             }
 
-            MGData<BandedMatrixQ1<double>, DenseVector<double>, BandedMatrixQ1<double> > data(A, Res, Prol, P, b, x, c, d, t0, t1, 1, 1000, 4, 4, 1, 1e-8);
+            MGData<BandedMatrixQ1<double>, DenseVector<double>, SparseMatrixELL<double>, BandedMatrixQ1<double> > data(A, Res, Prol, P, b, x, c, d, t0, t1, 1, 1000, 4, 4, 1, 1e-8);
 
             OperatorList ol(
             MGCycleCreation<Tag_,
@@ -156,9 +158,10 @@ class MGUtilLoadTest:
             unsigned long levels(4);
             std::string file(HONEI_SOURCEDIR);
             file += "/honei/math/testdata/poisson_advanced/sort_0/";
-            MGData<SparseMatrixELL<double>, DenseVector<double>, DenseVector<double> > data(MGUtil<Tag_,
+            MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double>, DenseVector<double> > data(MGUtil<Tag_,
                                                                                             SparseMatrixELL<double>,
                                                                                             DenseVector<double>,
+                                                                                            SparseMatrixELL<double>,
                                                                                             DenseVector<double>,
                                                                                             io_formats::ELL,
                                                                                             io_formats::EXP,
@@ -200,9 +203,10 @@ class MGSolverTest:
             unsigned long min_level(1);
             std::string file(HONEI_SOURCEDIR);
             file += "/honei/math/testdata/poisson_advanced/sort_0/";
-            MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double> >  data(MGUtil<Tag_,
+            MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double>, SparseMatrixELL<double> >  data(MGUtil<Tag_,
                                                                                             SparseMatrixELL<double>,
                                                                                             DenseVector<double>,
+                                                                                            SparseMatrixELL<double>,
                                                                                             SparseMatrixELL<double>,
                                                                                             io_formats::ELL,
                                                                                             io_formats::EXP,
@@ -210,6 +214,7 @@ class MGSolverTest:
             MGUtil<Tag_,
                 SparseMatrixELL<double>,
                 DenseVector<double>,
+                SparseMatrixELL<double>,
                 SparseMatrixELL<double>,
                 io_formats::ELL,
                 io_formats::EXP,
@@ -291,9 +296,10 @@ class MGSolverTestQuad:
             unsigned long min_level(1);
             std::string file(HONEI_SOURCEDIR);
             file += "/honei/math/testdata/poisson/";
-            MGData<SparseMatrixELL<double>, DenseVector<double>, DenseVector<double> >  data(MGUtil<Tag_,
+            MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double>, DenseVector<double> >  data(MGUtil<Tag_,
                                                                                             SparseMatrixELL<double>,
                                                                                             DenseVector<double>,
+                                                                                            SparseMatrixELL<double>,
                                                                                             DenseVector<double>,
                                                                                             io_formats::ELL,
                                                                                             io_formats::EXP,
@@ -301,6 +307,7 @@ class MGSolverTestQuad:
             MGUtil<Tag_,
                 SparseMatrixELL<double>,
                 DenseVector<double>,
+                SparseMatrixELL<double>,
                 DenseVector<double>,
                 io_formats::ELL,
                 io_formats::EXP,

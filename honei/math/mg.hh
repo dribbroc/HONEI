@@ -32,13 +32,13 @@
 namespace honei
 {
 
-    template<typename MatrixType_, typename VectorType_, typename PreconContType_>
+    template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
     struct MGData
     {
         public:
             std::vector<MatrixType_> A;
-            std::vector<MatrixType_> resmat;
-            std::vector<MatrixType_> prolmat;
+            std::vector<TransferContType_> resmat;
+            std::vector<TransferContType_> prolmat;
             std::vector<PreconContType_> P;
             std::vector<VectorType_> b;
             std::vector<VectorType_> x;
@@ -60,8 +60,8 @@ namespace honei
             };
 
             MGData(std::vector<MatrixType_> & systems,
-                   std::vector<MatrixType_> & resmats,
-                   std::vector<MatrixType_> & prolmats,
+                   std::vector<TransferContType_> & resmats,
+                   std::vector<TransferContType_> & prolmats,
                    std::vector<PreconContType_> & precons,
                    std::vector<VectorType_> & rhss,
                    std::vector<VectorType_> & xs,
@@ -99,8 +99,8 @@ namespace honei
                 ASSERT(p_min_level <= systems.size(), "Minimum level is larger then number of levels!");
             }
 
-            template<typename MatrixSrc_, typename VectorSrc_, typename PreconSrc_>
-            void convert(MGData<MatrixSrc_, VectorSrc_, PreconSrc_> & other)
+            template<typename MatrixSrc_, typename VectorSrc_, typename TransferSrc_, typename PreconSrc_>
+            void convert(MGData<MatrixSrc_, VectorSrc_, TransferSrc_, PreconSrc_> & other)
             {
                 for (unsigned long i(0) ; i < other.A.size() ; ++i)
                 {
@@ -110,9 +110,9 @@ namespace honei
 
                 for (unsigned long i(0) ; i < other.resmat.size() ; ++i)
                 {
-                    MatrixType_ t2(other.resmat.at(i));
+                    TransferContType_ t2(other.resmat.at(i));
                     this->resmat.push_back(t2);
-                    MatrixType_ t3(other.prolmat.at(i));
+                    TransferContType_ t3(other.prolmat.at(i));
                     this->prolmat.push_back(t3);
                 }
 
@@ -289,11 +289,11 @@ namespace honei
         }
     }
 
-    template<typename Tag_, typename MatrixType_, typename VectorType_, typename PreconContType_, typename MatIOType_, typename VecIOType_, typename DT_>
+    template<typename Tag_, typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_, typename MatIOType_, typename VecIOType_, typename DT_>
         struct MGUtil
         {
         public:
-            static void configure(MGData<MatrixType_, VectorType_, PreconContType_> & target, unsigned long max_iters,
+            static void configure(MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & target, unsigned long max_iters,
                                                                                               unsigned long max_iters_coarse,
                                                                                               unsigned long n_pre_smooth,
                                                                                               unsigned long n_post_smooth,
@@ -308,13 +308,13 @@ namespace honei
                 target.eps_relative = eps_relative;
             }
 
-            static MGData<MatrixType_, VectorType_, PreconContType_> load_data(std::string file_base, unsigned long max_level, DT_ damping_factor, std::string precon_suffix = "jac")
+            static MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> load_data(std::string file_base, unsigned long max_level, DT_ damping_factor, std::string precon_suffix = "jac")
             {
                 CONTEXT("When creating MGData from file(s):");
 
                 std::vector<MatrixType_> A;
-                std::vector<MatrixType_> Prol;
-                std::vector<MatrixType_> Res;
+                std::vector<TransferContType_> Prol;
+                std::vector<TransferContType_> Res;
                 std::vector<PreconContType_> P;
                 std::vector<VectorType_> b;
                 std::vector<VectorType_> x;
@@ -366,7 +366,7 @@ namespace honei
                     if(i < 2)
                     {
                         SparseMatrix<DT_> local_preProl(9,9);
-                        MatrixType_ local_Prol(local_preProl);
+                        TransferContType_ local_Prol(local_preProl);
                         Prol.push_back(local_Prol);
                         Res.push_back(local_Prol.copy());
                     }
@@ -375,14 +375,14 @@ namespace honei
                         std::string local_Prol_name(Prol_name);
                         local_Prol_name += stringify(i);
                         local_Prol_name += ".ell";
-                        MatrixType_ local_Prol(MatrixIO<MatIOType_>::read_matrix(local_Prol_name, DT_(0)));
+                        TransferContType_ local_Prol(MatrixIO<MatIOType_>::read_matrix(local_Prol_name, DT_(0)));
                         Prol.push_back(local_Prol);
 
                         ///get Resmat R_{i+1}^{i} = (P_{i}^{i+1})^T
                         SparseMatrix<DT_> local_preProl(Prol.at(i).copy());
                         SparseMatrix<DT_> local_preRes(Prol.at(i).columns(), Prol.at(i).rows());
                         Transposition<Tag_>::value(local_preProl, local_preRes);
-                        MatrixType_ local_Res(local_preRes);
+                        TransferContType_ local_Res(local_preRes);
                         Res.push_back(local_Res);
                     }
 
@@ -429,7 +429,7 @@ namespace honei
 
                 }
 
-                MGData<MatrixType_, VectorType_, PreconContType_> result(A, Res, Prol, P, b, x, d, c, temp_0, temp_1, 0, 0, 0, 0, 0, double(0.));
+                MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> result(A, Res, Prol, P, b, x, d, c, temp_0, temp_1, 0, 0, 0, 0, 0, double(0.));
                 return result;
             }
     };
@@ -462,13 +462,13 @@ namespace honei
                              DT_>
     {
         private:
-            template<typename MatrixType_, typename VectorType_, typename PreconContType_>
+            template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
             static void _build_cycle(
                     std::vector<VectorType_> & x,
                     std::vector<VectorType_> & b,
                     unsigned long level,
                     OperatorList & cycle,
-                    MGData<MatrixType_, VectorType_, PreconContType_> & data)
+                    MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & data)
             {
                 if(level == data.min_level)
                 {
@@ -502,7 +502,7 @@ namespace honei
                     ///Restriction
                     //std::cout << " Restrict Accessing " << level << std::endl;
                     //std::cout << " Restrict Accessing " << level - 1 << std::endl;
-                    cycle.push_back(new TransferOperator<ResType_, MatrixType_, VectorType_>(data.d.at(level - 1) , data.temp_0.at(level), data.resmat.at(level)));
+                    cycle.push_back(new TransferOperator<ResType_, TransferContType_, VectorType_>(data.d.at(level - 1) , data.temp_0.at(level), data.resmat.at(level)));
 
                     ///Recursion
                     ///all vectors in c have to be initialised with 0
@@ -512,7 +512,7 @@ namespace honei
                     ///Prolongation
                     //std::cout << "Prol Accessing " << level << std::endl;
                     //std::cout << "Prol Accessing " << level - 1 << std::endl;
-                    cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(data.temp_0.at(level) , data.c.at(level - 1), data.prolmat.at(level)));
+                    cycle.push_back(new TransferOperator<ProlType_, TransferContType_, VectorType_>(data.temp_0.at(level) , data.c.at(level - 1), data.prolmat.at(level)));
                     //std::cout << "Sum Accessing " << level << std::endl;
                     cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(level), data.temp_0.at(level)));
 
@@ -530,8 +530,8 @@ namespace honei
             }
 
         public:
-            template<typename MatrixType_, typename VectorType_, typename PreconContType_>
-            static OperatorList value(MGData<MatrixType_, VectorType_, PreconContType_> & data)
+            template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
+            static OperatorList value(MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & data)
             {
                 CONTEXT("When evaluating MGCycleCreation:");
 
@@ -556,13 +556,13 @@ namespace honei
                              DT_>
     {
         private:
-            template<typename MatrixType_, typename VectorType_, typename PreconContType_>
+            template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
             static void _build_cycle(
                     std::vector<VectorType_> & x,
                     std::vector<VectorType_> & b,
                     unsigned long level,
                     OperatorList & cycle,
-                    MGData<MatrixType_, VectorType_, PreconContType_> & data)
+                    MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & data)
             {
                 if(level == data.min_level)
                 {
@@ -596,7 +596,7 @@ namespace honei
                     ///Restriction
                     //std::cout << " Restrict Accessing " << level << std::endl;
                     //std::cout << " Restrict Accessing " << level - 1 << std::endl;
-                    cycle.push_back(new TransferOperator<ResType_, MatrixType_, VectorType_>(data.d.at(level - 1) , data.temp_0.at(level), data.resmat.at(level)));
+                    cycle.push_back(new TransferOperator<ResType_, TransferContType_, VectorType_>(data.d.at(level - 1) , data.temp_0.at(level), data.resmat.at(level)));
 
                     ///Recursion
                     ///all vectors in c have to be initialised with 0
@@ -608,7 +608,7 @@ namespace honei
                     ///Prolongation
                     //std::cout << "Prol Accessing " << level << std::endl;
                     //std::cout << "Prol Accessing " << level - 1 << std::endl;
-                    cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(data.temp_0.at(level) , data.c.at(level - 1), data.prolmat.at(level)));
+                    cycle.push_back(new TransferOperator<ProlType_, TransferContType_, VectorType_>(data.temp_0.at(level) , data.c.at(level - 1), data.prolmat.at(level)));
                     //std::cout << "Sum Accessing " << level << std::endl;
                     cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(level), data.temp_0.at(level)));
 
@@ -626,8 +626,8 @@ namespace honei
             }
 
         public:
-            template<typename MatrixType_, typename VectorType_, typename PreconContType_>
-            static OperatorList value(MGData<MatrixType_, VectorType_, PreconContType_> & data)
+            template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
+            static OperatorList value(MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & data)
             {
                 CONTEXT("When evaluating MGCycleCreation:");
 
@@ -653,13 +653,13 @@ namespace honei
                              DT_>
     {
         private:
-            template<typename MatrixType_, typename VectorType_, typename PreconContType_>
+            template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
             static void _build_cycle_V(
                     std::vector<VectorType_> & x,
                     std::vector<VectorType_> & b,
                     unsigned long level,
                     OperatorList & cycle,
-                    MGData<MatrixType_, VectorType_, PreconContType_> & data)
+                    MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & data)
             {
                 if(level == data.min_level)
                 {
@@ -693,7 +693,7 @@ namespace honei
                     ///Restriction
                     //std::cout << " Restrict Accessing " << level << std::endl;
                     //std::cout << " Restrict Accessing " << level - 1 << std::endl;
-                    cycle.push_back(new TransferOperator<ResType_, MatrixType_, VectorType_>(data.d.at(level - 1) , data.temp_0.at(level), data.resmat.at(level)));
+                    cycle.push_back(new TransferOperator<ResType_, TransferContType_, VectorType_>(data.d.at(level - 1) , data.temp_0.at(level), data.resmat.at(level)));
 
                     ///Recursion
                     ///all vectors in c have to be initialised with 0
@@ -703,7 +703,7 @@ namespace honei
                     ///Prolongation
                     //std::cout << "Prol Accessing " << level << std::endl;
                     //std::cout << "Prol Accessing " << level - 1 << std::endl;
-                    cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(data.temp_0.at(level) , data.c.at(level - 1), data.prolmat.at(level)));
+                    cycle.push_back(new TransferOperator<ProlType_, TransferContType_, VectorType_>(data.temp_0.at(level) , data.c.at(level - 1), data.prolmat.at(level)));
                     //std::cout << "Sum Accessing " << level << std::endl;
                     cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(level), data.temp_0.at(level)));
 
@@ -720,13 +720,13 @@ namespace honei
                 }
             }
 
-            template<typename MatrixType_, typename VectorType_, typename PreconContType_>
+            template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
             static void _build_cycle_F(
                     std::vector<VectorType_> & x,
                     std::vector<VectorType_> & b,
                     unsigned long level,
                     OperatorList & cycle,
-                    MGData<MatrixType_, VectorType_, PreconContType_> & data)
+                    MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & data)
             {
                 if(level == data.min_level)
                 {
@@ -760,7 +760,7 @@ namespace honei
                     ///Restriction
                     //std::cout << " Restrict Accessing " << level << std::endl;
                     //std::cout << " Restrict Accessing " << level - 1 << std::endl;
-                    cycle.push_back(new TransferOperator<ResType_, MatrixType_, VectorType_>(data.d.at(level - 1) , data.temp_0.at(level), data.resmat.at(level)));
+                    cycle.push_back(new TransferOperator<ResType_, TransferContType_, VectorType_>(data.d.at(level - 1) , data.temp_0.at(level), data.resmat.at(level)));
 
                     ///Recursion
                     ///all vectors in c have to be initialised with 0
@@ -771,7 +771,7 @@ namespace honei
                     ///Prolongation
                     //std::cout << "Prol Accessing " << level << std::endl;
                     //std::cout << "Prol Accessing " << level - 1 << std::endl;
-                    cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(data.temp_0.at(level) , data.c.at(level - 1), data.prolmat.at(level)));
+                    cycle.push_back(new TransferOperator<ProlType_, TransferContType_, VectorType_>(data.temp_0.at(level) , data.c.at(level - 1), data.prolmat.at(level)));
                     //std::cout << "Sum Accessing " << level << std::endl;
                     cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(level), data.temp_0.at(level)));
 
@@ -789,8 +789,8 @@ namespace honei
             }
 
         public:
-            template<typename MatrixType_, typename VectorType_, typename PreconContType_>
-            static OperatorList value(MGData<MatrixType_, VectorType_, PreconContType_> & data)
+            template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
+            static OperatorList value(MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & data)
             {
                 CONTEXT("When evaluating MGCycleCreation:");
 
@@ -816,13 +816,13 @@ namespace honei
                              DT_>
     {
         private:
-            template<typename MatrixType_, typename VectorType_, typename PreconContType_>
+            template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
             static void _build_cycle_W(
                     std::vector<VectorType_> & x,
                     std::vector<VectorType_> & b,
                     unsigned long level,
                     OperatorList & cycle,
-                    MGData<MatrixType_, VectorType_, PreconContType_> & data)
+                    MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & data)
             {
                 if(level == data.min_level)
                 {
@@ -856,7 +856,7 @@ namespace honei
                     ///Restriction
                     //std::cout << " Restrict Accessing " << level << std::endl;
                     //std::cout << " Restrict Accessing " << level - 1 << std::endl;
-                    cycle.push_back(new TransferOperator<ResType_, MatrixType_, VectorType_>(data.d.at(level - 1) , data.temp_0.at(level), data.resmat.at(level)));
+                    cycle.push_back(new TransferOperator<ResType_, TransferContType_, VectorType_>(data.d.at(level - 1) , data.temp_0.at(level), data.resmat.at(level)));
 
                     ///Recursion
                     ///all vectors in c have to be initialised with 0
@@ -868,7 +868,7 @@ namespace honei
                     ///Prolongation
                     //std::cout << "Prol Accessing " << level << std::endl;
                     //std::cout << "Prol Accessing " << level - 1 << std::endl;
-                    cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(data.temp_0.at(level) , data.c.at(level - 1), data.prolmat.at(level)));
+                    cycle.push_back(new TransferOperator<ProlType_, TransferContType_, VectorType_>(data.temp_0.at(level) , data.c.at(level - 1), data.prolmat.at(level)));
                     //std::cout << "Sum Accessing " << level << std::endl;
                     cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(level), data.temp_0.at(level)));
 
@@ -885,13 +885,13 @@ namespace honei
                 }
             }
 
-            template<typename MatrixType_, typename VectorType_, typename PreconContType_>
+            template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
             static void _build_cycle_F(
                     std::vector<VectorType_> & x,
                     std::vector<VectorType_> & b,
                     unsigned long level,
                     OperatorList & cycle,
-                    MGData<MatrixType_, VectorType_, PreconContType_> & data)
+                    MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & data)
             {
                 if(level == data.min_level)
                 {
@@ -925,7 +925,7 @@ namespace honei
                     ///Restriction
                     //std::cout << " Restrict Accessing " << level << std::endl;
                     //std::cout << " Restrict Accessing " << level - 1 << std::endl;
-                    cycle.push_back(new TransferOperator<ResType_, MatrixType_, VectorType_>(data.d.at(level - 1) , data.temp_0.at(level), data.resmat.at(level)));
+                    cycle.push_back(new TransferOperator<ResType_, TransferContType_, VectorType_>(data.d.at(level - 1) , data.temp_0.at(level), data.resmat.at(level)));
 
                     ///Recursion
                     ///all vectors in c have to be initialised with 0
@@ -936,7 +936,7 @@ namespace honei
                     ///Prolongation
                     //std::cout << "Prol Accessing " << level << std::endl;
                     //std::cout << "Prol Accessing " << level - 1 << std::endl;
-                    cycle.push_back(new TransferOperator<ProlType_, MatrixType_, VectorType_>(data.temp_0.at(level) , data.c.at(level - 1), data.prolmat.at(level)));
+                    cycle.push_back(new TransferOperator<ProlType_, TransferContType_, VectorType_>(data.temp_0.at(level) , data.c.at(level - 1), data.prolmat.at(level)));
                     //std::cout << "Sum Accessing " << level << std::endl;
                     cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(level), data.temp_0.at(level)));
 
@@ -954,8 +954,8 @@ namespace honei
             }
 
         public:
-            template<typename MatrixType_, typename VectorType_, typename PreconContType_>
-            static OperatorList value(MGData<MatrixType_, VectorType_, PreconContType_> & data)
+            template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
+            static OperatorList value(MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & data)
             {
                 CONTEXT("When evaluating MGCycleCreation:");
 
@@ -970,8 +970,8 @@ namespace honei
     struct MGSolver
     {
         public:
-            template<typename MatrixType_, typename VectorType_, typename PreconContType_>
-            static void value(MGData<MatrixType_, VectorType_, PreconContType_> & data, OperatorList & cycle)
+            template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
+            static void value(MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & data, OperatorList & cycle)
             {
                 CONTEXT("When solving linear system with MG :");
                 ASSERT(cycle.size() > 0, "OperatorList is empty!");

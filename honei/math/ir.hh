@@ -35,8 +35,9 @@ namespace honei
                      typename OuterVectorType_,
                      typename InnerMatrixType_,
                      typename InnerVectorType_,
+                     typename InnerTransferContType_,
                      typename InnerPreconContType_>
-            static void value(OuterMatrixType_ A, OuterVectorType_ b, OuterVectorType_ x, MGData<InnerMatrixType_, InnerVectorType_, InnerPreconContType_> & data, OperatorList & cycle, double eps, unsigned long max_iters, unsigned long & used_iters)
+            static void value(OuterMatrixType_ A, OuterVectorType_ b, OuterVectorType_ x, MGData<InnerMatrixType_, InnerVectorType_, InnerTransferContType_, InnerPreconContType_> & data, OperatorList & cycle, double eps, unsigned long max_iters, unsigned long & used_iters)
             {
                 CONTEXT("When solving linear system with Iterative Refinement :");
                 ASSERT(cycle.size() > 0, "OperatorList is empty!");

@@ -145,9 +145,10 @@ class IRBench:
                     Configuration::instance()->set_value("cuda::product_smell_dv_double", 256);
                 }
             }
-            MGData<SparseMatrixELL<DTInner_>, DenseVector<DTInner_>, PreconContType_ >  data(MGUtil<InnerTag_,
+            MGData<SparseMatrixELL<DTInner_>, DenseVector<DTInner_>, SparseMatrixELL<DTInner_>, PreconContType_ >  data(MGUtil<InnerTag_,
                     SparseMatrixELL<DTInner_>,
                     DenseVector<DTInner_>,
+                    SparseMatrixELL<DTInner_>,
                     PreconContType_,
                     io_formats::ELL,
                     io_formats::EXP,
@@ -156,6 +157,7 @@ class IRBench:
             MGUtil<InnerTag_,
                 SparseMatrixELL<DTInner_>,
                 DenseVector<DTInner_>,
+                SparseMatrixELL<DTInner_>,
                 PreconContType_,
                 io_formats::ELL,
                 io_formats::EXP,
