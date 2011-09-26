@@ -157,10 +157,10 @@ namespace honei
     template <> struct Prolongation<tags::GPU::CUDA, methods::NONE>
     {
         static DenseVector<float> & value(DenseVector<float> & fine,
-                const DenseVector<float> & coarse, const DenseVector<unsigned long> & mask, HONEI_UNUSED BandedMatrixQ1<float> & prolmat);
+                const DenseVector<float> & coarse, const DenseVector<unsigned long> & mask, HONEI_UNUSED BandedMatrixQx<Q1Type, float> & prolmat);
 
         static DenseVector<double> & value(DenseVector<double> & fine,
-                const DenseVector<double> & coarse, const DenseVector<unsigned long> & mask, HONEI_UNUSED BandedMatrixQ1<double> & prolmat);
+                const DenseVector<double> & coarse, const DenseVector<unsigned long> & mask, HONEI_UNUSED BandedMatrixQx<Q1Type, double> & prolmat);
 
         static DenseVector<float> & value(DenseVector<float> & fine,
                 const DenseVector<float> & coarse, const DenseVector<unsigned long> & mask, HONEI_UNUSED SparseMatrixELL<float> & prolmat);

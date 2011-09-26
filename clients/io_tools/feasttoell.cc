@@ -21,7 +21,7 @@
 #include <iostream>
 #include <honei/math/matrix_io.hh>
 #include <honei/la/sparse_matrix.hh>
-#include <honei/la/banded_matrix_q1.hh>
+#include <honei/la/banded_matrix_qx.hh>
 #include <honei/la/banded_matrix.hh>
 #include <honei/la/sparse_matrix_ell.hh>
 #include <fstream>
@@ -123,7 +123,7 @@ int main(int argc, char ** argv)
     A.insert_band(-root_n-1, ll_v );
     A.insert_band(-root_n+1, lu_v);
 
-    BandedMatrixQ1<double> Aq1(A);
+    BandedMatrixQx<Q1Type, double> Aq1(A);
     SparseMatrix<double> sm(Aq1);
     SparseMatrixELL<double> smell(sm);
 

@@ -150,7 +150,7 @@ class PoissonTestMGSparseELLProlMat2:
                     size = 9;
 
                 DenseVector<DT1_> dummy_band(size, DT1_(0));
-                BandedMatrixQ1<DT1_> ac_a(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
+                BandedMatrixQx<Q1Type, DT1_> ac_a(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
                 SparseMatrix<DT1_> sm(ac_a);
                 SparseMatrixELL<DT1_> ac_s(sm);
                 info.a.push_back(ac_s);
@@ -191,7 +191,7 @@ class PoissonTestMGSparseELLProlMat2:
                 unsigned long N = (unsigned long)(((unsigned long)pow((DT1_)2, (DT1_)i) + 1) * ((unsigned long)pow((DT1_)2, (DT1_)i) + 1));
                 DenseVector<DT1_> current_rhs(N);
                 DenseVector<DT1_> dummy_band(N, DT1_(0));
-                BandedMatrixQ1<DT1_> current_matrix(N, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
+                BandedMatrixQx<Q1Type, DT1_> current_matrix(N, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
 
                 FillMatrix<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(current_matrix);
 

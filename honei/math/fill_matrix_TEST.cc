@@ -161,10 +161,10 @@ class FillMatrixTestDirichlet0:
                 ref_sol_v[i] = (DT1_)ref_sol[i];
             }
 
-            BandedMatrixQ1<DT1_> A_ref(n ,ll_v, ld_v , lu_v, dl_v, dd_v, du_v, ul_v, ud_v, uu_v);
+            BandedMatrixQx<Q1Type, DT1_> A_ref(n ,ll_v, ld_v , lu_v, dl_v, dd_v, du_v, ul_v, ud_v, uu_v);
             DenseVector<DT1_> null(_size, DT1_(0));
 
-            BandedMatrixQ1<DT1_> result(_size, null.copy(), null.copy(),null.copy(),null.copy(),null.copy(),null.copy(),null.copy(),null.copy(),null.copy());
+            BandedMatrixQx<Q1Type, DT1_> result(_size, null.copy(), null.copy(),null.copy(),null.copy(),null.copy(),null.copy(),null.copy(),null.copy(),null.copy());
             FillMatrix<Tag_, applications::POISSON, boundary_types::DIRICHLET::DIRICHLET_0>::value(result);
             result.lock(lm_read_only);
             for(unsigned long i(0) ; i < result.band(DD).size() ; ++i)

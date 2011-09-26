@@ -21,7 +21,7 @@
 #include <iostream>
 #include <honei/math/vector_io.hh>
 #include <honei/la/sparse_matrix.hh>
-#include <honei/la/banded_matrix_q1.hh>
+#include <honei/la/banded_matrix_qx.hh>
 #include <honei/la/banded_matrix.hh>
 #include <honei/la/sparse_matrix_ell.hh>
 #include <fstream>

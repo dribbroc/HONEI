@@ -69,7 +69,7 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                         _root_n = 33;
                         unsigned long n(_root_n * _root_n);
                         _u = new DenseMatrix<float>(_root_n, _root_n, Prec_(0.00));
-                        MGInfo<Prec_, BandedMatrixQ1<Prec_> > info;
+                        MGInfo<Prec_, BandedMatrixQx<Q1Type, Prec_> > info;
                         //configuration constants: /TODO: set/allocate!!!
                         info.is_smoother = false;
 
@@ -153,7 +153,7 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                                 size = 9;
 
                             DenseVector<Prec_> dummy_band(size, Prec_(0));
-                            BandedMatrixQ1<Prec_> ac_a(size, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band);
+                            BandedMatrixQx<Q1Type, Prec_> ac_a(size, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band);
                             info.a.push_back(ac_a);
                             // iteration vectors
                             DenseVector<Prec_> ac_c(size, Prec_(0));
@@ -189,7 +189,7 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                         {
                             unsigned long N = (unsigned long)(((unsigned long)pow((Prec_)2, (Prec_)i) + 1) * ((unsigned long)pow((Prec_)2, (Prec_)i) + 1));
                             DenseVector<Prec_> band(N);
-                            BandedMatrixQ1<Prec_> current_matrix(N, band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy());
+                            BandedMatrixQx<Q1Type, Prec_> current_matrix(N, band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy());
                             DenseVector<Prec_> current_rhs(N);
 
 
@@ -252,7 +252,7 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                         _root_n = 33;
                         unsigned long n(_root_n * _root_n);
                         _u = new DenseMatrix<float>(_root_n, _root_n, Prec_(0.00));
-                        MGInfo<float, BandedMatrixQ1<float> > info;
+                        MGInfo<float, BandedMatrixQx<Q1Type, float> > info;
                         //configuration constants: /TODO: set/allocate!!!
                         info.is_smoother = false;
 
@@ -336,7 +336,7 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                                 size = 9;
 
                             DenseVector<float> dummy_band(size, float(0));
-                            BandedMatrixQ1<float> ac_a(size, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band);
+                            BandedMatrixQx<Q1Type, float> ac_a(size, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band);
                             info.a.push_back(ac_a);
                             // iteration vectors
                             DenseVector<float> ac_c(size, float(0));
@@ -372,7 +372,7 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                         {
                             unsigned long N = (unsigned long)(((unsigned long)pow((Prec_)2, (Prec_)i) + 1) * ((unsigned long)pow((Prec_)2, (Prec_)i) + 1));
                             DenseVector<float> band(N);
-                            BandedMatrixQ1<float> current_matrix(N, band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy());
+                            BandedMatrixQx<Q1Type, float> current_matrix(N, band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy());
                             DenseVector<float> current_rhs(N);
 
 
@@ -408,7 +408,7 @@ template<typename Tag_, typename Prec_> class ScenarioController :
                         }
 
                         DenseVector<Prec_> null(info.rhs[info.max_level].size() , Prec_(0));
-                        BandedMatrixQ1<Prec_> A(info.rhs[info.max_level].size() , null.copy(), null.copy() , null.copy(), null.copy() , null.copy(), null.copy(), null.copy(), null.copy(), null.copy());
+                        BandedMatrixQx<Q1Type, Prec_> A(info.rhs[info.max_level].size() , null.copy(), null.copy() , null.copy(), null.copy() , null.copy(), null.copy(), null.copy(), null.copy(), null.copy());
                         FillMatrix<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(A);
                         DenseVector<Prec_> RHS( info.rhs[info.max_level].size(), Prec_(0.));
                         FillVector<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(RHS);

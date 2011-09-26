@@ -27,13 +27,14 @@
 #include <honei/la/band_iterator.hh>
 #include <honei/la/element_iterator.hh>
 #include <honei/la/dense_vector.hh>
-#include <honei/la/banded_matrix_q1.hh>
+#include <honei/la/banded_matrix_qx.hh>
+#include <honei/la/band_type.hh>
 #include <honei/util/private_implementation_pattern.hh>
 
 namespace honei
 {
     // Forward declarations
-    template <typename DataType_> class BandedMatrixQ1;
+    template <BandType BandType_, typename DataType_> class BandedMatrixQx;
 
     /**
      * \brief BandedMatrix is a square matrix with O(size) non-zero bands which keeps its data
@@ -90,7 +91,7 @@ namespace honei
              *
              * \param source The q1 matrix our matrix will be created from.
              */
-            explicit BandedMatrix(const BandedMatrixQ1<DataType_> & src);
+            explicit BandedMatrix(const BandedMatrixQx<Q1Type, DataType_> & src);
 
             /// Destructor.
             ~BandedMatrix();

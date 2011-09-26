@@ -83,7 +83,7 @@ namespace honei
 
 
             template<typename DT1_, typename DT2_>
-            static inline void jacobi_kernel(HONEI_UNUSED BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, BandedMatrixQ1<DT1_> & difference)
+            static inline void jacobi_kernel(HONEI_UNUSED BandedMatrixQx<Q1Type, DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, BandedMatrixQx<Q1Type, DT1_> & difference)
             {
 #ifdef SOLVER_VERBOSE_L3
                 std::cout << "    Calling JACOBI kernel, datalayout=Q1, version=1" << std::endl;
@@ -115,7 +115,7 @@ namespace honei
             }
 //MG types:
             template<typename DT1_, typename DT2_>
-            static inline void jacobi_kernel(DenseVector<DT1_> to_smooth, BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, HONEI_UNUSED BandedMatrixQ1<DT1_> & difference, HONEI_UNUSED DT1_ omega)
+            static inline void jacobi_kernel(DenseVector<DT1_> to_smooth, BandedMatrixQx<Q1Type, DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted, HONEI_UNUSED BandedMatrixQx<Q1Type, DT1_> & difference, HONEI_UNUSED DT1_ omega)
             {
 #ifdef SOLVER_VERBOSE_L3
                 std::cout << "    Calling JACOBI kernel, datalayout=Q1, version=2" << std::endl;
@@ -279,7 +279,7 @@ namespace honei
             }
 
             template<typename DT1_, typename DT2_>
-            static inline void jacobi_kernel(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted)
+            static inline void jacobi_kernel(BandedMatrixQx<Q1Type, DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted)
             {
 #ifdef SOLVER_VERBOSE_L3
                 std::cout << "    Calling JACOBI kernel, datalayout=Q1, version=3" << std::endl;
@@ -318,7 +318,7 @@ namespace honei
             *
             */
             template <typename DT1_, typename DT2_>
-            static void value(BandedMatrixQ1<DT1_> & system_matrix,
+            static void value(BandedMatrixQx<Q1Type, DT1_> & system_matrix,
                     DenseVector<DT2_> & right_hand_side,
                     DenseVector<DT2_> & x,
                     unsigned long iter_number)
@@ -331,7 +331,7 @@ namespace honei
 
                 DenseVector<DT1_> diag_inverted(right_hand_side.size(), DT1_(0));
 
-                BandedMatrixQ1<DT1_> difference(system_matrix.size(), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()));
+                BandedMatrixQx<Q1Type, DT1_> difference(system_matrix.size(), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()));
                 copy<Tag_>(system_matrix, difference);
 
                 DenseVector<DT1_> zeros(right_hand_side.size(), DT1_(0));
@@ -363,7 +363,7 @@ namespace honei
             }
 
             template <typename DT1_, typename DT2_>
-            static void value(BandedMatrixQ1<DT1_> & system_matrix,
+            static void value(BandedMatrixQx<Q1Type, DT1_> & system_matrix,
                     DenseVector<DT2_> & right_hand_side,
                     DenseVector<DT2_> & x,
                     unsigned long iter_number,
@@ -375,7 +375,7 @@ namespace honei
 #endif
                 DenseVector<DT1_> diag_inverted(right_hand_side.size());
 
-                BandedMatrixQ1<DT1_> difference(system_matrix.size(), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()));
+                BandedMatrixQx<Q1Type, DT1_> difference(system_matrix.size(), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()), DenseVector<DT1_>(system_matrix.band(LL).size()));
                 copy<Tag_>(system_matrix, difference);
 
                 DenseVector<DT1_> zeros(right_hand_side.size(), DT1_(0));
@@ -396,7 +396,7 @@ namespace honei
             }
 //MG types:
             template <typename DT1_, typename DT2_>
-            static inline void value(HONEI_UNUSED BandedMatrixQ1<DT1_> & system_matrix,
+            static inline void value(HONEI_UNUSED BandedMatrixQx<Q1Type, DT1_> & system_matrix,
                     DenseVector<DT2_> & right_hand_side,
                     DenseVector<DT2_> & x,
                     HONEI_UNUSED DT1_ omega,
@@ -437,7 +437,7 @@ namespace honei
 
             template <typename DT1_, typename DT2_>
             static inline void value(DenseVector<DT1_>& to_smooth,
-                    BandedMatrixQ1<DT1_> & system_matrix,
+                    BandedMatrixQx<Q1Type, DT1_> & system_matrix,
                     DenseVector<DT2_> & right_hand_side,
                     DenseVector<DT2_> & x,
                     unsigned long iter_number,

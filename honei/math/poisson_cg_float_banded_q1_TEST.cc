@@ -165,7 +165,7 @@ class PoissonTestCGBandedFloatQ1:
             //std::cout<<dd_v<<endl;
 
 
-            BandedMatrixQ1<float> A(n,ll_v, ld_v , lu_v, dl_v, dd_v, du_v, ul_v, ud_v, uu_v);
+            BandedMatrixQx<Q1Type, float> A(n,ll_v, ld_v , lu_v, dl_v, dd_v, du_v, ul_v, ud_v, uu_v);
 
             FillMatrix<Tag_, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(A);
 

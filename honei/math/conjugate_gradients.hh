@@ -106,7 +106,7 @@ namespace honei
             }
 
             template<typename DT1_, typename DT2_>
-            static inline void cg_kernel(BandedMatrixQ1<DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility)
+            static inline void cg_kernel(BandedMatrixQx<Q1Type, DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_gradient, DenseVector<DT1_> & former_result, DenseVector<DT1_> & utility)
             {
 #ifdef SOLVER_VERBOSE_L3
                 std::cout << "    Calling CG kernel, datalayout=Q1, version=1" << std::endl;
@@ -488,7 +488,7 @@ namespace honei
             *
             */
             template <typename DT1_, typename DT2_>
-            static void value(BandedMatrixQ1<DT1_> & system_matrix,
+            static void value(BandedMatrixQx<Q1Type, DT1_> & system_matrix,
                     DenseVector<DT2_> & right_hand_side,
                     DenseVector<DT2_> & x,
                     double konv_rad)
@@ -525,7 +525,7 @@ namespace honei
             }
 
             template <typename DT1_, typename DT2_>
-            static void value(BandedMatrixQ1<DT1_> & system_matrix,
+            static void value(BandedMatrixQx<Q1Type, DT1_> & system_matrix,
                     DenseVector<DT2_> & right_hand_side,
                     DenseVector<DT2_> & x,
                     unsigned long iters)

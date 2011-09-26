@@ -187,10 +187,10 @@ namespace honei
     template <> struct Restriction<tags::GPU::CUDA, methods::NONE>
     {
         static DenseVector<float> & value(DenseVector<float> & coarse,
-                const DenseVector<float> & fine, const DenseVector<unsigned long> & mask, HONEI_UNUSED BandedMatrixQ1<float> & resmat);
+                const DenseVector<float> & fine, const DenseVector<unsigned long> & mask, HONEI_UNUSED BandedMatrixQx<Q1Type, float> & resmat);
 
         static DenseVector<double> & value(DenseVector<double> & coarse,
-                const DenseVector<double> & fine, const DenseVector<unsigned long> & mask, HONEI_UNUSED BandedMatrixQ1<double> & resmat);
+                const DenseVector<double> & fine, const DenseVector<unsigned long> & mask, HONEI_UNUSED BandedMatrixQx<Q1Type, double> & resmat);
 
         static DenseVector<float> & value(DenseVector<float> & coarse,
                 const DenseVector<float> & fine, const DenseVector<unsigned long> & mask, HONEI_UNUSED SparseMatrixELL<float> & resmat);

@@ -60,7 +60,7 @@ namespace honei
         }
 
         template <typename Tag_, typename DT_>
-        void common_defect(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & rhs, const BandedMatrixQ1<DT_> & a, const DenseVectorContinuousBase<DT_> & b)
+        void common_defect(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & rhs, const BandedMatrixQx<Q1Type, DT_> & a, const DenseVectorContinuousBase<DT_> & b)
         {
             if (b.size() != a.columns())
             {
@@ -173,7 +173,7 @@ template DenseVectorContinuousBase<double> & Defect<tags::OpenCL::GPU>::value(De
 
 template <typename DT_>
 DenseVector<DT_> Defect<tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<DT_> & rhs,
-        const BandedMatrixQ1<DT_> & a,
+        const BandedMatrixQx<Q1Type, DT_> & a,
         const DenseVectorContinuousBase<DT_> & b)
 {
     CONTEXT("When calculating Defect<DT_> (OpenCL CPU):");
@@ -183,12 +183,12 @@ DenseVector<DT_> Defect<tags::OpenCL::CPU>::value(const DenseVectorContinuousBas
     PROFILER_STOP("Defect tags::OpenCL::CPU");
     return result;
 }
-template DenseVector<float> Defect<tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<float> &, const BandedMatrixQ1<float> &, const DenseVectorContinuousBase<float> &);
-template DenseVector<double> Defect<tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<double> &, const BandedMatrixQ1<double> &, const DenseVectorContinuousBase<double> &);
+template DenseVector<float> Defect<tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<float> &, const BandedMatrixQx<Q1Type, float> &, const DenseVectorContinuousBase<float> &);
+template DenseVector<double> Defect<tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<double> &, const BandedMatrixQx<Q1Type, double> &, const DenseVectorContinuousBase<double> &);
 
 template <typename DT_>
 DenseVector<DT_> Defect<tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<DT_> & rhs,
-        const BandedMatrixQ1<DT_> & a,
+        const BandedMatrixQx<Q1Type, DT_> & a,
         const DenseVectorContinuousBase<DT_> & b)
 {
     CONTEXT("When calculating Defect<DT_> (OpenCL GPU):");
@@ -198,12 +198,12 @@ DenseVector<DT_> Defect<tags::OpenCL::GPU>::value(const DenseVectorContinuousBas
     PROFILER_STOP("Defect tags::OpenCL::GPU");
     return result;
 }
-template DenseVector<float> Defect<tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<float> &, const BandedMatrixQ1<float> &, const DenseVectorContinuousBase<float> &);
-template DenseVector<double> Defect<tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<double> &, const BandedMatrixQ1<double> &, const DenseVectorContinuousBase<double> &);
+template DenseVector<float> Defect<tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<float> &, const BandedMatrixQx<Q1Type, float> &, const DenseVectorContinuousBase<float> &);
+template DenseVector<double> Defect<tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<double> &, const BandedMatrixQx<Q1Type, double> &, const DenseVectorContinuousBase<double> &);
 
 template <typename DT_>
 DenseVectorContinuousBase<DT_> & Defect<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & rhs,
-        const BandedMatrixQ1<DT_> & a,
+        const BandedMatrixQx<Q1Type, DT_> & a,
         const DenseVectorContinuousBase<DT_> & b)
 {
     CONTEXT("When calculating Defect<DT_> (OpenCL CPU):");
@@ -212,12 +212,12 @@ DenseVectorContinuousBase<DT_> & Defect<tags::OpenCL::CPU>::value(DenseVectorCon
     PROFILER_STOP("Defect tags::OpenCL::CPU");
     return result;
 }
-template DenseVectorContinuousBase<float> & Defect<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &, const BandedMatrixQ1<float> &, const DenseVectorContinuousBase<float> &);
-template DenseVectorContinuousBase<double> & Defect<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &, const BandedMatrixQ1<double> &, const DenseVectorContinuousBase<double> &);
+template DenseVectorContinuousBase<float> & Defect<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &, const BandedMatrixQx<Q1Type, float> &, const DenseVectorContinuousBase<float> &);
+template DenseVectorContinuousBase<double> & Defect<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &, const BandedMatrixQx<Q1Type, double> &, const DenseVectorContinuousBase<double> &);
 
 template <typename DT_>
 DenseVectorContinuousBase<DT_> & Defect<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & rhs,
-        const BandedMatrixQ1<DT_> & a,
+        const BandedMatrixQx<Q1Type, DT_> & a,
         const DenseVectorContinuousBase<DT_> & b)
 {
     CONTEXT("When calculating Defect<DT_> (OpenCL GPU):");
@@ -226,5 +226,5 @@ DenseVectorContinuousBase<DT_> & Defect<tags::OpenCL::GPU>::value(DenseVectorCon
     PROFILER_STOP("Defect tags::OpenCL::GPU");
     return result;
 }
-template DenseVectorContinuousBase<float> & Defect<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &, const BandedMatrixQ1<float> &, const DenseVectorContinuousBase<float> &);
-template DenseVectorContinuousBase<double> & Defect<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &, const BandedMatrixQ1<double> &, const DenseVectorContinuousBase<double> &);
+template DenseVectorContinuousBase<float> & Defect<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &, const BandedMatrixQx<Q1Type, float> &, const DenseVectorContinuousBase<float> &);
+template DenseVectorContinuousBase<double> & Defect<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &, const BandedMatrixQx<Q1Type, double> &, const DenseVectorContinuousBase<double> &);

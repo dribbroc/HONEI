@@ -17,25 +17,25 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/la/banded_matrix_q1.hh>
-#include <honei/la/banded_matrix_q1-impl.hh>
+#include <honei/la/banded_matrix_qx.hh>
+#include <honei/la/banded_matrix_qx-impl.hh>
 
 namespace honei
 {
-    template <> const float Implementation<BandedMatrixQ1<float> >::zero_element(0.0f);
+    template <> const float Implementation<BandedMatrixQx<Q1Type, float> >::zero_element(0.0f);
 
-    template class BandedMatrixQ1<float>;
+    template class BandedMatrixQx<Q1Type, float>;
 
-    template bool operator== (const BandedMatrixQ1<float> & a, const BandedMatrixQ1<float> & b);
+    template bool operator== (const BandedMatrixQx<Q1Type, float> & a, const BandedMatrixQx<Q1Type, float> & b);
 
-    template std::ostream & operator<< (std::ostream & lhs, const BandedMatrixQ1<float> & matrix);
+    template std::ostream & operator<< (std::ostream & lhs, const BandedMatrixQx<Q1Type, float> & matrix);
 
-    template <> const double Implementation<BandedMatrixQ1<double> >::zero_element(0.0);
+    template <> const double Implementation<BandedMatrixQx<Q1Type, double> >::zero_element(0.0);
 
-    template class BandedMatrixQ1<double>;
+    template class BandedMatrixQx<Q1Type, double>;
 
-    template bool operator== (const BandedMatrixQ1<double> & a, const BandedMatrixQ1<double> & b);
+    template bool operator== (const BandedMatrixQx<Q1Type, double> & a, const BandedMatrixQx<Q1Type, double> & b);
 
-    template std::ostream & operator<< (std::ostream & lhs, const BandedMatrixQ1<double> & matrix);
+    template std::ostream & operator<< (std::ostream & lhs, const BandedMatrixQx<Q1Type, double> & matrix);
 }
 

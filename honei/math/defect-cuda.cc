@@ -33,11 +33,11 @@ namespace
         private:
             DenseVector<float> & result;
             const DenseVectorContinuousBase<float> & rhs;
-            const BandedMatrixQ1<float> & a;
+            const BandedMatrixQx<Q1Type, float> & a;
             const DenseVectorContinuousBase<float> & b;
             unsigned long blocksize;
         public:
-            cudaDefectBMQ1DVfloat(DenseVector<float> & result, const DenseVectorContinuousBase<float> & rhs, const BandedMatrixQ1<float> & a, const DenseVectorContinuousBase<float> & b, unsigned long blocksize) :
+            cudaDefectBMQ1DVfloat(DenseVector<float> & result, const DenseVectorContinuousBase<float> & rhs, const BandedMatrixQx<Q1Type, float> & a, const DenseVectorContinuousBase<float> & b, unsigned long blocksize) :
                 result(result),
                 rhs(rhs),
                 a(a),
@@ -86,11 +86,11 @@ namespace
         private:
             DenseVector<double> & result;
             const DenseVectorContinuousBase<double> & rhs;
-            const BandedMatrixQ1<double> & a;
+            const BandedMatrixQx<Q1Type, double> & a;
             const DenseVectorContinuousBase<double> & b;
             unsigned long blocksize;
         public:
-            cudaDefectBMQ1DVdouble(DenseVector<double> & result, const DenseVectorContinuousBase<double> & rhs, const BandedMatrixQ1<double> & a, const DenseVectorContinuousBase<double> & b, unsigned long blocksize) :
+            cudaDefectBMQ1DVdouble(DenseVector<double> & result, const DenseVectorContinuousBase<double> & rhs, const BandedMatrixQx<Q1Type, double> & a, const DenseVectorContinuousBase<double> & b, unsigned long blocksize) :
                 result(result),
                 rhs(rhs),
                 a(a),
@@ -214,7 +214,7 @@ namespace
 }
 
 DenseVector<float> Defect<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<float> & rhs,
-        const BandedMatrixQ1<float> & a,
+        const BandedMatrixQx<Q1Type, float> & a,
         const DenseVectorContinuousBase<float> & b)
 {
     CONTEXT("When calculating Defect<float> (CUDA):");
@@ -248,7 +248,7 @@ DenseVector<float> Defect<tags::GPU::CUDA>::value(const DenseVectorContinuousBas
 
 #ifdef HONEI_CUDA_DOUBLE
 DenseVector<double> Defect<tags::GPU::CUDA>::value(const DenseVectorContinuousBase<double> & rhs,
-        const BandedMatrixQ1<double> & a,
+        const BandedMatrixQx<Q1Type, double> & a,
         const DenseVectorContinuousBase<double> & b)
 {
     CONTEXT("When calculating Defect<double> (CUDA):");
@@ -282,7 +282,7 @@ DenseVector<double> Defect<tags::GPU::CUDA>::value(const DenseVectorContinuousBa
 #endif
 
 DenseVector<float> & Defect<tags::GPU::CUDA>::value(DenseVector<float> & result, const DenseVectorContinuousBase<float> & rhs,
-        const BandedMatrixQ1<float> & a,
+        const BandedMatrixQx<Q1Type, float> & a,
         const DenseVectorContinuousBase<float> & b)
 {
     CONTEXT("When calculating Defect<float> (CUDA):");
@@ -314,7 +314,7 @@ DenseVector<float> & Defect<tags::GPU::CUDA>::value(DenseVector<float> & result,
 
 #ifdef HONEI_CUDA_DOUBLE
 DenseVector<double> & Defect<tags::GPU::CUDA>::value(DenseVector<double> & result, const DenseVectorContinuousBase<double> & rhs,
-        const BandedMatrixQ1<double> & a,
+        const BandedMatrixQx<Q1Type, double> & a,
         const DenseVectorContinuousBase<double> & b)
 {
     CONTEXT("When calculating Defect<double> (CUDA):");

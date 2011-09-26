@@ -26,7 +26,7 @@
 #include <honei/la/element_iterator.hh>
 #include <honei/la/sparse_vector-impl.hh>
 #include <honei/la/sparse_matrix_ell.hh>
-#include <honei/la/banded_matrix_q1.hh>
+#include <honei/la/banded_matrix_qx.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/matrix_error.hh>
 #include <honei/util/shared_array-impl.hh>
@@ -182,7 +182,7 @@ namespace honei
                 _synch_column_vectors();
             }
 
-            explicit SparseMatrix(const BandedMatrixQ1<DataType_> & src, unsigned long capacity = 1) :
+            explicit SparseMatrix(const BandedMatrixQx<Q1Type, DataType_> & src, unsigned long capacity = 1) :
                 _capacity(capacity),
                 _columns(src.columns()),
                 _rows(src.rows()),

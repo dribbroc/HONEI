@@ -22,7 +22,7 @@
 #define MATH_GUARD_FILL_MATRIX_HH 1
 
 #include<honei/la/dense_vector.hh>
-#include<honei/la/banded_matrix_q1.hh>
+#include<honei/la/banded_matrix_qx.hh>
 #include<honei/math/methods.hh>
 #include<cmath>
 
@@ -38,7 +38,7 @@ namespace honei
         {
             public:
                 template <typename DT_>
-                    static inline void value(BandedMatrixQ1<DT_> & target)
+                    static inline void value(BandedMatrixQx<Q1Type, DT_> & target)
                     {
                         unsigned long size(target.band(DD).size());
                         DT_ * ll = target.band(LL).elements();
@@ -82,7 +82,7 @@ namespace honei
         {
             public:
                 template <typename DT_>
-                    static inline void value(BandedMatrixQ1<DT_> & target)
+                    static inline void value(BandedMatrixQx<Q1Type, DT_> & target)
                     {
                         unsigned long size(target.band(DD).size());
                         DT_ * ll = target.band(LL).elements();

@@ -53,7 +53,7 @@ class PoissonBenchmarkMGBandedQ1Fixed:
         {
             unsigned long _root_n(_size);
             unsigned long n(_root_n * _root_n);
-            MGInfo<DT1_, BandedMatrixQ1<DT1_> > info;
+            MGInfo<DT1_, BandedMatrixQx<Q1Type, DT1_> > info;
             //configuration constants: /TODO: set/allocate!!!
             info.is_smoother = false;
 
@@ -140,7 +140,7 @@ class PoissonBenchmarkMGBandedQ1Fixed:
                     size = 9;
 
                 DenseVector<DT1_> dummy_band(size, DT1_(0));
-                BandedMatrixQ1<DT1_> ac_a(size, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band);
+                BandedMatrixQx<Q1Type, DT1_> ac_a(size, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band);
                 info.a.push_back(ac_a);
                 // iteration vectors
                 DenseVector<DT1_> ac_c(size, DT1_(0));
@@ -176,7 +176,7 @@ class PoissonBenchmarkMGBandedQ1Fixed:
             {
                 unsigned long N = (unsigned long)(((unsigned long)pow((DT1_)2, (DT1_)i) + 1) * ((unsigned long)pow((DT1_)2, (DT1_)i) + 1));
                 DenseVector<DT1_> band(N);
-                BandedMatrixQ1<DT1_> current_matrix(N, band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy());
+                BandedMatrixQx<Q1Type, DT1_> current_matrix(N, band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy());
                 DenseVector<DT1_> current_rhs(N);
 
 

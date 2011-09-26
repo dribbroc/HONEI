@@ -214,7 +214,7 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrix<double> & 
     return result;
 }
 
-DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrixQ1<float> & a, const DenseVectorContinuousBase<float> & b)
+DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrixQx<Q1Type, float> & a, const DenseVectorContinuousBase<float> & b)
 {
     CONTEXT("When multiplying BandedMatrix<float> with DenseVectorContinuousBase<float> (SSE):");
 
@@ -233,7 +233,7 @@ DenseVector<float> Product<tags::CPU::SSE>::value(const BandedMatrixQ1<float> & 
     return result;
 }
 
-DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrixQ1<double> & a, const DenseVectorContinuousBase<double> & b)
+DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrixQx<Q1Type, double> & a, const DenseVectorContinuousBase<double> & b)
 {
     CONTEXT("When multiplying BandedMatrix<double> with DenseVectorContinuousBase<double> (SSE):");
 
@@ -252,7 +252,7 @@ DenseVector<double> Product<tags::CPU::SSE>::value(const BandedMatrixQ1<double> 
     return result;
 }
 
-DenseVector<float> & Product<tags::CPU::SSE>::value(DenseVector<float> & result, const BandedMatrixQ1<float> & a, const DenseVectorContinuousBase<float> & b)
+DenseVector<float> & Product<tags::CPU::SSE>::value(DenseVector<float> & result, const BandedMatrixQx<Q1Type, float> & a, const DenseVectorContinuousBase<float> & b)
 {
     CONTEXT("When multiplying BandedMatrix<float> with DenseVectorContinuousBase<float> (SSE):");
 
@@ -269,7 +269,7 @@ DenseVector<float> & Product<tags::CPU::SSE>::value(DenseVector<float> & result,
     return result;
 }
 
-DenseVector<double> & Product<tags::CPU::SSE>::value(DenseVector<double> & result, const BandedMatrixQ1<double> & a, const DenseVectorContinuousBase<double> & b)
+DenseVector<double> & Product<tags::CPU::SSE>::value(DenseVector<double> & result, const BandedMatrixQx<Q1Type, double> & a, const DenseVectorContinuousBase<double> & b)
 {
     CONTEXT("When multiplying BandedMatrix<double> with DenseVectorContinuousBase<double> (SSE):");
 

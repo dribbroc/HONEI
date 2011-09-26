@@ -23,7 +23,7 @@
 
 
 #include<honei/la/dense_vector.hh>
-#include<honei/la/banded_matrix_q1.hh>
+#include<honei/la/banded_matrix_qx.hh>
 #include<honei/math/methods.hh>
 #include<cmath>
 #include <iostream>

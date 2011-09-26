@@ -93,7 +93,7 @@ namespace honei
     }
 
     template <typename DataType_>
-    BandedMatrix<DataType_>::BandedMatrix(const BandedMatrixQ1<DataType_> & src) :
+    BandedMatrix<DataType_>::BandedMatrix(const BandedMatrixQx<Q1Type, DataType_> & src) :
         PrivateImplementationPattern<BandedMatrix<DataType_>, Shared>(new Implementation<BandedMatrix<DataType_> >(src.size()))
     {
             this->insert_band(0, src.band(DD));

@@ -165,7 +165,7 @@ class PoissonJACBenchQ1_1 :
             }
 
             DenseVector<float> to_smooth(n, float(0));
-            BandedMatrixQ1<float> A(n , ll_v, ld_v, lu_v, dl_v, dd_v, du_v, ul_v, ud_v, uu_v);
+            BandedMatrixQx<Q1Type, float> A(n , ll_v, ld_v, lu_v, dl_v, dd_v, du_v, ul_v, ud_v, uu_v);
 
             DenseVector<float> diag_inverted(A.band(DD).copy());
             ElementInverse<Tag_>::value(diag_inverted);
@@ -327,7 +327,7 @@ class PoissonJACBenchQ1_2 :
             }
 
             DenseVector<float> to_smooth(n, float(0));
-            BandedMatrixQ1<float> A(n , ll_v, ld_v, lu_v, dl_v, dd_v, du_v, ul_v, ud_v, uu_v);
+            BandedMatrixQx<Q1Type, float> A(n , ll_v, ld_v, lu_v, dl_v, dd_v, du_v, ul_v, ud_v, uu_v);
 
             DenseVector<float> diag_inverted(A.band(DD).copy());
             ElementInverse<Tag_>::value(diag_inverted);

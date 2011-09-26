@@ -163,7 +163,7 @@ class PoissonCGQ1Bench :
             //std::cout<<dd_v<<endl;
 
 
-            BandedMatrixQ1<float> A(n,ll_v, ld_v , lu_v, dl_v, dd_v, du_v, ul_v, ud_v, uu_v);
+            BandedMatrixQx<Q1Type, float> A(n,ll_v, ld_v , lu_v, dl_v, dd_v, du_v, ul_v, ud_v, uu_v);
             DenseVector<float> res(ll_v.size());
             for(int i(0); i < 100; ++i)
             {

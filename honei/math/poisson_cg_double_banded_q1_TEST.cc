@@ -62,7 +62,7 @@ class PoissonTestCGBandedFloatQ1:
             DenseVector<double> ana_sol_v(n, double(0));
             DenseVector<double> ref_sol_v(n, double(0));
             long root_n = (long)sqrt(n);
-            BandedMatrixQ1<double> A(n,ll_v, ld_v , lu_v, dl_v, dd_v, du_v, ul_v, ud_v, uu_v);
+            BandedMatrixQx<Q1Type, double> A(n,ll_v, ld_v , lu_v, dl_v, dd_v, du_v, ul_v, ud_v, uu_v);
 
             FillMatrix<Tag_, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(A);
             FillVector<Tag_, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(b_v);

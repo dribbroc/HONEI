@@ -17,7 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/la/banded_matrix_q1.hh>
+#include <honei/la/banded_matrix_qx.hh>
 #include <honei/la/banded_matrix.hh>
 #include <honei/la/sparse_matrix.hh>
 #include <honei/la/sparse_matrix_ell.hh>
@@ -57,15 +57,15 @@ class BandedMatrixQ1QuickTest :
             DenseVector<DataType_> dv8(size, DataType_(8));
             DenseVector<DataType_> dv9(size, DataType_(9));
 
-            BandedMatrixQ1<DataType_> bm1(size, dv1, dv2, dv3, dv4, dv5, dv6, dv7, dv8, dv9);
-            BandedMatrixQ1<DataType_> bm0(size, dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy(),
+            BandedMatrixQx<Q1Type, DataType_> bm1(size, dv1, dv2, dv3, dv4, dv5, dv6, dv7, dv8, dv9);
+            BandedMatrixQx<Q1Type, DataType_> bm0(size, dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy(), dv0.copy(),
                     dv0.copy(), dv0.copy());
             TEST_CHECK_NOT_EQUAL(bm0, bm1);
             TEST_CHECK_EQUAL(bm0, bm0);
             TEST_CHECK_EQUAL(bm1, bm1.copy());
 
             BandedMatrix<DataType_> am(bm1);
-            BandedMatrixQ1<DataType_> bm3(am);
+            BandedMatrixQx<Q1Type, DataType_> bm3(am);
             /// \todo activate when bm==bmq1 is available
             /*TEST_CHECK_EQUAL(am, bm1);
             TEST_CHECK_EQUAL(bm3, am) */;
@@ -79,7 +79,7 @@ class BandedMatrixQ1QuickTest :
             }
 
             SparseMatrixELL<DataType_> smell(sm);
-            BandedMatrixQ1<DataType_> bm4(smell);
+            BandedMatrixQx<Q1Type, DataType_> bm4(smell);
             for (unsigned long row(0) ; row < sm.rows() ; ++row)
             {
                 for (unsigned long column(0) ; column < sm.columns() ; ++column)
@@ -90,7 +90,7 @@ class BandedMatrixQ1QuickTest :
 
 
             DenseVector<DataType_> dv01(5, DataType_(1));
-            TEST_CHECK_THROWS(BandedMatrixQ1<DataType_> bm01(9, dv01, dv01, dv01, dv01, dv01, dv01, dv01, dv01, dv01), VectorSizeDoesNotMatch);
+            //TEST_CHECK_THROWS(BandedMatrixQx<Q1Type, DataType_> bm01(9, dv01, dv01, dv01, dv01, dv01, dv01, dv01, dv01, dv01), VectorSizeDoesNotMatch);
         }
 };
 BandedMatrixQ1QuickTest<float> banded_matrix_q1_quick_test_float("float");

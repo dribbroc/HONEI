@@ -19,10 +19,11 @@
  */
 
 #pragma once
-#ifndef LIBLA_GUARD_BANDED_MATRIX_Q1_HH
-#define LIBLA_GUARD_BANDED_MATRIX_Q1_HH 1
+#ifndef LIBLA_GUARD_BANDED_MATRIX_QX_HH
+#define LIBLA_GUARD_BANDED_MATRIX_QX_HH 1
 
 #include <honei/la/dense_vector.hh>
+#include <honei/la/band_type.hh>
 #include <honei/la/banded_matrix.hh>
 #include <honei/la/sparse_matrix_ell.hh>
 #include <honei/util/private_implementation_pattern.hh>
@@ -32,27 +33,14 @@ namespace honei
     // Forward declarations
     template <typename DataType_> class BandedMatrix;
 
-    enum Q1BandIndex
-    {
-        LL = 0,
-        LD,
-        LU,
-        DL,
-        DD,
-        DU,
-        UL,
-        UD,
-        UU
-    };
-
     /**
-     * \brief BandedMatrixQ1 is a square matrix with nine non-zero bands which keeps its data
+     * \brief BandedMatrixQx is a square matrix with nine non-zero bands which keeps its data
      * \brief non-sequential.
      *
      * \ingroup grpmatrix
      */
-    template <typename DataType_> class BandedMatrixQ1 :
-        PrivateImplementationPattern<BandedMatrixQ1<DataType_>, Shared>
+    template <BandType BandType_, typename DataType_> class BandedMatrixQx :
+        PrivateImplementationPattern<BandedMatrixQx<BandType_, DataType_>, Shared>
     {
         public:
             /// \name Basic operations
@@ -64,7 +52,7 @@ namespace honei
              * \param size Size of the new banded matrix.
              * \param diagonal Diagonal of the new banded matrix.
              */
-            BandedMatrixQ1(unsigned long size,
+            BandedMatrixQx(unsigned long size,
                     const DenseVector<DataType_> & ll,
                     const DenseVector<DataType_> & ld,
                     const DenseVector<DataType_> & lu,
@@ -80,20 +68,20 @@ namespace honei
              *
              * \param src The BandedMatrix our matrix will be created from.
              */
-            explicit BandedMatrixQ1(BandedMatrix<DataType_> & src);
+            explicit BandedMatrixQx(BandedMatrix<DataType_> & src);
 
             /**
              * Constructor.
              *
              * \param src The BandedMatrix our matrix will be created from.
              */
-            explicit BandedMatrixQ1(SparseMatrixELL<DataType_> & src);
+            explicit BandedMatrixQx(SparseMatrixELL<DataType_> & src);
 
             /// Copy-constructor.
-            BandedMatrixQ1(const BandedMatrixQ1<DataType_> & other);
+            BandedMatrixQx(const BandedMatrixQx<BandType_, DataType_> & other);
 
             /// Destructor.
-            ~BandedMatrixQ1();
+            ~BandedMatrixQx();
 
             /// \}
 
@@ -110,10 +98,10 @@ namespace honei
             const DataType_ & operator() (unsigned long row, unsigned long column) const;
 
             /// Returns a full band-vector by index.
-            DenseVector<DataType_> & band(Q1BandIndex index) const;
+            DenseVector<DataType_> & band(unsigned long index) const;
 
             /// Returns a band-vector range by index.
-            DenseVectorRange<DataType_> band_range(Q1BandIndex index) const;
+            DenseVectorRange<DataType_> band_range(unsigned long index) const;
 
             /// Request a memory access lock for our data.
             void lock(LockMode mode) const;
@@ -122,38 +110,41 @@ namespace honei
             void unlock(LockMode mode) const;
 
             /// Returns a copy of the matrix.
-            BandedMatrixQ1 copy() const;
+            BandedMatrixQx copy() const;
 
             /// Returns the square root of our size.
             signed long root() const;
+
+            /// Returns number of bands
+            unsigned long bands() const;
     };
 
     /**
-     * Equality operator for BandedMatrixQ1.
+     * Equality operator for BandedMatrixQx.
      *
      * Compares if corresponding elements of two banded matrices are equal
      * within machine precision.
      */
-    template <typename DataType_> bool operator== (const BandedMatrixQ1<DataType_> & a, const BandedMatrixQ1<DataType_> & b);
+    template <BandType BandType_, typename DataType_> bool operator== (const BandedMatrixQx<BandType_, DataType_> & a, const BandedMatrixQx<BandType_, DataType_> & b);
 
     /**
-     * Output operator for BandedMatrixQ1.
+     * Output operator for BandedMatrixQx.
      *
      * Outputs a banded matrix to an output stream.
      */
-    template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const BandedMatrixQ1<DataType_> & matrix);
+    template <BandType BandType_, typename DataType_> std::ostream & operator<< (std::ostream & lhs, const BandedMatrixQx<BandType_, DataType_> & matrix);
 
-    extern template class BandedMatrixQ1<float>;
+    extern template class BandedMatrixQx<Q1Type, float>;
 
-    extern template bool operator== (const BandedMatrixQ1<float> & a, const BandedMatrixQ1<float> & b);
+    extern template bool operator== (const BandedMatrixQx<Q1Type, float> & a, const BandedMatrixQx<Q1Type, float> & b);
 
-    extern template std::ostream & operator<< (std::ostream & lhs, const BandedMatrixQ1<float> & matrix);
+    extern template std::ostream & operator<< (std::ostream & lhs, const BandedMatrixQx<Q1Type, float> & matrix);
 
-    extern template class BandedMatrixQ1<double>;
+    extern template class BandedMatrixQx<Q1Type, double>;
 
-    extern template bool operator== (const BandedMatrixQ1<double> & a, const BandedMatrixQ1<double> & b);
+    extern template bool operator== (const BandedMatrixQx<Q1Type, double> & a, const BandedMatrixQx<Q1Type, double> & b);
 
-    extern template std::ostream & operator<< (std::ostream & lhs, const BandedMatrixQ1<double> & matrix);
+    extern template std::ostream & operator<< (std::ostream & lhs, const BandedMatrixQx<Q1Type, double> & matrix);
 
 }
 #endif

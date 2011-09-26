@@ -121,7 +121,7 @@ class Q1MatrixDenseVectorProductBench :
             bm1.insert_band((unsigned long)sqrt(_size), dv4.copy());
             bm1.insert_band((unsigned long)sqrt(_size)+ 1, dv4.copy());
 
-            BandedMatrixQ1<DataType_> qm1(bm1);
+            BandedMatrixQx<Q1Type, DataType_> qm1(bm1);
             DenseVector<DataType_> dv2(_size, DataType_(4));
             DenseVector<DataType_> dv3(_size);
             for (unsigned long i(0) ; i < _count ; i++)
@@ -670,7 +670,7 @@ class Q1MatrixELLDenseVectorProductBench :
             bm1.insert_band((unsigned long)sqrt(_size), dv4.copy());
             bm1.insert_band((unsigned long)sqrt(_size)+ 1, dv4.copy());
 
-            //BandedMatrixQ1<DataType_> qm1(bm1);
+            //BandedMatrixQx<Q1Type, DataType_> qm1(bm1);
             DenseVector<DataType_> dv2(_size, DataType_(4));
             DenseVector<DataType_> dv3(_size, DataType_(4));
 

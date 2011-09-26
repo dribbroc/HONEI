@@ -32,7 +32,7 @@ class DefectBench :
             DenseVector<DataType_> x(_size, DataType_(0.123456789));
 
             DenseVector<DataType_> omni_band(_size, DataType_(4711));
-            BandedMatrixQ1<DataType_> A(_size, omni_band.copy(), omni_band.copy(),omni_band.copy(),omni_band.copy(),omni_band.copy(),omni_band.copy(),omni_band.copy(),omni_band.copy(),omni_band.copy());
+            BandedMatrixQx<Q1Type, DataType_> A(_size, omni_band.copy(), omni_band.copy(),omni_band.copy(),omni_band.copy(),omni_band.copy(),omni_band.copy(),omni_band.copy(),omni_band.copy(),omni_band.copy());
 
             for(unsigned long i(0) ; i < _count ; ++i)
             {

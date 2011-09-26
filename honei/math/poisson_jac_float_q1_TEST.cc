@@ -167,7 +167,7 @@ class PoissonTestJACBandedQ1Float:
             //std::cout<<dd_v<<endl;
 
 
-            BandedMatrixQ1<float> A(n, ll_v.copy(), ld_v.copy(), lu_v.copy(), dl_v.copy(), dd_v.copy(), du_v.copy(), ul_v.copy(), ud_v.copy(), uu_v.copy());
+            BandedMatrixQx<Q1Type, float> A(n, ll_v.copy(), ld_v.copy(), lu_v.copy(), dl_v.copy(), dd_v.copy(), du_v.copy(), ul_v.copy(), ud_v.copy(), uu_v.copy());
             //std::cout<<A.band(0)<<endl;
             //A->insert_band(0, dd_v.copy());
             //std::cout<<A.band(0)[0] * double(1) << endl;

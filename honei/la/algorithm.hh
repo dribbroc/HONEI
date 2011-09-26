@@ -26,7 +26,7 @@
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/sparse_matrix.hh>
 #include <honei/la/banded_matrix.hh>
-#include <honei/la/banded_matrix_q1.hh>
+#include <honei/la/banded_matrix_qx.hh>
 #include <honei/util/tags.hh>
 
 #include <limits>
@@ -89,7 +89,7 @@ namespace honei
         }
     }
 
-    template <typename Tag_, typename DT_> void copy(const BandedMatrixQ1<DT_> & source, BandedMatrixQ1<DT_> & dest)
+    template <typename Tag_, typename DT_> void copy(const BandedMatrixQx<Q1Type, DT_> & source, BandedMatrixQx<Q1Type, DT_> & dest)
     {
         CONTEXT("When copying elements from BandedMatrixQ1 to BandedMatrixQ1:");
 

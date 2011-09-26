@@ -57,11 +57,11 @@ namespace
     {
         private:
             DenseVector<float> & result;;
-            const BandedMatrixQ1<float> & a;
+            const BandedMatrixQx<Q1Type, float> & a;
             const DenseVectorContinuousBase<float> & b;
             unsigned long blocksize;
         public:
-            cudaProductBMQ1DVfloat(DenseVector<float> & result, const BandedMatrixQ1<float> & a, const DenseVectorContinuousBase<float> & b, unsigned long blocksize) :
+            cudaProductBMQ1DVfloat(DenseVector<float> & result, const BandedMatrixQx<Q1Type, float> & a, const DenseVectorContinuousBase<float> & b, unsigned long blocksize) :
                 result(result),
                 a(a),
                 b(b),
@@ -106,11 +106,11 @@ namespace
     {
         private:
             DenseVector<double> & result;;
-            const BandedMatrixQ1<double> & a;
+            const BandedMatrixQx<Q1Type, double> & a;
             const DenseVectorContinuousBase<double> & b;
             unsigned long blocksize;
         public:
-            cudaProductBMQ1DVdouble(DenseVector<double> & result, const BandedMatrixQ1<double> & a, const DenseVectorContinuousBase<double> & b, unsigned long blocksize) :
+            cudaProductBMQ1DVdouble(DenseVector<double> & result, const BandedMatrixQx<Q1Type, double> & a, const DenseVectorContinuousBase<double> & b, unsigned long blocksize) :
                 result(result),
                 a(a),
                 b(b),
@@ -299,9 +299,9 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrix<float> & a
 }
 
 
-DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrixQ1<float> & a, const DenseVectorContinuousBase<float> & b)
+DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrixQx<Q1Type, float> & a, const DenseVectorContinuousBase<float> & b)
 {
-    CONTEXT("When multiplying BandedMatrixQ1<float> with DenseVectorContinuousBase<float> (CUDA):");
+    CONTEXT("When multiplying BandedMatrixQx<Q1Type, float> with DenseVectorContinuousBase<float> (CUDA):");
 
     if (b.size() != a.columns())
     {
@@ -327,9 +327,9 @@ DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrixQ1<float> &
 }
 
 #ifdef HONEI_CUDA_DOUBLE
-DenseVector<double> Product<tags::GPU::CUDA>::value(const BandedMatrixQ1<double> & a, const DenseVectorContinuousBase<double> & b)
+DenseVector<double> Product<tags::GPU::CUDA>::value(const BandedMatrixQx<Q1Type, double> & a, const DenseVectorContinuousBase<double> & b)
 {
-    CONTEXT("When multiplying BandedMatrixQ1<double> with DenseVectorContinuousBase<double> (CUDA):");
+    CONTEXT("When multiplying BandedMatrixQx<Q1Type, double> with DenseVectorContinuousBase<double> (CUDA):");
 
     if (b.size() != a.columns())
     {
@@ -355,9 +355,9 @@ DenseVector<double> Product<tags::GPU::CUDA>::value(const BandedMatrixQ1<double>
 }
 #endif
 
-DenseVector<float> & Product<tags::GPU::CUDA>::value(DenseVector<float> & result, const BandedMatrixQ1<float> & a, const DenseVectorContinuousBase<float> & b)
+DenseVector<float> & Product<tags::GPU::CUDA>::value(DenseVector<float> & result, const BandedMatrixQx<Q1Type, float> & a, const DenseVectorContinuousBase<float> & b)
 {
-    CONTEXT("When multiplying BandedMatrixQ1<float> with DenseVectorContinuousBase<float> (CUDA):");
+    CONTEXT("When multiplying BandedMatrixQx<Q1Type, float> with DenseVectorContinuousBase<float> (CUDA):");
 
     if (b.size() != a.columns())
     {
@@ -385,9 +385,9 @@ DenseVector<float> & Product<tags::GPU::CUDA>::value(DenseVector<float> & result
 }
 
 #ifdef HONEI_CUDA_DOUBLE
-DenseVector<double> & Product<tags::GPU::CUDA>::value(DenseVector<double> & result, const BandedMatrixQ1<double> & a, const DenseVectorContinuousBase<double> & b)
+DenseVector<double> & Product<tags::GPU::CUDA>::value(DenseVector<double> & result, const BandedMatrixQx<Q1Type, double> & a, const DenseVectorContinuousBase<double> & b)
 {
-    CONTEXT("When multiplying BandedMatrixQ1<double> with DenseVectorContinuousBase<double> (CUDA):");
+    CONTEXT("When multiplying BandedMatrixQx<Q1Type, double> with DenseVectorContinuousBase<double> (CUDA):");
 
     if (b.size() != a.columns())
     {

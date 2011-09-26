@@ -92,10 +92,10 @@ class Q1MGCycleCreationTest:
 
         virtual void run() const
         {
-            std::vector<BandedMatrixQ1<double> > A;
+            std::vector<BandedMatrixQx<Q1Type, double> > A;
             std::vector<SparseMatrixELL<double> > Res;
             std::vector<SparseMatrixELL<double> > Prol;
-            std::vector<BandedMatrixQ1<double> > P;
+            std::vector<BandedMatrixQx<Q1Type, double> > P;
             std::vector<DenseVector<double> > b;
             std::vector<DenseVector<double> > x;
             std::vector<DenseVector<double> > c;
@@ -105,7 +105,7 @@ class Q1MGCycleCreationTest:
             for(unsigned long i(0); i < 5; ++i)
             {
                 BandedMatrix<double> a_t(9);
-                BandedMatrixQ1<double> a(a_t);
+                BandedMatrixQx<Q1Type, double> a(a_t);
                 SparseMatrix<double> trans(a);
                 SparseMatrixELL<double> transell(trans);
                 A.push_back(a);
@@ -122,7 +122,7 @@ class Q1MGCycleCreationTest:
                 t1.push_back(dummy.copy());
             }
 
-            MGData<BandedMatrixQ1<double>, DenseVector<double>, SparseMatrixELL<double>, BandedMatrixQ1<double> > data(A, Res, Prol, P, b, x, c, d, t0, t1, 1, 1000, 4, 4, 1, 1e-8);
+            MGData<BandedMatrixQx<Q1Type, double>, DenseVector<double>, SparseMatrixELL<double>, BandedMatrixQx<Q1Type, double> > data(A, Res, Prol, P, b, x, c, d, t0, t1, 1, 1000, 4, 4, 1, 1e-8);
 
             OperatorList ol(
             MGCycleCreation<Tag_,

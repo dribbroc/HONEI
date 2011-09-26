@@ -169,14 +169,14 @@ class PoissonTestMGBandedQ1Double:
             //std::cout<<dd_v<<endl;
 
 
-            BandedMatrixQ1<double> A(n, ll_v.copy(), ld_v.copy(), lu_v.copy(), dl_v.copy(), dd_v.copy(), du_v.copy(), ul_v.copy(), ud_v.copy(), uu_v.copy());
+            BandedMatrixQx<Q1Type, double> A(n, ll_v.copy(), ld_v.copy(), lu_v.copy(), dl_v.copy(), dd_v.copy(), du_v.copy(), ul_v.copy(), ud_v.copy(), uu_v.copy());
             //std::cout<<A.band(0)<<endl;
             //A->insert_band(0, dd_v.copy());
             //std::cout<<A.band(0)[0] * double(1) << endl;
             //std::cout<< n << " " << A << " "<< root_n<<endl;
 
             //----Load in POISSON - specific data:----------------------
-            MGInfo<double, BandedMatrixQ1<double> > info;
+            MGInfo<double, BandedMatrixQx<Q1Type, double> > info;
             //configuration constants: /TODO: set/allocate!!!
             info.is_smoother = false;
 
@@ -262,7 +262,7 @@ class PoissonTestMGBandedQ1Double:
                     size = 9;
 
                 DenseVector<double> dummy_band(size, double(0));
-                BandedMatrixQ1<double> ac_a(size, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band);
+                BandedMatrixQx<Q1Type, double> ac_a(size, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band);
                 info.a.push_back(ac_a);
                 // iteration vectors
                 DenseVector<double> ac_c(size, double(0));
@@ -304,7 +304,7 @@ class PoissonTestMGBandedQ1Double:
                 DenseVector<double> UL_v_2(N);
                 DenseVector<double> UD_v_2(N);
                 DenseVector<double> UU_v_2(N);
-                BandedMatrixQ1<double> current_matrix(N,LL_v_2, LD_v_2, LU_v_2, DL_v_2, DD_v_2, DU_v_2, UL_v_2, UD_v_2, UU_v_2);
+                BandedMatrixQx<Q1Type, double> current_matrix(N,LL_v_2, LD_v_2, LU_v_2, DL_v_2, DD_v_2, DU_v_2, UL_v_2, UD_v_2, UU_v_2);
 
                 DenseVector<double> current_rhs(N);
                 int n_2;

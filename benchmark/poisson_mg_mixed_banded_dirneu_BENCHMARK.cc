@@ -54,7 +54,7 @@ class PoissonBenchmarkMGBandedQ1Mixed:
         {
             unsigned long _root_n(_size);
             unsigned long n(_root_n * _root_n);
-            MGInfo<float, BandedMatrixQ1<float> > info;
+            MGInfo<float, BandedMatrixQx<Q1Type, float> > info;
             //configuration constants: /TODO: set/allocate!!!
             info.is_smoother = false;
 
@@ -141,7 +141,7 @@ class PoissonBenchmarkMGBandedQ1Mixed:
                     size = 9;
 
                 DenseVector<float> dummy_band(size, float(0));
-                BandedMatrixQ1<float> ac_a(size, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band);
+                BandedMatrixQx<Q1Type, float> ac_a(size, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band, dummy_band);
                 info.a.push_back(ac_a);
                 // iteration vectors
                 DenseVector<float> ac_c(size, float(0));
@@ -177,7 +177,7 @@ class PoissonBenchmarkMGBandedQ1Mixed:
             {
                 unsigned long N = (unsigned long)(((unsigned long)pow((DT1_)2, (DT1_)i) + 1) * ((unsigned long)pow((DT1_)2, (DT1_)i) + 1));
                 DenseVector<float> band(N);
-                BandedMatrixQ1<float> current_matrix(N, band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy());
+                BandedMatrixQx<Q1Type, float> current_matrix(N, band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy(), band.copy());
                 DenseVector<float> current_rhs(N);
 
 
@@ -213,7 +213,7 @@ class PoissonBenchmarkMGBandedQ1Mixed:
             }
 
             DenseVector<DT1_> null(info.rhs[info.max_level].size() , DT1_(0));
-            BandedMatrixQ1<DT1_> A(info.rhs[info.max_level].size() , null.copy(), null.copy() , null.copy(), null.copy() , null.copy(), null.copy(), null.copy(), null.copy(), null.copy());
+            BandedMatrixQx<Q1Type, DT1_> A(info.rhs[info.max_level].size() , null.copy(), null.copy() , null.copy(), null.copy() , null.copy(), null.copy(), null.copy(), null.copy(), null.copy());
             FillMatrix<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(A);
             DenseVector<DT1_> RHS( info.rhs[info.max_level].size(), DT1_(0.));
             FillVector<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(RHS);

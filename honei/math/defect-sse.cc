@@ -30,7 +30,7 @@ using namespace honei;
 
 namespace honei
 {
-    DenseVector<float> & Defect<tags::CPU::SSE>::value(DenseVector<float> & result, const DenseVector<float> & right_hand_side, const BandedMatrixQ1<float> & system, const DenseVector<float> & x)
+    DenseVector<float> & Defect<tags::CPU::SSE>::value(DenseVector<float> & result, const DenseVector<float> & right_hand_side, const BandedMatrixQx<Q1Type, float> & system, const DenseVector<float> & x)
     {
         unsigned long n = right_hand_side.size();
         unsigned long root_n = (unsigned long)sqrt(n);
@@ -347,14 +347,14 @@ namespace honei
         return result;
     }
 
-    DenseVector<float> Defect<tags::CPU::SSE>::value(const DenseVector<float> & right_hand_side, const BandedMatrixQ1<float> & system, const DenseVector<float> & x)
+    DenseVector<float> Defect<tags::CPU::SSE>::value(const DenseVector<float> & right_hand_side, const BandedMatrixQx<Q1Type, float> & system, const DenseVector<float> & x)
     {
         DenseVector<float> result(right_hand_side.size());
         Defect<tags::CPU::SSE>::value(result, right_hand_side, system, x);
         return result;
     }
 
-    DenseVector<double> & Defect<tags::CPU::SSE>::value(DenseVector<double> & result, const DenseVector<double> & right_hand_side, const BandedMatrixQ1<double> & system, const DenseVector<double> & x)
+    DenseVector<double> & Defect<tags::CPU::SSE>::value(DenseVector<double> & result, const DenseVector<double> & right_hand_side, const BandedMatrixQx<Q1Type, double> & system, const DenseVector<double> & x)
     {
         unsigned long n = right_hand_side.size();
         unsigned long root_n = (unsigned long)sqrt(n);
@@ -671,7 +671,7 @@ namespace honei
         return result;
     }
 
-    DenseVector<double> Defect<tags::CPU::SSE>::value(const DenseVector<double> & right_hand_side, const BandedMatrixQ1<double> & system, const DenseVector<double> & x)
+    DenseVector<double> Defect<tags::CPU::SSE>::value(const DenseVector<double> & right_hand_side, const BandedMatrixQx<Q1Type, double> & system, const DenseVector<double> & x)
     {
         DenseVector<double> result(right_hand_side.size());
         Defect<tags::CPU::SSE>::value(result, right_hand_side, system, x);

@@ -22,7 +22,7 @@
 #define LIBMATH_GUARD_MULTIGRID_HH 1
 
 #include<honei/la/dense_vector.hh>
-#include<honei/la/banded_matrix_q1.hh>
+#include<honei/la/banded_matrix_qx.hh>
 #include<honei/math/methods.hh>
 #include<honei/math/conjugate_gradients.hh>
 #include<honei/math/jacobi.hh>
@@ -157,7 +157,7 @@ namespace honei
     class Multigrid<Tag_, OuterTag_, ProlType_, methods::JAC, methods::CYCLE::V, methods::FIXED>
     {
         template <typename Prec_>
-        static DenseVector<Prec_> _multigrid_kernel(HONEI_UNUSED BandedMatrixQ1<Prec_>&  system, HONEI_UNUSED DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ * cappa, MGInfo<Prec_, BandedMatrixQ1<Prec_> > & info)
+        static DenseVector<Prec_> _multigrid_kernel(HONEI_UNUSED BandedMatrixQx<Q1Type, Prec_>&  system, HONEI_UNUSED DenseVector<Prec_>& right_hand_side, unsigned long max_levels, Prec_ * cappa, MGInfo<Prec_, BandedMatrixQx<Q1Type, Prec_> > & info)
         {
             bool restriction_started(false);
             // compute initial defect
@@ -780,12 +780,12 @@ endCycleLoop:
         }
         public:
         template<typename Prec_>
-        static inline void value(HONEI_UNUSED BandedMatrixQ1<Prec_>&  system,
+        static inline void value(HONEI_UNUSED BandedMatrixQx<Q1Type, Prec_>&  system,
                 DenseVector<Prec_>& right_hand_side,
                 DenseVector<Prec_>& x,
                 unsigned long max_levels,
                 HONEI_UNUSED Prec_ conv_rad,
-                MGInfo<Prec_, BandedMatrixQ1<Prec_> > & info)
+                MGInfo<Prec_, BandedMatrixQx<Q1Type, Prec_> > & info)
         {
             CONTEXT("When solving banded q1 linear system with MULTIGRID: ");
 #ifdef SOLVER_VERBOSE_L2
@@ -1617,7 +1617,7 @@ endCycleLoop:
     class Multigrid<Tag_ , OuterTag_ , ProlType_, methods::JAC, methods::CYCLE::V, methods::MIXED>
     {
         template <typename Prec_>
-        static DenseVector<Prec_> _multigrid_kernel(unsigned long max_levels, Prec_ * cappa, MGInfo<Prec_, BandedMatrixQ1<Prec_> > & info)
+        static DenseVector<Prec_> _multigrid_kernel(unsigned long max_levels, Prec_ * cappa, MGInfo<Prec_, BandedMatrixQx<Q1Type, Prec_> > & info)
         {
             bool restriction_started(false);
             // compute initial defect
@@ -2251,12 +2251,12 @@ endCycleLoop:
 
         public:
         template<typename InnerPrec_, typename OuterPrec_>
-        static inline void value(BandedMatrixQ1<OuterPrec_>&  system,
+        static inline void value(BandedMatrixQx<Q1Type, OuterPrec_>&  system,
                 DenseVector<OuterPrec_>& right_hand_side,
                 DenseVector<OuterPrec_>& x,
                 unsigned long max_levels,
                 HONEI_UNUSED OuterPrec_ conv_rad,
-                MGInfo<InnerPrec_, BandedMatrixQ1<InnerPrec_> > & info)
+                MGInfo<InnerPrec_, BandedMatrixQx<Q1Type, InnerPrec_> > & info)
             {
                 CONTEXT("When solving banded q1 linear system with MULTIGRID: ");
 #ifdef SOLVER_VERBOSE_L2

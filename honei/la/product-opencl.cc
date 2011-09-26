@@ -54,7 +54,7 @@ namespace honei
         }
 
         template <typename Tag_, typename DT_>
-        void common_product(DenseVectorContinuousBase<DT_> & result, const BandedMatrixQ1<DT_> & a, const DenseVectorContinuousBase<DT_> & b)
+        void common_product(DenseVectorContinuousBase<DT_> & result, const BandedMatrixQx<Q1Type, DT_> & a, const DenseVectorContinuousBase<DT_> & b)
         {
             if (b.size() != a.columns())
             {
@@ -126,51 +126,51 @@ template DenseVectorContinuousBase<float> & Product<tags::OpenCL::GPU>::value(De
 template DenseVectorContinuousBase<double> & Product<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> &, const SparseMatrixELL<double> &, const DenseVectorContinuousBase<double> &);
 
 template <typename DT_>
-DenseVector<DT_> Product<tags::OpenCL::CPU>::value(const BandedMatrixQ1<DT_> & a, const DenseVectorContinuousBase<DT_> & b)
+DenseVector<DT_> Product<tags::OpenCL::CPU>::value(const BandedMatrixQx<Q1Type, DT_> & a, const DenseVectorContinuousBase<DT_> & b)
 {
-    CONTEXT("When multiplying BandedMatrixQ1<DT_> with DenseVectorContinuousBase<DT_> (OpenCL CPU):");
+    CONTEXT("When multiplying BandedMatrixQx<Q1Type, DT_> with DenseVectorContinuousBase<DT_> (OpenCL CPU):");
     PROFILER_START("Product Q1 tags::OpenCL::CPU");
     DenseVector<DT_> result(a.rows());
     opencl::common_product<tags::OpenCL::CPU>(result, a, b);
     PROFILER_STOP("Product Q1 tags::OpenCL::CPU");
     return result;
 }
-template DenseVector<float> Product<tags::OpenCL::CPU>::value(const BandedMatrixQ1<float> &, const DenseVectorContinuousBase<float> &);
-template DenseVector<double> Product<tags::OpenCL::CPU>::value(const BandedMatrixQ1<double> &, const DenseVectorContinuousBase<double> &);
+template DenseVector<float> Product<tags::OpenCL::CPU>::value(const BandedMatrixQx<Q1Type, float> &, const DenseVectorContinuousBase<float> &);
+template DenseVector<double> Product<tags::OpenCL::CPU>::value(const BandedMatrixQx<Q1Type, double> &, const DenseVectorContinuousBase<double> &);
 
 template <typename DT_>
-DenseVector<DT_> Product<tags::OpenCL::GPU>::value(const BandedMatrixQ1<DT_> & a, const DenseVectorContinuousBase<DT_> & b)
+DenseVector<DT_> Product<tags::OpenCL::GPU>::value(const BandedMatrixQx<Q1Type, DT_> & a, const DenseVectorContinuousBase<DT_> & b)
 {
-    CONTEXT("When multiplying BandedMatrixQ1<DT_> with DenseVectorContinuousBase<DT_> (OpenCL GPU):");
+    CONTEXT("When multiplying BandedMatrixQx<Q1Type, DT_> with DenseVectorContinuousBase<DT_> (OpenCL GPU):");
     PROFILER_START("Product Q1 tags::OpenCL::GPU");
     DenseVector<DT_> result(a.rows());
     opencl::common_product<tags::OpenCL::GPU>(result, a, b);
     PROFILER_STOP("Product Q1 tags::OpenCL::GPU");
     return result;
 }
-template DenseVector<float> Product<tags::OpenCL::GPU>::value(const BandedMatrixQ1<float> &, const DenseVectorContinuousBase<float> &);
-template DenseVector<double> Product<tags::OpenCL::GPU>::value(const BandedMatrixQ1<double> &, const DenseVectorContinuousBase<double> &);
+template DenseVector<float> Product<tags::OpenCL::GPU>::value(const BandedMatrixQx<Q1Type, float> &, const DenseVectorContinuousBase<float> &);
+template DenseVector<double> Product<tags::OpenCL::GPU>::value(const BandedMatrixQx<Q1Type, double> &, const DenseVectorContinuousBase<double> &);
 
 template <typename DT_>
-DenseVectorContinuousBase<DT_> & Product<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<DT_> & result, const BandedMatrixQ1<DT_> & a, const DenseVectorContinuousBase<DT_> & b)
+DenseVectorContinuousBase<DT_> & Product<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<DT_> & result, const BandedMatrixQx<Q1Type, DT_> & a, const DenseVectorContinuousBase<DT_> & b)
 {
-    CONTEXT("When multiplying BandedMatrixQ1<DT_> with DenseVectorContinuousBase<DT_> (OpenCL CPU):");
+    CONTEXT("When multiplying BandedMatrixQx<Q1Type, DT_> with DenseVectorContinuousBase<DT_> (OpenCL CPU):");
     PROFILER_START("Product Q1 tags::OpenCL::CPU");
     opencl::common_product<tags::OpenCL::CPU>(result, a, b);
     PROFILER_STOP("Product Q1 tags::OpenCL::CPU");
     return result;
 }
-template DenseVectorContinuousBase<float> & Product<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<float> &, const BandedMatrixQ1<float> &, const DenseVectorContinuousBase<float> &);
-template DenseVectorContinuousBase<double> & Product<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<double> &, const BandedMatrixQ1<double> &, const DenseVectorContinuousBase<double> &);
+template DenseVectorContinuousBase<float> & Product<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<float> &, const BandedMatrixQx<Q1Type, float> &, const DenseVectorContinuousBase<float> &);
+template DenseVectorContinuousBase<double> & Product<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<double> &, const BandedMatrixQx<Q1Type, double> &, const DenseVectorContinuousBase<double> &);
 
 template <typename DT_>
-DenseVectorContinuousBase<DT_> & Product<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<DT_> & result, const BandedMatrixQ1<DT_> & a, const DenseVectorContinuousBase<DT_> & b)
+DenseVectorContinuousBase<DT_> & Product<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<DT_> & result, const BandedMatrixQx<Q1Type, DT_> & a, const DenseVectorContinuousBase<DT_> & b)
 {
-    CONTEXT("When multiplying BandedMatrixQ1<DT_> with DenseVectorContinuousBase<DT_> (OpenCL GPU):");
+    CONTEXT("When multiplying BandedMatrixQx<Q1Type, DT_> with DenseVectorContinuousBase<DT_> (OpenCL GPU):");
     PROFILER_START("Product Q1 tags::OpenCL::GPU");
     opencl::common_product<tags::OpenCL::GPU>(result, a, b);
     PROFILER_STOP("Product Q1 tags::OpenCL::GPU");
     return result;
 }
-template DenseVectorContinuousBase<float> & Product<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<float> &, const BandedMatrixQ1<float> &, const DenseVectorContinuousBase<float> &);
-template DenseVectorContinuousBase<double> & Product<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> &, const BandedMatrixQ1<double> &, const DenseVectorContinuousBase<double> &);
+template DenseVectorContinuousBase<float> & Product<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<float> &, const BandedMatrixQx<Q1Type, float> &, const DenseVectorContinuousBase<float> &);
+template DenseVectorContinuousBase<double> & Product<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> &, const BandedMatrixQx<Q1Type, double> &, const DenseVectorContinuousBase<double> &);

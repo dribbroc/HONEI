@@ -82,7 +82,7 @@ namespace
 }
 
 DenseVector<float> & Prolongation<tags::GPU::CUDA, methods::NONE>::value(DenseVector<float> & fine,
-        const DenseVector<float> & coarse, const DenseVector<unsigned long> & mask, HONEI_UNUSED BandedMatrixQ1<float> & prolmat)
+        const DenseVector<float> & coarse, const DenseVector<unsigned long> & mask, HONEI_UNUSED BandedMatrixQx<Q1Type, float> & prolmat)
 {
     CONTEXT("When prolongating from coarse to fine (CUDA):");
 
@@ -125,7 +125,7 @@ DenseVector<float> & Prolongation<tags::GPU::CUDA, methods::NONE>::value(DenseVe
 
 #ifdef HONEI_CUDA_DOUBLE
 DenseVector<double> & Prolongation<tags::GPU::CUDA, methods::NONE>::value(DenseVector<double> & fine,
-        const DenseVector<double> & coarse, const DenseVector<unsigned long> & mask, HONEI_UNUSED BandedMatrixQ1<double> & prolmat)
+        const DenseVector<double> & coarse, const DenseVector<unsigned long> & mask, HONEI_UNUSED BandedMatrixQx<Q1Type, double> & prolmat)
 {
     CONTEXT("When prolongating from coarse to fine (CUDA):");
 

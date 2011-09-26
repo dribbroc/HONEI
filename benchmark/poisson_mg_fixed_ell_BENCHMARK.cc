@@ -143,7 +143,7 @@ class PoissonBenchmarkMGELLFixed:
                     size = 9;
 
                 DenseVector<DT1_> dummy_band(size, DT1_(0));
-                BandedMatrixQ1<DT1_> ac_a(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
+                BandedMatrixQx<Q1Type, DT1_> ac_a(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
                 SparseMatrix<DT1_> sm(ac_a);
                 SparseMatrixELL<DT1_> ac_s(sm);
                 info.a.push_back(ac_s);
@@ -444,7 +444,7 @@ class PoissonAdvancedBENCHMGSparseELLProlMat:
                     size = 9;
 
                 DenseVector<DT1_> dummy_band(size, DT1_(0));
-                BandedMatrixQ1<DT1_> ac_a(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
+                BandedMatrixQx<Q1Type, DT1_> ac_a(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
                 SparseMatrix<DT1_> sm(ac_a);
                 SparseMatrixELL<DT1_> ac_s(sm);
                 info.a.push_back(ac_s);
@@ -906,7 +906,7 @@ class PoissonAdvancedANHEURYSMBENCHMGSparseELLProlMat:
                     size = 9;
 
                 DenseVector<DT1_> dummy_band(size, DT1_(0));
-                BandedMatrixQ1<DT1_> ac_a(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
+                BandedMatrixQx<Q1Type, DT1_> ac_a(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
                 SparseMatrix<DT1_> sm(ac_a);
                 SparseMatrixELL<DT1_> ac_s(sm);
                 info.a.push_back(ac_s);
@@ -1180,7 +1180,7 @@ class PoissonAdvancedBENCHMGSparseELLProlMatSPAI:
                     size = 9;
 
                 DenseVector<DT1_> dummy_band(size, DT1_(0));
-                BandedMatrixQ1<DT1_> ac_a(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
+                BandedMatrixQx<Q1Type, DT1_> ac_a(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
                 SparseMatrix<DT1_> sm(ac_a);
                 SparseMatrixELL<DT1_> ac_s(sm);
                 info.a.push_back(ac_s);
@@ -1649,7 +1649,7 @@ class PoissonAdvancedBENCHMGSparseELLProlMatILU:
                     size = 9;
 
                 DenseVector<DT1_> dummy_band(size, DT1_(0));
-                BandedMatrixQ1<DT1_> ac_a(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
+                BandedMatrixQx<Q1Type, DT1_> ac_a(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
                 SparseMatrix<DT1_> sm(ac_a);
                 SparseMatrixELL<DT1_> ac_s(sm);
                 info.a.push_back(ac_s);

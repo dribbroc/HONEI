@@ -216,7 +216,7 @@ class Q1MatrixDenseVectorProductTest :
                     (dv4)[i]= DataType_((i + 7) % num_limit);
                 }
 
-                BandedMatrixQ1<DataType_> bm1(size, dv3, dv2, dv4, dv2, dv3, dv4, dv4, dv3, dv2);
+                BandedMatrixQx<Q1Type, DataType_> bm1(size, dv3, dv2, dv4, dv2, dv3, dv4, dv4, dv3, dv2);
                 BandedMatrix<DataType_> bm2(bm1);
 
                 DenseVector<DataType_> prod(Product<Tag_>::value(bm1, dv1));
@@ -246,7 +246,7 @@ class Q1MatrixDenseVectorProductTest :
 
             DenseVector<DataType_> dv01(4, DataType_(1));
             DenseVector<DataType_> dv02(1089, DataType_(1));
-            BandedMatrixQ1<DataType_> bm01(1089, dv02, dv02, dv02, dv02, dv02, dv02, dv02, dv02, dv02);
+            BandedMatrixQx<Q1Type, DataType_> bm01(1089, dv02, dv02, dv02, dv02, dv02, dv02, dv02, dv02, dv02);
             TEST_CHECK_THROWS(Product<Tag_>::value(bm01, dv01), VectorSizeDoesNotMatch);
         }
 };
@@ -315,7 +315,7 @@ class Q1MatrixDenseVectorProductQuickTest :
                 (dv4)[i]= DataType_((i + 7) % num_limit);
             }
 
-            BandedMatrixQ1<DataType_> bm1(size, dv3, dv2, dv4, dv2, dv3, dv4, dv4, dv3, dv2);
+            BandedMatrixQx<Q1Type, DataType_> bm1(size, dv3, dv2, dv4, dv2, dv3, dv4, dv4, dv3, dv2);
             BandedMatrix<DataType_> bm2(bm1);
 
             DenseVector<DataType_> prod(Product<Tag_>::value(bm1, dv1));
@@ -345,7 +345,7 @@ class Q1MatrixDenseVectorProductQuickTest :
 
             DenseVector<DataType_> dv01(4, DataType_(1));
             DenseVector<DataType_> dv02(1089, DataType_(1));
-            BandedMatrixQ1<DataType_> bm01(1089, dv02, dv02, dv02, dv02, dv02, dv02, dv02, dv02, dv02);
+            BandedMatrixQx<Q1Type, DataType_> bm01(1089, dv02, dv02, dv02, dv02, dv02, dv02, dv02, dv02, dv02);
             TEST_CHECK_THROWS(Product<Tag_>::value(bm01, dv01), VectorSizeDoesNotMatch);
         }
 };

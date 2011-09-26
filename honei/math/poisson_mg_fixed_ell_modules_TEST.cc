@@ -66,7 +66,7 @@ class PoissonTestMGModulesSparseELL:
 
                 FillVector<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(rhs);
 
-                BandedMatrixQ1<DT1_> banded_matrix(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
+                BandedMatrixQx<Q1Type, DT1_> banded_matrix(size, dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy(), dummy_band.copy());
                 FillMatrix<tags::CPU, applications::POISSON, boundary_types::DIRICHLET_NEUMANN>::value(banded_matrix);
                 SparseMatrix<DT1_> sm(banded_matrix);
                 SparseMatrixELL<DT1_> sparse_matrix(sm);

@@ -25,7 +25,7 @@
 
 #include <honei/la/banded_matrix.hh>
 #include <honei/la/algorithm.hh>
-#include <honei/la/banded_matrix_q1.hh>
+#include <honei/la/banded_matrix_qx.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/dense_matrix_tile.hh>
 #include <honei/la/dense_vector.hh>
@@ -296,7 +296,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> value(const BandedMatrixQ1<DT1_> & a, const DenseVectorBase<DT2_> & b)
+        static DenseVector<DT1_> value(const BandedMatrixQx<Q1Type, DT1_> & a, const DenseVectorBase<DT2_> & b)
         {
             CONTEXT("When multiplying BandedMatrixQ1 with DenseVectorBase:");
             if (b.size() != a.columns())
@@ -332,7 +332,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVector<DT1_> & value(DenseVector<DT1_> & result, const BandedMatrixQ1<DT1_> & a, const DenseVectorBase<DT2_> & b)
+        static DenseVector<DT1_> & value(DenseVector<DT1_> & result, const BandedMatrixQx<Q1Type, DT1_> & a, const DenseVectorBase<DT2_> & b)
         {
             CONTEXT("When multiplying BandedMatrixQ1 with DenseVectorBase:");
             if (b.size() != a.columns())
@@ -1361,10 +1361,10 @@ namespace honei
         static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & result, const SparseMatrixELL<DT_> & a, const DenseVectorContinuousBase<DT_> & b);
 
         template <typename DT_>
-        static DenseVector<DT_> value(const BandedMatrixQ1<DT_> & a, const DenseVectorContinuousBase<DT_> & b);
+        static DenseVector<DT_> value(const BandedMatrixQx<Q1Type, DT_> & a, const DenseVectorContinuousBase<DT_> & b);
 
         template <typename DT_>
-        static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & result, const BandedMatrixQ1<DT_> & a, const DenseVectorContinuousBase<DT_> & b);
+        static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & result, const BandedMatrixQx<Q1Type, DT_> & a, const DenseVectorContinuousBase<DT_> & b);
 
         template<typename DT1_, typename DT2_>
         static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
@@ -1400,10 +1400,10 @@ namespace honei
         static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & result, const SparseMatrixELL<DT_> & a, const DenseVectorContinuousBase<DT_> & b);
 
         template <typename DT_>
-        static DenseVector<DT_> value(const BandedMatrixQ1<DT_> & a, const DenseVectorContinuousBase<DT_> & b);
+        static DenseVector<DT_> value(const BandedMatrixQx<Q1Type, DT_> & a, const DenseVectorContinuousBase<DT_> & b);
 
         template <typename DT_>
-        static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & result, const BandedMatrixQ1<DT_> & a, const DenseVectorContinuousBase<DT_> & b);
+        static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & result, const BandedMatrixQx<Q1Type, DT_> & a, const DenseVectorContinuousBase<DT_> & b);
 
         template<typename DT1_, typename DT2_>
         static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
@@ -1453,13 +1453,13 @@ namespace honei
 
         static DenseVector<float> value(const BandedMatrix<float> & a, const DenseVectorContinuousBase<float> & b);
 
-        static DenseVector<float> value(const BandedMatrixQ1<float> & a, const DenseVectorContinuousBase<float> & b);
+        static DenseVector<float> value(const BandedMatrixQx<Q1Type, float> & a, const DenseVectorContinuousBase<float> & b);
 
-        static DenseVector<double> value(const BandedMatrixQ1<double> & a, const DenseVectorContinuousBase<double> & b);
+        static DenseVector<double> value(const BandedMatrixQx<Q1Type, double> & a, const DenseVectorContinuousBase<double> & b);
 
-        static DenseVector<float> & value(DenseVector<float> & result, const BandedMatrixQ1<float> & a, const DenseVectorContinuousBase<float> & b);
+        static DenseVector<float> & value(DenseVector<float> & result, const BandedMatrixQx<Q1Type, float> & a, const DenseVectorContinuousBase<float> & b);
 
-        static DenseVector<double> & value(DenseVector<double> & result, const BandedMatrixQ1<double> & a, const DenseVectorContinuousBase<double> & b);
+        static DenseVector<double> & value(DenseVector<double> & result, const BandedMatrixQx<Q1Type, double> & a, const DenseVectorContinuousBase<double> & b);
 
         static DenseVector<float> & value(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b);
 
@@ -1548,13 +1548,13 @@ namespace honei
 
         static DenseVector<double> value(const BandedMatrix<double> & a, const DenseVectorContinuousBase<double> & b);
 
-        static DenseVector<float> value(const BandedMatrixQ1<float> & a, const DenseVectorContinuousBase<float> & b);
+        static DenseVector<float> value(const BandedMatrixQx<Q1Type, float> & a, const DenseVectorContinuousBase<float> & b);
 
-        static DenseVector<double> value(const BandedMatrixQ1<double> & a, const DenseVectorContinuousBase<double> & b);
+        static DenseVector<double> value(const BandedMatrixQx<Q1Type, double> & a, const DenseVectorContinuousBase<double> & b);
 
-        static DenseVector<float> & value(DenseVector<float> & result, const BandedMatrixQ1<float> & a, const DenseVectorContinuousBase<float> & b);
+        static DenseVector<float> & value(DenseVector<float> & result, const BandedMatrixQx<Q1Type, float> & a, const DenseVectorContinuousBase<float> & b);
 
-        static DenseVector<double> & value(DenseVector<double> & result, const BandedMatrixQ1<double> & a, const DenseVectorContinuousBase<double> & b);
+        static DenseVector<double> & value(DenseVector<double> & result, const BandedMatrixQx<Q1Type, double> & a, const DenseVectorContinuousBase<double> & b);
 
         static DenseVector<float> value(const DenseMatrix<float> & a, const DenseVectorContinuousBase<float> & b);
 
@@ -1622,7 +1622,7 @@ namespace honei
             }
 
             template <typename DT1_, typename DT2_>
-                static DenseVector<DT1_> value(const BandedMatrixQ1<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
+                static DenseVector<DT1_> value(const BandedMatrixQx<Q1Type, DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
             {
                 CONTEXT("When multiplying BandedMatrixQ1 with DenseVectorContinuousBase using backend : " + Tag_::name);
                 if (b.size() != a.columns())
@@ -1675,7 +1675,7 @@ namespace honei
             }
 
             template <typename DT1_, typename DT2_>
-            static DenseVector<DT1_> & value(DenseVector<DT1_> & result, const BandedMatrixQ1<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
+            static DenseVector<DT1_> & value(DenseVector<DT1_> & result, const BandedMatrixQx<Q1Type, DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
             {
                 CONTEXT("When multiplying BandedMatrixQ1 with DenseVectorContinuousBase using backend : " + Tag_::name);
                 if (b.size() != a.columns())
