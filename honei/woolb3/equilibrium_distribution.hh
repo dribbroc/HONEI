@@ -40,12 +40,13 @@ namespace honei
     struct EquilibriumDistribution<tags::CPU>
     {
         template <typename DT_, unsigned long directions>
-        static void value(PackedGrid3<DT_, directions> & pgrid, DT_ g, DT_ e, unsigned long start = 0, unsigned long end = 0)
+        static void value(PackedGrid3<DT_, directions> & pgrid, DT_ g, DT_ e, bool inner)
         {
             PROFILER_START("EqDist");
 
-            if (end == 0)
-                end = pgrid.h->size();
+            unsigned long start(inner == true ? 0 : pgrid.grid.size() - pgrid.grid.inner_halo_size());
+            unsigned long end(inner == true ? pgrid.grid.local_size() : pgrid.grid.size());
+
             unsigned long direction(0);
 
             DT_ * f_eq(pgrid.f_eq[direction]->elements());

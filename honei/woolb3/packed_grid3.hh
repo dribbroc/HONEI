@@ -113,8 +113,10 @@ namespace honei
             Grid3<DT_, directions> grid;
 
             SharedArray<shared_ptr<DenseVector<unsigned long> > > neighbours;
-            SharedArray<shared_ptr<DenseVector<unsigned long> > > dir;
-            SharedArray<shared_ptr<DenseVector<unsigned long> > > dir_index;
+            SharedArray<shared_ptr<DenseVector<unsigned long> > > dir_inner;
+            SharedArray<shared_ptr<DenseVector<unsigned long> > > dir_index_inner;
+            SharedArray<shared_ptr<DenseVector<unsigned long> > > dir_outer;
+            SharedArray<shared_ptr<DenseVector<unsigned long> > > dir_index_outer;
 
             SharedArray<shared_ptr<DenseVector<DT_> > > f;
             SharedArray<shared_ptr<DenseVector<DT_> > > f_eq;
@@ -134,8 +136,10 @@ namespace honei
             PackedGrid3(Grid3<DT_, directions> & grid3) :
                 grid(grid3),
                 neighbours(directions),
-                dir(directions),
-                dir_index(directions),
+                dir_inner(directions),
+                dir_index_inner(directions),
+                dir_outer(directions),
+                dir_index_outer(directions),
                 f(directions),
                 f_eq(directions),
                 f_temp(directions),
@@ -162,13 +166,15 @@ namespace honei
                 }
 
                 //fill packed direction vectors
+                // inner dir vectors
                 for (unsigned long i(0) ; i < directions ; ++i)
                 {
                     unsigned long idx(0);
                     std::vector<unsigned long> temp_dir;
                     std::vector<unsigned long> temp_dir_index;
                     unsigned long old(-(1ul));
-                    while (idx < grid.size())
+                    unsigned long max_idx(grid.local_size());
+                    while (idx < max_idx)
                     {
                         if (temp_dir_index.size() % 2 == 0 && (*neighbours[i])[idx] != -(1ul))
                         {
@@ -176,14 +182,14 @@ namespace honei
                             temp_dir.push_back((*neighbours[i])[idx]);
                             old = (*neighbours[i])[idx];
 
-                            if(idx == grid.size() - 1 ||  (*neighbours[i])[idx+1] != old+1)
+                            if(idx == max_idx - 1 ||  (*neighbours[i])[idx+1] != old+1)
                             {
                                 ++idx;
                                 temp_dir_index.push_back(idx);
                                 continue;
                             }
                         }
-                        else if (temp_dir_index.size() % 2 == 1 && (idx == grid.size() - 1 || (*neighbours[i])[idx+1] != old+1))
+                        else if (temp_dir_index.size() % 2 == 1 && (idx == max_idx - 1 || (*neighbours[i])[idx+1] != old+1))
                         {
                             temp_dir_index.push_back(idx+1);
                         }
@@ -192,13 +198,77 @@ namespace honei
                             ++old;
                     }
 
-                    dir[i].reset(new DenseVector<unsigned long>(temp_dir.size()));
-                    dir_index[i].reset(new DenseVector<unsigned long>(temp_dir_index.size()));
-                    for (unsigned long j(0) ; j < temp_dir.size() ; ++j)
+                    if (temp_dir.size() != 0)
                     {
-                        (*dir[i])[j] = temp_dir.at(j);
-                        (*dir_index[i])[j*2] = temp_dir_index.at(j*2);
-                        (*dir_index[i])[j*2 + 1] = temp_dir_index.at(j*2 + 1);
+                        dir_inner[i].reset(new DenseVector<unsigned long>(temp_dir.size()));
+                        dir_index_inner[i].reset(new DenseVector<unsigned long>(temp_dir_index.size()));
+                        for (unsigned long j(0) ; j < temp_dir.size() ; ++j)
+                        {
+                            (*dir_inner[i])[j] = temp_dir.at(j);
+                            (*dir_index_inner[i])[j*2] = temp_dir_index.at(j*2);
+                            (*dir_index_inner[i])[j*2 + 1] = temp_dir_index.at(j*2 + 1);
+                        }
+                    }
+                    else
+                    {
+                        dir_inner[i].reset(new DenseVector<unsigned long>(1));
+                        dir_index_inner[i].reset(new DenseVector<unsigned long>(1));
+                        (*dir_inner[i])[0] = -(1ul);
+                        (*dir_index_inner[i])[0] = 0;
+                        //(*dir_index_inner[i])[1] = 0;
+                    }
+                }
+
+                //outer dir vectors
+                for (unsigned long i(0) ; i < directions ; ++i)
+                {
+                    unsigned long idx(grid.size() - grid.inner_halo_size());
+                    std::vector<unsigned long> temp_dir;
+                    std::vector<unsigned long> temp_dir_index;
+                    unsigned long old(-(1ul));
+                    unsigned long max_idx(grid.size());
+                    while (idx < max_idx)
+                    {
+                        if (temp_dir_index.size() % 2 == 0 && (*neighbours[i])[idx] != -(1ul))
+                        {
+                            temp_dir_index.push_back(idx);
+                            temp_dir.push_back((*neighbours[i])[idx]);
+                            old = (*neighbours[i])[idx];
+
+                            if(idx == max_idx - 1 ||  (*neighbours[i])[idx+1] != old+1)
+                            {
+                                ++idx;
+                                temp_dir_index.push_back(idx);
+                                continue;
+                            }
+                        }
+                        else if (temp_dir_index.size() % 2 == 1 && (idx == max_idx - 1 || (*neighbours[i])[idx+1] != old+1))
+                        {
+                            temp_dir_index.push_back(idx+1);
+                        }
+                        ++idx;
+                        if (old != -(1ul))
+                            ++old;
+                    }
+
+                    if (temp_dir.size() != 0)
+                    {
+                        dir_outer[i].reset(new DenseVector<unsigned long>(temp_dir.size()));
+                        dir_index_outer[i].reset(new DenseVector<unsigned long>(temp_dir_index.size()));
+                        for (unsigned long j(0) ; j < temp_dir.size() ; ++j)
+                        {
+                            (*dir_outer[i])[j] = temp_dir.at(j);
+                            (*dir_index_outer[i])[j*2] = temp_dir_index.at(j*2);
+                            (*dir_index_outer[i])[j*2 + 1] = temp_dir_index.at(j*2 + 1);
+                        }
+                    }
+                    else
+                    {
+                        dir_outer[i].reset(new DenseVector<unsigned long>(1));
+                        dir_index_outer[i].reset(new DenseVector<unsigned long>(1));
+                        (*dir_outer[i])[0] = -(1ul);
+                        (*dir_index_outer[i])[0] = 0;
+                        //(*dir_index_outer[i])[1] = 0;
                     }
                 }
 

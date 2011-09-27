@@ -54,7 +54,8 @@ class ExtractionTest :
             Grid3<DataType_, 9> grid(geometry, h, b, u, v);
             PackedGrid3<DataType_, 9> pgrid(grid);
 
-            Extraction<Tag_>::value(pgrid);
+            Extraction<Tag_>::value(pgrid, false);
+            Extraction<Tag_>::value(pgrid, true);
         }
 
 };

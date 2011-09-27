@@ -87,12 +87,15 @@ namespace honei
                     (*_pgrid.distribution_y)[8] = DT_(sqrt(DT_(2.)) * _e * sin(DT_(7.) * _pi / DT_(4.)));
 
                     ///Compute initial equilibrium distribution:
-                    EquilibriumDistribution<Tag_>::value(_pgrid, _gravity, _e);
+                    EquilibriumDistribution<Tag_>::value(_pgrid, _gravity, _e, false);
+                    EquilibriumDistribution<Tag_>::value(_pgrid, _gravity, _e, true);
 
                     for (unsigned long direction(0) ; direction < directions ; ++direction)
                         _pgrid.f[direction].reset(new DenseVector<DT_>(_pgrid.f_eq[direction]->copy()));
 
-                    CollideStream<Tag_>::value(_pgrid, _relaxation_time);
+                    CollideStream<Tag_>::value(_pgrid, _relaxation_time, false);
+                    CollideStream<Tag_>::value(_pgrid, _relaxation_time, true);
+
                     for (unsigned long dir(0) ; dir < directions ; ++dir)
                         for (unsigned long i(0) ; i < _pgrid.f_temp2[dir]->size() ; ++i)
                             (*_pgrid.f_temp[dir])[i] = (*_pgrid.f_temp2[dir])[i];
@@ -112,18 +115,15 @@ namespace honei
                 {
                     PROFILER_START("SolverLBM3 inner");
 
-                    unsigned long start(0);
-                    unsigned long end(_grid.local_size());
+                    Force<Tag_, SourceScheme_>::value(_pgrid, _gravity, _delta_x, _delta_y, _delta_t, DT_(0.01), true);
 
-                    Force<Tag_, SourceScheme_>::value(_pgrid, _gravity, _delta_x, _delta_y, _delta_t, DT_(0.01), start, end);
+                    UpdateVelocityDirections<Tag_>::value(_grid, _pgrid, true);
 
-                    UpdateVelocityDirections<Tag_>::value(_grid, _pgrid, start, end);
+                    Extraction<Tag_>::value(_pgrid, true);
 
-                    Extraction<Tag_>::value(_pgrid, start, end);
+                    EquilibriumDistribution<Tag_>::value(_pgrid, _gravity, _e, true);
 
-                    EquilibriumDistribution<Tag_>::value(_pgrid, _gravity, _e, start, end);
-
-                    CollideStream<Tag_>::value(_pgrid, _relaxation_time, start, end);
+                    CollideStream<Tag_>::value(_pgrid, _relaxation_time, true);
 
                     // TODO is pointer swapping sufficient?
                     for (unsigned long dir(0) ; dir < directions ; ++dir)
@@ -139,18 +139,15 @@ namespace honei
                 {
                     PROFILER_START("SolverLBM3 outer");
 
-                    unsigned long start(_grid.size() - _grid.inner_halo_size());
-                    unsigned long end(_grid.size());
+                    Force<Tag_, SourceScheme_>::value(_pgrid, _gravity, _delta_x, _delta_y, _delta_t, DT_(0.01), false);
 
-                    Force<Tag_, SourceScheme_>::value(_pgrid, _gravity, _delta_x, _delta_y, _delta_t, DT_(0.01), start, end);
+                    UpdateVelocityDirections<Tag_>::value(_grid, _pgrid, false);
 
-                    UpdateVelocityDirections<Tag_>::value(_grid, _pgrid, start, end);
+                    Extraction<Tag_>::value(_pgrid, false);
 
-                    Extraction<Tag_>::value(_pgrid, start, end);
+                    EquilibriumDistribution<Tag_>::value(_pgrid, _gravity, _e, false);
 
-                    EquilibriumDistribution<Tag_>::value(_pgrid, _gravity, _e, start, end);
-
-                    CollideStream<Tag_>::value(_pgrid, _relaxation_time, start, end);
+                    CollideStream<Tag_>::value(_pgrid, _relaxation_time, false);
 
                     PROFILER_STOP("SolverLBM3 outer");
                 }

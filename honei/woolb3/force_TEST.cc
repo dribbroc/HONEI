@@ -54,7 +54,8 @@ class ForceTest :
             Grid3<DataType_, 9> grid(geometry, h, b, u, v);
             PackedGrid3<DataType_, 9> pgrid(grid);
 
-            Force<Tag_, lbm::lbm_source_schemes::BED_FULL>::value(pgrid, DataType_(1), DataType_(1), DataType_(1), DataType_(1), DataType_(1));
+            Force<Tag_, lbm::lbm_source_schemes::BED_FULL>::value(pgrid, DataType_(1), DataType_(1), DataType_(1), DataType_(1), DataType_(1), false);
+            Force<Tag_, lbm::lbm_source_schemes::BED_FULL>::value(pgrid, DataType_(1), DataType_(1), DataType_(1), DataType_(1), DataType_(1), true);
         }
 
 };

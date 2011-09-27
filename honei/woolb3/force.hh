@@ -43,10 +43,10 @@ namespace honei
     {
         template <typename DT_, unsigned long directions>
         static void value(PackedGrid3<DT_, directions> & pgrid, DT_ g, DT_ d_x, DT_ d_y, DT_ d_t, DT_ /*manning*/,
-                unsigned long start = 0, unsigned long end = 0)
+                bool inner)
         {
-            if (end == 0)
-                end = pgrid.h->size();
+            unsigned long start(inner == true ? 0 : pgrid.grid.size() - pgrid.grid.inner_halo_size());
+            unsigned long end(inner == true ? pgrid.grid.local_size() : pgrid.grid.size());
 
             DT_ force_multiplier(d_t / (6 * d_x * d_x / (d_t * d_t)));
             DT_ gravity_multiplier(-g);
@@ -260,144 +260,144 @@ namespace honei
     {
         template <typename DT_, unsigned long directions>
         static void value(PackedGrid3<DT_, directions> & pgrid, DT_ g, DT_ d_x, DT_ /*d_y*/, DT_ d_t, DT_ manning,
-                unsigned long start = 0, unsigned long end = 0)
+                bool inner)
         {
-            if (end == 0)
-                end = pgrid.h->size();
+            unsigned long start(inner == true ? 0 : pgrid.grid.size() - pgrid.grid.inner_halo_size());
+            unsigned long end(inner == true ? pgrid.grid.local_size() : pgrid.grid.size());
 
-                DT_ force_multiplier(d_t / (DT_(6) * d_x * d_x / (d_t * d_t)));
-                force_multiplier *= g;
-                DT_ manning2(manning * manning);
-                DT_ * h(pgrid.h->elements());
-                DT_ * u(pgrid.u->elements());
-                DT_ * v(pgrid.v->elements());
+            DT_ force_multiplier(d_t / (DT_(6) * d_x * d_x / (d_t * d_t)));
+            force_multiplier *= g;
+            DT_ manning2(manning * manning);
+            DT_ * h(pgrid.h->elements());
+            DT_ * u(pgrid.u->elements());
+            DT_ * v(pgrid.v->elements());
 
-                unsigned long direction(1);
-                DT_ * f_temp((pgrid.f_temp[direction])->elements());
-                DT_ distribution_x((*pgrid.distribution_x)[direction]);
-                DT_ distribution_y((*pgrid.distribution_y)[direction]);
-                for (unsigned long i(start) ; i < end ; ++i)
-                {
-                    if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
-                        f_temp[i] -= force_multiplier * distribution_x * manning2 *
-                            u[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
-                }
+            unsigned long direction(1);
+            DT_ * f_temp((pgrid.f_temp[direction])->elements());
+            DT_ distribution_x((*pgrid.distribution_x)[direction]);
+            DT_ distribution_y((*pgrid.distribution_y)[direction]);
+            for (unsigned long i(start) ; i < end ; ++i)
+            {
+                if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
+                    f_temp[i] -= force_multiplier * distribution_x * manning2 *
+                        u[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
+            }
 
-                direction = 2;
-                f_temp = (pgrid.f_temp[direction])->elements();
-                distribution_x = (*pgrid.distribution_x)[direction];
-                distribution_y = (*pgrid.distribution_y)[direction];
-                for (unsigned long i(start) ; i < end ; ++i)
-                {
-                    if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
-                        f_temp[i] -= force_multiplier * distribution_x * manning2 *
-                            u[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
-                }
-                for (unsigned long i(start) ; i < end ; ++i)
-                {
-                    if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
-                        f_temp[i] -= force_multiplier * distribution_y * manning2 *
-                            v[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
-                }
+            direction = 2;
+            f_temp = (pgrid.f_temp[direction])->elements();
+            distribution_x = (*pgrid.distribution_x)[direction];
+            distribution_y = (*pgrid.distribution_y)[direction];
+            for (unsigned long i(start) ; i < end ; ++i)
+            {
+                if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
+                    f_temp[i] -= force_multiplier * distribution_x * manning2 *
+                        u[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
+            }
+            for (unsigned long i(start) ; i < end ; ++i)
+            {
+                if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
+                    f_temp[i] -= force_multiplier * distribution_y * manning2 *
+                        v[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
+            }
 
-                direction = 3;
-                f_temp = (pgrid.f_temp[direction])->elements();
-                distribution_x = (*pgrid.distribution_x)[direction];
-                distribution_y = (*pgrid.distribution_y)[direction];
-                for (unsigned long i(start) ; i < end ; ++i)
-                {
-                    if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
-                        f_temp[i] -= force_multiplier * distribution_y * manning2 *
-                            v[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
-                }
+            direction = 3;
+            f_temp = (pgrid.f_temp[direction])->elements();
+            distribution_x = (*pgrid.distribution_x)[direction];
+            distribution_y = (*pgrid.distribution_y)[direction];
+            for (unsigned long i(start) ; i < end ; ++i)
+            {
+                if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
+                    f_temp[i] -= force_multiplier * distribution_y * manning2 *
+                        v[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
+            }
 
-                direction = 4;
-                f_temp = (pgrid.f_temp[direction])->elements();
-                distribution_x = (*pgrid.distribution_x)[direction];
-                distribution_y = (*pgrid.distribution_y)[direction];
-                for (unsigned long i(start) ; i < end ; ++i)
-                {
-                    if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
-                        f_temp[i] -= force_multiplier * distribution_x * manning2 *
-                            u[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
-                }
-                for (unsigned long i(start) ; i < end ; ++i)
-                {
-                    if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
-                        f_temp[i] -= force_multiplier * distribution_y * manning2 *
-                            v[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
-                }
+            direction = 4;
+            f_temp = (pgrid.f_temp[direction])->elements();
+            distribution_x = (*pgrid.distribution_x)[direction];
+            distribution_y = (*pgrid.distribution_y)[direction];
+            for (unsigned long i(start) ; i < end ; ++i)
+            {
+                if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
+                    f_temp[i] -= force_multiplier * distribution_x * manning2 *
+                        u[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
+            }
+            for (unsigned long i(start) ; i < end ; ++i)
+            {
+                if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
+                    f_temp[i] -= force_multiplier * distribution_y * manning2 *
+                        v[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
+            }
 
-                direction = 5;
-                f_temp = (pgrid.f_temp[direction])->elements();
-                distribution_x = (*pgrid.distribution_x)[direction];
-                distribution_y = (*pgrid.distribution_y)[direction];
-                for (unsigned long i(start) ; i < end ; ++i)
-                {
-                    if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
-                        f_temp[i] -= force_multiplier * distribution_x * manning2 *
-                            u[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
-                }
+            direction = 5;
+            f_temp = (pgrid.f_temp[direction])->elements();
+            distribution_x = (*pgrid.distribution_x)[direction];
+            distribution_y = (*pgrid.distribution_y)[direction];
+            for (unsigned long i(start) ; i < end ; ++i)
+            {
+                if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
+                    f_temp[i] -= force_multiplier * distribution_x * manning2 *
+                        u[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
+            }
 
-                direction = 6;
-                f_temp = (pgrid.f_temp[direction])->elements();
-                distribution_x = (*pgrid.distribution_x)[direction];
-                distribution_y = (*pgrid.distribution_y)[direction];
-                for (unsigned long i(start) ; i < end ; ++i)
-                {
-                    if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
-                        f_temp[i] -= force_multiplier * distribution_x * manning2 *
-                            u[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
-                }
-                for (unsigned long i(start) ; i < end ; ++i)
-                {
-                    if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
-                        f_temp[i] -= force_multiplier * distribution_y * manning2 *
-                            v[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
-                }
+            direction = 6;
+            f_temp = (pgrid.f_temp[direction])->elements();
+            distribution_x = (*pgrid.distribution_x)[direction];
+            distribution_y = (*pgrid.distribution_y)[direction];
+            for (unsigned long i(start) ; i < end ; ++i)
+            {
+                if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
+                    f_temp[i] -= force_multiplier * distribution_x * manning2 *
+                        u[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
+            }
+            for (unsigned long i(start) ; i < end ; ++i)
+            {
+                if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
+                    f_temp[i] -= force_multiplier * distribution_y * manning2 *
+                        v[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
+            }
 
-                direction = 7;
-                f_temp = (pgrid.f_temp[direction])->elements();
-                distribution_x = (*pgrid.distribution_x)[direction];
-                distribution_y = (*pgrid.distribution_y)[direction];
-                for (unsigned long i(start) ; i < end ; ++i)
-                {
-                    if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
-                        f_temp[i] -= force_multiplier * distribution_y * manning2 *
-                            v[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
-                }
+            direction = 7;
+            f_temp = (pgrid.f_temp[direction])->elements();
+            distribution_x = (*pgrid.distribution_x)[direction];
+            distribution_y = (*pgrid.distribution_y)[direction];
+            for (unsigned long i(start) ; i < end ; ++i)
+            {
+                if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
+                    f_temp[i] -= force_multiplier * distribution_y * manning2 *
+                        v[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
+            }
 
-                direction = 8;
-                f_temp = (pgrid.f_temp[direction])->elements();
-                distribution_x = (*pgrid.distribution_x)[direction];
-                distribution_y = (*pgrid.distribution_y)[direction];
-                for (unsigned long i(start) ; i < end ; ++i)
-                {
-                    if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
-                        f_temp[i] -= force_multiplier * distribution_x * manning2 *
-                            u[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
-                }
-                for (unsigned long i(start) ; i < end ; ++i)
-                {
-                    if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
-                        f_temp[i] -= force_multiplier * distribution_y * manning2 *
-                            v[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
-                }
+            direction = 8;
+            f_temp = (pgrid.f_temp[direction])->elements();
+            distribution_x = (*pgrid.distribution_x)[direction];
+            distribution_y = (*pgrid.distribution_y)[direction];
+            for (unsigned long i(start) ; i < end ; ++i)
+            {
+                if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
+                    f_temp[i] -= force_multiplier * distribution_x * manning2 *
+                        u[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
+            }
+            for (unsigned long i(start) ; i < end ; ++i)
+            {
+                if( pow(h[i], DT_(1./3.)) > std::numeric_limits<DT_>::epsilon() || pow(h[i], DT_(1./3.)) < -std::numeric_limits<DT_>::epsilon())
+                    f_temp[i] -= force_multiplier * distribution_y * manning2 *
+                        v[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / pow(h[i], DT_(1./3.));
+            }
         }
     };
 
     template <typename Tag_>
-    struct Force<Tag_, lbm::lbm_source_schemes::BED_FULL>
-    {
-        template <typename DT_, unsigned long directions>
-        static void value(PackedGrid3<DT_, directions> & pgrid, DT_ g, DT_ d_x, DT_ d_y, DT_ d_t, DT_ manning,
-                unsigned long start = 0, unsigned long end = 0)
+        struct Force<Tag_, lbm::lbm_source_schemes::BED_FULL>
         {
-            PROFILER_START("Force BED_FULL");
-            Force<Tag_, lbm::lbm_source_schemes::BED_SLOPE>::value(pgrid, g, d_x, d_y, d_t, manning, start, end);
-            Force<Tag_, lbm::lbm_source_schemes::BED_FRICTION>::value(pgrid, g, d_x, d_y, d_t, manning, start, end);
-            PROFILER_STOP("Force BED_FULL");
-        }
-    };
+            template <typename DT_, unsigned long directions>
+                static void value(PackedGrid3<DT_, directions> & pgrid, DT_ g, DT_ d_x, DT_ d_y, DT_ d_t, DT_ manning,
+                        bool inner)
+                {
+                    PROFILER_START("Force BED_FULL");
+                    Force<Tag_, lbm::lbm_source_schemes::BED_SLOPE>::value(pgrid, g, d_x, d_y, d_t, manning, inner);
+                    Force<Tag_, lbm::lbm_source_schemes::BED_FRICTION>::value(pgrid, g, d_x, d_y, d_t, manning, inner);
+                    PROFILER_STOP("Force BED_FULL");
+                }
+        };
 }
 #endif

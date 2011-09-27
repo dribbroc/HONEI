@@ -181,7 +181,7 @@ class MultiSolverLBM3Test :
             unsigned long g_h(128);
             unsigned long g_w(128);
             unsigned long timesteps(250);
-            unsigned long process_count(8);
+            unsigned long process_count(7);
 
 
             Grid<D2Q9, DataType_> grid;

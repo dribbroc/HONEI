@@ -57,7 +57,8 @@ class EquilibriumDistributionTest :
             DataType_ e (0.5);
             DataType_ g (9.81);
 
-            EquilibriumDistribution<Tag_>::value(pgrid, e, g);
+            EquilibriumDistribution<Tag_>::value(pgrid, e, g, false);
+            EquilibriumDistribution<Tag_>::value(pgrid, e, g, true);
         }
 
 };
