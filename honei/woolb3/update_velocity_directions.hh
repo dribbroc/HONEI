@@ -42,11 +42,11 @@ namespace honei
     struct UpdateVelocityDirections<tags::CPU>
     {
         template <typename DT_, unsigned long directions>
-        static void value(Grid3<DT_, directions> & grid, PackedGrid3<DT_, directions> & pgrid, unsigned long start = 0, unsigned long end = 0)
+        static void value(Grid3<DT_, directions> & grid, PackedGrid3<DT_, directions> & pgrid, bool inner)
         {
             PROFILER_START("UpVelDir");
-            if (end == 0)
-                end = pgrid.h->size();
+            unsigned long start(inner == true ? 0 : pgrid.grid.size() - pgrid.grid.inner_halo_size());
+            unsigned long end(inner == true ? pgrid.grid.local_size() : pgrid.grid.size());
 
             for (typename std::set<Cell<DT_, directions> *>::iterator i(grid.no_neighbour().begin()) ; i != grid.no_neighbour().end() ; ++i)
             {

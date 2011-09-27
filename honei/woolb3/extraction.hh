@@ -41,12 +41,12 @@ namespace honei
     struct Extraction<tags::CPU>
     {
         template <typename DT_, unsigned long directions>
-        static void value(PackedGrid3<DT_, directions> & pgrid, unsigned long start = 0, unsigned long end = 0)
+        static void value(PackedGrid3<DT_, directions> & pgrid, bool inner)
         {
             PROFILER_START("Extraction");
 
-            if (end == 0)
-                end = pgrid.h->size();
+            unsigned long start(inner == true ? 0 : pgrid.grid.size() - pgrid.grid.inner_halo_size());
+            unsigned long end(inner == true ? pgrid.grid.local_size() : pgrid.grid.size());
 
             DT_ * f[directions];
             for (unsigned long dir(0) ; dir < directions ; ++dir)

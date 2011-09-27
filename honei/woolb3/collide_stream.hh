@@ -40,29 +40,41 @@ namespace honei
     struct CollideStream<tags::CPU>
     {
         template <typename DT_, unsigned long directions>
-        static void value(PackedGrid3<DT_, directions> & pgrid, DT_ tau, unsigned long start = 0, unsigned long end = 0)
+        static void value(PackedGrid3<DT_, directions> & pgrid, DT_ tau, bool inner)
         {
             PROFILER_START("CollStream");
-
-            if (end == 0)
-                end = pgrid.h->size();
 
             for (unsigned long direction(0) ; direction < directions ; ++direction)
             {
                 const DT_ * const f(pgrid.f[direction]->elements());
                 const DT_ * const f_eq(pgrid.f_eq[direction]->elements());
                 DT_ * f_temp2(pgrid.f_temp2[direction]->elements());
-                // TODO start und end punkt für dir_index vektoren finden ist garnicht so leicht
-                /*const unsigned long * const dir_index(pgrid.dir_index[direction]->elements());
-                const unsigned long * const dir(pgrid.dir[direction]->elements());
-                for (unsigned long begin(0), half(0) ; begin < pgrid.dir_index[direction]->size() - 1; begin+=2, ++half)
+                /*unsigned long * dir_index;
+                unsigned long * dir;
+                unsigned long size;
+                if (inner)
                 {
-                    const unsigned long end(dir_index[begin + 1]);
-                    for (unsigned long i(dir_index[begin]), offset(0) ; i < end ; ++i, ++offset)
+                    dir_index = pgrid.dir_index_inner[direction]->elements();
+                    dir = pgrid.dir_inner[direction]->elements();
+                    size = pgrid.dir_index_inner[direction]->size() - 1;
+                }
+                else
+                {
+                    dir_index = pgrid.dir_index_outer[direction]->elements();
+                    dir = pgrid.dir_outer[direction]->elements();
+                    size = pgrid.dir_index_outer[direction]->size() - 1;
+                }
+                for (unsigned long begin(0), half(0) ; begin < size ; begin+=2, ++half)
+                {
+                    const unsigned long end_dir(dir_index[begin + 1]);
+                    for (unsigned long i(dir_index[begin]), offset(0) ; i < end_dir ; ++i, ++offset)
                     {
                         f_temp2[dir[half] + offset] = f[i] - (f[i] - f_eq[i])/tau;
                     }
-                }*/
+                }
+*/
+                unsigned long start(inner == true ? 0 : pgrid.grid.size() - pgrid.grid.inner_halo_size());
+                unsigned long end(inner == true ? pgrid.grid.local_size() : pgrid.grid.size());
                 const unsigned long * neighbours(pgrid.neighbours[direction]->elements());
                 for (unsigned long i(start) ; i < end ; ++i)
                 {

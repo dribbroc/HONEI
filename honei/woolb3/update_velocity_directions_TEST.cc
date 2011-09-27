@@ -54,7 +54,8 @@ class UpVelDirTest :
             Grid3<DataType_, 9> grid(geometry, h, b, u, v);
             PackedGrid3<DataType_, 9> pgrid(grid);
 
-            UpdateVelocityDirections<Tag_>::value(grid, pgrid);
+            UpdateVelocityDirections<Tag_>::value(grid, pgrid, false);
+            UpdateVelocityDirections<Tag_>::value(grid, pgrid, true);
         }
 
 };

@@ -49,7 +49,7 @@ class PackedGrid3Test :
             geometry(2,3) = true;
             Grid3<DataType_, 9>::print_numbering(geometry, "z-curve");
             std::cout<<geometry;
-            Grid3<DataType_, 9> grid(geometry, h, b, u, v);
+            Grid3<DataType_, 9> grid(geometry, h, b, u, v, 1, 2);
             PackedGrid3<DataType_, 9> pgrid(grid);
 
             std::cout<<std::endl<<"'to send' targets:"<<std::endl;
@@ -89,8 +89,10 @@ class PackedGrid3Test :
             for (unsigned long i(0) ; i < 9 ; ++i)
             {
                 std::cout<<i<<": "<<std::endl;
-                std::cout<<*(pgrid.dir[i]);
-                std::cout<<*(pgrid.dir_index[i]);
+                std::cout<<*(pgrid.dir_inner[i]);
+                std::cout<<*(pgrid.dir_index_inner[i]);
+                std::cout<<*(pgrid.dir_outer[i]);
+                std::cout<<*(pgrid.dir_index_outer[i]);
             }
         }
 };

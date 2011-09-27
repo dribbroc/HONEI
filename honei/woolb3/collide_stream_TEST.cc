@@ -65,7 +65,8 @@ class CollideStreamTest :
                     (*pgrid.f_temp[j])[i] = DataType_(4711);
                 }
             }
-            CollideStream<Tag_>::value(pgrid, tau);
+            CollideStream<Tag_>::value(pgrid, tau, false);
+            CollideStream<Tag_>::value(pgrid, tau, true);
             //std::cout<< *pgrid.f_temp[2];
         }
 
