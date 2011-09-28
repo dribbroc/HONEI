@@ -190,32 +190,38 @@ template<typename Tag_>
 class MGSolverTest:
     public BaseTest
 {
+    private:
+        std::string _file;
+
     public:
-        MGSolverTest(const std::string & tag) :
+        MGSolverTest(const std::string & tag, std::string filebase) :
             BaseTest("MGSolverTest<" + tag + ">")
         {
             register_tag(Tag_::name);
+            _file = filebase;
         }
 
         virtual void run() const
         {
-            unsigned long max_level(4);
+            unsigned long max_level(7);
             unsigned long min_level(1);
             std::string file(HONEI_SOURCEDIR);
-            file += "/honei/math/testdata/poisson_advanced/sort_0/";
-            MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double>, SparseMatrixELL<double> >  data(MGUtil<Tag_,
+            file += "/honei/math/testdata/";
+            file += _file;
+
+            MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double>, DenseVector<double> >  data(MGUtil<Tag_,
                                                                                             SparseMatrixELL<double>,
                                                                                             DenseVector<double>,
                                                                                             SparseMatrixELL<double>,
-                                                                                            SparseMatrixELL<double>,
+                                                                                            DenseVector<double>,
                                                                                             io_formats::ELL,
                                                                                             io_formats::EXP,
-                                                                                            double>::load_data(file, max_level, double(1), "spai"));
+                                                                                            double>::load_data(file, max_level, double(0.7), "jac"));
             MGUtil<Tag_,
                 SparseMatrixELL<double>,
                 DenseVector<double>,
                 SparseMatrixELL<double>,
-                SparseMatrixELL<double>,
+                DenseVector<double>,
                 io_formats::ELL,
                 io_formats::EXP,
                 double>::configure(data, 100, 100, 4, 4, min_level, double(1e-8));
@@ -236,7 +242,9 @@ class MGSolverTest:
             std::cout << data.used_iters_coarse << std::endl;
 
             std::string reffile(HONEI_SOURCEDIR);
-            reffile += "/honei/math/testdata/poisson_advanced/sort_0/sol_";
+            reffile += "/honei/math/testdata/";
+            reffile += _file;
+            reffile += "sol_";
             reffile += stringify(max_level);
             DenseVector<double> ref(VectorIO<io_formats::EXP>::read_vector(reffile, double(0)));
             double base_digits(1);
@@ -256,28 +264,42 @@ class MGSolverTest:
             for(unsigned long i(0) ; i < ref.size() ; ++i)
                 TEST_CHECK_EQUAL_WITHIN_EPS(data.x.at(max_level)[i], ref[i], eps);
 
-            print_cycle(ol, max_level, min_level);
+            //print_cycle(ol, max_level, min_level);
         }
 };
-MGSolverTest<tags::CPU> mg_solver_test_cpu("double");
+MGSolverTest<tags::CPU> mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
 #ifdef HONEI_SSE
-MGSolverTest<tags::CPU::SSE> sse_mg_solver_test_cpu("double");
-MGSolverTest<tags::CPU::MultiCore::SSE> mcsse_mg_solver_test_cpu("double");
+MGSolverTest<tags::CPU::SSE> sse_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
+MGSolverTest<tags::CPU::MultiCore::SSE> mcsse_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
-MGSolverTest<tags::GPU::CUDA> mg_solver_test_gpu("double");
+MGSolverTest<tags::GPU::CUDA> mg_solver_test_gpu("double", "poisson_advanced/sort_0/");
 #endif
 #endif
 #ifdef HONEI_OPENCL
-MGSolverTest<tags::OpenCL::CPU> ocl_cpu_mg_solver_test_cpu("double");
+MGSolverTest<tags::OpenCL::CPU> ocl_cpu_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
 #ifdef HONEI_CUDA_DOUBLE
-MGSolverTest<tags::OpenCL::GPU> ocl_gpu_mg_solver_test_cpu("double");
+MGSolverTest<tags::OpenCL::GPU> ocl_gpu_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
 #endif
 #endif
 
-
-
+MGSolverTest<tags::CPU> mg_solver_test_cpu_2("double", "poisson_advanced2/sort_0/");
+#ifdef HONEI_SSE
+MGSolverTest<tags::CPU::SSE> sse_mg_solver_test_cpu_2("double", "poisson_advanced2/sort_0/");
+MGSolverTest<tags::CPU::MultiCore::SSE> mcsse_mg_solver_test_cpu_2("double", "poisson_advanced2/sort_0/");
+#endif
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
+MGSolverTest<tags::GPU::CUDA> mg_solver_test_gpu_2("double", "poisson_advanced2/sort_0/");
+#endif
+#endif
+#ifdef HONEI_OPENCL
+MGSolverTest<tags::OpenCL::CPU> ocl_cpu_mg_solver_test_cpu_2("double", "poisson_advanced2/sort_0/");
+#ifdef HONEI_CUDA_DOUBLE
+MGSolverTest<tags::OpenCL::GPU> ocl_gpu_mg_solver_test_cpu_2("double", "poisson_advanced2/sort_0/");
+#endif
+#endif
 
 template<typename Tag_>
 class MGSolverTestQuad:
@@ -353,3 +375,4 @@ class MGSolverTestQuad:
         }
 };
 MGSolverTestQuad<tags::CPU> mg_solver_quad_test_cpu("double");
+
