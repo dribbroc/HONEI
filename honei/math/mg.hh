@@ -28,6 +28,7 @@
 #include <honei/math/matrix_io.hh>
 #include <honei/math/transposition.hh>
 #include <honei/math/vector_io.hh>
+#include <honei/math/spai2.hh>
 
 namespace honei
 {
@@ -164,16 +165,29 @@ namespace honei
                 static void value(unsigned long /*i*/,
                                   std::vector<DenseVector<DataType_> > & target,
                                   std::string /*filename*/,
-                                  std::string /*precon_suffix*/,
+                                  std::string precon_suffix,
                                   MatrixType_ & A,
                                   DataType_ damping_factor)
                 {
-                    DenseVector<DataType_> current_P(A.rows(), damping_factor);
-                    for(unsigned long j(0) ; j < current_P.size() ; ++j)
+                    if (precon_suffix == "jac")
                     {
-                        current_P[j] /= A(j, j);
+                        DenseVector<DataType_> current_P(A.rows(), damping_factor);
+                        for(unsigned long j(0) ; j < current_P.size() ; ++j)
+                        {
+                            current_P[j] /= A(j, j);
+                        }
+                        target.push_back(current_P);
                     }
-                    target.push_back(current_P);
+                    else if (precon_suffix == "spai")
+                    {
+                        DenseVector<DataType_> current_P(A.rows());
+                        SparseMatrix<DataType_> As(A);
+                        SPAI2<tags::CPU>::value_0(current_P, As);
+                        Scale<tags::CPU>::value(current_P, damping_factor);
+                        target.push_back(current_P);
+                    }
+                    else
+                        throw InternalError("Preconditioner unknown!");
                 }
 
                 static void dummy(std::vector<DenseVector<DataType_> > & target)
@@ -308,7 +322,7 @@ namespace honei
                 target.eps_relative = eps_relative;
             }
 
-            static MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> load_data(std::string file_base, unsigned long max_level, DT_ damping_factor, std::string precon_suffix = "jac")
+            static MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> load_data(std::string file_base, unsigned long max_level, DT_ damping_factor, std::string precon_suffix)
             {
                 CONTEXT("When creating MGData from file(s):");
 
