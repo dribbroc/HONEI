@@ -62,7 +62,7 @@ namespace honei
         public:
             template<typename DT_, typename MatrixType_, typename VectorType_, typename PreconContType_>
             static inline VectorType_ & value(MatrixType_ & A,
-                                              HONEI_UNUSED PreconContType_ & P,
+                                              PreconContType_ & P,
                                               VectorType_ & b,
                                               VectorType_ & x,
                                               unsigned long max_iters,

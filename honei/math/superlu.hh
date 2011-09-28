@@ -33,7 +33,6 @@
 
 namespace honei
 {
-
     struct SuperLU
     {
         template <typename DT_>
@@ -179,6 +178,21 @@ namespace honei
             }
             Destroy_SuperMatrix_Store(&X);
             StatFree(&stat);
+        }
+
+        template<typename DT_, typename MatrixType_, typename VectorType_, typename PreconContType_>
+        static inline VectorType_ & value(MatrixType_ & A,
+                    PreconContType_ & /*P*/,
+                    VectorType_ & b,
+                    VectorType_ & x,
+                    unsigned long /*max_iters*/,
+                    unsigned long & used_iters,
+                    DT_ /*eps_relative*/)
+        {
+            SparseMatrixELL<DT_> in_matrix(A);
+            SuperLU::value(in_matrix, b, x);
+            used_iters = 1;
+            return x;
         }
     };
 }
