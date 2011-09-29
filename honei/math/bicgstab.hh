@@ -121,7 +121,7 @@ namespace honei
                         if (fabs(gamma_tilde) < fabs(rho_tilde)*1e-14)
                         {
                             num_restarts++;
-                            std::cout << "Breakpoint 1" << std::endl;
+                            //std::cout << "Breakpoint 1" << std::endl;
                             break;
                         }
 
@@ -130,7 +130,7 @@ namespace honei
                         if ((fabs(alpha_tilde) * Norm<vnt_l_two, false, Tag_>::value(v_tilde)) / defnorm < 1e-5)
                         {
                             num_restarts++;
-                            std::cout << "Breakpoint 2" << std::endl;
+                            //std::cout << "Breakpoint 2" << std::endl;
                             //break;
                         }
 
@@ -144,7 +144,7 @@ namespace honei
 
                             early_exit = 1;
                             converged = 1;
-                            std::cout << "Breakpoint 3 (converged)" << std::endl;
+                            //std::cout << "Breakpoint 3 (converged)" << std::endl;
                             break;
                         }
                         ScaledSum<Tag_>::value(s_tilde, r_tilde, v_tilde, -alpha_tilde);
@@ -159,7 +159,7 @@ namespace honei
                         if (fabs(gamma_tilde) < fabs(omega_tilde) * 1e-14)
                         {
                             num_restarts++;
-                            std::cout << "Breakpoint 4" << std::endl;
+                            //std::cout << "Breakpoint 4" << std::endl;
                             break;
                         }
                         omega_tilde = omega_tilde / gamma_tilde;
@@ -175,7 +175,7 @@ namespace honei
                         if (defnorm < eps_relative * defnorm_00)
                         {
                             converged = 1;
-                            std::cout << "Breakpoint 5 (converged)" << std::endl;
+                            //std::cout << "Breakpoint 5 (converged)" << std::endl;
                             break;
                         }
 
@@ -196,7 +196,7 @@ namespace honei
 
 
                 used_iters = iter + 1;
-                std::cout << "Norm: " << defnorm << std::endl;
+                //std::cout << "Norm: " << defnorm << std::endl;
                 LOGMESSAGE(lc_solver, "BiCgStab(VAR) finished in " + stringify(used_iters) + " iterations with defect " + stringify(defnorm));
                 PROFILER_STOP("CGSolver NONE");
 

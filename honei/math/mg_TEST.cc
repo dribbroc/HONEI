@@ -4,6 +4,7 @@
 #include <honei/math/restriction.hh>
 #include <honei/math/prolongation.hh>
 #include <honei/math/cg.hh>
+#include <honei/math/bicgstab.hh>
 #include <honei/math/ri.hh>
 #include <honei/math/mg.hh>
 #include <honei/math/methods.hh>
@@ -12,6 +13,7 @@
 #include <honei/la/dense_vector.hh>
 #include <honei/math/matrix_io.hh>
 #include <honei/math/vector_io.hh>
+#include <honei/math/superlu.hh>
 
 using namespace honei;
 using namespace tests;
@@ -228,8 +230,9 @@ class MGSolverTest:
 
             OperatorList ol(
                     MGCycleCreation<Tag_,
-                    methods::CYCLE::W::STATIC,
-                    CG<Tag_, methods::VAR>,
+                    methods::CYCLE::V::STATIC,
+                    BiCGStab<Tag_, methods::VAR>,
+                    //SuperLU,
                     RISmoother<Tag_>,
                     Restriction<Tag_, methods::PROLMAT>,
                     Prolongation<Tag_, methods::PROLMAT>,
@@ -267,6 +270,7 @@ class MGSolverTest:
             //print_cycle(ol, max_level, min_level);
         }
 };
+
 MGSolverTest<tags::CPU> mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
 #ifdef HONEI_SSE
 MGSolverTest<tags::CPU::SSE> sse_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
