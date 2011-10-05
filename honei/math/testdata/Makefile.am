@@ -270,7 +270,7 @@ EXTRA_DIST = \
 	poisson_advanced2/q2_sort_0/sol_3 \
 	poisson_advanced2/q2_sort_0/sol_4 \
 	poisson_advanced2/q2_sort_0/sol_5 \
-	poisson_advanced2/q2_sort_0/sol_6 \
+	poisson_advanced2/q2_sort_0/sol_6
 
 DEFS = \
 	$(CELLDEF) \
