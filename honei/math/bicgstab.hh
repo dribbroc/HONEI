@@ -132,6 +132,7 @@ namespace honei
                         {
                             restarted = true;;
                             //std::cout << "Breakpoint 2" << std::endl;
+                            // \TODO warum ist das break hier nicht aktiv?
                             //break;
                         }
 
