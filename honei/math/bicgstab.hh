@@ -113,6 +113,8 @@ namespace honei
                     // main BiCGStab loop
                     do
                     {
+                        iter = iter + 1;
+
                         Product<Tag_>::value(v, A, p_tilde);
                         Product<Tag_>::value(v_tilde, P, v);
 
@@ -139,7 +141,6 @@ namespace honei
                         defnorm = Norm<vnt_l_two, false, Tag_>::value(s);
                         if (defnorm < eps_relative * defnorm_00)
                         {
-                            iter = iter + 1;
                             ScaledSum<Tag_>::value(x, p_tilde, alpha_tilde);
 
                             early_exit = 1;
@@ -163,8 +164,6 @@ namespace honei
                             break;
                         }
                         omega_tilde = omega_tilde / gamma_tilde;
-
-                        iter = iter + 1;
 
                         ScaledSum<Tag_>::value(x, s_tilde, omega_tilde);
                         ScaledSum<Tag_>::value(x, p_tilde, alpha_tilde);
@@ -192,7 +191,7 @@ namespace honei
 
                     } while (iter <= max_iters);
 
-                } while (num_restarts < max_restarts  && converged == 0);
+                } while (num_restarts < max_restarts  && converged == 0 && iter < max_iters);
 
 
                 used_iters = iter + 1;
