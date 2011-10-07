@@ -78,9 +78,8 @@ namespace honei
                 double rho_tilde, rho_tilde_old, alpha_tilde, omega_tilde, beta_tilde, gamma_tilde;
                 double nrm_r_tilde_0, nrm_tilde_00;
                 bool early_exit = 0;
-                bool num_restarts = 0;
+                bool restarted = false;
                 bool converged = 0;
-                bool max_restarts = 50;
 
                 DenseVector<DT_> r(b.size());
                 DenseVector<DT_> r_tilde(b.size());
@@ -101,7 +100,7 @@ namespace honei
                     Product<Tag_>::value(r_tilde_0, P, r);
                     nrm_r_tilde_0 = Norm<vnt_l_two, false, Tag_>::value(r_tilde_0);
 
-                    if (num_restarts == 0)
+                    if (restarted == false)
                     {
                         defnorm_00 = defnorm_0;
                         nrm_tilde_00 = nrm_r_tilde_0;
@@ -122,7 +121,7 @@ namespace honei
 
                         if (fabs(gamma_tilde) < fabs(rho_tilde)*1e-14)
                         {
-                            num_restarts++;
+                            restarted = true;
                             //std::cout << "Breakpoint 1" << std::endl;
                             break;
                         }
@@ -131,7 +130,7 @@ namespace honei
 
                         if ((fabs(alpha_tilde) * Norm<vnt_l_two, false, Tag_>::value(v_tilde)) / defnorm < 1e-5)
                         {
-                            num_restarts++;
+                            restarted = true;;
                             //std::cout << "Breakpoint 2" << std::endl;
                             //break;
                         }
@@ -159,7 +158,7 @@ namespace honei
 
                         if (fabs(gamma_tilde) < fabs(omega_tilde) * 1e-14)
                         {
-                            num_restarts++;
+                            restarted = true;
                             //std::cout << "Breakpoint 4" << std::endl;
                             break;
                         }
@@ -191,7 +190,7 @@ namespace honei
 
                     } while (iter <= max_iters);
 
-                } while (num_restarts < max_restarts  && converged == 0 && iter < max_iters);
+                } while (converged == 0 && iter < max_iters);
 
 
                 used_iters = iter + 1;
