@@ -87,19 +87,16 @@ namespace honei
                     DT_ alpha = (fabs(p[i]) > std::numeric_limits<DT_>::epsilon()) ? p[j] / p[i] : p[j] / std::numeric_limits<DT_>::epsilon();
                     if (fabs(alpha) > tolerance)
                     {
-                        SparseVector<DT_> z_tmp(((const SparseMatrix<DT_>)z)[i].copy());
-                        Scale<Tag_>::value(z_tmp, alpha);
-
-                        //Difference<tags::CPU>::value(z[j], z_tmp);
                         //TODO integrate dropping strategy in difference and insert (virtual) zeros if dropping occurs
                         typename SparseVector<DT_>::NonZeroElementIterator l(z[j].begin_non_zero_elements());
-                        for (typename SparseVector<DT_>::NonZeroConstElementIterator r(z_tmp.begin_non_zero_elements()),
-                                r_end(z_tmp.end_non_zero_elements()) ; r != r_end ; )
+                        typename SparseVector<DT_>::NonZeroElementIterator r(z[i].begin_non_zero_elements());
+                        typename SparseVector<DT_>::NonZeroElementIterator r_end(z[i].end_non_zero_elements());
+                        for ( ; r != r_end ; )
                         {
                             if (r.index() < l.index())
                             {
-                                if(fabs(*r) > tolerance)
-                                    z[j][r.index()] = -(*r);
+                                if(fabs(*r * alpha) > tolerance)
+                                    z[j][r.index()] = -(*r) * alpha;
                                 ++r;
                             }
                             else if (l.index() < r.index())
@@ -109,7 +106,7 @@ namespace honei
                             else
                             {
                                 //TODO BUG!: if dropping occurs: do not insert zero but delete the entry at z[j][x] if any exists
-                                *l = (*l - *r) * DT_(fabs(*l - *r) > tolerance);
+                                *l = (*l - (*r * alpha)) * DT_(fabs(*l - (*r * alpha)) > tolerance);
                                 ++l; ++r;
                             }
                         }
