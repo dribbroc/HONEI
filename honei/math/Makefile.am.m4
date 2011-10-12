@@ -22,7 +22,7 @@ $1_TEST_LDADD = \
 	libhoneimath.la \
 	$(FLIBS) \
 	$(DYNAMIC_LD_LIBS)
-dnl $1_TEST_LDFLAGS = -Wl,--start-group -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -Wl,--end-group -lpthread -fopenmp
+$1_TEST_LDFLAGS = -Wl,--start-group -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -Wl,--end-group -lpthread -fopenmp
 
 if BLAPACK
 
