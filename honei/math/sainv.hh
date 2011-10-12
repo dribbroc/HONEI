@@ -85,7 +85,7 @@ namespace honei
                 {
                     //DT_ alpha = p[j] / p[i];
                     DT_ alpha = (fabs(p[i]) > std::numeric_limits<DT_>::epsilon()) ? p[j] / p[i] : p[j] / std::numeric_limits<DT_>::epsilon();
-                    if (alpha != DT_(0))
+                    if (fabs(alpha) > tolerance)
                     {
                         SparseVector<DT_> z_tmp(((const SparseMatrix<DT_>)z)[i].copy());
                         Scale<Tag_>::value(z_tmp, alpha);
