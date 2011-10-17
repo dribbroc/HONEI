@@ -23,11 +23,68 @@
 
 #include <honei/la/product.hh>
 #include <honei/math/defect.hh>
+#include <honei/la/norm.hh>
 #include <honei/la/sum.hh>
 #include <honei/util/profiler.hh>
 
 namespace honei
 {
+
+    /**
+     * \brief  Solving with Richardson.
+     *
+     * \ingroup grpmatrixoperations
+     * \ingroup grpvectoroperations
+     */
+    template <typename Tag_>
+    struct RISolver
+    {
+        public:
+            /**
+            * \brief Returns solved vector stemming from linear system with the preconditioned and damped Richardson iterative method.
+            *
+            */
+            template <typename DT_,
+                      typename MatrixType_,
+                      typename VectorType_,
+                      typename PreconContType_>
+            static VectorType_ &  value(MatrixType_ & A,
+                    PreconContType_ & P,
+                    VectorType_ & b,
+                    VectorType_ & x,
+                    VectorType_ & temp_0,
+                    VectorType_ & temp_1,
+                    unsigned long max_iters,
+                    unsigned long & used_iters,
+                    DT_ eps_relative = 1e-8)
+            {
+                CONTEXT("When solving with Richardson: ");
+                PROFILER_START("RISolver");
+
+                Defect<Tag_>::value(temp_0, b, A, x);
+                DT_ initial_defect = Norm<vnt_l_two, true, Tag_>::value(temp_0);
+
+                used_iters = 0;
+                while(true)
+                {
+                    ++used_iters;
+
+                    Defect<Tag_>::value(temp_0, b, A, x);
+                    Product<Tag_>::value(temp_1, P, temp_0);
+                    Sum<Tag_>::value(x, temp_1);
+
+                    DT_ current_defect = Norm<vnt_l_two, true, Tag_>::value(temp_0);
+
+                    if(current_defect < eps_relative * initial_defect || current_defect < eps_relative || used_iters >= max_iters)
+                    {
+                        break;
+                    }
+                }
+                PROFILER_STOP("RISolver");
+
+                return x;
+            }
+    };
 
     /**
      * \brief  Smoothing with Richardson.
