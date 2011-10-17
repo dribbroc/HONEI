@@ -3,6 +3,7 @@ AM_CXXFLAGS = -I$(top_srcdir)
 CLEANFILES = *~
 MAINTAINERCLEANFILES = Makefile.in
 EXTRA_DIST = \
+	fft.p \
 	area51_full_0.m \
 	area51_full_0.ell \
 	area51_rhs_0 \
