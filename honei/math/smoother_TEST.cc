@@ -75,16 +75,32 @@ class SmootherTestSparse:
 
             DenseVector<DT_> temp_0(rhs.size());
             DenseVector<DT_> temp_1(rhs.size());
-            RISmoother<Tag_>::value(A, diag_inverted, rhs, result, temp_0, temp_1, 1ul);
+            RISmoother<Tag_>::value(A, diag_inverted, rhs, result, temp_0, temp_1, 500ul);
 
             Defect<Tag_>::value(x, rhs, A, result);
             DenseVector<DT_> post_y = FFT::forward(x);
 
             //std::cout<<pre_y<<post_y;
 
+            DenseVector<DT_> quotient(post_y.size());
             for (unsigned long i(0) ; i < post_y.size() ; ++i)
-                std::cout<<fabs(post_y[i] / pre_y[i])<<" ";
-            std::cout<<std::endl;
+            {
+                quotient[i] = (pre_y[i] == DT_(0)) || fabs(post_y[i] / pre_y[i]) > 1 ? DT_(0) : fabs(post_y[i] / pre_y[i]);
+            }
+            //std::cout<<quotient;
+
+
+            std::string out_filename (dir + "/honei/math/testdata/");
+            out_filename += "fft.dat";
+            std::ofstream hfile;
+            hfile.open(out_filename.c_str(), fstream::trunc | fstream::out);
+
+            for (unsigned long i(0) ; i < quotient.size() ; ++i)
+            {
+                std::string record = stringify(i) + " " + stringify(quotient[i]) + "\n";
+                hfile << record;
+            }
+            hfile.close();
         }
 };
-SmootherTestSparse<tags::CPU, double> smoother_test_double("double");
+//SmootherTestSparse<tags::CPU, double> smoother_test_double("double");
