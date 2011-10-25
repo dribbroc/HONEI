@@ -547,6 +547,7 @@ AC_OUTPUT(
 	benchmark/Makefile
 	clients/Makefile
 	clients/config/Makefile
+	clients/woolb3_malpasset/Makefile
 	clients/io_tools/Makefile
 	clients/fortran/Makefile
 	clients/mpi/Makefile

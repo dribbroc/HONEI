@@ -55,9 +55,9 @@ class MalpassetTest :
 
         virtual void run() const
         {
-            unsigned long timesteps(5000);
+            unsigned long timesteps(10000);
             DataType_ dx(15);
-            DataType_ _tau(0.51);
+            DataType_ _tau(0.632);
             DataType_ _dt(0.0015);
 
             std::string file(HONEI_SOURCEDIR);
@@ -102,75 +102,26 @@ class MalpassetTest :
 
 
             Grid3<DataType_, 9> grid3(o, h, b, u, v);
+            PackedGrid3<DataType_, 9> pgrid3(grid3);
+            SolverLBM3<Tag_, DataType_, 9, lbm::lbm_source_schemes::BED_FULL> solver3(grid3, pgrid3, dx, dx, _dt, _tau);
+            solver3.do_preprocessing();
 
-
-
-
-            unsigned long best_iters(0);
-            _dt = 0.0115f;
-            for ( ; _dt <= 0.15f ; _dt+=0.01f )
+            for (unsigned long i(0) ; i  < timesteps ; ++i)
             {
-                _tau = 0.51f;
-                for( ; _tau <= 2.0f ; _tau+=0.005f )
-                {
-                    PackedGrid3<DataType_, 9> pgrid3(grid3);
-                    SolverLBM3<Tag_, DataType_, 9, lbm::lbm_source_schemes::BED_FULL> solver3(grid3, pgrid3, dx, dx, _dt, _tau);
-                    solver3.do_preprocessing();
-
-                    unsigned long i(0);
-                    //DenseVector<DataType_> old(pgrid3.h->copy());
-                    for (bool broken(false) ; (i < timesteps) && (!broken) ; ++i)
-                    {
-                        solver3.solve();
-                        for (unsigned long j(0) ; j < pgrid3.h->size() ; ++j)
-                        {
-                            if ( (*pgrid3.h)[j] > DataType_(0.15))
-                            {
-                                broken = true;
-                                break;
-                            }
-                            else
-                            {
-                                //old = pgrid3.h->copy();
-                            }
-                        }
-                    }
-
-                    //if (i > best_iters)
-                    {
-                        //std::cout<<std::endl<<"iters: "<<i<<" dt: "<<_dt<<" tau: "<<_tau<<std::endl;
-                        best_iters = i;
-                        /*DenseMatrix<DataType_> output(h.copy());
-                          grid3.fill_h(output, old);
-
-                          std::string filename(file + "out_");
-                          filename += stringify(i);
-                          filename += "-";
-                          filename += stringify(_dt);
-                          filename += "_";
-                          filename += stringify(_tau);
-                          filename +=".dat";
-                          PostProcessing<GNUPLOT>::value(output, 1, output.columns(), output.rows(), 0, filename);*/
-
-
-                        std::ofstream file;
-                        std::string filename(HONEI_SOURCEDIR);
-                        filename += "/honei/woolb3/malpasset/";
-                        filename += "heatmap.dat";
-                        file.open(filename.c_str(), ios::ate | ios::out | ios::app);
-                        //std::string header = "# " + stringify(d_height) + " " + stringify(d_width) + "\n" + "\n";
-                        //file << header;
-                        std::string record = stringify(_dt) + " " + stringify(_tau) + " " + stringify(i) + "\n";
-                        file << record;
-                        file.close();
-                    }
-                    /*else
-                    {
-                        std::cout<<i<<" ";
-                        std::cout.flush();
-                    }*/
-                }
+                solver3.solve();
             }
+
+            DenseMatrix<DataType_> output(h.copy());
+            grid3.fill_h(output, *pgrid3.h);
+
+            std::string filename(file + "out_");
+            filename += stringify(_dt);
+            filename += "_";
+            filename += stringify(_tau);
+            filename +=".dat";
+            PostProcessing<GNUPLOT>::value(output, 1, output.columns(), output.rows(), 0, filename);
+
+
         }
 
 };
