@@ -32,13 +32,13 @@ using namespace tests;
 using namespace std;
 
 template <typename Tag_, typename DT1_>
-class RITestSparseELL:
+class RISmootherTestSparseELL:
     public BaseTest
 {
     private:
         std::string _m_f, _v_f, _r_f, _i_f;
     public:
-        RITestSparseELL(const std::string & tag,
+        RISmootherTestSparseELL(const std::string & tag,
                 std::string m_file,
                 std::string v_file,
                 std::string res_file,
@@ -119,34 +119,34 @@ class RITestSparseELL:
             }
         }
 };
-RITestSparseELL<tags::CPU, double> ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
-RITestSparseELL<tags::CPU::MultiCore, double> mc_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISmootherTestSparseELL<tags::CPU, double> ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISmootherTestSparseELL<tags::CPU::MultiCore, double> mc_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #ifdef HONEI_SSE
-RITestSparseELL<tags::CPU::SSE, double> sse_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
-RITestSparseELL<tags::CPU::MultiCore::SSE, double> mcsse_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISmootherTestSparseELL<tags::CPU::SSE, double> sse_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISmootherTestSparseELL<tags::CPU::MultiCore::SSE, double> mcsse_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
-RITestSparseELL<tags::GPU::CUDA, double> cuda_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
-RITestSparseELL<tags::GPU::MultiCore::CUDA, double> mccuda_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISmootherTestSparseELL<tags::GPU::CUDA, double> cuda_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISmootherTestSparseELL<tags::GPU::MultiCore::CUDA, double> mccuda_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #endif
 #endif
 #ifdef HONEI_OPENCL
-RITestSparseELL<tags::OpenCL::CPU, double> ocl_cpu_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISmootherTestSparseELL<tags::OpenCL::CPU, double> ocl_cpu_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #ifdef HONEI_CUDA_DOUBLE
-RITestSparseELL<tags::OpenCL::GPU, double> ocl_gpu_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISmootherTestSparseELL<tags::OpenCL::GPU, double> ocl_gpu_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #endif
 #endif
 
 
 template <typename Tag_, typename DT1_>
-class RISmootherTestSparseELL:
+class RISolverTestSparseELL:
     public BaseTest
 {
     private:
         std::string _m_f, _v_f, _r_f, _i_f;
     public:
-        RISmootherTestSparseELL(const std::string & tag,
+        RISolverTestSparseELL(const std::string & tag,
                 std::string m_file,
                 std::string v_file,
                 std::string res_file,
@@ -229,21 +229,21 @@ class RISmootherTestSparseELL:
             }
         }
 };
-RISmootherTestSparseELL<tags::CPU, double> ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
-RISmootherTestSparseELL<tags::CPU::MultiCore, double> mc_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISolverTestSparseELL<tags::CPU, double> ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISolverTestSparseELL<tags::CPU::MultiCore, double> mc_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #ifdef HONEI_SSE
-RISmootherTestSparseELL<tags::CPU::SSE, double> sse_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
-RISmootherTestSparseELL<tags::CPU::MultiCore::SSE, double> mcsse_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISolverTestSparseELL<tags::CPU::SSE, double> sse_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISolverTestSparseELL<tags::CPU::MultiCore::SSE, double> mcsse_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
-RISmootherTestSparseELL<tags::GPU::CUDA, double> cuda_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
-RISmootherTestSparseELL<tags::GPU::MultiCore::CUDA, double> mccuda_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISolverTestSparseELL<tags::GPU::CUDA, double> cuda_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISolverTestSparseELL<tags::GPU::MultiCore::CUDA, double> mccuda_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #endif
 #endif
 #ifdef HONEI_OPENCL
-RISmootherTestSparseELL<tags::OpenCL::CPU, double> ocl_cpu_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISolverTestSparseELL<tags::OpenCL::CPU, double> ocl_cpu_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #ifdef HONEI_CUDA_DOUBLE
-RISmootherTestSparseELL<tags::OpenCL::GPU, double> ocl_gpu_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISolverTestSparseELL<tags::OpenCL::GPU, double> ocl_gpu_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #endif
 #endif
