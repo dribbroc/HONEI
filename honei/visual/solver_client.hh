@@ -125,7 +125,8 @@ namespace honei
                 srv.sin_port = htons(port);
                 srv.sin_family = AF_INET;
 
-                if (connect(_socket, (struct sockaddr*)&srv, sizeof(srv)) == -1)
+                struct sockaddr_in * psrv = &srv;
+                if (connect(_socket, (const struct sockaddr*)psrv, sizeof(srv)) == -1)
                 {
                     perror("connect failed()");
                 }

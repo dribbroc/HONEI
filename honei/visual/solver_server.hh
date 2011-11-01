@@ -181,7 +181,8 @@ namespace honei
                 srv.sin_port = htons(4711);
                 srv.sin_family = AF_INET;
 
-                if (::bind(s, (struct sockaddr*)&srv, sizeof(srv)) == -1)
+                struct sockaddr_in * psrv = &srv;
+                if (::bind(s, (struct sockaddr*)psrv, sizeof(srv)) == -1)
                 {
                     perror("bind() failed");
                 }
@@ -195,7 +196,8 @@ namespace honei
                 {
                     std::cout<<"Waiting for clients to connect."<<std::endl;
                     cli_size = sizeof(cli);
-                    c = accept(s, (struct sockaddr*)&cli, (socklen_t*)&cli_size);
+                    struct sockaddr_in * pcli = &cli;
+                    c = accept(s, (struct sockaddr*)pcli, (socklen_t*)&cli_size);
                     if (c == -1)
                     {
                         perror("accept() failed");
