@@ -30,22 +30,17 @@ namespace honei
             Difference<tags::CPU>::value(I_minus_A, I, A_damped);
 
             //perform
-            for(unsigned long k(0) ; k < m ; ++k)
+            for(unsigned long k(1) ; k < m ; ++k)
             {
 
-                if(k == 0)
-                    Sum<tags::CPU>::value(result, I);
-                else
-                {
-                    SparseMatrix<DT_> temp(I_minus_A.copy());
-                    for(unsigned long i(0) ; i < k ; ++i)
-                    {
-                        temp = Product<tags::CPU>::value(temp, I_minus_A);
-                    }
+                SparseMatrix<DT_> temp(result.copy());
+                if (k == 1)
+                    temp = I_minus_A.copy();
+                temp = Product<tags::CPU>::value(temp, I_minus_A);
 
-                    Sum<tags::CPU>::value(result, temp);
-                }
+                Sum<tags::CPU>::value(result, temp);
             }
+            Sum<tags::CPU>::value(result, I);
             return result;
         }
     };

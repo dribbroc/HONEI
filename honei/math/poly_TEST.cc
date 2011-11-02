@@ -54,7 +54,7 @@ class PolyTestSparse:
                 used_elements+= sm[i].used_elements();
             std::cout<<"Non Zero Elements of A: "<<used_elements<<std::endl;
             SparseMatrix<DT_> m(sm.copy());
-            m= Poly::value(sm, 5, DT_(1./4.));
+            m= Poly::value(sm, 3, DT_(1./4.));
             used_elements = 0;
             for (unsigned i(0) ; i < m.rows() ; ++i)
                 used_elements+= m[i].used_elements();
@@ -75,7 +75,6 @@ class PolyTestSparse:
             double jacnorm = Norm<vnt_l_one, false, tags::CPU>::value(Difference<tags::CPU>::value(temp, ident, Product<tags::CPU>::value(sm, jac)));
             std::cout<<"Poly Norm: "<<min<<" Jac Norm: "<<jacnorm<<std::endl;
 
-            std::cout << m;
             TEST_CHECK(jacnorm > min);
         }
 };
