@@ -28,6 +28,7 @@ namespace honei
     namespace mpi
     {
         void mpi_init(int * argc, char*** argv);
+        void mpi_init();
         void mpi_finalize();
         void mpi_comm_size(int * size, MPI_Comm com = MPI_COMM_WORLD);
         void mpi_comm_rank(int * id, MPI_Comm com = MPI_COMM_WORLD);

@@ -17,6 +17,7 @@ $1_TEST_LDADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/la/libhoneila.la \
 	$(top_builddir)/honei/math/libhoneimath.la \
+	$(top_builddir)/honei/mpi/libhoneimpi.la \
 	$(BACKEND_LIBS) \
 	$(DYNAMIC_LD_LIBS)
 $1_TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
@@ -132,7 +133,7 @@ libhoneimpi_includedir = $(includedir)/honei/mpi
 libhoneimpi_include_HEADERS = headerlist
 
 TESTS = testlist
-TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE="$(TYPE)" bash $(top_srcdir)/honei/util/run.sh
+TESTS_ENVIRONMENT = env BACKENDS="$(BACKENDS)" TYPE="$(TYPE)" bash $(top_srcdir)/honei/util/mpi_run.sh
 
 check_PROGRAMS = $(TESTS)
 

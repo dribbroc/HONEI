@@ -19,6 +19,7 @@
 
 #include <honei/la/dense_vector.hh>
 #include <honei/mpi/dense_vector_mpi.hh>
+#include <honei/backends/mpi/operations.hh>
 #include <honei/util/unittest.hh>
 
 #include <string>
@@ -43,20 +44,25 @@ class DenseVectorMPIQuickTest :
 
         virtual void run() const
         {
-            DenseVector<DataType_> src(4711, DataType_(7));
-            DenseVectorMPI<DataType_> dm00(src, 0, 5);
-            DenseVectorMPI<DataType_> dm0(dm00);
-            DenseVectorMPI<DataType_> dm11(src, 1, 5);
-            DenseVectorMPI<DataType_> dm1(dm11.copy());
-            DenseVectorMPI<DataType_> dm2(src, 2, 5);
-            DenseVectorMPI<DataType_> dm3(src, 3, 5);
-            DenseVectorMPI<DataType_> dm4(src, 4, 5);
-            std::cout<<dm0.size()<<" "<<dm0.offset()<<std::endl;
-            std::cout<<dm1.size()<<" "<<dm1.offset()<<std::endl;
+            mpi::mpi_init();
+            int rank;
+            mpi::mpi_comm_rank(&rank);
+            int comm_size;
+            mpi::mpi_comm_size(&comm_size);
+
+            DenseVector<DataType_> src(4711);
+            for (unsigned long i(0) ; i < src.size() ; ++i)
+                src[i] = i + 10;
+
+            DenseVectorMPI<DataType_> dm0(src, rank, comm_size);
+            DenseVectorMPI<DataType_> dm1(dm0);
+            DenseVectorMPI<DataType_> dm2(dm1.copy());
             std::cout<<dm2.size()<<" "<<dm2.offset()<<std::endl;
-            std::cout<<dm3.size()<<" "<<dm3.offset()<<std::endl;
-            std::cout<<dm4.size()<<" "<<dm4.offset()<<std::endl;
+
+            for (unsigned long i(0) ; i < dm2.size() ; ++i)
+                TEST_CHECK_EQUAL(dm2[i], src[i + dm2.offset()]);
+
+            mpi::mpi_finalize();
         }
 };
-DenseVectorMPIQuickTest<float>  dense_vector_mpi_quick_test_float("float");
 DenseVectorMPIQuickTest<double> dense_vector_mpi_quick_test_double("double");

@@ -29,6 +29,16 @@ namespace honei
             MPI_Init(argc, argv);
         }
 
+        void mpi_init()
+        {
+            int argc(0);
+            char argv = 'a';
+            char * argv2(&argv);
+            char ** argv3(&argv2);
+
+            MPI_Init(&argc, &argv3);
+        }
+
         void mpi_finalize()
         {
             MPI_Finalize();
