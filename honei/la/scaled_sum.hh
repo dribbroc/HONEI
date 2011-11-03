@@ -30,6 +30,8 @@
 #include <honei/util/benchmark_info.hh>
 #include <honei/util/configuration.hh>
 #include <honei/util/tags.hh>
+#include <honei/mpi/operations.hh>
+#include <honei/mpi/dense_vector_mpi-fwd.hh>
 
 namespace honei
 {
@@ -86,7 +88,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & result, DenseVectorBase<DT1_> & x, const DenseVectorBase<DT2_> & y, DT2_ b)
+        static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & result, const DenseVectorBase<DT1_> & x, const DenseVectorBase<DT2_> & y, DT2_ b)
         {
             CONTEXT("When calculating ScaledSum (DenseVectorBase, DenseVectorBase, scalar):");
 
@@ -97,9 +99,10 @@ namespace honei
                 throw VectorSizeDoesNotMatch(result.size(), x.size());
 
             typename DenseVectorBase<DT1_>::ConstElementIterator x_i(x.begin_elements());
+            typename DenseVectorBase<DT2_>::ConstElementIterator x_i_end(x.end_elements());
             typename DenseVectorBase<DT2_>::ConstElementIterator y_i(y.begin_elements());
-            for (typename DenseVectorBase<DT1_>::ElementIterator res_i(result.begin_elements()),
-                    x_i_end(x.end_elements()) ; x_i != x_i_end ; ++x_i, ++y_i, ++res_i)
+            for (typename DenseVectorBase<DT1_>::ElementIterator res_i(result.begin_elements())
+                    ; x_i != x_i_end ; ++x_i, ++y_i, ++res_i)
             {
                 *res_i = b * (*y_i) + *x_i;
             }
@@ -198,6 +201,13 @@ namespace honei
             DenseVectorBase<DT1_> & temp = x;
             ScaledSum<>::value(temp, y, z);
             return x;
+        }
+
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y, DT_ a)
+        {
+            MPIOps<tags::CPU>::scaled_sum(r, x, y, a);
+            return r;
         }
 
         /// \}

@@ -18,13 +18,11 @@
  */
 
 #pragma once
-#ifndef LIBLA_GUARD_DENSE_VECTOR_MPI_HH
-#define LIBLA_GUARD_DENSE_VECTOR_MPI_HH 1
+#ifndef MPI_GUARD_DENSE_VECTOR_MPI_HH
+#define MPI_GUARD_DENSE_VECTOR_MPI_HH 1
 
 #include <honei/util/tags.hh>
 #include <honei/la/dense_vector.hh>
-
-#include <iostream>
 
 namespace honei
 {
@@ -119,6 +117,16 @@ namespace honei
             virtual DataType_ & operator[] (unsigned long index)
             {
                 return (*_vector)[index];
+            }
+
+            const DenseVector<DataType_> & vector() const
+            {
+                return *_vector;
+            }
+
+            DenseVector<DataType_> & vector()
+            {
+                return *_vector;
             }
 
             /// \{

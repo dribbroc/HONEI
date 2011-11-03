@@ -18,8 +18,8 @@
  */
 
 #pragma once
-#ifndef MPI_GUARD_OPERATIONS_HH
-#define MPI_GUARD_OPERATIONS_HH 1
+#ifndef BACKEND_MPI_GUARD_OPERATIONS_HH
+#define BACKEND_MPI_GUARD_OPERATIONS_HH 1
 
 #include <mpi.h>
 
