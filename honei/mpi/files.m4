@@ -10,3 +10,4 @@ dnl on this file at present...
 
 add(`dense_vector_mpi',              `hh', `fwd', `test')
 add(`operations',                    `hh', `cc', `test')
+add(`sparse_matrix_ell_mpi',         `hh', `fwd', `test')

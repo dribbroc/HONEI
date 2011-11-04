@@ -72,8 +72,6 @@ class ScaledSumMPITest :
 
             for (unsigned long i(0) ; i < r.size() ; ++i)
                 TEST_CHECK_EQUAL(r[i], rs[i + r.offset()]);
-
-            mpi::mpi_finalize();
         }
 };
 ScaledSumMPITest<tags::CPU, double> scaled_sum_mpi_test_double("double");
@@ -91,7 +89,6 @@ class DotProductMPITest :
 
         virtual void run() const
         {
-            mpi::mpi_init();
             int rank;
             mpi::mpi_comm_rank(&rank);
             int comm_size;

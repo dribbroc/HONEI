@@ -26,17 +26,10 @@
 
 namespace honei
 {
-    /**
-     * DenseVectorMPI is a vector with O(size) non-zero elements which keeps its data
-     * aligned and sequential.
-     *
-     * \ingroup grpvector
-     */
-    template <typename DataType_> class DenseVectorMPI
+    template <typename DT_> class DenseVectorMPI
     {
         private:
-            shared_ptr<DenseVector<DataType_> > _vector;
-            unsigned long _size;
+            shared_ptr<DenseVector<DT_> > _vector;
             unsigned long _offset;
             unsigned long _rank;
             unsigned long _com_size;
@@ -51,7 +44,7 @@ namespace honei
              *
              * \param size Size of the new dense vector.
              */
-            DenseVectorMPI(const DenseVector<DataType_> & src, const unsigned long rank, const unsigned long com_size) :
+            DenseVectorMPI(const DenseVector<DT_> & src, const unsigned long rank, const unsigned long com_size) :
                 _rank(rank),
                 _com_size(com_size)
             {
@@ -59,7 +52,7 @@ namespace honei
                 unsigned long rest(src.size() - (part_size * com_size));
                 if (rank < rest)
                     ++part_size;
-                _size = part_size;
+                unsigned long size = part_size;
 
                 unsigned local_offset(0);
                 for (unsigned long i(0) ; i < _rank ; ++i)
@@ -70,8 +63,8 @@ namespace honei
                 }
                 _offset = local_offset;
 
-                _vector.reset(new DenseVector<DataType_>(_size));
-                for (unsigned long i(0) ; i < _size ; ++i)
+                _vector.reset(new DenseVector<DT_>(size));
+                for (unsigned long i(0) ; i < size ; ++i)
                 {
                     (*_vector)[i] = src[i + _offset];
                 }
@@ -79,13 +72,12 @@ namespace honei
 
 
             /// Copy-constructor.
-            DenseVectorMPI(const DenseVectorMPI<DataType_> & other) :
-                _size(other._size),
+            DenseVectorMPI(const DenseVectorMPI<DT_> & other) :
                 _offset(other._offset),
                 _rank(other._rank),
                 _com_size(other._com_size)
             {
-                _vector.reset(new DenseVector<DataType_> (*other._vector));
+                _vector.reset(new DenseVector<DT_> (*other._vector));
             }
 
             /// Destructor.
@@ -98,7 +90,7 @@ namespace honei
             /// Returns our size.
             virtual unsigned long size() const
             {
-                return _size;
+                return _vector->size();
             }
 
             /// Returns our offset into the origin vector.
@@ -108,23 +100,23 @@ namespace honei
             }
 
             /// Retrieves element by index, zero-based, unassignable.
-            virtual const DataType_ & operator[] (unsigned long index) const
+            virtual const DT_ & operator[] (unsigned long index) const
             {
                 return (*_vector)[index];
             }
 
             /// Retrieves element by index, zero-based, assignable.
-            virtual DataType_ & operator[] (unsigned long index)
+            virtual DT_ & operator[] (unsigned long index)
             {
                 return (*_vector)[index];
             }
 
-            const DenseVector<DataType_> & vector() const
+            const DenseVector<DT_> & vector() const
             {
                 return *_vector;
             }
 
-            DenseVector<DataType_> & vector()
+            DenseVector<DT_> & vector()
             {
                 return *_vector;
             }
@@ -133,13 +125,13 @@ namespace honei
 
 
             /// Return a pointer to our elements.
-            virtual DataType_ * elements() const
+            virtual DT_ * elements() const
             {
                 return _vector->elements();
             }
 
             /// Return a reference of the elements array.
-            virtual SharedArray<DataType_> & array() const
+            virtual SharedArray<DT_> & array() const
             {
                 return _vector->array();
             }
@@ -159,10 +151,10 @@ namespace honei
             /// \}
 
             /// Return a copy of the Vector.
-            DenseVectorMPI<DataType_> copy() const
+            DenseVectorMPI<DT_> copy() const
             {
-                DenseVectorMPI<DataType_> result(*this);
-                result._vector.reset(new DenseVector<DataType_>(this->_vector->copy()));
+                DenseVectorMPI<DT_> result(*this);
+                result._vector.reset(new DenseVector<DT_>(this->_vector->copy()));
                 return result;
             }
     };
@@ -173,14 +165,14 @@ namespace honei
      * Compares if corresponding elements of two dense vectors are equal
      * within machine precision.
      */
-    template <typename DataType_> bool operator== (const DenseVectorMPI<DataType_> & a, const DenseVectorMPI<DataType_> & b);
+    template <typename DT_> bool operator== (const DenseVectorMPI<DT_> & a, const DenseVectorMPI<DT_> & b);
 
     /**
      * Output operator for DenseVectorMPI.
      *
      * Outputs a dense vector to an output stream.
      */
-    template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const DenseVectorMPI<DataType_> & vector);
+    template <typename DT_> std::ostream & operator<< (std::ostream & lhs, const DenseVectorMPI<DT_> & vector);
 
     /*extern template class DenseVectorMPI<float>;
 
