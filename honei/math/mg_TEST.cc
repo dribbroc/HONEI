@@ -270,22 +270,37 @@ class MGSolverTest:
             //print_cycle(ol, max_level, min_level);
         }
 };
-
-
-MGSolverTest<tags::CPU> mg_solver_test_cpu_2("double", "poisson_advanced3/sort_0/");
+MGSolverTest<tags::CPU> mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
 #ifdef HONEI_SSE
-MGSolverTest<tags::CPU::SSE> sse_mg_solver_test_cpu_2("double", "poisson_advanced3/sort_0/");
-MGSolverTest<tags::CPU::MultiCore::SSE> mcsse_mg_solver_test_cpu_2("double", "poisson_advanced3/sort_0/");
+MGSolverTest<tags::CPU::SSE> sse_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
+MGSolverTest<tags::CPU::MultiCore::SSE> mcsse_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
-MGSolverTest<tags::GPU::CUDA> mg_solver_test_gpu_2("double", "poisson_advanced3/sort_0/");
+MGSolverTest<tags::GPU::CUDA> mg_solver_test_gpu("double", "poisson_advanced/sort_0/");
 #endif
 #endif
 #ifdef HONEI_OPENCL
-MGSolverTest<tags::OpenCL::CPU> ocl_cpu_mg_solver_test_cpu_2("double", "poisson_advanced3/sort_0/");
+MGSolverTest<tags::OpenCL::CPU> ocl_cpu_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
 #ifdef HONEI_CUDA_DOUBLE
-MGSolverTest<tags::OpenCL::GPU> ocl_gpu_mg_solver_test_cpu_2("double", "poisson_advanced3/sort_0/");
+MGSolverTest<tags::OpenCL::GPU> ocl_gpu_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
+#endif
+#endif
+
+MGSolverTest<tags::CPU> mg_solver_test_cpu_2("double", "poisson_advanced2/sort_0/");
+#ifdef HONEI_SSE
+MGSolverTest<tags::CPU::SSE> sse_mg_solver_test_cpu_2("double", "poisson_advanced2/sort_0/");
+MGSolverTest<tags::CPU::MultiCore::SSE> mcsse_mg_solver_test_cpu_2("double", "poisson_advanced2/sort_0/");
+#endif
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
+MGSolverTest<tags::GPU::CUDA> mg_solver_test_gpu_2("double", "poisson_advanced2/sort_0/");
+#endif
+#endif
+#ifdef HONEI_OPENCL
+MGSolverTest<tags::OpenCL::CPU> ocl_cpu_mg_solver_test_cpu_2("double", "poisson_advanced2/sort_0/");
+#ifdef HONEI_CUDA_DOUBLE
+MGSolverTest<tags::OpenCL::GPU> ocl_gpu_mg_solver_test_cpu_2("double", "poisson_advanced2/sort_0/");
 #endif
 #endif
 
