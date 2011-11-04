@@ -23,6 +23,10 @@
 #include <honei/util/unittest.hh>
 #include <honei/la/scaled_sum.hh>
 #include <honei/la/dot_product.hh>
+#include <honei/la/product.hh>
+#include <honei/math/matrix_io.hh>
+#include <honei/math/vector_io.hh>
+#include <honei/util/time_stamp.hh>
 
 #include <string>
 #include <limits>
@@ -110,8 +114,65 @@ class DotProductMPITest :
             DT_ rs = DotProduct<tags::CPU>::value(xs, ys);
 
             TEST_CHECK_EQUAL(r, rs);
+        }
+};
+DotProductMPITest<tags::CPU, double> dot_product_mpi_test_double("double");
+
+template <typename Tag_, typename DT_>
+class SPMVMPITest :
+    public BaseTest
+{
+    public:
+        SPMVMPITest(const std::string & type) :
+            BaseTest("spmv_mpi_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            int rank;
+            mpi::mpi_comm_rank(&rank);
+            int comm_size;
+            mpi::mpi_comm_size(&comm_size);
+
+
+            std::string dir(HONEI_SOURCEDIR);
+            std::string file (dir + "/honei/math/testdata/poisson_advanced2/q2_sort_2/");
+            file += "A_4";
+            file += ".ell";
+            SparseMatrixELL<DT_> aell(MatrixIO<io_formats::ELL>::read_matrix(file, DT_(0)));
+
+            SparseMatrix<DT_> as(aell);
+            SparseMatrixELLMPI<DT_> a(as, rank, comm_size);
+
+            DenseVector<DT_> rs(aell.rows());
+            DenseVector<DT_> xs(aell.rows());
+            for (unsigned long i(0) ; i < xs.size() ; ++i)
+            {
+                xs[i] = DT_(i) + 10;
+            }
+
+            DenseVectorMPI<DT_> r(rs, rank, comm_size);
+            DenseVectorMPI<DT_> x(xs, rank, comm_size);
+
+            TimeStamp at, bt, ct, dt;
+            at.take();
+            Product<Tag_>::value(rs, aell, xs);
+            bt.take();
+            //Product<Tag_>::value(rs, aell, xs);
+            MPI_Barrier(MPI_COMM_WORLD);
+            ct.take();
+            Product<Tag_>::value(r, a, x);
+            dt.take();
+            std::cout<<bt.total()-at.total()<<" "<<dt.total()-ct.total()<<std::endl;
+            //Product<Tag_>::value(r, a, x);
+
+
+            for (unsigned long i(0) ; i < r.size() ; ++i)
+                TEST_CHECK_EQUAL(r[i], rs[i + r.offset()]);
 
             mpi::mpi_finalize();
         }
 };
-DotProductMPITest<tags::CPU, double> dot_product_mpi_test_double("double");
+SPMVMPITest<tags::CPU::SSE, double> spmv_mpi_test_double("double");

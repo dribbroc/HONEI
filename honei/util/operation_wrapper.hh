@@ -31,7 +31,7 @@ namespace honei
      * overloaded functions.
      */
     template <typename Operation_, typename ResultType_, typename T1_, typename T2_ = void, typename T3_ = void,
-             typename T4_ = void, typename T5_ = void, typename T6_ = void, typename T7_ = void>
+             typename T4_ = void, typename T5_ = void, typename T6_ = void, typename T7_ = void, typename T8_ = void>
     struct OperationWrapper;
 
     template <typename Operation_, typename ResultType_, typename T1_>
@@ -133,6 +133,23 @@ namespace honei
         void operator() (T1_ & param_one, const T2_ & param_two, const T3_ & param_three, const T4_ & param_four, const T5_ & param_five, const T6_ & param_six)
         {
             result = Operation_::value(param_one, param_two, param_three, param_four, param_five, param_six);
+        }
+    };
+
+    template <typename Operation_, typename ResultType_, typename T1_, typename T2_, typename T3_, typename T4_, typename T5_, typename T6_, typename T7_>
+    struct OperationWrapper<Operation_, ResultType_, T1_, T2_, T3_, T4_, T5_, T6_, T7_>
+    {
+        typedef void result_type;
+        ResultType_ & result;
+
+        OperationWrapper(ResultType_ & r) :
+            result(r)
+        {
+        }
+
+        void operator() (T1_ & param_one, const T2_ & param_two, const T3_ & param_three, const T4_ & param_four, const T5_ & param_five, const T6_ & param_six, const T7_ & param_seven)
+        {
+            result = Operation_::value(param_one, param_two, param_three, param_four, param_five, param_six, param_seven);
         }
     };
 }

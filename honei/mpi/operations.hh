@@ -22,6 +22,7 @@
 #define MPI_GUARD_OPERATIONS_HH 1
 
 #include <honei/mpi/dense_vector_mpi.hh>
+#include <honei/mpi/sparse_matrix_ell_mpi.hh>
 
 namespace honei
 {
@@ -30,6 +31,9 @@ namespace honei
         {
             template <typename DT_>
                 static DT_ dot_product(const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y);
+
+            template <typename DT_>
+                static void product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b);
 
             template <typename DT_>
                 static void scaled_sum(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y, DT_ a);

@@ -30,6 +30,7 @@ namespace honei
     {
         private:
             shared_ptr<DenseVector<DT_> > _vector;
+            unsigned long _orig_size;
             unsigned long _offset;
             unsigned long _rank;
             unsigned long _com_size;
@@ -45,6 +46,7 @@ namespace honei
              * \param size Size of the new dense vector.
              */
             DenseVectorMPI(const DenseVector<DT_> & src, const unsigned long rank, const unsigned long com_size) :
+                _orig_size(src.size()),
                 _rank(rank),
                 _com_size(com_size)
             {
@@ -73,6 +75,7 @@ namespace honei
 
             /// Copy-constructor.
             DenseVectorMPI(const DenseVectorMPI<DT_> & other) :
+                _orig_size(other._orig_size),
                 _offset(other._offset),
                 _rank(other._rank),
                 _com_size(other._com_size)
@@ -91,6 +94,12 @@ namespace honei
             virtual unsigned long size() const
             {
                 return _vector->size();
+            }
+
+            /// Returns our original size.
+            virtual unsigned long orig_size() const
+            {
+                return _orig_size;
             }
 
             /// Returns our offset into the origin vector.

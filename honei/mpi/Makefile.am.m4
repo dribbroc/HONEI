@@ -118,7 +118,8 @@ DEFS = \
 	$(DEBUGDEF) \
 	$(BOOSTDEF) \
 	$(MPIDEF) \
-	$(PROFILERDEF)
+	$(PROFILERDEF) \
+	-DHONEI_SOURCEDIR='"$(top_srcdir)"'
 
 lib_LTLIBRARIES = libhoneimpi.la
 

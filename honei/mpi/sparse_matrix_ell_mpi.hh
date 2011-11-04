@@ -25,16 +25,28 @@
 #include <honei/la/sparse_matrix_ell.hh>
 #include <honei/la/sparse_matrix.hh>
 #include <honei/la/dense_vector.hh>
+#include <honei/backends/mpi/operations.hh>
+
+#include <vector>
+#include <set>
 
 namespace honei
 {
     template <typename DT_> class SparseMatrixELLMPI
     {
         private:
-            shared_ptr<SparseMatrixELL<DT_> > _matrix;
+            shared_ptr<SparseMatrixELL<DT_> > _inner;
+            shared_ptr<SparseMatrix<DT_> > _outer;
+            std::set<unsigned long> _missing_indices;
+            SharedArray<std::set<unsigned long> > _alien_indices;
+            unsigned long _rows;
+            unsigned long _columns;
             unsigned long _offset;
             unsigned long _rank;
             unsigned long _com_size;
+            std::vector<unsigned long> _before_cols;
+            std::vector<unsigned long> _middle_cols;
+            std::vector<unsigned long> _behind_cols;
 
         public:
 
@@ -45,6 +57,7 @@ namespace honei
              * Constructor.
              */
             SparseMatrixELLMPI(const SparseMatrix<DT_> & src, const unsigned long rank, const unsigned long com_size) :
+                _alien_indices(com_size),
                 _rank(rank),
                 _com_size(com_size)
             {
@@ -52,7 +65,8 @@ namespace honei
                 unsigned long rest(src.rows() - (part_size * com_size));
                 if (rank < rest)
                     ++part_size;
-                unsigned long rows = part_size;
+                _rows = part_size;
+                _columns = src.columns();
 
                 unsigned local_offset(0);
                 for (unsigned long i(0) ; i < _rank ; ++i)
@@ -63,25 +77,133 @@ namespace honei
                 }
                 _offset = local_offset;
 
-                SparseMatrix<DT_> src_part(rows, src.columns());
-                for (unsigned long row(0) ; row < rows ; ++row)
+                SparseMatrix<DT_> src_part(_rows, src.columns());
+                for (unsigned long row(0) ; row < _rows ; ++row)
                 {
                     for (unsigned long i(0) ; i < src[row + _offset].used_elements() ; ++i)
                     {
                         src_part(row, (src[row + _offset].indices())[i], (src[row + _offset].elements())[i]);
                     }
                 }
-                _matrix.reset(new SparseMatrixELL<DT_>(src_part));
+
+
+                std::vector<unsigned long> inner_row_index;
+                std::vector<unsigned long> outer_row_index;
+
+                // matrix fenster ausschneiden und in src_part speichern
+                for (unsigned long row(0) ; row < _rows ; ++row)
+                {
+                    bool outter(false);
+                    for (unsigned long i(0) ; i < src_part[row].used_elements() ; ++i)
+                    {
+                        if ((src_part[row].indices())[i] < _offset || (src_part[row].indices())[i] >= _offset + _rows)
+                        {
+                            outter = true;
+                            break;
+                        }
+                    }
+                    if (outter)
+                        outer_row_index.push_back(row);
+                    else
+                        inner_row_index.push_back(row);
+                }
+
+                // inneren teil ohne abhaengigkeiten in inner speichern
+                SparseMatrix<DT_> inner(src_part.copy());
+                SparseVector<DT_> zeros(_columns, 0);
+                for (unsigned long row(0) ; row < outer_row_index.size() ; ++row)
+                {
+                    inner[outer_row_index.at(row)] = zeros;
+                }
+                // alle spalten in inner nach links ruecken, damit man mit 0 in einen rechte seite vektor einsteigen kann
+                for (unsigned long row(0) ; row < _rows ; ++row)
+                {
+                    for (unsigned long i(0) ; i < inner[row].used_elements() ; ++i)
+                    {
+                        (inner[row].indices())[i] -= _offset;
+                    }
+                }
+
+                // aeusseren teil mit abhaengigkeit nach draussen speichern
+                SparseMatrix<DT_> outer(_rows, _columns);
+                for (unsigned long row(0) ; row < outer_row_index.size() ; ++row)
+                {
+                    outer[outer_row_index.at(row)] = src_part[outer_row_index.at(row)];
+                }
+
+                _inner.reset(new SparseMatrixELL<DT_>(inner));
+                _outer.reset(new SparseMatrix<DT_>(outer));
+                _outer->_synch_column_vectors();
+
+                // liste der fehlenden x eintraege erstellen
+                for (unsigned long row(0) ; row < _rows ; ++row)
+                {
+                    for (unsigned long i(0) ; i < outer[row].used_elements() ; ++i)
+                    {
+                        if ((outer[row].indices())[i] < _offset || (outer[row].indices())[i] >= _offset + _rows)
+                            _missing_indices.insert((outer[row].indices())[i]);
+                    }
+                }
+
+                // liste an alle anderen prozesse schicken
+                for (unsigned long rank(0) ; rank < _com_size ; ++rank)
+                {
+                    if (rank == _rank)
+                    {
+                        unsigned long count(_missing_indices.size());
+                        mpi::mpi_bcast(&count, 1, rank);
+
+                        for (std::set<unsigned long>::iterator i(_missing_indices.begin()) ; i != _missing_indices.end() ; ++i)
+                        {
+                            unsigned long index(*i);
+                            mpi::mpi_bcast(&index, 1, rank);
+                        }
+                    }
+                    else
+                    {
+                        unsigned long count;
+                        mpi::mpi_bcast(&count, 1, rank);
+                        for (unsigned long i(0) ; i < count ; ++i)
+                        {
+                            unsigned long index;
+                            mpi::mpi_bcast(&index, 1, rank);
+                            if (index >= _offset && index < _offset + _rows)
+                                _alien_indices[rank].insert(index);
+                        }
+                    }
+                }
+
+                //cols der outer matrix, die nicht leer sind
+                for (unsigned long col(0) ; col < _columns && col < _offset; ++col)
+                {
+                    if (_outer->column(col).used_elements() > 0)
+                        _before_cols.push_back(col);
+                }
+                for (unsigned long col(_offset) ; col < _columns && (col < _offset + _rows)  ; ++col)
+                {
+                    if (_outer->column(col).used_elements() > 0)
+                        _middle_cols.push_back(col);
+                }
+                for (unsigned long col(_offset + _rows) ; col < _columns; ++col)
+                {
+                    if (_outer->column(col).used_elements() > 0)
+                        _behind_cols.push_back(col);
+                }
             }
 
 
             /// Copy-constructor.
             SparseMatrixELLMPI(const SparseMatrixELLMPI<DT_> & other) :
+                _alien_indices(other._alien_indices),
+                _rows(other._rows),
+                _columns(other._columns),
                 _offset(other._offset),
                 _rank(other._rank),
                 _com_size(other._com_size)
             {
-                _matrix.reset(new SparseMatrixELL<DT_> (*other._matrix));
+                // \TODO create a real copy of _alien_indices
+                _inner.reset(new SparseMatrixELL<DT_> (*other._inner));
+                _outer.reset(new SparseMatrix<DT_> (*other._outer));
             }
 
             /// Destructor.
@@ -94,19 +216,19 @@ namespace honei
             /// Returns our size.
             virtual unsigned long size() const
             {
-                return _matrix->size();
+                return _rows * _columns;
             }
 
             /// Returns our row count.
             virtual unsigned long rows() const
             {
-                return _matrix->rows();
+                return _rows;
             }
 
             /// Returns our column count.
             virtual unsigned long columns() const
             {
-                return _matrix->columns();
+                return _columns;
             }
 
             /// Returns our offset into the origin vector.
@@ -117,17 +239,58 @@ namespace honei
 
             const DT_ operator()(unsigned long i, unsigned long j) const
             {
-                return (*_matrix)(i, j);
+                DT_ result;
+                if (j >= _offset)
+                    result = (unsigned long)(*_inner)(i, j - _offset) | (unsigned long)(*_outer)(i, j);
+                else
+                    result = (unsigned long)(*_outer)(i, j);
+
+                return result;
             }
 
-            const SparseMatrixELL<DT_> & matrix() const
+            const SparseMatrixELL<DT_> & inner_matrix() const
             {
-                return *_matrix;
+                return *_inner;
             }
 
-            SparseMatrixELL<DT_> & matrix()
+            SparseMatrixELL<DT_> & inner_matrix()
             {
-                return *_matrix;
+                return *_inner;
+            }
+
+            const SparseMatrix<DT_> & outer_matrix() const
+            {
+                return *_outer;
+            }
+
+            SparseMatrix<DT_> & outer_matrix()
+            {
+                return *_outer;
+            }
+
+            const std::set<unsigned long> & missing_indices() const
+            {
+                return _missing_indices;
+            }
+
+            const std::set<unsigned long> & alien_indices(unsigned long i) const
+            {
+                return _alien_indices[i];
+            }
+
+            const std::vector<unsigned long> & before_cols() const
+            {
+                return _before_cols;
+            }
+
+            const std::vector<unsigned long> & middle_cols() const
+            {
+                return _middle_cols;
+            }
+
+            const std::vector<unsigned long> & behind_cols() const
+            {
+                return _behind_cols;
             }
 
             /// \{
@@ -151,7 +314,8 @@ namespace honei
             SparseMatrixELLMPI<DT_> copy() const
             {
                 SparseMatrixELLMPI<DT_> result(*this);
-                result._matrix.reset(new SparseMatrixELL<DT_>(this->_matrix->copy()));
+                result._inner.reset(new SparseMatrixELL<DT_>(this->_inner->copy()));
+                result._outer.reset(new SparseMatrix<DT_>(this->_outer->copy()));
                 return result;
             }
     };

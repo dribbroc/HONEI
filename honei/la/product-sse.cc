@@ -287,14 +287,17 @@ DenseVector<double> & Product<tags::CPU::SSE>::value(DenseVector<double> & resul
 }
 
 DenseVector<float> & Product<tags::CPU::SSE>::value(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b,
-        unsigned long row_start, unsigned long row_end)
+         bool no_exceptions, unsigned long row_start, unsigned long row_end)
 {
     CONTEXT("When multiplying SparseMatrixELL<float> with DenseVector<float> (SSE):");
     PROFILER_START("Product SMELL float tags::CPU::SSE");
 
-    if (b.size() != a.columns())
+    if (! no_exceptions)
     {
-        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+        if (b.size() != a.columns())
+        {
+            throw VectorSizeDoesNotMatch(b.size(), a.columns());
+        }
     }
 
 
@@ -316,14 +319,17 @@ DenseVector<float> & Product<tags::CPU::SSE>::value(DenseVector<float> & result,
 }
 
 DenseVector<double> & Product<tags::CPU::SSE>::value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b,
-        unsigned long row_start, unsigned long row_end)
+         bool no_exceptions, unsigned long row_start, unsigned long row_end)
 {
     CONTEXT("When multiplying SparseMatrixELL<double> with DenseVector<double> (SSE):");
     PROFILER_START("Product SMELL double tags::CPU::SSE");
 
-    if (b.size() != a.columns())
+    if (! no_exceptions)
     {
-        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+        if (b.size() != a.columns())
+        {
+            throw VectorSizeDoesNotMatch(b.size(), a.columns());
+        }
     }
 
     if (row_end == 0)

@@ -16,6 +16,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include <iostream>
 
 #include <honei/la/sparse_matrix.hh>
 #include <honei/la/sparse_matrix_ell.hh>
@@ -26,7 +27,6 @@
 #include <string>
 #include <limits>
 #include <cmath>
-#include <iostream>
 
 
 using namespace honei;
@@ -51,11 +51,17 @@ class SparseMatrixELLMPIQuickTest :
             int comm_size;
             mpi::mpi_comm_size(&comm_size);
 
-            SparseMatrix<DataType_> src(711, 713);
+            SparseMatrix<DataType_> src(32, 32);
             for (unsigned long i(0) ; i < src.rows() ; ++i)
                 for (unsigned long j(0) ; j < src.columns() ; ++j)
-                    if (i % 7 == 0)
+                {
+                    if (i == j)
                         src(i, j, i+10);
+                    if (i > 0 && i < src.rows() - 1 && i==j)
+                        src(i+1, j, i+1);
+                    if (j > 0 && j < src.columns() - 1 && i==j)
+                        src(i, j+1, j);
+                }
 
 
             SparseMatrixELLMPI<DataType_> sm0(src, rank, comm_size);

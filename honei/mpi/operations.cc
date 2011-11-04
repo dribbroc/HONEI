@@ -21,6 +21,7 @@
 #include <honei/mpi/operations.hh>
 #include <honei/backends/mpi/operations.hh>
 #include <honei/la/dot_product.hh>
+#include <honei/la/product.hh>
 #include <honei/la/scaled_sum.hh>
 
 using namespace honei;
@@ -39,6 +40,126 @@ DT_ MPIOps<Tag_>::dot_product(const DenseVectorMPI<DT_> & x, const DenseVectorMP
 
 template <typename Tag_>
 template <typename DT_>
+void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
+{
+    // cast away const as mpi does not like const pointers
+    DT_ * bp = (DT_*)b.elements();
+
+    int myrank;
+    mpi::mpi_comm_rank(&myrank);
+    int com_size;
+    mpi::mpi_comm_size(&com_size);
+
+    std::vector<MPI_Request> requests;
+
+    DT_ missing_values[a.missing_indices().size()];
+    // empfange alle fehlenden werte
+    {
+        unsigned long j(0);
+        for (std::set<unsigned long>::iterator i(a.missing_indices().begin()) ; i != a.missing_indices().end() ; ++i, ++j)
+        {
+            requests.push_back(mpi::mpi_irecv(missing_values + j, 1, MPI_ANY_SOURCE, *i));
+        }
+    }
+
+    // sende alle werte, die anderen fehlen
+    for (int rank(0) ; rank < com_size ; ++rank)
+    {
+        if (rank == myrank)
+            continue;
+
+        unsigned long j(0);
+        for (std::set<unsigned long>::iterator i(a.alien_indices(rank).begin()) ; i != a.alien_indices(rank).end() ; ++i, ++j)
+        {
+            requests.push_back(mpi::mpi_isend(bp + *i - a.offset(), 1, rank, *i));
+        }
+    }
+
+    // berechne innere anteile
+    Product<Tag_>::value(r.vector(), a.inner_matrix(), b.vector(), true);
+
+    // TODO nur auf empfang warten - senden warten reicht auch wenn ich ganz fertig bin.
+    MPI_Waitall(requests.size(), &requests[0], MPI_STATUSES_IGNORE);
+
+    /*std::vector<unsigned long> before_cols;
+    std::vector<unsigned long> middle_cols;
+    std::vector<unsigned long> behind_cols;
+    for (unsigned long col(0) ; col < a.columns() && col < a.offset(); ++col)
+    {
+        if (a.outer_matrix().column(col).used_elements() > 0)
+            before_cols.push_back(col);
+    }
+    for (unsigned long col(a.offset()) ; col < a.columns() && (col < a.offset() + b.size())  ; ++col)
+    {
+        if (a.outer_matrix().column(col).used_elements() > 0)
+            middle_cols.push_back(col);
+    }
+    for (unsigned long col(a.offset() + b.size()) ; col < a.columns(); ++col)
+    {
+        if (a.outer_matrix().column(col).used_elements() > 0)
+            behind_cols.push_back(col);
+    }*/
+
+    // berechne aeussere anteile
+    unsigned long ix(0);
+    DT_ * r_ele(r.elements());
+    const DT_ * b_ele(b.elements());
+    //vor eigenem vektor
+    //for (unsigned long col(0) ; col < a.columns() && col < a.offset(); ++col)
+    for (unsigned long coli(0) ; coli < a.before_cols().size() ; ++coli)
+    {
+        unsigned long col(a.before_cols().at(coli));
+        const SparseVector<DT_> scol((a.outer_matrix()).column(col));
+        const unsigned long ue(scol.used_elements());
+        const DT_* scol_ele(scol.elements());
+        const unsigned long * indices(scol.indices());
+
+        for (unsigned long row(0) ; row < ue ; ++row)
+        {
+            const unsigned long row_index(indices[row]);
+            r_ele[row_index] +=  scol_ele[row] * missing_values[ix];
+        }
+        ++ix;
+    }
+
+    //in eigenem vektor
+    //for (unsigned long col(a.offset()) ; col < a.columns() && (col < a.offset() + b.size())  ; ++col)
+    for (unsigned long coli(0) ; coli < a.middle_cols().size() ; ++coli)
+    {
+        unsigned long col(a.middle_cols().at(coli));
+        const SparseVector<DT_> scol((a.outer_matrix()).column(col));
+        const unsigned long ue(scol.used_elements());
+        const unsigned long * indices(scol.indices());
+        const DT_* scol_ele(scol.elements());
+
+        for (unsigned long row(0) ; row < ue ; ++row)
+        {
+            const unsigned long row_index(indices[row]);
+            r_ele[row_index] += scol_ele[row] * b_ele[ col  - a.offset()];
+        }
+    }
+
+    //nach eigenem vektor
+    //for (unsigned long col(a.offset() + b.size()) ; col < a.columns(); ++col)
+    for (unsigned long coli(0) ; coli < a.behind_cols().size() ; ++coli)
+    {
+        unsigned long col(a.behind_cols().at(coli));
+        const SparseVector<DT_> scol((a.outer_matrix()).column(col));
+        const unsigned long ue(scol.used_elements());
+        const unsigned long * indices(scol.indices());
+        const DT_* scol_ele(scol.elements());
+
+        for (unsigned long row(0) ; row < ue ; ++row)
+        {
+            const unsigned long row_index(indices[row]);
+            r_ele[row_index] +=  scol_ele[row] * missing_values[ix];
+        }
+        ++ix;
+    }
+}
+
+template <typename Tag_>
+template <typename DT_>
 void MPIOps<Tag_>::scaled_sum(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y, DT_ a)
 {
     ScaledSum<Tag_>::value(r.vector(), x.vector(), y.vector(), a);
@@ -46,4 +167,8 @@ void MPIOps<Tag_>::scaled_sum(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_>
 
 template struct MPIOps<tags::CPU>;
 template double MPIOps<tags::CPU>::dot_product(const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
+template void MPIOps<tags::CPU>::product(DenseVectorMPI<double> & r, const SparseMatrixELLMPI<double> & a, const DenseVectorMPI<double> & b);
 template void MPIOps<tags::CPU>::scaled_sum(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
+
+template struct MPIOps<tags::CPU::SSE>;
+template void MPIOps<tags::CPU::SSE>::product(DenseVectorMPI<double> & r, const SparseMatrixELLMPI<double> & a, const DenseVectorMPI<double> & b);

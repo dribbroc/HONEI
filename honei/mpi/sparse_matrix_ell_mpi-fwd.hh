@@ -24,7 +24,7 @@
 
 namespace honei
 {
-    template <typename DataType_> class SparseMatrixELLMPI
+    template <typename DataType_> class SparseMatrixELLMPI;
 }
 
 #endif
