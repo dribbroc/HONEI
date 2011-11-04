@@ -33,6 +33,8 @@
 #include <honei/backends/multicore/operation.hh>
 #include <honei/backends/multicore/thread_pool.hh>
 #include <honei/util/tags.hh>
+#include <honei/mpi/operations.hh>
+#include <honei/mpi/dense_vector_mpi-fwd.hh>
 
 namespace honei
 {
@@ -187,6 +189,12 @@ namespace honei
             }
 
             return result;
+        }
+
+        template <typename DT_>
+        static inline DT_ value(const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
+        {
+            return MPIOps<tags::CPU>::dot_product(x, y);
         }
 
         /// \}

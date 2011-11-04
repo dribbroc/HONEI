@@ -22,6 +22,7 @@
 #include <honei/backends/mpi/operations.hh>
 #include <honei/util/unittest.hh>
 #include <honei/la/scaled_sum.hh>
+#include <honei/la/dot_product.hh>
 
 #include <string>
 #include <limits>
@@ -76,3 +77,44 @@ class ScaledSumMPITest :
         }
 };
 ScaledSumMPITest<tags::CPU, double> scaled_sum_mpi_test_double("double");
+
+template <typename Tag_, typename DT_>
+class DotProductMPITest :
+    public BaseTest
+{
+    public:
+        DotProductMPITest(const std::string & type) :
+            BaseTest("dot_product_mpi_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            mpi::mpi_init();
+            int rank;
+            mpi::mpi_comm_rank(&rank);
+            int comm_size;
+            mpi::mpi_comm_size(&comm_size);
+
+            DenseVector<DT_> xs(4711);
+            DenseVector<DT_> ys(4711);
+            for (unsigned long i(0) ; i < xs.size() ; ++i)
+            {
+                xs[i] = DT_(i) + 10;
+                ys[i] = DT_(i) - 5;
+            }
+
+            DenseVectorMPI<DT_> x(xs, rank, comm_size);
+            DenseVectorMPI<DT_> y(ys, rank, comm_size);
+
+
+            DT_ r = DotProduct<tags::CPU>::value(x, y);
+            DT_ rs = DotProduct<tags::CPU>::value(xs, ys);
+
+            TEST_CHECK_EQUAL(r, rs);
+
+            mpi::mpi_finalize();
+        }
+};
+DotProductMPITest<tags::CPU, double> dot_product_mpi_test_double("double");

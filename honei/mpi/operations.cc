@@ -20,9 +20,22 @@
 #include <honei/util/tags.hh>
 #include <honei/mpi/operations.hh>
 #include <honei/backends/mpi/operations.hh>
+#include <honei/la/dot_product.hh>
 #include <honei/la/scaled_sum.hh>
 
 using namespace honei;
+
+template <typename Tag_>
+template <typename DT_>
+DT_ MPIOps<Tag_>::dot_product(const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
+{
+    DT_ local_result(DotProduct<Tag_>::value(x.vector(), y.vector()));
+    DT_ result(DT_(0));
+
+    MPI_Allreduce(&local_result, &result, 1, mpi::MPIType<DT_>::value(), MPI_SUM, MPI_COMM_WORLD);
+
+    return result;
+}
 
 template <typename Tag_>
 template <typename DT_>
@@ -32,4 +45,5 @@ void MPIOps<Tag_>::scaled_sum(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_>
 }
 
 template struct MPIOps<tags::CPU>;
+template double MPIOps<tags::CPU>::dot_product(const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
 template void MPIOps<tags::CPU>::scaled_sum(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
