@@ -71,12 +71,12 @@ class PolyTestSparse:
             {
                 jac(i, i) = DT_(1) / sm(i, i);
             }
+            Scale<Tag_>::value(m, DT_(1./4.));
             double min = Norm<vnt_l_one, false, tags::CPU>::value(Difference<tags::CPU>::value(temp, ident, Product<tags::CPU>::value(sm, m)));
             double jacnorm = Norm<vnt_l_one, false, tags::CPU>::value(Difference<tags::CPU>::value(temp, ident, Product<tags::CPU>::value(sm, jac)));
             std::cout<<"Poly Norm: "<<min<<" Jac Norm: "<<jacnorm<<std::endl;
 
-            //TODO apply reasonable check
-            TEST_CHECK(jacnorm > min / 4);
+            TEST_CHECK(jacnorm > min);
         }
 };
 
