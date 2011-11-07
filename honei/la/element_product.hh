@@ -33,6 +33,8 @@
 #include <honei/util/benchmark_info.hh>
 #include <honei/util/configuration.hh>
 #include <honei/util/tags.hh>
+#include <honei/mpi/operations.hh>
+#include <honei/mpi/dense_vector_mpi-fwd.hh>
 
 namespace honei
 {
@@ -426,6 +428,13 @@ namespace honei
             return a;
         }
 
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
+        {
+            MPIOps<tags::CPU>::element_product(r, x, y);
+            return r;
+        }
+
         /// \}
 
         template <typename DT1_, typename DT2_>
@@ -665,6 +674,13 @@ namespace honei
         {
             CONTEXT("When multiplying SparseMatrix with DenseMatrix elementwise (SSE forwarding to CPU):");
             return ElementProduct<tags::CPU>::value(a, b);
+        }
+
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
+        {
+            MPIOps<tags::CPU::SSE>::element_product(r, x, y);
+            return r;
         }
 
         /// \}

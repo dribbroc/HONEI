@@ -30,6 +30,8 @@
 #include <honei/util/configuration.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/dense_vector.hh>
+#include <honei/mpi/operations.hh>
+#include <honei/mpi/dense_vector_mpi-fwd.hh>
 
 #include <cmath>
 
@@ -324,6 +326,12 @@ namespace honei
             return result;
         }
 
+        template <typename DT_>
+        static inline DT_ value(const DenseVectorMPI<DT_> & x)
+        {
+            return MPIOps<tags::CPU>::norm_l2_false(x);
+        }
+
         /// \}
     };
 
@@ -367,6 +375,12 @@ namespace honei
         {
             CONTEXT("When calculating norm of a SparseMatrix:");
             return sqrt(Norm<vnt_l_two, false>::value(x));
+        }
+
+        template <typename DT_>
+        static inline DT_ value(const DenseVectorMPI<DT_> & x)
+        {
+            return sqrt(MPIOps<tags::CPU>::norm_l2_false(x));
         }
 
         /// \}
@@ -559,6 +573,12 @@ namespace honei
         static float value(const SparseVector<float> & x);
 
         static double value(const SparseVector<double> & x);
+
+        template <typename DT_>
+        static inline DT_ value(const DenseVectorMPI<DT_> & x)
+        {
+            return MPIOps<tags::CPU::SSE>::norm_l2_false(x);
+        }
     };
 
     template <> struct Norm<vnt_l_two, true, tags::CPU::SSE>
@@ -585,6 +605,12 @@ namespace honei
         static float value(const SparseVector<float> & x);
 
         static double value(const SparseVector<double> & x);
+
+        template <typename DT_>
+        static inline DT_ value(const DenseVectorMPI<DT_> & x)
+        {
+            return sqrt(MPIOps<tags::CPU::SSE>::norm_l2_false(x));
+        }
     };
 
     template <> struct Norm<vnt_l_two, false, tags::OpenCL::CPU>

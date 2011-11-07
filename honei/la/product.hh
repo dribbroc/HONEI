@@ -102,13 +102,6 @@ namespace honei
             return result;
         }
 
-        template<typename DT1_, typename DT2_>
-        static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
-        {
-            ElementProduct<Tag_>::value(y, a, b);
-            return y;
-        }
-
         template <typename DT1_, typename DT2_>
         static DenseVector<DT1_> value(const DenseMatrix<DT1_> & a, const SparseVector<DT2_> & b)
         {
@@ -1166,10 +1159,25 @@ namespace honei
             return result;
         }
 
+        template<typename DT1_, typename DT2_>
+        static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
+        {
+            ElementProduct<Tag_>::value(y, a, b);
+            return y;
+        }
+
+
         template <typename DT_>
         static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
         {
             MPIOps<tags::CPU>::product(r, a, b);
+            return r;
+        }
+
+        template<typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
+        {
+            MPIOps<tags::CPU>::element_product(r, x, y);
             return r;
         }
 
@@ -1602,6 +1610,13 @@ namespace honei
         static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
         {
             MPIOps<tags::CPU::SSE>::product(r, a, b);
+            return r;
+        }
+
+        template<typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
+        {
+            MPIOps<tags::CPU::SSE>::element_product(r, x, y);
             return r;
         }
         /// \}

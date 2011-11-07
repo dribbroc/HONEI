@@ -81,6 +81,7 @@ namespace honei
                 _com_size(other._com_size)
             {
                 _vector.reset(new DenseVector<DT_> (*other._vector));
+                //_vector = std::tr1::shared_ptr<DenseVector<DT_> >(new DenseVector<DT_>(*other._vector));
             }
 
             /// Destructor.
@@ -164,6 +165,7 @@ namespace honei
             {
                 DenseVectorMPI<DT_> result(*this);
                 result._vector.reset(new DenseVector<DT_>(this->_vector->copy()));
+                //result._vector = std::tr1::shared_ptr<DenseVector<DT_> >(new DenseVector<DT_>(this->_vector->copy()));
                 return result;
             }
     };

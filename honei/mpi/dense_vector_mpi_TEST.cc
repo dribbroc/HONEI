@@ -59,9 +59,10 @@ class DenseVectorMPIQuickTest :
             DenseVectorMPI<DataType_> dm2(dm1.copy());
             std::cout<<dm2.size()<<" "<<dm2.offset()<<std::endl;
 
+            TEST_CHECK((unsigned long) dm0.vector().elements() == (unsigned long) dm1.vector().elements());
+            TEST_CHECK((unsigned long) dm1.vector().elements() != (unsigned long) dm2.vector().elements());
             for (unsigned long i(0) ; i < dm2.size() ; ++i)
                 TEST_CHECK_EQUAL(dm2[i], src[i + dm2.offset()]);
-
 
             mpi::mpi_finalize();
         }

@@ -25,6 +25,8 @@
 #include <honei/la/sum.hh>
 #include <honei/la/difference.hh>
 #include <honei/la/dot_product.hh>
+#include <honei/la/norm.hh>
+#include <honei/la/element_product.hh>
 #include <honei/la/product.hh>
 #include <honei/math/defect.hh>
 #include <honei/math/matrix_io.hh>
@@ -164,6 +166,47 @@ class DifferenceMPITest :
 DifferenceMPITest<tags::CPU::SSE, double> difference_mpi_test_double("double");
 
 template <typename Tag_, typename DT_>
+class ElementProductMPITest :
+    public BaseTest
+{
+    public:
+        ElementProductMPITest(const std::string & type) :
+            BaseTest("element_product_mpi_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            int rank;
+            mpi::mpi_comm_rank(&rank);
+            int comm_size;
+            mpi::mpi_comm_size(&comm_size);
+
+            DenseVector<DT_> rs(4711);
+            DenseVector<DT_> xs(4711);
+            DenseVector<DT_> ys(4711);
+            for (unsigned long i(0) ; i < xs.size() ; ++i)
+            {
+                xs[i] = DT_(i) + 10;
+                ys[i] = DT_(i) - 5;
+            }
+
+            DenseVectorMPI<DT_> r(rs, rank, comm_size);
+            DenseVectorMPI<DT_> x(xs, rank, comm_size);
+            DenseVectorMPI<DT_> y(ys, rank, comm_size);
+
+
+            ElementProduct<tags::CPU::SSE>::value(r, x, y);
+            ElementProduct<tags::CPU::SSE>::value(rs, xs, ys);
+
+            for (unsigned long i(0) ; i < x.size() ; ++i)
+                TEST_CHECK_EQUAL(r[i], rs[i + x.offset()]);
+        }
+};
+ElementProductMPITest<tags::CPU::SSE, double> element_product_mpi_test_double("double");
+
+template <typename Tag_, typename DT_>
 class DotProductMPITest :
     public BaseTest
 {
@@ -193,13 +236,51 @@ class DotProductMPITest :
             DenseVectorMPI<DT_> y(ys, rank, comm_size);
 
 
-            DT_ r = DotProduct<tags::CPU::SSE>::value(x, y);
-            DT_ rs = DotProduct<tags::CPU::SSE>::value(xs, ys);
+            DT_ r = DotProduct<Tag_>::value(x, y);
+            DT_ rs = DotProduct<Tag_>::value(xs, ys);
 
             TEST_CHECK_EQUAL(r, rs);
         }
 };
 DotProductMPITest<tags::CPU::SSE, double> dot_product_mpi_test_double("double");
+
+template <typename Tag_, typename DT_>
+class NormMPITest :
+    public BaseTest
+{
+    public:
+        NormMPITest(const std::string & type) :
+            BaseTest("norm_mpi_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            int rank;
+            mpi::mpi_comm_rank(&rank);
+            int comm_size;
+            mpi::mpi_comm_size(&comm_size);
+
+            DenseVector<DT_> xs(4711);
+            for (unsigned long i(0) ; i < xs.size() ; ++i)
+            {
+                xs[i] = DT_(i) /10;
+            }
+
+            DenseVectorMPI<DT_> x(xs, rank, comm_size);
+
+
+            DT_ r = Norm<vnt_l_two, false, Tag_>::value(x);
+            DT_ rs = Norm<vnt_l_two, false, Tag_>::value(xs);
+            TEST_CHECK_EQUAL(r, rs);
+
+            r = Norm<vnt_l_two, true, Tag_>::value(x);
+            rs = Norm<vnt_l_two, true, Tag_>::value(xs);
+            TEST_CHECK_EQUAL(r, rs);
+        }
+};
+NormMPITest<tags::CPU::SSE, double> norm_mpi_test_double("double");
 
 template <typename Tag_, typename DT_>
 class DefectMPITest :
