@@ -33,6 +33,8 @@
 #include <honei/util/benchmark_info.hh>
 #include <honei/util/configuration.hh>
 #include <honei/util/tags.hh>
+#include <honei/mpi/operations.hh>
+#include <honei/mpi/dense_vector_mpi-fwd.hh>
 
 namespace honei
 {
@@ -547,6 +549,13 @@ namespace honei
             Difference<>::value(a, temp);
             return b;
         }
+
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
+        {
+            MPIOps<tags::CPU>::difference(r, x, y);
+            return r;
+        }
         /// \}
 
         template <typename DT1_, typename DT2_>
@@ -740,6 +749,13 @@ namespace honei
         {
             CONTEXT("When subtracting DenseMatrix from BandedMatrix (SSE forwarding to CPU):");
             return Difference<tags::CPU>::value(a, b);
+        }
+
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
+        {
+            MPIOps<tags::CPU::SSE>::difference(r, x, y);
+            return r;
         }
 
         /// \}

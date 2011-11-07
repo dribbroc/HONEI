@@ -32,6 +32,8 @@
 #include <honei/util/operation_wrapper.hh>
 #include <honei/util/partitioner.hh>
 #include <honei/util/tags.hh>
+#include <honei/mpi/operations.hh>
+#include <honei/mpi/dense_vector_mpi-fwd.hh>
 
 #include <algorithm>
 
@@ -482,6 +484,13 @@ namespace honei
             return result;
         }
 
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
+        {
+            MPIOps<tags::CPU>::sum(x, y);
+            return x;
+        }
+
         template <typename DT1_, typename DT2_>
         static inline BenchmarkInfo get_benchmark_info(const DenseVectorBase<DT1_> & a, const DenseVectorBase<DT2_> & b)
         {
@@ -796,6 +805,13 @@ namespace honei
         static DenseMatrix<float> & value(DenseMatrix<float> & x, const float a);
 
         static DenseMatrix<double> & value(DenseMatrix<double> & x, const double a);
+
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
+        {
+            MPIOps<tags::CPU::SSE>::sum(x, y);
+            return x;
+        }
         /// \}
     };
 

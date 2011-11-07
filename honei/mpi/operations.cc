@@ -23,8 +23,17 @@
 #include <honei/la/dot_product.hh>
 #include <honei/la/product.hh>
 #include <honei/la/scaled_sum.hh>
+#include <honei/la/sum.hh>
+#include <honei/la/difference.hh>
 
 using namespace honei;
+
+template <typename Tag_>
+template <typename DT_>
+void MPIOps<Tag_>::difference(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
+{
+    Difference<Tag_>::value(r.vector(), x.vector(), y.vector());
+}
 
 template <typename Tag_>
 template <typename DT_>
@@ -52,6 +61,7 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
 
     std::vector<MPI_Request> requests;
 
+    // \TODO use only one send/recv per process
     DT_ missing_values[a.missing_indices().size()];
     // empfange alle fehlenden werte
     {
@@ -81,31 +91,11 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
     // TODO nur auf empfang warten - senden warten reicht auch wenn ich ganz fertig bin.
     MPI_Waitall(requests.size(), &requests[0], MPI_STATUSES_IGNORE);
 
-    /*std::vector<unsigned long> before_cols;
-    std::vector<unsigned long> middle_cols;
-    std::vector<unsigned long> behind_cols;
-    for (unsigned long col(0) ; col < a.columns() && col < a.offset(); ++col)
-    {
-        if (a.outer_matrix().column(col).used_elements() > 0)
-            before_cols.push_back(col);
-    }
-    for (unsigned long col(a.offset()) ; col < a.columns() && (col < a.offset() + b.size())  ; ++col)
-    {
-        if (a.outer_matrix().column(col).used_elements() > 0)
-            middle_cols.push_back(col);
-    }
-    for (unsigned long col(a.offset() + b.size()) ; col < a.columns(); ++col)
-    {
-        if (a.outer_matrix().column(col).used_elements() > 0)
-            behind_cols.push_back(col);
-    }*/
-
     // berechne aeussere anteile
     unsigned long ix(0);
     DT_ * r_ele(r.elements());
     const DT_ * b_ele(b.elements());
     //vor eigenem vektor
-    //for (unsigned long col(0) ; col < a.columns() && col < a.offset(); ++col)
     for (unsigned long coli(0) ; coli < a.before_cols().size() ; ++coli)
     {
         unsigned long col(a.before_cols().at(coli));
@@ -123,7 +113,6 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
     }
 
     //in eigenem vektor
-    //for (unsigned long col(a.offset()) ; col < a.columns() && (col < a.offset() + b.size())  ; ++col)
     for (unsigned long coli(0) ; coli < a.middle_cols().size() ; ++coli)
     {
         unsigned long col(a.middle_cols().at(coli));
@@ -140,7 +129,6 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
     }
 
     //nach eigenem vektor
-    //for (unsigned long col(a.offset() + b.size()) ; col < a.columns(); ++col)
     for (unsigned long coli(0) ; coli < a.behind_cols().size() ; ++coli)
     {
         unsigned long col(a.behind_cols().at(coli));
@@ -165,10 +153,27 @@ void MPIOps<Tag_>::scaled_sum(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_>
     ScaledSum<Tag_>::value(r.vector(), x.vector(), y.vector(), a);
 }
 
+template <typename Tag_>
+template <typename DT_>
+void MPIOps<Tag_>::sum(DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
+{
+    Sum<Tag_>::value(x.vector(), y.vector());
+}
+
+// \ TODO use atomic defect operation
+
 template struct MPIOps<tags::CPU>;
+template void MPIOps<tags::CPU>::difference(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
 template double MPIOps<tags::CPU>::dot_product(const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
 template void MPIOps<tags::CPU>::product(DenseVectorMPI<double> & r, const SparseMatrixELLMPI<double> & a, const DenseVectorMPI<double> & b);
 template void MPIOps<tags::CPU>::scaled_sum(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
+template void MPIOps<tags::CPU>::sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
+
 
 template struct MPIOps<tags::CPU::SSE>;
+template void MPIOps<tags::CPU::SSE>::difference(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
+template double MPIOps<tags::CPU::SSE>::dot_product(const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
 template void MPIOps<tags::CPU::SSE>::product(DenseVectorMPI<double> & r, const SparseMatrixELLMPI<double> & a, const DenseVectorMPI<double> & b);
+template void MPIOps<tags::CPU::SSE>::scaled_sum(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
+template void MPIOps<tags::CPU::SSE>::sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
+

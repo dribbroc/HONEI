@@ -270,6 +270,13 @@ namespace honei
 
         static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & x, const DenseVectorContinuousBase<double> & y, const DenseVectorContinuousBase<double> & z, double b);
 
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y, DT_ a)
+        {
+            MPIOps<tags::CPU::SSE>::scaled_sum(r, x, y, a);
+            return r;
+        }
+
         /// \}
     };
 

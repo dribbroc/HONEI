@@ -31,6 +31,10 @@
 #include<honei/backends/multicore/thread_pool.hh>
 #include<honei/util/operation_wrapper.hh>
 #include<honei/util/profiler.hh>
+#include <honei/mpi/operations.hh>
+#include <honei/mpi/dense_vector_mpi-fwd.hh>
+#include <honei/mpi/sparse_matrix_ell_mpi-fwd.hh>
+
 using namespace honei;
 namespace honei
 {
@@ -377,6 +381,15 @@ namespace honei
                     return result;
                 }
 
+            template<typename DT_>
+                static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixELLMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
+                {
+                    DenseVectorMPI<DT_> temp(result.copy());
+                    Product<tags::CPU>::value(temp, system, x);
+                    Difference<tags::CPU>::value(result, right_hand_side, temp);
+                    return result;
+                }
+
             /*template <typename DT_>
               static inline BenchmarkInfo get_benchmark_info(const DenseVector<DT_> & right_hand_side, const SparseMatrixELL<DT_> & system, const DenseVector<DT_> & x)
               {
@@ -497,6 +510,15 @@ namespace honei
                     static DenseVector<float> & value(DenseVector<float> & result, const DenseVector<float> & right_hand_side, const SparseMatrixELL<float> & system, const DenseVector<float> & x, unsigned long row_start = 0, unsigned long row_end = 0);
 
                     static DenseVector<double> & value(DenseVector<double> & result, const DenseVector<double> & right_hand_side, const SparseMatrixELL<double> & system, const DenseVector<double> & x, unsigned long row_start = 0, unsigned long row_end = 0);
+
+            template<typename DT_>
+                static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixELLMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
+                {
+                    DenseVectorMPI<DT_> temp(result.copy());
+                    Product<tags::CPU>::value(temp, system, x);
+                    Difference<tags::CPU>::value(result, right_hand_side, temp);
+                    return result;
+                }
         };
 
     template<>

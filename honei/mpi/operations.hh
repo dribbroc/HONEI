@@ -30,6 +30,9 @@ namespace honei
         struct MPIOps
         {
             template <typename DT_>
+                static void difference(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y);
+
+            template <typename DT_>
                 static DT_ dot_product(const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y);
 
             template <typename DT_>
@@ -37,6 +40,9 @@ namespace honei
 
             template <typename DT_>
                 static void scaled_sum(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y, DT_ a);
+
+            template <typename DT_>
+                static void sum(DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y);
         };
 }
 
