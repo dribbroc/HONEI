@@ -249,9 +249,7 @@ class DefectMPITest :
 
 
             for (unsigned long i(0) ; i < r.size() ; ++i)
-                TEST_CHECK_EQUAL(r[i], rs[i + r.offset()]);
-
-            mpi::mpi_finalize();
+                TEST_CHECK_EQUAL_WITHIN_EPS(r[i], rs[i + r.offset()], 1e-10);
         }
 };
 DefectMPITest<tags::CPU::SSE, double> defect_mpi_test_double("double");
@@ -308,7 +306,7 @@ class SPMVMPITest :
 
 
             for (unsigned long i(0) ; i < r.size() ; ++i)
-                TEST_CHECK_EQUAL(r[i], rs[i + r.offset()]);
+                TEST_CHECK_EQUAL_WITHIN_EPS(r[i], rs[i + r.offset()], 1e-10);
 
             mpi::mpi_finalize();
         }

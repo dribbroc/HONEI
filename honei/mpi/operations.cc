@@ -92,50 +92,15 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
     MPI_Waitall(requests.size(), &requests[0], MPI_STATUSES_IGNORE);
 
     // berechne aeussere anteile
+    // es gilt: missing_indices eintraege in b-vektor sind spalten in outer matrix
     unsigned long ix(0);
     DT_ * r_ele(r.elements());
-    const DT_ * b_ele(b.elements());
-    //vor eigenem vektor
-    for (unsigned long coli(0) ; coli < a.before_cols().size() ; ++coli)
+    for (std::set<unsigned long>::iterator coli(a.missing_indices().begin()) ; coli != a.missing_indices().end() ; ++coli)
     {
-        unsigned long col(a.before_cols().at(coli));
-        const SparseVector<DT_> scol((a.outer_matrix()).column(col));
+        const SparseVector<DT_> scol((a.outer_matrix()).column(*coli));
         const unsigned long ue(scol.used_elements());
         const DT_* scol_ele(scol.elements());
         const unsigned long * indices(scol.indices());
-
-        for (unsigned long row(0) ; row < ue ; ++row)
-        {
-            const unsigned long row_index(indices[row]);
-            r_ele[row_index] +=  scol_ele[row] * missing_values[ix];
-        }
-        ++ix;
-    }
-
-    //in eigenem vektor
-    for (unsigned long coli(0) ; coli < a.middle_cols().size() ; ++coli)
-    {
-        unsigned long col(a.middle_cols().at(coli));
-        const SparseVector<DT_> scol((a.outer_matrix()).column(col));
-        const unsigned long ue(scol.used_elements());
-        const unsigned long * indices(scol.indices());
-        const DT_* scol_ele(scol.elements());
-
-        for (unsigned long row(0) ; row < ue ; ++row)
-        {
-            const unsigned long row_index(indices[row]);
-            r_ele[row_index] += scol_ele[row] * b_ele[ col  - a.offset()];
-        }
-    }
-
-    //nach eigenem vektor
-    for (unsigned long coli(0) ; coli < a.behind_cols().size() ; ++coli)
-    {
-        unsigned long col(a.behind_cols().at(coli));
-        const SparseVector<DT_> scol((a.outer_matrix()).column(col));
-        const unsigned long ue(scol.used_elements());
-        const unsigned long * indices(scol.indices());
-        const DT_* scol_ele(scol.elements());
 
         for (unsigned long row(0) ; row < ue ; ++row)
         {

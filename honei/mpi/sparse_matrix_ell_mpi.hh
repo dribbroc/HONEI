@@ -44,9 +44,6 @@ namespace honei
             unsigned long _offset;
             unsigned long _rank;
             unsigned long _com_size;
-            std::vector<unsigned long> _before_cols;
-            std::vector<unsigned long> _middle_cols;
-            std::vector<unsigned long> _behind_cols;
 
         public:
 
@@ -87,7 +84,6 @@ namespace honei
                 }
 
 
-                std::vector<unsigned long> inner_row_index;
                 std::vector<unsigned long> outer_row_index;
 
                 // matrix fenster ausschneiden und in src_part speichern
@@ -104,16 +100,20 @@ namespace honei
                     }
                     if (outter)
                         outer_row_index.push_back(row);
-                    else
-                        inner_row_index.push_back(row);
                 }
 
                 // inneren teil ohne abhaengigkeiten in inner speichern
                 SparseMatrix<DT_> inner(src_part.copy());
-                SparseVector<DT_> zeros(_columns, 0);
-                for (unsigned long row(0) ; row < outer_row_index.size() ; ++row)
+                for (unsigned long rowi(0) ; rowi < outer_row_index.size() ; ++rowi)
                 {
-                    inner[outer_row_index.at(row)] = zeros;
+                    unsigned long row(outer_row_index.at(rowi));
+                    SparseVector<DT_> temp(_columns, 0);
+                    for (unsigned long i(0) ; i < src_part[row].used_elements() ; ++i)
+                    {
+                        if ((src_part[row].indices())[i] >= _offset && (src_part[row].indices())[i] < _offset + _rows)
+                            temp[(src_part[row].indices())[i]] = (src_part[row].elements())[i];
+                    }
+                    inner[row] = temp;
                 }
                 // alle spalten in inner nach links ruecken, damit man mit 0 in einen rechte seite vektor einsteigen kann
                 for (unsigned long row(0) ; row < _rows ; ++row)
@@ -126,24 +126,24 @@ namespace honei
 
                 // aeusseren teil mit abhaengigkeit nach draussen speichern
                 SparseMatrix<DT_> outer(_rows, _columns);
-                for (unsigned long row(0) ; row < outer_row_index.size() ; ++row)
+                for (unsigned long rowi(0) ; rowi < outer_row_index.size() ; ++rowi)
                 {
-                    outer[outer_row_index.at(row)] = src_part[outer_row_index.at(row)];
+                    unsigned long row(outer_row_index.at(rowi));
+                    SparseVector<DT_> temp(_columns, 0);
+                    for (unsigned long i(0) ; i < src_part[row].used_elements() ; ++i)
+                    {
+                        if ((src_part[row].indices())[i] < _offset || (src_part[row].indices())[i] >= _offset + _rows)
+                        {
+                            temp[(src_part[row].indices())[i]] = (src_part[row].elements())[i];
+                            _missing_indices.insert((src_part[row].indices())[i]);
+                        }
+                    }
+                    outer[row] = temp;
                 }
 
                 _inner.reset(new SparseMatrixELL<DT_>(inner));
                 _outer.reset(new SparseMatrix<DT_>(outer));
                 _outer->_synch_column_vectors();
-
-                // liste der fehlenden x eintraege erstellen
-                for (unsigned long row(0) ; row < _rows ; ++row)
-                {
-                    for (unsigned long i(0) ; i < outer[row].used_elements() ; ++i)
-                    {
-                        if ((outer[row].indices())[i] < _offset || (outer[row].indices())[i] >= _offset + _rows)
-                            _missing_indices.insert((outer[row].indices())[i]);
-                    }
-                }
 
                 // liste an alle anderen prozesse schicken
                 for (unsigned long rank(0) ; rank < _com_size ; ++rank)
@@ -171,23 +171,6 @@ namespace honei
                                 _alien_indices[rank].insert(index);
                         }
                     }
-                }
-
-                //cols der outer matrix, die nicht leer sind
-                for (unsigned long col(0) ; col < _columns && col < _offset; ++col)
-                {
-                    if (_outer->column(col).used_elements() > 0)
-                        _before_cols.push_back(col);
-                }
-                for (unsigned long col(_offset) ; col < _columns && (col < _offset + _rows)  ; ++col)
-                {
-                    if (_outer->column(col).used_elements() > 0)
-                        _middle_cols.push_back(col);
-                }
-                for (unsigned long col(_offset + _rows) ; col < _columns; ++col)
-                {
-                    if (_outer->column(col).used_elements() > 0)
-                        _behind_cols.push_back(col);
                 }
             }
 
@@ -276,21 +259,6 @@ namespace honei
             const std::set<unsigned long> & alien_indices(unsigned long i) const
             {
                 return _alien_indices[i];
-            }
-
-            const std::vector<unsigned long> & before_cols() const
-            {
-                return _before_cols;
-            }
-
-            const std::vector<unsigned long> & middle_cols() const
-            {
-                return _middle_cols;
-            }
-
-            const std::vector<unsigned long> & behind_cols() const
-            {
-                return _behind_cols;
             }
 
             /// \{
