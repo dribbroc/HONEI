@@ -45,16 +45,12 @@ class DenseVectorMPIQuickTest :
         virtual void run() const
         {
             mpi::mpi_init();
-            int rank;
-            mpi::mpi_comm_rank(&rank);
-            int comm_size;
-            mpi::mpi_comm_size(&comm_size);
 
             DenseVector<DataType_> src(4711);
             for (unsigned long i(0) ; i < src.size() ; ++i)
                 src[i] = i + 10;
 
-            DenseVectorMPI<DataType_> dm0(src, rank, comm_size);
+            DenseVectorMPI<DataType_> dm0(src);
             DenseVectorMPI<DataType_> dm1(dm0);
             DenseVectorMPI<DataType_> dm2(dm1.copy());
             std::cout<<dm2.size()<<" "<<dm2.offset()<<std::endl;

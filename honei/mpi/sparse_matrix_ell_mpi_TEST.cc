@@ -46,10 +46,6 @@ class SparseMatrixELLMPIQuickTest :
         virtual void run() const
         {
             mpi::mpi_init();
-            int rank;
-            mpi::mpi_comm_rank(&rank);
-            int comm_size;
-            mpi::mpi_comm_size(&comm_size);
 
             SparseMatrix<DataType_> src(32, 32);
             for (unsigned long i(0) ; i < src.rows() ; ++i)
@@ -64,7 +60,7 @@ class SparseMatrixELLMPIQuickTest :
                 }
 
 
-            SparseMatrixELLMPI<DataType_> sm0(src, rank, comm_size);
+            SparseMatrixELLMPI<DataType_> sm0(src);
             SparseMatrixELLMPI<DataType_> sm1(sm0);
             SparseMatrixELLMPI<DataType_> sm2(sm1.copy());
             std::cout<<sm2.rows()<<" "<<sm2.offset()<<std::endl;

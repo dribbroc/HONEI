@@ -53,14 +53,19 @@ namespace honei
             /**
              * Constructor.
              */
-            SparseMatrixELLMPI(const SparseMatrix<DT_> & src, const unsigned long rank, const unsigned long com_size) :
-                _alien_indices(com_size),
-                _rank(rank),
-                _com_size(com_size)
+            SparseMatrixELLMPI(const SparseMatrix<DT_> & src, MPI_Comm com = MPI_COMM_WORLD) :
+                _alien_indices(mpi::mpi_comm_size(com))
             {
-                unsigned long part_size(src.rows() / com_size);
-                unsigned long rest(src.rows() - (part_size * com_size));
-                if (rank < rest)
+                int irank;
+                mpi::mpi_comm_rank(&irank, com);
+                _rank = irank;
+                int icom_size;
+                mpi::mpi_comm_size(&icom_size, com);
+                _com_size = icom_size;
+
+                unsigned long part_size(src.rows() / _com_size);
+                unsigned long rest(src.rows() - (part_size * _com_size));
+                if (_rank < rest)
                     ++part_size;
                 _rows = part_size;
                 _columns = src.columns();
@@ -68,7 +73,7 @@ namespace honei
                 unsigned local_offset(0);
                 for (unsigned long i(0) ; i < _rank ; ++i)
                 {
-                    local_offset += src.rows() / com_size;
+                    local_offset += src.rows() / _com_size;
                     if (i < rest)
                         ++local_offset;
                 }

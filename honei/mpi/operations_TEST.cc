@@ -57,10 +57,6 @@ class ScaledSumMPITest :
         virtual void run() const
         {
             mpi::mpi_init();
-            int rank;
-            mpi::mpi_comm_rank(&rank);
-            int comm_size;
-            mpi::mpi_comm_size(&comm_size);
 
             DenseVector<DT_> rs(4711, DT_(42));
             DenseVector<DT_> xs(4711);
@@ -71,9 +67,9 @@ class ScaledSumMPITest :
                 ys[i] = DT_(i) - 5;
             }
 
-            DenseVectorMPI<DT_> r(rs, rank, comm_size);
-            DenseVectorMPI<DT_> x(xs, rank, comm_size);
-            DenseVectorMPI<DT_> y(ys, rank, comm_size);
+            DenseVectorMPI<DT_> r(rs);
+            DenseVectorMPI<DT_> x(xs);
+            DenseVectorMPI<DT_> y(ys);
 
 
             ScaledSum<tags::CPU::SSE>::value(r, x, y, DT_(5));
@@ -98,11 +94,6 @@ class SumMPITest :
 
         virtual void run() const
         {
-            int rank;
-            mpi::mpi_comm_rank(&rank);
-            int comm_size;
-            mpi::mpi_comm_size(&comm_size);
-
             DenseVector<DT_> xs(4711);
             DenseVector<DT_> ys(4711);
             for (unsigned long i(0) ; i < xs.size() ; ++i)
@@ -111,8 +102,8 @@ class SumMPITest :
                 ys[i] = DT_(i) - 5;
             }
 
-            DenseVectorMPI<DT_> x(xs, rank, comm_size);
-            DenseVectorMPI<DT_> y(ys, rank, comm_size);
+            DenseVectorMPI<DT_> x(xs);
+            DenseVectorMPI<DT_> y(ys);
 
 
             Sum<tags::CPU::SSE>::value(x, y);
@@ -137,11 +128,6 @@ class DifferenceMPITest :
 
         virtual void run() const
         {
-            int rank;
-            mpi::mpi_comm_rank(&rank);
-            int comm_size;
-            mpi::mpi_comm_size(&comm_size);
-
             DenseVector<DT_> rs(4711, DT_(42));
             DenseVector<DT_> xs(4711);
             DenseVector<DT_> ys(4711);
@@ -151,9 +137,9 @@ class DifferenceMPITest :
                 ys[i] = DT_(i) - 5;
             }
 
-            DenseVectorMPI<DT_> r(rs, rank, comm_size);
-            DenseVectorMPI<DT_> x(xs, rank, comm_size);
-            DenseVectorMPI<DT_> y(ys, rank, comm_size);
+            DenseVectorMPI<DT_> r(rs);
+            DenseVectorMPI<DT_> x(xs);
+            DenseVectorMPI<DT_> y(ys);
 
 
             Difference<tags::CPU::SSE>::value(r, x, y);
@@ -178,11 +164,6 @@ class ElementProductMPITest :
 
         virtual void run() const
         {
-            int rank;
-            mpi::mpi_comm_rank(&rank);
-            int comm_size;
-            mpi::mpi_comm_size(&comm_size);
-
             DenseVector<DT_> rs(4711);
             DenseVector<DT_> xs(4711);
             DenseVector<DT_> ys(4711);
@@ -192,9 +173,9 @@ class ElementProductMPITest :
                 ys[i] = DT_(i) - 5;
             }
 
-            DenseVectorMPI<DT_> r(rs, rank, comm_size);
-            DenseVectorMPI<DT_> x(xs, rank, comm_size);
-            DenseVectorMPI<DT_> y(ys, rank, comm_size);
+            DenseVectorMPI<DT_> r(rs);
+            DenseVectorMPI<DT_> x(xs);
+            DenseVectorMPI<DT_> y(ys);
 
 
             ElementProduct<tags::CPU::SSE>::value(r, x, y);
@@ -219,11 +200,6 @@ class DotProductMPITest :
 
         virtual void run() const
         {
-            int rank;
-            mpi::mpi_comm_rank(&rank);
-            int comm_size;
-            mpi::mpi_comm_size(&comm_size);
-
             DenseVector<DT_> xs(4711);
             DenseVector<DT_> ys(4711);
             for (unsigned long i(0) ; i < xs.size() ; ++i)
@@ -232,8 +208,8 @@ class DotProductMPITest :
                 ys[i] = DT_(i) - 5;
             }
 
-            DenseVectorMPI<DT_> x(xs, rank, comm_size);
-            DenseVectorMPI<DT_> y(ys, rank, comm_size);
+            DenseVectorMPI<DT_> x(xs);
+            DenseVectorMPI<DT_> y(ys);
 
 
             DT_ r = DotProduct<Tag_>::value(x, y);
@@ -257,18 +233,13 @@ class NormMPITest :
 
         virtual void run() const
         {
-            int rank;
-            mpi::mpi_comm_rank(&rank);
-            int comm_size;
-            mpi::mpi_comm_size(&comm_size);
-
             DenseVector<DT_> xs(4711);
             for (unsigned long i(0) ; i < xs.size() ; ++i)
             {
                 xs[i] = DT_(i) /10;
             }
 
-            DenseVectorMPI<DT_> x(xs, rank, comm_size);
+            DenseVectorMPI<DT_> x(xs);
 
 
             DT_ r = Norm<vnt_l_two, false, Tag_>::value(x);
@@ -295,12 +266,6 @@ class DefectMPITest :
 
         virtual void run() const
         {
-            int rank;
-            mpi::mpi_comm_rank(&rank);
-            int comm_size;
-            mpi::mpi_comm_size(&comm_size);
-
-
             std::string dir(HONEI_SOURCEDIR);
             std::string file (dir + "/honei/math/testdata/poisson_advanced2/q2_sort_2/");
             file += "A_4";
@@ -308,7 +273,7 @@ class DefectMPITest :
             SparseMatrixELL<DT_> aell(MatrixIO<io_formats::ELL>::read_matrix(file, DT_(0)));
 
             SparseMatrix<DT_> as(aell);
-            SparseMatrixELLMPI<DT_> a(as, rank, comm_size);
+            SparseMatrixELLMPI<DT_> a(as);
 
             DenseVector<DT_> rs(aell.rows());
             DenseVector<DT_> xs(aell.rows());
@@ -319,9 +284,9 @@ class DefectMPITest :
                 bs[i] = DT_(i) + i/2;
             }
 
-            DenseVectorMPI<DT_> r(rs, rank, comm_size);
-            DenseVectorMPI<DT_> x(xs, rank, comm_size);
-            DenseVectorMPI<DT_> b(bs, rank, comm_size);
+            DenseVectorMPI<DT_> r(rs);
+            DenseVectorMPI<DT_> x(xs);
+            DenseVectorMPI<DT_> b(bs);
 
             Defect<Tag_>::value(rs, bs, aell, xs);
             Defect<Tag_>::value(rs, bs, aell, xs);
@@ -348,12 +313,6 @@ class SPMVMPITest :
 
         virtual void run() const
         {
-            int rank;
-            mpi::mpi_comm_rank(&rank);
-            int comm_size;
-            mpi::mpi_comm_size(&comm_size);
-
-
             std::string dir(HONEI_SOURCEDIR);
             std::string file (dir + "/honei/math/testdata/poisson_advanced2/q2_sort_2/");
             file += "A_4";
@@ -361,7 +320,7 @@ class SPMVMPITest :
             SparseMatrixELL<DT_> aell(MatrixIO<io_formats::ELL>::read_matrix(file, DT_(0)));
 
             SparseMatrix<DT_> as(aell);
-            SparseMatrixELLMPI<DT_> a(as, rank, comm_size);
+            SparseMatrixELLMPI<DT_> a(as);
 
             DenseVector<DT_> rs(aell.rows());
             DenseVector<DT_> xs(aell.rows());
@@ -370,8 +329,8 @@ class SPMVMPITest :
                 xs[i] = DT_(i) + 10;
             }
 
-            DenseVectorMPI<DT_> r(rs, rank, comm_size);
-            DenseVectorMPI<DT_> x(xs, rank, comm_size);
+            DenseVectorMPI<DT_> r(rs);
+            DenseVectorMPI<DT_> x(xs);
 
             TimeStamp at, bt, ct, dt;
             at.take();

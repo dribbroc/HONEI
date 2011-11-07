@@ -23,6 +23,7 @@
 
 #include <honei/util/tags.hh>
 #include <honei/la/dense_vector.hh>
+#include <honei/backends/mpi/operations.hh>
 
 namespace honei
 {
@@ -45,21 +46,21 @@ namespace honei
              *
              * \param size Size of the new dense vector.
              */
-            DenseVectorMPI(const DenseVector<DT_> & src, const unsigned long rank, const unsigned long com_size) :
+            DenseVectorMPI(const DenseVector<DT_> & src,  MPI_Comm com = MPI_COMM_WORLD) :
                 _orig_size(src.size()),
-                _rank(rank),
-                _com_size(com_size)
+                _rank(mpi::mpi_comm_rank(com)),
+                _com_size(mpi::mpi_comm_size(com))
             {
-                unsigned long part_size(src.size() / com_size);
-                unsigned long rest(src.size() - (part_size * com_size));
-                if (rank < rest)
+                unsigned long part_size(src.size() / _com_size);
+                unsigned long rest(src.size() - (part_size * _com_size));
+                if (_rank < rest)
                     ++part_size;
                 unsigned long size = part_size;
 
                 unsigned local_offset(0);
                 for (unsigned long i(0) ; i < _rank ; ++i)
                 {
-                    local_offset += src.size() / com_size;
+                    local_offset += src.size() / _com_size;
                     if (i < rest)
                         ++local_offset;
                 }

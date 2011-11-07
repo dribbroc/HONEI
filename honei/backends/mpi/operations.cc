@@ -49,9 +49,23 @@ namespace honei
             MPI_Comm_size(com, size);
         }
 
+        int mpi_comm_size(MPI_Comm com)
+        {
+            int size;
+            MPI_Comm_size(com, &size);
+            return size;
+        }
+
         void mpi_comm_rank(int * id, MPI_Comm com)
         {
             MPI_Comm_rank(com, id);
+        }
+
+        int mpi_comm_rank(MPI_Comm com)
+        {
+            int id;
+            MPI_Comm_rank(com, &id);
+            return id;
         }
 
         template <typename DT_>

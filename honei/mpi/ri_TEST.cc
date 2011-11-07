@@ -61,41 +61,37 @@ class RISolverTestSparseELL:
         virtual void run() const
         {
             mpi::mpi_init();
-            int rank;
-            mpi::mpi_comm_rank(&rank);
-            int comm_size;
-            mpi::mpi_comm_size(&comm_size);
 
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/poisson_advanced2/q2_sort_0/";
             filename += _m_f;
             SparseMatrixELL<DT1_> smatrix2(MatrixIO<io_formats::ELL>::read_matrix(filename, DT1_(0)));
             SparseMatrix<DT1_> ssmatrix2(smatrix2);
-            SparseMatrixELLMPI<DT1_> matrix2(ssmatrix2, rank, comm_size);
+            SparseMatrixELLMPI<DT1_> matrix2(ssmatrix2);
 
             std::string filename_2(HONEI_SOURCEDIR);
             filename_2 += "/honei/math/testdata/poisson_advanced2/q2_sort_0/";
             filename_2 += _v_f;
             DenseVector<DT1_> srhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT1_(0)));
-            DenseVectorMPI<DT1_> rhs(srhs, rank, comm_size);
+            DenseVectorMPI<DT1_> rhs(srhs);
 
             DenseVector<DT1_> sdiag_inverted(smatrix2.rows(), DT1_(0));
             for(unsigned long i(0) ; i < sdiag_inverted.size() ; ++i)
             {
                     sdiag_inverted[i] = DT1_(0.7)/smatrix2(i, i);
             }
-            DenseVectorMPI<DT1_> diag_inverted(sdiag_inverted, rank, comm_size);
+            DenseVectorMPI<DT1_> diag_inverted(sdiag_inverted);
 
             std::string filename_4(HONEI_SOURCEDIR);
             filename_4 += "/honei/math/testdata/poisson_advanced2/q2_sort_0/";
             filename_4 += _i_f;
             DenseVector<DT1_> sresult(VectorIO<io_formats::EXP>::read_vector(filename_4, DT1_(0)));
-            DenseVectorMPI<DT1_> result(sresult, rank, comm_size);
+            DenseVectorMPI<DT1_> result(sresult);
 
             DenseVector<DT1_> stemp_0(srhs.size());
-            DenseVectorMPI<DT1_> temp_0(stemp_0, rank, comm_size);
+            DenseVectorMPI<DT1_> temp_0(stemp_0);
             DenseVector<DT1_> stemp_1(srhs.size());
-            DenseVectorMPI<DT1_> temp_1(stemp_1, rank, comm_size);
+            DenseVectorMPI<DT1_> temp_1(stemp_1);
             unsigned long used_iters(4711);
             RISolver<Tag_>::value(matrix2, diag_inverted, rhs, result, temp_0, temp_1, 10000ul, used_iters, 1e-6);
             std::cout<<"Used iters: "<<used_iters<<std::endl;
@@ -104,7 +100,7 @@ class RISolverTestSparseELL:
             filename_3 += "/honei/math/testdata/poisson_advanced2/q2_sort_0/";
             filename_3 += _r_f;
             DenseVector<DT1_> sref_result(VectorIO<io_formats::EXP>::read_vector(filename_3, DT1_(0)));
-            DenseVectorMPI<DT1_> ref_result(sref_result, rank, comm_size);
+            DenseVectorMPI<DT1_> ref_result(sref_result);
 
 
 
