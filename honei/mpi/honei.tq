@@ -1,0 +1,10 @@
+# #PBS -o mpi_output.txt
+#PBS -M dribbrock@gmail.com
+#PBS -m bae
+#PBS -q short_ib
+#PBS -N honei-mpi
+#PBS -j oe
+#echo stern 5
+#PBS -l walltime=00:20:00,vmem=10000mb,nodes=4
+cd $HOME/honei/trunk/honei/mpi/
+mpirun -np 4 ./operations_TEST check
