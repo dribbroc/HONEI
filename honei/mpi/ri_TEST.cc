@@ -126,4 +126,8 @@ class RISolverTestSparseELL:
             mpi::mpi_finalize();
         }
 };
+#ifdef HONEI_SSE
 RISolverTestSparseELL<tags::CPU::SSE, double> ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+#else
+RISolverTestSparseELL<tags::CPU, double> ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+#endif
