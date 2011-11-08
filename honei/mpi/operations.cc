@@ -101,11 +101,12 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
         unsigned long j(0);
         for (std::set<unsigned long>::iterator i(a.alien_indices(rank).begin()) ; i != a.alien_indices(rank).end() ; ++i, ++j)
         {
-            requests.push_back(mpi::mpi_isend(bp + *i - a.offset(), 1, rank, *i));
+            requests.push_back(mpi::mpi_isend(bp + *i - a.x_offset(), 1, rank, *i));
         }
     }
 
     // berechne innere anteile
+    // \TODO innner_matrix so designen, dass in product keine exception fliegen wuerde
     Product<Tag_>::value(r.vector(), a.inner_matrix(), b.vector(), true);
 
     // TODO nur auf empfang warten - senden warten reicht auch wenn ich ganz fertig bin.

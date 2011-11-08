@@ -343,7 +343,7 @@ class SPMVMPITest :
         {
             std::string dir(HONEI_SOURCEDIR);
             std::string file (dir + "/honei/math/testdata/poisson_advanced2/q2_sort_0/");
-            file += "A_4";
+            file += "prol_4";
             file += ".ell";
             SparseMatrixELL<DT_> aell(MatrixIO<io_formats::ELL>::read_matrix(file, DT_(0)));
 
@@ -351,7 +351,7 @@ class SPMVMPITest :
             SparseMatrixELLMPI<DT_> a(as);
 
             DenseVector<DT_> rs(aell.rows());
-            DenseVector<DT_> xs(aell.rows());
+            DenseVector<DT_> xs(aell.columns());
             for (unsigned long i(0) ; i < xs.size() ; ++i)
             {
                 xs[i] = DT_(i) + 10;

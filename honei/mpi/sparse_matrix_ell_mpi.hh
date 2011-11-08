@@ -43,6 +43,7 @@ namespace honei
             unsigned long _rows;
             unsigned long _columns;
             unsigned long _offset;
+            unsigned long _x_offset;
             unsigned long _rank;
             unsigned long _com_size;
 
@@ -80,8 +81,21 @@ namespace honei
                 }
                 _offset = local_offset;
 
+                unsigned long col_part_size(src.columns() / _com_size);
+                unsigned long col_rest(src.columns() - (col_part_size * _com_size));
+                if (_rank < col_rest)
+                    ++col_part_size;
+                unsigned local_x_offset(0);
+                for (unsigned long i(0) ; i < _rank ; ++i)
+                {
+                    local_x_offset += src.columns() / _com_size;
+                    if (i < col_rest)
+                        ++local_x_offset;
+                }
+                _x_offset = local_x_offset;
+
                 // matrix fenster ausschneiden und in src_part speichern
-                SparseMatrix<DT_> src_part(_rows, src.columns());
+                SparseMatrix<DT_> src_part(_rows, _columns);
                 for (unsigned long row(0) ; row < _rows ; ++row)
                 {
                     for (unsigned long i(0) ; i < src[row + _offset].used_elements() ; ++i)
@@ -98,7 +112,7 @@ namespace honei
                     bool outter(false);
                     for (unsigned long i(0) ; i < src_part[row].used_elements() ; ++i)
                     {
-                        if ((src_part[row].indices())[i] < _offset || (src_part[row].indices())[i] >= _offset + _rows)
+                        if ((src_part[row].indices())[i] < _x_offset || (src_part[row].indices())[i] >= _x_offset + col_part_size)
                         {
                             outter = true;
                             break;
@@ -116,7 +130,7 @@ namespace honei
                     SparseVector<DT_> temp(_columns, 0);
                     for (unsigned long i(0) ; i < src_part[row].used_elements() ; ++i)
                     {
-                        if ((src_part[row].indices())[i] >= _offset && (src_part[row].indices())[i] < _offset + _rows)
+                        if ((src_part[row].indices())[i] >= _x_offset && (src_part[row].indices())[i] < _x_offset + col_part_size)
                             temp[(src_part[row].indices())[i]] = (src_part[row].elements())[i];
                     }
                     inner[row] = temp;
@@ -126,7 +140,7 @@ namespace honei
                 {
                     for (unsigned long i(0) ; i < inner[row].used_elements() ; ++i)
                     {
-                        (inner[row].indices())[i] -= _offset;
+                        (inner[row].indices())[i] -= _x_offset;
                     }
                 }
 
@@ -138,7 +152,7 @@ namespace honei
                     SparseVector<DT_> temp(_columns, 0);
                     for (unsigned long i(0) ; i < src_part[row].used_elements() ; ++i)
                     {
-                        if ((src_part[row].indices())[i] < _offset || (src_part[row].indices())[i] >= _offset + _rows)
+                        if ((src_part[row].indices())[i] < _x_offset || (src_part[row].indices())[i] >= _x_offset + col_part_size)
                         {
                             temp[(src_part[row].indices())[i]] = (src_part[row].elements())[i];
                             _missing_indices.insert((src_part[row].indices())[i]);
@@ -185,7 +199,7 @@ namespace honei
                         {
                             unsigned long index;
                             mpi::mpi_bcast(&index, 1, rank);
-                            if (index >= _offset && index < _offset + _rows)
+                            if (index >= _x_offset && index < _x_offset + col_part_size)
                                 _alien_indices[rank].insert(index);
                         }
                     }
@@ -199,6 +213,7 @@ namespace honei
                 _rows(other._rows),
                 _columns(other._columns),
                 _offset(other._offset),
+                _x_offset(other._x_offset),
                 _rank(other._rank),
                 _com_size(other._com_size)
             {
@@ -239,12 +254,18 @@ namespace honei
                 return _offset;
             }
 
+            /// Returns our offset into the origin vector.
+            virtual unsigned long x_offset() const
+            {
+                return _x_offset;
+            }
+
             const DT_ operator()(unsigned long i, unsigned long j) const
             {
                 // \TODO remove _outer_unpacked and use _outer for element retrieval
                 DT_ result;
-                if (j >= _offset)
-                    result = (unsigned long)(*_inner)(i, j - _offset) | (unsigned long)(*_outer_unpacked)(i, j);
+                if (j >= _x_offset)
+                    result = (unsigned long)(*_inner)(i, j - _x_offset) | (unsigned long)(*_outer_unpacked)(i, j);
                 else
                     result = (unsigned long)(*_outer_unpacked)(i, j);
 
