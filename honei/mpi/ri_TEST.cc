@@ -127,7 +127,7 @@ class RISolverTestSparseELL:
         }
 };
 #ifdef HONEI_SSE
-RISolverTestSparseELL<tags::CPU::SSE, double> ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISolverTestSparseELL<tags::CPU::SSE, double> ris_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
 #else
-RISolverTestSparseELL<tags::CPU, double> ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISolverTestSparseELL<tags::CPU, double> ris_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
 #endif

@@ -36,7 +36,8 @@ namespace honei
     {
         private:
             shared_ptr<SparseMatrixELL<DT_> > _inner;
-            shared_ptr<SparseMatrix<DT_> > _outer;
+            shared_ptr<SparseMatrixELL<DT_> > _outer;
+            shared_ptr<SparseMatrix<DT_> > _outer_unpacked;
             std::set<unsigned long> _missing_indices;
             SharedArray<std::set<unsigned long> > _alien_indices;
             unsigned long _rows;
@@ -79,6 +80,7 @@ namespace honei
                 }
                 _offset = local_offset;
 
+                // matrix fenster ausschneiden und in src_part speichern
                 SparseMatrix<DT_> src_part(_rows, src.columns());
                 for (unsigned long row(0) ; row < _rows ; ++row)
                 {
@@ -89,9 +91,8 @@ namespace honei
                 }
 
 
+                // outer rows finden
                 std::vector<unsigned long> outer_row_index;
-
-                // matrix fenster ausschneiden und in src_part speichern
                 for (unsigned long row(0) ; row < _rows ; ++row)
                 {
                     bool outter(false);
@@ -145,10 +146,22 @@ namespace honei
                     }
                     outer[row] = temp;
                 }
+                outer._synch_column_vectors();
+
+                SparseMatrix<DT_> outer_comp(_rows, _missing_indices.size());
+                unsigned long cix(0);
+                for (std::set<unsigned long>::iterator ci(_missing_indices.begin()) ; ci != _missing_indices.end() ; ++ci, ++cix)
+                {
+                    for (unsigned long i(0) ; i < outer.column(*ci).used_elements() ; ++i)
+                    {
+                        outer_comp((outer.column(*ci).indices())[i], cix, (outer.column(*ci).elements())[i]);
+                    }
+                }
+                outer_comp._synch_column_vectors();
 
                 _inner.reset(new SparseMatrixELL<DT_>(inner));
-                _outer.reset(new SparseMatrix<DT_>(outer));
-                _outer->_synch_column_vectors();
+                _outer.reset(new SparseMatrixELL<DT_>(outer_comp));
+                _outer_unpacked.reset(new SparseMatrix<DT_>(outer));
 
                 // liste an alle anderen prozesse schicken
                 for (unsigned long rank(0) ; rank < _com_size ; ++rank)
@@ -191,7 +204,8 @@ namespace honei
             {
                 // \TODO create a real copy of _alien_indices
                 _inner.reset(new SparseMatrixELL<DT_> (*other._inner));
-                _outer.reset(new SparseMatrix<DT_> (*other._outer));
+                _outer.reset(new SparseMatrixELL<DT_> (*other._outer));
+                _outer_unpacked.reset(new SparseMatrix<DT_> (*other._outer_unpacked));
             }
 
             /// Destructor.
@@ -227,11 +241,12 @@ namespace honei
 
             const DT_ operator()(unsigned long i, unsigned long j) const
             {
+                // \TODO remove _outer_unpacked and use _outer for element retrieval
                 DT_ result;
                 if (j >= _offset)
-                    result = (unsigned long)(*_inner)(i, j - _offset) | (unsigned long)(*_outer)(i, j);
+                    result = (unsigned long)(*_inner)(i, j - _offset) | (unsigned long)(*_outer_unpacked)(i, j);
                 else
-                    result = (unsigned long)(*_outer)(i, j);
+                    result = (unsigned long)(*_outer_unpacked)(i, j);
 
                 return result;
             }
@@ -241,20 +256,20 @@ namespace honei
                 return *_inner;
             }
 
-            SparseMatrixELL<DT_> & inner_matrix()
+            /*SparseMatrixELL<DT_> & inner_matrix()
             {
                 return *_inner;
-            }
+            }*/
 
-            const SparseMatrix<DT_> & outer_matrix() const
+            const SparseMatrixELL<DT_> & outer_matrix() const
             {
                 return *_outer;
             }
 
-            SparseMatrix<DT_> & outer_matrix()
+            /*SparseMatrixELL<DT_> & outer_matrix()
             {
                 return *_outer;
-            }
+            }*/
 
             const std::set<unsigned long> & missing_indices() const
             {
@@ -288,7 +303,8 @@ namespace honei
             {
                 SparseMatrixELLMPI<DT_> result(*this);
                 result._inner.reset(new SparseMatrixELL<DT_>(this->_inner->copy()));
-                result._outer.reset(new SparseMatrix<DT_>(this->_outer->copy()));
+                result._outer.reset(new SparseMatrixELL<DT_>(this->_outer->copy()));
+                result._outer_unpacked.reset(new SparseMatrix<DT_>(this->_outer_unpacked->copy()));
                 return result;
             }
     };

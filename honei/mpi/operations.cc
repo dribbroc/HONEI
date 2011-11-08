@@ -83,14 +83,13 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
     std::vector<MPI_Request> requests;
 
     // \TODO use only one send/recv per process
-    DT_ missing_values[a.missing_indices().size()];
+    // \TODO when done, remove _missing_indices from smellmpi
+    DenseVector<DT_> missing_values(a.outer_matrix().columns());
     // empfange alle fehlenden werte
+    unsigned long j(0);
+    for (std::set<unsigned long>::iterator i(a.missing_indices().begin()) ; i != a.missing_indices().end() ; ++i, ++j)
     {
-        unsigned long j(0);
-        for (std::set<unsigned long>::iterator i(a.missing_indices().begin()) ; i != a.missing_indices().end() ; ++i, ++j)
-        {
-            requests.push_back(mpi::mpi_irecv(missing_values + j, 1, MPI_ANY_SOURCE, *i));
-        }
+        requests.push_back(mpi::mpi_irecv(missing_values.elements() + j, 1, MPI_ANY_SOURCE, *i));
     }
 
     // sende alle werte, die anderen fehlen
@@ -113,23 +112,9 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
     MPI_Waitall(requests.size(), &requests[0], MPI_STATUSES_IGNORE);
 
     // berechne aeussere anteile
-    // es gilt: missing_indices eintraege in b-vektor sind spalten in outer matrix
-    unsigned long ix(0);
-    DT_ * r_ele(r.elements());
-    for (std::set<unsigned long>::iterator coli(a.missing_indices().begin()) ; coli != a.missing_indices().end() ; ++coli)
-    {
-        const SparseVector<DT_> scol((a.outer_matrix()).column(*coli));
-        const unsigned long ue(scol.used_elements());
-        const DT_* scol_ele(scol.elements());
-        const unsigned long * indices(scol.indices());
-
-        for (unsigned long row(0) ; row < ue ; ++row)
-        {
-            const unsigned long row_index(indices[row]);
-            r_ele[row_index] +=  scol_ele[row] * missing_values[ix];
-        }
-        ++ix;
-    }
+    DenseVector<DT_> r_outer(r.size(), DT_(0));
+    Product<Tag_>::value(r_outer, a.outer_matrix(), missing_values);
+    Sum<Tag_>::value(r.vector(), r_outer);
 }
 
 template <typename Tag_>
