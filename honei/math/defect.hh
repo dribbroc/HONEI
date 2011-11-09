@@ -384,7 +384,7 @@ namespace honei
             template<typename DT_>
                 static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixELLMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
                 {
-                    DenseVectorMPI<DT_> temp(result.copy());
+                    DenseVectorMPI<DT_> temp(result.size());
                     Product<tags::CPU>::value(temp, system, x);
                     Difference<tags::CPU>::value(result, right_hand_side, temp);
                     return result;
@@ -514,7 +514,7 @@ namespace honei
             template<typename DT_>
                 static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixELLMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
                 {
-                    DenseVectorMPI<DT_> temp(result.copy());
+                    DenseVectorMPI<DT_> temp(result.size());
                     Product<tags::CPU::SSE>::value(temp, system, x);
                     Difference<tags::CPU::SSE>::value(result, right_hand_side, temp);
                     return result;
