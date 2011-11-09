@@ -80,7 +80,8 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
     int com_size;
     mpi::mpi_comm_size(&com_size);
 
-    std::vector<MPI_Request> requests;
+    std::vector<MPI_Request> send_requests;
+    std::vector<MPI_Request> recv_requests;
 
     // \TODO use only one send/recv per process
     // \TODO when done, remove _missing_indices from smellmpi
@@ -89,7 +90,7 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
     unsigned long j(0);
     for (std::set<unsigned long>::iterator i(a.missing_indices().begin()) ; i != a.missing_indices().end() ; ++i, ++j)
     {
-        requests.push_back(mpi::mpi_irecv(missing_values.elements() + j, 1, MPI_ANY_SOURCE, *i));
+        recv_requests.push_back(mpi::mpi_irecv(missing_values.elements() + j, 1, MPI_ANY_SOURCE, *i));
     }
 
     // sende alle werte, die anderen fehlen
@@ -101,7 +102,7 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
         unsigned long j(0);
         for (std::set<unsigned long>::iterator i(a.alien_indices(rank).begin()) ; i != a.alien_indices(rank).end() ; ++i, ++j)
         {
-            requests.push_back(mpi::mpi_isend(bp + *i - a.x_offset(), 1, rank, *i));
+            send_requests.push_back(mpi::mpi_isend(bp + *i - a.x_offset(), 1, rank, *i));
         }
     }
 
@@ -109,14 +110,16 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
     // \TODO innner_matrix so designen, dass in product keine exception fliegen wuerde
     Product<Tag_>::value(r.vector(), a.inner_matrix(), b.vector(), true);
 
-    // TODO nur auf empfang warten - senden warten reicht auch wenn ich ganz fertig bin.
-    MPI_Waitall(requests.size(), &requests[0], MPI_STATUSES_IGNORE);
-    requests.clear();
+    MPI_Waitall(recv_requests.size(), &recv_requests[0], MPI_STATUSES_IGNORE);
+    recv_requests.clear();
 
     // berechne aeussere anteile
     DenseVector<DT_> r_outer(r.local_size(), DT_(0));
     Product<Tag_>::value(r_outer, a.outer_matrix(), missing_values);
     Sum<Tag_>::value(r.vector(), r_outer);
+
+    MPI_Waitall(send_requests.size(), &send_requests[0], MPI_STATUSES_IGNORE);
+    send_requests.clear();
 }
 
 template <typename Tag_>
