@@ -317,13 +317,12 @@ class DefectMPITest :
             Defect<Tag_>::value(r, b, a, x);
             Defect<Tag_>::value(r, b, a, x);
 
-
             for (unsigned long i(0) ; i < r.size() ; ++i)
                 TEST_CHECK_EQUAL_WITHIN_EPS(r[i], rs[i + r.offset()], 1e-10);
         }
 };
 #ifdef HONEI_SSE
-DefectMPITest<tags::CPU::SSE, double> defect_mpi_test_double("double");
+//DefectMPITest<tags::CPU::SSE, double> defect_mpi_test_double("double");
 #else
 DefectMPITest<tags::CPU, double> defect_mpi_test_double("double");
 #endif
@@ -341,6 +340,7 @@ class SPMVMPITest :
 
         virtual void run() const
         {
+            MPI_Barrier(MPI_COMM_WORLD);
             std::string dir(HONEI_SOURCEDIR);
             std::string file (dir + "/honei/math/testdata/poisson_advanced2/q2_sort_0/");
             file += "prol_4";
@@ -372,9 +372,10 @@ class SPMVMPITest :
             Product<Tag_>::value(r, a, x);
             std::cout<<bt.total()-at.total()<<" "<<dt.total()-ct.total()<<std::endl;
 
-
             for (unsigned long i(0) ; i < r.size() ; ++i)
+            {
                 TEST_CHECK_EQUAL_WITHIN_EPS(r[i], rs[i + r.offset()], 1e-10);
+            }
 
             mpi::mpi_finalize();
         }

@@ -85,6 +85,7 @@ namespace honei
                 unsigned long col_rest(src.columns() - (col_part_size * _com_size));
                 if (_rank < col_rest)
                     ++col_part_size;
+
                 unsigned local_x_offset(0);
                 for (unsigned long i(0) ; i < _rank ; ++i)
                 {
@@ -127,11 +128,13 @@ namespace honei
                 for (unsigned long rowi(0) ; rowi < outer_row_index.size() ; ++rowi)
                 {
                     unsigned long row(outer_row_index.at(rowi));
-                    SparseVector<DT_> temp(_columns, 0);
+                    SparseVector<DT_> temp(_columns);
                     for (unsigned long i(0) ; i < src_part[row].used_elements() ; ++i)
                     {
                         if ((src_part[row].indices())[i] >= _x_offset && (src_part[row].indices())[i] < _x_offset + col_part_size)
+                        {
                             temp[(src_part[row].indices())[i]] = (src_part[row].elements())[i];
+                        }
                     }
                     inner[row] = temp;
                 }
@@ -149,7 +152,7 @@ namespace honei
                 for (unsigned long rowi(0) ; rowi < outer_row_index.size() ; ++rowi)
                 {
                     unsigned long row(outer_row_index.at(rowi));
-                    SparseVector<DT_> temp(_columns, 0);
+                    SparseVector<DT_> temp(_columns);
                     for (unsigned long i(0) ; i < src_part[row].used_elements() ; ++i)
                     {
                         if ((src_part[row].indices())[i] < _x_offset || (src_part[row].indices())[i] >= _x_offset + col_part_size)
@@ -162,6 +165,7 @@ namespace honei
                 }
                 outer._synch_column_vectors();
 
+                // outer matrix komprimieren
                 SparseMatrix<DT_> outer_comp(_rows, _missing_indices.size());
                 unsigned long cix(0);
                 for (std::set<unsigned long>::iterator ci(_missing_indices.begin()) ; ci != _missing_indices.end() ; ++ci, ++cix)
@@ -171,7 +175,7 @@ namespace honei
                         outer_comp((outer.column(*ci).indices())[i], cix, (outer.column(*ci).elements())[i]);
                     }
                 }
-                outer_comp._synch_column_vectors();
+                //outer_comp._synch_column_vectors();
 
                 _inner.reset(new SparseMatrixELL<DT_>(inner));
                 _outer.reset(new SparseMatrixELL<DT_>(outer_comp));
@@ -263,13 +267,16 @@ namespace honei
             const DT_ operator()(unsigned long i, unsigned long j) const
             {
                 // \TODO remove _outer_unpacked and use _outer for element retrieval
-                DT_ result;
                 if (j >= _x_offset)
-                    result = (unsigned long)(*_inner)(i, j - _x_offset) | (unsigned long)(*_outer_unpacked)(i, j);
+                {
+                    //result = (*_inner)(i, j - _x_offset) | (*_outer_unpacked)(i, j);
+                    if ((*_inner)(i, j - _x_offset) != DT_(0))
+                        return (*_inner)(i, j - _x_offset);
+                    else
+                        return (*_outer_unpacked)(i, j);
+                }
                 else
-                    result = (unsigned long)(*_outer_unpacked)(i, j);
-
-                return result;
+                    return (*_outer_unpacked)(i, j);
             }
 
             const SparseMatrixELL<DT_> & inner_matrix() const

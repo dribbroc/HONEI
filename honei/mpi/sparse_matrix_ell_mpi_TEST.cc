@@ -23,6 +23,7 @@
 #include <honei/mpi/sparse_matrix_ell_mpi.hh>
 #include <honei/backends/mpi/operations.hh>
 #include <honei/util/unittest.hh>
+#include <honei/math/matrix_io.hh>
 
 #include <string>
 #include <limits>
@@ -33,7 +34,7 @@ using namespace honei;
 using namespace tests;
 
 
-template <typename DataType_>
+template <typename DT_>
 class SparseMatrixELLMPIQuickTest :
     public QuickTest
 {
@@ -47,27 +48,26 @@ class SparseMatrixELLMPIQuickTest :
         {
             mpi::mpi_init();
 
-            SparseMatrix<DataType_> src(32, 32);
-            for (unsigned long i(0) ; i < src.rows() ; ++i)
-                for (unsigned long j(0) ; j < src.columns() ; ++j)
-                {
-                    if (i == j)
-                        src(i, j, i+10);
-                    if (i > 0 && i < src.rows() - 1 && i==j)
-                        src(i+1, j, i+1);
-                    if (j > 0 && j < src.columns() - 1 && i==j)
-                        src(i, j+1, j);
-                }
+            std::string dir(HONEI_SOURCEDIR);
+            std::string file (dir + "/honei/math/testdata/poisson_advanced2/sort_0/");
+            file += "prol_4";
+            file += ".ell";
+            SparseMatrixELL<DT_> aell(MatrixIO<io_formats::ELL>::read_matrix(file, DT_(0)));
+
+            SparseMatrix<DT_> as(aell);
+            SparseMatrixELLMPI<DT_> a(as);
 
 
-            SparseMatrixELLMPI<DataType_> sm0(src);
-            SparseMatrixELLMPI<DataType_> sm1(sm0);
-            SparseMatrixELLMPI<DataType_> sm2(sm1.copy());
-            std::cout<<sm2.rows()<<" "<<sm2.offset()<<std::endl;
+            SparseMatrixELLMPI<DT_> sm0(as);
+            SparseMatrixELLMPI<DT_> sm1(sm0);
+            SparseMatrixELLMPI<DT_> sm2(sm1.copy());
+
 
             for (unsigned long i(0) ; i < sm2.rows() ; ++i)
                 for (unsigned long j(0) ; j < sm2.columns() ; ++j)
-                    TEST_CHECK_EQUAL(sm2(i, j), src(i + sm2.offset(), j));
+                {
+                    TEST_CHECK_EQUAL(sm0(i, j), aell(i + sm2.offset(), j));
+                }
 
 
             mpi::mpi_finalize();

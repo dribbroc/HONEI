@@ -111,6 +111,7 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
 
     // TODO nur auf empfang warten - senden warten reicht auch wenn ich ganz fertig bin.
     MPI_Waitall(requests.size(), &requests[0], MPI_STATUSES_IGNORE);
+    requests.clear();
 
     // berechne aeussere anteile
     DenseVector<DT_> r_outer(r.size(), DT_(0));
