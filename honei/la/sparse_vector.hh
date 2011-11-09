@@ -91,7 +91,7 @@ namespace honei
              * \param size Size of the new sparse vector.
              * \param capacity Number of elements for which the vector shall reserve space.
              */
-            SparseVector(unsigned long size, unsigned long capacity);
+            SparseVector(unsigned long size, unsigned long capacity = 1);
 
             /// Copy-constructor.
             SparseVector(const SparseVector<DataType_> & other);

@@ -152,6 +152,8 @@ namespace honei
         ASSERT(size + 1 >= capacity, "capacity '" + stringify(capacity) + "' exceeds size '" +
                 stringify(size) + "'!");
         ASSERT(size > 0, "size is zero!");
+        if (capacity < 1)
+            throw InternalError("capacity == 0 is bugy und no one wants to fix it!");
     }
 
     template <typename DataType_>
