@@ -8,6 +8,7 @@ dnl the base filename with no extension; later parameters can be `hh', `cc',
 dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
+add(`cg',                            `test')
 add(`dense_vector_mpi',              `hh', `fwd', `test')
 add(`operations',                    `hh', `cc', `test')
 add(`ri',                            `test')

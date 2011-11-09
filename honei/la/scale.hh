@@ -27,6 +27,8 @@
 #include <honei/la/sparse_matrix.hh>
 #include <honei/util/benchmark_info.hh>
 #include <honei/util/tags.hh>
+#include <honei/mpi/operations.hh>
+#include <honei/mpi/dense_vector_mpi-fwd.hh>
 
 namespace honei
 {
@@ -146,6 +148,13 @@ namespace honei
                 *l *= a;
             }
 
+            return x;
+        }
+
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & x, DT_ a)
+        {
+            MPIOps<tags::CPU>::scale(x, a);
             return x;
         }
 
@@ -290,6 +299,13 @@ namespace honei
         /*static SparseMatrix<float> & value(SparseMatrix<float> & x, const float a);
 
         static SparseMatrix<double> & value(SparseMatrix<double> & x, const double a);*/
+
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & x, DT_ a)
+        {
+            MPIOps<tags::CPU::SSE>::scale(x, a);
+            return x;
+        }
         /// \}
     };
 

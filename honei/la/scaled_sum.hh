@@ -204,6 +204,13 @@ namespace honei
         }
 
         template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y, DT_ a)
+        {
+            MPIOps<tags::CPU>::scaled_sum(x, y, a);
+            return x;
+        }
+
+        template <typename DT_>
         static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y, DT_ a)
         {
             MPIOps<tags::CPU>::scaled_sum(r, x, y, a);
@@ -269,6 +276,13 @@ namespace honei
         static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & x, const DenseVectorContinuousBase<float> & y, const DenseVectorContinuousBase<float> & z, float b);
 
         static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & x, const DenseVectorContinuousBase<double> & y, const DenseVectorContinuousBase<double> & z, double b);
+
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y, DT_ a)
+        {
+            MPIOps<tags::CPU::SSE>::scaled_sum(x, y, a);
+            return x;
+        }
 
         template <typename DT_>
         static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y, DT_ a)

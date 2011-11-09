@@ -44,15 +44,15 @@ namespace honei
             /**
              * Constructor.
              *
-             * \param size Size of the new dense vector.
+             * \param src The src for the new dense vector.
              */
             DenseVectorMPI(const DenseVector<DT_> & src,  MPI_Comm com = MPI_COMM_WORLD) :
                 _orig_size(src.size()),
                 _rank(mpi::mpi_comm_rank(com)),
                 _com_size(mpi::mpi_comm_size(com))
             {
-                unsigned long part_size(src.size() / _com_size);
-                unsigned long rest(src.size() - (part_size * _com_size));
+                unsigned long part_size(_orig_size / _com_size);
+                unsigned long rest(_orig_size - (part_size * _com_size));
                 if (_rank < rest)
                     ++part_size;
                 unsigned long size = part_size;
@@ -60,7 +60,7 @@ namespace honei
                 unsigned local_offset(0);
                 for (unsigned long i(0) ; i < _rank ; ++i)
                 {
-                    local_offset += src.size() / _com_size;
+                    local_offset += _orig_size / _com_size;
                     if (i < rest)
                         ++local_offset;
                 }
@@ -71,6 +71,34 @@ namespace honei
                 {
                     (*_vector)[i] = src[i + _offset];
                 }
+            }
+
+            /**
+             * Constructor.
+             *
+             * \param size Size of the new dense vector.
+             */
+            DenseVectorMPI(unsigned long src_size,  MPI_Comm com = MPI_COMM_WORLD) :
+                _orig_size(src_size),
+                _rank(mpi::mpi_comm_rank(com)),
+                _com_size(mpi::mpi_comm_size(com))
+            {
+                unsigned long part_size(_orig_size / _com_size);
+                unsigned long rest(_orig_size - (part_size * _com_size));
+                if (_rank < rest)
+                    ++part_size;
+                unsigned long size = part_size;
+
+                unsigned local_offset(0);
+                for (unsigned long i(0) ; i < _rank ; ++i)
+                {
+                    local_offset += _orig_size / _com_size;
+                    if (i < rest)
+                        ++local_offset;
+                }
+                _offset = local_offset;
+
+                _vector.reset(new DenseVector<DT_>(size));
             }
 
 
@@ -93,13 +121,13 @@ namespace honei
             /// \}
 
             /// Returns our size.
-            virtual unsigned long size() const
+            virtual unsigned long local_size() const
             {
                 return _vector->size();
             }
 
             /// Returns our original size.
-            virtual unsigned long orig_size() const
+            virtual unsigned long size() const
             {
                 return _orig_size;
             }

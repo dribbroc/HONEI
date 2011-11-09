@@ -21,7 +21,7 @@
 #include <honei/mpi/dense_vector_mpi.hh>
 #include <honei/backends/mpi/operations.hh>
 #include <honei/util/unittest.hh>
-#include <honei/math/ri.hh>
+#include <honei/math/cg.hh>
 #include <honei/math/matrix_io.hh>
 #include <honei/math/vector_io.hh>
 #include <honei/util/time_stamp.hh>
@@ -38,18 +38,18 @@ using namespace tests;
 
 
 template <typename Tag_, typename DT1_>
-class RISolverTestSparseELL:
+class CGSolverTestSparseELL:
     public BaseTest
 {
     private:
         std::string _m_f, _v_f, _r_f, _i_f;
     public:
-        RISolverTestSparseELL(const std::string & tag,
+        CGSolverTestSparseELL(const std::string & tag,
                 std::string m_file,
                 std::string v_file,
                 std::string res_file,
                 std::string init_file) :
-            BaseTest("MPI RI solver test (sparse ELL system)<" + tag + ">")
+            BaseTest("MPI CG solver test (sparse ELL system)<" + tag + ">")
         {
             register_tag(Tag_::name);
             _m_f = m_file;
@@ -88,12 +88,8 @@ class RISolverTestSparseELL:
             DenseVector<DT1_> sresult(VectorIO<io_formats::EXP>::read_vector(filename_4, DT1_(0)));
             DenseVectorMPI<DT1_> result(sresult);
 
-            DenseVector<DT1_> stemp_0(srhs.size());
-            DenseVectorMPI<DT1_> temp_0(stemp_0);
-            DenseVector<DT1_> stemp_1(srhs.size());
-            DenseVectorMPI<DT1_> temp_1(stemp_1);
             unsigned long used_iters(4711);
-            RISolver<Tag_>::value(matrix2, diag_inverted, rhs, result, temp_0, temp_1, 10000ul, used_iters, 1e-6);
+            CG<Tag_, methods::VAR>::value(matrix2, diag_inverted, rhs, result, 1000ul, used_iters, 1e-6);
             std::cout<<"Used iters: "<<used_iters<<std::endl;
 
             std::string filename_3(HONEI_SOURCEDIR);
@@ -127,7 +123,7 @@ class RISolverTestSparseELL:
         }
 };
 #ifdef HONEI_SSE
-RISolverTestSparseELL<tags::CPU::SSE, double> ris_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
+CGSolverTestSparseELL<tags::CPU::SSE, double> cgs_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
 #else
-RISolverTestSparseELL<tags::CPU, double> ris_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
+CGSolverTestSparseELL<tags::CPU, double> cgs_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
 #endif

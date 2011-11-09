@@ -75,7 +75,7 @@ class ScaledSumMPITest :
             ScaledSum<tags::CPU::SSE>::value(r, x, y, DT_(5));
             ScaledSum<tags::CPU::SSE>::value(rs, xs, ys, DT_(5));
 
-            for (unsigned long i(0) ; i < r.size() ; ++i)
+            for (unsigned long i(0) ; i < r.local_size() ; ++i)
                 TEST_CHECK_EQUAL(r[i], rs[i + r.offset()]);
         }
 };
@@ -113,7 +113,7 @@ class SumMPITest :
             Sum<tags::CPU::SSE>::value(x, y);
             Sum<tags::CPU::SSE>::value(xs, ys);
 
-            for (unsigned long i(0) ; i < x.size() ; ++i)
+            for (unsigned long i(0) ; i < x.local_size() ; ++i)
                 TEST_CHECK_EQUAL(x[i], xs[i + x.offset()]);
         }
 };
@@ -153,7 +153,7 @@ class DifferenceMPITest :
             Difference<tags::CPU::SSE>::value(r, x, y);
             Difference<tags::CPU::SSE>::value(rs, xs, ys);
 
-            for (unsigned long i(0) ; i < r.size() ; ++i)
+            for (unsigned long i(0) ; i < r.local_size() ; ++i)
                 TEST_CHECK_EQUAL(r[i], rs[i + r.offset()]);
         }
 };
@@ -193,7 +193,7 @@ class ElementProductMPITest :
             ElementProduct<tags::CPU::SSE>::value(r, x, y);
             ElementProduct<tags::CPU::SSE>::value(rs, xs, ys);
 
-            for (unsigned long i(0) ; i < x.size() ; ++i)
+            for (unsigned long i(0) ; i < x.local_size() ; ++i)
                 TEST_CHECK_EQUAL(r[i], rs[i + x.offset()]);
         }
 };
@@ -317,7 +317,7 @@ class DefectMPITest :
             Defect<Tag_>::value(r, b, a, x);
             Defect<Tag_>::value(r, b, a, x);
 
-            for (unsigned long i(0) ; i < r.size() ; ++i)
+            for (unsigned long i(0) ; i < r.local_size() ; ++i)
                 TEST_CHECK_EQUAL_WITHIN_EPS(r[i], rs[i + r.offset()], 1e-10);
         }
 };
@@ -372,7 +372,7 @@ class SPMVMPITest :
             Product<Tag_>::value(r, a, x);
             std::cout<<bt.total()-at.total()<<" "<<dt.total()-ct.total()<<std::endl;
 
-            for (unsigned long i(0) ; i < r.size() ; ++i)
+            for (unsigned long i(0) ; i < r.local_size() ; ++i)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(r[i], rs[i + r.offset()], 1e-10);
             }

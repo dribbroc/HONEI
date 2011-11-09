@@ -114,9 +114,23 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
     requests.clear();
 
     // berechne aeussere anteile
-    DenseVector<DT_> r_outer(r.size(), DT_(0));
+    DenseVector<DT_> r_outer(r.local_size(), DT_(0));
     Product<Tag_>::value(r_outer, a.outer_matrix(), missing_values);
     Sum<Tag_>::value(r.vector(), r_outer);
+}
+
+template <typename Tag_>
+template <typename DT_>
+void MPIOps<Tag_>::scale(DenseVectorMPI<DT_> & x, DT_ a)
+{
+    Scale<Tag_>::value(x.vector(), a);
+}
+
+template <typename Tag_>
+template <typename DT_>
+void MPIOps<Tag_>::scaled_sum(DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y, DT_ a)
+{
+    ScaledSum<Tag_>::value(x.vector(), y.vector(), a);
 }
 
 template <typename Tag_>
@@ -141,6 +155,8 @@ template double MPIOps<tags::CPU>::dot_product(const DenseVectorMPI<double> & x,
 template void MPIOps<tags::CPU>::element_product(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
 template double MPIOps<tags::CPU>::norm_l2_false(const DenseVectorMPI<double> & x);
 template void MPIOps<tags::CPU>::product(DenseVectorMPI<double> & r, const SparseMatrixELLMPI<double> & a, const DenseVectorMPI<double> & b);
+template void MPIOps<tags::CPU>::scale(DenseVectorMPI<double> & x, double a);
+template void MPIOps<tags::CPU>::scaled_sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
 template void MPIOps<tags::CPU>::scaled_sum(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
 template void MPIOps<tags::CPU>::sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
 
@@ -151,6 +167,8 @@ template double MPIOps<tags::CPU::SSE>::dot_product(const DenseVectorMPI<double>
 template void MPIOps<tags::CPU::SSE>::element_product(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
 template double MPIOps<tags::CPU::SSE>::norm_l2_false(const DenseVectorMPI<double> & x);
 template void MPIOps<tags::CPU::SSE>::product(DenseVectorMPI<double> & r, const SparseMatrixELLMPI<double> & a, const DenseVectorMPI<double> & b);
+template void MPIOps<tags::CPU::SSE>::scale(DenseVectorMPI<double> & x, double a);
+template void MPIOps<tags::CPU::SSE>::scaled_sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
 template void MPIOps<tags::CPU::SSE>::scaled_sum(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
 template void MPIOps<tags::CPU::SSE>::sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
 
