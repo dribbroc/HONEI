@@ -146,20 +146,17 @@ namespace honei
 
         template <typename DT1_, typename DT2_>
         static DenseVector<DT1_> value(DenseVector<DT1_> & result, const SparseMatrixELL<DT1_> & a, const DenseVector<DT2_> & b,
-                bool no_exceptions = false, unsigned long row_start = 0, unsigned long row_end = 0)
+                unsigned long row_start = 0, unsigned long row_end = 0)
         {
             CONTEXT("When multiplying SparseMatrixELL with DenseVector:");
 
-            if (! no_exceptions)
+            if (b.size() != a.columns())
             {
-                if (b.size() != a.columns())
-                {
-                    throw VectorSizeDoesNotMatch(b.size(), a.columns());
-                }
-                if (a.rows() != result.size())
-                {
-                    throw VectorSizeDoesNotMatch(a.rows(), result.size());
-                }
+                throw VectorSizeDoesNotMatch(b.size(), a.columns());
+            }
+            if (a.rows() != result.size())
+            {
+                throw VectorSizeDoesNotMatch(a.rows(), result.size());
             }
 
             //DenseVector<DT1_> result(a.rows(), DT1_(0));
@@ -1594,10 +1591,10 @@ namespace honei
         static DenseMatrixTile<double> & value(DenseMatrixTile<double> & r, const DenseMatrixTile<double> & a, const DenseMatrixTile<double> & b);
 
         static DenseVector<float> & value(DenseVector<float> & result, const SparseMatrixELL<float> & a, const DenseVector<float> & b,
-                bool no_exceptions = false, unsigned long row_start = 0, unsigned long row_end = 0);
+                unsigned long row_start = 0, unsigned long row_end = 0);
 
         static DenseVector<double> & value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b,
-                bool no_exceptions = false, unsigned long row_start = 0, unsigned long row_end = 0);
+                unsigned long row_start = 0, unsigned long row_end = 0);
 
         template<typename DT1_, typename DT2_>
         static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
@@ -1763,18 +1760,15 @@ namespace honei
             }
 
             template <typename DT_>
-            static DenseVector<DT_> & value(DenseVector<DT_> & result, const SparseMatrixELL<DT_> & a, const DenseVector<DT_> & b, bool no_exceptions = false)
+            static DenseVector<DT_> & value(DenseVector<DT_> & result, const SparseMatrixELL<DT_> & a, const DenseVector<DT_> & b)
             {
-                if (! no_exceptions)
+                if (b.size() != a.columns())
                 {
-                    if (b.size() != a.columns())
-                    {
-                        throw VectorSizeDoesNotMatch(b.size(), a.columns());
-                    }
-                    if (a.rows() != result.size())
-                    {
-                        throw VectorSizeDoesNotMatch(a.rows(), result.size());
-                    }
+                    throw VectorSizeDoesNotMatch(b.size(), a.columns());
+                }
+                if (a.rows() != result.size())
+                {
+                    throw VectorSizeDoesNotMatch(a.rows(), result.size());
                 }
 
                 //fill<typename Tag_::DelegateTo>(result, DT_(0));
@@ -1795,8 +1789,8 @@ namespace honei
                 for (unsigned long i(0) ; i < max_count ; ++i)
                 {
                     OperationWrapper<honei::Product<typename Tag_::DelegateTo>, DenseVector<DT_>,
-                        DenseVector<DT_>, SparseMatrixELL<DT_>, DenseVector<DT_>, bool, unsigned long, unsigned long > wrapper(result);
-                    tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, result, a, b, no_exceptions, limits[i], limits[i+1])));
+                        DenseVector<DT_>, SparseMatrixELL<DT_>, DenseVector<DT_>, unsigned long, unsigned long > wrapper(result);
+                    tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, result, a, b, limits[i], limits[i+1])));
                 }
 
                 tickets.wait();

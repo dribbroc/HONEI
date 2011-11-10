@@ -107,8 +107,7 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
     }
 
     // berechne innere anteile
-    // \TODO innner_matrix so designen, dass in product keine exception fliegen wuerde
-    Product<Tag_>::value(r.vector(), a.inner_matrix(), b.vector(), true);
+    Product<Tag_>::value(r.vector(), a.inner_matrix(), b.vector());
 
     MPI_Waitall(recv_requests.size(), &recv_requests[0], MPI_STATUSES_IGNORE);
     recv_requests.clear();
