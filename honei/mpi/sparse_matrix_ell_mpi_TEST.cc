@@ -69,7 +69,6 @@ class SparseMatrixELLMPIQuickTest :
                     TEST_CHECK_EQUAL(sm0(i, j), aell(i + sm2.offset(), j));
                 }
 
-
             mpi::mpi_finalize();
         }
 };

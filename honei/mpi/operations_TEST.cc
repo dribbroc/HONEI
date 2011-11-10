@@ -322,7 +322,7 @@ class DefectMPITest :
         }
 };
 #ifdef HONEI_SSE
-//DefectMPITest<tags::CPU::SSE, double> defect_mpi_test_double("double");
+DefectMPITest<tags::CPU::SSE, double> defect_mpi_test_double("double");
 #else
 DefectMPITest<tags::CPU, double> defect_mpi_test_double("double");
 #endif

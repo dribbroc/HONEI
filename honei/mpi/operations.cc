@@ -72,8 +72,7 @@ template <typename Tag_>
 template <typename DT_>
 void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
 {
-    // cast away const as mpi does not like const pointers
-    DT_ * bp = (DT_*)b.elements();
+    const DT_ * bp = b.elements();
 
     int myrank;
     mpi::mpi_comm_rank(&myrank);
@@ -83,27 +82,25 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
     std::vector<MPI_Request> send_requests;
     std::vector<MPI_Request> recv_requests;
 
-    // \TODO use only one send/recv per process
-    // \TODO when done, remove _missing_indices from smellmpi
     DenseVector<DT_> missing_values(a.outer_matrix().columns());
     // empfange alle fehlenden werte
-    unsigned long j(0);
-    for (std::set<unsigned long>::iterator i(a.missing_indices().begin()) ; i != a.missing_indices().end() ; ++i, ++j)
+    unsigned long g_size(0);
+    for (unsigned long i(0) ; i < a.recv_ranks().size() ; ++i)
     {
-        recv_requests.push_back(mpi::mpi_irecv(missing_values.elements() + j, 1, MPI_ANY_SOURCE, *i));
+        recv_requests.push_back(mpi::mpi_irecv(missing_values.elements() + g_size, a.recv_sizes().at(i), a.recv_ranks().at(i), a.recv_ranks().at(i)));
+        g_size += a.recv_sizes().at(i);
     }
 
     // sende alle werte, die anderen fehlen
-    for (int rank(0) ; rank < com_size ; ++rank)
+    g_size = 0;
+    // \TODO use real array here
+    std::vector<DT_> send_data;
+    for (unsigned long i(0) ; i < a.send_ranks().size() ; ++i)
     {
-        if (rank == myrank)
-            continue;
-
-        unsigned long j(0);
-        for (std::set<unsigned long>::iterator i(a.alien_indices(rank).begin()) ; i != a.alien_indices(rank).end() ; ++i, ++j)
-        {
-            send_requests.push_back(mpi::mpi_isend(bp + *i - a.x_offset(), 1, rank, *i));
-        }
+        unsigned long g_end(g_size + a.send_sizes().at(i));
+        for (unsigned long j(0) ; g_size < g_end ; ++g_size, ++j)
+            send_data.push_back(bp[a.send_index().at(g_size)]);
+        send_requests.push_back(mpi::mpi_isend(&(send_data[g_size - a.send_sizes().at(i)]), a.send_sizes().at(i), a.send_ranks().at(i), myrank));
     }
 
     // berechne innere anteile

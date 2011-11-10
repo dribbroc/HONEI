@@ -38,7 +38,11 @@ namespace honei
             shared_ptr<SparseMatrixELL<DT_> > _inner;
             shared_ptr<SparseMatrixELL<DT_> > _outer;
             std::set<unsigned long> _missing_indices;
-            SharedArray<std::set<unsigned long> > _alien_indices;
+            std::vector<unsigned long> _recv_ranks;
+            std::vector<unsigned long> _recv_sizes;
+            std::vector<unsigned long> _send_ranks;
+            std::vector<unsigned long> _send_sizes;
+            std::vector<unsigned long> _send_index;
             unsigned long _rows;
             unsigned long _columns;
             unsigned long _offset;
@@ -55,8 +59,7 @@ namespace honei
             /**
              * Constructor.
              */
-            SparseMatrixELLMPI(const SparseMatrix<DT_> & src, MPI_Comm com = MPI_COMM_WORLD) :
-                _alien_indices(mpi::mpi_comm_size(com))
+            SparseMatrixELLMPI(const SparseMatrix<DT_> & src, MPI_Comm com = MPI_COMM_WORLD)
             {
                 int irank;
                 mpi::mpi_comm_rank(&irank, com);
@@ -144,19 +147,41 @@ namespace honei
                 _inner.reset(new SparseMatrixELL<DT_>(inner));
                 _outer.reset(new SparseMatrixELL<DT_>(outer_comp));
 
-                // liste an alle anderen prozesse schicken
+                // liste aufbauen, wer was hat und braucht
+                unsigned long send_size(0);
                 for (unsigned long rank(0) ; rank < _com_size ; ++rank)
                 {
+                    send_size = 0;
                     if (rank == _rank)
                     {
                         unsigned long count(_missing_indices.size());
                         mpi::mpi_bcast(&count, 1, rank);
 
-                        for (std::set<unsigned long>::iterator i(_missing_indices.begin()) ; i != _missing_indices.end() ; ++i)
+                        unsigned long last_owner(-1);
+                        unsigned long cix(0);
+                        unsigned long last_cix(0);
+                        for (std::set<unsigned long>::iterator i(_missing_indices.begin()) ; i != _missing_indices.end() ; ++i, ++cix)
                         {
                             unsigned long index(*i);
                             mpi::mpi_bcast(&index, 1, rank);
+                            unsigned long owner(0);
+                            mpi::mpi_recv(&owner, 1, MPI_ANY_SOURCE, rank);
+
+                            if (last_owner == (unsigned long)(-1))
+                            {
+                                last_owner = owner;
+                                _recv_ranks.push_back(owner);
+                            }
+                            else if (last_owner != owner)
+                            {
+                                _recv_sizes.push_back(cix - last_cix);
+                                last_cix = cix;
+                                last_owner = owner;
+                                _recv_ranks.push_back(owner);
+                            }
+
                         }
+                        _recv_sizes.push_back(cix - last_cix);
                     }
                     else
                     {
@@ -167,16 +192,27 @@ namespace honei
                             unsigned long index;
                             mpi::mpi_bcast(&index, 1, rank);
                             if (index >= _x_offset && index < _x_offset + col_part_size)
-                                _alien_indices[rank].insert(index);
+                            {
+                                mpi::mpi_send(&_rank, 1, rank, rank);
+
+                                if (_send_ranks.size() == 0 || _send_ranks.at(_send_ranks.size() - 1) != rank)
+                                {
+                                    _send_ranks.push_back(rank);
+                                }
+
+                                _send_index.push_back(index - _x_offset);
+                                ++send_size;
+                            }
                         }
                     }
+                    if (_send_ranks.size() != 0 && _send_ranks.at(_send_ranks.size() - 1) == rank)
+                        _send_sizes.push_back(send_size);
                 }
             }
 
 
             /// Copy-constructor.
             SparseMatrixELLMPI(const SparseMatrixELLMPI<DT_> & other) :
-                _alien_indices(other._alien_indices),
                 _rows(other._rows),
                 _columns(other._columns),
                 _offset(other._offset),
@@ -185,7 +221,6 @@ namespace honei
                 _rank(other._rank),
                 _com_size(other._com_size)
             {
-                // \TODO create a real copy of _alien_indices
                 _inner.reset(new SparseMatrixELL<DT_> (*other._inner));
                 _outer.reset(new SparseMatrixELL<DT_> (*other._outer));
             }
@@ -265,14 +300,29 @@ namespace honei
                 return *_outer;
             }*/
 
-            const std::set<unsigned long> & missing_indices() const
+            const std::vector<unsigned long> & recv_sizes() const
             {
-                return _missing_indices;
+                return _recv_sizes;
             }
 
-            const std::set<unsigned long> & alien_indices(unsigned long i) const
+            const std::vector<unsigned long> & recv_ranks() const
             {
-                return _alien_indices[i];
+                return _recv_ranks;
+            }
+
+            const std::vector<unsigned long> & send_sizes() const
+            {
+                return _send_sizes;
+            }
+
+            const std::vector<unsigned long> & send_ranks() const
+            {
+                return _send_ranks;
+            }
+
+            const std::vector<unsigned long> & send_index() const
+            {
+                return _send_index;
             }
 
             /// \{
