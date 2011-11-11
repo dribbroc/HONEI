@@ -87,8 +87,15 @@ class CGSolverTestSparseELL:
             DenseVectorMPI<DT1_> result(sresult);
 
             unsigned long used_iters(4711);
+            TimeStamp at, bt;
+            at.take();
             CG<Tag_, methods::VAR>::value(matrix2, diag_inverted, rhs, result, 1000ul, used_iters, 1e-6);
-            std::cout<<"Used iters: "<<used_iters<<std::endl;
+            bt.take();
+            if (mpi::mpi_comm_rank() == 0)
+            {
+                std::cout<<"Used iters: "<<used_iters<<std::endl;
+                std::cout<<"TOE: "<<bt.total()-at.total()<<std::endl;
+            }
 
             std::string filename_3(HONEI_SOURCEDIR);
             filename_3 += "/honei/math/testdata/poisson_advanced2/q2_sort_0/";
@@ -110,7 +117,10 @@ class CGSolverTestSparseELL:
             DT1_ eps(m * sizeof(DT1_) + b);
             eps *= DT1_(3);
 
-            std::cout << "Comparing with FEATFLOW2: eps= " << eps << std::endl;
+            if (mpi::mpi_comm_rank() == 0)
+            {
+                std::cout << "Comparing with FEATFLOW2: eps= " << eps << std::endl;
+            }
             for(unsigned long i(0) ; i < result.local_size() ; ++i)
             {
                 if(fabs(result[i] - ref_result[i]) > eps)
@@ -120,7 +130,7 @@ class CGSolverTestSparseELL:
         }
 };
 #ifdef HONEI_SSE
-CGSolverTestSparseELL<tags::CPU::SSE, double> cgs_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
+CGSolverTestSparseELL<tags::CPU::SSE, double> cgs_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #else
-CGSolverTestSparseELL<tags::CPU, double> cgs_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
+CGSolverTestSparseELL<tags::CPU, double> cgs_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #endif
