@@ -44,8 +44,6 @@ class DenseVectorMPIQuickTest :
 
         virtual void run() const
         {
-            mpi::mpi_init();
-
             DenseVector<DataType_> src(4711);
             for (unsigned long i(0) ; i < src.size() ; ++i)
                 src[i] = i + 10;
@@ -59,8 +57,6 @@ class DenseVectorMPIQuickTest :
             TEST_CHECK((unsigned long) dm1.vector().elements() != (unsigned long) dm2.vector().elements());
             for (unsigned long i(0) ; i < dm2.local_size() ; ++i)
                 TEST_CHECK_EQUAL(dm2[i], src[i + dm2.offset()]);
-
-            mpi::mpi_finalize();
         }
 };
 DenseVectorMPIQuickTest<double> dense_vector_mpi_quick_test_double("double");

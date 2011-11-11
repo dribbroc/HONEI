@@ -56,8 +56,6 @@ class ScaledSumMPITest :
 
         virtual void run() const
         {
-            mpi::mpi_init();
-
             DenseVector<DT_> rs(4711, DT_(42));
             DenseVector<DT_> xs(4711);
             DenseVector<DT_> ys(4711);
@@ -376,8 +374,6 @@ class SPMVMPITest :
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(r[i], rs[i + r.offset()], 1e-10);
             }
-
-            mpi::mpi_finalize();
         }
 };
 #ifdef HONEI_SSE

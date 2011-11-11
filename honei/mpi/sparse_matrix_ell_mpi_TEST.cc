@@ -46,8 +46,6 @@ class SparseMatrixELLMPIQuickTest :
 
         virtual void run() const
         {
-            mpi::mpi_init();
-
             std::string dir(HONEI_SOURCEDIR);
             std::string file (dir + "/honei/math/testdata/poisson_advanced2/sort_0/");
             file += "prol_4";
@@ -68,8 +66,6 @@ class SparseMatrixELLMPIQuickTest :
                 {
                     TEST_CHECK_EQUAL(sm0(i, j), aell(i + sm2.offset(), j));
                 }
-
-            mpi::mpi_finalize();
         }
 };
 SparseMatrixELLMPIQuickTest<double> sparse_matrix_ell_mpi_quick_test_double("double");

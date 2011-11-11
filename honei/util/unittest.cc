@@ -22,6 +22,9 @@
 
 #include <honei/util/unittest.hh>
 #include <honei/util/instantiation_policy-impl.hh>
+#ifdef HONEI_MPI
+#include <mpi.h>
+#endif
 
 #include <cstdlib>
 #include <exception>
@@ -123,6 +126,7 @@ TestFailedException::~TestFailedException() throw ()
 
 int main(int argc, char** argv)
 {
+    MPI_Init(&argc, &argv);
     int result(EXIT_SUCCESS);
     bool quick(false);
     bool sse(false);
@@ -298,5 +302,6 @@ int main(int argc, char** argv)
         iterator_index++;
     }
 
+    MPI_Finalize();
     return result;
 }

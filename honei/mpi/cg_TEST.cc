@@ -60,8 +60,6 @@ class CGSolverTestSparseELL:
 
         virtual void run() const
         {
-            mpi::mpi_init();
-
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/poisson_advanced2/q2_sort_0/";
             filename += _m_f;
@@ -119,7 +117,6 @@ class CGSolverTestSparseELL:
                     std::cout << std::setprecision(11) << result[i] << " " << ref_result[i] << " at index " << i << std::endl;
                 TEST_CHECK_EQUAL_WITHIN_EPS(result[i], ref_result[i], eps);
             }
-            mpi::mpi_finalize();
         }
 };
 #ifdef HONEI_SSE

@@ -43,6 +43,7 @@ DEFS = \
 	$(ITANIUMDEF) \
 	$(DEBUGDEF) \
 	$(BOOSTDEF) \
+	$(MPIDEF) \
 	$(PROFILERDEF) \
 	-DHONEI_SOURCEDIR='"$(top_srcdir)"'
 
