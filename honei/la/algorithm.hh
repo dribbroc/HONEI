@@ -28,6 +28,7 @@
 #include <honei/la/banded_matrix.hh>
 #include <honei/la/banded_matrix_qx.hh>
 #include <honei/util/tags.hh>
+#include <honei/mpi/dense_vector_mpi-fwd.hh>
 
 #include <limits>
 
@@ -71,6 +72,30 @@ namespace honei
         {
             MemoryArbiter::instance()->copy(Tag_::memory_value, source.memid(), source.address(),
                     dest.memid(), dest.address(), source.size() * sizeof(DT_));
+        }
+    }
+
+    template <typename Tag_, typename DT_> void copy(const DenseVectorMPI<DT_> & source, DenseVectorMPI<DT_> & dest)
+    {
+        CONTEXT("When copying elements from DenseVectorMPI to DenseVectorMPI:");
+        ASSERT(source.elements() != dest.elements(),
+                "trying to copy data from a DenseVectorMPI to the very same DenseVectorMPI!");
+
+        if (source.size() != dest.size())
+            throw VectorSizeDoesNotMatch(dest.size(), source.size());
+
+        /*if (Tag_::tag_value == tags::tv_gpu_multi_core)
+        {
+            dest.lock(lm_write_only);
+            source.lock(lm_read_only);
+            dest.unlock(lm_write_only);
+            source.unlock(lm_read_only);
+            TypeTraits<DT_>::copy(source.elements(), dest.elements(), dest.size());
+        }
+        else*/
+        {
+            MemoryArbiter::instance()->copy(Tag_::memory_value, source.vector().memid(), source.vector().address(),
+                    dest.vector().memid(), dest.vector().address(), source.vector().size() * sizeof(DT_));
         }
     }
 
