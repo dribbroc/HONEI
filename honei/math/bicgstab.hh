@@ -81,16 +81,16 @@ namespace honei
                 bool restarted = false;
                 bool converged = 0;
 
-                DenseVector<DT_> r(b.size());
-                DenseVector<DT_> r_tilde(b.size());
-                DenseVector<DT_> r_tilde_0(b.size());
-                DenseVector<DT_> p_tilde(b.size());
-                DenseVector<DT_> v(b.size());
-                DenseVector<DT_> v_tilde(b.size());
-                DenseVector<DT_> s(b.size());
-                DenseVector<DT_> s_tilde(b.size());
-                DenseVector<DT_> t(b.size());
-                DenseVector<DT_> t_tilde(b.size());
+                VectorType_ r(b.size());
+                VectorType_ r_tilde(b.size());
+                VectorType_ r_tilde_0(b.size());
+                VectorType_ p_tilde(b.size());
+                VectorType_ v(b.size());
+                VectorType_ v_tilde(b.size());
+                VectorType_ s(b.size());
+                VectorType_ s_tilde(b.size());
+                VectorType_ t(b.size());
+                VectorType_ t_tilde(b.size());
 
                 do
                 {
