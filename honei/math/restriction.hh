@@ -175,8 +175,8 @@ namespace honei
     struct Restriction<Tag_, methods::PROLMAT>
     {
         public:
-            template <typename Prec_, typename MatrixType_>
-                static DenseVector<Prec_> & value(DenseVector<Prec_>&  coarse, DenseVector<Prec_>& fine, HONEI_UNUSED DenseVector<unsigned long>& mask, HONEI_UNUSED MatrixType_ & resmat)
+            template <typename VectorType_, typename MatrixType_>
+                static VectorType_ & value(VectorType_ &  coarse, VectorType_ & fine, DenseVector<unsigned long>& /*mask*/, MatrixType_ & resmat)
                 {
                     Product<Tag_>::value(coarse, resmat, fine);
                     //ApplyDirichletBoundaries<Tag_>::value(coarse, mask);

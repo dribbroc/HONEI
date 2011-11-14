@@ -121,6 +121,7 @@ DEFS = \
 	$(BOOSTDEF) \
 	$(PROFILERDEF) \
 	$(DUNEDEF) \
+	$(MPIDEF) \
 	-DHONEI_SOURCEDIR='"$(top_srcdir)"' \
 	-DHONEI_BUILDDIR='"$(top_builddir)"'
 

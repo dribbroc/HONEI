@@ -142,10 +142,10 @@ namespace honei
         class Prolongation<Tag_, methods::PROLMAT>
         {
             public:
-                template <typename Prec_, typename MatrixType_>
-                    static DenseVector<Prec_> & value(DenseVector<Prec_>&  fine,
-                            DenseVector<Prec_>& coarse,
-                            HONEI_UNUSED DenseVector<unsigned long>& mask,
+                template <typename VectorType_, typename MatrixType_>
+                    static VectorType_ & value(VectorType_ &  fine,
+                            VectorType_ & coarse,
+                            DenseVector<unsigned long>& /*mask*/,
                             MatrixType_ & prolmat)
                     {
                         Product<Tag_>::value(fine, prolmat, coarse);

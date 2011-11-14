@@ -132,20 +132,28 @@ namespace honei
                 }
 
                 // outer matrix mit allen abhaengigkeiten nach draussen erstellen
-                SparseMatrix<DT_> outer_comp(_rows, _missing_indices.size());
+                if(_missing_indices.size() != 0)
                 {
-                    unsigned long cix(0);
-                    for (std::set<unsigned long>::iterator ci(_missing_indices.begin()) ; ci != _missing_indices.end() ; ++ci, ++cix)
+                    SparseMatrix<DT_> outer_comp(_rows, _missing_indices.size());
                     {
-                        for (unsigned long i(0) ; i < src_part.column(*ci).used_elements() ; ++i)
+                        unsigned long cix(0);
+                        for (std::set<unsigned long>::iterator ci(_missing_indices.begin()) ; ci != _missing_indices.end() ; ++ci, ++cix)
                         {
-                            outer_comp((src_part.column(*ci).indices())[i], cix, (src_part.column(*ci).elements())[i]);
+                            for (unsigned long i(0) ; i < src_part.column(*ci).used_elements() ; ++i)
+                            {
+                                outer_comp((src_part.column(*ci).indices())[i], cix, (src_part.column(*ci).elements())[i]);
+                            }
                         }
                     }
+                    _outer.reset(new SparseMatrixELL<DT_>(outer_comp));
+                }
+                else
+                {
+                    SparseMatrix<DT_> outer_comp(_rows, 1);
+                    _outer.reset(new SparseMatrixELL<DT_>(outer_comp));
                 }
 
                 _inner.reset(new SparseMatrixELL<DT_>(inner));
-                _outer.reset(new SparseMatrixELL<DT_>(outer_comp));
 
                 // liste aufbauen, wer was hat und braucht
                 unsigned long send_size(0);
@@ -181,7 +189,8 @@ namespace honei
                             }
 
                         }
-                        _recv_sizes.push_back(cix - last_cix);
+                        if (_missing_indices.size() != 0)
+                            _recv_sizes.push_back(cix - last_cix);
                     }
                     else
                     {
@@ -213,6 +222,12 @@ namespace honei
 
             /// Copy-constructor.
             SparseMatrixELLMPI(const SparseMatrixELLMPI<DT_> & other) :
+                _missing_indices(other._missing_indices),
+                _recv_ranks(other._recv_ranks),
+                _recv_sizes(other._recv_sizes),
+                _send_ranks(other._send_ranks),
+                _send_sizes(other._send_sizes),
+                _send_index(other._send_index),
                 _rows(other._rows),
                 _columns(other._columns),
                 _offset(other._offset),

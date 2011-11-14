@@ -316,7 +316,7 @@ class DefectMPITest :
             Defect<Tag_>::value(r, b, a, x);
 
             for (unsigned long i(0) ; i < r.local_size() ; ++i)
-                TEST_CHECK_EQUAL_WITHIN_EPS(r[i], rs[i + r.offset()], 1e-10);
+                TEST_CHECK_EQUAL_WITHIN_EPS(r[i], rs[i + r.offset()], 1e-11);
         }
 };
 #ifdef HONEI_SSE
@@ -372,7 +372,7 @@ class SPMVMPITest :
 
             for (unsigned long i(0) ; i < r.local_size() ; ++i)
             {
-                TEST_CHECK_EQUAL_WITHIN_EPS(r[i], rs[i + r.offset()], 1e-10);
+                TEST_CHECK_EQUAL_WITHIN_EPS(r[i], rs[i + r.offset()], 1e-11);
             }
         }
 };

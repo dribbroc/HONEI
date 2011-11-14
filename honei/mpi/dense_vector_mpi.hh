@@ -179,13 +179,19 @@ namespace honei
             virtual void * memid() const;
 
             /// Return the address of our data
-            virtual void * address() const;
+            virtual void * address() const;*/
 
             /// Request a memory access lock for our data.
-            virtual void * lock(LockMode mode, tags::TagValue memory = tags::CPU::memory_value) const;
+            virtual void * lock(LockMode mode, tags::TagValue memory = tags::CPU::memory_value) const
+            {
+                return _vector->lock(mode, memory);
+            }
 
             /// Release a memory access lock for our data.
-            virtual void unlock(LockMode mode) const;*/
+            virtual void unlock(LockMode mode) const
+            {
+                return _vector->unlock(mode);
+            }
 
             /// \}
 

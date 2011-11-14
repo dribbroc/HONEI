@@ -340,7 +340,7 @@ namespace honei
      */
 
     template <typename Tag_>
-    void fill(const DenseVectorContinuousBase<float> & dest, const float & proto = float(0))
+    void fill(DenseVectorContinuousBase<float> & dest, const float & proto = float(0))
     {
         CONTEXT("When filling DenseVectorContinuousBase with '" + stringify(proto) + "':");
 
@@ -350,13 +350,22 @@ namespace honei
     }
 
     template <typename Tag_>
-    void fill(const DenseVectorContinuousBase<double> & dest, const double & proto = double(0))
+    void fill(DenseVectorContinuousBase<double> & dest, const double & proto = double(0))
     {
         CONTEXT("When filling DenseVectorContinuousBase with '" + stringify(proto) + "':");
 
         //TypeTraits<DT_>::fill(dest.elements(), dest.size(), proto);
         MemoryArbiter::instance()->fill(Tag_::memory_value, dest.memid(), dest.address(),
                 dest.size() * sizeof(double), proto);
+    }
+
+    template <typename Tag_, typename DT_>
+    void fill(DenseVectorMPI<DT_> & dest, const DT_ & proto = DT_(0))
+    {
+        CONTEXT("When filling DenseVectorMPI with '" + stringify(proto) + "':");
+
+        MemoryArbiter::instance()->fill(Tag_::memory_value, dest.vector().memid(), dest.vector().address(),
+                dest.vector().size() * sizeof(DT_), proto);
     }
 
     template <typename Tag_>

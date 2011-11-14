@@ -212,7 +212,7 @@ namespace honei
 
                 static void dummy(std::vector<DenseVector<DataType_> > & target)
                 {
-                    DenseVector<DataType_> d(1);
+                    DenseVector<DataType_> d(9);
                     target.push_back(d);
                 }
         };
