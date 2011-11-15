@@ -171,4 +171,8 @@ class MGSolverTest:
             ref.unlock(lm_read_only);
         }
 };
-MGSolverTest<tags::CPU> mg_solver_test_cpu("double", "poisson_advanced2/sort_0/");
+#ifdef HONEI_SSE
+MGSolverTest<tags::CPU::SSE> mg_solver_test_cpu("double", "poisson_advanced2/q2_sort_0/");
+#else
+MGSolverTest<tags::CPU> mg_solver_test_cpu("double", "poisson_advanced2/q2_sort_0/");
+#endif
