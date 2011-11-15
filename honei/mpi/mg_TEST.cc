@@ -46,20 +46,20 @@ class MGSolverTest:
             file += "/honei/math/testdata/";
             file += _file;
 
-            MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double>, DenseVector<double> >  data(MGUtil<Tag_,
+            MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double>, SparseMatrixELL<double> >  data(MGUtil<Tag_,
                                                                                             SparseMatrixELL<double>,
                                                                                             DenseVector<double>,
                                                                                             SparseMatrixELL<double>,
-                                                                                            DenseVector<double>,
+                                                                                            SparseMatrixELL<double>,
                                                                                             io_formats::ELL,
                                                                                             io_formats::EXP,
-                                                                                            double>::load_data(file, max_level, double(0.7), "jac"));
+                                                                                            double>::load_data(file, max_level, double(1), "spai"));
 
             // create MPI cycle
             std::vector<SparseMatrixELLMPI<double> > A;
             std::vector<SparseMatrixELLMPI<double> > Res;
             std::vector<SparseMatrixELLMPI<double> > Prol;
-            std::vector<DenseVectorMPI<double> > P;
+            std::vector<SparseMatrixELLMPI<double> > P;
             std::vector<DenseVectorMPI<double> > b;
             std::vector<DenseVectorMPI<double> > x;
             std::vector<DenseVectorMPI<double> > c;
@@ -73,7 +73,8 @@ class MGSolverTest:
                 SparseMatrixELLMPI<double> am(as);
                 A.push_back(am);
 
-                DenseVectorMPI<double> a4m(data.P.at(i));
+                SparseMatrix<double> a4s(data.P.at(i));
+                SparseMatrixELLMPI<double> a4m(a4s);
                 P.push_back(a4m);
                 DenseVectorMPI<double> a5m(data.b.at(i));
                 b.push_back(a5m);
@@ -94,9 +95,6 @@ class MGSolverTest:
                 SparseMatrix<double> a2s(data.resmat.at(i));
                 SparseMatrixELLMPI<double> a2m(a2s);
                 Res.push_back(a2m);
-                SparseMatrix<double> a3s(data.prolmat.at(i));
-                SparseMatrixELLMPI<double> a3m(a3s);
-                Prol.push_back(a3m);
             }
 
             for(unsigned long i(0); i < data.prolmat.size(); ++i)
@@ -106,14 +104,14 @@ class MGSolverTest:
                 Prol.push_back(a3m);
             }
 
-            MGData<SparseMatrixELLMPI<double>, DenseVectorMPI<double>, SparseMatrixELLMPI<double>, DenseVectorMPI<double> > data_mpi(A, Res, Prol, P, b, x, c, d, t0, t1, 1, 1000, 4, 4, 1, 1e-8);
+            MGData<SparseMatrixELLMPI<double>, DenseVectorMPI<double>, SparseMatrixELLMPI<double>, SparseMatrixELLMPI<double> > data_mpi(A, Res, Prol, P, b, x, c, d, t0, t1, 1, 1000, 4, 4, 1, 1e-8);
 
 
             MGUtil<Tag_,
                 SparseMatrixELLMPI<double>,
                 DenseVectorMPI<double>,
                 SparseMatrixELLMPI<double>,
-                DenseVectorMPI<double>,
+                SparseMatrixELLMPI<double>,
                 io_formats::ELL,
                 io_formats::EXP,
                 double>::configure(data_mpi, 100, 100, 4, 4, min_level, double(1e-8));

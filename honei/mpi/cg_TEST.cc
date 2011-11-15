@@ -22,6 +22,7 @@
 #include <honei/backends/mpi/operations.hh>
 #include <honei/util/unittest.hh>
 #include <honei/math/cg.hh>
+#include <honei/math/bicgstab.hh>
 #include <honei/math/matrix_io.hh>
 #include <honei/math/vector_io.hh>
 #include <honei/util/time_stamp.hh>
@@ -42,13 +43,14 @@ class CGSolverTestSparseELL:
     public BaseTest
 {
     private:
-        std::string _m_f, _v_f, _r_f, _i_f;
+        std::string _m_f, _v_f, _r_f, _i_f, _p_f;
     public:
         CGSolverTestSparseELL(const std::string & tag,
                 std::string m_file,
                 std::string v_file,
                 std::string res_file,
-                std::string init_file) :
+                std::string init_file,
+                std::string precon_file) :
             BaseTest("MPI CG solver test (sparse ELL system)<" + tag + ">")
         {
             register_tag(Tag_::name);
@@ -56,6 +58,7 @@ class CGSolverTestSparseELL:
             _v_f = v_file;
             _r_f = res_file;
             _i_f = init_file;
+            _p_f = precon_file;
         }
 
         virtual void run() const
@@ -73,12 +76,18 @@ class CGSolverTestSparseELL:
             DenseVector<DT1_> srhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT1_(0)));
             DenseVectorMPI<DT1_> rhs(srhs);
 
-            DenseVector<DT1_> sdiag_inverted(smatrix2.rows(), DT1_(0));
+            /*DenseVector<DT1_> sdiag_inverted(smatrix2.rows(), DT1_(0));
             for(unsigned long i(0) ; i < sdiag_inverted.size() ; ++i)
             {
                     sdiag_inverted[i] = DT1_(0.7)/smatrix2(i, i);
             }
-            DenseVectorMPI<DT1_> diag_inverted(sdiag_inverted);
+            DenseVectorMPI<DT1_> diag_inverted(sdiag_inverted);*/
+            std::string filename_5(HONEI_SOURCEDIR);
+            filename_5 += "/honei/math/testdata/poisson_advanced2/q2_sort_0/";
+            filename_5 += _p_f;
+            SparseMatrixELL<DT1_> sdiag_inverted(MatrixIO<io_formats::ELL>::read_matrix(filename_5, DT1_(0)));
+            SparseMatrix<DT1_> ssdiag_inverted(sdiag_inverted);
+            SparseMatrixELLMPI<DT1_> diag_inverted(ssdiag_inverted);
 
             std::string filename_4(HONEI_SOURCEDIR);
             filename_4 += "/honei/math/testdata/poisson_advanced2/q2_sort_0/";
@@ -89,7 +98,7 @@ class CGSolverTestSparseELL:
             unsigned long used_iters(4711);
             TimeStamp at, bt;
             at.take();
-            CG<Tag_, methods::VAR>::value(matrix2, diag_inverted, rhs, result, 1000ul, used_iters, 1e-8);
+            BiCGStab<Tag_, methods::VAR>::value(matrix2, diag_inverted, rhs, result, 1000ul, used_iters, 1e-8);
             bt.take();
             if (mpi::mpi_comm_rank() == 0)
             {
@@ -130,7 +139,7 @@ class CGSolverTestSparseELL:
         }
 };
 #ifdef HONEI_SSE
-CGSolverTestSparseELL<tags::CPU::SSE, double> cgs_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+CGSolverTestSparseELL<tags::CPU::SSE, double> cgs_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
 #else
-CGSolverTestSparseELL<tags::CPU, double> cgs_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+CGSolverTestSparseELL<tags::CPU, double> cgs_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
 #endif
