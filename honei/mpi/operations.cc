@@ -93,13 +93,12 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
 
     // sende alle werte, die anderen fehlen
     g_size = 0;
-    // \TODO use real array here
-    std::vector<DT_> send_data;
+    DT_ send_data[a.send_size()];
     for (unsigned long i(0) ; i < a.send_ranks().size() ; ++i)
     {
         unsigned long g_end(g_size + a.send_sizes().at(i));
         for (unsigned long j(0) ; g_size < g_end ; ++g_size, ++j)
-            send_data.push_back(bp[a.send_index().at(g_size)]);
+            send_data[g_size] = bp[a.send_index().at(g_size)];
         send_requests.push_back(mpi::mpi_isend(&(send_data[g_size - a.send_sizes().at(i)]), a.send_sizes().at(i), a.send_ranks().at(i), myrank));
     }
 

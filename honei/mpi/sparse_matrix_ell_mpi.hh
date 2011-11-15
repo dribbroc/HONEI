@@ -43,6 +43,7 @@ namespace honei
             std::vector<unsigned long> _send_ranks;
             std::vector<unsigned long> _send_sizes;
             std::vector<unsigned long> _send_index;
+            unsigned long _send_size;
             unsigned long _rows;
             unsigned long _columns;
             unsigned long _offset;
@@ -217,6 +218,11 @@ namespace honei
                     if (_send_ranks.size() != 0 && _send_ranks.at(_send_ranks.size() - 1) == rank)
                         _send_sizes.push_back(send_size);
                 }
+
+                send_size = 0;
+                for (unsigned long i(0) ; i < _send_sizes.size() ; ++i)
+                    send_size+= _send_sizes.at(i);
+                _send_size = send_size;
             }
 
 
@@ -228,6 +234,7 @@ namespace honei
                 _send_ranks(other._send_ranks),
                 _send_sizes(other._send_sizes),
                 _send_index(other._send_index),
+                _send_size(other._send_size),
                 _rows(other._rows),
                 _columns(other._columns),
                 _offset(other._offset),
@@ -338,6 +345,11 @@ namespace honei
             const std::vector<unsigned long> & send_index() const
             {
                 return _send_index;
+            }
+
+            unsigned long send_size() const
+            {
+                return _send_size;
             }
 
             /// \{
