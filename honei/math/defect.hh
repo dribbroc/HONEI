@@ -353,7 +353,7 @@ namespace honei
                 }
 
             template<typename DT_>
-                static DenseVector<DT_> & value(DenseVector<DT_> & result, DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
+                static DenseVector<DT_> & value(DenseVector<DT_> & result, const DenseVector<DT_> & right_hand_side, const SparseMatrixELL<DT_> & system, const DenseVector<DT_> & x)
                 {
                     if (x.size() != system.columns())
                     {
@@ -384,9 +384,7 @@ namespace honei
             template<typename DT_>
                 static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixELLMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
                 {
-                    DenseVectorMPI<DT_> temp(result.size());
-                    Product<tags::CPU>::value(temp, system, x);
-                    Difference<tags::CPU>::value(result, right_hand_side, temp);
+                    MPIOps<tags::CPU>::defect(result, right_hand_side, system, x);
                     return result;
                 }
 
@@ -514,9 +512,7 @@ namespace honei
             template<typename DT_>
                 static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixELLMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
                 {
-                    DenseVectorMPI<DT_> temp(result.size());
-                    Product<tags::CPU::SSE>::value(temp, system, x);
-                    Difference<tags::CPU::SSE>::value(result, right_hand_side, temp);
+                    MPIOps<tags::CPU::SSE>::defect(result, right_hand_side, system, x);
                     return result;
                 }
         };
