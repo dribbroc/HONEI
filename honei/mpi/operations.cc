@@ -110,7 +110,7 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
     recv_requests.clear();
 
     // berechne aeussere anteile
-    DenseVector<DT_> r_outer(r.local_size(), DT_(0));
+    DenseVector<DT_> r_outer(r.local_size());
     Product<Tag_>::value(r_outer, a.outer_matrix(), missing_values);
     Sum<Tag_>::value(r.vector(), r_outer);
 

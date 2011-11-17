@@ -301,7 +301,7 @@ DenseVector<float> & Product<tags::CPU::SSE>::value(DenseVector<float> & result,
     if (row_end == 0)
     {
         fill<tags::CPU::SSE>(result, float(0));
-        honei::sse::product_smell_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), b.elements(),
+        honei::sse::product_smell_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), a.Arl().elements(), b.elements(),
                 a.stride(), a.rows(), a.num_cols_per_row(), a.threads());
     }
 
@@ -329,7 +329,7 @@ DenseVector<double> & Product<tags::CPU::SSE>::value(DenseVector<double> & resul
     if (row_end == 0)
     {
         fill<tags::CPU::SSE>(result, double(0));
-        honei::sse::product_smell_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), b.elements(),
+        honei::sse::product_smell_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), a.Arl().elements(), b.elements(),
                 a.stride(), a.rows(), a.num_cols_per_row(), a.threads());
     }
 
