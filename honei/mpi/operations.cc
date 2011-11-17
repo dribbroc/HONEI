@@ -159,7 +159,7 @@ void MPIOps<Tag_>::defect(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & r
     recv_requests.clear();
 
     // berechne aeussere anteile
-    DenseVector<DT_> r_outer(r.local_size(), DT_(0));
+    DenseVector<DT_> r_outer(r.local_size());
     Product<Tag_>::value(r_outer, a.outer_matrix(), missing_values);
     Difference<Tag_>::value(r.vector(), r_outer);
 

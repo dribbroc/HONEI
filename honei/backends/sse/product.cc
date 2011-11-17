@@ -1005,18 +1005,6 @@ namespace honei
         void product_smell_dv(float * result, const unsigned long * Aj, const float * Ax, const unsigned long * Arl, const float * b,
                 unsigned long stride, unsigned long rows, unsigned long /*num_cols_per_row*/, const unsigned long threads)
         {
-            /*for(unsigned long n(0) ; n < num_cols_per_row ; n++)
-            {
-                const unsigned long * Aj_n = Aj + n * stride;
-                const float * Ax_n = Ax + n * stride;
-                for(unsigned i(0) ; i < rows * threads ; i++)
-                {
-                    //if(Ax_n[i] != float(0))
-                    const unsigned long row(i/threads);
-                    result[row] += Ax_n[i] * b[Aj_n[i]];
-                }
-            }*/
-
             for (unsigned long row(0) ; row < rows ; ++row)
             {
                 const unsigned long * tAj(Aj);
@@ -1082,18 +1070,6 @@ namespace honei
         void product_smell_dv(double * result, const unsigned long * Aj, const double * Ax, const unsigned long * Arl, const double * b,
                 unsigned long stride, unsigned long rows, unsigned long /*num_cols_per_row*/, const unsigned long threads)
         {
-            /*for(unsigned long n(0) ; n < num_cols_per_row ; n++)
-            {
-                const unsigned long * Aj_n = Aj + n * stride;
-                const double * Ax_n = Ax + n * stride;
-                for(unsigned i(0) ; i < rows * threads ; i++)
-                {
-                    //if(Ax_n[i] != double(0))
-                    const unsigned long row(i/threads);
-                    result[row] += Ax_n[i] * b[Aj_n[i]];
-                }
-            }*/
-
             for (unsigned long row(0) ; row < rows ; ++row)
             {
                 const unsigned long * tAj(Aj);

@@ -26,23 +26,35 @@ namespace honei
 {
     namespace sse
     {
-        void defect_smell_dv(float * result, float * rhs, unsigned long * Aj, float * Ax, float * b,
-                unsigned long stride, unsigned long rows, unsigned long num_cols_per_row, const unsigned long threads)
+        void defect_smell_dv(float * result, const float * rhs, const unsigned long * Aj, const float * Ax, const unsigned long * Arl, const float * b,
+                unsigned long stride, unsigned long rows, unsigned long /*num_cols_per_row*/, const unsigned long threads)
         {
-            for(unsigned long n(0) ; n < num_cols_per_row ; n++)
+            for (unsigned long row(0) ; row < rows ; ++row)
             {
-                const unsigned long * Aj_n = Aj + n * stride;
-                const float * Ax_n = Ax + n * stride;
-                for(unsigned i(0) ; i < rows * threads ; i++)
+                const unsigned long * tAj(Aj);
+                const float * tAx(Ax);
+                float sum(0);
+                tAj += row * threads;
+                tAx += row * threads;
+
+                const unsigned long max(Arl[row]);
+                for(unsigned long n = 0; n < max ; n++)
                 {
-                    //if(Ax_n[i] != float(0))
-                    const unsigned long row(i/threads);
-                    result[row] += Ax_n[i] * b[Aj_n[i]];
+                    for (unsigned long thread(0) ; thread < threads ; ++thread)
+                    {
+                        const float A_ij = *(tAx + thread);
+
+                        //if (A_ij != 0)
+                        {
+                            const unsigned long col = *(tAj + thread);
+                            sum += A_ij * b[col];
+                        }
+                    }
+
+                    tAj += stride;
+                    tAx += stride;
                 }
-            }
-            for (unsigned long i(0) ; i < rows ; ++i)
-            {
-                result[i] = rhs[i] - result[i];
+                result[row] = rhs[row] - sum;
             }
         }
 
@@ -79,23 +91,35 @@ namespace honei
             }
         }
 
-        void defect_smell_dv(double * result, double * rhs, unsigned long * Aj, double * Ax, double * b,
-                unsigned long stride, unsigned long rows, unsigned long num_cols_per_row, const unsigned long threads)
+        void defect_smell_dv(double * result, const double * rhs, const unsigned long * Aj, const double * Ax, const unsigned long * Arl, const double * b,
+                unsigned long stride, unsigned long rows, unsigned long /*num_cols_per_row*/, const unsigned long threads)
         {
-            for(unsigned long n(0) ; n < num_cols_per_row ; n++)
+            for (unsigned long row(0) ; row < rows ; ++row)
             {
-                const unsigned long * Aj_n = Aj + n * stride;
-                const double * Ax_n = Ax + n * stride;
-                for(unsigned i(0) ; i < rows * threads ; i++)
+                const unsigned long * tAj(Aj);
+                const double * tAx(Ax);
+                double sum(0);
+                tAj += row * threads;
+                tAx += row * threads;
+
+                const unsigned long max(Arl[row]);
+                for(unsigned long n = 0; n < max ; n++)
                 {
-                    //if(Ax_n[i] != double(0))
-                    const unsigned long row(i/threads);
-                    result[row] += Ax_n[i] * b[Aj_n[i]];
+                    for (unsigned long thread(0) ; thread < threads ; ++thread)
+                    {
+                        const double A_ij = *(tAx + thread);
+
+                        //if (A_ij != 0)
+                        {
+                            const unsigned long col = *(tAj + thread);
+                            sum += A_ij * b[col];
+                        }
+                    }
+
+                    tAj += stride;
+                    tAx += stride;
                 }
-            }
-            for (unsigned long i(0) ; i < rows ; ++i)
-            {
-                result[i] = rhs[i] - result[i];
+                result[row] = rhs[row] - sum;
             }
         }
 
