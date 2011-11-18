@@ -27,6 +27,12 @@
 #include <honei/la/sparse_matrix.hh>
 #include <honei/util/benchmark_info.hh>
 #include <honei/util/tags.hh>
+#include <honei/backends/multicore/operation.hh>
+#include <honei/backends/multicore/thread_pool.hh>
+#include <honei/util/configuration.hh>
+#include <honei/util/operation_wrapper.hh>
+#include <honei/util/partitioner.hh>
+#include <honei/util/tags.hh>
 #include <honei/mpi/operations.hh>
 #include <honei/mpi/dense_vector_mpi-fwd.hh>
 
@@ -115,18 +121,24 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static inline DenseVector<DT2_> & value(DenseVector<DT2_> & x, const DT1_ a)
+        static inline DenseVectorContinuousBase<DT2_> & value(DenseVectorContinuousBase<DT2_> & x, const DT1_ a)
         {
-            DenseVectorBase<DT2_> & temp = x;
-            Scale<>::value(temp, a);
+            for (typename DenseVectorContinuousBase<DT2_>::ElementIterator l(x.begin_elements()),
+                    l_end(x.end_elements()) ; l != l_end ; ++l)
+            {
+                *l *= a;
+            }
             return x;
         }
 
         template <typename DT1_, typename DT2_>
         static inline DenseVectorRange<DT2_> & value(DenseVectorRange<DT2_> & x, const DT1_ a)
         {
-            DenseVectorBase<DT2_> & temp = x;
-            Scale<>::value(temp, a);
+            for (typename DenseVectorRange<DT2_>::ElementIterator l(x.begin_elements()),
+                    l_end(x.end_elements()) ; l != l_end ; ++l)
+            {
+                *l *= a;
+            }
             return x;
         }
 
@@ -365,9 +377,28 @@ namespace honei
 
     namespace mc
     {
-        template <typename Tag_> struct Scale :
-            public honei::Scale<typename Tag_::DelegateTo>
+        template <typename Tag_> struct Scale
         {
+            template <typename DT1_, typename DT2_>
+            static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & x, const DT2_ a)
+            {
+                CONTEXT("When calculating Scale (DenseVectorContinuousBase) using backend : " + Tag_::name);
+
+                unsigned long min_part_size(Configuration::instance()->get_value("mc::Scale(DVCB)::min_part_size", 128));
+                unsigned long max_count(Configuration::instance()->get_value("mc::Scale(DVCB)::max_count",
+                            mc::ThreadPool::instance()->num_threads()));
+
+                Operation<honei::Scale<typename Tag_::DelegateTo> >::op(x, a, min_part_size, max_count);
+
+                return x;
+            }
+
+            template <typename DT_>
+            static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & x, const DT_ a)
+            {
+                MPIOps<Tag_>::scale(x, a);
+                return x;
+            }
         };
     }
 

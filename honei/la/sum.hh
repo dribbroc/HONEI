@@ -880,7 +880,14 @@ namespace honei
 
                 return x;
             }
-/*
+
+            template <typename DT_>
+            static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
+            {
+                MPIOps<Tag_>::sum(x, y);
+                return x;
+            }
+            /*
             template <typename DT1_, typename DT2_>
             static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & x, const DT2_ & a)
             {

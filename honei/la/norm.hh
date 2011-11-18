@@ -701,6 +701,12 @@ namespace honei
 
                 return result;
             }
+
+            template <typename DT_>
+            static inline DT_ value(const DenseVectorMPI<DT_> & x)
+            {
+                return MPIOps<tags::CPU::MultiCore>::norm_l2_false(x);
+            }
     };
 
     template <> struct Norm<vnt_l_two, true, tags::CPU::MultiCore>
@@ -721,11 +727,17 @@ namespace honei
 
                 return result;
             }
+
+            template <typename DT_>
+            static inline DT_ value(const DenseVectorMPI<DT_> & x)
+            {
+                return sqrt(MPIOps<tags::CPU::MultiCore>::norm_l2_false(x));
+            }
     };
 
     template <> struct Norm<vnt_l_two, false, tags::CPU::MultiCore::SSE>
     {
-            template <typename DT1_>
+        template <typename DT1_>
             static DT1_ value(const DenseVectorContinuousBase<DT1_> & x)
             {
                 CONTEXT("When calculating DVCB, DBCB dot product using backend : " + tags::CPU::MultiCore::SSE::name);
@@ -739,6 +751,12 @@ namespace honei
                 mc::Operation<honei::Norm<vnt_l_two, false, typename tags::CPU::MultiCore::SSE::DelegateTo> >::op(result, x, min_part_size, max_count);
 
                 return result;
+            }
+
+            template <typename DT_>
+            static inline DT_ value(const DenseVectorMPI<DT_> & x)
+            {
+                return MPIOps<tags::CPU::MultiCore::SSE>::norm_l2_false(x);
             }
     };
 
@@ -759,6 +777,12 @@ namespace honei
                 result = sqrt(result);
 
                 return result;
+            }
+
+            template <typename DT_>
+            static inline DT_ value(const DenseVectorMPI<DT_> & x)
+            {
+                return sqrt(MPIOps<tags::CPU::MultiCore::SSE>::norm_l2_false(x));
             }
     };
 }

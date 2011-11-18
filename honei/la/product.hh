@@ -1798,6 +1798,20 @@ namespace honei
                 return result;
             }
 
+            template <typename DT_>
+            static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
+            {
+                MPIOps<Tag_>::product(r, a, b);
+                return r;
+            }
+
+            template<typename DT_>
+            static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
+            {
+                MPIOps<Tag_>::element_product(r, x, y);
+                return r;
+            }
+
             // Dummy
             template <typename DT1_, typename DT2_>
                 static DenseVector<DT1_> value(const DenseMatrix<DT1_> & a, const DenseVectorBase<DT2_> & b)

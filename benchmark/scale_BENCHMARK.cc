@@ -55,8 +55,8 @@ ScalarDenseVectorScaleBench<tags::CPU::MultiCore::SSE, float>   SVPBenchfloatMCS
 ScalarDenseVectorScaleBench<tags::CPU::MultiCore::SSE, double>  SVPBenchdoubleMCSSE("MC SSE: Densevector Scale Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
 #endif
 
+/*
 template <typename Tag_, typename DataType_>
-
 class ScalarDenseMatrixScaleBench :
     public Benchmark
 {
@@ -97,3 +97,4 @@ ScalarDenseMatrixScaleBench<tags::CPU::SSE, double>             SMPBenchdoubleSS
 ScalarDenseMatrixScaleBench<tags::CPU::MultiCore::SSE, float>   SMPBenchfloatMCSSE("MC SSE: DenseMatrix Scale Benchmark: size: 8192x8192, float", 8192, 10);
 ScalarDenseMatrixScaleBench<tags::CPU::MultiCore::SSE, double>  SMPBenchdoubleMCSSE("MC SSE: DenseMatrix Scale Benchmark: size: 8192x8192, double", 8192, 10);
 #endif
+*/

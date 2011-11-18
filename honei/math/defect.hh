@@ -747,6 +747,13 @@ namespace honei
 
                         return result;
                     }
+
+                    template<typename DT_>
+                    static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixELLMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
+                    {
+                        MPIOps<Tag_>::defect(result, right_hand_side, system, x);
+                        return result;
+                    }
         };
 
     }

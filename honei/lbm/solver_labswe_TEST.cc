@@ -129,13 +129,13 @@ class SolverLABSWETest :
 };
 SolverLABSWETest<tags::CPU, float> solver_test_float("float");
 SolverLABSWETest<tags::CPU, double> solver_test_double("double");
-SolverLABSWETest<tags::CPU::MultiCore, float> solver_test_float_mc("float");
-SolverLABSWETest<tags::CPU::MultiCore, double> solver_test_double_mc("double");
+//SolverLABSWETest<tags::CPU::MultiCore, float> solver_test_float_mc("float");
+//SolverLABSWETest<tags::CPU::MultiCore, double> solver_test_double_mc("double");
 #ifdef HONEI_SSE
 SolverLABSWETest<tags::CPU::SSE, float> solver_test_float_sse("float");
 SolverLABSWETest<tags::CPU::SSE, double> solver_test_double_sse("double");
-SolverLABSWETest<tags::CPU::MultiCore::SSE, float> solver_test_float_mc_sse("float");
-SolverLABSWETest<tags::CPU::MultiCore::SSE, double> solver_test_double_mc_sse("double");
+//SolverLABSWETest<tags::CPU::MultiCore::SSE, float> solver_test_float_mc_sse("float");
+//SolverLABSWETest<tags::CPU::MultiCore::SSE, double> solver_test_double_mc_sse("double");
 #endif
 #ifdef HONEI_CELL
 SolverLABSWETest<tags::Cell, float> solver_test_float_cell("float");

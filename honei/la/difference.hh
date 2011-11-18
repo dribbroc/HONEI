@@ -914,6 +914,13 @@ namespace honei
                 return r;
             }
 
+            template <typename DT_>
+            static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
+            {
+                MPIOps<Tag_>::difference(r, x, y);
+                return r;
+            }
+
             // Dummy
             template <typename DT1_, typename DT2_>
             static DenseVectorBase<DT1_> & value(DenseVectorBase<DT1_> & a, const SparseVector<DT2_> & b)
