@@ -79,10 +79,8 @@ class ScaledSumMPITest :
 };
 #ifdef HONEI_SSE
 ScaledSumMPITest<tags::CPU::SSE, double> scaled_sum_mpi_test_double("double");
-ScaledSumMPITest<tags::CPU::MultiCore::SSE, double> mc_scaled_sum_mpi_test_double("double");
 #else
 ScaledSumMPITest<tags::CPU, double> scaled_sum_mpi_test_double("double");
-ScaledSumMPITest<tags::MultiCore::CPU, double> mc_scaled_sum_mpi_test_double("double");
 #endif
 
 template <typename Tag_, typename DT_>
@@ -116,7 +114,6 @@ class ScaleMPITest :
 };
 #ifdef HONEI_SSE
 ScaleMPITest<tags::CPU::SSE, double> scale_mpi_test_double("double");
-ScaleMPITest<tags::CPU::MultiCore::SSE, double> mc_scale_mpi_test_double("double");
 #else
 ScaleMPITest<tags::CPU, double> scale_mpi_test_double("double");
 #endif
@@ -155,7 +152,6 @@ class SumMPITest :
 };
 #ifdef HONEI_SSE
 SumMPITest<tags::CPU::SSE, double> sum_mpi_test_double("double");
-SumMPITest<tags::CPU::MultiCore::SSE, double> mc_sum_mpi_test_double("double");
 #else
 SumMPITest<tags::CPU, double> sum_mpi_test_double("double");
 #endif
@@ -196,7 +192,6 @@ class DifferenceMPITest :
 };
 #ifdef HONEI_SSE
 DifferenceMPITest<tags::CPU::SSE, double> difference_mpi_test_double("double");
-DifferenceMPITest<tags::CPU::MultiCore::SSE, double> mc_difference_mpi_test_double("double");
 #else
 DifferenceMPITest<tags::CPU, double> difference_mpi_test_double("double");
 #endif
@@ -237,7 +232,6 @@ class ElementProductMPITest :
 };
 #ifdef HONEI_SSE
 ElementProductMPITest<tags::CPU::SSE, double> element_product_mpi_test_double("double");
-ElementProductMPITest<tags::CPU::MultiCore::SSE, double> mc_element_product_mpi_test_double("double");
 #else
 ElementProductMPITest<tags::CPU, double> element_product_mpi_test_double("double");
 #endif
@@ -275,7 +269,6 @@ class DotProductMPITest :
 };
 #ifdef HONEI_SSE
 DotProductMPITest<tags::CPU::SSE, double> dot_product_mpi_test_double("double");
-DotProductMPITest<tags::CPU::MultiCore::SSE, double> mc_dot_product_mpi_test_double("double");
 #else
 DotProductMPITest<tags::CPU, double> dot_product_mpi_test_double("double");
 #endif
@@ -313,7 +306,6 @@ class NormMPITest :
 };
 #ifdef HONEI_SSE
 NormMPITest<tags::CPU::SSE, double> norm_mpi_test_double("double");
-NormMPITest<tags::CPU::MultiCore::SSE, double> mc_norm_mpi_test_double("double");
 #else
 NormMPITest<tags::CPU, double> norm_mpi_test_double("double");
 #endif
@@ -333,7 +325,7 @@ class DefectMPITest :
         {
             std::string dir(HONEI_SOURCEDIR);
             std::string file (dir + "/honei/math/testdata/poisson_advanced2/sort_0/");
-            file += "A_4";
+            file += "A_3";
             file += ".ell";
             SparseMatrixELL<DT_> aell(MatrixIO<io_formats::ELL>::read_matrix(file, DT_(0)));
 
@@ -364,10 +356,8 @@ class DefectMPITest :
 };
 #ifdef HONEI_SSE
 DefectMPITest<tags::CPU::SSE, double> defect_mpi_test_double("double");
-DefectMPITest<tags::CPU::MultiCore::SSE, double> mc_defect_mpi_test_double("double");
 #else
 DefectMPITest<tags::CPU, double> defect_mpi_test_double("double");
-DefectMPITest<tags::MultiCore::CPU, double> mc_defect_mpi_test_double("double");
 #endif
 
 template <typename Tag_, typename DT_>
@@ -386,7 +376,7 @@ class SPMVMPITest :
             MPI_Barrier(MPI_COMM_WORLD);
             std::string dir(HONEI_SOURCEDIR);
             std::string file (dir + "/honei/math/testdata/poisson_advanced2/q2_sort_0/");
-            file += "prol_4";
+            file += "prol_3";
             file += ".ell";
             SparseMatrixELL<DT_> aell(MatrixIO<io_formats::ELL>::read_matrix(file, DT_(0)));
 
@@ -423,7 +413,6 @@ class SPMVMPITest :
 };
 #ifdef HONEI_SSE
 SPMVMPITest<tags::CPU::SSE, double> spmv_mpi_test_double("double");
-SPMVMPITest<tags::CPU::MultiCore::SSE, double> mc_spmv_mpi_test_double("double");
 #else
 SPMVMPITest<tags::CPU, double> spmv_mpi_test_double("double");
 SPMVMPITest<tags::CPU::MultCore, double> mc_spmv_mpi_test_double("double");

@@ -422,7 +422,7 @@ namespace honei
     };
 
     template <> struct Scale<tags::CPU::MultiCore::SSE> :
-        public mc::Scale<tags::CPU::MultiCore>
+        public mc::Scale<tags::CPU::MultiCore::SSE>
     {
     };
 }
