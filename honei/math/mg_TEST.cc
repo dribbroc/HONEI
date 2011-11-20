@@ -169,21 +169,29 @@ class MGUtilLoadTest:
                                                                                             io_formats::EXP,
                                                                                             double>::load_data(file, levels, double(0.7), "jac"));
 
-            for(unsigned long i(0) ; i <= levels ; ++i)
+            std::cout << "-----------------------------------" << std::endl;
+            for(unsigned long i(0) ; i < data.A.size() ; ++i)
             {
-                std::cout << "-----------------------------------" << std::endl;
                 std::cout << "A_" << i << " is a " << data.A.at(i).rows() << " x " << data.A.at(i).columns() << " matrix." << std::endl;
                 std::cout << "P_" << i << " is a container of size" << data.P.at(i).size() << "." << std::endl;
+            }
+            std::cout << "-----------------------------------" << std::endl;
+            for(unsigned long i(0) ; i < data.prolmat.size() ; ++i)
+            {
                 std::cout << "Prol_" << i << " is a " << data.prolmat.at(i).rows() << " x " << data.prolmat.at(i).columns() << " matrix." << std::endl;
                 std::cout << "Res_" << i << " is a " << data.resmat.at(i).rows() << " x " << data.resmat.at(i).columns() << " matrix." << std::endl;
+            }
+            std::cout << "-----------------------------------" << std::endl;
+            for(unsigned long i(0) ; i < data.x.size() ; ++i)
+            {
                 std::cout << "b_" << i << " is a vector of size " << data.b.at(i).size() << std::endl;
                 std::cout << "x_" << i << " is a vector of size " << data.x.at(i).size() << std::endl;
                 std::cout << "c_" << i << " is a vector of size " << data.c.at(i).size() << std::endl;
                 std::cout << "d_" << i << " is a vector of size " << data.d.at(i).size() << std::endl;
                 std::cout << "temp0_" << i << " is a vector of size " << data.temp_0.at(i).size() << std::endl;
                 std::cout << "temp1_" << i << " is a vector of size " << data.temp_1.at(i).size() << std::endl;
-                std::cout << "-----------------------------------" << std::endl;
             }
+            std::cout << "-----------------------------------" << std::endl;
         }
 };
 MGUtilLoadTest<tags::CPU> mgutilloadtest_cpu("double");
@@ -239,6 +247,16 @@ class MGSolverTest:
                     double>::value(data)
                     );
 
+            std::cout << data.A.size() << std::endl;
+            std::cout << data.P.size() << std::endl;
+            std::cout << data.prolmat.size() << std::endl;
+            std::cout << data.resmat.size() << std::endl;
+            std::cout << data.b.size() << std::endl;
+            std::cout << data.x.size() << std::endl;
+            std::cout << data.temp_0.size() << std::endl;
+            std::cout << data.temp_1.size() << std::endl;
+
+            print_cycle(ol, 4, 1);
             MGSolver<Tag_, Norm<vnt_l_two, true, Tag_> >::value(data, ol);
 
             std::cout << data.used_iters << std::endl;
@@ -262,10 +280,10 @@ class MGSolverTest:
             double eps(m * sizeof(double) + b);
             eps *= double(8);
 
-            data.x.at(max_level).lock(lm_read_only);
+            data.x.at(MGDataIndex::internal_index_A(max_level)).lock(lm_read_only);
             ref.lock(lm_read_only);
             for(unsigned long i(0) ; i < ref.size() ; ++i)
-                TEST_CHECK_EQUAL_WITHIN_EPS(data.x.at(max_level)[i], ref[i], eps);
+                TEST_CHECK_EQUAL_WITHIN_EPS(data.x.at(MGDataIndex::internal_index_A(max_level))[i], ref[i], eps);
 
             //print_cycle(ol, max_level, min_level);
         }
@@ -371,10 +389,10 @@ class MGSolverTestQuad:
             eps *= double(8);
 
 
-            data.x.at(max_level).lock(lm_read_only);
+            data.x.at(MGDataIndex::internal_index_A(max_level)).lock(lm_read_only);
             ref.lock(lm_read_only);
             for(unsigned long i(0) ; i < ref.size() ; ++i)
-                TEST_CHECK_EQUAL_WITHIN_EPS(data.x.at(max_level)[i], ref[i], eps);
+                TEST_CHECK_EQUAL_WITHIN_EPS(data.x.at(MGDataIndex::internal_index_A(max_level))[i], ref[i], eps);
         }
 };
 MGSolverTestQuad<tags::CPU> mg_solver_quad_test_cpu("double");
