@@ -230,7 +230,7 @@ namespace honei
                                   DataType_ damping_factor)
                 {
                     std::string local_P_name(filename);
-                    local_P_name += stringify(i);
+                    local_P_name += stringify(i+1);
                     local_P_name += "_";
                     local_P_name += precon_suffix;
                     local_P_name += ".ell";

@@ -284,7 +284,7 @@ class MGSolverTest:
             ref.lock(lm_read_only);
             for(unsigned long i(0) ; i < ref.size() ; ++i)
                 TEST_CHECK_EQUAL_WITHIN_EPS(data.x.at(MGDataIndex::internal_index_A(max_level))[i], ref[i], eps);
-            data.x.at(max_level).unlock(lm_read_only);
+            data.x.at(MGDataIndex::internal_index_A(max_level)).unlock(lm_read_only);
             ref.unlock(lm_read_only);
 
             //print_cycle(ol, max_level, min_level);
@@ -395,9 +395,8 @@ class MGSolverTestQuad:
             ref.lock(lm_read_only);
             for(unsigned long i(0) ; i < ref.size() ; ++i)
                 TEST_CHECK_EQUAL_WITHIN_EPS(data.x.at(MGDataIndex::internal_index_A(max_level))[i], ref[i], eps);
-            data.x.at(max_level).unlock(lm_read_only);
+            data.x.at(MGDataIndex::internal_index_A(max_level)).unlock(lm_read_only);
             ref.unlock(lm_read_only);
         }
 };
 MGSolverTestQuad<tags::CPU> mg_solver_quad_test_cpu("double");
-

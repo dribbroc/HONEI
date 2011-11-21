@@ -161,11 +161,11 @@ class MGSolverTest:
             double eps(m * sizeof(double) + bd);
             eps *= double(8);
 
-            data_mpi.x.at(max_level).lock(lm_read_only);
+            data_mpi.x.at(MGDataIndex::internal_index_A(max_level)).lock(lm_read_only);
             ref.lock(lm_read_only);
             for(unsigned long i(0) ; i < ref.local_size() ; ++i)
-                TEST_CHECK_EQUAL_WITHIN_EPS(data_mpi.x.at(max_level)[i], ref[i], eps);
-            data_mpi.x.at(max_level).unlock(lm_read_only);
+                TEST_CHECK_EQUAL_WITHIN_EPS(data_mpi.x.at(MGDataIndex::internal_index_A(max_level))[i], ref[i], eps);
+            data_mpi.x.at(MGDataIndex::internal_index_A(max_level)).unlock(lm_read_only);
             ref.unlock(lm_read_only);
         }
 };
