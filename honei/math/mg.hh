@@ -209,12 +209,6 @@ namespace honei
                     else
                         throw InternalError("Preconditioner unknown!");
                 }
-
-                static void dummy(std::vector<DenseVector<DataType_> > & target)
-                {
-                    DenseVector<DataType_> d(1);
-                    target.push_back(d);
-                }
         };
 
     template<typename DataType_>
@@ -244,13 +238,6 @@ namespace honei
                     }
                     else
                         target.push_back(current_P);
-                }
-
-                static void dummy(std::vector<SparseMatrixELL<DataType_> > & target)
-                {
-                    SparseMatrix<DataType_> d(9,9);
-                    SparseMatrixELL<DataType_> dell(d);
-                    target.push_back(dell);
                 }
         };
 
