@@ -13,6 +13,10 @@ log::output = /dev/null
 #ell thread count, pick 0 for heuristic configuration
 ell::threads = 1
 
+# MPI
+# Min Part size for rows and columns in matrix and vector
+mpi::min_part_size = 2000
+
 # CUDA
 ######
 # Number of GPU's

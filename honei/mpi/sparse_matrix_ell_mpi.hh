@@ -22,6 +22,7 @@
 #define MPI_GUARD_SPARSE_MATRIX_ELL_MPI_HH 1
 
 #include <honei/util/tags.hh>
+#include <honei/util/configuration.hh>
 #include <honei/la/sparse_matrix_ell.hh>
 #include <honei/la/sparse_matrix.hh>
 #include <honei/la/dense_vector.hh>
@@ -51,6 +52,7 @@ namespace honei
             unsigned long _col_part_size;
             unsigned long _rank;
             unsigned long _com_size;
+            bool _active;
 
             void _init(const SparseMatrix<DT_> & src, MPI_Comm com = MPI_COMM_WORLD)
             {
@@ -61,92 +63,158 @@ namespace honei
                 mpi::mpi_comm_size(&icom_size, com);
                 _com_size = icom_size;
 
-                unsigned long part_size(src.rows() / _com_size);
-                unsigned long rest(src.rows() - (part_size * _com_size));
-                if (_rank < rest)
-                    ++part_size;
-                _rows = part_size;
-                _columns = src.columns();
-
-                unsigned local_offset(0);
-                for (unsigned long i(0) ; i < _rank ; ++i)
+                unsigned long min_part_size(Configuration::instance()->get_value("mpi::min_part_size", 1));
+                unsigned long pre_part_size(src.rows() / _com_size);
+                if (pre_part_size > min_part_size)
                 {
-                    local_offset += src.rows() / _com_size;
-                    if (i < rest)
-                        ++local_offset;
-                }
-                _offset = local_offset;
+                    unsigned long part_size(src.rows() / _com_size);
+                    unsigned long rest(src.rows() - (part_size * _com_size));
+                    if (_rank < rest)
+                        ++part_size;
+                    _rows = part_size;
+                    _columns = src.columns();
 
-                unsigned long col_part_size(src.columns() / _com_size);
-                unsigned long col_rest(src.columns() - (col_part_size * _com_size));
-                if (_rank < col_rest)
-                    ++col_part_size;
-                _col_part_size = col_part_size;
-
-                unsigned local_x_offset(0);
-                for (unsigned long i(0) ; i < _rank ; ++i)
-                {
-                    local_x_offset += src.columns() / _com_size;
-                    if (i < col_rest)
-                        ++local_x_offset;
-                }
-                _x_offset = local_x_offset;
-
-                // matrix fenster ausschneiden und in src_part speichern
-                SparseMatrix<DT_> src_part(_rows, _columns);
-                for (unsigned long row(0) ; row < _rows ; ++row)
-                {
-                    for (unsigned long i(0) ; i < src[row + _offset].used_elements() ; ++i)
+                    unsigned local_offset(0);
+                    for (unsigned long i(0) ; i < _rank ; ++i)
                     {
-                        src_part(row, (src[row + _offset].indices())[i], (src[row + _offset].elements())[i]);
+                        local_offset += src.rows() / _com_size;
+                        if (i < rest)
+                            ++local_offset;
                     }
-                }
-
-
-                // inneren teil ohne abhaengigkeiten in inner speichern
-                SparseMatrix<DT_> inner(_rows, _col_part_size);
-                for (unsigned long col(0) ; col < _col_part_size ; ++col)
-                {
-                    for (unsigned long i(0) ; i < src_part.column(col + _x_offset).used_elements() ; ++i)
-                        inner((src_part.column(col + _x_offset).indices())[i], col, (src_part.column(col + _x_offset).elements())[i]);
-                }
-
-
-                // extern abhaengige spalten berechnen
-                for (unsigned long col(0) ; col < _x_offset ; ++col)
-                {
-                    if (src_part.column(col).used_elements() != 0)
-                            _missing_indices.insert(col);
-                }
-                for (unsigned long col(_x_offset + _col_part_size) ; col < _columns  ; ++col)
-                {
-                    if (src_part.column(col).used_elements() != 0)
-                            _missing_indices.insert(col);
-                }
-
-                // outer matrix mit allen abhaengigkeiten nach draussen erstellen
-                if(_missing_indices.size() != 0)
-                {
-                    SparseMatrix<DT_> outer_comp(_rows, _missing_indices.size());
-                    {
-                        unsigned long cix(0);
-                        for (std::set<unsigned long>::iterator ci(_missing_indices.begin()) ; ci != _missing_indices.end() ; ++ci, ++cix)
-                        {
-                            for (unsigned long i(0) ; i < src_part.column(*ci).used_elements() ; ++i)
-                            {
-                                outer_comp((src_part.column(*ci).indices())[i], cix, (src_part.column(*ci).elements())[i]);
-                            }
-                        }
-                    }
-                    _outer.reset(new SparseMatrixELL<DT_>(outer_comp));
+                    _offset = local_offset;
                 }
                 else
                 {
-                    SparseMatrix<DT_> outer_comp(_rows, 1);
+                    unsigned long count(src.rows() / min_part_size);
+                    if (count == 0)
+                        count = 1;
+                    unsigned long part_size(src.rows() / count);
+                    unsigned long rest(src.rows() - (part_size * count));
+                    if (_rank < rest)
+                        ++part_size;
+                    _rows = part_size;
+                    _columns = src.columns();
+                    if (_rank >= count)
+                        _rows = 0;
+
+                    unsigned local_offset(0);
+                    for (unsigned long i(0) ; i < _rank ; ++i)
+                    {
+                        local_offset += src.rows() / count;
+                        if (i < rest)
+                            ++local_offset;
+                    }
+                    _offset = local_offset;
+                }
+
+//////////////////////////
+                unsigned long pre_col_part_size(src.columns() / _com_size);
+                if (pre_col_part_size > min_part_size)
+                {
+                    unsigned long col_part_size(src.columns() / _com_size);
+                    unsigned long col_rest(src.columns() - (col_part_size * _com_size));
+                    if (_rank < col_rest)
+                        ++col_part_size;
+                    _col_part_size = col_part_size;
+
+                    unsigned local_x_offset(0);
+                    for (unsigned long i(0) ; i < _rank ; ++i)
+                    {
+                        local_x_offset += src.columns() / _com_size;
+                        if (i < col_rest)
+                            ++local_x_offset;
+                    }
+                    _x_offset = local_x_offset;
+                }
+                else
+                {
+                    unsigned long count(src.columns() / min_part_size);
+                    if (count == 0)
+                        count = 1;
+                    unsigned long col_part_size(src.columns() / count);
+                    unsigned long col_rest(src.columns() - (col_part_size * count));
+                    if (_rank < col_rest)
+                        ++col_part_size;
+                    _col_part_size = col_part_size;
+                    if (_rank >= count)
+                        _col_part_size = 0;
+
+                    unsigned local_x_offset(0);
+                    for (unsigned long i(0) ; i < _rank ; ++i)
+                    {
+                        local_x_offset += src.columns() / count;
+                        if (i < col_rest)
+                            ++local_x_offset;
+                    }
+                    _x_offset = local_x_offset;
+                }
+
+                if (_rows != 0)
+                {
+                    _active = true;
+                    // matrix fenster ausschneiden und in src_part speichern
+                    SparseMatrix<DT_> src_part(_rows, _columns);
+                    for (unsigned long row(0) ; row < _rows ; ++row)
+                    {
+                        for (unsigned long i(0) ; i < src[row + _offset].used_elements() ; ++i)
+                        {
+                            src_part(row, (src[row + _offset].indices())[i], (src[row + _offset].elements())[i]);
+                        }
+                    }
+
+                    // inneren teil ohne abhaengigkeiten in inner speichern
+                    SparseMatrix<DT_> inner(_rows, _col_part_size);
+                    for (unsigned long col(0) ; col < _col_part_size ; ++col)
+                    {
+                        for (unsigned long i(0) ; i < src_part.column(col + _x_offset).used_elements() ; ++i)
+                            inner((src_part.column(col + _x_offset).indices())[i], col, (src_part.column(col + _x_offset).elements())[i]);
+                    }
+                    _inner.reset(new SparseMatrixELL<DT_>(inner));
+
+
+                    // extern abhaengige spalten berechnen
+                    for (unsigned long col(0) ; col < _x_offset  && col < _columns; ++col)
+                    {
+                        if (src_part.column(col).used_elements() != 0)
+                            _missing_indices.insert(col);
+                    }
+                    for (unsigned long col(_x_offset + _col_part_size) ; col < _columns  ; ++col)
+                    {
+                        if (src_part.column(col).used_elements() != 0)
+                            _missing_indices.insert(col);
+                    }
+
+                    // outer matrix mit allen abhaengigkeiten nach draussen erstellen
+                    if(_missing_indices.size() != 0)
+                    {
+                        SparseMatrix<DT_> outer_comp(_rows, _missing_indices.size());
+                        {
+                            unsigned long cix(0);
+                            for (std::set<unsigned long>::iterator ci(_missing_indices.begin()) ; ci != _missing_indices.end() ; ++ci, ++cix)
+                            {
+                                for (unsigned long i(0) ; i < src_part.column(*ci).used_elements() ; ++i)
+                                {
+                                    outer_comp((src_part.column(*ci).indices())[i], cix, (src_part.column(*ci).elements())[i]);
+                                }
+                            }
+                        }
+                        _outer.reset(new SparseMatrixELL<DT_>(outer_comp));
+                    }
+                    else
+                    {
+                        SparseMatrix<DT_> outer_comp(_rows, 1);
+                        _outer.reset(new SparseMatrixELL<DT_>(outer_comp));
+                    }
+                }
+                else
+                {
+                    _active = false;
+                    SparseMatrix<DT_> inner(1, 1);
+                    _inner.reset(new SparseMatrixELL<DT_>(inner));
+                    SparseMatrix<DT_> outer_comp(1, 1);
                     _outer.reset(new SparseMatrixELL<DT_>(outer_comp));
                 }
 
-                _inner.reset(new SparseMatrixELL<DT_>(inner));
 
                 // liste aufbauen, wer was hat und braucht
                 unsigned long send_size(0);
@@ -193,7 +261,7 @@ namespace honei
                         {
                             unsigned long index;
                             mpi::mpi_bcast(&index, 1, rank);
-                            if (index >= _x_offset && index < _x_offset + col_part_size)
+                            if (index >= _x_offset && index < _x_offset + _col_part_size)
                             {
                                 mpi::mpi_send(&_rank, 1, rank, rank);
 
@@ -215,6 +283,7 @@ namespace honei
                 for (unsigned long i(0) ; i < _send_sizes.size() ; ++i)
                     send_size+= _send_sizes.at(i);
                 _send_size = send_size;
+
             }
 
         public:
@@ -252,7 +321,8 @@ namespace honei
                 _x_offset(other._x_offset),
                 _col_part_size(other._col_part_size),
                 _rank(other._rank),
-                _com_size(other._com_size)
+                _com_size(other._com_size),
+                _active(other._active)
             {
                 _inner.reset(new SparseMatrixELL<DT_> (*other._inner));
                 _outer.reset(new SparseMatrixELL<DT_> (*other._outer));
@@ -293,6 +363,11 @@ namespace honei
             virtual unsigned long x_offset() const
             {
                 return _x_offset;
+            }
+
+            virtual bool active() const
+            {
+                return _active;
             }
 
             const DT_ operator()(unsigned long i, unsigned long j) const

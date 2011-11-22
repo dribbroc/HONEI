@@ -22,6 +22,7 @@
 #define MPI_GUARD_DENSE_VECTOR_MPI_HH 1
 
 #include <honei/util/tags.hh>
+#include <honei/util/configuration.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/backends/mpi/operations.hh>
 
@@ -51,20 +52,49 @@ namespace honei
                 _rank(mpi::mpi_comm_rank(com)),
                 _com_size(mpi::mpi_comm_size(com))
             {
-                unsigned long part_size(_orig_size / _com_size);
-                unsigned long rest(_orig_size - (part_size * _com_size));
-                if (_rank < rest)
-                    ++part_size;
-                unsigned long size = part_size;
+                unsigned long size;
 
-                unsigned local_offset(0);
-                for (unsigned long i(0) ; i < _rank ; ++i)
+                unsigned long min_part_size(Configuration::instance()->get_value("mpi::min_part_size", 1));
+                unsigned long pre_part_size(_orig_size / _com_size);
+                if (pre_part_size > min_part_size)
                 {
-                    local_offset += _orig_size / _com_size;
-                    if (i < rest)
-                        ++local_offset;
+                    unsigned long part_size(pre_part_size);
+                    unsigned long rest(_orig_size - (part_size * _com_size));
+                    if (_rank < rest)
+                        ++part_size;
+                    size = part_size;
+
+                    unsigned local_offset(0);
+                    for (unsigned long i(0) ; i < _rank ; ++i)
+                    {
+                        local_offset += _orig_size / _com_size;
+                        if (i < rest)
+                            ++local_offset;
+                    }
+                    _offset = local_offset;
                 }
-                _offset = local_offset;
+                else
+                {
+                    unsigned long count(_orig_size / min_part_size);
+                    if (count == 0)
+                        count = 1;
+                    unsigned long part_size(_orig_size / count);
+                    unsigned long rest(_orig_size - (part_size * count));
+                    if (_rank < rest)
+                        ++part_size;
+                    size = part_size;
+                    if (_rank >= count)
+                        size = 0;
+
+                    unsigned local_offset(0);
+                    for (unsigned long i(0) ; i < _rank ; ++i)
+                    {
+                        local_offset += _orig_size / count;
+                        if (i < rest)
+                            ++local_offset;
+                    }
+                    _offset = local_offset;
+                }
 
                 _vector.reset(new DenseVector<DT_>(size));
                 for (unsigned long i(0) ; i < size ; ++i)
@@ -82,12 +112,18 @@ namespace honei
                 _orig_size(src_size),
                 _rank(mpi::mpi_comm_rank(com)),
                 _com_size(mpi::mpi_comm_size(com))
+        {
+            unsigned long size;
+
+            unsigned long min_part_size(Configuration::instance()->get_value("mpi::min_part_size", 1));
+            unsigned long pre_part_size(_orig_size / _com_size);
+            if (pre_part_size > min_part_size)
             {
-                unsigned long part_size(_orig_size / _com_size);
+                unsigned long part_size(pre_part_size);
                 unsigned long rest(_orig_size - (part_size * _com_size));
                 if (_rank < rest)
                     ++part_size;
-                unsigned long size = part_size;
+                size = part_size;
 
                 unsigned local_offset(0);
                 for (unsigned long i(0) ; i < _rank ; ++i)
@@ -97,9 +133,32 @@ namespace honei
                         ++local_offset;
                 }
                 _offset = local_offset;
-
-                _vector.reset(new DenseVector<DT_>(size));
             }
+            else
+            {
+                unsigned long count(_orig_size / min_part_size);
+                if (count == 0)
+                    count = 1;
+                unsigned long part_size(_orig_size / count);
+                unsigned long rest(_orig_size - (part_size * count));
+                if (_rank < rest)
+                    ++part_size;
+                size = part_size;
+                if (_rank >= count)
+                    size = 0;
+
+                unsigned local_offset(0);
+                for (unsigned long i(0) ; i < _rank ; ++i)
+                {
+                    local_offset += _orig_size / count;
+                    if (i < rest)
+                        ++local_offset;
+                }
+                _offset = local_offset;
+            }
+
+            _vector.reset(new DenseVector<DT_>(size));
+        }
 
 
             /// Copy-constructor.
@@ -108,10 +167,10 @@ namespace honei
                 _offset(other._offset),
                 _rank(other._rank),
                 _com_size(other._com_size)
-            {
-                _vector.reset(new DenseVector<DT_> (*other._vector));
-                //_vector = std::tr1::shared_ptr<DenseVector<DT_> >(new DenseVector<DT_>(*other._vector));
-            }
+        {
+            _vector.reset(new DenseVector<DT_> (*other._vector));
+            //_vector = std::tr1::shared_ptr<DenseVector<DT_> >(new DenseVector<DT_>(*other._vector));
+        }
 
             /// Destructor.
             virtual ~DenseVectorMPI()
@@ -176,7 +235,7 @@ namespace honei
             }
 
             /*/// Return our memory id
-            virtual void * memid() const;
+              virtual void * memid() const;
 
             /// Return the address of our data
             virtual void * address() const;*/
@@ -222,27 +281,27 @@ namespace honei
 
     /*extern template class DenseVectorMPI<float>;
 
-    extern template bool operator== (const DenseVectorMPI<float> & a, const DenseVectorMPI<float> & b);
+      extern template bool operator== (const DenseVectorMPI<float> & a, const DenseVectorMPI<float> & b);
 
-    extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorMPI<float> & vector);
+      extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorMPI<float> & vector);
 
-    extern template class DenseVectorMPI<double>;
+      extern template class DenseVectorMPI<double>;
 
-    extern template bool operator== (const DenseVectorMPI<double> & a, const DenseVectorMPI<double> & b);
+      extern template bool operator== (const DenseVectorMPI<double> & a, const DenseVectorMPI<double> & b);
 
-    extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorMPI<double> & vector);
+      extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorMPI<double> & vector);
 
-    extern template class DenseVectorMPI<long>;
+      extern template class DenseVectorMPI<long>;
 
-    extern template bool operator== (const DenseVectorMPI<long> & a, const DenseVectorMPI<long> & b);
+      extern template bool operator== (const DenseVectorMPI<long> & a, const DenseVectorMPI<long> & b);
 
-    extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorMPI<long> & vector);
+      extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorMPI<long> & vector);
 
-    extern template class DenseVectorMPI<unsigned long>;
+      extern template class DenseVectorMPI<unsigned long>;
 
-    extern template bool operator== (const DenseVectorMPI<unsigned long> & a, const DenseVectorMPI<unsigned long> & b);
+      extern template bool operator== (const DenseVectorMPI<unsigned long> & a, const DenseVectorMPI<unsigned long> & b);
 
-    extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorMPI<unsigned long> & vector);*/
+      extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorMPI<unsigned long> & vector);*/
 }
 
 #endif

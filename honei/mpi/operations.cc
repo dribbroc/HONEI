@@ -104,15 +104,15 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
     }
 
     // berechne innere anteile
-    Product<Tag_>::value(r.vector(), a.inner_matrix(), b.vector());
+    if (a.active()) Product<Tag_>::value(r.vector(), a.inner_matrix(), b.vector());
 
     MPI_Waitall(recv_requests.size(), &recv_requests[0], MPI_STATUSES_IGNORE);
     recv_requests.clear();
 
     // berechne aeussere anteile
     DenseVector<DT_> r_outer(r.local_size());
-    Product<Tag_>::value(r_outer, a.outer_matrix(), missing_values);
-    Sum<Tag_>::value(r.vector(), r_outer);
+    if (a.active()) Product<Tag_>::value(r_outer, a.outer_matrix(), missing_values);
+    if (a.active()) Sum<Tag_>::value(r.vector(), r_outer);
 
     MPI_Waitall(send_requests.size(), &send_requests[0], MPI_STATUSES_IGNORE);
     send_requests.clear();
@@ -153,15 +153,15 @@ void MPIOps<Tag_>::defect(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & r
     }
 
     // berechne innere anteile
-    Defect<Tag_>::value(r.vector(), rhs.vector(), a.inner_matrix(), b.vector());
+    if (a.active()) Defect<Tag_>::value(r.vector(), rhs.vector(), a.inner_matrix(), b.vector());
 
     MPI_Waitall(recv_requests.size(), &recv_requests[0], MPI_STATUSES_IGNORE);
     recv_requests.clear();
 
     // berechne aeussere anteile
     DenseVector<DT_> r_outer(r.local_size());
-    Product<Tag_>::value(r_outer, a.outer_matrix(), missing_values);
-    Difference<Tag_>::value(r.vector(), r_outer);
+    if (a.active()) Product<Tag_>::value(r_outer, a.outer_matrix(), missing_values);
+    if (a.active()) Difference<Tag_>::value(r.vector(), r_outer);
 
     MPI_Waitall(send_requests.size(), &send_requests[0], MPI_STATUSES_IGNORE);
     send_requests.clear();
