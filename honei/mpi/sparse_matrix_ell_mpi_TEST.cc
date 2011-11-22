@@ -53,7 +53,8 @@ class SparseMatrixELLMPIQuickTest :
             SparseMatrixELL<DT_> aell(MatrixIO<io_formats::ELL>::read_matrix(file, DT_(0)));
 
             SparseMatrix<DT_> as(aell);
-            SparseMatrixELLMPI<DT_> a(as);
+            //SparseMatrixELLMPI<DT_> a(as);
+            SparseMatrixELLMPI<DT_> a(aell);
 
 
             SparseMatrixELLMPI<DT_> sm0(as);

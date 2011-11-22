@@ -52,15 +52,7 @@ namespace honei
             unsigned long _rank;
             unsigned long _com_size;
 
-        public:
-
-            /// Constructors
-            /// \{
-
-            /**
-             * Constructor.
-             */
-            SparseMatrixELLMPI(const SparseMatrix<DT_> & src, MPI_Comm com = MPI_COMM_WORLD)
+            void _init(const SparseMatrix<DT_> & src, MPI_Comm com = MPI_COMM_WORLD)
             {
                 int irank;
                 mpi::mpi_comm_rank(&irank, com);
@@ -223,6 +215,25 @@ namespace honei
                 for (unsigned long i(0) ; i < _send_sizes.size() ; ++i)
                     send_size+= _send_sizes.at(i);
                 _send_size = send_size;
+            }
+
+        public:
+
+            /// Constructors
+            /// \{
+
+            /**
+             * Constructor.
+             */
+            SparseMatrixELLMPI(const SparseMatrix<DT_> & src, MPI_Comm com = MPI_COMM_WORLD)
+            {
+                _init(src, com);
+            }
+
+            SparseMatrixELLMPI(const SparseMatrixELL<DT_> & src, MPI_Comm com = MPI_COMM_WORLD)
+            {
+                SparseMatrix<DT_> t(src);
+                _init(t, com);
             }
 
 
