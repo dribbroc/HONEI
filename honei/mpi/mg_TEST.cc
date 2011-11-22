@@ -56,56 +56,7 @@ class MGSolverTest:
                                                                                             double>::load_data(file, max_level, double(1), "spai"));
 
             // create MPI cycle
-            std::vector<SparseMatrixELLMPI<double> > A;
-            std::vector<SparseMatrixELLMPI<double> > Res;
-            std::vector<SparseMatrixELLMPI<double> > Prol;
-            std::vector<SparseMatrixELLMPI<double> > P;
-            std::vector<DenseVectorMPI<double> > b;
-            std::vector<DenseVectorMPI<double> > x;
-            std::vector<DenseVectorMPI<double> > c;
-            std::vector<DenseVectorMPI<double> > d;
-            std::vector<DenseVectorMPI<double> > t0;
-            std::vector<DenseVectorMPI<double> > t1;
-
-            for(unsigned long i(0); i < data.A.size(); ++i)
-            {
-                SparseMatrix<double> as(data.A.at(i));
-                SparseMatrixELLMPI<double> am(as);
-                A.push_back(am);
-
-                SparseMatrix<double> a4s(data.P.at(i));
-                SparseMatrixELLMPI<double> a4m(a4s);
-                P.push_back(a4m);
-                DenseVectorMPI<double> a5m(data.b.at(i));
-                b.push_back(a5m);
-                DenseVectorMPI<double> a6m(data.x.at(i));
-                x.push_back(a6m);
-                DenseVectorMPI<double> a7m(data.c.at(i));
-                c.push_back(a7m);
-                DenseVectorMPI<double> a8m(data.d.at(i));
-                d.push_back(a8m);
-                DenseVectorMPI<double> a9m(data.temp_0.at(i));
-                t0.push_back(a9m);
-                DenseVectorMPI<double> a10m(data.temp_1.at(i));
-                t1.push_back(a10m);
-            }
-
-            for(unsigned long i(0); i < data.resmat.size(); ++i)
-            {
-                SparseMatrix<double> a2s(data.resmat.at(i));
-                SparseMatrixELLMPI<double> a2m(a2s);
-                Res.push_back(a2m);
-            }
-
-            for(unsigned long i(0); i < data.prolmat.size(); ++i)
-            {
-                SparseMatrix<double> a3s(data.prolmat.at(i));
-                SparseMatrixELLMPI<double> a3m(a3s);
-                Prol.push_back(a3m);
-            }
-
-            MGData<SparseMatrixELLMPI<double>, DenseVectorMPI<double>, SparseMatrixELLMPI<double>, SparseMatrixELLMPI<double> > data_mpi(A, Res, Prol, P, b, x, c, d, t0, t1, 1, 1000, 4, 4, 1, 1e-8);
-
+            MGData<SparseMatrixELLMPI<double>, DenseVectorMPI<double>, SparseMatrixELLMPI<double>, SparseMatrixELLMPI<double> > data_mpi(data);
 
             MGUtil<Tag_,
                 SparseMatrixELLMPI<double>,

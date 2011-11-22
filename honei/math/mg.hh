@@ -76,10 +76,6 @@ namespace honei
             unsigned long min_level;
             double eps_relative;
 
-            MGData()
-            {
-            };
-
             MGData(std::vector<MatrixType_> & systems,
                    std::vector<TransferContType_> & resmats,
                    std::vector<TransferContType_> & prolmats,
@@ -121,7 +117,7 @@ namespace honei
             }
 
             template<typename MatrixSrc_, typename VectorSrc_, typename TransferSrc_, typename PreconSrc_>
-            void convert(MGData<MatrixSrc_, VectorSrc_, TransferSrc_, PreconSrc_> & other)
+            MGData(const MGData<MatrixSrc_, VectorSrc_, TransferSrc_, PreconSrc_> & other)
             {
                 for (unsigned long i(0) ; i < other.A.size() ; ++i)
                 {
@@ -133,14 +129,18 @@ namespace honei
                 {
                     TransferContType_ t2(other.resmat.at(i));
                     this->resmat.push_back(t2);
-                    TransferContType_ t3(other.prolmat.at(i));
-                    this->prolmat.push_back(t3);
+                }
+
+                for (unsigned long i(0) ; i < other.prolmat.size() ; ++i)
+                {
+                    TransferContType_ t4(other.prolmat.at(i));
+                    this->prolmat.push_back(t4);
                 }
 
                 for (unsigned long i(0) ; i < other.P.size() ; ++i)
                 {
-                    PreconContType_ t1(other.P.at(i));
-                    this->P.push_back(t1);
+                    PreconContType_ t5(other.P.at(i));
+                    this->P.push_back(t5);
                 }
 
                 for (unsigned long i(0) ; i < other.b.size() ; ++i)
