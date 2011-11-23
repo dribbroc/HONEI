@@ -29,6 +29,9 @@
 #include <honei/la/dense_vector.hh>
 #include <honei/la/algorithm.hh>
 #include <vector>
+#ifdef HONEI_MPI
+#include <honei/backends/mpi/operations.hh>
+#endif
 
 using namespace honei;
 
@@ -52,40 +55,62 @@ class VectorIO<io_formats::EXP>
         template<typename DT_>
             static DenseVector<DT_> read_vector(std::string filename, DT_)
             {
-                std::vector<DT_> data;
-
-                std::ifstream file(filename.c_str());
-                if (! file.is_open())
-                    throw honei::InternalError("Unable to open Vector file " + filename);
-
-                while(!file.eof())
+#ifdef HONEI_MPI
+                int rank(mpi::mpi_comm_rank());
+                if (rank == 0)
                 {
-                    std::string line;
-                    std::getline(file, line);
-                    if(line.find("#", 0) < line.npos)
-                        continue;
-                    if(file.eof())
-                        break;
+#endif
+                    std::vector<DT_> data;
 
-                    std::string n_z_s;
+                    std::ifstream file(filename.c_str());
+                    if (! file.is_open())
+                        throw honei::InternalError("Unable to open Vector file " + filename);
 
-                    std::string::size_type first_digit(line.find_first_not_of(" "));
-                    line.erase(0, first_digit);
-                    std::string::size_type eol(line.length());
-                    for(unsigned long i(0) ; i < eol ; ++i)
+                    while(!file.eof())
                     {
-                        n_z_s.append(1, line[i]);
+                        std::string line;
+                        std::getline(file, line);
+                        if(line.find("#", 0) < line.npos)
+                            continue;
+                        if(file.eof())
+                            break;
+
+                        std::string n_z_s;
+
+                        std::string::size_type first_digit(line.find_first_not_of(" "));
+                        line.erase(0, first_digit);
+                        std::string::size_type eol(line.length());
+                        for(unsigned long i(0) ; i < eol ; ++i)
+                        {
+                            n_z_s.append(1, line[i]);
+                        }
+
+                        DT_ n_z = (DT_)atof(n_z_s.c_str());
+
+                        data.push_back(n_z);
+
                     }
-
-                    DT_ n_z = (DT_)atof(n_z_s.c_str());
-
-                    data.push_back(n_z);
-
+                    file.close();
+                    DenseVector<DT_> result(data.size());
+                    TypeTraits<DT_>::copy(&(data[0]), result.elements(), data.size());
+#ifdef HONEI_MPI
+                    unsigned long vec_size(result.size());
+                    mpi::mpi_bcast(&vec_size, 1, 0);
+                    mpi::mpi_bcast(result.elements(), vec_size, 0);
+                    return result;
                 }
-                file.close();
-                DenseVector<DT_> result(data.size(), 0);
-                TypeTraits<DT_>::copy(&(data[0]), result.elements(), data.size());
+                else
+                {
+                    unsigned long vec_size;
+                    mpi::mpi_bcast(&vec_size, 1, 0);
+                    DenseVector<DT_> result(vec_size);
+                    mpi::mpi_bcast(result.elements(), vec_size, 0);
+                    return result;
+                }
+#endif
+#ifndef HONEI_MPI
                 return result;
+#endif
             }
 };
 
@@ -180,45 +205,45 @@ template<>
 class VectorIO<io_formats::DV>
 {
     public:
-    static void write_vector(std::string output, DenseVectorContinuousBase<double> & dv)
-    {
+        static void write_vector(std::string output, DenseVectorContinuousBase<double> & dv)
+        {
             FILE* file;
             file = fopen(output.c_str(), "wb");
             uint64_t size(dv.size());
             fwrite(&size, sizeof(uint64_t), 1, file);
             fwrite(dv.elements(), sizeof(double), size, file);
             fclose(file);
-    }
+        }
 
-    template <typename DT_>
-    static void write_vector(std::string output, DenseVectorContinuousBase<DT_> & dv)
-    {
-            FILE* file;
-            file = fopen(output.c_str(), "wb");
-            uint64_t size(dv.size());
-            DenseVector<double> src(dv.size());
-            convert(src, dv);
-            fwrite(&size, sizeof(uint64_t), 1, file);
-            fwrite(src.elements(), sizeof(double), size, file);
-            fclose(file);
-    }
+        template <typename DT_>
+            static void write_vector(std::string output, DenseVectorContinuousBase<DT_> & dv)
+            {
+                FILE* file;
+                file = fopen(output.c_str(), "wb");
+                uint64_t size(dv.size());
+                DenseVector<double> src(dv.size());
+                convert(src, dv);
+                fwrite(&size, sizeof(uint64_t), 1, file);
+                fwrite(src.elements(), sizeof(double), size, file);
+                fclose(file);
+            }
 
-    template <typename DT_>
-    static DenseVector<DT_> read_vector(std::string input, DT_ HONEI_UNUSED datatype)
-    {
-            FILE* file(NULL);
-            file = fopen(input.c_str(), "rb");
-            if (file == NULL)
-                throw InternalError("File "+input+" not found!");
-            uint64_t size;
-            int status = fread(&size, sizeof(uint64_t), 1, file);
-            DenseVector<double> ax(size);
-            status = fread(ax.elements(), sizeof(double), size, file);
-            fclose(file);
-            DenseVector<DT_> axc(size);
-            convert<tags::CPU>(axc, ax);
-            return axc;
-    }
+        template <typename DT_>
+            static DenseVector<DT_> read_vector(std::string input, DT_ HONEI_UNUSED datatype)
+            {
+                FILE* file(NULL);
+                file = fopen(input.c_str(), "rb");
+                if (file == NULL)
+                    throw InternalError("File "+input+" not found!");
+                uint64_t size;
+                int status = fread(&size, sizeof(uint64_t), 1, file);
+                DenseVector<double> ax(size);
+                status = fread(ax.elements(), sizeof(double), size, file);
+                fclose(file);
+                DenseVector<DT_> axc(size);
+                convert<tags::CPU>(axc, ax);
+                return axc;
+            }
 
 };
 #endif

@@ -15,7 +15,7 @@ ell::threads = 1
 
 # MPI
 # Min Part size for rows and columns in matrix and vector
-mpi::min_part_size = 2000
+mpi::min_part_size = 1
 
 # CUDA
 ######

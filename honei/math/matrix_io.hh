@@ -34,6 +34,9 @@
 #include <honei/util/configuration.hh>
 #include <vector>
 #include <algorithm>
+#ifdef HONEI_MPI
+#include <honei/backends/mpi/operations.hh>
+#endif
 
 using namespace honei;
 
@@ -413,48 +416,94 @@ class MatrixIO<io_formats::ELL>
         template <typename DT_>
             static SparseMatrixELL<DT_> read_matrix(std::string input, HONEI_UNUSED DT_ datatype)
             {
-                FILE* file(NULL);
-                file = fopen(input.c_str(), "rb");
-                if (file == NULL)
-                    throw InternalError("File "+input+" not found!");
-                uint64_t size;
-                uint64_t rows;
-                uint64_t columns;
-                uint64_t stride;
-                uint64_t num_cols_per_row;
-                int status = fread(&size, sizeof(uint64_t), 1, file);
-                status = fread(&rows, sizeof(uint64_t), 1, file);
-                status = fread(&columns, sizeof(uint64_t), 1, file);
-                status = fread(&stride, sizeof(uint64_t), 1, file);
-                status = fread(&num_cols_per_row, sizeof(uint64_t), 1, file);
-                DenseVector<unsigned long> ajc(size);
-                if (sizeof(unsigned long) == sizeof(uint64_t))
+#ifdef HONEI_MPI
+                int rank(mpi::mpi_comm_rank());
+                if(rank == 0)
                 {
-                    DenseVector<unsigned long> aj(size);
-                    status = fread(aj.elements(), sizeof(uint64_t), size, file);
-                    for (unsigned long i(0) ; i < size ; ++i)
+#endif
+                    FILE* file(NULL);
+                    file = fopen(input.c_str(), "rb");
+                    if (file == NULL)
+                        throw InternalError("File "+input+" not found!");
+                    uint64_t size;
+                    uint64_t rows;
+                    uint64_t columns;
+                    uint64_t stride;
+                    uint64_t num_cols_per_row;
+                    int status = fread(&size, sizeof(uint64_t), 1, file);
+                    status = fread(&rows, sizeof(uint64_t), 1, file);
+                    status = fread(&columns, sizeof(uint64_t), 1, file);
+                    status = fread(&stride, sizeof(uint64_t), 1, file);
+                    status = fread(&num_cols_per_row, sizeof(uint64_t), 1, file);
+                    DenseVector<unsigned long> ajc(size);
+                    if (sizeof(unsigned long) == sizeof(uint64_t))
                     {
-                        ajc[i] = aj[i];
+                        status = fread(ajc.elements(), sizeof(uint64_t), size, file);
                     }
+                    else
+                    {
+                        uint64_t aj[size];
+                        status = fread(aj, sizeof(uint64_t), size, file);
+                        for (unsigned long i(0) ; i < size ; ++i)
+                        {
+                            ajc[i] = aj[i];
+                        }
+                    }
+                    DenseVector<double> ax(size);
+                    status = fread(ax.elements(), sizeof(double), size, file);
+                    fclose(file);
+                    DenseVector<DT_> axc(size);
+                    unsigned long crows(rows);
+                    unsigned long ccolumns(columns);
+                    unsigned long cstride(stride);
+                    unsigned long cnum_cols_per_row(num_cols_per_row);
+                    convert<tags::CPU>(axc, ax);
+#ifdef HONEI_MPI
+                    unsigned long vec_size(ajc.size());
+                    mpi::mpi_bcast(&vec_size, 1, 0);
+                    mpi::mpi_bcast(&crows, 1, 0);
+                    mpi::mpi_bcast(&ccolumns, 1, 0);
+                    mpi::mpi_bcast(&cstride, 1, 0);
+                    mpi::mpi_bcast(&cnum_cols_per_row, 1, 0);
+
+                    mpi::mpi_bcast(ajc.elements(), vec_size, 0);
+                    mpi::mpi_bcast(axc.elements(), vec_size, 0);
+
+                    SparseMatrixELL<DT_> smatrix(crows, ccolumns, cstride, cnum_cols_per_row, ajc, axc, 1);
+                    if (Configuration::instance()->get_value("ell::threads", 1) != 1)
+                    {
+                        SparseMatrix<DT_> bla(smatrix);
+                        SparseMatrixELL<DT_> smatrix2(bla);
+                        return smatrix2;
+                    }
+                    return smatrix;
                 }
                 else
                 {
-                    uint64_t aj[size];
-                    status = fread(aj, sizeof(uint64_t), size, file);
-                    for (unsigned long i(0) ; i < size ; ++i)
+                    unsigned long vec_size, crows, ccolumns, cstride, cnum_cols_per_row;
+                    mpi::mpi_bcast(&vec_size, 1, 0);
+                    mpi::mpi_bcast(&crows, 1, 0);
+                    mpi::mpi_bcast(&ccolumns, 1, 0);
+                    mpi::mpi_bcast(&cstride, 1, 0);
+                    mpi::mpi_bcast(&cnum_cols_per_row, 1, 0);
+
+                    DenseVector<unsigned long> ajc(vec_size);
+                    DenseVector<DT_> axc(vec_size);
+
+                    mpi::mpi_bcast(ajc.elements(), vec_size, 0);
+                    mpi::mpi_bcast(axc.elements(), vec_size, 0);
+
+                    SparseMatrixELL<DT_> smatrix(crows, ccolumns, cstride, cnum_cols_per_row, ajc, axc, 1);
+                    if (Configuration::instance()->get_value("ell::threads", 1) != 1)
                     {
-                        ajc[i] = aj[i];
+                        SparseMatrix<DT_> bla(smatrix);
+                        SparseMatrixELL<DT_> smatrix2(bla);
+                        return smatrix2;
                     }
+                    return smatrix;
                 }
-                DenseVector<double> ax(size);
-                status = fread(ax.elements(), sizeof(double), size, file);
-                fclose(file);
-                DenseVector<DT_> axc(size);
-                unsigned long crows(rows);
-                unsigned long ccolumns(columns);
-                unsigned long cstride(stride);
-                unsigned long cnum_cols_per_row(num_cols_per_row);
-                convert<tags::CPU>(axc, ax);
+#endif
+#ifndef HONEI_MPI
                 SparseMatrixELL<DT_> smatrix(crows, ccolumns, cstride, cnum_cols_per_row, ajc, axc, 1);
                 if (Configuration::instance()->get_value("ell::threads", 1) != 1)
                 {
@@ -463,6 +512,7 @@ class MatrixIO<io_formats::ELL>
                     return smatrix2;
                 }
                 return smatrix;
+#endif
             }
 };
 #endif
