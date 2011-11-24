@@ -65,7 +65,7 @@ namespace honei
 
                 unsigned long min_part_size(Configuration::instance()->get_value("mpi::min_part_size", 1));
                 unsigned long pre_part_size(src.rows() / _com_size);
-                if (pre_part_size > min_part_size)
+                if (pre_part_size >= min_part_size)
                 {
                     unsigned long part_size(src.rows() / _com_size);
                     unsigned long rest(src.rows() - (part_size * _com_size));
@@ -109,7 +109,7 @@ namespace honei
 
 //////////////////////////
                 unsigned long pre_col_part_size(src.columns() / _com_size);
-                if (pre_col_part_size > min_part_size)
+                if (pre_col_part_size >= min_part_size)
                 {
                     unsigned long col_part_size(src.columns() / _com_size);
                     unsigned long col_rest(src.columns() - (col_part_size * _com_size));

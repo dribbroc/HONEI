@@ -56,7 +56,7 @@ namespace honei
 
                 unsigned long min_part_size(Configuration::instance()->get_value("mpi::min_part_size", 1));
                 unsigned long pre_part_size(_orig_size / _com_size);
-                if (pre_part_size > min_part_size)
+                if (pre_part_size >= min_part_size)
                 {
                     unsigned long part_size(pre_part_size);
                     unsigned long rest(_orig_size - (part_size * _com_size));
@@ -117,7 +117,7 @@ namespace honei
 
             unsigned long min_part_size(Configuration::instance()->get_value("mpi::min_part_size", 1));
             unsigned long pre_part_size(_orig_size / _com_size);
-            if (pre_part_size > min_part_size)
+            if (pre_part_size >= min_part_size)
             {
                 unsigned long part_size(pre_part_size);
                 unsigned long rest(_orig_size - (part_size * _com_size));
