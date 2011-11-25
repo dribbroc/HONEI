@@ -63,6 +63,7 @@ class CGSolverTestSparseELL:
 
         virtual void run() const
         {
+            srand(time(NULL) + mpi::mpi_comm_rank());
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/poisson_advanced2/q2_sort_0/";
             filename += _m_f;
@@ -76,18 +77,18 @@ class CGSolverTestSparseELL:
             DenseVector<DT1_> srhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT1_(0)));
             DenseVectorMPI<DT1_> rhs(srhs);
 
-            /*DenseVector<DT1_> sdiag_inverted(smatrix2.rows(), DT1_(0));
+            DenseVector<DT1_> sdiag_inverted(smatrix2.rows(), DT1_(0));
             for(unsigned long i(0) ; i < sdiag_inverted.size() ; ++i)
             {
                     sdiag_inverted[i] = DT1_(0.7)/smatrix2(i, i);
             }
-            DenseVectorMPI<DT1_> diag_inverted(sdiag_inverted);*/
-            std::string filename_5(HONEI_SOURCEDIR);
+            DenseVectorMPI<DT1_> diag_inverted(sdiag_inverted);
+            /*std::string filename_5(HONEI_SOURCEDIR);
             filename_5 += "/honei/math/testdata/poisson_advanced2/q2_sort_0/";
             filename_5 += _p_f;
             SparseMatrixELL<DT1_> sdiag_inverted(MatrixIO<io_formats::ELL>::read_matrix(filename_5, DT1_(0)));
             SparseMatrix<DT1_> ssdiag_inverted(sdiag_inverted);
-            SparseMatrixELLMPI<DT1_> diag_inverted(ssdiag_inverted);
+            SparseMatrixELLMPI<DT1_> diag_inverted(ssdiag_inverted);*/
 
             std::string filename_4(HONEI_SOURCEDIR);
             filename_4 += "/honei/math/testdata/poisson_advanced2/q2_sort_0/";
@@ -98,7 +99,7 @@ class CGSolverTestSparseELL:
             unsigned long used_iters(4711);
             TimeStamp at, bt;
             at.take();
-            BiCGStab<Tag_, methods::VAR>::value(matrix2, diag_inverted, rhs, result, 1000ul, used_iters, 1e-8);
+            CG<Tag_, methods::VAR>::value(matrix2, diag_inverted, rhs, result, 1000ul, used_iters, 1e-8);
             bt.take();
             if (mpi::mpi_comm_rank() == 0)
             {

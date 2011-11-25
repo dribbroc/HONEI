@@ -71,9 +71,10 @@ DT_ MPIOps<Tag_>::norm_l2_false(const DenseVectorMPI<DT_> & x)
 
 template <typename Tag_>
 template <typename DT_>
-void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
+void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
 {
     const DT_ * bp = b.elements();
+    const unsigned long bid = (unsigned long) b.vector().memid();
 
     int myrank;
     mpi::mpi_comm_rank(&myrank);
@@ -83,12 +84,12 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
     std::vector<MPI_Request> send_requests;
     std::vector<MPI_Request> recv_requests;
 
-    DenseVector<DT_> missing_values(a.outer_matrix().columns());
+    DenseVector<DT_> recv_values(a.outer_matrix().columns());
     // empfange alle fehlenden werte
     unsigned long g_size(0);
     for (unsigned long i(0) ; i < a.recv_ranks().size() ; ++i)
     {
-        recv_requests.push_back(mpi::mpi_irecv(missing_values.elements() + g_size, a.recv_sizes().at(i), a.recv_ranks().at(i), a.recv_ranks().at(i)));
+        recv_requests.push_back(mpi::mpi_irecv(recv_values.elements() + g_size, a.recv_sizes().at(i), a.recv_ranks().at(i), a.recv_ranks().at(i)));
         g_size += a.recv_sizes().at(i);
     }
 
@@ -108,6 +109,43 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
 
     MPI_Waitall(recv_requests.size(), &recv_requests[0], MPI_STATUSES_IGNORE);
     recv_requests.clear();
+
+    //unsigned long black = rand() % mpi::mpi_comm_size();
+    g_size = 0;
+    for (unsigned long i(0) ; i < a.recv_ranks().size() ; ++i)
+    {
+        if (a.history()[bid][a.recv_ranks().at(i)].size() == 0)
+        {
+            unsigned long g_end(g_size + a.recv_sizes().at(i));
+            for ( ; g_size < g_end ; ++g_size)
+                a.history()[bid][a.recv_ranks().at(i)].push_back(recv_values[g_size]);
+        }
+        else
+        {
+            if(rand() % 300 != 1)
+            {
+                unsigned long g_end(g_size + a.recv_sizes().at(i));
+                for (unsigned long j(0) ; g_size < g_end ; ++g_size, ++j)
+                    a.history()[bid][a.recv_ranks().at(i)][j] = recv_values[g_size];
+            }
+            else
+            {
+                std::cout<<mpi::mpi_comm_rank()<<" "<<a.recv_ranks().at(i)<<std::endl;
+                g_size += a.recv_sizes().at(i);
+                sleep(1);
+            }
+        }
+
+    }
+
+    DenseVector<DT_> missing_values(recv_values.size());
+    g_size = 0;
+    for (unsigned long i(0) ; i < a.recv_ranks().size() ; ++i)
+    {
+        unsigned long g_end(g_size + a.recv_sizes().at(i));
+        for (unsigned long j(0) ; g_size < g_end ; ++g_size, ++j)
+            missing_values[g_size] = a.history()[bid][a.recv_ranks().at(i)][j];
+    }
 
     // berechne aeussere anteile
     DenseVector<DT_> r_outer(r.local_size());
@@ -202,7 +240,7 @@ template void MPIOps<tags::CPU>::defect(DenseVectorMPI<double> & r, const DenseV
 template double MPIOps<tags::CPU>::dot_product(const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
 template void MPIOps<tags::CPU>::element_product(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
 template double MPIOps<tags::CPU>::norm_l2_false(const DenseVectorMPI<double> & x);
-template void MPIOps<tags::CPU>::product(DenseVectorMPI<double> & r, const SparseMatrixELLMPI<double> & a, const DenseVectorMPI<double> & b);
+template void MPIOps<tags::CPU>::product(DenseVectorMPI<double> & r, SparseMatrixELLMPI<double> & a, const DenseVectorMPI<double> & b);
 template void MPIOps<tags::CPU>::scale(DenseVectorMPI<double> & x, double a);
 template void MPIOps<tags::CPU>::scaled_sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
 template void MPIOps<tags::CPU>::scaled_sum(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
@@ -214,7 +252,7 @@ template void MPIOps<tags::CPU::SSE>::defect(DenseVectorMPI<double> & r, const D
 template double MPIOps<tags::CPU::SSE>::dot_product(const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
 template void MPIOps<tags::CPU::SSE>::element_product(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
 template double MPIOps<tags::CPU::SSE>::norm_l2_false(const DenseVectorMPI<double> & x);
-template void MPIOps<tags::CPU::SSE>::product(DenseVectorMPI<double> & r, const SparseMatrixELLMPI<double> & a, const DenseVectorMPI<double> & b);
+template void MPIOps<tags::CPU::SSE>::product(DenseVectorMPI<double> & r, SparseMatrixELLMPI<double> & a, const DenseVectorMPI<double> & b);
 template void MPIOps<tags::CPU::SSE>::scale(DenseVectorMPI<double> & x, double a);
 template void MPIOps<tags::CPU::SSE>::scaled_sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
 template void MPIOps<tags::CPU::SSE>::scaled_sum(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
@@ -226,7 +264,7 @@ template void MPIOps<tags::CPU::MultiCore::SSE>::defect(DenseVectorMPI<double> &
 template double MPIOps<tags::CPU::MultiCore::SSE>::dot_product(const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
 template void MPIOps<tags::CPU::MultiCore::SSE>::element_product(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
 template double MPIOps<tags::CPU::MultiCore::SSE>::norm_l2_false(const DenseVectorMPI<double> & x);
-template void MPIOps<tags::CPU::MultiCore::SSE>::product(DenseVectorMPI<double> & r, const SparseMatrixELLMPI<double> & a, const DenseVectorMPI<double> & b);
+template void MPIOps<tags::CPU::MultiCore::SSE>::product(DenseVectorMPI<double> & r, SparseMatrixELLMPI<double> & a, const DenseVectorMPI<double> & b);
 template void MPIOps<tags::CPU::MultiCore::SSE>::scale(DenseVectorMPI<double> & x, double a);
 template void MPIOps<tags::CPU::MultiCore::SSE>::scaled_sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
 template void MPIOps<tags::CPU::MultiCore::SSE>::scaled_sum(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);

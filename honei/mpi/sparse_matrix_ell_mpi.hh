@@ -30,6 +30,7 @@
 
 #include <vector>
 #include <set>
+#include <map>
 
 namespace honei
 {
@@ -45,6 +46,7 @@ namespace honei
             std::vector<unsigned long> _send_sizes;
             std::vector<unsigned long> _send_index;
             unsigned long _send_size;
+            std::map<unsigned long, std::map<unsigned long, std::vector<DT_> > > _history; // <memid of x vector, <rank of sender, data of sender> >
             unsigned long _rows;
             unsigned long _columns;
             unsigned long _offset;
@@ -315,6 +317,7 @@ namespace honei
                 _send_sizes(other._send_sizes),
                 _send_index(other._send_index),
                 _send_size(other._send_size),
+                _history(other._history),
                 _rows(other._rows),
                 _columns(other._columns),
                 _offset(other._offset),
@@ -436,6 +439,11 @@ namespace honei
             unsigned long send_size() const
             {
                 return _send_size;
+            }
+
+            std::map<unsigned long, std::map<unsigned long, std::vector<DT_> > >  & history()
+            {
+                return _history;
             }
 
             /// \{

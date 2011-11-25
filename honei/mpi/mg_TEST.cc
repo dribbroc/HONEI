@@ -40,6 +40,7 @@ class MGSolverTest:
 
         virtual void run() const
         {
+            srand(time(NULL) + mpi::mpi_comm_rank());
             unsigned long max_level(6);
             unsigned long min_level(1);
             std::string file(HONEI_SOURCEDIR);

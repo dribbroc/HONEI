@@ -1165,7 +1165,7 @@ namespace honei
 
 
         template <typename DT_>
-        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
         {
             MPIOps<tags::CPU>::product(r, a, b);
             return r;
@@ -1604,7 +1604,7 @@ namespace honei
         }
 
         template <typename DT_>
-        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
         {
             MPIOps<tags::CPU::SSE>::product(r, a, b);
             return r;
@@ -1799,7 +1799,7 @@ namespace honei
             }
 
             template <typename DT_>
-            static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
+            static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
             {
                 MPIOps<Tag_>::product(r, a, b);
                 return r;

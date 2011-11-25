@@ -45,7 +45,7 @@ namespace honei
                 static DT_ norm_l2_false(const DenseVectorMPI<DT_> & x);
 
             template <typename DT_>
-                static void product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b);
+                static void product(DenseVectorMPI<DT_> & r, SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b);
 
             template <typename DT_>
                 static void scale(DenseVectorMPI<DT_> & x, DT_ a);
