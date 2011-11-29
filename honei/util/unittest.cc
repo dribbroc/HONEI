@@ -126,7 +126,9 @@ TestFailedException::~TestFailedException() throw ()
 
 int main(int argc, char** argv)
 {
+#ifdef HONEI_MPI
     MPI_Init(&argc, &argv);
+#endif
     int result(EXIT_SUCCESS);
     bool quick(false);
     bool sse(false);
@@ -302,6 +304,8 @@ int main(int argc, char** argv)
         iterator_index++;
     }
 
+#ifdef HONEI_MPI
     MPI_Finalize();
+#endif
     return result;
 }
