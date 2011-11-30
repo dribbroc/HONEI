@@ -7,6 +7,7 @@ DEFS = \
 	$(SSEDEF) \
 	$(MPIDEF) \
 	$(DEBUGDEF) \
+	$(MPIDEF) \
 	$(PROFILERDEF)
 
 lib_LTLIBRARIES = libhoneibackendsmpi.la

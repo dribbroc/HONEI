@@ -21,6 +21,7 @@
 #ifndef BACKEND_MPI_GUARD_OPERATIONS_HH
 #define BACKEND_MPI_GUARD_OPERATIONS_HH 1
 
+#ifdef HONEI_MPI
 #include <mpi.h>
 
 namespace honei
@@ -78,4 +79,5 @@ namespace honei
     }
 }
 
+#endif
 #endif
