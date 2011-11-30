@@ -36,6 +36,7 @@ namespace honei
         enum TagValue
         {
             tv_cpu = 1,
+            tv_cpu_generic,
             tv_cpu_multi_core,
             tv_cpu_itanium,
             tv_cell,
@@ -62,6 +63,19 @@ namespace honei
             const static TagValue tag_value = tv_cpu;
             const static TagValue memory_value = tv_cpu;
             const static std::string name;
+
+            /**
+             * Tag-type for compiler-optimised operations.
+             *
+             * \ingroup grptagscpugeneric
+             */
+            struct Generic :
+                public InstantiationPolicy<CPU::Generic, NonCopyable>
+            {
+                const static TagValue tag_value = tv_cpu;
+                const static TagValue memory_value = tv_cpu;
+                const static std::string name;
+            };
 
             /**
              * Tag-type for SSE-optimised operations.
