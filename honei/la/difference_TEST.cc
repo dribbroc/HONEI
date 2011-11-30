@@ -794,13 +794,18 @@ class DenseVectorDifferenceResultTest :
 
             DenseVector<DT_> dv00(1, DT_(1));
             DenseVector<DT_> dv01(5, DT_(1));
-            TEST_CHECK_THROWS(Difference<Tag_>::value(dv00, dv01), VectorSizeDoesNotMatch);
+            DenseVector<DT_> dv02(3, DT_(1));
+            TEST_CHECK_THROWS(Difference<Tag_>::value(dv02, dv00, dv01), VectorSizeDoesNotMatch);
         }
 };
 DenseVectorDifferenceResultTest<tags::CPU, float> dense_vector_difference_result_test_float("float");
 DenseVectorDifferenceResultTest<tags::CPU, double> dense_vector_difference_result_test_double("double");
 DenseVectorDifferenceResultTest<tags::CPU::MultiCore, float> mc_dense_vector_difference_result_test_float("float");
 DenseVectorDifferenceResultTest<tags::CPU::MultiCore, double> mc_dense_vector_difference_result_test_double("double");
+DenseVectorDifferenceResultTest<tags::CPU::Generic, float> generic_dense_vector_difference_result_test_float("float");
+DenseVectorDifferenceResultTest<tags::CPU::Generic, double> generic_dense_vector_difference_result_test_double("double");
+DenseVectorDifferenceResultTest<tags::CPU::MultiCore::Generic, float> generic_mc_dense_vector_difference_result_test_float("float");
+DenseVectorDifferenceResultTest<tags::CPU::MultiCore::Generic, double> generic_mc_dense_vector_difference_result_test_double("double");
 #ifdef HONEI_SSE
 DenseVectorDifferenceResultTest<tags::CPU::SSE, float> sse_dense_vector_difference_result_test_float("float");
 DenseVectorDifferenceResultTest<tags::CPU::SSE, double> sse_dense_vector_difference_result_test_double("double");
@@ -821,6 +826,75 @@ DenseVectorDifferenceResultTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_
 DenseVectorDifferenceResultTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_difference_result_test_float("float");
 #ifdef HONEI_CUDA_DOUBLE
 DenseVectorDifferenceResultTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_difference_result_test_double("double");
+#endif
+#endif
+
+template <typename Tag_, typename DT_>
+class DenseVectorDifferenceResultQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorDifferenceResultQuickTest(const std::string & type) :
+            QuickTest("dense_vector_difference_result_quick_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long size(4711);
+            DenseVector<DT_> dv1(size), dv2(size), dv3(size, DT_(0));
+
+            for (typename DenseVector<DT_>::ElementIterator i(dv1.begin_elements()), i_end(dv1.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
+            }
+            for (typename DenseVector<DT_>::ElementIterator i(dv2.begin_elements()), i_end(dv2.end_elements()) ;
+                    i != i_end ; ++i)
+            {
+                *i = static_cast<DT_>((i.index() + 1) / 1.23456789);
+            }
+
+            DenseVector<DT_> result(size);
+            Difference<Tag_>::value(result, dv1, dv2);
+
+            TEST(result.lock(lm_read_only), TEST_CHECK_EQUAL(result, dv3), result.unlock(lm_read_only));
+
+            DenseVector<DT_> dv00(1, DT_(1));
+            DenseVector<DT_> dv01(5, DT_(1));
+            DenseVector<DT_> dv02(3, DT_(1));
+            TEST_CHECK_THROWS(Difference<Tag_>::value(dv02, dv00, dv01), VectorSizeDoesNotMatch);
+        }
+};
+DenseVectorDifferenceResultQuickTest<tags::CPU, float> dense_vector_difference_result_quick_test_float("float");
+DenseVectorDifferenceResultQuickTest<tags::CPU, double> dense_vector_difference_result_quick_test_double("double");
+DenseVectorDifferenceResultQuickTest<tags::CPU::MultiCore, float> mc_dense_vector_difference_result_quick_test_float("float");
+DenseVectorDifferenceResultQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_difference_result_quick_test_double("double");
+DenseVectorDifferenceResultQuickTest<tags::CPU::Generic, float> generic_dense_vector_difference_result_quick_test_float("float");
+DenseVectorDifferenceResultQuickTest<tags::CPU::Generic, double> generic_dense_vector_difference_result_quick_test_double("double");
+DenseVectorDifferenceResultQuickTest<tags::CPU::MultiCore::Generic, float> generic_mc_dense_vector_difference_result_quick_test_float("float");
+DenseVectorDifferenceResultQuickTest<tags::CPU::MultiCore::Generic, double> generic_mc_dense_vector_difference_result_quick_test_double("double");
+#ifdef HONEI_SSE
+DenseVectorDifferenceResultQuickTest<tags::CPU::SSE, float> sse_dense_vector_difference_result_quick_test_float("float");
+DenseVectorDifferenceResultQuickTest<tags::CPU::SSE, double> sse_dense_vector_difference_result_quick_test_double("double");
+DenseVectorDifferenceResultQuickTest<tags::CPU::MultiCore::SSE, float> mc_sse_dense_vector_difference_result_quick_test_float("float");
+DenseVectorDifferenceResultQuickTest<tags::CPU::MultiCore::SSE, double> mc_sse_dense_vector_difference_result_quick_test_double("double");
+#endif
+#ifdef HONEI_CUDA
+DenseVectorDifferenceResultQuickTest<tags::GPU::CUDA, float> cuda_dense_vector_difference_result_quick_test_float("float");
+DenseVectorDifferenceResultQuickTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_dense_vector_difference_result_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorDifferenceResultQuickTest<tags::GPU::CUDA, double> cuda_dense_vector_difference_result_quick_test_double("double");
+DenseVectorDifferenceResultQuickTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_dense_vector_difference_result_quick_test_double("double");
+#endif
+#endif
+#ifdef HONEI_OPENCL
+DenseVectorDifferenceResultQuickTest<tags::OpenCL::CPU, float> ocl_cpu_dense_vector_difference_result_quick_test_float("float");
+DenseVectorDifferenceResultQuickTest<tags::OpenCL::CPU, double> ocl_cpu_dense_vector_difference_result_quick_test_double("double");
+DenseVectorDifferenceResultQuickTest<tags::OpenCL::GPU, float> ocl_gpu_dense_vector_difference_result_quick_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorDifferenceResultQuickTest<tags::OpenCL::GPU, double> ocl_gpu_dense_vector_difference_result_quick_test_double("double");
 #endif
 #endif
 

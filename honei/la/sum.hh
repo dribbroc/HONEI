@@ -537,6 +537,25 @@ namespace honei
         }
     };
 
+    template <> struct Sum<tags::CPU::Generic>
+    {
+        template <typename DT_>
+        static inline DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y)
+        {
+            if (x.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+            const DT_ * ye(y.elements());
+            DT_ * xe(x.elements());
+            const unsigned long size(x.size());
+            for (unsigned long i(0) ; i < size ; ++i)
+            {
+                xe[i] += ye[i];
+            }
+            return x;
+        }
+    };
+
     /**
      * \brief Sum of two entities
      *
@@ -1052,6 +1071,11 @@ namespace honei
 
     template <> struct Sum<tags::CPU::MultiCore> :
         public mc::Sum<tags::CPU::MultiCore>
+    {
+    };
+
+    template <> struct Sum<tags::CPU::MultiCore::Generic> :
+        public mc::Sum<tags::CPU::MultiCore::Generic>
     {
     };
 

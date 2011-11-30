@@ -601,6 +601,7 @@ int main(int argc, char** argv)
     std::list<int> runrs;
     bool sse(true);
     bool cuda(true);
+    bool generic(true);
     bool opencl(true);
     bool itanium(true);
     bool cell(true);
@@ -626,6 +627,7 @@ int main(int argc, char** argv)
             mc = false;
             sc = false;
             cuda = false;
+            generic = false;
             opencl = false;
             itanium = false;
             for(int i(1) ; i < argc ; ++i)
@@ -650,6 +652,10 @@ int main(int argc, char** argv)
                 {
                     cell = true;
                 }
+                if (honei::stringify(argv[i]) == "generic")
+                {
+                    generic = true;
+                }
                 if (honei::stringify(argv[i]) == "mc")
                 {
                     mc = true;
@@ -659,6 +665,7 @@ int main(int argc, char** argv)
                     sse = true;
                     mc = true;
                     sc = true;
+                    generic = true;
                 }
                 if (honei::stringify(argv[i]) == "sc")
                 {
@@ -678,6 +685,11 @@ int main(int argc, char** argv)
     for (BenchmarkList::Iterator i(BenchmarkList::instance()->begin_benchs()),i_end(BenchmarkList::instance()->end_benchs()) ; i != i_end ; )
     {
         if (sse && ((*i)->plots() == plot) && (((*i)->get_tag_name() == "sse") || ((*i)->get_tag_name() == "mc-sse")))
+        {
+            ++i;
+            continue;
+        }
+        if (generic && ((*i)->plots() == plot) && (((*i)->get_tag_name() == "generic") || ((*i)->get_tag_name() == "mc-generic")))
         {
             ++i;
             continue;

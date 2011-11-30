@@ -343,6 +343,10 @@ DenseVectorScaleTest<tags::CPU, float> dense_vector_scale_test_float("float");
 DenseVectorScaleTest<tags::CPU, double> dense_vector_scale_test_double("double");
 DenseVectorScaleTest<tags::CPU::MultiCore, float> mc_dense_vector_scale_test_float("MC float");
 DenseVectorScaleTest<tags::CPU::MultiCore, double> mc_dense_vector_scale_test_double("MC double");
+DenseVectorScaleTest<tags::CPU::Generic, float> generic_dense_vector_scale_test_float("float");
+DenseVectorScaleTest<tags::CPU::Generic, double> generic_dense_vector_scale_test_double("double");
+DenseVectorScaleTest<tags::CPU::MultiCore::Generic, float> generic_mc_dense_vector_scale_test_float("MC float");
+DenseVectorScaleTest<tags::CPU::MultiCore::Generic, double> generic_mc_dense_vector_scale_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorScaleTest<tags::CPU::SSE, float> sse_dense_vector_scale_test_float("sse float");
 DenseVectorScaleTest<tags::CPU::SSE, double> sse_dense_vector_scale_test_double("sse double");
@@ -401,6 +405,10 @@ DenseVectorScaleQuickTest<tags::CPU, float>  dense_vector_scale_quick_test_float
 DenseVectorScaleQuickTest<tags::CPU, double> dense_vector_scale_quick_test_double("double");
 DenseVectorScaleQuickTest<tags::CPU::MultiCore, float> mc_dense_vector_scale_quick_test_float("MC float");
 DenseVectorScaleQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_scale_quick_test_double("MC double");
+DenseVectorScaleQuickTest<tags::CPU::Generic, float>  generic_dense_vector_scale_quick_test_float("float");
+DenseVectorScaleQuickTest<tags::CPU::Generic, double> generic_dense_vector_scale_quick_test_double("double");
+DenseVectorScaleQuickTest<tags::CPU::MultiCore::Generic, float> generic_mc_dense_vector_scale_quick_test_float("MC float");
+DenseVectorScaleQuickTest<tags::CPU::MultiCore::Generic, double> generic_mc_dense_vector_scale_quick_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorScaleQuickTest<tags::CPU::SSE, float> sse_dense_vector_scale_quick_test_float("sse float");
 DenseVectorScaleQuickTest<tags::CPU::SSE, double> sse_dense_vector_scale_quick_test_double("sse double");

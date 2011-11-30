@@ -212,6 +212,21 @@ namespace honei
         }
     };
 
+    template <> struct Scale<tags::CPU::Generic>
+    {
+        template <typename DT_>
+        static inline DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & x, DT_ a)
+        {
+            DT_ * xe(x.elements());
+            const unsigned long size(x.size());
+            for (unsigned long i(0) ; i < size ; ++i)
+            {
+                xe[i] *= a;
+            }
+            return x;
+        }
+    };
+
     /**
      * \brief Result of scaling an entity by a scalar factor.
      *
@@ -418,6 +433,11 @@ namespace honei
 
     template <> struct Scale<tags::CPU::MultiCore> :
         public mc::Scale<tags::CPU::MultiCore>
+    {
+    };
+
+    template <> struct Scale<tags::CPU::MultiCore::Generic> :
+        public mc::Scale<tags::CPU::MultiCore::Generic>
     {
     };
 

@@ -228,7 +228,46 @@ namespace honei
             result.store = a.size() * sizeof(DT1_);
             result.size.push_back(a.size());
             result.size.push_back(b.size());
-            return result; 
+            return result;
+        }
+    };
+
+    template <> struct ScaledSum<tags::CPU::Generic>
+    {
+        template <typename DT_>
+        static inline DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y, DT_ a)
+        {
+            if (x.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+            const DT_ * ye(y.elements());
+            DT_ * xe(x.elements());
+            const unsigned long size(x.size());
+            for (unsigned long i(0) ; i < size ; ++i)
+            {
+                xe[i] += ye[i] * a;
+            }
+            return x;
+        }
+
+        template <typename DT_>
+        static inline DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & r, const DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y, DT_ a)
+        {
+            if (x.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+            if (x.size() != r.size())
+                throw VectorSizeDoesNotMatch(r.size(), x.size());
+
+            const DT_ * ye(y.elements());
+            const DT_ * xe(x.elements());
+            DT_ * re(r.elements());
+            const unsigned long size(x.size());
+            for (unsigned long i(0) ; i < size ; ++i)
+            {
+                re[i] = xe[i] + ye[i] * a;
+            }
+            return r;
         }
     };
 
@@ -587,6 +626,11 @@ namespace honei
 
     template <> struct ScaledSum<tags::CPU::MultiCore> :
         public mc::ScaledSum<tags::CPU::MultiCore>
+    {
+    };
+
+    template <> struct ScaledSum<tags::CPU::MultiCore::Generic> :
+        public mc::ScaledSum<tags::CPU::MultiCore::Generic>
     {
     };
 

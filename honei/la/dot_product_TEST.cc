@@ -76,6 +76,10 @@ DenseDotProductTest<tags::CPU, float> dense_scalar_product_test_float("float");
 DenseDotProductTest<tags::CPU, double> dense_scalar_product_test_double("double");
 DenseDotProductTest<tags::CPU::MultiCore, float> mc_dense_scalar_product_test_float("MC float");
 DenseDotProductTest<tags::CPU::MultiCore, double> mc_dense_scalar_product_test_double("MC double");
+DenseDotProductTest<tags::CPU::Generic, float> generic_dense_scalar_product_test_float("float");
+DenseDotProductTest<tags::CPU::Generic, double> generic_dense_scalar_product_test_double("double");
+DenseDotProductTest<tags::CPU::MultiCore::Generic, float> generic_mc_dense_scalar_product_test_float("MC float");
+DenseDotProductTest<tags::CPU::MultiCore::Generic, double> generic_mc_dense_scalar_product_test_double("MC double");
 #ifdef HONEI_SSE
 DenseDotProductTest<tags::CPU::SSE, float> sse_dense_scalar_product_test_float("SSE float");
 DenseDotProductTest<tags::CPU::SSE, double> sse_dense_scalar_product_test_double("SSE double");
@@ -143,6 +147,10 @@ DenseDotProductQuickTest<tags::CPU, float> dense_scalar_product_quick_test_float
 DenseDotProductQuickTest<tags::CPU, double> dense_scalar_product_quick_test_double("double");
 DenseDotProductQuickTest<tags::CPU::MultiCore, float> mc_dense_scalar_product_quick_test_float("MC float");
 DenseDotProductQuickTest<tags::CPU::MultiCore, double> mc_dense_scalar_product_quick_test_double("MC double");
+DenseDotProductQuickTest<tags::CPU::Generic, float> generic_dense_scalar_product_quick_test_float("float");
+DenseDotProductQuickTest<tags::CPU::Generic, double> generic_dense_scalar_product_quick_test_double("double");
+DenseDotProductQuickTest<tags::CPU::MultiCore::Generic, float> generic_mc_dense_scalar_product_quick_test_float("MC float");
+DenseDotProductQuickTest<tags::CPU::MultiCore::Generic, double> generic_mc_dense_scalar_product_quick_test_double("MC double");
 #ifdef HONEI_SSE
 DenseDotProductQuickTest<tags::CPU::SSE, float> sse_dense_scalar_product_quick_test_float("SSE float");
 DenseDotProductQuickTest<tags::CPU::SSE, double> sse_dense_scalar_product_quick_test_double("SSE double");
@@ -309,6 +317,10 @@ DenseVectorRangeDotProductTest<tags::CPU, float> dense_vector_range_scalar_produ
 DenseVectorRangeDotProductTest<tags::CPU, double> dense_vector_range_scalar_product_test_double("double");
 DenseVectorRangeDotProductTest<tags::CPU::MultiCore, float> mc_dense_vector_range_scalar_product_test_float("MC float");
 DenseVectorRangeDotProductTest<tags::CPU::MultiCore, double> mc_dense_vector_range_scalar_product_test_double("MC double");
+DenseVectorRangeDotProductTest<tags::CPU::Generic, float> generic_dense_vector_range_scalar_product_test_float("float");
+DenseVectorRangeDotProductTest<tags::CPU::Generic, double> generic_dense_vector_range_scalar_product_test_double("double");
+DenseVectorRangeDotProductTest<tags::CPU::MultiCore::Generic, float> generic_mc_dense_vector_range_scalar_product_test_float("MC float");
+DenseVectorRangeDotProductTest<tags::CPU::MultiCore::Generic, double> generic_mc_dense_vector_range_scalar_product_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorRangeDotProductTest<tags::CPU::SSE, float> sse_dense_vector_range_scalar_product_test_float("SSE float");
 DenseVectorRangeDotProductTest<tags::CPU::SSE, double> sse_dense_vector_range_scalar_product_test_double("SSE double");
@@ -381,6 +393,10 @@ DenseVectorRangeDotProductQuickTest<tags::CPU, float> dense_vector_range_scalar_
 DenseVectorRangeDotProductQuickTest<tags::CPU, double> dense_vector_range_scalar_product_quick_test_double("double");
 DenseVectorRangeDotProductQuickTest<tags::CPU::MultiCore, float> mc_dense_vector_range_scalar_product_quick_test_float("MC float");
 DenseVectorRangeDotProductQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_range_scalar_product_quick_test_double("MC double");
+DenseVectorRangeDotProductQuickTest<tags::CPU::Generic, float> generic_dense_vector_range_scalar_product_quick_test_float("float");
+DenseVectorRangeDotProductQuickTest<tags::CPU::Generic, double> generic_dense_vector_range_scalar_product_quick_test_double("double");
+DenseVectorRangeDotProductQuickTest<tags::CPU::MultiCore::Generic, float> generic_mc_dense_vector_range_scalar_product_quick_test_float("MC float");
+DenseVectorRangeDotProductQuickTest<tags::CPU::MultiCore::Generic, double> generic_mc_dense_vector_range_scalar_product_quick_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorRangeDotProductQuickTest<tags::CPU::SSE, float> sse_dense_vector_range_scalar_product_quick_test_float("SSE float");
 DenseVectorRangeDotProductQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_scalar_product_quick_test_double("SSE double");

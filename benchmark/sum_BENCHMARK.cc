@@ -132,6 +132,10 @@ DenseVectorSumBench<tags::CPU, float> DVSBenchfloat1("Dense Vector Sum Benchmark
 DenseVectorSumBench<tags::CPU, double> DVSBenchdouble1("Dense Vector Sum Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
 DenseVectorSumBench<tags::CPU::MultiCore, float> MCDVSBenchfloat1("MC Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
 DenseVectorSumBench<tags::CPU::MultiCore, double> MCDVSBenchdouble1("MC Dense Vector Sum Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
+DenseVectorSumBench<tags::CPU::Generic, float> GENERICDVSBenchfloat1("Generic Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
+DenseVectorSumBench<tags::CPU::Generic, double> GENERICDVSBenchdouble1("Generic Dense Vector Sum Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
+DenseVectorSumBench<tags::CPU::MultiCore::Generic, float> GENERICMCDVSBenchfloat1("MC Generic Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
+DenseVectorSumBench<tags::CPU::MultiCore::Generic, double> GENERICMCDVSBenchdouble1("MC Generic Dense Vector Sum Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
 #ifdef HONEI_SSE
 DenseVectorSumBench<tags::CPU::SSE, float> SSEDVSBenchfloat1("SSE Dense Vector Sum Benchmark - vector size: 64^4, float", 64ul*64ul*64ul*64ul, 50);
 DenseVectorSumBench<tags::CPU::SSE, double> SSEDVSBenchdouble1("SSE Dense Vector Sum Benchmark - vector size: 64^4, double", 64ul*64ul*64ul*64ul, 50);

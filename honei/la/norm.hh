@@ -452,6 +452,39 @@ namespace honei
         /// \}
     };
 
+    template <VectorNormType norm_type_> struct Norm<norm_type_, false, tags::CPU::Generic>
+    {
+        template <typename DT_>
+        static inline DT_ value(const DenseVectorContinuousBase<DT_> & x)
+        {
+            const DT_ * xe(x.elements());
+            const unsigned long size(x.size());
+            DT_ result(0);
+            for (unsigned long i(0) ; i < size ; ++i)
+            {
+                result += xe[i]*xe[i];
+            }
+
+            return result;
+        }
+    };
+
+    template <VectorNormType norm_type_> struct Norm<norm_type_, true, tags::CPU::Generic>
+    {
+        template <typename DT_>
+        static inline DT_ value(const DenseVectorContinuousBase<DT_> & x)
+        {
+            const DT_ * xe(x.elements());
+            const unsigned long size(x.size());
+            DT_ result(0);
+            for (unsigned long i(0) ; i < size ; ++i)
+            {
+                result += xe[i]*xe[i];
+            }
+
+            return sqrt(result);
+        }
+    };
 
     /**
      * \brief Norm of an entity (CUDA implementation).
@@ -732,6 +765,45 @@ namespace honei
             static inline DT_ value(const DenseVectorMPI<DT_> & x)
             {
                 return sqrt(MPIOps<tags::CPU::MultiCore>::norm_l2_false(x));
+            }
+    };
+
+    template <> struct Norm<vnt_l_two, false, tags::CPU::MultiCore::Generic>
+    {
+            template <typename DT1_>
+            static DT1_ value(const DenseVectorContinuousBase<DT1_> & x)
+            {
+                CONTEXT("When calculating DVCB, DBCB dot product using backend : " + tags::CPU::MultiCore::Generic::name);
+
+
+                DT1_ result(0);
+                unsigned long min_part_size(Configuration::instance()->get_value("mc::dot_product(DVCB,DVCB)::min_part_size", 128));
+                unsigned long max_count(Configuration::instance()->get_value("mc::dot_product(DVCB,DVCB)::max_count",
+                            mc::ThreadPool::instance()->num_threads()));
+
+                mc::Operation<honei::Norm<vnt_l_two, false, typename tags::CPU::MultiCore::Generic::DelegateTo> >::op(result, x, min_part_size, max_count);
+
+                return result;
+            }
+    };
+
+    template <> struct Norm<vnt_l_two, true, tags::CPU::MultiCore::Generic>
+    {
+            template <typename DT1_>
+            static DT1_ value(const DenseVectorContinuousBase<DT1_> & x)
+            {
+                CONTEXT("When calculating DVCB, DBCB dot product using backend : " + tags::CPU::MultiCore::Generic::name);
+
+
+                DT1_ result(0);
+                unsigned long min_part_size(Configuration::instance()->get_value("mc::dot_product(DVCB,DVCB)::min_part_size", 128));
+                unsigned long max_count(Configuration::instance()->get_value("mc::dot_product(DVCB,DVCB)::max_count",
+                            mc::ThreadPool::instance()->num_threads()));
+
+                mc::Operation<honei::Norm<vnt_l_two, false, typename tags::CPU::MultiCore::Generic::DelegateTo> >::op(result, x, min_part_size, max_count);
+                result = sqrt(result);
+
+                return result;
             }
     };
 

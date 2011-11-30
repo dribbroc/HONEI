@@ -264,6 +264,10 @@ DenseVectorRangeNormValueTest<tags::CPU, float> dense_vector_range_norm_value_te
 DenseVectorRangeNormValueTest<tags::CPU, double> dense_vector_range_norm_value_test_double("double");
 DenseVectorRangeNormValueTest<tags::CPU::MultiCore, float> mc_dense_vector_range_norm_value_test_float("MC float");
 DenseVectorRangeNormValueTest<tags::CPU::MultiCore, double> mc_dense_vector_range_norm_value_test_double("MC double");
+DenseVectorRangeNormValueTest<tags::CPU::Generic, float> generic_dense_vector_range_norm_value_test_float("float");
+DenseVectorRangeNormValueTest<tags::CPU::Generic, double> generic_dense_vector_range_norm_value_test_double("double");
+DenseVectorRangeNormValueTest<tags::CPU::MultiCore::Generic, float> generic_mc_dense_vector_range_norm_value_test_float("MC float");
+DenseVectorRangeNormValueTest<tags::CPU::MultiCore::Generic, double> generic_mc_dense_vector_range_norm_value_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorRangeNormValueTest<tags::CPU::SSE, float> sse_dense_vector_range_norm_value_test_float("SSE float");
 DenseVectorRangeNormValueTest<tags::CPU::SSE, double> sse_dense_vector_range_norm_value_test_double("SSE double");
@@ -338,6 +342,10 @@ DenseVectorRangeNormQuickTest<tags::CPU, float>  dense_vector_range_norm_quick_t
 DenseVectorRangeNormQuickTest<tags::CPU, double> dense_vector_range_norm_quick_test_double("double");
 DenseVectorRangeNormQuickTest<tags::CPU::MultiCore, float>  mc_dense_vector_range_norm_quick_test_float("MC float");
 DenseVectorRangeNormQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_range_norm_quick_test_double("MC double");
+DenseVectorRangeNormQuickTest<tags::CPU::Generic, float>  generic_dense_vector_range_norm_quick_test_float("float");
+DenseVectorRangeNormQuickTest<tags::CPU::Generic, double> generic_dense_vector_range_norm_quick_test_double("double");
+DenseVectorRangeNormQuickTest<tags::CPU::MultiCore::Generic, float>  generic_mc_dense_vector_range_norm_quick_test_float("MC float");
+DenseVectorRangeNormQuickTest<tags::CPU::MultiCore::Generic, double> generic_mc_dense_vector_range_norm_quick_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorRangeNormQuickTest<tags::CPU::SSE, float>  sse_dense_vector_range_norm_quick_test_float("SSE float");
 DenseVectorRangeNormQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_norm_quick_test_double("SSE double");

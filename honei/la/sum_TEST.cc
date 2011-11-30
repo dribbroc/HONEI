@@ -968,8 +968,12 @@ class DenseVectorRangeSumTest :
 };
 DenseVectorRangeSumTest<tags::CPU, float> dense_vector_range_sum_test_float("float");
 DenseVectorRangeSumTest<tags::CPU, double> dense_vector_range_sum_test_double("double");
+DenseVectorRangeSumTest<tags::CPU::Generic, float> gen_dense_vector_range_sum_test_float("float");
+DenseVectorRangeSumTest<tags::CPU::Generic, double> gen_dense_vector_range_sum_test_double("double");
 DenseVectorRangeSumTest<tags::CPU::MultiCore, float> mc_dense_vector_range_sum_test_float("MC float");
 DenseVectorRangeSumTest<tags::CPU::MultiCore, double> mc_dense_vector_range_sum_test_double("MC double");
+DenseVectorRangeSumTest<tags::CPU::MultiCore::Generic, float> gen_mc_dense_vector_range_sum_test_float("MC float");
+DenseVectorRangeSumTest<tags::CPU::MultiCore::Generic, double> gen_mc_dense_vector_range_sum_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorRangeSumTest<tags::CPU::SSE, float> sse_dense_vector_range_sum_test_float("SSE float");
 DenseVectorRangeSumTest<tags::CPU::SSE, double> sse_dense_vector_range_sum_test_double("SSE double");
@@ -1041,6 +1045,10 @@ DenseVectorRangeSumQuickTest<tags::CPU, float> dense_vector_range_sum_quick_test
 DenseVectorRangeSumQuickTest<tags::CPU, double> dense_vector_range_sum_quick_test_double("double");
 DenseVectorRangeSumQuickTest<tags::CPU::MultiCore, float> mc_dense_vector_range_sum_quick_test_float("MC float");
 DenseVectorRangeSumQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_range_sum_quick_test_double("MC double");
+DenseVectorRangeSumQuickTest<tags::CPU::Generic, float> generic_dense_vector_range_sum_quick_test_float("float");
+DenseVectorRangeSumQuickTest<tags::CPU::Generic, double> generic_dense_vector_range_sum_quick_test_double("double");
+DenseVectorRangeSumQuickTest<tags::CPU::MultiCore::Generic, float> generic_mc_dense_vector_range_sum_quick_test_float("MC float");
+DenseVectorRangeSumQuickTest<tags::CPU::MultiCore::Generic, double> generic_mc_dense_vector_range_sum_quick_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorRangeSumQuickTest<tags::CPU::SSE, float> sse_dense_vector_range_sum_quick_test_float("SSE float");
 DenseVectorRangeSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_range_sum_quick_test_double("SSE double");
@@ -1122,6 +1130,10 @@ DenseVectorSumTest<tags::CPU, float> dense_vector_sum_test_float("float");
 DenseVectorSumTest<tags::CPU, double> dense_vector_sum_test_double("double");
 DenseVectorSumTest<tags::CPU::MultiCore, float> mc_dense_vector_sum_test_float("MC float");
 DenseVectorSumTest<tags::CPU::MultiCore, double> mc_dense_vector_sum_test_double("MC double");
+DenseVectorSumTest<tags::CPU::Generic, float> generic_dense_vector_sum_test_float("float");
+DenseVectorSumTest<tags::CPU::Generic, double> generic_dense_vector_sum_test_double("double");
+DenseVectorSumTest<tags::CPU::MultiCore::Generic, float> generic_mc_dense_vector_sum_test_float("MC float");
+DenseVectorSumTest<tags::CPU::MultiCore::Generic, double> generic_mc_dense_vector_sum_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorSumTest<tags::CPU::SSE, float> sse_dense_vector_sum_test_float("SSE float");
 DenseVectorSumTest<tags::CPU::SSE, double> sse_dense_vector_sum_test_double("SSE double");
@@ -1199,6 +1211,10 @@ DenseVectorSumQuickTest<tags::CPU, float> dense_vector_sum_quick_test_float("flo
 DenseVectorSumQuickTest<tags::CPU, double> dense_vector_sum_quick_test_double("double");
 DenseVectorSumQuickTest<tags::CPU::MultiCore, float> mc_dense_vector_sum_quick_test_float("MC float");
 DenseVectorSumQuickTest<tags::CPU::MultiCore, double> mc_dense_vector_sum_quick_test_double("MC double");
+DenseVectorSumQuickTest<tags::CPU::Generic, float> generic_dense_vector_sum_quick_test_float("float");
+DenseVectorSumQuickTest<tags::CPU::Generic, double> generic_dense_vector_sum_quick_test_double("double");
+DenseVectorSumQuickTest<tags::CPU::MultiCore::Generic, float> generic_mc_dense_vector_sum_quick_test_float("MC float");
+DenseVectorSumQuickTest<tags::CPU::MultiCore::Generic, double> generic_mc_dense_vector_sum_quick_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorSumQuickTest<tags::CPU::SSE, float> sse_dense_vector_sum_quick_test_float("SSE float");
 DenseVectorSumQuickTest<tags::CPU::SSE, double> sse_dense_vector_sum_quick_test_double("SSE double");

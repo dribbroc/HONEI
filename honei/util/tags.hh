@@ -118,6 +118,21 @@ namespace honei
                 typedef tags::CPU DelegateTo;
 
                 /**
+                 * Tag-type for compiler-optimised multithreaded operations.
+                 *
+                 * \ingroup grptagscpumulticore
+                 */
+                struct Generic :
+                    public InstantiationPolicy<MultiCore::Generic, NonCopyable>
+                {
+                    const static TagValue tag_value = tv_cpu_multi_core;
+                    const static TagValue memory_value = tv_cpu;
+                    const static std::string name;
+
+                    typedef tags::CPU::Generic DelegateTo;
+                };
+
+                /**
                  * Tag-type for SSE-optimised multithreaded operations.
                  *
                  * \ingroup grptagscpumulticore

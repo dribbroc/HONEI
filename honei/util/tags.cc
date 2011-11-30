@@ -28,6 +28,7 @@ const std::string tags::CPU::Generic::name = "generic";
 const std::string tags::CPU::SSE::name = "sse";
 const std::string tags::CPU::Itanium::name = "itanium";
 const std::string tags::CPU::MultiCore::name = "mc";
+const std::string tags::CPU::MultiCore::Generic::name = "mc-generic";
 const std::string tags::CPU::MultiCore::SSE::name = "mc-sse";
 const std::string tags::Cell::name = "cell";
 const std::string tags::GPU::name = "gpu";

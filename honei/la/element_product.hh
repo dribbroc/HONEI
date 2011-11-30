@@ -503,6 +503,47 @@ namespace honei
         }
     };
 
+    template<> struct ElementProduct<tags::CPU::Generic>
+    {
+        template <typename DT_>
+        static inline DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y)
+        {
+            if (x.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+            const DT_ * ye(y.elements());
+            DT_ * xe(x.elements());
+            const unsigned long size(x.size());
+            for (unsigned long i(0) ; i < size ; ++i)
+            {
+                xe[i] *= ye[i];
+            }
+
+            return x;
+        }
+
+        template <typename DT_>
+        static inline DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & r, const DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y)
+        {
+            if (x.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+            if (x.size() != r.size())
+                throw VectorSizeDoesNotMatch(r.size(), x.size());
+
+            const DT_ * xe(x.elements());
+            const DT_ * ye(y.elements());
+            DT_ * re(r.elements());
+            const unsigned long size(x.size());
+            for (unsigned long i(0) ; i < size ; ++i)
+            {
+                re[i] = xe[i] * ye[i];
+            }
+
+            return r;
+        }
+    };
+
     /**
      * \brief Multiplication of the elements of two given entities.
      *
@@ -859,6 +900,11 @@ namespace honei
 
     template <> struct ElementProduct<tags::CPU::MultiCore> :
         public mc::ElementProduct<tags::CPU::MultiCore>
+    {
+    };
+
+    template <> struct ElementProduct<tags::CPU::MultiCore::Generic> :
+        public mc::ElementProduct<tags::CPU::MultiCore::Generic>
     {
     };
 

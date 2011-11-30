@@ -254,6 +254,26 @@ namespace honei
         }
     };
 
+    template <> struct DotProduct<tags::CPU::Generic>
+    {
+        template <typename DT_>
+        static inline DT_ value(const DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y)
+        {
+            if (x.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+            const DT_ * xe(x.elements());
+            const DT_ * ye(y.elements());
+            const unsigned long size(x.size());
+            DT_ result(0);
+            for (unsigned long i(0) ; i < size ; ++i)
+            {
+                result += xe[i] * ye[i];
+            }
+            return result;
+        }
+    };
+
     /**
      * \brief DotProduct of two vectors.
      *
@@ -442,6 +462,11 @@ namespace honei
 
     template <> struct DotProduct <tags::CPU::MultiCore> :
         public mc::DotProduct<tags::CPU::MultiCore>
+    {
+    };
+
+    template <> struct DotProduct <tags::CPU::MultiCore::Generic> :
+        public mc::DotProduct<tags::CPU::MultiCore::Generic>
     {
     };
 
