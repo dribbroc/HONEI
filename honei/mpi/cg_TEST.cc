@@ -20,6 +20,8 @@
 #include <honei/la/dense_vector.hh>
 #include <honei/mpi/dense_vector_mpi.hh>
 #include <honei/backends/mpi/operations.hh>
+#include <honei/mpi/dense_vector_mpi.hh>
+#include <honei/mpi/sparse_matrix_ell_mpi.hh>
 #include <honei/util/unittest.hh>
 #include <honei/math/cg.hh>
 #include <honei/math/bicgstab.hh>

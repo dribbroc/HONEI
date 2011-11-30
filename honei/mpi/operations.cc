@@ -19,6 +19,8 @@
 
 #include <honei/util/tags.hh>
 #include <honei/mpi/operations.hh>
+#include <honei/mpi/dense_vector_mpi.hh>
+#include <honei/mpi/sparse_matrix_ell_mpi.hh>
 #include <honei/backends/mpi/operations.hh>
 #include <honei/la/dot_product.hh>
 #include <honei/la/norm.hh>

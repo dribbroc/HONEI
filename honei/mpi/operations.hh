@@ -21,8 +21,8 @@
 #ifndef MPI_GUARD_OPERATIONS_HH
 #define MPI_GUARD_OPERATIONS_HH 1
 
-#include <honei/mpi/dense_vector_mpi.hh>
-#include <honei/mpi/sparse_matrix_ell_mpi.hh>
+#include <honei/mpi/dense_vector_mpi-fwd.hh>
+#include <honei/mpi/sparse_matrix_ell_mpi-fwd.hh>
 
 namespace honei
 {
