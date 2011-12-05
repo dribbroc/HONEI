@@ -27,12 +27,8 @@ namespace honei
     {
         ///////////// LA
         void defect_smell_dv(float * result, const float * rhs, const unsigned long * Aj, const float * Ax, const unsigned long * Arl, const float * b,
-                unsigned long stride, unsigned long rows, unsigned long /*num_cols_per_row*/, const unsigned long threads);
-        void defect_smell_dv(float * result, const float * rhs, const unsigned long * Aj, const float * Ax, const unsigned long * Arl, const float * b,
             unsigned long stride, unsigned long rows, unsigned long num_cols_per_row,
             unsigned long row_start, unsigned long row_end, const unsigned long threads);
-        void defect_smell_dv(double * result, const double * rhs, const unsigned long * Aj, const double * Ax, const unsigned long * Arl, const double * b,
-                unsigned long stride, unsigned long rows, unsigned long /*num_cols_per_row*/, const unsigned long threads);
         void defect_smell_dv(double * result, const double * rhs, const unsigned long * Aj, const double * Ax, const unsigned long * Arl, const double * b,
             unsigned long stride, unsigned long rows, unsigned long num_cols_per_row,
             unsigned long row_start, unsigned long row_end, const unsigned long threads);

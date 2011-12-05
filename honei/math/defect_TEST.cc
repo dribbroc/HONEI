@@ -62,19 +62,14 @@ class DefectTest:
                 SparseMatrixELL<DT_> smatrix(ssmatrix);
 
                 DenseVector<DT_> y1(Defect<Tag_>::value(b, smatrix, x));
-                DenseVector<DT_> y2(b.size());
-                Defect<Tag_>::value(y2, b, smatrix, x);
                 DenseVector<DT_> yref(b.copy());
                 Difference<tags::CPU>::value(yref ,Product<tags::CPU>::value(matrix, x));
 
                 y1.lock(lm_read_only);
                 y1.unlock(lm_read_only);
-                y2.lock(lm_read_only);
-                y2.unlock(lm_read_only);
                 for (unsigned long i(0) ; i < x.size() ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(y1[i], yref[i], 1e-3);
-                    TEST_CHECK_EQUAL_WITHIN_EPS(y2[i], yref[i], 1e-3);
                 }
             }
 
@@ -83,9 +78,13 @@ class DefectTest:
 };
 DefectTest<float, tags::CPU> defect_test_float_sparse("float");
 DefectTest<double, tags::CPU> defect_test_double_sparse("double");
+DefectTest<float, tags::CPU::MultiCore> mc_defect_test_float_sparse("float");
+DefectTest<double, tags::CPU::MultiCore> mc_defect_test_double_sparse("double");
 #ifdef HONEI_SSE
 DefectTest<float, tags::CPU::SSE> sse_defect_test_float_sparse("float");
 DefectTest<double, tags::CPU::SSE> sse_defect_test_double_sparse("double");
+DefectTest<float, tags::CPU::MultiCore::SSE> mcsse_defect_test_float_sparse("float");
+DefectTest<double, tags::CPU::MultiCore::SSE> mcsse_defect_test_double_sparse("double");
 #endif
 #ifdef HONEI_CUDA
 DefectTest<float, tags::GPU::CUDA> cuda_defect_test_float_sparse("float");
@@ -101,6 +100,85 @@ DefectTest<double, tags::OpenCL::CPU> ocl_cpu_defect_test_double_sparse("double"
 DefectTest<float, tags::OpenCL::GPU> ocl_gpu_defect_test_float_sparse("float");
 #ifdef HONEI_CUDA_DOUBLE
 DefectTest<double, tags::OpenCL::GPU> ocl_gpu_defect_test_double_sparse("double");
+#endif
+#endif
+
+template<typename DT_, typename Tag_>
+class Defect2Test:
+    public BaseTest
+{
+    public:
+        Defect2Test(const std::string & tag) :
+            BaseTest("Defect2 Test " + tag)
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            unsigned long old_threads = Configuration::instance()->get_value("ell::threads", 1);
+            std::string filename(HONEI_SOURCEDIR);
+            filename += "/honei/math/testdata/5pt_10x10.mtx";
+            unsigned long non_zeros(0);
+            DenseMatrix<DT_> matrix = MatrixIO<io_formats::MTX>::read_matrix(filename, DT_(0), non_zeros);
+
+            DenseVector<DT_> x(matrix.rows());
+            DenseVector<DT_> b(matrix.rows(), DT_(1.234));
+            DenseVector<DT_> y(matrix.rows());
+            for (unsigned long i(0) ; i < x.size() ; ++i)
+            {
+                x[i] = DT_(i) / 1.234;
+            }
+            SparseMatrix<DT_> ssmatrix(matrix);
+            for (unsigned long threads(1) ; threads <= 16 ; threads *= 2)
+            {
+                Configuration::instance()->set_value("ell::threads", threads);
+                SparseMatrixELL<DT_> smatrix(ssmatrix);
+
+                DenseVector<DT_> y2(b.size());
+                Defect<Tag_>::value(y2, b, smatrix, x);
+                DenseVector<DT_> yref(b.copy());
+                Difference<tags::CPU>::value(yref ,Product<tags::CPU>::value(matrix, x));
+
+                y2.lock(lm_read_only);
+                y2.unlock(lm_read_only);
+                for (unsigned long i(0) ; i < x.size() ; ++i)
+                {
+                    TEST_CHECK_EQUAL_WITHIN_EPS(y2[i], yref[i], 1e-3);
+                }
+            }
+
+            Configuration::instance()->set_value("ell::threads", old_threads);
+        }
+};
+Defect2Test<float, tags::CPU> defect2_test_float_sparse("float");
+Defect2Test<double, tags::CPU> defect2_test_double_sparse("double");
+Defect2Test<float, tags::CPU::MultiCore> mc_defect2_test_float_sparse("float");
+Defect2Test<double, tags::CPU::MultiCore> mc_defect2_test_double_sparse("double");
+Defect2Test<float, tags::CPU::Generic> generic_defect2_test_float_sparse("float");
+Defect2Test<double, tags::CPU::Generic> generic_defect2_test_double_sparse("double");
+Defect2Test<float, tags::CPU::MultiCore::Generic> generic_mc_defect2_test_float_sparse("float");
+Defect2Test<double, tags::CPU::MultiCore::Generic> generic_mc_defect2_test_double_sparse("double");
+#ifdef HONEI_SSE
+Defect2Test<float, tags::CPU::SSE> sse_defect2_test_float_sparse("float");
+Defect2Test<double, tags::CPU::SSE> sse_defect2_test_double_sparse("double");
+Defect2Test<float, tags::CPU::MultiCore::SSE> mcsse_defect2_test_float_sparse("float");
+Defect2Test<double, tags::CPU::MultiCore::SSE> mcsse_defect2_test_double_sparse("double");
+#endif
+#ifdef HONEI_CUDA
+Defect2Test<float, tags::GPU::CUDA> cuda_defect2_test_float_sparse("float");
+Defect2Test<float, tags::GPU::MultiCore::CUDA> mc_cuda_defect2_test_float_sparse("float");
+#ifdef HONEI_CUDA_DOUBLE
+Defect2Test<double, tags::GPU::CUDA> cuda_defect2_test_double_sparse("double");
+Defect2Test<double, tags::GPU::MultiCore::CUDA> mc_cuda_defect2_test_double_sparse("double");
+#endif
+#endif
+#ifdef HONEI_OPENCL
+Defect2Test<float, tags::OpenCL::CPU> ocl_cpu_defect2_test_float_sparse("float");
+Defect2Test<double, tags::OpenCL::CPU> ocl_cpu_defect2_test_double_sparse("double");
+Defect2Test<float, tags::OpenCL::GPU> ocl_gpu_defect2_test_float_sparse("float");
+#ifdef HONEI_CUDA_DOUBLE
+Defect2Test<double, tags::OpenCL::GPU> ocl_gpu_defect2_test_double_sparse("double");
 #endif
 #endif
 
@@ -171,6 +249,8 @@ class DefectRegressionTest:
 };
 DefectRegressionTest<float, tags::CPU> regression_defect_test_float_sparse("Regression float", "l2/area51_full_0.m", "l2/area51_rhs_0");
 DefectRegressionTest<double, tags::CPU> regression_defect_test_double_sparse("Regression double", "l2/area51_full_0.m", "l2/area51_rhs_0");
+DefectRegressionTest<float, tags::CPU::MultiCore> mc_regression_defect_test_float_sparse("Regression float", "l2/area51_full_0.m", "l2/area51_rhs_0");
+DefectRegressionTest<double, tags::CPU::MultiCore> mc_regression_defect_test_double_sparse("Regression double", "l2/area51_full_0.m", "l2/area51_rhs_0");
 #ifdef HONEI_SSE
 DefectRegressionTest<float, tags::CPU::SSE> sse_regression_defect_test_float_sparse("Regression float", "l2/area51_full_0.m", "l2/area51_rhs_0");
 DefectRegressionTest<double, tags::CPU::SSE> sse_regression_defect_test_double_sparse("Regression double", "l2/area51_full_0.m", "l2/area51_rhs_0");

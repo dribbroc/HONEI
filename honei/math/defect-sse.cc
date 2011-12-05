@@ -688,6 +688,10 @@ namespace honei
         {
             throw VectorSizeDoesNotMatch(b.size(), a.columns());
         }
+        if (result.size() != a.rows())
+        {
+            throw VectorSizeDoesNotMatch(result.size(), a.rows());
+        }
         if (right_hand_side.size() != result.size())
         {
             throw VectorSizeDoesNotMatch(result.size(), right_hand_side.size());
@@ -695,17 +699,10 @@ namespace honei
 
 
         if (row_end == 0)
-        {
-            fill<tags::CPU::SSE>(result, float(0));
-            honei::sse::defect_smell_dv(result.elements(), right_hand_side.elements(), a.Aj().elements(), a.Ax().elements(), a.Arl().elements(), b.elements(),
-                    a.stride(), a.rows(), a.num_cols_per_row(), a.threads());
-        }
+            row_end = a.rows();
 
-        else
-        {
-            honei::sse::defect_smell_dv(result.elements(), right_hand_side.elements(), a.Aj().elements(), a.Ax().elements(), a.Arl().elements(), b.elements(),
-                    a.stride(), a.rows(), a.num_cols_per_row(), row_start, row_end, a.threads());
-        }
+        honei::sse::defect_smell_dv(result.elements(), right_hand_side.elements(), a.Aj().elements(), a.Ax().elements(), a.Arl().elements(), b.elements(),
+                a.stride(), a.rows(), a.num_cols_per_row(), row_start, row_end, a.threads());
 
         PROFILER_STOP("Defect SMELL float tags::CPU::SSE");
         return result;
@@ -721,6 +718,10 @@ namespace honei
         {
             throw VectorSizeDoesNotMatch(b.size(), a.columns());
         }
+        if (result.size() != a.rows())
+        {
+            throw VectorSizeDoesNotMatch(result.size(), a.rows());
+        }
         if (right_hand_side.size() != result.size())
         {
             throw VectorSizeDoesNotMatch(result.size(), right_hand_side.size());
@@ -728,17 +729,10 @@ namespace honei
 
 
         if (row_end == 0)
-        {
-            fill<tags::CPU::SSE>(result, double(0));
-            honei::sse::defect_smell_dv(result.elements(), right_hand_side.elements(), a.Aj().elements(), a.Ax().elements(), a.Arl().elements(), b.elements(),
-                    a.stride(), a.rows(), a.num_cols_per_row(), a.threads());
-        }
+            row_end = a.rows();
 
-        else
-        {
-            honei::sse::defect_smell_dv(result.elements(), right_hand_side.elements(), a.Aj().elements(), a.Ax().elements(), a.Arl().elements(), b.elements(),
-                    a.stride(), a.rows(), a.num_cols_per_row(), row_start, row_end, a.threads());
-        }
+        honei::sse::defect_smell_dv(result.elements(), right_hand_side.elements(), a.Aj().elements(), a.Ax().elements(), a.Arl().elements(), b.elements(),
+                a.stride(), a.rows(), a.num_cols_per_row(), row_start, row_end, a.threads());
 
         PROFILER_STOP("Defect SMELL double tags::CPU::SSE");
         return result;

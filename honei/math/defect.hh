@@ -402,6 +402,63 @@ namespace honei
     };
 
     template<>
+        struct Defect<tags::CPU::Generic>
+        {
+            template <typename DT_>
+                static DenseVector<DT_> & value(DenseVector<DT_> & r, const DenseVector<DT_> & rhs, const SparseMatrixELL<DT_> & a, const DenseVector<DT_> & bv,
+                        unsigned long row_start = 0, unsigned long row_end = 0)
+                {
+                    if (bv.size() != a.columns())
+                    {
+                        throw VectorSizeDoesNotMatch(bv.size(), a.columns());
+                    }
+                    if (rhs.size() != a.columns())
+                    {
+                        throw VectorSizeDoesNotMatch(rhs.size(), a.columns());
+                    }
+                    if (row_end == 0)
+                        row_end = a.rows();
+
+                    DT_ * result(r.elements());
+                    const unsigned long * Aj(a.Aj().elements());
+                    const DT_ * Ax(a.Ax().elements());
+                    const unsigned long * Arl(a.Arl().elements());
+                    const DT_ * b(bv.elements());
+                    const unsigned long stride(a.stride());
+                    const unsigned long threads(a.threads());
+
+                    for (unsigned long row(row_start) ; row < row_end ; ++row)
+                    {
+                        const unsigned long * tAj(Aj);
+                        const DT_ * tAx(Ax);
+                        DT_ sum(0);
+                        tAj += row * threads;
+                        tAx += row * threads;
+
+                        const unsigned long max(Arl[row]);
+                        for(unsigned long n = 0; n < max ; n++)
+                        {
+                            for (unsigned long thread(0) ; thread < threads ; ++thread)
+                            {
+                                const DT_ A_ij = *(tAx + thread);
+
+                                //if (A_ij != 0)
+                                {
+                                    const unsigned long col = *(tAj + thread);
+                                    sum += A_ij * b[col];
+                                }
+                            }
+
+                            tAj += stride;
+                            tAx += stride;
+                        }
+                        result[row] = rhs[row] - sum;
+                    }
+                    return r;
+                }
+        };
+
+    template<>
         struct Defect<tags::GPU::CUDA>
         {
             public:
@@ -643,6 +700,7 @@ namespace honei
 
                         return result;
                     }
+
         };
 
     namespace mc
@@ -720,6 +778,10 @@ namespace honei
                         {
                             throw VectorSizeDoesNotMatch(a.rows(), result.size());
                         }
+                        if (rhs.size() != a.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(rhs.size(), a.columns());
+                        }
 
                         //fill<typename Tag_::DelegateTo>(result, DT_(0));
 
@@ -760,6 +822,11 @@ namespace honei
 
     template <> struct Defect<tags::CPU::MultiCore::SSE> :
         public mc::Defect<tags::CPU::MultiCore::SSE>
+        {
+        };
+
+    template <> struct Defect<tags::CPU::MultiCore::Generic> :
+        public mc::Defect<tags::CPU::MultiCore::Generic>
         {
         };
 }
