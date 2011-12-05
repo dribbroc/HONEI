@@ -296,20 +296,17 @@ DenseVector<float> & Product<tags::CPU::SSE>::value(DenseVector<float> & result,
     {
         throw VectorSizeDoesNotMatch(b.size(), a.columns());
     }
+    if (result.size() != a.rows())
+    {
+        throw VectorSizeDoesNotMatch(result.size(), a.columns());
+    }
 
 
     if (row_end == 0)
-    {
-        fill<tags::CPU::SSE>(result, float(0));
-        honei::sse::product_smell_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), a.Arl().elements(), b.elements(),
-                a.stride(), a.rows(), a.num_cols_per_row(), a.threads());
-    }
+        row_end = a.rows();
 
-    else
-    {
-        honei::sse::product_smell_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), a.Arl().elements(), b.elements(),
-                a.stride(), a.rows(), a.num_cols_per_row(), row_start, row_end, a.threads());
-    }
+    honei::sse::product_smell_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), a.Arl().elements(), b.elements(),
+            a.stride(), a.rows(), a.num_cols_per_row(), row_start, row_end, a.threads());
 
     PROFILER_STOP("Product SMELL float tags::CPU::SSE");
     return result;
@@ -325,19 +322,16 @@ DenseVector<double> & Product<tags::CPU::SSE>::value(DenseVector<double> & resul
     {
         throw VectorSizeDoesNotMatch(b.size(), a.columns());
     }
+    if (result.size() != a.rows())
+    {
+        throw VectorSizeDoesNotMatch(result.size(), a.columns());
+    }
 
     if (row_end == 0)
-    {
-        fill<tags::CPU::SSE>(result, double(0));
-        honei::sse::product_smell_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), a.Arl().elements(), b.elements(),
-                a.stride(), a.rows(), a.num_cols_per_row(), a.threads());
-    }
+        row_end = a.rows();
 
-    else
-    {
-        honei::sse::product_smell_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), a.Arl().elements(), b.elements(),
-                a.stride(), a.rows(), a.num_cols_per_row(), row_start, row_end, a.threads());
-    }
+    honei::sse::product_smell_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), a.Arl().elements(), b.elements(),
+            a.stride(), a.rows(), a.num_cols_per_row(), row_start, row_end, a.threads());
 
     PROFILER_STOP("Product SMELL double tags::CPU::SSE");
     return result;

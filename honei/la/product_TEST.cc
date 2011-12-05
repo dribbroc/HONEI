@@ -805,6 +805,12 @@ class SparseMatrixELLDenseVectorProductTest :
 };
 SparseMatrixELLDenseVectorProductTest<float, tags::CPU> sparse_matrix_ell_dense_vector_product_test_float("float");
 SparseMatrixELLDenseVectorProductTest<double, tags::CPU> sparse_matrix_ell_dense_vector_product_test_double("double");
+SparseMatrixELLDenseVectorProductTest<float, tags::CPU::MultiCore> mc_sparse_matrix_ell_dense_vector_product_test_float("float");
+SparseMatrixELLDenseVectorProductTest<double, tags::CPU::MultiCore> mc_sparse_matrix_ell_dense_vector_product_test_double("double");
+SparseMatrixELLDenseVectorProductTest<float, tags::CPU::Generic> generic_sparse_matrix_ell_dense_vector_product_test_float("float");
+SparseMatrixELLDenseVectorProductTest<double, tags::CPU::Generic> generic_sparse_matrix_ell_dense_vector_product_test_double("double");
+SparseMatrixELLDenseVectorProductTest<float, tags::CPU::MultiCore::Generic> generic_mc_sparse_matrix_ell_dense_vector_product_test_float("float");
+SparseMatrixELLDenseVectorProductTest<double, tags::CPU::MultiCore::Generic> generic_mc_sparse_matrix_ell_dense_vector_product_test_double("double");
 #ifdef HONEI_SSE
 SparseMatrixELLDenseVectorProductTest<float, tags::CPU::SSE> sse_sparse_matrix_ell_dense_vector_product_test_float("float");
 SparseMatrixELLDenseVectorProductTest<double, tags::CPU::SSE> sse_sparse_matrix_ell_dense_vector_product_test_double("double");
@@ -870,6 +876,12 @@ class SparseMatrixELLDenseVectorProductQuickTest :
 };
 SparseMatrixELLDenseVectorProductQuickTest<float, tags::CPU> sparse_matrix_ell_dense_vector_product_quick_test_float("float");
 SparseMatrixELLDenseVectorProductQuickTest<double, tags::CPU> sparse_matrix_ell_dense_vector_product_quick_test_double("double");
+SparseMatrixELLDenseVectorProductQuickTest<float, tags::CPU::MultiCore> mc_sparse_matrix_ell_dense_vector_product_quick_test_float("float");
+SparseMatrixELLDenseVectorProductQuickTest<double, tags::CPU::MultiCore> mc_sparse_matrix_ell_dense_vector_product_quick_test_double("double");
+SparseMatrixELLDenseVectorProductQuickTest<float, tags::CPU::Generic> generic_sparse_matrix_ell_dense_vector_product_quick_test_float("float");
+SparseMatrixELLDenseVectorProductQuickTest<double, tags::CPU::Generic> generic_sparse_matrix_ell_dense_vector_product_quick_test_double("double");
+SparseMatrixELLDenseVectorProductQuickTest<float, tags::CPU::MultiCore::Generic> generic_mc_sparse_matrix_ell_dense_vector_product_quick_test_float("float");
+SparseMatrixELLDenseVectorProductQuickTest<double, tags::CPU::MultiCore::Generic> generic_mc_sparse_matrix_ell_dense_vector_product_quick_test_double("double");
 #ifdef HONEI_SSE
 SparseMatrixELLDenseVectorProductQuickTest<float, tags::CPU::SSE> sse_sparse_matrix_ell_dense_vector_product_quick_test_float("float");
 SparseMatrixELLDenseVectorProductQuickTest<double, tags::CPU::SSE> sse_sparse_matrix_ell_dense_vector_product_quick_test_double("double");

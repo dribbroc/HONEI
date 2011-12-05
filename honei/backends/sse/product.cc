@@ -1003,38 +1003,6 @@ namespace honei
         }
 
         void product_smell_dv(float * result, const unsigned long * Aj, const float * Ax, const unsigned long * Arl, const float * b,
-                unsigned long stride, unsigned long rows, unsigned long /*num_cols_per_row*/, const unsigned long threads)
-        {
-            for (unsigned long row(0) ; row < rows ; ++row)
-            {
-                const unsigned long * tAj(Aj);
-                const float * tAx(Ax);
-                float sum(0);
-                tAj += row * threads;
-                tAx += row * threads;
-
-                const unsigned long max(Arl[row]);
-                for(unsigned long n = 0; n < max ; n++)
-                {
-                    for (unsigned long thread(0) ; thread < threads ; ++thread)
-                    {
-                        const float A_ij = *(tAx + thread);
-
-                        //if (A_ij != 0)
-                        {
-                            const unsigned long col = *(tAj + thread);
-                            sum += A_ij * b[col];
-                        }
-                    }
-
-                    tAj += stride;
-                    tAx += stride;
-                }
-                result[row] = sum;
-            }
-        }
-
-        void product_smell_dv(float * result, const unsigned long * Aj, const float * Ax, const unsigned long * Arl, const float * b,
                 unsigned long stride, unsigned long /*rows*/, unsigned long /*num_cols_per_row*/,
                 unsigned long row_start, unsigned long row_end, const unsigned long threads)
         {
@@ -1052,38 +1020,6 @@ namespace honei
                     for (unsigned long thread(0) ; thread < threads ; ++thread)
                     {
                         const float A_ij = *(tAx + thread);
-
-                        //if (A_ij != 0)
-                        {
-                            const unsigned long col = *(tAj + thread);
-                            sum += A_ij * b[col];
-                        }
-                    }
-
-                    tAj += stride;
-                    tAx += stride;
-                }
-                result[row] = sum;
-            }
-        }
-
-        void product_smell_dv(double * result, const unsigned long * Aj, const double * Ax, const unsigned long * Arl, const double * b,
-                unsigned long stride, unsigned long rows, unsigned long /*num_cols_per_row*/, const unsigned long threads)
-        {
-            for (unsigned long row(0) ; row < rows ; ++row)
-            {
-                const unsigned long * tAj(Aj);
-                const double * tAx(Ax);
-                double sum(0);
-                tAj += row * threads;
-                tAx += row * threads;
-
-                const unsigned long max(Arl[row]);
-                for(unsigned long n = 0; n < max ; n++)
-                {
-                    for (unsigned long thread(0) ; thread < threads ; ++thread)
-                    {
-                        const double A_ij = *(tAx + thread);
 
                         //if (A_ij != 0)
                         {
