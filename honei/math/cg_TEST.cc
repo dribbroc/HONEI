@@ -120,6 +120,8 @@ class CGTestSparseELL:
 };
 CGTestSparseELL<tags::CPU, double> cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
 CGTestSparseELL<tags::CPU::MultiCore, double> mc_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
+CGTestSparseELL<tags::CPU::Generic, double> generic_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
+CGTestSparseELL<tags::CPU::MultiCore::Generic, double> generic_mc_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
 #ifdef HONEI_SSE
 CGTestSparseELL<tags::CPU::SSE, double> sse_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
 CGTestSparseELL<tags::CPU::MultiCore::SSE, double> mcsse_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
@@ -218,6 +220,8 @@ class CGTestSparseELLPrecon:
 };
 CGTestSparseELLPrecon<tags::CPU, double> cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
 CGTestSparseELLPrecon<tags::CPU::MultiCore, double> mc_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+CGTestSparseELLPrecon<tags::CPU::Generic, double> generic_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+CGTestSparseELLPrecon<tags::CPU::MultiCore::Generic, double> generic_mc_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
 #ifdef HONEI_SSE
 CGTestSparseELLPrecon<tags::CPU::SSE, double> sse_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
 CGTestSparseELLPrecon<tags::CPU::MultiCore::SSE, double> mcsse_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
@@ -423,6 +427,8 @@ class CGTestSparseELLQuadPrecon:
 };
 CGTestSparseELLQuadPrecon<tags::CPU, double> cg_precon_test_double_sparse_ell_quad("double JAC", "A_6.ell", "rhs_6", "sol_6", "init_6");
 CGTestSparseELLQuadPrecon<tags::CPU::MultiCore, double> mc_cg_precon_test_double_sparse_ell_quad("double JAC", "A_6.ell", "rhs_6", "sol_6", "init_6");
+CGTestSparseELLQuadPrecon<tags::CPU::Generic, double> generic_cg_precon_test_double_sparse_ell_quad("double JAC", "A_6.ell", "rhs_6", "sol_6", "init_6");
+CGTestSparseELLQuadPrecon<tags::CPU::MultiCore::Generic, double> generic_mc_cg_precon_test_double_sparse_ell_quad("double JAC", "A_6.ell", "rhs_6", "sol_6", "init_6");
 #ifdef HONEI_SSE
 CGTestSparseELLQuadPrecon<tags::CPU::SSE, double> sse_cg_precon_test_double_sparse_ell_quad("double JAC", "A_6.ell", "rhs_6", "sol_6", "init_6");
 CGTestSparseELLQuadPrecon<tags::CPU::MultiCore::SSE, double> mcsse_cg_precon_test_double_sparse_ell_quad("double JAC", "A_6.ell", "rhs_6", "sol_6", "init_6");

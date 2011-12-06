@@ -112,6 +112,8 @@ class BiCGStabTestSparseELLPrecon:
 };
 BiCGStabTestSparseELLPrecon<tags::CPU, double> cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
 //BiCGStabTestSparseELLPrecon<tags::CPU::MultiCore, double> mc_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+BiCGStabTestSparseELLPrecon<tags::CPU::Generic, double> generic_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+BiCGStabTestSparseELLPrecon<tags::CPU::MultiCore::Generic, double> generic_mc_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
 #ifdef HONEI_SSE
 BiCGStabTestSparseELLPrecon<tags::CPU::SSE, double> sse_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
 BiCGStabTestSparseELLPrecon<tags::CPU::MultiCore::SSE, double> mcsse_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
@@ -218,6 +220,8 @@ class BiCGStabTestSparseELLPreconSAINV:
 };
 BiCGStabTestSparseELLPreconSAINV<tags::CPU, double> cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
 //BiCGStabTestSparseELLPreconSAINV<tags::CPU::MultiCore, double> mc_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
+BiCGStabTestSparseELLPreconSAINV<tags::CPU::Generic, double> generic_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
+BiCGStabTestSparseELLPreconSAINV<tags::CPU::MultiCore::Generic, double> generic_mc_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
 #ifdef HONEI_SSE
 BiCGStabTestSparseELLPreconSAINV<tags::CPU::SSE, double> sse_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
 BiCGStabTestSparseELLPreconSAINV<tags::CPU::MultiCore::SSE, double> mcsse_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
@@ -324,6 +328,8 @@ class BiCGStabTestSparseELLPreconSPAI:
 };
 BiCGStabTestSparseELLPreconSPAI<tags::CPU, double> cg_precon_spai_test_double_sparse_ell("double SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
 //BiCGStabTestSparseELLPreconSPAI<tags::CPU::MultiCore, double> mc_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
+BiCGStabTestSparseELLPreconSPAI<tags::CPU::Generic, double> generic_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
+BiCGStabTestSparseELLPreconSPAI<tags::CPU::MultiCore::Generic, double> generic_mc_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
 #ifdef HONEI_SSE
 BiCGStabTestSparseELLPreconSPAI<tags::CPU::SSE, double> sse_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
 BiCGStabTestSparseELLPreconSPAI<tags::CPU::MultiCore::SSE, double> mcsse_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");

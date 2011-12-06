@@ -291,6 +291,9 @@ class MGSolverTest:
         }
 };
 MGSolverTest<tags::CPU> mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
+//MGSolverTest<tags::CPU::MultiCore> mc_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
+MGSolverTest<tags::CPU::Generic> generic_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
+MGSolverTest<tags::CPU::MultiCore::Generic> generic_mc_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
 #ifdef HONEI_SSE
 MGSolverTest<tags::CPU::SSE> sse_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
 MGSolverTest<tags::CPU::MultiCore::SSE> mcsse_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");

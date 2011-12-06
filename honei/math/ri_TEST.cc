@@ -121,6 +121,8 @@ class RISmootherTestSparseELL:
 };
 RISmootherTestSparseELL<tags::CPU, double> ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 RISmootherTestSparseELL<tags::CPU::MultiCore, double> mc_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISmootherTestSparseELL<tags::CPU::Generic, double> generic_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISmootherTestSparseELL<tags::CPU::MultiCore::Generic, double> generic_mc_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #ifdef HONEI_SSE
 RISmootherTestSparseELL<tags::CPU::SSE, double> sse_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 RISmootherTestSparseELL<tags::CPU::MultiCore::SSE, double> mcsse_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
@@ -231,6 +233,8 @@ class RISolverTestSparseELL:
 };
 RISolverTestSparseELL<tags::CPU, double> ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 RISolverTestSparseELL<tags::CPU::MultiCore, double> mc_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISolverTestSparseELL<tags::CPU::Generic, double> generic_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISolverTestSparseELL<tags::CPU::MultiCore::Generic, double> generic_mc_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #ifdef HONEI_SSE
 RISolverTestSparseELL<tags::CPU::SSE, double> sse_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 RISolverTestSparseELL<tags::CPU::MultiCore::SSE, double> mcsse_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
