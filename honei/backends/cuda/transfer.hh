@@ -33,6 +33,8 @@ extern "C"
 
     void cuda_free(void *src);
 
+    void cuda_free_host(void *src);
+
     void cuda_copy(void * src, void * dest, unsigned long bytes);
 
     void cuda_convert_float_double(void * src, void * dest, unsigned long bytes);
