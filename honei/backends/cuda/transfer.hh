@@ -23,6 +23,8 @@
 
 extern "C"
 {
+    void * cuda_malloc_host(unsigned long bytes);
+
     void * cuda_malloc(unsigned long bytes);
 
     void cuda_upload(void * src, void * target, unsigned long bytes);
