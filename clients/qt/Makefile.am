@@ -11,6 +11,7 @@ DEFS = \
 	$(CUDADEF) \
 	$(DEBUGDEF) \
 	$(BOOSTDEF) \
+	$(GMPDEF) \
 	$(PROFILERDEF)
 
 BACKEND_LIBS = \

@@ -42,7 +42,7 @@ namespace honei
 
     template class DenseVectorSlice<unsigned long>;
 
-    template bool operator== (const DenseVectorSlice<unsigned long> & a, const DenseVectorSlice<unsigned long> & b);
+    //template bool operator== (const DenseVectorSlice<unsigned long> & a, const DenseVectorSlice<unsigned long> & b);
 
     template std::ostream & operator<< (std::ostream & lhs, const DenseVectorSlice<unsigned long> & vector);
 
@@ -51,4 +51,12 @@ namespace honei
     template bool operator== (const DenseVectorSlice<bool> & a, const DenseVectorSlice<bool> & b);
 
     template std::ostream & operator<< (std::ostream & lhs, const DenseVectorSlice<bool> & vector);
+
+#ifdef HONEI_GMP
+    template class DenseVectorSlice<mpf_class>;
+
+    template bool operator== (const DenseVectorSlice<mpf_class> & a, const DenseVectorSlice<mpf_class> & b);
+
+    template std::ostream & operator<< (std::ostream & lhs, const DenseVectorSlice<mpf_class> & vector);
+#endif
 }

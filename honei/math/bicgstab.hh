@@ -72,11 +72,11 @@ namespace honei
                 CONTEXT("When solving linear system with BiCGStab :");
                 PROFILER_START("BiCGStab VAR");
 
-                double defnorm, defnorm_0, defnorm_00(1e14);
-                //double kappa = 1.0;
+                DT_ defnorm, defnorm_0, defnorm_00(1e14);
+                //DT_ kappa = 1.0;
                 unsigned long iter = 0;
-                double rho_tilde, rho_tilde_old, alpha_tilde, omega_tilde, beta_tilde, gamma_tilde;
-                double nrm_r_tilde_0, nrm_tilde_00;
+                DT_ rho_tilde, rho_tilde_old, alpha_tilde, omega_tilde, beta_tilde, gamma_tilde;
+                DT_ nrm_r_tilde_0, nrm_tilde_00;
                 bool early_exit = 0;
                 bool restarted = false;
                 bool converged = 0;
@@ -119,7 +119,7 @@ namespace honei
 
                         gamma_tilde = DotProduct<Tag_>::value(v_tilde, r_tilde_0);
 
-                        if (fabs(gamma_tilde) < fabs(rho_tilde)*1e-14)
+                        if (std::abs(gamma_tilde) < std::abs(rho_tilde)*1e-14)
                         {
                             restarted = true;
                             //std::cout << "Breakpoint 1" << std::endl;
@@ -128,7 +128,7 @@ namespace honei
 
                         alpha_tilde = rho_tilde / gamma_tilde;
 
-                        if ((fabs(alpha_tilde) * Norm<vnt_l_two, false, Tag_>::value(v_tilde)) / defnorm < 1e-5)
+                        if ((std::abs(alpha_tilde) * Norm<vnt_l_two, false, Tag_>::value(v_tilde)) / defnorm < 1e-5)
                         {
                             restarted = true;;
                             //std::cout << "Breakpoint 2" << std::endl;
@@ -136,7 +136,8 @@ namespace honei
                             //break;
                         }
 
-                        ScaledSum<Tag_>::value(s, r, v, -alpha_tilde);
+                        DT_ malpha_tilde(-alpha_tilde);
+                        ScaledSum<Tag_>::value(s, r, v, malpha_tilde);
 
                         defnorm = Norm<vnt_l_two, false, Tag_>::value(s);
                         if (defnorm < eps_relative * defnorm_00)
@@ -148,7 +149,7 @@ namespace honei
                             //std::cout << "Breakpoint 3 (converged)" << std::endl;
                             break;
                         }
-                        ScaledSum<Tag_>::value(s_tilde, r_tilde, v_tilde, -alpha_tilde);
+                        ScaledSum<Tag_>::value(s_tilde, r_tilde, v_tilde, malpha_tilde);
 
                         Product<Tag_>::value(t, A, s_tilde);
 
@@ -157,7 +158,7 @@ namespace honei
                         gamma_tilde = DotProduct<Tag_>::value(t_tilde, t_tilde);
                         omega_tilde = DotProduct<Tag_>::value(t_tilde, s_tilde);
 
-                        if (fabs(gamma_tilde) < fabs(omega_tilde) * 1e-14)
+                        if (std::abs(gamma_tilde) < std::abs(omega_tilde) * 1e-14)
                         {
                             restarted = true;
                             //std::cout << "Breakpoint 4" << std::endl;
@@ -168,7 +169,8 @@ namespace honei
                         ScaledSum<Tag_>::value(x, s_tilde, omega_tilde);
                         ScaledSum<Tag_>::value(x, p_tilde, alpha_tilde);
 
-                        ScaledSum<Tag_>::value(r, s, t, -omega_tilde);
+                        DT_ momega_tilde(-omega_tilde);
+                        ScaledSum<Tag_>::value(r, s, t, momega_tilde);
 
                         defnorm = Norm<vnt_l_two, false, Tag_>::value(r);
                         if (defnorm < eps_relative * defnorm_00)
@@ -178,14 +180,14 @@ namespace honei
                             break;
                         }
 
-                        ScaledSum<Tag_>::value(r_tilde, s_tilde, t_tilde, -omega_tilde);
+                        ScaledSum<Tag_>::value(r_tilde, s_tilde, t_tilde, momega_tilde);
 
                         rho_tilde_old = rho_tilde;
                         rho_tilde = DotProduct<Tag_>::value(r_tilde, r_tilde_0);
 
                         beta_tilde = (alpha_tilde / omega_tilde) * (rho_tilde / rho_tilde_old);
 
-                        ScaledSum<Tag_>::value(p_tilde, v_tilde, -omega_tilde);
+                        ScaledSum<Tag_>::value(p_tilde, v_tilde, momega_tilde);
                         Scale<Tag_>::value(p_tilde, beta_tilde);
                         Sum<Tag_>::value(p_tilde, r_tilde);
 

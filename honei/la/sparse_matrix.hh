@@ -24,7 +24,7 @@
 #define LIBLA_GUARD_SPARSE_MATRIX_HH 1
 
 #include <honei/la/element_iterator.hh>
-#include <honei/la/sparse_vector-impl.hh>
+#include <honei/la/sparse_vector.hh>
 #include <honei/la/sparse_matrix_ell.hh>
 #include <honei/la/banded_matrix_qx.hh>
 #include <honei/la/dense_vector.hh>

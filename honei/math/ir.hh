@@ -36,8 +36,10 @@ namespace honei
                      typename InnerMatrixType_,
                      typename InnerVectorType_,
                      typename InnerTransferContType_,
-                     typename InnerPreconContType_>
-            static void value(OuterMatrixType_ A, OuterVectorType_ b, OuterVectorType_ x, MGData<InnerMatrixType_, InnerVectorType_, InnerTransferContType_, InnerPreconContType_> & data, OperatorList & cycle, double eps, unsigned long max_iters, unsigned long & used_iters)
+                     typename InnerPreconContType_,
+                     typename OuterType_,
+                     typename InnerType_>
+            static void value(OuterMatrixType_ A, OuterVectorType_ b, OuterVectorType_ x, MGData<InnerMatrixType_, InnerVectorType_, InnerTransferContType_, InnerPreconContType_, InnerType_> & data, OperatorList & cycle, OuterType_ eps, unsigned long max_iters, unsigned long & used_iters)
             {
                 CONTEXT("When solving linear system with Iterative Refinement :");
                 ASSERT(cycle.size() > 0, "OperatorList is empty!");
@@ -45,8 +47,8 @@ namespace honei
 
                 OuterVectorType_ r(x.size());//TODO:move allocation to preprocessing
                 OuterVectorType_ c(x.size());//TODO:move allocation to preprocessing
-                double rnorm_initial(1e16);
-                double rnorm_current(1e16);
+                OuterType_ rnorm_initial(1e16);
+                OuterType_ rnorm_current(1e16);
 
                 //std::cout << "starting cycles" << std::endl;
                 //inner MG-cycles, TODO: see above

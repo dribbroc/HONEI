@@ -102,6 +102,7 @@ DEFS = \
 	$(CUDA_DOUBLEDEF) \
 	$(DEBUGDEF) \
 	$(BOOSTDEF) \
+	$(GMPDEF) \
 	$(PROFILERDEF) \
 	-DHONEI_SOURCEDIR='"$(top_srcdir)"'
 

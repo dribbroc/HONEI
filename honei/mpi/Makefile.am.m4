@@ -118,6 +118,7 @@ DEFS = \
 	$(DEBUGDEF) \
 	$(BOOSTDEF) \
 	$(MPIDEF) \
+	$(GMPDEF) \
 	$(PROFILERDEF) \
 	-DHONEI_SOURCEDIR='"$(top_srcdir)"'
 

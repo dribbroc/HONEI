@@ -24,6 +24,7 @@
 #include <honei/util/unittest.hh>
 
 #include <iostream>
+#include <cmath>
 
 using namespace honei;
 using namespace tests;

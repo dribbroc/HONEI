@@ -89,22 +89,22 @@ class BiCGStabTestSparseELLPrecon:
 
             std::cout << "Used iters: " << used_iters << std::endl;
 
-            DT1_ base_digits(1);
-            DT1_ additional_digits(1);
+            double base_digits(1);
+            double additional_digits(1);
 
-            DT1_ base_eps(1 / pow(10, base_digits));
-            DT1_ add_eps(base_eps / pow(10, additional_digits));
+            double base_eps(1 / pow(10, base_digits));
+            double add_eps(base_eps / pow(10, additional_digits));
 
-            DT1_ m((add_eps - base_eps) / DT1_(4));
-            DT1_ b(base_eps - (DT1_(4) * m));
+            double m((add_eps - base_eps) / double(4));
+            double b(base_eps - (double(4) * m));
 
-            DT1_ eps(m * sizeof(DT1_) + b);
-            eps *= DT1_(3);
+            double eps(m * sizeof(double) + b);
+            eps *= double(3);
 
             std::cout << "Comparing with FEATFLOW2: eps= " << eps << std::endl;
             for(unsigned long i(0) ; i < result.size() ; ++i)
             {
-                if(fabs(result[i] - ref_result[i]) > eps)
+                if(std::abs(result[i] - ref_result[i]) > eps)
                     std::cout << std::setprecision(11) << result[i] << " " << ref_result[i] << " at index " << i << std::endl;
                 TEST_CHECK_EQUAL_WITHIN_EPS(result[i], ref_result[i], eps);
             }
@@ -114,6 +114,10 @@ BiCGStabTestSparseELLPrecon<tags::CPU, double> cg_precon_test_double_sparse_ell(
 //BiCGStabTestSparseELLPrecon<tags::CPU::MultiCore, double> mc_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
 BiCGStabTestSparseELLPrecon<tags::CPU::Generic, double> generic_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
 BiCGStabTestSparseELLPrecon<tags::CPU::MultiCore::Generic, double> generic_mc_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+#ifdef HONEI_GMP
+BiCGStabTestSparseELLPrecon<tags::CPU::Generic, mpf_class> generic_cg_precon_test_mpf_class_sparse_ell_mpf_class("mpf_class JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+BiCGStabTestSparseELLPrecon<tags::CPU::MultiCore::Generic, mpf_class> generic_mc_cg_precon_test_mpf_class_sparse_ell_mpf_class("mpf_class JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+#endif
 #ifdef HONEI_SSE
 BiCGStabTestSparseELLPrecon<tags::CPU::SSE, double> sse_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
 BiCGStabTestSparseELLPrecon<tags::CPU::MultiCore::SSE, double> mcsse_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
@@ -197,22 +201,22 @@ class BiCGStabTestSparseELLPreconSAINV:
 
             std::cout << "Used iters: " << used_iters << std::endl;
 
-            DT1_ base_digits(1);
-            DT1_ additional_digits(1);
+            double base_digits(1);
+            double additional_digits(1);
 
-            DT1_ base_eps(1 / pow(10, base_digits));
-            DT1_ add_eps(base_eps / pow(10, additional_digits));
+            double base_eps(1 / pow(10, base_digits));
+            double add_eps(base_eps / pow(10, additional_digits));
 
-            DT1_ m((add_eps - base_eps) / DT1_(4));
-            DT1_ b(base_eps - (DT1_(4) * m));
+            double m((add_eps - base_eps) / double(4));
+            double b(base_eps - (double(4) * m));
 
-            DT1_ eps(m * sizeof(DT1_) + b);
-            eps *= DT1_(3);
+            double eps(m * sizeof(double) + b);
+            eps *= double(3);
 
             std::cout << "Comparing with FEATFLOW2: eps= " << eps << std::endl;
             for(unsigned long i(0) ; i < result.size() ; ++i)
             {
-                if(fabs(result[i] - ref_result[i]) > eps)
+                if(std::abs(result[i] - ref_result[i]) > eps)
                     std::cout << std::setprecision(11) << result[i] << " " << ref_result[i] << " at index " << i << std::endl;
                 TEST_CHECK_EQUAL_WITHIN_EPS(result[i], ref_result[i], eps);
             }
@@ -222,6 +226,10 @@ BiCGStabTestSparseELLPreconSAINV<tags::CPU, double> cg_precon_sainv_test_double_
 //BiCGStabTestSparseELLPreconSAINV<tags::CPU::MultiCore, double> mc_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
 BiCGStabTestSparseELLPreconSAINV<tags::CPU::Generic, double> generic_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
 BiCGStabTestSparseELLPreconSAINV<tags::CPU::MultiCore::Generic, double> generic_mc_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
+#ifdef HONEI_GMP
+BiCGStabTestSparseELLPreconSAINV<tags::CPU::Generic, mpf_class> generic_cg_precon_sainv_test_mpf_class_sparse_ell_mpf_class("mpf_class SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
+BiCGStabTestSparseELLPreconSAINV<tags::CPU::MultiCore::Generic, mpf_class> generic_mc_cg_precon_sainv_test_mpf_class_sparse_ell_mpf_class("mpf_class SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
+#endif
 #ifdef HONEI_SSE
 BiCGStabTestSparseELLPreconSAINV<tags::CPU::SSE, double> sse_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
 BiCGStabTestSparseELLPreconSAINV<tags::CPU::MultiCore::SSE, double> mcsse_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
@@ -305,22 +313,22 @@ class BiCGStabTestSparseELLPreconSPAI:
 
             std::cout << "Used iters: " << used_iters << std::endl;
 
-            DT1_ base_digits(1);
-            DT1_ additional_digits(1);
+            double base_digits(1);
+            double additional_digits(1);
 
-            DT1_ base_eps(1 / pow(10, base_digits));
-            DT1_ add_eps(base_eps / pow(10, additional_digits));
+            double base_eps(1 / pow(10, base_digits));
+            double add_eps(base_eps / pow(10, additional_digits));
 
-            DT1_ m((add_eps - base_eps) / DT1_(4));
-            DT1_ b(base_eps - (DT1_(4) * m));
+            double m((add_eps - base_eps) / double(4));
+            double b(base_eps - (double(4) * m));
 
-            DT1_ eps(m * sizeof(DT1_) + b);
-            eps *= DT1_(3);
+            double eps(m * sizeof(double) + b);
+            eps *= double(3);
 
             std::cout << "Comparing with FEATFLOW2: eps= " << eps << std::endl;
             for(unsigned long i(0) ; i < result.size() ; ++i)
             {
-                if(fabs(result[i] - ref_result[i]) > eps)
+                if(std::abs(result[i] - ref_result[i]) > eps)
                     std::cout << std::setprecision(11) << result[i] << " " << ref_result[i] << " at index " << i << std::endl;
                 TEST_CHECK_EQUAL_WITHIN_EPS(result[i], ref_result[i], eps);
             }
@@ -330,6 +338,10 @@ BiCGStabTestSparseELLPreconSPAI<tags::CPU, double> cg_precon_spai_test_double_sp
 //BiCGStabTestSparseELLPreconSPAI<tags::CPU::MultiCore, double> mc_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
 BiCGStabTestSparseELLPreconSPAI<tags::CPU::Generic, double> generic_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
 BiCGStabTestSparseELLPreconSPAI<tags::CPU::MultiCore::Generic, double> generic_mc_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
+#ifdef HONEI_GMP
+BiCGStabTestSparseELLPreconSPAI<tags::CPU::Generic, mpf_class> generic_cg_precon_spai_test_mpf_class_sparse_ell_mpf_class("mpf_class SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
+BiCGStabTestSparseELLPreconSPAI<tags::CPU::MultiCore::Generic, mpf_class> generic_mc_cg_precon_spai_test_mpf_class_sparse_ell_mpf_class("mpf_class SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
+#endif
 #ifdef HONEI_SSE
 BiCGStabTestSparseELLPreconSPAI<tags::CPU::SSE, double> sse_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
 BiCGStabTestSparseELLPreconSPAI<tags::CPU::MultiCore::SSE, double> mcsse_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");

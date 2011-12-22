@@ -97,22 +97,22 @@ class CGTestSparseELL:
 
             std::cout << "Used iters: " << used_iters << std::endl;
 
-            DT1_ base_digits(3);
-            DT1_ additional_digits(2);
+            double base_digits(3);
+            double additional_digits(2);
 
-            DT1_ base_eps(1 / pow(10, base_digits));
-            DT1_ add_eps(base_eps / pow(10, additional_digits));
+            double base_eps(1 / pow(10, base_digits));
+            double add_eps(base_eps / pow(10, additional_digits));
 
-            DT1_ m((add_eps - base_eps) / DT1_(4));
-            DT1_ b(base_eps - (DT1_(4) * m));
+            double m((add_eps - base_eps) / double(4));
+            double b(base_eps - (double(4) * m));
 
-            DT1_ eps(m * sizeof(DT1_) + b);
-            eps *= DT1_(3);
+            double eps(m * sizeof(double) + b);
+            eps *= double(3);
 
             std::cout << "Comparing with FEATFLOW2: eps= " << eps << std::endl;
             for(unsigned long i(0) ; i < result.size() ; ++i)
             {
-                if(fabs(result[i] - ref_result[i]) > eps)
+                if(std::abs(result[i] - ref_result[i]) > eps)
                     std::cout << std::setprecision(11) << result[i] << " " << ref_result[i] << " at index " << i << std::endl;
                 TEST_CHECK_EQUAL_WITHIN_EPS(result[i], ref_result[i], eps);
             }
@@ -122,6 +122,10 @@ CGTestSparseELL<tags::CPU, double> cg_test_double_sparse_ell("double", "A_7.ell"
 CGTestSparseELL<tags::CPU::MultiCore, double> mc_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
 CGTestSparseELL<tags::CPU::Generic, double> generic_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
 CGTestSparseELL<tags::CPU::MultiCore::Generic, double> generic_mc_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
+#ifdef HONEI_GMP
+CGTestSparseELL<tags::CPU::Generic, mpf_class> generic_cg_test_mpf_class_sparse_ell_mpf_class("mpf_class", "A_7.ell", "rhs_7", "sol_7", "init_7");
+CGTestSparseELL<tags::CPU::MultiCore::Generic, mpf_class> generic_mc_cg_test_mpf_class_sparse_ell_mpf_class("mpf_class", "A_7.ell", "rhs_7", "sol_7", "init_7");
+#endif
 #ifdef HONEI_SSE
 CGTestSparseELL<tags::CPU::SSE, double> sse_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
 CGTestSparseELL<tags::CPU::MultiCore::SSE, double> mcsse_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
@@ -197,22 +201,22 @@ class CGTestSparseELLPrecon:
 
             std::cout << "Used iters: " << used_iters << std::endl;
 
-            DT1_ base_digits(3);
-            DT1_ additional_digits(2);
+            double base_digits(3);
+            double additional_digits(2);
 
-            DT1_ base_eps(1 / pow(10, base_digits));
-            DT1_ add_eps(base_eps / pow(10, additional_digits));
+            double base_eps(1 / pow(10, base_digits));
+            double add_eps(base_eps / pow(10, additional_digits));
 
-            DT1_ m((add_eps - base_eps) / DT1_(4));
-            DT1_ b(base_eps - (DT1_(4) * m));
+            double m((add_eps - base_eps) / double(4));
+            double b(base_eps - (double(4) * m));
 
-            DT1_ eps(m * sizeof(DT1_) + b);
-            eps *= DT1_(3);
+            double eps(m * sizeof(double) + b);
+            eps *= double(3);
 
             std::cout << "Comparing with FEATFLOW2: eps= " << eps << std::endl;
             for(unsigned long i(0) ; i < result.size() ; ++i)
             {
-                if(fabs(result[i] - ref_result[i]) > eps)
+                if(std::abs(result[i] - ref_result[i]) > eps)
                     std::cout << std::setprecision(11) << result[i] << " " << ref_result[i] << " at index " << i << std::endl;
                 TEST_CHECK_EQUAL_WITHIN_EPS(result[i], ref_result[i], eps);
             }
@@ -222,6 +226,10 @@ CGTestSparseELLPrecon<tags::CPU, double> cg_precon_test_double_sparse_ell("doubl
 CGTestSparseELLPrecon<tags::CPU::MultiCore, double> mc_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
 CGTestSparseELLPrecon<tags::CPU::Generic, double> generic_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
 CGTestSparseELLPrecon<tags::CPU::MultiCore::Generic, double> generic_mc_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+#ifdef HONEI_GMP
+CGTestSparseELLPrecon<tags::CPU::Generic, mpf_class> generic_cg_precon_test_mpf_class_sparse_ell_mpf_class("mpf_class JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+CGTestSparseELLPrecon<tags::CPU::MultiCore::Generic, mpf_class> generic_mc_cg_precon_test_mpf_class_sparse_ell_mpf_class("mpf_class JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+#endif
 #ifdef HONEI_SSE
 CGTestSparseELLPrecon<tags::CPU::SSE, double> sse_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
 CGTestSparseELLPrecon<tags::CPU::MultiCore::SSE, double> mcsse_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
@@ -404,22 +412,22 @@ class CGTestSparseELLQuadPrecon:
 
             std::cout << "Used iters: " << used_iters << std::endl;
 
-            DT1_ base_digits(3);
-            DT1_ additional_digits(2);
+            double base_digits(3);
+            double additional_digits(2);
 
-            DT1_ base_eps(1 / pow(10, base_digits));
-            DT1_ add_eps(base_eps / pow(10, additional_digits));
+            double base_eps(1 / pow(10, base_digits));
+            double add_eps(base_eps / pow(10, additional_digits));
 
-            DT1_ m((add_eps - base_eps) / DT1_(4));
-            DT1_ b(base_eps - (DT1_(4) * m));
+            double m((add_eps - base_eps) / double(4));
+            double b(base_eps - (double(4) * m));
 
-            DT1_ eps(m * sizeof(DT1_) + b);
-            eps *= DT1_(3);
+            double eps(m * sizeof(double) + b);
+            eps *= double(3);
 
             std::cout << "Comparing with FEATFLOW2: eps= " << eps << std::endl;
             for(unsigned long i(0) ; i < result.size() ; ++i)
             {
-                if(fabs(result[i] - ref_result[i]) > eps)
+                if(std::abs(result[i] - ref_result[i]) > eps)
                     std::cout << std::setprecision(11) << result[i] << " " << ref_result[i] << " at index " << i << std::endl;
                 TEST_CHECK_EQUAL_WITHIN_EPS(result[i], ref_result[i], eps);
             }
@@ -429,6 +437,10 @@ CGTestSparseELLQuadPrecon<tags::CPU, double> cg_precon_test_double_sparse_ell_qu
 CGTestSparseELLQuadPrecon<tags::CPU::MultiCore, double> mc_cg_precon_test_double_sparse_ell_quad("double JAC", "A_6.ell", "rhs_6", "sol_6", "init_6");
 CGTestSparseELLQuadPrecon<tags::CPU::Generic, double> generic_cg_precon_test_double_sparse_ell_quad("double JAC", "A_6.ell", "rhs_6", "sol_6", "init_6");
 CGTestSparseELLQuadPrecon<tags::CPU::MultiCore::Generic, double> generic_mc_cg_precon_test_double_sparse_ell_quad("double JAC", "A_6.ell", "rhs_6", "sol_6", "init_6");
+#ifdef HONEI_GMP
+CGTestSparseELLQuadPrecon<tags::CPU::Generic, mpf_class> generic_cg_precon_test_mpf_class_sparse_ell_quad_mpf_class("mpf_class JAC", "A_6.ell", "rhs_6", "sol_6", "init_6");
+CGTestSparseELLQuadPrecon<tags::CPU::MultiCore::Generic, mpf_class> generic_mc_cg_precon_test_mpf_class_sparse_ell_quad_mpf_class("mpf_class JAC", "A_6.ell", "rhs_6", "sol_6", "init_6");
+#endif
 #ifdef HONEI_SSE
 CGTestSparseELLQuadPrecon<tags::CPU::SSE, double> sse_cg_precon_test_double_sparse_ell_quad("double JAC", "A_6.ell", "rhs_6", "sol_6", "init_6");
 CGTestSparseELLQuadPrecon<tags::CPU::MultiCore::SSE, double> mcsse_cg_precon_test_double_sparse_ell_quad("double JAC", "A_6.ell", "rhs_6", "sol_6", "init_6");

@@ -25,6 +25,10 @@
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/util/private_implementation_pattern.hh>
+#ifdef HONEI_GMP
+#include <gmpxx.h>
+#endif
+
 
 namespace honei
 {
@@ -138,6 +142,12 @@ namespace honei
     extern template bool operator== (const SparseMatrixELL<double> & a, const SparseMatrixELL<double> & b);
 
     extern template std::ostream & operator<< (std::ostream & lhs, const SparseMatrixELL<double> & matrix);
+
+    extern template class SparseMatrixELL<mpf_class>;
+
+    extern template bool operator== (const SparseMatrixELL<mpf_class> & a, const SparseMatrixELL<mpf_class> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const SparseMatrixELL<mpf_class> & matrix);
 
 }
 #endif

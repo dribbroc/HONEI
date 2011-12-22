@@ -24,6 +24,7 @@
 #include <honei/la/banded_matrix_qx.hh>
 #include <honei/la/banded_matrix.hh>
 #include <honei/la/sparse_matrix_ell.hh>
+#include <cmath>
 #include <fstream>
 
 using namespace honei;

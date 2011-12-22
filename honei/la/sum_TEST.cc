@@ -28,6 +28,10 @@
 #include <limits>
 #include <cstdlib>
 
+#ifdef HONEI_GMP
+#include <gmpxx.h>
+#endif
+
 using namespace honei;
 using namespace tests;
 
@@ -968,10 +972,10 @@ class DenseVectorRangeSumTest :
 };
 DenseVectorRangeSumTest<tags::CPU, float> dense_vector_range_sum_test_float("float");
 DenseVectorRangeSumTest<tags::CPU, double> dense_vector_range_sum_test_double("double");
-DenseVectorRangeSumTest<tags::CPU::Generic, float> gen_dense_vector_range_sum_test_float("float");
-DenseVectorRangeSumTest<tags::CPU::Generic, double> gen_dense_vector_range_sum_test_double("double");
 DenseVectorRangeSumTest<tags::CPU::MultiCore, float> mc_dense_vector_range_sum_test_float("MC float");
 DenseVectorRangeSumTest<tags::CPU::MultiCore, double> mc_dense_vector_range_sum_test_double("MC double");
+DenseVectorRangeSumTest<tags::CPU::Generic, float> gen_dense_vector_range_sum_test_float("float");
+DenseVectorRangeSumTest<tags::CPU::Generic, double> gen_dense_vector_range_sum_test_double("double");
 DenseVectorRangeSumTest<tags::CPU::MultiCore::Generic, float> gen_mc_dense_vector_range_sum_test_float("MC float");
 DenseVectorRangeSumTest<tags::CPU::MultiCore::Generic, double> gen_mc_dense_vector_range_sum_test_double("MC double");
 #ifdef HONEI_SSE
@@ -1106,10 +1110,10 @@ class DenseVectorSumTest :
                         i_end(dv1.end_elements()) ; i != i_end ; ++i)
                 {
                     TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_((i.index() + 1) * 3 / 1.23456789),
-                            std::numeric_limits<DataType_>::epsilon() * 2 * (i.index() + 1) * 3 / 1.23456789);
+                            std::max(std::numeric_limits<DataType_>::epsilon(), DataType_(1e-15)) * 2 * (i.index() + 1) * 3 / 1.23456789);
                 }
-                dv1.unlock(lm_read_only);
 
+                dv1.unlock(lm_read_only);
                 Sum<Tag_>::value(dv1, dv2);
 
                 TEST(dv1.lock(lm_read_only),
@@ -1117,7 +1121,7 @@ class DenseVectorSumTest :
                             i_end(dv1.end_elements()) ; i != i_end ; ++i)
                         {
                         TEST_CHECK_EQUAL_WITHIN_EPS(*i, DataType_((i.index() + 1) * 5 / 1.23456789),
-                            std::numeric_limits<DataType_>::epsilon() * 2 * (i.index() + 1) * 5 / 1.23456789);
+                            std::max(std::numeric_limits<DataType_>::epsilon(), DataType_(1e-15)) * 2 * (i.index() + 1) * 5 / 1.23456789);
                         },
                         dv1.unlock(lm_read_only));
 
@@ -1134,6 +1138,9 @@ DenseVectorSumTest<tags::CPU::Generic, float> generic_dense_vector_sum_test_floa
 DenseVectorSumTest<tags::CPU::Generic, double> generic_dense_vector_sum_test_double("double");
 DenseVectorSumTest<tags::CPU::MultiCore::Generic, float> generic_mc_dense_vector_sum_test_float("MC float");
 DenseVectorSumTest<tags::CPU::MultiCore::Generic, double> generic_mc_dense_vector_sum_test_double("MC double");
+#ifdef HONEI_GMP
+DenseVectorSumTest<tags::CPU::Generic, mpf_class> generic_dense_vector_sum_test_mpf("mpf");
+#endif
 #ifdef HONEI_SSE
 DenseVectorSumTest<tags::CPU::SSE, float> sse_dense_vector_sum_test_float("SSE float");
 DenseVectorSumTest<tags::CPU::SSE, double> sse_dense_vector_sum_test_double("SSE double");

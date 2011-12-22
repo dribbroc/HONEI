@@ -37,5 +37,15 @@ namespace honei
     template bool operator== (const SparseMatrixELL<double> & a, const SparseMatrixELL<double> & b);
 
     template std::ostream & operator<< (std::ostream & lhs, const SparseMatrixELL<double> & matrix);
+
+#ifdef HONEI_GMP
+    template <> const mpf_class Implementation<SparseMatrixELL<mpf_class> >::zero_element(mpf_class(0.0));
+
+    template class SparseMatrixELL<mpf_class>;
+
+    template bool operator== (const SparseMatrixELL<mpf_class> & a, const SparseMatrixELL<mpf_class> & b);
+
+    template std::ostream & operator<< (std::ostream & lhs, const SparseMatrixELL<mpf_class> & matrix);
+#endif
 }
 

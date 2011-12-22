@@ -552,7 +552,44 @@ namespace honei
                 b.unlock(lm_read_only);
                 return false;
             }
-            if (std::fabs(*i - *j) > std::numeric_limits<DataType_>::epsilon())
+            if (std::abs(*i - *j) > std::numeric_limits<DataType_>::epsilon())
+            {
+                a.unlock(lm_read_only);
+                b.unlock(lm_read_only);
+                return false;
+            }
+        }
+        a.unlock(lm_read_only);
+        b.unlock(lm_read_only);
+
+        return true;
+    }
+
+    template <>
+    bool
+    operator== (const DenseVectorBase<unsigned long> & a, const DenseVectorBase<unsigned long> & b)
+    {
+        if (a.size() != b.size())
+            throw VectorSizeDoesNotMatch(a.size(), b.size());
+
+        a.lock(lm_read_only);
+        b.lock(lm_read_only);
+        for (DenseVectorBase<unsigned long>::ConstElementIterator i(a.begin_elements()), i_end(a.end_elements()),
+                j(b.begin_elements()) ; i != i_end ; ++i, ++j)
+        {
+            if (*i != *i || *j != *j)
+            {
+                a.unlock(lm_read_only);
+                b.unlock(lm_read_only);
+                return false;
+            }
+            if (*i > *j && *i - *j > std::numeric_limits<unsigned long>::epsilon())
+            {
+                a.unlock(lm_read_only);
+                b.unlock(lm_read_only);
+                return false;
+            }
+            if (*j > *i && *j - *i > std::numeric_limits<unsigned long>::epsilon())
             {
                 a.unlock(lm_read_only);
                 b.unlock(lm_read_only);

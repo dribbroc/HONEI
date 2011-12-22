@@ -44,6 +44,7 @@ DEFS = \
 	$(DEBUGDEF) \
 	$(BOOSTDEF) \
 	$(MPIDEF) \
+	$(GMPDEF) \
 	$(PROFILERDEF) \
 	-DHONEI_SOURCEDIR='"$(top_srcdir)"'
 
@@ -58,12 +59,21 @@ else
 
 endif
 
+if GMP
+
+GMPLIBS = -lgmpxx -lgmp
+
+else
+
+endif
+
 lib_LTLIBRARIES = libhoneiutil.la
 
 libhoneiutil_la_SOURCES = general_filelist $(HDF5SOURCES)
 libhoneiutil_la_LIBADD = \
 	-lpthread \
-	$(HDF5LIBS)
+	$(HDF5LIBS) \
+	$(GMPLIBS)
 
 libhoneiutil_includedir = $(includedir)/honei/util
 libhoneiutil_include_HEADERS = general_headerlist $(HDF5HEADERS)

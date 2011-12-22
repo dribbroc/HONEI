@@ -25,6 +25,9 @@
 #include <honei/util/private_implementation_pattern.hh>
 
 #include <string>
+#ifdef HONEI_GMP
+#include <gmpxx.h>
+#endif
 
 namespace honei
 {
@@ -94,6 +97,10 @@ namespace honei
     extern template class SharedArray<long>;
 
     extern template class SharedArray<unsigned long>;
+
+#ifdef HONEI_GMP
+    extern template class SharedArray<mpf_class>;
+#endif
 }
 
 #endif

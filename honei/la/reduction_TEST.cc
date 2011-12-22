@@ -25,6 +25,7 @@
 
 #include <limits>
 #include <cstdlib>
+#include <cmath>
 
 using namespace honei;
 using namespace tests;

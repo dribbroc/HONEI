@@ -129,6 +129,7 @@ DEFS = \
 	$(PROFILERDEF) \
 	$(DUNEDEF) \
 	$(MPIDEF) \
+	$(GMPDEF) \
 	-DHONEI_SOURCEDIR='"$(top_srcdir)"' \
 	-DHONEI_BUILDDIR='"$(top_builddir)"'
 

@@ -22,8 +22,9 @@
 #define LIBLA_GUARD_DENSE_VECTOR_RANGE_IMPL_HH 1
 
 #include <honei/la/dense_vector.hh>
-#include <honei/la/dense_vector-impl.hh>
+#include <honei/la/dense_vector.hh>
 #include <honei/la/dense_vector_range.hh>
+#include <honei/la/vector_error.hh>
 #include <honei/la/element_iterator.hh>
 #include <honei/util/assertion.hh>
 #include <honei/util/private_implementation_pattern-impl.hh>
@@ -32,6 +33,8 @@
 
 #include <algorithm>
 #include <string>
+#include <limits>
+#include <cmath>
 
 namespace honei
 {
@@ -68,7 +71,7 @@ namespace honei
     DenseVectorRange<DataType_>::DenseVectorRange(const DenseVector<DataType_> & source, const unsigned long size,
             const unsigned long offset) :
         PrivateImplementationPattern<DenseVectorRange<DataType_>, Shared>(new Implementation<DenseVectorRange<DataType_> >(
-                    source._imp->elements, size, offset))
+                    source.array(), size, offset))
     {
         CONTEXT("When creating DenseVectorRange:");
         ASSERT(size > 0, "size is zero!");
@@ -272,7 +275,44 @@ namespace honei
                 b.unlock(lm_read_only);
                 return false;
             }
-            if (std::fabs(*i - *j) > std::numeric_limits<DataType_>::epsilon())
+            if (std::abs(*i - *j) > std::numeric_limits<DataType_>::epsilon())
+            {
+                a.unlock(lm_read_only);
+                b.unlock(lm_read_only);
+                return false;
+            }
+        }
+        a.unlock(lm_read_only);
+        b.unlock(lm_read_only);
+
+        return true;
+    }
+
+    template <>
+    bool
+    operator== (const DenseVectorRange<unsigned long> & a, const DenseVectorRange<unsigned long> & b)
+    {
+        if (a.size() != b.size())
+            throw VectorSizeDoesNotMatch(a.size(), b.size());
+
+        a.lock(lm_read_only);
+        b.lock(lm_read_only);
+        for (DenseVectorRange<unsigned long>::ConstElementIterator i(a.begin_elements()), i_end(a.end_elements()),
+                j(b.begin_elements()) ; i != i_end ; ++i, ++j)
+        {
+            if (*i != *i || *j != *j)
+            {
+                a.unlock(lm_read_only);
+                b.unlock(lm_read_only);
+                return false;
+            }
+            if (*i > *j && *i - *j > std::numeric_limits<unsigned long>::epsilon())
+            {
+                a.unlock(lm_read_only);
+                b.unlock(lm_read_only);
+                return false;
+            }
+            if (*j > *i && *j - *i > std::numeric_limits<unsigned long>::epsilon())
             {
                 a.unlock(lm_read_only);
                 b.unlock(lm_read_only);

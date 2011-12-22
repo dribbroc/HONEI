@@ -92,6 +92,7 @@ DEFS = \
 	$(ITANIUMDEF) \
 	$(CUDADEF) \
 	$(DEBUGDEF) \
+	$(GMPDEF) \
 	$(BOOSTDEF) \
 	$(PROFILERDEF)
 

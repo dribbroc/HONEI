@@ -33,6 +33,10 @@
 #include <honei/util/shared_array.hh>
 #include <honei/util/stringify.hh>
 
+#ifdef HONEI_GMP
+#include <gmpxx.h>
+#endif
+
 
 namespace honei
 {
@@ -193,10 +197,17 @@ namespace honei
 
     extern template class SparseVector<unsigned long>;
 
-    extern template bool operator== (const SparseVector<unsigned long> & a, const SparseVector<unsigned long> & b);
+    //extern template bool operator== (const SparseVector<unsigned long> & a, const SparseVector<unsigned long> & b);
 
     extern template std::ostream & operator<< (std::ostream & lhs, const SparseVector<unsigned long> & vector);
 
+#ifdef HONEI_GMP
+    extern template class SparseVector<mpf_class>;
+
+    extern template bool operator== (const SparseVector<mpf_class> & a, const SparseVector<mpf_class> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const SparseVector<mpf_class> & vector);
+#endif
 }
 
 #endif

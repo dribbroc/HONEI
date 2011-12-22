@@ -119,6 +119,7 @@ namespace honei
             // Write out the terminating elements.
             TypeTraits<unsigned long>::fill(indices, capacity, this->_imp->_size);
 
+            TypeTraits<DataType_>::create(elements, capacity);
             TypeTraits<DataType_>::copy(this->_imp->_elements.get(), elements, position + 1);
             TypeTraits<unsigned long>::copy(this->_imp->_indices.get(), indices, position + 1);
         }
@@ -961,8 +962,35 @@ namespace honei
         {
             if (*i != *i || *j != *j)
                 return false;
-            if (std::fabs(*i - *j) > std::numeric_limits<DataType_>::epsilon())
+            if (std::abs(*i - *j) > std::numeric_limits<DataType_>::epsilon())
                 return false;
+        }
+
+        return true;
+    }
+
+    template <>
+    bool
+    operator== (const SparseVector<unsigned long> & a, const SparseVector<unsigned long> & b)
+    {
+        if (a.size() != b.size())
+            throw VectorSizeDoesNotMatch(a.size(), b.size());
+
+        for (SparseVector<unsigned long>::ConstElementIterator i(a.begin_elements()), i_end(a.end_elements()),
+                j(b.begin_elements()) ; i != i_end ; ++i, ++j)
+        {
+            if (*i != *i || *j != *j)
+            {
+                return false;
+            }
+            if (*i > *j && *i - *j > std::numeric_limits<unsigned long>::epsilon())
+            {
+                return false;
+            }
+            if (*j > *i && *j - *i > std::numeric_limits<unsigned long>::epsilon())
+            {
+                return false;
+            }
         }
 
         return true;

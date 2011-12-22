@@ -95,13 +95,15 @@ namespace honei
                 {
                     Product<Tag_>::value(v, A, p);
                     temp = DotProduct<Tag_>::value(v, p);
-                    lambda = alpha / (fabs(temp) > std::numeric_limits<DT_>::epsilon() ? temp : std::numeric_limits<DT_>::epsilon());
+                    lambda = alpha / (std::abs(temp) > std::numeric_limits<DT_>::epsilon() ? temp : std::numeric_limits<DT_>::epsilon());
                     ScaledSum<Tag_>::value(x, p, lambda);
-                    ScaledSum<Tag_>::value(r, v, -lambda);
+                    DT_ mlambda(-lambda);
+                    ScaledSum<Tag_>::value(r, v, mlambda);
                     alpha_old = alpha;
                     alpha = Norm<vnt_l_two, false, Tag_>::value(r);
 
-                    Scale<Tag_>::value(p, alpha / (fabs(alpha_old) > std::numeric_limits<DT_>::epsilon() ? alpha_old : std::numeric_limits<DT_>::epsilon()));
+                    DT_ talpha(alpha / (std::abs(alpha_old) > std::numeric_limits<DT_>::epsilon() ? alpha_old : std::numeric_limits<DT_>::epsilon()));
+                    Scale<Tag_>::value(p, talpha);
                     Sum<Tag_>::value(p, r);
 
                     ++iterations;
@@ -173,12 +175,13 @@ namespace honei
                 {
                     Product<Tag_>::value(v, A, p);
                     temp = DotProduct<Tag_>::value(v, p);
-                    lambda = alpha_new / (fabs(temp) > std::numeric_limits<DT_>::epsilon() ? temp : copysign(std::numeric_limits<DT_>::epsilon(), temp));
+                    lambda = alpha_new / (std::abs(temp) > std::numeric_limits<DT_>::epsilon() ? temp : (std::numeric_limits<DT_>::epsilon()* (temp/std::abs(temp))));
 
                     ++iterations;
                     ScaledSum<Tag_>::value(x, p, lambda);
 
-                    ScaledSum<Tag_>::value(r, v, -lambda);
+                    DT_ mlambda(-lambda);
+                    ScaledSum<Tag_>::value(r, v, mlambda);
 
                     DT_ current_defect(Norm<vnt_l_two, true, Tag_>::value(r));
                     if(current_defect < eps_relative * initial_defect)
@@ -203,7 +206,8 @@ namespace honei
 
                     alpha_new = DotProduct<Tag_>::value(r, z);
 
-                    Scale<Tag_>::value(p, alpha_new / (fabs(alpha) > std::numeric_limits<DT_>::epsilon() ? alpha : copysign(std::numeric_limits<DT_>::epsilon(), alpha)));
+                    DT_ talpha_new(alpha_new / (std::abs(alpha) > std::numeric_limits<DT_>::epsilon() ? alpha : (std::numeric_limits<DT_>::epsilon() * (alpha / std::abs(alpha)))));
+                    Scale<Tag_>::value(p, talpha_new);
                     Sum<Tag_>::value(p, z);
                 }
 

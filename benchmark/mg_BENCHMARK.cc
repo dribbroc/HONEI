@@ -103,7 +103,7 @@ class MGBench:
             }
 
 
-            MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double>, PreconContType_ >  data(MGUtil<Tag_,
+            MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double>, PreconContType_, double >  data(MGUtil<Tag_,
                     SparseMatrixELL<double>,
                     DenseVector<double>,
                     SparseMatrixELL<double>,

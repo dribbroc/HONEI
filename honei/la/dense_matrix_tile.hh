@@ -25,7 +25,7 @@
 #include <honei/la/element_iterator.hh>
 #include <honei/la/dense_vector_range.hh>
 #include <honei/la/dense_vector_slice.hh>
-#include <honei/la/dense_matrix-impl.hh>
+#include <honei/la/dense_matrix.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/matrix_error.hh>
 #include <honei/util/shared_array-impl.hh>
@@ -105,7 +105,7 @@ namespace honei
              */
             DenseMatrixTile(const DenseMatrix<DataType_> & source, const unsigned long rows, const unsigned long columns,
                                 const unsigned long row_offset, const unsigned long column_offset) :
-                _elements(source._imp->elements),
+                _elements(source.array()),
                 _rows(rows),
                 _columns(columns),
                 _row_vectors(rows),

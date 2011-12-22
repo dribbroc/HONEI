@@ -32,6 +32,10 @@
 #include <honei/la/sparse_matrix-fwd.hh>
 #include <honei/util/private_implementation_pattern.hh>
 
+#ifdef HONEI_GMP
+#include <gmpxx.h>
+#endif
+
 namespace honei
 {
     /**
@@ -169,6 +173,9 @@ namespace honei
             /// Returns a pointer to our data array.
             DataType_ * elements() const;
 
+            /// Return a reference of the elements array.
+            virtual SharedArray<DataType_> & array() const;
+
             /// Return the address of our data
             void * address() const;
 
@@ -217,11 +224,25 @@ namespace honei
 
     extern template std::ostream & operator<< (std::ostream & lhs, const DenseMatrix<long> & matrix);
 
+    extern template class DenseMatrix<unsigned long>;
+
+    //extern template bool operator== (const DenseMatrix<unsigned long> & a, const DenseMatrix<unsigned long> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const DenseMatrix<unsigned long> & matrix);
+
     extern template class DenseMatrix<bool>;
 
     extern template bool operator== (const DenseMatrix<bool> & a, const DenseMatrix<bool> & b);
 
     extern template std::ostream & operator<< (std::ostream & lhs, const DenseMatrix<bool> & matrix);
+
+#ifdef HONEI_GMP
+    extern template class DenseMatrix<mpf_class>;
+
+    extern template bool operator== (const DenseMatrix<mpf_class> & a, const DenseMatrix<mpf_class> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const DenseMatrix<mpf_class> & matrix);
+#endif
 }
 
 #endif

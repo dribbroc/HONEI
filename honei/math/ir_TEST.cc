@@ -31,7 +31,7 @@ class IRSolverTest:
             unsigned long levels(4);
             std::string file(HONEI_SOURCEDIR);
             file += "/honei/math/testdata/poisson_advanced/sort_0/";
-            MGData<SparseMatrixELL<DTInner_>, DenseVector<DTInner_>, SparseMatrixELL<DTInner_>, DenseVector<DTInner_> >  data(MGUtil<InnerTag_,
+            MGData<SparseMatrixELL<DTInner_>, DenseVector<DTInner_>, SparseMatrixELL<DTInner_>, DenseVector<DTInner_>, DTInner_ >  data(MGUtil<InnerTag_,
                                                                                             SparseMatrixELL<DTInner_>,
                                                                                             DenseVector<DTInner_>,
                                                                                             SparseMatrixELL<DTInner_>,

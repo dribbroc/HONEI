@@ -46,7 +46,7 @@ class MGSolverTest:
             file += "/honei/math/testdata/";
             file += _file;
 
-            MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double>, SparseMatrixELL<double> >  data(MGUtil<Tag_,
+            MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double>, SparseMatrixELL<double>, double >  data(MGUtil<Tag_,
                                                                                             SparseMatrixELL<double>,
                                                                                             DenseVector<double>,
                                                                                             SparseMatrixELL<double>,
@@ -56,7 +56,7 @@ class MGSolverTest:
                                                                                             double>::load_data(file, max_level, double(1), "spai"));
 
             // create MPI cycle
-            MGData<SparseMatrixELLMPI<double>, DenseVectorMPI<double>, SparseMatrixELLMPI<double>, SparseMatrixELLMPI<double> > data_mpi(data);
+            MGData<SparseMatrixELLMPI<double>, DenseVectorMPI<double>, SparseMatrixELLMPI<double>, SparseMatrixELLMPI<double>, double > data_mpi(data);
 
             MGUtil<Tag_,
                 SparseMatrixELLMPI<double>,

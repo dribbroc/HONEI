@@ -53,7 +53,7 @@ namespace honei
             }
     };
 
-    template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
+    template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_, typename DataType_>
         struct MGData
         {
             public:
@@ -74,7 +74,7 @@ namespace honei
             unsigned long n_pre_smooth;
             unsigned long n_post_smooth;
             unsigned long min_level;
-            double eps_relative;
+            DataType_ eps_relative;
 
             MGData(std::vector<MatrixType_> & systems,
                    std::vector<TransferContType_> & resmats,
@@ -91,7 +91,7 @@ namespace honei
                    unsigned long p_n_pre_smooth,
                    unsigned long p_n_post_smooth,
                    unsigned long p_min_level,
-                   double p_eps_rel
+                   DataType_ p_eps_rel
                    ) :
                 A(systems),
                 resmat(resmats),
@@ -116,8 +116,8 @@ namespace honei
                 ASSERT(p_min_level <= systems.size(), "Minimum level is larger then number of levels!");
             }
 
-            template<typename MatrixSrc_, typename VectorSrc_, typename TransferSrc_, typename PreconSrc_>
-            MGData(const MGData<MatrixSrc_, VectorSrc_, TransferSrc_, PreconSrc_> & other)
+            template<typename MatrixSrc_, typename VectorSrc_, typename TransferSrc_, typename PreconSrc_, typename DataTypeSrc_>
+            MGData(const MGData<MatrixSrc_, VectorSrc_, TransferSrc_, PreconSrc_, DataTypeSrc_> & other)
             {
                 for (unsigned long i(0) ; i < other.A.size() ; ++i)
                 {
@@ -310,16 +310,16 @@ namespace honei
         }
     }
 
-    template<typename Tag_, typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_, typename MatIOType_, typename VecIOType_, typename DT_>
+    template<typename Tag_, typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_, typename MatIOType_, typename VecIOType_, typename DataType_>
         struct MGUtil
         {
         public:
-            static void configure(MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & target, unsigned long max_iters,
+            static void configure(MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_, DataType_> & target, unsigned long max_iters,
                                                                                               unsigned long max_iters_coarse,
                                                                                               unsigned long n_pre_smooth,
                                                                                               unsigned long n_post_smooth,
                                                                                               unsigned long min_level,
-                                                                                              double eps_relative)
+                                                                                              DataType_ eps_relative)
             {
                 target.max_iters = max_iters;
                 target.max_iters_coarse = max_iters_coarse;
@@ -330,7 +330,7 @@ namespace honei
             }
 
 
-            static MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> load_data(std::string file_base, unsigned long max_level, DT_ damping_factor, std::string precon_suffix)
+            static MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_, DataType_> load_data(std::string file_base, unsigned long max_level, DataType_ damping_factor, std::string precon_suffix)
             {
                 CONTEXT("When creating MGData from file(s):");
 
@@ -367,10 +367,10 @@ namespace honei
                         std::string local_A_name(A_name);
                         local_A_name += stringify(MGDataIndex::base_index_A(i));
                         local_A_name += ".ell";
-                        MatrixType_ local_A(MatrixIO<MatIOType_>::read_matrix(local_A_name, DT_(0)));
+                        MatrixType_ local_A(MatrixIO<MatIOType_>::read_matrix(local_A_name, DataType_(0)));
                         A.push_back(local_A);
 
-                        PreconFill<PreconContType_, MatrixType_, DT_>::value(i, P, P_name, precon_suffix, local_A, damping_factor);
+                        PreconFill<PreconContType_, MatrixType_, DataType_>::value(i, P, P_name, precon_suffix, local_A, damping_factor);
                     }
 
                     ///get Prolmat P_{i}^{i+1}
@@ -379,12 +379,12 @@ namespace honei
                         std::string local_Prol_name(Prol_name);
                         local_Prol_name += stringify(MGDataIndex::base_index_Prol(i));
                         local_Prol_name += ".ell";
-                        TransferContType_ local_Prol(MatrixIO<MatIOType_>::read_matrix(local_Prol_name, DT_(0)));
+                        TransferContType_ local_Prol(MatrixIO<MatIOType_>::read_matrix(local_Prol_name, DataType_(0)));
                         Prol.push_back(local_Prol);
 
                         ///get Resmat R_{i+1}^{i} = (P_{i}^{i+1})^T
-                        SparseMatrix<DT_> local_preProl(Prol.at(i).copy());
-                        SparseMatrix<DT_> local_preRes(Prol.at(i).columns(), Prol.at(i).rows());
+                        SparseMatrix<DataType_> local_preProl(Prol.at(i).copy());
+                        SparseMatrix<DataType_> local_preRes(Prol.at(i).columns(), Prol.at(i).rows());
                         Transposition<Tag_>::value(local_preProl, local_preRes);
                         TransferContType_ local_Res(local_preRes);
                         Res.push_back(local_Res);
@@ -395,16 +395,16 @@ namespace honei
                     {
                         std::string local_b_name(b_name);
                         local_b_name += stringify(MGDataIndex::base_index_A(i));
-                        VectorType_ max_b(VectorIO<VecIOType_>::read_vector(local_b_name, DT_(0)));
+                        VectorType_ max_b(VectorIO<VecIOType_>::read_vector(local_b_name, DataType_(0)));
                         b.push_back(max_b);
 
                         std::string local_x_name(x_name);
                         local_x_name += stringify(MGDataIndex::base_index_A(i));
-                        VectorType_ max_x(VectorIO<VecIOType_>::read_vector(local_x_name, DT_(0)));
-                        //VectorType_ max_x(max_b.size(), DT_(0));
+                        VectorType_ max_x(VectorIO<VecIOType_>::read_vector(local_x_name, DataType_(0)));
+                        //VectorType_ max_x(max_b.size(), DataType_(0));
                         x.push_back(max_x);
 
-                        VectorType_ zero(A.at(i).rows(), DT_(0));
+                        VectorType_ zero(A.at(i).rows(), DataType_(0));
                         d.push_back(zero.copy());
                         ///Set c = x on finest level
                         //c.push_back(max_x.copy());
@@ -415,7 +415,7 @@ namespace honei
                     else if(i < MGDataIndex::internal_index_A(max_level))
                     {
                         ///get vectors for level i
-                        VectorType_ zero(A.at(i).rows(), DT_(0));
+                        VectorType_ zero(A.at(i).rows(), DataType_(0));
                         b.push_back(zero.copy());
                         x.push_back(zero.copy());
                         d.push_back(zero.copy());
@@ -432,7 +432,7 @@ namespace honei
                     }
                 }
 
-                MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> result(A, Res, Prol, P, b, x, d, c, temp_0, temp_1, 0, 0, 0, 0, 0, double(0.));
+                MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_, DataType_> result(A, Res, Prol, P, b, x, d, c, temp_0, temp_1, 0, 0, 0, 0, 0, DataType_(0.));
                 return result;
             }
         };
@@ -444,7 +444,7 @@ namespace honei
         typename SmootherType_,
         typename ResType_,
         typename ProlType_,
-        typename DT_>
+        typename DataType_>
             struct MGCycleCreation
             {
             };
@@ -455,14 +455,14 @@ namespace honei
         typename SmootherType_,
         typename ResType_,
         typename ProlType_,
-        typename DT_>
+        typename DataType_>
             struct MGCycleCreation<Tag_,
                              methods::CYCLE::V::STATIC,
                              CoarseGridSolverType_,
                              SmootherType_,
                              ResType_,
                              ProlType_,
-                             DT_>
+                             DataType_>
     {
         private:
             template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
@@ -471,12 +471,12 @@ namespace honei
                     std::vector<VectorType_> & b,
                     unsigned long level,
                     OperatorList & cycle,
-                    MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & data)
+                    MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_, DataType_> & data)
             {
                 if(level == (data.min_level))
                 {
                     //std::cout << "Solver Accessing " << data.min_level << std::endl;
-                    cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_>(
+                    cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_, DataType_>(
                                 data.A.at(MGDataIndex::internal_index_A(data.min_level)),
                                 data.P.at(MGDataIndex::internal_index_A(data.min_level)),
                                 b.at(MGDataIndex::internal_index_A(data.min_level)),
@@ -535,7 +535,7 @@ namespace honei
 
         public:
             template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
-            static OperatorList value(MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & data)
+            static OperatorList value(MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_, DataType_> & data)
             {
                 CONTEXT("When evaluating MGCycleCreation:");
 
@@ -550,14 +550,14 @@ namespace honei
              typename SmootherType_,
              typename ResType_,
              typename ProlType_,
-             typename DT_>
+             typename DataType_>
     struct MGCycleCreation<Tag_,
                              methods::CYCLE::W::STATIC,
                              CoarseGridSolverType_,
                              SmootherType_,
                              ResType_,
                              ProlType_,
-                             DT_>
+                             DataType_>
     {
         private:
             template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
@@ -566,12 +566,12 @@ namespace honei
                     std::vector<VectorType_> & b,
                     unsigned long level,
                     OperatorList & cycle,
-                    MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & data)
+                    MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_, DataType_> & data)
             {
                 if(level == (data.min_level))
                 {
                     //std::cout << "Solver Accessing " << data.min_level << std::endl;
-                    cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_>(
+                    cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_, DataType_>(
                                 data.A.at(MGDataIndex::internal_index_A(data.min_level)),
                                 data.P.at(MGDataIndex::internal_index_A(data.min_level)),
                                 b.at(MGDataIndex::internal_index_A(data.min_level)),
@@ -631,7 +631,7 @@ namespace honei
 
         public:
             template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
-            static OperatorList value(MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & data)
+            static OperatorList value(MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_, DataType_> & data)
             {
                 CONTEXT("When evaluating MGCycleCreation:");
 
@@ -647,14 +647,14 @@ namespace honei
              typename SmootherType_,
              typename ResType_,
              typename ProlType_,
-             typename DT_>
+             typename DataType_>
     struct MGCycleCreation<Tag_,
                              methods::CYCLE::F::V::STATIC,
                              CoarseGridSolverType_,
                              SmootherType_,
                              ResType_,
                              ProlType_,
-                             DT_>
+                             DataType_>
     {
         private:
             template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
@@ -663,12 +663,12 @@ namespace honei
                     std::vector<VectorType_> & b,
                     unsigned long level,
                     OperatorList & cycle,
-                    MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & data)
+                    MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_, DataType_> & data)
             {
                 if(level == (data.min_level))
                 {
                     //std::cout << "Solver Accessing " << data.min_level << std::endl;
-                    cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_>(
+                    cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_, DataType_>(
                                 data.A.at(MGDataIndex::internal_index_A(data.min_level)),
                                 data.P.at(MGDataIndex::internal_index_A(data.min_level)),
                                 b.at(MGDataIndex::internal_index_A(data.min_level)),
@@ -730,12 +730,12 @@ namespace honei
                     std::vector<VectorType_> & b,
                     unsigned long level,
                     OperatorList & cycle,
-                    MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & data)
+                    MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_, DataType_> & data)
             {
                 if(level == (data.min_level))
                 {
                     //std::cout << "Solver Accessing " << data.min_level << std::endl;
-                    cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_>(
+                    cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_, DataType_>(
                                 data.A.at(MGDataIndex::internal_index_A(data.min_level)),
                                 data.P.at(MGDataIndex::internal_index_A(data.min_level)),
                                 b.at(MGDataIndex::internal_index_A(data.min_level)),
@@ -794,7 +794,7 @@ namespace honei
 
         public:
             template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
-            static OperatorList value(MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & data)
+            static OperatorList value(MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_, DataType_> & data)
             {
                 CONTEXT("When evaluating MGCycleCreation:");
 
@@ -810,14 +810,14 @@ namespace honei
              typename SmootherType_,
              typename ResType_,
              typename ProlType_,
-             typename DT_>
+             typename DataType_>
     struct MGCycleCreation<Tag_,
                              methods::CYCLE::F::W::STATIC,
                              CoarseGridSolverType_,
                              SmootherType_,
                              ResType_,
                              ProlType_,
-                             DT_>
+                             DataType_>
     {
         private:
             template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
@@ -826,12 +826,12 @@ namespace honei
                     std::vector<VectorType_> & b,
                     unsigned long level,
                     OperatorList & cycle,
-                    MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & data)
+                    MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_, DataType_> & data)
             {
                 if(level == (data.min_level))
                 {
                     //std::cout << "Solver Accessing " << data.min_level << std::endl;
-                    cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_>(
+                    cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_, DataType_>(
                                 data.A.at(MGDataIndex::internal_index_A(data.min_level)),
                                 data.P.at(MGDataIndex::internal_index_A(data.min_level)),
                                 b.at(MGDataIndex::internal_index_A(data.min_level)),
@@ -895,12 +895,12 @@ namespace honei
                     std::vector<VectorType_> & b,
                     unsigned long level,
                     OperatorList & cycle,
-                    MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & data)
+                    MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_, DataType_> & data)
             {
                 if(level == (data.min_level))
                 {
                     //std::cout << "Solver Accessing " << data.min_level << std::endl;
-                    cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_>(
+                    cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_, DataType_>(
                                 data.A.at(MGDataIndex::internal_index_A(data.min_level)),
                                 data.P.at(MGDataIndex::internal_index_A(data.min_level)),
                                 b.at(MGDataIndex::internal_index_A(data.min_level)),
@@ -959,7 +959,7 @@ namespace honei
 
         public:
             template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
-            static OperatorList value(MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & data)
+            static OperatorList value(MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_, DataType_> & data)
             {
                 CONTEXT("When evaluating MGCycleCreation:");
 
@@ -974,8 +974,8 @@ namespace honei
     struct MGSolver
     {
         public:
-            template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
-            static void value(MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_> & data, OperatorList & cycle)
+            template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_, typename DataType_>
+            static void value(MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_, DataType_> & data, OperatorList & cycle)
             {
                 CONTEXT("When solving linear system with MG :");
                 ASSERT(cycle.size() > 0, "OperatorList is empty!");
@@ -983,9 +983,9 @@ namespace honei
 
                 VectorType_ r(data.x.at(data.x.size() - 1).size());
                 Defect<Tag_>::value(r, data.b.at(data.b.size() - 1), data.A.at(data.A.size() - 1), data.x.at(data.x.size() - 1));
-                double rnorm_initial(NormType_::value(r));
+                DataType_ rnorm_initial = NormType_::value(r);
                 std::cout << "Initial norm: " << rnorm_initial << std::endl;
-                double rnorm_current(1e16);
+                DataType_ rnorm_current(1e16);
 
                 //std::cout << "starting cycles" << std::endl;
                 for(unsigned long i(0) ; i < data.max_iters ; ++i)

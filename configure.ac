@@ -270,6 +270,23 @@ if test "x$ENABLE_MPI" = "xyes"; then
 fi
 AC_SUBST([MPIDEF])
 dnl }}}
+dnl {{{ check for GMP support
+AC_MSG_CHECKING([whether to build GMP support])
+AC_ARG_ENABLE([gmp],
+	AS_HELP_STRING([--enable-gmp], [Build GMP support (needs packages: GMP)]),
+		[ENABLE_GMP=$enableval
+		  AC_MSG_RESULT([$enableval])],
+		[ENABLE_GMP=no
+		  AC_MSG_RESULT([no])])
+AC_SUBST([ENABLE_GMP])
+AM_CONDITIONAL([GMP], test "x$ENABLE_GMP" = "xyes")
+if test "x$ENABLE_GMP" = "xyes"; then
+	dnl {{{ enable GMP support
+	GMPDEF="-DHONEI_GMP"
+	dnl }}}
+fi
+AC_SUBST([GMPDEF])
+dnl }}}
 dnl {{{ check for debug support
 AC_MSG_CHECKING([whether to build debug support])
 AC_ARG_ENABLE([debug],

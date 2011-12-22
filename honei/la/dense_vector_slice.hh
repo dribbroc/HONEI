@@ -23,6 +23,9 @@
 
 #include <honei/la/dense_vector.hh>
 #include <honei/util/private_implementation_pattern.hh>
+#ifdef HONEI_GMP
+#include <gmpxx.h>
+#endif
 
 namespace honei
 {
@@ -190,7 +193,7 @@ namespace honei
 
     extern template class DenseVectorSlice<unsigned long>;
 
-    extern template bool operator== (const DenseVectorSlice<unsigned long> & a, const DenseVectorSlice<unsigned long> & b);
+    //extern template bool operator== (const DenseVectorSlice<unsigned long> & a, const DenseVectorSlice<unsigned long> & b);
 
     extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorSlice<unsigned long> & vector);
 
@@ -199,6 +202,14 @@ namespace honei
     extern template bool operator== (const DenseVectorSlice<bool> & a, const DenseVectorSlice<bool> & b);
 
     extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorSlice<bool> & vector);
+
+#ifdef HONEI_GMP
+    extern template class DenseVectorSlice<mpf_class>;
+
+    extern template bool operator== (const DenseVectorSlice<mpf_class> & a, const DenseVectorSlice<mpf_class> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const DenseVectorSlice<mpf_class> & vector);
+#endif
 }
 
 #endif

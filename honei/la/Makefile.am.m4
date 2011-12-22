@@ -108,6 +108,7 @@ DEFS = \
 	$(DEBUGDEF) \
 	$(BOOSTDEF) \
 	$(MPIDEF) \
+	$(GMPDEF) \
 	$(PROFILERDEF)
 
 lib_LTLIBRARIES = libhoneila.la

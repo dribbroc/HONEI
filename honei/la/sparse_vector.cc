@@ -75,7 +75,7 @@ namespace honei
 
     template class ElementIterator<storage::SparseNonZero, container::Vector, unsigned long>;
 
-    template bool operator== (const SparseVector<unsigned long> & a, const SparseVector<unsigned long> & b);
+    //template bool operator== (const SparseVector<unsigned long> & a, const SparseVector<unsigned long> & b);
 
     template std::ostream & operator<< (std::ostream & lhs, const SparseVector<unsigned long> & vector);
 
@@ -92,5 +92,21 @@ namespace honei
     template bool operator== (const SparseVector<bool> & a, const SparseVector<bool> & b);
 
     template std::ostream & operator<< (std::ostream & lhs, const SparseVector<bool> & vector);
+
+#ifdef HONEI_GMP
+    template class ConstElementIterator<storage::Sparse, container::Vector, mpf_class>;
+
+    template class ConstElementIterator<storage::SparseNonZero, container::Vector, mpf_class>;
+
+    template class SparseVector<mpf_class>;
+
+    template class ElementIterator<storage::Sparse, container::Vector, mpf_class>;
+
+    template class ElementIterator<storage::SparseNonZero, container::Vector, mpf_class>;
+
+    template bool operator== (const SparseVector<mpf_class> & a, const SparseVector<mpf_class> & b);
+
+    template std::ostream & operator<< (std::ostream & lhs, const SparseVector<mpf_class> & vector);
+#endif
 }
 

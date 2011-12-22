@@ -154,6 +154,8 @@ namespace honei
                 if (0 == result)
                     throw std::bad_alloc();
 
+                MemoryArbiter::instance()->register_address(result);
+
                 return reinterpret_cast<DT_ *>(result);
             }
 
@@ -231,6 +233,7 @@ namespace honei
              */
             static inline void free(DT_ * location, std::size_t /*count*/)
             {
+                MemoryArbiter::instance()->remove_address(location);
                 ::free(location);
             }
         };

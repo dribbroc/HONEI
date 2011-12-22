@@ -63,7 +63,7 @@ namespace honei
                     unsigned long pivot = k;
                     for (unsigned long t(k + 1) ; t < u.rows() ; ++t)
                     {
-                        if (fabs(u(t, k)) > fabs(u(pivot, k)))
+                        if (abs(u(t, k)) > abs(u(pivot, k)))
                                 pivot = t;
                     }
                     //switch row k and row pivot
@@ -155,7 +155,7 @@ namespace honei
                         if (ci.index() < k + 1)
                             continue;
 
-                        if (fabs(*ci) > fabs(piv_value))
+                        if (abs(*ci) > abs(piv_value))
                         {
                                 pivot = ci.index();
                                 piv_value = *ci;

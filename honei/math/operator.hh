@@ -257,7 +257,7 @@ namespace honei
             DT_ _alpha;
     };
 
-    template<typename SolverType_, typename MatrixType_, typename VectorType_, typename PreconContType_>
+    template<typename SolverType_, typename MatrixType_, typename VectorType_, typename PreconContType_, typename DataType_>
     class SolverOperator : public Operator
     {
         //TODO: how to build in preconditioning -> standard-value?
@@ -278,7 +278,7 @@ namespace honei
                            VectorType_ & x,
                            unsigned long max_iters,
                            unsigned long & used_iters,
-                           double eps_relative = 1e-8) :
+                           DataType_ eps_relative = 1e-8) :
                 _A(A),
                 _P(P),
                 _b(b),
@@ -310,7 +310,7 @@ namespace honei
             VectorType_ _x;
             unsigned long _max_iters;
             unsigned long & _used_iters;
-            double _eps_relative;
+            DataType_ _eps_relative;
     };
 
     template<typename SmootherType_, typename MatrixType_, typename VectorType_, typename PreconContType_>

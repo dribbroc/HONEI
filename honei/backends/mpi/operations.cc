@@ -19,6 +19,9 @@
 
 #include <mpi.h>
 #include <honei/backends/mpi/operations.hh>
+#ifdef HONEI_GMP
+#include <gmpxx.h>
+#endif
 
 namespace honei
 {
@@ -73,6 +76,23 @@ namespace honei
         {
             MPI_Bcast(data, size, MPIType<DT_>::value(), sender, com);
         }
+
+#ifdef HONEI_GMP
+        template <>
+        void mpi_bcast(mpf_class * data, unsigned long size, int sender, MPI_Comm com)
+        {
+            double tdata[size];
+            if (mpi_comm_rank() == sender)
+                for (unsigned long i(0) ; i < size ; ++i)
+                    tdata[i] = mpf_get_d(data[i].get_mpf_t());
+
+            MPI_Bcast(tdata, size, MPIType<double>::value(), sender, com);
+
+            if (mpi_comm_rank() != sender)
+                for (unsigned long i(0) ; i < size ; ++i)
+                    data[i] = tdata[i];
+        }
+#endif
 
         template <typename DT_>
         void mpi_send(DT_ * data, unsigned long size, int target, int tag, MPI_Comm com)

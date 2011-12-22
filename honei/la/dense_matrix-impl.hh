@@ -25,9 +25,9 @@
 
 #include <honei/la/element_iterator.hh>
 #include <honei/la/dense_matrix.hh>
-#include <honei/la/dense_vector-impl.hh>
-#include <honei/la/dense_vector_range-impl.hh>
-#include <honei/la/dense_vector_slice-impl.hh>
+#include <honei/la/dense_vector.hh>
+#include <honei/la/dense_vector_range.hh>
+#include <honei/la/dense_vector_slice.hh>
 #include <honei/la/matrix_error.hh>
 #include <honei/la/sparse_matrix.hh>
 #include <honei/util/private_implementation_pattern-impl.hh>
@@ -272,6 +272,12 @@ namespace honei
     DenseMatrix<DataType_>::elements() const
     {
         return this->_imp->elements.get();
+    }
+
+    template <typename DataType_>
+    inline SharedArray<DataType_> & DenseMatrix<DataType_>::array() const
+    {
+        return this->_imp->elements;
     }
 
     template <typename DataType_>
@@ -607,7 +613,7 @@ namespace honei
         {
             CONTEXT("When comparing elements at index '" + stringify(i.index()) + "':");
 
-            if (fabs((*i - *j)) <= std::numeric_limits<DataType_>::epsilon())
+            if (abs((*i - *j)) <= std::numeric_limits<DataType_>::epsilon())
             {
                 ++j;
                 continue;
@@ -624,6 +630,45 @@ namespace honei
         }
 
         return result;
+    }
+
+    template <>
+    bool
+    operator== (const DenseMatrix<unsigned long> & left, const DenseMatrix<unsigned long> & right)
+    {
+        CONTEXT("When comparing two dense matrices:");
+
+        if (left.columns() != right.columns())
+        {
+            throw MatrixColumnsDoNotMatch(right.columns(), left.columns());
+        }
+
+        if (left.rows() != right.rows())
+        {
+            throw MatrixRowsDoNotMatch(right.rows(), left.rows());
+        }
+
+        for (DenseMatrix<unsigned long>::ConstElementIterator i(left.begin_elements()), i_end(left.end_elements()),
+                j(right.begin_elements()) ; i != i_end ; ++i)
+        {
+            CONTEXT("When comparing elements at index '" + stringify(i.index()) + "':");
+
+            if (*i != *i || *j != *j)
+            {
+                return false;
+            }
+            if (*i > *j && *i - *j > std::numeric_limits<unsigned long>::epsilon())
+            {
+                return false;
+            }
+            if (*j > *i && *j - *i > std::numeric_limits<unsigned long>::epsilon())
+            {
+                return false;
+            }
+
+        }
+
+        return true;
     }
 
     template <typename DataType_>

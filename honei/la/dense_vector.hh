@@ -30,6 +30,10 @@
 #include <honei/util/tags.hh>
 #include <honei/util/private_implementation_pattern.hh>
 
+#ifdef HONEI_GMP
+#include <gmpxx.h>
+#endif
+
 namespace honei
 {
     // Forward declarations
@@ -240,9 +244,17 @@ namespace honei
 
     extern template class DenseVector<unsigned long>;
 
-    extern template bool operator== (const DenseVectorBase<unsigned long> & a, const DenseVectorBase<unsigned long> & b);
+    //extern template bool operator== (const DenseVectorBase<unsigned long> & a, const DenseVectorBase<unsigned long> & b);
 
     extern template std::ostream & operator<< (std::ostream & lhs, const DenseVector<unsigned long> & vector);
+
+#ifdef HONEI_GMP
+    extern template class DenseVector<mpf_class>;
+
+    extern template bool operator== (const DenseVectorBase<mpf_class> & a, const DenseVectorBase<mpf_class> & b);
+
+    extern template std::ostream & operator<< (std::ostream & lhs, const DenseVector<mpf_class> & vector);
+#endif
 }
 
 #endif

@@ -29,6 +29,10 @@
 #include <honei/la/banded_matrix_qx.hh>
 #include <honei/util/tags.hh>
 #include <honei/mpi/dense_vector_mpi-fwd.hh>
+#include <honei/la/vector_error.hh>
+#ifdef HONEI_GMP
+#include <gmpxx.h>
+#endif
 
 #include <limits>
 
@@ -68,6 +72,12 @@ namespace honei
             source.unlock(lm_read_only);
             TypeTraits<DT_>::copy(source.elements(), dest.elements(), dest.size());
         }
+#ifdef HONEI_GMP
+        else if (typeid(DT_) == typeid(mpf_class))
+        {
+            TypeTraits<DT_>::copy(source.elements(), dest.elements(), source.size());
+        }
+#endif
         else
         {
             MemoryArbiter::instance()->copy(Tag_::memory_value, source.memid(), source.address(),
@@ -185,6 +195,23 @@ namespace honei
         MemoryArbiter::instance()->convert_double_float(Tag_::memory_value, orig.memid(), orig.address(),
                 copy.memid(), copy.address(), orig.size() * sizeof(double));
     }
+
+#ifdef HONEI_GMP
+    template <typename Tag_> void convert(DenseVector<mpf_class> & copy,
+            const DenseVector<double> & orig)
+    {
+        CONTEXT("When converting DenseVector to DenseVector:");
+
+        if (copy.size() != orig.size())
+            throw VectorSizeDoesNotMatch(orig.size(), copy.size());
+
+        for (unsigned long i(0) ; i < copy.size() ; ++i)
+        {
+            mpf_class t(orig[i]);
+            copy[i] = t;
+        }
+    }
+#endif
 
     template <typename DataType_> void convert(DenseVectorBase<DataType_> & copy,
             const DenseVectorBase<DataType_> & orig)

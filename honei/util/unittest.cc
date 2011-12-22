@@ -129,6 +129,7 @@ int main(int argc, char** argv)
 #ifdef HONEI_MPI
     MPI_Init(&argc, &argv);
 #endif
+
     int result(EXIT_SUCCESS);
     bool quick(false);
     bool sse(false);

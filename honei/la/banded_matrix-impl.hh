@@ -25,7 +25,7 @@
 #define LIBLA_GUARD_BANDED_MATRIX_IMPL_HH 1
 
 #include <honei/la/banded_matrix.hh>
-#include <honei/la/dense_vector-impl.hh>
+#include <honei/la/dense_vector.hh>
 #include <honei/la/matrix_error.hh>
 #include <honei/la/vector_error.hh>
 #include <honei/util/assertion.hh>
@@ -35,6 +35,8 @@
 #include <honei/util/stringify.hh>
 
 #include <set>
+#include <limits>
+#include <cmath>
 
 namespace honei
 {
@@ -981,7 +983,32 @@ namespace honei
             {
                 if (*x != *x || *y != *y)
                     return false;
-                if (std::fabs(*x - *y) > std::numeric_limits<DataType_>::epsilon())
+                if (std::abs(*x - *y) > std::numeric_limits<DataType_>::epsilon())
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    template <>
+    bool
+    operator== (const BandedMatrix<unsigned long> & a, const BandedMatrix<unsigned long> & b)
+    {
+        if (a.size() != b.size())
+            throw MatrixSizeDoesNotMatch(a.size(), b.size());
+
+        for (BandedMatrix<unsigned long>::ConstBandIterator i(a.begin_bands()), i_end(a.end_bands()),
+                j(b.begin_bands()) ; i != i_end ; ++i, ++j)
+        {
+            for (DenseVector<unsigned long>::ConstElementIterator x(i->begin_elements()), x_end(i->end_elements()),
+                    y(j->begin_elements()) ; x < x_end ; ++x, ++y)
+            {
+                if (*x != *x || *y != *y)
+                    return false;
+                if (*x > *y && *x - *y > std::numeric_limits<unsigned long>::epsilon())
+                    return false;
+                if (*y > *x && *y - *x > std::numeric_limits<unsigned long>::epsilon())
                     return false;
             }
         }

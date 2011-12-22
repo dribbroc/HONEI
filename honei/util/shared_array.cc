@@ -39,4 +39,8 @@ namespace honei
     template class SharedArray<unsigned long>;
 
     template class SharedArray<bool>;
+
+#ifdef HONEI_GMP
+    template class SharedArray<mpf_class>;
+#endif
 }
