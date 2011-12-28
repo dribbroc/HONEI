@@ -21,6 +21,9 @@
 #ifndef MULTICORE_GUARD_X86_SPEC_HH
 #define MULTICORE_GUARD_X86_SPEC_HH 1
 
+#include <honei/util/log.hh>
+#include <honei/util/stringify.hh>
+
 #include <stdint.h>
 #include <unistd.h>
 
@@ -85,6 +88,8 @@ namespace honei
         /// Read processor specific information using cpuid instruction
         void init_x86(unsigned & vendor, unsigned & num_cores, unsigned & ht_factor)
         {
+            CONTEXT("When retrieving x86-specific information from a processor via cpuid:");
+
             int CPUInfo[4];
 
             cpuid(CPUInfo, 0x0);
@@ -111,7 +116,21 @@ namespace honei
                         ht_factor = 2;
                     else
                         ht_factor = 1;
+
+#ifdef DEBUG
+                    std::string msg = "Found INTEL processor(s) with " + stringify(num_cores) + " LPUs and HTT " +
+                    (ht_factor == 1 ? "available" : "not available") + "\n";
+                    LOGMESSAGE(lc_backend, msg);
+#endif
                 }
+#ifdef DEBUG
+                else
+                {
+                    std::string msg = "Found INTEL processor(s) but could not further evaluate them\n";
+                    LOGMESSAGE(lc_backend, msg);
+                }
+#endif
+
             }
             else if (vendor == AMD)
             {
@@ -124,8 +143,27 @@ namespace honei
                     }
 
                     ht_factor = 1; // ToDo: Remove hardcoded numbers
+#ifdef DEBUG
+                    std::string msg = "Found AMD processor(s) with " + stringify(num_cores) + " LPUs and HTT " +
+                    (ht_factor == 1 ? "available" : "not available") + "\n";
+                    LOGMESSAGE(lc_backend, msg);
+#endif
                 }
+#ifdef DEBUG
+                else
+                {
+                    std::string msg = "Found AMD processor(s) but could not further evaluate them\n";
+                    LOGMESSAGE(lc_backend, msg);
+                }
+#endif
             }
+#ifdef DEBUG
+            else
+            {
+                std::string msg = "Could not determine vendor and further information about available processors\n";
+                LOGMESSAGE(lc_backend, msg);
+            }
+#endif
         }
 #endif
 
