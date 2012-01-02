@@ -143,11 +143,12 @@ namespace honei
 
     extern template std::ostream & operator<< (std::ostream & lhs, const SparseMatrixELL<double> & matrix);
 
+#ifdef HONEI_GMP
     extern template class SparseMatrixELL<mpf_class>;
 
     extern template bool operator== (const SparseMatrixELL<mpf_class> & a, const SparseMatrixELL<mpf_class> & b);
 
     extern template std::ostream & operator<< (std::ostream & lhs, const SparseMatrixELL<mpf_class> & matrix);
-
+#endif
 }
 #endif
