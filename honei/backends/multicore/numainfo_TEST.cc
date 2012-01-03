@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2010 Sven Mallach <mallach@honei.org>
+ * Copyright (c) 2010 - 2012 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -19,6 +19,7 @@
 
 #include <honei/backends/multicore/numainfo.hh>
 #include <honei/util/unittest.hh>
+#include <iostream>
 
 using namespace honei::mc;
 using namespace tests;
@@ -37,21 +38,18 @@ class NumaInfoTest :
 #if defined linux
             unsigned nnodes = intern::num_nodes();
 
-            TEST_CHECK(nnodes >= 1);
-
-            unsigned lpus(sysconf(_SC_NPROCESSORS_CONF));
-            unsigned * res = intern::cpu_to_node_array(nnodes, lpus);
-
-            if (nnodes == 0)
+            if (nnodes < 1)
             {
-                TEST_CHECK(false);
-            }
-            else if (nnodes == 1)
-            {
-                TEST_CHECK(res == NULL);
+                TEST_CHECK(nnodes == 0);
+                std::cout << "NumaInfo TEST cannot be performed - NUMA filesystem not available on this system" << std::endl;
+                TEST_CHECK(true);
+                return;
             }
             else
             {
+                unsigned lpus(sysconf(_SC_NPROCESSORS_CONF));
+                unsigned * res = intern::cpu_to_node_array(nnodes, lpus);
+
                 TEST_CHECK(res != NULL);
 
                 for (unsigned i(0) ; i < lpus ; ++i)
