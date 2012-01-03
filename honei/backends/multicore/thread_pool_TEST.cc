@@ -104,7 +104,7 @@ class ThreadPoolTest :
             for (unsigned i(1250) ; i < 1500 ; ++i)
             {
                 Ticket<tags::CPU::MultiCore> ticket = ThreadPool::instance()->enqueue(t,
-                        DispatchPolicy::on_node(i % top->num_nodes()));
+                        DispatchPolicy::on_socket(i % top->num_cpus()));
                 last250[i % 250] = ticket;
                 tickets.push_back(ticket);
             }
@@ -112,7 +112,7 @@ class ThreadPoolTest :
             for (unsigned i(1500) ; i < 1750 ; ++i)
             {
                 Ticket<tags::CPU::MultiCore> ticket = ThreadPool::instance()->enqueue(t,
-                        DispatchPolicy::same_node_as(last250[i % 250]));
+                        DispatchPolicy::same_socket_as(last250[i % 250]));
 
                 tickets.push_back(ticket);
             }

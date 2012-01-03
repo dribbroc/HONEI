@@ -81,17 +81,16 @@ namespace honei
     template <> struct Implementation<mc::AffinityThreadFunction> :
         public TFImplementationBase
     {
-        /* The logical processor this thread is bound to, in fact a
-         * scheduler id which is only used with affinity enabled. */
-        const unsigned sched_lpu;
+        /// The logical processor this thread is bound to
+        LPU * const lpu;
 
         /// The task list administrated by the thread pool.
         std::deque<mc::ThreadTask *> * const tasklist;
 
         Implementation(mc::PoolSyncData * const psync, ThreadData * const tdata, std::deque<mc::ThreadTask *> * const list,
-                unsigned pid, unsigned sched) :
+                unsigned pid, LPU * const pu) :
             TFImplementationBase(psync, tdata, pid),
-            sched_lpu(sched),
+            lpu(pu),
             tasklist(list)
         {
         }
@@ -106,7 +105,7 @@ namespace honei
             mc::ThreadTask * task(0);
 
             /// A comparison object for mc::ThreadTask objects.
-            mc::TaskComp * const comp(new mc::TaskComp(sched_lpu));
+            mc::TaskComp * const comp(new mc::TaskComp(lpu));
 
             std::deque<mc::ThreadTask *>::iterator i, i_end;
 
@@ -135,11 +134,11 @@ namespace honei
                         {
                             task = *i;
                             unsigned & sched_id = task->ticket.sid();
-                            sched_id = sched_lpu;
+                            sched_id = lpu->sched_id;
                             tasklist->erase(i);
 #ifdef DEBUG
                             std::string msg = "Thread " + stringify(pool_id) + " on LPU " +
-                            stringify(sched_lpu) + " will execute ticket " +
+                            stringify(lpu->sched_id) + " will execute ticket " +
                             stringify(task->ticket.uid()) + "\n";
                             LOGMESSAGE(lc_backend, msg);
 #endif
@@ -175,9 +174,8 @@ namespace honei
     template <> struct Implementation<mc::WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> > > :
         public TFImplementationBase
     {
-        /* The logical processor this thread is bound to, in fact a
-         * scheduler id which is only used with affinity enabled. */
-        const unsigned sched_lpu;
+        /// The logical processor this thread is bound to (if any)
+        const unsigned sched_id;
 
         /// The task list (local to this thread!)
         CASDeque<mc::ThreadTask *> tasklist;
@@ -192,11 +190,11 @@ namespace honei
 
         Mutex * const steal_mutex;
 
-        Implementation(mc::PoolSyncData * const psync, ThreadData * const tdata, unsigned pid, unsigned sched,
+        Implementation(mc::PoolSyncData * const psync, ThreadData * const tdata, unsigned pid, unsigned sid,
                 const std::vector<mc::WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> > *> & thr,
                 unsigned num_thr, volatile bool & term) :
             TFImplementationBase(psync, tdata, pid),
-            sched_lpu(sched),
+            sched_id(sid),
             threads(thr),
             num_threads(num_thr),
             global_terminate(term),
@@ -262,11 +260,11 @@ namespace honei
 
                 if (task != 0)
                 {
-                    unsigned & sched_id = task->ticket.sid();
-                    sched_id = sched_lpu;
+                    unsigned & tsched_id = task->ticket.sid();
+                    tsched_id = sched_id;
 #ifdef DEBUG
                     std::string msg = "Thread " + stringify(pool_id) + " on LPU " +
-                    stringify(sched_lpu) + " will execute ticket " +
+                    stringify(sched_id) + " will execute ticket " +
                     stringify(task->ticket.uid()) + "\n";
                     LOGMESSAGE(lc_backend, msg);
 #endif
@@ -305,9 +303,8 @@ namespace honei
     template <> struct Implementation<mc::WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> > > :
         public TFImplementationBase
     {
-        /* The logical processor this thread is bound to, in fact a
-         * scheduler id which is only used with affinity enabled. */
-        const unsigned sched_lpu;
+        /// The logical processor this thread is bound to (if any)
+        const unsigned sched_id;
 
         /// The task list (local to this thread!)
         ConcurrentDeque<mc::ThreadTask *> tasklist;
@@ -322,11 +319,11 @@ namespace honei
 
         Mutex * const steal_mutex;
 
-        Implementation(mc::PoolSyncData * const psync, ThreadData * const tdata, unsigned pid, unsigned sched,
+        Implementation(mc::PoolSyncData * const psync, ThreadData * const tdata, unsigned pid, unsigned sid,
                 const std::vector<mc::WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> > *> & thr,
                 unsigned num_thr, volatile bool & term) :
             TFImplementationBase(psync, tdata, pid),
-            sched_lpu(sched),
+            sched_id(sid),
             threads(thr),
             num_threads(num_thr),
             global_terminate(term),
@@ -392,11 +389,11 @@ namespace honei
 
                 if (task != 0)
                 {
-                    unsigned & sched_id = task->ticket.sid();
-                    sched_id = sched_lpu;
+                    unsigned & tsched_id = task->ticket.sid();
+                    tsched_id = sched_id;
 #ifdef DEBUG
                     std::string msg = "Thread " + stringify(pool_id) + " on LPU " +
-                    stringify(sched_lpu) + " will execute ticket " +
+                    stringify(sched_id) + " will execute ticket " +
                     stringify(task->ticket.uid()) + "\n";
                     LOGMESSAGE(lc_backend, msg);
 #endif
@@ -435,9 +432,8 @@ namespace honei
     template <> struct Implementation<mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > > :
         public TFImplementationBase
     {
-        /* The logical processor this thread is bound to, in fact a
-         * scheduler id which is only used with affinity enabled. */
-        const unsigned sched_lpu;
+        /// The logical processor this thread is bound to (if any)
+        const unsigned sched_id;
 
         /// The task list (local to this thread!)
         std::deque<mc::ThreadTask *> tasklist;
@@ -452,11 +448,11 @@ namespace honei
 
         Mutex * const steal_mutex;
 
-        Implementation(mc::PoolSyncData * const psync, ThreadData * const tdata, unsigned pid, unsigned sched,
+        Implementation(mc::PoolSyncData * const psync, ThreadData * const tdata, unsigned pid, unsigned sid,
                 const std::vector<mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > *> & thr,
                 unsigned num_thr, volatile bool & term) :
             TFImplementationBase(psync, tdata, pid),
-            sched_lpu(sched),
+            sched_id(sid),
             threads(thr),
             num_threads(num_thr),
             global_terminate(term),
@@ -543,11 +539,11 @@ namespace honei
 
                 if (task != 0)
                 {
-                    unsigned & sched_id = task->ticket.sid();
-                    sched_id = sched_lpu;
+                    unsigned & tsched_id = task->ticket.sid();
+                    tsched_id = sched_id;
 #ifdef DEBUG
                     std::string msg = "Thread " + stringify(pool_id) + " on LPU " +
-                    stringify(sched_lpu) + " will execute ticket " +
+                    stringify(sched_id) + " will execute ticket " +
                     stringify(task->ticket.uid()) + "\n";
                     LOGMESSAGE(lc_backend, msg);
 #endif
@@ -663,6 +659,8 @@ namespace honei
 
                 if (task != 0)
                 {
+                    unsigned & sched_id = task->ticket.sid();
+                    sched_id = 0xFFFF;
 #ifdef DEBUG
                     std::string msg = "Thread " + stringify(pool_id) + " will execute ticket " +
                     stringify(task->ticket.uid()) + "\n";
@@ -732,6 +730,9 @@ namespace honei
 
                 if (task != 0)
                 {
+                    unsigned & sched_id = task->ticket.sid();
+                    sched_id = 0xFFFF;
+
 #ifdef DEBUG
                     std::string msg = "Thread " + stringify(pool_id) + " will execute ticket " +
                     stringify(task->ticket.uid()) + "\n";
@@ -801,6 +802,9 @@ namespace honei
 
                 if (task != 0)
                 {
+                    unsigned & sched_id = task->ticket.sid();
+                    sched_id = 0xFFFF;
+
 #ifdef DEBUG
                     std::string msg = "Thread " + stringify(pool_id) + " will execute ticket " +
                     stringify(task->ticket.uid()) + "\n";
@@ -826,9 +830,9 @@ ThreadFunctionBase::~ThreadFunctionBase()
 }
 
 AffinityThreadFunction::AffinityThreadFunction(PoolSyncData * const psync, ThreadData * const tdata,
-        std::deque<ThreadTask *> * const list, unsigned pool_id, unsigned sched_id) :
+        std::deque<ThreadTask *> * const list, unsigned pool_id, LPU * const lpu) :
     PrivateImplementationPattern<AffinityThreadFunction, Shared>(new
-            Implementation<AffinityThreadFunction>(psync, tdata, list, pool_id, sched_id))
+            Implementation<AffinityThreadFunction>(psync, tdata, list, pool_id, lpu))
 {
 }
 
@@ -889,8 +893,8 @@ unsigned WorkStealingThreadFunction<std::deque<mc::ThreadTask *> >::tid() const
     return _imp->thread_id;
 }
 
-WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> >::WorkStealingThreadFunction(PoolSyncData * const psync, ThreadData * const tdata,
-        unsigned pool_id, unsigned sched_id,
+WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> >::WorkStealingThreadFunction(PoolSyncData * const psync,
+        ThreadData * const tdata, unsigned pool_id, unsigned sched_id,
         const std::vector<mc::WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> > *> & threads,
         unsigned num_thr, volatile bool & terminate) :
     PrivateImplementationPattern<WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> >, Shared>(new
@@ -927,8 +931,8 @@ unsigned WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> >::tid() cons
     return _imp->thread_id;
 }
 
-WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> >::WorkStealingThreadFunction(PoolSyncData * const psync, ThreadData * const tdata,
-        unsigned pool_id, unsigned sched_id,
+WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> >::WorkStealingThreadFunction(PoolSyncData * const psync,
+        ThreadData * const tdata, unsigned pool_id, unsigned sched_id,
         const std::vector<mc::WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> > *> & threads,
         unsigned num_thr, volatile bool & terminate) :
     PrivateImplementationPattern<WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> >, Shared>(new

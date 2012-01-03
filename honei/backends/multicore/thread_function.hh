@@ -1,6 +1,6 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 /*
- * Copyright (c) 2009, 2010, 2011 Sven Mallach <mallach@honei.org>
+ * Copyright (c) 2009 - 2012 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -22,6 +22,7 @@
 
 #include <honei/backends/multicore/cas_deque.hh>
 #include <honei/backends/multicore/concurrent_deque.hh>
+#include <honei/backends/multicore/lpu.hh>
 #include <honei/backends/multicore/thread_task.hh>
 #include <honei/util/condition_variable.hh>
 #include <honei/util/private_implementation_pattern.hh>
@@ -56,7 +57,7 @@ namespace honei
 
             public:
 
-                AffinityThreadFunction(PoolSyncData * const psync, ThreadData * const tdata, std::deque<ThreadTask *> * const list, unsigned pool_id, unsigned sched_id);
+                AffinityThreadFunction(PoolSyncData * const psync, ThreadData * const tdata, std::deque<ThreadTask *> * const list, unsigned pool_id, LPU * const lpu);
 
                 virtual ~AffinityThreadFunction();
 

@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2008, 2009, 2010, 2011 Sven Mallach <mallach@honei.org>
+ * Copyright (c) 2008 - 2012 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -35,23 +35,23 @@ namespace honei
             /// Unique ID
             unsigned id;
 
-            /// Lowest sched_id of a core that may execute this task
-            unsigned sched_min;
+            /// Can be used to assign the associated task to LPUs on a distinct socket
+            unsigned req_socket_id;
 
-            /// Highest sched_id of a core that may execute this task
-            unsigned sched_max;
+            /// Can be used to assign the associated task to a distinct LPU
+            unsigned req_sched_id;
 
-            /// ID of the core that really executed this task
+            /// ID of the LPU that really executed this task
             unsigned sched_id;
 
             /// Process ID of the executing thread
             unsigned thread_id;
 
-            Implementation(const unsigned sid_min, const unsigned sid_max) :
+            Implementation(const unsigned req_socket, const unsigned req_sched) :
                 TicketBaseImpl(),
                 id(counter),
-                sched_min(sid_min),
-                sched_max(sid_max),
+                req_socket_id(req_socket),
+                req_sched_id(req_sched),
                 sched_id(0xFFFF),
                 thread_id(0)
             {
@@ -63,10 +63,10 @@ namespace honei
             }
         };
 
-        Ticket<tags::CPU::MultiCore>::Ticket(const unsigned sid_min, const unsigned sid_max) :
+        Ticket<tags::CPU::MultiCore>::Ticket(const unsigned req_socket, const unsigned req_sched) :
             TicketBase(),
             PrivateImplementationPattern<Ticket<tags::CPU::MultiCore>, Shared>(new
-                    Implementation<Ticket<tags::CPU::MultiCore> >(sid_min, sid_max))
+                    Implementation<Ticket<tags::CPU::MultiCore> >(req_socket, req_sched))
         {
         }
 
@@ -86,14 +86,14 @@ namespace honei
             return _imp->id;
         }
 
-        unsigned Ticket<tags::CPU::MultiCore>::sid_min() const
+        unsigned Ticket<tags::CPU::MultiCore>::req_socket() const
         {
-            return _imp->sched_min;
+            return _imp->req_socket_id;
         }
 
-        unsigned Ticket<tags::CPU::MultiCore>::sid_max() const
+        unsigned Ticket<tags::CPU::MultiCore>::req_sched() const
         {
-            return _imp->sched_max;
+            return _imp->req_sched_id;
         }
 
         unsigned & Ticket<tags::CPU::MultiCore>::sid()

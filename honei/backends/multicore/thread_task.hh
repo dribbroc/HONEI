@@ -1,6 +1,6 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 /*
- * Copyright (c) 2009, 2010, 2011 Sven Mallach <mallach@honei.org>
+ * Copyright (c) 2009 - 2012 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -19,6 +19,7 @@
 #ifndef MULTICORE_GUARD_THREAD_TASK_HH
 #define MULTICORE_GUARD_THREAD_TASK_HH 1
 
+#include <honei/backends/multicore/lpu.hh>
 #include <honei/backends/multicore/ticket.hh>
 #include <honei/util/tr1_boost.hh>
 
@@ -45,22 +46,33 @@ namespace honei
 
         struct TaskComp
         {
-            const unsigned sched_lpu;
+            LPU * const lpu;
 
-            TaskComp(unsigned slpu) :
-                sched_lpu(slpu)
+            TaskComp(LPU * const pu) :
+                lpu(pu)
             {
             }
 
             bool operator () (ThreadTask * const t) const
             {
-                const unsigned sched_min = t->ticket.sid_min();
-                const unsigned sched_max = t->ticket.sid_max();
+                const unsigned req_socket = t->ticket.req_socket();
+                const unsigned req_sched = t->ticket.req_sched();
 
-                if (sched_min == 0xFFFF || (sched_min <= sched_lpu && sched_lpu <= sched_max))
+                if (req_sched == 0xFFFFu)
+                {
+                    if (req_socket == 0xFFFFu || req_socket == (unsigned) lpu->socket_id)
+                        return true;
+                    else
+                        return false;
+                }
+                else if (req_sched == (unsigned) lpu->sched_id)
+                {
                     return true;
-
-                return false;
+                }
+                else
+                {
+                    return false;
+                }
             }
         };
 

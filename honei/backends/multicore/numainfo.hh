@@ -203,7 +203,6 @@ namespace honei
                     std::string msg = "Unable to open NUMA filesystem - will assume to have ONE node.\n";
                     LOGMESSAGE(lc_backend, msg);
 #endif
-                    num_nodes = 1;
                 }
                 else
                 {

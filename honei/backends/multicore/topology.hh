@@ -21,13 +21,36 @@
 #ifndef TOPOLOGY_GUARD_HH
 #define TOPOLOGY_GUARD_HH 1
 
+#include <honei/backends/multicore/lpu.hh>
 #include <honei/util/attributes.hh>
+#include <honei/util/barrier.hh>
 #include <honei/util/instantiation_policy.hh>
 
 namespace honei
 {
     namespace mc
     {
+        enum Architectures
+        {
+            unknown = 0,
+            x86_intel,
+            x86_amd
+        };
+
+        template <int> struct TopologyThreadFunction;
+
+        template <> struct TopologyThreadFunction<x86_intel>
+        {
+            LPU * const lpu;
+            int apic_id;
+            Barrier * barrier;
+
+            TopologyThreadFunction(LPU * const pu, Barrier * b);
+
+            void operator() ();
+        };
+
+
         class Topology :
              public InstantiationPolicy<Topology, Singleton>
         {
@@ -38,35 +61,38 @@ namespace honei
                 /// Number of LOGICAL PUs (hardware threads)
                 unsigned _num_lpus;
 
-                /// Number of NUMA nodes
-                unsigned _num_nodes;
-
-                /// Number of PUs per node
-                unsigned _lpus_per_node;
-
-                /// Array that maps sched_ids to NUMA nodes
-                unsigned * cpu_to_node;
-
-                /// Lowest scheduler ID of NUMA nodes
-                unsigned * range_min;
-
-                /// Highest scheduler ID of NUMA nodes
-                unsigned * range_max;
-
-#if defined(__i386__) || defined(__x86_64__)
-                /// Processor vendor as specified by the corresponding enumeration
-                unsigned _vendor;
-
                 /// Return the number of PUs per physical processor package
                 unsigned _num_cores;
 
                 /// Return the number of physical processor packages (num_lpus / num_cores)
+                /// Equivalent to the number of nodes detected in case of NUMA
                 unsigned _num_cpus;
+
+                /// Processor arch and vendor (if relevant)
+                unsigned _arch;
+
+                /// Array with access to LPU data structures
+                LPU ** _lpus;
+
+                /// Socket / Node information
+                Socket ** _sockets;
+
+#if defined(__i386__) || defined(__x86_64__)
+
+                /// Return whether the processor support simultaneous multithreading
+                bool _ht_support;
 
                 /// Return the number of hardware threads per processor core (usually 1 or 2)
                 unsigned _ht_factor;
 
 #endif
+                /// Determine the architecture of the underlying system
+                void determine_arch();
+
+                void enumerate_x86_intel();
+                void enumerate_x86_amd();
+                void enumerate_numainfo(int num_nodes);
+
                 /// \}
 
             protected:
@@ -93,6 +119,11 @@ namespace honei
                 /// \name Public members
                 /// \{
 
+                LPU ** lpus();
+                LPU * lpu(int id);
+
+                Socket ** sockets();
+
                 /// Return the number of logical PUs (hardware-threads)
                 unsigned num_lpus() const;
 
@@ -114,13 +145,14 @@ namespace honei
                 /// Return the node which the main thread is running on
                 unsigned main_node() const;
 
-#if defined(__i386__) || defined(__x86_64__)
-
                 /// Return the number of PUs per physical processor package
                 unsigned num_cores() const;
 
                 /// Return the number of physical processor packages (num_lpus / num_cores)
                 unsigned num_cpus() const;
+
+#if defined(__i386__) || defined(__x86_64__)
+
 
                 /// Return the number of hardware threads per processor core (usually 1 or 2)
                 unsigned ht_factor() const;

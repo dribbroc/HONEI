@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2008, 2009, 2010, 2011 Sven Mallach <mallach@honei.org>
+ * Copyright (c) 2008 - 2012 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -40,7 +40,7 @@ namespace honei
                 /// \{
 
                 /// Constructor
-                Ticket(const unsigned sid_min = 0xFFFF, const unsigned sid_max = 0xFFFF);
+                Ticket(const unsigned req_socket = 0xFFFF, const unsigned req_sched = 0xFFFF);
 
                 /// Destructor
                 virtual ~Ticket();
@@ -54,11 +54,11 @@ namespace honei
                 /// Retrieve unique ticket ID
                 unsigned uid() const;
 
-                /// Retrieve the lowest sched_id of a core that may execute this task
-                unsigned sid_min() const;
+                /// Retrieve the socket the associated task shall be assigned to
+                unsigned req_socket() const;
 
-                /// Retrieve the highest sched_id of a core that may execute this task
-                unsigned sid_max() const;
+                /// Retrieve the LPU the associated task shall be assigned to
+                unsigned req_sched() const;
 
                 /// Retrieve sched ID of the thread executing the task
                 unsigned & sid();

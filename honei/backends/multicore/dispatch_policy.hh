@@ -29,6 +29,7 @@
 #include <honei/util/tr1_boost.hh>
 #include <vector>
 #include <algorithm>
+#include <iostream>
 
 namespace honei
 {
@@ -59,39 +60,6 @@ namespace honei
                 }
         };
 
-        /* Dispatch on the same processing unit as with a
-         * previous ticket which is to provide here */
-
-        class SameCorePolicy
-        {
-            private:
-
-                Ticket<tags::CPU::MultiCore> other;
-
-            public:
-
-                SameCorePolicy(Ticket<tags::CPU::MultiCore> & ticket) :
-                    other(ticket)
-                {
-                }
-
-                Ticket<tags::CPU::MultiCore> operator() ()
-                {
-                    CONTEXT("When using the SameCorePolicy to dispatch a task:");
-
-                    unsigned sched_id(other.sid());
-
-                    Ticket<tags::CPU::MultiCore> ticket(sched_id, sched_id);
-
-#ifdef DEBUG
-                    std::string msg = "Dispatching ticket " + stringify(ticket.uid()) + " on LPU " + stringify(sched_id) + "\n";
-                    LOGMESSAGE(lc_backend, msg);
-#endif
-
-                    return ticket;
-                }
-        };
-
         /* Dispatch on an explicit processing unit */
 
         class OnCorePolicy
@@ -114,9 +82,9 @@ namespace honei
                     Topology * top = Topology::instance();
 
                     if (core_id >= top->num_lpus())
-                        core_id = top->num_lpus() - 1;
+                        core_id = rand() % top->num_lpus();
 
-                    Ticket<tags::CPU::MultiCore> ticket(core_id, core_id);
+                    Ticket<tags::CPU::MultiCore> ticket(0xFFFF, core_id);
 
 #ifdef DEBUG
                     std::string msg = "Dispatching ticket " + stringify(ticket.uid()) + " on LPU " + stringify(core_id) + "\n";
@@ -127,10 +95,10 @@ namespace honei
                 }
         };
 
-        /* Dispatch on an arbitrary core on the same node as
-         * with a previous ticket which is to provide here */
+        /* Dispatch on the same processing unit as with a
+         * previous ticket which is to provide here */
 
-        class SameNodePolicy
+        class SameCorePolicy
         {
             private:
 
@@ -138,23 +106,19 @@ namespace honei
 
             public:
 
-                SameNodePolicy(Ticket<tags::CPU::MultiCore> & ticket) :
+                SameCorePolicy(Ticket<tags::CPU::MultiCore> & ticket) :
                     other(ticket)
                 {
                 }
 
                 Ticket<tags::CPU::MultiCore> operator() ()
                 {
-                    CONTEXT("When using the SameNodePolicy to dispatch a task:");
+                    CONTEXT("When using the SameCorePolicy to dispatch a task:");
 
-                    unsigned sched_min(other.sid_min());
-                    unsigned sched_max(other.sid_max());
-
-                    Ticket<tags::CPU::MultiCore> ticket(sched_min, sched_max);
+                    Ticket<tags::CPU::MultiCore> ticket(0xFFFF, other.req_sched());
 
 #ifdef DEBUG
-                    std::string msg = "Dispatching ticket " + stringify(ticket.uid()) + " on a LPU in range " + stringify(sched_min) + " to "
-                        + stringify(sched_max) + "\n";
+                    std::string msg = "Dispatching ticket " + stringify(ticket.uid()) + " on LPU " + stringify(other.req_sched()) + "\n";
                     LOGMESSAGE(lc_backend, msg);
 #endif
 
@@ -162,35 +126,34 @@ namespace honei
                 }
         };
 
-        /* Dispatch on an arbitrary core on an explicit node. */
+        /* Dispatch on an arbitrary core on an explicit socket. */
 
-        class OnNodePolicy
+        class OnSocketPolicy
         {
             private:
 
-                unsigned node_id;
+                unsigned socket_id;
 
             public:
 
-                OnNodePolicy(const unsigned node_nr) :
-                    node_id(node_nr)
+                OnSocketPolicy(const unsigned socket_nr) :
+                    socket_id(socket_nr)
                 {
                 }
 
                 Ticket<tags::CPU::MultiCore> operator() ()
                 {
-                    CONTEXT("When using the OnNodePolicy to dispatch a task:");
+                    CONTEXT("When using the OnSocketPolicy to dispatch a task:");
 
                     Topology * top = Topology::instance();
 
-                    if (node_id >= top->num_nodes())
-                        node_id = top->num_nodes() - 1;
+                    if (socket_id >= top->num_cpus())
+                        socket_id = top->num_cpus() - 1;
 
-                    Ticket<tags::CPU::MultiCore> ticket(top->node_min(node_id), top->node_max(node_id));
+                    Ticket<tags::CPU::MultiCore> ticket(socket_id, 0xFFFF);
 
 #ifdef DEBUG
-                    std::string msg = "Dispatching ticket " + stringify(ticket.uid()) + " on a LPU in range " + stringify(top->node_min(node_id)) + " to "
-                        + stringify(top->node_max(node_id)) + "\n";
+                    std::string msg = "Dispatching ticket " + stringify(ticket.uid()) + " on socket " + stringify(socket_id) + "\n";
                     LOGMESSAGE(lc_backend, msg);
 #endif
 
@@ -198,9 +161,53 @@ namespace honei
                 }
         };
 
-        /* Fill the available nodes processing unit by processing unit */
+        /* Dispatch on an arbitrary core on the same node as
+         * with a previous ticket which is to provide here */
 
-        class LinearNodePolicy
+        class SameSocketPolicy
+        {
+            private:
+
+                Ticket<tags::CPU::MultiCore> other;
+
+            public:
+
+                SameSocketPolicy(Ticket<tags::CPU::MultiCore> & ticket) :
+                    other(ticket)
+                {
+                }
+
+                Ticket<tags::CPU::MultiCore> operator() ()
+                {
+                    CONTEXT("When using the SameSocketPolicy to dispatch a task:");
+
+                    unsigned socket;
+
+                    if (other.req_sched() == 0xFFFF)
+                    {
+                        socket = 0xFFFF;
+                    }
+                    else
+                    {
+                       LPU * lpu = Topology::instance()->lpu(other.req_sched());
+                       socket = lpu->socket_id;
+                    }
+
+                    Ticket<tags::CPU::MultiCore> ticket(socket, 0xFFFF);
+
+#ifdef DEBUG
+                    std::string msg = "Dispatching ticket " + stringify(ticket.uid()) + " on socket " + stringify(socket) + "\n";
+                    LOGMESSAGE(lc_backend, msg);
+#endif
+
+                    return ticket;
+                }
+        };
+
+
+        /* Fill the available sockets processing unit by processing unit */
+
+        class LinearSocketPolicy
         {
             private:
 
@@ -208,47 +215,40 @@ namespace honei
 
             public:
 
-                LinearNodePolicy(Ticket<tags::CPU::MultiCore> & l) :
+                LinearSocketPolicy(Ticket<tags::CPU::MultiCore> & l) :
                     last(l)
                 {
                 }
 
                 Ticket<tags::CPU::MultiCore> operator() ()
                 {
-                    CONTEXT("When using the LinearNodePolicy to dispatch a task:");
+                    CONTEXT("When using the LinearSocketPolicy to dispatch a task:");
 
-                    Topology * top = Topology::instance();
-
-                    if (last.uid() == 0)
+                    if (last.req_sched() >= Topology::instance()->num_lpus())
                     {
                         Ticket<tags::CPU::MultiCore> ticket(0, 0);
+#ifdef DEBUG
+                        std::string msg = "Dispatching ticket " + stringify(ticket.uid()) + " on LPU 0" + "\n";
+                        LOGMESSAGE(lc_backend, msg);
+#endif
                         return ticket;
                     }
-                    else
-                    {
-                        unsigned last_core = last.sid_min();
 
-                        if (last_core == top->num_lpus() - 1)
-                            last_core = 0;
-                        else
-                            ++last_core;
-
-                        Ticket<tags::CPU::MultiCore> ticket(last_core, last_core);
+                    LPU * lpu = Topology::instance()->lpu(last.req_sched());
+                    Ticket<tags::CPU::MultiCore> ticket(lpu->socket_id, lpu->linear_succ->sched_id);
 
 #ifdef DEBUG
-                    std::string msg = "Dispatching ticket " + stringify(ticket.uid()) + " on LPU " + stringify(last_core) + "\n";
+                    std::string msg = "Dispatching ticket " + stringify(ticket.uid()) + " on LPU " + stringify(lpu->linear_succ->sched_id) + "\n";
                     LOGMESSAGE(lc_backend, msg);
 #endif
-
-                        return ticket;
-                    }
+                    return ticket;
                 }
         };
 
-        /* Fill the available nodes in an alternaing manner concerning
+        /* Fill the available sockets in an alternating manner concerning
          * their processing units */
 
-        class AlternatingNodePolicy
+        class AlternatingSocketPolicy
         {
             private:
 
@@ -256,54 +256,33 @@ namespace honei
 
             public:
 
-                AlternatingNodePolicy(Ticket<tags::CPU::MultiCore> & l) :
+                AlternatingSocketPolicy(Ticket<tags::CPU::MultiCore> & l) :
                     last(l)
                 {
                 }
 
                 Ticket<tags::CPU::MultiCore> operator() ()
                 {
-                    CONTEXT("When using the AlternatingNodePolicy to dispatch a task:");
+                    CONTEXT("When using the AlternatingSocketPolicy to dispatch a task:");
 
-                    Topology * top = Topology::instance();
-                    unsigned num_nodes = top->num_nodes();
-
-                    if (last.uid() == 0)
+                    if (last.req_sched() >= Topology::instance()->num_lpus())
                     {
                         Ticket<tags::CPU::MultiCore> ticket(0, 0);
 #ifdef DEBUG
-                        std::string msg = "Dispatching ticket " + stringify(ticket.uid()) + " on LPU 0 \n";
+                        std::string msg = "Dispatching ticket " + stringify(ticket.uid()) + " on LPU 0" + "\n";
                         LOGMESSAGE(lc_backend, msg);
 #endif
                         return ticket;
                     }
-                    else
-                    {
-                        unsigned last_node = top->get_node(last.sid_min());
-                        unsigned core_pos = last.sid_min() % top->lpus_per_node();
 
-                        unsigned next_node(1 + last_node);
+                    LPU * lpu = Topology::instance()->lpu(last.req_sched());
+                    Ticket<tags::CPU::MultiCore> ticket(lpu->alternating_succ->socket_id, lpu->alternating_succ->sched_id);
 
-                        if (last_node == num_nodes - 1)
-                        {
-                            next_node = 0; // overwrite increase and reset to 0
-
-                            if (core_pos == top->lpus_per_node() - 1)
-                                core_pos = 0;
-                            else
-                                ++core_pos;
-                        }
-                        // else leave increase as set above
-
-                        unsigned next_core = next_node * top->lpus_per_node() + core_pos;
-
-                        Ticket<tags::CPU::MultiCore> ticket(next_core, next_core);
 #ifdef DEBUG
-                        std::string msg = "Dispatching ticket " + stringify(ticket.uid()) + " on LPU " + stringify(next_core) + "\n";
-                        LOGMESSAGE(lc_backend, msg);
+                    std::string msg = "Dispatching ticket " + stringify(ticket.uid()) + " on LPU " + stringify(lpu->alternating_succ->sched_id) + " (last ticket was " + stringify(last.uid()) + " with requested sched " + stringify(last.req_sched()) + ")\n";
+                    LOGMESSAGE(lc_backend, msg);
 #endif
-                        return ticket;
-                    }
+                    return ticket;
                 }
         };
 
@@ -352,16 +331,16 @@ namespace honei
                     return DispatchPolicy(AnyCorePolicy());
                 }
 
-                /// Dispatch alternatingly on next NUMA node
-                static DispatchPolicy alternating_node()
+                /// Dispatch alternatingly on next (NUMA) socket
+                static DispatchPolicy alternating_socket()
                 {
-                    return DispatchPolicy(AlternatingNodePolicy(last));
+                    return DispatchPolicy(AlternatingSocketPolicy(last));
                 }
 
-                /// Dispatch linearly on NUMA nodes
-                static DispatchPolicy linear_node()
+                /// Dispatch linearly on (NUMA) socket
+                static DispatchPolicy linear_socket()
                 {
-                    return DispatchPolicy(LinearNodePolicy(last));
+                    return DispatchPolicy(LinearSocketPolicy(last));
                 }
 
                 /// \}
@@ -383,15 +362,15 @@ namespace honei
                 }
 
                 /// Dispatch on same node as earlier task
-                static DispatchPolicy same_node_as(Ticket<tags::CPU::MultiCore> & ticket)
+                static DispatchPolicy same_socket_as(Ticket<tags::CPU::MultiCore> & ticket)
                 {
-                    return DispatchPolicy(SameNodePolicy(ticket));
+                    return DispatchPolicy(SameSocketPolicy(ticket));
                 }
 
                 /// Dispatch on explicit NUMA node
-                static DispatchPolicy on_node(unsigned node_id)
+                static DispatchPolicy on_socket(unsigned socket_id)
                 {
-                    return DispatchPolicy(OnNodePolicy(node_id));
+                    return DispatchPolicy(OnSocketPolicy(socket_id));
                 }
 
                 /// \}

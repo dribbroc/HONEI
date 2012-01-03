@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2008, 2009, 2010, 2011 Sven Mallach <mallach@honei.org>
+ * Copyright (c) 2008 - 2012 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -85,16 +85,16 @@ namespace honei
             }
             else if (dis == "alternating")
             {
-                policy = &mc::DispatchPolicy::alternating_node;
+                policy = &mc::DispatchPolicy::alternating_socket;
 #ifdef DEBUG
-                msg += "alternating - tasks shall be assigned alternatingly on available NUMA nodes\n";
+                msg += "alternating - tasks shall be assigned alternatingly on available (NUMA) sockets\n";
 #endif
             }
             else if (dis == "linear")
             {
-                policy = &mc::DispatchPolicy::linear_node;
+                policy = &mc::DispatchPolicy::linear_socket;
 #ifdef DEBUG
-                msg += "linear - tasks shall be assigned to fill up available NUMA nodes one-by-one\n";
+                msg += "linear - tasks shall be assigned to fill up available (NUMA) sockets one-by-one\n";
 #endif
             }
 
@@ -332,7 +332,7 @@ namespace honei
 
 #ifdef DEBUG
             std::string msg = "THREAD \t\t POOL_ID \t LPU \t NODE \n";
-            msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->get_node(_topology->num_lpus() - 1)) + " \n";
+            msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->lpus()[_topology->num_lpus() - 1]->socket_id) + " \n";
 #endif
 
             int inst_ctr(0);
@@ -340,9 +340,12 @@ namespace honei
             for (int i(_num_threads - 1) ; i >= 0 ; --i)
             {
                 unsigned sched_id(i % (_topology->num_lpus()));
+
+                LPU * const lpu = _topology->lpu(sched_id);
+
                 mc::ThreadData * td = new mc::ThreadData;
 
-                mc::AffinityThreadFunction tobj(_pool_sync, td, &_tasks, inst_ctr, sched_id);
+                mc::AffinityThreadFunction tobj(_pool_sync, td, &_tasks, inst_ctr, lpu);
 
                 Thread * t;
                 {
@@ -359,7 +362,7 @@ namespace honei
                 if(sched_setaffinity(tobj.tid(), sizeof(cpu_set_t), &_affinity_mask[i]) != 0)
                     throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 #ifdef DEBUG
-                msg += stringify(tobj.tid()) + "\t\t" + stringify(inst_ctr) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(_topology->get_node(sched_id)) + " \n";
+                msg += stringify(tobj.tid()) + "\t\t" + stringify(inst_ctr) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(_topology->lpus()[sched_id]->socket_id) + " \n";
 #endif
 
                 ++inst_ctr;
@@ -419,6 +422,8 @@ namespace honei
         /// Mapping of threads to the scheduler ids of the cores they run on
         std::vector<unsigned> _sched_ids;
 
+        bool _affinity;
+
         /// Array of affinity masks for main process and all controlled threads
         cpu_set_t * _affinity_mask;
 
@@ -426,18 +431,17 @@ namespace honei
 
         WorkStealingImplementation() :
             Implementation<mc::ThreadPool>(),
+            _affinity(Configuration::instance()->get_value("mc::affinity", true)),
             _affinity_mask(NULL),
             global_terminate(false)
         {
             CONTEXT("When initializing the work stealing implementation thread pool:");
 
-            bool affinity = Configuration::instance()->get_value("mc::affinity", true);
-
 #ifdef DEBUG
             std::string msg;
 #endif
 
-            if (affinity)
+            if (_affinity)
             {
                 _affinity_mask = new cpu_set_t[_num_threads + 1];
 
@@ -449,7 +453,7 @@ namespace honei
 
 #ifdef DEBUG
                 msg += "THREAD \t\t POOL_ID \t LPU \t NODE \n";
-                msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->get_node(_topology->num_lpus() - 1)) + " \n";
+                msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->lpus()[_topology->num_lpus() - 1]->socket_id) + " \n";
 #endif
             }
 
@@ -458,7 +462,8 @@ namespace honei
             Lock l(*_pool_sync->steal_mutex); // Prevent threads from stealing before all threads are alive
             for (int i(_num_threads - 1) ; i >= 0 ; --i)
             {
-                unsigned sched_id(affinity ? (i % (_topology->num_lpus())) : 0xFFFF );
+                unsigned sched_id(_affinity ? (i % (_topology->num_lpus())) : 0xFFFF );
+
                 mc::ThreadData * td = new mc::ThreadData;
 
                 mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > * tobj =
@@ -476,7 +481,7 @@ namespace honei
                 _thread_data.push_back(td);
                 _thread_fn.push_back(tobj);
 
-                if (affinity)
+                if (_affinity)
                 {
                     _sched_ids.push_back(sched_id);
                     CPU_ZERO(&_affinity_mask[i]);
@@ -484,7 +489,7 @@ namespace honei
                     if(sched_setaffinity(tobj->tid(), sizeof(cpu_set_t), &_affinity_mask[i]) != 0)
                         throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 #ifdef DEBUG
-                    msg += stringify(tobj->tid()) + "\t\t" + stringify(inst_ctr) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(_topology->get_node(sched_id)) + " \n";
+                    msg += stringify(tobj->tid()) + "\t\t" + stringify(inst_ctr) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(_topology->lpus()[sched_id]->socket_id) + " \n";
 #endif
                 }
 
@@ -521,7 +526,33 @@ namespace honei
             Ticket<tags::CPU::MultiCore> ticket(p.apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
-            int idx((ticket.sid_min() == 0xFFFF) ? rand() % _num_threads : ticket.sid_min());
+            int idx(-1);
+            int req_sched(ticket.req_sched());
+
+            if (! _affinity)
+            {
+                idx = 0xFFFF;
+            }
+            else
+            {
+                if (req_sched != 0xFFFF)
+                {
+                    idx = req_sched;
+                }
+                else // req_sched == 0xFFFF
+                {
+                    int req_socket(ticket.req_socket());
+
+                    if (req_socket == 0xFFFF)
+                    {
+                        idx = rand() % _topology->num_lpus();
+                    }
+                    else
+                    {
+                        idx = _topology->sockets()[req_socket]->_lpus[rand() % _topology->sockets()[req_socket]->_num_lpus]->sched_id;
+                    }
+                }
+            }
 
             mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > * wfunc(_thread_fn[idx]);
             wfunc->enqueue(t_task);
@@ -541,7 +572,33 @@ namespace honei
             Ticket<tags::CPU::MultiCore> ticket(policy().apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
-            int idx((ticket.sid_min() == 0xFFFF) ? rand() % _num_threads : ticket.sid_min());
+            int idx(-1);
+            int req_sched(ticket.req_sched());
+
+            if (! _affinity)
+            {
+                idx = 0xFFFF;
+            }
+            else
+            {
+                if (req_sched != 0xFFFF)
+                {
+                    idx = req_sched;
+                }
+                else // req_sched == 0xFFFF
+                {
+                    int req_socket(ticket.req_socket());
+
+                    if (req_socket == 0xFFFF)
+                    {
+                        idx = rand() % _topology->num_lpus();
+                    }
+                    else
+                    {
+                        idx = _topology->sockets()[req_socket]->_lpus[rand() % _topology->sockets()[req_socket]->_num_lpus]->sched_id;
+                    }
+                }
+            }
 
             mc::WorkStealingThreadFunction<std::deque<mc::ThreadTask *> > * wfunc(_thread_fn[idx]);
             wfunc->enqueue(t_task);
@@ -564,6 +621,8 @@ namespace honei
         /// Mapping of threads to the scheduler ids of the cores they run on
         std::vector<unsigned> _sched_ids;
 
+        bool _affinity;
+
         /// Array of affinity masks for main process and all controlled threads
         cpu_set_t * _affinity_mask;
 
@@ -571,18 +630,17 @@ namespace honei
 
         WorkStealingImplementation() :
             Implementation<mc::ThreadPool>(),
+            _affinity(Configuration::instance()->get_value("mc::affinity", true)),
             _affinity_mask(NULL),
             global_terminate(false)
         {
             CONTEXT("When initializing the work stealing implementation thread pool:");
 
-            bool affinity = Configuration::instance()->get_value("mc::affinity", true);
-
 #ifdef DEBUG
             std::string msg;
 #endif
 
-            if (affinity)
+            if (_affinity)
             {
                 _affinity_mask = new cpu_set_t[_num_threads + 1];
 
@@ -594,7 +652,7 @@ namespace honei
 
 #ifdef DEBUG
                 msg += "THREAD \t\t POOL_ID \t LPU \t NODE \n";
-                msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->get_node(_topology->num_lpus() - 1)) + " \n";
+                msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->lpus()[_topology->num_lpus() - 1]->socket_id) + " \n";
 #endif
             }
 
@@ -602,7 +660,7 @@ namespace honei
             Lock l(*_pool_sync->steal_mutex); // Prevent threads from stealing before all threads are alive
             for (int i(_num_threads - 1) ; i >= 0 ; --i)
             {
-                unsigned sched_id(affinity ? (i % (_topology->num_lpus())) : 0xFFFF);
+                unsigned sched_id(_affinity ? (i % (_topology->num_lpus())) : 0xFFFF);
 
                 mc::ThreadData * td = new mc::ThreadData;
 
@@ -621,7 +679,7 @@ namespace honei
                 _thread_data.push_back(td);
                 _thread_fn.push_back(tobj);
 
-                if (affinity)
+                if (_affinity)
                 {
                     _sched_ids.push_back(sched_id);
                     CPU_ZERO(&_affinity_mask[i]);
@@ -629,7 +687,7 @@ namespace honei
                     if(sched_setaffinity(tobj->tid(), sizeof(cpu_set_t), &_affinity_mask[i]) != 0)
                         throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 #ifdef DEBUG
-                    msg += stringify(tobj->tid()) + "\t\t" + stringify(inst_ctr) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(_topology->get_node(sched_id)) + " \n";
+                    msg += stringify(tobj->tid()) + "\t\t" + stringify(inst_ctr) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(_topology->lpus()[sched_id]->socket_id) + " \n";
 #endif
                 }
 
@@ -667,7 +725,33 @@ namespace honei
             Ticket<tags::CPU::MultiCore> ticket(p.apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
-            int idx((ticket.sid_min() == 0xFFFF) ? rand() % _num_threads : ticket.sid_min());
+            int idx(-1);
+            int req_sched(ticket.req_sched());
+
+            if (! _affinity)
+            {
+                idx = 0xFFFF;
+            }
+            else
+            {
+                if (req_sched != 0xFFFF)
+                {
+                    idx = req_sched;
+                }
+                else // req_sched == 0xFFFF
+                {
+                    int req_socket(ticket.req_socket());
+
+                    if (req_socket == 0xFFFF)
+                    {
+                        idx = rand() % _topology->num_lpus();
+                    }
+                    else
+                    {
+                        idx = _topology->sockets()[req_socket]->_lpus[rand() % _topology->sockets()[req_socket]->_num_lpus]->sched_id;
+                    }
+                }
+            }
 
             mc::WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> > * wfunc(_thread_fn[idx]);
             wfunc->enqueue(t_task);
@@ -687,7 +771,33 @@ namespace honei
             Ticket<tags::CPU::MultiCore> ticket(policy().apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
-            int idx((ticket.sid_min() == 0xFFFF) ? rand() % _num_threads : ticket.sid_min());
+            int idx(-1);
+            int req_sched(ticket.req_sched());
+
+            if (! _affinity)
+            {
+                idx = 0xFFFF;
+            }
+            else
+            {
+                if (req_sched != 0xFFFF)
+                {
+                    idx = req_sched;
+                }
+                else // req_sched == 0xFFFF
+                {
+                    int req_socket(ticket.req_socket());
+
+                    if (req_socket == 0xFFFF)
+                    {
+                        idx = rand() % _topology->num_lpus();
+                    }
+                    else
+                    {
+                        idx = _topology->sockets()[req_socket]->_lpus[rand() % _topology->sockets()[req_socket]->_num_lpus]->sched_id;
+                    }
+                }
+            }
 
             mc::WorkStealingThreadFunction<mc::ConcurrentDeque<mc::ThreadTask *> > * wfunc(_thread_fn[idx]);
             wfunc->enqueue(t_task);
@@ -710,6 +820,8 @@ namespace honei
         /// Mapping of threads to the scheduler ids of the cores they run on
         std::vector<unsigned> _sched_ids;
 
+        bool _affinity;
+
         /// Array of affinity masks for main process and all controlled threads
         cpu_set_t * _affinity_mask;
 
@@ -717,18 +829,17 @@ namespace honei
 
         WorkStealingImplementation() :
             Implementation<mc::ThreadPool>(),
+            _affinity(Configuration::instance()->get_value("mc::affinity", true)),
             _affinity_mask(NULL),
             global_terminate(false)
         {
             CONTEXT("When initializing the work stealing implementation thread pool:");
 
-            bool affinity = Configuration::instance()->get_value("mc::affinity", true);
-
 #ifdef DEBUG
             std::string msg;
 #endif
 
-            if (affinity)
+            if (_affinity)
             {
                 _affinity_mask = new cpu_set_t[_num_threads + 1];
 
@@ -740,7 +851,7 @@ namespace honei
 
 #ifdef DEBUG
                 msg += "THREAD \t\t POOL_ID \t LPU \t NODE \n";
-                msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->get_node(_topology->num_lpus() - 1)) + " \n";
+                msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->lpus()[_topology->num_lpus() - 1]->socket_id) + " \n";
 #endif
             }
 
@@ -748,7 +859,7 @@ namespace honei
             Lock l(*_pool_sync->steal_mutex); // Prevent threads from stealing before all threads are alive
             for (int i(_num_threads - 1) ; i >= 0 ; --i)
             {
-                unsigned sched_id(affinity ? (i % (_topology->num_lpus())) : 0xFFFF);
+                unsigned sched_id(_affinity ? (i % (_topology->num_lpus())) : 0xFFFF);
 
                 mc::ThreadData * td = new mc::ThreadData;
 
@@ -767,7 +878,7 @@ namespace honei
                 _thread_data.push_back(td);
                 _thread_fn.push_back(tobj);
 
-                if (affinity)
+                if (_affinity)
                 {
                     _sched_ids.push_back(sched_id);
                     CPU_ZERO(&_affinity_mask[i]);
@@ -775,7 +886,7 @@ namespace honei
                     if(sched_setaffinity(tobj->tid(), sizeof(cpu_set_t), &_affinity_mask[i]) != 0)
                         throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 #ifdef DEBUG
-                    msg += stringify(tobj->tid()) + "\t\t" + stringify(inst_ctr) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(_topology->get_node(sched_id)) + " \n";
+                    msg += stringify(tobj->tid()) + "\t\t" + stringify(inst_ctr) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(_topology->lpus()[sched_id]->socket_id) + " \n";
 #endif
                 }
 
@@ -813,7 +924,33 @@ namespace honei
             Ticket<tags::CPU::MultiCore> ticket(p.apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
-            int idx((ticket.sid_min() == 0xFFFF) ? rand() % _num_threads : ticket.sid_min());
+            int idx(-1);
+            int req_sched(ticket.req_sched());
+
+            if (! _affinity)
+            {
+                idx = 0xFFFF;
+            }
+            else
+            {
+                if (req_sched != 0xFFFF)
+                {
+                    idx = req_sched;
+                }
+                else // req_sched == 0xFFFF
+                {
+                    int req_socket(ticket.req_socket());
+
+                    if (req_socket == 0xFFFF)
+                    {
+                        idx = rand() % _topology->num_lpus();
+                    }
+                    else
+                    {
+                        idx = _topology->sockets()[req_socket]->_lpus[rand() % _topology->sockets()[req_socket]->_num_lpus]->sched_id;
+                    }
+                }
+            }
 
             mc::WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> > * wfunc(_thread_fn[idx]);
             wfunc->enqueue(t_task);
@@ -833,7 +970,33 @@ namespace honei
             Ticket<tags::CPU::MultiCore> ticket(policy().apply());
             mc::ThreadTask * t_task(new mc::ThreadTask(task, ticket));
 
-            int idx((ticket.sid_min() == 0xFFFF) ? rand() % _num_threads : ticket.sid_min());
+            int idx(-1);
+            int req_sched(ticket.req_sched());
+
+            if (! _affinity)
+            {
+                idx = 0xFFFF;
+            }
+            else
+            {
+                if (req_sched != 0xFFFF)
+                {
+                    idx = req_sched;
+                }
+                else // req_sched == 0xFFFF
+                {
+                    int req_socket(ticket.req_socket());
+
+                    if (req_socket == 0xFFFF)
+                    {
+                        idx = rand() % _topology->num_lpus();
+                    }
+                    else
+                    {
+                        idx = _topology->sockets()[req_socket]->_lpus[rand() % _topology->sockets()[req_socket]->_num_lpus]->sched_id;
+                    }
+                }
+            }
 
             mc::WorkStealingThreadFunction<mc::CASDeque<mc::ThreadTask *> > * wfunc(_thread_fn[idx]);
             wfunc->enqueue(t_task);
