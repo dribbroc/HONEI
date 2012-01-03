@@ -58,9 +58,10 @@ namespace honei
                 if (n2 == 0)
                     continue;
                 unsigned long J[n2];
+                const unsigned long * A_col_idx_index(A.column(idx).indices());
                 for (unsigned long i(0) ; i < n2 ; ++i)
                 {
-                    J[i] = A.column(idx).indices()[i];
+                    J[i] = A_col_idx_index[i];
                 }
 
                 unsigned long n1(0);
@@ -75,9 +76,11 @@ namespace honei
                 unsigned long tmp(0);
                 for (unsigned long i(0) ; i < n2 ; ++i)
                 {
-                    for (unsigned long j(0) ; j < A.column(J[i]).used_elements() ; ++j)
+                    const unsigned long A_col_ji_ue(A.column(J[i]).used_elements());
+                    const unsigned long * A_col_ji_index(A.column(J[i]).indices());
+                    for (unsigned long j(0) ; j < A_col_ji_ue ; ++j)
                     {
-                        I[tmp] = A.column(J[i]).indices()[j];
+                        I[tmp] = A_col_ji_index[j];
                         et[tmp] = (I[tmp] == idx);
                         ++tmp;
                     }
@@ -86,7 +89,7 @@ namespace honei
                 DenseMatrix<DT_> At(n1, n2, DT_(0));
                 for (unsigned long i(0) ; i < n1 ; ++i)
                 {
-                    SparseVector<DT_> row = A[I[i]];
+                    const SparseVector<DT_> row = A[I[i]];
                     unsigned long it(0);
                     const unsigned long * indices(row.indices());
                     const DT_ * elements(row.elements());
@@ -108,6 +111,7 @@ namespace honei
                 }*/
 
                 DenseMatrix<DT_> Atrans(n2, n1);
+                // \TODO schneller transponieren
                 for (unsigned long i(0) ; i < At.rows() ; ++i)
                 {
                     for (unsigned long j(0) ; j < At.columns() ; ++j)
