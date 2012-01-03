@@ -122,25 +122,25 @@ void Topology::enumerate_x86_intel()
     for (unsigned i(0) ; i < _num_lpus ; ++i)
         socket_lpu_count[i] = 0;
 
-    int num_sockets(0);
-
     for (unsigned i(0) ; i < _num_lpus ; ++i)
     {
         ++socket_lpu_count[_lpus[i]->socket_id];
 
         std::cout << "LPU " << i << " is on socket " << _lpus[i]->socket_id << std::endl;
 
-        if (_lpus[i]->socket_id > num_sockets)
-            num_sockets = _lpus[i]->socket_id;
-
         delete threads[i];
     }
 
     delete[] threads;
 
-    ++num_sockets;
+    int num_sockets(0);
+    for (unsigned i(0) ; i < _num_lpus ; ++i)
+    {
+        if (socket_lpu_count[i] > 0)
+            ++num_sockets;
+    }
 
-    std::cout << "Found two sockets" << std::endl;
+    std::cout << "Found " << num_sockets << " sockets." << std::endl;
     _num_cpus = num_sockets;
 
     _sockets = new Socket * [num_sockets];
@@ -340,8 +340,8 @@ void Topology::enumerate_x86_amd()
         for (int l(1) ; l < so->_num_lpus ; ++l)
         {
             lpu = so->_lpus[l];
-            lpu->linear_succ = last;
-            lpu->alternating_succ = last;
+            last->linear_succ = lpu;
+            last->alternating_succ = lpu;
             last = lpu;
         }
 
@@ -382,8 +382,8 @@ void Topology::enumerate_numainfo(int _num_nodes)
         for (int l(1) ; l < so->_num_lpus ; ++l)
         {
             lpu = so->_lpus[l];
-            lpu->linear_succ = last;
-            lpu->alternating_succ = last;
+            last->linear_succ = lpu;
+            last->alternating_succ = lpu;
             last = lpu;
         }
 
@@ -437,7 +437,7 @@ void Topology::enumerate_numainfo(int _num_nodes)
             for (int l(1) ; l < _sockets[s]->_num_lpus ; ++l)
             {
                 lpu = _sockets[s]->_lpus[l];
-                lpu->linear_succ = last;
+                last->linear_succ = lpu;
                 last = lpu;
             }
 
@@ -481,6 +481,10 @@ void Topology::enumerate_numainfo(int _num_nodes)
             l = m;
         }
     }
+#if defined(__i386__) || defined(__x86_64__)
+    _ht_support = 0;
+    _ht_factor = 1;
+#endif
 }
 
 Topology::Topology() :

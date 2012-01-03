@@ -42,9 +42,10 @@ class TopologyTest :
             TEST_CHECK(t->num_lpus() > 0u);
 #endif
 
-#if defined(__i386__) || defined(__x86_64__)
             TEST_CHECK(t->num_cpus() > 0u);
             TEST_CHECK(t->num_cores() > 0u);
+
+#if defined(__i386__) || defined(__x86_64__)
             TEST_CHECK(t->ht_factor() > 0u);
 #endif
             TEST_CHECK(true);

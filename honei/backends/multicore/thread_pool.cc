@@ -531,7 +531,7 @@ namespace honei
 
             if (! _affinity)
             {
-                idx = 0xFFFF;
+                idx = rand() % _num_threads;
             }
             else
             {
@@ -545,7 +545,7 @@ namespace honei
 
                     if (req_socket == 0xFFFF)
                     {
-                        idx = rand() % _topology->num_lpus();
+                        idx = rand() % _num_threads;
                     }
                     else
                     {
@@ -577,7 +577,7 @@ namespace honei
 
             if (! _affinity)
             {
-                idx = 0xFFFF;
+                idx = rand() % _num_threads;
             }
             else
             {
@@ -591,7 +591,7 @@ namespace honei
 
                     if (req_socket == 0xFFFF)
                     {
-                        idx = rand() % _topology->num_lpus();
+                        idx = rand() % _num_threads;
                     }
                     else
                     {
@@ -730,7 +730,7 @@ namespace honei
 
             if (! _affinity)
             {
-                idx = 0xFFFF;
+                idx = rand() % _num_threads;
             }
             else
             {
@@ -744,7 +744,7 @@ namespace honei
 
                     if (req_socket == 0xFFFF)
                     {
-                        idx = rand() % _topology->num_lpus();
+                        idx = rand() % _num_threads;
                     }
                     else
                     {
@@ -776,7 +776,7 @@ namespace honei
 
             if (! _affinity)
             {
-                idx = 0xFFFF;
+                idx = rand() % _num_threads;
             }
             else
             {
@@ -790,7 +790,7 @@ namespace honei
 
                     if (req_socket == 0xFFFF)
                     {
-                        idx = rand() % _topology->num_lpus();
+                        idx = rand() % _num_threads;
                     }
                     else
                     {
@@ -929,7 +929,7 @@ namespace honei
 
             if (! _affinity)
             {
-                idx = 0xFFFF;
+                idx = rand() % _num_threads;
             }
             else
             {
@@ -943,7 +943,7 @@ namespace honei
 
                     if (req_socket == 0xFFFF)
                     {
-                        idx = rand() % _topology->num_lpus();
+                        idx = rand() % _num_threads;
                     }
                     else
                     {
@@ -975,7 +975,7 @@ namespace honei
 
             if (! _affinity)
             {
-                idx = 0xFFFF;
+                idx = rand() % _num_threads;
             }
             else
             {
@@ -989,7 +989,7 @@ namespace honei
 
                     if (req_socket == 0xFFFF)
                     {
-                        idx = rand() % _topology->num_lpus();
+                        idx = rand() % _num_threads;
                     }
                     else
                     {
