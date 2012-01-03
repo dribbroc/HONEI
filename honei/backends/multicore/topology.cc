@@ -158,11 +158,14 @@ void Topology::enumerate_x86_intel()
 
     int socket_lpus_assigned[num_sockets];
 
-    for (int i(0) ; i < num_sockets ; ++i)
+    for (unsigned i(0) ; i < _num_lpus ; ++i)
     {
-        std::cout << "Socket " << i << " has " << socket_lpu_count[i] << " lpus" << std::endl;
-        _sockets[i] = new Socket(socket_lpu_count[i]);
-        socket_lpus_assigned[i] = 0;
+        if (socket_lpu_count[i] > 0)
+        {
+            std::cout << "Socket " << i << " has " << socket_lpu_count[i] << " lpus" << std::endl;
+            _sockets[new_socket_id[i]] = new Socket(socket_lpu_count[i]);
+            socket_lpus_assigned[new_socket_id[i]] = 0;
+        }
     }
 
     for (unsigned i(0) ; i < _num_lpus ; ++i)
