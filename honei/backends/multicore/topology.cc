@@ -118,16 +118,18 @@ void Topology::enumerate_x86_intel()
     delete barrier;
 
     int socket_lpu_count[_num_lpus];
+    // renaming possibly necessary since socket-ids may not be continuous
+    int new_socket_id[_num_lpus]; 
 
     for (unsigned i(0) ; i < _num_lpus ; ++i)
+    {
         socket_lpu_count[i] = 0;
+        new_socket_id[i] = 0;
+    }
 
     for (unsigned i(0) ; i < _num_lpus ; ++i)
     {
         ++socket_lpu_count[_lpus[i]->socket_id];
-
-        std::cout << "LPU " << i << " is on socket " << _lpus[i]->socket_id << std::endl;
-
         delete threads[i];
     }
 
@@ -137,11 +139,20 @@ void Topology::enumerate_x86_intel()
     for (unsigned i(0) ; i < _num_lpus ; ++i)
     {
         if (socket_lpu_count[i] > 0)
+        {
+            new_socket_id[i] = num_sockets;
             ++num_sockets;
+        }
     }
 
     std::cout << "Found " << num_sockets << " sockets." << std::endl;
     _num_cpus = num_sockets;
+
+    for (unsigned i(0) ; i < _num_lpus ; ++i)
+    {
+        _lpus[i]->socket_id = new_socket_id[_lpus[i]->socket_id];
+        std::cout << "LPU " << i << " is on socket " << _lpus[i]->socket_id << std::endl;
+    }
 
     _sockets = new Socket * [num_sockets];
 
