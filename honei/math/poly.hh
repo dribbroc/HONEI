@@ -23,15 +23,17 @@ namespace honei
             //construct D for diagonally scaled A
             SparseMatrix<DT_> D(A.rows(), A.columns());
 
+            SparseMatrix<DT_> result(A.rows(), A.columns());
+
             for(unsigned long i(0) ; i < A.rows() ; ++i)
             {
+                result(i, i, DT_(1));
                 I(i, i, DT_(1));
                 D(i, i, DT_(1) / A(i, i));
             }
             SparseMatrix<DT_> DA(Product<tags::CPU>::value(D, A_damped));
 
             SparseMatrix<DT_> I_minus_A(A.rows(), A.columns());
-            SparseMatrix<DT_> result(A.rows(), A.columns());
             Difference<tags::CPU>::value(I_minus_A, I, DA);
 
             //perform
