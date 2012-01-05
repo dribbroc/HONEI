@@ -54,7 +54,7 @@ class PolyTestSparse:
                 used_elements+= sm[i].used_elements();
             std::cout<<"Non Zero Elements of A: "<<used_elements<<std::endl;
             SparseMatrix<DT_> m(sm.copy());
-            m= Poly::value(sm, 3, DT_(1./4.));
+            m= Poly::value(sm, 3);
             used_elements = 0;
             for (unsigned i(0) ; i < m.rows() ; ++i)
                 used_elements+= m[i].used_elements();
