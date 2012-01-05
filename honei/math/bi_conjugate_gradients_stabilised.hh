@@ -1,5 +1,6 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
+#pragma once
 #ifndef MATH_GUARD_BI_CONJUGATE_GRADIENTS_STABILISED_HH
 #define MATH_GUARD_BI_CONJUGATE_GRADIENTS_STABILISED_HH 1
 
