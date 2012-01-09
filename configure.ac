@@ -566,6 +566,7 @@ AC_OUTPUT(
 	clients/config/Makefile
 	clients/io_tools/Makefile
 	clients/fortran/Makefile
+	clients/mg_opt/Makefile
 	clients/mpi/Makefile
 	clients/swe/Makefile
 	clients/lbm/Makefile
