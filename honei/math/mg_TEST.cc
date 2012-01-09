@@ -226,22 +226,22 @@ class MGSolverTest:
             file += "/honei/math/testdata/";
             file += _file;
 
-            MGData<SparseMatrixELL<DT_>, DenseVector<DT_>, SparseMatrixELL<DT_>, DenseVector<DT_>, DT_ >  data(MGUtil<Tag_,
+            MGData<SparseMatrixELL<DT_>, DenseVector<DT_>, SparseMatrixELL<DT_>, SparseMatrixELL<DT_>, DT_ >  data(MGUtil<Tag_,
                                                                                             SparseMatrixELL<DT_>,
                                                                                             DenseVector<DT_>,
                                                                                             SparseMatrixELL<DT_>,
-                                                                                            DenseVector<DT_>,
+                                                                                            SparseMatrixELL<DT_>,
                                                                                             io_formats::ELL,
                                                                                             io_formats::EXP,
-                                                                                            DT_>::load_data(file, max_level, DT_(0.5), "jac"));
+                                                                                            DT_>::load_data(file, max_level, DT_(1.), "spai_grote"));
             MGUtil<Tag_,
                 SparseMatrixELL<DT_>,
                 DenseVector<DT_>,
                 SparseMatrixELL<DT_>,
-                DenseVector<DT_>,
+                SparseMatrixELL<DT_>,
                 io_formats::ELL,
                 io_formats::EXP,
-                DT_>::configure(data, 100, 100, 16, 16, min_level, DT_(1e-8));
+                DT_>::configure(data, 100, 100, 8, 8, min_level, DT_(1e-8));
 
             OperatorList ol(
                     MGCycleCreation<Tag_,
@@ -340,6 +340,29 @@ MGSolverTest<tags::GPU::CUDA, double> mg_solver_test_gpu_2("double", "poisson_ad
 MGSolverTest<tags::OpenCL::CPU, double> ocl_cpu_mg_solver_test_cpu_2("double", "poisson_advanced2/sort_0/");
 #ifdef HONEI_CUDA_DOUBLE
 MGSolverTest<tags::OpenCL::GPU, double> ocl_gpu_mg_solver_test_cpu_2("double", "poisson_advanced2/sort_0/");
+#endif
+#endif
+
+MGSolverTest<tags::CPU, double> mg_solver_test_cpu_4("double", "poisson_advanced4/sort_0/");
+MGSolverTest<tags::CPU::Generic, double> generic_mg_solver_test_cpu_4("double", "poisson_advanced4/sort_0/");
+MGSolverTest<tags::CPU::MultiCore::Generic, double> mc_generic_mg_solver_test_cpu_4("double", "poisson_advanced4/sort_0/");
+#ifdef HONEI_GMP
+MGSolverTest<tags::CPU::Generic, mpf_class> generic_mg_solver_test_cpu_4_mpf_class("mpf_class", "poisson_advanced4/sort_0/");
+MGSolverTest<tags::CPU::MultiCore::Generic, mpf_class> mc_generic_mg_solver_test_cpu_4_mpf_class("mpf_class", "poisson_advanced4/sort_0/");
+#endif
+#ifdef HONEI_SSE
+MGSolverTest<tags::CPU::SSE, double> sse_mg_solver_test_cpu_4("double", "poisson_advanced4/sort_0/");
+MGSolverTest<tags::CPU::MultiCore::SSE, double> mcsse_mg_solver_test_cpu_4("double", "poisson_advanced4/sort_0/");
+#endif
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
+MGSolverTest<tags::GPU::CUDA, double> mg_solver_test_gpu_4("double", "poisson_advanced4/sort_0/");
+#endif
+#endif
+#ifdef HONEI_OPENCL
+MGSolverTest<tags::OpenCL::CPU, double> ocl_cpu_mg_solver_test_cpu_4("double", "poisson_advanced4/sort_0/");
+#ifdef HONEI_CUDA_DOUBLE
+MGSolverTest<tags::OpenCL::GPU, double> ocl_gpu_mg_solver_test_cpu_4("double", "poisson_advanced4/sort_0/");
 #endif
 #endif
 

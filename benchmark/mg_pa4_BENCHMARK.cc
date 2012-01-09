@@ -118,7 +118,7 @@ class MGBench:
                 PreconContType_,
                 io_formats::ELL,
                 io_formats::EXP,
-                double>::configure(data, 100, 10, 4, 4, 1, double(1e-8));
+                double>::configure(data, 100, 100, 8, 8, 1, double(1e-8));
 
             OperatorList ol(
                     MGCycleCreation<Tag_,
@@ -149,99 +149,99 @@ class MGBench:
 #ifdef HONEI_SSE
 //JAC
 //q1
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l6_jac_v("MGBench mcsse | q1 | sort 0 | L6 | jac | V", 1 , 0, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l7_jac_v("MGBench mcsse | q1 | sort 0 | L7 | jac | V", 1 , 0, 7, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l8_jac_v("MGBench mcsse | q1 | sort 0 | L8 | jac | V", 1 , 0, 8, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l6_jac_v("MGBench mcsse | q1 | sort 0 | L6 | jac | V", 1 , 0, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l7_jac_v("MGBench mcsse | q1 | sort 0 | L7 | jac | V", 1 , 0, 7, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l8_jac_v("MGBench mcsse | q1 | sort 0 | L8 | jac | V", 1 , 0, 8, "jac", 0.5);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l6_jac_v("MGBench mcsse | q1 | sort 1 | L6 | jac | V", 1 , 1, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l7_jac_v("MGBench mcsse | q1 | sort 1 | L7 | jac | V", 1 , 1, 7, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l8_jac_v("MGBench mcsse | q1 | sort 1 | L8 | jac | V", 1 , 1, 8, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l6_jac_v("MGBench mcsse | q1 | sort 1 | L6 | jac | V", 1 , 1, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l7_jac_v("MGBench mcsse | q1 | sort 1 | L7 | jac | V", 1 , 1, 7, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l8_jac_v("MGBench mcsse | q1 | sort 1 | L8 | jac | V", 1 , 1, 8, "jac", 0.5);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l6_jac_v("MGBench mcsse | q1 | sort 2 | L6 | jac | V", 1 , 2, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_jac_v("MGBench mcsse | q1 | sort 2 | L7 | jac | V", 1 , 2, 7, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l8_jac_v("MGBench mcsse | q1 | sort 2 | L8 | jac | V", 1 , 2, 8, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l6_jac_v("MGBench mcsse | q1 | sort 2 | L6 | jac | V", 1 , 2, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_jac_v("MGBench mcsse | q1 | sort 2 | L7 | jac | V", 1 , 2, 7, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l8_jac_v("MGBench mcsse | q1 | sort 2 | L8 | jac | V", 1 , 2, 8, "jac", 0.5);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l6_jac_v("MGBench mcsse | q1 | sort 3 | L6 | jac | V", 1 , 3, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_jac_v("MGBench mcsse | q1 | sort 3 | L7 | jac | V", 1 , 3, 7, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l8_jac_v("MGBench mcsse | q1 | sort 3 | L8 | jac | V", 1 , 3, 8, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l6_jac_v("MGBench mcsse | q1 | sort 3 | L6 | jac | V", 1 , 3, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_jac_v("MGBench mcsse | q1 | sort 3 | L7 | jac | V", 1 , 3, 7, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l8_jac_v("MGBench mcsse | q1 | sort 3 | L8 | jac | V", 1 , 3, 8, "jac", 0.5);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l6_jac_v("MGBench mcsse | q1 | sort 4 | L6 | jac | V", 1 , 4, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l7_jac_v("MGBench mcsse | q1 | sort 4 | L7 | jac | V", 1 , 4, 7, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l8_jac_v("MGBench mcsse | q1 | sort 4 | L8 | jac | V", 1 , 4, 8, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l6_jac_v("MGBench mcsse | q1 | sort 4 | L6 | jac | V", 1 , 4, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l7_jac_v("MGBench mcsse | q1 | sort 4 | L7 | jac | V", 1 , 4, 7, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l8_jac_v("MGBench mcsse | q1 | sort 4 | L8 | jac | V", 1 , 4, 8, "jac", 0.5);
 
 //q2
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort0_l5_jac_v("MGBench mcsse | q2 | sort 0 | L5 | jac | V", 2 , 0, 5, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort0_l6_jac_v("MGBench mcsse | q2 | sort 0 | L6 | jac | V", 2 , 0, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort0_l7_jac_v("MGBench mcsse | q2 | sort 0 | L7 | jac | V", 2 , 0, 7, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort0_l5_jac_v("MGBench mcsse | q2 | sort 0 | L5 | jac | V", 2 , 0, 5, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort0_l6_jac_v("MGBench mcsse | q2 | sort 0 | L6 | jac | V", 2 , 0, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort0_l7_jac_v("MGBench mcsse | q2 | sort 0 | L7 | jac | V", 2 , 0, 7, "jac", 0.5);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort1_l5_jac_v("MGBench mcsse | q2 | sort 1 | L5 | jac | V", 2 , 1, 5, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort1_l6_jac_v("MGBench mcsse | q2 | sort 1 | L6 | jac | V", 2 , 1, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort1_l7_jac_v("MGBench mcsse | q2 | sort 1 | L7 | jac | V", 2 , 1, 7, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort1_l5_jac_v("MGBench mcsse | q2 | sort 1 | L5 | jac | V", 2 , 1, 5, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort1_l6_jac_v("MGBench mcsse | q2 | sort 1 | L6 | jac | V", 2 , 1, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort1_l7_jac_v("MGBench mcsse | q2 | sort 1 | L7 | jac | V", 2 , 1, 7, "jac", 0.5);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort2_l5_jac_v("MGBench mcsse | q2 | sort 2 | L5 | jac | V", 2 , 2, 5, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort2_l6_jac_v("MGBench mcsse | q2 | sort 2 | L6 | jac | V", 2 , 2, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort2_l7_jac_v("MGBench mcsse | q2 | sort 2 | L7 | jac | V", 2 , 2, 7, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort2_l5_jac_v("MGBench mcsse | q2 | sort 2 | L5 | jac | V", 2 , 2, 5, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort2_l6_jac_v("MGBench mcsse | q2 | sort 2 | L6 | jac | V", 2 , 2, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort2_l7_jac_v("MGBench mcsse | q2 | sort 2 | L7 | jac | V", 2 , 2, 7, "jac", 0.5);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort3_l5_jac_v("MGBench mcsse | q2 | sort 3 | L5 | jac | V", 2 , 3, 5, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort3_l6_jac_v("MGBench mcsse | q2 | sort 3 | L6 | jac | V", 2 , 3, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort3_l7_jac_v("MGBench mcsse | q2 | sort 3 | L7 | jac | V", 2 , 3, 7, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort3_l5_jac_v("MGBench mcsse | q2 | sort 3 | L5 | jac | V", 2 , 3, 5, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort3_l6_jac_v("MGBench mcsse | q2 | sort 3 | L6 | jac | V", 2 , 3, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort3_l7_jac_v("MGBench mcsse | q2 | sort 3 | L7 | jac | V", 2 , 3, 7, "jac", 0.5);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort4_l5_jac_v("MGBench mcsse | q2 | sort 4 | L5 | jac | V", 2 , 4, 5, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort4_l6_jac_v("MGBench mcsse | q2 | sort 4 | L6 | jac | V", 2 , 4, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort4_l7_jac_v("MGBench mcsse | q2 | sort 4 | L7 | jac | V", 2 , 4, 7, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort4_l5_jac_v("MGBench mcsse | q2 | sort 4 | L5 | jac | V", 2 , 4, 5, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort4_l6_jac_v("MGBench mcsse | q2 | sort 4 | L6 | jac | V", 2 , 4, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort4_l7_jac_v("MGBench mcsse | q2 | sort 4 | L7 | jac | V", 2 , 4, 7, "jac", 0.5);
 
 //q1t
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort0_l5_jac_v("MGBench mcsse | q1t | sort 0 | L5 | jac | V", 3 , 0, 5, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort0_l6_jac_v("MGBench mcsse | q1t | sort 0 | L6 | jac | V", 3 , 0, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort0_l7_jac_v("MGBench mcsse | q1t | sort 0 | L7 | jac | V", 3 , 0, 7, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort0_l5_jac_v("MGBench mcsse | q1t | sort 0 | L5 | jac | V", 3 , 0, 5, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort0_l6_jac_v("MGBench mcsse | q1t | sort 0 | L6 | jac | V", 3 , 0, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort0_l7_jac_v("MGBench mcsse | q1t | sort 0 | L7 | jac | V", 3 , 0, 7, "jac", 0.5);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort1_l5_jac_v("MGBench mcsse | q1t | sort 1 | L5 | jac | V", 3 , 1, 5, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort1_l6_jac_v("MGBench mcsse | q1t | sort 1 | L6 | jac | V", 3 , 1, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort1_l7_jac_v("MGBench mcsse | q1t | sort 1 | L7 | jac | V", 3 , 1, 7, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort1_l5_jac_v("MGBench mcsse | q1t | sort 1 | L5 | jac | V", 3 , 1, 5, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort1_l6_jac_v("MGBench mcsse | q1t | sort 1 | L6 | jac | V", 3 , 1, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort1_l7_jac_v("MGBench mcsse | q1t | sort 1 | L7 | jac | V", 3 , 1, 7, "jac", 0.5);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort2_l5_jac_v("MGBench mcsse | q1t | sort 2 | L5 | jac | V", 3 , 2, 5, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort2_l6_jac_v("MGBench mcsse | q1t | sort 2 | L6 | jac | V", 3 , 2, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort2_l7_jac_v("MGBench mcsse | q1t | sort 2 | L7 | jac | V", 3 , 2, 7, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort2_l5_jac_v("MGBench mcsse | q1t | sort 2 | L5 | jac | V", 3 , 2, 5, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort2_l6_jac_v("MGBench mcsse | q1t | sort 2 | L6 | jac | V", 3 , 2, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort2_l7_jac_v("MGBench mcsse | q1t | sort 2 | L7 | jac | V", 3 , 2, 7, "jac", 0.5);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort3_l5_jac_v("MGBench mcsse | q1t | sort 3 | L5 | jac | V", 3 , 3, 5, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort3_l6_jac_v("MGBench mcsse | q1t | sort 3 | L6 | jac | V", 3 , 3, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort3_l7_jac_v("MGBench mcsse | q1t | sort 3 | L7 | jac | V", 3 , 3, 7, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort3_l5_jac_v("MGBench mcsse | q1t | sort 3 | L5 | jac | V", 3 , 3, 5, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort3_l6_jac_v("MGBench mcsse | q1t | sort 3 | L6 | jac | V", 3 , 3, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort3_l7_jac_v("MGBench mcsse | q1t | sort 3 | L7 | jac | V", 3 , 3, 7, "jac", 0.5);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort4_l5_jac_v("MGBench mcsse | q1t | sort 4 | L5 | jac | V", 3 , 4, 5, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort4_l6_jac_v("MGBench mcsse | q1t | sort 4 | L6 | jac | V", 3 , 4, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort4_l7_jac_v("MGBench mcsse | q1t | sort 4 | L7 | jac | V", 3 , 4, 7, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort4_l5_jac_v("MGBench mcsse | q1t | sort 4 | L5 | jac | V", 3 , 4, 5, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort4_l6_jac_v("MGBench mcsse | q1t | sort 4 | L6 | jac | V", 3 , 4, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort4_l7_jac_v("MGBench mcsse | q1t | sort 4 | L7 | jac | V", 3 , 4, 7, "jac", 0.5);
 
 //SPAI
 //q1
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l6_spai_v("MGBench mcsse | q1 | sort 0 | L6 | spai | V", 1 , 0, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l7_spai_v("MGBench mcsse | q1 | sort 0 | L7 | spai | V", 1 , 0, 7, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l8_spai_v("MGBench mcsse | q1 | sort 0 | L8 | spai | V", 1 , 0, 8, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l6_spai_v("MGBench mcsse | q1 | sort 0 | L6 | spai | V", 1 , 0, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l7_spai_v("MGBench mcsse | q1 | sort 0 | L7 | spai | V", 1 , 0, 7, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l8_spai_v("MGBench mcsse | q1 | sort 0 | L8 | spai | V", 1 , 0, 8, "spai", 1.);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l6_spai_v("MGBench mcsse | q1 | sort 1 | L6 | spai | V", 1 , 1, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l7_spai_v("MGBench mcsse | q1 | sort 1 | L7 | spai | V", 1 , 1, 7, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l8_spai_v("MGBench mcsse | q1 | sort 1 | L8 | spai | V", 1 , 1, 8, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l6_spai_v("MGBench mcsse | q1 | sort 1 | L6 | spai | V", 1 , 1, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l7_spai_v("MGBench mcsse | q1 | sort 1 | L7 | spai | V", 1 , 1, 7, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l8_spai_v("MGBench mcsse | q1 | sort 1 | L8 | spai | V", 1 , 1, 8, "spai", 1.);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l6_spai_v("MGBench mcsse | q1 | sort 2 | L6 | spai | V", 1 , 2, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_spai_v("MGBench mcsse | q1 | sort 2 | L7 | spai | V", 1 , 2, 7, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l8_spai_v("MGBench mcsse | q1 | sort 2 | L8 | spai | V", 1 , 2, 8, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l6_spai_v("MGBench mcsse | q1 | sort 2 | L6 | spai | V", 1 , 2, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_spai_v("MGBench mcsse | q1 | sort 2 | L7 | spai | V", 1 , 2, 7, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l8_spai_v("MGBench mcsse | q1 | sort 2 | L8 | spai | V", 1 , 2, 8, "spai", 1.);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l6_spai_v("MGBench mcsse | q1 | sort 3 | L6 | spai | V", 1 , 3, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_spai_v("MGBench mcsse | q1 | sort 3 | L7 | spai | V", 1 , 3, 7, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l8_spai_v("MGBench mcsse | q1 | sort 3 | L8 | spai | V", 1 , 3, 8, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l6_spai_v("MGBench mcsse | q1 | sort 3 | L6 | spai | V", 1 , 3, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_spai_v("MGBench mcsse | q1 | sort 3 | L7 | spai | V", 1 , 3, 7, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l8_spai_v("MGBench mcsse | q1 | sort 3 | L8 | spai | V", 1 , 3, 8, "spai", 1.);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l6_spai_v("MGBench mcsse | q1 | sort 4 | L6 | spai | V", 1 , 4, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l7_spai_v("MGBench mcsse | q1 | sort 4 | L7 | spai | V", 1 , 4, 7, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l8_spai_v("MGBench mcsse | q1 | sort 4 | L8 | spai | V", 1 , 4, 8, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l6_spai_v("MGBench mcsse | q1 | sort 4 | L6 | spai | V", 1 , 4, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l7_spai_v("MGBench mcsse | q1 | sort 4 | L7 | spai | V", 1 , 4, 7, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l8_spai_v("MGBench mcsse | q1 | sort 4 | L8 | spai | V", 1 , 4, 8, "spai", 1.);
 
 //q2
 MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort0_l5_spai_v("MGBench mcsse | q2 | sort 0 | L5 | spai | V", 2 , 0, 5, "spai", 0.7);
@@ -267,52 +267,52 @@ MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double
 MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort4_l7_spai_v("MGBench mcsse | q2 | sort 4 | L7 | spai | V", 2 , 4, 7, "spai", 0.7);
 
 //q1t
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort0_l5_spai_v("MGBench mcsse | q1t | sort 0 | L5 | spai | V", 3 , 0, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort0_l6_spai_v("MGBench mcsse | q1t | sort 0 | L6 | spai | V", 3 , 0, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort0_l7_spai_v("MGBench mcsse | q1t | sort 0 | L7 | spai | V", 3 , 0, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort0_l5_spai_v("MGBench mcsse | q1t | sort 0 | L5 | spai | V", 3 , 0, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort0_l6_spai_v("MGBench mcsse | q1t | sort 0 | L6 | spai | V", 3 , 0, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort0_l7_spai_v("MGBench mcsse | q1t | sort 0 | L7 | spai | V", 3 , 0, 7, "spai", 1.);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort1_l5_spai_v("MGBench mcsse | q1t | sort 1 | L5 | spai | V", 3 , 1, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort1_l6_spai_v("MGBench mcsse | q1t | sort 1 | L6 | spai | V", 3 , 1, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort1_l7_spai_v("MGBench mcsse | q1t | sort 1 | L7 | spai | V", 3 , 1, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort1_l5_spai_v("MGBench mcsse | q1t | sort 1 | L5 | spai | V", 3 , 1, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort1_l6_spai_v("MGBench mcsse | q1t | sort 1 | L6 | spai | V", 3 , 1, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort1_l7_spai_v("MGBench mcsse | q1t | sort 1 | L7 | spai | V", 3 , 1, 7, "spai", 1.);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort2_l5_spai_v("MGBench mcsse | q1t | sort 2 | L5 | spai | V", 3 , 2, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort2_l6_spai_v("MGBench mcsse | q1t | sort 2 | L6 | spai | V", 3 , 2, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort2_l7_spai_v("MGBench mcsse | q1t | sort 2 | L7 | spai | V", 3 , 2, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort2_l5_spai_v("MGBench mcsse | q1t | sort 2 | L5 | spai | V", 3 , 2, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort2_l6_spai_v("MGBench mcsse | q1t | sort 2 | L6 | spai | V", 3 , 2, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort2_l7_spai_v("MGBench mcsse | q1t | sort 2 | L7 | spai | V", 3 , 2, 7, "spai", 1.);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort3_l5_spai_v("MGBench mcsse | q1t | sort 3 | L5 | spai | V", 3 , 3, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort3_l6_spai_v("MGBench mcsse | q1t | sort 3 | L6 | spai | V", 3 , 3, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort3_l7_spai_v("MGBench mcsse | q1t | sort 3 | L7 | spai | V", 3 , 3, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort3_l5_spai_v("MGBench mcsse | q1t | sort 3 | L5 | spai | V", 3 , 3, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort3_l6_spai_v("MGBench mcsse | q1t | sort 3 | L6 | spai | V", 3 , 3, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort3_l7_spai_v("MGBench mcsse | q1t | sort 3 | L7 | spai | V", 3 , 3, 7, "spai", 1.);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort4_l5_spai_v("MGBench mcsse | q1t | sort 4 | L5 | spai | V", 3 , 4, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort4_l6_spai_v("MGBench mcsse | q1t | sort 4 | L6 | spai | V", 3 , 4, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort4_l7_spai_v("MGBench mcsse | q1t | sort 4 | L7 | spai | V", 3 , 4, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort4_l5_spai_v("MGBench mcsse | q1t | sort 4 | L5 | spai | V", 3 , 4, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort4_l6_spai_v("MGBench mcsse | q1t | sort 4 | L6 | spai | V", 3 , 4, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1t_sort4_l7_spai_v("MGBench mcsse | q1t | sort 4 | L7 | spai | V", 3 , 4, 7, "spai", 1.);
 
 //SAINV
 //q1
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l6_sainv_v("MGBench mcsse | q1 | sort 0 | L6 | sainv | V", 1 , 0, 6, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l7_sainv_v("MGBench mcsse | q1 | sort 0 | L7 | sainv | V", 1 , 0, 7, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l8_sainv_v("MGBench mcsse | q1 | sort 0 | L8 | sainv | V", 1 , 0, 8, "sainv", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l6_sainv_v("MGBench mcsse | q1 | sort 0 | L6 | sainv | V", 1 , 0, 6, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l7_sainv_v("MGBench mcsse | q1 | sort 0 | L7 | sainv | V", 1 , 0, 7, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l8_sainv_v("MGBench mcsse | q1 | sort 0 | L8 | sainv | V", 1 , 0, 8, "sainv", 0.5);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l6_sainv_v("MGBench mcsse | q1 | sort 1 | L6 | sainv | V", 1 , 1, 6, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l7_sainv_v("MGBench mcsse | q1 | sort 1 | L7 | sainv | V", 1 , 1, 7, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l8_sainv_v("MGBench mcsse | q1 | sort 1 | L8 | sainv | V", 1 , 1, 8, "sainv", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l6_sainv_v("MGBench mcsse | q1 | sort 1 | L6 | sainv | V", 1 , 1, 6, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l7_sainv_v("MGBench mcsse | q1 | sort 1 | L7 | sainv | V", 1 , 1, 7, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l8_sainv_v("MGBench mcsse | q1 | sort 1 | L8 | sainv | V", 1 , 1, 8, "sainv", 0.5);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l6_sainv_v("MGBench mcsse | q1 | sort 2 | L6 | sainv | V", 1 , 2, 6, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_sainv_v("MGBench mcsse | q1 | sort 2 | L7 | sainv | V", 1 , 2, 7, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l8_sainv_v("MGBench mcsse | q1 | sort 2 | L8 | sainv | V", 1 , 2, 8, "sainv", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l6_sainv_v("MGBench mcsse | q1 | sort 2 | L6 | sainv | V", 1 , 2, 6, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_sainv_v("MGBench mcsse | q1 | sort 2 | L7 | sainv | V", 1 , 2, 7, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l8_sainv_v("MGBench mcsse | q1 | sort 2 | L8 | sainv | V", 1 , 2, 8, "sainv", 0.5);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l6_sainv_v("MGBench mcsse | q1 | sort 3 | L6 | sainv | V", 1 , 3, 6, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_sainv_v("MGBench mcsse | q1 | sort 3 | L7 | sainv | V", 1 , 3, 7, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l8_sainv_v("MGBench mcsse | q1 | sort 3 | L8 | sainv | V", 1 , 3, 8, "sainv", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l6_sainv_v("MGBench mcsse | q1 | sort 3 | L6 | sainv | V", 1 , 3, 6, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_sainv_v("MGBench mcsse | q1 | sort 3 | L7 | sainv | V", 1 , 3, 7, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l8_sainv_v("MGBench mcsse | q1 | sort 3 | L8 | sainv | V", 1 , 3, 8, "sainv", 0.5);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l6_sainv_v("MGBench mcsse | q1 | sort 4 | L6 | sainv | V", 1 , 4, 6, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l7_sainv_v("MGBench mcsse | q1 | sort 4 | L7 | sainv | V", 1 , 4, 7, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l8_sainv_v("MGBench mcsse | q1 | sort 4 | L8 | sainv | V", 1 , 4, 8, "sainv", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l6_sainv_v("MGBench mcsse | q1 | sort 4 | L6 | sainv | V", 1 , 4, 6, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l7_sainv_v("MGBench mcsse | q1 | sort 4 | L7 | sainv | V", 1 , 4, 7, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l8_sainv_v("MGBench mcsse | q1 | sort 4 | L8 | sainv | V", 1 , 4, 8, "sainv", 0.5);
 
 //q2
 MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q2_sort0_l5_sainv_v("MGBench mcsse | q2 | sort 0 | L5 | sainv | V", 2 , 0, 5, "sainv", 0.7);
@@ -364,28 +364,28 @@ MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double
 #if defined HONEI_CUDA && defined HONEI_CUDA_DOUBLE
 //JAC
 //q1
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort0_l6_jac_v("MGBench cuda | q1 | sort 0 | L6 | jac | V", 1 , 0, 6, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort0_l7_jac_v("MGBench cuda | q1 | sort 0 | L7 | jac | V", 1 , 0, 7, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort0_l8_jac_v("MGBench cuda | q1 | sort 0 | L8 | jac | V", 1 , 0, 8, "jac", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort0_l6_jac_v("MGBench cuda | q1 | sort 0 | L6 | jac | V", 1 , 0, 6, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort0_l7_jac_v("MGBench cuda | q1 | sort 0 | L7 | jac | V", 1 , 0, 7, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort0_l8_jac_v("MGBench cuda | q1 | sort 0 | L8 | jac | V", 1 , 0, 8, "jac", 0.5);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort1_l6_jac_v("MGBench cuda | q1 | sort 1 | L6 | jac | V", 1 , 1, 6, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort1_l7_jac_v("MGBench cuda | q1 | sort 1 | L7 | jac | V", 1 , 1, 7, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort1_l8_jac_v("MGBench cuda | q1 | sort 1 | L8 | jac | V", 1 , 1, 8, "jac", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort1_l6_jac_v("MGBench cuda | q1 | sort 1 | L6 | jac | V", 1 , 1, 6, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort1_l7_jac_v("MGBench cuda | q1 | sort 1 | L7 | jac | V", 1 , 1, 7, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort1_l8_jac_v("MGBench cuda | q1 | sort 1 | L8 | jac | V", 1 , 1, 8, "jac", 0.5);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort2_l6_jac_v("MGBench cuda | q1 | sort 2 | L6 | jac | V", 1 , 2, 6, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort2_l7_jac_v("MGBench cuda | q1 | sort 2 | L7 | jac | V", 1 , 2, 7, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort2_l8_jac_v("MGBench cuda | q1 | sort 2 | L8 | jac | V", 1 , 2, 8, "jac", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort2_l6_jac_v("MGBench cuda | q1 | sort 2 | L6 | jac | V", 1 , 2, 6, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort2_l7_jac_v("MGBench cuda | q1 | sort 2 | L7 | jac | V", 1 , 2, 7, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort2_l8_jac_v("MGBench cuda | q1 | sort 2 | L8 | jac | V", 1 , 2, 8, "jac", 0.5);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort3_l6_jac_v("MGBench cuda | q1 | sort 3 | L6 | jac | V", 1 , 3, 6, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort3_l7_jac_v("MGBench cuda | q1 | sort 3 | L7 | jac | V", 1 , 3, 7, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort3_l8_jac_v("MGBench cuda | q1 | sort 3 | L8 | jac | V", 1 , 3, 8, "jac", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort3_l6_jac_v("MGBench cuda | q1 | sort 3 | L6 | jac | V", 1 , 3, 6, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort3_l7_jac_v("MGBench cuda | q1 | sort 3 | L7 | jac | V", 1 , 3, 7, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort3_l8_jac_v("MGBench cuda | q1 | sort 3 | L8 | jac | V", 1 , 3, 8, "jac", 0.5);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort4_l6_jac_v("MGBench cuda | q1 | sort 4 | L6 | jac | V", 1 , 4, 6, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort4_l7_jac_v("MGBench cuda | q1 | sort 4 | L7 | jac | V", 1 , 4, 7, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort4_l8_jac_v("MGBench cuda | q1 | sort 4 | L8 | jac | V", 1 , 4, 8, "jac", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort4_l6_jac_v("MGBench cuda | q1 | sort 4 | L6 | jac | V", 1 , 4, 6, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort4_l7_jac_v("MGBench cuda | q1 | sort 4 | L7 | jac | V", 1 , 4, 7, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort4_l8_jac_v("MGBench cuda | q1 | sort 4 | L8 | jac | V", 1 , 4, 8, "jac", 0.5);
 
 //q2
 MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort0_l5_jac_v("MGBench cuda | q2 | sort 0 | L5 | jac | V", 2 , 0, 5, "jac", 0.7);
@@ -435,99 +435,99 @@ MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q
 
 //SPAI
 //q1
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort0_l6_spai_v("MGBench cuda | q1 | sort 0 | L6 | spai | V", 1 , 0, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort0_l7_spai_v("MGBench cuda | q1 | sort 0 | L7 | spai | V", 1 , 0, 7, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort0_l8_spai_v("MGBench cuda | q1 | sort 0 | L8 | spai | V", 1 , 0, 8, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort0_l6_spai_v("MGBench cuda | q1 | sort 0 | L6 | spai | V", 1 , 0, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort0_l7_spai_v("MGBench cuda | q1 | sort 0 | L7 | spai | V", 1 , 0, 7, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort0_l8_spai_v("MGBench cuda | q1 | sort 0 | L8 | spai | V", 1 , 0, 8, "spai", 1.);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort1_l6_spai_v("MGBench cuda | q1 | sort 1 | L6 | spai | V", 1 , 1, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort1_l7_spai_v("MGBench cuda | q1 | sort 1 | L7 | spai | V", 1 , 1, 7, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort1_l8_spai_v("MGBench cuda | q1 | sort 1 | L8 | spai | V", 1 , 1, 8, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort1_l6_spai_v("MGBench cuda | q1 | sort 1 | L6 | spai | V", 1 , 1, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort1_l7_spai_v("MGBench cuda | q1 | sort 1 | L7 | spai | V", 1 , 1, 7, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort1_l8_spai_v("MGBench cuda | q1 | sort 1 | L8 | spai | V", 1 , 1, 8, "spai", 1.);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort2_l6_spai_v("MGBench cuda | q1 | sort 2 | L6 | spai | V", 1 , 2, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort2_l7_spai_v("MGBench cuda | q1 | sort 2 | L7 | spai | V", 1 , 2, 7, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort2_l8_spai_v("MGBench cuda | q1 | sort 2 | L8 | spai | V", 1 , 2, 8, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort2_l6_spai_v("MGBench cuda | q1 | sort 2 | L6 | spai | V", 1 , 2, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort2_l7_spai_v("MGBench cuda | q1 | sort 2 | L7 | spai | V", 1 , 2, 7, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort2_l8_spai_v("MGBench cuda | q1 | sort 2 | L8 | spai | V", 1 , 2, 8, "spai", 1.);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort3_l6_spai_v("MGBench cuda | q1 | sort 3 | L6 | spai | V", 1 , 3, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort3_l7_spai_v("MGBench cuda | q1 | sort 3 | L7 | spai | V", 1 , 3, 7, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort3_l8_spai_v("MGBench cuda | q1 | sort 3 | L8 | spai | V", 1 , 3, 8, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort3_l6_spai_v("MGBench cuda | q1 | sort 3 | L6 | spai | V", 1 , 3, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort3_l7_spai_v("MGBench cuda | q1 | sort 3 | L7 | spai | V", 1 , 3, 7, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort3_l8_spai_v("MGBench cuda | q1 | sort 3 | L8 | spai | V", 1 , 3, 8, "spai", 1.);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort4_l6_spai_v("MGBench cuda | q1 | sort 4 | L6 | spai | V", 1 , 4, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort4_l7_spai_v("MGBench cuda | q1 | sort 4 | L7 | spai | V", 1 , 4, 7, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort4_l8_spai_v("MGBench cuda | q1 | sort 4 | L8 | spai | V", 1 , 4, 8, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort4_l6_spai_v("MGBench cuda | q1 | sort 4 | L6 | spai | V", 1 , 4, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort4_l7_spai_v("MGBench cuda | q1 | sort 4 | L7 | spai | V", 1 , 4, 7, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort4_l8_spai_v("MGBench cuda | q1 | sort 4 | L8 | spai | V", 1 , 4, 8, "spai", 1.);
 
 //q2
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort0_l5_spai_v("MGBench cuda | q2 | sort 0 | L5 | spai | V", 2 , 0, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort0_l6_spai_v("MGBench cuda | q2 | sort 0 | L6 | spai | V", 2 , 0, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort0_l7_spai_v("MGBench cuda | q2 | sort 0 | L7 | spai | V", 2 , 0, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort0_l5_spai_v("MGBench cuda | q2 | sort 0 | L5 | spai | V", 2 , 0, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort0_l6_spai_v("MGBench cuda | q2 | sort 0 | L6 | spai | V", 2 , 0, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort0_l7_spai_v("MGBench cuda | q2 | sort 0 | L7 | spai | V", 2 , 0, 7, "spai", 1.);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort1_l5_spai_v("MGBench cuda | q2 | sort 1 | L5 | spai | V", 2 , 1, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort1_l6_spai_v("MGBench cuda | q2 | sort 1 | L6 | spai | V", 2 , 1, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort1_l7_spai_v("MGBench cuda | q2 | sort 1 | L7 | spai | V", 2 , 1, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort1_l5_spai_v("MGBench cuda | q2 | sort 1 | L5 | spai | V", 2 , 1, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort1_l6_spai_v("MGBench cuda | q2 | sort 1 | L6 | spai | V", 2 , 1, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort1_l7_spai_v("MGBench cuda | q2 | sort 1 | L7 | spai | V", 2 , 1, 7, "spai", 1.);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort2_l5_spai_v("MGBench cuda | q2 | sort 2 | L5 | spai | V", 2 , 2, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort2_l6_spai_v("MGBench cuda | q2 | sort 2 | L6 | spai | V", 2 , 2, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort2_l7_spai_v("MGBench cuda | q2 | sort 2 | L7 | spai | V", 2 , 2, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort2_l5_spai_v("MGBench cuda | q2 | sort 2 | L5 | spai | V", 2 , 2, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort2_l6_spai_v("MGBench cuda | q2 | sort 2 | L6 | spai | V", 2 , 2, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort2_l7_spai_v("MGBench cuda | q2 | sort 2 | L7 | spai | V", 2 , 2, 7, "spai", 1.);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort3_l5_spai_v("MGBench cuda | q2 | sort 3 | L5 | spai | V", 2 , 3, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort3_l6_spai_v("MGBench cuda | q2 | sort 3 | L6 | spai | V", 2 , 3, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort3_l7_spai_v("MGBench cuda | q2 | sort 3 | L7 | spai | V", 2 , 3, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort3_l5_spai_v("MGBench cuda | q2 | sort 3 | L5 | spai | V", 2 , 3, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort3_l6_spai_v("MGBench cuda | q2 | sort 3 | L6 | spai | V", 2 , 3, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort3_l7_spai_v("MGBench cuda | q2 | sort 3 | L7 | spai | V", 2 , 3, 7, "spai", 1.);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort4_l5_spai_v("MGBench cuda | q2 | sort 4 | L5 | spai | V", 2 , 4, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort4_l6_spai_v("MGBench cuda | q2 | sort 4 | L6 | spai | V", 2 , 4, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort4_l7_spai_v("MGBench cuda | q2 | sort 4 | L7 | spai | V", 2 , 4, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort4_l5_spai_v("MGBench cuda | q2 | sort 4 | L5 | spai | V", 2 , 4, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort4_l6_spai_v("MGBench cuda | q2 | sort 4 | L6 | spai | V", 2 , 4, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort4_l7_spai_v("MGBench cuda | q2 | sort 4 | L7 | spai | V", 2 , 4, 7, "spai", 1.);
 
 //q1t
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort0_l5_spai_v("MGBench cuda | q1t | sort 0 | L5 | spai | V", 3 , 0, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort0_l6_spai_v("MGBench cuda | q1t | sort 0 | L6 | spai | V", 3 , 0, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort0_l7_spai_v("MGBench cuda | q1t | sort 0 | L7 | spai | V", 3 , 0, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort0_l5_spai_v("MGBench cuda | q1t | sort 0 | L5 | spai | V", 3 , 0, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort0_l6_spai_v("MGBench cuda | q1t | sort 0 | L6 | spai | V", 3 , 0, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort0_l7_spai_v("MGBench cuda | q1t | sort 0 | L7 | spai | V", 3 , 0, 7, "spai", 1.);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort1_l5_spai_v("MGBench cuda | q1t | sort 1 | L5 | spai | V", 3 , 1, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort1_l6_spai_v("MGBench cuda | q1t | sort 1 | L6 | spai | V", 3 , 1, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort1_l7_spai_v("MGBench cuda | q1t | sort 1 | L7 | spai | V", 3 , 1, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort1_l5_spai_v("MGBench cuda | q1t | sort 1 | L5 | spai | V", 3 , 1, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort1_l6_spai_v("MGBench cuda | q1t | sort 1 | L6 | spai | V", 3 , 1, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort1_l7_spai_v("MGBench cuda | q1t | sort 1 | L7 | spai | V", 3 , 1, 7, "spai", 1.);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort2_l5_spai_v("MGBench cuda | q1t | sort 2 | L5 | spai | V", 3 , 2, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort2_l6_spai_v("MGBench cuda | q1t | sort 2 | L6 | spai | V", 3 , 2, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort2_l7_spai_v("MGBench cuda | q1t | sort 2 | L7 | spai | V", 3 , 2, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort2_l5_spai_v("MGBench cuda | q1t | sort 2 | L5 | spai | V", 3 , 2, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort2_l6_spai_v("MGBench cuda | q1t | sort 2 | L6 | spai | V", 3 , 2, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort2_l7_spai_v("MGBench cuda | q1t | sort 2 | L7 | spai | V", 3 , 2, 7, "spai", 1.);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort3_l5_spai_v("MGBench cuda | q1t | sort 3 | L5 | spai | V", 3 , 3, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort3_l6_spai_v("MGBench cuda | q1t | sort 3 | L6 | spai | V", 3 , 3, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort3_l7_spai_v("MGBench cuda | q1t | sort 3 | L7 | spai | V", 3 , 3, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort3_l5_spai_v("MGBench cuda | q1t | sort 3 | L5 | spai | V", 3 , 3, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort3_l6_spai_v("MGBench cuda | q1t | sort 3 | L6 | spai | V", 3 , 3, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort3_l7_spai_v("MGBench cuda | q1t | sort 3 | L7 | spai | V", 3 , 3, 7, "spai", 1.);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort4_l5_spai_v("MGBench cuda | q1t | sort 4 | L5 | spai | V", 3 , 4, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort4_l6_spai_v("MGBench cuda | q1t | sort 4 | L6 | spai | V", 3 , 4, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort4_l7_spai_v("MGBench cuda | q1t | sort 4 | L7 | spai | V", 3 , 4, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort4_l5_spai_v("MGBench cuda | q1t | sort 4 | L5 | spai | V", 3 , 4, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort4_l6_spai_v("MGBench cuda | q1t | sort 4 | L6 | spai | V", 3 , 4, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1t_sort4_l7_spai_v("MGBench cuda | q1t | sort 4 | L7 | spai | V", 3 , 4, 7, "spai", 1.);
 
 //SAINV
 //q1
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort0_l6_sainv_v("MGBench cuda | q1 | sort 0 | L6 | sainv | V", 1 , 0, 6, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort0_l7_sainv_v("MGBench cuda | q1 | sort 0 | L7 | sainv | V", 1 , 0, 7, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort0_l8_sainv_v("MGBench cuda | q1 | sort 0 | L8 | sainv | V", 1 , 0, 8, "sainv", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort0_l6_sainv_v("MGBench cuda | q1 | sort 0 | L6 | sainv | V", 1 , 0, 6, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort0_l7_sainv_v("MGBench cuda | q1 | sort 0 | L7 | sainv | V", 1 , 0, 7, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort0_l8_sainv_v("MGBench cuda | q1 | sort 0 | L8 | sainv | V", 1 , 0, 8, "sainv", 0.5);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort1_l6_sainv_v("MGBench cuda | q1 | sort 1 | L6 | sainv | V", 1 , 1, 6, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort1_l7_sainv_v("MGBench cuda | q1 | sort 1 | L7 | sainv | V", 1 , 1, 7, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort1_l8_sainv_v("MGBench cuda | q1 | sort 1 | L8 | sainv | V", 1 , 1, 8, "sainv", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort1_l6_sainv_v("MGBench cuda | q1 | sort 1 | L6 | sainv | V", 1 , 1, 6, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort1_l7_sainv_v("MGBench cuda | q1 | sort 1 | L7 | sainv | V", 1 , 1, 7, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort1_l8_sainv_v("MGBench cuda | q1 | sort 1 | L8 | sainv | V", 1 , 1, 8, "sainv", 0.5);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort2_l6_sainv_v("MGBench cuda | q1 | sort 2 | L6 | sainv | V", 1 , 2, 6, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort2_l7_sainv_v("MGBench cuda | q1 | sort 2 | L7 | sainv | V", 1 , 2, 7, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort2_l8_sainv_v("MGBench cuda | q1 | sort 2 | L8 | sainv | V", 1 , 2, 8, "sainv", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort2_l6_sainv_v("MGBench cuda | q1 | sort 2 | L6 | sainv | V", 1 , 2, 6, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort2_l7_sainv_v("MGBench cuda | q1 | sort 2 | L7 | sainv | V", 1 , 2, 7, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort2_l8_sainv_v("MGBench cuda | q1 | sort 2 | L8 | sainv | V", 1 , 2, 8, "sainv", 0.5);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort3_l6_sainv_v("MGBench cuda | q1 | sort 3 | L6 | sainv | V", 1 , 3, 6, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort3_l7_sainv_v("MGBench cuda | q1 | sort 3 | L7 | sainv | V", 1 , 3, 7, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort3_l8_sainv_v("MGBench cuda | q1 | sort 3 | L8 | sainv | V", 1 , 3, 8, "sainv", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort3_l6_sainv_v("MGBench cuda | q1 | sort 3 | L6 | sainv | V", 1 , 3, 6, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort3_l7_sainv_v("MGBench cuda | q1 | sort 3 | L7 | sainv | V", 1 , 3, 7, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort3_l8_sainv_v("MGBench cuda | q1 | sort 3 | L8 | sainv | V", 1 , 3, 8, "sainv", 0.5);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort4_l6_sainv_v("MGBench cuda | q1 | sort 4 | L6 | sainv | V", 1 , 4, 6, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort4_l7_sainv_v("MGBench cuda | q1 | sort 4 | L7 | sainv | V", 1 , 4, 7, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort4_l8_sainv_v("MGBench cuda | q1 | sort 4 | L8 | sainv | V", 1 , 4, 8, "sainv", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort4_l6_sainv_v("MGBench cuda | q1 | sort 4 | L6 | sainv | V", 1 , 4, 6, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort4_l7_sainv_v("MGBench cuda | q1 | sort 4 | L7 | sainv | V", 1 , 4, 7, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort4_l8_sainv_v("MGBench cuda | q1 | sort 4 | L8 | sainv | V", 1 , 4, 8, "sainv", 0.5);
 
 //q2
 MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q2_sort0_l5_sainv_v("MGBench cuda | q2 | sort 0 | L5 | sainv | V", 2 , 0, 5, "sainv", 0.7);
@@ -579,28 +579,28 @@ MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q
 #ifdef HONEI_SSE
 //JAC
 //q1
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort0_l6_jac_w("MGBench mcsse | q1 | sort 0 | L6 | jac | W", 1 , 0, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort0_l7_jac_w("MGBench mcsse | q1 | sort 0 | L7 | jac | W", 1 , 0, 7, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort0_l8_jac_w("MGBench mcsse | q1 | sort 0 | L8 | jac | W", 1 , 0, 8, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort0_l6_jac_w("MGBench mcsse | q1 | sort 0 | L6 | jac | W", 1 , 0, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort0_l7_jac_w("MGBench mcsse | q1 | sort 0 | L7 | jac | W", 1 , 0, 7, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort0_l8_jac_w("MGBench mcsse | q1 | sort 0 | L8 | jac | W", 1 , 0, 8, "jac", 0.5);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort1_l6_jac_w("MGBench mcsse | q1 | sort 1 | L6 | jac | W", 1 , 1, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort1_l7_jac_w("MGBench mcsse | q1 | sort 1 | L7 | jac | W", 1 , 1, 7, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort1_l8_jac_w("MGBench mcsse | q1 | sort 1 | L8 | jac | W", 1 , 1, 8, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort1_l6_jac_w("MGBench mcsse | q1 | sort 1 | L6 | jac | W", 1 , 1, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort1_l7_jac_w("MGBench mcsse | q1 | sort 1 | L7 | jac | W", 1 , 1, 7, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort1_l8_jac_w("MGBench mcsse | q1 | sort 1 | L8 | jac | W", 1 , 1, 8, "jac", 0.5);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort2_l6_jac_w("MGBench mcsse | q1 | sort 2 | L6 | jac | W", 1 , 2, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_jac_w("MGBench mcsse | q1 | sort 2 | L7 | jac | W", 1 , 2, 7, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort2_l8_jac_w("MGBench mcsse | q1 | sort 2 | L8 | jac | W", 1 , 2, 8, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort2_l6_jac_w("MGBench mcsse | q1 | sort 2 | L6 | jac | W", 1 , 2, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_jac_w("MGBench mcsse | q1 | sort 2 | L7 | jac | W", 1 , 2, 7, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort2_l8_jac_w("MGBench mcsse | q1 | sort 2 | L8 | jac | W", 1 , 2, 8, "jac", 0.5);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort3_l6_jac_w("MGBench mcsse | q1 | sort 3 | L6 | jac | W", 1 , 3, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_jac_w("MGBench mcsse | q1 | sort 3 | L7 | jac | W", 1 , 3, 7, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort3_l8_jac_w("MGBench mcsse | q1 | sort 3 | L8 | jac | W", 1 , 3, 8, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort3_l6_jac_w("MGBench mcsse | q1 | sort 3 | L6 | jac | W", 1 , 3, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_jac_w("MGBench mcsse | q1 | sort 3 | L7 | jac | W", 1 , 3, 7, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort3_l8_jac_w("MGBench mcsse | q1 | sort 3 | L8 | jac | W", 1 , 3, 8, "jac", 0.5);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort4_l6_jac_w("MGBench mcsse | q1 | sort 4 | L6 | jac | W", 1 , 4, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort4_l7_jac_w("MGBench mcsse | q1 | sort 4 | L7 | jac | W", 1 , 4, 7, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort4_l8_jac_w("MGBench mcsse | q1 | sort 4 | L8 | jac | W", 1 , 4, 8, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort4_l6_jac_w("MGBench mcsse | q1 | sort 4 | L6 | jac | W", 1 , 4, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort4_l7_jac_w("MGBench mcsse | q1 | sort 4 | L7 | jac | W", 1 , 4, 7, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort4_l8_jac_w("MGBench mcsse | q1 | sort 4 | L8 | jac | W", 1 , 4, 8, "jac", 0.5);
 
 //q2
 MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort0_l5_jac_w("MGBench mcsse | q2 | sort 0 | L5 | jac | W", 2 , 0, 5, "jac", 0.7);
@@ -650,99 +650,99 @@ MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double
 
 //SPAI
 //q1
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort0_l6_spai_w("MGBench mcsse | q1 | sort 0 | L6 | spai | W", 1 , 0, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort0_l7_spai_w("MGBench mcsse | q1 | sort 0 | L7 | spai | W", 1 , 0, 7, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort0_l8_spai_w("MGBench mcsse | q1 | sort 0 | L8 | spai | W", 1 , 0, 8, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort0_l6_spai_w("MGBench mcsse | q1 | sort 0 | L6 | spai | W", 1 , 0, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort0_l7_spai_w("MGBench mcsse | q1 | sort 0 | L7 | spai | W", 1 , 0, 7, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort0_l8_spai_w("MGBench mcsse | q1 | sort 0 | L8 | spai | W", 1 , 0, 8, "spai", 1.);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort1_l6_spai_w("MGBench mcsse | q1 | sort 1 | L6 | spai | W", 1 , 1, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort1_l7_spai_w("MGBench mcsse | q1 | sort 1 | L7 | spai | W", 1 , 1, 7, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort1_l8_spai_w("MGBench mcsse | q1 | sort 1 | L8 | spai | W", 1 , 1, 8, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort1_l6_spai_w("MGBench mcsse | q1 | sort 1 | L6 | spai | W", 1 , 1, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort1_l7_spai_w("MGBench mcsse | q1 | sort 1 | L7 | spai | W", 1 , 1, 7, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort1_l8_spai_w("MGBench mcsse | q1 | sort 1 | L8 | spai | W", 1 , 1, 8, "spai", 1.);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort2_l6_spai_w("MGBench mcsse | q1 | sort 2 | L6 | spai | W", 1 , 2, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_spai_w("MGBench mcsse | q1 | sort 2 | L7 | spai | W", 1 , 2, 7, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort2_l8_spai_w("MGBench mcsse | q1 | sort 2 | L8 | spai | W", 1 , 2, 8, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort2_l6_spai_w("MGBench mcsse | q1 | sort 2 | L6 | spai | W", 1 , 2, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_spai_w("MGBench mcsse | q1 | sort 2 | L7 | spai | W", 1 , 2, 7, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort2_l8_spai_w("MGBench mcsse | q1 | sort 2 | L8 | spai | W", 1 , 2, 8, "spai", 1.);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort3_l6_spai_w("MGBench mcsse | q1 | sort 3 | L6 | spai | W", 1 , 3, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_spai_w("MGBench mcsse | q1 | sort 3 | L7 | spai | W", 1 , 3, 7, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort3_l8_spai_w("MGBench mcsse | q1 | sort 3 | L8 | spai | W", 1 , 3, 8, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort3_l6_spai_w("MGBench mcsse | q1 | sort 3 | L6 | spai | W", 1 , 3, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_spai_w("MGBench mcsse | q1 | sort 3 | L7 | spai | W", 1 , 3, 7, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort3_l8_spai_w("MGBench mcsse | q1 | sort 3 | L8 | spai | W", 1 , 3, 8, "spai", 1.);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort4_l6_spai_w("MGBench mcsse | q1 | sort 4 | L6 | spai | W", 1 , 4, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort4_l7_spai_w("MGBench mcsse | q1 | sort 4 | L7 | spai | W", 1 , 4, 7, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort4_l8_spai_w("MGBench mcsse | q1 | sort 4 | L8 | spai | W", 1 , 4, 8, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort4_l6_spai_w("MGBench mcsse | q1 | sort 4 | L6 | spai | W", 1 , 4, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort4_l7_spai_w("MGBench mcsse | q1 | sort 4 | L7 | spai | W", 1 , 4, 7, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort4_l8_spai_w("MGBench mcsse | q1 | sort 4 | L8 | spai | W", 1 , 4, 8, "spai", 1.);
 
 //q2
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort0_l5_spai_w("MGBench mcsse | q2 | sort 0 | L5 | spai | W", 2 , 0, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort0_l6_spai_w("MGBench mcsse | q2 | sort 0 | L6 | spai | W", 2 , 0, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort0_l7_spai_w("MGBench mcsse | q2 | sort 0 | L7 | spai | W", 2 , 0, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort0_l5_spai_w("MGBench mcsse | q2 | sort 0 | L5 | spai | W", 2 , 0, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort0_l6_spai_w("MGBench mcsse | q2 | sort 0 | L6 | spai | W", 2 , 0, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort0_l7_spai_w("MGBench mcsse | q2 | sort 0 | L7 | spai | W", 2 , 0, 7, "spai", 1.);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort1_l5_spai_w("MGBench mcsse | q2 | sort 1 | L5 | spai | W", 2 , 1, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort1_l6_spai_w("MGBench mcsse | q2 | sort 1 | L6 | spai | W", 2 , 1, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort1_l7_spai_w("MGBench mcsse | q2 | sort 1 | L7 | spai | W", 2 , 1, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort1_l5_spai_w("MGBench mcsse | q2 | sort 1 | L5 | spai | W", 2 , 1, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort1_l6_spai_w("MGBench mcsse | q2 | sort 1 | L6 | spai | W", 2 , 1, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort1_l7_spai_w("MGBench mcsse | q2 | sort 1 | L7 | spai | W", 2 , 1, 7, "spai", 1.);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort2_l5_spai_w("MGBench mcsse | q2 | sort 2 | L5 | spai | W", 2 , 2, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort2_l6_spai_w("MGBench mcsse | q2 | sort 2 | L6 | spai | W", 2 , 2, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort2_l7_spai_w("MGBench mcsse | q2 | sort 2 | L7 | spai | W", 2 , 2, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort2_l5_spai_w("MGBench mcsse | q2 | sort 2 | L5 | spai | W", 2 , 2, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort2_l6_spai_w("MGBench mcsse | q2 | sort 2 | L6 | spai | W", 2 , 2, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort2_l7_spai_w("MGBench mcsse | q2 | sort 2 | L7 | spai | W", 2 , 2, 7, "spai", 1.);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort3_l5_spai_w("MGBench mcsse | q2 | sort 3 | L5 | spai | W", 2 , 3, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort3_l6_spai_w("MGBench mcsse | q2 | sort 3 | L6 | spai | W", 2 , 3, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort3_l7_spai_w("MGBench mcsse | q2 | sort 3 | L7 | spai | W", 2 , 3, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort3_l5_spai_w("MGBench mcsse | q2 | sort 3 | L5 | spai | W", 2 , 3, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort3_l6_spai_w("MGBench mcsse | q2 | sort 3 | L6 | spai | W", 2 , 3, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort3_l7_spai_w("MGBench mcsse | q2 | sort 3 | L7 | spai | W", 2 , 3, 7, "spai", 1.);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort4_l5_spai_w("MGBench mcsse | q2 | sort 4 | L5 | spai | W", 2 , 4, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort4_l6_spai_w("MGBench mcsse | q2 | sort 4 | L6 | spai | W", 2 , 4, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort4_l7_spai_w("MGBench mcsse | q2 | sort 4 | L7 | spai | W", 2 , 4, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort4_l5_spai_w("MGBench mcsse | q2 | sort 4 | L5 | spai | W", 2 , 4, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort4_l6_spai_w("MGBench mcsse | q2 | sort 4 | L6 | spai | W", 2 , 4, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort4_l7_spai_w("MGBench mcsse | q2 | sort 4 | L7 | spai | W", 2 , 4, 7, "spai", 1.);
 
 //q1t
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort0_l5_spai_w("MGBench mcsse | q1t | sort 0 | L5 | spai | W", 3 , 0, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort0_l6_spai_w("MGBench mcsse | q1t | sort 0 | L6 | spai | W", 3 , 0, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort0_l7_spai_w("MGBench mcsse | q1t | sort 0 | L7 | spai | W", 3 , 0, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort0_l5_spai_w("MGBench mcsse | q1t | sort 0 | L5 | spai | W", 3 , 0, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort0_l6_spai_w("MGBench mcsse | q1t | sort 0 | L6 | spai | W", 3 , 0, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort0_l7_spai_w("MGBench mcsse | q1t | sort 0 | L7 | spai | W", 3 , 0, 7, "spai", 1.);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort1_l5_spai_w("MGBench mcsse | q1t | sort 1 | L5 | spai | W", 3 , 1, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort1_l6_spai_w("MGBench mcsse | q1t | sort 1 | L6 | spai | W", 3 , 1, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort1_l7_spai_w("MGBench mcsse | q1t | sort 1 | L7 | spai | W", 3 , 1, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort1_l5_spai_w("MGBench mcsse | q1t | sort 1 | L5 | spai | W", 3 , 1, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort1_l6_spai_w("MGBench mcsse | q1t | sort 1 | L6 | spai | W", 3 , 1, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort1_l7_spai_w("MGBench mcsse | q1t | sort 1 | L7 | spai | W", 3 , 1, 7, "spai", 1.);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort2_l5_spai_w("MGBench mcsse | q1t | sort 2 | L5 | spai | W", 3 , 2, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort2_l6_spai_w("MGBench mcsse | q1t | sort 2 | L6 | spai | W", 3 , 2, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort2_l7_spai_w("MGBench mcsse | q1t | sort 2 | L7 | spai | W", 3 , 2, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort2_l5_spai_w("MGBench mcsse | q1t | sort 2 | L5 | spai | W", 3 , 2, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort2_l6_spai_w("MGBench mcsse | q1t | sort 2 | L6 | spai | W", 3 , 2, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort2_l7_spai_w("MGBench mcsse | q1t | sort 2 | L7 | spai | W", 3 , 2, 7, "spai", 1.);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort3_l5_spai_w("MGBench mcsse | q1t | sort 3 | L5 | spai | W", 3 , 3, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort3_l6_spai_w("MGBench mcsse | q1t | sort 3 | L6 | spai | W", 3 , 3, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort3_l7_spai_w("MGBench mcsse | q1t | sort 3 | L7 | spai | W", 3 , 3, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort3_l5_spai_w("MGBench mcsse | q1t | sort 3 | L5 | spai | W", 3 , 3, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort3_l6_spai_w("MGBench mcsse | q1t | sort 3 | L6 | spai | W", 3 , 3, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort3_l7_spai_w("MGBench mcsse | q1t | sort 3 | L7 | spai | W", 3 , 3, 7, "spai", 1.);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort4_l5_spai_w("MGBench mcsse | q1t | sort 4 | L5 | spai | W", 3 , 4, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort4_l6_spai_w("MGBench mcsse | q1t | sort 4 | L6 | spai | W", 3 , 4, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort4_l7_spai_w("MGBench mcsse | q1t | sort 4 | L7 | spai | W", 3 , 4, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort4_l5_spai_w("MGBench mcsse | q1t | sort 4 | L5 | spai | W", 3 , 4, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort4_l6_spai_w("MGBench mcsse | q1t | sort 4 | L6 | spai | W", 3 , 4, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1t_sort4_l7_spai_w("MGBench mcsse | q1t | sort 4 | L7 | spai | W", 3 , 4, 7, "spai", 1.);
 
 //SAINV
 //q1
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort0_l6_sainv_w("MGBench mcsse | q1 | sort 0 | L6 | sainv | W", 1 , 0, 6, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort0_l7_sainv_w("MGBench mcsse | q1 | sort 0 | L7 | sainv | W", 1 , 0, 7, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort0_l8_sainv_w("MGBench mcsse | q1 | sort 0 | L8 | sainv | W", 1 , 0, 8, "sainv", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort0_l6_sainv_w("MGBench mcsse | q1 | sort 0 | L6 | sainv | W", 1 , 0, 6, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort0_l7_sainv_w("MGBench mcsse | q1 | sort 0 | L7 | sainv | W", 1 , 0, 7, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort0_l8_sainv_w("MGBench mcsse | q1 | sort 0 | L8 | sainv | W", 1 , 0, 8, "sainv", 0.5);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort1_l6_sainv_w("MGBench mcsse | q1 | sort 1 | L6 | sainv | W", 1 , 1, 6, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort1_l7_sainv_w("MGBench mcsse | q1 | sort 1 | L7 | sainv | W", 1 , 1, 7, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort1_l8_sainv_w("MGBench mcsse | q1 | sort 1 | L8 | sainv | W", 1 , 1, 8, "sainv", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort1_l6_sainv_w("MGBench mcsse | q1 | sort 1 | L6 | sainv | W", 1 , 1, 6, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort1_l7_sainv_w("MGBench mcsse | q1 | sort 1 | L7 | sainv | W", 1 , 1, 7, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort1_l8_sainv_w("MGBench mcsse | q1 | sort 1 | L8 | sainv | W", 1 , 1, 8, "sainv", 0.5);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort2_l6_sainv_w("MGBench mcsse | q1 | sort 2 | L6 | sainv | W", 1 , 2, 6, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_sainv_w("MGBench mcsse | q1 | sort 2 | L7 | sainv | W", 1 , 2, 7, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort2_l8_sainv_w("MGBench mcsse | q1 | sort 2 | L8 | sainv | W", 1 , 2, 8, "sainv", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort2_l6_sainv_w("MGBench mcsse | q1 | sort 2 | L6 | sainv | W", 1 , 2, 6, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_sainv_w("MGBench mcsse | q1 | sort 2 | L7 | sainv | W", 1 , 2, 7, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort2_l8_sainv_w("MGBench mcsse | q1 | sort 2 | L8 | sainv | W", 1 , 2, 8, "sainv", 0.5);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort3_l6_sainv_w("MGBench mcsse | q1 | sort 3 | L6 | sainv | W", 1 , 3, 6, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_sainv_w("MGBench mcsse | q1 | sort 3 | L7 | sainv | W", 1 , 3, 7, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort3_l8_sainv_w("MGBench mcsse | q1 | sort 3 | L8 | sainv | W", 1 , 3, 8, "sainv", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort3_l6_sainv_w("MGBench mcsse | q1 | sort 3 | L6 | sainv | W", 1 , 3, 6, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_sainv_w("MGBench mcsse | q1 | sort 3 | L7 | sainv | W", 1 , 3, 7, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort3_l8_sainv_w("MGBench mcsse | q1 | sort 3 | L8 | sainv | W", 1 , 3, 8, "sainv", 0.5);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort4_l6_sainv_w("MGBench mcsse | q1 | sort 4 | L6 | sainv | W", 1 , 4, 6, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort4_l7_sainv_w("MGBench mcsse | q1 | sort 4 | L7 | sainv | W", 1 , 4, 7, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort4_l8_sainv_w("MGBench mcsse | q1 | sort 4 | L8 | sainv | W", 1 , 4, 8, "sainv", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort4_l6_sainv_w("MGBench mcsse | q1 | sort 4 | L6 | sainv | W", 1 , 4, 6, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort4_l7_sainv_w("MGBench mcsse | q1 | sort 4 | L7 | sainv | W", 1 , 4, 7, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort4_l8_sainv_w("MGBench mcsse | q1 | sort 4 | L8 | sainv | W", 1 , 4, 8, "sainv", 0.5);
 
 //q2
 MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q2_sort0_l5_sainv_w("MGBench mcsse | q2 | sort 0 | L5 | sainv | W", 2 , 0, 5, "sainv", 0.7);
@@ -794,28 +794,28 @@ MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double
 #if defined HONEI_CUDA && defined HONEI_CUDA_DOUBLE
 //JAC
 //q1
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort0_l6_jac_w("MGBench cuda | q1 | sort 0 | L6 | jac | W", 1 , 0, 6, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort0_l7_jac_w("MGBench cuda | q1 | sort 0 | L7 | jac | W", 1 , 0, 7, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort0_l8_jac_w("MGBench cuda | q1 | sort 0 | L8 | jac | W", 1 , 0, 8, "jac", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort0_l6_jac_w("MGBench cuda | q1 | sort 0 | L6 | jac | W", 1 , 0, 6, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort0_l7_jac_w("MGBench cuda | q1 | sort 0 | L7 | jac | W", 1 , 0, 7, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort0_l8_jac_w("MGBench cuda | q1 | sort 0 | L8 | jac | W", 1 , 0, 8, "jac", 0.5);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort1_l6_jac_w("MGBench cuda | q1 | sort 1 | L6 | jac | W", 1 , 1, 6, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort1_l7_jac_w("MGBench cuda | q1 | sort 1 | L7 | jac | W", 1 , 1, 7, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort1_l8_jac_w("MGBench cuda | q1 | sort 1 | L8 | jac | W", 1 , 1, 8, "jac", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort1_l6_jac_w("MGBench cuda | q1 | sort 1 | L6 | jac | W", 1 , 1, 6, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort1_l7_jac_w("MGBench cuda | q1 | sort 1 | L7 | jac | W", 1 , 1, 7, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort1_l8_jac_w("MGBench cuda | q1 | sort 1 | L8 | jac | W", 1 , 1, 8, "jac", 0.5);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort2_l6_jac_w("MGBench cuda | q1 | sort 2 | L6 | jac | W", 1 , 2, 6, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort2_l7_jac_w("MGBench cuda | q1 | sort 2 | L7 | jac | W", 1 , 2, 7, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort2_l8_jac_w("MGBench cuda | q1 | sort 2 | L8 | jac | W", 1 , 2, 8, "jac", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort2_l6_jac_w("MGBench cuda | q1 | sort 2 | L6 | jac | W", 1 , 2, 6, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort2_l7_jac_w("MGBench cuda | q1 | sort 2 | L7 | jac | W", 1 , 2, 7, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort2_l8_jac_w("MGBench cuda | q1 | sort 2 | L8 | jac | W", 1 , 2, 8, "jac", 0.5);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort3_l6_jac_w("MGBench cuda | q1 | sort 3 | L6 | jac | W", 1 , 3, 6, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort3_l7_jac_w("MGBench cuda | q1 | sort 3 | L7 | jac | W", 1 , 3, 7, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort3_l8_jac_w("MGBench cuda | q1 | sort 3 | L8 | jac | W", 1 , 3, 8, "jac", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort3_l6_jac_w("MGBench cuda | q1 | sort 3 | L6 | jac | W", 1 , 3, 6, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort3_l7_jac_w("MGBench cuda | q1 | sort 3 | L7 | jac | W", 1 , 3, 7, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort3_l8_jac_w("MGBench cuda | q1 | sort 3 | L8 | jac | W", 1 , 3, 8, "jac", 0.5);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort4_l6_jac_w("MGBench cuda | q1 | sort 4 | L6 | jac | W", 1 , 4, 6, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort4_l7_jac_w("MGBench cuda | q1 | sort 4 | L7 | jac | W", 1 , 4, 7, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort4_l8_jac_w("MGBench cuda | q1 | sort 4 | L8 | jac | W", 1 , 4, 8, "jac", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort4_l6_jac_w("MGBench cuda | q1 | sort 4 | L6 | jac | W", 1 , 4, 6, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort4_l7_jac_w("MGBench cuda | q1 | sort 4 | L7 | jac | W", 1 , 4, 7, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort4_l8_jac_w("MGBench cuda | q1 | sort 4 | L8 | jac | W", 1 , 4, 8, "jac", 0.5);
 
 //q2
 MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort0_l5_jac_w("MGBench cuda | q2 | sort 0 | L5 | jac | W", 2 , 0, 5, "jac", 0.7);
@@ -865,99 +865,99 @@ MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q
 
 //SPAI
 //q1
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort0_l6_spai_w("MGBench cuda | q1 | sort 0 | L6 | spai | W", 1 , 0, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort0_l7_spai_w("MGBench cuda | q1 | sort 0 | L7 | spai | W", 1 , 0, 7, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort0_l8_spai_w("MGBench cuda | q1 | sort 0 | L8 | spai | W", 1 , 0, 8, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort0_l6_spai_w("MGBench cuda | q1 | sort 0 | L6 | spai | W", 1 , 0, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort0_l7_spai_w("MGBench cuda | q1 | sort 0 | L7 | spai | W", 1 , 0, 7, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort0_l8_spai_w("MGBench cuda | q1 | sort 0 | L8 | spai | W", 1 , 0, 8, "spai", 1.);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort1_l6_spai_w("MGBench cuda | q1 | sort 1 | L6 | spai | W", 1 , 1, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort1_l7_spai_w("MGBench cuda | q1 | sort 1 | L7 | spai | W", 1 , 1, 7, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort1_l8_spai_w("MGBench cuda | q1 | sort 1 | L8 | spai | W", 1 , 1, 8, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort1_l6_spai_w("MGBench cuda | q1 | sort 1 | L6 | spai | W", 1 , 1, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort1_l7_spai_w("MGBench cuda | q1 | sort 1 | L7 | spai | W", 1 , 1, 7, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort1_l8_spai_w("MGBench cuda | q1 | sort 1 | L8 | spai | W", 1 , 1, 8, "spai", 1.);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort2_l6_spai_w("MGBench cuda | q1 | sort 2 | L6 | spai | W", 1 , 2, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort2_l7_spai_w("MGBench cuda | q1 | sort 2 | L7 | spai | W", 1 , 2, 7, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort2_l8_spai_w("MGBench cuda | q1 | sort 2 | L8 | spai | W", 1 , 2, 8, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort2_l6_spai_w("MGBench cuda | q1 | sort 2 | L6 | spai | W", 1 , 2, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort2_l7_spai_w("MGBench cuda | q1 | sort 2 | L7 | spai | W", 1 , 2, 7, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort2_l8_spai_w("MGBench cuda | q1 | sort 2 | L8 | spai | W", 1 , 2, 8, "spai", 1.);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort3_l6_spai_w("MGBench cuda | q1 | sort 3 | L6 | spai | W", 1 , 3, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort3_l7_spai_w("MGBench cuda | q1 | sort 3 | L7 | spai | W", 1 , 3, 7, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort3_l8_spai_w("MGBench cuda | q1 | sort 3 | L8 | spai | W", 1 , 3, 8, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort3_l6_spai_w("MGBench cuda | q1 | sort 3 | L6 | spai | W", 1 , 3, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort3_l7_spai_w("MGBench cuda | q1 | sort 3 | L7 | spai | W", 1 , 3, 7, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort3_l8_spai_w("MGBench cuda | q1 | sort 3 | L8 | spai | W", 1 , 3, 8, "spai", 1.);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort4_l6_spai_w("MGBench cuda | q1 | sort 4 | L6 | spai | W", 1 , 4, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort4_l7_spai_w("MGBench cuda | q1 | sort 4 | L7 | spai | W", 1 , 4, 7, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort4_l8_spai_w("MGBench cuda | q1 | sort 4 | L8 | spai | W", 1 , 4, 8, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort4_l6_spai_w("MGBench cuda | q1 | sort 4 | L6 | spai | W", 1 , 4, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort4_l7_spai_w("MGBench cuda | q1 | sort 4 | L7 | spai | W", 1 , 4, 7, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort4_l8_spai_w("MGBench cuda | q1 | sort 4 | L8 | spai | W", 1 , 4, 8, "spai", 1.);
 
 //q2
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort0_l5_spai_w("MGBench cuda | q2 | sort 0 | L5 | spai | W", 2 , 0, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort0_l6_spai_w("MGBench cuda | q2 | sort 0 | L6 | spai | W", 2 , 0, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort0_l7_spai_w("MGBench cuda | q2 | sort 0 | L7 | spai | W", 2 , 0, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort0_l5_spai_w("MGBench cuda | q2 | sort 0 | L5 | spai | W", 2 , 0, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort0_l6_spai_w("MGBench cuda | q2 | sort 0 | L6 | spai | W", 2 , 0, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort0_l7_spai_w("MGBench cuda | q2 | sort 0 | L7 | spai | W", 2 , 0, 7, "spai", 1.);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort1_l5_spai_w("MGBench cuda | q2 | sort 1 | L5 | spai | W", 2 , 1, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort1_l6_spai_w("MGBench cuda | q2 | sort 1 | L6 | spai | W", 2 , 1, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort1_l7_spai_w("MGBench cuda | q2 | sort 1 | L7 | spai | W", 2 , 1, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort1_l5_spai_w("MGBench cuda | q2 | sort 1 | L5 | spai | W", 2 , 1, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort1_l6_spai_w("MGBench cuda | q2 | sort 1 | L6 | spai | W", 2 , 1, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort1_l7_spai_w("MGBench cuda | q2 | sort 1 | L7 | spai | W", 2 , 1, 7, "spai", 1.);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort2_l5_spai_w("MGBench cuda | q2 | sort 2 | L5 | spai | W", 2 , 2, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort2_l6_spai_w("MGBench cuda | q2 | sort 2 | L6 | spai | W", 2 , 2, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort2_l7_spai_w("MGBench cuda | q2 | sort 2 | L7 | spai | W", 2 , 2, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort2_l5_spai_w("MGBench cuda | q2 | sort 2 | L5 | spai | W", 2 , 2, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort2_l6_spai_w("MGBench cuda | q2 | sort 2 | L6 | spai | W", 2 , 2, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort2_l7_spai_w("MGBench cuda | q2 | sort 2 | L7 | spai | W", 2 , 2, 7, "spai", 1.);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort3_l5_spai_w("MGBench cuda | q2 | sort 3 | L5 | spai | W", 2 , 3, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort3_l6_spai_w("MGBench cuda | q2 | sort 3 | L6 | spai | W", 2 , 3, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort3_l7_spai_w("MGBench cuda | q2 | sort 3 | L7 | spai | W", 2 , 3, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort3_l5_spai_w("MGBench cuda | q2 | sort 3 | L5 | spai | W", 2 , 3, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort3_l6_spai_w("MGBench cuda | q2 | sort 3 | L6 | spai | W", 2 , 3, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort3_l7_spai_w("MGBench cuda | q2 | sort 3 | L7 | spai | W", 2 , 3, 7, "spai", 1.);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort4_l5_spai_w("MGBench cuda | q2 | sort 4 | L5 | spai | W", 2 , 4, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort4_l6_spai_w("MGBench cuda | q2 | sort 4 | L6 | spai | W", 2 , 4, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort4_l7_spai_w("MGBench cuda | q2 | sort 4 | L7 | spai | W", 2 , 4, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort4_l5_spai_w("MGBench cuda | q2 | sort 4 | L5 | spai | W", 2 , 4, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort4_l6_spai_w("MGBench cuda | q2 | sort 4 | L6 | spai | W", 2 , 4, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort4_l7_spai_w("MGBench cuda | q2 | sort 4 | L7 | spai | W", 2 , 4, 7, "spai", 1.);
 
 //q1t
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort0_l5_spai_w("MGBench cuda | q1t | sort 0 | L5 | spai | W", 3 , 0, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort0_l6_spai_w("MGBench cuda | q1t | sort 0 | L6 | spai | W", 3 , 0, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort0_l7_spai_w("MGBench cuda | q1t | sort 0 | L7 | spai | W", 3 , 0, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort0_l5_spai_w("MGBench cuda | q1t | sort 0 | L5 | spai | W", 3 , 0, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort0_l6_spai_w("MGBench cuda | q1t | sort 0 | L6 | spai | W", 3 , 0, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort0_l7_spai_w("MGBench cuda | q1t | sort 0 | L7 | spai | W", 3 , 0, 7, "spai", 1.);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort1_l5_spai_w("MGBench cuda | q1t | sort 1 | L5 | spai | W", 3 , 1, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort1_l6_spai_w("MGBench cuda | q1t | sort 1 | L6 | spai | W", 3 , 1, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort1_l7_spai_w("MGBench cuda | q1t | sort 1 | L7 | spai | W", 3 , 1, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort1_l5_spai_w("MGBench cuda | q1t | sort 1 | L5 | spai | W", 3 , 1, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort1_l6_spai_w("MGBench cuda | q1t | sort 1 | L6 | spai | W", 3 , 1, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort1_l7_spai_w("MGBench cuda | q1t | sort 1 | L7 | spai | W", 3 , 1, 7, "spai", 1.);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort2_l5_spai_w("MGBench cuda | q1t | sort 2 | L5 | spai | W", 3 , 2, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort2_l6_spai_w("MGBench cuda | q1t | sort 2 | L6 | spai | W", 3 , 2, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort2_l7_spai_w("MGBench cuda | q1t | sort 2 | L7 | spai | W", 3 , 2, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort2_l5_spai_w("MGBench cuda | q1t | sort 2 | L5 | spai | W", 3 , 2, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort2_l6_spai_w("MGBench cuda | q1t | sort 2 | L6 | spai | W", 3 , 2, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort2_l7_spai_w("MGBench cuda | q1t | sort 2 | L7 | spai | W", 3 , 2, 7, "spai", 1.);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort3_l5_spai_w("MGBench cuda | q1t | sort 3 | L5 | spai | W", 3 , 3, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort3_l6_spai_w("MGBench cuda | q1t | sort 3 | L6 | spai | W", 3 , 3, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort3_l7_spai_w("MGBench cuda | q1t | sort 3 | L7 | spai | W", 3 , 3, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort3_l5_spai_w("MGBench cuda | q1t | sort 3 | L5 | spai | W", 3 , 3, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort3_l6_spai_w("MGBench cuda | q1t | sort 3 | L6 | spai | W", 3 , 3, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort3_l7_spai_w("MGBench cuda | q1t | sort 3 | L7 | spai | W", 3 , 3, 7, "spai", 1.);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort4_l5_spai_w("MGBench cuda | q1t | sort 4 | L5 | spai | W", 3 , 4, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort4_l6_spai_w("MGBench cuda | q1t | sort 4 | L6 | spai | W", 3 , 4, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort4_l7_spai_w("MGBench cuda | q1t | sort 4 | L7 | spai | W", 3 , 4, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort4_l5_spai_w("MGBench cuda | q1t | sort 4 | L5 | spai | W", 3 , 4, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort4_l6_spai_w("MGBench cuda | q1t | sort 4 | L6 | spai | W", 3 , 4, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1t_sort4_l7_spai_w("MGBench cuda | q1t | sort 4 | L7 | spai | W", 3 , 4, 7, "spai", 1.);
 
 //SAINV
 //q1
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort0_l6_sainv_w("MGBench cuda | q1 | sort 0 | L6 | sainv | W", 1 , 0, 6, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort0_l7_sainv_w("MGBench cuda | q1 | sort 0 | L7 | sainv | W", 1 , 0, 7, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort0_l8_sainv_w("MGBench cuda | q1 | sort 0 | L8 | sainv | W", 1 , 0, 8, "sainv", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort0_l6_sainv_w("MGBench cuda | q1 | sort 0 | L6 | sainv | W", 1 , 0, 6, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort0_l7_sainv_w("MGBench cuda | q1 | sort 0 | L7 | sainv | W", 1 , 0, 7, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort0_l8_sainv_w("MGBench cuda | q1 | sort 0 | L8 | sainv | W", 1 , 0, 8, "sainv", 0.5);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort1_l6_sainv_w("MGBench cuda | q1 | sort 1 | L6 | sainv | W", 1 , 1, 6, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort1_l7_sainv_w("MGBench cuda | q1 | sort 1 | L7 | sainv | W", 1 , 1, 7, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort1_l8_sainv_w("MGBench cuda | q1 | sort 1 | L8 | sainv | W", 1 , 1, 8, "sainv", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort1_l6_sainv_w("MGBench cuda | q1 | sort 1 | L6 | sainv | W", 1 , 1, 6, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort1_l7_sainv_w("MGBench cuda | q1 | sort 1 | L7 | sainv | W", 1 , 1, 7, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort1_l8_sainv_w("MGBench cuda | q1 | sort 1 | L8 | sainv | W", 1 , 1, 8, "sainv", 0.5);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort2_l6_sainv_w("MGBench cuda | q1 | sort 2 | L6 | sainv | W", 1 , 2, 6, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort2_l7_sainv_w("MGBench cuda | q1 | sort 2 | L7 | sainv | W", 1 , 2, 7, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort2_l8_sainv_w("MGBench cuda | q1 | sort 2 | L8 | sainv | W", 1 , 2, 8, "sainv", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort2_l6_sainv_w("MGBench cuda | q1 | sort 2 | L6 | sainv | W", 1 , 2, 6, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort2_l7_sainv_w("MGBench cuda | q1 | sort 2 | L7 | sainv | W", 1 , 2, 7, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort2_l8_sainv_w("MGBench cuda | q1 | sort 2 | L8 | sainv | W", 1 , 2, 8, "sainv", 0.5);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort3_l6_sainv_w("MGBench cuda | q1 | sort 3 | L6 | sainv | W", 1 , 3, 6, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort3_l7_sainv_w("MGBench cuda | q1 | sort 3 | L7 | sainv | W", 1 , 3, 7, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort3_l8_sainv_w("MGBench cuda | q1 | sort 3 | L8 | sainv | W", 1 , 3, 8, "sainv", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort3_l6_sainv_w("MGBench cuda | q1 | sort 3 | L6 | sainv | W", 1 , 3, 6, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort3_l7_sainv_w("MGBench cuda | q1 | sort 3 | L7 | sainv | W", 1 , 3, 7, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort3_l8_sainv_w("MGBench cuda | q1 | sort 3 | L8 | sainv | W", 1 , 3, 8, "sainv", 0.5);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort4_l6_sainv_w("MGBench cuda | q1 | sort 4 | L6 | sainv | W", 1 , 4, 6, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort4_l7_sainv_w("MGBench cuda | q1 | sort 4 | L7 | sainv | W", 1 , 4, 7, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort4_l8_sainv_w("MGBench cuda | q1 | sort 4 | L8 | sainv | W", 1 , 4, 8, "sainv", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort4_l6_sainv_w("MGBench cuda | q1 | sort 4 | L6 | sainv | W", 1 , 4, 6, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort4_l7_sainv_w("MGBench cuda | q1 | sort 4 | L7 | sainv | W", 1 , 4, 7, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort4_l8_sainv_w("MGBench cuda | q1 | sort 4 | L8 | sainv | W", 1 , 4, 8, "sainv", 0.5);
 
 //q2
 MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q2_sort0_l5_sainv_w("MGBench cuda | q2 | sort 0 | L5 | sainv | W", 2 , 0, 5, "sainv", 0.7);
@@ -1009,28 +1009,28 @@ MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q
 #ifdef HONEI_SSE
 //JAC
 //q1
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l6_jac_f("MGBench mcsse | q1 | sort 0 | L6 | jac | F", 1 , 0, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l7_jac_f("MGBench mcsse | q1 | sort 0 | L7 | jac | F", 1 , 0, 7, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l8_jac_f("MGBench mcsse | q1 | sort 0 | L8 | jac | F", 1 , 0, 8, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l6_jac_f("MGBench mcsse | q1 | sort 0 | L6 | jac | F", 1 , 0, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l7_jac_f("MGBench mcsse | q1 | sort 0 | L7 | jac | F", 1 , 0, 7, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l8_jac_f("MGBench mcsse | q1 | sort 0 | L8 | jac | F", 1 , 0, 8, "jac", 0.5);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l6_jac_f("MGBench mcsse | q1 | sort 1 | L6 | jac | F", 1 , 1, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l7_jac_f("MGBench mcsse | q1 | sort 1 | L7 | jac | F", 1 , 1, 7, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l8_jac_f("MGBench mcsse | q1 | sort 1 | L8 | jac | F", 1 , 1, 8, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l6_jac_f("MGBench mcsse | q1 | sort 1 | L6 | jac | F", 1 , 1, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l7_jac_f("MGBench mcsse | q1 | sort 1 | L7 | jac | F", 1 , 1, 7, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l8_jac_f("MGBench mcsse | q1 | sort 1 | L8 | jac | F", 1 , 1, 8, "jac", 0.5);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l6_jac_f("MGBench mcsse | q1 | sort 2 | L6 | jac | F", 1 , 2, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_jac_f("MGBench mcsse | q1 | sort 2 | L7 | jac | F", 1 , 2, 7, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l8_jac_f("MGBench mcsse | q1 | sort 2 | L8 | jac | F", 1 , 2, 8, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l6_jac_f("MGBench mcsse | q1 | sort 2 | L6 | jac | F", 1 , 2, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_jac_f("MGBench mcsse | q1 | sort 2 | L7 | jac | F", 1 , 2, 7, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l8_jac_f("MGBench mcsse | q1 | sort 2 | L8 | jac | F", 1 , 2, 8, "jac", 0.5);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l6_jac_f("MGBench mcsse | q1 | sort 3 | L6 | jac | F", 1 , 3, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_jac_f("MGBench mcsse | q1 | sort 3 | L7 | jac | F", 1 , 3, 7, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l8_jac_f("MGBench mcsse | q1 | sort 3 | L8 | jac | F", 1 , 3, 8, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l6_jac_f("MGBench mcsse | q1 | sort 3 | L6 | jac | F", 1 , 3, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_jac_f("MGBench mcsse | q1 | sort 3 | L7 | jac | F", 1 , 3, 7, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l8_jac_f("MGBench mcsse | q1 | sort 3 | L8 | jac | F", 1 , 3, 8, "jac", 0.5);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l6_jac_f("MGBench mcsse | q1 | sort 4 | L6 | jac | F", 1 , 4, 6, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l7_jac_f("MGBench mcsse | q1 | sort 4 | L7 | jac | F", 1 , 4, 7, "jac", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l8_jac_f("MGBench mcsse | q1 | sort 4 | L8 | jac | F", 1 , 4, 8, "jac", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l6_jac_f("MGBench mcsse | q1 | sort 4 | L6 | jac | F", 1 , 4, 6, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l7_jac_f("MGBench mcsse | q1 | sort 4 | L7 | jac | F", 1 , 4, 7, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l8_jac_f("MGBench mcsse | q1 | sort 4 | L8 | jac | F", 1 , 4, 8, "jac", 0.5);
 
 //q2
 MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort0_l5_jac_f("MGBench mcsse | q2 | sort 0 | L5 | jac | F", 2 , 0, 5, "jac", 0.7);
@@ -1080,99 +1080,99 @@ MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<dou
 
 //SPAI
 //q1
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l6_spai_f("MGBench mcsse | q1 | sort 0 | L6 | spai | F", 1 , 0, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l7_spai_f("MGBench mcsse | q1 | sort 0 | L7 | spai | F", 1 , 0, 7, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l8_spai_f("MGBench mcsse | q1 | sort 0 | L8 | spai | F", 1 , 0, 8, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l6_spai_f("MGBench mcsse | q1 | sort 0 | L6 | spai | F", 1 , 0, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l7_spai_f("MGBench mcsse | q1 | sort 0 | L7 | spai | F", 1 , 0, 7, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l8_spai_f("MGBench mcsse | q1 | sort 0 | L8 | spai | F", 1 , 0, 8, "spai", 1.);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l6_spai_f("MGBench mcsse | q1 | sort 1 | L6 | spai | F", 1 , 1, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l7_spai_f("MGBench mcsse | q1 | sort 1 | L7 | spai | F", 1 , 1, 7, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l8_spai_f("MGBench mcsse | q1 | sort 1 | L8 | spai | F", 1 , 1, 8, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l6_spai_f("MGBench mcsse | q1 | sort 1 | L6 | spai | F", 1 , 1, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l7_spai_f("MGBench mcsse | q1 | sort 1 | L7 | spai | F", 1 , 1, 7, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l8_spai_f("MGBench mcsse | q1 | sort 1 | L8 | spai | F", 1 , 1, 8, "spai", 1.);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l6_spai_f("MGBench mcsse | q1 | sort 2 | L6 | spai | F", 1 , 2, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_spai_f("MGBench mcsse | q1 | sort 2 | L7 | spai | F", 1 , 2, 7, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l8_spai_f("MGBench mcsse | q1 | sort 2 | L8 | spai | F", 1 , 2, 8, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l6_spai_f("MGBench mcsse | q1 | sort 2 | L6 | spai | F", 1 , 2, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_spai_f("MGBench mcsse | q1 | sort 2 | L7 | spai | F", 1 , 2, 7, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l8_spai_f("MGBench mcsse | q1 | sort 2 | L8 | spai | F", 1 , 2, 8, "spai", 1.);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l6_spai_f("MGBench mcsse | q1 | sort 3 | L6 | spai | F", 1 , 3, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_spai_f("MGBench mcsse | q1 | sort 3 | L7 | spai | F", 1 , 3, 7, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l8_spai_f("MGBench mcsse | q1 | sort 3 | L8 | spai | F", 1 , 3, 8, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l6_spai_f("MGBench mcsse | q1 | sort 3 | L6 | spai | F", 1 , 3, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_spai_f("MGBench mcsse | q1 | sort 3 | L7 | spai | F", 1 , 3, 7, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l8_spai_f("MGBench mcsse | q1 | sort 3 | L8 | spai | F", 1 , 3, 8, "spai", 1.);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l6_spai_f("MGBench mcsse | q1 | sort 4 | L6 | spai | F", 1 , 4, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l7_spai_f("MGBench mcsse | q1 | sort 4 | L7 | spai | F", 1 , 4, 7, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l8_spai_f("MGBench mcsse | q1 | sort 4 | L8 | spai | F", 1 , 4, 8, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l6_spai_f("MGBench mcsse | q1 | sort 4 | L6 | spai | F", 1 , 4, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l7_spai_f("MGBench mcsse | q1 | sort 4 | L7 | spai | F", 1 , 4, 7, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l8_spai_f("MGBench mcsse | q1 | sort 4 | L8 | spai | F", 1 , 4, 8, "spai", 1.);
 
 //q2
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort0_l5_spai_f("MGBench mcsse | q2 | sort 0 | L5 | spai | F", 2 , 0, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort0_l6_spai_f("MGBench mcsse | q2 | sort 0 | L6 | spai | F", 2 , 0, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort0_l7_spai_f("MGBench mcsse | q2 | sort 0 | L7 | spai | F", 2 , 0, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort0_l5_spai_f("MGBench mcsse | q2 | sort 0 | L5 | spai | F", 2 , 0, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort0_l6_spai_f("MGBench mcsse | q2 | sort 0 | L6 | spai | F", 2 , 0, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort0_l7_spai_f("MGBench mcsse | q2 | sort 0 | L7 | spai | F", 2 , 0, 7, "spai", 1.);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort1_l5_spai_f("MGBench mcsse | q2 | sort 1 | L5 | spai | F", 2 , 1, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort1_l6_spai_f("MGBench mcsse | q2 | sort 1 | L6 | spai | F", 2 , 1, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort1_l7_spai_f("MGBench mcsse | q2 | sort 1 | L7 | spai | F", 2 , 1, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort1_l5_spai_f("MGBench mcsse | q2 | sort 1 | L5 | spai | F", 2 , 1, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort1_l6_spai_f("MGBench mcsse | q2 | sort 1 | L6 | spai | F", 2 , 1, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort1_l7_spai_f("MGBench mcsse | q2 | sort 1 | L7 | spai | F", 2 , 1, 7, "spai", 1.);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort2_l5_spai_f("MGBench mcsse | q2 | sort 2 | L5 | spai | F", 2 , 2, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort2_l6_spai_f("MGBench mcsse | q2 | sort 2 | L6 | spai | F", 2 , 2, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort2_l7_spai_f("MGBench mcsse | q2 | sort 2 | L7 | spai | F", 2 , 2, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort2_l5_spai_f("MGBench mcsse | q2 | sort 2 | L5 | spai | F", 2 , 2, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort2_l6_spai_f("MGBench mcsse | q2 | sort 2 | L6 | spai | F", 2 , 2, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort2_l7_spai_f("MGBench mcsse | q2 | sort 2 | L7 | spai | F", 2 , 2, 7, "spai", 1.);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort3_l5_spai_f("MGBench mcsse | q2 | sort 3 | L5 | spai | F", 2 , 3, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort3_l6_spai_f("MGBench mcsse | q2 | sort 3 | L6 | spai | F", 2 , 3, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort3_l7_spai_f("MGBench mcsse | q2 | sort 3 | L7 | spai | F", 2 , 3, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort3_l5_spai_f("MGBench mcsse | q2 | sort 3 | L5 | spai | F", 2 , 3, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort3_l6_spai_f("MGBench mcsse | q2 | sort 3 | L6 | spai | F", 2 , 3, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort3_l7_spai_f("MGBench mcsse | q2 | sort 3 | L7 | spai | F", 2 , 3, 7, "spai", 1.);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort4_l5_spai_f("MGBench mcsse | q2 | sort 4 | L5 | spai | F", 2 , 4, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort4_l6_spai_f("MGBench mcsse | q2 | sort 4 | L6 | spai | F", 2 , 4, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort4_l7_spai_f("MGBench mcsse | q2 | sort 4 | L7 | spai | F", 2 , 4, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort4_l5_spai_f("MGBench mcsse | q2 | sort 4 | L5 | spai | F", 2 , 4, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort4_l6_spai_f("MGBench mcsse | q2 | sort 4 | L6 | spai | F", 2 , 4, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort4_l7_spai_f("MGBench mcsse | q2 | sort 4 | L7 | spai | F", 2 , 4, 7, "spai", 1.);
 
 //q1t
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort0_l5_spai_f("MGBench mcsse | q1t | sort 0 | L5 | spai | F", 3 , 0, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort0_l6_spai_f("MGBench mcsse | q1t | sort 0 | L6 | spai | F", 3 , 0, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort0_l7_spai_f("MGBench mcsse | q1t | sort 0 | L7 | spai | F", 3 , 0, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort0_l5_spai_f("MGBench mcsse | q1t | sort 0 | L5 | spai | F", 3 , 0, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort0_l6_spai_f("MGBench mcsse | q1t | sort 0 | L6 | spai | F", 3 , 0, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort0_l7_spai_f("MGBench mcsse | q1t | sort 0 | L7 | spai | F", 3 , 0, 7, "spai", 1.);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort1_l5_spai_f("MGBench mcsse | q1t | sort 1 | L5 | spai | F", 3 , 1, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort1_l6_spai_f("MGBench mcsse | q1t | sort 1 | L6 | spai | F", 3 , 1, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort1_l7_spai_f("MGBench mcsse | q1t | sort 1 | L7 | spai | F", 3 , 1, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort1_l5_spai_f("MGBench mcsse | q1t | sort 1 | L5 | spai | F", 3 , 1, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort1_l6_spai_f("MGBench mcsse | q1t | sort 1 | L6 | spai | F", 3 , 1, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort1_l7_spai_f("MGBench mcsse | q1t | sort 1 | L7 | spai | F", 3 , 1, 7, "spai", 1.);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort2_l5_spai_f("MGBench mcsse | q1t | sort 2 | L5 | spai | F", 3 , 2, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort2_l6_spai_f("MGBench mcsse | q1t | sort 2 | L6 | spai | F", 3 , 2, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort2_l7_spai_f("MGBench mcsse | q1t | sort 2 | L7 | spai | F", 3 , 2, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort2_l5_spai_f("MGBench mcsse | q1t | sort 2 | L5 | spai | F", 3 , 2, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort2_l6_spai_f("MGBench mcsse | q1t | sort 2 | L6 | spai | F", 3 , 2, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort2_l7_spai_f("MGBench mcsse | q1t | sort 2 | L7 | spai | F", 3 , 2, 7, "spai", 1.);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort3_l5_spai_f("MGBench mcsse | q1t | sort 3 | L5 | spai | F", 3 , 3, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort3_l6_spai_f("MGBench mcsse | q1t | sort 3 | L6 | spai | F", 3 , 3, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort3_l7_spai_f("MGBench mcsse | q1t | sort 3 | L7 | spai | F", 3 , 3, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort3_l5_spai_f("MGBench mcsse | q1t | sort 3 | L5 | spai | F", 3 , 3, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort3_l6_spai_f("MGBench mcsse | q1t | sort 3 | L6 | spai | F", 3 , 3, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort3_l7_spai_f("MGBench mcsse | q1t | sort 3 | L7 | spai | F", 3 , 3, 7, "spai", 1.);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort4_l5_spai_f("MGBench mcsse | q1t | sort 4 | L5 | spai | F", 3 , 4, 5, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort4_l6_spai_f("MGBench mcsse | q1t | sort 4 | L6 | spai | F", 3 , 4, 6, "spai", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort4_l7_spai_f("MGBench mcsse | q1t | sort 4 | L7 | spai | F", 3 , 4, 7, "spai", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort4_l5_spai_f("MGBench mcsse | q1t | sort 4 | L5 | spai | F", 3 , 4, 5, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort4_l6_spai_f("MGBench mcsse | q1t | sort 4 | L6 | spai | F", 3 , 4, 6, "spai", 1.);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1t_sort4_l7_spai_f("MGBench mcsse | q1t | sort 4 | L7 | spai | F", 3 , 4, 7, "spai", 1.);
 
 //SAINV
 //q1
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l6_sainv_f("MGBench mcsse | q1 | sort 0 | L6 | sainv | F", 1 , 0, 6, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l7_sainv_f("MGBench mcsse | q1 | sort 0 | L7 | sainv | F", 1 , 0, 7, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l8_sainv_f("MGBench mcsse | q1 | sort 0 | L8 | sainv | F", 1 , 0, 8, "sainv", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l6_sainv_f("MGBench mcsse | q1 | sort 0 | L6 | sainv | F", 1 , 0, 6, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l7_sainv_f("MGBench mcsse | q1 | sort 0 | L7 | sainv | F", 1 , 0, 7, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort0_l8_sainv_f("MGBench mcsse | q1 | sort 0 | L8 | sainv | F", 1 , 0, 8, "sainv", 0.5);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l6_sainv_f("MGBench mcsse | q1 | sort 1 | L6 | sainv | F", 1 , 1, 6, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l7_sainv_f("MGBench mcsse | q1 | sort 1 | L7 | sainv | F", 1 , 1, 7, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l8_sainv_f("MGBench mcsse | q1 | sort 1 | L8 | sainv | F", 1 , 1, 8, "sainv", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l6_sainv_f("MGBench mcsse | q1 | sort 1 | L6 | sainv | F", 1 , 1, 6, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l7_sainv_f("MGBench mcsse | q1 | sort 1 | L7 | sainv | F", 1 , 1, 7, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort1_l8_sainv_f("MGBench mcsse | q1 | sort 1 | L8 | sainv | F", 1 , 1, 8, "sainv", 0.5);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l6_sainv_f("MGBench mcsse | q1 | sort 2 | L6 | sainv | F", 1 , 2, 6, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_sainv_f("MGBench mcsse | q1 | sort 2 | L7 | sainv | F", 1 , 2, 7, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l8_sainv_f("MGBench mcsse | q1 | sort 2 | L8 | sainv | F", 1 , 2, 8, "sainv", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l6_sainv_f("MGBench mcsse | q1 | sort 2 | L6 | sainv | F", 1 , 2, 6, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_sainv_f("MGBench mcsse | q1 | sort 2 | L7 | sainv | F", 1 , 2, 7, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l8_sainv_f("MGBench mcsse | q1 | sort 2 | L8 | sainv | F", 1 , 2, 8, "sainv", 0.5);
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l6_sainv_f("MGBench mcsse | q1 | sort 3 | L6 | sainv | F", 1 , 3, 6, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_sainv_f("MGBench mcsse | q1 | sort 3 | L7 | sainv | F", 1 , 3, 7, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l8_sainv_f("MGBench mcsse | q1 | sort 3 | L8 | sainv | F", 1 , 3, 8, "sainv", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l6_sainv_f("MGBench mcsse | q1 | sort 3 | L6 | sainv | F", 1 , 3, 6, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_sainv_f("MGBench mcsse | q1 | sort 3 | L7 | sainv | F", 1 , 3, 7, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l8_sainv_f("MGBench mcsse | q1 | sort 3 | L8 | sainv | F", 1 , 3, 8, "sainv", 0.5);
 
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l6_sainv_f("MGBench mcsse | q1 | sort 4 | L6 | sainv | F", 1 , 4, 6, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l7_sainv_f("MGBench mcsse | q1 | sort 4 | L7 | sainv | F", 1 , 4, 7, "sainv", 0.7);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l8_sainv_f("MGBench mcsse | q1 | sort 4 | L8 | sainv | F", 1 , 4, 8, "sainv", 0.7);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l6_sainv_f("MGBench mcsse | q1 | sort 4 | L6 | sainv | F", 1 , 4, 6, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l7_sainv_f("MGBench mcsse | q1 | sort 4 | L7 | sainv | F", 1 , 4, 7, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort4_l8_sainv_f("MGBench mcsse | q1 | sort 4 | L8 | sainv | F", 1 , 4, 8, "sainv", 0.5);
 
 //q2
 MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q2_sort0_l5_sainv_f("MGBench mcsse | q2 | sort 0 | L5 | sainv | F", 2 , 0, 5, "sainv", 0.7);
@@ -1224,28 +1224,28 @@ MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<dou
 #if defined HONEI_CUDA && defined HONEI_CUDA_DOUBLE
 //JAC
 //q1
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort0_l6_jac_f("MGBench cuda | q1 | sort 0 | L6 | jac | F", 1 , 0, 6, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort0_l7_jac_f("MGBench cuda | q1 | sort 0 | L7 | jac | F", 1 , 0, 7, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort0_l8_jac_f("MGBench cuda | q1 | sort 0 | L8 | jac | F", 1 , 0, 8, "jac", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort0_l6_jac_f("MGBench cuda | q1 | sort 0 | L6 | jac | F", 1 , 0, 6, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort0_l7_jac_f("MGBench cuda | q1 | sort 0 | L7 | jac | F", 1 , 0, 7, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort0_l8_jac_f("MGBench cuda | q1 | sort 0 | L8 | jac | F", 1 , 0, 8, "jac", 0.5);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort1_l6_jac_f("MGBench cuda | q1 | sort 1 | L6 | jac | F", 1 , 1, 6, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort1_l7_jac_f("MGBench cuda | q1 | sort 1 | L7 | jac | F", 1 , 1, 7, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort1_l8_jac_f("MGBench cuda | q1 | sort 1 | L8 | jac | F", 1 , 1, 8, "jac", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort1_l6_jac_f("MGBench cuda | q1 | sort 1 | L6 | jac | F", 1 , 1, 6, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort1_l7_jac_f("MGBench cuda | q1 | sort 1 | L7 | jac | F", 1 , 1, 7, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort1_l8_jac_f("MGBench cuda | q1 | sort 1 | L8 | jac | F", 1 , 1, 8, "jac", 0.5);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort2_l6_jac_f("MGBench cuda | q1 | sort 2 | L6 | jac | F", 1 , 2, 6, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort2_l7_jac_f("MGBench cuda | q1 | sort 2 | L7 | jac | F", 1 , 2, 7, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort2_l8_jac_f("MGBench cuda | q1 | sort 2 | L8 | jac | F", 1 , 2, 8, "jac", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort2_l6_jac_f("MGBench cuda | q1 | sort 2 | L6 | jac | F", 1 , 2, 6, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort2_l7_jac_f("MGBench cuda | q1 | sort 2 | L7 | jac | F", 1 , 2, 7, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort2_l8_jac_f("MGBench cuda | q1 | sort 2 | L8 | jac | F", 1 , 2, 8, "jac", 0.5);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort3_l6_jac_f("MGBench cuda | q1 | sort 3 | L6 | jac | F", 1 , 3, 6, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort3_l7_jac_f("MGBench cuda | q1 | sort 3 | L7 | jac | F", 1 , 3, 7, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort3_l8_jac_f("MGBench cuda | q1 | sort 3 | L8 | jac | F", 1 , 3, 8, "jac", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort3_l6_jac_f("MGBench cuda | q1 | sort 3 | L6 | jac | F", 1 , 3, 6, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort3_l7_jac_f("MGBench cuda | q1 | sort 3 | L7 | jac | F", 1 , 3, 7, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort3_l8_jac_f("MGBench cuda | q1 | sort 3 | L8 | jac | F", 1 , 3, 8, "jac", 0.5);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort4_l6_jac_f("MGBench cuda | q1 | sort 4 | L6 | jac | F", 1 , 4, 6, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort4_l7_jac_f("MGBench cuda | q1 | sort 4 | L7 | jac | F", 1 , 4, 7, "jac", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort4_l8_jac_f("MGBench cuda | q1 | sort 4 | L8 | jac | F", 1 , 4, 8, "jac", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort4_l6_jac_f("MGBench cuda | q1 | sort 4 | L6 | jac | F", 1 , 4, 6, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort4_l7_jac_f("MGBench cuda | q1 | sort 4 | L7 | jac | F", 1 , 4, 7, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort4_l8_jac_f("MGBench cuda | q1 | sort 4 | L8 | jac | F", 1 , 4, 8, "jac", 0.5);
 
 //q2
 MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort0_l5_jac_f("MGBench cuda | q2 | sort 0 | L5 | jac | F", 2 , 0, 5, "jac", 0.7);
@@ -1295,99 +1295,99 @@ MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cud
 
 //SPAI
 //q1
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort0_l6_spai_f("MGBench cuda | q1 | sort 0 | L6 | spai | F", 1 , 0, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort0_l7_spai_f("MGBench cuda | q1 | sort 0 | L7 | spai | F", 1 , 0, 7, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort0_l8_spai_f("MGBench cuda | q1 | sort 0 | L8 | spai | F", 1 , 0, 8, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort0_l6_spai_f("MGBench cuda | q1 | sort 0 | L6 | spai | F", 1 , 0, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort0_l7_spai_f("MGBench cuda | q1 | sort 0 | L7 | spai | F", 1 , 0, 7, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort0_l8_spai_f("MGBench cuda | q1 | sort 0 | L8 | spai | F", 1 , 0, 8, "spai", 1.);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort1_l6_spai_f("MGBench cuda | q1 | sort 1 | L6 | spai | F", 1 , 1, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort1_l7_spai_f("MGBench cuda | q1 | sort 1 | L7 | spai | F", 1 , 1, 7, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort1_l8_spai_f("MGBench cuda | q1 | sort 1 | L8 | spai | F", 1 , 1, 8, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort1_l6_spai_f("MGBench cuda | q1 | sort 1 | L6 | spai | F", 1 , 1, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort1_l7_spai_f("MGBench cuda | q1 | sort 1 | L7 | spai | F", 1 , 1, 7, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort1_l8_spai_f("MGBench cuda | q1 | sort 1 | L8 | spai | F", 1 , 1, 8, "spai", 1.);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort2_l6_spai_f("MGBench cuda | q1 | sort 2 | L6 | spai | F", 1 , 2, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort2_l7_spai_f("MGBench cuda | q1 | sort 2 | L7 | spai | F", 1 , 2, 7, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort2_l8_spai_f("MGBench cuda | q1 | sort 2 | L8 | spai | F", 1 , 2, 8, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort2_l6_spai_f("MGBench cuda | q1 | sort 2 | L6 | spai | F", 1 , 2, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort2_l7_spai_f("MGBench cuda | q1 | sort 2 | L7 | spai | F", 1 , 2, 7, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort2_l8_spai_f("MGBench cuda | q1 | sort 2 | L8 | spai | F", 1 , 2, 8, "spai", 1.);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort3_l6_spai_f("MGBench cuda | q1 | sort 3 | L6 | spai | F", 1 , 3, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort3_l7_spai_f("MGBench cuda | q1 | sort 3 | L7 | spai | F", 1 , 3, 7, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort3_l8_spai_f("MGBench cuda | q1 | sort 3 | L8 | spai | F", 1 , 3, 8, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort3_l6_spai_f("MGBench cuda | q1 | sort 3 | L6 | spai | F", 1 , 3, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort3_l7_spai_f("MGBench cuda | q1 | sort 3 | L7 | spai | F", 1 , 3, 7, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort3_l8_spai_f("MGBench cuda | q1 | sort 3 | L8 | spai | F", 1 , 3, 8, "spai", 1.);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort4_l6_spai_f("MGBench cuda | q1 | sort 4 | L6 | spai | F", 1 , 4, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort4_l7_spai_f("MGBench cuda | q1 | sort 4 | L7 | spai | F", 1 , 4, 7, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort4_l8_spai_f("MGBench cuda | q1 | sort 4 | L8 | spai | F", 1 , 4, 8, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort4_l6_spai_f("MGBench cuda | q1 | sort 4 | L6 | spai | F", 1 , 4, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort4_l7_spai_f("MGBench cuda | q1 | sort 4 | L7 | spai | F", 1 , 4, 7, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort4_l8_spai_f("MGBench cuda | q1 | sort 4 | L8 | spai | F", 1 , 4, 8, "spai", 1.);
 
 //q2
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort0_l5_spai_f("MGBench cuda | q2 | sort 0 | L5 | spai | F", 2 , 0, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort0_l6_spai_f("MGBench cuda | q2 | sort 0 | L6 | spai | F", 2 , 0, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort0_l7_spai_f("MGBench cuda | q2 | sort 0 | L7 | spai | F", 2 , 0, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort0_l5_spai_f("MGBench cuda | q2 | sort 0 | L5 | spai | F", 2 , 0, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort0_l6_spai_f("MGBench cuda | q2 | sort 0 | L6 | spai | F", 2 , 0, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort0_l7_spai_f("MGBench cuda | q2 | sort 0 | L7 | spai | F", 2 , 0, 7, "spai", 1.);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort1_l5_spai_f("MGBench cuda | q2 | sort 1 | L5 | spai | F", 2 , 1, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort1_l6_spai_f("MGBench cuda | q2 | sort 1 | L6 | spai | F", 2 , 1, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort1_l7_spai_f("MGBench cuda | q2 | sort 1 | L7 | spai | F", 2 , 1, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort1_l5_spai_f("MGBench cuda | q2 | sort 1 | L5 | spai | F", 2 , 1, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort1_l6_spai_f("MGBench cuda | q2 | sort 1 | L6 | spai | F", 2 , 1, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort1_l7_spai_f("MGBench cuda | q2 | sort 1 | L7 | spai | F", 2 , 1, 7, "spai", 1.);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort2_l5_spai_f("MGBench cuda | q2 | sort 2 | L5 | spai | F", 2 , 2, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort2_l6_spai_f("MGBench cuda | q2 | sort 2 | L6 | spai | F", 2 , 2, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort2_l7_spai_f("MGBench cuda | q2 | sort 2 | L7 | spai | F", 2 , 2, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort2_l5_spai_f("MGBench cuda | q2 | sort 2 | L5 | spai | F", 2 , 2, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort2_l6_spai_f("MGBench cuda | q2 | sort 2 | L6 | spai | F", 2 , 2, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort2_l7_spai_f("MGBench cuda | q2 | sort 2 | L7 | spai | F", 2 , 2, 7, "spai", 1.);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort3_l5_spai_f("MGBench cuda | q2 | sort 3 | L5 | spai | F", 2 , 3, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort3_l6_spai_f("MGBench cuda | q2 | sort 3 | L6 | spai | F", 2 , 3, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort3_l7_spai_f("MGBench cuda | q2 | sort 3 | L7 | spai | F", 2 , 3, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort3_l5_spai_f("MGBench cuda | q2 | sort 3 | L5 | spai | F", 2 , 3, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort3_l6_spai_f("MGBench cuda | q2 | sort 3 | L6 | spai | F", 2 , 3, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort3_l7_spai_f("MGBench cuda | q2 | sort 3 | L7 | spai | F", 2 , 3, 7, "spai", 1.);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort4_l5_spai_f("MGBench cuda | q2 | sort 4 | L5 | spai | F", 2 , 4, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort4_l6_spai_f("MGBench cuda | q2 | sort 4 | L6 | spai | F", 2 , 4, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort4_l7_spai_f("MGBench cuda | q2 | sort 4 | L7 | spai | F", 2 , 4, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort4_l5_spai_f("MGBench cuda | q2 | sort 4 | L5 | spai | F", 2 , 4, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort4_l6_spai_f("MGBench cuda | q2 | sort 4 | L6 | spai | F", 2 , 4, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort4_l7_spai_f("MGBench cuda | q2 | sort 4 | L7 | spai | F", 2 , 4, 7, "spai", 1.);
 
 //q1t
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort0_l5_spai_f("MGBench cuda | q1t | sort 0 | L5 | spai | F", 3 , 0, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort0_l6_spai_f("MGBench cuda | q1t | sort 0 | L6 | spai | F", 3 , 0, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort0_l7_spai_f("MGBench cuda | q1t | sort 0 | L7 | spai | F", 3 , 0, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort0_l5_spai_f("MGBench cuda | q1t | sort 0 | L5 | spai | F", 3 , 0, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort0_l6_spai_f("MGBench cuda | q1t | sort 0 | L6 | spai | F", 3 , 0, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort0_l7_spai_f("MGBench cuda | q1t | sort 0 | L7 | spai | F", 3 , 0, 7, "spai", 1.);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort1_l5_spai_f("MGBench cuda | q1t | sort 1 | L5 | spai | F", 3 , 1, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort1_l6_spai_f("MGBench cuda | q1t | sort 1 | L6 | spai | F", 3 , 1, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort1_l7_spai_f("MGBench cuda | q1t | sort 1 | L7 | spai | F", 3 , 1, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort1_l5_spai_f("MGBench cuda | q1t | sort 1 | L5 | spai | F", 3 , 1, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort1_l6_spai_f("MGBench cuda | q1t | sort 1 | L6 | spai | F", 3 , 1, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort1_l7_spai_f("MGBench cuda | q1t | sort 1 | L7 | spai | F", 3 , 1, 7, "spai", 1.);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort2_l5_spai_f("MGBench cuda | q1t | sort 2 | L5 | spai | F", 3 , 2, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort2_l6_spai_f("MGBench cuda | q1t | sort 2 | L6 | spai | F", 3 , 2, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort2_l7_spai_f("MGBench cuda | q1t | sort 2 | L7 | spai | F", 3 , 2, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort2_l5_spai_f("MGBench cuda | q1t | sort 2 | L5 | spai | F", 3 , 2, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort2_l6_spai_f("MGBench cuda | q1t | sort 2 | L6 | spai | F", 3 , 2, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort2_l7_spai_f("MGBench cuda | q1t | sort 2 | L7 | spai | F", 3 , 2, 7, "spai", 1.);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort3_l5_spai_f("MGBench cuda | q1t | sort 3 | L5 | spai | F", 3 , 3, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort3_l6_spai_f("MGBench cuda | q1t | sort 3 | L6 | spai | F", 3 , 3, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort3_l7_spai_f("MGBench cuda | q1t | sort 3 | L7 | spai | F", 3 , 3, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort3_l5_spai_f("MGBench cuda | q1t | sort 3 | L5 | spai | F", 3 , 3, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort3_l6_spai_f("MGBench cuda | q1t | sort 3 | L6 | spai | F", 3 , 3, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort3_l7_spai_f("MGBench cuda | q1t | sort 3 | L7 | spai | F", 3 , 3, 7, "spai", 1.);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort4_l5_spai_f("MGBench cuda | q1t | sort 4 | L5 | spai | F", 3 , 4, 5, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort4_l6_spai_f("MGBench cuda | q1t | sort 4 | L6 | spai | F", 3 , 4, 6, "spai", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort4_l7_spai_f("MGBench cuda | q1t | sort 4 | L7 | spai | F", 3 , 4, 7, "spai", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort4_l5_spai_f("MGBench cuda | q1t | sort 4 | L5 | spai | F", 3 , 4, 5, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort4_l6_spai_f("MGBench cuda | q1t | sort 4 | L6 | spai | F", 3 , 4, 6, "spai", 1.);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1t_sort4_l7_spai_f("MGBench cuda | q1t | sort 4 | L7 | spai | F", 3 , 4, 7, "spai", 1.);
 
 //SAINV
 //q1
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort0_l6_sainv_f("MGBench cuda | q1 | sort 0 | L6 | sainv | F", 1 , 0, 6, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort0_l7_sainv_f("MGBench cuda | q1 | sort 0 | L7 | sainv | F", 1 , 0, 7, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort0_l8_sainv_f("MGBench cuda | q1 | sort 0 | L8 | sainv | F", 1 , 0, 8, "sainv", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort0_l6_sainv_f("MGBench cuda | q1 | sort 0 | L6 | sainv | F", 1 , 0, 6, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort0_l7_sainv_f("MGBench cuda | q1 | sort 0 | L7 | sainv | F", 1 , 0, 7, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort0_l8_sainv_f("MGBench cuda | q1 | sort 0 | L8 | sainv | F", 1 , 0, 8, "sainv", 0.5);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort1_l6_sainv_f("MGBench cuda | q1 | sort 1 | L6 | sainv | F", 1 , 1, 6, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort1_l7_sainv_f("MGBench cuda | q1 | sort 1 | L7 | sainv | F", 1 , 1, 7, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort1_l8_sainv_f("MGBench cuda | q1 | sort 1 | L8 | sainv | F", 1 , 1, 8, "sainv", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort1_l6_sainv_f("MGBench cuda | q1 | sort 1 | L6 | sainv | F", 1 , 1, 6, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort1_l7_sainv_f("MGBench cuda | q1 | sort 1 | L7 | sainv | F", 1 , 1, 7, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort1_l8_sainv_f("MGBench cuda | q1 | sort 1 | L8 | sainv | F", 1 , 1, 8, "sainv", 0.5);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort2_l6_sainv_f("MGBench cuda | q1 | sort 2 | L6 | sainv | F", 1 , 2, 6, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort2_l7_sainv_f("MGBench cuda | q1 | sort 2 | L7 | sainv | F", 1 , 2, 7, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort2_l8_sainv_f("MGBench cuda | q1 | sort 2 | L8 | sainv | F", 1 , 2, 8, "sainv", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort2_l6_sainv_f("MGBench cuda | q1 | sort 2 | L6 | sainv | F", 1 , 2, 6, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort2_l7_sainv_f("MGBench cuda | q1 | sort 2 | L7 | sainv | F", 1 , 2, 7, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort2_l8_sainv_f("MGBench cuda | q1 | sort 2 | L8 | sainv | F", 1 , 2, 8, "sainv", 0.5);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort3_l6_sainv_f("MGBench cuda | q1 | sort 3 | L6 | sainv | F", 1 , 3, 6, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort3_l7_sainv_f("MGBench cuda | q1 | sort 3 | L7 | sainv | F", 1 , 3, 7, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort3_l8_sainv_f("MGBench cuda | q1 | sort 3 | L8 | sainv | F", 1 , 3, 8, "sainv", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort3_l6_sainv_f("MGBench cuda | q1 | sort 3 | L6 | sainv | F", 1 , 3, 6, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort3_l7_sainv_f("MGBench cuda | q1 | sort 3 | L7 | sainv | F", 1 , 3, 7, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort3_l8_sainv_f("MGBench cuda | q1 | sort 3 | L8 | sainv | F", 1 , 3, 8, "sainv", 0.5);
 
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort4_l6_sainv_f("MGBench cuda | q1 | sort 4 | L6 | sainv | F", 1 , 4, 6, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort4_l7_sainv_f("MGBench cuda | q1 | sort 4 | L7 | sainv | F", 1 , 4, 7, "sainv", 0.7);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort4_l8_sainv_f("MGBench cuda | q1 | sort 4 | L8 | sainv | F", 1 , 4, 8, "sainv", 0.7);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort4_l6_sainv_f("MGBench cuda | q1 | sort 4 | L6 | sainv | F", 1 , 4, 6, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort4_l7_sainv_f("MGBench cuda | q1 | sort 4 | L7 | sainv | F", 1 , 4, 7, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort4_l8_sainv_f("MGBench cuda | q1 | sort 4 | L8 | sainv | F", 1 , 4, 8, "sainv", 0.5);
 
 //q2
 MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q2_sort0_l5_sainv_f("MGBench cuda | q2 | sort 0 | L5 | sainv | F", 2 , 0, 5, "sainv", 0.7);

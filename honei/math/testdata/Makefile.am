@@ -270,7 +270,35 @@ EXTRA_DIST = \
 	poisson_advanced2/q2_sort_0/sol_3 \
 	poisson_advanced2/q2_sort_0/sol_4 \
 	poisson_advanced2/q2_sort_0/sol_5 \
-	poisson_advanced2/q2_sort_0/sol_6
+	poisson_advanced2/q2_sort_0/sol_6 \
+	poisson_advanced4/sort_0/sol_1 \
+	poisson_advanced4/sort_0/sol_2 \
+	poisson_advanced4/sort_0/sol_3 \
+	poisson_advanced4/sort_0/sol_4 \
+	poisson_advanced4/sort_0/init_1 \
+	poisson_advanced4/sort_0/init_2 \
+	poisson_advanced4/sort_0/init_3 \
+	poisson_advanced4/sort_0/init_4 \
+	poisson_advanced4/sort_0/rhs_1 \
+	poisson_advanced4/sort_0/rhs_2 \
+	poisson_advanced4/sort_0/rhs_3 \
+	poisson_advanced4/sort_0/rhs_4 \
+	poisson_advanced4/sort_0/A_1.ell \
+	poisson_advanced4/sort_0/A_2.ell \
+	poisson_advanced4/sort_0/A_3.ell \
+	poisson_advanced4/sort_0/A_4.ell \
+	poisson_advanced4/sort_0/A_1_spai_grote.ell \
+	poisson_advanced4/sort_0/A_2_spai_grote.ell \
+	poisson_advanced4/sort_0/A_3_spai_grote.ell \
+	poisson_advanced4/sort_0/A_4_spai_grote.ell \
+	poisson_advanced4/sort_0/A_1_sainv.ell \
+	poisson_advanced4/sort_0/A_2_sainv.ell \
+	poisson_advanced4/sort_0/A_3_sainv.ell \
+	poisson_advanced4/sort_0/A_4_sainv.ell \
+	poisson_advanced4/sort_0/prol_1.ell \
+	poisson_advanced4/sort_0/prol_2.ell \
+	poisson_advanced4/sort_0/prol_3.ell \
+	poisson_advanced4/sort_0/prol_4.ell
 
 DEFS = \
 	$(CELLDEF) \
