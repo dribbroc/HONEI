@@ -46,7 +46,24 @@ class Driver
     public:
     Driver(std::string _file)
     {
-        unsigned long max_level(7);
+        if(typeid(Tag_) == typeid(tags::CPU::MultiCore::SSE))
+        {
+            //Q1
+            Configuration::instance()->set_value("ell::threads", 2);
+            // Q2 / Q1t
+            //Configuration::instance()->set_value("ell::threads", 16);
+        }
+        else
+        {
+            //Q1
+            Configuration::instance()->set_value("ell::threads", 1);
+            Configuration::instance()->set_value("cuda::product_smell_dv_double", 128);
+            // Q2 / Q1t
+            //Configuration::instance()->set_value("ell::threads", 2);
+            //Configuration::instance()->set_value("cuda::product_smell_dv_double", 256);
+        }
+
+        unsigned long max_level(8);
         std::string file(HONEI_SOURCEDIR);
         file += "/honei/math/testdata/";
         file += _file;
@@ -61,14 +78,17 @@ class Driver
                 DT_>::load_data(file, max_level, DT_(1.0), "jac"));
 
         double best_time(1000);
+        double best_iter(1000);
         unsigned long best_min_level(0);
         unsigned long best_smooth_iters(0);
         double best_damping(0);
-        std::cout<<std::endl;
 
-        for (double damping(0.1) ; damping <=1 ; damping += 0.1)
-            for (unsigned long min_level(1) ; min_level < max_level/2 ; ++min_level)
-                for (unsigned long smooth_iters(1) ; smooth_iters < 50 ; smooth_iters+=2)
+        for (unsigned long min_level(1) ; min_level <= 3 ; ++min_level)
+        {
+            std::cout<<"========================= min_level"<<min_level<<"==========================="<<std::endl;
+            for (double damping(0.1) ; damping <=1 ; damping += 0.05)
+            {
+                for (unsigned long smooth_iters(0) ; smooth_iters < 50 ; smooth_iters+=2)
                 {
                     MGData<SparseMatrixELL<DT_>, DenseVector<DT_>, SparseMatrixELL<DT_>, DenseVector<DT_>, DT_> data = data_base.copy();
                     for (unsigned long i(0) ; i < data.P.size() ; ++i)
@@ -107,15 +127,19 @@ class Driver
                         best_min_level = min_level;
                         best_smooth_iters = smooth_iters;
                         best_damping = damping;
+                        best_iter = data.used_iters;
 
                         std::cout<<std::endl;
-                        std::cout<<"Best Time: "<<best_time<<std::endl;
+                        std::cout<<"Best time: "<<best_time<<std::endl;
+                        std::cout<<"Best iter: "<<best_iter<<std::endl;
                         std::cout<<"Best min level: "<<best_min_level<<std::endl;
                         std::cout<<"Best smooth iters: "<<best_smooth_iters<<std::endl;
                         std::cout<<"Best damping: "<<best_damping<<std::endl;
                     }
                     std::cout<<"."<<std::flush;
                 }
+            }
+        }
 
         std::cout<<std::endl;
         std::cout<<"Best Time: "<<best_time<<std::endl;
@@ -130,7 +154,8 @@ int main(int argc, char ** argv)
 #ifdef HONEI_MPI
     MPI_Init(&argc, &argv);
 #endif
-    Driver<tags::GPU::CUDA, double> a("poisson_advanced2/sort_0/");
+    //Driver<tags::GPU::CUDA, double> a("poisson_advanced2/sort_2/");
+    Driver<tags::CPU::MultiCore::SSE, double> a("poisson_advanced2/sort_2/");
 #ifdef HONEI_MPI
     MPI_Finalize();
 #endif
