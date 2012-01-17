@@ -52,10 +52,14 @@ namespace honei
             unsigned long _col_part_size;
             unsigned long _rank;
             unsigned long _com_size;
+            unsigned long _orig_rows;
+            unsigned long _orig_columns;
             bool _active;
 
             void _init(const SparseMatrix<DT_> & src, MPI_Comm com = MPI_COMM_WORLD)
             {
+                _orig_rows = src.rows();
+                _orig_columns = src.columns();
                 int irank;
                 mpi::mpi_comm_rank(&irank, com);
                 _rank = irank;
@@ -322,6 +326,8 @@ namespace honei
                 _col_part_size(other._col_part_size),
                 _rank(other._rank),
                 _com_size(other._com_size),
+                _orig_rows(other._orig_rows),
+                _orig_columns(other._orig_columns),
                 _active(other._active)
             {
                 _inner.reset(new SparseMatrixELL<DT_> (*other._inner));
@@ -338,17 +344,29 @@ namespace honei
             /// Returns our size.
             virtual unsigned long size() const
             {
-                return _rows * _columns;
+                return _orig_rows * _orig_columns;
             }
 
             /// Returns our row count.
             virtual unsigned long rows() const
             {
-                return _rows;
+                return _orig_rows;
             }
 
             /// Returns our column count.
             virtual unsigned long columns() const
+            {
+                return _orig_columns;
+            }
+
+            /// Returns our local row count.
+            virtual unsigned long local_rows() const
+            {
+                return _rows;
+            }
+
+            /// Returns our local column count.
+            virtual unsigned long local_columns() const
             {
                 return _columns;
             }
