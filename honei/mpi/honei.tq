@@ -5,6 +5,10 @@
 #PBS -N honei-mpi
 #PBS -j oe
 #echo stern 5
-#PBS -l walltime=00:20:00,vmem=10000mb,nodes=4
-cd $HOME/honei/trunk/honei/mpi/
-mpirun -np 4 ./operations_TEST check
+#PBS -l walltime=00:50:00,vmem=15000mb,nodes=PROC
+cd $HOME/nobackup/honei/honei/mpi/
+mpirun -np PROC ./mg_TEST check
+
+# #PBS -l walltime=00:40:00,vmem=15000mb,nodes=PROC:ppn=4
+#cd $HOME/nobackup/honei/honei/mpi/
+#mpirun -bynode -np PROC ./mg_TEST check

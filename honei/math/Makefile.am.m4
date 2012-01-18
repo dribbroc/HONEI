@@ -109,6 +109,13 @@ BACKEND_LIBS += \
 
 endif
 
+if MPI
+
+BACKEND_LIBS += \
+	$(top_builddir)/honei/backends/mpi/libhoneibackendsmpi.la
+
+endif
+
 SUBDIRS = testdata spai SuperLU_4.1
 
 AM_CXXFLAGS = -I$(top_srcdir)
