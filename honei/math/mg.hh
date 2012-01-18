@@ -1103,7 +1103,7 @@ namespace honei
                         VectorType_ r(data.x.at(data.x.size() - 1).size());
                         Defect<Tag_>::value(r, data.b.at(data.b.size() - 1), data.A.at(data.A.size() - 1), data.x.at(data.x.size() - 1));
                         DataType_ rnorm_initial = NormType_::value(r);
-                        std::cout << "Initial norm: " << rnorm_initial << std::endl;
+                        //std::cout << "Initial norm: " << rnorm_initial << std::endl;
                         DataType_ rnorm_current(1e16);
 
                         //std::cout << "starting cycles" << std::endl;
@@ -1121,7 +1121,7 @@ namespace honei
                         }
 
                         PROFILER_STOP("MGSolver");
-                        std::cout << "Final norm: " << rnorm_current << std::endl;
+                        //std::cout << "Final norm: " << rnorm_current << std::endl;
                     }
         };
 

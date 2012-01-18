@@ -297,10 +297,7 @@ int main(int argc, char** argv)
                     continue;
             }*/
 
-            std::cout << "(" << iterator_index << "/" << list_size << ") " << (*i)->id() + " [Backend: "
-                << (*i)->get_tag_name() << "]" << std::endl;
             (*i)->run();
-            std::cout << "PASSED" << std::endl;
         }
         catch (TestFailedException & e)
         {

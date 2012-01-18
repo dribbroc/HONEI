@@ -29,18 +29,23 @@ class MGSolverTest:
 {
     private:
         std::string _file;
+        unsigned long _min;
 
     public:
-        MGSolverTest(const std::string & tag, std::string filebase) :
+        MGSolverTest(const std::string & tag, std::string filebase, unsigned long min) :
             BaseTest("MGSolverTest<" + tag + ">")
         {
             register_tag(Tag_::name);
             _file = filebase;
+            _min = min;
         }
 
         virtual void run() const
         {
-            unsigned long max_level(4);
+            Configuration::instance()->set_value("ell::threads", 2);
+            Configuration::instance()->set_value("mpi::min_part_size", _min);
+
+            unsigned long max_level(8);
             unsigned long min_level(1);
             std::string file(HONEI_SOURCEDIR);
             file += "/honei/math/testdata/";
@@ -85,6 +90,8 @@ class MGSolverTest:
 
             if (mpi::mpi_comm_rank() == 0)
             {
+                std::cout<<"min part size: "<<_min<<std::endl;
+                std::cout<<"processes: "<<mpi::mpi_comm_size()<<" "<<min_level<<" "<<max_level<<std::endl;
                 std::cout<<"Used iters: "<<data_mpi.used_iters<<std::endl;
                 std::cout<<"Used coarse iters: "<<data_mpi.used_iters_coarse<<std::endl;
                 std::cout<<"TOE: "<<bt.total()-at.total()<<std::endl;
@@ -116,16 +123,27 @@ class MGSolverTest:
                 TEST_CHECK_EQUAL_WITHIN_EPS(data_mpi.x.at(MGDataIndex::internal_index_A(max_level))[i], ref[i], eps);
             data_mpi.x.at(MGDataIndex::internal_index_A(max_level)).unlock(lm_read_only);
             ref.unlock(lm_read_only);
+
+            data_mpi.A.clear();
+            data_mpi.P.clear();
+            data_mpi.b.clear();
+            data_mpi.x.clear();
+            data_mpi.c.clear();
+            data_mpi.d.clear();
+            data_mpi.temp_0.clear();
+            data_mpi.temp_1.clear();
+            data_mpi.prolmat.clear();
+            data_mpi.resmat.clear();
         }
 };
-MGSolverTest<tags::CPU::Generic> generic_mg_solver_test("double", "poisson_advanced2/q2_sort_0/");
+MGSolverTest<tags::CPU::Generic> generic_mg_solver_test("double", "poisson_advanced2/q2_sort_0/", 1);
 #ifdef HONEI_SSE
-MGSolverTest<tags::CPU::SSE> mg_solver_test("double", "poisson_advanced2/q2_sort_0/");
+MGSolverTest<tags::CPU::SSE> mg0_solver_test_cpu("double", "poisson_advanced2/q2_sort_2/", 1);
 #else
-MGSolverTest<tags::CPU> mg_solver_test("double", "poisson_advanced2/q2_sort_0/");
+MGSolverTest<tags::CPU> mg_solver_test_cpu("double", "poisson_advanced2/sort_2/", 1);
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
-MGSolverTest<tags::GPU::CUDA> cuda_mg_solver_test("double", "poisson_advanced2/q2_sort_0/");
+MGSolverTest<tags::GPU::CUDA> cuda_mg_solver_test("double", "poisson_advanced2/q2_sort_0/", 1);
 #endif
 #endif

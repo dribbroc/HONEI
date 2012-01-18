@@ -67,33 +67,33 @@ class CGSolverTestSparseELL:
         virtual void run() const
         {
             std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/math/testdata/poisson_advanced2/q2_sort_0/";
+            filename += "/honei/math/testdata/poisson_advanced2/sort_0/";
             filename += _m_f;
             SparseMatrixELL<DT1_> smatrix2(MatrixIO<io_formats::ELL>::read_matrix(filename, DT1_(0)));
             SparseMatrix<DT1_> ssmatrix2(smatrix2);
             SparseMatrixELLMPI<DT1_> matrix2(ssmatrix2);
 
             std::string filename_2(HONEI_SOURCEDIR);
-            filename_2 += "/honei/math/testdata/poisson_advanced2/q2_sort_0/";
+            filename_2 += "/honei/math/testdata/poisson_advanced2/sort_0/";
             filename_2 += _v_f;
             DenseVector<DT1_> srhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT1_(0)));
             DenseVectorMPI<DT1_> rhs(srhs);
 
-            /*DenseVector<DT1_> sdiag_inverted(smatrix2.rows(), DT1_(0));
+            DenseVector<DT1_> sdiag_inverted(smatrix2.rows(), DT1_(0));
             for(unsigned long i(0) ; i < sdiag_inverted.size() ; ++i)
             {
                     sdiag_inverted[i] = DT1_(0.7)/smatrix2(i, i);
             }
-            DenseVectorMPI<DT1_> diag_inverted(sdiag_inverted);*/
-            std::string filename_5(HONEI_SOURCEDIR);
-            filename_5 += "/honei/math/testdata/poisson_advanced2/q2_sort_0/";
+            DenseVectorMPI<DT1_> diag_inverted(sdiag_inverted);
+            /*std::string filename_5(HONEI_SOURCEDIR);
+            filename_5 += "/honei/math/testdata/poisson_advanced2/sort_0/";
             filename_5 += _p_f;
             SparseMatrixELL<DT1_> sdiag_inverted(MatrixIO<io_formats::ELL>::read_matrix(filename_5, DT1_(0)));
             SparseMatrix<DT1_> ssdiag_inverted(sdiag_inverted);
-            SparseMatrixELLMPI<DT1_> diag_inverted(ssdiag_inverted);
+            SparseMatrixELLMPI<DT1_> diag_inverted(ssdiag_inverted);*/
 
             std::string filename_4(HONEI_SOURCEDIR);
-            filename_4 += "/honei/math/testdata/poisson_advanced2/q2_sort_0/";
+            filename_4 += "/honei/math/testdata/poisson_advanced2/sort_0/";
             filename_4 += _i_f;
             DenseVector<DT1_> sresult(VectorIO<io_formats::EXP>::read_vector(filename_4, DT1_(0)));
             DenseVectorMPI<DT1_> result(sresult);
@@ -101,16 +101,18 @@ class CGSolverTestSparseELL:
             unsigned long used_iters(4711);
             TimeStamp at, bt;
             at.take();
-            BiCGStabSolver<Tag_, methods::VAR>::value(matrix2, diag_inverted, rhs, result, 1000ul, used_iters, 1e-8);
+            //CG<Tag_, methods::VAR>::value(matrix2, diag_inverted, rhs, result, 10000ul, used_iters, 1e-8);
+            BiCGStab<Tag_, methods::VAR>::value(matrix2, diag_inverted, rhs, result, 10000ul, used_iters, 1e-8);
             bt.take();
             if (mpi::mpi_comm_rank() == 0)
             {
+                std::cout<<"processes: "<<mpi::mpi_comm_size()<<" "<<_m_f<<std::endl;
                 std::cout<<"Used iters: "<<used_iters<<std::endl;
                 std::cout<<"TOE: "<<bt.total()-at.total()<<std::endl;
             }
 
             std::string filename_3(HONEI_SOURCEDIR);
-            filename_3 += "/honei/math/testdata/poisson_advanced2/q2_sort_0/";
+            filename_3 += "/honei/math/testdata/poisson_advanced2/sort_0/";
             filename_3 += _r_f;
             DenseVector<DT1_> sref_result(VectorIO<io_formats::EXP>::read_vector(filename_3, DT1_(0)));
             DenseVectorMPI<DT1_> ref_result(sref_result);
@@ -148,7 +150,12 @@ class CGSolverTestSparseELL:
 };
 CGSolverTestSparseELL<tags::CPU::Generic, double> generic_cgs_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
 #ifdef HONEI_SSE
-CGSolverTestSparseELL<tags::CPU::SSE, double> cgs_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
+CGSolverTestSparseELL<tags::CPU::SSE, double> cgs1_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
+CGSolverTestSparseELL<tags::CPU::SSE, double> cgs2_test_double_sparse_ell("double", "A_5.ell", "rhs_5", "sol_5", "init_5", "A_5_spai.ell");
+CGSolverTestSparseELL<tags::CPU::SSE, double> cgs3_test_double_sparse_ell("double", "A_6.ell", "rhs_6", "sol_6", "init_6", "A_6_spai.ell");
+CGSolverTestSparseELL<tags::CPU::SSE, double> cgs4_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
+CGSolverTestSparseELL<tags::CPU::SSE, double> cgs5_test_double_sparse_ell("double", "A_8.ell", "rhs_8", "sol_8", "init_8", "A_8_spai.ell");
+CGSolverTestSparseELL<tags::CPU::SSE, double> cgs6_test_double_sparse_ell("double", "A_9.ell", "rhs_9", "sol_9", "init_9", "A_9_spai.ell");
 #else
 CGSolverTestSparseELL<tags::CPU, double> cgs_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
 #endif
