@@ -51,7 +51,7 @@ class IRSolverTest:
             OperatorList ol(
                     MGCycleCreation<InnerTag_,
                     methods::CYCLE::V::STATIC,
-                    CG<InnerTag_, methods::VAR>,
+                    CGSolver<InnerTag_, methods::VAR>,
                     RISmoother<InnerTag_>,
                     Restriction<InnerTag_, methods::PROLMAT>,
                     Prolongation<InnerTag_, methods::PROLMAT>,

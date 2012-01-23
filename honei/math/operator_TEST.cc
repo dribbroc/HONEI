@@ -84,11 +84,11 @@ class OperatorTest:
             DenseVector<double> x2(x1.copy());
 
             unsigned long used_iters(0);
-            cgop = new SolverOperator<CG<Tag_, methods::NONE>, SparseMatrixELL<double>, DenseVector<double>, DenseVector<double>, double >(system, b, b, x1, 1000ul, used_iters, double(1e-8));
+            cgop = new SolverOperator<CGSolver<Tag_, methods::NONE>, SparseMatrixELL<double>, DenseVector<double>, DenseVector<double>, double >(system, b, b, x1, 1000ul, used_iters, double(1e-8));
             cgop->value();
 
             unsigned long used_iters2(0);
-            CG<Tag_, methods::NONE>::value(system, b, b, x2, 1000ul, used_iters2, double(1e-8));
+            CGSolver<Tag_, methods::NONE>::value(system, b, b, x2, 1000ul, used_iters2, double(1e-8));
 
             TEST_CHECK_EQUAL(used_iters, used_iters2);
             for(unsigned long i(0) ; i < x1.size() ; ++i)

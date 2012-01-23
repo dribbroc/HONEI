@@ -100,7 +100,7 @@ class CGSolverTestSparseELL:
             unsigned long used_iters(4711);
             TimeStamp at, bt;
             at.take();
-            BiCGStab<Tag_, methods::VAR>::value(matrix2, diag_inverted, rhs, result, 1000ul, used_iters, 1e-8);
+            BiCGStabSolver<Tag_, methods::VAR>::value(matrix2, diag_inverted, rhs, result, 1000ul, used_iters, 1e-8);
             bt.take();
             if (mpi::mpi_comm_rank() == 0)
             {

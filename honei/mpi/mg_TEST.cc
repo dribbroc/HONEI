@@ -70,7 +70,7 @@ class MGSolverTest:
             OperatorList ol_mpi(
                     MGCycleCreation<Tag_,
                     methods::CYCLE::V::STATIC,
-                    BiCGStab<Tag_, methods::VAR>,
+                    BiCGStabSolver<Tag_, methods::VAR>,
                     //SuperLU,
                     RISmoother<Tag_>,
                     Restriction<Tag_, methods::PROLMAT>,

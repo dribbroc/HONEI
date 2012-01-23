@@ -123,7 +123,7 @@ class MGBench:
             OperatorList ol(
                     MGCycleCreation<Tag_,
                     CycleType_,
-                    BiCGStab<Tag_, methods::VAR>,
+                    BiCGStabSolver<Tag_, methods::VAR>,
                     RISmoother<Tag_>,
                     Restriction<Tag_, methods::PROLMAT>,
                     Prolongation<Tag_, methods::PROLMAT>,

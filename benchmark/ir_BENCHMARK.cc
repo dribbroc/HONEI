@@ -166,7 +166,7 @@ class IRBench:
             OperatorList ol(
                     MGCycleCreation<InnerTag_,
                     CycleType_,
-                    CG<InnerTag_, methods::VAR>,
+                    CGSolver<InnerTag_, methods::VAR>,
                     RISmoother<InnerTag_>,
                     Restriction<InnerTag_, methods::PROLMAT>,
                     Prolongation<InnerTag_, methods::PROLMAT>,

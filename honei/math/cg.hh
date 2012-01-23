@@ -49,7 +49,7 @@ namespace honei
      * \ingroup grpvectoroperations
      */
     template <typename Tag_, typename PreconType_>
-    struct CG
+    struct CGSolver
     {
     };
 
@@ -60,7 +60,7 @@ namespace honei
      * \ingroup grpvectoroperations
      */
     template <typename Tag_>
-    struct CG<Tag_, methods::NONE>
+    struct CGSolver<Tag_, methods::NONE>
     {
         public:
             template<typename DT_, typename MatrixType_, typename VectorType_, typename PreconContType_>
@@ -138,7 +138,7 @@ namespace honei
      * \ingroup grpvectoroperations
      */
     template <typename Tag_>
-    struct CG<Tag_, methods::VAR>
+    struct CGSolver<Tag_, methods::VAR>
     {
         public:
             template<typename DT_, typename PreconContType_, typename MatrixType_, typename VectorType_>

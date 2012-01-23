@@ -70,7 +70,7 @@ class MGCycleCreationTest:
             OperatorList ol(
             MGCycleCreation<Tag_,
                               methods::CYCLE::V::STATIC,
-                              CG<Tag_, methods::NONE>,
+                              CGSolver<Tag_, methods::NONE>,
                               RISmoother<Tag_>,
                               Restriction<Tag_, methods::PROLMAT>,
                               Prolongation<Tag_, methods::PROLMAT>,
@@ -133,7 +133,7 @@ class Q1MGCycleCreationTest:
             OperatorList ol(
             MGCycleCreation<Tag_,
                               methods::CYCLE::V::STATIC,
-                              CG<Tag_, methods::NONE>,
+                              CGSolver<Tag_, methods::NONE>,
                               RISmoother<Tag_>,
                               Restriction<Tag_, methods::PROLMAT>,
                               Prolongation<Tag_, methods::PROLMAT>,
@@ -246,7 +246,7 @@ class MGSolverTest:
             OperatorList ol(
                     MGCycleCreation<Tag_,
                     methods::CYCLE::V::STATIC,
-                    BiCGStab<Tag_, methods::VAR>,
+                    BiCGStabSolver<Tag_, methods::VAR>,
                     //SuperLU,
                     RISmoother<Tag_>,
                     Restriction<Tag_, methods::PROLMAT>,
@@ -404,7 +404,7 @@ class MGSolverTestQuad:
             OperatorList ol(
                     MGCycleCreation<Tag_,
                     methods::CYCLE::W::STATIC,
-                    CG<Tag_, methods::NONE>,
+                    CGSolver<Tag_, methods::NONE>,
                     RISmoother<Tag_>,
                     Restriction<Tag_, methods::PROLMAT>,
                     Prolongation<Tag_, methods::PROLMAT>,

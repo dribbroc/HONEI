@@ -46,7 +46,7 @@ namespace honei
      * \ingroup grpvectoroperations
      */
     template <typename Tag_, typename PreconType_>
-    struct BiCGStab
+    struct BiCGStabSolver
     {
     };
 
@@ -57,7 +57,7 @@ namespace honei
      * \ingroup grpvectoroperations
      */
     template <typename Tag_>
-    struct BiCGStab<Tag_, methods::VAR>
+    struct BiCGStabSolver<Tag_, methods::VAR>
     {
         public:
             template<typename DT_, typename MatrixType_, typename VectorType_, typename PreconContType_>
