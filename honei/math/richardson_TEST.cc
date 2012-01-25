@@ -304,7 +304,7 @@ class RichardsonPolyTEST :
             SparseMatrixELL<DT1_> A(MatrixIO<io_formats::ELL>::read_matrix(file, DT1_(0)));
             SparseMatrix<DT1_> As(A);
 
-            SparseMatrix<DT1_> precon(Poly::value(As,3));
+            SparseMatrix<DT1_> precon(Poly::value(As,2));
             SparseMatrixELL<DT1_> C(precon);
 
             std::string rhs_file(dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
@@ -329,6 +329,7 @@ class RichardsonPolyTEST :
             std::cout << "#Iterations: " << info.iters << std::endl;
             for(unsigned long i(0) ; i < sol.size() ; ++i)
                 TEST_CHECK_EQUAL_WITHIN_EPS((*data.result)[i], sol[i], std::numeric_limits<DT1_>::epsilon() * 1e12);
+
         }
 };
 //RichardsonPolyTEST<tags::CPU, double> rt_poly_cpu("double");

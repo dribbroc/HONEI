@@ -17,8 +17,6 @@ namespace honei
         template<typename DT_>
         static inline SparseMatrix<DT_> value(SparseMatrix<DT_>& A, unsigned long m, DT_ damp = DT_(1))
         {
-            SparseMatrix<DT_> A_damped(A.copy());
-            Scale<tags::CPU>::value(A_damped, damp);
             //construct identity matrix
             SparseMatrix<DT_> I(A.rows(), A.columns());
             //construct D for diagonally scaled A
@@ -28,28 +26,33 @@ namespace honei
 
             for(unsigned long i(0) ; i < A.rows() ; ++i)
             {
-                result(i, i, DT_(1));
                 I(i, i, DT_(1));
-                D(i, i, DT_(1) / A(i, i));
+                D(i, i, A(i, i) > std::numeric_limits<DT_>::epsilon() ? DT_(1) / A(i, i) : DT_(1) / std::numeric_limits<DT_>::epsilon());
             }
-            SparseMatrix<DT_> DA(Product<tags::CPU>::value(D, A_damped));
+            SparseMatrix<DT_> DA(Product<tags::CPU>::value(D, A));
 
-            SparseMatrix<DT_> I_minus_A(A.rows(), A.columns());
-            Difference<tags::CPU>::value(I_minus_A, I, DA);
+            SparseMatrix<DT_> I_minus_DA(A.rows(), A.columns());
+            Difference<tags::CPU>::value(I_minus_DA, I, DA);
 
-            //perform
+            //perform:
+
+            SparseMatrix<DT_> temp(A.rows(), A.columns());
+            //i := 0 => (I-DA)^0 = I
+            temp = I.copy();
+            result = temp.copy();
+
+            //i > 0
             for(unsigned long k(1) ; k < m ; ++k)
             {
-
-                SparseMatrix<DT_> temp(result.copy());
                 if (k == 1)
-                    temp = I_minus_A.copy();
-                temp = Product<tags::CPU>::value(temp, I_minus_A);
+                    temp = I_minus_DA.copy();
+                else
+                    temp = Product<tags::CPU>::value(temp.copy(), I_minus_DA);
 
                 Sum<tags::CPU>::value(result, temp);
             }
-            Sum<tags::CPU>::value(result, I);
-            result = Product<tags::CPU>::value(result, D);
+            //multiply with D
+            result = Product<tags::CPU>::value(result.copy(), D);
             return result;
         }
     };
