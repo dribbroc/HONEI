@@ -28,8 +28,6 @@
 #include <stdint.h>
 #include <unistd.h>
 
-#include <iostream>
-
 namespace honei
 {
     namespace mc
@@ -117,17 +115,9 @@ namespace honei
             {
                 cpuid(CPUInfo, 0xB);
 
-                if ((CPUInfo[0] & 0x1F) != 1 || CPUInfo[0] == 0 || CPUInfo[1] == 0 || (CPUInfo[2] & 0xFF) != 0)
-                    std::cout << "ERROR!" << std::endl;
-
                 int ecx = CPUInfo[2];
                 ecx &= 0xFFFF;
                 ecx >>= 8;
-
-                if (ecx == 0)
-                    std::cout << "ERROR! INVALID LEVEL!" << std::endl;
-
-                std::cout << "EDX = " << CPUInfo[3] << std::endl;
 
                 int result = CPUInfo[3];
 
@@ -214,19 +204,9 @@ namespace honei
                 {
                     smt_mask_width = CPUInfo[0] & 0x1F; // EAX[4:0]
 
-                    if (smt_mask_width != 1)
-                        std::cout << "ERROR WHILE RETRIEVING SMT_ID" << std::endl;
-
                     smt_select_mask = ~((-1) << smt_mask_width);
-                    std::cout << "select mask: " << smt_select_mask << std::endl;
-
 
                     unit->topo_id[0] = unit->apic_id & smt_select_mask;
-                    std::cout << "apic id is : " << unit->apic_id << "  -  got SMT id " << unit->topo_id[0] << std::endl;
-                }
-                else
-                {
-                    std::cout << "ERROR WHILE RETRIEVING SMT_ID" << std::endl;
                 }
 
                 cpuid(CPUInfo, 0xB, 1);
@@ -238,10 +218,8 @@ namespace honei
                 if (ecx_15_8 == 2 && smt_mask_width >= 0) // ECX[15:8] must be 2
                 {
                     core_mask_width = CPUInfo[0] & 0x1F; // EAX[4:0]
-                    std::cout << "core mask width: " << core_mask_width << std::endl;
                     int core_only_select_mask = (~((-1) << core_mask_width)) ^ smt_select_mask;
                     unit->topo_id[1] = (unit->apic_id & core_only_select_mask) >> smt_mask_width;
-                    std::cout << "apic id is : " << unit->apic_id << "  -  got core id " << unit->topo_id[1] << std::endl;
                 }
 
                 int package_select_mask = ((-1) << core_mask_width);

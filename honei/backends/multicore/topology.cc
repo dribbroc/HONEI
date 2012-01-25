@@ -54,9 +54,6 @@ void TopologyThreadFunction<x86_intel>::operator() ()
     if(sched_setaffinity(syscall(__NR_gettid), sizeof(cpu_set_t), &_affinity_mask) != 0)
         throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 
-    int CPUInfo[4];
-    cpuid(CPUInfo, 0x0);
-
     x86_unit * unit = retrieve_topology<x86_intel>(lpu->sched_id);
     apic_id = unit->apic_id;
     lpu->smt_id = unit->topo_id[0];
@@ -145,13 +142,11 @@ void Topology::enumerate_x86_intel()
         }
     }
 
-    std::cout << "Found " << num_sockets << " sockets." << std::endl;
     _num_cpus = num_sockets;
 
     for (unsigned i(0) ; i < _num_lpus ; ++i)
     {
         _lpus[i]->socket_id = new_socket_id[_lpus[i]->socket_id];
-        std::cout << "LPU " << i << " is on socket " << _lpus[i]->socket_id << std::endl;
     }
 
     _sockets = new Socket * [num_sockets];
@@ -162,7 +157,6 @@ void Topology::enumerate_x86_intel()
     {
         if (socket_lpu_count[i] > 0)
         {
-            std::cout << "Socket " << i << " has " << socket_lpu_count[i] << " lpus" << std::endl;
             _sockets[new_socket_id[i]] = new Socket(socket_lpu_count[i]);
             socket_lpus_assigned[new_socket_id[i]] = 0;
         }
@@ -172,7 +166,6 @@ void Topology::enumerate_x86_intel()
     {
         int socket = _lpus[i]->socket_id;
         _sockets[socket]->_lpus[socket_lpus_assigned[socket]] = _lpus[i];
-        std::cout << "Assigning LPU " << i << " to socket " << socket << std::endl;
         ++socket_lpus_assigned[socket];
     }
 
@@ -189,7 +182,6 @@ void Topology::enumerate_x86_intel()
         {
             LPU * lpu = _sockets[s]->_lpus[l];
             ++socket_cores[lpu->core_id];
-            std::cout << "Socket " << s << " has core " << lpu->core_id << std::endl;
         }
 
         int num(0);
@@ -203,24 +195,28 @@ void Topology::enumerate_x86_intel()
         _sockets[s]->_num_cores = num;
 
         _num_cores += num;
-
     }
 
-    for (int s(0) ; s < num_sockets ; ++s)
+    LPU * last = _sockets[0]->_lpus[0], * lpu(0);
+
+    for (int l(1) ; l < _sockets[0]->_num_lpus ; ++l)
     {
-        Socket * so = _sockets[s];
+       lpu = _sockets[0]->_lpus[l];
+       last->linear_succ = lpu;
+       last = lpu;
+    }
 
-        LPU * last = so->_lpus[0], * lpu(0);
-
-        for (int l(1) ; l < _sockets[s]->_num_lpus ; ++l)
+    for (int s(1) ; s < num_sockets ; ++s)
+    {
+        for (int l(0) ; l < _sockets[s]->_num_lpus ; ++l)
         {
             lpu = _sockets[s]->_lpus[l];
             last->linear_succ = lpu;
             last = lpu;
         }
-
-        lpu->linear_succ = so->_lpus[0];
     }
+
+    lpu->linear_succ = _sockets[0]->_lpus[0];
 
     LPU * l = _sockets[0]->_lpus[0];
     LPU * m = l;
@@ -249,27 +245,13 @@ void Topology::enumerate_x86_intel()
             else
             {
                 l->alternating_succ = _sockets[0]->_lpus[0];
-                std::cout << "set alternating succ of " << l->sched_id << " to 0" << std::endl;
                 break;
             }
         }
 
-        std::cout << "set alternating succ of " << l->sched_id << " to " << m->sched_id << std::endl;
-
         l = m;
     }
 
-    for (unsigned i(0) ; i < _num_lpus ; ++i)
-    {
-        LPU * lpu = _lpus[i];
-        std::cout << "Linear succ of " << lpu->sched_id << ": " << lpu->linear_succ->sched_id << std::endl;
-    }
-
-    for (unsigned i(0) ; i < _num_lpus ; ++i)
-    {
-        LPU * lpu = _lpus[i];
-        std::cout << "Alternating succ of " << lpu->sched_id << ": " << lpu->alternating_succ->sched_id << std::endl;
-    }
 
     int CPUInfo[4];
     cpuid(CPUInfo, 0x1);
@@ -284,12 +266,22 @@ void Topology::enumerate_x86_intel()
     else
         _ht_factor = _num_lpus / _num_cores;
 
-    if (_ht_factor > 1 && _ht_support == false)
-        std::cout << "ERROR IN SMT DETECTION!!!" << std::endl;
-
 #ifdef DEBUG
-    std::string msg = "Found INTEL processor(s) with " + stringify(_num_cores) + " cores and HTT " +
-    (_ht_support == 1 ? "supported" : "not supported") + " and " + (_ht_factor > 1 ? "enabled" : "disabled") + "\n";
+    std::string msg = "Found INTEL processor(s) with " + stringify(num_sockets) + " sockets, "
+        + stringify(_num_cores) + " cores and HTT " + (_ht_support == 1 ? "supported" : "not supported")
+        + " and " + (_ht_factor > 1 ? "enabled" : "disabled") + "\n";
+
+    for (unsigned i(0) ; i < _num_lpus ; ++i)
+    {
+        LPU * lpu = _lpus[i];
+        msg += "LPU " + stringify(lpu->sched_id) + "on socket " + stringify(lpu->socket_id) + "\n";
+        msg += "Linear succ of " + stringify(lpu->sched_id) + ": " + stringify(lpu->linear_succ->sched_id) + "\n";
+        msg += "Alternating succ of " + stringify(lpu->sched_id) + ": " + stringify(lpu->alternating_succ->sched_id) + "\n";
+    }
+
+    if (_ht_factor > 1 && _ht_support == false)
+        msg += "Attention: Error in SMT detection!\n";
+
     LOGMESSAGE(lc_backend, msg);
 #endif
 }
@@ -364,9 +356,19 @@ void Topology::enumerate_x86_amd()
     }
 
 #ifdef DEBUG
-        std::string msg = "Found AMD processor(s) with " + stringify(_num_lpus) + " LPUs and HTT " +
-        (_ht_factor > 1 ? "available" : "not available") + "\n";
-        msg += "Attention: currently no working HTT detection for AMD - always assuming #cores = #LPUs\n";
+        std::string msg = "Found AMD processor(s) with " + stringify(_num_cpus) + " sockets, "
+            + stringify(_num_lpus) + " LPUs and HTT " + (_ht_factor > 1 ? "available" : "not available") + "\n";
+
+        msg += "Attention: currently no working SMT detection for AMD - always assuming #cores = #LPUs\n";
+
+        for (unsigned i(0) ; i < _num_lpus ; ++i)
+        {
+            LPU * lpu = _lpus[i];
+            msg += "LPU " + stringify(lpu->sched_id) + "on socket " + stringify(lpu->socket_id) + "\n";
+            msg += "Linear succ of " + stringify(lpu->sched_id) + ": " + stringify(lpu->linear_succ->sched_id) + "\n";
+            msg += "Alternating succ of " + stringify(lpu->sched_id) + ": " + stringify(lpu->alternating_succ->sched_id) + "\n";
+        }
+
         LOGMESSAGE(lc_backend, msg);
 #endif
 
@@ -421,14 +423,12 @@ void Topology::enumerate_numainfo(int _num_nodes)
         for (unsigned i(0) ; i < _num_lpus ; ++i)
         {
             ++socket_lpu_count[lpu_to_node[i]];
-            std::cout << "LPU " << i << " is on node " << lpu_to_node[i] << std::endl;
         }
 
         int socket_lpus_assigned[_num_cpus];
 
         for (unsigned i(0) ; i < _num_cpus ; ++i)
         {
-            std::cout << "Socket " << i << " has " << socket_lpu_count[i] << " lpus" << std::endl;
             _sockets[i] = new Socket(socket_lpu_count[i]);
             socket_lpus_assigned[i] = 0;
         }
@@ -438,25 +438,29 @@ void Topology::enumerate_numainfo(int _num_nodes)
             int socket = lpu_to_node[i];
             _sockets[socket]->_lpus[socket_lpus_assigned[socket]] = _lpus[i];
             _lpus[i]->socket_id = socket;
-            std::cout << "Assigning LPU " << i << " to socket " << socket << std::endl;
             ++socket_lpus_assigned[socket];
         }
 
-        for (unsigned s(0) ; s < _num_cpus ; ++s)
+        LPU * last = _sockets[0]->_lpus[0], * lpu(0);
+
+        for (int l(1) ; l < _sockets[0]->_num_lpus ; ++l)
         {
-            Socket * so = _sockets[s];
+           lpu = _sockets[0]->_lpus[l];
+           last->linear_succ = lpu;
+           last = lpu;
+        }
 
-            LPU * last = so->_lpus[0], * lpu(0);
-
-            for (int l(1) ; l < _sockets[s]->_num_lpus ; ++l)
+        for (unsigned s(1) ; s < _num_cpus ; ++s)
+        {
+            for (int l(0) ; l < _sockets[s]->_num_lpus ; ++l)
             {
                 lpu = _sockets[s]->_lpus[l];
                 last->linear_succ = lpu;
                 last = lpu;
             }
-
-            lpu->linear_succ = so->_lpus[0];
         }
+
+        lpu->linear_succ = _sockets[0]->_lpus[0];
 
         LPU * l = _sockets[0]->_lpus[0];
         LPU * m = l;
@@ -485,12 +489,9 @@ void Topology::enumerate_numainfo(int _num_nodes)
                 else
                 {
                     l->alternating_succ = _sockets[0]->_lpus[0];
-                    std::cout << "set alternating succ of " << l->sched_id << " to 0" << std::endl;
                     break;
                 }
             }
-
-            std::cout << "set alternating succ of " << l->sched_id << " to " << m->sched_id << std::endl;
 
             l = m;
         }
