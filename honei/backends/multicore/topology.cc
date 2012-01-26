@@ -274,7 +274,7 @@ void Topology::enumerate_x86_intel()
     for (unsigned i(0) ; i < _num_lpus ; ++i)
     {
         LPU * lpu = _lpus[i];
-        msg += "LPU " + stringify(lpu->sched_id) + "on socket " + stringify(lpu->socket_id) + "\n";
+        msg += "LPU " + stringify(lpu->sched_id) + " on socket " + stringify(lpu->socket_id) + "\n";
         msg += "Linear succ of " + stringify(lpu->sched_id) + ": " + stringify(lpu->linear_succ->sched_id) + "\n";
         msg += "Alternating succ of " + stringify(lpu->sched_id) + ": " + stringify(lpu->alternating_succ->sched_id) + "\n";
     }
@@ -364,7 +364,7 @@ void Topology::enumerate_x86_amd()
         for (unsigned i(0) ; i < _num_lpus ; ++i)
         {
             LPU * lpu = _lpus[i];
-            msg += "LPU " + stringify(lpu->sched_id) + "on socket " + stringify(lpu->socket_id) + "\n";
+            msg += "LPU " + stringify(lpu->sched_id) + " on socket " + stringify(lpu->socket_id) + "\n";
             msg += "Linear succ of " + stringify(lpu->sched_id) + ": " + stringify(lpu->linear_succ->sched_id) + "\n";
             msg += "Alternating succ of " + stringify(lpu->sched_id) + ": " + stringify(lpu->alternating_succ->sched_id) + "\n";
         }

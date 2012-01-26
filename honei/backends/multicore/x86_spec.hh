@@ -28,6 +28,8 @@
 #include <stdint.h>
 #include <unistd.h>
 
+#include <iostream>
+
 namespace honei
 {
     namespace mc
@@ -46,7 +48,7 @@ namespace honei
             __asm__ (
                 "push %%ebx\n\t"
                 "cpuid\n\t"
-                "movl %%ebx, %0\n\t"
+                "movl %%ebx, %1\n\t"
                 "pop %%ebx\n\t"
                 : "=a" (eax), "=r" (ebx), "=c" (ecx), "=d" (edx)
                 : "a" (infoType), "c" (ecx_init)
@@ -102,45 +104,6 @@ namespace honei
 
 #if defined(__i386__) || defined(__x86_64__)
 
-        // Retrieve the unique APIC processor id of the currently executing core
-        template <int> int retrieve_apic_id();
-
-        template <> int retrieve_apic_id<x86_intel>()
-        {
-            int CPUInfo[4];
-            cpuid(CPUInfo, 0x0);
-
-            // check if extended topology leaf (0BH) is available
-            if (CPUInfo[0] >= 0xB)
-            {
-                cpuid(CPUInfo, 0xB);
-
-                int ecx = CPUInfo[2];
-                ecx &= 0xFFFF;
-                ecx >>= 8;
-
-                int result = CPUInfo[3];
-
-                return result; // x2APIC id is in EDX
-            }
-            else if (CPUInfo[0] >= 0x1)
-            {
-                cpuid(CPUInfo, 0x1);
-
-                int result = (CPUInfo[1] >> 24); // Read EBX[31:24]
-                return result;
-            }
-            else
-            {
-                return -1;
-            }
-        }
-
-        template <> int retrieve_apic_id<x86_amd>()
-        {
-            return 0;
-        }
-
         // Retrieve the topology for a given unit using leaf OBH
         template <int> x86_unit * retrieve_topology(unsigned sched);
 
@@ -185,11 +148,36 @@ namespace honei
 
             int CPUInfo[4];
             cpuid(CPUInfo, 0x0);
+            int max_leaf = CPUInfo[0];
 
-            // check if extended topology leaf (0BH) is available
-            if (CPUInfo[0] >= 0xB)
+            if (max_leaf >= 0x1)
             {
-                int smt_mask_width(-1), smt_select_mask, core_mask_width(-1);
+                cpuid(CPUInfo, 0x1);
+                unit->apic_id = (CPUInfo[1] >> 24) & 0xFF; // EBX[31:24]
+            }
+            else
+            {
+                unit->apic_id = 0;
+            }
+
+            if (max_leaf < 0x4)
+            {
+                unit->topo_id[0] = 0;
+                unit->topo_id[1] = 0;
+                unit->topo_id[2] = 0;
+
+                return unit;
+            }
+
+            cpuid(CPUInfo, 0x1);
+            unit->apic_id = (CPUInfo[1] >> 24) & 0xFF; // EBX[31:24]
+            int x2a = (CPUInfo[2] >> 21) & 0x1; // x2apic-bit set?
+            bool ok(true);
+
+            // check if extended topology leaf (0BH) and x2apic functionality is available
+            if (max_leaf >= 0xB && x2a)
+            {
+                int smt_mask_width(-1), smt_select_mask(-1), core_mask_width(-1);
 
                 cpuid(CPUInfo, 0xB, 0);
 
@@ -204,40 +192,48 @@ namespace honei
                 {
                     smt_mask_width = CPUInfo[0] & 0x1F; // EAX[4:0]
 
-                    smt_select_mask = ~((-1) << smt_mask_width);
+                    if (smt_mask_width != 1)
+                        ok = false;
+                    else
+                    {
+                        smt_select_mask = ~((-1) << smt_mask_width);
+                        unit->topo_id[0] = unit->apic_id & smt_select_mask;
 
-                    unit->topo_id[0] = unit->apic_id & smt_select_mask;
+                        cpuid(CPUInfo, 0xB, 1);
+
+                        ecx = CPUInfo[2];
+                        ecx_low16 = ecx & 0xFFFF;
+                        ecx_15_8 = ecx_low16 >> 8;
+
+                        if (ecx_15_8 == 2 && smt_mask_width >= 0) // ECX[15:8] must be 2
+                        {
+                            core_mask_width = CPUInfo[0] & 0x1F; // EAX[4:0]
+                            int core_only_select_mask = (~((-1) << core_mask_width)) ^ smt_select_mask;
+                            unit->topo_id[1] = (unit->apic_id & core_only_select_mask) >> smt_mask_width;
+                            int package_select_mask = ((-1) << core_mask_width);
+                            unit->topo_id[2] = (unit->apic_id & package_select_mask) >> core_mask_width;
+                        }
+                        else
+                        {
+                            ok = false;
+                        }
+                    }
                 }
-
-                cpuid(CPUInfo, 0xB, 1);
-
-                ecx = CPUInfo[2];
-                ecx_low16 = ecx & 0xFFFF;
-                ecx_15_8 = ecx_low16 >> 8;
-
-                if (ecx_15_8 == 2 && smt_mask_width >= 0) // ECX[15:8] must be 2
+                else
                 {
-                    core_mask_width = CPUInfo[0] & 0x1F; // EAX[4:0]
-                    int core_only_select_mask = (~((-1) << core_mask_width)) ^ smt_select_mask;
-                    unit->topo_id[1] = (unit->apic_id & core_only_select_mask) >> smt_mask_width;
+                    ok = false;
                 }
-
-                int package_select_mask = ((-1) << core_mask_width);
-                unit->topo_id[2] = (unit->apic_id & package_select_mask) >> core_mask_width;
             }
-            else if (CPUInfo[0] >= 0x1)
+            else
             {
                 // Retrieve the topology for a given unit using legacy method
-                // Attention: Not working correctly for all processors though
-                // implemented in compliance with INTEL manuals.
-
-                unit->apic_id = retrieve_apic_id<x86_intel>();
 
                 cpuid(CPUInfo, 0x1);
+
                 int max_apics = (CPUInfo[1] >> 16) & 0xFF; // EBX[23:16]
 
                 cpuid(CPUInfo, 0x4);
-                int max_cores = (CPUInfo[0] >> 26); // EAX[31:26]
+                int max_cores = (CPUInfo[0] >> 26) & 0x3F; // EAX[31:26]
 
                 int smt_mask_width = log2(next_power_of_two(max_apics) / (1 + max_cores));
                 int smt_select_mask = ~((-1) << smt_mask_width);
@@ -252,10 +248,15 @@ namespace honei
                 unit->topo_id[2] = (unit->apic_id & package_select_mask) >> package_mask_width;
             }
 
+            if (! ok)
+            {
+                unit->topo_id[0] = 0;
+                unit->topo_id[1] = 0;
+                unit->topo_id[2] = 0;
+            }
+
             return unit;
         }
-
-
 #endif
     }
 }
