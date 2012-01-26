@@ -116,7 +116,7 @@ void Topology::enumerate_x86_intel()
 
     int socket_lpu_count[_num_lpus];
     // renaming possibly necessary since socket-ids may not be continuous
-    int new_socket_id[_num_lpus]; 
+    int new_socket_id[_num_lpus];
 
     for (unsigned i(0) ; i < _num_lpus ; ++i)
     {
@@ -197,8 +197,7 @@ void Topology::enumerate_x86_intel()
         _num_cores += num;
     }
 
-    LPU * last = _sockets[0]->_lpus[0], * lpu(0);
-
+    LPU * last = _sockets[0]->_lpus[0], * lpu = _sockets[0]->_lpus[0];
     for (int l(1) ; l < _sockets[0]->_num_lpus ; ++l)
     {
        lpu = _sockets[0]->_lpus[l];

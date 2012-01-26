@@ -88,7 +88,7 @@ class ThreadPoolTest :
             for (unsigned i(750) ; i < 1000 ; ++i)
             {
                 Ticket<tags::CPU::MultiCore> ticket = ThreadPool::instance()->enqueue(t,
-                        DispatchPolicy::on_core(i % (sysconf(_SC_NPROCESSORS_CONF) - 1)));
+                        DispatchPolicy::on_core(i % (sysconf(_SC_NPROCESSORS_CONF))));
 
                 last250.push_back(ticket);
                 tickets.push_back(ticket);

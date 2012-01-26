@@ -28,8 +28,6 @@
 #include <stdint.h>
 #include <unistd.h>
 
-#include <iostream>
-
 namespace honei
 {
     namespace mc
