@@ -331,4 +331,4 @@ class RichardsonPolyTEST :
                 TEST_CHECK_EQUAL_WITHIN_EPS((*data.result)[i], sol[i], std::numeric_limits<DT1_>::epsilon() * 1e12);
         }
 };
-RichardsonPolyTEST<tags::CPU, double> rt_poly_cpu("double");
+//RichardsonPolyTEST<tags::CPU, double> rt_poly_cpu("double");
