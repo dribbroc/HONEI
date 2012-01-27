@@ -296,53 +296,6 @@ class MGSolverTest:
             //print_cycle(ol, max_level, min_level);
         }
 };
-MGSolverTest<tags::CPU, double> mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
-//MGSolverTest<tags::CPU::MultiCore, double> mc_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
-MGSolverTest<tags::CPU::Generic, double> generic_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
-MGSolverTest<tags::CPU::MultiCore::Generic, double> mc_generic_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
-#ifdef HONEI_GMP
-MGSolverTest<tags::CPU::Generic, mpf_class> generic_mg_solver_test_cpu_mpf_class("mpf_class", "poisson_advanced/sort_0/");
-MGSolverTest<tags::CPU::MultiCore::Generic, mpf_class> mc_generic_mg_solver_test_cpu_mpf_class("mpf_class", "poisson_advanced/sort_0/");
-#endif
-#ifdef HONEI_SSE
-MGSolverTest<tags::CPU::SSE, double> sse_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
-MGSolverTest<tags::CPU::MultiCore::SSE, double> mcsse_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
-#endif
-#ifdef HONEI_CUDA
-#ifdef HONEI_CUDA_DOUBLE
-MGSolverTest<tags::GPU::CUDA, double> mg_solver_test_gpu("double", "poisson_advanced/sort_0/");
-#endif
-#endif
-#ifdef HONEI_OPENCL
-MGSolverTest<tags::OpenCL::CPU, double> ocl_cpu_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
-#ifdef HONEI_CUDA_DOUBLE
-MGSolverTest<tags::OpenCL::GPU, double> ocl_gpu_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
-#endif
-#endif
-
-MGSolverTest<tags::CPU, double> mg_solver_test_cpu_2("double", "poisson_advanced2/sort_0/");
-MGSolverTest<tags::CPU::Generic, double> generic_mg_solver_test_cpu_2("double", "poisson_advanced2/sort_0/");
-MGSolverTest<tags::CPU::MultiCore::Generic, double> mc_generic_mg_solver_test_cpu_2("double", "poisson_advanced2/sort_0/");
-#ifdef HONEI_GMP
-MGSolverTest<tags::CPU::Generic, mpf_class> generic_mg_solver_test_cpu_2_mpf_class("mpf_class", "poisson_advanced2/sort_0/");
-MGSolverTest<tags::CPU::MultiCore::Generic, mpf_class> mc_generic_mg_solver_test_cpu_2_mpf_class("mpf_class", "poisson_advanced2/sort_0/");
-#endif
-#ifdef HONEI_SSE
-MGSolverTest<tags::CPU::SSE, double> sse_mg_solver_test_cpu_2("double", "poisson_advanced2/sort_0/");
-MGSolverTest<tags::CPU::MultiCore::SSE, double> mcsse_mg_solver_test_cpu_2("double", "poisson_advanced2/sort_0/");
-#endif
-#ifdef HONEI_CUDA
-#ifdef HONEI_CUDA_DOUBLE
-MGSolverTest<tags::GPU::CUDA, double> mg_solver_test_gpu_2("double", "poisson_advanced2/sort_0/");
-#endif
-#endif
-#ifdef HONEI_OPENCL
-MGSolverTest<tags::OpenCL::CPU, double> ocl_cpu_mg_solver_test_cpu_2("double", "poisson_advanced2/sort_0/");
-#ifdef HONEI_CUDA_DOUBLE
-MGSolverTest<tags::OpenCL::GPU, double> ocl_gpu_mg_solver_test_cpu_2("double", "poisson_advanced2/sort_0/");
-#endif
-#endif
-
 MGSolverTest<tags::CPU, double> mg_solver_test_cpu_4("double", "poisson_advanced4/sort_0/");
 MGSolverTest<tags::CPU::Generic, double> generic_mg_solver_test_cpu_4("double", "poisson_advanced4/sort_0/");
 MGSolverTest<tags::CPU::MultiCore::Generic, double> mc_generic_mg_solver_test_cpu_4("double", "poisson_advanced4/sort_0/");
