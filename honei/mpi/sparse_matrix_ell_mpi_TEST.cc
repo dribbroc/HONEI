@@ -62,7 +62,7 @@ class SparseMatrixELLMPIQuickTest :
             SparseMatrixELLMPI<DT_> sm2(sm1.copy());
 
 
-            for (unsigned long i(0) ; i < sm2.rows() ; ++i)
+            for (unsigned long i(0) ; i < sm2.local_rows() ; ++i)
                 for (unsigned long j(0) ; j < sm2.columns() ; ++j)
                 {
                     TEST_CHECK_EQUAL(sm0(i, j), aell(i + sm2.offset(), j));
