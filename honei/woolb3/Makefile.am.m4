@@ -88,6 +88,8 @@ BACKEND_LIBS += \
 
 endif
 
+SUBDIRS = malpasset
+
 AM_CXXFLAGS = -I$(top_srcdir)
 
 CLEANFILES = *~

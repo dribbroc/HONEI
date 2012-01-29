@@ -155,7 +155,9 @@ int main(int argc, char ** argv)
     MPI_Init(&argc, &argv);
 #endif
     //Driver<tags::GPU::CUDA, double> a("poisson_advanced2/sort_2/");
+#ifdef HONEI_SSE
     Driver<tags::CPU::MultiCore::SSE, double> a("poisson_advanced2/sort_2/");
+#endif
 #ifdef HONEI_MPI
     MPI_Finalize();
 #endif

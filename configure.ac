@@ -596,6 +596,7 @@ AC_OUTPUT(
 	honei/mpi/Makefile
 	honei/lbm/Makefile
 	honei/woolb3/Makefile
+	honei/woolb3/malpasset/Makefile
 	honei/math/Makefile
 	honei/math/testdata/Makefile
 	honei/math/SuperLU_4.1/Makefile
