@@ -332,15 +332,15 @@ namespace honei
                              PreconContType_ & P,
                              VectorType_ & b,
                              VectorType_ & x,
-                             VectorType_ & temp_0,
-                             VectorType_ & temp_1,
+                             //VectorType_ & temp_0,
+                             //VectorType_ & temp_1,
+                             std::vector<VectorType_> & temp_vecs,
                              unsigned long max_iters) :
                 _A(A),
                 _P(P),
                 _b(b),
                 _x(x),
-                _temp_0(temp_0),
-                _temp_1(temp_1),
+                _temp_vecs(temp_vecs),
                 _max_iters(max_iters)
             {
                 CONTEXT("When creating SmootherOperator:");
@@ -351,7 +351,7 @@ namespace honei
                 CONTEXT("When evaluating SmootherOperator:");
                 //std::cout << "x before" << _x;
                 //std::cout << "rhs" << _b;
-                SmootherType_::value(_A, _P, _b, _x, _temp_0, _temp_1, _max_iters);
+                SmootherType_::value(_A, _P, _b, _x, _temp_vecs, _max_iters);
                 //std::cout << "x after" << _x;
             }
 
@@ -365,8 +365,7 @@ namespace honei
             PreconContType_ _P;
             VectorType_ _b;
             VectorType_ _x;
-            VectorType_ _temp_0;
-            VectorType_ _temp_1;
+            std::vector<VectorType_> _temp_vecs;
             unsigned long _max_iters;
     };
 
