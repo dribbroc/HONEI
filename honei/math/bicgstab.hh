@@ -62,9 +62,9 @@ namespace honei
     {
         public:
             template<typename VT_>
-            static std::vector<VT_> & vectorpool(unsigned long size)
+            static void vectorpool(unsigned long size, std::vector<VT_> & result)
             {
-                return honei::create_vectorpool<VT_>(10, size);
+                result = honei::create_vectorpool<VT_>(10, size);
             }
 
             template<typename DT_, typename MatrixType_, typename VectorType_, typename PreconContType_>
@@ -223,9 +223,9 @@ namespace honei
     {
         public:
             template<typename VT_>
-            static std::vector<VT_> & vectorpool(unsigned long size)
+            static void vectorpool(unsigned long size, std::vector<VT_> & result)
             {
-                return honei::create_vectorpool<VT_>(10, size);
+                result = honei::create_vectorpool<VT_>(10, size);
             }
 
             template<typename MatrixType_, typename VectorType_, typename PreconContType_>
@@ -233,9 +233,9 @@ namespace honei
                                               PreconContType_ & P,
                                               VectorType_ & b,
                                               VectorType_ & x,
-                                              VectorType_ & temp_0,
-                                              VectorType_ & temp_1,
-                                              //std::vector<VectorType_> & temp_vecs,
+                                              //VectorType_ & temp_0,
+                                              //VectorType_ & temp_1,
+                                              std::vector<VectorType_> & temp_vecs,
                                               unsigned long max_iters)
             {
                 CONTEXT("When solving linear system with BiCGStab :");
@@ -248,7 +248,7 @@ namespace honei
                 double nrm_r_tilde_0, nrm_tilde_00;
                 bool restarted = false;
 
-                VectorType_ r(b.size());
+                /*VectorType_ r(b.size());
                 VectorType_ r_tilde(b.size());
                 VectorType_ r_tilde_0(b.size());
                 VectorType_ p_tilde(b.size());
@@ -257,8 +257,8 @@ namespace honei
                 VectorType_ s(b.size());
                 VectorType_ s_tilde(b.size());
                 VectorType_ t(b.size());
-                VectorType_ t_tilde(b.size());
-                /*
+                VectorType_ t_tilde(b.size());*/
+
                 VectorType_ r(temp_vecs[0]);
                 VectorType_ r_tilde(temp_vecs[1]);
                 VectorType_ r_tilde_0(temp_vecs[2]);
@@ -269,7 +269,7 @@ namespace honei
                 VectorType_ s_tilde(temp_vecs[7]);
                 VectorType_ t(temp_vecs[8]);
                 VectorType_ t_tilde(temp_vecs[9]);
-                */
+
                 ///TODO optimise -> kill convergence control
                 do
                 {

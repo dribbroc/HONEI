@@ -152,7 +152,8 @@ class IRBench:
                     PreconContType_,
                     io_formats::ELL,
                     io_formats::EXP,
-                    DTInner_>::load_data(file, _levels, _damping, _precon));
+                    DTInner_,
+                    RISmoother<InnerTag_> >::load_data(file, _levels, _damping, _precon));
 
             MGUtil<InnerTag_,
                 SparseMatrixELL<DTInner_>,
@@ -161,7 +162,8 @@ class IRBench:
                 PreconContType_,
                 io_formats::ELL,
                 io_formats::EXP,
-                DTInner_>::configure(data, _max_iters_inner_mg, 1, 4, 4, 1, DTInner_(1e-8));
+                DTInner_,
+                RISmoother<InnerTag_> >::configure(data, _max_iters_inner_mg, 1, 4, 4, 1, DTInner_(1e-8));
 
             OperatorList ol(
                     MGCycleCreation<InnerTag_,

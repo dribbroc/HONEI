@@ -22,6 +22,7 @@
 #define MATH_GUARD_RI_HH 1
 
 #include <honei/la/product.hh>
+#include <honei/math/vectorpool.hh>
 #include <honei/math/defect.hh>
 #include <honei/la/norm.hh>
 #include <honei/la/sum.hh>
@@ -96,6 +97,12 @@ namespace honei
     struct RISmoother
     {
         public:
+            template<typename VT_>
+            static void vectorpool(unsigned long size, std::vector<VT_> & result)
+            {
+                result = honei::create_vectorpool<VT_>(2, size);
+            }
+
             /**
             * \brief Returns smoothed vector stemming from linear system with the preconditioned and damped Richardson iterative method.
             *
@@ -107,12 +114,16 @@ namespace honei
                               PreconContType_ & P,
                               VectorType_ & b,
                               VectorType_ & x,
-                              VectorType_ & temp_0,
-                              VectorType_ & temp_1,
+                              //VectorType_ & temp_0,
+                              //VectorType_ & temp_1,
+                              std::vector<VectorType_> & temp_vecs,
                               unsigned long max_iters)
             {
                 CONTEXT("When smoothing with Richardson: ");
                 PROFILER_START("RISmoother");
+
+                VectorType_  temp_0(temp_vecs[0]);
+                VectorType_  temp_1(temp_vecs[1]);
 
                 for(unsigned long i(0) ; i < max_iters ; ++i)
                 {

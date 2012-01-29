@@ -116,7 +116,8 @@ class MGBench:
                     PreconContType_,
                     io_formats::ELL,
                     io_formats::EXP,
-                    double>::load_data(file, _levels, _damping, _precon));
+                    double,
+                    BiCGStabSmoother<Tag_> >::load_data(file, _levels, _damping, _precon));
             MGUtil<Tag_,
                 SparseMatrixELL<double>,
                 DenseVector<double>,
@@ -124,7 +125,8 @@ class MGBench:
                 PreconContType_,
                 io_formats::ELL,
                 io_formats::EXP,
-                double>::configure(data, 100, 10, 2, 2, 1, double(1e-8));
+                double,
+                BiCGStabSmoother<Tag_> >::configure(data, 100, 10, 2, 2, 1, double(1e-8));
 
             OperatorList ol(
                     MGCycleCreation<Tag_,

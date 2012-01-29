@@ -84,9 +84,11 @@ class RISmootherTestSparseELL:
             filename_4 += _i_f;
             DenseVector<DT1_> result(VectorIO<io_formats::EXP>::read_vector(filename_4, DT1_(0)));
 
-            DenseVector<DT1_> temp_0(rhs.size());
-            DenseVector<DT1_> temp_1(rhs.size());
-            RISmoother<Tag_>::value(smatrix2, diag_inverted, rhs, result, temp_0, temp_1, 1000ul);
+            //DenseVector<DT1_> temp_0(rhs.size());
+            //DenseVector<DT1_> temp_1(rhs.size());
+            std::vector<DenseVector<DT1_> > svt;
+            RISmoother<Tag_>::vectorpool(rhs.size(), svt);
+            RISmoother<Tag_>::value(smatrix2, diag_inverted, rhs, result, svt, 1000ul);
 
             std::string filename_3(HONEI_SOURCEDIR);
             filename_3 += "/honei/math/testdata/poisson_advanced/sort_0/";

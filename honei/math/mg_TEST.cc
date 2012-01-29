@@ -44,8 +44,9 @@ class MGCycleCreationTest:
             std::vector<DenseVector<double> > x;
             std::vector<DenseVector<double> > c;
             std::vector<DenseVector<double> > d;
-            std::vector<DenseVector<double> > t0;
-            std::vector<DenseVector<double> > t1;
+            //std::vector<DenseVector<double> > t0;
+            //std::vector<DenseVector<double> > t1;
+            std::vector<std::vector<DenseVector<double> > > stv;
             for(unsigned long i(0); i < 5; ++i)
             {
                 SparseMatrix<double> a_t(1,1);
@@ -61,11 +62,14 @@ class MGCycleCreationTest:
                 x.push_back(dummy.copy());
                 c.push_back(dummy.copy());
                 d.push_back(dummy.copy());
-                t0.push_back(dummy.copy());
-                t1.push_back(dummy.copy());
+                //t0.push_back(dummy.copy());
+                //t1.push_back(dummy.copy());
+                std::vector<DenseVector<double> > temp;
+                RISmoother<Tag_>::vectorpool(1, temp);
+                stv.push_back(temp);
             }
 
-            MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double>, SparseMatrixELL<double>, double > data(A, Res, Prol, P, b, x, c, d, t0, t1, 1, 1000, 4, 4, 1, 1e-8);
+            MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double>, SparseMatrixELL<double>, double > data(A, Res, Prol, P, b, x, c, d, stv, 1, 1000, 4, 4, 1, 1e-8);
 
             OperatorList ol(
             MGCycleCreation<Tag_,
@@ -106,8 +110,9 @@ class Q1MGCycleCreationTest:
             std::vector<DenseVector<double> > x;
             std::vector<DenseVector<double> > c;
             std::vector<DenseVector<double> > d;
-            std::vector<DenseVector<double> > t0;
-            std::vector<DenseVector<double> > t1;
+            //std::vector<DenseVector<double> > t0;
+            //std::vector<DenseVector<double> > t1;
+            std::vector<std::vector<DenseVector<double> > > stv;
             for(unsigned long i(0); i < 5; ++i)
             {
                 BandedMatrix<double> a_t(9);
@@ -124,11 +129,14 @@ class Q1MGCycleCreationTest:
                 x.push_back(dummy.copy());
                 c.push_back(dummy.copy());
                 d.push_back(dummy.copy());
-                t0.push_back(dummy.copy());
-                t1.push_back(dummy.copy());
+                //t0.push_back(dummy.copy());
+                //t1.push_back(dummy.copy());
+                std::vector<DenseVector<double> > temp;
+                RISmoother<Tag_>::vectorpool(1, temp);
+                stv.push_back(temp);
             }
 
-            MGData<BandedMatrixQx<Q1Type, double>, DenseVector<double>, SparseMatrixELL<double>, BandedMatrixQx<Q1Type, double>, double > data(A, Res, Prol, P, b, x, c, d, t0, t1, 1, 1000, 4, 4, 1, 1e-8);
+            MGData<BandedMatrixQx<Q1Type, double>, DenseVector<double>, SparseMatrixELL<double>, BandedMatrixQx<Q1Type, double>, double > data(A, Res, Prol, P, b, x, c, d, stv, 1, 1000, 4, 4, 1, 1e-8);
 
             OperatorList ol(
             MGCycleCreation<Tag_,
@@ -171,7 +179,8 @@ class MGUtilLoadTest:
                                                                                             DenseVector<double>,
                                                                                             io_formats::ELL,
                                                                                             io_formats::EXP,
-                                                                                            double>::load_data(file, levels, double(0.7), "jac"));
+                                                                                            double,
+                                                                                            RISmoother<Tag_> >::load_data(file, levels, double(0.7), "jac"));
 
             std::cout << "-----------------------------------" << std::endl;
             for(unsigned long i(0) ; i < data.A.size() ; ++i)
@@ -192,8 +201,12 @@ class MGUtilLoadTest:
                 std::cout << "x_" << i << " is a vector of size " << data.x.at(i).size() << std::endl;
                 std::cout << "c_" << i << " is a vector of size " << data.c.at(i).size() << std::endl;
                 std::cout << "d_" << i << " is a vector of size " << data.d.at(i).size() << std::endl;
-                std::cout << "temp0_" << i << " is a vector of size " << data.temp_0.at(i).size() << std::endl;
-                std::cout << "temp1_" << i << " is a vector of size " << data.temp_1.at(i).size() << std::endl;
+                //std::cout << "temp0_" << i << " is a vector of size " << data.temp_0.at(i).size() << std::endl;
+                //std::cout << "temp1_" << i << " is a vector of size " << data.temp_1.at(i).size() << std::endl;
+                for(unsigned long j(0) ; j < 2 ; ++j)
+                {
+                    std::cout << "smoother_temp_" << i << "_" << j << " is a vector of size " << data.smoother_temp.at(i).at(j).size() << std::endl;
+                }
             }
             std::cout << "-----------------------------------" << std::endl;
         }
@@ -233,7 +246,8 @@ class MGSolverTest:
                                                                                             SparseMatrixELL<DT_>,
                                                                                             io_formats::ELL,
                                                                                             io_formats::EXP,
-                                                                                            DT_>::load_data(file, max_level, DT_(1.), "spai_grote"));
+                                                                                            DT_,
+                                                                                            RISmoother<Tag_> >::load_data(file, max_level, DT_(1.), "spai_grote"));
             MGUtil<Tag_,
                 SparseMatrixELL<DT_>,
                 DenseVector<DT_>,
@@ -241,7 +255,8 @@ class MGSolverTest:
                 SparseMatrixELL<DT_>,
                 io_formats::ELL,
                 io_formats::EXP,
-                DT_>::configure(data, 100, 100, 8, 8, min_level, DT_(1e-8));
+                DT_,
+                RISmoother<Tag_> >::configure(data, 100, 100, 8, 8, min_level, DT_(1e-8));
 
             OperatorList ol(
                     MGCycleCreation<Tag_,
@@ -260,8 +275,8 @@ class MGSolverTest:
             std::cout << data.resmat.size() << std::endl;
             std::cout << data.b.size() << std::endl;
             std::cout << data.x.size() << std::endl;
-            std::cout << data.temp_0.size() << std::endl;
-            std::cout << data.temp_1.size() << std::endl;
+            //std::cout << data.temp_0.size() << std::endl;
+            //std::cout << data.temp_1.size() << std::endl;
 
             MGSolver<Tag_, Norm<vnt_l_two, true, Tag_> >::value(data, ol);
 
@@ -296,7 +311,7 @@ class MGSolverTest:
             //print_cycle(ol, max_level, min_level);
         }
 };
-MGSolverTest<tags::CPU, double> mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
+/*MGSolverTest<tags::CPU, double> mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
 //MGSolverTest<tags::CPU::MultiCore, double> mc_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
 MGSolverTest<tags::CPU::Generic, double> generic_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
 MGSolverTest<tags::CPU::MultiCore::Generic, double> mc_generic_mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
@@ -341,7 +356,7 @@ MGSolverTest<tags::OpenCL::CPU, double> ocl_cpu_mg_solver_test_cpu_2("double", "
 #ifdef HONEI_CUDA_DOUBLE
 MGSolverTest<tags::OpenCL::GPU, double> ocl_gpu_mg_solver_test_cpu_2("double", "poisson_advanced2/sort_0/");
 #endif
-#endif
+#endif*/
 
 MGSolverTest<tags::CPU, double> mg_solver_test_cpu_4("double", "poisson_advanced4/sort_0/");
 MGSolverTest<tags::CPU::Generic, double> generic_mg_solver_test_cpu_4("double", "poisson_advanced4/sort_0/");
@@ -390,7 +405,8 @@ class MGSolverTestQuad:
                                                                                             DenseVector<double>,
                                                                                             io_formats::ELL,
                                                                                             io_formats::EXP,
-                                                                                            double>::load_data(file, max_level, double(0.7), "jac"));
+                                                                                            double,
+                                                                                            RISmoother<Tag_> >::load_data(file, max_level, double(0.7), "jac"));
             MGUtil<Tag_,
                 SparseMatrixELL<double>,
                 DenseVector<double>,
@@ -398,7 +414,8 @@ class MGSolverTestQuad:
                 DenseVector<double>,
                 io_formats::ELL,
                 io_formats::EXP,
-                double>::configure(data, 100, 100, 4, 4, min_level, double(1e-8));
+                double,
+                RISmoother<Tag_> >::configure(data, 100, 100, 4, 4, min_level, double(1e-8));
 
 
             OperatorList ol(
