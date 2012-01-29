@@ -101,18 +101,20 @@ class OperatorTest:
             DenseVector<double> x3(VectorIO<io_formats::EXP>::read_vector(filename3, double(0)));
             DenseVector<double> x4(x3.copy());
 
-            DenseVector<double> t1(x3.size());
-            DenseVector<double> t2(x3.size());
+            //DenseVector<double> t1(x3.size());
+            //DenseVector<double> t2(x3.size());
+            std::vector<DenseVector<double> > stv;
+            RISmoother<Tag_>::vectorpool(x3.size(), stv);
 
             DenseVector<double> diag_inverted(x3.size(), double(0));
             for(unsigned long i(0) ; i < diag_inverted.size() ; ++i)
             {
                     diag_inverted[i] = double(0.7)/system(i, i);
             }
-            riop = new SmootherOperator<RISmoother<Tag_>, SparseMatrixELL<double>, DenseVector<double>, DenseVector<double> >(system, diag_inverted, b, x3, t1, t2, 1000ul);
+            riop = new SmootherOperator<RISmoother<Tag_>, SparseMatrixELL<double>, DenseVector<double>, DenseVector<double> >(system, diag_inverted, b, x3, stv, 1000ul);
             riop->value();
 
-            RISmoother<Tag_>::value(system, diag_inverted, b, x4, t1, t2, 1000ul);
+            RISmoother<Tag_>::value(system, diag_inverted, b, x4, stv, 1000ul);
 
             for(unsigned long i(0) ; i < x4.size() ; ++i)
             {
