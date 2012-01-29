@@ -104,6 +104,11 @@ class MGBench:
             }
 
 
+            ///SET ADAPTIVE SMOOTHING HERE (Krylov Smoother)
+            bool adaptive = true;
+
+            _damping = adaptive ? double(1) : _damping;
+
             MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double>, PreconContType_, double >  data(MGUtil<Tag_,
                     SparseMatrixELL<double>,
                     DenseVector<double>,
@@ -119,7 +124,7 @@ class MGBench:
                 PreconContType_,
                 io_formats::ELL,
                 io_formats::EXP,
-                double>::configure(data, 100, 10, 4, 4, 1, double(1e-8));
+                double>::configure(data, 100, 10, 2, 2, 1, double(1e-8));
 
             OperatorList ol(
                     MGCycleCreation<Tag_,
@@ -127,7 +132,8 @@ class MGBench:
                     //SuperLU,
                     BiCGStab<Tag_, methods::VAR>,
                     //CG<Tag_, methods::NONE>,
-                    RISmoother<Tag_>,
+                    //RISmoother<Tag_>,
+                    BiCGStabSmoother<Tag_>,
                     Restriction<Tag_, methods::PROLMAT>,
                     Prolongation<Tag_, methods::PROLMAT>,
                     double>::value(data)
