@@ -126,7 +126,7 @@ class MGBench:
                 io_formats::ELL,
                 io_formats::EXP,
                 double,
-                BiCGStabSmoother<Tag_> >::configure(data, 100, 10, 2, 2, 1, double(1e-8));
+                BiCGStabSmoother<Tag_> >::configure(data, 100, 10, 4, 4, 1, double(1e-8));
 
             OperatorList ol(
                     MGCycleCreation<Tag_,
