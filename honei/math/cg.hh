@@ -22,6 +22,7 @@
 #define MATH_GUARD_CG_HH 1
 
 #include <honei/util/tags.hh>
+#include <honei/math/vectorpool.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/math/defect.hh>
@@ -214,6 +215,83 @@ namespace honei
                 PROFILER_STOP("CGSolver VAR");
                 //std::cout << used_iters << " " << max_iters << " " << iterations << std::endl;
                 return x;
+            }
+    };
+
+    /**
+     * \brief Smoothing with PCG. Variable preconditioning.
+     *
+     * \ingroup grpmatrixoperations
+     * \ingroup grpvectoroperations
+     */
+    template <typename Tag_>
+    struct CGSmoother
+    {
+        public:
+            template<typename VT_>
+            static void vectorpool(unsigned long size, std::vector<VT_> & result)
+            {
+                result = honei::create_vectorpool<VT_>(4, size);
+            }
+
+            template<typename MatrixType_, typename VectorType_, typename PreconContType_>
+            static inline void value(MatrixType_ & A,
+                                     PreconContType_ & P,
+                                     VectorType_ & b,
+                                     VectorType_ & x,
+                                     std::vector<VectorType_> & temp_vecs,
+                                     unsigned long max_iters)
+            {
+                CONTEXT("When solving linear system with CG :");
+                PROFILER_START("CGSolver VAR");
+
+                VectorType_ p(temp_vecs.at(0));
+                VectorType_ r(temp_vecs.at(1));
+                VectorType_ v(temp_vecs.at(2));
+                VectorType_ z(temp_vecs.at(3));
+
+                typename VectorType_::DataType alpha, alpha_new, lambda, initial_defect;
+                unsigned long iterations(0);
+
+                Defect<Tag_>::value(r, b, A, x);
+
+                Product<Tag_>::value(p, P, r);
+
+                initial_defect = Norm<vnt_l_two, true, Tag_>::value(r);
+
+                alpha_new = DotProduct<Tag_>::value(r, p);
+
+                typename VectorType_::DataType temp;
+
+                while(iterations < max_iters)
+                {
+                    Product<Tag_>::value(v, A, p);
+                    temp = DotProduct<Tag_>::value(v, p);
+                    lambda = alpha_new / (std::abs(temp) > std::numeric_limits<typename VectorType_::DataType>::epsilon() ? temp : (std::numeric_limits<typename VectorType_::DataType>::epsilon()* (temp/std::abs(temp))));
+
+                    ++iterations;
+                    ScaledSum<Tag_>::value(x, p, lambda);
+
+                    typename VectorType_::DataType mlambda(-lambda);
+                    ScaledSum<Tag_>::value(r, v, mlambda);
+
+                    if(iterations == max_iters)
+                    {
+                        break;
+                    }
+
+                    Product<Tag_>::value(z, P, r);
+
+                    alpha = alpha_new;
+
+                    alpha_new = DotProduct<Tag_>::value(r, z);
+
+                    typename VectorType_::DataType talpha_new(alpha_new / (std::abs(alpha) > std::numeric_limits<typename VectorType_::DataType>::epsilon() ? alpha : (std::numeric_limits<typename VectorType_::DataType>::epsilon() * (alpha / std::abs(alpha)))));
+                    Scale<Tag_>::value(p, talpha_new);
+                    Sum<Tag_>::value(p, z);
+                }
+
+                PROFILER_STOP("CGSolver VAR");
             }
     };
 }
