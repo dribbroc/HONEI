@@ -235,15 +235,15 @@ namespace honei
             }
 
             template<typename MatrixType_, typename VectorType_, typename PreconContType_>
-            static inline void value(MatrixType_ & A,
+            static inline VectorType_ & value(MatrixType_ & A,
                                      PreconContType_ & P,
                                      VectorType_ & b,
                                      VectorType_ & x,
                                      std::vector<VectorType_> & temp_vecs,
                                      unsigned long max_iters)
             {
-                CONTEXT("When solving linear system with CG :");
-                PROFILER_START("CGSolver VAR");
+                CONTEXT("When smoothing with CG :");
+                PROFILER_START("CGSmoother");
 
                 VectorType_ p(temp_vecs.at(0));
                 VectorType_ r(temp_vecs.at(1));
@@ -291,7 +291,8 @@ namespace honei
                     Sum<Tag_>::value(p, z);
                 }
 
-                PROFILER_STOP("CGSolver VAR");
+                PROFILER_STOP("CGSmoother VAR");
+                return x;
             }
     };
 }

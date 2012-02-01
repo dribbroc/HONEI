@@ -233,19 +233,17 @@ namespace honei
                                               PreconContType_ & P,
                                               VectorType_ & b,
                                               VectorType_ & x,
-                                              //VectorType_ & temp_0,
-                                              //VectorType_ & temp_1,
                                               std::vector<VectorType_> & temp_vecs,
                                               unsigned long max_iters)
             {
-                CONTEXT("When solving linear system with BiCGStab :");
-                PROFILER_START("BiCGStab VAR");
+                CONTEXT("When smoothing with BiCGStab :");
+                PROFILER_START("Smoothing BiCGStab");
 
-                double defnorm, defnorm_0, defnorm_00(1e14);
-                //double kappa = 1.0;
+                typename VectorType_::DataType defnorm, defnorm_0, defnorm_00(1e14);
+                //typename VectorType_::DataType kappa = 1.0;
                 unsigned long iter = 0;
-                double rho_tilde, rho_tilde_old, alpha_tilde, omega_tilde, beta_tilde, gamma_tilde;
-                double nrm_r_tilde_0, nrm_tilde_00;
+                typename VectorType_::DataType rho_tilde, rho_tilde_old, alpha_tilde, omega_tilde, beta_tilde, gamma_tilde;
+                typename VectorType_::DataType nrm_r_tilde_0, nrm_tilde_00;
                 bool restarted = false;
 
                 /*VectorType_ r(b.size());
@@ -259,16 +257,16 @@ namespace honei
                 VectorType_ t(b.size());
                 VectorType_ t_tilde(b.size());*/
 
-                VectorType_ r(temp_vecs[0]);
-                VectorType_ r_tilde(temp_vecs[1]);
-                VectorType_ r_tilde_0(temp_vecs[2]);
-                VectorType_ p_tilde(temp_vecs[3]);
-                VectorType_ v(temp_vecs[4]);
-                VectorType_ v_tilde(temp_vecs[5]);
-                VectorType_ s(temp_vecs[6]);
-                VectorType_ s_tilde(temp_vecs[7]);
-                VectorType_ t(temp_vecs[8]);
-                VectorType_ t_tilde(temp_vecs[9]);
+                VectorType_ r(temp_vecs.at(0));
+                VectorType_ r_tilde(temp_vecs.at(1));
+                VectorType_ r_tilde_0(temp_vecs.at(2));
+                VectorType_ p_tilde(temp_vecs.at(3));
+                VectorType_ v(temp_vecs.at(4));
+                VectorType_ v_tilde(temp_vecs.at(5));
+                VectorType_ s(temp_vecs.at(6));
+                VectorType_ s_tilde(temp_vecs.at(7));
+                VectorType_ t(temp_vecs.at(8));
+                VectorType_ t_tilde(temp_vecs.at(9));
 
                 ///TODO optimise -> kill convergence control
                 do
@@ -315,7 +313,7 @@ namespace honei
                             //break;
                         }
 
-                        double malpha_tilde(-alpha_tilde);
+                        typename VectorType_::DataType malpha_tilde(-alpha_tilde);
                         ScaledSum<Tag_>::value(s, r, v, malpha_tilde);
 
                         defnorm = Norm<vnt_l_two, false, Tag_>::value(s);
@@ -339,7 +337,7 @@ namespace honei
                         ScaledSum<Tag_>::value(x, s_tilde, omega_tilde);
                         ScaledSum<Tag_>::value(x, p_tilde, alpha_tilde);
 
-                        double momega_tilde(-omega_tilde);
+                        typename VectorType_::DataType momega_tilde(-omega_tilde);
                         ScaledSum<Tag_>::value(r, s, t, momega_tilde);
 
                         defnorm = Norm<vnt_l_two, false, Tag_>::value(r);
@@ -361,8 +359,8 @@ namespace honei
 
 
                 //std::cout << "Norm: " << defnorm << std::endl;
-                LOGMESSAGE(lc_solver, "BiCgStab(VAR) finished in " + stringify(iters + 1) + " iterations with defect " + stringify(defnorm));
-                PROFILER_STOP("CGSolver NONE");
+                LOGMESSAGE(lc_solver, "BiCgStab(VAR) smoother finished in " + stringify(iters + 1) + " iterations with defect " + stringify(defnorm));
+                PROFILER_STOP("BiCGStabSmoother");
 
                 return x;
             }
