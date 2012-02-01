@@ -126,7 +126,7 @@ class MGBench:
                 io_formats::ELL,
                 io_formats::EXP,
                 double,
-                BiCGStabSmoother<Tag_> >::configure(data, 100, 10, 4, 4, 1, double(1e-8));
+                BiCGStabSmoother<Tag_> >::configure(data, 100, 10, 2, 2, 1, double(1e-8));
 
             OperatorList ol(
                     MGCycleCreation<Tag_,
@@ -156,6 +156,20 @@ class MGBench:
             std::cout << data.used_iters << " iterations used." << std::endl;
         }
 };
+
+/*MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, SparseMatrixELL<double> > mcsse_q1_sort2_l8_spai_grote_v("MGBench mcsse | q1 | sort 2 | L8 | spai_grote | V", 1 , 2, 8, "spai_grote", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, SparseMatrixELL<double> > mcsse_q1_sort3_l8_spai_grote_v("MGBench mcsse | q1 | sort 3 | L8 | spai_grote | V", 1 , 3, 8, "spai_grote", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, SparseMatrixELL<double> > mcsse_q1_sort2_l8_spai_grote_w("MGBench mcsse | q1 | sort 2 | L8 | spai_grote | W", 1 , 2, 8, "spai_grote", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, SparseMatrixELL<double> > mcsse_q1_sort3_l8_spai_grote_w("MGBench mcsse | q1 | sort 3 | L8 | spai_grote | W", 1 , 3, 8, "spai_grote", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> > mcsse_q1_sort2_l8_spai_grote_f("MGBench mcsse | q1 | sort 2 | L8 | spai_grote | F", 1 , 2, 8, "spai_grote", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> > mcsse_q1_sort3_l8_spai_grote_f("MGBench mcsse | q1 | sort 3 | L8 | spai_grote | F", 1 , 3, 8, "spai_grote", 0.5);
+
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, SparseMatrixELL<double> > cuda_q1_sort2_l8_spai_grote_v("MGBench cuda | q1 | sort 2 | L8 | spai_grote | V", 1 , 2, 8, "spai_grote", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, SparseMatrixELL<double> > cuda_q1_sort3_l8_spai_grote_v("MGBench cuda | q1 | sort 3 | L8 | spai_grote | V", 1 , 3, 8, "spai_grote", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, SparseMatrixELL<double> > cuda_q1_sort2_l8_spai_grote_w("MGBench cuda | q1 | sort 2 | L8 | spai_grote | W", 1 , 2, 8, "spai_grote", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, SparseMatrixELL<double> > cuda_q1_sort3_l8_spai_grote_w("MGBench cuda | q1 | sort 3 | L8 | spai_grote | W", 1 , 3, 8, "spai_grote", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> > cuda_q1_sort2_l8_spai_grote_f("MGBench cuda | q1 | sort 2 | L8 | spai_grote | F", 1 , 2, 8, "spai_grote", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> > cuda_q1_sort3_l8_spai_grote_f("MGBench cuda | q1 | sort 3 | L8 | spai_grote | F", 1 , 3, 8, "spai_grote", 0.5);*/
 
 #ifdef HONEI_SSE
 //JAC
