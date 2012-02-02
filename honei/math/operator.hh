@@ -344,6 +344,17 @@ namespace honei
                 _max_iters(max_iters)
             {
                 CONTEXT("When creating SmootherOperator:");
+
+                ///Ask for sufficient number of tempvecs
+                if(_temp_vecs.size() < SmootherType_::NUM_TEMPVECS)
+                {
+                    unsigned long k(SmootherType_::NUM_TEMPVECS - _temp_vecs.size() );
+                    for(unsigned long i(0) ; i < k ; ++i)
+                    {
+                        VectorType_ tv(_b.size());
+                        _temp_vecs.push_back(tv);
+                    }
+                }
             }
 
             virtual void value()
@@ -365,7 +376,7 @@ namespace honei
             PreconContType_ _P;
             VectorType_ _b;
             VectorType_ _x;
-            std::vector<VectorType_> _temp_vecs;
+            std::vector<VectorType_> & _temp_vecs;
             unsigned long _max_iters;
     };
 
