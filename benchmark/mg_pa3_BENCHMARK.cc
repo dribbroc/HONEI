@@ -110,8 +110,7 @@ class MGBench:
                     PreconContType_,
                     io_formats::ELL,
                     io_formats::EXP,
-                    double,
-                    RISmoother<Tag_> >::load_data(file, _levels, _damping, _precon));
+                    double>::load_data(file, _levels, _damping, _precon));
             MGUtil<Tag_,
                 SparseMatrixELL<double>,
                 DenseVector<double>,
@@ -119,8 +118,7 @@ class MGBench:
                 PreconContType_,
                 io_formats::ELL,
                 io_formats::EXP,
-                double,
-                RISmoother<Tag_> >::configure(data, 100, 150, 20, 20, 1, double(1e-8));
+                double>::configure(data, 100, 150, 20, 20, 1, double(1e-8));
 
             OperatorList ol(
                     MGCycleCreation<Tag_,
@@ -131,8 +129,6 @@ class MGBench:
                     Prolongation<Tag_, methods::PROLMAT>,
                     double>::value(data)
                     );
-
-
 
             BENCHMARK(
                     (MGSolver<Tag_, Norm<vnt_l_two, true, Tag_> >::value(data, ol));
