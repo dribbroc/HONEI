@@ -149,10 +149,13 @@ class Driver
     }
 };
 
-int main(int /*argc*/, char ** /*argv*/)
+int main(int argc, char ** argv)
 {
 #ifdef HONEI_MPI
     MPI_Init(&argc, &argv);
+#else
+    (void)argc;
+    (void)argv;
 #endif
     //Driver<tags::GPU::CUDA, double> a("poisson_advanced2/sort_2/");
 #ifdef HONEI_SSE
