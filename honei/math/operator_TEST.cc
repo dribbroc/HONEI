@@ -103,8 +103,7 @@ class OperatorTest:
 
             //DenseVector<double> t1(x3.size());
             //DenseVector<double> t2(x3.size());
-            std::vector<DenseVector<double> > stv;
-            RISmoother<Tag_>::vectorpool(x3.size(), stv);
+            std::vector<DenseVector<double> > stv(honei::create_vectorpool<DenseVector<double> >(RISmoother<Tag_>::NUM_TEMPVECS, x3.size()));
 
             DenseVector<double> diag_inverted(x3.size(), double(0));
             for(unsigned long i(0) ; i < diag_inverted.size() ; ++i)

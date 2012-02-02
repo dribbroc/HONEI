@@ -86,8 +86,7 @@ class RISmootherTestSparseELL:
 
             //DenseVector<DT1_> temp_0(rhs.size());
             //DenseVector<DT1_> temp_1(rhs.size());
-            std::vector<DenseVector<DT1_> > svt;
-            RISmoother<Tag_>::vectorpool(rhs.size(), svt);
+            std::vector<DenseVector<DT1_> > svt(honei::create_vectorpool<DenseVector<double> >(RISmoother<Tag_>::NUM_TEMPVECS , rhs.size()));
             RISmoother<Tag_>::value(smatrix2, diag_inverted, rhs, result, svt, 1000ul);
 
             std::string filename_3(HONEI_SOURCEDIR);

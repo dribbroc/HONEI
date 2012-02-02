@@ -33,8 +33,7 @@ class VectorpoolTest:
                 TEST_CHECK_EQUAL(stv.at(i).size(), 100ul);
             }
 
-            std::vector<DenseVector<double> > stv2;
-            RISmoother<Tag_>::vectorpool(100, stv2);
+            std::vector<DenseVector<double> > stv2(honei::create_vectorpool<DenseVector<double> >(RISmoother<Tag_>::NUM_TEMPVECS, 100));
             for(unsigned long i(0) ; i < 2 ; ++i)
             {
                 TEST_CHECK_EQUAL(stv.at(i).size(), 100ul);
@@ -43,8 +42,7 @@ class VectorpoolTest:
             std::vector<std::vector<DenseVector<double> > > data;
             for(unsigned long i(0) ; i < 10 ; ++i)
             {
-                std::vector<DenseVector<double> > stv3;
-                RISmoother<Tag_>::vectorpool(i*100, stv3);
+                std::vector<DenseVector<double> > stv3(honei::create_vectorpool<DenseVector<double> >(RISmoother<Tag_>::NUM_TEMPVECS, i * 100));
                 data.push_back(stv3);
             }
             for(unsigned long i(0) ; i < 10 ; ++i)

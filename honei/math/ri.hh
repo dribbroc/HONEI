@@ -97,11 +97,7 @@ namespace honei
     struct RISmoother
     {
         public:
-            template<typename VT_>
-            static void vectorpool(unsigned long size, std::vector<VT_> & result)
-            {
-                result = honei::create_vectorpool<VT_>(2, size);
-            }
+            static const unsigned long NUM_TEMPVECS = 2;
 
             /**
             * \brief Returns smoothed vector stemming from linear system with the preconditioned and damped Richardson iterative method.

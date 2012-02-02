@@ -228,11 +228,7 @@ namespace honei
     struct CGSmoother
     {
         public:
-            template<typename VT_>
-            static void vectorpool(unsigned long size, std::vector<VT_> & result)
-            {
-                result = honei::create_vectorpool<VT_>(4, size);
-            }
+            static const unsigned long NUM_TEMPVECS = 4;
 
             template<typename MatrixType_, typename VectorType_, typename PreconContType_>
             static inline VectorType_ & value(MatrixType_ & A,

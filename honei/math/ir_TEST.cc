@@ -38,8 +38,7 @@ class IRSolverTest:
                                                                                             DenseVector<DTInner_>,
                                                                                             io_formats::ELL,
                                                                                             io_formats::EXP,
-                                                                                            DTInner_,
-                                                                                            RISmoother<InnerTag_> >::load_data(file, levels, DTInner_(0.7), "jac"));
+                                                                                            DTInner_>::load_data(file, levels, DTInner_(0.7), "jac"));
             MGUtil<InnerTag_,
                 SparseMatrixELL<DTInner_>,
                 DenseVector<DTInner_>,
@@ -47,8 +46,7 @@ class IRSolverTest:
                 DenseVector<DTInner_>,
                 io_formats::ELL,
                 io_formats::EXP,
-                DTInner_,
-                RISmoother<InnerTag_> >::configure(data, 8, 100, 4, 4, 1, DTInner_(1e-8));
+                DTInner_>::configure(data, 8, 100, 4, 4, 1, DTInner_(1e-8));
 
             OperatorList ol(
                     MGCycleCreation<InnerTag_,

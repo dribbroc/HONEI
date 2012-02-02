@@ -222,11 +222,13 @@ namespace honei
     struct BiCGStabSmoother
     {
         public:
-            template<typename VT_>
+            /*template<typename VT_>
             static void vectorpool(unsigned long size, std::vector<VT_> & result)
             {
                 result = honei::create_vectorpool<VT_>(10, size);
-            }
+            }*/
+
+            static const unsigned long NUM_TEMPVECS = 10;
 
             template<typename MatrixType_, typename VectorType_, typename PreconContType_>
             static inline VectorType_ & value(MatrixType_ & A,
@@ -237,7 +239,7 @@ namespace honei
                                               unsigned long max_iters)
             {
                 CONTEXT("When smoothing with BiCGStab :");
-                PROFILER_START("Smoothing BiCGStab");
+                PROFILER_START("BiCGStabSmoother");
 
                 typename VectorType_::DataType defnorm, defnorm_0, defnorm_00(1e14);
                 //typename VectorType_::DataType kappa = 1.0;
@@ -245,17 +247,6 @@ namespace honei
                 typename VectorType_::DataType rho_tilde, rho_tilde_old, alpha_tilde, omega_tilde, beta_tilde, gamma_tilde;
                 typename VectorType_::DataType nrm_r_tilde_0, nrm_tilde_00;
                 bool restarted = false;
-
-                /*VectorType_ r(b.size());
-                VectorType_ r_tilde(b.size());
-                VectorType_ r_tilde_0(b.size());
-                VectorType_ p_tilde(b.size());
-                VectorType_ v(b.size());
-                VectorType_ v_tilde(b.size());
-                VectorType_ s(b.size());
-                VectorType_ s_tilde(b.size());
-                VectorType_ t(b.size());
-                VectorType_ t_tilde(b.size());*/
 
                 VectorType_ r(temp_vecs.at(0));
                 VectorType_ r_tilde(temp_vecs.at(1));
@@ -359,7 +350,7 @@ namespace honei
 
 
                 //std::cout << "Norm: " << defnorm << std::endl;
-                LOGMESSAGE(lc_solver, "BiCgStab(VAR) smoother finished in " + stringify(iters + 1) + " iterations with defect " + stringify(defnorm));
+                LOGMESSAGE(lc_solver, "BiCgStab smoother finished in " + stringify(iters + 1) + " iterations with defect " + stringify(defnorm));
                 PROFILER_STOP("BiCGStabSmoother");
 
                 return x;
