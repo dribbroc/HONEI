@@ -30,6 +30,7 @@
 #include <sys/time.h>
 #include <iostream>
 
+using namespace honei;
 
 /**
  * Baseclass for all testingclasses

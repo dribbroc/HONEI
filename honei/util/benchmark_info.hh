@@ -3,7 +3,7 @@
 /*
  * Copyright (c) 2007 Andre Matuschek <andre@matuschek.org>
  * Copyright (c) 2007 David Gies      <david-gies@gmx.de>
- * Copyright (c) 2009 Dirk Ribbrock   <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2009, 2012 Dirk Ribbrock   <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -26,70 +26,84 @@
 #include <list>
 #include <iostream>
 
-struct BenchmarkInfo
+namespace honei
 {
-    unsigned long long flops;
-    unsigned long long load;
-    unsigned long long store;
-    std::list<unsigned long> size;
-    double scale;
-    std::string scaleinfo;
-
-    BenchmarkInfo() :
-        flops(0),
-        load(0),
-        store(0),
-        scale(1),
-        scaleinfo(" ")
+    struct BenchmarkInfo
     {
-    }
+        unsigned long long flops;
+        unsigned long long load;
+        unsigned long long store;
+        std::list<unsigned long> size;
+        double scale;
+        std::string scaleinfo;
 
-    BenchmarkInfo operator+(const BenchmarkInfo a)
-    {
-        flops += a.flops;
-        load += a.load;
-        store += a.store;
-        return *this;
-    }
+        BenchmarkInfo() :
+            flops(0),
+            load(0),
+            store(0),
+            scale(1),
+            scaleinfo(" ")
+        {
+        }
 
-    BenchmarkInfo operator*(unsigned long long a)
-    {
-        flops *= a;
-        load *= a;
-        store *= a;
-        return *this;
-    }
-};
+        BenchmarkInfo operator+(const BenchmarkInfo a)
+        {
+            flops += a.flops;
+            load += a.load;
+            store += a.store;
+            return *this;
+        }
 
-struct LBMBenchmarkInfo :
-    public BenchmarkInfo
-{
-    unsigned long long lups;
-    unsigned long long flups;
-    LBMBenchmarkInfo() :
-        BenchmarkInfo(),
-        lups(0),
-        flups(0)
-    {
-    }
+        BenchmarkInfo operator*(unsigned long long a)
+        {
+            flops *= a;
+            load *= a;
+            store *= a;
+            return *this;
+        }
+    };
 
-    LBMBenchmarkInfo operator+=(const BenchmarkInfo a)
+    struct LBMBenchmarkInfo :
+        public BenchmarkInfo
     {
-        flops += a.flops;
-        load += a.load;
-        store += a.store;
-        return *this;
-    }
+        unsigned long long lups;
+        unsigned long long flups;
+        LBMBenchmarkInfo() :
+            BenchmarkInfo(),
+            lups(0),
+            flups(0)
+        {
+        }
 
-    LBMBenchmarkInfo operator*(unsigned long a)
-    {
-        flops *= a;
-        load *= a;
-        store *= a;
-        lups *= a;
-        flups *= a;
-        return *this;
-    }
-};
+        LBMBenchmarkInfo operator+=(const BenchmarkInfo a)
+        {
+            flops += a.flops;
+            load += a.load;
+            store += a.store;
+            return *this;
+        }
+
+        LBMBenchmarkInfo operator*(unsigned long a)
+        {
+            flops *= a;
+            load *= a;
+            store *= a;
+            lups *= a;
+            flups *= a;
+            return *this;
+        }
+    };
+
+    extern BenchmarkInfo globalBenchmarkInfo;
+}
+
+#if defined (BENCHMARK_INSTRUMENTATION)
+#define BENCHADD(i) \
+    globalBenchmarkInfo.flops+=i.flopsf; \
+    globalBenchmarkInfo.load+=i.load; \
+    globalBenchmarkInfo.store+=i.store
+#else
+#define BENCHADD(i)
+#endif
 
 #endif
