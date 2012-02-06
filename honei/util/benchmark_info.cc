@@ -23,4 +23,5 @@
 namespace honei
 {
     BenchmarkInfo globalBenchmarkInfo;
+    Mutex globalBenchmarkInfoMutex;
 }

@@ -24,7 +24,8 @@
 #define LIBUTIL_GUARD_BENCHMARK_INFO_HH 1
 
 #include <list>
-#include <iostream>
+#include <string>
+#include <honei/util/mutex.hh>
 
 namespace honei
 {
@@ -95,22 +96,28 @@ namespace honei
     };
 
     extern BenchmarkInfo globalBenchmarkInfo;
+    extern Mutex globalBenchmarkInfoMutex;
 }
-
 #if defined (BENCHMARK_INSTRUMENTATION)
 #define BENCHADD(i) \
+    { \
+    Lock l(globalBenchmarkInfoMutex); \
     globalBenchmarkInfo.flops+=i.flops; \
     globalBenchmarkInfo.load+=i.load; \
-    globalBenchmarkInfo.store+=i.store
+    globalBenchmarkInfo.store+=i.store; \
+    };
 #else
 #define BENCHADD(i)
 #endif
 
 #if defined (BENCHMARK_INSTRUMENTATION)
 #define BENCHRESET() \
+    { \
+    Lock l(globalBenchmarkInfoMutex); \
     globalBenchmarkInfo.flops=0; \
     globalBenchmarkInfo.load=0; \
-    globalBenchmarkInfo.store=0
+    globalBenchmarkInfo.store=0; \
+    };
 #else
 #define BENCHRESET()
 #endif
