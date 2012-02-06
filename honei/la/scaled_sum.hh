@@ -220,7 +220,19 @@ namespace honei
         /// \}
 
         template <typename DT1_, typename DT2_, typename DT3_>
-        static inline BenchmarkInfo get_benchmark_info(DenseVectorBase<DT1_> & a, DenseVectorBase<DT2_> & b, HONEI_UNUSED DT3_ c)
+        static inline BenchmarkInfo get_benchmark_info(DenseVectorBase<DT1_> & a, const DenseVectorBase<DT2_> & b, HONEI_UNUSED DT3_ c)
+        {
+            BenchmarkInfo result;
+            result.flops = a.size() * 2;
+            result.load = a.size() * (sizeof(DT1_) + sizeof(DT2_)) + sizeof(DT3_);
+            result.store = a.size() * sizeof(DT1_);
+            result.size.push_back(a.size());
+            result.size.push_back(b.size());
+            return result;
+        }
+
+        template <typename DT1_, typename DT2_, typename DT3_>
+        static inline BenchmarkInfo get_benchmark_info(DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b, HONEI_UNUSED DT3_ c)
         {
             BenchmarkInfo result;
             result.flops = a.size() * 2;
@@ -239,6 +251,8 @@ namespace honei
         {
             if (x.size() != y.size())
                 throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+            BENCHADD(ScaledSum<tags::CPU>::get_benchmark_info(x, y, a));
 
             const DT_ * ye(y.elements());
             DT_ * xe(x.elements());

@@ -180,7 +180,7 @@ namespace honei
             result.load = b.rows() * b.columns() * sizeof(DT2_) + sizeof(DT1_);
             result.store = b.rows() * b.columns() * sizeof(DT2_);
             result.size.push_back(b.rows() * b.columns());
-            return result; 
+            return result;
         }
 
         template <typename DT1_, typename DT2_>
@@ -197,18 +197,29 @@ namespace honei
             result.size.push_back(b.rows() * b.columns());
             result.load += sizeof(DT1_);
             result.scale = (double(b.rows() * b.columns()) / result.flops);
-            return result; 
+            return result;
         }
 
         template <typename DT1_, typename DT2_>
-        static inline BenchmarkInfo get_benchmark_info(DenseVector<DT2_> & b, HONEI_UNUSED DT1_ a)
+        static inline BenchmarkInfo get_benchmark_info(DenseVectorBase<DT2_> & b, HONEI_UNUSED DT1_ a)
         {
             BenchmarkInfo result;
             result.flops = b.size();
             result.load = b.size() * sizeof(DT2_) + sizeof(DT1_);
             result.store = b.size() * sizeof(DT2_);
             result.size.push_back(b.size());
-            return result; 
+            return result;
+        }
+
+        template <typename DT1_, typename DT2_>
+        static inline BenchmarkInfo get_benchmark_info(DenseVectorContinuousBase<DT2_> & b, HONEI_UNUSED DT1_ a)
+        {
+            BenchmarkInfo result;
+            result.flops = b.size();
+            result.load = b.size() * sizeof(DT2_) + sizeof(DT1_);
+            result.store = b.size() * sizeof(DT2_);
+            result.size.push_back(b.size());
+            return result;
         }
     };
 
@@ -217,6 +228,8 @@ namespace honei
         template <typename DT_>
         static inline DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & x, DT_ a)
         {
+            BENCHADD(Scale<tags::CPU>::get_benchmark_info(x, a));
+
             DT_ * xe(x.elements());
             const unsigned long size(x.size());
             for (unsigned long i(0) ; i < size ; ++i)

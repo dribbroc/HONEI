@@ -511,6 +511,8 @@ namespace honei
             if (x.size() != y.size())
                 throw VectorSizeDoesNotMatch(y.size(), x.size());
 
+            BENCHADD(ElementProduct<tags::CPU>::get_benchmark_info(x, y));
+
             const DT_ * ye(y.elements());
             DT_ * xe(x.elements());
             const unsigned long size(x.size());

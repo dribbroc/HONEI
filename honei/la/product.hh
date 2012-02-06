@@ -1337,6 +1337,16 @@ namespace honei
             result.scale = (double(tinfo.flops) / result.flops);
             return result;
         }
+
+        template <typename DT_>
+        static inline BenchmarkInfo get_benchmark_info(const DenseVectorContinuousBase<DT_> & r, const SparseMatrixELL<DT_> & a, const DenseVectorContinuousBase<DT_> & b)
+        {
+            BenchmarkInfo result;
+            result.flops = a.used_elements() * 2;
+            result.load = (a.used_elements() + b.size() )* sizeof(DT_);
+            result.store = r.size() * sizeof(DT_);
+            return result;
+        }
     };
 
     template <> struct Product<tags::CPU::Generic>
@@ -1351,6 +1361,8 @@ namespace honei
             }
             if (row_end == 0)
                 row_end = a.rows();
+
+            BENCHADD(Product<tags::CPU>::get_benchmark_info(r, a, bv));
 
             DT_ * result(r.elements());
             const unsigned long * Aj(a.Aj().elements());

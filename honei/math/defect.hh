@@ -388,17 +388,15 @@ namespace honei
                     return result;
                 }
 
-            /*template <typename DT_>
-              static inline BenchmarkInfo get_benchmark_info(const DenseVector<DT_> & right_hand_side, const SparseMatrixELL<DT_> & system, const DenseVector<DT_> & x)
-              {
-              BenchmarkInfo result;
-              result.flops = :;
-              result.load = a.rows() * a.columns() * (sizeof(DT1_) + sizeof(DT2_));
-              result.store = a.rows() * a.columns() * sizeof(DT1_);
-              result.size.push_back(a.rows() * a.columns());
-              result.size.push_back(b.rows() * b.columns());
-              return result;
-              }*/
+        template <typename DT_>
+        static inline BenchmarkInfo get_benchmark_info(const DenseVectorContinuousBase<DT_> & r, const DenseVectorContinuousBase<DT_> & rhs, const SparseMatrixELL<DT_> & a, const DenseVectorContinuousBase<DT_> & b)
+        {
+            BenchmarkInfo result;
+            result.flops = a.used_elements() * 2 + rhs.size();
+            result.load = (a.used_elements() + b.size() + rhs.size())* sizeof(DT_);
+            result.store = r.size() * sizeof(DT_);
+            return result;
+        }
     };
 
     template<>
@@ -418,6 +416,8 @@ namespace honei
                     }
                     if (row_end == 0)
                         row_end = a.rows();
+
+                    BENCHADD(Defect<tags::CPU>::get_benchmark_info(r, rhs, a, bv));
 
                     DT_ * result(r.elements());
                     const unsigned long * Aj(a.Aj().elements());

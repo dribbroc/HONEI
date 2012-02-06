@@ -332,6 +332,16 @@ namespace honei
             return MPIOps<tags::CPU>::norm_l2_false(x);
         }
 
+        template <typename DT_>
+        static BenchmarkInfo get_benchmark_info(const DenseVectorContinuousBase<DT_> & x)
+        {
+            BenchmarkInfo result;
+            result.flops = 2 * x.size();
+            result.load = x.size() * sizeof(DT_);
+            result.store = sizeof(DT_);
+            return result;
+        }
+
         /// \}
     };
 
@@ -381,6 +391,16 @@ namespace honei
         static inline DT_ value(const DenseVectorMPI<DT_> & x)
         {
             return sqrt(MPIOps<tags::CPU>::norm_l2_false(x));
+        }
+
+        template <typename DT_>
+        static BenchmarkInfo get_benchmark_info(const DenseVectorContinuousBase<DT_> & x)
+        {
+            BenchmarkInfo result;
+            result.flops = 2 * x.size() + 1;
+            result.load = x.size() * sizeof(DT_);
+            result.store = sizeof(DT_);
+            return result;
         }
 
         /// \}
@@ -452,11 +472,12 @@ namespace honei
         /// \}
     };
 
-    template <VectorNormType norm_type_> struct Norm<norm_type_, false, tags::CPU::Generic>
+    template <> struct Norm<vnt_l_two, false, tags::CPU::Generic>
     {
         template <typename DT_>
         static inline DT_ value(const DenseVectorContinuousBase<DT_> & x)
         {
+            BENCHADD((Norm<vnt_l_two, false, tags::CPU>::get_benchmark_info(x)));
             const DT_ * xe(x.elements());
             const unsigned long size(x.size());
             DT_ result(0);
@@ -469,11 +490,12 @@ namespace honei
         }
     };
 
-    template <VectorNormType norm_type_> struct Norm<norm_type_, true, tags::CPU::Generic>
+    template <> struct Norm<vnt_l_two, true, tags::CPU::Generic>
     {
         template <typename DT_>
         static inline DT_ value(const DenseVectorContinuousBase<DT_> & x)
         {
+            BENCHADD((Norm<vnt_l_two, true, tags::CPU>::get_benchmark_info(x)));
             const DT_ * xe(x.elements());
             const unsigned long size(x.size());
             DT_ result(0);

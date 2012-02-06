@@ -99,11 +99,20 @@ namespace honei
 
 #if defined (BENCHMARK_INSTRUMENTATION)
 #define BENCHADD(i) \
-    globalBenchmarkInfo.flops+=i.flopsf; \
+    globalBenchmarkInfo.flops+=i.flops; \
     globalBenchmarkInfo.load+=i.load; \
     globalBenchmarkInfo.store+=i.store
 #else
 #define BENCHADD(i)
+#endif
+
+#if defined (BENCHMARK_INSTRUMENTATION)
+#define BENCHRESET() \
+    globalBenchmarkInfo.flops=0; \
+    globalBenchmarkInfo.load=0; \
+    globalBenchmarkInfo.store=0
+#else
+#define BENCHRESET()
 #endif
 
 #endif
