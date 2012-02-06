@@ -74,7 +74,7 @@ class CGPoissonAdvancedEllBENCH<Tag_, DT1_, methods::JAC>:
             unsigned long used_iters(0);
 
             BENCHMARK(
-                      (CG<Tag_, methods::VAR>::value(system, smatrix3, rhs, result, 10000ul, used_iters, DT1_(1e-8)));
+                      (CGSolver<Tag_, methods::VAR>::value(system, smatrix3, rhs, result, 10000ul, used_iters, DT1_(1e-8)));
                      );
 
             std::cout << "Iters: " << used_iters << std::endl;
@@ -144,7 +144,7 @@ class CGPoissonAdvancedEllBENCH<Tag_, DT1_, methods::SPAI>:
             unsigned long used_iters(0);
 
             BENCHMARK(
-                      (CG<Tag_, methods::VAR>::value(system, precon, rhs, result, 10000ul, used_iters, DT1_(1e-8)));
+                      (CGSolver<Tag_, methods::VAR>::value(system, precon, rhs, result, 10000ul, used_iters, DT1_(1e-8)));
                      );
 
             std::cout << "Iters: " << used_iters << std::endl;

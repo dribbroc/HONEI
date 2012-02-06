@@ -74,7 +74,7 @@ class BiCGStabPoissonAdvancedEllBENCH<Tag_, DT1_, methods::JAC>:
             unsigned long used_iters(0);
 
             BENCHMARK(
-                      (BiCGStab<Tag_, methods::VAR>::value(system, smatrix3, rhs, result, 10000ul, used_iters, DT1_(1e-8)));
+                      (BiCGStabSolver<Tag_, methods::VAR>::value(system, smatrix3, rhs, result, 10000ul, used_iters, DT1_(1e-8)));
                      );
 
             std::cout << "Iters: " << used_iters << std::endl;
@@ -148,7 +148,7 @@ class BiCGStabPoissonAdvancedEllBENCH<Tag_, DT1_, methods::SPAI>:
             unsigned long used_iters(0);
 
             BENCHMARK(
-                      (BiCGStab<Tag_, methods::VAR>::value(system, precon, rhs, result, 10000ul, used_iters, DT1_(1e-8)));
+                      (BiCGStabSolver<Tag_, methods::VAR>::value(system, precon, rhs, result, 10000ul, used_iters, DT1_(1e-8)));
                      );
 
             std::cout << "Iters: " << used_iters << std::endl;

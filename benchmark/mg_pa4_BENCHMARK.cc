@@ -131,7 +131,7 @@ class MGBench:
                     MGCycleCreation<Tag_,
                     CycleType_,
                     //SuperLU,
-                    BiCGStab<Tag_, methods::VAR>,
+                    BiCGStabSolver<Tag_, methods::VAR>,
                     //CG<Tag_, methods::NONE>,
                     //RISmoother<Tag_>,
                     BiCGStabSmoother<Tag_>,
