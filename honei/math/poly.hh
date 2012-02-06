@@ -15,7 +15,7 @@ namespace honei
     struct Poly
     {
         template<typename DT_>
-        static inline SparseMatrix<DT_> value(SparseMatrix<DT_>& A, unsigned long m, DT_ damp = DT_(1))
+        static inline SparseMatrix<DT_> value(SparseMatrix<DT_>& A, unsigned long m)
         {
             //construct identity matrix
             SparseMatrix<DT_> I(A.rows(), A.columns());
