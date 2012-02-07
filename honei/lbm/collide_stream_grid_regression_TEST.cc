@@ -163,13 +163,16 @@ class CollideStreamGridRegressionTest :
         }
 };
 #ifdef HONEI_SSE
-CollideStreamGridRegressionTest<tags::CPU::SSE, float> sse_solver_multi_test_float("float");
-CollideStreamGridRegressionTest<tags::CPU::SSE, double> sse_solver_multi_test_double("double");
+CollideStreamGridRegressionTest<tags::CPU::SSE, float> sse_collide_stream_regression_test_float("float");
+CollideStreamGridRegressionTest<tags::CPU::SSE, double> sse_collide_stream_regression_test_double("double");
 #endif
 #ifdef HONEI_CUDA
-CollideStreamGridRegressionTest<tags::GPU::CUDA, float> cuda_solver_multi_test_float("float");
+CollideStreamGridRegressionTest<tags::GPU::CUDA, float> cuda_collide_stream_regression_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+CollideStreamGridRegressionTest<tags::GPU::CUDA, double> cuda_collide_stream_regression_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CELL
-CollideStreamGridRegressionTest<tags::Cell, float> cell_solver_multi_test_float("float");
+CollideStreamGridRegressionTest<tags::Cell, float> cell_collide_stream_regression_test_float("float");
 #endif
 

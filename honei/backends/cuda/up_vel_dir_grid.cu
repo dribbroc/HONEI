@@ -23,10 +23,11 @@ namespace honei
 {
     namespace cuda
     {
+        template <typename DT_>
         __global__ void up_vel_dir_grid_gpu(
-                float * f_temp_1, float * f_temp_2,
-                float * f_temp_3, float * f_temp_4, float * f_temp_5,
-                float * f_temp_6, float * f_temp_7, float * f_temp_8,
+                DT_ * f_temp_1, DT_ * f_temp_2,
+                DT_ * f_temp_3, DT_ * f_temp_4, DT_ * f_temp_5,
+                DT_ * f_temp_6, DT_ * f_temp_7, DT_ * f_temp_8,
                 unsigned long * types,
                 unsigned long offset,
                 unsigned long size)
@@ -76,6 +77,41 @@ namespace honei
             }
         }
     }
+
+    template <typename DT_>
+    void cuda_up_vel_dir_grid(unsigned long start, unsigned long end,
+        void * types, void * f_temp_1, void * f_temp_2,
+        void * f_temp_3, void * f_temp_4, void * f_temp_5,
+        void * f_temp_6, void * f_temp_7, void * f_temp_8,
+        unsigned long blocksize)
+    {
+        unsigned long size(end);
+        dim3 grid;
+        dim3 block;
+        block.x = blocksize;
+        grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
+        grid.y = grid.x;
+
+
+        unsigned long * types_gpu((unsigned long *)types);
+
+        DT_ * f_temp_1_gpu((DT_ *)f_temp_1);
+        DT_ * f_temp_2_gpu((DT_ *)f_temp_2);
+        DT_ * f_temp_3_gpu((DT_ *)f_temp_3);
+        DT_ * f_temp_4_gpu((DT_ *)f_temp_4);
+        DT_ * f_temp_5_gpu((DT_ *)f_temp_5);
+        DT_ * f_temp_6_gpu((DT_ *)f_temp_6);
+        DT_ * f_temp_7_gpu((DT_ *)f_temp_7);
+        DT_ * f_temp_8_gpu((DT_ *)f_temp_8);
+
+        honei::cuda::up_vel_dir_grid_gpu<DT_><<<grid, block>>>(
+                f_temp_1_gpu, f_temp_2_gpu, f_temp_3_gpu, f_temp_4_gpu,
+                f_temp_5_gpu, f_temp_6_gpu, f_temp_7_gpu, f_temp_8_gpu,
+                types_gpu,
+                start, size);
+
+        CUDA_ERROR();
+    }
 }
 
 extern "C" void cuda_up_vel_dir_grid_float(unsigned long start, unsigned long end,
@@ -84,30 +120,16 @@ extern "C" void cuda_up_vel_dir_grid_float(unsigned long start, unsigned long en
         void * f_temp_6, void * f_temp_7, void * f_temp_8,
         unsigned long blocksize)
 {
-    unsigned long size(end);
-    dim3 grid;
-    dim3 block;
-    block.x = blocksize;
-    grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
-    grid.y = grid.x;
-
-
-    unsigned long * types_gpu((unsigned long *)types);
-
-    float * f_temp_1_gpu((float *)f_temp_1);
-    float * f_temp_2_gpu((float *)f_temp_2);
-    float * f_temp_3_gpu((float *)f_temp_3);
-    float * f_temp_4_gpu((float *)f_temp_4);
-    float * f_temp_5_gpu((float *)f_temp_5);
-    float * f_temp_6_gpu((float *)f_temp_6);
-    float * f_temp_7_gpu((float *)f_temp_7);
-    float * f_temp_8_gpu((float *)f_temp_8);
-
-    honei::cuda::up_vel_dir_grid_gpu<<<grid, block>>>(
-            f_temp_1_gpu, f_temp_2_gpu, f_temp_3_gpu, f_temp_4_gpu,
-            f_temp_5_gpu, f_temp_6_gpu, f_temp_7_gpu, f_temp_8_gpu,
-            types_gpu,
-            start, size);
-
-    CUDA_ERROR();
+    honei::cuda_up_vel_dir_grid<float>(start, end, types, f_temp_1, f_temp_2, f_temp_3, f_temp_4, f_temp_5, f_temp_6, f_temp_7, f_temp_8, blocksize);
 }
+
+#ifdef HONEI_CUDA_DOUBLE
+extern "C" void cuda_up_vel_dir_grid_double(unsigned long start, unsigned long end,
+        void * types, void * f_temp_1, void * f_temp_2,
+        void * f_temp_3, void * f_temp_4, void * f_temp_5,
+        void * f_temp_6, void * f_temp_7, void * f_temp_8,
+        unsigned long blocksize)
+{
+    honei::cuda_up_vel_dir_grid<double>(start, end, types, f_temp_1, f_temp_2, f_temp_3, f_temp_4, f_temp_5, f_temp_6, f_temp_7, f_temp_8, blocksize);
+}
+#endif

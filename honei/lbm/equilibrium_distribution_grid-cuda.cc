@@ -97,6 +97,78 @@ namespace
                 data.f_eq_8->unlock(lm_write_only);
             }
     };
+
+#ifdef HONEI_CUDA_DOUBLE
+    class cudaEqDistGriddouble
+    {
+        private:
+            double g;
+            double e;
+            PackedGridInfo<D2Q9> & info;
+            PackedGridData<D2Q9, double> & data;
+            unsigned long blocksize;
+        public:
+            cudaEqDistGriddouble(double g, double e, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data, unsigned long blocksize) :
+                g(g),
+                e(e),
+                info(info),
+                data(data),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                info.limits->lock(lm_read_only);
+
+                void * u_gpu(data.u->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * v_gpu(data.v->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * h_gpu(data.h->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                void * distribution_x_gpu(data.distribution_x->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * distribution_y_gpu(data.distribution_y->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                void * f_eq_0_gpu(data.f_eq_0->lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * f_eq_1_gpu(data.f_eq_1->lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * f_eq_2_gpu(data.f_eq_2->lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * f_eq_3_gpu(data.f_eq_3->lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * f_eq_4_gpu(data.f_eq_4->lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * f_eq_5_gpu(data.f_eq_5->lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * f_eq_6_gpu(data.f_eq_6->lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * f_eq_7_gpu(data.f_eq_7->lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * f_eq_8_gpu(data.f_eq_8->lock(lm_write_only, tags::GPU::CUDA::memory_value));
+
+                unsigned long start((*info.limits)[0]);
+                unsigned long end((*info.limits)[info.limits->size() - 1]);
+                cuda_eq_dist_grid_double(start, end, u_gpu, v_gpu, h_gpu,
+                        distribution_x_gpu, distribution_y_gpu,
+                        f_eq_0_gpu, f_eq_1_gpu, f_eq_2_gpu,
+                        f_eq_3_gpu, f_eq_4_gpu, f_eq_5_gpu,
+                        f_eq_6_gpu, f_eq_7_gpu, f_eq_8_gpu,
+                        g, e,
+                        blocksize);
+
+                info.limits->unlock(lm_read_only);
+
+                data.u->unlock(lm_read_only);
+                data.v->unlock(lm_read_only);
+                data.h->unlock(lm_read_only);
+
+                data.distribution_x->unlock(lm_read_only);
+                data.distribution_y->unlock(lm_read_only);
+
+                data.f_eq_0->unlock(lm_write_only);
+                data.f_eq_1->unlock(lm_write_only);
+                data.f_eq_2->unlock(lm_write_only);
+                data.f_eq_3->unlock(lm_write_only);
+                data.f_eq_4->unlock(lm_write_only);
+                data.f_eq_5->unlock(lm_write_only);
+                data.f_eq_6->unlock(lm_write_only);
+                data.f_eq_7->unlock(lm_write_only);
+                data.f_eq_8->unlock(lm_write_only);
+            }
+    };
+#endif
 }
 
 void EquilibriumDistributionGrid<tags::GPU::CUDA, lbm_applications::LABSWE>::value(float g, float e,
@@ -119,3 +191,24 @@ void EquilibriumDistributionGrid<tags::GPU::CUDA, lbm_applications::LABSWE>::val
     }
 }
 
+#ifdef HONEI_CUDA_DOUBLE
+void EquilibriumDistributionGrid<tags::GPU::CUDA, lbm_applications::LABSWE>::value(double g, double e,
+        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data)
+{
+    CONTEXT("When computing LABSWE local equilibrium distribution function (CUDA):");
+
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::eq_dist_grid_double", 128ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaEqDistGriddouble task(g, e, info, data, blocksize);
+        task();
+    }
+    else
+    {
+        cudaEqDistGriddouble task(g, e, info, data, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
+    }
+}
+#endif

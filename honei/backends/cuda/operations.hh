@@ -117,6 +117,14 @@ extern "C"
             float g, float e,
             unsigned long blocksize);
 
+    void cuda_eq_dist_grid_double(unsigned long start, unsigned long end, void * u, void * v, void * h,
+            void * distribution_x, void * distribution_y,
+            void * f_eq_0, void * f_eq_1, void * f_eq_2,
+            void * f_eq_3, void * f_eq_4, void * f_eq_5,
+            void * f_eq_6, void * f_eq_7, void * f_eq_8,
+            double g, double e,
+            unsigned long blocksize);
+
     void cuda_collide_stream_grid_float(unsigned long start, unsigned long end,
             void * dir_1, void * dir_2, void * dir_3, void * dir_4,
             void * dir_5, void * dir_6, void * dir_7, void * dir_8,
@@ -130,6 +138,21 @@ extern "C"
             void * f_temp_3, void * f_temp_4, void * f_temp_5,
             void * f_temp_6, void * f_temp_7, void * f_temp_8,
             float tau, unsigned long size,
+            unsigned long blocksize);
+
+    void cuda_collide_stream_grid_double(unsigned long start, unsigned long end,
+            void * dir_1, void * dir_2, void * dir_3, void * dir_4,
+            void * dir_5, void * dir_6, void * dir_7, void * dir_8,
+            void * f_eq_0, void * f_eq_1, void * f_eq_2,
+            void * f_eq_3, void * f_eq_4, void * f_eq_5,
+            void * f_eq_6, void * f_eq_7, void * f_eq_8,
+            void * f_0, void * f_1, void * f_2,
+            void * f_3, void * f_4, void * f_5,
+            void * f_6, void * f_7, void * f_8,
+            void * f_temp_0, void * f_temp_1, void * f_temp_2,
+            void * f_temp_3, void * f_temp_4, void * f_temp_5,
+            void * f_temp_6, void * f_temp_7, void * f_temp_8,
+            double tau, unsigned long size,
             unsigned long blocksize);
 
     void cuda_force_grid_float(
@@ -151,6 +174,25 @@ extern "C"
             unsigned long size,
             unsigned long blocksize);
 
+    void cuda_force_grid_double(
+            void * dir_1, void * dir_2, void * dir_3, void * dir_4,
+            void * dir_5, void * dir_6, void * dir_7, void * dir_8,
+            void * h, void * b,
+            void * f_temp_1, void * f_temp_2,
+            void * f_temp_3, void * f_temp_4, void * f_temp_5,
+            void * f_temp_6, void * f_temp_7, void * f_temp_8,
+            double distribution_x_1, double distribution_y_1,
+            double distribution_x_2, double distribution_y_2,
+            double distribution_x_3, double distribution_y_3,
+            double distribution_x_4, double distribution_y_4,
+            double distribution_x_5, double distribution_y_5,
+            double distribution_x_6, double distribution_y_6,
+            double distribution_x_7, double distribution_y_7,
+            double distribution_x_8, double distribution_y_8,
+            double g, double d_x, double d_y, double d_t,
+            unsigned long size,
+            unsigned long blocksize);
+
     void cuda_force_grid_float_2(
             void * h, void * u, void * v,
             void * f_temp_1, void * f_temp_2,
@@ -168,7 +210,30 @@ extern "C"
             unsigned long size,
             unsigned long blocksize);
 
+    void cuda_force_grid_double_2(
+            void * h, void * u, void * v,
+            void * f_temp_1, void * f_temp_2,
+            void * f_temp_3, void * f_temp_4, void * f_temp_5,
+            void * f_temp_6, void * f_temp_7, void * f_temp_8,
+            double distribution_x_1, double distribution_y_1,
+            double distribution_x_2, double distribution_y_2,
+            double distribution_x_3, double distribution_y_3,
+            double distribution_x_4, double distribution_y_4,
+            double distribution_x_5, double distribution_y_5,
+            double distribution_x_6, double distribution_y_6,
+            double distribution_x_7, double distribution_y_7,
+            double distribution_x_8, double distribution_y_8,
+            double g, double d_x, double d_y, double d_t, double manning,
+            unsigned long size,
+            unsigned long blocksize);
+
     void cuda_up_vel_dir_grid_float(unsigned long start, unsigned long end,
+            void * types, void * f_temp_1, void * f_temp_2,
+            void * f_temp_3, void * f_temp_4, void * f_temp_5,
+            void * f_temp_6, void * f_temp_7, void * f_temp_8,
+            unsigned long blocksize);
+
+    void cuda_up_vel_dir_grid_double(unsigned long start, unsigned long end,
             void * types, void * f_temp_1, void * f_temp_2,
             void * f_temp_3, void * f_temp_4, void * f_temp_5,
             void * f_temp_6, void * f_temp_7, void * f_temp_8,
@@ -183,6 +248,15 @@ extern "C"
             void * distribution_x, void * distribution_y, float epsilon,
             unsigned long blocksize);
 
+    void cuda_extraction_grid_dry_double(
+            unsigned long start, unsigned long end,
+            void * f_0, void * f_1, void * f_2,
+            void * f_3, void * f_4, void * f_5,
+            void * f_6, void * f_7, void * f_8,
+            void * h, void * u, void * v,
+            void * distribution_x, void * distribution_y, double epsilon,
+            unsigned long blocksize);
+
     void cuda_extraction_grid_wet_float(
             unsigned long start, unsigned long end,
             void * f_0, void * f_1, void * f_2,
@@ -190,6 +264,15 @@ extern "C"
             void * f_6, void * f_7, void * f_8,
             void * h, void * u, void * v,
             void * distribution_x, void * distribution_y, float epsilon,
+            unsigned long blocksize);
+
+    void cuda_extraction_grid_wet_double(
+            unsigned long start, unsigned long end,
+            void * f_0, void * f_1, void * f_2,
+            void * f_3, void * f_4, void * f_5,
+            void * f_6, void * f_7, void * f_8,
+            void * h, void * u, void * v,
+            void * distribution_x, void * distribution_y, double epsilon,
             unsigned long blocksize);
 
     ///////////////////////////  /////////////////////////

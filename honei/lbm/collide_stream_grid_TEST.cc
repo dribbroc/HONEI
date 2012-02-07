@@ -113,6 +113,9 @@ CollideStreamGridLABSWETest<tags::CPU::SSE, double> sse_collidestream_grid_test_
 #endif
 #ifdef HONEI_CUDA
 CollideStreamGridLABSWETest<tags::GPU::CUDA, float> cuda_collidestream_grid_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+CollideStreamGridLABSWETest<tags::GPU::CUDA, double> cuda_collidestream_grid_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CELL
 CollideStreamGridLABSWETest<tags::Cell, float> cell_collidestream_grid_test_float("float");

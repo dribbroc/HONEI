@@ -104,6 +104,9 @@ EqDisGridLABSWETest<tags::CPU::SSE, double> sse_eq_dist_grid_test_double("double
 #endif
 #ifdef HONEI_CUDA
 EqDisGridLABSWETest<tags::GPU::CUDA, float> cuda_eq_dist_grid_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+EqDisGridLABSWETest<tags::GPU::CUDA, double> cuda_eq_dist_grid_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CELL
 EqDisGridLABSWETest<tags::Cell, float> cell_eq_dist_grid_test_float("float");

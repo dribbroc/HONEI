@@ -825,12 +825,14 @@ namespace honei
         struct ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_SLOPE>
         {
             static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float g, float d_x, float d_y, float d_t, float manning);
+            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data, double g, double d_x, double d_y, double d_t, double manning);
         };
 
     template <>
         struct ForceGrid<tags::GPU::CUDA, lbm_applications::LABSWE, lbm_force::CENTRED, lbm_source_schemes::BED_FRICTION>
         {
             static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float g, float d_x, float d_y, float d_t, float m);
+            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data, double g, double d_x, double d_y, double d_t, double m);
         };
 
     template <>

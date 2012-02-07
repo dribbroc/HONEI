@@ -194,6 +194,7 @@ namespace honei
         {
             public:
                 static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float epsilon);
+                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data, double epsilon);
         };
 
     template<>
@@ -359,6 +360,7 @@ namespace honei
         {
             public:
                 static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data, float epsilon);
+                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data, double epsilon);
         };
 
     template<>

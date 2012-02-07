@@ -164,6 +164,7 @@ namespace honei
        struct UpdateVelocityDirectionsGrid<tags::GPU::CUDA, lbm_boundary_types::NOSLIP>
        {
            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data);
+           static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data);
        };
 
    template <>

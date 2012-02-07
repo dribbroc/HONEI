@@ -77,6 +77,58 @@ namespace
                 data.f_temp_8->unlock(lm_read_and_write);
             }
     };
+
+#ifdef HONEI_CUDA_DOUBLE
+    class cudaUpVelDirGriddouble
+    {
+        private:
+            PackedGridInfo<D2Q9> & info;
+            PackedGridData<D2Q9, double> & data;
+            unsigned long blocksize;
+        public:
+            cudaUpVelDirGriddouble(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data, unsigned long blocksize) :
+                info(info),
+                data(data),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                info.limits->lock(lm_read_only);
+
+                void * cuda_types_gpu(info.cuda_types->lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                void * f_temp_1_gpu(data.f_temp_1->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_temp_2_gpu(data.f_temp_2->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_temp_3_gpu(data.f_temp_3->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_temp_4_gpu(data.f_temp_4->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_temp_5_gpu(data.f_temp_5->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_temp_6_gpu(data.f_temp_6->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_temp_7_gpu(data.f_temp_7->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * f_temp_8_gpu(data.f_temp_8->lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+
+                unsigned long start((*info.limits)[0]);
+                unsigned long end((*info.limits)[info.limits->size() - 1]);
+                cuda_up_vel_dir_grid_double(start, end, cuda_types_gpu,
+                        f_temp_1_gpu, f_temp_2_gpu,
+                        f_temp_3_gpu, f_temp_4_gpu, f_temp_5_gpu,
+                        f_temp_6_gpu, f_temp_7_gpu, f_temp_8_gpu,
+                        blocksize);
+
+                info.cuda_types->unlock(lm_read_only);
+
+                data.f_temp_1->unlock(lm_read_and_write);
+                data.f_temp_2->unlock(lm_read_and_write);
+                data.f_temp_3->unlock(lm_read_and_write);
+                data.f_temp_4->unlock(lm_read_and_write);
+                data.f_temp_5->unlock(lm_read_and_write);
+                data.f_temp_6->unlock(lm_read_and_write);
+                data.f_temp_7->unlock(lm_read_and_write);
+                data.f_temp_8->unlock(lm_read_and_write);
+            }
+    };
+#endif
 }
 
 void UpdateVelocityDirectionsGrid<tags::GPU::CUDA, lbm_boundary_types::NOSLIP>::value(
@@ -99,3 +151,24 @@ void UpdateVelocityDirectionsGrid<tags::GPU::CUDA, lbm_boundary_types::NOSLIP>::
     }
 }
 
+#ifdef HONEI_CUDA_DOUBLE
+void UpdateVelocityDirectionsGrid<tags::GPU::CUDA, lbm_boundary_types::NOSLIP>::value(
+        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data)
+{
+    CONTEXT("When updating velocity directions (CUDA):");
+
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::up_vel_dir_grid_double", 128ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaUpVelDirGriddouble task(info, data, blocksize);
+        task();
+    }
+    else
+    {
+        cudaUpVelDirGriddouble task(info, data, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
+    }
+}
+#endif

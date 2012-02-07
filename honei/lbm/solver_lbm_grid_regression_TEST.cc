@@ -178,7 +178,11 @@ SolverLBMGridRegressionTest<tags::CPU::MultiCore::SSE, double> mcsse_solver_test
 #endif
 #ifdef HONEI_CUDA
 SolverLBMGridRegressionTest<tags::GPU::CUDA, float> cuda_solver_test_float("float");
-//SolverLBMGridRegressionTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_solver_test_float("float");
+SolverLBMGridRegressionTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_solver_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+SolverLBMGridRegressionTest<tags::GPU::CUDA, double> cuda_solver_test_double("double");
+SolverLBMGridRegressionTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_solver_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CELL
 //Cell cannot handle obstacles in collide&stream
@@ -328,6 +332,10 @@ SimpleSolverLBMGridRegressionTest<tags::CPU::MultiCore::SSE, double> mcsse_simpl
 #ifdef HONEI_CUDA
 SimpleSolverLBMGridRegressionTest<tags::GPU::CUDA, float> cuda_simple_solver_test_float("float");
 SimpleSolverLBMGridRegressionTest<tags::GPU::MultiCore::CUDA, float> mccuda_simple_solver_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+SimpleSolverLBMGridRegressionTest<tags::GPU::CUDA, double> cuda_simple_solver_test_double("double");
+SimpleSolverLBMGridRegressionTest<tags::GPU::MultiCore::CUDA, double> mccuda_simple_solver_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CELL
 SimpleSolverLBMGridRegressionTest<tags::Cell, float> cell_simple_solver_test_float("float");

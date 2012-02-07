@@ -23,17 +23,39 @@ namespace honei
 {
     namespace cuda
     {
+        template <typename DT_>
+        class SharedMem
+        {
+        };
+
+        template <>
+        class SharedMem<float>
+        {
+            public:
+                __device__ float * get_pointer(){extern __shared__ float s_float[]; return s_float;}
+        };
+
+        template <>
+        class SharedMem<double>
+        {
+            public:
+                __device__ double * get_pointer(){extern __shared__ double s_double[]; return s_double;}
+        };
+
+        template <typename DT_>
         __global__ void extraction_grid_dry_gpu(
-                float * f_0, float * f_1, float * f_2,
-                float * f_3, float * f_4, float * f_5,
-                float * f_6, float * f_7, float * f_8,
-                float * h, float * u, float * v,
-                float * distribution_x_data, float * distribution_y_data, float epsilon,
+                DT_ * f_0, DT_ * f_1, DT_ * f_2,
+                DT_ * f_3, DT_ * f_4, DT_ * f_5,
+                DT_ * f_6, DT_ * f_7, DT_ * f_8,
+                DT_ * h, DT_ * u, DT_ * v,
+                DT_ * distribution_x_data, DT_ * distribution_y_data, DT_ epsilon,
                 unsigned long offset, unsigned long size)
         {
-            extern __shared__ float  distribution_cache[];
-            float* distribution_x = distribution_cache;
-            float* distribution_y = distribution_cache + 9;
+            //extern __shared__ DT_  distribution_cache[];
+            SharedMem<DT_> shared;
+            DT_ * distribution_cache = shared.get_pointer();
+            DT_* distribution_x = distribution_cache;
+            DT_* distribution_y = distribution_cache + 9;
 
             unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
 
@@ -58,8 +80,8 @@ namespace honei
                     f_7[i] +
                     f_8[i];
 
-                float lax_upper(epsilon);
-                float lax_lower(-lax_upper);
+                DT_ lax_upper(epsilon);
+                DT_ lax_lower(-lax_upper);
 
                 if(h[i] < lax_lower || h[i] > lax_upper)
                 {
@@ -89,21 +111,24 @@ namespace honei
                     u[i] = 0;
                     v[i] = 0;
                 }
-                h[i] = max(float(0), min(float(1), h[i]));
+                h[i] = max(DT_(0), min(DT_(1), h[i]));
             }
         }
 
+        template <typename DT_>
         __global__ void extraction_grid_wet_gpu(
-                float * f_0, float * f_1, float * f_2,
-                float * f_3, float * f_4, float * f_5,
-                float * f_6, float * f_7, float * f_8,
-                float * h, float * u, float * v,
-                float * distribution_x_data, float * distribution_y_data, float epsilon,
+                DT_ * f_0, DT_ * f_1, DT_ * f_2,
+                DT_ * f_3, DT_ * f_4, DT_ * f_5,
+                DT_ * f_6, DT_ * f_7, DT_ * f_8,
+                DT_ * h, DT_ * u, DT_ * v,
+                DT_ * distribution_x_data, DT_ * distribution_y_data, DT_ epsilon,
                 unsigned long offset, unsigned long size)
         {
-            extern __shared__ float  distribution_cache[];
-            float* distribution_x = distribution_cache;
-            float* distribution_y = distribution_cache + 9;
+            //extern __shared__ DT_  distribution_cache[];
+            SharedMem<DT_> shared;
+            DT_ * distribution_cache = shared.get_pointer();
+            DT_* distribution_x = distribution_cache;
+            DT_* distribution_y = distribution_cache + 9;
 
             unsigned long idx = (blockDim.y * blockIdx.y * gridDim.x * blockDim.x) + (blockDim.x * blockIdx.x) + threadIdx.x;
 
@@ -150,6 +175,92 @@ namespace honei
             }
         }
     }
+
+    template <typename DT_>
+        void cuda_extraction_grid_dry(
+                unsigned long start, unsigned long end,
+                void * f_0, void * f_1, void * f_2,
+                void * f_3, void * f_4, void * f_5,
+                void * f_6, void * f_7, void * f_8,
+                void * h, void * u, void * v,
+                void * distribution_x, void * distribution_y, DT_ epsilon,
+                unsigned long blocksize)
+        {
+            unsigned long size(end);
+            dim3 grid;
+            dim3 block;
+            block.x = blocksize;
+            grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
+            grid.y = grid.x;
+
+            DT_ * f_0_gpu((DT_ *)f_0);
+            DT_ * f_1_gpu((DT_ *)f_1);
+            DT_ * f_2_gpu((DT_ *)f_2);
+            DT_ * f_3_gpu((DT_ *)f_3);
+            DT_ * f_4_gpu((DT_ *)f_4);
+            DT_ * f_5_gpu((DT_ *)f_5);
+            DT_ * f_6_gpu((DT_ *)f_6);
+            DT_ * f_7_gpu((DT_ *)f_7);
+            DT_ * f_8_gpu((DT_ *)f_8);
+
+            DT_ * h_gpu((DT_ *)h);
+            DT_ * u_gpu((DT_ *)u);
+            DT_ * v_gpu((DT_ *)v);
+            DT_ * distribution_x_gpu((DT_ *)distribution_x);
+            DT_ * distribution_y_gpu((DT_ *)distribution_y);
+
+            honei::cuda::extraction_grid_dry_gpu<DT_><<<grid, block, 18 * sizeof(DT_)>>>(
+                    f_0_gpu, f_1_gpu, f_2_gpu, f_3_gpu, f_4_gpu,
+                    f_5_gpu, f_6_gpu, f_7_gpu, f_8_gpu,
+                    h_gpu, u_gpu, v_gpu,
+                    distribution_x_gpu, distribution_y_gpu, epsilon,
+                    start, size);
+
+            CUDA_ERROR();
+        }
+
+    template <typename DT_>
+        void cuda_extraction_grid_wet(
+                unsigned long start, unsigned long end,
+                void * f_0, void * f_1, void * f_2,
+                void * f_3, void * f_4, void * f_5,
+                void * f_6, void * f_7, void * f_8,
+                void * h, void * u, void * v,
+                void * distribution_x, void * distribution_y, DT_ epsilon,
+                unsigned long blocksize)
+        {
+            unsigned long size(end);
+            dim3 grid;
+            dim3 block;
+            block.x = blocksize;
+            grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
+            grid.y = grid.x;
+
+            DT_ * f_0_gpu((DT_ *)f_0);
+            DT_ * f_1_gpu((DT_ *)f_1);
+            DT_ * f_2_gpu((DT_ *)f_2);
+            DT_ * f_3_gpu((DT_ *)f_3);
+            DT_ * f_4_gpu((DT_ *)f_4);
+            DT_ * f_5_gpu((DT_ *)f_5);
+            DT_ * f_6_gpu((DT_ *)f_6);
+            DT_ * f_7_gpu((DT_ *)f_7);
+            DT_ * f_8_gpu((DT_ *)f_8);
+
+            DT_ * h_gpu((DT_ *)h);
+            DT_ * u_gpu((DT_ *)u);
+            DT_ * v_gpu((DT_ *)v);
+            DT_ * distribution_x_gpu((DT_ *)distribution_x);
+            DT_ * distribution_y_gpu((DT_ *)distribution_y);
+
+            honei::cuda::extraction_grid_wet_gpu<DT_><<<grid, block, 18 * sizeof(DT_)>>>(
+                    f_0_gpu, f_1_gpu, f_2_gpu, f_3_gpu, f_4_gpu,
+                    f_5_gpu, f_6_gpu, f_7_gpu, f_8_gpu,
+                    h_gpu, u_gpu, v_gpu,
+                    distribution_x_gpu, distribution_y_gpu, epsilon,
+                    start, size);
+
+            CUDA_ERROR();
+        }
 }
 
 extern "C" void cuda_extraction_grid_dry_float(
@@ -161,38 +272,24 @@ extern "C" void cuda_extraction_grid_dry_float(
         void * distribution_x, void * distribution_y, float epsilon,
         unsigned long blocksize)
 {
-    unsigned long size(end);
-    dim3 grid;
-    dim3 block;
-    block.x = blocksize;
-    grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
-    grid.y = grid.x;
-
-    float * f_0_gpu((float *)f_0);
-    float * f_1_gpu((float *)f_1);
-    float * f_2_gpu((float *)f_2);
-    float * f_3_gpu((float *)f_3);
-    float * f_4_gpu((float *)f_4);
-    float * f_5_gpu((float *)f_5);
-    float * f_6_gpu((float *)f_6);
-    float * f_7_gpu((float *)f_7);
-    float * f_8_gpu((float *)f_8);
-
-    float * h_gpu((float *)h);
-    float * u_gpu((float *)u);
-    float * v_gpu((float *)v);
-    float * distribution_x_gpu((float *)distribution_x);
-    float * distribution_y_gpu((float *)distribution_y);
-
-    honei::cuda::extraction_grid_dry_gpu<<<grid, block, 18 * sizeof(float)>>>(
-            f_0_gpu, f_1_gpu, f_2_gpu, f_3_gpu, f_4_gpu,
-            f_5_gpu, f_6_gpu, f_7_gpu, f_8_gpu,
-            h_gpu, u_gpu, v_gpu,
-            distribution_x_gpu, distribution_y_gpu, epsilon,
-            start, size);
-
-    CUDA_ERROR();
+    honei::cuda_extraction_grid_dry<float>(start, end, f_0, f_1, f_2, f_3, f_4, f_5, f_6, f_7, f_8, h, u, v,
+            distribution_x, distribution_y, epsilon, blocksize);
 }
+
+#ifdef HONEI_CUDA_DOUBLE
+extern "C" void cuda_extraction_grid_dry_double(
+        unsigned long start, unsigned long end,
+        void * f_0, void * f_1, void * f_2,
+        void * f_3, void * f_4, void * f_5,
+        void * f_6, void * f_7, void * f_8,
+        void * h, void * u, void * v,
+        void * distribution_x, void * distribution_y, double epsilon,
+        unsigned long blocksize)
+{
+    honei::cuda_extraction_grid_dry<double>(start, end, f_0, f_1, f_2, f_3, f_4, f_5, f_6, f_7, f_8, h, u, v,
+            distribution_x, distribution_y, epsilon, blocksize);
+}
+#endif
 
 extern "C" void cuda_extraction_grid_wet_float(
         unsigned long start, unsigned long end,
@@ -203,35 +300,21 @@ extern "C" void cuda_extraction_grid_wet_float(
         void * distribution_x, void * distribution_y, float epsilon,
         unsigned long blocksize)
 {
-    unsigned long size(end);
-    dim3 grid;
-    dim3 block;
-    block.x = blocksize;
-    grid.x = (unsigned)ceil(sqrt(size/(double)block.x));
-    grid.y = grid.x;
-
-    float * f_0_gpu((float *)f_0);
-    float * f_1_gpu((float *)f_1);
-    float * f_2_gpu((float *)f_2);
-    float * f_3_gpu((float *)f_3);
-    float * f_4_gpu((float *)f_4);
-    float * f_5_gpu((float *)f_5);
-    float * f_6_gpu((float *)f_6);
-    float * f_7_gpu((float *)f_7);
-    float * f_8_gpu((float *)f_8);
-
-    float * h_gpu((float *)h);
-    float * u_gpu((float *)u);
-    float * v_gpu((float *)v);
-    float * distribution_x_gpu((float *)distribution_x);
-    float * distribution_y_gpu((float *)distribution_y);
-
-    honei::cuda::extraction_grid_wet_gpu<<<grid, block, 18 * sizeof(float)>>>(
-            f_0_gpu, f_1_gpu, f_2_gpu, f_3_gpu, f_4_gpu,
-            f_5_gpu, f_6_gpu, f_7_gpu, f_8_gpu,
-            h_gpu, u_gpu, v_gpu,
-            distribution_x_gpu, distribution_y_gpu, epsilon,
-            start, size);
-
-    CUDA_ERROR();
+    honei::cuda_extraction_grid_wet<float>(start, end, f_0, f_1, f_2, f_3, f_4, f_5, f_6, f_7, f_8, h, u, v,
+            distribution_x, distribution_y, epsilon, blocksize);
 }
+
+#ifdef HONEI_CUDA_DOUBLE
+extern "C" void cuda_extraction_grid_wet_double(
+        unsigned long start, unsigned long end,
+        void * f_0, void * f_1, void * f_2,
+        void * f_3, void * f_4, void * f_5,
+        void * f_6, void * f_7, void * f_8,
+        void * h, void * u, void * v,
+        void * distribution_x, void * distribution_y, double epsilon,
+        unsigned long blocksize)
+{
+    honei::cuda_extraction_grid_wet<double>(start, end, f_0, f_1, f_2, f_3, f_4, f_5, f_6, f_7, f_8, h, u, v,
+            distribution_x, distribution_y, epsilon, blocksize);
+}
+#endif

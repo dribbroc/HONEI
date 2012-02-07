@@ -157,6 +157,9 @@ ForceSlopeLBMGridTest<tags::CPU::SSE, double> force_slope_test_double("double");
 
 #ifdef HONEI_CUDA
 ForceSlopeLBMGridTest<tags::GPU::CUDA, float> force_slope_test_float_cuda("CUDA float");
+#ifdef HONEI_CUDA_DOUBLE
+ForceSlopeLBMGridTest<tags::GPU::CUDA, double> force_slope_test_double_cuda("CUDA double");
+#endif
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -296,4 +299,7 @@ ForceFrictionLBMGridTest<tags::CPU::SSE, double> force_friction_test_double("dou
 
 #ifdef HONEI_CUDA
 ForceFrictionLBMGridTest<tags::GPU::CUDA, float> force_friction_test_float_cuda("CUDA float");
+#ifdef HONEI_CUDA_DOUBLE
+ForceFrictionLBMGridTest<tags::GPU::CUDA, double> force_friction_test_double_cuda("CUDA double");
+#endif
 #endif

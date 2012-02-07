@@ -253,6 +253,10 @@ namespace honei
                 PackedGridInfo<lbm_lattice_types::D2Q9> & info,
                 PackedGridData<lbm_lattice_types::D2Q9, float> & data,
                 float tau);
+        static void value(
+                PackedGridInfo<lbm_lattice_types::D2Q9> & info,
+                PackedGridData<lbm_lattice_types::D2Q9, double> & data,
+                double tau);
     };
 
     template <>

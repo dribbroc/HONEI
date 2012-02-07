@@ -114,6 +114,10 @@ SolverLBMGridTest<tags::CPU::MultiCore::SSE, double> mcsse_solver_test_double("d
 #ifdef HONEI_CUDA
 SolverLBMGridTest<tags::GPU::CUDA, float> cuda_solver_test_float("float");
 SolverLBMGridTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_solver_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+SolverLBMGridTest<tags::GPU::CUDA, double> cuda_solver_test_double("double");
+SolverLBMGridTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_solver_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CELL
 SolverLBMGridTest<tags::Cell, float> cell_solver_test_float("float");
@@ -200,6 +204,10 @@ SolverLBMGridMassConservationTest<tags::CPU::MultiCore::SSE, double> mcsse_solve
 #ifdef HONEI_CUDA
 SolverLBMGridMassConservationTest<tags::GPU::CUDA, float> cuda_solver_grid_mc_test_float("float");
 SolverLBMGridMassConservationTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_solver_grid_mc_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+SolverLBMGridMassConservationTest<tags::GPU::CUDA, double> cuda_solver_grid_mc_test_double("double");
+SolverLBMGridMassConservationTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_solver_grid_mc_test_double("double");
+#endif
 #endif
 #ifdef HONEI_Cell
 SolverLBMGridMassConservationTest<tags::Cell, float> cell_solver_grid_mc_test_float("float");
@@ -287,6 +295,10 @@ SimpleSolverLBMGridMassConservationTest<tags::CPU::MultiCore::SSE, double> mcsse
 #ifdef HONEI_CUDA
 SimpleSolverLBMGridMassConservationTest<tags::GPU::CUDA, float> cuda_simple_solver_grid_mc_test_float("float");
 SimpleSolverLBMGridMassConservationTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_simple_solver_grid_mc_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+SimpleSolverLBMGridMassConservationTest<tags::GPU::CUDA, double> cuda_simple_solver_grid_mc_test_double("double");
+SimpleSolverLBMGridMassConservationTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_simple_solver_grid_mc_test_double("double");
+#endif
 #endif
 #ifdef HONEI_Cell
 SimpleSolverLBMGridMassConservationTest<tags::Cell, float> cell_simple_solver_grid_mc_test_float("float");

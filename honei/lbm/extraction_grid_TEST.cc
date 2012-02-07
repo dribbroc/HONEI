@@ -135,6 +135,9 @@ ExtractionGridTest<tags::CPU::SSE, double> sse_extraction_grid_test_double("doub
 #endif
 #ifdef HONEI_CUDA
 ExtractionGridTest<tags::GPU::CUDA, float> cuda_extraction_grid_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+ExtractionGridTest<tags::GPU::CUDA, double> cuda_extraction_grid_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CELL
 ExtractionGridTest<tags::Cell, float> cell_extraction_grid_test_float("float");
