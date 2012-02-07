@@ -9,6 +9,7 @@ dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
 add(`boundary_init_fsi',               `hh', `test', `cuda')
+add(`bitmap_io',                       `hh', `test')
 add(`collide_stream',                  `hh', `test')
 add(`collide_stream_grid',             `hh', `sse', `cuda', `cell', `itanium', `test')
 add(`collide_stream_fsi',              `hh', `test', `cuda')
@@ -36,6 +37,7 @@ add(`solid_emulation_fsi',             `hh', `test')
 add(`solver_labswe',                   `hh', `test')
 add(`solver_lbm_grid',                 `hh', `test')
 add(`solver_lbm_fsi',                  `hh', `test')
+add(`solver_lbm_fsi_external_comparison',    `test')
 add(`solver_lbm_grid_multi',                 `test')
 add(`solver_lbm_grid_regression',            `test')
 add(`solver_labnavsto',                `hh', `test')
