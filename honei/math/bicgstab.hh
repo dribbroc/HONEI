@@ -350,7 +350,7 @@ namespace honei
 
 
                 //std::cout << "Norm: " << defnorm << std::endl;
-                LOGMESSAGE(lc_solver, "BiCgStab smoother finished in " + stringify(iters + 1) + " iterations with defect " + stringify(defnorm));
+                LOGMESSAGE(lc_solver, "BiCgStab smoother finished in " + stringify(iter + 1) + " iterations with defect " + stringify(defnorm));
                 PROFILER_STOP("BiCGStabSmoother");
 
                 return x;
