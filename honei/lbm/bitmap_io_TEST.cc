@@ -42,7 +42,7 @@ class BitmapIOTest:
         virtual void run() const
         {
             std::string filename;
-            if(_tag.find("PPM") == -1)
+            if(_tag.find("PPM") == std::string::npos)
                 filename = "testdata/test_2.pgm";
             else
                 filename = "testdata/test_2.ppm";
@@ -57,12 +57,12 @@ class BitmapIOTest:
             TEST_CHECK_EQUAL(result[99][0], DT_(1));
             //std::cout << result << std::endl;
 
-            std::string outname(_tag);
-            outname += ".ppm";
-            BitmapIO<FileType_>::write_scalar_field(result, outname);
 
-            if(_tag.find("PPM") != -1)
+            if(_tag.find("PPM") != std::string::npos)
             {
+                std::string outname(_tag);
+                outname += ".ppm";
+                BitmapIO<FileType_>::write_scalar_field(result, outname);
                 DenseMatrix<DT_> result_2(BitmapIO<FileType_>::read_scalar_field(outname, scale));
                 TEST_CHECK_EQUAL(result_2[50][50], DT_(0));
                 TEST_CHECK_EQUAL(result_2[0][0], DT_(1));

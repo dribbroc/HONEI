@@ -44,7 +44,7 @@ class BitmapIO<io_formats::PGM>
 {
     public:
         template<typename DT_>
-        static DenseMatrix<DT_> read_scalar_field(std::string source, DT_ scale, int channel=1)
+        static DenseMatrix<DT_> read_scalar_field(std::string source, DT_ scale/*, int channel=1*/)
         {
             std::cout << "Reading PGM image from file " << source << ":" << std::endl;
             std::tr1::shared_ptr<PGMImage> image(PGMImage::read(source.c_str()));
@@ -67,9 +67,10 @@ class BitmapIO<io_formats::PGM>
         }
 
         template<typename DT_>
-        static void write_scalar_field(DenseMatrix<DT_> & source, std::string filename, int channels=0)
+        static void write_scalar_field(DenseMatrix<DT_> & /*source*/, std::string /*filename*//*, int channels=0*/)
         {
-            std::cout << "Skipping output to file " << filename << "!" << std::endl;
+            //std::cout << "Skipping output to file " << filename << "!" << std::endl;
+            throw InternalError("PGM output not implemented!");
         }
 };
 
