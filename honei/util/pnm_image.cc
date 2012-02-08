@@ -165,12 +165,12 @@ std::tr1::shared_ptr<PGMImage> PGMImage::read(const char* filename) throw(PNMIma
     //Convert to float representation between 0 and 1
     data = img->getGrayData();
     if (bpc == 2) {
-        for(int i=0; i<width*height; ++i) {
+        for(unsigned long i(0) ; i < width * height ; ++i) {
             data[i] = read16BitValue(&buffer[2*i]) / (float) max_value;
         }
     }
     else {
-        for(int i=0; i<width*height; ++i) {
+        for(unsigned long i(0) ; i < width * height ; ++i) {
             data[i] = buffer[i] / (float) max_value;
         }
     }
@@ -222,14 +222,14 @@ std::tr1::shared_ptr<PPMImage> PPMImage::read(const char* filename) throw(PNMIma
     data[1] = img->getGreenData();
     data[2] = img->getBlueData();
     if (bpc == 2) {
-        for(int i=0; i<width*height; ++i) {
+        for(unsigned long i(0) ; i < width * height ; ++i) {
             for (int j=0; j<3; ++j) {
                 data[j][i] = read16BitValue(&buffer[6*i+2*j]) / (float) max_value;
             }
         }
     }
     else {
-        for(int i=0; i<width*height; ++i) {
+        for(unsigned long i(0) ; i < width * height ; ++i) {
             for (int j=0; j<3; ++j) {
                 data[j][i] = buffer[3*i+j] / (float) max_value;
             }
@@ -265,7 +265,7 @@ void PPMImage::write(std::tr1::shared_ptr<PPMImage>& img, const char* filename) 
     data[1] = img->getGreenData();
     data[2] = img->getBlueData();
     if (bpc == 2) {
-        for(int i=0; i<width*height; ++i) {
+        for(unsigned long i(0); i < width * height ; ++i) {
             for (int j=0; j<3; ++j) {
                 buffer[6*i  ] = data[0][i]*max_value;
                 buffer[6*i+1] = data[0][i+1]*max_value;
@@ -277,7 +277,7 @@ void PPMImage::write(std::tr1::shared_ptr<PPMImage>& img, const char* filename) 
         }
     }
     else {
-        for(int i=0; i<width*height; ++i) {
+        for(unsigned long i(0) ; i < width * height ; ++i) {
             for (int j=0; j<3; ++j) {
                 buffer[3*i  ] = data[0][i]*max_value;
                 buffer[3*i+1] = data[1][i]*max_value;
