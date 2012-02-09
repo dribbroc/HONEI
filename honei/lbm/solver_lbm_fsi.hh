@@ -33,7 +33,9 @@
 //#define SOLVER_POSTPROCESSING
 
 #ifdef DEBUG
+#ifndef SOLVER_VERBOSE
 #define SOLVER_VERBOSE
+#endif
 #endif
 
 #include <honei/lbm/tags.hh>
