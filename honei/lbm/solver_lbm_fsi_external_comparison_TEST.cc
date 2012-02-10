@@ -17,6 +17,9 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#define SOLVER_VERBOSE 1
+#define SOLVER_POSTPROCESSING 1
+
 #include <honei/la/algorithm.hh>
 #include <honei/lbm/solver_lbm_fsi.hh>
 #include <honei/lbm/scan_conversion_fsi.hh>
@@ -41,8 +44,6 @@ using namespace std;
 using namespace output_types;
 using namespace lbm::lbm_lattice_types;
 
-#define SOLVER_VERBOSE 1
-#define SOLVER_POSTPROCESSING 1
 template <typename Tag_, typename DataType_>
 class SolverLBMFSIExternalComparisonTest_CDUB :
     public TaggedTest<Tag_>
