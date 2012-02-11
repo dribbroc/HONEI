@@ -638,7 +638,7 @@ class SolverLBMFSIExternalComparisonTest_Malpasset :
 //SolverLBMFSIExternalComparisonTest_Malpasset<tags::CPU, float> malpasset_cpu_float("float", 1000, 0.015, 1.5);
 //SolverLBMFSIExternalComparisonTest_Malpasset<tags::CPU, float> malpasset_cpu_float("float", 10000, 0.0045, 1.245);
 //SolverLBMFSIExternalComparisonTest_Malpasset<tags::CPU, float> malpasset_cpu_float("float", 10000, 0.004, 1.245);
-SolverLBMFSIExternalComparisonTest_Malpasset<tags::CPU, float> malpasset_cpu_float("float", 10000, 0.0045, 1.245);
+//SolverLBMFSIExternalComparisonTest_Malpasset<tags::CPU, float> malpasset_cpu_float("float", 10000, 0.0045, 1.245);
 
 template <typename Tag_, typename DataType_>
 class IO_Malpasset :
