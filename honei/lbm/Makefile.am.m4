@@ -88,6 +88,8 @@ BACKEND_LIBS += \
 
 endif
 
+SUBDIRS = testdata
+
 AM_CXXFLAGS = -I$(top_srcdir)
 
 CLEANFILES = *~
