@@ -17,8 +17,8 @@ $1_TEST_LDADD = \
 	$(BACKEND_LIBS) \
 	$(top_builddir)/honei/la/libhoneila.la \
 	$(top_builddir)/honei/math/spai/src/libspai.la \
-	libhoneimath.la \
 	$(top_builddir)/honei/math/SuperLU_4.1/SRC/libsuperlu.la \
+	$(top_builddir)/honei/math/benzi/libbenzi.la \
 	libhoneimath.la \
 	$(FLIBS) \
 	$(DYNAMIC_LD_LIBS)
@@ -109,7 +109,7 @@ BACKEND_LIBS += \
 
 endif
 
-SUBDIRS = testdata spai SuperLU_4.1
+SUBDIRS = testdata spai SuperLU_4.1 benzi
 
 AM_CXXFLAGS = -I$(top_srcdir)
 
@@ -140,7 +140,8 @@ libhoneimath_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/la/libhoneila.la
 	$(top_builddir)/honei/math/spai/src/libspai.la \
-	$(top_builddir)/honei/math/SuperLU_4.1/SRC/libsuperlu.la
+	$(top_builddir)/honei/math/SuperLU_4.1/SRC/libsuperlu.la \
+	$(top_builddir)/honei/math/benzi/libbenzi.la
 
 libhoneimath_includedir = $(includedir)/honei/math
 libhoneimath_include_HEADERS = headerlist

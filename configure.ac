@@ -607,6 +607,7 @@ AC_OUTPUT(
 	honei/math/spai/src/Makefile
 	honei/math/spai/blas/Makefile
 	honei/math/spai/lapack/Makefile
+	honei/math/benzi/Makefile
 	honei/swe/Makefile
 	honei/fem/Makefile
 	honei/util/Makefile

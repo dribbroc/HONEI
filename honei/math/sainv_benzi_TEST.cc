@@ -18,7 +18,7 @@
  */
 
 
-#include <honei/math/sainv.hh>
+#include <honei/math/sainv_benzi.hh>
 #include <honei/util/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <iostream>
@@ -46,14 +46,27 @@ class SainvTestSparse:
         virtual void run() const
         {
             std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/math/testdata/poisson_advanced/sort_0/A_5.ell";
+            filename += "/honei/math/testdata/poisson_advanced/sort_0/A_4.ell";
             SparseMatrixELL<DT_> smell = MatrixIO<io_formats::ELL>::read_matrix(filename, DT_(1));
-            SparseMatrix<DT_> sm(smell);
+            //SparseMatrix<DT_> sm(smell);
+            SparseMatrix<DT_> sm(4,4);
+            sm(0,0) = 4;
+            sm(0,1) = -1;
+            sm(0,2) = -1;
+            sm(1,0) = -1;
+            sm(1,1) = 4;
+            sm(1,3) = -1;
+            sm(2,0) = -1;
+            sm(2,2) = 4;
+            sm(2,3) = -1;
+            sm(3,1) = -1;
+            sm(3,2) = -1;
+            sm(3,3) = 4;
             unsigned long used_elements(0);
             for (unsigned i(0) ; i < sm.rows() ; ++i)
                 used_elements+= sm[i].used_elements();
             std::cout<<"Non Zero Elements of A: "<<used_elements<<std::endl;
-            SparseMatrix<DT_> m(SAINV<Tag_>::value(sm));
+            SparseMatrix<DT_> m(SAINV_BENZI::value(sm));
             used_elements = 0;
             for (unsigned i(0) ; i < m.rows() ; ++i)
                 used_elements+= m[i].used_elements();
@@ -72,13 +85,8 @@ class SainvTestSparse:
             }
             double min = Norm<vnt_l_one, false, tags::CPU>::value(Difference<tags::CPU>::value(temp, ident, Product<tags::CPU>::value(sm, m)));
             double jacnorm = Norm<vnt_l_one, false, tags::CPU>::value(Difference<tags::CPU>::value(temp, ident, Product<tags::CPU>::value(sm, jac)));
-            std::cout<<"SAINV Norm: "<<min<<" Jac Norm: "<<jacnorm<<std::endl;
+            std::cout<<"SAINV_BENZI Norm: "<<min<<" Jac Norm: "<<jacnorm<<std::endl;
             TEST_CHECK(jacnorm > min);
         }
 };
-SainvTestSparse<tags::CPU, float> sainv_test_sparse_ell_float("float");
 SainvTestSparse<tags::CPU, double> sainv_test_sparse_ell_double("double");
-#ifdef HONEI_SSE
-SainvTestSparse<tags::CPU::SSE, float> sse_sainv_test_sparse_ell_float("float");
-SainvTestSparse<tags::CPU::SSE, double> sse_sainv_test_sparse_ell_double("double");
-#endif
