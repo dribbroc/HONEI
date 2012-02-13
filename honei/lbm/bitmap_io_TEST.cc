@@ -41,11 +41,12 @@ class BitmapIOTest:
 
         virtual void run() const
         {
-            std::string filename;
+            std::string filename(HONEI_SOURCEDIR);
+            filename += "/honei/lbm/testdata/";
             if(_tag.find("PPM") == std::string::npos)
-                filename = "testdata/test_2.pgm";
+                filename += "test_2.pgm";
             else
-                filename = "testdata/test_2.ppm";
+                filename += "test_2.ppm";
 
             DT_ scale(1);
             DenseMatrix<DT_> result(BitmapIO<FileType_>::read_scalar_field(filename, scale));
