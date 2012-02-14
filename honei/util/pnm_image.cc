@@ -1,6 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 #include <honei/util/pnm_image.hh>
+#include <honei/util/stringify.hh>
 
 #include <iostream>
 #include <fstream>
@@ -122,13 +123,13 @@ inline void writeBuffer(ofstream& file, unsigned int size, uint8_t*& buffer) {
 inline void openIfstream(const char*& filename, ifstream& file) {
     file.open(filename, ios::in | ios::out | ios::binary);
     if (!file)
-        throw PNMImageExcpetion("Unable to open file");
+        throw PNMImageExcpetion("Unable to open file " + stringify(filename));
 }
 
 inline void openOfstream(const char*& filename, ofstream& file) {
     file.open(filename, ios::out | ios::binary);
     if (!file)
-        throw PNMImageExcpetion("Unable to open file");
+        throw PNMImageExcpetion("Unable to open file " + stringify(filename));
 }
 
 PGMImage::PGMImage(size_t width, size_t height) {
