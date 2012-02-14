@@ -41,10 +41,16 @@ template <typename Tag_, typename DataType_>
 class SolverLBMGridRegressionTest :
     public TaggedTest<Tag_>
 {
+    private:
+        DataType_ _eps1;
+        DataType_ _eps2;
+
     public:
-        SolverLBMGridRegressionTest(const std::string & type) :
+        SolverLBMGridRegressionTest(const std::string & type, DataType_ eps1, DataType_ eps2) :
             TaggedTest<Tag_>("solver_lbm_grid_regression_test<" + type + ">")
     {
+        _eps1 = eps1;
+        _eps2 = eps2;
     }
 
         virtual void run() const
@@ -134,7 +140,7 @@ class SolverLBMGridRegressionTest :
                         std::cout << "(" << i << " , " << j << ")" << std::endl;
                         std::cout << (*grid.h)(i , j) << " " << (*grid_standard.h)(i , j) << std::endl;
 #endif
-                        TEST_CHECK_EQUAL_WITHIN_EPS((*grid.h)(i , j) , (*grid_standard.h)(i , j), std::numeric_limits<DataType_>::epsilon() * 2e2);
+                        TEST_CHECK_EQUAL_WITHIN_EPS((*grid.h)(i , j) , (*grid_standard.h)(i , j), /*std::numeric_limits<DataType_>::epsilon() * 2e2*/ _eps1);
                     }
                 }
 
@@ -155,7 +161,7 @@ class SolverLBMGridRegressionTest :
 
                 Difference<tags::CPU>::value(result_grid, result_standard);
                 double l2 = Norm<vnt_l_two, false, tags::CPU>::value(result_grid);
-                TEST_CHECK_EQUAL_WITHIN_EPS(l2, DataType_(0.), std::numeric_limits<DataType_>::epsilon() /** 2*/);
+                TEST_CHECK_EQUAL_WITHIN_EPS(l2, DataType_(0.), /*std::numeric_limits<DataType_>::epsilon() */ _eps2);
 
                 std::cout << "L2 norm " << l2 << std::endl;
 
@@ -168,20 +174,20 @@ class SolverLBMGridRegressionTest :
             }
         }
 };
-SolverLBMGridRegressionTest<tags::CPU::MultiCore, float> mc_solver_test_float("float");
-SolverLBMGridRegressionTest<tags::CPU::MultiCore, double> mc_solver_test_double("double");
+SolverLBMGridRegressionTest<tags::CPU::MultiCore, float> mc_solver_test_float("float", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
+SolverLBMGridRegressionTest<tags::CPU::MultiCore, double> mc_solver_test_double("double", std::numeric_limits<double>::epsilon() * 2e2, std::numeric_limits<double>::epsilon());
 #ifdef HONEI_SSE
-SolverLBMGridRegressionTest<tags::CPU::SSE, float> sse_solver_test_float("float");
-SolverLBMGridRegressionTest<tags::CPU::SSE, double> sse_solver_test_double("double");
-SolverLBMGridRegressionTest<tags::CPU::MultiCore::SSE, float> mcsse_solver_test_float("float");
-SolverLBMGridRegressionTest<tags::CPU::MultiCore::SSE, double> mcsse_solver_test_double("double");
+SolverLBMGridRegressionTest<tags::CPU::SSE, float> sse_solver_test_float("float", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
+SolverLBMGridRegressionTest<tags::CPU::SSE, double> sse_solver_test_double("double", std::numeric_limits<double>::epsilon() * 2e2, std::numeric_limits<double>::epsilon());
+SolverLBMGridRegressionTest<tags::CPU::MultiCore::SSE, float> mcsse_solver_test_float("float", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
+SolverLBMGridRegressionTest<tags::CPU::MultiCore::SSE, double> mcsse_solver_test_double("double", std::numeric_limits<double>::epsilon() * 2e2, std::numeric_limits<double>::epsilon());
 #endif
 #ifdef HONEI_CUDA
-SolverLBMGridRegressionTest<tags::GPU::CUDA, float> cuda_solver_test_float("float");
-SolverLBMGridRegressionTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_solver_test_float("float");
+SolverLBMGridRegressionTest<tags::GPU::CUDA, float> cuda_solver_test_float("float", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
+SolverLBMGridRegressionTest<tags::GPU::MultiCore::CUDA, float> mc_cuda_solver_test_float("float", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
 #ifdef HONEI_CUDA_DOUBLE
-SolverLBMGridRegressionTest<tags::GPU::CUDA, double> cuda_solver_test_double("double");
-SolverLBMGridRegressionTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_solver_test_double("double");
+SolverLBMGridRegressionTest<tags::GPU::CUDA, double> cuda_solver_test_double("double", std::numeric_limits<float>::epsilon() * 2e6, std::numeric_limits<float>::epsilon());
+SolverLBMGridRegressionTest<tags::GPU::MultiCore::CUDA, double> mc_cuda_solver_test_double("double", std::numeric_limits<double>::epsilon() * 3e11, std::numeric_limits<double>::epsilon() * 3e11);
 #endif
 #endif
 #ifdef HONEI_CELL
@@ -193,10 +199,16 @@ template <typename Tag_, typename DataType_>
 class SimpleSolverLBMGridRegressionTest :
     public TaggedTest<Tag_>
 {
+    private:
+        DataType_ _eps1;
+        DataType_ _eps2;
+
     public:
-        SimpleSolverLBMGridRegressionTest(const std::string & type) :
+        SimpleSolverLBMGridRegressionTest(const std::string & type, DataType_ eps1, DataType_ eps2) :
             TaggedTest<Tag_>("simple_solver_lbm_grid_regression_test<" + type + ">")
     {
+        _eps1 = eps1;
+        _eps2 = eps2;
     }
 
         virtual void run() const
@@ -287,7 +299,7 @@ class SimpleSolverLBMGridRegressionTest :
                         std::cout << "(" << i << " , " << j << ")" << std::endl;
                         std::cout << (*grid.h)(i , j) << " " << (*grid_standard.h)(i , j) << std::endl;
 #endif
-                        TEST_CHECK_EQUAL_WITHIN_EPS((*grid.h)(i , j) , (*grid_standard.h)(i , j), std::numeric_limits<DataType_>::epsilon() * 2e2);
+                        TEST_CHECK_EQUAL_WITHIN_EPS((*grid.h)(i , j) , (*grid_standard.h)(i , j), /*std::numeric_limits<DataType_>::epsilon() * 2e2*/ _eps1);
                     }
                 }
 
@@ -308,7 +320,7 @@ class SimpleSolverLBMGridRegressionTest :
 
                 Difference<tags::CPU>::value(result_grid, result_standard);
                 double l2 = Norm<vnt_l_two, false, tags::CPU>::value(result_grid);
-                TEST_CHECK_EQUAL_WITHIN_EPS(l2, DataType_(0.), std::numeric_limits<DataType_>::epsilon() * 2);
+                TEST_CHECK_EQUAL_WITHIN_EPS(l2, DataType_(0.), /*std::numeric_limits<DataType_>::epsilon() * 2*/ _eps2);
 
                 std::cout << "L2 norm " << l2 << std::endl;
 
@@ -321,23 +333,23 @@ class SimpleSolverLBMGridRegressionTest :
             }
         }
 };
-SimpleSolverLBMGridRegressionTest<tags::CPU::MultiCore, float> mc_simple_solver_test_float("float");
-SimpleSolverLBMGridRegressionTest<tags::CPU::MultiCore, double> mc_simple_solver_test_double("double");
+SimpleSolverLBMGridRegressionTest<tags::CPU::MultiCore, float> mc_simple_solver_test_float("float", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
+SimpleSolverLBMGridRegressionTest<tags::CPU::MultiCore, double> mc_simple_solver_test_double("double", std::numeric_limits<double>::epsilon() * 2e2, std::numeric_limits<double>::epsilon());
 #ifdef HONEI_SSE
-SimpleSolverLBMGridRegressionTest<tags::CPU::SSE, float> sse_simple_solver_test_float("float");
-SimpleSolverLBMGridRegressionTest<tags::CPU::SSE, double> sse_simple_solver_test_double("double");
-SimpleSolverLBMGridRegressionTest<tags::CPU::MultiCore::SSE, float> mcsse_simple_solver_test_float("float");
-SimpleSolverLBMGridRegressionTest<tags::CPU::MultiCore::SSE, double> mcsse_simple_solver_test_double("double");
+SimpleSolverLBMGridRegressionTest<tags::CPU::SSE, float> sse_simple_solver_test_float("float", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
+SimpleSolverLBMGridRegressionTest<tags::CPU::SSE, double> sse_simple_solver_test_double("double", std::numeric_limits<double>::epsilon() * 2e2, std::numeric_limits<double>::epsilon());
+SimpleSolverLBMGridRegressionTest<tags::CPU::MultiCore::SSE, float> mcsse_simple_solver_test_float("float", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
+SimpleSolverLBMGridRegressionTest<tags::CPU::MultiCore::SSE, double> mcsse_simple_solver_test_double("double", std::numeric_limits<double>::epsilon() * 2e2, std::numeric_limits<double>::epsilon());
 #endif
 #ifdef HONEI_CUDA
-SimpleSolverLBMGridRegressionTest<tags::GPU::CUDA, float> cuda_simple_solver_test_float("float");
-SimpleSolverLBMGridRegressionTest<tags::GPU::MultiCore::CUDA, float> mccuda_simple_solver_test_float("float");
+SimpleSolverLBMGridRegressionTest<tags::GPU::CUDA, float> cuda_simple_solver_test_float("float", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
+SimpleSolverLBMGridRegressionTest<tags::GPU::MultiCore::CUDA, float> mccuda_simple_solver_test_float("float", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
 #ifdef HONEI_CUDA_DOUBLE
-SimpleSolverLBMGridRegressionTest<tags::GPU::CUDA, double> cuda_simple_solver_test_double("double");
-SimpleSolverLBMGridRegressionTest<tags::GPU::MultiCore::CUDA, double> mccuda_simple_solver_test_double("double");
+SimpleSolverLBMGridRegressionTest<tags::GPU::CUDA, double> cuda_simple_solver_test_double("double", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
+SimpleSolverLBMGridRegressionTest<tags::GPU::MultiCore::CUDA, double> mccuda_simple_solver_test_double("double", std::numeric_limits<double>::epsilon() * 2e2, std::numeric_limits<double>::epsilon());
 #endif
 #endif
 #ifdef HONEI_CELL
-SimpleSolverLBMGridRegressionTest<tags::Cell, float> cell_simple_solver_test_float("float");
+SimpleSolverLBMGridRegressionTest<tags::Cell, float> cell_simple_solver_test_float("float", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
 #endif
 
