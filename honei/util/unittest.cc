@@ -139,6 +139,7 @@ int main(int argc, char** argv)
     bool mc(false);
     bool cpu(false);
     bool opencl(false);
+    bool generic(false);
     bool all(true);
     if ((argc > 1) && (stringify(argv[1]) == "quick"))
     {
@@ -162,6 +163,11 @@ int main(int argc, char** argv)
             if (stringify(argv[index]) == "cuda")
             {
                 cuda = true;
+                all = false;
+            }
+            if (stringify(argv[index]) == "generic")
+            {
+                generic = true;
                 all = false;
             }
             if (stringify(argv[index]) == "cell")
@@ -204,6 +210,11 @@ int main(int argc, char** argv)
                     i = TestList::instance()->erase(i);
                     continue;
                 }
+                if (((*i)->get_tag_name()=="generic") && !generic)
+                {
+                    i = TestList::instance()->erase(i);
+                    continue;
+                }
                 if (((*i)->get_tag_name()=="itanium") && !itanium)
                 {
                     i = TestList::instance()->erase(i);
@@ -225,6 +236,11 @@ int main(int argc, char** argv)
                     continue;
                 }
                 if (((*i)->get_tag_name()=="mc-sse") && (!mc && !sse))
+                {
+                    i = TestList::instance()->erase(i);
+                    continue;
+                }
+                if (((*i)->get_tag_name()=="mc-generic") && (!mc && !generic))
                 {
                     i = TestList::instance()->erase(i);
                     continue;
