@@ -132,7 +132,7 @@ Configuration::_read()
     {
         CONTEXT("When reading configuration file '" + _imp->filename + "':");
 
-        std::fstream file(_imp->filename.c_str(), std::ios_base::in);
+        std::ifstream file(_imp->filename.c_str(), std::ios_base::in);
         std::string line;
 
         while (std::getline(file, line))
