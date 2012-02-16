@@ -31,6 +31,23 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
+
+namespace
+{
+    template <typename DT_>
+    struct matrix_tupple
+    {
+        unsigned long row;
+        unsigned long column;
+        DT_ value;
+
+        static bool compare (matrix_tupple<DT_> x, matrix_tupple<DT_> y)
+        {
+            return (x.value) > (y.value);
+        }
+    };
+}
 
 // Based on "Robust Approximate Inverse Preconditioning for the Conjugate Gradients Method" by Benzi et al.
 namespace honei
@@ -41,7 +58,7 @@ namespace honei
         static SparseMatrix<DT_> value(const SparseMatrix<DT_> & A, DT_ tolerance = 13e-2)
         {
             // z holds the row vector z_i
-            SparseMatrix<DT_> z(A.rows(), A.columns(), A[A.rows() / 2].used_elements());
+            SparseMatrix<DT_> z(A.rows(), A.columns());
             DenseVector<DT_> p(z.rows(), DT_(0));
             SparseMatrixELL<DT_> Aell(A);
 
@@ -89,14 +106,16 @@ namespace honei
                     {
                         //TODO integrate dropping strategy in difference and insert (virtual) zeros if dropping occurs
                         typename SparseVector<DT_>::NonZeroElementIterator l(z[j].begin_non_zero_elements());
-                        typename SparseVector<DT_>::NonZeroElementIterator r(z[i].begin_non_zero_elements());
-                        typename SparseVector<DT_>::NonZeroElementIterator r_end(z[i].end_non_zero_elements());
+                        typename SparseVector<DT_>::NonZeroConstElementIterator r(z[i].begin_non_zero_elements());
+                        typename SparseVector<DT_>::NonZeroConstElementIterator r_end(z[i].end_non_zero_elements());
                         for ( ; r != r_end ; )
                         {
                             if (r.index() < l.index())
                             {
                                 if(fabs(*r * alpha) > tolerance)
+                                {
                                     z[j][r.index()] = -(*r) * alpha;
+                                }
                                 ++r;
                             }
                             else if (l.index() < r.index())
@@ -133,19 +152,36 @@ namespace honei
             SparseMatrix<DT_> z_temp = Product<tags::CPU>::value(z_d, z);
             SparseMatrix<DT_> z_r = Product<tags::CPU>::value(z_t, z_temp);
 
-            /* POST FILTERING
-               unsigned long ue(0);
-               for (typename SparseMatrix<DT_>::NonZeroElementIterator r(z_r.begin_non_zero_elements()),
-               r_end(z_r.end_non_zero_elements()) ; r != r_end ; ++r)
-               {
-               if (fabs(*r) < tolerance / 5)
-               {
-               ue++;
-             *r = DT_(0);
-             }
-             }
-             std::cout<<ue<<std::endl;*/
-            return z_r;
+            //return z_r;
+
+            //POST FILTERING
+            std::vector<matrix_tupple<DT_> > elements;
+            for (typename SparseMatrix<DT_>::NonZeroElementIterator r(z_r.begin_non_zero_elements()),
+                    r_end(z_r.end_non_zero_elements()) ; r != r_end ; ++r)
+            {
+                matrix_tupple<DT_> temp;
+                temp.row = r.row();
+                temp.column = r.column();
+                temp.value = *r;
+                elements.push_back(temp);
+            }
+
+
+            if (elements.size() > A.used_elements())
+            {
+                // sort from higher to lower
+                std::sort(elements.begin(), elements.end(), matrix_tupple<DT_>::compare);
+                // remove smalles values
+                elements.resize(A.used_elements());
+            }
+
+            SparseMatrix<DT_> result(A.rows(), A.columns());
+            for (unsigned long i(0) ; i < elements.size() ; ++i)
+            {
+                result(elements.at(i).row, elements.at(i).column, elements.at(i).value);
+            }
+
+            return result;
         }
     };
 }

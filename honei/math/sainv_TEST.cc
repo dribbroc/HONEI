@@ -49,15 +49,9 @@ class SainvTestSparse:
             filename += "/honei/math/testdata/poisson_advanced/sort_0/A_5.ell";
             SparseMatrixELL<DT_> smell = MatrixIO<io_formats::ELL>::read_matrix(filename, DT_(1));
             SparseMatrix<DT_> sm(smell);
-            unsigned long used_elements(0);
-            for (unsigned i(0) ; i < sm.rows() ; ++i)
-                used_elements+= sm[i].used_elements();
-            std::cout<<"Non Zero Elements of A: "<<used_elements<<std::endl;
+            std::cout<<"Non Zero Elements of A: "<<sm.used_elements()<<std::endl;
             SparseMatrix<DT_> m(SAINV<Tag_>::value(sm));
-            used_elements = 0;
-            for (unsigned i(0) ; i < m.rows() ; ++i)
-                used_elements+= m[i].used_elements();
-            std::cout<<"Non Zero Elements of M: "<<used_elements<<std::endl;
+            std::cout<<"Non Zero Elements of M: "<<m.used_elements()<<std::endl;
 
             SparseMatrix<DT_> temp(sm.rows(), sm.columns());
             SparseMatrix<DT_> ident(sm.rows(), sm.columns(), 1);
