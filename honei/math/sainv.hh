@@ -155,30 +155,35 @@ namespace honei
             //return z_r;
 
             //POST FILTERING
-            std::vector<matrix_tupple<DT_> > elements;
-            for (typename SparseMatrix<DT_>::NonZeroElementIterator r(z_r.begin_non_zero_elements()),
-                    r_end(z_r.end_non_zero_elements()) ; r != r_end ; ++r)
-            {
-                matrix_tupple<DT_> temp;
-                temp.row = r.row();
-                temp.column = r.column();
-                temp.value = *r;
-                elements.push_back(temp);
-            }
-
-
-            if (elements.size() > A.used_elements())
-            {
-                // sort from higher to lower
-                std::sort(elements.begin(), elements.end(), matrix_tupple<DT_>::compare);
-                // remove smalles values
-                elements.resize(A.used_elements());
-            }
-
             SparseMatrix<DT_> result(A.rows(), A.columns());
-            for (unsigned long i(0) ; i < elements.size() ; ++i)
+            for (unsigned long i(0) ; i < A.rows() ; ++i)
             {
-                result(elements.at(i).row, elements.at(i).column, elements.at(i).value);
+                std::vector<matrix_tupple<DT_> > elements;
+
+                typename SparseVector<DT_>::NonZeroConstElementIterator r(z_r[i].begin_non_zero_elements());
+                typename SparseVector<DT_>::NonZeroConstElementIterator r_end(z_r[i].end_non_zero_elements());
+                for ( ; r != r_end ; ++r)
+                {
+                    matrix_tupple<DT_> temp;
+                    temp.row = i;
+                    temp.column = r.index();
+                    temp.value = *r;
+                    elements.push_back(temp);
+                }
+
+                unsigned long target(std::max(A.used_elements() / A.rows(), A[i].used_elements()));
+                if (elements.size() > target)
+                {
+                    // sort from higher to lower
+                    std::sort(elements.begin(), elements.end(), matrix_tupple<DT_>::compare);
+                    // remove smalles values
+                    elements.resize(target);
+                }
+
+                for (unsigned long i(0) ; i < elements.size() ; ++i)
+                {
+                    result(elements.at(i).row, elements.at(i).column, elements.at(i).value);
+                }
             }
 
             return result;
