@@ -121,7 +121,7 @@ inline void writeBuffer(ofstream& file, unsigned int size, uint8_t*& buffer) {
 }
 
 inline void openIfstream(const char*& filename, ifstream& file) {
-    file.open(filename, ios::in | ios::out | ios::binary);
+    file.open(filename, ios::in | ios::binary);
     if (!file)
         throw PNMImageExcpetion("Unable to open file " + stringify(filename));
 }
