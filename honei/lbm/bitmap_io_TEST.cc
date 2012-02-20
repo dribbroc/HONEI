@@ -21,6 +21,7 @@
 #include <honei/util/unittest.hh>
 #include <honei/util/stringify.hh>
 #include <iostream>
+#include <cstdlib>
 
 using namespace honei;
 using namespace tests;
@@ -70,6 +71,8 @@ class BitmapIOTest:
                 TEST_CHECK_EQUAL(result_2[99][99], DT_(1));
                 TEST_CHECK_EQUAL(result_2[0][99], DT_(1));
                 TEST_CHECK_EQUAL(result_2[99][0], DT_(1));
+                std::string rm_command("rm -f " + outname);
+                TEST_CHECK(!system(rm_command.c_str()));
             }
         }
 };
