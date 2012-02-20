@@ -30,17 +30,12 @@ namespace honei
 {
     namespace ls_config
     {
+        /// \todo replace double by DT_
         class SolverObject
         {
             public:
             std::string name;
             std::string type;
-        };
-
-        class Preconditioner : public SolverObject
-        {
-            public:
-            double damping;
         };
 
         class Smoother : public SolverObject
@@ -69,6 +64,7 @@ namespace honei
         {
             public:
             SolverObject precon;
+            double damping;
         };
 
         class MGSolver : public Solver
@@ -82,6 +78,7 @@ namespace honei
         {
             public:
             SolverObject precon;
+            double damping;
         };
 
         class LSConfig
