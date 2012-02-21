@@ -96,7 +96,7 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
 
     // sende alle werte, die anderen fehlen
     g_size = 0;
-    DT_ send_data[a.send_size()];
+    DT_ * send_data = new DT_[a.send_size()];
     for (unsigned long i(0) ; i < a.send_ranks().size() ; ++i)
     {
         unsigned long g_end(g_size + a.send_sizes().at(i));
@@ -118,6 +118,7 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
 
     MPI_Waitall(send_requests.size(), &send_requests[0], MPI_STATUSES_IGNORE);
     send_requests.clear();
+    delete[] send_data;
 }
 
 template <typename Tag_>
@@ -145,7 +146,7 @@ void MPIOps<Tag_>::defect(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & r
 
     // sende alle werte, die anderen fehlen
     g_size = 0;
-    DT_ send_data[a.send_size()];
+    DT_ * send_data = new DT_[a.send_size()];
     for (unsigned long i(0) ; i < a.send_ranks().size() ; ++i)
     {
         unsigned long g_end(g_size + a.send_sizes().at(i));
@@ -167,6 +168,7 @@ void MPIOps<Tag_>::defect(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & r
 
     MPI_Waitall(send_requests.size(), &send_requests[0], MPI_STATUSES_IGNORE);
     send_requests.clear();
+    delete[] send_data;
 }
 
 template <typename Tag_>
