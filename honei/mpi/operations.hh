@@ -59,6 +59,13 @@ namespace honei
             template <typename DT_>
                 static void sum(DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y);
         };
+
+    template <>
+        struct MPIOps<tags::GPU::CUDA>
+        {
+            template <typename DT_>
+                static void product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b);
+        };
 }
 
 #endif

@@ -30,6 +30,7 @@
 #include <honei/la/sum.hh>
 #include <honei/la/difference.hh>
 #include <honei/la/element_product.hh>
+#include <honei/backends/cuda/transfer.hh>
 
 using namespace honei;
 
@@ -118,6 +119,63 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
 
     MPI_Waitall(send_requests.size(), &send_requests[0], MPI_STATUSES_IGNORE);
     send_requests.clear();
+    delete[] send_data;
+}
+
+template <typename DT_>
+void MPIOps<tags::GPU::CUDA>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
+{
+    int myrank;
+    mpi::mpi_comm_rank(&myrank);
+    int com_size;
+    mpi::mpi_comm_size(&com_size);
+
+    std::vector<MPI_Request> send_requests;
+    std::vector<MPI_Request> recv_requests;
+
+    DT_ * missing_values_array = (DT_*)cuda_malloc_host(a.outer_matrix().columns() * sizeof(DT_));
+    // empfange alle fehlenden werte
+    unsigned long g_size(0);
+    for (unsigned long i(0) ; i < a.recv_ranks().size() ; ++i)
+    {
+        recv_requests.push_back(mpi::mpi_irecv(missing_values_array + g_size, a.recv_sizes().at(i), a.recv_ranks().at(i), a.recv_ranks().at(i)));
+        g_size += a.recv_sizes().at(i);
+    }
+
+    // sende alle werte, die anderen fehlen
+    g_size = 0;
+    DT_ * send_data = new DT_[a.send_size()];
+    DT_ * b_cpu = (DT_*)cuda_malloc_host(b.local_size() * sizeof(DT_));
+    void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+    cuda_download(b_gpu, b_cpu, b.local_size() * sizeof(DT_));
+    for (unsigned long i(0) ; i < a.send_ranks().size() ; ++i)
+    {
+        unsigned long g_end(g_size + a.send_sizes().at(i));
+        for (unsigned long j(0) ; g_size < g_end ; ++g_size, ++j)
+            send_data[g_size] = b_cpu[a.send_index().at(g_size)];
+        send_requests.push_back(mpi::mpi_isend(&(send_data[g_size - a.send_sizes().at(i)]), a.send_sizes().at(i), a.send_ranks().at(i), myrank));
+    }
+    b.unlock(lm_read_only);
+
+    // berechne innere anteile
+    if (a.active()) Product<tags::GPU::CUDA>::value(r.vector(), a.inner_matrix(), b.vector());
+
+    MPI_Waitall(recv_requests.size(), &recv_requests[0], MPI_STATUSES_IGNORE);
+    recv_requests.clear();
+    DenseVector<DT_> missing_values(a.outer_matrix().columns());
+    void * missing_values_gpu(missing_values.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+    cuda_upload(missing_values_array, missing_values_gpu, missing_values.size() * sizeof(DT_));
+    missing_values.unlock(lm_write_only);
+
+    // berechne aeussere anteile
+    DenseVector<DT_> r_outer(r.local_size());
+    if (a.active()) Product<tags::GPU::CUDA>::value(r_outer, a.outer_matrix(), missing_values);
+    if (a.active()) Sum<tags::GPU::CUDA>::value(r.vector(), r_outer);
+
+    MPI_Waitall(send_requests.size(), &send_requests[0], MPI_STATUSES_IGNORE);
+    send_requests.clear();
+    cuda_free_host(missing_values_array);
+    cuda_free_host(b_cpu);
     delete[] send_data;
 }
 
@@ -235,3 +293,6 @@ template void MPIOps<tags::CPU::MultiCore::SSE>::scale(DenseVectorMPI<double> & 
 template void MPIOps<tags::CPU::MultiCore::SSE>::scaled_sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
 template void MPIOps<tags::CPU::MultiCore::SSE>::scaled_sum(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
 template void MPIOps<tags::CPU::MultiCore::SSE>::sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
+
+template struct MPIOps<tags::GPU::CUDA>;
+template void MPIOps<tags::GPU::CUDA>::product(DenseVectorMPI<double> & r, const SparseMatrixELLMPI<double> & a, const DenseVectorMPI<double> & b);

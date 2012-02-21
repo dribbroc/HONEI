@@ -1561,6 +1561,20 @@ namespace honei
             ElementProduct<tags::GPU::CUDA>::value(y, a, b);
             return y;
         }
+
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
+        {
+            MPIOps<tags::GPU::CUDA>::product(r, a, b);
+            return r;
+        }
+
+        /*template<typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
+        {
+            MPIOps<tags::GPU::CUDA>::element_product(r, x, y);
+            return r;
+        }*/
         /// \}
     };
 

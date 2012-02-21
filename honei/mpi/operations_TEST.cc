@@ -378,7 +378,7 @@ class SPMVMPITest :
             MPI_Barrier(MPI_COMM_WORLD);
             std::string dir(HONEI_SOURCEDIR);
             std::string file (dir + "/honei/math/testdata/poisson_advanced2/q2_sort_0/");
-            file += "prol_3";
+            file += "prol_4";
             file += ".ell";
             SparseMatrixELL<DT_> aell(MatrixIO<io_formats::ELL>::read_matrix(file, DT_(0)));
 
@@ -396,17 +396,23 @@ class SPMVMPITest :
             DenseVectorMPI<DT_> x(xs);
 
             TimeStamp at, bt, ct, dt;
+            Product<Tag_>::value(rs, aell, xs);
+            MPI_Barrier(MPI_COMM_WORLD);
             at.take();
             Product<Tag_>::value(rs, aell, xs);
             bt.take();
-            Product<Tag_>::value(rs, aell, xs);
+            MPI_Barrier(MPI_COMM_WORLD);
+            Product<Tag_>::value(r, a, x);
             MPI_Barrier(MPI_COMM_WORLD);
             ct.take();
             Product<Tag_>::value(r, a, x);
             dt.take();
-            Product<Tag_>::value(r, a, x);
             std::cout<<bt.total()-at.total()<<" "<<dt.total()-ct.total()<<std::endl;
 
+            r.lock(lm_read_only);
+            r.unlock(lm_read_only);
+            rs.lock(lm_read_only);
+            rs.unlock(lm_read_only);
             for (unsigned long i(0) ; i < r.local_size() ; ++i)
             {
                 TEST_CHECK_EQUAL_WITHIN_EPS(r[i], rs[i + r.offset()], 1e-11);
@@ -415,7 +421,13 @@ class SPMVMPITest :
 };
 #ifdef HONEI_SSE
 SPMVMPITest<tags::CPU::SSE, double> spmv_mpi_test_double("double");
+SPMVMPITest<tags::CPU::MultiCore::SSE, double> mv_spmv_mpi_test_double("double");
 #else
 SPMVMPITest<tags::CPU, double> spmv_mpi_test_double("double");
 SPMVMPITest<tags::CPU::MultCore, double> mc_spmv_mpi_test_double("double");
+#endif
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
+#endif
+SPMVMPITest<tags::GPU::CUDA, double> cuda_spmv_mpi_test_double("double");
 #endif

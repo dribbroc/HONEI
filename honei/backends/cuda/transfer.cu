@@ -48,11 +48,11 @@ namespace honei
 
 extern "C" void * cuda_malloc_host(unsigned long bytes)
 {
-    void * gpu(NULL);
-    if (cudaErrorMemoryAllocation == cudaMallocHost((void**)&gpu, bytes))
+    void * cpu(NULL);
+    if (cudaErrorMemoryAllocation == cudaMallocHost((void**)&cpu, bytes))
         return 0;
     CUDA_ERROR();
-    return gpu;
+    return cpu;
 }
 
 extern "C" void * cuda_malloc(unsigned long bytes)
@@ -82,9 +82,9 @@ extern "C" void cuda_free(void * gpu)
     CUDA_ERROR();
 }
 
-extern "C" void cuda_free_host(void * gpu)
+extern "C" void cuda_free_host(void * cpu)
 {
-    cudaFreeHost(gpu);
+    cudaFreeHost(cpu);
     CUDA_ERROR();
 }
 
