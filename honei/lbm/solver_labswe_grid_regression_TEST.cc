@@ -154,11 +154,22 @@ class SolverLABSWEGridRegressionTest :
                 TEST_CHECK_EQUAL_WITHIN_EPS(l2, DataType_(0.), std::numeric_limits<DataType_>::epsilon() * 2);
 
                 std::cout << "L2 norm " << l2 << std::endl;
+
+                grid.destroy();
+                info.destroy();
+                data.destroy();
+                grid_standard.destroy();
+                info_standard.destroy();
+                data_standard.destroy();
             }
         }
 };
 SolverLABSWEGridRegressionTest<tags::CPU::MultiCore, float> mc_solver_test_float("float");
 SolverLABSWEGridRegressionTest<tags::CPU::MultiCore, double> mc_solver_test_double("double");
+SolverLABSWEGridRegressionTest<tags::CPU::Generic, float> generic_solver_test_float("float");
+SolverLABSWEGridRegressionTest<tags::CPU::Generic, double> generic_solver_test_double("double");
+SolverLABSWEGridRegressionTest<tags::CPU::MultiCore::Generic, float> mc_generic_solver_test_float("float");
+SolverLABSWEGridRegressionTest<tags::CPU::MultiCore::Generic, double> mc_generic_solver_test_double("double");
 #ifdef HONEI_SSE
 SolverLABSWEGridRegressionTest<tags::CPU::SSE, float> sse_solver_test_float("float");
 SolverLABSWEGridRegressionTest<tags::CPU::SSE, double> sse_solver_test_double("double");

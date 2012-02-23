@@ -176,6 +176,10 @@ class SolverLBMGridRegressionTest :
 };
 SolverLBMGridRegressionTest<tags::CPU::MultiCore, float> mc_solver_test_float("float", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
 SolverLBMGridRegressionTest<tags::CPU::MultiCore, double> mc_solver_test_double("double", std::numeric_limits<double>::epsilon() * 2e2, std::numeric_limits<double>::epsilon());
+SolverLBMGridRegressionTest<tags::CPU::Generic, float> generic_solver_test_float("float", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
+SolverLBMGridRegressionTest<tags::CPU::Generic, double> generic_solver_test_double("double", std::numeric_limits<double>::epsilon() * 2e2, std::numeric_limits<double>::epsilon());
+SolverLBMGridRegressionTest<tags::CPU::MultiCore::Generic, float> mcgeneric_solver_test_float("float", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
+SolverLBMGridRegressionTest<tags::CPU::MultiCore::Generic, double> mcgeneric_solver_test_double("double", std::numeric_limits<double>::epsilon() * 2e2, std::numeric_limits<double>::epsilon());
 #ifdef HONEI_SSE
 SolverLBMGridRegressionTest<tags::CPU::SSE, float> sse_solver_test_float("float", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
 SolverLBMGridRegressionTest<tags::CPU::SSE, double> sse_solver_test_double("double", std::numeric_limits<double>::epsilon() * 2e2, std::numeric_limits<double>::epsilon());
@@ -335,6 +339,10 @@ class SimpleSolverLBMGridRegressionTest :
 };
 SimpleSolverLBMGridRegressionTest<tags::CPU::MultiCore, float> mc_simple_solver_test_float("float", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
 SimpleSolverLBMGridRegressionTest<tags::CPU::MultiCore, double> mc_simple_solver_test_double("double", std::numeric_limits<double>::epsilon() * 2e2, std::numeric_limits<double>::epsilon());
+SimpleSolverLBMGridRegressionTest<tags::CPU::Generic, float> generic_simple_solver_test_float("float", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
+SimpleSolverLBMGridRegressionTest<tags::CPU::Generic, double> generic_simple_solver_test_double("double", std::numeric_limits<double>::epsilon() * 2e2, std::numeric_limits<double>::epsilon());
+SimpleSolverLBMGridRegressionTest<tags::CPU::MultiCore::Generic, float> mcgeneric_simple_solver_test_float("float", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
+SimpleSolverLBMGridRegressionTest<tags::CPU::MultiCore::Generic, double> mcgeneric_simple_solver_test_double("double", std::numeric_limits<double>::epsilon() * 2e2, std::numeric_limits<double>::epsilon());
 #ifdef HONEI_SSE
 SimpleSolverLBMGridRegressionTest<tags::CPU::SSE, float> sse_simple_solver_test_float("float", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
 SimpleSolverLBMGridRegressionTest<tags::CPU::SSE, double> sse_simple_solver_test_double("double", std::numeric_limits<double>::epsilon() * 2e2, std::numeric_limits<double>::epsilon());

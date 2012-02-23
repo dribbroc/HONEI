@@ -371,6 +371,17 @@ namespace honei
             }
         };
 
+    template<typename Application_, typename ResPrec_, typename Force_, typename SourceScheme_, typename LbmMode_>
+        class SolverLBMGrid<tags::CPU::MultiCore::Generic, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_> :
+        public mc::SolverLBMGrid<tags::CPU::MultiCore::Generic, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>
+        {
+            public:
+                SolverLBMGrid(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, ResPrec_> * data, ResPrec_ dx, ResPrec_ dy, ResPrec_ dt, ResPrec_ rel_time):
+                    mc::SolverLBMGrid<tags::CPU::MultiCore::Generic, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_>(info, data, dx, dy, dt, rel_time)
+            {
+            }
+        };
+
 
     namespace
     {

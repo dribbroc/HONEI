@@ -143,8 +143,8 @@ class ExtractionGridRegressionTest :
         }
 };
 #ifdef HONEI_SSE
-ExtractionGridRegressionTest<tags::CPU::SSE, float> sse_solver_multi_test_float("float");
-ExtractionGridRegressionTest<tags::CPU::SSE, double> sse_solver_multi_test_double("double");
+ExtractionGridRegressionTest<tags::CPU::Generic, float> generic_solver_multi_test_float("float");
+ExtractionGridRegressionTest<tags::CPU::Generic, double> generic_solver_multi_test_double("double");
 #endif
 #ifdef HONEI_CUDA
 ExtractionGridRegressionTest<tags::GPU::CUDA, float> cuda_solver_multi_test_float("float");

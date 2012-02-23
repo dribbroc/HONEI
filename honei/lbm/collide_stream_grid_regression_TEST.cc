@@ -162,6 +162,8 @@ class CollideStreamGridRegressionTest :
             data_standard.destroy();
         }
 };
+//CollideStreamGridRegressionTest<tags::CPU::Generic, float> generic_collide_stream_regression_test_float("float");
+//CollideStreamGridRegressionTest<tags::CPU::Generic, double> generic_collide_stream_regression_test_double("double");
 #ifdef HONEI_SSE
 CollideStreamGridRegressionTest<tags::CPU::SSE, float> sse_collide_stream_regression_test_float("float");
 CollideStreamGridRegressionTest<tags::CPU::SSE, double> sse_collide_stream_regression_test_double("double");

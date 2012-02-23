@@ -98,6 +98,8 @@ class EqDisGridLABSWETest :
 };
 EqDisGridLABSWETest<tags::CPU, float> eq_dist_grid_test_float("float");
 EqDisGridLABSWETest<tags::CPU, double> eq_dist_grid_test_double("double");
+EqDisGridLABSWETest<tags::CPU::Generic, float> generic_eq_dist_grid_test_float("float");
+EqDisGridLABSWETest<tags::CPU::Generic, double> generic_eq_dist_grid_test_double("double");
 #ifdef HONEI_SSE
 EqDisGridLABSWETest<tags::CPU::SSE, float> sse_eq_dist_grid_test_float("float");
 EqDisGridLABSWETest<tags::CPU::SSE, double> sse_eq_dist_grid_test_double("double");

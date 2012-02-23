@@ -160,6 +160,8 @@ class UpateVelocityDirectionsGridRegressionTest :
             grid_standard.destroy();
         }
 };
+UpateVelocityDirectionsGridRegressionTest<tags::CPU::Generic, float> generic_solver_multi_test_float("float");
+UpateVelocityDirectionsGridRegressionTest<tags::CPU::Generic, double> generic_solver_multi_test_double("double");
 #ifdef HONEI_SSE
 UpateVelocityDirectionsGridRegressionTest<tags::CPU::SSE, float> sse_solver_multi_test_float("float");
 UpateVelocityDirectionsGridRegressionTest<tags::CPU::SSE, double> sse_solver_multi_test_double("double");

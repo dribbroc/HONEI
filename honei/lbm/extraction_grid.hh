@@ -2,6 +2,7 @@
 
 /*
  * Copyright (c) 2008 Markus Geveler <apryde@gmx.de>
+ * Copyright (c) 2008, 2012 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LBM C++ library. LBM is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -190,6 +191,158 @@ namespace honei
         };
 
     template<>
+        struct ExtractionGrid<tags::CPU::Generic, lbm_modes::DRY>
+        {
+            public:
+                template<typename DT_>
+                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data, DT_ epsilon)
+                    {
+                        CONTEXT("When extracting h, u and v:");
+
+                        //set f to t_temp
+                        DenseVector<DT_> * swap;
+                        swap = data.f_0;
+                        data.f_0 = data.f_temp_0;
+                        data.f_temp_0 = swap;
+                        swap = data.f_1;
+                        data.f_1 = data.f_temp_1;
+                        data.f_temp_1 = swap;
+                        swap = data.f_2;
+                        data.f_2 = data.f_temp_2;
+                        data.f_temp_2 = swap;
+                        swap = data.f_3;
+                        data.f_3 = data.f_temp_3;
+                        data.f_temp_3 = swap;
+                        swap = data.f_4;
+                        data.f_4 = data.f_temp_4;
+                        data.f_temp_4 = swap;
+                        swap = data.f_5;
+                        data.f_5 = data.f_temp_5;
+                        data.f_temp_5 = swap;
+                        swap = data.f_6;
+                        data.f_6 = data.f_temp_6;
+                        data.f_temp_6 = swap;
+                        swap = data.f_7;
+                        data.f_7 = data.f_temp_7;
+                        data.f_temp_7 = swap;
+                        swap = data.f_8;
+                        data.f_8 = data.f_temp_8;
+                        data.f_temp_8 = swap;
+
+                        info.limits->lock(lm_read_only);
+
+                        data.f_0->lock(lm_read_and_write);
+                        data.f_1->lock(lm_read_and_write);
+                        data.f_2->lock(lm_read_and_write);
+                        data.f_3->lock(lm_read_and_write);
+                        data.f_4->lock(lm_read_and_write);
+                        data.f_5->lock(lm_read_and_write);
+                        data.f_6->lock(lm_read_and_write);
+                        data.f_7->lock(lm_read_and_write);
+                        data.f_8->lock(lm_read_and_write);
+
+                        data.h->lock(lm_write_only);
+
+                        data.distribution_x->lock(lm_read_only);
+                        data.distribution_y->lock(lm_read_only);
+
+                        data.u->lock(lm_write_only);
+                        data.v->lock(lm_write_only);
+
+                        const unsigned long * const limits(info.limits->elements());
+                        DT_ * f_0(data.f_0->elements());
+                        DT_ * f_1(data.f_1->elements());
+                        DT_ * f_2(data.f_2->elements());
+                        DT_ * f_3(data.f_3->elements());
+                        DT_ * f_4(data.f_4->elements());
+                        DT_ * f_5(data.f_5->elements());
+                        DT_ * f_6(data.f_6->elements());
+                        DT_ * f_7(data.f_7->elements());
+                        DT_ * f_8(data.f_8->elements());
+
+                        DT_ * h(data.h->elements());
+                        DT_ * u(data.u->elements());
+                        DT_ * v(data.v->elements());
+                        const DT_ * const distribution_x(data.distribution_x->elements());
+                        const DT_ * const distribution_y(data.distribution_y->elements());
+
+                        DT_ lax_upper(epsilon /*10e-5 std::numeric_limits<DT_>::epsilon() * 10e7*/);
+                        DT_ lax_lower(-lax_upper);
+
+                        const unsigned long start(limits[0]);
+                        const unsigned long end(limits[info.limits->size() - 1]);
+                        for(unsigned long i(start); i < end; ++i)
+                        {
+
+                            //accumulate
+                            (h)[i] = (f_0)[i] +
+                                (f_1)[i] +
+                                (f_2)[i] +
+                                (f_3)[i] +
+                                (f_4)[i] +
+                                (f_5)[i] +
+                                (f_6)[i] +
+                                (f_7)[i] +
+                                (f_8)[i];
+
+                            if((h)[i] < lax_lower || (h)[i] > lax_upper)
+                            {
+                                (u)[i] = ((distribution_x)[0] * (f_0)[i] +
+                                        (distribution_x)[1] * (f_1)[i] +
+                                        (distribution_x)[2] * (f_2)[i] +
+                                        (distribution_x)[3] * (f_3)[i] +
+                                        (distribution_x)[4] * (f_4)[i] +
+                                        (distribution_x)[5] * (f_5)[i] +
+                                        (distribution_x)[6] * (f_6)[i] +
+                                        (distribution_x)[7] * (f_7)[i] +
+                                        (distribution_x)[8] * (f_8)[i]) / (h)[i];
+
+                                (v)[i] = ((distribution_y)[0] * (f_0)[i] +
+                                        (distribution_y)[1] * (f_1)[i] +
+                                        (distribution_y)[2] * (f_2)[i] +
+                                        (distribution_y)[3] * (f_3)[i] +
+                                        (distribution_y)[4] * (f_4)[i] +
+                                        (distribution_y)[5] * (f_5)[i] +
+                                        (distribution_y)[6] * (f_6)[i] +
+                                        (distribution_y)[7] * (f_7)[i] +
+                                        (distribution_y)[8] * (f_8)[i]) / (h)[i];
+                            }
+                            else
+                            {
+                                //TODO: better heuristics for reset of h: if negative -> 0, if positive but too small -> epsilon
+                                (h)[i] = 0;
+
+                                (u)[i] = 0;
+                                (v)[i] = 0;
+                            }
+                            (h)[i] = MinModLimiter<tags::CPU>::value((h)[i]);
+
+
+                        }
+
+                        info.limits->unlock(lm_read_only);
+
+                        data.f_0->unlock(lm_read_and_write);
+                        data.f_1->unlock(lm_read_and_write);
+                        data.f_2->unlock(lm_read_and_write);
+                        data.f_3->unlock(lm_read_and_write);
+                        data.f_4->unlock(lm_read_and_write);
+                        data.f_5->unlock(lm_read_and_write);
+                        data.f_6->unlock(lm_read_and_write);
+                        data.f_7->unlock(lm_read_and_write);
+                        data.f_8->unlock(lm_read_and_write);
+
+                        data.h->unlock(lm_write_only);
+
+                        data.distribution_x->unlock(lm_read_only);
+                        data.distribution_y->unlock(lm_read_only);
+
+                        data.u->unlock(lm_write_only);
+                        data.v->unlock(lm_write_only);
+                    }
+        };
+
+    template<>
         struct ExtractionGrid<tags::GPU::CUDA, lbm_modes::DRY>
         {
             public:
@@ -352,6 +505,147 @@ namespace honei
                         result.store = data->h->size() * 3 * sizeof(DT1_);
                         result.size.push_back(data->h->size());
                         return result;
+                    }
+        };
+
+    template<>
+        struct ExtractionGrid<tags::CPU::Generic, lbm_modes::WET>
+        {
+            public:
+                template<typename DT_>
+                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data, HONEI_UNUSED DT_ epsilon)
+                    {
+                        CONTEXT("When extracting h, u and v:");
+
+                        //set f to t_temp
+                        DenseVector<DT_> * swap;
+                        swap = data.f_0;
+                        data.f_0 = data.f_temp_0;
+                        data.f_temp_0 = swap;
+                        swap = data.f_1;
+                        data.f_1 = data.f_temp_1;
+                        data.f_temp_1 = swap;
+                        swap = data.f_2;
+                        data.f_2 = data.f_temp_2;
+                        data.f_temp_2 = swap;
+                        swap = data.f_3;
+                        data.f_3 = data.f_temp_3;
+                        data.f_temp_3 = swap;
+                        swap = data.f_4;
+                        data.f_4 = data.f_temp_4;
+                        data.f_temp_4 = swap;
+                        swap = data.f_5;
+                        data.f_5 = data.f_temp_5;
+                        data.f_temp_5 = swap;
+                        swap = data.f_6;
+                        data.f_6 = data.f_temp_6;
+                        data.f_temp_6 = swap;
+                        swap = data.f_7;
+                        data.f_7 = data.f_temp_7;
+                        data.f_temp_7 = swap;
+                        swap = data.f_8;
+                        data.f_8 = data.f_temp_8;
+                        data.f_temp_8 = swap;
+
+                        info.limits->lock(lm_read_only);
+
+                        data.f_0->lock(lm_read_and_write);
+                        data.f_1->lock(lm_read_and_write);
+                        data.f_2->lock(lm_read_and_write);
+                        data.f_3->lock(lm_read_and_write);
+                        data.f_4->lock(lm_read_and_write);
+                        data.f_5->lock(lm_read_and_write);
+                        data.f_6->lock(lm_read_and_write);
+                        data.f_7->lock(lm_read_and_write);
+                        data.f_8->lock(lm_read_and_write);
+
+                        data.h->lock(lm_write_only);
+
+                        data.distribution_x->lock(lm_read_only);
+                        data.distribution_y->lock(lm_read_only);
+
+                        data.u->lock(lm_write_only);
+                        data.v->lock(lm_write_only);
+
+                        const unsigned long * const limits(info.limits->elements());
+                        DT_ * f_0(data.f_0->elements());
+                        DT_ * f_1(data.f_1->elements());
+                        DT_ * f_2(data.f_2->elements());
+                        DT_ * f_3(data.f_3->elements());
+                        DT_ * f_4(data.f_4->elements());
+                        DT_ * f_5(data.f_5->elements());
+                        DT_ * f_6(data.f_6->elements());
+                        DT_ * f_7(data.f_7->elements());
+                        DT_ * f_8(data.f_8->elements());
+
+                        DT_ * h(data.h->elements());
+                        DT_ * u(data.u->elements());
+                        DT_ * v(data.v->elements());
+                        const DT_ * const distribution_x(data.distribution_x->elements());
+                        const DT_ * const distribution_y(data.distribution_y->elements());
+
+                        const unsigned long start(limits[0]);
+                        const unsigned long end(limits[info.limits->size() - 1]);
+                        for(unsigned long i(start); i < end; ++i)
+                        {
+
+                            //accumulate
+                            (h)[i] = (f_0)[i] +
+                                (f_1)[i] +
+                                (f_2)[i] +
+                                (f_3)[i] +
+                                (f_4)[i] +
+                                (f_5)[i] +
+                                (f_6)[i] +
+                                (f_7)[i] +
+                                (f_8)[i];
+                        }
+
+                        for(unsigned long i(start); i < end; ++i)
+                        {
+                            (u)[i] = ((distribution_x)[0] * (f_0)[i] +
+                                    (distribution_x)[1] * (f_1)[i] +
+                                    (distribution_x)[2] * (f_2)[i] +
+                                    (distribution_x)[3] * (f_3)[i] +
+                                    (distribution_x)[4] * (f_4)[i] +
+                                    (distribution_x)[5] * (f_5)[i] +
+                                    (distribution_x)[6] * (f_6)[i] +
+                                    (distribution_x)[7] * (f_7)[i] +
+                                    (distribution_x)[8] * (f_8)[i]) / (h)[i];
+                        }
+
+                        for(unsigned long i(start); i < end; ++i)
+                        {
+                            (v)[i] = ((distribution_y)[0] * (f_0)[i] +
+                                    (distribution_y)[1] * (f_1)[i] +
+                                    (distribution_y)[2] * (f_2)[i] +
+                                    (distribution_y)[3] * (f_3)[i] +
+                                    (distribution_y)[4] * (f_4)[i] +
+                                    (distribution_y)[5] * (f_5)[i] +
+                                    (distribution_y)[6] * (f_6)[i] +
+                                    (distribution_y)[7] * (f_7)[i] +
+                                    (distribution_y)[8] * (f_8)[i]) / (h)[i];
+                        }
+
+                        info.limits->unlock(lm_read_only);
+
+                        data.f_0->unlock(lm_read_and_write);
+                        data.f_1->unlock(lm_read_and_write);
+                        data.f_2->unlock(lm_read_and_write);
+                        data.f_3->unlock(lm_read_and_write);
+                        data.f_4->unlock(lm_read_and_write);
+                        data.f_5->unlock(lm_read_and_write);
+                        data.f_6->unlock(lm_read_and_write);
+                        data.f_7->unlock(lm_read_and_write);
+                        data.f_8->unlock(lm_read_and_write);
+
+                        data.h->unlock(lm_write_only);
+
+                        data.distribution_x->unlock(lm_read_only);
+                        data.distribution_y->unlock(lm_read_only);
+
+                        data.u->unlock(lm_write_only);
+                        data.v->unlock(lm_write_only);
                     }
         };
 

@@ -2,7 +2,7 @@
 
 /*
  * Copyright (c) 2008 Markus Geveler <apryde@gmx.de>
- * Copyright (c) 2008 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2008, 2012 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LBM C++ library. LBM is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -143,6 +143,123 @@ namespace honei
                            {
                                (*data.f_temp_4)[i] = (*data.f_temp_6)[i];
                                (*data.f_temp_8)[i] = (*data.f_temp_6)[i];
+                           }
+                   }
+
+                   info.limits->unlock(lm_read_only);
+                   info.types->unlock(lm_read_only);
+
+                   data.f_temp_1->unlock(lm_read_and_write);
+                   data.f_temp_2->unlock(lm_read_and_write);
+                   data.f_temp_3->unlock(lm_read_and_write);
+                   data.f_temp_4->unlock(lm_read_and_write);
+                   data.f_temp_5->unlock(lm_read_and_write);
+                   data.f_temp_6->unlock(lm_read_and_write);
+                   data.f_temp_7->unlock(lm_read_and_write);
+                   data.f_temp_8->unlock(lm_read_and_write);
+               }
+       };
+
+   template <>
+       struct UpdateVelocityDirectionsGrid<tags::CPU::Generic, lbm_boundary_types::NOSLIP>
+       {
+           template<typename DT1_>
+               static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data)
+               {
+                   CONTEXT("When updating velocity directions:");
+
+                   info.limits->lock(lm_read_only);
+                   info.types->lock(lm_read_only);
+
+                   data.f_temp_1->lock(lm_read_and_write);
+                   data.f_temp_2->lock(lm_read_and_write);
+                   data.f_temp_3->lock(lm_read_and_write);
+                   data.f_temp_4->lock(lm_read_and_write);
+                   data.f_temp_5->lock(lm_read_and_write);
+                   data.f_temp_6->lock(lm_read_and_write);
+                   data.f_temp_7->lock(lm_read_and_write);
+                   data.f_temp_8->lock(lm_read_and_write);
+
+                   const unsigned long * const limits(info.limits->elements());
+                   const unsigned long * const types(info.types->elements());
+
+                   DT1_ * f_temp_1(data.f_temp_1->elements());
+                   DT1_ * f_temp_2(data.f_temp_2->elements());
+                   DT1_ * f_temp_3(data.f_temp_3->elements());
+                   DT1_ * f_temp_4(data.f_temp_4->elements());
+                   DT1_ * f_temp_5(data.f_temp_5->elements());
+                   DT1_ * f_temp_6(data.f_temp_6->elements());
+                   DT1_ * f_temp_7(data.f_temp_7->elements());
+                   DT1_ * f_temp_8(data.f_temp_8->elements());
+
+                   const unsigned long end(info.limits->size() - 1);
+                   for (unsigned long begin(0) ; begin < end ; ++begin)
+                   {
+                       if(((types)[begin] & 1<<0) == 1<<0)
+                           for (unsigned long i((limits)[begin]) ; i != (limits)[begin + 1] ; ++i)
+                           {
+                               (f_temp_5)[i] = (f_temp_1)[i];
+                           }
+                       if(((types)[begin] & 1<<1) == 1<<1)
+                           for (unsigned long i((limits)[begin]) ; i != (limits)[begin + 1] ; ++i)
+                           {
+                               (f_temp_6)[i] = (f_temp_2)[i];
+                           }
+                       if(((types)[begin] & 1<<2) == 1<<2)
+                           for (unsigned long i((limits)[begin]) ; i != (limits)[begin + 1] ; ++i)
+                           {
+                               (f_temp_7)[i] = (f_temp_3)[i];
+                           }
+                       if(((types)[begin] & 1<<3) == 1<<3)
+                           for (unsigned long i((limits)[begin]) ; i != (limits)[begin + 1] ; ++i)
+                           {
+                               (f_temp_8)[i] = (f_temp_4)[i];
+                           }
+                       if(((types)[begin] & 1<<4) == 1<<4)
+                           for (unsigned long i((limits)[begin]) ; i != (limits)[begin + 1] ; ++i)
+                           {
+                               (f_temp_1)[i] = (f_temp_5)[i];
+                           }
+                       if(((types)[begin] & 1<<5) == 1<<5)
+                           for (unsigned long i((limits)[begin]) ; i != (limits)[begin + 1] ; ++i)
+                           {
+                               (f_temp_2)[i] = (f_temp_6)[i];
+                           }
+                       if(((types)[begin] & 1<<6) == 1<<6)
+                           for (unsigned long i((limits)[begin]) ; i != (limits)[begin + 1] ; ++i)
+                           {
+                               (f_temp_3)[i] = (f_temp_7)[i];
+                           }
+                       if(((types)[begin] & 1<<7) == 1<<7)
+                           for (unsigned long i((limits)[begin]) ; i != (limits)[begin + 1] ; ++i)
+                           {
+                               (f_temp_4)[i] = (f_temp_8)[i];
+                           }
+
+                       // Corners
+                       if(((types)[begin] & 1<<2) == 1<<2 && ((types)[begin] & 1<<4) == 1<<4)
+                           for (unsigned long i((limits)[begin]) ; i != (limits)[begin + 1] ; ++i)
+                           {
+                               (f_temp_2)[i] = (f_temp_8)[i];
+                               (f_temp_6)[i] = (f_temp_8)[i];
+                           }
+                       if(((types)[begin] & 1<<4) == 1<<4 && ((types)[begin] & 1<<6) == 1<<6)
+                           for (unsigned long i((limits)[begin]) ; i != (limits)[begin + 1] ; ++i)
+                           {
+                               (f_temp_4)[i] = (f_temp_2)[i];
+                               (f_temp_8)[i] = (f_temp_2)[i];
+                           }
+                       if(((types)[begin] & 1<<0) == 1<<0 && ((types)[begin] & 1<<6) == 1<<6)
+                           for (unsigned long i((limits)[begin]) ; i != (limits)[begin + 1] ; ++i)
+                           {
+                               (f_temp_2)[i] = (f_temp_4)[i];
+                               (f_temp_6)[i] = (f_temp_4)[i];
+                           }
+                       if(((types)[begin] & 1<<0) == 1<<0 && ((types)[begin] & 1<<2) == 1<<2)
+                           for (unsigned long i((limits)[begin]) ; i != (limits)[begin + 1] ; ++i)
+                           {
+                               (f_temp_4)[i] = (f_temp_6)[i];
+                               (f_temp_8)[i] = (f_temp_6)[i];
                            }
                    }
 

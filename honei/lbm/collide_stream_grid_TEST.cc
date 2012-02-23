@@ -107,6 +107,8 @@ class CollideStreamGridLABSWETest :
 };
 CollideStreamGridLABSWETest<tags::CPU, float> collidestream_grid_test_float("float");
 CollideStreamGridLABSWETest<tags::CPU, double> collidestream_grid_test_double("double");
+CollideStreamGridLABSWETest<tags::CPU::Generic, float> generic_collidestream_grid_test_float("float");
+CollideStreamGridLABSWETest<tags::CPU::Generic, double> generic_collidestream_grid_test_double("double");
 #ifdef HONEI_SSE
 CollideStreamGridLABSWETest<tags::CPU::SSE, float> sse_collidestream_grid_test_float("float");
 CollideStreamGridLABSWETest<tags::CPU::SSE, double> sse_collidestream_grid_test_double("double");

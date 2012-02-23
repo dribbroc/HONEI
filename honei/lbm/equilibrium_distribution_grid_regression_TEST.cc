@@ -160,6 +160,8 @@ class EquilibriumDistributionGridRegressionTest :
             data_standard.destroy();
         }
 };
+EquilibriumDistributionGridRegressionTest<tags::CPU::Generic, float> generic_solver_multi_test_float("float");
+EquilibriumDistributionGridRegressionTest<tags::CPU::Generic, double> generic_solver_multi_test_double("double");
 #ifdef HONEI_SSE
 EquilibriumDistributionGridRegressionTest<tags::CPU::SSE, float> sse_solver_multi_test_float("float");
 EquilibriumDistributionGridRegressionTest<tags::CPU::SSE, double> sse_solver_multi_test_double("double");

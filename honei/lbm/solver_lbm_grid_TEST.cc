@@ -105,6 +105,10 @@ SolverLBMGridTest<tags::CPU, float> solver_test_float("float");
 SolverLBMGridTest<tags::CPU, double> solver_test_double("double");
 SolverLBMGridTest<tags::CPU::MultiCore, float> mc_solver_test_float("float");
 SolverLBMGridTest<tags::CPU::MultiCore, double> mc_solver_test_double("double");
+SolverLBMGridTest<tags::CPU::Generic, float> generic_solver_test_float("float");
+SolverLBMGridTest<tags::CPU::Generic, double> generic_solver_test_double("double");
+SolverLBMGridTest<tags::CPU::MultiCore::Generic, float> mc_generic_solver_test_float("float");
+SolverLBMGridTest<tags::CPU::MultiCore::Generic, double> mc_generic_solver_test_double("double");
 #ifdef HONEI_SSE
 SolverLBMGridTest<tags::CPU::SSE, float> sse_solver_test_float("float");
 SolverLBMGridTest<tags::CPU::SSE, double> sse_solver_test_double("double");
@@ -195,6 +199,10 @@ SolverLBMGridMassConservationTest<tags::CPU, float> solver_grid_mc_test_float("f
 SolverLBMGridMassConservationTest<tags::CPU, double> solver_grid_mc_test_double("double");
 SolverLBMGridMassConservationTest<tags::CPU::MultiCore, float> mc_solver_grid_mc_test_float("float");
 SolverLBMGridMassConservationTest<tags::CPU::MultiCore, double> mc_solver_grid_mc_test_double("double");
+SolverLBMGridMassConservationTest<tags::CPU::Generic, float> generic_solver_grid_mc_test_float("float");
+SolverLBMGridMassConservationTest<tags::CPU::Generic, double> generic_solver_grid_mc_test_double("double");
+SolverLBMGridMassConservationTest<tags::CPU::MultiCore::Generic, float> mc_generic_solver_grid_mc_test_float("float");
+SolverLBMGridMassConservationTest<tags::CPU::MultiCore::Generic, double> mc_generic_solver_grid_mc_test_double("double");
 #ifdef HONEI_SSE
 SolverLBMGridMassConservationTest<tags::CPU::SSE, float> sse_solver_grid_mc_test_float("float");
 SolverLBMGridMassConservationTest<tags::CPU::SSE, double> sse_solver_grid_mc_test_double("double");
@@ -286,6 +294,10 @@ SimpleSolverLBMGridMassConservationTest<tags::CPU, float> simple_solver_grid_mc_
 SimpleSolverLBMGridMassConservationTest<tags::CPU, double> simple_solver_grid_mc_test_double("double");
 SimpleSolverLBMGridMassConservationTest<tags::CPU::MultiCore, float> mc_simple_solver_grid_mc_test_float("float");
 SimpleSolverLBMGridMassConservationTest<tags::CPU::MultiCore, double> mc_simple_solver_grid_mc_test_double("double");
+SimpleSolverLBMGridMassConservationTest<tags::CPU::Generic, float> generic_simple_solver_grid_mc_test_float("float");
+SimpleSolverLBMGridMassConservationTest<tags::CPU::Generic, double> generic_simple_solver_grid_mc_test_double("double");
+SimpleSolverLBMGridMassConservationTest<tags::CPU::MultiCore::Generic, float> mc_generic_simple_solver_grid_mc_test_float("float");
+SimpleSolverLBMGridMassConservationTest<tags::CPU::MultiCore::Generic, double> mc_generic_simple_solver_grid_mc_test_double("double");
 #ifdef HONEI_SSE
 SimpleSolverLBMGridMassConservationTest<tags::CPU::SSE, float> sse_simple_solver_grid_mc_test_float("float");
 SimpleSolverLBMGridMassConservationTest<tags::CPU::SSE, double> sse_simple_solver_grid_mc_test_double("double");

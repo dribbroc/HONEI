@@ -129,6 +129,8 @@ class ExtractionGridTest :
 };
 ExtractionGridTest<tags::CPU, float> extraction_grid_test_float("float");
 ExtractionGridTest<tags::CPU, double> extraction_grid_test_double("double");
+ExtractionGridTest<tags::CPU::Generic, float> generic_extraction_grid_test_float("float");
+ExtractionGridTest<tags::CPU::Generic, double> generic_extraction_grid_test_double("double");
 #ifdef HONEI_SSE
 ExtractionGridTest<tags::CPU::SSE, float> sse_extraction_grid_test_float("float");
 ExtractionGridTest<tags::CPU::SSE, double> sse_extraction_grid_test_double("double");

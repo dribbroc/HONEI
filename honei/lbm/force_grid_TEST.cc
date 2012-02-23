@@ -150,9 +150,11 @@ class ForceSlopeLBMGridTest :
 
 };
 
+ForceSlopeLBMGridTest<tags::CPU::Generic, float> force_slope_test_float_generic("float");
+ForceSlopeLBMGridTest<tags::CPU::Generic, double> force_slope_test_double_generic("double");
 #ifdef HONEI_SSE
 ForceSlopeLBMGridTest<tags::CPU::SSE, float> force_slope_test_float_sse("float");
-ForceSlopeLBMGridTest<tags::CPU::SSE, double> force_slope_test_double("double");
+ForceSlopeLBMGridTest<tags::CPU::SSE, double> force_slope_test_double_sse("double");
 #endif
 
 #ifdef HONEI_CUDA
@@ -292,9 +294,11 @@ class ForceFrictionLBMGridTest :
 
 };
 
+ForceFrictionLBMGridTest<tags::CPU::Generic, float> force_friction_test_float_generic("float");
+ForceFrictionLBMGridTest<tags::CPU::Generic, double> force_friction_test_double_generic("double");
 #ifdef HONEI_SSE
 ForceFrictionLBMGridTest<tags::CPU::SSE, float> force_friction_test_float_sse("float");
-ForceFrictionLBMGridTest<tags::CPU::SSE, double> force_friction_test_double("double");
+ForceFrictionLBMGridTest<tags::CPU::SSE, double> force_friction_test_double_sse("double");
 #endif
 
 #ifdef HONEI_CUDA
