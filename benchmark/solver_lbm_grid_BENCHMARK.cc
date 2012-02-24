@@ -110,15 +110,15 @@ class LBMGSolverBench :
         }
 };
 
-LBMGSolverBench<tags::CPU::Generic, float> solver_bench_float_1("Generic LBM Grid solver Benchmark - size: 500, float", 500, 25);
-LBMGSolverBench<tags::CPU::Generic, double> solver_bench_double_1("Generic LBM Grid solver Benchmark - size: 500, double", 500, 25);
-LBMGSolverBench<tags::CPU::MultiCore::Generic, float> mc_solver_bench_float_1("MC Generic LBM Grid solver Benchmark - size: 500, float", 500, 25);
-LBMGSolverBench<tags::CPU::MultiCore::Generic, double> mc_solver_bench_double_1("MC Generic LBM Grid solver Benchmark - size: 500, double", 500, 25);
+LBMGSolverBench<tags::CPU::Generic, float> solver_bench_float_1("Generic LBM Grid solver Benchmark - size: 500, float", 500, 5);
+LBMGSolverBench<tags::CPU::Generic, double> solver_bench_double_1("Generic LBM Grid solver Benchmark - size: 500, double", 500, 5);
+LBMGSolverBench<tags::CPU::MultiCore::Generic, float> mc_solver_bench_float_1("MC Generic LBM Grid solver Benchmark - size: 500, float", 500, 5);
+LBMGSolverBench<tags::CPU::MultiCore::Generic, double> mc_solver_bench_double_1("MC Generic LBM Grid solver Benchmark - size: 500, double", 500, 5);
 #ifdef HONEI_SSE
-LBMGSolverBench<tags::CPU::SSE, float> sse_solver_bench_float_1("SSE LBM Grid solver Benchmark - size: 500, float", 500, 25);
-LBMGSolverBench<tags::CPU::SSE, double> sse_solver_bench_double_1("SSE LBM Grid solver Benchmark - size: 500, double", 500, 25);
-LBMGSolverBench<tags::CPU::MultiCore::SSE, float> mcsse_solver_bench_float_1("MC SSE LBM Grid solver Benchmark - size: 500, float", 500, 25);
-LBMGSolverBench<tags::CPU::MultiCore::SSE, double> mcsse_solver_bench_double_1("MC SSE LBM Grid solver Benchmark - size: 500, double", 500, 25);
+LBMGSolverBench<tags::CPU::SSE, float> sse_solver_bench_float_1("SSE LBM Grid solver Benchmark - size: 500, float", 500, 5);
+LBMGSolverBench<tags::CPU::SSE, double> sse_solver_bench_double_1("SSE LBM Grid solver Benchmark - size: 500, double", 500, 5);
+LBMGSolverBench<tags::CPU::MultiCore::SSE, float> mcsse_solver_bench_float_1("MC SSE LBM Grid solver Benchmark - size: 500, float", 500, 5);
+LBMGSolverBench<tags::CPU::MultiCore::SSE, double> mcsse_solver_bench_double_1("MC SSE LBM Grid solver Benchmark - size: 500, double", 500, 5);
 #endif
 #ifdef HONEI_CUDA
 LBMGSolverBench<tags::GPU::CUDA, float> cuda_solver_bench_float_12("CUDA LBM Grid solver Benchmark - size: 1500^2, float", 1500, 25);

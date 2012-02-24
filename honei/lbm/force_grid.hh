@@ -595,30 +595,30 @@ namespace honei
                 data.f_temp_7->lock(lm_read_and_write);
                 data.f_temp_8->lock(lm_read_and_write);
 
-                const unsigned long * limits(info.limits->elements());
+                const unsigned long * const limits(info.limits->elements());
 
-                const unsigned long * dir_index_1(info.dir_index_1->elements());
-                const unsigned long * dir_index_2(info.dir_index_2->elements());
-                const unsigned long * dir_index_3(info.dir_index_3->elements());
-                const unsigned long * dir_index_4(info.dir_index_4->elements());
-                const unsigned long * dir_index_5(info.dir_index_5->elements());
-                const unsigned long * dir_index_6(info.dir_index_6->elements());
-                const unsigned long * dir_index_7(info.dir_index_7->elements());
-                const unsigned long * dir_index_8(info.dir_index_8->elements());
+                const unsigned long * const dir_index_1(info.dir_index_1->elements());
+                const unsigned long * const dir_index_2(info.dir_index_2->elements());
+                const unsigned long * const dir_index_3(info.dir_index_3->elements());
+                const unsigned long * const dir_index_4(info.dir_index_4->elements());
+                const unsigned long * const dir_index_5(info.dir_index_5->elements());
+                const unsigned long * const dir_index_6(info.dir_index_6->elements());
+                const unsigned long * const dir_index_7(info.dir_index_7->elements());
+                const unsigned long * const dir_index_8(info.dir_index_8->elements());
 
-                const unsigned long * dir_1(info.dir_1->elements());
-                const unsigned long * dir_2(info.dir_2->elements());
-                const unsigned long * dir_3(info.dir_3->elements());
-                const unsigned long * dir_4(info.dir_4->elements());
-                const unsigned long * dir_5(info.dir_5->elements());
-                const unsigned long * dir_6(info.dir_6->elements());
-                const unsigned long * dir_7(info.dir_7->elements());
-                const unsigned long * dir_8(info.dir_8->elements());
+                const unsigned long * const dir_1(info.dir_1->elements());
+                const unsigned long * const dir_2(info.dir_2->elements());
+                const unsigned long * const dir_3(info.dir_3->elements());
+                const unsigned long * const dir_4(info.dir_4->elements());
+                const unsigned long * const dir_5(info.dir_5->elements());
+                const unsigned long * const dir_6(info.dir_6->elements());
+                const unsigned long * const dir_7(info.dir_7->elements());
+                const unsigned long * const dir_8(info.dir_8->elements());
 
-                const DT1_ * h(data.h->elements());
-                const DT1_ * b(data.b->elements());
-                const DT1_ * distribution_x(data.distribution_x->elements());
-                const DT1_ * distribution_y(data.distribution_y->elements());
+                const DT1_ * const h(data.h->elements());
+                const DT1_ * const b(data.b->elements());
+                const DT1_ * const distribution_x(data.distribution_x->elements());
+                const DT1_ * const distribution_y(data.distribution_y->elements());
 
                 DT1_ * f_temp_1(data.f_temp_1->elements());
                 DT1_ * f_temp_2(data.f_temp_2->elements());
@@ -1295,12 +1295,12 @@ namespace honei
                 data.f_temp_7->lock(lm_read_and_write);
                 data.f_temp_8->lock(lm_read_and_write);
 
-                const unsigned long * limits(info.limits->elements());
-                const DT1_ * h(data.h->elements());
-                const DT1_ * u(data.u->elements());
-                const DT1_ * v(data.v->elements());
-                const DT1_ * distribution_x(data.distribution_x->elements());
-                const DT1_ * distribution_y(data.distribution_y->elements());
+                const unsigned long * const limits(info.limits->elements());
+                const DT1_ * const h(data.h->elements());
+                const DT1_ * const u(data.u->elements());
+                const DT1_ * const v(data.v->elements());
+                const DT1_ * const distribution_x(data.distribution_x->elements());
+                const DT1_ * const distribution_y(data.distribution_y->elements());
 
                 DT1_ * f_temp_1(data.f_temp_1->elements());
                 DT1_ * f_temp_2(data.f_temp_2->elements());
