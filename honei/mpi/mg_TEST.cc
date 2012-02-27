@@ -130,8 +130,6 @@ class MGSolverTest:
             data_mpi.x.clear();
             data_mpi.c.clear();
             data_mpi.d.clear();
-            data_mpi.temp_0.clear();
-            data_mpi.temp_1.clear();
             data_mpi.prolmat.clear();
             data_mpi.resmat.clear();
         }

@@ -102,7 +102,7 @@ class CGSolverTestSparseELL:
             TimeStamp at, bt;
             at.take();
             //CG<Tag_, methods::VAR>::value(matrix2, diag_inverted, rhs, result, 10000ul, used_iters, 1e-8);
-            BiCGStab<Tag_, methods::VAR>::value(matrix2, diag_inverted, rhs, result, 10000ul, used_iters, 1e-8);
+            BiCGStabSolver<Tag_, methods::VAR>::value(matrix2, diag_inverted, rhs, result, 10000ul, used_iters, 1e-8);
             bt.take();
             if (mpi::mpi_comm_rank() == 0)
             {
