@@ -486,6 +486,13 @@ namespace honei
                 static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & right_hand_side,
                         const SparseMatrixELL<double> & system, const DenseVectorContinuousBase<double> & x);
 
+            template<typename DT_>
+                static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixELLMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
+                {
+                    MPIOps<tags::GPU::CUDA>::defect(result, right_hand_side, system, x);
+                    return result;
+                }
+
         };
 
     template<>

@@ -538,6 +538,12 @@ namespace honei
 
         static float value(const DenseVectorContinuousBase<float> & x);
         static double value(const DenseVectorContinuousBase<double> & x);
+
+        template <typename DT_>
+        static inline DT_ value(const DenseVectorMPI<DT_> & x)
+        {
+            return MPIOps<tags::GPU::CUDA>::norm_l2_false(x);
+        }
     };
     template <> struct Norm<vnt_l_two, true, tags::GPU::CUDA>
     {
@@ -554,6 +560,12 @@ namespace honei
 
         static float value(const DenseVectorContinuousBase<float> & x);
         static double value(const DenseVectorContinuousBase<double> & x);
+
+        template <typename DT_>
+        static inline DT_ value(const DenseVectorMPI<DT_> & x)
+        {
+            return sqrt(MPIOps<tags::GPU::CUDA>::norm_l2_false(x));
+        }
     };
 
     template <> struct Norm<vnt_l_two, false, tags::GPU::MultiCore::CUDA>

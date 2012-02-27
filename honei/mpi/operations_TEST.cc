@@ -84,6 +84,11 @@ ScaledSumMPITest<tags::CPU::SSE, double> scaled_sum_mpi_test_double("double");
 #else
 ScaledSumMPITest<tags::CPU, double> scaled_sum_mpi_test_double("double");
 #endif
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
+ScaledSumMPITest<tags::GPU::CUDA, double> cuda_scaled_sum_mpi_test_double("double");
+#endif
+#endif
 
 template <typename Tag_, typename DT_>
 class ScaleMPITest :
@@ -118,6 +123,11 @@ class ScaleMPITest :
 ScaleMPITest<tags::CPU::SSE, double> scale_mpi_test_double("double");
 #else
 ScaleMPITest<tags::CPU, double> scale_mpi_test_double("double");
+#endif
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
+#endif
+ScaleMPITest<tags::GPU::CUDA, double> cuda_scale_mpi_test_double("double");
 #endif
 
 template <typename Tag_, typename DT_>
@@ -156,6 +166,11 @@ class SumMPITest :
 SumMPITest<tags::CPU::SSE, double> sum_mpi_test_double("double");
 #else
 SumMPITest<tags::CPU, double> sum_mpi_test_double("double");
+#endif
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
+SumMPITest<tags::GPU::CUDA, double> cuda_sum_mpi_test_double("double");
+#endif
 #endif
 
 template <typename Tag_, typename DT_>
@@ -197,6 +212,11 @@ DifferenceMPITest<tags::CPU::SSE, double> difference_mpi_test_double("double");
 #else
 DifferenceMPITest<tags::CPU, double> difference_mpi_test_double("double");
 #endif
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
+DifferenceMPITest<tags::GPU::CUDA, double> cuda_difference_mpi_test_double("double");
+#endif
+#endif
 
 template <typename Tag_, typename DT_>
 class ElementProductMPITest :
@@ -237,6 +257,11 @@ ElementProductMPITest<tags::CPU::SSE, double> element_product_mpi_test_double("d
 #else
 ElementProductMPITest<tags::CPU, double> element_product_mpi_test_double("double");
 #endif
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
+ElementProductMPITest<tags::GPU::CUDA, double> cuda_element_product_mpi_test_double("double");
+#endif
+#endif
 
 template <typename Tag_, typename DT_>
 class DotProductMPITest :
@@ -274,6 +299,11 @@ DotProductMPITest<tags::CPU::SSE, double> dot_product_mpi_test_double("double");
 #else
 DotProductMPITest<tags::CPU, double> dot_product_mpi_test_double("double");
 #endif
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
+DotProductMPITest<tags::GPU::CUDA, double> cuda_dot_product_mpi_test_double("double");
+#endif
+#endif
 
 template <typename Tag_, typename DT_>
 class NormMPITest :
@@ -288,10 +318,10 @@ class NormMPITest :
 
         virtual void run() const
         {
-            DenseVector<DT_> xs(4711);
+            DenseVector<DT_> xs(471);
             for (unsigned long i(0) ; i < xs.size() ; ++i)
             {
-                xs[i] = DT_(i) /10;
+                xs[i] = DT_(i) / xs.size();
             }
 
             DenseVectorMPI<DT_> x(xs);
@@ -299,17 +329,22 @@ class NormMPITest :
 
             DT_ r = Norm<vnt_l_two, false, Tag_>::value(x);
             DT_ rs = Norm<vnt_l_two, false, Tag_>::value(xs);
-            TEST_CHECK_EQUAL(r, rs);
+            TEST_CHECK_EQUAL_WITHIN_EPS(r, rs, 1e-11);
 
             r = Norm<vnt_l_two, true, Tag_>::value(x);
             rs = Norm<vnt_l_two, true, Tag_>::value(xs);
-            TEST_CHECK_EQUAL(r, rs);
+            TEST_CHECK_EQUAL_WITHIN_EPS(r, rs, 1e-11);
         }
 };
 #ifdef HONEI_SSE
 NormMPITest<tags::CPU::SSE, double> norm_mpi_test_double("double");
 #else
 NormMPITest<tags::CPU, double> norm_mpi_test_double("double");
+#endif
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
+NormMPITest<tags::GPU::CUDA, double> cuda_norm_mpi_test_double("double");
+#endif
 #endif
 
 template <typename Tag_, typename DT_>
@@ -360,6 +395,11 @@ class DefectMPITest :
 DefectMPITest<tags::CPU::SSE, double> defect_mpi_test_double("double");
 #else
 DefectMPITest<tags::CPU, double> defect_mpi_test_double("double");
+#endif
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
+DefectMPITest<tags::GPU::CUDA, double> cuda_defect_mpi_test_double("double");
+#endif
 #endif
 
 template <typename Tag_, typename DT_>

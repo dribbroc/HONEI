@@ -353,6 +353,11 @@ namespace honei
 
         static double value(const DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
 
+        template <typename DT_>
+        static inline DT_ value(const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
+        {
+            return MPIOps<tags::GPU::CUDA>::dot_product(x, y);
+        }
         /// \}
     };
 

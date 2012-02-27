@@ -145,3 +145,8 @@ CGSolverTestSparseELL<tags::CPU::SSE, double> cgs_test_double_sparse_ell("double
 #else
 CGSolverTestSparseELL<tags::CPU, double> cgs_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
 #endif
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
+CGSolverTestSparseELL<tags::GPU::CUDA, double> cuda_cgs_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
+#endif
+#endif

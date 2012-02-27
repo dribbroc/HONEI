@@ -125,3 +125,8 @@ MGSolverTest<tags::CPU::SSE> mg_solver_test_cpu("double", "poisson_advanced2/q2_
 #else
 MGSolverTest<tags::CPU> mg_solver_test_cpu("double", "poisson_advanced2/q2_sort_0/");
 #endif
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
+MGSolverTest<tags::GPU::CUDA> cuda_mg_solver_test_cpu("double", "poisson_advanced2/q2_sort_0/");
+#endif
+#endif

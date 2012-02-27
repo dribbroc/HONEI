@@ -130,3 +130,8 @@ RISolverTestSparseELL<tags::CPU::SSE, double> ris_test_double_sparse_ell("double
 #else
 RISolverTestSparseELL<tags::CPU, double> ris_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
 #endif
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
+RISolverTestSparseELL<tags::GPU::CUDA, double> cuda_ris_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
+#endif
+#endif

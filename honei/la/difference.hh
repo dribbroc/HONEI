@@ -692,6 +692,13 @@ namespace honei
         static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & r, const DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b);
 
         static DenseMatrix<float> & value(DenseMatrix<float> & a, const DenseMatrix<float> & b);
+
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
+        {
+            MPIOps<tags::GPU::CUDA>::difference(r, x, y);
+            return r;
+        }
     };
 
     template <>

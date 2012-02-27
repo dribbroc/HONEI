@@ -273,6 +273,12 @@ namespace honei
 
         static DenseMatrix<float> & value(DenseMatrix<float> & x, const float a);
 
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & x, DT_ a)
+        {
+            MPIOps<tags::GPU::CUDA>::scale(x, a);
+            return x;
+        }
         /// \}
     };
 
