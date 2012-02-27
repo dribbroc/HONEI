@@ -30,7 +30,9 @@
 #include <honei/la/sum.hh>
 #include <honei/la/difference.hh>
 #include <honei/la/element_product.hh>
+#ifdef HONEI_CUDA
 #include <honei/backends/cuda/transfer.hh>
+#endif
 
 using namespace honei;
 
@@ -41,11 +43,13 @@ void MPIOps<Tag_>::difference(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_>
     Difference<Tag_>::value(r.vector(), x.vector(), y.vector());
 }
 
+#ifdef HONEI_CUDA
 template <typename DT_>
 void MPIOps<tags::GPU::CUDA>::difference(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
 {
     Difference<tags::GPU::CUDA>::value(r.vector(), x.vector(), y.vector());
 }
+#endif
 
 template <typename Tag_>
 template <typename DT_>
@@ -59,6 +63,7 @@ DT_ MPIOps<Tag_>::dot_product(const DenseVectorMPI<DT_> & x, const DenseVectorMP
     return result;
 }
 
+#ifdef HONEI_CUDA
 template <typename DT_>
 DT_ MPIOps<tags::GPU::CUDA>::dot_product(const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
 {
@@ -69,6 +74,7 @@ DT_ MPIOps<tags::GPU::CUDA>::dot_product(const DenseVectorMPI<DT_> & x, const De
 
     return result;
 }
+#endif
 
 template <typename Tag_>
 template <typename DT_>
@@ -77,11 +83,13 @@ void MPIOps<Tag_>::element_product(DenseVectorMPI<DT_> & r, const DenseVectorMPI
     ElementProduct<Tag_>::value(r.vector(), x.vector(), y.vector());
 }
 
+#ifdef HONEI_CUDA
 template <typename DT_>
 void MPIOps<tags::GPU::CUDA>::element_product(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
 {
     ElementProduct<tags::GPU::CUDA>::value(r.vector(), x.vector(), y.vector());
 }
+#endif
 
 template <typename Tag_>
 template <typename DT_>
@@ -95,6 +103,7 @@ DT_ MPIOps<Tag_>::norm_l2_false(const DenseVectorMPI<DT_> & x)
     return result;
 }
 
+#ifdef HONEI_CUDA
 template <typename DT_>
 DT_ MPIOps<tags::GPU::CUDA>::norm_l2_false(const DenseVectorMPI<DT_> & x)
 {
@@ -105,6 +114,7 @@ DT_ MPIOps<tags::GPU::CUDA>::norm_l2_false(const DenseVectorMPI<DT_> & x)
 
     return result;
 }
+#endif
 
 template <typename Tag_>
 template <typename DT_>
@@ -156,6 +166,7 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_
     delete[] send_data;
 }
 
+#ifdef HONEI_CUDA
 template <typename DT_>
 void MPIOps<tags::GPU::CUDA>::product(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
 {
@@ -212,6 +223,7 @@ void MPIOps<tags::GPU::CUDA>::product(DenseVectorMPI<DT_> & r, const SparseMatri
     cuda_free_host(b_cpu);
     delete[] send_data;
 }
+#endif
 
 template <typename Tag_>
 template <typename DT_>
@@ -263,6 +275,7 @@ void MPIOps<Tag_>::defect(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & r
     delete[] send_data;
 }
 
+#ifdef HONEI_CUDA
 template <typename DT_>
 void MPIOps<tags::GPU::CUDA>::defect(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & rhs, const SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
 {
@@ -319,6 +332,7 @@ void MPIOps<tags::GPU::CUDA>::defect(DenseVectorMPI<DT_> & r, const DenseVectorM
     cuda_free_host(b_cpu);
     delete[] send_data;
 }
+#endif
 
 template <typename Tag_>
 template <typename DT_>
@@ -327,11 +341,13 @@ void MPIOps<Tag_>::scale(DenseVectorMPI<DT_> & x, DT_ a)
     Scale<Tag_>::value(x.vector(), a);
 }
 
+#ifdef HONEI_CUDA
 template <typename DT_>
 void MPIOps<tags::GPU::CUDA>::scale(DenseVectorMPI<DT_> & x, DT_ a)
 {
     Scale<tags::GPU::CUDA>::value(x.vector(), a);
 }
+#endif
 
 template <typename Tag_>
 template <typename DT_>
@@ -340,11 +356,13 @@ void MPIOps<Tag_>::scaled_sum(DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_>
     ScaledSum<Tag_>::value(x.vector(), y.vector(), a);
 }
 
+#ifdef HONEI_CUDA
 template <typename DT_>
 void MPIOps<tags::GPU::CUDA>::scaled_sum(DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y, DT_ a)
 {
     ScaledSum<tags::GPU::CUDA>::value(x.vector(), y.vector(), a);
 }
+#endif
 
 template <typename Tag_>
 template <typename DT_>
@@ -353,11 +371,13 @@ void MPIOps<Tag_>::scaled_sum(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_>
     ScaledSum<Tag_>::value(r.vector(), x.vector(), y.vector(), a);
 }
 
+#ifdef HONEI_CUDA
 template <typename DT_>
 void MPIOps<tags::GPU::CUDA>::scaled_sum(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y, DT_ a)
 {
     ScaledSum<tags::GPU::CUDA>::value(r.vector(), x.vector(), y.vector(), a);
 }
+#endif
 
 template <typename Tag_>
 template <typename DT_>
@@ -366,11 +386,13 @@ void MPIOps<Tag_>::sum(DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
     Sum<Tag_>::value(x.vector(), y.vector());
 }
 
+#ifdef HONEI_CUDA
 template <typename DT_>
 void MPIOps<tags::GPU::CUDA>::sum(DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
 {
     Sum<tags::GPU::CUDA>::value(x.vector(), y.vector());
 }
+#endif
 
 
 template struct MPIOps<tags::CPU>;
@@ -409,6 +431,7 @@ template void MPIOps<tags::CPU::MultiCore::SSE>::scaled_sum(DenseVectorMPI<doubl
 template void MPIOps<tags::CPU::MultiCore::SSE>::scaled_sum(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
 template void MPIOps<tags::CPU::MultiCore::SSE>::sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
 
+#ifdef HONEI_CUDA
 template struct MPIOps<tags::GPU::CUDA>;
 template void MPIOps<tags::GPU::CUDA>::difference(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
 template void MPIOps<tags::GPU::CUDA>::defect(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & rhs, const SparseMatrixELLMPI<double> & a, const DenseVectorMPI<double> & b);
@@ -420,3 +443,4 @@ template void MPIOps<tags::GPU::CUDA>::scale(DenseVectorMPI<double> & x, double 
 template void MPIOps<tags::GPU::CUDA>::scaled_sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
 template void MPIOps<tags::GPU::CUDA>::scaled_sum(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
 template void MPIOps<tags::GPU::CUDA>::sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
+#endif
