@@ -30,32 +30,72 @@ namespace honei
                 unsigned long stride, unsigned long /*rows*/, unsigned long /*num_cols_per_row*/,
                 unsigned long row_start, unsigned long row_end, const unsigned long threads)
         {
-            for (unsigned long row(row_start) ; row < row_end ; ++row)
+            if (threads % 4 != 0)
             {
-                const unsigned long * tAj(Aj);
-                const float * tAx(Ax);
-                float sum(0);
-                tAj += row * threads;
-                tAx += row * threads;
-
-                const unsigned long max(Arl[row]);
-                for(unsigned long n = 0; n < max ; n++)
+                for (unsigned long row(row_start) ; row < row_end ; ++row)
                 {
-                    for (unsigned long thread(0) ; thread < threads ; ++thread)
-                    {
-                        const float A_ij = *(tAx + thread);
+                    const unsigned long * tAj(Aj);
+                    const float * tAx(Ax);
+                    float sum(0);
+                    tAj += row * threads;
+                    tAx += row * threads;
 
-                        //if (A_ij != 0)
+                    const unsigned long max(Arl[row]);
+                    for(unsigned long n = 0; n < max ; n++)
+                    {
+                        for (unsigned long thread(0) ; thread < threads ; ++thread)
                         {
+                            const float A_ij = *(tAx + thread);
+
                             const unsigned long col = *(tAj + thread);
                             sum += A_ij * b[col];
                         }
-                    }
 
-                    tAj += stride;
-                    tAx += stride;
+                        tAj += stride;
+                        tAx += stride;
+                    }
+                    result[row] = rhs[row] - sum;
                 }
-                result[row] = rhs[row] - sum;
+            }
+            else
+            {
+                for (unsigned long row(row_start) ; row < row_end ; ++row)
+                {
+                    const unsigned long * tAj(Aj);
+                    const float * tAx(Ax);
+                    tAj += row * threads;
+                    tAx += row * threads;
+
+                    const unsigned long max(Arl[row]);
+                    __m128 A_ij, b_v, p;
+                    union sse4
+                    {
+                        __m128 m;
+                        float f[4];
+                    } sum_v;
+                    sum_v.m = _mm_setzero_ps();
+
+                    for(unsigned long n = 0; n < max ; n++)
+                    {
+                        for (unsigned long thread(0) ; thread < threads ; thread+=4)
+                        {
+                            A_ij = _mm_load_ps(tAx + thread);
+                            const unsigned long col0 = *(tAj + thread);
+                            const unsigned long col1 = *(tAj + thread + 1);
+                            const unsigned long col2 = *(tAj + thread + 2);
+                            const unsigned long col3 = *(tAj + thread + 3);
+                            b_v = _mm_set_ps(*(b+col3), *(b+col2), *(b+col1), *(b+col0));
+                            p = _mm_mul_ps(A_ij, b_v);
+                            sum_v.m = _mm_add_ps(p, sum_v.m);
+                        }
+
+                        tAj += stride;
+                        tAx += stride;
+                    }
+                    float sum = sum_v.f[0] + sum_v.f[1] + sum_v.f[2] + sum_v.f[3];
+
+                    result[row] = rhs[row] - sum;
+                }
             }
         }
 
@@ -63,32 +103,70 @@ namespace honei
                 unsigned long stride, unsigned long /*rows*/, unsigned long /*num_cols_per_row*/,
                 unsigned long row_start, unsigned long row_end, const unsigned long threads)
         {
-            for (unsigned long row(row_start) ; row < row_end ; ++row)
+            if (threads % 2 != 0)
             {
-                const unsigned long * tAj(Aj);
-                const double * tAx(Ax);
-                double sum(0);
-                tAj += row * threads;
-                tAx += row * threads;
-
-                const unsigned long max(Arl[row]);
-                for(unsigned long n = 0; n < max ; n++)
+                for (unsigned long row(row_start) ; row < row_end ; ++row)
                 {
-                    for (unsigned long thread(0) ; thread < threads ; ++thread)
-                    {
-                        const double A_ij = *(tAx + thread);
+                    const unsigned long * tAj(Aj);
+                    const double * tAx(Ax);
+                    double sum(0);
+                    tAj += row * threads;
+                    tAx += row * threads;
 
-                        //if (A_ij != 0)
+                    const unsigned long max(Arl[row]);
+                    for(unsigned long n = 0; n < max ; n++)
+                    {
+                        for (unsigned long thread(0) ; thread < threads ; ++thread)
                         {
+                            const double A_ij = *(tAx + thread);
+
                             const unsigned long col = *(tAj + thread);
                             sum += A_ij * b[col];
                         }
-                    }
 
-                    tAj += stride;
-                    tAx += stride;
+                        tAj += stride;
+                        tAx += stride;
+                    }
+                    result[row] = rhs[row] - sum;
                 }
-                result[row] = rhs[row] - sum;
+            }
+            else
+            {
+                for (unsigned long row(row_start) ; row < row_end ; ++row)
+                {
+                    const unsigned long * tAj(Aj);
+                    const double * tAx(Ax);
+                    tAj += row * threads;
+                    tAx += row * threads;
+
+                    const unsigned long max(Arl[row]);
+                    __m128d A_ij, b_v, p;
+                    union sse2
+                    {
+                        __m128d m;
+                        double d[2];
+                    } sum_v;
+                    sum_v.m = _mm_setzero_pd();
+
+                    for(unsigned long n = 0; n < max ; n++)
+                    {
+                        for (unsigned long thread(0) ; thread < threads ; thread+=2)
+                        {
+                            A_ij = _mm_load_pd(tAx + thread);
+                            const unsigned long col0 = *(tAj + thread);
+                            const unsigned long col1 = *(tAj + thread + 1);
+                            b_v = _mm_set_pd(*(b+col1), *(b+col0));
+                            p = _mm_mul_pd(A_ij, b_v);
+                            sum_v.m = _mm_add_pd(p, sum_v.m);
+                        }
+
+                        tAj += stride;
+                        tAx += stride;
+                    }
+                    double sum = sum_v.d[0] + sum_v.d[1];
+
+                    result[row] = rhs[row] - sum;
+                }
             }
         }
     }
