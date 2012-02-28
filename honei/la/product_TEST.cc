@@ -684,7 +684,7 @@ class DenseMatrixSparseVectorProductQuickTest :
 DenseMatrixSparseVectorProductQuickTest<float> dense_matrix_sparse_vector_product_test_quick_float("float");
 DenseMatrixSparseVectorProductQuickTest<double> dense_matrix_sparse_vector_product_test_quick_double("double");
 
-template <typename DataType_>
+template <typename DataType_, typename Tag_>
 class SparseMatrixDenseVectorProductTest :
     public BaseTest
 {
@@ -692,6 +692,7 @@ class SparseMatrixDenseVectorProductTest :
         SparseMatrixDenseVectorProductTest(const std::string & type) :
             BaseTest("sparse_matrix_dense_vector_product_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -720,10 +721,14 @@ class SparseMatrixDenseVectorProductTest :
             TEST_CHECK_THROWS(Product<>::value(sm01, dv01), VectorSizeDoesNotMatch);
         }
 };
-SparseMatrixDenseVectorProductTest<float> sparse_matrix_dense_vector_product_test_float("float");
-SparseMatrixDenseVectorProductTest<double> sparse_matrix_dense_vector_product_test_double("double");
+SparseMatrixDenseVectorProductTest<float, tags::CPU> sparse_matrix_dense_vector_product_test_float("float");
+SparseMatrixDenseVectorProductTest<double, tags::CPU> sparse_matrix_dense_vector_product_test_double("double");
+SparseMatrixDenseVectorProductTest<float, tags::CPU::Generic> generic_sparse_matrix_dense_vector_product_test_float("float");
+SparseMatrixDenseVectorProductTest<double, tags::CPU::Generic> generic_sparse_matrix_dense_vector_product_test_double("double");
+SparseMatrixDenseVectorProductTest<float, tags::CPU::MultiCore::Generic> mc_generic_sparse_matrix_dense_vector_product_test_float("float");
+SparseMatrixDenseVectorProductTest<double, tags::CPU::MultiCore::Generic> mc_generic_sparse_matrix_dense_vector_product_test_double("double");
 
-template <typename DataType_>
+template <typename DataType_, typename Tag_>
 class SparseMatrixDenseVectorProductQuickTest :
     public QuickTest
 {
@@ -731,6 +736,7 @@ class SparseMatrixDenseVectorProductQuickTest :
         SparseMatrixDenseVectorProductQuickTest(const std::string & type) :
             QuickTest("sparse_matrix_dense_vector_product_quick_test<" + type + ">")
         {
+            register_tag(Tag_::name);
         }
 
         virtual void run() const
@@ -758,8 +764,10 @@ class SparseMatrixDenseVectorProductQuickTest :
 
         }
 };
-SparseMatrixDenseVectorProductQuickTest<float> sparse_matrix_dense_vector_product_quick_test_float("float");
-SparseMatrixDenseVectorProductQuickTest<double> sparse_matrix_dense_vector_product_quick_test_double("double");
+SparseMatrixDenseVectorProductQuickTest<float, tags::CPU> sparse_matrix_dense_vector_product_quick_test_float("float");
+SparseMatrixDenseVectorProductQuickTest<double, tags::CPU> sparse_matrix_dense_vector_product_quick_test_double("double");
+SparseMatrixDenseVectorProductQuickTest<float, tags::CPU::MultiCore::Generic> mc_generic_sparse_matrix_dense_vector_product_quick_test_float("float");
+SparseMatrixDenseVectorProductQuickTest<double, tags::CPU::MultiCore::Generic> mc_generic_sparse_matrix_dense_vector_product_quick_test_double("double");
 
 template <typename DataType_, typename Tag_>
 class SparseMatrixELLDenseVectorProductTest :

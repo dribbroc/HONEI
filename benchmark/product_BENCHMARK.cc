@@ -387,113 +387,6 @@ DenseMatrixDenseVectorProductBench<tags::Cell, float> DMDVPBenchfloatCell("Cell:
 #endif
 
 template <typename Tag_, typename DataType_>
-class SparseMatrixProductBench :
-    public Benchmark
-{
-    private:
-        unsigned long _size;
-        unsigned long _count;
-    public:
-        SparseMatrixProductBench(const std::string & id, unsigned long size, unsigned long count) :
-            Benchmark(id)
-        {
-            register_tag(Tag_::name);
-            _size = size;
-            _count = count;
-        }
-
-        virtual void run()
-        {
-            SparseMatrix<DataType_> sm(_size, _size, (unsigned long)((_size*_size)/10));
-            for (typename SparseMatrix<DataType_>::ElementIterator i_end(sm.end_elements()), i(sm.begin_elements()) ; i != i_end ; ++i)
-            {
-                if (i.index() % 30 == 0)
-                {
-                    *i = DataType_(rand());
-                }
-            }
-            SparseMatrix<DataType_> sm2(_size, _size);
-            for (typename SparseMatrix<DataType_>::ElementIterator i_end(sm2.end_elements()), i(sm2.begin_elements()) ; i != i_end ; ++i)
-            {
-                if (i.index() % 20 == 0)
-                {
-                    *i = DataType_(rand());
-                }
-            }
-            for(unsigned long i = 0; i < _count; ++i)
-            {
-                BENCHMARK(Product<Tag_>::value(sm, sm2));
-            }
-
-            unsigned long nz1(0), rpc(0);
-            for (unsigned long i(0) ; i < sm.rows() ; ++i)
-                nz1+=sm[i].used_elements();
-            for (unsigned long i(0) ; i < sm2.rows() ; ++i)
-                if (rpc < sm2[i].used_elements())
-                    rpc = sm2[i].used_elements();
-
-            BenchmarkInfo info;
-            info.flops=nz1 * rpc * 2;
-            evaluate(info);
-        }
-};
-SparseMatrixProductBench<tags::CPU, float> SMPBenchfloat2("Matrix Product Benchmark sparse/sparse - matrix size: 1256x1256, float", 1256, 10);
-SparseMatrixProductBench<tags::CPU, double> SMPBenchdouble2("Matrix Product Benchmark sparse/sparse - matrix size: 1256x1256, double", 1256, 10);
-
-template <typename Tag_, typename DataType_>
-class SparseMatrixELLProductBench :
-    public Benchmark
-{
-    private:
-        unsigned long _size;
-        unsigned long _count;
-    public:
-        SparseMatrixELLProductBench(const std::string & id, unsigned long size, unsigned long count) :
-            Benchmark(id)
-        {
-            register_tag(Tag_::name);
-            _size = size;
-            _count = count;
-        }
-
-        virtual void run()
-        {
-            SparseMatrix<DataType_> sm(_size, _size, (unsigned long)((_size*_size)/10));
-            for (typename SparseMatrix<DataType_>::ElementIterator i_end(sm.end_elements()), i(sm.begin_elements()) ; i != i_end ; ++i)
-            {
-                if (i.index() % 30 == 0)
-                {
-                    *i = DataType_(rand());
-                }
-            }
-            SparseMatrix<DataType_> sm2(_size, _size);
-            for (typename SparseMatrix<DataType_>::ElementIterator i_end(sm2.end_elements()), i(sm2.begin_elements()) ; i != i_end ; ++i)
-            {
-                if (i.index() % 25 == 0)
-                {
-                    *i = DataType_(rand());
-                }
-            }
-            SparseMatrixELL<DataType_> ell(sm);
-            SparseMatrixELL<DataType_> ell2(sm2);
-            for(unsigned long i = 0; i < _count; ++i)
-            {
-                BENCHMARK(Product<Tag_>::value(ell, ell2));
-            }
-
-            unsigned long nz1(0);
-            for (unsigned long i(0) ; i < ell.Arl().size() ; ++i)
-                nz1+=ell.Arl()[i];
-
-            BenchmarkInfo info;
-            info.flops=nz1 * ell2.num_cols_per_row() * 2;
-            evaluate(info);
-        }
-};
-SparseMatrixELLProductBench<tags::CPU, float> SMELLPBenchfloat2("Matrix Product Benchmark ELL sparse/sparse - matrix size: 1256x1256, float", 1256, 10);
-SparseMatrixELLProductBench<tags::CPU, double> SMELLPBenchdouble2("Matrix Product Benchmark ELL sparse/sparse - matrix size: 1256x1256, double", 1256, 10);
-
-template <typename Tag_, typename DataType_>
 class BandedMatrixProductBench :
     public Benchmark
 {
@@ -521,7 +414,7 @@ class BandedMatrixProductBench :
             bm.insert_band(-5, dv);
             DenseMatrix<DataType_> dm(_size, _size, DataType_(rand()));
             for(unsigned long i = 0; i < _count; ++i)
-            { 
+            {
                 BENCHMARK(Product<Tag_>::value(bm, dm));
             }
             BenchmarkInfo info(Product<>::get_benchmark_info(bm, dm));
@@ -530,6 +423,74 @@ class BandedMatrixProductBench :
 };
 BandedMatrixProductBench<tags::CPU, float> BMPBenchfloat2("Matrix Product Benchmark banded/dense - matrix size: 256x256, float", 256, 10);
 BandedMatrixProductBench<tags::CPU, double> BMPBenchdouble2("Matrix Product Benchmark banded/dense - matrix size: 256x256, double", 256, 10);
+
+template <typename Tag_, typename DataType_>
+class SMDenseVectorProductBench :
+    public Benchmark
+{
+    private:
+        unsigned long _size;
+        unsigned long _count;
+        std::string _file;
+    public:
+        SMDenseVectorProductBench(const std::string & id, unsigned long size, unsigned long count, std::string file) :
+            Benchmark(id)
+        {
+            register_tag(Tag_::name);
+            _size = size;
+            _count = count;
+            _file = file;
+        }
+
+        virtual void run()
+        {
+            std::string filename(HONEI_SOURCEDIR);
+            filename += "/honei/math/testdata/";
+            filename += _file;
+
+            SparseMatrixELL<DataType_> smatrix(MatrixIO<io_formats::ELL>::read_matrix(filename, DataType_(1)));
+            SparseMatrix<DataType_>sm (smatrix);
+
+            DenseVector<DataType_> x(smatrix.rows());
+            DenseVector<DataType_> y(smatrix.rows());
+            for (unsigned long i(0) ; i < x.size() ; ++i)
+            {
+                x[i] = DataType_(i) / 1.234;
+            }
+
+            for (unsigned long i(0) ; i < _count ; i++)
+            {
+                BENCHMARK(
+                        for (unsigned long j(0) ; j < 1000 ; ++j)
+                        {
+                            Product<Tag_>::value(y, sm, x);
+                        }
+#ifdef HONEI_CUDA
+                        if (Tag_::tag_value == tags::tv_gpu_cuda)
+                            cuda::GPUPool::instance()->flush();
+#endif
+#ifdef HONEI_OPENCL
+                        if (Tag_::tag_value == tags::tv_opencl)
+                            opencl::OpenCLBackend::instance()->flush();
+#endif
+                        );
+            }
+            {
+            BenchmarkInfo info;
+            unsigned long non_zeros(0);
+            for (unsigned long i(0) ; i < smatrix.Arl().size() ; ++i)
+            {
+                non_zeros += smatrix.Arl()[i];
+            }
+            info.flops = non_zeros * 2;
+            evaluate(info * 1000);
+            }
+        }
+};
+SMDenseVectorProductBench<tags::CPU::Generic, float> generic_SMDVPBenchfloat("Generic SM 2  Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
+SMDenseVectorProductBench<tags::CPU::Generic, float> generic_SMDVPBenchfloat_pa7("Generic SM 0 PA  Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+SMDenseVectorProductBench<tags::CPU::MultiCore::Generic, float> mc_generic_SMDVPBenchfloat("MC Generic SM 2  Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
+SMDenseVectorProductBench<tags::CPU::MultiCore::Generic, float> mc_generic_SMDVPBenchfloat_pa7("MC Generic SM 0 PA  Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
 
 template <typename Tag_, typename DataType_>
 class SMELLDenseVectorProductBench :
@@ -555,15 +516,6 @@ class SMELLDenseVectorProductBench :
             filename += "/honei/math/testdata/";
             filename += _file;
 
-            /*unsigned long non_zeros(MatrixIO<io_formats::M>::get_non_zeros(filename));
-            DenseVector<unsigned long> r(non_zeros);
-            DenseVector<unsigned long> c(non_zeros);
-            DenseVector<DataType_> data(non_zeros);
-            MatrixIO<io_formats::M>::read_matrix(filename, r, c, data);
-            unsigned long rows, columns, ax, bx;
-            MatrixIO<io_formats::M>::get_sizes(filename, rows, columns, ax, bx);
-            SparseMatrix<DataType_> tsmatrix(rows, columns, r, c, data);
-            SparseMatrixELL<DataType_> smatrix(tsmatrix);*/
             SparseMatrixELL<DataType_> smatrix(MatrixIO<io_formats::ELL>::read_matrix(filename, DataType_(1)));
 
             DenseVector<DataType_> x(smatrix.rows());
@@ -602,14 +554,13 @@ class SMELLDenseVectorProductBench :
             }
         }
 };
-/// \todo Embed real world matrix with proper size
+SMELLDenseVectorProductBench<tags::CPU::Generic, float> generic_SMELLDVPBenchfloat("Generic SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
+SMELLDenseVectorProductBench<tags::CPU::Generic, float> generic_SMELLDVPBenchfloat_pa7("Generic SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+SMELLDenseVectorProductBench<tags::CPU::MultiCore::Generic, float> mc_generic_SMELLDVPBenchfloat("MC Generic SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
+SMELLDenseVectorProductBench<tags::CPU::MultiCore::Generic, float> mc_generic_SMELLDVPBenchfloat_pa7("MC Generic SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
 #ifdef HONEI_SSE
 SMELLDenseVectorProductBench<tags::CPU::SSE, float> sse_SMELLDVPBenchfloat("SSE SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
 SMELLDenseVectorProductBench<tags::CPU::SSE, float> sse_SMELLDVPBenchfloat_pa7("SSE SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
-/*SMELLDenseVectorProductBench<tags::CPU::SSE, float> sse_SMELLDVPBenchfloat0("SSE SM 2 ELL Dense Vector Product Benchmark - matrix size: L8, float", 1025ul*1025, 10, "l8/area51_full_2.ell");
-SMELLDenseVectorProductBench<tags::CPU::SSE, double> sse_SMELLDVPBenchdouble0("SSE SM 2 ELL Dense Vector Product Benchmark - matrix size: L8, double", 1025ul*1025, 10, "l8/area51_full_2.ell");
-SMELLDenseVectorProductBench<tags::CPU::MultiCore::SSE, float> mc_sse_SMELLDVPBenchfloat0("MC SSE SM 2 ELL Dense Vector Product Benchmark - matrix size: L8, float", 1025ul*1025, 10, "l8/area51_full_2.ell");
-SMELLDenseVectorProductBench<tags::CPU::MultiCore::SSE, double> mc_sse_SMELLDVPBenchdouble0("MC SSE SM 2 ELL Dense Vector Product Benchmark - matrix size: L8, double", 1025ul*1025, 10, "l8/area51_full_2.ell");*/
 #endif
 #ifdef HONEI_CUDA
 SMELLDenseVectorProductBench<tags::GPU::CUDA, float> cudaSMELLDVPBenchfloat("CUDA SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");

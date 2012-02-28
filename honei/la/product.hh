@@ -1352,6 +1352,37 @@ namespace honei
     template <> struct Product<tags::CPU::Generic>
     {
         template <typename DT_>
+        static DenseVector<DT_> & value(DenseVector<DT_> & r, const SparseMatrix<DT_> & a, const DenseVector<DT_> & b,
+                unsigned long row_start = 0, unsigned long row_end = 0)
+        {
+            if (b.size() != a.columns())
+            {
+                throw VectorSizeDoesNotMatch(b.size(), a.columns());
+            }
+            if (row_end == 0)
+                row_end = a.rows();
+
+            BENCHADD(Product<tags::CPU>::get_benchmark_info(r, a, bv));
+
+            const DT_ * const b_e(b.elements());
+            for (unsigned long row(row_start) ; row < row_end ; ++row)
+            {
+                const DT_ * const row_e(a[row].elements());
+                const unsigned long * const row_i(a[row].indices());
+                const unsigned long ue(a[row].used_elements());
+                DT_ sum(0);
+                for (unsigned long i(0) ; i < ue ; ++i)
+                {
+                    const unsigned long idx(row_i[i]);
+                    sum += row_e[i] * b_e[idx];
+                }
+                r[row] = sum;
+            }
+
+            return r;
+        }
+
+        template <typename DT_>
         static DenseVector<DT_> & value(DenseVector<DT_> & r, const SparseMatrixELL<DT_> & a, const DenseVector<DT_> & bv,
                 unsigned long row_start = 0, unsigned long row_end = 0)
         {
@@ -1841,6 +1872,43 @@ namespace honei
                 honei::ScaledSum<Tag_>::value(res_ud, ud_band, b_ud);
                 honei::ScaledSum<Tag_>::value(res_uu, uu_band, b_uu);
                 honei::ScaledSum<Tag_>::value(res_ul, ul_band, b_ul);
+
+                return result;
+            }
+
+            template <typename DT_>
+            static DenseVector<DT_> & value(DenseVector<DT_> & result, const SparseMatrix<DT_> & a, const DenseVector<DT_> & b)
+            {
+                if (b.size() != a.columns())
+                {
+                    throw VectorSizeDoesNotMatch(b.size(), a.columns());
+                }
+                if (a.rows() != result.size())
+                {
+                    throw VectorSizeDoesNotMatch(a.rows(), result.size());
+                }
+
+                unsigned long max_count(Configuration::instance()->get_value("mc::Product(DV,SMELL,DV)::max_count",
+                            mc::ThreadPool::instance()->num_threads()));
+
+                TicketVector tickets;
+
+                unsigned long limits[max_count + 1];
+                limits[0] = 0;
+                for (unsigned long i(1) ; i < max_count; ++i)
+                {
+                    limits[i] = limits[i-1] + a.rows() / max_count;
+                }
+                limits[max_count] = a.rows();
+
+                for (unsigned long i(0) ; i < max_count ; ++i)
+                {
+                    OperationWrapper<honei::Product<typename Tag_::DelegateTo>, DenseVector<DT_>,
+                        DenseVector<DT_>, SparseMatrix<DT_>, DenseVector<DT_>, unsigned long, unsigned long > wrapper(result);
+                    tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, result, a, b, limits[i], limits[i+1])));
+                }
+
+                tickets.wait();
 
                 return result;
             }
