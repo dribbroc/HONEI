@@ -117,12 +117,17 @@ class RISolverTestSparseELL:
             eps *= DT1_(3);
 
             std::cout << "Comparing with FEATFLOW2: eps= " << eps << std::endl;
+
+            result.lock(lm_read_only);
+            ref_result.lock(lm_read_only);
             for(unsigned long i(0) ; i < result.local_size() ; ++i)
             {
                 if(fabs(result[i] - ref_result[i]) > eps)
                     std::cout << std::setprecision(11) << result[i] << " " << ref_result[i] << " at index " << i << std::endl;
                 TEST_CHECK_EQUAL_WITHIN_EPS(result[i], ref_result[i], eps);
             }
+            result.unlock(lm_read_only);
+            ref_result.unlock(lm_read_only);
         }
 };
 #ifdef HONEI_SSE
