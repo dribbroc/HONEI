@@ -456,6 +456,37 @@ namespace honei
                     }
                     return r;
                 }
+
+            template <typename DT_>
+                static DenseVector<DT_> & value(DenseVector<DT_> & r, const DenseVector<DT_> & rhs, const SparseMatrixCSR<DT_> & a, const DenseVector<DT_> & bv,
+                        unsigned long row_start = 0, unsigned long row_end = 0)
+                {
+                    if (bv.size() != a.columns())
+                    {
+                        throw VectorSizeDoesNotMatch(bv.size(), a.columns());
+                    }
+                    if (row_end == 0)
+                        row_end = a.rows();
+
+                    BENCHADD(Defect<tags::CPU>::get_benchmark_info(r, rhs, a, bv));
+
+                    const unsigned long * const Ar(a.Ar().elements());
+                    const unsigned long * const Aj(a.Aj().elements());
+                    const DT_ * const Ax(a.Ax().elements());
+                    const unsigned long rows(a.rows());
+
+                    for (unsigned long row(row_start) ; row < rows ; ++row)
+                    {
+                        DT_ sum(0);
+                        for (unsigned long i(Ar[row]) ; i < Ar[row+1] ; ++i)
+                        {
+                            sum += Ax[i] * bv[Aj[i]];
+                        }
+                        r[row] = rhs[row] - sum;
+                    }
+
+                    return r;
+                }
         };
 
     template<>
@@ -809,6 +840,49 @@ namespace honei
                         {
                             OperationWrapper<honei::Defect<typename Tag_::DelegateTo>, DenseVector<DT_>, DenseVector<DT_>,
                                 DenseVector<DT_>, SparseMatrixELL<DT_>, DenseVector<DT_>, unsigned long, unsigned long > wrapper(result);
+                            tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, result, rhs, a, b, limits[i], limits[i+1])));
+                        }
+
+                        tickets.wait();
+
+                        return result;
+                    }
+
+                template <typename DT_>
+                    static DenseVector<DT_> value(DenseVector<DT_> & result, const DenseVector<DT_> & rhs, const SparseMatrixCSR<DT_> & a, const DenseVector<DT_> & b)
+                    {
+                        if (b.size() != a.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(b.size(), a.columns());
+                        }
+                        if (a.rows() != result.size())
+                        {
+                            throw VectorSizeDoesNotMatch(a.rows(), result.size());
+                        }
+                        if (rhs.size() != a.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(rhs.size(), a.columns());
+                        }
+
+                        //fill<typename Tag_::DelegateTo>(result, DT_(0));
+
+                        unsigned long max_count(Configuration::instance()->get_value("mc::Product(DV,SMELL,DV)::max_count",
+                                    mc::ThreadPool::instance()->num_threads()));
+
+                        TicketVector tickets;
+
+                        unsigned long limits[max_count + 1];
+                        limits[0] = 0;
+                        for (unsigned long i(1) ; i < max_count; ++i)
+                        {
+                            limits[i] = limits[i-1] + a.rows() / max_count;
+                        }
+                        limits[max_count] = a.rows();
+
+                        for (unsigned long i(0) ; i < max_count ; ++i)
+                        {
+                            OperationWrapper<honei::Defect<typename Tag_::DelegateTo>, DenseVector<DT_>, DenseVector<DT_>,
+                                DenseVector<DT_>, SparseMatrixCSR<DT_>, DenseVector<DT_>, unsigned long, unsigned long > wrapper(result);
                             tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, result, rhs, a, b, limits[i], limits[i+1])));
                         }
 

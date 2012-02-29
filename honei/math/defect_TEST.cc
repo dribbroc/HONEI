@@ -367,3 +367,55 @@ Q1MatrixDenseVectorDefectTest<tags::OpenCL::GPU, float> ocl_gpu_q1_defect_test_f
 Q1MatrixDenseVectorDefectTest<tags::OpenCL::GPU, double> ocl_gpu_q1_defect_test_double("double");
 #endif
 #endif
+
+template<typename DT_, typename Tag_>
+class DefectCSRRegressionTest:
+    public BaseTest
+{
+    private:
+        std::string _m_f, _v_f;
+    public:
+        DefectCSRRegressionTest(const std::string & tag, std::string m_file, std::string v_file) :
+            BaseTest("Defect CSR Regression Test " + tag)
+        {
+            register_tag(Tag_::name);
+            _m_f = m_file;
+            _v_f = v_file;
+        }
+
+        virtual void run() const
+        {
+
+            std::string filename(HONEI_SOURCEDIR);
+            filename += "/honei/math/testdata/";
+            filename += _m_f;
+            SparseMatrix<DT_> tsmatrix2(MatrixIO<io_formats::M>::read_matrix(filename, DT_(0)));
+            SparseMatrixCSR<DT_> smatrix2(tsmatrix2);
+            SparseMatrixELL<DT_> smatrix3(tsmatrix2);
+
+            std::string filename_2(HONEI_SOURCEDIR);
+            filename_2 += "/honei/math/testdata/";
+            filename_2 += _v_f;
+            DenseVector<DT_> rhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT_(0)));
+
+            DenseVector<DT_> x(tsmatrix2.rows(), DT_(0));
+            for (unsigned long i(0) ; i < x.size() ; ++i)
+                if (i%2 == 0) x[i] = 1;
+
+            DenseVector<DT_> result(tsmatrix2.rows());
+            Defect<Tag_>::value(result, rhs, smatrix2, x);
+            DenseVector<DT_> ref_result(result.size());
+            Defect<tags::CPU>::value(ref_result, rhs, smatrix3, x);
+
+            result.lock(lm_read_only);
+            for (unsigned long i(0) ; i < x.size() ; ++i)
+            {
+                TEST_CHECK_EQUAL_WITHIN_EPS(result[i], ref_result[i], 1e-3);
+            }
+            result.unlock(lm_read_only);
+        }
+};
+DefectCSRRegressionTest<float, tags::CPU::Generic> generic_regression_defect_csr_test_float_sparse("Regression CSR float", "l2/area51_full_0.m", "l2/area51_rhs_0");
+DefectCSRRegressionTest<double, tags::CPU::Generic> generic_regression_defect_csr_test_double_sparse("Regression CSR double", "l2/area51_full_0.m", "l2/area51_rhs_0");
+DefectCSRRegressionTest<float, tags::CPU::MultiCore::Generic> mc_generic_regression_defect_csr_test_float_sparse("Regression CSR float", "l2/area51_full_0.m", "l2/area51_rhs_0");
+DefectCSRRegressionTest<double, tags::CPU::MultiCore::Generic> mc_generic_regression_defect_csr_test_double_sparse("Regression CSR double", "l2/area51_full_0.m", "l2/area51_rhs_0");
