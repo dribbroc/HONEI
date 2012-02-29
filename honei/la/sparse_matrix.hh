@@ -26,6 +26,7 @@
 #include <honei/la/element_iterator.hh>
 #include <honei/la/sparse_vector.hh>
 #include <honei/la/sparse_matrix_ell.hh>
+#include <honei/la/sparse_matrix_csr.hh>
 #include <honei/la/banded_matrix_qx.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/matrix_error.hh>
@@ -34,9 +35,6 @@
 
 namespace honei
 {
-    // Forward declarations
-    template <typename DataType_> class SparseMatrixELL;
-
     /**
      * \brief SparseMatrix is a matrix with O(rows) sparse row-vectors.
      *
@@ -176,6 +174,33 @@ namespace honei
                             if (src.Ax()[i + thread] != 0)
                                 (*this)(row, src.Aj()[i + thread]) = src.Ax()[i + thread];
                         }
+                    }
+                }
+
+                _synch_column_vectors();
+            }
+
+            explicit SparseMatrix(const SparseMatrixCSR<DataType_> & src, unsigned long capacity = 1) :
+                _capacity(capacity),
+                _columns(src.columns()),
+                _rows(src.rows()),
+                _row_vectors(src.rows() + 1),
+                _column_vectors(src.columns() + 1),
+                _zero_vector(src.columns(), 1),
+                _zero_column_vector(src.rows(), 1)
+            {
+                CONTEXT("When creating SparseMatrix from SparseMatrixCSR:");
+                ASSERT(src.columns() >= capacity, "capacity '" + stringify(capacity) + "' exceeds row-vector size '" +
+                        stringify(src.columns()) + "'!");
+
+                _row_vectors[src.rows()].reset(new SparseVector<DataType_>(src.columns(), 1));
+                _column_vectors[src.columns()].reset(new SparseVector<DataType_>(src.rows(), 1));
+
+                for (unsigned long row(0) ; row < src.rows() ; ++row)
+                {
+                    for (unsigned long i(src.Ar()[row]) ; i < src.Ar()[row + 1] ; ++i)
+                    {
+                                (*this)(row, src.Aj()[i]) = src.Ax()[i];
                     }
                 }
 

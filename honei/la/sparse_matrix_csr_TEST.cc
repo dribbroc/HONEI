@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2009 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2012 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -17,8 +17,8 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include <honei/la/sparse_matrix_ell.hh>
 #include <honei/la/sparse_matrix_csr.hh>
+#include <honei/la/sparse_matrix_ell.hh>
 #include <honei/la/sparse_matrix.hh>
 #include <honei/la/dense_matrix.hh>
 #include <honei/la/vector_error.hh>
@@ -32,20 +32,17 @@ using namespace honei;
 using  namespace tests;
 
 template <typename DataType_>
-class SparseMatrixELLQuickTest :
+class SparseMatrixCSRQuickTest :
     public QuickTest
 {
     public:
-        SparseMatrixELLQuickTest(const std::string & type) :
-            QuickTest("sparse_matrix_ell_quick_test<" + type + ">")
+        SparseMatrixCSRQuickTest(const std::string & type) :
+            QuickTest("sparse_matrix_csr_quick_test<" + type + ">")
         {
         }
 
         virtual void run() const
         {
-            for (unsigned long threads(1) ; threads <= 16 ; threads*=2)
-            {
-                Configuration::instance()->set_value("ell::threads", threads);
                 unsigned long size (111);
                 SparseMatrix<DataType_> sms(size, size + 3);
                 for (typename SparseMatrix<DataType_>::ElementIterator i(sms.begin_elements()) ; i < sms.end_elements() ; ++i)
@@ -55,7 +52,7 @@ class SparseMatrixELLQuickTest :
                 }
                 sms[0][0] = 4711;
 
-                SparseMatrixELL<DataType_> sm0(sms);
+                SparseMatrixCSR<DataType_> sm0(sms);
 
                 TEST_CHECK_EQUAL(sm0, sm0);
                 TEST_CHECK_EQUAL(sm0, sm0.copy());
@@ -69,13 +66,12 @@ class SparseMatrixELLQuickTest :
                 }
                 SparseMatrix<DataType_> sms2(sm0);
                 TEST_CHECK_EQUAL(sms, sms2);
-                SparseMatrixCSR<DataType_> scsr(sms);
-                SparseMatrixELL<DataType_> sm1(scsr);
+                SparseMatrixELL<DataType_> smell(sms);
+                SparseMatrixCSR<DataType_> sm1(smell);
                 SparseMatrix<DataType_> sms3(sm1);
                 TEST_CHECK_EQUAL(sms, sms3);
-            }
         }
 };
-SparseMatrixELLQuickTest<float> sparse_matrix_ell_quick_test_float("float");
-SparseMatrixELLQuickTest<double> sparse_matrix_ell_quick_test_double("double");
+SparseMatrixCSRQuickTest<float> sparse_matrix_csr_quick_test_float("float");
+SparseMatrixCSRQuickTest<double> sparse_matrix_csr_quick_test_double("double");
 

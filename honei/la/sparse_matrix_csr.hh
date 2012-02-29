@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2009 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2012 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
@@ -19,8 +19,8 @@
  */
 
 #pragma once
-#ifndef LIBLA_GUARD_SPARSE_MATRIX_ELL_HH
-#define LIBLA_GUARD_SPARSE_MATRIX_ELL_HH 1
+#ifndef LIBLA_GUARD_SPARSE_MATRIX_CSR_HH
+#define LIBLA_GUARD_SPARSE_MATRIX_CSR_HH 1
 
 #include <honei/la/dense_vector.hh>
 #include <honei/la/dense_matrix.hh>
@@ -34,50 +34,48 @@ namespace honei
 {
     // Forward declarations
     template <typename DataType_> class SparseMatrix;
-    template <typename DataType_> class SparseMatrixCSR;
+    template <typename DataType_> class SparseMatrixELL;
 
     /**
-     * \brief SparseMatrixELL is a sparse matrix with its data kept in the ELLPACK format.
+     * \brief SparseMatrixCSR is a sparse matrix with its data kept in the CSR format.
      *
      * \ingroup grpmatrix
      */
-    template <typename DataType_> class SparseMatrixELL :
-        PrivateImplementationPattern<SparseMatrixELL<DataType_>, Shared>
+    template <typename DataType_> class SparseMatrixCSR :
+        PrivateImplementationPattern<SparseMatrixCSR<DataType_>, Shared>
     {
         public:
             /// \name Basic operations
             /// \{
 
+
             /**
              * Constructor.
              *
+             * \param CSR Vectors the matrix will be created from.
              */
-            SparseMatrixELL(unsigned long rows, unsigned columns, unsigned long stride,
-                    unsigned long num_cols_per_row,
-                    const DenseVector<unsigned long> & Aj,
-                    const DenseVector<DataType_> & Ax,
-                    unsigned long threads);
-
+            explicit SparseMatrixCSR(const unsigned long rows, const unsigned long columns,
+                    const DenseVector<unsigned long> & Aj, const DenseVector<DataType_> & Ax, const DenseVector<unsigned long> & Ar);
 
             /**
              * Constructor.
              *
              * \param src The SparseMatrix our matrix will be created from.
              */
-            explicit SparseMatrixELL(const SparseMatrix<DataType_> & src);
+            explicit SparseMatrixCSR(const SparseMatrix<DataType_> & src);
 
             /**
              * Constructor.
              *
-             * \param src The SparseMatrixCSR our matrix will be created from.
+             * \param src The SparseMatrixELL our matrix will be created from.
              */
-            explicit SparseMatrixELL(const SparseMatrixCSR<DataType_> & src);
+            explicit SparseMatrixCSR(const SparseMatrixELL<DataType_> & src);
 
             /// Copy-constructor.
-            SparseMatrixELL(const SparseMatrixELL<DataType_> & other);
+            SparseMatrixCSR(const SparseMatrixCSR<DataType_> & other);
 
             /// Destructor.
-            ~SparseMatrixELL();
+            ~SparseMatrixCSR();
 
             /// \}
 
@@ -93,23 +91,14 @@ namespace honei
             /// Returns out non zero element count.
             unsigned long used_elements() const;
 
-            /// Returns our Aj / Ax row count.
-            unsigned long stride() const;
-
-            /// Returns our Aj / Ax column count.
-            unsigned long num_cols_per_row() const;
-
-            /// Returns the thread count, e.g. the packed data count per Aj row
-            unsigned long threads() const;
-
             /// Retrieves our Aj (indices) vector.
             DenseVector<unsigned long> & Aj() const;
 
             /// Retrieves our Ax (data) vector.
             DenseVector<DataType_> & Ax() const;
 
-            /// Retrieves our Arl (row length) vector.
-            DenseVector<unsigned long> & Arl() const;
+            /// Retrieves our Ar (row start) vector.
+            DenseVector<unsigned long> & Ar() const;
 
             /// Retrieves element at (row, column), unassignable.
             const DataType_ operator() (unsigned long row, unsigned long column) const;
@@ -121,42 +110,42 @@ namespace honei
             void unlock(LockMode mode) const;
 
             /// Returns a copy of the matrix.
-            SparseMatrixELL copy() const;
+            SparseMatrixCSR copy() const;
     };
 
     /**
-     * Equality operator for SparseMatrixELL.
+     * Equality operator for SparseMatrixCSR.
      *
      * Compares if corresponding elements of two ell matrices are equal
      * within machine precision.
      */
-    template <typename DataType_> bool operator== (const SparseMatrixELL<DataType_> & a, const SparseMatrixELL<DataType_> & b);
+    template <typename DataType_> bool operator== (const SparseMatrixCSR<DataType_> & a, const SparseMatrixCSR<DataType_> & b);
 
     /**
-     * Output operator for SparseMatrixELL.
+     * Output operator for SparseMatrixCSR.
      *
      * Outputs a ell matrix to an output stream.
      */
-    template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const SparseMatrixELL<DataType_> & matrix);
+    template <typename DataType_> std::ostream & operator<< (std::ostream & lhs, const SparseMatrixCSR<DataType_> & matrix);
 
-    extern template class SparseMatrixELL<float>;
+    extern template class SparseMatrixCSR<float>;
 
-    extern template bool operator== (const SparseMatrixELL<float> & a, const SparseMatrixELL<float> & b);
+    extern template bool operator== (const SparseMatrixCSR<float> & a, const SparseMatrixCSR<float> & b);
 
-    extern template std::ostream & operator<< (std::ostream & lhs, const SparseMatrixELL<float> & matrix);
+    extern template std::ostream & operator<< (std::ostream & lhs, const SparseMatrixCSR<float> & matrix);
 
-    extern template class SparseMatrixELL<double>;
+    extern template class SparseMatrixCSR<double>;
 
-    extern template bool operator== (const SparseMatrixELL<double> & a, const SparseMatrixELL<double> & b);
+    extern template bool operator== (const SparseMatrixCSR<double> & a, const SparseMatrixCSR<double> & b);
 
-    extern template std::ostream & operator<< (std::ostream & lhs, const SparseMatrixELL<double> & matrix);
+    extern template std::ostream & operator<< (std::ostream & lhs, const SparseMatrixCSR<double> & matrix);
 
 #ifdef HONEI_GMP
-    extern template class SparseMatrixELL<mpf_class>;
+    extern template class SparseMatrixCSR<mpf_class>;
 
-    extern template bool operator== (const SparseMatrixELL<mpf_class> & a, const SparseMatrixELL<mpf_class> & b);
+    extern template bool operator== (const SparseMatrixCSR<mpf_class> & a, const SparseMatrixCSR<mpf_class> & b);
 
-    extern template std::ostream & operator<< (std::ostream & lhs, const SparseMatrixELL<mpf_class> & matrix);
+    extern template std::ostream & operator<< (std::ostream & lhs, const SparseMatrixCSR<mpf_class> & matrix);
 #endif
 }
 #endif

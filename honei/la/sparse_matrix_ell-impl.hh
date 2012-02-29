@@ -23,6 +23,7 @@
 #define LIBLA_GUARD_SPARSE_MATRIX_ELL_IMPL_HH 1
 
 #include <honei/la/sparse_matrix_ell.hh>
+#include <honei/la/sparse_matrix_csr.hh>
 #include <honei/la/sparse_matrix.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/matrix_error.hh>
@@ -121,6 +122,59 @@ namespace honei
             //Arl = row_length();
         }
 
+        Implementation(const SparseMatrixCSR<DataType_> & src) :
+            threads(Configuration::instance()->get_value("ell::threads", 1)),
+            Aj(1),
+            Ax(1),
+            Arl(src.rows(), 0),
+            rows(src.rows()),
+            columns(src.columns())
+        {
+            /// \todo do not use sm but convert directly
+            SparseMatrix<DataType_> src2(src);
+
+            /// \todo add thread optimisation heuristic
+            //if (threads == 0)...
+
+            num_cols_per_row = 1;
+            for (unsigned long i(0) ; i < rows ; ++i)
+            {
+                Arl[i] = ceil(double(src2[i].used_elements() / double(threads)));
+                if (src2[i].used_elements() > num_cols_per_row)
+                {
+                    num_cols_per_row = src2[i].used_elements();
+                }
+            }
+            num_cols_per_row = ceil(double(num_cols_per_row) / double(threads));
+            /// \todo remove hardcoded numbers
+            unsigned long alignment(32);
+            stride = alignment * (((rows * threads) + alignment - 1)/ alignment);
+
+            DenseVector<unsigned long> pAj(num_cols_per_row * stride, (unsigned long)(0));
+            DenseVector<DataType_> pAx(num_cols_per_row * stride, DataType_(0));
+
+            for (unsigned long row(0); row < rows ; ++row)
+            {
+                unsigned long target(0);
+                //for (typename SparseVector<DataType_>::NonZeroConstElementIterator i(src2[row].begin_non_zero_elements()) ;
+                //        i < src2[row].end_non_zero_elements() ; ++i)
+                for (unsigned long i(0) ; i < src2[row].used_elements() ; ++i)
+                {
+                    const SparseVector<DataType_> tmp_row(src2[row]);
+                    if((tmp_row.elements())[i] != DataType_(0))
+                    {
+                        pAj[(target%threads) + (row * threads)+ target/threads * stride] = (tmp_row.indices())[i];
+                        pAx[(target%threads) + (row * threads) + target/threads * stride] = (tmp_row.elements())[i];
+                        target++;
+                    }
+                }
+            }
+
+            Aj = pAj;
+            Ax = pAx;
+            //Arl = row_length();
+        }
+
         private:
         DenseVector<unsigned long> row_length()
         {
@@ -161,6 +215,13 @@ namespace honei
 
     template <typename DataType_>
     SparseMatrixELL<DataType_>::SparseMatrixELL(const SparseMatrix<DataType_> & src) :
+        PrivateImplementationPattern<SparseMatrixELL<DataType_>, Shared>(new Implementation<SparseMatrixELL<DataType_> >(src))
+    {
+        CONTEXT("When creating SparseMatrixELL from SparseMatrix:");
+    }
+
+    template <typename DataType_>
+    SparseMatrixELL<DataType_>::SparseMatrixELL(const SparseMatrixCSR<DataType_> & src) :
         PrivateImplementationPattern<SparseMatrixELL<DataType_>, Shared>(new Implementation<SparseMatrixELL<DataType_> >(src))
     {
         CONTEXT("When creating SparseMatrixELL from SparseMatrix:");
