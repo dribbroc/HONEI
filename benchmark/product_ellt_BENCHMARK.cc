@@ -104,11 +104,13 @@ class ProductELLFileBenchmark:
             std::cout<<"Non Zero Elements: "<<smatrix.used_elements()<<std::endl;
         }
 };
+#ifdef HONEI_SSE
 ProductELLFileBenchmark<tags::CPU::MultiCore::SSE, double> sse_pareng_double_1("ELL Product double MC SSE, 1 threads", "testdata/poisson_advanced4/q2_sort_2/A_6.ell", 10, 1, 128);
 ProductELLFileBenchmark<tags::CPU::MultiCore::SSE, double> sse_pareng_double_2("ELL Product double MC SSE, 2 threads", "testdata/poisson_advanced4/q2_sort_2/A_6.ell", 10, 2, 128);
 ProductELLFileBenchmark<tags::CPU::MultiCore::SSE, double> sse_pareng_double_3("ELL Product double MC SSE, 4 threads", "testdata/poisson_advanced4/q2_sort_2/A_6.ell", 10, 4, 128);
 ProductELLFileBenchmark<tags::CPU::MultiCore::SSE, double> sse_pareng_double_4("ELL Product double MC SSE, 6 threads", "testdata/poisson_advanced4/q2_sort_2/A_6.ell", 10, 6, 128);
 ProductELLFileBenchmark<tags::CPU::MultiCore::SSE, double> sse_pareng_double_5("ELL Product double MC SSE, 8 threads", "testdata/poisson_advanced4/q2_sort_2/A_6.ell", 10, 8, 128);
+#endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
 ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_0("ELL  Product double cuda L5, q2 sort 2, 1 threads, 128 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 1, 128);
