@@ -493,6 +493,74 @@ SMDenseVectorProductBench<tags::CPU::MultiCore::Generic, float> mc_generic_SMDVP
 SMDenseVectorProductBench<tags::CPU::MultiCore::Generic, float> mc_generic_SMDVPBenchfloat_pa7("MC Generic SM 0 PA  Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
 
 template <typename Tag_, typename DataType_>
+class SMCSRDenseVectorProductBench :
+    public Benchmark
+{
+    private:
+        unsigned long _size;
+        unsigned long _count;
+        std::string _file;
+    public:
+        SMCSRDenseVectorProductBench(const std::string & id, unsigned long size, unsigned long count, std::string file) :
+            Benchmark(id)
+        {
+            register_tag(Tag_::name);
+            _size = size;
+            _count = count;
+            _file = file;
+        }
+
+        virtual void run()
+        {
+            std::string filename(HONEI_SOURCEDIR);
+            filename += "/honei/math/testdata/";
+            filename += _file;
+
+            SparseMatrixELL<DataType_> smatrix(MatrixIO<io_formats::ELL>::read_matrix(filename, DataType_(1)));
+            SparseMatrixCSR<DataType_>sm (smatrix);
+
+            DenseVector<DataType_> x(smatrix.rows());
+            DenseVector<DataType_> y(smatrix.rows());
+            for (unsigned long i(0) ; i < x.size() ; ++i)
+            {
+                x[i] = DataType_(i) / 1.234;
+            }
+
+            for (unsigned long i(0) ; i < _count ; i++)
+            {
+                BENCHMARK(
+                        for (unsigned long j(0) ; j < 1000 ; ++j)
+                        {
+                            Product<Tag_>::value(y, sm, x);
+                        }
+#ifdef HONEI_CUDA
+                        if (Tag_::tag_value == tags::tv_gpu_cuda)
+                            cuda::GPUPool::instance()->flush();
+#endif
+#ifdef HONEI_OPENCL
+                        if (Tag_::tag_value == tags::tv_opencl)
+                            opencl::OpenCLBackend::instance()->flush();
+#endif
+                        );
+            }
+            {
+            BenchmarkInfo info;
+            unsigned long non_zeros(0);
+            for (unsigned long i(0) ; i < smatrix.Arl().size() ; ++i)
+            {
+                non_zeros += smatrix.Arl()[i];
+            }
+            info.flops = non_zeros * 2;
+            evaluate(info * 1000);
+            }
+        }
+};
+SMCSRDenseVectorProductBench<tags::CPU::Generic, float> generic_SMCSRDVPBenchfloat("Generic SM CSR 2  Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
+SMCSRDenseVectorProductBench<tags::CPU::Generic, float> generic_SMCSRDVPBenchfloat_pa7("Generic SM CSR 0 PA  Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+SMCSRDenseVectorProductBench<tags::CPU::MultiCore::Generic, float> mc_generic_SMCSRDVPBenchfloat("MC Generic SM CSR 2  Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
+SMCSRDenseVectorProductBench<tags::CPU::MultiCore::Generic, float> mc_generic_SMCSRDVPBenchfloat_pa7("MC Generic SM CSR 0 PA  Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+
+template <typename Tag_, typename DataType_>
 class SMELLDenseVectorProductBench :
     public Benchmark
 {
@@ -561,6 +629,8 @@ SMELLDenseVectorProductBench<tags::CPU::MultiCore::Generic, float> mc_generic_SM
 #ifdef HONEI_SSE
 SMELLDenseVectorProductBench<tags::CPU::SSE, float> sse_SMELLDVPBenchfloat("SSE SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
 SMELLDenseVectorProductBench<tags::CPU::SSE, float> sse_SMELLDVPBenchfloat_pa7("SSE SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+SMELLDenseVectorProductBench<tags::CPU::MultiCore::SSE, float> mcsse_SMELLDVPBenchfloat("MC SSE SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
+SMELLDenseVectorProductBench<tags::CPU::MultiCore::SSE, float> mcsse_SMELLDVPBenchfloat_pa7("MC SSE SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
 #endif
 #ifdef HONEI_CUDA
 SMELLDenseVectorProductBench<tags::GPU::CUDA, float> cudaSMELLDVPBenchfloat("CUDA SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");

@@ -1435,12 +1435,12 @@ namespace honei
         }
 
         template <typename DT_>
-        static DenseVector<DT_> & value(DenseVector<DT_> & r, const SparseMatrixCSR<DT_> & a, const DenseVector<DT_> & b,
+        static DenseVector<DT_> & value(DenseVector<DT_> & rv, const SparseMatrixCSR<DT_> & a, const DenseVector<DT_> & bv,
                 unsigned long row_start = 0, unsigned long row_end = 0)
         {
-            if (b.size() != a.columns())
+            if (bv.size() != a.columns())
             {
-                throw VectorSizeDoesNotMatch(b.size(), a.columns());
+                throw VectorSizeDoesNotMatch(bv.size(), a.columns());
             }
             if (row_end == 0)
                 row_end = a.rows();
@@ -1450,19 +1450,21 @@ namespace honei
             const unsigned long * const Ar(a.Ar().elements());
             const unsigned long * const Aj(a.Aj().elements());
             const DT_ * const Ax(a.Ax().elements());
-            const unsigned long rows(a.rows());
+            const DT_ * const b(bv.elements());
+            DT_ * r(rv.elements());
 
-            for (unsigned long row(row_start) ; row < rows ; ++row)
+            for (unsigned long row(row_start) ; row < row_end ; ++row)
             {
                 DT_ sum(0);
-                for (unsigned long i(Ar[row]) ; i < Ar[row+1] ; ++i)
+                const unsigned long end(Ar[row+1]);
+                for (unsigned long i(Ar[row]) ; i < end ; ++i)
                 {
                     sum += Ax[i] * b[Aj[i]];
                 }
                 r[row] = sum;
             }
 
-            return r;
+            return rv;
         }
 
         template<typename DT_>
