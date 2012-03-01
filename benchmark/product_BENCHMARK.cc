@@ -559,6 +559,10 @@ SMCSRDenseVectorProductBench<tags::CPU::Generic, float> generic_SMCSRDVPBenchflo
 SMCSRDenseVectorProductBench<tags::CPU::Generic, float> generic_SMCSRDVPBenchfloat_pa7("Generic SM CSR 0 PA  Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
 SMCSRDenseVectorProductBench<tags::CPU::MultiCore::Generic, float> mc_generic_SMCSRDVPBenchfloat("MC Generic SM CSR 2  Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
 SMCSRDenseVectorProductBench<tags::CPU::MultiCore::Generic, float> mc_generic_SMCSRDVPBenchfloat_pa7("MC Generic SM CSR 0 PA  Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+#ifdef HONEI_CUDA
+SMCSRDenseVectorProductBench<tags::GPU::CUDA, float> cuda_SMCSRDVPBenchfloat("Cuda SM CSR 2  Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
+SMCSRDenseVectorProductBench<tags::GPU::CUDA, float> cuda_SMCSRDVPBenchfloat_pa7("Cuda SM CSR 0 PA  Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+#endif
 
 template <typename Tag_, typename DataType_>
 class SMELLDenseVectorProductBench :

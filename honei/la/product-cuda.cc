@@ -230,6 +230,86 @@ namespace
                 a.Arl().unlock(lm_read_only);
             }
     };
+
+    class cudaProductSMCSRDVfloat
+    {
+        private:
+            DenseVectorContinuousBase<float> & result;
+            const SparseMatrixCSR<float> & a;
+            const DenseVectorContinuousBase<float> & b;
+            unsigned long row_start;
+            unsigned long row_end;
+            unsigned long blocksize;
+        public:
+            cudaProductSMCSRDVfloat(DenseVectorContinuousBase<float> & result, const SparseMatrixCSR<float> & a, const DenseVectorContinuousBase<float> & b,
+                    unsigned long row_start, unsigned long row_end, unsigned long blocksize) :
+                result(result),
+                a(a),
+                b(b),
+                row_start(row_start),
+                row_end(row_end),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * Aj_gpu(a.Aj().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * Ax_gpu(a.Ax().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * Ar_gpu(a.Ar().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                cuda_product_csr_dv_float(b_gpu, result_gpu, Aj_gpu, Ax_gpu, Ar_gpu,
+                        row_start, row_end, blocksize);
+
+                result.unlock(lm_write_only);
+                b.unlock(lm_read_only);
+                a.Aj().unlock(lm_read_only);
+                a.Ax().unlock(lm_read_only);
+                a.Ar().unlock(lm_read_only);
+            }
+    };
+
+    class cudaProductSMCSRDVdouble
+    {
+        private:
+            DenseVectorContinuousBase<double> & result;
+            const SparseMatrixCSR<double> & a;
+            const DenseVectorContinuousBase<double> & b;
+            unsigned long row_start;
+            unsigned long row_end;
+            unsigned long blocksize;
+        public:
+            cudaProductSMCSRDVdouble(DenseVectorContinuousBase<double> & result, const SparseMatrixCSR<double> & a, const DenseVectorContinuousBase<double> & b,
+                    unsigned long row_start, unsigned long row_end, unsigned long blocksize) :
+                result(result),
+                a(a),
+                b(b),
+                row_start(row_start),
+                row_end(row_end),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * Aj_gpu(a.Aj().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * Ax_gpu(a.Ax().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * Ar_gpu(a.Ar().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                cuda_product_csr_dv_double(b_gpu, result_gpu, Aj_gpu, Ax_gpu, Ar_gpu,
+                        row_start, row_end, blocksize);
+
+                result.unlock(lm_write_only);
+                b.unlock(lm_read_only);
+                a.Aj().unlock(lm_read_only);
+                a.Ax().unlock(lm_read_only);
+                a.Ar().unlock(lm_read_only);
+            }
+    };
 }
 
 DenseVector<float> Product<tags::GPU::CUDA>::value(const BandedMatrix<float> & a, const DenseVectorContinuousBase<float> & b)
@@ -473,6 +553,66 @@ DenseVector<double> & Product<tags::GPU::CUDA>::value(DenseVector<double> & resu
     }
 
     PROFILER_STOP("Product SMELL double tags::GPU::CUDA");
+    return result;
+}
+#endif
+
+DenseVector<float> & Product<tags::GPU::CUDA>::value(DenseVector<float> & result, const SparseMatrixCSR<float> & a, const DenseVector<float> & b)
+{
+    CONTEXT("When multiplying SparseMatrixCSR<float> with DenseVectorContinuousBase<float> (CUDA):");
+
+    if (b.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+    }
+    if (a.rows() != result.size())
+    {
+        throw VectorSizeDoesNotMatch(a.rows(), result.size());
+    }
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_float", 128ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaProductSMCSRDVfloat task(result, a, b, 0, a.rows(), blocksize);
+        task();
+    }
+    else
+    {
+        cudaProductSMCSRDVfloat task(result, a, b, 0, a.rows(), blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
+    }
+
+    return result;
+}
+
+#ifdef HONEI_CUDA_DOUBLE
+DenseVector<double> & Product<tags::GPU::CUDA>::value(DenseVector<double> & result, const SparseMatrixCSR<double> & a, const DenseVector<double> & b)
+{
+    CONTEXT("When multiplying SparseMatrixCSR<double> with DenseVectorContinuousBase<double> (CUDA):");
+
+    if (b.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+    }
+    if (a.rows() != result.size())
+    {
+        throw VectorSizeDoesNotMatch(a.rows(), result.size());
+    }
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_double", 128ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaProductSMCSRDVdouble task(result, a, b, 0, a.rows(), blocksize);
+        task();
+    }
+    else
+    {
+        cudaProductSMCSRDVdouble task(result, a, b, 0, a.rows(), blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
+    }
+
     return result;
 }
 #endif

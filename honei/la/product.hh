@@ -1653,6 +1653,10 @@ namespace honei
 
         static DenseVector<double> & value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b);
 
+        static DenseVector<float> & value(DenseVector<float> & result, const SparseMatrixCSR<float> & a, const DenseVector<float> & b);
+
+        static DenseVector<double> & value(DenseVector<double> & result, const SparseMatrixCSR<double> & a, const DenseVector<double> & b);
+
         template<typename DT1_, typename DT2_>
         static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
         {
