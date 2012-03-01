@@ -89,7 +89,7 @@ class MGCycleCreationTest:
 
             OperatorList ol(
             MGCycleCreation<Tag_,
-                              methods::CYCLE::V::STATIC,
+                              methods::CYCLE::FMG::V::STATIC,
                               CGSolver<Tag_, methods::NONE>,
                               RISmoother<Tag_>,
                               Restriction<Tag_, methods::PROLMAT>,
@@ -101,6 +101,7 @@ class MGCycleCreationTest:
             {
                 std::cout << ol[i]->to_string() << std::endl;
             }
+
         }
 };
 MGCycleCreationTest<tags::CPU> mgcycproctest_cpu("double");
@@ -184,7 +185,7 @@ class MGUtilLoadTest:
         {
             unsigned long levels(4);
             std::string file(HONEI_SOURCEDIR);
-            file += "/honei/math/testdata/poisson_advanced/sort_0/";
+            file += "/honei/math/testdata/poisson_advanced4/sort_0/";
             MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double>, DenseVector<double>, double > data(MGUtil<Tag_,
                                                                                             SparseMatrixELL<double>,
                                                                                             DenseVector<double>,
@@ -265,7 +266,7 @@ class MGSolverTest:
 
             OperatorList ol(
                     MGCycleCreation<Tag_,
-                    methods::CYCLE::V::STATIC,
+                    methods::CYCLE::FMG::W::STATIC,
                     BiCGStabSolver<Tag_, methods::VAR>,
                     //SuperLU,
                     RISmoother<Tag_>,
@@ -273,6 +274,8 @@ class MGSolverTest:
                     Prolongation<Tag_, methods::PROLMAT>,
                     DT_>::value(data)
                     );
+
+            //print_cycle(ol, max_level, min_level);
 
             std::cout << data.A.size() << std::endl;
             std::cout << data.P.size() << std::endl;
@@ -312,7 +315,6 @@ class MGSolverTest:
             data.x.at(MGDataIndex::internal_index_A(max_level)).unlock(lm_read_only);
             ref.unlock(lm_read_only);
 
-            //print_cycle(ol, max_level, min_level);
         }
 };
 /*MGSolverTest<tags::CPU, double> mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
@@ -460,4 +462,4 @@ class MGSolverTestQuad:
             ref.unlock(lm_read_only);
         }
 };
-MGSolverTestQuad<tags::CPU> mg_solver_quad_test_cpu("double");
+//MGSolverTestQuad<tags::CPU> mg_solver_quad_test_cpu("double");

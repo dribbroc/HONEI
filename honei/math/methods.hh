@@ -74,6 +74,17 @@ namespace methods
             {
                 struct STATIC;
             };
+            struct FMG
+            {
+                struct V
+                {
+                    struct STATIC;
+                };
+                struct W
+                {
+                    struct STATIC;
+                };
+            };
     };
     struct FIXED;
     struct MIXED;

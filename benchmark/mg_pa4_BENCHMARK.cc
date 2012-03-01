@@ -156,20 +156,21 @@ class MGBench:
         }
 };
 
-/*MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, SparseMatrixELL<double> > mcsse_q1_sort2_l8_spai_grote_v("MGBench mcsse | q1 | sort 2 | L8 | spai_grote | V", 1 , 2, 8, "spai_grote", 0.5);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, SparseMatrixELL<double> > mcsse_q1_sort3_l8_spai_grote_v("MGBench mcsse | q1 | sort 3 | L8 | spai_grote | V", 1 , 3, 8, "spai_grote", 0.5);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, SparseMatrixELL<double> > mcsse_q1_sort2_l8_spai_grote_w("MGBench mcsse | q1 | sort 2 | L8 | spai_grote | W", 1 , 2, 8, "spai_grote", 0.5);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, SparseMatrixELL<double> > mcsse_q1_sort3_l8_spai_grote_w("MGBench mcsse | q1 | sort 3 | L8 | spai_grote | W", 1 , 3, 8, "spai_grote", 0.5);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> > mcsse_q1_sort2_l8_spai_grote_f("MGBench mcsse | q1 | sort 2 | L8 | spai_grote | F", 1 , 2, 8, "spai_grote", 0.5);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> > mcsse_q1_sort3_l8_spai_grote_f("MGBench mcsse | q1 | sort 3 | L8 | spai_grote | F", 1 , 3, 8, "spai_grote", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, SparseMatrixELL<double> > mcsse_q1_sort2_l7_sainv_v("MGBench mcsse | q1 | sort 2 | L7 | sainv | V", 1 , 2, 7, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, SparseMatrixELL<double> > mcsse_q1_sort3_l7_sainv_v("MGBench mcsse | q1 | sort 3 | L7 | sainv | V", 1 , 3, 7, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, SparseMatrixELL<double> > mcsse_q1_sort2_l7_sainv_w("MGBench mcsse | q1 | sort 2 | L7 | sainv | W", 1 , 2, 7, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, SparseMatrixELL<double> > mcsse_q1_sort3_l7_sainv_w("MGBench mcsse | q1 | sort 3 | L7 | sainv | W", 1 , 3, 7, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> > mcsse_q1_sort2_l7_sainv_f("MGBench mcsse | q1 | sort 2 | L7 | sainv | F", 1 , 2, 7, "sainv", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> > mcsse_q1_sort3_l7_sainv_f("MGBench mcsse | q1 | sort 3 | L7 | sainv | F", 1 , 3, 7, "sainv", 0.5);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, SparseMatrixELL<double> > cuda_q1_sort2_l8_spai_grote_v("MGBench cuda | q1 | sort 2 | L8 | spai_grote | V", 1 , 2, 8, "spai_grote", 0.5);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, SparseMatrixELL<double> > cuda_q1_sort3_l8_spai_grote_v("MGBench cuda | q1 | sort 3 | L8 | spai_grote | V", 1 , 3, 8, "spai_grote", 0.5);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, SparseMatrixELL<double> > cuda_q1_sort2_l8_spai_grote_w("MGBench cuda | q1 | sort 2 | L8 | spai_grote | W", 1 , 2, 8, "spai_grote", 0.5);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, SparseMatrixELL<double> > cuda_q1_sort3_l8_spai_grote_w("MGBench cuda | q1 | sort 3 | L8 | spai_grote | W", 1 , 3, 8, "spai_grote", 0.5);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> > cuda_q1_sort2_l8_spai_grote_f("MGBench cuda | q1 | sort 2 | L8 | spai_grote | F", 1 , 2, 8, "spai_grote", 0.5);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> > cuda_q1_sort3_l8_spai_grote_f("MGBench cuda | q1 | sort 3 | L8 | spai_grote | F", 1 , 3, 8, "spai_grote", 0.5);*/
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, SparseMatrixELL<double> > cuda_q1_sort2_l7_sainv_v("MGBench cuda | q1 | sort 2 | L7 | sainv | V", 1 , 2, 7, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, SparseMatrixELL<double> > cuda_q1_sort3_l7_sainv_v("MGBench cuda | q1 | sort 3 | L7 | sainv | V", 1 , 3, 7, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, SparseMatrixELL<double> > cuda_q1_sort2_l7_sainv_w("MGBench cuda | q1 | sort 2 | L7 | sainv | W", 1 , 2, 7, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, SparseMatrixELL<double> > cuda_q1_sort3_l7_sainv_w("MGBench cuda | q1 | sort 3 | L7 | sainv | W", 1 , 3, 7, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> > cuda_q1_sort2_l7_sainv_f("MGBench cuda | q1 | sort 2 | L7 | sainv | F", 1 , 2, 7, "sainv", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> > cuda_q1_sort3_l7_sainv_f("MGBench cuda | q1 | sort 3 | L7 | sainv | F", 1 , 3, 7, "sainv", 0.5);
 
+/*
 #ifdef HONEI_SSE
 //JAC
 //q1
@@ -1459,3 +1460,4 @@ MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> >
 MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> > cuda_q1t_sort4_l5_sainv_f("MGBench cuda | q1t | sort 4 | L5 | sainv | F", 3 , 4, 5, "sainv", 0.7);
 MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> > cuda_q1t_sort4_l6_sainv_f("MGBench cuda | q1t | sort 4 | L6 | sainv | F", 3 , 4, 6, "sainv", 0.7);
 #endif
+*/

@@ -76,6 +76,10 @@ namespace honei
             unsigned long min_level;
             DataType_ eps_relative;
 
+            //storage used by cycle_control
+            bool down_sweep;
+            unsigned long max_iters_coarse_FMG;
+
             MGData(std::vector<MatrixType_> & systems,
                    std::vector<TransferContType_> & resmats,
                    std::vector<TransferContType_> & prolmats,
@@ -474,6 +478,28 @@ namespace honei
 
                             ///get vectors for level max_level
                             if(i == MGDataIndex::internal_index_A(max_level))
+                            {
+                                std::string local_b_name(b_name);
+                                local_b_name += stringify(MGDataIndex::base_index_A(i));
+                                VectorType_ max_b(VectorIO<VecIOType_>::read_vector(local_b_name, DataType_(0)));
+                                b.push_back(max_b);
+
+                                std::string local_x_name(x_name);
+                                local_x_name += stringify(MGDataIndex::base_index_A(i));
+                                VectorType_ max_x(VectorIO<VecIOType_>::read_vector(local_x_name, DataType_(0)));
+                                //VectorType_ max_x(max_b.size(), DataType_(0));
+                                x.push_back(max_x);
+
+                                VectorType_ zero(A.at(i).rows(), DataType_(0));
+                                d.push_back(zero.copy());
+                                ///Set c = x on finest level
+                                //c.push_back(max_x.copy());
+                                c.push_back(zero.copy());
+                                store.push_back(zero.copy());
+                                std::vector<VectorType_> smtl;
+                                smoother_temp.push_back(smtl);
+                            }
+                            else if(i == MGDataIndex::internal_index_A(1))
                             {
                                 std::string local_b_name(b_name);
                                 local_b_name += stringify(MGDataIndex::base_index_A(i));
@@ -965,7 +991,7 @@ namespace honei
                             ///Prolongation
                             //std::cout << "Prol Accessing " << level << std::endl;
                             //std::cout << "Prol Accessing " << level - 1 << std::endl;
-                            cycle.push_back(new TransferOperator<ProlType_, TransferContType_, VectorType_>(data.store.at(MGDataIndex::internal_index_A(level)), data.c.at(MGDataIndex::internal_index_A(level - 1)), data.prolmat.at(level)));
+                            cycle.push_back(new TransferOperator<ProlType_, TransferContType_, VectorType_>(data.store.at(MGDataIndex::internal_index_A(level)), data.c.at(MGDataIndex::internal_index_A(level - 1)), data.prolmat.at(MGDataIndex::internal_index_Prol((level)))));
                             //std::cout << "Sum Accessing " << level << std::endl;
                             cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(MGDataIndex::internal_index_A(level)), data.store.at(MGDataIndex::internal_index_A(level))));
 
@@ -1060,6 +1086,391 @@ namespace honei
                         CONTEXT("When evaluating MGCycleCreation:");
 
                         OperatorList cycle;
+                        _build_cycle_F(data.x, data.b, data.A.size(), cycle, data);
+                        return cycle;
+                    }
+        };
+
+    template<typename Tag_,
+        typename CoarseGridSolverType_,
+        typename SmootherType_,
+        typename ResType_,
+        typename ProlType_,
+        typename DataType_>
+            struct MGCycleCreation<Tag_,
+        methods::CYCLE::FMG::V::STATIC,
+        CoarseGridSolverType_,
+        SmootherType_,
+        ResType_,
+        ProlType_,
+        DataType_>
+        {
+            private:
+                template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
+                    static void _build_cycle_V(
+                            std::vector<VectorType_> & x,
+                            std::vector<VectorType_> & b,
+                            unsigned long level,
+                            OperatorList & cycle,
+                            MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_, DataType_> & data)
+                    {
+                        if(level == (data.min_level))
+                        {
+                            //std::cout << "Solver Accessing " << data.min_level << std::endl;
+                            cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_, DataType_>(
+                                        data.A.at(MGDataIndex::internal_index_A(data.min_level)),
+                                        data.P.at(MGDataIndex::internal_index_A(data.min_level)),
+                                        b.at(MGDataIndex::internal_index_A(data.min_level)),
+                                        x.at(MGDataIndex::internal_index_A(data.min_level)),
+                                        data.max_iters_coarse,
+                                        data.used_iters_coarse,
+                                        data.eps_relative) );
+                        }
+                        else
+                        {
+                            ///Presmoothing
+                            //std::cout << "Smoother Accessing " << level << std::endl;
+                            cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
+                                        data.A.at(MGDataIndex::internal_index_A(level)),
+                                        data.P.at(MGDataIndex::internal_index_A(level)),
+                                        b.at(MGDataIndex::internal_index_A(level)),
+                                        x.at(MGDataIndex::internal_index_A(level)),
+                                        //data.temp_0.at(MGDataIndex::internal_index_A(level)),
+                                        //data.temp_1.at(MGDataIndex::internal_index_A(level)),
+                                        data.smoother_temp.at(MGDataIndex::internal_index_A(level)),
+                                        data.n_pre_smooth) );
+
+
+                            ///Defect
+                            //std::cout << "Defect Accessing " << level << std::endl;
+                            cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(data.store.at(MGDataIndex::internal_index_A(level)), b.at(MGDataIndex::internal_index_A(level)), data.A.at(MGDataIndex::internal_index_A(level)), x.at(MGDataIndex::internal_index_A(level))));
+                            ///Restriction
+                            //std::cout << " Restrict Accessing " << level << std::endl;
+                            //std::cout << " Restrict Accessing " << level - 1 << std::endl;
+                            cycle.push_back(new TransferOperator<ResType_, TransferContType_, VectorType_>(data.d.at(MGDataIndex::internal_index_A(level - 1)) , data.store.at(MGDataIndex::internal_index_A(level)), data.resmat.at(MGDataIndex::internal_index_Prol(level))));
+
+                            ///Recursion
+                            ///all vectors in c have to be initialised with 0
+                            cycle.push_back(new FillOperator<Tag_, VectorType_>(data.c.at(MGDataIndex::internal_index_A(level - 1))));
+                            _build_cycle_V(data.c, data.d, level - 1, cycle, data);
+
+                            ///Prolongation
+                            //std::cout << "Prol Accessing " << level << std::endl;
+                            //std::cout << "Prol Accessing " << level - 1 << std::endl;
+                            cycle.push_back(new TransferOperator<ProlType_, TransferContType_, VectorType_>(data.store.at(MGDataIndex::internal_index_A(level)), data.c.at(MGDataIndex::internal_index_A(level - 1)), data.prolmat.at(MGDataIndex::internal_index_Prol(level))));
+                            //std::cout << "Sum Accessing " << level << std::endl;
+                            cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(MGDataIndex::internal_index_A(level)), data.store.at(MGDataIndex::internal_index_A(level))));
+
+                            ///Postsmoothing
+                            //std::cout << "Smoother Accessing " << level << std::endl;
+                            cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
+                                        data.A.at(MGDataIndex::internal_index_A(level)),
+                                        data.P.at(MGDataIndex::internal_index_A(level)),
+                                        b.at(MGDataIndex::internal_index_A(level)),
+                                        x.at(MGDataIndex::internal_index_A(level)),
+                                        //data.temp_0.at(MGDataIndex::internal_index_A(level)),
+                                        //data.temp_1.at(MGDataIndex::internal_index_A(level)),
+                                        data.smoother_temp.at(MGDataIndex::internal_index_A(level)),
+                                        data.n_post_smooth) );
+                        }
+                    }
+
+                template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
+                    static void _build_cycle_F(
+                            std::vector<VectorType_> & x,
+                            std::vector<VectorType_> & b,
+                            unsigned long level,
+                            OperatorList & cycle,
+                            MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_, DataType_> & data)
+                    {
+                        if(level == (data.min_level))
+                        {
+                            if(data.down_sweep)
+                            {
+                                data.down_sweep = false;
+                                //std::cout << "Solver Accessing " << data.min_level << std::endl;
+                                cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_, DataType_>(
+                                            data.A.at(MGDataIndex::internal_index_A(data.min_level)),
+                                            data.P.at(MGDataIndex::internal_index_A(data.min_level)),
+                                            data.b.at(MGDataIndex::internal_index_A(data.min_level)),
+                                            data.x.at(MGDataIndex::internal_index_A(data.min_level)),
+                                            data.max_iters_coarse_FMG,
+                                            data.used_iters_coarse,
+                                            data.eps_relative) );
+
+                                std::cout << data.b.at(MGDataIndex::internal_index_A(data.min_level));
+
+                                //std::cout << "Defect Accessing " << level << std::endl;
+                                cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(
+                                            data.d.at(MGDataIndex::internal_index_A(level)),
+                                            data.b.at(MGDataIndex::internal_index_A(level)),
+                                            data.A.at(MGDataIndex::internal_index_A(level)),
+                                            data.x.at(MGDataIndex::internal_index_A(level))));
+                            }
+                            //std::cout << "Solver Accessing " << data.min_level << std::endl;
+                            cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_, DataType_>(
+                                        data.A.at(MGDataIndex::internal_index_A(data.min_level)),
+                                        data.P.at(MGDataIndex::internal_index_A(data.min_level)),
+                                        b.at(MGDataIndex::internal_index_A(data.min_level)),
+                                        x.at(MGDataIndex::internal_index_A(data.min_level)),
+                                        data.max_iters_coarse,
+                                        data.used_iters_coarse,
+                                        data.eps_relative) );
+                        }
+                        else
+                        {
+                            if(!data.down_sweep)
+                            {
+                                ///Presmoothing
+                                //std::cout << "Smoother Accessing " << level << std::endl;
+                                cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
+                                            data.A.at(MGDataIndex::internal_index_A(level)),
+                                            data.P.at(MGDataIndex::internal_index_A(level)),
+                                            b.at(MGDataIndex::internal_index_A(level)),
+                                            x.at(MGDataIndex::internal_index_A(level)),
+                                            //data.temp_0.at(MGDataIndex::internal_index_A(level)),
+                                            //data.temp_1.at(MGDataIndex::internal_index_A(level)),
+                                            data.smoother_temp.at(MGDataIndex::internal_index_A(level)),
+                                            data.n_pre_smooth) );
+
+
+                                ///Defect
+                                //std::cout << "Defect Accessing " << level << std::endl;
+                                cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(data.store.at(MGDataIndex::internal_index_A(level)), b.at(MGDataIndex::internal_index_A(level)), data.A.at(MGDataIndex::internal_index_A(level)), x.at(MGDataIndex::internal_index_A(level))));
+                                ///Restriction
+                                //std::cout << " Restrict Accessing " << level << std::endl;
+                                //std::cout << " Restrict Accessing " << level - 1 << std::endl;
+                                cycle.push_back(new TransferOperator<ResType_, TransferContType_, VectorType_>(data.d.at(MGDataIndex::internal_index_A(level - 1)) , data.store.at(MGDataIndex::internal_index_A(level)), data.resmat.at(MGDataIndex::internal_index_Prol(level))));
+                            }
+
+                            ///Recursion
+                            ///all vectors in c have to be initialised with 0
+                            cycle.push_back(new FillOperator<Tag_, VectorType_>(data.c.at(MGDataIndex::internal_index_A(level - 1))));
+                            _build_cycle_F(data.c, data.d, level - 1, cycle, data);
+                            _build_cycle_V(data.c, data.d, level - 1, cycle, data);
+
+                            ///Prolongation
+                            //std::cout << "Prol Accessing " << level << std::endl;
+                            //std::cout << "Prol Accessing " << level - 1 << std::endl;
+                            cycle.push_back(new TransferOperator<ProlType_, TransferContType_, VectorType_>(data.store.at(MGDataIndex::internal_index_A(level)), data.c.at(MGDataIndex::internal_index_A(level - 1)), data.prolmat.at(MGDataIndex::internal_index_Prol(level))));
+                            //std::cout << "Sum Accessing " << level << std::endl;
+                            cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(MGDataIndex::internal_index_A(level)), data.store.at(MGDataIndex::internal_index_A(level))));
+
+                            ///Postsmoothing
+                            //std::cout << "Smoother Accessing " << level << std::endl;
+                            cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
+                                        data.A.at(MGDataIndex::internal_index_A(level)),
+                                        data.P.at(MGDataIndex::internal_index_A(level)),
+                                        b.at(MGDataIndex::internal_index_A(level)),
+                                        x.at(MGDataIndex::internal_index_A(level)),
+                                        //data.temp_0.at(MGDataIndex::internal_index_A(level)),
+                                        //data.temp_1.at(MGDataIndex::internal_index_A(level)),
+                                        data.smoother_temp.at(MGDataIndex::internal_index_A(level)),
+                                        data.n_post_smooth) );
+                        }
+                    }
+
+            public:
+                template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
+                    static OperatorList value(MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_, DataType_> & data)
+                    {
+                        CONTEXT("When evaluating MGCycleCreation:");
+
+                        OperatorList cycle;
+                        data.down_sweep = true;
+                        data.max_iters_coarse_FMG = 1000;
+                        _build_cycle_F(data.x, data.b, data.A.size(), cycle, data);
+                        return cycle;
+                    }
+        };
+    template<typename Tag_,
+        typename CoarseGridSolverType_,
+        typename SmootherType_,
+        typename ResType_,
+        typename ProlType_,
+        typename DataType_>
+            struct MGCycleCreation<Tag_,
+        methods::CYCLE::FMG::W::STATIC,
+        CoarseGridSolverType_,
+        SmootherType_,
+        ResType_,
+        ProlType_,
+        DataType_>
+        {
+            private:
+                template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
+                    static void _build_cycle_W(
+                            std::vector<VectorType_> & x,
+                            std::vector<VectorType_> & b,
+                            unsigned long level,
+                            OperatorList & cycle,
+                            MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_, DataType_> & data)
+                    {
+                        if(level == (data.min_level))
+                        {
+                            //std::cout << "Solver Accessing " << data.min_level << std::endl;
+                            cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_, DataType_>(
+                                        data.A.at(MGDataIndex::internal_index_A(data.min_level)),
+                                        data.P.at(MGDataIndex::internal_index_A(data.min_level)),
+                                        b.at(MGDataIndex::internal_index_A(data.min_level)),
+                                        x.at(MGDataIndex::internal_index_A(data.min_level)),
+                                        data.max_iters_coarse,
+                                        data.used_iters_coarse,
+                                        data.eps_relative) );
+                        }
+                        else
+                        {
+                            ///Presmoothing
+                            //std::cout << "Smoother Accessing " << level << std::endl;
+                            cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
+                                        data.A.at(MGDataIndex::internal_index_A(level)),
+                                        data.P.at(MGDataIndex::internal_index_A(level)),
+                                        b.at(MGDataIndex::internal_index_A(level)),
+                                        x.at(MGDataIndex::internal_index_A(level)),
+                                        //data.temp_0.at(MGDataIndex::internal_index_A(level)),
+                                        //data.temp_1.at(MGDataIndex::internal_index_A(level)),
+                                        data.smoother_temp.at(MGDataIndex::internal_index_A(level)),
+                                        data.n_pre_smooth) );
+
+
+                            ///Defect
+                            //std::cout << "Defect Accessing " << level << std::endl;
+                            cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(data.store.at(MGDataIndex::internal_index_A(level)), b.at(MGDataIndex::internal_index_A(level)), data.A.at(MGDataIndex::internal_index_A(level)), x.at(MGDataIndex::internal_index_A(level))));
+                            ///Restriction
+                            //std::cout << " Restrict Accessing " << level << std::endl;
+                            //std::cout << " Restrict Accessing " << level - 1 << std::endl;
+                            cycle.push_back(new TransferOperator<ResType_, TransferContType_, VectorType_>(data.d.at(MGDataIndex::internal_index_A(level - 1)) , data.store.at(MGDataIndex::internal_index_A(level)), data.resmat.at(MGDataIndex::internal_index_Prol(level))));
+
+                            ///Recursion
+                            ///all vectors in c have to be initialised with 0
+                            cycle.push_back(new FillOperator<Tag_, VectorType_>(data.c.at(MGDataIndex::internal_index_A(level - 1))));
+                            //if (level - 1 != data.min_level)
+                            //    _build_cycle_W(data.c, data.d, level - 1, cycle, data);
+                            _build_cycle_W(data.c, data.d, level - 1, cycle, data);
+
+                            ///Prolongation
+                            //std::cout << "Prol Accessing " << level << std::endl;
+                            //std::cout << "Prol Accessing " << level - 1 << std::endl;
+                            cycle.push_back(new TransferOperator<ProlType_, TransferContType_, VectorType_>(data.store.at(MGDataIndex::internal_index_A(level)), data.c.at(MGDataIndex::internal_index_A(level - 1)), data.prolmat.at(MGDataIndex::internal_index_Prol(level))));
+                            //std::cout << "Sum Accessing " << level << std::endl;
+                            cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(MGDataIndex::internal_index_A(level)), data.store.at(MGDataIndex::internal_index_A(level))));
+
+                            ///Postsmoothing
+                            //std::cout << "Smoother Accessing " << level << std::endl;
+                            cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
+                                        data.A.at(MGDataIndex::internal_index_A(level)),
+                                        data.P.at(MGDataIndex::internal_index_A(level)),
+                                        b.at(MGDataIndex::internal_index_A(level)),
+                                        x.at(MGDataIndex::internal_index_A(level)),
+                                        //data.temp_0.at(MGDataIndex::internal_index_A(level)),
+                                        //data.temp_1.at(MGDataIndex::internal_index_A(level)),
+                                        data.smoother_temp.at(MGDataIndex::internal_index_A(level)),
+                                        data.n_post_smooth) );
+                        }
+                    }
+
+                template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
+                    static void _build_cycle_F(
+                            std::vector<VectorType_> & x,
+                            std::vector<VectorType_> & b,
+                            unsigned long level,
+                            OperatorList & cycle,
+                            MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_, DataType_> & data)
+                    {
+                        if(level == (data.min_level))
+                        {
+                            if(data.down_sweep)
+                            {
+                                data.down_sweep = false;
+                                //std::cout << "Solver Accessing " << data.min_level << std::endl;
+                                cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_, DataType_>(
+                                            data.A.at(MGDataIndex::internal_index_A(data.min_level)),
+                                            data.P.at(MGDataIndex::internal_index_A(data.min_level)),
+                                            data.b.at(MGDataIndex::internal_index_A(data.min_level)),
+                                            data.x.at(MGDataIndex::internal_index_A(data.min_level)),
+                                            data.max_iters_coarse_FMG,
+                                            data.used_iters_coarse,
+                                            data.eps_relative) );
+
+                                //std::cout << "Defect Accessing " << level << std::endl;
+                                cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(
+                                            data.d.at(MGDataIndex::internal_index_A(level)),
+                                            data.b.at(MGDataIndex::internal_index_A(level)),
+                                            data.A.at(MGDataIndex::internal_index_A(level)),
+                                            data.x.at(MGDataIndex::internal_index_A(level))));
+                            }
+                            //std::cout << "Solver Accessing " << data.min_level << std::endl;
+                            cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_, DataType_>(
+                                        data.A.at(MGDataIndex::internal_index_A(data.min_level)),
+                                        data.P.at(MGDataIndex::internal_index_A(data.min_level)),
+                                        b.at(MGDataIndex::internal_index_A(data.min_level)),
+                                        x.at(MGDataIndex::internal_index_A(data.min_level)),
+                                        data.max_iters_coarse,
+                                        data.used_iters_coarse,
+                                        data.eps_relative) );
+                        }
+                        else
+                        {
+                            if(!data.down_sweep)
+                            {
+                                ///Presmoothing
+                                //std::cout << "Smoother Accessing " << level << std::endl;
+                                cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
+                                            data.A.at(MGDataIndex::internal_index_A(level)),
+                                            data.P.at(MGDataIndex::internal_index_A(level)),
+                                            b.at(MGDataIndex::internal_index_A(level)),
+                                            x.at(MGDataIndex::internal_index_A(level)),
+                                            //data.temp_0.at(MGDataIndex::internal_index_A(level)),
+                                            //data.temp_1.at(MGDataIndex::internal_index_A(level)),
+                                            data.smoother_temp.at(MGDataIndex::internal_index_A(level)),
+                                            data.n_pre_smooth) );
+
+
+                                ///Defect
+                                //std::cout << "Defect Accessing " << level << std::endl;
+                                cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(data.store.at(MGDataIndex::internal_index_A(level)), b.at(MGDataIndex::internal_index_A(level)), data.A.at(MGDataIndex::internal_index_A(level)), x.at(MGDataIndex::internal_index_A(level))));
+                                ///Restriction
+                                //std::cout << " Restrict Accessing " << level << std::endl;
+                                //std::cout << " Restrict Accessing " << level - 1 << std::endl;
+                                cycle.push_back(new TransferOperator<ResType_, TransferContType_, VectorType_>(data.d.at(MGDataIndex::internal_index_A(level - 1)) , data.store.at(MGDataIndex::internal_index_A(level)), data.resmat.at(MGDataIndex::internal_index_Prol(level))));
+                            }
+
+                            ///Recursion
+                            ///all vectors in c have to be initialised with 0
+                            cycle.push_back(new FillOperator<Tag_, VectorType_>(data.c.at(MGDataIndex::internal_index_A(level - 1))));
+                            _build_cycle_F(data.c, data.d, level - 1, cycle, data);
+                            _build_cycle_W(data.c, data.d, level - 1, cycle, data);
+
+                            ///Prolongation
+                            //std::cout << "Prol Accessing " << level << std::endl;
+                            //std::cout << "Prol Accessing " << level - 1 << std::endl;
+                            cycle.push_back(new TransferOperator<ProlType_, TransferContType_, VectorType_>(data.store.at(MGDataIndex::internal_index_A(level)), data.c.at(MGDataIndex::internal_index_A(level - 1)), data.prolmat.at(MGDataIndex::internal_index_Prol(level))));
+                            //std::cout << "Sum Accessing " << level << std::endl;
+                            cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(MGDataIndex::internal_index_A(level)), data.store.at(MGDataIndex::internal_index_A(level))));
+
+                            ///Postsmoothing
+                            //std::cout << "Smoother Accessing " << level << std::endl;
+                            cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
+                                        data.A.at(MGDataIndex::internal_index_A(level)),
+                                        data.P.at(MGDataIndex::internal_index_A(level)),
+                                        b.at(MGDataIndex::internal_index_A(level)),
+                                        x.at(MGDataIndex::internal_index_A(level)),
+                                        //data.temp_0.at(MGDataIndex::internal_index_A(level)),
+                                        //data.temp_1.at(MGDataIndex::internal_index_A(level)),
+                                        data.smoother_temp.at(MGDataIndex::internal_index_A(level)),
+                                        data.n_post_smooth) );
+                        }
+                    }
+
+            public:
+                template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
+                    static OperatorList value(MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_, DataType_> & data)
+                    {
+                        CONTEXT("When evaluating MGCycleCreation:");
+
+                        OperatorList cycle;
+                        data.down_sweep = true;
+                        data.max_iters_coarse_FMG = 1000;
                         _build_cycle_F(data.x, data.b, data.A.size(), cycle, data);
                         return cycle;
                     }
