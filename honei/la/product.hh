@@ -204,6 +204,39 @@ namespace honei
             return result;
         }
 
+        template <typename DT_>
+        static DenseVector<DT_> & value(DenseVector<DT_> & rv, const SparseMatrixCSR<DT_> & a, const DenseVector<DT_> & bv,
+                unsigned long row_start = 0, unsigned long row_end = 0)
+        {
+            CONTEXT("When multiplying SparseMatrixCSR with DenseVector:");
+
+            if (bv.size() != a.columns())
+            {
+                throw VectorSizeDoesNotMatch(bv.size(), a.columns());
+            }
+            if (row_end == 0)
+                row_end = a.rows();
+
+            const unsigned long * const Ar(a.Ar().elements());
+            const unsigned long * const Aj(a.Aj().elements());
+            const DT_ * const Ax(a.Ax().elements());
+            const DT_ * const b(bv.elements());
+            DT_ * r(rv.elements());
+
+            for (unsigned long row(row_start) ; row < row_end ; ++row)
+            {
+                DT_ sum(0);
+                const unsigned long end(Ar[row+1]);
+                for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                {
+                    sum += Ax[i] * b[Aj[i]];
+                }
+                r[row] = sum;
+            }
+
+            return rv;
+        }
+
         template <typename DT1_, typename DT2_>
         static SparseVector<DT1_> value(const SparseMatrix<DT1_> & a, const SparseVector<DT2_> & b)
         {
@@ -1438,6 +1471,7 @@ namespace honei
         static DenseVector<DT_> & value(DenseVector<DT_> & rv, const SparseMatrixCSR<DT_> & a, const DenseVector<DT_> & bv,
                 unsigned long row_start = 0, unsigned long row_end = 0)
         {
+            CONTEXT("When multiplying SparseMatrixCSR with DenseVector:");
             if (bv.size() != a.columns())
             {
                 throw VectorSizeDoesNotMatch(bv.size(), a.columns());
@@ -1988,6 +2022,7 @@ namespace honei
             template <typename DT_>
             static DenseVector<DT_> & value(DenseVector<DT_> & result, const SparseMatrixCSR<DT_> & a, const DenseVector<DT_> & b)
             {
+                CONTEXT("When multiplying SparseMatrixCSR with DenseVector (MC):");
                 if (b.size() != a.columns())
                 {
                     throw VectorSizeDoesNotMatch(b.size(), a.columns());

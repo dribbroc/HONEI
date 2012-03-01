@@ -381,6 +381,38 @@ namespace honei
                     return result;
                 }
 
+            template <typename DT_>
+                static DenseVector<DT_> & value(DenseVector<DT_> & rv, const DenseVector<DT_> & rhsv, const SparseMatrixCSR<DT_> & a, const DenseVector<DT_> & bv,
+                        unsigned long row_start = 0, unsigned long row_end = 0)
+                {
+                    if (bv.size() != a.columns())
+                    {
+                        throw VectorSizeDoesNotMatch(bv.size(), a.columns());
+                    }
+                    if (row_end == 0)
+                        row_end = a.rows();
+
+                    const unsigned long * const Ar(a.Ar().elements());
+                    const unsigned long * const Aj(a.Aj().elements());
+                    const DT_ * const Ax(a.Ax().elements());
+                    const DT_ * const b(bv.elements());
+                    const DT_ * const rhs(rhsv.elements());
+                    DT_ * r(rv.elements());
+
+                    for (unsigned long row(row_start) ; row < row_end ; ++row)
+                    {
+                        DT_ sum(0);
+                        const unsigned long end(Ar[row+1]);
+                        for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                        {
+                            sum += Ax[i] * b[Aj[i]];
+                        }
+                        r[row] = rhs[row] - sum;
+                    }
+
+                    return rv;
+                }
+
             template<typename DT_>
                 static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixELLMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
                 {
@@ -738,6 +770,49 @@ namespace honei
                         DenseVector<DT_> temp(right_hand_side.size());
                         Product<tags::CPU::MultiCore>::value(temp, system, x);
                         Difference<tags::CPU::MultiCore>::value(result, right_hand_side, temp);
+
+                        return result;
+                    }
+
+                template <typename DT_>
+                    static DenseVector<DT_> value(DenseVector<DT_> & result, const DenseVector<DT_> & rhs, const SparseMatrixCSR<DT_> & a, const DenseVector<DT_> & b)
+                    {
+                        if (b.size() != a.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(b.size(), a.columns());
+                        }
+                        if (a.rows() != result.size())
+                        {
+                            throw VectorSizeDoesNotMatch(a.rows(), result.size());
+                        }
+                        if (rhs.size() != a.columns())
+                        {
+                            throw VectorSizeDoesNotMatch(rhs.size(), a.columns());
+                        }
+
+                        //fill<typename Tag_::DelegateTo>(result, DT_(0));
+
+                        unsigned long max_count(Configuration::instance()->get_value("mc::Product(DV,SMELL,DV)::max_count",
+                                    mc::ThreadPool::instance()->num_threads()));
+
+                        TicketVector tickets;
+
+                        unsigned long limits[max_count + 1];
+                        limits[0] = 0;
+                        for (unsigned long i(1) ; i < max_count; ++i)
+                        {
+                            limits[i] = limits[i-1] + a.rows() / max_count;
+                        }
+                        limits[max_count] = a.rows();
+
+                        for (unsigned long i(0) ; i < max_count ; ++i)
+                        {
+                            OperationWrapper<honei::Defect<typename tags::CPU::MultiCore::DelegateTo>, DenseVector<DT_>, DenseVector<DT_>,
+                                DenseVector<DT_>, SparseMatrixCSR<DT_>, DenseVector<DT_>, unsigned long, unsigned long > wrapper(result);
+                            tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, result, rhs, a, b, limits[i], limits[i+1])));
+                        }
+
+                        tickets.wait();
 
                         return result;
                     }

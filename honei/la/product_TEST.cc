@@ -949,6 +949,10 @@ class SparseMatrixCSRDenseVectorProductTest :
             }
         }
 };
+SparseMatrixCSRDenseVectorProductTest<float, tags::CPU> sparse_matrix_csr_dense_vector_product_test_float("float");
+SparseMatrixCSRDenseVectorProductTest<double, tags::CPU> sparse_matrix_csr_dense_vector_product_test_double("double");
+SparseMatrixCSRDenseVectorProductTest<float, tags::CPU::MultiCore> mc_sparse_matrix_csr_dense_vector_product_test_float("float");
+SparseMatrixCSRDenseVectorProductTest<double, tags::CPU::MultiCore> mc_sparse_matrix_csr_dense_vector_product_test_double("double");
 SparseMatrixCSRDenseVectorProductTest<float, tags::CPU::Generic> generic_sparse_matrix_csr_dense_vector_product_test_float("float");
 SparseMatrixCSRDenseVectorProductTest<double, tags::CPU::Generic> generic_sparse_matrix_csr_dense_vector_product_test_double("double");
 SparseMatrixCSRDenseVectorProductTest<float, tags::CPU::MultiCore::Generic> generic_mc_sparse_matrix_csr_dense_vector_product_test_float("float");
@@ -988,6 +992,10 @@ class SparseMatrixCSRDenseVectorProductQuickTest :
             prod.unlock(lm_read_only);
         }
 };
+SparseMatrixCSRDenseVectorProductQuickTest<float, tags::CPU> sparse_matrix_csr_dense_vector_product_quick_test_float("float");
+SparseMatrixCSRDenseVectorProductQuickTest<double, tags::CPU> sparse_matrix_csr_dense_vector_product_quick_test_double("double");
+SparseMatrixCSRDenseVectorProductQuickTest<float, tags::CPU::MultiCore> mc_sparse_matrix_csr_dense_vector_product_quick_test_float("float");
+SparseMatrixCSRDenseVectorProductQuickTest<double, tags::CPU::MultiCore> mc_sparse_matrix_csr_dense_vector_product_quick_test_double("double");
 SparseMatrixCSRDenseVectorProductQuickTest<float, tags::CPU::Generic> generic_sparse_matrix_csr_dense_vector_product_quick_test_float("float");
 SparseMatrixCSRDenseVectorProductQuickTest<double, tags::CPU::Generic> generic_sparse_matrix_csr_dense_vector_product_quick_test_double("double");
 SparseMatrixCSRDenseVectorProductQuickTest<float, tags::CPU::MultiCore::Generic> generic_mc_sparse_matrix_csr_dense_vector_product_quick_test_float("float");

@@ -415,6 +415,10 @@ class DefectCSRRegressionTest:
             result.unlock(lm_read_only);
         }
 };
+DefectCSRRegressionTest<float, tags::CPU> regression_defect_csr_test_float_sparse("Regression CSR float", "l2/area51_full_0.m", "l2/area51_rhs_0");
+DefectCSRRegressionTest<double, tags::CPU> regression_defect_csr_test_double_sparse("Regression CSR double", "l2/area51_full_0.m", "l2/area51_rhs_0");
+DefectCSRRegressionTest<float, tags::CPU::MultiCore> mc_regression_defect_csr_test_float_sparse("Regression CSR float", "l2/area51_full_0.m", "l2/area51_rhs_0");
+DefectCSRRegressionTest<double, tags::CPU::MultiCore> mc_regression_defect_csr_test_double_sparse("Regression CSR double", "l2/area51_full_0.m", "l2/area51_rhs_0");
 DefectCSRRegressionTest<float, tags::CPU::Generic> generic_regression_defect_csr_test_float_sparse("Regression CSR float", "l2/area51_full_0.m", "l2/area51_rhs_0");
 DefectCSRRegressionTest<double, tags::CPU::Generic> generic_regression_defect_csr_test_double_sparse("Regression CSR double", "l2/area51_full_0.m", "l2/area51_rhs_0");
 DefectCSRRegressionTest<float, tags::CPU::MultiCore::Generic> mc_generic_regression_defect_csr_test_float_sparse("Regression CSR float", "l2/area51_full_0.m", "l2/area51_rhs_0");
