@@ -1039,7 +1039,7 @@ namespace honei
                                         b.at(MGDataIndex::internal_index_A(level)),
                                         x.at(MGDataIndex::internal_index_A(level)),
                                         //data.temp_0.at(MGDataIndex::internal_index_A(level)),
-                                        data.temp_1.at(MGDataIndex::internal_index_A(level)),
+                                        //data.temp_1.at(MGDataIndex::internal_index_A(level)),
                                         data.smoother_temp.at(MGDataIndex::internal_index_A(level)),
                                         data.n_pre_smooth) );
 
@@ -1050,7 +1050,7 @@ namespace honei
                             ///Restriction
                             //std::cout << " Restrict Accessing " << level << std::endl;
                             //std::cout << " Restrict Accessing " << level - 1 << std::endl;
-                            cycle.push_back(new TransferOperator<ResType_, TransferContType_, VectorType_>(data.d.at(MGDataIndex::internal_index_A(level - 1)) , data.smoother_type.at(MGDataIndex::internal_index_A(level)).at(0), data.resmat.at(MGDataIndex::internal_index_Prol(level))));
+                            cycle.push_back(new TransferOperator<ResType_, TransferContType_, VectorType_>(data.d.at(MGDataIndex::internal_index_A(level - 1)) , data.smoother_temp.at(MGDataIndex::internal_index_A(level)).at(0), data.resmat.at(MGDataIndex::internal_index_Prol(level))));
 
                             ///Recursion
                             ///all vectors in c have to be initialised with 0
@@ -1197,8 +1197,6 @@ namespace honei
                                             data.max_iters_coarse_FMG,
                                             data.used_iters_coarse,
                                             data.eps_relative) );
-
-                                std::cout << data.b.at(MGDataIndex::internal_index_A(data.min_level));
 
                                 //std::cout << "Defect Accessing " << level << std::endl;
                                 cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(
