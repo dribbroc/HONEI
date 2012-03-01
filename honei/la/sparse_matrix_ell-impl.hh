@@ -119,7 +119,6 @@ namespace honei
 
             Aj = pAj;
             Ax = pAx;
-            //Arl = row_length();
         }
 
         Implementation(const SparseMatrixCSR<DataType_> & src) :
@@ -130,19 +129,17 @@ namespace honei
             rows(src.rows()),
             columns(src.columns())
         {
-            /// \todo do not use sm but convert directly
-            SparseMatrix<DataType_> src2(src);
-
             /// \todo add thread optimisation heuristic
             //if (threads == 0)...
 
             num_cols_per_row = 1;
             for (unsigned long i(0) ; i < rows ; ++i)
             {
-                Arl[i] = ceil(double(src2[i].used_elements() / double(threads)));
-                if (src2[i].used_elements() > num_cols_per_row)
+                unsigned long ue(src.Ar()[i+1]-src.Ar()[i]);
+                Arl[i] = ceil(double(ue / double(threads)));
+                if (ue > num_cols_per_row)
                 {
-                    num_cols_per_row = src2[i].used_elements();
+                    num_cols_per_row = ue;
                 }
             }
             num_cols_per_row = ceil(double(num_cols_per_row) / double(threads));
@@ -156,23 +153,17 @@ namespace honei
             for (unsigned long row(0); row < rows ; ++row)
             {
                 unsigned long target(0);
-                //for (typename SparseVector<DataType_>::NonZeroConstElementIterator i(src2[row].begin_non_zero_elements()) ;
-                //        i < src2[row].end_non_zero_elements() ; ++i)
-                for (unsigned long i(0) ; i < src2[row].used_elements() ; ++i)
+                unsigned long ue(src.Ar()[row+1]-src.Ar()[row]);
+                for (unsigned long i(0) ; i < ue ; ++i)
                 {
-                    const SparseVector<DataType_> tmp_row(src2[row]);
-                    if((tmp_row.elements())[i] != DataType_(0))
-                    {
-                        pAj[(target%threads) + (row * threads)+ target/threads * stride] = (tmp_row.indices())[i];
-                        pAx[(target%threads) + (row * threads) + target/threads * stride] = (tmp_row.elements())[i];
-                        target++;
-                    }
+                    pAj[(target%threads) + (row * threads)+ target/threads * stride] = src.Aj()[src.Ar()[row] + i];
+                    pAx[(target%threads) + (row * threads) + target/threads * stride] = src.Ax()[src.Ar()[row] + i];
+                    target++;
                 }
             }
 
             Aj = pAj;
             Ax = pAx;
-            //Arl = row_length();
         }
 
         private:

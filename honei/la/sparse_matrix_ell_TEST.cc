@@ -60,13 +60,6 @@ class SparseMatrixELLQuickTest :
                 TEST_CHECK_EQUAL(sm0, sm0);
                 TEST_CHECK_EQUAL(sm0, sm0.copy());
                 TEST_CHECK_EQUAL(sms.used_elements(), sm0.used_elements());
-                for (unsigned long row(0) ; row < sm0.rows() ; ++row)
-                {
-                    for (unsigned long col(0) ; col < sm0.columns() ; ++col)
-                    {
-                        TEST_CHECK_EQUAL(sm0(row, col), sms(row, col));
-                    }
-                }
                 SparseMatrix<DataType_> sms2(sm0);
                 TEST_CHECK_EQUAL(sms, sms2);
                 SparseMatrixCSR<DataType_> scsr(sms);

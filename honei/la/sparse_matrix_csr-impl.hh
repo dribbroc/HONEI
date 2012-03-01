@@ -95,20 +95,26 @@ namespace honei
             rows(src.rows()),
             columns(src.columns())
         {
-            /// \todo do not use sm but convert directly
-            SparseMatrix<DataType_> src2(src);
             unsigned long gi(0);
-            for (unsigned long row(0) ; row < src2.rows() ; ++row)
+            for (unsigned long row(0) ; row < src.rows() ; ++row)
             {
                 Ar[row] = gi;
-                for (unsigned long i(0) ; i < src2[row].used_elements() ; ++i)
+                for (unsigned long i(row * src.threads()), j(0) ; j < src.Arl()[row] ; i+= src.stride(), ++j)
                 {
-                    Ax[gi] = src2[row].elements()[i];
-                    Aj[gi] = src2[row].indices()[i];
-                    ++gi;
+                    for (unsigned long thread(0) ; thread < src.threads() ; ++thread)
+                    {
+                        // check if element in threadblock is a nonzero entry, skip otherwise
+                        /// \todo BUG: empty matrix rows are not detected!
+                        if (! (thread != 0 && src.Aj()[i+thread] == 0))
+                        {
+                            Ax[gi] = src.Ax()[i+thread];
+                            Aj[gi] = src.Aj()[i+thread];
+                            ++gi;
+                        }
+                    }
                 }
             }
-            Ar[src2.rows()] = gi;
+            Ar[src.rows()] = gi;
         }
     };
 
