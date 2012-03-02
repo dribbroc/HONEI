@@ -423,3 +423,9 @@ DefectCSRRegressionTest<float, tags::CPU::Generic> generic_regression_defect_csr
 DefectCSRRegressionTest<double, tags::CPU::Generic> generic_regression_defect_csr_test_double_sparse("Regression CSR double", "l2/area51_full_0.m", "l2/area51_rhs_0");
 DefectCSRRegressionTest<float, tags::CPU::MultiCore::Generic> mc_generic_regression_defect_csr_test_float_sparse("Regression CSR float", "l2/area51_full_0.m", "l2/area51_rhs_0");
 DefectCSRRegressionTest<double, tags::CPU::MultiCore::Generic> mc_generic_regression_defect_csr_test_double_sparse("Regression CSR double", "l2/area51_full_0.m", "l2/area51_rhs_0");
+#ifdef HONEI_CUDA
+DefectCSRRegressionTest<float, tags::GPU::CUDA> cuda_regression_defect_csr_test_float_sparse("Regression CSR float", "l2/area51_full_0.m", "l2/area51_rhs_0");
+#ifdef HONEI_CUDA_DOUBLE
+DefectCSRRegressionTest<double, tags::GPU::CUDA> cuda_regression_defect_csr_test_double_sparse("Regression CSR double", "l2/area51_full_0.m", "l2/area51_rhs_0");
+#endif
+#endif

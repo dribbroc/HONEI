@@ -44,6 +44,12 @@ extern "C"
             unsigned long rows, unsigned long columns, unsigned long num_cols_per_row, unsigned long stride,
             unsigned long blocksize, unsigned long threads);
 
+    void cuda_defect_csr_dv_float(void * rhs, void * result, void * Aj, void * Ax, void * Ar, void * b,
+            unsigned long rows, unsigned long blocksize);
+
+    void cuda_defect_csr_dv_double(void * rhs, void * result, void * Aj, void * Ax, void * Ar, void * b,
+            unsigned long rows, unsigned long blocksize);
+
     void cuda_difference_two_float(void * a, const void * b, unsigned long size, unsigned long blocksize);
     void cuda_difference_two_double(void * a, const void * b, unsigned long size, unsigned long blocksize);
     void cuda_difference_three_float(void * r, const void * a, const void * b, unsigned long size, unsigned long blocksize);

@@ -552,6 +552,12 @@ namespace honei
                 static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & right_hand_side,
                         const SparseMatrixELL<double> & system, const DenseVectorContinuousBase<double> & x);
 
+                static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & right_hand_side,
+                        const SparseMatrixCSR<float> & system, const DenseVectorContinuousBase<float> & x);
+
+                static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & right_hand_side,
+                        const SparseMatrixCSR<double> & system, const DenseVectorContinuousBase<double> & x);
+
             template<typename DT_>
                 static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixELLMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
                 {
