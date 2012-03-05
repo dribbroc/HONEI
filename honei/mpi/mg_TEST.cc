@@ -12,6 +12,7 @@
 #include <honei/la/sparse_matrix_ell.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/mpi/sparse_matrix_ell_mpi.hh>
+#include <honei/mpi/sparse_matrix_csr_mpi.hh>
 #include <honei/mpi/dense_vector_mpi.hh>
 #include <honei/mpi/matrix_io_mpi.hh>
 #include <honei/mpi/vector_io_mpi.hh>
@@ -42,16 +43,16 @@ class MGSolverTest:
 
         virtual void run() const
         {
-            Configuration::instance()->set_value("ell::threads", 2);
+            //Configuration::instance()->set_value("ell::threads", 2);
             Configuration::instance()->set_value("mpi::min_part_size", _min);
 
-            unsigned long max_level(8);
+            unsigned long max_level(9);
             unsigned long min_level(1);
             std::string file(HONEI_SOURCEDIR);
             file += "/honei/math/testdata/";
             file += _file;
 
-            MGData<SparseMatrixELLMPI<double>, DenseVectorMPI<double>, SparseMatrixELLMPI<double>, DenseVectorMPI<double>, double >  data_mpi(MGUtil<Tag_,
+            MGData<SparseMatrixELLMPI<double>, DenseVectorMPI<double>, SparseMatrixELLMPI<double>, DenseVectorMPI<double>, double >  data_ell(MGUtil<Tag_,
                                                                                             SparseMatrixELLMPI<double>,
                                                                                             DenseVectorMPI<double>,
                                                                                             SparseMatrixELLMPI<double>,
@@ -60,11 +61,20 @@ class MGSolverTest:
                                                                                             VectorIOMPI<io_formats::EXP>,
                                                                                             double>::load_data(file, max_level, double(0.7), "jac"));
 
+            MGData<SparseMatrixCSRMPI<double>, DenseVectorMPI<double>, SparseMatrixCSRMPI<double>, DenseVectorMPI<double>, double > data_mpi(data_ell);
+            data_ell.A.clear();
+            data_ell.P.clear();
+            data_ell.b.clear();
+            data_ell.x.clear();
+            data_ell.c.clear();
+            data_ell.d.clear();
+            data_ell.prolmat.clear();
+            data_ell.resmat.clear();
 
             MGUtil<Tag_,
-                SparseMatrixELLMPI<double>,
+                SparseMatrixCSRMPI<double>,
                 DenseVectorMPI<double>,
-                SparseMatrixELLMPI<double>,
+                SparseMatrixCSRMPI<double>,
                 DenseVectorMPI<double>,
                 MatrixIOMPI_ELL<io_formats::ELL>,
                 VectorIOMPI<io_formats::EXP>,
@@ -134,14 +144,9 @@ class MGSolverTest:
             data_mpi.resmat.clear();
         }
 };
-MGSolverTest<tags::CPU::Generic> generic_mg_solver_test("double", "poisson_advanced2/q2_sort_0/", 1);
-#ifdef HONEI_SSE
-MGSolverTest<tags::CPU::SSE> mg0_solver_test_cpu("double", "poisson_advanced2/q2_sort_2/", 1);
-#else
-MGSolverTest<tags::CPU> mg_solver_test_cpu("double", "poisson_advanced2/sort_2/", 1);
-#endif
-#ifdef HONEI_CUDA
-#ifdef HONEI_CUDA_DOUBLE
-MGSolverTest<tags::GPU::CUDA> cuda_mg_solver_test("double", "poisson_advanced2/q2_sort_0/", 1);
-#endif
-#endif
+MGSolverTest<tags::CPU::SSE> mg0_solver_test_cpu1("double", "poisson_advanced2/sort_2/", 1);
+MGSolverTest<tags::CPU::SSE> mg0_solver_test_cpu2("double", "poisson_advanced2/sort_2/", 50);
+MGSolverTest<tags::CPU::SSE> mg0_solver_test_cpu3("double", "poisson_advanced2/sort_2/", 100);
+MGSolverTest<tags::CPU::SSE> mg0_solver_test_cpu4("double", "poisson_advanced2/sort_2/", 500);
+MGSolverTest<tags::CPU::SSE> mg0_solver_test_cpu5("double", "poisson_advanced2/sort_2/", 1000);
+MGSolverTest<tags::CPU::SSE> mg0_solver_test_cpu6("double", "poisson_advanced2/sort_2/", 2000);
