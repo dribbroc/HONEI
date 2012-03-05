@@ -34,6 +34,7 @@
 #include <honei/mpi/operations.hh>
 #include <honei/mpi/dense_vector_mpi-fwd.hh>
 #include <honei/mpi/sparse_matrix_ell_mpi-fwd.hh>
+#include <honei/mpi/sparse_matrix_csr_mpi-fwd.hh>
 
 using namespace honei;
 namespace honei
@@ -420,6 +421,13 @@ namespace honei
                     return result;
                 }
 
+            template<typename DT_>
+                static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixCSRMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
+                {
+                    MPIOps<tags::CPU>::defect(result, right_hand_side, system, x);
+                    return result;
+                }
+
         template <typename DT_>
         static inline BenchmarkInfo get_benchmark_info(const DenseVectorContinuousBase<DT_> & r, const DenseVectorContinuousBase<DT_> & rhs, const SparseMatrixELL<DT_> & a, const DenseVectorContinuousBase<DT_> & b)
         {
@@ -565,6 +573,13 @@ namespace honei
                     return result;
                 }
 
+            template<typename DT_>
+                static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixCSRMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
+                {
+                    MPIOps<tags::GPU::CUDA>::defect(result, right_hand_side, system, x);
+                    return result;
+                }
+
         };
 
     template<>
@@ -645,8 +660,21 @@ namespace honei
 
                     static DenseVector<double> & value(DenseVector<double> & result, const DenseVector<double> & right_hand_side, const SparseMatrixELL<double> & system, const DenseVector<double> & x, unsigned long row_start = 0, unsigned long row_end = 0);
 
+                    template <typename DT_>
+                    static DenseVector<DT_> & value(DenseVector<DT_> & result, const DenseVector<DT_> & right_hand_side, const SparseMatrixCSR<DT_> & system, const DenseVector<DT_> & x, unsigned long row_start = 0, unsigned long row_end = 0)
+                    {
+                        return Defect<tags::CPU::Generic>::value(result, right_hand_side, system, x, row_start, row_end);
+                    }
+
             template<typename DT_>
                 static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixELLMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
+                {
+                    MPIOps<tags::CPU::SSE>::defect(result, right_hand_side, system, x);
+                    return result;
+                }
+
+            template<typename DT_>
+                static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixCSRMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
                 {
                     MPIOps<tags::CPU::SSE>::defect(result, right_hand_side, system, x);
                     return result;
@@ -977,6 +1005,13 @@ namespace honei
 
                     template<typename DT_>
                     static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixELLMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
+                    {
+                        MPIOps<Tag_>::defect(result, right_hand_side, system, x);
+                        return result;
+                    }
+
+                    template<typename DT_>
+                    static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixCSRMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
                     {
                         MPIOps<Tag_>::defect(result, right_hand_side, system, x);
                         return result;

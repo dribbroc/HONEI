@@ -44,6 +44,7 @@
 #include <honei/mpi/operations.hh>
 #include <honei/mpi/dense_vector_mpi-fwd.hh>
 #include <honei/mpi/sparse_matrix_ell_mpi-fwd.hh>
+#include <honei/mpi/sparse_matrix_csr_mpi-fwd.hh>
 
 #include <cmath>
 
@@ -1204,6 +1205,13 @@ namespace honei
             return r;
         }
 
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const SparseMatrixCSRMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
+        {
+            MPIOps<tags::CPU>::product(r, a, b);
+            return r;
+        }
+
         template<typename DT_>
         static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
         {
@@ -1671,6 +1679,13 @@ namespace honei
             return r;
         }
 
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const SparseMatrixCSRMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
+        {
+            MPIOps<tags::GPU::CUDA>::product(r, a, b);
+            return r;
+        }
+
         template<typename DT_>
         static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
         {
@@ -1784,6 +1799,13 @@ namespace honei
         static DenseVector<double> & value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b,
                 unsigned long row_start = 0, unsigned long row_end = 0);
 
+        template <typename DT_>
+        static DenseVector<DT_> & value(DenseVector<DT_> & result, const SparseMatrixCSR<DT_> & a, const DenseVector<DT_> & b,
+                unsigned long row_start = 0, unsigned long row_end = 0)
+        {
+            return Product<tags::CPU::Generic>::value(result, a, b, row_start, row_end);
+        }
+
         template<typename DT1_, typename DT2_>
         static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
         {
@@ -1793,6 +1815,13 @@ namespace honei
 
         template <typename DT_>
         static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
+        {
+            MPIOps<tags::CPU::SSE>::product(r, a, b);
+            return r;
+        }
+
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const SparseMatrixCSRMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
         {
             MPIOps<tags::CPU::SSE>::product(r, a, b);
             return r;
@@ -2065,6 +2094,13 @@ namespace honei
 
             template <typename DT_>
             static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
+            {
+                MPIOps<Tag_>::product(r, a, b);
+                return r;
+            }
+
+            template <typename DT_>
+            static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const SparseMatrixCSRMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
             {
                 MPIOps<Tag_>::product(r, a, b);
                 return r;

@@ -234,12 +234,12 @@ class RISolverTestSparseCSR:
         }
 };
 #ifdef HONEI_SSE
-RISolverTestSparseCSR<tags::CPU::SSE, double> ris_test_double_sparse_csr("double", "A_3.csr", "rhs_3", "sol_3", "init_3");
+RISolverTestSparseCSR<tags::CPU::SSE, double> ris_test_double_sparse_csr("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
 #else
-RISolverTestSparseCSR<tags::CPU, double> ris_test_double_sparse_csr("double", "A_3.csr", "rhs_3", "sol_3", "init_3");
+RISolverTestSparseCSR<tags::CPU, double> ris_test_double_sparse_csr("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
-RISolverTestSparseCSR<tags::GPU::CUDA, double> cuda_ris_test_double_sparse_csr("double", "A_3.csr", "rhs_3", "sol_3", "init_3");
+RISolverTestSparseCSR<tags::GPU::CUDA, double> cuda_ris_test_double_sparse_csr("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
 #endif
 #endif
