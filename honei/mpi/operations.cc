@@ -31,9 +31,6 @@
 #include <honei/la/sum.hh>
 #include <honei/la/difference.hh>
 #include <honei/la/element_product.hh>
-#ifdef HONEI_CUDA
-#include <honei/backends/cuda/transfer.hh>
-#endif
 
 using namespace honei;
 
@@ -179,7 +176,8 @@ void MPIOps<tags::GPU::CUDA>::product(DenseVectorMPI<DT_> & r, const MT_ & a, co
     std::vector<MPI_Request> send_requests;
     std::vector<MPI_Request> recv_requests;
 
-    DT_ * missing_values_array = (DT_*)cuda_malloc_host(a.outer_matrix().columns() * sizeof(DT_));
+    DenseVector<DT_> missing_values(a.outer_matrix().columns());
+    DT_ * missing_values_array(missing_values.elements());
     // empfange alle fehlenden werte
     unsigned long g_size(0);
     for (unsigned long i(0) ; i < a.recv_ranks().size() ; ++i)
@@ -191,9 +189,8 @@ void MPIOps<tags::GPU::CUDA>::product(DenseVectorMPI<DT_> & r, const MT_ & a, co
     // sende alle werte, die anderen fehlen
     g_size = 0;
     DT_ * send_data = new DT_[a.send_size()];
-    DT_ * b_cpu = (DT_*)cuda_malloc_host(b.local_size() * sizeof(DT_));
-    void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    cuda_download(b_gpu, b_cpu, b.local_size() * sizeof(DT_));
+    b.lock(lm_read_only);
+    DT_ * b_cpu(b.elements());
     for (unsigned long i(0) ; i < a.send_ranks().size() ; ++i)
     {
         unsigned long g_end(g_size + a.send_sizes().at(i));
@@ -208,10 +205,8 @@ void MPIOps<tags::GPU::CUDA>::product(DenseVectorMPI<DT_> & r, const MT_ & a, co
 
     MPI_Waitall(recv_requests.size(), &recv_requests[0], MPI_STATUSES_IGNORE);
     recv_requests.clear();
-    DenseVector<DT_> missing_values(a.outer_matrix().columns());
-    void * missing_values_gpu(missing_values.lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    cuda_upload(missing_values_array, missing_values_gpu, missing_values.size() * sizeof(DT_));
-    missing_values.unlock(lm_write_only);
+    missing_values.lock(lm_read_only, tags::GPU::CUDA::memory_value);
+    missing_values.unlock(lm_read_only);
 
     // berechne aeussere anteile
     DenseVector<DT_> r_outer(r.local_size());
@@ -220,8 +215,6 @@ void MPIOps<tags::GPU::CUDA>::product(DenseVectorMPI<DT_> & r, const MT_ & a, co
 
     MPI_Waitall(send_requests.size(), &send_requests[0], MPI_STATUSES_IGNORE);
     send_requests.clear();
-    cuda_free_host(missing_values_array);
-    cuda_free_host(b_cpu);
     delete[] send_data;
 }
 #endif
@@ -288,7 +281,8 @@ void MPIOps<tags::GPU::CUDA>::defect(DenseVectorMPI<DT_> & r, const DenseVectorM
     std::vector<MPI_Request> send_requests;
     std::vector<MPI_Request> recv_requests;
 
-    DT_ * missing_values_array = (DT_*)cuda_malloc_host(a.outer_matrix().columns() * sizeof(DT_));
+    DenseVector<DT_> missing_values(a.outer_matrix().columns());
+    DT_ * missing_values_array(missing_values.elements());
     // empfange alle fehlenden werte
     unsigned long g_size(0);
     for (unsigned long i(0) ; i < a.recv_ranks().size() ; ++i)
@@ -300,9 +294,8 @@ void MPIOps<tags::GPU::CUDA>::defect(DenseVectorMPI<DT_> & r, const DenseVectorM
     // sende alle werte, die anderen fehlen
     g_size = 0;
     DT_ * send_data = new DT_[a.send_size()];
-    DT_ * b_cpu = (DT_*)cuda_malloc_host(b.local_size() * sizeof(DT_));
-    void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-    cuda_download(b_gpu, b_cpu, b.local_size() * sizeof(DT_));
+    b.lock(lm_read_only);
+    DT_ * b_cpu(b.elements());
     for (unsigned long i(0) ; i < a.send_ranks().size() ; ++i)
     {
         unsigned long g_end(g_size + a.send_sizes().at(i));
@@ -317,10 +310,8 @@ void MPIOps<tags::GPU::CUDA>::defect(DenseVectorMPI<DT_> & r, const DenseVectorM
 
     MPI_Waitall(recv_requests.size(), &recv_requests[0], MPI_STATUSES_IGNORE);
     recv_requests.clear();
-    DenseVector<DT_> missing_values(a.outer_matrix().columns());
-    void * missing_values_gpu(missing_values.lock(lm_write_only, tags::GPU::CUDA::memory_value));
-    cuda_upload(missing_values_array, missing_values_gpu, missing_values.size() * sizeof(DT_));
-    missing_values.unlock(lm_write_only);
+    missing_values.lock(lm_read_only, tags::GPU::CUDA::memory_value);
+    missing_values.unlock(lm_read_only);
 
     // berechne aeussere anteile
     DenseVector<DT_> r_outer(r.local_size());
@@ -329,8 +320,6 @@ void MPIOps<tags::GPU::CUDA>::defect(DenseVectorMPI<DT_> & r, const DenseVectorM
 
     MPI_Waitall(send_requests.size(), &send_requests[0], MPI_STATUSES_IGNORE);
     send_requests.clear();
-    cuda_free_host(missing_values_array);
-    cuda_free_host(b_cpu);
     delete[] send_data;
 }
 #endif

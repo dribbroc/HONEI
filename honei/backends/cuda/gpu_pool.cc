@@ -139,4 +139,6 @@ void GPUPool::single_start(int device)
     GPUFunction * tobj = new GPUFunction(device, mutexe.at(0), barriers.at(0), (tasks.at(0)));
     Thread * t = new Thread(*tobj);
     threads.push_back(std::make_pair(t, tobj));
+
+    cuda_set_device(device);
 }

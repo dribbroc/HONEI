@@ -40,6 +40,9 @@
 #include <cmath>
 #include <iostream>
 
+#ifdef HONEI_CUDA
+#include <honei/backends/cuda/gpu_pool.hh>
+#endif
 
 using namespace honei;
 using namespace tests;
@@ -58,6 +61,10 @@ class ScaledSumMPITest :
 
         virtual void run() const
         {
+#ifdef HONEI_CUDA
+            //cuda::GPUPool::instance()->single_start(mpi::mpi_comm_rank());
+#endif
+
             DenseVector<DT_> rs(4711, DT_(42));
             DenseVector<DT_> xs(4711);
             DenseVector<DT_> ys(4711);
@@ -72,8 +79,12 @@ class ScaledSumMPITest :
             DenseVectorMPI<DT_> y(ys);
 
 
-            ScaledSum<tags::CPU::SSE>::value(r, x, y, DT_(5));
-            ScaledSum<tags::CPU::SSE>::value(rs, xs, ys, DT_(5));
+            r.lock(lm_read_only);
+            rs.lock(lm_read_only);
+            rs.unlock(lm_read_only);
+            r.unlock(lm_read_only);
+            ScaledSum<Tag_>::value(r, x, y, DT_(5));
+            ScaledSum<Tag_>::value(rs, xs, ys, DT_(5));
 
             for (unsigned long i(0) ; i < r.local_size() ; ++i)
                 TEST_CHECK_EQUAL(r[i], rs[i + r.offset()]);
@@ -112,8 +123,12 @@ class ScaleMPITest :
             DenseVectorMPI<DT_> x(xs);
 
 
-            Scale<tags::CPU::SSE>::value(x, 3.12);
-            Scale<tags::CPU::SSE>::value(xs, 3.12);
+            x.lock(lm_read_only);
+            xs.lock(lm_read_only);
+            xs.unlock(lm_read_only);
+            x.unlock(lm_read_only);
+            Scale<Tag_>::value(x, 3.12);
+            Scale<Tag_>::value(xs, 3.12);
 
             for (unsigned long i(0) ; i < x.local_size() ; ++i)
                 TEST_CHECK_EQUAL(x[i], xs[i + x.offset()]);
@@ -155,9 +170,13 @@ class SumMPITest :
             DenseVectorMPI<DT_> y(ys);
 
 
-            Sum<tags::CPU::SSE>::value(x, y);
-            Sum<tags::CPU::SSE>::value(xs, ys);
+            Sum<Tag_>::value(x, y);
+            Sum<Tag_>::value(xs, ys);
 
+            x.lock(lm_read_only);
+            xs.lock(lm_read_only);
+            xs.unlock(lm_read_only);
+            x.unlock(lm_read_only);
             for (unsigned long i(0) ; i < x.local_size() ; ++i)
                 TEST_CHECK_EQUAL(x[i], xs[i + x.offset()]);
         }
@@ -200,9 +219,13 @@ class DifferenceMPITest :
             DenseVectorMPI<DT_> y(ys);
 
 
-            Difference<tags::CPU::SSE>::value(r, x, y);
-            Difference<tags::CPU::SSE>::value(rs, xs, ys);
+            Difference<Tag_>::value(r, x, y);
+            Difference<Tag_>::value(rs, xs, ys);
 
+            r.lock(lm_read_only);
+            rs.lock(lm_read_only);
+            r.unlock(lm_read_only);
+            rs.unlock(lm_read_only);
             for (unsigned long i(0) ; i < r.local_size() ; ++i)
                 TEST_CHECK_EQUAL(r[i], rs[i + r.offset()]);
         }
@@ -245,8 +268,12 @@ class ElementProductMPITest :
             DenseVectorMPI<DT_> y(ys);
 
 
-            ElementProduct<tags::CPU::SSE>::value(r, x, y);
-            ElementProduct<tags::CPU::SSE>::value(rs, xs, ys);
+            r.lock(lm_read_only);
+            rs.lock(lm_read_only);
+            r.unlock(lm_read_only);
+            rs.unlock(lm_read_only);
+            ElementProduct<Tag_>::value(r, x, y);
+            ElementProduct<Tag_>::value(rs, xs, ys);
 
             for (unsigned long i(0) ; i < x.local_size() ; ++i)
                 TEST_CHECK_EQUAL(r[i], rs[i + x.offset()]);
@@ -387,6 +414,10 @@ class DefectMPITest :
             Defect<Tag_>::value(r, b, a, x);
             Defect<Tag_>::value(r, b, a, x);
 
+            rs.lock(lm_read_only);
+            r.lock(lm_read_only);
+            rs.lock(lm_read_only);
+            rs.unlock(lm_read_only);
             for (unsigned long i(0) ; i < r.local_size() ; ++i)
                 TEST_CHECK_EQUAL_WITHIN_EPS(r[i], rs[i + r.offset()], 1e-11);
         }
@@ -417,7 +448,7 @@ class SPMVMPITest :
         {
             MPI_Barrier(MPI_COMM_WORLD);
             std::string dir(HONEI_SOURCEDIR);
-            std::string file (dir + "/honei/math/testdata/poisson_advanced2/q2_sort_0/");
+            std::string file (dir + "/honei/math/testdata/poisson_advanced4/sort_0/");
             file += "prol_4";
             file += ".ell";
             SparseMatrixELL<DT_> aell(MatrixIO<io_formats::ELL>::read_matrix(file, DT_(0)));
@@ -439,15 +470,27 @@ class SPMVMPITest :
             Product<Tag_>::value(rs, aell, xs);
             MPI_Barrier(MPI_COMM_WORLD);
             at.take();
-            Product<Tag_>::value(rs, aell, xs);
+            for (unsigned long i(0) ; i < 100 ; ++i)
+            {
+                Product<Tag_>::value(rs, aell, xs);
+            }
+#ifdef HONEI_CUDA
+            cuda::GPUPool::instance()->flush();
+#endif
             bt.take();
-            MPI_Barrier(MPI_COMM_WORLD);
             Product<Tag_>::value(r, a, x);
             MPI_Barrier(MPI_COMM_WORLD);
             ct.take();
-            Product<Tag_>::value(r, a, x);
+            for (unsigned long i(0) ; i < 100 ; ++i)
+            {
+                Product<Tag_>::value(r, a, x);
+            }
+#ifdef HONEI_CUDA
+            cuda::GPUPool::instance()->flush();
+#endif
             dt.take();
-            std::cout<<bt.total()-at.total()<<" "<<dt.total()-ct.total()<<std::endl;
+            MPI_Barrier(MPI_COMM_WORLD);
+            std::cout<<"serial: "<<bt.total()-at.total()<<" parallel: "<<dt.total()-ct.total()<<std::endl;
 
             r.lock(lm_read_only);
             r.unlock(lm_read_only);
@@ -455,7 +498,7 @@ class SPMVMPITest :
             rs.unlock(lm_read_only);
             for (unsigned long i(0) ; i < r.local_size() ; ++i)
             {
-                TEST_CHECK_EQUAL_WITHIN_EPS(r[i], rs[i + r.offset()], 1e-11);
+                TEST_CHECK_EQUAL_WITHIN_EPS(r[i], rs[i + r.offset()], 1e-9);
             }
         }
 };
