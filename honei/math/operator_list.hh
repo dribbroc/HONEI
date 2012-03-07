@@ -66,6 +66,11 @@ namespace honei
                 _imp->_ops.push_back(op);
             }
 
+            void erase(unsigned long i)
+            {
+                _imp->_ops.erase(_imp->_ops.begin() + i);
+            }
+
             void value()
             {
                 CONTEXT("When running OperatorList::value():");

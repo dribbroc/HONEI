@@ -262,11 +262,11 @@ class MGSolverTest:
                 SparseMatrixELL<DT_>,
                 io_formats::ELL,
                 io_formats::EXP,
-                DT_>::configure(data, 100, 100, 8, 8, min_level, DT_(1e-8));
+                DT_>::configure(data, 100, 10, 8, 8, min_level, DT_(1e-8));
 
             OperatorList ol(
                     MGCycleCreation<Tag_,
-                    methods::CYCLE::FMG::W::STATIC,
+                    methods::CYCLE::FMG::V::STATIC,
                     BiCGStabSolver<Tag_, methods::VAR>,
                     //SuperLU,
                     RISmoother<Tag_>,
@@ -287,8 +287,8 @@ class MGSolverTest:
 
             MGSolver<Tag_, Norm<vnt_l_two, true, Tag_> >::value(data, ol);
 
-            std::cout << data.used_iters << std::endl;
-            std::cout << data.used_iters_coarse << std::endl;
+            std::cout << "Used iters (MG): " << data.used_iters << std::endl;
+            std::cout << "Used iters (coarse): " << data.used_iters_coarse << std::endl;
 
             std::string reffile(HONEI_SOURCEDIR);
             reffile += "/honei/math/testdata/";

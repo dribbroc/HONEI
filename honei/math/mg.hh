@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2011 Markus Geveler <apryde@gmx.de>
+ * Copyright (c) 2011-2012 Markus Geveler <apryde@gmx.de>
  *
  * This file is part of the MATH C++ library. LibMath is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -318,6 +318,17 @@ namespace honei
                         target.push_back(current_P);
                 }
         };
+
+    template<typename Tag_, typename VectorType_>
+    void remove_redundant_operators(OperatorList & ol)
+    {
+        for(unsigned long i(1) ; i < ol.size() ; ++i)
+        {
+            if(typeid(*ol[i]) == typeid(*ol[i - 1]))
+                //if(!(typeid(*ol[i]) == typeid(FillOperator<Tag_, VectorType_>)))
+                    ol.erase(i);
+        }
+    }
 
     void print_cycle(OperatorList & ol, unsigned long max_level, unsigned long min_level)
     {
@@ -751,6 +762,7 @@ namespace honei
 
                         OperatorList cycle;
                         _build_cycle(data.x, data.b, data.A.size(), cycle, data);
+                        //remove_redundant_operators<Tag_, VectorType_>(cycle);
                         return cycle;
                     }
         };
@@ -918,6 +930,7 @@ namespace honei
 
                         OperatorList cycle;
                         _build_cycle_F(data.x, data.b, data.A.size(), cycle, data);
+                        //remove_redundant_operators<Tag_, VectorType_>(cycle);
                         return cycle;
                     }
         };
@@ -1087,6 +1100,7 @@ namespace honei
 
                         OperatorList cycle;
                         _build_cycle_F(data.x, data.b, data.A.size(), cycle, data);
+                        //remove_redundant_operators<Tag_, VectorType_>(cycle);
                         return cycle;
                     }
         };
@@ -1168,8 +1182,6 @@ namespace honei
                                         data.P.at(MGDataIndex::internal_index_A(level)),
                                         b.at(MGDataIndex::internal_index_A(level)),
                                         x.at(MGDataIndex::internal_index_A(level)),
-                                        //data.temp_0.at(MGDataIndex::internal_index_A(level)),
-                                        //data.temp_1.at(MGDataIndex::internal_index_A(level)),
                                         data.smoother_temp.at(MGDataIndex::internal_index_A(level)),
                                         data.n_post_smooth) );
                         }
@@ -1185,26 +1197,6 @@ namespace honei
                     {
                         if(level == (data.min_level))
                         {
-                            if(data.down_sweep)
-                            {
-                                data.down_sweep = false;
-                                //std::cout << "Solver Accessing " << data.min_level << std::endl;
-                                cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_, DataType_>(
-                                            data.A.at(MGDataIndex::internal_index_A(data.min_level)),
-                                            data.P.at(MGDataIndex::internal_index_A(data.min_level)),
-                                            data.b.at(MGDataIndex::internal_index_A(data.min_level)),
-                                            data.x.at(MGDataIndex::internal_index_A(data.min_level)),
-                                            data.max_iters_coarse_FMG,
-                                            data.used_iters_coarse,
-                                            data.eps_relative) );
-
-                                //std::cout << "Defect Accessing " << level << std::endl;
-                                cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(
-                                            data.d.at(MGDataIndex::internal_index_A(level)),
-                                            data.b.at(MGDataIndex::internal_index_A(level)),
-                                            data.A.at(MGDataIndex::internal_index_A(level)),
-                                            data.x.at(MGDataIndex::internal_index_A(level))));
-                            }
                             //std::cout << "Solver Accessing " << data.min_level << std::endl;
                             cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_, DataType_>(
                                         data.A.at(MGDataIndex::internal_index_A(data.min_level)),
@@ -1217,35 +1209,18 @@ namespace honei
                         }
                         else
                         {
-                            if(!data.down_sweep)
-                            {
-                                ///Presmoothing
-                                //std::cout << "Smoother Accessing " << level << std::endl;
-                                cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
-                                            data.A.at(MGDataIndex::internal_index_A(level)),
-                                            data.P.at(MGDataIndex::internal_index_A(level)),
-                                            b.at(MGDataIndex::internal_index_A(level)),
-                                            x.at(MGDataIndex::internal_index_A(level)),
-                                            //data.temp_0.at(MGDataIndex::internal_index_A(level)),
-                                            //data.temp_1.at(MGDataIndex::internal_index_A(level)),
-                                            data.smoother_temp.at(MGDataIndex::internal_index_A(level)),
-                                            data.n_pre_smooth) );
-
-
-                                ///Defect
-                                //std::cout << "Defect Accessing " << level << std::endl;
-                                cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(data.store.at(MGDataIndex::internal_index_A(level)), b.at(MGDataIndex::internal_index_A(level)), data.A.at(MGDataIndex::internal_index_A(level)), x.at(MGDataIndex::internal_index_A(level))));
-                                ///Restriction
-                                //std::cout << " Restrict Accessing " << level << std::endl;
-                                //std::cout << " Restrict Accessing " << level - 1 << std::endl;
-                                cycle.push_back(new TransferOperator<ResType_, TransferContType_, VectorType_>(data.d.at(MGDataIndex::internal_index_A(level - 1)) , data.store.at(MGDataIndex::internal_index_A(level)), data.resmat.at(MGDataIndex::internal_index_Prol(level))));
-                            }
+                            ///Defect
+                            //std::cout << "Defect Accessing " << level << std::endl;
+                            cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(data.store.at(MGDataIndex::internal_index_A(level)), b.at(MGDataIndex::internal_index_A(level)), data.A.at(MGDataIndex::internal_index_A(level)), x.at(MGDataIndex::internal_index_A(level))));
+                            ///Restriction
+                            //std::cout << " Restrict Accessing " << level << std::endl;
+                            //std::cout << " Restrict Accessing " << level - 1 << std::endl;
+                            cycle.push_back(new TransferOperator<ResType_, TransferContType_, VectorType_>(data.d.at(MGDataIndex::internal_index_A(level - 1)) , data.store.at(MGDataIndex::internal_index_A(level)), data.resmat.at(MGDataIndex::internal_index_Prol(level))));
 
                             ///Recursion
                             ///all vectors in c have to be initialised with 0
                             cycle.push_back(new FillOperator<Tag_, VectorType_>(data.c.at(MGDataIndex::internal_index_A(level - 1))));
                             _build_cycle_F(data.c, data.d, level - 1, cycle, data);
-                            _build_cycle_V(data.c, data.d, level - 1, cycle, data);
 
                             ///Prolongation
                             //std::cout << "Prol Accessing " << level << std::endl;
@@ -1254,20 +1229,9 @@ namespace honei
                             //std::cout << "Sum Accessing " << level << std::endl;
                             cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(MGDataIndex::internal_index_A(level)), data.store.at(MGDataIndex::internal_index_A(level))));
 
-                            ///Postsmoothing
-                            //std::cout << "Smoother Accessing " << level << std::endl;
-                            cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
-                                        data.A.at(MGDataIndex::internal_index_A(level)),
-                                        data.P.at(MGDataIndex::internal_index_A(level)),
-                                        b.at(MGDataIndex::internal_index_A(level)),
-                                        x.at(MGDataIndex::internal_index_A(level)),
-                                        //data.temp_0.at(MGDataIndex::internal_index_A(level)),
-                                        //data.temp_1.at(MGDataIndex::internal_index_A(level)),
-                                        data.smoother_temp.at(MGDataIndex::internal_index_A(level)),
-                                        data.n_post_smooth) );
                         }
+                        _build_cycle_V(x, b, level, cycle, data);
                     }
-
             public:
                 template<typename MatrixType_, typename VectorType_, typename TransferContType_, typename PreconContType_>
                     static OperatorList value(MGData<MatrixType_, VectorType_, TransferContType_, PreconContType_, DataType_> & data)
@@ -1278,9 +1242,11 @@ namespace honei
                         data.down_sweep = true;
                         data.max_iters_coarse_FMG = 1000;
                         _build_cycle_F(data.x, data.b, data.A.size(), cycle, data);
+                        //remove_redundant_operators<Tag_, VectorType_>(cycle);
                         return cycle;
                     }
         };
+
     template<typename Tag_,
         typename CoarseGridSolverType_,
         typename SmootherType_,
@@ -1332,7 +1298,7 @@ namespace honei
 
 
                             ///Defect
-                            //std::cout << "Defect Accessing " << level << std::endl;
+                            ////std::cout << "Defect Accessing " << level << std::endl;
                             cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(data.store.at(MGDataIndex::internal_index_A(level)), b.at(MGDataIndex::internal_index_A(level)), data.A.at(MGDataIndex::internal_index_A(level)), x.at(MGDataIndex::internal_index_A(level))));
                             ///Restriction
                             //std::cout << " Restrict Accessing " << level << std::endl;
@@ -1342,19 +1308,19 @@ namespace honei
                             ///Recursion
                             ///all vectors in c have to be initialised with 0
                             cycle.push_back(new FillOperator<Tag_, VectorType_>(data.c.at(MGDataIndex::internal_index_A(level - 1))));
-                            //if (level - 1 != data.min_level)
-                            //    _build_cycle_W(data.c, data.d, level - 1, cycle, data);
+                            if (level - 1 != data.min_level)
+                                _build_cycle_W(data.c, data.d, level - 1, cycle, data);
                             _build_cycle_W(data.c, data.d, level - 1, cycle, data);
 
                             ///Prolongation
                             //std::cout << "Prol Accessing " << level << std::endl;
                             //std::cout << "Prol Accessing " << level - 1 << std::endl;
-                            cycle.push_back(new TransferOperator<ProlType_, TransferContType_, VectorType_>(data.store.at(MGDataIndex::internal_index_A(level)), data.c.at(MGDataIndex::internal_index_A(level - 1)), data.prolmat.at(MGDataIndex::internal_index_Prol(level))));
+                            cycle.push_back(new TransferOperator<ProlType_, TransferContType_, VectorType_>(data.store.at(MGDataIndex::internal_index_A(level)), data.c.at(MGDataIndex::internal_index_A(level - 1)), data.prolmat.at(MGDataIndex::internal_index_Prol((level)))));
                             //std::cout << "Sum Accessing " << level << std::endl;
                             cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(MGDataIndex::internal_index_A(level)), data.store.at(MGDataIndex::internal_index_A(level))));
 
                             ///Postsmoothing
-                            //std::cout << "Smoother Accessing " << level << std::endl;
+                            ////std::cout << "Smoother Accessing " << level << std::endl;
                             cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
                                         data.A.at(MGDataIndex::internal_index_A(level)),
                                         data.P.at(MGDataIndex::internal_index_A(level)),
@@ -1377,26 +1343,6 @@ namespace honei
                     {
                         if(level == (data.min_level))
                         {
-                            if(data.down_sweep)
-                            {
-                                data.down_sweep = false;
-                                //std::cout << "Solver Accessing " << data.min_level << std::endl;
-                                cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_, DataType_>(
-                                            data.A.at(MGDataIndex::internal_index_A(data.min_level)),
-                                            data.P.at(MGDataIndex::internal_index_A(data.min_level)),
-                                            data.b.at(MGDataIndex::internal_index_A(data.min_level)),
-                                            data.x.at(MGDataIndex::internal_index_A(data.min_level)),
-                                            data.max_iters_coarse_FMG,
-                                            data.used_iters_coarse,
-                                            data.eps_relative) );
-
-                                //std::cout << "Defect Accessing " << level << std::endl;
-                                cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(
-                                            data.d.at(MGDataIndex::internal_index_A(level)),
-                                            data.b.at(MGDataIndex::internal_index_A(level)),
-                                            data.A.at(MGDataIndex::internal_index_A(level)),
-                                            data.x.at(MGDataIndex::internal_index_A(level))));
-                            }
                             //std::cout << "Solver Accessing " << data.min_level << std::endl;
                             cycle.push_back(new SolverOperator<CoarseGridSolverType_, MatrixType_, VectorType_, PreconContType_, DataType_>(
                                         data.A.at(MGDataIndex::internal_index_A(data.min_level)),
@@ -1409,35 +1355,18 @@ namespace honei
                         }
                         else
                         {
-                            if(!data.down_sweep)
-                            {
-                                ///Presmoothing
-                                //std::cout << "Smoother Accessing " << level << std::endl;
-                                cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
-                                            data.A.at(MGDataIndex::internal_index_A(level)),
-                                            data.P.at(MGDataIndex::internal_index_A(level)),
-                                            b.at(MGDataIndex::internal_index_A(level)),
-                                            x.at(MGDataIndex::internal_index_A(level)),
-                                            //data.temp_0.at(MGDataIndex::internal_index_A(level)),
-                                            //data.temp_1.at(MGDataIndex::internal_index_A(level)),
-                                            data.smoother_temp.at(MGDataIndex::internal_index_A(level)),
-                                            data.n_pre_smooth) );
-
-
-                                ///Defect
-                                //std::cout << "Defect Accessing " << level << std::endl;
-                                cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(data.store.at(MGDataIndex::internal_index_A(level)), b.at(MGDataIndex::internal_index_A(level)), data.A.at(MGDataIndex::internal_index_A(level)), x.at(MGDataIndex::internal_index_A(level))));
-                                ///Restriction
-                                //std::cout << " Restrict Accessing " << level << std::endl;
-                                //std::cout << " Restrict Accessing " << level - 1 << std::endl;
-                                cycle.push_back(new TransferOperator<ResType_, TransferContType_, VectorType_>(data.d.at(MGDataIndex::internal_index_A(level - 1)) , data.store.at(MGDataIndex::internal_index_A(level)), data.resmat.at(MGDataIndex::internal_index_Prol(level))));
-                            }
+                            ///Defect
+                            //std::cout << "Defect Accessing " << level << std::endl;
+                            cycle.push_back(new DefectOperator<Tag_, MatrixType_, VectorType_>(data.store.at(MGDataIndex::internal_index_A(level)), b.at(MGDataIndex::internal_index_A(level)), data.A.at(MGDataIndex::internal_index_A(level)), x.at(MGDataIndex::internal_index_A(level))));
+                            ///Restriction
+                            //std::cout << " Restrict Accessing " << level << std::endl;
+                            //std::cout << " Restrict Accessing " << level - 1 << std::endl;
+                            cycle.push_back(new TransferOperator<ResType_, TransferContType_, VectorType_>(data.d.at(MGDataIndex::internal_index_A(level - 1)) , data.store.at(MGDataIndex::internal_index_A(level)), data.resmat.at(MGDataIndex::internal_index_Prol(level))));
 
                             ///Recursion
                             ///all vectors in c have to be initialised with 0
                             cycle.push_back(new FillOperator<Tag_, VectorType_>(data.c.at(MGDataIndex::internal_index_A(level - 1))));
                             _build_cycle_F(data.c, data.d, level - 1, cycle, data);
-                            _build_cycle_W(data.c, data.d, level - 1, cycle, data);
 
                             ///Prolongation
                             //std::cout << "Prol Accessing " << level << std::endl;
@@ -1446,18 +1375,8 @@ namespace honei
                             //std::cout << "Sum Accessing " << level << std::endl;
                             cycle.push_back(new SumOperator<Tag_, VectorType_>(x.at(MGDataIndex::internal_index_A(level)), data.store.at(MGDataIndex::internal_index_A(level))));
 
-                            ///Postsmoothing
-                            //std::cout << "Smoother Accessing " << level << std::endl;
-                            cycle.push_back(new SmootherOperator<SmootherType_, MatrixType_, VectorType_, PreconContType_>(
-                                        data.A.at(MGDataIndex::internal_index_A(level)),
-                                        data.P.at(MGDataIndex::internal_index_A(level)),
-                                        b.at(MGDataIndex::internal_index_A(level)),
-                                        x.at(MGDataIndex::internal_index_A(level)),
-                                        //data.temp_0.at(MGDataIndex::internal_index_A(level)),
-                                        //data.temp_1.at(MGDataIndex::internal_index_A(level)),
-                                        data.smoother_temp.at(MGDataIndex::internal_index_A(level)),
-                                        data.n_post_smooth) );
                         }
+                        _build_cycle_W(x, b, level, cycle, data);
                     }
 
             public:
@@ -1470,9 +1389,11 @@ namespace honei
                         data.down_sweep = true;
                         data.max_iters_coarse_FMG = 1000;
                         _build_cycle_F(data.x, data.b, data.A.size(), cycle, data);
+                        //remove_redundant_operators<Tag_, VectorType_>(cycle);
                         return cycle;
                     }
         };
+
 
 
     template<typename Tag_, typename NormType_>
