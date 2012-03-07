@@ -341,6 +341,8 @@ namespace honei
 
             /// \}
 
+            typedef SparseMatrixELL<DT_> LocalType_;
+
             /// Returns our size.
             virtual unsigned long size() const
             {
