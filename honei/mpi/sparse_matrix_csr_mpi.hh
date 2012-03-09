@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et nofoldenable : */
 
 /*
- * Copyright (c) 2012 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
+ * Copyright (c) 2011 Dirk Ribbrock <dirk.ribbrock@uni-dortmund.de>
  *
  * This file is part of the LA C++ library. LibLa is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -56,9 +56,9 @@ namespace honei
             unsigned long _orig_columns;
             bool _active;
 
-            void _init(const SparseMatrix<DT_> & src, MPI_Comm com = MPI_COMM_WORLD)
+            void _init(const SparseMatrix<DT_> & src, unsigned long global_rows, MPI_Comm com = MPI_COMM_WORLD)
             {
-                _orig_rows = src.rows();
+                _orig_rows = global_rows;
                 _orig_columns = src.columns();
                 int irank;
                 mpi::mpi_comm_rank(&irank, com);
@@ -68,11 +68,11 @@ namespace honei
                 _com_size = icom_size;
 
                 unsigned long min_part_size(Configuration::instance()->get_value("mpi::min_part_size", 1));
-                unsigned long pre_part_size(src.rows() / _com_size);
+                unsigned long pre_part_size(global_rows / _com_size);
                 if (pre_part_size >= min_part_size)
                 {
-                    unsigned long part_size(src.rows() / _com_size);
-                    unsigned long rest(src.rows() - (part_size * _com_size));
+                    unsigned long part_size(global_rows / _com_size);
+                    unsigned long rest(global_rows - (part_size * _com_size));
                     if (_rank < rest)
                         ++part_size;
                     _rows = part_size;
@@ -81,7 +81,7 @@ namespace honei
                     unsigned local_offset(0);
                     for (unsigned long i(0) ; i < _rank ; ++i)
                     {
-                        local_offset += src.rows() / _com_size;
+                        local_offset += global_rows / _com_size;
                         if (i < rest)
                             ++local_offset;
                     }
@@ -89,11 +89,11 @@ namespace honei
                 }
                 else
                 {
-                    unsigned long count(src.rows() / min_part_size);
+                    unsigned long count(global_rows / min_part_size);
                     if (count == 0)
                         count = 1;
-                    unsigned long part_size(src.rows() / count);
-                    unsigned long rest(src.rows() - (part_size * count));
+                    unsigned long part_size(global_rows / count);
+                    unsigned long rest(global_rows - (part_size * count));
                     if (_rank < rest)
                         ++part_size;
                     _rows = part_size;
@@ -104,7 +104,7 @@ namespace honei
                     unsigned local_offset(0);
                     for (unsigned long i(0) ; i < _rank ; ++i)
                     {
-                        local_offset += src.rows() / count;
+                        local_offset += global_rows / count;
                         if (i < rest)
                             ++local_offset;
                     }
@@ -156,14 +156,25 @@ namespace honei
                 if (_rows != 0)
                 {
                     _active = true;
-                    // matrix fenster ausschneiden und in src_part speichern
-                    SparseMatrix<DT_> src_part(_rows, _columns);
-                    for (unsigned long row(0) ; row < _rows ; ++row)
+                    SparseMatrix<DT_> src_part(1,1);
+                    if (global_rows == src.rows())
                     {
-                        for (unsigned long i(0) ; i < src[row + _offset].used_elements() ; ++i)
+                        // matrix fenster ausschneiden und in src_part speichern
+                        SparseMatrix<DT_> src_part_new(_rows, _columns);
+                        src_part = src_part_new;
+
+                        for (unsigned long row(0) ; row < _rows ; ++row)
                         {
-                            src_part(row, (src[row + _offset].indices())[i], (src[row + _offset].elements())[i]);
+                            for (unsigned long i(0) ; i < src[row + _offset].used_elements() ; ++i)
+                            {
+                                src_part(row, (src[row + _offset].indices())[i], (src[row + _offset].elements())[i]);
+                            }
                         }
+                    }
+                    else
+                    {
+                        // src matrix übernehmen
+                        src_part = src;
                     }
 
                     // inneren teil ohne abhaengigkeiten in inner speichern
@@ -188,7 +199,7 @@ namespace honei
                             _missing_indices.insert(col);
                     }
 
-                    // outer matrix mit allen abhaengigkeiten nach draussen erstcsren
+                    // outer matrix mit allen abhaengigkeiten nach draussen erstellen
                     if(_missing_indices.size() != 0)
                     {
                         SparseMatrix<DT_> outer_comp(_rows, _missing_indices.size());
@@ -300,13 +311,18 @@ namespace honei
              */
             SparseMatrixCSRMPI(const SparseMatrix<DT_> & src, MPI_Comm com = MPI_COMM_WORLD)
             {
-                _init(src, com);
+                _init(src, src.rows(), com);
+            }
+
+            SparseMatrixCSRMPI(const SparseMatrix<DT_> & src, unsigned long global_rows, MPI_Comm com = MPI_COMM_WORLD)
+            {
+                _init(src, global_rows, com);
             }
 
             SparseMatrixCSRMPI(const SparseMatrixCSR<DT_> & src, MPI_Comm com = MPI_COMM_WORLD)
             {
                 SparseMatrix<DT_> t(src);
-                _init(t, com);
+                _init(t, t.rows(), com);
             }
 
 
