@@ -507,14 +507,27 @@ namespace honei
      * Compares if corresponding elements of two dense vectors are equal
      * within machine precision.
      */
-    template <typename DT_> bool operator== (const SparseMatrixELLMPI<DT_> & a, const SparseMatrixELLMPI<DT_> & b);
+    template <typename DT_> bool operator== (const SparseMatrixELLMPI<DT_> & a, const SparseMatrixELLMPI<DT_> & b)
+    {
+        return (a.inner_matrix() == b.inner_matrix() &&
+                a.outer_matrix() == b.outer_matrix() &&
+                a.rows() == b.rows() &&
+                a.columns() == b.columns() &&
+                a.offset() == b.offset() &&
+                a.x_offset() == b.x_offset());
+    }
 
     /**
      * Output operator for SparseMatrixELLMPI.
      *
      * Outputs a dense vector to an output stream.
      */
-    template <typename DT_> std::ostream & operator<< (std::ostream & lhs, const SparseMatrixELLMPI<DT_> & vector);
+    template <typename DT_> std::ostream & operator<< (std::ostream & lhs, const SparseMatrixELLMPI<DT_> & matrix)
+    {
+        (void) matrix;
+        lhs << "TODO implement mpi output operator!"<<std::endl;
+        return lhs;
+    }
 
     /*extern template class SparseMatrixELLMPI<float>;
 

@@ -61,7 +61,7 @@ class SparseMatrixELLMPIQuickTest :
             SparseMatrixELLMPI<DT_> sm1(sm0);
             SparseMatrixELLMPI<DT_> sm2(sm1.copy());
 
-            //TEST_CHECK_EQUAL(sm2, sm0);
+            TEST_CHECK_EQUAL(sm2, sm0);
 
             for (unsigned long i(0) ; i < sm2.local_rows() ; ++i)
                 for (unsigned long j(0) ; j < sm2.columns() ; ++j)
@@ -94,7 +94,8 @@ class SparseMatrixPartELLMPIQuickTest :
             SparseMatrixELLMPI<DT_> sm0(as, mpi::mpi_comm_size() * as.rows());
             SparseMatrixELLMPI<DT_> sm1(sm0);
             SparseMatrixELLMPI<DT_> sm2(sm1.copy());
-            //TEST_CHECK_EQUAL(sm2, sm0);
+
+            TEST_CHECK_EQUAL(sm2, sm0);
 
             for (unsigned long i(0) ; i < sm2.local_rows() ; ++i)
                 for (unsigned long j(0) ; j < sm2.columns() ; ++j)

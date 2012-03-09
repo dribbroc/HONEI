@@ -23,7 +23,7 @@
 
 #include <honei/util/tags.hh>
 #include <honei/util/configuration.hh>
-#include <honei/la/sparse_matrix_csr.hh>
+#include <honei/la/sparse_matrix_ell.hh>
 #include <honei/la/sparse_matrix.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/backends/mpi/operations.hh>
@@ -507,14 +507,27 @@ namespace honei
      * Compares if corresponding elements of two dense vectors are equal
      * within machine precision.
      */
-    template <typename DT_> bool operator== (const SparseMatrixCSRMPI<DT_> & a, const SparseMatrixCSRMPI<DT_> & b);
+    template <typename DT_> bool operator== (const SparseMatrixCSRMPI<DT_> & a, const SparseMatrixCSRMPI<DT_> & b)
+    {
+        return (a.inner_matrix() == b.inner_matrix() &&
+                a.outer_matrix() == b.outer_matrix() &&
+                a.rows() == b.rows() &&
+                a.columns() == b.columns() &&
+                a.offset() == b.offset() &&
+                a.x_offset() == b.x_offset());
+    }
 
     /**
      * Output operator for SparseMatrixCSRMPI.
      *
      * Outputs a dense vector to an output stream.
      */
-    template <typename DT_> std::ostream & operator<< (std::ostream & lhs, const SparseMatrixCSRMPI<DT_> & vector);
+    template <typename DT_> std::ostream & operator<< (std::ostream & lhs, const SparseMatrixCSRMPI<DT_> & matrix)
+    {
+        (void) matrix;
+        lhs << "TODO implement mpi output operator!"<<std::endl;
+        return lhs;
+    }
 
     /*extern template class SparseMatrixCSRMPI<float>;
 
