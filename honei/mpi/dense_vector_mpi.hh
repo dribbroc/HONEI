@@ -39,20 +39,43 @@ namespace honei
 
         public:
 
-            /// Constructors
-            /// \{
-
-            /**
-             * Constructor.
-             *
-             * \param src The src for the new dense vector.
-             */
-            DenseVectorMPI(const DenseVector<DT_> & src,  MPI_Comm com = MPI_COMM_WORLD) :
-                _orig_size(src.size()),
-                _rank(mpi::mpi_comm_rank(com)),
-                _com_size(mpi::mpi_comm_size(com))
+            static unsigned long calc_size(unsigned long _orig_size, MPI_Comm com = MPI_COMM_WORLD)
             {
                 unsigned long size;
+                unsigned long _rank(mpi::mpi_comm_rank(com));
+                unsigned long _com_size(mpi::mpi_comm_size(com));
+
+                unsigned long min_part_size(Configuration::instance()->get_value("mpi::min_part_size", 1));
+                unsigned long pre_part_size(_orig_size / _com_size);
+                if (pre_part_size >= min_part_size)
+                {
+                    unsigned long part_size(pre_part_size);
+                    unsigned long rest(_orig_size - (part_size * _com_size));
+                    if (_rank < rest)
+                        ++part_size;
+                    return part_size;
+                }
+                else
+                {
+                    unsigned long count(_orig_size / min_part_size);
+                    if (count == 0)
+                        count = 1;
+                    unsigned long part_size(_orig_size / count);
+                    unsigned long rest(_orig_size - (part_size * count));
+                    if (_rank < rest)
+                        ++part_size;
+                    size = part_size;
+                    if (_rank >= count)
+                        size = 0;
+                    return size;
+                }
+            }
+
+            static unsigned long calc_offset(unsigned long _orig_size, MPI_Comm com = MPI_COMM_WORLD)
+            {
+                unsigned long size;
+                unsigned long _rank(mpi::mpi_comm_rank(com));
+                unsigned long _com_size(mpi::mpi_comm_size(com));
 
                 unsigned long min_part_size(Configuration::instance()->get_value("mpi::min_part_size", 1));
                 unsigned long pre_part_size(_orig_size / _com_size);
@@ -71,7 +94,7 @@ namespace honei
                         if (i < rest)
                             ++local_offset;
                     }
-                    _offset = local_offset;
+                    return local_offset;
                 }
                 else
                 {
@@ -93,8 +116,25 @@ namespace honei
                         if (i < rest)
                             ++local_offset;
                     }
-                    _offset = local_offset;
+                    return local_offset;
                 }
+            }
+
+            /// Constructors
+            /// \{
+
+            /**
+             * Constructor.
+             *
+             * \param src The src for the new dense vector.
+             */
+            DenseVectorMPI(const DenseVector<DT_> & src,  MPI_Comm com = MPI_COMM_WORLD) :
+                _orig_size(src.size()),
+                _rank(mpi::mpi_comm_rank(com)),
+                _com_size(mpi::mpi_comm_size(com))
+            {
+                unsigned long size = calc_size(_orig_size, com);
+                _offset = calc_offset(_orig_size, com);
 
                 _vector.reset(new DenseVector<DT_>(size));
                 for (unsigned long i(0) ; i < size ; ++i)
@@ -113,51 +153,26 @@ namespace honei
                 _rank(mpi::mpi_comm_rank(com)),
                 _com_size(mpi::mpi_comm_size(com))
         {
-            unsigned long size;
-
-            unsigned long min_part_size(Configuration::instance()->get_value("mpi::min_part_size", 1));
-            unsigned long pre_part_size(_orig_size / _com_size);
-            if (pre_part_size >= min_part_size)
-            {
-                unsigned long part_size(pre_part_size);
-                unsigned long rest(_orig_size - (part_size * _com_size));
-                if (_rank < rest)
-                    ++part_size;
-                size = part_size;
-
-                unsigned local_offset(0);
-                for (unsigned long i(0) ; i < _rank ; ++i)
-                {
-                    local_offset += _orig_size / _com_size;
-                    if (i < rest)
-                        ++local_offset;
-                }
-                _offset = local_offset;
-            }
-            else
-            {
-                unsigned long count(_orig_size / min_part_size);
-                if (count == 0)
-                    count = 1;
-                unsigned long part_size(_orig_size / count);
-                unsigned long rest(_orig_size - (part_size * count));
-                if (_rank < rest)
-                    ++part_size;
-                size = part_size;
-                if (_rank >= count)
-                    size = 0;
-
-                unsigned local_offset(0);
-                for (unsigned long i(0) ; i < _rank ; ++i)
-                {
-                    local_offset += _orig_size / count;
-                    if (i < rest)
-                        ++local_offset;
-                }
-                _offset = local_offset;
-            }
+                unsigned long size = calc_size(_orig_size, com);
+                _offset = calc_offset(_orig_size, com);
 
             _vector.reset(new DenseVector<DT_>(size));
+        }
+
+            /**
+             * Constructor.
+             *
+             * \param size Size of the new dense vector.
+             */
+            DenseVectorMPI(unsigned long src_size,  DT_ value, MPI_Comm com = MPI_COMM_WORLD) :
+                _orig_size(src_size),
+                _rank(mpi::mpi_comm_rank(com)),
+                _com_size(mpi::mpi_comm_size(com))
+        {
+                unsigned long size = calc_size(_orig_size, com);
+                _offset = calc_offset(_orig_size, com);
+
+            _vector.reset(new DenseVector<DT_>(size, value));
         }
 
 

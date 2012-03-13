@@ -26,6 +26,7 @@
 #include <honei/la/sparse_matrix_ell.hh>
 #include <honei/la/sparse_matrix.hh>
 #include <honei/la/dense_vector.hh>
+#include <honei/mpi/dense_vector_mpi.hh>
 #include <honei/backends/mpi/operations.hh>
 
 #include <vector>
@@ -67,91 +68,12 @@ namespace honei
                 mpi::mpi_comm_size(&icom_size, com);
                 _com_size = icom_size;
 
-                unsigned long min_part_size(Configuration::instance()->get_value("mpi::min_part_size", 1));
-                unsigned long pre_part_size(global_rows / _com_size);
-                if (pre_part_size >= min_part_size)
-                {
-                    unsigned long part_size(global_rows / _com_size);
-                    unsigned long rest(global_rows - (part_size * _com_size));
-                    if (_rank < rest)
-                        ++part_size;
-                    _rows = part_size;
-                    _columns = src.columns();
+                _rows = DenseVectorMPI<DT_>::calc_size(global_rows, com);
+                _columns = src.columns();
+                _offset = DenseVectorMPI<DT_>::calc_offset(global_rows, com);
 
-                    unsigned local_offset(0);
-                    for (unsigned long i(0) ; i < _rank ; ++i)
-                    {
-                        local_offset += global_rows / _com_size;
-                        if (i < rest)
-                            ++local_offset;
-                    }
-                    _offset = local_offset;
-                }
-                else
-                {
-                    unsigned long count(global_rows / min_part_size);
-                    if (count == 0)
-                        count = 1;
-                    unsigned long part_size(global_rows / count);
-                    unsigned long rest(global_rows - (part_size * count));
-                    if (_rank < rest)
-                        ++part_size;
-                    _rows = part_size;
-                    _columns = src.columns();
-                    if (_rank >= count)
-                        _rows = 0;
-
-                    unsigned local_offset(0);
-                    for (unsigned long i(0) ; i < _rank ; ++i)
-                    {
-                        local_offset += global_rows / count;
-                        if (i < rest)
-                            ++local_offset;
-                    }
-                    _offset = local_offset;
-                }
-
-//////////////////////////
-                unsigned long pre_col_part_size(src.columns() / _com_size);
-                if (pre_col_part_size >= min_part_size)
-                {
-                    unsigned long col_part_size(src.columns() / _com_size);
-                    unsigned long col_rest(src.columns() - (col_part_size * _com_size));
-                    if (_rank < col_rest)
-                        ++col_part_size;
-                    _col_part_size = col_part_size;
-
-                    unsigned local_x_offset(0);
-                    for (unsigned long i(0) ; i < _rank ; ++i)
-                    {
-                        local_x_offset += src.columns() / _com_size;
-                        if (i < col_rest)
-                            ++local_x_offset;
-                    }
-                    _x_offset = local_x_offset;
-                }
-                else
-                {
-                    unsigned long count(src.columns() / min_part_size);
-                    if (count == 0)
-                        count = 1;
-                    unsigned long col_part_size(src.columns() / count);
-                    unsigned long col_rest(src.columns() - (col_part_size * count));
-                    if (_rank < col_rest)
-                        ++col_part_size;
-                    _col_part_size = col_part_size;
-                    if (_rank >= count)
-                        _col_part_size = 0;
-
-                    unsigned local_x_offset(0);
-                    for (unsigned long i(0) ; i < _rank ; ++i)
-                    {
-                        local_x_offset += src.columns() / count;
-                        if (i < col_rest)
-                            ++local_x_offset;
-                    }
-                    _x_offset = local_x_offset;
-                }
+                _col_part_size = DenseVectorMPI<DT_>::calc_size(src.columns(), com);
+                _x_offset = DenseVectorMPI<DT_>::calc_offset(src.columns(), com);
 
                 if (_rows != 0)
                 {
