@@ -10,6 +10,7 @@ dnl on this file at present...
 
 add(`cg',                            `test')
 add(`dense_vector_mpi',              `hh', `fwd', `test')
+add(`matrix_io_mpi',                 `hh', `test')
 add(`mg',                            `test')
 add(`operations',                    `hh', `cc', `test')
 add(`ri',                            `test')

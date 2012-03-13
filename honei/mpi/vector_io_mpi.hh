@@ -30,8 +30,6 @@
 #include <honei/mpi/dense_vector_mpi.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/la/algorithm.hh>
-#include <vector>
-#include <honei/backends/mpi/operations.hh>
 
 using namespace honei;
 
