@@ -145,6 +145,19 @@ namespace honei
 
             /**
              * Constructor.
+             */
+            DenseVectorMPI(const DenseVector<DT_> & src,  unsigned long global_size, MPI_Comm com = MPI_COMM_WORLD) :
+                _orig_size(global_size),
+                _rank(mpi::mpi_comm_rank(com)),
+                _com_size(mpi::mpi_comm_size(com))
+            {
+                _offset = calc_offset(_orig_size, com);
+
+                _vector.reset(new DenseVector<DT_>(src.copy()));
+            }
+
+            /**
+             * Constructor.
              *
              * \param size Size of the new dense vector.
              */
@@ -163,6 +176,7 @@ namespace honei
              * Constructor.
              *
              * \param size Size of the new dense vector.
+             * \param value Value the vector will be filled with.
              */
             DenseVectorMPI(unsigned long src_size,  DT_ value, MPI_Comm com = MPI_COMM_WORLD) :
                 _orig_size(src_size),
@@ -285,14 +299,23 @@ namespace honei
      * Compares if corresponding elements of two dense vectors are equal
      * within machine precision.
      */
-    template <typename DT_> bool operator== (const DenseVectorMPI<DT_> & a, const DenseVectorMPI<DT_> & b);
+    template <typename DT_> bool operator== (const DenseVectorMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
+    {
+            if (a.size() != b.size()) return false;
+            if (a.offset() != b.offset()) return false;
+            return a.vector()==b.vector();
+    }
 
     /**
      * Output operator for DenseVectorMPI.
      *
      * Outputs a dense vector to an output stream.
      */
-    template <typename DT_> std::ostream & operator<< (std::ostream & lhs, const DenseVectorMPI<DT_> & vector);
+    template <typename DT_> std::ostream & operator<< (std::ostream & lhs, const DenseVectorMPI<DT_> & vector)
+    {
+        lhs << vector;
+        return lhs;
+    }
 
     /*extern template class DenseVectorMPI<float>;
 
