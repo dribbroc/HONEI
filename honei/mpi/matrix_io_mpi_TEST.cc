@@ -50,7 +50,9 @@ class SparseMatrixELLMPIIOQuickTest :
             filename += "/honei/math/testdata/poisson_advanced4/sort_0/A_4.ell";
             SparseMatrixELL<DataType_> sa(MatrixIO<io_formats::ELL>::read_matrix(filename, DataType_(0)));
             SparseMatrixELLMPI<DataType_> ref_a(sa);
-            SparseMatrixELLMPI<DataType_> a(MatrixIOMPI<io_formats::ELL>::read_matrix(filename, DataType_(0)));
+            unsigned long global_rows(MatrixIOMPI<io_formats::ELL>::read_matrix_rows(filename));
+            SparseMatrix<DataType_> al(MatrixIOMPI<io_formats::ELL>::read_matrix(filename, DataType_(0)));
+            SparseMatrixELLMPI<DataType_> a(al, global_rows);
 
             TEST_CHECK_EQUAL(a, ref_a);
         }

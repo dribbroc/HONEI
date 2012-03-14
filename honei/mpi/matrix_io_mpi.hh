@@ -44,8 +44,22 @@ template<>
 class MatrixIOMPI<io_formats::ELL>
 {
     public:
+        static unsigned long read_matrix_rows(std::string input)
+        {
+            FILE* file(NULL);
+            file = fopen(input.c_str(), "rb");
+            if (file == NULL)
+                throw InternalError("File "+input+" not found!");
+            uint64_t size;
+            uint64_t rows;
+            int status = fread(&size, sizeof(uint64_t), 1, file);
+            status = fread(&rows, sizeof(uint64_t), 1, file);
+            fclose(file);
+            return rows;
+        }
+
         template <typename DT_>
-            static SparseMatrixELLMPI<DT_> read_matrix(std::string input, HONEI_UNUSED DT_ datatype)
+            static SparseMatrix<DT_> read_matrix(std::string input, HONEI_UNUSED DT_ datatype)
             {
                 FILE* file(NULL);
                 file = fopen(input.c_str(), "rb");
@@ -90,8 +104,7 @@ class MatrixIOMPI<io_formats::ELL>
                 }
 
                 fclose(file);
-                SparseMatrixELLMPI<DT_> result(local_matrix, rows);
-                return result;
+                return local_matrix;
             }
 };
 #endif
