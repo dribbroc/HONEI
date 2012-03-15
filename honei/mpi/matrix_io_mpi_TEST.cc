@@ -19,6 +19,7 @@
 
 #include <honei/la/sparse_matrix.hh>
 #include <honei/mpi/sparse_matrix_ell_mpi.hh>
+#include <honei/mpi/sparse_matrix_csr_mpi.hh>
 #include <honei/backends/mpi/operations.hh>
 #include <honei/util/unittest.hh>
 #include <honei/math/matrix_io.hh>
@@ -35,12 +36,12 @@ using namespace tests;
 
 
 template <typename DataType_>
-class SparseMatrixELLMPIIOQuickTest :
+class SparseMatrixMPIIOQuickTest :
     public QuickTest
 {
     public:
-        SparseMatrixELLMPIIOQuickTest(const std::string & type) :
-            QuickTest("sparse_matrix_ell_mpi_io_quick_test<" + type + ">")
+        SparseMatrixMPIIOQuickTest(const std::string & type) :
+            QuickTest("sparse_matrix_mpi_io_quick_test<" + type + ">")
         {
         }
 
@@ -48,13 +49,17 @@ class SparseMatrixELLMPIIOQuickTest :
         {
             std::string filename(HONEI_SOURCEDIR);
             filename += "/honei/math/testdata/poisson_advanced4/sort_0/A_4.ell";
-            SparseMatrixELL<DataType_> sa(MatrixIO<io_formats::ELL>::read_matrix(filename, DataType_(0)));
-            SparseMatrixELLMPI<DataType_> ref_a(sa);
-            unsigned long global_rows(MatrixIOMPI<io_formats::ELL>::read_matrix_rows(filename));
-            SparseMatrix<DataType_> al(MatrixIOMPI<io_formats::ELL>::read_matrix(filename, DataType_(0)));
-            SparseMatrixELLMPI<DataType_> a(al, global_rows);
+            SparseMatrixELL<DataType_> saell(MatrixIO<io_formats::ELL>::read_matrix(filename, DataType_(0)));
+            SparseMatrixELLMPI<DataType_> ref_aell(saell);
+            SparseMatrixELLMPI<DataType_> aell(MatrixIOMPI_ELL<io_formats::ELL>::read_matrix(filename, DataType_(0)));
 
-            TEST_CHECK_EQUAL(a, ref_a);
+            TEST_CHECK_EQUAL(aell, ref_aell);
+
+            SparseMatrixCSR<DataType_> sacsr(MatrixIO<io_formats::ELL>::read_matrix(filename, DataType_(0)));
+            SparseMatrixCSRMPI<DataType_> ref_acsr(sacsr);
+            SparseMatrixCSRMPI<DataType_> acsr(MatrixIOMPI_CSR<io_formats::ELL>::read_matrix(filename, DataType_(0)));
+
+            TEST_CHECK_EQUAL(acsr, ref_acsr);
         }
 };
-SparseMatrixELLMPIIOQuickTest<double> sparse_matrix_ell_mpi_io_quick_test_double("double");
+SparseMatrixMPIIOQuickTest<double> sparse_matrix_mpi_io_quick_test_double("double");

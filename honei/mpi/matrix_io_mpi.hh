@@ -28,6 +28,7 @@
 #include <string>
 #include <honei/math/matrix_io.hh>
 #include <honei/mpi/sparse_matrix_ell_mpi.hh>
+#include <honei/mpi/sparse_matrix_csr_mpi.hh>
 #include <honei/la/sparse_matrix.hh>
 #include <honei/la/algorithm.hh>
 #include <vector>
@@ -105,6 +106,44 @@ class MatrixIOMPI<io_formats::ELL>
 
                 fclose(file);
                 return local_matrix;
+            }
+};
+
+template<typename IOFormat_>
+class MatrixIOMPI_ELL
+{
+};
+
+template<>
+class MatrixIOMPI_ELL<io_formats::ELL>
+{
+    public:
+        template <typename DT_>
+            static SparseMatrixELLMPI<DT_> read_matrix(std::string input, HONEI_UNUSED DT_ datatype)
+            {
+                unsigned long global_rows(MatrixIOMPI<io_formats::ELL>::read_matrix_rows(input));
+                SparseMatrix<DT_> local(MatrixIOMPI<io_formats::ELL>::read_matrix(input, datatype));
+                SparseMatrixELLMPI<DT_> result(local, global_rows);
+                return result;
+            }
+};
+
+template<typename IOFormat_>
+class MatrixIOMPI_CSR
+{
+};
+
+template<>
+class MatrixIOMPI_CSR<io_formats::ELL>
+{
+    public:
+        template <typename DT_>
+            static SparseMatrixCSRMPI<DT_> read_matrix(std::string input, HONEI_UNUSED DT_ datatype)
+            {
+                unsigned long global_rows(MatrixIOMPI<io_formats::ELL>::read_matrix_rows(input));
+                SparseMatrix<DT_> local(MatrixIOMPI<io_formats::ELL>::read_matrix(input, datatype));
+                SparseMatrixCSRMPI<DT_> result(local, global_rows);
+                return result;
             }
 };
 #endif
