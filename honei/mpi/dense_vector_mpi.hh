@@ -128,7 +128,7 @@ namespace honei
              *
              * \param src The src for the new dense vector.
              */
-            DenseVectorMPI(const DenseVector<DT_> & src,  MPI_Comm com = MPI_COMM_WORLD) :
+            explicit DenseVectorMPI(const DenseVector<DT_> & src,  MPI_Comm com = MPI_COMM_WORLD) :
                 _orig_size(src.size()),
                 _rank(mpi::mpi_comm_rank(com)),
                 _com_size(mpi::mpi_comm_size(com))
@@ -146,7 +146,7 @@ namespace honei
             /**
              * Constructor.
              */
-            DenseVectorMPI(const DenseVector<DT_> & src,  unsigned long global_size, MPI_Comm com = MPI_COMM_WORLD) :
+            explicit DenseVectorMPI(const DenseVector<DT_> & src,  unsigned long global_size, MPI_Comm com = MPI_COMM_WORLD) :
                 _orig_size(global_size),
                 _rank(mpi::mpi_comm_rank(com)),
                 _com_size(mpi::mpi_comm_size(com))
@@ -161,7 +161,7 @@ namespace honei
              *
              * \param size Size of the new dense vector.
              */
-            DenseVectorMPI(unsigned long src_size,  MPI_Comm com = MPI_COMM_WORLD) :
+            explicit DenseVectorMPI(unsigned long src_size,  MPI_Comm com = MPI_COMM_WORLD) :
                 _orig_size(src_size),
                 _rank(mpi::mpi_comm_rank(com)),
                 _com_size(mpi::mpi_comm_size(com))
@@ -178,7 +178,7 @@ namespace honei
              * \param size Size of the new dense vector.
              * \param value Value the vector will be filled with.
              */
-            DenseVectorMPI(unsigned long src_size,  DT_ value, MPI_Comm com = MPI_COMM_WORLD) :
+            explicit DenseVectorMPI(unsigned long src_size,  DT_ value, MPI_Comm com = MPI_COMM_WORLD) :
                 _orig_size(src_size),
                 _rank(mpi::mpi_comm_rank(com)),
                 _com_size(mpi::mpi_comm_size(com))

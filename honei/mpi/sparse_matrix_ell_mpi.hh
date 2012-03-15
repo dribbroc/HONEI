@@ -231,17 +231,17 @@ namespace honei
             /**
              * Constructor.
              */
-            SparseMatrixELLMPI(const SparseMatrix<DT_> & src, MPI_Comm com = MPI_COMM_WORLD)
+            explicit SparseMatrixELLMPI(const SparseMatrix<DT_> & src, MPI_Comm com = MPI_COMM_WORLD)
             {
                 _init(src, src.rows(), com);
             }
 
-            SparseMatrixELLMPI(const SparseMatrix<DT_> & src, unsigned long global_rows, MPI_Comm com = MPI_COMM_WORLD)
+            explicit SparseMatrixELLMPI(const SparseMatrix<DT_> & src, unsigned long global_rows, MPI_Comm com = MPI_COMM_WORLD)
             {
                 _init(src, global_rows, com);
             }
 
-            SparseMatrixELLMPI(const SparseMatrixELL<DT_> & src, MPI_Comm com = MPI_COMM_WORLD)
+            explicit SparseMatrixELLMPI(const SparseMatrixELL<DT_> & src, MPI_Comm com = MPI_COMM_WORLD)
             {
                 SparseMatrix<DT_> t(src);
                 _init(t, t.rows(), com);
