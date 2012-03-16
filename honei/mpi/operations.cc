@@ -34,6 +34,12 @@
 
 using namespace honei;
 
+//static void * temp_data = 0;
+//static unsigned long temp_data_size = 0;
+
+static void * temp_send_data = 0;
+static unsigned long temp_send_data_size = 0;
+
 template <typename Tag_>
 template <typename DT_>
 void MPIOps<Tag_>::difference(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
@@ -139,7 +145,13 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const MT_ & a, const DenseVe
 
     // sende alle werte, die anderen fehlen
     g_size = 0;
-    DT_ * send_data = new DT_[a.send_size()];
+    if (temp_send_data_size < a.send_size() * sizeof(DT_))
+    {
+        ::free(temp_send_data);
+        temp_send_data = ::malloc(a.send_size() * sizeof(DT_));
+        temp_send_data_size = a.send_size() * sizeof(DT_);
+    }
+    DT_ * send_data((DT_*)temp_send_data);
     for (unsigned long i(0) ; i < a.send_ranks().size() ; ++i)
     {
         unsigned long g_end(g_size + a.send_sizes().at(i));
@@ -161,7 +173,7 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const MT_ & a, const DenseVe
 
     MPI_Waitall(send_requests.size(), &send_requests[0], MPI_STATUSES_IGNORE);
     send_requests.clear();
-    delete[] send_data;
+    //delete[] send_data;
 }
 
 #ifdef HONEI_CUDA
@@ -188,7 +200,13 @@ void MPIOps<tags::GPU::CUDA>::product(DenseVectorMPI<DT_> & r, const MT_ & a, co
 
     // sende alle werte, die anderen fehlen
     g_size = 0;
-    DT_ * send_data = new DT_[a.send_size()];
+    if (temp_send_data_size < a.send_size() * sizeof(DT_))
+    {
+        ::free(temp_send_data);
+        temp_send_data = ::malloc(a.send_size() * sizeof(DT_));
+        temp_send_data_size = a.send_size() * sizeof(DT_);
+    }
+    DT_ * send_data((DT_*)temp_send_data);
     b.lock(lm_read_only);
     DT_ * b_cpu(b.elements());
     for (unsigned long i(0) ; i < a.send_ranks().size() ; ++i)
@@ -215,7 +233,7 @@ void MPIOps<tags::GPU::CUDA>::product(DenseVectorMPI<DT_> & r, const MT_ & a, co
 
     MPI_Waitall(send_requests.size(), &send_requests[0], MPI_STATUSES_IGNORE);
     send_requests.clear();
-    delete[] send_data;
+    //delete[] send_data;
 }
 #endif
 
