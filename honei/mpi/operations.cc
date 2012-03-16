@@ -32,23 +32,71 @@
 #include <honei/la/difference.hh>
 #include <honei/la/element_product.hh>
 
+#ifdef HONEI_CUDA
+#include <honei/backends/cuda/transfer.hh>
+#include <honei/backends/cuda/gpu_pool.hh>
+#endif
+
+namespace
+{
+    template <typename DT_>
+    class AllocTask
+    {
+        private:
+            void ** address;
+            unsigned long size;
+        public:
+            AllocTask(void** a, unsigned long s) :
+                address(a),
+                size(s)
+        {
+        }
+
+            void operator() ()
+            {
+                *address = cuda_malloc_host(size);
+            }
+    };
+
+    template <typename DT_>
+    class DownloadTask
+    {
+        private:
+            const DenseVector<DT_> & device;
+            void * address;
+        public:
+            DownloadTask(const DenseVector<DT_> & d, void * a) :
+                device(d),
+                address(a)
+        {
+        }
+
+            void operator() ()
+            {
+                void * d_gpu(device.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                cuda_download(d_gpu, address, device.size() * sizeof(DT_));
+                device.unlock(lm_read_only);
+            }
+    };
+}
+
 using namespace honei;
 
-//static void * temp_data = 0;
-//static unsigned long temp_data_size = 0;
+static void * temp_data = 0;
+static unsigned long temp_data_size = 0;
 
 static void * temp_send_data = 0;
 static unsigned long temp_send_data_size = 0;
 
 template <typename Tag_>
-template <typename DT_>
+    template <typename DT_>
 void MPIOps<Tag_>::difference(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
 {
     Difference<Tag_>::value(r.vector(), x.vector(), y.vector());
 }
 
 #ifdef HONEI_CUDA
-template <typename DT_>
+    template <typename DT_>
 void MPIOps<tags::GPU::CUDA>::difference(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
 {
     Difference<tags::GPU::CUDA>::value(r.vector(), x.vector(), y.vector());
@@ -56,7 +104,7 @@ void MPIOps<tags::GPU::CUDA>::difference(DenseVectorMPI<DT_> & r, const DenseVec
 #endif
 
 template <typename Tag_>
-template <typename DT_>
+    template <typename DT_>
 DT_ MPIOps<Tag_>::dot_product(const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
 {
     DT_ local_result(DotProduct<Tag_>::value(x.vector(), y.vector()));
@@ -68,7 +116,7 @@ DT_ MPIOps<Tag_>::dot_product(const DenseVectorMPI<DT_> & x, const DenseVectorMP
 }
 
 #ifdef HONEI_CUDA
-template <typename DT_>
+    template <typename DT_>
 DT_ MPIOps<tags::GPU::CUDA>::dot_product(const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
 {
     DT_ local_result(DotProduct<tags::GPU::CUDA>::value(x.vector(), y.vector()));
@@ -81,14 +129,14 @@ DT_ MPIOps<tags::GPU::CUDA>::dot_product(const DenseVectorMPI<DT_> & x, const De
 #endif
 
 template <typename Tag_>
-template <typename DT_>
+    template <typename DT_>
 void MPIOps<Tag_>::element_product(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
 {
     ElementProduct<Tag_>::value(r.vector(), x.vector(), y.vector());
 }
 
 #ifdef HONEI_CUDA
-template <typename DT_>
+    template <typename DT_>
 void MPIOps<tags::GPU::CUDA>::element_product(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
 {
     ElementProduct<tags::GPU::CUDA>::value(r.vector(), x.vector(), y.vector());
@@ -96,7 +144,7 @@ void MPIOps<tags::GPU::CUDA>::element_product(DenseVectorMPI<DT_> & r, const Den
 #endif
 
 template <typename Tag_>
-template <typename DT_>
+    template <typename DT_>
 DT_ MPIOps<Tag_>::norm_l2_false(const DenseVectorMPI<DT_> & x)
 {
     DT_ local_result(Norm<vnt_l_two, false, Tag_>::value(x.vector()));
@@ -108,7 +156,7 @@ DT_ MPIOps<Tag_>::norm_l2_false(const DenseVectorMPI<DT_> & x)
 }
 
 #ifdef HONEI_CUDA
-template <typename DT_>
+    template <typename DT_>
 DT_ MPIOps<tags::GPU::CUDA>::norm_l2_false(const DenseVectorMPI<DT_> & x)
 {
     DT_ local_result(Norm<vnt_l_two, false, tags::GPU::CUDA>::value(x.vector()));
@@ -173,7 +221,6 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const MT_ & a, const DenseVe
 
     MPI_Waitall(send_requests.size(), &send_requests[0], MPI_STATUSES_IGNORE);
     send_requests.clear();
-    //delete[] send_data;
 }
 
 #ifdef HONEI_CUDA
@@ -188,9 +235,12 @@ void MPIOps<tags::GPU::CUDA>::product(DenseVectorMPI<DT_> & r, const MT_ & a, co
     std::vector<MPI_Request> send_requests;
     std::vector<MPI_Request> recv_requests;
 
+    // berechne innere anteile
+    if (a.active()) Product<tags::GPU::CUDA>::value(r.vector(), a.inner_matrix(), b.vector());
+
+    // empfange alle fehlenden werte
     DenseVector<DT_> missing_values(a.outer_matrix().columns());
     DT_ * missing_values_array(missing_values.elements());
-    // empfange alle fehlenden werte
     unsigned long g_size(0);
     for (unsigned long i(0) ; i < a.recv_ranks().size() ; ++i)
     {
@@ -207,8 +257,19 @@ void MPIOps<tags::GPU::CUDA>::product(DenseVectorMPI<DT_> & r, const MT_ & a, co
         temp_send_data_size = a.send_size() * sizeof(DT_);
     }
     DT_ * send_data((DT_*)temp_send_data);
-    b.lock(lm_read_only);
-    DT_ * b_cpu(b.elements());
+
+    if (temp_data_size < b.local_size() * sizeof(DT_))
+    {
+        cuda_free_host(temp_data);
+        AllocTask<DT_> at(&temp_data, b.local_size() * sizeof(DT_));
+        cuda::GPUPool::instance()->enqueue(at, 0).wait();
+        temp_data_size = b.local_size() * sizeof(DT_);
+    }
+    DownloadTask<DT_> dt(b.vector(), temp_data);
+    cuda::GPUPool::instance()->enqueue(dt, 0).wait();
+    DT_ * b_cpu((DT_*) temp_data);
+
+
     for (unsigned long i(0) ; i < a.send_ranks().size() ; ++i)
     {
         unsigned long g_end(g_size + a.send_sizes().at(i));
@@ -216,10 +277,6 @@ void MPIOps<tags::GPU::CUDA>::product(DenseVectorMPI<DT_> & r, const MT_ & a, co
             send_data[g_size] = b_cpu[a.send_index().at(g_size)];
         send_requests.push_back(mpi::mpi_isend(&(send_data[g_size - a.send_sizes().at(i)]), a.send_sizes().at(i), a.send_ranks().at(i), myrank));
     }
-    b.unlock(lm_read_only);
-
-    // berechne innere anteile
-    if (a.active()) Product<tags::GPU::CUDA>::value(r.vector(), a.inner_matrix(), b.vector());
 
     MPI_Waitall(recv_requests.size(), &recv_requests[0], MPI_STATUSES_IGNORE);
     recv_requests.clear();
@@ -233,7 +290,6 @@ void MPIOps<tags::GPU::CUDA>::product(DenseVectorMPI<DT_> & r, const MT_ & a, co
 
     MPI_Waitall(send_requests.size(), &send_requests[0], MPI_STATUSES_IGNORE);
     send_requests.clear();
-    //delete[] send_data;
 }
 #endif
 
