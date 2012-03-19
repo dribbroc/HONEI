@@ -1203,9 +1203,11 @@ namespace honei
                                         data.P.at(MGDataIndex::internal_index_A(data.min_level)),
                                         b.at(MGDataIndex::internal_index_A(data.min_level)),
                                         x.at(MGDataIndex::internal_index_A(data.min_level)),
-                                        data.max_iters_coarse,
+                                        data.down_sweep == false ? data.max_iters_coarse : data.max_iters_coarse_FMG,
                                         data.used_iters_coarse,
                                         data.eps_relative) );
+
+                            data.down_sweep = false;
                         }
                         else
                         {

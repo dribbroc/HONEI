@@ -105,7 +105,7 @@ class MGBench:
 
 
             ///SET ADAPTIVE SMOOTHING HERE (Krylov Smoother)
-            bool adaptive = false;
+            bool adaptive = true;
 
             _damping = adaptive ? double(1) : _damping;
 
@@ -125,7 +125,7 @@ class MGBench:
                 PreconContType_,
                 io_formats::ELL,
                 io_formats::EXP,
-                double>::configure(data, 100, 10, 8, 8, 1, double(1e-8));
+                double>::configure(data, 100, 10, 2, 2, 1, double(1e-8));
 
             OperatorList ol(
                     MGCycleCreation<Tag_,
@@ -133,8 +133,8 @@ class MGBench:
                     //SuperLU,
                     //BiCGStabSolver<Tag_, methods::VAR>,
                     CGSolver<Tag_, methods::NONE>,
-                    RISmoother<Tag_>,
-                    //BiCGStabSmoother<Tag_>,
+                    //RISmoother<Tag_>,
+                    BiCGStabSmoother<Tag_>,
                     Restriction<Tag_, methods::PROLMAT>,
                     Prolongation<Tag_, methods::PROLMAT>,
                     double>::value(data)
@@ -156,31 +156,31 @@ class MGBench:
         }
 };
 
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_jac_v("MGBench mcsse | q1 | sort 2 | L7 | jac | V", 1 , 2, 7, "jac", 0.5);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_jac_v("MGBench mcsse | q1 | sort 3 | L7 | jac | V", 1 , 3, 7, "jac", 0.5);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_jac_w("MGBench mcsse | q1 | sort 2 | L7 | jac | W", 1 , 2, 7, "jac", 0.5);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_jac_w("MGBench mcsse | q1 | sort 3 | L7 | jac | W", 1 , 3, 7, "jac", 0.5);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_jac_f("MGBench mcsse | q1 | sort 2 | L7 | jac | F", 1 , 2, 7, "jac", 0.5);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_jac_f("MGBench mcsse | q1 | sort 3 | L7 | jac | F", 1 , 3, 7, "jac", 0.5);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::W::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_jac_fw("MGBench mcsse | q1 | sort 2 | L7 | jac | NI-W", 1 , 2, 7, "jac", 0.5);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::W::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_jac_fw("MGBench mcsse | q1 | sort 3 | L7 | jac | NI-W", 1 , 3, 7, "jac", 0.5);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::FMG::V::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_jac_fmgv("MGBench mcsse | q1 | sort 2 | L7 | jac | FMG-V", 1 , 2, 7, "jac", 0.5);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::FMG::V::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_jac_fmgv("MGBench mcsse | q1 | sort 3 | L7 | jac | FMG-V", 1 , 3, 7, "jac", 0.5);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::FMG::W::STATIC, DenseVector<double> > mcsse_q1_sort2_l7_jac_fmgw("MGBench mcsse | q1 | sort 2 | L7 | jac | FMG-W", 1 , 2, 7, "jac", 0.5);
-MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::FMG::W::STATIC, DenseVector<double> > mcsse_q1_sort3_l7_jac_fmgw("MGBench mcsse | q1 | sort 3 | L7 | jac | FMG-W", 1 , 3, 7, "jac", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, SparseMatrixELL<double> > mcsse_q1_sort2_l7_spai_v("MGBench mcsse | q1 | sort 2 | L7 | spai | V", 1 , 2, 7, "spai", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::V::STATIC, SparseMatrixELL<double> > mcsse_q1_sort3_l7_spai_v("MGBench mcsse | q1 | sort 3 | L7 | spai | V", 1 , 3, 7, "spai", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, SparseMatrixELL<double> > mcsse_q1_sort2_l7_spai_w("MGBench mcsse | q1 | sort 2 | L7 | spai | W", 1 , 2, 7, "spai", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::W::STATIC, SparseMatrixELL<double> > mcsse_q1_sort3_l7_spai_w("MGBench mcsse | q1 | sort 3 | L7 | spai | W", 1 , 3, 7, "spai", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> > mcsse_q1_sort2_l7_spai_f("MGBench mcsse | q1 | sort 2 | L7 | spai | F", 1 , 2, 7, "spai", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> > mcsse_q1_sort3_l7_spai_f("MGBench mcsse | q1 | sort 3 | L7 | spai | F", 1 , 3, 7, "spai", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::W::STATIC, SparseMatrixELL<double> > mcsse_q1_sort2_l7_spai_fw("MGBench mcsse | q1 | sort 2 | L7 | spai | NI-W", 1 , 2, 7, "spai", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::F::W::STATIC, SparseMatrixELL<double> > mcsse_q1_sort3_l7_spai_fw("MGBench mcsse | q1 | sort 3 | L7 | spai | NI-W", 1 , 3, 7, "spai", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::FMG::V::STATIC, SparseMatrixELL<double> > mcsse_q1_sort2_l7_spai_fmgv("MGBench mcsse | q1 | sort 2 | L7 | spai | FMG-V", 1 , 2, 7, "spai", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::FMG::V::STATIC, SparseMatrixELL<double> > mcsse_q1_sort3_l7_spai_fmgv("MGBench mcsse | q1 | sort 3 | L7 | spai | FMG-V", 1 , 3, 7, "spai", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::FMG::W::STATIC, SparseMatrixELL<double> > mcsse_q1_sort2_l7_spai_fmgw("MGBench mcsse | q1 | sort 2 | L7 | spai | FMG-W", 1 , 2, 7, "spai", 0.5);
+MGBench<tags::CPU::MultiCore::SSE, methods::CYCLE::FMG::W::STATIC, SparseMatrixELL<double> > mcsse_q1_sort3_l7_spai_fmgw("MGBench mcsse | q1 | sort 3 | L7 | spai | FMG-W", 1 , 3, 7, "spai", 0.5);
 
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort2_l7_jac_v("MGBench cuda | q1 | sort 2 | L7 | jac | V", 1 , 2, 7, "jac", 0.5);
-MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, DenseVector<double> > cuda_q1_sort3_l7_jac_v("MGBench cuda | q1 | sort 3 | L7 | jac | V", 1 , 3, 7, "jac", 0.5);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort2_l7_jac_w("MGBench cuda | q1 | sort 2 | L7 | jac | W", 1 , 2, 7, "jac", 0.5);
-MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, DenseVector<double> > cuda_q1_sort3_l7_jac_w("MGBench cuda | q1 | sort 3 | L7 | jac | W", 1 , 3, 7, "jac", 0.5);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort2_l7_jac_f("MGBench cuda | q1 | sort 2 | L7 | jac | F", 1 , 2, 7, "jac", 0.5);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, DenseVector<double> > cuda_q1_sort3_l7_jac_f("MGBench cuda | q1 | sort 3 | L7 | jac | F", 1 , 3, 7, "jac", 0.5);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::W::STATIC, DenseVector<double> > cuda_q1_sort2_l7_jac_fw("MGBench cuda | q1 | sort 2 | L7 | jac | NI-W", 1 , 2, 7, "jac", 0.5);
-MGBench<tags::GPU::CUDA, methods::CYCLE::F::W::STATIC, DenseVector<double> > cuda_q1_sort3_l7_jac_fw("MGBench cuda | q1 | sort 3 | L7 | jac | NI-W", 1 , 3, 7, "jac", 0.5);
-MGBench<tags::GPU::CUDA, methods::CYCLE::FMG::V::STATIC, DenseVector<double> > cuda_q1_sort2_l7_jac_fmgv("MGBench cuda | q1 | sort 2 | L7 | jac | FMG-V", 1 , 2, 7, "jac", 0.5);
-MGBench<tags::GPU::CUDA, methods::CYCLE::FMG::V::STATIC, DenseVector<double> > cuda_q1_sort3_l7_jac_fmgv("MGBench cuda | q1 | sort 3 | L7 | jac | FMG-V", 1 , 3, 7, "jac", 0.5);
-MGBench<tags::GPU::CUDA, methods::CYCLE::FMG::W::STATIC, DenseVector<double> > cuda_q1_sort2_l7_jac_fmgw("MGBench cuda | q1 | sort 2 | L7 | jac | FMG-W", 1 , 2, 7, "jac", 0.5);
-MGBench<tags::GPU::CUDA, methods::CYCLE::FMG::W::STATIC, DenseVector<double> > cuda_q1_sort3_l7_jac_fmgw("MGBench cuda | q1 | sort 3 | L7 | jac | FMG-W", 1 , 3, 7, "jac", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, SparseMatrixELL<double> > cuda_q1_sort2_l7_spai_v("MGBench cuda | q1 | sort 2 | L7 | spai | V", 1 , 2, 7, "spai", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::V::STATIC, SparseMatrixELL<double> > cuda_q1_sort3_l7_spai_v("MGBench cuda | q1 | sort 3 | L7 | spai | V", 1 , 3, 7, "spai", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, SparseMatrixELL<double> > cuda_q1_sort2_l7_spai_w("MGBench cuda | q1 | sort 2 | L7 | spai | W", 1 , 2, 7, "spai", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::W::STATIC, SparseMatrixELL<double> > cuda_q1_sort3_l7_spai_w("MGBench cuda | q1 | sort 3 | L7 | spai | W", 1 , 3, 7, "spai", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> > cuda_q1_sort2_l7_spai_f("MGBench cuda | q1 | sort 2 | L7 | spai | F", 1 , 2, 7, "spai", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> > cuda_q1_sort3_l7_spai_f("MGBench cuda | q1 | sort 3 | L7 | spai | F", 1 , 3, 7, "spai", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::W::STATIC, SparseMatrixELL<double> > cuda_q1_sort2_l7_spai_fw("MGBench cuda | q1 | sort 2 | L7 | spai | NI-W", 1 , 2, 7, "spai", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::F::W::STATIC, SparseMatrixELL<double> > cuda_q1_sort3_l7_spai_fw("MGBench cuda | q1 | sort 3 | L7 | spai | NI-W", 1 , 3, 7, "spai", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::FMG::V::STATIC, SparseMatrixELL<double> > cuda_q1_sort2_l7_spai_fmgv("MGBench cuda | q1 | sort 2 | L7 | spai | FMG-V", 1 , 2, 7, "spai", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::FMG::V::STATIC, SparseMatrixELL<double> > cuda_q1_sort3_l7_spai_fmgv("MGBench cuda | q1 | sort 3 | L7 | spai | FMG-V", 1 , 3, 7, "spai", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::FMG::W::STATIC, SparseMatrixELL<double> > cuda_q1_sort2_l7_spai_fmgw("MGBench cuda | q1 | sort 2 | L7 | spai | FMG-W", 1 , 2, 7, "spai", 0.5);
+MGBench<tags::GPU::CUDA, methods::CYCLE::FMG::W::STATIC, SparseMatrixELL<double> > cuda_q1_sort3_l7_spai_fmgw("MGBench cuda | q1 | sort 3 | L7 | spai | FMG-W", 1 , 3, 7, "spai", 0.5);
 
 /*
 #ifdef HONEI_SSE
