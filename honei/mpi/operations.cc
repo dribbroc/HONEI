@@ -39,6 +39,7 @@
 
 namespace
 {
+#ifdef HONEI_CUDA
     template <typename DT_>
     class AllocTask
     {
@@ -78,6 +79,7 @@ namespace
                 device.unlock(lm_read_only);
             }
     };
+#endif
 }
 
 using namespace honei;
