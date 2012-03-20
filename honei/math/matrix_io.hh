@@ -214,6 +214,7 @@ class MatrixIO<io_formats::MTX>
                 std::vector<unsigned long> row_indices;
                 std::vector<DT_> data;
                 bool first(true);
+                bool symmetric(false);
 
                 while(!file.eof())
                 {
@@ -221,6 +222,10 @@ class MatrixIO<io_formats::MTX>
                     std::getline(file, line);
                     if(line.find("%", 0) < line.npos)
                     {
+                        if (line.find("symmetric") < line.npos)
+                        {
+                            symmetric = true;
+                        }
                         continue;
                     }
                     if(file.eof())
@@ -284,6 +289,21 @@ class MatrixIO<io_formats::MTX>
 
                 }
                 file.close();
+
+                if (symmetric)
+                {
+                    const unsigned long old_size(data.size());
+                    for (unsigned long i(0) ; i < old_size ; ++i)
+                    {
+                        if (! (row_indices.at(i) == column_indices.at(i)))
+                        {
+                            row_indices.push_back(column_indices.at(i));
+                            column_indices.push_back(row_indices.at(i));
+                            data.push_back(data.at(i));
+                        }
+                    }
+                }
+
                 SparseMatrix<DT_> result(rows, cols, &row_indices[0], &column_indices[0], &data[0], data.size());
                 return result;
             }
