@@ -1403,7 +1403,7 @@ namespace honei
             if (row_end == 0)
                 row_end = a.rows();
 
-            BENCHADD(Product<tags::CPU>::get_benchmark_info(r, a, bv));
+            BENCHADD(Product<tags::CPU>::get_benchmark_info(r, a, b));
 
             const DT_ * const b_e(b.elements());
             for (unsigned long row(row_start) ; row < row_end ; ++row)
@@ -1487,7 +1487,7 @@ namespace honei
             if (row_end == 0)
                 row_end = a.rows();
 
-            BENCHADD(Product<tags::CPU>::get_benchmark_info(r, a, bv));
+            BENCHADD(Product<tags::CPU>::get_benchmark_info(rv, a, bv));
 
             const unsigned long * const Ar(a.Ar().elements());
             const unsigned long * const Aj(a.Aj().elements());

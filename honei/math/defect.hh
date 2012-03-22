@@ -508,7 +508,7 @@ namespace honei
                     if (row_end == 0)
                         row_end = a.rows();
 
-                    BENCHADD(Defect<tags::CPU>::get_benchmark_info(r, rhs, a, bv));
+                    BENCHADD(Defect<tags::CPU>::get_benchmark_info(rv, rhs, a, bv));
 
                     const unsigned long * const Ar(a.Ar().elements());
                     const unsigned long * const Aj(a.Aj().elements());
