@@ -33,6 +33,7 @@ extern "C"
 
 #include <iostream>
 #include <cstdio>
+#include <vector>
 
 
 namespace honei
@@ -61,28 +62,97 @@ namespace honei
             matrix *A = NULL;
             matrix *M = NULL;
 
-            unsigned long used_elements(src.used_elements());
+            SparseMatrix<DT_> sm(src.copy());
+            unsigned long root(sqrt(src.rows()));
+
+            // 0
+            for (unsigned long i(0) ; i < sm.rows() ; ++i)
+            {
+                sm(i, i, src(i, i));
+                sm(i,i) += std::numeric_limits<double>::epsilon();
+            }
+
+            // 1
+            for (unsigned long i(0) ; i < sm.rows() - 1 ; ++i)
+            {
+                sm(i, i+1, src(i, i+1));
+                sm(i,i+1) += std::numeric_limits<double>::epsilon();
+            }
+
+            // -1
+            for (unsigned long i(1) ; i < sm.rows() ; ++i)
+            {
+                sm(i, i-1, src(i, i-1));
+                sm(i,i-1) += std::numeric_limits<double>::epsilon();
+            }
+
+            // root
+            for (unsigned long i(0) ; i < sm.rows() - root ; ++i)
+            {
+                sm(i, i+root, src(i, i+root));
+                sm(i,i+root) += std::numeric_limits<double>::epsilon();
+            }
+
+            for (unsigned long i(0) ; i < sm.rows() - root -1; ++i)
+            {
+                sm(i, i+(root-1), src(i, i+(root-1)));
+                sm(i,i+(root-1)) += std::numeric_limits<double>::epsilon();
+            }
+
+            for (unsigned long i(0) ; i < sm.rows() - (root + 1); ++i)
+            {
+                sm(i, i+root+1, src(i, i+root+1));
+                sm(i,i+root+1) += std::numeric_limits<double>::epsilon();
+            }
+
+            // -root
+            for (unsigned long i(root) ; i < sm.rows() ; ++i)
+            {
+                sm(i, i-root, src(i, i-root));
+                sm(i,i-root) += std::numeric_limits<double>::epsilon();
+            }
+
+            for (unsigned long i(root-1) ; i < sm.rows() ; ++i)
+            {
+                sm(i, i-(root-1), src(i, i-(root-1)));
+                sm(i,i-(root-1)) += std::numeric_limits<double>::epsilon();
+            }
+
+            for (unsigned long i(root+1) ; i < sm.rows() ; ++i)
+            {
+                sm(i, i-(root+1), src(i, i-(root+1)));
+                sm(i,i-(root+1)) += std::numeric_limits<double>::epsilon();
+            }
+
+            std::vector<mm_data> elements;
+            for (typename SparseMatrix<DT_>::NonZeroConstElementIterator iter(sm.begin_non_zero_elements()) ; iter != sm.end_non_zero_elements() ; ++iter)
+            {
+                mm_data temp;
+                temp.i = iter.row();
+                temp.j = iter.column();
+                temp.val = *iter;
+                elements.push_back(temp);
+            }
+
+            unsigned long used_elements(elements.size());
             mm_data * rows_array = new mm_data[used_elements];
             mm_data * cols_array = new mm_data[used_elements];
-            unsigned long tmp_i(0);
-
-            for (typename SparseMatrix<DT_>::NonZeroConstElementIterator iter(src.begin_non_zero_elements()) ; iter != src.end_non_zero_elements() ; ++iter)
+            for (unsigned long i(0) ; i < elements.size() ; ++i)
             {
-                rows_array[tmp_i].i = iter.row();
-                rows_array[tmp_i].j = iter.column();
-                rows_array[tmp_i].val = *iter;
-                cols_array[tmp_i].i = iter.row();
-                cols_array[tmp_i].j = iter.column();
-                cols_array[tmp_i].val = *iter;
-                tmp_i++;
+                rows_array[i].i = elements.at(i).i;
+                rows_array[i].j = elements.at(i).j;
+                rows_array[i].val = elements.at(i).val;
+                cols_array[i].i = elements.at(i).i;
+                cols_array[i].j = elements.at(i).j;
+                cols_array[i].val = elements.at(i).val;
             }
 
             A = mm_to_matrix
                 (left_precon_param,
                  symmetric_pattern_param,
-                 src.rows(),
+                 sm.rows(),
                  1,
-                 src.rows(),
+                 sm.rows(),
                  rows_array, used_elements,
                  cols_array, used_elements,
                  NULL);
@@ -105,7 +175,7 @@ namespace honei
                  tau_param);
 
 
-            SparseMatrix<DT_> tsmatrix(src.rows(), src.columns());
+            SparseMatrix<DT_> tsmatrix(sm.rows(), sm.columns());
             int ptr;
             for (long j=0; j<M->mnl; j++) {
 
