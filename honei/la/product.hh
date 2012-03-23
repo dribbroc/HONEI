@@ -1515,6 +1515,27 @@ namespace honei
             ElementProduct<tags::CPU::Generic>::value(r, x, y);
             return r;
         }
+
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const SparseMatrixELLMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
+        {
+            MPIOps<tags::CPU::Generic>::product(r, a, b);
+            return r;
+        }
+
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const SparseMatrixCSRMPI<DT_> & a, const DenseVectorMPI<DT_> & b)
+        {
+            MPIOps<tags::CPU::Generic>::product(r, a, b);
+            return r;
+        }
+
+        template<typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
+        {
+            MPIOps<tags::CPU::Generic>::element_product(r, x, y);
+            return r;
+        }
     };
 
     /**

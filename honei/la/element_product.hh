@@ -544,6 +544,13 @@ namespace honei
 
             return r;
         }
+
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
+        {
+            MPIOps<tags::CPU::Generic>::element_product(r, x, y);
+            return r;
+        }
     };
 
     /**

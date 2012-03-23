@@ -120,13 +120,14 @@ class MGSolverTest:
             ref.unlock(lm_read_only);
         }
 };
+MGSolverTest<tags::CPU::Generic> generic_mg_solver_test("double", "poisson_advanced2/q2_sort_0/");
 #ifdef HONEI_SSE
-MGSolverTest<tags::CPU::SSE> mg_solver_test_cpu("double", "poisson_advanced2/q2_sort_0/");
+MGSolverTest<tags::CPU::SSE> mg_solver_test("double", "poisson_advanced2/q2_sort_0/");
 #else
-MGSolverTest<tags::CPU> mg_solver_test_cpu("double", "poisson_advanced2/q2_sort_0/");
+MGSolverTest<tags::CPU> mg_solver_test("double", "poisson_advanced2/q2_sort_0/");
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
-MGSolverTest<tags::GPU::CUDA> cuda_mg_solver_test_cpu("double", "poisson_advanced2/q2_sort_0/");
+MGSolverTest<tags::GPU::CUDA> cuda_mg_solver_test("double", "poisson_advanced2/q2_sort_0/");
 #endif
 #endif

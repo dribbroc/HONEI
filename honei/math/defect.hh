@@ -498,6 +498,15 @@ namespace honei
                 }
 
             template <typename DT_>
+                static DenseVector<DT_> value(const DenseVector<DT_> & rhsv, const SparseMatrixELL<DT_> & a, const DenseVector<DT_> & bv,
+                        unsigned long row_start = 0, unsigned long row_end = 0)
+                {
+                    DenseVector<DT_> r(rhsv.size());
+                    Defect<tags::CPU::Generic>::value(r, rhsv, a, bv, row_start, row_end);
+                    return r;
+                }
+
+            template <typename DT_>
                 static DenseVector<DT_> & value(DenseVector<DT_> & rv, const DenseVector<DT_> & rhsv, const SparseMatrixCSR<DT_> & a, const DenseVector<DT_> & bv,
                         unsigned long row_start = 0, unsigned long row_end = 0)
                 {
@@ -529,6 +538,29 @@ namespace honei
                     }
 
                     return rv;
+                }
+
+            template <typename DT_>
+                static DenseVector<DT_> value(const DenseVector<DT_> & rhsv, const SparseMatrixCSR<DT_> & a, const DenseVector<DT_> & bv,
+                        unsigned long row_start = 0, unsigned long row_end = 0)
+                {
+                    DenseVector<DT_> r(rhsv.size());
+                    Defect<tags::CPU::Generic>::value(r, rhsv, a, bv, row_start, row_end);
+                    return r;
+                }
+
+            template<typename DT_>
+                static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixELLMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
+                {
+                    MPIOps<tags::CPU::Generic>::defect(result, right_hand_side, system, x);
+                    return result;
+                }
+
+            template<typename DT_>
+                static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixCSRMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
+                {
+                    MPIOps<tags::CPU::Generic>::defect(result, right_hand_side, system, x);
+                    return result;
                 }
         };
 

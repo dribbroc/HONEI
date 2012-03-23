@@ -90,6 +90,7 @@ class ScaledSumMPITest :
                 TEST_CHECK_EQUAL(r[i], rs[i + r.offset()]);
         }
 };
+ScaledSumMPITest<tags::CPU::Generic, double> generic_scaled_sum_mpi_test_double("double");
 #ifdef HONEI_SSE
 ScaledSumMPITest<tags::CPU::SSE, double> scaled_sum_mpi_test_double("double");
 #else
@@ -134,6 +135,7 @@ class ScaleMPITest :
                 TEST_CHECK_EQUAL(x[i], xs[i + x.offset()]);
         }
 };
+ScaleMPITest<tags::CPU::Generic, double> generic_scale_mpi_test_double("double");
 #ifdef HONEI_SSE
 ScaleMPITest<tags::CPU::SSE, double> scale_mpi_test_double("double");
 #else
@@ -181,6 +183,7 @@ class SumMPITest :
                 TEST_CHECK_EQUAL(x[i], xs[i + x.offset()]);
         }
 };
+SumMPITest<tags::CPU::Generic, double> generic_sum_mpi_test_double("double");
 #ifdef HONEI_SSE
 SumMPITest<tags::CPU::SSE, double> sum_mpi_test_double("double");
 #else
@@ -230,6 +233,7 @@ class DifferenceMPITest :
                 TEST_CHECK_EQUAL(r[i], rs[i + r.offset()]);
         }
 };
+DifferenceMPITest<tags::CPU::Generic, double> generic_difference_mpi_test_double("double");
 #ifdef HONEI_SSE
 DifferenceMPITest<tags::CPU::SSE, double> difference_mpi_test_double("double");
 #else
@@ -279,6 +283,7 @@ class ElementProductMPITest :
                 TEST_CHECK_EQUAL(r[i], rs[i + x.offset()]);
         }
 };
+ElementProductMPITest<tags::CPU::Generic, double> generic_element_product_mpi_test_double("double");
 #ifdef HONEI_SSE
 ElementProductMPITest<tags::CPU::SSE, double> element_product_mpi_test_double("double");
 #else
@@ -321,6 +326,7 @@ class DotProductMPITest :
             TEST_CHECK_EQUAL(r, rs);
         }
 };
+DotProductMPITest<tags::CPU::Generic, double> generic_dot_product_mpi_test_double("double");
 #ifdef HONEI_SSE
 DotProductMPITest<tags::CPU::SSE, double> dot_product_mpi_test_double("double");
 #else
@@ -363,6 +369,7 @@ class NormMPITest :
             TEST_CHECK_EQUAL_WITHIN_EPS(r, rs, 1e-11);
         }
 };
+NormMPITest<tags::CPU::Generic, double> generic_norm_mpi_test_double("double");
 #ifdef HONEI_SSE
 NormMPITest<tags::CPU::SSE, double> norm_mpi_test_double("double");
 #else
@@ -422,6 +429,7 @@ class DefectMPITest :
                 TEST_CHECK_EQUAL_WITHIN_EPS(r[i], rs[i + r.offset()], 1e-11);
         }
 };
+DefectMPITest<tags::CPU::Generic, double> generic_defect_mpi_test_double("double");
 #ifdef HONEI_SSE
 DefectMPITest<tags::CPU::SSE, double> defect_mpi_test_double("double");
 #else
@@ -502,12 +510,14 @@ class SPMVMPITest :
             }
         }
 };
+SPMVMPITest<tags::CPU::Generic, double> generic_spmv_mpi_test_double("double");
+SPMVMPITest<tags::CPU::MultiCore::Generic, double> mc_generic_spmv_mpi_test_double("double");
 #ifdef HONEI_SSE
 SPMVMPITest<tags::CPU::SSE, double> spmv_mpi_test_double("double");
 SPMVMPITest<tags::CPU::MultiCore::SSE, double> mv_spmv_mpi_test_double("double");
 #else
 SPMVMPITest<tags::CPU, double> spmv_mpi_test_double("double");
-SPMVMPITest<tags::CPU::MultCore, double> mc_spmv_mpi_test_double("double");
+SPMVMPITest<tags::CPU::MultiCore, double> mc_spmv_mpi_test_double("double");
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE

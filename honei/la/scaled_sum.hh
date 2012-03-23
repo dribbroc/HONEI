@@ -283,6 +283,20 @@ namespace honei
             }
             return r;
         }
+
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y, DT_ a)
+        {
+            MPIOps<tags::CPU::Generic>::scaled_sum(x, y, a);
+            return x;
+        }
+
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y, DT_ a)
+        {
+            MPIOps<tags::CPU::Generic>::scaled_sum(r, x, y, a);
+            return r;
+        }
     };
 
     /**

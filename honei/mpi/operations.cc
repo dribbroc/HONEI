@@ -475,6 +475,35 @@ template void MPIOps<tags::CPU>::scaled_sum(DenseVectorMPI<double> & x, const De
 template void MPIOps<tags::CPU>::scaled_sum(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
 template void MPIOps<tags::CPU>::sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
 
+template struct MPIOps<tags::CPU::Generic>;
+template void MPIOps<tags::CPU::Generic>::difference(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
+template void MPIOps<tags::CPU::Generic>::defect(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & rhs, const SparseMatrixELLMPI<double> & a, const DenseVectorMPI<double> & b);
+template void MPIOps<tags::CPU::Generic>::defect(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & rhs, const SparseMatrixCSRMPI<double> & a, const DenseVectorMPI<double> & b);
+template double MPIOps<tags::CPU::Generic>::dot_product(const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
+template void MPIOps<tags::CPU::Generic>::element_product(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
+template double MPIOps<tags::CPU::Generic>::norm_l2_false(const DenseVectorMPI<double> & x);
+template void MPIOps<tags::CPU::Generic>::product(DenseVectorMPI<double> & r, const SparseMatrixELLMPI<double> & a, const DenseVectorMPI<double> & b);
+template void MPIOps<tags::CPU::Generic>::product(DenseVectorMPI<double> & r, const SparseMatrixCSRMPI<double> & a, const DenseVectorMPI<double> & b);
+template void MPIOps<tags::CPU::Generic>::scale(DenseVectorMPI<double> & x, double a);
+template void MPIOps<tags::CPU::Generic>::scaled_sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
+template void MPIOps<tags::CPU::Generic>::scaled_sum(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
+template void MPIOps<tags::CPU::Generic>::sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
+
+template struct MPIOps<tags::CPU::MultiCore::Generic>;
+template void MPIOps<tags::CPU::MultiCore::Generic>::difference(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
+template void MPIOps<tags::CPU::MultiCore::Generic>::defect(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & rhs, const SparseMatrixELLMPI<double> & a, const DenseVectorMPI<double> & b);
+template void MPIOps<tags::CPU::MultiCore::Generic>::defect(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & rhs, const SparseMatrixCSRMPI<double> & a, const DenseVectorMPI<double> & b);
+template double MPIOps<tags::CPU::MultiCore::Generic>::dot_product(const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
+template void MPIOps<tags::CPU::MultiCore::Generic>::element_product(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
+template double MPIOps<tags::CPU::MultiCore::Generic>::norm_l2_false(const DenseVectorMPI<double> & x);
+template void MPIOps<tags::CPU::MultiCore::Generic>::product(DenseVectorMPI<double> & r, const SparseMatrixELLMPI<double> & a, const DenseVectorMPI<double> & b);
+template void MPIOps<tags::CPU::MultiCore::Generic>::product(DenseVectorMPI<double> & r, const SparseMatrixCSRMPI<double> & a, const DenseVectorMPI<double> & b);
+template void MPIOps<tags::CPU::MultiCore::Generic>::scale(DenseVectorMPI<double> & x, double a);
+template void MPIOps<tags::CPU::MultiCore::Generic>::scaled_sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
+template void MPIOps<tags::CPU::MultiCore::Generic>::scaled_sum(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
+template void MPIOps<tags::CPU::MultiCore::Generic>::sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
+
+#ifdef HONEI_SSE
 template struct MPIOps<tags::CPU::SSE>;
 template void MPIOps<tags::CPU::SSE>::difference(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
 template void MPIOps<tags::CPU::SSE>::defect(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & rhs, const SparseMatrixELLMPI<double> & a, const DenseVectorMPI<double> & b);
@@ -502,8 +531,10 @@ template void MPIOps<tags::CPU::MultiCore::SSE>::scale(DenseVectorMPI<double> & 
 template void MPIOps<tags::CPU::MultiCore::SSE>::scaled_sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
 template void MPIOps<tags::CPU::MultiCore::SSE>::scaled_sum(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
 template void MPIOps<tags::CPU::MultiCore::SSE>::sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
+#endif
 
 #ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
 template struct MPIOps<tags::GPU::CUDA>;
 template void MPIOps<tags::GPU::CUDA>::difference(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
 template void MPIOps<tags::GPU::CUDA>::defect(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & rhs, const SparseMatrixELLMPI<double> & a, const DenseVectorMPI<double> & b);
@@ -517,4 +548,5 @@ template void MPIOps<tags::GPU::CUDA>::scale(DenseVectorMPI<double> & x, double 
 template void MPIOps<tags::GPU::CUDA>::scaled_sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
 template void MPIOps<tags::GPU::CUDA>::scaled_sum(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
 template void MPIOps<tags::GPU::CUDA>::sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
+#endif
 #endif

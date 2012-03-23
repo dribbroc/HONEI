@@ -131,6 +131,7 @@ class RISolverTestSparseELL:
             ref_result.unlock(lm_read_only);
         }
 };
+RISolverTestSparseELL<tags::CPU::Generic, double> generic_ris_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
 #ifdef HONEI_SSE
 RISolverTestSparseELL<tags::CPU::SSE, double> ris_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
 #else
@@ -233,6 +234,7 @@ class RISolverTestSparseCSR:
             ref_result.unlock(lm_read_only);
         }
 };
+RISolverTestSparseCSR<tags::CPU::Generic, double> generic_ris_test_double_sparse_csr("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
 #ifdef HONEI_SSE
 RISolverTestSparseCSR<tags::CPU::SSE, double> ris_test_double_sparse_csr("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
 #else

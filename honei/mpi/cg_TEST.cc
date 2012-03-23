@@ -146,6 +146,7 @@ class CGSolverTestSparseELL:
             ref_result.unlock(lm_read_only);
         }
 };
+CGSolverTestSparseELL<tags::CPU::Generic, double> generic_cgs_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
 #ifdef HONEI_SSE
 CGSolverTestSparseELL<tags::CPU::SSE, double> cgs_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
 #else
@@ -262,6 +263,7 @@ class CGSolverTestSparseCSR:
             ref_result.unlock(lm_read_only);
         }
 };
+CGSolverTestSparseCSR<tags::CPU::Generic, double> generic_cgs_test_double_sparse_csr("double", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
 #ifdef HONEI_SSE
 CGSolverTestSparseCSR<tags::CPU::SSE, double> cgs_test_double_sparse_csr("double", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
 #else

@@ -251,6 +251,10 @@ DefectRegressionTest<float, tags::CPU> regression_defect_test_float_sparse("Regr
 DefectRegressionTest<double, tags::CPU> regression_defect_test_double_sparse("Regression double", "l2/area51_full_0.m", "l2/area51_rhs_0");
 DefectRegressionTest<float, tags::CPU::MultiCore> mc_regression_defect_test_float_sparse("Regression float", "l2/area51_full_0.m", "l2/area51_rhs_0");
 DefectRegressionTest<double, tags::CPU::MultiCore> mc_regression_defect_test_double_sparse("Regression double", "l2/area51_full_0.m", "l2/area51_rhs_0");
+DefectRegressionTest<float, tags::CPU::Generic> generic_regression_defect_test_float_sparse("Regression float", "l2/area51_full_0.m", "l2/area51_rhs_0");
+DefectRegressionTest<double, tags::CPU::Generic> generic_regression_defect_test_double_sparse("Regression double", "l2/area51_full_0.m", "l2/area51_rhs_0");
+DefectRegressionTest<float, tags::CPU::MultiCore::Generic> mc_generic_regression_defect_test_float_sparse("Regression float", "l2/area51_full_0.m", "l2/area51_rhs_0");
+DefectRegressionTest<double, tags::CPU::MultiCore::Generic> mc_generic_regression_defect_test_double_sparse("Regression double", "l2/area51_full_0.m", "l2/area51_rhs_0");
 #ifdef HONEI_SSE
 DefectRegressionTest<float, tags::CPU::SSE> sse_regression_defect_test_float_sparse("Regression float", "l2/area51_full_0.m", "l2/area51_rhs_0");
 DefectRegressionTest<double, tags::CPU::SSE> sse_regression_defect_test_double_sparse("Regression double", "l2/area51_full_0.m", "l2/area51_rhs_0");

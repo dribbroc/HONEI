@@ -640,6 +640,25 @@ namespace honei
     template <> struct Difference<tags::CPU::Generic>
     {
         template <typename DT_>
+        static inline DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y)
+        {
+            if (x.size() != y.size())
+                throw VectorSizeDoesNotMatch(y.size(), x.size());
+
+            BENCHADD(Difference<tags::CPU>::get_benchmark_info(x, y));
+
+            DT_ * xe(x.elements());
+            const DT_ * ye(y.elements());
+            const unsigned long size(x.size());
+            for (unsigned long i(0) ; i < size ; ++i)
+            {
+                xe[i] -= ye[i];
+            }
+
+            return x;
+        }
+
+        template <typename DT_>
         static inline DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & r, const DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y)
         {
             if (x.size() != y.size())
@@ -659,6 +678,13 @@ namespace honei
                 re[i] = xe[i] - ye[i];
             }
 
+            return r;
+        }
+
+        template <typename DT_>
+        static inline DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y)
+        {
+            MPIOps<tags::CPU::Generic>::difference(r, x, y);
             return r;
         }
     };
@@ -1115,6 +1141,20 @@ namespace honei
 
     template <> struct Difference<tags::CPU::MultiCore::Generic>
     {
+            template <typename DT1_, typename DT2_>
+            static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & x, const DenseVectorContinuousBase<DT2_> & y)
+            {
+                CONTEXT("When calculating Difference (DenseVectorContinuousBase, DenseVectorContinuousBase) using backend : " + tags::CPU::MultiCore::Generic::name);
+
+                unsigned long min_part_size(Configuration::instance()->get_value("mc::Difference(DVCB,DVCB)::min_part_size", 128));
+                unsigned long max_count(Configuration::instance()->get_value("mc::Difference(DVCB,DVCB)::max_count",
+                            mc::ThreadPool::instance()->num_threads()));
+
+                mc::Operation<honei::Difference<typename tags::CPU::MultiCore::Generic::DelegateTo> >::op(x, y, min_part_size, max_count);
+
+                return x;
+            }
+
             template <typename DT1_, typename DT2_>
             static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & r,
                     const DenseVectorContinuousBase<DT1_> & x, const DenseVectorContinuousBase<DT2_> & y)

@@ -664,6 +664,10 @@ DenseVectorDifferenceTest<tags::CPU, float> dense_vector_difference_test_float("
 DenseVectorDifferenceTest<tags::CPU, double> dense_vector_difference_test_double("double");
 DenseVectorDifferenceTest<tags::CPU::MultiCore, float>  mc_dense_vector_difference_test_float("MC float");
 DenseVectorDifferenceTest<tags::CPU::MultiCore, double> mc_dense_vector_difference_test_double("MC double");
+DenseVectorDifferenceTest<tags::CPU::Generic, float> generic_dense_vector_difference_test_float("float");
+DenseVectorDifferenceTest<tags::CPU::Generic, double> generic_dense_vector_difference_test_double("double");
+DenseVectorDifferenceTest<tags::CPU::MultiCore::Generic, float>  generic_mc_dense_vector_difference_test_float("MC float");
+DenseVectorDifferenceTest<tags::CPU::MultiCore::Generic, double> generic_mc_dense_vector_difference_test_double("MC double");
 #ifdef HONEI_SSE
 DenseVectorDifferenceTest<tags::CPU::SSE, float> sse_dense_vector_difference_test_float("SSE float");
 DenseVectorDifferenceTest<tags::CPU::SSE, double> sse_dense_vector_difference_test_double("SSE double");

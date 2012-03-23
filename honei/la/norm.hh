@@ -488,6 +488,12 @@ namespace honei
 
             return result;
         }
+
+        template <typename DT_>
+        static inline DT_ value(const DenseVectorMPI<DT_> & x)
+        {
+            return MPIOps<tags::CPU::Generic>::norm_l2_false(x);
+        }
     };
 
     template <> struct Norm<vnt_l_two, true, tags::CPU::Generic>
@@ -505,6 +511,12 @@ namespace honei
             }
 
             return sqrt(result);
+        }
+
+        template <typename DT_>
+        static inline DT_ value(const DenseVectorMPI<DT_> & x)
+        {
+            return sqrt(MPIOps<tags::CPU::Generic>::norm_l2_false(x));
         }
     };
 
@@ -819,6 +831,12 @@ namespace honei
 
                 return result;
             }
+
+            template <typename DT_>
+            static inline DT_ value(const DenseVectorMPI<DT_> & x)
+            {
+                return MPIOps<tags::CPU::MultiCore::Generic>::norm_l2_false(x);
+            }
     };
 
     template <> struct Norm<vnt_l_two, true, tags::CPU::MultiCore::Generic>
@@ -838,6 +856,12 @@ namespace honei
                 result = sqrt(result);
 
                 return result;
+            }
+
+            template <typename DT_>
+            static inline DT_ value(const DenseVectorMPI<DT_> & x)
+            {
+                return sqrt(MPIOps<tags::CPU::MultiCore::Generic>::norm_l2_false(x));
             }
     };
 
