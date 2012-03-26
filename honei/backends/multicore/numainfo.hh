@@ -40,7 +40,7 @@
 #if defined(__x86_64__)
 #define __NR_sched_getaffinity    204
 
-#elif defined (__i386__)
+#elif defined (__i386__) || defined (__arm__)
 #define __NR_sched_getaffinity    242
 
 #elif defined(__ia64__)
