@@ -45,10 +45,10 @@ extern "C"
             unsigned long blocksize, unsigned long threads);
 
     void cuda_defect_csr_dv_float(void * rhs, void * result, void * Aj, void * Ax, void * Ar, void * b,
-            unsigned long rows, unsigned long blocksize);
+            unsigned long rows, unsigned long atomicsize, unsigned long blocksize);
 
     void cuda_defect_csr_dv_double(void * rhs, void * result, void * Aj, void * Ax, void * Ar, void * b,
-            unsigned long rows, unsigned long blocksize);
+            unsigned long rows, unsigned long atomicsize, unsigned long blocksize);
 
     void cuda_difference_two_float(void * a, const void * b, unsigned long size, unsigned long blocksize);
     void cuda_difference_two_double(void * a, const void * b, unsigned long size, unsigned long blocksize);
@@ -91,10 +91,10 @@ extern "C"
             unsigned long stride, unsigned long blocksize, unsigned long threads);
 
     void cuda_product_csr_dv_float(void * x, void * y, void * Aj, void * Ax, void * Ar,
-            unsigned long row_start, unsigned long row_end, unsigned long blocksize);
+            unsigned long row_start, unsigned long row_end, unsigned long atomicsize, unsigned long blocksize);
 
     void cuda_product_csr_dv_double(void * x, void * y, void * Aj, void * Ax, void * Ar,
-            unsigned long row_start, unsigned long row_end, unsigned long blocksize);
+            unsigned long row_start, unsigned long row_end, unsigned long atomicsize, unsigned long blocksize);
 
     void cuda_prolongation_float(void * fine, unsigned long size_fine, void * coarse, unsigned long size_coarse,
             unsigned long * macroBorderMask, unsigned long blocksize);

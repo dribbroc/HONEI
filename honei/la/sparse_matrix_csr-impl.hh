@@ -35,14 +35,13 @@
 #include <honei/util/configuration.hh>
 
 #include <cmath>
+#include <vector>
 
 namespace honei
 {
     template <typename DataType_> struct Implementation<SparseMatrixCSR<DataType_> >
     {
-        unsigned long stride;
-        unsigned long num_cols_per_row;
-        unsigned long threads;
+        unsigned long blocksize;//our atomic 1d-blocksize
 
         DenseVector<unsigned long> Aj;//column indices corresponding to elements in Ax
         DenseVector<DataType_> Ax;//nonzero values
@@ -54,74 +53,95 @@ namespace honei
         /// Our column count.
         unsigned long columns;
 
+        unsigned long used_elements;//number of non zero elements
+
         /// Our zero element.
         static const DataType_ zero_element;
 
-        Implementation(const unsigned long rows, const unsigned long columns,
-            const DenseVector<unsigned long> & Aj, const DenseVector<DataType_> & Ax, const DenseVector<unsigned long> & Ar) :
+        Implementation(const unsigned long blocksize, const unsigned long rows, const unsigned long columns,
+            const DenseVector<unsigned long> & Aj, const DenseVector<DataType_> & Ax, const DenseVector<unsigned long> & Ar, const unsigned long used_elements) :
+            blocksize(blocksize),
             Aj(Aj),
             Ax(Ax),
             Ar(Ar),
             rows(rows),
-            columns(columns)
+            columns(columns),
+            used_elements(used_elements)
         {
         }
 
         Implementation(const SparseMatrix<DataType_> & src) :
+            blocksize(Configuration::instance()->get_value("csr::blocksize", 1)),
             Aj(src.used_elements()),
-            Ax(src.used_elements()),
+            Ax(1),
             Ar(src.rows() + 1),
             rows(src.rows()),
-            columns(src.columns())
+            columns(src.columns()),
+            used_elements(0)
         {
+            _create(src);
+        }
+
+        Implementation(const SparseMatrixELL<DataType_> & src) :
+            blocksize(Configuration::instance()->get_value("csr::blocksize", 1)),
+            Aj(src.used_elements()),
+            Ax(1),
+            Ar(src.rows() + 1),
+            rows(src.rows()),
+            columns(src.columns()),
+            used_elements(0)
+        {
+            SparseMatrix<DataType_> temp(src);
+            _create(temp);
+        }
+
+        void _create(const SparseMatrix<DataType_> & src)
+        {
+            std::vector<DataType_> Axv;
             unsigned long gi(0);
+            unsigned long ue(0);
             for (unsigned long row(0) ; row < src.rows() ; ++row)
             {
                 Ar[row] = gi;
                 for (unsigned long i(0) ; i < src[row].used_elements() ; ++i)
                 {
-                    Ax[gi] = src[row].elements()[i];
                     Aj[gi] = src[row].indices()[i];
+                    Axv.push_back(src[row].elements()[i]);
+                    ++ue;
+                    unsigned long delta_i(0);
+                    for (unsigned long blocki(1) ; blocki < blocksize ; ++blocki)
+                    {
+                        if (i+blocki < src[row].used_elements() && src[row].indices()[i+blocki] == src[row].indices()[i] + blocki)
+                        {
+                            Axv.push_back(src[row].elements()[i + blocki]);
+                            ++ue;
+                            ++delta_i;
+                        }
+                        else
+                        {
+                            Axv.push_back(DataType_(0));
+                        }
+                    }
+                    i += delta_i;
                     ++gi;
                 }
             }
             Ar[src.rows()] = gi;
-        }
+            used_elements = ue;
 
-        Implementation(const SparseMatrixELL<DataType_> & src) :
-            Aj(src.used_elements()),
-            Ax(src.used_elements()),
-            Ar(src.rows() + 1),
-            rows(src.rows()),
-            columns(src.columns())
-        {
-            unsigned long gi(0);
-            for (unsigned long row(0) ; row < src.rows() ; ++row)
+            DenseVector<DataType_> axt(Axv.size());
+            Ax = axt;
+            for (unsigned long i(0) ; i < Axv.size() ; ++i)
             {
-                Ar[row] = gi;
-                for (unsigned long i(row * src.threads()), j(0) ; j < src.Arl()[row] ; i+= src.stride(), ++j)
-                {
-                    for (unsigned long thread(0) ; thread < src.threads() ; ++thread)
-                    {
-                        // check if element in threadblock is a nonzero entry, skip otherwise
-                        /// \todo BUG: empty matrix rows are not detected!
-                        if (! (thread != 0 && src.Aj()[i+thread] == 0))
-                        {
-                            Ax[gi] = src.Ax()[i+thread];
-                            Aj[gi] = src.Aj()[i+thread];
-                            ++gi;
-                        }
-                    }
-                }
+                Ax[i] = Axv.at(i);
             }
-            Ar[src.rows()] = gi;
         }
     };
 
     template <typename DataType_>
-    SparseMatrixCSR<DataType_>::SparseMatrixCSR(const unsigned long rows, const unsigned long columns,
-            const DenseVector<unsigned long> & Aj, const DenseVector<DataType_> & Ax, const DenseVector<unsigned long> & Ar) :
-        PrivateImplementationPattern<SparseMatrixCSR<DataType_>, Shared>(new Implementation<SparseMatrixCSR<DataType_> >(rows, columns, Aj, Ax, Ar))
+    SparseMatrixCSR<DataType_>::SparseMatrixCSR(const unsigned long blocksize, const unsigned long rows, const unsigned long columns,
+            const DenseVector<unsigned long> & Aj, const DenseVector<DataType_> & Ax, const DenseVector<unsigned long> & Ar, const unsigned long ue) :
+        PrivateImplementationPattern<SparseMatrixCSR<DataType_>, Shared>(new Implementation<SparseMatrixCSR<DataType_> >(blocksize, rows, columns, Aj, Ax, Ar, ue))
     {
         CONTEXT("When creating SparseMatrixCSR from CSR Vectors:");
     }
@@ -153,6 +173,13 @@ namespace honei
 
     template <typename DataType_>
     unsigned long
+    SparseMatrixCSR<DataType_>::blocksize() const
+    {
+        return this->_imp->blocksize;
+    }
+
+    template <typename DataType_>
+    unsigned long
     SparseMatrixCSR<DataType_>::columns() const
     {
         return this->_imp->columns;
@@ -176,7 +203,7 @@ namespace honei
     unsigned long
     SparseMatrixCSR<DataType_>::used_elements() const
     {
-        return this->_imp->Aj.size();
+        return this->_imp->used_elements;
     }
 
     template <typename DataType_>
@@ -206,8 +233,9 @@ namespace honei
         unsigned long row_i(this->_imp->Ar[row]);
         while (row_i < this->_imp->Ar[row + 1])
         {
-            if (column == this->_imp->Aj[row_i])
-                return this->_imp->Ax[row_i];
+            if (column >= this->_imp->Aj[row_i] && (column < this->_imp->Aj[row_i] + this->blocksize()))
+                return this->_imp->Ax[row_i * this->blocksize() +  (column - this->_imp->Aj[row_i])];
+
             ++row_i;
         }
         return this->_imp->zero_element;
@@ -234,11 +262,12 @@ namespace honei
     SparseMatrixCSR<DataType_>::copy() const
     {
         CONTEXT("When creating copy() of a SparseMatrixCSR:");
-        SparseMatrixCSR result(this->_imp->rows,
+        SparseMatrixCSR result(this->_imp->blocksize, this->_imp->rows,
                 this->_imp->columns,
                 this->_imp->Aj.copy(),
                 this->_imp->Ax.copy(),
-                this->_imp->Ar.copy());
+                this->_imp->Ar.copy(),
+                this->_imp->used_elements);
 
         return result;
     }
@@ -286,6 +315,7 @@ namespace honei
         lhs << "Aj: " << b.Aj();
         lhs << "Ax: " << b.Ax();
         lhs << "Ar: " << b.Ar();
+        lhs << "Blocksize: " << b.blocksize() << std::endl;
         return lhs;
     }
 }

@@ -135,7 +135,16 @@ namespace honei
             num_cols_per_row = 1;
             for (unsigned long i(0) ; i < rows ; ++i)
             {
-                unsigned long ue(src.Ar()[i+1]-src.Ar()[i]);
+                //unsigned long ue(src.Ar()[i+1]-src.Ar()[i]);
+                unsigned long ue(0);
+                {
+                    const DataType_ * const t(src.Ax().elements() + src.Ar()[i] * src.blocksize());
+                    for (unsigned long j(0) ; j < (src.Ar()[i+1]-src.Ar()[i]) * src.blocksize() ; ++j)
+                    {
+                        if (t[j] != DataType_(0))
+                            ++ue;
+                    }
+                }
                 Arl[i] = ceil(double(ue / double(threads)));
                 if (ue > num_cols_per_row)
                 {
@@ -156,9 +165,16 @@ namespace honei
                 unsigned long ue(src.Ar()[row+1]-src.Ar()[row]);
                 for (unsigned long i(0) ; i < ue ; ++i)
                 {
-                    pAj[(target%threads) + (row * threads)+ target/threads * stride] = src.Aj()[src.Ar()[row] + i];
-                    pAx[(target%threads) + (row * threads) + target/threads * stride] = src.Ax()[src.Ar()[row] + i];
-                    target++;
+                    for (unsigned long blocki(0) ; blocki < src.blocksize() ; ++blocki)
+                    {
+                        if (src.Ax()[((src.Ar()[row] + i) * src.blocksize()) + blocki] != DataType_(0))
+                        {
+                            pAj[(target%threads) + (row * threads)+ target/threads * stride] = src.Aj()[src.Ar()[row] + i] + blocki;
+                            pAx[(target%threads) + (row * threads) + target/threads * stride] = src.Ax()[((src.Ar()[row] + i) * src.blocksize()) + blocki];
+                            target++;
+                        }
+                    }
+
                 }
             }
 

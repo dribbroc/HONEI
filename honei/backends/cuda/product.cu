@@ -255,7 +255,7 @@ namespace honei
 #endif
 
         __global__ void product_csr_dv_gpu(float * x, float * y, const unsigned long * Aj, const float * Ax, const unsigned long * Ar,
-                unsigned long row_start, unsigned long row_end)
+                unsigned long row_start, unsigned long row_end, unsigned long atomicsize)
         {
             unsigned long idx = blockDim.x*blockIdx.x+threadIdx.x;
             unsigned long row = idx + row_start;
@@ -266,14 +266,15 @@ namespace honei
             const unsigned long end(Ar[row+1]);
             for (unsigned long i(Ar[row]) ; i < end ; ++i)
             {
-                sum += Ax[i] * tex1Dfetch(tex_x_float_product, Aj[i]);
+                for (unsigned long blocki(0) ; blocki < atomicsize ; ++blocki)
+                    sum += Ax[(i * atomicsize) + blocki] * tex1Dfetch(tex_x_float_product, Aj[i] + blocki);
             }
             y[row] = sum;
         }
 
 #ifdef HONEI_CUDA_DOUBLE
         __global__ void product_csr_dv_gpu(double * x, double * y, const unsigned long * Aj, const double * Ax, const unsigned long * Ar,
-                unsigned long row_start, unsigned long row_end)
+                unsigned long row_start, unsigned long row_end, unsigned long atomicsize)
         {
             unsigned long idx = blockDim.x*blockIdx.x+threadIdx.x;
             unsigned long row = idx + row_start;
@@ -284,8 +285,11 @@ namespace honei
             const unsigned long end(Ar[row+1]);
             for (unsigned long i(Ar[row]) ; i < end ; ++i)
             {
-                int2 v = tex1Dfetch(tex_x_double_product, Aj[i]);
-                sum += Ax[i] * __hiloint2double(v.y, v.x);
+                for (unsigned long blocki(0) ; blocki < atomicsize ; ++blocki)
+                {
+                    int2 v = tex1Dfetch(tex_x_double_product, Aj[i] + blocki);
+                    sum += Ax[(i * atomicsize) + blocki] * __hiloint2double(v.y, v.x);
+                }
             }
             y[row] = sum;
         }
@@ -398,7 +402,7 @@ extern "C" void cuda_product_smell_dv_double(void * x, void * y, void * Aj, void
 #endif
 
 extern "C" void cuda_product_csr_dv_float(void * x, void * y, void * Aj, void * Ax, void * Ar,
-        unsigned long row_start, unsigned long row_end, unsigned long blocksize)
+        unsigned long row_start, unsigned long row_end, unsigned long atomicsize, unsigned long blocksize)
 {
     dim3 grid;
     dim3 block;
@@ -413,7 +417,7 @@ extern "C" void cuda_product_csr_dv_float(void * x, void * y, void * Aj, void * 
 
     cudaBindTexture(NULL, tex_x_float_product, x_gpu);
     honei::cuda::product_csr_dv_gpu<<<grid, block, block.x * sizeof(float)>>>(x_gpu, y_gpu, Aj_gpu, Ax_gpu, Ar_gpu,
-            row_start, row_end);
+            row_start, row_end, atomicsize);
     cudaUnbindTexture(tex_x_float_product);
 
     CUDA_ERROR();
@@ -421,7 +425,7 @@ extern "C" void cuda_product_csr_dv_float(void * x, void * y, void * Aj, void * 
 
 #ifdef HONEI_CUDA_DOUBLE
 extern "C" void cuda_product_csr_dv_double(void * x, void * y, void * Aj, void * Ax, void * Ar,
-        unsigned long row_start, unsigned long row_end, unsigned long blocksize)
+        unsigned long row_start, unsigned long row_end, unsigned long atomicsize, unsigned long blocksize)
 {
     dim3 grid;
     dim3 block;
@@ -436,7 +440,7 @@ extern "C" void cuda_product_csr_dv_double(void * x, void * y, void * Aj, void *
 
     cudaBindTexture(NULL, tex_x_double_product, x_gpu);
     honei::cuda::product_csr_dv_gpu<<<grid, block, block.x * sizeof(double)>>>(x_gpu, y_gpu, Aj_gpu, Ax_gpu, Ar_gpu,
-            row_start, row_end);
+            row_start, row_end, atomicsize);
     cudaUnbindTexture(tex_x_double_product);
 
     CUDA_ERROR();

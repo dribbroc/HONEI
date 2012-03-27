@@ -926,27 +926,33 @@ class SparseMatrixCSRDenseVectorProductTest :
 
         virtual void run() const
         {
-            for (unsigned long size(11) ; size < (1 << 9) ; size <<= 1)
+            unsigned long old_blocks = Configuration::instance()->get_value("csr::blocksize", 1);
+            for (unsigned long blocks(1) ; blocks <= 4 ; blocks*=2)
             {
-                SparseMatrix<DataType_> sms(size, size + 3);
-                for (typename SparseMatrix<DataType_>::ElementIterator i(sms.begin_elements()) ; i < sms.end_elements() ; ++i)
+                Configuration::instance()->set_value("csr::blocksize", blocks);
+                for (unsigned long size(11) ; size < (1 << 9) ; size <<= 1)
                 {
-                    if (i.index() % 5 == 0)
-                        *i = DataType_(i.index()) / 1.234;
-                }
-                SparseMatrixCSR<DataType_> sm0(sms);
-                DenseVector<DataType_> dv1(size + 3, DataType_(4));
-                DenseVector<DataType_> prod(size, DataType_(4711));
-                dv1[0] = 1;
-                dv1[1] = 2;
-                Product<Tag_>::value(prod, sm0, dv1);
-                DenseVector<DataType_> prod_ref(Product<>::value(sms, dv1));
+                    SparseMatrix<DataType_> sms(size, size + 3);
+                    for (typename SparseMatrix<DataType_>::ElementIterator i(sms.begin_elements()) ; i < sms.end_elements() ; ++i)
+                    {
+                        if (i.index() % 5 == 0)
+                            *i = DataType_(i.index()) / 1.234;
+                    }
+                    SparseMatrixCSR<DataType_> sm0(sms);
+                    DenseVector<DataType_> dv1(size + 3, DataType_(4));
+                    DenseVector<DataType_> prod(size, DataType_(4711));
+                    dv1[0] = 1;
+                    dv1[1] = 2;
+                    Product<Tag_>::value(prod, sm0, dv1);
+                    DenseVector<DataType_> prod_ref(Product<>::value(sms, dv1));
 
-                prod.lock(lm_read_only);
-                for (unsigned long i(0) ; i < prod.size() ; ++i)
-                    TEST_CHECK_EQUAL_WITHIN_EPS(prod[i], prod_ref[i], 1e7);
-                prod.unlock(lm_read_only);
+                    prod.lock(lm_read_only);
+                    for (unsigned long i(0) ; i < prod.size() ; ++i)
+                        TEST_CHECK_EQUAL_WITHIN_EPS(prod[i], prod_ref[i], 1e7);
+                    prod.unlock(lm_read_only);
+                }
             }
+            Configuration::instance()->set_value("csr::blocksize", old_blocks);
         }
 };
 SparseMatrixCSRDenseVectorProductTest<float, tags::CPU> sparse_matrix_csr_dense_vector_product_test_float("float");
@@ -977,25 +983,31 @@ class SparseMatrixCSRDenseVectorProductQuickTest :
 
         virtual void run() const
         {
-            unsigned long size (50);
-            SparseMatrix<DataType_> sms(size, size + 3);
-            for (typename SparseMatrix<DataType_>::ElementIterator i(sms.begin_elements()) ; i < sms.end_elements() ; ++i)
+            unsigned long old_blocks = Configuration::instance()->get_value("csr::blocksize", 1);
+            for (unsigned long blocks(1) ; blocks <= 4 ; blocks*=2)
             {
-                if (i.index() % 5 == 0)
-                    *i = DataType_(i.index()) / 1.234;
-            }
-            SparseMatrixCSR<DataType_> sm0(sms);
-            DenseVector<DataType_> dv1(size + 3, DataType_(4));
-            DenseVector<DataType_> prod(size, DataType_(4711));
-            dv1[0] = 1;
-            dv1[1] = 2;
-            Product<Tag_>::value(prod, sm0, dv1);
-            DenseVector<DataType_> prod_ref(Product<tags::CPU>::value(sms, dv1));
+                Configuration::instance()->set_value("csr::blocksize", blocks);
+                unsigned long size (50);
+                SparseMatrix<DataType_> sms(size, size + 3);
+                for (typename SparseMatrix<DataType_>::ElementIterator i(sms.begin_elements()) ; i < sms.end_elements() ; ++i)
+                {
+                    if (i.index() % 5 == 0)
+                        *i = DataType_(i.index()) / 1.234;
+                }
+                SparseMatrixCSR<DataType_> sm0(sms);
+                DenseVector<DataType_> dv1(size + 3, DataType_(4));
+                DenseVector<DataType_> prod(size, DataType_(4711));
+                dv1[0] = 1;
+                dv1[1] = 2;
+                Product<Tag_>::value(prod, sm0, dv1);
+                DenseVector<DataType_> prod_ref(Product<tags::CPU>::value(sms, dv1));
 
-            prod.lock(lm_read_only);
-            for (unsigned long i(0) ; i < prod.size() ; ++i)
-                TEST_CHECK_EQUAL_WITHIN_EPS(prod[i], prod_ref[i], 1e6*std::numeric_limits<DataType_>::epsilon());
-            prod.unlock(lm_read_only);
+                prod.lock(lm_read_only);
+                for (unsigned long i(0) ; i < prod.size() ; ++i)
+                    TEST_CHECK_EQUAL_WITHIN_EPS(prod[i], prod_ref[i], 1e6*std::numeric_limits<DataType_>::epsilon());
+                prod.unlock(lm_read_only);
+            }
+            Configuration::instance()->set_value("csr::blocksize", old_blocks);
         }
 };
 SparseMatrixCSRDenseVectorProductQuickTest<float, tags::CPU> sparse_matrix_csr_dense_vector_product_quick_test_float("float");

@@ -406,7 +406,10 @@ namespace honei
                         const unsigned long end(Ar[row+1]);
                         for (unsigned long i(Ar[row]) ; i < end ; ++i)
                         {
-                            sum += Ax[i] * b[Aj[i]];
+                            for (unsigned long blocki(0) ; blocki < a.blocksize() ; ++blocki)
+                            {
+                                sum += Ax[(i*a.blocksize())+blocki] * b[Aj[i] + blocki];
+                            }
                         }
                         r[row] = rhs[row] - sum;
                     }
@@ -532,7 +535,10 @@ namespace honei
                         const unsigned long end(Ar[row+1]);
                         for (unsigned long i(Ar[row]) ; i < end ; ++i)
                         {
-                            sum += Ax[i] * b[Aj[i]];
+                            for (unsigned long blocki(0) ; blocki < a.blocksize() ; ++blocki)
+                            {
+                                sum += Ax[(i*a.blocksize())+blocki] * b[Aj[i] + blocki];
+                            }
                         }
                         r[row] = rhs[row] - sum;
                     }

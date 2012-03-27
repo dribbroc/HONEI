@@ -255,7 +255,7 @@ namespace honei
 #endif
 
         __global__ void defect_csr_dv_gpu(float * rhs, float * y, unsigned long * Aj, float * Ax, unsigned long * Ar, float * x,
-                unsigned long num_rows)
+                unsigned long num_rows, unsigned long atomicsize)
         {
             unsigned long idx = blockDim.x*blockIdx.x+threadIdx.x;
             unsigned long row = idx;
@@ -266,14 +266,17 @@ namespace honei
             const unsigned long end(Ar[row+1]);
             for (unsigned long i(Ar[row]) ; i < end ; ++i)
             {
-                sum += Ax[i] * tex1Dfetch(tex_x_float_defect, Aj[i]);
+                for (unsigned long blocki(0) ; blocki < atomicsize ; ++blocki)
+                {
+                    sum += Ax[(i * atomicsize) + blocki] * tex1Dfetch(tex_x_float_defect, Aj[i] + blocki);
+                }
             }
             y[row] = rhs[row] - sum;
         }
 
 #ifdef HONEI_CUDA_DOUBLE
         __global__ void defect_csr_dv_gpu(double * rhs, double * y, unsigned long * Aj, double * Ax, unsigned long * Ar, double * x,
-                unsigned long num_rows)
+                unsigned long num_rows, unsigned long atomicsize)
         {
             unsigned long idx = blockDim.x*blockIdx.x+threadIdx.x;
             unsigned long row = idx;
@@ -284,8 +287,11 @@ namespace honei
             const unsigned long end(Ar[row+1]);
             for (unsigned long i(Ar[row]) ; i < end ; ++i)
             {
-                int2 v = tex1Dfetch(tex_x_double_defect, Aj[i]);
-                sum += Ax[i] * __hiloint2double(v.y, v.x);
+                for (unsigned long blocki(0) ; blocki < atomicsize ; ++blocki)
+                {
+                    int2 v = tex1Dfetch(tex_x_double_defect, Aj[i] + blocki);
+                    sum += Ax[(i * atomicsize) + blocki] * __hiloint2double(v.y, v.x);
+                }
             }
             y[row] = rhs[row] - sum;
         }
@@ -408,7 +414,7 @@ extern "C" void cuda_defect_smell_dv_double(void * rhs, void * result, void * Aj
 #endif
 
 extern "C" void cuda_defect_csr_dv_float(void * rhs, void * result, void * Aj, void * Ax, void * Ar, void * b,
-        unsigned long num_rows, unsigned long blocksize)
+        unsigned long num_rows, unsigned long atomicsize, unsigned long blocksize)
 {
     unsigned long size = num_rows;
     dim3 grid;
@@ -425,7 +431,7 @@ extern "C" void cuda_defect_csr_dv_float(void * rhs, void * result, void * Aj, v
 
     cudaBindTexture(NULL, tex_x_float_defect, b_gpu);
     honei::cuda::defect_csr_dv_gpu<<<grid, blocksize, block.x * sizeof(float)>>>(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Ar_gpu, b_gpu,
-            num_rows);
+            num_rows, atomicsize);
     cudaUnbindTexture(tex_x_float_defect);
 
     CUDA_ERROR();
@@ -433,7 +439,7 @@ extern "C" void cuda_defect_csr_dv_float(void * rhs, void * result, void * Aj, v
 
 #ifdef HONEI_CUDA_DOUBLE
 extern "C" void cuda_defect_csr_dv_double(void * rhs, void * result, void * Aj, void * Ax, void * Ar, void * b,
-        unsigned long num_rows, unsigned long blocksize)
+        unsigned long num_rows, unsigned long atomicsize, unsigned long blocksize)
 {
     unsigned long size = num_rows;
     dim3 grid;
@@ -450,7 +456,7 @@ extern "C" void cuda_defect_csr_dv_double(void * rhs, void * result, void * Aj, 
 
     cudaBindTexture(NULL, tex_x_double_defect, b_gpu);
     honei::cuda::defect_csr_dv_gpu<<<grid, blocksize, block.x * sizeof(double)>>>(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Ar_gpu, b_gpu,
-            num_rows);
+            num_rows, atomicsize);
     cudaUnbindTexture(tex_x_double_defect);
 
     CUDA_ERROR();

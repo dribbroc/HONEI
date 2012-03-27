@@ -13,6 +13,9 @@ log::output = /dev/null
 #ell thread count, pick 0 for heuristic configuration
 ell::threads = 1
 
+#csr atomic 1-d blocksize, pick 1 for classic csr configuration
+csr:blocksize = 2
+
 # MPI
 # Min Part size for rows and columns in matrix and vector
 mpi::min_part_size = 1

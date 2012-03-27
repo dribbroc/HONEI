@@ -43,6 +43,9 @@ class SparseMatrixCSRQuickTest :
 
         virtual void run() const
         {
+            for (unsigned long blocks(1) ; blocks <= 4 ; blocks*=2)
+            {
+                Configuration::instance()->set_value("csr::blocksize", blocks);
                 unsigned long size (111);
                 SparseMatrix<DataType_> sms(size, size + 3);
                 for (typename SparseMatrix<DataType_>::ElementIterator i(sms.begin_elements()) ; i < sms.end_elements() ; ++i)
@@ -50,19 +53,24 @@ class SparseMatrixCSRQuickTest :
                     if (i.index() % 5 == 0)
                         *i = (DataType_(i.index()) / 1.234 + 1);
                 }
-                sms[0][0] = 4711;
+                sms[0][1] = 4711;
+                sms[0][2] = 4711;
+                sms[0][3] = 4711;
 
                 SparseMatrixCSR<DataType_> sm0(sms);
 
                 TEST_CHECK_EQUAL(sm0, sm0);
                 TEST_CHECK_EQUAL(sm0, sm0.copy());
-                TEST_CHECK_EQUAL(sms.used_elements(), sm0.used_elements());
+                TEST_CHECK_EQUAL(sm0.used_elements(), sms.used_elements());
                 SparseMatrix<DataType_> sms2(sm0);
                 TEST_CHECK_EQUAL(sms, sms2);
                 SparseMatrixELL<DataType_> smell(sms);
+                SparseMatrixELL<DataType_> smell2(sm0);
+                TEST_CHECK_EQUAL(smell, smell2);
                 SparseMatrixCSR<DataType_> sm1(smell);
                 SparseMatrix<DataType_> sms3(sm1);
                 TEST_CHECK_EQUAL(sms, sms3);
+            }
         }
 };
 SparseMatrixCSRQuickTest<float> sparse_matrix_csr_quick_test_float("float");

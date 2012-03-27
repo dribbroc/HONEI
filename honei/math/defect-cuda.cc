@@ -219,13 +219,15 @@ namespace
             const DenseVectorContinuousBase<float> & rhs;
             const SparseMatrixCSR<float> & a;
             const DenseVectorContinuousBase<float> & b;
+            unsigned long atomicsize;
             unsigned long blocksize;
         public:
-            cudaDefectSMCSRDVfloat(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & rhs, const SparseMatrixCSR<float> & a, const DenseVectorContinuousBase<float> & b, unsigned long blocksize) :
+            cudaDefectSMCSRDVfloat(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & rhs, const SparseMatrixCSR<float> & a, const DenseVectorContinuousBase<float> & b, unsigned long atomicsize, unsigned long blocksize) :
                 result(result),
                 rhs(rhs),
                 a(a),
                 b(b),
+                atomicsize(atomicsize),
                 blocksize(blocksize)
             {
             }
@@ -240,7 +242,7 @@ namespace
                 void * Ar_gpu(a.Ar().lock(lm_read_only, tags::GPU::CUDA::memory_value));
 
                 cuda_defect_csr_dv_float(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Ar_gpu, b_gpu,
-                        a.rows(), blocksize);
+                        a.rows(), atomicsize, blocksize);
 
                 result.unlock(lm_write_only);
                 rhs.unlock(lm_read_only);
@@ -258,13 +260,15 @@ namespace
             const DenseVectorContinuousBase<double> & rhs;
             const SparseMatrixCSR<double> & a;
             const DenseVectorContinuousBase<double> & b;
+            unsigned long atomicsize;
             unsigned long blocksize;
         public:
-            cudaDefectSMCSRDVdouble(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & rhs, const SparseMatrixCSR<double> & a, const DenseVectorContinuousBase<double> & b, unsigned long blocksize) :
+            cudaDefectSMCSRDVdouble(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & rhs, const SparseMatrixCSR<double> & a, const DenseVectorContinuousBase<double> & b, unsigned long atomicsize, unsigned long blocksize) :
                 result(result),
                 rhs(rhs),
                 a(a),
                 b(b),
+                atomicsize(atomicsize),
                 blocksize(blocksize)
             {
             }
@@ -279,7 +283,7 @@ namespace
                 void * Ar_gpu(a.Ar().lock(lm_read_only, tags::GPU::CUDA::memory_value));
 
                 cuda_defect_csr_dv_double(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Ar_gpu, b_gpu,
-                        a.rows(), blocksize);
+                        a.rows(), atomicsize, blocksize);
 
                 result.unlock(lm_write_only);
                 rhs.unlock(lm_read_only);
@@ -581,12 +585,12 @@ DenseVectorContinuousBase<float> & Defect<tags::GPU::CUDA>::value(DenseVectorCon
 
     if (! cuda::GPUPool::instance()->idle())
     {
-        cudaDefectSMCSRDVfloat task(result, rhs, a, b, blocksize);
+        cudaDefectSMCSRDVfloat task(result, rhs, a, b, a.blocksize(), blocksize);
         task();
     }
     else
     {
-        cudaDefectSMCSRDVfloat task(result, rhs, a, b, blocksize);
+        cudaDefectSMCSRDVfloat task(result, rhs, a, b, a.blocksize(), blocksize);
         cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
@@ -614,12 +618,12 @@ DenseVectorContinuousBase<double> & Defect<tags::GPU::CUDA>::value(DenseVectorCo
 
     if (! cuda::GPUPool::instance()->idle())
     {
-        cudaDefectSMCSRDVdouble task(result, rhs, a, b, blocksize);
+        cudaDefectSMCSRDVdouble task(result, rhs, a, b, a.blocksize(), blocksize);
         task();
     }
     else
     {
-        cudaDefectSMCSRDVdouble task(result, rhs, a, b, blocksize);
+        cudaDefectSMCSRDVdouble task(result, rhs, a, b, a.blocksize(), blocksize);
         cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 

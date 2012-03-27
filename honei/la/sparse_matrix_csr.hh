@@ -54,8 +54,9 @@ namespace honei
              *
              * \param CSR Vectors the matrix will be created from.
              */
-            explicit SparseMatrixCSR(const unsigned long rows, const unsigned long columns,
-                    const DenseVector<unsigned long> & Aj, const DenseVector<DataType_> & Ax, const DenseVector<unsigned long> & Ar);
+            explicit SparseMatrixCSR(const unsigned long blocksize, const unsigned long rows, const unsigned long columns,
+                    const DenseVector<unsigned long> & Aj, const DenseVector<DataType_> & Ax, const DenseVector<unsigned long> & Ar,
+                    const unsigned long used_elements);
 
             /**
              * Constructor.
@@ -78,6 +79,9 @@ namespace honei
             ~SparseMatrixCSR();
 
             /// \}
+
+            /// Returns the our atomic 1d-blocksize.
+            unsigned long blocksize() const;
 
             /// Returns the number of our columns.
             unsigned long columns() const;

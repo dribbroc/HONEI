@@ -239,15 +239,17 @@ namespace
             const DenseVectorContinuousBase<float> & b;
             unsigned long row_start;
             unsigned long row_end;
+            unsigned long atomicsize;
             unsigned long blocksize;
         public:
             cudaProductSMCSRDVfloat(DenseVectorContinuousBase<float> & result, const SparseMatrixCSR<float> & a, const DenseVectorContinuousBase<float> & b,
-                    unsigned long row_start, unsigned long row_end, unsigned long blocksize) :
+                    unsigned long row_start, unsigned long row_end, unsigned long atomicsize, unsigned long blocksize) :
                 result(result),
                 a(a),
                 b(b),
                 row_start(row_start),
                 row_end(row_end),
+                atomicsize(atomicsize),
                 blocksize(blocksize)
             {
             }
@@ -261,7 +263,7 @@ namespace
                 void * Ar_gpu(a.Ar().lock(lm_read_only, tags::GPU::CUDA::memory_value));
 
                 cuda_product_csr_dv_float(b_gpu, result_gpu, Aj_gpu, Ax_gpu, Ar_gpu,
-                        row_start, row_end, blocksize);
+                        row_start, row_end, atomicsize, blocksize);
 
                 result.unlock(lm_write_only);
                 b.unlock(lm_read_only);
@@ -279,15 +281,17 @@ namespace
             const DenseVectorContinuousBase<double> & b;
             unsigned long row_start;
             unsigned long row_end;
+            unsigned long atomicsize;
             unsigned long blocksize;
         public:
             cudaProductSMCSRDVdouble(DenseVectorContinuousBase<double> & result, const SparseMatrixCSR<double> & a, const DenseVectorContinuousBase<double> & b,
-                    unsigned long row_start, unsigned long row_end, unsigned long blocksize) :
+                    unsigned long row_start, unsigned long row_end, unsigned long atomicsize, unsigned long blocksize) :
                 result(result),
                 a(a),
                 b(b),
                 row_start(row_start),
                 row_end(row_end),
+                atomicsize(atomicsize),
                 blocksize(blocksize)
             {
             }
@@ -301,7 +305,7 @@ namespace
                 void * Ar_gpu(a.Ar().lock(lm_read_only, tags::GPU::CUDA::memory_value));
 
                 cuda_product_csr_dv_double(b_gpu, result_gpu, Aj_gpu, Ax_gpu, Ar_gpu,
-                        row_start, row_end, blocksize);
+                        row_start, row_end, atomicsize, blocksize);
 
                 result.unlock(lm_write_only);
                 b.unlock(lm_read_only);
@@ -574,12 +578,12 @@ DenseVector<float> & Product<tags::GPU::CUDA>::value(DenseVector<float> & result
 
     if (! cuda::GPUPool::instance()->idle())
     {
-        cudaProductSMCSRDVfloat task(result, a, b, 0, a.rows(), blocksize);
+        cudaProductSMCSRDVfloat task(result, a, b, 0, a.rows(), a.blocksize(), blocksize);
         task();
     }
     else
     {
-        cudaProductSMCSRDVfloat task(result, a, b, 0, a.rows(), blocksize);
+        cudaProductSMCSRDVfloat task(result, a, b, 0, a.rows(), a.blocksize(), blocksize);
         cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
@@ -604,12 +608,12 @@ DenseVector<double> & Product<tags::GPU::CUDA>::value(DenseVector<double> & resu
 
     if (! cuda::GPUPool::instance()->idle())
     {
-        cudaProductSMCSRDVdouble task(result, a, b, 0, a.rows(), blocksize);
+        cudaProductSMCSRDVdouble task(result, a, b, 0, a.rows(), a.blocksize(), blocksize);
         task();
     }
     else
     {
-        cudaProductSMCSRDVdouble task(result, a, b, 0, a.rows(), blocksize);
+        cudaProductSMCSRDVdouble task(result, a, b, 0, a.rows(), a.blocksize(), blocksize);
         cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
