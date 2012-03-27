@@ -239,7 +239,7 @@ namespace honei
                     Ticket<tags::CPU::MultiCore> ticket(lpu->socket_id, lpu->linear_enqueue_succ->sched_id);
 
 #ifdef DEBUG
-                    std::string msg = "Dispatching ticket " + stringify(ticket.uid()) + " on LPU " + stringify(lpu->linear_succ->sched_id) + "\n";
+                    std::string msg = "Dispatching ticket " + stringify(ticket.uid()) + " on LPU " + stringify(lpu->linear_enqueue_succ->sched_id) + "\n";
                     LOGMESSAGE(lc_backend, msg);
 #endif
                     return ticket;

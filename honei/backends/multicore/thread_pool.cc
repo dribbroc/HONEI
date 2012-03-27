@@ -377,29 +377,60 @@ namespace honei
                 }
             }
 
-            LPU * last_with_thread = _topology->lpu(0);
-            LPU * succ(last_with_thread->linear_succ);
-
-            while (succ != _topology->lpu(0))
+            for (unsigned s(0) ; s < _topology->num_cpus() ; ++s)
             {
-                if (succ->has_thread)
+                LPU * first_on_socket(NULL);
+
+                unsigned i(0);
+                for ( ; i < _topology->num_lpus() ; ++i)
                 {
-                    last_with_thread->linear_enqueue_succ = succ;
-                    last_with_thread = succ;
+                    if (_topology->lpu(i)->socket_id == (int) s && _topology->lpu(i)->has_thread)
+                    {
+                        first_on_socket = _topology->lpu(i);
+                        ++i;
+                        break;
+                    }
                 }
 
-                succ = succ->linear_succ;
+                if (first_on_socket != NULL)
+                {
+                    LPU * last_with_thread = first_on_socket;
+                    LPU * succ(last_with_thread->linear_succ);
+
+                    while (succ != _topology->lpu(0))
+                    {
+                        if (succ->has_thread && succ->socket_id == (int) s)
+                        {
+#ifdef DEBUG
+                            msg += "Setting linear enqueue successor of LPU " + stringify(last_with_thread->sched_id) + " to " + stringify(succ->sched_id) + " \n";
+#endif
+
+                            last_with_thread->linear_enqueue_succ = succ;
+                            last_with_thread = succ;
+                        }
+
+                        succ = succ->linear_succ;
+                    }
+
+                    last_with_thread->linear_enqueue_succ = first_on_socket;
+#ifdef DEBUG
+                    msg += "Setting linear enqueue successor of LPU " + stringify(last_with_thread->sched_id) + " to " + stringify(first_on_socket->sched_id) + " \n";
+#endif
+                }
+
             }
 
-            last_with_thread->linear_enqueue_succ = _topology->lpu(0);
 
-            last_with_thread = _topology->lpu(0);
-            succ = last_with_thread->alternating_succ;
+            LPU * last_with_thread = _topology->lpu(0);
+            LPU * succ = last_with_thread->alternating_succ;
 
             while (succ != _topology->lpu(0))
             {
                 if (succ->has_thread)
                 {
+#ifdef DEBUG
+                msg += "Setting alternating enqueue successor of LPU " + stringify(last_with_thread->sched_id) + " to " + stringify(succ->sched_id) + " \n";
+#endif
                     last_with_thread->alternating_enqueue_succ = succ;
                     last_with_thread = succ;
                 }
@@ -408,8 +439,9 @@ namespace honei
             }
 
             last_with_thread->alternating_enqueue_succ = _topology->lpu(0);
-
 #ifdef DEBUG
+            msg += "Setting alternating enqueue successor of LPU " + stringify(last_with_thread->sched_id) + " to " + stringify(_topology->lpu(0)->sched_id) + " \n";
+
             LOGMESSAGE(lc_backend, msg);
 #endif
         }

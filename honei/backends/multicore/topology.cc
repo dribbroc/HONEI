@@ -97,6 +97,7 @@ void Topology::determine_arch()
 #endif
 }
 
+#if defined(__i386__) || defined(__x86_64__)
 void Topology::enumerate_x86_intel()
 {
     _num_cores = 0;
@@ -253,7 +254,6 @@ void Topology::enumerate_x86_intel()
         l = m;
     }
 
-#if defined(__i386__) || defined(__x86_64__)
     int CPUInfo[4];
     cpuid(CPUInfo, 0x1);
 
@@ -285,7 +285,7 @@ void Topology::enumerate_x86_intel()
 
     LOGMESSAGE(lc_backend, msg);
 #endif
-#endif
+
 }
 
 void Topology::enumerate_x86_amd()
@@ -373,8 +373,9 @@ void Topology::enumerate_x86_amd()
 
         LOGMESSAGE(lc_backend, msg);
 #endif
-
 }
+#endif
+
 
 void Topology::enumerate_numainfo(int _num_nodes)
 {
@@ -498,11 +499,12 @@ void Topology::enumerate_numainfo(int _num_nodes)
             l = m;
         }
     }
-#if defined(__i386__) || defined(__x86_64__)
+
     _ht_support = 0;
     _ht_factor = 1;
-#endif
+
 }
+
 
 Topology::Topology() :
     _num_lpus(1)
@@ -533,6 +535,7 @@ Topology::Topology() :
 
     switch (_arch)
     {
+#if defined(__i386__) || defined(__x86_64__)
         case x86_intel:
             enumerate_x86_intel();
             break;
@@ -540,7 +543,7 @@ Topology::Topology() :
         case x86_amd:
             enumerate_x86_amd();
             break;
-
+#endif
         default:
         {
             enumerate_numainfo(1);
@@ -597,11 +600,7 @@ unsigned Topology::num_cpus() const
     return _num_cpus;
 }
 
-#if defined(__i386__) || defined(__x86_64__)
-
 unsigned Topology::ht_factor() const
 {
     return _ht_factor;
 }
-
-#endif

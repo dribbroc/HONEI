@@ -38,7 +38,7 @@ namespace honei
         };
 
         template <int> struct TopologyThreadFunction;
-
+#if defined(__i386__) || defined(__x86_64__)
         template <> struct TopologyThreadFunction<x86_intel>
         {
             LPU * const lpu;
@@ -49,7 +49,7 @@ namespace honei
 
             void operator() ();
         };
-
+#endif
 
         class Topology :
              public InstantiationPolicy<Topology, Singleton>
@@ -77,20 +77,19 @@ namespace honei
                 /// Socket / Node information
                 Socket ** _sockets;
 
-#if defined(__i386__) || defined(__x86_64__)
-
                 /// Return whether the processor support simultaneous multithreading
                 bool _ht_support;
 
                 /// Return the number of hardware threads per processor core (usually 1 or 2)
                 unsigned _ht_factor;
 
-#endif
                 /// Determine the architecture of the underlying system
                 void determine_arch();
 
+#if defined(__i386__) || defined(__x86_64__)
                 void enumerate_x86_intel();
                 void enumerate_x86_amd();
+#endif
                 void enumerate_numainfo(int num_nodes);
 
                 /// \}
@@ -134,11 +133,9 @@ namespace honei
                 /// Return the number of physical processor packages (num_lpus / num_cores)
                 unsigned num_cpus() const;
 
-#if defined(__i386__) || defined(__x86_64__)
-
                 /// Return the number of hardware threads per processor core (usually 1 or 2)
                 unsigned ht_factor() const;
-#endif
+
                 /// \}
         };
     }
