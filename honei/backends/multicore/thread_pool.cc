@@ -41,10 +41,7 @@ namespace honei
         /// Information about processor topology (such as number of processing units)
         mc::Topology * const _topology;
 
-        /// Number of demanded threads (via honeirc)
-        const unsigned _demanded_threads;
-
-        /// Number of pooled threads
+        /// Number of demanded (via honeirc) and pooled threads
         const unsigned _num_threads;
 
         /// List of user POSIX threads
@@ -61,8 +58,7 @@ namespace honei
 
         Implementation() :
             _topology(mc::Topology::instance()),
-            _demanded_threads(Configuration::instance()->get_value("mc::num_threads", _topology->num_lpus())),
-            _num_threads(_demanded_threads > _topology->num_lpus() ? _demanded_threads : _topology->num_lpus()),
+            _num_threads(Configuration::instance()->get_value("mc::num_threads", _topology->num_lpus())),
             _pool_sync(new mc::PoolSyncData)
         {
             CONTEXT("When initializing the basic implementation of thread pool:");
@@ -317,32 +313,33 @@ namespace honei
         /// Array of affinity masks for main process and all controlled threads
         cpu_set_t * _affinity_mask;
 
+        /// Assignment policy - how to assign threads to multiple processors (if any)
+        /// 0 is LinearAssignment, 1 is Alternating Assignment
+        int _assign_policy;
+
         AffinityImplementation() :
-            Implementation<mc::ThreadPool>()
+            Implementation<mc::ThreadPool>(),
+            _affinity_mask(new cpu_set_t[_num_threads + 1]),
+            _assign_policy(Configuration::instance()->get_value("mc::thread_assignment", 0))
         {
             CONTEXT("When initializing the affinity implementation of thread pool:");
 
-            _affinity_mask = new cpu_set_t[_num_threads + 1];
-
             // set own affinity first
             CPU_ZERO(&_affinity_mask[_num_threads]);
-            CPU_SET(_topology->num_lpus() - 1, &_affinity_mask[_num_threads]);
+            CPU_SET(0, &_affinity_mask[_num_threads]);
             if(sched_setaffinity(syscall(__NR_gettid), sizeof(cpu_set_t), &_affinity_mask[_num_threads]) != 0)
                 throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 
 #ifdef DEBUG
             std::string msg = "THREAD \t\t POOL_ID \t LPU \t NODE \n";
-            msg += "MAIN \t\t - \t\t" + stringify(_topology->num_lpus() - 1) + "\t\t" + stringify(_topology->lpus()[_topology->num_lpus() - 1]->socket_id) + " \n";
+            msg += "MAIN \t\t - \t\t" + stringify(0) + "\t\t" + stringify(0) + " \n";
 #endif
-
             int inst_ctr(0);
 
-            for (int i(_num_threads - 1) ; i >= 0 ; --i)
+            LPU * lpu = _topology->lpu(0);
+
+            for (unsigned i(0) ; i < _num_threads ; ++i)
             {
-                unsigned sched_id(i % (_topology->num_lpus()));
-
-                LPU * const lpu = _topology->lpu(sched_id);
-
                 mc::ThreadData * td = new mc::ThreadData;
 
                 mc::AffinityThreadFunction tobj(_pool_sync, td, &_tasks, inst_ctr, lpu);
@@ -354,19 +351,63 @@ namespace honei
                     _pool_sync->barrier->wait(*_pool_sync->mutex); // Wait until the thread is really setup / got cpu time for the first time
                 }
 
+                lpu->has_thread = true;
+                _topology->sockets()[lpu->socket_id]->_has_threads = true;
+
                 _threads.push_back(t);
                 _thread_data.push_back(td);
-                _sched_ids.push_back(sched_id);
+                _sched_ids.push_back(lpu->sched_id);
                 CPU_ZERO(&_affinity_mask[i]);
-                CPU_SET(sched_id, &_affinity_mask[i]);
+                CPU_SET(lpu->sched_id, &_affinity_mask[i]);
                 if(sched_setaffinity(tobj.tid(), sizeof(cpu_set_t), &_affinity_mask[i]) != 0)
                     throw ExternalError("Unix: sched_setaffinity()", "could not set affinity! errno: " + stringify(errno));
 #ifdef DEBUG
-                msg += stringify(tobj.tid()) + "\t\t" + stringify(inst_ctr) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(_topology->lpus()[sched_id]->socket_id) + " \n";
+                msg += stringify(tobj.tid()) + "\t\t" + stringify(inst_ctr) + "\t\t" + stringify(lpu->sched_id) + "\t\t" + stringify(lpu->socket_id) + " \n";
 #endif
-
                 ++inst_ctr;
+
+                switch (_assign_policy)
+                {
+                    case 0:
+                        lpu = lpu->linear_succ;
+                        break;
+
+                    case 1:
+                        lpu = lpu->alternating_succ;
+                }
             }
+
+            LPU * last_with_thread = _topology->lpu(0);
+            LPU * succ(last_with_thread->linear_succ);
+
+            while (succ != _topology->lpu(0))
+            {
+                if (succ->has_thread)
+                {
+                    last_with_thread->linear_enqueue_succ = succ;
+                    last_with_thread = succ;
+                }
+
+                succ = succ->linear_succ;
+            }
+
+            last_with_thread->linear_enqueue_succ = _topology->lpu(0);
+
+            last_with_thread = _topology->lpu(0);
+            succ = last_with_thread->alternating_succ;
+
+            while (succ != _topology->lpu(0))
+            {
+                if (succ->has_thread)
+                {
+                    last_with_thread->alternating_enqueue_succ = succ;
+                    last_with_thread = succ;
+                }
+
+                succ = succ->alternating_succ;
+            }
+
+            last_with_thread->alternating_enqueue_succ = _topology->lpu(0);
 
 #ifdef DEBUG
             LOGMESSAGE(lc_backend, msg);

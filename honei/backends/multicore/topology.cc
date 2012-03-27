@@ -36,6 +36,7 @@
 using namespace honei;
 using namespace honei::mc;
 
+#if defined(__i386__) || defined(__x86_64__)
 TopologyThreadFunction<x86_intel>::TopologyThreadFunction(LPU * const pu, Barrier * b) :
     lpu(pu),
     apic_id(-1),
@@ -68,6 +69,7 @@ void TopologyThreadFunction<x86_intel>::operator() ()
 
     barrier->wait();
 }
+#endif
 
 template class InstantiationPolicy<Topology, Singleton>;
 
@@ -251,7 +253,7 @@ void Topology::enumerate_x86_intel()
         l = m;
     }
 
-
+#if defined(__i386__) || defined(__x86_64__)
     int CPUInfo[4];
     cpuid(CPUInfo, 0x1);
 
@@ -282,6 +284,7 @@ void Topology::enumerate_x86_intel()
         msg += "Attention: Error in SMT detection!\n";
 
     LOGMESSAGE(lc_backend, msg);
+#endif
 #endif
 }
 

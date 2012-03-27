@@ -1,7 +1,7 @@
 /* vim: set sw=4 sts=4 et foldmethod=syntax : */
 
 /*
- * Copyright (c) 2010, 2011 Sven Mallach <mallach@honei.org>
+ * Copyright (c) 2010, 2011, 2012 Sven Mallach <mallach@honei.org>
  *
  * This file is part of the HONEI C++ library. HONEI is free software;
  * you can redistribute it and/or modify it under the terms of the GNU General
@@ -108,6 +108,7 @@ namespace honei
                 /// \}
 
             public:
+
                 /// \name Basic Operations
                 /// \{
 
@@ -127,24 +128,6 @@ namespace honei
                 /// Return the number of logical PUs (hardware-threads)
                 unsigned num_lpus() const;
 
-                /// Return the number of NUMA nodes
-                unsigned num_nodes() const;
-
-                /// Return the number of PUs per node
-                unsigned lpus_per_node() const;
-
-                /// Return the node the lpu belongs to
-                unsigned get_node(unsigned lpu) const;
-
-                /// Return the lowest sched_id of a lpu belong to the node
-                unsigned node_min(unsigned node) const;
-
-                /// Return the highest sched_id of a lpu belong to the node
-                unsigned node_max(unsigned node) const;
-
-                /// Return the node which the main thread is running on
-                unsigned main_node() const;
-
                 /// Return the number of PUs per physical processor package
                 unsigned num_cores() const;
 
@@ -152,7 +135,6 @@ namespace honei
                 unsigned num_cpus() const;
 
 #if defined(__i386__) || defined(__x86_64__)
-
 
                 /// Return the number of hardware threads per processor core (usually 1 or 2)
                 unsigned ht_factor() const;

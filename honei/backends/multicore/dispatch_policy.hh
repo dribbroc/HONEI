@@ -18,8 +18,8 @@
  */
 
 #pragma once
-#ifndef MULTICORE_GUARD_POLICY_HH
-#define MULTICORE_GUARD_POLICY_HH 1
+#ifndef MULTICORE_GUARD_DISPATCH_POLICY_HH
+#define MULTICORE_GUARD_DISPATCH_POLICY_HH 1
 
 #include <honei/backends/multicore/ticket.hh>
 #include <honei/backends/multicore/topology.hh>
@@ -81,8 +81,8 @@ namespace honei
 
                     Topology * top = Topology::instance();
 
-                    if (core_id >= top->num_lpus())
-                        core_id = rand() % top->num_lpus();
+                    if (core_id >= top->num_lpus() || (! top->lpu(core_id)->has_thread))
+                        core_id = 0;
 
                     Ticket<tags::CPU::MultiCore> ticket(0xFFFF, core_id);
 
@@ -147,8 +147,8 @@ namespace honei
 
                     Topology * top = Topology::instance();
 
-                    if (socket_id >= top->num_cpus())
-                        socket_id = top->num_cpus() - 1;
+                    if (socket_id >= top->num_cpus() || (! top->sockets()[socket_id]->_has_threads))
+                        socket_id = 0;
 
                     Ticket<tags::CPU::MultiCore> ticket(socket_id, 0xFFFF);
 
@@ -224,6 +224,7 @@ namespace honei
                 {
                     CONTEXT("When using the LinearSocketPolicy to dispatch a task:");
 
+                    // Only happens at the very beginning...
                     if (last.req_sched() >= Topology::instance()->num_lpus())
                     {
                         Ticket<tags::CPU::MultiCore> ticket(0, 0);
@@ -235,7 +236,7 @@ namespace honei
                     }
 
                     LPU * lpu = Topology::instance()->lpu(last.req_sched());
-                    Ticket<tags::CPU::MultiCore> ticket(lpu->socket_id, lpu->linear_succ->sched_id);
+                    Ticket<tags::CPU::MultiCore> ticket(lpu->socket_id, lpu->linear_enqueue_succ->sched_id);
 
 #ifdef DEBUG
                     std::string msg = "Dispatching ticket " + stringify(ticket.uid()) + " on LPU " + stringify(lpu->linear_succ->sched_id) + "\n";
@@ -265,6 +266,7 @@ namespace honei
                 {
                     CONTEXT("When using the AlternatingSocketPolicy to dispatch a task:");
 
+                    // Only happens at the very beginning....
                     if (last.req_sched() >= Topology::instance()->num_lpus())
                     {
                         Ticket<tags::CPU::MultiCore> ticket(0, 0);
@@ -276,10 +278,10 @@ namespace honei
                     }
 
                     LPU * lpu = Topology::instance()->lpu(last.req_sched());
-                    Ticket<tags::CPU::MultiCore> ticket(lpu->alternating_succ->socket_id, lpu->alternating_succ->sched_id);
+                    Ticket<tags::CPU::MultiCore> ticket(lpu->alternating_enqueue_succ->socket_id, lpu->alternating_enqueue_succ->sched_id);
 
 #ifdef DEBUG
-                    std::string msg = "Dispatching ticket " + stringify(ticket.uid()) + " on LPU " + stringify(lpu->alternating_succ->sched_id) + " (last ticket was " + stringify(last.uid()) + " with requested sched " + stringify(last.req_sched()) + ")\n";
+                    std::string msg = "Dispatching ticket " + stringify(ticket.uid()) + " on LPU " + stringify(lpu->alternating_enqueue_succ->sched_id) + " (last ticket was " + stringify(last.uid()) + " with requested sched " + stringify(last.req_sched()) + ")\n";
                     LOGMESSAGE(lc_backend, msg);
 #endif
                     return ticket;

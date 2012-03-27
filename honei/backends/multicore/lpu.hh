@@ -24,7 +24,7 @@
 struct LPU
 {
     // Will always be set
-    int sched_id; // scheduler / cpuinfo / mask id
+    const int sched_id; // scheduler / cpuinfo / mask id
     int socket_id; // socket / cpu / node id
 
     // Will not always be set
@@ -34,11 +34,17 @@ struct LPU
     LPU * linear_succ;
     LPU * alternating_succ;
 
+    // Information that will be set by the thread pool
+    bool has_thread;
+    LPU * linear_enqueue_succ;
+    LPU * alternating_enqueue_succ;
+
     LPU(const int sid) :
         sched_id(sid),
         socket_id(-1),
         smt_id(-1),
-        core_id(-1)
+        core_id(-1),
+        has_thread(false)
     {
     }
 };
@@ -48,11 +54,13 @@ struct Socket
     int _num_lpus;
     int _num_cores;
     LPU ** _lpus;
+    bool _has_threads;
 
     Socket(int num_lpus) :
         _num_lpus(num_lpus),
         _num_cores(0),
-        _lpus(new LPU*[num_lpus])
+        _lpus(new LPU*[num_lpus]),
+        _has_threads(false)
     {
     }
 
