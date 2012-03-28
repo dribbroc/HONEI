@@ -169,5 +169,101 @@ namespace honei
                 }
             }
         }
+
+        void defect_csr_dv(float * result, const float * rhs, const unsigned long * Aj, const float * Ax, const unsigned long * Ar, const float * b,
+                unsigned long blocksize, unsigned long row_start, unsigned long row_end)
+        {
+            if (blocksize % 4 != 0)
+            {
+                for (unsigned long row(row_start) ; row < row_end ; ++row)
+                {
+                    float sum(0);
+                    const unsigned long end(Ar[row+1]);
+                    for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                    {
+                        for (unsigned long blocki(0) ; blocki < blocksize ; ++blocki)
+                        {
+                            sum += Ax[(i*blocksize)+blocki] * b[Aj[i] + blocki];
+                        }
+                    }
+                    result[row] = rhs[row] - sum;
+                }
+            }
+            else
+            {
+                __m128 A_ij, b_v;
+                union sse4
+                {
+                    __m128 m;
+                    float f[4];
+                } sum_v;
+
+                for (unsigned long row(row_start) ; row < row_end ; ++row)
+                {
+                    sum_v.m = _mm_setzero_ps();
+
+                    const unsigned long end(Ar[row+1]);
+                    for (unsigned long i(Ar[row]) ; i < end ; i++)
+                    {
+                        A_ij = _mm_load_ps(Ax + (i * blocksize));
+                        const unsigned long col = Aj[i];
+                        b_v = _mm_loadu_ps(b+col);
+                        b_v = _mm_mul_ps(A_ij, b_v);
+                        sum_v.m = _mm_add_ps(b_v, sum_v.m);
+                    }
+                    float sum = sum_v.f[0] + sum_v.f[1] + sum_v.f[2] + sum_v.f[3];
+
+                    result[row] = rhs[row] - sum;
+                }
+            }
+        }
+
+        void defect_csr_dv(double * result, const double * rhs, const unsigned long * Aj, const double * Ax, const unsigned long * Ar, const double * b,
+                unsigned long blocksize, unsigned long row_start, unsigned long row_end)
+        {
+            if (blocksize % 2 != 0)
+            {
+                for (unsigned long row(row_start) ; row < row_end ; ++row)
+                {
+                    double sum(0);
+                    const unsigned long end(Ar[row+1]);
+                    for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                    {
+                        for (unsigned long blocki(0) ; blocki < blocksize ; ++blocki)
+                        {
+                            sum += Ax[(i*blocksize)+blocki] * b[Aj[i] + blocki];
+                        }
+                    }
+                    result[row] = rhs[row] - sum;
+                }
+            }
+            else
+            {
+                __m128d A_ij, b_v;
+                union sse4
+                {
+                    __m128d m;
+                    double d[4];
+                } sum_v;
+
+                for (unsigned long row(row_start) ; row < row_end ; ++row)
+                {
+                    sum_v.m = _mm_setzero_pd();
+
+                    const unsigned long end(Ar[row+1]);
+                    for (unsigned long i(Ar[row]) ; i < end ; i++)
+                    {
+                        A_ij = _mm_load_pd(Ax + (i * blocksize));
+                        const unsigned long col = Aj[i];
+                        b_v = _mm_loadu_pd(b+col);
+                        b_v = _mm_mul_pd(A_ij, b_v);
+                        sum_v.m = _mm_add_pd(b_v, sum_v.m);
+                    }
+                    double sum = sum_v.d[0] + sum_v.d[1];
+
+                    result[row] = rhs[row] - sum;
+                }
+            }
+        }
     }
 }

@@ -32,6 +32,10 @@ namespace honei
         void defect_smell_dv(double * result, const double * rhs, const unsigned long * Aj, const double * Ax, const unsigned long * Arl, const double * b,
             unsigned long stride, unsigned long rows, unsigned long num_cols_per_row,
             unsigned long row_start, unsigned long row_end, const unsigned long threads);
+        void defect_csr_dv(float * result, const float * rhs, const unsigned long * Aj, const float * Ax, const unsigned long * Ar, const float * b,
+            unsigned long blocksize, unsigned long row_start, unsigned long row_end);
+        void defect_csr_dv(double * result, const double * rhs, const unsigned long * Aj, const double * Ax, const unsigned long * Ar, const double * b,
+            unsigned long blocksize, unsigned long row_start, unsigned long row_end);
 
         void difference(float * a, const float * b, unsigned long size);
         void difference(double * a, const double * b, unsigned long size);

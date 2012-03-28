@@ -737,4 +737,64 @@ namespace honei
         PROFILER_STOP("Defect SMELL double tags::CPU::SSE");
         return result;
     }
+
+    DenseVector<float> & Defect<tags::CPU::SSE>::value(DenseVector<float> & result, const DenseVector<float> & right_hand_side, const SparseMatrixCSR<float> & a, const DenseVector<float> & b,
+            unsigned long row_start, unsigned long row_end)
+    {
+        CONTEXT("When calculating defect of SparseMatrixCSR<float> with DenseVector<float> (SSE):");
+        PROFILER_START("Defect SMCSR float tags::CPU::SSE");
+
+        if (b.size() != a.columns())
+        {
+            throw VectorSizeDoesNotMatch(b.size(), a.columns());
+        }
+        if (result.size() != a.rows())
+        {
+            throw VectorSizeDoesNotMatch(result.size(), a.rows());
+        }
+        if (right_hand_side.size() != result.size())
+        {
+            throw VectorSizeDoesNotMatch(result.size(), right_hand_side.size());
+        }
+
+
+        if (row_end == 0)
+            row_end = a.rows();
+
+        honei::sse::defect_csr_dv(result.elements(), right_hand_side.elements(), a.Aj().elements(), a.Ax().elements(), a.Ar().elements(), b.elements(),
+                a.blocksize(), row_start, row_end);
+
+        PROFILER_STOP("Defect SMCSR float tags::CPU::SSE");
+        return result;
+    }
+
+    DenseVector<double> & Defect<tags::CPU::SSE>::value(DenseVector<double> & result, const DenseVector<double> & right_hand_side, const SparseMatrixCSR<double> & a, const DenseVector<double> & b,
+            unsigned long row_start, unsigned long row_end)
+    {
+        CONTEXT("When calculating defect of SparseMatrixCSR<double> with DenseVector<double> (SSE):");
+        PROFILER_START("Defect SMCSR double tags::CPU::SSE");
+
+        if (b.size() != a.columns())
+        {
+            throw VectorSizeDoesNotMatch(b.size(), a.columns());
+        }
+        if (result.size() != a.rows())
+        {
+            throw VectorSizeDoesNotMatch(result.size(), a.rows());
+        }
+        if (right_hand_side.size() != result.size())
+        {
+            throw VectorSizeDoesNotMatch(result.size(), right_hand_side.size());
+        }
+
+
+        if (row_end == 0)
+            row_end = a.rows();
+
+        honei::sse::defect_csr_dv(result.elements(), right_hand_side.elements(), a.Aj().elements(), a.Ax().elements(), a.Ar().elements(), b.elements(),
+                a.blocksize(), row_start, row_end);
+
+        PROFILER_STOP("Defect SMCSR double tags::CPU::SSE");
+        return result;
+    }
 }

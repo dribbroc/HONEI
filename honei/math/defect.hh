@@ -399,6 +399,7 @@ namespace honei
                     const DT_ * const b(bv.elements());
                     const DT_ * const rhs(rhsv.elements());
                     DT_ * r(rv.elements());
+                    const unsigned long blocksize(a.blocksize());
 
                     for (unsigned long row(row_start) ; row < row_end ; ++row)
                     {
@@ -406,9 +407,9 @@ namespace honei
                         const unsigned long end(Ar[row+1]);
                         for (unsigned long i(Ar[row]) ; i < end ; ++i)
                         {
-                            for (unsigned long blocki(0) ; blocki < a.blocksize() ; ++blocki)
+                            for (unsigned long blocki(0) ; blocki < blocksize ; ++blocki)
                             {
-                                sum += Ax[(i*a.blocksize())+blocki] * b[Aj[i] + blocki];
+                                sum += Ax[(i*blocksize)+blocki] * b[Aj[i] + blocki];
                             }
                         }
                         r[row] = rhs[row] - sum;
@@ -528,6 +529,7 @@ namespace honei
                     const DT_ * const b(bv.elements());
                     const DT_ * const rhs(rhsv.elements());
                     DT_ * r(rv.elements());
+                    const unsigned long blocksize(a.blocksize());
 
                     for (unsigned long row(row_start) ; row < row_end ; ++row)
                     {
@@ -535,9 +537,9 @@ namespace honei
                         const unsigned long end(Ar[row+1]);
                         for (unsigned long i(Ar[row]) ; i < end ; ++i)
                         {
-                            for (unsigned long blocki(0) ; blocki < a.blocksize() ; ++blocki)
+                            for (unsigned long blocki(0) ; blocki < blocksize ; ++blocki)
                             {
-                                sum += Ax[(i*a.blocksize())+blocki] * b[Aj[i] + blocki];
+                                sum += Ax[(i*blocksize)+blocki] * b[Aj[i] + blocki];
                             }
                         }
                         r[row] = rhs[row] - sum;
@@ -698,11 +700,9 @@ namespace honei
 
                     static DenseVector<double> & value(DenseVector<double> & result, const DenseVector<double> & right_hand_side, const SparseMatrixELL<double> & system, const DenseVector<double> & x, unsigned long row_start = 0, unsigned long row_end = 0);
 
-                    template <typename DT_>
-                    static DenseVector<DT_> & value(DenseVector<DT_> & result, const DenseVector<DT_> & right_hand_side, const SparseMatrixCSR<DT_> & system, const DenseVector<DT_> & x, unsigned long row_start = 0, unsigned long row_end = 0)
-                    {
-                        return Defect<tags::CPU::Generic>::value(result, right_hand_side, system, x, row_start, row_end);
-                    }
+                    static DenseVector<float> & value(DenseVector<float> & result, const DenseVector<float> & right_hand_side, const SparseMatrixCSR<float> & system, const DenseVector<float> & x, unsigned long row_start = 0, unsigned long row_end = 0);
+
+                    static DenseVector<double> & value(DenseVector<double> & result, const DenseVector<double> & right_hand_side, const SparseMatrixCSR<double> & system, const DenseVector<double> & x, unsigned long row_start = 0, unsigned long row_end = 0);
 
             template<typename DT_>
                 static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixELLMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
