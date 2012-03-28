@@ -33,7 +33,7 @@ namespace honei
             static unsigned counter;
 
             /// Unique ID
-            unsigned id;
+            const unsigned id;
 
             /// Can be used to assign the associated task to LPUs on a distinct socket
             unsigned req_socket_id;
@@ -81,17 +81,17 @@ namespace honei
             return *this;
         }
 
-        unsigned Ticket<tags::CPU::MultiCore>::uid() const
+        const unsigned Ticket<tags::CPU::MultiCore>::uid() const
         {
             return _imp->id;
         }
 
-        unsigned Ticket<tags::CPU::MultiCore>::req_socket() const
+        unsigned & Ticket<tags::CPU::MultiCore>::req_socket() const
         {
             return _imp->req_socket_id;
         }
 
-        unsigned Ticket<tags::CPU::MultiCore>::req_sched() const
+        unsigned & Ticket<tags::CPU::MultiCore>::req_sched() const
         {
             return _imp->req_sched_id;
         }

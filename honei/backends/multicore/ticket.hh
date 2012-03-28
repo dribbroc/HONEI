@@ -52,13 +52,13 @@ namespace honei
                 Ticket<tags::CPU::MultiCore> & operator= (const Ticket<tags::CPU::MultiCore> & other);
 
                 /// Retrieve unique ticket ID
-                unsigned uid() const;
+                const unsigned uid() const;
 
                 /// Retrieve the socket the associated task shall be assigned to
-                unsigned req_socket() const;
+                unsigned & req_socket() const;
 
                 /// Retrieve the LPU the associated task shall be assigned to
-                unsigned req_sched() const;
+                unsigned & req_sched() const;
 
                 /// Retrieve sched ID of the thread executing the task
                 unsigned & sid();
