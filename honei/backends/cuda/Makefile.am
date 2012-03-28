@@ -21,7 +21,7 @@ DEFS = \
 NVCC = nvcc
 NVCCFLAGS = -g --ptxas-options=-v -O3 -I$(top_srcdir) $(DEFS) -use_fast_math
 if CUDA_DOUBLE
-  NVCCFLAGS += -arch=compute_13 -code=compute_13 -m64
+  NVCCFLAGS += -arch=compute_20 -code=compute_20 -m64
 endif
 
 .cu.lo: libtool-hack.in
