@@ -61,6 +61,8 @@ void TopologyThreadFunction<x86_intel>::operator() ()
     lpu->core_id = unit->topo_id[1];
     lpu->socket_id = unit->topo_id[2];
 
+    delete unit;
+
 #ifdef DEBUG
     std::string msg = "SCHED \t\t APIC \t\t SMT \t\t CORE \t\t PKG \n";
     msg += stringify(lpu->sched_id) + "\t\t" + stringify(apic_id) + "\t\t" + stringify(lpu->smt_id) + "\t\t" + stringify(lpu->core_id) +  "\t\t" + stringify(lpu->socket_id) + " \n";

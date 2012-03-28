@@ -54,19 +54,22 @@ struct Socket
     int _num_lpus;
     int _num_cores;
     LPU ** _lpus;
-    bool _has_threads;
+    int _num_threads;
+    LPU ** _threaded_lpus;
 
     Socket(int num_lpus) :
         _num_lpus(num_lpus),
         _num_cores(0),
         _lpus(new LPU*[num_lpus]),
-        _has_threads(false)
+        _num_threads(0),
+        _threaded_lpus(new LPU*[num_lpus])
     {
     }
 
     ~Socket()
     {
         delete[] _lpus;
+        delete[] _threaded_lpus;
     }
 };
 

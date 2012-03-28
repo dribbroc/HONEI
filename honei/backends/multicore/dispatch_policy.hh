@@ -147,7 +147,7 @@ namespace honei
 
                     Topology * top = Topology::instance();
 
-                    if (socket_id >= top->num_cpus() || (! top->sockets()[socket_id]->_has_threads))
+                    if (socket_id >= top->num_cpus() || (top->sockets()[socket_id]->_num_threads == 0))
                         socket_id = 0;
 
                     Ticket<tags::CPU::MultiCore> ticket(socket_id, 0xFFFF);
