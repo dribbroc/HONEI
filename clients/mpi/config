@@ -5,7 +5,7 @@ scenario 0
 syncthreshold 0.5
 
 # describe procs on this node
-proc sse 1
+proc generic 1
 
 #activate fileoutput
 #fileoutput output

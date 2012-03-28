@@ -320,7 +320,7 @@ namespace honei
                 PackedGridInfo<D2Q9> info_ref;
 
                 GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_ref, info_ref, data_ref);
-                SolverLBMGrid<tags::CPU::SSE, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver_ref(&info_ref, &data_ref, grid_ref.d_x, grid_ref.d_y, grid_ref.d_t, grid_ref.tau);
+                SolverLBMGrid<tags::CPU::Generic, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver_ref(&info_ref, &data_ref, grid_ref.d_x, grid_ref.d_y, grid_ref.d_t, grid_ref.tau);
                 solver_ref.do_preprocessing();
                 for(unsigned long i(0); i < timesteps; ++i)
                 {
@@ -1489,7 +1489,7 @@ namespace honei
                 _sync_time_down+=delta_down;
                 delta_up = cu.total() - ca.total();
                 _sync_time_up+=delta_up;
-                _balance_load(delta_up, delta_down);
+                //_balance_load(delta_up, delta_down);
 
                 if (up_size_recv > 0)
                 {
@@ -1844,15 +1844,11 @@ namespace honei
 
             void _init_solver(SolverLBMGridBase *& solver, unsigned long id, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, DataType_ d_x, DataType_ d_y, DataType_ d_t, DataType_ tau)
             {
-                if(_backends.at(id).compare(tags::CPU::SSE::name) == 0)
+                if(_backends.at(id).compare(tags::CPU::Generic::name) == 0)
                 {
-#ifdef HONEI_SSE
-                    _device_name = tags::CPU::SSE::name;
-                    _solver_tag_value = tags::CPU::SSE::tag_value;
-                    solver = new SolverLBMGrid<tags::CPU::SSE, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> (&info, &data, d_x, d_y, d_t, tau);
-#else
-                    throw InternalError("Backend not activated: " + _backends.at(id));
-#endif
+                    _device_name = tags::CPU::Generic::name;
+                    _solver_tag_value = tags::CPU::Generic::tag_value;
+                    solver = new SolverLBMGrid<tags::CPU::Generic, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> (&info, &data, d_x, d_y, d_t, tau);
                 }
                 else if(_backends.at(id).compare(tags::GPU::CUDA::name) == 0)
                 {
