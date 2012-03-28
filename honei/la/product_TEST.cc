@@ -963,6 +963,12 @@ SparseMatrixCSRDenseVectorProductTest<float, tags::CPU::Generic> generic_sparse_
 SparseMatrixCSRDenseVectorProductTest<double, tags::CPU::Generic> generic_sparse_matrix_csr_dense_vector_product_test_double("double");
 SparseMatrixCSRDenseVectorProductTest<float, tags::CPU::MultiCore::Generic> generic_mc_sparse_matrix_csr_dense_vector_product_test_float("float");
 SparseMatrixCSRDenseVectorProductTest<double, tags::CPU::MultiCore::Generic> generic_mc_sparse_matrix_csr_dense_vector_product_test_double("double");
+#ifdef HONEI_SSE
+SparseMatrixCSRDenseVectorProductTest<float, tags::CPU::SSE> sse_sparse_matrix_csr_dense_vector_product_test_float("float");
+SparseMatrixCSRDenseVectorProductTest<double, tags::CPU::SSE> sse_sparse_matrix_csr_dense_vector_product_test_double("double");
+SparseMatrixCSRDenseVectorProductTest<float, tags::CPU::MultiCore::SSE> sse_mc_sparse_matrix_csr_dense_vector_product_test_float("float");
+SparseMatrixCSRDenseVectorProductTest<double, tags::CPU::MultiCore::SSE> sse_mc_sparse_matrix_csr_dense_vector_product_test_double("double");
+#endif
 #ifdef HONEI_CUDA
 SparseMatrixCSRDenseVectorProductTest<float, tags::GPU::CUDA> cuda_sparse_matrix_csr_dense_vector_product_test_float("float");
 #ifdef HONEI_CUDA_DOUBLE
@@ -1018,6 +1024,12 @@ SparseMatrixCSRDenseVectorProductQuickTest<float, tags::CPU::Generic> generic_sp
 SparseMatrixCSRDenseVectorProductQuickTest<double, tags::CPU::Generic> generic_sparse_matrix_csr_dense_vector_product_quick_test_double("double");
 SparseMatrixCSRDenseVectorProductQuickTest<float, tags::CPU::MultiCore::Generic> generic_mc_sparse_matrix_csr_dense_vector_product_quick_test_float("float");
 SparseMatrixCSRDenseVectorProductQuickTest<double, tags::CPU::MultiCore::Generic> generic_mc_sparse_matrix_csr_dense_vector_product_quick_test_double("double");
+#ifdef HONEI_SSE
+SparseMatrixCSRDenseVectorProductQuickTest<float, tags::CPU::SSE> sse_sparse_matrix_csr_dense_vector_product_quick_test_float("float");
+SparseMatrixCSRDenseVectorProductQuickTest<double, tags::CPU::SSE> sse_sparse_matrix_csr_dense_vector_product_quick_test_double("double");
+SparseMatrixCSRDenseVectorProductQuickTest<float, tags::CPU::MultiCore::SSE> sse_mc_sparse_matrix_csr_dense_vector_product_quick_test_float("float");
+SparseMatrixCSRDenseVectorProductQuickTest<double, tags::CPU::MultiCore::SSE> sse_mc_sparse_matrix_csr_dense_vector_product_quick_test_double("double");
+#endif
 #ifdef HONEI_CUDA
 SparseMatrixCSRDenseVectorProductQuickTest<float, tags::GPU::CUDA> cuda_sparse_matrix_csr_dense_vector_product_quick_test_float("float");
 #ifdef HONEI_CUDA_DOUBLE

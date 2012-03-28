@@ -223,6 +223,7 @@ namespace honei
             const DT_ * const Ax(a.Ax().elements());
             const DT_ * const b(bv.elements());
             DT_ * r(rv.elements());
+            const unsigned long blocksize(a.blocksize());
 
             for (unsigned long row(row_start) ; row < row_end ; ++row)
             {
@@ -230,9 +231,9 @@ namespace honei
                 const unsigned long end(Ar[row+1]);
                 for (unsigned long i(Ar[row]) ; i < end ; ++i)
                 {
-                    for (unsigned long blocki(0) ; blocki < a.blocksize() ; ++blocki)
+                    for (unsigned long blocki(0) ; blocki < blocksize ; ++blocki)
                     {
-                        sum += Ax[(i*a.blocksize())+blocki] * b[Aj[i] + blocki];
+                        sum += Ax[(i*blocksize)+blocki] * b[Aj[i] + blocki];
                     }
                 }
                 r[row] = sum;
@@ -1497,6 +1498,7 @@ namespace honei
             const DT_ * const Ax(a.Ax().elements());
             const DT_ * const b(bv.elements());
             DT_ * r(rv.elements());
+            const unsigned long blocksize(a.blocksize());
 
             for (unsigned long row(row_start) ; row < row_end ; ++row)
             {
@@ -1504,9 +1506,9 @@ namespace honei
                 const unsigned long end(Ar[row+1]);
                 for (unsigned long i(Ar[row]) ; i < end ; ++i)
                 {
-                    for (unsigned long blocki(0) ; blocki < a.blocksize() ; ++blocki)
+                    for (unsigned long blocki(0) ; blocki < blocksize ; ++blocki)
                     {
-                        sum += Ax[(i*a.blocksize())+blocki] * b[Aj[i] + blocki];
+                        sum += Ax[(i*blocksize)+blocki] * b[Aj[i] + blocki];
                     }
                 }
                 r[row] = sum;
@@ -1826,12 +1828,11 @@ namespace honei
         static DenseVector<double> & value(DenseVector<double> & result, const SparseMatrixELL<double> & a, const DenseVector<double> & b,
                 unsigned long row_start = 0, unsigned long row_end = 0);
 
-        template <typename DT_>
-        static DenseVector<DT_> & value(DenseVector<DT_> & result, const SparseMatrixCSR<DT_> & a, const DenseVector<DT_> & b,
-                unsigned long row_start = 0, unsigned long row_end = 0)
-        {
-            return Product<tags::CPU::Generic>::value(result, a, b, row_start, row_end);
-        }
+        static DenseVector<float> & value(DenseVector<float> & result, const SparseMatrixCSR<float> & a, const DenseVector<float> & b,
+                unsigned long row_start = 0, unsigned long row_end = 0);
+
+        static DenseVector<double> & value(DenseVector<double> & result, const SparseMatrixCSR<double> & a, const DenseVector<double> & b,
+                unsigned long row_start = 0, unsigned long row_end = 0);
 
         template<typename DT1_, typename DT2_>
         static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)

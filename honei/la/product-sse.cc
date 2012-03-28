@@ -337,6 +337,58 @@ DenseVector<double> & Product<tags::CPU::SSE>::value(DenseVector<double> & resul
     return result;
 }
 
+DenseVector<float> & Product<tags::CPU::SSE>::value(DenseVector<float> & result, const SparseMatrixCSR<float> & a, const DenseVector<float> & b,
+         unsigned long row_start, unsigned long row_end)
+{
+    CONTEXT("When multiplying SparseMatrixCSR<float> with DenseVector<float> (SSE):");
+    PROFILER_START("Product SMCSR float tags::CPU::SSE");
+
+    if (b.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+    }
+    if (result.size() != a.rows())
+    {
+        throw VectorSizeDoesNotMatch(result.size(), a.columns());
+    }
+
+
+    if (row_end == 0)
+        row_end = a.rows();
+
+    honei::sse::product_csr_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), a.Ar().elements(), b.elements(),
+            a.blocksize(), row_start, row_end);
+
+    PROFILER_STOP("Product SMCSR float tags::CPU::SSE");
+    return result;
+}
+
+DenseVector<double> & Product<tags::CPU::SSE>::value(DenseVector<double> & result, const SparseMatrixCSR<double> & a, const DenseVector<double> & b,
+         unsigned long row_start, unsigned long row_end)
+{
+    CONTEXT("When multiplying SparseMatrixCSR<double> with DenseVector<double> (SSE):");
+    PROFILER_START("Product SMCSR double tags::CPU::SSE");
+
+    if (b.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+    }
+    if (result.size() != a.rows())
+    {
+        throw VectorSizeDoesNotMatch(result.size(), a.columns());
+    }
+
+
+    if (row_end == 0)
+        row_end = a.rows();
+
+    honei::sse::product_csr_dv(result.elements(), a.Aj().elements(), a.Ax().elements(), a.Ar().elements(), b.elements(),
+            a.blocksize(), row_start, row_end);
+
+    PROFILER_STOP("Product SMCSR double tags::CPU::SSE");
+    return result;
+}
+
 DenseVector<float> Product<tags::CPU::SSE>::value(const DenseMatrix<float> & a, const DenseVectorContinuousBase<float> & b)
 {
     CONTEXT("When multiplying DenseMatrix<float> with DenseVectorContinuousBase<float> (SSE):");
