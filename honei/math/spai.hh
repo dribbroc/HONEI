@@ -72,18 +72,40 @@ namespace honei
                 sm(i,i) += std::numeric_limits<double>::epsilon();
             }
 
-            // 1
             for (unsigned long i(0) ; i < sm.rows() - 1 ; ++i)
             {
                 sm(i, i+1, src(i, i+1));
                 sm(i,i+1) += std::numeric_limits<double>::epsilon();
             }
 
-            // -1
             for (unsigned long i(1) ; i < sm.rows() ; ++i)
             {
                 sm(i, i-1, src(i, i-1));
                 sm(i,i-1) += std::numeric_limits<double>::epsilon();
+            }
+
+            for (unsigned long i(0) ; i < sm.rows() - 2 ; ++i)
+            {
+                sm(i, i+2, src(i, i+2));
+                sm(i,i+2) += std::numeric_limits<double>::epsilon();
+            }
+
+            for (unsigned long i(2) ; i < sm.rows() ; ++i)
+            {
+                sm(i, i-2, src(i, i-2));
+                sm(i,i-2) += std::numeric_limits<double>::epsilon();
+            }
+
+            for (unsigned long i(0) ; i < sm.rows() - 3 ; ++i)
+            {
+                sm(i, i+3, src(i, i+3));
+                sm(i,i+3) += std::numeric_limits<double>::epsilon();
+            }
+
+            for (unsigned long i(3) ; i < sm.rows() ; ++i)
+            {
+                sm(i, i-3, src(i, i-3));
+                sm(i,i-3) += std::numeric_limits<double>::epsilon();
             }
 
             // root
@@ -105,6 +127,18 @@ namespace honei
                 sm(i,i+root+1) += std::numeric_limits<double>::epsilon();
             }
 
+            for (unsigned long i(0) ; i < sm.rows() - root -2; ++i)
+            {
+                sm(i, i+(root-2), src(i, i+(root-2)));
+                sm(i,i+(root-2)) += std::numeric_limits<double>::epsilon();
+            }
+
+            for (unsigned long i(0) ; i < sm.rows() - (root + 2); ++i)
+            {
+                sm(i, i+root+2, src(i, i+root+2));
+                sm(i,i+root+2) += std::numeric_limits<double>::epsilon();
+            }
+
             // -root
             for (unsigned long i(root) ; i < sm.rows() ; ++i)
             {
@@ -122,6 +156,18 @@ namespace honei
             {
                 sm(i, i-(root+1), src(i, i-(root+1)));
                 sm(i,i-(root+1)) += std::numeric_limits<double>::epsilon();
+            }
+
+            for (unsigned long i(root-2) ; i < sm.rows() ; ++i)
+            {
+                sm(i, i-(root-2), src(i, i-(root-2)));
+                sm(i,i-(root-2)) += std::numeric_limits<double>::epsilon();
+            }
+
+            for (unsigned long i(root+2) ; i < sm.rows() ; ++i)
+            {
+                sm(i, i-(root+2), src(i, i-(root+2)));
+                sm(i,i-(root+2)) += std::numeric_limits<double>::epsilon();
             }
 
             std::vector<mm_data> elements;
