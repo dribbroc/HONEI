@@ -531,18 +531,85 @@ namespace honei
                     DT_ * r(rv.elements());
                     const unsigned long blocksize(a.blocksize());
 
-                    for (unsigned long row(row_start) ; row < row_end ; ++row)
+                    switch(blocksize)
                     {
-                        DT_ sum(0);
-                        const unsigned long end(Ar[row+1]);
-                        for (unsigned long i(Ar[row]) ; i < end ; ++i)
-                        {
-                            for (unsigned long blocki(0) ; blocki < blocksize ; ++blocki)
+                        case 1:
+                            for (unsigned long row(row_start) ; row < row_end ; ++row)
                             {
-                                sum += Ax[(i*blocksize)+blocki] * b[Aj[i] + blocki];
+                                DT_ sum(0);
+                                const unsigned long end(Ar[row+1]);
+                                for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                                {
+                                    sum += Ax[i] * b[Aj[i]];
+                                }
+                                r[row] = rhs[row] - sum;
                             }
-                        }
-                        r[row] = rhs[row] - sum;
+                            break;
+                        case 2:
+                            for (unsigned long row(row_start) ; row < row_end ; ++row)
+                            {
+                                DT_ sum(0);
+                                const unsigned long end(Ar[row+1]);
+                                for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                                {
+                                    const unsigned long col(Aj[i]);
+                                    sum += Ax[2*i] * b[col];
+                                    sum += Ax[2*i+1] * b[col+1];
+                                }
+                                r[row] = rhs[row] - sum;
+                            }
+                            break;
+                        case 4:
+                            for (unsigned long row(row_start) ; row < row_end ; ++row)
+                            {
+                                DT_ sum(0);
+                                const unsigned long end(Ar[row+1]);
+                                for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                                {
+                                    const unsigned long col(Aj[i]);
+                                    sum += Ax[2*i] * b[col];
+                                    sum += Ax[2*i+1] * b[col+1];
+                                    sum += Ax[2*i+2] * b[col+2];
+                                    sum += Ax[2*i+3] * b[col+3];
+                                }
+                                r[row] = rhs[row] - sum;
+                            }
+                            break;
+                        case 8:
+                            for (unsigned long row(row_start) ; row < row_end ; ++row)
+                            {
+                                DT_ sum(0);
+                                const unsigned long end(Ar[row+1]);
+                                for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                                {
+                                    const unsigned long col(Aj[i]);
+                                    sum += Ax[2*i] * b[col];
+                                    sum += Ax[2*i+1] * b[col+1];
+                                    sum += Ax[2*i+2] * b[col+2];
+                                    sum += Ax[2*i+3] * b[col+3];
+                                    sum += Ax[2*i+4] * b[col+4];
+                                    sum += Ax[2*i+5] * b[col+5];
+                                    sum += Ax[2*i+6] * b[col+6];
+                                    sum += Ax[2*i+7] * b[col+7];
+                                }
+                                r[row] = rhs[row] - sum;
+                            }
+                            break;
+                        default:
+                            for (unsigned long row(row_start) ; row < row_end ; ++row)
+                            {
+                                DT_ sum(0);
+                                const unsigned long end(Ar[row+1]);
+                                for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                                {
+                                    for (unsigned long blocki(0) ; blocki < blocksize ; ++blocki)
+                                    {
+                                        sum += Ax[(i*blocksize)+blocki] * b[Aj[i] + blocki];
+                                    }
+                                }
+                                r[row] = rhs[row] - sum;
+                            }
+                            break;
                     }
 
                     return rv;
@@ -606,19 +673,19 @@ namespace honei
                 static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & right_hand_side,
                         const SparseMatrixCSR<double> & system, const DenseVectorContinuousBase<double> & x);
 
-            template<typename DT_>
-                static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixELLMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
-                {
-                    MPIOps<tags::GPU::CUDA>::defect(result, right_hand_side, system, x);
-                    return result;
-                }
+                template<typename DT_>
+                    static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixELLMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
+                    {
+                        MPIOps<tags::GPU::CUDA>::defect(result, right_hand_side, system, x);
+                        return result;
+                    }
 
-            template<typename DT_>
-                static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixCSRMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
-                {
-                    MPIOps<tags::GPU::CUDA>::defect(result, right_hand_side, system, x);
-                    return result;
-                }
+                template<typename DT_>
+                    static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixCSRMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
+                    {
+                        MPIOps<tags::GPU::CUDA>::defect(result, right_hand_side, system, x);
+                        return result;
+                    }
 
         };
 
@@ -627,20 +694,20 @@ namespace honei
         {
             public:
                 template <typename DT_>
-                static DenseVector<DT_> value(const DenseVectorContinuousBase<DT_> & right_hand_side,
-                        const BandedMatrixQx<Q1Type, DT_> & system, const DenseVectorContinuousBase<DT_> & x);
+                    static DenseVector<DT_> value(const DenseVectorContinuousBase<DT_> & right_hand_side,
+                            const BandedMatrixQx<Q1Type, DT_> & system, const DenseVectorContinuousBase<DT_> & x);
 
                 template <typename DT_>
-                static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & right_hand_side,
-                        const BandedMatrixQx<Q1Type, DT_> & system, const DenseVectorContinuousBase<DT_> & x);
+                    static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & right_hand_side,
+                            const BandedMatrixQx<Q1Type, DT_> & system, const DenseVectorContinuousBase<DT_> & x);
 
                 template <typename DT_>
-                static DenseVector<DT_> value(const DenseVectorContinuousBase<DT_> & right_hand_side,
-                        const SparseMatrixELL<DT_> & system, const DenseVectorContinuousBase<DT_> & x);
+                    static DenseVector<DT_> value(const DenseVectorContinuousBase<DT_> & right_hand_side,
+                            const SparseMatrixELL<DT_> & system, const DenseVectorContinuousBase<DT_> & x);
 
                 template <typename DT_>
-                static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & right_hand_side,
-                        const SparseMatrixELL<DT_> & system, const DenseVectorContinuousBase<DT_> & x);
+                    static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & right_hand_side,
+                            const SparseMatrixELL<DT_> & system, const DenseVectorContinuousBase<DT_> & x);
         };
 
     template<>
@@ -648,20 +715,20 @@ namespace honei
         {
             public:
                 template <typename DT_>
-                static DenseVector<DT_> value(const DenseVectorContinuousBase<DT_> & right_hand_side,
-                        const BandedMatrixQx<Q1Type, DT_> & system, const DenseVectorContinuousBase<DT_> & x);
+                    static DenseVector<DT_> value(const DenseVectorContinuousBase<DT_> & right_hand_side,
+                            const BandedMatrixQx<Q1Type, DT_> & system, const DenseVectorContinuousBase<DT_> & x);
 
                 template <typename DT_>
-                static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & right_hand_side,
-                        const BandedMatrixQx<Q1Type, DT_> & system, const DenseVectorContinuousBase<DT_> & x);
+                    static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & right_hand_side,
+                            const BandedMatrixQx<Q1Type, DT_> & system, const DenseVectorContinuousBase<DT_> & x);
 
                 template <typename DT_>
-                static DenseVector<DT_> value(const DenseVectorContinuousBase<DT_> & right_hand_side,
-                        const SparseMatrixELL<DT_> & system, const DenseVectorContinuousBase<DT_> & x);
+                    static DenseVector<DT_> value(const DenseVectorContinuousBase<DT_> & right_hand_side,
+                            const SparseMatrixELL<DT_> & system, const DenseVectorContinuousBase<DT_> & x);
 
                 template <typename DT_>
-                static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & right_hand_side,
-                        const SparseMatrixELL<DT_> & system, const DenseVectorContinuousBase<DT_> & x);
+                    static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & right_hand_side,
+                            const SparseMatrixELL<DT_> & system, const DenseVectorContinuousBase<DT_> & x);
         };
 
     template<>
@@ -696,27 +763,27 @@ namespace honei
                         return result;
                     }
 
-                    static DenseVector<float> & value(DenseVector<float> & result, const DenseVector<float> & right_hand_side, const SparseMatrixELL<float> & system, const DenseVector<float> & x, unsigned long row_start = 0, unsigned long row_end = 0);
+                static DenseVector<float> & value(DenseVector<float> & result, const DenseVector<float> & right_hand_side, const SparseMatrixELL<float> & system, const DenseVector<float> & x, unsigned long row_start = 0, unsigned long row_end = 0);
 
-                    static DenseVector<double> & value(DenseVector<double> & result, const DenseVector<double> & right_hand_side, const SparseMatrixELL<double> & system, const DenseVector<double> & x, unsigned long row_start = 0, unsigned long row_end = 0);
+                static DenseVector<double> & value(DenseVector<double> & result, const DenseVector<double> & right_hand_side, const SparseMatrixELL<double> & system, const DenseVector<double> & x, unsigned long row_start = 0, unsigned long row_end = 0);
 
-                    static DenseVector<float> & value(DenseVector<float> & result, const DenseVector<float> & right_hand_side, const SparseMatrixCSR<float> & system, const DenseVector<float> & x, unsigned long row_start = 0, unsigned long row_end = 0);
+                static DenseVector<float> & value(DenseVector<float> & result, const DenseVector<float> & right_hand_side, const SparseMatrixCSR<float> & system, const DenseVector<float> & x, unsigned long row_start = 0, unsigned long row_end = 0);
 
-                    static DenseVector<double> & value(DenseVector<double> & result, const DenseVector<double> & right_hand_side, const SparseMatrixCSR<double> & system, const DenseVector<double> & x, unsigned long row_start = 0, unsigned long row_end = 0);
+                static DenseVector<double> & value(DenseVector<double> & result, const DenseVector<double> & right_hand_side, const SparseMatrixCSR<double> & system, const DenseVector<double> & x, unsigned long row_start = 0, unsigned long row_end = 0);
 
-            template<typename DT_>
-                static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixELLMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
-                {
-                    MPIOps<tags::CPU::SSE>::defect(result, right_hand_side, system, x);
-                    return result;
-                }
+                template<typename DT_>
+                    static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixELLMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
+                    {
+                        MPIOps<tags::CPU::SSE>::defect(result, right_hand_side, system, x);
+                        return result;
+                    }
 
-            template<typename DT_>
-                static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixCSRMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
-                {
-                    MPIOps<tags::CPU::SSE>::defect(result, right_hand_side, system, x);
-                    return result;
-                }
+                template<typename DT_>
+                    static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixCSRMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
+                    {
+                        MPIOps<tags::CPU::SSE>::defect(result, right_hand_side, system, x);
+                        return result;
+                    }
         };
 
     template<>
@@ -896,7 +963,7 @@ namespace honei
         template <typename Tag_> struct Defect
         {
 
-                template<typename DT_>
+            template<typename DT_>
                 static DenseVector<DT_> & value(DenseVector<DT_> & result, DenseVector<DT_> & right_hand_side, BandedMatrixQx<Q1Type, DT_> & system, DenseVector<DT_> & x)
                 {
                     if (x.size() != system.columns())
@@ -915,145 +982,145 @@ namespace honei
                     return result;
                 }
 
-                template <typename DT_>
-                    static DenseVector<DT_> value(const DenseVector<DT_> & rhs, const SparseMatrixELL<DT_> & a, const DenseVector<DT_> & b)
+            template <typename DT_>
+                static DenseVector<DT_> value(const DenseVector<DT_> & rhs, const SparseMatrixELL<DT_> & a, const DenseVector<DT_> & b)
+                {
+                    if (b.size() != a.columns())
                     {
-                        if (b.size() != a.columns())
-                        {
-                            throw VectorSizeDoesNotMatch(b.size(), a.columns());
-                        }
-                        if (a.rows() != rhs.size())
-                        {
-                            throw VectorSizeDoesNotMatch(a.rows(), rhs.size());
-                        }
-
-                        DenseVector<DT_> result(a.rows());
-                        //fill<typename Tag_::DelegateTo>(result, DT_(0));
-
-                        unsigned long max_count(Configuration::instance()->get_value("mc::Product(DV,SMELL,DV)::max_count",
-                                    mc::ThreadPool::instance()->num_threads()));
-
-                        TicketVector tickets;
-
-                        unsigned long limits[max_count + 1];
-                        limits[0] = 0;
-                        for (unsigned long i(1) ; i < max_count; ++i)
-                        {
-                            limits[i] = limits[i-1] + a.rows() / max_count;
-                        }
-                        limits[max_count] = a.rows();
-
-                        for (unsigned long i(0) ; i < max_count ; ++i)
-                        {
-                            OperationWrapper<honei::Defect<typename Tag_::DelegateTo>, DenseVector<DT_>, DenseVector<DT_>,
-                                DenseVector<DT_>, SparseMatrixELL<DT_>, DenseVector<DT_>, unsigned long, unsigned long > wrapper(result);
-                            tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, result, rhs, a, b, limits[i], limits[i+1])));
-                        }
-
-                        tickets.wait();
-
-                        return result;
+                        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+                    }
+                    if (a.rows() != rhs.size())
+                    {
+                        throw VectorSizeDoesNotMatch(a.rows(), rhs.size());
                     }
 
-                template <typename DT_>
-                    static DenseVector<DT_> value(DenseVector<DT_> & result, const DenseVector<DT_> & rhs, const SparseMatrixELL<DT_> & a, const DenseVector<DT_> & b)
+                    DenseVector<DT_> result(a.rows());
+                    //fill<typename Tag_::DelegateTo>(result, DT_(0));
+
+                    unsigned long max_count(Configuration::instance()->get_value("mc::Product(DV,SMELL,DV)::max_count",
+                                mc::ThreadPool::instance()->num_threads()));
+
+                    TicketVector tickets;
+
+                    unsigned long limits[max_count + 1];
+                    limits[0] = 0;
+                    for (unsigned long i(1) ; i < max_count; ++i)
                     {
-                        if (b.size() != a.columns())
-                        {
-                            throw VectorSizeDoesNotMatch(b.size(), a.columns());
-                        }
-                        if (a.rows() != result.size())
-                        {
-                            throw VectorSizeDoesNotMatch(a.rows(), result.size());
-                        }
-                        if (rhs.size() != a.columns())
-                        {
-                            throw VectorSizeDoesNotMatch(rhs.size(), a.columns());
-                        }
+                        limits[i] = limits[i-1] + a.rows() / max_count;
+                    }
+                    limits[max_count] = a.rows();
 
-                        //fill<typename Tag_::DelegateTo>(result, DT_(0));
-
-                        unsigned long max_count(Configuration::instance()->get_value("mc::Product(DV,SMELL,DV)::max_count",
-                                    mc::ThreadPool::instance()->num_threads()));
-
-                        TicketVector tickets;
-
-                        unsigned long limits[max_count + 1];
-                        limits[0] = 0;
-                        for (unsigned long i(1) ; i < max_count; ++i)
-                        {
-                            limits[i] = limits[i-1] + a.rows() / max_count;
-                        }
-                        limits[max_count] = a.rows();
-
-                        for (unsigned long i(0) ; i < max_count ; ++i)
-                        {
-                            OperationWrapper<honei::Defect<typename Tag_::DelegateTo>, DenseVector<DT_>, DenseVector<DT_>,
-                                DenseVector<DT_>, SparseMatrixELL<DT_>, DenseVector<DT_>, unsigned long, unsigned long > wrapper(result);
-                            tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, result, rhs, a, b, limits[i], limits[i+1])));
-                        }
-
-                        tickets.wait();
-
-                        return result;
+                    for (unsigned long i(0) ; i < max_count ; ++i)
+                    {
+                        OperationWrapper<honei::Defect<typename Tag_::DelegateTo>, DenseVector<DT_>, DenseVector<DT_>,
+                            DenseVector<DT_>, SparseMatrixELL<DT_>, DenseVector<DT_>, unsigned long, unsigned long > wrapper(result);
+                        tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, result, rhs, a, b, limits[i], limits[i+1])));
                     }
 
-                template <typename DT_>
-                    static DenseVector<DT_> value(DenseVector<DT_> & result, const DenseVector<DT_> & rhs, const SparseMatrixCSR<DT_> & a, const DenseVector<DT_> & b)
+                    tickets.wait();
+
+                    return result;
+                }
+
+            template <typename DT_>
+                static DenseVector<DT_> value(DenseVector<DT_> & result, const DenseVector<DT_> & rhs, const SparseMatrixELL<DT_> & a, const DenseVector<DT_> & b)
+                {
+                    if (b.size() != a.columns())
                     {
-                        if (b.size() != a.columns())
-                        {
-                            throw VectorSizeDoesNotMatch(b.size(), a.columns());
-                        }
-                        if (a.rows() != result.size())
-                        {
-                            throw VectorSizeDoesNotMatch(a.rows(), result.size());
-                        }
-                        if (rhs.size() != a.columns())
-                        {
-                            throw VectorSizeDoesNotMatch(rhs.size(), a.columns());
-                        }
-
-                        //fill<typename Tag_::DelegateTo>(result, DT_(0));
-
-                        unsigned long max_count(Configuration::instance()->get_value("mc::Product(DV,SMELL,DV)::max_count",
-                                    mc::ThreadPool::instance()->num_threads()));
-
-                        TicketVector tickets;
-
-                        unsigned long limits[max_count + 1];
-                        limits[0] = 0;
-                        for (unsigned long i(1) ; i < max_count; ++i)
-                        {
-                            limits[i] = limits[i-1] + a.rows() / max_count;
-                        }
-                        limits[max_count] = a.rows();
-
-                        for (unsigned long i(0) ; i < max_count ; ++i)
-                        {
-                            OperationWrapper<honei::Defect<typename Tag_::DelegateTo>, DenseVector<DT_>, DenseVector<DT_>,
-                                DenseVector<DT_>, SparseMatrixCSR<DT_>, DenseVector<DT_>, unsigned long, unsigned long > wrapper(result);
-                            tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, result, rhs, a, b, limits[i], limits[i+1])));
-                        }
-
-                        tickets.wait();
-
-                        return result;
+                        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+                    }
+                    if (a.rows() != result.size())
+                    {
+                        throw VectorSizeDoesNotMatch(a.rows(), result.size());
+                    }
+                    if (rhs.size() != a.columns())
+                    {
+                        throw VectorSizeDoesNotMatch(rhs.size(), a.columns());
                     }
 
-                    template<typename DT_>
-                    static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixELLMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
+                    //fill<typename Tag_::DelegateTo>(result, DT_(0));
+
+                    unsigned long max_count(Configuration::instance()->get_value("mc::Product(DV,SMELL,DV)::max_count",
+                                mc::ThreadPool::instance()->num_threads()));
+
+                    TicketVector tickets;
+
+                    unsigned long limits[max_count + 1];
+                    limits[0] = 0;
+                    for (unsigned long i(1) ; i < max_count; ++i)
                     {
-                        MPIOps<Tag_>::defect(result, right_hand_side, system, x);
-                        return result;
+                        limits[i] = limits[i-1] + a.rows() / max_count;
+                    }
+                    limits[max_count] = a.rows();
+
+                    for (unsigned long i(0) ; i < max_count ; ++i)
+                    {
+                        OperationWrapper<honei::Defect<typename Tag_::DelegateTo>, DenseVector<DT_>, DenseVector<DT_>,
+                            DenseVector<DT_>, SparseMatrixELL<DT_>, DenseVector<DT_>, unsigned long, unsigned long > wrapper(result);
+                        tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, result, rhs, a, b, limits[i], limits[i+1])));
                     }
 
-                    template<typename DT_>
-                    static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixCSRMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
+                    tickets.wait();
+
+                    return result;
+                }
+
+            template <typename DT_>
+                static DenseVector<DT_> value(DenseVector<DT_> & result, const DenseVector<DT_> & rhs, const SparseMatrixCSR<DT_> & a, const DenseVector<DT_> & b)
+                {
+                    if (b.size() != a.columns())
                     {
-                        MPIOps<Tag_>::defect(result, right_hand_side, system, x);
-                        return result;
+                        throw VectorSizeDoesNotMatch(b.size(), a.columns());
                     }
+                    if (a.rows() != result.size())
+                    {
+                        throw VectorSizeDoesNotMatch(a.rows(), result.size());
+                    }
+                    if (rhs.size() != a.columns())
+                    {
+                        throw VectorSizeDoesNotMatch(rhs.size(), a.columns());
+                    }
+
+                    //fill<typename Tag_::DelegateTo>(result, DT_(0));
+
+                    unsigned long max_count(Configuration::instance()->get_value("mc::Product(DV,SMELL,DV)::max_count",
+                                mc::ThreadPool::instance()->num_threads()));
+
+                    TicketVector tickets;
+
+                    unsigned long limits[max_count + 1];
+                    limits[0] = 0;
+                    for (unsigned long i(1) ; i < max_count; ++i)
+                    {
+                        limits[i] = limits[i-1] + a.rows() / max_count;
+                    }
+                    limits[max_count] = a.rows();
+
+                    for (unsigned long i(0) ; i < max_count ; ++i)
+                    {
+                        OperationWrapper<honei::Defect<typename Tag_::DelegateTo>, DenseVector<DT_>, DenseVector<DT_>,
+                            DenseVector<DT_>, SparseMatrixCSR<DT_>, DenseVector<DT_>, unsigned long, unsigned long > wrapper(result);
+                        tickets.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, result, rhs, a, b, limits[i], limits[i+1])));
+                    }
+
+                    tickets.wait();
+
+                    return result;
+                }
+
+            template<typename DT_>
+                static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixELLMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
+                {
+                    MPIOps<Tag_>::defect(result, right_hand_side, system, x);
+                    return result;
+                }
+
+            template<typename DT_>
+                static DenseVectorMPI<DT_> & value(DenseVectorMPI<DT_> & result, const DenseVectorMPI<DT_> & right_hand_side, const SparseMatrixCSRMPI<DT_> & system, const DenseVectorMPI<DT_> & x)
+                {
+                    MPIOps<Tag_>::defect(result, right_hand_side, system, x);
+                    return result;
+                }
         };
 
     }

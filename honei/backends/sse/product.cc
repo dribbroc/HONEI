@@ -1149,20 +1149,87 @@ namespace honei
         void product_csr_dv(float * result, const unsigned long * Aj, const float * Ax, const unsigned long * Ar, const float * b,
                 unsigned long blocksize, unsigned long row_start, unsigned long row_end)
         {
-            if (blocksize % 4 != 0)
+            if (blocksize != 4)
             {
-                for (unsigned long row(row_start) ; row < row_end ; ++row)
+                switch(blocksize)
                 {
-                    float sum(0);
-                    const unsigned long end(Ar[row+1]);
-                    for (unsigned long i(Ar[row]) ; i < end ; ++i)
-                    {
-                        for (unsigned long blocki(0) ; blocki < blocksize ; ++blocki)
+                    case 1:
+                        for (unsigned long row(row_start) ; row < row_end ; ++row)
                         {
-                            sum += Ax[(i*blocksize)+blocki] * b[Aj[i] + blocki];
+                            float sum(0);
+                            const unsigned long end(Ar[row+1]);
+                            for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                            {
+                                sum += Ax[i] * b[Aj[i]];
+                            }
+                            result[row] = sum;
                         }
-                    }
-                    result[row] = sum;
+                        break;
+                    case 2:
+                        for (unsigned long row(row_start) ; row < row_end ; ++row)
+                        {
+                            float sum(0);
+                            const unsigned long end(Ar[row+1]);
+                            for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                            {
+                                const unsigned long col(Aj[i]);
+                                sum += Ax[2*i] * b[col];
+                                sum += Ax[2*i+1] * b[col+1];
+                            }
+                            result[row] = sum;
+                        }
+                        break;
+                    /*case 4:
+                        for (unsigned long row(row_start) ; row < row_end ; ++row)
+                        {
+                            float sum(0);
+                            const unsigned long end(Ar[row+1]);
+                            for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                            {
+                                const unsigned long col(Aj[i]);
+                                sum += Ax[2*i] * b[col];
+                                sum += Ax[2*i+1] * b[col+1];
+                                sum += Ax[2*i+2] * b[col+2];
+                                sum += Ax[2*i+3] * b[col+3];
+                            }
+                            result[row] = sum;
+                        }
+                        break;*/
+                    case 8:
+                        for (unsigned long row(row_start) ; row < row_end ; ++row)
+                        {
+                            float sum(0);
+                            const unsigned long end(Ar[row+1]);
+                            for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                            {
+                                const unsigned long col(Aj[i]);
+                                sum += Ax[2*i] * b[col];
+                                sum += Ax[2*i+1] * b[col+1];
+                                sum += Ax[2*i+2] * b[col+2];
+                                sum += Ax[2*i+3] * b[col+3];
+                                sum += Ax[2*i+4] * b[col+4];
+                                sum += Ax[2*i+5] * b[col+5];
+                                sum += Ax[2*i+6] * b[col+6];
+                                sum += Ax[2*i+7] * b[col+7];
+                            }
+                            result[row] = sum;
+                        }
+                        break;
+                    default:
+                        for (unsigned long row(row_start) ; row < row_end ; ++row)
+                        {
+                            float sum(0);
+                            const unsigned long end(Ar[row+1]);
+                            for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                            {
+                                for (unsigned long blocki(0) ; blocki < blocksize ; ++blocki)
+                                {
+                                    sum += Ax[(i*blocksize)+blocki] * b[Aj[i] + blocki];
+                                }
+                            }
+                            result[row] = sum;
+                        }
+                        break;
                 }
             }
             else
@@ -1197,20 +1264,87 @@ namespace honei
         void product_csr_dv(double * result, const unsigned long * Aj, const double * Ax, const unsigned long * Ar, const double * b,
                 unsigned long blocksize, unsigned long row_start, unsigned long row_end)
         {
-            if (blocksize % 2 != 0)
+            if (blocksize != 2)
             {
-                for (unsigned long row(row_start) ; row < row_end ; ++row)
+                switch(blocksize)
                 {
-                    double sum(0);
-                    const unsigned long end(Ar[row+1]);
-                    for (unsigned long i(Ar[row]) ; i < end ; ++i)
-                    {
-                        for (unsigned long blocki(0) ; blocki < blocksize ; ++blocki)
+                    case 1:
+                        for (unsigned long row(row_start) ; row < row_end ; ++row)
                         {
-                            sum += Ax[(i*blocksize)+blocki] * b[Aj[i] + blocki];
+                            double sum(0);
+                            const unsigned long end(Ar[row+1]);
+                            for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                            {
+                                sum += Ax[i] * b[Aj[i]];
+                            }
+                            result[row] = sum;
                         }
-                    }
-                    result[row] = sum;
+                        break;
+                    /*case 2:
+                        for (unsigned long row(row_start) ; row < row_end ; ++row)
+                        {
+                            double sum(0);
+                            const unsigned long end(Ar[row+1]);
+                            for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                            {
+                                const unsigned long col(Aj[i]);
+                                sum += Ax[2*i] * b[col];
+                                sum += Ax[2*i+1] * b[col+1];
+                            }
+                            result[row] = sum;
+                        }
+                        break;*/
+                    case 4:
+                        for (unsigned long row(row_start) ; row < row_end ; ++row)
+                        {
+                            double sum(0);
+                            const unsigned long end(Ar[row+1]);
+                            for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                            {
+                                const unsigned long col(Aj[i]);
+                                sum += Ax[2*i] * b[col];
+                                sum += Ax[2*i+1] * b[col+1];
+                                sum += Ax[2*i+2] * b[col+2];
+                                sum += Ax[2*i+3] * b[col+3];
+                            }
+                            result[row] = sum;
+                        }
+                        break;
+                    case 8:
+                        for (unsigned long row(row_start) ; row < row_end ; ++row)
+                        {
+                            double sum(0);
+                            const unsigned long end(Ar[row+1]);
+                            for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                            {
+                                const unsigned long col(Aj[i]);
+                                sum += Ax[2*i] * b[col];
+                                sum += Ax[2*i+1] * b[col+1];
+                                sum += Ax[2*i+2] * b[col+2];
+                                sum += Ax[2*i+3] * b[col+3];
+                                sum += Ax[2*i+4] * b[col+4];
+                                sum += Ax[2*i+5] * b[col+5];
+                                sum += Ax[2*i+6] * b[col+6];
+                                sum += Ax[2*i+7] * b[col+7];
+                            }
+                            result[row] = sum;
+                        }
+                        break;
+                    default:
+                        for (unsigned long row(row_start) ; row < row_end ; ++row)
+                        {
+                            double sum(0);
+                            const unsigned long end(Ar[row+1]);
+                            for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                            {
+                                for (unsigned long blocki(0) ; blocki < blocksize ; ++blocki)
+                                {
+                                    sum += Ax[(i*blocksize)+blocki] * b[Aj[i] + blocki];
+                                }
+                            }
+                            result[row] = sum;
+                        }
+                        break;
                 }
             }
             else

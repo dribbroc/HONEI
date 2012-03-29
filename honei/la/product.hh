@@ -1500,18 +1500,85 @@ namespace honei
             DT_ * r(rv.elements());
             const unsigned long blocksize(a.blocksize());
 
-            for (unsigned long row(row_start) ; row < row_end ; ++row)
+            switch(blocksize)
             {
-                DT_ sum(0);
-                const unsigned long end(Ar[row+1]);
-                for (unsigned long i(Ar[row]) ; i < end ; ++i)
-                {
-                    for (unsigned long blocki(0) ; blocki < blocksize ; ++blocki)
+                case 1:
+                    for (unsigned long row(row_start) ; row < row_end ; ++row)
                     {
-                        sum += Ax[(i*blocksize)+blocki] * b[Aj[i] + blocki];
+                        DT_ sum(0);
+                        const unsigned long end(Ar[row+1]);
+                        for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                        {
+                            sum += Ax[i] * b[Aj[i]];
+                        }
+                        r[row] = sum;
                     }
-                }
-                r[row] = sum;
+                    break;
+                case 2:
+                    for (unsigned long row(row_start) ; row < row_end ; ++row)
+                    {
+                        DT_ sum(0);
+                        const unsigned long end(Ar[row+1]);
+                        for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                        {
+                            const unsigned long col(Aj[i]);
+                            sum += Ax[2*i] * b[col];
+                            sum += Ax[2*i+1] * b[col+1];
+                        }
+                        r[row] = sum;
+                    }
+                    break;
+                case 4:
+                    for (unsigned long row(row_start) ; row < row_end ; ++row)
+                    {
+                        DT_ sum(0);
+                        const unsigned long end(Ar[row+1]);
+                        for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                        {
+                            const unsigned long col(Aj[i]);
+                            sum += Ax[2*i] * b[col];
+                            sum += Ax[2*i+1] * b[col+1];
+                            sum += Ax[2*i+2] * b[col+2];
+                            sum += Ax[2*i+3] * b[col+3];
+                        }
+                        r[row] = sum;
+                    }
+                    break;
+                case 8:
+                    for (unsigned long row(row_start) ; row < row_end ; ++row)
+                    {
+                        DT_ sum(0);
+                        const unsigned long end(Ar[row+1]);
+                        for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                        {
+                            const unsigned long col(Aj[i]);
+                            sum += Ax[2*i] * b[col];
+                            sum += Ax[2*i+1] * b[col+1];
+                            sum += Ax[2*i+2] * b[col+2];
+                            sum += Ax[2*i+3] * b[col+3];
+                            sum += Ax[2*i+4] * b[col+4];
+                            sum += Ax[2*i+5] * b[col+5];
+                            sum += Ax[2*i+6] * b[col+6];
+                            sum += Ax[2*i+7] * b[col+7];
+                        }
+                        r[row] = sum;
+                    }
+                    break;
+                default:
+                    for (unsigned long row(row_start) ; row < row_end ; ++row)
+                    {
+                        DT_ sum(0);
+                        const unsigned long end(Ar[row+1]);
+                        for (unsigned long i(Ar[row]) ; i < end ; ++i)
+                        {
+                            for (unsigned long blocki(0) ; blocki < blocksize ; ++blocki)
+                            {
+                                sum += Ax[(i*blocksize)+blocki] * b[Aj[i] + blocki];
+                            }
+                        }
+                        r[row] = sum;
+                    }
+                    break;
             }
 
             return rv;
