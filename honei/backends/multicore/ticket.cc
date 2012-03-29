@@ -81,7 +81,7 @@ namespace honei
             return *this;
         }
 
-        const unsigned Ticket<tags::CPU::MultiCore>::uid() const
+        unsigned Ticket<tags::CPU::MultiCore>::uid() const
         {
             return _imp->id;
         }

@@ -52,7 +52,7 @@ namespace honei
                 Ticket<tags::CPU::MultiCore> & operator= (const Ticket<tags::CPU::MultiCore> & other);
 
                 /// Retrieve unique ticket ID
-                const unsigned uid() const;
+                unsigned uid() const;
 
                 /// Retrieve the socket the associated task shall be assigned to
                 unsigned & req_socket() const;
