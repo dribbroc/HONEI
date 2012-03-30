@@ -260,7 +260,7 @@ namespace honei
                     //MPI_Wait(&request, MPI_STATUS_IGNORE);
                     //MPI_File_close(&fh);
                 }
-                std::cout<<_mycartid << " (" << _device_name << "): up "<<_sync_time_up<<" down "<<_sync_time_down<<std::endl;
+                //std::cout<<_mycartid << " (" << _device_name << "): up "<<_sync_time_up<<" down "<<_sync_time_down<<std::endl;
                 MPI_Barrier(MPI_COMM_WORLD);
                 bt.take();
                 solver->do_postprocessing();
@@ -401,7 +401,7 @@ namespace honei
                     //MPI_Wait(&request, MPI_STATUS_IGNORE);
                     //MPI_File_close(&fh);
                 }
-                std::cout<<_mycartid << " (" << _device_name << "): up "<<_sync_time_up<<" down "<<_sync_time_down<<std::endl;
+                //std::cout<<_mycartid << " (" << _device_name << "): up "<<_sync_time_up<<" down "<<_sync_time_down<<std::endl;
                 MPI_Barrier(MPI_COMM_WORLD);
                 solver->do_postprocessing();
                 //_send_full_sync(_masterid, data);
@@ -1462,34 +1462,8 @@ namespace honei
                 }
 
 
-                TimeStamp ca, cu, cd;
-                int up_fin(false);
-                int down_fin(false);
-                double delta_up(0);
-                double delta_down(0);
-                ca.take();
-                while (!up_fin || !down_fin)
-                {
-                    if (!down_fin)
-                    {
-                        MPI_Testall(requests_down.size(),  &requests_down[0], &down_fin, MPI_STATUSES_IGNORE);
-                        if (down_fin)
-                            cd.take();
-                    }
-                    if (!up_fin)
-                    {
-                        MPI_Testall(requests_up.size(),  &requests_up[0], &up_fin, MPI_STATUSES_IGNORE);
-                        if (up_fin)
-                            cu.take();
-                    }
-                }
-                //MPI_Waitall(requests_up.size(), &requests_up[0], MPI_STATUSES_IGNORE);
-                //MPI_Waitall(requests_down.size(), &requests_down[0], MPI_STATUSES_IGNORE);
-                delta_down = cd.total() - ca.total();
-                _sync_time_down+=delta_down;
-                delta_up = cu.total() - ca.total();
-                _sync_time_up+=delta_up;
-                //_balance_load(delta_up, delta_down);
+                MPI_Waitall(requests_up.size(), &requests_up[0], MPI_STATUSES_IGNORE);
+                MPI_Waitall(requests_down.size(), &requests_down[0], MPI_STATUSES_IGNORE);
 
                 if (up_size_recv > 0)
                 {
