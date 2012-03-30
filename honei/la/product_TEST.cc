@@ -927,8 +927,9 @@ class SparseMatrixCSRDenseVectorProductTest :
         virtual void run() const
         {
             unsigned long old_blocks = Configuration::instance()->get_value("csr::blocksize", 1);
-            for (unsigned long blocks(1) ; blocks <= 4 ; blocks*=2)
+            for (unsigned long blocks(1) ; blocks <= 8 ; blocks*=2)
             {
+                std::cout<<"blocks: "<<blocks<<std::endl;
                 Configuration::instance()->set_value("csr::blocksize", blocks);
                 for (unsigned long size(11) ; size < (1 << 9) ; size <<= 1)
                 {
@@ -990,7 +991,7 @@ class SparseMatrixCSRDenseVectorProductQuickTest :
         virtual void run() const
         {
             unsigned long old_blocks = Configuration::instance()->get_value("csr::blocksize", 1);
-            for (unsigned long blocks(1) ; blocks <= 4 ; blocks*=2)
+            for (unsigned long blocks(1) ; blocks <= 8 ; blocks*=2)
             {
                 Configuration::instance()->set_value("csr::blocksize", blocks);
                 unsigned long size (50);

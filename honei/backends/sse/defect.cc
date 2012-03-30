@@ -211,10 +211,10 @@ namespace honei
                             for (unsigned long i(Ar[row]) ; i < end ; ++i)
                             {
                                 const unsigned long col(Aj[i]);
-                                sum += Ax[2*i] * b[col];
-                                sum += Ax[2*i+1] * b[col+1];
-                                sum += Ax[2*i+2] * b[col+2];
-                                sum += Ax[2*i+3] * b[col+3];
+                                sum += Ax[4*i] * b[col];
+                                sum += Ax[4*i+1] * b[col+1];
+                                sum += Ax[4*i+2] * b[col+2];
+                                sum += Ax[4*i+3] * b[col+3];
                             }
                             result[row] = rhs[row] - sum;
                         }
@@ -227,14 +227,14 @@ namespace honei
                             for (unsigned long i(Ar[row]) ; i < end ; ++i)
                             {
                                 const unsigned long col(Aj[i]);
-                                sum += Ax[2*i] * b[col];
-                                sum += Ax[2*i+1] * b[col+1];
-                                sum += Ax[2*i+2] * b[col+2];
-                                sum += Ax[2*i+3] * b[col+3];
-                                sum += Ax[2*i+4] * b[col+4];
-                                sum += Ax[2*i+5] * b[col+5];
-                                sum += Ax[2*i+6] * b[col+6];
-                                sum += Ax[2*i+7] * b[col+7];
+                                sum += Ax[8*i] * b[col];
+                                sum += Ax[8*i+1] * b[col+1];
+                                sum += Ax[8*i+2] * b[col+2];
+                                sum += Ax[8*i+3] * b[col+3];
+                                sum += Ax[8*i+4] * b[col+4];
+                                sum += Ax[8*i+5] * b[col+5];
+                                sum += Ax[8*i+6] * b[col+6];
+                                sum += Ax[8*i+7] * b[col+7];
                             }
                             result[row] = rhs[row] - sum;
                         }
@@ -326,10 +326,10 @@ namespace honei
                             for (unsigned long i(Ar[row]) ; i < end ; ++i)
                             {
                                 const unsigned long col(Aj[i]);
-                                sum += Ax[2*i] * b[col];
-                                sum += Ax[2*i+1] * b[col+1];
-                                sum += Ax[2*i+2] * b[col+2];
-                                sum += Ax[2*i+3] * b[col+3];
+                                sum += Ax[4*i] * b[col];
+                                sum += Ax[4*i+1] * b[col+1];
+                                sum += Ax[4*i+2] * b[col+2];
+                                sum += Ax[4*i+3] * b[col+3];
                             }
                             result[row] = rhs[row] - sum;
                         }
@@ -342,14 +342,14 @@ namespace honei
                             for (unsigned long i(Ar[row]) ; i < end ; ++i)
                             {
                                 const unsigned long col(Aj[i]);
-                                sum += Ax[2*i] * b[col];
-                                sum += Ax[2*i+1] * b[col+1];
-                                sum += Ax[2*i+2] * b[col+2];
-                                sum += Ax[2*i+3] * b[col+3];
-                                sum += Ax[2*i+4] * b[col+4];
-                                sum += Ax[2*i+5] * b[col+5];
-                                sum += Ax[2*i+6] * b[col+6];
-                                sum += Ax[2*i+7] * b[col+7];
+                                sum += Ax[8*i] * b[col];
+                                sum += Ax[8*i+1] * b[col+1];
+                                sum += Ax[8*i+2] * b[col+2];
+                                sum += Ax[8*i+3] * b[col+3];
+                                sum += Ax[8*i+4] * b[col+4];
+                                sum += Ax[8*i+5] * b[col+5];
+                                sum += Ax[8*i+6] * b[col+6];
+                                sum += Ax[8*i+7] * b[col+7];
                             }
                             result[row] = rhs[row] - sum;
                         }
