@@ -96,18 +96,6 @@ namespace honei
                 sm(i,i-2) += std::numeric_limits<double>::epsilon();
             }
 
-            for (unsigned long i(0) ; i < sm.rows() - 3 ; ++i)
-            {
-                sm(i, i+3, src(i, i+3));
-                sm(i,i+3) += std::numeric_limits<double>::epsilon();
-            }
-
-            for (unsigned long i(3) ; i < sm.rows() ; ++i)
-            {
-                sm(i, i-3, src(i, i-3));
-                sm(i,i-3) += std::numeric_limits<double>::epsilon();
-            }
-
             // root
             for (unsigned long i(0) ; i < sm.rows() - root ; ++i)
             {
@@ -168,6 +156,68 @@ namespace honei
             {
                 sm(i, i-(root+2), src(i, i-(root+2)));
                 sm(i,i-(root+2)) += std::numeric_limits<double>::epsilon();
+            }
+
+            // (root*2)
+            for (unsigned long i(0) ; i < sm.rows() - (root*2) ; ++i)
+            {
+                sm(i, i+(root*2), src(i, i+(root*2)));
+                sm(i,i+(root*2)) += std::numeric_limits<double>::epsilon();
+            }
+
+            for (unsigned long i(0) ; i < sm.rows() - (root*2) -1; ++i)
+            {
+                sm(i, i+((root*2)-1), src(i, i+((root*2)-1)));
+                sm(i,i+((root*2)-1)) += std::numeric_limits<double>::epsilon();
+            }
+
+            for (unsigned long i(0) ; i < sm.rows() - ((root*2) + 1); ++i)
+            {
+                sm(i, i+(root*2)+1, src(i, i+(root*2)+1));
+                sm(i,i+(root*2)+1) += std::numeric_limits<double>::epsilon();
+            }
+
+            for (unsigned long i(0) ; i < sm.rows() - (root*2) -2; ++i)
+            {
+                sm(i, i+((root*2)-2), src(i, i+((root*2)-2)));
+                sm(i,i+((root*2)-2)) += std::numeric_limits<double>::epsilon();
+            }
+
+            for (unsigned long i(0) ; i < sm.rows() - ((root*2) + 2); ++i)
+            {
+                sm(i, i+(root*2)+2, src(i, i+(root*2)+2));
+                sm(i,i+(root*2)+2) += std::numeric_limits<double>::epsilon();
+            }
+
+            // -(root*2)
+            for (unsigned long i((root*2)) ; i < sm.rows() ; ++i)
+            {
+                sm(i, i-(root*2), src(i, i-(root*2)));
+                sm(i,i-(root*2)) += std::numeric_limits<double>::epsilon();
+            }
+
+            for (unsigned long i((root*2)-1) ; i < sm.rows() ; ++i)
+            {
+                sm(i, i-((root*2)-1), src(i, i-((root*2)-1)));
+                sm(i,i-((root*2)-1)) += std::numeric_limits<double>::epsilon();
+            }
+
+            for (unsigned long i((root*2)+1) ; i < sm.rows() ; ++i)
+            {
+                sm(i, i-((root*2)+1), src(i, i-((root*2)+1)));
+                sm(i,i-((root*2)+1)) += std::numeric_limits<double>::epsilon();
+            }
+
+            for (unsigned long i((root*2)-2) ; i < sm.rows() ; ++i)
+            {
+                sm(i, i-((root*2)-2), src(i, i-((root*2)-2)));
+                sm(i,i-((root*2)-2)) += std::numeric_limits<double>::epsilon();
+            }
+
+            for (unsigned long i((root*2)+2) ; i < sm.rows() ; ++i)
+            {
+                sm(i, i-((root*2)+2), src(i, i-((root*2)+2)));
+                sm(i,i-((root*2)+2)) += std::numeric_limits<double>::epsilon();
             }
 
             std::vector<mm_data> elements;
