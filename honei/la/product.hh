@@ -224,6 +224,7 @@ namespace honei
             const DT_ * const b(bv.elements());
             DT_ * r(rv.elements());
             const unsigned long blocksize(a.blocksize());
+            const unsigned long bsize(bv.size());
 
             for (unsigned long row(row_start) ; row < row_end ; ++row)
             {
@@ -233,7 +234,8 @@ namespace honei
                 {
                     for (unsigned long blocki(0) ; blocki < blocksize ; ++blocki)
                     {
-                        sum += Ax[(i*blocksize)+blocki] * b[Aj[i] + blocki];
+                        if (Aj[i]+blocki < bsize)
+                            sum += Ax[(i*blocksize)+blocki] * b[Aj[i] + blocki];
                     }
                 }
                 r[row] = sum;
