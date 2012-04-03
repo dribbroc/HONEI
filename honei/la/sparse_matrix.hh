@@ -200,16 +200,11 @@ namespace honei
                 {
                     for (unsigned long i(src.Ar()[row]) ; i < src.Ar()[row + 1] ; ++i)
                     {
-                        (*this)(row, src.Aj()[i]) = src.Ax()[i * src.blocksize()];
-                        for (unsigned long blocki(1) ; blocki < src.blocksize() ; ++blocki)
+                        for (unsigned long blocki(0) ; blocki < src.blocksize() ; ++blocki)
                         {
-                            if(src.Ax()[i + blocki] != DataType_(0) && src.Aj()[i]+blocki < _columns)
+                            if(src.Ax()[(i * src.blocksize()) + blocki] != DataType_(0) && src.Aj()[i]+blocki < _columns)
                             {
                                 (*this)(row, src.Aj()[i]+blocki, src.Ax()[i * src.blocksize() + blocki]);
-                            }
-                            else
-                            {
-                                break;
                             }
                         }
                     }

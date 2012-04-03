@@ -103,17 +103,15 @@ namespace honei
             for (unsigned long row(0) ; row < src.rows() ; ++row)
             {
                 Ar[row] = gi;
-                for (unsigned long i(0) ; i < src[row].used_elements() ; ++i)
+                for (unsigned long i(0) ; i < src[row].used_elements() ;)
                 {
-                    Aj[gi] = src[row].indices()[i];
-                    Axv.push_back(src[row].elements()[i]);
-                    ++ue;
+                    Aj[gi] = src[row].indices()[i] - (src[row].indices()[i] % blocksize);
                     unsigned long delta_i(0);
-                    for (unsigned long blocki(1) ; blocki < blocksize ; ++blocki)
+                    for (unsigned long blocki(0) ; blocki < blocksize ; ++blocki)
                     {
-                        if (i+blocki < src[row].used_elements() && src[row].indices()[i+blocki] == src[row].indices()[i] + blocki)
+                        if (i+delta_i < src[row].used_elements() && Aj[gi] + blocki == src[row].indices()[i+delta_i])
                         {
-                            Axv.push_back(src[row].elements()[i + blocki]);
+                            Axv.push_back(src[row].elements()[i + delta_i]);
                             ++ue;
                             ++delta_i;
                         }
