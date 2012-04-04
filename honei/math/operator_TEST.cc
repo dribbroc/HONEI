@@ -28,7 +28,7 @@ class OperatorTest:
         virtual void run() const
         {
             std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/math/testdata/poisson_advanced/sort_0/A_7.ell";
+            filename += "/honei/math/testdata/poisson_advanced4/sort_0/A_4.ell";
             SparseMatrixELL<double> system(MatrixIO<io_formats::ELL>::read_matrix(filename, double(0)));
 
             DenseVector<double> result_1(system.rows());
@@ -75,11 +75,11 @@ class OperatorTest:
 
             Operator* cgop;
             std::string filename2(HONEI_SOURCEDIR);
-            filename2 += "/honei/math/testdata/poisson_advanced/sort_0/rhs_7";
+            filename2 += "/honei/math/testdata/poisson_advanced4/sort_0/rhs_4";
             DenseVector<double> b(VectorIO<io_formats::EXP>::read_vector(filename2, double(0)));
 
             std::string filename3(HONEI_SOURCEDIR);
-            filename3 += "/honei/math/testdata/poisson_advanced/sort_0/init_7";
+            filename3 += "/honei/math/testdata/poisson_advanced4/sort_0/init_4";
             DenseVector<double> x1(VectorIO<io_formats::EXP>::read_vector(filename3, double(0)));
             DenseVector<double> x2(x1.copy());
 
@@ -122,16 +122,16 @@ class OperatorTest:
 
             Operator* transop;
             string filename_fine(HONEI_SOURCEDIR);
-            filename_fine += "/honei/math/testdata/poisson_advanced/sort_0/sol_8";
+            filename_fine += "/honei/math/testdata/poisson_advanced4/sort_0/sol_4";
             string filename_coarse(HONEI_SOURCEDIR);
-            filename_coarse += "/honei/math/testdata/poisson_advanced/sort_0/sol_7";
+            filename_coarse += "/honei/math/testdata/poisson_advanced4/sort_0/sol_3";
 
             DenseVector<double> fine_1(VectorIO<io_formats::EXP>::read_vector(filename_fine, double(0)));
             DenseVector<double> fine_2(VectorIO<io_formats::EXP>::read_vector(filename_fine, double(0)));
             DenseVector<double> coarse(VectorIO<io_formats::EXP>::read_vector(filename_coarse, double(0)));
 
             string filename_prolmat(HONEI_SOURCEDIR);
-            filename_prolmat += "/honei/math/testdata/poisson_advanced/sort_0/prol_8.ell";
+            filename_prolmat += "/honei/math/testdata/poisson_advanced4/sort_0/prol_4.ell";
             SparseMatrixELL<double> prolmat(MatrixIO<io_formats::ELL>::read_matrix(filename_prolmat, double(0)));
 
             transop = new TransferOperator< Prolongation<Tag_, methods::PROLMAT>, SparseMatrixELL<double>, DenseVector<double> >(fine_1, coarse, prolmat);

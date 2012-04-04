@@ -113,29 +113,29 @@ ProductELLFileBenchmark<tags::CPU::MultiCore::SSE, double> sse_pareng_double_5("
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_0("ELL  Product double cuda L5, q2 sort 2, 1 threads, 128 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 1, 128);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_1("ELL  Product double cuda L5, q2 sort 2, 1 threads, 256 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 1, 256);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_2("ELL  Product double cuda L5, q2 sort 2, 1 threads, 512 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 1, 512);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_21("ELL  Product double cuda L5, q2 sort 2, 1 threads, 1024 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 1, 1024);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_3("ELL  Product double cuda L5, q2 sort 2, 2 threads, 128 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 2, 128);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_4("ELL  Product double cuda L5, q2 sort 2, 2 threads, 256 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 2, 256);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_5("ELL  Product double cuda L5, q2 sort 2, 2 threads, 512 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 2, 512);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_51("ELL  Product double cuda L5, q2 sort 2, 2 threads, 1024 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 2, 1024);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_6("ELL  Product double cuda L5, q2 sort 2, 4 threads, 128 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 4, 128);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_7("ELL  Product double cuda L5, q2 sort 2, 4 threads, 256 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 4, 256);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_8("ELL  Product double cuda L5, q2 sort 2, 4 threads, 512 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 4, 512);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_81("ELL  Product double cuda L5, q2 sort 2, 4 threads, 1024 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 4, 1024);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_9("ELL  Product double cuda L5, q2 sort 2, 8 threads, 128 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 8, 128);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_10("ELL  Product double cuda L5, q2 sort 2, 8 threads, 256 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 8, 256);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_11("ELL  Product double cuda L5, q2 sort 2, 8 threads, 512 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 8, 512);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_111("ELL  Product double cuda L5, q2 sort 2, 8 threads, 1024 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 8, 1024);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_12("ELL  Product double cuda L5, q2 sort 2, 16 threads, 128 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 16, 128);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_13("ELL  Product double cuda L5, q2 sort 2, 16 threads, 256 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 16, 256);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_14("ELL  Product double cuda L5, q2 sort 2, 16 threads, 512 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 16, 512);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_141("ELL  Product double cuda L5, q2 sort 2, 16 threads, 1024 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 16, 1024);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_15("ELL  Product double cuda L5, q2 sort 2, 32 threads, 128 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 32, 128);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_16("ELL  Product double cuda L5, q2 sort 2, 32 threads, 256 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 32, 256);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_17("ELL  Product double cuda L5, q2 sort 2, 32 threads, 512 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 32, 512);
-ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_171("ELL  Product double cuda L5, q2 sort 2, 32 threads, 1024 blocks", "testdata/poisson_advanced/q2_sort_2/A_5.ell", 10, 32, 512);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_0("ELL  Product double cuda L5, q2 sort 2, 1 threads, 128 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 1, 128);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_1("ELL  Product double cuda L5, q2 sort 2, 1 threads, 256 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 1, 256);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_2("ELL  Product double cuda L5, q2 sort 2, 1 threads, 512 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 1, 512);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_21("ELL  Product double cuda L5, q2 sort 2, 1 threads, 1024 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 1, 1024);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_3("ELL  Product double cuda L5, q2 sort 2, 2 threads, 128 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 2, 128);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_4("ELL  Product double cuda L5, q2 sort 2, 2 threads, 256 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 2, 256);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_5("ELL  Product double cuda L5, q2 sort 2, 2 threads, 512 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 2, 512);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_51("ELL  Product double cuda L5, q2 sort 2, 2 threads, 1024 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 2, 1024);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_6("ELL  Product double cuda L5, q2 sort 2, 4 threads, 128 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 4, 128);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_7("ELL  Product double cuda L5, q2 sort 2, 4 threads, 256 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 4, 256);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_8("ELL  Product double cuda L5, q2 sort 2, 4 threads, 512 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 4, 512);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_81("ELL  Product double cuda L5, q2 sort 2, 4 threads, 1024 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 4, 1024);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_9("ELL  Product double cuda L5, q2 sort 2, 8 threads, 128 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 8, 128);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_10("ELL  Product double cuda L5, q2 sort 2, 8 threads, 256 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 8, 256);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_11("ELL  Product double cuda L5, q2 sort 2, 8 threads, 512 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 8, 512);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_111("ELL  Product double cuda L5, q2 sort 2, 8 threads, 1024 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 8, 1024);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_12("ELL  Product double cuda L5, q2 sort 2, 16 threads, 128 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 16, 128);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_13("ELL  Product double cuda L5, q2 sort 2, 16 threads, 256 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 16, 256);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_14("ELL  Product double cuda L5, q2 sort 2, 16 threads, 512 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 16, 512);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_141("ELL  Product double cuda L5, q2 sort 2, 16 threads, 1024 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 16, 1024);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_15("ELL  Product double cuda L5, q2 sort 2, 32 threads, 128 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 32, 128);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_16("ELL  Product double cuda L5, q2 sort 2, 32 threads, 256 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 32, 256);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_17("ELL  Product double cuda L5, q2 sort 2, 32 threads, 512 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 32, 512);
+ProductELLFileBenchmark<tags::GPU::CUDA, double> acuda_pareng_7_double_q2_171("ELL  Product double cuda L5, q2 sort 2, 32 threads, 1024 blocks", "testdata/poisson_advanced4/q2_sort_2/A_5.ell", 10, 32, 512);
 #endif
 #endif

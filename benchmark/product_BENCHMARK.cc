@@ -488,9 +488,9 @@ class SMDenseVectorProductBench :
         }
 };
 SMDenseVectorProductBench<tags::CPU::Generic, float> generic_SMDVPBenchfloat("Generic SM 2  Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
-SMDenseVectorProductBench<tags::CPU::Generic, float> generic_SMDVPBenchfloat_pa7("Generic SM 0 PA  Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+SMDenseVectorProductBench<tags::CPU::Generic, float> generic_SMDVPBenchfloat_pa7("Generic SM 0 PA  Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced4/sort_0/A_7.ell");
 SMDenseVectorProductBench<tags::CPU::MultiCore::Generic, float> mc_generic_SMDVPBenchfloat("MC Generic SM 2  Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
-SMDenseVectorProductBench<tags::CPU::MultiCore::Generic, float> mc_generic_SMDVPBenchfloat_pa7("MC Generic SM 0 PA  Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+SMDenseVectorProductBench<tags::CPU::MultiCore::Generic, float> mc_generic_SMDVPBenchfloat_pa7("MC Generic SM 0 PA  Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced4/sort_0/A_7.ell");
 
 template <typename Tag_, typename DataType_>
 class SMCSRDenseVectorProductBench :
@@ -556,18 +556,18 @@ class SMCSRDenseVectorProductBench :
         }
 };
 SMCSRDenseVectorProductBench<tags::CPU::Generic, float> generic_SMCSRDVPBenchfloat("Generic SM CSR 2  Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
-SMCSRDenseVectorProductBench<tags::CPU::Generic, float> generic_SMCSRDVPBenchfloat_pa7("Generic SM CSR 0 PA  Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+SMCSRDenseVectorProductBench<tags::CPU::Generic, float> generic_SMCSRDVPBenchfloat_pa7("Generic SM CSR 0 PA  Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced4/sort_0/A_7.ell");
 SMCSRDenseVectorProductBench<tags::CPU::MultiCore::Generic, float> mc_generic_SMCSRDVPBenchfloat("MC Generic SM CSR 2  Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
-SMCSRDenseVectorProductBench<tags::CPU::MultiCore::Generic, float> mc_generic_SMCSRDVPBenchfloat_pa7("MC Generic SM CSR 0 PA  Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+SMCSRDenseVectorProductBench<tags::CPU::MultiCore::Generic, float> mc_generic_SMCSRDVPBenchfloat_pa7("MC Generic SM CSR 0 PA  Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced4/sort_0/A_7.ell");
 #ifdef HONEI_SSE
 SMCSRDenseVectorProductBench<tags::CPU::SSE, float> sse_SMCSRDVPBenchfloat("SSE SM CSR 2  Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
-SMCSRDenseVectorProductBench<tags::CPU::SSE, float> sse_SMCSRDVPBenchfloat_pa7("SSE SM CSR 0 PA  Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+SMCSRDenseVectorProductBench<tags::CPU::SSE, float> sse_SMCSRDVPBenchfloat_pa7("SSE SM CSR 0 PA  Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced4/sort_0/A_7.ell");
 SMCSRDenseVectorProductBench<tags::CPU::MultiCore::SSE, float> mc_sse_SMCSRDVPBenchfloat("MC SSE SM CSR 2  Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
-SMCSRDenseVectorProductBench<tags::CPU::MultiCore::SSE, float> mc_sse_SMCSRDVPBenchfloat_pa7("MC SSE SM CSR 0 PA  Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+SMCSRDenseVectorProductBench<tags::CPU::MultiCore::SSE, float> mc_sse_SMCSRDVPBenchfloat_pa7("MC SSE SM CSR 0 PA  Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced4/sort_0/A_7.ell");
 #endif
 #ifdef HONEI_CUDA
 SMCSRDenseVectorProductBench<tags::GPU::CUDA, float> cuda_SMCSRDVPBenchfloat("Cuda SM CSR 2  Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
-SMCSRDenseVectorProductBench<tags::GPU::CUDA, float> cuda_SMCSRDVPBenchfloat_pa7("Cuda SM CSR 0 PA  Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+SMCSRDenseVectorProductBench<tags::GPU::CUDA, float> cuda_SMCSRDVPBenchfloat_pa7("Cuda SM CSR 0 PA  Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced4/sort_0/A_7.ell");
 #endif
 
 template <typename Tag_, typename DataType_>
@@ -633,37 +633,37 @@ class SMELLDenseVectorProductBench :
         }
 };
 SMELLDenseVectorProductBench<tags::CPU::Generic, float> generic_SMELLDVPBenchfloat("Generic SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
-SMELLDenseVectorProductBench<tags::CPU::Generic, float> generic_SMELLDVPBenchfloat_pa7("Generic SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+SMELLDenseVectorProductBench<tags::CPU::Generic, float> generic_SMELLDVPBenchfloat_pa7("Generic SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced4/sort_0/A_7.ell");
 SMELLDenseVectorProductBench<tags::CPU::MultiCore::Generic, float> mc_generic_SMELLDVPBenchfloat("MC Generic SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
-SMELLDenseVectorProductBench<tags::CPU::MultiCore::Generic, float> mc_generic_SMELLDVPBenchfloat_pa7("MC Generic SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+SMELLDenseVectorProductBench<tags::CPU::MultiCore::Generic, float> mc_generic_SMELLDVPBenchfloat_pa7("MC Generic SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced4/sort_0/A_7.ell");
 #ifdef HONEI_SSE
 SMELLDenseVectorProductBench<tags::CPU::SSE, float> sse_SMELLDVPBenchfloat("SSE SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
-SMELLDenseVectorProductBench<tags::CPU::SSE, float> sse_SMELLDVPBenchfloat_pa7("SSE SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+SMELLDenseVectorProductBench<tags::CPU::SSE, float> sse_SMELLDVPBenchfloat_pa7("SSE SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced4/sort_0/A_7.ell");
 SMELLDenseVectorProductBench<tags::CPU::MultiCore::SSE, float> mcsse_SMELLDVPBenchfloat("MC SSE SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
-SMELLDenseVectorProductBench<tags::CPU::MultiCore::SSE, float> mcsse_SMELLDVPBenchfloat_pa7("MC SSE SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+SMELLDenseVectorProductBench<tags::CPU::MultiCore::SSE, float> mcsse_SMELLDVPBenchfloat_pa7("MC SSE SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced4/sort_0/A_7.ell");
 #endif
 #ifdef HONEI_CUDA
 SMELLDenseVectorProductBench<tags::GPU::CUDA, float> cudaSMELLDVPBenchfloat("CUDA SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
 SMELLDenseVectorProductBench<tags::GPU::MultiCore::CUDA, float> mccudaSMELLDVPBenchfloat("MC CUDA SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
-SMELLDenseVectorProductBench<tags::GPU::CUDA, float> cudaSMELLDVPBenchfloat_pa7("CUDA SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+SMELLDenseVectorProductBench<tags::GPU::CUDA, float> cudaSMELLDVPBenchfloat_pa7("CUDA SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced4/sort_0/A_7.ell");
 #ifdef HONEI_CUDA_DOUBLE
 SMELLDenseVectorProductBench<tags::GPU::CUDA, double> cudaSMELLDVPBenchdouble0("CUDA SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, double", 1025ul*1025, 10, "l2/area51_full_2.ell");
 SMELLDenseVectorProductBench<tags::GPU::MultiCore::CUDA, double> mccudaSMELLDVPBenchdouble0("MC CUDA SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, double", 1025ul*1025, 10, "l2/area51_full_2.ell");
-SMELLDenseVectorProductBench<tags::GPU::CUDA, double> cudaSMELLDVPBenchdouble_pa7("CUDA SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, double", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+SMELLDenseVectorProductBench<tags::GPU::CUDA, double> cudaSMELLDVPBenchdouble_pa7("CUDA SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, double", 1025ul*1025, 10, "poisson_advanced4/sort_0/A_7.ell");
 //SMELLDenseVectorProductBench<tags::GPU::CUDA, double> cudaSMELLDVPBenchdouble8("CUDA SM 2 ELL Dense Vector Product Benchmark - matrix size: L8, double", 1025ul*1025, 10, "l8/area51_full_2.ell");
 //SMELLDenseVectorProductBench<tags::GPU::MultiCore::CUDA, double> mccudaSMELLDVPBenchdouble8("MC CUDA SM 2 ELL Dense Vector Product Benchmark - matrix size: L8, double", 1025ul*1025, 10, "l8/area51_full_2.ell");
 #endif
 #endif
 #ifdef HONEI_OPENCL
 SMELLDenseVectorProductBench<tags::OpenCL::CPU, float> ocl_cpu_SMELLDVPBenchfloat("OpenCL CPU SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
-SMELLDenseVectorProductBench<tags::OpenCL::CPU, float> ocl_cpu_SMELLDVPBenchfloat_pa7("OpenCL CPU SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+SMELLDenseVectorProductBench<tags::OpenCL::CPU, float> ocl_cpu_SMELLDVPBenchfloat_pa7("OpenCL CPU SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced4/sort_0/A_7.ell");
 SMELLDenseVectorProductBench<tags::OpenCL::CPU, double> ocl_cpu_SMELLDVPBenchdouble("OpenCL CPU SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, double", 1025ul*1025, 10, "l2/area51_full_2.ell");
-SMELLDenseVectorProductBench<tags::OpenCL::CPU, double> ocl_cpu_SMELLDVPBenchdouble_pa7("OpenCL CPU SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, double", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+SMELLDenseVectorProductBench<tags::OpenCL::CPU, double> ocl_cpu_SMELLDVPBenchdouble_pa7("OpenCL CPU SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, double", 1025ul*1025, 10, "poisson_advanced4/sort_0/A_7.ell");
 SMELLDenseVectorProductBench<tags::OpenCL::GPU, float> ocl_gpu_SMELLDVPBenchfloat("OpenCL GPU SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, float", 1025ul*1025, 10, "l2/area51_full_2.ell");
-SMELLDenseVectorProductBench<tags::OpenCL::GPU, float> ocl_gpu_SMELLDVPBenchfloat_pa7("OpenCL GPU SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+SMELLDenseVectorProductBench<tags::OpenCL::GPU, float> ocl_gpu_SMELLDVPBenchfloat_pa7("OpenCL GPU SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, float", 1025ul*1025, 10, "poisson_advanced4/sort_0/A_7.ell");
 #ifdef HONEI_CUDA_DOUBLE
 SMELLDenseVectorProductBench<tags::OpenCL::GPU, double> ocl_gpu_SMELLDVPBenchdouble("OpenCL GPU SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, double", 1025ul*1025, 10, "l2/area51_full_2.ell");
-SMELLDenseVectorProductBench<tags::OpenCL::GPU, double> ocl_gpu_SMELLDVPBenchdouble_pa7("OpenCL GPU SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, double", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
+SMELLDenseVectorProductBench<tags::OpenCL::GPU, double> ocl_gpu_SMELLDVPBenchdouble_pa7("OpenCL GPU SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, double", 1025ul*1025, 10, "poisson_advanced4/sort_0/A_7.ell");
 #endif
 #endif
 

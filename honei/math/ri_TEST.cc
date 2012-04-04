@@ -56,12 +56,12 @@ class RISmootherTestSparseELL:
         {
 
             std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename += _m_f;
             SparseMatrixELL<DT1_> smatrix2(MatrixIO<io_formats::ELL>::read_matrix(filename, DT1_(0)));
 
             std::string filename_2(HONEI_SOURCEDIR);
-            filename_2 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_2 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_2 += _v_f;
             DenseVector<DT1_> rhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT1_(0)));
 
@@ -80,17 +80,17 @@ class RISmootherTestSparseELL:
                 }
             DenseMatrix<DT1_> dmatrix(bla);*/
             std::string filename_4(HONEI_SOURCEDIR);
-            filename_4 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_4 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_4 += _i_f;
             DenseVector<DT1_> result(VectorIO<io_formats::EXP>::read_vector(filename_4, DT1_(0)));
 
             //DenseVector<DT1_> temp_0(rhs.size());
             //DenseVector<DT1_> temp_1(rhs.size());
             std::vector<DenseVector<DT1_> > svt(honei::create_vectorpool<DenseVector<double> >(RISmoother<Tag_>::NUM_TEMPVECS , rhs.size()));
-            RISmoother<Tag_>::value(smatrix2, diag_inverted, rhs, result, svt, 1000ul);
+            RISmoother<Tag_>::value(smatrix2, diag_inverted, rhs, result, svt, 10000ul);
 
             std::string filename_3(HONEI_SOURCEDIR);
-            filename_3 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_3 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_3 += _r_f;
             DenseVector<DT1_> ref_result(VectorIO<io_formats::EXP>::read_vector(filename_3, DT1_(0)));
 
@@ -120,24 +120,24 @@ class RISmootherTestSparseELL:
             }
         }
 };
-RISmootherTestSparseELL<tags::CPU, double> ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
-RISmootherTestSparseELL<tags::CPU::MultiCore, double> mc_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
-RISmootherTestSparseELL<tags::CPU::Generic, double> generic_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
-RISmootherTestSparseELL<tags::CPU::MultiCore::Generic, double> generic_mc_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISmootherTestSparseELL<tags::CPU, double> ri_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
+RISmootherTestSparseELL<tags::CPU::MultiCore, double> mc_ri_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
+RISmootherTestSparseELL<tags::CPU::Generic, double> generic_ri_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
+RISmootherTestSparseELL<tags::CPU::MultiCore::Generic, double> generic_mc_ri_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
 #ifdef HONEI_SSE
-RISmootherTestSparseELL<tags::CPU::SSE, double> sse_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
-RISmootherTestSparseELL<tags::CPU::MultiCore::SSE, double> mcsse_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISmootherTestSparseELL<tags::CPU::SSE, double> sse_ri_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
+RISmootherTestSparseELL<tags::CPU::MultiCore::SSE, double> mcsse_ri_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
-RISmootherTestSparseELL<tags::GPU::CUDA, double> cuda_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
-RISmootherTestSparseELL<tags::GPU::MultiCore::CUDA, double> mccuda_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISmootherTestSparseELL<tags::GPU::CUDA, double> cuda_ri_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
+RISmootherTestSparseELL<tags::GPU::MultiCore::CUDA, double> mccuda_ri_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
 #endif
 #endif
 #ifdef HONEI_OPENCL
-RISmootherTestSparseELL<tags::OpenCL::CPU, double> ocl_cpu_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISmootherTestSparseELL<tags::OpenCL::CPU, double> ocl_cpu_ri_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
 #ifdef HONEI_CUDA_DOUBLE
-RISmootherTestSparseELL<tags::OpenCL::GPU, double> ocl_gpu_ri_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISmootherTestSparseELL<tags::OpenCL::GPU, double> ocl_gpu_ri_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
 #endif
 #endif
 
@@ -167,12 +167,12 @@ class RISolverTestSparseELL:
         {
 
             std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename += _m_f;
             SparseMatrixELL<DT1_> smatrix2(MatrixIO<io_formats::ELL>::read_matrix(filename, DT1_(0)));
 
             std::string filename_2(HONEI_SOURCEDIR);
-            filename_2 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_2 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_2 += _v_f;
             DenseVector<DT1_> rhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT1_(0)));
 
@@ -191,18 +191,18 @@ class RISolverTestSparseELL:
                 }
             DenseMatrix<DT1_> dmatrix(bla);*/
             std::string filename_4(HONEI_SOURCEDIR);
-            filename_4 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_4 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_4 += _i_f;
             DenseVector<DT1_> result(VectorIO<io_formats::EXP>::read_vector(filename_4, DT1_(0)));
 
             DenseVector<DT1_> temp_0(rhs.size());
             DenseVector<DT1_> temp_1(rhs.size());
             unsigned long used_iters(4711);
-            RISolver<Tag_>::value(smatrix2, diag_inverted, rhs, result, temp_0, temp_1, 1000ul, used_iters, 1e-6);
+            RISolver<Tag_>::value(smatrix2, diag_inverted, rhs, result, temp_0, temp_1, 10000ul, used_iters, 1e-6);
             std::cout<<"Used iters: "<<used_iters<<std::endl;
 
             std::string filename_3(HONEI_SOURCEDIR);
-            filename_3 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_3 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_3 += _r_f;
             DenseVector<DT1_> ref_result(VectorIO<io_formats::EXP>::read_vector(filename_3, DT1_(0)));
 
@@ -232,23 +232,23 @@ class RISolverTestSparseELL:
             }
         }
 };
-RISolverTestSparseELL<tags::CPU, double> ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
-RISolverTestSparseELL<tags::CPU::MultiCore, double> mc_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
-RISolverTestSparseELL<tags::CPU::Generic, double> generic_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
-RISolverTestSparseELL<tags::CPU::MultiCore::Generic, double> generic_mc_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISolverTestSparseELL<tags::CPU, double> ris_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
+RISolverTestSparseELL<tags::CPU::MultiCore, double> mc_ris_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
+RISolverTestSparseELL<tags::CPU::Generic, double> generic_ris_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
+RISolverTestSparseELL<tags::CPU::MultiCore::Generic, double> generic_mc_ris_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
 #ifdef HONEI_SSE
-RISolverTestSparseELL<tags::CPU::SSE, double> sse_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
-RISolverTestSparseELL<tags::CPU::MultiCore::SSE, double> mcsse_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISolverTestSparseELL<tags::CPU::SSE, double> sse_ris_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
+RISolverTestSparseELL<tags::CPU::MultiCore::SSE, double> mcsse_ris_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
-RISolverTestSparseELL<tags::GPU::CUDA, double> cuda_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
-RISolverTestSparseELL<tags::GPU::MultiCore::CUDA, double> mccuda_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISolverTestSparseELL<tags::GPU::CUDA, double> cuda_ris_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
+RISolverTestSparseELL<tags::GPU::MultiCore::CUDA, double> mccuda_ris_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
 #endif
 #endif
 #ifdef HONEI_OPENCL
-RISolverTestSparseELL<tags::OpenCL::CPU, double> ocl_cpu_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISolverTestSparseELL<tags::OpenCL::CPU, double> ocl_cpu_ris_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
 #ifdef HONEI_CUDA_DOUBLE
-RISolverTestSparseELL<tags::OpenCL::GPU, double> ocl_gpu_ris_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+RISolverTestSparseELL<tags::OpenCL::GPU, double> ocl_gpu_ris_test_double_sparse_ell("double", "A_3.ell", "rhs_3", "sol_3", "init_3");
 #endif
 #endif

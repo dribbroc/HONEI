@@ -184,7 +184,7 @@ class MGUtilLoadTest:
         {
             unsigned long levels(4);
             std::string file(HONEI_SOURCEDIR);
-            file += "/honei/math/testdata/poisson_advanced/sort_0/";
+            file += "/honei/math/testdata/poisson_advanced4/sort_0/";
             MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double>, DenseVector<double>, double > data(MGUtil<Tag_,
                                                                                             SparseMatrixELL<double>,
                                                                                             DenseVector<double>,

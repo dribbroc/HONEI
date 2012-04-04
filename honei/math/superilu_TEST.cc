@@ -84,4 +84,4 @@ class SuperILUTestSparseELL:
             }
         }
 };
-SuperILUTestSparseELL<tags::CPU, double> superlu_test_sparse_ell_double_2("double", "poisson_advanced/q2_sort_0/A_3.ell", "poisson_advanced/q2_sort_0/rhs_3", "poisson_advanced/q2_sort_0/sol_3");
+SuperILUTestSparseELL<tags::CPU, double> superlu_test_sparse_ell_double_2("double", "poisson_advanced4/sort_0/A_3.ell", "poisson_advanced4/sort_0/rhs_3", "poisson_advanced4/sort_0/sol_3");

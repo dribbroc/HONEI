@@ -32,15 +32,15 @@ class RichardsonTESTArb :
         {
             //Read in data:
             std::string dir(HONEI_SOURCEDIR);
-            std::string file (dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            file += "A_4";
+            std::string file (dir + "/honei/math/testdata/poisson_advanced4/sort_0/");
+            file += "A_3";
             file += ".ell";
             SparseMatrixELL<DT1_> A(MatrixIO<io_formats::ELL>::read_matrix(file, DT1_(0)));
 
             SparseMatrix<DT1_> precon(A);
 
-            std::string rhs_file(dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            rhs_file += "rhs_4";
+            std::string rhs_file(dir + "/honei/math/testdata/poisson_advanced4/sort_0/");
+            rhs_file += "rhs_3";
             DenseVector<DT1_> b(VectorIO<io_formats::EXP>::read_vector(rhs_file, DT1_(0)));
 
             //TODO sparsify
@@ -61,8 +61,8 @@ class RichardsonTESTArb :
             std::cout << "Finished data I/O." << std::endl;
             Richardson<Tag_, Preconditioning<Tag_, methods::NONE> >::value(data, info);
 
-            std::string sol_file(dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            sol_file += "sol_4";
+            std::string sol_file(dir + "/honei/math/testdata/poisson_advanced4/sort_0/");
+            sol_file += "sol_3";
             DenseVector<DT1_> sol(VectorIO<io_formats::EXP>::read_vector(sol_file, DT1_(0)));
 
             std::cout << "#Iterations: " << info.iters << std::endl;
@@ -88,8 +88,8 @@ class RichardsonSPAITEST :
         {
             //Read in data:
             std::string dir(HONEI_SOURCEDIR);
-            std::string file (dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            file += "A_4";
+            std::string file (dir + "/honei/math/testdata/poisson_advanced4/sort_0/");
+            file += "A_3";
             file += ".ell";
             SparseMatrixELL<DT1_> A(MatrixIO<io_formats::ELL>::read_matrix(file, DT1_(0)));
 
@@ -98,8 +98,8 @@ class RichardsonSPAITEST :
 
             SparseMatrixELL<DT1_> C(spai);
 
-            std::string rhs_file(dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            rhs_file += "rhs_4";
+            std::string rhs_file(dir + "/honei/math/testdata/poisson_advanced4/sort_0/");
+            rhs_file += "rhs_3";
             DenseVector<DT1_> b(VectorIO<io_formats::EXP>::read_vector(rhs_file, DT1_(0)));
 
             //set up data and info structures:
@@ -113,8 +113,8 @@ class RichardsonSPAITEST :
             std::cout << "Finished data I/O." << std::endl;
             Richardson<Tag_, Preconditioning<Tag_, methods::NONE> >::value(data, info);
 
-            std::string sol_file(dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            sol_file += "sol_4";
+            std::string sol_file(dir + "/honei/math/testdata/poisson_advanced4/sort_0/");
+            sol_file += "sol_3";
             DenseVector<DT1_> sol(VectorIO<io_formats::EXP>::read_vector(sol_file, DT1_(0)));
 
             std::cout << "#Iterations: " << info.iters << std::endl;
@@ -139,8 +139,8 @@ class RichardsonSAINVTEST :
         {
             //Read in data:
             std::string dir(HONEI_SOURCEDIR);
-            std::string file (dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            file += "A_4";
+            std::string file (dir + "/honei/math/testdata/poisson_advanced4/sort_0/");
+            file += "A_3";
             file += ".ell";
             SparseMatrixELL<DT1_> A(MatrixIO<io_formats::ELL>::read_matrix(file, DT1_(0)));
 
@@ -149,8 +149,8 @@ class RichardsonSAINVTEST :
 
             SparseMatrixELL<DT1_> C(spai);
 
-            std::string rhs_file(dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            rhs_file += "rhs_4";
+            std::string rhs_file(dir + "/honei/math/testdata/poisson_advanced4/sort_0/");
+            rhs_file += "rhs_3";
             DenseVector<DT1_> b(VectorIO<io_formats::EXP>::read_vector(rhs_file, DT1_(0)));
 
             //set up data and info structures:
@@ -164,8 +164,8 @@ class RichardsonSAINVTEST :
             std::cout << "Finished data I/O." << std::endl;
             Richardson<Tag_, Preconditioning<Tag_, methods::NONE> >::value(data, info);
 
-            std::string sol_file(dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            sol_file += "sol_4";
+            std::string sol_file(dir + "/honei/math/testdata/poisson_advanced4/sort_0/");
+            sol_file += "sol_3";
             DenseVector<DT1_> sol(VectorIO<io_formats::EXP>::read_vector(sol_file, DT1_(0)));
 
             std::cout << "#Iterations: " << info.iters << std::endl;
@@ -191,8 +191,8 @@ class RichardsonSPAI2TEST :
         {
             //Read in data:
             std::string dir(HONEI_SOURCEDIR);
-            std::string file (dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            file += "A_4";
+            std::string file (dir + "/honei/math/testdata/poisson_advanced4/sort_0/");
+            file += "A_3";
             file += ".ell";
             SparseMatrixELL<DT1_> A(MatrixIO<io_formats::ELL>::read_matrix(file, DT1_(0)));
 
@@ -202,8 +202,8 @@ class RichardsonSPAI2TEST :
 
             SparseMatrixELL<DT1_> C(spai);
 
-            std::string rhs_file(dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            rhs_file += "rhs_4";
+            std::string rhs_file(dir + "/honei/math/testdata/poisson_advanced4/sort_0/");
+            rhs_file += "rhs_3";
             DenseVector<DT1_> b(VectorIO<io_formats::EXP>::read_vector(rhs_file, DT1_(0)));
 
             //set up data and info structures:
@@ -217,8 +217,8 @@ class RichardsonSPAI2TEST :
             std::cout << "Finished data I/O." << std::endl;
             Richardson<Tag_, Preconditioning<Tag_, methods::NONE> >::value(data, info);
 
-            std::string sol_file(dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            sol_file += "sol_4";
+            std::string sol_file(dir + "/honei/math/testdata/poisson_advanced4/sort_0/");
+            sol_file += "sol_3";
             DenseVector<DT1_> sol(VectorIO<io_formats::EXP>::read_vector(sol_file, DT1_(0)));
 
             std::cout << "#Iterations: " << info.iters << std::endl;
@@ -243,8 +243,8 @@ class RichardsonSPAI2_0TEST :
         {
             //Read in data:
             std::string dir(HONEI_SOURCEDIR);
-            std::string file (dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            file += "A_4";
+            std::string file (dir + "/honei/math/testdata/poisson_advanced4/sort_0/");
+            file += "A_3";
             file += ".ell";
             SparseMatrixELL<DT1_> A(MatrixIO<io_formats::ELL>::read_matrix(file, DT1_(0)));
 
@@ -257,8 +257,8 @@ class RichardsonSPAI2_0TEST :
                 sspai(i, i, spai[i]);
             SparseMatrixELL<DT1_> C(sspai);
 
-            std::string rhs_file(dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            rhs_file += "rhs_4";
+            std::string rhs_file(dir + "/honei/math/testdata/poisson_advanced4/sort_0/");
+            rhs_file += "rhs_3";
             DenseVector<DT1_> b(VectorIO<io_formats::EXP>::read_vector(rhs_file, DT1_(0)));
 
             //set up data and info structures:
@@ -272,8 +272,8 @@ class RichardsonSPAI2_0TEST :
             std::cout << "Finished data I/O." << std::endl;
             Richardson<Tag_, Preconditioning<Tag_, methods::NONE> >::value(data, info);
 
-            std::string sol_file(dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            sol_file += "sol_4";
+            std::string sol_file(dir + "/honei/math/testdata/poisson_advanced4/sort_0/");
+            sol_file += "sol_3";
             DenseVector<DT1_> sol(VectorIO<io_formats::EXP>::read_vector(sol_file, DT1_(0)));
 
             std::cout << "#Iterations: " << info.iters << std::endl;
@@ -298,8 +298,8 @@ class RichardsonPolyTEST :
         {
             //Read in data:
             std::string dir(HONEI_SOURCEDIR);
-            std::string file (dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            file += "A_4";
+            std::string file (dir + "/honei/math/testdata/poisson_advanced4/sort_0/");
+            file += "A_3";
             file += ".ell";
             SparseMatrixELL<DT1_> A(MatrixIO<io_formats::ELL>::read_matrix(file, DT1_(0)));
             SparseMatrix<DT1_> As(A);
@@ -307,8 +307,8 @@ class RichardsonPolyTEST :
             SparseMatrix<DT1_> precon(Poly::value(As,2));
             SparseMatrixELL<DT1_> C(precon);
 
-            std::string rhs_file(dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            rhs_file += "rhs_4";
+            std::string rhs_file(dir + "/honei/math/testdata/poisson_advanced4/sort_0/");
+            rhs_file += "rhs_3";
             DenseVector<DT1_> b(VectorIO<io_formats::EXP>::read_vector(rhs_file, DT1_(0)));
 
             //set up data and info structures:
@@ -322,8 +322,8 @@ class RichardsonPolyTEST :
             std::cout << "Finished data I/O." << std::endl;
             Richardson<Tag_, Preconditioning<Tag_, methods::NONE> >::value(data, info);
 
-            std::string sol_file(dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
-            sol_file += "sol_4";
+            std::string sol_file(dir + "/honei/math/testdata/poisson_advanced4/sort_0/");
+            sol_file += "sol_3";
             DenseVector<DT1_> sol(VectorIO<io_formats::EXP>::read_vector(sol_file, DT1_(0)));
 
             std::cout << "#Iterations: " << info.iters << std::endl;

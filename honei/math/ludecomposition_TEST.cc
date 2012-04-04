@@ -292,4 +292,4 @@ class LUTestSparseELL:
         }
 };
 LUTestSparseELL<tags::CPU, double> lu_test_sparse_ell_double_1("double", "l2/area51_full_0.ell", "l2/area51_rhs_0", "l2/area51_sol_0");
-//LUTestSparseELL<tags::CPU, double> lu_test_sparse_ell_double_2("double", "poisson_advanced/sort_0/A_7.ell", "poisson_advanced/sort_0/rhs_7", "poisson_advanced/sort_0/sol_7");
+//LUTestSparseELL<tags::CPU, double> lu_test_sparse_ell_double_2("double", "poisson_advanced4/sort_0/A_4.ell", "poisson_advanced4/sort_0/rhs_4", "poisson_advanced4/sort_0/sol_4");

@@ -65,7 +65,7 @@ class IRBench:
         virtual void run()
         {
             std::string file(HONEI_SOURCEDIR);
-            file += "/honei/math/testdata/poisson_advanced/";
+            file += "/honei/math/testdata/poisson_advanced4/";
 
             if(_element_type == 2)
                 file += "q2_";

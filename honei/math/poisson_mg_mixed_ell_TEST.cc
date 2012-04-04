@@ -801,11 +801,11 @@ class PoissonAdvancedTestMGSparseELLProlMat:
         }
 };
 #ifdef HONEI_SSE
-//  PoissonAdvancedTestMGSparseELLProlMat<tags::CPU::SSE, tags::CPU::SSE, double> sse_poisson_advanced_test_mg_sparse_prolmat_double("double", 4ul, 0ul, "/honei/math/testdata/poisson_advanced/sort_", 0);
-//  PoissonAdvancedTestMGSparseELLProlMat<tags::CPU::MultiCore::SSE, tags::CPU::MultiCore::SSE, double> mcsse_poisson_advanced_test_mg_sparse_prolmat_double("double", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/q2_sort_", 2);
+//  PoissonAdvancedTestMGSparseELLProlMat<tags::CPU::SSE, tags::CPU::SSE, double> sse_poisson_advanced4_test_mg_sparse_prolmat_double("double", 4ul, 0ul, "/honei/math/testdata/poisson_advanced4/sort_", 0);
+//  PoissonAdvancedTestMGSparseELLProlMat<tags::CPU::MultiCore::SSE, tags::CPU::MultiCore::SSE, double> mcsse_poisson_advanced4_test_mg_sparse_prolmat_double("double", 7ul, 0ul, "/honei/math/testdata/poisson_advanced4/q2_sort_", 2);
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
-//  PoissonAdvancedTestMGSparseELLProlMat<tags::GPU::CUDA, tags::GPU::CUDA, double> cuda_poisson_advanced_test_mg_sparse_prolmat_double("double", 7ul, 0ul, "/honei/math/testdata/poisson_advanced/q2_sort_", 2);
+//  PoissonAdvancedTestMGSparseELLProlMat<tags::GPU::CUDA, tags::GPU::CUDA, double> cuda_poisson_advanced4_test_mg_sparse_prolmat_double("double", 4ul, 0ul, "/honei/math/testdata/poisson_advanced4/sort_", 0);
 #endif
 #endif

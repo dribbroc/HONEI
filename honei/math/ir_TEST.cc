@@ -30,7 +30,7 @@ class IRSolverTest:
         {
             unsigned long levels(4);
             std::string file(HONEI_SOURCEDIR);
-            file += "/honei/math/testdata/poisson_advanced/sort_0/";
+            file += "/honei/math/testdata/poisson_advanced4/sort_0/";
             MGData<SparseMatrixELL<DTInner_>, DenseVector<DTInner_>, SparseMatrixELL<DTInner_>, DenseVector<DTInner_>, DTInner_ >  data(MGUtil<InnerTag_,
                                                                                             SparseMatrixELL<DTInner_>,
                                                                                             DenseVector<DTInner_>,
@@ -59,18 +59,18 @@ class IRSolverTest:
                     );
 
             std::string a_file(HONEI_SOURCEDIR);
-            a_file += "/honei/math/testdata/poisson_advanced/sort_0/A_";
+            a_file += "/honei/math/testdata/poisson_advanced4/sort_0/A_";
             a_file += stringify(levels);
             a_file += ".ell";
             SparseMatrixELL<DTOuter_> A(MatrixIO<io_formats::ELL>::read_matrix(a_file, DTOuter_(0)));
 
             std::string b_file(HONEI_SOURCEDIR);
-            b_file += "/honei/math/testdata/poisson_advanced/sort_0/rhs_";
+            b_file += "/honei/math/testdata/poisson_advanced4/sort_0/rhs_";
             b_file += stringify(levels);
             DenseVector<DTOuter_> b(VectorIO<io_formats::EXP>::read_vector(b_file, DTOuter_(0)));
 
             std::string x_file(HONEI_SOURCEDIR);
-            x_file += "/honei/math/testdata/poisson_advanced/sort_0/init_";
+            x_file += "/honei/math/testdata/poisson_advanced4/sort_0/init_";
             x_file += stringify(levels);
             DenseVector<DTOuter_> x(VectorIO<io_formats::EXP>::read_vector(x_file, DTOuter_(0)));
 
@@ -82,7 +82,7 @@ class IRSolverTest:
             std::cout << data.used_iters_coarse << std::endl;
 
             std::string reffile(HONEI_SOURCEDIR);
-            reffile += "/honei/math/testdata/poisson_advanced/sort_0/sol_";
+            reffile += "/honei/math/testdata/poisson_advanced4/sort_0/sol_";
             reffile += stringify(levels);
             DenseVector<double> ref(VectorIO<io_formats::EXP>::read_vector(reffile, double(0)));
             double base_digits(1);

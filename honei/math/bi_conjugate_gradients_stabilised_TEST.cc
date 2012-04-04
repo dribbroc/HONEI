@@ -118,20 +118,20 @@ class PBiCGStabELLTEST:
             }
         }
 };
-PBiCGStabELLTEST<tags::CPU, double> pbicgstab_test_double_sparse_ell("double", "poisson_advanced/sort_0/A_7.ell", "poisson_advanced/sort_0/A_7_spai.ell", "poisson_advanced/sort_0/rhs_7", "poisson_advanced/sort_0/sol_7", "poisson_advanced/sort_0/init_7");
-//PBiCGStabELLTEST<tags::CPU::MultiCore, double> mc_pbicgstab_test_double_sparse_ell("double", "poisson_advanced/sort_0/A_7.ell", "poisson_advanced/sort_0/A_7_spai.ell", "poisson_advanced/sort_0/rhs_7", "poisson_advanced/sort_0/sol_7", "poisson_advanced/sort_0/init_7");
+PBiCGStabELLTEST<tags::CPU, double> pbicgstab_test_double_sparse_ell("double", "poisson_advanced4/sort_0/A_4.ell", "poisson_advanced4/sort_0/A_4_spai.ell", "poisson_advanced4/sort_0/rhs_4", "poisson_advanced4/sort_0/sol_4", "poisson_advanced4/sort_0/init_4");
+//PBiCGStabELLTEST<tags::CPU::MultiCore, double> mc_pbicgstab_test_double_sparse_ell("double", "poisson_advanced4/sort_0/A_4.ell", "poisson_advanced4/sort_0/A_4_spai.ell", "poisson_advanced4/sort_0/rhs_4", "poisson_advanced4/sort_0/sol_4", "poisson_advanced4/sort_0/init_4");
 #ifdef HONEI_SSE
-PBiCGStabELLTEST<tags::CPU::SSE, double> sse_pbicgstab_test_double_sparse_ell("double", "poisson_advanced/sort_0/A_7.ell", "poisson_advanced/sort_0/A_7_spai.ell", "poisson_advanced/sort_0/rhs_7", "poisson_advanced/sort_0/sol_7", "poisson_advanced/sort_0/init_7");
-PBiCGStabELLTEST<tags::CPU::MultiCore::SSE, double> mcsse_pbicgstab_test_double_sparse_ell("double", "poisson_advanced/sort_0/A_7.ell", "poisson_advanced/sort_0/A_7_spai.ell", "poisson_advanced/sort_0/rhs_7", "poisson_advanced/sort_0/sol_7", "poisson_advanced/sort_0/init_7");
+PBiCGStabELLTEST<tags::CPU::SSE, double> sse_pbicgstab_test_double_sparse_ell("double", "poisson_advanced4/sort_0/A_4.ell", "poisson_advanced4/sort_0/A_4_spai.ell", "poisson_advanced4/sort_0/rhs_4", "poisson_advanced4/sort_0/sol_4", "poisson_advanced4/sort_0/init_4");
+PBiCGStabELLTEST<tags::CPU::MultiCore::SSE, double> mcsse_pbicgstab_test_double_sparse_ell("double", "poisson_advanced4/sort_0/A_4.ell", "poisson_advanced4/sort_0/A_4_spai.ell", "poisson_advanced4/sort_0/rhs_4", "poisson_advanced4/sort_0/sol_4", "poisson_advanced4/sort_0/init_4");
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
-PBiCGStabELLTEST<tags::GPU::CUDA, double> cuda_pbicgstab_test_double_sparse_ell("double", "poisson_advanced/sort_0/A_7.ell", "poisson_advanced/sort_0/A_7_spai.ell", "poisson_advanced/sort_0/rhs_7", "poisson_advanced/sort_0/sol_7", "poisson_advanced/sort_0/init_7");
+PBiCGStabELLTEST<tags::GPU::CUDA, double> cuda_pbicgstab_test_double_sparse_ell("double", "poisson_advanced4/sort_0/A_4.ell", "poisson_advanced4/sort_0/A_4_spai.ell", "poisson_advanced4/sort_0/rhs_4", "poisson_advanced4/sort_0/sol_4", "poisson_advanced4/sort_0/init_4");
 #endif
 #endif
 #ifdef HONEI_OPENCL
-PBiCGStabELLTEST<tags::OpenCL::CPU, double> ocl_cpu_pbicgstab_test_double_sparse_ell("double", "poisson_advanced/sort_0/A_7.ell", "poisson_advanced/sort_0/A_7_spai.ell", "poisson_advanced/sort_0/rhs_7", "poisson_advanced/sort_0/sol_7", "poisson_advanced/sort_0/init_7");
+PBiCGStabELLTEST<tags::OpenCL::CPU, double> ocl_cpu_pbicgstab_test_double_sparse_ell("double", "poisson_advanced4/sort_0/A_4.ell", "poisson_advanced4/sort_0/A_4_spai.ell", "poisson_advanced4/sort_0/rhs_4", "poisson_advanced4/sort_0/sol_4", "poisson_advanced4/sort_0/init_4");
 #ifdef HONEI_CUDA_DOUBLE
-PBiCGStabELLTEST<tags::OpenCL::GPU, double> ocl_gpu_pbicgstab_test_double_sparse_ell("double", "poisson_advanced/sort_0/A_7.ell", "poisson_advanced/sort_0/A_7_spai.ell", "poisson_advanced/sort_0/rhs_7", "poisson_advanced/sort_0/sol_7", "poisson_advanced/sort_0/init_7");
+PBiCGStabELLTEST<tags::OpenCL::GPU, double> ocl_gpu_pbicgstab_test_double_sparse_ell("double", "poisson_advanced4/sort_0/A_4.ell", "poisson_advanced4/sort_0/A_4_spai.ell", "poisson_advanced4/sort_0/rhs_4", "poisson_advanced4/sort_0/sol_4", "poisson_advanced4/sort_0/init_4");
 #endif
 #endif

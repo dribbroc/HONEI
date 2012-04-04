@@ -56,12 +56,12 @@ class BiCGStabSolverTestSparseELLPrecon:
         {
 
             std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename += _m_f;
             SparseMatrixELL<DT1_> smatrix2(MatrixIO<io_formats::ELL>::read_matrix(filename, DT1_(0)));
 
             std::string filename_2(HONEI_SOURCEDIR);
-            filename_2 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_2 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_2 += _v_f;
             DenseVector<DT1_> rhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT1_(0)));
 
@@ -72,14 +72,14 @@ class BiCGStabSolverTestSparseELLPrecon:
             }
 
             std::string filename_4(HONEI_SOURCEDIR);
-            filename_4 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_4 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_4 += _i_f;
             DenseVector<DT1_> result(VectorIO<io_formats::EXP>::read_vector(filename_4, DT1_(0)));
             unsigned long used_iters;
             BiCGStabSolver<Tag_, methods::VAR>::value(smatrix2, diag_inverted, rhs, result, 700ul, used_iters, DT1_(1e-8));
 
             std::string filename_3(HONEI_SOURCEDIR);
-            filename_3 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_3 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_3 += _r_f;
             DenseVector<DT1_> ref_result(VectorIO<io_formats::EXP>::read_vector(filename_3, DT1_(0)));
 
@@ -110,27 +110,27 @@ class BiCGStabSolverTestSparseELLPrecon:
             }
         }
 };
-BiCGStabSolverTestSparseELLPrecon<tags::CPU, double> cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
-//BiCGStabSolverTestSparseELLPrecon<tags::CPU::MultiCore, double> mc_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
-BiCGStabSolverTestSparseELLPrecon<tags::CPU::Generic, double> generic_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
-BiCGStabSolverTestSparseELLPrecon<tags::CPU::MultiCore::Generic, double> generic_mc_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+BiCGStabSolverTestSparseELLPrecon<tags::CPU, double> cg_precon_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4");
+//BiCGStabSolverTestSparseELLPrecon<tags::CPU::MultiCore, double> mc_cg_precon_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4");
+BiCGStabSolverTestSparseELLPrecon<tags::CPU::Generic, double> generic_cg_precon_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4");
+BiCGStabSolverTestSparseELLPrecon<tags::CPU::MultiCore::Generic, double> generic_mc_cg_precon_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #ifdef HONEI_GMP
-BiCGStabSolverTestSparseELLPrecon<tags::CPU::Generic, mpf_class> generic_cg_precon_test_mpf_class_sparse_ell_mpf_class("mpf_class JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
-BiCGStabSolverTestSparseELLPrecon<tags::CPU::MultiCore::Generic, mpf_class> generic_mc_cg_precon_test_mpf_class_sparse_ell_mpf_class("mpf_class JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+BiCGStabSolverTestSparseELLPrecon<tags::CPU::Generic, mpf_class> generic_cg_precon_test_mpf_class_sparse_ell_mpf_class("mpf_class JAC", "A_4.ell", "rhs_4", "sol_4", "init_4");
+BiCGStabSolverTestSparseELLPrecon<tags::CPU::MultiCore::Generic, mpf_class> generic_mc_cg_precon_test_mpf_class_sparse_ell_mpf_class("mpf_class JAC", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #endif
 #ifdef HONEI_SSE
-BiCGStabSolverTestSparseELLPrecon<tags::CPU::SSE, double> sse_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
-BiCGStabSolverTestSparseELLPrecon<tags::CPU::MultiCore::SSE, double> mcsse_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+BiCGStabSolverTestSparseELLPrecon<tags::CPU::SSE, double> sse_cg_precon_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4");
+BiCGStabSolverTestSparseELLPrecon<tags::CPU::MultiCore::SSE, double> mcsse_cg_precon_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
-BiCGStabSolverTestSparseELLPrecon<tags::GPU::CUDA, double> cuda_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+BiCGStabSolverTestSparseELLPrecon<tags::GPU::CUDA, double> cuda_cg_precon_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #endif
 #endif
 #ifdef HONEI_OPENCL
-BiCGStabSolverTestSparseELLPrecon<tags::OpenCL::CPU, double> ocl_cpu_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+BiCGStabSolverTestSparseELLPrecon<tags::OpenCL::CPU, double> ocl_cpu_cg_precon_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #ifdef HONEI_CUDA_DOUBLE
-BiCGStabSolverTestSparseELLPrecon<tags::OpenCL::GPU, double> ocl_gpu_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+BiCGStabSolverTestSparseELLPrecon<tags::OpenCL::GPU, double> ocl_gpu_cg_precon_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #endif
 #endif
 
@@ -161,12 +161,12 @@ class BiCGStabSolverTestSparseELLPreconSAINV:
         {
 
             std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename += _m_f;
             SparseMatrixELL<DT1_> smatrix2(MatrixIO<io_formats::ELL>::read_matrix(filename, DT1_(0)));
 
             std::string filename_2(HONEI_SOURCEDIR);
-            filename_2 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_2 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_2 += _v_f;
             DenseVector<DT1_> rhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT1_(0)));
 
@@ -177,20 +177,20 @@ class BiCGStabSolverTestSparseELLPreconSAINV:
             }
 
             std::string filename_4(HONEI_SOURCEDIR);
-            filename_4 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_4 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_4 += _i_f;
             DenseVector<DT1_> result(VectorIO<io_formats::EXP>::read_vector(filename_4, DT1_(0)));
             unsigned long used_iters;
 
             std::string filename_5(HONEI_SOURCEDIR);
-            filename_5 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_5 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_5 += _p_f;
             SparseMatrixELL<DT1_> smatrix5(MatrixIO<io_formats::ELL>::read_matrix(filename_5, DT1_(0)));
 
             BiCGStabSolver<Tag_, methods::VAR>::value(smatrix2, smatrix5, rhs, result, 700ul, used_iters, DT1_(1e-8));
 
             std::string filename_3(HONEI_SOURCEDIR);
-            filename_3 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_3 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_3 += _r_f;
             DenseVector<DT1_> ref_result(VectorIO<io_formats::EXP>::read_vector(filename_3, DT1_(0)));
 
@@ -222,27 +222,27 @@ class BiCGStabSolverTestSparseELLPreconSAINV:
             }
         }
 };
-BiCGStabSolverTestSparseELLPreconSAINV<tags::CPU, double> cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
-//BiCGStabSolverTestSparseELLPreconSAINV<tags::CPU::MultiCore, double> mc_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
-BiCGStabSolverTestSparseELLPreconSAINV<tags::CPU::Generic, double> generic_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
-BiCGStabSolverTestSparseELLPreconSAINV<tags::CPU::MultiCore::Generic, double> generic_mc_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
+BiCGStabSolverTestSparseELLPreconSAINV<tags::CPU, double> cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_sainv.ell");
+//BiCGStabSolverTestSparseELLPreconSAINV<tags::CPU::MultiCore, double> mc_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_sainv.ell");
+BiCGStabSolverTestSparseELLPreconSAINV<tags::CPU::Generic, double> generic_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_sainv.ell");
+BiCGStabSolverTestSparseELLPreconSAINV<tags::CPU::MultiCore::Generic, double> generic_mc_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_sainv.ell");
 #ifdef HONEI_GMP
-BiCGStabSolverTestSparseELLPreconSAINV<tags::CPU::Generic, mpf_class> generic_cg_precon_sainv_test_mpf_class_sparse_ell_mpf_class("mpf_class SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
-BiCGStabSolverTestSparseELLPreconSAINV<tags::CPU::MultiCore::Generic, mpf_class> generic_mc_cg_precon_sainv_test_mpf_class_sparse_ell_mpf_class("mpf_class SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
+BiCGStabSolverTestSparseELLPreconSAINV<tags::CPU::Generic, mpf_class> generic_cg_precon_sainv_test_mpf_class_sparse_ell_mpf_class("mpf_class SAINV", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_sainv.ell");
+BiCGStabSolverTestSparseELLPreconSAINV<tags::CPU::MultiCore::Generic, mpf_class> generic_mc_cg_precon_sainv_test_mpf_class_sparse_ell_mpf_class("mpf_class SAINV", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_sainv.ell");
 #endif
 #ifdef HONEI_SSE
-BiCGStabSolverTestSparseELLPreconSAINV<tags::CPU::SSE, double> sse_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
-BiCGStabSolverTestSparseELLPreconSAINV<tags::CPU::MultiCore::SSE, double> mcsse_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
+BiCGStabSolverTestSparseELLPreconSAINV<tags::CPU::SSE, double> sse_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_sainv.ell");
+BiCGStabSolverTestSparseELLPreconSAINV<tags::CPU::MultiCore::SSE, double> mcsse_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_sainv.ell");
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
-BiCGStabSolverTestSparseELLPreconSAINV<tags::GPU::CUDA, double> cuda_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
+BiCGStabSolverTestSparseELLPreconSAINV<tags::GPU::CUDA, double> cuda_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_sainv.ell");
 #endif
 #endif
 #ifdef HONEI_OPENCL
-BiCGStabSolverTestSparseELLPreconSAINV<tags::OpenCL::CPU, double> ocl_cpu_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
+BiCGStabSolverTestSparseELLPreconSAINV<tags::OpenCL::CPU, double> ocl_cpu_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_sainv.ell");
 #ifdef HONEI_CUDA_DOUBLE
-BiCGStabSolverTestSparseELLPreconSAINV<tags::OpenCL::GPU, double> ocl_gpu_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
+BiCGStabSolverTestSparseELLPreconSAINV<tags::OpenCL::GPU, double> ocl_gpu_cg_precon_sainv_test_double_sparse_ell("double SAINV", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_sainv.ell");
 #endif
 #endif
 
@@ -273,12 +273,12 @@ class BiCGStabSolverTestSparseELLPreconSPAI:
         {
 
             std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename += _m_f;
             SparseMatrixELL<DT1_> smatrix2(MatrixIO<io_formats::ELL>::read_matrix(filename, DT1_(0)));
 
             std::string filename_2(HONEI_SOURCEDIR);
-            filename_2 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_2 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_2 += _v_f;
             DenseVector<DT1_> rhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT1_(0)));
 
@@ -289,20 +289,20 @@ class BiCGStabSolverTestSparseELLPreconSPAI:
             }
 
             std::string filename_4(HONEI_SOURCEDIR);
-            filename_4 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_4 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_4 += _i_f;
             DenseVector<DT1_> result(VectorIO<io_formats::EXP>::read_vector(filename_4, DT1_(0)));
             unsigned long used_iters;
 
             std::string filename_5(HONEI_SOURCEDIR);
-            filename_5 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_5 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_5 += _p_f;
             SparseMatrixELL<DT1_> smatrix5(MatrixIO<io_formats::ELL>::read_matrix(filename_5, DT1_(0)));
 
             BiCGStabSolver<Tag_, methods::VAR>::value(smatrix2, smatrix5, rhs, result, 700ul, used_iters, DT1_(1e-8));
 
             std::string filename_3(HONEI_SOURCEDIR);
-            filename_3 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_3 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_3 += _r_f;
             DenseVector<DT1_> ref_result(VectorIO<io_formats::EXP>::read_vector(filename_3, DT1_(0)));
 
@@ -334,27 +334,27 @@ class BiCGStabSolverTestSparseELLPreconSPAI:
             }
         }
 };
-BiCGStabSolverTestSparseELLPreconSPAI<tags::CPU, double> cg_precon_spai_test_double_sparse_ell("double SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
-//BiCGStabSolverTestSparseELLPreconSPAI<tags::CPU::MultiCore, double> mc_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
-BiCGStabSolverTestSparseELLPreconSPAI<tags::CPU::Generic, double> generic_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
-BiCGStabSolverTestSparseELLPreconSPAI<tags::CPU::MultiCore::Generic, double> generic_mc_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
+BiCGStabSolverTestSparseELLPreconSPAI<tags::CPU, double> cg_precon_spai_test_double_sparse_ell("double SPAI", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
+//BiCGStabSolverTestSparseELLPreconSPAI<tags::CPU::MultiCore, double> mc_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
+BiCGStabSolverTestSparseELLPreconSPAI<tags::CPU::Generic, double> generic_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
+BiCGStabSolverTestSparseELLPreconSPAI<tags::CPU::MultiCore::Generic, double> generic_mc_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
 #ifdef HONEI_GMP
-BiCGStabSolverTestSparseELLPreconSPAI<tags::CPU::Generic, mpf_class> generic_cg_precon_spai_test_mpf_class_sparse_ell_mpf_class("mpf_class SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
-BiCGStabSolverTestSparseELLPreconSPAI<tags::CPU::MultiCore::Generic, mpf_class> generic_mc_cg_precon_spai_test_mpf_class_sparse_ell_mpf_class("mpf_class SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
+BiCGStabSolverTestSparseELLPreconSPAI<tags::CPU::Generic, mpf_class> generic_cg_precon_spai_test_mpf_class_sparse_ell_mpf_class("mpf_class SPAI", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
+BiCGStabSolverTestSparseELLPreconSPAI<tags::CPU::MultiCore::Generic, mpf_class> generic_mc_cg_precon_spai_test_mpf_class_sparse_ell_mpf_class("mpf_class SPAI", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
 #endif
 #ifdef HONEI_SSE
-BiCGStabSolverTestSparseELLPreconSPAI<tags::CPU::SSE, double> sse_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
-BiCGStabSolverTestSparseELLPreconSPAI<tags::CPU::MultiCore::SSE, double> mcsse_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
+BiCGStabSolverTestSparseELLPreconSPAI<tags::CPU::SSE, double> sse_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
+BiCGStabSolverTestSparseELLPreconSPAI<tags::CPU::MultiCore::SSE, double> mcsse_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
-BiCGStabSolverTestSparseELLPreconSPAI<tags::GPU::CUDA, double> cuda_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
+BiCGStabSolverTestSparseELLPreconSPAI<tags::GPU::CUDA, double> cuda_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
 #endif
 #endif
 #ifdef HONEI_OPENCL
-BiCGStabSolverTestSparseELLPreconSPAI<tags::OpenCL::CPU, double> ocl_cpu_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
+BiCGStabSolverTestSparseELLPreconSPAI<tags::OpenCL::CPU, double> ocl_cpu_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
 #ifdef HONEI_CUDA_DOUBLE
-BiCGStabSolverTestSparseELLPreconSPAI<tags::OpenCL::GPU, double> ocl_gpu_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
+BiCGStabSolverTestSparseELLPreconSPAI<tags::OpenCL::GPU, double> ocl_gpu_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_spai.ell");
 #endif
 #endif
 

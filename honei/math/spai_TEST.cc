@@ -46,7 +46,7 @@ class SpaiTestSparse:
         virtual void run() const
         {
             std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/math/testdata/poisson_advanced/sort_0/A_7.ell";
+            filename += "/honei/math/testdata/poisson_advanced4/sort_0/A_4.ell";
             SparseMatrixELL<DT_> smell = MatrixIO<io_formats::ELL>::read_matrix(filename, DT_(1));
             SparseMatrix<DT_> sm(smell);
             unsigned long used_elements(0);

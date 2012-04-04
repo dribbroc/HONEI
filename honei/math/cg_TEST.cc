@@ -56,12 +56,12 @@ class CGSolverTestSparseELL:
         {
 
             std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename += _m_f;
             SparseMatrixELL<DT1_> smatrix2(MatrixIO<io_formats::ELL>::read_matrix(filename, DT1_(0)));
 
             std::string filename_2(HONEI_SOURCEDIR);
-            filename_2 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_2 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_2 += _v_f;
             DenseVector<DT1_> rhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT1_(0)));
 
@@ -80,14 +80,14 @@ class CGSolverTestSparseELL:
                 }
             DenseMatrix<DT1_> dmatrix(bla);*/
             std::string filename_4(HONEI_SOURCEDIR);
-            filename_4 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_4 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_4 += _i_f;
             DenseVector<DT1_> result(VectorIO<io_formats::EXP>::read_vector(filename_4, DT1_(0)));
             unsigned long used_iters;
             CGSolver<Tag_, methods::NONE>::value(smatrix2, rhs, rhs, result, 10000ul, used_iters, DT1_(1e-8));
 
             std::string filename_3(HONEI_SOURCEDIR);
-            filename_3 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_3 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_3 += _r_f;
             DenseVector<DT1_> ref_result(VectorIO<io_formats::EXP>::read_vector(filename_3, DT1_(0)));
 
@@ -118,28 +118,28 @@ class CGSolverTestSparseELL:
             }
         }
 };
-CGSolverTestSparseELL<tags::CPU, double> cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
-CGSolverTestSparseELL<tags::CPU::MultiCore, double> mc_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
-CGSolverTestSparseELL<tags::CPU::Generic, double> generic_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
-CGSolverTestSparseELL<tags::CPU::MultiCore::Generic, double> generic_mc_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
+CGSolverTestSparseELL<tags::CPU, double> cg_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+CGSolverTestSparseELL<tags::CPU::MultiCore, double> mc_cg_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+CGSolverTestSparseELL<tags::CPU::Generic, double> generic_cg_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+CGSolverTestSparseELL<tags::CPU::MultiCore::Generic, double> generic_mc_cg_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #ifdef HONEI_GMP
-CGSolverTestSparseELL<tags::CPU::Generic, mpf_class> generic_cg_test_mpf_class_sparse_ell_mpf_class("mpf_class", "A_7.ell", "rhs_7", "sol_7", "init_7");
-CGSolverTestSparseELL<tags::CPU::MultiCore::Generic, mpf_class> generic_mc_cg_test_mpf_class_sparse_ell_mpf_class("mpf_class", "A_7.ell", "rhs_7", "sol_7", "init_7");
+CGSolverTestSparseELL<tags::CPU::Generic, mpf_class> generic_cg_test_mpf_class_sparse_ell_mpf_class("mpf_class", "A_4.ell", "rhs_4", "sol_4", "init_4");
+CGSolverTestSparseELL<tags::CPU::MultiCore::Generic, mpf_class> generic_mc_cg_test_mpf_class_sparse_ell_mpf_class("mpf_class", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #endif
 #ifdef HONEI_SSE
-CGSolverTestSparseELL<tags::CPU::SSE, double> sse_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
-CGSolverTestSparseELL<tags::CPU::MultiCore::SSE, double> mcsse_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
+CGSolverTestSparseELL<tags::CPU::SSE, double> sse_cg_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+CGSolverTestSparseELL<tags::CPU::MultiCore::SSE, double> mcsse_cg_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
-CGSolverTestSparseELL<tags::GPU::CUDA, double> cuda_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
-CGSolverTestSparseELL<tags::GPU::MultiCore::CUDA, double> mccuda_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
+CGSolverTestSparseELL<tags::GPU::CUDA, double> cuda_cg_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
+CGSolverTestSparseELL<tags::GPU::MultiCore::CUDA, double> mccuda_cg_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #endif
 #endif
 #ifdef HONEI_OPENCL
-CGSolverTestSparseELL<tags::OpenCL::CPU, double> ocl_cpu_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
+CGSolverTestSparseELL<tags::OpenCL::CPU, double> ocl_cpu_cg_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #ifdef HONEI_CUDA_DOUBLE
-CGSolverTestSparseELL<tags::OpenCL::GPU, double> ocl_gpu_cg_test_double_sparse_ell("double", "A_7.ell", "rhs_7", "sol_7", "init_7");
+CGSolverTestSparseELL<tags::OpenCL::GPU, double> ocl_gpu_cg_test_double_sparse_ell("double", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #endif
 #endif
 
@@ -168,12 +168,12 @@ class CGSolverTestSparseELLPrecon:
         {
 
             std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename += _m_f;
             SparseMatrixELL<DT1_> smatrix2(MatrixIO<io_formats::ELL>::read_matrix(filename, DT1_(0)));
 
             std::string filename_2(HONEI_SOURCEDIR);
-            filename_2 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_2 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_2 += _v_f;
             DenseVector<DT1_> rhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT1_(0)));
 
@@ -184,14 +184,14 @@ class CGSolverTestSparseELLPrecon:
             }
 
             std::string filename_4(HONEI_SOURCEDIR);
-            filename_4 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_4 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_4 += _i_f;
             DenseVector<DT1_> result(VectorIO<io_formats::EXP>::read_vector(filename_4, DT1_(0)));
             unsigned long used_iters;
             CGSolver<Tag_, methods::VAR>::value(smatrix2, diag_inverted, rhs, result, 700ul, used_iters, DT1_(1e-8));
 
             std::string filename_3(HONEI_SOURCEDIR);
-            filename_3 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_3 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_3 += _r_f;
             DenseVector<DT1_> ref_result(VectorIO<io_formats::EXP>::read_vector(filename_3, DT1_(0)));
 
@@ -222,27 +222,27 @@ class CGSolverTestSparseELLPrecon:
             }
         }
 };
-CGSolverTestSparseELLPrecon<tags::CPU, double> cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
-CGSolverTestSparseELLPrecon<tags::CPU::MultiCore, double> mc_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
-CGSolverTestSparseELLPrecon<tags::CPU::Generic, double> generic_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
-CGSolverTestSparseELLPrecon<tags::CPU::MultiCore::Generic, double> generic_mc_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+CGSolverTestSparseELLPrecon<tags::CPU, double> cg_precon_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4");
+CGSolverTestSparseELLPrecon<tags::CPU::MultiCore, double> mc_cg_precon_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4");
+CGSolverTestSparseELLPrecon<tags::CPU::Generic, double> generic_cg_precon_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4");
+CGSolverTestSparseELLPrecon<tags::CPU::MultiCore::Generic, double> generic_mc_cg_precon_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #ifdef HONEI_GMP
-CGSolverTestSparseELLPrecon<tags::CPU::Generic, mpf_class> generic_cg_precon_test_mpf_class_sparse_ell_mpf_class("mpf_class JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
-CGSolverTestSparseELLPrecon<tags::CPU::MultiCore::Generic, mpf_class> generic_mc_cg_precon_test_mpf_class_sparse_ell_mpf_class("mpf_class JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+CGSolverTestSparseELLPrecon<tags::CPU::Generic, mpf_class> generic_cg_precon_test_mpf_class_sparse_ell_mpf_class("mpf_class JAC", "A_4.ell", "rhs_4", "sol_4", "init_4");
+CGSolverTestSparseELLPrecon<tags::CPU::MultiCore::Generic, mpf_class> generic_mc_cg_precon_test_mpf_class_sparse_ell_mpf_class("mpf_class JAC", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #endif
 #ifdef HONEI_SSE
-CGSolverTestSparseELLPrecon<tags::CPU::SSE, double> sse_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
-CGSolverTestSparseELLPrecon<tags::CPU::MultiCore::SSE, double> mcsse_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+CGSolverTestSparseELLPrecon<tags::CPU::SSE, double> sse_cg_precon_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4");
+CGSolverTestSparseELLPrecon<tags::CPU::MultiCore::SSE, double> mcsse_cg_precon_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
-CGSolverTestSparseELLPrecon<tags::GPU::CUDA, double> cuda_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+CGSolverTestSparseELLPrecon<tags::GPU::CUDA, double> cuda_cg_precon_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #endif
 #endif
 #ifdef HONEI_OPENCL
-CGSolverTestSparseELLPrecon<tags::OpenCL::CPU, double> ocl_cpu_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+CGSolverTestSparseELLPrecon<tags::OpenCL::CPU, double> ocl_cpu_cg_precon_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #ifdef HONEI_CUDA_DOUBLE
-CGSolverTestSparseELLPrecon<tags::OpenCL::GPU, double> ocl_gpu_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+CGSolverTestSparseELLPrecon<tags::OpenCL::GPU, double> ocl_gpu_cg_precon_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4");
 #endif
 #endif
 
@@ -274,12 +274,12 @@ class CGSolverTestSparseELLPreconSAINV:
         {
 
             std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename += _m_f;
             SparseMatrixELL<DT1_> smatrix2(MatrixIO<io_formats::ELL>::read_matrix(filename, DT1_(0)));
 
             std::string filename_2(HONEI_SOURCEDIR);
-            filename_2 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_2 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_2 += _v_f;
             DenseVector<DT1_> rhs(VectorIO<io_formats::EXP>::read_vector(filename_2, DT1_(0)));
 
@@ -290,20 +290,20 @@ class CGSolverTestSparseELLPreconSAINV:
             }
 
             std::string filename_4(HONEI_SOURCEDIR);
-            filename_4 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_4 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_4 += _i_f;
             DenseVector<DT1_> result(VectorIO<io_formats::EXP>::read_vector(filename_4, DT1_(0)));
             unsigned long used_iters;
 
             std::string filename_5(HONEI_SOURCEDIR);
-            filename_5 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_5 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_5 += _p_f;
             SparseMatrixELL<DT1_> smatrix5(MatrixIO<io_formats::ELL>::read_matrix(filename_5, DT1_(0)));
 
             CGSolver<Tag_, methods::VAR>::value(smatrix2, smatrix5, rhs, result, 700ul, used_iters, DT1_(1e-8));
 
             std::string filename_3(HONEI_SOURCEDIR);
-            filename_3 += "/honei/math/testdata/poisson_advanced/sort_0/";
+            filename_3 += "/honei/math/testdata/poisson_advanced4/sort_0/";
             filename_3 += _r_f;
             DenseVector<DT1_> ref_result(VectorIO<io_formats::EXP>::read_vector(filename_3, DT1_(0)));
 
@@ -335,21 +335,21 @@ class CGSolverTestSparseELLPreconSAINV:
             }
         }
 };
-CGSolverTestSparseELLPreconSAINV<tags::CPU, double> cg_precon_sainv_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
-CGSolverTestSparseELLPreconSAINV<tags::CPU::MultiCore, double> mc_cg_precon_sainv_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
+CGSolverTestSparseELLPreconSAINV<tags::CPU, double> cg_precon_sainv_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_sainv.ell");
+CGSolverTestSparseELLPreconSAINV<tags::CPU::MultiCore, double> mc_cg_precon_sainv_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_sainv.ell");
 #ifdef HONEI_SSE
-CGSolverTestSparseELLPreconSAINV<tags::CPU::SSE, double> sse_cg_precon_sainv_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
-CGSolverTestSparseELLPreconSAINV<tags::CPU::MultiCore::SSE, double> mcsse_cg_precon_sainv_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
+CGSolverTestSparseELLPreconSAINV<tags::CPU::SSE, double> sse_cg_precon_sainv_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_sainv.ell");
+CGSolverTestSparseELLPreconSAINV<tags::CPU::MultiCore::SSE, double> mcsse_cg_precon_sainv_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_sainv.ell");
 #endif
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
-CGSolverTestSparseELLPreconSAINV<tags::GPU::CUDA, double> cuda_cg_precon_sainv_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
+CGSolverTestSparseELLPreconSAINV<tags::GPU::CUDA, double> cuda_cg_precon_sainv_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_sainv.ell");
 #endif
 #endif
 #ifdef HONEI_OPENCL
-CGSolverTestSparseELLPreconSAINV<tags::OpenCL::CPU, double> ocl_cpu_cg_precon_sainv_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
+CGSolverTestSparseELLPreconSAINV<tags::OpenCL::CPU, double> ocl_cpu_cg_precon_sainv_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_sainv.ell");
 #ifdef HONEI_CUDA_DOUBLE
-CGSolverTestSparseELLPreconSAINV<tags::OpenCL::GPU, double> ocl_gpu_cg_precon_sainv_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_sainv.ell");
+CGSolverTestSparseELLPreconSAINV<tags::OpenCL::GPU, double> ocl_gpu_cg_precon_sainv_test_double_sparse_ell("double JAC", "A_4.ell", "rhs_4", "sol_4", "init_4", "A_4_sainv.ell");
 #endif
 #endif
 */
