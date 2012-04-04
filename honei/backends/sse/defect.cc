@@ -274,7 +274,7 @@ namespace honei
                     {
                         A_ij = _mm_load_ps(Ax + (i * blocksize));
                         const unsigned long col = Aj[i];
-                        b_v = _mm_loadu_ps(b+col);
+                        b_v = _mm_load_ps(b+col);
                         b_v = _mm_mul_ps(A_ij, b_v);
                         sum_v.m = _mm_add_ps(b_v, sum_v.m);
                     }
@@ -389,7 +389,7 @@ namespace honei
                     {
                         A_ij = _mm_load_pd(Ax + (i * blocksize));
                         const unsigned long col = Aj[i];
-                        b_v = _mm_loadu_pd(b+col);
+                        b_v = _mm_load_pd(b+col);
                         b_v = _mm_mul_pd(A_ij, b_v);
                         sum_v.m = _mm_add_pd(b_v, sum_v.m);
                     }
