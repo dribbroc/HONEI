@@ -21,7 +21,7 @@ DEFS = \
 	$(CUDADEF) \
 	$(CUDA_DOUBLEDEF) \
 	$(PROFILERDEF) \
-	-DHONEI_SOURCEDIR='"$(abs_top_srcdir)"'
+	-DHONEI_SOURCEDIR='"$(top_srcdir)"'
 
 lib_LTLIBRARIES = libhoneibackendsopencl.la
 
