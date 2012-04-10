@@ -58,6 +58,9 @@ namespace honei
 
             template <typename DT_>
                 static void sum(DenseVectorMPI<DT_> & x, const DenseVectorMPI<DT_> & y);
+
+            template <typename MT_>
+                static MT_ transposition(const MT_ & x);
         };
 
     template <>

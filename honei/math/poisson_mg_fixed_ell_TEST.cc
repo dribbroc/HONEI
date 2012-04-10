@@ -431,8 +431,7 @@ class PoissonTestMGSparseELLProlMat:
                         info.prolmats.push_back(prolmat);
 
                         SparseMatrix<DT1_> prol(prolmat);
-                        SparseMatrix<DT1_> res(prol.columns(), prol.rows());
-                        Transposition<Tag_>::value(prol, res);
+                        SparseMatrix<DT1_> res(Transposition<Tag_>::value(prol));
                         SparseMatrixELL<DT1_> resmat(res);
                         info.resmats.push_back(resmat);
                     }
@@ -734,8 +733,7 @@ class PoissonAdvancedTestMGSparseELLProlMat:
                         info.prolmats.push_back(prolmat);
 
                         SparseMatrix<DT1_> prol(prolmat);
-                        SparseMatrix<DT1_> res(prol.columns(), prol.rows());
-                        Transposition<Tag_>::value(prol, res);
+                        SparseMatrix<DT1_> res(Transposition<Tag_>::value(prol));
                         SparseMatrixELL<DT1_> resmat(res);
                         info.resmats.push_back(resmat);
                     }
@@ -1068,8 +1066,7 @@ class PoissonAdvancedTestMGSparseELLProlMatSpai:
                         info.prolmats.push_back(prolmat);
 
                         SparseMatrix<DT1_> prol(prolmat);
-                        SparseMatrix<DT1_> res(prol.columns(), prol.rows());
-                        Transposition<Tag_>::value(prol, res);
+                        SparseMatrix<DT1_> res(Transposition<Tag_>::value(prol));
                         SparseMatrixELL<DT1_> resmat(res);
                         info.resmats.push_back(resmat);
                     }
@@ -1385,8 +1382,7 @@ class PoissonAdvancedTestMGSparseELLProlMatILU:
                         info.prolmats.push_back(prolmat);
 
                         SparseMatrix<DT1_> prol(prolmat);
-                        SparseMatrix<DT1_> res(prol.columns(), prol.rows());
-                        Transposition<Tag_>::value(prol, res);
+                        SparseMatrix<DT1_> res(Transposition<Tag_>::value(prol));
                         SparseMatrixELL<DT1_> resmat(res);
                         info.resmats.push_back(resmat);
                     }

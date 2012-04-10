@@ -66,7 +66,7 @@ class SparseMatrixELLMPIQuickTest :
             for (unsigned long i(0) ; i < sm2.local_rows() ; ++i)
                 for (unsigned long j(0) ; j < sm2.columns() ; ++j)
                 {
-                    TEST_CHECK_EQUAL(sm0(i, j), aell(i + sm2.offset(), j));
+                    TEST_CHECK_EQUAL(sm2(i, j), aell(i + sm2.offset(), j));
                 }
         }
 };
@@ -100,7 +100,7 @@ class SparseMatrixPartELLMPIQuickTest :
             for (unsigned long i(0) ; i < sm2.local_rows() ; ++i)
                 for (unsigned long j(0) ; j < sm2.columns() ; ++j)
                 {
-                    TEST_CHECK_EQUAL(sm0(i, j), as(i, j));
+                    TEST_CHECK_EQUAL(sm2(i, j), as(i, j));
                 }
         }
 };

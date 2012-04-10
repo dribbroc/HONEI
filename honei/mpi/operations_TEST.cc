@@ -31,6 +31,7 @@
 #include <honei/la/element_product.hh>
 #include <honei/la/product.hh>
 #include <honei/math/defect.hh>
+#include <honei/math/transposition.hh>
 #include <honei/math/matrix_io.hh>
 #include <honei/math/vector_io.hh>
 #include <honei/util/time_stamp.hh>
@@ -382,6 +383,40 @@ NormMPITest<tags::GPU::CUDA, double> cuda_norm_mpi_test_double("double");
 #endif
 
 template <typename Tag_, typename DT_>
+class TranspositionMPITest :
+    public BaseTest
+{
+    public:
+        TranspositionMPITest(const std::string & type) :
+            BaseTest("transposition_mpi_test<" + type + ">")
+        {
+            register_tag(Tag_::name);
+        }
+
+        virtual void run() const
+        {
+            std::string dir(HONEI_SOURCEDIR);
+            std::string file (dir + "/honei/math/testdata/poisson_advanced2/sort_0/");
+            file += "prol_2";
+            file += ".ell";
+            SparseMatrixELL<DT_> aell(MatrixIO<io_formats::ELL>::read_matrix(file, DT_(0)));
+
+            SparseMatrixELLMPI<DT_> a(aell);
+
+            SparseMatrixELL<DT_> ref_result(Transposition<tags::CPU>::value(aell));
+            SparseMatrixELLMPI<DT_> result(Transposition<tags::CPU>::value(a));
+
+            for (unsigned long i(0) ; i < result.local_rows() ; ++i)
+                for (unsigned long j(0) ; j < result.columns() ; ++j)
+                {
+                    TEST_CHECK_EQUAL(result(i, j), ref_result(i + result.offset(), j));
+                }
+
+        }
+};
+TranspositionMPITest<tags::CPU, double> generic_transposition_mpi_test_double("double");
+
+template <typename Tag_, typename DT_>
 class DefectMPITest :
     public BaseTest
 {
@@ -457,7 +492,7 @@ class SPMVMPITest :
             MPI_Barrier(MPI_COMM_WORLD);
             std::string dir(HONEI_SOURCEDIR);
             std::string file (dir + "/honei/math/testdata/poisson_advanced4/sort_0/");
-            file += "prol_4";
+            file += "prol_3";
             file += ".ell";
             SparseMatrixELL<DT_> aell(MatrixIO<io_formats::ELL>::read_matrix(file, DT_(0)));
 

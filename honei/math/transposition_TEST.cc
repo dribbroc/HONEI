@@ -38,7 +38,6 @@ class TranspositionTEST:
         virtual void run() const
         {
             SparseMatrix<DT1_> source(5, 10);
-            SparseMatrix<DT1_> target(10, 5);
             source(1,9) = DT1_(1);
             source(4,2) = DT1_(2);
             source(2,8) = DT1_(3);
@@ -48,9 +47,9 @@ class TranspositionTEST:
             ref(2, 4) = DT1_(2);
             ref(8, 2) = DT1_(3);
 
-            Transposition<Tag_>::value(source, target);
+            SparseMatrix<DT1_> target(Transposition<Tag_>::value(source));
+
             TEST_CHECK_EQUAL(target, ref);
         }
 };
 TranspositionTEST<tags::CPU, float> transposition_test_float("Transposition TEST float, CPU: ");
-

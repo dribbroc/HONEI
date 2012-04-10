@@ -108,16 +108,16 @@ class MGBench:
                     DenseVector<double>,
                     SparseMatrixELL<double>,
                     PreconContType_,
-                    io_formats::ELL,
-                    io_formats::EXP,
+                    MatrixIO<io_formats::ELL>,
+                    VectorIO<io_formats::EXP>,
                     double>::load_data(file, _levels, _damping, _precon));
             MGUtil<Tag_,
                 SparseMatrixELL<double>,
                 DenseVector<double>,
                 SparseMatrixELL<double>,
                 PreconContType_,
-                io_formats::ELL,
-                io_formats::EXP,
+                MatrixIO<io_formats::ELL>,
+                VectorIO<io_formats::EXP>,
                 double>::configure(data, 100, 10, 4, 4, 1, double(1e-8));
 
             OperatorList ol(

@@ -73,8 +73,8 @@ class Driver
                 DenseVector<DT_>,
                 SparseMatrixELL<DT_>,
                 DenseVector<DT_>,
-                io_formats::ELL,
-                io_formats::EXP,
+                MatrixIO<io_formats::ELL>,
+                VectorIO<io_formats::EXP>,
                 DT_>::load_data(file, max_level, DT_(1.0), "jac"));
 
         double best_time(1000);
@@ -99,8 +99,8 @@ class Driver
                         DenseVector<DT_>,
                         SparseMatrixELL<DT_>,
                         DenseVector<DT_>,
-                        io_formats::ELL,
-                        io_formats::EXP,
+                        MatrixIO<io_formats::ELL>,
+                        VectorIO<io_formats::EXP>,
                         DT_>::configure(data, 150, 100, smooth_iters, smooth_iters, min_level, DT_(1e-8));
 
                     OperatorList ol(

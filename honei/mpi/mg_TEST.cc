@@ -13,8 +13,8 @@
 #include <honei/la/dense_vector.hh>
 #include <honei/mpi/sparse_matrix_ell_mpi.hh>
 #include <honei/mpi/dense_vector_mpi.hh>
-#include <honei/math/matrix_io.hh>
-#include <honei/math/vector_io.hh>
+#include <honei/mpi/matrix_io_mpi.hh>
+#include <honei/mpi/vector_io_mpi.hh>
 #include <honei/math/superlu.hh>
 #include <honei/util/time_stamp.hh>
 
@@ -40,39 +40,37 @@ class MGSolverTest:
 
         virtual void run() const
         {
-            unsigned long max_level(6);
+            unsigned long max_level(4);
             unsigned long min_level(1);
             std::string file(HONEI_SOURCEDIR);
             file += "/honei/math/testdata/";
             file += _file;
 
-            MGData<SparseMatrixELL<double>, DenseVector<double>, SparseMatrixELL<double>, SparseMatrixELL<double>, double >  data(MGUtil<Tag_,
-                                                                                            SparseMatrixELL<double>,
-                                                                                            DenseVector<double>,
-                                                                                            SparseMatrixELL<double>,
-                                                                                            SparseMatrixELL<double>,
-                                                                                            io_formats::ELL,
-                                                                                            io_formats::EXP,
-                                                                                            double>::load_data(file, max_level, double(1), "spai"));
+            MGData<SparseMatrixELLMPI<double>, DenseVectorMPI<double>, SparseMatrixELLMPI<double>, DenseVectorMPI<double>, double >  data_mpi(MGUtil<Tag_,
+                                                                                            SparseMatrixELLMPI<double>,
+                                                                                            DenseVectorMPI<double>,
+                                                                                            SparseMatrixELLMPI<double>,
+                                                                                            DenseVectorMPI<double>,
+                                                                                            MatrixIOMPI_ELL<io_formats::ELL>,
+                                                                                            VectorIOMPI<io_formats::EXP>,
+                                                                                            double>::load_data(file, max_level, double(0.7), "jac"));
 
-            // create MPI cycle
-            MGData<SparseMatrixELLMPI<double>, DenseVectorMPI<double>, SparseMatrixELLMPI<double>, SparseMatrixELLMPI<double>, double > data_mpi(data);
 
             MGUtil<Tag_,
                 SparseMatrixELLMPI<double>,
                 DenseVectorMPI<double>,
                 SparseMatrixELLMPI<double>,
-                SparseMatrixELLMPI<double>,
-                io_formats::ELL,
-                io_formats::EXP,
+                DenseVectorMPI<double>,
+                MatrixIOMPI_ELL<io_formats::ELL>,
+                VectorIOMPI<io_formats::EXP>,
                 double>::configure(data_mpi, 100, 100, 4, 4, min_level, double(1e-8));
 
             OperatorList ol_mpi(
                     MGCycleCreation<Tag_,
                     methods::CYCLE::V::STATIC,
                     BiCGStabSolver<Tag_, methods::VAR>,
-                    //SuperLU,
-                    RISmoother<Tag_>,
+                    BiCGStabSmoother<Tag_>,
+                    //RISmoother<Tag_>,
                     Restriction<Tag_, methods::PROLMAT>,
                     Prolongation<Tag_, methods::PROLMAT>,
                     double>::value(data_mpi)

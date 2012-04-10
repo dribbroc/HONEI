@@ -22,6 +22,9 @@
 #define MATH_GUARD_TRANSPOSITION_HH 1
 
 #include <honei/la/sparse_matrix.hh>
+#include <honei/mpi/operations.hh>
+#include <honei/mpi/sparse_matrix_ell_mpi-fwd.hh>
+#include <honei/mpi/sparse_matrix_csr_mpi-fwd.hh>
 
 namespace honei
 {
@@ -29,17 +32,33 @@ namespace honei
     struct Transposition
     {
         public:
-        template <typename DT_>
-        static inline void value(const SparseMatrix<DT_> & source, SparseMatrix<DT_> & target)
+        template <typename MT_>
+        static inline MT_ value(const MT_ & src)
         {
             CONTEXT("When transposing sparse matrix: ");
-            if(source.rows() != target.columns() || source.columns() != target.rows())
-                throw InternalError("Inner matrix dimensions mismatch!");
+            SparseMatrix<typename MT_::iDT_> source(src);
+            SparseMatrix<typename MT_::iDT_> target(src.columns(), src.rows());
 
-            for(typename SparseMatrix<DT_>::NonZeroConstElementIterator i(source.begin_non_zero_elements()) ; i != source.end_non_zero_elements() ; ++i)
+            for(typename SparseMatrix<typename MT_::iDT_>::NonZeroConstElementIterator i(source.begin_non_zero_elements()) ; i != source.end_non_zero_elements() ; ++i)
             {
                 target(i.column(), i.row(), *i);
             }
+
+            MT_ result(target);
+
+            return result;
+        }
+
+        template <typename DT_>
+        static inline SparseMatrixELLMPI<DT_> value(const SparseMatrixELLMPI<DT_> & src)
+        {
+            return MPIOps<tags::CPU>::transposition(src);
+        }
+
+        template <typename DT_>
+        static inline SparseMatrixCSRMPI<DT_> value(const SparseMatrixCSRMPI<DT_> & src)
+        {
+            return MPIOps<tags::CPU>::transposition(src);
         }
     };
 }

@@ -45,6 +45,10 @@ namespace honei
         PrivateImplementationPattern<SparseMatrixELL<DataType_>, Shared>
     {
         public:
+
+            /// Our internal DataType
+            typedef DataType_ iDT_;
+
             /// \name Basic operations
             /// \{
 

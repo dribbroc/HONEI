@@ -95,6 +95,9 @@ namespace honei
                     }
                     else
                     {
+                        if (_rows != src.rows())
+                            throw InternalError("SMCSRMPI init: src matrix has wrong row count!");
+
                         // src matrix übernehmen
                         src_part = src;
                     }
@@ -224,6 +227,9 @@ namespace honei
             }
 
         public:
+
+            /// Our internal DataType
+            typedef DT_ DataType;
 
             /// Constructors
             /// \{
@@ -366,6 +372,11 @@ namespace honei
                 return *_outer;
             }*/
 
+            const std::set<unsigned long> & missing_indices() const
+            {
+                return _missing_indices;
+            }
+
             const std::vector<unsigned long> & recv_sizes() const
             {
                 return _recv_sizes;
@@ -446,8 +457,18 @@ namespace honei
      */
     template <typename DT_> std::ostream & operator<< (std::ostream & lhs, const SparseMatrixCSRMPI<DT_> & matrix)
     {
-        (void) matrix;
-        lhs << "TODO implement mpi output operator!"<<std::endl;
+        lhs << "SparseMatrixCSRMPI" << std::endl;
+        lhs << "[" << std::endl;
+        for (unsigned long row(0) ; row < matrix.local_rows() ; ++row)
+        {
+            lhs << "[";
+            for (unsigned long col(0) ; col < matrix.columns() ; ++col)
+            {
+                lhs << " " << matrix(row, col);
+            }
+            lhs << "]" << std::endl;
+        }
+        lhs << "]" << std::endl;
         return lhs;
     }
 

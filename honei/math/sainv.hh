@@ -116,8 +116,7 @@ namespace honei
 
             // z is the lower triangular matrix(Z^T); z_t is the upper triangular matrix (Z), z_d is the inverted diagonal matrix
 
-            SparseMatrix<DT_> z_t(z.rows(), z.columns());
-            Transposition<Tag_>::value(z, z_t);
+            SparseMatrix<DT_> z_t(Transposition<Tag_>::value(z));
             for(unsigned long i(0) ; i < z_t.rows() ; ++i)
             {
                 z_t(i, i, DT_(1));

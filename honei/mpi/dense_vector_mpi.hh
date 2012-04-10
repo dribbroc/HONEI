@@ -34,10 +34,11 @@ namespace honei
             shared_ptr<DenseVector<DT_> > _vector;
             unsigned long _orig_size;
             unsigned long _offset;
-            unsigned long _rank;
-            unsigned long _com_size;
 
         public:
+
+            /// Our internal DataType
+            typedef DT_ DataType;
 
             static unsigned long calc_size(unsigned long _orig_size, MPI_Comm com = MPI_COMM_WORLD)
             {
@@ -129,9 +130,7 @@ namespace honei
              * \param src The src for the new dense vector.
              */
             explicit DenseVectorMPI(const DenseVector<DT_> & src,  MPI_Comm com = MPI_COMM_WORLD) :
-                _orig_size(src.size()),
-                _rank(mpi::mpi_comm_rank(com)),
-                _com_size(mpi::mpi_comm_size(com))
+                _orig_size(src.size())
             {
                 unsigned long size = calc_size(_orig_size, com);
                 _offset = calc_offset(_orig_size, com);
@@ -147,10 +146,11 @@ namespace honei
              * Constructor.
              */
             explicit DenseVectorMPI(const DenseVector<DT_> & src,  unsigned long global_size, MPI_Comm com = MPI_COMM_WORLD) :
-                _orig_size(global_size),
-                _rank(mpi::mpi_comm_rank(com)),
-                _com_size(mpi::mpi_comm_size(com))
+                _orig_size(global_size)
             {
+                if (src.size() != calc_size(_orig_size, com))
+                    throw InternalError("DVMPI: global size, src part size missmatch!");
+
                 _offset = calc_offset(_orig_size, com);
 
                 _vector.reset(new DenseVector<DT_>(src.copy()));
@@ -162,9 +162,7 @@ namespace honei
              * \param size Size of the new dense vector.
              */
             explicit DenseVectorMPI(unsigned long src_size,  MPI_Comm com = MPI_COMM_WORLD) :
-                _orig_size(src_size),
-                _rank(mpi::mpi_comm_rank(com)),
-                _com_size(mpi::mpi_comm_size(com))
+                _orig_size(src_size)
         {
                 unsigned long size = calc_size(_orig_size, com);
                 _offset = calc_offset(_orig_size, com);
@@ -179,9 +177,7 @@ namespace honei
              * \param value Value the vector will be filled with.
              */
             explicit DenseVectorMPI(unsigned long src_size,  DT_ value, MPI_Comm com = MPI_COMM_WORLD) :
-                _orig_size(src_size),
-                _rank(mpi::mpi_comm_rank(com)),
-                _com_size(mpi::mpi_comm_size(com))
+                _orig_size(src_size)
         {
                 unsigned long size = calc_size(_orig_size, com);
                 _offset = calc_offset(_orig_size, com);
@@ -193,9 +189,7 @@ namespace honei
             /// Copy-constructor.
             DenseVectorMPI(const DenseVectorMPI<DT_> & other) :
                 _orig_size(other._orig_size),
-                _offset(other._offset),
-                _rank(other._rank),
-                _com_size(other._com_size)
+                _offset(other._offset)
         {
             _vector.reset(new DenseVector<DT_> (*other._vector));
             //_vector = std::tr1::shared_ptr<DenseVector<DT_> >(new DenseVector<DT_>(*other._vector));

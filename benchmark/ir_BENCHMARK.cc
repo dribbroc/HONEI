@@ -150,8 +150,8 @@ class IRBench:
                     DenseVector<DTInner_>,
                     SparseMatrixELL<DTInner_>,
                     PreconContType_,
-                    io_formats::ELL,
-                    io_formats::EXP,
+                    MatrixIO<io_formats::ELL>,
+                    VectorIO<io_formats::EXP>,
                     DTInner_>::load_data(file, _levels, _damping, _precon));
 
             MGUtil<InnerTag_,
@@ -159,8 +159,8 @@ class IRBench:
                 DenseVector<DTInner_>,
                 SparseMatrixELL<DTInner_>,
                 PreconContType_,
-                io_formats::ELL,
-                io_formats::EXP,
+                MatrixIO<io_formats::ELL>,
+                VectorIO<io_formats::EXP>,
                 DTInner_>::configure(data, _max_iters_inner_mg, 1, 4, 4, 1, DTInner_(1e-8));
 
             OperatorList ol(

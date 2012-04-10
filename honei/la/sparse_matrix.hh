@@ -87,6 +87,9 @@ namespace honei
             /// Type of the iterator over our non zero elements.
             typedef honei::ElementIterator<storage::SparseNonZero, container::Matrix, DataType_> NonZeroElementIterator;
 
+            /// Our internal DataType
+            typedef DataType_ iDT_;
+
             void _synch_column_vectors();
 
 

@@ -51,7 +51,6 @@ class DenseVectorMPIQuickTest :
             DenseVectorMPI<DataType_> dm0(src);
             DenseVectorMPI<DataType_> dm1(dm0);
             DenseVectorMPI<DataType_> dm2(dm1.copy());
-            std::cout<<dm2.local_size()<<" "<<dm2.offset()<<std::endl;
 
             TEST_CHECK((unsigned long) dm0.vector().elements() == (unsigned long) dm1.vector().elements());
             TEST_CHECK((unsigned long) dm1.vector().elements() != (unsigned long) dm2.vector().elements());
@@ -60,3 +59,30 @@ class DenseVectorMPIQuickTest :
         }
 };
 DenseVectorMPIQuickTest<double> dense_vector_mpi_quick_test_double("double");
+
+template <typename DataType_>
+class DenseVectorMPIPartQuickTest :
+    public QuickTest
+{
+    public:
+        DenseVectorMPIPartQuickTest(const std::string & type) :
+            QuickTest("dense_vector_mpi_part_quick_test<" + type + ">")
+        {
+        }
+
+        virtual void run() const
+        {
+            DenseVector<DataType_> src(4711);
+            for (unsigned long i(0) ; i < src.size() ; ++i)
+                src[i] = i + 10 * mpi::mpi_comm_rank();
+
+            DenseVectorMPI<DataType_> dm0(src, mpi::mpi_comm_size() * src.size());
+            DenseVectorMPI<DataType_> dm1(dm0);
+            DenseVectorMPI<DataType_> dm2(dm1.copy());
+            TEST_CHECK_EQUAL(dm2, dm0);
+
+            for (unsigned long i(0) ; i < dm2.local_size() ; ++i)
+                TEST_CHECK_EQUAL(dm2[i], src[i]);
+        }
+};
+DenseVectorMPIPartQuickTest<double> dense_vector_mpi_part_quick_test_double("double");

@@ -106,8 +106,7 @@ class RestrictionVisualTest:
             prol_file += "prol_2.ell";
             SparseMatrixELL<DT1_> prolmat(MatrixIO<io_formats::ELL>::read_matrix(prol_file, DT1_(0)));
             SparseMatrix<DT1_> prol(prolmat);
-            SparseMatrix<DT1_> res(prol.columns(), prol.rows());
-            Transposition<Tag_>::value(prol, res);
+            SparseMatrix<DT1_> res(Transposition<Tag_>::value(prol));
             SparseMatrixELL<DT1_> resmat(res);
             std::cout << resmat << std::endl;
         }

@@ -190,8 +190,8 @@ class MGUtilLoadTest:
                                                                                             DenseVector<double>,
                                                                                             SparseMatrixELL<double>,
                                                                                             DenseVector<double>,
-                                                                                            io_formats::ELL,
-                                                                                            io_formats::EXP,
+                                                                                            MatrixIO<io_formats::ELL>,
+                                                                                            VectorIO<io_formats::EXP>,
                                                                                             double>::load_data(file, levels, double(0.7), "jac"));
 
             std::cout << "-----------------------------------" << std::endl;
@@ -251,16 +251,16 @@ class MGSolverTest:
                                                                                             DenseVector<DT_>,
                                                                                             SparseMatrixELL<DT_>,
                                                                                             SparseMatrixELL<DT_>,
-                                                                                            io_formats::ELL,
-                                                                                            io_formats::EXP,
+                                                                                            MatrixIO<io_formats::ELL>,
+                                                                                            VectorIO<io_formats::EXP>,
                                                                                             DT_>::load_data(file, max_level, DT_(1.), "spai_grote"));
             MGUtil<Tag_,
                 SparseMatrixELL<DT_>,
                 DenseVector<DT_>,
                 SparseMatrixELL<DT_>,
                 SparseMatrixELL<DT_>,
-                io_formats::ELL,
-                io_formats::EXP,
+                MatrixIO<io_formats::ELL>,
+                VectorIO<io_formats::EXP>,
                 DT_>::configure(data, 100, 100, 8, 8, min_level, DT_(1e-8));
 
             OperatorList ol(
@@ -407,16 +407,16 @@ class MGSolverTestQuad:
                                                                                             DenseVector<double>,
                                                                                             SparseMatrixELL<double>,
                                                                                             DenseVector<double>,
-                                                                                            io_formats::ELL,
-                                                                                            io_formats::EXP,
+                                                                                            MatrixIO<io_formats::ELL>,
+                                                                                            VectorIO<io_formats::EXP>,
                                                                                             double>::load_data(file, max_level, double(0.7), "jac"));
             MGUtil<Tag_,
                 SparseMatrixELL<double>,
                 DenseVector<double>,
                 SparseMatrixELL<double>,
                 DenseVector<double>,
-                io_formats::ELL,
-                io_formats::EXP,
+                MatrixIO<io_formats::ELL>,
+                VectorIO<io_formats::EXP>,
                 double>::configure(data, 100, 100, 4, 4, min_level, double(1e-8));
 
 

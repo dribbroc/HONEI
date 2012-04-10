@@ -480,6 +480,108 @@ void MPIOps<tags::GPU::CUDA>::sum(DenseVectorMPI<DT_> & x, const DenseVectorMPI<
 }
 #endif
 
+template <typename Tag_>
+template <typename MT_>
+MT_ MPIOps<Tag_>::transposition(const MT_ & src)
+{
+    typedef typename MT_::DataType DT_;
+
+    // reverse create src local matrix
+    unsigned long new_rows(DenseVectorMPI<double>::calc_size(src.columns()));
+    SparseMatrix<DT_> local(src.local_rows(), src.columns());
+    SparseMatrix<DT_> old_inner(src.inner_matrix());
+    for(typename SparseMatrix<DT_>::NonZeroConstElementIterator i(old_inner.begin_non_zero_elements()) ; i != old_inner.end_non_zero_elements() ; ++i)
+    {
+        local(i.row(), i.column() + src.x_offset(), *i);
+    }
+    SparseMatrix<DT_> old_outer(src.outer_matrix());
+    unsigned long cix(0);
+    for (std::set<unsigned long>::iterator ci(src.missing_indices().begin()) ; ci != src.missing_indices().end() ; ++ci, ++cix)
+    {
+        for (unsigned long i(0) ; i < old_outer.column(cix).used_elements() ; ++i)
+        {
+            local(old_outer.column(cix).indices()[i], *ci, old_outer.column(cix).elements()[i]);
+        }
+    }
+
+    // create new transposed local matrix
+    SparseMatrix<DT_> new_local(new_rows, src.rows());
+    unsigned long start_row(DenseVectorMPI<double>::calc_offset(src.columns()));
+    unsigned long end_row(start_row + new_rows);
+
+    unsigned long _rank(mpi::mpi_comm_rank());
+    unsigned long _com_size(mpi::mpi_comm_size());
+    // jeder schickt nach einander alle elemente einer spalte->zeile an den aktuellen empfänger
+    for (unsigned long rank(0) ; rank < _com_size ; ++rank)
+    {
+        if (rank == _rank)
+        {
+            mpi::mpi_bcast(&start_row, 1, rank);
+            mpi::mpi_bcast(&end_row, 1, rank);
+
+            for (unsigned long row(start_row) ; row < end_row ; ++row)
+            {
+                for (unsigned long other(0) ; other < _com_size ; ++other)
+                {
+                    if (other == _rank)
+                    {
+                        for (unsigned long i(0) ; i < local.column(row).used_elements() ; ++i)
+                        {
+                            new_local(row - start_row, local.column(row).indices()[i] + src.offset(), local.column(row).elements()[i]);
+                        }
+                    }
+                    else
+                    {
+                        unsigned long count(0);
+                        mpi::mpi_recv(&count, 1, other, other);
+
+                        if (count > 0)
+                        {
+                            unsigned long alien_offset;
+                            mpi::mpi_recv(&alien_offset, 1, other, other);
+
+                            unsigned long col_indices[count];
+                            DT_ values[count];
+
+                            mpi::mpi_recv(col_indices, count, other, other);
+                            mpi::mpi_recv(values, count, other, other);
+
+                            for (unsigned long i(0) ; i < count ; ++i)
+                            {
+                                new_local(row - start_row, col_indices[i] + alien_offset, values[i]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            unsigned long alien_start_row;
+            unsigned long alien_end_row;
+            mpi::mpi_bcast(&alien_start_row, 1, rank);
+            mpi::mpi_bcast(&alien_end_row, 1, rank);
+
+            for (unsigned long col(alien_start_row) ; col < alien_end_row ; ++col)
+            {
+                unsigned long count(local.column(col).used_elements());
+                mpi::mpi_send(&count, 1, rank, _rank);
+
+                if (count > 0)
+                {
+                    unsigned long own_offset(src.offset());
+                    mpi::mpi_send(&own_offset, 1, rank, _rank);
+                    mpi::mpi_send(local.column(col).indices(), count, rank, _rank);
+                    mpi::mpi_send(local.column(col).elements(), count, rank, _rank);
+                }
+            }
+        }
+    }
+
+    MT_ result(new_local, src.columns());
+    return result;
+}
+
 
 template struct MPIOps<tags::CPU>;
 template void MPIOps<tags::CPU>::difference(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
@@ -494,6 +596,8 @@ template void MPIOps<tags::CPU>::scale(DenseVectorMPI<double> & x, double a);
 template void MPIOps<tags::CPU>::scaled_sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
 template void MPIOps<tags::CPU>::scaled_sum(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y, double a);
 template void MPIOps<tags::CPU>::sum(DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);
+template SparseMatrixELLMPI<double> MPIOps<tags::CPU>::transposition(const SparseMatrixELLMPI<double> & src);
+template SparseMatrixCSRMPI<double> MPIOps<tags::CPU>::transposition(const SparseMatrixCSRMPI<double> & src);
 
 template struct MPIOps<tags::CPU::Generic>;
 template void MPIOps<tags::CPU::Generic>::difference(DenseVectorMPI<double> & r, const DenseVectorMPI<double> & x, const DenseVectorMPI<double> & y);

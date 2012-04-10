@@ -276,8 +276,7 @@ class PoissonAdvancedBENCHMGSparseELLProlMat:
                         info.prolmats.push_back(prolmat);
 
                         SparseMatrix<float> prol(prolmat);
-                        SparseMatrix<float> res(prol.columns(), prol.rows());
-                        Transposition<OTag_>::value(prol, res);
+                        SparseMatrix<float> res(Transposition<OTag_>::value(prol));
                         SparseMatrixELL<float> resmat(res);
                         info.resmats.push_back(resmat);
                     }
@@ -677,8 +676,7 @@ class PoissonAdvancedBENCHMGSparseELLProlMatSPAI:
                         info.prolmats.push_back(prolmat);
 
                         SparseMatrix<float> prol(prolmat);
-                        SparseMatrix<float> res(prol.columns(), prol.rows());
-                        Transposition<OTag_>::value(prol, res);
+                        SparseMatrix<float> res(Transposition<OTag_>::value(prol));
                         SparseMatrixELL<float> resmat(res);
                         info.resmats.push_back(resmat);
                     }

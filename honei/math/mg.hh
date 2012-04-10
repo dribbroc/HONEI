@@ -285,6 +285,33 @@ namespace honei
                 }
         };
 
+    template<typename MatrixType_, typename DataType_>
+        struct PreconFill<DenseVectorMPI<DataType_>, MatrixType_, DataType_>
+        {
+            public:
+
+                static void value(unsigned long /*i*/,
+                        std::vector<DenseVectorMPI<DataType_> > & target,
+                        std::string /*filename*/,
+                        std::string precon_suffix,
+                        MatrixType_ & A,
+                        DataType_ damping_factor)
+                {
+                    if (precon_suffix == "jac")
+                    {
+                        DenseVector<DataType_> current_P(A.local_rows(), damping_factor);
+                        for(unsigned long j(0) ; j < current_P.size() ; ++j)
+                        {
+                            current_P[j] /= A.inner_matrix()(j, j);
+                        }
+                        DenseVectorMPI<DataType_> current_PP(current_P, A.rows());
+                        target.push_back(current_PP);
+                    }
+                    else
+                        throw InternalError("Preconditioner unknown!");
+                }
+        };
+
     template<typename DataType_>
         struct PreconFill<SparseMatrixELL<DataType_>, SparseMatrixELL<DataType_>, DataType_>
         {
@@ -449,7 +476,7 @@ namespace honei
                                 std::string local_A_name(A_name);
                                 local_A_name += stringify(MGDataIndex::base_index_A(i));
                                 local_A_name += ".ell";
-                                MatrixType_ local_A(MatrixIO<MatIOType_>::read_matrix(local_A_name, DataType_(0)));
+                                MatrixType_ local_A(MatIOType_::read_matrix(local_A_name, DataType_(0)));
                                 A.push_back(local_A);
 
                                 PreconFill<PreconContType_, MatrixType_, DataType_>::value(i, P, P_name, precon_suffix, local_A, damping_factor);
@@ -461,15 +488,11 @@ namespace honei
                                 std::string local_Prol_name(Prol_name);
                                 local_Prol_name += stringify(MGDataIndex::base_index_Prol(i));
                                 local_Prol_name += ".ell";
-                                TransferContType_ local_Prol(MatrixIO<MatIOType_>::read_matrix(local_Prol_name, DataType_(0)));
+                                TransferContType_ local_Prol(MatIOType_::read_matrix(local_Prol_name, DataType_(0)));
                                 Prol.push_back(local_Prol);
 
                                 ///get Resmat R_{i+1}^{i} = (P_{i}^{i+1})^T
-                                SparseMatrix<DataType_> local_preProl(Prol.at(i).copy());
-                                SparseMatrix<DataType_> local_preRes(Prol.at(i).columns(), Prol.at(i).rows());
-                                Transposition<Tag_>::value(local_preProl, local_preRes);
-                                TransferContType_ local_Res(local_preRes);
-                                Res.push_back(local_Res);
+                                Res.push_back(Transposition<Tag_>::value(Prol.at(i).copy()));
                             }
 
                             ///get vectors for level max_level
@@ -477,12 +500,12 @@ namespace honei
                             {
                                 std::string local_b_name(b_name);
                                 local_b_name += stringify(MGDataIndex::base_index_A(i));
-                                VectorType_ max_b(VectorIO<VecIOType_>::read_vector(local_b_name, DataType_(0)));
+                                VectorType_ max_b(VecIOType_::read_vector(local_b_name, DataType_(0)));
                                 b.push_back(max_b);
 
                                 std::string local_x_name(x_name);
                                 local_x_name += stringify(MGDataIndex::base_index_A(i));
-                                VectorType_ max_x(VectorIO<VecIOType_>::read_vector(local_x_name, DataType_(0)));
+                                VectorType_ max_x(VecIOType_::read_vector(local_x_name, DataType_(0)));
                                 //VectorType_ max_x(max_b.size(), DataType_(0));
                                 x.push_back(max_x);
 
