@@ -18,6 +18,13 @@ AC_PROG_LIBTOOL
 AC_PROG_MAKE_SET
 dnl }}}
 
+dnl {{{ add missing path variables
+abs_top_srcdir=`cd $srcdir; pwd`
+AC_SUBST(abs_top_srcdir)
+abs_top_builddir=`pwd`
+AC_SUBST(abs_top_builddir)
+dnl }}}
+
 dnl {{{ check for Pathscale C++ compiler (due to lack of __thread support in PIC)
 AC_MSG_CHECKING([for Pathscale compiler])
 AC_COMPILE_IFELSE([
