@@ -228,6 +228,7 @@ namespace honei
             }
 
         public:
+            friend class SparseMatrixCSRMPI<DT_>;
 
             /// Our internal DataType
             typedef DT_ DataType;
