@@ -27,6 +27,7 @@
 #include <honei/la/sparse_matrix.hh>
 #include <honei/la/dense_vector.hh>
 #include <honei/mpi/dense_vector_mpi.hh>
+#include <honei/mpi/sparse_matrix_ell_mpi-fwd.hh>
 #include <honei/backends/mpi/operations.hh>
 
 #include <vector>
@@ -256,6 +257,29 @@ namespace honei
 
             /// Copy-constructor.
             SparseMatrixCSRMPI(const SparseMatrixCSRMPI<DT_> & other) :
+                _missing_indices(other._missing_indices),
+                _recv_ranks(other._recv_ranks),
+                _recv_sizes(other._recv_sizes),
+                _send_ranks(other._send_ranks),
+                _send_sizes(other._send_sizes),
+                _send_index(other._send_index),
+                _send_size(other._send_size),
+                _rows(other._rows),
+                _columns(other._columns),
+                _offset(other._offset),
+                _x_offset(other._x_offset),
+                _col_part_size(other._col_part_size),
+                _rank(other._rank),
+                _com_size(other._com_size),
+                _orig_rows(other._orig_rows),
+                _orig_columns(other._orig_columns),
+                _active(other._active)
+            {
+                _inner.reset(new SparseMatrixCSR<DT_> (*other._inner));
+                _outer.reset(new SparseMatrixCSR<DT_> (*other._outer));
+            }
+
+            SparseMatrixCSRMPI(const SparseMatrixELLMPI<DT_> & other) :
                 _missing_indices(other._missing_indices),
                 _recv_ranks(other._recv_ranks),
                 _recv_sizes(other._recv_sizes),
