@@ -45,46 +45,47 @@ class VectorIOMPI<io_formats::EXP>
         template<typename DT_>
             static DenseVectorMPI<DT_> read_vector(std::string filename, DT_)
             {
-                unsigned long global_size(0);
-                std::ifstream file(filename.c_str());
-                if (! file.is_open())
-                    throw honei::InternalError("Unable to open Vector file " + filename);
-                while(!file.eof())
+                unsigned long _rank(mpi::mpi_comm_rank());
+                if (_rank == 0)
                 {
-                    std::string line;
-                    std::getline(file, line);
-                    if(line.find("#", 0) < line.npos)
-                        continue;
-                    if(file.eof())
-                        break;
+                    unsigned long global_size(0);
 
-                    ++global_size;
-                }
-
-                unsigned long offset(DenseVectorMPI<DT_>::calc_offset(global_size));
-                unsigned long size(DenseVectorMPI<DT_>::calc_size(global_size));
-
-
-                DenseVector<DT_> data(size);
-                unsigned long index(0);
-
-                file.clear();
-                file.seekg (0, std::ios::beg);
-
-                while(!file.eof())
-                {
-                    std::string line;
-                    std::getline(file, line);
-                    if(line.find("#", 0) < line.npos)
-                        continue;
-                    if(file.eof())
-                        break;
-
-                    if (index >= offset + size)
-                        break;
-
-                    if (index >= offset)
+                    std::ifstream file(filename.c_str());
+                    if (! file.is_open())
+                        throw honei::InternalError("Unable to open Vector file " + filename);
+                    while(!file.eof())
                     {
+                        std::string line;
+                        std::getline(file, line);
+                        if(line.find("#", 0) < line.npos)
+                            continue;
+                        if(file.eof())
+                            break;
+
+                        ++global_size;
+                    }
+                    mpi::mpi_bcast(&global_size, 1, 0);
+
+                    unsigned long offset(DenseVectorMPI<DT_>::calc_offset(global_size));
+                    unsigned long size(DenseVectorMPI<DT_>::calc_size(global_size));
+
+
+                    DenseVector<DT_> data(global_size);
+                    unsigned long index(0);
+
+                    file.clear();
+                    file.seekg (0, std::ios::beg);
+
+                    while(!file.eof())
+                    {
+                        std::string line;
+                        std::getline(file, line);
+                        if(line.find("#", 0) < line.npos)
+                            continue;
+                        if(file.eof())
+                            break;
+
+
                         std::string n_z_s;
 
                         std::string::size_type first_digit(line.find_first_not_of(" "));
@@ -97,14 +98,29 @@ class VectorIOMPI<io_formats::EXP>
 
                         DT_ n_z = (DT_)atof(n_z_s.c_str());
 
-                        data[index - offset] = n_z;
-                    }
+                        data[index] = n_z;
 
-                    ++index;
+                        ++index;
+                    }
+                    file.close();
+
+                    mpi::mpi_bcast(data.elements(), data.size(), 0);
+                    DenseVectorMPI<DT_> result(data);
+                    return result;
                 }
-                file.close();
-                DenseVectorMPI<DT_> result(data, global_size);
-                return result;
+                else
+                {
+                    unsigned long global_size;
+                    mpi::mpi_bcast(&global_size, 1, 0);
+                    unsigned long offset(DenseVectorMPI<DT_>::calc_offset(global_size));
+                    unsigned long size(DenseVectorMPI<DT_>::calc_size(global_size));
+
+                    DenseVector<DT_> data(global_size);
+                    mpi::mpi_bcast(data.elements(), data.size(), 0);
+                    DenseVectorMPI<DT_> result(data);
+                    return result;
+                }
+
             }
 };
 #endif

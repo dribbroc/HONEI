@@ -47,65 +47,129 @@ class MatrixIOMPI<io_formats::ELL>
     public:
         static unsigned long read_matrix_rows(std::string input)
         {
-            FILE* file(NULL);
-            file = fopen(input.c_str(), "rb");
-            if (file == NULL)
-                throw InternalError("File "+input+" not found!");
-            uint64_t size;
-            uint64_t rows;
-            int status = fread(&size, sizeof(uint64_t), 1, file);
-            status = fread(&rows, sizeof(uint64_t), 1, file);
-            fclose(file);
-            return rows;
-        }
-
-        template <typename DT_>
-            static SparseMatrix<DT_> read_matrix(std::string input, HONEI_UNUSED DT_ datatype)
+            unsigned long _rank(mpi::mpi_comm_rank());
+            unsigned long rows(0);
+            if (_rank == 0)
             {
                 FILE* file(NULL);
                 file = fopen(input.c_str(), "rb");
                 if (file == NULL)
                     throw InternalError("File "+input+" not found!");
                 uint64_t size;
-                uint64_t rows;
-                uint64_t columns;
-                uint64_t stride;
-                uint64_t num_cols_per_row;
+                uint64_t rowst;
                 int status = fread(&size, sizeof(uint64_t), 1, file);
-                status = fread(&rows, sizeof(uint64_t), 1, file);
-                status = fread(&columns, sizeof(uint64_t), 1, file);
-                status = fread(&stride, sizeof(uint64_t), 1, file);
-                status = fread(&num_cols_per_row, sizeof(uint64_t), 1, file);
-                long int pos_aj(ftell(file));
-                fseek(file, size * sizeof(uint64_t), SEEK_CUR);
-                long int pos_ax(ftell(file));
+                status = fread(&rowst, sizeof(uint64_t), 1, file);
+                fclose(file);
+                rows = rowst;
+                mpi::mpi_bcast(&rows, 1, 0);
+            }
+            else
+            {
+                mpi::mpi_bcast(&rows, 1, 0);
+            }
+            return rows;
+        }
 
-                unsigned long local_rows(DenseVectorMPI<DT_>::calc_size(rows));
-                unsigned long local_offset(DenseVectorMPI<DT_>::calc_offset(rows));
-
-                SparseMatrix<DT_> local_matrix(local_rows, columns);
-                for (unsigned long current_row(local_offset) ; current_row < local_rows + local_offset ; ++current_row)
+        template <typename DT_>
+            static SparseMatrix<DT_> read_matrix(std::string input, HONEI_UNUSED DT_ datatype)
+            {
+                unsigned long _rank(mpi::mpi_comm_rank());
+                if (_rank == 0)
                 {
-                    for (unsigned long cols(0) ; cols < num_cols_per_row ; ++cols)
+                    FILE* file(NULL);
+                    file = fopen(input.c_str(), "rb");
+                    if (file == NULL)
+                        throw InternalError("File "+input+" not found!");
+                    uint64_t size;
+                    uint64_t rows;
+                    uint64_t columns;
+                    uint64_t stride;
+                    uint64_t num_cols_per_row;
+                    int status = fread(&size, sizeof(uint64_t), 1, file);
+                    status = fread(&rows, sizeof(uint64_t), 1, file);
+                    status = fread(&columns, sizeof(uint64_t), 1, file);
+                    status = fread(&stride, sizeof(uint64_t), 1, file);
+                    status = fread(&num_cols_per_row, sizeof(uint64_t), 1, file);
+                    long int pos_aj(ftell(file));
+                    fseek(file, size * sizeof(uint64_t), SEEK_CUR);
+                    long int pos_ax(ftell(file));
+
+                    unsigned long local_rows(DenseVectorMPI<DT_>::calc_size(rows));
+                    unsigned long local_offset(DenseVectorMPI<DT_>::calc_offset(rows));
+                    unsigned long alien_rows(rows);
+                    unsigned long alien_columns(columns);
+                    unsigned long alien_stride(stride);
+                    unsigned long alien_num_cols_per_row(num_cols_per_row);
+
+                    mpi::mpi_bcast(&alien_rows, 1, 0);
+                    mpi::mpi_bcast(&alien_columns, 1, 0);
+                    mpi::mpi_bcast(&alien_stride, 1, 0);
+                    mpi::mpi_bcast(&alien_num_cols_per_row, 1, 0);
+
+                    SparseMatrix<DT_> local_matrix(local_rows, columns);
+
+                    uint64_t * indices = new uint64_t[stride];
+                    double * values = new double[stride];
+                    for (unsigned long current_col(0) ; current_col < num_cols_per_row ; ++current_col)
                     {
                         fseek(file, pos_aj, SEEK_SET);
-                        fseek(file, (current_row + (cols * stride)) * sizeof(uint64_t), SEEK_CUR);
+                        fseek(file, (current_col * stride) * sizeof(uint64_t), SEEK_CUR);
 
-                        uint64_t temp;
-                        int status = fread(&temp, sizeof(uint64_t), 1, file);
-                        unsigned long icol(temp);
+                        int status = fread(indices, sizeof(uint64_t), stride, file);
 
                         fseek(file, pos_ax, SEEK_SET);
-                        fseek(file, (current_row + (cols * stride)) * sizeof(double), SEEK_CUR);
+                        fseek(file, (current_col * stride) * sizeof(double), SEEK_CUR);
 
-                        double ival;
-                        status = fread(&ival, sizeof(double), 1, file);
-                        if (ival != DT_(0)) local_matrix(current_row-local_offset, icol, ival);
+                        status = fread(values, sizeof(double), stride, file);
+
+                        mpi::mpi_bcast(indices, stride, _rank);
+                        mpi::mpi_bcast(values, stride, _rank);
+
+                        for (unsigned long i(local_offset) ; i < local_offset + local_rows ; ++i)
+                        {
+                            if (values[i] != double(0))
+                                local_matrix(i - local_offset, indices[i], values[i]);
+                        }
                     }
-                }
+                    delete[] indices;
+                    delete[] values;
 
-                fclose(file);
-                return local_matrix;
+                    fclose(file);
+                    return local_matrix;
+                }
+                else
+                {
+                    unsigned long rows;
+                    unsigned long columns;
+                    unsigned long stride;
+                    unsigned long num_cols_per_row;
+                    mpi::mpi_bcast(&rows, 1, 0);
+                    mpi::mpi_bcast(&columns, 1, 0);
+                    mpi::mpi_bcast(&stride, 1, 0);
+                    mpi::mpi_bcast(&num_cols_per_row, 1, 0);
+                    unsigned long local_rows(DenseVectorMPI<DT_>::calc_size(rows));
+                    unsigned long local_offset(DenseVectorMPI<DT_>::calc_offset(rows));
+                    SparseMatrix<DT_> local_matrix(local_rows, columns);
+
+                    uint64_t * indices = new uint64_t[stride];
+                    double * values = new double[stride];
+
+                    for (unsigned long current_col(0) ; current_col < num_cols_per_row ; ++current_col)
+                    {
+                        mpi::mpi_bcast(indices, stride, 0);
+                        mpi::mpi_bcast(values, stride, 0);
+
+                        for (unsigned long i(local_offset) ; i < local_offset + local_rows ; ++i)
+                        {
+                            if (values[i] != double(0))
+                                local_matrix(i - local_offset, indices[i], values[i]);
+                        }
+                    }
+                    delete[] indices;
+                    delete[] values;
+
+                    return local_matrix;
+                }
             }
 };
 
@@ -121,8 +185,8 @@ class MatrixIOMPI_ELL<io_formats::ELL>
         template <typename DT_>
             static SparseMatrixELLMPI<DT_> read_matrix(std::string input, HONEI_UNUSED DT_ datatype)
             {
-                unsigned long global_rows(MatrixIOMPI<io_formats::ELL>::read_matrix_rows(input));
-                SparseMatrix<DT_> local(MatrixIOMPI<io_formats::ELL>::read_matrix(input, datatype));
+                unsigned long global_rows = MatrixIOMPI<io_formats::ELL>::read_matrix_rows(input);
+                SparseMatrix<DT_> local = MatrixIOMPI<io_formats::ELL>::read_matrix(input, datatype);
                 SparseMatrixELLMPI<DT_> result(local, global_rows);
                 return result;
             }
@@ -140,8 +204,8 @@ class MatrixIOMPI_CSR<io_formats::ELL>
         template <typename DT_>
             static SparseMatrixCSRMPI<DT_> read_matrix(std::string input, HONEI_UNUSED DT_ datatype)
             {
-                unsigned long global_rows(MatrixIOMPI<io_formats::ELL>::read_matrix_rows(input));
-                SparseMatrix<DT_> local(MatrixIOMPI<io_formats::ELL>::read_matrix(input, datatype));
+                unsigned long global_rows = MatrixIOMPI<io_formats::ELL>::read_matrix_rows(input);
+                SparseMatrix<DT_> local = MatrixIOMPI<io_formats::ELL>::read_matrix(input, datatype);
                 SparseMatrixCSRMPI<DT_> result(local, global_rows);
                 return result;
             }

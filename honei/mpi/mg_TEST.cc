@@ -52,31 +52,22 @@ class MGSolverTest:
             file += "/honei/math/testdata/";
             file += _file;
 
-            MGData<SparseMatrixELLMPI<double>, DenseVectorMPI<double>, SparseMatrixELLMPI<double>, DenseVectorMPI<double>, double >  data_ell(MGUtil<Tag_,
-                                                                                            SparseMatrixELLMPI<double>,
+            MGData<SparseMatrixCSRMPI<double>, DenseVectorMPI<double>, SparseMatrixCSRMPI<double>, DenseVectorMPI<double>, double >  data_mpi(MGUtil<Tag_,
+                                                                                            SparseMatrixCSRMPI<double>,
                                                                                             DenseVectorMPI<double>,
-                                                                                            SparseMatrixELLMPI<double>,
+                                                                                            SparseMatrixCSRMPI<double>,
                                                                                             DenseVectorMPI<double>,
-                                                                                            MatrixIOMPI_ELL<io_formats::ELL>,
+                                                                                            MatrixIOMPI_CSR<io_formats::ELL>,
                                                                                             VectorIOMPI<io_formats::EXP>,
                                                                                             double>::load_data(file, max_level, double(0.7), "jac"));
 
-            MGData<SparseMatrixCSRMPI<double>, DenseVectorMPI<double>, SparseMatrixCSRMPI<double>, DenseVectorMPI<double>, double > data_mpi(data_ell);
-            data_ell.A.clear();
-            data_ell.P.clear();
-            data_ell.b.clear();
-            data_ell.x.clear();
-            data_ell.c.clear();
-            data_ell.d.clear();
-            data_ell.prolmat.clear();
-            data_ell.resmat.clear();
 
             MGUtil<Tag_,
                 SparseMatrixCSRMPI<double>,
                 DenseVectorMPI<double>,
                 SparseMatrixCSRMPI<double>,
                 DenseVectorMPI<double>,
-                MatrixIOMPI_ELL<io_formats::ELL>,
+                MatrixIOMPI_CSR<io_formats::ELL>,
                 VectorIOMPI<io_formats::EXP>,
                 double>::configure(data_mpi, 100, 100, 4, 4, min_level, double(1e-8));
 
