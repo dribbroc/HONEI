@@ -59,20 +59,20 @@ namespace methods
             {
                 struct V
                 {
-                    struct STATIC;
+                    struct STATIC{};
                 };
                 struct W
                 {
-                    struct STATIC;
+                    struct STATIC{};
                 };
             };
             struct W
             {
-                struct STATIC;
+                struct STATIC{};
             };
             struct V
             {
-                struct STATIC;
+                struct STATIC{};
             };
     };
     struct FIXED;

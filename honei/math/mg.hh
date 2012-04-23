@@ -342,6 +342,7 @@ namespace honei
                 }
         };
 
+    template <typename CycleShape_>
     void print_cycle(OperatorList & ol, unsigned long max_level, unsigned long min_level)
     {
         std::vector<unsigned long> transfers;
@@ -352,7 +353,12 @@ namespace honei
         }
 
         DenseMatrix<unsigned long> graph((max_level - min_level + 1) * 2, transfers.size(), 0ul);
-        unsigned long acx(0);
+        unsigned long acx;
+        /*if (typeid(CycleShape_) == typeid(methods::CYCLE::FMG::V::STATIC) || typeid(CycleShape_) == typeid(methods::CYCLE::FMG::W::STATIC))
+            acx = graph.rows()-1;
+        else*/
+            acx = 0;
+
         for (unsigned long i(0) ; i < transfers.size() ; ++i)
         {
             switch (transfers.at(i))

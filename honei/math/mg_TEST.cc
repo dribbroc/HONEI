@@ -312,7 +312,7 @@ class MGSolverTest:
             data.x.at(MGDataIndex::internal_index_A(max_level)).unlock(lm_read_only);
             ref.unlock(lm_read_only);
 
-            //print_cycle(ol, max_level, min_level);
+            print_cycle<methods::CYCLE::V::STATIC>(ol, max_level, min_level);
         }
 };
 /*MGSolverTest<tags::CPU, double> mg_solver_test_cpu("double", "poisson_advanced/sort_0/");
