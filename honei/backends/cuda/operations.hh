@@ -23,6 +23,8 @@
 #ifndef CUDA_GUARD_OPERATIONS_HH
 #define CUDA_GUARD_OPERATIONS_HH 1
 
+#include <cuda_runtime.h>
+
 extern "C"
 {
     /////////////////////////// LA /////////////////////////
@@ -38,20 +40,20 @@ extern "C"
 
     void cuda_defect_smell_dv_float(void * rhs, void * result, void * Aj, void * Ax, void * Arl, void * b,
             unsigned long rows, unsigned long columns, unsigned long num_cols_per_row, unsigned long stride,
-            unsigned long blocksize, unsigned long threads);
+            unsigned long blocksize, unsigned long threads, cudaStream_t stream = 0);
 
     void cuda_defect_smell_dv_double(void * rhs, void * result, void * Aj, void * Ax, void * Arl, void * b,
             unsigned long rows, unsigned long columns, unsigned long num_cols_per_row, unsigned long stride,
-            unsigned long blocksize, unsigned long threads);
+            unsigned long blocksize, unsigned long threads, cudaStream_t stream = 0);
 
     void cuda_defect_csr_dv_float(void * rhs, void * result, void * Aj, void * Ax, void * Ar, void * b,
-            unsigned long rows, unsigned long atomicsize, unsigned long blocksize);
+            unsigned long rows, unsigned long atomicsize, unsigned long blocksize, cudaStream_t stream = 0);
 
     void cuda_defect_csr_dv_double(void * rhs, void * result, void * Aj, void * Ax, void * Ar, void * b,
-            unsigned long rows, unsigned long atomicsize, unsigned long blocksize);
+            unsigned long rows, unsigned long atomicsize, unsigned long blocksize, cudaStream_t stream = 0);
 
-    void cuda_difference_two_float(void * a, const void * b, unsigned long size, unsigned long blocksize);
-    void cuda_difference_two_double(void * a, const void * b, unsigned long size, unsigned long blocksize);
+    void cuda_difference_two_float(void * a, const void * b, unsigned long size, unsigned long blocksize, cudaStream_t stream = 0);
+    void cuda_difference_two_double(void * a, const void * b, unsigned long size, unsigned long blocksize, cudaStream_t stream = 0);
     void cuda_difference_three_float(void * r, const void * a, const void * b, unsigned long size, unsigned long blocksize);
     void cuda_difference_three_double(void * r, const void * a, const void * b, unsigned long size, unsigned long blocksize);
 
@@ -88,13 +90,13 @@ extern "C"
 
     void cuda_product_smell_dv_double(void * x, void * y, void * Aj, void * Ax, void * Arl,
             unsigned long row_start, unsigned long row_end, unsigned long num_cols_per_row,
-            unsigned long stride, unsigned long blocksize, unsigned long threads);
+            unsigned long stride, unsigned long blocksize, unsigned long threads, cudaStream_t stream = 0);
 
     void cuda_product_csr_dv_float(void * x, void * y, void * Aj, void * Ax, void * Ar,
-            unsigned long row_start, unsigned long row_end, unsigned long atomicsize, unsigned long blocksize);
+            unsigned long row_start, unsigned long row_end, unsigned long atomicsize, unsigned long blocksize, cudaStream_t stream = 0);
 
     void cuda_product_csr_dv_double(void * x, void * y, void * Aj, void * Ax, void * Ar,
-            unsigned long row_start, unsigned long row_end, unsigned long atomicsize, unsigned long blocksize);
+            unsigned long row_start, unsigned long row_end, unsigned long atomicsize, unsigned long blocksize, cudaStream_t stream = 0);
 
     void cuda_prolongation_float(void * fine, unsigned long size_fine, void * coarse, unsigned long size_coarse,
             unsigned long * macroBorderMask, unsigned long blocksize);
@@ -117,7 +119,7 @@ extern "C"
     void cuda_scale_one_double(void * x, const double a, unsigned long size, unsigned long blocksize);
 
     void cuda_sum_two_float(void * a, const void * b, unsigned long size, unsigned long blocksize);
-    void cuda_sum_two_double(void * a, const void * b, unsigned long size, unsigned long blocksize);
+    void cuda_sum_two_double(void * a, const void * b, unsigned long size, unsigned long blocksize, cudaStream_t stream = 0);
 
 
     /////////////////////////// LBM /////////////////////////

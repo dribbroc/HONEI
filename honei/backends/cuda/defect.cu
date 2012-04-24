@@ -363,7 +363,7 @@ extern "C" void cuda_defect_q1_double (void * rhs, void * ll, void * ld, void * 
 
 extern "C" void cuda_defect_smell_dv_float(void * rhs, void * result, void * Aj, void * Ax, void * Arl, void * b,
         unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row, unsigned long stride,
-        unsigned long blocksize, unsigned long threads)
+        unsigned long blocksize, unsigned long threads, cudaStream_t stream)
 {
     unsigned long size = num_rows;
     dim3 grid;
@@ -379,7 +379,7 @@ extern "C" void cuda_defect_smell_dv_float(void * rhs, void * result, void * Aj,
     unsigned long * Arl_gpu((unsigned long *)Arl);
 
     cudaBindTexture(NULL, tex_x_float_defect, b_gpu);
-    honei::cuda::defect_smell_dv_gpu<<<grid, blocksize, block.x * sizeof(float)>>>(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Arl_gpu, b_gpu,
+    honei::cuda::defect_smell_dv_gpu<<<grid, blocksize, block.x * sizeof(float), stream>>>(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Arl_gpu, b_gpu,
             num_rows, num_cols, num_cols_per_row, stride, threads);
     cudaUnbindTexture(tex_x_float_defect);
 
@@ -389,7 +389,7 @@ extern "C" void cuda_defect_smell_dv_float(void * rhs, void * result, void * Aj,
 #ifdef HONEI_CUDA_DOUBLE
 extern "C" void cuda_defect_smell_dv_double(void * rhs, void * result, void * Aj, void * Ax, void * Arl, void * b,
         unsigned long num_rows, unsigned long num_cols, unsigned long num_cols_per_row, unsigned long stride,
-        unsigned long blocksize, unsigned long threads)
+        unsigned long blocksize, unsigned long threads, cudaStream_t stream)
 {
     unsigned long size = num_rows;
     dim3 grid;
@@ -405,7 +405,7 @@ extern "C" void cuda_defect_smell_dv_double(void * rhs, void * result, void * Aj
     unsigned long * Arl_gpu((unsigned long *)Arl);
 
     cudaBindTexture(NULL, tex_x_double_defect, b_gpu);
-    honei::cuda::defect_smell_dv_gpu<<<grid, blocksize, block.x * sizeof(double)>>>(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Arl_gpu, b_gpu,
+    honei::cuda::defect_smell_dv_gpu<<<grid, blocksize, block.x * sizeof(double), stream>>>(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Arl_gpu, b_gpu,
             num_rows, num_cols, num_cols_per_row, stride, threads);
     cudaUnbindTexture(tex_x_double_defect);
 
@@ -414,7 +414,7 @@ extern "C" void cuda_defect_smell_dv_double(void * rhs, void * result, void * Aj
 #endif
 
 extern "C" void cuda_defect_csr_dv_float(void * rhs, void * result, void * Aj, void * Ax, void * Ar, void * b,
-        unsigned long num_rows, unsigned long atomicsize, unsigned long blocksize)
+        unsigned long num_rows, unsigned long atomicsize, unsigned long blocksize, cudaStream_t stream)
 {
     unsigned long size = num_rows;
     dim3 grid;
@@ -430,7 +430,7 @@ extern "C" void cuda_defect_csr_dv_float(void * rhs, void * result, void * Aj, v
     unsigned long * Ar_gpu((unsigned long *)Ar);
 
     cudaBindTexture(NULL, tex_x_float_defect, b_gpu);
-    honei::cuda::defect_csr_dv_gpu<<<grid, blocksize, block.x * sizeof(float)>>>(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Ar_gpu, b_gpu,
+    honei::cuda::defect_csr_dv_gpu<<<grid, blocksize, block.x * sizeof(float), stream>>>(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Ar_gpu, b_gpu,
             num_rows, atomicsize);
     cudaUnbindTexture(tex_x_float_defect);
 
@@ -439,7 +439,7 @@ extern "C" void cuda_defect_csr_dv_float(void * rhs, void * result, void * Aj, v
 
 #ifdef HONEI_CUDA_DOUBLE
 extern "C" void cuda_defect_csr_dv_double(void * rhs, void * result, void * Aj, void * Ax, void * Ar, void * b,
-        unsigned long num_rows, unsigned long atomicsize, unsigned long blocksize)
+        unsigned long num_rows, unsigned long atomicsize, unsigned long blocksize, cudaStream_t stream)
 {
     unsigned long size = num_rows;
     dim3 grid;
@@ -455,7 +455,7 @@ extern "C" void cuda_defect_csr_dv_double(void * rhs, void * result, void * Aj, 
     unsigned long * Ar_gpu((unsigned long *)Ar);
 
     cudaBindTexture(NULL, tex_x_double_defect, b_gpu);
-    honei::cuda::defect_csr_dv_gpu<<<grid, blocksize, block.x * sizeof(double)>>>(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Ar_gpu, b_gpu,
+    honei::cuda::defect_csr_dv_gpu<<<grid, blocksize, block.x * sizeof(double), stream>>>(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Ar_gpu, b_gpu,
             num_rows, atomicsize);
     cudaUnbindTexture(tex_x_double_defect);
 

@@ -35,7 +35,11 @@
 #ifdef HONEI_CUDA
 #include <honei/backends/cuda/transfer.hh>
 #include <honei/backends/cuda/gpu_pool.hh>
+#include <cuda.h>
+#include <cuda_runtime.h>
 #endif
+
+#include <honei/util/time_stamp.hh>
 
 namespace
 {
@@ -65,18 +69,295 @@ namespace
         private:
             const DenseVector<DT_> & device;
             void * address;
+            cudaStream_t stream;
         public:
-            DownloadTask(const DenseVector<DT_> & d, void * a) :
+            DownloadTask(const DenseVector<DT_> & d, void * a, cudaStream_t s = 0) :
                 device(d),
-                address(a)
+                address(a),
+                stream(s)
         {
         }
 
             void operator() ()
             {
                 void * d_gpu(device.lock(lm_read_only, tags::GPU::CUDA::memory_value));
-                cuda_download(d_gpu, address, device.size() * sizeof(DT_));
+                cuda_download_async(d_gpu, address, device.size() * sizeof(DT_), stream);
+                /// \todo this is a realy bad idea!
+                cudaStreamSynchronize(stream);
                 device.unlock(lm_read_only);
+            }
+    };
+
+    template <typename DT_>
+    class UploadTask
+    {
+        private:
+            const DenseVector<DT_> & device;
+            void * address;
+            cudaStream_t stream;
+        public:
+            UploadTask(void * a, const DenseVector<DT_> & d, cudaStream_t s = 0) :
+                device(d),
+                address(a),
+                stream(s)
+        {
+        }
+
+            void operator() ()
+            {
+                void * d_gpu(device.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                cuda_upload_async(address, d_gpu, device.size() * sizeof(DT_), stream);
+                device.unlock(lm_write_only);
+            }
+    };
+
+    template <typename MT_>
+    class ProductTask
+    {
+    };
+
+    template <>
+    class ProductTask<SparseMatrixELLMPI<double> >
+    {
+        private:
+            DenseVectorContinuousBase<double> & result;
+            const SparseMatrixELL<double> & a;
+            const DenseVectorContinuousBase<double> & b;
+            unsigned long row_start;
+            unsigned long row_end;
+            unsigned long blocksize;
+            cudaStream_t stream;
+        public:
+            ProductTask(DenseVectorContinuousBase<double> & result, const SparseMatrixELL<double> & a, const DenseVectorContinuousBase<double> & b,
+                    unsigned long row_start, unsigned long row_end, unsigned long blocksize, cudaStream_t s) :
+                result(result),
+                a(a),
+                b(b),
+                row_start(row_start),
+                row_end(row_end),
+                blocksize(blocksize),
+                stream(s)
+            {
+            }
+
+            void operator() ()
+            {
+                void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * Aj_gpu(a.Aj().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * Ax_gpu(a.Ax().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * Arl_gpu(a.Arl().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                cuda_product_smell_dv_double(b_gpu, result_gpu, Aj_gpu, Ax_gpu, Arl_gpu,
+                        row_start, row_end, a.num_cols_per_row(), a.stride(), blocksize, a.threads(), stream);
+
+                result.unlock(lm_write_only);
+                b.unlock(lm_read_only);
+                a.Aj().unlock(lm_read_only);
+                a.Ax().unlock(lm_read_only);
+                a.Arl().unlock(lm_read_only);
+            }
+    };
+
+    template <>
+    class ProductTask<SparseMatrixCSRMPI<double> >
+    {
+        private:
+            DenseVectorContinuousBase<double> & result;
+            const SparseMatrixCSR<double> & a;
+            const DenseVectorContinuousBase<double> & b;
+            unsigned long row_start;
+            unsigned long row_end;
+            unsigned long atomicsize;
+            unsigned long blocksize;
+            cudaStream_t stream;
+        public:
+            ProductTask(DenseVectorContinuousBase<double> & result, const SparseMatrixCSR<double> & a, const DenseVectorContinuousBase<double> & b,
+                    unsigned long row_start, unsigned long row_end, unsigned long blocksize, cudaStream_t s) :
+                result(result),
+                a(a),
+                b(b),
+                row_start(row_start),
+                row_end(row_end),
+                blocksize(blocksize),
+                stream(s)
+            {
+            }
+
+            void operator() ()
+            {
+                void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * Aj_gpu(a.Aj().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * Ax_gpu(a.Ax().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * Ar_gpu(a.Ar().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                cuda_product_csr_dv_double(b_gpu, result_gpu, Aj_gpu, Ax_gpu, Ar_gpu,
+                        row_start, row_end, a.blocksize(), blocksize, stream);
+
+                result.unlock(lm_write_only);
+                b.unlock(lm_read_only);
+                a.Aj().unlock(lm_read_only);
+                a.Ax().unlock(lm_read_only);
+                a.Ar().unlock(lm_read_only);
+            }
+    };
+
+    template <typename MT_>
+    class DefectTask
+    {
+    };
+
+    template <>
+    class DefectTask<SparseMatrixELLMPI<double> >
+    {
+        private:
+            DenseVectorContinuousBase<double> & result;
+            const DenseVectorContinuousBase<double> & rhs;
+            const SparseMatrixELL<double> & a;
+            const DenseVectorContinuousBase<double> & b;
+            unsigned long row_start;
+            unsigned long row_end;
+            unsigned long blocksize;
+            cudaStream_t stream;
+        public:
+            DefectTask(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & rhs, const SparseMatrixELL<double> & a, const DenseVectorContinuousBase<double> & b,
+                    unsigned long row_start, unsigned long row_end, unsigned long blocksize, cudaStream_t s) :
+                result(result),
+                rhs(rhs),
+                a(a),
+                b(b),
+                row_start(row_start),
+                row_end(row_end),
+                blocksize(blocksize),
+                stream(s)
+            {
+            }
+
+            void operator() ()
+            {
+                void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * rhs_gpu(rhs.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * Aj_gpu(a.Aj().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * Ax_gpu(a.Ax().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * Arl_gpu(a.Arl().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                cuda_defect_smell_dv_double(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Arl_gpu, b_gpu,
+                        a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), blocksize, a.threads(), stream);
+
+                result.unlock(lm_write_only);
+                rhs.unlock(lm_read_only);
+                b.unlock(lm_read_only);
+                a.Aj().unlock(lm_read_only);
+                a.Ax().unlock(lm_read_only);
+                a.Arl().unlock(lm_read_only);
+            }
+    };
+
+    template <>
+    class DefectTask<SparseMatrixCSRMPI<double> >
+    {
+        private:
+            DenseVectorContinuousBase<double> & result;
+            const DenseVectorContinuousBase<double> & rhs;
+            const SparseMatrixCSR<double> & a;
+            const DenseVectorContinuousBase<double> & b;
+            unsigned long row_start;
+            unsigned long row_end;
+            unsigned long atomicsize;
+            unsigned long blocksize;
+            cudaStream_t stream;
+        public:
+            DefectTask(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & rhs, const SparseMatrixCSR<double> & a, const DenseVectorContinuousBase<double> & b,
+                    unsigned long row_start, unsigned long row_end, unsigned long blocksize, cudaStream_t s) :
+                result(result),
+                rhs(rhs),
+                a(a),
+                b(b),
+                row_start(row_start),
+                row_end(row_end),
+                blocksize(blocksize),
+                stream(s)
+            {
+            }
+
+            void operator() ()
+            {
+                void * rhs_gpu(rhs.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * b_gpu(b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * Aj_gpu(a.Aj().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * Ax_gpu(a.Ax().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * Ar_gpu(a.Ar().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                cuda_defect_csr_dv_double(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Ar_gpu, b_gpu,
+                        a.rows(), a.blocksize(), blocksize, stream);
+
+                result.unlock(lm_write_only);
+                rhs.unlock(lm_read_only);
+                b.unlock(lm_read_only);
+                a.Aj().unlock(lm_read_only);
+                a.Ax().unlock(lm_read_only);
+                a.Ar().unlock(lm_read_only);
+            }
+    };
+
+    class SumTask
+    {
+        private:
+            DenseVectorContinuousBase<double> & a;
+            const DenseVectorContinuousBase<double> & b;
+            unsigned long blocksize;
+            cudaStream_t stream;
+        public:
+            SumTask(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b, unsigned long blocksize, cudaStream_t s) :
+                a(a),
+                b(b),
+                blocksize(blocksize),
+                stream(s)
+            {
+            }
+
+            void operator() ()
+            {
+                void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * b_gpu (b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                cuda_sum_two_double(a_gpu, b_gpu, a.size(), blocksize, stream);
+                cudaDeviceSynchronize();
+
+                b.unlock(lm_read_only);
+                a.unlock(lm_read_and_write);
+            }
+    };
+
+    class DifferenceTask
+    {
+        private:
+            DenseVectorContinuousBase<double> & a;
+            const DenseVectorContinuousBase<double> & b;
+            unsigned long blocksize;
+            cudaStream_t stream;
+        public:
+            DifferenceTask(DenseVectorContinuousBase<double> & a, const DenseVectorContinuousBase<double> & b, unsigned long blocksize, cudaStream_t s) :
+                a(a),
+                b(b),
+                blocksize(blocksize),
+                stream(s)
+            {
+            }
+
+            void operator() ()
+            {
+                void * a_gpu (a.lock(lm_read_and_write, tags::GPU::CUDA::memory_value));
+                void * b_gpu (b.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                cuda_difference_two_double(a_gpu, b_gpu, a.size(), blocksize, stream);
+                cudaDeviceSynchronize();
+
+                b.unlock(lm_read_only);
+                a.unlock(lm_read_and_write);
             }
     };
 #endif
@@ -89,6 +370,13 @@ static unsigned long temp_data_size = 0;
 
 static void * temp_send_data = 0;
 static unsigned long temp_send_data_size = 0;
+
+static void * temp_missing_data = 0;
+static unsigned long temp_missing_data_size = 0;
+
+#ifdef HONEI_CUDA
+static cudaStream_t * streams = 0;
+#endif
 
 template <typename Tag_>
     template <typename DT_>
@@ -201,6 +489,7 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const MT_ & a, const DenseVe
         temp_send_data = ::malloc(a.send_size() * sizeof(DT_));
         temp_send_data_size = a.send_size() * sizeof(DT_);
     }
+
     DT_ * send_data((DT_*)temp_send_data);
     for (unsigned long i(0) ; i < a.send_ranks().size() ; ++i)
     {
@@ -234,15 +523,39 @@ void MPIOps<tags::GPU::CUDA>::product(DenseVectorMPI<DT_> & r, const MT_ & a, co
     int com_size;
     mpi::mpi_comm_size(&com_size);
 
+    unsigned long blocksize_prod(Configuration::instance()->get_value("cuda::product_smell_dv_double", 128ul));
+    unsigned long blocksize_sum(Configuration::instance()->get_value("cuda::sum_two_double", 128ul));
+    TicketVector tickets_0;
+    TicketVector tickets_1;
+
     std::vector<MPI_Request> send_requests;
     std::vector<MPI_Request> recv_requests;
 
+    if (streams == NULL)
+    {
+        streams = new cudaStream_t[2];
+        //inner product stream
+        cudaStreamCreate(&streams[0]);
+        // outer/synchronisation stream
+        cudaStreamCreate(&streams[1]);
+    }
+
     // berechne innere anteile
-    if (a.active()) Product<tags::GPU::CUDA>::value(r.vector(), a.inner_matrix(), b.vector());
+    if (a.active())
+    {
+        ProductTask<MT_> product_inner(r.vector(), a.inner_matrix(), b.vector(), 0, a.inner_matrix().rows(), blocksize_prod, streams[0]);
+        tickets_0.push_back(cuda::GPUPool::instance()->enqueue(product_inner, 0));
+    }
 
     // empfange alle fehlenden werte
-    DenseVector<DT_> missing_values(a.outer_matrix().columns());
-    DT_ * missing_values_array(missing_values.elements());
+    if (temp_missing_data_size < a.outer_matrix().columns() * sizeof(DT_))
+    {
+        cuda_free_host(temp_missing_data);
+        AllocTask<DT_> at(&temp_missing_data, a.outer_matrix().columns() * sizeof(DT_));
+        cuda::GPUPool::instance()->enqueue(at, 0).wait();
+        temp_missing_data_size = a.outer_matrix().columns() * sizeof(DT_);
+    }
+    DT_ * missing_values_array((DT_*)temp_missing_data);
     unsigned long g_size(0);
     for (unsigned long i(0) ; i < a.recv_ranks().size() ; ++i)
     {
@@ -267,7 +580,8 @@ void MPIOps<tags::GPU::CUDA>::product(DenseVectorMPI<DT_> & r, const MT_ & a, co
         cuda::GPUPool::instance()->enqueue(at, 0).wait();
         temp_data_size = b.local_size() * sizeof(DT_);
     }
-    DownloadTask<DT_> dt(b.vector(), temp_data);
+
+    DownloadTask<DT_> dt(b.vector(), temp_data, streams[1]);
     cuda::GPUPool::instance()->enqueue(dt, 0).wait();
     DT_ * b_cpu((DT_*) temp_data);
 
@@ -282,16 +596,29 @@ void MPIOps<tags::GPU::CUDA>::product(DenseVectorMPI<DT_> & r, const MT_ & a, co
 
     MPI_Waitall(recv_requests.size(), &recv_requests[0], MPI_STATUSES_IGNORE);
     recv_requests.clear();
-    missing_values.lock(lm_read_only, tags::GPU::CUDA::memory_value);
-    missing_values.unlock(lm_read_only);
+
+    //fehlende aeussere werte auf gpu schaufeln
+    DenseVector<DT_> missing_values(a.outer_matrix().columns());
+    UploadTask<DT_> ut(temp_missing_data, missing_values, streams[1]);
+    tickets_1.push_back(cuda::GPUPool::instance()->enqueue(ut, 0));
 
     // berechne aeussere anteile
     DenseVector<DT_> r_outer(r.local_size());
-    if (a.active()) Product<tags::GPU::CUDA>::value(r_outer, a.outer_matrix(), missing_values);
-    if (a.active()) Sum<tags::GPU::CUDA>::value(r.vector(), r_outer);
+    if (a.active())
+    {
+        ProductTask<MT_> product_outer(r_outer, a.outer_matrix(), missing_values, 0, a.outer_matrix().rows(), blocksize_prod, streams[1]);
+        tickets_1.push_back(cuda::GPUPool::instance()->enqueue(product_outer, 0));
+        SumTask sum_outer(r.vector(), r_outer, blocksize_sum, streams[1]);
+        tickets_1.push_back(cuda::GPUPool::instance()->enqueue(sum_outer, 0));
+    }
 
     MPI_Waitall(send_requests.size(), &send_requests[0], MPI_STATUSES_IGNORE);
     send_requests.clear();
+    tickets_0.wait();
+    tickets_1.wait();
+    //cudaStreamSynchronize(streams[0]);
+    //cudaStreamSynchronize(streams[1]);
+    //cudaDeviceSynchronize();
 }
 #endif
 
@@ -359,15 +686,39 @@ void MPIOps<tags::GPU::CUDA>::defect(DenseVectorMPI<DT_> & r, const DenseVectorM
     int com_size;
     mpi::mpi_comm_size(&com_size);
 
+    unsigned long blocksize_prod(Configuration::instance()->get_value("cuda::product_smell_dv_double", 128ul));
+    unsigned long blocksize_sum(Configuration::instance()->get_value("cuda::sum_two_double", 128ul));
+    TicketVector tickets_0;
+    TicketVector tickets_1;
+
     std::vector<MPI_Request> send_requests;
     std::vector<MPI_Request> recv_requests;
 
+    if (streams == NULL)
+    {
+        streams = new cudaStream_t[2];
+        //inner product stream
+        cudaStreamCreate(&streams[0]);
+        // outer/synchronisation stream
+        cudaStreamCreate(&streams[1]);
+    }
+
     // berechne innere anteile
-    if (a.active()) Defect<tags::GPU::CUDA>::value(r.vector(), rhs.vector(),a.inner_matrix(), b.vector());
+    if (a.active())
+    {
+        DefectTask<MT_> defect_inner(r.vector(), rhs.vector(), a.inner_matrix(), b.vector(), 0, a.inner_matrix().rows(), blocksize_prod, streams[0]);
+        tickets_0.push_back(cuda::GPUPool::instance()->enqueue(defect_inner, 0));
+    }
 
     // empfange alle fehlenden werte
-    DenseVector<DT_> missing_values(a.outer_matrix().columns());
-    DT_ * missing_values_array(missing_values.elements());
+    if (temp_missing_data_size < a.outer_matrix().columns() * sizeof(DT_))
+    {
+        cuda_free_host(temp_missing_data);
+        AllocTask<DT_> at(&temp_missing_data, a.outer_matrix().columns() * sizeof(DT_));
+        cuda::GPUPool::instance()->enqueue(at, 0).wait();
+        temp_missing_data_size = a.outer_matrix().columns() * sizeof(DT_);
+    }
+    DT_ * missing_values_array((DT_*)temp_missing_data);
     unsigned long g_size(0);
     for (unsigned long i(0) ; i < a.recv_ranks().size() ; ++i)
     {
@@ -392,7 +743,8 @@ void MPIOps<tags::GPU::CUDA>::defect(DenseVectorMPI<DT_> & r, const DenseVectorM
         cuda::GPUPool::instance()->enqueue(at, 0).wait();
         temp_data_size = b.local_size() * sizeof(DT_);
     }
-    DownloadTask<DT_> dt(b.vector(), temp_data);
+
+    DownloadTask<DT_> dt(b.vector(), temp_data, streams[1]);
     cuda::GPUPool::instance()->enqueue(dt, 0).wait();
     DT_ * b_cpu((DT_*) temp_data);
 
@@ -407,16 +759,29 @@ void MPIOps<tags::GPU::CUDA>::defect(DenseVectorMPI<DT_> & r, const DenseVectorM
 
     MPI_Waitall(recv_requests.size(), &recv_requests[0], MPI_STATUSES_IGNORE);
     recv_requests.clear();
-    missing_values.lock(lm_read_only, tags::GPU::CUDA::memory_value);
-    missing_values.unlock(lm_read_only);
+
+    //fehlende aeussere werte auf gpu schaufeln
+    DenseVector<DT_> missing_values(a.outer_matrix().columns());
+    UploadTask<DT_> ut(temp_missing_data, missing_values, streams[1]);
+    tickets_1.push_back(cuda::GPUPool::instance()->enqueue(ut, 0));
 
     // berechne aeussere anteile
     DenseVector<DT_> r_outer(r.local_size());
-    if (a.active()) Product<tags::GPU::CUDA>::value(r_outer, a.outer_matrix(), missing_values);
-    if (a.active()) Difference<tags::GPU::CUDA>::value(r.vector(), r_outer);
+    if (a.active())
+    {
+        ProductTask<MT_> product_outer(r_outer, a.outer_matrix(), missing_values, 0, a.outer_matrix().rows(), blocksize_prod, streams[1]);
+        tickets_1.push_back(cuda::GPUPool::instance()->enqueue(product_outer, 0));
+        DifferenceTask difference_outer(r.vector(), r_outer, blocksize_sum, streams[1]);
+        tickets_1.push_back(cuda::GPUPool::instance()->enqueue(difference_outer, 0));
+    }
 
     MPI_Waitall(send_requests.size(), &send_requests[0], MPI_STATUSES_IGNORE);
     send_requests.clear();
+    tickets_0.wait();
+    tickets_1.wait();
+    //cudaStreamSynchronize(streams[0]);
+    //cudaStreamSynchronize(streams[1]);
+    //cudaDeviceSynchronize();
 }
 #endif
 
@@ -485,6 +850,11 @@ template <typename MT_>
 MT_ MPIOps<Tag_>::transposition(const MT_ & src)
 {
     typedef typename MT_::DataType DT_;
+
+    src.inner_matrix().lock(lm_read_only);
+    src.inner_matrix().unlock(lm_read_only);
+    src.outer_matrix().lock(lm_read_only);
+    src.outer_matrix().unlock(lm_read_only);
 
     // reverse create src local matrix
     unsigned long new_rows(DenseVectorMPI<double>::calc_size(src.columns()));

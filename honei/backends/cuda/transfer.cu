@@ -76,6 +76,18 @@ extern "C" void cuda_download(void * gpu, void * cpu, unsigned long bytes)
     CUDA_ERROR();
 }
 
+extern "C" void cuda_upload_async(void * cpu, void * gpu, unsigned long bytes, cudaStream_t stream)
+{
+    cudaMemcpyAsync(gpu, cpu, bytes, cudaMemcpyHostToDevice, stream);
+    CUDA_ERROR();
+}
+
+extern "C" void cuda_download_async(void * gpu, void * cpu, unsigned long bytes, cudaStream_t stream)
+{
+    cudaMemcpyAsync(cpu, gpu, bytes, cudaMemcpyDeviceToHost, stream);
+    CUDA_ERROR();
+}
+
 extern "C" void cuda_free(void * gpu)
 {
     cudaFree(gpu);

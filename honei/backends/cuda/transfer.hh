@@ -21,6 +21,8 @@
 #ifndef CUDA_GUARD_TRANSFER_HH
 #define CUDA_GUARD_TRANSFER_HH 1
 
+#include <cuda_runtime.h>
+
 extern "C"
 {
     void * cuda_malloc_host(unsigned long bytes);
@@ -30,6 +32,10 @@ extern "C"
     void cuda_upload(void * src, void * target, unsigned long bytes);
 
     void cuda_download(void * src, void * target, unsigned long bytes);
+
+    void cuda_upload_async(void * src, void * target, unsigned long bytes, cudaStream_t stream = 0);
+
+    void cuda_download_async(void * src, void * target, unsigned long bytes, cudaStream_t stream = 0);
 
     void cuda_free(void *src);
 

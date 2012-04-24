@@ -61,7 +61,7 @@ extern "C" void cuda_sum_two_float(void * x, void * y, unsigned long size, unsig
 }
 
 #ifdef HONEI_CUDA_DOUBLE
-extern "C" void cuda_sum_two_double(void * x, void * y, unsigned long size, unsigned long blocksize)
+extern "C" void cuda_sum_two_double(void * x, void * y, unsigned long size, unsigned long blocksize, cudaStream_t stream)
 {
     dim3 grid;
     dim3 block;
@@ -71,7 +71,7 @@ extern "C" void cuda_sum_two_double(void * x, void * y, unsigned long size, unsi
     double * x_gpu((double *)x);
     double * y_gpu((double *)y);
 
-    honei::cuda::sum_gpu<<<grid, block>>>(x_gpu, y_gpu, size);
+    honei::cuda::sum_gpu<<<grid, block,0 ,stream>>>(x_gpu, y_gpu, size);
 
     CUDA_ERROR();
 }

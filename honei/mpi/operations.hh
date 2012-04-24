@@ -23,6 +23,7 @@
 
 #include <honei/mpi/dense_vector_mpi-fwd.hh>
 #include <honei/mpi/sparse_matrix_ell_mpi-fwd.hh>
+#include <honei/mpi/sparse_matrix_csr_mpi-fwd.hh>
 
 namespace honei
 {
