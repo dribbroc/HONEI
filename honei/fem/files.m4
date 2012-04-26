@@ -8,5 +8,6 @@ dnl the base filename with no extension; later parameters can be `hh', `cc',
 dnl `test', `impl', `testscript'. Note that there isn't much error checking done
 dnl on this file at present...
 
-add(`mesh',           `hh', `test')
-add(`topology',       `hh', `test')
+add(`dense_data_wrapper',           `hh')
+add(`mesh',                         `hh', `test')
+add(`topology',                     `hh', `test')

@@ -6,6 +6,7 @@
 #include <deque>
 #include <list>
 #include <queue>
+#include <honei/fem/dense_data_wrapper.hh>
 
 
 using namespace honei;
@@ -46,3 +47,5 @@ MeshTest<tags::CPU, unsigned long, std::list, std::queue<unsigned long> > topolo
 MeshTest<tags::CPU, unsigned long, std::queue, std::list<unsigned long> > topology_test_cpu_q_l("std::queue, std::list");
 MeshTest<tags::CPU, unsigned long, std::queue, std::vector<unsigned long> > topology_test_cpu_q_v("std::queue, std::vector");
 MeshTest<tags::CPU, unsigned long, std::vector, std::queue<unsigned long> > topology_test_cpu_v_q("std::vector, std::queue");
+
+MeshTest<tags::CPU, unsigned long, std::vector, fem::DenseDataWrapper<15, unsigned long> > topology_test_cpu_v_ddw("std::vector, DV");
