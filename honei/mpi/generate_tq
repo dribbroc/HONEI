@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
-for ((i = 1 ; i <=64 ; i*=2))
+for ((i = 1 ; i <=128 ; i*=2))
 do
     cp honei.tq honei.tq.tmp
+    j=$((${i}/4))
     sed "s/PROC/${i}/g" <honei.tq.tmp >honei.tq.tmp2
-    mv honei.tq.tmp2 honei.tq.tmp
+    sed "s/NODES/${j}/g" <honei.tq.tmp2 >honei.tq.tmp3
+    mv honei.tq.tmp3 honei.tq.tmp
     qsub honei.tq.tmp
 done
 rm -f honei.tq.tmp
+rm -f honei.tq.tmp2
+rm -f honei.tq.tmp3
