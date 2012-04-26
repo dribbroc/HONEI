@@ -15,23 +15,13 @@ namespace honei
         template<
             typename IndexType_ = unsigned long,
             template<typename, typename> class OuterStorageType_ = std::vector,
-            typename StorageType_ = std::vector<IndexType_>,
-            template<typename, typename> class OuterAttrStorageType_ = std::vector,
-            template<typename, typename> class AttrStorageType_ = std::vector,
-            typename AttributeType1_ = Nil,
-            typename AttributeType2_ = Nil,
-            typename AttributeType3_ = Nil,
-            typename AttributeType4_ = Nil>
+            typename StorageType_ = std::vector<IndexType_> >
         class Topology
         {
             public:
                 Topology() :
                     _num_polytopes(0),
-                    _num_attributes(0),
-                    _topology(new OuterStorageType_<StorageType_, std::allocator<StorageType_> >),
-                    _attributes_of_type_1(new OuterAttrStorageType_< //todo just do it if needed
-                    AttrStorageType_<AttributeType1_, std::allocator<AttributeType1_> >,
-                    std::allocator<AttrStorageType_<AttributeType1_, std::allocator<AttributeType1_> > > >)
+                    _topology(new OuterStorageType_<StorageType_, std::allocator<StorageType_> >)
                 {
                 };
 
@@ -70,12 +60,9 @@ namespace honei
 
             private:
                 unsigned long _num_polytopes;
-                unsigned long _num_attributes;
                 OuterStorageType_<StorageType_, std::allocator<StorageType_> >* _topology;
-                OuterAttrStorageType_<
-                    AttrStorageType_<AttributeType1_, std::allocator<AttributeType1_> >, //todo for other types
-                    std::allocator<AttrStorageType_<AttributeType1_, std::allocator<AttributeType1_> > > >* _attributes_of_type_1;
         };
+
     }
 }
 #endif
