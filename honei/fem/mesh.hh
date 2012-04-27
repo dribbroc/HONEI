@@ -83,6 +83,19 @@ namespace honei
                         _inter_topologies[level].push_back();
                 }
 
+                template<typename IndexT_, typename ValueT_>
+                void add_adjacency(unsigned level, IndexT_ polytope_index, ValueT_ value)
+                {
+                    if(level == _i)
+                    {
+                        _element_topology->at(polytope_index).push_back(value);
+                    }
+                    else if(level < _i)
+                    {
+                        _inter_topologies->at(level).at(polytope_index).push_back(value);
+                    }
+                }
+
             private:
                 unsigned _num_inter_topologies;
                 unsigned * _inter_topology_relations;
