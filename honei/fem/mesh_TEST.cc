@@ -48,16 +48,14 @@ class MeshTest:
             adjacencies.push_back(1);
 
             m2.add_polytope(fem::pl_vertex, adjacencies);
+
+            m2.add_element();
+            m2.add_adjacency(fem::pl_face, 0, 1);
         }
 };
 MeshTest<tags::CPU, unsigned long, std::vector, std::vector<unsigned long> > topology_test_cpu_v_v("std::vector, std::vector");
 MeshTest<tags::CPU, unsigned long, std::deque, std::vector<unsigned long> > topology_test_cpu_d_v("std::deque, std::vector");
 MeshTest<tags::CPU, unsigned long, std::vector, std::deque<unsigned long> > topology_test_cpu_v_d("std::vector, std::deque");
 MeshTest<tags::CPU, unsigned long, std::deque, std::deque<unsigned long> > topology_test_cpu_d_d("std::deque, std::deque");
-MeshTest<tags::CPU, unsigned long, std::list, std::vector<unsigned long> > topology_test_cpu_l_v("std::list, std::vector");
-MeshTest<tags::CPU, unsigned long, std::vector, std::list<unsigned long> > topology_test_cpu_v_l("std::vector, std::list");
-MeshTest<tags::CPU, unsigned long, std::list, std::list<unsigned long> > topology_test_cpu_l_l("std::list, std::list");
-MeshTest<tags::CPU, unsigned long, std::deque, std::list<unsigned long> > topology_test_cpu_d_l("std::deque, std::list");
-MeshTest<tags::CPU, unsigned long, std::list, std::deque<unsigned long> > topology_test_cpu_l_d("std::list, std::deque");
 
 //MeshTest<tags::CPU, unsigned long, std::vector, fem::DenseDataWrapper<15, unsigned long> > topology_test_cpu_v_ddw("std::vector, DV");

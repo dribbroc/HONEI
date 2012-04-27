@@ -4,6 +4,7 @@
 #define FEM_GUARD_MESH_HH 1
 
 #include <honei/fem/topology.hh>
+#include <iostream>
 
 namespace honei
 {
@@ -77,22 +78,25 @@ namespace honei
 
                 void add_polytope(unsigned level)
                 {
-                    if(level == _i)
+                    if(level == _i - 1)
                         add_element();
-                    else if(level < _i)
+                    else if(level < _i - 1)
                         _inter_topologies[level].push_back();
                 }
 
                 template<typename IndexT_, typename ValueT_>
                 void add_adjacency(unsigned level, IndexT_ polytope_index, ValueT_ value)
                 {
-                    if(level == _i)
+                    if(level == _i - 1)
                     {
+                        std::cout << "ELEMENT"<< std::endl;
                         _element_topology->at(polytope_index).push_back(value);
                     }
-                    else if(level < _i)
+                    else if(level < _i - 1)
                     {
-                        _inter_topologies->at(level).at(polytope_index).push_back(value);
+                        std::cout << "POLY"<< std::endl;
+                        TopologyType_ & topo = _inter_topologies[level];
+                        topo.at(polytope_index).push_back(value);
                     }
                 }
 
