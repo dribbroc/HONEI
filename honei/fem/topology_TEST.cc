@@ -51,12 +51,5 @@ TopologyTest<tags::CPU, unsigned long, std::vector, std::list<unsigned long> > t
 TopologyTest<tags::CPU, unsigned long, std::list, std::list<unsigned long> > topology_test_cpu_l_l("std::list, std::list");
 TopologyTest<tags::CPU, unsigned long, std::deque, std::list<unsigned long> > topology_test_cpu_d_l("std::deque, std::list");
 TopologyTest<tags::CPU, unsigned long, std::list, std::deque<unsigned long> > topology_test_cpu_l_d("std::list, std::deque");
-TopologyTest<tags::CPU, unsigned long, std::queue, std::queue<unsigned long> > topology_test_cpu_q_q("std::queue, std::queue");
-TopologyTest<tags::CPU, unsigned long, std::deque, std::queue<unsigned long> > topology_test_cpu_d_q("std::deque, std::queue");
-TopologyTest<tags::CPU, unsigned long, std::queue, std::deque<unsigned long> > topology_test_cpu_q_d("std::queue, std::deque");
-TopologyTest<tags::CPU, unsigned long, std::list, std::queue<unsigned long> > topology_test_cpu_l_q("std::list, std::queue");
-TopologyTest<tags::CPU, unsigned long, std::queue, std::list<unsigned long> > topology_test_cpu_q_l("std::queue, std::list");
-TopologyTest<tags::CPU, unsigned long, std::queue, std::vector<unsigned long> > topology_test_cpu_q_v("std::queue, std::vector");
-TopologyTest<tags::CPU, unsigned long, std::vector, std::queue<unsigned long> > topology_test_cpu_v_q("std::vector, std::queue");
 
 TopologyTest<tags::CPU, unsigned long, std::vector, fem::DenseDataWrapper<15, unsigned long> > topology_test_cpu_v_ddw("std::vector, DV");

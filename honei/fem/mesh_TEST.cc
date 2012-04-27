@@ -26,9 +26,28 @@ class MeshTest:
 
         virtual void run() const
         {
-            fem::Mesh<> m(3);
+            fem::Mesh<> m;
 
-            fem::Mesh<fem::Topology<IndexType_, OT_, IT_> > m2(3);
+            fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > m2;
+
+            TEST_CHECK_EQUAL(m.get_inter_topology_relation(0), 2u);
+            TEST_CHECK_EQUAL(m.get_inter_topology_relation(1), 0u);
+            TEST_CHECK_EQUAL(m.get_inter_topology_relation(2), 1u);
+            TEST_CHECK_EQUAL(m2.get_inter_topology_relation(0), 2u);
+            TEST_CHECK_EQUAL(m2.get_inter_topology_relation(1), 0u);
+            TEST_CHECK_EQUAL(m2.get_inter_topology_relation(2), 1u);
+
+            IT_ neighbours;
+            neighbours.push_back(234);
+            neighbours.push_back(546734);
+            neighbours.push_back(2);
+
+            m2.add_element(neighbours);
+
+            IT_ adjacencies;
+            adjacencies.push_back(1);
+
+            m2.add_polytope(fem::pl_vertex, adjacencies);
         }
 };
 MeshTest<tags::CPU, unsigned long, std::vector, std::vector<unsigned long> > topology_test_cpu_v_v("std::vector, std::vector");
@@ -40,12 +59,5 @@ MeshTest<tags::CPU, unsigned long, std::vector, std::list<unsigned long> > topol
 MeshTest<tags::CPU, unsigned long, std::list, std::list<unsigned long> > topology_test_cpu_l_l("std::list, std::list");
 MeshTest<tags::CPU, unsigned long, std::deque, std::list<unsigned long> > topology_test_cpu_d_l("std::deque, std::list");
 MeshTest<tags::CPU, unsigned long, std::list, std::deque<unsigned long> > topology_test_cpu_l_d("std::list, std::deque");
-MeshTest<tags::CPU, unsigned long, std::queue, std::queue<unsigned long> > topology_test_cpu_q_q("std::queue, std::queue");
-MeshTest<tags::CPU, unsigned long, std::deque, std::queue<unsigned long> > topology_test_cpu_d_q("std::deque, std::queue");
-MeshTest<tags::CPU, unsigned long, std::queue, std::deque<unsigned long> > topology_test_cpu_q_d("std::queue, std::deque");
-MeshTest<tags::CPU, unsigned long, std::list, std::queue<unsigned long> > topology_test_cpu_l_q("std::list, std::queue");
-MeshTest<tags::CPU, unsigned long, std::queue, std::list<unsigned long> > topology_test_cpu_q_l("std::queue, std::list");
-MeshTest<tags::CPU, unsigned long, std::queue, std::vector<unsigned long> > topology_test_cpu_q_v("std::queue, std::vector");
-MeshTest<tags::CPU, unsigned long, std::vector, std::queue<unsigned long> > topology_test_cpu_v_q("std::vector, std::queue");
 
-MeshTest<tags::CPU, unsigned long, std::vector, fem::DenseDataWrapper<15, unsigned long> > topology_test_cpu_v_ddw("std::vector, DV");
+//MeshTest<tags::CPU, unsigned long, std::vector, fem::DenseDataWrapper<15, unsigned long> > topology_test_cpu_v_ddw("std::vector, DV");

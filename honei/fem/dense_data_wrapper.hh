@@ -9,7 +9,7 @@ namespace honei
 {
     namespace fem
     {
-        template<int _i, typename DT_, template<typename> class ContType_ = DenseVector>
+        template<unsigned long _i, typename DT_, template<typename> class ContType_ = DenseVector>
         class DenseDataWrapper
         {
             public:
