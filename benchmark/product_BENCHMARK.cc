@@ -650,8 +650,7 @@ SMELLDenseVectorProductBench<tags::GPU::CUDA, float> cudaSMELLDVPBenchfloat_pa7(
 SMELLDenseVectorProductBench<tags::GPU::CUDA, double> cudaSMELLDVPBenchdouble0("CUDA SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, double", 1025ul*1025, 10, "l2/area51_full_2.ell");
 SMELLDenseVectorProductBench<tags::GPU::MultiCore::CUDA, double> mccudaSMELLDVPBenchdouble0("MC CUDA SM 2 ELL Dense Vector Product Benchmark - matrix size: L2, double", 1025ul*1025, 10, "l2/area51_full_2.ell");
 SMELLDenseVectorProductBench<tags::GPU::CUDA, double> cudaSMELLDVPBenchdouble_pa7("CUDA SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, double", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
-//SMELLDenseVectorProductBench<tags::GPU::CUDA, double> cudaSMELLDVPBenchdouble8("CUDA SM 2 ELL Dense Vector Product Benchmark - matrix size: L8, double", 1025ul*1025, 10, "l8/area51_full_2.ell");
-//SMELLDenseVectorProductBench<tags::GPU::MultiCore::CUDA, double> mccudaSMELLDVPBenchdouble8("MC CUDA SM 2 ELL Dense Vector Product Benchmark - matrix size: L8, double", 1025ul*1025, 10, "l8/area51_full_2.ell");
+SMELLDenseVectorProductBench<tags::GPU::MultiCore::CUDA, double> mccudaSMELLDVPBenchdouble_pa7("MC CUDA SM 0 PA ELL Dense Vector Product Benchmark - matrix size: L7, double", 1025ul*1025, 10, "poisson_advanced/sort_0/A_7.ell");
 #endif
 #endif
 #ifdef HONEI_OPENCL

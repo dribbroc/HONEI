@@ -355,7 +355,7 @@ extern "C" void cuda_product_bmdv_q1_double (void * ll, void * ld, void * lu,
 
 extern "C" void cuda_product_smell_dv_float(void * x, void * y, void * Aj, void * Ax, void * Arl,
         unsigned long row_start, unsigned long row_end, unsigned long num_cols_per_row,
-        unsigned long stride, unsigned long blocksize, unsigned long threads)
+        unsigned long stride, unsigned long blocksize, unsigned long threads, cudaStream_t stream)
 {
     dim3 grid;
     dim3 block;
@@ -369,7 +369,7 @@ extern "C" void cuda_product_smell_dv_float(void * x, void * y, void * Aj, void 
     unsigned long * Arl_gpu((unsigned long *)Arl);
 
     cudaBindTexture(NULL, tex_x_float_product, x_gpu);
-    honei::cuda::product_smell_dv_gpu<<<grid, block, block.x * sizeof(float)>>>(x_gpu, y_gpu, Aj_gpu, Ax_gpu, Arl_gpu,
+    honei::cuda::product_smell_dv_gpu<<<grid, block, block.x * sizeof(float), stream>>>(x_gpu, y_gpu, Aj_gpu, Ax_gpu, Arl_gpu,
             row_start, row_end, num_cols_per_row, stride, threads);
     cudaUnbindTexture(tex_x_float_product);
 

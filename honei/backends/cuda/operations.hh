@@ -39,12 +39,12 @@ extern "C"
             unsigned long size, unsigned long blocksize, unsigned long m);
 
     void cuda_defect_smell_dv_float(void * rhs, void * result, void * Aj, void * Ax, void * Arl, void * b,
-            unsigned long rows, unsigned long columns, unsigned long num_cols_per_row, unsigned long stride,
-            unsigned long blocksize, unsigned long threads, cudaStream_t stream = 0);
+            unsigned long row_start, unsigned long row_end, unsigned long num_cols_per_row,
+            unsigned long stride, unsigned long blocksize, unsigned long threads, cudaStream_t stream = 0 );
 
     void cuda_defect_smell_dv_double(void * rhs, void * result, void * Aj, void * Ax, void * Arl, void * b,
-            unsigned long rows, unsigned long columns, unsigned long num_cols_per_row, unsigned long stride,
-            unsigned long blocksize, unsigned long threads, cudaStream_t stream = 0);
+            unsigned long row_start, unsigned long row_end, unsigned long num_cols_per_row,
+            unsigned long stride, unsigned long blocksize, unsigned long threads, cudaStream_t stream = 0 );
 
     void cuda_defect_csr_dv_float(void * rhs, void * result, void * Aj, void * Ax, void * Ar, void * b,
             unsigned long rows, unsigned long atomicsize, unsigned long blocksize, cudaStream_t stream = 0);
@@ -86,7 +86,7 @@ extern "C"
 
     void cuda_product_smell_dv_float(void * x, void * y, void * Aj, void * Ax, void * Arl,
             unsigned long row_start, unsigned long row_end, unsigned long num_cols_per_row,
-            unsigned long stride, unsigned long blocksize, unsigned long threads);
+            unsigned long stride, unsigned long blocksize, unsigned long threads, cudaStream_t stream = 0);
 
     void cuda_product_smell_dv_double(void * x, void * y, void * Aj, void * Ax, void * Arl,
             unsigned long row_start, unsigned long row_end, unsigned long num_cols_per_row,

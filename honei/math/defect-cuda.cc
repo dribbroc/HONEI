@@ -20,9 +20,13 @@
 #include <honei/math/defect.hh>
 #include <honei/backends/cuda/operations.hh>
 #include <honei/backends/cuda/gpu_pool.hh>
+#include <honei/backends/cuda/multi_gpu.hh>
+#include <honei/backends/cuda/transfer.hh>
 #include <honei/util/memory_arbiter.hh>
 #include <honei/util/configuration.hh>
 #include <honei/util/profiler.hh>
+
+#include <cuda_runtime.h>
 
 using namespace honei;
 
@@ -141,13 +145,17 @@ namespace
             const DenseVectorContinuousBase<float> & rhs;
             const SparseMatrixELL<float> & a;
             const DenseVectorContinuousBase<float> & b;
+            unsigned long row_start;
+            unsigned long row_end;
             unsigned long blocksize;
         public:
-            cudaDefectSMELLDVfloat(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & rhs, const SparseMatrixELL<float> & a, const DenseVectorContinuousBase<float> & b, unsigned long blocksize) :
+            cudaDefectSMELLDVfloat(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & rhs, const SparseMatrixELL<float> & a, const DenseVectorContinuousBase<float> & b, unsigned long row_start, unsigned long row_end, unsigned long blocksize) :
                 result(result),
                 rhs(rhs),
                 a(a),
                 b(b),
+                row_start(row_start),
+                row_end(row_end),
                 blocksize(blocksize)
             {
             }
@@ -162,7 +170,7 @@ namespace
                 void * Arl_gpu(a.Arl().lock(lm_read_only, tags::GPU::CUDA::memory_value));
 
                 cuda_defect_smell_dv_float(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Arl_gpu, b_gpu,
-                        a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), blocksize, a.threads());
+                        row_start, row_end, a.num_cols_per_row(), a.stride(), blocksize, a.threads());
 
                 result.unlock(lm_write_only);
                 rhs.unlock(lm_read_only);
@@ -180,13 +188,17 @@ namespace
             const DenseVectorContinuousBase<double> & rhs;
             const SparseMatrixELL<double> & a;
             const DenseVectorContinuousBase<double> & b;
+            unsigned long row_start;
+            unsigned long row_end;
             unsigned long blocksize;
         public:
-            cudaDefectSMELLDVdouble(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & rhs, const SparseMatrixELL<double> & a, const DenseVectorContinuousBase<double> & b, unsigned long blocksize) :
+            cudaDefectSMELLDVdouble(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & rhs, const SparseMatrixELL<double> & a, const DenseVectorContinuousBase<double> & b, unsigned long row_start, unsigned long row_end, unsigned long blocksize) :
                 result(result),
                 rhs(rhs),
                 a(a),
                 b(b),
+                row_start(row_start),
+                row_end(row_end),
                 blocksize(blocksize)
             {
             }
@@ -201,11 +213,93 @@ namespace
                 void * Arl_gpu(a.Arl().lock(lm_read_only, tags::GPU::CUDA::memory_value));
 
                 cuda_defect_smell_dv_double(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Arl_gpu, b_gpu,
-                        a.rows(), a.columns(), a.num_cols_per_row(), a.stride(), blocksize, a.threads());
+                        row_start, row_end, a.num_cols_per_row(), a.stride(), blocksize, a.threads());
 
                 result.unlock(lm_write_only);
                 rhs.unlock(lm_read_only);
                 b.unlock(lm_read_only);
+                a.Aj().unlock(lm_read_only);
+                a.Ax().unlock(lm_read_only);
+                a.Arl().unlock(lm_read_only);
+            }
+    };
+
+    class MCcudaDefectSMELLDVfloat
+    {
+        private:
+            DenseVectorContinuousBase<float> & result;
+            const DenseVectorContinuousBase<float> & rhs;
+            const SparseMatrixELL<float> & a;
+            void * b;
+            unsigned long row_start;
+            unsigned long row_end;
+            unsigned long blocksize;
+        public:
+            MCcudaDefectSMELLDVfloat(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & rhs, const SparseMatrixELL<float> & a, void * b, unsigned long row_start, unsigned long row_end, unsigned long blocksize) :
+                result(result),
+                rhs(rhs),
+                a(a),
+                b(b),
+                row_start(row_start),
+                row_end(row_end),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * rhs_gpu(rhs.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * Aj_gpu(a.Aj().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * Ax_gpu(a.Ax().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * Arl_gpu(a.Arl().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                cuda_defect_smell_dv_float(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Arl_gpu, b,
+                        row_start, row_end, a.num_cols_per_row(), a.stride(), blocksize, a.threads());
+
+                result.unlock(lm_write_only);
+                rhs.unlock(lm_read_only);
+                a.Aj().unlock(lm_read_only);
+                a.Ax().unlock(lm_read_only);
+                a.Arl().unlock(lm_read_only);
+            }
+    };
+
+    class MCcudaDefectSMELLDVdouble
+    {
+        private:
+            DenseVectorContinuousBase<double> & result;
+            const DenseVectorContinuousBase<double> & rhs;
+            const SparseMatrixELL<double> & a;
+            void * b;
+            unsigned long row_start;
+            unsigned long row_end;
+            unsigned long blocksize;
+        public:
+            MCcudaDefectSMELLDVdouble(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & rhs, const SparseMatrixELL<double> & a, void * b, unsigned long row_start, unsigned long row_end, unsigned long blocksize) :
+                result(result),
+                rhs(rhs),
+                a(a),
+                b(b),
+                row_start(row_start),
+                row_end(row_end),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                void * rhs_gpu(rhs.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * result_gpu(result.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * Aj_gpu(a.Aj().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * Ax_gpu(a.Ax().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * Arl_gpu(a.Arl().lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                cuda_defect_smell_dv_double(rhs_gpu, result_gpu, Aj_gpu, Ax_gpu, Arl_gpu, b,
+                        row_start, row_end, a.num_cols_per_row(), a.stride(), blocksize, a.threads());
+
+                result.unlock(lm_write_only);
+                rhs.unlock(lm_read_only);
                 a.Aj().unlock(lm_read_only);
                 a.Ax().unlock(lm_read_only);
                 a.Arl().unlock(lm_read_only);
@@ -448,12 +542,12 @@ DenseVector<float> Defect<tags::GPU::CUDA>::value(const DenseVectorContinuousBas
 
     if (! cuda::GPUPool::instance()->idle())
     {
-        cudaDefectSMELLDVfloat task(result, rhs, a, b, blocksize);
+        cudaDefectSMELLDVfloat task(result, rhs, a, b, 0, a.rows(), blocksize);
         task();
     }
     else
     {
-        cudaDefectSMELLDVfloat task(result, rhs, a, b, blocksize);
+        cudaDefectSMELLDVfloat task(result, rhs, a, b, 0, a.rows(), blocksize);
         cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
@@ -483,12 +577,12 @@ DenseVector<double> Defect<tags::GPU::CUDA>::value(const DenseVectorContinuousBa
 
     if (! cuda::GPUPool::instance()->idle())
     {
-        cudaDefectSMELLDVdouble task(result, rhs, a, b, blocksize);
+        cudaDefectSMELLDVdouble task(result, rhs, a, b, 0, a.rows(), blocksize);
         task();
     }
     else
     {
-        cudaDefectSMELLDVdouble task(result, rhs, a, b, blocksize);
+        cudaDefectSMELLDVdouble task(result, rhs, a, b, 0, a.rows(), blocksize);
         cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
@@ -517,12 +611,12 @@ DenseVectorContinuousBase<float> & Defect<tags::GPU::CUDA>::value(DenseVectorCon
 
     if (! cuda::GPUPool::instance()->idle())
     {
-        cudaDefectSMELLDVfloat task(result, rhs, a, b, blocksize);
+        cudaDefectSMELLDVfloat task(result, rhs, a, b, 0, a.rows(), blocksize);
         task();
     }
     else
     {
-        cudaDefectSMELLDVfloat task(result, rhs, a, b, blocksize);
+        cudaDefectSMELLDVfloat task(result, rhs, a, b, 0, a.rows(), blocksize);
         cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
@@ -551,12 +645,12 @@ DenseVectorContinuousBase<double> & Defect<tags::GPU::CUDA>::value(DenseVectorCo
 
     if (! cuda::GPUPool::instance()->idle())
     {
-        cudaDefectSMELLDVdouble task(result, rhs, a, b, blocksize);
+        cudaDefectSMELLDVdouble task(result, rhs, a, b, 0, a.rows(), blocksize);
         task();
     }
     else
     {
-        cudaDefectSMELLDVdouble task(result, rhs, a, b, blocksize);
+        cudaDefectSMELLDVdouble task(result, rhs, a, b, 0, a.rows(), blocksize);
         cuda::GPUPool::instance()->enqueue(task, 0).wait();
     }
 
@@ -628,5 +722,175 @@ DenseVectorContinuousBase<double> & Defect<tags::GPU::CUDA>::value(DenseVectorCo
     }
 
     return result;
+}
+#endif
+
+DenseVectorContinuousBase<float> & Defect<tags::GPU::MultiCore::CUDA>::value(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & rhs,
+        const SparseMatrixELL<float> & a,
+        const DenseVectorContinuousBase<float> & b)
+{
+    CONTEXT("When calculating Defect<float> (CUDA):");
+
+    if (b.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+    }
+    if (rhs.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(rhs.size(), a.columns());
+    }
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_float", 128ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        throw InternalError("You should not run this operation within any MC CUDA op!");
+        return result;
+    }
+    else
+    {
+        if (cuda::GPUPool::instance()->get_num_gpus() > 1)
+        {
+            //erst liegen in jeder gpu die hälfte von b vor.
+            //es muss zunächst das ganze b in jede gpu gepackt werden
+            //und am ende wieder das b halbiert werden | ich fasse die b haelften nur lesend an, ist also nicht nötig
+            DenseVectorRange<float> b1(b.range(b.size()/2, 0));
+            DenseVectorRange<float> b2(b.range(b.size()/2 + b.size()%2, b.size()/2));
+
+            cuda_set_device(0);
+            void * whole_b_1 = cuda_malloc(b.size() * sizeof(float));
+            void * whole_b_1_2 = (float*)whole_b_1 + b1.size();
+            cudaMemcpy(whole_b_1, b1.lock(lm_read_only, tags::GPU::CUDA::memory_value), b1.size() * sizeof(float), cudaMemcpyDeviceToDevice);
+            b1.unlock(lm_read_only);
+
+            cuda_set_device(1);
+            void * whole_b_2 = cuda_malloc(b.size() * sizeof(float));
+            void * whole_b_2_2 = (float *)whole_b_2 + (b1.size());
+
+            cudaMemcpy(whole_b_2_2 , b2.lock(lm_read_only, tags::GPU::CUDA::memory_value), b2.size() * sizeof(float), cudaMemcpyDeviceToDevice);
+            b2.unlock(lm_read_only);
+
+            cuda_set_device(0);
+            cudaMemcpyPeer(whole_b_2, 1, whole_b_1, 0, b1.size() * sizeof(float));
+            cudaMemcpyPeer(whole_b_1_2, 0, whole_b_2_2, 1, b2.size() * sizeof(float));
+
+            DenseVectorRange<float> result1(result.range(result.size()/2, 0));
+            DenseVectorRange<float> result2(result.range(result.size()/2 + result.size()%2, result.size()/2));
+            DenseVectorRange<float> rhs1(rhs.range(rhs.size()/2, 0));
+            DenseVectorRange<float> rhs2(rhs.range(rhs.size()/2 + rhs.size()%2, rhs.size()/2));
+            MCcudaDefectSMELLDVfloat task1(result1, rhs1, a, whole_b_1, 0, result1.size(), blocksize);
+            MCcudaDefectSMELLDVfloat task2(result2, rhs2, a, whole_b_2, result1.size(), a.rows(), blocksize);
+            TicketVector tickets;
+            tickets.push_back(cuda::GPUPool::instance()->enqueue(task1, 0));
+            tickets.push_back(cuda::GPUPool::instance()->enqueue(task2, 1));
+            tickets.wait();
+
+            cuda_free(whole_b_1);
+            cuda_free(whole_b_2);
+            return result;
+        }
+        else
+        {
+            //todo DIRK remove lock hack
+            b.lock(lm_read_and_write);
+            b.unlock(lm_read_and_write);
+            DenseVectorRange<float> result1(result.range(result.size()/2, 0));
+            DenseVectorRange<float> rhs1(rhs.range(rhs.size()/2, 0));
+            cudaDefectSMELLDVfloat task1(result1, rhs1, a, b, 0, result1.size(), blocksize);
+            DenseVectorRange<float> result2(result.range(result.size()/2 + result.size()%2, result.size()/2));
+            DenseVectorRange<float> rhs2(rhs.range(rhs.size()/2 + rhs.size()%2, rhs.size()/2));
+            cudaDefectSMELLDVfloat task2(result2, rhs2, a, b, result1.size(), a.rows(), blocksize);
+            cuda::GPUPool::instance()->enqueue(task1, 0).wait();
+            cuda::GPUPool::instance()->enqueue(task2, 1).wait();
+            b.lock(lm_read_and_write);
+            b.unlock(lm_read_and_write);
+            return result;
+        }
+    }
+}
+
+#ifdef HONEI_CUDA_DOUBLE
+DenseVectorContinuousBase<double> & Defect<tags::GPU::MultiCore::CUDA>::value(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & rhs,
+        const SparseMatrixELL<double> & a,
+        const DenseVectorContinuousBase<double> & b)
+{
+    CONTEXT("When calculating Defect<double> (CUDA):");
+
+    if (b.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(b.size(), a.columns());
+    }
+    if (rhs.size() != a.columns())
+    {
+        throw VectorSizeDoesNotMatch(rhs.size(), a.columns());
+    }
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::product_smell_dv_double", 128ul));
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        throw InternalError("You should not run this operation within any MC CUDA op!");
+        return result;
+    }
+    else
+    {
+        if (cuda::GPUPool::instance()->get_num_gpus() > 1)
+        {
+            //erst liegen in jeder gpu die hälfte von b vor.
+            //es muss zunächst das ganze b in jede gpu gepackt werden
+            //und am ende wieder das b halbiert werden | ich fasse die b haelften nur lesend an, ist also nicht nötig
+            DenseVectorRange<double> b1(b.range(b.size()/2, 0));
+            DenseVectorRange<double> b2(b.range(b.size()/2 + b.size()%2, b.size()/2));
+
+            cuda_set_device(0);
+            void * whole_b_1 = cuda_malloc(b.size() * sizeof(double));
+            void * whole_b_1_2 = (double*)whole_b_1 + b1.size();
+            cudaMemcpy(whole_b_1, b1.lock(lm_read_only, tags::GPU::CUDA::memory_value), b1.size() * sizeof(double), cudaMemcpyDeviceToDevice);
+            b1.unlock(lm_read_only);
+
+            cuda_set_device(1);
+            void * whole_b_2 = cuda_malloc(b.size() * sizeof(double));
+            void * whole_b_2_2 = (double *)whole_b_2 + (b1.size());
+
+            cudaMemcpy(whole_b_2_2 , b2.lock(lm_read_only, tags::GPU::CUDA::memory_value), b2.size() * sizeof(double), cudaMemcpyDeviceToDevice);
+            b2.unlock(lm_read_only);
+
+            cuda_set_device(0);
+            cudaMemcpyPeer(whole_b_2, 1, whole_b_1, 0, b1.size() * sizeof(double));
+            cudaMemcpyPeer(whole_b_1_2, 0, whole_b_2_2, 1, b2.size() * sizeof(double));
+
+            DenseVectorRange<double> result1(result.range(result.size()/2, 0));
+            DenseVectorRange<double> result2(result.range(result.size()/2 + result.size()%2, result.size()/2));
+            DenseVectorRange<double> rhs1(rhs.range(rhs.size()/2, 0));
+            DenseVectorRange<double> rhs2(rhs.range(rhs.size()/2 + rhs.size()%2, rhs.size()/2));
+            MCcudaDefectSMELLDVdouble task1(result1, rhs1, a, whole_b_1, 0, result1.size(), blocksize);
+            MCcudaDefectSMELLDVdouble task2(result2, rhs2, a, whole_b_2, result1.size(), a.rows(), blocksize);
+            TicketVector tickets;
+            tickets.push_back(cuda::GPUPool::instance()->enqueue(task1, 0));
+            tickets.push_back(cuda::GPUPool::instance()->enqueue(task2, 1));
+            tickets.wait();
+
+            cuda_free(whole_b_1);
+            cuda_free(whole_b_2);
+            return result;
+        }
+        else
+        {
+            //todo DIRK remove lock hack
+            b.lock(lm_read_and_write);
+            b.unlock(lm_read_and_write);
+            DenseVectorRange<double> result1(result.range(result.size()/2, 0));
+            DenseVectorRange<double> rhs1(rhs.range(rhs.size()/2, 0));
+            cudaDefectSMELLDVdouble task1(result1, rhs1, a, b, 0, result1.size(), blocksize);
+            DenseVectorRange<double> result2(result.range(result.size()/2 + result.size()%2, result.size()/2));
+            DenseVectorRange<double> rhs2(rhs.range(rhs.size()/2 + rhs.size()%2, rhs.size()/2));
+            cudaDefectSMELLDVdouble task2(result2, rhs2, a, b, result1.size(), a.rows(), blocksize);
+            cuda::GPUPool::instance()->enqueue(task1, 0).wait();
+            cuda::GPUPool::instance()->enqueue(task2, 1).wait();
+            b.lock(lm_read_and_write);
+            b.unlock(lm_read_and_write);
+            return result;
+        }
+    }
 }
 #endif

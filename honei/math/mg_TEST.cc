@@ -376,6 +376,7 @@ MGSolverTest<tags::CPU::MultiCore::SSE, double> mcsse_mg_solver_test_cpu_4("doub
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
 MGSolverTest<tags::GPU::CUDA, double> mg_solver_test_gpu_4("double", "poisson_advanced4/sort_0/");
+MGSolverTest<tags::GPU::MultiCore::CUDA, double> mg_solver_test_mcgpu_4("double", "poisson_advanced4/sort_0/");
 #endif
 #endif
 #ifdef HONEI_OPENCL

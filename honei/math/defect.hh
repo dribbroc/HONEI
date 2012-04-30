@@ -814,25 +814,12 @@ namespace honei
                         return result;
                     }
 
-                template<typename DT_>
-                    static DenseVector<DT_> & value(DenseVector<DT_> & result, DenseVector<DT_> & right_hand_side, SparseMatrixELL<DT_> & system, DenseVector<DT_> & x)
-                    {
-                        if (x.size() != system.columns())
-                        {
-                            throw VectorSizeDoesNotMatch(x.size(), system.columns());
-                        }
-                        if (right_hand_side.size() != system.columns())
-                        {
-                            throw VectorSizeDoesNotMatch(right_hand_side.size(), system.columns());
-                        }
+                static DenseVectorContinuousBase<float> & value(DenseVectorContinuousBase<float> & result, const DenseVectorContinuousBase<float> & right_hand_side, const SparseMatrixELL<float> & system, const DenseVectorContinuousBase<float> & x);
 
-                        DenseVector<DT_> temp(right_hand_side.size());
-                        Product<tags::GPU::MultiCore::CUDA>::value(temp, system, x);
-                        Difference<tags::GPU::MultiCore::CUDA>::value(result, right_hand_side, temp);
+                static DenseVectorContinuousBase<double> & value(DenseVectorContinuousBase<double> & result, const DenseVectorContinuousBase<double> & right_hand_side, const SparseMatrixELL<double> & system, const DenseVectorContinuousBase<double> & x);
 
-                        return result;
-                    }
         };
+
 
     template<>
         struct Defect<tags::CPU::MultiCore>
