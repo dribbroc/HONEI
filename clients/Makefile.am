@@ -13,4 +13,4 @@ if MPI
   MPIDIR = mpi
 endif
 
-SUBDIRS = $(VISUALDIR) $(MPIDIR) $(HQTDIR) config io_tools fortran mg_opt
+SUBDIRS = $(VISUALDIR) $(MPIDIR) $(HQTDIR) config io_tools fortran mg_opt poski
