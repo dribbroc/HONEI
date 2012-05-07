@@ -6,10 +6,19 @@ MAINTAINERCLEANFILES = Makefile.in
 DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \
+	$(OPENCLDEF) \
+	$(ITANIUMDEF) \
 	$(CUDADEF) \
+	$(CUDA_DOUBLEDEF) \
+	$(CUBLASDEF) \
 	$(DEBUGDEF) \
 	$(BOOSTDEF) \
-	$(PROFILERDEF)
+	$(PROFILERDEF) \
+	$(DUNEDEF) \
+	$(MPIDEF) \
+	$(GMPDEF) \
+	-DHONEI_SOURCEDIR='"$(top_srcdir)"' \
+	-DHONEI_BUILDDIR='"$(top_builddir)"'
 
 BACKEND_LIBS = \
        $(top_builddir)/honei/backends/multicore/libhoneibackendsmulticore.la
@@ -55,6 +64,13 @@ BACKEND_LIBS += \
 
 endif
 
+if MPI
+
+BACKEND_LIBS += \
+	$(top_builddir)/honei/backends/mpi/libhoneibackendsmpi.la
+
+endif
+
 OSKILIB = /home/user/dribbroc/nobackup/poski/lib/oski
 OSKILIB_SHARED = -I/home/user/dribbroc/nobackup/oski/include -Wl,-rpath -Wl,$(OSKILIB) -L$(OSKILIB) \
 		 `cat $(OSKILIB)/site-modules-shared.txt` -loski
@@ -66,7 +82,7 @@ bin_PROGRAMS = poski
 poski_SOURCES = poski.cc
 poski_CXXFLAGS = -I/home/user/dribbroc/nobackup/poski/include -fopenmp
 poski_LDFLAGS = \
-	$(OSKILIB_SHARED) $(POSKILIB_SHARED) -lm
+	$(OSKILIB_SHARED) $(POSKILIB_SHARED) -lm -fopenmp
 poski_LDADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/la/libhoneila.la \

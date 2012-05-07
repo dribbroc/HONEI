@@ -126,6 +126,8 @@ namespace honei
             }
             Ar[src.rows()] = gi;
             used_elements = ue;
+            if (ue != Aj.size())
+                throw InternalError("non zero count mismatch!");
 
             DenseVector<DataType_> axt(Axv.size());
             Ax = axt;

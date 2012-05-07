@@ -14,7 +14,7 @@ log::output = /dev/null
 ell::threads = 1
 
 #csr atomic 1-d blocksize, pick 1 for classic csr configuration
-csr:blocksize = 2
+csr::blocksize = 2
 
 # MPI
 # Min Part size for rows and columns in matrix and vector
