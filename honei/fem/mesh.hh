@@ -44,27 +44,14 @@ namespace honei
                 Mesh() :
                     _num_inter_topologies(_i),
                     _num_levels((unsigned)(_i/2u) + 1u),
-                    //_inter_topology_relations(new unsigned[_i]),
                     _topologies(new TopologyType_[_i])
                 {
-                    //implements a ring of topologies
-                    /*const unsigned i_end(_i);
-                    for(unsigned i(0) ; i < i_end ; ++i)
-                    {
-                        _inter_topology_relations[i] = i == 0 ? _i - 1 : i - 1;
-                    }*/
                 }
 
                 ~Mesh()
                 {
                     delete[] _topologies;
-                    //delete[] _inter_topology_relations;
                 }
-
-                /*unsigned get_inter_topology_relation(unsigned i)
-                {
-                    return _inter_topology_relations[i];
-                }*/
 
                 void add_polytope(const unsigned level)
                 {
@@ -241,7 +228,6 @@ namespace honei
             private:
                 const unsigned _num_inter_topologies;
                 const unsigned _num_levels;
-                //unsigned * _inter_topology_relations;
                 TopologyType_* _topologies;
 
                 inline const unsigned _level_difference(const unsigned from, const unsigned to)
