@@ -10,4 +10,5 @@ dnl on this file at present...
 
 add(`dense_data_wrapper',           `hh')
 add(`mesh',                         `hh', `test')
+add(`mesh_error',                   `hh', `cc')
 add(`topology',                     `hh', `test')
