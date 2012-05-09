@@ -43,6 +43,11 @@
 #include <list>
 //#include <netdb.h>
 
+#include <time.h>
+
+time_t now;
+struct tm * current;
+
 namespace honei
 {
     template <typename DataType_>
@@ -75,6 +80,12 @@ namespace honei
                 mpi::mpi_init(&argc, &argv);
                 mpi::mpi_comm_size(&_numprocs);
                 mpi::mpi_comm_rank(&_myid);
+
+                time(&now);
+                current = localtime(&now);
+                if (_myid == 0)
+                    std::cout<<"[time] Start:"<<current->tm_hour<<":"<<current->tm_min<<":"<<current->tm_sec<<std::endl;
+
                 _gpu_device = 0;
                 _sync_time_up = 0;
                 _sync_time_down = 0;
@@ -151,6 +162,11 @@ namespace honei
 
                 PackedGridData<D2Q9, DataType_>  data_global;
                 PackedGridInfo<D2Q9> info_global;
+
+                time(&now);
+                current = localtime(&now);
+                if (_myid == 0)
+                    std::cout<<"[time] Assembly:"<<current->tm_hour<<":"<<current->tm_min<<":"<<current->tm_sec<<std::endl;
 
                 GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_global, info_global, data_global, false);
                 std::vector<PackedGridInfo<D2Q9> > info_list;
@@ -234,6 +250,10 @@ namespace honei
                 //PostProcessing<output_types::GNUPLOT>::value(*grid_global.h, 1, grid_global.h->columns(), grid_global.h->rows(), 101);
                 // Preproc finished
                 // start timesteps
+                time(&now);
+                current = localtime(&now);
+                if (_myid == 0)
+                    std::cout<<"[time] Solving:"<<current->tm_hour<<":"<<current->tm_min<<":"<<current->tm_sec<<std::endl;
                 TimeStamp at, bt;
                 at.take();
                 for(unsigned long i(0); i < timesteps; ++i)
@@ -263,6 +283,10 @@ namespace honei
                 //std::cout<<_mycartid << " (" << _device_name << "): up "<<_sync_time_up<<" down "<<_sync_time_down<<std::endl;
                 MPI_Barrier(MPI_COMM_WORLD);
                 bt.take();
+                time(&now);
+                current = localtime(&now);
+                if (_myid == 0)
+                    std::cout<<"[time] Shutdown:"<<current->tm_hour<<":"<<current->tm_min<<":"<<current->tm_sec<<std::endl;
                 solver->do_postprocessing();
                 std::cout<<"Timesteps: " << timesteps << " TOE: "<<bt.total() - at.total()<<std::endl;
                 std::cout<<"MLUPS: "<< (double(grid_global.h->rows()) * double(grid_global.h->columns()) * double(timesteps)) / (1e6 * (bt.total() - at.total())) <<std::endl;
