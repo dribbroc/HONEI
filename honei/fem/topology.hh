@@ -21,7 +21,7 @@ namespace honei
             public:
                 typedef IndexType_ index_type_;
                 typedef StorageType_ storage_type_;
-                typedef OuterStorageType_<StorageType_, std::allocator<StorageType_> > outer_storage_type_;
+                typedef OuterStorageType_<StorageType_, std::allocator<StorageType_> > compound_storage_type_;
 
                 Topology() :
                     _num_polytopes(0),

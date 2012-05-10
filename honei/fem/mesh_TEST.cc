@@ -51,8 +51,13 @@ class MeshTest:
             //   3--4--5     *--*--*
             //    5  6
 
-            //add vertices
             fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > m3;
+
+            //configure attribute
+            unsigned my_attribute(fem::MeshAttributeRegistration<fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> >, double>::execute(m3, fem::pl_vertex));
+            std::cout << my_attribute << std::endl;
+
+            //add vertices
             m3.add_polytope(fem::pl_vertex);
             m3.add_polytope(fem::pl_vertex);
             m3.add_polytope(fem::pl_vertex);

@@ -12,6 +12,35 @@ namespace honei
 {
     namespace fem
     {
+        template<typename MeshType_, typename ExplicitType_>
+        class MeshAttributeRegistration
+        {
+        };
+
+        template<typename MeshType_>
+        class MeshAttributeRegistration<MeshType_, typename MeshType_::attr_type_1_>
+        {
+            public:
+                static unsigned execute(MeshType_ & mesh, const unsigned polytope_level)
+                {
+                    mesh._attribute_polytopelevel_relations_1->push_back(polytope_level);
+                    ++mesh._num_attributes_of_type_1;
+                    return mesh._num_attributes_of_type_1 - 1;
+                }
+        };
+
+        template<typename MeshType_>
+            class MeshAttributeRegistration<MeshType_, typename MeshType_::attr_type_2_>
+            {
+                public:
+                static unsigned execute(MeshType_ & mesh, const unsigned polytope_level)
+                {
+                    mesh._attribute_polytopelevel_relations_2->push_back(polytope_level);
+                    ++mesh._num_attributes_of_type_2;
+                    return mesh._num_attributes_of_type_2 - 1;
+                }
+        };
+
         enum RequiredNumTopologies
         {
             rnt_1D = 2,
@@ -37,14 +66,49 @@ namespace honei
             ipi_polyhedron_face
         };
 
-        template<RequiredNumTopologies _i = rnt_2D, typename TopologyType_ = Topology<> >
+        template<RequiredNumTopologies _i = rnt_2D,
+                 typename TopologyType_ = Topology<>,
+                 template<typename, typename> class AttributeStorageType_ = std::vector,
+                 template<typename, typename> class OuterAttributeStorageType_ = std::vector,
+                 typename AttributeType1_ = double,
+                 typename AttributeType2_ = unsigned long>
         class Mesh
         {
             public:
+                friend class MeshAttributeRegistration< Mesh<_i, TopologyType_, AttributeStorageType_, OuterAttributeStorageType_, AttributeType1_, AttributeType2_>, AttributeType1_>;
+                friend class MeshAttributeRegistration< Mesh<_i, TopologyType_, AttributeStorageType_, OuterAttributeStorageType_, AttributeType1_, AttributeType2_>, AttributeType2_>;
+
+                typedef AttributeType1_ attr_type_1_;
+                typedef AttributeType2_ attr_type_2_;
+
+                typedef typename TopologyType_::storage_type_ topology_storage_type_;
+
                 Mesh() :
                     _num_inter_topologies(_i),
                     _num_levels((unsigned)(_i/2u) + 1u),
-                    _topologies(new TopologyType_[_i])
+                    _topologies(new TopologyType_[_i]),
+                    _num_attributes_of_type_1(0),
+                    _num_attributes_of_type_2(0),
+                    _attribute_polytopelevel_relations_1(new typename TopologyType_::storage_type_),
+                    _attribute_polytopelevel_relations_2(new typename TopologyType_::storage_type_),
+                    _attributes_of_type_1(new OuterAttributeStorageType_<
+                                            AttributeStorageType_<
+                                                AttributeType1_,
+                                                std::allocator<AttributeType1_> >,
+                                            std::allocator<
+                                                AttributeStorageType_<
+                                                    AttributeType1_,
+                                                    std::allocator<AttributeType1_>
+                                            > > >),
+                    _attributes_of_type_2(new OuterAttributeStorageType_<
+                                            AttributeStorageType_<
+                                                AttributeType2_,
+                                                std::allocator<AttributeType2_> >,
+                                            std::allocator<
+                                                AttributeStorageType_<
+                                                    AttributeType2_,
+                                                    std::allocator<AttributeType2_>
+                                            > > >)
                 {
                 }
 
@@ -130,7 +194,7 @@ namespace honei
                     const unsigned level_diff(_level_difference(from_level, to_level));
                     const unsigned path_length(level_diff + 1);
                     unsigned current_level(from_level);
-                    typename TopologyType_::outer_storage_type_ search_data;
+                    typename TopologyType_::compound_storage_type_ search_data;
 
 
                     if(level_diff == 0u) //we can directly give the neighbours
@@ -225,10 +289,90 @@ namespace honei
                     return _upward_index(pl);
                 }
 
+                template<typename AT_>
+                void set_attribute_value(const unsigned attribute_index, const typename TopologyType_::index_type_ index, const AT_ value)
+                {
+                    if(typeid(AT_) == typeid(AttributeType1_))
+                    {
+#ifdef FEM_MESH_DEBUG
+                        if(_num_attributes_of_type_1 == 0)
+                            throw MeshInternalIndexOutOfBounds(attribute_index, 0);
+#endif
+                        if(attribute_index < _num_attributes_of_type_1)
+                        {
+                            _attributes_of_type_1->at(attribute_index).at(index) = value;
+                        }
+                    }
+                    else if(typeid(AT_) == typeid(AttributeType2_))
+                    {
+#ifdef FEM_MESH_DEBUG
+                        if(_num_attributes_of_type_2 == 0)
+                            throw MeshInternalIndexOutOfBounds(attribute_index, 0);
+#endif
+                        if(attribute_index < _num_attributes_of_type_2)
+                        {
+                            _attributes_of_type_2->at(attribute_index).at(index) = value;
+                        }
+                    }
+                    //todo catch index out of bounds
+                }
+
+                template<typename AT_>
+                void add_attribute_value(const unsigned attribute_index, const AT_ value)
+                {
+                    if(typeid(AT_) == typeid(AttributeType1_))
+                    {
+#ifdef FEM_MESH_DEBUG
+                        if(_num_attributes_of_type_1 == 0)
+                            throw MeshInternalIndexOutOfBounds(attribute_index, 0);
+#endif
+                        if(attribute_index < _num_attributes_of_type_1)
+                        {
+                            _attributes_of_type_1->at(attribute_index).push_back(value);
+                        }
+                    }
+                    else if(typeid(AT_) == typeid(AttributeType2_))
+                    {
+#ifdef FEM_MESH_DEBUG
+                        if(_num_attributes_of_type_2 == 0)
+                            throw MeshInternalIndexOutOfBounds(attribute_index, 0);
+#endif
+                        if(attribute_index < _num_attributes_of_type_2)
+                        {
+                            _attributes_of_type_2->at(attribute_index).push_back(value);
+                        }
+                    }
+                }
+
             private:
                 const unsigned _num_inter_topologies;
                 const unsigned _num_levels;
                 TopologyType_* _topologies;
+
+                unsigned _num_attributes_of_type_1;
+                unsigned _num_attributes_of_type_2;
+                typename TopologyType_::storage_type_ * _attribute_polytopelevel_relations_1;
+                typename TopologyType_::storage_type_ * _attribute_polytopelevel_relations_2;
+
+                OuterAttributeStorageType_<
+                    AttributeStorageType_<
+                        AttributeType1_,
+                        std::allocator<AttributeType1_> >,
+                    std::allocator<
+                            AttributeStorageType_<
+                                AttributeType1_,
+                                std::allocator<AttributeType1_>
+                > > >* _attributes_of_type_1;
+
+                OuterAttributeStorageType_<
+                    AttributeStorageType_<
+                        AttributeType2_,
+                        std::allocator<AttributeType2_> >,
+                    std::allocator<
+                            AttributeStorageType_<
+                                AttributeType2_,
+                                std::allocator<AttributeType2_>
+                > > >* _attributes_of_type_2;
 
                 inline const unsigned _level_difference(const unsigned from, const unsigned to)
                 {
