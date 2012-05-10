@@ -64,6 +64,12 @@ class MeshTest:
             m3.add_polytope(fem::pl_vertex);
             m3.add_polytope(fem::pl_vertex);
             m3.add_polytope(fem::pl_vertex);
+            m3.add_attribute_value(0u, double(0));
+            m3.add_attribute_value(0u, double(0.5));
+            m3.add_attribute_value(0u, double(1));
+            m3.add_attribute_value(0u, double(0));
+            m3.add_attribute_value(0u, double(0.5));
+            m3.add_attribute_value(0u, double(1));
 
             //add edges
             m3.add_polytope(fem::pl_edge);

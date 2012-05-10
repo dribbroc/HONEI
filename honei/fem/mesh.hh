@@ -30,9 +30,9 @@ namespace honei
         };
 
         template<typename MeshType_>
-            class MeshAttributeRegistration<MeshType_, typename MeshType_::attr_type_2_>
-            {
-                public:
+        class MeshAttributeRegistration<MeshType_, typename MeshType_::attr_type_2_>
+        {
+            public:
                 static unsigned execute(MeshType_ & mesh, const unsigned polytope_level)
                 {
                     mesh._attribute_polytopelevel_relations_2->push_back(polytope_level);
