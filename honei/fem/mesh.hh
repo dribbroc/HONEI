@@ -23,7 +23,10 @@ namespace honei
             public:
                 static unsigned execute(MeshType_ & mesh, const unsigned polytope_level)
                 {
+                    typename MeshType_::attribute_storage_type_1_ storage;
+                    mesh._attributes_of_type_1->push_back(storage);
                     mesh._attribute_polytopelevel_relations_1->push_back(polytope_level);
+
                     ++mesh._num_attributes_of_type_1;
                     return mesh._num_attributes_of_type_1 - 1;
                 }
@@ -35,7 +38,10 @@ namespace honei
             public:
                 static unsigned execute(MeshType_ & mesh, const unsigned polytope_level)
                 {
+                    typename MeshType_::attribute_storage_type_2_ storage;
+                    mesh._attributes_of_type_2->push_back(storage);
                     mesh._attribute_polytopelevel_relations_2->push_back(polytope_level);
+
                     ++mesh._num_attributes_of_type_2;
                     return mesh._num_attributes_of_type_2 - 1;
                 }
@@ -81,7 +87,33 @@ namespace honei
                 typedef AttributeType1_ attr_type_1_;
                 typedef AttributeType2_ attr_type_2_;
 
-                typedef typename TopologyType_::storage_type_ topology_storage_type_;
+                typedef OuterAttributeStorageType_<
+                    AttributeStorageType_<
+                        AttributeType1_,
+                        std::allocator<AttributeType1_> >,
+                    std::allocator<
+                            AttributeStorageType_<
+                                AttributeType1_,
+                                std::allocator<AttributeType1_>
+                > > > outer_attribute_storage_type_1_;
+
+                typedef OuterAttributeStorageType_<
+                    AttributeStorageType_<
+                        AttributeType2_,
+                        std::allocator<AttributeType2_> >,
+                    std::allocator<
+                            AttributeStorageType_<
+                                AttributeType2_,
+                                std::allocator<AttributeType2_>
+                > > > outer_attribute_storage_type_2_;
+
+                typedef AttributeStorageType_<
+                            AttributeType1_,
+                            std::allocator<AttributeType1_> > attribute_storage_type_1_;
+
+                typedef AttributeStorageType_<
+                            AttributeType2_,
+                            std::allocator<AttributeType2_> > attribute_storage_type_2_;
 
                 Mesh() :
                     _num_inter_topologies(_i),
@@ -91,24 +123,8 @@ namespace honei
                     _num_attributes_of_type_2(0),
                     _attribute_polytopelevel_relations_1(new typename TopologyType_::storage_type_),
                     _attribute_polytopelevel_relations_2(new typename TopologyType_::storage_type_),
-                    _attributes_of_type_1(new OuterAttributeStorageType_<
-                                            AttributeStorageType_<
-                                                AttributeType1_,
-                                                std::allocator<AttributeType1_> >,
-                                            std::allocator<
-                                                AttributeStorageType_<
-                                                    AttributeType1_,
-                                                    std::allocator<AttributeType1_>
-                                            > > >),
-                    _attributes_of_type_2(new OuterAttributeStorageType_<
-                                            AttributeStorageType_<
-                                                AttributeType2_,
-                                                std::allocator<AttributeType2_> >,
-                                            std::allocator<
-                                                AttributeStorageType_<
-                                                    AttributeType2_,
-                                                    std::allocator<AttributeType2_>
-                                            > > >)
+                    _attributes_of_type_1(new outer_attribute_storage_type_1_),
+                    _attributes_of_type_2(new outer_attribute_storage_type_2_)
                 {
                 }
 
@@ -354,25 +370,9 @@ namespace honei
                 typename TopologyType_::storage_type_ * _attribute_polytopelevel_relations_1;
                 typename TopologyType_::storage_type_ * _attribute_polytopelevel_relations_2;
 
-                OuterAttributeStorageType_<
-                    AttributeStorageType_<
-                        AttributeType1_,
-                        std::allocator<AttributeType1_> >,
-                    std::allocator<
-                            AttributeStorageType_<
-                                AttributeType1_,
-                                std::allocator<AttributeType1_>
-                > > >* _attributes_of_type_1;
+                outer_attribute_storage_type_1_* _attributes_of_type_1;
+                outer_attribute_storage_type_2_* _attributes_of_type_2;
 
-                OuterAttributeStorageType_<
-                    AttributeStorageType_<
-                        AttributeType2_,
-                        std::allocator<AttributeType2_> >,
-                    std::allocator<
-                            AttributeStorageType_<
-                                AttributeType2_,
-                                std::allocator<AttributeType2_>
-                > > >* _attributes_of_type_2;
 
                 inline const unsigned _level_difference(const unsigned from, const unsigned to)
                 {

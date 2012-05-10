@@ -54,8 +54,7 @@ class MeshTest:
             fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > m3;
 
             //configure attribute
-            unsigned my_attribute(fem::MeshAttributeRegistration<fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> >, double>::execute(m3, fem::pl_vertex));
-            std::cout << my_attribute << std::endl;
+            unsigned my_attribute_index(fem::MeshAttributeRegistration<fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> >, double>::execute(m3, fem::pl_vertex));
 
             //add vertices
             m3.add_polytope(fem::pl_vertex);
@@ -64,12 +63,12 @@ class MeshTest:
             m3.add_polytope(fem::pl_vertex);
             m3.add_polytope(fem::pl_vertex);
             m3.add_polytope(fem::pl_vertex);
-            m3.add_attribute_value(0u, double(0));
-            m3.add_attribute_value(0u, double(0.5));
-            m3.add_attribute_value(0u, double(1));
-            m3.add_attribute_value(0u, double(0));
-            m3.add_attribute_value(0u, double(0.5));
-            m3.add_attribute_value(0u, double(1));
+            m3.add_attribute_value(my_attribute_index, double(0));
+            m3.add_attribute_value(my_attribute_index, double(0.5));
+            m3.add_attribute_value(my_attribute_index, double(1));
+            m3.add_attribute_value(my_attribute_index, double(0));
+            m3.add_attribute_value(my_attribute_index, double(0.5));
+            m3.add_attribute_value(my_attribute_index, double(1));
 
             //add edges
             m3.add_polytope(fem::pl_edge);
