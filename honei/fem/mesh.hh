@@ -360,6 +360,94 @@ namespace honei
                     }
                 }
 
+                template<typename IndexType_>
+                typename TopologyType_::storage_type_ get_primary_comm_neighbours(IndexType_ i)
+                {
+                    typename TopologyType_::storage_type_ pre_result(this->get_adjacent_polytopes(_num_levels - 1, _num_levels - 1, i));
+                    typename TopologyType_::storage_type_ result;
+
+                    //remove self
+                    for(IndexType_ j(0) ; j < (IndexType_)pre_result.size() ; ++j)
+                        if((IndexType_)pre_result.at(j) != i)
+                            result.push_back(pre_result.at(j));
+
+                    return result;
+                }
+
+                template<typename IndexType_>
+                typename TopologyType_::storage_type_ get_all_comm_neighbours(IndexType_ i)
+                {
+                    const int sweepdir(-1);
+                    int current_sweepdir(sweepdir);
+                    const unsigned path_length(_num_inter_topologies);
+                    unsigned current_level(_num_levels - 1);
+                    typename TopologyType_::compound_storage_type_ search_data;
+
+                    for(unsigned j(0) ; j < path_length ; ++j)
+                    {
+                        //create current search datastructure
+                        typename TopologyType_::storage_type_ temp;
+                        search_data.push_back(temp);
+
+                        //fill current datastructure:
+                        if(j == 0)
+                        {
+                            search_data.at(0) = _topologies[_downward_index(current_level)].at(i);
+
+                            --current_level;
+
+                            current_sweepdir = current_level == 0 ? 1 : current_sweepdir;
+                        }
+                        else
+                        {
+                            //for all entries in previous polytope list get all polytope lists and store sequentially
+                            for(IndexType_ k(0) ; k < (IndexType_)search_data.at(j - 1).size(); ++k)
+                            {
+                                IndexType_ l_upper(
+                                        current_sweepdir == -1 ? (IndexType_)_topologies[_downward_index(current_level)].at(search_data.at(j - 1).at(k)).size()
+                                                               : (IndexType_)_topologies[_upward_index(current_level)].at(search_data.at(j - 1).at(k)).size()
+                                        );
+
+                                for(IndexType_ l(0) ; l < l_upper ; ++l)
+                                {
+                                    //TODO optimise search
+                                    IndexType_ to_insert(
+                                            current_sweepdir == -1 ? _topologies[_downward_index(current_level)].at(search_data.at(j - 1).at(k)).at(l)
+                                                                   : _topologies[_upward_index(current_level)].at(search_data.at(j - 1).at(k)).at(l)
+                                            );
+
+                                    bool insert(true);
+                                    for(IndexType_ search_index(0) ; search_index < (IndexType_)search_data.at(j).size() ; ++search_index)
+                                    {
+                                        if((IndexType_)search_data.at(j).at(search_index) == (IndexType_)to_insert)
+                                        {
+                                            insert = false;
+                                            break;
+                                        }
+                                    }
+                                    if(insert)
+                                    {
+                                        search_data.at(j).push_back(to_insert);
+                                    }
+                                }
+                            }
+                            current_level = current_sweepdir == 1 ? current_level + 1
+                                                                  : current_level - 1;
+
+                            current_sweepdir = current_level == 0 ? 1 : current_sweepdir;
+                        }
+                    }
+
+                    typename TopologyType_::storage_type_ result;
+
+                    //remove self
+                    for(IndexType_ j(0) ; j < (IndexType_)search_data.at(search_data.size() - 1).size() ; ++j)
+                        if((IndexType_)search_data.at(search_data.size() - 1).at(j) != i)
+                            result.push_back(search_data.at(search_data.size() - 1).at(j));
+
+                    return result;
+                }
+
             private:
                 const unsigned _num_inter_topologies;
                 const unsigned _num_levels;

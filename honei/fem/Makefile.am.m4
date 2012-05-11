@@ -15,6 +15,7 @@ define(`addtest', `define(`testlist', testlist `$1_TEST')dnl
 $1_TEST_SOURCES = $1_TEST.cc
 $1_TEST_LDADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
+	$(top_builddir)/honei/la/libhoneila.la \
 	$(BACKEND_LIBS) \
 	libhoneifem.la \
 	$(DYNAMIC_LD_LIBS)
@@ -115,6 +116,7 @@ lib_LTLIBRARIES = libhoneifem.la
 libhoneifem_la_SOURCES = filelist $(CELLFILES) $(SSEFILES) $(CUDAFILES) $(OPENCLFILES) $(ITANIUMFILES)
 libhoneifem_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
+	$(top_builddir)/honei/la/libhoneila.la \
 	$(CELLLIB)
 
 libhoneifem_includedir = $(includedir)/honei/fem

@@ -37,6 +37,7 @@ namespace honei
 
                 void push_back(DT_ value)
                 {
+                    std::cout << "Pushing back: " << value << " to position " << _num_non_zeros << std::endl;
                     //todo capacity check
                     (*_data)[_num_non_zeros] = value;
                     ++_num_non_zeros;
@@ -44,12 +45,14 @@ namespace honei
 
                 DT_ & at(unsigned long i)
                 {
+                    std::cout << "Accessing: " << i << std::endl;
                     //todo in non-zero range check
                     return (*_data)[i];
                 }
 
                 DT_ & operator[](unsigned long i)
                 {
+                    std::cout << "Accessing: " << i << std::endl;
                     //todo in non-zero range check
                     return (*_data)[i];
                 }

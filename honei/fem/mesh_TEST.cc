@@ -361,6 +361,24 @@ class MeshTest:
             typename fem::Topology<IndexType_, OT_, IT_>::storage_type_ test_45(m3.get_adjacent_polytopes(fem::pl_vertex, fem::pl_face, 5));
             TEST_CHECK_EQUAL(test_45.size(), 1ul);
             TEST_CHECK_EQUAL(test_45.at(0), 1ul);
+
+            //testing primary comm neighbours
+            typename fem::Topology<IndexType_, OT_, IT_>::storage_type_ test_46(m3.get_primary_comm_neighbours(0));
+            TEST_CHECK_EQUAL(test_46.size(), 1ul);
+            TEST_CHECK_EQUAL(test_46.at(0), 1ul);
+
+            typename fem::Topology<IndexType_, OT_, IT_>::storage_type_ test_47(m3.get_primary_comm_neighbours(1));
+            TEST_CHECK_EQUAL(test_47.size(), 1ul);
+            TEST_CHECK_EQUAL(test_47.at(0), 0ul);
+
+            //testing all comm neighbours
+            typename fem::Topology<IndexType_, OT_, IT_>::storage_type_ test_48(m3.get_all_comm_neighbours(0));
+            TEST_CHECK_EQUAL(test_48.size(), 1ul);
+            TEST_CHECK_EQUAL(test_48.at(0), 1ul);
+
+            typename fem::Topology<IndexType_, OT_, IT_>::storage_type_ test_49(m3.get_all_comm_neighbours(1));
+            TEST_CHECK_EQUAL(test_49.size(), 1ul);
+            TEST_CHECK_EQUAL(test_49.at(0), 0ul);
         }
 };
 MeshTest<tags::CPU, unsigned long, std::vector, std::vector<unsigned long> > topology_test_cpu_v_v("std::vector, std::vector");
@@ -368,4 +386,4 @@ MeshTest<tags::CPU, unsigned long, std::deque, std::vector<unsigned long> > topo
 MeshTest<tags::CPU, unsigned long, std::vector, std::deque<unsigned long> > topology_test_cpu_v_d("std::vector, std::deque");
 MeshTest<tags::CPU, unsigned long, std::deque, std::deque<unsigned long> > topology_test_cpu_d_d("std::deque, std::deque");
 
-//MeshTest<tags::CPU, unsigned long, std::vector, fem::DenseDataWrapper<15, unsigned long> > topology_test_cpu_v_ddw("std::vector, DV");
+//MeshTest<tags::CPU, unsigned long, std::vector, fem::DenseDataWrapper<100, unsigned long> > topology_test_cpu_v_ddw("std::vector, DV");
