@@ -47,6 +47,21 @@ namespace honei
                 }
         };
 
+        template<typename MeshType_>
+        class MeshAttributeRegistration<MeshType_, typename MeshType_::attr_type_3_>
+        {
+            public:
+                static unsigned execute(MeshType_ & mesh, const unsigned polytope_level)
+                {
+                    typename MeshType_::attribute_storage_type_2_ storage;
+                    mesh._attributes_of_type_2->push_back(storage);
+                    mesh._attribute_polytopelevel_relations_2->push_back(polytope_level);
+
+                    ++mesh._num_attributes_of_type_2;
+                    return mesh._num_attributes_of_type_2 - 1;
+                }
+        };
+
         enum RequiredNumTopologies
         {
             rnt_1D = 2,
@@ -77,12 +92,14 @@ namespace honei
                  template<typename, typename> class AttributeStorageType_ = std::vector,
                  template<typename, typename> class OuterAttributeStorageType_ = std::vector,
                  typename AttributeType1_ = double,
-                 typename AttributeType2_ = unsigned long>
+                 typename AttributeType2_ = unsigned long,
+                 typename AttributeType3_ = float>
         class Mesh
         {
             public:
                 friend class MeshAttributeRegistration< Mesh<_i, TopologyType_, AttributeStorageType_, OuterAttributeStorageType_, AttributeType1_, AttributeType2_>, AttributeType1_>;
                 friend class MeshAttributeRegistration< Mesh<_i, TopologyType_, AttributeStorageType_, OuterAttributeStorageType_, AttributeType1_, AttributeType2_>, AttributeType2_>;
+                friend class MeshAttributeRegistration< Mesh<_i, TopologyType_, AttributeStorageType_, OuterAttributeStorageType_, AttributeType1_, AttributeType3_>, AttributeType3_>;
 
                 typedef AttributeType1_ attr_type_1_;
                 typedef AttributeType2_ attr_type_2_;
@@ -107,6 +124,16 @@ namespace honei
                                 std::allocator<AttributeType2_>
                 > > > outer_attribute_storage_type_2_;
 
+                typedef OuterAttributeStorageType_<
+                    AttributeStorageType_<
+                        AttributeType2_,
+                        std::allocator<AttributeType2_> >,
+                    std::allocator<
+                            AttributeStorageType_<
+                                AttributeType2_,
+                                std::allocator<AttributeType2_>
+                > > > outer_attribute_storage_type_3_;
+
                 typedef AttributeStorageType_<
                             AttributeType1_,
                             std::allocator<AttributeType1_> > attribute_storage_type_1_;
@@ -115,16 +142,23 @@ namespace honei
                             AttributeType2_,
                             std::allocator<AttributeType2_> > attribute_storage_type_2_;
 
+                typedef AttributeStorageType_<
+                            AttributeType2_,
+                            std::allocator<AttributeType3_> > attribute_storage_type_3_;
+
                 Mesh() :
                     _num_inter_topologies(_i),
                     _num_levels((unsigned)(_i/2u) + 1u),
                     _topologies(new TopologyType_[_i]),
                     _num_attributes_of_type_1(0),
                     _num_attributes_of_type_2(0),
+                    _num_attributes_of_type_3(0),
                     _attribute_polytopelevel_relations_1(new typename TopologyType_::storage_type_),
                     _attribute_polytopelevel_relations_2(new typename TopologyType_::storage_type_),
+                    _attribute_polytopelevel_relations_3(new typename TopologyType_::storage_type_),
                     _attributes_of_type_1(new outer_attribute_storage_type_1_),
-                    _attributes_of_type_2(new outer_attribute_storage_type_2_)
+                    _attributes_of_type_2(new outer_attribute_storage_type_2_),
+                    _attributes_of_type_3(new outer_attribute_storage_type_3_)
                 {
                 }
 
@@ -330,6 +364,17 @@ namespace honei
                             _attributes_of_type_2->at(attribute_index).at(index) = value;
                         }
                     }
+                    else if(typeid(AT_) == typeid(AttributeType3_))
+                    {
+#ifdef FEM_MESH_DEBUG
+                        if(_num_attributes_of_type_3 == 0)
+                            throw MeshInternalIndexOutOfBounds(attribute_index, 0);
+#endif
+                        if(attribute_index < _num_attributes_of_type_3)
+                        {
+                            _attributes_of_type_3->at(attribute_index).at(index) = value;
+                        }
+                    }
                     //todo catch index out of bounds
                 }
 
@@ -356,6 +401,17 @@ namespace honei
                         if(attribute_index < _num_attributes_of_type_2)
                         {
                             _attributes_of_type_2->at(attribute_index).push_back(value);
+                        }
+                    }
+                    else if(typeid(AT_) == typeid(AttributeType3_))
+                    {
+#ifdef FEM_MESH_DEBUG
+                        if(_num_attributes_of_type_3 == 0)
+                            throw MeshInternalIndexOutOfBounds(attribute_index, 0);
+#endif
+                        if(attribute_index < _num_attributes_of_type_3)
+                        {
+                            _attributes_of_type_3->at(attribute_index).push_back(value);
                         }
                     }
                 }
@@ -455,12 +511,14 @@ namespace honei
 
                 unsigned _num_attributes_of_type_1;
                 unsigned _num_attributes_of_type_2;
+                unsigned _num_attributes_of_type_3;
                 typename TopologyType_::storage_type_ * _attribute_polytopelevel_relations_1;
                 typename TopologyType_::storage_type_ * _attribute_polytopelevel_relations_2;
+                typename TopologyType_::storage_type_ * _attribute_polytopelevel_relations_3;
 
                 outer_attribute_storage_type_1_* _attributes_of_type_1;
                 outer_attribute_storage_type_2_* _attributes_of_type_2;
-
+                outer_attribute_storage_type_3_* _attributes_of_type_3;
 
                 inline const unsigned _level_difference(const unsigned from, const unsigned to)
                 {
