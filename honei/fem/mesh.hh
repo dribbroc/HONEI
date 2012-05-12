@@ -504,6 +504,51 @@ namespace honei
                     return result;
                 }
 
+                unsigned get_num_attributes_of_type_1()
+                {
+                    return _num_attributes_of_type_1;
+                }
+
+                unsigned get_num_attributes_of_type_2()
+                {
+                    return _num_attributes_of_type_2;
+                }
+
+                unsigned get_num_attributes_of_type_3()
+                {
+                    return _num_attributes_of_type_3;
+                }
+
+                typename TopologyType_::storage_type_ & get_attribute_polytopelevel_relations_1()
+                {
+                    return *_attribute_polytopelevel_relations_1;
+                }
+
+                typename TopologyType_::storage_type_ & get_attribute_polytopelevel_relations_2()
+                {
+                    return *_attribute_polytopelevel_relations_2;
+                }
+
+                typename TopologyType_::storage_type_ & get_attribute_polytopelevel_relations_3()
+                {
+                    return *_attribute_polytopelevel_relations_3;
+                }
+
+                outer_attribute_storage_type_1_ & get_attributes_of_type_1()
+                {
+                    return *_attributes_of_type_1;
+                }
+
+                outer_attribute_storage_type_2_ & get_attributes_of_type_2()
+                {
+                    return *_attributes_of_type_2;
+                }
+
+                outer_attribute_storage_type_3_ & get_attributes_of_type_3()
+                {
+                    return *_attributes_of_type_3;
+                }
+
             private:
                 const unsigned _num_inter_topologies;
                 const unsigned _num_levels;
@@ -512,6 +557,7 @@ namespace honei
                 unsigned _num_attributes_of_type_1;
                 unsigned _num_attributes_of_type_2;
                 unsigned _num_attributes_of_type_3;
+
                 typename TopologyType_::storage_type_ * _attribute_polytopelevel_relations_1;
                 typename TopologyType_::storage_type_ * _attribute_polytopelevel_relations_2;
                 typename TopologyType_::storage_type_ * _attribute_polytopelevel_relations_3;
