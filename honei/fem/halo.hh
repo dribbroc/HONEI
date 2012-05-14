@@ -16,36 +16,40 @@ namespace honei
                 typedef IndexType_ index_type_;
 
                 Halo() :
-                    _halo_element_counterparts(new StorageType_<IndexType_, std::allocator<IndexType_> >()),
-                    _halo_element_indices(new StorageType_<IndexType_, std::allocator<IndexType_> >())
+                    _halo_elements(StorageType_<IndexType_, std::allocator<IndexType_> >()),
+                    _halo_element_counterparts(StorageType_<IndexType_, std::allocator<IndexType_> >())
                 {
                 }
 
                 ~Halo()
                 {
-                    delete _halo_element_counterparts;
-                    delete _halo_element_indices;
                 }
 
-                ///Add correspondence of i in mesh 1
-                void add_halo_element_counterpart(IndexType_ i, IndexType_ j)
+                ///Add correspondence of i
+                void add_halo_element_pair(IndexType_ i, IndexType_ j)
                 {
+                    _halo_elements.push_back(i);
+                    _halo_element_counterparts.push_back(j);
                 }
 
-                IndexType_ get_halo_element_counterpart(IndexType_ i)
+                IndexType_ get_element_counterpart(IndexType_ index)
                 {
-                    return _halo_element_counterparts->at(_halo_element_indices->at(i));
+                    return _halo_element_counterparts.at(index);
                 }
 
-                template<typename MeshType_>
-                IndexType_ get_element_counterpart(MeshType_ & source, MeshType_ & target, IndexType_ index)
+                IndexType_ get_element(IndexType_ index)
                 {
-                    return 47;
+                    return _halo_elements.at(index);
+                }
+
+                IndexType_ size()
+                {
+                    return _halo_elements.size();
                 }
 
             private:
-                StorageType_<IndexType_, std::allocator<IndexType_> >* _halo_element_counterparts;
-                StorageType_<IndexType_, std::allocator<IndexType_> >* _halo_element_indices;
+                StorageType_<IndexType_, std::allocator<IndexType_> > _halo_elements;
+                StorageType_<IndexType_, std::allocator<IndexType_> > _halo_element_counterparts;
         };
 
         template<template<typename, typename> class StorageType_, typename IndexType_>
@@ -55,36 +59,40 @@ namespace honei
                 typedef IndexType_ index_type_;
 
                 Halo() :
-                    _halo_element_counterparts(new StorageType_<IndexType_, std::allocator<IndexType_> >()),
-                    _halo_element_indices(new StorageType_<IndexType_, std::allocator<IndexType_> >())
+                    _halo_elements(StorageType_<IndexType_, std::allocator<IndexType_> >()),
+                    _halo_element_counterparts(StorageType_<IndexType_, std::allocator<IndexType_> >())
                 {
                 }
 
                 ~Halo()
                 {
-                    delete _halo_element_counterparts;
-                    delete _halo_element_indices;
                 }
 
-                ///Add correspondence of i in mesh 1
-                void add_halo_element_counterpart(IndexType_ i, IndexType_ j)
+                ///Add correspondence of i
+                void add_halo_element_pair(IndexType_ i, IndexType_ j)
                 {
+                    _halo_elements.push_back(i);
+                    _halo_element_counterparts.push_back(j);
                 }
 
-                IndexType_ get_halo_element_counterpart(IndexType_ i)
+                IndexType_ get_element_counterpart(IndexType_ index)
                 {
-                    return _halo_element_counterparts->at(_halo_element_indices->at(i));
+                    return _halo_element_counterparts.at(index);
                 }
 
-                template<typename MeshType_>
-                IndexType_ get_element_counterpart(MeshType_ & source, MeshType_ & target, IndexType_ index)
+                IndexType_ get_element(IndexType_ index)
                 {
-                    return 48;
+                    return _halo_elements.at(index);
+                }
+
+                IndexType_ size()
+                {
+                    return _halo_elements.size();
                 }
 
             private:
-                StorageType_<IndexType_, std::allocator<IndexType_> >* _halo_element_counterparts;
-                StorageType_<IndexType_, std::allocator<IndexType_> >* _halo_element_indices;
+                StorageType_<IndexType_, std::allocator<IndexType_> > _halo_elements;
+                StorageType_<IndexType_, std::allocator<IndexType_> > _halo_element_counterparts;
         };
 
         /*template<typename HaloType_, typename MeshType_, typename IndexType_>
@@ -101,11 +109,15 @@ namespace honei
         /*template<typename IndexType_>
         static StorageType_ & get_primary_comm_neighbours(MeshType_ & m1, MeshType_ & m2, Halo<0, StorageType_, IndexType_> & halo, IndexType_ index)
         {
+                    //we know it must refer to targets max polytope_level
+                    unsigned element_level(target.get_num_levels() - 1);
         }
 
         template<typename IndexType_>
         static StorageType_ & get_all_comm_neighbours(MeshType_ & m1, MeshType_ & m2, Halo<0, StorageType_, IndexType_> & halo, IndexType_ index)
         {
+                    //we know it must refer to targets max polytope_level
+                    unsigned element_level(target.get_num_levels() - 1);
         }*/
     }
 

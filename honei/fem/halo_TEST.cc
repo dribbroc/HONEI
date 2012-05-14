@@ -89,10 +89,32 @@ class HaloTest:
             m3.add_adjacency(fem::pl_face, fem::pl_edge, 1, 4);
             m3.add_adjacency(fem::pl_face, fem::pl_edge, 1, 6);
 
+            //clone mesh
+            fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > m4(m3);
+
+            //init simple halo
             fem::Halo<0> h;
 
-            TEST_CHECK_EQUAL(h.get_element_counterpart(m3, m3, 0u), 48u);
+            //add connections
+            //
+            // *--*--*
+            // |0 | 1| m3
+            // *--*--*
+            //  5   6
+            //  |   |
+            //  0   1
+            // *--*--*
+            // |0 | 1| m4
+            // *--*--*
 
+            h.add_halo_element_pair(5u, 0u);
+            h.add_halo_element_pair(6u, 1u);
+
+            TEST_CHECK_EQUAL(h.size(), 2u);
+            TEST_CHECK_EQUAL(h.get_element(0u), 5u);
+            TEST_CHECK_EQUAL(h.get_element(1u), 6u);
+            TEST_CHECK_EQUAL(h.get_element_counterpart(0u), 0u);
+            TEST_CHECK_EQUAL(h.get_element_counterpart(1u), 1u);
         }
 };
 HaloTest<tags::CPU, unsigned long, std::vector, std::vector<unsigned long> > halo_test_cpu_v_v("std::vector, std::vector");
