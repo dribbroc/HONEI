@@ -16,13 +16,12 @@ namespace honei
                 DenseDataWrapper() :
                     _size(_i),
                     _num_non_zeros(0),
-                    _data(new ContType_<DT_>(_i))
+                    _data(ContType_<DT_>(_i))
                 {
                 }
 
                 ~DenseDataWrapper()
                 {
-                    delete _data;
                 }
 
                 unsigned long size()
@@ -37,30 +36,27 @@ namespace honei
 
                 void push_back(DT_ value)
                 {
-                    std::cout << "Pushing back: " << value << " to position " << _num_non_zeros << std::endl;
                     //todo capacity check
-                    (*_data)[_num_non_zeros] = value;
+                    _data[_num_non_zeros] = value;
                     ++_num_non_zeros;
                 }
 
                 DT_ & at(unsigned long i)
                 {
-                    std::cout << "Accessing: " << i << std::endl;
                     //todo in non-zero range check
-                    return (*_data)[i];
+                    return _data[i];
                 }
 
                 DT_ & operator[](unsigned long i)
                 {
-                    std::cout << "Accessing: " << i << std::endl;
                     //todo in non-zero range check
-                    return (*_data)[i];
+                    return _data[i];
                 }
 
             private:
                 unsigned long _size;
                 unsigned long _num_non_zeros;
-                ContType_<DT_>* _data;
+                ContType_<DT_> _data;
         };
     }
 }

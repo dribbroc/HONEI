@@ -392,4 +392,4 @@ MeshTest<tags::CPU, unsigned long, std::deque, std::vector<unsigned long> > topo
 MeshTest<tags::CPU, unsigned long, std::vector, std::deque<unsigned long> > topology_test_cpu_v_d("std::vector, std::deque");
 MeshTest<tags::CPU, unsigned long, std::deque, std::deque<unsigned long> > topology_test_cpu_d_d("std::deque, std::deque");
 
-//MeshTest<tags::CPU, unsigned long, std::vector, fem::DenseDataWrapper<100, unsigned long> > topology_test_cpu_v_ddw("std::vector, DV");
+MeshTest<tags::CPU, unsigned long, std::vector, fem::DenseDataWrapper<100, unsigned long> > topology_test_cpu_v_ddw("std::vector, DV");
