@@ -28,12 +28,12 @@ namespace honei
                     _num_attributes_of_type_1(mesh.get_num_attributes_of_type_1()),
                     _num_attributes_of_type_2(mesh.get_num_attributes_of_type_2()),
                     _num_attributes_of_type_3(mesh.get_num_attributes_of_type_3()),
-                    _attributes_of_type_1(new OuterStorageType_<VectorType_<DataType1_>, std::allocator<VectorType_<DataType1_> > >()),
-                    _attributes_of_type_2(new OuterStorageType_<VectorType_<DataType2_>, std::allocator<VectorType_<DataType2_> > >()),
-                    _attributes_of_type_3(new OuterStorageType_<VectorType_<DataType3_>, std::allocator<VectorType_<DataType3_> > >()),
-                    _attribute_polytopelevel_relations_1(new VectorType_<IndexType_>(_num_attributes_of_type_1)),
-                    _attribute_polytopelevel_relations_2(new VectorType_<IndexType_>(_num_attributes_of_type_2)),
-                    _attribute_polytopelevel_relations_3(new VectorType_<IndexType_>(_num_attributes_of_type_3))
+                    _attributes_of_type_1(OuterStorageType_<VectorType_<DataType1_>, std::allocator<VectorType_<DataType1_> > >()),
+                    _attributes_of_type_2(OuterStorageType_<VectorType_<DataType2_>, std::allocator<VectorType_<DataType2_> > >()),
+                    _attributes_of_type_3(OuterStorageType_<VectorType_<DataType3_>, std::allocator<VectorType_<DataType3_> > >()),
+                    _attribute_polytopelevel_relations_1(VectorType_<IndexType_>(_num_attributes_of_type_1)),
+                    _attribute_polytopelevel_relations_2(VectorType_<IndexType_>(_num_attributes_of_type_2)),
+                    _attribute_polytopelevel_relations_3(VectorType_<IndexType_>(_num_attributes_of_type_3))
                 {
                     for(IndexType_ i(0) ; i < _num_attributes_of_type_1 ; ++i)
                     {
@@ -46,7 +46,7 @@ namespace honei
                             attr_i[j] = _mesh.get_attributes_of_type_1().at(i).at(j);
                         }
 
-                        _attributes_of_type_1->push_back(attr_i);
+                        _attributes_of_type_1.push_back(attr_i);
                     }
 
                     for(IndexType_ i(0) ; i < _num_attributes_of_type_2 ; ++i)
@@ -60,7 +60,7 @@ namespace honei
                             attr_i[j] = _mesh.get_attributes_of_type_2().at(i).at(j);
                         }
 
-                        _attributes_of_type_2->push_back(attr_i);
+                        _attributes_of_type_2.push_back(attr_i);
                     }
 
                     for(IndexType_ i(0) ; i < _num_attributes_of_type_3 ; ++i)
@@ -74,18 +74,12 @@ namespace honei
                             attr_i[j] = _mesh.get_attributes_of_type_3().at(i).at(j);
                         }
 
-                        _attributes_of_type_3->push_back(attr_i);
+                        _attributes_of_type_3.push_back(attr_i);
                     }
                 }
 
                 ~MeshData()
                 {
-                    delete _attributes_of_type_1;
-                    delete _attributes_of_type_2;
-                    delete _attributes_of_type_3;
-                    delete _attribute_polytopelevel_relations_1;
-                    delete _attribute_polytopelevel_relations_2;
-                    delete _attribute_polytopelevel_relations_3;
                 }
 
                 MeshType_ & get_mesh()
@@ -95,17 +89,17 @@ namespace honei
 
                 VectorType_<DataType1_> & get_attribute_of_type_1(IndexType_ index)
                 {
-                    return _attributes_of_type_1->at(index);
+                    return _attributes_of_type_1.at(index);
                 }
 
                 VectorType_<DataType1_> & get_attribute_of_type_2(IndexType_ index)
                 {
-                    return _attributes_of_type_2->at(index);
+                    return _attributes_of_type_2.at(index);
                 }
 
                 VectorType_<DataType1_> & get_attribute_of_type_3(IndexType_ index)
                 {
-                    return _attributes_of_type_3->at(index);
+                    return _attributes_of_type_3.at(index);
                 }
 
             private:
@@ -115,13 +109,13 @@ namespace honei
                 unsigned _num_attributes_of_type_2;
                 unsigned _num_attributes_of_type_3;
 
-                OuterStorageType_<VectorType_<DataType1_>, std::allocator<VectorType_<DataType1_> > >* _attributes_of_type_1;
-                OuterStorageType_<VectorType_<DataType2_>, std::allocator<VectorType_<DataType2_> > >* _attributes_of_type_2;
-                OuterStorageType_<VectorType_<DataType3_>, std::allocator<VectorType_<DataType3_> > >* _attributes_of_type_3;
+                OuterStorageType_<VectorType_<DataType1_>, std::allocator<VectorType_<DataType1_> > > _attributes_of_type_1;
+                OuterStorageType_<VectorType_<DataType2_>, std::allocator<VectorType_<DataType2_> > > _attributes_of_type_2;
+                OuterStorageType_<VectorType_<DataType3_>, std::allocator<VectorType_<DataType3_> > > _attributes_of_type_3;
 
-                VectorType_<IndexType_>* _attribute_polytopelevel_relations_1;
-                VectorType_<IndexType_>* _attribute_polytopelevel_relations_2;
-                VectorType_<IndexType_>* _attribute_polytopelevel_relations_3;
+                VectorType_<IndexType_> _attribute_polytopelevel_relations_1;
+                VectorType_<IndexType_> _attribute_polytopelevel_relations_2;
+                VectorType_<IndexType_> _attribute_polytopelevel_relations_3;
         };
     }
 }

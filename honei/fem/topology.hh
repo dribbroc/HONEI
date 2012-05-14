@@ -25,13 +25,12 @@ namespace honei
 
                 Topology() :
                     _num_polytopes(0),
-                    _topology(new OuterStorageType_<StorageType_, std::allocator<StorageType_> >)
+                    _topology(OuterStorageType_<StorageType_, std::allocator<StorageType_> >())
                 {
                 };
 
                 ~Topology()
                 {
-                    delete _topology;
                 }
 
                 unsigned long size()
@@ -41,30 +40,30 @@ namespace honei
 
                 void push_back(const StorageType_ s)
                 {
-                    _topology->push_back(s);
+                    _topology.push_back(s);
                     ++_num_polytopes;
                 }
 
                 StorageType_ & at(unsigned long i)
                 {
-                    return _topology->at(i);
+                    return _topology.at(i);
                 }
 
                 StorageType_ & operator[] (unsigned long i)
                 {
-                    return _topology->at(i);
+                    return _topology.at(i);
                 }
 
                 void push_back()
                 {
                     StorageType_ s;
-                    _topology->push_back(s);
+                    _topology.push_back(s);
                     ++_num_polytopes;
                 }
 
             private:
                 unsigned long _num_polytopes;
-                OuterStorageType_<StorageType_, std::allocator<StorageType_> >* _topology;
+                OuterStorageType_<StorageType_, std::allocator<StorageType_> > _topology;
         };
 
     }

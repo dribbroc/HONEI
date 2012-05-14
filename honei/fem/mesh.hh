@@ -24,8 +24,8 @@ namespace honei
                 static unsigned execute(MeshType_ & mesh, const unsigned polytope_level)
                 {
                     typename MeshType_::attribute_storage_type_1_ storage;
-                    mesh._attributes_of_type_1->push_back(storage);
-                    mesh._attribute_polytopelevel_relations_1->push_back(polytope_level);
+                    mesh._attributes_of_type_1.push_back(storage);
+                    mesh._attribute_polytopelevel_relations_1.push_back(polytope_level);
 
                     ++mesh._num_attributes_of_type_1;
                     return mesh._num_attributes_of_type_1 - 1;
@@ -39,8 +39,8 @@ namespace honei
                 static unsigned execute(MeshType_ & mesh, const unsigned polytope_level)
                 {
                     typename MeshType_::attribute_storage_type_2_ storage;
-                    mesh._attributes_of_type_2->push_back(storage);
-                    mesh._attribute_polytopelevel_relations_2->push_back(polytope_level);
+                    mesh._attributes_of_type_2.push_back(storage);
+                    mesh._attribute_polytopelevel_relations_2.push_back(polytope_level);
 
                     ++mesh._num_attributes_of_type_2;
                     return mesh._num_attributes_of_type_2 - 1;
@@ -54,8 +54,8 @@ namespace honei
                 static unsigned execute(MeshType_ & mesh, const unsigned polytope_level)
                 {
                     typename MeshType_::attribute_storage_type_2_ storage;
-                    mesh._attributes_of_type_2->push_back(storage);
-                    mesh._attribute_polytopelevel_relations_2->push_back(polytope_level);
+                    mesh._attributes_of_type_2.push_back(storage);
+                    mesh._attribute_polytopelevel_relations_2.push_back(polytope_level);
 
                     ++mesh._num_attributes_of_type_2;
                     return mesh._num_attributes_of_type_2 - 1;
@@ -158,12 +158,12 @@ namespace honei
                     _num_attributes_of_type_1(0),
                     _num_attributes_of_type_2(0),
                     _num_attributes_of_type_3(0),
-                    _attribute_polytopelevel_relations_1(new typename TopologyType_::storage_type_),
-                    _attribute_polytopelevel_relations_2(new typename TopologyType_::storage_type_),
-                    _attribute_polytopelevel_relations_3(new typename TopologyType_::storage_type_),
-                    _attributes_of_type_1(new outer_attribute_storage_type_1_),
-                    _attributes_of_type_2(new outer_attribute_storage_type_2_),
-                    _attributes_of_type_3(new outer_attribute_storage_type_3_)
+                    _attribute_polytopelevel_relations_1(typename TopologyType_::storage_type_()),
+                    _attribute_polytopelevel_relations_2(typename TopologyType_::storage_type_()),
+                    _attribute_polytopelevel_relations_3(typename TopologyType_::storage_type_()),
+                    _attributes_of_type_1(outer_attribute_storage_type_1_()),
+                    _attributes_of_type_2(outer_attribute_storage_type_2_()),
+                    _attributes_of_type_3(outer_attribute_storage_type_3_())
                 {
                 }
 
@@ -174,22 +174,30 @@ namespace honei
                     _num_attributes_of_type_1(other._num_attributes_of_type_1),
                     _num_attributes_of_type_2(other._num_attributes_of_type_2),
                     _num_attributes_of_type_3(other._num_attributes_of_type_3),
-                    _attribute_polytopelevel_relations_1(new typename TopologyType_::storage_type_),
-                    _attribute_polytopelevel_relations_2(new typename TopologyType_::storage_type_),
-                    _attribute_polytopelevel_relations_3(new typename TopologyType_::storage_type_),
-                    _attributes_of_type_1(new outer_attribute_storage_type_1_),
-                    _attributes_of_type_2(new outer_attribute_storage_type_2_),
-                    _attributes_of_type_3(new outer_attribute_storage_type_3_)
+                    _attribute_polytopelevel_relations_1(typename TopologyType_::storage_type_()),
+                    _attribute_polytopelevel_relations_2(typename TopologyType_::storage_type_()),
+                    _attribute_polytopelevel_relations_3(typename TopologyType_::storage_type_()),
+                    _attributes_of_type_1(outer_attribute_storage_type_1_()),
+                    _attributes_of_type_2(outer_attribute_storage_type_2_()),
+                    _attributes_of_type_3(outer_attribute_storage_type_3_())
                 {
                     for(unsigned long i(0) ; i < _num_inter_topologies ; ++i)
                     {
                         _topologies[i] = other._topologies[i];
                     }
 
-                    std::cout << other._num_attributes_of_type_1 << std::endl;
-                    for(unsigned long i(0) ; i < other._num_attributes_of_type_1 ; ++i)
-                        _attribute_polytopelevel_relations_1->push_back(10);
-                        //_attribute_polytopelevel_relations_1->push_back(other._attribute_polytopelevel_relations_1->at(i));
+                    _attribute_polytopelevel_relations_1 = other._attribute_polytopelevel_relations_1;
+                    _attribute_polytopelevel_relations_2 = other._attribute_polytopelevel_relations_2;
+                    _attribute_polytopelevel_relations_3 = other._attribute_polytopelevel_relations_3;
+
+                    _attributes_of_type_1 = other._attributes_of_type_1;
+                    _attributes_of_type_2 = other._attributes_of_type_2;
+                    _attributes_of_type_3 = other._attributes_of_type_3;
+
+                    /*for(unsigned long i(0) ; i < other._num_attributes_of_type_1 ; ++i)
+                    {
+                        _attribute_polytopelevel_relations_1.push_back(other._attribute_polytopelevel_relations_1.at(i));
+                    }*/
 
                     /*for(unsigned long i(0) ; i < other._num_attributes_of_type_2 ; ++i)
                         _attribute_polytopelevel_relations_2->push_back(other._attribute_polytopelevel_relations_2->at(i));
@@ -231,9 +239,8 @@ namespace honei
 
                 ~Mesh()
                 {
-                    /*
                     delete[] _topologies;
-                    delete _attribute_polytopelevel_relations_1;
+                    /*delete _attribute_polytopelevel_relations_1;
                     delete _attribute_polytopelevel_relations_2;
                     delete _attribute_polytopelevel_relations_3;
                     delete _attributes_of_type_1;
@@ -424,7 +431,7 @@ namespace honei
 #endif
                         if(attribute_index < _num_attributes_of_type_1)
                         {
-                            _attributes_of_type_1->at(attribute_index).at(index) = value;
+                            _attributes_of_type_1.at(attribute_index).at(index) = value;
                         }
                     }
                     else if(typeid(AT_) == typeid(AttributeType2_))
@@ -435,7 +442,7 @@ namespace honei
 #endif
                         if(attribute_index < _num_attributes_of_type_2)
                         {
-                            _attributes_of_type_2->at(attribute_index).at(index) = value;
+                            _attributes_of_type_2.at(attribute_index).at(index) = value;
                         }
                     }
                     else if(typeid(AT_) == typeid(AttributeType3_))
@@ -446,7 +453,7 @@ namespace honei
 #endif
                         if(attribute_index < _num_attributes_of_type_3)
                         {
-                            _attributes_of_type_3->at(attribute_index).at(index) = value;
+                            _attributes_of_type_3.at(attribute_index).at(index) = value;
                         }
                     }
                     //todo catch index out of bounds
@@ -463,7 +470,7 @@ namespace honei
 #endif
                         if(attribute_index < _num_attributes_of_type_1)
                         {
-                            _attributes_of_type_1->at(attribute_index).push_back(value);
+                            _attributes_of_type_1.at(attribute_index).push_back(value);
                         }
                     }
                     else if(typeid(AT_) == typeid(AttributeType2_))
@@ -474,7 +481,7 @@ namespace honei
 #endif
                         if(attribute_index < _num_attributes_of_type_2)
                         {
-                            _attributes_of_type_2->at(attribute_index).push_back(value);
+                            _attributes_of_type_2.at(attribute_index).push_back(value);
                         }
                     }
                     else if(typeid(AT_) == typeid(AttributeType3_))
@@ -485,7 +492,7 @@ namespace honei
 #endif
                         if(attribute_index < _num_attributes_of_type_3)
                         {
-                            _attributes_of_type_3->at(attribute_index).push_back(value);
+                            _attributes_of_type_3.at(attribute_index).push_back(value);
                         }
                     }
                 }
@@ -595,32 +602,32 @@ namespace honei
 
                 typename TopologyType_::storage_type_ & get_attribute_polytopelevel_relations_1()
                 {
-                    return *_attribute_polytopelevel_relations_1;
+                    return _attribute_polytopelevel_relations_1;
                 }
 
                 typename TopologyType_::storage_type_ & get_attribute_polytopelevel_relations_2()
                 {
-                    return *_attribute_polytopelevel_relations_2;
+                    return _attribute_polytopelevel_relations_2;
                 }
 
                 typename TopologyType_::storage_type_ & get_attribute_polytopelevel_relations_3()
                 {
-                    return *_attribute_polytopelevel_relations_3;
+                    return _attribute_polytopelevel_relations_3;
                 }
 
                 outer_attribute_storage_type_1_ & get_attributes_of_type_1()
                 {
-                    return *_attributes_of_type_1;
+                    return _attributes_of_type_1;
                 }
 
                 outer_attribute_storage_type_2_ & get_attributes_of_type_2()
                 {
-                    return *_attributes_of_type_2;
+                    return _attributes_of_type_2;
                 }
 
                 outer_attribute_storage_type_3_ & get_attributes_of_type_3()
                 {
-                    return *_attributes_of_type_3;
+                    return _attributes_of_type_3;
                 }
 
             private:
@@ -632,13 +639,13 @@ namespace honei
                 unsigned _num_attributes_of_type_2;
                 unsigned _num_attributes_of_type_3;
 
-                typename TopologyType_::storage_type_* _attribute_polytopelevel_relations_1;
-                typename TopologyType_::storage_type_* _attribute_polytopelevel_relations_2;
-                typename TopologyType_::storage_type_* _attribute_polytopelevel_relations_3;
+                typename TopologyType_::storage_type_ _attribute_polytopelevel_relations_1;
+                typename TopologyType_::storage_type_ _attribute_polytopelevel_relations_2;
+                typename TopologyType_::storage_type_ _attribute_polytopelevel_relations_3;
 
-                outer_attribute_storage_type_1_* _attributes_of_type_1;
-                outer_attribute_storage_type_2_* _attributes_of_type_2;
-                outer_attribute_storage_type_3_* _attributes_of_type_3;
+                outer_attribute_storage_type_1_ _attributes_of_type_1;
+                outer_attribute_storage_type_2_ _attributes_of_type_2;
+                outer_attribute_storage_type_3_ _attributes_of_type_3;
 
                 inline const unsigned _level_difference(const unsigned from, const unsigned to)
                 {
