@@ -165,6 +165,12 @@ namespace honei
                 ~Mesh()
                 {
                     delete[] _topologies;
+                    delete _attribute_polytopelevel_relations_1;
+                    delete _attribute_polytopelevel_relations_2;
+                    delete _attribute_polytopelevel_relations_3;
+                    delete _attributes_of_type_1;
+                    delete _attributes_of_type_2;
+                    delete _attributes_of_type_3;
                 }
 
                 void add_polytope(const unsigned level)
