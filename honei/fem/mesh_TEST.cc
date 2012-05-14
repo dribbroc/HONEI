@@ -379,6 +379,10 @@ class MeshTest:
             typename fem::Topology<IndexType_, OT_, IT_>::storage_type_ test_49(m3.get_all_comm_neighbours(1));
             TEST_CHECK_EQUAL(test_49.size(), 1ul);
             TEST_CHECK_EQUAL(test_49.at(0), 0ul);
+
+            //testing copy-ctor
+            fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > m4(m3);
+            std::cout << "sfbsfbsfb" << std::endl;
         }
 };
 MeshTest<tags::CPU, unsigned long, std::vector, std::vector<unsigned long> > topology_test_cpu_v_v("std::vector, std::vector");

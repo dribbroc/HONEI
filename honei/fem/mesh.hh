@@ -101,8 +101,13 @@ namespace honei
                 friend class MeshAttributeRegistration< Mesh<_i, TopologyType_, AttributeStorageType_, OuterAttributeStorageType_, AttributeType1_, AttributeType2_>, AttributeType2_>;
                 friend class MeshAttributeRegistration< Mesh<_i, TopologyType_, AttributeStorageType_, OuterAttributeStorageType_, AttributeType1_, AttributeType3_>, AttributeType3_>;
 
+                typedef TopologyType_ topology_type_;
+                typedef typename TopologyType_::index_type_ index_type_;
+                typedef typename TopologyType_::storage_type_ storage_type_;
+
                 typedef AttributeType1_ attr_type_1_;
                 typedef AttributeType2_ attr_type_2_;
+                typedef AttributeType3_ attr_type_3_;
 
                 typedef OuterAttributeStorageType_<
                     AttributeStorageType_<
@@ -126,12 +131,12 @@ namespace honei
 
                 typedef OuterAttributeStorageType_<
                     AttributeStorageType_<
-                        AttributeType2_,
-                        std::allocator<AttributeType2_> >,
+                        AttributeType3_,
+                        std::allocator<AttributeType3_> >,
                     std::allocator<
                             AttributeStorageType_<
-                                AttributeType2_,
-                                std::allocator<AttributeType2_>
+                                AttributeType3_,
+                                std::allocator<AttributeType3_>
                 > > > outer_attribute_storage_type_3_;
 
                 typedef AttributeStorageType_<
@@ -143,7 +148,7 @@ namespace honei
                             std::allocator<AttributeType2_> > attribute_storage_type_2_;
 
                 typedef AttributeStorageType_<
-                            AttributeType2_,
+                            AttributeType3_,
                             std::allocator<AttributeType3_> > attribute_storage_type_3_;
 
                 Mesh() :
@@ -162,15 +167,78 @@ namespace honei
                 {
                 }
 
+                Mesh(Mesh & other) :
+                    _num_inter_topologies(other._num_inter_topologies),
+                    _num_levels(other._num_levels),
+                    _topologies(new TopologyType_[_i]),
+                    _num_attributes_of_type_1(other._num_attributes_of_type_1),
+                    _num_attributes_of_type_2(other._num_attributes_of_type_2),
+                    _num_attributes_of_type_3(other._num_attributes_of_type_3),
+                    _attribute_polytopelevel_relations_1(new typename TopologyType_::storage_type_),
+                    _attribute_polytopelevel_relations_2(new typename TopologyType_::storage_type_),
+                    _attribute_polytopelevel_relations_3(new typename TopologyType_::storage_type_),
+                    _attributes_of_type_1(new outer_attribute_storage_type_1_),
+                    _attributes_of_type_2(new outer_attribute_storage_type_2_),
+                    _attributes_of_type_3(new outer_attribute_storage_type_3_)
+                {
+                    for(unsigned long i(0) ; i < _num_inter_topologies ; ++i)
+                    {
+                        _topologies[i] = other._topologies[i];
+                    }
+
+                    std::cout << other._num_attributes_of_type_1 << std::endl;
+                    for(unsigned long i(0) ; i < other._num_attributes_of_type_1 ; ++i)
+                        _attribute_polytopelevel_relations_1->push_back(10);
+                        //_attribute_polytopelevel_relations_1->push_back(other._attribute_polytopelevel_relations_1->at(i));
+
+                    /*for(unsigned long i(0) ; i < other._num_attributes_of_type_2 ; ++i)
+                        _attribute_polytopelevel_relations_2->push_back(other._attribute_polytopelevel_relations_2->at(i));
+
+                    for(unsigned long i(0) ; i < other._num_attributes_of_type_3 ; ++i)
+                        _attribute_polytopelevel_relations_3->push_back(other._attribute_polytopelevel_relations_3->at(i));*/
+
+                    /*for(unsigned long i(0) ; i < other._num_attributes_of_type_1 ; ++i)
+                    {
+                        std::cout << i << std::endl;
+                        std::cout << "rel 1" << std::endl;
+                        _attribute_polytopelevel_relations_1->push_back(other._attribute_polytopelevel_relations_1->at(i));
+                        std::cout << "att 1" << std::endl;
+                        std::cout << other._num_attributes_of_type_1 << std::endl;
+                        std::cout << other._attributes_of_type_1->at(i).at(0) << std::endl;
+
+                        this->_attributes_of_type_1->push_back(other._attributes_of_type_1->at(i));
+                        std::cout << "vdfgdfgdfgh" << std::endl;
+                    }
+                    std::cout << "vdfgdfgdfgh" << std::endl;
+
+                    for(unsigned long i(0) ; i < other._num_attributes_of_type_2 ; ++i)
+                    {
+                        std::cout << "rel 2" << std::endl;
+                        _attribute_polytopelevel_relations_2->push_back(other._attribute_polytopelevel_relations_2->at(i));
+                        std::cout << "att 2" << std::endl;
+                        _attributes_of_type_2->push_back(other._attributes_of_type_2->at(i));
+                    }
+
+                    for(unsigned long i(0) ; i < other._num_attributes_of_type_3 ; ++i)
+                    {
+                        std::cout << "rel 3" << std::endl;
+                        _attribute_polytopelevel_relations_3->push_back(other._attribute_polytopelevel_relations_3->at(i));
+                        std::cout << "att 3" << std::endl;
+                        _attributes_of_type_3->push_back(other._attributes_of_type_3->at(i));
+                    }*/
+
+                }
+
                 ~Mesh()
                 {
+                    /*
                     delete[] _topologies;
                     delete _attribute_polytopelevel_relations_1;
                     delete _attribute_polytopelevel_relations_2;
                     delete _attribute_polytopelevel_relations_3;
                     delete _attributes_of_type_1;
                     delete _attributes_of_type_2;
-                    delete _attributes_of_type_3;
+                    delete _attributes_of_type_3;*/
                 }
 
                 void add_polytope(const unsigned level)
@@ -564,9 +632,9 @@ namespace honei
                 unsigned _num_attributes_of_type_2;
                 unsigned _num_attributes_of_type_3;
 
-                typename TopologyType_::storage_type_ * _attribute_polytopelevel_relations_1;
-                typename TopologyType_::storage_type_ * _attribute_polytopelevel_relations_2;
-                typename TopologyType_::storage_type_ * _attribute_polytopelevel_relations_3;
+                typename TopologyType_::storage_type_* _attribute_polytopelevel_relations_1;
+                typename TopologyType_::storage_type_* _attribute_polytopelevel_relations_2;
+                typename TopologyType_::storage_type_* _attribute_polytopelevel_relations_3;
 
                 outer_attribute_storage_type_1_* _attributes_of_type_1;
                 outer_attribute_storage_type_2_* _attributes_of_type_2;
