@@ -93,7 +93,7 @@ class HaloTest:
             fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > m4(m3);
 
             //init simple halo
-            fem::Halo<0> h;
+            fem::Halo<0, fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > > h(m3, m4);
 
             //add connections
             //
