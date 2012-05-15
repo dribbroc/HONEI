@@ -53,3 +53,5 @@ TopologyTest<tags::CPU, unsigned long, std::deque, std::list<unsigned long> > to
 TopologyTest<tags::CPU, unsigned long, std::list, std::deque<unsigned long> > topology_test_cpu_l_d("std::list, std::deque");
 
 TopologyTest<tags::CPU, unsigned long, std::vector, fem::DenseDataWrapper<15, unsigned long> > topology_test_cpu_v_ddw("std::vector, DV");
+TopologyTest<tags::CPU, unsigned long, std::deque, fem::DenseDataWrapper<15, unsigned long> > topology_test_cpu_d_ddw("std::deque, DV");
+TopologyTest<tags::CPU, unsigned long, std::list, fem::DenseDataWrapper<15, unsigned long> > topology_test_cpu_l_ddw("std::list, DV");
