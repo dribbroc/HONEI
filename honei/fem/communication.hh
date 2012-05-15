@@ -19,7 +19,7 @@ namespace honei
             com_bidir_send_receive,
             com_bidir_average
                 //TODO...
-        }
+        };
 
         template<unsigned i_ = 1, typename AttributeType_ = double, typename Tag_ = tags::CPU>
         class Communication
