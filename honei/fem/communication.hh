@@ -25,8 +25,9 @@ namespace honei
         class Communication
         {
             public:
+                //example: Halo-based
                 template<typename HaloType_>
-                static void execute(HaloType_ & halo, unsigned attr_index, CommModes mode = com_bidir_send_receive)
+                static void execute(HaloType_ & halo, unsigned attr_index, CommModes mode = com_bidir_send_receive) //TODO add rank
                 {
 #ifdef FEM_COMM_DEBUG
                     if(i_ != halo.get_overlap())
@@ -41,7 +42,7 @@ namespace honei
         {
             public:
                 template<typename HaloType_>
-                static void execute(HaloType_ & halo, unsigned attr_index, CommModes mode = com_bidir_send_receive)
+                static void execute(HaloType_ & halo, unsigned attr_index, CommModes mode = com_bidir_send_receive) //TODO add rank
                 {
 #ifdef FEM_COMM_DEBUG
                     if(halo.get_overlap() != 0)
@@ -54,6 +55,26 @@ namespace honei
         template<typename Tag_>
         class Comm
         {
+        };
+
+        template<>
+        class Comm<tags::CPU>
+        {
+            public:
+                //example shared-mem exchange
+                template<typename DataType_>
+                static void send_receive(DataType_ * sendbuf, DataType_ * recvbuf, unsigned long num_elements, unsigned sender_rank = 0, unsigned recvr_rank = 0)
+                {
+                    DataType_ buf;
+                    for(unsigned long i(0) ; i < num_elements ; ++i)
+                    {
+                        buf = sendbuf[i];
+                        sendbuf[i] = recvbuf[i];
+                        recvbuf[i] = sendbuf[i];
+                    }
+                }
+
+                //TODO
         };
     }
 }
