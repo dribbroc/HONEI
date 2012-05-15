@@ -12,12 +12,21 @@ namespace honei
 {
     namespace fem
     {
+        enum CommModes
+        {
+            com_unidir_left_send_right_receive = 0,
+            com_unidir_left_receive_right_send,
+            com_bidir_send_receive,
+            com_bidir_average
+                //TODO...
+        }
+
         template<unsigned i_ = 1, typename AttributeType_ = double, typename Tag_ = tags::CPU>
         class Communication
         {
             public:
                 template<typename HaloType_>
-                static void execute(HaloType_ & halo, unsigned attr_index)
+                static void execute(HaloType_ & halo, unsigned attr_index, CommModes mode = com_bidir_send_receive)
                 {
 #ifdef FEM_COMM_DEBUG
                     if(i_ != halo.get_overlap())
@@ -32,7 +41,7 @@ namespace honei
         {
             public:
                 template<typename HaloType_>
-                static void execute(HaloType_ & halo, unsigned attr_index)
+                static void execute(HaloType_ & halo, unsigned attr_index, CommModes mode = com_bidir_send_receive)
                 {
 #ifdef FEM_COMM_DEBUG
                     if(halo.get_overlap() != 0)
@@ -40,6 +49,11 @@ namespace honei
 #endif
                 }
                 //TODO
+        };
+
+        template<typename Tag_>
+        class Comm
+        {
         };
     }
 }
