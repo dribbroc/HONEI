@@ -19,7 +19,8 @@ namespace honei
                     _halo_elements(StorageType_<IndexType_, std::allocator<IndexType_> >()),
                     _halo_element_counterparts(StorageType_<IndexType_, std::allocator<IndexType_> >()),
                     _left(left),
-                    _right(right)
+                    _right(right),
+                    _overlap(delta)
                 {
                 }
 
@@ -59,12 +60,19 @@ namespace honei
                     return _right;
                 }
 
+                unsigned get_overlap()
+                {
+                    return _overlap;
+                }
+
             private:
                 StorageType_<IndexType_, std::allocator<IndexType_> > _halo_elements;
                 StorageType_<IndexType_, std::allocator<IndexType_> > _halo_element_counterparts;
 
                 MeshType_ & _left;
                 MeshType_ & _right;
+
+                unsigned _overlap;
         };
 
     }

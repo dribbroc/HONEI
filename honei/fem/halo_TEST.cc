@@ -3,6 +3,7 @@
 #include <honei/util/unittest.hh>
 #include <honei/fem/halo.hh>
 #include <honei/fem/mesh.hh>
+#include <honei/fem/communication.hh>
 #include <iostream>
 #include <deque>
 #include <list>
@@ -115,6 +116,8 @@ class HaloTest:
             TEST_CHECK_EQUAL(h.get_element(1u), 6u);
             TEST_CHECK_EQUAL(h.get_element_counterpart(0u), 0u);
             TEST_CHECK_EQUAL(h.get_element_counterpart(1u), 1u);
+
+            fem::Communication<0, double, tags::CPU>::execute(h, 0);
         }
 };
 HaloTest<tags::CPU, unsigned long, std::vector, std::vector<unsigned long> > halo_test_cpu_v_v("std::vector, std::vector");
