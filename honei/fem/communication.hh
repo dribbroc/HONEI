@@ -14,51 +14,11 @@ namespace honei
     {
         enum CommModes
         {
-            com_unidir_left_send_right_receive = 0,
-            com_unidir_left_receive_right_send,
-            com_bidir_send_receive,
-            com_bidir_average
+            com_send = 0,
+            com_receive,
+            com_send_receive,
+            com_average
                 //TODO...
-        };
-
-        //overlap is a compile-time decision now, if not feasible, move to inner function template
-        template<unsigned i_ = 1, CommModes j_ = com_bidir_send_receive, typename AttributeType_ = double, typename Tag_ = tags::CPU>
-        class Communication
-        {
-            public:
-                //example: Halo-based
-                template<typename HaloType_>
-                static void execute(HaloType_ & halo, unsigned attr_index) //TODO add rank
-                {
-#ifdef FEM_COMM_DEBUG
-                    if(i_ != halo.get_overlap())
-                        throw CommunicationHaloOverlapMismatch(i_, halo.get_overlap());
-#endif
-                    //temp
-                    switch(j_)
-                    {
-                        case com_bidir_send_receive:
-                            {
-                                AttributeType_* buf(new AttributeType_[halo.size()]);
-                            }
-                    }
-                }
-                //TODO
-        };
-
-        template<CommModes j_, typename AttributeType_, typename Tag_>
-        class Communication<0, j_, AttributeType_, Tag_>
-        {
-            public:
-                template<typename HaloType_>
-                static void execute(HaloType_ & halo, unsigned attr_index) //TODO add rank
-                {
-#ifdef FEM_COMM_DEBUG
-                    if(halo.get_overlap() != 0)
-                        throw CommunicationHaloOverlapMismatch(0, halo.get_overlap());
-#endif
-                }
-                //TODO
         };
 
         template<typename Tag_>
@@ -72,19 +32,69 @@ namespace honei
             public:
                 //example shared-mem exchange
                 template<typename DataType_>
-                static void send_receive(DataType_ * sendbuf, DataType_ * recvbuf, unsigned long num_elements, unsigned sender_rank = 0, unsigned recvr_rank = 0)
+                static void send_recv(DataType_ * sendbuf, unsigned long dest_rank, unsigned long num_elements, DataType_* recvbuf, unsigned long source_rank)
                 {
                     DataType_ buf;
                     for(unsigned long i(0) ; i < num_elements ; ++i)
                     {
                         buf = sendbuf[i];
                         sendbuf[i] = recvbuf[i];
-                        recvbuf[i] = sendbuf[i];
+                        recvbuf[i] = buf;
                     }
                 }
 
                 //TODO
         };
+
+        //overlap is a compile-time decision now, if not feasible, move to inner function template
+        template<unsigned i_ = 1, CommModes j_ = com_send_receive, typename AttributeType_ = double, typename Tag_ = tags::CPU>
+        class Communication
+        {
+            public:
+                //example: Halo-based
+                template<typename HaloType_, typename MeshType_>
+                static void execute(HaloType_ & halo,
+                                    unsigned attr_index,
+                                    MeshType_ & other_mesh,
+                                    unsigned long other_rank) //TODO other_mesh resolved by process mesh list (mesh by id), needs to be a local thing
+                {
+#ifdef FEM_COMM_DEBUG
+                    if(i_ != halo.get_overlap())
+                        throw CommunicationHaloOverlapMismatch(i_, halo.get_overlap());
+#endif
+                    //temp example
+                    switch(j_)
+                    {
+                        case com_send_receive:
+                            {
+                                //temp until some sort of patch-internal buffer or master bufferpool available. Emulates Pack(). if rank=.. states here
+                                AttributeType_* sendbuf(new AttributeType_[halo.size()]);
+                                AttributeType_* recvbuf(new AttributeType_[halo.size()]);
+                                for(unsigned long i(0) ; i < halo.size() ; ++i)
+                                {
+                                    if(typeid(AttributeType_) == typeid(typename MeshType_::attr_type_1_))
+                                    {
+                                        sendbuf[i] = halo.get_mesh().get_attributes_of_type_1().at(attr_index).at(halo.get_element(i)); //TODO maybe mixed up send/recv
+                                        recvbuf[i] = other_mesh.get_attributes_of_type_1().at(attr_index).at(halo.get_element_counterpart(i));
+                                    }
+                                }
+                                //'post'
+                                //TODO resolve get_other() in other_rank, temp: other_id = other_rank
+                                fem::Comm<Tag_>::send_recv(sendbuf, other_rank, halo.size(), recvbuf, halo.get_mesh().get_pp_rank());
+                                for(unsigned long i(0) ; i < halo.size() ; ++i)
+                                {
+                                    if(typeid(AttributeType_) == typeid(typename MeshType_::attr_type_1_))
+                                    {
+                                        halo.get_mesh().get_attributes_of_type_1().at(attr_index).at(halo.get_element(i)) = sendbuf[i]; //TODO maybe mixed up send/recv
+                                        other_mesh.get_attributes_of_type_1().at(attr_index).at(halo.get_element_counterpart(i)) = recvbuf[i];
+                                    }
+                                }
+                            }
+                    }
+                }
+                //TODO
+        };
+
     }
 }
 #endif

@@ -15,6 +15,9 @@ namespace honei
             public:
                 typedef IndexType_ index_type_;
                 typedef MeshType_ mesh_type_;
+                typedef typename MeshType_::attr_type_1_ attr_type_1_;
+                typedef typename MeshType_::attr_type_2_ attr_type_2_;
+                typedef typename MeshType_::attr_type_3_ attr_type_3_;
 
                 Halo(MeshType_ & mesh, IndexType_ other) :
                     _halo_elements(StorageType_<IndexType_, std::allocator<IndexType_> >()),
