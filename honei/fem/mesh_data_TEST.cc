@@ -32,7 +32,7 @@ class MeshDataTest:
             //   3--4--5     *--*--*
             //    5  6
 
-            fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > m3;
+            fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > m3(0);
 
             //configure attribute
             unsigned my_attribute_index(fem::MeshAttributeRegistration<fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> >, double>::execute(m3, fem::pl_vertex));

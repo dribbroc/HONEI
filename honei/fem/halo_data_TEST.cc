@@ -35,7 +35,7 @@ class HaloDataTest:
             //   3--4--5     *--*--*
             //    5  6
 
-            fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > m3;
+            fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > m3(0);
 
             //configure attribute
             unsigned my_attribute_index(fem::MeshAttributeRegistration<fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> >, double>::execute(m3, fem::pl_vertex));
@@ -92,10 +92,10 @@ class HaloDataTest:
             m3.add_adjacency(fem::pl_face, fem::pl_edge, 1, 6);
 
             //clone mesh
-            fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > m4(m3);
+            fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > m4(1, m3);
 
             //init simple halo
-            fem::Halo<0, fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > > h(m3, m4);
+            fem::Halo<0, fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > > h(m3, 1);
 
             //add connections
             //

@@ -34,7 +34,7 @@ class HaloTest:
             //   3--4--5     *--*--*
             //    5  6
 
-            fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > m3;
+            fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > m3(0);
 
             //configure attribute
             unsigned my_attribute_index(fem::MeshAttributeRegistration<fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> >, double>::execute(m3, fem::pl_vertex));
@@ -91,10 +91,10 @@ class HaloTest:
             m3.add_adjacency(fem::pl_face, fem::pl_edge, 1, 6);
 
             //clone mesh
-            fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > m4(m3);
+            fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > m4(1, m3);
 
             //init simple halo
-            fem::Halo<0, fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > > h(m3, m4);
+            fem::Halo<0, fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > > h(m3, 1);
 
             //add connections
             //
@@ -116,8 +116,6 @@ class HaloTest:
             TEST_CHECK_EQUAL(h.get_element(1u), 6u);
             TEST_CHECK_EQUAL(h.get_element_counterpart(0u), 0u);
             TEST_CHECK_EQUAL(h.get_element_counterpart(1u), 1u);
-
-            fem::Communication<0, double, tags::CPU>::execute(h, 0);
         }
 };
 HaloTest<tags::CPU, unsigned long, std::vector, std::vector<unsigned long> > halo_test_cpu_v_v("std::vector, std::vector");

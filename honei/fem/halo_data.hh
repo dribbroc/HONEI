@@ -55,14 +55,14 @@ namespace honei
                     return _halo_elements.size();
                 }
 
-                typename HaloType_::mesh_type_ & get_left_mesh()
+                typename HaloType_::mesh_type_ & get_mesh()
                 {
-                    return _halo.get_left_mesh();
+                    return _halo.get_mesh();
                 }
 
-                typename HaloType_::mesh_type_ & get_right_mesh()
+                IndexType_ & get_other()
                 {
-                    return _halo.get_right_mesh();
+                    return _halo.get_other();
                 }
 
                 unsigned get_overlap()

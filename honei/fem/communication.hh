@@ -21,28 +21,37 @@ namespace honei
                 //TODO...
         };
 
-        template<unsigned i_ = 1, typename AttributeType_ = double, typename Tag_ = tags::CPU>
+        //overlap is a compile-time decision now, if not feasible, move to inner function template
+        template<unsigned i_ = 1, CommModes j_ = com_bidir_send_receive, typename AttributeType_ = double, typename Tag_ = tags::CPU>
         class Communication
         {
             public:
                 //example: Halo-based
                 template<typename HaloType_>
-                static void execute(HaloType_ & halo, unsigned attr_index, CommModes mode = com_bidir_send_receive) //TODO add rank
+                static void execute(HaloType_ & halo, unsigned attr_index) //TODO add rank
                 {
 #ifdef FEM_COMM_DEBUG
                     if(i_ != halo.get_overlap())
                         throw CommunicationHaloOverlapMismatch(i_, halo.get_overlap());
 #endif
+                    //temp
+                    switch(j_)
+                    {
+                        case com_bidir_send_receive:
+                            {
+                                AttributeType_* buf(new AttributeType_[halo.size()]);
+                            }
+                    }
                 }
                 //TODO
         };
 
-        template<typename AttributeType_, typename Tag_>
-        class Communication<0, AttributeType_, Tag_>
+        template<CommModes j_, typename AttributeType_, typename Tag_>
+        class Communication<0, j_, AttributeType_, Tag_>
         {
             public:
                 template<typename HaloType_>
-                static void execute(HaloType_ & halo, unsigned attr_index, CommModes mode = com_bidir_send_receive) //TODO add rank
+                static void execute(HaloType_ & halo, unsigned attr_index) //TODO add rank
                 {
 #ifdef FEM_COMM_DEBUG
                     if(halo.get_overlap() != 0)

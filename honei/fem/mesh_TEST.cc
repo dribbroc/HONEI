@@ -27,9 +27,9 @@ class MeshTest:
         virtual void run() const
         {
             //basic tests
-            fem::Mesh<> m;
+            fem::Mesh<> m(0);
 
-            fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > m2;
+            fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > m2(1);
 
             TEST_CHECK_EQUAL(m.get_num_levels(), 3ul);
             TEST_CHECK_EQUAL(m2.get_num_levels(), 3ul);
@@ -51,7 +51,7 @@ class MeshTest:
             //   3--4--5     *--*--*
             //    5  6
 
-            fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > m3;
+            fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > m3(2);
 
             //configure attribute
             unsigned my_attribute_index(fem::MeshAttributeRegistration<fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> >, double>::execute(m3, fem::pl_vertex));
@@ -381,7 +381,7 @@ class MeshTest:
             TEST_CHECK_EQUAL(test_49.at(0), 0ul);
 
             //testing copy-ctor
-            fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > m4(m3);
+            fem::Mesh<fem::rnt_2D, fem::Topology<IndexType_, OT_, IT_> > m4(3, m3);
             typename fem::Topology<IndexType_, OT_, IT_>::storage_type_ test_50(m4.get_all_comm_neighbours(1));
             TEST_CHECK_EQUAL(test_50.size(), 1ul);
             TEST_CHECK_EQUAL(test_50.at(0), 0ul);

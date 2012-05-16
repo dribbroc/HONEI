@@ -16,11 +16,11 @@ namespace honei
                 typedef IndexType_ index_type_;
                 typedef MeshType_ mesh_type_;
 
-                Halo(MeshType_ & left, MeshType_ & right) :
+                Halo(MeshType_ & mesh, IndexType_ other) :
                     _halo_elements(StorageType_<IndexType_, std::allocator<IndexType_> >()),
                     _halo_element_counterparts(StorageType_<IndexType_, std::allocator<IndexType_> >()),
-                    _left(left),
-                    _right(right),
+                    _mesh(mesh),
+                    _other(other),
                     _overlap(delta)
                 {
                 }
@@ -51,14 +51,14 @@ namespace honei
                     return _halo_elements.size();
                 }
 
-                MeshType_ & get_left_mesh()
+                MeshType_ & get_mesh()
                 {
-                    return _left;
+                    return _mesh;
                 }
 
-                MeshType_ & get_right_mesh()
+                IndexType_ get_other()
                 {
-                    return _right;
+                    return _other;
                 }
 
                 unsigned get_overlap()
@@ -70,8 +70,8 @@ namespace honei
                 StorageType_<IndexType_, std::allocator<IndexType_> > _halo_elements;
                 StorageType_<IndexType_, std::allocator<IndexType_> > _halo_element_counterparts;
 
-                MeshType_ & _left;
-                MeshType_ & _right;
+                MeshType_ & _mesh;
+                IndexType_ _other;
 
                 unsigned _overlap;
         };
