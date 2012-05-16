@@ -32,10 +32,11 @@ namespace honei
             public:
                 //example shared-mem exchange
                 template<typename DataType_>
-                static void send_recv(DataType_ * sendbuf, unsigned long dest_rank, unsigned long num_elements, DataType_* recvbuf, unsigned long source_rank)
+                static inline void send_recv(DataType_ * sendbuf, unsigned long dest_rank, unsigned long num_elements, DataType_* recvbuf, unsigned long source_rank)
                 {
                     DataType_ buf;
-                    for(unsigned long i(0) ; i < num_elements ; ++i)
+                    const unsigned long i_end(num_elements);
+                    for(unsigned long i(0) ; i < i_end ; ++i)
                     {
                         buf = sendbuf[i];
                         sendbuf[i] = recvbuf[i];
@@ -79,7 +80,6 @@ namespace honei
                                     }
                                 }
                                 //'post'
-                                //TODO resolve get_other() in other_rank, temp: other_id = other_rank
                                 fem::Comm<Tag_>::send_recv(sendbuf, other_rank, halo.size(), recvbuf, halo.get_mesh().get_pp_rank());
                                 for(unsigned long i(0) ; i < halo.size() ; ++i)
                                 {
