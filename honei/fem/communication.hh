@@ -26,11 +26,11 @@ namespace honei
         {
         };
 
+        //example shared-mem exchange
         template<>
         class Comm<tags::CPU>
         {
             public:
-                //example shared-mem exchange
                 template<typename DataType_>
                 static inline void send_recv(DataType_ * sendbuf, unsigned long dest_rank, unsigned long num_elements, DataType_* recvbuf, unsigned long source_rank)
                 {
