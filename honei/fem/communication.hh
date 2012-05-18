@@ -32,7 +32,7 @@ namespace honei
         {
             public:
                 template<typename DataType_>
-                static inline void send_recv(DataType_ * sendbuf, unsigned long dest_rank, unsigned long num_elements, DataType_* recvbuf, unsigned long source_rank)
+                static inline void send_recv(DataType_ * sendbuf, HONEI_UNUSED unsigned long dest_rank, unsigned long num_elements, DataType_* recvbuf, HONEI_UNUSED unsigned long source_rank)
                 {
                     DataType_ buf;
                     const unsigned long i_end(num_elements);

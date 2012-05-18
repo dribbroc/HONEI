@@ -363,17 +363,17 @@ namespace honei
                     return search_data.at(search_data.size() - 1);
                 }
 
-                const typename TopologyType_::index_type_ get_num_levels()
+                typename TopologyType_::index_type_ get_num_levels()
                 {
                     return _num_levels;
                 }
 
-                const int get_downward_index(const unsigned pl)
+                int get_downward_index(const unsigned pl)
                 {
                     return _downward_index(pl);
                 }
 
-                const int get_upward_index(const unsigned pl)
+                int get_upward_index(const unsigned pl)
                 {
                     return _upward_index(pl);
                 }
@@ -633,22 +633,22 @@ namespace honei
                 outer_attribute_storage_type_2_ _attributes_of_type_2;
                 outer_attribute_storage_type_3_ _attributes_of_type_3;
 
-                inline const unsigned _level_difference(const unsigned from, const unsigned to)
+                inline unsigned _level_difference(const unsigned from, const unsigned to)
                 {
                     return from == to ? 1u : ( from > to ? (unsigned)std::abs((double)(from - to)) - 1u : (unsigned)std::abs((double)(to - from)) - 1u);
                 }
 
-                inline const int _downward_index(const unsigned pl)
+                inline int _downward_index(const unsigned pl)
                 {
                     return (pl == 0u || pl >= _num_levels) ? - 1 : (pl == 3u ? 5 : (unsigned)pow(2, pl) - 1);
                 }
 
-                inline const int _upward_index(const unsigned pl)
+                inline int _upward_index(const unsigned pl)
                 {
                     return pl >= _num_levels - 1? -1 : ( pl > 0 ? (unsigned)pow(2, pl) : 0);
                 }
 
-                inline const int _sweep_direction(const unsigned from_level, const unsigned to_level)
+                inline int _sweep_direction(const unsigned from_level, const unsigned to_level)
                 {
                     return from_level == to_level ? 0 : (from_level > to_level ? -1 : 1);
                 }

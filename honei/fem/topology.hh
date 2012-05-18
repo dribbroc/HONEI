@@ -38,18 +38,18 @@ namespace honei
                     return _num_polytopes;
                 }
 
-                void push_back(const StorageType_ s)
+                void push_back(StorageType_ & s)
                 {
                     _topology.push_back(s);
                     ++_num_polytopes;
                 }
 
-                StorageType_ & at(unsigned long i)
+                StorageType_ & at(const unsigned long i)
                 {
                     return _topology.at(i);
                 }
 
-                StorageType_ & operator[] (unsigned long i)
+                StorageType_ & operator[] (const unsigned long i)
                 {
                     return _topology.at(i);
                 }
