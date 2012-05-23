@@ -24,6 +24,7 @@
 #include <honei/la/dense_matrix.hh>
 #include <honei/backends/mpi/operations.hh>
 #include <honei/lbm/solver_lbm_grid.hh>
+#include <honei/lbm/solver_lbm_grid_pollutant.hh>
 #include <honei/lbm/partial_derivative.hh>
 #include <honei/swe/post_processing.hh>
 #include <honei/swe/volume.hh>
@@ -46,7 +47,7 @@
 namespace honei
 {
     template <typename DataType_>
-    class MPIRingSolver
+    class MPIPollutantSolver
     {
         private:
             int _numprocs;
@@ -62,23 +63,18 @@ namespace honei
             tags::TagValue _solver_tag_value;
             std::vector<std::string> _backends;
             std::vector<double> _fractions;
-            double _sync_time_up;
-            double _sync_time_down;
             std::string _device_name;
             unsigned long _scenario;
             double _sync_threshold;
             bool _recently_synched;
 
         public:
-            MPIRingSolver(int argc, char **argv)
+            MPIPollutantSolver(int argc, char **argv)
             {
                 mpi::mpi_init(&argc, &argv);
                 mpi::mpi_comm_size(&_numprocs);
                 mpi::mpi_comm_rank(&_myid);
                 _gpu_device = 0;
-                _sync_time_up = 0;
-                _sync_time_down = 0;
-                _recently_synched = false;
                 if (argc != 5)
                 {
                     if(_myid == 0) std::cout<<"Usage: honei-mpi-ring grid_x grid_y timesteps config_file_name"<<std::endl;
@@ -124,7 +120,6 @@ namespace honei
                 if (fraction_sum != 1.)
                     throw InternalError("proc fraction sum must be equal to 1!");
 
-
                 _nodes = _numprocs / (_fractions.size());
 
 
@@ -138,7 +133,7 @@ namespace honei
                 }
             }
 
-            ~MPIRingSolver()
+            ~MPIPollutantSolver()
             {
                 mpi::mpi_finalize();
             }
@@ -146,24 +141,32 @@ namespace honei
         private:
             void _master(unsigned long gridsize_x, unsigned long gridsize_y, unsigned long timesteps)
             {
-                std::cout<<"Ring LBM Solver with " << _numprocs << " procs on " << _nodes << " nodes (" << _numprocs / _nodes << " jobs per node)" << std::endl;
+                std::cout<<"Pollutant LBM Solver with " << _numprocs << " procs on " << _nodes << " nodes (" << _numprocs / _nodes << " jobs per node)" << std::endl;
                 if (_file_output)
                     std::cout<<"with file output activated"<<std::endl<<std::endl;
                 else
                     std::cout<<std::endl;
                 Grid<D2Q9, DataType_> grid_global;
+                Grid<D2Q9, DataType_> grid_poll_global;
                 ScenarioCollection::get_scenario(_scenario, gridsize_x, gridsize_y, grid_global);
+                ScenarioCollection::get_scenario(_scenario, gridsize_x, gridsize_y, grid_poll_global);
+                delete grid_poll_global.h;
+                grid_poll_global.h = new DenseMatrix<DataType_>(gridsize_x, gridsize_y, DataType_(0.1));
                 std::cout << "Solving: " << grid_global.long_description << std::endl;
                 std::cout<<"Gridsize: "<<grid_global.h->rows()<<" x "<<grid_global.h->columns()<<std::endl;
                 std::cout<<"Timesteps: "<<timesteps<<std::endl;
 
                 PackedGridData<D2Q9, DataType_>  data_global;
                 PackedGridInfo<D2Q9> info_global;
+                PackedGridData<D2Q9, DataType_>  data_poll_global;
 
                 GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_global, info_global, data_global, false);
+                GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_poll_global, info_global, data_poll_global, false);
+
                 std::vector<PackedGridInfo<D2Q9> > info_list;
                 std::vector<PackedGridData<D2Q9, DataType_> > data_list;
                 std::vector<PackedGridFringe<D2Q9> > fringe_list;
+                std::vector<PackedGridData<D2Q9, DataType_> > data_poll_list;
 
                 //decompose patches
                 {
@@ -184,11 +187,16 @@ namespace honei
                     }
                     patch_sizes.front() += data_global.u->size() % _nodes;
                     GridPartitioner<D2Q9, DataType_>::decompose_intern(patch_sizes, info_global, data_global, info_list, data_list, fringe_list, false);
+                    std::vector<PackedGridData<D2Q9, DataType_> > dummy_data_list;
+                    honei::GridPartitioner<D2Q9, DataType_>::destroy(info_list, dummy_data_list, fringe_list);
+                    GridPartitioner<D2Q9, DataType_>::decompose_intern(patch_sizes, info_global, data_poll_global, info_list, data_poll_list, fringe_list, false);
                 }
 
                 PackedGridData<D2Q9, DataType_> data_lokal(data_list.at(0));
+                PackedGridData<D2Q9, DataType_> data_poll_lokal(data_poll_list.at(0));
                 PackedGridInfo<D2Q9> info_lokal(info_list.at(0));
                 _alloc_lokal_data(data_lokal);
+                _alloc_lokal_data(data_poll_lokal);
 
                 unsigned long mpi_file_size(data_global.h->size() * sizeof(DataType_));
                 mpi::mpi_bcast(&timesteps, 1, _masterid, _comm_cart);
@@ -197,6 +205,12 @@ namespace honei
                 mpi::mpi_bcast(&grid_global.d_y, 1, _masterid, _comm_cart);
                 mpi::mpi_bcast(&grid_global.d_t, 1, _masterid, _comm_cart);
                 mpi::mpi_bcast(&grid_global.tau, 1, _masterid, _comm_cart);
+                DataType_ tau_c(1);
+                DataType_ k(0.5);
+                DataType_ s_0(0.);
+                mpi::mpi_bcast(&tau_c, 1, _masterid, _comm_cart);
+                mpi::mpi_bcast(&k, 1, _masterid, _comm_cart);
+                mpi::mpi_bcast(&s_0, 1, _masterid, _comm_cart);
 
                 std::list<unsigned long> ul_buffer;
                 std::vector<MPI_Request> requests;
@@ -206,6 +220,7 @@ namespace honei
                     MPI_Cart_rank(_comm_cart, &target, &rank);
                     _send_info(rank, info_list.at(target), ul_buffer, requests);
                     _send_data(rank, data_list.at(target), ul_buffer, requests);
+                    _send_data(rank, data_poll_list.at(target), ul_buffer, requests);
                     _send_fringe(rank, fringe_list.at(target), ul_buffer, requests);
                 }
                 MPI_Waitall(requests.size(), &requests[0], MPI_STATUSES_IGNORE);
@@ -216,26 +231,16 @@ namespace honei
                 SolverLBMGridBase * solver(NULL);
                 _init_solver(solver, _mycartid % _backends.size(), info_lokal, data_lokal, grid_global.d_x, grid_global.d_y, grid_global.d_t, grid_global.tau);
 
+                SolverLBMGridPollutantBase * solver_poll(NULL);
+                _init_solver_poll(solver_poll, _mycartid % _backends.size(), info_lokal, data_lokal, data_poll_lokal, grid_poll_global.d_x, grid_poll_global.d_y, grid_poll_global.d_t, tau_c, k, s_0, 0.);
+
                 solver->do_preprocessing();
+                solver_poll->do_preprocessing();
 
-                /*for (int target(1) ; target < _numprocs ; ++target)
-                  {
-                  int rank;
-                  MPI_Cart_rank(_comm_cart, &target, &rank);
-                  _recv_slave_sync(rank, info_list.at(target), data_list.at(target), fringe_list.at(target));
-                  }
-
-                  GridPartitioner<D2Q9, DataType_>::synch(info_global, data_global, info_list, data_list, fringe_list);
-
-                  for (int target(1) ; target < _numprocs ; ++target)
-                  {
-                  int rank;
-                  MPI_Cart_rank(_comm_cart, &target, &rank);
-                  _send_slave_sync(rank, info_list.at(target), data_list.at(target), fringe_list.at(target));
-                  }*/
 
                 MPI_Barrier(MPI_COMM_WORLD);
                 _circle_sync(info_lokal, data_lokal, fringe_list.at(0));
+                _circle_sync(info_lokal, data_poll_lokal, fringe_list.at(0));
 
                 //GridPartitioner<D2Q9, DataType_>::compose(info_global, data_global, info_list, data_list);
                 //GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid_global, info_global, data_global);
@@ -247,6 +252,7 @@ namespace honei
                 for(unsigned long i(0); i < timesteps; ++i)
                 {
                     solver->solve();
+                    solver_poll->solve();
 
                     /*MPI_File fh;
                       std::string filename("h_"+stringify(i)+"_out.dat");
@@ -257,6 +263,7 @@ namespace honei
                       MPI_File_iwrite_at(fh, info_lokal.offset + (*info_lokal.limits)[0], data_lokal.h->elements() + (*info_lokal.limits)[0], (*info_lokal.limits)[info_lokal.limits->size() - 1] - (*info_lokal.limits)[0], mpi::MPIType<DataType_>::value(), &request);*/
 
                     _circle_sync(info_lokal, data_lokal, fringe_list.at(0));
+                    _circle_sync(info_lokal, data_poll_lokal, fringe_list.at(0));
 
                     if (_file_output)
                     {
@@ -268,10 +275,10 @@ namespace honei
                     //MPI_Wait(&request, MPI_STATUS_IGNORE);
                     //MPI_File_close(&fh);
                 }
-                std::cout<<_mycartid << " (" << _device_name << "): up "<<_sync_time_up<<" down "<<_sync_time_down<<std::endl;
                 MPI_Barrier(MPI_COMM_WORLD);
                 bt.take();
                 solver->do_postprocessing();
+                solver_poll->do_postprocessing();
                 std::cout<<"Timesteps: " << timesteps << " TOE: "<<bt.total() - at.total()<<std::endl;
                 std::cout<<"MLUPS: "<< (double(grid_global.h->rows()) * double(grid_global.h->columns()) * double(timesteps)) / (1e6 * (bt.total() - at.total())) <<std::endl;
 
@@ -348,21 +355,29 @@ namespace honei
                 std::cout<<"Comparison finished sucessfully!"<<std::endl;*/
 
                 delete solver;
+                delete solver_poll;
                 data_lokal.destroy();
+                data_poll_lokal.destroy();
                 data_list.erase(data_list.begin());
+                data_poll_list.erase(data_poll_list.begin());
                 honei::GridPartitioner<D2Q9, DataType_>::destroy(info_list, data_list, fringe_list);
+                honei::GridPartitioner<D2Q9, DataType_>::destroy(info_list, data_poll_list, fringe_list);
                 grid_global.destroy();
+                grid_poll_global.destroy();
                 info_global.destroy();
                 data_global.destroy();
+                data_poll_global.destroy();
             }
 
             void _slave()
             {
                 PackedGridData<D2Q9, DataType_> data;
+                PackedGridData<D2Q9, DataType_> data_poll;
                 PackedGridInfo<D2Q9> info;
                 PackedGridFringe<D2Q9> fringe;
                 unsigned long timesteps, mpi_file_size;
                 DataType_ d_x, d_y, d_t, tau;
+                DataType_ tau_c, k, s_0;
 
                 mpi::mpi_bcast(&timesteps, 1, _masterid, _comm_cart);
                 mpi::mpi_bcast(&mpi_file_size, 1, _masterid, _comm_cart);
@@ -370,24 +385,32 @@ namespace honei
                 mpi::mpi_bcast(&d_y, 1, _masterid, _comm_cart);
                 mpi::mpi_bcast(&d_t, 1, _masterid, _comm_cart);
                 mpi::mpi_bcast(&tau, 1, _masterid, _comm_cart);
+                mpi::mpi_bcast(&tau_c, 1, _masterid, _comm_cart);
+                mpi::mpi_bcast(&k, 1, _masterid, _comm_cart);
+                mpi::mpi_bcast(&s_0, 1, _masterid, _comm_cart);
 
                 _recv_info(info);
                 _recv_data(data);
+                _recv_data(data_poll);
                 _recv_fringe(fringe);
 
                 SolverLBMGridBase * solver(NULL);
                 _init_solver(solver, _mycartid % _backends.size(), info, data, d_x, d_y, d_t, tau);
 
-                solver->do_preprocessing();
+                SolverLBMGridPollutantBase * solver_poll(NULL);
+                _init_solver_poll(solver_poll, _mycartid % _backends.size(), info, data, data_poll, d_x, d_y, d_t, tau_c, k, s_0, 0.);
 
-                //_send_master_sync(_masterid, info, data, fringe);
-                //_recv_master_sync(_masterid, info, data, fringe);
+                solver->do_preprocessing();
+                solver_poll->do_preprocessing();
+
                 MPI_Barrier(MPI_COMM_WORLD);
                 _circle_sync(info, data, fringe);
+                _circle_sync(info, data_poll, fringe);
 
                 for(unsigned long i(0); i < timesteps; ++i)
                 {
                     solver->solve();
+                    solver_poll->solve();
 
                     /*MPI_File fh;
                       std::string filename("h_"+stringify(i)+"_out.dat");
@@ -398,6 +421,7 @@ namespace honei
                       MPI_File_iwrite_at(fh, info.offset + (*info.limits)[0], data.h->elements() + (*info.limits)[0], (*info.limits)[info.limits->size() - 1] - (*info.limits)[0], mpi::MPIType<DataType_>::value(), &request);*/
 
                     _circle_sync(info, data, fringe);
+                    _circle_sync(info, data_poll, fringe);
 
                     if (_file_output)
                     {
@@ -409,15 +433,17 @@ namespace honei
                     //MPI_Wait(&request, MPI_STATUS_IGNORE);
                     //MPI_File_close(&fh);
                 }
-                std::cout<<_mycartid << " (" << _device_name << "): up "<<_sync_time_up<<" down "<<_sync_time_down<<std::endl;
                 MPI_Barrier(MPI_COMM_WORLD);
                 solver->do_postprocessing();
+                solver_poll->do_postprocessing();
                 //_send_full_sync(_masterid, data);
 
                 delete solver;
+                delete solver_poll;
                 fringe.destroy();
                 info.destroy();
                 data.destroy();
+                data_poll.destroy();
             }
 
             void _alloc_lokal_data(PackedGridData<D2Q9, DataType_> & data_lokal)
@@ -992,230 +1018,6 @@ namespace honei
                 data.f_temp_8->unlock(lm_read_and_write);
             }
 
-            void _send_master_sync(int target, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & fringe)
-            {
-                data.h->lock(lm_read_only);
-                data.f_temp_1->lock(lm_read_only);
-                data.f_temp_2->lock(lm_read_only);
-                data.f_temp_3->lock(lm_read_only);
-                data.f_temp_4->lock(lm_read_only);
-                data.f_temp_5->lock(lm_read_only);
-                data.f_temp_6->lock(lm_read_only);
-                data.f_temp_7->lock(lm_read_only);
-                data.f_temp_8->lock(lm_read_only);
-
-                unsigned long offset(info.offset);
-                unsigned long f1_offset((*fringe.dir_index_1)[0]);
-                unsigned long f1_size((*fringe.dir_index_1)[fringe.dir_index_1->size()-1] - f1_offset);
-                if (f1_size > 0) mpi::mpi_send(data.f_temp_1->elements() + f1_offset - offset, f1_size, target, _mycartid, _comm_cart);
-                unsigned long f2_offset((*fringe.dir_index_2)[0]);
-                unsigned long f2_size((*fringe.dir_index_2)[fringe.dir_index_2->size()-1] - f2_offset);
-                if (f2_size > 0)mpi::mpi_send(data.f_temp_2->elements() + f2_offset - offset, f2_size, target, _mycartid, _comm_cart);
-                unsigned long f3_offset((*fringe.dir_index_3)[0]);
-                unsigned long f3_size((*fringe.dir_index_3)[fringe.dir_index_3->size()-1] - f3_offset);
-                if (f3_size > 0) mpi::mpi_send(data.f_temp_3->elements() + f3_offset - offset, f3_size, target, _mycartid, _comm_cart);
-                unsigned long f4_offset((*fringe.dir_index_4)[0]);
-                unsigned long f4_size((*fringe.dir_index_4)[fringe.dir_index_4->size()-1] - f4_offset);
-                if (f4_size > 0) mpi::mpi_send(data.f_temp_4->elements() + f4_offset - offset, f4_size, target, _mycartid, _comm_cart);
-                unsigned long f5_offset((*fringe.dir_index_5)[0]);
-                unsigned long f5_size((*fringe.dir_index_5)[fringe.dir_index_5->size()-1] - f5_offset);
-                if (f5_size > 0) mpi::mpi_send(data.f_temp_5->elements() + f5_offset - offset, f5_size, target, _mycartid, _comm_cart);
-                unsigned long f6_offset((*fringe.dir_index_6)[0]);
-                unsigned long f6_size((*fringe.dir_index_6)[fringe.dir_index_6->size()-1] - f6_offset);
-                if (f6_size > 0) mpi::mpi_send(data.f_temp_6->elements() + f6_offset - offset, f6_size, target, _mycartid, _comm_cart);
-                unsigned long f7_offset((*fringe.dir_index_7)[0]);
-                unsigned long f7_size((*fringe.dir_index_7)[fringe.dir_index_7->size()-1] - f7_offset);
-                if (f7_size > 0) mpi::mpi_send(data.f_temp_7->elements() + f7_offset - offset, f7_size, target, _mycartid, _comm_cart);
-                unsigned long f8_offset((*fringe.dir_index_8)[0]);
-                unsigned long f8_size((*fringe.dir_index_8)[fringe.dir_index_8->size()-1] - f8_offset);
-                if (f8_size > 0) mpi::mpi_send(data.f_temp_8->elements() + f8_offset - offset, f8_size, target, _mycartid, _comm_cart);
-
-                for (unsigned long i(0) ; i < fringe.external_h_index->size() / 2 ; ++i)
-                {
-                    unsigned long h_offset((*fringe.external_h_index)[i * 2]);
-                    unsigned long h_size((*fringe.external_h_index)[i * 2 + 1] - h_offset);
-                    if (h_size > 0) mpi::mpi_send(data.h->elements() + h_offset - offset, h_size, target, _mycartid, _comm_cart);
-                }
-
-                data.h->unlock(lm_read_only);
-                data.f_temp_1->unlock(lm_read_only);
-                data.f_temp_2->unlock(lm_read_only);
-                data.f_temp_3->unlock(lm_read_only);
-                data.f_temp_4->unlock(lm_read_only);
-                data.f_temp_5->unlock(lm_read_only);
-                data.f_temp_6->unlock(lm_read_only);
-                data.f_temp_7->unlock(lm_read_only);
-                data.f_temp_8->unlock(lm_read_only);
-            }
-
-            void _recv_slave_sync(int target, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & fringe)
-            {
-                data.h->lock(lm_read_and_write);
-                data.f_temp_1->lock(lm_read_and_write);
-                data.f_temp_2->lock(lm_read_and_write);
-                data.f_temp_3->lock(lm_read_and_write);
-                data.f_temp_4->lock(lm_read_and_write);
-                data.f_temp_5->lock(lm_read_and_write);
-                data.f_temp_6->lock(lm_read_and_write);
-                data.f_temp_7->lock(lm_read_and_write);
-                data.f_temp_8->lock(lm_read_and_write);
-
-                unsigned long offset(info.offset);
-                unsigned long f1_offset((*fringe.dir_index_1)[0]);
-                unsigned long f1_size((*fringe.dir_index_1)[fringe.dir_index_1->size()-1] - f1_offset);
-                if (f1_size > 0) mpi::mpi_recv(data.f_temp_1->elements() + f1_offset - offset, f1_size, target, target, _comm_cart);
-                unsigned long f2_offset((*fringe.dir_index_2)[0]);
-                unsigned long f2_size((*fringe.dir_index_2)[fringe.dir_index_2->size()-1] - f2_offset);
-                if (f2_size > 0) mpi::mpi_recv(data.f_temp_2->elements() + f2_offset - offset, f2_size, target, target, _comm_cart);
-                unsigned long f3_offset((*fringe.dir_index_3)[0]);
-                unsigned long f3_size((*fringe.dir_index_3)[fringe.dir_index_3->size()-1] - f3_offset);
-                if (f3_size > 0) mpi::mpi_recv(data.f_temp_3->elements() + f3_offset - offset, f3_size, target, target, _comm_cart);
-                unsigned long f4_offset((*fringe.dir_index_4)[0]);
-                unsigned long f4_size((*fringe.dir_index_4)[fringe.dir_index_4->size()-1] - f4_offset);
-                if (f4_size > 0) mpi::mpi_recv(data.f_temp_4->elements() + f4_offset - offset, f4_size, target, target, _comm_cart);
-                unsigned long f5_offset((*fringe.dir_index_5)[0]);
-                unsigned long f5_size((*fringe.dir_index_5)[fringe.dir_index_5->size()-1] - f5_offset);
-                if (f5_size > 0) mpi::mpi_recv(data.f_temp_5->elements() + f5_offset - offset, f5_size, target, target, _comm_cart);
-                unsigned long f6_offset((*fringe.dir_index_6)[0]);
-                unsigned long f6_size((*fringe.dir_index_6)[fringe.dir_index_6->size()-1] - f6_offset);
-                if (f6_size > 0) mpi::mpi_recv(data.f_temp_6->elements() + f6_offset - offset, f6_size, target, target, _comm_cart);
-                unsigned long f7_offset((*fringe.dir_index_7)[0]);
-                unsigned long f7_size((*fringe.dir_index_7)[fringe.dir_index_7->size()-1] - f7_offset);
-                if (f7_size > 0) mpi::mpi_recv(data.f_temp_7->elements() + f7_offset - offset, f7_size, target, target, _comm_cart);
-                unsigned long f8_offset((*fringe.dir_index_8)[0]);
-                unsigned long f8_size((*fringe.dir_index_8)[fringe.dir_index_8->size()-1] - f8_offset);
-                if (f8_size > 0) mpi::mpi_recv(data.f_temp_8->elements() + f8_offset - offset, f8_size, target, target, _comm_cart);
-
-                for (unsigned long i(0) ; i < fringe.external_h_index->size() / 2 ; ++i)
-                {
-                    unsigned long h_offset((*fringe.external_h_index)[i * 2]);
-                    unsigned long h_size((*fringe.external_h_index)[i * 2 + 1] - h_offset);
-                    if (h_size > 0) mpi::mpi_recv(data.h->elements() + h_offset - offset, h_size, target, target, _comm_cart);
-                }
-
-                data.h->unlock(lm_read_and_write);
-                data.f_temp_1->unlock(lm_read_and_write);
-                data.f_temp_2->unlock(lm_read_and_write);
-                data.f_temp_3->unlock(lm_read_and_write);
-                data.f_temp_4->unlock(lm_read_and_write);
-                data.f_temp_5->unlock(lm_read_and_write);
-                data.f_temp_6->unlock(lm_read_and_write);
-                data.f_temp_7->unlock(lm_read_and_write);
-                data.f_temp_8->unlock(lm_read_and_write);
-            }
-
-            void _send_slave_sync(int target, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & fringe)
-            {
-                data.h->lock(lm_read_only);
-                data.f_temp_1->lock(lm_read_only);
-                data.f_temp_2->lock(lm_read_only);
-                data.f_temp_3->lock(lm_read_only);
-                data.f_temp_4->lock(lm_read_only);
-                data.f_temp_5->lock(lm_read_only);
-                data.f_temp_6->lock(lm_read_only);
-                data.f_temp_7->lock(lm_read_only);
-                data.f_temp_8->lock(lm_read_only);
-
-                unsigned long offset(info.offset);
-                unsigned long f1_offset((*fringe.external_dir_index_1)[0]);
-                unsigned long f1_size((*fringe.external_dir_index_1)[fringe.external_dir_index_1->size()-1] - f1_offset);
-                if (f1_size > 0) mpi::mpi_send(data.f_temp_1->elements() + f1_offset - offset, f1_size, target, _mycartid, _comm_cart);
-                unsigned long f2_offset((*fringe.external_dir_index_2)[0]);
-                unsigned long f2_size((*fringe.external_dir_index_2)[fringe.external_dir_index_2->size()-1] - f2_offset);
-                if (f2_size > 0)mpi::mpi_send(data.f_temp_2->elements() + f2_offset - offset, f2_size, target, _mycartid, _comm_cart);
-                unsigned long f3_offset((*fringe.external_dir_index_3)[0]);
-                unsigned long f3_size((*fringe.external_dir_index_3)[fringe.external_dir_index_3->size()-1] - f3_offset);
-                if (f3_size > 0) mpi::mpi_send(data.f_temp_3->elements() + f3_offset - offset, f3_size, target, _mycartid, _comm_cart);
-                unsigned long f4_offset((*fringe.external_dir_index_4)[0]);
-                unsigned long f4_size((*fringe.external_dir_index_4)[fringe.external_dir_index_4->size()-1] - f4_offset);
-                if (f4_size > 0) mpi::mpi_send(data.f_temp_4->elements() + f4_offset - offset, f4_size, target, _mycartid, _comm_cart);
-                unsigned long f5_offset((*fringe.external_dir_index_5)[0]);
-                unsigned long f5_size((*fringe.external_dir_index_5)[fringe.external_dir_index_5->size()-1] - f5_offset);
-                if (f5_size > 0) mpi::mpi_send(data.f_temp_5->elements() + f5_offset - offset, f5_size, target, _mycartid, _comm_cart);
-                unsigned long f6_offset((*fringe.external_dir_index_6)[0]);
-                unsigned long f6_size((*fringe.external_dir_index_6)[fringe.external_dir_index_6->size()-1] - f6_offset);
-                if (f6_size > 0) mpi::mpi_send(data.f_temp_6->elements() + f6_offset - offset, f6_size, target, _mycartid, _comm_cart);
-                unsigned long f7_offset((*fringe.external_dir_index_7)[0]);
-                unsigned long f7_size((*fringe.external_dir_index_7)[fringe.external_dir_index_7->size()-1] - f7_offset);
-                if (f7_size > 0) mpi::mpi_send(data.f_temp_7->elements() + f7_offset - offset, f7_size, target, _mycartid, _comm_cart);
-                unsigned long f8_offset((*fringe.external_dir_index_8)[0]);
-                unsigned long f8_size((*fringe.external_dir_index_8)[fringe.external_dir_index_8->size()-1] - f8_offset);
-                if (f8_size > 0) mpi::mpi_send(data.f_temp_8->elements() + f8_offset - offset, f8_size, target, _mycartid, _comm_cart);
-
-                for (unsigned long i(0) ; i < fringe.h_index->size() / 2 ; ++i)
-                {
-                    unsigned long h_offset((*fringe.h_index)[i * 2]);
-                    unsigned long h_size((*fringe.h_index)[i * 2 + 1] - h_offset);
-                    if (h_size > 0) mpi::mpi_send(data.h->elements() + h_offset - offset, h_size, target, _mycartid, _comm_cart);
-                }
-
-                data.h->unlock(lm_read_only);
-                data.f_temp_1->unlock(lm_read_only);
-                data.f_temp_2->unlock(lm_read_only);
-                data.f_temp_3->unlock(lm_read_only);
-                data.f_temp_4->unlock(lm_read_only);
-                data.f_temp_5->unlock(lm_read_only);
-                data.f_temp_6->unlock(lm_read_only);
-                data.f_temp_7->unlock(lm_read_only);
-                data.f_temp_8->unlock(lm_read_only);
-            }
-
-            void _recv_master_sync(int target, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & fringe)
-            {
-                data.h->lock(lm_read_and_write);
-                data.f_temp_1->lock(lm_read_and_write);
-                data.f_temp_2->lock(lm_read_and_write);
-                data.f_temp_3->lock(lm_read_and_write);
-                data.f_temp_4->lock(lm_read_and_write);
-                data.f_temp_5->lock(lm_read_and_write);
-                data.f_temp_6->lock(lm_read_and_write);
-                data.f_temp_7->lock(lm_read_and_write);
-                data.f_temp_8->lock(lm_read_and_write);
-
-                unsigned long offset(info.offset);
-                unsigned long f1_offset((*fringe.external_dir_index_1)[0]);
-                unsigned long f1_size((*fringe.external_dir_index_1)[fringe.external_dir_index_1->size()-1] - f1_offset);
-                if (f1_size > 0) mpi::mpi_recv(data.f_temp_1->elements() + f1_offset - offset, f1_size, target, target, _comm_cart);
-                unsigned long f2_offset((*fringe.external_dir_index_2)[0]);
-                unsigned long f2_size((*fringe.external_dir_index_2)[fringe.external_dir_index_2->size()-1] - f2_offset);
-                if (f2_size > 0) mpi::mpi_recv(data.f_temp_2->elements() + f2_offset - offset, f2_size, target, target, _comm_cart);
-                unsigned long f3_offset((*fringe.external_dir_index_3)[0]);
-                unsigned long f3_size((*fringe.external_dir_index_3)[fringe.external_dir_index_3->size()-1] - f3_offset);
-                if (f3_size > 0) mpi::mpi_recv(data.f_temp_3->elements() + f3_offset - offset, f3_size, target, target, _comm_cart);
-                unsigned long f4_offset((*fringe.external_dir_index_4)[0]);
-                unsigned long f4_size((*fringe.external_dir_index_4)[fringe.external_dir_index_4->size()-1] - f4_offset);
-                if (f4_size > 0) mpi::mpi_recv(data.f_temp_4->elements() + f4_offset - offset, f4_size, target, target, _comm_cart);
-                unsigned long f5_offset((*fringe.external_dir_index_5)[0]);
-                unsigned long f5_size((*fringe.external_dir_index_5)[fringe.external_dir_index_5->size()-1] - f5_offset);
-                if (f5_size > 0) mpi::mpi_recv(data.f_temp_5->elements() + f5_offset - offset, f5_size, target, target, _comm_cart);
-                unsigned long f6_offset((*fringe.external_dir_index_6)[0]);
-                unsigned long f6_size((*fringe.external_dir_index_6)[fringe.external_dir_index_6->size()-1] - f6_offset);
-                if (f6_size > 0) mpi::mpi_recv(data.f_temp_6->elements() + f6_offset - offset, f6_size, target, target, _comm_cart);
-                unsigned long f7_offset((*fringe.external_dir_index_7)[0]);
-                unsigned long f7_size((*fringe.external_dir_index_7)[fringe.external_dir_index_7->size()-1] - f7_offset);
-                if (f7_size > 0) mpi::mpi_recv(data.f_temp_7->elements() + f7_offset - offset, f7_size, target, target, _comm_cart);
-                unsigned long f8_offset((*fringe.external_dir_index_8)[0]);
-                unsigned long f8_size((*fringe.external_dir_index_8)[fringe.external_dir_index_8->size()-1] - f8_offset);
-                if (f8_size > 0) mpi::mpi_recv(data.f_temp_8->elements() + f8_offset - offset, f8_size, target, target, _comm_cart);
-
-                for (unsigned long i(0) ; i < fringe.h_index->size() / 2 ; ++i)
-                {
-                    unsigned long h_offset((*fringe.h_index)[i * 2]);
-                    unsigned long h_size((*fringe.h_index)[i * 2 + 1] - h_offset);
-                    if (h_size > 0) mpi::mpi_recv(data.h->elements() + h_offset - offset, h_size, target, target, _comm_cart);
-                }
-
-                data.h->unlock(lm_read_and_write);
-                data.f_temp_1->unlock(lm_read_and_write);
-                data.f_temp_2->unlock(lm_read_and_write);
-                data.f_temp_3->unlock(lm_read_and_write);
-                data.f_temp_4->unlock(lm_read_and_write);
-                data.f_temp_5->unlock(lm_read_and_write);
-                data.f_temp_6->unlock(lm_read_and_write);
-                data.f_temp_7->unlock(lm_read_and_write);
-                data.f_temp_8->unlock(lm_read_and_write);
-            }
-
             void _circle_sync(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & fringe)
             {
                 /// \todo global buffer for requests and in/out data
@@ -1470,34 +1272,8 @@ namespace honei
                 }
 
 
-                TimeStamp ca, cu, cd;
-                int up_fin(false);
-                int down_fin(false);
-                double delta_up(0);
-                double delta_down(0);
-                ca.take();
-                while (!up_fin || !down_fin)
-                {
-                    if (!down_fin)
-                    {
-                        MPI_Testall(requests_down.size(),  &requests_down[0], &down_fin, MPI_STATUSES_IGNORE);
-                        if (down_fin)
-                            cd.take();
-                    }
-                    if (!up_fin)
-                    {
-                        MPI_Testall(requests_up.size(),  &requests_up[0], &up_fin, MPI_STATUSES_IGNORE);
-                        if (up_fin)
-                            cu.take();
-                    }
-                }
-                //MPI_Waitall(requests_up.size(), &requests_up[0], MPI_STATUSES_IGNORE);
-                //MPI_Waitall(requests_down.size(), &requests_down[0], MPI_STATUSES_IGNORE);
-                delta_down = cd.total() - ca.total();
-                _sync_time_down+=delta_down;
-                delta_up = cu.total() - ca.total();
-                _sync_time_up+=delta_up;
-                _balance_load(delta_up, delta_down);
+                MPI_Waitall(requests_up.size(), &requests_up[0], MPI_STATUSES_IGNORE);
+                MPI_Waitall(requests_down.size(), &requests_down[0], MPI_STATUSES_IGNORE);
 
                 if (up_size_recv > 0)
                 {
@@ -1625,164 +1401,6 @@ namespace honei
                 }
             }
 
-            void _balance_load(double delta_up, double delta_down)
-            {
-                std::vector<MPI_Request> requests;
-                int source_up_recv, source_down_recv, target_up_send, target_down_send;
-
-                MPI_Cart_shift(_comm_cart, 0, 1, &source_up_recv, &target_down_send);
-                MPI_Cart_shift(_comm_cart, 0, -1, &source_down_recv, &target_up_send);
-
-                // Load Balancing Requests
-
-                // 0 means: nothing to do
-                // 1 means: give me data, you are to slow
-                unsigned long status_in_up(0);
-                unsigned long status_in_down(0);
-                if (source_up_recv != MPI_PROC_NULL) requests.push_back(mpi::mpi_irecv(&status_in_up, 1, source_up_recv, source_up_recv, _comm_cart));
-                if (source_down_recv != MPI_PROC_NULL) requests.push_back(mpi::mpi_irecv(&status_in_down, 1, source_down_recv, source_down_recv, _comm_cart));
-
-                unsigned long status_out_up(0);
-                unsigned long status_out_down(0);
-
-                if (delta_up > _sync_threshold)
-                    status_out_up = 1;
-
-                if (delta_down > _sync_threshold)
-                    status_out_down = 1;
-
-                if (target_up_send != MPI_PROC_NULL) requests.push_back(mpi::mpi_isend(&status_out_up, 1, target_up_send, _mycartid, _comm_cart));
-                if (target_down_send != MPI_PROC_NULL) requests.push_back(mpi::mpi_isend(&status_out_down, 1, target_down_send, _mycartid, _comm_cart));
-                MPI_Waitall(requests.size(), &requests[0], MPI_STATUSES_IGNORE);
-                requests.clear();
-
-                // Answers
-
-                // 0 means: go ahead, i am waiting, too | or if no request was sent, gives a dummy answer
-                // 1 means: ok, i will give you some data
-                // A -> B means: A -> waits for B, where A is over B
-
-                unsigned long old_out_up = status_out_up;
-                unsigned long old_out_down = status_out_down;
-                // if down is waiting for us
-                // W <- N
-                if (status_in_down == 1 && old_out_up == 0)
-                {
-                    status_out_down = 1;
-                    //std::cout<<_mycartid<<": down waits for me"<<std::endl;
-                }
-                // if up is waiting for us
-                // N -> W
-                if (status_in_up == 1 && old_out_down == 0)
-                {
-                    status_out_up = 1;
-                    //std::cout<<_mycartid<<": up waits for me"<<std::endl;
-                }
-                // if down is waiting for us but we are waiting for up, too
-                // N <- W <- N
-                if (status_in_down == 1 && old_out_up == 1)
-                {
-                    status_out_down = 0;
-                    //std::cout<<_mycartid<<": down waits for me, but i wait for up"<<std::endl;
-                }
-                // if up is waiting for us but we are waiting for down, too
-                // N -> W -> N
-                if (status_in_up == 1 && old_out_down == 1)
-                {
-                    status_out_up = 0;
-                    //std::cout<<_mycartid<<": up waits for me, but i wait for down"<<std::endl;
-                }
-                // if down is waiting for us and we are waiting for up, but up is waiting for us too
-                // N <-> W <- N
-                if (status_in_down == 1 && old_out_up == 1 && status_in_up == 1)
-                {
-                    status_out_down = 1;
-                    //std::cout<<_mycartid<<": down and up wait for me, i wait for up"<<std::endl;
-                }
-                // if up is waiting for us and we are waiting for down, but down is waiting for us too
-                // N -> W <-> N
-                if (status_in_up == 1 && old_out_down == 1 && status_in_down == 1)
-                {
-                    status_out_up = 1;
-                    //std::cout<<_mycartid<<": up and down wait for me, i wait for down"<<std::endl;
-                }
-                /* // if down and up are waiting for us
-                if (status_in_up == 1 && status_in_down == 1)
-                {
-                    status_out_up = 0;
-                    status_out_down = 1;
-                    std::cout<<_mycartid<<": up and down waits for me, favouring down"<<std::endl;
-                }*/
-                // down wants nothing from us or we synched recently
-                if (status_in_down == 0 || _recently_synched)
-                {
-                    status_out_down = 0;
-                    status_in_down = 0;
-                }
-                // up wants nothing from us or we synched recently
-                if (status_in_up == 0 || _recently_synched)
-                {
-                    status_out_up = 0;
-                    status_in_up = 0;
-                }
-                // if down waits for us and we wait for down
-                // W <-> N
-                if (status_in_down == 1 && old_out_down == 1 && !_recently_synched)
-                {
-                    status_out_down = 0;
-                    //status_out_up = 1; //experimentell
-                    //std::cout<<_mycartid<<": down waits for me, i wait for down"<<std::endl;
-                }
-                // if up waits for us and we wait for up
-                // N <-> W
-                if (status_in_up == 1 && old_out_up == 1 && !_recently_synched)
-                {
-                    status_out_up = 0;
-                    //status_out_down = 1; //experimentell
-                    //std::cout<<_mycartid<<": up waits for me, i wait for up"<<std::endl;
-                }
-                _recently_synched = false;
-
-                if (source_up_recv != MPI_PROC_NULL) requests.push_back(mpi::mpi_irecv(&status_in_up, 1, source_up_recv, source_up_recv, _comm_cart));
-                if (source_down_recv != MPI_PROC_NULL) requests.push_back(mpi::mpi_irecv(&status_in_down, 1, source_down_recv, source_down_recv, _comm_cart));
-                if (target_up_send != MPI_PROC_NULL) requests.push_back(mpi::mpi_isend(&status_out_up, 1, target_up_send, _mycartid, _comm_cart));
-                if (target_down_send != MPI_PROC_NULL) requests.push_back(mpi::mpi_isend(&status_out_down, 1, target_down_send, _mycartid, _comm_cart));
-
-                MPI_Waitall(requests.size(), &requests[0], MPI_STATUSES_IGNORE);
-                requests.clear();
-                //std::cout<<_mycartid<<": "<<delta_down<<", delta up: "<<delta_up<<std::endl;
-
-                // status_in == 0 : you get no data
-                // status_in == 1 : you get data
-                // if status_out up/down == 1 -> send/recv data
-                // \TODO recv/send real data
-
-                // receive data from up
-                if (status_in_up == 1)
-                {
-                    _recently_synched = true;
-                    //std::cout<<_mycartid<<": up gives me data"<<std::endl;
-                }
-                // receive data from down
-                if (status_in_down == 1)
-                {
-                    _recently_synched = true;
-                    //std::cout<<_mycartid<<": down gives me data"<<std::endl;
-                }
-                // send data to up
-                if (status_out_up == 1)
-                {
-                    _recently_synched = true;
-                    //std::cout<<_mycartid<<": i give up data"<<std::endl;
-                }
-                // send data to down
-                if (status_out_down == 1)
-                {
-                    _recently_synched = true;
-                    //std::cout<<_mycartid<<": i give down data"<<std::endl;
-                }
-            }
-
             void _read_config(std::string filename, unsigned long & scenario, std::vector<std::string> & backends,
                     std::vector<double> & fractions, bool & file_output, std::string & base_filename)
             {
@@ -1883,6 +1501,46 @@ namespace honei
                     _device_name = tags::CPU::Generic::name;
                     _solver_tag_value = tags::CPU::Generic::tag_value;
                     solver = new SolverLBMGrid<tags::CPU::Generic, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> (&info, &data, d_x, d_y, d_t, tau);
+                }
+                else
+                {
+                    throw InternalError("Backend not known: " + _backends.at(id));
+                }
+            }
+
+            void _init_solver_poll(SolverLBMGridPollutantBase *& solver, unsigned long id, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridData<D2Q9, DataType_> & data_poll, DataType_ d_x, DataType_ d_y, DataType_ d_t, DataType_ tau_c, DataType_ k, DataType_ s_0, DataType_ dir_value)
+            {
+                if(_backends.at(id).compare(tags::CPU::Generic::name) == 0)
+                {
+                    _device_name = tags::CPU::Generic::name;
+                    _solver_tag_value = tags::CPU::Generic::tag_value;
+                    solver = new SolverLBMGridPollutant<tags::CPU::Generic, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> (&info, &data, &data_poll, d_x, d_y, d_t, tau_c, k, s_0, dir_value);
+                }
+                /*else if(_backends.at(id).compare(tags::CPU::SSE::name) == 0)
+                {
+#ifdef HONEI_SSE
+                    _device_name = tags::CPU::SSE::name;
+                    _solver_tag_value = tags::CPU::SSE::tag_value;
+                    solver = new SolverLBMGridPollutant<tags::CPU::SSE, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> (&info, &data, &data_poll, d_x, d_y, d_t, tau_c, k, s_0, dir_value);
+#else
+                    throw InternalError("Backend not activated: " + _backends.at(id));
+#endif
+                }*/
+                else if(_backends.at(id).compare(tags::GPU::CUDA::name) == 0)
+                {
+#ifdef HONEI_CUDA
+                    _device_name = tags::GPU::CUDA::name;
+                    _solver_tag_value = tags::GPU::CUDA::tag_value;
+                    // die wievielte gpu sind wir auf dem knoten?
+                    unsigned long gpu_number(0);
+                    for (unsigned long i(0) ; i < id ; ++i)
+                        if (_backends.at(i).compare(tags::GPU::CUDA::name) == 0)
+                            gpu_number++;
+                    cuda::GPUPool::instance()->single_start(gpu_number);
+                    solver = new SolverLBMGridPollutant<tags::GPU::CUDA, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> (&info, &data, &data_poll, d_x, d_y, d_t, tau_c, k, s_0, dir_value);
+#else
+                    throw InternalError("Backend not activated: " + _backends.at(id));
+#endif
                 }
                 else
                 {

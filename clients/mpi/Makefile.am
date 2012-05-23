@@ -60,7 +60,7 @@ BACKEND_LIBS += \
 
 endif
 
-bin_PROGRAMS = mpi-test honei-mpi honei-mpi-ring
+bin_PROGRAMS = mpi-test honei-mpi honei-mpi-ring honei-mpi-pollutant
 
 mpi_test_SOURCES = mpi_test.cc mpi_test.hh
 mpi_test_LDADD = \
@@ -80,6 +80,14 @@ honei_mpi_LDADD = \
 
 honei_mpi_ring_SOURCES = honei_mpi_ring.cc honei_mpi_ring.hh
 honei_mpi_ring_LDADD = \
+	$(top_builddir)/honei/util/libhoneiutil.la \
+	$(top_builddir)/honei/la/libhoneila.la \
+	$(top_builddir)/honei/swe/libhoneiswe.la \
+	$(top_builddir)/honei/lbm/libhoneilbm.la \
+	$(BACKEND_LIBS)
+
+honei_mpi_pollutant_SOURCES = honei_mpi_pollutant.cc honei_mpi_pollutant.hh
+honei_mpi_pollutant_LDADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/la/libhoneila.la \
 	$(top_builddir)/honei/swe/libhoneiswe.la \

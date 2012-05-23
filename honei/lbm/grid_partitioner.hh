@@ -1301,6 +1301,10 @@ namespace honei
                     data_list.at(i).destroy();
                 for (unsigned long i(0) ; i < fringe_list.size() ; ++i)
                     fringe_list.at(i).destroy();
+
+                info_list.clear();
+                data_list.clear();
+                fringe_list.clear();
             }
 
             static void recompose(PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, DT_> * data)

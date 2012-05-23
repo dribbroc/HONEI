@@ -88,7 +88,7 @@ namespace honei
             };
 
     template<typename Tag_, typename Application_, typename ResPrec_, typename Force_, typename SourceScheme_, typename LbmMode_>
-        class SolverLBMGridPollutant<Tag_, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_> : public SolverLBMGridBase
+        class SolverLBMGridPollutant<Tag_, Application_, ResPrec_, Force_, SourceScheme_, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_> : public SolverLBMGridPollutantBase
         {
             private:
                 /** Global variables.
