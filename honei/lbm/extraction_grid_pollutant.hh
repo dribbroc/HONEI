@@ -44,7 +44,7 @@ namespace honei
         {
             public:
                 template<typename DT_>
-                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data_flow, PackedGridData<D2Q9, DT_> & data_poll, DT_ epsilon)
+                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data_flow, PackedGridData<D2Q9, DT_> & data_poll, HONEI_UNUSED DT_ epsilon)
                     {
                         CONTEXT("When extracting c only:");
 

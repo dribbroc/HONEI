@@ -335,6 +335,8 @@ namespace honei
 
             static void pack(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data, bool alloc_all = true)
             {
+                info.destroy();
+                data.destroy();
                 unsigned long fluid_count(0);
                 for(unsigned long i(0); i < grid.obstacles->rows(); ++i)
                 {

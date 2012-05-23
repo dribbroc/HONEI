@@ -17,6 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include <honei/lbm/solver_lbm_grid.hh>
+#include <honei/lbm/solver_lbm_grid_pollutant.hh>
 #include <honei/lbm/partial_derivative.hh>
 #include <honei/swe/post_processing.hh>
 #include <honei/util/unittest.hh>
@@ -50,7 +51,7 @@ class SolverLBMGridPollutantTest :
 {
     public:
         SolverLBMGridPollutantTest(const std::string & type) :
-            TaggedTest<Tag_>("solver_lbm_grid_test<" + type + ">")
+            TaggedTest<Tag_>("solver_lbm_grid_pollutant_test<" + type + ">")
         {
         }
 
@@ -60,50 +61,58 @@ class SolverLBMGridPollutantTest :
             unsigned long g_w(50);
             unsigned long timesteps(100);
 
+            Grid<D2Q9, DataType_> grid;
+            Grid<D2Q9, DataType_> grid_poll;
 
-            for (unsigned long i(0) ; i < ScenarioCollection::get_stable_scenario_count() ; ++i)
+            ScenarioCollection::get_scenario(0, g_h, g_w, grid);
+            ScenarioCollection::get_scenario(0, g_h, g_w, grid_poll);
+
+            PackedGridData<D2Q9, DataType_>  data_flow;
+            PackedGridData<D2Q9, DataType_>  data_poll;
+            PackedGridInfo<D2Q9> info;
+
+            GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data_flow);
+            GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_poll, info, data_poll);
+
+            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data_flow, grid.d_x, grid.d_y, grid.d_t, grid.tau);
+
+            SolverLBMGridPollutant<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> poll_solver(&info, &data_flow, &data_poll, grid.d_t, grid.tau, DataType_(1.), DataType_(0.));
+
+            solver.do_preprocessing();
+            poll_solver.do_preprocessing();
+            std::cout << "Solving: " << grid.description << std::endl;
+            for(unsigned long i(0); i < timesteps; ++i)
             {
-                Grid<D2Q9, DataType_> grid;
-
-                ScenarioCollection::get_scenario(i, g_h, g_w, grid);
-
-                PackedGridData<D2Q9, DataType_>  data_flow;
-                PackedGridData<D2Q9, DataType_>  data_poll;
-                PackedGridInfo<D2Q9> info;
-
-                GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data_flow);
-
-                SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data_flow, grid.d_x, grid.d_y, grid.d_t, grid.tau);
-
-                solver.do_preprocessing();
-                std::cout << "Solving: " << grid.description << std::endl;
-                for(unsigned long i(0); i < timesteps; ++i)
-                {
 #ifdef SOLVER_VERBOSE
-                    std::cout<<"Timestep: " << i << "/" << timesteps << std::endl;
+                std::cout<<"Timestep: " << i << "/" << timesteps << std::endl;
 #endif
-                    solver.solve();
+                solver.solve();
+                poll_solver.solve();
 #ifdef SOLVER_POSTPROCESSING
-                    solver.do_postprocessing();
-                    GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data_flow);
-                    PostProcessing<GNUPLOT>::value(*grid.h, 1, g_w, g_h, i);
-#endif
-                }
                 solver.do_postprocessing();
+                poll_solver.do_postprocessing();
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data_flow);
-#ifdef SOLVER_VERBOSE
-                std::cout << *grid.h << std::endl;
+                PostProcessing<GNUPLOT>::value(*grid.h, 1, g_w, g_h, i);
+                GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid_poll, info, data_poll);
+                PostProcessing<GNUPLOT>::value(*grid_poll.h, 1, g_w, g_h, i);
 #endif
-                for (unsigned long i(0) ; i < (*grid.h).rows() ; ++i)
-                    for(unsigned long j(0) ; j < (*grid.h).columns() ; ++j)
-                        TEST_CHECK_EQUAL_WITHIN_EPS((*grid.h)( i , j), DataType_(0.02), DataType_(0.1));
-
-                info.destroy();
-                data_flow.destroy();
-                grid.destroy();
             }
+            solver.do_postprocessing();
+            poll_solver.do_postprocessing();
+            GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data_flow);
+#ifdef SOLVER_VERBOSE
+            std::cout << *grid.h << std::endl;
+#endif
+            for (unsigned long i(0) ; i < (*grid.h).rows() ; ++i)
+                for(unsigned long j(0) ; j < (*grid.h).columns() ; ++j)
+                    TEST_CHECK_EQUAL_WITHIN_EPS((*grid.h)( i , j), DataType_(0.02), DataType_(0.1));
+
+            info.destroy();
+            data_flow.destroy();
+            data_poll.destroy();
+            grid.destroy();
+            grid_poll.destroy();
         }
 
 };
-
-SolverLBMGridPollutantTest<tags::CPU, float> solver_test_float("float");
+SolverLBMGridPollutantTest<tags::CPU::Generic, float> solver_test_float("float");

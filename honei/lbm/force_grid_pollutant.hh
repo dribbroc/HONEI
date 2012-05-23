@@ -35,7 +35,7 @@ namespace honei
     template <>
     struct ForceGridPollutant<tags::CPU::Generic, lbm_applications::LABSWE>
     {
-        template<typename DT1_, typename DT2_>
+        template<typename DT1_>
             static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data_flow, PackedGridData<D2Q9, DT1_> & data_poll, DT1_ dt, DT1_ k, DT1_ s_0)
             {
                 CONTEXT("When computing force term for pollutant transport:");
@@ -43,8 +43,6 @@ namespace honei
                 info.limits->lock(lm_read_only);
 
                 data_flow.h->lock(lm_read_only);
-                data_flow.u->lock(lm_read_only);
-                data_flow.v->lock(lm_read_only);
                 data_poll.h->lock(lm_read_only);
 
                 data_poll.f_temp_0->lock(lm_write_only);
@@ -60,8 +58,6 @@ namespace honei
                 const unsigned long * const limits(info.limits->elements());
                 const DT1_ * const h(data_flow.h->elements());
                 const DT1_ * const c(data_poll.h->elements());
-                const DT1_ * const u(data_flow.u->elements());
-                const DT1_ * const v(data_flow.v->elements());
 
                 DT1_ * f_temp_0(data_poll.f_temp_0->elements());
                 DT1_ * f_temp_1(data_poll.f_temp_1->elements());
@@ -100,19 +96,17 @@ namespace honei
                 info.limits->unlock(lm_read_only);
 
                 data_flow.h->unlock(lm_read_only);
-                data_flow.u->unlock(lm_read_only);
-                data_flow.v->unlock(lm_read_only);
-                data_flow.distribution_x->unlock(lm_read_only);
-                data_flow.distribution_y->unlock(lm_read_only);
+                data_poll.h->unlock(lm_read_only);
 
-                data_flow.f_temp_1->unlock(lm_write_only);
-                data_flow.f_temp_2->unlock(lm_write_only);
-                data_flow.f_temp_3->unlock(lm_write_only);
-                data_flow.f_temp_4->unlock(lm_write_only);
-                data_flow.f_temp_5->unlock(lm_write_only);
-                data_flow.f_temp_6->unlock(lm_write_only);
-                data_flow.f_temp_7->unlock(lm_write_only);
-                data_flow.f_temp_8->unlock(lm_write_only);
+                data_poll.f_temp_0->unlock(lm_write_only);
+                data_poll.f_temp_1->unlock(lm_write_only);
+                data_poll.f_temp_2->unlock(lm_write_only);
+                data_poll.f_temp_3->unlock(lm_write_only);
+                data_poll.f_temp_4->unlock(lm_write_only);
+                data_poll.f_temp_5->unlock(lm_write_only);
+                data_poll.f_temp_6->unlock(lm_write_only);
+                data_poll.f_temp_7->unlock(lm_write_only);
+                data_poll.f_temp_8->unlock(lm_write_only);
             }
     };
 }

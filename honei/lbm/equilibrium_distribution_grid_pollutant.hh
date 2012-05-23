@@ -108,7 +108,7 @@ namespace honei
                     const unsigned long start(limits[0]);
                     const unsigned long end(limits[info.limits->size() - 1]);
 
-                    DT1_ t1, t2, t3, t4;
+                    DT1_ t1, t2;
 
                     for(unsigned long i(start); i < end; ++i)
                     {
