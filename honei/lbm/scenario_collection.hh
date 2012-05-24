@@ -424,7 +424,7 @@ class ScenarioCollection
                         target_grid.long_description.append("flow = laminar\n");
                         target_grid.long_description.append("lattice_type = D2Q9 square\n");
 
-                        target_grid.h = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.05));
+                        target_grid.h = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(1.));
                         target_grid.u = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.v = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.b = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));

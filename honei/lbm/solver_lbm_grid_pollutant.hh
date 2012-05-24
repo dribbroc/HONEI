@@ -229,25 +229,6 @@ namespace honei
                               *_data_poll,
                               _relaxation_time);
                 }
-
-                /*static LBMBenchmarkInfo get_benchmark_info(Grid<D2Q9, ResPrec_> * grid, PackedGridInfo<D2Q9> * info, PackedGridData<D2Q9, ResPrec_> * data_flow)
-                {
-                    LBMBenchmarkInfo result;
-                    BenchmarkInfo eq_dist(EquilibriumDistributionGrid<Tag_, Application_>::get_benchmark_info(info, data_flow));
-                    result += eq_dist;
-                    BenchmarkInfo col_stream(CollideStreamGrid<Tag_, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::get_benchmark_info(info, data_flow));
-                    result += col_stream;
-                    BenchmarkInfo force(ForceGrid<Tag_, Application_, Force_, SourceScheme_>::get_benchmark_info(info, data_flow));
-                    result += force;
-                    BenchmarkInfo extraction(ExtractionGrid<Tag_, LbmMode_>::get_benchmark_info(info, data_flow));
-                    result += extraction;
-
-                    result.size.push_back(grid->h->rows());
-                    result.size.push_back(grid->h->columns());
-                    result.lups = grid->h->rows() * grid->h->columns();
-                    result.flups = data_flow->h->size();
-                    return result;
-                }*/
         };
 }
 #endif
