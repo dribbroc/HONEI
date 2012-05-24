@@ -110,6 +110,7 @@ namespace honei
 
                     DT1_ t1, t2;
 
+
                     for(unsigned long i(start); i < end; ++i)
                     {
                         const DT1_ h((th)[i]);

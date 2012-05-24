@@ -117,7 +117,7 @@ class ScenarioCollection
                         target_grid.long_description.append("lattice_type = D2Q9 square\n");
 
                         target_grid.h = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.05));
-                        Cylinder<DataType_> c1(*target_grid.h, DataType_(0.03), 25, 25);
+                        Cylinder<DataType_> c1(*target_grid.h, DataType_(0.01), 25, 25);
                         c1.value();
                         target_grid.u = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.v = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));

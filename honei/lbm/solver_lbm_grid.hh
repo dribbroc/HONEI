@@ -147,23 +147,23 @@ namespace honei
                     CONTEXT("When performing LABSWE preprocessing.");
 
                     (*_data->distribution_x)[0] = ResPrec_(0.);
-                    (*_data->distribution_x)[1] = ResPrec_(_e * cos(ResPrec_(0.)));
-                    (*_data->distribution_x)[2] = ResPrec_(sqrt(ResPrec_(2.)) * _e * cos(_pi / ResPrec_(4.)));
-                    (*_data->distribution_x)[3] = ResPrec_(_e * cos(_pi / ResPrec_(2.)));
-                    (*_data->distribution_x)[4] = ResPrec_(sqrt(ResPrec_(2.)) * _e * cos(ResPrec_(3.) * _pi / ResPrec_(4.)));
-                    (*_data->distribution_x)[5] = ResPrec_(_e * cos(_pi));
-                    (*_data->distribution_x)[6] = ResPrec_(sqrt(ResPrec_(2.)) * _e * cos(ResPrec_(5.) * _pi / ResPrec_(4.)));
-                    (*_data->distribution_x)[7] = ResPrec_(_e * cos(ResPrec_(3.) * _pi / ResPrec_(2.)));
-                    (*_data->distribution_x)[8] = ResPrec_(sqrt(ResPrec_(2.)) * _e * cos(ResPrec_(7.) * _pi / ResPrec_(4.)));
+                    (*_data->distribution_x)[1] = ResPrec_(1.);
+                    (*_data->distribution_x)[2] = ResPrec_(1.);
+                    (*_data->distribution_x)[3] = ResPrec_(0.);
+                    (*_data->distribution_x)[4] = ResPrec_(-1.);
+                    (*_data->distribution_x)[5] = ResPrec_(-1);
+                    (*_data->distribution_x)[6] = ResPrec_(-1);
+                    (*_data->distribution_x)[7] = ResPrec_(0);
+                    (*_data->distribution_x)[8] = ResPrec_(1);
                     (*_data->distribution_y)[0] = ResPrec_(0.);
-                    (*_data->distribution_y)[1] = ResPrec_(_e * sin(ResPrec_(0.)));
-                    (*_data->distribution_y)[2] = ResPrec_(sqrt(ResPrec_(2.)) * _e * sin(_pi / ResPrec_(4.)));
-                    (*_data->distribution_y)[3] = ResPrec_(_e * sin(_pi / ResPrec_(2.)));
-                    (*_data->distribution_y)[4] = ResPrec_(sqrt(ResPrec_(2.)) * _e * sin(ResPrec_(3.) * _pi / ResPrec_(4.)));
-                    (*_data->distribution_y)[5] = ResPrec_(_e * sin(_pi));
-                    (*_data->distribution_y)[6] = ResPrec_(sqrt(ResPrec_(2.)) * _e * sin(ResPrec_(5.) * _pi / ResPrec_(4.)));
-                    (*_data->distribution_y)[7] = ResPrec_(_e * sin(ResPrec_(3.) * _pi / ResPrec_(2.)));
-                    (*_data->distribution_y)[8] = ResPrec_(sqrt(ResPrec_(2.)) * _e * sin(ResPrec_(7.) * _pi / ResPrec_(4.)));
+                    (*_data->distribution_y)[1] = ResPrec_(0.);
+                    (*_data->distribution_y)[2] = ResPrec_(1.);
+                    (*_data->distribution_y)[3] = ResPrec_(1.);
+                    (*_data->distribution_y)[4] = ResPrec_(1.);
+                    (*_data->distribution_y)[5] = ResPrec_(0);
+                    (*_data->distribution_y)[6] = ResPrec_(-1);
+                    (*_data->distribution_y)[7] = ResPrec_(-1);
+                    (*_data->distribution_y)[8] = ResPrec_(-1);
 
                     ///Compute initial equilibrium distribution:
                     EquilibriumDistributionGrid<Tag_, Application_>::

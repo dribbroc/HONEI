@@ -136,7 +136,6 @@ namespace honei
                             //}
                             //(h)[i] = MinModLimiter<tags::CPU>::value((h)[i]);
 
-
                         }
 
                         info.limits->unlock(lm_read_only);

@@ -79,6 +79,7 @@ namespace honei
             class NOSLIP_2;
             class PERIODIC;
             class DRIVEN_CAVITY;
+            class DIRICHLET_SLIP;
         }
 
         namespace lbm_applications

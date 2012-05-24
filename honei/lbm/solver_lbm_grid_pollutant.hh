@@ -43,6 +43,7 @@
 #include <honei/lbm/force_grid.hh>
 #include <honei/lbm/force_grid_pollutant.hh>
 #include <honei/lbm/update_velocity_directions_grid.hh>
+#include <honei/lbm/update_velocity_directions_grid_pollutant.hh>
 #include <honei/lbm/extraction_grid.hh>
 #include <honei/lbm/extraction_grid_pollutant.hh>
 #include <cmath>
@@ -95,7 +96,7 @@ namespace honei
                  **/
 
 
-                ResPrec_ _relaxation_time, _delta_x, _delta_y, _delta_t, _k, _s_0;
+                ResPrec_ _relaxation_time, _delta_x, _delta_y, _delta_t, _k, _s_0, _dir_value;
 
                 unsigned long _time;
 
@@ -112,14 +113,20 @@ namespace honei
                 SolverLBMGridPollutant(PackedGridInfo<D2Q9> * info,
                         PackedGridData<D2Q9, ResPrec_> * data_flow,
                         PackedGridData<D2Q9, ResPrec_> * data_poll,
+                        ResPrec_ dx,
+                        ResPrec_ dy,
                         ResPrec_ dt,
                         ResPrec_ rel_time,
                         ResPrec_ k,
-                        ResPrec_ s_0) :
+                        ResPrec_ s_0,
+                        ResPrec_ dirvalue) :
                     _relaxation_time(rel_time),
+                    _delta_x(dx),
+                    _delta_y(dy),
                     _delta_t(dt),
                     _k(k),
                     _s_0(s_0),
+                    _dir_value(dirvalue),
                     _time(0),
                     _info(info),
                     _data_flow(data_flow),
@@ -148,23 +155,23 @@ namespace honei
                     CONTEXT("When performing LABSWE preprocessing.");
 
                     (*_data_poll->distribution_x)[0] = ResPrec_(0.);
-                    (*_data_poll->distribution_x)[1] = ResPrec_(_e * cos(ResPrec_(0.)));
-                    (*_data_poll->distribution_x)[2] = ResPrec_(sqrt(ResPrec_(2.)) * _e * cos(_pi / ResPrec_(4.)));
-                    (*_data_poll->distribution_x)[3] = ResPrec_(_e * cos(_pi / ResPrec_(2.)));
-                    (*_data_poll->distribution_x)[4] = ResPrec_(sqrt(ResPrec_(2.)) * _e * cos(ResPrec_(3.) * _pi / ResPrec_(4.)));
-                    (*_data_poll->distribution_x)[5] = ResPrec_(_e * cos(_pi));
-                    (*_data_poll->distribution_x)[6] = ResPrec_(sqrt(ResPrec_(2.)) * _e * cos(ResPrec_(5.) * _pi / ResPrec_(4.)));
-                    (*_data_poll->distribution_x)[7] = ResPrec_(_e * cos(ResPrec_(3.) * _pi / ResPrec_(2.)));
-                    (*_data_poll->distribution_x)[8] = ResPrec_(sqrt(ResPrec_(2.)) * _e * cos(ResPrec_(7.) * _pi / ResPrec_(4.)));
+                    (*_data_poll->distribution_x)[1] = ResPrec_(1.);
+                    (*_data_poll->distribution_x)[2] = ResPrec_(1.);
+                    (*_data_poll->distribution_x)[3] = ResPrec_(0.);
+                    (*_data_poll->distribution_x)[4] = ResPrec_(-1.);
+                    (*_data_poll->distribution_x)[5] = ResPrec_(-1);
+                    (*_data_poll->distribution_x)[6] = ResPrec_(-1);
+                    (*_data_poll->distribution_x)[7] = ResPrec_(0);
+                    (*_data_poll->distribution_x)[8] = ResPrec_(1);
                     (*_data_poll->distribution_y)[0] = ResPrec_(0.);
-                    (*_data_poll->distribution_y)[1] = ResPrec_(_e * sin(ResPrec_(0.)));
-                    (*_data_poll->distribution_y)[2] = ResPrec_(sqrt(ResPrec_(2.)) * _e * sin(_pi / ResPrec_(4.)));
-                    (*_data_poll->distribution_y)[3] = ResPrec_(_e * sin(_pi / ResPrec_(2.)));
-                    (*_data_poll->distribution_y)[4] = ResPrec_(sqrt(ResPrec_(2.)) * _e * sin(ResPrec_(3.) * _pi / ResPrec_(4.)));
-                    (*_data_poll->distribution_y)[5] = ResPrec_(_e * sin(_pi));
-                    (*_data_poll->distribution_y)[6] = ResPrec_(sqrt(ResPrec_(2.)) * _e * sin(ResPrec_(5.) * _pi / ResPrec_(4.)));
-                    (*_data_poll->distribution_y)[7] = ResPrec_(_e * sin(ResPrec_(3.) * _pi / ResPrec_(2.)));
-                    (*_data_poll->distribution_y)[8] = ResPrec_(sqrt(ResPrec_(2.)) * _e * sin(ResPrec_(7.) * _pi / ResPrec_(4.)));
+                    (*_data_poll->distribution_y)[1] = ResPrec_(0.);
+                    (*_data_poll->distribution_y)[2] = ResPrec_(1.);
+                    (*_data_poll->distribution_y)[3] = ResPrec_(1.);
+                    (*_data_poll->distribution_y)[4] = ResPrec_(1.);
+                    (*_data_poll->distribution_y)[5] = ResPrec_(0);
+                    (*_data_poll->distribution_y)[6] = ResPrec_(-1);
+                    (*_data_poll->distribution_y)[7] = ResPrec_(-1);
+                    (*_data_poll->distribution_y)[8] = ResPrec_(-1);
 
                     ///Compute initial equilibrium distribution:
                     EquilibriumDistributionGridPollutant<Tag_, Application_>::
@@ -205,8 +212,8 @@ namespace honei
                     ForceGridPollutant<Tag_, Application_>::value(*_info, *_data_flow, *_data_poll, _delta_t, _k, _s_0);
 
                     ///Boundary correction:
-                    UpdateVelocityDirectionsGrid<Tag_, NOSLIP>::
-                        value(*_info, *_data_poll);
+                    UpdateVelocityDirectionsGridPollutant<Tag_, DIRICHLET_SLIP>::
+                        value(*_info, *_data_flow, *_data_poll, _e_squared, _dir_value);
 
                     //extract velocities out of h from previous timestep:
                     ExtractionGridPollutant<Tag_, LbmMode_>::value(*_info, *_data_flow, *_data_poll, ResPrec_(10e-5));
