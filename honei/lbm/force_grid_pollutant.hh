@@ -74,13 +74,13 @@ namespace honei
                 DT1_ w_0(4./9.);
                 DT1_ w_odd(1./9.);
                 DT1_ w_even(1./36.);
-                DT1_ const_multiplier_0(-dt * w_0);
-                DT1_ const_multiplier_odd(-dt * w_odd);
-                DT1_ const_multiplier_even(-dt * w_even);
+                DT1_ const_multiplier_0(dt * w_0);
+                DT1_ const_multiplier_odd(dt * w_odd);
+                DT1_ const_multiplier_even(dt * w_even);
 
                 for(unsigned long i((limits)[0]); i < (limits)[info.limits->size() - 1]; ++i)
                 {
-                    t1 = k * h[i] * c[i];
+                    t1 = -k * h[i] * c[i];
                     t2 = s_0 * h[i];
                     (f_temp_0)[i] += const_multiplier_0 * (t1 + t2);
                     (f_temp_1)[i] += const_multiplier_odd * (t1 + t2);
