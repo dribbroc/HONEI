@@ -128,9 +128,6 @@ namespace honei
                                 (f_8)[i] ) / h[i]
                                     );
 
-                            if (c[i] < 0)
-                                std::cout << "SHIT HAPPEND HERE: (f0, f1, ..., f8)= " << "(" << f_0[i] << " " << f_1[i] << " " << f_2[i] << " " << f_3[i] << " " << f_4[i] << " " << f_5[i] << " " << f_6[i] << " " << f_7[i] << " " << f_8[i] << "); h= " << h[i] << " ; c= " << c[i]<< std::endl;
-
                             //if((h)[i] < lax_lower || (h)[i] > lax_upper)
                             //{
                             //}

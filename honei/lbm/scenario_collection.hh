@@ -85,6 +85,14 @@ class ScenarioCollection
                     return "DRIVEN CAVITY";
                     break;
 
+                case 9:
+                    return "Steady State 2";
+                    break;
+
+                case 10:
+                    return "Yet another Circular dam break, uncritical";
+                    break;
+
                 default:
                     return "Unspecified or unstable  scenario";
                     break;
@@ -544,6 +552,41 @@ class ScenarioCollection
                         target_grid.d_y = 1.;
                         target_grid.d_t = 1.;
                         target_grid.tau = 1.;
+
+                    }
+                    break;
+                case 10:
+                    {
+                        target_grid.description = "Yet another Circular dam break, uncritical";
+                        target_grid.long_description = target_grid.description;
+                        target_grid.long_description.append("\nDiscretization (proposal):\n");
+                        target_grid.long_description.append("d_x = d_y = 0.1\n");
+                        target_grid.long_description.append("d_t = 0.1\n");
+                        target_grid.long_description.append("recommended minimum size: 50x50\n\n");
+
+                        target_grid.long_description.append("Initial conditions:\n");
+                        target_grid.long_description.append("u = 0.\n");
+                        target_grid.long_description.append("v = 0.\n");
+                        target_grid.long_description.append("b = 0.\n");
+                        target_grid.long_description.append("h = h + b = 0.75\n\n");
+
+                        target_grid.long_description.append("Lattice Boltzmann model:\n");
+                        target_grid.long_description.append("tau = 1.1\n");
+                        target_grid.long_description.append("flow = laminar\n");
+                        target_grid.long_description.append("lattice_type = D2Q9 square\n");
+
+                        target_grid.h = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.6));
+                        Cylinder<DataType_> c1(*target_grid.h, DataType_(0.05), 15, 15);
+                        c1.value();
+                        target_grid.u = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.v = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.b = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.obstacles = new DenseMatrix<bool>(grid_height, grid_width, false);
+
+                        target_grid.d_x = 0.01;
+                        target_grid.d_y = 0.01;
+                        target_grid.d_t = 0.0025;
+                        target_grid.tau = 0.75;
 
                     }
                     break;

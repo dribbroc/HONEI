@@ -25,6 +25,8 @@
 #include <cmath>
 
 #include <clients/qt/gl_widget.hh>
+#include <clients/qt/vertex.hh>
+#include <clients/qt/normal.hh>
 #include <iostream>
 // switch on the following if you want the scene to be drawn in wireframe
 #undef WIREFRAME
@@ -119,6 +121,21 @@ void GLWidget::initializeGL()
 #endif
 #endif
 
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT1);
+
+    // Create light components
+    GLfloat ambientLight[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+    GLfloat diffuseLight[] = { 1., 1., 1., 1.0f };
+    GLfloat specularLight[] = { 1., 1., 1., 1.0f };
+    GLfloat position[] = { 0., 0., 1., 1.0f };
+
+    // Assign created components to GL_LIGHT0
+    glLightfv(GL_LIGHT1, GL_AMBIENT, ambientLight);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuseLight);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, specularLight);
+    glLightfv(GL_LIGHT1, GL_POSITION, position);
+
     //start the solver timer
     _solver_timer = new QTimer(this);
     connect(_solver_timer, SIGNAL(timeout()), SLOT(solver_event()));
@@ -127,7 +144,7 @@ void GLWidget::initializeGL()
 
 void GLWidget::paintGL()
 {
-    glClearColor(0., 0., 0., 0.);
+    glClearColor(1., 1., 1., 0.);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
     glMatrixMode(GL_MODELVIEW);
@@ -204,9 +221,23 @@ void GLWidget::_render_matrix(DenseMatrix<Prec_> & matrix, float r, float g, flo
     {
         for(unsigned int j = 0 ; j < matrix.columns() - 1 ; ++j)
         {
-            glColor4f(r, g, b, a);
+            float mcolor[] = {r, g, b, a};
+            glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, mcolor);
+            float specReflection[] = { r, g, b, a};
+            glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specReflection);
+            glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 100.);
+
+            Vertex<double> v0(i, j, matrix[i][j]);
+            Vertex<double> v1(i, j+1, matrix[i][j+1]);
+            Vertex<double> v2(i+1, j+1, matrix[i+1][j+1]);
+            Vertex<double> normal;
+
+            get_unit_normal(v0, v1, v2, normal);
+
+            glNormal3d(normal.coord_x, normal.coord_y, normal.coord_z);
+            //glColor4f(r, g, b, a);
             glVertex3d(i,j, matrix[i][j]);
-            glColor4f(r, g + 0.2, b + 0.2, a);
+            //glColor4f(r, g + 0.2, b + 0.2, a);
             glVertex3d(i,j+1, matrix[i][j+1]);
             glVertex3d(i+1,j+1, matrix[i+1][j+1]);
             glVertex3d(i+1,j, matrix[i+1][j]);
@@ -360,9 +391,9 @@ void GLWidget::_render_hud()
         glPushMatrix();
         glLoadIdentity();
 
-        renderText( 10, 20, QString(txt_1), QFont("System", 8) );
-        renderText( 10, 35, QString(txt_2), QFont("System", 8) );
-        renderText( 10, 50, QString(txt_3), QFont("System", 8) );
+        renderText( 100, 20, QString(txt_1), QFont("System", 8) );
+        renderText( 100, 35, QString(txt_2), QFont("System", 8) );
+        renderText( 100, 50, QString(txt_3), QFont("System", 8) );
 
         glPopMatrix();
 

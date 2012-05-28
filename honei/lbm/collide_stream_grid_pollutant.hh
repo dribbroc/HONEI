@@ -155,8 +155,6 @@ namespace honei
             {
                 tau_local = one_over_2 + h[i] * (tau - one_over_2);
                 (f_temp_0)[i] = (f_0)[i] - ((f_0)[i] - (f_eq_0)[i])/tau_local;
-                if(f_temp_0[i] < 0)
-                    std::cout << "CS: (f0, feq0, tau_local)= "<< f_0[i] << " " << f_eq_0[i] << " " << tau_local << " f_temp_0= " << f_temp_0[i] << std::endl;
             }
 
             for (unsigned long begin(0), half(0) ; begin < info.dir_index_1->size() - 1; begin+=2, ++half)
