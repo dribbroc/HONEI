@@ -50,6 +50,7 @@
 #include <honei/lbm/collide_stream_grid.hh>
 #include <honei/lbm/equilibrium_distribution_grid.hh>
 #include <honei/lbm/force_grid.hh>
+#include <honei/lbm/force_grid_wind.hh>
 #include <honei/lbm/update_velocity_directions_grid.hh>
 #include <honei/lbm/extraction_grid.hh>
 #include <cmath>

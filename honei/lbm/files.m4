@@ -27,6 +27,7 @@ add(`extraction_grid',                 `hh', `sse', `cuda', `cell', `itanium', `
 add(`extraction_grid_pollutant',       `hh')
 add(`extraction_grid_regression',            `test')
 add(`force_grid',                      `hh', `test', `sse', `cuda')
+add(`force_grid_wind',                 `hh')
 add(`force_grid_pollutant',            `hh')
 add(`fluid_solid_interaction',               `test')
 add(`grid',                            `hh')
