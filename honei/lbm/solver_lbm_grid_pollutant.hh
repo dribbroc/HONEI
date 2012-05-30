@@ -212,8 +212,10 @@ namespace honei
                     ForceGridPollutant<Tag_, Application_>::value(*_info, *_data_flow, *_data_poll, _delta_t, _k, _s_0);
 
                     ///Boundary correction:
-                    UpdateVelocityDirectionsGridPollutant<Tag_, DIRICHLET_SLIP>::
-                        value(*_info, *_data_flow, *_data_poll, _e_squared, _dir_value);
+                    //UpdateVelocityDirectionsGridPollutant<Tag_, DIRICHLET_SLIP>::
+                      //  value(*_info, *_data_flow, *_data_poll, _e_squared, _dir_value);
+                    UpdateVelocityDirectionsGrid<Tag_, NOSLIP>::
+                        value(*_info, *_data_poll);
 
                     //extract velocities out of h from previous timestep:
                     ExtractionGridPollutant<Tag_, LbmMode_>::value(*_info, *_data_flow, *_data_poll, ResPrec_(10e-5));
