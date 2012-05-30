@@ -15,7 +15,12 @@ struct Vertex
             coord_z(z)
     {
     }
+
     Vertex()
+        :
+            coord_x(DT_(0.)),
+            coord_y(DT_(0.)),
+            coord_z(DT_(0.))
     {
     }
 };

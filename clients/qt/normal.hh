@@ -8,7 +8,7 @@
 
 
 template<typename DT_>
-void get_unit_normal(Vertex<DT_> & v0, Vertex<DT_> & v1, Vertex<DT_> & v2, Vertex<DT_> & normal)
+void get_face_unit_normal(Vertex<DT_> & v0, Vertex<DT_> & v1, Vertex<DT_> & v2, Vertex<DT_> & normal)
 {
     Vertex<DT_> a, b;
     a.coord_x = v0.coord_x - v1.coord_x;
@@ -25,7 +25,7 @@ void get_unit_normal(Vertex<DT_> & v0, Vertex<DT_> & v1, Vertex<DT_> & v2, Verte
 
     DT_ len = (DT_)(sqrt((normal.coord_x * normal.coord_x) + (normal.coord_y * normal.coord_y) + (normal.coord_z * normal.coord_z)));
 
-    len = len < std::numeric_limits<DT_>::epsilon() ? DT_(1) : len;
+    len = len == DT_(0.) ? DT_(1) : len;
 
     normal.coord_x /= len;
     normal.coord_y /= len;

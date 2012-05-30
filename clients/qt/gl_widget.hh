@@ -83,6 +83,8 @@ class GLWidget : public QGLWidget
         template <typename Prec_>
         void _render_matrix( DenseMatrix<Prec_> & matrix, float r, float g, float b, float a);
 
+        void _render_reference_cube();
+
         void _render_hud();
 
     private slots:
