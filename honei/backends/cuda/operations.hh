@@ -289,6 +289,22 @@ extern "C"
             void * distribution_x, void * distribution_y, double epsilon,
             unsigned long blocksize);
 
+    void cuda_extraction_grid_pollutant_dry_float(
+            unsigned long start, unsigned long end,
+            void * f_0, void * f_1, void * f_2,
+            void * f_3, void * f_4, void * f_5,
+            void * f_6, void * f_7, void * f_8,
+            void * h_flow, void * h_poll, float epsilon,
+            unsigned long blocksize);
+
+    void cuda_extraction_grid_pollutant_dry_double(
+            unsigned long start, unsigned long end,
+            void * f_0, void * f_1, void * f_2,
+            void * f_3, void * f_4, void * f_5,
+            void * f_6, void * f_7, void * f_8,
+            void * h_flow, void * h_poll, double epsilon,
+            unsigned long blocksize);
+
     ///////////////////////////  /////////////////////////
     void cuda_thread_synchronize();
 

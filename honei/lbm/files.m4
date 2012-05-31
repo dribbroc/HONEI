@@ -24,7 +24,7 @@ add(`equilibrium_distribution_grid',   `hh', `sse', `cuda', `cell', `itanium', `
 add(`equilibrium_distribution_grid_pollutant', `hh')
 add(`equilibrium_distribution_grid_regression',  `test')
 add(`extraction_grid',                 `hh', `sse', `cuda', `cell', `itanium', `test')
-add(`extraction_grid_pollutant',       `hh')
+add(`extraction_grid_pollutant',       `hh', `cuda')
 add(`extraction_grid_regression',            `test')
 add(`force_grid',                      `hh', `test', `sse', `cuda')
 add(`force_grid_wind',                 `hh')

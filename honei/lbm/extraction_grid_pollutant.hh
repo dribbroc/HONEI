@@ -30,6 +30,8 @@
 #include <honei/util/benchmark_info.hh>
 #include <honei/util/attributes.hh>
 
+#include <iostream>
+
 using namespace lbm;
 
 namespace honei
@@ -156,6 +158,15 @@ namespace honei
                         data_poll.h->unlock(lm_write_only);
 
                     }
+        };
+
+    template<>
+        struct ExtractionGridPollutant<tags::GPU::CUDA, lbm_modes::DRY>
+        {
+            public:
+                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data_flow, PackedGridData<D2Q9, float> & data_poll, float epsilon);
+
+                    static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data_flow, PackedGridData<D2Q9, double> & data_poll, double epsilon);
         };
 
 
