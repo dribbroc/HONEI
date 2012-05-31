@@ -82,15 +82,21 @@ namespace honei
                 {
                     t1 = -k * h[i] * c[i];
                     t2 = s_0 * h[i];
-                    (f_temp_0)[i] += const_multiplier_0 * (t1 + t2);
-                    (f_temp_1)[i] += const_multiplier_odd * (t1 + t2);
-                    (f_temp_3)[i] += const_multiplier_odd * (t1 + t2);
-                    (f_temp_5)[i] += const_multiplier_odd * (t1 + t2);
-                    (f_temp_7)[i] += const_multiplier_odd * (t1 + t2);
-                    (f_temp_2)[i] += const_multiplier_even * (t1 + t2);
-                    (f_temp_4)[i] += const_multiplier_even * (t1 + t2);
-                    (f_temp_6)[i] += const_multiplier_even * (t1 + t2);
-                    (f_temp_8)[i] += const_multiplier_even * (t1 + t2);
+                    t1 = t1 + t2;
+
+                    (f_temp_0)[i] += const_multiplier_0 * (t1);
+
+                    t1 = const_multiplier_odd * (t1);
+                    t2 = const_multiplier_even * (t2);
+
+                    (f_temp_1)[i] += t1;
+                    (f_temp_3)[i] += t1;
+                    (f_temp_5)[i] += t1;
+                    (f_temp_7)[i] += t1;
+                    (f_temp_2)[i] += t2;
+                    (f_temp_4)[i] += t2;
+                    (f_temp_6)[i] += t2;
+                    (f_temp_8)[i] += t2;
                 }
 
                 info.limits->unlock(lm_read_only);
