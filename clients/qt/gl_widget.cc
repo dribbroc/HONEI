@@ -236,9 +236,9 @@ void GLWidget::_render_matrix(DenseMatrix<Prec_> & matrix, float r, float g, flo
         {
             float mcolor[] = {r, g, b, a};
             glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE, mcolor);
-            float specReflection[] = { 1., 1., 1., 1.};
+            float specReflection[] = { 0.8, 0.8, 0.8, 1.};
             glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specReflection);
-            glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 1.);
+            glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 0.5);
 
             Vertex<double> v0(i, j, 100.*matrix[i][j]);
             Vertex<double> v1(i, j+1, 100.*matrix[i][j+1]);
