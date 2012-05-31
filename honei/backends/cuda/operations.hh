@@ -139,6 +139,22 @@ extern "C"
             double g, double e,
             unsigned long blocksize);
 
+    void cuda_eq_dist_grid_pollutant_float(unsigned long start, unsigned long end, void * u, void * v, void * h, void * c,
+            void * distribution_x, void * distribution_y,
+            void * f_eq_0, void * f_eq_1, void * f_eq_2,
+            void * f_eq_3, void * f_eq_4, void * f_eq_5,
+            void * f_eq_6, void * f_eq_7, void * f_eq_8,
+            float e,
+            unsigned long blocksize);
+
+    void cuda_eq_dist_grid_pollutant_double(unsigned long start, unsigned long end, void * u, void * v, void * h, void * c,
+            void * distribution_x, void * distribution_y,
+            void * f_eq_0, void * f_eq_1, void * f_eq_2,
+            void * f_eq_3, void * f_eq_4, void * f_eq_5,
+            void * f_eq_6, void * f_eq_7, void * f_eq_8,
+            double e,
+            unsigned long blocksize);
+
     void cuda_collide_stream_grid_float(unsigned long start, unsigned long end,
             void * dir_1, void * dir_2, void * dir_3, void * dir_4,
             void * dir_5, void * dir_6, void * dir_7, void * dir_8,

@@ -260,6 +260,14 @@ namespace honei
                     data_poll.f_eq_8->unlock(lm_write_only);
                 }
         };
+
+    template<>
+        struct EquilibriumDistributionGridPollutant<tags::GPU::CUDA, lbm_applications::LABSWE>
+        {
+                static void value(float e, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data_flow, PackedGridData<D2Q9, float> & data_poll);
+                static void value(double e, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data_flow, PackedGridData<D2Q9, double> & data_poll);
+        };
 }
+
 
 #endif

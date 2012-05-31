@@ -63,6 +63,7 @@ libhoneibackendscuda_la_SOURCES = \
 				 extraction_grid.cu \
 				 extraction_grid_pollutant.cu \
 				 eq_dist_grid.cu \
+				 eq_dist_grid_pollutant.cu \
 				 force_grid.cu \
 				 memory_backend.cc \
 				 multi_gpu.cu \
