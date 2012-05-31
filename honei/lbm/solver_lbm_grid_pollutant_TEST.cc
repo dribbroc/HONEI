@@ -31,6 +31,7 @@
 #include <honei/lbm/equilibrium_distribution_grid_pollutant.hh>
 #include <honei/lbm/force_grid_pollutant.hh>
 #include <honei/lbm/collide_stream_grid_pollutant.hh>
+#include <honei/lbm/function.hh>
 
 #ifdef DEBUG
 #define SOLVER_VERBOSE
@@ -244,7 +245,9 @@ class Showcase :
             for(unsigned long i(0); i < g_h ; ++i)
                 for(unsigned long j(0); j < g_w ; ++j)
                    //(*grid_poll.h)[i][j] = 1.*((grid_poll.d_x * i) * (grid_poll.d_x * i) + (grid_poll.d_y * j) * (grid_poll.d_y * j));
-                   (*grid_poll.h)[i][j] = 0.1 * exp(-(((grid_poll.d_x * i) - 25. * grid_poll.d_x) * ((grid_poll.d_x * i) - 25. * grid_poll.d_x)/2. + ((grid_poll.d_y * j) - 25. * grid_poll.d_y) * ((grid_poll.d_y * j) - 25. * grid_poll.d_y)/2. ));
+                   //(*grid_poll.h)[i][j] = 0.1 * exp(-(((grid_poll.d_x * i) - 25. * grid_poll.d_x) * ((grid_poll.d_x * i) - 25. * grid_poll.d_x)/2. + ((grid_poll.d_y * j) - 25. * grid_poll.d_y) * ((grid_poll.d_y * j) - 25. * grid_poll.d_y)/2. ));
+                   (*grid_poll.h)[i][j] = Gaussian2D<0>::value(grid_poll.d_x * i, grid_poll.d_y * j, 0.1f, grid_poll.d_x * 25, grid_poll.d_y * 25, 0.1f, 0.1f);
+
             PostProcessing<GNUPLOT>::value(*grid_poll.h, 1, g_w, g_h, 1, "poll_init.dat");
 
             PackedGridData<D2Q9, DataType_>  data_flow;
