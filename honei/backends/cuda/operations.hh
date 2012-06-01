@@ -257,6 +257,22 @@ extern "C"
             unsigned long size,
             unsigned long blocksize);
 
+    void cuda_force_grid_pollutant_float(unsigned long start, unsigned long end,
+            void * h, void * c,
+            void * f_temp_1, void * f_temp_2,
+            void * f_temp_3, void * f_temp_4, void * f_temp_5,
+            void * f_temp_6, void * f_temp_7, void * f_temp_8,
+            float d_t, float k, float s_0,
+            unsigned long blocksize);
+
+    void cuda_force_grid_pollutant_double(unsigned long start, unsigned long end,
+            void * h, void * c,
+            void * f_temp_1, void * f_temp_2,
+            void * f_temp_3, void * f_temp_4, void * f_temp_5,
+            void * f_temp_6, void * f_temp_7, void * f_temp_8,
+            double d_t, double k, double s_0,
+            unsigned long blocksize);
+
     void cuda_up_vel_dir_grid_float(unsigned long start, unsigned long end,
             void * types, void * f_temp_1, void * f_temp_2,
             void * f_temp_3, void * f_temp_4, void * f_temp_5,

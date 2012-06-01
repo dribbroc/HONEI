@@ -17,13 +17,18 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include <honei/lbm/tags.hh>
+#include <honei/la/dense_vector.hh>
+#include <honei/la/dense_matrix.hh>
+#include <honei/lbm/grid.hh>
+#include <honei/util/benchmark_info.hh>
+#include <cmath>
 
 #pragma once
 
 #ifndef LBM_GUARD_FORCE_GRID_POLLUTANT_HH
 #define LBM_GUARD_FORCE_GRID_POLLUTANT_HH 1
 
-#include "config.h"
 namespace honei
 {
    template <typename Tag_,
@@ -114,6 +119,14 @@ namespace honei
                 data_poll.f_temp_7->unlock(lm_write_only);
                 data_poll.f_temp_8->unlock(lm_write_only);
             }
+    };
+
+    template <>
+    struct ForceGridPollutant<tags::GPU::CUDA, lbm_applications::LABSWE>
+    {
+            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, float> & data_flow, PackedGridData<D2Q9, float> & data_poll, float dt, float k, float s_0);
+
+            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data_flow, PackedGridData<D2Q9, double> & data_poll, double dt, double k, double s_0);
     };
 }
 
