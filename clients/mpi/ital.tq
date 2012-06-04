@@ -1,0 +1,13 @@
+# #PBS -o mpi_output.txt
+#PBS -A DEC08_FFF
+#PBS -M dribbrock@gmail.com
+#PBS -m bae
+#PBS -q parallel
+#PBS -N honei-mpi
+#PBS -j oe
+#PBS -l walltime=00:20:00
+# #PBS -l mem=47GB
+#PBS -l select=NODES:ncpus=2:mpiprocs=2:ngpus=2
+#cd $HOME/honei/trunk/clients/mpi
+cd $PBS_O_WORKDIR
+mpirun ./honei-mpi-pollutant 5000 5000 250 config

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+for ((i = 1 ; i <=128 ; i*=2))
+do
+    cp ital.tq ital.tq.tmp
+    sed "s/NODES/${i}/g" <ital.tq.tmp >ital.tq.tmp2
+    mv ital.tq.tmp2 ital.tq.tmp
+    qsub ital.tq.tmp
+done
+rm -f ital.tq.tmp

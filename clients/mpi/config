@@ -5,7 +5,8 @@ scenario 6
 syncthreshold 0.5
 
 # describe procs on this node
-proc generic 1
+proc cuda 0.5
+proc cuda 0.5
 
 #activate fileoutput
 #fileoutput output
