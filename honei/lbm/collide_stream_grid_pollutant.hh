@@ -287,5 +287,21 @@ namespace honei
             data_flow.h->unlock(lm_read_only);
         }
     };
+
+    template <>
+    struct CollideStreamGridPollutant<tags::GPU::CUDA, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>
+    {
+        static void value(
+                          PackedGridInfo<lbm_lattice_types::D2Q9> & info,
+                          PackedGridData<lbm_lattice_types::D2Q9, float> & data_flow,
+                          PackedGridData<lbm_lattice_types::D2Q9, float> & data_poll,
+                          float tau);
+
+        static void value(
+                          PackedGridInfo<lbm_lattice_types::D2Q9> & info,
+                          PackedGridData<lbm_lattice_types::D2Q9, double> & data_flow,
+                          PackedGridData<lbm_lattice_types::D2Q9, double> & data_poll,
+                          double tau);
+    };
 }
 #endif

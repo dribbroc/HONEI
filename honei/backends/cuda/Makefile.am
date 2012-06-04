@@ -54,6 +54,7 @@ libhoneibackendscuda_la_SOURCES = \
 				 cuda_util.hh \
 				 boundary_init_fsi.cu \
 				 collide_stream_grid.cu \
+				 collide_stream_grid_pollutant.cu \
 				 collide_stream_fsi.cu \
 				 defect.cu \
 				 difference.cu \

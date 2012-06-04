@@ -302,4 +302,4 @@ class Showcase :
             grid_poll.destroy();
         }
 };
-Showcase<tags::CPU::Generic, float> solver_test_float("float");
+Showcase<tags::GPU::CUDA, float> solver_test_float("float");
