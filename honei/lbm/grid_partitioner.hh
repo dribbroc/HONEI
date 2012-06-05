@@ -1190,6 +1190,7 @@ namespace honei
                     new_data.u = new DenseVector<DT_>(data_size + 1);
                     new_data.v = new DenseVector<DT_>(data_size + 1);
                     new_data.b = new DenseVector<DT_>(data_size + 1);
+                    new_data.s0 = new DenseVector<DT_>(data_size + 1);
 
                     if (alloc_all)
                     {
@@ -1235,6 +1236,7 @@ namespace honei
                         (*new_data.u)[j] = (*data.u)[j + new_info.offset];
                         (*new_data.v)[j] = (*data.v)[j + new_info.offset];
                         (*new_data.b)[j] = (*data.b)[j + new_info.offset];
+                        (*new_data.s0)[j] = (*data.s0)[j + new_info.offset];
                     }
                     data_list.push_back(new_data);
 
@@ -1402,6 +1404,10 @@ namespace honei
                 temp = new DenseVector<DT_>(data->b->copy());
                 delete data->b;
                 data->b = temp;
+
+                temp = new DenseVector<DT_>(data->s0->copy());
+                delete data->s0;
+                data->s0 = temp;
 
                 temp = new DenseVector<DT_>(data->f_0->copy());
                 delete data->f_0;

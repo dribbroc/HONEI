@@ -67,6 +67,7 @@ namespace honei
                 b(0),
                 u(0),
                 v(0),
+                s0(0),
                 h_index(0)
             {
             }
@@ -77,6 +78,7 @@ namespace honei
                 delete b;
                 delete u;
                 delete v;
+                delete s0;
                 delete h_index;
 
                 obstacles = 0;
@@ -84,6 +86,7 @@ namespace honei
                 b = 0;
                 u = 0;
                 v = 0;
+                s0 = 0;
                 h_index = 0;
             }
             DenseMatrix<bool> * obstacles;
@@ -91,6 +94,7 @@ namespace honei
             DenseMatrix<DT_> * b;
             DenseMatrix<DT_> * u;
             DenseMatrix<DT_> * v;
+            DenseMatrix<DT_> * s0;
             DenseMatrix<unsigned long> * h_index;
 
             DT_ d_x, d_y, d_t, tau;
@@ -232,6 +236,7 @@ namespace honei
                 b(0),
                 u(0),
                 v(0),
+                s0(0),
                 temp(0),
                 f_0(0),
                 f_1(0),
@@ -272,6 +277,7 @@ namespace honei
                 delete b;
                 delete u;
                 delete v;
+                delete s0;
                 delete temp;
                 delete f_0;
                 delete f_1;
@@ -308,6 +314,7 @@ namespace honei
                 b = 0;
                 u = 0;
                 v = 0;
+                s0 = 0;
                 temp = 0;
                 f_0 = 0;
                 f_1 = 0;
@@ -344,6 +351,7 @@ namespace honei
             DenseVector<DT_> * b;
             DenseVector<DT_> * u;
             DenseVector<DT_> * v;
+            DenseVector<DT_> * s0;
             DenseVector<DT_> * temp;
 
             DenseVector<DT_> * f_0;
