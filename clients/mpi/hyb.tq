@@ -1,0 +1,13 @@
+# #PBS -o mpi_output.txt
+#PBS -A DEC08_FFF
+#PBS -M dribbrock@gmail.com
+#PBS -m bae
+#PBS -q parallel
+#PBS -N hyb-mpi
+#PBS -j oe
+#PBS -l walltime=00:20:00
+# #PBS -l mem=47GB
+#PBS -l select=1:ncpus=12:mpiprocs=14:ngpus=2
+#cd $HOME/honei/trunk/clients/mpi
+cd $PBS_O_WORKDIR
+mpirun ./honei-mpi-ring 7000 7000 100 config-hyb
