@@ -20,6 +20,7 @@
 #include <honei/lbm/solver_lbm_grid_pollutant.hh>
 #include <honei/lbm/partial_derivative.hh>
 #include <honei/swe/post_processing.hh>
+#include <honei/lbm/post_processing.hh>
 #include <honei/util/unittest.hh>
 #include <iostream>
 #include <honei/swe/volume.hh>
@@ -230,25 +231,51 @@ class Showcase :
         {
             unsigned long g_h(50);
             unsigned long g_w(50);
-            unsigned long timesteps(10000);
-            DataType_ tau_c(1);
-            DataType_ k(0.5);
+            unsigned long timesteps(5000);
+            //DataType_ tau_c(1);
+            DataType_ tau_c(1.5);
+            DataType_ k(1.);
             DataType_ s_0(0.);
 
             Grid<D2Q9, DataType_> grid;
             Grid<D2Q9, DataType_> grid_poll;
 
             ScenarioCollection::get_scenario(10, g_h, g_w, grid);
+
+            //override flow parameters
+            grid.d_x = 0.01;
+            grid.d_y = 0.01;
+            grid.d_t = 0.003;
+            grid.tau = 1.5;
+
+            delete grid.h;
+            grid.h = new DenseMatrix<DataType_>(g_h, g_w, DataType_(0.6));
+            for(unsigned long i(0); i < g_h ; ++i)
+                for(unsigned long j(0); j < g_w ; ++j)
+                {
+                    (*grid.h)[i][j] += Gaussian2D<90>::value(grid.d_x * i,  //x
+                                                             grid.d_y * j,  //y
+                                                             0.3f,          //amplitude
+                                                             grid.d_x * 25, //center x
+                                                             grid.d_y * 10, //center y
+                                                             0.05f,         //x spread
+                                                             0.1f);         //y spread
+
+                }
             ScenarioCollection::get_scenario(10, g_h, g_w, grid_poll);
             delete grid_poll.h;
             grid_poll.h = new DenseMatrix<DataType_>(g_h, g_w, DataType_(0.));
             for(unsigned long i(0); i < g_h ; ++i)
                 for(unsigned long j(0); j < g_w ; ++j)
-                   //(*grid_poll.h)[i][j] = 1.*((grid_poll.d_x * i) * (grid_poll.d_x * i) + (grid_poll.d_y * j) * (grid_poll.d_y * j));
-                   //(*grid_poll.h)[i][j] = 0.1 * exp(-(((grid_poll.d_x * i) - 25. * grid_poll.d_x) * ((grid_poll.d_x * i) - 25. * grid_poll.d_x)/2. + ((grid_poll.d_y * j) - 25. * grid_poll.d_y) * ((grid_poll.d_y * j) - 25. * grid_poll.d_y)/2. ));
-                   (*grid_poll.h)[i][j] = Gaussian2D<0>::value(grid_poll.d_x * i, grid_poll.d_y * j, 0.1f, grid_poll.d_x * 25, grid_poll.d_y * 25, 0.1f, 0.1f);
+                   (*grid_poll.h)[i][j] = Gaussian2D<30>::value(grid_poll.d_x * i,
+                                                                grid_poll.d_y * j,
+                                                                0.01f,
+                                                                grid_poll.d_x * 25,
+                                                                grid_poll.d_y * 25,
+                                                                0.05f,
+                                                                0.1f);
 
-            PostProcessing<GNUPLOT>::value(*grid_poll.h, 1, g_w, g_h, 1, "poll_init.dat");
+            //LBMPostProcessing::value(*grid_poll.h, 1, g_w, g_h, grid.d_x, grid.d_y, 1, "poll_init.dat");
 
             PackedGridData<D2Q9, DataType_>  data_flow;
             PackedGridData<D2Q9, DataType_>  data_poll;
@@ -279,9 +306,24 @@ class Showcase :
                 solver.do_postprocessing();
                 poll_solver.do_postprocessing();
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid, info, data_flow);
-                PostProcessing<GNUPLOT>::value(*grid.h, 100, g_w, g_h, i, "flow" + stringify(i) + ".dat");
+
+                unsigned I(i), digits(0);
+                while(I > 0)
+                {
+                    digits++;
+                    I/=10;
+                }
+                std::string i_;
+                for(unsigned j(0) ; j < (i != 0 ? 4 : 3) - digits ; j++)
+                {
+                    i_ += "0";
+                }
+                i_ += stringify(i);
+                std::cout << i_ << std::endl;
+
+                LBMPostProcessing::value(*grid.h, 10, g_w, g_h, grid.d_x, grid.d_y, i, "flow" + i_ + ".dat");
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid_poll, info, data_poll);
-                PostProcessing<GNUPLOT>::value(*grid_poll.h, 100, g_w, g_h, i, "poll" + stringify(i) + ".dat");
+                LBMPostProcessing::value(*grid_poll.h, 10, g_w, g_h, grid.d_x, grid.d_y, i, "poll" + i_ + ".dat");
 
                 //if(i==0)
                 //    std::cout << *grid_poll.h;
