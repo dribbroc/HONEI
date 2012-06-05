@@ -633,6 +633,7 @@ namespace honei
                 requests.push_back(mpi::mpi_isend(data.u->elements(), data.u->size(), target, _mycartid, _comm_cart));
                 requests.push_back(mpi::mpi_isend(data.v->elements(), data.v->size(), target, _mycartid, _comm_cart));
                 requests.push_back(mpi::mpi_isend(data.b->elements(), data.b->size(), target, _mycartid, _comm_cart));
+                requests.push_back(mpi::mpi_isend(data.s0->elements(), data.s0->size(), target, _mycartid, _comm_cart));
             }
 
             void _recv_data(PackedGridData<D2Q9, DataType_> & data)
@@ -647,12 +648,14 @@ namespace honei
                 data.u = new DenseVector<DataType_>(h_size);
                 data.v = new DenseVector<DataType_>(h_size);
                 data.b = new DenseVector<DataType_>(h_size);
+                data.s0 = new DenseVector<DataType_>(h_size);
                 data.temp = new DenseVector<DataType_>(h_size);
 
                 mpi::mpi_recv(data.h->elements(), data.h->size(), _masterid, _masterid, _comm_cart);
                 mpi::mpi_recv(data.u->elements(), data.u->size(), _masterid, _masterid, _comm_cart);
                 mpi::mpi_recv(data.v->elements(), data.v->size(), _masterid, _masterid, _comm_cart);
                 mpi::mpi_recv(data.b->elements(), data.b->size(), _masterid, _masterid, _comm_cart);
+                mpi::mpi_recv(data.s0->elements(), data.s0->size(), _masterid, _masterid, _comm_cart);
 
                 data.f_0 = new DenseVector<DataType_>(h_size);
                 data.f_1 = new DenseVector<DataType_>(h_size);
