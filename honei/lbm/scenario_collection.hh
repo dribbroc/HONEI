@@ -130,6 +130,7 @@ class ScenarioCollection
                         target_grid.u = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.v = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.b = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.s0 = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.obstacles = new DenseMatrix<bool>(grid_height, grid_width, false);
 
                         target_grid.d_x = 0.01;
@@ -165,6 +166,7 @@ class ScenarioCollection
                         target_grid.u = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.v = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.b = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.s0 = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.obstacles = new DenseMatrix<bool>(grid_height, grid_width, false);
                         Cuboid<bool> q2(*target_grid.obstacles, 15, 5, 1, 10, 0);
                         q2.value();
@@ -211,6 +213,7 @@ class ScenarioCollection
                         target_grid.v = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
                         target_grid.b = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
                         target_grid.obstacles = new DenseMatrix<bool>(constraint_g_h, constraint_g_w, false);
+                        target_grid.s0 = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         Cuboid<bool> q2(*target_grid.obstacles, 15, 2, 1, 30, 0);
                         q2.value();
                         Cuboid<bool> q3(*target_grid.obstacles, 40, 2, 1, 30, 20);
@@ -254,6 +257,7 @@ class ScenarioCollection
                         target_grid.u = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
                         target_grid.v = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
                         target_grid.b = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
+                        target_grid.s0 = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.obstacles = new DenseMatrix<bool>(constraint_g_h, constraint_g_w, false);
 
                         target_grid.d_x = 0.01;
@@ -316,6 +320,7 @@ class ScenarioCollection
                         target_grid.u = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
                         target_grid.v = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
                         target_grid.b = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
+                        target_grid.s0 = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.obstacles = new DenseMatrix<bool>(constraint_g_h, constraint_g_w, false);
                         Cylinder<bool> c2(*target_grid.obstacles, true, 10 ,10);
                         c2.value();
@@ -380,6 +385,7 @@ class ScenarioCollection
                         target_grid.u = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
                         target_grid.v = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
                         target_grid.b = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
+                        target_grid.s0 = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.obstacles = new DenseMatrix<bool>(constraint_g_h, constraint_g_w, false);
                         Cylinder<bool> c2(*target_grid.obstacles, true, 10 ,10);
                         c2.value();
@@ -436,6 +442,7 @@ class ScenarioCollection
                         target_grid.u = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.v = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.b = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.s0 = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.obstacles = new DenseMatrix<bool>(grid_height, grid_width, false);
 
                         target_grid.d_x = 0.1;
@@ -477,6 +484,7 @@ class ScenarioCollection
                         target_grid.u = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
                         target_grid.v = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
                         target_grid.b = new DenseMatrix<DataType_>(constraint_g_h, constraint_g_w, DataType_(0.));
+                        target_grid.s0 = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.obstacles = new DenseMatrix<bool>(constraint_g_h, constraint_g_w, false);
                         Cuboid<bool> q2(*target_grid.obstacles, 15, 2, 1, 30, 0);
                         q2.value();
@@ -513,6 +521,7 @@ class ScenarioCollection
                         target_grid.u = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.v = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.b = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.s0 = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.obstacles = new DenseMatrix<bool>(grid_height, grid_width, false);
 
                         target_grid.d_x = 0.01;
@@ -546,6 +555,7 @@ class ScenarioCollection
                         target_grid.u = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.v = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.b = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.s0 = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.obstacles = new DenseMatrix<bool>(grid_height, grid_width, false);
 
                         target_grid.d_x = 1.;
@@ -581,6 +591,7 @@ class ScenarioCollection
                         target_grid.u = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.v = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.b = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
+                        target_grid.s0 = new DenseMatrix<DataType_>(grid_height, grid_width, DataType_(0.));
                         target_grid.obstacles = new DenseMatrix<bool>(grid_height, grid_width, false);
 
                         target_grid.d_x = 0.01;
