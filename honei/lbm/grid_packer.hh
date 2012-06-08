@@ -599,7 +599,7 @@ namespace honei
                         (*data.b)[i] = (*grid.b)(index2 / grid.obstacles->columns(), index2 % grid.obstacles->columns());
                         (*data.u)[i] = (*grid.u)(index2 / grid.obstacles->columns(), index2 % grid.obstacles->columns());
                         (*data.v)[i] = (*grid.v)(index2 / grid.obstacles->columns(), index2 % grid.obstacles->columns());
-                        (*data.s0)[i] = (*grid.s0)(index2 / grid.obstacles->columns(), index2 % grid.obstacles->columns());
+                        if (grid.s0 != NULL) (*data.s0)[i] = (*grid.s0)(index2 / grid.obstacles->columns(), index2 % grid.obstacles->columns());
                         ++index2;
                     }
                 }
