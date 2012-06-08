@@ -62,8 +62,8 @@ class SolverLBMGridPollutantTest :
             unsigned long g_h(50);
             unsigned long g_w(50);
             unsigned long timesteps(100);
-            DataType_ tau_c(1);
-            DataType_ k(0.5);
+            DataType_ tau_c(1.5);
+            DataType_ k(0.0005);
             DataType_ s_0(0.);
 
             Grid<D2Q9, DataType_> grid;
@@ -81,7 +81,7 @@ class SolverLBMGridPollutantTest :
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data_flow);
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_poll, info, data_poll);
 
-            std::cout << "D = " << (grid_poll.d_t / 6.) * (2 * tau_c) * (grid_poll.d_x / grid_poll.d_t) * (grid_poll.d_x / grid_poll.d_t) << std::endl;
+            std::cout << "D = " << (grid_poll.d_t / 6.) * (2 * tau_c - 1) * (grid_poll.d_x / grid_poll.d_t) * (grid_poll.d_x / grid_poll.d_t) << std::endl;
 
             SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data_flow, grid.d_x, grid.d_y, grid.d_t, grid.tau);
 
@@ -229,51 +229,53 @@ class Showcase :
 
         virtual void run() const
         {
+            unsigned print_every(10);
             unsigned long g_h(50);
             unsigned long g_w(50);
             unsigned long timesteps(5000);
-            //DataType_ tau_c(1);
-            DataType_ tau_c(1.5);
-            DataType_ k(1.);
+            DataType_ tau_c(1.);
+            DataType_ k(1e-10);
             DataType_ s_0(0.);
 
             Grid<D2Q9, DataType_> grid;
             Grid<D2Q9, DataType_> grid_poll;
 
             ScenarioCollection::get_scenario(10, g_h, g_w, grid);
-
             //override flow parameters
-            grid.d_x = 0.01;
-            grid.d_y = 0.01;
-            grid.d_t = 0.003;
-            grid.tau = 1.5;
+            grid.d_x = 5.;
+            grid.d_y = 5.;
+            grid.d_t = 1.;
+            grid.tau = 0.9;
 
             delete grid.h;
-            grid.h = new DenseMatrix<DataType_>(g_h, g_w, DataType_(0.6));
-            for(unsigned long i(0); i < g_h ; ++i)
+            grid.h = new DenseMatrix<DataType_>(g_h, g_w, DataType_(1.));
+            /*for(unsigned long i(0); i < g_h ; ++i)
                 for(unsigned long j(0); j < g_w ; ++j)
                 {
                     (*grid.h)[i][j] += Gaussian2D<90>::value(grid.d_x * i,  //x
                                                              grid.d_y * j,  //y
-                                                             0.3f,          //amplitude
+                                                             1.f,          //amplitude
                                                              grid.d_x * 25, //center x
-                                                             grid.d_y * 10, //center y
-                                                             0.05f,         //x spread
-                                                             0.1f);         //y spread
+                                                             grid.d_y * 15, //center y
+                                                             35.f,          //x spread
+                                                             35.f);         //y spread
+                }*/
 
-                }
             ScenarioCollection::get_scenario(10, g_h, g_w, grid_poll);
+            grid_poll.d_x = grid.d_x;
+            grid_poll.d_y = grid.d_y;
+            grid_poll.d_t = grid.d_t;
             delete grid_poll.h;
             grid_poll.h = new DenseMatrix<DataType_>(g_h, g_w, DataType_(0.));
             for(unsigned long i(0); i < g_h ; ++i)
                 for(unsigned long j(0); j < g_w ; ++j)
-                   (*grid_poll.h)[i][j] = Gaussian2D<30>::value(grid_poll.d_x * i,
-                                                                grid_poll.d_y * j,
-                                                                0.01f,
-                                                                grid_poll.d_x * 25,
-                                                                grid_poll.d_y * 25,
-                                                                0.05f,
-                                                                0.1f);
+                   (*grid_poll.h)[i][j] = Gaussian2D<0>::value(grid_poll.d_x * i,
+                                                               grid_poll.d_y * j,
+                                                               0.5f,
+                                                               grid_poll.d_x * 25,
+                                                               grid_poll.d_y * 25,
+                                                               3.f,
+                                                               3.f);
 
             //LBMPostProcessing::value(*grid_poll.h, 1, g_w, g_h, grid.d_x, grid.d_y, 1, "poll_init.dat");
 
@@ -284,11 +286,17 @@ class Showcase :
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data_flow);
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_poll, info, data_poll);
 
-            std::cout << "D = " << (grid_poll.d_t / 6.) * (2 * tau_c) * (grid_poll.d_x / grid_poll.d_t) * (grid_poll.d_x / grid_poll.d_t) << std::endl;
+            std::cout << "D = " << (grid_poll.d_t / 6.) * (2 * tau_c - 1) * (grid_poll.d_x / grid_poll.d_t) * (grid_poll.d_x / grid_poll.d_t) << std::endl;
 
             SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data_flow, grid.d_x, grid.d_y, grid.d_t, grid.tau);
 
-            SolverLBMGridPollutant<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> poll_solver(&info, &data_flow, &data_poll, grid_poll.d_x, grid_poll.d_y, grid_poll.d_t, DataType_(tau_c), DataType_(k), DataType_(s_0), 0.1);
+            SolverLBMGridPollutant<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> poll_solver(&info, &data_flow, &data_poll, grid_poll.d_x, grid_poll.d_y, grid_poll.d_t, DataType_(tau_c), DataType_(k), DataType_(s_0), 0.005);
+
+            DenseVector<DataType_> const_u(data_flow.u->size(), DataType_(0.25));
+            DenseVector<DataType_> const_v(data_flow.v->size(), DataType_(0));
+
+            *data_flow.u = const_u.copy();
+            *data_flow.v = const_v.copy();
 
             solver.do_preprocessing();
             poll_solver.do_preprocessing();
@@ -299,8 +307,11 @@ class Showcase :
 #ifdef SOLVER_VERBOSE
                 std::cout<<"Timestep: " << i << "/" << timesteps << std::endl;
 #endif
+                *data_flow.u = const_u.copy();
+                *data_flow.v = const_v.copy();
                 solver.solve();
-
+                *data_flow.u = const_u.copy();
+                *data_flow.v = const_v.copy();
                 poll_solver.solve();
 #ifdef SOLVER_POSTPROCESSING
                 solver.do_postprocessing();
@@ -321,9 +332,9 @@ class Showcase :
                 i_ += stringify(i);
                 std::cout << i_ << std::endl;
 
-                LBMPostProcessing::value(*grid.h, 10, g_w, g_h, grid.d_x, grid.d_y, i, "flow" + i_ + ".dat");
+                LBMPostProcessing::value(*grid.h, print_every, g_w, g_h, grid.d_x, grid.d_y, i, "flow" + i_ + ".dat");
                 GridPacker<D2Q9, NOSLIP, DataType_>::unpack(grid_poll, info, data_poll);
-                LBMPostProcessing::value(*grid_poll.h, 10, g_w, g_h, grid.d_x, grid.d_y, i, "poll" + i_ + ".dat");
+                LBMPostProcessing::value(*grid_poll.h, print_every, g_w, g_h, grid.d_x, grid.d_y, i, "poll" + i_ + ".dat");
 
                 //if(i==0)
                 //    std::cout << *grid_poll.h;

@@ -213,7 +213,7 @@ namespace honei
 
                     ///Boundary correction:
                     //UpdateVelocityDirectionsGridPollutant<Tag_, DIRICHLET_SLIP>::
-                      //  value(*_info, *_data_flow, *_data_poll, _e_squared, _dir_value);
+                        //value(*_info, *_data_flow, *_data_poll, _e_squared, _dir_value);
                     UpdateVelocityDirectionsGrid<Tag_, NOSLIP>::
                         value(*_info, *_data_poll);
 
