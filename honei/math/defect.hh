@@ -354,7 +354,7 @@ namespace honei
                 }
 
             template<typename DT_>
-                static DenseVector<DT_> & value(DenseVector<DT_> & result, const DenseVector<DT_> & right_hand_side, const SparseMatrixELL<DT_> & system, const DenseVector<DT_> & x)
+                static DenseVector<DT_> & value(DenseVector<DT_> & result, const DenseVector<DT_> & right_hand_side, const SparseMatrixELL<DT_> & system, const DenseVector<DT_> & x, HONEI_UNUSED unsigned long blind_start = 0, HONEI_UNUSED unsigned long blind_stop = 0)
                 {
                     if (x.size() != system.columns())
                     {
@@ -1012,7 +1012,7 @@ namespace honei
                 }
 
             template <typename DT_>
-                static DenseVector<DT_> value(DenseVector<DT_> & result, const DenseVector<DT_> & rhs, const SparseMatrixELL<DT_> & a, const DenseVector<DT_> & b)
+                static DenseVector<DT_> value(DenseVector<DT_> & result, const DenseVector<DT_> & rhs, const SparseMatrixELL<DT_> & a, const DenseVector<DT_> & b, HONEI_UNUSED unsigned long blind_start = 0, HONEI_UNUSED unsigned long blind_stop = 0)
                 {
                     if (b.size() != a.columns())
                     {
@@ -1055,7 +1055,7 @@ namespace honei
                 }
 
             template <typename DT_>
-                static DenseVector<DT_> value(DenseVector<DT_> & result, const DenseVector<DT_> & rhs, const SparseMatrixCSR<DT_> & a, const DenseVector<DT_> & b)
+                static DenseVector<DT_> value(DenseVector<DT_> & result, const DenseVector<DT_> & rhs, const SparseMatrixCSR<DT_> & a, const DenseVector<DT_> & b, HONEI_UNUSED unsigned long blind_start = 0, HONEI_UNUSED unsigned long blind_stop = 0)
                 {
                     if (b.size() != a.columns())
                     {

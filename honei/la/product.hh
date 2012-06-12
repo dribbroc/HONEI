@@ -2111,7 +2111,7 @@ namespace honei
             }
 
             template <typename DT_>
-            static DenseVector<DT_> & value(DenseVector<DT_> & result, const SparseMatrixELL<DT_> & a, const DenseVector<DT_> & b)
+            static DenseVector<DT_> & value(DenseVector<DT_> & result, const SparseMatrixELL<DT_> & a, const DenseVector<DT_> & b, HONEI_UNUSED unsigned long blind_start = 0, HONEI_UNUSED unsigned long blind_end = 0)
             {
                 if (b.size() != a.columns())
                 {
@@ -2150,7 +2150,7 @@ namespace honei
             }
 
             template <typename DT_>
-            static DenseVector<DT_> & value(DenseVector<DT_> & result, const SparseMatrixCSR<DT_> & a, const DenseVector<DT_> & b)
+            static DenseVector<DT_> & value(DenseVector<DT_> & result, const SparseMatrixCSR<DT_> & a, const DenseVector<DT_> & b, HONEI_UNUSED unsigned long blind_start = 0, HONEI_UNUSED unsigned long blind_end = 0)
             {
                 CONTEXT("When multiplying SparseMatrixCSR with DenseVector (MC):");
                 if (b.size() != a.columns())

@@ -462,6 +462,16 @@ template <typename Tag_>
 template <typename MT_, typename DT_>
 void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const MT_ & a, const DenseVectorMPI<DT_> & b)
 {
+
+    // berechne innere anteile
+    TicketVector inner_ticket;
+    if (a.active())
+    {
+        OperationWrapper<honei::Product<Tag_>, DenseVector<DT_>,
+            DenseVector<DT_>, typename MT_::LocalType_, DenseVector<DT_>, unsigned long, unsigned long > wrapper(r.vector());
+        inner_ticket.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, r.vector(), a.inner_matrix(), b.vector(), 0, a.inner_matrix().rows())));
+    }
+
     const DT_ * bp = b.elements();
 
     int myrank;
@@ -500,7 +510,7 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const MT_ & a, const DenseVe
     }
 
     // berechne innere anteile
-    if (a.active()) Product<Tag_>::value(r.vector(), a.inner_matrix(), b.vector());
+    //if (a.active()) Product<Tag_>::value(r.vector(), a.inner_matrix(), b.vector());
 
     MPI_Waitall(recv_requests.size(), &recv_requests[0], MPI_STATUSES_IGNORE);
     recv_requests.clear();
@@ -508,6 +518,8 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const MT_ & a, const DenseVe
     // berechne aeussere anteile
     DenseVector<DT_> r_outer(r.local_size());
     if (a.active()) Product<Tag_>::value(r_outer, a.outer_matrix(), missing_values);
+
+    inner_ticket.wait();
     if (a.active()) Sum<Tag_>::value(r.vector(), r_outer);
 
     MPI_Waitall(send_requests.size(), &send_requests[0], MPI_STATUSES_IGNORE);
@@ -626,6 +638,15 @@ template <typename Tag_>
 template <typename MT_, typename DT_>
 void MPIOps<Tag_>::defect(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & rhs, const MT_ & a, const DenseVectorMPI<DT_> & b)
 {
+    // berechne innere anteile
+    TicketVector inner_ticket;
+    if (a.active())
+    {
+        OperationWrapper<honei::Defect<Tag_>, DenseVector<DT_>,
+            DenseVector<DT_>, DenseVector<DT_>, typename MT_::LocalType_, DenseVector<DT_>, unsigned long, unsigned long > wrapper(r.vector());
+        inner_ticket.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, r.vector(), rhs.vector(), a.inner_matrix(), b.vector(), 0, a.inner_matrix().rows())));
+    }
+
     const DT_ * bp = b.elements();
 
     int myrank;
@@ -663,7 +684,7 @@ void MPIOps<Tag_>::defect(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & r
     }
 
     // berechne innere anteile
-    if (a.active()) Defect<Tag_>::value(r.vector(), rhs.vector(), a.inner_matrix(), b.vector());
+    //if (a.active()) Defect<Tag_>::value(r.vector(), rhs.vector(), a.inner_matrix(), b.vector());
 
     MPI_Waitall(recv_requests.size(), &recv_requests[0], MPI_STATUSES_IGNORE);
     recv_requests.clear();
@@ -671,6 +692,8 @@ void MPIOps<Tag_>::defect(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & r
     // berechne aeussere anteile
     DenseVector<DT_> r_outer(r.local_size());
     if (a.active()) Product<Tag_>::value(r_outer, a.outer_matrix(), missing_values);
+
+    inner_ticket.wait();
     if (a.active()) Difference<Tag_>::value(r.vector(), r_outer);
 
     MPI_Waitall(send_requests.size(), &send_requests[0], MPI_STATUSES_IGNORE);

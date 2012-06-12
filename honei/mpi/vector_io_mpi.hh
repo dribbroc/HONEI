@@ -66,9 +66,6 @@ class VectorIOMPI<io_formats::EXP>
                     }
                     mpi::mpi_bcast(&global_size, 1, 0);
 
-                    unsigned long offset(DenseVectorMPI<DT_>::calc_offset(global_size));
-                    unsigned long size(DenseVectorMPI<DT_>::calc_size(global_size));
-
 
                     DenseVector<DT_> data(global_size);
                     unsigned long index(0);
@@ -112,8 +109,6 @@ class VectorIOMPI<io_formats::EXP>
                 {
                     unsigned long global_size;
                     mpi::mpi_bcast(&global_size, 1, 0);
-                    unsigned long offset(DenseVectorMPI<DT_>::calc_offset(global_size));
-                    unsigned long size(DenseVectorMPI<DT_>::calc_size(global_size));
 
                     DenseVector<DT_> data(global_size);
                     mpi::mpi_bcast(data.elements(), data.size(), 0);
