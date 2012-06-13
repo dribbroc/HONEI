@@ -41,6 +41,8 @@
 
 #include <honei/util/time_stamp.hh>
 
+#include <pthread.h>
+
 namespace
 {
 #ifdef HONEI_CUDA
@@ -361,6 +363,55 @@ namespace
             }
     };
 #endif
+    template <typename MT_, typename DT_>
+    struct PthreadDataProduct
+    {
+        DenseVector<DT_> & r;
+        const MT_ & a;
+        const DenseVector<DT_> & b;
+
+        PthreadDataProduct(DenseVector<DT_> & r, const MT_ & a, const DenseVector<DT_> & b) :
+            r(r),
+            a(a),
+            b(b)
+        {
+        }
+    };
+
+    template <typename Tag_, typename MT_, typename DT_>
+    void *PthreadProduct(void * arg)
+    {
+        struct PthreadDataProduct<MT_, DT_> * data;
+        data = (struct PthreadDataProduct<MT_, DT_> *) arg;
+        Product<Tag_>::value(data->r, data->a, data->b);
+        pthread_exit(NULL);
+    }
+
+    template <typename MT_, typename DT_>
+    struct PthreadDataDefect
+    {
+        DenseVector<DT_> & r;
+        const DenseVector<DT_> & rhs;
+        const MT_ & a;
+        const DenseVector<DT_> & b;
+
+        PthreadDataDefect(DenseVector<DT_> & r, const DenseVector<DT_> & rhs, const MT_ & a, const DenseVector<DT_> & b) :
+            r(r),
+            rhs(rhs),
+            a(a),
+            b(b)
+        {
+        }
+    };
+
+    template <typename Tag_, typename MT_, typename DT_>
+    void *PthreadDefect(void * arg)
+    {
+        struct PthreadDataDefect<MT_, DT_> * data;
+        data = (struct PthreadDataDefect<MT_, DT_> *) arg;
+        Defect<Tag_>::value(data->r, data->rhs, data->a, data->b);
+        pthread_exit(NULL);
+    }
 }
 
 using namespace honei;
@@ -464,13 +515,9 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const MT_ & a, const DenseVe
 {
 
     // berechne innere anteile
-    TicketVector inner_ticket;
-    if (a.active())
-    {
-        OperationWrapper<honei::Product<Tag_>, DenseVector<DT_>,
-            DenseVector<DT_>, typename MT_::LocalType_, DenseVector<DT_>, unsigned long, unsigned long > wrapper(r.vector());
-        inner_ticket.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, r.vector(), a.inner_matrix(), b.vector(), 0, a.inner_matrix().rows())));
-    }
+    pthread_t inner_thread;
+    PthreadDataProduct<typename MT_::LocalType_, DT_> inner_pthread_data(r.vector(), a.inner_matrix(), b.vector());
+    pthread_create(&inner_thread, NULL, PthreadProduct<Tag_, typename MT_::LocalType_, DT_>, (void*) &inner_pthread_data);
 
     const DT_ * bp = b.elements();
 
@@ -517,7 +564,7 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const MT_ & a, const DenseVe
 
     // berechne aeussere anteile
     DenseVector<DT_> r_outer(r.local_size());
-    inner_ticket.wait();
+    if (a.active()) pthread_join(inner_thread, NULL);
     if (a.active()) Product<Tag_>::value(r_outer, a.outer_matrix(), missing_values);
     if (a.active()) Sum<Tag_>::value(r.vector(), r_outer);
 
@@ -638,12 +685,11 @@ template <typename MT_, typename DT_>
 void MPIOps<Tag_>::defect(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & rhs, const MT_ & a, const DenseVectorMPI<DT_> & b)
 {
     // berechne innere anteile
-    TicketVector inner_ticket;
+    pthread_t inner_thread;
     if (a.active())
     {
-        OperationWrapper<honei::Defect<Tag_>, DenseVector<DT_>,
-            DenseVector<DT_>, DenseVector<DT_>, typename MT_::LocalType_, DenseVector<DT_>, unsigned long, unsigned long > wrapper(r.vector());
-        inner_ticket.push_back(mc::ThreadPool::instance()->enqueue(bind(wrapper, r.vector(), rhs.vector(), a.inner_matrix(), b.vector(), 0, a.inner_matrix().rows())));
+        PthreadDataDefect<typename MT_::LocalType_, DT_> inner_pthread_data(r.vector(), rhs.vector(), a.inner_matrix(), b.vector());
+        pthread_create(&inner_thread, NULL, PthreadDefect<Tag_, typename MT_::LocalType_, DT_>, (void*) &inner_pthread_data);
     }
 
     const DT_ * bp = b.elements();
@@ -690,7 +736,7 @@ void MPIOps<Tag_>::defect(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & r
 
     // berechne aeussere anteile
     DenseVector<DT_> r_outer(r.local_size());
-    inner_ticket.wait();
+    if (a.active()) pthread_join(inner_thread, NULL);
     if (a.active()) Product<Tag_>::value(r_outer, a.outer_matrix(), missing_values);
     if (a.active()) Difference<Tag_>::value(r.vector(), r_outer);
 
