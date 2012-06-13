@@ -102,10 +102,10 @@ namespace honei
                 do
                 {
                     Defect<Tag_>::value(r, b, A, x);
-                    defnorm_0 = Norm<vnt_l_two, false, Tag_>::value(r);
+                    defnorm_0 = Norm<vnt_l_two, true, Tag_>::value(r);
                     defnorm = defnorm_0;
                     Product<Tag_>::value(r_tilde_0, P, r);
-                    nrm_r_tilde_0 = Norm<vnt_l_two, false, Tag_>::value(r_tilde_0);
+                    nrm_r_tilde_0 = Norm<vnt_l_two, true, Tag_>::value(r_tilde_0);
 
                     if (restarted == false)
                     {
@@ -135,7 +135,7 @@ namespace honei
 
                         alpha_tilde = rho_tilde / gamma_tilde;
 
-                        if ((std::abs(alpha_tilde) * Norm<vnt_l_two, false, Tag_>::value(v_tilde)) / defnorm < 1e-5)
+                        if ((std::abs(alpha_tilde) * Norm<vnt_l_two, true, Tag_>::value(v_tilde)) / defnorm < 1e-5)
                         {
                             restarted = true;;
                             //std::cout << "Breakpoint 2" << std::endl;
@@ -146,7 +146,7 @@ namespace honei
                         DT_ malpha_tilde(-alpha_tilde);
                         ScaledSum<Tag_>::value(s, r, v, malpha_tilde);
 
-                        defnorm = Norm<vnt_l_two, false, Tag_>::value(s);
+                        defnorm = Norm<vnt_l_two, true, Tag_>::value(s);
                         if (defnorm < eps_relative * defnorm_00)
                         {
                             ScaledSum<Tag_>::value(x, p_tilde, alpha_tilde);
@@ -179,7 +179,7 @@ namespace honei
                         DT_ momega_tilde(-omega_tilde);
                         ScaledSum<Tag_>::value(r, s, t, momega_tilde);
 
-                        defnorm = Norm<vnt_l_two, false, Tag_>::value(r);
+                        defnorm = Norm<vnt_l_two, true, Tag_>::value(r);
                         if (defnorm < eps_relative * defnorm_00)
                         {
                             converged = 1;
@@ -207,6 +207,7 @@ namespace honei
                 //std::cout << "Norm: " << defnorm << std::endl;
                 LOGMESSAGE(lc_solver, "BiCgStab(VAR) finished in " + stringify(used_iters) + " iterations with defect " + stringify(defnorm));
                 PROFILER_STOP("BiCGStab VAR");
+                std::cout<<defnorm_00<<" "<<defnorm<<std::endl;
 
                 return x;
             }
