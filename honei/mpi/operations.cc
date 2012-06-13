@@ -517,9 +517,8 @@ void MPIOps<Tag_>::product(DenseVectorMPI<DT_> & r, const MT_ & a, const DenseVe
 
     // berechne aeussere anteile
     DenseVector<DT_> r_outer(r.local_size());
-    if (a.active()) Product<Tag_>::value(r_outer, a.outer_matrix(), missing_values);
-
     inner_ticket.wait();
+    if (a.active()) Product<Tag_>::value(r_outer, a.outer_matrix(), missing_values);
     if (a.active()) Sum<Tag_>::value(r.vector(), r_outer);
 
     MPI_Waitall(send_requests.size(), &send_requests[0], MPI_STATUSES_IGNORE);
@@ -691,9 +690,8 @@ void MPIOps<Tag_>::defect(DenseVectorMPI<DT_> & r, const DenseVectorMPI<DT_> & r
 
     // berechne aeussere anteile
     DenseVector<DT_> r_outer(r.local_size());
-    if (a.active()) Product<Tag_>::value(r_outer, a.outer_matrix(), missing_values);
-
     inner_ticket.wait();
+    if (a.active()) Product<Tag_>::value(r_outer, a.outer_matrix(), missing_values);
     if (a.active()) Difference<Tag_>::value(r.vector(), r_outer);
 
     MPI_Waitall(send_requests.size(), &send_requests[0], MPI_STATUSES_IGNORE);
