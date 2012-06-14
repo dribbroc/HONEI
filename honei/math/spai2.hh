@@ -103,6 +103,16 @@ namespace honei
                             At(i, j) = elements[it];
                     }
                 }
+                // GPU ONLY - without row vectors
+                /*DenseMatrix<DT_> At(n1, n2, DT_(0));
+                for (unsigned long j(0) ; j < n2 ; ++j)
+                {
+                    const SparseVector<DT_> column = A.column(J[j]);
+                    for (unsigned long i(0) ; i < n1 ; ++i)
+                    {
+                        At(i, j) = column[I[i]];
+                    }
+                }*/
 
                 /*LAPACKE_dgels(LAPACK_ROW_MAJOR, 'N', At.rows(), At.columns(), 1, At.elements(), At.columns(), et.elements(), 1);
                 for (unsigned long i(0) ; i < n2 ; ++i)
