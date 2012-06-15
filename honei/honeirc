@@ -77,6 +77,8 @@ cuda::extraction_grid = 128
 
 cuda::SolverLabsweGrid::patch_count = 2
 
+cuda::spai2_double = 128
+
 # Cell
 ######
 

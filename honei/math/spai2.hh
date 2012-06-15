@@ -136,6 +136,8 @@ namespace honei
                 for (unsigned long i(0) ; i < n2 ; ++i)
                 {
                     M(A.column(idx).indices()[i], idx, res[i]);
+                    //M.column(idx).elements()[i] = res[i];
+                    //M._synch_row_vectors();
                 }
             }
 
@@ -252,6 +254,12 @@ namespace honei
     template <> struct SPAI2<tags::CPU::MultiCore> :
         public mc::SPAI2<tags::CPU::MultiCore>
     {
+    };
+
+    template <>
+    struct SPAI2<tags::GPU::CUDA>
+    {
+        static SparseMatrix<double> & value(SparseMatrix<double> & M, const SparseMatrix<double> & A);
     };
 }
 #endif

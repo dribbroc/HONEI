@@ -524,10 +524,13 @@ namespace honei
     {
         for (unsigned long col(0) ; col < this->columns() ; ++col)
         {
-            for (typename SparseVector<DataType_>::NonZeroConstElementIterator i(this->column(col).begin_non_zero_elements()) ;
-                    i != this->column(col).end_non_zero_elements() ; ++i)
+            if (_column_vectors[col])
             {
-                (*this)(i.index(), col) = *i;
+                for (typename SparseVector<DataType_>::NonZeroConstElementIterator i(this->column(col).begin_non_zero_elements()) ;
+                        i != this->column(col).end_non_zero_elements() ; ++i)
+                {
+                    (*this)(i.index(), col) = *i;
+                }
             }
         }
     }
