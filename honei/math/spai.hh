@@ -63,7 +63,7 @@ namespace honei
             matrix *M = NULL;
 
             SparseMatrix<DT_> sm(src.rows(), src.columns());
-            //unsigned long root(sqrt(src.rows()));
+            unsigned long root(sqrt(src.rows()));
 
             // 0
             for (unsigned long i(0) ; i < sm.rows() ; ++i)
@@ -95,14 +95,14 @@ namespace honei
                 sm(i, i-2, src(i, i-2));
                 sm(i,i-2) += std::numeric_limits<double>::epsilon();
             }
-
+*/
             // root
             for (unsigned long i(0) ; i < sm.rows() - root ; ++i)
             {
                 sm(i, i+root, src(i, i+root));
                 sm(i,i+root) += std::numeric_limits<double>::epsilon();
             }
-
+/*
             for (unsigned long i(0) ; i < sm.rows() - root -1; ++i)
             {
                 sm(i, i+(root-1), src(i, i+(root-1)));
@@ -126,14 +126,14 @@ namespace honei
                 sm(i, i+root+2, src(i, i+root+2));
                 sm(i,i+root+2) += std::numeric_limits<double>::epsilon();
             }
-
+*/
             // -root
             for (unsigned long i(root) ; i < sm.rows() ; ++i)
             {
                 sm(i, i-root, src(i, i-root));
                 sm(i,i-root) += std::numeric_limits<double>::epsilon();
             }
-
+/*
             for (unsigned long i(root-1) ; i < sm.rows() ; ++i)
             {
                 sm(i, i-(root-1), src(i, i-(root-1)));
