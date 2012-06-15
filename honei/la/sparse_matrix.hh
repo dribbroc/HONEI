@@ -92,6 +92,8 @@ namespace honei
 
             void _synch_column_vectors();
 
+            void _synch_row_vectors();
+
 
             /// \name Constructors
             /// \{
@@ -514,6 +516,19 @@ namespace honei
                 i != this->end_non_zero_elements() ; ++i)
         {
             this->column(i.column())[i.row()] = *i;
+        }
+    }
+
+    template <typename DataType_>
+    void SparseMatrix<DataType_>::_synch_row_vectors()
+    {
+        for (unsigned long col(0) ; col < this->columns() ; ++col)
+        {
+            for (typename SparseVector<DataType_>::NonZeroConstElementIterator i(this->column(col).begin_non_zero_elements()) ;
+                    i != this->column(col).end_non_zero_elements() ; ++i)
+            {
+                (*this)(i.index(), col) = *i;
+            }
         }
     }
 
