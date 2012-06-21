@@ -97,9 +97,14 @@ namespace honei
             if (n1 == 0)
                 return;
 
+            DT_ * pro_v(get_next_heap<DT_>(local_heap, heap_offset, n2));
+            Matrix<DT_> product(get_next_heap<DT_>(local_heap, heap_offset, n2 * n2), n2, n2);
+            unsigned long offset_behind_product(heap_offset);
             unsigned long * I(get_next_heap<unsigned long>(local_heap, heap_offset, n1));
-
             DT_ * et(get_next_heap<DT_>(local_heap, heap_offset, n1));
+            Matrix<DT_> At(get_next_heap<DT_>(local_heap, heap_offset, n1 * n2), n1, n2);
+            Matrix<DT_> Atrans(get_next_heap<DT_>(local_heap, heap_offset, n2 * n1), n2, n1);
+
             for (unsigned long i(0) ; i < n1 ; ++i)
             {
                 et[i] = DT_(0);
@@ -118,7 +123,6 @@ namespace honei
                 }
             }
 
-            Matrix<DT_> At(get_next_heap<DT_>(local_heap, heap_offset, n1 * n2), n1, n2);
             for (unsigned long j(0) ; j < n2 ; ++j)
             {
                 unsigned long * indices(a_indices + column_ptr[J[j]]);
@@ -135,7 +139,6 @@ namespace honei
             }
             // ASSEMBLY END
 
-            Matrix<DT_> Atrans(get_next_heap<DT_>(local_heap, heap_offset, n2 * n1), n2, n1);
             for (unsigned long i(0) ; i < At.rows ; ++i)
             {
                 for (unsigned long j(0) ; j < At.columns ; ++j)
@@ -145,7 +148,6 @@ namespace honei
             }
 
             // TODO matrix produkt cache blocken?
-            Matrix<DT_> product(get_next_heap<DT_>(local_heap, heap_offset, n2 * n2), n2, n2);
             for (unsigned long i(0) ; i < product.rows ; ++i)
             {
                 for (unsigned long j(0) ; j < product.columns ; ++j)
@@ -159,7 +161,6 @@ namespace honei
                 }
             }
 
-            DT_ * pro_v(get_next_heap<DT_>(local_heap, heap_offset, Atrans.rows));
             for (unsigned long i(0) ; i < Atrans.rows ; ++i)
             {
                 DT_ temp(0);
@@ -170,9 +171,12 @@ namespace honei
                 pro_v[i] = temp;
             }
 
+            heap_offset = offset_behind_product;
+
             // LU DECOMPOSITION START
             DT_ * res(get_next_heap<DT_>(local_heap, heap_offset, product.columns));
-            Matrix<DT_> u(get_next_heap<DT_>(local_heap, heap_offset, product.rows * product.columns), product.rows, product.columns);
+            //Matrix<DT_> u(get_next_heap<DT_>(local_heap, heap_offset, product.rows * product.columns), product.rows, product.columns);
+            Matrix<DT_> u(product);
             for (unsigned long i(0) ; i < product.rows * product.columns ; ++i)
             {
                 u.data[i] = product.data[i];
@@ -225,6 +229,12 @@ namespace honei
                 m_elements[column_ptr[idx] + i] = res[i];
             }
 
+            /*if (get_local_heap(idx + 1, heap_gpu, heap_size) < local_heap + heap_offset)
+                m_elements[0] = DT_(4711);
+            else
+                m_elements[0] = DT_(23);*/
+
+
         }
     }
 
@@ -232,7 +242,7 @@ namespace honei
         void cuda_spai2(void * column_ptr, void * m_elements,
                 void * a_elements, void * a_indices, unsigned long columns, unsigned long blocksize)
     {
-        unsigned long heap_size(600000000ul);
+        unsigned long heap_size(1800000000ul);
 
         dim3 grid;
         dim3 block;
