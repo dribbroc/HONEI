@@ -36,6 +36,8 @@
 //#include <mkl_lapacke.h>
 //#include <omp.h>
 
+#include <honei/util/time_stamp.hh>
+
 //based on "Parallel Preconditioning with Sparse Approximate Inverses" by Grote et al.
 namespace honei
 {
@@ -223,9 +225,12 @@ namespace honei
             template <typename DT_>
             static SparseMatrix<DT_> & value(SparseMatrix<DT_> & M, const SparseMatrix<DT_> & A)
             {
+                TimeStamp at, bt;
+                at.take();
                 //omp_set_num_threads(1);
                 unsigned long max_count(Configuration::instance()->get_value("mc::Product(DV,SMELL,DV)::max_count",
                             mc::ThreadPool::instance()->num_threads()));
+                //max_count = 40;
 
                 TicketVector tickets;
 
@@ -245,6 +250,8 @@ namespace honei
                 }
 
                 tickets.wait();
+                bt.take();
+                std::cout<<"TOE MC CPU: "<<bt.total()-at.total()<<std::endl;
 
                 return M;
             }

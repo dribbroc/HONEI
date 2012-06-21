@@ -220,6 +220,8 @@ class RichardsonSPAI2TEST :
             std::string sol_file(dir + "/honei/math/testdata/poisson_advanced/q2_sort_0/");
             sol_file += "sol_4";
             DenseVector<DT1_> sol(VectorIO<io_formats::EXP>::read_vector(sol_file, DT1_(0)));
+            data.result->lock(lm_read_only);
+            data.result->unlock(lm_read_only);
 
             std::cout << "#Iterations: " << info.iters << std::endl;
             for(unsigned long i(0) ; i < sol.size() ; ++i)
@@ -227,6 +229,8 @@ class RichardsonSPAI2TEST :
         }
 };
 RichardsonSPAI2TEST<tags::CPU, double> rt_spai2_cpu("double");
+RichardsonSPAI2TEST<tags::CPU::MultiCore, double> rt_spai2_mc("double");
+RichardsonSPAI2TEST<tags::GPU::CUDA, double> rt_spai2_gpu("double");
 
 template <typename Tag_, typename DT1_>
 class RichardsonSPAI2_0TEST :

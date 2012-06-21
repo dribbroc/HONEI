@@ -27,6 +27,7 @@
 #include <honei/util/profiler.hh>
 
 #include <iostream>
+#include <honei/util/time_stamp.hh>
 
 using namespace honei;
 
@@ -48,11 +49,16 @@ namespace
 
             void operator() ()
             {
+                TimeStamp at, bt;
+                at.take();
                 M._synch_column_vectors();
 
                 DenseVector<double> a_elements(A.used_elements());
+                double * a_elements_e(a_elements.elements());
                 DenseVector<unsigned long> a_indices(A.used_elements());
+                unsigned long * a_indices_e(a_indices.elements());
                 DenseVector<double> m_elements(M.used_elements());
+                double * m_elements_e(m_elements.elements());
                 DenseVector<unsigned long> columns(A.columns() + 1);
                 unsigned long offset(0);
 
@@ -66,8 +72,8 @@ namespace
                     const unsigned long size(A.column(column).used_elements());
                     for (unsigned long i(0) ; i < size ; ++i)
                     {
-                        a_elements[i + offset] = elements[i];
-                        a_indices[i + offset] = indices[i];
+                        a_elements_e[i + offset] = elements[i];
+                        a_indices_e[i + offset] = indices[i];
                     }
                     offset += size;
                     columns[column + 1] = offset;
@@ -94,13 +100,16 @@ namespace
                     const unsigned long size(M.column(column).used_elements());
                     for (unsigned long i(0) ; i < size ; ++i)
                     {
-                        elements[i] = m_elements[i + offset];
+                        elements[i] = m_elements_e[i + offset];
                     }
                     offset += size;
                 }
 
                 M._synch_row_vectors();
                 m_elements.unlock(lm_read_only);
+                bt.take();
+                std::cout<<"TOE GPU: "<<bt.total()-at.total()<<std::endl;
+                std::cout<<"error code: "<<m_elements_e[0]<<std::endl;
             }
     };
 }
