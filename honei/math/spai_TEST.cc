@@ -27,6 +27,7 @@
 #include <honei/la/difference.hh>
 #include <honei/math/matrix_io.hh>
 
+#include <honei/util/time_stamp.hh>
 
 using namespace honei;
 using namespace tests;
@@ -46,14 +47,18 @@ class SpaiTestSparse:
         virtual void run() const
         {
             std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/math/testdata/poisson_advanced/sort_0/A_7.ell";
+            filename += "/honei/math/testdata/poisson_advanced/q2_sort_0/A_5.ell";
             SparseMatrixELL<DT_> smell = MatrixIO<io_formats::ELL>::read_matrix(filename, DT_(1));
             SparseMatrix<DT_> sm(smell);
             unsigned long used_elements(0);
             for (unsigned i(0) ; i < sm.rows() ; ++i)
                 used_elements+= sm[i].used_elements();
             std::cout<<"Non Zero Elements of A: "<<used_elements<<std::endl;
+            TimeStamp at, bt;
+            at.take();
             SparseMatrix<DT_> m(SPAI::value(sm));
+            bt.take();
+            std::cout<<"TOE: "<<bt.total()-at.total()<<std::endl;
             used_elements = 0;
             for (unsigned i(0) ; i < m.rows() ; ++i)
                 used_elements+= m[i].used_elements();

@@ -6,6 +6,7 @@ MAINTAINERCLEANFILES = Makefile.in
 DEFS = \
 	$(DEBUGDEF) \
 	$(GMPDEF) \
+	$(SSEDEF) \
 	$(BOOSTDEF)
 
 BACKEND_LIBS = \

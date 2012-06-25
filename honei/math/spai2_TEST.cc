@@ -78,7 +78,7 @@ class Spai2TestSparse:
         }
 };
 
-Spai2TestSparse<tags::CPU, float> spai2_test_sparse_ell_float("float");
-Spai2TestSparse<tags::CPU, double> spai2_test_sparse_ell_double("double");
-Spai2TestSparse<tags::CPU::MultiCore, double> mc_spai2_test_sparse_ell_double("double");
+Spai2TestSparse<tags::CPU::SSE, float> spai2_test_sparse_ell_float("float");
+Spai2TestSparse<tags::CPU::SSE, double> spai2_test_sparse_ell_double("double");
+Spai2TestSparse<tags::CPU::MultiCore::SSE, double> mc_spai2_test_sparse_ell_double("double");
 Spai2TestSparse<tags::GPU::CUDA, double> cuda_spai2_test_sparse_ell_double("double");

@@ -228,8 +228,8 @@ class RichardsonSPAI2TEST :
                 TEST_CHECK_EQUAL_WITHIN_EPS((*data.result)[i], sol[i], std::numeric_limits<DT1_>::epsilon() * 1e12);
         }
 };
-RichardsonSPAI2TEST<tags::CPU, double> rt_spai2_cpu("double");
-RichardsonSPAI2TEST<tags::CPU::MultiCore, double> rt_spai2_mc("double");
+RichardsonSPAI2TEST<tags::CPU::SSE, double> rt_spai2_cpu("double");
+RichardsonSPAI2TEST<tags::CPU::MultiCore::SSE, double> rt_spai2_mc("double");
 RichardsonSPAI2TEST<tags::GPU::CUDA, double> rt_spai2_gpu("double");
 
 template <typename Tag_, typename DT1_>

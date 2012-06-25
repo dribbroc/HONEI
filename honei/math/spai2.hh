@@ -50,6 +50,81 @@ namespace honei
     struct SPAI2<tags::CPU>
     {
         template <typename DT_>
+        static DenseVector<DT_> & value_0(DenseVector<DT_> & result, const SparseMatrix<DT_> & A, unsigned long col_start = 0, unsigned long col_end = 0)
+        {
+            if (col_end == 0)
+                col_end = A.columns();
+            for (unsigned long idx(col_start) ; idx < col_end ; ++idx)
+            {
+                unsigned long n2(1);
+                unsigned long J[n2];
+                J[0] = idx;
+
+                unsigned long n1(0);
+                for (unsigned long i(0) ; i < n2 ; ++i)
+                {
+                    n1 += A.column(J[i]).used_elements();
+                }
+                if (n1 == 0)
+                    continue;
+                unsigned long I[n1];
+                DenseVector<DT_> et(n1, DT_(0));
+                unsigned long tmp(0);
+                for (unsigned long i(0) ; i < n2 ; ++i)
+                {
+                    for (unsigned long j(0) ; j < A.column(J[i]).used_elements() ; ++j)
+                    {
+                        I[tmp] = A.column(J[i]).indices()[j];
+                        et[tmp] = (I[tmp] == idx);
+                        ++tmp;
+                    }
+                }
+
+                DenseMatrix<DT_> At(n1, n2, DT_(0));
+                for (unsigned long i(0) ; i < n1 ; ++i)
+                {
+                    SparseVector<DT_> row = A[I[i]];
+                    unsigned long it(0);
+                    const unsigned long * indices(row.indices());
+                    const DT_ * elements(row.elements());
+                    const unsigned long used_elements(row.used_elements());
+                    for (unsigned long j(0) ; j < n2 ; ++j)
+                    {
+                        const unsigned long index(J[j]);
+                        for ( ; (indices[it] < index) && (it < used_elements) ; ++it)
+                            ;
+                        if (indices[it] == index)
+                            At(i, j) = elements[it];
+                    }
+                }
+
+                //LAPACKE_dgels(LAPACK_ROW_MAJOR, 'N', At.rows(), At.columns(), 1, At.elements(), At.columns(), et.elements(), 1);
+                //result[idx] = et[0];
+
+                DenseMatrix<DT_> Atrans(n2, n1);
+                for (unsigned long i(0) ; i < At.rows() ; ++i)
+                {
+                    for (unsigned long j(0) ; j < At.columns() ; ++j)
+                    {
+                        Atrans(j, i) = At(i, j);
+                    }
+                }
+                DenseMatrix<DT_> product = Product<tags::CPU::SSE>::value(Atrans, At);
+                DenseVector<DT_> pro_v = Product<tags::CPU::SSE>::value(Atrans, et);
+                DenseVector<DT_> res(product.columns());
+                LUDecomposition<tags::CPU::SSE>::value(product, pro_v, res);
+                result[idx] = res[0];
+
+            }
+
+            return result;
+        }
+    };
+
+    template <>
+    struct SPAI2<tags::CPU::SSE>
+    {
+        template <typename DT_>
         static SparseMatrix<DT_> & value(SparseMatrix<DT_> & M, const SparseMatrix<DT_> & A, unsigned long col_start = 0, unsigned long col_end = 0)
         {
             if (col_end == 0)
@@ -131,10 +206,10 @@ namespace honei
                         Atrans(j, i) = At(i, j);
                     }
                 }
-                DenseMatrix<DT_> product = Product<tags::CPU>::value(Atrans, At);
-                DenseVector<DT_> pro_v = Product<tags::CPU>::value(Atrans, et);
+                DenseMatrix<DT_> product = Product<tags::CPU::SSE>::value(Atrans, At);
+                DenseVector<DT_> pro_v = Product<tags::CPU::SSE>::value(Atrans, et);
                 DenseVector<DT_> res(product.columns());
-                LUDecomposition<tags::CPU>::value(product, pro_v, res);
+                LUDecomposition<tags::CPU::SSE>::value(product, pro_v, res);
                 for (unsigned long i(0) ; i < n2 ; ++i)
                 {
                     M(A.column(idx).indices()[i], idx, res[i]);
@@ -146,76 +221,6 @@ namespace honei
             return M;
         }
 
-        template <typename DT_>
-        static DenseVector<DT_> & value_0(DenseVector<DT_> & result, const SparseMatrix<DT_> & A, unsigned long col_start = 0, unsigned long col_end = 0)
-        {
-            if (col_end == 0)
-                col_end = A.columns();
-            for (unsigned long idx(col_start) ; idx < col_end ; ++idx)
-            {
-                unsigned long n2(1);
-                unsigned long J[n2];
-                J[0] = idx;
-
-                unsigned long n1(0);
-                for (unsigned long i(0) ; i < n2 ; ++i)
-                {
-                    n1 += A.column(J[i]).used_elements();
-                }
-                if (n1 == 0)
-                    continue;
-                unsigned long I[n1];
-                DenseVector<DT_> et(n1, DT_(0));
-                unsigned long tmp(0);
-                for (unsigned long i(0) ; i < n2 ; ++i)
-                {
-                    for (unsigned long j(0) ; j < A.column(J[i]).used_elements() ; ++j)
-                    {
-                        I[tmp] = A.column(J[i]).indices()[j];
-                        et[tmp] = (I[tmp] == idx);
-                        ++tmp;
-                    }
-                }
-
-                DenseMatrix<DT_> At(n1, n2, DT_(0));
-                for (unsigned long i(0) ; i < n1 ; ++i)
-                {
-                    SparseVector<DT_> row = A[I[i]];
-                    unsigned long it(0);
-                    const unsigned long * indices(row.indices());
-                    const DT_ * elements(row.elements());
-                    const unsigned long used_elements(row.used_elements());
-                    for (unsigned long j(0) ; j < n2 ; ++j)
-                    {
-                        const unsigned long index(J[j]);
-                        for ( ; (indices[it] < index) && (it < used_elements) ; ++it)
-                            ;
-                        if (indices[it] == index)
-                            At(i, j) = elements[it];
-                    }
-                }
-
-                //LAPACKE_dgels(LAPACK_ROW_MAJOR, 'N', At.rows(), At.columns(), 1, At.elements(), At.columns(), et.elements(), 1);
-                //result[idx] = et[0];
-
-                DenseMatrix<DT_> Atrans(n2, n1);
-                for (unsigned long i(0) ; i < At.rows() ; ++i)
-                {
-                    for (unsigned long j(0) ; j < At.columns() ; ++j)
-                    {
-                        Atrans(j, i) = At(i, j);
-                    }
-                }
-                DenseMatrix<DT_> product = Product<tags::CPU>::value(Atrans, At);
-                DenseVector<DT_> pro_v = Product<tags::CPU>::value(Atrans, et);
-                DenseVector<DT_> res(product.columns());
-                LUDecomposition<tags::CPU>::value(product, pro_v, res);
-                result[idx] = res[0];
-
-            }
-
-            return result;
-        }
     };
 
     namespace mc
@@ -258,8 +263,8 @@ namespace honei
         };
     }
 
-    template <> struct SPAI2<tags::CPU::MultiCore> :
-        public mc::SPAI2<tags::CPU::MultiCore>
+    template <> struct SPAI2<tags::CPU::MultiCore::SSE> :
+        public mc::SPAI2<tags::CPU::MultiCore::SSE>
     {
     };
 

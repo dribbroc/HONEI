@@ -28,6 +28,7 @@ using namespace honei;
 
 int main(int argc, char ** argv)
 {
+#ifdef HONEI_SSE
     if (argc != 3)
     {
         std::cout<<"Usage 'ell2spai ell-file spai-ell-file'"<<std::endl;
@@ -46,11 +47,17 @@ int main(int argc, char ** argv)
     SparseMatrixELL<double> smatrix(MatrixIO<io_formats::ELL>::read_matrix(input, double(0)));
     SparseMatrix<double> ssmatrix(smatrix);
     SparseMatrix<double> sspai(ssmatrix.copy());
-    SPAI2<tags::CPU::MultiCore>::value(sspai, ssmatrix);
+    SPAI2<tags::CPU::MultiCore::SSE>::value(sspai, ssmatrix);
     SparseMatrixELL<double> spai(sspai);
 
     // Write out spai matrix
     MatrixIO<io_formats::ELL>::write_matrix(output, spai);
 
     return EXIT_SUCCESS;
+#else
+    (void) argc;
+    (void) argv;
+    std::cout<<"Cannot be compiled without SSE enabled"<<std::endl;
+    return EXIT_FAILURE;
+#endif
 }
