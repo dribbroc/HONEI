@@ -230,7 +230,7 @@ namespace honei
                 //omp_set_num_threads(1);
                 unsigned long max_count(Configuration::instance()->get_value("mc::Product(DV,SMELL,DV)::max_count",
                             mc::ThreadPool::instance()->num_threads()));
-                //max_count = 40;
+                max_count = 10;
 
                 TicketVector tickets;
 

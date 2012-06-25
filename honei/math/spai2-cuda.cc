@@ -109,7 +109,6 @@ namespace
                 m_elements.unlock(lm_read_only);
                 bt.take();
                 std::cout<<"TOE GPU: "<<bt.total()-at.total()<<std::endl;
-                std::cout<<"error code: "<<m_elements_e[0]<<std::endl;
             }
     };
 }

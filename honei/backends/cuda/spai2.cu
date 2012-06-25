@@ -66,14 +66,16 @@ namespace honei
         template <typename DT_>
         __global__ void spai2_gpu(unsigned long * column_ptr, DT_ * m_elements,
                 DT_ * a_elements, unsigned long * a_indices,
-                unsigned long columns, char * heap_gpu, unsigned long heap_size)
+                unsigned long columns, char * heap_gpu, unsigned long heap_size, unsigned long idx_offset)
         {
             unsigned long idx = blockDim.x*blockIdx.x+threadIdx.x;
+            idx += idx_offset;
+
             if (idx >= columns)
                 return;
 
             unsigned long heap_offset(0);
-            char * local_heap(get_local_heap(idx, heap_gpu, heap_size));
+            char * local_heap(get_local_heap(idx-idx_offset, heap_gpu, heap_size));
 
             // ASSEMBLY START
             const unsigned long n2(column_ptr[idx + 1] - column_ptr[idx]);
@@ -228,13 +230,6 @@ namespace honei
             {
                 m_elements[column_ptr[idx] + i] = res[i];
             }
-
-            /*if (get_local_heap(idx + 1, heap_gpu, heap_size) < local_heap + heap_offset)
-                m_elements[0] = DT_(4711);
-            else
-                m_elements[0] = DT_(23);*/
-
-
         }
     }
 
@@ -243,23 +238,32 @@ namespace honei
                 void * a_elements, void * a_indices, unsigned long columns, unsigned long blocksize)
     {
         unsigned long heap_size(1800000000ul);
-
-        dim3 grid;
-        dim3 block;
-        block.x = blocksize;
-        grid.x = (unsigned)ceil(columns/(double)(block.x));
+        char * heap_gpu(NULL);
+        cudaMalloc((void**)&heap_gpu, heap_size);
 
         unsigned long * column_ptr_gpu((unsigned long *)column_ptr);
         DT_ * m_elements_gpu((DT_ *)m_elements);
         DT_ * a_elements_gpu((DT_ *)a_elements);
         unsigned long * a_indices_gpu((unsigned long *)a_indices);
 
-        char * heap_gpu(NULL);
-        cudaMalloc((void**)&heap_gpu, heap_size);
+        unsigned long parts(1);
+        unsigned long column_offset(0);
+        for (unsigned long i(0) ; i < parts ; ++i)
+        {
+            unsigned long part_size(columns / parts);
+            if (i == 0)
+                part_size = part_size + columns % parts;
 
+            dim3 grid;
+            dim3 block;
+            block.x = blocksize;
+            grid.x = (unsigned)ceil(part_size/(double)(block.x));
 
-        honei::cuda::spai2_gpu<<<grid, block>>>(column_ptr_gpu, m_elements_gpu, a_elements_gpu, a_indices_gpu,
-                columns, heap_gpu, heap_size);
+            honei::cuda::spai2_gpu<<<grid, block>>>(column_ptr_gpu, m_elements_gpu, a_elements_gpu, a_indices_gpu,
+                part_size + column_offset, heap_gpu, heap_size, column_offset);
+
+            column_offset += part_size;
+        }
 
         cudaFree(heap_gpu);
 
