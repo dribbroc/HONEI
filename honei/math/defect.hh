@@ -439,7 +439,7 @@ namespace honei
         {
             BenchmarkInfo result;
             result.flops = a.used_elements() * 2 + rhs.size();
-            result.load = (a.used_elements() + b.size() + rhs.size())* sizeof(DT_);
+            result.load = ((a.used_elements() * 2) + rhs.size())* sizeof(DT_);
             result.store = r.size() * sizeof(DT_);
             return result;
         }
