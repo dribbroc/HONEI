@@ -44,7 +44,7 @@ namespace honei
                     template <typename DataType_>
                         static DataType_ value(const DataType_ & scal)
                         {
-                            return std::max(DataType_(0), std::min(DataType_(2), scal));
+                            return std::max(DataType_(0), std::min(DataType_(5), scal));
                         }
 
                     /// \}
