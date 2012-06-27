@@ -52,7 +52,7 @@ BACKEND_LIBS += \
 
 endif
 
-bin_PROGRAMS = m2ell mtx2ell exp2dv m2dv ell2mtx mtxinfo minfo ellinfo ell2spai ell2grote ell2sainv feast2ell feast2dv match_sainv
+bin_PROGRAMS = m2ell mtx2ell exp2dv m2dv ell2mtx mtxinfo minfo ellinfo ellexpand ell2spai ell2grote ell2sainv feast2ell feast2dv match_sainv
 
 m2ell_SOURCES = mtoell.cc
 m2ell_LDADD = \
@@ -98,6 +98,13 @@ mtxinfo_LDADD = \
 
 ellinfo_SOURCES = ellinfo.cc
 ellinfo_LDADD = \
+	$(top_builddir)/honei/util/libhoneiutil.la \
+	$(top_builddir)/honei/la/libhoneila.la \
+	$(top_builddir)/honei/math/libhoneimath.la \
+	$(BACKEND_LIBS)
+
+ellexpand_SOURCES = ellexpand.cc
+ellexpand_LDADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/la/libhoneila.la \
 	$(top_builddir)/honei/math/libhoneimath.la \
