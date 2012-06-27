@@ -312,16 +312,16 @@ namespace honei
                 }
         };
 
-    template<typename DataType_>
-        struct PreconFill<SparseMatrixELL<DataType_>, SparseMatrixELL<DataType_>, DataType_>
+    template<typename MatrixType_, typename DataType_>
+        struct PreconFill<MatrixType_, MatrixType_, DataType_>
         {
             public:
 
                 static void value(unsigned long i,
-                        std::vector<SparseMatrixELL<DataType_> > & target,
+                        std::vector<MatrixType_ > & target,
                         std::string filename,
                         std::string precon_suffix,
-                        SparseMatrixELL<DataType_> & /*A*/,
+                        MatrixType_ & /*A*/,
                         DataType_ damping_factor)
                 {
                     std::string local_P_name(filename);
@@ -329,12 +329,13 @@ namespace honei
                     local_P_name += "_";
                     local_P_name += precon_suffix;
                     local_P_name += ".ell";
-                    SparseMatrixELL<DataType_> current_P(MatrixIO<io_formats::ELL>::read_matrix(local_P_name, DataType_(0)));
+                    SparseMatrixELL<DataType_> tcurrent_P(MatrixIO<io_formats::ELL>::read_matrix(local_P_name, DataType_(0)));
+                    MatrixType_ current_P(tcurrent_P);
                     if (damping_factor != DataType_(1))
                     {
                         SparseMatrix<DataType_> sm_P(current_P);
                         Scale<tags::CPU>::value(sm_P, damping_factor);
-                        SparseMatrixELL<DataType_> new_P(sm_P);
+                        MatrixType_ new_P(sm_P);
                         target.push_back(new_P);
                     }
                     else
