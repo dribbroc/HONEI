@@ -435,7 +435,7 @@ namespace honei
                 }
 
         template <typename DT_>
-        static inline BenchmarkInfo get_benchmark_info(const DenseVectorContinuousBase<DT_> & r, const DenseVectorContinuousBase<DT_> & rhs, const SparseMatrixELL<DT_> & a, const DenseVectorContinuousBase<DT_> & b)
+        static inline BenchmarkInfo get_benchmark_info(const DenseVectorContinuousBase<DT_> & r, const DenseVectorContinuousBase<DT_> & rhs, const SparseMatrixELL<DT_> & a, const DenseVectorContinuousBase<DT_> & /*b*/)
         {
             BenchmarkInfo result;
             result.flops = a.used_elements() * 2 + rhs.size();
@@ -523,7 +523,7 @@ namespace honei
                     if (row_end == 0)
                         row_end = a.rows();
 
-                    BENCHADD(Defect<tags::CPU>::get_benchmark_info(rv, rhs, a, bv));
+                    BENCHADD(Defect<tags::CPU>::get_benchmark_info(rv, rhsv, a, bv));
 
                     const unsigned long * const Ar(a.Ar().elements());
                     const unsigned long * const Aj(a.Aj().elements());

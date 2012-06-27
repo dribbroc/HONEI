@@ -1386,7 +1386,7 @@ namespace honei
         }
 
         template <typename DT_>
-        static inline BenchmarkInfo get_benchmark_info(const DenseVectorContinuousBase<DT_> & r, const SparseMatrixELL<DT_> & a, const DenseVectorContinuousBase<DT_> & b)
+        static inline BenchmarkInfo get_benchmark_info(const DenseVectorContinuousBase<DT_> & r, const SparseMatrixELL<DT_> & a, const DenseVectorContinuousBase<DT_> & /*b*/)
         {
             BenchmarkInfo result;
             result.flops = a.used_elements() * 2;
