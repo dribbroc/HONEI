@@ -66,6 +66,8 @@ class MatrixIO<io_formats::M>
                 std::vector<unsigned long> row_indices;
                 std::vector<unsigned long> column_indices;
                 std::vector<DT_> data;
+                unsigned long rows(0);
+                unsigned long columns(0);
 
                 ///Attention: MatrixMarket indices are 1-based!!!
                 while(!file.eof())
@@ -74,7 +76,36 @@ class MatrixIO<io_formats::M>
                     std::getline(file, line);
 
                     if(line.find("]", 0) < line.npos)
+                    {
+                        std::getline(file, line);
+                        char occu_array[line.size()+1];
+                        char * occu = occu_array;
+                        std::string datas("data");
+                        const char * datas_c(datas.c_str());
+                        strcpy(occu, line.c_str());
+                        occu = strstr(occu, datas_c);
+                        occu++;
+                        occu = strstr(occu, datas_c);
+                        occu++;
+                        occu = strstr(occu, datas_c);
+                        if (occu == NULL)
+                            throw InternalError("File is not in MATLAB format!");
+
+                        std::string klammer(")");
+                        occu = strstr(occu, klammer.c_str());
+                        std::string komma(",");
+                        occu = strstr(occu, komma.c_str());
+                        if (occu == NULL)
+                            break;
+
+                        char * pch;
+                        pch = strtok(occu + 1, ",");
+                        rows = atoi(pch);
+                        pch = strtok(NULL, ")");
+                        columns = atoi(pch);
+
                         break;
+                    }
 
                     if(line.find("data", 0) < line.npos)
                     {
@@ -124,8 +155,8 @@ class MatrixIO<io_formats::M>
 
                 }
                 file.close();
-                unsigned long columns(*std::max_element(column_indices.begin(), column_indices.end()) + 1);
-                unsigned long rows(*std::max_element(row_indices.begin(), row_indices.end()) + 1);
+                if (columns == 0) columns = (*std::max_element(column_indices.begin(), column_indices.end()) + 1);
+                if (rows == 0) rows = (*std::max_element(row_indices.begin(), row_indices.end()) + 1);
                 SparseMatrix<DT_> result(rows, columns, &row_indices[0], &column_indices[0], &data[0], data.size());
                 return result;
             }
