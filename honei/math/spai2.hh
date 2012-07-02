@@ -36,8 +36,6 @@
 //#include <mkl_lapacke.h>
 //#include <omp.h>
 
-#include <honei/util/time_stamp.hh>
-
 //based on "Parallel Preconditioning with Sparse Approximate Inverses" by Grote et al.
 namespace honei
 {
@@ -150,6 +148,7 @@ namespace honei
                     continue;
                 unsigned long I[n1];
                 DenseVector<DT_> et(n1, DT_(0));
+                DT_ * __restrict__ ete(et.elements());
                 unsigned long tmp(0);
                 for (unsigned long i(0) ; i < n2 ; ++i)
                 {
@@ -158,7 +157,7 @@ namespace honei
                     for (unsigned long j(0) ; j < A_col_ji_ue ; ++j)
                     {
                         I[tmp] = A_col_ji_index[j];
-                        et[tmp] = (I[tmp] == idx);
+                        ete[tmp] = (I[tmp] == idx);
                         ++tmp;
                     }
                 }
@@ -169,7 +168,7 @@ namespace honei
                     const SparseVector<DT_> row = A[I[i]];
                     unsigned long it(0);
                     const unsigned long * indices(row.indices());
-                    const DT_ * elements(row.elements());
+                    const DT_ * __restrict__ elements(row.elements());
                     const unsigned long used_elements(row.used_elements());
                     for (unsigned long j(0) ; j < n2 ; ++j)
                     {
@@ -198,16 +197,43 @@ namespace honei
                 }*/
 
                 DenseMatrix<DT_> Atrans(n2, n1);
+                DT_ * __restrict__ Ate(At.elements());
+                DT_ * __restrict__ Atranse(Atrans.elements());
                 // \TODO schneller transponieren
-                for (unsigned long i(0) ; i < At.rows() ; ++i)
+                for (unsigned long i(0) ; i < n1 ; ++i)
                 {
-                    for (unsigned long j(0) ; j < At.columns() ; ++j)
+                    for (unsigned long j(0) ; j < n2 ; ++j)
                     {
-                        Atrans(j, i) = At(i, j);
+                        Atranse[n1 * j + i] = Ate[n2 * i + j];
                     }
                 }
-                DenseMatrix<DT_> product = Product<tags::CPU::SSE>::value(Atrans, At);
-                DenseVector<DT_> pro_v = Product<tags::CPU::SSE>::value(Atrans, et);
+                //DenseMatrix<DT_> product = Product<tags::CPU::SSE>::value(Atrans, At);
+                DenseMatrix<DT_> product(n2, n2);
+                DT_ * __restrict__ producte(product.elements());
+                for (unsigned long i(0) ; i < n2 ; ++i)
+                {
+                    for (unsigned long j(0) ; j < n2 ; ++j)
+                    {
+                        DT_ temp(0);
+                        for (unsigned long k(0) ; k < n1 ; ++k)
+                        {
+                            temp += Atranse[n1 * i + k] * Ate[n2 * k + j];
+                        }
+                        producte[n2 * i + j] = temp;
+                    }
+                }
+                //DenseVector<DT_> pro_v = Product<tags::CPU::SSE>::value(Atrans, et);
+                DenseVector<DT_> pro_v(n2);
+                DT_ * __restrict__ pro_ve(pro_v.elements());
+                for (unsigned long i(0) ; i < n2 ; ++i)
+                {
+                    DT_ temp(0);
+                    for (unsigned long j(0) ; j < n1 ; ++j)
+                    {
+                        temp += Atranse[n1 * i + j] * et[j];
+                    }
+                    pro_ve[i] = temp;
+                }
                 DenseVector<DT_> res(product.columns());
                 LUDecomposition<tags::CPU::SSE>::value(product, pro_v, res);
                 for (unsigned long i(0) ; i < n2 ; ++i)
@@ -230,8 +256,6 @@ namespace honei
             template <typename DT_>
             static SparseMatrix<DT_> & value(SparseMatrix<DT_> & M, const SparseMatrix<DT_> & A)
             {
-                TimeStamp at, bt;
-                at.take();
                 //omp_set_num_threads(1);
                 unsigned long max_count(Configuration::instance()->get_value("mc::Product(DV,SMELL,DV)::max_count",
                             mc::ThreadPool::instance()->num_threads()));
@@ -255,8 +279,6 @@ namespace honei
                 }
 
                 tickets.wait();
-                bt.take();
-                std::cout<<"TOE MC CPU: "<<bt.total()-at.total()<<std::endl;
 
                 return M;
             }

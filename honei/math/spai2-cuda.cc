@@ -26,9 +26,6 @@
 #include <honei/util/configuration.hh>
 #include <honei/util/profiler.hh>
 
-#include <iostream>
-#include <honei/util/time_stamp.hh>
-
 using namespace honei;
 
 namespace
@@ -49,8 +46,6 @@ namespace
 
             void operator() ()
             {
-                TimeStamp at, bt;
-                at.take();
                 M._synch_column_vectors();
 
                 DenseVector<double> a_elements(A.used_elements());
@@ -61,7 +56,6 @@ namespace
                 double * m_elements_e(m_elements.elements());
                 DenseVector<unsigned long> columns(A.columns() + 1);
                 unsigned long offset(0);
-
 
                 columns[0] = 0;
                 for (unsigned long column(0) ; column < A.columns() ; ++column)
@@ -107,8 +101,6 @@ namespace
 
                 M._synch_row_vectors();
                 m_elements.unlock(lm_read_only);
-                bt.take();
-                std::cout<<"TOE GPU: "<<bt.total()-at.total()<<std::endl;
             }
     };
 }

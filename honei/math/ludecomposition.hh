@@ -272,70 +272,49 @@ namespace honei
 
                 DenseMatrix<DT_> u(a.copy());
                 DenseMatrix<DT_> l(a.rows(), a.columns(), 0);
+                DT_ * ue(u.elements());
+                DT_ * le(l.elements());
+                DT_ * be(b.elements());
+                DT_ * xe(x.elements());
+                const unsigned long rows(a.rows());
+                const unsigned long columns(a.columns());
+                const unsigned long size(x.size());
                 for (unsigned long i(0) ; i < a.rows() ; ++i)
                 {
-                    l(i, i) = 1;
+                    le[columns * i + i] = 1;
                 }
 
-                for (unsigned long k(0) ; k < u.rows() - 1 ; ++k)
+                for (unsigned long k(0) ; k < rows - 1 ; ++k)
                 {
-                    /*
-                    //search maximum pivot in column k
-                    unsigned long pivot = k;
-                    for (unsigned long t(k + 1) ; t < u.rows() ; ++t)
-                    {
-                        if (abs(u(t, k)) > abs(u(pivot, k)))
-                                pivot = t;
-                    }
-                    //switch row k and row pivot
-                    if (pivot != k)
-                    {
-                        for (unsigned long i(k) ; i < a.columns() ; ++i)
-                        {
-                            DT_ temp(u(k, i));
-                            u(k, i) = u(pivot, i);
-                            u(pivot, i) = temp;
-                        }
-                        for (unsigned long i(0) ; i < k  ; ++i)
-                        {
-                            DT_ temp(l(k, i));
-                            l(k, i) = l(pivot, i);
-                            l(pivot, i) = temp;
-                        }
-                        DT_ temp(b[k]);
-                        b[k] = b[pivot];
-                        b[pivot] = temp;
-                    }*/
-
                     //todo calc and store LU insitu in A
-                    for (unsigned long j(k + 1) ; j < u.rows() ; ++j)
+                    for (unsigned long j(k + 1) ; j < rows ; ++j)
                     {
-                        l(j, k) = u(j, k) / u(k, k);
-                        for (unsigned long i(k) ; i < u.rows() ; ++i)
+                        le[columns * j + k] = ue[columns * j +  k] / ue[columns * k + k];
+                        for (unsigned long i(k) ; i < rows ; ++i)
                         {
-                            u(j, i) = u(j, i) - l(j, k) * u(k, i);
+                            ue[columns * j +  i] = ue[columns * j + i] - le[columns * j + k] * ue[columns * k + i];
                         }
                     }
                 }
 
-                for (unsigned long i(0) ; i < x.size() ; ++i)
+                for (unsigned long i(0) ; i < size ; ++i)
                 {
                     DT_ sum(0);
                     for (unsigned long j(0) ; j < i ; ++j)
                     {
-                        sum += l(i,j) * x[j];
+                        sum += le[columns * i +j] * xe[j];
                     }
-                    x[i] = DT_(1) / l(i, i) * (b[i] - sum);
+                    xe[i] = DT_(1) / le[columns * i + i] * (be[i] - sum);
                 }
 
-                for (long i(x.size() - 1) ; i >= 0 ; --i)
+                for (long i(size - 1) ; i >= 0 ; --i)
                 {
                     DT_ sum(0);
-                    for (unsigned long j(i+1) ; j < x.size() ; ++j)
+                    for (unsigned long j(i+1) ; j < size ; ++j)
                     {
-                        sum += u(i,j) * x[j];
+                        sum += ue[columns * i + j] * xe[j];
                     }
-                    x[i] = DT_(1) / u(i, i) * (x[i] - sum);
+                    xe[i] = DT_(1) / ue[columns * i + i] * (xe[i] - sum);
                 }
             }
     };

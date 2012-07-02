@@ -27,6 +27,7 @@
 #include <honei/la/difference.hh>
 #include <honei/math/matrix_io.hh>
 
+#include <honei/util/time_stamp.hh>
 
 using namespace honei;
 using namespace tests;
@@ -54,11 +55,16 @@ class Spai2TestSparse:
                 used_elements+= sm[i].used_elements();
             std::cout<<"Non Zero Elements of A: "<<used_elements<<std::endl;
             SparseMatrix<DT_> m(sm.copy());
+            TimeStamp at, bt;
+            at.take();
             m = SPAI2<Tag_>::value(m, sm);
+            bt.take();
+            std::cout<<"TOE: "<<bt.total()-at.total()<<std::endl;
             used_elements = 0;
             for (unsigned i(0) ; i < m.rows() ; ++i)
                 used_elements+= m[i].used_elements();
             std::cout<<"Non Zero Elements of M: "<<used_elements<<std::endl;
+            std::cout<<"rows/cols of M: "<<m.rows()<<" "<<m.columns()<<std::endl;
 
             SparseMatrix<DT_> temp(sm.rows(), sm.columns());
             SparseMatrix<DT_> ident(sm.rows(), sm.columns(), 1);

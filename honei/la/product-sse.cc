@@ -30,7 +30,7 @@ namespace honei
         void rec_dm_product(DenseMatrixTile<float> & r, const DenseMatrixTile<float> & a, const DenseMatrixTile<float> & b)
         {
             /// \todo Use Configuration.
-            unsigned long best_cache_size(1000000);
+            unsigned long best_cache_size(5000000);
             if (r.rows() * r.columns() + a.rows() * a.columns() + b.rows() * b.columns() < best_cache_size)
             {
                 for (unsigned long i(0) ; i < a.rows() ; ++i)
@@ -88,7 +88,7 @@ namespace honei
         void rec_dm_product(DenseMatrixTile<double> & r, const DenseMatrixTile<double> & a, const DenseMatrixTile<double> & b)
         {
             /// \todo Use Configuration.
-            unsigned long best_cache_size(500000);
+            unsigned long best_cache_size(5000000);
             if (r.rows() * r.columns() + a.rows() * a.columns() + b.rows() * b.columns() < best_cache_size)
             {
                 for (unsigned long i(0) ; i < a.rows() ; ++i)
