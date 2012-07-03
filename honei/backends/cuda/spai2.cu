@@ -26,19 +26,11 @@ namespace honei
 {
     namespace cuda
     {
-        __device__ char * get_local_heap(unsigned long idx, char * heap_gpu, unsigned long heap_size)
-        {
-            unsigned long thread_count(gridDim.x * blockDim.x);
-            unsigned long count_per_thread(heap_size / thread_count);
-            count_per_thread = (count_per_thread / 16) * 16;
-            return heap_gpu + (idx * count_per_thread);
-        }
-
         template <typename DT_>
         __device__ DT_ * get_next_heap(char * heap, unsigned long & offset, unsigned long count)
         {
             unsigned long old_offset = offset;
-            offset += (count + ((16-count)%16)) * sizeof(DT_) ;
+            offset += count * sizeof(DT_) * gridDim.x * blockDim.x;
             return (DT_ *)(heap + old_offset);
         }
 
@@ -59,7 +51,28 @@ namespace honei
 
                 inline __device__ DT_ & operator() (unsigned long row, unsigned long column)
                 {
-                    return data[columns * row + column];
+                    unsigned long threads = gridDim.x * blockDim.x;
+                    return data[(columns * row + column) * threads];
+                }
+        };
+
+        template <typename DT_>
+        class Vector
+        {
+            public:
+                DT_ * data;
+                unsigned long size;
+
+                __device__ Vector(DT_ * heap, unsigned long size) :
+                    data(heap),
+                    size(size)
+                {
+                }
+
+                inline __device__ DT_ & operator[] (unsigned long index)
+                {
+                    unsigned long threads = gridDim.x * blockDim.x;
+                    return data[index * threads];
                 }
         };
 
@@ -69,20 +82,21 @@ namespace honei
                 unsigned long columns, char * heap_gpu, unsigned long heap_size, unsigned long idx_offset)
         {
             unsigned long idx = blockDim.x*blockIdx.x+threadIdx.x;
+            unsigned long real_idx = idx;
             idx += idx_offset;
 
             if (idx >= columns)
                 return;
 
             unsigned long heap_offset(0);
-            char * local_heap(get_local_heap(idx-idx_offset, heap_gpu, heap_size));
+            char * local_heap = heap_gpu + ((real_idx) * sizeof(unsigned long));
 
             // ASSEMBLY START
             const unsigned long n2(column_ptr[idx + 1] - column_ptr[idx]);
             if (n2 == 0)
                 return;
 
-            unsigned long * J(get_next_heap<unsigned long>(local_heap, heap_offset, n2));
+            Vector<unsigned long> J(get_next_heap<unsigned long>(local_heap, heap_offset, n2), n2);
 
             for (unsigned long i(0) ; i < n2 ; ++i)
             {
@@ -99,11 +113,11 @@ namespace honei
             if (n1 == 0)
                 return;
 
-            DT_ * pro_v(get_next_heap<DT_>(local_heap, heap_offset, n2));
+            Vector<DT_> pro_v(get_next_heap<DT_>(local_heap, heap_offset, n2), n2);
             Matrix<DT_> product(get_next_heap<DT_>(local_heap, heap_offset, n2 * n2), n2, n2);
             unsigned long offset_behind_product(heap_offset);
-            unsigned long * I(get_next_heap<unsigned long>(local_heap, heap_offset, n1));
-            DT_ * et(get_next_heap<DT_>(local_heap, heap_offset, n1));
+            Vector<unsigned long> I(get_next_heap<unsigned long>(local_heap, heap_offset, n1), n1);
+            Vector<DT_> et(get_next_heap<DT_>(local_heap, heap_offset, n1), n1);
             Matrix<DT_> At(get_next_heap<DT_>(local_heap, heap_offset, n1 * n2), n1, n2);
             Matrix<DT_> Atrans(get_next_heap<DT_>(local_heap, heap_offset, n2 * n1), n2, n1);
 
@@ -176,17 +190,22 @@ namespace honei
             heap_offset = offset_behind_product;
 
             // LU DECOMPOSITION START
-            DT_ * res(get_next_heap<DT_>(local_heap, heap_offset, product.columns));
-            //Matrix<DT_> u(get_next_heap<DT_>(local_heap, heap_offset, product.rows * product.columns), product.rows, product.columns);
+            Vector<DT_> res(get_next_heap<DT_>(local_heap, heap_offset, product.columns), product.columns);
             Matrix<DT_> u(product);
-            for (unsigned long i(0) ; i < product.rows * product.columns ; ++i)
+            for (unsigned long i(0) ; i < product.rows ; ++i)
             {
-                u.data[i] = product.data[i];
+                for (unsigned long j(0) ; j < product.columns ; ++j)
+                {
+                    u(i, j) = product(i, j);
+                }
             }
             Matrix<DT_> l(get_next_heap<DT_>(local_heap, heap_offset, product.rows * product.columns), product.rows, product.columns);
-            for (unsigned long i(0) ; i < l.rows * l.columns ; ++i)
+            for (unsigned long i(0) ; i < l.rows ; ++i)
             {
-                l.data[i] = DT_(0);
+                for (unsigned long j(0) ; j < l.columns ; ++j)
+                {
+                    l(i, j) = DT_(0);
+                }
             }
             for (unsigned long i(0) ; i < l.rows ; ++i)
             {
