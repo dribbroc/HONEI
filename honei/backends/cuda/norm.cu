@@ -109,7 +109,7 @@ extern "C" float cuda_norm_l2_one_float(const void * x, unsigned long size, unsi
     delete[] tmp_cpu;
 
     CUDA_ERROR();
-    return sqrt(result);
+    return (result);
 #endif
 }
 
@@ -149,7 +149,7 @@ extern "C" double cuda_norm_l2_one_double(const void * x, unsigned long size, un
     delete[] tmp_cpu;
 
     CUDA_ERROR();
-    return sqrt(result);
+    return (result);
 #endif
 }
 #endif

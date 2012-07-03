@@ -109,7 +109,7 @@ float Norm<vnt_l_two, false, tags::GPU::CUDA>::value(const DenseVectorContinuous
             cudaNormL2oneDVfloat task(a, &result, blocksize, gridsize);
             cuda::GPUPool::instance()->enqueue(task, 0).wait();
         }
-        return result * result;
+        return result;
     }
 }
 
@@ -144,7 +144,7 @@ float Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuousB
             cudaNormL2oneDVfloat task(a, &result, blocksize, gridsize);
             cuda::GPUPool::instance()->enqueue(task, 0).wait();
         }
-        return result;
+        return sqrt(result);
     }
 }
 
@@ -183,7 +183,7 @@ double Norm<vnt_l_two, false, tags::GPU::CUDA>::value(const DenseVectorContinuou
             cuda::GPUPool::instance()->enqueue(task, 0).wait();
         }
         PROFILER_STOP("Norm DV L2 false double tags::GPU::CUDA");
-        return result * result;
+        return result;
     }
 }
 
@@ -221,7 +221,7 @@ double Norm<vnt_l_two, true, tags::GPU::CUDA>::value(const DenseVectorContinuous
             cuda::GPUPool::instance()->enqueue(task, 0).wait();
         }
         PROFILER_STOP("Norm DV L2 true double tags::GPU::CUDA");
-        return result;
+        return sqrt(result);
     }
 }
 #endif
@@ -261,7 +261,7 @@ float Norm<vnt_l_two, false, tags::GPU::MultiCore::CUDA>::value(const DenseVecto
             cudaNormL2oneDVfloat task2(a2, &result2, blocksize, gridsize);
             cuda::GPUPool::instance()->enqueue(task1, 0).wait();
             cuda::GPUPool::instance()->enqueue(task2, 1).wait();
-            result = result1*result1 + result2*result2;
+            result = result1 + result2;
         }
         return result;
     }
@@ -303,7 +303,7 @@ double Norm<vnt_l_two, false, tags::GPU::MultiCore::CUDA>::value(const DenseVect
             cudaNormL2oneDVdouble task2(a2, &result2, blocksize, gridsize);
             cuda::GPUPool::instance()->enqueue(task1, 0).wait();
             cuda::GPUPool::instance()->enqueue(task2, 1).wait();
-            result = result1*result1 + result2*result2;
+            result = result1 + result2;
         }
         return result;
     }
@@ -347,7 +347,7 @@ float Norm<vnt_l_two, true, tags::GPU::MultiCore::CUDA>::value(const DenseVector
             cuda::GPUPool::instance()->enqueue(task2, 1).wait();
             result = result1 + result2;
         }
-        return result;
+        return sqrt(result);
     }
 }
 
@@ -387,8 +387,9 @@ double Norm<vnt_l_two, true, tags::GPU::MultiCore::CUDA>::value(const DenseVecto
             cudaNormL2oneDVdouble task2(a2, &result2, blocksize, gridsize);
             cuda::GPUPool::instance()->enqueue(task1, 0).wait();
             cuda::GPUPool::instance()->enqueue(task2, 1).wait();
+            result = result1 + result2;
         }
-        return result;
+        return sqrt(result);
     }
 }
 #endif

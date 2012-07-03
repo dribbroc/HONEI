@@ -125,6 +125,7 @@ BiCGStabSolverTestSparseELLPrecon<tags::CPU::MultiCore::SSE, double> mcsse_cg_pr
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
 BiCGStabSolverTestSparseELLPrecon<tags::GPU::CUDA, double> cuda_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
+BiCGStabSolverTestSparseELLPrecon<tags::GPU::MultiCore::CUDA, double> mccuda_cg_precon_test_double_sparse_ell("double JAC", "A_7.ell", "rhs_7", "sol_7", "init_7");
 #endif
 #endif
 #ifdef HONEI_OPENCL
@@ -349,6 +350,7 @@ BiCGStabSolverTestSparseELLPreconSPAI<tags::CPU::MultiCore::SSE, double> mcsse_c
 #ifdef HONEI_CUDA
 #ifdef HONEI_CUDA_DOUBLE
 BiCGStabSolverTestSparseELLPreconSPAI<tags::GPU::CUDA, double> cuda_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
+BiCGStabSolverTestSparseELLPreconSPAI<tags::GPU::MultiCore::CUDA, double> mccuda_cg_precon_spai_test_double_sparse_ell("double SPAI", "A_7.ell", "rhs_7", "sol_7", "init_7", "A_7_spai.ell");
 #endif
 #endif
 #ifdef HONEI_OPENCL
