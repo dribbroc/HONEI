@@ -786,6 +786,7 @@ DenseVectorContinuousBase<float> & Defect<tags::GPU::MultiCore::CUDA>::value(Den
             tickets.wait();
 
             cuda_free(whole_b_1);
+            cuda_set_device(1);
             cuda_free(whole_b_2);
             return result;
         }
@@ -871,6 +872,7 @@ DenseVectorContinuousBase<double> & Defect<tags::GPU::MultiCore::CUDA>::value(De
             tickets.wait();
 
             cuda_free(whole_b_1);
+            cuda_set_device(1);
             cuda_free(whole_b_2);
             return result;
         }

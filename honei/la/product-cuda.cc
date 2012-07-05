@@ -758,6 +758,7 @@ DenseVector<float> & Product<tags::GPU::MultiCore::CUDA>::value(DenseVector<floa
             tickets.wait();
 
             cuda_free(whole_b_1);
+            cuda_set_device(1);
             cuda_free(whole_b_2);
 
             return result;
@@ -840,6 +841,7 @@ DenseVector<double> & Product<tags::GPU::MultiCore::CUDA>::value(DenseVector<dou
             tickets.wait();
 
             cuda_free(whole_b_1);
+            cuda_set_device(1);
             cuda_free(whole_b_2);
 
             return result;

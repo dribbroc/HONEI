@@ -324,7 +324,7 @@ namespace honei
                     cuda::GPUPool::instance()->enqueue(at, cuda_get_device()).wait();
                 }
                 if (device == 0)
-                    throw InternalError("MemoryBackend<tags::GPU::CUDA>::alloc CudaMallocError!");
+                    throw InternalError("MemoryBackend<tags::GPU::CUDA>::alloc CudaMallocError! 1");
                 _id_map.insert(std::pair<void *, Chunk>(memid, Chunk(address, device, bytes, cuda_get_device())));
                 _address_map.insert(std::pair<void *, void *>(address, device));
                 _device_map.insert(std::pair<void *, int>(address, cuda_get_device()));
@@ -355,7 +355,7 @@ namespace honei
                         cuda::GPUPool::instance()->enqueue(at, cuda_get_device()).wait();
                     }
                     if (device == 0)
-                        throw InternalError("MemoryBackend<tags::GPU::CUDA>::alloc CudaMallocError!");
+                        throw InternalError("MemoryBackend<tags::GPU::CUDA>::alloc CudaMallocError! 2");
                     _id_map.insert(std::pair<void *, Chunk>(memid, Chunk(address, device, bytes, cuda_get_device())));
                     _address_map.insert(std::pair<void *, void *>(address, device));
                     _device_map.insert(std::pair<void *, int>(address, cuda_get_device()));
@@ -415,7 +415,7 @@ namespace honei
                     cuda::AllocTask at(&dest_device, bytes);
                     cuda::GPUPool::instance()->enqueue(at, j_source->second).wait();
                     if (dest_device == 0)
-                        throw InternalError("MemoryBackend<tags::GPU::CUDA>::alloc CudaMallocError!");
+                        throw InternalError("MemoryBackend<tags::GPU::CUDA>::alloc CudaMallocError! 3");
                     _id_map.insert(std::pair<void *, Chunk>(dest_id, Chunk(dest_address, dest_device, bytes, j_source->second)));
                     _address_map.insert(std::pair<void *, void *>(dest_address, dest_device));
                     _device_map.insert(std::pair<void *, int>(dest_address, j_source->second));
