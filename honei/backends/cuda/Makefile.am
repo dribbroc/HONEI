@@ -19,9 +19,9 @@ DEFS = \
 	$(PROFILERDEF)
 
 NVCC = nvcc
-NVCCFLAGS = -g --ptxas-options=-v -O3 -I$(top_srcdir) $(DEFS) -use_fast_math
+NVCCFLAGS = -g -v --ptxas-options=-v -O3 -I$(top_srcdir) $(DEFS) -use_fast_math
 if CUDA_DOUBLE
-  NVCCFLAGS += -arch=compute_13 -code=compute_13 -m64
+  NVCCFLAGS += -arch=sm_13  -m64
 endif
 
 .cu.lo: libtool-hack.in
