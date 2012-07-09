@@ -110,6 +110,9 @@ extern "C"
     void cuda_restriction_double(void * coarse, unsigned long size_coarse, void * fine, unsigned long size_fine,
             unsigned long * macroBorderMask, unsigned long blocksize);
 
+    void cuda_spai2_float(void * columns_gpu, void * m_elements_gpu,
+            void * a_elements_gpu, void * a_indices_gpu, unsigned long columns, unsigned long blocksize);
+
     void cuda_spai2_double(void * columns_gpu, void * m_elements_gpu,
             void * a_elements_gpu, void * a_indices_gpu, unsigned long columns, unsigned long blocksize);
 

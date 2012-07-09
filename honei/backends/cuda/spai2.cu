@@ -148,9 +148,18 @@ namespace honei
                 {
                     unsigned long index(I[i]);
                     unsigned long it(0);
-                    for( ; (indices[it] < index) && (it < used_elements) ; ++it)
-                        ;
-                    At(i, j) = (indices[it] == index) ? elements[it] : DT_(0);
+                    while (it < used_elements)
+                    {
+                        if (indices[it] >= index)
+                            break;
+                        ++it;
+                    }
+                    if (it < used_elements)
+                    {
+                        At(i, j) = (indices[it] == index) ? elements[it] : DT_(0);
+                    }
+                    else
+                        At(i, j) = DT_(0);
                 }
             }
             // ASSEMBLY END
@@ -288,6 +297,12 @@ namespace honei
 
         CUDA_ERROR();
     }
+}
+
+extern "C" void cuda_spai2_float(void * column_ptr, void * m_elements,
+        void * a_elements, void * a_indices, unsigned long columns, unsigned long blocksize)
+{
+    honei::cuda_spai2<float>(column_ptr, m_elements, a_elements, a_indices, columns, blocksize);
 }
 
 #ifdef HONEI_CUDA_DOUBLE

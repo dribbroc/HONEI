@@ -293,6 +293,7 @@ namespace honei
     template <>
     struct SPAI2<tags::GPU::CUDA>
     {
+        static SparseMatrix<float> & value(SparseMatrix<float> & M, const SparseMatrix<float> & A);
         static SparseMatrix<double> & value(SparseMatrix<double> & M, const SparseMatrix<double> & A);
     };
 }

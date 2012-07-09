@@ -47,7 +47,7 @@ class Spai2TestSparse:
         virtual void run() const
         {
             std::string filename(HONEI_SOURCEDIR);
-            filename += "/honei/math/testdata/poisson_advanced/q2_sort_0/A_5.ell";
+            filename += "/honei/math/testdata/poisson_advanced/q2_sort_0/A_2.ell";
             SparseMatrixELL<DT_> smell = MatrixIO<io_formats::ELL>::read_matrix(filename, DT_(1));
             SparseMatrix<DT_> sm(smell);
             unsigned long used_elements(0);
@@ -83,8 +83,16 @@ class Spai2TestSparse:
             TEST_CHECK(jacnorm > min);
         }
 };
-
-Spai2TestSparse<tags::CPU::SSE, float> spai2_test_sparse_ell_float("float");
-Spai2TestSparse<tags::CPU::SSE, double> spai2_test_sparse_ell_double("double");
-Spai2TestSparse<tags::CPU::MultiCore::SSE, double> mc_spai2_test_sparse_ell_double("double");
+//Spai2TestSparse<tags::CPU, float> spai2_test_sparse_ell_float("float");
+//Spai2TestSparse<tags::CPU, double> spai2_test_sparse_ell_double("double");
+#ifdef HONEI_SSE
+Spai2TestSparse<tags::CPU::SSE, float> sse_spai2_test_sparse_ell_float("float");
+Spai2TestSparse<tags::CPU::SSE, double> sse_spai2_test_sparse_ell_double("double");
+Spai2TestSparse<tags::CPU::MultiCore::SSE, double> mcsse_spai2_test_sparse_ell_double("double");
+#endif
+#ifdef HONEI_CUDA
+//Spai2TestSparse<tags::GPU::CUDA, float> cuda_spai2_test_sparse_ell_float("float");
+#ifdef HONEI_CUDA_DOUBLE
 Spai2TestSparse<tags::GPU::CUDA, double> cuda_spai2_test_sparse_ell_double("double");
+#endif
+#endif

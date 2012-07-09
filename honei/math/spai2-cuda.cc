@@ -30,6 +30,80 @@ using namespace honei;
 
 namespace
 {
+    class cudaSpai2float
+    {
+        private:
+            SparseMatrix<float> & M;
+            const SparseMatrix<float> & A;
+            unsigned long blocksize;
+        public:
+            cudaSpai2float(SparseMatrix<float> & M, const SparseMatrix<float> & A, unsigned long blocksize) :
+                M(M),
+                A(A),
+                blocksize(blocksize)
+            {
+            }
+
+            void operator() ()
+            {
+                M._synch_column_vectors();
+
+                DenseVector<float> a_elements(A.used_elements());
+                float * a_elements_e(a_elements.elements());
+                DenseVector<unsigned long> a_indices(A.used_elements());
+                unsigned long * a_indices_e(a_indices.elements());
+                DenseVector<float> m_elements(M.used_elements());
+                float * m_elements_e(m_elements.elements());
+                DenseVector<unsigned long> columns(A.columns() + 1);
+                unsigned long offset(0);
+
+                columns[0] = 0;
+                for (unsigned long column(0) ; column < A.columns() ; ++column)
+                {
+                    float * elements(A.column(column).elements());
+                    unsigned long * indices(A.column(column).indices());
+
+                    const unsigned long size(A.column(column).used_elements());
+                    for (unsigned long i(0) ; i < size ; ++i)
+                    {
+                        a_elements_e[i + offset] = elements[i];
+                        a_indices_e[i + offset] = indices[i];
+                    }
+                    offset += size;
+                    columns[column + 1] = offset;
+                }
+
+                void * a_elements_gpu(a_elements.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * a_indices_gpu(a_indices.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+                void * m_elements_gpu(m_elements.lock(lm_write_only, tags::GPU::CUDA::memory_value));
+                void * columns_gpu(columns.lock(lm_read_only, tags::GPU::CUDA::memory_value));
+
+                cuda_spai2_float(columns_gpu, m_elements_gpu, a_elements_gpu, a_indices_gpu, A.columns(), blocksize);
+
+                a_elements.unlock(lm_read_only);
+                a_indices.unlock(lm_read_only);
+                m_elements.unlock(lm_write_only);
+                columns.unlock(lm_read_only);
+
+                m_elements.lock(lm_read_only);
+                offset = 0;
+                for (unsigned long column(0) ; column < M.columns() ; ++column)
+                {
+                    float * elements(M.column(column).elements());
+
+                    const unsigned long size(M.column(column).used_elements());
+                    for (unsigned long i(0) ; i < size ; ++i)
+                    {
+                        elements[i] = m_elements_e[i + offset];
+                    }
+                    offset += size;
+                }
+
+                M._synch_row_vectors();
+                m_elements.unlock(lm_read_only);
+            }
+    };
+
     class cudaSpai2double
     {
         private:
@@ -103,6 +177,30 @@ namespace
                 m_elements.unlock(lm_read_only);
             }
     };
+}
+
+SparseMatrix<float> & SPAI2<tags::GPU::CUDA>::value(SparseMatrix<float> & M, const SparseMatrix<float> & A)
+{
+    CONTEXT("When calculating SPAI2<float> (CUDA):");
+
+    unsigned long blocksize(Configuration::instance()->get_value("cuda::spai2_float", 128ul));
+
+    M = A.copy();
+
+    if (! cuda::GPUPool::instance()->idle())
+    {
+        cudaSpai2float task(M, A, blocksize);
+        task();
+    }
+    else
+    {
+        cudaSpai2float task(M, A, blocksize);
+        cuda::GPUPool::instance()->enqueue(task, 0).wait();
+    }
+
+
+
+    return M;
 }
 
 #ifdef HONEI_CUDA_DOUBLE
