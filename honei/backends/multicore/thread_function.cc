@@ -29,9 +29,10 @@
 #include <honei/util/stringify.hh>
 #include <honei/util/thread.hh>
 
-#include <sys/syscall.h>
-#include <math.h>
 #include <deque>
+#include <math.h>
+#include <sys/syscall.h>
+#include <unistd.h>
 
 namespace honei
 {

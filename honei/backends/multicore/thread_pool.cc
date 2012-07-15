@@ -33,6 +33,7 @@
 #include <sched.h>
 #include <stdlib.h>
 #include <sys/syscall.h>
+#include <unistd.h>
 
 namespace honei
 {

@@ -35,6 +35,7 @@
 #include <honei/util/tr1_boost.hh>
 
 #include <syscall.h>
+#include <unistd.h>
 
 namespace honei
 {
@@ -327,8 +328,8 @@ namespace honei
                             {
                                 unsigned long maxi(0);
                                 float totali(0.0f);
-                                unsigned long i(0);
-                                for (ResultMap::const_iterator r(results.begin()), r_end(results.end()) ; r != r_end ; ++r, ++i)
+                                unsigned long k(0);
+                                for (ResultMap::const_iterator r(results.begin()), r_end(results.end()) ; r != r_end ; ++r, ++k)
                                 {
                                     float totalt(0.0f);
                                     for (TimingList::const_iterator t(r->second.begin()), t_end(r->second.end()) ; t != t_end ; ++t)
@@ -338,7 +339,7 @@ namespace honei
                                     if (totalt > totali)
                                     {
                                         totali = totalt;
-                                        maxi = i;
+                                        maxi = k;
                                     }
                                 }
                                 ResultMap::iterator r(results.begin());
