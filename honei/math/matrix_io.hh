@@ -482,19 +482,33 @@ class MatrixIO<io_formats::ELL>
                     uint64_t stride;
                     uint64_t num_cols_per_row;
                     int status = fread(&size, sizeof(uint64_t), 1, file);
+                    if (status != 1)
+                        throw InternalError("fread error!");
                     status = fread(&rows, sizeof(uint64_t), 1, file);
+                    if (status != 1)
+                        throw InternalError("fread error!");
                     status = fread(&columns, sizeof(uint64_t), 1, file);
+                    if (status != 1)
+                        throw InternalError("fread error!");
                     status = fread(&stride, sizeof(uint64_t), 1, file);
+                    if (status != 1)
+                        throw InternalError("fread error!");
                     status = fread(&num_cols_per_row, sizeof(uint64_t), 1, file);
+                    if (status != 1)
+                        throw InternalError("fread error!");
                     DenseVector<unsigned long> ajc(size);
                     if (sizeof(unsigned long) == sizeof(uint64_t))
                     {
                         status = fread(ajc.elements(), sizeof(uint64_t), size, file);
+                        if ((unsigned long)status != size)
+                            throw InternalError("fread error!");
                     }
                     else
                     {
                         uint64_t aj[size];
                         status = fread(aj, sizeof(uint64_t), size, file);
+                        if ((unsigned long)status != size)
+                            throw InternalError("fread error!");
                         for (unsigned long i(0) ; i < size ; ++i)
                         {
                             ajc[i] = aj[i];
@@ -502,6 +516,8 @@ class MatrixIO<io_formats::ELL>
                     }
                     DenseVector<double> ax(size);
                     status = fread(ax.elements(), sizeof(double), size, file);
+                    if ((unsigned long)status != size)
+                        throw InternalError("fread error!");
                     fclose(file);
                     DenseVector<DT_> axc(size);
                     unsigned long crows(rows);
