@@ -82,7 +82,7 @@ extern "C" float cuda_norm_l2_one_float(const void * x, unsigned long size, unsi
     cublasInit();
     float result = cublasSnrm2(size, x_gpu, 1);
     cublasShutdown();
-    return result;
+    return result*result;
 #else
     float result(0.);
 
@@ -122,7 +122,7 @@ extern "C" double cuda_norm_l2_one_double(const void * x, unsigned long size, un
     cublasInit();
     double result = cublasDnrm2(size, x_gpu, 1);
     cublasShutdown();
-    return result;
+    return result*result;
 #else
     double result(0.);
 
