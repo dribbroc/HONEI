@@ -228,9 +228,15 @@ class RichardsonSPAI2TEST :
                 TEST_CHECK_EQUAL_WITHIN_EPS((*data.result)[i], sol[i], std::numeric_limits<DT1_>::epsilon() * 1e12);
         }
 };
+#ifdef HONEI_SSE
 RichardsonSPAI2TEST<tags::CPU::SSE, double> rt_spai2_cpu("double");
 RichardsonSPAI2TEST<tags::CPU::MultiCore::SSE, double> rt_spai2_mc("double");
+#endif
+#ifdef HONEI_CUDA
+#ifdef HONEI_CUDA_DOUBLE
 RichardsonSPAI2TEST<tags::GPU::CUDA, double> rt_spai2_gpu("double");
+#endif
+#endif
 
 template <typename Tag_, typename DT1_>
 class RichardsonSPAI2_0TEST :
