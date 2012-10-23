@@ -49,8 +49,8 @@ namespace honei
             //
             // data needed for DD, DU, DL: each thread loads one element, the first and last one load the border cases
             // x_0 ... x_blockdim-1 into c_1...c_blockdim
-            Dcache[lindex + 1] = x[idx];
-            if (idx  >= m) Lcache[lindex + 1] = x[idx - m];
+            if (idx < n) Dcache[lindex + 1] = x[idx];
+            if (idx >= m && idx - m < n) Lcache[lindex + 1] = x[idx - m];
             if (idx + m < n) Ucache[lindex + 1] = x[idx + m];
             if (lindex == 0)
             {
@@ -108,8 +108,8 @@ namespace honei
             //
             // data needed for DD, DU, DL: each thread loads one element, the first and last one load the border cases
             // x_0 ... x_blockdim-1 into c_1...c_blockdim
-            Dcache[lindex + 1] = x[idx];
-            if (idx  >= m) Lcache[lindex + 1] = x[idx - m];
+            if (idx < n) Dcache[lindex + 1] = x[idx];
+            if (idx >= m && idx - m < n) Lcache[lindex + 1] = x[idx - m];
             if (idx + m < n) Ucache[lindex + 1] = x[idx + m];
             if (lindex == 0)
             {
