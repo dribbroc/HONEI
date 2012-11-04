@@ -427,10 +427,14 @@ namespace honei
                 msg += stringify(tobj.tid()) + "\t\t" + stringify(i) + "\t\t" + stringify(lpu->sched_id) + "\t\t" + stringify(lpu->socket_id) + " \n";
 #endif
 
-                lpu->has_thread = true;
-                Socket * sock = _topology->sockets()[lpu->socket_id];
-                sock->_threaded_lpus[sock->_num_threads] = lpu;
-                ++sock->_num_threads;
+                if (! lpu->has_thread) // Could otherwise cause problems
+                //- assigning the same LPU more than once to the array threaded_lpus due to multiple threads on it can possibly exceed the arrays size
+                {
+                    lpu->has_thread = true;
+                    Socket * sock = _topology->sockets()[lpu->socket_id];
+                    sock->_threaded_lpus[sock->_num_threads] = lpu;
+                    ++sock->_num_threads;
+                }
 
                 switch (_assign_policy)
                 {
@@ -564,10 +568,14 @@ namespace honei
                     msg += stringify(tobj->tid()) + "\t\t" + stringify(i) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(lpu->socket_id) + " \n";
 #endif
 
-                    lpu->has_thread = true;
-                    Socket * sock = _topology->sockets()[lpu->socket_id];
-                    sock->_threaded_lpus[sock->_num_threads] = lpu;
-                    ++sock->_num_threads;
+                    if (! lpu->has_thread) // Could otherwise cause problems
+                    //- assigning the same LPU more than once to the array threaded_lpus due to multiple threads on it can possibly exceed the arrays size
+                    {
+                        lpu->has_thread = true;
+                        Socket * sock = _topology->sockets()[lpu->socket_id];
+                        sock->_threaded_lpus[sock->_num_threads] = lpu;
+                        ++sock->_num_threads;
+                    }
 
                     switch (_assign_policy)
                     {
@@ -778,10 +786,14 @@ namespace honei
                     msg += stringify(tobj->tid()) + "\t\t" + stringify(i) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(lpu->socket_id) + " \n";
 #endif
 
-                    lpu->has_thread = true;
-                    Socket * sock = _topology->sockets()[lpu->socket_id];
-                    sock->_threaded_lpus[sock->_num_threads] = lpu;
-                    ++sock->_num_threads;
+                    if (! lpu->has_thread) // Could otherwise cause problems
+                    //- assigning the same LPU more than once to the array threaded_lpus due to multiple threads on it can possibly exceed the arrays size
+                    {
+                        lpu->has_thread = true;
+                        Socket * sock = _topology->sockets()[lpu->socket_id];
+                        sock->_threaded_lpus[sock->_num_threads] = lpu;
+                        ++sock->_num_threads;
+                    }
 
                     switch (_assign_policy)
                     {
@@ -992,10 +1004,14 @@ namespace honei
                     msg += stringify(tobj->tid()) + "\t\t" + stringify(i) + "\t\t" + stringify(sched_id) + "\t\t" + stringify(lpu->socket_id) + " \n";
 #endif
 
-                    lpu->has_thread = true;
-                    Socket * sock = _topology->sockets()[lpu->socket_id];
-                    sock->_threaded_lpus[sock->_num_threads] = lpu;
-                    ++sock->_num_threads;
+                    if (! lpu->has_thread) // Could otherwise cause problems
+                    //- assigning the same LPU more than once to the array threaded_lpus due to multiple threads on it can possibly exceed the arrays size
+                    {
+                        lpu->has_thread = true;
+                        Socket * sock = _topology->sockets()[lpu->socket_id];
+                        sock->_threaded_lpus[sock->_num_threads] = lpu;
+                        ++sock->_num_threads;
+                    }
 
                     switch (_assign_policy)
                     {

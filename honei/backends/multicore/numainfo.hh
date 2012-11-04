@@ -147,7 +147,7 @@ namespace honei
 
                     for (unsigned node(0) ; node < num_nodes ; ++node)
                     {
-                        node_cpu_mask[node] = (bitmask *) malloc(sizeof(struct bitmask *));
+                        node_cpu_mask[node] = (bitmask *) malloc(sizeof(struct bitmask));
                         node_cpu_mask[node]->size = mask_size;
                         node_cpu_mask[node]->maskp = (unsigned long *) calloc(longsperbits(mask_size), sizeof(unsigned long));
 

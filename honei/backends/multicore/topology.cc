@@ -32,6 +32,7 @@
 #include <limits>
 #include <sched.h>
 #include <sys/syscall.h>
+#include <iostream>
 
 using namespace honei;
 using namespace honei::mc;
@@ -94,6 +95,8 @@ void Topology::determine_arch()
         else
             _arch = unknown;
     }
+    else
+        _arch = unknown;
 #else
     _arch = unknown;
 #endif
@@ -132,6 +135,7 @@ void Topology::enumerate_x86_intel()
     for (unsigned i(0) ; i < _num_lpus ; ++i)
     {
         ++socket_lpu_count[_lpus[i]->socket_id];
+
         delete threads[i];
     }
 
@@ -562,12 +566,16 @@ Topology::Topology() :
 Topology::~Topology()
 {
     for (unsigned c(0) ; c < _num_cpus ; ++c)
+    {
         delete _sockets[c];
+    }
 
     delete[] _sockets;
 
     for (unsigned l(0) ; l < _num_lpus ; ++l)
+    {
         delete _lpus[l];
+    }
 
     delete[] _lpus;
 }

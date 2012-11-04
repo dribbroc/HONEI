@@ -137,6 +137,7 @@ namespace honei
                             unsigned & sched_id = task->ticket.sid();
                             sched_id = lpu->sched_id;
                             tasklist->erase(i);
+
 #ifdef DEBUG
                             std::string msg = "Thread " + stringify(pool_id) + " on LPU " +
                             stringify(lpu->sched_id) + " will execute ticket " +
