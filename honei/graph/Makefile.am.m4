@@ -52,7 +52,8 @@ endif
 if CUDA
 
 BACKEND_LIBS += \
-	$(top_builddir)/honei/backends/cuda/libhoneibackendscuda.la
+	$(top_builddir)/honei/backends/cuda/libhoneibackendscuda.la \
+	-lcudart
 
 endif
 
