@@ -143,6 +143,17 @@ libhoneimath_la_LIBADD = \
 	$(top_builddir)/honei/math/spai/src/libspai.la \
 	$(top_builddir)/honei/math/SuperLU_4.1/SRC/libsuperlu.la
 
+if BLAPACK
+
+else
+
+  libhoneimath_la_LIBADD += \
+	$(top_builddir)/honei/math/spai/blas/libblas.la \
+	$(top_builddir)/honei/math/spai/lapack/liblapack.la \
+	$(top_builddir)/honei/math/SuperLU_4.1/CBLAS/libsblas.la
+
+endif
+
 libhoneimath_includedir = $(includedir)/honei/math
 libhoneimath_include_HEADERS = headerlist
 

@@ -12,6 +12,12 @@
 
 
 lib_LTLIBRARIES	= libspai.la
+if BLAPACK
+else
+libspai_la_LIBADD = \
+	$(top_builddir)/honei/math/spai/lapack/liblapack.la
+endif
+#	$(top_builddir)/honei/math/spai/blas/libblas.la
 
 libspai_la_SOURCES	= basics.c bicgstab.c blocks.c com_server.c		\
   debug.c hash_table.c index_set.c						\
