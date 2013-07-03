@@ -27,11 +27,11 @@ dnl }}}
 
 dnl {{{ check for Pathscale C++ compiler (due to lack of __thread support in PIC)
 AC_MSG_CHECKING([for Pathscale compiler])
-AC_COMPILE_IFELSE([
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 #ifdef __PATHSCALE__
 #  error "Pathscale compiler detected!"
 #endif
-],
+])],
 		[AC_MSG_RESULT([no])],
 		[
 		 AC_MSG_RESULT([yes])
@@ -42,7 +42,7 @@ dnl }}}
 dnl {{{ check for a sensible C++ compiler
 dnl {{{ check for partial specialisation of class templates
 AC_MSG_CHECKING([for compiler support for partial specialisation of template classes])
-AC_COMPILE_IFELSE([
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 template <typename T_>
 struct S
 {
@@ -64,7 +64,7 @@ int main(int, char **)
 {
 	return S<int &>::s + S<const int &>::t;
 }
-],
+])],
 		[AC_MSG_RESULT([yes])],
 		[
 		 AC_MSG_RESULT([no])
@@ -73,7 +73,7 @@ int main(int, char **)
 
 dnl {{{ check for numeric limits
 AC_MSG_CHECKING([for std::numeric_limits<>])
-AC_COMPILE_IFELSE([
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 #include <limits>
 int main(int, char **)
 {
@@ -82,7 +82,7 @@ int main(int, char **)
 
 	return result;
 }
-],
+])],
 	[AC_MSG_RESULT([yes])],
 	[
 	 AC_MSG_RESULT([no])
@@ -341,7 +341,7 @@ if test "x$WITH_BOOST" = "xno"; then
 	dnl {{{ check for tr1
 		dnl {{{ check for tr1 shared pointers
 		AC_MSG_CHECKING([for std::tr1::shared_ptr<>])
-		AC_COMPILE_IFELSE([
+		AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 		#include <tr1/memory>
 
 		int main(int, char **)
@@ -349,7 +349,7 @@ if test "x$WITH_BOOST" = "xno"; then
 			std::tr1::shared_ptr<int> x(new int(10));
 			return *x;
 		}
-		],
+		])],
 				[AC_MSG_RESULT([yes])],
 				[
 				 AC_MSG_RESULT([no])
@@ -362,7 +362,7 @@ if test "x$WITH_BOOST" = "xyes"; then
 	dnl {{{ check for boost
 		dnl {{{ check for boost shared pointers
 		AC_MSG_CHECKING([for boost::shared_ptr<>])
-		AC_COMPILE_IFELSE([
+		AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 		#include <boost/shared_ptr.hpp>
 
 		int main(int, char **)
@@ -370,7 +370,7 @@ if test "x$WITH_BOOST" = "xyes"; then
 			boost::shared_ptr<int> x(new int(10));
 			return *x;
 		}
-		],
+		])],
 				[AC_MSG_RESULT([yes])],
 				[
 				 AC_MSG_RESULT([no])
