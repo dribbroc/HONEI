@@ -55,6 +55,7 @@ class MatrixIOMPI<io_formats::ELL>
             uint64_t rows;
             int status = fread(&size, sizeof(uint64_t), 1, file);
             status = fread(&rows, sizeof(uint64_t), 1, file);
+            (void)status;
             fclose(file);
             return rows;
         }
@@ -101,9 +102,11 @@ class MatrixIOMPI<io_formats::ELL>
                         double ival;
                         status = fread(&ival, sizeof(double), 1, file);
                         if (ival != DT_(0)) local_matrix(current_row-local_offset, icol, ival);
+                        (void)status;
                     }
                 }
 
+                (void)status;
                 fclose(file);
                 return local_matrix;
             }

@@ -53,6 +53,7 @@ opencl_backend_TEST_SOURCES = opencl_backend_TEST.cc
 opencl_backend_TEST_LDADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	libhoneibackendsopencl.la \
+	-lOpenCL \
 	$(DYNAMIC_LD_LIBS)
 opencl_backend__TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 
@@ -60,6 +61,7 @@ memory_backend_TEST_SOURCES = memory_backend_TEST.cc
 memory_backend_TEST_LDADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	libhoneibackendsopencl.la \
+	-lOpenCL \
 	$(DYNAMIC_LD_LIBS)
 memory_backend__TEST_CXXFLAGS = -I$(top_srcdir) $(AM_CXXFLAGS)
 

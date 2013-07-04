@@ -755,7 +755,7 @@ class CudaDenseMatrixFillQuickTest :
 {
     public:
         CudaDenseMatrixFillQuickTest(const std::string & type) :
-            QuickTest("cuda_dense_matrix_fill_quick_test<" + type + ">")
+            QuickTest("dense_matrix_fill_quick_test<" + type + ">")
         {
             register_tag(Tag_::name);
         }

@@ -36,8 +36,6 @@ DenseVector<float> SourceProcessing<source_types::SIMPLE, tags::CPU::SSE>::value
     unsigned long sse_tripels((tripels - (tripels % 4)) / 4);
     unsigned long sse_limit(sse_tripels * 12);
     float HONEI_ALIGNED(16) h_buffer[tripels];
-    float HONEI_ALIGNED(16) q1_buffer[tripels];
-    float HONEI_ALIGNED(16) q2_buffer[tripels];
 
     float HONEI_ALIGNED(16) result_h[tripels];
     float HONEI_ALIGNED(16) result_q1[tripels];
@@ -45,9 +43,7 @@ DenseVector<float> SourceProcessing<source_types::SIMPLE, tags::CPU::SSE>::value
 
     float HONEI_ALIGNED(16) g(9.81f);
     float HONEI_ALIGNED(16) zero(0.f);
-    float HONEI_ALIGNED(16) exponent(float(-7.f)/float(3.f));
     float HONEI_ALIGNED(16) minus_one(-1.f);
-    float HONEI_ALIGNED(16) manning(manning_n_squared);
 
     ///Alignment and compaction loop
     unsigned long buffer_i(0);
@@ -55,8 +51,6 @@ DenseVector<float> SourceProcessing<source_types::SIMPLE, tags::CPU::SSE>::value
     {
         //std::cout << v_e[i] << ", " << v_e[i + 1] << ", " << v_e[i+2] << endl;
         h_buffer[buffer_i] = v_e[i];
-        q1_buffer[buffer_i] = v_e[i + 1];
-        q2_buffer[buffer_i] = v_e[i + 2];
         ++buffer_i;
     }
 /*    ///Preprocess pow terms:
@@ -77,12 +71,10 @@ DenseVector<float> SourceProcessing<source_types::SIMPLE, tags::CPU::SSE>::value
     }
 */
     ///SSE loop: This routine does not yet check for any NAN cases (dry states!) and uses manning = 0!!! TODO!!
-    __m128 m1, m2, m3, m4, m5, m6, m7, m8;
+    __m128 m1, m2, m4, m6, m7, m8;
     m1 = _mm_set_ps1(g);
     m2 = _mm_set_ps1(zero);
-    m3 = _mm_set_ps1(exponent);
     m4 = _mm_set_ps1(minus_one);
-    m5 = _mm_set_ps1(manning);
 
     for(unsigned long i(0); i < tripels - (tripels % 4); i += 4)
     {
@@ -154,8 +146,6 @@ DenseVector<double> SourceProcessing<source_types::SIMPLE, tags::CPU::SSE>::valu
     unsigned long sse_tripels((tripels - (tripels % 2)) / 2);
     unsigned long sse_limit(sse_tripels * 6);
     double HONEI_ALIGNED(16) h_buffer[tripels];
-    double HONEI_ALIGNED(16) q1_buffer[tripels];
-    double HONEI_ALIGNED(16) q2_buffer[tripels];
 
     double HONEI_ALIGNED(16) result_h[tripels];
     double HONEI_ALIGNED(16) result_q1[tripels];
@@ -163,9 +153,7 @@ DenseVector<double> SourceProcessing<source_types::SIMPLE, tags::CPU::SSE>::valu
 
     double HONEI_ALIGNED(16) g(9.81);
     double HONEI_ALIGNED(16) zero(0.);
-    double HONEI_ALIGNED(16) exponent(double(-7.)/double(3.));
     double HONEI_ALIGNED(16) minus_one(-1.);
-    double HONEI_ALIGNED(16) manning(manning_n_squared);
 
     ///Alignment and compaction loop
     unsigned long buffer_i(0);
@@ -173,8 +161,6 @@ DenseVector<double> SourceProcessing<source_types::SIMPLE, tags::CPU::SSE>::valu
     {
         //std::cout << v_e[i] << ", " << v_e[i + 1] << ", " << v_e[i+2] << endl;
         h_buffer[buffer_i] = v_e[i];
-        q1_buffer[buffer_i] = v_e[i + 1];
-        q2_buffer[buffer_i] = v_e[i + 2];
         ++buffer_i;
     }
 /*    ///Preprocess pow terms:
@@ -195,12 +181,10 @@ DenseVector<double> SourceProcessing<source_types::SIMPLE, tags::CPU::SSE>::valu
     }
 */
     ///SSE loop: This routine does not yet check for any NAN cases (dry states!) and uses manning = 0!!! TODO!!
-    __m128d m1, m2, m3, m4, m5, m6, m7, m8;
+    __m128d m1, m2, m4, m6, m7, m8;
     m1 = _mm_set1_pd(g);
     m2 = _mm_set1_pd(zero);
-    m3 = _mm_set1_pd(exponent);
     m4 = _mm_set1_pd(minus_one);
-    m5 = _mm_set1_pd(manning);
 
     for(unsigned long i(0); i < tripels - (tripels % 2); i += 2)
     {

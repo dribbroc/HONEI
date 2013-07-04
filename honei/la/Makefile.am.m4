@@ -117,7 +117,7 @@ lib_LTLIBRARIES = libhoneila.la
 libhoneila_la_SOURCES = filelist $(CELLFILES) $(SSEFILES) $(CUDAFILES) $(OPENCLFILES) $(ITANIUMFILES)
 libhoneila_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
-	$(CELLLIB)
+	$(BACKEND_LIBS)
 
 libhoneila_includedir = $(includedir)/honei/la
 libhoneila_include_HEADERS = headerlist

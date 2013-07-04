@@ -239,6 +239,7 @@ class VectorIO<io_formats::DV>
                 int status = fread(&size, sizeof(uint64_t), 1, file);
                 DenseVector<double> ax(size);
                 status = fread(ax.elements(), sizeof(double), size, file);
+                (void)status;
                 fclose(file);
                 DenseVector<DT_> axc(size);
                 convert<tags::CPU>(axc, ax);

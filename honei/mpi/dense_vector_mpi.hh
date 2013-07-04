@@ -74,7 +74,6 @@ namespace honei
 
             static unsigned long calc_offset(unsigned long _orig_size, MPI_Comm com = MPI_COMM_WORLD)
             {
-                unsigned long size;
                 unsigned long _rank(mpi::mpi_comm_rank(com));
                 unsigned long _com_size(mpi::mpi_comm_size(com));
 
@@ -86,7 +85,6 @@ namespace honei
                     unsigned long rest(_orig_size - (part_size * _com_size));
                     if (_rank < rest)
                         ++part_size;
-                    size = part_size;
 
                     unsigned local_offset(0);
                     for (unsigned long i(0) ; i < _rank ; ++i)
@@ -106,9 +104,6 @@ namespace honei
                     unsigned long rest(_orig_size - (part_size * count));
                     if (_rank < rest)
                         ++part_size;
-                    size = part_size;
-                    if (_rank >= count)
-                        size = 0;
 
                     unsigned local_offset(0);
                     for (unsigned long i(0) ; i < _rank ; ++i)

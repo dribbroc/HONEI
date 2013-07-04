@@ -63,3 +63,12 @@ libsuperlu_la_SOURCES = \
 			ilu_zpivotL.c zdiagonal.c \
 			colamd.h html_mainpage.h slu_Cnames.h slu_cdefs.h slu_dcomplex.h slu_ddefs.h \
 			slu_scomplex.h slu_sdefs.h slu_util.h slu_zdefs.h superlu_enum_consts.h supermatrix.h
+
+if BLAPACK
+
+else
+
+libsuperlu_la_LIBADD = \
+	$(top_builddir)/honei/math/SuperLU_4.1/CBLAS/libsblas.la
+
+endif

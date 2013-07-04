@@ -39,13 +39,12 @@ class DotProductBench :
         {
             DenseVector<DataType_> dv0(_size, DataType_(rand()));
             DenseVector<DataType_> dv1(_size, DataType_(rand()));
-            DataType_ p0;
             for(int i = 0; i < _count; ++i)
             {
                 BENCHMARK(
                         for (unsigned long j(0) ; j < 10 ; ++j)
                         {
-                        p0 = DotProduct<Tag_>::value(dv0, dv1);
+                        DotProduct<Tag_>::value(dv0, dv1);
                         }
 #ifdef HONEI_CUDA
                         if (Tag_::tag_value == tags::tv_gpu_cuda)
@@ -110,7 +109,6 @@ class SparseDotProductBench :
 
         virtual void run()
         {
-            DataType_ p0;
             SparseVector<DataType_> sv(_size, (unsigned long)(_size/10));
             for (typename SparseVector<DataType_>::ElementIterator i(sv.begin_elements()), i_end(sv.end_elements()) ; i != i_end ; ++i)
             {
@@ -122,7 +120,7 @@ class SparseDotProductBench :
             DenseVector<DataType_> dv(_size, DataType_(rand()));
             for(int i = 0; i < _count; ++i)
             {
-                BENCHMARK(p0 = DotProduct<Tag_>::value(sv,dv));
+                BENCHMARK(DotProduct<Tag_>::value(sv,dv));
             }
             BenchmarkInfo info(DotProduct<>::get_benchmark_info(sv, dv));
             evaluate(info);

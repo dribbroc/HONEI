@@ -390,7 +390,6 @@ class SparseVectorNormValueTest :
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
                 SparseVector<DataType_> sv(size, size / 4 + 1);
-                DataType_ smax(0);
                 DataType_ s1(0);
                 DataType_ s2(0);
                 for (typename SparseVector<DataType_>::ElementIterator i(sv.begin_elements()),
@@ -399,7 +398,6 @@ class SparseVectorNormValueTest :
                     if (i.index() % 10 == 0)
                     {
                         *i = DataType_((i.index() + 1) / 1.23456789);
-                        smax = DataType_((i.index() + 1) / 1.23456789);
                         s1 += DataType_((i.index() + 1) / 1.23456789);
                         s2 += DataType_((( i.index() + 1) / 1.23456789) * (( i.index() + 1) / 1.23456789));
                     }
@@ -434,7 +432,6 @@ class SparseVectorNormQuickTest :
         {
             unsigned long size(5);
             SparseVector<DataType_> sv(size, size / 4 + 1);
-            DataType_ smax(0);
             DataType_ s1(0);
             DataType_ s2(0);
             for (typename SparseVector<DataType_>::ElementIterator i(sv.begin_elements()),
@@ -443,7 +440,6 @@ class SparseVectorNormQuickTest :
                 if (i.index() % 10 == 0)
                 {
                     *i = DataType_((i.index() + 1) / 1.23456789);
-                    smax = DataType_((i.index() + 1) / 1.23456789);
                     s1 += DataType_((i.index() + 1) / 1.23456789);
                     s2 += DataType_((( i.index() + 1) / 1.23456789) * (( i.index() + 1) / 1.23456789));
                 }

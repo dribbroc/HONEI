@@ -180,8 +180,6 @@ class PoissonJACKernelCascadeBench :
             //float x_analytical_n = Norm< vnt_l_two, false, Tag_>::value(ref_sol_v);
             DenseVector<float> x(b_v.size(), float(0));
             DenseVector<float> x_last(x.copy());
-            float norm_x_last = float(0);
-            float norm_x = float(1);
             DenseVector<float> diag(b_v.size(), float(0));
             DenseVector<float> diag_inverted(b_v.size(), float(0));
             BandedMatrix<float> difference(A.copy());
@@ -208,8 +206,6 @@ class PoissonJACKernelCascadeBench :
             for(int i(0); i < 100; ++i)
             {
                 BENCHMARK((x = JacobiKernelCascade<Tag_, Quantity_, Q1>::value(b_v, x, diag_inverted, difference, scaled_diag_inverted)));
-                norm_x = Norm<vnt_l_two, false, Tag_>::value(x);
-                norm_x_last = Norm<vnt_l_two, false, Tag_>::value(x_last);
                 x_last = x.copy();
             }
             evaluate();

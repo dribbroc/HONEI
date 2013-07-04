@@ -17,6 +17,10 @@
 * Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifndef __CPU__
+#pragma OPENCL EXTENSION cl_khr_fp64 : enable
+#endif
+
 __kernel void element_product_three_f(__global  float * output,
                                   __global const float * x,
                                   __global const float * y,
@@ -27,7 +31,6 @@ uint tid = get_global_id(0);
     if (tid < size) output[tid] = x[tid] * y[tid];
 }
 
-#pragma OPENCL EXTENSION cl_khr_fp64 : enable
 __kernel void element_product_three_d(__global  double * output,
                                   __global const double * x,
                                   __global const double * y,

@@ -200,10 +200,6 @@ class PoissonBenchmarkMGBandedQ1Fixed:
             //SET DIAG_INVERTED:
             for (unsigned long i(0) ; i <= info.max_level; ++i)
             {
-                unsigned long size((unsigned long)(((unsigned long)pow((DT1_)2, (DT1_)i) + 1) * ((unsigned long)pow((DT1_)2, (DT1_)i) + 1)));
-                if(i == 0)
-                    size = 9;
-
                 DenseVector<DT1_> scaled_diag_inverted(info.a[i].band(DD).copy());
                 ElementInverse<Tag_>::value(scaled_diag_inverted);
                 Scale<Tag_>::value(scaled_diag_inverted, 0.7);

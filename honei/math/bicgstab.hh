@@ -83,8 +83,6 @@ namespace honei
                 //DT_ kappa = 1.0;
                 unsigned long iter = 0;
                 DT_ rho_tilde, rho_tilde_old, alpha_tilde, omega_tilde, beta_tilde, gamma_tilde;
-                DT_ nrm_r_tilde_0, nrm_tilde_00;
-                bool early_exit = 0;
                 bool restarted = false;
                 bool converged = 0;
 
@@ -105,12 +103,10 @@ namespace honei
                     defnorm_0 = Norm<vnt_l_two, false, Tag_>::value(r);
                     defnorm = defnorm_0;
                     Product<Tag_>::value(r_tilde_0, P, r);
-                    nrm_r_tilde_0 = Norm<vnt_l_two, false, Tag_>::value(r_tilde_0);
 
                     if (restarted == false)
                     {
                         defnorm_00 = defnorm_0;
-                        nrm_tilde_00 = nrm_r_tilde_0;
                     }
                     copy<Tag_>(r_tilde_0, r_tilde);
                     copy<Tag_>(r_tilde_0, p_tilde);
@@ -151,7 +147,6 @@ namespace honei
                         {
                             ScaledSum<Tag_>::value(x, p_tilde, alpha_tilde);
 
-                            early_exit = 1;
                             converged = 1;
                             //std::cout << "Breakpoint 3 (converged)" << std::endl;
                             break;
@@ -241,12 +236,10 @@ namespace honei
                 CONTEXT("When smoothing with BiCGStab :");
                 PROFILER_START("BiCGStabSmoother");
 
-                typename VectorType_::DataType defnorm, defnorm_0, defnorm_00(1e14);
+                typename VectorType_::DataType defnorm, defnorm_0;
                 //typename VectorType_::DataType kappa = 1.0;
                 unsigned long iter = 0;
                 typename VectorType_::DataType rho_tilde, rho_tilde_old, alpha_tilde, omega_tilde, beta_tilde, gamma_tilde;
-                typename VectorType_::DataType nrm_r_tilde_0, nrm_tilde_00;
-                bool restarted = false;
 
                 VectorType_ r(temp_vecs.at(0));
                 VectorType_ r_tilde(temp_vecs.at(1));
@@ -266,13 +259,7 @@ namespace honei
                     defnorm_0 = Norm<vnt_l_two, false, Tag_>::value(r);
                     defnorm = defnorm_0;
                     Product<Tag_>::value(r_tilde_0, P, r);
-                    nrm_r_tilde_0 = Norm<vnt_l_two, false, Tag_>::value(r_tilde_0);
 
-                    if (restarted == false)
-                    {
-                        defnorm_00 = defnorm_0;
-                        nrm_tilde_00 = nrm_r_tilde_0;
-                    }
                     copy<Tag_>(r_tilde_0, r_tilde);
                     copy<Tag_>(r_tilde_0, p_tilde);
                     rho_tilde = DotProduct<Tag_>::value(r_tilde_0, r_tilde_0);
@@ -289,7 +276,6 @@ namespace honei
 
                         if (std::abs(gamma_tilde) < std::abs(rho_tilde)*1e-14)
                         {
-                            restarted = true;
                             //std::cout << "Breakpoint 1" << std::endl;
                             break;
                         }
@@ -298,7 +284,6 @@ namespace honei
 
                         if ((std::abs(alpha_tilde) * Norm<vnt_l_two, false, Tag_>::value(v_tilde)) / defnorm < 1e-5)
                         {
-                            restarted = true;;
                             //std::cout << "Breakpoint 2" << std::endl;
                             // \TODO warum ist das break hier nicht aktiv?
                             //break;
@@ -319,7 +304,6 @@ namespace honei
 
                         if (std::abs(gamma_tilde) < std::abs(omega_tilde) * 1e-14)
                         {
-                            restarted = true;
                             //std::cout << "Breakpoint 4" << std::endl;
                             break;
                         }

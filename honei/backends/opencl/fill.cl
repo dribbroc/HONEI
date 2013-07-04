@@ -17,6 +17,10 @@
 * Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifndef __CPU__
+#pragma OPENCL EXTENSION cl_khr_fp64 : enable
+#endif
+
 __kernel void fill_float(__global  float * output,
                                    const     float proto,
                                    const unsigned int size)
@@ -26,7 +30,6 @@ __kernel void fill_float(__global  float * output,
     if (tid < size) output[tid] = proto;
 }
 
-#pragma OPENCL EXTENSION cl_khr_fp64 : enable
 __kernel void fill_double(__global  double * output,
                                    const     double proto,
                                    const unsigned int size)
