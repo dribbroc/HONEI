@@ -2,17 +2,8 @@ AM_CXXFLAGS = -I$(top_srcdir)
 
 MAINTAINERCLEANFILES = Makefile.in
 AUTOMAKE_OPTIONS = foreign dist-bzip2
-EXTRA_DIST = defect.cl \
-	     difference.cl \
-	     dot_product.cl \
-	     element_product.cl \
-	     fill.cl \
-	     norm.cl \
-	     scaled_sum.cl \
-	     scale.cl \
-	     sum.cl \
-	     product.cl
-CLEANFILES = *~
+CLEANFILES = *~ \
+	     *.outcl
 
 DEFS = \
 	$(OPENCLDEF) \
@@ -22,6 +13,15 @@ DEFS = \
 	$(CUDA_DOUBLEDEF) \
 	$(PROFILERDEF) \
 	-DHONEI_SOURCEDIR='"$(abs_top_srcdir)"'
+
+CL_OUT = $(CL_SOURCEN:.cl=.outcl)
+
+all-local: $(CL_OUT)
+
+%.outcl:%.cl oclc
+	@$(top_builddir)/honei/backends/opencl/oclc $<
+	@echo 'Mnemonic for autotools' > $(<:.cl=.outcl)
+
 
 lib_LTLIBRARIES = libhoneibackendsopencl.la
 
@@ -44,10 +44,29 @@ libhoneibackendsopencl_la_SOURCES = defect.cc \
 				    scaled_sum.cc \
 				    sum.cc \
 				    product.cc
+CL_SOURCEN =	                    defect.cl \
+				    difference.cl \
+				    dot_product.cl \
+				    element_product.cl \
+				    fill.cl \
+				    norm.cl \
+				    scaled_sum.cl \
+				    scale.cl \
+				    sum.cl \
+				    product.cl
+
+
 
 
 libhoneibackendsopencl_includedir = $(includedir)/honei/backends/opencl/
 libhoneibackendsopencl_include_HEADERS =  operations.hh opencl_backend.hh opencl_backend-impl.hh
+
+bin_PROGRAMS = oclc
+oclc_SOURCES = oclc.cc
+oclc_LDADD = \
+	$(top_builddir)/honei/util/libhoneiutil.la \
+	-lOpenCL \
+	$(top_builddir)/honei/backends/opencl/libhoneibackendsopencl.la
 
 opencl_backend_TEST_SOURCES = opencl_backend_TEST.cc
 opencl_backend_TEST_LDADD = \

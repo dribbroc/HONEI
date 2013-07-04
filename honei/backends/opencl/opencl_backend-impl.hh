@@ -141,6 +141,10 @@ namespace honei
             clFinish(dcq.command_queue);
             dcq = prepare_device(CL_DEVICE_TYPE_GPU);
             clFinish(dcq.command_queue);
+#ifdef __PPC__
+            dcq = prepare_device(CL_DEVICE_TYPE_ACCELLERATOR);
+            clFinish(dcq.command_queue);
+#endif
         }
 
         cl_kernel add_kernel(std::string file, std::string kernel_name, cl_context context, cl_device_id device)
@@ -153,7 +157,7 @@ namespace honei
             program = clCreateProgramWithSource(context, 1, &source, source_size, &status);
             if (status != CL_SUCCESS)
             {
-                throw InternalError("OpenCL: Error " + stringify(status) + " in clCrateProgramWithSource!");
+                throw InternalError("OpenCL: Error " + stringify(status) + " in clCreateProgramWithSource!");
             }
             std::string cl_flags("-Werror -cl-strict-aliasing -cl-mad-enable -cl-fast-relaxed-math");
 #ifdef HONEI_CUDA_DOUBLE
