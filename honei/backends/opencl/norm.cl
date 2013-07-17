@@ -24,14 +24,14 @@
 #ifdef __CPU__
 __kernel void norm_l2_false_f(__global  float * x,
                                           __global float * tmp,
-                                          const unsigned int size)
+                                          const unsigned long size)
 {
         uint tid = get_global_id(0);
         uint blocksize = get_local_size(0);
 
             // calculate how many elements each thread needs to calculate
-            const unsigned int iter = size / (get_global_size(0));
-            unsigned int pos =  tid * iter;
+            const unsigned long iter = size / (get_global_size(0));
+            unsigned long pos =  tid * iter;
 
             // clear the output
             float temp = 0;
@@ -56,14 +56,14 @@ __kernel void norm_l2_false_f(__global  float * x,
 
 __kernel void norm_l2_false_d(__global  double * x,
                                           __global double * tmp,
-                                          const unsigned int size)
+                                          const unsigned long size)
 {
         uint tid = get_global_id(0);
         uint blocksize = get_local_size(0);
 
             // calculate how many elements each thread needs to calculate
-            const unsigned int iter = size / (get_global_size(0));
-            unsigned int pos =  tid * iter;
+            const unsigned long iter = size / (get_global_size(0));
+            unsigned long pos =  tid * iter;
 
             // clear the output
             double temp = 0;
@@ -88,14 +88,14 @@ __kernel void norm_l2_false_d(__global  double * x,
 #else
 __kernel void norm_l2_false_f(__global  float * x,
                                           __global float * tmp,
-                                          const unsigned int size)
+                                          const unsigned long size)
 {
         uint tid = get_global_id(0);
         uint blocksize = get_local_size(0);
 
             // calculate how many elements each thread needs to calculate
-            const unsigned int iter = size / (get_global_size(0));
-            unsigned int pos =  tid;
+            const unsigned long iter = size / (get_global_size(0));
+            unsigned long pos =  tid;
 
             // clear the output
             float temp = 0;
@@ -116,14 +116,14 @@ __kernel void norm_l2_false_f(__global  float * x,
 
 __kernel void norm_l2_false_d(__global  double * x,
                                           __global double * tmp,
-                                          const unsigned int size)
+                                          const unsigned long size)
 {
         uint tid = get_global_id(0);
         uint blocksize = get_local_size(0);
 
             // calculate how many elements each thread needs to calculate
-            const unsigned int iter = size / (get_global_size(0));
-            unsigned int pos =  tid;
+            const unsigned long iter = size / (get_global_size(0));
+            unsigned long pos =  tid;
 
             // clear the output
             double temp = 0;

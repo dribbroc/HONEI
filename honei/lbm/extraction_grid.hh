@@ -658,6 +658,22 @@ namespace honei
         };
 
     template<>
+        struct ExtractionGrid<tags::OpenCL::CPU, lbm_modes::WET>
+        {
+            public:
+                template <typename DT_>
+                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data, DT_ epsilon);
+        };
+
+    template<>
+        struct ExtractionGrid<tags::OpenCL::GPU, lbm_modes::WET>
+        {
+            public:
+                template <typename DT_>
+                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data, DT_ epsilon);
+        };
+
+    template<>
         struct ExtractionGrid<tags::CPU::SSE, lbm_modes::WET>
         {
             public:

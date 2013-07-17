@@ -77,7 +77,7 @@ class OpenclBackendQuickTest :
 
             float x[10];
             float y[10];
-            cl_uint size = 10;
+            unsigned long size = 10;
             for (unsigned long i(0) ; i < size ; ++i)
             {
                 x[i] = i;
@@ -96,7 +96,7 @@ class OpenclBackendQuickTest :
             clSetKernelArg(kernel, 1, sizeof(cl_mem), (void *)&x_buffer);
             clSetKernelArg(kernel, 2, sizeof(cl_mem), (void *)&y_buffer);
             clSetKernelArg(kernel, 3, sizeof(cl_float), (void *)&b);
-            clSetKernelArg(kernel, 4, sizeof(cl_uint), (void *)&size);
+            clSetKernelArg(kernel, 4, sizeof(unsigned long), (void *)&size);
 
             size_t threads = size;
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);

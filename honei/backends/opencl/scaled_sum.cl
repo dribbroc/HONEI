@@ -21,7 +21,7 @@ __kernel void scaled_sum_three_s_f(__global  float * output,
                                    __global  float * x,
                                    __global  float * y,
                                    const     float multiplier,
-                                   const unsigned int size)
+                                   const unsigned long size)
 {
     uint tid = get_global_id(0);
 
@@ -31,7 +31,7 @@ __kernel void scaled_sum_three_s_f(__global  float * output,
 __kernel void scaled_sum_three_f(__global  float * output,
                                    __global  float * x,
                                    __global  float * y,
-                                   const unsigned int size)
+                                   const unsigned long size)
 {
     uint tid = get_global_id(0);
 
@@ -45,7 +45,7 @@ __kernel void scaled_sum_three_s_d(__global  double * output,
                                    __global  double * x,
                                    __global  double * y,
                                    const     double multiplier,
-                                   const unsigned int size)
+                                   const unsigned long size)
 {
     uint tid = get_global_id(0);
 
@@ -55,7 +55,7 @@ __kernel void scaled_sum_three_s_d(__global  double * output,
 __kernel void scaled_sum_three_d(__global  double * output,
                                    __global  double * x,
                                    __global  double * y,
-                                   const unsigned int size)
+                                   const unsigned long size)
 {
     uint tid = get_global_id(0);
 

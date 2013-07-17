@@ -144,3 +144,9 @@ ExtractionGridTest<tags::GPU::CUDA, double> cuda_extraction_grid_test_double("do
 #ifdef HONEI_CELL
 ExtractionGridTest<tags::Cell, float> cell_extraction_grid_test_float("float");
 #endif
+#ifdef HONEI_OPENCL
+ExtractionGridTest<tags::OpenCL::CPU, float> opencl_cpu_extraction_grid_test_float("float");
+ExtractionGridTest<tags::OpenCL::CPU, double> opencl_cpu_extraction_grid_test_double("double");
+ExtractionGridTest<tags::OpenCL::GPU, float> opencl_gpu_extraction_grid_test_float("float");
+ExtractionGridTest<tags::OpenCL::GPU, double> opencl_gpu_extraction_grid_test_double("double");
+#endif

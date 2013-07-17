@@ -44,7 +44,7 @@ namespace honei
             kernel = OpenCLBackend::instance()->create_kernel(filename, function, context, device);
             clSetKernelArg(kernel, 0, sizeof(cl_mem), &x);
             clSetKernelArg(kernel, 1, sizeof(DT_), (void *)&b);
-            clSetKernelArg(kernel, 2, sizeof(cl_uint), (void *)&size);
+            clSetKernelArg(kernel, 2, sizeof(unsigned long), (void *)&size);
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
         }

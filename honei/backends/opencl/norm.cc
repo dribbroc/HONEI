@@ -51,7 +51,7 @@ namespace honei
             tmp_device = OpenCLBackend::instance()->create_empty_buffer(threads*sizeof(DT_), dcq.context);
             clSetKernelArg(kernel, 0, sizeof(cl_mem), &x);
             clSetKernelArg(kernel, 1, sizeof(cl_mem), &tmp_device);
-            clSetKernelArg(kernel, 2, sizeof(cl_uint), (void *)&size);
+            clSetKernelArg(kernel, 2, sizeof(unsigned long), (void *)&size);
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, &blocksize, 0, NULL, NULL);
             clEnqueueReadBuffer(dcq.command_queue, tmp_device, CL_TRUE, 0, threads*sizeof(DT_), (void*)tmp_cpu, 0, NULL, NULL);

@@ -23,7 +23,7 @@
 
 __kernel void scale_f(__global  float * output,
                                    const     float multiplier,
-                                   const unsigned int size)
+                                   const unsigned long size)
 {
     uint tid = get_global_id(0);
 
@@ -32,7 +32,7 @@ __kernel void scale_f(__global  float * output,
 
 __kernel void scale_d(__global  double * output,
                                    const     double multiplier,
-                                   const unsigned int size)
+                                   const unsigned long size)
 {
     uint tid = get_global_id(0);
 

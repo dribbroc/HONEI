@@ -7,6 +7,7 @@ define(`filelist', `')dnl
 define(`celllist', `')dnl
 define(`headerlist', `')dnl
 define(`sselist', `')dnl
+define(`opencllist', `')dnl
 define(`itaniumlist', `')dnl
 define(`cudalist', `')dnl
 define(`mclist', `')dnl
@@ -28,6 +29,7 @@ define(`addcell', `define(`celllist', celllist `$1-cell.cc')')dnl
 define(`addsse', `define(`sselist', sselist `$1-sse.cc')')dnl
 define(`additanium', `define(`itaniumlist', itaniumlist `$1-itanium.cc')')dnl
 define(`addcuda', `define(`cudalist', cudalist `$1-cuda.cc')')dnl
+define(`addopencl', `define(`opencllist', opencllist `$1-opencl.cc')')dnl
 define(`addmc', `define(`filelist', filelist `$1-mc.cc')')dnl
 define(`addthis', `dnl
 ifelse(`$2', `hh', `addhh(`$1')', `')dnl
@@ -37,10 +39,11 @@ ifelse(`$2', `cell', `addcell(`$1')', `')dnl
 ifelse(`$2', `sse', `addsse(`$1')', `')dnl
 ifelse(`$2', `itanium', `additanium(`$1')', `')dnl
 ifelse(`$2', `cuda', `addcuda(`$1')', `')dnl
+ifelse(`$2', `opencl', `addopencl(`$1')', `')dnl
 ifelse(`$2', `mc', `addmc(`$1')', `')dnl
 ifelse(`$2', `test', `addtest(`$1')', `')dnl
 ')dnl
-define(`add', `addthis(`$1',`$2')addthis(`$1',`$3')addthis(`$1',`$4')addthis(`$1',`$5')addthis(`$1',`$6')addthis(`$1',`$7')addthis(`$1',`$8')addthis(`$1',`$9')')dnl
+define(`add', `addthis(`$1',`$2')addthis(`$1',`$3')addthis(`$1',`$4')addthis(`$1',`$5')addthis(`$1',`$6')addthis(`$1',`$7')addthis(`$1',`$8')addthis(`$1',`$9')addthis(`$1',`$10')')dnl
 
 include(`honei/lbm/files.m4')
 
@@ -111,11 +114,11 @@ DEFS = \
 
 lib_LTLIBRARIES = libhoneilbm.la
 
-libhoneilbm_la_SOURCES = filelist $(CELLFILES) $(SSEFILES) $(ITANIUMFILES) $(CUDAFILES)
+libhoneilbm_la_SOURCES = filelist $(CELLFILES) $(SSEFILES) $(ITANIUMFILES) $(CUDAFILES) $(OPENCLFILES)
 libhoneilbm_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	$(top_builddir)/honei/la/libhoneila.la \
-	$(CELLLIB)
+	$(BACKEND_LIBS)
 
 libhoneilbm_includedir = $(includedir)/honei/lbm
 libhoneilbm_include_HEADERS = headerlist

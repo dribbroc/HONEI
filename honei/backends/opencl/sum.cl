@@ -24,7 +24,7 @@
 __kernel void sum_three_f(__global  float * output,
                                   __global const float * x,
                                   __global const float * y,
-                                  const unsigned int size)
+                                  const unsigned long size)
 {
 uint tid = get_global_id(0);
 
@@ -34,7 +34,7 @@ uint tid = get_global_id(0);
 __kernel void sum_three_d(__global  double * output,
                                   __global const double * x,
                                   __global const double * y,
-                                  const unsigned int size)
+                                  const unsigned long size)
 {
 uint tid = get_global_id(0);
 

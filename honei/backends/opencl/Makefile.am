@@ -19,7 +19,7 @@ CL_OUT = $(CL_SOURCEN:.cl=.outcl)
 all-local: $(CL_OUT)
 check-local: $(CL_OUT)
 
-%.outcl:%.cl oclc
+%.outcl:%.cl oclc libhoneibackendsopencl.la
 	@$(top_builddir)/honei/backends/opencl/oclc $<
 	@echo 'Mnemonic for autotools' > $(<:.cl=.outcl)
 
@@ -34,6 +34,7 @@ libhoneibackendsopencl_la_SOURCES = defect.cc \
 				    difference.cc \
 				    dot_product.cc \
 				    element_product.cc \
+				    extraction_grid.cc \
 				    fill.cc \
 				    norm.cc \
 				    operations.hh \
@@ -49,6 +50,7 @@ CL_SOURCEN =	                    defect.cl \
 				    difference.cl \
 				    dot_product.cl \
 				    element_product.cl \
+				    extraction_grid.cl \
 				    fill.cl \
 				    norm.cl \
 				    scaled_sum.cl \

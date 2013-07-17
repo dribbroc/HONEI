@@ -44,7 +44,7 @@ namespace honei
             clSetKernelArg(kernel, 0, sizeof(cl_mem), &r);
             clSetKernelArg(kernel, 1, sizeof(cl_mem), &x);
             clSetKernelArg(kernel, 2, sizeof(cl_mem), &y);
-            clSetKernelArg(kernel, 3, sizeof(cl_uint), (void *)&size);
+            clSetKernelArg(kernel, 3, sizeof(unsigned long), (void *)&size);
 
             clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &threads, NULL, 0, NULL, NULL);
         }
