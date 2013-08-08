@@ -34,6 +34,7 @@ libhoneibackendsopencl_la_SOURCES = defect.cc \
 				    difference.cc \
 				    dot_product.cc \
 				    element_product.cc \
+				    eq_dist_grid.cc \
 				    extraction_grid.cc \
 				    fill.cc \
 				    norm.cc \
@@ -50,6 +51,7 @@ CL_SOURCEN =	                    defect.cl \
 				    difference.cl \
 				    dot_product.cl \
 				    element_product.cl \
+				    eq_dist_grid.cl \
 				    extraction_grid.cl \
 				    fill.cl \
 				    norm.cl \
