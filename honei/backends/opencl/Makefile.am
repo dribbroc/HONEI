@@ -47,7 +47,8 @@ libhoneibackendsopencl_la_SOURCES = collide_stream_grid.cc \
 				    scale.cc \
 				    scaled_sum.cc \
 				    sum.cc \
-				    product.cc
+				    product.cc \
+				    update_velocity_directions_grid.cc
 CL_SOURCEN =	                    collide_stream_grid.cl \
 				    defect.cl \
 				    difference.cl \
@@ -60,7 +61,8 @@ CL_SOURCEN =	                    collide_stream_grid.cl \
 				    scaled_sum.cl \
 				    scale.cl \
 				    sum.cl \
-				    product.cl
+				    product.cl \
+				    update_velocity_directions_grid.cl
 
 
 

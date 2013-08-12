@@ -131,7 +131,7 @@ namespace honei
                 _e = _delta_x / _delta_t;
                 _e_squared = _e * _e;
 
-                if (Tag_::tag_value == tags::tv_gpu_cuda)
+                if (Tag_::tag_value == tags::tv_gpu_cuda || Tag_::tag_value == tags::tv_opencl)
                 {
                     GridPacker<D2Q9, lbm_boundary_types::NOSLIP, ResPrec_>::cuda_pack(*_info, *_data);
                 }
