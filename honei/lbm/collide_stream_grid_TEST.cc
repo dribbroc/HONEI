@@ -122,3 +122,9 @@ CollideStreamGridLABSWETest<tags::GPU::CUDA, double> cuda_collidestream_grid_tes
 #ifdef HONEI_CELL
 CollideStreamGridLABSWETest<tags::Cell, float> cell_collidestream_grid_test_float("float");
 #endif
+#ifdef HONEI_OPENCL
+CollideStreamGridLABSWETest<tags::OpenCL::CPU, float> ocl_cpu_collidestream_grid_test_float("float");
+CollideStreamGridLABSWETest<tags::OpenCL::CPU, double> ocl_cpu_collidestream_grid_test_double("double");
+CollideStreamGridLABSWETest<tags::OpenCL::GPU, float> ocl_gpu_collidestream_grid_test_float("float");
+CollideStreamGridLABSWETest<tags::OpenCL::GPU, double> ocl_gpu_collidestream_grid_test_double("double");
+#endif

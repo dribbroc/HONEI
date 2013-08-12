@@ -11,7 +11,7 @@ dnl on this file at present...
 add(`boundary_init_fsi',               `hh', `test', `cuda')
 add(`bitmap_io',                       `hh', `test')
 add(`collide_stream',                  `hh', `test')
-add(`collide_stream_grid',             `hh', `sse', `cuda', `cell', `itanium', `test')
+add(`collide_stream_grid',             `hh', `sse', `cuda', `cell', `itanium', `opencl', `test')
 add(`collide_stream_fsi',              `hh', `test', `cuda')
 add(`collide_stream_grid_regression',        `test')
 add(`dc_advanced',                           `test')

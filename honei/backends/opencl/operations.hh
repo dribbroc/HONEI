@@ -90,6 +90,22 @@ namespace honei
                 void * h, void * u, void * v,
                 void * distribution_x, void * distribution_y, DT_ g, DT_ e,
                 cl_device_type type, std::string function);
+
+        template <typename DT_>
+        void collide_stream_grid(unsigned long start, unsigned long end,
+                void * dir_1, void * dir_2, void * dir_3, void * dir_4,
+                void * dir_5, void * dir_6, void * dir_7, void * dir_8,
+                void * f_eq_0, void * f_eq_1, void * f_eq_2,
+                void * f_eq_3, void * f_eq_4, void * f_eq_5,
+                void * f_eq_6, void * f_eq_7, void * f_eq_8,
+                void * f_0, void * f_1, void * f_2,
+                void * f_3, void * f_4, void * f_5,
+                void * f_6, void * f_7, void * f_8,
+                void * f_temp_0, void * f_temp_1, void * f_temp_2,
+                void * f_temp_3, void * f_temp_4, void * f_temp_5,
+                void * f_temp_6, void * f_temp_7, void * f_temp_8,
+                DT_ tau, unsigned long size,
+                cl_device_type type, std::string function);
     }
 }
 #endif

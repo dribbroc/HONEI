@@ -30,7 +30,8 @@ libhoneibackendsopencl_la_LIBADD = \
 	$(top_builddir)/honei/util/libhoneiutil.la \
 	-lOpenCL
 
-libhoneibackendsopencl_la_SOURCES = defect.cc \
+libhoneibackendsopencl_la_SOURCES = collide_stream_grid.cc \
+				    defect.cc \
 				    difference.cc \
 				    dot_product.cc \
 				    element_product.cc \
@@ -47,7 +48,8 @@ libhoneibackendsopencl_la_SOURCES = defect.cc \
 				    scaled_sum.cc \
 				    sum.cc \
 				    product.cc
-CL_SOURCEN =	                    defect.cl \
+CL_SOURCEN =	                    collide_stream_grid.cl \
+				    defect.cl \
 				    difference.cl \
 				    dot_product.cl \
 				    element_product.cl \

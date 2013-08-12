@@ -491,6 +491,26 @@ namespace honei
     };
 
     template <>
+    struct CollideStreamGrid<tags::OpenCL::CPU, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>
+    {
+        template <typename DT_>
+        static void value(
+                PackedGridInfo<lbm_lattice_types::D2Q9> & info,
+                PackedGridData<lbm_lattice_types::D2Q9, DT_> & data,
+                DT_ tau);
+    };
+
+    template <>
+    struct CollideStreamGrid<tags::OpenCL::GPU, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>
+    {
+        template <typename DT_>
+        static void value(
+                PackedGridInfo<lbm_lattice_types::D2Q9> & info,
+                PackedGridData<lbm_lattice_types::D2Q9, DT_> & data,
+                DT_ tau);
+    };
+
+    template <>
     struct CollideStreamGrid<tags::CPU::SSE, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>
     {
         template <typename DT1_>
