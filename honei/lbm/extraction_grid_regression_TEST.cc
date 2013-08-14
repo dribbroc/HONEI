@@ -155,6 +155,12 @@ ExtractionGridRegressionTest<tags::GPU::CUDA, double, lbm_modes::DRY> cuda_solve
 #ifdef HONEI_CELL
 ExtractionGridRegressionTest<tags::Cell, float, lbm_modes::DRY> cell_solver_multi_test_float_dry("float dry");
 #endif
+#ifdef HONEI_OPENCL
+ExtractionGridRegressionTest<tags::OpenCL::CPU, float, lbm_modes::DRY> ocl_cpu_solver_multi_test_float_dry("float dry");
+ExtractionGridRegressionTest<tags::OpenCL::CPU, double, lbm_modes::DRY> ocl_cpu_solver_multi_test_double_dry("double dry");
+ExtractionGridRegressionTest<tags::OpenCL::GPU, float, lbm_modes::DRY> ocl_gpu_solver_multi_test_float_dry("float dry");
+ExtractionGridRegressionTest<tags::OpenCL::GPU, double, lbm_modes::DRY> ocl_gpu_solver_multi_test_double_dry("double dry");
+#endif
 
 #ifdef HONEI_SSE
 ExtractionGridRegressionTest<tags::CPU::Generic, float, lbm_modes::WET> generic_solver_multi_test_float_wet("float wet");

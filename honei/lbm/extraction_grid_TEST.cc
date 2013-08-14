@@ -26,7 +26,7 @@ using namespace honei;
 using namespace tests;
 using namespace std;
 
-template <typename Tag_, typename DataType_>
+template <typename Tag_, typename DataType_, typename ExtType_>
 class ExtractionGridTest :
     public TaggedTest<Tag_>
 {
@@ -70,7 +70,7 @@ class ExtractionGridTest :
             data.f_7 = new DenseVector<DataType_>(1000, DataType_(1.234));
             data.f_8 = new DenseVector<DataType_>(1000, DataType_(1.234));
 
-            ExtractionGrid<Tag_, lbm_modes::WET>::value(info, data, DataType_(1));
+            ExtractionGrid<Tag_, ExtType_>::value(info, data, DataType_(1));
 
 
             DenseVector<DataType_> calc_h (data.h->copy());
@@ -127,26 +127,26 @@ class ExtractionGridTest :
 
         }
 };
-ExtractionGridTest<tags::CPU, float> extraction_grid_test_float("float");
-ExtractionGridTest<tags::CPU, double> extraction_grid_test_double("double");
-ExtractionGridTest<tags::CPU::Generic, float> generic_extraction_grid_test_float("float");
-ExtractionGridTest<tags::CPU::Generic, double> generic_extraction_grid_test_double("double");
+ExtractionGridTest<tags::CPU, float, lbm_modes::WET> extraction_grid_test_float_wet("float wet");
+ExtractionGridTest<tags::CPU, double, lbm_modes::WET> extraction_grid_test_double_wet("double wet");
+ExtractionGridTest<tags::CPU::Generic, float, lbm_modes::WET> generic_extraction_grid_test_float_wet("float wet");
+ExtractionGridTest<tags::CPU::Generic, double, lbm_modes::WET> generic_extraction_grid_test_double_wet("double wet");
 #ifdef HONEI_SSE
-ExtractionGridTest<tags::CPU::SSE, float> sse_extraction_grid_test_float("float");
-ExtractionGridTest<tags::CPU::SSE, double> sse_extraction_grid_test_double("double");
+ExtractionGridTest<tags::CPU::SSE, float, lbm_modes::WET> sse_extraction_grid_test_float_wet("float wet");
+ExtractionGridTest<tags::CPU::SSE, double, lbm_modes::WET> sse_extraction_grid_test_double_wet("double wet");
 #endif
 #ifdef HONEI_CUDA
-ExtractionGridTest<tags::GPU::CUDA, float> cuda_extraction_grid_test_float("float");
+ExtractionGridTest<tags::GPU::CUDA, float, lbm_modes::WET> cuda_extraction_grid_test_float_wet("float wet");
 #ifdef HONEI_CUDA_DOUBLE
-ExtractionGridTest<tags::GPU::CUDA, double> cuda_extraction_grid_test_double("double");
+ExtractionGridTest<tags::GPU::CUDA, double, lbm_modes::WET> cuda_extraction_grid_test_double_wet("double wet");
 #endif
 #endif
 #ifdef HONEI_CELL
-ExtractionGridTest<tags::Cell, float> cell_extraction_grid_test_float("float");
+ExtractionGridTest<tags::Cell, float, lbm_modes::WET> cell_extraction_grid_test_float_wet("float wet");
 #endif
 #ifdef HONEI_OPENCL
-ExtractionGridTest<tags::OpenCL::CPU, float> opencl_cpu_extraction_grid_test_float("float");
-ExtractionGridTest<tags::OpenCL::CPU, double> opencl_cpu_extraction_grid_test_double("double");
-ExtractionGridTest<tags::OpenCL::GPU, float> opencl_gpu_extraction_grid_test_float("float");
-ExtractionGridTest<tags::OpenCL::GPU, double> opencl_gpu_extraction_grid_test_double("double");
+ExtractionGridTest<tags::OpenCL::CPU, float, lbm_modes::WET> opencl_cpu_extraction_grid_test_float_wet("float wet");
+ExtractionGridTest<tags::OpenCL::CPU, double, lbm_modes::WET> opencl_cpu_extraction_grid_test_double_wet("double wet");
+ExtractionGridTest<tags::OpenCL::GPU, float, lbm_modes::WET> opencl_gpu_extraction_grid_test_float_wet("float wet");
+ExtractionGridTest<tags::OpenCL::GPU, double, lbm_modes::WET> opencl_gpu_extraction_grid_test_double_wet("double wet");
 #endif
