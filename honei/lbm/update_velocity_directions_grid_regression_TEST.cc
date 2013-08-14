@@ -74,7 +74,7 @@ class UpateVelocityDirectionsGridRegressionTest :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, 0.01, 0.01, 0.005, 1.1);
+            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info, &data, 0.01, 0.01, 0.005, 1.1);
 
             solver.do_preprocessing();
             solver.solve();
@@ -112,7 +112,7 @@ class UpateVelocityDirectionsGridRegressionTest :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_standard, info_standard, data_standard);
 
-            SolverLBMGrid<tags::CPU, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver_standard(&info_standard, &data_standard, 0.01, 0.01, 0.005, 1.1);
+            SolverLBMGrid<tags::CPU, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver_standard(&info_standard, &data_standard, 0.01, 0.01, 0.005, 1.1);
 
             solver_standard.do_preprocessing();
             solver_standard.solve();
@@ -174,4 +174,10 @@ UpateVelocityDirectionsGridRegressionTest<tags::GPU::CUDA, double> cuda_solver_m
 #endif
 #ifdef HONEI_CELL
 UpateVelocityDirectionsGridRegressionTest<tags::Cell, float> cell_solver_multi_test_float("float");
+#endif
+#ifdef HONEI_OPENCL
+UpateVelocityDirectionsGridRegressionTest<tags::OpenCL::CPU, float> ocl_cpu_solver_multi_test_float("float");
+UpateVelocityDirectionsGridRegressionTest<tags::OpenCL::CPU, double> ocl_cpu_solver_multi_test_double("double");
+UpateVelocityDirectionsGridRegressionTest<tags::OpenCL::GPU, float> ocl_gpu_solver_multi_test_float("float");
+UpateVelocityDirectionsGridRegressionTest<tags::OpenCL::GPU, double> ocl_gpu_solver_multi_test_double("double");
 #endif

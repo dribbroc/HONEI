@@ -32,7 +32,7 @@ using namespace lbm::lbm_lattice_types;
 
 //#define SOLVER_VERBOSE 1
 
-template <typename Tag_, typename DataType_>
+template <typename Tag_, typename DataType_, typename ExtType_>
 class ExtractionGridRegressionTest :
     public TaggedTest<Tag_>
 {
@@ -74,12 +74,12 @@ class ExtractionGridRegressionTest :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, 0.01, 0.01, 0.005, 1.1);
+            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, ExtType_> solver(&info, &data, 0.01, 0.01, 0.005, 1.1);
 
             solver.do_preprocessing();
             solver.solve();
 
-            ExtractionGrid<Tag_, lbm_modes::DRY>::value(info, data, DataType_(10e-5));
+            ExtractionGrid<Tag_, ExtType_>::value(info, data, DataType_(10e-5));
 
             //Standard solver using tags::CPU:
             unsigned long g_h_standard(50);
@@ -112,12 +112,12 @@ class ExtractionGridRegressionTest :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_standard, info_standard, data_standard);
 
-            SolverLBMGrid<tags::CPU, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver_standard(&info_standard, &data_standard, 0.01, 0.01, 0.005, 1.1);
+            SolverLBMGrid<tags::CPU, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, ExtType_> solver_standard(&info_standard, &data_standard, 0.01, 0.01, 0.005, 1.1);
 
             solver_standard.do_preprocessing();
             solver_standard.solve();
 
-            ExtractionGrid<tags::CPU, lbm_modes::DRY>::value(info_standard, data_standard, DataType_(10e-5));
+            ExtractionGrid<tags::CPU, ExtType_>::value(info_standard, data_standard, DataType_(10e-5));
 
 
             //Compare results of both solvers:
@@ -143,15 +143,35 @@ class ExtractionGridRegressionTest :
         }
 };
 #ifdef HONEI_SSE
-ExtractionGridRegressionTest<tags::CPU::Generic, float> generic_solver_multi_test_float("float");
-ExtractionGridRegressionTest<tags::CPU::Generic, double> generic_solver_multi_test_double("double");
+ExtractionGridRegressionTest<tags::CPU::Generic, float, lbm_modes::DRY> generic_solver_multi_test_float_dry("float dry");
+ExtractionGridRegressionTest<tags::CPU::Generic, double, lbm_modes::DRY> generic_solver_multi_test_double_dry("double dry");
 #endif
 #ifdef HONEI_CUDA
-ExtractionGridRegressionTest<tags::GPU::CUDA, float> cuda_solver_multi_test_float("float");
+ExtractionGridRegressionTest<tags::GPU::CUDA, float, lbm_modes::DRY> cuda_solver_multi_test_float_dry("float dry");
 #ifdef HONEI_CUDA_DOUBLE
-ExtractionGridRegressionTest<tags::GPU::CUDA, double> cuda_solver_multi_test_double("double");
+ExtractionGridRegressionTest<tags::GPU::CUDA, double, lbm_modes::DRY> cuda_solver_multi_test_double_dry("double dry");
 #endif
 #endif
 #ifdef HONEI_CELL
-ExtractionGridRegressionTest<tags::Cell, float> cell_solver_multi_test_float("float");
+ExtractionGridRegressionTest<tags::Cell, float, lbm_modes::DRY> cell_solver_multi_test_float_dry("float dry");
+#endif
+
+#ifdef HONEI_SSE
+ExtractionGridRegressionTest<tags::CPU::Generic, float, lbm_modes::WET> generic_solver_multi_test_float_wet("float wet");
+ExtractionGridRegressionTest<tags::CPU::Generic, double, lbm_modes::WET> generic_solver_multi_test_double_wet("double wet");
+#endif
+#ifdef HONEI_CUDA
+ExtractionGridRegressionTest<tags::GPU::CUDA, float, lbm_modes::WET> cuda_solver_multi_test_float_wet("float wet");
+#ifdef HONEI_CUDA_DOUBLE
+ExtractionGridRegressionTest<tags::GPU::CUDA, double, lbm_modes::WET> cuda_solver_multi_test_double_wet("double wet");
+#endif
+#endif
+#ifdef HONEI_CELL
+ExtractionGridRegressionTest<tags::Cell, float, lbm_modes::WET> cell_solver_multi_test_float_wet("float wet");
+#endif
+#ifdef HONEI_OPENCL
+ExtractionGridRegressionTest<tags::OpenCL::CPU, float, lbm_modes::WET> ocl_cpu_solver_multi_test_float_wet("float wet");
+ExtractionGridRegressionTest<tags::OpenCL::CPU, double, lbm_modes::WET> ocl_cpu_solver_multi_test_double_wet("double wet");
+ExtractionGridRegressionTest<tags::OpenCL::GPU, float, lbm_modes::WET> ocl_gpu_solver_multi_test_float_wet("float wet");
+ExtractionGridRegressionTest<tags::OpenCL::GPU, double, lbm_modes::WET> ocl_gpu_solver_multi_test_double_wet("double wet");
 #endif

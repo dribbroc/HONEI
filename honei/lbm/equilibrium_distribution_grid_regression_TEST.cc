@@ -74,7 +74,7 @@ class EquilibriumDistributionGridRegressionTest :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, 0.01, 0.01, 0.005, 1.1);
+            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver(&info, &data, 0.01, 0.01, 0.005, 1.1);
 
             solver.do_preprocessing();
             solver.solve();
@@ -112,7 +112,7 @@ class EquilibriumDistributionGridRegressionTest :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid_standard, info_standard, data_standard);
 
-            SolverLBMGrid<tags::CPU, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver_standard(&info_standard, &data_standard, 0.01, 0.01, 0.005, 1.1);
+            SolverLBMGrid<tags::CPU, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::WET> solver_standard(&info_standard, &data_standard, 0.01, 0.01, 0.005, 1.1);
 
             solver_standard.do_preprocessing();
             solver_standard.solve();
@@ -160,15 +160,24 @@ class EquilibriumDistributionGridRegressionTest :
             data_standard.destroy();
         }
 };
-EquilibriumDistributionGridRegressionTest<tags::CPU::Generic, float> generic_solver_multi_test_float("float");
-EquilibriumDistributionGridRegressionTest<tags::CPU::Generic, double> generic_solver_multi_test_double("double");
+EquilibriumDistributionGridRegressionTest<tags::CPU::Generic, float> generic_solver_regression_test_float("float");
+EquilibriumDistributionGridRegressionTest<tags::CPU::Generic, double> generic_solver_regression_test_double("double");
 #ifdef HONEI_SSE
-EquilibriumDistributionGridRegressionTest<tags::CPU::SSE, float> sse_solver_multi_test_float("float");
-EquilibriumDistributionGridRegressionTest<tags::CPU::SSE, double> sse_solver_multi_test_double("double");
+EquilibriumDistributionGridRegressionTest<tags::CPU::SSE, float> sse_solver_regression_test_float("float");
+EquilibriumDistributionGridRegressionTest<tags::CPU::SSE, double> sse_solver_regression_test_double("double");
 #endif
 #ifdef HONEI_CUDA
-EquilibriumDistributionGridRegressionTest<tags::GPU::CUDA, float> cuda_solver_multi_test_float("float");
+EquilibriumDistributionGridRegressionTest<tags::GPU::CUDA, float> cuda_solver_regression_test_float("float");
+#ifdef HONEI_CUDA_DOUBLE
+EquilibriumDistributionGridRegressionTest<tags::GPU::CUDA, double> cuda_solver_regression_test_double("double");
+#endif
 #endif
 #ifdef HONEI_CELL
-EquilibriumDistributionGridRegressionTest<tags::Cell, float> cell_solver_multi_test_float("float");
+EquilibriumDistributionGridRegressionTest<tags::Cell, float> cell_solver_regression_test_float("float");
+#endif
+#ifdef HONEI_OPENCL
+EquilibriumDistributionGridRegressionTest<tags::OpenCL::CPU, float> ocl_cpu_solver_regression_test_float("float");
+EquilibriumDistributionGridRegressionTest<tags::OpenCL::CPU, double> ocl_cpu_solver_regression_test_double("double");
+EquilibriumDistributionGridRegressionTest<tags::OpenCL::GPU, float> ocl_gpu_solver_regression_test_float("float");
+EquilibriumDistributionGridRegressionTest<tags::OpenCL::GPU, double> ocl_gpu_solver_regression_test_double("double");
 #endif
