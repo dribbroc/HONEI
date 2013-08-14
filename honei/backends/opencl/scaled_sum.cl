@@ -38,7 +38,7 @@ __kernel void scaled_sum_three_f(__global  float * output,
     if (tid < size) output[tid] = output[tid] + x[tid] * y[tid];
 }
 
-#ifndef __CPU__
+#ifdef HONEI_OPENCL_GPU
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
 #endif
 __kernel void scaled_sum_three_s_d(__global  double * output,

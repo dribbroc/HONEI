@@ -160,9 +160,16 @@ namespace honei
                 throw InternalError("OpenCL: Error " + stringify(status) + " in clCreateProgramWithSource!");
             }
             std::string cl_flags("-Werror -cl-strict-aliasing -cl-mad-enable -cl-fast-relaxed-math");
-#ifdef HONEI_CUDA_DOUBLE
-            cl_flags += " -D HONEI_CUDA_DOUBLE";
-#endif
+
+            cl_device_type type;
+            clGetDeviceInfo(device, CL_DEVICE_TYPE, sizeof(cl_device_type), &type, NULL);
+            if (type == CL_DEVICE_TYPE_CPU)
+                cl_flags += " -DHONEI_OPENCL_CPU";
+            else if (type == CL_DEVICE_TYPE_GPU)
+                cl_flags += " -DHONEI_CUDA_DOUBLE -DHONEI_OPENCL_GPU";
+            else if (type == CL_DEVICE_TYPE_ACCELERATOR)
+                cl_flags += " -DHONEI_OPENCL_ACCELERATOR";
+
             status = clBuildProgram(program, 1, &device, cl_flags.c_str(), NULL, NULL);
             if (status != CL_SUCCESS)
             {

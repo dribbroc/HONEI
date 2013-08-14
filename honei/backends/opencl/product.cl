@@ -17,7 +17,7 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __CPU__
+#ifdef HONEI_OPENCL_GPU
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
 #endif
 
