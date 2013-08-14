@@ -29,6 +29,9 @@
 #include <honei/swe/volume.hh>
 #include <honei/math/quadrature.hh>
 #include <honei/backends/cuda/operations.hh>
+#ifdef HONEI_OPENCL
+#include <honei/backends/opencl/opencl_backend.hh>
+#endif
 
 using namespace std;
 using namespace honei;
@@ -99,6 +102,10 @@ class EquilibriumDistributionGridBench :
                         if (Tag_::tag_value == tags::tv_gpu_cuda)
                             cuda::GPUPool::instance()->flush();
 #endif
+#ifdef HONEI_OPENCL
+                        if (Tag_::tag_value == tags::tv_opencl)
+                            opencl::OpenCLBackend::instance()->flush();
+#endif
                         );
             }
             BenchmarkInfo benchinfo(EquilibriumDistributionGrid<tags::CPU, lbm_applications::LABSWE>::get_benchmark_info(&info, &data));
@@ -121,4 +128,9 @@ EquilibriumDistributionGridBench<tags::CPU::Itanium, double> sse_eq_dist_grid_be
 
 #ifdef HONEI_CUDA
 EquilibriumDistributionGridBench<tags::GPU::CUDA, float> cuda_eq_dist_grid_bench_float("CUDA EquilibriumDistributionGridBenchmark - size: 2000, float", 2000, 10);
+#endif
+
+#ifdef HONEI_OPENCL
+EquilibriumDistributionGridBench<tags::OpenCL::CPU, float> ocl_cpu_eq_dist_grid_bench_float("OpenCL CPU EquilibriumDistributionGridBenchmark - size: 2000, float", 2000, 10);
+EquilibriumDistributionGridBench<tags::OpenCL::GPU, float> ocl_gpu_eq_dist_grid_bench_float("OpenCL GPU EquilibriumDistributionGridBenchmark - size: 2000, float", 2000, 10);
 #endif

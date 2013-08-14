@@ -29,6 +29,9 @@
 #include <honei/swe/volume.hh>
 #include <honei/math/quadrature.hh>
 #include <honei/backends/cuda/operations.hh>
+#ifdef HONEI_OPENCL
+#include <honei/backends/opencl/opencl_backend.hh>
+#endif
 
 using namespace std;
 using namespace honei;
@@ -81,7 +84,7 @@ class ExtractionGridBench :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_> solver(&info, &data, 1., 1., 1., 1.5);
+            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, LbmMode_> solver(&info, &data, 1., 1., 1., 1.5);
 
             solver.do_preprocessing();
 
@@ -95,6 +98,10 @@ class ExtractionGridBench :
 #ifdef HONEI_CUDA
                         if (Tag_::tag_value == tags::tv_gpu_cuda)
                             cuda::GPUPool::instance()->flush();
+#endif
+#ifdef HONEI_OPENCL
+                        if (Tag_::tag_value == tags::tv_opencl)
+                            opencl::OpenCLBackend::instance()->flush();
 #endif
                         );
             }
@@ -116,6 +123,10 @@ ExtractionGridBench<tags::GPU::CUDA, float, lbm_modes::WET> cuda_wet_extraction_
 #ifdef HONEI_ITANIUM
 ExtractionGridBench<tags::CPU::Itanium, float, lbm_modes::WET> sse_wet_extraction_grid_bench_float("Itanium WET ExtractionGridBench - size: 2000, float", 2000, 10);
 ExtractionGridBench<tags::CPU::Itanium, double, lbm_modes::WET> sse_wet_extraction_grid_bench_double("Itanium WET ExtractionGridBench - size: 2000, double", 2000, 10);
+#endif
+#ifdef HONEI_OPENCL
+ExtractionGridBench<tags::OpenCL::CPU, float, lbm_modes::WET> ocl_cpu_wet_extraction_grid_bench_float("OpenCL CPU WET ExtractionGridBench - size: 2000, float", 2000, 10);
+ExtractionGridBench<tags::OpenCL::GPU, float, lbm_modes::WET> ocl_gpu_wet_extraction_grid_bench_float("OpenCL GPU WET ExtractionGridBench - size: 2000, float", 2000, 10);
 #endif
 
 #ifdef HONEI_SSE
