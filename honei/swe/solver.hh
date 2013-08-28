@@ -187,7 +187,7 @@ namespace honei {
               *
               **/
             template<typename WorkPrec_>
-            /*BandedMatrix<WorkPrec_>*/ void _quick_assemble_matrix1(BandedMatrix<WorkPrec_>& m3, BandedMatrix<WorkPrec_>& result)
+            /*BandedMatrix<WorkPrec_>*/ void _quick_assemble_matrix1(BandedMatrix<WorkPrec_>& /*m3*/, BandedMatrix<WorkPrec_>& /*result*/)
             {
                 //result = *(m3.copy());
                 //return ;
@@ -205,7 +205,7 @@ namespace honei {
               *
               **/
             template<typename WorkPrec_>
-            /*BandedMatrix<WorkPrec_>*/void _quick_assemble_matrix3(BandedMatrix<WorkPrec_>& m4, BandedMatrix<WorkPrec_>& result)
+            /*BandedMatrix<WorkPrec_>*/void _quick_assemble_matrix3(BandedMatrix<WorkPrec_>& /*m4*/, BandedMatrix<WorkPrec_>& /*result*/)
             {
                 //result = *(m4.copy());
                 //return ;

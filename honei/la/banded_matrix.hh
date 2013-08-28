@@ -51,7 +51,7 @@ namespace honei
 
             friend struct Implementation<honei::BandIterator<type::Banded, DataType_> >;
             friend struct Implementation<honei::ConstBandIterator<type::Banded, DataType_> >;
-            friend struct honei::ConstElementIterator<storage::Banded, container::Matrix, DataType_>;
+            friend class honei::ConstElementIterator<storage::Banded, container::Matrix, DataType_>;
             friend struct Implementation<honei::ElementIterator<storage::Banded, container::Matrix, DataType_> >;
 
             /// \}

@@ -36,10 +36,13 @@
 
 namespace honei
 {
+    namespace mc
+    {
     // Tell the compiler that we want to instantiate CASDeque
     // and ConcurrentDeque for a ThreadTask pointer
     template class ConcurrentDeque<mc::ThreadTask *>;
     template class CASDeque<mc::ThreadTask *>;
+    }
 
     /* TFImplementationBase is a base-class for all concrete implementations
      * of a ThreadFunction and provides the members that all derivatives

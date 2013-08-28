@@ -37,7 +37,7 @@
 namespace honei
 {
     // Forward declarations.
-    template <typename VectorType_> class VectorImplementation;
+    template <typename VectorType_> struct VectorImplementation;
 
     /**
      * \brief ConstVector::Implementation is the private implementation class for ConstVector.

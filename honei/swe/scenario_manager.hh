@@ -329,9 +329,9 @@ namespace honei
              * \param filename The name of the HDF5 file.
              *
              **/
-            void save(const std::string filename)
+            /*void save(const std::string filename)
             {
-            }
+            }*/
 
             /**
              * Loads scenario from an existing HDF5 file.
@@ -339,10 +339,10 @@ namespace honei
              * \param filename The name of the HDF5 file.
              *
              **/
-            void load(const std::string filename)
+            /*void load(const std::string filename)
             {
                 //TODO
-            }
+            }*/
     };
 }
 #endif

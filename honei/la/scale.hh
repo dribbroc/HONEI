@@ -184,7 +184,7 @@ namespace honei
         }
 
         template <typename DT1_, typename DT2_>
-        static inline BenchmarkInfo get_benchmark_info(SparseMatrix<DT2_> & b, DT1_ a)
+        static inline BenchmarkInfo get_benchmark_info(SparseMatrix<DT2_> & b, DT1_)
         {
             BenchmarkInfo result;
             for (typename SparseMatrix<DT2_>::NonZeroElementIterator l(b.begin_non_zero_elements()),

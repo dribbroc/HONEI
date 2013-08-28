@@ -57,7 +57,7 @@ namespace honei
     {
         public:
             friend class InstantiationPolicy<MemoryArbiter, Singleton>;
-            friend class MemoryBackendRegistrator;
+            friend struct MemoryBackendRegistrator;
 
             /**
              * Add a chunk of memory to the memory block map.

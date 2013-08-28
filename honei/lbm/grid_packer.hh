@@ -656,7 +656,7 @@ namespace honei
                 grid.h->unlock(lm_write_only);
                 data.h->unlock(lm_read_only);
             }
-            static void unpack_u(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
+            static void unpack_u(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & /*info*/, PackedGridData<D2Q9, DT_> & data)
             {
                 grid.obstacles->lock(lm_read_only);
                 grid.u->lock(lm_write_only);
@@ -689,7 +689,7 @@ namespace honei
                 return (*grid.h_index)(i, j);
             }
 
-            static DenseMatrix<DT_> extract_ftemp2(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
+            static DenseMatrix<DT_> extract_ftemp2(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & /*info*/, PackedGridData<D2Q9, DT_> & data)
             {
                 unsigned long packed_index(0);
                 DenseMatrix<DT_> result(grid.obstacles->rows(), grid.obstacles->columns());
@@ -712,7 +712,7 @@ namespace honei
                 return result;
             }
 
-            static DenseMatrix<DT_> extract_f2(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
+            static DenseMatrix<DT_> extract_f2(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & /*info*/, PackedGridData<D2Q9, DT_> & data)
             {
                 unsigned long packed_index(0);
                 DenseMatrix<DT_> result(grid.obstacles->rows(), grid.obstacles->columns());
@@ -735,7 +735,7 @@ namespace honei
                 return result;
             }
 
-            static DenseMatrix<DT_> extract_f6(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
+            static DenseMatrix<DT_> extract_f6(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & /*info*/, PackedGridData<D2Q9, DT_> & data)
             {
                 unsigned long packed_index(0);
                 DenseMatrix<DT_> result(grid.obstacles->rows(), grid.obstacles->columns());
@@ -758,7 +758,7 @@ namespace honei
                 return result;
             }
 
-            static DenseMatrix<DT_> extract_ftemp6(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
+            static DenseMatrix<DT_> extract_ftemp6(Grid<D2Q9, DT_> & grid, PackedGridInfo<D2Q9> & /*info*/, PackedGridData<D2Q9, DT_> & data)
             {
                 unsigned long packed_index(0);
                 DenseMatrix<DT_> result(grid.obstacles->rows(), grid.obstacles->columns());

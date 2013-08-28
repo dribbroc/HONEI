@@ -27,7 +27,7 @@
 using namespace std;
 using namespace honei;
 
-DenseVector<float> SourceProcessing<source_types::SIMPLE, tags::CPU::SSE>::value(DenseVector<float> & vector, DenseVector<float> & bottom_slopes_x, DenseVector<float> & bottom_slopes_y, float manning_n_squared)
+DenseVector<float> SourceProcessing<source_types::SIMPLE, tags::CPU::SSE>::value(DenseVector<float> & vector, DenseVector<float> & bottom_slopes_x, DenseVector<float> & bottom_slopes_y, float /*manning_n_squared*/)
 {
     float * v_e = vector.elements();
     float * sl_x_e = bottom_slopes_x.elements();
@@ -137,7 +137,7 @@ DenseVector<float> SourceProcessing<source_types::SIMPLE, tags::CPU::SSE>::value
     //std::cout << "sse_limit: " << sse_limit << endl;
     return vector;
 }
-DenseVector<double> SourceProcessing<source_types::SIMPLE, tags::CPU::SSE>::value(DenseVector<double> & vector, DenseVector<double> & bottom_slopes_x, DenseVector<double> & bottom_slopes_y, double manning_n_squared)
+DenseVector<double> SourceProcessing<source_types::SIMPLE, tags::CPU::SSE>::value(DenseVector<double> & vector, DenseVector<double> & bottom_slopes_x, DenseVector<double> & bottom_slopes_y, double /*manning_n_squared*/)
 {
     double * v_e = vector.elements();
     double * sl_x_e = bottom_slopes_x.elements();

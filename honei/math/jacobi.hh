@@ -279,7 +279,7 @@ namespace honei
             }
 
             template<typename DT1_, typename DT2_>
-            static inline void jacobi_kernel(BandedMatrixQx<Q1Type, DT1_> & system_matrix, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted)
+            static inline void jacobi_kernel(BandedMatrixQx<Q1Type, DT1_> & /*system_matrix*/, DenseVector<DT2_> & right_hand_side, DenseVector<DT1_> & former_result, DenseVector<DT1_> & diag_inverted)
             {
 #ifdef SOLVER_VERBOSE_L3
                 std::cout << "    Calling JACOBI kernel, datalayout=Q1, version=3" << std::endl;

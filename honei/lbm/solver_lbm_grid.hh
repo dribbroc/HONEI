@@ -77,7 +77,7 @@ namespace honei
             virtual void do_preprocessing() = 0;
             virtual void do_postprocessing() = 0;
             virtual void solve() = 0;
-
+            virtual ~SolverLBMGridBase(){};
     };
 
     template<typename Tag_,

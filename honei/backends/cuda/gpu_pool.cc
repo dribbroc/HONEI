@@ -30,10 +30,14 @@
 #include <stdlib.h>
 #include <sys/syscall.h>
 
+namespace honei
+{
+    template class InstantiationPolicy<cuda::GPUPool, Singleton>;
+}
+
+
 using namespace honei;
 using namespace honei::cuda;
-
-template class InstantiationPolicy<GPUPool, Singleton>;
 
 GPUPool::GPUPool() :
     num_gpus(std::min(Configuration::instance()->get_value("cuda::num_gpu", 2), cuda_device_count()))

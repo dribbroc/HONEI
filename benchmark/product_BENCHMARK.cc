@@ -813,7 +813,7 @@ class DenseMatrixDenseVectorProductSPUPlot :
 
             int temp(Configuration::instance()->get_value("cell::product_dense_matrix_dense_vector_float", 4));
 
-            int max_spu(6);
+            unsigned long max_spu(6);
 
             for (unsigned long j(1) ; j <= max_spu ; ++j)
             {
@@ -872,7 +872,7 @@ class BandedMatrixProductQ1SPUPlot :
             int temp(Configuration::instance()->get_value("cell::product_banded_matrix_dense_vector_float", 4));
             int temp2(Configuration::instance()->get_value("cell::product_banded_matrix_dense_vector_double", 4));
 
-            int max_spu(6);
+            unsigned long max_spu(6);
 
             for (unsigned long j(1) ; j <= max_spu ; ++j)
             {
@@ -947,7 +947,7 @@ class BandedMatrixProductRelaxSPUPlot :
             int temp(Configuration::instance()->get_value("cell::product_banded_matrix_dense_vector_float", 4));
             int temp2(Configuration::instance()->get_value("cell::product_banded_matrix_dense_vector_double", 4));
 
-            int max_spu(6);
+            unsigned long max_spu(6);
 
             for (unsigned long j(1) ; j <= max_spu ; ++j)
             {

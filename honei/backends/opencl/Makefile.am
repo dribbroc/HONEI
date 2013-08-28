@@ -17,6 +17,7 @@ DEFS = \
 CL_OUT = $(CL_SOURCEN:.cl=.outcl)
 
 all-local: $(CL_OUT)
+check-local: $(CL_OUT)
 
 %.outcl:%.cl oclc
 	@$(top_builddir)/honei/backends/opencl/oclc $<

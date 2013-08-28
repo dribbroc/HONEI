@@ -58,7 +58,7 @@ namespace honei
 
             /// \}
 
-            struct Filler;
+            class Filler;
 
             /// \name Iteration over our elements
             /// \{

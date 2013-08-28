@@ -34,6 +34,11 @@
 #include <sys/syscall.h>
 #include <iostream>
 
+namespace honei
+{
+    template class InstantiationPolicy<mc::Topology, Singleton>;
+}
+
 using namespace honei;
 using namespace honei::mc;
 
@@ -73,8 +78,6 @@ void TopologyThreadFunction<x86_intel>::operator() ()
     barrier->wait();
 }
 #endif
-
-template class InstantiationPolicy<Topology, Singleton>;
 
 void Topology::determine_arch()
 {

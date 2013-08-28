@@ -29,6 +29,7 @@
 #include <honei/graph/abstract_graph.hh>
 #include <map>
 #include <cstdlib>
+#include <cmath>
 
 
 
@@ -87,8 +88,8 @@ namespace honei
                 {
                     dist *= (DataType_)std::rand() / RAND_MAX;
                 }
-                (*this->_coordinates)(_node_count, 0) =  dist * sin(angle); 
-                (*this->_coordinates)(_node_count, 1) =  dist * cos(angle);
+                (*this->_coordinates)(_node_count, 0) =  dist * std::sin(angle);
+                (*this->_coordinates)(_node_count, 1) =  dist * std::cos(angle);
                 (*this->_node_weights)[_node_count] = node->get_weight();
                 ++_node_count;
             }

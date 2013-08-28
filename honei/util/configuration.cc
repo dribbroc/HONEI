@@ -35,11 +35,11 @@
 namespace honei
 {
     template class WrappedForwardIterator<Configuration::ConstIteratorTag, const std::pair<const std::string, std::string> >;
+    template class InstantiationPolicy<Configuration, Singleton>;
 }
 
 using namespace honei;
 
-template class InstantiationPolicy<Configuration, Singleton>;
 
 ConfigurationError::ConfigurationError(const std::string & line) :
     Exception("Invalid line in configuration file: '" + line + "'")

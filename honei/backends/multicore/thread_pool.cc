@@ -1148,14 +1148,14 @@ namespace honei
             return ticket;
         }
     };
+
+    template class InstantiationPolicy<mc::ThreadPool, Singleton>;
 }
 
 using namespace honei;
 using namespace honei::mc;
 
 Ticket<tags::CPU::MultiCore> DispatchPolicy::last;
-
-template class InstantiationPolicy<ThreadPool, Singleton>;
 
 ThreadPool::ThreadPool() :
     PrivateImplementationPattern<ThreadPool, Shared>(select_impl())

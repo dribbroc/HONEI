@@ -594,7 +594,7 @@ namespace honei
                 mpi::mpi_recv(fringe.external_dir_index_8->elements(), fringe.external_dir_index_8->size(), 0, 0);
             }
 
-            void _send_full_sync(unsigned long target, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & fringe)
+            void _send_full_sync(unsigned long target, PackedGridInfo<D2Q9> & /*info*/, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & /*fringe*/)
             {
                 mpi::mpi_send(data.h->elements(), data.h->size(), target, _myid);
 
@@ -608,7 +608,7 @@ namespace honei
                 mpi::mpi_send(data.f_temp_8->elements(), data.h->size(), target, _myid);
             }
 
-            void _recv_full_sync(unsigned long target, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & fringe)
+            void _recv_full_sync(unsigned long target, PackedGridInfo<D2Q9> & /*info*/, PackedGridData<D2Q9, DataType_> & data, PackedGridFringe<D2Q9> & /*fringe*/)
             {
                 mpi::mpi_recv(data.h->elements(), data.h->size(), target, target);
 

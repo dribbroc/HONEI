@@ -1487,11 +1487,11 @@ class DenseMatrixProductCellTest :
         {
             for (unsigned long size(1) ; size < (1 << 10) ; size <<= 1)
             {
-                for (unsigned i(0) ; i < 4 ; i++)
+                for (unsigned offset(0) ; offset < 4 ; offset++)
                 {
-                    DenseMatrix<DataType_> dm1(size + i + 1, size + 2);
-                    DenseMatrix<DataType_> dm2(size + 2, size + i);
-                    DenseMatrix<DataType_> dm3(size + i + 1 , size + i, DataType_(0));
+                    DenseMatrix<DataType_> dm1(size + offset + 1, size + 2);
+                    DenseMatrix<DataType_> dm2(size + 2, size + offset);
+                    DenseMatrix<DataType_> dm3(size + offset + 1 , size + offset, DataType_(0));
                     for (typename DenseMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
                             i != i_end ; ++i)
                     {
@@ -1551,11 +1551,11 @@ class DenseMatrixProductCellQuickTest :
         {
             unsigned long size(192);
 
-            for (unsigned i(0) ; i < 4 ; i++)
+            for (unsigned offset(0) ; offset < 4 ; offset++)
             {
                 DenseMatrix<DataType_> dm1(size + 3, size + 2);
-                DenseMatrix<DataType_> dm2(size + 2, size + i);
-                DenseMatrix<DataType_> dm3(size + 3 , size + i, DataType_(0));
+                DenseMatrix<DataType_> dm2(size + 2, size + offset);
+                DenseMatrix<DataType_> dm3(size + 3 , size + offset, DataType_(0));
 
                 for (typename DenseMatrix<DataType_>::ElementIterator i(dm1.begin_elements()), i_end(dm1.end_elements()) ;
                         i != i_end ; ++i)

@@ -640,9 +640,6 @@ namespace honei
 
             for(long i(0); i < y_max; ++i)
             {
-                long i_forward(i + 1);
-                long i_backward(i - 1);
-
                 for(long j(0); j < x_max; ++j)
                 {
                     long j_forward(j + 1);
@@ -766,9 +763,6 @@ namespace honei
 
                 for(long j(0); j < x_max; ++j)
                 {
-                    long j_forward(j + 1);
-                    long j_backward(j - 1);
-
                     if(i_forward >= y_max)
                         result(i_backward, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
                     else
@@ -884,9 +878,6 @@ namespace honei
 
             for(long i(0); i < y_max; ++i)
             {
-                long i_forward(i + 1);
-                long i_backward(i - 1);
-
                 for(long j(0); j < x_max; ++j)
                 {
                     long j_forward(j + 1);
@@ -1011,9 +1002,6 @@ namespace honei
 
                 for(long j(0); j < x_max; ++j)
                 {
-                    long j_forward(j + 1);
-                    long j_backward(j - 1);
-
                     if(i_backward < 0)
                         result(i_forward, j) = dist(i,j) - (dist(i,j) - eq_dist(i,j))/tau + DT1_(1./6.) * (e_x * s_x(i,j) + e_y * s_y(i,j));
                     else
@@ -1115,10 +1103,10 @@ namespace honei
         static void value(DenseMatrix<DT1_>& result,
                           DenseMatrix<DT1_>& dist,
                           DenseMatrix<DT1_>& eq_dist,
-                          DenseMatrix<DT1_>& s_x,
-                          DenseMatrix<DT1_>& s_y,
-                          DT2_ e_x,
-                          DT2_ e_y,
+                          DenseMatrix<DT1_>& /*s_x*/,
+                          DenseMatrix<DT1_>& /*s_y*/,
+                          DT2_ /*e_x*/,
+                          DT2_ /*e_y*/,
                           DT2_ tau)
         {
 

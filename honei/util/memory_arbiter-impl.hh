@@ -74,7 +74,7 @@ namespace honei
         /// Our map of all memory blocks.
         std::map<void *, MemoryBlock> _blocks;
 
-        friend class MemoryBackendRegistrator;
+        friend struct MemoryBackendRegistrator;
 
         /// Constructor
         Implementation() :

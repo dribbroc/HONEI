@@ -47,7 +47,7 @@ namespace honei
                 else
                 {
                     PartitionList partitions;
-                    Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+                    Partitioner<tags::CPU::MultiCore> partitioner(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
 
                     TicketVector tickets;
 
@@ -80,7 +80,7 @@ namespace honei
                 else
                 {
                     PartitionList partitions;
-                    Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+                    Partitioner<tags::CPU::MultiCore>partitioner(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
 
                     TicketVector tickets;
 
@@ -111,7 +111,7 @@ namespace honei
                 else
                 {
                     PartitionList partitions;
-                    Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+                    Partitioner<tags::CPU::MultiCore>partitioner(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
 
                     TicketVector tickets;
                     DT1_ temp[max_count];
@@ -157,7 +157,7 @@ namespace honei
                 else
                 {
                     PartitionList partitions;
-                    Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+                    Partitioner<tags::CPU::MultiCore>partitioner(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
 
                     TicketVector tickets;
 
@@ -193,7 +193,7 @@ namespace honei
                 else
                 {
                     PartitionList partitions;
-                    Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+                    Partitioner<tags::CPU::MultiCore>partitioner(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
 
                     TicketVector tickets;
 
@@ -230,7 +230,7 @@ namespace honei
                 else
                 {
                     PartitionList partitions;
-                    Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+                    Partitioner<tags::CPU::MultiCore>partitioner(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
 
                     TicketVector tickets;
                     DT3_ temp[max_count];
@@ -278,7 +278,7 @@ namespace honei
                 else
                 {
                     PartitionList partitions;
-                    Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+                    Partitioner<tags::CPU::MultiCore>partitioner(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
 
                     TicketVector tickets;
 
@@ -316,7 +316,7 @@ namespace honei
                 else
                 {
                     PartitionList partitions;
-                    Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+                    Partitioner<tags::CPU::MultiCore>partitioner(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
 
                     TicketVector tickets;
 
@@ -358,7 +358,7 @@ namespace honei
                 else
                 {
                     PartitionList partitions;
-                    Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+                    Partitioner<tags::CPU::MultiCore>partitioner(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
 
                     TicketVector tickets;
 
@@ -407,7 +407,7 @@ namespace honei
                 else
                 {
                     PartitionList partitions;
-                    Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+                    Partitioner<tags::CPU::MultiCore>partitioner(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
 
                     TicketVector tickets;
 
@@ -451,7 +451,7 @@ namespace honei
                 else
                 {
                     PartitionList partitions;
-                    Partitioner<tags::CPU::MultiCore>(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
+                    Partitioner<tags::CPU::MultiCore>partitioner(max_count, min_part_size, 16, x.size(), PartitionList::Filler(partitions));
 
                     TicketVector tickets;
 

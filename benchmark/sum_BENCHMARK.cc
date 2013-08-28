@@ -532,7 +532,7 @@ class DenseVectorSumSPUPlot :
             int temp(Configuration::instance()->get_value("cell::sum_dense_dense_float", 4));
             int temp2(Configuration::instance()->get_value("cell::sum_dense_dense_double", 4));
 
-            int max_spu(6);
+            unsigned long max_spu(6);
 
             for (unsigned long j(1) ; j <= max_spu ; ++j)
             {
