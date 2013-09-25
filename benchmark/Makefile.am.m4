@@ -85,6 +85,8 @@ DEFS = \
 	$(CELLDEF) \
 	$(SSEDEF) \
 	$(OPENCLDEF) \
+	$(OPENCL_GPUDEF) \
+	$(OPENCL_ACCDEF) \
 	$(ITANIUMDEF) \
 	$(CUDADEF) \
 	$(CUBLASDEF) \

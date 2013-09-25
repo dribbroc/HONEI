@@ -279,7 +279,8 @@ LBMGSimpleSolverBench<tags::CPU::Itanium, double> sse_solver_simple_bench_double
 #ifdef HONEI_OPENCL
 LBMGSimpleSolverBench<tags::OpenCL::CPU, float> ocl_cpu_solver_simple_bench_float_1("OpenCL CPU LBM Simple Grid solver Benchmark - size: 1000, float", 1000, 5);
 LBMGSimpleSolverBench<tags::OpenCL::CPU, double> ocl_cpu_solver_simple_bench_double_1("OpenCL CPU LBM Simple Grid solver Benchmark - size: 1000, double", 1000, 5);
-
+#endif
+#ifdef HONEI_OPENCL_GPU
 LBMGSimpleSolverBench<tags::OpenCL::GPU, float> ocl_gpu_solver_simple_bench_float_1("OpenCL GPU LBM Simple Grid solver Benchmark - size: 50, float", 50, 25);
 LBMGSimpleSolverBench<tags::OpenCL::GPU, float> ocl_gpu_solver_simple_bench_float_2("OpenCL GPU LBM Simple Grid solver Benchmark - size: 100, float", 100, 25);
 LBMGSimpleSolverBench<tags::OpenCL::GPU, float> ocl_gpu_solver_simple_bench_float_3("OpenCL GPU LBM Simple Grid solver Benchmark - size: 250, float", 250, 25);
@@ -287,4 +288,13 @@ LBMGSimpleSolverBench<tags::OpenCL::GPU, float> ocl_gpu_solver_simple_bench_floa
 LBMGSimpleSolverBench<tags::OpenCL::GPU, float> ocl_gpu_solver_simple_bench_float_5("OpenCL GPU LBM Simple Grid solver Benchmark - size: 800, float", 800, 25);
 LBMGSimpleSolverBench<tags::OpenCL::GPU, float> ocl_gpu_solver_simple_bench_float_6("OpenCL GPU LBM Simple Grid solver Benchmark - size: 1100, float", 1100, 25);
 LBMGSimpleSolverBench<tags::OpenCL::GPU, float> ocl_gpu_solver_simple_bench_float_7("OpenCL GPU LBM Simple Grid solver Benchmark - size: 1500, float", 1500, 25);
+#endif
+#ifdef HONEI_OPENCL_ACC
+LBMGSimpleSolverBench<tags::OpenCL::Accelerator, float> ocl_acc_solver_simple_bench_float_1("OpenCL Accelerator LBM Simple Grid solver Benchmark - size: 50, float", 50, 25);
+LBMGSimpleSolverBench<tags::OpenCL::Accelerator, float> ocl_acc_solver_simple_bench_float_2("OpenCL Accelerator LBM Simple Grid solver Benchmark - size: 100, float", 100, 25);
+LBMGSimpleSolverBench<tags::OpenCL::Accelerator, float> ocl_acc_solver_simple_bench_float_3("OpenCL Accelerator LBM Simple Grid solver Benchmark - size: 250, float", 250, 25);
+LBMGSimpleSolverBench<tags::OpenCL::Accelerator, float> ocl_acc_solver_simple_bench_float_4("OpenCL Accelerator LBM Simple Grid solver Benchmark - size: 500, float", 500, 25);
+LBMGSimpleSolverBench<tags::OpenCL::Accelerator, float> ocl_acc_solver_simple_bench_float_5("OpenCL Accelerator LBM Simple Grid solver Benchmark - size: 800, float", 800, 25);
+LBMGSimpleSolverBench<tags::OpenCL::Accelerator, float> ocl_acc_solver_simple_bench_float_6("OpenCL Accelerator LBM Simple Grid solver Benchmark - size: 1100, float", 1100, 25);
+LBMGSimpleSolverBench<tags::OpenCL::Accelerator, float> ocl_acc_solver_simple_bench_float_7("OpenCL Accelerator LBM Simple Grid solver Benchmark - size: 1500, float", 1500, 25);
 #endif

@@ -699,7 +699,8 @@ int main(int argc, char** argv)
             ++i;
             continue;
         }
-        if (opencl && ((*i)->plots() == plot) && ((*i)->get_tag_name() == "opencl-cpu" || (*i)->get_tag_name() == "opencl-gpu"))
+        if (opencl && ((*i)->plots() == plot) && ((*i)->get_tag_name() == "opencl-cpu" || (*i)->get_tag_name() == "opencl-gpu"
+                || (*i)->get_tag_name() == "opencl-accelerator"))
         {
             ++i;
             continue;
