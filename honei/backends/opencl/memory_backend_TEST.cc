@@ -55,8 +55,10 @@ class MemoryBackendQuickTest :
         }
 };
 MemoryBackendQuickTest<tags::OpenCL::CPU> ocl_cpu_memory_backend_quick_test;
+#ifdef HONEI_OPENCL_GPU
 MemoryBackendQuickTest<tags::OpenCL::GPU> ocl_gpu_memory_backend_quick_test;
-#ifdef __PPC__
+#endif
+#ifdef HONEI_OPENCL_ACC
 MemoryBackendQuickTest<tags::OpenCL::Accelerator> ocl_accelerator_memory_backend_quick_test;
 #endif
 
@@ -103,7 +105,9 @@ class OpenCLMemoryArbiterQuickTest :
         }
 };
 OpenCLMemoryArbiterQuickTest<tags::OpenCL::CPU> ocl_cpu_memory_arbiter_quick_test;
+#ifdef HONEI_OPENCL_GPU
 OpenCLMemoryArbiterQuickTest<tags::OpenCL::GPU> ocl_gpu_memory_arbiter_quick_test;
-#ifdef __PPC__
+#endif
+#ifdef HONEI_OPENCL_ACC
 OpenCLMemoryArbiterQuickTest<tags::OpenCL::Accelerator> ocl_accelerator_memory_arbiter_quick_test;
 #endif

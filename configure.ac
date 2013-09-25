@@ -227,9 +227,9 @@ fi
 AC_SUBST([SSEDEF])
 dnl }}}
 dnl {{{ check for OpenCL support
-AC_MSG_CHECKING([whether to build OpenCL support])
+AC_MSG_CHECKING([whether to build OpenCL CPU support])
 AC_ARG_ENABLE([opencl],
-	AS_HELP_STRING([--enable-opencl], [Build OpenCL support (needs packages: OpenCL)]),
+	AS_HELP_STRING([--enable-opencl], [Build OpenCL CPU support (needs packages: OpenCL)]),
 		[ENABLE_OPENCL=$enableval
 		  AC_MSG_RESULT([$enableval])],
 		[ENABLE_OPENCL=no
@@ -242,6 +242,40 @@ if test "x$ENABLE_OPENCL" = "xyes"; then
 	dnl }}}
 fi
 AC_SUBST([OPENCLDEF])
+dnl }}}
+dnl {{{ check for opencl-gpu support
+AC_MSG_CHECKING([whether to build OpenCL GPU support])
+AC_ARG_ENABLE([opencl_gpu],
+			  AS_HELP_STRING([--enable-opencl_gpu], [Build OpenCL GPU (needs packages: OpenCL)]),
+		[ENABLE_OPENCL_GPU=$enableval
+		  AC_MSG_RESULT([$enableval])],
+		[ENABLE_OPENCL_GPU=no
+		  AC_MSG_RESULT([no])])
+AC_SUBST([ENABLE_OPENCL_GPU])
+AM_CONDITIONAL([OPENCL_GPU], test "x$ENABLE_OPENCL_GPU" = "xyes")
+if test "x$ENABLE_OPENCL_GPU" = "xyes"; then
+	dnl {{{ enable opencl-gpu support
+	OPENCL_GPUDEF="-DHONEI_OPENCL_GPU"
+	dnl }}}
+fi
+AC_SUBST([OPENCL_GPUDEF])
+dnl }}}
+dnl {{{ check for opencl-accelerator support
+AC_MSG_CHECKING([whether to build OpenCL Accelerator support])
+AC_ARG_ENABLE([opencl_acc],
+			  AS_HELP_STRING([--enable-opencl_acc], [Build OpenCL Accelerator (needs packages: OpenCL)]),
+		[ENABLE_OPENCL_ACC=$enableval
+		  AC_MSG_RESULT([$enableval])],
+		[ENABLE_OPENCL_ACC=no
+		  AC_MSG_RESULT([no])])
+AC_SUBST([ENABLE_OPENCL_ACC])
+AM_CONDITIONAL([OPENCL_ACC], test "x$ENABLE_OPENCL_ACC" = "xyes")
+if test "x$ENABLE_OPENCL_ACC" = "xyes"; then
+	dnl {{{ enable opencl-accelerator support
+	OPENCL_ACCDEF="-DHONEI_OPENCL_ACC"
+	dnl }}}
+fi
+AC_SUBST([OPENCL_ACCDEF])
 dnl }}}
 dnl {{{ check for Itanium support
 AC_MSG_CHECKING([whether to build Itanium support])

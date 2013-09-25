@@ -113,7 +113,9 @@ class OpenclBackendQuickTest :
         }
 };
 OpenclBackendQuickTest<tags::OpenCL::CPU> cpu_opencl_backend_quick_test(CL_DEVICE_TYPE_CPU);
+#ifdef HONEI_OPENCL_GPU
 OpenclBackendQuickTest<tags::OpenCL::GPU> gpu_opencl_backend_quick_test(CL_DEVICE_TYPE_GPU);
-#ifdef __PPC__
+#endif
+#ifdef HONEI_OPENCL_ACC
 OpenclBackendQuickTest<tags::OpenCL::Accelerator> accelerator_opencl_backend_quick_test(CL_DEVICE_TYPE_ACCELERATOR);
 #endif

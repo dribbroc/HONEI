@@ -7,6 +7,8 @@ CLEANFILES = *~ \
 
 DEFS = \
 	$(OPENCLDEF) \
+	$(OPENCL_GPUDEF) \
+	$(OPENCL_ACCDEF) \
 	$(DEBUGDEF) \
 	$(BOOSTEF) \
 	$(CUDADEF) \

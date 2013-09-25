@@ -139,9 +139,11 @@ namespace honei
         {
             DCQ dcq = prepare_device(CL_DEVICE_TYPE_CPU);
             clFinish(dcq.command_queue);
+#ifdef HONEI_OPENCL_GPU
             dcq = prepare_device(CL_DEVICE_TYPE_GPU);
             clFinish(dcq.command_queue);
-#ifdef __PPC__
+#endif
+#ifdef HONEI_OPENCL_ACC
             dcq = prepare_device(CL_DEVICE_TYPE_ACCELLERATOR);
             clFinish(dcq.command_queue);
 #endif
@@ -168,7 +170,7 @@ namespace honei
             else if (type == CL_DEVICE_TYPE_GPU)
                 cl_flags += " -DHONEI_CUDA_DOUBLE -DHONEI_OPENCL_GPU";
             else if (type == CL_DEVICE_TYPE_ACCELERATOR)
-                cl_flags += " -DHONEI_OPENCL_ACCELERATOR";
+                cl_flags += " -DHONEI_OPENCL_ACC";
 
             status = clBuildProgram(program, 1, &device, cl_flags.c_str(), NULL, NULL);
             if (status != CL_SUCCESS)
