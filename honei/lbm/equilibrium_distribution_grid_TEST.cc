@@ -113,8 +113,14 @@ EqDisGridLABSWETest<tags::GPU::CUDA, double> cuda_eq_dist_grid_test_double("doub
 #ifdef HONEI_OPENCL
 EqDisGridLABSWETest<tags::OpenCL::CPU, float> ocl_cpu_eq_dist_grid_test_float("float");
 EqDisGridLABSWETest<tags::OpenCL::CPU, double> ocl_cpu_eq_dist_grid_test_double("double");
+#endif
+#ifdef HONEI_OPENCL_GPU
 EqDisGridLABSWETest<tags::OpenCL::GPU, float> ocl_gpu_eq_dist_grid_test_float("float");
 EqDisGridLABSWETest<tags::OpenCL::GPU, double> ocl_gpu_eq_dist_grid_test_double("double");
+#endif
+#ifdef HONEI_OPENCL_ACC
+EqDisGridLABSWETest<tags::OpenCL::Accelerator, float> ocl_acc_eq_dist_grid_test_float("float");
+EqDisGridLABSWETest<tags::OpenCL::Accelerator, double> ocl_acc_eq_dist_grid_test_double("double");
 #endif
 #ifdef HONEI_CELL
 EqDisGridLABSWETest<tags::Cell, float> cell_eq_dist_grid_test_float("float");

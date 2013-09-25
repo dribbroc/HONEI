@@ -255,7 +255,7 @@ int main(int argc, char** argv)
                     i = TestList::instance()->erase(i);
                     continue;
                 }
-                if (((*i)->get_tag_name()=="opencl-cpu" || (*i)->get_tag_name()=="opencl-gpu") && !opencl)
+                if (((*i)->get_tag_name()=="opencl-cpu" || (*i)->get_tag_name()=="opencl-gpu" || (*i)->get_tag_name()=="opencl-accelerator") && !opencl)
                 {
                     i = TestList::instance()->erase(i);
                     continue;

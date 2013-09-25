@@ -147,6 +147,12 @@ ExtractionGridTest<tags::Cell, float, lbm_modes::WET> cell_extraction_grid_test_
 #ifdef HONEI_OPENCL
 ExtractionGridTest<tags::OpenCL::CPU, float, lbm_modes::WET> opencl_cpu_extraction_grid_test_float_wet("float wet");
 ExtractionGridTest<tags::OpenCL::CPU, double, lbm_modes::WET> opencl_cpu_extraction_grid_test_double_wet("double wet");
+#endif
+#ifdef HONEI_OPENCL_GPU
 ExtractionGridTest<tags::OpenCL::GPU, float, lbm_modes::WET> opencl_gpu_extraction_grid_test_float_wet("float wet");
 ExtractionGridTest<tags::OpenCL::GPU, double, lbm_modes::WET> opencl_gpu_extraction_grid_test_double_wet("double wet");
+#endif
+#ifdef HONEI_OPENCL_ACC
+ExtractionGridTest<tags::OpenCL::Accelerator, float, lbm_modes::WET> opencl_acc_extraction_grid_test_float_wet("float wet");
+ExtractionGridTest<tags::OpenCL::Accelerator, double, lbm_modes::WET> opencl_acc_extraction_grid_test_double_wet("double wet");
 #endif

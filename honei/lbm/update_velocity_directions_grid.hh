@@ -284,15 +284,8 @@ namespace honei
            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data);
        };
 
-   template <>
-       struct UpdateVelocityDirectionsGrid<tags::OpenCL::CPU, lbm_boundary_types::NOSLIP>
-       {
-           template <typename DT_>
-           static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data);
-       };
-
-   template <>
-       struct UpdateVelocityDirectionsGrid<tags::OpenCL::GPU, lbm_boundary_types::NOSLIP>
+   template <typename Tag_>
+       struct UpdateVelocityDirectionsGrid<Tag_, lbm_boundary_types::NOSLIP>
        {
            template <typename DT_>
            static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data);

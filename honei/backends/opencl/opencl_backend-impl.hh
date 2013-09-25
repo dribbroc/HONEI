@@ -144,7 +144,7 @@ namespace honei
             clFinish(dcq.command_queue);
 #endif
 #ifdef HONEI_OPENCL_ACC
-            dcq = prepare_device(CL_DEVICE_TYPE_ACCELLERATOR);
+            dcq = prepare_device(CL_DEVICE_TYPE_ACCELERATOR);
             clFinish(dcq.command_queue);
 #endif
         }

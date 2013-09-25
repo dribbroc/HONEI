@@ -363,6 +363,12 @@ SimpleSolverLBMGridRegressionTest<tags::Cell, float> cell_simple_solver_test_flo
 #ifdef HONEI_OPENCL
 SimpleSolverLBMGridRegressionTest<tags::OpenCL::CPU, float> ocl_cpu_simple_solver_test_float("float", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
 SimpleSolverLBMGridRegressionTest<tags::OpenCL::CPU, double> ocl_cpu_simple_solver_test_double("double", std::numeric_limits<double>::epsilon() * 2e2, std::numeric_limits<double>::epsilon());
+#endif
+#ifdef HONEI_OPENCL_GPU
 SimpleSolverLBMGridRegressionTest<tags::OpenCL::GPU, float> ocl_gpu_simple_solver_test_float("float", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
 SimpleSolverLBMGridRegressionTest<tags::OpenCL::GPU, double> ocl_gpu_simple_solver_test_double("double", std::numeric_limits<double>::epsilon() * 2e2, std::numeric_limits<double>::epsilon());
+#endif
+#ifdef HONEI_OPENCL_ACC
+SimpleSolverLBMGridRegressionTest<tags::OpenCL::Accelerator, float> ocl_acc_simple_solver_test_float("float", std::numeric_limits<float>::epsilon() * 2e2, std::numeric_limits<float>::epsilon());
+SimpleSolverLBMGridRegressionTest<tags::OpenCL::Accelerator, double> ocl_acc_simple_solver_test_double("double", std::numeric_limits<double>::epsilon() * 2e2, std::numeric_limits<double>::epsilon());
 #endif

@@ -178,6 +178,12 @@ EquilibriumDistributionGridRegressionTest<tags::Cell, float> cell_solver_regress
 #ifdef HONEI_OPENCL
 EquilibriumDistributionGridRegressionTest<tags::OpenCL::CPU, float> ocl_cpu_solver_regression_test_float("float");
 EquilibriumDistributionGridRegressionTest<tags::OpenCL::CPU, double> ocl_cpu_solver_regression_test_double("double");
+#endif
+#ifdef HONEI_OPENCL_GPU
 EquilibriumDistributionGridRegressionTest<tags::OpenCL::GPU, float> ocl_gpu_solver_regression_test_float("float");
 EquilibriumDistributionGridRegressionTest<tags::OpenCL::GPU, double> ocl_gpu_solver_regression_test_double("double");
+#endif
+#ifdef HONEI_OPENCL_ACC
+EquilibriumDistributionGridRegressionTest<tags::OpenCL::Accelerator, float> ocl_acc_solver_regression_test_float("float");
+EquilibriumDistributionGridRegressionTest<tags::OpenCL::Accelerator, double> ocl_acc_solver_regression_test_double("double");
 #endif

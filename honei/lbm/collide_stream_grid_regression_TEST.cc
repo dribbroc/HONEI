@@ -180,6 +180,12 @@ CollideStreamGridRegressionTest<tags::Cell, float> cell_collide_stream_regressio
 #ifdef HONEI_OPENCL
 CollideStreamGridRegressionTest<tags::OpenCL::CPU, float> ocl_cpu_collide_stream_regression_test_float("float");
 CollideStreamGridRegressionTest<tags::OpenCL::CPU, double> ocl_cpu_collide_stream_regression_test_double("double");
+#endif
+#ifdef HONEI_OPENCL_GPU
 CollideStreamGridRegressionTest<tags::OpenCL::GPU, float> ocl_gpu_collide_stream_regression_test_float("float");
 CollideStreamGridRegressionTest<tags::OpenCL::GPU, double> ocl_gpu_collide_stream_regression_test_double("double");
+#endif
+#ifdef HONEI_OPENCL_ACC
+CollideStreamGridRegressionTest<tags::OpenCL::Accelerator, float> ocl_acc_collide_stream_regression_test_float("float");
+CollideStreamGridRegressionTest<tags::OpenCL::Accelerator, double> ocl_acc_collide_stream_regression_test_double("double");
 #endif

@@ -144,12 +144,13 @@ namespace honei
 
 using namespace honei;
 
+template <typename Tag_>
 template <typename DT_>
-void ExtractionGrid<tags::OpenCL::CPU, lbm_modes::DRY>::value(
+void ExtractionGrid<Tag_, lbm_modes::DRY>::value(
         PackedGridInfo<lbm_lattice_types::D2Q9> & info,
         PackedGridData<lbm_lattice_types::D2Q9, DT_> & data, DT_ epsilon)
 {
-    CONTEXT("When extracting h, u and v (OpenCL CPU):");
+    CONTEXT("When extracting h, u and v (OpenCL):");
 
     //set f to t_temp
     DenseVector<DT_> * swap;
@@ -181,7 +182,7 @@ void ExtractionGrid<tags::OpenCL::CPU, lbm_modes::DRY>::value(
     data.f_8 = data.f_temp_8;
     data.f_temp_8 = swap;
 
-    opencl::common_extraction_grid_dry<tags::OpenCL::CPU>(info, data, epsilon);
+    opencl::common_extraction_grid_dry<Tag_>(info, data, epsilon);
 }
 
 template void ExtractionGrid<tags::OpenCL::CPU, lbm_modes::DRY>::value(PackedGridInfo<lbm_lattice_types::D2Q9> &,
@@ -189,57 +190,27 @@ template void ExtractionGrid<tags::OpenCL::CPU, lbm_modes::DRY>::value(PackedGri
 template void ExtractionGrid<tags::OpenCL::CPU, lbm_modes::DRY>::value(PackedGridInfo<lbm_lattice_types::D2Q9> &,
     PackedGridData<lbm_lattice_types::D2Q9, double> &, double);
 
-template <typename DT_>
-void ExtractionGrid<tags::OpenCL::GPU, lbm_modes::DRY>::value(
-        PackedGridInfo<lbm_lattice_types::D2Q9> & info,
-        PackedGridData<lbm_lattice_types::D2Q9, DT_> & data, DT_ epsilon)
-{
-    CONTEXT("When extracting h, u and v (OpenCL GPU):");
-
-    //set f to t_temp
-    DenseVector<DT_> * swap;
-    swap = data.f_0;
-    data.f_0 = data.f_temp_0;
-    data.f_temp_0 = swap;
-    swap = data.f_1;
-    data.f_1 = data.f_temp_1;
-    data.f_temp_1 = swap;
-    swap = data.f_2;
-    data.f_2 = data.f_temp_2;
-    data.f_temp_2 = swap;
-    swap = data.f_3;
-    data.f_3 = data.f_temp_3;
-    data.f_temp_3 = swap;
-    swap = data.f_4;
-    data.f_4 = data.f_temp_4;
-    data.f_temp_4 = swap;
-    swap = data.f_5;
-    data.f_5 = data.f_temp_5;
-    data.f_temp_5 = swap;
-    swap = data.f_6;
-    data.f_6 = data.f_temp_6;
-    data.f_temp_6 = swap;
-    swap = data.f_7;
-    data.f_7 = data.f_temp_7;
-    data.f_temp_7 = swap;
-    swap = data.f_8;
-    data.f_8 = data.f_temp_8;
-    data.f_temp_8 = swap;
-
-    opencl::common_extraction_grid_dry<tags::OpenCL::GPU>(info, data, epsilon);
-}
-
+#ifdef HONEI_OPENCL_GPU
 template void ExtractionGrid<tags::OpenCL::GPU, lbm_modes::DRY>::value(PackedGridInfo<lbm_lattice_types::D2Q9> &,
     PackedGridData<lbm_lattice_types::D2Q9, float> &, float);
 template void ExtractionGrid<tags::OpenCL::GPU, lbm_modes::DRY>::value(PackedGridInfo<lbm_lattice_types::D2Q9> &,
     PackedGridData<lbm_lattice_types::D2Q9, double> &, double);
+#endif
 
+#ifdef HONEI_OPENCL_ACC
+template void ExtractionGrid<tags::OpenCL::Accelerator, lbm_modes::DRY>::value(PackedGridInfo<lbm_lattice_types::D2Q9> &,
+    PackedGridData<lbm_lattice_types::D2Q9, float> &, float);
+template void ExtractionGrid<tags::OpenCL::Accelerator, lbm_modes::DRY>::value(PackedGridInfo<lbm_lattice_types::D2Q9> &,
+    PackedGridData<lbm_lattice_types::D2Q9, double> &, double);
+#endif
+
+template <typename Tag_>
 template <typename DT_>
-void ExtractionGrid<tags::OpenCL::CPU, lbm_modes::WET>::value(
+void ExtractionGrid<Tag_, lbm_modes::WET>::value(
         PackedGridInfo<lbm_lattice_types::D2Q9> & info,
         PackedGridData<lbm_lattice_types::D2Q9, DT_> & data, DT_ epsilon)
 {
-    CONTEXT("When extracting h, u and v (OpenCL CPU):");
+    CONTEXT("When extracting h, u and v (OpenCL):");
 
     //set f to t_temp
     DenseVector<DT_> * swap;
@@ -279,47 +250,16 @@ template void ExtractionGrid<tags::OpenCL::CPU, lbm_modes::WET>::value(PackedGri
 template void ExtractionGrid<tags::OpenCL::CPU, lbm_modes::WET>::value(PackedGridInfo<lbm_lattice_types::D2Q9> &,
     PackedGridData<lbm_lattice_types::D2Q9, double> &, double);
 
-template <typename DT_>
-void ExtractionGrid<tags::OpenCL::GPU, lbm_modes::WET>::value(
-        PackedGridInfo<lbm_lattice_types::D2Q9> & info,
-        PackedGridData<lbm_lattice_types::D2Q9, DT_> & data, DT_ epsilon)
-{
-    CONTEXT("When extracting h, u and v (OpenCL GPU):");
-
-    //set f to t_temp
-    DenseVector<DT_> * swap;
-    swap = data.f_0;
-    data.f_0 = data.f_temp_0;
-    data.f_temp_0 = swap;
-    swap = data.f_1;
-    data.f_1 = data.f_temp_1;
-    data.f_temp_1 = swap;
-    swap = data.f_2;
-    data.f_2 = data.f_temp_2;
-    data.f_temp_2 = swap;
-    swap = data.f_3;
-    data.f_3 = data.f_temp_3;
-    data.f_temp_3 = swap;
-    swap = data.f_4;
-    data.f_4 = data.f_temp_4;
-    data.f_temp_4 = swap;
-    swap = data.f_5;
-    data.f_5 = data.f_temp_5;
-    data.f_temp_5 = swap;
-    swap = data.f_6;
-    data.f_6 = data.f_temp_6;
-    data.f_temp_6 = swap;
-    swap = data.f_7;
-    data.f_7 = data.f_temp_7;
-    data.f_temp_7 = swap;
-    swap = data.f_8;
-    data.f_8 = data.f_temp_8;
-    data.f_temp_8 = swap;
-
-    opencl::common_extraction_grid_wet<tags::OpenCL::GPU>(info, data, epsilon);
-}
-
+#ifdef HONEI_OPENCL_GPU
 template void ExtractionGrid<tags::OpenCL::GPU, lbm_modes::WET>::value(PackedGridInfo<lbm_lattice_types::D2Q9> &,
     PackedGridData<lbm_lattice_types::D2Q9, float> &, float);
 template void ExtractionGrid<tags::OpenCL::GPU, lbm_modes::WET>::value(PackedGridInfo<lbm_lattice_types::D2Q9> &,
     PackedGridData<lbm_lattice_types::D2Q9, double> &, double);
+#endif
+
+#ifdef HONEI_OPENCL_ACC
+template void ExtractionGrid<tags::OpenCL::Accelerator, lbm_modes::WET>::value(PackedGridInfo<lbm_lattice_types::D2Q9> &,
+    PackedGridData<lbm_lattice_types::D2Q9, float> &, float);
+template void ExtractionGrid<tags::OpenCL::Accelerator, lbm_modes::WET>::value(PackedGridInfo<lbm_lattice_types::D2Q9> &,
+    PackedGridData<lbm_lattice_types::D2Q9, double> &, double);
+#endif

@@ -552,15 +552,8 @@ namespace honei
             static void value(double g, double e, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data);
         };
 
-    template<>
-        struct EquilibriumDistributionGrid<tags::OpenCL::CPU, lbm_applications::LABSWE>
-        {
-            template <typename DT1_>
-                static void value(DT1_ g, DT1_ e, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data);
-        };
-
-    template<>
-        struct EquilibriumDistributionGrid<tags::OpenCL::GPU, lbm_applications::LABSWE>
+    template<typename Tag_>
+        struct EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>
         {
             template <typename DT1_>
                 static void value(DT1_ g, DT1_ e, PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT1_> & data);

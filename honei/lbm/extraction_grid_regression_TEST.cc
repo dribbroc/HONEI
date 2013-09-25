@@ -158,8 +158,14 @@ ExtractionGridRegressionTest<tags::Cell, float, lbm_modes::DRY> cell_solver_mult
 #ifdef HONEI_OPENCL
 ExtractionGridRegressionTest<tags::OpenCL::CPU, float, lbm_modes::DRY> ocl_cpu_solver_multi_test_float_dry("float dry");
 ExtractionGridRegressionTest<tags::OpenCL::CPU, double, lbm_modes::DRY> ocl_cpu_solver_multi_test_double_dry("double dry");
+#endif
+#ifdef HONEI_OPENCL_GPU
 ExtractionGridRegressionTest<tags::OpenCL::GPU, float, lbm_modes::DRY> ocl_gpu_solver_multi_test_float_dry("float dry");
 ExtractionGridRegressionTest<tags::OpenCL::GPU, double, lbm_modes::DRY> ocl_gpu_solver_multi_test_double_dry("double dry");
+#endif
+#ifdef HONEI_OPENCL_ACC
+ExtractionGridRegressionTest<tags::OpenCL::Accelerator, float, lbm_modes::DRY> ocl_acc_solver_multi_test_float_dry("float dry");
+ExtractionGridRegressionTest<tags::OpenCL::Accelerator, double, lbm_modes::DRY> ocl_acc_solver_multi_test_double_dry("double dry");
 #endif
 
 #ifdef HONEI_SSE
@@ -178,6 +184,12 @@ ExtractionGridRegressionTest<tags::Cell, float, lbm_modes::WET> cell_solver_mult
 #ifdef HONEI_OPENCL
 ExtractionGridRegressionTest<tags::OpenCL::CPU, float, lbm_modes::WET> ocl_cpu_solver_multi_test_float_wet("float wet");
 ExtractionGridRegressionTest<tags::OpenCL::CPU, double, lbm_modes::WET> ocl_cpu_solver_multi_test_double_wet("double wet");
+#endif
+#ifdef HONEI_OPENCL_GPU
 ExtractionGridRegressionTest<tags::OpenCL::GPU, float, lbm_modes::WET> ocl_gpu_solver_multi_test_float_wet("float wet");
 ExtractionGridRegressionTest<tags::OpenCL::GPU, double, lbm_modes::WET> ocl_gpu_solver_multi_test_double_wet("double wet");
+#endif
+#ifdef HONEI_OPENCL_ACC
+ExtractionGridRegressionTest<tags::OpenCL::Accelerator, float, lbm_modes::WET> ocl_acc_solver_multi_test_float_wet("float wet");
+ExtractionGridRegressionTest<tags::OpenCL::Accelerator, double, lbm_modes::WET> ocl_acc_solver_multi_test_double_wet("double wet");
 #endif

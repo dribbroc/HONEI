@@ -138,32 +138,28 @@ namespace honei
 
 using namespace honei;
 
+template <typename Tag_>
 template <typename DT_>
-void CollideStreamGrid<tags::OpenCL::CPU, lbm_boundary_types::NOSLIP,
+void CollideStreamGrid<Tag_, lbm_boundary_types::NOSLIP,
      lbm_lattice_types::D2Q9>::value(
              PackedGridInfo<lbm_lattice_types::D2Q9> & info,
              PackedGridData<lbm_lattice_types::D2Q9, DT_> & data,
              DT_ tau)
 {
-    CONTEXT("When performing collision and streaming (OpenCL CPU):");
+    CONTEXT("When performing collision and streaming (OpenCL):");
 
-    opencl::common_collide_stream_grid<tags::OpenCL::CPU>(info, data, tau);
+    opencl::common_collide_stream_grid<Tag_>(info, data, tau);
 }
 
 template void CollideStreamGrid<tags::OpenCL::CPU, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::value(PackedGridInfo<lbm_lattice_types::D2Q9> &, PackedGridData<lbm_lattice_types::D2Q9, float> &, float);
 template void CollideStreamGrid<tags::OpenCL::CPU, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::value(PackedGridInfo<lbm_lattice_types::D2Q9> &, PackedGridData<lbm_lattice_types::D2Q9, double> &, double);
 
-template <typename DT_>
-void CollideStreamGrid<tags::OpenCL::GPU, lbm_boundary_types::NOSLIP,
-     lbm_lattice_types::D2Q9>::value(
-             PackedGridInfo<lbm_lattice_types::D2Q9> & info,
-             PackedGridData<lbm_lattice_types::D2Q9, DT_> & data,
-             DT_ tau)
-{
-    CONTEXT("When performing collision and streaming (OpenCL GPU):");
-
-    opencl::common_collide_stream_grid<tags::OpenCL::GPU>(info, data, tau);
-}
-
+#ifdef HONEI_OPENCL_GPU
 template void CollideStreamGrid<tags::OpenCL::GPU, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::value(PackedGridInfo<lbm_lattice_types::D2Q9> &, PackedGridData<lbm_lattice_types::D2Q9, float> &, float);
 template void CollideStreamGrid<tags::OpenCL::GPU, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::value(PackedGridInfo<lbm_lattice_types::D2Q9> &, PackedGridData<lbm_lattice_types::D2Q9, double> &, double);
+#endif
+
+#ifdef HONEI_OPENCL_ACC
+template void CollideStreamGrid<tags::OpenCL::Accelerator, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::value(PackedGridInfo<lbm_lattice_types::D2Q9> &, PackedGridData<lbm_lattice_types::D2Q9, float> &, float);
+template void CollideStreamGrid<tags::OpenCL::Accelerator, lbm_boundary_types::NOSLIP, lbm_lattice_types::D2Q9>::value(PackedGridInfo<lbm_lattice_types::D2Q9> &, PackedGridData<lbm_lattice_types::D2Q9, double> &, double);
+#endif

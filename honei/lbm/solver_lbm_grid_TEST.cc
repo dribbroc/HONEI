@@ -318,6 +318,12 @@ SimpleSolverLBMGridMassConservationTest<tags::Cell, float> cell_simple_solver_gr
 #ifdef HONEI_OPENCL
 SimpleSolverLBMGridMassConservationTest<tags::OpenCL::CPU, float> ocl_cpu_simple_solver_grid_mc_test_float("float");
 SimpleSolverLBMGridMassConservationTest<tags::OpenCL::CPU, double> ocl_cpu_simple_solver_grid_mc_test_double("double");
+#endif
+#ifdef HONEI_OPENCL_GPU
 SimpleSolverLBMGridMassConservationTest<tags::OpenCL::GPU, float> ocl_gpu_simple_solver_grid_mc_test_float("float");
 SimpleSolverLBMGridMassConservationTest<tags::OpenCL::GPU, double> ocl_gpu_simple_solver_grid_mc_test_double("double");
+#endif
+#ifdef HONEI_OPENCL_ACC
+SimpleSolverLBMGridMassConservationTest<tags::OpenCL::Accelerator, float> ocl_acc_simple_solver_grid_mc_test_float("float");
+SimpleSolverLBMGridMassConservationTest<tags::OpenCL::Accelerator, double> ocl_acc_simple_solver_grid_mc_test_double("double");
 #endif

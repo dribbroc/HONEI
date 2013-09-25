@@ -86,16 +86,18 @@ namespace honei
 
 using namespace honei;
 
+template <typename Tag_>
 template <typename DT_>
-void EquilibriumDistributionGrid<tags::OpenCL::CPU, lbm_applications::LABSWE>::value(
+void EquilibriumDistributionGrid<Tag_, lbm_applications::LABSWE>::value(
         DT_ g, DT_ e,
         PackedGridInfo<lbm_lattice_types::D2Q9> & info,
         PackedGridData<lbm_lattice_types::D2Q9, DT_> & data)
 {
-    CONTEXT("When computing LABSWE local equilibrium distribution function (OpenCL CPU):");
+    CONTEXT("When computing LABSWE local equilibrium distribution function (OpenCL):");
 
-    opencl::common_eq_dist_grid<tags::OpenCL::CPU>(info, data, g, e);
+    opencl::common_eq_dist_grid<Tag_>(info, data, g, e);
 }
+
 
 template void EquilibriumDistributionGrid<tags::OpenCL::CPU, lbm_applications::LABSWE>::value(float, float,
         PackedGridInfo<lbm_lattice_types::D2Q9> &,
@@ -104,20 +106,20 @@ template void EquilibriumDistributionGrid<tags::OpenCL::CPU, lbm_applications::L
         PackedGridInfo<lbm_lattice_types::D2Q9> &,
         PackedGridData<lbm_lattice_types::D2Q9, double> &);
 
-template <typename DT_>
-void EquilibriumDistributionGrid<tags::OpenCL::GPU, lbm_applications::LABSWE>::value(
-        DT_ g, DT_ e,
-        PackedGridInfo<lbm_lattice_types::D2Q9> & info,
-        PackedGridData<lbm_lattice_types::D2Q9, DT_> & data)
-{
-    CONTEXT("When computing LABSWE local equilibrium distribution function (OpenCL GPU):");
-
-    opencl::common_eq_dist_grid<tags::OpenCL::GPU>(info, data, g, e);
-}
-
+#ifdef HONEI_OPENCL_GPU
 template void EquilibriumDistributionGrid<tags::OpenCL::GPU, lbm_applications::LABSWE>::value(float, float,
         PackedGridInfo<lbm_lattice_types::D2Q9> &,
         PackedGridData<lbm_lattice_types::D2Q9, float> &);
 template void EquilibriumDistributionGrid<tags::OpenCL::GPU, lbm_applications::LABSWE>::value(double, double,
         PackedGridInfo<lbm_lattice_types::D2Q9> &,
         PackedGridData<lbm_lattice_types::D2Q9, double> &);
+#endif
+
+#ifdef HONEI_OPENCL_ACC
+template void EquilibriumDistributionGrid<tags::OpenCL::Accelerator, lbm_applications::LABSWE>::value(float, float,
+        PackedGridInfo<lbm_lattice_types::D2Q9> &,
+        PackedGridData<lbm_lattice_types::D2Q9, float> &);
+template void EquilibriumDistributionGrid<tags::OpenCL::Accelerator, lbm_applications::LABSWE>::value(double, double,
+        PackedGridInfo<lbm_lattice_types::D2Q9> &,
+        PackedGridData<lbm_lattice_types::D2Q9, double> &);
+#endif

@@ -72,13 +72,14 @@ namespace honei
 
 using namespace honei;
 
+template <typename Tag_>
 template <typename DT_>
-void UpdateVelocityDirectionsGrid<tags::OpenCL::CPU, lbm_boundary_types::NOSLIP>::value(
+void UpdateVelocityDirectionsGrid<Tag_, lbm_boundary_types::NOSLIP>::value(
         PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
 {
-    CONTEXT("When updating velocity directions (OpenCL CPU):");
+    CONTEXT("When updating velocity directions (OpenCL):");
 
-    opencl::common_update_velocity_directions_grid<tags::OpenCL::CPU>(info, data);
+    opencl::common_update_velocity_directions_grid<Tag_>(info, data);
 }
 
 template void UpdateVelocityDirectionsGrid<tags::OpenCL::CPU, lbm_boundary_types::NOSLIP>::value(
@@ -86,16 +87,16 @@ template void UpdateVelocityDirectionsGrid<tags::OpenCL::CPU, lbm_boundary_types
 template void UpdateVelocityDirectionsGrid<tags::OpenCL::CPU, lbm_boundary_types::NOSLIP>::value(
         PackedGridInfo<lbm_lattice_types::D2Q9> &, PackedGridData<lbm_lattice_types::D2Q9, double> &);
 
-template <typename DT_>
-void UpdateVelocityDirectionsGrid<tags::OpenCL::GPU, lbm_boundary_types::NOSLIP>::value(
-        PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data)
-{
-    CONTEXT("When updating velocity directions (OpenCL GPU):");
-
-    opencl::common_update_velocity_directions_grid<tags::OpenCL::GPU>(info, data);
-}
-
+#ifdef HONEI_OPENCL_GPU
 template void UpdateVelocityDirectionsGrid<tags::OpenCL::GPU, lbm_boundary_types::NOSLIP>::value(
         PackedGridInfo<lbm_lattice_types::D2Q9> &, PackedGridData<lbm_lattice_types::D2Q9, float> &);
 template void UpdateVelocityDirectionsGrid<tags::OpenCL::GPU, lbm_boundary_types::NOSLIP>::value(
         PackedGridInfo<lbm_lattice_types::D2Q9> &, PackedGridData<lbm_lattice_types::D2Q9, double> &);
+#endif
+
+#ifdef HONEI_OPENCL_ACC
+template void UpdateVelocityDirectionsGrid<tags::OpenCL::Accelerator, lbm_boundary_types::NOSLIP>::value(
+        PackedGridInfo<lbm_lattice_types::D2Q9> &, PackedGridData<lbm_lattice_types::D2Q9, float> &);
+template void UpdateVelocityDirectionsGrid<tags::OpenCL::Accelerator, lbm_boundary_types::NOSLIP>::value(
+        PackedGridInfo<lbm_lattice_types::D2Q9> &, PackedGridData<lbm_lattice_types::D2Q9, double> &);
+#endif

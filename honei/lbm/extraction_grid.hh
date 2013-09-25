@@ -350,16 +350,8 @@ namespace honei
                 static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data, double epsilon);
         };
 
-    template<>
-        struct ExtractionGrid<tags::OpenCL::CPU, lbm_modes::DRY>
-        {
-            public:
-                template <typename DT_>
-                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data, DT_ epsilon);
-        };
-
-    template<>
-        struct ExtractionGrid<tags::OpenCL::GPU, lbm_modes::DRY>
+    template<typename Tag_>
+        struct ExtractionGrid<Tag_, lbm_modes::DRY>
         {
             public:
                 template <typename DT_>
@@ -673,16 +665,8 @@ namespace honei
                 static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, double> & data, double epsilon);
         };
 
-    template<>
-        struct ExtractionGrid<tags::OpenCL::CPU, lbm_modes::WET>
-        {
-            public:
-                template <typename DT_>
-                static void value(PackedGridInfo<D2Q9> & info, PackedGridData<D2Q9, DT_> & data, DT_ epsilon);
-        };
-
-    template<>
-        struct ExtractionGrid<tags::OpenCL::GPU, lbm_modes::WET>
+    template<typename Tag_>
+        struct ExtractionGrid<Tag_, lbm_modes::WET>
         {
             public:
                 template <typename DT_>

@@ -76,7 +76,12 @@ int main(int argc, char ** argv)
     }
     std::string filename(argv[1]);
     compile(CL_DEVICE_TYPE_CPU , filename);
+#ifdef HONEI_OPENCL_GPU
     compile(CL_DEVICE_TYPE_GPU , filename);
+#endif
+#ifdef HONEI_OPENCL_ACC
+    compile(CL_DEVICE_TYPE_ACCELERATOR , filename);
+#endif
 
     std::cout<<"OCLC compiled "<<argv[1]<<" successfully"<<std::endl;
     return EXIT_SUCCESS;

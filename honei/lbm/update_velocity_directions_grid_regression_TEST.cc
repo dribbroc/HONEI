@@ -178,6 +178,12 @@ UpateVelocityDirectionsGridRegressionTest<tags::Cell, float> cell_solver_multi_t
 #ifdef HONEI_OPENCL
 UpateVelocityDirectionsGridRegressionTest<tags::OpenCL::CPU, float> ocl_cpu_solver_multi_test_float("float");
 UpateVelocityDirectionsGridRegressionTest<tags::OpenCL::CPU, double> ocl_cpu_solver_multi_test_double("double");
+#endif
+#ifdef HONEI_OPENCL_GPU
 UpateVelocityDirectionsGridRegressionTest<tags::OpenCL::GPU, float> ocl_gpu_solver_multi_test_float("float");
 UpateVelocityDirectionsGridRegressionTest<tags::OpenCL::GPU, double> ocl_gpu_solver_multi_test_double("double");
+#endif
+#ifdef HONEI_OPENCL_ACC
+UpateVelocityDirectionsGridRegressionTest<tags::OpenCL::Accelerator, float> ocl_acc_solver_multi_test_float("float");
+UpateVelocityDirectionsGridRegressionTest<tags::OpenCL::Accelerator, double> ocl_acc_solver_multi_test_double("double");
 #endif
