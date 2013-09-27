@@ -81,7 +81,7 @@ class UpdateVelocityDirectionsGridBench :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, 1., 1., 1., 1.5);
+            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, 1., 1., 1., 1.5);
 
             solver.do_preprocessing();
 
@@ -117,4 +117,13 @@ UpdateVelocityDirectionsGridBench<tags::GPU::CUDA, float> cuda_update_velocity_d
 #endif
 #ifdef HONEI_CELL
 UpdateVelocityDirectionsGridBench<tags::Cell, float> cell_update_velocity_directions_grid_bench_float("Cell UpdateVelocityDirectionsGridBench - size: 250, float", 250, 25);
+#endif
+#ifdef HONEI_OPENCL
+UpdateVelocityDirectionsGridBench<tags::OpenCL::CPU, float> ocl_cpu_update_velocity_directions_grid_bench_float("OpenCL CPU UpdateVelocityDirectionsGridBench - size: 1000, float", 1000, 10);
+#endif
+#ifdef HONEI_OPENCL_GPU
+UpdateVelocityDirectionsGridBench<tags::OpenCL::GPU, float> ocl_gpu_update_velocity_directions_grid_bench_float("OpenCL GPU UpdateVelocityDirectionsGridBench - size: 1000, float", 1000, 10);
+#endif
+#ifdef HONEI_OPENCL_ACC
+UpdateVelocityDirectionsGridBench<tags::OpenCL::Accelerator, float> ocl_acc_update_velocity_directions_grid_bench_float("OpenCL Accelerator UpdateVelocityDirectionsGridBench - size: 1000, float", 1000, 10);
 #endif

@@ -125,8 +125,13 @@ ExtractionGridBench<tags::CPU::Itanium, float, lbm_modes::WET> sse_wet_extractio
 ExtractionGridBench<tags::CPU::Itanium, double, lbm_modes::WET> sse_wet_extraction_grid_bench_double("Itanium WET ExtractionGridBench - size: 2000, double", 2000, 10);
 #endif
 #ifdef HONEI_OPENCL
-ExtractionGridBench<tags::OpenCL::CPU, float, lbm_modes::WET> ocl_cpu_wet_extraction_grid_bench_float("OpenCL CPU WET ExtractionGridBench - size: 2000, float", 2000, 10);
-ExtractionGridBench<tags::OpenCL::GPU, float, lbm_modes::WET> ocl_gpu_wet_extraction_grid_bench_float("OpenCL GPU WET ExtractionGridBench - size: 2000, float", 2000, 10);
+ExtractionGridBench<tags::OpenCL::CPU, float, lbm_modes::WET> ocl_cpu_wet_extraction_grid_bench_float("OpenCL CPU WET ExtractionGridBench - size: 1000, float", 1000, 10);
+#endif
+#ifdef HONEI_OPENCL_GPU
+ExtractionGridBench<tags::OpenCL::GPU, float, lbm_modes::WET> ocl_gpu_wet_extraction_grid_bench_float("OpenCL GPU WET ExtractionGridBench - size: 1000, float", 1000, 10);
+#endif
+#ifdef HONEI_OPENCL_ACC
+ExtractionGridBench<tags::OpenCL::Accelerator, float, lbm_modes::WET> ocl_acc_wet_extraction_grid_bench_float("OpenCL Accelerator WET ExtractionGridBench - size: 1000, float", 1000, 10);
 #endif
 
 #ifdef HONEI_SSE

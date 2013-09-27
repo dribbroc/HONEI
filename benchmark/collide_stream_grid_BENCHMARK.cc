@@ -29,6 +29,9 @@
 #include <honei/swe/volume.hh>
 #include <honei/math/quadrature.hh>
 #include <honei/backends/cuda/operations.hh>
+#ifdef HONEI_OPENCL
+#include <honei/backends/opencl/opencl_backend.hh>
+#endif
 
 using namespace std;
 using namespace honei;
@@ -81,7 +84,7 @@ class CollideStreamGridBench :
 
             GridPacker<D2Q9, NOSLIP, DataType_>::pack(grid, info, data);
 
-            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::CENTRED, lbm_source_schemes::BED_FULL, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, 1., 1., 1., 1.5);
+            SolverLBMGrid<Tag_, lbm_applications::LABSWE, DataType_,lbm_force::NONE, lbm_source_schemes::NONE, lbm_grid_types::RECTANGULAR, lbm_lattice_types::D2Q9, lbm_boundary_types::NOSLIP, lbm_modes::DRY> solver(&info, &data, 1., 1., 1., 1.5);
 
             solver.do_preprocessing();
 
@@ -98,6 +101,10 @@ class CollideStreamGridBench :
 #ifdef HONEI_CUDA
                         if (Tag_::tag_value == tags::tv_gpu_cuda)
                             cuda::GPUPool::instance()->flush();
+#endif
+#ifdef HONEI_OPENCL
+                        if (Tag_::tag_value == tags::tv_opencl)
+                            opencl::OpenCLBackend::instance()->flush();
 #endif
                         );
             }
@@ -121,4 +128,14 @@ CollideStreamGridBench<tags::CPU::Itanium, double> sse_collide_stream_grid_bench
 
 #ifdef HONEI_CUDA
 CollideStreamGridBench<tags::GPU::CUDA, float> cuda_collide_stream_grid_bench_float("CUDA CollideStreamGridBenchmark - size: 2000, float", 2000, 10);
+#endif
+
+#ifdef HONEI_OPENCL
+CollideStreamGridBench<tags::OpenCL::CPU, float> ocl_cpu_collide_stream_grid_bench_float("OpenCL CPU CollideStreamGridBenchmark - size: 1000, float", 1000, 10);
+#endif
+#ifdef HONEI_OPENCL_GPU
+CollideStreamGridBench<tags::OpenCL::GPU, float> ocl_gpu_collide_stream_grid_bench_float("OpenCL GPU CollideStreamGridBenchmark - size: 1000, float", 1000, 10);
+#endif
+#ifdef HONEI_OPENCL_ACC
+CollideStreamGridBench<tags::OpenCL::Accelerator, float> ocl_acc_collide_stream_grid_bench_float("OpenCL Accelerator CollideStreamGridBenchmark - size: 1000, float", 1000, 10);
 #endif

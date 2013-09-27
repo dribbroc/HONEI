@@ -99,12 +99,18 @@ DenseVectorScaledSumBench<tags::OpenCL::CPU, float>
     OCLCPUDVSSBenchfloat("OpenCL CPU Dense Vector ScaledSum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
 DenseVectorScaledSumBench<tags::OpenCL::CPU, double>
     OCLCPUDVSSBenchdouble("OpenCL CPU Dense Vector ScaledSum Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
+#endif
+#ifdef HONEI_OPENCL_GPU
 DenseVectorScaledSumBench<tags::OpenCL::GPU, float>
     OCLGPUDVSSBenchfloat("OpenCL GPU Dense Vector ScaledSum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
-#ifdef HONEI_CUDA_DOUBLE
 DenseVectorScaledSumBench<tags::OpenCL::GPU, double>
     OCLGPUDVSSBenchdouble("OpenCL GPU Dense Vector ScaledSum Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
 #endif
+#ifdef HONEI_OPENCL_ACC
+DenseVectorScaledSumBench<tags::OpenCL::Accelerator, float>
+    OCLACCDVSSBenchfloat("OpenCL Accelerator Dense Vector ScaledSum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);
+DenseVectorScaledSumBench<tags::OpenCL::Accelerator, double>
+    OCLACCDVSSBenchdouble("OpenCL Accelerator Dense Vector ScaledSum Benchmark - vector size: 64^4, double", 64ul*64*64*64, 10);
 #endif
 #ifdef HONEI_CELL
 DenseVectorScaledSumBench<tags::Cell, float> CellDVSSBenchfloat1("CELL Dense Vector ScaledSum Benchmark - vector size: 64^4, float", 64ul*64*64*64, 10);

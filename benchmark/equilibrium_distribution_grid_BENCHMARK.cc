@@ -131,6 +131,11 @@ EquilibriumDistributionGridBench<tags::GPU::CUDA, float> cuda_eq_dist_grid_bench
 #endif
 
 #ifdef HONEI_OPENCL
-EquilibriumDistributionGridBench<tags::OpenCL::CPU, float> ocl_cpu_eq_dist_grid_bench_float("OpenCL CPU EquilibriumDistributionGridBenchmark - size: 2000, float", 2000, 10);
-EquilibriumDistributionGridBench<tags::OpenCL::GPU, float> ocl_gpu_eq_dist_grid_bench_float("OpenCL GPU EquilibriumDistributionGridBenchmark - size: 2000, float", 2000, 10);
+EquilibriumDistributionGridBench<tags::OpenCL::CPU, float> ocl_cpu_eq_dist_grid_bench_float("OpenCL CPU EquilibriumDistributionGridBenchmark - size: 1000, float", 1000, 10);
+#endif
+#ifdef HONEI_OPENCL_GPU
+EquilibriumDistributionGridBench<tags::OpenCL::GPU, float> ocl_gpu_eq_dist_grid_bench_float("OpenCL GPU EquilibriumDistributionGridBenchmark - size: 1000, float", 1000, 10);
+#endif
+#ifdef HONEI_OPENCL_ACC
+EquilibriumDistributionGridBench<tags::OpenCL::Accelerator, float> ocl_acc_eq_dist_grid_bench_float("OpenCL Accelerator EquilibriumDistributionGridBenchmark - size: 1000, float", 1000, 10);
 #endif

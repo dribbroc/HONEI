@@ -290,6 +290,7 @@ LBMGSimpleSolverBench<tags::OpenCL::GPU, float> ocl_gpu_solver_simple_bench_floa
 LBMGSimpleSolverBench<tags::OpenCL::GPU, float> ocl_gpu_solver_simple_bench_float_7("OpenCL GPU LBM Simple Grid solver Benchmark - size: 1500, float", 1500, 25);
 #endif
 #ifdef HONEI_OPENCL_ACC
+LBMGSimpleSolverBench<tags::OpenCL::Accelerator, float> ocl_acc_solver_simple_bench_float_0("OpenCL Accelerator LBM Simple Grid solver Benchmark - size: 10, float", 10, 25);
 LBMGSimpleSolverBench<tags::OpenCL::Accelerator, float> ocl_acc_solver_simple_bench_float_1("OpenCL Accelerator LBM Simple Grid solver Benchmark - size: 50, float", 50, 25);
 LBMGSimpleSolverBench<tags::OpenCL::Accelerator, float> ocl_acc_solver_simple_bench_float_2("OpenCL Accelerator LBM Simple Grid solver Benchmark - size: 100, float", 100, 25);
 LBMGSimpleSolverBench<tags::OpenCL::Accelerator, float> ocl_acc_solver_simple_bench_float_3("OpenCL Accelerator LBM Simple Grid solver Benchmark - size: 250, float", 250, 25);
