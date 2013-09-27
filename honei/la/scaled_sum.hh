@@ -387,6 +387,19 @@ namespace honei
         static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y, const DenseVectorContinuousBase<DT_> & z, DT_ b);
     };
 
+    template <>
+    struct ScaledSum<tags::OpenCL::Accelerator>
+    {
+        template <typename DT_>
+        static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y, DT_ b);
+
+        template <typename DT_>
+        static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & a, const DenseVectorContinuousBase<DT_> & b, const DenseVectorContinuousBase<DT_> & c );
+
+        template <typename DT_>
+        static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y, const DenseVectorContinuousBase<DT_> & z, DT_ b);
+    };
+
     /**
      * \brief Scaled sum of two given vectors and a given scalar.
      *

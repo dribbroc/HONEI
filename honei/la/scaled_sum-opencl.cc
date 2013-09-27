@@ -109,6 +109,19 @@ template DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::GPU>::value(
 template DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &, double);
 
 template <typename DT_>
+DenseVectorContinuousBase<DT_> & ScaledSum<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<DT_> & x,
+        const DenseVectorContinuousBase<DT_> & y, DT_ b)
+{
+    CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<DT_> (OpenCL Accelerator):");
+    PROFILER_START("ScaledSum tags::OpenCL::Accelerator");
+    opencl::common_scaled_sum<tags::OpenCL::Accelerator>(x, y, b);
+    PROFILER_STOP("ScaledSum tags::OpenCL::Accelerator");
+    return x;
+}
+template DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &, float);
+template DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &, double);
+
+template <typename DT_>
 DenseVectorContinuousBase<DT_> & ScaledSum<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<DT_> & r, const DenseVectorContinuousBase<DT_> & x,
         const DenseVectorContinuousBase<DT_> & y, DT_ b)
 {
@@ -135,6 +148,19 @@ template DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::GPU>::value(
 template DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &, double);
 
 template <typename DT_>
+DenseVectorContinuousBase<DT_> & ScaledSum<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<DT_> & r, const DenseVectorContinuousBase<DT_> & x,
+        const DenseVectorContinuousBase<DT_> & y, DT_ b)
+{
+    CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<DT_> (OpenCL Accelerator):");
+    PROFILER_START("ScaledSum tags::OpenCL::Accelerator");
+    opencl::common_scaled_sum<tags::OpenCL::Accelerator>(r, x, y, b);
+    PROFILER_STOP("ScaledSum tags::OpenCL::Accelerator");
+    return r;
+}
+template DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &, float);
+template DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &, double);
+
+template <typename DT_>
 DenseVectorContinuousBase<DT_> & ScaledSum<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<DT_> & r, const DenseVectorContinuousBase<DT_> & x,
         const DenseVectorContinuousBase<DT_> & y)
 {
@@ -159,3 +185,16 @@ DenseVectorContinuousBase<DT_> & ScaledSum<tags::OpenCL::GPU>::value(DenseVector
 }
 template DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &);
 template DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &);
+
+template <typename DT_>
+DenseVectorContinuousBase<DT_> & ScaledSum<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<DT_> & r, const DenseVectorContinuousBase<DT_> & x,
+        const DenseVectorContinuousBase<DT_> & y)
+{
+    CONTEXT("When calculating ScaledSum form DenseVectorContinuousBase<DT_> (OpenCL Accelerator):");
+    PROFILER_START("ScaledSum tags::OpenCL::Accelerator");
+    opencl::common_scaled_sum<tags::OpenCL::Accelerator>(r, x, y);
+    PROFILER_STOP("ScaledSum tags::OpenCL::Accelerator");
+    return r;
+}
+template DenseVectorContinuousBase<float> & ScaledSum<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &);
+template DenseVectorContinuousBase<double> & ScaledSum<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &);
