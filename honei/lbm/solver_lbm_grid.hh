@@ -58,8 +58,10 @@
 #include <honei/lbm/grid_packer.hh>
 #include <honei/backends/multicore/dispatch_policy.hh>
 #include <honei/backends/multicore/thread_pool.hh>
+#ifdef HONEI_CUDA
 #include <honei/backends/cuda/gpu_pool.hh>
 #include <honei/backends/cuda/transfer.hh>
+#endif
 
 #include <iostream>
 #include <honei/util/tr1_boost.hh>
@@ -383,6 +385,7 @@ namespace honei
         };
 
 
+#ifdef HONEI_CUDA
     namespace
     {
         class UploadTask
@@ -726,5 +729,6 @@ namespace honei
             {
             }
         };
+#endif
 }
 #endif
