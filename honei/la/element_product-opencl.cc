@@ -88,6 +88,18 @@ template DenseVectorContinuousBase<float> & ElementProduct<tags::OpenCL::GPU>::v
 template DenseVectorContinuousBase<double> & ElementProduct<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &);
 
 template <typename DT_>
+DenseVectorContinuousBase<DT_> & ElementProduct<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y)
+{
+    CONTEXT("When calculating the element product of two DenseVectorContinuousBase<DT_> (OpenCL Accelerator):");
+    PROFILER_START("ElementProduct tags::OpenCL::Accelerator");
+    opencl::common_element_product<tags::OpenCL::Accelerator>(x, y);
+    PROFILER_STOP("ElementProduct tags::OpenCL::Accelerator");
+    return x;
+}
+template DenseVectorContinuousBase<float> & ElementProduct<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &);
+template DenseVectorContinuousBase<double> & ElementProduct<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &);
+
+template <typename DT_>
 DenseVectorContinuousBase<DT_> & ElementProduct<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<DT_> & r, const DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y)
 {
     CONTEXT("When calculating the element product of two DenseVectorContinuousBase<DT_> (OpenCL CPU):");
@@ -110,3 +122,15 @@ DenseVectorContinuousBase<DT_> & ElementProduct<tags::OpenCL::GPU>::value(DenseV
 }
 template DenseVectorContinuousBase<float> & ElementProduct<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &);
 template DenseVectorContinuousBase<double> & ElementProduct<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &);
+
+template <typename DT_>
+DenseVectorContinuousBase<DT_> & ElementProduct<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<DT_> & r, const DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y)
+{
+    CONTEXT("When calculating the element product of two DenseVectorContinuousBase<DT_> (OpenCL Accelerator):");
+    PROFILER_START("ElementProduct tags::OpenCL::Accelerator");
+    opencl::common_element_product<tags::OpenCL::Accelerator>(r, x, y);
+    PROFILER_STOP("ElementProduct tags::OpenCL::Accelerator");
+    return r;
+}
+template DenseVectorContinuousBase<float> & ElementProduct<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &);
+template DenseVectorContinuousBase<double> & ElementProduct<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &);

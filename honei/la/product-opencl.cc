@@ -126,6 +126,18 @@ template DenseVectorContinuousBase<float> & Product<tags::OpenCL::GPU>::value(De
 template DenseVectorContinuousBase<double> & Product<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> &, const SparseMatrixELL<double> &, const DenseVectorContinuousBase<double> &);
 
 template <typename DT_>
+DenseVectorContinuousBase<DT_> & Product<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<DT_> & result, const SparseMatrixELL<DT_> & a, const DenseVectorContinuousBase<DT_> & b)
+{
+    CONTEXT("When multiplying SparseMatrixELL<DT_> with DenseVectorContinuousBase<DT_> (OpenCL Accelerator):");
+    PROFILER_START("Product ELL tags::OpenCL::Accelerator");
+    opencl::common_product<tags::OpenCL::Accelerator>(result, a, b);
+    PROFILER_STOP("Product ELL tags::OpenCL::Accelerator");
+    return result;
+}
+template DenseVectorContinuousBase<float> & Product<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<float> &, const SparseMatrixELL<float> &, const DenseVectorContinuousBase<float> &);
+template DenseVectorContinuousBase<double> & Product<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<double> &, const SparseMatrixELL<double> &, const DenseVectorContinuousBase<double> &);
+
+template <typename DT_>
 DenseVector<DT_> Product<tags::OpenCL::CPU>::value(const BandedMatrixQx<Q1Type, DT_> & a, const DenseVectorContinuousBase<DT_> & b)
 {
     CONTEXT("When multiplying BandedMatrixQx<Q1Type, DT_> with DenseVectorContinuousBase<DT_> (OpenCL CPU):");

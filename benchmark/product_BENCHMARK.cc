@@ -66,7 +66,7 @@ class GenericQ1MatrixDenseVectorProductBench :
                         }
                         );
             }
-            BenchmarkInfo info(Product<>::get_benchmark_info(bm1, dv2));
+            BenchmarkInfo info(Product<tags::CPU>::get_benchmark_info(bm1, dv2));
             evaluate(info * 10);
         }
 };
@@ -141,7 +141,7 @@ class Q1MatrixDenseVectorProductBench :
 #endif
                         );
             }
-            BenchmarkInfo info(Product<>::get_benchmark_info(bm1, dv2));
+            BenchmarkInfo info(Product<tags::CPU>::get_benchmark_info(bm1, dv2));
             evaluate(info * 10);
         }
 };
@@ -216,7 +216,7 @@ class BandedMatrixDenseVectorProductBench :
                         }
                         );
             }
-            BenchmarkInfo info(Product<>::get_benchmark_info(bm1, dv2));
+            BenchmarkInfo info(Product<tags::CPU>::get_benchmark_info(bm1, dv2));
             evaluate(info * 10);
         }
 };
@@ -279,7 +279,7 @@ class BandedMatrixDenseVectorProductBenchRelax :
                         }
                         );
             }
-            BenchmarkInfo info(Product<>::get_benchmark_info(bm1, dv2));
+            BenchmarkInfo info(Product<tags::CPU>::get_benchmark_info(bm1, dv2));
             evaluate(info * 10);
         }
 };
@@ -320,7 +320,7 @@ class DenseMatrixProductBench :
             {
                 BENCHMARK(Product<Tag_>::value(dm0, dm1));
             }
-            BenchmarkInfo info(Product<>::get_benchmark_info(dm0, dm1));
+            BenchmarkInfo info(Product<tags::CPU>::get_benchmark_info(dm0, dm1));
             evaluate(info);
         }
 };
@@ -368,7 +368,7 @@ class DenseMatrixDenseVectorProductBench :
             {
                 BENCHMARK(Product<Tag_>::value(dm0, dv0));
             }
-            BenchmarkInfo info(Product<>::get_benchmark_info(dm0, dv0));
+            BenchmarkInfo info(Product<tags::CPU>::get_benchmark_info(dm0, dv0));
             evaluate(info);
         }
 };
@@ -417,7 +417,7 @@ class BandedMatrixProductBench :
             {
                 BENCHMARK(Product<Tag_>::value(bm, dm));
             }
-            BenchmarkInfo info(Product<>::get_benchmark_info(bm, dm));
+            BenchmarkInfo info(Product<tags::CPU>::get_benchmark_info(bm, dm));
             evaluate(info);
         }
 };
@@ -760,7 +760,7 @@ class Q1MatrixELLDenseVectorProductBench :
 #endif
                         );
             }
-            BenchmarkInfo info(Product<>::get_benchmark_info(bm1, dv2));
+            BenchmarkInfo info(Product<tags::CPU>::get_benchmark_info(bm1, dv2));
             evaluate(info * 10);
         }
 };
@@ -833,7 +833,7 @@ class DenseMatrixDenseVectorProductSPUPlot :
                                 }
                                 );
                     }
-                    info = Product<>::get_benchmark_info(dm, dv);
+                    info = Product<tags::CPU>::get_benchmark_info(dm, dv);
                     infolist.push_back(info * 5);
                     std::cout << ".";
                     std::cout.flush();
@@ -904,7 +904,7 @@ class BandedMatrixProductQ1SPUPlot :
                                 }
                                 );
                     }
-                    info = Product<>::get_benchmark_info(bm, dv0);
+                    info = Product<tags::CPU>::get_benchmark_info(bm, dv0);
                     infolist.push_back(info * 5);
                     std::cout << ".";
                     std::cout.flush();
@@ -973,7 +973,7 @@ class BandedMatrixProductRelaxSPUPlot :
                                 }
                                 );
                     }
-                    info = Product<>::get_benchmark_info(bm, dv0);
+                    info = Product<tags::CPU>::get_benchmark_info(bm, dv0);
                     infolist.push_back(info * 5);
                     std::cout << ".";
                     std::cout.flush();
@@ -1033,7 +1033,7 @@ class BandedMatrixProductQ1VSPlot :
                 {
                     BENCHMARK(Product<tags::CPU::MultiCore::SSE>::value(bm, dv0));
                 }
-                info = Product<>::get_benchmark_info(bm, dv0);
+                info = Product<tags::CPU>::get_benchmark_info(bm, dv0);
                 infolist.push_back(info);
                 std::cout<<".";
                 std::cout.flush();
@@ -1061,7 +1061,7 @@ class BandedMatrixProductQ1VSPlot :
                 {
                     BENCHMARK(Product<tags::CPU::SSE>::value(bm, dv0));
                 }
-                info = Product<>::get_benchmark_info(bm, dv0);
+                info = Product<tags::CPU>::get_benchmark_info(bm, dv0);
                 infolist.push_back(info);
                 std::cout<<".";
                 std::cout.flush();
@@ -1113,7 +1113,7 @@ class BandedMatrixProductRelaxVSPlot :
                 {
                     BENCHMARK(Product<tags::CPU::MultiCore::SSE>::value(bm, dv0));
                 }
-                info = Product<>::get_benchmark_info(bm, dv0);
+                info = Product<tags::CPU>::get_benchmark_info(bm, dv0);
                 infolist.push_back(info);
                 std::cout<<".";
                 std::cout.flush();
@@ -1135,7 +1135,7 @@ class BandedMatrixProductRelaxVSPlot :
                 {
                     BENCHMARK(Product<tags::CPU::SSE>::value(bm, dv0));
                 }
-                info = Product<>::get_benchmark_info(bm, dv0);
+                info = Product<tags::CPU>::get_benchmark_info(bm, dv0);
                 infolist.push_back(info);
                 std::cout<<".";
                 std::cout.flush();
@@ -1182,7 +1182,7 @@ class DenseMatrixProductVSPlot :
                 {
                     BENCHMARK(Product<tags::CPU::MultiCore::SSE>::value(dm0, dm1));
                 }
-                info = Product<>::get_benchmark_info(dm0, dm1);
+                info = Product<tags::CPU>::get_benchmark_info(dm0, dm1);
                 infolist.push_back(info);
                 std::cout<<".";
                 std::cout.flush();
@@ -1199,7 +1199,7 @@ class DenseMatrixProductVSPlot :
                 {
                     BENCHMARK(Product<tags::CPU::SSE>::value(dm0, dm1));
                 }
-                info = Product<>::get_benchmark_info(dm0, dm1);
+                info = Product<tags::CPU>::get_benchmark_info(dm0, dm1);
                 infolist.push_back(info);
                 std::cout<<".";
                 std::cout.flush();
@@ -1247,7 +1247,7 @@ class DenseMatrixDenseVectorProductVSPlot :
                 {
                     BENCHMARK(Product<tags::CPU::MultiCore::SSE>::value(dm, dv));
                 }
-                info = Product<>::get_benchmark_info(dm, dv);
+                info = Product<tags::CPU>::get_benchmark_info(dm, dv);
                 infolist.push_back(info);
                 std::cout<<".";
                 std::cout.flush();
@@ -1264,7 +1264,7 @@ class DenseMatrixDenseVectorProductVSPlot :
                 {
                     BENCHMARK(Product<tags::CPU::SSE>::value(dm, dv));
                 }
-                info = Product<>::get_benchmark_info(dm, dv);
+                info = Product<tags::CPU>::get_benchmark_info(dm, dv);
                 infolist.push_back(info);
                 std::cout<<".";
                 std::cout.flush();

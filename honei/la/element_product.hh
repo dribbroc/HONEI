@@ -761,6 +761,15 @@ namespace honei
         static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & a, const DenseVectorContinuousBase<DT_> & b, const DenseVectorContinuousBase<DT_> & c);
     };
 
+    template <> struct ElementProduct<tags::OpenCL::Accelerator>
+    {
+        template <typename DT_>
+        static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & a, const DenseVectorContinuousBase<DT_> & b);
+
+        template <typename DT_>
+        static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & a, const DenseVectorContinuousBase<DT_> & b, const DenseVectorContinuousBase<DT_> & c);
+    };
+
     /**
      * \brief Multiplication of the elements of two given entities.
      *

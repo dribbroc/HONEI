@@ -441,6 +441,12 @@ namespace honei
         static DT_ value(const DenseVectorContinuousBase<DT_> & a, const DenseVectorContinuousBase<DT_> & b);
     };
 
+    template <> struct DotProduct<tags::OpenCL::Accelerator>
+    {
+        template <typename DT_>
+        static DT_ value(const DenseVectorContinuousBase<DT_> & a, const DenseVectorContinuousBase<DT_> & b);
+    };
+
     namespace mc
     {
         template <typename Tag_> struct DotProduct

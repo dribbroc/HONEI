@@ -861,6 +861,12 @@ namespace honei
         static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & a, const DenseVectorContinuousBase<DT_> & b);
     };
 
+    template <> struct Sum<tags::OpenCL::Accelerator>
+    {
+        template <typename DT_>
+        static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & a, const DenseVectorContinuousBase<DT_> & b);
+    };
+
     /**
      * \brief Sum of two entities
      *

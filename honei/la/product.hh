@@ -66,7 +66,11 @@ namespace honei
      * \ingroup grplamatrixoperations
      * \ingroup grplavectoroperations
      */
-    template <typename Tag_ = tags::CPU> struct Product
+    template <typename Tag_> struct Product
+    {
+    };
+    template <>
+    struct Product<tags::CPU>
     {
         /**
          * \name Right-handed Matrix-Vector products
@@ -97,7 +101,7 @@ namespace honei
                     r != r_end ; ++r)
             {
                 const DenseVectorRange<DT1_> dv(a[r.index()]);
-                *r = DotProduct<Tag_>::value(dv, b);
+                *r = DotProduct<tags::CPU>::value(dv, b);
             }
 
             return result;
@@ -118,7 +122,7 @@ namespace honei
                     r != r_end ; ++r)
             {
                 const DenseVectorRange<DT1_> dv(a[r.index()]);
-                *r = DotProduct<Tag_>::value(dv, b);
+                *r = DotProduct<tags::CPU>::value(dv, b);
             }
 
             return result;
@@ -139,7 +143,7 @@ namespace honei
                     r != r_end ; ++r)
             {
                 const SparseVector<DT1_> sv(a[r.index()]);
-                *r = DotProduct<Tag_>::value(sv, b);
+                *r = DotProduct<tags::CPU>::value(sv, b);
             }
 
             return result;
@@ -259,7 +263,7 @@ namespace honei
                     r != r_end ; ++r)
             {
                 const SparseVector<DT1_> sv(a[r.index()]);
-                *r = DotProduct<Tag_>::value(sv, b);
+                *r = DotProduct<tags::CPU>::value(sv, b);
             }
 
             return result;
@@ -1199,7 +1203,7 @@ namespace honei
         template<typename DT1_, typename DT2_>
         static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
         {
-            ElementProduct<Tag_>::value(y, a, b);
+            ElementProduct<tags::CPU>::value(y, a, b);
             return y;
         }
 
@@ -1703,6 +1707,39 @@ namespace honei
         static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
         {
             ElementProduct<tags::OpenCL::GPU>::value(y, a, b);
+            return y;
+        }
+
+        /// \}
+    };
+
+    template <> struct Product<tags::OpenCL::Accelerator>
+    {
+        /**
+         * \name Products
+         * \{
+         *
+         * \brief Returns the product of a Matrix and a Vector.
+         *
+         * \param a The matrix that is the first factor of the operation.
+         * \param b The vector that is the second factor of the operation.
+         *
+         * \retval c Will create a new entity with Datatype of the first factor and return it.
+         *
+         * \exception MatrixSizeDoesNotMatch is thrown if two banded matrices do not have the same size.
+         * \exception MatrixRowsDoNotMatch is thrown if two matrices do not have the same number of rows.
+         * \exception MatrixColumnsDoNotMatch is thrown if two matrices do not have the same number of columns.
+         * \exception MatrixIsNotSquare is thrown if a row access matrix's number of rows does not equal its number of columns.
+         * \exception VectorSizeDoesNotMatch is thrown if two vectors do not have the same size.
+         */
+
+        template <typename DT_>
+        static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & result, const SparseMatrixELL<DT_> & a, const DenseVectorContinuousBase<DT_> & b);
+
+        template<typename DT1_, typename DT2_>
+        static DenseVectorContinuousBase<DT1_> & value(DenseVectorContinuousBase<DT1_> & y, const DenseVectorContinuousBase<DT1_> & a, const DenseVectorContinuousBase<DT2_> & b)
+        {
+            ElementProduct<tags::OpenCL::Accelerator>::value(y, a, b);
             return y;
         }
 

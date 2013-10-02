@@ -374,6 +374,12 @@ namespace honei
         static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & x, const DT_ a);
     };
 
+    template <> struct Scale<tags::OpenCL::Accelerator>
+    {
+        template <typename DT_>
+        static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & x, const DT_ a);
+    };
+
     /**
      * \brief Result of scaling an entity by a scalar factor.
      *

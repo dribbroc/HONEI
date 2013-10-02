@@ -144,6 +144,21 @@ template DenseVector<float> Defect<tags::OpenCL::GPU>::value(const DenseVectorCo
 template DenseVector<double> Defect<tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<double> &, const SparseMatrixELL<double> &, const DenseVectorContinuousBase<double> &);
 
 template <typename DT_>
+DenseVector<DT_> Defect<tags::OpenCL::Accelerator>::value(const DenseVectorContinuousBase<DT_> & rhs,
+        const SparseMatrixELL<DT_> & a,
+        const DenseVectorContinuousBase<DT_> & b)
+{
+    CONTEXT("When calculating Defect<DT_> (OpenCL Accelerator):");
+    PROFILER_START("Defect tags::OpenCL::Accelerator");
+    DenseVector<DT_> result(a.rows());
+    opencl::common_defect<tags::OpenCL::Accelerator>(result, rhs, a, b);
+    PROFILER_STOP("Defect tags::OpenCL::Accelerator");
+    return result;
+}
+template DenseVector<float> Defect<tags::OpenCL::Accelerator>::value(const DenseVectorContinuousBase<float> &, const SparseMatrixELL<float> &, const DenseVectorContinuousBase<float> &);
+template DenseVector<double> Defect<tags::OpenCL::Accelerator>::value(const DenseVectorContinuousBase<double> &, const SparseMatrixELL<double> &, const DenseVectorContinuousBase<double> &);
+
+template <typename DT_>
 DenseVectorContinuousBase<DT_> & Defect<tags::OpenCL::CPU>::value(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & rhs,
         const SparseMatrixELL<DT_> & a,
         const DenseVectorContinuousBase<DT_> & b)
@@ -170,6 +185,20 @@ DenseVectorContinuousBase<DT_> & Defect<tags::OpenCL::GPU>::value(DenseVectorCon
 }
 template DenseVectorContinuousBase<float> & Defect<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &, const SparseMatrixELL<float> &, const DenseVectorContinuousBase<float> &);
 template DenseVectorContinuousBase<double> & Defect<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &, const SparseMatrixELL<double> &, const DenseVectorContinuousBase<double> &);
+
+template <typename DT_>
+DenseVectorContinuousBase<DT_> & Defect<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & rhs,
+        const SparseMatrixELL<DT_> & a,
+        const DenseVectorContinuousBase<DT_> & b)
+{
+    CONTEXT("When calculating Defect<DT_> (OpenCL Accelerator):");
+    PROFILER_START("Defect tags::OpenCL::Accelerator");
+    opencl::common_defect<tags::OpenCL::Accelerator>(result, rhs, a, b);
+    PROFILER_STOP("Defect tags::OpenCL::Accelerator");
+    return result;
+}
+template DenseVectorContinuousBase<float> & Defect<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &, const SparseMatrixELL<float> &, const DenseVectorContinuousBase<float> &);
+template DenseVectorContinuousBase<double> & Defect<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &, const SparseMatrixELL<double> &, const DenseVectorContinuousBase<double> &);
 
 template <typename DT_>
 DenseVector<DT_> Defect<tags::OpenCL::CPU>::value(const DenseVectorContinuousBase<DT_> & rhs,

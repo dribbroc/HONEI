@@ -83,3 +83,15 @@ DT_ DotProduct<tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<DT_> & 
 }
 template float DotProduct<tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &);
 template double DotProduct<tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &);
+
+template <typename DT_>
+DT_ DotProduct<tags::OpenCL::Accelerator>::value(const DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y)
+{
+    CONTEXT("When calculating dot product of DenseVectorContinuousBase<DT_>(OpenCL Accelerator):");
+    PROFILER_START("DotProduct tags::OpenCL::Accelerator");
+    DT_ result = opencl::common_dot_product<tags::OpenCL::Accelerator>(x, y);
+    PROFILER_STOP("DotProduct tags::OpenCL::Accelerator");
+    return result;
+}
+template float DotProduct<tags::OpenCL::Accelerator>::value(const DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &);
+template double DotProduct<tags::OpenCL::Accelerator>::value(const DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &);

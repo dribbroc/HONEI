@@ -100,3 +100,27 @@ DT_ Norm<vnt_l_two, true, tags::OpenCL::GPU>::value(const DenseVectorContinuousB
 }
 template float Norm<vnt_l_two, true, tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<float> &);
 template double Norm<vnt_l_two, true, tags::OpenCL::GPU>::value(const DenseVectorContinuousBase<double> &);
+
+template <typename DT_>
+DT_ Norm<vnt_l_two, false, tags::OpenCL::Accelerator>::value(const DenseVectorContinuousBase<DT_> & x)
+{
+    CONTEXT("When calculating L2 norm (false) of DenseVectorContinuousBase<DT_> (OpenCL Accelerator):");
+    PROFILER_START("Norm l2 false tags::OpenCL::Accelerator");
+    DT_ result = opencl::common_norm_l2_false<tags::OpenCL::Accelerator>(x);
+    PROFILER_STOP("Norm l2 false tags::OpenCL::Accelerator");
+    return result;
+}
+template float Norm<vnt_l_two, false, tags::OpenCL::Accelerator>::value(const DenseVectorContinuousBase<float> &);
+template double Norm<vnt_l_two, false, tags::OpenCL::Accelerator>::value(const DenseVectorContinuousBase<double> &);
+
+template <typename DT_>
+DT_ Norm<vnt_l_two, true, tags::OpenCL::Accelerator>::value(const DenseVectorContinuousBase<DT_> & x)
+{
+    CONTEXT("When calculating L2 norm (false) of DenseVectorContinuousBase<DT_> (OpenCL Accelerator):");
+    PROFILER_START("Norm l2 true tags::OpenCL::Accelerator");
+    DT_ result = opencl::common_norm_l2_false<tags::OpenCL::Accelerator>(x);
+    PROFILER_STOP("Norm l2 true tags::OpenCL::Accelerator");
+    return sqrt(result);
+}
+template float Norm<vnt_l_two, true, tags::OpenCL::Accelerator>::value(const DenseVectorContinuousBase<float> &);
+template double Norm<vnt_l_two, true, tags::OpenCL::Accelerator>::value(const DenseVectorContinuousBase<double> &);

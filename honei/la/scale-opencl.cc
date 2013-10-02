@@ -62,3 +62,15 @@ DenseVectorContinuousBase<DT_> & Scale<tags::OpenCL::GPU>::value(DenseVectorCont
 }
 template DenseVectorContinuousBase<float> & Scale<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<float> &, const float);
 template DenseVectorContinuousBase<double> & Scale<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> &, const double);
+
+template <typename DT_>
+DenseVectorContinuousBase<DT_> & Scale<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<DT_> & x, const DT_ a)
+{
+    CONTEXT("When scaling DenseVectorContinuousBase<DT_> by scalar (OpenCL Accelerator):");
+    PROFILER_START("Scale tags::OpenCL::Accelerator");
+    opencl::common_scale<tags::OpenCL::Accelerator>(x, a);
+    PROFILER_STOP("Scale tags::OpenCL::Accelerator");
+    return x;
+}
+template DenseVectorContinuousBase<float> & Scale<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<float> &, const float);
+template DenseVectorContinuousBase<double> & Scale<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<double> &, const double);

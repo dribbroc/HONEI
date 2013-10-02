@@ -68,3 +68,15 @@ DenseVectorContinuousBase<DT_> & Sum<tags::OpenCL::GPU>::value(DenseVectorContin
 }
 template DenseVectorContinuousBase<float> & Sum<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &);
 template DenseVectorContinuousBase<double> & Sum<tags::OpenCL::GPU>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &);
+
+template <typename DT_>
+DenseVectorContinuousBase<DT_> & Sum<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<DT_> & x, const DenseVectorContinuousBase<DT_> & y)
+{
+    CONTEXT("When calculating the sum of two DenseVectorContinuousBase<DT_> (OpenCL Accelerator):");
+    PROFILER_START("Sum tags::OpenCL::Accelerator");
+    opencl::common_sum<tags::OpenCL::Accelerator>(x, y);
+    PROFILER_STOP("Sum tags::OpenCL::Accelerator");
+    return x;
+}
+template DenseVectorContinuousBase<float> & Sum<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<float> &, const DenseVectorContinuousBase<float> &);
+template DenseVectorContinuousBase<double> & Sum<tags::OpenCL::Accelerator>::value(DenseVectorContinuousBase<double> &, const DenseVectorContinuousBase<double> &);

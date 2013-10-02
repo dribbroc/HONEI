@@ -734,6 +734,19 @@ namespace honei
         };
 
     template<>
+        struct Defect<tags::OpenCL::Accelerator>
+        {
+            public:
+                template <typename DT_>
+                    static DenseVector<DT_> value(const DenseVectorContinuousBase<DT_> & right_hand_side,
+                            const SparseMatrixELL<DT_> & system, const DenseVectorContinuousBase<DT_> & x);
+
+                template <typename DT_>
+                    static DenseVectorContinuousBase<DT_> & value(DenseVectorContinuousBase<DT_> & result, const DenseVectorContinuousBase<DT_> & right_hand_side,
+                            const SparseMatrixELL<DT_> & system, const DenseVectorContinuousBase<DT_> & x);
+        };
+
+    template<>
         struct Defect<tags::CPU::SSE>
         {
 

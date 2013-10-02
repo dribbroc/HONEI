@@ -20,6 +20,7 @@
 //#define SOLVER_VERBOSE 1
 #include <honei/math/mg.hh>
 #include <honei/math/bicgstab.hh>
+#include <honei/math/cg.hh>
 #include <honei/math/methods.hh>
 #include <honei/math/restriction.hh>
 #include <honei/math/prolongation.hh>
@@ -30,6 +31,9 @@
 #include <iostream>
 #include <honei/backends/cuda/gpu_pool.hh>
 #include <honei/math/superlu.hh>
+#ifdef HONEI_OPENCL
+#include <honei/backends/opencl/opencl_backend.hh>
+#endif
 
 //#include <cstdio>
 //#include <cstdlib>
@@ -125,14 +129,14 @@ class MGBench:
                 PreconContType_,
                 MatrixIO<io_formats::ELL>,
                 VectorIO<io_formats::EXP>,
-                double>::configure(data, 100, 10, 2, 2, 1, double(1e-8));
+                double>::configure(data, 20, 10, 2, 2, 1, double(1e-8));
 
             OperatorList ol(
                     MGCycleCreation<Tag_,
                     CycleType_,
                     //SuperLU,
                     BiCGStabSolver<Tag_, methods::VAR>,
-                    //CG<Tag_, methods::NONE>,
+                    //CGSolver<Tag_, methods::NONE>,
                     //RISmoother<Tag_>,
                     BiCGStabSmoother<Tag_>,
                     Restriction<Tag_, methods::PROLMAT>,
@@ -147,6 +151,10 @@ class MGBench:
 #ifdef HONEI_CUDA
                     if (Tag_::tag_value == tags::tv_gpu_cuda)
                     cuda::GPUPool::instance()->flush();
+#endif
+#ifdef HONEI_OPENCL
+                        if (Tag_::tag_value == tags::tv_opencl)
+                            opencl::OpenCLBackend::instance()->flush();
 #endif
                     );
 
@@ -1458,4 +1466,19 @@ MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> >
 MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> > cuda_q1t_sort4_l4_sainv_f("MGBench cuda | q1t | sort 4 | L4 | sainv | F", 3 , 4, 4, "sainv", 0.7);
 MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> > cuda_q1t_sort4_l5_sainv_f("MGBench cuda | q1t | sort 4 | L5 | sainv | F", 3 , 4, 5, "sainv", 0.7);
 MGBench<tags::GPU::CUDA, methods::CYCLE::F::V::STATIC, SparseMatrixELL<double> > cuda_q1t_sort4_l6_sainv_f("MGBench cuda | q1t | sort 4 | L6 | sainv | F", 3 , 4, 6, "sainv", 0.7);
+#endif
+
+
+
+
+#ifdef HONEI_OPENCL
+MGBench<tags::OpenCL::CPU, methods::CYCLE::V::STATIC, DenseVector<double> > opencl_cpu_q1_sort0_l4_jac_v("MGBench opencl cpu | q1 | sort 0 | L4 | jac | V", 1 , 0, 4, "jac", 0.5);
+MGBench<tags::OpenCL::CPU, methods::CYCLE::V::STATIC, DenseVector<double> > opencl_cpu_q1_sort0_l5_jac_v("MGBench opencl cpu | q1 | sort 0 | L5 | jac | V", 1 , 0, 5, "jac", 0.5);
+#endif
+#ifdef HONEI_OPENCL_GPU
+MGBench<tags::OpenCL::GPU, methods::CYCLE::V::STATIC, DenseVector<double> > opencl_gpu_q1_sort0_l5_jac_v("MGBench opencl gpu | q1 | sort 0 | L5 | jac | V", 1 , 0, 5, "jac", 0.5);
+#endif
+#ifdef HONEI_OPENCL_ACC
+MGBench<tags::OpenCL::Accelerator, methods::CYCLE::V::STATIC, DenseVector<double> > opencl_acc_q1_sort0_l4_jac_v("MGBench opencl accelerator | q1 | sort 0 | L4 | jac | V", 1 , 0, 4, "jac", 0.5);
+MGBench<tags::OpenCL::Accelerator, methods::CYCLE::V::STATIC, DenseVector<double> > opencl_acc_q1_sort0_l5_jac_v("MGBench opencl accelerator | q1 | sort 0 | L5 | jac | V", 1 , 0, 5, "jac", 0.5);
 #endif

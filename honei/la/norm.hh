@@ -716,6 +716,18 @@ namespace honei
         static DT_ value(const DenseVectorContinuousBase<DT_> & x);
     };
 
+    template <> struct Norm<vnt_l_two, false, tags::OpenCL::Accelerator>
+    {
+        template <typename DT_>
+        static DT_ value(const DenseVectorContinuousBase<DT_> & x);
+    };
+
+    template <> struct Norm<vnt_l_two, true, tags::OpenCL::Accelerator>
+    {
+        template <typename DT_>
+        static DT_ value(const DenseVectorContinuousBase<DT_> & x);
+    };
+
      /**
      * \brief Norm of an entity (Cell-implementation).
      *
