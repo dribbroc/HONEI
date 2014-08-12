@@ -227,20 +227,19 @@ namespace honei
 
         static unsigned * cpu_to_node_array(unsigned num_nodes, unsigned num_lpus)
         {
-            unsigned * result;
-
             if (num_nodes < 1)
             {
                 return NULL;
             }
 
             // if num_nodes >= 2 then num_lpus should be >=2 too...
-            result = new unsigned[num_lpus];
             intern::NumaInfo info;
             bool success = info.init(num_nodes);
 
             if (! success)
                 return NULL;
+
+            unsigned * result = new unsigned[num_lpus];
 
             for (unsigned i(0) ; i < num_lpus ; ++i)
             {
