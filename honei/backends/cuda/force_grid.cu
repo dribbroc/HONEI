@@ -315,7 +315,7 @@ namespace honei
         template <typename DT_>
         __global__ void force_grid_gpu_x_2(
                 DT_ * f_temp,
-                DT_ * h, DT_ * u, DT_ * v,
+                DT_ * h, DT_ * uv, DT_ * u, DT_ * v,
                 DT_ distribution_x,
                 DT_ g, DT_ d_x, DT_ d_t, DT_ manning, DT_ epsilon,
                 unsigned long size)
@@ -330,7 +330,7 @@ namespace honei
                 if ( (pow(h[i], DT_(1./3.))) > epsilon || (pow(h[i], DT_(1./3.))) < -epsilon )
                 {
                     f_temp[i] -= force_multiplier * distribution_x * manning * manning *
-                        u[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / (pow(h[i], DT_(1./3.)));
+                        uv[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / (pow(h[i], DT_(1./3.)));
                 }
             }
         }
@@ -356,7 +356,7 @@ namespace honei
                     f_temp[i] -= force_multiplier * distribution_x * manning * manning *
                         u[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / (pow(h[i], DT_(1./3.)));
                     f_temp[i] -= force_multiplier * distribution_y * manning * manning *
-                        u[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / (pow(h[i], DT_(1./3.)));
+                        v[i] * sqrt(u[i] * u[i] + v[i] * v[i]) / (pow(h[i], DT_(1./3.)));
                 }
             }
         }
@@ -401,7 +401,7 @@ namespace honei
 
         honei::cuda::force_grid_gpu_x_2<DT_><<<grid, block>>>(
                 f_temp_1_gpu,
-                h_gpu, u_gpu, v_gpu,
+                h_gpu, u_gpu, u_gpu, v_gpu,
                 distribution_x_1,
                 g, d_x, d_t, manning, std::numeric_limits<DT_>::epsilon(),
                 size);
@@ -414,7 +414,7 @@ namespace honei
                 size);
         honei::cuda::force_grid_gpu_x_2<DT_><<<grid, block>>>(
                 f_temp_3_gpu,
-                h_gpu, u_gpu, v_gpu,
+                h_gpu, v_gpu, u_gpu, v_gpu,
                 distribution_y_3,
                 g, d_x, d_t, manning, std::numeric_limits<DT_>::epsilon(),
                 size);
@@ -427,7 +427,7 @@ namespace honei
                 size);
         honei::cuda::force_grid_gpu_x_2<DT_><<<grid, block>>>(
                 f_temp_5_gpu,
-                h_gpu, u_gpu, v_gpu,
+                h_gpu, u_gpu, u_gpu, v_gpu,
                 distribution_x_5,
                 g, d_x, d_t, manning, std::numeric_limits<DT_>::epsilon(),
                 size);
@@ -440,7 +440,7 @@ namespace honei
                 size);
         honei::cuda::force_grid_gpu_x_2<DT_><<<grid, block>>>(
                 f_temp_7_gpu,
-                h_gpu, u_gpu, v_gpu,
+                h_gpu, v_gpu, u_gpu, v_gpu,
                 distribution_y_7,
                 g, d_x, d_t, manning, std::numeric_limits<DT_>::epsilon(),
                 size);
