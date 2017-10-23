@@ -49,7 +49,7 @@ namespace honei
     template <typename DataType_> struct Implementation<BandedMatrix<DataType_> >
     {
         /// Array of pointers to our band-data.
-        SharedArray<shared_ptr<DenseVector<DataType_> > > bands;
+        SharedArray<std::shared_ptr<DenseVector<DataType_> > > bands;
 
         /// Our size.
         unsigned long size;
@@ -253,7 +253,7 @@ namespace honei
         {
             this->_imp->non_zero_bands.insert(index + this->_imp->size - 1);
         }
-        shared_ptr<DenseVector<DataType_> > temp(new DenseVector<DataType_>(vector));
+        std::shared_ptr<DenseVector<DataType_> > temp(new DenseVector<DataType_>(vector));
         this->_imp->bands[index + this->_imp->size - 1] = temp;
 
     }
@@ -327,7 +327,7 @@ namespace honei
         {
             if (this->_imp->bands[i])
             {
-                shared_ptr<DenseVector<DataType_> > temp(new DenseVector<DataType_>(
+                std::shared_ptr<DenseVector<DataType_> > temp(new DenseVector<DataType_>(
                             this->_imp->bands[i]->copy()));
                 result._imp->bands[i] = temp;
                 result._imp->non_zero_bands.insert(i);
@@ -341,7 +341,7 @@ namespace honei
 
     template <typename DataType_> struct Implementation<ElementIterator<storage::Banded, container::Matrix, DataType_> >
     {
-        shared_ptr<Implementation<BandedMatrix<DataType_> > > matrix;
+        std::shared_ptr<Implementation<BandedMatrix<DataType_> > > matrix;
 
         unsigned long index;
 
@@ -480,11 +480,11 @@ namespace honei
 
     template <typename DataType_> struct Implementation<ConstElementIterator<storage::Banded, container::Matrix, DataType_> >
     {
-        shared_ptr<Implementation<BandedMatrix<DataType_> > > matrix;
+        std::shared_ptr<Implementation<BandedMatrix<DataType_> > > matrix;
 
         unsigned long index;
 
-        Implementation(const shared_ptr<Implementation<BandedMatrix<DataType_> > > & matrix, unsigned long index) :
+        Implementation(const std::shared_ptr<Implementation<BandedMatrix<DataType_> > > & matrix, unsigned long index) :
             matrix(matrix),
             index(index)
         {
@@ -631,13 +631,13 @@ namespace honei
 
     template <typename DataType_> struct Implementation<BandIterator<type::Banded, DataType_> >
     {
-        shared_ptr<Implementation<BandedMatrix<DataType_> > > matrix;
+        std::shared_ptr<Implementation<BandedMatrix<DataType_> > > matrix;
 
         unsigned long index;
 
         DenseVector<DataType_> * band;
 
-        Implementation(const shared_ptr<Implementation<BandedMatrix<DataType_> > > & matrix, unsigned long index) :
+        Implementation(const std::shared_ptr<Implementation<BandedMatrix<DataType_> > > & matrix, unsigned long index) :
             matrix(matrix),
             index(index),
             band(0)
@@ -660,7 +660,7 @@ namespace honei
     template <typename DataType_> struct BandIteratorImplementation :
         public Implementation<BandIterator<type::Banded, DataType_> >
     {
-        BandIteratorImplementation(const shared_ptr<Implementation<BandedMatrix<DataType_> > > & matrix, unsigned long index) :
+        BandIteratorImplementation(const std::shared_ptr<Implementation<BandedMatrix<DataType_> > > & matrix, unsigned long index) :
             Implementation<BandIterator<type::Banded, DataType_> >(matrix, index)
         {
         }
@@ -681,7 +681,7 @@ namespace honei
 
         virtual bool exists() const
         {
-            return this->matrix->bands[this->index];
+            return !this->matrix->bands;
         }
 
         virtual Implementation<ConstBandIterator<type::Banded, DataType_> > * make_const() const
@@ -695,7 +695,7 @@ namespace honei
     {
         std::set<unsigned long>::const_iterator iterator;
 
-        NonZeroBandIteratorImplementation(const shared_ptr<Implementation<BandedMatrix<DataType_> > > & matrix,
+        NonZeroBandIteratorImplementation(const std::shared_ptr<Implementation<BandedMatrix<DataType_> > > & matrix,
                 const std::set<unsigned long>::const_iterator & iterator) :
             Implementation<BandIterator<type::Banded, DataType_> >(matrix, *iterator),
             iterator(iterator)
@@ -800,11 +800,11 @@ namespace honei
 
     template <typename DataType_> struct Implementation<ConstBandIterator<type::Banded, DataType_> >
     {
-        shared_ptr<Implementation<BandedMatrix<DataType_> > > matrix;
+        std::shared_ptr<Implementation<BandedMatrix<DataType_> > > matrix;
 
         unsigned long index;
 
-        Implementation(const shared_ptr<Implementation<BandedMatrix<DataType_> > > & matrix, unsigned long index) :
+        Implementation(const std::shared_ptr<Implementation<BandedMatrix<DataType_> > > & matrix, unsigned long index) :
             matrix(matrix),
             index(index)
         {
@@ -825,7 +825,7 @@ namespace honei
     template <typename DataType_> struct ConstBandIteratorImplementation :
         public Implementation<ConstBandIterator<type::Banded, DataType_> >
     {
-        ConstBandIteratorImplementation(const shared_ptr<Implementation<BandedMatrix<DataType_> > > & matrix, unsigned long index) :
+        ConstBandIteratorImplementation(const std::shared_ptr<Implementation<BandedMatrix<DataType_> > > & matrix, unsigned long index) :
             Implementation<ConstBandIterator<type::Banded, DataType_> >(matrix, index)
         {
         }
@@ -846,7 +846,7 @@ namespace honei
 
         virtual bool exists()
         {
-            return this->matrix->bands[this->index];
+            return !this->matrix->bands;
         }
     };
 
@@ -855,7 +855,7 @@ namespace honei
     {
         std::set<unsigned long>::const_iterator iterator;
 
-        ConstNonZeroBandIteratorImplementation(const shared_ptr<Implementation<BandedMatrix<DataType_> > > & matrix,
+        ConstNonZeroBandIteratorImplementation(const std::shared_ptr<Implementation<BandedMatrix<DataType_> > > & matrix,
                 const std::set<unsigned long>::const_iterator & iterator) :
             Implementation<ConstBandIterator<type::Banded, DataType_> >(matrix, *iterator),
             iterator(iterator)
