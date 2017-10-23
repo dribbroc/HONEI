@@ -53,10 +53,10 @@ namespace honei
             unsigned long _rows;
 
             /// Our row-vectors.
-            SharedArray<shared_ptr<SparseVector<DataType_> > > _row_vectors;
+            SharedArray<std::shared_ptr<SparseVector<DataType_> > > _row_vectors;
 
             /// Our column-vectors.
-            SharedArray<shared_ptr<SparseVector<DataType_> > > _column_vectors;
+            SharedArray<std::shared_ptr<SparseVector<DataType_> > > _column_vectors;
 
             /// Our zero-vector.
             SparseVector<DataType_> _zero_vector;

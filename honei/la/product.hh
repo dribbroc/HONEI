@@ -824,60 +824,60 @@ namespace honei
                 if (! vi.exists())
                     continue;
 
-                    // We only go on until band_index of b is equal to [numbers of bands] - actual band_index of a (zero_based).
-                    unsigned long iteration_end((2*b.size()-1) - (vi.index() - diag_index));
-                    for(typename BandedMatrix<DT1_>::ConstBandIterator vj(b.begin_bands()), vj_end(b.band_at(iteration_end)) ; vj != vj_end ; ++vj)
+                // We only go on until band_index of b is equal to [numbers of bands] - actual band_index of a (zero_based).
+                unsigned long iteration_end((2*b.size()-1) - (vi.index() - diag_index));
+                for(typename BandedMatrix<DT1_>::ConstBandIterator vj(b.begin_bands()), vj_end(b.band_at(iteration_end)) ; vj != vj_end ; ++vj)
+                {
+                    if (vj.index() == diag_index) // We are on diagonal of b
                     {
-                        if (vj.index() == diag_index) // We are on diagonal of b
+                        signed long result_band_index(vi.index() - diag_index); //index based on diag = 0
+                        typename DenseVector<DT1_>::ConstElementIterator i(vi->begin_elements());
+                        typename DenseVector<DT2_>::ConstElementIterator j(vj->element_at(result_band_index));
+                        for(typename DenseVector<DT1_>::ElementIterator r(result.band(result_band_index).begin_elements()),
+                                r_end(result.band(result_band_index).element_at(result.size() - result_band_index)) ; r < r_end ; ++j, ++i, ++r)
                         {
-                            signed long result_band_index(vi.index() - diag_index); //index based on diag = 0
-                            typename DenseVector<DT1_>::ConstElementIterator i(vi->begin_elements());
-                            typename DenseVector<DT2_>::ConstElementIterator j(vj->element_at(result_band_index));
-                            for(typename DenseVector<DT1_>::ElementIterator r(result.band(result_band_index).begin_elements()),
-                                    r_end(result.band(result_band_index).element_at(result.size() - result_band_index)) ; r < r_end ; ++j, ++i, ++r)
-                            {
-                                *r += *i * *j;
-                            }
-                        }
-                        else if (vj.index() > diag_index) // We are above diagonal of b
-                        {
-                            signed long diag_based_index_a(vi.index() - diag_index);
-                            signed long diag_based_index_b(vj.index() - diag_index);
-                            signed long result_band_index(diag_based_index_a + diag_based_index_b);
-                            typename DenseVector<DT1_>::ConstElementIterator i(vi->begin_elements());
-                            unsigned long shift(vi.index() - diag_index);
-                            typename DenseVector<DT2_>::ConstElementIterator j(vj->element_at(shift));
-                            for(typename DenseVector<DT1_>::ElementIterator r(result.band(result_band_index).begin_elements()),
-                                    r_end(result.band(result_band_index).element_at(result.size() - result_band_index)) ; r < r_end ; ++j, ++i, ++r)
-                            {
-                                *r += *i * *j;
-                            }
-                        }
-
-                        else if (vj.index() < diag_index) // We are below diagonal of b
-                        {
-                            signed long diag_based_index_a(vi.index() - diag_index);
-                            signed long diag_based_index_b(vj.index() - diag_index);
-                            signed long result_band_index(diag_based_index_a + diag_based_index_b);
-
-                            long res_start(0);
-                            if (result_band_index < 0)
-                                res_start = abs(result_band_index);
-
-                            typename DenseVector<DT1_>::ConstElementIterator i(vi->element_at(res_start));
-                            long vj_start(vi.index() - diag_index);
-                            if (result_band_index < 0)
-                                vj_start += abs(result_band_index);
-
-                            typename DenseVector<DT2_>::ConstElementIterator j(vj->element_at(vj_start));
-                            long res_end(2*result.size() - (vi.index() + 1));
-                            for(typename DenseVector<DT1_>::ElementIterator r(result.band(result_band_index).element_at(res_start)),
-                                    r_end(result.band(result_band_index).element_at(res_end)) ; r < r_end ; ++j, ++i, ++r)
-                            {
-                                *r += *i * *j;
-                            }
+                            *r += *i * *j;
                         }
                     }
+                    else if (vj.index() > diag_index) // We are above diagonal of b
+                    {
+                        signed long diag_based_index_a(vi.index() - diag_index);
+                        signed long diag_based_index_b(vj.index() - diag_index);
+                        signed long result_band_index(diag_based_index_a + diag_based_index_b);
+                        typename DenseVector<DT1_>::ConstElementIterator i(vi->begin_elements());
+                        unsigned long shift(vi.index() - diag_index);
+                        typename DenseVector<DT2_>::ConstElementIterator j(vj->element_at(shift));
+                        for(typename DenseVector<DT1_>::ElementIterator r(result.band(result_band_index).begin_elements()),
+                                r_end(result.band(result_band_index).element_at(result.size() - result_band_index)) ; r < r_end ; ++j, ++i, ++r)
+                        {
+                            *r += *i * *j;
+                        }
+                    }
+
+                    else if (vj.index() < diag_index) // We are below diagonal of b
+                    {
+                        signed long diag_based_index_a(vi.index() - diag_index);
+                        signed long diag_based_index_b(vj.index() - diag_index);
+                        signed long result_band_index(diag_based_index_a + diag_based_index_b);
+
+                        long res_start(0);
+                        if (result_band_index < 0)
+                            res_start = abs(result_band_index);
+
+                        typename DenseVector<DT1_>::ConstElementIterator i(vi->element_at(res_start));
+                        long vj_start(vi.index() - diag_index);
+                        if (result_band_index < 0)
+                            vj_start += abs(result_band_index);
+
+                        typename DenseVector<DT2_>::ConstElementIterator j(vj->element_at(vj_start));
+                        long res_end(2*result.size() - (vi.index() + 1));
+                        for(typename DenseVector<DT1_>::ElementIterator r(result.band(result_band_index).element_at(res_start)),
+                                r_end(result.band(result_band_index).element_at(res_end)) ; r < r_end ; ++j, ++i, ++r)
+                        {
+                            *r += *i * *j;
+                        }
+                    }
+                }
             }
 
             return result;

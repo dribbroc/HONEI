@@ -16,7 +16,7 @@
 #include <iostream>
 #include <iomanip>
 #include <limits>
-#include <honei/util/tr1_boost.hh>
+#include <memory>
 
 #include <honei/util/instantiation_policy.hh>
 #include <honei/util/kpnetcdf_types.hh>

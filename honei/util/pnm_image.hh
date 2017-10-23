@@ -12,7 +12,7 @@
 #include <exception>
 #include <string>
 
-#include <tr1/memory>
+#include <memory>
 
 namespace honei
 {
@@ -77,8 +77,8 @@ namespace honei
                 size_t getWidth();
                 size_t getHeight();
 
-                static std::tr1::shared_ptr<PGMImage> read(const char* filename) throw(PNMImageExcpetion);
-                static void write(std::tr1::shared_ptr<PGMImage>, const char* filename);
+                static std::shared_ptr<PGMImage> read(const char* filename) throw(PNMImageExcpetion);
+                static void write(std::shared_ptr<PGMImage>, const char* filename);
 
             private:
                 PGMImage() {};
@@ -109,8 +109,8 @@ namespace honei
                 size_t getWidth();
                 size_t getHeight();
 
-                static std::tr1::shared_ptr<PPMImage> read(const char* filename) throw(PNMImageExcpetion);
-                static void write(std::tr1::shared_ptr<PPMImage>& image, const char* filename) throw(PNMImageExcpetion);
+                static std::shared_ptr<PPMImage> read(const char* filename) throw(PNMImageExcpetion);
+                static void write(std::shared_ptr<PPMImage>& image, const char* filename) throw(PNMImageExcpetion);
 
             private:
                 PPMImage() {};

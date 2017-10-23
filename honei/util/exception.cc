@@ -95,7 +95,7 @@ Context::Context(const char * const file, const long line, const std::string & c
     context_stack->push_back(context + " (" + stringify(file) + ":" + stringify(line) +")");
 }
 
-Context::~Context()
+Context::~Context() noexcept(false)
 {
     if (! context_stack)
         throw InternalError("no context!");

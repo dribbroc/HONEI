@@ -142,8 +142,8 @@ PGMImage::~PGMImage() {
     delete [] data;
 }
 
-std::tr1::shared_ptr<PGMImage> PGMImage::read(const char* filename) throw(PNMImageExcpetion) {
-    std::tr1::shared_ptr<PGMImage> img;
+std::shared_ptr<PGMImage> PGMImage::read(const char* filename) throw(PNMImageExcpetion) {
+    std::shared_ptr<PGMImage> img;
 
     ifstream file;
     float* data;
@@ -197,8 +197,8 @@ PPMImage::~PPMImage() {
     delete [] blue;
 }
 
-std::tr1::shared_ptr<PPMImage> PPMImage::read(const char* filename) throw(PNMImageExcpetion) {
-    std::tr1::shared_ptr<PPMImage> img;
+std::shared_ptr<PPMImage> PPMImage::read(const char* filename) throw(PNMImageExcpetion) {
+    std::shared_ptr<PPMImage> img;
 
     ifstream file;
     float* data[3];
@@ -244,7 +244,7 @@ std::tr1::shared_ptr<PPMImage> PPMImage::read(const char* filename) throw(PNMIma
 }
 
 
-void PPMImage::write(std::tr1::shared_ptr<PPMImage>& img, const char* filename) throw(PNMImageExcpetion) {
+void PPMImage::write(std::shared_ptr<PPMImage>& img, const char* filename) throw(PNMImageExcpetion) {
     ofstream file;
     float* data[3];
     uint8_t* buffer;

@@ -31,8 +31,9 @@
 #include <fstream>
 #include <list>
 #include <map>
+#include <memory>
+
 #include <string>
-#include <honei/util/tr1_boost.hh>
 
 #include <syscall.h>
 #include <unistd.h>
@@ -403,13 +404,13 @@ namespace honei
             output << "== New profiler session started ==" << std::endl;
 #endif
 
-            evaluation_functions.push_back(EvaluationFunction(bind(
-                            mem_fn(&Profiler::evaluation_printer),
+            evaluation_functions.push_back(EvaluationFunction(std::bind(
+                            std::mem_fn(&Profiler::evaluation_printer),
                             this, HONEI_PLACEHOLDERS_1, HONEI_PLACEHOLDERS_2,
                             HONEI_PLACEHOLDERS_3, HONEI_PLACEHOLDERS_4,
                             HONEI_PLACEHOLDERS_5, HONEI_PLACEHOLDERS_6,
                             HONEI_PLACEHOLDERS_7, HONEI_PLACEHOLDERS_8)));
-            thread = new Thread(bind(mem_fn(&Profiler::profiler_function), this));
+            thread = new Thread(std::bind(std::mem_fn(&Profiler::profiler_function), this));
         }
 
         ~Profiler()

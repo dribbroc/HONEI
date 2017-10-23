@@ -69,7 +69,7 @@ namespace honei
             {
             }
 
-            ~MemoryPool()
+            ~MemoryPool() noexcept(false)
             {
                 {
                     Lock l(*_mutex);

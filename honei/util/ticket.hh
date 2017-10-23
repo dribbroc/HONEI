@@ -29,6 +29,8 @@
 #include <honei/util/private_implementation_pattern.hh>
 #include <honei/util/tags.hh>
 
+#include <memory>
+
 namespace honei
 {
     struct TicketBaseImpl
@@ -87,7 +89,7 @@ namespace honei
 
         protected:
 
-            shared_ptr<TicketBaseImpl> _base;
+            std::shared_ptr<TicketBaseImpl> _base;
 
             /// Constructor.
             TicketBase();

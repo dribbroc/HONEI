@@ -12,8 +12,7 @@
 #include <honei/util/netcdf_datatypes.hh>
 #include <honei/util/instantiation_policy.hh>
 
-#include <honei/util/tr1_boost.hh>
-
+#include <memory>
 #include <netcdfcpp.h>
 #include <netcdf.h>
 

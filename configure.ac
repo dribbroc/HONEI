@@ -619,3 +619,4 @@ AC_OUTPUT(
 	honei/util/Makefile
 	honei/visual/Makefile
 )
+AC_CONFIG_MACRO_DIRS([m4])

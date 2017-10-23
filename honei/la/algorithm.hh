@@ -337,7 +337,7 @@ namespace honei
         if (copy.size() != orig.size())
             throw MatrixSizeDoesNotMatch(orig.size(), copy.size());
 
-            copy = orig.copy();
+        copy = orig.copy();
     }
 
 

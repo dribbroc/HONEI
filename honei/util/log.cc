@@ -34,9 +34,9 @@
 #include <iostream>
 #include <fstream>
 #include <list>
+#include <memory>
 #include <set>
 #include <string>
-#include <honei/util/tr1_boost.hh>
 
 #include <syscall.h>
 
@@ -219,7 +219,7 @@ namespace honei
                 selections.insert(lc_none);
             }
 
-            thread = new Thread(bind(mem_fn(&LogQueue::log_function), this));
+            thread = new Thread(std::bind(std::mem_fn(&LogQueue::log_function), this));
         }
 
         ~LogQueue()

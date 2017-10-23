@@ -45,7 +45,7 @@ namespace honei
     template <typename DataType_> struct Implementation<BandedMatrixQx<Q1Type, DataType_> >
     {
         /// Array of pointers to our band-data.
-        SharedArray<shared_ptr<DenseVector<DataType_> > > bands;
+        SharedArray<std::shared_ptr<DenseVector<DataType_> > > bands;
 
         /// Number of bands
         unsigned long band_count;

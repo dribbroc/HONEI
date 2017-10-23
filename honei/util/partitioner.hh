@@ -27,7 +27,7 @@
 #include <honei/util/tags.hh>
 #include <honei/util/wrapped_forward_iterator.hh>
 
-#include <honei/util/tr1_boost.hh>
+#include <functional>
 
 namespace honei
 {

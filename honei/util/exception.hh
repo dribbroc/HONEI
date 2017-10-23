@@ -50,7 +50,7 @@ namespace honei
             Context(const char * const file, const long line, const std::string & context);
 
             /// Desctructor.
-            ~Context();
+            ~Context() noexcept(false);
 
             /**
              * Current context (forwards to libebt).

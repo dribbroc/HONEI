@@ -25,8 +25,8 @@
 # include <honei/backends/cell/cell.hh>
 #endif
 
+#include <memory>
 #include <sstream>
-#include <honei/util/tr1_boost.hh>
 #include <string>
 
 namespace honei
@@ -69,7 +69,7 @@ namespace honei
          * \ingroup grpstringify
          */
         template <typename T_>
-        struct CheckType<shared_ptr<T_> >
+        struct CheckType<std::shared_ptr<T_> >
         {
         };
     }
