@@ -1,63 +1,21 @@
-Data protection
-General preliminary remarks
+Data protection statement
 
-The organizational unit mentioned above and the IT and Media Center (ITMC) of the Technical University of Dortmund take the protection of personal data very seriously. We process personal data, which are collected when visiting our websites, in compliance with the applicable data protection regulations. In particular, the Data Protection Act NRW (DSG NRW) and the Telemedia Act apply.
+We at honei.org takes the protection of your personal information very seriously and strictly adheres to the rules of data protection laws. Personal data is collected on this website only to the extent technically necessary. In no case will the data collected be sold or otherwise disclosed to third parties.
+The following explanation gives you an overview of how we guarantee this protection and what kind of data is collected for which purpose.
 
-In the following, we will inform you about the nature, scope and purpose of the collection and use of personal data. You can retrieve this information at any time on our website.
+1. Collection and processing of data
+It is not necessary for the use of our website to provide personal information.
 
-Your data will neither be published by us nor passed on to third parties without authorization.
-1. Data collection and processing for access from the Internet
-When you visit our web pages, our web servers temporarily store every access in a log file. The following data is collected and stored until automated deletion after 3 months:
+3. Right to information
+At any time you have the right to information about the data stored about you, their origin and recipient as well as the purpose of the storage. Information about the stored data is given by the webmaster at admin{replace with AT - ersetze mit AT}honei.org.
 
-    The anonymously shortened IP address of the requesting computer
-    Date and time of access
-    Name and URL of the retrieved file
-    Transferred amount of data
-    Message if the retrieval was successful
-    Detection data of the browser and operating system used
-    Website from which access is made
-    Name of your Internet access provider 
+4. Integration of services and content of third parties
+Third-party content such as video material, maps or graphics can be integrated on this website.
 
-The processing of this data is for the purpose of enabling the use of the website (connection establishment), the system security, the technical administration of the network infrastructure and to optimize the Internet site. For the avoidance of danger or in case of violations of the usage guidelines of the IT and Media Center of the Technical University of Dortmund, the IP addresses can, in justified cases, be ascertained and evaluated without any time limitation.
+This always presupposes that the providers of this content (hereinafter referred to as "third party provider") perceive the IP address of the users. Because without the IP address, they could not send the contents to the browser of the respective user.
 
-Personal user profiles are not created.
+The IP address is therefore required for the presentation of this content. We endeavor to use only content whose respective providers use the IP address solely for the delivery of the content. However, we do not have any influence on this if the third parties provide the IP address e.g. save for statistical purposes.
+As far as we know this, we clarify the users about it.
 
-In addition to the above cases, personal data will not be processed unless you expressly consent to further processing.
-
-The login for access to protected areas is partially logged in order to detect abuse attempts and password attacks. Thereby, no data is stored, with the help of which personal profiles are created about the user behavior.
-2. Use and disclosure of personal data
-
-In general, the use of our website does not require you to provide personal information. In order for us to provide some of our services, we may need your personal information.
-
-Any use of your personal data takes place only for the stated purposes and to the extent necessary to achieve these purposes.
-
-Transfers of personal data to public authorities are made only in accordance with mandatory national legislation.
-3. Consent for further use
-
-The use of certain offers on our website such as inquiries, newsletters or forums requires a prior registration and further processing of personal data, such as a longer-term storage of e-mail addresses or user IDs. The use of such data only takes place if you have forwarded these to us and agreed to use them in advance.
-
-Entries in blogs, guestbooks, forums, leaving comments or similar services are subject to no substantive control. Nevertheless, we reserve the right, at our sole discretion, to delete entries and exclude users from further use, in particular when entries fulfill criminally relevant facts or are incompatible with the objectives of TU Dortmund. If you leave entries on the web pages, you assure that these may take place indefinitely and are free from third party rights.
-4. Cookies
-
-Cookies, which are set by the TU Dortmund, serve to make our Internet offer more user-friendly, more effective and safer. Cookies are small text files that your browser saves and which are stored on your computer. Cookies do not harm your computer and do not contain viruses. If, by way of exception, we also wish to store personal data in a cookie, such as a user ID, you will be particularly aware of this.
-
-When calling pages that require a login, a so-called "session cookie" is set up on your computer, which is deleted after the end of the browser session. It is excluded that a reference to the person produced or a user profile is created.
-
-You can also view our websites largely without cookies, but most browsers accept cookies automatically. You can prevent the storage of cookies by setting this in your browser settings. Failure to accept cookies may restrict the functionality of our offers.
-5. Web analysis
-
-The ITMC uses services on some websites that collect and store data for web analysis, exploitation and optimization purposes. From this data, user profiles are created under a pseudonym. For this purpose, cookies (see above) can be used.
-
-Cookies enable recognition of the Internet browser. The data collected by such technologies will not be used by us without the specific consent of the person concerned to personally identify the visitor to this website or to personal data about the bearer of the pseudonym.
-6. Links to websites of other providers
-
-Our websites may contain links to websites of other providers. We point out that this privacy policy applies exclusively to the websites of the organizational unit of TU Dortmund mentioned above. We have no control over this and we do not control that other providers comply with applicable privacy policies.
-7. Right to information
-
-You have a right of access to the personal data stored about you and also a right to correction of incorrect data, blocking and deletion.
-
-If you wish to receive information about your personal data or to correct or delete it, or if you have further questions about the use of your personal data provided to us, please contact us.
-8. Validity and timeliness of the privacy policy
-
-By using our website, you consent to the use of the data described above. This Privacy Policy is immediately valid and supersedes all prior statements.
-Data protection officer of the TU Dortmund Information on and from the data protection officer of the TU Dortmund can be found on the website Privacy Commissioner
+5. Data collection through the use of GitHub Pages
+This site is hosted on servers by Github Inc., 88 Colin P Kelly Jr. St, San Francisco, CA 94107, USA. Please note the GitHub Privacy Policy.
