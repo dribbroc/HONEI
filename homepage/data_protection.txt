@@ -1,4 +1,4 @@
-Data protection statement
+Data privacy statement
 
 We at honei.org takes the protection of your personal information very seriously and strictly adheres to the rules of data protection laws. Personal data is collected on this website only to the extent technically necessary. In no case will the data collected be sold or otherwise disclosed to third parties.
 The following explanation gives you an overview of how we guarantee this protection and what kind of data is collected for which purpose.
@@ -18,4 +18,4 @@ The IP address is therefore required for the presentation of this content. We en
 As far as we know this, we clarify the users about it.
 
 5. Data collection through the use of GitHub Pages
-This site is hosted on servers by Github Inc., 88 Colin P Kelly Jr. St, San Francisco, CA 94107, USA. Please note the GitHub Privacy Policy.
+This site is hosted on servers by Github Inc., 88 Colin P Kelly Jr. St, San Francisco, CA 94107, USA. Please note the GitHub Data Privacy Policy.
